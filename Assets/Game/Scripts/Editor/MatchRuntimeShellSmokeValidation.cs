@@ -15,6 +15,7 @@ using UnityEngine.SceneManagement;
 public static class MatchRuntimeShellSmokeValidation
 {
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
+    private const string InitialUnitsConfigPath = "Assets/Game/Configs/Scene/MatchSubScene_InitialUnitsSpawner_Config.asset";
     private const string MatchSceneName = "Match";
     private const string MatchHudContentName = "SCN08_MatchHudContent";
     private const string ActiveKey = "MatchRuntimeShellSmokeValidation.Active";
@@ -24,6 +25,8 @@ public static class MatchRuntimeShellSmokeValidation
     private const string RequireFrameDiagKey = "MatchRuntimeShellSmokeValidation.RequireFrameDiag";
     private const string RequireAirMissileSmokeKey = "MatchRuntimeShellSmokeValidation.RequireAirMissileSmoke";
     private const string RequireBaselineMetricsKey = "MatchRuntimeShellSmokeValidation.RequireBaselineMetrics";
+    private const string RequireInitialBuildingSmokeKey = "MatchRuntimeShellSmokeValidation.RequireInitialBuildingSmoke";
+    private const string InitialBuildingImmediateStatusKey = "MatchRuntimeShellSmokeValidation.InitialBuildingImmediateStatus";
     private const string FrameDiagKey = "MatchRuntimeShellSmokeValidation.FrameDiag";
     private const string ReadyAtKey = "MatchRuntimeShellSmokeValidation.ReadyAt";
     private const string BaselineMetricsReportPath = "/private/tmp/warlinecapture-match-runtime-baseline-metrics.json";
@@ -31,6 +34,7 @@ public static class MatchRuntimeShellSmokeValidation
     private const double TimeoutSeconds = 120d;
     private const double StableFrameDiagObservationSeconds = 4d;
     private const double BaselineMetricsObservationSeconds = 4d;
+    private const double InitialBuildingPostAiObservationSeconds = 10d;
     private const int BaselineMetricsFrameTarget = 180;
     private const string AirLauncherConfigPath = "Assets/Game/Configs/Weapons/AirMissileLauncher_Air_Config.asset";
 
@@ -42,7 +46,8 @@ public static class MatchRuntimeShellSmokeValidation
         WaitingForMatchReady = 3,
         WaitingForFrameDiag = 4,
         WaitingForAirMissileSmoke = 5,
-        WaitingForBaselineMetrics = 6
+        WaitingForBaselineMetrics = 6,
+        WaitingForInitialBuildingPostAi = 7
     }
 
     private static Entity _airSmokeLauncher = Entity.Null;
@@ -84,6 +89,15 @@ public static class MatchRuntimeShellSmokeValidation
         RunInternal(requireFrameDiag: false, requireAirMissileSmoke: false, requireBaselineMetrics: true);
     }
 
+    public static void RunInitialBuildingSmoke()
+    {
+        RunInternal(
+            requireFrameDiag: false,
+            requireAirMissileSmoke: false,
+            requireBaselineMetrics: false,
+            requireInitialBuildingSmoke: true);
+    }
+
     private static void RunInternal(bool requireFrameDiag)
     {
         RunInternal(requireFrameDiag, requireAirMissileSmoke: false, requireBaselineMetrics: false);
@@ -96,6 +110,15 @@ public static class MatchRuntimeShellSmokeValidation
 
     private static void RunInternal(bool requireFrameDiag, bool requireAirMissileSmoke, bool requireBaselineMetrics)
     {
+        RunInternal(requireFrameDiag, requireAirMissileSmoke, requireBaselineMetrics, requireInitialBuildingSmoke: false);
+    }
+
+    private static void RunInternal(
+        bool requireFrameDiag,
+        bool requireAirMissileSmoke,
+        bool requireBaselineMetrics,
+        bool requireInitialBuildingSmoke)
+    {
         try
         {
             ResetAirMissileSmokeState();
@@ -107,7 +130,9 @@ public static class MatchRuntimeShellSmokeValidation
             SessionState.SetBool(RequireFrameDiagKey, requireFrameDiag);
             SessionState.SetBool(RequireAirMissileSmokeKey, requireAirMissileSmoke);
             SessionState.SetBool(RequireBaselineMetricsKey, requireBaselineMetrics);
+            SessionState.SetBool(RequireInitialBuildingSmokeKey, requireInitialBuildingSmoke);
             SessionState.EraseString(FrameDiagKey);
+            SessionState.EraseString(InitialBuildingImmediateStatusKey);
             SessionState.EraseFloat(ReadyAtKey);
 
             RegisterCallbacks();
@@ -261,6 +286,26 @@ public static class MatchRuntimeShellSmokeValidation
             return;
         }
 
+        if (phase == Phase.WaitingForInitialBuildingPostAi)
+        {
+            float readyAt = SessionState.GetFloat(ReadyAtKey, 0f);
+            if (readyAt <= 0f)
+            {
+                SessionState.SetFloat(ReadyAtKey, (float)EditorApplication.timeSinceStartup);
+                return;
+            }
+
+            if (EditorApplication.timeSinceStartup - readyAt < InitialBuildingPostAiObservationSeconds)
+                return;
+
+            bool passed = ValidateInitialBuildingSmoke(
+                requireNoFaction2OilPump: false,
+                out string postAiStatus);
+            string immediateStatus = SessionState.GetString(InitialBuildingImmediateStatusKey, string.Empty);
+            Finish(passed, $"{immediateStatus} postAi={postAiStatus}");
+            return;
+        }
+
         if (phase != Phase.WaitingForMatchReady)
             return;
 
@@ -295,6 +340,24 @@ public static class MatchRuntimeShellSmokeValidation
             Debug.Log($"[MatchRuntimeShellSmokeValidation] runtimeReady collectingBaselineMetrics {status}");
             ResetBaselineMetricsState();
             SessionState.SetInt(PhaseKey, (int)Phase.WaitingForBaselineMetrics);
+            return;
+        }
+
+        if (SessionState.GetBool(RequireInitialBuildingSmokeKey, false))
+        {
+            bool passed = ValidateInitialBuildingSmoke(
+                requireNoFaction2OilPump: true,
+                out string initialBuildingStatus);
+            if (!passed)
+            {
+                Finish(false, initialBuildingStatus);
+                return;
+            }
+
+            Debug.Log($"[MatchRuntimeShellSmokeValidation] initialBuildingImmediatePassed {initialBuildingStatus}");
+            SessionState.SetString(InitialBuildingImmediateStatusKey, initialBuildingStatus);
+            SessionState.SetFloat(ReadyAtKey, (float)EditorApplication.timeSinceStartup);
+            SessionState.SetInt(PhaseKey, (int)Phase.WaitingForInitialBuildingPostAi);
             return;
         }
 
@@ -833,6 +896,355 @@ public static class MatchRuntimeShellSmokeValidation
         return count;
     }
 
+    private static bool ValidateInitialBuildingSmoke(bool requireNoFaction2OilPump, out string status)
+    {
+        status = "initialBuildingSmoke=failed world=missing";
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager em = world.EntityManager;
+        int faction2Tent = CountRuntimeBuildingsByFactionAndKey(em, 2, "Tent_Regular");
+        int faction2OilPump = CountRuntimeBuildingsByFactionAndKey(em, 2, "Building_OilPump");
+        int allOilPump = CountRuntimeBuildingsByKey(em, "Building_OilPump");
+        bool hasExpectedInitialTentOrigin = TryResolveExpectedInitialBuildingOrigin(
+            2,
+            "Tent_Regular",
+            out int2 expectedInitialTentOrigin,
+            out string expectedOriginStatus);
+        int faction2InitialTent = hasExpectedInitialTentOrigin
+            ? CountRuntimeBuildingsByFactionKeyAndOrigin(em, 2, "Tent_Regular", expectedInitialTentOrigin)
+            : 0;
+        int visibleFaction2InitialTent = hasExpectedInitialTentOrigin
+            ? CountVisibleRuntimeBuildingInstancesByFactionKeyAndOrigin(em, 2, "Tent_Regular", expectedInitialTentOrigin)
+            : 0;
+        string buildings = DescribeRuntimeBuildingKeys(em);
+        string visibleBuildings = DescribeRuntimeBuildingInstances(em);
+        string requests = DescribeRuntimeSpawnRequests(em);
+
+        if (!hasExpectedInitialTentOrigin ||
+            faction2InitialTent <= 0 ||
+            visibleFaction2InitialTent <= 0 ||
+            faction2Tent <= 0 ||
+            requireNoFaction2OilPump && faction2OilPump > 0)
+        {
+            status =
+                $"[InitialBuildingMenuDeploySmoke] result=Failed faction2Tent={faction2Tent} " +
+                $"faction2InitialTent={faction2InitialTent} expectedInitialTentOrigin={expectedOriginStatus} " +
+                $"visibleFaction2InitialTent={visibleFaction2InitialTent} requireNoFaction2OilPump={(requireNoFaction2OilPump ? 1 : 0)} " +
+                $"faction2OilPump={faction2OilPump} allOilPump={allOilPump} " +
+                $"buildings={buildings} visibleBuildings={visibleBuildings} requests={requests}";
+            return false;
+        }
+
+        status =
+            $"[InitialBuildingMenuDeploySmoke] result=Passed faction2Tent={faction2Tent} " +
+            $"faction2InitialTent={faction2InitialTent} expectedInitialTentOrigin={expectedOriginStatus} " +
+            $"visibleFaction2InitialTent={visibleFaction2InitialTent} requireNoFaction2OilPump={(requireNoFaction2OilPump ? 1 : 0)} " +
+            $"faction2OilPump={faction2OilPump} " +
+            $"allOilPump={allOilPump} buildings={buildings} visibleBuildings={visibleBuildings}";
+        return true;
+    }
+
+    private static int CountRuntimeBuildingsByFactionAndKey(EntityManager em, byte factionId, string key)
+    {
+        string normalized = NormalizeRuntimeKey(key);
+        int count = 0;
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
+            ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),
+            ComponentType.ReadOnly<UnitSourcePrefabKey>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(entity);
+            if (info.OwnerFactionId != factionId)
+                continue;
+
+            UnitSourcePrefabKey sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity);
+            if (NormalizeRuntimeKey(sourceKey.Value.ToString()) == normalized)
+                count++;
+        }
+
+        return count;
+    }
+
+    private static int CountRuntimeBuildingsByKey(EntityManager em, string key)
+    {
+        string normalized = NormalizeRuntimeKey(key);
+        int count = 0;
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
+            ComponentType.ReadOnly<UnitSourcePrefabKey>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            UnitSourcePrefabKey sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entities[i]);
+            if (NormalizeRuntimeKey(sourceKey.Value.ToString()) == normalized)
+                count++;
+        }
+
+        return count;
+    }
+
+    private static int CountRuntimeBuildingsByFactionKeyAndOrigin(EntityManager em, byte factionId, string key, int2 originCell)
+    {
+        string normalized = NormalizeRuntimeKey(key);
+        int count = 0;
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
+            ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),
+            ComponentType.ReadOnly<UnitSourcePrefabKey>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(entity);
+            if (info.OwnerFactionId != factionId || !info.OriginCell.Equals(originCell))
+                continue;
+
+            UnitSourcePrefabKey sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity);
+            if (NormalizeRuntimeKey(sourceKey.Value.ToString()) == normalized)
+                count++;
+        }
+
+        return count;
+    }
+
+    private static int CountVisibleRuntimeBuildingInstancesByFactionKeyAndOrigin(EntityManager em, byte factionId, string key, int2 originCell)
+    {
+        string normalized = NormalizeRuntimeKey(key);
+        int count = 0;
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
+            ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),
+            ComponentType.ReadOnly<UnitSourcePrefabKey>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(entity);
+            if (info.OwnerFactionId != factionId || !info.OriginCell.Equals(originCell))
+                continue;
+
+            UnitSourcePrefabKey sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity);
+            if (NormalizeRuntimeKey(sourceKey.Value.ToString()) != normalized)
+                continue;
+
+            if (HasVisibleRuntimeBuildingInstance(entity))
+                count++;
+        }
+
+        return count;
+    }
+
+    private static bool HasVisibleRuntimeBuildingInstance(Entity combatEntity)
+    {
+        RuntimeBuildingEntityLink[] links = UnityEngine.Object.FindObjectsByType<RuntimeBuildingEntityLink>(FindObjectsInactive.Include);
+        for (int linkIndex = 0; linkIndex < links.Length; linkIndex++)
+        {
+            RuntimeBuildingEntityLink link = links[linkIndex];
+            if (link == null || link.Entity != combatEntity || link.gameObject == null || !link.gameObject.activeInHierarchy)
+                continue;
+
+            Renderer[] renderers = link.GetComponentsInChildren<Renderer>(true);
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Renderer renderer = renderers[rendererIndex];
+                if (renderer != null && renderer.enabled && renderer.gameObject.activeInHierarchy)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryResolveExpectedInitialBuildingOrigin(
+        byte factionId,
+        string prefabName,
+        out int2 origin,
+        out string status)
+    {
+        origin = default;
+        status = "missing";
+        InitialUnitsSpawnerAuthoringConfig config =
+            AssetDatabase.LoadAssetAtPath<InitialUnitsSpawnerAuthoringConfig>(InitialUnitsConfigPath);
+        if (config == null || config.Factions == null)
+        {
+            status = $"missingConfig path={InitialUnitsConfigPath}";
+            return false;
+        }
+
+        for (int factionIndex = 0; factionIndex < config.Factions.Count; factionIndex++)
+        {
+            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = config.Factions[factionIndex];
+            if (faction == null || faction.FactionId != factionId || faction.Buildings == null)
+                continue;
+
+            for (int buildingIndex = 0; buildingIndex < faction.Buildings.Count; buildingIndex++)
+            {
+                InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry building = faction.Buildings[buildingIndex];
+                if (building?.Prefab == null ||
+                    !string.Equals(building.Prefab.name, prefabName, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                origin = new int2(
+                    faction.SpawnCell.x + building.OriginOffset.x,
+                    faction.SpawnCell.y + building.OriginOffset.y);
+                status = $"{origin.x},{origin.y}";
+                return true;
+            }
+        }
+
+        status = $"missingEntry faction={factionId} prefab={prefabName}";
+        return false;
+    }
+
+    private static string DescribeRuntimeBuildingKeys(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
+            ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),
+            ComponentType.ReadOnly<UnitSourcePrefabKey>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        if (entities.Length == 0)
+            return "<none>";
+
+        StringBuilder builder = new();
+        int max = Math.Min(entities.Length, 32);
+        for (int i = 0; i < max; i++)
+        {
+            Entity entity = entities[i];
+            RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(entity);
+            UnitSourcePrefabKey sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity);
+            if (builder.Length > 0)
+                builder.Append(';');
+            builder
+                .Append("f")
+                .Append(info.OwnerFactionId)
+                .Append(':')
+                .Append(sourceKey.Value.ToString())
+                .Append('@')
+                .Append(info.OriginCell.x)
+                .Append(',')
+                .Append(info.OriginCell.y);
+        }
+
+        if (entities.Length > max)
+            builder.Append(";...");
+        return builder.ToString();
+    }
+
+    private static string DescribeRuntimeBuildingInstances(EntityManager em)
+    {
+        RuntimeBuildingEntityLink[] links = UnityEngine.Object.FindObjectsByType<RuntimeBuildingEntityLink>(FindObjectsInactive.Include);
+        if (links.Length == 0)
+            return "<none>";
+
+        StringBuilder builder = new();
+        int max = Math.Min(links.Length, 32);
+        for (int i = 0; i < max; i++)
+        {
+            RuntimeBuildingEntityLink link = links[i];
+            if (link == null)
+                continue;
+
+            string source = "<none>";
+            string origin = "<none>";
+            byte faction = 0;
+            if (em.Exists(link.Entity) &&
+                em.HasComponent<RuntimeBuildingCombatInfo>(link.Entity))
+            {
+                RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(link.Entity);
+                faction = info.OwnerFactionId;
+                origin = $"{info.OriginCell.x},{info.OriginCell.y}";
+                if (em.HasComponent<UnitSourcePrefabKey>(link.Entity))
+                    source = em.GetComponentData<UnitSourcePrefabKey>(link.Entity).Value.ToString();
+            }
+
+            Renderer[] renderers = link.GetComponentsInChildren<Renderer>(true);
+            int enabledRenderers = 0;
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Renderer renderer = renderers[rendererIndex];
+                if (renderer != null && renderer.enabled && renderer.gameObject.activeInHierarchy)
+                    enabledRenderers++;
+            }
+
+            if (builder.Length > 0)
+                builder.Append(';');
+            builder
+                .Append("f")
+                .Append(faction)
+                .Append(':')
+                .Append(source)
+                .Append('@')
+                .Append(origin)
+                .Append(":go=")
+                .Append(link.gameObject != null ? link.gameObject.name : "<null>")
+                .Append(":active=")
+                .Append(link.gameObject != null && link.gameObject.activeInHierarchy ? 1 : 0)
+                .Append(":renderers=")
+                .Append(enabledRenderers);
+        }
+
+        if (links.Length > max)
+            builder.Append(";...");
+        return builder.Length == 0 ? "<empty>" : builder.ToString();
+    }
+
+    private static string DescribeRuntimeSpawnRequests(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingRuntimeSpawnRequest>());
+        if (query.IsEmptyIgnoreFilter)
+            return "<no-boundary>";
+
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        StringBuilder builder = new();
+        for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+        {
+            DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
+                em.GetBuffer<BuildingRuntimeSpawnRequest>(entities[entityIndex], true);
+            int max = Math.Min(requests.Length, 16);
+            for (int i = 0; i < max; i++)
+            {
+                BuildingRuntimeSpawnRequest request = requests[i];
+                if (builder.Length > 0)
+                    builder.Append(';');
+                builder
+                    .Append("f")
+                    .Append(request.FactionId)
+                    .Append(':')
+                    .Append(request.BuildingId.ToString())
+                    .Append(":status=")
+                    .Append(request.Status)
+                    .Append(":result=")
+                    .Append(request.ResultCode)
+                    .Append(":origin=")
+                    .Append(request.ActualOrigin.x)
+                    .Append(',')
+                    .Append(request.ActualOrigin.y);
+            }
+
+            if (requests.Length > max)
+                builder.Append(";...");
+        }
+
+        return builder.Length == 0 ? "<empty>" : builder.ToString();
+    }
+
+    private static string NormalizeRuntimeKey(string value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? string.Empty
+            : value.Replace("\0", string.Empty, StringComparison.Ordinal).Trim().ToLowerInvariant();
+    }
+
     private static double Average(List<double> values)
     {
         if (values.Count == 0)
@@ -1099,7 +1511,9 @@ public static class MatchRuntimeShellSmokeValidation
         SessionState.EraseBool(RequireFrameDiagKey);
         SessionState.EraseBool(RequireAirMissileSmokeKey);
         SessionState.EraseBool(RequireBaselineMetricsKey);
+        SessionState.EraseBool(RequireInitialBuildingSmokeKey);
         SessionState.EraseString(FrameDiagKey);
+        SessionState.EraseString(InitialBuildingImmediateStatusKey);
         SessionState.EraseFloat(ReadyAtKey);
         ResetBaselineMetricsState();
     }

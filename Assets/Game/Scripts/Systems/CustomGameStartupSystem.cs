@@ -57,6 +57,8 @@ public sealed partial class CustomGameStartupSystem : SystemBase
         Entity entity = GetOrCreateStartupEntity(em);
         CustomGameMapConfig map = config.MapConfig;
 
+        ResetInitialSpawnLifecycle(em, entity);
+        RemoveRuntimeSpawnRequestsForPlan(em, entity);
         SetInitialUnitsConfig(em, entity, map);
         EnsureBuffer<InitialUnitsFactionSpawnEntry>(em, entity);
         EnsureBuffer<InitialUnitsFactionUnitSpawnEntry>(em, entity);
@@ -120,6 +122,8 @@ public sealed partial class CustomGameStartupSystem : SystemBase
         RemoveDuplicateCustomInitialSpawnConfigs(em, entity);
         Dictionary<string, Entity> convertedPrefabLookup = BuildConvertedPrefabLookup(em, initialUnitsConfig, unitPrefabRegistryConfig, entity);
 
+        ResetInitialSpawnLifecycle(em, entity);
+        RemoveRuntimeSpawnRequestsForPlan(em, entity);
         SetInitialUnitsConfig(em, entity, initialUnitsConfig);
         if (em.HasComponent<UnitPrefabRegistryTag>(entity))
             em.RemoveComponent<UnitPrefabRegistryTag>(entity);
@@ -236,12 +240,38 @@ public sealed partial class CustomGameStartupSystem : SystemBase
         RemoveComponentIfPresent<InitialUnitsSpawnConfig>(em, entity);
         RemoveComponentIfPresent<InitialUnitsBlockerChurnConfig>(em, entity);
         RemoveComponentIfPresent<InitialUnitsBlockerChurnComponent>(em, entity);
-        RemoveComponentIfPresent<InitialUnitsSpawnProgress>(em, entity);
-        RemoveComponentIfPresent<InitialUnitsSpawnInitialized>(em, entity);
+        ResetInitialSpawnLifecycle(em, entity);
         RemoveComponentIfPresent<InitialUnitsFactionSpawnEntry>(em, entity);
         RemoveComponentIfPresent<InitialUnitsFactionUnitSpawnEntry>(em, entity);
         RemoveComponentIfPresent<InitialUnitsFactionBuildingSpawnEntry>(em, entity);
+    }
+
+    private static void ResetInitialSpawnLifecycle(EntityManager em, Entity entity)
+    {
+        RemoveComponentIfPresent<InitialUnitsSpawnProgress>(em, entity);
+        RemoveComponentIfPresent<InitialUnitsSpawnInitialized>(em, entity);
         RemoveComponentIfPresent<InitialUnitsFactionUnitSpawnProgress>(em, entity);
+    }
+
+    private static void RemoveRuntimeSpawnRequestsForPlan(EntityManager em, Entity planEntity)
+    {
+        if (planEntity == Entity.Null)
+            return;
+
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadWrite<BuildingRuntimeSpawnRequest>());
+        using NativeArray<Entity> boundaryEntities = query.ToEntityArray(Allocator.Temp);
+        for (int boundaryIndex = 0; boundaryIndex < boundaryEntities.Length; boundaryIndex++)
+        {
+            Entity boundaryEntity = boundaryEntities[boundaryIndex];
+            DynamicBuffer<BuildingRuntimeSpawnRequest> requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
+            for (int requestIndex = requests.Length - 1; requestIndex >= 0; requestIndex--)
+            {
+                if (requests[requestIndex].PlanEntity == planEntity)
+                    requests.RemoveAt(requestIndex);
+            }
+        }
     }
 
     private static void RemoveComponentIfPresent<T>(EntityManager em, Entity entity)

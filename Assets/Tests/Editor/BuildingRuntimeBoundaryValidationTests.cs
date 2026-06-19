@@ -3,10 +3,17 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class BuildingRuntimeBoundaryValidationTests
 {
+    private const string BuildingPlacementConfigPath = "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset";
+    private const string InitialSpawnConfigPath = "Assets/Game/Configs/Scene/MatchSubScene_InitialUnitsSpawner_Config.asset";
+    private const string MapBuildingPlacementConfigPath = "Assets/Game/Configs/Scene/Match_MapBuildingPlacement_Config.asset";
+    private const string TentRegularPrefabPath = "Assets/Game/Prefabs/Buildings/Tent_Regular.prefab";
+    private const string OilPumpPrefabPath = "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab";
+
     private World _previousDefaultWorld;
     private World _world;
     private NativeArray<int> _blockerCounts;
@@ -27,6 +34,12 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         {
             tests.RuntimeSpawnRequestCompletionSurvivesSpawnStructuralChanges();
             tests.TearDown();
+            tests.RuntimeSpawnRequestCompletionRunsDuringStartupTick();
+            tests.TearDown();
+            tests.Faction2InitialConfiguredBuildingSpawnsTentFromCurrentAssets();
+            tests.TearDown();
+            tests.MapAuthoredFaction2PlacementsDoNotSpawnOilPumpOverInitialTent();
+            tests.TearDown();
             tests.RuntimeSpawnCommandEnqueuesBoundarySpawnRequest();
             tests.TearDown();
             tests.RuntimeCitySpawnUsesBoundarySpawnRequestAndPreservesUnownedBuilding();
@@ -37,7 +50,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tests.TearDown();
             tests.RuntimeBoundaryPublishesProductionSlotSourceKeyReadModel();
             tests.TearDown();
-            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=6");
+            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=9");
             ValidationExit.Exit(0);
         }
         catch (System.Exception ex)
@@ -80,6 +93,128 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         if (_buildingConfig != null)
             Object.DestroyImmediate(_buildingConfig);
         _buildingConfig = null;
+    }
+
+    [Test]
+    public void MapAuthoredFaction2PlacementsDoNotSpawnOilPumpOverInitialTent()
+    {
+        MapBuildingPlacementConfig mapConfig =
+            AssetDatabase.LoadAssetAtPath<MapBuildingPlacementConfig>(MapBuildingPlacementConfigPath);
+        GameObject oilPumpPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(OilPumpPrefabPath);
+
+        Assert.NotNull(mapConfig, $"Missing map building placement config at {MapBuildingPlacementConfigPath}.");
+        Assert.NotNull(oilPumpPrefab, $"Missing oil pump prefab at {OilPumpPrefabPath}.");
+
+        for (int i = 0; i < mapConfig.Placements.Count; i++)
+        {
+            MapBuildingPlacementConfigEntry placement = mapConfig.Placements[i];
+            if (placement == null)
+                continue;
+
+            Assert.IsFalse(
+                placement.FactionId == 2 && placement.BuildingPrefab == oilPumpPrefab,
+                $"Map-authored Faction 2 OilPump placement shadows the initial Faction 2 Tent_Regular config. source={placement.SourcePath}");
+        }
+    }
+
+    [Test]
+    public void Faction2InitialConfiguredBuildingSpawnsTentFromCurrentAssets()
+    {
+        BuildingPlacementSystemConfig placementConfig =
+            AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(BuildingPlacementConfigPath);
+        InitialUnitsSpawnerAuthoringConfig initialConfig =
+            AssetDatabase.LoadAssetAtPath<InitialUnitsSpawnerAuthoringConfig>(InitialSpawnConfigPath);
+        GameObject tentPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TentRegularPrefabPath);
+        GameObject oilPumpPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(OilPumpPrefabPath);
+
+        Assert.NotNull(placementConfig, $"Missing building placement config at {BuildingPlacementConfigPath}.");
+        Assert.NotNull(initialConfig, $"Missing initial spawn config at {InitialSpawnConfigPath}.");
+        Assert.NotNull(tentPrefab, $"Missing tent prefab at {TentRegularPrefabPath}.");
+        Assert.NotNull(oilPumpPrefab, $"Missing oil pump prefab at {OilPumpPrefabPath}.");
+
+        InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry faction2Building = null;
+        for (int factionIndex = 0; factionIndex < initialConfig.Factions.Count; factionIndex++)
+        {
+            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = initialConfig.Factions[factionIndex];
+            if (faction == null || faction.FactionId != 2 || faction.Buildings == null)
+                continue;
+
+            for (int buildingIndex = 0; buildingIndex < faction.Buildings.Count; buildingIndex++)
+            {
+                InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry building = faction.Buildings[buildingIndex];
+                if (building?.Prefab == tentPrefab)
+                {
+                    faction2Building = building;
+                    break;
+                }
+            }
+        }
+
+        Assert.NotNull(faction2Building, "Faction 2 initial spawn config must contain Tent_Regular.");
+
+        _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("Faction2InitialConfiguredBuildingAssetValidation");
+        World.DefaultGameObjectInjectionWorld = _world;
+        EntityManager em = _world.EntityManager;
+
+        CreateGrid(em, 512, 512);
+        _runtimeRoot = new GameObject("Faction2InitialConfiguredBuilding_RuntimeRoot");
+        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingGameplay = _buildingComposition.Initialize(
+            buildingPlacementConfig: placementConfig,
+            worldCamera: null,
+            runtimeTransportsRoot: _runtimeRoot.transform,
+            runtimeUiRoot: _runtimeRoot.transform,
+            roadFootprintState: default,
+            factionVisuals: null,
+            dayNight: null,
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+        _buildingGameplayInitialized = true;
+
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+
+        CustomGameStartupSystem startupSystem = _world.GetOrCreateSystemManaged<CustomGameStartupSystem>();
+        CustomGameStartupSystem.Result startup = startupSystem.InitializeFromLegacyConfigs(initialConfig, null);
+        Assert.IsTrue(startup.Initialized);
+
+        using EntityQuery startupQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<CustomGameStartupStateComponent>(),
+            ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
+        Assert.AreEqual(1, startupQuery.CalculateEntityCount());
+        Entity startupEntity = startupQuery.GetSingletonEntity();
+
+        DynamicBuffer<InitialUnitsFactionSpawnEntry> factionSpawns =
+            em.GetBuffer<InitialUnitsFactionSpawnEntry>(startupEntity, true);
+        using NativeArray<InitialUnitsFactionSpawnEntry> factionSpawnArray =
+            factionSpawns.ToNativeArray(Allocator.Temp);
+        InitialUnitsSpawnSystem.InitialSpawnDiagnosticLogWriter logWriter = default;
+        Assert.IsTrue(InitialUnitsSpawnSystem.EnqueueConfiguredInitialBuildingRequests(
+            em,
+            boundary,
+            startupEntity,
+            factionSpawnArray,
+            ref logWriter,
+            out int requestCount));
+        Assert.AreEqual(2, requestCount);
+
+        DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
+            em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        Assert.AreEqual(2, requests.Length);
+        int tentRequestIndex = FindSpawnRequestIndex(requests, 2, "tent_regular");
+        Assert.GreaterOrEqual(tentRequestIndex, 0, "Faction 2 tent initial spawn request was not queued.");
+
+        Assert.DoesNotThrow(() => _buildingGameplay.RuntimeUpdate.UpdateStartup(_buildingGameplay.RuntimeUpdateContext));
+
+        requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary, true);
+        BuildingRuntimeSpawnRequest tentRequest = requests[tentRequestIndex];
+        Assert.AreEqual(BuildingRuntimeSpawnRequest.Succeeded, tentRequest.Status);
+        Assert.AreNotEqual(0, tentRequest.BuildingRuntimeId);
+        Assert.IsTrue(_buildingGameplay.RuntimeBuildings.TryGetValue(tentRequest.BuildingRuntimeId, out RuntimeBuildingEntity runtimeBuilding));
+        Assert.AreSame(tentPrefab, runtimeBuilding.Definition.Prefab);
+        Assert.AreNotSame(oilPumpPrefab, runtimeBuilding.Definition.Prefab);
     }
 
     [Test]
@@ -128,6 +263,55 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         Assert.AreEqual(BuildingRuntimeSpawnRequest.Succeeded, requests[0].Status);
         Assert.AreNotEqual(0, requests[0].BuildingRuntimeId);
         Assert.AreEqual(new int2(10, 10), requests[0].ActualOrigin);
+        Assert.AreEqual(new int2(2, 2), requests[0].ActualFootprint);
+    }
+
+    [Test]
+    public void RuntimeSpawnRequestCompletionRunsDuringStartupTick()
+    {
+        _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("BuildingRuntimeBoundaryStartupTickTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+        EntityManager em = _world.EntityManager;
+
+        CreateGrid(em, 32, 32);
+        _buildingPrefab = CreateBuildingPrefab("Tent_Regular", 2, 2);
+        _buildingConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
+        SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
+
+        _runtimeRoot = new GameObject("BuildingRuntimeBoundary_StartupRuntimeRoot");
+        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingGameplay = _buildingComposition.Initialize(
+            buildingPlacementConfig: _buildingConfig,
+            worldCamera: null,
+            runtimeTransportsRoot: _runtimeRoot.transform,
+            runtimeUiRoot: _runtimeRoot.transform,
+            roadFootprintState: default,
+            factionVisuals: null,
+            dayNight: null,
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+        _buildingGameplayInitialized = true;
+
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        DynamicBuffer<BuildingRuntimeSpawnRequest> requests = em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        requests.Add(new BuildingRuntimeSpawnRequest
+        {
+            RequestId = 1,
+            FactionId = 1,
+            HasOwnerFaction = 1,
+            BuildingId = new FixedString128Bytes("Tent_Regular"),
+            PreferredOrigin = new int2(6, 6),
+            Status = BuildingRuntimeSpawnRequest.Pending
+        });
+
+        Assert.DoesNotThrow(() => _buildingGameplay.RuntimeUpdate.UpdateStartup(_buildingGameplay.RuntimeUpdateContext));
+
+        requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        Assert.AreEqual(BuildingRuntimeSpawnRequest.Succeeded, requests[0].Status);
+        Assert.AreNotEqual(0, requests[0].BuildingRuntimeId);
+        Assert.AreEqual(new int2(6, 6), requests[0].ActualOrigin);
         Assert.AreEqual(new int2(2, 2), requests[0].ActualFootprint);
     }
 
@@ -439,6 +623,23 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         SetPrivateField(authoring, "canRequest", true);
         SetPrivateField(authoring, "price", 0);
         return prefab;
+    }
+
+    private static int FindSpawnRequestIndex(
+        DynamicBuffer<BuildingRuntimeSpawnRequest> requests,
+        byte factionId,
+        string buildingId)
+    {
+        FixedString128Bytes targetBuildingId =
+            new(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId));
+        for (int i = 0; i < requests.Length; i++)
+        {
+            BuildingRuntimeSpawnRequest request = requests[i];
+            if (request.FactionId == factionId && request.BuildingId.Equals(targetBuildingId))
+                return i;
+        }
+
+        return -1;
     }
 
     private static void SetPrivateField(object target, string fieldName, object value)

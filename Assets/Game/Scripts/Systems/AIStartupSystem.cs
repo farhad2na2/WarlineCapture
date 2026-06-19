@@ -61,11 +61,13 @@ public sealed partial class AIStartupSystem : SystemBase
         EntityManager em = EntityManager;
         if (aiControllerConfigs != null)
         {
+            double elapsedTime = World != null && World.IsCreated ? World.Time.ElapsedTime : 0d;
+            float startupTime = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
             _factionEconomyStartupSystem.Initialize(em, aiControllerConfigs, aiSettings);
             AIFactionControlStartupSystem.Result factionControlResult = _factionControlStartupSystem.Initialize(em, aiControllerConfigs, aiSettings);
             result = new Result(factionControlResult.HasPlayerAutoMode, factionControlResult.PlayerAutoModeEnabled);
-            EnsureAIBuildPlansInitialized(em, aiControllerConfigs, planEntryConfig, resolveFactionSpawnCell, aiSettings);
-            EnsureAIProductionPlansInitialized(em, aiControllerConfigs, planEntryConfig, aiSettings);
+            EnsureAIBuildPlansInitialized(em, aiControllerConfigs, planEntryConfig, resolveFactionSpawnCell, aiSettings, startupTime);
+            EnsureAIProductionPlansInitialized(em, aiControllerConfigs, planEntryConfig, aiSettings, startupTime);
             EnsureAISquadPlansInitialized(em, aiControllerConfigs, aiSettings);
             EnsureAITargetPrioritySettingsInitialized(em, aiControllerConfigs, aiSettings);
         }
@@ -188,7 +190,8 @@ public sealed partial class AIStartupSystem : SystemBase
         IReadOnlyList<AIControllerConfig> aiControllerConfigs,
         AIPlanEntryStartupConfig planEntryConfig,
         TryResolveFactionSpawnCell resolveFactionSpawnCell,
-        AISettingsSnapshot aiSettings)
+        AISettingsSnapshot aiSettings,
+        float startupTime)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AIBuildPlan>());
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
@@ -240,7 +243,7 @@ public sealed partial class AIStartupSystem : SystemBase
                 NextBuildIndex = 0,
                 BaseCenterCell = baseCenterCell,
                 BuildIntervalSeconds = aiSettings.ApplyBuildInterval(config.BuildIntervalSeconds, config.Role),
-                LastBuildTime = -999f,
+                LastBuildTime = startupTime,
                 LastLogTime = -999f
             });
 
@@ -254,7 +257,8 @@ public sealed partial class AIStartupSystem : SystemBase
         EntityManager em,
         IReadOnlyList<AIControllerConfig> aiControllerConfigs,
         AIPlanEntryStartupConfig planEntryConfig,
-        AISettingsSnapshot aiSettings)
+        AISettingsSnapshot aiSettings,
+        float startupTime)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AIProductionPlan>());
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
@@ -304,7 +308,7 @@ public sealed partial class AIStartupSystem : SystemBase
                 TargetProducedUnits = 3,
                 MaxQueuedUnits = 3,
                 UnitProductionIntervalSeconds = aiSettings.ApplyProductionInterval(config.UnitProductionIntervalSeconds, config.Role),
-                LastProductionTime = -999f,
+                LastProductionTime = startupTime,
                 LastLogTime = -999f
             });
 

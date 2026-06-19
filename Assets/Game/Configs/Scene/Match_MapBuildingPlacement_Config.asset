@@ -645,16 +645,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_OilPump/SM_Prop_Pipline_OilPump_01
-    category: Building_OilPump
-    buildingPrefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
-    factionId: 2
-    worldCenter: {x: 1786.885, y: 6.186617, z: 192.50697}
-    worldPosition: {x: 1788.5007, y: 2.6000004, z: 192.4997}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Building_OilPump/SM_Prop_Pipline_OilPump_01 (1)
     category: Building_OilPump
     buildingPrefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}

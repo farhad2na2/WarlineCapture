@@ -16,8 +16,10 @@ public sealed class CustomGameStartupSystemTests
         {
             var tests = new CustomGameStartupSystemTests();
             tests.InitializeFromLegacyConfigsCreatesStartupEntityAndBuffers();
+            tests.InitializeFromLegacyConfigsResetsInitialSpawnLifecycleAndRequests();
+            tests.InitializeFromLegacyConfigsKeepsFaction2TentBuildingKey();
             tests.InitializeCreatesSourceKeyStartupBuffers();
-            Debug.Log("[CustomGameStartupFocusedValidation] result=Passed tests=2");
+            Debug.Log("[CustomGameStartupFocusedValidation] result=Passed tests=4");
         }
         catch (Exception exception)
         {
@@ -59,6 +61,112 @@ public sealed class CustomGameStartupSystemTests
 
         CustomGameStartupStateComponent state = em.GetComponentData<CustomGameStartupStateComponent>(entity);
         Assert.AreEqual(new FixedString64Bytes("custom.skirmish.legacy"), state.GameModeId);
+    }
+
+    [Test]
+    public void InitializeFromLegacyConfigsResetsInitialSpawnLifecycleAndRequests()
+    {
+        using var world = new World("CustomGameStartupLifecycleResetTests");
+        CustomGameStartupSystem system = world.GetOrCreateSystemManaged<CustomGameStartupSystem>();
+        EntityManager em = world.EntityManager;
+
+        Entity startupEntity = em.CreateEntity(
+            typeof(CustomGameStartupStateComponent),
+            typeof(InitialUnitsSpawnConfig),
+            typeof(InitialUnitsSpawnInitialized));
+        em.AddComponentData(startupEntity, new InitialUnitsSpawnProgress
+        {
+            RandomState = 17u,
+            InitialBuildingRequestsIssued = 1,
+            InitialBuildingsSpawned = 1
+        });
+        DynamicBuffer<InitialUnitsFactionUnitSpawnProgress> unitProgress =
+            em.AddBuffer<InitialUnitsFactionUnitSpawnProgress>(startupEntity);
+        unitProgress.Add(new InitialUnitsFactionUnitSpawnProgress { Spawned = 9 });
+
+        Entity unrelatedPlan = em.CreateEntity();
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        DynamicBuffer<BuildingRuntimeSpawnRequest> requests = em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        requests.Add(new BuildingRuntimeSpawnRequest
+        {
+            PlanEntity = startupEntity,
+            BuildingId = new FixedString128Bytes("stale_tent_request"),
+            Status = BuildingRuntimeSpawnRequest.Pending
+        });
+        requests.Add(new BuildingRuntimeSpawnRequest
+        {
+            PlanEntity = unrelatedPlan,
+            BuildingId = new FixedString128Bytes("unrelated_request"),
+            Status = BuildingRuntimeSpawnRequest.Pending
+        });
+
+        CustomGameStartupSystem.Result result = system.InitializeFromLegacyConfigs(null, null);
+
+        Assert.IsTrue(result.Initialized);
+        Assert.IsFalse(em.HasComponent<InitialUnitsSpawnInitialized>(startupEntity));
+        Assert.IsFalse(em.HasComponent<InitialUnitsSpawnProgress>(startupEntity));
+        Assert.IsFalse(em.HasBuffer<InitialUnitsFactionUnitSpawnProgress>(startupEntity));
+
+        DynamicBuffer<BuildingRuntimeSpawnRequest> remainingRequests =
+            em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary, true);
+        Assert.AreEqual(1, remainingRequests.Length);
+        Assert.AreEqual(unrelatedPlan, remainingRequests[0].PlanEntity);
+        Assert.AreEqual(new FixedString128Bytes("unrelated_request"), remainingRequests[0].BuildingId);
+    }
+
+    [Test]
+    public void InitializeFromLegacyConfigsKeepsFaction2TentBuildingKey()
+    {
+        using var world = new World("CustomGameStartupFaction2TentTests");
+        CustomGameStartupSystem system = world.GetOrCreateSystemManaged<CustomGameStartupSystem>();
+        InitialUnitsSpawnerAuthoringConfig initialConfig =
+            ScriptableObject.CreateInstance<InitialUnitsSpawnerAuthoringConfig>();
+        GameObject tentPrefab = new("Tent_Regular");
+        try
+        {
+            InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry building = new();
+            SetPrivateField(building, "prefab", tentPrefab);
+            SetPrivateField(building, "originOffset", new Vector2Int(250, 150));
+
+            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = new();
+            SetPrivateField(faction, "factionId", 2);
+            SetPrivateField(faction, "spawnCell", new Vector2Int(150, 50));
+            SetPrivateField(
+                faction,
+                "buildings",
+                new List<InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry> { building });
+
+            SetPrivateField(
+                initialConfig,
+                "factions",
+                new List<InitialUnitsSpawnerAuthoringConfig.FactionEntry> { faction });
+
+            CustomGameStartupSystem.Result result = system.InitializeFromLegacyConfigs(initialConfig, null);
+
+            Assert.IsTrue(result.Initialized);
+            Assert.AreEqual(1, result.FactionCount);
+            Assert.AreEqual(1, result.InitialBuildingEntryCount);
+
+            EntityManager em = world.EntityManager;
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<CustomGameStartupStateComponent>(),
+                ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
+            Assert.AreEqual(1, query.CalculateEntityCount());
+
+            Entity startupEntity = query.GetSingletonEntity();
+            DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> buildingSpawns =
+                em.GetBuffer<InitialUnitsFactionBuildingSpawnEntry>(startupEntity, true);
+            Assert.AreEqual(1, buildingSpawns.Length);
+            Assert.AreEqual(2, buildingSpawns[0].FactionId);
+            Assert.AreEqual(new FixedString128Bytes("tent_regular"), buildingSpawns[0].PrefabLookupKey);
+            Assert.AreEqual(new int2(250, 150), buildingSpawns[0].OriginOffset);
+            Assert.AreNotEqual(new FixedString128Bytes("building_oilpump"), buildingSpawns[0].PrefabLookupKey);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(tentPrefab);
+            UnityEngine.Object.DestroyImmediate(initialConfig);
+        }
     }
 
     [Test]

@@ -100,6 +100,13 @@ internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
         double afterBoundary = startTime;
         try
         {
+            using (UpdateBuildingRuntimeBoundaryMarker.Auto())
+            {
+                context.UpdateBuildingRuntimeBoundary?.Invoke();
+            }
+
+            afterBoundary = UnityEngine.Time.realtimeSinceStartupAsDouble;
+
             using (EnqueueMapBuildingPlacementsMarker.Auto())
             {
                 context.EnqueueMapBuildingPlacements?.Invoke();
@@ -168,6 +175,18 @@ internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
         double afterInput = startTime;
         try
         {
+            using (EnqueueMapBuildingPlacementsMarker.Auto())
+            {
+                context.EnqueueMapBuildingPlacements?.Invoke();
+            }
+
+            using (EnqueueMapVehiclePlacementsMarker.Auto())
+            {
+                context.EnqueueMapVehiclePlacements?.Invoke();
+            }
+
+            afterMapPlacements = UnityEngine.Time.realtimeSinceStartupAsDouble;
+
             using (UpdateBuildingRuntimeBoundaryMarker.Auto())
             {
                 context.UpdateBuildingRuntimeBoundary?.Invoke();

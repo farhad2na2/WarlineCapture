@@ -45,7 +45,7 @@ MonoBehaviour:
       spawnOffset: {x: -150, y: -250}
     buildings:
     - prefab: {fileID: 3297871969661906962, guid: 772ca690e3298408b98dffdf84c31019, type: 3}
-      originOffset: {x: 250, y: 150}
+      originOffset: {x: 0, y: 0}
   blockerCount: 0
   spawnRadiusCells: 10
   respawnDelaySeconds: 1

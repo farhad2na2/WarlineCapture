@@ -18,7 +18,7 @@ public partial struct UnitHealthBarSystem : ISystem
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
         var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        EntityCommandBuffer ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
+        EntityCommandBuffer.ParallelWriter ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
         state.Dependency = new ExpireRecentDamageVisibilityJob
         {
             DeltaTime = deltaTime,
@@ -47,18 +47,17 @@ public partial struct UnitHealthBarSystem : ISystem
     private partial struct ExpireRecentDamageVisibilityJob : IJobEntity
     {
         public float DeltaTime;
-        public EntityCommandBuffer Ecb;
+        public EntityCommandBuffer.ParallelWriter Ecb;
 
-        public void Execute(Entity entity, ref RecentDamageHealthBarVisibility recentDamage)
+        public void Execute([EntityIndexInQuery] int sortKey, Entity entity, ref RecentDamageHealthBarVisibility recentDamage)
         {
             recentDamage.TimeRemaining -= DeltaTime;
             if (recentDamage.TimeRemaining <= 0f)
-                Ecb.RemoveComponent<RecentDamageHealthBarVisibility>(entity);
+                Ecb.RemoveComponent<RecentDamageHealthBarVisibility>(sortKey, entity);
         }
     }
 
     [BurstCompile]
-    [WithChangeFilter(typeof(UnitHealth))]
     private partial struct UpdateJob : IJobEntity
     {
         [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;

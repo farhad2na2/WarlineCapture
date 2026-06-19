@@ -18,19 +18,23 @@ The Canvas prefabs stay as fallback until each UI Toolkit screen reaches behavio
 
 ## Progress Dashboard
 
-Last updated: 2026-06-18
+Last updated: 2026-06-19
 
-Overall progress: 18% - 20 / 111 tracked items complete
+Overall progress: 64% - 71 / 111 tracked items complete
 
-Current phase: Phase 1 - UI Toolkit Shell Foundation
+Current phase: Phase 5 - Build Popup
 
 Current focus:
 
-- Add pointer-block propagation from UI Toolkit to ECS input suppression.
+- Build Drawer content read model source from ECS.
 
 Completed phases:
 
 - Phase 0 - Inventory And Feature Switch
+- Phase 1 - UI Toolkit Shell Foundation
+- Phase 2 - Loading Screen
+- Phase 3 - Main Menu
+- Phase 4 - Match HUD
 
 Blocked:
 
@@ -39,11 +43,11 @@ Blocked:
 | Phase | Status | Progress | Done / Total | Completion evidence |
 | --- | --- | ---: | ---: | --- |
 | Phase 0 - Inventory And Feature Switch | Complete | 100% | 15 / 15 | `Design/Architecture/ui_toolkit_canvas_phase0_inventory.md`; Unity compile log `/private/tmp/warline-ui-toolkit-runtime-ui-config-compile.log`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
-| Phase 1 - UI Toolkit Shell Foundation | In progress | 36% | 5 / 14 | `Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uxml`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
-| Phase 2 - Loading Screen | Not started | 0% | 0 / 9 | Pending |
-| Phase 3 - Main Menu | Not started | 0% | 0 / 11 | Pending |
-| Phase 4 - Match HUD | Not started | 0% | 0 / 13 | Pending |
-| Phase 5 - Build Popup | Not started | 0% | 0 / 12 | Pending |
+| Phase 1 - UI Toolkit Shell Foundation | Complete | 100% | 14 / 14 | `Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uxml`; `Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uss`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Game/Scripts/Composition/MenuBootstrapView.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
+| Phase 2 - Loading Screen | Complete | 100% | 9 / 9 | `Assets/Game/UI Toolkit/SCN01_LoadingContent/SCN01_LoadingContent.uxml`; `Assets/Game/UI Toolkit/SCN01_LoadingContent/SCN01_LoadingContent.uss`; `Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
+| Phase 3 - Main Menu | Complete | 100% | 11 / 11 | `Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uxml`; `Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uss`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`; `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`; `Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
+| Phase 4 - Match HUD | Complete | 100% | 13 / 13 | `Assets/Game/UI Toolkit/SCN08_MatchHudContent/SCN08_MatchHudContent.uxml`; `Assets/Game/UI Toolkit/SCN08_MatchHudContent/SCN08_PassengerItemView.uxml`; `Assets/Game/UI Toolkit/SCN08_MatchHudContent/SCN08_MatchHudContent.uss`; `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`; `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; `Design/AgentReports/2026-06-19_ui-toolkit-match-hud-phase4-handoff.md`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
+| Phase 5 - Build Popup | In progress | 75% | 9 / 12 | `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_BuildDrawerPopup.uxml`; `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_BuildCatalogItemView.uxml`; `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_ProductionQueueItemView.uxml`; `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_ProductionActiveItemView.uxml`; `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
 | Phase 6 - Build Placement Confirmation Bar | Not started | 0% | 0 / 8 | Pending |
 | Phase 7 - Armory | Not started | 0% | 0 / 8 | Pending |
 | Phase 8 - Commander/Profile | Not started | 0% | 0 / 6 | Pending |
@@ -216,7 +220,7 @@ Completed steps:
 - Confirmed current Canvas mode keeps the Canvas fallback enabled and the UI Toolkit shell disabled.
 - Confirmed isolated UI Toolkit mode enables the `UIDocument` shell and disables the Canvas fallback without destroying it.
 
-Blocked: None.
+Blocked: Unity validation for the Build Drawer retained catalog/queue binding pass is temporarily blocked because process `92047` has `/Users/farhad/Projects/WarlineCapture` open in the Unity editor. Missing command: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UiToolkitCanvasMigrationValidationTests.RunBatchValidation -logFile /private/tmp/warline-ui-toolkit-validation-execmethod.log`. Owner lane: UI. Another lane can continue only if it does not require main-project Unity batchmode validation.
 
 Tasks:
 
@@ -241,9 +245,9 @@ Validation:
 
 ### Phase 1 - UI Toolkit Shell Foundation
 
-Status: In progress
-Progress: 36% - 5 / 14 tracked items complete
-Current step: Add pointer-block propagation from UI Toolkit to ECS input suppression.
+Status: Complete
+Progress: 100% - 14 / 14 tracked items complete
+Current step: Phase complete. Continue with Phase 2 loading screen reconciliation.
 Completed steps:
 
 - Added the `Game.UI.Toolkit` assembly for the managed UI Toolkit edge.
@@ -261,7 +265,23 @@ Completed steps:
 - Moved `LoadingLayer` out of normal `ContentRoot` and into the top-level safe-area overlay stack above `ModalOverlay` and `TooltipLayer`.
 - Cached `LoadingLayer` as a required shell region on `UiToolkitShellView`.
 - Added focused validation that `ModalOverlay` draws above normal content, `LoadingLayer` draws above content, footer, popups, and tooltip overlays, and both overlay layers remain hidden by default.
-- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=13` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added pointer-block query methods to `UiToolkitShellView` for gameplay, placement, and raycastable UI suppression.
+- Added structural filtering so empty full-screen shell containers and screen slots do not block world input by themselves.
+- Added focused validation that concrete UI content and visible loading/popup/header overlays block world clicks while hidden overlays and empty screen slots do not.
+- Added `UiToolkitShellApplySystem` as the managed UI Toolkit apply edge in `PresentationSystemGroup`.
+- Kept the apply system thin for this phase: it reads existing shell state/loading read models from `UiShellRuntimeGateway` and does not contain gameplay policy or direct `VisualElement` access.
+- Added focused validation that the apply system is a `PresentationSystemGroup` `SystemBase`, that the UI Toolkit assembly has explicit `Unity.Entities`/`Unity.Collections` references, and that UI Toolkit `*View` classes do not own `Update`, `LateUpdate`, or coroutines.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=16` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiToolkitShellApplySystem` managed shell-view reference storage plus `ConfigureShellView` and `ClearShellView` methods so the presentation edge can receive the mounted shell without reading or writing `VisualElement` directly.
+- Wired `MenuBootstrapView.ApplyRuntimeUiMode()` to register the mounted `UiToolkitShellView` with `UiToolkitShellApplySystem` in UI Toolkit mode and clear the reference in Canvas mode through `World.DefaultGameObjectInjectionWorld`.
+- Added focused validation for the shell reference path and bootstrap wiring.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=17` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added focused validation that the UI Toolkit shell scaffold stays fluid and full-screen instead of clamping to a fixed mockup resolution.
+- Added 16:9 and 20:9 shell aspect smoke checks covering top-level shell regions, header/footer visibility, and placeholder popup clipping.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=19` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added focused validation that runtime ECS-style systems do not read or write UI Toolkit objects directly, including `VisualElement`, `UIDocument`, `PanelSettings`, `TemplateContainer`, or `StyleBackground`.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=20` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Closed Phase 1 after confirming all shell foundation tasks and validation gates have focused coverage: shell mount, region binding, screen slots, motion states, overlay order, pointer blocking, managed apply ownership, shell reference path, 16:9/20:9 fluid layout, ECS/UI Toolkit boundary, and no UI Toolkit view frame polling.
 
 Blocked: None.
 
@@ -287,14 +307,58 @@ Validation:
 
 ### Phase 2 - Loading Screen
 
-Status: Not started
-Progress: 0% - 0 / 9 tracked items complete
-Current step: Reconcile Loading UXML text, logo, status, progress behavior, topmost behavior, and disable-initial-loading behavior against the current Canvas flow before binding.
+Status: Complete
+Progress: 100% - 9 / 9 tracked items complete
+Current step: Phase complete. Continue with Phase 3 main menu reconciliation.
 Completed steps:
 
-- None yet.
+- Reconciled Loading Canvas behavior/text/features against the UI Toolkit loading surface before binding.
+- Confirmed the behavior source is `UIShellLoadingProgressView`: it reads `UiShellLoadingProgressModel` from `UiShellRuntimeGateway`, applies `Progress01` to the fill width, applies `Status` to status text, and formats percent as `0%` through `100%`.
+- Confirmed the route/source-of-truth is ECS shell state: `UiShellFlowSystem` shows/exits `LoadingLayer`; `MenuBootstrapSystem` computes actual loading progress, match-load deferral, the 2 second minimum visible loading window, match-ready hold, and menu return loading.
+- Confirmed the current Canvas loading prefab exposes `UIShellLoadingProgressView` with `Progress_Fill`, `LoadingPanel_Percent`, and `LoadingPanel_Status`.
+- Confirmed the UI Toolkit loading UXML exposes binding names for `Brand_LogoLockup`, `CommandSystem_Text`, `LoadingPanel_Status`, `LoadingPanel_Percent`, `Progress_Frame`, `Progress_Fill`, `BottomStatus_Spinner`, and `BottomStatus_Text`.
+- Added focused validation that the UI Toolkit loading UXML keeps the required Canvas parity binding names, approved default text, separate progress fill element, and the approved `TargetLockV04Imagegen` new-art asset set.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=21` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiToolkitShellView` loading-screen asset mounting so `SCN01_LoadingContent.uxml` can be cloned into `LoadingScreenSlot` in UI Toolkit mode without replacing normal content or popup content.
+- Added focused validation that the configured loading UXML mounts under the shell loading slot, exposes the progress/percent binding elements, and does not duplicate on repeated shell mounts.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=22` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Bound the mounted loading UXML elements on `UiToolkitShellView`: `LoadingBody`, `Background`, `Brand_LogoLockup`, `CommandSystem_Text`, `LoadingPanel_Frame`, `LoadingPanel_Status`, `LoadingPanel_Percent`, `Progress_Frame`, `Progress_Fill`, `BottomStatus_Spinner`, and `BottomStatus_Text`.
+- Added `UiToolkitShellView.ApplyLoadingProgress()` as the retained UI Toolkit loading apply surface. It clamps `Progress01`, formats `0%` through `100%`, applies fallback status text, updates the retained progress-fill width, and does not recreate UI elements.
+- Wired `UiToolkitShellApplySystem` to call `ApplyLoadingProgress(lastLoadingProgress)` from the existing `UiShellLoadingProgressModel` read path.
+- Added `overflow: hidden` to the loading progress track so the retained fill can safely animate from empty to full inside the frame.
+- Added focused validation that loading content mounts at runtime `0%`, exposes all required binding elements, applies a mid-progress read model, clamps completed progress to `100%`, and keeps the bottom status static until spinner animation binding is explicitly added.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=23` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Updated `MenuBootstrapSystem` so UI Toolkit mode no longer exits before `sceneLifecycleSystem`, `matchStartSystem`, deferred match-load feedback, and `UpdateActualLoadingProgress` run. UI Toolkit mode now skips only Canvas presentation and Canvas runtime UI binding.
+- Mirrored fresh shell reset for UI Toolkit initialization so the isolated UI Toolkit path does not inherit stale loading state.
+- Extended `UiToolkitShellApplySystem` to consume shell presentation commands and enqueue transition completions through `UiShellRuntimeGateway`, matching the Canvas transition-completion contract without adding gameplay policy.
+- Added `UiToolkitShellView.ApplyPresentationCommands()` for loading shell commands so `ShowLoading` reveals `LoadingLayer` and `ExitLoading` hides it through shell classes.
+- Added focused validation that UI Toolkit loading commands show/hide the loading layer, apply visible/fade motion classes, and that `MenuBootstrapSystem.Update` keeps loading progress active before skipping Canvas-only binding in UI Toolkit mode.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=25` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added focused validation that mounted loading content remains hidden and non-blocking on the default menu boot path while still initializing the retained UI to runtime `0%`.
+- Added focused validation that a visible UI Toolkit loading layer draws above visible popups and tooltip overlays and blocks underlying popup/menu/world input.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=27` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added focused validation that mounted UI Toolkit loading labels are populated, not under a hidden ancestor, and not resolved to `display: none` when `ShowLoading` reveals the loading layer.
+- Added focused validation that UI Toolkit loading can show, apply completed progress at `100%`, then process `ExitLoading` while preserving the ECS shell route transition contract through `UiShellFlowSystem` and `UiToolkitShellApplySystem`.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=29` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
 
 Blocked: None.
+
+Loading reconciliation map:
+
+| Canvas/reference item | UI Toolkit element | Runtime source | Binding rule |
+| --- | --- | --- | --- |
+| Root loading content | `SCN01_LoadingContent` / `LoadingBody` | `UiShellCommandKind.ShowLoading` on `UiShellRegionId.LoadingLayer` | Mount into `UiToolkitShellView.LoadingScreenSlot`; never replace normal content or popup content. |
+| Background and logo | `Background`, `Brand_LogoLockup`, `CommandSystem_Text` | Static new-art loading assets | Keep as visual-only elements. No runtime gameplay state. |
+| Main status | `LoadingPanel_Status` | `UiShellLoadingProgressModel.Status` | Empty status falls back to `Preparing command interface` or approved Toolkit fallback text; apply only in the managed UI Toolkit presentation edge. |
+| Percent | `LoadingPanel_Percent` | `UiShellLoadingProgressModel.Progress01` | Clamp `0..1`, round to integer percent, display `0%..100%`; initial runtime apply must override the static `68%` mockup value. |
+| Progress fill | `Progress_Fill` | `UiShellLoadingProgressModel.Progress01` | Use retained element width/scale, not recreated elements; starts at `0` and reaches `100` under existing loading progress logic. |
+| Bottom status | `BottomStatus_Text`, `BottomStatus_Spinner` | Static text plus loading active state | Text defaults to `LOADING REQUIRED DATA`; spinner is visual-only until animation binding is explicitly added. |
+| Topmost behavior | `LoadingLayer` and `LoadingScreenSlot` | `UiShellFlowSystem` / `UiShellView` equivalent commands | Loading layer stays above content, popups, and tooltip layers; already enforced in Phase 1 shell order validation. |
+| Initial loading disabled | `UiShellMode.None` begins with `EnterMenu` | `UiShellFlowSystem` initial mode rule | Do not show loading on game start; only show when route requests enter match or return to menu through loading. |
+
+Phase 2 binding gaps:
+
+- None.
 
 Tasks:
 
@@ -313,14 +377,65 @@ Validation:
 
 ### Phase 3 - Main Menu
 
-Status: Not started
-Progress: 0% - 0 / 11 tracked items complete
-Current step: Reconcile Main Menu UXML buttons, labels, resources, settings/mail actions, profile action, deploy route, and current header behavior against the Canvas prefab before binding.
+Status: Complete
+Progress: 100% - 11 / 11 tracked items complete
+Current step: Phase complete. Continue with Phase 4 Match HUD reconciliation.
 Completed steps:
 
-- None yet.
+- Reconciled Main Menu Canvas behavior/text/features against the UI Toolkit main menu surface before binding.
+- Confirmed the UI Toolkit surface exposes required named regions and actions: `HeaderContent`, `CreditsPanel`, `SuppliesPanel`, `CommandPanel`, `InboxButton`, `SettingsButton`, `MenuButton`, `Nav_Campaign`, `Nav_Armory`, `Nav_Supply`, `Nav_Command`, `Nav_TechTree`, `Nav_Profile`, `Card_Campaign`, `Card_Skirmish`, `Card_Operations`, `CommanderPanel`, and `DeployOperationButton`.
+- Confirmed the Canvas behavior source is split between `UIShellContentView` section installation and runtime binding (`BindQuickCustomScreens`, `BindGameStartButtons`) while route decisions remain in `UiShellFlowSystem`.
+- Added focused validation that the Main Menu UXML keeps required binding names, actionable elements are UI Toolkit buttons, default labels exist, and the USS uses the approved `MainMenuBrightCommand` new-art set plus the current `TargetLockV04Imagegen` logo lockup.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=30` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiToolkitShellView` support for a configured `SCN02_MainMenuContent.uxml` asset and a retained Main Menu template under `MainMenuScreenSlot`.
+- Added UI Toolkit presentation handling for `EnterMenu`, `SwapMenuMiddle`, and `ExitMenu` so the Main Menu UXML can be shown/hidden by shell commands without gameplay logic in the view.
+- Added focused validation that the Main Menu UXML mounts once under `MainMenuScreenSlot`, exposes deploy/commander/header bindings after mount, survives repeated shell mounts without duplication, clears through `ClearCache`, and responds to Main Menu presentation commands.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=32` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Bound the mounted Main Menu action surface in `UiToolkitShellView`: header actions, left navigation, mode cards, commander/profile panel, and deploy now submit through `UiShellRuntimeGateway.TryEnqueueRouteRequest`.
+- Kept Main Menu callbacks as request-boundary work only. They enqueue shell route intents and do not call gameplay systems, selection, build rules, pathing, or Canvas code.
+- Added focused validation that every Phase 3 Main Menu action target exists as a UI Toolkit button and submits the expected shell route request. Current placeholder route mappings are explicit until dedicated routes exist: Supply -> `LoadoutSquadPrep`, Tech Tree -> `Events`, Profile/Commander -> `CommandFeed`, Skirmish -> `QuickCustomSetup`.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=33` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added explicit Main Menu route-state application in `UiToolkitShellView` so `SwapMenuMiddle` updates route-selected nav/card classes while preserving the mounted `HeaderContent` instance.
+- Added focused validation that Main Menu sub-route swaps do not recreate the UXML tree, keep the same header and header action bindings, select `Nav_Armory` for the Armory route, and restore `Nav_Campaign` for the root Main Menu route.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=33` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added explicit commander/profile sub-route state for `CommandFeed`: the profile route selects `Nav_Profile`, applies the profile route class, reveals `CommanderProfileScreenSlot`, and keeps the same mounted header/header action instances.
+- Added focused validation that returning to the root Main Menu hides `CommanderProfileScreenSlot`, clears Profile selection, restores Campaign selection, and preserves the same header instance.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=33` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Updated `UiToolkitShellApplySystem` so Main Menu selected nav/card state is mechanically applied from `UiShellStateModel.ActiveRoute` when the ECS shell read model reports `UiShellMode.MainMenu`.
+- Added focused validation that changes the fake shell read model from `CommandFeed` to `Armory` without presentation commands and verifies Profile/Armory selected state, route classes, and `CommanderProfileScreenSlot` visibility update through the managed apply edge.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=34` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added focused Main Menu header geometry validation for the header logo, resource icons, plus icons, action icon safe rects, and header button frame slices.
+- The validation now guards that header resource/plus icons stay vertically centered, action icons use symmetric safe insets, header action hit areas remain close to their visible square frames, and the logo uses scale-to-fit instead of cropping.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=35` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added focused validation that `InboxButton` and `SettingsButton` use the shared header action hit rect, direct frame/icon children, no button text, no per-button positional overrides, transparent zero-padding button reset, and frame/icon geometry tied to the visible square frame.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=36` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added focused validation that the three Main Menu game-mode cards keep portrait art wells padded inside the chrome, title labels centered inside label plates, badges/icons centered inside their junction frame, bottom decoration inside the label plate, direct child structure intact, and large target-matched title text.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=37` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiShellCommanderProfileComponent` / `UiShellCommanderProfileModel` and routed it through `UiShellRuntimeGateway`, `UiShellEcsGateway`, `UiToolkitShellApplySystem`, and `UiToolkitShellView.ApplyMainMenuCommanderProfile`.
+- Moved the Main Menu commander portrait image onto the semantic `commander-portrait-default` class so the read model can select portrait classes without old-art sprites or view-side gameplay decisions.
+- Added focused validation that the commander/profile panel applies name, subtitle, and portrait class from the read model through the managed UI Toolkit apply edge, with approved defaults for empty read-model values.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=38` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiShellMainMenuResourcesComponent` / `UiShellMainMenuResourcesModel` and routed resource values through `UiShellRuntimeGateway`, `UiShellEcsGateway`, `UiToolkitShellApplySystem`, and `UiToolkitShellView.ApplyMainMenuResources`.
+- Bound `CreditsPanel`, `SuppliesPanel`, and `CommandPanel` value labels from read-model data with approved defaults for empty read-model values.
+- Reset Main Menu resource read-model defaults from `MenuBootstrapSystem.ResetShellForFreshMenuScene` so menu boot does not retain stale runtime values.
+- Added focused validation that Main Menu resource labels apply from the ECS shell read model through the managed UI Toolkit apply edge and fall back to approved defaults when empty.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=39` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
 
 Blocked: None.
+
+Main Menu reconciliation map:
+
+| Canvas/reference item | UI Toolkit element | Runtime source | Binding rule |
+| --- | --- | --- | --- |
+| Root main menu content | `SCN02_MainMenuContent` | `UiShellCommandKind.EnterMenu` / `UiShellCommandKind.SwapMenuMiddle` | Mount into the main menu screen slot or shell regions in UI Toolkit mode; do not flatten into one image. |
+| Background | `MenuBackgroundContent`, `BackgroundArt`, `BackgroundArtOverlay` | Static new-art MainMenuBrightCommand background | Visual-only; never use old Canvas-era background sprites. |
+| Persistent header | `HeaderContent`, `HeaderLogoPanel`, `HeaderResourceArea`, `HeaderActionsPanel` | Shell route state plus resource read model | Header remains persistent across Main Menu sub-routes; only labels/resources/icons update from read models. |
+| Resources | `CreditsPanel`, `SuppliesPanel`, `CommandPanel` | `UiShellMainMenuResourcesModel` / `UiShellMainMenuResourcesComponent` | Update values mechanically in the managed UI Toolkit apply edge; no gameplay policy in the view. |
+| Header actions | `InboxButton`, `SettingsButton`, `MenuButton` | UI action request boundary | Callbacks enqueue UI/shell requests only; settings/mail assets must stay new-art direction. |
+| Left navigation | `Nav_Campaign`, `Nav_Armory`, `Nav_Supply`, `Nav_Command`, `Nav_TechTree`, `Nav_Profile` | Route request/read-model state | Selected state comes from ECS read model or shell route, not local-only class state. |
+| Mode cards | `Card_Campaign`, `Card_Skirmish`, `Card_Operations` | Main menu selection/read model | Cards remain live buttons with separate art, frame, title, badge, and selected state elements. |
+| Deploy | `DeployOperationButton` | `UiShellRouteIntent.EnterMatch` | Enqueue route request for Main Menu exit, loading, then Match HUD enter. |
+| Commander/profile | `CommanderPanel` and child identity/progress/readiness elements | Commander/profile read model and route request | Click enqueues profile route/screen swap; header remains unchanged while left/middle/right content swaps. |
 
 Tasks:
 
@@ -341,14 +456,98 @@ Validation:
 
 ### Phase 4 - Match HUD
 
-Status: Not started
-Progress: 0% - 0 / 13 tracked items complete
-Current step: Reconcile Match HUD UXML against the current Canvas HUD before binding.
+Status: Complete
+Progress: 100% - 13 / 13 tracked items complete
+Current step: Complete.
 Completed steps:
 
-- None yet.
+- Reconciled Match HUD Canvas behavior/text/features against the UI Toolkit Match HUD surface before binding.
+- Confirmed the UI Toolkit Match HUD exposes required named regions and actions: `HeaderContent`, `CurrentOrderBanner`, `ResourceStrip`, `SelectedSquadPanel`, `ReturnButton`, `DestroyButton`, `BoardButton`, `PassengerChip`, `TransportPassengerDrawer`, `Scroll_View`, `ExitAllButton`, `CloseButton`, `ThreatJumpPanel`, `JumpButton`, `RightQuickRail`, `PauseButton`, `SettingsButton`, `RightBuildCommand`, `RightSupportCommand`, `SquadCard1` through `SquadCard5`, `CommandRail`, `SelectCommand`, `MoveCommand`, `AttackCommand`, `HoldCommand`, `StopCommand`, `BuildCommand`, `ScanCommand`, `SupportCommand`, `MinimapPanel`, `ZoomIn`, `ZoomOut`, `ZoomFocus`, `FeedbackPanel`, `BoardAllButton`, and `CancelButton`.
+- Confirmed `SCN08_PassengerItemView.uxml` exists as the retained passenger row template and exposes `Portrait`, `Name`, `Role`, `HealthFrame`, `HealthFill`, `Health`, and `ExitButton` bindings.
+- Added focused validation that the Match HUD UXML keeps the Canvas parity binding names, every actionable surface is a UI Toolkit `Button`, five squad cards are present, command labels are present, passenger scrollbars remain hidden, the passenger template exists, and the USS uses the approved new-art `TargetLockV02` asset set.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=40` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added configured `SCN08_MatchHudContent.uxml` asset support to `UiToolkitShellView` and mounted it once under `MatchScreenSlot`.
+- Cached `MatchHudContentRoot`, validated required root/command bindings, and kept the retained Match HUD hidden until an `EnterMatchHud` presentation command arrives.
+- Added UI Toolkit presentation handling for `EnterMatchHud` and `ExitMatchHud` so shell commands reveal/hide the retained Match HUD slot without gameplay logic in the view.
+- Added focused validation for Match HUD mount, no duplicate mount on repeated shell mount, hidden-before-command state, enter/exit motion classes, and `ClearCache` cleanup.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=41` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiActionKind` / `UiActionRequestModel` and the ECS `UiActionRequestComponent` dynamic buffer for UI Toolkit action requests.
+- Extended `UiShellBoundarySystem` and `UiShellEcsGateway` so Match HUD UI Toolkit callbacks enqueue typed action requests on the shell boundary instead of calling gameplay logic directly.
+- Bound the mounted Match HUD action surfaces in `UiToolkitShellView`: selected actions, passenger drawer actions, threat jump, right rail, five squad cards, command rail, minimap controls, and feedback actions.
+- Added focused validation that every Match HUD action target exists, is registered by the mounted view, and submits the expected `UiActionKind` plus payload through `UiShellRuntimeGateway`.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=42` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiActionRequestSystem` as an ECS `ISystem` that consumes Match HUD `UiActionRequestComponent` values and writes existing `RtsSelectionCommandIntentRequestElement` requests for Select, Move, Attack, Hold, Stop, Scan/Support, Return, Destroy, Board, Board All, and Cancel Feedback.
+- Added `BuildDrawer` to the shell popup contract and routed Build/RightBuild action requests to `UiShellPopupRequestComponent` without calling Canvas popup code.
+- Routed Match menu/settings/pause action requests to existing shell route or popup request buffers.
+- Preserved Canvas-equivalent UI-click suppression by updating `RtsSelectionInputStateComponent` and clearing pending move requests before command intents are queued.
+- Added focused validation that the action request processor is an `ISystem`, does not touch UI Toolkit or Canvas objects, and maps Match HUD action kinds to existing ECS command/popup contracts.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=43` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiMatchHudSelectionPanelModel` as the sprite-free UI Toolkit shell contract for selected panel visibility, title, subtitle, order, health, badge visibility, and action availability.
+- Extended `UiShellEcsGateway` so the mounted UI Toolkit shell reads the existing `FocusedUnitUiReadModelComponent` as a hidden/visible selected-panel read model without adding a dependency on gameplay systems.
+- Updated `UiToolkitShellApplySystem` to apply Match HUD selection read-model data only when the shell state is `MatchHud`, keeping it as the thin managed UI Toolkit apply edge.
+- Cached `SelectedSquadPanel`, title/subtitle/order labels, health fill/text, badge, and Return/Destroy/Board actions in `UiToolkitShellView`, and added `ApplyMatchHudSelection()` for mechanical visual updates.
+- Added focused validation that a fake Match HUD selection read model shows the selected panel, applies title/subtitle/order/health/action state, hides vehicle badges, and hides the panel again when the read model is empty.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=44` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiMatchHudCommandStateModel` as the sprite-free UI Toolkit shell contract for active tactical command mode and Build drawer visibility.
+- Added `UiShellActivePopupComponent` and updated ECS popup flow so the shell boundary records the currently visible popup without a managed UI dependency.
+- Extended `UiShellEcsGateway` to combine `RtsSelectionInputStateComponent.ActiveCommandMode` with active `BuildDrawer` popup state for the Match HUD command read model.
+- Updated `UiToolkitShellApplySystem` so Match HUD command-state apply is independent from selected-panel data and still only runs on the thin managed UI Toolkit edge.
+- Cached bottom command rail and right quick rail command elements in `UiToolkitShellView`, clearing UXML defaults on mount and applying selected classes for active command mode plus Build drawer open state.
+- Added focused validation that Move command selection, Build drawer selected state, and selected-state clearing apply correctly on the mounted Match HUD surface.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=45` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiMatchHudPassengerDrawerModel` / `UiMatchHudPassengerRowModel` as the sprite-free shell contract for passenger chip visibility, drawer visibility, passenger counts, and retained row data.
+- Added `UiMatchHudPassengerDrawerStateComponent` on the shell boundary and updated `UiActionRequestSystem` so Toggle/Close/Exit All passenger actions update ECS state without touching UI Toolkit objects.
+- Extended `UiShellEcsGateway` to read the existing `FocusedUnitUiReadModelComponent` and `FocusedUnitPassengerUiReadModelElement` buffer into the Match HUD passenger drawer model.
+- Updated `UiToolkitShellApplySystem` to apply passenger drawer read-model data only while the shell state is `MatchHud`.
+- Cached passenger chip, drawer, header, empty state, and retained passenger rows in `UiToolkitShellView`, and added `ApplyMatchHudPassengerDrawer()` for count labels, row text, row health, and visibility classes.
+- Added focused validation that the mounted Match HUD passenger drawer shows/hides from the read model, updates counts, fills retained passenger rows, hides unused rows, and clears when hidden.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=46` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiMatchHudSquadTrayModel` / `UiMatchHudSquadTrayCardModel` as the sprite-free shell contract for five retained squad cards, selected slot, titles, health text, health fill, and visibility.
+- Added `UiMatchHudSquadTrayStateComponent` on the shell boundary and updated `UiActionRequestSystem` so squad slot UI actions update selected-slot ECS state without touching UI Toolkit objects.
+- Extended `UiShellEcsGateway` to expose the Match HUD squad tray model, currently preserving the five Canvas-equivalent slot identities while keeping selection state ECS-owned.
+- Updated `UiToolkitShellApplySystem` to apply squad tray read-model data only while the shell state is `MatchHud`.
+- Cached the five retained squad cards in `UiToolkitShellView`, and added `ApplyMatchHudSquadTray()` for selected class, title, health text/fill, and card visibility.
+- Added focused validation that the mounted Match HUD squad tray applies selected slot state, card titles, health text/fill, hidden cards, and default clearing.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=47` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiMatchHudHeaderModel` as the shell contract for Match HUD order text, squad text, credits, fuel, supply, and civilian risk values.
+- Added ECS-owned `UiMatchHudHeaderComponent` defaults on the shell boundary so header/resource text is no longer sourced from UXML placeholders.
+- Extended `UiShellEcsGateway` and `UiToolkitShellApplySystem` so Match HUD header/resource data is read from ECS and applied only through the thin managed UI Toolkit edge.
+- Cached `CurrentOrderBanner` and `ResourceStrip` labels in `UiToolkitShellView`, and added `ApplyMatchHudHeader()` for mechanical label updates.
+- Added focused validation that the mounted Match HUD header and resource labels apply fake read-model values and restore defaults.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=48` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiMatchHudStatusSurfacesModel` as the shell contract for objectives, elapsed time, threat jump, and tactical feedback visibility/actions.
+- Added ECS-owned `UiMatchHudStatusSurfacesComponent` defaults on the shell boundary so objectives/threat/feedback text no longer comes from UXML placeholders.
+- Extended `UiShellEcsGateway` and `UiToolkitShellApplySystem` so objectives/threat/feedback state is read from ECS and applied only through the thin managed UI Toolkit edge.
+- Cached `ObjectivesPanel`, `ThreatJumpPanel`, and `FeedbackPanel` labels/actions in `UiToolkitShellView`, and added `ApplyMatchHudStatusSurfaces()` for mechanical text, class, visibility, and enabled-state updates.
+- Added focused validation that mounted Match HUD objectives, objective icon classes, threat jump text/enabled state, and feedback action visibility/enabled state apply fake read-model values and restore defaults.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=49` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiMatchHudMinimapModel` / `UiMatchHudMinimapMarkerModel` as the shell contract for retained minimap viewport, marker positions, marker visibility, and zoom/focus action availability.
+- Added ECS-owned `UiMatchHudMinimapComponent` defaults on the shell boundary so minimap marker and viewport state no longer comes from USS-only placeholder values.
+- Extended `UiShellEcsGateway` and `UiToolkitShellApplySystem` so minimap state is read from ECS and applied only through the thin managed UI Toolkit edge.
+- Cached `MinimapPanel`, `Viewport`, retained minimap markers, and zoom/focus controls in `UiToolkitShellView`, and added `ApplyMatchHudMinimap()` for mechanical percent-position, visibility, and enabled-state updates.
+- Added focused validation that mounted Match HUD minimap viewport style, marker positions/visibility, and zoom/focus enabled state apply fake read-model values and restore defaults.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=50` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Ran final static audit for SCN08 old-art references, ECS/UI separation, forbidden class names, TargetLockV02 asset usage, and UI action processor shape.
+- Wrote Match HUD Phase 4 handoff at `Design/AgentReports/2026-06-19_ui-toolkit-match-hud-phase4-handoff.md`.
 
 Blocked: None.
+
+Match HUD reconciliation map:
+
+| Canvas/reference item | UI Toolkit element | Runtime source | Binding rule |
+| --- | --- | --- | --- |
+| Root Match HUD content | `SCN08_MatchHudContent` | `UiShellCommandKind.EnterMatchHud` / `UiShellMode.MatchHud` | Mount into `MatchScreenSlot`; keep as live UI elements, not a flattened mockup. |
+| Header/status | `HeaderContent`, `LogoPanel`, `CurrentOrderBanner`, `ResourceStrip`, `MenuButton` | Match HUD read model and shell route state | Apply resource/order values mechanically in the managed UI Toolkit apply edge. |
+| Objectives | `ObjectivesPanel`, objective rows, `Elapsed` | Match objective read model | Text/icon state comes from ECS read model; no view-side mission logic. |
+| Selected squad panel | `SelectedSquadPanel`, `Badge`, `Title`, `Subtitle`, `Portrait`, `HealthFill`, `HealthText`, `OrderValue` | Selection summary read model | Hidden when selection is empty; single/multi/squad/building values come from ECS read model. |
+| Selected actions | `ReturnButton`, `DestroyButton`, `BoardButton` | UI action requests | Buttons enqueue request components only; availability comes from read model. |
+| Passenger drawer | `PassengerChip`, `TransportPassengerDrawer`, `Scroll_View`, `Content`, `SCN08_PassengerItemView.uxml`, `ExitAllButton`, `CloseButton` | Transport passenger read model and UI action requests | Retain item rows/templates; hidden scrollbars match Canvas; actions enqueue passenger requests. |
+| Threat jump | `ThreatJumpPanel`, `JumpButton` | Alert/threat read model and route/focus request | Jump enqueues focus request; panel data comes from read model. |
+| Right rail | `PauseButton`, `SettingsButton`, `RightBuildCommand`, `RightSupportCommand` | UI action requests and popup route state | Build/support semantics stay distinct from bottom command aliases. |
+| Squad tray | `SquadCard1` through `SquadCard5` | Squad tray read model | Five retained cards; selected/portrait/health/text state comes from ECS read model. |
+| Command rail | `SelectCommand`, `MoveCommand`, `AttackCommand`, `HoldCommand`, `StopCommand`, `BuildCommand`, `ScanCommand`, `SupportCommand` | `UiActionRequestComponent` plus command-mode read model | Selected state is read-model driven; Select toggles selection mode; Build remains selected while popup is open. |
+| Minimap | `MinimapPanel`, `Map`, `Viewport`, `ZoomIn`, `ZoomOut`, `ZoomFocus` | Minimap read model and UI requests | Pointer over minimap controls blocks world selection. |
+| Feedback | `FeedbackPanel`, `Feedback`, `BoardAllButton`, `CancelButton` | Tactical feedback read model and action requests | Feedback actions enqueue ECS requests and never route to Main Menu directly. |
 
 Tasks:
 
@@ -371,12 +570,45 @@ Validation:
 
 ### Phase 5 - Build Popup
 
-Status: Not started
-Progress: 0% - 0 / 12 tracked items complete
-Current step: Reconcile Build Drawer UXML against the current Canvas popup before binding.
+Status: In progress
+Progress: 75% - 9 / 12 tracked items complete
+Current step: Build Drawer content read model source from ECS.
 Completed steps:
 
-- None yet.
+- Reconciled Build Drawer UXML against the current Canvas popup before binding, including tabs, catalog scroll, retained catalog item template, production scroll, active production template, queued production template, build/rush/clear/close actions, detail labels, and hidden scrollbars.
+- Added focused validation that the Build Drawer popup and all retained templates expose the required Canvas parity binding names and actionable UI Toolkit `Button` surfaces.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=51` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added configured `SCN09_BuildDrawerPopup.uxml` asset support to `UiToolkitShellView` and mounted it once under `PopupScreenSlot`.
+- Cached the Build Drawer popup root, build panel, production panel, catalog scroll, production scroll, Build, Rush, Clear, and Close actions while keeping the popup hidden until popup presentation wiring is added.
+- Added focused validation for Build Drawer popup mount, no duplicate mount on repeated shell mount, hidden-before-command state, and `ClearCache` cleanup.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=52` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Cached Build Drawer retained catalog item slots, production queue rows, active production row, detail labels, cost labels, icons, thumbnails, queue images, and action surfaces in `UiToolkitShellView`.
+- Strengthened focused validation for retained catalog/queue/detail/icon bindings and `ClearCache` cleanup.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=52` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiBuildDrawerModel`, retained catalog item rows, retained queue rows, and active-production read models as sprite-free UI Toolkit shell contracts.
+- Added `UiToolkitShellView.ApplyBuildDrawer()` to refresh cached Build Drawer templates in place, including visibility, labels, action enabled states, active production progress, catalog rows, and queue rows.
+- Added focused validation that populated and reduced Build Drawer snapshots update retained rows without creating or destroying catalog/queue template instances.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=53` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiActionKind.CloseBuildDrawer`, registered the UI Toolkit Build Drawer `CloseButton` to enqueue it, and processed it in `UiActionRequestSystem`.
+- Close now captures the UI click, hides only `UiShellPopupKind.BuildDrawer`, and enqueues `CancelActiveCommandMode` so Build selected state clears without routing to Main Menu.
+- Added focused validation that Build Drawer close goes through the UI action boundary, does not enqueue a route request, and maps to `UiShellPopupIntent.Hide`.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=54` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiActionKind.BuildCatalogItem`, retained catalog row callbacks in `UiToolkitShellView`, and `UiBuildCatalogRequestComponent` on the UI shell ECS boundary.
+- `UiActionRequestSystem` now maps Build Drawer catalog row clicks to ECS build catalog requests with the retained row payload and a request id while suppressing underlying world clicks.
+- Added focused validation that retained catalog rows submit the expected payloads and that the ECS action request system owns the catalog request buffer path.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=55` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added typed Build Drawer production UI actions for Rush, Clear, active-production cancel, and queued-row cancel.
+- Added `UiBuildProductionRequestComponent` on the UI shell ECS boundary so production queue surfaces enqueue ECS production requests instead of calling gameplay directly from the view.
+- `UiActionRequestSystem` now maps production UI actions to `UiBuildProductionActionKind` values with queue slot payloads and request ids while suppressing underlying world clicks.
+- Added focused validation that retained production surfaces submit the expected actions and that the ECS action request system owns the production request buffer path.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=56` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `ShowPopup` and `HidePopup` presentation handling in `UiToolkitShellView` so the Build Drawer popup and modal overlay are driven by ECS shell presentation commands.
+- Added focused validation that `ShowPopup` reveals the Build Drawer popup with popup motion, `HidePopup` hides it, and the Build command/right Build command remain selected only while the Build Drawer read model is open.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=57` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiActionKind.BuildDrawerPrimaryBuild`, an unregisterable Build Drawer primary Build callback, and `UiBuildPrimaryRequestComponent` on the UI shell ECS boundary.
+- `UiActionRequestSystem` now maps the primary Build action to an ECS request with a request id while suppressing underlying world clicks.
+- Added focused validation that the primary Build button submits through the UI action boundary and that the ECS action request system owns the primary Build request buffer path.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=58` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
 
 Blocked: None.
 

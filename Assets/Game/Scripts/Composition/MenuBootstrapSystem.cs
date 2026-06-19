@@ -62,6 +62,9 @@ internal sealed class MenuBootstrapSystem
         view.ApplyRuntimeUiMode();
         if (view.IsUiToolkitMode)
         {
+            if (!wasInitialized)
+                ResetShellForFreshMenuScene();
+
             initialized = true;
             return;
         }
@@ -104,8 +107,7 @@ internal sealed class MenuBootstrapSystem
         if (view == null)
             return;
         view.ApplyRuntimeUiMode();
-        if (view.IsUiToolkitMode)
-            return;
+        bool useUiToolkit = view.IsUiToolkitMode;
 
         if (!TryGetWorldEntityManager(out EntityManager entityManager))
             return;
@@ -117,9 +119,16 @@ internal sealed class MenuBootstrapSystem
             return;
 
         UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
-        ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
+        if (!useUiToolkit)
+            ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
         QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
         UpdateActualLoadingProgress(entityManager, boundary, shellState);
+        if (useUiToolkit)
+        {
+            ClearBoundMatchRuntimeUi();
+            return;
+        }
+
         BindMatchRuntimeUi(view, shellState);
     }
 
@@ -635,6 +644,26 @@ internal sealed class MenuBootstrapSystem
             SequenceId = 0,
             Status = new FixedString64Bytes("Inactive")
         });
+
+        if (entityManager.HasComponent<UiShellCommanderProfileComponent>(boundary))
+        {
+            entityManager.SetComponentData(boundary, new UiShellCommanderProfileComponent
+            {
+                Name = new FixedString64Bytes("COL. ALEX MORGAN"),
+                Subtitle = new FixedString64Bytes("VICTORY IS PLANNED"),
+                PortraitClass = new FixedString64Bytes("commander-portrait-default")
+            });
+        }
+
+        if (entityManager.HasComponent<UiShellMainMenuResourcesComponent>(boundary))
+        {
+            entityManager.SetComponentData(boundary, new UiShellMainMenuResourcesComponent
+            {
+                CreditsText = new FixedString32Bytes("12,450"),
+                SuppliesText = new FixedString32Bytes("1,280"),
+                CommandText = new FixedString32Bytes("78/100")
+            });
+        }
     }
 
     private static bool TryGetWorldEntityManager(out EntityManager entityManager)

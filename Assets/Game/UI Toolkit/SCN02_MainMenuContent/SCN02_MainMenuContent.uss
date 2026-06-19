@@ -678,8 +678,11 @@
     right: 7%;
     top: 5.5%;
     bottom: 5.5%;
-    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait.png");
     -unity-background-scale-mode: scale-and-crop;
+}
+
+.commander-portrait-default {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait.png");
 }
 
 .commander-edit-button {

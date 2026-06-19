@@ -148,6 +148,7 @@
     top: 57.0%;
     height: 21%;
     min-height: 34px;
+    overflow: hidden;
     background-image: url("../../Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_progress_track_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
 }

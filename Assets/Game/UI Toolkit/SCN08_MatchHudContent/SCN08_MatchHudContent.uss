@@ -947,6 +947,10 @@
     -unity-slice-bottom: 60;
 }
 
+.quick-command-selected .rect-button-frame {
+    -unity-background-image-tint-color: rgb(255, 229, 145);
+}
+
 .quick-command .build-icon,
 .quick-command .support-icon {
     position: absolute;

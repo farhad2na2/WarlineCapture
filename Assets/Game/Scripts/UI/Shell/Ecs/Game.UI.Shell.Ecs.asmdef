@@ -2,10 +2,12 @@
     "name": "Game.UI.Shell.Ecs",
     "rootNamespace": "",
     "references": [
+        "Game.Components",
         "Game.UI.Contracts",
         "Game.UI.Shell.Contracts.Ecs",
         "Unity.Collections",
-        "Unity.Entities"
+        "Unity.Entities",
+        "Unity.Mathematics"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

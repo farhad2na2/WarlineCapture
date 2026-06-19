@@ -145,7 +145,7 @@
                 <ui:VisualElement name="CommanderPortraitPanel" class="commander-portrait-panel">
                     <ui:VisualElement name="Backing" class="commander-portrait-backing" />
                     <ui:VisualElement name="Frame" class="commander-portrait-frame" />
-                    <ui:VisualElement name="Portrait" class="commander-portrait" />
+                    <ui:VisualElement name="Portrait" class="commander-portrait commander-portrait-default" />
                     <ui:VisualElement name="EditButton" class="commander-edit-button">
                         <ui:VisualElement name="Frame" class="commander-edit-frame" />
                         <ui:VisualElement name="Icon" class="commander-edit-icon" />

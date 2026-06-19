@@ -2,7 +2,9 @@
     "name": "Game.UI.Toolkit",
     "rootNamespace": "",
     "references": [
-        "Game.UI.Contracts"
+        "Game.UI.Contracts",
+        "Unity.Collections",
+        "Unity.Entities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UIElements;
+using Unity.Entities;
 
 [DisallowMultipleComponent]
 public sealed class MenuBootstrapView : MonoBehaviour
@@ -103,6 +104,27 @@ public sealed class MenuBootstrapView : MonoBehaviour
             uiToolkitShellView.Mount();
         if (!useUiToolkit && uiToolkitShellView != null)
             uiToolkitShellView.ClearCache();
+
+        ConfigureUiToolkitApplySystem(useUiToolkit);
+    }
+
+    private void ConfigureUiToolkitApplySystem(bool useUiToolkit)
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return;
+
+        if (useUiToolkit && uiToolkitShellView != null)
+        {
+            UiToolkitShellApplySystem applySystem = world.GetOrCreateSystemManaged<UiToolkitShellApplySystem>();
+            if (!uiToolkitShellView.IsMounted)
+                uiToolkitShellView.Mount();
+            applySystem.ConfigureShellView(uiToolkitShellView);
+            return;
+        }
+
+        UiToolkitShellApplySystem existingSystem = world.GetExistingSystemManaged<UiToolkitShellApplySystem>();
+        existingSystem?.ClearShellView(uiToolkitShellView);
     }
 
     private void Awake()

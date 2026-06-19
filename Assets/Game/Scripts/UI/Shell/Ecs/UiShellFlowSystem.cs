@@ -14,6 +14,7 @@ public partial struct UiShellFlowSystem : ISystem
             ComponentType.ReadWrite<MatchIntroTransitionComponent>(),
             ComponentType.ReadWrite<UiShellRouteRequestComponent>(),
             ComponentType.ReadWrite<UiShellRouteHistoryComponent>(),
+            ComponentType.ReadWrite<UiShellActivePopupComponent>(),
             ComponentType.ReadWrite<UiShellPopupRequestComponent>(),
             ComponentType.ReadWrite<UiShellPresentationCommandComponent>(),
             ComponentType.ReadWrite<UiShellTransitionCompleteComponent>(),
@@ -32,6 +33,7 @@ public partial struct UiShellFlowSystem : ISystem
         DynamicBuffer<UiShellPopupRequestComponent> popupRequests = state.EntityManager.GetBuffer<UiShellPopupRequestComponent>(boundary);
         DynamicBuffer<UiShellPresentationCommandComponent> commands = state.EntityManager.GetBuffer<UiShellPresentationCommandComponent>(boundary);
         DynamicBuffer<UiShellTransitionCompleteComponent> completions = state.EntityManager.GetBuffer<UiShellTransitionCompleteComponent>(boundary);
+        UiShellActivePopupComponent activePopup = state.EntityManager.GetComponentData<UiShellActivePopupComponent>(boundary);
 
         ConsumeCompletions(ref shellState, ref matchIntro, completions);
         completions.Clear();
@@ -56,8 +58,9 @@ public partial struct UiShellFlowSystem : ISystem
 
         if (TryConsumePopupRequest(popupRequests, out UiShellPopupRequestComponent popupRequest))
         {
-            ProcessPopupRequest(ref shellState, commands, popupRequest);
+            ProcessPopupRequest(ref shellState, ref activePopup, commands, popupRequest);
             state.EntityManager.SetComponentData(boundary, shellState);
+            state.EntityManager.SetComponentData(boundary, activePopup);
             state.EntityManager.SetComponentData(boundary, matchIntro);
             return;
         }
@@ -217,6 +220,7 @@ public partial struct UiShellFlowSystem : ISystem
 
     private static void ProcessPopupRequest(
         ref UiShellStateComponent shellState,
+        ref UiShellActivePopupComponent activePopup,
         DynamicBuffer<UiShellPresentationCommandComponent> commands,
         UiShellPopupRequestComponent request)
     {
@@ -227,6 +231,15 @@ public partial struct UiShellFlowSystem : ISystem
         shellState.Phase = request.Intent == UiShellPopupIntent.Hide
             ? UiShellTransitionPhase.HidingPopup
             : UiShellTransitionPhase.ShowingPopup;
+        if (request.Intent == UiShellPopupIntent.Hide)
+        {
+            if (activePopup.PopupKind == request.PopupKind)
+                activePopup.Visible = 0;
+            return;
+        }
+
+        activePopup.PopupKind = request.PopupKind;
+        activePopup.Visible = 1;
     }
 
     private static bool TryConsumeRouteRequest(

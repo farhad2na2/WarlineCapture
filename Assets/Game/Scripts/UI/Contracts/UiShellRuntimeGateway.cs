@@ -10,11 +10,15 @@ public interface IUiShellRuntimeGateway
 
     bool TrySetLoadingProgress(float progress01, string status, bool complete);
 
+    bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics);
+
     bool TryReadShellState(out UiShellStateModel state);
 
     bool TryReadCommanderProfile(out UiShellCommanderProfileModel profile);
 
     bool TryReadMainMenuResources(out UiShellMainMenuResourcesModel resources);
+
+    bool TryReadMissionResult(out UiMissionResultPopupModel result);
 
     bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection);
 
@@ -72,6 +76,11 @@ public static class UiShellRuntimeGateway
         return current.TrySetLoadingProgress(progress01, status, complete);
     }
 
+    public static bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics)
+    {
+        return current.TryReadDiagnosticsOverlay(out diagnostics);
+    }
+
     public static bool TryReadShellState(out UiShellStateModel state)
     {
         return current.TryReadShellState(out state);
@@ -85,6 +94,11 @@ public static class UiShellRuntimeGateway
     public static bool TryReadMainMenuResources(out UiShellMainMenuResourcesModel resources)
     {
         return current.TryReadMainMenuResources(out resources);
+    }
+
+    public static bool TryReadMissionResult(out UiMissionResultPopupModel result)
+    {
+        return current.TryReadMissionResult(out result);
     }
 
     public static bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection)
@@ -177,6 +191,12 @@ public static class UiShellRuntimeGateway
             return false;
         }
 
+        public bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics)
+        {
+            diagnostics = UiDiagnosticsOverlayModel.Default;
+            return false;
+        }
+
         public bool TryReadShellState(out UiShellStateModel state)
         {
             state = default;
@@ -192,6 +212,12 @@ public static class UiShellRuntimeGateway
         public bool TryReadMainMenuResources(out UiShellMainMenuResourcesModel resources)
         {
             resources = default;
+            return false;
+        }
+
+        public bool TryReadMissionResult(out UiMissionResultPopupModel result)
+        {
+            result = UiMissionResultPopupModel.VictoryDefault;
             return false;
         }
 

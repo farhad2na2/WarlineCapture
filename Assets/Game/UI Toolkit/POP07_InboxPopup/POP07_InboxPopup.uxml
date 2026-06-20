@@ -1,0 +1,44 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="POP07_InboxPopup.uss" />
+
+    <ui:VisualElement name="POP07_InboxPopup" class="pop07-inbox-popup">
+        <ui:VisualElement name="BackdropScrim" class="inbox-backdrop-scrim" />
+        <ui:VisualElement name="PopupFrame" class="inbox-popup-frame shell-motion shell-motion-popup-hidden">
+            <ui:VisualElement name="Chrome" class="inbox-popup-chrome" />
+
+            <ui:VisualElement name="HeaderPanel" class="inbox-header-panel">
+                <ui:VisualElement name="InboxIcon" class="inbox-header-icon" />
+                <ui:Label name="Title" class="inbox-title" text="INBOX" />
+                <ui:Label name="Subtitle" class="inbox-subtitle" text="Command net dispatches" />
+                <ui:Button name="CloseButton" class="inbox-close-action" text="">
+                    <ui:Label name="Label" class="inbox-close-label" text="CLOSE" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="MessageList" class="inbox-message-list">
+                <ui:Button name="MessageRow0" class="inbox-message-row unread" text="">
+                    <ui:VisualElement name="Priority" class="message-priority high" />
+                    <ui:Label name="Title" class="message-title" text="OPERATIONS READY" />
+                    <ui:Label name="Body" class="message-body" text="Forward command has cleared the next deployment window." />
+                    <ui:Label name="Time" class="message-time" text="02 MIN" />
+                </ui:Button>
+                <ui:Button name="MessageRow1" class="inbox-message-row" text="">
+                    <ui:VisualElement name="Priority" class="message-priority medium" />
+                    <ui:Label name="Title" class="message-title" text="SUPPLY REPORT" />
+                    <ui:Label name="Body" class="message-body" text="Depot inventory synchronized with tactical reserve." />
+                    <ui:Label name="Time" class="message-time" text="18 MIN" />
+                </ui:Button>
+                <ui:Button name="MessageRow2" class="inbox-message-row" text="">
+                    <ui:VisualElement name="Priority" class="message-priority low" />
+                    <ui:Label name="Title" class="message-title" text="FIELD NOTE" />
+                    <ui:Label name="Body" class="message-body" text="Recon markers updated across the active theatre map." />
+                    <ui:Label name="Time" class="message-time" text="1 HR" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="FooterPanel" class="inbox-footer-panel">
+                <ui:Label name="FooterText" class="inbox-footer-text" text="Inbox rows are retained UI Toolkit elements ready for ECS read-model binding." />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

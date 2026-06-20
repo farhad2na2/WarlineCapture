@@ -98,6 +98,22 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         return true;
     }
 
+    public static bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics)
+    {
+        diagnostics = UiDiagnosticsOverlayModel.Default;
+        if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
+            return false;
+
+        EnsureDiagnosticsOverlayState(entityManager, boundary);
+        UiDiagnosticsOverlayComponent component =
+            entityManager.GetComponentData<UiDiagnosticsOverlayComponent>(boundary);
+        diagnostics = new UiDiagnosticsOverlayModel(
+            Mathf.Max(0, component.Fps),
+            component.LogVisible != 0,
+            component.LogText.ToString());
+        return true;
+    }
+
     public static bool TryReadShellState(out UiShellStateModel state)
     {
         state = default;
@@ -147,6 +163,12 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             component.SuppliesText.ToString(),
             component.CommandText.ToString());
         return true;
+    }
+
+    public static bool TryReadMissionResult(out UiMissionResultPopupModel result)
+    {
+        result = UiMissionResultPopupModel.VictoryDefault;
+        return false;
     }
 
     public static bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection)
@@ -737,6 +759,19 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             entityManager.AddBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
     }
 
+    private static void EnsureDiagnosticsOverlayState(EntityManager entityManager, Entity boundary)
+    {
+        if (entityManager.HasComponent<UiDiagnosticsOverlayComponent>(boundary))
+            return;
+
+        entityManager.AddComponentData(boundary, new UiDiagnosticsOverlayComponent
+        {
+            Fps = 0,
+            LogVisible = 0,
+            LogText = new FixedString4096Bytes("Runtime log ready.")
+        });
+    }
+
     private static void EnsureUiActionRequestBuffer(EntityManager entityManager, Entity boundary)
     {
         if (!entityManager.HasBuffer<UiActionRequestComponent>(boundary))
@@ -975,6 +1010,11 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         return TrySetLoadingProgress(progress01, status, complete);
     }
 
+    bool IUiShellRuntimeGateway.TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics)
+    {
+        return TryReadDiagnosticsOverlay(out diagnostics);
+    }
+
     bool IUiShellRuntimeGateway.TryReadShellState(out UiShellStateModel state)
     {
         return TryReadShellState(out state);
@@ -988,6 +1028,11 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
     bool IUiShellRuntimeGateway.TryReadMainMenuResources(out UiShellMainMenuResourcesModel resources)
     {
         return TryReadMainMenuResources(out resources);
+    }
+
+    bool IUiShellRuntimeGateway.TryReadMissionResult(out UiMissionResultPopupModel result)
+    {
+        return TryReadMissionResult(out result);
     }
 
     bool IUiShellRuntimeGateway.TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection)

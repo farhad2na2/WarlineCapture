@@ -18,6 +18,7 @@ public partial struct UiShellBoundarySystem : ISystem
         {
             Entity existingBoundary = boundaryQuery.GetSingletonEntity();
             EnsureMatchIntroComponent(ref state, existingBoundary);
+            EnsureDiagnosticsOverlayComponent(ref state, existingBoundary);
             EnsureCommanderProfileComponent(ref state, existingBoundary);
             EnsureMainMenuResourcesComponent(ref state, existingBoundary);
             EnsureActivePopupComponent(ref state, existingBoundary);
@@ -53,6 +54,7 @@ public partial struct UiShellBoundarySystem : ISystem
             Status = new FixedString64Bytes("Starting"),
             IsComplete = 0
         });
+        state.EntityManager.AddComponentData(boundary, DefaultDiagnosticsOverlay());
         state.EntityManager.AddComponentData(boundary, new MatchIntroTransitionComponent
         {
             State = MatchIntroTransitionStateKind.Inactive,
@@ -117,6 +119,14 @@ public partial struct UiShellBoundarySystem : ISystem
             SequenceId = 0,
             Status = new FixedString64Bytes("Inactive")
         });
+    }
+
+    private static void EnsureDiagnosticsOverlayComponent(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasComponent<UiDiagnosticsOverlayComponent>(boundary))
+            return;
+
+        state.EntityManager.AddComponentData(boundary, DefaultDiagnosticsOverlay());
     }
 
     private static void EnsureCommanderProfileComponent(ref SystemState state, Entity boundary)
@@ -449,6 +459,16 @@ public partial struct UiShellBoundarySystem : ISystem
             CivilianVisible = 1,
             CivilianLeftPercent = 75f,
             CivilianTopPercent = 52f
+        };
+    }
+
+    private static UiDiagnosticsOverlayComponent DefaultDiagnosticsOverlay()
+    {
+        return new UiDiagnosticsOverlayComponent
+        {
+            Fps = 0,
+            LogVisible = 0,
+            LogText = new FixedString4096Bytes("Runtime log ready.")
         };
     }
 }

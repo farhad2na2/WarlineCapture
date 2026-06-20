@@ -1,0 +1,90 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="POP05_MissionResultPopup.uss" />
+
+    <ui:VisualElement name="POP05_MissionResultPopup" class="pop05-mission-result-popup">
+        <ui:VisualElement name="BackdropScrim" class="backdrop-scrim" />
+        <ui:VisualElement name="PopupFrame" class="popup-frame shell-motion shell-motion-popup-hidden">
+            <ui:VisualElement name="Chrome" class="popup-chrome" />
+
+            <ui:VisualElement name="HeaderPanel" class="header-panel">
+                <ui:VisualElement name="ResultBadge" class="result-badge victory-badge" />
+                <ui:Label name="Title" class="result-title" text="VICTORY" />
+                <ui:Label name="Subtitle" class="result-subtitle" text="Sector secured. Command net restored." />
+            </ui:VisualElement>
+
+            <ui:VisualElement name="SummaryPanel" class="summary-panel">
+                <ui:Label name="SummaryTitle" class="panel-title" text="MISSION SUMMARY" />
+                <ui:Label name="SummaryBody" class="summary-body" text="Primary objectives completed with acceptable losses. Civilian risk stabilized and remaining hostile cells are retreating." />
+                <ui:VisualElement name="ObjectiveRows" class="objective-rows">
+                    <ui:VisualElement name="PrimaryObjectiveRow" class="objective-row completed">
+                        <ui:VisualElement name="Icon" class="objective-icon check-icon" />
+                        <ui:Label name="Label" class="objective-label" text="Neutralize hostile patrol" />
+                        <ui:Label name="Value" class="objective-value" text="COMPLETE" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="CivilianObjectiveRow" class="objective-row completed">
+                        <ui:VisualElement name="Icon" class="objective-icon check-icon" />
+                        <ui:Label name="Label" class="objective-label" text="Protect civilians" />
+                        <ui:Label name="Value" class="objective-value" text="COMPLETE" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="LossObjectiveRow" class="objective-row completed">
+                        <ui:VisualElement name="Icon" class="objective-icon star-icon" />
+                        <ui:Label name="Label" class="objective-label" text="Keep losses low" />
+                        <ui:Label name="Value" class="objective-value" text="BONUS" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="StatsPanel" class="stats-panel">
+                <ui:Label name="StatsTitle" class="panel-title" text="FIELD REPORT" />
+                <ui:VisualElement name="StatsGrid" class="stats-grid">
+                    <ui:VisualElement name="TimeStat" class="stat-card">
+                        <ui:Label name="Label" class="stat-label" text="TIME" />
+                        <ui:Label name="Value" class="stat-value" text="07:42" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="UnitsLostStat" class="stat-card">
+                        <ui:Label name="Label" class="stat-label" text="UNITS LOST" />
+                        <ui:Label name="Value" class="stat-value" text="0" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="CiviliansStat" class="stat-card">
+                        <ui:Label name="Label" class="stat-label" text="CIVILIAN RISK" />
+                        <ui:Label name="Value" class="stat-value" text="LOW" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="ScoreStat" class="stat-card highlighted">
+                        <ui:Label name="Label" class="stat-label" text="SCORE" />
+                        <ui:Label name="Value" class="stat-value" text="18,450" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="RewardsPanel" class="rewards-panel">
+                <ui:Label name="RewardsTitle" class="panel-title" text="REWARDS" />
+                <ui:VisualElement name="RewardCredits" class="reward-row">
+                    <ui:VisualElement name="Icon" class="reward-icon credits-icon" />
+                    <ui:Label name="Label" class="reward-label" text="Credits" />
+                    <ui:Label name="Value" class="reward-value" text="+4,200" />
+                </ui:VisualElement>
+                <ui:VisualElement name="RewardSupply" class="reward-row">
+                    <ui:VisualElement name="Icon" class="reward-icon supply-icon" />
+                    <ui:Label name="Label" class="reward-label" text="Supply" />
+                    <ui:Label name="Value" class="reward-value" text="+80" />
+                </ui:VisualElement>
+                <ui:VisualElement name="RewardIntel" class="reward-row">
+                    <ui:VisualElement name="Icon" class="reward-icon intel-icon" />
+                    <ui:Label name="Label" class="reward-label" text="Intel" />
+                    <ui:Label name="Value" class="reward-value" text="+2" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="ActionsPanel" class="actions-panel">
+                <ui:Button name="ContinueButton" class="result-action primary-action" text="">
+                    <ui:VisualElement name="Frame" class="action-frame primary-frame" />
+                    <ui:Label name="Label" class="action-label" text="CONTINUE" />
+                </ui:Button>
+                <ui:Button name="ReplayButton" class="result-action secondary-action" text="">
+                    <ui:VisualElement name="Frame" class="action-frame secondary-frame" />
+                    <ui:Label name="Label" class="action-label" text="REPLAY" />
+                </ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

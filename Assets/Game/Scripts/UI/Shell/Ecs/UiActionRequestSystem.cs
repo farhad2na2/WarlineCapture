@@ -12,6 +12,7 @@ public partial struct UiActionRequestSystem : ISystem
         boundaryQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<UiShellBoundaryComponent>(),
             ComponentType.ReadWrite<UiActionRequestComponent>(),
+            ComponentType.ReadWrite<UiDiagnosticsOverlayComponent>(),
             ComponentType.ReadWrite<UiMatchHudPassengerDrawerStateComponent>(),
             ComponentType.ReadWrite<UiMatchHudSquadTrayStateComponent>(),
             ComponentType.ReadWrite<UiBuildCatalogRequestComponent>(),
@@ -53,6 +54,8 @@ public partial struct UiActionRequestSystem : ISystem
             state.EntityManager.GetComponentData<UiMatchHudPassengerDrawerStateComponent>(boundary);
         UiMatchHudSquadTrayStateComponent squadTrayState =
             state.EntityManager.GetComponentData<UiMatchHudSquadTrayStateComponent>(boundary);
+        UiDiagnosticsOverlayComponent diagnosticsOverlay =
+            state.EntityManager.GetComponentData<UiDiagnosticsOverlayComponent>(boundary);
         RtsSelectionInputStateComponent inputState =
             state.EntityManager.GetComponentData<RtsSelectionInputStateComponent>(selectionInput);
         RtsSelectionInputRequestQueueComponent queue =
@@ -82,6 +85,7 @@ public partial struct UiActionRequestSystem : ISystem
                 buildProductionRequests,
                 buildPrimaryRequests,
                 placementRequests,
+                ref diagnosticsOverlay,
                 ref passengerDrawerState,
                 ref squadTrayState,
                 ref placementQueue,
@@ -91,6 +95,7 @@ public partial struct UiActionRequestSystem : ISystem
         actionRequests.Clear();
         state.EntityManager.SetComponentData(boundary, passengerDrawerState);
         state.EntityManager.SetComponentData(boundary, squadTrayState);
+        state.EntityManager.SetComponentData(boundary, diagnosticsOverlay);
         state.EntityManager.SetComponentData(selectionInput, inputState);
         state.EntityManager.SetComponentData(selectionInput, queue);
         if (needsPlacementCommandQueue)
@@ -164,6 +169,7 @@ public partial struct UiActionRequestSystem : ISystem
         DynamicBuffer<UiBuildProductionRequestComponent> buildProductionRequests,
         DynamicBuffer<UiBuildPrimaryRequestComponent> buildPrimaryRequests,
         DynamicBuffer<BuildingUiPlacementCommandRequestElement> placementRequests,
+        ref UiDiagnosticsOverlayComponent diagnosticsOverlay,
         ref UiMatchHudPassengerDrawerStateComponent passengerDrawerState,
         ref UiMatchHudSquadTrayStateComponent squadTrayState,
         ref BuildingUiPlacementCommandQueueComponent placementQueue,
@@ -329,6 +335,12 @@ public partial struct UiActionRequestSystem : ISystem
             case UiActionKind.CancelFeedback:
                 CaptureUiClickSequence(ref inputState, commandRequests, frame);
                 EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.CancelActiveCommandMode, frame);
+                break;
+            case UiActionKind.ToggleDiagnosticsOverlay:
+                diagnosticsOverlay.LogVisible = diagnosticsOverlay.LogVisible == 0 ? (byte)1 : (byte)0;
+                break;
+            case UiActionKind.CloseDiagnosticsOverlay:
+                diagnosticsOverlay.LogVisible = 0;
                 break;
         }
     }

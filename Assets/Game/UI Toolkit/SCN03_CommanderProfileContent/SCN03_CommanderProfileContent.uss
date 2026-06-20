@@ -346,6 +346,7 @@
     height: 25%;
     font-size: 32px;
     color: rgb(246, 232, 190);
+    white-space: nowrap;
 }
 
 .identity-subtitle {
@@ -353,6 +354,7 @@
     height: 20%;
     font-size: 15px;
     color: rgb(206, 194, 159);
+    white-space: nowrap;
 }
 
 .identity-level {

@@ -71,7 +71,11 @@ public sealed class UiToolkitShellView : MonoBehaviour
     [SerializeField] private VisualTreeAsset mainMenuScreenAsset;
     [SerializeField] private VisualTreeAsset matchHudScreenAsset;
     [SerializeField] private VisualTreeAsset armoryScreenAsset;
+    [SerializeField] private VisualTreeAsset commanderProfileScreenAsset;
     [SerializeField] private VisualTreeAsset buildDrawerPopupAsset;
+    [SerializeField] private VisualTreeAsset missionResultPopupAsset;
+    [SerializeField] private VisualTreeAsset settingsPopupAsset;
+    [SerializeField] private VisualTreeAsset inboxPopupAsset;
     [SerializeField] private VisualTreeAsset buildPlacementConfirmationBarAsset;
 
     private VisualElement root;
@@ -81,6 +85,8 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private VisualElement footerBar;
     private VisualElement modalOverlay;
     private VisualElement tooltipLayer;
+    private VisualElement diagnosticsOverlay;
+    private VisualElement diagnosticsLogPanel;
     private VisualElement loadingLayer;
     private VisualElement menuBackgroundRegion;
     private VisualElement loadingScreenSlot;
@@ -94,13 +100,21 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private TemplateContainer mainMenuScreenContainer;
     private TemplateContainer matchHudScreenContainer;
     private TemplateContainer armoryScreenContainer;
+    private TemplateContainer commanderProfileScreenContainer;
     private TemplateContainer buildDrawerPopupContainer;
+    private TemplateContainer missionResultPopupContainer;
+    private TemplateContainer settingsPopupContainer;
+    private TemplateContainer inboxPopupContainer;
     private TemplateContainer buildPlacementConfirmationBarContainer;
     private VisualElement loadingContentRoot;
     private VisualElement mainMenuContentRoot;
     private VisualElement matchHudContentRoot;
     private VisualElement armoryContentRoot;
+    private VisualElement commanderProfileContentRoot;
     private VisualElement buildDrawerPopupRoot;
+    private VisualElement missionResultPopupRoot;
+    private VisualElement settingsPopupRoot;
+    private VisualElement inboxPopupRoot;
     private VisualElement buildPlacementConfirmationBarRoot;
     private VisualElement mainMenuHeaderContent;
     private Button mainMenuInboxAction;
@@ -312,6 +326,50 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private EventCallback<ClickEvent> armoryDepotTabCallback;
     private EventCallback<ClickEvent> armoryOfficersTabCallback;
     private int selectedArmoryItemIndex;
+    private Button commanderProfileBackAction;
+    private Button commanderProfileOverviewTabAction;
+    private Button commanderProfileStatsTabAction;
+    private Button commanderProfileBadgesTabAction;
+    private Button commanderProfileHistoryTabAction;
+    private Button commanderProfileUpgradesTabAction;
+    private Button commanderProfileOpenArmoryAction;
+    private Button commanderProfileDetailAction;
+    private Button commanderProfileReplayAction;
+    private VisualElement commanderProfilePortrait;
+    private VisualElement commanderProfileBadge;
+    private Label commanderProfileTitleLabel;
+    private Label commanderProfileNameLabel;
+    private Label commanderProfileSubtitleLabel;
+    private Label commanderProfileLevelLabel;
+    private EventCallback<ClickEvent> commanderProfileBackCallback;
+    private EventCallback<ClickEvent> commanderProfileOverviewTabCallback;
+    private EventCallback<ClickEvent> commanderProfileStatsTabCallback;
+    private EventCallback<ClickEvent> commanderProfileBadgesTabCallback;
+    private EventCallback<ClickEvent> commanderProfileHistoryTabCallback;
+    private EventCallback<ClickEvent> commanderProfileUpgradesTabCallback;
+    private EventCallback<ClickEvent> commanderProfileOpenArmoryCallback;
+    private EventCallback<ClickEvent> commanderProfileDetailCallback;
+    private EventCallback<ClickEvent> commanderProfileReplayCallback;
+    private Label missionResultTitleLabel;
+    private Label missionResultSubtitleLabel;
+    private Label missionResultSummaryBodyLabel;
+    private VisualElement missionResultBadge;
+    private Button missionResultContinueAction;
+    private Button missionResultReplayAction;
+    private EventCallback<ClickEvent> missionResultContinueCallback;
+    private EventCallback<ClickEvent> missionResultReplayCallback;
+    private Label settingsTitleLabel;
+    private Button settingsCloseAction;
+    private EventCallback<ClickEvent> settingsCloseCallback;
+    private Label inboxTitleLabel;
+    private Button inboxCloseAction;
+    private EventCallback<ClickEvent> inboxCloseCallback;
+    private Button diagnosticsFpsAction;
+    private Button diagnosticsCloseAction;
+    private Label diagnosticsFpsValueLabel;
+    private Label diagnosticsLogTextLabel;
+    private EventCallback<ClickEvent> diagnosticsFpsCallback;
+    private EventCallback<ClickEvent> diagnosticsCloseCallback;
 
     public UIDocument Document => document;
     public VisualTreeAsset ShellAsset => shellAsset;
@@ -319,7 +377,11 @@ public sealed class UiToolkitShellView : MonoBehaviour
     public VisualTreeAsset MainMenuScreenAsset => mainMenuScreenAsset;
     public VisualTreeAsset MatchHudScreenAsset => matchHudScreenAsset;
     public VisualTreeAsset ArmoryScreenAsset => armoryScreenAsset;
+    public VisualTreeAsset CommanderProfileScreenAsset => commanderProfileScreenAsset;
     public VisualTreeAsset BuildDrawerPopupAsset => buildDrawerPopupAsset;
+    public VisualTreeAsset MissionResultPopupAsset => missionResultPopupAsset;
+    public VisualTreeAsset SettingsPopupAsset => settingsPopupAsset;
+    public VisualTreeAsset InboxPopupAsset => inboxPopupAsset;
     public VisualTreeAsset BuildPlacementConfirmationBarAsset => buildPlacementConfirmationBarAsset;
     public VisualElement Root => root;
     public VisualElement SafeAreaRoot => safeAreaRoot;
@@ -328,6 +390,8 @@ public sealed class UiToolkitShellView : MonoBehaviour
     public VisualElement FooterBar => footerBar;
     public VisualElement ModalOverlay => modalOverlay;
     public VisualElement TooltipLayer => tooltipLayer;
+    public VisualElement DiagnosticsOverlay => diagnosticsOverlay;
+    public VisualElement DiagnosticsLogPanel => diagnosticsLogPanel;
     public VisualElement LoadingLayer => loadingLayer;
     public VisualElement MenuBackgroundRegion => menuBackgroundRegion;
     public VisualElement LoadingScreenSlot => loadingScreenSlot;
@@ -341,7 +405,11 @@ public sealed class UiToolkitShellView : MonoBehaviour
     public VisualElement MainMenuContentRoot => mainMenuContentRoot;
     public VisualElement MatchHudContentRoot => matchHudContentRoot;
     public VisualElement ArmoryContentRoot => armoryContentRoot;
+    public VisualElement CommanderProfileContentRoot => commanderProfileContentRoot;
     public VisualElement BuildDrawerPopupRoot => buildDrawerPopupRoot;
+    public VisualElement MissionResultPopupRoot => missionResultPopupRoot;
+    public VisualElement SettingsPopupRoot => settingsPopupRoot;
+    public VisualElement InboxPopupRoot => inboxPopupRoot;
     public VisualElement BuildPlacementConfirmationBarRoot => buildPlacementConfirmationBarRoot;
     public VisualElement MainMenuHeaderContent => mainMenuHeaderContent;
     public VisualElement LoadingProgressFill => loadingProgressFill;
@@ -465,6 +533,24 @@ public sealed class UiToolkitShellView : MonoBehaviour
     public IReadOnlyList<Button> ArmoryItems => armoryItems;
     public IReadOnlyList<Label> ArmoryItemTitleLabels => armoryItemTitleLabels;
     public int SelectedArmoryItemIndex => selectedArmoryItemIndex;
+    public Button CommanderProfileBackAction => commanderProfileBackAction;
+    public Button CommanderProfileOpenArmoryAction => commanderProfileOpenArmoryAction;
+    public Label CommanderProfileNameLabel => commanderProfileNameLabel;
+    public Label CommanderProfileSubtitleLabel => commanderProfileSubtitleLabel;
+    public Label MissionResultTitleLabel => missionResultTitleLabel;
+    public Label MissionResultSubtitleLabel => missionResultSubtitleLabel;
+    public Label MissionResultSummaryBodyLabel => missionResultSummaryBodyLabel;
+    public VisualElement MissionResultBadge => missionResultBadge;
+    public Button MissionResultContinueAction => missionResultContinueAction;
+    public Button MissionResultReplayAction => missionResultReplayAction;
+    public Label SettingsTitleLabel => settingsTitleLabel;
+    public Button SettingsCloseAction => settingsCloseAction;
+    public Label InboxTitleLabel => inboxTitleLabel;
+    public Button InboxCloseAction => inboxCloseAction;
+    public Button DiagnosticsFpsAction => diagnosticsFpsAction;
+    public Button DiagnosticsCloseAction => diagnosticsCloseAction;
+    public Label DiagnosticsFpsValueLabel => diagnosticsFpsValueLabel;
+    public Label DiagnosticsLogTextLabel => diagnosticsLogTextLabel;
     public bool IsMounted => root != null;
     public bool HasMountedLoadingScreen =>
         loadingScreenContainer != null
@@ -482,10 +568,26 @@ public sealed class UiToolkitShellView : MonoBehaviour
         armoryScreenContainer != null
         && armoryContentRoot != null
         && armoryScreenContainer.parent == armoryScreenSlot;
+    public bool HasMountedCommanderProfileScreen =>
+        commanderProfileScreenContainer != null
+        && commanderProfileContentRoot != null
+        && commanderProfileScreenContainer.parent == commanderProfileScreenSlot;
     public bool HasMountedBuildDrawerPopup =>
         buildDrawerPopupContainer != null
         && buildDrawerPopupRoot != null
         && buildDrawerPopupContainer.parent == popupScreenSlot;
+    public bool HasMountedMissionResultPopup =>
+        missionResultPopupContainer != null
+        && missionResultPopupRoot != null
+        && missionResultPopupContainer.parent == popupScreenSlot;
+    public bool HasMountedSettingsPopup =>
+        settingsPopupContainer != null
+        && settingsPopupRoot != null
+        && settingsPopupContainer.parent == popupScreenSlot;
+    public bool HasMountedInboxPopup =>
+        inboxPopupContainer != null
+        && inboxPopupRoot != null
+        && inboxPopupContainer.parent == popupScreenSlot;
     public bool HasMountedBuildPlacementConfirmationBar =>
         buildPlacementConfirmationBarContainer != null
         && buildPlacementConfirmationBarRoot != null
@@ -527,6 +629,23 @@ public sealed class UiToolkitShellView : MonoBehaviour
         && armoryContentRoot.Q<Button>("UpgradeButton") != null
         && armoryContentRoot.Q<Button>("EquipButton") != null
         && armoryContentRoot.Q<Button>("CloseButton") != null;
+    public bool HasRequiredCommanderProfileBindings =>
+        commanderProfileContentRoot != null
+        && commanderProfileBackAction != null
+        && commanderProfileOverviewTabAction != null
+        && commanderProfileStatsTabAction != null
+        && commanderProfileBadgesTabAction != null
+        && commanderProfileHistoryTabAction != null
+        && commanderProfileUpgradesTabAction != null
+        && commanderProfileOpenArmoryAction != null
+        && commanderProfileDetailAction != null
+        && commanderProfileReplayAction != null
+        && commanderProfilePortrait != null
+        && commanderProfileBadge != null
+        && commanderProfileTitleLabel != null
+        && commanderProfileNameLabel != null
+        && commanderProfileSubtitleLabel != null
+        && commanderProfileLevelLabel != null;
     public bool HasRequiredArmoryRuntimeBindings =>
         HasRequiredArmoryBindings
         && armoryScrollView != null
@@ -687,6 +806,22 @@ public sealed class UiToolkitShellView : MonoBehaviour
         && buildDrawerQueueNameLabels[0] != null
         && buildDrawerQueueTimeLabels[0] != null
         && buildDrawerQueueOrderActions[0] != null;
+    public bool HasRequiredMissionResultBindings =>
+        missionResultPopupRoot != null
+        && missionResultTitleLabel != null
+        && missionResultSubtitleLabel != null
+        && missionResultSummaryBodyLabel != null
+        && missionResultBadge != null
+        && missionResultContinueAction != null
+        && missionResultReplayAction != null;
+    public bool HasRequiredSettingsBindings =>
+        settingsPopupRoot != null
+        && settingsTitleLabel != null
+        && settingsCloseAction != null;
+    public bool HasRequiredInboxBindings =>
+        inboxPopupRoot != null
+        && inboxTitleLabel != null
+        && inboxCloseAction != null;
     public bool HasRequiredBuildPlacementConfirmationBarBindings =>
         buildPlacementConfirmationBarRoot != null
         && buildPlacementTitleLabel != null
@@ -721,7 +856,15 @@ public sealed class UiToolkitShellView : MonoBehaviour
         && footerBar != null
         && modalOverlay != null
         && tooltipLayer != null
+        && diagnosticsOverlay != null
         && loadingLayer != null;
+    public bool HasRequiredDiagnosticsBindings =>
+        diagnosticsOverlay != null
+        && diagnosticsLogPanel != null
+        && diagnosticsFpsAction != null
+        && diagnosticsCloseAction != null
+        && diagnosticsFpsValueLabel != null
+        && diagnosticsLogTextLabel != null;
     public bool HasRequiredScreenSlots =>
         loadingScreenSlot != null
         && mainMenuScreenSlot != null
@@ -817,7 +960,11 @@ public sealed class UiToolkitShellView : MonoBehaviour
         VisualTreeAsset configuredMatchHudScreenAsset,
         VisualTreeAsset configuredArmoryScreenAsset,
         VisualTreeAsset configuredBuildDrawerPopupAsset,
-        VisualTreeAsset configuredBuildPlacementConfirmationBarAsset)
+        VisualTreeAsset configuredBuildPlacementConfirmationBarAsset,
+        VisualTreeAsset configuredCommanderProfileScreenAsset = null,
+        VisualTreeAsset configuredMissionResultPopupAsset = null,
+        VisualTreeAsset configuredSettingsPopupAsset = null,
+        VisualTreeAsset configuredInboxPopupAsset = null)
     {
         if (configuredDocument != null)
             document = configuredDocument;
@@ -831,8 +978,16 @@ public sealed class UiToolkitShellView : MonoBehaviour
             matchHudScreenAsset = configuredMatchHudScreenAsset;
         if (configuredArmoryScreenAsset != null)
             armoryScreenAsset = configuredArmoryScreenAsset;
+        if (configuredCommanderProfileScreenAsset != null)
+            commanderProfileScreenAsset = configuredCommanderProfileScreenAsset;
         if (configuredBuildDrawerPopupAsset != null)
             buildDrawerPopupAsset = configuredBuildDrawerPopupAsset;
+        if (configuredMissionResultPopupAsset != null)
+            missionResultPopupAsset = configuredMissionResultPopupAsset;
+        if (configuredSettingsPopupAsset != null)
+            settingsPopupAsset = configuredSettingsPopupAsset;
+        if (configuredInboxPopupAsset != null)
+            inboxPopupAsset = configuredInboxPopupAsset;
         if (configuredBuildPlacementConfirmationBarAsset != null)
             buildPlacementConfirmationBarAsset = configuredBuildPlacementConfirmationBarAsset;
     }
@@ -887,6 +1042,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
             MountMainMenuScreen();
             MountMatchHudScreen();
             MountArmoryScreen();
+            MountCommanderProfileScreen();
             MountBuildPlacementConfirmationBar();
             MountBuildDrawerPopup();
         }
@@ -966,6 +1122,24 @@ public sealed class UiToolkitShellView : MonoBehaviour
         return HasRequiredArmoryRuntimeBindings;
     }
 
+    public bool MountCommanderProfileScreen()
+    {
+        if (commanderProfileScreenSlot == null || commanderProfileScreenAsset == null)
+            return false;
+
+        if (HasMountedCommanderProfileScreen)
+            return true;
+
+        commanderProfileScreenSlot.Clear();
+        commanderProfileScreenContainer = commanderProfileScreenAsset.Instantiate();
+        commanderProfileScreenContainer.name = "SCN03_CommanderProfileContent_Template";
+        commanderProfileContentRoot = commanderProfileScreenContainer.Q<VisualElement>("SCN03_CommanderProfileContent");
+        commanderProfileScreenSlot.Add(commanderProfileScreenContainer);
+        BindCommanderProfileScreen();
+        SetShellHidden(commanderProfileScreenSlot, true);
+        return HasRequiredCommanderProfileBindings;
+    }
+
     public bool MountBuildDrawerPopup()
     {
         if (popupScreenSlot == null || buildDrawerPopupAsset == null)
@@ -983,6 +1157,63 @@ public sealed class UiToolkitShellView : MonoBehaviour
         SetShellHidden(popupScreenSlot, true);
         SetShellHidden(modalOverlay, true);
         return HasRequiredBuildDrawerBindings;
+    }
+
+    public bool MountMissionResultPopup()
+    {
+        if (popupScreenSlot == null || missionResultPopupAsset == null)
+            return false;
+
+        if (HasMountedMissionResultPopup)
+            return true;
+
+        popupScreenSlot.Clear();
+        missionResultPopupContainer = missionResultPopupAsset.Instantiate();
+        missionResultPopupContainer.name = "POP05_MissionResultPopup_Template";
+        missionResultPopupRoot = missionResultPopupContainer.Q<VisualElement>("POP05_MissionResultPopup");
+        popupScreenSlot.Add(missionResultPopupContainer);
+        BindMissionResultPopup();
+        SetShellHidden(popupScreenSlot, true);
+        SetShellHidden(modalOverlay, true);
+        return HasRequiredMissionResultBindings;
+    }
+
+    public bool MountSettingsPopup()
+    {
+        if (popupScreenSlot == null || settingsPopupAsset == null)
+            return false;
+
+        if (HasMountedSettingsPopup)
+            return true;
+
+        popupScreenSlot.Clear();
+        settingsPopupContainer = settingsPopupAsset.Instantiate();
+        settingsPopupContainer.name = "POP06_SettingsPopup_Template";
+        settingsPopupRoot = settingsPopupContainer.Q<VisualElement>("POP06_SettingsPopup");
+        popupScreenSlot.Add(settingsPopupContainer);
+        BindSettingsPopup();
+        SetShellHidden(popupScreenSlot, true);
+        SetShellHidden(modalOverlay, true);
+        return HasRequiredSettingsBindings;
+    }
+
+    public bool MountInboxPopup()
+    {
+        if (popupScreenSlot == null || inboxPopupAsset == null)
+            return false;
+
+        if (HasMountedInboxPopup)
+            return true;
+
+        popupScreenSlot.Clear();
+        inboxPopupContainer = inboxPopupAsset.Instantiate();
+        inboxPopupContainer.name = "POP07_InboxPopup_Template";
+        inboxPopupRoot = inboxPopupContainer.Q<VisualElement>("POP07_InboxPopup");
+        popupScreenSlot.Add(inboxPopupContainer);
+        BindInboxPopup();
+        SetShellHidden(popupScreenSlot, true);
+        SetShellHidden(modalOverlay, true);
+        return HasRequiredInboxBindings;
     }
 
     public bool MountBuildPlacementConfirmationBar()
@@ -1035,6 +1266,65 @@ public sealed class UiToolkitShellView : MonoBehaviour
         }
     }
 
+    public bool TrySubmitCommanderProfileAction(string actionName)
+    {
+        switch (actionName)
+        {
+            case "BackButton":
+                return EnqueueMainMenuRoute(
+                    UiShellRouteIntent.BackMenuRoute,
+                    UIRoute.MainMenu,
+                    pushHistory: false);
+            case "OverviewTab":
+                return EnqueueMainMenuRoute(
+                    UiShellRouteIntent.OpenMenuRoute,
+                    UIRoute.CommandFeed,
+                    pushHistory: false);
+            case "OpenArmoryButton":
+                return EnqueueMainMenuRoute(
+                    UiShellRouteIntent.OpenMenuRoute,
+                    UIRoute.Armory,
+                    pushHistory: true);
+            default:
+                return false;
+        }
+    }
+
+    public bool TrySubmitMissionResultAction(string actionName)
+    {
+        switch (actionName)
+        {
+            case "ContinueButton":
+                return EnqueueMainMenuRoute(UiShellRouteIntent.ReturnToMainMenu, UIRoute.MainMenu, pushHistory: false);
+            case "ReplayButton":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public bool TrySubmitSettingsAction(string actionName)
+    {
+        switch (actionName)
+        {
+            case "CloseButton":
+                return EnqueueMainMenuRoute(UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, pushHistory: false);
+            default:
+                return false;
+        }
+    }
+
+    public bool TrySubmitInboxAction(string actionName)
+    {
+        switch (actionName)
+        {
+            case "CloseButton":
+                return EnqueueMainMenuRoute(UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, pushHistory: false);
+            default:
+                return false;
+        }
+    }
+
     public bool TrySubmitArmoryCategory(ArmoryCatalogCategory category)
     {
         bool queued = UiShellRuntimeGateway.TryEnqueueArmoryCategory(category);
@@ -1074,6 +1364,35 @@ public sealed class UiToolkitShellView : MonoBehaviour
             hasLastLoadingStatus = true;
         }
 
+        return true;
+    }
+
+    public bool ApplyDiagnosticsOverlay(UiDiagnosticsOverlayModel diagnostics)
+    {
+        if (!HasRequiredDiagnosticsBindings)
+            return false;
+
+        if (diagnosticsFpsValueLabel != null)
+            diagnosticsFpsValueLabel.text = Mathf.Max(0, diagnostics.Fps).ToString();
+
+        SetLabelText(diagnosticsLogTextLabel, diagnostics.LogText, "Runtime log ready.");
+        SetShellHidden(diagnosticsLogPanel, !diagnostics.LogVisible);
+        return true;
+    }
+
+    public bool ApplyMissionResult(UiMissionResultPopupModel result)
+    {
+        if (!HasRequiredMissionResultBindings)
+            return false;
+
+        SetLabelText(missionResultTitleLabel, result.Title, "VICTORY");
+        SetLabelText(missionResultSubtitleLabel, result.Subtitle, "Sector secured. Command net restored.");
+        SetLabelText(missionResultSummaryBodyLabel, result.SummaryBody, UiMissionResultPopupModel.VictoryDefault.SummaryBody);
+
+        missionResultBadge.RemoveFromClassList("victory-badge");
+        missionResultBadge.RemoveFromClassList("loss-badge");
+        missionResultBadge.AddToClassList(result.Outcome == UiMissionResultOutcome.Loss ? "loss-badge" : "victory-badge");
+        SetElementEnabled(missionResultReplayAction, result.ReplayEnabled);
         return true;
     }
 
@@ -1141,7 +1460,9 @@ public sealed class UiToolkitShellView : MonoBehaviour
         if (IsShellStructuralElement(element))
             return false;
 
-        if (IsSelfOrDescendantOf(element, contentRoot) || IsSelfOrDescendantOf(element, tooltipLayer))
+        if (IsSelfOrDescendantOf(element, contentRoot) ||
+            IsSelfOrDescendantOf(element, tooltipLayer) ||
+            IsSelfOrDescendantOf(element, diagnosticsOverlay))
         {
             source = DescribeUiElement(element, "UiToolkitShell");
             return true;
@@ -1178,6 +1499,8 @@ public sealed class UiToolkitShellView : MonoBehaviour
         footerBar = null;
         modalOverlay = null;
         tooltipLayer = null;
+        diagnosticsOverlay = null;
+        diagnosticsLogPanel = null;
         loadingLayer = null;
         menuBackgroundRegion = null;
         loadingScreenSlot = null;
@@ -1191,20 +1514,33 @@ public sealed class UiToolkitShellView : MonoBehaviour
         mainMenuScreenContainer = null;
         matchHudScreenContainer = null;
         armoryScreenContainer = null;
+        commanderProfileScreenContainer = null;
         buildDrawerPopupContainer = null;
+        missionResultPopupContainer = null;
+        settingsPopupContainer = null;
+        inboxPopupContainer = null;
         buildPlacementConfirmationBarContainer = null;
         loadingContentRoot = null;
         mainMenuContentRoot = null;
         matchHudContentRoot = null;
         armoryContentRoot = null;
+        commanderProfileContentRoot = null;
         buildDrawerPopupRoot = null;
+        missionResultPopupRoot = null;
+        settingsPopupRoot = null;
+        inboxPopupRoot = null;
         buildPlacementConfirmationBarRoot = null;
         mainMenuHeaderContent = null;
         ClearLoadingBindings();
         ClearMainMenuBindings();
         ClearMatchHudBindings();
         ClearArmoryBindings();
+        ClearCommanderProfileBindings();
         ClearBuildDrawerBindings();
+        ClearMissionResultBindings();
+        ClearSettingsBindings();
+        ClearInboxBindings();
+        ClearDiagnosticsBindings();
         ClearBuildPlacementConfirmationBarBindings();
         ResetLoadingPresentationCache();
     }
@@ -1232,6 +1568,8 @@ public sealed class UiToolkitShellView : MonoBehaviour
                 MountMainMenuScreen();
                 if (command.Route == UIRoute.Armory)
                     MountArmoryScreen();
+                if (command.Route == UIRoute.CommandFeed)
+                    MountCommanderProfileScreen();
                 ApplyMainMenuRouteState(command.Route);
                 if (command.Route == UIRoute.Armory && HasMountedArmoryScreen)
                 {
@@ -1244,6 +1582,8 @@ public sealed class UiToolkitShellView : MonoBehaviour
                     SetShellHidden(mainMenuScreenSlot, false);
                     SetShellHidden(armoryScreenSlot, true);
                     ApplyShellMotion(mainMenuScreenSlot, UiToolkitShellMotionState.Visible);
+                    if (command.Route == UIRoute.CommandFeed && HasMountedCommanderProfileScreen)
+                        ApplyShellMotion(commanderProfileScreenSlot, UiToolkitShellMotionState.Visible);
                 }
                 break;
             case UiShellCommandKind.ExitMenu:
@@ -1260,7 +1600,12 @@ public sealed class UiToolkitShellView : MonoBehaviour
                 SetShellHidden(matchScreenSlot, true);
                 break;
             case UiShellCommandKind.ShowPopup:
-                MountBuildDrawerPopup();
+                if (command.Route == UIRoute.Settings)
+                    MountSettingsPopup();
+                else if (command.Route == UIRoute.Inbox)
+                    MountInboxPopup();
+                else
+                    MountBuildDrawerPopup();
                 SetShellHidden(modalOverlay, false);
                 SetShellHidden(popupScreenSlot, false);
                 ApplyShellMotion(popupScreenSlot, UiToolkitShellMotionState.PopupVisible);
@@ -1309,7 +1654,8 @@ public sealed class UiToolkitShellView : MonoBehaviour
         SetClass(mainMenuCardCampaignAction, "mode-card-selected", route == UIRoute.MainMenu);
         SetClass(mainMenuCardSkirmishAction, "mode-card-selected", route == UIRoute.QuickCustomSetup);
         SetClass(mainMenuCardOperationsAction, "mode-card-selected", route == UIRoute.CommandExchange);
-        SetShellHidden(commanderProfileScreenSlot, route != UIRoute.CommandFeed);
+        bool showCommanderProfile = route == UIRoute.CommandFeed && MountCommanderProfileScreen();
+        SetShellHidden(commanderProfileScreenSlot, !showCommanderProfile);
         if (route == UIRoute.Armory && MountArmoryScreen())
         {
             SetShellHidden(mainMenuScreenSlot, true);
@@ -1382,6 +1728,29 @@ public sealed class UiToolkitShellView : MonoBehaviour
             ? DefaultCommanderPortraitClass
             : profile.PortraitClass;
         ApplyKnownClass(mainMenuCommanderPortrait, MainMenuCommanderPortraitClasses, portraitClass);
+        return true;
+    }
+
+    public bool ApplyCommanderProfile(UiShellCommanderProfileModel profile)
+    {
+        if (commanderProfileContentRoot == null)
+            return false;
+
+        string name = string.IsNullOrWhiteSpace(profile.Name)
+            ? DefaultCommanderName
+            : profile.Name;
+        string subtitle = string.IsNullOrWhiteSpace(profile.Subtitle)
+            ? DefaultCommanderSubtitle
+            : profile.Subtitle;
+        string portraitClass = string.IsNullOrWhiteSpace(profile.PortraitClass)
+            ? DefaultCommanderPortraitClass
+            : profile.PortraitClass;
+
+        SetLabelText(commanderProfileTitleLabel, "FIELD COMMANDER", "FIELD COMMANDER");
+        SetLabelText(commanderProfileNameLabel, name, DefaultCommanderName);
+        SetLabelText(commanderProfileSubtitleLabel, subtitle, DefaultCommanderSubtitle);
+        SetLabelText(commanderProfileLevelLabel, "LEVEL 38", "LEVEL 38");
+        ApplyKnownClass(commanderProfilePortrait, MainMenuCommanderPortraitClasses, portraitClass);
         return true;
     }
 
@@ -1948,6 +2317,8 @@ public sealed class UiToolkitShellView : MonoBehaviour
         footerBar = root.Q<VisualElement>("FooterBar");
         modalOverlay = root.Q<VisualElement>("ModalOverlay");
         tooltipLayer = root.Q<VisualElement>("TooltipLayer");
+        diagnosticsOverlay = root.Q<VisualElement>("DiagnosticsOverlay");
+        diagnosticsLogPanel = root.Q<VisualElement>("DiagnosticsLogPanel");
         loadingLayer = root.Q<VisualElement>("LoadingLayer");
         menuBackgroundRegion = root.Q<VisualElement>("MenuBackgroundRegion");
         loadingScreenSlot = root.Q<VisualElement>("LoadingScreenSlot");
@@ -1957,6 +2328,22 @@ public sealed class UiToolkitShellView : MonoBehaviour
         commanderProfileScreenSlot = root.Q<VisualElement>("CommanderProfileScreenSlot");
         resultScreenSlot = root.Q<VisualElement>("ResultScreenSlot");
         popupScreenSlot = root.Q<VisualElement>("PopupScreenSlot");
+        BindDiagnosticsOverlay();
+    }
+
+    private void BindDiagnosticsOverlay()
+    {
+        ClearDiagnosticsBindings();
+        if (diagnosticsOverlay == null)
+            return;
+
+        diagnosticsFpsAction = diagnosticsOverlay.Q<Button>("DiagnosticsFpsButton");
+        diagnosticsCloseAction = diagnosticsOverlay.Q<Button>("DiagnosticsCloseButton");
+        diagnosticsFpsValueLabel = diagnosticsOverlay.Q<Label>("DiagnosticsFpsValue");
+        diagnosticsLogTextLabel = diagnosticsOverlay.Q<Label>("DiagnosticsLogText");
+        RegisterDiagnosticsFpsAction();
+        RegisterDiagnosticsCloseAction();
+        ApplyDiagnosticsOverlay(UiDiagnosticsOverlayModel.Default);
     }
 
     private void BindLoadingScreen()
@@ -2040,6 +2427,44 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
         for (int i = 0; i < buildDrawerQueueRows.Length; i++)
             CacheBuildDrawerQueueRow(i, i == 0 ? "ProductionItemView" : "ProductionItemView_" + i);
+    }
+
+    private void BindMissionResultPopup()
+    {
+        ClearMissionResultBindings();
+        if (missionResultPopupRoot == null)
+            return;
+
+        missionResultTitleLabel = missionResultPopupRoot.Q<Label>("Title");
+        missionResultSubtitleLabel = missionResultPopupRoot.Q<Label>("Subtitle");
+        missionResultSummaryBodyLabel = missionResultPopupRoot.Q<Label>("SummaryBody");
+        missionResultBadge = missionResultPopupRoot.Q<VisualElement>("ResultBadge");
+        missionResultContinueAction = missionResultPopupRoot.Q<Button>("ContinueButton");
+        missionResultReplayAction = missionResultPopupRoot.Q<Button>("ReplayButton");
+        RegisterMissionResultContinueAction();
+        RegisterMissionResultReplayAction();
+    }
+
+    private void BindSettingsPopup()
+    {
+        ClearSettingsBindings();
+        if (settingsPopupRoot == null)
+            return;
+
+        settingsTitleLabel = settingsPopupRoot.Q<Label>("Title");
+        settingsCloseAction = settingsPopupRoot.Q<Button>("CloseButton");
+        RegisterSettingsCloseAction();
+    }
+
+    private void BindInboxPopup()
+    {
+        ClearInboxBindings();
+        if (inboxPopupRoot == null)
+            return;
+
+        inboxTitleLabel = inboxPopupRoot.Q<Label>("Title");
+        inboxCloseAction = inboxPopupRoot.Q<Button>("CloseButton");
+        RegisterInboxCloseAction();
     }
 
     private void BindBuildPlacementConfirmationBar()
@@ -2198,6 +2623,62 @@ public sealed class UiToolkitShellView : MonoBehaviour
             ? category
             : ArmoryCatalogCategory.Characters);
         SelectArmoryItem(0);
+    }
+
+    private void BindCommanderProfileScreen()
+    {
+        ClearCommanderProfileBindings();
+        if (commanderProfileContentRoot == null)
+            return;
+
+        commanderProfileBackAction = commanderProfileContentRoot.Q<Button>("BackButton");
+        commanderProfileOverviewTabAction = commanderProfileContentRoot.Q<Button>("OverviewTab");
+        commanderProfileStatsTabAction = commanderProfileContentRoot.Q<Button>("StatsTab");
+        commanderProfileBadgesTabAction = commanderProfileContentRoot.Q<Button>("BadgesTab");
+        commanderProfileHistoryTabAction = commanderProfileContentRoot.Q<Button>("HistoryTab");
+        commanderProfileUpgradesTabAction = commanderProfileContentRoot.Q<Button>("UpgradesTab");
+        commanderProfileOpenArmoryAction = commanderProfileContentRoot.Q<Button>("OpenArmoryButton");
+        commanderProfileDetailAction = commanderProfileContentRoot.Q<Button>("DetailButton");
+        commanderProfileReplayAction = commanderProfileContentRoot.Q<Button>("ReplayButton");
+        commanderProfilePortrait = commanderProfileContentRoot.Q<VisualElement>("Portrait");
+        commanderProfileBadge = commanderProfileContentRoot.Q<VisualElement>("Badge");
+        VisualElement identityCard = commanderProfileContentRoot.Q<VisualElement>("IdentityCard");
+        commanderProfileTitleLabel = identityCard?.Q<Label>("Title");
+        commanderProfileNameLabel = identityCard?.Q<Label>("Name");
+        commanderProfileSubtitleLabel = identityCard?.Q<Label>("Subtitle");
+        commanderProfileLevelLabel = identityCard?.Q<Label>("Level");
+
+        RegisterCommanderProfileRouteAction(
+            commanderProfileBackAction,
+            ref commanderProfileBackCallback,
+            UiShellRouteIntent.BackMenuRoute,
+            UIRoute.MainMenu,
+            pushHistory: false);
+        RegisterCommanderProfileRouteAction(
+            commanderProfileOverviewTabAction,
+            ref commanderProfileOverviewTabCallback,
+            UiShellRouteIntent.OpenMenuRoute,
+            UIRoute.CommandFeed,
+            pushHistory: false);
+        RegisterCommanderProfileRouteAction(
+            commanderProfileOpenArmoryAction,
+            ref commanderProfileOpenArmoryCallback,
+            UiShellRouteIntent.OpenMenuRoute,
+            UIRoute.Armory,
+            pushHistory: true);
+        RegisterCommanderProfileNoopAction(commanderProfileStatsTabAction, ref commanderProfileStatsTabCallback);
+        RegisterCommanderProfileNoopAction(commanderProfileBadgesTabAction, ref commanderProfileBadgesTabCallback);
+        RegisterCommanderProfileNoopAction(commanderProfileHistoryTabAction, ref commanderProfileHistoryTabCallback);
+        RegisterCommanderProfileNoopAction(commanderProfileUpgradesTabAction, ref commanderProfileUpgradesTabCallback);
+        RegisterCommanderProfileNoopAction(commanderProfileDetailAction, ref commanderProfileDetailCallback);
+        RegisterCommanderProfileNoopAction(commanderProfileReplayAction, ref commanderProfileReplayCallback);
+
+        ApplyCommanderProfile(UiShellRuntimeGateway.TryReadCommanderProfile(out UiShellCommanderProfileModel profile)
+            ? profile
+            : new UiShellCommanderProfileModel(
+                DefaultCommanderName,
+                DefaultCommanderSubtitle,
+                DefaultCommanderPortraitClass));
     }
 
     private void CacheArmoryCategory(int index, string name, ArmoryCatalogCategory category)
@@ -2497,6 +2978,44 @@ public sealed class UiToolkitShellView : MonoBehaviour
         selectedArmoryItemIndex = 0;
     }
 
+    private void ClearCommanderProfileBindings()
+    {
+        UnregisterClick(commanderProfileBackAction, commanderProfileBackCallback);
+        UnregisterClick(commanderProfileOverviewTabAction, commanderProfileOverviewTabCallback);
+        UnregisterClick(commanderProfileStatsTabAction, commanderProfileStatsTabCallback);
+        UnregisterClick(commanderProfileBadgesTabAction, commanderProfileBadgesTabCallback);
+        UnregisterClick(commanderProfileHistoryTabAction, commanderProfileHistoryTabCallback);
+        UnregisterClick(commanderProfileUpgradesTabAction, commanderProfileUpgradesTabCallback);
+        UnregisterClick(commanderProfileOpenArmoryAction, commanderProfileOpenArmoryCallback);
+        UnregisterClick(commanderProfileDetailAction, commanderProfileDetailCallback);
+        UnregisterClick(commanderProfileReplayAction, commanderProfileReplayCallback);
+
+        commanderProfileBackAction = null;
+        commanderProfileOverviewTabAction = null;
+        commanderProfileStatsTabAction = null;
+        commanderProfileBadgesTabAction = null;
+        commanderProfileHistoryTabAction = null;
+        commanderProfileUpgradesTabAction = null;
+        commanderProfileOpenArmoryAction = null;
+        commanderProfileDetailAction = null;
+        commanderProfileReplayAction = null;
+        commanderProfilePortrait = null;
+        commanderProfileBadge = null;
+        commanderProfileTitleLabel = null;
+        commanderProfileNameLabel = null;
+        commanderProfileSubtitleLabel = null;
+        commanderProfileLevelLabel = null;
+        commanderProfileBackCallback = null;
+        commanderProfileOverviewTabCallback = null;
+        commanderProfileStatsTabCallback = null;
+        commanderProfileBadgesTabCallback = null;
+        commanderProfileHistoryTabCallback = null;
+        commanderProfileUpgradesTabCallback = null;
+        commanderProfileOpenArmoryCallback = null;
+        commanderProfileDetailCallback = null;
+        commanderProfileReplayCallback = null;
+    }
+
     private void ClearMatchHudBindings()
     {
         foreach (KeyValuePair<Button, EventCallback<ClickEvent>> callback in matchHudActionCallbacks)
@@ -2674,6 +3193,48 @@ public sealed class UiToolkitShellView : MonoBehaviour
         buildPlacementConfirmAction = null;
     }
 
+    private void ClearMissionResultBindings()
+    {
+        UnregisterClick(missionResultContinueAction, missionResultContinueCallback);
+        UnregisterClick(missionResultReplayAction, missionResultReplayCallback);
+        missionResultContinueCallback = null;
+        missionResultReplayCallback = null;
+        missionResultTitleLabel = null;
+        missionResultSubtitleLabel = null;
+        missionResultSummaryBodyLabel = null;
+        missionResultBadge = null;
+        missionResultContinueAction = null;
+        missionResultReplayAction = null;
+    }
+
+    private void ClearSettingsBindings()
+    {
+        UnregisterClick(settingsCloseAction, settingsCloseCallback);
+        settingsCloseCallback = null;
+        settingsTitleLabel = null;
+        settingsCloseAction = null;
+    }
+
+    private void ClearInboxBindings()
+    {
+        UnregisterClick(inboxCloseAction, inboxCloseCallback);
+        inboxCloseCallback = null;
+        inboxTitleLabel = null;
+        inboxCloseAction = null;
+    }
+
+    private void ClearDiagnosticsBindings()
+    {
+        UnregisterClick(diagnosticsFpsAction, diagnosticsFpsCallback);
+        UnregisterClick(diagnosticsCloseAction, diagnosticsCloseCallback);
+        diagnosticsFpsCallback = null;
+        diagnosticsCloseCallback = null;
+        diagnosticsFpsAction = null;
+        diagnosticsCloseAction = null;
+        diagnosticsFpsValueLabel = null;
+        diagnosticsLogTextLabel = null;
+    }
+
     private void ClearLoadingBindings()
     {
         loadingBody = null;
@@ -2744,6 +3305,84 @@ public sealed class UiToolkitShellView : MonoBehaviour
         RegisterClick(buildDrawerCloseAction, buildDrawerCloseActionCallback);
     }
 
+    private void RegisterMissionResultContinueAction()
+    {
+        if (missionResultContinueAction == null)
+            return;
+
+        missionResultContinueCallback = evt =>
+        {
+            TrySubmitMissionResultAction("ContinueButton");
+            evt?.StopPropagation();
+        };
+        RegisterClick(missionResultContinueAction, missionResultContinueCallback);
+    }
+
+    private void RegisterMissionResultReplayAction()
+    {
+        if (missionResultReplayAction == null)
+            return;
+
+        missionResultReplayCallback = evt =>
+        {
+            TrySubmitMissionResultAction("ReplayButton");
+            evt?.StopPropagation();
+        };
+        RegisterClick(missionResultReplayAction, missionResultReplayCallback);
+    }
+
+    private void RegisterSettingsCloseAction()
+    {
+        if (settingsCloseAction == null)
+            return;
+
+        settingsCloseCallback = evt =>
+        {
+            TrySubmitSettingsAction("CloseButton");
+            evt?.StopPropagation();
+        };
+        RegisterClick(settingsCloseAction, settingsCloseCallback);
+    }
+
+    private void RegisterInboxCloseAction()
+    {
+        if (inboxCloseAction == null)
+            return;
+
+        inboxCloseCallback = evt =>
+        {
+            TrySubmitInboxAction("CloseButton");
+            evt?.StopPropagation();
+        };
+        RegisterClick(inboxCloseAction, inboxCloseCallback);
+    }
+
+    private void RegisterDiagnosticsFpsAction()
+    {
+        if (diagnosticsFpsAction == null)
+            return;
+
+        diagnosticsFpsCallback = evt =>
+        {
+            TrySubmitMatchHudAction(UiActionKind.ToggleDiagnosticsOverlay);
+            evt?.StopPropagation();
+        };
+        RegisterClick(diagnosticsFpsAction, diagnosticsFpsCallback);
+    }
+
+    private void RegisterDiagnosticsCloseAction()
+    {
+        if (diagnosticsCloseAction == null)
+            return;
+
+        diagnosticsCloseCallback = evt =>
+        {
+            TrySubmitMatchHudAction(UiActionKind.CloseDiagnosticsOverlay);
+            evt?.StopPropagation();
+        };
+        RegisterClick(diagnosticsCloseAction, diagnosticsCloseCallback);
+    }
+
     private void RegisterArmoryRouteAction(
         Button target,
         ref EventCallback<ClickEvent> callback,
@@ -2757,6 +3396,42 @@ public sealed class UiToolkitShellView : MonoBehaviour
             EnqueueMainMenuRoute(UiShellRouteIntent.OpenMenuRoute, route, pushHistory: route != UIRoute.MainMenu);
             evt?.StopPropagation();
         };
+        RegisterClick(target, callback);
+    }
+
+    private void RegisterCommanderProfileRouteAction(
+        Button target,
+        ref EventCallback<ClickEvent> callback,
+        UiShellRouteIntent intent,
+        UIRoute route,
+        bool pushHistory)
+    {
+        if (target == null)
+            return;
+
+        callback = evt =>
+        {
+            if (target.name == "BackButton" ||
+                target.name == "OverviewTab" ||
+                target.name == "OpenArmoryButton")
+            {
+                TrySubmitCommanderProfileAction(target.name);
+            }
+            else
+            {
+                EnqueueMainMenuRoute(intent, route, pushHistory);
+            }
+            evt?.StopPropagation();
+        };
+        RegisterClick(target, callback);
+    }
+
+    private void RegisterCommanderProfileNoopAction(Button target, ref EventCallback<ClickEvent> callback)
+    {
+        if (target == null)
+            return;
+
+        callback = evt => evt?.StopPropagation();
         RegisterClick(target, callback);
     }
 

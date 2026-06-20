@@ -34,6 +34,12 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     private const string ArmoryItemUxmlPath = "Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryItemView.uxml";
     private const string CommanderProfileUxmlPath = "Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uxml";
     private const string CommanderProfileUssPath = "Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uss";
+    private const string MissionResultPopupUxmlPath = "Assets/Game/UI Toolkit/POP05_MissionResultPopup/POP05_MissionResultPopup.uxml";
+    private const string MissionResultPopupUssPath = "Assets/Game/UI Toolkit/POP05_MissionResultPopup/POP05_MissionResultPopup.uss";
+    private const string SettingsPopupUxmlPath = "Assets/Game/UI Toolkit/POP06_SettingsPopup/POP06_SettingsPopup.uxml";
+    private const string SettingsPopupUssPath = "Assets/Game/UI Toolkit/POP06_SettingsPopup/POP06_SettingsPopup.uss";
+    private const string InboxPopupUxmlPath = "Assets/Game/UI Toolkit/POP07_InboxPopup/POP07_InboxPopup.uxml";
+    private const string InboxPopupUssPath = "Assets/Game/UI Toolkit/POP07_InboxPopup/POP07_InboxPopup.uss";
     private const string UiToolkitAsmdefPath = "Assets/Game/Scripts/UI/Toolkit/Game.UI.Toolkit.asmdef";
     private const string ShellApplySystemPath = "Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs";
     private const string MenuBootstrapSystemPath = "Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs";
@@ -88,6 +94,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             tests.MenuBootstrapSystemKeepsLoadingProgressActiveInUiToolkitMode();
             tests.UiToolkitLoadingMountDoesNotShowInitialLoadingOrBlockByDefault();
             tests.UiToolkitLoadingLayerStaysAboveVisiblePopupWhenShown();
+            tests.UiToolkitLoadingLayerOverridesMountedPopupDuringTransition();
             tests.UiToolkitLoadingTextBindingsStayVisibleWhenShown();
             tests.UiToolkitLoadingProgressCompletionCanExitLoadingLayer();
             tests.MainMenuUxmlExposesCanvasParityBindings();
@@ -133,7 +140,16 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             tests.UiToolkitArmoryItemSelectionSwapsGeneratedFrameStateClasses();
             tests.UiToolkitArmoryLockedRowsKeepLockedStateAndRejectUnavailableActions();
             tests.CommanderProfileUxmlExposesCanvasParityBindingsAndNewArtAssets();
-            UnityEngine.Debug.Log("[UiToolkitCanvasMigrationValidation] result=Passed tests=72");
+            tests.CommanderProfileLayoutKeepsRegionsAndTextInsideSafeRects();
+            tests.UiToolkitShellViewMountsCommanderProfileUxmlIntoCommanderProfileSlot();
+            tests.MissionResultPopupUxmlExposesCanvasParityBindingsAndNewArtAssets();
+            tests.UiToolkitShellViewMountsMissionResultPopupIntoPopupSlot();
+            tests.UiToolkitShellApplySystemAppliesMissionResultReadModelVariants();
+            tests.MissionResultUsesSingleUiToolkitPopupForVictoryAndLossVariants();
+            tests.UiToolkitShellDiagnosticsOverlayExposesFpsAndRuntimeLogActions();
+            tests.SettingsPopupUxmlExposesShellBindingsAndRoutesThroughGateway();
+            tests.InboxPopupUxmlExposesShellBindingsAndRoutesThroughGateway();
+            UnityEngine.Debug.Log("[UiToolkitCanvasMigrationValidation] result=Passed tests=82");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -736,6 +752,74 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     }
 
     [Test]
+    public void UiToolkitLoadingLayerOverridesMountedPopupDuringTransition()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset loadingAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(LoadingUxmlPath);
+        VisualTreeAsset resultAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MissionResultPopupUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(loadingAsset, $"Missing loading UXML asset: {LoadingUxmlPath}");
+        Assert.IsNotNull(resultAsset, $"Missing Mission Result popup UXML asset: {MissionResultPopupUxmlPath}");
+
+        GameObject host = new("UiToolkitShellLoadingOverridesPopupSmoke");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(
+                document,
+                shellAsset,
+                loadingAsset,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                resultAsset);
+
+            Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before validating loading popup precedence.");
+            Assert.IsTrue(shellView.MountMissionResultPopup(), "Mission Result popup must mount before popup/loading precedence validation.");
+
+            var popupCommands = new[]
+            {
+                new UiShellPresentationCommandModel(
+                    UiShellCommandKind.ShowPopup,
+                    UiShellRegionId.PopupLayer,
+                    UIRoute.Match,
+                    UiShellMode.PopupOnly,
+                    21)
+            };
+
+            Assert.IsTrue(shellView.ApplyPresentationCommands(popupCommands), "ShowPopup presentation must apply before loading transition.");
+            Assert.IsFalse(shellView.PopupScreenSlot.ClassListContains("shell-hidden"), "Popup slot must be visible before loading transition.");
+            Assert.IsFalse(shellView.ModalOverlay.ClassListContains("shell-hidden"), "Modal overlay must be visible before loading transition.");
+            Assert.IsTrue(shellView.PopupScreenSlot.ClassListContains(UiToolkitShellView.GetMotionStateClass(UiToolkitShellMotionState.PopupVisible)), "Popup slot must use visible popup motion before loading transition.");
+
+            var loadingCommands = new[]
+            {
+                new UiShellPresentationCommandModel(
+                    UiShellCommandKind.ShowLoading,
+                    UiShellRegionId.LoadingLayer,
+                    UIRoute.Match,
+                    UiShellMode.Loading,
+                    22)
+            };
+
+            Assert.IsTrue(shellView.ApplyPresentationCommands(loadingCommands), "ShowLoading must apply over a visible popup during route transition.");
+            Assert.IsFalse(shellView.LoadingLayer.ClassListContains("shell-hidden"), "Loading layer must be visible while overriding a popup.");
+            Assert.IsFalse(shellView.PopupScreenSlot.ClassListContains("shell-hidden"), "Loading must cover, not depend on destroying, the visible popup layer.");
+            AssertDrawsAfter(shellView.SafeAreaRoot, shellView.LoadingLayer, shellView.ModalOverlay, "Loading layer must draw above a mounted visible popup during route transition.");
+            Assert.IsTrue(shellView.IsElementBlockingUi(shellView.LoadingContentRoot, out string source), "Visible loading content must block mounted popup and world clicks during route transition.");
+            Assert.AreEqual("SCN01_LoadingContent", source);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
     public void UiToolkitLoadingTextBindingsStayVisibleWhenShown()
     {
         VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
@@ -824,6 +908,8 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             StringAssert.Contains("if (shellState.CurrentMode == UiShellMode.Loading && loading.IsComplete != 0)", flowSource, "The ECS shell flow must still route out of loading when progress is complete.");
             StringAssert.Contains("UiShellCommandKind.ExitLoading", flowSource, "Completed loading must enqueue an ExitLoading command.");
             StringAssert.Contains("UiShellCommandKind.EnterMatchHud", flowSource, "Completed match loading must enqueue the Match HUD route command.");
+            StringAssert.Contains("UiShellCommandKind.EnterMenu", flowSource, "Completed Main Menu loading must enqueue the Main Menu route command.");
+            StringAssert.Contains("case UiShellRouteIntent.ReturnToMainMenu", flowSource, "Return-to-menu requests must route through loading before Main Menu is shown.");
             StringAssert.Contains("UiShellRuntimeGateway.TryEnqueueTransitionComplete(pendingCompletion)", applySource, "The UI Toolkit apply edge must complete presentation commands so the shell route can continue.");
         }
         finally
@@ -1032,8 +1118,10 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     {
         VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
         VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset commanderAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommanderProfileUxmlPath);
         Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
         Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(commanderAsset, $"Missing Commander/Profile UXML asset: {CommanderProfileUxmlPath}");
 
         string uxml = File.ReadAllText(MainMenuUxmlPath);
         string uss = File.ReadAllText(MainMenuUssPath);
@@ -1046,7 +1134,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         {
             UIDocument document = host.AddComponent<UIDocument>();
             UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
-            shellView.Configure(document, shellAsset, null, mainMenuAsset);
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, null, null, null, commanderAsset);
 
             var gateway = new RecordingUiShellRuntimeGateway
             {
@@ -1096,8 +1184,10 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     {
         VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
         VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset commanderAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommanderProfileUxmlPath);
         Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
         Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(commanderAsset, $"Missing Commander/Profile UXML asset: {CommanderProfileUxmlPath}");
 
         GameObject host = new("UiToolkitShellMainMenuResourcesReadModelSmoke");
         using World world = new("UiToolkitShellMainMenuResourcesReadModelSmokeWorld");
@@ -1105,7 +1195,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         {
             UIDocument document = host.AddComponent<UIDocument>();
             UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
-            shellView.Configure(document, shellAsset, null, mainMenuAsset);
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, null, null, null, commanderAsset);
 
             var gateway = new RecordingUiShellRuntimeGateway
             {
@@ -1153,15 +1243,17 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     {
         VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
         VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset commanderAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommanderProfileUxmlPath);
         Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
         Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(commanderAsset, $"Missing Commander/Profile UXML asset: {CommanderProfileUxmlPath}");
 
         GameObject host = new("UiToolkitShellMainMenuMountSmoke");
         try
         {
             UIDocument document = host.AddComponent<UIDocument>();
             UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
-            shellView.Configure(document, shellAsset, null, mainMenuAsset);
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, null, null, null, commanderAsset);
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Main Menu content.");
             Assert.AreSame(mainMenuAsset, shellView.MainMenuScreenAsset, "Configured Main Menu asset must be retained by the shell view.");
@@ -1610,15 +1702,17 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     {
         VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
         VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset commanderAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommanderProfileUxmlPath);
         Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
         Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(commanderAsset, $"Missing Commander/Profile UXML asset: {CommanderProfileUxmlPath}");
 
         GameObject host = new("UiToolkitShellMainMenuCommandSmoke");
         try
         {
             UIDocument document = host.AddComponent<UIDocument>();
             UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
-            shellView.Configure(document, shellAsset, null, mainMenuAsset);
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, null, null, null, commanderAsset);
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before applying Main Menu commands.");
             Assert.IsTrue(shellView.HasMountedMainMenuScreen, "Main Menu content must be mounted before command presentation.");
@@ -1712,8 +1806,10 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     {
         VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
         VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset commanderAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommanderProfileUxmlPath);
         Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
         Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(commanderAsset, $"Missing Commander/Profile UXML asset: {CommanderProfileUxmlPath}");
 
         var gateway = new RecordingUiShellRuntimeGateway();
         UiShellRuntimeGateway.Register(gateway);
@@ -1723,7 +1819,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         {
             UIDocument document = host.AddComponent<UIDocument>();
             UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
-            shellView.Configure(document, shellAsset, null, mainMenuAsset);
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, null, null, null, commanderAsset);
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before validating Main Menu actions.");
             Assert.IsTrue(shellView.HasRequiredMainMenuBindings, "Main Menu action bindings must be present before click routing.");
@@ -1773,8 +1869,10 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     {
         VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
         VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset commanderAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommanderProfileUxmlPath);
         Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
         Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(commanderAsset, $"Missing Commander/Profile UXML asset: {CommanderProfileUxmlPath}");
 
         var gateway = new RecordingUiShellRuntimeGateway
         {
@@ -1794,7 +1892,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         {
             UIDocument document = host.AddComponent<UIDocument>();
             UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
-            shellView.Configure(document, shellAsset, null, mainMenuAsset);
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, null, null, null, commanderAsset);
 
             UiToolkitShellApplySystem applySystem = world.GetOrCreateSystemManaged<UiToolkitShellApplySystem>();
             applySystem.ConfigureShellView(shellView);
@@ -3949,6 +4047,600 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     }
 
     [Test]
+    public void CommanderProfileLayoutKeepsRegionsAndTextInsideSafeRects()
+    {
+        string uss = File.ReadAllText(CommanderProfileUssPath);
+
+        string rootBlock = GetCssBlock(uss, ".scn03-commander-profile-content {");
+        string leftBlock = GetCssBlock(uss, ".left-content {");
+        string middleBlock = GetCssBlock(uss, ".middle-content {");
+        string rightBlock = GetCssBlock(uss, ".right-content {");
+        string footerBlock = GetCssBlock(uss, ".footer-content {");
+        string identityPanelBlock = GetCssBlock(uss, ".identity-panel {");
+        string overviewPanelBlock = GetCssBlock(uss, ".overview-panel {");
+        string accountPanelBlock = GetCssBlock(uss, ".account-panel {");
+        string rewardPanelBlock = GetCssBlock(uss, ".reward-track-panel {");
+        string historyPanelBlock = GetCssBlock(uss, ".recent-history-panel {");
+        string identityNameBlock = GetCssBlock(uss, ".identity-name {");
+        string identitySubtitleBlock = GetCssBlock(uss, ".identity-subtitle {");
+        string panelTitleBlock = GetCssBlock(uss, ".panel-title {");
+        string rewardTextBlock = GetCssBlock(uss, ".reward-text {");
+        string footerActionBlock = GetCssBlock(uss, ".footer-action {");
+
+        AssertCssContains(rootBlock, "overflow: hidden;", "Commander/Profile root must clip only at the screen boundary.");
+        AssertCssContains(leftBlock, "top: 13%;", "Commander/Profile content must leave the persistent Main Menu header clear.");
+        AssertCssContains(middleBlock, "top: 13%;", "Commander/Profile middle region must align below the persistent header.");
+        AssertCssContains(rightBlock, "top: 13%;", "Commander/Profile right region must align below the persistent header.");
+        AssertCssContains(leftBlock, "width: 16%;", "Left tab rail must remain narrow enough to preserve middle/right content gutters.");
+        AssertCssContains(middleBlock, "left: 18.4%;", "Middle content must start after the left rail gutter.");
+        AssertCssContains(middleBlock, "width: 45.2%;", "Middle content width must preserve the right panel gutter.");
+        AssertCssContains(rightBlock, "right: 1.2%;", "Right content must stay inside the shell safe edge.");
+        AssertCssContains(rightBlock, "width: 34%;", "Right content must stay large enough for reward/history panels without clipping.");
+        AssertCssContains(footerBlock, "left: 18.4%;", "Footer actions must align with middle content, not the left tab rail.");
+        AssertCssContains(footerBlock, "right: 1.2%;", "Footer actions must stay inside the shell safe edge.");
+
+        AssertPanelWithinColumn(identityPanelBlock, "identity panel");
+        AssertPanelWithinColumn(overviewPanelBlock, "overview panel");
+        AssertPanelWithinColumn(accountPanelBlock, "account panel");
+        AssertPanelWithinColumn(rewardPanelBlock, "reward track panel");
+        AssertPanelWithinColumn(historyPanelBlock, "recent history panel");
+
+        AssertCssContains(identityNameBlock, "white-space: nowrap;", "Commander/Profile identity name must not wrap into the portrait or frame chrome.");
+        AssertCssContains(identitySubtitleBlock, "white-space: nowrap;", "Commander/Profile subtitle must not wrap into adjacent labels.");
+        AssertCssContains(panelTitleBlock, "right: 6%;", "Panel titles must reserve right-side padding inside frames.");
+        AssertCssContains(rewardTextBlock, "-unity-text-align: middle-center;", "Reward copy must stay centered inside its safe row.");
+        AssertCssContains(footerActionBlock, "width: 20%;", "Footer action buttons must keep enough width for readable labels.");
+    }
+
+    [Test]
+    public void MissionResultPopupUxmlExposesCanvasParityBindingsAndNewArtAssets()
+    {
+        VisualTreeAsset resultAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MissionResultPopupUxmlPath);
+        StyleSheet resultStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>(MissionResultPopupUssPath);
+        Assert.IsNotNull(resultAsset, $"Missing Mission Result popup UXML asset: {MissionResultPopupUxmlPath}");
+        Assert.IsNotNull(resultStyle, $"Missing Mission Result popup USS asset: {MissionResultPopupUssPath}");
+
+        string uxml = File.ReadAllText(MissionResultPopupUxmlPath);
+        string uss = File.ReadAllText(MissionResultPopupUssPath);
+
+        string[] requiredBindings =
+        {
+            "POP05_MissionResultPopup",
+            "BackdropScrim",
+            "PopupFrame",
+            "HeaderPanel",
+            "ResultBadge",
+            "Title",
+            "Subtitle",
+            "SummaryPanel",
+            "SummaryTitle",
+            "SummaryBody",
+            "PrimaryObjectiveRow",
+            "CivilianObjectiveRow",
+            "LossObjectiveRow",
+            "StatsPanel",
+            "TimeStat",
+            "UnitsLostStat",
+            "CiviliansStat",
+            "ScoreStat",
+            "RewardsPanel",
+            "RewardCredits",
+            "RewardSupply",
+            "RewardIntel",
+            "ContinueButton",
+            "ReplayButton"
+        };
+
+        for (int i = 0; i < requiredBindings.Length; i++)
+            StringAssert.Contains($"name=\"{requiredBindings[i]}\"", uxml, $"Mission Result popup UXML missing binding: {requiredBindings[i]}");
+
+        StringAssert.Contains("<ui:Button name=\"ContinueButton\"", uxml, "Mission Result continue action must remain a UI Toolkit Button.");
+        StringAssert.Contains("<ui:Button name=\"ReplayButton\"", uxml, "Mission Result replay action must remain a UI Toolkit Button.");
+        StringAssert.Contains("shell-motion shell-motion-popup-hidden", uxml, "Mission Result popup must start from the shared popup scale-motion hidden state.");
+        StringAssert.Contains("TargetLockV02", uss, "Mission Result popup must use the approved new-art Match HUD TargetLockV02 asset set.");
+        StringAssert.Contains("Armory/LayeredOneGo", uss, "Mission Result popup may reuse approved new-art Armory chrome assets.");
+        StringAssert.Contains(".popup-frame", uss, "Mission Result stylesheet must define the popup frame safe rect.");
+        StringAssert.Contains("transform-origin: 50% 50%;", uss, "Mission Result popup must scale from center.");
+        StringAssert.Contains(".result-title", uss, "Mission Result stylesheet must define readable result title text.");
+        StringAssert.Contains("font-size: 58px;", uss, "Mission Result title must be target-readable.");
+        StringAssert.Contains(".action-label", uss, "Mission Result action labels must be styled separately from button chrome.");
+
+        Assert.IsFalse(uxml.Contains("UnityEngine.UI,", StringComparison.Ordinal), "Mission Result UXML must not reference Canvas UI.");
+        Assert.IsFalse(uxml.Contains("TMPro", StringComparison.Ordinal), "Mission Result UXML must not reference TextMesh Pro.");
+        Assert.IsFalse(uss.Contains("TargetLockV01", StringComparison.Ordinal), "Mission Result USS must not reference stale TargetLockV01 art.");
+        Assert.IsFalse(uss.Contains("Art/UI/Final", StringComparison.Ordinal), "Mission Result USS must not pull old final Canvas-era sprites.");
+    }
+
+    [Test]
+    public void UiToolkitShellViewMountsMissionResultPopupIntoPopupSlot()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset resultAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MissionResultPopupUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(resultAsset, $"Missing Mission Result popup UXML asset: {MissionResultPopupUxmlPath}");
+
+        var gateway = new RecordingUiShellRuntimeGateway();
+        UiShellRuntimeGateway.Register(gateway);
+        GameObject host = new("UiToolkitShellMissionResultPopupSmoke");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(
+                document,
+                shellAsset,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                configuredMissionResultPopupAsset: resultAsset);
+
+            Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Mission Result popup.");
+            Assert.IsTrue(shellView.MountMissionResultPopup(), "Mission Result popup must mount into PopupScreenSlot.");
+            Assert.AreSame(resultAsset, shellView.MissionResultPopupAsset, "Configured Mission Result asset must be retained by the shell view.");
+            Assert.IsTrue(shellView.HasMountedMissionResultPopup, "Mission Result popup must mount into PopupScreenSlot.");
+            Assert.IsTrue(shellView.HasRequiredMissionResultBindings, "Mission Result popup must cache required labels and actions.");
+            Assert.AreEqual("VICTORY", shellView.MissionResultTitleLabel.text, "Mission Result title binding mismatch.");
+            Assert.IsNotNull(shellView.MissionResultContinueAction, "Mission Result Continue action must be cached.");
+            Assert.IsNotNull(shellView.MissionResultReplayAction, "Mission Result Replay action must be cached.");
+            Assert.IsTrue(shellView.PopupScreenSlot.ClassListContains("shell-hidden"), "Mission Result popup must start hidden.");
+            Assert.IsTrue(shellView.ModalOverlay.ClassListContains("shell-hidden"), "Mission Result modal overlay must start hidden.");
+
+            var commands = new[]
+            {
+                new UiShellPresentationCommandModel(
+                    UiShellCommandKind.ShowPopup,
+                    UiShellRegionId.PopupLayer,
+                    UIRoute.Match,
+                    UiShellMode.PopupOnly,
+                    94)
+            };
+
+            Assert.IsTrue(shellView.ApplyPresentationCommands(commands), "ShowPopup presentation must apply to Mission Result popup.");
+            Assert.IsFalse(shellView.PopupScreenSlot.ClassListContains("shell-hidden"), "ShowPopup must reveal the Mission Result popup slot.");
+            Assert.IsFalse(shellView.ModalOverlay.ClassListContains("shell-hidden"), "ShowPopup must reveal the modal overlay.");
+            Assert.IsTrue(shellView.PopupScreenSlot.ClassListContains(UiToolkitShellView.GetMotionStateClass(UiToolkitShellMotionState.PopupVisible)), "Mission Result popup must use shared popup scale-in motion.");
+
+            Assert.IsTrue(shellView.TrySubmitMissionResultAction("ContinueButton"), "Mission Result Continue action must submit through the shell route boundary.");
+
+            Assert.AreEqual(1, gateway.RouteRequests.Count, "Mission Result Continue must enqueue a route request.");
+            Assert.AreEqual(UiShellRouteIntent.ReturnToMainMenu, gateway.RouteRequests[0].Intent, "Mission Result Continue must route through loading before returning to Main Menu.");
+            Assert.AreEqual(UIRoute.MainMenu, gateway.RouteRequests[0].Route, "Mission Result Continue must target Main Menu after loading.");
+            Assert.IsFalse(gateway.RouteRequests[0].PushHistory, "Mission Result Continue must not push route history.");
+
+            shellView.ClearCache();
+
+            Assert.IsFalse(shellView.HasMountedMissionResultPopup, "ClearCache must clear Mission Result mounted state.");
+            Assert.IsNull(shellView.MissionResultPopupRoot, "ClearCache must clear Mission Result root.");
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void UiToolkitShellApplySystemAppliesMissionResultReadModelVariants()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset resultAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MissionResultPopupUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(resultAsset, $"Missing Mission Result popup UXML asset: {MissionResultPopupUxmlPath}");
+
+        var gateway = new RecordingUiShellRuntimeGateway
+        {
+            HasMissionResult = true,
+            MissionResult = new UiMissionResultPopupModel(
+                UiMissionResultOutcome.Loss,
+                "MISSION FAILED",
+                "Extraction required.",
+                "Primary objectives were not completed. Remaining squads are returning to base for reassignment.",
+                replayEnabled: false)
+        };
+        UiShellRuntimeGateway.Register(gateway);
+
+        GameObject host = new("UiToolkitShellMissionResultReadModelSmoke");
+        using World world = new("UiToolkitShellMissionResultReadModelSmokeWorld");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(
+                document,
+                shellAsset,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                configuredMissionResultPopupAsset: resultAsset);
+
+            UiToolkitShellApplySystem applySystem = world.GetOrCreateSystemManaged<UiToolkitShellApplySystem>();
+            applySystem.ConfigureShellView(shellView);
+            Assert.IsTrue(shellView.MountMissionResultPopup(), "Mission Result popup must mount before applying its read model.");
+
+            applySystem.Update();
+
+            Assert.IsTrue(applySystem.HasMissionResult, "Apply system must read Mission Result state from the runtime gateway.");
+            Assert.AreEqual("MISSION FAILED", applySystem.LastMissionResult.Title, "Apply system did not capture Mission Result title.");
+            Assert.AreEqual("MISSION FAILED", shellView.MissionResultTitleLabel.text, "Mission Result title must come from the read model.");
+            Assert.AreEqual("Extraction required.", shellView.MissionResultSubtitleLabel.text, "Mission Result subtitle must come from the read model.");
+            StringAssert.Contains("Remaining squads", shellView.MissionResultSummaryBodyLabel.text, "Mission Result summary must come from the read model.");
+            Assert.IsTrue(shellView.MissionResultBadge.ClassListContains("loss-badge"), "Loss result must apply the loss badge style.");
+            Assert.IsFalse(shellView.MissionResultReplayAction.enabledSelf, "Replay enabled state must come from the read model.");
+
+            gateway.MissionResult = UiMissionResultPopupModel.VictoryDefault;
+            applySystem.Update();
+
+            Assert.AreEqual("VICTORY", shellView.MissionResultTitleLabel.text, "Victory model must restore the victory title.");
+            Assert.IsTrue(shellView.MissionResultBadge.ClassListContains("victory-badge"), "Victory result must restore the victory badge style.");
+            Assert.IsTrue(shellView.MissionResultReplayAction.enabledSelf, "Victory model must restore replay enabled state.");
+
+            string runtimeGatewaySource = File.ReadAllText("Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs");
+            StringAssert.Contains("bool TryReadMissionResult(out UiMissionResultPopupModel result)", runtimeGatewaySource, "Runtime gateway must expose Mission Result read model access.");
+
+            string applySource = File.ReadAllText("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs");
+            StringAssert.Contains("UiShellRuntimeGateway.TryReadMissionResult", applySource, "Managed apply edge must read Mission Result from the runtime gateway.");
+            StringAssert.Contains("shellView.ApplyMissionResult", applySource, "Managed apply edge must apply Mission Result through the shell view.");
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void MissionResultUsesSingleUiToolkitPopupForVictoryAndLossVariants()
+    {
+        Assert.IsTrue(File.Exists(MissionResultPopupUxmlPath), $"Missing Mission Result UXML: {MissionResultPopupUxmlPath}");
+        Assert.IsTrue(File.Exists(MissionResultPopupUssPath), $"Missing Mission Result USS: {MissionResultPopupUssPath}");
+
+        var resultSurfacePaths = new List<string>();
+        string[] uxmlPaths = Directory.GetFiles(UiToolkitRoot, "*.uxml", SearchOption.AllDirectories);
+        for (int i = 0; i < uxmlPaths.Length; i++)
+        {
+            string fileName = Path.GetFileNameWithoutExtension(uxmlPaths[i]);
+            if (fileName.Contains("Result", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Contains("Victory", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Contains("Loss", StringComparison.OrdinalIgnoreCase))
+            {
+                resultSurfacePaths.Add(NormalizeAssetPath(uxmlPaths[i]));
+            }
+        }
+
+        Assert.AreEqual(1, resultSurfacePaths.Count, "Victory/Loss result variants must stay inside the single POP05 UI Toolkit surface instead of adding duplicate result UXMLs.");
+        Assert.AreEqual(MissionResultPopupUxmlPath, resultSurfacePaths[0], "POP05 must remain the only UI Toolkit result popup surface.");
+
+        string resultUss = File.ReadAllText(MissionResultPopupUssPath);
+        string shellViewSource = File.ReadAllText("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs");
+        string componentsSource = File.ReadAllText("Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs");
+        StringAssert.Contains(".victory-badge", resultUss, "Single Mission Result surface must style the Victory variant.");
+        StringAssert.Contains(".loss-badge", resultUss, "Single Mission Result surface must style the Loss variant.");
+        StringAssert.Contains("UiMissionResultOutcome.Loss ? \"loss-badge\" : \"victory-badge\"", shellViewSource, "Mission Result view must select badge state from the read model outcome.");
+        StringAssert.Contains("public static UiMissionResultPopupModel VictoryDefault", componentsSource, "Mission Result contracts must retain a Victory default model.");
+        StringAssert.Contains("public static UiMissionResultPopupModel LossDefault", componentsSource, "Mission Result contracts must retain a Loss default model.");
+    }
+
+    [Test]
+    public void SettingsPopupUxmlExposesShellBindingsAndRoutesThroughGateway()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset settingsAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SettingsPopupUxmlPath);
+        StyleSheet settingsStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>(SettingsPopupUssPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(settingsAsset, $"Missing Settings popup UXML asset: {SettingsPopupUxmlPath}");
+        Assert.IsNotNull(settingsStyle, $"Missing Settings popup USS asset: {SettingsPopupUssPath}");
+
+        string uxml = File.ReadAllText(SettingsPopupUxmlPath);
+        string uss = File.ReadAllText(SettingsPopupUssPath);
+        StringAssert.Contains("POP06_SettingsPopup", uxml, "Settings popup must expose a stable root binding.");
+        StringAssert.Contains("name=\"CloseButton\"", uxml, "Settings popup must expose a close action.");
+        StringAssert.Contains("settings-popup-frame", uxml, "Settings popup must use the shared popup scale-motion frame.");
+        StringAssert.Contains("shell-motion-popup-hidden", uxml, "Settings popup must start with hidden popup motion state.");
+        StringAssert.Contains("scn08_v02_panel_frame_large.png", uss, "Settings popup must use the new-art-direction V02 chrome.");
+        StringAssert.Contains("scn08_v02_icon_settings_gear.png", uss, "Settings popup must use the new-art-direction settings icon.");
+        Assert.IsFalse(uss.Contains("TargetLockV01", StringComparison.Ordinal), "Settings popup USS must not reference stale TargetLockV01 art.");
+        Assert.IsFalse(uss.Contains("Art/UI/Final", StringComparison.Ordinal), "Settings popup USS must not pull old final Canvas-era sprites.");
+
+        var gateway = new RecordingUiShellRuntimeGateway();
+        UiShellRuntimeGateway.Register(gateway);
+        GameObject host = new("UiToolkitShellSettingsPopupSmoke");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(
+                document,
+                shellAsset,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                configuredSettingsPopupAsset: settingsAsset);
+
+            Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Settings popup.");
+            Assert.IsTrue(shellView.MountSettingsPopup(), "Settings popup must mount into PopupScreenSlot.");
+            Assert.AreSame(settingsAsset, shellView.SettingsPopupAsset, "Configured Settings popup asset must be retained by the shell view.");
+            Assert.IsTrue(shellView.HasMountedSettingsPopup, "Settings popup must mount into PopupScreenSlot.");
+            Assert.IsTrue(shellView.HasRequiredSettingsBindings, "Settings popup must cache title and close action bindings.");
+            Assert.AreEqual("SETTINGS", shellView.SettingsTitleLabel.text, "Settings title binding mismatch.");
+            Assert.IsNotNull(shellView.SettingsCloseAction, "Settings close action must be cached.");
+            Assert.IsTrue(shellView.PopupScreenSlot.ClassListContains("shell-hidden"), "Settings popup must start hidden.");
+
+            var commands = new[]
+            {
+                new UiShellPresentationCommandModel(
+                    UiShellCommandKind.ShowPopup,
+                    UiShellRegionId.PopupLayer,
+                    UIRoute.Settings,
+                    UiShellMode.PopupOnly,
+                    12)
+            };
+
+            Assert.IsTrue(shellView.ApplyPresentationCommands(commands), "ShowPopup presentation must apply to Settings popup.");
+            Assert.IsFalse(shellView.PopupScreenSlot.ClassListContains("shell-hidden"), "ShowPopup must reveal the Settings popup slot.");
+            Assert.IsFalse(shellView.ModalOverlay.ClassListContains("shell-hidden"), "ShowPopup must reveal the modal overlay.");
+            Assert.IsTrue(shellView.PopupScreenSlot.ClassListContains(UiToolkitShellView.GetMotionStateClass(UiToolkitShellMotionState.PopupVisible)), "Settings popup must use shared popup scale-in motion.");
+
+            Assert.IsTrue(shellView.TrySubmitSettingsAction("CloseButton"), "Settings Close action must submit through the shell route boundary.");
+            Assert.AreEqual(1, gateway.RouteRequests.Count, "Settings Close must enqueue one route request.");
+            Assert.AreEqual(UiShellRouteIntent.BackMenuRoute, gateway.RouteRequests[0].Intent, "Settings Close must use the back/menu route boundary.");
+            Assert.AreEqual(UIRoute.MainMenu, gateway.RouteRequests[0].Route, "Settings Close must route back to Main Menu.");
+            Assert.IsFalse(gateway.RouteRequests[0].PushHistory, "Settings Close must not push route history.");
+
+            shellView.ClearCache();
+
+            Assert.IsFalse(shellView.HasMountedSettingsPopup, "ClearCache must clear Settings mounted state.");
+            Assert.IsNull(shellView.SettingsPopupRoot, "ClearCache must clear Settings root.");
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void InboxPopupUxmlExposesShellBindingsAndRoutesThroughGateway()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset inboxAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(InboxPopupUxmlPath);
+        StyleSheet inboxStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>(InboxPopupUssPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(inboxAsset, $"Missing Inbox popup UXML asset: {InboxPopupUxmlPath}");
+        Assert.IsNotNull(inboxStyle, $"Missing Inbox popup USS asset: {InboxPopupUssPath}");
+
+        string uxml = File.ReadAllText(InboxPopupUxmlPath);
+        string uss = File.ReadAllText(InboxPopupUssPath);
+        StringAssert.Contains("POP07_InboxPopup", uxml, "Inbox popup must expose a stable root binding.");
+        StringAssert.Contains("name=\"CloseButton\"", uxml, "Inbox popup must expose a close action.");
+        StringAssert.Contains("name=\"MessageRow0\"", uxml, "Inbox popup must expose retained message rows for later read-model binding.");
+        StringAssert.Contains("inbox-popup-frame", uxml, "Inbox popup must use the shared popup scale-motion frame.");
+        StringAssert.Contains("shell-motion-popup-hidden", uxml, "Inbox popup must start with hidden popup motion state.");
+        StringAssert.Contains("scn08_v02_panel_frame_large.png", uss, "Inbox popup must use the new-art-direction V02 chrome.");
+        StringAssert.Contains("scn02c_mail_icon.png", uss, "Inbox popup must use the new-art-direction Main Menu mail icon.");
+        Assert.IsFalse(uss.Contains("TargetLockV01", StringComparison.Ordinal), "Inbox popup USS must not reference stale TargetLockV01 art.");
+        Assert.IsFalse(uss.Contains("Art/UI/Final", StringComparison.Ordinal), "Inbox popup USS must not pull old final Canvas-era sprites.");
+
+        var gateway = new RecordingUiShellRuntimeGateway();
+        UiShellRuntimeGateway.Register(gateway);
+        GameObject host = new("UiToolkitShellInboxPopupSmoke");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(
+                document,
+                shellAsset,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                configuredInboxPopupAsset: inboxAsset);
+
+            Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Inbox popup.");
+            Assert.IsTrue(shellView.MountInboxPopup(), "Inbox popup must mount into PopupScreenSlot.");
+            Assert.AreSame(inboxAsset, shellView.InboxPopupAsset, "Configured Inbox popup asset must be retained by the shell view.");
+            Assert.IsTrue(shellView.HasMountedInboxPopup, "Inbox popup must mount into PopupScreenSlot.");
+            Assert.IsTrue(shellView.HasRequiredInboxBindings, "Inbox popup must cache title and close action bindings.");
+            Assert.AreEqual("INBOX", shellView.InboxTitleLabel.text, "Inbox title binding mismatch.");
+            Assert.IsNotNull(shellView.InboxCloseAction, "Inbox close action must be cached.");
+            Assert.IsTrue(shellView.PopupScreenSlot.ClassListContains("shell-hidden"), "Inbox popup must start hidden.");
+
+            var commands = new[]
+            {
+                new UiShellPresentationCommandModel(
+                    UiShellCommandKind.ShowPopup,
+                    UiShellRegionId.PopupLayer,
+                    UIRoute.Inbox,
+                    UiShellMode.PopupOnly,
+                    13)
+            };
+
+            Assert.IsTrue(shellView.ApplyPresentationCommands(commands), "ShowPopup presentation must apply to Inbox popup.");
+            Assert.IsFalse(shellView.PopupScreenSlot.ClassListContains("shell-hidden"), "ShowPopup must reveal the Inbox popup slot.");
+            Assert.IsFalse(shellView.ModalOverlay.ClassListContains("shell-hidden"), "ShowPopup must reveal the modal overlay.");
+            Assert.IsTrue(shellView.PopupScreenSlot.ClassListContains(UiToolkitShellView.GetMotionStateClass(UiToolkitShellMotionState.PopupVisible)), "Inbox popup must use shared popup scale-in motion.");
+
+            Assert.IsTrue(shellView.TrySubmitInboxAction("CloseButton"), "Inbox Close action must submit through the shell route boundary.");
+            Assert.AreEqual(1, gateway.RouteRequests.Count, "Inbox Close must enqueue one route request.");
+            Assert.AreEqual(UiShellRouteIntent.BackMenuRoute, gateway.RouteRequests[0].Intent, "Inbox Close must use the back/menu route boundary.");
+            Assert.AreEqual(UIRoute.MainMenu, gateway.RouteRequests[0].Route, "Inbox Close must route back to Main Menu.");
+            Assert.IsFalse(gateway.RouteRequests[0].PushHistory, "Inbox Close must not push route history.");
+
+            shellView.ClearCache();
+
+            Assert.IsFalse(shellView.HasMountedInboxPopup, "ClearCache must clear Inbox mounted state.");
+            Assert.IsNull(shellView.InboxPopupRoot, "ClearCache must clear Inbox root.");
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void UiToolkitShellDiagnosticsOverlayExposesFpsAndRuntimeLogActions()
+    {
+        string shellUxml = File.ReadAllText(ShellUxmlPath);
+        string shellUss = File.ReadAllText(ShellUssPath);
+        StringAssert.Contains("name=\"DiagnosticsOverlay\"", shellUxml, "Shell UXML must expose a persistent diagnostics overlay.");
+        StringAssert.Contains("name=\"DiagnosticsFpsButton\"", shellUxml, "FPS counter must be a clickable Toolkit button.");
+        StringAssert.Contains("name=\"DiagnosticsLogPanel\"", shellUxml, "Runtime log popup panel must be present in Toolkit shell.");
+        StringAssert.Contains("name=\"DiagnosticsCloseButton\"", shellUxml, "Runtime log popup must expose a close action.");
+        StringAssert.Contains(".diagnostics-fps-button", shellUss, "Shell USS must style the FPS counter.");
+        StringAssert.Contains(".diagnostics-log-panel", shellUss, "Shell USS must style the runtime log overlay.");
+        Assert.IsFalse(shellUxml.Contains("UnityEngine.UI,", StringComparison.Ordinal), "Diagnostics overlay must not reference Canvas UI.");
+        Assert.IsFalse(shellUxml.Contains("TMPro", StringComparison.Ordinal), "Diagnostics overlay must not reference TextMesh Pro.");
+
+        string componentsSource = File.ReadAllText("Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs");
+        StringAssert.Contains("ToggleDiagnosticsOverlay", componentsSource, "FPS click must enqueue an ECS UI action.");
+        StringAssert.Contains("CloseDiagnosticsOverlay", componentsSource, "Runtime log close must enqueue an ECS UI action.");
+
+        string applySource = File.ReadAllText("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs");
+        StringAssert.Contains("UiShellRuntimeGateway.TryReadDiagnosticsOverlay", applySource, "Managed apply edge must read diagnostics from the runtime gateway.");
+        StringAssert.Contains("shellView.ApplyDiagnosticsOverlay", applySource, "Managed apply edge must apply diagnostics through the shell view.");
+
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+
+        var gateway = new RecordingUiShellRuntimeGateway
+        {
+            HasDiagnosticsOverlay = true,
+            DiagnosticsOverlay = new UiDiagnosticsOverlayModel(
+                58,
+                true,
+                "[WARN] sample warning\n\n[ERROR] sample error")
+        };
+        UiShellRuntimeGateway.Register(gateway);
+
+        GameObject host = new("UiToolkitShellDiagnosticsOverlaySmoke");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(document, shellAsset);
+
+            Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before diagnostics overlay validation.");
+            Assert.IsTrue(shellView.HasRequiredDiagnosticsBindings, "Diagnostics overlay must cache required FPS/log bindings.");
+            Assert.IsNotNull(shellView.DiagnosticsFpsAction, "FPS counter action must be cached.");
+            Assert.IsNotNull(shellView.DiagnosticsCloseAction, "Diagnostics close action must be cached.");
+
+            Assert.IsTrue(shellView.ApplyDiagnosticsOverlay(gateway.DiagnosticsOverlay), "Diagnostics read model must apply to the shell overlay.");
+            Assert.AreEqual("58", shellView.DiagnosticsFpsValueLabel.text, "FPS text must come from the diagnostics read model.");
+            StringAssert.Contains("sample warning", shellView.DiagnosticsLogTextLabel.text, "Log text must come from the diagnostics read model.");
+            Assert.IsFalse(shellView.DiagnosticsLogPanel.ClassListContains("shell-hidden"), "Visible diagnostics model must show the runtime log panel.");
+
+            Assert.IsTrue(shellView.TrySubmitMatchHudAction(UiActionKind.ToggleDiagnosticsOverlay), "FPS diagnostics click must enqueue a UI action.");
+            Assert.IsTrue(shellView.TrySubmitMatchHudAction(UiActionKind.CloseDiagnosticsOverlay), "Diagnostics close click must enqueue a UI action.");
+            Assert.AreEqual(2, gateway.UiActionRequests.Count, "Diagnostics actions must be routed through the UI action boundary.");
+            Assert.AreEqual(UiActionKind.ToggleDiagnosticsOverlay, gateway.UiActionRequests[0].Kind, "FPS click action kind mismatch.");
+            Assert.AreEqual(UiActionKind.CloseDiagnosticsOverlay, gateway.UiActionRequests[1].Kind, "Close click action kind mismatch.");
+
+            shellView.ApplyDiagnosticsOverlay(new UiDiagnosticsOverlayModel(60, false, string.Empty));
+            Assert.AreEqual("60", shellView.DiagnosticsFpsValueLabel.text, "FPS text must update on subsequent read-model applies.");
+            Assert.IsTrue(shellView.DiagnosticsLogPanel.ClassListContains("shell-hidden"), "Hidden diagnostics model must hide the runtime log panel.");
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void UiToolkitShellViewMountsCommanderProfileUxmlIntoCommanderProfileSlot()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset commanderAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommanderProfileUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(commanderAsset, $"Missing Commander/Profile UXML asset: {CommanderProfileUxmlPath}");
+
+        var gateway = new RecordingUiShellRuntimeGateway
+        {
+            HasCommanderProfile = true,
+            CommanderProfile = new UiShellCommanderProfileModel(
+                "MAJ. RILEY STONE",
+                "TACTICAL ADVANTAGE READY",
+                "commander-portrait-default")
+        };
+        UiShellRuntimeGateway.Register(gateway);
+
+        GameObject host = new("UiToolkitShellCommanderProfileMountSmoke");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, null, null, null, commanderAsset);
+
+            Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Commander/Profile content.");
+            Assert.AreSame(commanderAsset, shellView.CommanderProfileScreenAsset, "Configured Commander/Profile asset must be retained by the shell view.");
+            Assert.IsTrue(shellView.HasMountedCommanderProfileScreen, "Configured Commander/Profile UXML must mount into CommanderProfileScreenSlot.");
+            Assert.IsTrue(shellView.HasRequiredCommanderProfileBindings, "Commander/Profile runtime bindings must be cached.");
+            Assert.IsTrue(shellView.CommanderProfileScreenSlot.ClassListContains("shell-hidden"), "Commander/Profile slot must stay hidden until the CommandFeed route is active.");
+            VisualElement headerBeforeCommandFeed = shellView.MainMenuHeaderContent;
+
+            var commands = new List<UiShellPresentationCommandModel>
+            {
+                new(
+                    UiShellCommandKind.SwapMenuMiddle,
+                    UiShellRegionId.MiddleRegion,
+                    UIRoute.CommandFeed,
+                    UiShellMode.MainMenu,
+                    900)
+            };
+
+            Assert.IsTrue(shellView.ApplyPresentationCommands(commands), "CommandFeed route command must apply successfully.");
+            Assert.IsTrue(shellView.IsCommanderProfileSubRouteVisible, "CommandFeed route must reveal the Commander/Profile slot.");
+            Assert.IsTrue(shellView.CommanderProfileScreenSlot.ClassListContains(UiToolkitShellView.GetMotionStateClass(UiToolkitShellMotionState.Visible)), "CommandFeed route must apply the visible motion class to the Commander/Profile slot.");
+            Assert.IsTrue(shellView.HasPersistentMainMenuHeader, "Commander/Profile route must keep the persistent Main Menu header mounted.");
+            Assert.AreSame(headerBeforeCommandFeed, shellView.MainMenuHeaderContent, "Commander/Profile route must preserve the same persistent header instance.");
+            Assert.AreEqual("MAJ. RILEY STONE", shellView.CommanderProfileNameLabel.text, "Commander/Profile name must use the commander read model.");
+            Assert.AreEqual("TACTICAL ADVANTAGE READY", shellView.CommanderProfileSubtitleLabel.text, "Commander/Profile subtitle must use the commander read model.");
+
+            commands[0] = new UiShellPresentationCommandModel(
+                UiShellCommandKind.SwapMenuMiddle,
+                UiShellRegionId.MiddleRegion,
+                UIRoute.MainMenu,
+                UiShellMode.MainMenu,
+                901);
+
+            Assert.IsTrue(shellView.ApplyPresentationCommands(commands), "Returning to Main Menu route must apply successfully.");
+            Assert.IsFalse(shellView.IsCommanderProfileSubRouteVisible, "Returning to Main Menu must hide the Commander/Profile slot.");
+            Assert.AreSame(headerBeforeCommandFeed, shellView.MainMenuHeaderContent, "Returning from Commander/Profile must keep the same persistent header instance.");
+
+            Assert.IsTrue(shellView.TrySubmitCommanderProfileAction("BackButton"), "Back action must submit through the shell route boundary.");
+            Assert.AreEqual(1, gateway.RouteRequests.Count, "Back action must enqueue one route request.");
+            Assert.AreEqual(UiShellRouteIntent.BackMenuRoute, gateway.RouteRequests[0].Intent, "Back action must use the shell back-route intent.");
+            Assert.AreEqual(UIRoute.MainMenu, gateway.RouteRequests[0].Route, "Back action must fall back to Main Menu.");
+            Assert.IsFalse(gateway.RouteRequests[0].PushHistory, "Back action must not push history.");
+
+            Assert.IsTrue(shellView.TrySubmitCommanderProfileAction("OpenArmoryButton"), "Open Armory action must submit through the shell route boundary.");
+            Assert.AreEqual(2, gateway.RouteRequests.Count, "Open Armory action must enqueue a route request.");
+            Assert.AreEqual(UiShellRouteIntent.OpenMenuRoute, gateway.RouteRequests[1].Intent, "Open Armory action must use a menu-route intent.");
+            Assert.AreEqual(UIRoute.Armory, gateway.RouteRequests[1].Route, "Open Armory action must route to Armory.");
+            Assert.IsTrue(gateway.RouteRequests[1].PushHistory, "Open Armory action must push route history.");
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
     public void UiToolkitViewsDoNotOwnFramePolling()
     {
         var violations = new List<string>();
@@ -4220,6 +4912,38 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             RegexOptions.CultureInvariant);
         Assert.IsTrue(match.Success, $"Missing numeric USS property: {propertyName}");
         return float.Parse(match.Groups["value"].Value, CultureInfo.InvariantCulture);
+    }
+
+    private static bool TryReadPercentProperty(string block, string propertyName, out float value)
+    {
+        Match match = Regex.Match(
+            block,
+            $@"(?m)^\s*{Regex.Escape(propertyName)}\s*:\s*(?<value>-?\d+(\.\d+)?)%\s*;",
+            RegexOptions.CultureInvariant);
+        if (!match.Success)
+        {
+            value = 0f;
+            return false;
+        }
+
+        value = float.Parse(match.Groups["value"].Value, CultureInfo.InvariantCulture);
+        return true;
+    }
+
+    private static void AssertPanelWithinColumn(string block, string label)
+    {
+        float height = ReadPercentProperty(block, "height");
+        Assert.Greater(height, 0f, $"{label} must have a positive height.");
+        Assert.LessOrEqual(height, 100f, $"{label} must fit within its parent column.");
+
+        if (TryReadPercentProperty(block, "top", out float top))
+            Assert.LessOrEqual(top + height, 100f, $"{label} top + height must stay inside its column.");
+
+        if (TryReadPercentProperty(block, "bottom", out float bottom))
+            Assert.LessOrEqual(bottom + height, 100f, $"{label} bottom + height must stay inside its column.");
+
+        if (TryReadPercentProperty(block, "width", out float width))
+            Assert.LessOrEqual(width, 100f, $"{label} width must stay inside its parent column.");
     }
 
     private static void AssertSymmetricInsets(string block, string label)
@@ -4623,8 +5347,10 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         public readonly List<RecordedUiActionRequest> UiActionRequests = new();
         public readonly List<ArmoryCatalogCategory> ArmoryCategoryRequests = new();
         public UiShellStateModel ShellState;
+        public UiDiagnosticsOverlayModel DiagnosticsOverlay;
         public UiShellCommanderProfileModel CommanderProfile;
         public UiShellMainMenuResourcesModel MainMenuResources;
+        public UiMissionResultPopupModel MissionResult;
         public UiMatchHudSelectionPanelModel MatchHudSelection;
         public UiMatchHudCommandStateModel MatchHudCommandState;
         public UiMatchHudHeaderModel MatchHudHeader;
@@ -4636,8 +5362,10 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         public UiBuildPlacementConfirmationBarModel BuildPlacementConfirmationBar;
         public ArmoryCatalogCategory ArmoryCategory;
         public bool HasShellState;
+        public bool HasDiagnosticsOverlay;
         public bool HasCommanderProfile;
         public bool HasMainMenuResources;
+        public bool HasMissionResult;
         public bool HasMatchHudSelection;
         public bool HasMatchHudCommandState;
         public bool HasMatchHudHeader;
@@ -4672,6 +5400,12 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             return false;
         }
 
+        public bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics)
+        {
+            diagnostics = DiagnosticsOverlay;
+            return HasDiagnosticsOverlay;
+        }
+
         public bool TryReadShellState(out UiShellStateModel state)
         {
             state = ShellState;
@@ -4688,6 +5422,12 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         {
             resources = MainMenuResources;
             return HasMainMenuResources;
+        }
+
+        public bool TryReadMissionResult(out UiMissionResultPopupModel result)
+        {
+            result = MissionResult;
+            return HasMissionResult;
         }
 
         public bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection)

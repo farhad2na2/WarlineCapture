@@ -21,6 +21,13 @@ public struct UiShellLoadingProgressComponent : IComponentData
     public byte IsComplete;
 }
 
+public struct UiDiagnosticsOverlayComponent : IComponentData
+{
+    public int Fps;
+    public byte LogVisible;
+    public FixedString4096Bytes LogText;
+}
+
 public struct MatchIntroTransitionComponent : IComponentData
 {
     public MatchIntroTransitionStateKind State;

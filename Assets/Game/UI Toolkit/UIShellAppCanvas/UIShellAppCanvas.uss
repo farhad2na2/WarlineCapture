@@ -238,3 +238,119 @@
 .tooltip-layer {
     background-color: rgba(0, 0, 0, 0);
 }
+
+.diagnostics-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    picking-mode: ignore;
+}
+
+.diagnostics-fps-button {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    width: 78px;
+    height: 34px;
+    background-color: rgba(5, 8, 10, 0.86);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(215, 174, 72, 0.78);
+    border-right-color: rgba(215, 174, 72, 0.78);
+    border-top-color: rgba(215, 174, 72, 0.78);
+    border-bottom-color: rgba(215, 174, 72, 0.78);
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.diagnostics-fps-value {
+    font-size: 19px;
+    color: rgb(246, 210, 94);
+    -unity-text-align: middle-right;
+    margin-right: 4px;
+}
+
+.diagnostics-fps-suffix {
+    font-size: 11px;
+    color: rgb(222, 216, 190);
+    -unity-text-align: middle-left;
+}
+
+.diagnostics-log-panel {
+    position: absolute;
+    right: 12px;
+    top: 54px;
+    width: 520px;
+    height: 420px;
+    background-color: rgba(5, 8, 10, 0.94);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(215, 174, 72, 0.82);
+    border-right-color: rgba(215, 174, 72, 0.82);
+    border-top-color: rgba(215, 174, 72, 0.82);
+    border-bottom-color: rgba(215, 174, 72, 0.82);
+}
+
+.diagnostics-log-header {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: 12px;
+    height: 34px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.diagnostics-log-title {
+    font-size: 18px;
+    color: rgb(240, 235, 210);
+    -unity-text-align: middle-left;
+}
+
+.diagnostics-close-button {
+    width: 96px;
+    height: 30px;
+    background-color: rgba(20, 26, 25, 0.94);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(215, 174, 72, 0.7);
+    border-right-color: rgba(215, 174, 72, 0.7);
+    border-top-color: rgba(215, 174, 72, 0.7);
+    border-bottom-color: rgba(215, 174, 72, 0.7);
+}
+
+.diagnostics-close-label {
+    font-size: 13px;
+    color: rgb(240, 235, 210);
+    -unity-text-align: middle-center;
+}
+
+.diagnostics-log-scroll-view {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: 58px;
+    bottom: 16px;
+    background-color: rgba(0, 0, 0, 0.32);
+}
+
+.diagnostics-log-text {
+    font-size: 13px;
+    color: rgb(218, 230, 224);
+    white-space: normal;
+    -unity-text-align: upper-left;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

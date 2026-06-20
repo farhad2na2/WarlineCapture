@@ -36,6 +36,24 @@
 
             <ui:VisualElement name="TooltipLayer" class="tooltip-layer" />
 
+            <ui:VisualElement name="DiagnosticsOverlay" class="diagnostics-overlay">
+                <ui:Button name="DiagnosticsFpsButton" class="diagnostics-fps-button" text="">
+                    <ui:Label name="DiagnosticsFpsValue" class="diagnostics-fps-value" text="0" />
+                    <ui:Label name="DiagnosticsFpsSuffix" class="diagnostics-fps-suffix" text="FPS" />
+                </ui:Button>
+                <ui:VisualElement name="DiagnosticsLogPanel" class="diagnostics-log-panel shell-hidden">
+                    <ui:VisualElement name="DiagnosticsLogHeader" class="diagnostics-log-header">
+                        <ui:Label name="DiagnosticsLogTitle" class="diagnostics-log-title" text="RUNTIME LOG" />
+                        <ui:Button name="DiagnosticsCloseButton" class="diagnostics-close-button" text="">
+                            <ui:Label name="DiagnosticsCloseLabel" class="diagnostics-close-label" text="CLOSE" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                    <ui:ScrollView name="DiagnosticsLogScrollView" class="diagnostics-log-scroll-view" mode="Vertical">
+                        <ui:Label name="DiagnosticsLogText" class="diagnostics-log-text" text="" />
+                    </ui:ScrollView>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
             <ui:VisualElement name="LoadingLayer" class="loading-layer shell-slot shell-hidden">
                 <ui:VisualElement name="LoadingScreenSlot" class="screen-slot loading-screen-slot" />
             </ui:VisualElement>

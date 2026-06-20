@@ -1,0 +1,385 @@
+.pop05-mission-result-popup {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf");
+    color: rgb(239, 232, 202);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.pop05-mission-result-popup Button {
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.backdrop-scrim {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.68);
+}
+
+.popup-frame {
+    position: absolute;
+    left: 16.2%;
+    right: 16.2%;
+    top: 13.5%;
+    bottom: 11%;
+    transform-origin: 50% 50%;
+}
+
+.popup-chrome {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 92;
+    -unity-slice-right: 92;
+    -unity-slice-top: 62;
+    -unity-slice-bottom: 62;
+}
+
+.header-panel {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    top: 5.2%;
+    height: 17%;
+}
+
+.result-badge {
+    position: absolute;
+    left: 0;
+    top: 7%;
+    width: 9%;
+    height: 78%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.victory-badge {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_objective_star.png");
+}
+
+.loss-badge {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_warning_triangle.png");
+}
+
+.result-title {
+    position: absolute;
+    left: 11%;
+    right: 0;
+    top: 0;
+    height: 52%;
+    font-size: 58px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(247, 217, 99);
+    white-space: nowrap;
+}
+
+.result-subtitle {
+    position: absolute;
+    left: 11.4%;
+    right: 0;
+    bottom: 0;
+    height: 34%;
+    font-size: 24px;
+    -unity-text-align: middle-left;
+    color: rgb(229, 221, 190);
+    white-space: nowrap;
+}
+
+.summary-panel,
+.stats-panel,
+.rewards-panel {
+    position: absolute;
+    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_inspection_panel_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 74;
+    -unity-slice-right: 74;
+    -unity-slice-top: 54;
+    -unity-slice-bottom: 54;
+}
+
+.summary-panel {
+    left: 6%;
+    top: 25%;
+    width: 52%;
+    height: 39%;
+}
+
+.stats-panel {
+    right: 6%;
+    top: 25%;
+    width: 31%;
+    height: 39%;
+}
+
+.rewards-panel {
+    left: 6%;
+    right: 6%;
+    bottom: 17%;
+    height: 15%;
+}
+
+.panel-title {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    top: 6%;
+    height: 17%;
+    font-size: 22px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(247, 217, 99);
+    white-space: nowrap;
+}
+
+.summary-body {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    top: 25%;
+    height: 22%;
+    font-size: 18px;
+    white-space: normal;
+    -unity-text-align: upper-left;
+    color: rgb(226, 219, 190);
+}
+
+.objective-rows {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    top: 52%;
+    bottom: 8%;
+}
+
+.objective-row {
+    position: relative;
+    height: 31%;
+    margin-bottom: 1.8%;
+    background-color: rgba(5, 10, 10, 0.46);
+}
+
+.objective-icon {
+    position: absolute;
+    left: 2.2%;
+    top: 22%;
+    width: 6%;
+    height: 56%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.check-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_checkbox_checked.png");
+}
+
+.star-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_objective_star.png");
+}
+
+.objective-label {
+    position: absolute;
+    left: 10%;
+    right: 27%;
+    top: 0;
+    bottom: 0;
+    font-size: 18px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgb(239, 232, 202);
+    white-space: nowrap;
+}
+
+.objective-value {
+    position: absolute;
+    right: 3%;
+    width: 23%;
+    top: 0;
+    bottom: 0;
+    font-size: 17px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-right;
+    color: rgb(156, 212, 57);
+    white-space: nowrap;
+}
+
+.stats-grid {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 26%;
+    bottom: 9%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.stat-card {
+    width: 47%;
+    height: 45%;
+    margin-bottom: 5%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_chip_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 38;
+    -unity-slice-right: 38;
+    -unity-slice-top: 24;
+    -unity-slice-bottom: 24;
+}
+
+.stat-label {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 14%;
+    height: 28%;
+    font-size: 15px;
+    -unity-text-align: middle-center;
+    color: rgb(204, 198, 170);
+    white-space: nowrap;
+}
+
+.stat-value {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 12%;
+    height: 42%;
+    font-size: 25px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(247, 217, 99);
+    white-space: nowrap;
+}
+
+.reward-row {
+    position: relative;
+    width: 30.5%;
+    height: 58%;
+    margin-left: 2.1%;
+    margin-top: 5.4%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_resource_chip_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 56;
+    -unity-slice-right: 56;
+    -unity-slice-top: 34;
+    -unity-slice-bottom: 34;
+}
+
+.rewards-panel {
+    flex-direction: row;
+}
+
+.reward-icon {
+    position: absolute;
+    left: 8%;
+    top: 23%;
+    width: 13%;
+    height: 54%;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.credits-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_credits_coin.png");
+}
+
+.supply-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_supply_crate.png");
+}
+
+.intel-icon {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_scan_radar.png");
+}
+
+.reward-label {
+    position: absolute;
+    left: 25%;
+    top: 14%;
+    width: 42%;
+    height: 30%;
+    font-size: 16px;
+    -unity-text-align: middle-left;
+    color: rgb(209, 202, 174);
+    white-space: nowrap;
+}
+
+.reward-value {
+    position: absolute;
+    right: 8%;
+    top: 34%;
+    width: 34%;
+    height: 48%;
+    font-size: 25px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-right;
+    color: rgb(247, 217, 99);
+    white-space: nowrap;
+}
+
+.actions-panel {
+    position: absolute;
+    left: 23%;
+    right: 23%;
+    bottom: 5.8%;
+    height: 8.8%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.result-action {
+    position: relative;
+    width: 46%;
+    height: 100%;
+}
+
+.action-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 72;
+    -unity-slice-right: 72;
+    -unity-slice-top: 42;
+    -unity-slice-bottom: 42;
+}
+
+.primary-frame {
+    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_cta_primary_gold_frame.png");
+}
+
+.secondary-frame {
+    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_cta_secondary_dark_frame.png");
+}
+
+.action-label {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 0;
+    bottom: 0;
+    font-size: 24px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(248, 237, 205);
+    white-space: nowrap;
+}

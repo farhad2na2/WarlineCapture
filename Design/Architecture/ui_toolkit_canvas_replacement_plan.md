@@ -20,13 +20,13 @@ The Canvas prefabs stay as fallback until each UI Toolkit screen reaches behavio
 
 Last updated: 2026-06-20
 
-Overall progress: 81% - 90 / 111 tracked items complete
+Overall progress: 93% - 105 / 113 tracked items complete
 
-Current phase: Phase 8 - Commander/Profile
+Current phase: Phase 10 - Remove Canvas Runtime Dependency
 
 Current focus:
 
-- Convert the commander/profile content screen to UI Toolkit.
+- Replace runtime Canvas shell references in startup/composition with UI Toolkit references when `RuntimeUiConfig` is `UiToolkit`.
 
 Completed phases:
 
@@ -38,6 +38,8 @@ Completed phases:
 - Phase 5 - Build Popup
 - Phase 6 - Build Placement Confirmation Bar
 - Phase 7 - Armory
+- Phase 8 - Commander/Profile
+- Phase 9 - Result, Victory, Loss, Diagnostics, And Other Popups
 
 Blocked:
 
@@ -53,8 +55,8 @@ Blocked:
 | Phase 5 - Build Popup | Complete | 100% | 12 / 12 | `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_BuildDrawerPopup.uxml`; `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_BuildCatalogItemView.uxml`; `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_ProductionQueueItemView.uxml`; `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_ProductionActiveItemView.uxml`; `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`; `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; `Design/AgentReports/2026-06-19_ui-toolkit-build-popup-phase5-handoff.md`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
 | Phase 6 - Build Placement Confirmation Bar | Complete | 100% | 8 / 8 | `Assets/Game/UI Toolkit/SCN08_BuildPlacementConfirmationBar/SCN08_BuildPlacementConfirmationBar.uxml`; `Assets/Game/UI Toolkit/SCN08_BuildPlacementConfirmationBar/SCN08_BuildPlacementConfirmationBar.uss`; `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`; `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; `Design/AgentReports/2026-06-19_ui-toolkit-build-placement-phase6-handoff.md`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
 | Phase 7 - Armory | Complete | 100% | 8 / 8 | `Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryContent.uxml`; `Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryItemView.uxml`; `Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryContent.uss`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; `Design/AgentReports/2026-06-20_ui-toolkit-armory-phase7-handoff.md`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
-| Phase 8 - Commander/Profile | Not started | 0% | 0 / 6 | Pending |
-| Phase 9 - Result, Victory, Loss, And Other Popups | Not started | 0% | 0 / 7 | Pending |
+| Phase 8 - Commander/Profile | Complete | 100% | 6 / 6 | `Design/VisualLockLayered/SCN-03_CommanderProfile/reference/SCN-03_CommanderProfile_NewMainMenuArtDirection_TargetLock_V01.png`; `Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uxml`; `Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uss`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
+| Phase 9 - Result, Victory, Loss, Diagnostics, And Other Popups | Complete | 100% | 9 / 9 | Entry-gate reference saved: `Design/VisualLockLayered/POP-05_MissionResult/reference/POP-05_MissionResult_NewMainMenuArtDirection_TargetLock_V01.png`; `Assets/Game/UI Toolkit/POP05_MissionResultPopup/POP05_MissionResultPopup.uxml`; `Assets/Game/UI Toolkit/POP05_MissionResultPopup/POP05_MissionResultPopup.uss`; `Assets/Game/UI Toolkit/POP06_SettingsPopup/POP06_SettingsPopup.uxml`; `Assets/Game/UI Toolkit/POP06_SettingsPopup/POP06_SettingsPopup.uss`; `Assets/Game/UI Toolkit/POP07_InboxPopup/POP07_InboxPopup.uxml`; `Assets/Game/UI Toolkit/POP07_InboxPopup/POP07_InboxPopup.uss`; `Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uxml`; `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`; `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
 | Phase 10 - Remove Canvas Runtime Dependency | Not started | 0% | 0 / 8 | Pending |
 
 ## Progress Update Rules
@@ -195,6 +197,7 @@ New ECS/read-model data:
 - `UiArmoryReadModelComponent`
 - `UiCommanderReadModelComponent`
 - `UiResultReadModelComponent`
+- `UiDiagnosticsOverlayReadModelComponent`
 
 The final names can adjust to existing local naming, but they must preserve the same ownership split.
 
@@ -736,12 +739,20 @@ Validation:
 
 ### Phase 8 - Commander/Profile
 
-Status: Not started
-Progress: 0% - 0 / 6 tracked items complete
-Current step: Convert the commander/profile content screen to UI Toolkit.
+Status: Complete
+Progress: 100% - 6 / 6 tracked items complete
+Current step: Phase complete. Continue with Phase 9 result popups and diagnostics overlays.
 Completed steps:
 
-- None yet.
+- Saved the new-art Commander/Profile target-lock reference and prompt under `Design/VisualLockLayered/SCN-03_CommanderProfile/reference/SCN-03_CommanderProfile_NewMainMenuArtDirection_TargetLock_V01.png` and `Design/VisualLockLayered/SCN-03_CommanderProfile/prompts/SCN-03_CommanderProfile_NewMainMenuArtDirection_TargetLock_V01.md`.
+- Added `SCN03_CommanderProfileContent.uxml` and `.uss` as the dedicated UI Toolkit Commander/Profile content surface, exposing Canvas parity binding names while keeping the persistent header out of the content UXML.
+- Added focused validation that SCN03 imports, exposes tab/portrait/title/subtitle/badge/stat/ability/back bindings, uses only approved new-art shared assets, and avoids stale Commander/Profile generated assets.
+- Wired `UiToolkitShellView` to configure and mount `SCN03_CommanderProfileContent.uxml` into `CommanderProfileScreenSlot`, cache the tab/portrait/title/subtitle/badge/footer action bindings, and keep the persistent Main Menu header outside the SCN03 content surface.
+- Added thin Commander/Profile route submissions for Back, Overview, and Open Armory, with other tab/footer actions captured as no-op UI-edge callbacks until their read models exist.
+- Updated `UiToolkitShellApplySystem` so the managed presentation edge applies the commander read model to both the Main Menu commander card and the dedicated SCN03 Commander/Profile screen.
+- Added runtime validation that SCN03 mounts into the Commander/Profile slot, reveals on `UIRoute.CommandFeed`, preserves the persistent header, applies commander read-model text, and routes Back/Open Armory through `UiShellRuntimeGateway`.
+- Added static layout validation that Commander/Profile left/middle/right/footer regions stay below the persistent header, preserve safe gutters, and keep text inside safe rects.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=74` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
 
 Blocked: None.
 
@@ -757,20 +768,56 @@ Validation:
 - Header remains visible and unchanged.
 - Text stays inside tabs, panels, and frames.
 
-### Phase 9 - Result, Victory, Loss, And Other Popups
+### Phase 9 - Result, Victory, Loss, Diagnostics, And Other Popups
 
-Status: Not started
-Progress: 0% - 0 / 7 tracked items complete
-Current step: Convert result popups, victory/loss screens, mission result panels, settings/mail popups, and any remaining shell overlays.
+Status: In progress
+Status: Complete
+Progress: 100% - 9 / 9 tracked items complete
+Current step: Phase complete. Continue with Phase 10 Canvas runtime dependency removal.
 Completed steps:
 
-- None yet.
+- Entry-gate target reference saved under `Design/VisualLockLayered/POP-05_MissionResult/reference/POP-05_MissionResult_NewMainMenuArtDirection_TargetLock_V01.png`, with prompt saved under `Design/VisualLockLayered/POP-05_MissionResult/prompts/POP-05_MissionResult_NewMainMenuArtDirection_TargetLock_V01.md`.
+- Added `POP05_MissionResultPopup.uxml` and `.uss` with separate live result title/subtitle, mission summary rows, field-report stats, rewards, Continue/Replay actions, shared center scale-motion classes, and approved new-art chrome only.
+- Added focused validation that the Mission Result popup imports, exposes Canvas parity bindings as UI Toolkit elements/buttons, uses new-art assets, avoids stale TargetLockV01/Final assets, and keeps center-scale popup motion visible in the UXML/USS.
+- Wired `POP05_MissionResultPopup` into `UiToolkitShellView` as a mountable shell popup surface with cached title/subtitle/summary/action bindings, shared modal scale motion, and Continue routing through `UiShellRuntimeGateway`.
+- Added runtime validation that the Mission Result popup mounts into `PopupScreenSlot`, starts hidden with the modal overlay hidden, reveals through `ShowPopup`, clears on `ClearCache`, and writes a Main Menu route request from Continue.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=76` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Converted the shell-level FPS counter and click/tap runtime log popup to UI Toolkit in `UIShellAppCanvas.uxml`/`.uss`, with `DiagnosticsFpsButton`, `DiagnosticsLogPanel`, scrollable retained log text, and close action.
+- Added `UiDiagnosticsOverlayModel`, ECS diagnostics overlay state, `ToggleDiagnosticsOverlay` and `CloseDiagnosticsOverlay` UI actions, and a managed `UiDiagnosticsReadModelSystem` that writes FPS/log snapshots to ECS without touching UI Toolkit objects.
+- Wired `UiToolkitShellApplySystem` and `UiToolkitShellView` so diagnostics display applies through the managed UI edge, and the FPS/close controls enqueue ECS UI actions while blocking world clicks.
+- Added focused validation for diagnostics UXML/USS bindings, read-model application, and action routing.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=77` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `POP06_SettingsPopup.uxml` and `.uss` as a new-art UI Toolkit Settings popup surface with live title/subtitle/rows/close action, shared center popup motion, and no old `TargetLockV01` or `Art/UI/Final` references.
+- Wired `POP06_SettingsPopup` into `UiToolkitShellView` as a mountable shell popup surface. `ShowPopup` with `UIRoute.Settings` mounts Settings, while other popup routes continue using the existing popup flow.
+- Added Settings close routing through `UiShellRuntimeGateway` with `UiShellRouteIntent.BackMenuRoute` to Main Menu, keeping behavior at the shell boundary rather than mutating UI/gameplay state directly.
+- Added focused validation that Settings imports, exposes shell bindings, uses new-art V02 chrome/icon assets, mounts hidden in `PopupScreenSlot`, reveals through shared popup motion, and routes close through the shell gateway.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=78` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `POP07_InboxPopup.uxml` and `.uss` as a new-art UI Toolkit Inbox popup surface with retained live message rows, close action, shared center popup motion, and no old `TargetLockV01` or `Art/UI/Final` references.
+- Wired `POP07_InboxPopup` into `UiToolkitShellView` as a mountable shell popup surface. `ShowPopup` with `UIRoute.Inbox` mounts Inbox, while other popup routes continue using the existing popup flow.
+- Added Inbox close routing through `UiShellRuntimeGateway` with `UiShellRouteIntent.BackMenuRoute` to Main Menu, preserving shell-boundary ownership.
+- Added focused validation that Inbox imports, exposes retained message row bindings, uses new-art V02/Main Menu assets, mounts hidden in `PopupScreenSlot`, reveals through shared popup motion, and routes close through the shell gateway.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=79` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiMissionResultPopupModel` and `UiMissionResultOutcome` so the Mission Result popup can receive Victory/Loss title, subtitle, summary, badge outcome, and replay-enabled state from a read model instead of hardcoded UXML defaults.
+- Exposed `TryReadMissionResult` through `IUiShellRuntimeGateway`, `UiShellRuntimeGateway`, and `UiShellEcsGateway`. The ECS gateway currently returns no result data until a gameplay result source is added, while test/runtime gateways can drive the popup immediately.
+- Added `UiToolkitShellView.ApplyMissionResult` and wired `UiToolkitShellApplySystem` to read the Mission Result model and apply it through the managed UI edge.
+- Added `loss-badge` styling in `POP05_MissionResultPopup.uss` using the approved V02 warning icon, keeping Victory and Loss variants in the same live popup surface.
+- Added focused validation that a Loss read model updates the POP05 title/subtitle/summary/badge/replay state, then a Victory read model restores the victory title/badge/replay state through the same apply path.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=80` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added focused popup/loading precedence validation against a real mounted Mission Result popup: `ShowPopup` reveals `PopupScreenSlot`/`ModalOverlay`, then `ShowLoading` keeps loading visible above the mounted popup and blocks popup/world input through the loading content.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=81` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Updated Mission Result Continue to enqueue `UiShellRouteIntent.ReturnToMainMenu` instead of a direct `OpenMenuRoute`, so result confirm enters the ECS-owned loading transition and only reaches Main Menu after loading completion.
+- Added focused validation that Mission Result Continue targets Main Menu through `ReturnToMainMenu`, and that `UiShellFlowSystem` owns the loading-to-menu sequence with `ShowLoading`, `ExitLoading`, and `EnterMenu`.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=81` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Explicitly closed separate Victory/Loss UI Toolkit surfaces as unnecessary: both variants are read-model states of the single live `POP05_MissionResultPopup` surface, with `victory-badge` and `loss-badge` styling selected by `UiMissionResultOutcome`.
+- Added focused validation that `POP05_MissionResultPopup.uxml` is the only UI Toolkit result/victory/loss UXML surface and that the contract retains both `VictoryDefault` and `LossDefault` models.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=82` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
 
 Blocked: None.
 
 Tasks:
 
 - Convert result popups, victory/loss screens, mission result panels, settings/mail popups, and any remaining shell overlays.
+- Convert the on-screen FPS counter and its click/tap log popup to UI Toolkit as an explicit diagnostics overlay surface.
 - All popups scale from center on show and scale back to center on hide.
 - Popup layer always renders above loading only when loading is inactive; loading overrides popups when loading is active.
 - Result confirm writes a route request to loading, then main menu.
@@ -779,6 +826,7 @@ Validation:
 
 - Popup show/hide motion is shared and consistent.
 - Result confirm does not directly mutate gameplay state outside ECS route/result requests.
+- FPS counter click/tap enqueues a diagnostics popup request, and the log popup reads retained log rows from a diagnostics read model instead of pulling logs directly from a view.
 - Loading covers popups during route transitions.
 
 ### Phase 10 - Remove Canvas Runtime Dependency

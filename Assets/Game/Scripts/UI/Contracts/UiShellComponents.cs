@@ -97,7 +97,9 @@ public enum UiActionKind
     BuildDrawerPrimaryBuild,
     BuildPlacementConfirm,
     BuildPlacementCancel,
-    BuildPlacementRotate
+    BuildPlacementRotate,
+    ToggleDiagnosticsOverlay,
+    CloseDiagnosticsOverlay
 }
 
 public enum UiBuildProductionActionKind : byte
@@ -219,6 +221,22 @@ public readonly struct UiShellLoadingProgressModel
     }
 }
 
+public readonly struct UiDiagnosticsOverlayModel
+{
+    public readonly int Fps;
+    public readonly bool LogVisible;
+    public readonly string LogText;
+
+    public UiDiagnosticsOverlayModel(int fps, bool logVisible, string logText)
+    {
+        Fps = fps;
+        LogVisible = logVisible;
+        LogText = logText;
+    }
+
+    public static UiDiagnosticsOverlayModel Default => new(0, false, string.Empty);
+}
+
 public readonly struct UiActionRequestModel
 {
     public readonly UiActionKind Kind;
@@ -257,6 +275,51 @@ public readonly struct UiShellMainMenuResourcesModel
         SuppliesText = suppliesText;
         CommandText = commandText;
     }
+}
+
+public enum UiMissionResultOutcome : byte
+{
+    Victory,
+    Loss
+}
+
+public readonly struct UiMissionResultPopupModel
+{
+    public readonly UiMissionResultOutcome Outcome;
+    public readonly string Title;
+    public readonly string Subtitle;
+    public readonly string SummaryBody;
+    public readonly bool ReplayEnabled;
+
+    public UiMissionResultPopupModel(
+        UiMissionResultOutcome outcome,
+        string title,
+        string subtitle,
+        string summaryBody,
+        bool replayEnabled)
+    {
+        Outcome = outcome;
+        Title = title;
+        Subtitle = subtitle;
+        SummaryBody = summaryBody;
+        ReplayEnabled = replayEnabled;
+    }
+
+    public static UiMissionResultPopupModel VictoryDefault =>
+        new(
+            UiMissionResultOutcome.Victory,
+            "VICTORY",
+            "Sector secured. Command net restored.",
+            "Primary objectives completed with acceptable losses. Civilian risk stabilized and remaining hostile cells are retreating.",
+            true);
+
+    public static UiMissionResultPopupModel LossDefault =>
+        new(
+            UiMissionResultOutcome.Loss,
+            "MISSION FAILED",
+            "Command net disrupted. Extraction required.",
+            "Primary objectives were not completed. Regroup, resupply, and redeploy when command authorizes a new operation.",
+            true);
 }
 
 public readonly struct UiMatchHudSelectionPanelModel

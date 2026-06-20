@@ -8,8 +8,10 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
     private UiToolkitShellView shellView;
     private UiShellStateModel lastShellState;
     private UiShellLoadingProgressModel lastLoadingProgress;
+    private UiDiagnosticsOverlayModel lastDiagnosticsOverlay;
     private UiShellCommanderProfileModel lastCommanderProfile;
     private UiShellMainMenuResourcesModel lastMainMenuResources;
+    private UiMissionResultPopupModel lastMissionResult;
     private UiMatchHudSelectionPanelModel lastMatchHudSelection;
     private UiMatchHudCommandStateModel lastMatchHudCommandState;
     private UiMatchHudHeaderModel lastMatchHudHeader;
@@ -23,8 +25,10 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
     private UiShellTransitionCompleteModel pendingCompletion;
     private bool hasShellState;
     private bool hasLoadingProgress;
+    private bool hasDiagnosticsOverlay;
     private bool hasCommanderProfile;
     private bool hasMainMenuResources;
+    private bool hasMissionResult;
     private bool hasMatchHudSelection;
     private bool hasMatchHudCommandState;
     private bool hasMatchHudHeader;
@@ -43,8 +47,10 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
     public bool HasMountedShellView => shellView != null && shellView.IsMounted;
     public bool HasShellState => hasShellState;
     public bool HasLoadingProgress => hasLoadingProgress;
+    public bool HasDiagnosticsOverlay => hasDiagnosticsOverlay;
     public bool HasCommanderProfile => hasCommanderProfile;
     public bool HasMainMenuResources => hasMainMenuResources;
+    public bool HasMissionResult => hasMissionResult;
     public bool HasMatchHudSelection => hasMatchHudSelection;
     public bool HasMatchHudCommandState => hasMatchHudCommandState;
     public bool HasMatchHudHeader => hasMatchHudHeader;
@@ -57,8 +63,10 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
     public bool HasArmoryCategory => hasArmoryCategory;
     public UiShellStateModel LastShellState => lastShellState;
     public UiShellLoadingProgressModel LastLoadingProgress => lastLoadingProgress;
+    public UiDiagnosticsOverlayModel LastDiagnosticsOverlay => lastDiagnosticsOverlay;
     public UiShellCommanderProfileModel LastCommanderProfile => lastCommanderProfile;
     public UiShellMainMenuResourcesModel LastMainMenuResources => lastMainMenuResources;
+    public UiMissionResultPopupModel LastMissionResult => lastMissionResult;
     public UiMatchHudSelectionPanelModel LastMatchHudSelection => lastMatchHudSelection;
     public UiMatchHudCommandStateModel LastMatchHudCommandState => lastMatchHudCommandState;
     public UiMatchHudHeaderModel LastMatchHudHeader => lastMatchHudHeader;
@@ -87,8 +95,10 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
     {
         hasShellState = UiShellRuntimeGateway.TryReadShellState(out lastShellState);
         hasLoadingProgress = UiShellRuntimeGateway.TryReadLoadingProgress(out lastLoadingProgress);
+        hasDiagnosticsOverlay = UiShellRuntimeGateway.TryReadDiagnosticsOverlay(out lastDiagnosticsOverlay);
         hasCommanderProfile = UiShellRuntimeGateway.TryReadCommanderProfile(out lastCommanderProfile);
         hasMainMenuResources = UiShellRuntimeGateway.TryReadMainMenuResources(out lastMainMenuResources);
+        hasMissionResult = UiShellRuntimeGateway.TryReadMissionResult(out lastMissionResult);
         hasMatchHudSelection = UiShellRuntimeGateway.TryReadMatchHudSelection(out lastMatchHudSelection);
         hasMatchHudCommandState = UiShellRuntimeGateway.TryReadMatchHudCommandState(out lastMatchHudCommandState);
         hasMatchHudHeader = UiShellRuntimeGateway.TryReadMatchHudHeader(out lastMatchHudHeader);
@@ -106,6 +116,12 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
         if (shellView != null && shellView.IsMounted && hasLoadingProgress)
             shellView.ApplyLoadingProgress(lastLoadingProgress);
 
+        if (shellView != null && shellView.IsMounted && hasDiagnosticsOverlay)
+            shellView.ApplyDiagnosticsOverlay(lastDiagnosticsOverlay);
+
+        if (shellView != null && shellView.IsMounted && hasMissionResult)
+            shellView.ApplyMissionResult(lastMissionResult);
+
         if (shellView != null &&
             shellView.IsMounted &&
             hasShellState &&
@@ -113,7 +129,10 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
         {
             shellView.ApplyMainMenuRouteState(lastShellState.ActiveRoute);
             if (hasCommanderProfile)
+            {
                 shellView.ApplyMainMenuCommanderProfile(lastCommanderProfile);
+                shellView.ApplyCommanderProfile(lastCommanderProfile);
+            }
             if (hasMainMenuResources)
                 shellView.ApplyMainMenuResources(lastMainMenuResources);
             if (lastShellState.ActiveRoute == UIRoute.Armory && hasArmoryCategory)

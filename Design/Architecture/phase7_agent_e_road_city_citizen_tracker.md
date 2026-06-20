@@ -1,168 +1,310 @@
-# Phase 7 Agent E Tracker - Road Build, Runtime City, Environment, And Citizen Systems
+# Phase 7 Agent E Tracker - Road, City, Grid, Citizen, And Environment Gameplay
 
 Purpose:
-Convert road, runtime-city, environment, grid-blocker, and citizen simulation/read-model systems to focused `ISystem` processors while moving visual, prefab, coroutine, and GameObject ownership to counted managed presentation `SystemBase` exceptions or ECS entity-prefab pipelines. Phase 7 must not introduce updating MonoBehaviour bridges.
+Convert non-UI road building, city/runtime environment, grid blocker, and citizen gameplay `SystemBase` systems into narrow `ISystem` processors. Agent E owns simulation/data work for roads, city state, runtime blockers, and citizens. It does not own UI, rendering, camera, prefab GameObject presentation, or visual effects.
 
 Branch:
 `codex/phase7-agent-e-road-city-citizen`
 
+Execution order:
+
+1. Wait for Agent A to publish authoritative inventory rows and guardrails.
+2. Pull only rows assigned to `AgentE`.
+3. Classify each row as direct convert, split-then-convert, retire/fold, or managed exception.
+4. Convert in small behavior-preserving slices, starting with pure ECS data systems and ending with split mixed systems.
+5. Write handoffs under `Design/AgentReports/`; Agent A owns main tracker integration.
+
 Progress snapshot:
 
-- Checklist progress: `0 / 66 complete (0.0%)`.
+- Checklist progress: `0 / 79 complete (0.0%)`.
 - In progress: `0`.
-- Remaining open: `66`.
-- Current target: `E0 - road/city/citizen inventory intake`.
-- Direct conversions completed: `0`.
-- Split processors created: `0`.
-- Managed presentation `SystemBase` exceptions created: `0`.
+- Remaining open: `79`.
+- Current target: `E0 - wait for Agent A inventory assignment`.
+- Converted to `ISystem`: `0`.
+- Split passive/managed boundaries: `0`.
 - Retired/folded helpers: `0`.
+- Managed `SystemBase` exceptions created: `0`.
 - Validation status: `not started`.
 
-Ownership:
+Owned files:
 
-- Owns road build and road runtime systems assigned by Agent A.
-- Owns runtime-city and environment systems assigned by Agent A.
-- Owns citizen population/schedule/danger/resource/read-model systems assigned by Agent A.
-- Coordinates with Agent D for road/building and runtime-city building spawn contracts.
-- Coordinates with Agent F for road visuals, city visuals, decoration visuals, and citizen visible presentation.
+- `Design/Architecture/phase7_agent_e_road_city_citizen_tracker.md`
+- Agent E rows assigned by `Design/Architecture/systembase_to_isystem_inventory.md`
+- Road/city/citizen focused tests or validation runners when needed
+- Agent E handoff reports under `Design/AgentReports/`
 
 Do not touch:
 
-- Building production/placement internals except agreed contracts.
-- Selection command systems.
-- Rendering/VFX systems except agreed passive visual request contracts.
-- UI Toolkit/Canvas implementation.
-- Main Phase 7 tracker except through handoff reports.
-- Any new `MonoBehaviour.Update`, `LateUpdate`, `FixedUpdate`, coroutine loop, or manager-style MonoBehaviour ticker. MonoBehaviours are view/reference holders only.
+- UI Toolkit/Canvas systems, build menu views, HUD, or citizen UI views.
+- Building placement/production systems owned by Agent D.
+- Selection command-intent systems owned by Agent C, except agreed request/result contracts.
+- Visual rendering, markers, materials, particles, line renderers, lights, or mesh presentation owned by Agent F.
+- Scenes, prefabs, terrain/visual assets, or ScriptableObject config unless an assigned row requires a passive ECS data projection.
+- Shared trackers except this file.
 
-Candidate examples to verify, not pre-approved:
+Shared rules:
 
-- `RoadBuild*`
-- `RoadNetworkSystem`
-- `RoadGridProjectionSystem`
-- `RoadRuntime*`
-- `RuntimeCity*`
-- `RuntimeGridBlockerSystem`
-- `RuntimeDecorationSpawnerSystem`
-- `DayNightSystem`
-- `Citizen*`
+- Do not introduce `MonoBehaviour.Update`, `LateUpdate`, `FixedUpdate`, coroutine loops, or manager-style MonoBehaviour tickers.
+- MonoBehaviours are view/reference holders only and must not run road/city/citizen gameplay loops.
+- Managed Unity-object ticking belongs in counted managed `SystemBase` exceptions when unavoidable.
+- Converted `ISystem` files must not use `GameObject`, `Transform`, `UnityEngine.Object`, `Object.Instantiate`, `Object.Destroy`, `Camera.main`, hierarchy lookup, service locators, or mutable static gameplay state.
+- Do not replace a broad road/city/citizen `SystemBase` with one broad `ISystem`.
+- Preserve Unity `.meta` files.
 
-## E0 - Inventory Intake
+Reference documents:
 
-- [ ] Wait for Agent A inventory and guardrails.
-- [ ] Pull Agent E rows and inspect source files and call sites.
-- [ ] Split rows into road, runtime-city/environment, and citizen batches.
-- [ ] Identify managed blockers: preview visuals, chunk visuals, GameObject decoration spawn, coroutine/yield, scene roots, prefab lists, native container disposal, public helper APIs.
-- [ ] Identify pure data algorithms that can convert directly.
-- [ ] Write an initial Agent E handoff with target groups and cross-agent dependencies.
+- `Design/Architecture/systembase_to_isystem_inventory.md`
+- `Design/Architecture/ecs_architecture_performance_quality_improvement_tracker.md`
+- `Design/Architecture/gameplay_solid_ecs_contract.md`
+- `Design/Architecture/performance_regression_contract.md`
+- `Design/Architecture/ecs_native_command_request_system_conversion_example.md`
+- `Design/Architecture/ui_runtime_shell_transition_architecture.md`
 
-Acceptance:
+Likely Agent E target families after Agent A review:
 
-- Every Agent E target has a disposition and first safe slice.
-- No visual or prefab owner is planned as unmanaged `ISystem`.
+- Road placement/build request processors and road network state updates.
+- Runtime grid blocker and obstacle data systems.
+- Runtime city composition data processors that can be separated from visuals.
+- Citizen population, citizen visible-unit, citizen movement, and citizen simulation systems.
+- Environment/runtime state processors without Unity object presentation ownership.
 
-## E1 - Road Request/Result Boundary
+Likely not Agent E:
 
-- [ ] Inventory road input, road build session, placement storage, road network, grid projection, and read-model data.
-- [ ] Split pointer/camera/input capture from road ECS command requests.
-- [ ] Define or reuse road command request and result components/buffers.
-- [ ] Preserve nearest-road, blocker, movement, and minimap contracts.
-- [ ] Add road contract validation.
+- Road/build UI, menu interactions, and UI Toolkit screens.
+- Road/city/citizen visual meshes, materials, particles, or presentation effects.
+- Building placement/production execution.
+- Camera and map-surface visual presentation.
 
-Acceptance:
+## E0 - Intake And Ownership Map
 
-- Managed road input writes requests only.
-- ECS road processors own validation and mutation.
+Goal:
+Create a precise Agent E worklist from Agent A's inventory.
 
-## E2 - Road Direct Conversions
-
-- [ ] Convert road command validation processors to `ISystem` after request data is ECS-owned.
-- [ ] Convert road placement storage/grid projection/network updates to `ISystem`.
-- [ ] Convert road read-model and minimap event publication to `ISystem` where data-only.
-- [ ] Fold road composition/context helpers with no independent runtime responsibility.
-- [ ] Keep road preview, chunk visual, and special visual work passive or Agent F-owned.
-- [ ] Run road-build command, nearest-road, movement blocker, and minimap validations.
-
-Acceptance:
-
-- Road data state is ECS-owned.
-- Visual road presentation is passive.
-
-## E3 - Runtime City Data Split
-
-- [ ] Inventory runtime-city config, lifecycle, layout, plot, road layout, ingress, walkability, spawn bridge, visual, decoration, readiness, and minimap systems.
-- [ ] Separate config projection from deterministic generation algorithms.
-- [ ] Convert layout, plot, road layout, ingress, walkability, minimap event, read-model, and readiness query systems to `ISystem` when data-only.
-- [ ] Use explicit components/buffers for generation phase state instead of managed flags.
-- [ ] Preserve generation order with update group/order attributes.
-- [ ] Run runtime-city generation focused validation after each batch.
+- [ ] Read `Design/Architecture/systembase_to_isystem_inventory.md` after Agent A marks it ready.
+- [ ] Filter rows assigned to `AgentE`.
+- [ ] Copy row ids, type names, paths, dispositions, blockers, and validation gates into this tracker or an Agent E intake report.
+- [ ] For each target, run `rg "<TypeName>" Assets/Game/Scripts Assets/Tests`.
+- [ ] Record public methods/properties and every caller.
+- [ ] Record update group/order attributes and dependencies with building, selection, transport, runtime grid, and visual systems.
+- [ ] Record managed blockers: GameObject, Transform, Renderer, Material, ParticleSystem, camera, ScriptableObject, prefab, mesh, or managed collections.
+- [ ] Identify whether each target owns simulation policy, request processing, result publication, config projection, or presentation.
+- [ ] Return rows to Agent A when ownership overlaps with Agent C/D/F.
+- [ ] Update the progress snapshot denominator and current target.
 
 Acceptance:
 
-- Deterministic city generation remains behavior-equivalent.
-- Generation state does not require managed `SystemBase`.
+- Agent E has a concrete row list and no ownership overlap.
+- Mixed simulation/presentation systems are marked for split.
+- No runtime code changed before intake is complete.
 
-## E4 - Runtime City Spawn And Visual Boundaries
+## E1 - Road Request And Result Contracts
 
-- [ ] Identify city building/decoration spawn systems that still own GameObject or prefab selection.
-- [ ] Convert spawn decisions to ECS requests only after prefab selection is entity/source-key data.
-- [ ] Move GameObject visual spawn behavior to counted managed presentation `SystemBase` exceptions or Agent F-owned entity-prefab visual pipelines.
-- [ ] Remove coroutine/yield gameplay ownership from runtime-city systems without replacing it with MonoBehaviour coroutine loops.
-- [ ] Replace coroutine/yield behavior with explicit ECS phase components where practical.
-- [ ] Coordinate building spawn request contracts with Agent D.
-- [ ] Run city spawn, decoration, and match runtime smoke validation.
+Goal:
+Separate road player intent, validation, mutation, and presentation.
 
-Acceptance:
-
-- Runtime-city algorithms do not instantiate GameObjects directly.
-- Visual spawn ownership is not recurring gameplay `SystemBase` and is not an updating MonoBehaviour.
-
-## E5 - Runtime Grid Blocker And Environment
-
-- [ ] Inspect `RuntimeGridBlockerSystem`, `RuntimeDecorationSpawnerSystem`, and `DayNightSystem`.
-- [ ] Make native container ownership and disposal explicit before converting any blocker data processor.
-- [ ] Convert blocker data updates to `ISystem` only after managed object references are removed or split.
-- [ ] Move decoration spawning to entity-prefab requests or counted managed presentation `SystemBase` exceptions.
-- [ ] Keep day/night light/material work in counted managed presentation `SystemBase` exceptions unless represented as ECS data and Agent F agrees.
-- [ ] Run blocker, movement, runtime-city, and visual smoke validations.
+- [ ] Inventory existing road build request components, road preview data, road network data, and road placement results.
+- [ ] Coordinate request-intent ownership with Agent C if player command input is involved.
+- [ ] Keep Agent E responsible for road validation and road data mutation.
+- [ ] Define or reuse ECS result data for UI and visuals to observe.
+- [ ] Ensure request data uses ECS entity/source-key/grid coordinates, not GameObject references.
+- [ ] Preserve road placement constraints, adjacency, blocked cells, faction/resource constraints, and terrain/grid rules.
+- [ ] Ensure one-shot requests are consumed exactly once.
+- [ ] Keep road preview rendering and mesh/material changes in Agent F or managed presentation exceptions.
 
 Acceptance:
 
-- Grid blocker ECS data updates are deterministic and disposal-safe.
-- Environment presentation does not own gameplay policy.
+- Road processing can run from ECS requests without UI or visual calls.
+- Road results are visible to UI/visual consumers through ECS data.
 
-## E6 - Citizen Simulation
+## E2 - Road Systems Conversion
 
-- [ ] Inventory citizen population composition, lifecycle, state, schedule, danger, resource, refugee, building-read, household registration, diagnostics, debug, read-model, and visible-unit systems.
-- [ ] Convert citizen totals/state/schedule/danger/resource/refugee/read-model systems to `ISystem` where data-only.
-- [ ] Replace managed dictionaries/lists with ECS buffers/components or passive presentation state.
-- [ ] Split visible-citizen spawn/lifetime into request, instantiate, movement-state, and lifetime processors.
-- [ ] Coordinate citizen visible presentation with Agent F if visuals are touched.
-- [ ] Run citizen population, visible unit, movement, and combat/death validations.
+Goal:
+Convert road data systems to `ISystem` in narrow slices.
+
+- [ ] Start with the lowest-risk pure ECS road row.
+- [ ] Inspect lifecycle, query shape, and ordering.
+- [ ] Replace `SystemBase` lifecycle methods with `ISystem` lifecycle methods when no managed fields remain.
+- [ ] Replace `Entities.ForEach` with `SystemAPI.Query`, explicit query iteration, or `IJobEntity`.
+- [ ] Use refreshed component/buffer lookups for road network reads and writes.
+- [ ] Preserve road creation, deletion, connection, path validity, and blocker interactions.
+- [ ] Preserve determinism for road segment ids/source keys if existing code relies on stable order.
+- [ ] Keep mesh/material/visual updates outside the converted `ISystem`.
+- [ ] Add tests for road add, blocked road, adjacent connection, and cleanup when missing.
 
 Acceptance:
 
-- Citizen simulation policy is ECS-owned.
-- Citizen visible presentation does not block data conversion.
+- Road behavior matches baseline.
+- Converted systems have no GameObject, Transform, renderer, or material dependencies.
 
-## E7 - Agent E Completion
+## E3 - Runtime Grid And Blocker Systems
 
-- [ ] Run `git diff --check`.
-- [ ] Run road-build validation.
-- [ ] Run runtime-city generation validation.
-- [ ] Run runtime-grid blocker and movement validation.
-- [ ] Run citizen population and visible-unit validation.
-- [ ] Run match runtime smoke if city or citizen spawning changed.
-- [ ] Run architecture guardrails.
-- [ ] Write `Design/AgentReports/YYYY-MM-DD_phase7_agent_e_road_city_citizen_handoff.md`.
+Goal:
+Convert grid/blocker state updates without visual or scene-object coupling.
 
-Handoff format:
+- [ ] Inventory grid blocker components, runtime blocker requests, occupancy data, and consumers.
+- [ ] Identify blockers sourced from buildings, roads, vehicles, citizens, terrain, or city composition.
+- [ ] Convert pure blocker mutation and cleanup systems to `ISystem`.
+- [ ] Preserve add/remove behavior during spawn, destroy, road/build placement, and match restart.
+- [ ] Preserve blocker priority and overlap rules.
+- [ ] Avoid direct scene-object or transform reads in converted systems.
+- [ ] If scene object data must be sampled, keep that sampling in a managed config/presentation boundary and project ECS data.
+- [ ] Validate with placement and movement smoke paths.
 
-- Checklist progress.
-- Road systems converted/split/retired.
-- Runtime-city systems converted/split/retired.
-- Citizen systems converted/split/retired.
-- Managed presentation `SystemBase` exceptions created.
-- Cross-agent contracts changed.
-- Validation commands and logs.
-- Remaining blockers.
+Acceptance:
+
+- Occupancy/blocker data stays correct after spawn, destroy, placement, and restart.
+- Converted blocker systems are data-only.
+
+## E4 - Runtime City Composition Data
+
+Goal:
+Split runtime city generation/composition into ECS data processors and managed presentation boundaries.
+
+- [ ] Inventory city composition systems, city spawn requests, map cells, generated entities, and visual presentation calls.
+- [ ] Identify whether city data is baked, generated at runtime, or projected from serialized config.
+- [ ] Convert pure data generation/update systems to `ISystem`.
+- [ ] Keep mesh, renderer, material, prefab GameObject, and decoration presentation in Agent F or managed exceptions.
+- [ ] Ensure generated city data uses stable source keys and deterministic ordering.
+- [ ] Preserve restart/shutdown cleanup and avoid stale entity references.
+- [ ] Validate city composition in a fresh match and after returning to menu/restarting.
+
+Acceptance:
+
+- Runtime city data is ECS-readable and deterministic.
+- Visual presentation stays outside gameplay processors.
+
+## E5 - Citizen Simulation And Visibility
+
+Goal:
+Convert citizen gameplay systems without changing visual presentation.
+
+- [ ] Inventory citizen population data, visible-unit data, spawn requests, despawn requests, and movement/combat interactions.
+- [ ] Identify GameObject/prefab dependencies and confirm whether Entity prefab refs already exist.
+- [ ] Convert pure population, selection, visibility, and request systems to `ISystem`.
+- [ ] Keep citizen visual spawning/presentation in Agent F or managed presentation exceptions when Unity objects are required.
+- [ ] Preserve citizen counts, spawn timing, team/faction filters, death cleanup, and visibility behavior.
+- [ ] Preserve any citizen-to-unit interaction that affects combat or movement.
+- [ ] Add tests for population update, visible unit lookup, spawn request, death cleanup, and restart if missing.
+
+Acceptance:
+
+- Citizen gameplay data remains correct and runtime visual behavior is not degraded.
+- Converted systems do not own GameObject prefab APIs.
+
+## E6 - Config And Serialized Boundary Handling
+
+Goal:
+Avoid pushing serialized Unity object/config ownership into unmanaged systems.
+
+- [ ] Identify serialized config assets used by road, city, grid, or citizen systems.
+- [ ] Confirm whether data is already baked into ECS.
+- [ ] For runtime projection, keep a small counted managed config `SystemBase` exception.
+- [ ] Project only blittable ECS data, Entity prefab refs, and stable source keys.
+- [ ] Ensure projection is one-shot or explicitly gated.
+- [ ] Validate missing config and missing prefab entity behavior where practical.
+
+Acceptance:
+
+- Converted systems consume ECS config data.
+- Managed config exceptions are explicit and counted.
+
+## E7 - Retire Or Fold Helpers
+
+Goal:
+Remove dead wrappers instead of converting them.
+
+- [ ] Identify disabled, unused, or wrapper road/city/citizen `SystemBase` types.
+- [ ] Search all code and serialized references before retiring.
+- [ ] Fold pure helper logic into static domain methods or nearest narrow `ISystem` only when ownership is obvious.
+- [ ] Do not delete referenced scene/prefab scripts without Agent A-approved serialized-reference migration.
+- [ ] Update tests that referenced retired helpers.
+- [ ] Record retired/folded count in the progress snapshot.
+
+Acceptance:
+
+- No missing-script references introduced.
+- Retired logic is either unused or has a clear replacement.
+
+## E8 - Focused Validation Matrix
+
+Goal:
+Prove road, city, grid, and citizen behavior still works.
+
+- [ ] Always run `git diff --check -- <changed files>`.
+- [ ] Run architecture tests for no forbidden blockers in converted `ISystem` files.
+- [ ] Run road validation for build, blocked placement, adjacency, cleanup, and restart.
+- [ ] Run runtime grid blocker validation for add/remove/overlap/restart.
+- [ ] Run city composition validation for generation, cleanup, and deterministic data.
+- [ ] Run citizen validation for population update, visible unit spawn, death cleanup, and restart.
+- [ ] Run a PlayMode smoke test that starts a match and exercises at least one road/build/citizen path when practical.
+- [ ] Check Unity logs for missing prefab entity, stale entity, destroyed system state, or empty runtime data.
+- [ ] If Unity is locked, retry once, then use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` shadow validation when available.
+
+Suggested commands:
+
+```bash
+git diff --check -- <changed files>
+```
+
+```bash
+"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" \
+  -batchmode -nographics -quit \
+  -projectPath /Users/farhad/Projects/WarlineCapture \
+  -runTests -testPlatform EditMode \
+  -logFile /private/tmp/warline-phase7-agent-e-editmode.log
+```
+
+Acceptance:
+
+- Focused validation passes or failures are fixed in-slice.
+- Any unrun validation is recorded with a concrete reason.
+
+## E9 - Handoff To Agent A
+
+Goal:
+Make Agent E integration clear.
+
+- [ ] Create a dated handoff report under `Design/AgentReports/`.
+- [ ] Include inventory row ids, files changed, and final disposition.
+- [ ] Include split map for mixed systems.
+- [ ] Include converted-to-`ISystem`, split passive/managed-boundary, retired/folded, and managed-exception counts.
+- [ ] Include road/city/citizen request/result contracts added or changed.
+- [ ] Include validation commands, outcomes, and log paths.
+- [ ] Include coordination notes for Agents C/D/F.
+- [ ] Include any rows returned to Agent A for reclassification.
+- [ ] Confirm this tracker progress snapshot is current.
+
+Handoff template:
+
+```markdown
+# Phase 7 Agent E Handoff - YYYY-MM-DD
+
+Branch:
+`codex/phase7-agent-e-road-city-citizen`
+
+Rows completed:
+- `P7-####` - `TypeName` - `Converted/Split/Retired`
+
+Contracts changed:
+- Request/result component:
+
+Counts:
+- Converted to ISystem:
+- Split passive/managed boundaries:
+- Managed SystemBase exceptions:
+- Retired/folded:
+
+Validation:
+- `git diff --check`: passed/failed
+- Unity validation: passed/failed/not run, log path
+
+Risks:
+- ...
+```
+
+Completion criteria:
+
+- Every Agent E row has final status.
+- No road/city/citizen gameplay `ISystem` owns UI, GameObject prefab lookup, camera, or rendering presentation.
+- Mixed simulation/presentation systems are split.
+- No MonoBehaviour ticking introduced.

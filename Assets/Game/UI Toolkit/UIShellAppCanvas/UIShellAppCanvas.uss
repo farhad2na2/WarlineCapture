@@ -165,6 +165,10 @@
     background-color: rgba(0, 0, 0, 0.58);
 }
 
+.tooltip-layer {
+    picking-mode: ignore;
+}
+
 .placeholder-popup {
     position: absolute;
     left: 32%;
@@ -241,17 +245,22 @@
 
 .diagnostics-overlay {
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    picking-mode: ignore;
+    right: 12px;
+    top: 12px;
+    width: 78px;
+    height: 34px;
+    overflow: visible;
+}
+
+.diagnostics-overlay-expanded {
+    width: 544px;
+    height: 474px;
 }
 
 .diagnostics-fps-button {
     position: absolute;
-    right: 12px;
-    top: 12px;
+    right: 0;
+    top: 0;
     width: 78px;
     height: 34px;
     background-color: rgba(5, 8, 10, 0.86);
@@ -283,8 +292,8 @@
 
 .diagnostics-log-panel {
     position: absolute;
-    right: 12px;
-    top: 54px;
+    right: 0;
+    top: 42px;
     width: 520px;
     height: 420px;
     background-color: rgba(5, 8, 10, 0.94);

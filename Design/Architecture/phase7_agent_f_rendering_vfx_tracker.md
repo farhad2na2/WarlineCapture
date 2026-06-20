@@ -1,175 +1,341 @@
-# Phase 7 Agent F Tracker - Rendering, VFX, Visual Bridges, Camera, And Presentation Boundaries
+# Phase 7 Agent F Tracker - Rendering, Presentation, VFX, Camera, And Visual Boundaries
 
 Purpose:
-Retire non-UI gameplay visual ownership by converting data-only visual state to focused `ISystem` processors and moving Unity object presentation, pooling, camera, material, light, renderer, ParticleSystem, and GameObject work into counted managed presentation `SystemBase` exceptions or ECS entity-prefab pipelines. Do not introduce updating MonoBehaviours.
+Reduce non-UI rendering/presentation `SystemBase` usage without damaging visuals. Agent F owns visual bridges, marker presentation, renderer/material/light updates, trails, missiles, particles, explosion VFX, visual quality bindings, and camera/presentation boundaries assigned by Agent A. Agent F must not convert Unity-object presentation into ugly or incomplete entity-only effects just to improve the `ISystem` percentage.
 
 Branch:
 `codex/phase7-agent-f-rendering-vfx`
 
+Execution order:
+
+1. Wait for Agent A to publish authoritative inventory rows and guardrails.
+2. Pull only rows assigned to `AgentF`.
+3. Classify each row as data request/result `ISystem`, split presentation boundary, managed presentation `SystemBase` exception, or retire/fold.
+4. Convert pure ECS visual request/result systems first.
+5. Preserve Unity presentation systems as counted managed `SystemBase` exceptions when they own `Renderer`, `Material`, `Light`, `Camera`, `ParticleSystem`, `LineRenderer`, `VisualEffect`, or other Unity objects that must tick.
+6. Write handoffs under `Design/AgentReports/`; Agent A owns shared tracker integration.
+
 Progress snapshot:
 
-- Checklist progress: `0 / 58 complete (0.0%)`.
+- Checklist progress: `0 / 89 complete (0.0%)`.
 - In progress: `0`.
-- Remaining open: `58`.
-- Current target: `F0 - rendering/VFX inventory intake`.
-- Data `ISystem` conversions completed: `0`.
-- Managed presentation `SystemBase` exceptions created: `0`.
-- Entity-prefab visual pipelines created: `0`.
-- Retired managed ECS visual owners: `0`.
+- Remaining open: `89`.
+- Current target: `F0 - wait for Agent A inventory assignment`.
+- Converted to `ISystem`: `0`.
+- Split passive/managed boundaries: `0`.
+- Managed presentation `SystemBase` exceptions: `0`.
+- Retired/folded helpers: `0`.
 - Validation status: `not started`.
 
-Ownership:
+Owned files:
 
-- Owns rendering, VFX, marker, trace, impostor, attached-light, destroyed visual, visual-quality, camera-adjacent, and visual bridge systems assigned by Agent A.
-- Coordinates with Agent C for selection/order markers.
-- Coordinates with Agent D for building visuals, destroyed visuals, foundation visuals, and markers.
-- Coordinates with Agent E for road visuals, city visuals, decoration visuals, day/night, and citizen visible presentation.
+- `Design/Architecture/phase7_agent_f_rendering_vfx_tracker.md`
+- Agent F visual/presentation rows assigned by `Design/Architecture/systembase_to_isystem_inventory.md`
+- Visual/VFX/camera focused tests or validation runners when practical
+- Agent F handoff reports under `Design/AgentReports/`
 
 Do not touch:
 
-- Gameplay policy in selection, building, road, runtime-city, or citizen systems except through visual request/result contracts.
-- UI Toolkit/Canvas implementation.
-- Main Phase 7 tracker except through handoff reports.
-- Any new `MonoBehaviour.Update`, `LateUpdate`, `FixedUpdate`, coroutine loop, or manager-style MonoBehaviour ticker. MonoBehaviours may hold references and expose callable presentation methods only.
+- UI Toolkit/Canvas views, UXML, USS, UI presenters, and menu systems.
+- Building gameplay execution owned by Agent D.
+- Road/city/citizen simulation owned by Agent E.
+- Selection command intent owned by Agent C.
+- Pure startup/config/diagnostic systems owned by Agent B.
+- Scene/prefab/material/VFX assets unless the assigned row requires a documented visual validation slice.
+- Shared trackers except this file.
 
-Candidate examples to verify, not pre-approved:
+Shared rules:
 
-- `UnitAttachedLightSystem`
-- `UnitAttackTraceSystem`
-- `UnitImpostorRenderSystem`
-- `UnitAttackVfxRequestSystem`
-- `CombatGameObjectVfxPlaybackSystem`
-- `GroundMissileRocketTrailSystem`
-- `AirMissileProjectileTrailSystem`
-- `BuildingDestroyedVisualSystem`
-- `BuildingFoundationVisualSystem`
-- `RoadChunkVisualSystem`
-- `RoadBuildPlacementVisualSystem`
-- `SelectionOrderMarkerSystem`
-- `SelectionScreenMarkerSystem`
-- `BuildingSelectionMarkerSystem`
-- `RuntimeCameraReferenceSystem`
-- `RtsCameraSystem`
-- `VisualQualitySettingsSystem`
+- Do not introduce `MonoBehaviour.Update`, `LateUpdate`, `FixedUpdate`, coroutine loops, or manager-style MonoBehaviour tickers.
+- MonoBehaviours are view/reference holders only. They may hold serialized references and expose direct event methods, but they must not poll gameplay state.
+- If Unity-object presentation must tick, keep it in a small counted managed `SystemBase` exception.
+- Converted `ISystem` files must not hold or access `GameObject`, `Transform`, `Camera`, `Renderer`, `Material`, `Light`, `ParticleSystem`, `LineRenderer`, `VisualEffect`, `UnityEngine.Object`, `Object.Instantiate`, `Object.Destroy`, hierarchy paths, `Object.Find*`, or `Camera.main`.
+- Do not replace ParticleSystem explosions, smoke, muzzle flashes, or trails with new entity visuals unless the user explicitly approves the art change.
+- Do not downgrade visuals to meet an inheritance metric.
+- Do not replace one broad visual bridge with one broad `ISystem`; split request/result data from managed presentation.
+- Preserve Unity `.meta` files.
 
-## F0 - Inventory Intake
+Reference documents:
 
-- [ ] Wait for Agent A inventory and guardrails.
-- [ ] Pull Agent F rows and inspect source files and call sites.
-- [ ] Classify each target as data-only visual state, entity-prefab visual pipeline, managed presentation `SystemBase` exception, camera `SystemBase` exception, view/reference-only MonoBehaviour, or retire/fold.
-- [ ] Identify managed blockers: `GameObject`, `Transform`, `Camera`, `Renderer`, `Material`, `Light`, `UnityEngine.Object`, pooling, object instantiate/destroy, scene roots, public renderer interfaces.
-- [ ] Identify gameplay policy that must move out before a boundary can stay as a managed presentation `SystemBase` exception.
-- [ ] Identify any existing MonoBehaviour update/coroutine ownership and plan removal or non-Phase-7 deferral; do not add new ones.
-- [ ] Write an initial Agent F handoff with target list and cross-agent dependencies.
+- `Design/Architecture/systembase_to_isystem_inventory.md`
+- `Design/Architecture/ecs_architecture_performance_quality_improvement_tracker.md`
+- `Design/Architecture/gameplay_solid_ecs_contract.md`
+- `Design/Architecture/performance_regression_contract.md`
+- `Design/Architecture/ui_runtime_shell_transition_architecture.md`
+- `Design/Architecture/ecs_native_command_request_system_conversion_example.md`
 
-Acceptance:
+Likely Agent F target families after Agent A review:
 
-- No Unity object owner is planned as unmanaged `ISystem`.
-- Every managed presentation exception has data-only inputs, no gameplay policy, and no MonoBehaviour update bridge.
+- Selection/building/road/command marker presentation.
+- Unit, vehicle, projectile, missile, trail, and combat VFX presentation.
+- Explosion, smoke, muzzle flash, particle, light, and material update bridges.
+- Visual quality binding systems that apply ECS/settings data to rendering components.
+- Runtime camera reference/presentation systems assigned by Agent A.
+- Pure visual request/result data systems that can be converted to `ISystem`.
 
-## F1 - Visual Request/Result Contracts
+Likely not Agent F:
 
-- [ ] Inventory existing visual request components/buffers.
-- [ ] Define or reuse explicit requests for VFX playback, traces, impostors, attached lights, destroyed visuals, road visuals, markers, and quality changes.
-- [ ] Ensure gameplay systems only enqueue requests or update ECS visual state.
-- [ ] Ensure managed presentation `SystemBase` exceptions consume requests/results without deciding gameplay.
-- [ ] Add architecture validation for visual request ownership.
+- UI Toolkit or Canvas screen rendering.
+- Gameplay command validation, building production, road simulation, citizen simulation, or AI/faction logic.
+- Runtime art redesign or entity-particle replacement unless explicitly approved.
 
-Acceptance:
+## F0 - Intake And Visual Risk Classification
 
-- Visual presentation does not require gameplay systems to hold Unity object references.
+Goal:
+Create a visual-safe worklist from Agent A's inventory.
 
-## F2 - Entity-Prefab Visual Pipelines
-
-- [ ] Identify visuals that can become ECS entity prefabs.
-- [ ] Convert spawn/update/cleanup to `ISystem` with ECB playback and explicit lifetime components.
-- [ ] Replace GameObject prefab fallback with entity prefab/source-key data before conversion.
-- [ ] Preserve wrapper-aware contracts where existing tests require them.
-- [ ] Run render-budget and visual smoke validation after each conversion.
-
-Acceptance:
-
-- Entity-prefab visuals do not allocate managed objects per frame.
-- Cleanup is explicit and deterministic.
-
-## F3 - VFX Playback And Trails
-
-- [ ] Inspect missile launch/impact systems and trail/playback systems.
-- [ ] Keep launch/impact gameplay policy in ECS processors.
-- [ ] Move pooled GameObject or ParticleSystem playback to counted managed presentation `SystemBase` exceptions when Unity objects remain.
-- [ ] Keep VFX presenter MonoBehaviours view/reference-only with no `Update`, `LateUpdate`, `FixedUpdate`, or coroutine loops.
-- [ ] Convert request generation to `ISystem` where data-only.
-- [ ] Convert trail lifetime/state ECS updates to `ISystem` where data-only.
-- [ ] Run air missile, ground missile, combat/death, and VFX validation.
+- [ ] Read `Design/Architecture/systembase_to_isystem_inventory.md` after Agent A marks it ready.
+- [ ] Filter rows assigned to `AgentF`.
+- [ ] Copy row ids, type names, paths, dispositions, blockers, and validation gates into this tracker or an Agent F intake report.
+- [ ] For each target, run `rg "<TypeName>" Assets/Game/Scripts Assets/Tests`.
+- [ ] Record public methods/properties and callers, especially combat, building, selection, camera, and runtime composition systems.
+- [ ] Record all Unity object blockers: `GameObject`, `Transform`, `Camera`, `Renderer`, `Material`, `Light`, `ParticleSystem`, `LineRenderer`, `TrailRenderer`, `VisualEffect`, `Mesh`, `SkinnedMeshRenderer`, `UnityEngine.Object`, and `ScriptableObject`.
+- [ ] Record whether the system owns data request/result processing, visual state derivation, Unity object application, pooling, or asset references.
+- [ ] Mark pure data rows as `DirectConvert`.
+- [ ] Mark mixed rows as `SplitThenConvert`.
+- [ ] Mark unavoidable Unity-object ticking rows as `ManagedPresentationSystemBaseException`.
+- [ ] Return rows to Agent A when they are actually gameplay/UI/camera ownership outside Agent F scope.
+- [ ] Update the progress snapshot denominator and current target.
 
 Acceptance:
 
-- VFX playback does not own damage, targeting, or gameplay timing.
-- Pooled GameObject/ParticleSystem work is a counted managed presentation `SystemBase` exception when it must tick Unity objects, not a gameplay `SystemBase` and not an updating MonoBehaviour.
+- Agent F has a concrete row list with visual risk per row.
+- No art-changing conversion starts without explicit user approval.
+- Managed presentation exceptions are visible and countable.
 
-## F4 - Markers, Selection Visuals, And Building Visuals
+## F1 - Visual Request/Result Data Contracts
 
-- [ ] Coordinate with Agent C before touching selection/order markers.
-- [ ] Coordinate with Agent D before touching building markers, destroyed visuals, foundation visuals, or faction visuals.
-- [ ] Convert marker visibility/state to `ISystem` where data-only.
-- [ ] Move marker GameObject or renderer application to counted managed presentation `SystemBase` exceptions or entity-prefab visuals.
-- [ ] Convert building destroyed/foundation/faction visual ECS state to `ISystem` where data-only.
-- [ ] Run selection marker, building selection marker, building faction visual, and destroyed visual validations.
+Goal:
+Move gameplay-to-visual communication into ECS data so presentation systems do not own gameplay decisions.
 
-Acceptance:
-
-- Selection/building visual state is data-driven.
-- Presentation cannot change gameplay state.
-
-## F5 - Camera And Quality Boundaries
-
-- [ ] Inspect `RuntimeCameraReferenceSystem`, `RtsCameraSystem`, and `VisualQualitySettingsSystem`.
-- [ ] Split camera input/application from ECS camera request/result data.
-- [ ] Keep actual `Camera`, `Transform`, and quality asset application in counted managed presentation/config/camera `SystemBase` exceptions when ticking is required.
-- [ ] Convert pure camera request/read-model state to `ISystem` where practical.
-- [ ] Convert visual-quality ECS state to `ISystem` if it does not touch `ScriptableObject`, render pipeline assets, or Unity object settings.
-- [ ] Run visual quality, camera smoke, and match runtime validation.
+- [ ] Inventory existing visual events, trace requests, impact events, marker requests, highlight state, and camera reference state.
+- [ ] Coordinate with Agent C for selection/focus/command visual result data.
+- [ ] Coordinate with Agent D for building placement, production, damage, and construction visual result data.
+- [ ] Coordinate with Agent E for road, city, citizen, and environment visual result data.
+- [ ] Define or reuse one-shot visual request buffers/entities for effects such as explosion, muzzle flash, projectile trail, selection pulse, or placement result.
+- [ ] Define or reuse persistent visual state components for highlights, marker visibility, faction color, and quality settings.
+- [ ] Ensure visual request data is ECS-friendly and references entities/source keys, not GameObjects.
+- [ ] Ensure presentation systems consume requests without writing gameplay policy.
+- [ ] Ensure one-shot visual requests are consumed or aged out deterministically.
 
 Acceptance:
 
-- Camera and quality presentation boundaries are explicit and passive.
-- No unmanaged `ISystem` touches Unity object settings.
-- No camera or quality bridge uses MonoBehaviour `Update`, `LateUpdate`, `FixedUpdate`, or coroutine loops.
+- Visual presentation has ECS inputs and does not call gameplay systems directly.
+- Gameplay systems do not call Unity object visual APIs.
 
-## F6 - Retire/Fold Visual Bridges
+## F2 - Pure Visual Data Systems To ISystem
 
-- [ ] Identify visual bridges that only forward data.
-- [ ] Fold pure helpers into request producers or passive consumers.
-- [ ] Delete empty ECS managed visual shells after call sites are removed.
-- [ ] Preserve `.meta` files.
-- [ ] Add guardrails preventing new broad visual facade shells.
-- [ ] Run compile and graphics-capable smoke validation.
+Goal:
+Convert data-only visual processors while leaving Unity object application managed.
+
+- [ ] Start with the lowest-risk pure ECS visual data row.
+- [ ] Inspect lifecycle, query shape, update group/order, and consumers.
+- [ ] Convert to `ISystem` only if no Unity object or managed presentation fields remain.
+- [ ] Replace `Entities.ForEach` with `SystemAPI.Query`, explicit query iteration, or `IJobEntity`.
+- [ ] Preserve request aging, result publication, marker state derivation, and quality-data calculations.
+- [ ] Avoid direct renderer/material/light/camera/particle access.
+- [ ] Add tests for result data when existing coverage is missing.
+- [ ] Run focused validation before moving to the next row.
 
 Acceptance:
 
-- No managed ECS visual bridge remains without a concrete Unity object blocker.
+- Data-only visual systems compile as `ISystem`.
+- Unity object application remains outside converted systems.
 
-## F7 - Agent F Completion
+## F3 - Managed Presentation SystemBase Exceptions
 
-- [ ] Run `git diff --check`.
-- [ ] Run render-budget validation.
-- [ ] Run vehicle visual validation.
-- [ ] Run missile VFX validation.
-- [ ] Run attached-light validation.
-- [ ] Run marker validations.
-- [ ] Run visual-quality validation.
-- [ ] Run graphics-capable match smoke.
-- [ ] Run architecture guardrails.
-- [ ] Write `Design/AgentReports/YYYY-MM-DD_phase7_agent_f_rendering_vfx_handoff.md`.
+Goal:
+Keep required Unity object ticking explicit, small, and counted.
 
-Handoff format:
+- [ ] For each row with Unity object blockers, split pure ECS data derivation into an `ISystem` when practical.
+- [ ] Keep renderer/material/light/camera/particle application in a small managed `SystemBase` exception.
+- [ ] Do not move ticking presentation to MonoBehaviour.
+- [ ] Do not create broad visual manager/facade systems.
+- [ ] Keep managed exceptions read-only from gameplay perspective, except consuming visual requests and updating Unity presentation.
+- [ ] Gate expensive work by visibility, request count, or changed state.
+- [ ] Avoid hot-path allocations, LINQ, per-frame string formatting, or ungated logs.
+- [ ] Record every managed exception in the Agent F handoff for Agent A's denominator.
 
-- Checklist progress.
-- Visual data systems converted.
-- Managed presentation `SystemBase` exceptions created.
-- Entity-prefab visual pipelines created.
-- Managed ECS visual owners retired.
-- Managed presentation `SystemBase` exceptions retained and counted.
-- Cross-agent contracts changed.
-- Validation commands and logs.
-- Remaining blockers.
+Acceptance:
+
+- Required Unity visuals are preserved.
+- Managed exceptions are minimal and do not own gameplay policy.
+- No new MonoBehaviour ticking is introduced.
+
+## F4 - Particle, Explosion, Trail, And Combat VFX
+
+Goal:
+Preserve authored VFX quality while decoupling gameplay triggers from Unity object playback.
+
+- [ ] Inventory explosion, smoke, muzzle flash, hit impact, projectile, missile, trail, and attack trace systems assigned to Agent F.
+- [ ] Identify the authored effect type: `ParticleSystem`, `VisualEffect`, `LineRenderer`, `TrailRenderer`, light flash, mesh effect, or material animation.
+- [ ] Keep authored ParticleSystem/VisualEffect assets unless the user explicitly approves replacement.
+- [ ] Convert combat/VFX trigger data to ECS requests when possible.
+- [ ] Keep playback/pooling of Unity VFX objects in a managed presentation `SystemBase` exception when ticking is required.
+- [ ] Ensure `Play` calls are triggered by the managed presentation system consuming ECS requests, not by gameplay processors.
+- [ ] Do not introduce `ExplosionVfxPresenter.Update()` or similar MonoBehaviour loops.
+- [ ] Preserve pooling semantics, lifetime, scale, position, rotation, faction color, and quality gating.
+- [ ] Validate visually or via smoke tests that effects still spawn at the right place and time.
+
+Acceptance:
+
+- Explosions and combat VFX look the same unless an explicit art-change task says otherwise.
+- Gameplay emits ECS visual requests; presentation consumes them.
+- No new MonoBehaviour update loop is introduced.
+
+## F5 - Markers, Highlights, And Building/Road Visuals
+
+Goal:
+Preserve selection/build/road visual feedback while making ownership clear.
+
+- [ ] Inventory marker/highlight systems for selection, focus, command, building placement, road placement, construction, and faction visuals.
+- [ ] Coordinate data contracts with Agent C/D/E.
+- [ ] Convert marker visibility/state derivation to `ISystem` when data-only.
+- [ ] Keep mesh/material/renderer application in managed presentation exceptions.
+- [ ] Preserve selection outlines, placement valid/invalid colors, road previews, building faction colors, and construction feedback.
+- [ ] Avoid direct gameplay mutation from visual systems.
+- [ ] Validate common user flows: select unit, target command, place building, place road, damage building.
+
+Acceptance:
+
+- Visual feedback remains equivalent to baseline.
+- Visual systems consume ECS state and do not drive gameplay policy.
+
+## F6 - Camera And Visual Quality Boundaries
+
+Goal:
+Keep camera/quality Unity object ownership managed while converting data policy where safe.
+
+- [ ] Identify assigned camera reference, visual quality, or render config systems.
+- [ ] Split quality policy/state calculation into ECS data when possible.
+- [ ] Keep actual `Camera`, `RenderSettings`, renderer, material, volume, or pipeline API application in a managed `SystemBase` exception.
+- [ ] Do not use `Camera.main` or hierarchy lookup.
+- [ ] Preserve explicit serialized camera/reference assignment boundaries.
+- [ ] Preserve low-quality setting behavior while avoiding accidental ignored quality config.
+- [ ] Validate quality changes are applied and not responsible for gameplay FPS regressions unless evidence shows otherwise.
+
+Acceptance:
+
+- Camera and rendering object APIs are not in `ISystem`.
+- Quality settings still apply through explicit references.
+
+## F7 - Pooling And Instantiation Boundaries
+
+Goal:
+Reduce runtime `Object.Instantiate` where practical without changing visuals.
+
+- [ ] Inventory visual object spawning/pooling in assigned systems.
+- [ ] Prefer existing pools when available.
+- [ ] If converting to Entity prefab is safe and visually equivalent, document the before/after and validate.
+- [ ] If conversion would change visuals, keep Unity-object pooling in a managed presentation exception.
+- [ ] Do not introduce Addressables or broad pooling architecture unless explicitly requested outside Phase 7.
+- [ ] Keep gameplay entity spawning separate from visual object playback.
+- [ ] Validate no per-frame instantiate/destroy loops are added.
+
+Acceptance:
+
+- Visual pooling remains behavior-preserving.
+- Runtime allocation is not made worse.
+
+## F8 - Retire Or Fold Visual Helpers
+
+Goal:
+Remove dead visual wrappers only when safe.
+
+- [ ] Identify disabled, unused, or wrapper visual `SystemBase` types.
+- [ ] Search code, serialized references, prefab references, and reflection before retiring.
+- [ ] Do not delete referenced scripts without Agent A-approved serialized-reference migration.
+- [ ] Fold pure data helper logic into static functions or a narrow `ISystem` only when ownership is obvious.
+- [ ] Keep asset-linked presentation scripts when removing them would create missing scripts.
+- [ ] Record retired/folded count in the progress snapshot.
+
+Acceptance:
+
+- No missing-script references introduced.
+- Removed helpers are proven unused or replaced.
+
+## F9 - Focused Validation Matrix
+
+Goal:
+Prove visuals still work and no forbidden ticking was introduced.
+
+- [ ] Always run `git diff --check -- <changed files>`.
+- [ ] Run architecture tests for no forbidden Unity blockers in converted `ISystem` files.
+- [ ] Run an architecture check for no newly introduced MonoBehaviour `Update`, `LateUpdate`, `FixedUpdate`, or coroutine loops.
+- [ ] Run visual quality validation if quality/camera rows changed.
+- [ ] Run smoke validation for selection marker, command marker, building placement marker, road preview, projectile/missile, explosion, and attached light when touched.
+- [ ] Check Unity logs for missing references, null renderer/material/light/particle errors, and destroyed system state errors.
+- [ ] Capture before/after screenshots or short videos for any visual row that changes presentation code when practical.
+- [ ] If Unity is locked, retry once, then use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` shadow validation when available.
+
+Suggested commands:
+
+```bash
+git diff --check -- <changed files>
+```
+
+```bash
+"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" \
+  -batchmode -nographics -quit \
+  -projectPath /Users/farhad/Projects/WarlineCapture \
+  -runTests -testPlatform EditMode \
+  -logFile /private/tmp/warline-phase7-agent-f-editmode.log
+```
+
+Acceptance:
+
+- Visual behavior touched by Agent F is validated or explicitly marked as needing manual visual QA.
+- No new MonoBehaviour ticking is introduced.
+- Managed presentation exceptions are counted.
+
+## F10 - Handoff To Agent A
+
+Goal:
+Make visual integration safe and honest.
+
+- [ ] Create a dated handoff report under `Design/AgentReports/`.
+- [ ] Include inventory row ids, files changed, and final disposition.
+- [ ] Include visual split map: ECS request/result systems, managed presentation exceptions, and retired helpers.
+- [ ] Include converted-to-`ISystem`, split passive/managed-boundary, managed-presentation-exception, and retired/folded counts.
+- [ ] Include visual validation notes, screenshots/video paths if captured, and log paths.
+- [ ] Include any rows returned to Agent A for reclassification.
+- [ ] Include any coordination notes for Agents C/D/E.
+- [ ] Confirm this tracker progress snapshot is current.
+
+Handoff template:
+
+```markdown
+# Phase 7 Agent F Handoff - YYYY-MM-DD
+
+Branch:
+`codex/phase7-agent-f-rendering-vfx`
+
+Rows completed:
+- `P7-####` - `TypeName` - `Converted/Split/ManagedException/Retired`
+
+Visual split:
+- Request/result data:
+- Managed presentation exceptions:
+
+Counts:
+- Converted to ISystem:
+- Split passive/managed boundaries:
+- Managed presentation SystemBase exceptions:
+- Retired/folded:
+
+Validation:
+- `git diff --check`: passed/failed
+- Unity validation: passed/failed/not run, log path
+- Visual QA: screenshot/video/manual/not run
+
+Risks:
+- ...
+```
+
+Completion criteria:
+
+- Every Agent F row has final status.
+- No converted `ISystem` owns Unity rendering, camera, particle, light, material, or GameObject APIs.
+- Authored VFX quality is preserved unless the user approved an art change.
+- No MonoBehaviour ticking introduced.
+- Managed presentation exceptions are explicit and countable.

@@ -1430,6 +1430,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
         SetLabelText(diagnosticsLogTextLabel, diagnostics.LogText, "Runtime log ready.");
         SetShellHidden(diagnosticsLogPanel, !diagnostics.LogVisible);
+        SetClass(diagnosticsOverlay, "diagnostics-overlay-expanded", diagnostics.LogVisible);
         return true;
     }
 

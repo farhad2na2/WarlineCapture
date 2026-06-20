@@ -270,6 +270,12 @@ public static class UiToolkitMenuSceneStartupValidation
                     return;
                 }
 
+                if (!IsPickedByPanel(deployButton, out string pickedElement))
+                {
+                    CompleteDeployValidation(false, $"DeployOperationButton is blocked by another UI Toolkit element. picked={pickedElement}");
+                    return;
+                }
+
                 using ClickEvent clickEvent = ClickEvent.GetPooled();
                 clickEvent.target = deployButton;
                 deployButton.SendEvent(clickEvent);
@@ -424,6 +430,36 @@ public static class UiToolkitMenuSceneStartupValidation
             $"{name}[children={element.childCount},hidden={element.ClassListContains("shell-hidden")}," +
             $"display={style.display},visibility={style.visibility},opacity={style.opacity:0.00}," +
             $"wb=({worldBound.x:0},{worldBound.y:0},{worldBound.width:0},{worldBound.height:0})]";
+    }
+
+    private static bool IsPickedByPanel(VisualElement target, out string pickedElement)
+    {
+        pickedElement = "none";
+        if (target == null || target.panel == null)
+            return false;
+
+        Rect worldBound = target.worldBound;
+        Vector2 center = worldBound.center;
+        VisualElement picked = target.panel.Pick(center);
+        pickedElement = DescribePickedElement(picked);
+        while (picked != null)
+        {
+            if (picked == target)
+                return true;
+            picked = picked.parent;
+        }
+
+        return false;
+    }
+
+    private static string DescribePickedElement(VisualElement element)
+    {
+        if (element == null)
+            return "null";
+
+        string typeName = element.GetType().Name;
+        string name = string.IsNullOrEmpty(element.name) ? "(unnamed)" : element.name;
+        return $"{typeName}:{name}";
     }
 
     private static float EstimateAverageLuma(Texture2D texture)

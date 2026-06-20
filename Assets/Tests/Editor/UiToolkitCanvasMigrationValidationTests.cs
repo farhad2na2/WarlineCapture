@@ -23,10 +23,17 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     private const string MatchHudUxmlPath = "Assets/Game/UI Toolkit/SCN08_MatchHudContent/SCN08_MatchHudContent.uxml";
     private const string MatchHudUssPath = "Assets/Game/UI Toolkit/SCN08_MatchHudContent/SCN08_MatchHudContent.uss";
     private const string MatchHudPassengerItemUxmlPath = "Assets/Game/UI Toolkit/SCN08_MatchHudContent/SCN08_PassengerItemView.uxml";
+    private const string BuildPlacementConfirmationBarUxmlPath = "Assets/Game/UI Toolkit/SCN08_BuildPlacementConfirmationBar/SCN08_BuildPlacementConfirmationBar.uxml";
+    private const string BuildPlacementConfirmationBarUssPath = "Assets/Game/UI Toolkit/SCN08_BuildPlacementConfirmationBar/SCN08_BuildPlacementConfirmationBar.uss";
     private const string BuildDrawerUxmlPath = "Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_BuildDrawerPopup.uxml";
     private const string BuildDrawerCatalogItemUxmlPath = "Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_BuildCatalogItemView.uxml";
     private const string BuildDrawerProductionQueueItemUxmlPath = "Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_ProductionQueueItemView.uxml";
     private const string BuildDrawerProductionActiveItemUxmlPath = "Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_ProductionActiveItemView.uxml";
+    private const string ArmoryUxmlPath = "Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryContent.uxml";
+    private const string ArmoryUssPath = "Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryContent.uss";
+    private const string ArmoryItemUxmlPath = "Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryItemView.uxml";
+    private const string CommanderProfileUxmlPath = "Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uxml";
+    private const string CommanderProfileUssPath = "Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uss";
     private const string UiToolkitAsmdefPath = "Assets/Game/Scripts/UI/Toolkit/Game.UI.Toolkit.asmdef";
     private const string ShellApplySystemPath = "Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs";
     private const string MenuBootstrapSystemPath = "Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs";
@@ -113,7 +120,20 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             tests.UiToolkitBuildDrawerPopupCommandsPreserveSelectedBuildState();
             tests.UiToolkitBuildDrawerPrimaryBuildEnqueuesEcsBuildRequest();
             tests.UiToolkitShellApplySystemAppliesBuildDrawerReadModel();
-            UnityEngine.Debug.Log("[UiToolkitCanvasMigrationValidation] result=Passed tests=59");
+            tests.BuildPlacementConfirmationBarUxmlExposesCanvasParityBindings();
+            tests.UiToolkitShellViewMountsBuildPlacementConfirmationBarIntoMatchSlot();
+            tests.UiToolkitShellApplySystemAppliesBuildPlacementConfirmationBarReadModelAndActions();
+            tests.UiBuildPlacementReadModelSystemMirrorsActivePlacementState();
+            tests.ArmoryUxmlExposesCanvasParityBindingsAndRetainedItemTemplate();
+            tests.UiToolkitShellViewMountsArmoryUxmlIntoArmorySlot();
+            tests.UiToolkitShellViewBindsArmoryRetainedItemsAndActions();
+            tests.UiToolkitShellApplySystemAppliesArmoryCategoryReadModel();
+            tests.ArmoryItemTemplateSupportsFullRetainedStateBindings();
+            tests.UiToolkitArmoryScrollUsesRetainedRowsWithoutPerOperationReplacement();
+            tests.UiToolkitArmoryItemSelectionSwapsGeneratedFrameStateClasses();
+            tests.UiToolkitArmoryLockedRowsKeepLockedStateAndRejectUnavailableActions();
+            tests.CommanderProfileUxmlExposesCanvasParityBindingsAndNewArtAssets();
+            UnityEngine.Debug.Log("[UiToolkitCanvasMigrationValidation] result=Passed tests=72");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -636,12 +656,12 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         StringAssert.Contains("if (!useUiToolkit)\n            ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);", source);
         StringAssert.Contains("QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);", source);
         StringAssert.Contains("UpdateActualLoadingProgress(entityManager, boundary, shellState);", source);
-        StringAssert.Contains("if (useUiToolkit)\n        {\n            ClearBoundMatchRuntimeUi();\n            return;\n        }\n\n        BindMatchRuntimeUi(view, shellState);", source);
+        StringAssert.Contains("if (useUiToolkit)\n        {\n            BindUiToolkitMatchReadModels(shellState);\n            ClearBoundMatchRuntimeUi();\n            return;\n        }\n\n        ClearUiToolkitMatchReadModels();\n        BindMatchRuntimeUi(view, shellState);", source);
         StringAssert.Contains("if (!wasInitialized)\n                ResetShellForFreshMenuScene();", source);
 
         int modeIndex = source.IndexOf("bool useUiToolkit = view.IsUiToolkitMode;", StringComparison.Ordinal);
         int progressIndex = source.IndexOf("UpdateActualLoadingProgress(entityManager, boundary, shellState);", StringComparison.Ordinal);
-        int toolkitReturnIndex = source.IndexOf("if (useUiToolkit)\n        {\n            ClearBoundMatchRuntimeUi();", StringComparison.Ordinal);
+        int toolkitReturnIndex = source.IndexOf("if (useUiToolkit)\n        {\n            BindUiToolkitMatchReadModels(shellState);", StringComparison.Ordinal);
 
         Assert.GreaterOrEqual(modeIndex, 0, "Update must cache UI Toolkit mode after applying runtime mode.");
         Assert.Greater(progressIndex, modeIndex, "Loading progress must update after mode detection.");
@@ -1164,6 +1184,423 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         }
         finally
         {
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void UiToolkitShellViewMountsArmoryUxmlIntoArmorySlot()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset armoryAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ArmoryUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(armoryAsset, $"Missing Armory UXML asset: {ArmoryUxmlPath}");
+
+        GameObject host = new("UiToolkitShellArmoryMountSmoke");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, armoryAsset, null, null);
+
+            Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Armory content.");
+            Assert.AreSame(armoryAsset, shellView.ArmoryScreenAsset, "Configured Armory asset must be retained by the shell view.");
+            Assert.IsTrue(shellView.HasMountedArmoryScreen, "Configured Armory UXML must mount into ArmoryScreenSlot.");
+            Assert.IsTrue(shellView.HasRequiredArmoryBindings, "Mounted Armory UXML must expose the Phase 7 screen and action bindings.");
+            Assert.IsNotNull(shellView.ArmoryContentRoot, "Mounted Armory content root must be cached.");
+            Assert.AreEqual("SCN19_ArmoryContent", shellView.ArmoryContentRoot.name, "Mounted Armory content must keep its binding root name.");
+            Assert.AreEqual(1, shellView.ArmoryScreenSlot.childCount, "Armory slot must contain a single Armory UXML tree.");
+            Assert.IsTrue(shellView.ArmoryScreenSlot.ClassListContains("shell-hidden"), "Mounted Armory screen must stay hidden until the Armory route is presented.");
+
+            var commands = new List<UiShellPresentationCommandModel>
+            {
+                new(
+                    UiShellCommandKind.SwapMenuMiddle,
+                    UiShellRegionId.MiddleRegion,
+                    UIRoute.Armory,
+                    UiShellMode.MainMenu,
+                    81)
+            };
+
+            Assert.IsTrue(shellView.ApplyPresentationCommands(commands));
+            Assert.IsTrue(shellView.MainMenuScreenSlot.ClassListContains("shell-hidden"), "Armory route must hide the Main Menu body when a dedicated Armory screen is mounted.");
+            Assert.IsFalse(shellView.ArmoryScreenSlot.ClassListContains("shell-hidden"), "Armory route must reveal the dedicated Armory screen slot.");
+            Assert.IsTrue(shellView.ArmoryScreenSlot.ClassListContains(UiToolkitShellView.GetMotionStateClass(UiToolkitShellMotionState.Visible)), "Armory route must apply the visible motion state to the dedicated Armory slot.");
+
+            commands[0] = new UiShellPresentationCommandModel(
+                UiShellCommandKind.SwapMenuMiddle,
+                UiShellRegionId.MiddleRegion,
+                UIRoute.MainMenu,
+                UiShellMode.MainMenu,
+                82);
+
+            Assert.IsTrue(shellView.ApplyPresentationCommands(commands));
+            Assert.IsFalse(shellView.MainMenuScreenSlot.ClassListContains("shell-hidden"), "Returning to Main Menu must reveal the Main Menu body.");
+            Assert.IsTrue(shellView.ArmoryScreenSlot.ClassListContains("shell-hidden"), "Returning to Main Menu must hide the dedicated Armory screen.");
+
+            Assert.IsTrue(shellView.Mount(), "Repeated shell mount must remain stable.");
+            Assert.AreEqual(1, shellView.ArmoryScreenSlot.childCount, "Repeated shell mount must not duplicate Armory content.");
+
+            shellView.ClearCache();
+
+            Assert.IsFalse(shellView.HasMountedArmoryScreen, "ClearCache must clear mounted Armory state.");
+            Assert.IsNull(shellView.ArmoryContentRoot, "ClearCache must clear Armory content root.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void UiToolkitShellViewBindsArmoryRetainedItemsAndActions()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset armoryAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ArmoryUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(armoryAsset, $"Missing Armory UXML asset: {ArmoryUxmlPath}");
+
+        var gateway = new RecordingUiShellRuntimeGateway
+        {
+            HasArmoryCategory = true,
+            ArmoryCategory = ArmoryCatalogCategory.Characters
+        };
+        UiShellRuntimeGateway.Register(gateway);
+
+        GameObject host = new("UiToolkitShellArmoryBindingSmoke");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, armoryAsset, null, null);
+
+            Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before Armory retained binding validation.");
+            Assert.IsTrue(shellView.HasRequiredArmoryRuntimeBindings, "Armory runtime binding cache must include roster, category nav, inspection, tabs, and actions.");
+            Assert.IsNotNull(shellView.ArmoryScrollView, "Armory roster scroll view must be cached.");
+            Assert.IsNotNull(shellView.ArmoryCatalogContent, "Armory retained item content root must be cached.");
+            Assert.AreEqual(8, shellView.ArmoryItems.Count, "Armory retained item cache must preserve the eight visible target rows.");
+            Assert.AreEqual("RIFLE SQUAD", shellView.ArmoryItemTitleLabels[0].text, "Armory item title binding mismatch.");
+            Assert.IsTrue(shellView.ArmoryItems[0].ClassListContains("selected"), "Initial Armory item must be selected.");
+            Assert.IsTrue(shellView.ArmoryItems[4].ClassListContains("locked"), "Locked Armory item state must be retained.");
+
+            Assert.IsTrue(shellView.SelectArmoryItem(1), "Unlocked Armory item selection must update retained state.");
+            Assert.IsFalse(shellView.ArmoryItems[0].ClassListContains("selected"), "Previous Armory item must leave selected state.");
+            Assert.IsTrue(shellView.ArmoryItems[1].ClassListContains("selected"), "Selected Armory item must gain selected state.");
+            Assert.AreEqual("FAST APC", shellView.ArmoryInspectionNameLabel.text, "Inspection title must follow retained selection.");
+            Assert.AreEqual("VEHICLE", shellView.ArmoryInspectionTypeLabel.text, "Inspection type must follow retained selection.");
+
+            Assert.IsFalse(shellView.SelectArmoryItem(4), "Locked Armory items must not trigger selection.");
+            Assert.IsFalse(shellView.ArmoryItems[4].ClassListContains("selected"), "Locked Armory item must not gain selected state.");
+            Assert.IsTrue(shellView.ArmoryItems[1].ClassListContains("selected"), "Rejected locked selection must preserve the previous selected item.");
+
+            Assert.IsTrue(shellView.TrySubmitArmoryCategory(ArmoryCatalogCategory.Vehicles), "Armory category action must enqueue through the shell runtime gateway.");
+            Assert.AreEqual(1, gateway.ArmoryCategoryRequests.Count, "Armory category request must be recorded once.");
+            Assert.AreEqual(ArmoryCatalogCategory.Vehicles, gateway.ArmoryCategoryRequests[0], "Armory category request kind mismatch.");
+            Assert.IsTrue(shellView.ArmoryCategoryActions[1].ClassListContains("category-selected"), "Submitted Armory category must update visual state.");
+            Assert.IsFalse(shellView.ArmoryCategoryActions[0].ClassListContains("category-selected"), "Submitted Armory category must clear prior visual state.");
+
+            string shellViewSource = File.ReadAllText("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs");
+            StringAssert.Contains("BindArmoryScreen", shellViewSource, "Shell view must bind Armory retained elements through a dedicated method.");
+            StringAssert.Contains("CacheArmoryItem", shellViewSource, "Shell view must cache retained Armory item rows.");
+            StringAssert.Contains("TrySubmitArmoryCategory", shellViewSource, "Shell view must submit Armory category changes through the runtime gateway.");
+            StringAssert.Contains("UiShellRuntimeGateway.TryEnqueueArmoryCategory", shellViewSource, "Armory category actions must use the ECS shell category boundary.");
+            StringAssert.Contains("ClassListContains(\"locked\")", shellViewSource, "Armory item selection must guard locked rows.");
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void UiToolkitShellApplySystemAppliesArmoryCategoryReadModel()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset armoryAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ArmoryUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(armoryAsset, $"Missing Armory UXML asset: {ArmoryUxmlPath}");
+
+        var gateway = new RecordingUiShellRuntimeGateway
+        {
+            HasShellState = true,
+            ShellState = new UiShellStateModel(
+                UiShellMode.MainMenu,
+                UIRoute.Armory,
+                UiShellTransitionPhase.MenuReady,
+                91,
+                false),
+            HasArmoryCategory = true,
+            ArmoryCategory = ArmoryCatalogCategory.Aircrafts
+        };
+        UiShellRuntimeGateway.Register(gateway);
+
+        GameObject host = new("UiToolkitShellArmoryCategoryReadModelSmoke");
+        using World world = new("UiToolkitShellArmoryCategoryReadModelSmokeWorld");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, armoryAsset, null, null);
+
+            UiToolkitShellApplySystem applySystem = world.GetOrCreateSystemManaged<UiToolkitShellApplySystem>();
+            applySystem.ConfigureShellView(shellView);
+            applySystem.Update();
+
+            Assert.IsTrue(applySystem.HasArmoryCategory, "Apply system must read Armory category state through the runtime gateway.");
+            Assert.AreEqual(ArmoryCatalogCategory.Aircrafts, applySystem.LastArmoryCategory, "Apply system did not capture Armory category state.");
+            Assert.IsTrue(shellView.HasMountedArmoryScreen, "Armory read-model apply must keep the dedicated Armory screen mounted.");
+            Assert.IsTrue(shellView.ArmoryCategoryActions[2].ClassListContains("category-selected"), "Armory category read model must select Aircraft.");
+            Assert.IsFalse(shellView.ArmoryCategoryActions[0].ClassListContains("category-selected"), "Armory category read model must clear default Units state.");
+
+            gateway.ArmoryCategory = ArmoryCatalogCategory.Buildings;
+            applySystem.Update();
+
+            Assert.AreEqual(ArmoryCatalogCategory.Buildings, applySystem.LastArmoryCategory, "Apply system must capture updated Armory category state.");
+            Assert.IsTrue(shellView.ArmoryCategoryActions[3].ClassListContains("category-selected"), "Updated Armory category read model must select Buildings.");
+            Assert.IsFalse(shellView.ArmoryCategoryActions[2].ClassListContains("category-selected"), "Updated Armory category read model must clear Aircraft.");
+
+            string shellApplySource = File.ReadAllText(ShellApplySystemPath);
+            StringAssert.Contains("UiShellRuntimeGateway.TryReadArmoryCategory", shellApplySource, "Apply system must read Armory category through the runtime gateway.");
+            StringAssert.Contains("shellView.ApplyArmoryCategory", shellApplySource, "Apply system must apply Armory category through the view edge.");
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void UiToolkitArmoryScrollUsesRetainedRowsWithoutPerOperationReplacement()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset armoryAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ArmoryUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(armoryAsset, $"Missing Armory UXML asset: {ArmoryUxmlPath}");
+
+        var gateway = new RecordingUiShellRuntimeGateway
+        {
+            HasShellState = true,
+            ShellState = new UiShellStateModel(
+                UiShellMode.MainMenu,
+                UIRoute.Armory,
+                UiShellTransitionPhase.MenuReady,
+                74,
+                false),
+            HasArmoryCategory = true,
+            ArmoryCategory = ArmoryCatalogCategory.Characters
+        };
+        UiShellRuntimeGateway.Register(gateway);
+
+        GameObject host = new("UiToolkitShellArmoryRetainedScrollSmoke");
+        using World world = new("UiToolkitShellArmoryRetainedScrollSmokeWorld");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, armoryAsset, null, null);
+
+            UiToolkitShellApplySystem applySystem = world.GetOrCreateSystemManaged<UiToolkitShellApplySystem>();
+            applySystem.ConfigureShellView(shellView);
+            applySystem.Update();
+
+            Assert.IsTrue(shellView.HasRequiredArmoryRuntimeBindings, "Armory retained-scroll validation requires complete runtime bindings.");
+            Assert.IsNotNull(shellView.ArmoryCatalogContent, "Armory catalog content root must be cached.");
+            Assert.AreEqual(8, shellView.ArmoryItems.Count, "Armory retained item cache must preserve the eight visible target rows.");
+
+            int initialChildCount = shellView.ArmoryCatalogContent.childCount;
+            Button firstItem = shellView.ArmoryItems[0];
+            Button secondItem = shellView.ArmoryItems[1];
+            Button lockedItem = shellView.ArmoryItems[4];
+            Assert.IsNotNull(firstItem, "First Armory row must be retained.");
+            Assert.IsNotNull(secondItem, "Second Armory row must be retained.");
+            Assert.IsNotNull(lockedItem, "Locked Armory row must be retained.");
+
+            ArmoryCatalogCategory[] categories =
+            {
+                ArmoryCatalogCategory.Characters,
+                ArmoryCatalogCategory.Vehicles,
+                ArmoryCatalogCategory.Aircrafts,
+                ArmoryCatalogCategory.Buildings,
+                ArmoryCatalogCategory.Support
+            };
+
+            for (int i = 0; i < categories.Length; i++)
+            {
+                gateway.ArmoryCategory = categories[i];
+                applySystem.Update();
+
+                Assert.AreEqual(initialChildCount, shellView.ArmoryCatalogContent.childCount, $"Armory category update {categories[i]} must not add or remove retained rows.");
+                Assert.AreSame(firstItem, shellView.ArmoryItems[0], $"Armory category update {categories[i]} must not replace the first retained row.");
+                Assert.AreSame(secondItem, shellView.ArmoryItems[1], $"Armory category update {categories[i]} must not replace the second retained row.");
+                Assert.AreSame(lockedItem, shellView.ArmoryItems[4], $"Armory category update {categories[i]} must not replace the locked retained row.");
+
+                Assert.IsTrue(shellView.SelectArmoryItem(1), "Unlocked retained row selection must still work after category updates.");
+                Assert.IsTrue(secondItem.ClassListContains("selected"), "Selected retained row must keep selected state.");
+                Assert.IsFalse(shellView.SelectArmoryItem(4), "Locked retained row must continue rejecting selection after category updates.");
+                Assert.IsFalse(lockedItem.ClassListContains("selected"), "Locked retained row must not gain selected state.");
+                Assert.IsTrue(shellView.SelectArmoryItem(0), "Selection must be able to return to the first retained row.");
+                Assert.AreEqual(initialChildCount, shellView.ArmoryCatalogContent.childCount, "Repeated item selection must not mutate retained row count.");
+            }
+
+            string shellViewSource = File.ReadAllText("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs");
+            StringAssert.Contains("private readonly Button[] armoryItems", shellViewSource, "Armory rows must be cached in a retained array.");
+            StringAssert.Contains("private readonly EventCallback<ClickEvent>[] armoryItemCallbacks", shellViewSource, "Armory item callbacks must be retained instead of rebuilt per operation.");
+            StringAssert.Contains("CacheArmoryItem", shellViewSource, "Armory retained row lookup must stay isolated to mount/cache time.");
+            StringAssert.Contains("SelectArmoryItem(0)", shellViewSource, "Armory mount must initialize selection without rebuilding rows.");
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void UiToolkitArmoryItemSelectionSwapsGeneratedFrameStateClasses()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset armoryAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ArmoryUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(armoryAsset, $"Missing Armory UXML asset: {ArmoryUxmlPath}");
+
+        string uss = File.ReadAllText(ArmoryUssPath);
+        string defaultFrameBlock = GetCssBlock(uss, ".item-frame {");
+        string selectedFrameBlock = GetCssBlock(uss, ".armory-item-view.selected .item-frame {");
+        string lockedFrameBlock = GetCssBlock(uss, ".armory-item-view.locked .item-frame {");
+        AssertCssContains(defaultFrameBlock, "scn19_roster_card_default_frame.png", "Default Armory rows must use the generated default frame.");
+        AssertCssContains(selectedFrameBlock, "scn19_roster_card_selected_frame.png", "Selected Armory rows must use the generated selected frame.");
+        AssertCssContains(lockedFrameBlock, "scn19_roster_card_locked_frame.png", "Locked Armory rows must use the generated locked frame.");
+
+        var gateway = new RecordingUiShellRuntimeGateway
+        {
+            HasArmoryCategory = true,
+            ArmoryCategory = ArmoryCatalogCategory.Characters
+        };
+        UiShellRuntimeGateway.Register(gateway);
+
+        GameObject host = new("UiToolkitShellArmorySelectedFrameSmoke");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, armoryAsset, null, null);
+
+            Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before Armory selected-frame validation.");
+            Assert.IsTrue(shellView.HasRequiredArmoryRuntimeBindings, "Armory selected-frame validation requires complete runtime bindings.");
+
+            Button firstItem = shellView.ArmoryItems[0];
+            Button secondItem = shellView.ArmoryItems[1];
+            Button lockedItem = shellView.ArmoryItems[4];
+            Assert.IsNotNull(firstItem, "First Armory row must be cached.");
+            Assert.IsNotNull(secondItem, "Second Armory row must be cached.");
+            Assert.IsNotNull(lockedItem, "Locked Armory row must be cached.");
+            Assert.IsTrue(firstItem.ClassListContains("selected"), "Initial Armory row must start selected for static parity.");
+            Assert.IsFalse(firstItem.ClassListContains("default"), "Initial selected row must not also keep the default visual state.");
+            Assert.IsFalse(secondItem.ClassListContains("selected"), "Second row must not start selected.");
+            Assert.IsFalse(secondItem.ClassListContains("locked"), "Second row must be selectable.");
+
+            Assert.IsTrue(shellView.SelectArmoryItem(1), "Selecting an unlocked Armory row must succeed.");
+            Assert.AreEqual(1, shellView.SelectedArmoryItemIndex, "Selected Armory index must update to the clicked row.");
+            Assert.IsFalse(firstItem.ClassListContains("selected"), "Previously selected Armory row must remove selected class.");
+            Assert.IsTrue(firstItem.ClassListContains("default"), "Previously selected Armory row must restore default frame state.");
+            Assert.IsTrue(secondItem.ClassListContains("selected"), "Newly selected Armory row must gain selected class.");
+            Assert.IsFalse(secondItem.ClassListContains("default"), "Newly selected Armory row must remove default frame state.");
+            Assert.AreEqual("FAST APC", shellView.ArmoryInspectionNameLabel.text, "Inspection title must track the selected row.");
+            Assert.AreEqual("VEHICLE", shellView.ArmoryInspectionTypeLabel.text, "Inspection type must track the selected row.");
+
+            Assert.IsFalse(shellView.SelectArmoryItem(4), "Locked Armory row selection must be rejected.");
+            Assert.AreEqual(1, shellView.SelectedArmoryItemIndex, "Rejected locked selection must preserve the prior selected row.");
+            Assert.IsTrue(lockedItem.ClassListContains("locked"), "Locked Armory row must preserve locked frame state.");
+            Assert.IsFalse(lockedItem.ClassListContains("selected"), "Locked Armory row must not gain selected state.");
+            Assert.IsTrue(secondItem.ClassListContains("selected"), "Prior selected row must remain selected after locked-row rejection.");
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void UiToolkitArmoryLockedRowsKeepLockedStateAndRejectUnavailableActions()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset mainMenuAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(MainMenuUxmlPath);
+        VisualTreeAsset armoryAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ArmoryUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(mainMenuAsset, $"Missing Main Menu UXML asset: {MainMenuUxmlPath}");
+        Assert.IsNotNull(armoryAsset, $"Missing Armory UXML asset: {ArmoryUxmlPath}");
+
+        string uxml = File.ReadAllText(ArmoryUxmlPath);
+        string itemUxml = File.ReadAllText(ArmoryItemUxmlPath);
+        string uss = File.ReadAllText(ArmoryUssPath);
+        StringAssert.Contains("class=\"armory-item-view item-card locked item-vehicle\"", uxml, "Armory UXML must seed locked vehicle rows.");
+        StringAssert.Contains("class=\"armory-item-view item-card locked item-aircraft\"", uxml, "Armory UXML must seed locked aircraft rows.");
+        StringAssert.Contains("class=\"item-state-label locked-state\" text=\"LOCKED\"", uxml, "Locked Armory rows must expose a visible LOCKED state label.");
+        StringAssert.Contains("class=\"lock-badge\"", uxml, "Locked Armory rows must expose a lock badge.");
+        StringAssert.Contains("class=\"item-action-availability available\"", itemUxml, "Retained Armory item template must expose the action availability surface.");
+        StringAssert.Contains(".armory-item-view.locked .item-action-icon", uss, "Locked rows must override the action marker to unavailable styling.");
+        StringAssert.Contains(".armory-item-view.locked .item-action-label", uss, "Locked rows must override the action text to unavailable styling.");
+        StringAssert.Contains("scn19_icon_hold_shield.png", uss, "Locked unavailable marker must use a generated new-art-direction icon.");
+
+        var gateway = new RecordingUiShellRuntimeGateway
+        {
+            HasArmoryCategory = true,
+            ArmoryCategory = ArmoryCatalogCategory.Characters
+        };
+        UiShellRuntimeGateway.Register(gateway);
+
+        GameObject host = new("UiToolkitShellArmoryLockedRowsSmoke");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(document, shellAsset, null, mainMenuAsset, null, armoryAsset, null, null);
+
+            Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before Armory locked-row validation.");
+            Assert.IsTrue(shellView.HasRequiredArmoryRuntimeBindings, "Armory locked-row validation requires complete runtime bindings.");
+            Assert.IsTrue(shellView.SelectArmoryItem(1), "Unlocked setup selection must succeed before locked-row rejection checks.");
+            Assert.AreEqual("FAST APC", shellView.ArmoryInspectionNameLabel.text, "Setup selection title mismatch.");
+            Assert.AreEqual("VEHICLE", shellView.ArmoryInspectionTypeLabel.text, "Setup selection type mismatch.");
+
+            int[] lockedIndexes = { 4, 5, 6, 7 };
+            for (int i = 0; i < lockedIndexes.Length; i++)
+            {
+                int index = lockedIndexes[i];
+                Button lockedItem = shellView.ArmoryItems[index];
+                Assert.IsNotNull(lockedItem, $"Locked Armory row {index} must be cached.");
+                Assert.IsTrue(lockedItem.ClassListContains("locked"), $"Locked Armory row {index} must keep the locked class.");
+                Assert.IsFalse(lockedItem.ClassListContains("selected"), $"Locked Armory row {index} must not start selected.");
+                Assert.AreEqual("LOCKED", lockedItem.Q<Label>("StateLabel")?.text, $"Locked Armory row {index} must show LOCKED state text.");
+                Assert.IsTrue(lockedItem.Q<VisualElement>("Badge")?.ClassListContains("lock-badge") ?? false, $"Locked Armory row {index} must keep the lock badge.");
+
+                Assert.IsFalse(shellView.SelectArmoryItem(index), $"Locked Armory row {index} must reject selection/action trigger.");
+                Assert.AreEqual(1, shellView.SelectedArmoryItemIndex, $"Locked Armory row {index} must not replace the selected row.");
+                Assert.IsFalse(lockedItem.ClassListContains("selected"), $"Locked Armory row {index} must not gain selected frame state.");
+                Assert.IsFalse(lockedItem.ClassListContains("default"), $"Locked Armory row {index} must not fall back to the default unlocked frame state.");
+                Assert.AreEqual("FAST APC", shellView.ArmoryInspectionNameLabel.text, $"Locked Armory row {index} must not update the inspection title.");
+                Assert.AreEqual("VEHICLE", shellView.ArmoryInspectionTypeLabel.text, $"Locked Armory row {index} must not update the inspection type.");
+                Assert.AreEqual(0, gateway.UiActionRequests.Count, $"Locked Armory row {index} must not enqueue unavailable UI actions.");
+            }
+
+            string shellViewSource = File.ReadAllText("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs");
+            StringAssert.Contains("if (item == null || item.ClassListContains(\"locked\"))\n            return false;", shellViewSource, "Armory selection must reject locked rows before mutating selection, labels, or actions.");
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
             UnityEngine.Object.DestroyImmediate(host);
         }
     }
@@ -2977,6 +3414,541 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     }
 
     [Test]
+    public void BuildPlacementConfirmationBarUxmlExposesCanvasParityBindings()
+    {
+        VisualTreeAsset placementBarAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(BuildPlacementConfirmationBarUxmlPath);
+        Assert.IsNotNull(placementBarAsset, $"Missing Build Placement Confirmation Bar UXML asset: {BuildPlacementConfirmationBarUxmlPath}");
+
+        string uxml = File.ReadAllText(BuildPlacementConfirmationBarUxmlPath);
+        string uss = File.ReadAllText(BuildPlacementConfirmationBarUssPath);
+        string matchHudUss = File.ReadAllText(MatchHudUssPath);
+
+        string[] requiredNames =
+        {
+            "SCN08_BuildPlacementConfirmationBar",
+            "BuildPlacementConfirmationBarRoot",
+            "Frame",
+            "Title",
+            "StatusChip",
+            "Status",
+            "CreditsIcon",
+            "Cost",
+            "TimeIcon",
+            "Duration",
+            "CancelButton",
+            "RotateButton",
+            "ConfirmButton",
+            "InstructionStrip",
+            "InfoIcon",
+            "Instruction"
+        };
+
+        for (int i = 0; i < requiredNames.Length; i++)
+            StringAssert.Contains($"name=\"{requiredNames[i]}\"", uxml, $"Build Placement Confirmation Bar UXML missing Canvas parity binding element: {requiredNames[i]}");
+
+        string[] requiredButtons =
+        {
+            "CancelButton",
+            "RotateButton",
+            "ConfirmButton"
+        };
+
+        for (int i = 0; i < requiredButtons.Length; i++)
+            StringAssert.Contains($"<ui:Button name=\"{requiredButtons[i]}\"", uxml, $"Build Placement Confirmation Bar actionable element must remain a UI Toolkit Button: {requiredButtons[i]}");
+
+        StringAssert.Contains("build-placement-confirmation-bar-root", uxml, "Build Placement Confirmation Bar root must keep a dedicated pointer-blocking region class.");
+        StringAssert.Contains("bar-frame", uxml, "Build Placement Confirmation Bar must keep a frame element instead of flattening the popup.");
+        StringAssert.Contains(".build-placement-confirmation-bar-root", uss, "Build Placement Confirmation Bar USS must define the pointer-blocking root region.");
+        StringAssert.Contains(".cancel-action", uss, "Build Placement Confirmation Bar USS must style the cancel action separately.");
+        StringAssert.Contains(".rotate-action", uss, "Build Placement Confirmation Bar USS must style the rotate action separately.");
+        StringAssert.Contains(".confirm-action", uss, "Build Placement Confirmation Bar USS must style the confirm action separately.");
+        StringAssert.Contains("pointer-events", uss, "Build Placement Confirmation Bar USS must explicitly control pointer blocking over the active bar.");
+        StringAssert.Contains("pointer-events: none;", uss, "Build Placement Confirmation Bar full-screen root must stay pointer-transparent outside the active bar rect.");
+        StringAssert.Contains("pointer-events: auto;", uss, "Build Placement Confirmation Bar active rect must block world clicks over the bar only.");
+        StringAssert.Contains("bottom: 20.5%;", uss, "Build Placement Confirmation Bar must stay above the Match HUD footer/command rail band.");
+        StringAssert.Contains("height: 18%;", uss, "Build Placement Confirmation Bar height must remain bounded so it does not overlap the command rail.");
+        StringAssert.Contains(".footer-content", matchHudUss, "Match HUD USS must expose the footer band that contains the command rail.");
+        StringAssert.Contains("bottom: 1.25%;", matchHudUss, "Match HUD footer must remain below the Build Placement Confirmation Bar.");
+        StringAssert.Contains("height: 18.7%;", matchHudUss, "Match HUD footer height must remain below the Build Placement Confirmation Bar safe band.");
+        StringAssert.Contains(".command-rail", matchHudUss, "Match HUD USS must expose the command rail layout for placement-bar overlap validation.");
+        StringAssert.Contains(".placement-valid .status-chip", uss, "Build Placement Confirmation Bar must express valid feedback as a visual state without changing UXML structure.");
+        StringAssert.Contains(".placement-invalid .status-chip", uss, "Build Placement Confirmation Bar must express invalid feedback as a visual state without changing UXML structure.");
+        StringAssert.Contains(".placement-invalid .confirm-action", uss, "Invalid placement feedback must visually disable confirm without replacing the action element.");
+        StringAssert.Contains("min-width: 17%;", uss, "Status feedback slot must keep a fixed width so status text changes do not shift layout.");
+        StringAssert.Contains("max-width: 17%;", uss, "Status feedback slot must keep a fixed width so status text changes do not shift layout.");
+        StringAssert.Contains("white-space: nowrap;", uss, "Build Placement Confirmation Bar text fields must keep single-line feedback to avoid vertical layout shifts.");
+        StringAssert.Contains("overflow: hidden;", uss, "Build Placement Confirmation Bar text fields must clip overflow inside fixed safe rects.");
+    }
+
+    [Test]
+    public void UiToolkitShellViewMountsBuildPlacementConfirmationBarIntoMatchSlot()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset placementBarAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(BuildPlacementConfirmationBarUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(placementBarAsset, $"Missing Build Placement Confirmation Bar UXML asset: {BuildPlacementConfirmationBarUxmlPath}");
+
+        GameObject host = new("UiToolkitShellBuildPlacementBarMountSmoke");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(document, shellAsset, null, null, null, null, placementBarAsset);
+
+            Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Build Placement Confirmation Bar content.");
+            Assert.AreSame(placementBarAsset, shellView.BuildPlacementConfirmationBarAsset, "Configured Build Placement Confirmation Bar asset must be retained by the shell view.");
+            Assert.IsTrue(shellView.HasMountedBuildPlacementConfirmationBar, "Configured Build Placement Confirmation Bar UXML must mount into MatchScreenSlot.");
+            Assert.IsTrue(shellView.HasRequiredBuildPlacementConfirmationBarBindings, "Mounted Build Placement Confirmation Bar UXML must bind Phase 6 title/status/cost/duration/instruction/actions.");
+            Assert.IsNotNull(shellView.BuildPlacementConfirmationBarRoot, "Mounted Build Placement Confirmation Bar root must be cached.");
+            Assert.AreEqual("SCN08_BuildPlacementConfirmationBar", shellView.BuildPlacementConfirmationBarRoot.name, "Mounted Build Placement Confirmation Bar content must keep its binding root name.");
+            Assert.AreEqual(1, shellView.MatchScreenSlot.childCount, "Match screen slot must contain a single placement bar UXML tree when no Match HUD asset is configured.");
+            Assert.IsNotNull(shellView.BuildPlacementTitleLabel, "Mounted Build Placement Confirmation Bar must expose the title binding.");
+            Assert.IsNotNull(shellView.BuildPlacementStatusLabel, "Mounted Build Placement Confirmation Bar must expose the status binding.");
+            Assert.IsNotNull(shellView.BuildPlacementCostLabel, "Mounted Build Placement Confirmation Bar must expose the cost binding.");
+            Assert.IsNotNull(shellView.BuildPlacementDurationLabel, "Mounted Build Placement Confirmation Bar must expose the duration binding.");
+            Assert.IsNotNull(shellView.BuildPlacementInstructionLabel, "Mounted Build Placement Confirmation Bar must expose the instruction binding.");
+            Assert.IsNotNull(shellView.BuildPlacementCancelAction, "Mounted Build Placement Confirmation Bar must expose the cancel action binding.");
+            Assert.IsNotNull(shellView.BuildPlacementRotateAction, "Mounted Build Placement Confirmation Bar must expose the rotate action binding.");
+            Assert.IsNotNull(shellView.BuildPlacementConfirmAction, "Mounted Build Placement Confirmation Bar must expose the confirm action binding.");
+            Assert.IsTrue(shellView.BuildPlacementConfirmationBarRoot.ClassListContains("shell-hidden"), "Mounted Build Placement Confirmation Bar must remain hidden until placement read-model binding is added.");
+
+            Assert.IsTrue(shellView.Mount(), "Repeated shell mount must remain stable.");
+            Assert.AreEqual(1, shellView.MatchScreenSlot.childCount, "Repeated shell mount must not duplicate Build Placement Confirmation Bar content.");
+
+            shellView.ClearCache();
+
+            Assert.IsFalse(shellView.HasMountedBuildPlacementConfirmationBar, "ClearCache must clear mounted Build Placement Confirmation Bar state.");
+            Assert.IsNull(shellView.BuildPlacementConfirmationBarRoot, "ClearCache must clear Build Placement Confirmation Bar root.");
+            Assert.IsNull(shellView.BuildPlacementConfirmAction, "ClearCache must clear Build Placement Confirmation Bar action bindings.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void UiToolkitShellApplySystemAppliesBuildPlacementConfirmationBarReadModelAndActions()
+    {
+        VisualTreeAsset shellAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ShellUxmlPath);
+        VisualTreeAsset placementBarAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(BuildPlacementConfirmationBarUxmlPath);
+        Assert.IsNotNull(shellAsset, $"Missing shell UXML asset: {ShellUxmlPath}");
+        Assert.IsNotNull(placementBarAsset, $"Missing Build Placement Confirmation Bar UXML asset: {BuildPlacementConfirmationBarUxmlPath}");
+
+        var gateway = new RecordingUiShellRuntimeGateway
+        {
+            HasShellState = true,
+            ShellState = new UiShellStateModel(
+                UiShellMode.MatchHud,
+                UIRoute.Match,
+                UiShellTransitionPhase.MatchHudReady,
+                117,
+                false),
+            HasBuildPlacementConfirmationBar = true,
+            BuildPlacementConfirmationBar = new UiBuildPlacementConfirmationBarModel(
+                true,
+                true,
+                true,
+                true,
+                "BUILD: GUARD TOWER",
+                "VALID PLACEMENT",
+                "420",
+                "00:18",
+                "TAP TO PLACE BUILDING")
+        };
+        UiShellRuntimeGateway.Register(gateway);
+
+        GameObject host = new("UiToolkitShellBuildPlacementBarReadModelSmoke");
+        using World world = new("UiToolkitShellBuildPlacementBarReadModelSmokeWorld");
+        try
+        {
+            UIDocument document = host.AddComponent<UIDocument>();
+            UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
+            shellView.Configure(document, shellAsset, null, null, null, null, placementBarAsset);
+
+            UiToolkitShellApplySystem applySystem = world.GetOrCreateSystemManaged<UiToolkitShellApplySystem>();
+            applySystem.ConfigureShellView(shellView);
+            applySystem.Update();
+
+            Assert.IsTrue(applySystem.HasBuildPlacementConfirmationBar, "Apply system must read Build Placement Confirmation Bar state from the runtime gateway.");
+            Assert.AreEqual("BUILD: GUARD TOWER", applySystem.LastBuildPlacementConfirmationBar.Title, "Apply system did not capture Build Placement Confirmation Bar title.");
+            Assert.IsFalse(shellView.BuildPlacementConfirmationBarRoot.ClassListContains("shell-hidden"), "Visible placement read model must show the bar.");
+            Assert.AreEqual("BUILD: GUARD TOWER", shellView.BuildPlacementTitleLabel.text, "Placement title must come from the read model.");
+            Assert.AreEqual("VALID PLACEMENT", shellView.BuildPlacementStatusLabel.text, "Placement status must come from the read model.");
+            Assert.AreEqual("420", shellView.BuildPlacementCostLabel.text, "Placement cost must come from the read model.");
+            Assert.AreEqual("00:18", shellView.BuildPlacementDurationLabel.text, "Placement duration must come from the read model.");
+            Assert.AreEqual("TAP TO PLACE BUILDING", shellView.BuildPlacementInstructionLabel.text, "Placement instruction must come from the read model.");
+            Assert.IsTrue(shellView.BuildPlacementConfirmAction.enabledSelf, "Confirm must be enabled for a valid placement.");
+            Assert.IsTrue(shellView.BuildPlacementCancelAction.enabledSelf, "Cancel must be enabled while placement is active.");
+            Assert.IsTrue(shellView.BuildPlacementRotateAction.enabledSelf, "Rotate must be enabled while placement is active.");
+            Assert.IsTrue(shellView.BuildPlacementConfirmationBarRoot.ClassListContains("placement-valid"), "Valid placement must add the valid visual state.");
+
+            gateway.BuildPlacementConfirmationBar = new UiBuildPlacementConfirmationBarModel(
+                true,
+                false,
+                true,
+                true,
+                "PLACE BARRACKS",
+                "BLOCKED: TERRAIN",
+                "900",
+                "00:30",
+                "DRAG TO POSITION, CONFIRM TO BUILD");
+            applySystem.Update();
+            Assert.IsFalse(shellView.BuildPlacementConfirmationBarRoot.ClassListContains("shell-hidden"), "Invalid visible placement must keep the bar visible.");
+            Assert.IsFalse(shellView.BuildPlacementConfirmationBarRoot.ClassListContains("placement-valid"), "Invalid placement must remove the valid visual state.");
+            Assert.IsTrue(shellView.BuildPlacementConfirmationBarRoot.ClassListContains("placement-invalid"), "Invalid placement must add the invalid visual state without layout replacement.");
+            Assert.AreEqual("BLOCKED: TERRAIN", shellView.BuildPlacementStatusLabel.text, "Invalid placement status must update in-place.");
+            Assert.IsFalse(shellView.BuildPlacementConfirmAction.enabledSelf, "Invalid placement must disable confirm while preserving cancel and rotate.");
+            Assert.IsTrue(shellView.BuildPlacementCancelAction.enabledSelf, "Invalid placement must preserve cancel behavior.");
+            Assert.IsTrue(shellView.BuildPlacementRotateAction.enabledSelf, "Invalid placement must preserve rotate behavior.");
+
+            gateway.BuildPlacementConfirmationBar = UiBuildPlacementConfirmationBarModel.Hidden;
+            applySystem.Update();
+            Assert.IsTrue(shellView.BuildPlacementConfirmationBarRoot.ClassListContains("shell-hidden"), "Hidden placement read model must hide the bar.");
+            Assert.IsFalse(shellView.BuildPlacementConfirmAction.enabledSelf, "Hidden placement read model must disable confirm.");
+
+            Assert.IsTrue(shellView.TrySubmitMatchHudAction(UiActionKind.BuildPlacementConfirm), "Build placement confirm action must submit through the UI action boundary.");
+            Assert.IsTrue(shellView.TrySubmitMatchHudAction(UiActionKind.BuildPlacementCancel), "Build placement cancel action must submit through the UI action boundary.");
+            Assert.IsTrue(shellView.TrySubmitMatchHudAction(UiActionKind.BuildPlacementRotate), "Build placement rotate action must submit through the UI action boundary.");
+            Assert.AreEqual(UiActionKind.BuildPlacementConfirm, gateway.UiActionRequests[0].Kind, "Confirm action kind mismatch.");
+            Assert.AreEqual(UiActionKind.BuildPlacementCancel, gateway.UiActionRequests[1].Kind, "Cancel action kind mismatch.");
+            Assert.AreEqual(UiActionKind.BuildPlacementRotate, gateway.UiActionRequests[2].Kind, "Rotate action kind mismatch.");
+
+            string runtimeGatewaySource = File.ReadAllText("Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs");
+            StringAssert.Contains("bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)", runtimeGatewaySource, "Runtime gateway must expose Build Placement Confirmation Bar read model access.");
+
+            string ecsComponentsSource = File.ReadAllText("Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs");
+            StringAssert.Contains("public struct UiBuildPlacementConfirmationBarComponent : IComponentData", ecsComponentsSource, "Build Placement Confirmation Bar must be an ECS read-model component.");
+
+            string shellViewSource = File.ReadAllText("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs");
+            StringAssert.Contains("ApplyBuildPlacementConfirmationBar", shellViewSource, "Shell view must expose a narrow apply method for placement bar visuals.");
+            StringAssert.Contains("RegisterBuildPlacementAction", shellViewSource, "Placement bar actions must use typed callbacks.");
+            StringAssert.Contains("UiActionKind.BuildPlacementConfirm", shellViewSource, "Placement confirm button must enqueue a typed UI action.");
+            StringAssert.Contains("target.enabledInHierarchy", shellViewSource, "Placement bar actions must not enqueue gameplay requests from disabled Toolkit elements.");
+
+            string shellApplySource = File.ReadAllText(ShellApplySystemPath);
+            StringAssert.Contains("UiShellRuntimeGateway.TryReadBuildPlacementConfirmationBar", shellApplySource, "Apply system must read placement state through the runtime gateway.");
+            StringAssert.Contains("shellView.ApplyBuildPlacementConfirmationBar", shellApplySource, "Apply system must apply placement state through the view edge.");
+
+            string actionRequestSource = File.ReadAllText(UiActionRequestSystemPath);
+            StringAssert.Contains("case UiActionKind.BuildPlacementConfirm:", actionRequestSource, "UI action request system must process BuildPlacementConfirm.");
+            StringAssert.Contains("case UiActionKind.BuildPlacementCancel:", actionRequestSource, "UI action request system must process BuildPlacementCancel.");
+            StringAssert.Contains("case UiActionKind.BuildPlacementRotate:", actionRequestSource, "UI action request system must process BuildPlacementRotate.");
+            StringAssert.Contains("BuildingUiPlacementCommandRequestElement.KindConfirmPlacement", actionRequestSource, "Confirm must enqueue the existing building placement confirm request.");
+            StringAssert.Contains("BuildingUiPlacementCommandRequestElement.KindCancelPlacement", actionRequestSource, "Cancel must enqueue the existing building placement cancel request.");
+            StringAssert.Contains("BuildingUiPlacementCommandRequestElement.KindRotatePlacement", actionRequestSource, "Rotate must enqueue the existing building placement rotate request.");
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(host);
+        }
+    }
+
+    [Test]
+    public void UiBuildPlacementReadModelSystemMirrorsActivePlacementState()
+    {
+        string readModelSource = File.ReadAllText("Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs");
+        StringAssert.Contains("public partial struct UiBuildPlacementReadModelSystem : ISystem", readModelSource, "Build Placement read model producer must remain an ISystem.");
+        StringAssert.Contains("UiBuildPlacementReadModelSource", readModelSource, "Build Placement read model system must read through a narrow source adapter.");
+        StringAssert.Contains("IBuildingUiCommand", readModelSource, "Build Placement read model source must mirror the existing building UI command boundary.");
+        StringAssert.Contains("buildingUiCommand.HasPendingBuildingPlacement", readModelSource, "Build Placement bar must be hidden when there is no active placement.");
+        StringAssert.Contains("buildingUiCommand.CanConfirmBuildingPlacement", readModelSource, "Build Placement confirm state must mirror the runtime placement command boundary.");
+        StringAssert.Contains("buildingUiCommand.PlacementStatusText", readModelSource, "Build Placement title/status text must mirror the runtime placement command boundary.");
+        StringAssert.Contains("buildingUiCommand.ActivePlacementCost", readModelSource, "Build Placement cost must mirror the runtime placement command boundary.");
+        StringAssert.Contains("buildingUiCommand.ActivePlacementDurationSeconds", readModelSource, "Build Placement duration must mirror the runtime placement command boundary.");
+        StringAssert.Contains("UiBuildPlacementConfirmationBarComponent", readModelSource, "Build Placement read model system must write the shell ECS component.");
+        StringAssert.Contains("Visible = 1", readModelSource, "Active placement must make the shell read model visible.");
+        StringAssert.Contains("Visible = 0", readModelSource, "Inactive placement must make the shell read model hidden.");
+        StringAssert.Contains("SplitPlacementStatus", readModelSource, "Build Placement read model must match the Canvas title/status split.");
+        StringAssert.Contains("FormatCost", readModelSource, "Build Placement read model must match the Canvas cost formatting.");
+        StringAssert.Contains("FormatDuration", readModelSource, "Build Placement read model must match the Canvas duration formatting.");
+
+        string bootstrapSource = File.ReadAllText(MenuBootstrapSystemPath);
+        StringAssert.Contains("BindUiToolkitMatchReadModels", bootstrapSource, "Menu bootstrap must bind UI Toolkit match read-model sources.");
+        StringAssert.Contains("UiBuildPlacementReadModelSource.Configure(command)", bootstrapSource, "Menu bootstrap must configure the Build Placement read-model source from the loaded Match bootstrap.");
+        StringAssert.Contains("ClearUiToolkitMatchReadModels", bootstrapSource, "Menu bootstrap must clear UI Toolkit match read-model sources when leaving Match or UI Toolkit mode.");
+        StringAssert.Contains("matchBootstrap.BuildingUiCommandContract", bootstrapSource, "Build Placement read model must use the same building UI command contract as the Canvas bar.");
+    }
+
+    [Test]
+    public void ArmoryUxmlExposesCanvasParityBindingsAndRetainedItemTemplate()
+    {
+        VisualTreeAsset armoryAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ArmoryUxmlPath);
+        VisualTreeAsset itemAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ArmoryItemUxmlPath);
+        Assert.IsNotNull(armoryAsset, $"Missing Armory UXML asset: {ArmoryUxmlPath}");
+        Assert.IsNotNull(itemAsset, $"Missing Armory item template UXML asset: {ArmoryItemUxmlPath}");
+
+        string uxml = File.ReadAllText(ArmoryUxmlPath);
+        string itemUxml = File.ReadAllText(ArmoryItemUxmlPath);
+        string uss = File.ReadAllText(ArmoryUssPath);
+
+        string[] requiredScreenBindings =
+        {
+            "SCN19_ArmoryContent",
+            "HeaderContent",
+            "LeftContent",
+            "MiddleContent",
+            "RightContent",
+            "FooterContent",
+            "Scroll_View",
+            "Content",
+            "InspectionPanel",
+            "PortraitFrame",
+            "PortraitArt",
+            "LevelSection",
+            "StatsSection",
+            "UpgradeButton",
+            "EquipButton",
+            "CloseButton",
+            "BottomNavPanel"
+        };
+
+        for (int i = 0; i < requiredScreenBindings.Length; i++)
+            StringAssert.Contains($"name=\"{requiredScreenBindings[i]}\"", uxml, $"Armory UXML missing Canvas parity binding: {requiredScreenBindings[i]}");
+
+        string[] categoryButtons =
+        {
+            "Nav_Units",
+            "Nav_Vehicles",
+            "Nav_Aircraft",
+            "Nav_Buildings",
+            "Nav_Upgrades"
+        };
+
+        for (int i = 0; i < categoryButtons.Length; i++)
+            StringAssert.Contains($"<ui:Button name=\"{categoryButtons[i]}\"", uxml, $"Armory category must remain an actionable UI Toolkit Button: {categoryButtons[i]}");
+
+        string[] requiredActions =
+        {
+            "FilterDropdown",
+            "SortDropdown",
+            "UpgradeButton",
+            "EquipButton",
+            "CloseButton",
+            "ArmoryTab",
+            "WorkshopTab",
+            "DoctrineTab",
+            "DepotTab",
+            "OfficersTab"
+        };
+
+        for (int i = 0; i < requiredActions.Length; i++)
+            StringAssert.Contains($"<ui:Button name=\"{requiredActions[i]}\"", uxml, $"Armory action surface must remain a UI Toolkit Button: {requiredActions[i]}");
+
+        StringAssert.Contains("<ui:Template name=\"ArmoryItemView\"", uxml, "Armory must declare a retained reusable item template.");
+        StringAssert.Contains("src=\"SCN19_ArmoryItemView.uxml\"", uxml, "Armory item template must come from SCN19_ArmoryItemView.uxml.");
+        StringAssert.Contains("<ui:ScrollView name=\"Scroll_View\"", uxml, "Armory catalog must keep the Canvas scroll binding name.");
+        StringAssert.Contains("class=\"armory-catalog-grid\"", uxml, "Armory catalog content must keep a grid container for retained item rows.");
+
+        string[] itemBindings =
+        {
+            "ItemView",
+            "Frame",
+            "Rarity",
+            "Art",
+            "Title",
+            "State",
+            "StateLabel",
+            "Badge",
+            "Progress",
+            "Track",
+            "Fill",
+            "Level",
+            "Type"
+        };
+
+        for (int i = 0; i < itemBindings.Length; i++)
+            StringAssert.Contains($"name=\"{itemBindings[i]}\"", itemUxml, $"Armory retained item template missing binding: {itemBindings[i]}");
+
+        StringAssert.Contains("<ui:Button name=\"ItemView\"", itemUxml, "Armory item template root must be actionable for selection.");
+        StringAssert.Contains("item-card selected", uxml, "Armory static seed data must include a selected item state for styling parity.");
+        StringAssert.Contains("item-card locked", uxml, "Armory static seed data must include locked item states for styling parity.");
+        StringAssert.Contains(".armory-item-view.selected", uss, "Armory USS must define selected item visual state.");
+        StringAssert.Contains(".armory-item-view.locked", uss, "Armory USS must define locked item visual state.");
+        StringAssert.Contains("scn19_roster_card_selected_frame.png", uss, "Armory selected item state must use the generated selected roster frame.");
+        StringAssert.Contains("scn19_roster_card_locked_frame.png", uss, "Armory locked item state must use the generated locked roster frame.");
+        StringAssert.Contains("Generated/Armory/LayeredOneGo", uss, "Armory USS must use the new-art-direction generated Armory asset set.");
+        Assert.IsFalse(uss.Contains("SCN-19_Armory_Landscape_Target", StringComparison.Ordinal), "Armory USS must not reference the deleted old Armory target.");
+        Assert.IsFalse(uss.Contains("TargetLockV01", StringComparison.Ordinal), "Armory USS must not reference stale TargetLockV01 art.");
+    }
+
+    [Test]
+    public void ArmoryItemTemplateSupportsFullRetainedStateBindings()
+    {
+        VisualTreeAsset itemAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ArmoryItemUxmlPath);
+        Assert.IsNotNull(itemAsset, $"Missing Armory item template UXML asset: {ArmoryItemUxmlPath}");
+
+        string itemUxml = File.ReadAllText(ArmoryItemUxmlPath);
+        string uss = File.ReadAllText(ArmoryUssPath);
+
+        string[] requiredTemplateBindings =
+        {
+            "ItemView",
+            "Frame",
+            "Rarity",
+            "Art",
+            "Title",
+            "Subtitle",
+            "State",
+            "StateLabel",
+            "Badge",
+            "Stats",
+            "Stat_Primary",
+            "Stat_Primary_Label",
+            "Stat_Primary_Value",
+            "Stat_Secondary",
+            "Stat_Secondary_Label",
+            "Stat_Secondary_Value",
+            "Progress",
+            "Track",
+            "Fill",
+            "Level",
+            "Type",
+            "ActionAvailability",
+            "ActionIcon",
+            "ActionLabel"
+        };
+
+        for (int i = 0; i < requiredTemplateBindings.Length; i++)
+            StringAssert.Contains($"name=\"{requiredTemplateBindings[i]}\"", itemUxml, $"Armory item template missing retained binding: {requiredTemplateBindings[i]}");
+
+        StringAssert.Contains("<ui:Button name=\"ItemView\"", itemUxml, "Armory item template root must stay actionable.");
+        StringAssert.Contains("class=\"armory-item-view item-card\"", itemUxml, "Armory item template must keep stable default item classes.");
+        StringAssert.Contains("class=\"item-rarity rarity-gold\"", itemUxml, "Armory item template must expose rarity classes.");
+        StringAssert.Contains("class=\"item-art rifle-art\"", itemUxml, "Armory item template must expose portrait/art classes.");
+        StringAssert.Contains("class=\"item-action-availability available\"", itemUxml, "Armory item template must expose action availability state.");
+
+        string[] requiredStyles =
+        {
+            ".item-subtitle",
+            ".item-stats",
+            ".item-stat-row",
+            ".item-stat-label",
+            ".item-stat-value",
+            ".item-action-availability",
+            ".item-action-icon",
+            ".item-action-label",
+            ".armory-item-view.locked .item-action-icon",
+            ".armory-item-view.locked .item-action-label"
+        };
+
+        for (int i = 0; i < requiredStyles.Length; i++)
+            StringAssert.Contains(requiredStyles[i], uss, $"Armory stylesheet missing retained item template style: {requiredStyles[i]}");
+
+        StringAssert.Contains("scn19_badge_owned_checkmark.png", uss, "Available action marker must use generated Armory new-art asset.");
+        StringAssert.Contains("scn19_icon_hold_shield.png", uss, "Locked action marker must use generated Armory new-art asset.");
+        Assert.IsFalse(uss.Contains("SCN-19_Armory_Landscape_Target", StringComparison.Ordinal), "Armory item template styles must not reference old Armory target art.");
+        Assert.IsFalse(uss.Contains("TargetLockV01", StringComparison.Ordinal), "Armory item template styles must not reference stale TargetLockV01 art.");
+    }
+
+    [Test]
+    public void CommanderProfileUxmlExposesCanvasParityBindingsAndNewArtAssets()
+    {
+        VisualTreeAsset commanderAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CommanderProfileUxmlPath);
+        StyleSheet commanderStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>(CommanderProfileUssPath);
+        Assert.IsNotNull(commanderAsset, $"Missing Commander/Profile UXML asset: {CommanderProfileUxmlPath}");
+        Assert.IsNotNull(commanderStyle, $"Missing Commander/Profile USS asset: {CommanderProfileUssPath}");
+
+        string uxml = File.ReadAllText(CommanderProfileUxmlPath);
+        string uss = File.ReadAllText(CommanderProfileUssPath);
+
+        string[] requiredBindings =
+        {
+            "SCN03_CommanderProfileContent",
+            "LeftContent",
+            "MiddleContent",
+            "RightContent",
+            "FooterContent",
+            "BackButton",
+            "RouteStrip",
+            "OverviewTab",
+            "StatsTab",
+            "BadgesTab",
+            "HistoryTab",
+            "UpgradesTab",
+            "ScreenTitle",
+            "ScreenSubtitle",
+            "CommanderIdentityPanel",
+            "PortraitPanel",
+            "Portrait",
+            "EditIdButton",
+            "IdentityCard",
+            "Badge",
+            "Title",
+            "Name",
+            "Subtitle",
+            "Level",
+            "OverviewPanel",
+            "VictoriesStatCard",
+            "MissionsStatCard",
+            "CiviliansStatCard",
+            "LostStatCard",
+            "AccountSnapshotPanel",
+            "ReadinessSnapshot",
+            "OperationsSnapshot",
+            "SkirmishSnapshot",
+            "RewardTrackPanel",
+            "XpProgress",
+            "RewardNodes",
+            "ClaimButton",
+            "RecentHistoryPanel",
+            "FirstContactRow",
+            "OldMarketRow",
+            "OpenArmoryButton",
+            "DetailButton",
+            "ReplayButton"
+        };
+
+        for (int i = 0; i < requiredBindings.Length; i++)
+            StringAssert.Contains($"name=\"{requiredBindings[i]}\"", uxml, $"Commander/Profile UXML missing binding: {requiredBindings[i]}");
+
+        string[] requiredTexts =
+        {
+            "COMMANDER PROFILE",
+            "FIELD COMMANDER",
+            "COL. ALEX MORGAN",
+            "VICTORY IS PLANNED",
+            "LEVEL 38",
+            "OVERVIEW",
+            "STATS",
+            "BADGES",
+            "HISTORY",
+            "UPGRADES",
+            "ACCOUNT SNAPSHOT",
+            "COMMANDER REWARD TRACK",
+            "RECENT HISTORY",
+            "OPEN ARMORY",
+            "BACK"
+        };
+
+        for (int i = 0; i < requiredTexts.Length; i++)
+            StringAssert.Contains(requiredTexts[i], uxml, $"Commander/Profile UXML missing visible text: {requiredTexts[i]}");
+
+        Assert.IsFalse(uxml.Contains("HeaderContent", StringComparison.Ordinal), "Commander/Profile content must not duplicate the persistent Main Menu header.");
+        Assert.IsFalse(uxml.Contains("HeaderBar", StringComparison.Ordinal), "Commander/Profile content must not own shell header structure.");
+
+        StringAssert.Contains("MainMenuBrightCommand/Sprites", uss, "Commander/Profile USS must use the approved new bright command-table shared assets.");
+        StringAssert.Contains("Armory/LayeredOneGo", uss, "Commander/Profile USS must use approved new-art reusable panel assets.");
+        StringAssert.Contains("scn02c_commander_portrait.png", uss, "Commander/Profile USS must use the new-art commander portrait.");
+        StringAssert.Contains("scn02c_nav_chevron_icon.png", uss, "Commander/Profile USS must use the new-art back icon.");
+        Assert.IsFalse(uxml.Contains("TargetLockV01", StringComparison.Ordinal), "Commander/Profile UXML must not reference stale TargetLockV01 art.");
+        Assert.IsFalse(uss.Contains("TargetLockV01", StringComparison.Ordinal), "Commander/Profile USS must not reference stale TargetLockV01 art.");
+        Assert.IsFalse(uss.Contains("Generated/CommanderProfile", StringComparison.Ordinal), "Commander/Profile USS must not reference stale CommanderProfile generated art.");
+        Assert.IsFalse(uss.Contains("UnityEngine.UI", StringComparison.Ordinal), "Commander/Profile USS must not reference Canvas UI APIs.");
+
+        string screenTitleBlock = GetCssBlock(uss, ".screen-title {");
+        string identityNameBlock = GetCssBlock(uss, ".identity-name {");
+        string tabLabelBlock = GetCssBlock(uss, ".tab-label {");
+        string statValueBlock = GetCssBlock(uss, ".stat-value {");
+        AssertCssContains(screenTitleBlock, "font-size: 32px;");
+        AssertCssContains(screenTitleBlock, "white-space: nowrap;");
+        AssertCssContains(identityNameBlock, "font-size: 32px;");
+        AssertCssContains(tabLabelBlock, "font-size: 18px;");
+        AssertCssContains(statValueBlock, "font-size: 30px;");
+    }
+
+    [Test]
     public void UiToolkitViewsDoNotOwnFramePolling()
     {
         var violations = new List<string>();
@@ -3649,6 +4621,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     {
         public readonly List<RecordedRouteRequest> RouteRequests = new();
         public readonly List<RecordedUiActionRequest> UiActionRequests = new();
+        public readonly List<ArmoryCatalogCategory> ArmoryCategoryRequests = new();
         public UiShellStateModel ShellState;
         public UiShellCommanderProfileModel CommanderProfile;
         public UiShellMainMenuResourcesModel MainMenuResources;
@@ -3660,6 +4633,8 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         public UiMatchHudPassengerDrawerModel MatchHudPassengerDrawer;
         public UiMatchHudSquadTrayModel MatchHudSquadTray;
         public UiBuildDrawerModel BuildDrawer;
+        public UiBuildPlacementConfirmationBarModel BuildPlacementConfirmationBar;
+        public ArmoryCatalogCategory ArmoryCategory;
         public bool HasShellState;
         public bool HasCommanderProfile;
         public bool HasMainMenuResources;
@@ -3671,6 +4646,8 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         public bool HasMatchHudPassengerDrawer;
         public bool HasMatchHudSquadTray;
         public bool HasBuildDrawer;
+        public bool HasBuildPlacementConfirmationBar;
+        public bool HasArmoryCategory;
 
         public bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory)
         {
@@ -3761,15 +4738,24 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             return HasBuildDrawer;
         }
 
+        public bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)
+        {
+            placementBar = BuildPlacementConfirmationBar;
+            return HasBuildPlacementConfirmationBar;
+        }
+
         public bool TryReadArmoryCategory(out ArmoryCatalogCategory category)
         {
-            category = ArmoryCatalogCategory.Characters;
-            return false;
+            category = ArmoryCategory;
+            return HasArmoryCategory;
         }
 
         public bool TryEnqueueArmoryCategory(ArmoryCatalogCategory category)
         {
-            return false;
+            ArmoryCategoryRequests.Add(category);
+            ArmoryCategory = category;
+            HasArmoryCategory = true;
+            return true;
         }
 
         public bool TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands)

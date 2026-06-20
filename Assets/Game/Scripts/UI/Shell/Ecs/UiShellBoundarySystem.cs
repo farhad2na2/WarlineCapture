@@ -30,6 +30,7 @@ public partial struct UiShellBoundarySystem : ISystem
             EnsureBuildDrawerActiveProductionComponent(ref state, existingBoundary);
             EnsureUiBuildDrawerCatalogBuffer(ref state, existingBoundary);
             EnsureUiBuildDrawerQueueBuffer(ref state, existingBoundary);
+            EnsureBuildPlacementConfirmationBarComponent(ref state, existingBoundary);
             EnsureUiActionRequestBuffer(ref state, existingBoundary);
             EnsureUiBuildCatalogRequestBuffer(ref state, existingBoundary);
             EnsureUiBuildProductionRequestBuffer(ref state, existingBoundary);
@@ -84,6 +85,7 @@ public partial struct UiShellBoundarySystem : ISystem
         state.EntityManager.AddComponentData(boundary, DefaultMatchHudMinimap());
         state.EntityManager.AddComponentData(boundary, DefaultBuildDrawerDetail());
         state.EntityManager.AddComponentData(boundary, DefaultBuildDrawerActiveProduction());
+        state.EntityManager.AddComponentData(boundary, DefaultBuildPlacementConfirmationBar());
         DynamicBuffer<UiBuildDrawerCatalogItemComponent> catalog =
             state.EntityManager.AddBuffer<UiBuildDrawerCatalogItemComponent>(boundary);
         SeedBuildDrawerCatalog(catalog);
@@ -239,6 +241,14 @@ public partial struct UiShellBoundarySystem : ISystem
             SeedBuildDrawerQueue(queue);
     }
 
+    private static void EnsureBuildPlacementConfirmationBarComponent(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasComponent<UiBuildPlacementConfirmationBarComponent>(boundary))
+            return;
+
+        state.EntityManager.AddComponentData(boundary, DefaultBuildPlacementConfirmationBar());
+    }
+
     private static void EnsureUiActionRequestBuffer(ref SystemState state, Entity boundary)
     {
         if (state.EntityManager.HasBuffer<UiActionRequestComponent>(boundary))
@@ -323,6 +333,22 @@ public partial struct UiShellBoundarySystem : ISystem
             Name = new FixedString64Bytes("BARRACKS"),
             PercentText = new FixedString32Bytes("65%"),
             Progress01 = 0.65f
+        };
+    }
+
+    private static UiBuildPlacementConfirmationBarComponent DefaultBuildPlacementConfirmationBar()
+    {
+        return new UiBuildPlacementConfirmationBarComponent
+        {
+            Visible = 0,
+            CanConfirm = 0,
+            CanCancel = 0,
+            CanRotate = 0,
+            Title = new FixedString64Bytes("PLACE BUILDING"),
+            Status = new FixedString64Bytes("VALID GROUND"),
+            CostText = new FixedString32Bytes("2,000"),
+            DurationText = new FixedString32Bytes("00:30"),
+            InstructionText = new FixedString128Bytes("DRAG TO POSITION, CONFIRM TO BUILD")
         };
     }
 

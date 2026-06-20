@@ -18,15 +18,15 @@ The Canvas prefabs stay as fallback until each UI Toolkit screen reaches behavio
 
 ## Progress Dashboard
 
-Last updated: 2026-06-19
+Last updated: 2026-06-20
 
-Overall progress: 64% - 71 / 111 tracked items complete
+Overall progress: 81% - 90 / 111 tracked items complete
 
-Current phase: Phase 5 - Build Popup
+Current phase: Phase 8 - Commander/Profile
 
 Current focus:
 
-- Build Drawer content read model source from ECS.
+- Convert the commander/profile content screen to UI Toolkit.
 
 Completed phases:
 
@@ -35,6 +35,9 @@ Completed phases:
 - Phase 2 - Loading Screen
 - Phase 3 - Main Menu
 - Phase 4 - Match HUD
+- Phase 5 - Build Popup
+- Phase 6 - Build Placement Confirmation Bar
+- Phase 7 - Armory
 
 Blocked:
 
@@ -47,9 +50,9 @@ Blocked:
 | Phase 2 - Loading Screen | Complete | 100% | 9 / 9 | `Assets/Game/UI Toolkit/SCN01_LoadingContent/SCN01_LoadingContent.uxml`; `Assets/Game/UI Toolkit/SCN01_LoadingContent/SCN01_LoadingContent.uss`; `Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
 | Phase 3 - Main Menu | Complete | 100% | 11 / 11 | `Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uxml`; `Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uss`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`; `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`; `Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
 | Phase 4 - Match HUD | Complete | 100% | 13 / 13 | `Assets/Game/UI Toolkit/SCN08_MatchHudContent/SCN08_MatchHudContent.uxml`; `Assets/Game/UI Toolkit/SCN08_MatchHudContent/SCN08_PassengerItemView.uxml`; `Assets/Game/UI Toolkit/SCN08_MatchHudContent/SCN08_MatchHudContent.uss`; `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`; `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; `Design/AgentReports/2026-06-19_ui-toolkit-match-hud-phase4-handoff.md`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
-| Phase 5 - Build Popup | In progress | 75% | 9 / 12 | `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_BuildDrawerPopup.uxml`; `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_BuildCatalogItemView.uxml`; `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_ProductionQueueItemView.uxml`; `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_ProductionActiveItemView.uxml`; `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
-| Phase 6 - Build Placement Confirmation Bar | Not started | 0% | 0 / 8 | Pending |
-| Phase 7 - Armory | Not started | 0% | 0 / 8 | Pending |
+| Phase 5 - Build Popup | Complete | 100% | 12 / 12 | `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_BuildDrawerPopup.uxml`; `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_BuildCatalogItemView.uxml`; `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_ProductionQueueItemView.uxml`; `Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_ProductionActiveItemView.uxml`; `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`; `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; `Design/AgentReports/2026-06-19_ui-toolkit-build-popup-phase5-handoff.md`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
+| Phase 6 - Build Placement Confirmation Bar | Complete | 100% | 8 / 8 | `Assets/Game/UI Toolkit/SCN08_BuildPlacementConfirmationBar/SCN08_BuildPlacementConfirmationBar.uxml`; `Assets/Game/UI Toolkit/SCN08_BuildPlacementConfirmationBar/SCN08_BuildPlacementConfirmationBar.uss`; `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`; `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; `Design/AgentReports/2026-06-19_ui-toolkit-build-placement-phase6-handoff.md`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
+| Phase 7 - Armory | Complete | 100% | 8 / 8 | `Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryContent.uxml`; `Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryItemView.uxml`; `Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryContent.uss`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; `Design/AgentReports/2026-06-20_ui-toolkit-armory-phase7-handoff.md`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
 | Phase 8 - Commander/Profile | Not started | 0% | 0 / 6 | Pending |
 | Phase 9 - Result, Victory, Loss, And Other Popups | Not started | 0% | 0 / 7 | Pending |
 | Phase 10 - Remove Canvas Runtime Dependency | Not started | 0% | 0 / 8 | Pending |
@@ -570,9 +573,9 @@ Validation:
 
 ### Phase 5 - Build Popup
 
-Status: In progress
-Progress: 75% - 9 / 12 tracked items complete
-Current step: Build Drawer content read model source from ECS.
+Status: Complete
+Progress: 100% - 12 / 12 tracked items complete
+Current step: Complete.
 Completed steps:
 
 - Reconciled Build Drawer UXML against the current Canvas popup before binding, including tabs, catalog scroll, retained catalog item template, production scroll, active production template, queued production template, build/rush/clear/close actions, detail labels, and hidden scrollbars.
@@ -609,6 +612,13 @@ Completed steps:
 - `UiActionRequestSystem` now maps the primary Build action to an ECS request with a request id while suppressing underlying world clicks.
 - Added focused validation that the primary Build button submits through the UI action boundary and that the ECS action request system owns the primary Build request buffer path.
 - Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=58` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added Build Drawer ECS read-model state on the UI shell boundary: detail component, active-production component, retained catalog row buffer, and retained queue row buffer.
+- Added `UiShellRuntimeGateway.TryReadBuildDrawer` and `UiShellEcsGateway.TryReadBuildDrawer` so fixed-string ECS state maps to `UiBuildDrawerModel` at the presentation boundary.
+- Updated `UiToolkitShellApplySystem` to read and apply Build Drawer snapshots through the thin managed UI Toolkit edge while Match HUD is active.
+- Added focused validation that populated and empty Build Drawer ECS read-model snapshots apply through the runtime gateway into retained UI Toolkit rows.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=59` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Wrote Build Popup Phase 5 handoff at `Design/AgentReports/2026-06-19_ui-toolkit-build-popup-phase5-handoff.md`.
+- Marked Phase 5 complete and advanced the tracker to Phase 6 - Build Placement Confirmation Bar.
 
 Blocked: None.
 
@@ -632,12 +642,37 @@ Validation:
 
 ### Phase 6 - Build Placement Confirmation Bar
 
-Status: Not started
-Progress: 0% - 0 / 8 tracked items complete
-Current step: Reconcile Build Placement Confirmation Bar UXML against the current Canvas bar before binding.
+Status: Complete
+Progress: 100% - 8 / 8 tracked items complete
+Current step: Phase complete.
 Completed steps:
 
-- None yet.
+- Reconciled Build Placement Confirmation Bar UXML against the current Canvas bar before binding, including title, status, cost, duration, instruction, confirm/cancel/rotate actions, dedicated frame element, and explicit pointer blocking over the active bar only.
+- Added focused validation that the Build Placement Confirmation Bar UXML exposes Canvas parity binding names, actionable UI Toolkit `Button` surfaces, separate action styles, frame styling, and pointer-event handling.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=60` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added configured `SCN08_BuildPlacementConfirmationBar.uxml` asset support to `UiToolkitShellView` and mounted it once under `MatchScreenSlot` in UI Toolkit mode.
+- Cached the Build Placement Confirmation Bar title, status, cost, duration, instruction, cancel, rotate, and confirm bindings while keeping the bar hidden until read-model binding is added.
+- Added focused validation for Build Placement Confirmation Bar mount, no duplicate mount on repeated shell mount, hidden-before-read-model state, and `ClearCache` cleanup.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=61` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiBuildPlacementConfirmationBarModel`, ECS boundary state, runtime gateway mapping, and `UiToolkitShellApplySystem` presentation binding for title, status, cost, duration, instruction, confirm, cancel, rotate, and valid/invalid visual state.
+- Added Build Placement Confirmation Bar confirm/cancel/rotate callbacks in `UiToolkitShellView` that enqueue typed UI actions and stop pointer propagation.
+- Mapped `BuildPlacementConfirm`, `BuildPlacementCancel`, and `BuildPlacementRotate` in `UiActionRequestSystem` to the existing `BuildingUiPlacementCommandRequestElement` queue rather than adding a parallel gameplay path.
+- Added focused validation for read-model application, action submission, and placement command request wiring.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=62` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added `UiBuildPlacementReadModelSystem` as an `ISystem` producer that mirrors the existing `IBuildingUiCommand` active placement state into `UiBuildPlacementConfirmationBarComponent`.
+- Wired UI Toolkit match bootstrap to configure and clear `UiBuildPlacementReadModelSource` from the loaded `MatchBootstrapSystem.BuildingUiCommandContract`.
+- Added focused validation to keep the Build Placement producer as an `ISystem`, verify active placement visibility, and confirm Canvas-compatible status, cost, and duration formatting.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=63` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Guarded Build Placement confirm, cancel, and rotate callbacks so disabled UI Toolkit actions keep blocking pointer propagation but do not enqueue stale gameplay requests.
+- Added focused validation that Build Placement actions only enqueue through enabled Toolkit elements and continue mapping to the existing `BuildingUiPlacementCommandRequestElement` request queue.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=63` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added fixed-width status, cost, duration, and single-line feedback slots to `SCN08_BuildPlacementConfirmationBar.uss` so changing placement state updates in-place instead of shifting layout.
+- Added valid and invalid placement visual states that recolor status and confirm affordance without replacing UXML elements or changing bar structure.
+- Added focused validation for valid-to-invalid feedback transitions, fixed feedback slots, clipped single-line text, and confirm disabling while cancel/rotate remain available.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=63` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added focused validation that the Build Placement Confirmation Bar stays above the Match HUD footer and command rail band while the full-screen root remains pointer-transparent outside the active bar.
+- Wrote Phase 6 handoff report: `Design/AgentReports/2026-06-19_ui-toolkit-build-placement-phase6-handoff.md`.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=63` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
 
 Blocked: None.
 
@@ -657,12 +692,31 @@ Validation:
 
 ### Phase 7 - Armory
 
-Status: Not started
-Progress: 0% - 0 / 8 tracked items complete
-Current step: Reconcile Armory UXML against the current Canvas Armory behavior before binding.
+Status: Complete
+Progress: 100% - 8 / 8 tracked items complete
+Current step: Phase complete.
 Completed steps:
 
-- None yet.
+- Added focused validation that `SCN19_ArmoryContent.uxml` exposes Canvas-parity Armory bindings for header, left category nav, middle catalog, retained item template, right inspection panel, bottom tabs, filter/sort controls, and upgrade/equip/close actions.
+- Added focused validation that `SCN19_ArmoryItemView.uxml` remains an actionable retained item template with selected/default/locked state binding surfaces.
+- Added focused validation that the Armory stylesheet uses the generated new-art-direction Armory asset set and does not reference stale Armory target locks.
+- Added `UiToolkitShellView` support for a dedicated `SCN19_ArmoryContent.uxml` asset, retained mounting into `ArmoryScreenSlot`, hidden-by-default startup state, Armory route reveal, and Main Menu route return hiding.
+- Added focused validation that the Armory route uses the dedicated Armory screen when configured instead of leaving the Canvas/Main Menu body as the only route target.
+- Added retained Armory runtime bindings for the roster `ScrollView`, item rows, category buttons, inspection labels, bottom tabs, and action surfaces.
+- Added Armory item selection state handling so unlocked rows swap selected/default USS state and locked rows reject selection without losing the previous selected item.
+- Added thin managed apply-edge support for the ECS Armory category read model; category clicks enqueue through `UiShellRuntimeGateway.TryEnqueueArmoryCategory`.
+- Added focused validation for Armory retained bindings, category requests, selected/default/locked item behavior, and apply-system category synchronization.
+- Added `SCN19_ArmoryItemView.uxml` retained bindings for subtitle, primary/secondary stat rows, and action availability state without introducing old art-direction assets.
+- Added Armory item-template USS support for subtitle, stat rows, available action marker, and locked action marker using generated Armory assets.
+- Added focused validation that the Armory item template exposes locked/selected/default, rarity, portrait/art, title, subtitle, stat rows, progress, level/type, and action availability bindings.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=68` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added focused validation that the Armory roster scroll/catalog uses retained item rows: repeated category read-model applies and item selections preserve catalog child count and row object references.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=69` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added focused validation that Armory selected/default/locked runtime classes map to the generated SCN19 roster frame sprites, selection restores default state on the previous row, and inspection labels follow the selected item.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=70` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Added focused validation that every locked Armory retained row keeps locked text/badge/frame state, rejects selection/action trigger attempts, preserves the previous valid selection, and does not mutate inspection labels or enqueue UI actions.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=71` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
+- Wrote Phase 7 handoff report: `Design/AgentReports/2026-06-20_ui-toolkit-armory-phase7-handoff.md`.
 
 Blocked: None.
 

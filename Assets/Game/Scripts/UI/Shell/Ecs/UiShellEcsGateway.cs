@@ -541,6 +541,28 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         return true;
     }
 
+    public static bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)
+    {
+        placementBar = UiBuildPlacementConfirmationBarModel.Hidden;
+        if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
+            return false;
+
+        EnsureBuildPlacementConfirmationBarState(entityManager, boundary);
+        UiBuildPlacementConfirmationBarComponent component =
+            entityManager.GetComponentData<UiBuildPlacementConfirmationBarComponent>(boundary);
+        placementBar = new UiBuildPlacementConfirmationBarModel(
+            component.Visible != 0,
+            component.CanConfirm != 0,
+            component.CanCancel != 0,
+            component.CanRotate != 0,
+            component.Title.ToString(),
+            component.Status.ToString(),
+            component.CostText.ToString(),
+            component.DurationText.ToString(),
+            component.InstructionText.ToString());
+        return true;
+    }
+
     public static bool TryReadArmoryCategory(out ArmoryCatalogCategory category)
     {
         category = ArmoryCatalogCategory.Characters;
@@ -815,6 +837,25 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         }
     }
 
+    private static void EnsureBuildPlacementConfirmationBarState(EntityManager entityManager, Entity boundary)
+    {
+        if (entityManager.HasComponent<UiBuildPlacementConfirmationBarComponent>(boundary))
+            return;
+
+        entityManager.AddComponentData(boundary, new UiBuildPlacementConfirmationBarComponent
+        {
+            Visible = 0,
+            CanConfirm = 0,
+            CanCancel = 0,
+            CanRotate = 0,
+            Title = new FixedString64Bytes("PLACE BUILDING"),
+            Status = new FixedString64Bytes("VALID GROUND"),
+            CostText = new FixedString32Bytes("2,000"),
+            DurationText = new FixedString32Bytes("00:30"),
+            InstructionText = new FixedString128Bytes("DRAG TO POSITION, CONFIRM TO BUILD")
+        });
+    }
+
     private static void EnsureCommanderProfileState(EntityManager entityManager, Entity boundary)
     {
         if (entityManager.HasComponent<UiShellCommanderProfileComponent>(boundary))
@@ -987,6 +1028,11 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
     bool IUiShellRuntimeGateway.TryReadBuildDrawer(out UiBuildDrawerModel drawer)
     {
         return TryReadBuildDrawer(out drawer);
+    }
+
+    bool IUiShellRuntimeGateway.TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)
+    {
+        return TryReadBuildPlacementConfirmationBar(out placementBar);
     }
 
     bool IUiShellRuntimeGateway.TryReadArmoryCategory(out ArmoryCatalogCategory category)

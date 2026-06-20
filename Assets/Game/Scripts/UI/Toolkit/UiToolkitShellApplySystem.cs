@@ -18,6 +18,8 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
     private UiMatchHudPassengerDrawerModel lastMatchHudPassengerDrawer;
     private UiMatchHudSquadTrayModel lastMatchHudSquadTray;
     private UiBuildDrawerModel lastBuildDrawer;
+    private UiBuildPlacementConfirmationBarModel lastBuildPlacementConfirmationBar;
+    private ArmoryCatalogCategory lastArmoryCategory;
     private UiShellTransitionCompleteModel pendingCompletion;
     private bool hasShellState;
     private bool hasLoadingProgress;
@@ -31,6 +33,8 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
     private bool hasMatchHudPassengerDrawer;
     private bool hasMatchHudSquadTray;
     private bool hasBuildDrawer;
+    private bool hasBuildPlacementConfirmationBar;
+    private bool hasArmoryCategory;
     private bool hasPendingCompletion;
     private bool isExecuting;
 
@@ -49,6 +53,8 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
     public bool HasMatchHudPassengerDrawer => hasMatchHudPassengerDrawer;
     public bool HasMatchHudSquadTray => hasMatchHudSquadTray;
     public bool HasBuildDrawer => hasBuildDrawer;
+    public bool HasBuildPlacementConfirmationBar => hasBuildPlacementConfirmationBar;
+    public bool HasArmoryCategory => hasArmoryCategory;
     public UiShellStateModel LastShellState => lastShellState;
     public UiShellLoadingProgressModel LastLoadingProgress => lastLoadingProgress;
     public UiShellCommanderProfileModel LastCommanderProfile => lastCommanderProfile;
@@ -61,6 +67,8 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
     public UiMatchHudPassengerDrawerModel LastMatchHudPassengerDrawer => lastMatchHudPassengerDrawer;
     public UiMatchHudSquadTrayModel LastMatchHudSquadTray => lastMatchHudSquadTray;
     public UiBuildDrawerModel LastBuildDrawer => lastBuildDrawer;
+    public UiBuildPlacementConfirmationBarModel LastBuildPlacementConfirmationBar => lastBuildPlacementConfirmationBar;
+    public ArmoryCatalogCategory LastArmoryCategory => lastArmoryCategory;
 
     public void ConfigureShellView(UiToolkitShellView view)
     {
@@ -91,6 +99,9 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
             UiShellRuntimeGateway.TryReadMatchHudPassengerDrawer(out lastMatchHudPassengerDrawer);
         hasMatchHudSquadTray = UiShellRuntimeGateway.TryReadMatchHudSquadTray(out lastMatchHudSquadTray);
         hasBuildDrawer = UiShellRuntimeGateway.TryReadBuildDrawer(out lastBuildDrawer);
+        hasBuildPlacementConfirmationBar =
+            UiShellRuntimeGateway.TryReadBuildPlacementConfirmationBar(out lastBuildPlacementConfirmationBar);
+        hasArmoryCategory = UiShellRuntimeGateway.TryReadArmoryCategory(out lastArmoryCategory);
 
         if (shellView != null && shellView.IsMounted && hasLoadingProgress)
             shellView.ApplyLoadingProgress(lastLoadingProgress);
@@ -105,6 +116,8 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
                 shellView.ApplyMainMenuCommanderProfile(lastCommanderProfile);
             if (hasMainMenuResources)
                 shellView.ApplyMainMenuResources(lastMainMenuResources);
+            if (lastShellState.ActiveRoute == UIRoute.Armory && hasArmoryCategory)
+                shellView.ApplyArmoryCategory(lastArmoryCategory);
         }
 
         if (shellView != null &&
@@ -128,6 +141,8 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
                 shellView.ApplyMatchHudSquadTray(lastMatchHudSquadTray);
             if (hasBuildDrawer)
                 shellView.ApplyBuildDrawer(lastBuildDrawer);
+            if (hasBuildPlacementConfirmationBar)
+                shellView.ApplyBuildPlacementConfirmationBar(lastBuildPlacementConfirmationBar);
         }
 
         FlushPendingCompletion();

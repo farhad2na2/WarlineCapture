@@ -48,6 +48,7 @@ internal sealed class MenuBootstrapSystem
     private SelectionUiCommandSystem boundSelectionUiCommand;
     private SelectionUiReadModelSystem boundSelectionUiReadModel;
     private MainMenuPlayUI boundMainMenu;
+    private IBuildingUiCommand boundUiToolkitBuildingUiCommand;
     private int boundContentVersion = -1;
 
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => performanceDiagnosticsSystem;
@@ -125,10 +126,12 @@ internal sealed class MenuBootstrapSystem
         UpdateActualLoadingProgress(entityManager, boundary, shellState);
         if (useUiToolkit)
         {
+            BindUiToolkitMatchReadModels(shellState);
             ClearBoundMatchRuntimeUi();
             return;
         }
 
+        ClearUiToolkitMatchReadModels();
         BindMatchRuntimeUi(view, shellState);
     }
 
@@ -145,6 +148,7 @@ internal sealed class MenuBootstrapSystem
         ResetMatchReadyHoldWindow();
         matchLoadQueuedForCurrentRoute = false;
         ClearBoundMatchRuntimeUi();
+        ClearUiToolkitMatchReadModels();
         if (!diagnosticsInitialized)
             return;
 
@@ -418,6 +422,42 @@ internal sealed class MenuBootstrapSystem
         boundSelectionUiReadModel = selectionUiReadModel;
         boundMainMenu = mainMenu;
         boundContentVersion = contentVersion;
+    }
+
+    private void BindUiToolkitMatchReadModels(UiShellStateComponent shellState)
+    {
+        if (shellState.ActiveRoute != UIRoute.Match)
+        {
+            ClearUiToolkitMatchReadModels();
+            return;
+        }
+
+        if (!matchSceneReferenceSystem.TryGetLoadedMatchSceneView(
+                World.DefaultGameObjectInjectionWorld,
+                out MatchSceneView matchScene))
+        {
+            ClearUiToolkitMatchReadModels();
+            return;
+        }
+
+        MatchBootstrapSystem matchBootstrap = matchScene.MatchBootstrap;
+        IBuildingUiCommand command = matchBootstrap != null
+            ? matchBootstrap.BuildingUiCommandContract
+            : null;
+        if (ReferenceEquals(boundUiToolkitBuildingUiCommand, command))
+            return;
+
+        UiBuildPlacementReadModelSource.Configure(command);
+        boundUiToolkitBuildingUiCommand = command;
+    }
+
+    private void ClearUiToolkitMatchReadModels()
+    {
+        if (boundUiToolkitBuildingUiCommand == null && !UiBuildPlacementReadModelSource.HasBuildingUiCommand)
+            return;
+
+        UiBuildPlacementReadModelSource.Clear();
+        boundUiToolkitBuildingUiCommand = null;
     }
 
     private void ClearBoundMatchRuntimeUi()

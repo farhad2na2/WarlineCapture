@@ -32,6 +32,8 @@ public interface IUiShellRuntimeGateway
 
     bool TryReadBuildDrawer(out UiBuildDrawerModel drawer);
 
+    bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar);
+
     bool TryReadArmoryCategory(out ArmoryCatalogCategory category);
 
     bool TryEnqueueArmoryCategory(ArmoryCatalogCategory category);
@@ -123,6 +125,11 @@ public static class UiShellRuntimeGateway
     public static bool TryReadBuildDrawer(out UiBuildDrawerModel drawer)
     {
         return current.TryReadBuildDrawer(out drawer);
+    }
+
+    public static bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)
+    {
+        return current.TryReadBuildPlacementConfirmationBar(out placementBar);
     }
 
     public static bool TryReadArmoryCategory(out ArmoryCatalogCategory category)
@@ -233,6 +240,12 @@ public static class UiShellRuntimeGateway
         public bool TryReadBuildDrawer(out UiBuildDrawerModel drawer)
         {
             drawer = UiBuildDrawerModel.Empty;
+            return false;
+        }
+
+        public bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)
+        {
+            placementBar = UiBuildPlacementConfirmationBarModel.Hidden;
             return false;
         }
 

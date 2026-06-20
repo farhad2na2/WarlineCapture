@@ -5,6 +5,7 @@ public partial struct UiActionRequestSystem : ISystem
 {
     private EntityQuery boundaryQuery;
     private EntityQuery selectionInputQuery;
+    private EntityQuery buildingPlacementCommandQuery;
 
     public void OnCreate(ref SystemState state)
     {
@@ -22,6 +23,9 @@ public partial struct UiActionRequestSystem : ISystem
             ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
             ComponentType.ReadWrite<RtsSelectionInputRequestQueueComponent>(),
             ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
+        buildingPlacementCommandQuery = state.GetEntityQuery(
+            ComponentType.ReadWrite<BuildingUiPlacementCommandQueueComponent>(),
+            ComponentType.ReadWrite<BuildingUiPlacementCommandRequestElement>());
         state.RequireForUpdate(boundaryQuery);
     }
 
@@ -53,6 +57,16 @@ public partial struct UiActionRequestSystem : ISystem
             state.EntityManager.GetComponentData<RtsSelectionInputStateComponent>(selectionInput);
         RtsSelectionInputRequestQueueComponent queue =
             state.EntityManager.GetComponentData<RtsSelectionInputRequestQueueComponent>(selectionInput);
+        bool needsPlacementCommandQueue = HasBuildPlacementAction(actionRequests);
+        Entity placementCommand = Entity.Null;
+        DynamicBuffer<BuildingUiPlacementCommandRequestElement> placementRequests = default;
+        BuildingUiPlacementCommandQueueComponent placementQueue = default;
+        if (needsPlacementCommandQueue)
+        {
+            placementCommand = ResolveBuildingPlacementCommandEntity(ref state);
+            placementRequests = state.EntityManager.GetBuffer<BuildingUiPlacementCommandRequestElement>(placementCommand);
+            placementQueue = state.EntityManager.GetComponentData<BuildingUiPlacementCommandQueueComponent>(placementCommand);
+        }
         int frame = UnityEngine.Time.frameCount;
 
         for (int i = 0; i < actionRequests.Length; i++)
@@ -67,8 +81,10 @@ public partial struct UiActionRequestSystem : ISystem
                 buildCatalogRequests,
                 buildProductionRequests,
                 buildPrimaryRequests,
+                placementRequests,
                 ref passengerDrawerState,
                 ref squadTrayState,
+                ref placementQueue,
                 frame);
         }
 
@@ -77,6 +93,8 @@ public partial struct UiActionRequestSystem : ISystem
         state.EntityManager.SetComponentData(boundary, squadTrayState);
         state.EntityManager.SetComponentData(selectionInput, inputState);
         state.EntityManager.SetComponentData(selectionInput, queue);
+        if (needsPlacementCommandQueue)
+            state.EntityManager.SetComponentData(placementCommand, placementQueue);
     }
 
     private Entity ResolveSelectionInputEntity(ref SystemState state)
@@ -109,6 +127,32 @@ public partial struct UiActionRequestSystem : ISystem
             state.EntityManager.AddBuffer<RtsSelectionCommandResultElement>(entity);
     }
 
+    private Entity ResolveBuildingPlacementCommandEntity(ref SystemState state)
+    {
+        if (!buildingPlacementCommandQuery.IsEmptyIgnoreFilter)
+        {
+            Entity entity = buildingPlacementCommandQuery.GetSingletonEntity();
+            EnsureBuildingPlacementCommandBuffers(ref state, entity);
+            return entity;
+        }
+
+        Entity created = state.EntityManager.CreateEntity(typeof(BuildingUiPlacementCommandQueueComponent));
+        state.EntityManager.SetComponentData(created, new BuildingUiPlacementCommandQueueComponent
+        {
+            LastRequestId = 0
+        });
+        EnsureBuildingPlacementCommandBuffers(ref state, created);
+        return created;
+    }
+
+    private static void EnsureBuildingPlacementCommandBuffers(ref SystemState state, Entity entity)
+    {
+        if (!state.EntityManager.HasBuffer<BuildingUiPlacementCommandRequestElement>(entity))
+            state.EntityManager.AddBuffer<BuildingUiPlacementCommandRequestElement>(entity);
+        if (!state.EntityManager.HasBuffer<BuildingUiPlacementCommandResultElement>(entity))
+            state.EntityManager.AddBuffer<BuildingUiPlacementCommandResultElement>(entity);
+    }
+
     private static void ProcessRequest(
         UiActionRequestComponent request,
         ref RtsSelectionInputStateComponent inputState,
@@ -119,8 +163,10 @@ public partial struct UiActionRequestSystem : ISystem
         DynamicBuffer<UiBuildCatalogRequestComponent> buildCatalogRequests,
         DynamicBuffer<UiBuildProductionRequestComponent> buildProductionRequests,
         DynamicBuffer<UiBuildPrimaryRequestComponent> buildPrimaryRequests,
+        DynamicBuffer<BuildingUiPlacementCommandRequestElement> placementRequests,
         ref UiMatchHudPassengerDrawerStateComponent passengerDrawerState,
         ref UiMatchHudSquadTrayStateComponent squadTrayState,
+        ref BuildingUiPlacementCommandQueueComponent placementQueue,
         int frame)
     {
         switch (request.Kind)
@@ -186,6 +232,30 @@ public partial struct UiActionRequestSystem : ISystem
             case UiActionKind.BuildProductionCancelQueued:
                 CaptureUiClickSequence(ref inputState, commandRequests, frame);
                 EnqueueBuildProductionRequest(ref queue, buildProductionRequests, UiBuildProductionActionKind.CancelQueued, request.PayloadId);
+                break;
+            case UiActionKind.BuildPlacementConfirm:
+                CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                EnqueueBuildPlacementRequest(
+                    ref placementQueue,
+                    placementRequests,
+                    BuildingUiPlacementCommandRequestElement.KindConfirmPlacement,
+                    true);
+                break;
+            case UiActionKind.BuildPlacementCancel:
+                CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                EnqueueBuildPlacementRequest(
+                    ref placementQueue,
+                    placementRequests,
+                    BuildingUiPlacementCommandRequestElement.KindCancelPlacement,
+                    true);
+                break;
+            case UiActionKind.BuildPlacementRotate:
+                CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                EnqueueBuildPlacementRequest(
+                    ref placementQueue,
+                    placementRequests,
+                    BuildingUiPlacementCommandRequestElement.KindRotatePlacement,
+                    false);
                 break;
             case UiActionKind.Select:
                 CaptureUiClickSequence(ref inputState, commandRequests, frame);
@@ -326,6 +396,38 @@ public partial struct UiActionRequestSystem : ISystem
             QueueSlot = queueSlot,
             RequestId = queue.LastRequestId
         });
+    }
+
+    private static void EnqueueBuildPlacementRequest(
+        ref BuildingUiPlacementCommandQueueComponent queue,
+        DynamicBuffer<BuildingUiPlacementCommandRequestElement> placementRequests,
+        byte requestKind,
+        bool clearBuildingSelection)
+    {
+        queue.LastRequestId++;
+        placementRequests.Add(new BuildingUiPlacementCommandRequestElement
+        {
+            RequestId = queue.LastRequestId,
+            BuildingId = default,
+            RequestKind = requestKind,
+            ClearBuildingSelection = clearBuildingSelection ? (byte)1 : (byte)0
+        });
+    }
+
+    private static bool HasBuildPlacementAction(DynamicBuffer<UiActionRequestComponent> actionRequests)
+    {
+        for (int i = 0; i < actionRequests.Length; i++)
+        {
+            if (actionRequests[i].Kind is
+                UiActionKind.BuildPlacementConfirm or
+                UiActionKind.BuildPlacementCancel or
+                UiActionKind.BuildPlacementRotate)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static MatchHudSquadTraySlot ToSquadTraySlot(UiActionKind kind)

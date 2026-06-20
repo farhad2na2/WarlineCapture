@@ -169,6 +169,19 @@ public struct UiBuildDrawerQueueRowComponent : IBufferElementData
     public FixedString32Bytes TimeText;
 }
 
+public struct UiBuildPlacementConfirmationBarComponent : IComponentData
+{
+    public byte Visible;
+    public byte CanConfirm;
+    public byte CanCancel;
+    public byte CanRotate;
+    public FixedString64Bytes Title;
+    public FixedString64Bytes Status;
+    public FixedString32Bytes CostText;
+    public FixedString32Bytes DurationText;
+    public FixedString128Bytes InstructionText;
+}
+
 public struct UiShellArmoryCategoryRequestComponent : IBufferElementData
 {
     public ArmoryCatalogCategory Category;

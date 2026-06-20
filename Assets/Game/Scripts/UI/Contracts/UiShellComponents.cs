@@ -94,7 +94,10 @@ public enum UiActionKind
     BuildProductionClear,
     BuildProductionCancelActive,
     BuildProductionCancelQueued,
-    BuildDrawerPrimaryBuild
+    BuildDrawerPrimaryBuild,
+    BuildPlacementConfirm,
+    BuildPlacementCancel,
+    BuildPlacementRotate
 }
 
 public enum UiBuildProductionActionKind : byte
@@ -103,6 +106,44 @@ public enum UiBuildProductionActionKind : byte
     Clear,
     CancelActive,
     CancelQueued
+}
+
+public readonly struct UiBuildPlacementConfirmationBarModel
+{
+    public readonly bool Visible;
+    public readonly bool CanConfirm;
+    public readonly bool CanCancel;
+    public readonly bool CanRotate;
+    public readonly string Title;
+    public readonly string Status;
+    public readonly string CostText;
+    public readonly string DurationText;
+    public readonly string InstructionText;
+
+    public UiBuildPlacementConfirmationBarModel(
+        bool visible,
+        bool canConfirm,
+        bool canCancel,
+        bool canRotate,
+        string title,
+        string status,
+        string costText,
+        string durationText,
+        string instructionText)
+    {
+        Visible = visible;
+        CanConfirm = canConfirm;
+        CanCancel = canCancel;
+        CanRotate = canRotate;
+        Title = title;
+        Status = status;
+        CostText = costText;
+        DurationText = durationText;
+        InstructionText = instructionText;
+    }
+
+    public static UiBuildPlacementConfirmationBarModel Hidden =>
+        new(false, false, false, false, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
 }
 
 public enum ArmoryCatalogCategory

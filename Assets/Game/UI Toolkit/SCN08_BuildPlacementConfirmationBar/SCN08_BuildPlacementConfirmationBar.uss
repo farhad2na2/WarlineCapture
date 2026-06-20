@@ -3,6 +3,7 @@
     height: 100%;
     position: relative;
     overflow: hidden;
+    pointer-events: none;
     -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf");
     color: rgb(232, 226, 198);
     background-color: rgba(0, 0, 0, 0);
@@ -31,6 +32,7 @@
     right: 27.5%;
     bottom: 20.5%;
     height: 18%;
+    pointer-events: auto;
 }
 
 .bar-frame {
@@ -63,8 +65,10 @@
     position: absolute;
     left: 40.5%;
     top: 7%;
-    width: 15%;
+    width: 17%;
     height: 25%;
+    min-width: 17%;
+    max-width: 17%;
     background-image: url("../../Art/UI/Panels/scn09_panel_small_status_chip_bg.png");
     -unity-background-scale-mode: stretch-to-fill;
     -unity-slice-left: 18;
@@ -72,6 +76,7 @@
     -unity-slice-top: 12;
     -unity-slice-bottom: 12;
     background-color: rgba(24, 66, 28, 0.64);
+    overflow: hidden;
 }
 
 .status-text {
@@ -84,6 +89,24 @@
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(158, 250, 89);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.placement-valid .status-chip {
+    background-color: rgba(24, 74, 30, 0.72);
+}
+
+.placement-valid .status-text {
+    color: rgb(158, 250, 89);
+}
+
+.placement-invalid .status-chip {
+    background-color: rgba(78, 30, 24, 0.72);
+}
+
+.placement-invalid .status-text {
+    color: rgb(255, 126, 94);
 }
 
 .metric-icon {
@@ -113,16 +136,22 @@
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(245, 241, 220);
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .cost-text {
-    left: 64.5%;
-    width: 9%;
+    left: 65.5%;
+    width: 9.5%;
+    min-width: 9.5%;
+    max-width: 9.5%;
 }
 
 .duration-text {
     left: 81.5%;
     width: 10.5%;
+    min-width: 10.5%;
+    max-width: 10.5%;
 }
 
 .placement-action,
@@ -152,6 +181,11 @@
     width: 32%;
     background-image: url("../../Art/UI/Panels/scn09_panel_gold_action_button_bg.png");
     background-color: rgba(183, 122, 28, 0.72);
+}
+
+.placement-invalid .confirm-action {
+    background-color: rgba(72, 67, 54, 0.62);
+    opacity: 0.64;
 }
 
 .rotate-action {
@@ -204,6 +238,8 @@
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(245, 241, 220);
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .instruction-strip {
@@ -240,4 +276,6 @@
     font-size: 15px;
     -unity-text-align: middle-left;
     color: rgba(204, 201, 184, 0.92);
+    white-space: nowrap;
+    overflow: hidden;
 }

@@ -28,6 +28,8 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private const string DefaultCommandText = "78/100";
     private const int BuildDrawerCatalogItemCount = 7;
     private const int BuildDrawerQueueItemCount = 2;
+    private const int ArmoryCategoryCount = 5;
+    private const int ArmoryItemCount = 8;
 
     private static readonly string[] MotionStateClasses =
     {
@@ -68,7 +70,9 @@ public sealed class UiToolkitShellView : MonoBehaviour
     [SerializeField] private VisualTreeAsset loadingScreenAsset;
     [SerializeField] private VisualTreeAsset mainMenuScreenAsset;
     [SerializeField] private VisualTreeAsset matchHudScreenAsset;
+    [SerializeField] private VisualTreeAsset armoryScreenAsset;
     [SerializeField] private VisualTreeAsset buildDrawerPopupAsset;
+    [SerializeField] private VisualTreeAsset buildPlacementConfirmationBarAsset;
 
     private VisualElement root;
     private VisualElement safeAreaRoot;
@@ -89,11 +93,15 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private TemplateContainer loadingScreenContainer;
     private TemplateContainer mainMenuScreenContainer;
     private TemplateContainer matchHudScreenContainer;
+    private TemplateContainer armoryScreenContainer;
     private TemplateContainer buildDrawerPopupContainer;
+    private TemplateContainer buildPlacementConfirmationBarContainer;
     private VisualElement loadingContentRoot;
     private VisualElement mainMenuContentRoot;
     private VisualElement matchHudContentRoot;
+    private VisualElement armoryContentRoot;
     private VisualElement buildDrawerPopupRoot;
+    private VisualElement buildPlacementConfirmationBarRoot;
     private VisualElement mainMenuHeaderContent;
     private Button mainMenuInboxAction;
     private Button mainMenuSettingsAction;
@@ -206,8 +214,19 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private EventCallback<ClickEvent> buildDrawerRushActionCallback;
     private EventCallback<ClickEvent> buildDrawerClearActionCallback;
     private EventCallback<ClickEvent> buildDrawerActiveProductionCancelActionCallback;
+    private EventCallback<ClickEvent> buildPlacementConfirmActionCallback;
+    private EventCallback<ClickEvent> buildPlacementCancelActionCallback;
+    private EventCallback<ClickEvent> buildPlacementRotateActionCallback;
     private readonly EventCallback<ClickEvent>[] buildDrawerCatalogActionCallbacks = new EventCallback<ClickEvent>[BuildDrawerCatalogItemCount];
     private readonly EventCallback<ClickEvent>[] buildDrawerQueueActionCallbacks = new EventCallback<ClickEvent>[BuildDrawerQueueItemCount];
+    private readonly EventCallback<ClickEvent>[] armoryCategoryCallbacks = new EventCallback<ClickEvent>[ArmoryCategoryCount];
+    private readonly EventCallback<ClickEvent>[] armoryItemCallbacks = new EventCallback<ClickEvent>[ArmoryItemCount];
+    private readonly Button[] armoryCategoryActions = new Button[ArmoryCategoryCount];
+    private readonly Button[] armoryItems = new Button[ArmoryItemCount];
+    private readonly Label[] armoryItemTitleLabels = new Label[ArmoryItemCount];
+    private readonly Label[] armoryItemStateLabels = new Label[ArmoryItemCount];
+    private readonly Label[] armoryItemLevelLabels = new Label[ArmoryItemCount];
+    private readonly Label[] armoryItemTypeLabels = new Label[ArmoryItemCount];
     private ScrollView buildDrawerCatalogScrollView;
     private ScrollView buildDrawerProductionScrollView;
     private VisualElement buildDrawerBuildPanel;
@@ -258,13 +277,50 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private readonly Label[] buildDrawerQueueNameLabels = new Label[BuildDrawerQueueItemCount];
     private readonly Label[] buildDrawerQueueTimeLabels = new Label[BuildDrawerQueueItemCount];
     private readonly Button[] buildDrawerQueueOrderActions = new Button[BuildDrawerQueueItemCount];
+    private Label buildPlacementTitleLabel;
+    private Label buildPlacementStatusLabel;
+    private Label buildPlacementCostLabel;
+    private Label buildPlacementDurationLabel;
+    private Label buildPlacementInstructionLabel;
+    private Button buildPlacementCancelAction;
+    private Button buildPlacementRotateAction;
+    private Button buildPlacementConfirmAction;
+    private ScrollView armoryScrollView;
+    private VisualElement armoryCatalogContent;
+    private VisualElement armoryInspectionPanel;
+    private Label armoryInspectionNameLabel;
+    private Label armoryInspectionTypeLabel;
+    private VisualElement armoryInspectionPortraitArt;
+    private Button armoryFilterAction;
+    private Button armorySortAction;
+    private Button armoryUpgradeAction;
+    private Button armoryEquipAction;
+    private Button armoryCloseAction;
+    private Button armoryTabAction;
+    private Button armoryWorkshopTabAction;
+    private Button armoryDoctrineTabAction;
+    private Button armoryDepotTabAction;
+    private Button armoryOfficersTabAction;
+    private EventCallback<ClickEvent> armoryFilterCallback;
+    private EventCallback<ClickEvent> armorySortCallback;
+    private EventCallback<ClickEvent> armoryUpgradeCallback;
+    private EventCallback<ClickEvent> armoryEquipCallback;
+    private EventCallback<ClickEvent> armoryCloseCallback;
+    private EventCallback<ClickEvent> armoryTabCallback;
+    private EventCallback<ClickEvent> armoryWorkshopTabCallback;
+    private EventCallback<ClickEvent> armoryDoctrineTabCallback;
+    private EventCallback<ClickEvent> armoryDepotTabCallback;
+    private EventCallback<ClickEvent> armoryOfficersTabCallback;
+    private int selectedArmoryItemIndex;
 
     public UIDocument Document => document;
     public VisualTreeAsset ShellAsset => shellAsset;
     public VisualTreeAsset LoadingScreenAsset => loadingScreenAsset;
     public VisualTreeAsset MainMenuScreenAsset => mainMenuScreenAsset;
     public VisualTreeAsset MatchHudScreenAsset => matchHudScreenAsset;
+    public VisualTreeAsset ArmoryScreenAsset => armoryScreenAsset;
     public VisualTreeAsset BuildDrawerPopupAsset => buildDrawerPopupAsset;
+    public VisualTreeAsset BuildPlacementConfirmationBarAsset => buildPlacementConfirmationBarAsset;
     public VisualElement Root => root;
     public VisualElement SafeAreaRoot => safeAreaRoot;
     public VisualElement HeaderBar => headerBar;
@@ -284,7 +340,9 @@ public sealed class UiToolkitShellView : MonoBehaviour
     public VisualElement LoadingContentRoot => loadingContentRoot;
     public VisualElement MainMenuContentRoot => mainMenuContentRoot;
     public VisualElement MatchHudContentRoot => matchHudContentRoot;
+    public VisualElement ArmoryContentRoot => armoryContentRoot;
     public VisualElement BuildDrawerPopupRoot => buildDrawerPopupRoot;
+    public VisualElement BuildPlacementConfirmationBarRoot => buildPlacementConfirmationBarRoot;
     public VisualElement MainMenuHeaderContent => mainMenuHeaderContent;
     public VisualElement LoadingProgressFill => loadingProgressFill;
     public Label LoadingStatusLabel => loadingStatusLabel;
@@ -387,6 +445,26 @@ public sealed class UiToolkitShellView : MonoBehaviour
     public IReadOnlyList<VisualElement> BuildDrawerQueueImages => buildDrawerQueueImages;
     public IReadOnlyList<Label> BuildDrawerQueueNameLabels => buildDrawerQueueNameLabels;
     public IReadOnlyList<Button> BuildDrawerQueueOrderActions => buildDrawerQueueOrderActions;
+    public Label BuildPlacementTitleLabel => buildPlacementTitleLabel;
+    public Label BuildPlacementStatusLabel => buildPlacementStatusLabel;
+    public Label BuildPlacementCostLabel => buildPlacementCostLabel;
+    public Label BuildPlacementDurationLabel => buildPlacementDurationLabel;
+    public Label BuildPlacementInstructionLabel => buildPlacementInstructionLabel;
+    public Button BuildPlacementCancelAction => buildPlacementCancelAction;
+    public Button BuildPlacementRotateAction => buildPlacementRotateAction;
+    public Button BuildPlacementConfirmAction => buildPlacementConfirmAction;
+    public ScrollView ArmoryScrollView => armoryScrollView;
+    public VisualElement ArmoryCatalogContent => armoryCatalogContent;
+    public VisualElement ArmoryInspectionPanel => armoryInspectionPanel;
+    public Label ArmoryInspectionNameLabel => armoryInspectionNameLabel;
+    public Label ArmoryInspectionTypeLabel => armoryInspectionTypeLabel;
+    public Button ArmoryUpgradeAction => armoryUpgradeAction;
+    public Button ArmoryEquipAction => armoryEquipAction;
+    public Button ArmoryCloseAction => armoryCloseAction;
+    public IReadOnlyList<Button> ArmoryCategoryActions => armoryCategoryActions;
+    public IReadOnlyList<Button> ArmoryItems => armoryItems;
+    public IReadOnlyList<Label> ArmoryItemTitleLabels => armoryItemTitleLabels;
+    public int SelectedArmoryItemIndex => selectedArmoryItemIndex;
     public bool IsMounted => root != null;
     public bool HasMountedLoadingScreen =>
         loadingScreenContainer != null
@@ -400,10 +478,18 @@ public sealed class UiToolkitShellView : MonoBehaviour
         matchHudScreenContainer != null
         && matchHudContentRoot != null
         && matchHudScreenContainer.parent == matchScreenSlot;
+    public bool HasMountedArmoryScreen =>
+        armoryScreenContainer != null
+        && armoryContentRoot != null
+        && armoryScreenContainer.parent == armoryScreenSlot;
     public bool HasMountedBuildDrawerPopup =>
         buildDrawerPopupContainer != null
         && buildDrawerPopupRoot != null
         && buildDrawerPopupContainer.parent == popupScreenSlot;
+    public bool HasMountedBuildPlacementConfirmationBar =>
+        buildPlacementConfirmationBarContainer != null
+        && buildPlacementConfirmationBarRoot != null
+        && buildPlacementConfirmationBarContainer.parent == matchScreenSlot;
     public bool HasRequiredMainMenuBindings =>
         mainMenuContentRoot != null
         && mainMenuHeaderContent != null
@@ -427,6 +513,46 @@ public sealed class UiToolkitShellView : MonoBehaviour
         && mainMenuCommanderPortrait != null
         && mainMenuCommanderNameLabel != null
         && mainMenuCommanderSubtitleLabel != null;
+    public bool HasRequiredArmoryBindings =>
+        armoryContentRoot != null
+        && armoryContentRoot.Q<VisualElement>("HeaderContent") != null
+        && armoryContentRoot.Q<Button>("Nav_Units") != null
+        && armoryContentRoot.Q<Button>("Nav_Vehicles") != null
+        && armoryContentRoot.Q<Button>("Nav_Aircraft") != null
+        && armoryContentRoot.Q<Button>("Nav_Buildings") != null
+        && armoryContentRoot.Q<Button>("Nav_Upgrades") != null
+        && armoryContentRoot.Q<ScrollView>("Scroll_View") != null
+        && armoryContentRoot.Q<VisualElement>("Content") != null
+        && armoryContentRoot.Q<VisualElement>("InspectionPanel") != null
+        && armoryContentRoot.Q<Button>("UpgradeButton") != null
+        && armoryContentRoot.Q<Button>("EquipButton") != null
+        && armoryContentRoot.Q<Button>("CloseButton") != null;
+    public bool HasRequiredArmoryRuntimeBindings =>
+        HasRequiredArmoryBindings
+        && armoryScrollView != null
+        && armoryCatalogContent != null
+        && armoryInspectionPanel != null
+        && armoryInspectionNameLabel != null
+        && armoryInspectionTypeLabel != null
+        && armoryInspectionPortraitArt != null
+        && armoryFilterAction != null
+        && armorySortAction != null
+        && armoryUpgradeAction != null
+        && armoryEquipAction != null
+        && armoryCloseAction != null
+        && armoryTabAction != null
+        && armoryWorkshopTabAction != null
+        && armoryDoctrineTabAction != null
+        && armoryDepotTabAction != null
+        && armoryOfficersTabAction != null
+        && armoryCategoryActions[0] != null
+        && armoryCategoryActions[4] != null
+        && armoryItems[0] != null
+        && armoryItems[7] != null
+        && armoryItemTitleLabels[0] != null
+        && armoryItemStateLabels[0] != null
+        && armoryItemLevelLabels[0] != null
+        && armoryItemTypeLabels[0] != null;
     public bool HasPersistentMainMenuHeader =>
         mainMenuHeaderContent != null
         && mainMenuHeaderContent.parent != null
@@ -561,6 +687,16 @@ public sealed class UiToolkitShellView : MonoBehaviour
         && buildDrawerQueueNameLabels[0] != null
         && buildDrawerQueueTimeLabels[0] != null
         && buildDrawerQueueOrderActions[0] != null;
+    public bool HasRequiredBuildPlacementConfirmationBarBindings =>
+        buildPlacementConfirmationBarRoot != null
+        && buildPlacementTitleLabel != null
+        && buildPlacementStatusLabel != null
+        && buildPlacementCostLabel != null
+        && buildPlacementDurationLabel != null
+        && buildPlacementInstructionLabel != null
+        && buildPlacementCancelAction != null
+        && buildPlacementRotateAction != null
+        && buildPlacementConfirmAction != null;
     public bool IsCommanderProfileSubRouteVisible =>
         commanderProfileScreenSlot != null
         && !IsHiddenBySelfOrAncestor(commanderProfileScreenSlot);
@@ -643,6 +779,46 @@ public sealed class UiToolkitShellView : MonoBehaviour
         VisualTreeAsset configuredMatchHudScreenAsset,
         VisualTreeAsset configuredBuildDrawerPopupAsset)
     {
+        Configure(
+            configuredDocument,
+            configuredShellAsset,
+            configuredLoadingScreenAsset,
+            configuredMainMenuScreenAsset,
+            configuredMatchHudScreenAsset,
+            configuredBuildDrawerPopupAsset,
+            null);
+    }
+
+    public void Configure(
+        UIDocument configuredDocument,
+        VisualTreeAsset configuredShellAsset,
+        VisualTreeAsset configuredLoadingScreenAsset,
+        VisualTreeAsset configuredMainMenuScreenAsset,
+        VisualTreeAsset configuredMatchHudScreenAsset,
+        VisualTreeAsset configuredBuildDrawerPopupAsset,
+        VisualTreeAsset configuredBuildPlacementConfirmationBarAsset)
+    {
+        Configure(
+            configuredDocument,
+            configuredShellAsset,
+            configuredLoadingScreenAsset,
+            configuredMainMenuScreenAsset,
+            configuredMatchHudScreenAsset,
+            null,
+            configuredBuildDrawerPopupAsset,
+            configuredBuildPlacementConfirmationBarAsset);
+    }
+
+    public void Configure(
+        UIDocument configuredDocument,
+        VisualTreeAsset configuredShellAsset,
+        VisualTreeAsset configuredLoadingScreenAsset,
+        VisualTreeAsset configuredMainMenuScreenAsset,
+        VisualTreeAsset configuredMatchHudScreenAsset,
+        VisualTreeAsset configuredArmoryScreenAsset,
+        VisualTreeAsset configuredBuildDrawerPopupAsset,
+        VisualTreeAsset configuredBuildPlacementConfirmationBarAsset)
+    {
         if (configuredDocument != null)
             document = configuredDocument;
         if (configuredShellAsset != null)
@@ -653,8 +829,12 @@ public sealed class UiToolkitShellView : MonoBehaviour
             mainMenuScreenAsset = configuredMainMenuScreenAsset;
         if (configuredMatchHudScreenAsset != null)
             matchHudScreenAsset = configuredMatchHudScreenAsset;
+        if (configuredArmoryScreenAsset != null)
+            armoryScreenAsset = configuredArmoryScreenAsset;
         if (configuredBuildDrawerPopupAsset != null)
             buildDrawerPopupAsset = configuredBuildDrawerPopupAsset;
+        if (configuredBuildPlacementConfirmationBarAsset != null)
+            buildPlacementConfirmationBarAsset = configuredBuildPlacementConfirmationBarAsset;
     }
 
     public static string GetMotionStateClass(UiToolkitShellMotionState state)
@@ -706,6 +886,8 @@ public sealed class UiToolkitShellView : MonoBehaviour
             MountLoadingScreen();
             MountMainMenuScreen();
             MountMatchHudScreen();
+            MountArmoryScreen();
+            MountBuildPlacementConfirmationBar();
             MountBuildDrawerPopup();
         }
 
@@ -766,6 +948,24 @@ public sealed class UiToolkitShellView : MonoBehaviour
         return HasRequiredMatchHudBindings;
     }
 
+    public bool MountArmoryScreen()
+    {
+        if (armoryScreenSlot == null || armoryScreenAsset == null)
+            return false;
+
+        if (HasMountedArmoryScreen)
+            return true;
+
+        armoryScreenSlot.Clear();
+        armoryScreenContainer = armoryScreenAsset.Instantiate();
+        armoryScreenContainer.name = "SCN19_ArmoryContent_Template";
+        armoryContentRoot = armoryScreenContainer.Q<VisualElement>("SCN19_ArmoryContent");
+        armoryScreenSlot.Add(armoryScreenContainer);
+        BindArmoryScreen();
+        SetShellHidden(armoryScreenSlot, true);
+        return HasRequiredArmoryRuntimeBindings;
+    }
+
     public bool MountBuildDrawerPopup()
     {
         if (popupScreenSlot == null || buildDrawerPopupAsset == null)
@@ -783,6 +983,23 @@ public sealed class UiToolkitShellView : MonoBehaviour
         SetShellHidden(popupScreenSlot, true);
         SetShellHidden(modalOverlay, true);
         return HasRequiredBuildDrawerBindings;
+    }
+
+    public bool MountBuildPlacementConfirmationBar()
+    {
+        if (matchScreenSlot == null || buildPlacementConfirmationBarAsset == null)
+            return false;
+
+        if (HasMountedBuildPlacementConfirmationBar)
+            return true;
+
+        buildPlacementConfirmationBarContainer = buildPlacementConfirmationBarAsset.Instantiate();
+        buildPlacementConfirmationBarContainer.name = "SCN08_BuildPlacementConfirmationBar_Template";
+        buildPlacementConfirmationBarRoot = buildPlacementConfirmationBarContainer.Q<VisualElement>("SCN08_BuildPlacementConfirmationBar");
+        matchScreenSlot.Add(buildPlacementConfirmationBarContainer);
+        BindBuildPlacementConfirmationBar();
+        SetShellHidden(buildPlacementConfirmationBarRoot, true);
+        return HasRequiredBuildPlacementConfirmationBarBindings;
     }
 
     public bool TrySubmitMainMenuAction(string actionName)
@@ -816,6 +1033,13 @@ public sealed class UiToolkitShellView : MonoBehaviour
             default:
                 return false;
         }
+    }
+
+    public bool TrySubmitArmoryCategory(ArmoryCatalogCategory category)
+    {
+        bool queued = UiShellRuntimeGateway.TryEnqueueArmoryCategory(category);
+        ApplyArmoryCategory(category);
+        return queued;
     }
 
     public bool TrySubmitMatchHudAction(UiActionKind kind, int payloadId = 0)
@@ -966,16 +1190,22 @@ public sealed class UiToolkitShellView : MonoBehaviour
         loadingScreenContainer = null;
         mainMenuScreenContainer = null;
         matchHudScreenContainer = null;
+        armoryScreenContainer = null;
         buildDrawerPopupContainer = null;
+        buildPlacementConfirmationBarContainer = null;
         loadingContentRoot = null;
         mainMenuContentRoot = null;
         matchHudContentRoot = null;
+        armoryContentRoot = null;
         buildDrawerPopupRoot = null;
+        buildPlacementConfirmationBarRoot = null;
         mainMenuHeaderContent = null;
         ClearLoadingBindings();
         ClearMainMenuBindings();
         ClearMatchHudBindings();
+        ClearArmoryBindings();
         ClearBuildDrawerBindings();
+        ClearBuildPlacementConfirmationBarBindings();
         ResetLoadingPresentationCache();
     }
 
@@ -1000,9 +1230,21 @@ public sealed class UiToolkitShellView : MonoBehaviour
             case UiShellCommandKind.EnterMenu:
             case UiShellCommandKind.SwapMenuMiddle:
                 MountMainMenuScreen();
+                if (command.Route == UIRoute.Armory)
+                    MountArmoryScreen();
                 ApplyMainMenuRouteState(command.Route);
-                SetShellHidden(mainMenuScreenSlot, false);
-                ApplyShellMotion(mainMenuScreenSlot, UiToolkitShellMotionState.Visible);
+                if (command.Route == UIRoute.Armory && HasMountedArmoryScreen)
+                {
+                    SetShellHidden(mainMenuScreenSlot, true);
+                    SetShellHidden(armoryScreenSlot, false);
+                    ApplyShellMotion(armoryScreenSlot, UiToolkitShellMotionState.Visible);
+                }
+                else
+                {
+                    SetShellHidden(mainMenuScreenSlot, false);
+                    SetShellHidden(armoryScreenSlot, true);
+                    ApplyShellMotion(mainMenuScreenSlot, UiToolkitShellMotionState.Visible);
+                }
                 break;
             case UiShellCommandKind.ExitMenu:
                 ApplyShellMotion(mainMenuScreenSlot, UiToolkitShellMotionState.ScaleOut);
@@ -1068,6 +1310,55 @@ public sealed class UiToolkitShellView : MonoBehaviour
         SetClass(mainMenuCardSkirmishAction, "mode-card-selected", route == UIRoute.QuickCustomSetup);
         SetClass(mainMenuCardOperationsAction, "mode-card-selected", route == UIRoute.CommandExchange);
         SetShellHidden(commanderProfileScreenSlot, route != UIRoute.CommandFeed);
+        if (route == UIRoute.Armory && MountArmoryScreen())
+        {
+            SetShellHidden(mainMenuScreenSlot, true);
+            SetShellHidden(armoryScreenSlot, false);
+        }
+        else
+        {
+            SetShellHidden(mainMenuScreenSlot, false);
+            SetShellHidden(armoryScreenSlot, true);
+        }
+        return true;
+    }
+
+    public bool ApplyArmoryCategory(ArmoryCatalogCategory category)
+    {
+        if (!HasRequiredArmoryRuntimeBindings)
+            return false;
+
+        for (int i = 0; i < armoryCategoryActions.Length; i++)
+            SetClass(armoryCategoryActions[i], "category-selected", i == (int)category);
+
+        return true;
+    }
+
+    public bool SelectArmoryItem(int index)
+    {
+        if (!HasRequiredArmoryRuntimeBindings || index < 0 || index >= armoryItems.Length)
+            return false;
+
+        Button item = armoryItems[index];
+        if (item == null || item.ClassListContains("locked"))
+            return false;
+
+        selectedArmoryItemIndex = index;
+        for (int i = 0; i < armoryItems.Length; i++)
+        {
+            Button candidate = armoryItems[i];
+            if (candidate == null)
+                continue;
+
+            bool selected = i == selectedArmoryItemIndex;
+            SetClass(candidate, "selected", selected);
+            SetClass(candidate, "default", !selected && !candidate.ClassListContains("locked"));
+        }
+
+        SetLabelText(armoryInspectionNameLabel, armoryItemTitleLabels[index]?.text, "ITEM");
+        SetLabelText(armoryInspectionTypeLabel, armoryItemTypeLabels[index]?.text, "UNIT");
+        SetElementEnabled(armoryUpgradeAction, true);
+        SetElementEnabled(armoryEquipAction, true);
         return true;
     }
 
@@ -1201,6 +1492,25 @@ public sealed class UiToolkitShellView : MonoBehaviour
             ApplyBuildDrawerQueueRow(i, visible, row);
         }
 
+        return true;
+    }
+
+    public bool ApplyBuildPlacementConfirmationBar(UiBuildPlacementConfirmationBarModel placementBar)
+    {
+        if (!HasRequiredBuildPlacementConfirmationBarBindings)
+            return false;
+
+        SetShellHidden(buildPlacementConfirmationBarRoot, !placementBar.Visible);
+        SetLabelText(buildPlacementTitleLabel, placementBar.Title, "PLACE BUILDING");
+        SetLabelText(buildPlacementStatusLabel, placementBar.Status, placementBar.CanConfirm ? "VALID GROUND" : "INVALID PLACEMENT");
+        SetLabelText(buildPlacementCostLabel, placementBar.CostText, "0");
+        SetLabelText(buildPlacementDurationLabel, placementBar.DurationText, "00:00");
+        SetLabelText(buildPlacementInstructionLabel, placementBar.InstructionText, "DRAG TO POSITION, CONFIRM TO BUILD");
+        SetElementEnabled(buildPlacementCancelAction, placementBar.CanCancel);
+        SetElementEnabled(buildPlacementRotateAction, placementBar.CanRotate);
+        SetElementEnabled(buildPlacementConfirmAction, placementBar.CanConfirm);
+        SetClass(buildPlacementConfirmationBarRoot, "placement-valid", placementBar.Visible && placementBar.CanConfirm);
+        SetClass(buildPlacementConfirmationBarRoot, "placement-invalid", placementBar.Visible && !placementBar.CanConfirm);
         return true;
     }
 
@@ -1732,6 +2042,25 @@ public sealed class UiToolkitShellView : MonoBehaviour
             CacheBuildDrawerQueueRow(i, i == 0 ? "ProductionItemView" : "ProductionItemView_" + i);
     }
 
+    private void BindBuildPlacementConfirmationBar()
+    {
+        ClearBuildPlacementConfirmationBarBindings();
+        if (buildPlacementConfirmationBarRoot == null)
+            return;
+
+        buildPlacementTitleLabel = buildPlacementConfirmationBarRoot.Q<Label>("Title");
+        buildPlacementStatusLabel = buildPlacementConfirmationBarRoot.Q<Label>("Status");
+        buildPlacementCostLabel = buildPlacementConfirmationBarRoot.Q<Label>("Cost");
+        buildPlacementDurationLabel = buildPlacementConfirmationBarRoot.Q<Label>("Duration");
+        buildPlacementInstructionLabel = buildPlacementConfirmationBarRoot.Q<Label>("Instruction");
+        buildPlacementCancelAction = buildPlacementConfirmationBarRoot.Q<Button>("CancelButton");
+        buildPlacementRotateAction = buildPlacementConfirmationBarRoot.Q<Button>("RotateButton");
+        buildPlacementConfirmAction = buildPlacementConfirmationBarRoot.Q<Button>("ConfirmButton");
+        RegisterBuildPlacementAction(buildPlacementCancelAction, ref buildPlacementCancelActionCallback, UiActionKind.BuildPlacementCancel);
+        RegisterBuildPlacementAction(buildPlacementRotateAction, ref buildPlacementRotateActionCallback, UiActionKind.BuildPlacementRotate);
+        RegisterBuildPlacementAction(buildPlacementConfirmAction, ref buildPlacementConfirmActionCallback, UiActionKind.BuildPlacementConfirm);
+    }
+
     private void CacheBuildDrawerCatalogItem(int index, string itemName)
     {
         if (index < 0 || index >= buildDrawerCatalogItems.Length)
@@ -1814,6 +2143,102 @@ public sealed class UiToolkitShellView : MonoBehaviour
             DefaultCommanderSubtitle,
             DefaultCommanderPortraitClass));
         ApplyMainMenuRouteState(UIRoute.MainMenu);
+    }
+
+    private void BindArmoryScreen()
+    {
+        ClearArmoryBindings();
+        if (armoryContentRoot == null)
+            return;
+
+        armoryScrollView = armoryContentRoot.Q<ScrollView>("Scroll_View");
+        armoryCatalogContent = armoryContentRoot.Q<VisualElement>("Content");
+        armoryInspectionPanel = armoryContentRoot.Q<VisualElement>("InspectionPanel");
+        armoryInspectionNameLabel = armoryInspectionPanel?.Q<Label>("Name");
+        armoryInspectionTypeLabel = armoryInspectionPanel?.Q<Label>("Type");
+        armoryInspectionPortraitArt = armoryInspectionPanel?.Q<VisualElement>("PortraitArt");
+        armoryFilterAction = armoryContentRoot.Q<Button>("FilterDropdown");
+        armorySortAction = armoryContentRoot.Q<Button>("SortDropdown");
+        armoryUpgradeAction = armoryContentRoot.Q<Button>("UpgradeButton");
+        armoryEquipAction = armoryContentRoot.Q<Button>("EquipButton");
+        armoryCloseAction = armoryContentRoot.Q<Button>("CloseButton");
+        armoryTabAction = armoryContentRoot.Q<Button>("ArmoryTab");
+        armoryWorkshopTabAction = armoryContentRoot.Q<Button>("WorkshopTab");
+        armoryDoctrineTabAction = armoryContentRoot.Q<Button>("DoctrineTab");
+        armoryDepotTabAction = armoryContentRoot.Q<Button>("DepotTab");
+        armoryOfficersTabAction = armoryContentRoot.Q<Button>("OfficersTab");
+
+        CacheArmoryCategory(0, "Nav_Units", ArmoryCatalogCategory.Characters);
+        CacheArmoryCategory(1, "Nav_Vehicles", ArmoryCatalogCategory.Vehicles);
+        CacheArmoryCategory(2, "Nav_Aircraft", ArmoryCatalogCategory.Aircrafts);
+        CacheArmoryCategory(3, "Nav_Buildings", ArmoryCatalogCategory.Buildings);
+        CacheArmoryCategory(4, "Nav_Upgrades", ArmoryCatalogCategory.Support);
+
+        CacheArmoryItem(0, "ItemView");
+        CacheArmoryItem(1, "ItemView_FastApc");
+        CacheArmoryItem(2, "ItemView_ReconDrone");
+        CacheArmoryItem(3, "ItemView_BombSuit");
+        CacheArmoryItem(4, "ItemView_HeavyTank");
+        CacheArmoryItem(5, "ItemView_AttackHelicopter");
+        CacheArmoryItem(6, "ItemView_RocketArtillery");
+        CacheArmoryItem(7, "ItemView_SniperTeam");
+
+        RegisterArmoryRouteAction(armoryCloseAction, ref armoryCloseCallback, UIRoute.MainMenu);
+        RegisterArmoryRouteAction(armoryTabAction, ref armoryTabCallback, UIRoute.Armory);
+        RegisterArmoryRouteAction(armoryWorkshopTabAction, ref armoryWorkshopTabCallback, UIRoute.CommandExchange);
+        RegisterArmoryRouteAction(armoryDoctrineTabAction, ref armoryDoctrineTabCallback, UIRoute.Events);
+        RegisterArmoryRouteAction(armoryDepotTabAction, ref armoryDepotTabCallback, UIRoute.LoadoutSquadPrep);
+        RegisterArmoryRouteAction(armoryOfficersTabAction, ref armoryOfficersTabCallback, UIRoute.CommandFeed);
+        RegisterArmoryNoopAction(armoryFilterAction, ref armoryFilterCallback);
+        RegisterArmoryNoopAction(armorySortAction, ref armorySortCallback);
+        RegisterArmoryNoopAction(armoryUpgradeAction, ref armoryUpgradeCallback);
+        RegisterArmoryNoopAction(armoryEquipAction, ref armoryEquipCallback);
+
+        ApplyArmoryCategory(UiShellRuntimeGateway.TryReadArmoryCategory(out ArmoryCatalogCategory category)
+            ? category
+            : ArmoryCatalogCategory.Characters);
+        SelectArmoryItem(0);
+    }
+
+    private void CacheArmoryCategory(int index, string name, ArmoryCatalogCategory category)
+    {
+        if (index < 0 || index >= armoryCategoryActions.Length)
+            return;
+
+        Button target = armoryContentRoot?.Q<Button>(name);
+        armoryCategoryActions[index] = target;
+        if (target == null)
+            return;
+
+        armoryCategoryCallbacks[index] = evt =>
+        {
+            TrySubmitArmoryCategory(category);
+            evt?.StopPropagation();
+        };
+        RegisterClick(target, armoryCategoryCallbacks[index]);
+    }
+
+    private void CacheArmoryItem(int index, string name)
+    {
+        if (index < 0 || index >= armoryItems.Length)
+            return;
+
+        Button item = armoryCatalogContent?.Q<Button>(name);
+        armoryItems[index] = item;
+        armoryItemTitleLabels[index] = item?.Q<Label>("Title");
+        armoryItemStateLabels[index] = item?.Q<Label>("StateLabel");
+        armoryItemLevelLabels[index] = item?.Q<Label>("Level");
+        armoryItemTypeLabels[index] = item?.Q<Label>("Type");
+        if (item == null)
+            return;
+
+        int itemIndex = index;
+        armoryItemCallbacks[index] = evt =>
+        {
+            SelectArmoryItem(itemIndex);
+            evt?.StopPropagation();
+        };
+        RegisterClick(item, armoryItemCallbacks[index]);
     }
 
     private void RegisterMainMenuCallbacks()
@@ -2012,6 +2437,66 @@ public sealed class UiToolkitShellView : MonoBehaviour
         mainMenuCommanderSubtitleLabel = null;
     }
 
+    private void ClearArmoryBindings()
+    {
+        for (int i = 0; i < armoryCategoryActions.Length; i++)
+        {
+            UnregisterClick(armoryCategoryActions[i], armoryCategoryCallbacks[i]);
+            armoryCategoryCallbacks[i] = null;
+            armoryCategoryActions[i] = null;
+        }
+
+        for (int i = 0; i < armoryItems.Length; i++)
+        {
+            UnregisterClick(armoryItems[i], armoryItemCallbacks[i]);
+            armoryItemCallbacks[i] = null;
+            armoryItems[i] = null;
+            armoryItemTitleLabels[i] = null;
+            armoryItemStateLabels[i] = null;
+            armoryItemLevelLabels[i] = null;
+            armoryItemTypeLabels[i] = null;
+        }
+
+        UnregisterClick(armoryFilterAction, armoryFilterCallback);
+        UnregisterClick(armorySortAction, armorySortCallback);
+        UnregisterClick(armoryUpgradeAction, armoryUpgradeCallback);
+        UnregisterClick(armoryEquipAction, armoryEquipCallback);
+        UnregisterClick(armoryCloseAction, armoryCloseCallback);
+        UnregisterClick(armoryTabAction, armoryTabCallback);
+        UnregisterClick(armoryWorkshopTabAction, armoryWorkshopTabCallback);
+        UnregisterClick(armoryDoctrineTabAction, armoryDoctrineTabCallback);
+        UnregisterClick(armoryDepotTabAction, armoryDepotTabCallback);
+        UnregisterClick(armoryOfficersTabAction, armoryOfficersTabCallback);
+
+        armoryScrollView = null;
+        armoryCatalogContent = null;
+        armoryInspectionPanel = null;
+        armoryInspectionNameLabel = null;
+        armoryInspectionTypeLabel = null;
+        armoryInspectionPortraitArt = null;
+        armoryFilterAction = null;
+        armorySortAction = null;
+        armoryUpgradeAction = null;
+        armoryEquipAction = null;
+        armoryCloseAction = null;
+        armoryTabAction = null;
+        armoryWorkshopTabAction = null;
+        armoryDoctrineTabAction = null;
+        armoryDepotTabAction = null;
+        armoryOfficersTabAction = null;
+        armoryFilterCallback = null;
+        armorySortCallback = null;
+        armoryUpgradeCallback = null;
+        armoryEquipCallback = null;
+        armoryCloseCallback = null;
+        armoryTabCallback = null;
+        armoryWorkshopTabCallback = null;
+        armoryDoctrineTabCallback = null;
+        armoryDepotTabCallback = null;
+        armoryOfficersTabCallback = null;
+        selectedArmoryItemIndex = 0;
+    }
+
     private void ClearMatchHudBindings()
     {
         foreach (KeyValuePair<Button, EventCallback<ClickEvent>> callback in matchHudActionCallbacks)
@@ -2171,6 +2656,24 @@ public sealed class UiToolkitShellView : MonoBehaviour
         }
     }
 
+    private void ClearBuildPlacementConfirmationBarBindings()
+    {
+        UnregisterClick(buildPlacementCancelAction, buildPlacementCancelActionCallback);
+        UnregisterClick(buildPlacementRotateAction, buildPlacementRotateActionCallback);
+        UnregisterClick(buildPlacementConfirmAction, buildPlacementConfirmActionCallback);
+        buildPlacementCancelActionCallback = null;
+        buildPlacementRotateActionCallback = null;
+        buildPlacementConfirmActionCallback = null;
+        buildPlacementTitleLabel = null;
+        buildPlacementStatusLabel = null;
+        buildPlacementCostLabel = null;
+        buildPlacementDurationLabel = null;
+        buildPlacementInstructionLabel = null;
+        buildPlacementCancelAction = null;
+        buildPlacementRotateAction = null;
+        buildPlacementConfirmAction = null;
+    }
+
     private void ClearLoadingBindings()
     {
         loadingBody = null;
@@ -2211,6 +2714,23 @@ public sealed class UiToolkitShellView : MonoBehaviour
         matchHudActionCallbacks[target] = callback;
     }
 
+    private void RegisterBuildPlacementAction(
+        Button target,
+        ref EventCallback<ClickEvent> callback,
+        UiActionKind kind)
+    {
+        if (target == null)
+            return;
+
+        callback = evt =>
+        {
+            if (target.enabledInHierarchy)
+                TrySubmitMatchHudAction(kind);
+            evt?.StopPropagation();
+        };
+        RegisterClick(target, callback);
+    }
+
     private void RegisterBuildDrawerCloseAction()
     {
         if (buildDrawerCloseAction == null)
@@ -2222,6 +2742,31 @@ public sealed class UiToolkitShellView : MonoBehaviour
             evt?.StopPropagation();
         };
         RegisterClick(buildDrawerCloseAction, buildDrawerCloseActionCallback);
+    }
+
+    private void RegisterArmoryRouteAction(
+        Button target,
+        ref EventCallback<ClickEvent> callback,
+        UIRoute route)
+    {
+        if (target == null)
+            return;
+
+        callback = evt =>
+        {
+            EnqueueMainMenuRoute(UiShellRouteIntent.OpenMenuRoute, route, pushHistory: route != UIRoute.MainMenu);
+            evt?.StopPropagation();
+        };
+        RegisterClick(target, callback);
+    }
+
+    private void RegisterArmoryNoopAction(Button target, ref EventCallback<ClickEvent> callback)
+    {
+        if (target == null)
+            return;
+
+        callback = evt => evt?.StopPropagation();
+        RegisterClick(target, callback);
     }
 
     private void RegisterBuildDrawerCatalogAction(int index)

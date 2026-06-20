@@ -287,6 +287,19 @@ public static class UiToolkitMenuSceneStartupValidation
 
             if (IsMatchHudActive())
             {
+                Camera uiCamera = bootstrap.UiCamera;
+                if (uiCamera != null && uiCamera.enabled)
+                {
+                    CompleteDeployValidation(false, $"Match HUD is active but the legacy UI camera is still enabled. {DescribeDeployRuntimeState()}");
+                    return;
+                }
+
+                if (uiCamera != null && uiCamera.clearFlags != CameraClearFlags.Depth)
+                {
+                    CompleteDeployValidation(false, $"Match HUD is active but the legacy UI camera is still clearing {uiCamera.clearFlags}. {DescribeDeployRuntimeState()}");
+                    return;
+                }
+
                 CompleteDeployValidation(true, $"Deploy loaded Match scene and entered Match HUD. {DescribeDeployRuntimeState()}");
                 return;
             }

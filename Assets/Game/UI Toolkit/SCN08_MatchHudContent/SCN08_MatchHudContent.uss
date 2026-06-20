@@ -5,7 +5,7 @@
     overflow: hidden;
     -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold.ttf");
     color: rgb(238, 229, 198);
-    background-color: rgb(8, 9, 8);
+    background-color: rgba(0, 0, 0, 0);
 }
 
 .scn08-match-hud-content Button {
@@ -31,15 +31,15 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_background_command_table_no_ui.png");
-    -unity-background-scale-mode: scale-and-crop;
+    display: none;
+    background-color: rgba(0, 0, 0, 0);
+    picking-mode: ignore;
 }
 
 .header-content,
 .left-content,
 .right-content,
-.footer-content,
-.battlefield-layer {
+.footer-content {
     position: absolute;
 }
 
@@ -70,13 +70,6 @@
     bottom: 1.25%;
     height: 18.7%;
     overflow: visible;
-}
-
-.battlefield-layer {
-    left: 22%;
-    right: 25.6%;
-    top: 12.8%;
-    bottom: 20.2%;
 }
 
 /* ── Frame helpers (absolute fill) ── */
@@ -1291,83 +1284,6 @@
     -unity-text-align: middle-center;
     color: rgb(238, 231, 199);
 }
-
-/* ── Battlefield overlay elements ── */
-
-.selection-ring {
-    position: absolute;
-    left: 32%;
-    top: 53%;
-    width: 15%;
-    height: 10%;
-    border-left-width: 3px;
-    border-right-width: 3px;
-    border-top-width: 3px;
-    border-bottom-width: 3px;
-    border-left-color: rgba(141, 226, 84, 0.72);
-    border-right-color: rgba(141, 226, 84, 0.72);
-    border-top-color: rgba(141, 226, 84, 0.72);
-    border-bottom-color: rgba(141, 226, 84, 0.72);
-    border-top-left-radius: 999px;
-    border-top-right-radius: 999px;
-    border-bottom-left-radius: 999px;
-    border-bottom-right-radius: 999px;
-}
-
-.move-path {
-    position: absolute;
-    left: 45%;
-    top: 47%;
-    width: 23%;
-    height: 18%;
-}
-
-.move-dot {
-    position: relative;
-    width: 6px;
-    height: 6px;
-    margin-left: 12px;
-    margin-top: 7px;
-    background-color: rgba(166, 213, 67, 0.7);
-    border-top-left-radius: 999px;
-    border-top-right-radius: 999px;
-    border-bottom-left-radius: 999px;
-    border-bottom-right-radius: 999px;
-}
-
-.move-destination {
-    position: absolute;
-    left: 66%;
-    top: 44%;
-    width: 6%;
-    height: 7%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_focus_reticle.png");
-    -unity-background-scale-mode: scale-to-fit;
-    -unity-background-image-tint-color: rgba(241, 232, 203, 0.82);
-}
-
-.map-marker {
-    position: absolute;
-    width: 5.8%;
-    height: 6.8%;
-    -unity-background-scale-mode: scale-to-fit;
-}
-
-.friendly-marker {
-    left: 37%;
-    top: 42%;
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_civilian_group.png");
-    -unity-background-image-tint-color: rgba(220, 194, 71, 0.85);
-}
-
-.hostile-marker-a,
-.hostile-marker-b {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_warning_triangle.png");
-    -unity-background-image-tint-color: rgba(219, 82, 57, 0.82);
-}
-
-.hostile-marker-a { left: 62%; top: 34%; }
-.hostile-marker-b { left: 77%; top: 41%; }
 
 /* ── Icon assignments ── */
 

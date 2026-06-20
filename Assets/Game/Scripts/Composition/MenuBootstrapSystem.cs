@@ -126,6 +126,7 @@ internal sealed class MenuBootstrapSystem
         UpdateActualLoadingProgress(entityManager, boundary, shellState);
         if (useUiToolkit)
         {
+            ApplyUiToolkitPresentationMode(view.UiCamera, view.UiCanvas);
             BindUiToolkitMatchReadModels(shellState);
             ClearBoundMatchRuntimeUi();
             return;
@@ -505,6 +506,22 @@ internal sealed class MenuBootstrapSystem
         }
 
         RestoreUiPresentationMode(uiCamera, uiCanvas);
+    }
+
+    private void ApplyUiToolkitPresentationMode(Camera uiCamera, Canvas uiCanvas)
+    {
+        CaptureUiPresentationMode(uiCamera, uiCanvas);
+
+        if (uiCanvas != null && uiCanvas.enabled)
+            uiCanvas.enabled = false;
+
+        if (uiCamera == null)
+            return;
+
+        if (uiCamera.clearFlags != CameraClearFlags.Depth)
+            uiCamera.clearFlags = CameraClearFlags.Depth;
+        if (uiCamera.enabled)
+            uiCamera.enabled = false;
     }
 
     private void CaptureUiPresentationMode(Camera uiCamera, Canvas uiCanvas)

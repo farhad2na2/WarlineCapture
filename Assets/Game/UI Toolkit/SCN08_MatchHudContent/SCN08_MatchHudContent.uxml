@@ -5,22 +5,6 @@
     <ui:VisualElement name="SCN08_MatchHudContent" class="scn08-match-hud-content">
         <ui:VisualElement name="BackgroundPlate" class="background-plate" />
 
-        <ui:VisualElement name="BattlefieldLayer" class="battlefield-layer">
-            <ui:VisualElement name="SelectionRing" class="selection-ring" />
-            <ui:VisualElement name="MovePath" class="move-path">
-                <ui:VisualElement class="move-dot" />
-                <ui:VisualElement class="move-dot" />
-                <ui:VisualElement class="move-dot" />
-                <ui:VisualElement class="move-dot" />
-                <ui:VisualElement class="move-dot" />
-                <ui:VisualElement class="move-dot" />
-            </ui:VisualElement>
-            <ui:VisualElement name="MoveDestination" class="move-destination" />
-            <ui:VisualElement name="FriendlyMarker" class="map-marker friendly-marker" />
-            <ui:VisualElement name="HostileMarkerA" class="map-marker hostile-marker-a" />
-            <ui:VisualElement name="HostileMarkerB" class="map-marker hostile-marker-b" />
-        </ui:VisualElement>
-
         <ui:VisualElement name="HeaderContent" class="header-content">
             <ui:VisualElement name="LogoPanel" class="logo-panel">
                 <ui:VisualElement name="Frame" class="chip-frame" />

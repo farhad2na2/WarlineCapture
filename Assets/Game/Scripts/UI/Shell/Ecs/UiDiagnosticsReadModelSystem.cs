@@ -5,17 +5,57 @@ using Unity.Entities;
 using UnityEngine;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
-public sealed partial class UiDiagnosticsReadModelSystem : SystemBase
+public partial struct UiDiagnosticsReadModelSystem : ISystem
 {
-    private const int MaxVisibleLogEntries = 50;
     private const double FpsUpdateIntervalSeconds = 0.25d;
 
-    private readonly Queue<RuntimeLogEntry> runtimeLogEntries = new(MaxVisibleLogEntries);
-    private readonly StringBuilder runtimeLogBuilder = new(8192);
     private EntityQuery boundaryQuery;
     private double accumulatedSeconds;
     private int accumulatedFrames;
-    private bool subscribed;
+
+    public void OnCreate(ref SystemState state)
+    {
+        boundaryQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadWrite<UiDiagnosticsOverlayComponent>());
+        UiDiagnosticsRuntimeLogBuffer.EnsureSubscribed();
+    }
+
+    public void OnDestroy(ref SystemState state)
+    {
+        UiDiagnosticsRuntimeLogBuffer.ReleaseSubscription();
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        if (boundaryQuery.IsEmptyIgnoreFilter)
+            return;
+
+        Entity boundary = boundaryQuery.GetSingletonEntity();
+        UiDiagnosticsOverlayComponent component =
+            state.EntityManager.GetComponentData<UiDiagnosticsOverlayComponent>(boundary);
+
+        accumulatedFrames++;
+        accumulatedSeconds += Mathf.Max(0f, UnityEngine.Time.unscaledDeltaTime);
+        if (accumulatedSeconds >= FpsUpdateIntervalSeconds)
+        {
+            double fps = accumulatedSeconds > 0d ? accumulatedFrames / accumulatedSeconds : 0d;
+            component.Fps = Mathf.Max(0, Mathf.RoundToInt((float)fps));
+            accumulatedFrames = 0;
+            accumulatedSeconds = 0d;
+        }
+
+        component.LogText = UiDiagnosticsRuntimeLogBuffer.BuildLogText();
+        state.EntityManager.SetComponentData(boundary, component);
+    }
+}
+
+public static class UiDiagnosticsRuntimeLogBuffer
+{
+    private const int MaxVisibleLogEntries = 50;
+    private static readonly Queue<RuntimeLogEntry> RuntimeLogEntries = new(MaxVisibleLogEntries);
+    private static readonly StringBuilder RuntimeLogBuilder = new(8192);
+    private static bool subscribed;
 
     private readonly struct RuntimeLogEntry
     {
@@ -29,14 +69,7 @@ public sealed partial class UiDiagnosticsReadModelSystem : SystemBase
         }
     }
 
-    protected override void OnCreate()
-    {
-        boundaryQuery = EntityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
-            ComponentType.ReadWrite<UiDiagnosticsOverlayComponent>());
-    }
-
-    protected override void OnStartRunning()
+    public static void EnsureSubscribed()
     {
         if (subscribed)
             return;
@@ -45,7 +78,7 @@ public sealed partial class UiDiagnosticsReadModelSystem : SystemBase
         subscribed = true;
     }
 
-    protected override void OnStopRunning()
+    public static void ReleaseSubscription()
     {
         if (!subscribed)
             return;
@@ -54,35 +87,27 @@ public sealed partial class UiDiagnosticsReadModelSystem : SystemBase
         subscribed = false;
     }
 
-    protected override void OnDestroy()
+    public static FixedString4096Bytes BuildLogText()
     {
-        OnStopRunning();
-    }
-
-    protected override void OnUpdate()
-    {
-        if (boundaryQuery.IsEmptyIgnoreFilter)
-            return;
-
-        Entity boundary = boundaryQuery.GetSingletonEntity();
-        UiDiagnosticsOverlayComponent component =
-            EntityManager.GetComponentData<UiDiagnosticsOverlayComponent>(boundary);
-
-        accumulatedFrames++;
-        accumulatedSeconds += Mathf.Max(0f, UnityEngine.Time.unscaledDeltaTime);
-        if (accumulatedSeconds >= FpsUpdateIntervalSeconds)
+        RuntimeLogBuilder.Clear();
+        foreach (RuntimeLogEntry entry in RuntimeLogEntries)
         {
-            double fps = accumulatedSeconds > 0d ? accumulatedFrames / accumulatedSeconds : 0d;
-            component.Fps = Mathf.Max(0, Mathf.RoundToInt((float)fps));
-            accumulatedFrames = 0;
-            accumulatedSeconds = 0d;
+            if (RuntimeLogBuilder.Length > 0)
+                RuntimeLogBuilder.Append('\n').Append('\n');
+
+            RuntimeLogBuilder.Append(GetLogPrefix(entry.Type));
+            RuntimeLogBuilder.Append(entry.Message);
         }
 
-        component.LogText = BuildLogText();
-        EntityManager.SetComponentData(boundary, component);
+        if (RuntimeLogBuilder.Length == 0)
+            RuntimeLogBuilder.Append("Runtime log ready.");
+
+        var fixedLog = new FixedString4096Bytes();
+        fixedLog.Append(RuntimeLogBuilder.ToString());
+        return fixedLog;
     }
 
-    private void HandleRuntimeLogMessage(string condition, string stackTrace, LogType type)
+    private static void HandleRuntimeLogMessage(string condition, string stackTrace, LogType type)
     {
         if (type == LogType.Log && string.IsNullOrWhiteSpace(condition))
             return;
@@ -90,32 +115,12 @@ public sealed partial class UiDiagnosticsReadModelSystem : SystemBase
         AddRuntimeLogEntry(BuildRuntimeLogMessage(condition, stackTrace, type), type);
     }
 
-    private void AddRuntimeLogEntry(string message, LogType type)
+    private static void AddRuntimeLogEntry(string message, LogType type)
     {
-        while (runtimeLogEntries.Count >= MaxVisibleLogEntries)
-            runtimeLogEntries.Dequeue();
+        while (RuntimeLogEntries.Count >= MaxVisibleLogEntries)
+            RuntimeLogEntries.Dequeue();
 
-        runtimeLogEntries.Enqueue(new RuntimeLogEntry(message, type));
-    }
-
-    private FixedString4096Bytes BuildLogText()
-    {
-        runtimeLogBuilder.Clear();
-        foreach (RuntimeLogEntry entry in runtimeLogEntries)
-        {
-            if (runtimeLogBuilder.Length > 0)
-                runtimeLogBuilder.Append('\n').Append('\n');
-
-            runtimeLogBuilder.Append(GetLogPrefix(entry.Type));
-            runtimeLogBuilder.Append(entry.Message);
-        }
-
-        if (runtimeLogBuilder.Length == 0)
-            runtimeLogBuilder.Append("Runtime log ready.");
-
-        var fixedLog = new FixedString4096Bytes();
-        fixedLog.Append(runtimeLogBuilder.ToString());
-        return fixedLog;
+        RuntimeLogEntries.Enqueue(new RuntimeLogEntry(message, type));
     }
 
     private static string BuildRuntimeLogMessage(string condition, string stackTrace, LogType type)

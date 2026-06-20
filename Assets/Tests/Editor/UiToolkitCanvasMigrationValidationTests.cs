@@ -71,9 +71,13 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             tests.UiToolkitUssFilesImport();
             tests.UiToolkitUssUrlReferencesResolve();
             tests.UiToolkitFilesDoNotReferenceOldArtDirection();
+            tests.UiToolkitRuntimeCodeDoesNotDependOnCanvasRuntimeTypes();
+            tests.CanvasFallbackReferencesStayInApprovedLegacySurface();
+            tests.MigratedUiToolkitRuntimeDoesNotReferenceLegacyCanvasViews();
             tests.RuntimeUiConfigExistsAndDefaultsToCanvas();
             tests.MenuBootstrapViewKeepsCanvasFallbackEnabledInCanvasMode();
             tests.MenuBootstrapViewCanEnableIsolatedUiToolkitShellMode();
+            tests.MenuBootstrapViewDisablesCanvasPresentationStackInUiToolkitMode();
             tests.UiToolkitShellViewMountsShellUxmlThroughUidocument();
             tests.UiToolkitShellViewBindsRequiredShellRegionsByName();
             tests.UiToolkitShellViewBindsRequiredScreenSlotsByName();
@@ -84,6 +88,11 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             tests.UiToolkitShellLayersRenderAboveNormalContent();
             tests.UiToolkitShellPointerGateBlocksOnlyConcreteUiAndVisibleOverlays();
             tests.UiToolkitShellApplySystemIsManagedPresentationEdge();
+            tests.UiShellRuntimeUsesOnlyIntentionalManagedSystemBaseEdge();
+            tests.UiToolkitRuntimeClassNamesFollowArchitectureContract();
+            tests.UiToolkitRuntimeAssembliesStayLayered();
+            tests.UiToolkitHotPathsAvoidKnownAllocationPatterns();
+            tests.UiToolkitManagedApplyEdgeIsClassifiedAndDocumented();
             tests.MenuBootstrapViewWiresUiToolkitShellReferencePath();
             tests.EcsSystemsDoNotTouchUiToolkitObjectsDirectly();
             tests.UiToolkitViewsDoNotOwnFramePolling();
@@ -149,7 +158,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             tests.UiToolkitShellDiagnosticsOverlayExposesFpsAndRuntimeLogActions();
             tests.SettingsPopupUxmlExposesShellBindingsAndRoutesThroughGateway();
             tests.InboxPopupUxmlExposesShellBindingsAndRoutesThroughGateway();
-            UnityEngine.Debug.Log("[UiToolkitCanvasMigrationValidation] result=Passed tests=82");
+            UnityEngine.Debug.Log("[UiToolkitCanvasMigrationValidation] result=Passed tests=91");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -223,6 +232,157 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     }
 
     [Test]
+    public void UiToolkitRuntimeCodeDoesNotDependOnCanvasRuntimeTypes()
+    {
+        var violations = new List<string>();
+        string[] roots =
+        {
+            "Assets/Game/Scripts/UI/Toolkit",
+            "Assets/Game/Scripts/UI/Shell/Ecs",
+            "Assets/Game/Scripts/UI/Contracts"
+        };
+
+        (string Label, Regex Pattern)[] forbidden =
+        {
+            ("UnityEngine.UI namespace", new Regex(@"using\s+UnityEngine\.UI\s*;", RegexOptions.CultureInvariant)),
+            ("TMPro namespace", new Regex(@"using\s+TMPro\s*;", RegexOptions.CultureInvariant)),
+            ("Canvas type", new Regex(@"\bCanvas\b", RegexOptions.CultureInvariant)),
+            ("CanvasGroup type", new Regex(@"\bCanvasGroup\b", RegexOptions.CultureInvariant)),
+            ("RectTransform type", new Regex(@"\bRectTransform\b", RegexOptions.CultureInvariant)),
+            ("TextMeshPro type", new Regex(@"\bTextMeshPro\w*\b", RegexOptions.CultureInvariant)),
+            ("TMP type", new Regex(@"\bTMP_\w+\b", RegexOptions.CultureInvariant))
+        };
+
+        for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
+        {
+            string root = roots[rootIndex];
+            if (!Directory.Exists(root))
+                continue;
+
+            foreach (string path in Directory.GetFiles(root, "*.cs", SearchOption.AllDirectories))
+            {
+                string normalizedPath = NormalizeAssetPath(path);
+                string source = File.ReadAllText(normalizedPath);
+
+                for (int forbiddenIndex = 0; forbiddenIndex < forbidden.Length; forbiddenIndex++)
+                {
+                    (string label, Regex pattern) = forbidden[forbiddenIndex];
+                    if (pattern.IsMatch(source))
+                        violations.Add($"{normalizedPath} -> {label}");
+                }
+            }
+        }
+
+        AssertNoViolations(violations, "UI Toolkit runtime code must not depend on legacy Canvas/TMPro runtime types.");
+    }
+
+    [Test]
+    public void CanvasFallbackReferencesStayInApprovedLegacySurface()
+    {
+        var violations = new List<string>();
+        (string Label, Regex Pattern)[] legacyUiTokens =
+        {
+            ("UnityEngine.UI namespace", new Regex(@"using\s+UnityEngine\.UI\s*;", RegexOptions.CultureInvariant)),
+            ("TMPro namespace", new Regex(@"using\s+TMPro\s*;", RegexOptions.CultureInvariant)),
+            ("Canvas type", new Regex(@"\bCanvas\b", RegexOptions.CultureInvariant)),
+            ("CanvasGroup type", new Regex(@"\bCanvasGroup\b", RegexOptions.CultureInvariant)),
+            ("RectTransform type", new Regex(@"\bRectTransform\b", RegexOptions.CultureInvariant)),
+            ("GraphicRaycaster type", new Regex(@"\bGraphicRaycaster\b", RegexOptions.CultureInvariant)),
+            ("ScrollRect type", new Regex(@"\bScrollRect\b", RegexOptions.CultureInvariant)),
+            ("TMP type", new Regex(@"\bTMP_\w+\b", RegexOptions.CultureInvariant))
+        };
+
+        foreach (string path in Directory.GetFiles("Assets/Game/Scripts", "*.cs", SearchOption.AllDirectories))
+        {
+            string normalizedPath = NormalizeAssetPath(path);
+            if (!normalizedPath.StartsWith("Assets/Game/Scripts/UI/", StringComparison.Ordinal) &&
+                !normalizedPath.StartsWith("Assets/Game/Scripts/Composition/", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            string source = File.ReadAllText(normalizedPath);
+            bool containsLegacyUiToken = false;
+            for (int tokenIndex = 0; tokenIndex < legacyUiTokens.Length; tokenIndex++)
+            {
+                if (!legacyUiTokens[tokenIndex].Pattern.IsMatch(source))
+                    continue;
+
+                containsLegacyUiToken = true;
+                break;
+            }
+
+            if (!containsLegacyUiToken || IsApprovedLegacyCanvasFallbackSource(normalizedPath))
+                continue;
+
+            violations.Add(normalizedPath);
+        }
+
+        AssertNoViolations(violations, "Legacy Canvas/TMPro references must stay inside the approved Canvas fallback surface or bootstrap boundary.");
+    }
+
+    [Test]
+    public void MigratedUiToolkitRuntimeDoesNotReferenceLegacyCanvasViews()
+    {
+        var violations = new List<string>();
+        string[] migratedRuntimeRoots =
+        {
+            "Assets/Game/Scripts/UI/Toolkit",
+            "Assets/Game/Scripts/UI/Shell/Ecs",
+            "Assets/Game/Scripts/UI/Contracts"
+        };
+        string[] legacyViewTypes =
+        {
+            "UIShellLoadingProgressView",
+            "UIGameStartButtonView",
+            "UIModeCardView",
+            "MainMenuNavigationView",
+            "MainMenuNavigationTabView",
+            "MatchHudSelectionPanelView",
+            "MatchHudSquadTrayView",
+            "MatchHudTransportPassengerDrawerView",
+            "MatchHudTransportPassengerItemView",
+            "BattleHudRuntimeFeedbackView",
+            "MatchHudMinimapView",
+            "MatchHudRightQuickRailView",
+            "BuildDrawerView",
+            "BuildDrawerCatalogRuntimeView",
+            "BuildDrawerItemView",
+            "BuildDrawerQueueItemView",
+            "BuildPlacementConfirmationBarView",
+            "ArmoryCatalogItemView",
+            "ArmoryContentListView",
+            "ArmoryInspectionPanelView",
+            "SettingsScreenView",
+            "MenuDiagnosticsView",
+            "UIPopupFrameView",
+            "UIPopupCloseView",
+            "UIModalView"
+        };
+
+        for (int rootIndex = 0; rootIndex < migratedRuntimeRoots.Length; rootIndex++)
+        {
+            string root = migratedRuntimeRoots[rootIndex];
+            if (!Directory.Exists(root))
+                continue;
+
+            foreach (string path in Directory.GetFiles(root, "*.cs", SearchOption.AllDirectories))
+            {
+                string normalizedPath = NormalizeAssetPath(path);
+                string source = File.ReadAllText(normalizedPath);
+                for (int typeIndex = 0; typeIndex < legacyViewTypes.Length; typeIndex++)
+                {
+                    string legacyViewType = legacyViewTypes[typeIndex];
+                    if (Regex.IsMatch(source, $@"\b{Regex.Escape(legacyViewType)}\b", RegexOptions.CultureInvariant))
+                        violations.Add($"{normalizedPath} -> {legacyViewType}");
+                }
+            }
+        }
+
+        AssertNoViolations(violations, "Migrated UI Toolkit runtime must use ECS gateway/read-model contracts, not direct legacy Canvas view classes.");
+    }
+
+    [Test]
     public void RuntimeUiConfigExistsAndDefaultsToCanvas()
     {
         RuntimeUiConfig config = AssetDatabase.LoadAssetAtPath<RuntimeUiConfig>(RuntimeUiConfigPath);
@@ -261,6 +421,28 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         Assert.IsFalse(scope.Canvas.enabled, "UI Toolkit mode must disable the Canvas fallback without destroying it.");
         Assert.IsTrue(scope.UiDocument.enabled, "UI Toolkit mode must enable the isolated UI Toolkit document.");
         Assert.IsTrue(scope.UiToolkitRoot.activeSelf, "UI Toolkit mode must enable the isolated UI Toolkit shell root.");
+    }
+
+    [Test]
+    public void MenuBootstrapViewDisablesCanvasPresentationStackInUiToolkitMode()
+    {
+        using var scope = new RuntimeUiModeSmokeScope(RuntimeUiMode.UiToolkit);
+
+        scope.Canvas.enabled = true;
+        scope.LegacyShellPresentation.enabled = true;
+        scope.LegacyContentSystem.enabled = true;
+        scope.LegacyRouter.enabled = true;
+        scope.UiDocument.enabled = false;
+        scope.UiToolkitRoot.SetActive(false);
+
+        scope.BootstrapView.ApplyRuntimeUiMode();
+
+        Assert.IsFalse(scope.Canvas.enabled, "UI Toolkit mode must disable the Canvas renderer path.");
+        Assert.IsFalse(scope.LegacyShellPresentation.enabled, "UI Toolkit mode must disable the legacy Canvas ECS presentation component.");
+        Assert.IsFalse(scope.LegacyContentSystem.enabled, "UI Toolkit mode must disable the legacy Canvas content component.");
+        Assert.IsFalse(scope.LegacyRouter.enabled, "UI Toolkit mode must disable the legacy Canvas router component.");
+        Assert.IsTrue(scope.UiDocument.enabled, "UI Toolkit mode must enable the UI Toolkit document.");
+        Assert.IsTrue(scope.UiToolkitRoot.activeSelf, "UI Toolkit mode must enable the UI Toolkit shell root.");
     }
 
     [Test]
@@ -452,6 +634,176 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         Assert.IsFalse(source.Contains("SelectionState", StringComparison.Ordinal), "The shell apply system must not contain gameplay selection policy.");
         Assert.IsFalse(source.Contains("Path", StringComparison.Ordinal), "The shell apply system must not contain gameplay pathing policy.");
         Assert.IsFalse(source.Contains("BuildMode", StringComparison.Ordinal), "The shell apply system must not contain build gameplay policy.");
+    }
+
+    [Test]
+    public void UiShellRuntimeUsesOnlyIntentionalManagedSystemBaseEdge()
+    {
+        var violations = new List<string>();
+        string[] roots =
+        {
+            "Assets/Game/Scripts/UI/Toolkit",
+            "Assets/Game/Scripts/UI/Shell/Ecs"
+        };
+
+        for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
+        {
+            string root = roots[rootIndex];
+            if (!Directory.Exists(root))
+                continue;
+
+            foreach (string path in Directory.GetFiles(root, "*.cs", SearchOption.AllDirectories))
+            {
+                string normalizedPath = NormalizeAssetPath(path);
+                string source = File.ReadAllText(normalizedPath);
+                if (!source.Contains("SystemBase", StringComparison.Ordinal))
+                    continue;
+
+                if (normalizedPath == ShellApplySystemPath)
+                    continue;
+
+                violations.Add($"{normalizedPath} -> SystemBase");
+            }
+        }
+
+        string diagnosticsSource = File.ReadAllText("Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs");
+        StringAssert.Contains("public partial struct UiDiagnosticsReadModelSystem : ISystem", diagnosticsSource, "Diagnostics FPS/log read model must remain an ISystem.");
+        StringAssert.Contains("UiDiagnosticsRuntimeLogBuffer.EnsureSubscribed()", diagnosticsSource, "Managed Unity log subscription must stay isolated behind the diagnostics log buffer helper.");
+        AssertNoViolations(violations, "The UI shell runtime must not introduce managed SystemBase systems outside the intentional UI Toolkit apply edge.");
+    }
+
+    [Test]
+    public void UiToolkitRuntimeClassNamesFollowArchitectureContract()
+    {
+        var violations = new List<string>();
+        string[] roots =
+        {
+            "Assets/Game/Scripts/UI/Toolkit",
+            "Assets/Game/Scripts/UI/Shell/Ecs",
+            "Assets/Game/Scripts/UI/Contracts"
+        };
+        var forbiddenNamePattern = new Regex(@"\b(?:class|struct)\s+\w*(?:Controller|Presenter|Bridge|Manager|Button)\b", RegexOptions.CultureInvariant);
+
+        for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
+        {
+            string root = roots[rootIndex];
+            if (!Directory.Exists(root))
+                continue;
+
+            foreach (string path in Directory.GetFiles(root, "*.cs", SearchOption.AllDirectories))
+            {
+                string normalizedPath = NormalizeAssetPath(path);
+                string source = File.ReadAllText(normalizedPath);
+                Match match = forbiddenNamePattern.Match(source);
+                if (match.Success)
+                    violations.Add($"{normalizedPath} -> {match.Value}");
+            }
+        }
+
+        AssertNoViolations(violations, "Migrated UI Toolkit runtime must not add forbidden Controller/Presenter/Bridge/Manager/Button class names.");
+    }
+
+    [Test]
+    public void UiToolkitRuntimeAssembliesStayLayered()
+    {
+        var violations = new List<string>();
+        (string Root, string ExpectedAsmdef)[] roots =
+        {
+            ("Assets/Game/Scripts/UI/Contracts", "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef"),
+            ("Assets/Game/Scripts/UI/Shell/Ecs/Contracts", "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/Game.UI.Shell.Contracts.Ecs.asmdef"),
+            ("Assets/Game/Scripts/UI/Shell/Ecs", "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef"),
+            ("Assets/Game/Scripts/UI/Toolkit", UiToolkitAsmdefPath)
+        };
+
+        for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
+        {
+            (string root, string expectedAsmdef) = roots[rootIndex];
+            if (!Directory.Exists(root))
+                continue;
+
+            foreach (string path in Directory.GetFiles(root, "*.cs", SearchOption.AllDirectories))
+            {
+                string normalizedPath = NormalizeAssetPath(path);
+                if (root == "Assets/Game/Scripts/UI/Shell/Ecs" &&
+                    normalizedPath.StartsWith("Assets/Game/Scripts/UI/Shell/Ecs/Contracts/", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                string nearestAsmdef = FindNearestAsmdef(normalizedPath);
+                if (!string.Equals(nearestAsmdef, expectedAsmdef, StringComparison.Ordinal))
+                    violations.Add($"{normalizedPath} -> {nearestAsmdef}");
+            }
+        }
+
+        AssertNoViolations(violations, "Migrated UI Toolkit runtime sources must stay under explicit UI assembly definitions.");
+
+        string uiContractsAsmdef = File.ReadAllText("Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef");
+        string shellContractsAsmdef = File.ReadAllText("Assets/Game/Scripts/UI/Shell/Ecs/Contracts/Game.UI.Shell.Contracts.Ecs.asmdef");
+        string shellEcsAsmdef = File.ReadAllText("Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef");
+        string toolkitAsmdef = File.ReadAllText(UiToolkitAsmdefPath);
+
+        StringAssert.Contains("\"name\": \"Game.UI.Contracts\"", uiContractsAsmdef);
+        StringAssert.Contains("\"references\": []", uiContractsAsmdef, "UI contracts must stay dependency-free.");
+        Assert.IsFalse(shellContractsAsmdef.Contains("Game.UI.Toolkit", StringComparison.Ordinal), "ECS shell contracts must not depend on the UI Toolkit edge.");
+        Assert.IsFalse(shellEcsAsmdef.Contains("Game.UI.Toolkit", StringComparison.Ordinal), "ECS shell systems must not depend on the UI Toolkit edge.");
+        Assert.IsFalse(toolkitAsmdef.Contains("Game.UI.Shell.Ecs", StringComparison.Ordinal), "The UI Toolkit edge must depend on contracts/gateway only, not concrete ECS shell systems.");
+    }
+
+    [Test]
+    public void UiToolkitHotPathsAvoidKnownAllocationPatterns()
+    {
+        var violations = new List<string>();
+        string[] allocationTokens =
+        {
+            ".ToList(",
+            ".ToArray(",
+            "Enumerable.",
+            "string.Format",
+            "string.Join",
+            "new List<",
+            "new Dictionary<",
+            "GetComponent<",
+            "GameObject.Find",
+            "FindObject",
+            "Resources.Load",
+            "CloneTree(",
+            ".Q<",
+            ".Query<"
+        };
+
+        foreach (string path in Directory.GetFiles("Assets/Game/Scripts/UI/Shell/Ecs", "*.cs", SearchOption.AllDirectories))
+            CheckHotPathSourceForAllocationPatterns(NormalizeAssetPath(path), allocationTokens, violations);
+
+        CheckHotPathSourceForAllocationPatterns(ShellApplySystemPath, allocationTokens, violations);
+
+        AssertNoViolations(violations, "UI Toolkit ECS/apply hot paths must avoid known recurring allocation and element lookup patterns.");
+    }
+
+    [Test]
+    public void UiToolkitManagedApplyEdgeIsClassifiedAndDocumented()
+    {
+        string plan = File.ReadAllText("Design/Architecture/ui_toolkit_canvas_replacement_plan.md");
+        string applySource = File.ReadAllText(ShellApplySystemPath);
+
+        StringAssert.Contains("## Managed UI Toolkit Edge Classification", plan);
+        StringAssert.Contains("intentional managed presentation boundary", plan);
+        StringAssert.Contains("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs", plan);
+        StringAssert.Contains("PresentationSystemGroup", plan);
+        StringAssert.Contains("Allowed inputs: ECS/read-model data exposed through `UiShellRuntimeGateway`", plan);
+        StringAssert.Contains("Allowed outputs: visual apply calls on `UiToolkitShellView`", plan);
+        StringAssert.Contains("Forbidden behavior: gameplay decisions", plan);
+        StringAssert.Contains("Residual constraint: this system remains `SystemBase`", plan);
+        StringAssert.Contains("Fallback removal constraint: Canvas fallback objects can only be removed after the user approves fallback deletion", plan);
+
+        StringAssert.Contains("[UpdateInGroup(typeof(PresentationSystemGroup))]", applySource);
+        StringAssert.Contains("public sealed partial class UiToolkitShellApplySystem : SystemBase", applySource);
+        StringAssert.Contains("UiShellRuntimeGateway.TryReadShellState", applySource);
+        StringAssert.Contains("UiShellRuntimeGateway.TryConsumePresentationCommands(commandScratch)", applySource);
+        StringAssert.Contains("shellView.ApplyPresentationCommands(commandScratch)", applySource);
+        StringAssert.Contains("UiShellRuntimeGateway.TryEnqueueTransitionComplete(pendingCompletion)", applySource);
+        Assert.IsFalse(applySource.Contains("EntityManager.SetComponentData", StringComparison.Ordinal), "The managed UI Toolkit apply edge must not directly mutate ECS component data.");
+        Assert.IsFalse(applySource.Contains("GetEntityQuery", StringComparison.Ordinal), "The managed UI Toolkit apply edge must not own ECS queries.");
     }
 
     [Test]
@@ -4836,6 +5188,41 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         return path.Replace('\\', '/');
     }
 
+    private static string FindNearestAsmdef(string normalizedPath)
+    {
+        string directory = Path.GetDirectoryName(normalizedPath)?.Replace('\\', '/') ?? string.Empty;
+        while (!string.IsNullOrEmpty(directory) && directory.StartsWith("Assets/", StringComparison.Ordinal))
+        {
+            string[] asmdefs = Directory.GetFiles(directory, "*.asmdef", SearchOption.TopDirectoryOnly);
+            if (asmdefs.Length > 0)
+            {
+                Array.Sort(asmdefs, StringComparer.Ordinal);
+                return NormalizeAssetPath(asmdefs[0]);
+            }
+
+            directory = Path.GetDirectoryName(directory)?.Replace('\\', '/') ?? string.Empty;
+        }
+
+        return string.Empty;
+    }
+
+    private static void CheckHotPathSourceForAllocationPatterns(
+        string normalizedPath,
+        string[] allocationTokens,
+        List<string> violations)
+    {
+        if (!File.Exists(normalizedPath))
+            return;
+
+        string source = File.ReadAllText(normalizedPath);
+        for (int tokenIndex = 0; tokenIndex < allocationTokens.Length; tokenIndex++)
+        {
+            string token = allocationTokens[tokenIndex];
+            if (source.Contains(token, StringComparison.Ordinal))
+                violations.Add($"{normalizedPath} -> {token}");
+        }
+    }
+
     private static bool IsEcsSystemSource(string normalizedPath)
     {
         return normalizedPath.StartsWith("Assets/Game/Scripts/", StringComparison.Ordinal)
@@ -4849,6 +5236,18 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             || source.Contains(": SystemBase", StringComparison.Ordinal)
             || source.Contains(": ISystem", StringComparison.Ordinal)
             || source.Contains("[UpdateInGroup(", StringComparison.Ordinal);
+    }
+
+    private static bool IsApprovedLegacyCanvasFallbackSource(string normalizedPath)
+    {
+        if (normalizedPath.StartsWith("Assets/Game/Scripts/UI/Toolkit/", StringComparison.Ordinal))
+            return false;
+        if (normalizedPath.StartsWith("Assets/Game/Scripts/UI/Shell/Ecs/", StringComparison.Ordinal))
+            return false;
+
+        return normalizedPath.StartsWith("Assets/Game/Scripts/UI/", StringComparison.Ordinal) ||
+               normalizedPath == "Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs" ||
+               normalizedPath == "Assets/Game/Scripts/Composition/MenuBootstrapView.cs";
     }
 
     private static string GetCssBlock(string source, string selector)
@@ -5288,23 +5687,35 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             GameObject canvasObject = new("CanvasFallback");
             GameObject documentObject = new("UiToolkitDocument");
             UiToolkitRoot = new GameObject("UiToolkitShellRoot");
+            GameObject legacyPresentationObject = new("LegacyCanvasPresentation");
+            GameObject legacyContentObject = new("LegacyCanvasContent");
+            GameObject legacyRouterObject = new("LegacyCanvasRouter");
 
             canvasObject.transform.SetParent(host.transform);
             documentObject.transform.SetParent(host.transform);
             UiToolkitRoot.transform.SetParent(host.transform);
+            legacyPresentationObject.transform.SetParent(host.transform);
+            legacyContentObject.transform.SetParent(host.transform);
+            legacyRouterObject.transform.SetParent(host.transform);
 
             BootstrapView = host.AddComponent<MenuBootstrapView>();
             Canvas = canvasObject.AddComponent<Canvas>();
             UiDocument = documentObject.AddComponent<UIDocument>();
+            LegacyShellPresentation = legacyPresentationObject.AddComponent<UIShellEcsPresentationSystem>();
+            LegacyContentSystem = legacyContentObject.AddComponent<UIShellContentView>();
+            LegacyRouter = legacyRouterObject.AddComponent<UIRouterView>();
             config = CreateRuntimeUiConfig(mode);
 
-            BootstrapView.Configure(null, Canvas, null, null, null, null, config, UiDocument, UiToolkitRoot, null);
+            BootstrapView.Configure(null, Canvas, null, LegacyShellPresentation, LegacyContentSystem, LegacyRouter, config, UiDocument, UiToolkitRoot, null);
         }
 
         public MenuBootstrapView BootstrapView { get; }
         public Canvas Canvas { get; }
         public UIDocument UiDocument { get; }
         public GameObject UiToolkitRoot { get; }
+        public UIShellEcsPresentationSystem LegacyShellPresentation { get; }
+        public UIShellContentView LegacyContentSystem { get; }
+        public UIRouterView LegacyRouter { get; }
 
         public void Dispose()
         {

@@ -20,13 +20,13 @@ The Canvas prefabs stay as fallback until each UI Toolkit screen reaches behavio
 
 Last updated: 2026-06-20
 
-Overall progress: 93% - 105 / 113 tracked items complete
+Overall progress: 100% - 113 / 113 tracked items complete
 
 Current phase: Phase 10 - Remove Canvas Runtime Dependency
 
 Current focus:
 
-- Replace runtime Canvas shell references in startup/composition with UI Toolkit references when `RuntimeUiConfig` is `UiToolkit`.
+- Phase complete. PM/user approval is required before deleting Canvas fallback assets or flipping the default runtime UI mode.
 
 Completed phases:
 
@@ -40,6 +40,7 @@ Completed phases:
 - Phase 7 - Armory
 - Phase 8 - Commander/Profile
 - Phase 9 - Result, Victory, Loss, Diagnostics, And Other Popups
+- Phase 10 - Remove Canvas Runtime Dependency
 
 Blocked:
 
@@ -57,7 +58,7 @@ Blocked:
 | Phase 7 - Armory | Complete | 100% | 8 / 8 | `Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryContent.uxml`; `Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryItemView.uxml`; `Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryContent.uss`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; `Design/AgentReports/2026-06-20_ui-toolkit-armory-phase7-handoff.md`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
 | Phase 8 - Commander/Profile | Complete | 100% | 6 / 6 | `Design/VisualLockLayered/SCN-03_CommanderProfile/reference/SCN-03_CommanderProfile_NewMainMenuArtDirection_TargetLock_V01.png`; `Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uxml`; `Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uss`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
 | Phase 9 - Result, Victory, Loss, Diagnostics, And Other Popups | Complete | 100% | 9 / 9 | Entry-gate reference saved: `Design/VisualLockLayered/POP-05_MissionResult/reference/POP-05_MissionResult_NewMainMenuArtDirection_TargetLock_V01.png`; `Assets/Game/UI Toolkit/POP05_MissionResultPopup/POP05_MissionResultPopup.uxml`; `Assets/Game/UI Toolkit/POP05_MissionResultPopup/POP05_MissionResultPopup.uss`; `Assets/Game/UI Toolkit/POP06_SettingsPopup/POP06_SettingsPopup.uxml`; `Assets/Game/UI Toolkit/POP06_SettingsPopup/POP06_SettingsPopup.uss`; `Assets/Game/UI Toolkit/POP07_InboxPopup/POP07_InboxPopup.uxml`; `Assets/Game/UI Toolkit/POP07_InboxPopup/POP07_InboxPopup.uss`; `Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uxml`; `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`; `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs`; `Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs`; `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
-| Phase 10 - Remove Canvas Runtime Dependency | Not started | 0% | 0 / 8 | Pending |
+| Phase 10 - Remove Canvas Runtime Dependency | Complete | 100% | 8 / 8 | `Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs`; `Assets/Tests/Editor/UiToolkitCanvasMigrationValidationTests.cs`; `Design/Architecture/ui_toolkit_canvas_replacement_plan.md`; `Design/AgentReports/2026-06-20_ui-toolkit-canvas-migration-phase10-final-handoff.md`; UI Toolkit validation log `/private/tmp/warline-ui-toolkit-validation-execmethod.log` |
 
 ## Progress Update Rules
 
@@ -121,6 +122,21 @@ Rules for this managed apply system:
 - It must stay thin and mechanical; when logic grows, move that logic into an `ISystem` read-model or request-processing system.
 - It is allowed to be `SystemBase` because UI Toolkit object access is managed. This exception does not justify new managed gameplay systems.
 - `*View` MonoBehaviours must not add `Update`, `LateUpdate`, coroutines, polling loops, or gameplay timers. If a view needs per-frame refresh, the refresh belongs in the managed presentation system.
+
+## Managed UI Toolkit Edge Classification
+
+The remaining managed UI Toolkit edge is intentionally limited to `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs`.
+
+Classification:
+
+- Type: intentional managed presentation boundary.
+- Group: `PresentationSystemGroup`.
+- Reason: UI Toolkit objects, `UIDocument`, `VisualElement`, styles, text, sprites, and retained templates are managed Unity objects and cannot be touched from Burst jobs or unmanaged ECS systems.
+- Allowed inputs: ECS/read-model data exposed through `UiShellRuntimeGateway` and one retained `UiToolkitShellView` reference configured by bootstrap.
+- Allowed outputs: visual apply calls on `UiToolkitShellView` and transition-complete notifications through `UiShellRuntimeGateway`.
+- Forbidden behavior: gameplay decisions, route policy beyond consuming ECS presentation commands, selection policy, pathing, build validation, production rules, direct entity mutation, direct UI Toolkit element lookup, per-frame template cloning, or ad hoc allocation.
+- Residual constraint: this system remains `SystemBase` until Unity provides a Burst-compatible UI Toolkit apply path, but it must stay as the only managed UI shell system. Any new UI state calculation belongs in an `ISystem` read-model or request-processing system before data reaches this edge.
+- Fallback removal constraint: Canvas fallback objects can only be removed after the user approves fallback deletion and the final Phase 10 validation confirms no active UI Toolkit runtime path depends on legacy Canvas view classes.
 
 ## Naming And Contract Guardrails
 
@@ -770,7 +786,6 @@ Validation:
 
 ### Phase 9 - Result, Victory, Loss, Diagnostics, And Other Popups
 
-Status: In progress
 Status: Complete
 Progress: 100% - 9 / 9 tracked items complete
 Current step: Phase complete. Continue with Phase 10 Canvas runtime dependency removal.
@@ -831,12 +846,20 @@ Validation:
 
 ### Phase 10 - Remove Canvas Runtime Dependency
 
-Status: Not started
-Progress: 0% - 0 / 8 tracked items complete
-Current step: Replace runtime Canvas shell references in startup/composition with UI Toolkit references when `RuntimeUiConfig` is `UiToolkit`.
+Status: Complete
+Progress: 100% - 8 / 8 tracked items complete
+Current step: Phase complete. PM/user approval is required before deleting Canvas fallback assets or flipping the default runtime UI mode.
 Completed steps:
 
-- None yet.
+- Added focused startup/composition validation that `MenuBootstrapView.ApplyRuntimeUiMode()` disables the legacy Canvas renderer path, `UIShellEcsPresentationSystem`, `UIShellContentView`, and `UIRouterView` when `RuntimeUiConfig` is `UiToolkit`, while enabling the UI Toolkit `UIDocument` and shell root.
+- Added static UI Toolkit runtime dependency validation that scans `Assets/Game/Scripts/UI/Toolkit`, `Assets/Game/Scripts/UI/Shell/Ecs`, and `Assets/Game/Scripts/UI/Contracts` for forbidden Canvas/TMPro runtime types while allowing the intentional `UnityEngine.UIElements` edge.
+- Converted `UiDiagnosticsReadModelSystem` from managed `SystemBase` to `ISystem`; isolated the Unity log subscription and retained log string buffer in `UiDiagnosticsRuntimeLogBuffer`, and added validation that the UI shell runtime has no `SystemBase` outside `UiToolkitShellApplySystem`.
+- Added fallback-surface validation that permits legacy Canvas/TMPro references only under the approved Canvas UI fallback surface and bootstrap boundary, preventing new migrated UI Toolkit runtime code from depending on old Canvas view types.
+- Added migrated UI Toolkit runtime validation that rejects direct references to legacy Canvas view classes for Loading, Main Menu, Match HUD, Build Drawer, Build Placement, Armory, settings/diagnostics, and popup surfaces, while allowing ECS gateway/read-model contracts.
+- Added architecture validation for migrated UI Toolkit runtime class naming, explicit UI assembly layers, and known ECS/apply hot-path allocation or element-lookup patterns.
+- Classified `UiToolkitShellApplySystem` as the single intentional managed presentation boundary, documented its allowed inputs/outputs, forbidden behavior, residual `SystemBase` constraint, and fallback removal constraint.
+- Wrote final Phase 10 handoff report: `Design/AgentReports/2026-06-20_ui-toolkit-canvas-migration-phase10-final-handoff.md`, with explicit PM/user approval requirement before Canvas fallback deletion or default-mode switching.
+- Ran Unity validation with `[UiToolkitCanvasMigrationValidation] result=Passed tests=91` in `/private/tmp/warline-ui-toolkit-validation-execmethod.log`.
 
 Blocked: None.
 

@@ -127,6 +127,7 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
             hasShellState &&
             lastShellState.CurrentMode == UiShellMode.MainMenu)
         {
+            shellView.EnsureMainMenuVisible(lastShellState.ActiveRoute);
             shellView.ApplyMainMenuRouteState(lastShellState.ActiveRoute);
             if (hasCommanderProfile)
             {

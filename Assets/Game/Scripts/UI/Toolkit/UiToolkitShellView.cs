@@ -1060,6 +1060,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
         loadingScreenSlot.Clear();
         loadingScreenContainer = loadingScreenAsset.Instantiate();
+        StretchTemplateContainer(loadingScreenContainer);
         loadingScreenContainer.name = "SCN01_LoadingContent_Template";
         loadingContentRoot = loadingScreenContainer.Q<VisualElement>("SCN01_LoadingContent");
         loadingScreenSlot.Add(loadingScreenContainer);
@@ -1079,11 +1080,42 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
         mainMenuScreenSlot.Clear();
         mainMenuScreenContainer = mainMenuScreenAsset.Instantiate();
+        StretchTemplateContainer(mainMenuScreenContainer);
         mainMenuScreenContainer.name = "SCN02_MainMenuContent_Template";
         mainMenuContentRoot = mainMenuScreenContainer.Q<VisualElement>("SCN02_MainMenuContent");
         mainMenuScreenSlot.Add(mainMenuScreenContainer);
         BindMainMenuScreen();
         return HasRequiredMainMenuBindings;
+    }
+
+    public bool EnsureMainMenuVisible(UIRoute route)
+    {
+        if (!IsMounted)
+            return false;
+
+        MountMainMenuScreen();
+        if (route == UIRoute.Armory)
+            MountArmoryScreen();
+        if (route == UIRoute.CommandFeed)
+            MountCommanderProfileScreen();
+
+        ApplyMainMenuRouteState(route);
+        SetShellHidden(loadingLayer, true);
+        SetShellHidden(matchScreenSlot, true);
+        if (route == UIRoute.Armory && HasMountedArmoryScreen)
+        {
+            SetShellHidden(mainMenuScreenSlot, true);
+            SetShellHidden(armoryScreenSlot, false);
+            ApplyShellMotion(armoryScreenSlot, UiToolkitShellMotionState.Visible);
+            return true;
+        }
+
+        SetShellHidden(mainMenuScreenSlot, false);
+        SetShellHidden(armoryScreenSlot, true);
+        ApplyShellMotion(mainMenuScreenSlot, UiToolkitShellMotionState.Visible);
+        if (route == UIRoute.CommandFeed && HasMountedCommanderProfileScreen)
+            ApplyShellMotion(commanderProfileScreenSlot, UiToolkitShellMotionState.Visible);
+        return true;
     }
 
     public bool MountMatchHudScreen()
@@ -1096,6 +1128,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
         matchScreenSlot.Clear();
         matchHudScreenContainer = matchHudScreenAsset.Instantiate();
+        StretchTemplateContainer(matchHudScreenContainer);
         matchHudScreenContainer.name = "SCN08_MatchHudContent_Template";
         matchHudContentRoot = matchHudScreenContainer.Q<VisualElement>("SCN08_MatchHudContent");
         matchScreenSlot.Add(matchHudScreenContainer);
@@ -1114,6 +1147,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
         armoryScreenSlot.Clear();
         armoryScreenContainer = armoryScreenAsset.Instantiate();
+        StretchTemplateContainer(armoryScreenContainer);
         armoryScreenContainer.name = "SCN19_ArmoryContent_Template";
         armoryContentRoot = armoryScreenContainer.Q<VisualElement>("SCN19_ArmoryContent");
         armoryScreenSlot.Add(armoryScreenContainer);
@@ -1132,6 +1166,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
         commanderProfileScreenSlot.Clear();
         commanderProfileScreenContainer = commanderProfileScreenAsset.Instantiate();
+        StretchTemplateContainer(commanderProfileScreenContainer);
         commanderProfileScreenContainer.name = "SCN03_CommanderProfileContent_Template";
         commanderProfileContentRoot = commanderProfileScreenContainer.Q<VisualElement>("SCN03_CommanderProfileContent");
         commanderProfileScreenSlot.Add(commanderProfileScreenContainer);
@@ -1150,6 +1185,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
         popupScreenSlot.Clear();
         buildDrawerPopupContainer = buildDrawerPopupAsset.Instantiate();
+        StretchTemplateContainer(buildDrawerPopupContainer);
         buildDrawerPopupContainer.name = "SCN09_BuildDrawerPopup_Template";
         buildDrawerPopupRoot = buildDrawerPopupContainer.Q<VisualElement>("SCN09_BuildDrawerPopup");
         popupScreenSlot.Add(buildDrawerPopupContainer);
@@ -1169,6 +1205,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
         popupScreenSlot.Clear();
         missionResultPopupContainer = missionResultPopupAsset.Instantiate();
+        StretchTemplateContainer(missionResultPopupContainer);
         missionResultPopupContainer.name = "POP05_MissionResultPopup_Template";
         missionResultPopupRoot = missionResultPopupContainer.Q<VisualElement>("POP05_MissionResultPopup");
         popupScreenSlot.Add(missionResultPopupContainer);
@@ -1188,6 +1225,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
         popupScreenSlot.Clear();
         settingsPopupContainer = settingsPopupAsset.Instantiate();
+        StretchTemplateContainer(settingsPopupContainer);
         settingsPopupContainer.name = "POP06_SettingsPopup_Template";
         settingsPopupRoot = settingsPopupContainer.Q<VisualElement>("POP06_SettingsPopup");
         popupScreenSlot.Add(settingsPopupContainer);
@@ -1207,6 +1245,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
         popupScreenSlot.Clear();
         inboxPopupContainer = inboxPopupAsset.Instantiate();
+        StretchTemplateContainer(inboxPopupContainer);
         inboxPopupContainer.name = "POP07_InboxPopup_Template";
         inboxPopupRoot = inboxPopupContainer.Q<VisualElement>("POP07_InboxPopup");
         popupScreenSlot.Add(inboxPopupContainer);
@@ -1225,12 +1264,26 @@ public sealed class UiToolkitShellView : MonoBehaviour
             return true;
 
         buildPlacementConfirmationBarContainer = buildPlacementConfirmationBarAsset.Instantiate();
+        StretchTemplateContainer(buildPlacementConfirmationBarContainer);
         buildPlacementConfirmationBarContainer.name = "SCN08_BuildPlacementConfirmationBar_Template";
         buildPlacementConfirmationBarRoot = buildPlacementConfirmationBarContainer.Q<VisualElement>("SCN08_BuildPlacementConfirmationBar");
         matchScreenSlot.Add(buildPlacementConfirmationBarContainer);
         BindBuildPlacementConfirmationBar();
         SetShellHidden(buildPlacementConfirmationBarRoot, true);
         return HasRequiredBuildPlacementConfirmationBarBindings;
+    }
+
+    private static void StretchTemplateContainer(TemplateContainer container)
+    {
+        if (container == null)
+            return;
+
+        container.style.position = Position.Absolute;
+        container.style.left = 0f;
+        container.style.right = 0f;
+        container.style.top = 0f;
+        container.style.bottom = 0f;
+        container.style.flexGrow = 1f;
     }
 
     public bool TrySubmitMainMenuAction(string actionName)

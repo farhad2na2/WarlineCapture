@@ -74,7 +74,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             tests.UiToolkitRuntimeCodeDoesNotDependOnCanvasRuntimeTypes();
             tests.CanvasFallbackReferencesStayInApprovedLegacySurface();
             tests.MigratedUiToolkitRuntimeDoesNotReferenceLegacyCanvasViews();
-            tests.RuntimeUiConfigExistsAndDefaultsToCanvas();
+            tests.RuntimeUiConfigExistsAndDefaultsToUiToolkit();
             tests.MenuBootstrapViewKeepsCanvasFallbackEnabledInCanvasMode();
             tests.MenuBootstrapViewCanEnableIsolatedUiToolkitShellMode();
             tests.MenuBootstrapViewDisablesCanvasPresentationStackInUiToolkitMode();
@@ -383,12 +383,12 @@ public sealed class UiToolkitCanvasMigrationValidationTests
     }
 
     [Test]
-    public void RuntimeUiConfigExistsAndDefaultsToCanvas()
+    public void RuntimeUiConfigExistsAndDefaultsToUiToolkit()
     {
         RuntimeUiConfig config = AssetDatabase.LoadAssetAtPath<RuntimeUiConfig>(RuntimeUiConfigPath);
         Assert.IsNotNull(config, $"Missing runtime UI config: {RuntimeUiConfigPath}");
-        Assert.AreEqual(RuntimeUiMode.Canvas, config.Mode, "Canvas must remain the default runtime UI mode until UI Toolkit parity gates pass.");
-        Assert.IsFalse(config.UseUiToolkit, "The default runtime UI config must not enable UI Toolkit yet.");
+        Assert.AreEqual(RuntimeUiMode.UiToolkit, config.Mode, "The default runtime UI config must boot the new UI Toolkit shell.");
+        Assert.IsTrue(config.UseUiToolkit, "The default runtime UI config must enable UI Toolkit.");
     }
 
     [Test]

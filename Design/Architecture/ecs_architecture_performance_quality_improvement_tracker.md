@@ -17,14 +17,14 @@ Do not merge this work into the paused five-SystemBase split tracker. This track
 
 ## Progress Snapshot
 
-- Checklist progress: `92 / 100 complete (92.0%)`.
+- Checklist progress: `92 / 200 complete (46.0%)`.
 - In progress: `0`.
-- Remaining open: `8`.
-- Current target: `Medium-term scope complete; Phase 7 long-term ECS/Burst migration remains deferred`.
+- Remaining open: `108`.
+- Current target: `Phase 7 authoritative non-UI gameplay SystemBase inventory and guardrails`.
 - Quick-win estimate: `3-5 working days`.
 - Medium-term audit estimate: `5-8 working weeks`.
-- Long-term architecture vision estimate: `2-4 months`.
-- Validation status: `git diff --check` passed; Unity batchmode compile passed after quick-win settings cleanup; main project validation was available, so shadow-project fallback was not needed; baseline render-budget, production, movement, transport, and armory/UI validations passed; Phase 1 camera, building visual, marker shadow/rendering, and quality-setting smoke validations passed; building placement command validation passed after wall-preview scratch-list cleanup and focused scratch-list coverage; vehicle visual adornments validation passed after health-bar expiry scheduling; transport validation passed after deploy-order and airdrop lookup array-snapshot cleanup; selection input validation passed after attack-target, board-target, deselect-all, move-target, and immediate-selected array-snapshot cleanup; building UI query validation passed after boundary lookup cleanup; scan intel focused validation passed after selected-source lookup cleanup; Phase 2 focused rendering budget, health, animation, minimap, production, and movement validations passed; render-budget `.Run()` helpers were evaluated, left synchronous pending an output-container redesign, and revalidated; minimap marker filtering was evaluated and left unfiltered to preserve per-frame HUD rebuild behavior; UnitAnimationIndexSystem validation passed after removing disabled freeze-diagnostic counter allocation; health/animation scheduling and change-filter candidates were evaluated and left synchronous/unfiltered where immediate refresh is required; UnitMoveTargetDiagnosticSystem scratch cleanup passed diagnostics focused validation; BuildingCombatSystem cleanup scratch passed focused validation; runtime Systems `ToEntityArray`/`ToComponentDataArray` grep is clean; Phase 3 managed component inventory classified all 10 managed component classes; Phase 3 scene/camera reference boundary slices passed Unity compile/focused validation (`/private/tmp/warline-ecs-audit-scene-reference-boundary-compile.log`, `/private/tmp/warline-ecs-audit-runtime-camera-boundary-validation.log`); Phase 3 diagnostics reference boundary slice passed Unity compile (`/private/tmp/warline-ecs-audit-diagnostics-boundary-compile.log`); Phase 3 VFX prefab reference conversion passed Unity compile and focused missile validations (`/private/tmp/warline-ecs-audit-attack-vfx-unityobjectref-compile.log`, `/private/tmp/warline-ecs-audit-missile-vfx-unityobjectref-compile.log`, `/private/tmp/warline-ecs-audit-air-missile-vfx-unityobjectref-validation.log`, `/private/tmp/warline-ecs-audit-ground-missile-vfx-unityobjectref-validation.log`); Phase 3 attached-light setup buffer slice passed Unity compile (`/private/tmp/warline-ecs-audit-attached-light-setup-buffer-compile-rerun.log`); Phase 3 pose mesh setup `UnityObjectRef` slice passed Unity compile (`/private/tmp/warline-ecs-audit-pose-mesh-unityobjectref-compile.log`); Phase 3 attached-light runtime boundary passed Unity compile and combat/death validation (`/private/tmp/warline-ecs-audit-attached-light-runtime-boundary-compile.log`, `/private/tmp/warline-ecs-audit-attached-light-runtime-combat-death-validation.log`) and managed component scan now reports 0 classes; Phase 3 static mutable gameplay registry guard passed bootstrap architecture validation (`/private/tmp/warline-ecs-audit-static-registry-guard-validation.log`); Phase 3 VFX playback boundary split passed Unity compile plus air and ground missile focused validations (`/private/tmp/warline-ecs-audit-vfx-presentation-boundary-compile.log`, `/private/tmp/warline-ecs-audit-vfx-presentation-air-missile-validation.log`, `/private/tmp/warline-ecs-audit-vfx-presentation-ground-missile-validation.log`); Phase 4 instantiation categorization passed `git diff --check`; Phase 4 order-marker preview pooling passed focused validation (`/private/tmp/warline-ecs-audit-selection-order-marker-pool-validation.log`); Phase 4 health-bar and vehicle destroyed visual entity-prefab ECB slice passed focused vehicle visual validation (`/private/tmp/warline-ecs-audit-entity-prefab-ecb-vehicle-visual-validation.log`); Phase 4 building destroyed visual wrapper-aware contract validation passed after updating the stale assertion (`/private/tmp/warline-ecs-audit-phase4-building-destroyed-visual-validation.log`); Phase 4 validation sweep passed selection/order marker, building selection marker, building faction visual, production, and nearest road-build focused validations (`/private/tmp/warline-ecs-audit-phase4-selection-order-marker-validation.log`, `/private/tmp/warline-ecs-audit-phase4-building-selection-marker-validation.log`, `/private/tmp/warline-ecs-audit-phase4-building-faction-visual-validation.log`, `/private/tmp/warline-ecs-audit-phase4-production-validation.log`, `/private/tmp/warline-ecs-audit-phase4-road-build-validation.log`); Phase 5 transport constants-only slice passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-transport-constants-validation.log`); Phase 5 shared boarding transport validation helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-boarding-validation-helper-validation.log`); Phase 5 boarding goal-order helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-boarding-goal-order-helper-validation.log`, test result passed before Unity batchmode teardown was manually terminated); Phase 5 plane-ramp calculation helpers passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-plane-ramp-calculation-helper-validation.log`); Phase 5 airdrop drop-execution helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-airdrop-drop-execution-helper-validation.log`); Phase 5 passenger capacity state helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-passenger-capacity-helper-validation.log`); Phase 5 disembark planning helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-disembark-planning-helper-validation.log`) and movement validation (`/private/tmp/warline-ecs-audit-phase5-movement-validation.log`); Phase 6 validation-exit helper passed batchmode smoke validation through movement runner (`/private/tmp/warline-ecs-audit-phase6-validation-exit-movement.log`); Phase 6 required validation-set runner exit conversions passed production, armory, build drawer, and render-budget validations (`/private/tmp/warline-ecs-audit-phase6-production-validation-exit.log`, `/private/tmp/warline-ecs-audit-phase6-armory-validation-exit.log`, `/private/tmp/warline-ecs-audit-phase6-builddrawer-validation-exit.log`, `/private/tmp/warline-ecs-audit-phase6-renderbudget-validation-exit.log`); Phase 6 match-start initial-spawn PlayMode smoke passed (`/private/tmp/warline-ecs-audit-phase6-match-start-initial-spawn-playmode.log`, `/private/tmp/warline-ecs-audit-phase6-match-start-initial-spawn-playmode-results.xml`, `1/1` passed); Phase 6 focused EditMode coverage passed for city generation, unit combat, road build, and building placement (`/private/tmp/warline-ecs-audit-phase6-runtime-city-generation-editmode-results.xml`, `/private/tmp/warline-ecs-audit-phase6-unit-combat-editmode-results.xml`, `/private/tmp/warline-ecs-audit-phase6-road-build-editmode-results.xml`, `/private/tmp/warline-ecs-audit-phase6-building-placement-editmode-results.xml`); final medium-term validation sweep passed `git diff --check`, Unity compile, render-budget, movement, transport, production/build drawer, armory/UI, and combat-death PlayMode smoke; architecture runner still fails on separate existing non-Burst `OnUpdate` debt (`Current=256`, `ceiling=23`) deferred to Phase 7.
+- Long-term architecture vision estimate: `8-14 working weeks for full non-UI gameplay SystemBase retirement with explicit managed presentation SystemBase exceptions`.
+- Validation status: `git diff --check` passed; Unity batchmode compile passed after quick-win settings cleanup; main project validation was available, so shadow-project fallback was not needed; baseline render-budget, production, movement, transport, and armory/UI validations passed; Phase 1 camera, building visual, marker shadow/rendering, and quality-setting smoke validations passed; building placement command validation passed after wall-preview scratch-list cleanup and focused scratch-list coverage; vehicle visual adornments validation passed after health-bar expiry scheduling; transport validation passed after deploy-order and airdrop lookup array-snapshot cleanup; selection input validation passed after attack-target, board-target, deselect-all, move-target, and immediate-selected array-snapshot cleanup; building UI query validation passed after boundary lookup cleanup; scan intel focused validation passed after selected-source lookup cleanup; Phase 2 focused rendering budget, health, animation, minimap, production, and movement validations passed; render-budget `.Run()` helpers were evaluated, left synchronous pending an output-container redesign, and revalidated; minimap marker filtering was evaluated and left unfiltered to preserve per-frame HUD rebuild behavior; UnitAnimationIndexSystem validation passed after removing disabled freeze-diagnostic counter allocation; health/animation scheduling and change-filter candidates were evaluated and left synchronous/unfiltered where immediate refresh is required; UnitMoveTargetDiagnosticSystem scratch cleanup passed diagnostics focused validation; BuildingCombatSystem cleanup scratch passed focused validation; runtime Systems `ToEntityArray`/`ToComponentDataArray` grep is clean; Phase 3 managed component inventory classified all 10 managed component classes; Phase 3 scene/camera reference boundary slices passed Unity compile/focused validation (`/private/tmp/warline-ecs-audit-scene-reference-boundary-compile.log`, `/private/tmp/warline-ecs-audit-runtime-camera-boundary-validation.log`); Phase 3 diagnostics reference boundary slice passed Unity compile (`/private/tmp/warline-ecs-audit-diagnostics-boundary-compile.log`); Phase 3 VFX prefab reference conversion passed Unity compile and focused missile validations (`/private/tmp/warline-ecs-audit-attack-vfx-unityobjectref-compile.log`, `/private/tmp/warline-ecs-audit-missile-vfx-unityobjectref-compile.log`, `/private/tmp/warline-ecs-audit-air-missile-vfx-unityobjectref-validation.log`, `/private/tmp/warline-ecs-audit-ground-missile-vfx-unityobjectref-validation.log`); Phase 3 attached-light setup buffer slice passed Unity compile (`/private/tmp/warline-ecs-audit-attached-light-setup-buffer-compile-rerun.log`); Phase 3 pose mesh setup `UnityObjectRef` slice passed Unity compile (`/private/tmp/warline-ecs-audit-pose-mesh-unityobjectref-compile.log`); Phase 3 attached-light runtime boundary passed Unity compile and combat/death validation (`/private/tmp/warline-ecs-audit-attached-light-runtime-boundary-compile.log`, `/private/tmp/warline-ecs-audit-attached-light-runtime-combat-death-validation.log`) and managed component scan now reports 0 classes; Phase 3 static mutable gameplay registry guard passed bootstrap architecture validation (`/private/tmp/warline-ecs-audit-static-registry-guard-validation.log`); Phase 3 VFX playback boundary split passed Unity compile plus air and ground missile focused validations (`/private/tmp/warline-ecs-audit-vfx-presentation-boundary-compile.log`, `/private/tmp/warline-ecs-audit-vfx-presentation-air-missile-validation.log`, `/private/tmp/warline-ecs-audit-vfx-presentation-ground-missile-validation.log`); Phase 4 instantiation categorization passed `git diff --check`; Phase 4 order-marker preview pooling passed focused validation (`/private/tmp/warline-ecs-audit-selection-order-marker-pool-validation.log`); Phase 4 health-bar and vehicle destroyed visual entity-prefab ECB slice passed focused vehicle visual validation (`/private/tmp/warline-ecs-audit-entity-prefab-ecb-vehicle-visual-validation.log`); Phase 4 building destroyed visual wrapper-aware contract validation passed after updating the stale assertion (`/private/tmp/warline-ecs-audit-phase4-building-destroyed-visual-validation.log`); Phase 4 validation sweep passed selection/order marker, building selection marker, building faction visual, production, and nearest road-build focused validations (`/private/tmp/warline-ecs-audit-phase4-selection-order-marker-validation.log`, `/private/tmp/warline-ecs-audit-phase4-building-selection-marker-validation.log`, `/private/tmp/warline-ecs-audit-phase4-building-faction-visual-validation.log`, `/private/tmp/warline-ecs-audit-phase4-production-validation.log`, `/private/tmp/warline-ecs-audit-phase4-road-build-validation.log`); Phase 5 transport constants-only slice passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-transport-constants-validation.log`); Phase 5 shared boarding transport validation helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-boarding-validation-helper-validation.log`); Phase 5 boarding goal-order helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-boarding-goal-order-helper-validation.log`, test result passed before Unity batchmode teardown was manually terminated); Phase 5 plane-ramp calculation helpers passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-plane-ramp-calculation-helper-validation.log`); Phase 5 airdrop drop-execution helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-airdrop-drop-execution-helper-validation.log`); Phase 5 passenger capacity state helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-passenger-capacity-helper-validation.log`); Phase 5 disembark planning helper passed full transport validation (`/private/tmp/warline-ecs-audit-phase5-disembark-planning-helper-validation.log`) and movement validation (`/private/tmp/warline-ecs-audit-phase5-movement-validation.log`); Phase 6 validation-exit helper passed batchmode smoke validation through movement runner (`/private/tmp/warline-ecs-audit-phase6-validation-exit-movement.log`); Phase 6 required validation-set runner exit conversions passed production, armory, build drawer, and render-budget validations (`/private/tmp/warline-ecs-audit-phase6-production-validation-exit.log`, `/private/tmp/warline-ecs-audit-phase6-armory-validation-exit.log`, `/private/tmp/warline-ecs-audit-phase6-builddrawer-validation-exit.log`, `/private/tmp/warline-ecs-audit-phase6-renderbudget-validation-exit.log`); Phase 6 match-start initial-spawn PlayMode smoke passed (`/private/tmp/warline-ecs-audit-phase6-match-start-initial-spawn-playmode.log`, `/private/tmp/warline-ecs-audit-phase6-match-start-initial-spawn-playmode-results.xml`, `1/1` passed); Phase 6 focused EditMode coverage passed for city generation, unit combat, road build, and building placement (`/private/tmp/warline-ecs-audit-phase6-runtime-city-generation-editmode-results.xml`, `/private/tmp/warline-ecs-audit-phase6-unit-combat-editmode-results.xml`, `/private/tmp/warline-ecs-audit-phase6-road-build-editmode-results.xml`, `/private/tmp/warline-ecs-audit-phase6-building-placement-editmode-results.xml`); final medium-term validation sweep passed `git diff --check`, Unity compile, render-budget, movement, transport, production/build drawer, armory/UI, and combat-death PlayMode smoke; architecture runner still fails on separate existing non-Burst `OnUpdate` debt (`Current=256`, `ceiling=23`) deferred to Phase 7; 2026-06-20 doc-only Phase 7 expansion completed, and current `git diff --check` is blocked by unrelated trailing whitespace in `Assets/Game/Scenes/Menu.unity:2049`.
 - Latest medium-term validation: final PlayMode smoke passed with `/private/tmp/warline-ecs-audit-medium-final-combat-death-playmode.log` and result XML `/private/tmp/warline-ecs-audit-medium-final-combat-death-playmode-results.xml` (`1/1` passed).
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
 
@@ -354,19 +354,301 @@ Phase 6 notes:
 - Focused EditMode validation passed with `/private/tmp/warline-ecs-audit-phase6-building-placement-editmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-building-placement-editmode-results.xml` (`17/17` passed).
 - Final medium-term validation sweep passed: `git diff --check`; Unity compile `/private/tmp/warline-ecs-audit-medium-final-compile.log`; render budget `/private/tmp/warline-ecs-audit-medium-final-render-budget.log`; movement `/private/tmp/warline-ecs-audit-medium-final-movement.log`; transport `/private/tmp/warline-ecs-audit-medium-final-transport.log` (`73` tests); production `/private/tmp/warline-ecs-audit-medium-final-production.log` (`21` tests); build drawer `/private/tmp/warline-ecs-audit-medium-final-builddrawer.log` (`22` tests); armory/UI `/private/tmp/warline-ecs-audit-medium-final-armory.log` (`3` tests); combat-death PlayMode smoke `/private/tmp/warline-ecs-audit-medium-final-combat-death-playmode.log` and `/private/tmp/warline-ecs-audit-medium-final-combat-death-playmode-results.xml` (`1/1` passed).
 
-## Phase 7: Long-Term ECS And Burst Migration
+## Phase 7: Non-UI `SystemBase` To `ISystem` Migration
 
 Purpose:
-Convert only proven hot unmanaged work to `ISystem`/Burst while preserving managed boundaries.
+Retire non-UI runtime gameplay `SystemBase` ownership by converting pure ECS gameplay/data work to focused unmanaged `ISystem` structs, and by splitting every mixed managed owner into ECS data/request/result processors plus explicit managed presentation, camera, config, authoring, or view/reference boundaries. The goal is not inheritance churn. A target is complete only when the old non-UI `SystemBase` no longer owns recurring gameplay policy, command execution, simulation, ECS mutation, or data publication. Managed Unity-object presentation may remain in narrow `SystemBase` boundaries when it must tick ParticleSystem, Camera, Renderer, Light, Material, Transform, or pooled GameObject presentation state; those exceptions must be counted separately and must not own gameplay policy.
 
-- [ ] Rank remaining `SystemBase` files by update frequency, entity count, allocation risk, and managed-boundary risk.
-- [ ] Pick the first 10 hot unmanaged candidates for `ISystem` conversion.
-- [ ] For each candidate, split managed Unity access into a passive boundary before conversion.
-- [ ] Add `[BurstCompile]` only after unmanaged access is proven by compile and tests.
-- [ ] Add architecture tests for converted systems to block `GameObject`, `UnityEngine.Object`, and unmanaged-incompatible dependencies.
-- [ ] Update performance benchmarks after each migration batch.
-- [ ] Re-estimate the next 10 candidates after every completed batch.
-- [ ] Keep Addressables, subscene streaming, and 80% coverage goals as separate long-term planning tracks.
+Scope:
+
+- In scope: non-UI runtime `SystemBase` types under `Assets/Game/Scripts`, including gameplay, selection, road/building, runtime-city, citizen, startup/config projection, diagnostics state, rendering data bridges, and prefab/visual bridges after their gameplay ownership is converted or split from managed presentation.
+- Out of scope: UI Toolkit/Canvas replacement implementation, editor-only tools, test fixtures, pure authoring/baker code, Addressables/subscene streaming strategy, and visual redesign.
+- Coordination: do not duplicate or contradict `Design/Architecture/five_systembase_to_isystem_conversion_tracker.md`; this Phase 7 owns project-wide sequencing and must treat that tracker as the building/spawn sub-track.
+
+Phase 7 progress snapshot:
+
+- Phase 7 checklist progress: `0 / 108 complete (0.0%)`.
+- Phase 7 in progress: `0`.
+- Phase 7 remaining open: `108`.
+- Static seed scan date: `2026-06-20`.
+- Static seed `SystemBase` declarations under `Assets/Game/Scripts`: `255`.
+- Authoritative classified inventory: `not generated yet`.
+- Non-UI gameplay `SystemBase` retirement target: `0 non-UI runtime gameplay owners`.
+- Managed presentation `SystemBase` exception target: `authoritative count pending Phase 7.0 inventory; provisional planning cap <= 30 non-UI managed presentation/config/camera exceptions plus 1 UI apply edge`.
+- Updating `MonoBehaviour` target: `0 newly introduced MonoBehaviour Update/LateUpdate/FixedUpdate/coroutine loops`.
+- Direct `ISystem` conversion candidates selected: `0`.
+- Split-before-conversion candidates selected: `0`.
+- Retired/folded non-UI `SystemBase` boundaries: `0`.
+- Converted focused `ISystem` processors from this phase: `0`.
+- Current target: `Phase 7.0 authoritative inventory and guardrails`.
+
+Decision rules:
+
+| Disposition | Use when | Done means |
+| --- | --- | --- |
+| Direct `ISystem` conversion | The current `SystemBase` has no managed Unity object state, no GameObject/prefab/camera/UI/config asset access, no public managed helper API required by composition, and owns pure ECS data work. | The type becomes an unmanaged `partial struct : ISystem`, caches handles/lookups correctly, uses ECBs where safe, and passes focused validation. |
+| Split then convert | The current `SystemBase` mixes ECS gameplay with managed object/config/presentation work. | ECS behavior moves to one or more narrow `ISystem` processors; managed work becomes passive data projection, authoring/baking, MonoBehaviour/View binding, or one-shot composition outside recurring gameplay. |
+| Retire/fold | The current `SystemBase` is really a composition helper, config projector, query helper, or narrow pure algorithm with no independent ECS update lifetime. | The old ECS managed system is deleted or folded into its owner/job/static value helper without creating a broad replacement shell. |
+| Managed presentation `SystemBase` exception | The remaining work must tick Camera, GameObject, Transform, UnityEngine.Object, ParticleSystem, Renderer, Material, Light, pooled VFX, visual marker, diagnostics, or serialized scene reference presentation. | The managed system is narrow, lives in a presentation/config/diagnostic group, reads ECS result/request data or serialized inputs, applies Unity object presentation only, and is counted in the managed-exception denominator. Gameplay policy stays in ECS data processors. |
+| View/reference-only `MonoBehaviour` | The remaining work only holds serialized references, prefab references, view components, or callable presentation methods. | The `MonoBehaviour` has no `Update`, `LateUpdate`, `FixedUpdate`, coroutine loop, or gameplay decision logic. Runtime ticking stays in ECS systems. |
+
+Hard blockers before a target can be marked complete:
+
+- Converted `ISystem` code must not reference `GameObject`, `Transform`, `Camera`, `UnityEngine.Object`, `ScriptableObject`, `Resources`, `Object.Instantiate`, `Object.Destroy`, `Find*`, `Camera.main`, hierarchy paths, managed component classes, `List<GameObject>`, `Dictionary<..., GameObject>`, or mutable static gameplay state.
+- A broad `SystemBase` cannot be completed by moving the same broad responsibilities into one large `ISystem`.
+- A managed presentation/config/camera boundary cannot keep making gameplay decisions after the split.
+- Phase 7 must not introduce new `MonoBehaviour.Update`, `LateUpdate`, `FixedUpdate`, coroutine loops, or manager-style MonoBehaviour tickers. MonoBehaviours are allowed only as view/reference holders or callable presentation views without their own runtime loop.
+- Runtime systems must not add per-frame managed allocations, LINQ, ungated string formatting/logging, direct hot-path `EntityManager` mutation, or uncached type handles in `OnUpdate`.
+- UI work stays separate. If a `SystemBase` only exists for current Canvas UI, classify it out of Phase 7 and leave it to the UI Toolkit replacement tracker.
+
+Priority bands:
+
+| Band | Target shape | Examples to verify during inventory | Strategy |
+| --- | --- | --- | --- |
+| A | Direct data-only conversions | `MatchStartRequestSystem`, `RuntimeGameplayStateSystem`, `RuntimeDiagnosticsSystem`, selected read-model/projection systems, small startup request processors. | Convert first after tests because blast radius is low. |
+| B | Startup/config projection | `AIStartupSystem`, `AIFactionControlStartupSystem`, `FactionEconomyStartupSystem`, `RuntimeGridBootstrapSystem`, `InitialFactionSpawnCellSystem`, custom-game startup pieces. | Convert one-shot ECS writes to `ISystem`; move serialized config projection to bakers/passive startup boundaries. |
+| C | Selection and command data | `RtsSelection*`, `SelectionStateSystem`, `FocusableUnitLookupSystem`, command-result flush/read models. | Keep pointer/camera/UI input passive; convert command/result processing and selected-state mutations. |
+| D | Building and production | Existing five-SystemBase tracker plus building placement/runtime/boundary systems. | Split broad owners into request, validation, placement, instantiation, state, and result processors; retire managed runtime-building mirrors. |
+| E | Road build | `RoadBuild*`, `RoadNetworkSystem`, `RoadGridProjectionSystem`, road runtime generation/read models. | Convert grid/command/data processors; move preview/visual GameObject work to passive result application. |
+| F | Runtime city and environment | `RuntimeCity*`, `RuntimeGridBlockerSystem`, `RuntimeDecorationSpawnerSystem`, `DayNightSystem`. | Convert generation/state/read-model algorithms; replace visual GameObject spawn ownership with ECS entity prefabs or narrow managed presentation `SystemBase` exceptions. |
+| G | Citizen population | `Citizen*` population/travel/resource/danger/read-model systems. | Convert population state and movement/resource decisions; split visible citizen presentation. |
+| H | Rendering, VFX, and visual bridges | `UnitAttachedLightSystem`, traces/impostors, missile trails, building/road visuals, selection/order markers. | Convert gameplay decisions to entity-prefab/request/result ECS first; keep Unity object playback in narrow managed presentation `SystemBase` exceptions when visuals cannot be converted without redesign. Do not introduce updating MonoBehaviours. |
+
+Post-Phase 7 inheritance projection:
+
+| Scenario | Final production `SystemBase` | Final production `ISystem` if non-exception systems convert one-to-one | `ISystem` share |
+| --- | ---: | ---: | ---: |
+| Aggressive managed-exception target | `21` (`1` UI + `20` non-UI managed exceptions) | `360` | `94.5%` |
+| Planning cap used until inventory | `31` (`1` UI + `30` non-UI managed exceptions) | `350` | `91.9%` |
+| Conservative exception overrun | `41` (`1` UI + `40` non-UI managed exceptions) | `340` | `89.2%` |
+
+Formula:
+`final ISystem share = (126 + converted_non_exception_SystemBase) / ((126 + converted_non_exception_SystemBase) + remaining_SystemBase)`.
+Phase 7.0 must replace this projection with an authoritative inventory count. The invariant is `0` non-UI gameplay `SystemBase`; managed presentation `SystemBase` exceptions are allowed only when Unity object ticking is required and no updating MonoBehaviour is introduced.
+
+### Phase 7.0: Authoritative Inventory And Denominator
+
+Purpose:
+Replace the seed line scan with a generated, reviewable inventory before changing code.
+
+- [ ] Create `Tools/Architecture/generate_systembase_to_isystem_inventory.py` or an equivalent architecture test that enumerates every `SystemBase` declaration under runtime roots.
+- [ ] Exclude UI path and UI-named systems from the non-UI conversion denominator, but list them in an out-of-scope table.
+- [ ] Exclude editor-only and test-only systems from the runtime denominator, but list them separately.
+- [ ] For every remaining type, record file path, type name, namespace if any, current assembly, public/internal API surface, update method presence, managed field count, ECS query count, and known call sites.
+- [ ] Scan each candidate for managed blockers: `GameObject`, `Transform`, `Camera`, `UnityEngine.Object`, `ScriptableObject`, `Resources`, `Object.Instantiate`, `Object.Destroy`, `Find*`, `Camera.main`, `Material`, `Renderer`, `Light`, managed collections, and public helper APIs.
+- [ ] Classify each candidate as DirectConvert, SplitThenConvert, RetireFold, ManagedPresentationSystemBaseException, ViewReferenceOnlyMonoBehaviour, UIOutOfScope, EditorOutOfScope, or ReviewRequired.
+- [ ] Scan for newly introduced `MonoBehaviour.Update`, `LateUpdate`, `FixedUpdate`, and coroutine loops and fail the inventory if any Phase 7 bridge adds one.
+- [ ] Generate `Design/Architecture/systembase_to_isystem_inventory.md` with disposition, blocker, owner phase, validation runner, and first recommended slice.
+- [ ] Add a guardrail test that fails when a new non-UI runtime `SystemBase` appears without an inventory row.
+- [ ] Add a guardrail test that fails when an inventory row points to a deleted or renamed file.
+- [ ] Update the Phase 7 progress snapshot with authoritative denominator counts.
+- [ ] Run `git diff --check` and focused architecture validation.
+
+Acceptance:
+
+- Every non-UI runtime `SystemBase` is classified exactly once.
+- The inventory distinguishes direct conversion from split/retire work.
+- No candidate is hidden as "managed boundary" without a concrete Unity-object ticking blocker, no-gameplay-policy proof, and counted exception status.
+- No new updating MonoBehaviour is introduced.
+
+### Phase 7.1: Guardrails And Test Harness
+
+Purpose:
+Make the migration ratchet safe before converting batches.
+
+- [ ] Add `NonUiSystemBaseMigrationArchitectureTests` with a focused validation runner.
+- [ ] Add a rule that converted Phase 7 targets cannot regain `SystemBase`.
+- [ ] Add a rule that converted `ISystem` files cannot reference managed Unity object APIs or managed prefab fallback collections.
+- [ ] Add a rule that managed presentation `SystemBase` exceptions cannot contain gameplay request validation, command execution, simulation, or gameplay ECS mutation policy.
+- [ ] Add a rule that Phase 7 cannot introduce new `MonoBehaviour.Update`, `LateUpdate`, `FixedUpdate`, or coroutine loops.
+- [ ] Add a rule that broad converted systems cannot exceed a documented public/internal helper surface limit.
+- [ ] Add a rule that all new runtime non-UI ECS systems default to `ISystem` unless classified as a managed presentation/config/camera `SystemBase` exception.
+- [ ] Add a rule that public `SystemBase` helper methods used by managed composition must be mapped to an ECS request/result or folded helper before conversion.
+- [ ] Add a validation matrix table mapping every domain to compile, EditMode, PlayMode, and performance validation commands.
+- [ ] Add a progress-update template for each batch: counts, files changed, converted, split boundaries, validation logs, and blockers.
+- [ ] Run architecture validation after adding guardrails.
+
+Acceptance:
+
+- The migration cannot silently add new non-UI `SystemBase` debt.
+- Every converted target has a static guard preventing managed API regression.
+- Managed Unity-object ticking remains in counted `SystemBase` exceptions, not updating MonoBehaviour bridges.
+
+### Phase 7.2: Direct Conversion Batch 1 - Small Data/State Systems
+
+Purpose:
+Convert the smallest pure ECS state/request systems first and prove the process.
+
+- [ ] Select 8-12 DirectConvert candidates with no managed Unity blockers and no broad public helper API.
+- [ ] For each selected target, inspect call sites before editing.
+- [ ] Convert one target at a time from `sealed partial class : SystemBase` to `partial struct : ISystem`.
+- [ ] Replace `Entities.ForEach`/managed query code with `SystemAPI.Query`, cached `EntityQuery`, `IJobEntity`, or `IJobChunk` as appropriate.
+- [ ] Move type-handle creation to `OnCreate`; refresh handles with `.Update(ref state)` in `OnUpdate`.
+- [ ] Replace direct structural mutation with ECB where same-frame mutation is not required.
+- [ ] Add `[BurstCompile]` only after unmanaged access is proven and tests pass.
+- [ ] Update architecture inventory rows after each conversion.
+- [ ] Run each target's focused validation, then the domain validation set for the batch.
+- [ ] Ratchet guardrail counts after the batch.
+
+Candidate examples to verify, not pre-approved:
+`MatchStartRequestSystem`, `RuntimeGameplayStateSystem`, `RuntimeDiagnosticsSystem`, `SelectionRuntimeConfigSystem`, `RtsSelectionInputStateSystem`, `CitizenPopulationTotalsSystem`, `CitizenStatusTransitionSystem`, `RoadMinimapEventSystem`, `RuntimeCityMinimapEventSystem`.
+
+### Phase 7.3: Direct Conversion Batch 2 - Startup And Config Projection
+
+Purpose:
+Move one-shot ECS projection systems out of managed `SystemBase` without dragging serialized config into unmanaged runtime.
+
+- [ ] Classify startup/config systems into ECS-data projection, serialized-config boundary, or composition-only helper.
+- [ ] For ECS-data projection systems, convert to `ISystem` and consume baked singleton/buffer data.
+- [ ] For serialized config readers, add a passive projection step that writes unmanaged ECS config data before gameplay update.
+- [ ] Convert AI plan/faction/economy startup projection only after authored config fallbacks are represented as ECS data.
+- [ ] Convert runtime-grid/bootstrap request processors after native grid ownership and disposal are explicit.
+- [ ] Convert custom-game startup only through the five-SystemBase split tracker or a linked sub-track.
+- [ ] Remove managed system state from startup processors after data projection exists.
+- [ ] Add focused startup validation for AI, faction economy, initial spawn, custom-game startup, and runtime grid bootstrap.
+- [ ] Run compile, architecture, and startup validation gates.
+
+### Phase 7.4: Selection And Command Systems
+
+Purpose:
+Keep UI/camera input passive while converting selection state, focus lookup, command processing, and result publication.
+
+- [ ] Inventory all `RtsSelection*`, `Selection*`, and focused-unit `SystemBase` call sites.
+- [ ] Separate pointer/camera raycast boundaries from command/result ECS processing.
+- [ ] Move command intake to ECS request components/buffers where a managed UI boundary still calls public methods.
+- [ ] Convert selected-state mutations and focusable-unit lookup to `ISystem` after camera data is pre-resolved.
+- [ ] Convert command-result publication to ECS result buffers; keep UI display passive.
+- [ ] Convert selection read-model projection systems after UI-facing data is pure component/buffer data.
+- [ ] Remove managed command flush helper APIs after result boundaries are in place.
+- [ ] Add or update selection input, command-result, focus, hold/stop/scan, and board/attack validations.
+- [ ] Run selection performance validation and confirm no recurring GC allocation.
+
+### Phase 7.5: Building, Placement, And Production Systems
+
+Purpose:
+Retire broad managed building gameplay owners instead of creating large `ISystem` replacements.
+
+- [ ] Treat `Design/Architecture/five_systembase_to_isystem_conversion_tracker.md` as the required sub-track for `BuildingSpawnSystem`, `BuildingProductionTransportBridgeSystem`, `CitizenVisibleUnitSystem`, `MapVehiclePlacementSpawnSystem`, and `CustomGameStartupSystem`.
+- [ ] Generate a complete building-domain `SystemBase` inventory, including placement, runtime boundary, production, selection, combat, visual, and composition systems.
+- [ ] Classify composition-only systems for RetireFold before touching gameplay behavior.
+- [ ] Convert pure placement validation/grid/session data to `ISystem` after managed preview visuals are split out.
+- [ ] Convert production request, slot reservation, produced-unit state, and transport request systems to focused `ISystem` processors.
+- [ ] Convert building combat/resource/ownership/runtime-boundary ECS data updates after `RuntimeBuildingEntity` managed mirrors are removed.
+- [ ] Replace runtime-building transform fallback reads with ECS position/footprint/read-model data.
+- [ ] Move building visuals, destroyed visuals, markers, and foundation presentation to ECS entity prefabs or counted managed presentation `SystemBase` exceptions.
+- [ ] Add guardrails so no completed building target can keep `RuntimeBuildingEntity`, `GameObject`, or managed produced-unit fallback dependencies.
+- [ ] Run building placement, production, build drawer, building selection marker, building faction visual, combat, and PlayMode placement-to-production validations.
+
+### Phase 7.6: Road Build And Road Runtime Systems
+
+Purpose:
+Convert road command/grid/read-model work while keeping preview and GameObject visuals passive.
+
+- [ ] Inventory `RoadBuild*`, `Road*Visual*`, `RoadNetworkSystem`, `RoadGridProjectionSystem`, and road runtime generation systems.
+- [ ] Split road input/pointer/camera state from ECS road command requests.
+- [ ] Convert road command validation, mutation, placement storage, grid projection, and network updates to `ISystem`.
+- [ ] Convert road read-model and minimap event publication to `ISystem` where data-only.
+- [ ] Move road preview, special visuals, chunk visuals, and runtime roots to entity-prefab data or counted managed presentation `SystemBase` exceptions.
+- [ ] Fold road composition/context/dependency systems into explicit startup wiring or owner constructors when they have no runtime update responsibility.
+- [ ] Remove direct managed helper APIs after ECS requests/results replace them.
+- [ ] Run road-build command, nearest-road, movement blocker, minimap, and road PlayMode smoke validation.
+
+### Phase 7.7: Runtime City And Environment Systems
+
+Purpose:
+Convert city generation/state/read-model algorithms and retire visual/config managed ECS owners.
+
+- [ ] Inventory all `RuntimeCity*`, `RuntimeGridBlockerSystem`, `RuntimeDecorationSpawnerSystem`, and `DayNightSystem` `SystemBase` targets.
+- [ ] Separate city config snapshot/projection from generation algorithms.
+- [ ] Convert deterministic layout, plot, road layout, ingress, walkability, minimap, read-model, and readiness query systems to `ISystem` when data-only.
+- [ ] Convert city building/decoration spawn decisions only after prefab selection and visual instantiation are represented as ECS entity-prefab requests.
+- [ ] Move coroutine/yield and GameObject visual spawn behavior to counted managed presentation `SystemBase` exceptions or replace with ECS entity prefab pipelines. Do not introduce MonoBehaviour coroutine loops.
+- [ ] Convert runtime-grid blocker data updates to `ISystem` after native container ownership and disposal are explicit.
+- [ ] Add city generation, road layout, decoration, runtime grid blocker, and minimap validations.
+- [ ] Run steady-state performance validation for runtime-city generation and post-generation gameplay.
+
+### Phase 7.8: Citizen Population Systems
+
+Purpose:
+Convert citizen simulation/read-model work and retire same-frame managed presentation state.
+
+- [ ] Inventory all `Citizen*` `SystemBase` targets and call sites.
+- [ ] Convert citizen totals, state transitions, schedule, danger, resource, refugee, building-read, household-registration, and population read-model systems where data-only.
+- [ ] Split visible-citizen spawn/lifetime into request, instantiate, movement-state, and lifetime `ISystem` processors.
+- [ ] Replace managed visible-citizen dictionaries with ECS components/buffers or passive presentation state.
+- [ ] Keep citizen UI display passive and out of conversion scope.
+- [ ] Add focused citizen population, visible unit, resource/refugee, and read-model validations.
+- [ ] Run movement and combat/death validations if citizen visibility or danger state touches unit state.
+
+### Phase 7.9: Rendering, VFX, And Visual Bridge Retirement
+
+Purpose:
+Remove non-UI gameplay `SystemBase` visual ownership by converting visuals to ECS entity data or counted managed presentation `SystemBase` exceptions.
+
+- [ ] Inventory attached lights, attack traces, impostors, missile trails, building visuals, road visuals, markers, destroyed visuals, quality settings, and camera-adjacent rendering systems.
+- [ ] For each visual system, decide whether the visual can become an entity prefab with ECS state, or must remain a passive Unity object boundary.
+- [ ] Convert entity-prefab visual spawn/update/cleanup to `ISystem` with ECB playback and explicit lifetime components.
+- [ ] Move GameObject pooling/playback to counted managed presentation `SystemBase` exceptions that consume ECS requests only.
+- [ ] Replace camera-dependent rendering systems with ECS camera request/result data plus a counted managed camera presentation `SystemBase` exception when Camera/Transform ticking is required.
+- [ ] Confirm visual presenter MonoBehaviours, if any, are view/reference holders only and do not add `Update`, `LateUpdate`, `FixedUpdate`, or coroutine loops.
+- [ ] Remove managed component/object references from converted visual ECS paths.
+- [ ] Run render-budget, vehicle visual, missile VFX, attack trace, attached light, marker, and visual-quality validations.
+- [ ] Run graphics-capable match runtime smoke after each visual batch.
+
+### Phase 7.10: Composition, Boundary, And Helper Retirement
+
+Purpose:
+Remove `SystemBase` types that only exist to compose other systems or expose public helper APIs.
+
+- [ ] Inventory all `*CompositionSystem`, `*ContextSystem`, `*DependencySystem`, `*BindingSystem`, `*DisposalSystem`, and `*ReferenceBoundarySystem` types.
+- [ ] For each composition helper, decide whether it folds into a caller, becomes a plain value helper, becomes authoring/baker projection, or is replaced by ECS request/result data.
+- [ ] Remove managed ECS system wrappers that have no independent update lifetime.
+- [ ] Replace public helper methods with explicit components, buffers, or plain helper functions owned by the consuming system.
+- [ ] Keep scene, camera, diagnostics, and performance references in counted managed `SystemBase` exceptions where ticking is required, or view/reference-only MonoBehaviours where no runtime loop is needed.
+- [ ] Add architecture tests preventing reintroduction of broad composition shells.
+- [ ] Run compile and full domain validation after each composition cleanup batch.
+
+### Phase 7.11: Performance Ratchet And Final Completion
+
+Purpose:
+Prove the migration improved or preserved performance and lock the new architecture.
+
+- [ ] Re-run authoritative inventory and set non-UI runtime gameplay `SystemBase` remaining count to `0`, excluding UI/editor/test and counted managed presentation/config/camera `SystemBase` exceptions.
+- [ ] Recalculate final `ISystem` share using the authoritative managed-exception count.
+- [ ] Re-run `rg` guards for managed blockers in converted `ISystem` files.
+- [ ] Raise architecture guard floors for `ISystem`, Burst, job-backed systems, and non-UI `SystemBase` retirement counts.
+- [ ] Run `git diff --check`.
+- [ ] Run Unity compile gate.
+- [ ] Run rendering budget, movement, transport, production/build drawer, armory/UI, combat/death, road-build, building placement, runtime-city, citizen, and custom-game focused validations.
+- [ ] Run PlayMode smokes for match start, building placement to production, transport boarding to disembark, and combat/death.
+- [ ] Run structured performance scenarios for M01 launch, select/move, attack/result flow, tactical steady state, render budget, pathfinding, and runtime-city generation.
+- [ ] Compare frame time average/p95/p99/max, GC allocation, system timing, entity counts, and scenario markers against the Phase 6 baseline.
+- [ ] Record final report under `Design/AgentReports`.
+- [ ] Update this tracker and close Phase 7 only after all guardrails and validation pass.
+
+Validation matrix:
+
+| Domain | Required focused validation |
+| --- | --- |
+| Architecture | `EcsBurstHotPathArchitectureTests.RunFocusedValidation`, new Phase 7 inventory guard, static managed-blocker grep. |
+| Selection/commands | `RtsSelectionInputSystemValidation`, command/result contract validation, hold/stop/scan focused validation. |
+| Building/production | `BuildingProductionRequestValidation`, `BuildingUiQueryValidation`, building placement command validation, placement-to-production PlayMode smoke. |
+| Road | `RoadBuildCommandRequestValidation`, nearest road/build validation, movement blocker validation. |
+| Runtime city | runtime-city generation focused EditMode, runtime-city minimap/readiness validations, match runtime smoke. |
+| Citizen | citizen population/visible-unit focused validation, movement/combat regressions if touched. |
+| Rendering/VFX | `UnitRenderBudgetFocusedValidation`, vehicle visual adornments, missile VFX, attached light, marker validations, graphics-capable smoke. |
+| Transport/custom game | `UnitTransportValidation`, transport PlayMode smoke, custom-game startup focused validation. |
+
+Estimate:
+
+- Phase 7.0-7.2 inventory, guardrails, and first direct conversions: `1-2 working days`.
+- Startup/selection/road direct conversion batches: `1-2 working weeks`.
+- Building, citizen, runtime-city, and visual split/conversion batches: `4-8 working weeks`.
+- Full non-UI gameplay `SystemBase` retirement including visual/prefab split, managed presentation exception inventory, and performance ratchets: `8-14 working weeks`, assuming Unity validation remains available and no product-level visual redesign is folded into the scope.
+
+Progress notes:
+
+- 2026-06-20: Expanded Phase 7 from an 8-item placeholder into this project-wide non-UI `SystemBase` retirement tracker. Static seed scan found `255` `SystemBase` declarations under `Assets/Game/Scripts`; Phase 7.0 must replace that line scan with a generated authoritative inventory before implementation begins.
 
 ## Required Validation Set
 

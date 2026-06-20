@@ -49,6 +49,7 @@
 .screen-slot {
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0);
+    picking-mode: position;
 }
 
 .popup-screen-slot {

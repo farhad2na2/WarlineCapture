@@ -1102,16 +1102,19 @@ public sealed class UiToolkitShellView : MonoBehaviour
         ApplyMainMenuRouteState(route);
         SetShellHidden(loadingLayer, true);
         SetShellHidden(matchScreenSlot, true);
+        SetShellHidden(resultScreenSlot, true);
         if (route == UIRoute.Armory && HasMountedArmoryScreen)
         {
             SetShellHidden(mainMenuScreenSlot, true);
             SetShellHidden(armoryScreenSlot, false);
+            SetShellHidden(commanderProfileScreenSlot, true);
             ApplyShellMotion(armoryScreenSlot, UiToolkitShellMotionState.Visible);
             return true;
         }
 
         SetShellHidden(mainMenuScreenSlot, false);
         SetShellHidden(armoryScreenSlot, true);
+        SetShellHidden(commanderProfileScreenSlot, route != UIRoute.CommandFeed);
         ApplyShellMotion(mainMenuScreenSlot, UiToolkitShellMotionState.Visible);
         if (route == UIRoute.CommandFeed && HasMountedCommanderProfileScreen)
             ApplyShellMotion(commanderProfileScreenSlot, UiToolkitShellMotionState.Visible);
@@ -1629,12 +1632,16 @@ public sealed class UiToolkitShellView : MonoBehaviour
                 {
                     SetShellHidden(mainMenuScreenSlot, true);
                     SetShellHidden(armoryScreenSlot, false);
+                    SetShellHidden(commanderProfileScreenSlot, true);
+                    SetShellHidden(resultScreenSlot, true);
                     ApplyShellMotion(armoryScreenSlot, UiToolkitShellMotionState.Visible);
                 }
                 else
                 {
                     SetShellHidden(mainMenuScreenSlot, false);
                     SetShellHidden(armoryScreenSlot, true);
+                    SetShellHidden(commanderProfileScreenSlot, command.Route != UIRoute.CommandFeed);
+                    SetShellHidden(resultScreenSlot, true);
                     ApplyShellMotion(mainMenuScreenSlot, UiToolkitShellMotionState.Visible);
                     if (command.Route == UIRoute.CommandFeed && HasMountedCommanderProfileScreen)
                         ApplyShellMotion(commanderProfileScreenSlot, UiToolkitShellMotionState.Visible);
@@ -1681,10 +1688,12 @@ public sealed class UiToolkitShellView : MonoBehaviour
         {
             if (!target.ClassListContains("shell-hidden"))
                 target.AddToClassList("shell-hidden");
+            target.pickingMode = PickingMode.Ignore;
             return;
         }
 
         target.RemoveFromClassList("shell-hidden");
+        target.pickingMode = PickingMode.Position;
     }
 
     private static void SetElementEnabled(VisualElement target, bool enabled)
@@ -2375,6 +2384,25 @@ public sealed class UiToolkitShellView : MonoBehaviour
         diagnosticsLogPanel = root.Q<VisualElement>("DiagnosticsLogPanel");
         loadingLayer = root.Q<VisualElement>("LoadingLayer");
         menuBackgroundRegion = root.Q<VisualElement>("MenuBackgroundRegion");
+        if (menuBackgroundRegion != null)
+            menuBackgroundRegion.pickingMode = PickingMode.Ignore;
+
+        VisualElement headerRegion = root.Q<VisualElement>("HeaderRegion");
+        if (headerRegion != null)
+            headerRegion.pickingMode = PickingMode.Ignore;
+
+        VisualElement leftRegion = root.Q<VisualElement>("LeftRegion");
+        if (leftRegion != null)
+            leftRegion.pickingMode = PickingMode.Ignore;
+
+        VisualElement rightRegion = root.Q<VisualElement>("RightRegion");
+        if (rightRegion != null)
+            rightRegion.pickingMode = PickingMode.Ignore;
+
+        VisualElement footerRegion = root.Q<VisualElement>("FooterRegion");
+        if (footerRegion != null)
+            footerRegion.pickingMode = PickingMode.Ignore;
+
         loadingScreenSlot = root.Q<VisualElement>("LoadingScreenSlot");
         mainMenuScreenSlot = root.Q<VisualElement>("MainMenuScreenSlot");
         matchScreenSlot = root.Q<VisualElement>("MatchScreenSlot");
@@ -2382,6 +2410,9 @@ public sealed class UiToolkitShellView : MonoBehaviour
         commanderProfileScreenSlot = root.Q<VisualElement>("CommanderProfileScreenSlot");
         resultScreenSlot = root.Q<VisualElement>("ResultScreenSlot");
         popupScreenSlot = root.Q<VisualElement>("PopupScreenSlot");
+        if (tooltipLayer != null)
+            tooltipLayer.pickingMode = PickingMode.Ignore;
+
         BindDiagnosticsOverlay();
     }
 

@@ -38,6 +38,14 @@ public static class UiToolkitMenuSceneStartupValidation
     private static bool deployValidationCompleted;
     private static bool deployValidationSubmitted;
     private static bool deployValidationShouldExitEditor;
+    private static int selectCommandValidationFrameCount;
+    private static int selectCommandDeployFrame;
+    private static int selectCommandClickFrame;
+    private static double selectCommandValidationStartedAt;
+    private static bool selectCommandValidationCompleted;
+    private static bool selectCommandDeploySubmitted;
+    private static bool selectCommandClicked;
+    private static bool selectCommandValidationShouldExitEditor;
 
     [MenuItem("Game/UI Toolkit/Repair Menu Scene Wiring")]
     public static void RepairMenuSceneWiring()
@@ -207,6 +215,32 @@ public static class UiToolkitMenuSceneStartupValidation
         }
     }
 
+    public static void RunMatchHudSelectCommandValidation()
+    {
+        try
+        {
+            RepairMenuSceneWiring();
+            EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+
+            selectCommandValidationFrameCount = 0;
+            selectCommandDeployFrame = 0;
+            selectCommandClickFrame = 0;
+            selectCommandValidationStartedAt = EditorApplication.timeSinceStartup;
+            selectCommandValidationCompleted = false;
+            selectCommandDeploySubmitted = false;
+            selectCommandClicked = false;
+            selectCommandValidationShouldExitEditor = true;
+            EditorApplication.update -= ContinueMatchHudSelectCommandValidation;
+            EditorApplication.update += ContinueMatchHudSelectCommandValidation;
+            EditorApplication.EnterPlaymode();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[UiToolkitMenuSceneStartupValidation] selectCommandResult=Failed\n{exception}");
+            EditorApplication.Exit(1);
+        }
+    }
+
     private static void ContinueDeployCommandValidation()
     {
         if (deployValidationCompleted)
@@ -323,6 +357,139 @@ public static class UiToolkitMenuSceneStartupValidation
         catch (Exception exception)
         {
             CompleteDeployValidation(false, exception.ToString());
+        }
+    }
+
+    private static void ContinueMatchHudSelectCommandValidation()
+    {
+        if (selectCommandValidationCompleted)
+            return;
+
+        try
+        {
+            double elapsed = EditorApplication.timeSinceStartup - selectCommandValidationStartedAt;
+            if (elapsed > 120d)
+            {
+                CompleteSelectCommandValidation(false, $"Timed out waiting for Select command validation. {DescribeDeployRuntimeState()}");
+                return;
+            }
+
+            if (!EditorApplication.isPlaying)
+                return;
+
+            selectCommandValidationFrameCount++;
+            if (selectCommandValidationFrameCount < 45)
+                return;
+
+            MenuBootstrapView bootstrap = FindSceneObject<MenuBootstrapView>();
+            if (bootstrap == null)
+            {
+                CompleteSelectCommandValidation(false, "Menu scene is missing MenuBootstrapView in PlayMode.");
+                return;
+            }
+
+            bootstrap.ApplyRuntimeUiMode();
+            UiToolkitShellView shellView = bootstrap.UiToolkitShellView;
+            if (shellView == null)
+            {
+                CompleteSelectCommandValidation(false, "Menu scene has no UI Toolkit shell view in PlayMode.");
+                return;
+            }
+
+            if (!shellView.IsMounted && !shellView.Mount())
+            {
+                CompleteSelectCommandValidation(false, "UI Toolkit shell failed to mount in PlayMode.");
+                return;
+            }
+
+            if (!selectCommandDeploySubmitted)
+            {
+                if (!shellView.EnsureMainMenuVisible(UIRoute.MainMenu))
+                {
+                    CompleteSelectCommandValidation(false, "UI Toolkit Main Menu failed to become visible in PlayMode.");
+                    return;
+                }
+
+                Button deployButton = shellView.MainMenuContentRoot?.Q<Button>("DeployOperationButton");
+                if (deployButton == null)
+                {
+                    CompleteSelectCommandValidation(false, "DeployOperationButton was not found before Select validation.");
+                    return;
+                }
+
+                if (!IsPickedByPanel(deployButton, out string pickedElement))
+                {
+                    CompleteSelectCommandValidation(false, $"DeployOperationButton is blocked before Select validation. picked={pickedElement}");
+                    return;
+                }
+
+                using ClickEvent clickEvent = ClickEvent.GetPooled();
+                clickEvent.target = deployButton;
+                deployButton.SendEvent(clickEvent);
+                selectCommandDeploySubmitted = true;
+                selectCommandDeployFrame = selectCommandValidationFrameCount;
+                Debug.Log("[UiToolkitMenuSceneStartupValidation] selectCommandDeploySubmitted=ClickEvent target=DeployOperationButton");
+                return;
+            }
+
+            if (!IsMatchHudActive())
+                return;
+
+            if (selectCommandValidationFrameCount - selectCommandDeployFrame < 12)
+                return;
+
+            if (!selectCommandClicked)
+            {
+                Button selectButton = shellView.MatchHudContentRoot?.Q<Button>("SelectCommand");
+                if (selectButton == null)
+                {
+                    CompleteSelectCommandValidation(false, "SelectCommand was not found in the mounted Match HUD.");
+                    return;
+                }
+
+                if (!IsPickedByPanel(selectButton, out string pickedElement))
+                {
+                    CompleteSelectCommandValidation(false, $"SelectCommand is blocked by another UI Toolkit element. picked={pickedElement}");
+                    return;
+                }
+
+                using ClickEvent clickEvent = ClickEvent.GetPooled();
+                clickEvent.target = selectButton;
+                selectButton.SendEvent(clickEvent);
+                selectCommandClicked = true;
+                selectCommandClickFrame = selectCommandValidationFrameCount;
+                Debug.Log("[UiToolkitMenuSceneStartupValidation] selectCommandSubmitted=ClickEvent target=SelectCommand");
+                return;
+            }
+
+            if (selectCommandValidationFrameCount - selectCommandClickFrame < 12)
+                return;
+
+            if (!TryReadSelectionInputState(out RtsSelectionInputStateComponent inputState))
+            {
+                CompleteSelectCommandValidation(false, "Selection input state was not available after SelectCommand click.");
+                return;
+            }
+
+            TacticalCommandMode activeMode = (TacticalCommandMode)inputState.ActiveCommandMode;
+            if (activeMode != TacticalCommandMode.Select)
+            {
+                CompleteSelectCommandValidation(false, $"SelectCommand did not set active command mode. activeMode={activeMode}");
+                return;
+            }
+
+            Button activeSelectButton = shellView.MatchHudContentRoot?.Q<Button>("SelectCommand");
+            if (activeSelectButton == null || !activeSelectButton.ClassListContains("command-button-selected"))
+            {
+                CompleteSelectCommandValidation(false, "SelectCommand active mode was set but the UI Toolkit selected class was not applied.");
+                return;
+            }
+
+            CompleteSelectCommandValidation(true, "SelectCommand entered selection mode and applied selected visual state.");
+        }
+        catch (Exception exception)
+        {
+            CompleteSelectCommandValidation(false, exception.ToString());
         }
     }
 
@@ -531,6 +698,23 @@ public static class UiToolkitMenuSceneStartupValidation
         return true;
     }
 
+    private static bool TryReadSelectionInputState(out RtsSelectionInputStateComponent inputState)
+    {
+        inputState = default;
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<RtsSelectionInputStateComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity entity = query.GetSingletonEntity();
+        inputState = entityManager.GetComponentData<RtsSelectionInputStateComponent>(entity);
+        return true;
+    }
+
     private static string DescribeDeployRuntimeState()
     {
         string shell = UiShellRuntimeGateway.TryReadShellState(out UiShellStateModel shellState)
@@ -576,6 +760,22 @@ public static class UiToolkitMenuSceneStartupValidation
             EditorApplication.ExitPlaymode();
 
         if (Application.isBatchMode || deployValidationShouldExitEditor)
+            EditorApplication.delayCall += () => EditorApplication.Exit(success ? 0 : 1);
+    }
+
+    private static void CompleteSelectCommandValidation(bool success, string message)
+    {
+        selectCommandValidationCompleted = true;
+        EditorApplication.update -= ContinueMatchHudSelectCommandValidation;
+        if (success)
+            Debug.Log($"[UiToolkitMenuSceneStartupValidation] selectCommandResult=Passed {message}");
+        else
+            Debug.LogError($"[UiToolkitMenuSceneStartupValidation] selectCommandResult=Failed {message}");
+
+        if (EditorApplication.isPlaying)
+            EditorApplication.ExitPlaymode();
+
+        if (Application.isBatchMode || selectCommandValidationShouldExitEditor)
             EditorApplication.delayCall += () => EditorApplication.Exit(success ? 0 : 1);
     }
 

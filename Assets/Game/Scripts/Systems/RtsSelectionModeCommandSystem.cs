@@ -136,6 +136,8 @@ public partial struct RtsSelectionModeCommandSystem : ISystem
         ClearCommandMode(ref inputState);
         ResetSelectionDragState(ref inputState, pointer);
         ClearQueuedMoveOrder(ref inputState);
+        inputState.ActiveCommandMode = (int)TacticalCommandMode.Select;
+        inputState.ActiveCommandModeFrame = currentFrame;
         inputState.IgnoreNextLeftMouseRelease = 1;
         inputState.SkipNextWorldReleaseAfterSelection = 1;
         inputState.IgnoreWorldCommandsUntilFrame = currentFrame + 1;

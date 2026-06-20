@@ -1272,6 +1272,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
         buildPlacementConfirmationBarRoot = buildPlacementConfirmationBarContainer.Q<VisualElement>("SCN08_BuildPlacementConfirmationBar");
         matchScreenSlot.Add(buildPlacementConfirmationBarContainer);
         BindBuildPlacementConfirmationBar();
+        SetShellHidden(buildPlacementConfirmationBarContainer, true);
         SetShellHidden(buildPlacementConfirmationBarRoot, true);
         return HasRequiredBuildPlacementConfirmationBarBindings;
     }
@@ -1932,6 +1933,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
         if (!HasRequiredBuildPlacementConfirmationBarBindings)
             return false;
 
+        SetShellHidden(buildPlacementConfirmationBarContainer, !placementBar.Visible);
         SetShellHidden(buildPlacementConfirmationBarRoot, !placementBar.Visible);
         SetLabelText(buildPlacementTitleLabel, placementBar.Title, "PLACE BUILDING");
         SetLabelText(buildPlacementStatusLabel, placementBar.Status, placementBar.CanConfirm ? "VALID GROUND" : "INVALID PLACEMENT");

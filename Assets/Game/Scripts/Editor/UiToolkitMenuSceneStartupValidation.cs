@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Unity.Entities;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -31,6 +32,12 @@ public static class UiToolkitMenuSceneStartupValidation
     private static bool screenshotValidationCompleted;
     private static bool screenshotCaptureRequested;
     private static bool screenshotValidationShouldExitEditor;
+    private static int deployValidationFrameCount;
+    private static int deployValidationSubmitFrame;
+    private static double deployValidationStartedAt;
+    private static bool deployValidationCompleted;
+    private static bool deployValidationSubmitted;
+    private static bool deployValidationShouldExitEditor;
 
     [MenuItem("Game/UI Toolkit/Repair Menu Scene Wiring")]
     public static void RepairMenuSceneWiring()
@@ -176,6 +183,130 @@ public static class UiToolkitMenuSceneStartupValidation
         }
     }
 
+    public static void RunDeployCommandValidation()
+    {
+        try
+        {
+            RepairMenuSceneWiring();
+            EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+
+            deployValidationFrameCount = 0;
+            deployValidationSubmitFrame = 0;
+            deployValidationStartedAt = EditorApplication.timeSinceStartup;
+            deployValidationCompleted = false;
+            deployValidationSubmitted = false;
+            deployValidationShouldExitEditor = true;
+            EditorApplication.update -= ContinueDeployCommandValidation;
+            EditorApplication.update += ContinueDeployCommandValidation;
+            EditorApplication.EnterPlaymode();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[UiToolkitMenuSceneStartupValidation] deployResult=Failed\n{exception}");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    private static void ContinueDeployCommandValidation()
+    {
+        if (deployValidationCompleted)
+            return;
+
+        try
+        {
+            double elapsed = EditorApplication.timeSinceStartup - deployValidationStartedAt;
+            if (elapsed > 120d)
+            {
+                CompleteDeployValidation(false, $"Timed out waiting for Deploy to enter Match HUD. {DescribeDeployRuntimeState()}");
+                return;
+            }
+
+            if (!EditorApplication.isPlaying)
+                return;
+
+            deployValidationFrameCount++;
+            if (deployValidationFrameCount < 45)
+                return;
+
+            MenuBootstrapView bootstrap = FindSceneObject<MenuBootstrapView>();
+            if (bootstrap == null)
+            {
+                CompleteDeployValidation(false, "Menu scene is missing MenuBootstrapView in PlayMode.");
+                return;
+            }
+
+            bootstrap.ApplyRuntimeUiMode();
+            UiToolkitShellView shellView = bootstrap.UiToolkitShellView;
+            if (shellView == null)
+            {
+                CompleteDeployValidation(false, "Menu scene has no UI Toolkit shell view in PlayMode.");
+                return;
+            }
+
+            if (!shellView.IsMounted && !shellView.Mount())
+            {
+                CompleteDeployValidation(false, "UI Toolkit shell failed to mount in PlayMode.");
+                return;
+            }
+
+            if (!deployValidationSubmitted && !shellView.EnsureMainMenuVisible(UIRoute.MainMenu))
+            {
+                CompleteDeployValidation(false, "UI Toolkit Main Menu failed to become visible in PlayMode.");
+                return;
+            }
+
+            if (!deployValidationSubmitted && !shellView.HasRequiredMainMenuBindings)
+            {
+                CompleteDeployValidation(false, $"UI Toolkit Main Menu is missing runtime bindings. {DescribeMenuRenderState(shellView)}");
+                return;
+            }
+
+            if (!deployValidationSubmitted)
+            {
+                Button deployButton = shellView.MainMenuContentRoot?.Q<Button>("DeployOperationButton");
+                if (deployButton == null)
+                {
+                    CompleteDeployValidation(false, "DeployOperationButton was not found in the mounted Main Menu.");
+                    return;
+                }
+
+                using ClickEvent clickEvent = ClickEvent.GetPooled();
+                clickEvent.target = deployButton;
+                deployButton.SendEvent(clickEvent);
+                deployValidationSubmitted = true;
+                deployValidationSubmitFrame = deployValidationFrameCount;
+                Debug.Log("[UiToolkitMenuSceneStartupValidation] deployActionSubmitted=ClickEvent target=DeployOperationButton");
+                return;
+            }
+
+            if (IsMatchHudActive())
+            {
+                CompleteDeployValidation(true, $"Deploy loaded Match scene and entered Match HUD. {DescribeDeployRuntimeState()}");
+                return;
+            }
+
+            if (deployValidationFrameCount - deployValidationSubmitFrame < 12)
+                return;
+
+            if (UiShellRuntimeGateway.TryReadShellState(out UiShellStateModel shellState) &&
+                shellState.ActiveRoute != UIRoute.Match)
+            {
+                CompleteDeployValidation(false, $"Deploy click did not route to Match. {DescribeDeployRuntimeState()}");
+                return;
+            }
+
+            if (TryReadSceneLifecycleState(out SceneLifecycleStateComponent lifecycleState) &&
+                lifecycleState.Status == SceneLifecycleStatusKind.Failed)
+            {
+                CompleteDeployValidation(false, $"Deploy Match scene load failed. {DescribeDeployRuntimeState()}");
+            }
+        }
+        catch (Exception exception)
+        {
+            CompleteDeployValidation(false, exception.ToString());
+        }
+    }
+
     private static void ContinuePlayModeScreenshotValidation()
     {
         if (screenshotValidationCompleted)
@@ -314,6 +445,59 @@ public static class UiToolkitMenuSceneStartupValidation
         return count == 0 ? 0f : total / (count * 255000f);
     }
 
+    private static bool IsMatchSceneLoaded()
+    {
+        Scene matchScene = SceneManager.GetSceneByName(SceneLifecycleSystem.MatchSceneName);
+        if (matchScene.IsValid() && matchScene.isLoaded)
+            return true;
+
+        return TryReadSceneLifecycleState(out SceneLifecycleStateComponent state) &&
+            state.IsMatchLoaded != 0;
+    }
+
+    private static bool IsMatchHudActive()
+    {
+        return IsMatchSceneLoaded() &&
+            UiShellRuntimeGateway.TryReadShellState(out UiShellStateModel shellState) &&
+            shellState.CurrentMode == UiShellMode.MatchHud &&
+            shellState.ActiveRoute == UIRoute.Match;
+    }
+
+    private static bool TryReadSceneLifecycleState(out SceneLifecycleStateComponent lifecycleState)
+    {
+        lifecycleState = default;
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<SceneLifecycleBoundaryComponent>(),
+            ComponentType.ReadOnly<SceneLifecycleStateComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity entity = query.GetSingletonEntity();
+        lifecycleState = entityManager.GetComponentData<SceneLifecycleStateComponent>(entity);
+        return true;
+    }
+
+    private static string DescribeDeployRuntimeState()
+    {
+        string shell = UiShellRuntimeGateway.TryReadShellState(out UiShellStateModel shellState)
+            ? $"shell(mode={shellState.CurrentMode},route={shellState.ActiveRoute},phase={shellState.Phase},transition={shellState.IsTransitionRunning},seq={shellState.TransitionSequenceId})"
+            : "shell=unavailable";
+        string loading = UiShellRuntimeGateway.TryReadLoadingProgress(out UiShellLoadingProgressModel loadingState)
+            ? $"loading(progress={loadingState.Progress01:0.00},complete={loadingState.IsComplete},status={loadingState.Status})"
+            : "loading=unavailable";
+        string lifecycle = TryReadSceneLifecycleState(out SceneLifecycleStateComponent lifecycleState)
+            ? $"scene(status={lifecycleState.Status},busy={lifecycleState.IsBusy},loaded={lifecycleState.IsMatchLoaded},progress={lifecycleState.Progress01:0.00})"
+            : "scene=unavailable";
+        Scene matchScene = SceneManager.GetSceneByName(SceneLifecycleSystem.MatchSceneName);
+        string unityScene = $"unityScene(valid={matchScene.IsValid()},loaded={matchScene.isLoaded})";
+        return $"{shell}; {loading}; {lifecycle}; {unityScene}";
+    }
+
     private static void CompleteScreenshotValidation(bool success, string message)
     {
         screenshotValidationCompleted = true;
@@ -327,6 +511,22 @@ public static class UiToolkitMenuSceneStartupValidation
             EditorApplication.ExitPlaymode();
 
         if (Application.isBatchMode || screenshotValidationShouldExitEditor)
+            EditorApplication.delayCall += () => EditorApplication.Exit(success ? 0 : 1);
+    }
+
+    private static void CompleteDeployValidation(bool success, string message)
+    {
+        deployValidationCompleted = true;
+        EditorApplication.update -= ContinueDeployCommandValidation;
+        if (success)
+            Debug.Log($"[UiToolkitMenuSceneStartupValidation] deployResult=Passed {message}");
+        else
+            Debug.LogError($"[UiToolkitMenuSceneStartupValidation] deployResult=Failed {message}");
+
+        if (EditorApplication.isPlaying)
+            EditorApplication.ExitPlaymode();
+
+        if (Application.isBatchMode || deployValidationShouldExitEditor)
             EditorApplication.delayCall += () => EditorApplication.Exit(success ? 0 : 1);
     }
 

@@ -100,7 +100,7 @@ public sealed class MenuBootstrapView : MonoBehaviour
             uiToolkitDocument.enabled = useUiToolkit;
         if (uiToolkitShellRoot != null && uiToolkitShellRoot.activeSelf != useUiToolkit)
             uiToolkitShellRoot.SetActive(useUiToolkit);
-        if (useUiToolkit && uiToolkitShellView != null)
+        if (useUiToolkit && uiToolkitShellView != null && !uiToolkitShellView.IsMounted)
         {
             if (uiToolkitShellView.Mount())
                 uiToolkitShellView.EnsureMainMenuVisible(UIRoute.MainMenu);

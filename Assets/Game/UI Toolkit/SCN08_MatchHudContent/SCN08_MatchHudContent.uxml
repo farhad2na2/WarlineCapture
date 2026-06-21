@@ -169,7 +169,6 @@
                 <ui:VisualElement name="Frame" class="squad-tray-frame">
                     <ui:Button name="SquadCard1" class="squad-card squad-card-selected" text="">
                         <ui:VisualElement name="Frame" class="squad-card-frame">
-                            <ui:VisualElement name="SelectedGlow" class="squad-selected-glow" />
                             <ui:Label name="Number" class="squad-number" text="1" />
                             <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-1" />
                             <ui:Label name="Title" class="squad-card-title" text="RIFLE SQUAD" />
@@ -189,7 +188,6 @@
                     </ui:Button>
                     <ui:Button name="SquadCard2" class="squad-card" text="">
                         <ui:VisualElement name="Frame" class="squad-card-frame">
-                            <ui:VisualElement name="SelectedGlow" class="squad-selected-glow" />
                             <ui:Label name="Number" class="squad-number" text="2" />
                             <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-2" />
                             <ui:Label name="Title" class="squad-card-title" text="FAST APC" />
@@ -209,7 +207,6 @@
                     </ui:Button>
                     <ui:Button name="SquadCard3" class="squad-card squad-card-damaged" text="">
                         <ui:VisualElement name="Frame" class="squad-card-frame">
-                            <ui:VisualElement name="SelectedGlow" class="squad-selected-glow" />
                             <ui:Label name="Number" class="squad-number" text="3" />
                             <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-3" />
                             <ui:Label name="Title" class="squad-card-title" text="RECON DRONE" />
@@ -229,7 +226,6 @@
                     </ui:Button>
                     <ui:Button name="SquadCard4" class="squad-card" text="">
                         <ui:VisualElement name="Frame" class="squad-card-frame">
-                            <ui:VisualElement name="SelectedGlow" class="squad-selected-glow" />
                             <ui:Label name="Number" class="squad-number" text="4" />
                             <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-4" />
                             <ui:Label name="Title" class="squad-card-title" text="BOMB SUIT" />
@@ -249,7 +245,6 @@
                     </ui:Button>
                     <ui:Button name="SquadCard5" class="squad-card squad-card-empty" text="">
                         <ui:VisualElement name="Frame" class="squad-card-frame">
-                            <ui:VisualElement name="SelectedGlow" class="squad-selected-glow" />
                             <ui:Label name="Number" class="squad-number" text="5" />
                             <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-5" />
                             <ui:Label name="Title" class="squad-card-title" text="RESERVE" />

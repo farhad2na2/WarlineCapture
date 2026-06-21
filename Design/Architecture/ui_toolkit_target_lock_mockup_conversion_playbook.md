@@ -108,6 +108,14 @@ These rules override pixel-level target matching for future screens.
 - Each section should have its own frame/backing/content elements so state, text, progress, badges, and future data can remain live.
 - A baked sprite is acceptable only for purely decorative background art with no separable live UI sections.
 
+### Selection And Hover Quality
+
+- Selected, hover, focus, active, and disabled states must read as stateful chrome, not as cheap translucent rectangles pasted over content.
+- Prefer a dedicated state sprite, state-specific frame image, or frame replacement when the mockup shows the state over the border/chrome.
+- Do not add a small inner overlay when the reference state covers the full panel/card frame.
+- Repeated controls must use the same base template. A selected example in the mockup is a state example, not permission to make the first item a one-off layout.
+- Before leaving a repeated card/button/row family, compare left/right padding, outer margins, repeated gap values, and state coverage for every item in the family.
+
 ### Target Match Priority
 
 When a mockup conflicts with these shared chrome rules, prefer the shared UI system rule:

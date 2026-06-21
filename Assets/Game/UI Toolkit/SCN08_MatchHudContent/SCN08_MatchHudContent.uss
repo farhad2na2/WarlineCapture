@@ -187,58 +187,13 @@
     -unity-slice-right: 92;
     -unity-slice-top: 86;
     -unity-slice-bottom: 86;
-    border-left-width: 2px;
-    border-right-width: 2px;
-    border-top-width: 2px;
-    border-bottom-width: 2px;
-    border-left-color: rgba(255, 230, 98, 0);
-    border-right-color: rgba(255, 230, 98, 0);
-    border-top-color: rgba(255, 230, 98, 0);
-    border-bottom-color: rgba(255, 230, 98, 0);
 }
 
 .squad-card:hover .squad-card-frame,
 .squad-card:focus .squad-card-frame,
 .squad-card-selected .squad-card-frame {
-    -unity-background-image-tint-color: rgb(255, 246, 182);
-    border-left-color: rgba(255, 230, 98, 0.9);
-    border-right-color: rgba(255, 230, 98, 0.9);
-    border-top-color: rgba(255, 230, 98, 0.9);
-    border-bottom-color: rgba(255, 230, 98, 0.9);
-}
-
-.squad-selected-glow {
-    position: absolute;
-    left: 6%;
-    right: 6%;
-    top: 6%;
-    bottom: 6%;
-    background-color: rgba(255, 211, 70, 0);
-    border-left-width: 2px;
-    border-right-width: 2px;
-    border-top-width: 2px;
-    border-bottom-width: 2px;
-    border-left-color: rgba(255, 222, 72, 0);
-    border-right-color: rgba(255, 222, 72, 0);
-    border-top-color: rgba(255, 222, 72, 0);
-    border-bottom-color: rgba(255, 222, 72, 0);
-}
-
-.squad-card:hover .squad-selected-glow,
-.squad-card:focus .squad-selected-glow {
-    background-color: rgba(255, 211, 70, 0.10);
-    border-left-color: rgba(255, 222, 72, 0.54);
-    border-right-color: rgba(255, 222, 72, 0.54);
-    border-top-color: rgba(255, 222, 72, 0.54);
-    border-bottom-color: rgba(255, 222, 72, 0.54);
-}
-
-.squad-card-selected .squad-selected-glow {
-    background-color: rgba(255, 211, 70, 0.16);
-    border-left-color: rgba(255, 230, 98, 0.86);
-    border-right-color: rgba(255, 230, 98, 0.86);
-    border-top-color: rgba(255, 230, 98, 0.86);
-    border-bottom-color: rgba(255, 230, 98, 0.86);
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_selected_frame.png");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
 }
 
 .squad-card:hover .squad-number,
@@ -1047,11 +1002,11 @@
     height: 93%;
 }
 
-#SquadCard1 { left: 1.1%; }
-#SquadCard2 { left: 20.6%; }
-#SquadCard3 { left: 40.1%; }
-#SquadCard4 { left: 59.6%; }
-#SquadCard5 { left: 79.1%; }
+#SquadCard1 { left: 1.2%; }
+#SquadCard2 { left: 20.95%; }
+#SquadCard3 { left: 40.7%; }
+#SquadCard4 { left: 60.45%; }
+#SquadCard5 { left: 80.2%; }
 
 .squad-number {
     position: absolute;

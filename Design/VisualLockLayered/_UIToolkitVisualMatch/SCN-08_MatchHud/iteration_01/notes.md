@@ -4,7 +4,7 @@ Date:
 2026-06-21
 
 Status:
-Satisfied for current pass after slice 08 squad-tray correction. The earlier `Satisfied for current pass` status was incorrect because it accepted the squad tray from a weak broad crop and did not compare each repeated squad card against the reference. User review identified the five squad panels as visually poor, with the health/slider area not cleanly separated from the cards, a non-reference yellow strip pinned to the top of each card, and card 1 being treated as a one-off design instead of the selected-state example.
+In progress after slice 09 selected-state correction. The earlier `Satisfied for current pass` status was incorrect because it accepted the squad tray from a weak broad crop and did not compare each repeated squad card against the reference. User review identified the five squad panels as visually poor, with the health/slider area not cleanly separated from the cards, a non-reference yellow strip pinned to the top of each card, card 1 being treated as a one-off design instead of the selected-state example, a weak inner selected overlay, and visibly asymmetric left/right squad-tray padding.
 
 Scope:
 
@@ -23,6 +23,7 @@ Validation:
 - Minimap crop: `shadow_ui_builder_scn08_minimap_valid_baseline_crop.png`.
 - Squad tray full slice 08 capture: `shadow_ui_builder_scn08_squad_tray_slice08_full.png`.
 - Squad tray focused slice 08 crop: `shadow_ui_builder_scn08_squad_tray_slice08_crop.png`.
+- Squad tray slice 09 capture: pending. Shadow Unity batch import/compile passed, but the controllable GUI preview was not available long enough to capture a fresh UI Builder crop in this pass.
 
 Findings:
 
@@ -31,9 +32,13 @@ Findings:
 - The earlier claim that squad tray cards passed was too weak. Visibility/readability is not enough for Target Lock acceptance.
 - Slice 08 restyles the five squad cards to better match the reference hierarchy: taller cards, clearer portrait area, separated health bar/value text, and segmented status pips.
 - Slice 08 fixes the inherited `top: 0` layout bug on `.squad-health-frame`, which had incorrectly pinned the yellow health/progress strip to the top border of each squad card.
-- Slice 08 adds the same `SelectedGlow` layer to all five cards and styles `squad-card-selected`, `:hover`, and `:focus` as reusable state treatments without changing card geometry.
+- Slice 08 added a `SelectedGlow` layer to all five cards, but user review correctly rejected it as a cheap inner overlay that did not cover the chrome like the mockup.
+- Slice 09 removes the `SelectedGlow` elements entirely and changes `squad-card-selected`, `:hover`, and `:focus` to replace the card chrome with `scn08_v02_squad_card_selected_frame.png`.
+- Slice 09 balances the five-card tray margins: the cards remain `18.6%` wide, with `1.2%` left and right outer padding and consistent internal gaps.
 - Runtime already moves `squad-card-selected` based on `UiMatchHudSquadTrayModel.SelectedSlot` in `UiToolkitShellView.ApplyMatchHudSquadTray`, so the selected visual state can apply to any squad card when selected.
-- The focused slice 08 crop shows all five repeated cards visible with no top progress strip, no health/slider border overlap, readable titles and health values, consistent card chrome, and card 1 serving only as the selected-state example.
+- Slice 09 keeps card 1 as only the static selected-state example in UI Builder; runtime selection remains class-driven.
+- Validation slice 09: `git diff --check` passed.
+- Validation slice 09: shadow Unity batch import/compile passed with no SCN-08 asset/import/compile errors in `/private/tmp/warline-scn08-slice09-shadow-batch.log`.
 - Right threat banner and quick rail controls are visible.
 - Visual-only UXML/USS changes were required for the squad tray. Runtime bindings were preserved: `Title`, `HealthFrame`, `HealthFill`, `HealthText`, and `Portrait`.
 

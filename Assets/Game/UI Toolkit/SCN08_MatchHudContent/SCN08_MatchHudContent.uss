@@ -168,9 +168,11 @@
     -unity-slice-bottom: 150;
 }
 
+.command-button:hover .command-button-frame,
+.command-button:focus .command-button-frame,
 .command-button-selected .command-button-frame {
-    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png");
-    -unity-background-image-tint-color: rgb(255, 229, 145);
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_selected_frame.png");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
 }
 
 .rect-button-frame {
@@ -1181,6 +1183,39 @@
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(238, 231, 199);
+}
+
+.command-button:hover .select-command-icon,
+.command-button:focus .select-command-icon,
+.command-button-selected .select-command-icon,
+.command-button:hover .move-command-icon,
+.command-button:focus .move-command-icon,
+.command-button-selected .move-command-icon,
+.command-button:hover .attack-command-icon,
+.command-button:focus .attack-command-icon,
+.command-button-selected .attack-command-icon,
+.command-button:hover .hold-command-icon,
+.command-button:focus .hold-command-icon,
+.command-button-selected .hold-command-icon,
+.command-button:hover .stop-command-icon,
+.command-button:focus .stop-command-icon,
+.command-button-selected .stop-command-icon,
+.command-button:hover .build-command-icon,
+.command-button:focus .build-command-icon,
+.command-button-selected .build-command-icon,
+.command-button:hover .scan-command-icon,
+.command-button:focus .scan-command-icon,
+.command-button-selected .scan-command-icon,
+.command-button:hover .support-command-icon,
+.command-button:focus .support-command-icon,
+.command-button-selected .support-command-icon {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}
+
+.command-button:hover .command-button-label,
+.command-button:focus .command-button-label,
+.command-button-selected .command-button-label {
+    color: rgb(255, 239, 174);
 }
 
 /* ── Minimap panel ── */

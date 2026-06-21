@@ -37,8 +37,11 @@ Findings:
 - Slice 09 balances the five-card tray margins: the cards remain `18.6%` wide, with `1.2%` left and right outer padding and consistent internal gaps.
 - Runtime already moves `squad-card-selected` based on `UiMatchHudSquadTrayModel.SelectedSlot` in `UiToolkitShellView.ApplyMatchHudSquadTray`, so the selected visual state can apply to any squad card when selected.
 - Slice 09 keeps card 1 as only the static selected-state example in UI Builder; runtime selection remains class-driven.
+- Slice 09 also updates the command rail selected-state example shown by `MoveCommand`: `command-button-selected`, `:hover`, and `:focus` now replace the command button chrome with `scn08_v02_square_button_selected_frame.png` instead of tinting the normal frame.
+- Runtime already moves `command-button-selected` based on the active tactical command mode in `UiToolkitShellView.ApplyMatchHudCommandState`, so the selected visual state can apply to Select, Move, Attack, Hold, Stop, Build, Scan, and Support.
 - Validation slice 09: `git diff --check` passed.
 - Validation slice 09: shadow Unity batch import/compile passed with no SCN-08 asset/import/compile errors in `/private/tmp/warline-scn08-slice09-shadow-batch.log`.
+- Validation slice 09 command-button follow-up: shadow Unity batch import/compile passed with no command selected-frame import/compile errors in `/private/tmp/warline-scn08-command-selected-shadow-batch.log`.
 - Right threat banner and quick rail controls are visible.
 - Visual-only UXML/USS changes were required for the squad tray. Runtime bindings were preserved: `Title`, `HealthFrame`, `HealthFill`, `HealthText`, and `Portrait`.
 

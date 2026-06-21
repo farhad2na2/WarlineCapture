@@ -27,6 +27,31 @@ Do not tune UI Toolkit visuals from stale runtime captures, bad crops, or screen
 - Before taking a UI Builder screenshot, enable the `Match Game View` check-mark toggle so the preview uses the intended aspect/resolution.
 - After the `Match Game View` toggle is enabled, click `Fit Viewport` so the UI is scaled into the viewport before capturing.
 
+## Runtime Scaling Rule
+
+UI Builder and Game View do not apply scale in the same way. Treat UI Builder as the authoring/reference view, then validate runtime scaling separately in Game View.
+
+For the Target Lock UI:
+
+- Author and tune USS against the `4800x2160` reference canvas in UI Builder.
+- Keep runtime `PanelSettings` on UI Toolkit Scale With Screen Size, not Constant Pixel Size.
+- Use `RuntimePanelSettings.asset` values:
+  - `m_ScaleMode: 2`
+  - `m_ReferenceResolution: {x: 4800, y: 2160}`
+  - `m_ScreenMatchMode: 2`
+  - `m_Match: 0.5`
+- Preserve these values in editor validation/repair tooling. Do not let validation reset the panel to `1920x1080`, Constant Pixel Size, or a different screen match mode.
+- Do not compensate for runtime aspect or resolution problems by shrinking screen-specific fonts in USS.
+- If text looks correct at `4800x2160` but massive at `1920x1080`, inspect `PanelSettings` scale mode first.
+- Constant Pixel Size is only valid for one exact target resolution; it is not Canvas-like and will make lower resolutions render 4800-authored font sizes too large.
+- UI Builder does not prove runtime aspect scaling. Validate runtime at the common aspect/resolution cases in Game View after the static UI Builder pass is visually accepted.
+
+SCN-02 correction:
+
+- The temporary Constant Pixel Size fix made the main menu look acceptable only at the current 4800-style view, then failed at `1920x1080`.
+- The correct fix was UI Toolkit Scale With Screen Size (`m_ScaleMode: 2`) with the `4800x2160` reference and Expand-style aspect handling (`m_ScreenMatchMode: 2`).
+- The validation artifact for the corrected `1920x1080` runtime pass is `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/main_runtime_scale_with_screen_1920.png`.
+
 ## File Scope Rule
 
 Allowed by default for visual-match loops:

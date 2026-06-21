@@ -4,7 +4,7 @@ Date:
 2026-06-21
 
 Status:
-Approved by user after preparation/inventory, first logo-source decision, typography scale slices, SCN-02 9-slice import-warning slice, SCN-02 scoped PPU/9-slice audits, and static UI Builder preview setup. The user-confirmed shield/star logo remains unchanged; SCN-02 text sizes were reduced from the original overflow state and then retuned against the valid 4800x2160 artifact; the collapsed diagnostics overlay is visually hidden; SCN-02 `-unity-slice-scale` values now include explicit `px` units so Unity accepts them. Current user direction was to fix only for 4800x2160 in UI Builder/static comparison, Unity/UI Builder may be opened in the shadow project, and do not run the game.
+Approved by user after preparation/inventory, first logo-source decision, typography scale slices, SCN-02 9-slice import-warning slice, SCN-02 scoped PPU/9-slice audits, and static UI Builder preview setup. The user-confirmed shield/star logo remains unchanged; SCN-02 text sizes were reduced from the original overflow state and then retuned against the valid 4800x2160 artifact; the collapsed diagnostics overlay is visually hidden; SCN-02 `-unity-slice-scale` values now include explicit `px` units so Unity accepts them. Runtime scaling follow-up: `RuntimePanelSettings` now uses UI Toolkit Scale With Screen Size (`m_ScaleMode: 2`) with the 4800x2160 reference and Expand-style aspect handling (`m_ScreenMatchMode: 2`). This matches the old CanvasScaler intent and prevents the 4800-authored fonts from rendering as raw oversized pixels at 1920x1080.
 
 Allowed files touched in this slice:
 
@@ -14,6 +14,7 @@ Allowed files touched in this slice:
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/pixel_per_unit_audit.md`
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/nine_slice_audit.md`
 - `Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uss`
+- `Assets/Game/UI Toolkit/RuntimePanelSettings.asset`
 - `Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uss`
 - `Assets/Game/Scripts/Editor/UiToolkitTargetLockStaticPreview.cs`
 - `Assets/Game/Scripts/Editor/UiToolkitTargetLockStaticPreview.cs.meta`
@@ -22,6 +23,7 @@ Allowed files touched in this slice:
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice04.png`
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice04_canvas.png`
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/target_vs_shadow_ui_builder_typography_slice04_contact.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/main_runtime_scale_with_screen_1920.png`
 
 Structure lock:
 
@@ -46,7 +48,7 @@ Initial findings:
 - The provisional 20:9 capture shows large text overflow/collisions in resource chips, mode card titles, commander labels, and deploy CTA. Iteration 01 reduced those font sizes in `SCN02_MainMenuContent.uss` as the first visual-only fix batch.
 - Most chrome sprites import at Pixel Per Unit `100`; no PPU edits are justified until the first UI Builder/runtime crop comparison proves chrome scale mismatch.
 - Main and shadow projects both use Unity `6000.4.0f1`.
-- Current scope no longer requires shadow PlayMode/Game View capture. Use 4800x2160 UI Builder/static visual comparison only.
+- Current SCN-02 follow-up required main-scene Game View verification because the user reported UI Builder and runtime mismatch.
 - Allowed UI Toolkit/art files were synced to `/Users/farhad/Projects/WarlineCapture-CodexUnity1`; no C# files, scenes, prefabs, asmdefs, gameplay, ECS, or Canvas fallback files were synced.
 - Shadow import validation passed with Unity exit code `0`.
 - Fresh shadow log: `/private/tmp/warline-ui-target-lock-scn02-shadow-import-after-slice.log`.
@@ -87,6 +89,14 @@ Typography adjustments retained:
 | `.readiness-label` | 25px | 28px | Faction standing label was increased while staying inside the lower right frame. |
 | `.deploy-text` | 66px | 82px | Deploy CTA text was increased for target hierarchy without overfilling. |
 
+Runtime scale correction:
+
+- `RuntimePanelSettings.asset` now uses `m_ScaleMode: 2`, the UI Toolkit serialized value for Scale With Screen Size.
+- `RuntimePanelSettings.asset` now uses `m_ScreenMatchMode: 2`, the UI Toolkit serialized value used here for Expand-style aspect handling.
+- `UiToolkitMenuSceneStartupValidation` now preserves those runtime scale settings instead of resetting the panel to the old 1920x1080 setup.
+- The temporary attempt to compensate runtime mismatch by shrinking `.nav-text`, `.mode-title`, and `.deploy-text` was reverted; those selectors remain at the UI Builder-approved sizes.
+- Reason: 4800-authored USS pixel sizes must be scaled by runtime PanelSettings for lower resolutions. Constant Pixel Size is only valid for one exact resolution and makes 1920x1080 too large.
+
 Latest valid artifact:
 
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_runtime_iter04_text_diagnostics_4800x2160.png`
@@ -100,6 +110,7 @@ Latest valid artifact:
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice04.png`
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice04_canvas.png`
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/target_vs_shadow_ui_builder_typography_slice04_contact.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/main_runtime_scale_with_screen_1920.png`
 
 Superseded artifacts:
 
@@ -135,5 +146,5 @@ Validation:
 
 - Passed `git diff --check` after syncing typography slice 04 to the shadow project and before this notes update.
 - Shadow UI Builder/static screenshot path is working; typography slice 04 contact sheet was approved by the user.
-- Runtime/Game View capture is intentionally out of scope for the current SCN-02 pass.
+- Main-scene Game View follow-up captured at 1920x1080 after the Scale With Screen Size fix: `main_runtime_scale_with_screen_1920.png`.
 - No further SCN-02 edits are planned unless the user requests revisions.

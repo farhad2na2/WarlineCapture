@@ -25,6 +25,8 @@ public static class UiToolkitMenuSceneStartupValidation
     private const string InboxPopupUxmlPath = "Assets/Game/UI Toolkit/POP07_InboxPopup/POP07_InboxPopup.uxml";
     private const string RuntimeThemePath = "Assets/Game/UI Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss";
     private const string ScreenshotPath = "/private/tmp/warline-uitoolkit-menu-startup.png";
+    private static readonly Vector2 TargetLockReferenceResolution = new(4800f, 2160f);
+    private static readonly Vector2Int TargetLockCaptureResolution = new(3840, 1728);
 
     private static int screenshotFrameCount;
     private static int screenshotCaptureRequestedFrame;
@@ -552,7 +554,7 @@ public static class UiToolkitMenuSceneStartupValidation
                 return;
             }
 
-            lastScreenshotRenderState = DescribeMenuRenderState(shellView);
+            lastScreenshotRenderState = $"{DescribeMenuRenderState(shellView)}; {DescribeCameraState(bootstrap.UiCamera)}";
 
             if (!screenshotCaptureRequested)
             {
@@ -580,13 +582,13 @@ public static class UiToolkitMenuSceneStartupValidation
             {
                 CompleteScreenshotValidation(
                     false,
-                    $"Captured Menu screenshot is still black or near-black. luma={luma:0.000} path={ScreenshotPath} {DescribeMenuRenderState(shellView)}");
+                    $"Captured Menu screenshot is still black or near-black. luma={luma:0.000} path={ScreenshotPath} {lastScreenshotRenderState}");
                 return;
             }
 
             CompleteScreenshotValidation(
                 true,
-                $"Captured non-black Menu screenshot. luma={luma:0.000} path={ScreenshotPath} {DescribeMenuRenderState(shellView)}");
+                $"Captured non-black Menu screenshot. luma={luma:0.000} path={ScreenshotPath} {lastScreenshotRenderState}");
         }
         catch (Exception exception)
         {
@@ -620,6 +622,17 @@ public static class UiToolkitMenuSceneStartupValidation
             $"{name}[children={element.childCount},hidden={element.ClassListContains("shell-hidden")}," +
             $"display={style.display},visibility={style.visibility},opacity={style.opacity:0.00}," +
             $"wb=({worldBound.x:0},{worldBound.y:0},{worldBound.width:0},{worldBound.height:0})]";
+    }
+
+    private static string DescribeCameraState(Camera camera)
+    {
+        if (camera == null)
+            return "camera=null";
+
+        return
+            $"camera[name={camera.name},active={camera.gameObject.activeInHierarchy}," +
+            $"enabled={camera.enabled},clear={camera.clearFlags},depth={camera.depth:0.0}," +
+            $"target={(camera.targetTexture != null ? camera.targetTexture.name : "null")}]";
     }
 
     private static bool IsPickedByPanel(VisualElement target, out string pickedElement)
@@ -690,7 +703,11 @@ public static class UiToolkitMenuSceneStartupValidation
         ClearScreenshotPanelTexture();
         screenshotPanelSettings = panelSettings;
         previousPanelTexture = panelSettings.targetTexture;
-        screenshotPanelTexture = new RenderTexture(1920, 1080, 24, RenderTextureFormat.ARGB32)
+        screenshotPanelTexture = new RenderTexture(
+            TargetLockCaptureResolution.x,
+            TargetLockCaptureResolution.y,
+            24,
+            RenderTextureFormat.ARGB32)
         {
             name = "UiToolkitMenuSceneStartupValidationTexture"
         };
@@ -914,8 +931,9 @@ public static class UiToolkitMenuSceneStartupValidation
         ThemeStyleSheet theme = AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>(RuntimeThemePath);
         SerializedObject serializedObject = new(panelSettings);
         SetSerializedObject(serializedObject, "m_ThemeStyleSheet", theme);
-        SetSerializedInt(serializedObject, "m_ScaleMode", 1);
-        SetSerializedVector2(serializedObject, "m_ReferenceResolution", new Vector2(1920f, 1080f));
+        SetSerializedInt(serializedObject, "m_ScaleMode", 2);
+        SetSerializedVector2(serializedObject, "m_ReferenceResolution", TargetLockReferenceResolution);
+        SetSerializedInt(serializedObject, "m_ScreenMatchMode", 2);
         SetSerializedFloat(serializedObject, "m_Match", 0.5f);
         SetSerializedBool(serializedObject, "m_ClearDepthStencil", true);
         SetSerializedBool(serializedObject, "m_VertexBudgetAutoAdjust", true);

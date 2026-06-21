@@ -251,11 +251,15 @@
     width: 78px;
     height: 34px;
     overflow: visible;
+    opacity: 0;
+    picking-mode: ignore;
 }
 
 .diagnostics-overlay-expanded {
     width: 544px;
     height: 474px;
+    opacity: 1;
+    picking-mode: position;
 }
 
 .diagnostics-fps-button {

@@ -11,19 +11,19 @@ Last updated:
 
 Progress snapshot:
 
-- Checklist progress: `19 / 140 complete (13.6%)`.
-- In progress: `1`.
-- Remaining open: `121`.
-- Current target: `SCN-02 Main Menu iteration 01 - typography, slice-scale import, and SCN-02 audit docs applied; post-fix runtime screenshot blocked on shadow capture tooling`.
-- Iteration loop status: `SCN-02 prep and mapping complete; user-confirmed shield/star logo retained; provisional 20:9 artifact saved; typography scale pass applied; SCN-02 slice-scale import warnings fixed; SCN-02 PPU and 9-slice audits recorded`.
-- Surfaces target-matched: `0 / 11`.
-- User verification gate: `stop after SCN-02 Main Menu target-match handoff`.
+- Checklist progress: `25 / 142 complete (17.6%)`.
+- In progress: `0`.
+- Remaining open: `117`.
+- Current target: `No active target; SCN-02 Main Menu approved by user after 4800x2160 UI Builder/static visual handoff from WarlineCapture-CodexUnity1 shadow project`.
+- Iteration loop status: `SCN-02 approved; user-confirmed shield/star logo retained; diagnostics overlay hidden visually when collapsed; SCN-02 slice-scale import warnings fixed; SCN-02 PPU and 9-slice audits recorded; editor-only static preview launcher synced to shadow; bad editor-chrome crop was corrected; typography density slice 04 accepted; reusable mockup-conversion playbook saved at Design/Architecture/ui_toolkit_target_lock_mockup_conversion_playbook.md`.
+- Surfaces target-matched: `1 / 11`.
+- User verification gate: `SCN-02 approved; wait for explicit user direction before continuing to the next screen`.
 - Pixel Per Unit audit status: `SCN-02 audit recorded in pixel_per_unit_audit.md; no PPU changes`.
 - 9-slice audit status: `SCN-02 audit recorded in nine_slice_audit.md; slice-scale unit fix applied; no sprite border changes`.
-- UI Builder comparison status: `not run`.
-- Game View capture comparison status: `provisional existing 20:9 contact sheet saved; post-fix runtime screenshot still pending`.
-- Shadow project validation status: `allowed visual files synced; shadow import validation passed with no SCN-02 USS warnings; current screenshot runner still missing in shadow`.
-- Validation status: `git diff --check passed for SCN-02 audit-doc slice; forbidden-path status check still shows pre-existing C# worktree changes outside this visual slice`.
+- UI Builder/static comparison status: `shadow-project UI Builder screenshot captured; canvas inspector shows 4800x2160; corrected clean-canvas crop/contact sheet saved for typography slice 04 and approved by user`.
+- Game View capture comparison status: `not required for current SCN-02 pass; do not run the game`.
+- Shadow project validation status: `not required for current SCN-02 pass; do not run PlayMode/Game View capture`.
+- Validation status: `git diff --check passed after static-preview tooling update; forbidden-path status check still shows pre-existing C#/config worktree changes outside this visual slice`.
 
 ## Scope
 
@@ -90,22 +90,37 @@ Forbidden changes:
 - Do not "fix" visual mismatch by changing data values or hiding required runtime panels.
 - Do not delete fallback Canvas assets in this visual-match loop.
 
+## Shared Chrome Override Rules
+
+These rules override mockup pixel matching when there is a conflict.
+
+- Reuse the approved SCN-02 Main Menu header for Armory and the rest of the main-menu-adjacent screens. Do not create or convert separate target headers for those screens.
+- Match HUD is the exception: it is allowed to keep or receive its own gameplay HUD header.
+- Reuse the approved SCN-02 Main Menu left navigation style and background for Armory and other main-menu screens.
+- For reused left navigation, only icons, labels, selected state, and route-specific active item should change.
+- Do not create a visually different Armory left nav, even if the mockup shows one.
+- If a right-side mockup panel is one large baked sprite with multiple sections, split it into separate UI Toolkit panels like the approved SCN-02 right commander panel.
+- Baked sprites are acceptable only for decorative background art, not for multi-section live UI panels.
+- Priority order is shared SCN-02 header/nav language, then live panel-by-panel composition, then clean Target Lock style, then strict mockup pixel matching.
+
 ## Implementation Loop Contract
 
 Every surface must use the same loop until it is visually accepted:
 
 1. Implement one small visual fix batch in allowed files only.
 2. Reload or reopen the surface in UI Builder.
-3. Compare against the saved Target Lock reference mockup.
-4. Classify differences as `PPU`, `9-slice`, `position`, `padding`, `font`, `sprite`, `state`, `content`, `responsive`, or `artifact`.
-5. Fix Pixel Per Unit and 9-slice issues before layout or font tweaks.
-6. Repeat UI Builder comparison until no obvious UI Builder mismatch remains.
-7. Sync the same allowed-file changes into the shadow project.
-8. Capture the surface in the shadow project at 16:9 and 20:9 without opening the main project.
-9. Generate comparison contact sheets and focused crops.
-10. Reclassify remaining differences and start the next fix batch.
-11. Continue until the surface has no visible unapproved mismatch in latest UI Builder preview, latest 16:9 capture, latest 20:9 capture, and focused crops.
-12. If any visible mismatch remains, keep the surface `In progress` or record a user-approved exception; do not mark it `Target matched`.
+3. Before screenshot capture, enable the `Match Game View` check-mark toggle so UI Builder uses the intended aspect/resolution.
+4. After the `Match Game View` toggle is enabled, click `Fit Viewport` so the preview is scaled correctly in the UI Builder viewport.
+5. Compare against the saved Target Lock reference mockup.
+6. Classify differences as `PPU`, `9-slice`, `position`, `padding`, `font`, `sprite`, `state`, `content`, `responsive`, or `artifact`.
+7. Fix Pixel Per Unit and 9-slice issues before layout or font tweaks.
+8. Repeat UI Builder comparison until no obvious UI Builder mismatch remains.
+9. Sync the same allowed-file changes into the shadow project.
+10. Reconfirm the `Match Game View` check-mark toggle is enabled, click `Fit Viewport`, then capture the surface in the shadow project at the required aspect/resolution without opening the main project.
+11. Generate comparison contact sheets and focused crops.
+12. Reclassify remaining differences and start the next fix batch.
+13. Continue until the surface has no visible unapproved mismatch in latest UI Builder preview, latest required captures, and focused crops.
+14. If any visible mismatch remains, keep the surface `In progress` or record a user-approved exception; do not mark it `Target matched`.
 
 This is intentionally iterative. One implementation pass is never enough evidence for completion.
 
@@ -126,6 +141,8 @@ Pixel Per Unit is a first-class acceptance item, not a cleanup detail.
 A surface is target-matched only when:
 
 - Header, footer, left, right, and middle regions remain in their existing structural roles.
+- Main-menu-adjacent screens reuse the approved SCN-02 header and left-nav style unless they are explicitly gameplay HUD surfaces.
+- Multi-section right panels are decomposed into live panel-by-panel UI instead of kept as one baked sprite.
 - Full-screen Game View capture matches the target composition at the canonical target resolution.
 - 20:9 capture keeps intended edge anchoring and does not stretch content art.
 - Focused crops match for every major panel, button, tab, card, resource chip, icon, portrait, divider, and footer/header chrome.
@@ -473,7 +490,7 @@ Use these labels in iteration notes:
 | --- | --- | ---: | --- | --- |
 | Shell | Not started | 0 | None | None |
 | SCN-01 Loading | Not started | 0 | None | None |
-| SCN-02 Main Menu | In progress | 1 | Post-fix screenshot blocked: shadow lacks the current UI Toolkit screenshot runner; C# sync is forbidden in this loop | `Design/VisualLockLayered/_UIToolkitVisualMatch/target_to_toolkit_mapping.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/pixel_per_unit_audit.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/nine_slice_audit.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/notes.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/provisional_target_vs_existing_20x9_contact.png`; `/private/tmp/warline-ui-target-lock-scn02-shadow-import-after-slice.log` |
+| SCN-02 Main Menu | Target matched | 1 | Approved by user; use SCN-02 lessons from `Design/Architecture/ui_toolkit_target_lock_mockup_conversion_playbook.md` for later screens | `Assets/Game/Scripts/Editor/UiToolkitTargetLockStaticPreview.cs`; `Design/VisualLockLayered/_UIToolkitVisualMatch/target_to_toolkit_mapping.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/pixel_per_unit_audit.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/nine_slice_audit.md`; `Design/Architecture/ui_toolkit_target_lock_mockup_conversion_playbook.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/notes.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice04.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice04_canvas.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/target_vs_shadow_ui_builder_typography_slice04_contact.png` |
 | SCN-03 Commander Profile | Not started | 0 | None | None |
 | SCN-08 Match HUD | Not started | 0 | None | None |
 | SCN-08 Build Placement Bar | Not started | 0 | None | None |
@@ -487,10 +504,12 @@ Use these labels in iteration notes:
 
 Main-menu verification gate:
 
-- [ ] Complete SCN-02 Main Menu first.
-- [ ] Save final SCN-02 UI Builder preview, shadow-project 16:9 capture, shadow-project 20:9 capture, comparison contact sheet, focused crops, Pixel Per Unit notes, 9-slice notes, and validation result.
-- [ ] Mark SCN-02 as `Pending user verification`, not `Target matched`, until the user reviews it.
-- [ ] Stop implementation after the SCN-02 handoff and do not continue to SCN-19 or later surfaces until the user approves the main-menu result.
+- [x] Complete SCN-02 Main Menu first.
+- [x] Save final SCN-02 4800x2160 UI Builder/static preview, comparison contact sheet, focused crops, Pixel Per Unit notes, 9-slice notes, and validation result.
+- [x] Mark SCN-02 as `Pending user verification`, not `Target matched`, until the user reviews it.
+- [x] Stop implementation after the SCN-02 handoff and do not continue to SCN-19 or later surfaces until the user approves the main-menu result.
+- [x] Document shared chrome override rules: reuse SCN-02 header/nav for menu screens, allow Match HUD its own header, and decompose baked multi-section right panels.
+- [x] Document UI Builder screenshot validation rule: enable the `Match Game View` check-mark toggle, then click `Fit Viewport` before capture.
 
 1. SCN-02 Main Menu, because it defines the main Target Lock chrome language for menu screens.
 2. SCN-19 Armory, because it has dense cards, tabs, locked/selected states, and known chrome sensitivity.

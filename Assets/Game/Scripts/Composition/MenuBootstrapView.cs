@@ -87,8 +87,19 @@ public sealed class MenuBootstrapView : MonoBehaviour
     {
         bool useUiToolkit = IsUiToolkitMode;
 
-        if (uiCanvas != null && uiCanvas.enabled == useUiToolkit)
-            uiCanvas.enabled = !useUiToolkit;
+        if (uiCanvas != null)
+        {
+            if (!useUiToolkit)
+            {
+                if (!uiCanvas.gameObject.activeSelf)
+                    uiCanvas.gameObject.SetActive(true);
+                if (uiCanvas.transform.localScale != Vector3.one)
+                    uiCanvas.transform.localScale = Vector3.one;
+            }
+
+            if (uiCanvas.enabled == useUiToolkit)
+                uiCanvas.enabled = !useUiToolkit;
+        }
         if (shellEcsPresentation != null && shellEcsPresentation.enabled == useUiToolkit)
             shellEcsPresentation.enabled = !useUiToolkit;
         if (contentSystem != null && contentSystem.enabled == useUiToolkit)

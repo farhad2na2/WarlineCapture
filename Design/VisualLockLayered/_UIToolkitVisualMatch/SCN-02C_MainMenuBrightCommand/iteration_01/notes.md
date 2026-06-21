@@ -4,7 +4,7 @@ Date:
 2026-06-21
 
 Status:
-Preparation/inventory, first logo-source decision, typography scale slice, SCN-02 9-slice import-warning slice, and SCN-02 scoped PPU/9-slice audits. The user-confirmed shield/star logo remains unchanged; SCN-02 text sizes were reduced to address the provisional 20:9 capture's major text overflow; SCN-02 `-unity-slice-scale` values now include explicit `px` units so Unity accepts them.
+Approved by user after preparation/inventory, first logo-source decision, typography scale slices, SCN-02 9-slice import-warning slice, SCN-02 scoped PPU/9-slice audits, and static UI Builder preview setup. The user-confirmed shield/star logo remains unchanged; SCN-02 text sizes were reduced from the original overflow state and then retuned against the valid 4800x2160 artifact; the collapsed diagnostics overlay is visually hidden; SCN-02 `-unity-slice-scale` values now include explicit `px` units so Unity accepts them. Current user direction was to fix only for 4800x2160 in UI Builder/static comparison, Unity/UI Builder may be opened in the shadow project, and do not run the game.
 
 Allowed files touched in this slice:
 
@@ -14,8 +14,14 @@ Allowed files touched in this slice:
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/pixel_per_unit_audit.md`
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/nine_slice_audit.md`
 - `Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uss`
+- `Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uss`
+- `Assets/Game/Scripts/Editor/UiToolkitTargetLockStaticPreview.cs`
+- `Assets/Game/Scripts/Editor/UiToolkitTargetLockStaticPreview.cs.meta`
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/provisional_existing_runtime_20x9.png`
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/provisional_target_vs_existing_20x9_contact.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice04.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice04_canvas.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/target_vs_shadow_ui_builder_typography_slice04_contact.png`
 
 Structure lock:
 
@@ -35,36 +41,74 @@ Initial findings:
 - The SCN-02 UXML already maps to the required structural regions: background, header, left, middle, right, and footer.
 - SCN-02 uses the Target Lock MainMenuBrightCommand sprite family for most chrome and icons.
 - The logo points at the Splash Loading TargetLockV04 shield/star logo, and the user confirmed this is the correct Main Menu logo. Do not replace it with `scn02c_brand_logo_lockup.png` in this pass.
-- Provisional existing runtime capture: `/private/tmp/warline-uitoolkit-menu-startup.png`, saved into this iteration as `provisional_existing_runtime_20x9.png`. This is not accepted as a shadow capture; it is only a diagnostic artifact.
+- Provisional existing runtime capture: `/private/tmp/warline-uitoolkit-menu-startup.png`, saved into this iteration as `provisional_existing_runtime_20x9.png`. This is not accepted as the current reference artifact; it is only a diagnostic artifact.
 - Provisional comparison artifact: `provisional_target_vs_existing_20x9_contact.png`.
 - The provisional 20:9 capture shows large text overflow/collisions in resource chips, mode card titles, commander labels, and deploy CTA. Iteration 01 reduced those font sizes in `SCN02_MainMenuContent.uss` as the first visual-only fix batch.
 - Most chrome sprites import at Pixel Per Unit `100`; no PPU edits are justified until the first UI Builder/runtime crop comparison proves chrome scale mismatch.
 - Main and shadow projects both use Unity `6000.4.0f1`.
-- The shadow project exists, but it is missing the current SCN-02 UI Toolkit UXML/USS files and the current `UiToolkitMenuSceneStartupValidation.RunPlayModeScreenshot` C# runner. Since this visual loop forbids C# syncs, shadow capture is blocked until an allowed non-C# capture path exists or the user approves a separate tooling step outside this loop.
+- Current scope no longer requires shadow PlayMode/Game View capture. Use 4800x2160 UI Builder/static visual comparison only.
 - Allowed UI Toolkit/art files were synced to `/Users/farhad/Projects/WarlineCapture-CodexUnity1`; no C# files, scenes, prefabs, asmdefs, gameplay, ECS, or Canvas fallback files were synced.
 - Shadow import validation passed with Unity exit code `0`.
 - Fresh shadow log: `/private/tmp/warline-ui-target-lock-scn02-shadow-import-after-slice.log`.
+- Added editor-only static preview menu `Game/UI Toolkit/Target Lock/Open SCN-02 Main Menu Static Preview` for this visual loop. Unity log confirmed it opened UI Builder with `playMode=False`.
+- Unity static preview window observed through macOS UI scripting: `UI Builder` plus `Menu - WarlineCapture - Android - Unity 6.4 (6000.4.0f1) <Metal>`.
+- macOS screenshot capture from this process failed with `could not create image from display`, including a display-specific retry. Do not substitute stale runtime/Game View images for the current UI Builder/static artifact.
+- After the user required shadow-project capture, the heartbeat was updated and allowed UI Toolkit/art/static-preview files were synced to `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
+- Shadow UI Builder static screenshot saved as `shadow_ui_builder_static_scn02_4800_target_screen.png`. The screenshot bitmap is `2940x1912` because it is the physical display capture, but the UI Builder inspector in the screenshot shows the canvas size set to `4800 x 2160`.
+- Shadow UI Builder visible viewport crop saved as `shadow_ui_builder_static_scn02_visible_viewport.png`.
+- Fresh static contact sheet saved as `target_vs_shadow_ui_builder_static_contact.png`.
+- The first shadow UI Builder screenshot is not approval-ready because the UI Builder viewport is panned/partial; it proves the shadow capture path works and gives a current mismatch artifact, but the next iteration needs a cleaner centered/fit UI Builder viewport.
+- Frontmost shadow UI Builder retry saved as `shadow_ui_builder_static_scn02_frontmost_retry.png`.
+- Frontmost viewport crop saved as `shadow_ui_builder_static_scn02_frontmost_viewport.png`.
+- Fresh frontmost contact sheet saved as `target_vs_shadow_ui_builder_frontmost_contact.png`.
+- The frontmost contact sheet is usable for visual decisions. It shows the current live text hierarchy is too small against the Target Lock reference at the 4800x2160 static target, especially navigation labels, resource values, mode card titles, right-column microcopy, and the deploy CTA.
 - Fresh shadow import no longer reports SCN-02 `Expected (<length>) but found` warnings for `SCN02_MainMenuContent.uss`.
 - The fresh log still contains non-SCN-02 Unity licensing/Android ADB noise; it did not fail the import run.
 - SCN-02 pixel-per-unit audit is recorded in `Design/VisualLockLayered/_UIToolkitVisualMatch/pixel_per_unit_audit.md`.
 - SCN-02 9-slice audit is recorded in `Design/VisualLockLayered/_UIToolkitVisualMatch/nine_slice_audit.md`.
 - The SCN-02 audit found all referenced sprites currently use PPU `100`; no PPU edits were made.
 - The SCN-02 9-slice audit records 13 sliced USS selectors. The deploy frame remains the only explicit top/bottom orientation review item before future USS/meta changes.
+- The initial clean-retry crop was wrong because it clipped the left side of the UI and included the UI Builder inspector. Corrected clean-canvas crop bounds were applied to the full shadow UI Builder screenshot.
+- Typography slice 04 was approved by the user. The remaining visible differences are accepted as 20:9 composition choices against a 16:9 reference rather than proven PPU or 9-slice defects.
+- Lessons from this approved pass are saved in `Design/Architecture/ui_toolkit_target_lock_mockup_conversion_playbook.md`.
 
 Typography adjustments retained:
 
 | USS selector | Old font size | New font size | Reason |
 | --- | ---: | ---: | --- |
-| `.resource-value` | 54px | 38px | Resource counters collided with icons/plus controls in 20:9 capture. |
-| `.nav-text` | 44px | 32px | Left navigation labels were too large relative to target and crowded the chevron. |
-| `.mode-title` | 70px | 50px | Mode card titles overlapped across adjacent cards. |
-| `.commander-title` | 52px | 36px | Commander heading exceeded the target panel scale. |
-| `.identity-name` | 40px | 29px | Commander identity row clipped/overlapped the right panel. |
-| `.identity-level` | 31px | 22px | Subtitle overlapped under commander identity. |
-| `.commander-level-badge` | 48px | 34px | Level badge was oversized inside its frame. |
-| `.commander-progress-value` | 34px | 24px | Progress value crowded the progress bar panel. |
-| `.readiness-label` | 36px | 25px | Faction standing label was oversized. |
-| `.deploy-text` | 92px | 66px | Deploy CTA text overfilled the button. |
+| `.resource-value` | 36px | 40px | Slice 04 lightly increased resource counters after the corrected canvas crop still showed under-sized values. |
+| `.nav-text` | 36px | 44px | Left navigation labels were increased toward the reference hierarchy while keeping chevron clearance. |
+| `.mode-title` | 58px | 70px | Mode card titles were increased for 4800x2160 readability without returning to cross-card overlap. |
+| `.commander-title` | 36px | 40px | Commander heading remains contained while reading closer to the reference. |
+| `.identity-name` | 28px | 32px | Commander identity row was increased while staying inside its frame. |
+| `.identity-level` | 18px | 20px | Subtitle stays inside the identity row at 4800x2160. |
+| `.commander-level-badge` | 32px | 36px | Level badge was increased while fitting its frame. |
+| `.commander-progress-value` | 22px | 24px | Progress value remains inside the progress bar panel. |
+| `.readiness-label` | 25px | 28px | Faction standing label was increased while staying inside the lower right frame. |
+| `.deploy-text` | 66px | 82px | Deploy CTA text was increased for target hierarchy without overfilling. |
+
+Latest valid artifact:
+
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_runtime_iter04_text_diagnostics_4800x2160.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/target_vs_shadow_iter04_contact.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_4800_target_screen.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/target_vs_shadow_ui_builder_static_contact.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_frontmost_retry.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/target_vs_shadow_ui_builder_frontmost_contact.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice03.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/target_vs_shadow_ui_builder_typography_slice03_contact.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice04.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice04_canvas.png`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/target_vs_shadow_ui_builder_typography_slice04_contact.png`
+
+Superseded artifacts:
+
+- `shadow_runtime_after_typography_slice_gui_1156x650.png`
+- `shadow_runtime_iter02_typography_scaled_1156x650.png`
+- `shadow_runtime_iter03_typography_scaled_1156x650.png`
+- `shadow_runtime_iter03b_typography_scaled_1156x650.png`
+
+Do not use the superseded 1156x650 artifacts for visual decisions.
 
 9-slice import-warning adjustments retained:
 
@@ -83,17 +127,13 @@ Typography adjustments retained:
 
 Next intended loop:
 
-1. Sync allowed UI Toolkit/art files to `/Users/farhad/Projects/WarlineCapture-CodexUnity1` after approval.
-2. Use an existing shadow-project UI Toolkit screenshot path if one is added outside this visual-only loop, or record the capture blocker explicitly.
-3. Save baseline 16:9 and 20:9 captures under `baseline/`.
-4. Generate comparison contact sheets against the saved Target Lock reference.
-5. Classify the first visible differences, with Pixel Per Unit and 9-slice issues ahead of layout/font edits.
-6. Recapture after the typography pass before making any PPU, 9-slice, or panel-position changes.
+1. Keep SCN-02 stopped as the approved Target Lock menu baseline.
+2. Use `Design/Architecture/ui_toolkit_target_lock_mockup_conversion_playbook.md` for the next screen.
+3. Do not continue other screens until the user explicitly approves the next surface.
 
 Validation:
 
-- Passed `git diff --check` for the tracker and SCN-02 visual-match markdown artifacts.
-- Pending post-fix UI Builder/shadow recapture; allowed visual files were synced to shadow, but no C# or forbidden files were synced.
-- Passed shadow import validation after syncing allowed visual files only.
-- Pending post-fix runtime screenshot; the current screenshot runner is C# and is not present in the shadow project.
-- Pending focused crop review before any PPU or sprite border edits.
+- Passed `git diff --check` after syncing typography slice 04 to the shadow project and before this notes update.
+- Shadow UI Builder/static screenshot path is working; typography slice 04 contact sheet was approved by the user.
+- Runtime/Game View capture is intentionally out of scope for the current SCN-02 pass.
+- No further SCN-02 edits are planned unless the user requests revisions.

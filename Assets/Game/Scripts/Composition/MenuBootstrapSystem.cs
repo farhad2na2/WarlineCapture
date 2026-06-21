@@ -717,7 +717,7 @@ internal sealed class MenuBootstrapSystem
         entityManager.GetBuffer<UiShellTransitionCompleteComponent>(boundary).Clear();
         entityManager.SetComponentData(boundary, new UiShellStateComponent
         {
-            CurrentMode = UiShellMode.MainMenu,
+            CurrentMode = UiShellMode.None,
             ActiveRoute = UIRoute.MainMenu,
             Phase = UiShellTransitionPhase.Idle,
             TransitionSequenceId = 0,

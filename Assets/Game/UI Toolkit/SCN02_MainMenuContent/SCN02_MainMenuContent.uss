@@ -151,7 +151,7 @@
     right: 15%;
     top: 0;
     bottom: 0;
-    font-size: 38px;
+    font-size: 40px;
     color: rgb(242, 232, 196);
     -unity-text-align: middle-center;
     white-space: nowrap;
@@ -302,7 +302,7 @@
     right: 10%;
     top: 0;
     bottom: 0;
-    font-size: 32px;
+    font-size: 44px;
     color: rgb(242, 232, 196);
     -unity-text-align: middle-left;
     white-space: nowrap;
@@ -498,7 +498,7 @@
     right: 2.5%;
     bottom: 8.7%;
     height: 10.2%;
-    font-size: 50px;
+    font-size: 70px;
     color: rgb(248, 239, 205);
     -unity-text-align: middle-center;
     white-space: nowrap;
@@ -651,7 +651,7 @@
     right: 10%;
     top: 0;
     bottom: 0;
-    font-size: 36px;
+    font-size: 40px;
     color: rgb(242, 232, 196);
     -unity-text-align: middle-center;
     white-space: nowrap;
@@ -737,14 +737,14 @@
 .identity-name {
     top: 7%;
     height: 50%;
-    font-size: 29px;
+    font-size: 32px;
     color: rgb(242, 232, 196);
 }
 
 .identity-level {
     bottom: 6%;
     height: 38%;
-    font-size: 22px;
+    font-size: 20px;
     color: rgb(167, 179, 80);
 }
 
@@ -753,7 +753,7 @@
     top: 13%;
     width: 16.5%;
     height: 74%;
-    font-size: 34px;
+    font-size: 36px;
     color: rgb(248, 204, 64);
     -unity-text-align: middle-center;
     background-color: rgba(23, 26, 24, 0.8);
@@ -791,7 +791,7 @@
     right: 0;
     top: 5%;
     height: 36%;
-    font-size: 25px;
+    font-size: 28px;
     color: rgb(201, 190, 153);
     -unity-text-align: middle-center;
 }
@@ -858,7 +858,7 @@
     right: 16%;
     top: 3%;
     height: 74%;
-    font-size: 66px;
+    font-size: 82px;
     color: rgb(255, 243, 196);
     -unity-text-align: middle-center;
     white-space: nowrap;

@@ -40,9 +40,8 @@
 .background-shade,
 .header-back-plate,
 .middle-frame,
-.inspection-frame,
-.inspection-backing,
 .category-frame,
+.item-backing,
 .item-frame,
 .bottom-tab-frame,
 .resource-frame,
@@ -87,7 +86,7 @@
     -unity-slice-right: 110;
     -unity-slice-top: 52;
     -unity-slice-bottom: 52;
-    -unity-slice-scale: 0.30;
+    -unity-slice-scale: 0.30px;
 }
 
 .header-logo-panel {
@@ -136,7 +135,7 @@
     -unity-slice-right: 135;
     -unity-slice-top: 82;
     -unity-slice-bottom: 82;
-    -unity-slice-scale: 0.20;
+    -unity-slice-scale: 0.20px;
 }
 
 .resource-icon,
@@ -233,7 +232,7 @@
     -unity-slice-right: 150;
     -unity-slice-top: 150;
     -unity-slice-bottom: 150;
-    -unity-slice-scale: 0.16;
+    -unity-slice-scale: 0.16px;
 }
 
 .header-menu-icon {
@@ -252,10 +251,10 @@
    ======================================================================== */
 .left-content {
     position: absolute;
-    left: 0.8%;
-    top: 14%;
-    width: 15.5%;
-    height: 72%;
+    left: 1.55%;
+    top: 16.7%;
+    width: 16.9%;
+    height: 56.3%;
 }
 
 .left-nav-panel {
@@ -271,29 +270,28 @@
 .category-button {
     position: relative;
     width: 100%;
-    height: 18.5%;
+    height: 14.45%;
 }
 
-/* Category button frame: sprite 307×75, slice ~18.9% L/R, ~26.7% T/B */
 .category-frame {
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_category_button_default_frame.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_default.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 58;
-    -unity-slice-right: 58;
-    -unity-slice-top: 20;
-    -unity-slice-bottom: 20;
-    -unity-slice-scale: 0.50;
+    -unity-slice-left: 130;
+    -unity-slice-right: 130;
+    -unity-slice-top: 95;
+    -unity-slice-bottom: 95;
+    -unity-slice-scale: 0.22px;
 }
 
 .category-selected .category-frame {
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_category_button_selected_frame.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png");
 }
 
 .category-icon {
     position: absolute;
-    left: 10%;
+    left: 8.5%;
     top: 22%;
-    width: 16%;
+    width: 17.5%;
     height: 56%;
     -unity-background-scale-mode: scale-to-fit;
 }
@@ -320,15 +318,25 @@
 
 .category-label {
     position: absolute;
-    left: 32%;
-    right: 6%;
+    left: 28%;
+    right: 10%;
     top: 0;
     bottom: 0;
-    font-size: 22px;
+    font-size: 44px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(240, 232, 199);
     white-space: nowrap;
+}
+
+.category-chevron {
+    position: absolute;
+    right: 6.8%;
+    top: 34%;
+    width: 6.5%;
+    height: 32%;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_chevron_icon.png");
+    -unity-background-scale-mode: scale-to-fit;
 }
 
 /* ========================================================================
@@ -337,9 +345,9 @@
    ======================================================================== */
 .middle-content {
     position: absolute;
-    left: 17%;
+    left: 19.4%;
     top: 13%;
-    width: 57%;
+    width: 53.8%;
     height: 73%;
 }
 
@@ -351,7 +359,7 @@
     -unity-slice-right: 78;
     -unity-slice-top: 60;
     -unity-slice-bottom: 60;
-    -unity-slice-scale: 0.40;
+    -unity-slice-scale: 0.40px;
     -unity-background-image-tint-color: rgb(246, 232, 182);
 }
 
@@ -361,7 +369,7 @@
     top: 2.5%;
     width: 28%;
     height: 8%;
-    font-size: 36px;
+    font-size: 46px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(242, 232, 196);
@@ -379,7 +387,7 @@
     -unity-slice-right: 48;
     -unity-slice-top: 22;
     -unity-slice-bottom: 22;
-    -unity-slice-scale: 0.50;
+    -unity-slice-scale: 0.50px;
 }
 
 .filter-dropdown {
@@ -398,7 +406,7 @@
     right: 16%;
     top: 0;
     bottom: 0;
-    font-size: 14px;
+    font-size: 20px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(242, 232, 196);
@@ -455,29 +463,48 @@
 .armory-item-view {
     position: relative;
     width: 23%;
-    height: 300px;
+    height: 520px;
     margin-right: 1.5%;
-    margin-bottom: 16px;
+    margin-bottom: 26px;
     overflow: hidden;
 }
 
 /* Roster card frame: sprite 288×414, slice ~18.8% L/R, ~15.5% T/B */
-.item-frame {
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_roster_card_default_frame.png");
+.item-backing {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_blue.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 54;
-    -unity-slice-right: 54;
-    -unity-slice-top: 64;
-    -unity-slice-bottom: 64;
-    -unity-slice-scale: 0.72;
+    -unity-slice-left: 72;
+    -unity-slice-right: 72;
+    -unity-slice-top: 104;
+    -unity-slice-bottom: 104;
+    -unity-slice-scale: 0.32px;
+}
+
+.armory-item-view.selected .item-backing {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_selected.png");
+}
+
+.armory-item-view.locked .item-backing {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_amber.png");
+    opacity: 0.62;
+}
+
+.item-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_blue.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 72;
+    -unity-slice-right: 72;
+    -unity-slice-top: 104;
+    -unity-slice-bottom: 104;
+    -unity-slice-scale: 0.32px;
 }
 
 .armory-item-view.selected .item-frame {
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_roster_card_selected_frame.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png");
 }
 
 .armory-item-view.locked .item-frame {
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_roster_card_locked_frame.png");
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_amber.png");
 }
 
 /* Rarity star/badge at top center */
@@ -530,7 +557,7 @@
     right: 8%;
     top: 51%;
     height: 7%;
-    font-size: 16px;
+    font-size: 30px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(244, 238, 210);
@@ -543,7 +570,7 @@
     right: 10%;
     top: 58%;
     height: 5%;
-    font-size: 10px;
+    font-size: 18px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(183, 174, 137);
@@ -584,7 +611,7 @@
     right: 18%;
     top: 0;
     bottom: 0;
-    font-size: 13px;
+    font-size: 24px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
 }
@@ -616,7 +643,7 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    font-size: 9px;
+    font-size: 21px;
     -unity-font-style: bold;
     color: rgb(213, 204, 169);
 }
@@ -650,13 +677,13 @@
     right: 0;
     top: 0;
     height: 32%;
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_progress_meter_empty_frame.png");
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_track_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 36;
-    -unity-slice-right: 36;
-    -unity-slice-top: 7;
-    -unity-slice-bottom: 7;
-    -unity-slice-scale: 0.72;
+    -unity-slice-left: 80;
+    -unity-slice-right: 80;
+    -unity-slice-top: 24;
+    -unity-slice-bottom: 24;
+    -unity-slice-scale: 0.24px;
 }
 
 /* Progress fill: sprite 112×46, slice ~19.6% L/R, ~10.9% T/B */
@@ -666,13 +693,13 @@
     top: 0;
     bottom: 0;
     width: 78%;
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_progress_fill_olive_segment.png");
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_fill_gold.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 22;
-    -unity-slice-right: 22;
-    -unity-slice-top: 5;
-    -unity-slice-bottom: 5;
-    -unity-slice-scale: 0.72;
+    -unity-slice-left: 50;
+    -unity-slice-right: 50;
+    -unity-slice-top: 18;
+    -unity-slice-bottom: 18;
+    -unity-slice-scale: 0.24px;
 }
 
 .medium-fill {
@@ -684,7 +711,7 @@
     position: absolute;
     top: 38%;
     bottom: 0;
-    font-size: 12px;
+    font-size: 23px;
     -unity-font-style: bold;
     color: rgb(226, 218, 188);
 }
@@ -725,7 +752,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    font-size: 9px;
+    font-size: 21px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(154, 226, 64);
@@ -748,9 +775,9 @@
    ======================================================================== */
 .right-content {
     position: absolute;
-    right: 0.8%;
+    right: 1.4%;
     top: 13%;
-    width: 25%;
+    width: 21.4%;
     height: 73%;
 }
 
@@ -762,36 +789,109 @@
     bottom: 0;
 }
 
-/* Dark solid backing fills the entire panel interior */
-.inspection-backing {
+.inspection-section,
+.section-backing,
+.section-frame,
+.portrait-backing,
+.portrait-frame,
+.inspection-name,
+.inspection-type,
+.inspection-portrait-frame,
+.inspection-portrait-art,
+.level-label,
+.level-value,
+.level-track,
+.level-fill,
+.xp-value,
+.stats-panel,
+.cta-button {
     position: absolute;
+}
+
+.inspection-section {
+    left: 0;
+    right: 0;
+}
+
+.title-section {
+    top: 0;
+    height: 8.5%;
+}
+
+.portrait-section {
+    top: 9.8%;
+    height: 30.5%;
+}
+
+.level-section {
+    top: 42%;
+    height: 10.5%;
+}
+
+.stats-section {
+    top: 53.8%;
+    height: 20%;
+}
+
+.action-section {
+    bottom: 0;
+    height: 24.8%;
+}
+
+.section-backing,
+.section-frame,
+.portrait-backing,
+.portrait-frame {
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_selected.png");
     -unity-background-scale-mode: stretch-to-fill;
 }
 
-/* Outer frame: sprite 783×1390, hollow 9-slice, borders ~33px L/R, ~31px T/B
-   Tall vertical card frame — clean border, no baked-in sections */
-.inspection-frame {
-    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png");
+.section-backing {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_backing_default.png");
+    -unity-slice-left: 130;
+    -unity-slice-right: 130;
+    -unity-slice-top: 95;
+    -unity-slice-bottom: 95;
+    -unity-slice-scale: 0.22px;
+}
+
+.section-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_default.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 33;
-    -unity-slice-right: 34;
-    -unity-slice-top: 30;
-    -unity-slice-bottom: 32;
-    -unity-slice-scale: 0.30;
+    -unity-slice-left: 130;
+    -unity-slice-right: 130;
+    -unity-slice-top: 95;
+    -unity-slice-bottom: 95;
+    -unity-slice-scale: 0.22px;
+}
+
+.portrait-backing {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_blue.png");
+    -unity-slice-left: 72;
+    -unity-slice-right: 72;
+    -unity-slice-top: 104;
+    -unity-slice-bottom: 104;
+    -unity-slice-scale: 0.32px;
+}
+
+.portrait-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_blue.png");
+    -unity-slice-left: 72;
+    -unity-slice-right: 72;
+    -unity-slice-top: 104;
+    -unity-slice-bottom: 104;
+    -unity-slice-scale: 0.32px;
 }
 
 .inspection-name {
-    position: absolute;
-    left: 10%;
-    right: 10%;
-    top: 2.5%;
-    height: 6%;
-    font-size: 24px;
+    left: 7%;
+    right: 7%;
+    top: 2%;
+    height: 56%;
+    font-size: 40px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(242, 232, 196);
@@ -799,62 +899,27 @@
 }
 
 .inspection-type {
-    position: absolute;
-    left: 10%;
-    right: 10%;
-    top: 8.5%;
-    height: 4%;
-    font-size: 14px;
+    left: 8%;
+    right: 8%;
+    bottom: 7%;
+    height: 34%;
+    font-size: 24px;
     -unity-font-style: bold;
-    -unity-text-align: upper-center;
+    -unity-text-align: middle-center;
     color: rgb(156, 226, 62);
     letter-spacing: 1px;
 }
 
-/* --- Section containers --- */
-/* Each section is a positioned container with a dark bar backing */
-.inspection-section {
-    position: absolute;
-    left: 6%;
-    right: 6%;
-}
-
-/* Section bar backing: uses comms_status_panel_frame sprite (439×112)
-   which is a solid dark bar with a thin gold accent on left edge.
-   Slice ~4.1% L (gold accent), ~2.3% R, ~25% T/B */
-.section-bar-backing {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_comms_status_panel_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 18;
-    -unity-slice-right: 10;
-    -unity-slice-top: 28;
-    -unity-slice-bottom: 28;
-    -unity-slice-scale: 0.50;
-}
-
-/* Portrait section: art well with backing */
-.portrait-section {
-    top: 14%;
-    height: 27%;
-}
-
 .inspection-portrait-frame {
-    position: absolute;
-    left: 8%;
-    right: 8%;
-    top: 10%;
-    bottom: 10%;
+    left: 7%;
+    right: 7%;
+    top: 6%;
+    bottom: 6%;
     background-color: rgb(10, 14, 13);
     overflow: hidden;
 }
 
 .inspection-portrait-art {
-    position: absolute;
     left: 0;
     right: 0;
     top: 0;
@@ -863,104 +928,79 @@
     -unity-background-scale-mode: scale-and-crop;
 }
 
-/* Level section: level label, value, XP bar */
-.level-section {
-    top: 42.5%;
-    height: 12%;
-}
-
-.level-label,
-.level-value,
-.xp-value {
-    position: absolute;
+.level-label {
+    left: 6%;
+    top: 10%;
+    width: 30%;
+    height: 35%;
+    font-size: 24px;
     -unity-font-style: bold;
     color: rgb(232, 222, 190);
-}
-
-.level-label {
-    left: 8%;
-    top: 12%;
-    width: 28%;
-    height: 30%;
-    font-size: 13px;
     -unity-text-align: middle-left;
 }
 
 .level-value {
-    right: 8%;
-    top: 12%;
-    width: 36%;
-    height: 30%;
-    font-size: 13px;
+    right: 6%;
+    top: 10%;
+    width: 38%;
+    height: 35%;
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: rgb(232, 222, 190);
     -unity-text-align: middle-right;
 }
 
 .level-track {
-    position: absolute;
-    left: 8%;
-    right: 36%;
-    top: 52%;
-    height: 22%;
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_progress_meter_empty_frame.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 36;
-    -unity-slice-right: 36;
-    -unity-slice-top: 7;
-    -unity-slice-bottom: 7;
-    -unity-slice-scale: 0.72;
+    left: 6%;
+    right: 38%;
+    top: 56%;
+    height: 24%;
+    background-color: rgba(22, 24, 24, 0.92);
 }
 
 .level-fill {
-    position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
     width: 62%;
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_progress_fill_olive_segment.png");
-    -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 22;
-    -unity-slice-right: 22;
-    -unity-slice-top: 5;
-    -unity-slice-bottom: 5;
-    -unity-slice-scale: 0.72;
+    background-color: rgb(191, 174, 57);
 }
 
 .xp-value {
-    right: 8%;
-    top: 52%;
-    width: 28%;
-    height: 40%;
-    font-size: 11px;
+    right: 6%;
+    top: 50%;
+    width: 30%;
+    height: 42%;
+    font-size: 22px;
+    -unity-font-style: bold;
     -unity-text-align: middle-right;
     color: rgb(180, 172, 140);
 }
 
-/* Stats section: 5 stat rows with icon, name, value */
-.stats-section {
-    top: 55.5%;
-    height: 19%;
-}
-
 .stats-panel {
-    position: absolute;
-    left: 8%;
-    right: 8%;
-    top: 8%;
-    bottom: 8%;
+    left: 7%;
+    right: 7%;
+    top: 7%;
+    bottom: 7%;
 }
 
 .stat-row {
     position: relative;
     width: 100%;
-    height: 20%;
+    height: 18.8%;
+}
+
+.stat-icon,
+.stat-name,
+.stat-value {
+    position: absolute;
 }
 
 .stat-icon {
-    position: absolute;
     left: 0;
-    top: 15%;
-    width: 8%;
-    height: 70%;
+    top: 12%;
+    width: 9%;
+    height: 76%;
     -unity-background-scale-mode: scale-to-fit;
 }
 
@@ -985,24 +1025,22 @@
 }
 
 .stat-name {
-    position: absolute;
-    left: 11%;
-    width: 52%;
+    left: 13%;
+    width: 46%;
     top: 0;
     bottom: 0;
-    font-size: 14px;
+    font-size: 22px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(207, 197, 164);
 }
 
 .stat-value {
-    position: absolute;
-    right: 0;
-    width: 34%;
+    right: 2%;
+    width: 32%;
     top: 0;
     bottom: 0;
-    font-size: 15px;
+    font-size: 25px;
     -unity-font-style: bold;
     -unity-text-align: middle-right;
     color: rgb(157, 226, 61);
@@ -1012,40 +1050,45 @@
 /* CTA frames: primary gold 172×77, secondary dark 158×77
    slice ~24.4% L/R, ~28.6% T/B for primary; ~26.6% L/R for secondary */
 .cta-button {
-    position: absolute;
-    left: 8%;
-    right: 8%;
-    height: 7%;
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_cta_secondary_dark_frame.png");
+    left: 6%;
+    right: 6%;
+    height: 28%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 42;
-    -unity-slice-right: 42;
-    -unity-slice-top: 22;
-    -unity-slice-bottom: 22;
-    -unity-slice-scale: 0.55;
+    -unity-slice-left: 150;
+    -unity-slice-right: 150;
+    -unity-slice-top: 110;
+    -unity-slice-bottom: 110;
+    -unity-slice-scale: 0.22px;
 }
 
 .primary-cta {
-    top: 76%;
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_cta_primary_gold_frame.png");
+    top: 5%;
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame.png");
+    -unity-slice-left: 155;
+    -unity-slice-right: 155;
+    -unity-slice-top: 116;
+    -unity-slice-bottom: 96;
+    -unity-slice-scale: 0.20px;
 }
 
 .equip-cta {
-    top: 84%;
-    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_category_button_selected_frame.png");
+    top: 36%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png");
 }
 
 .close-cta {
-    top: 92%;
+    top: 67%;
+    height: 28%;
 }
 
 .cta-icon,
 .close-x {
     position: absolute;
-    left: 18%;
-    top: 18%;
-    width: 12%;
-    height: 64%;
+    left: 13%;
+    top: 13%;
+    width: 16%;
+    height: 70%;
     -unity-background-scale-mode: scale-to-fit;
 }
 
@@ -1058,19 +1101,18 @@
 }
 
 .close-x {
-    font-size: 20px;
+    font-size: 40px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(232, 222, 190);
 }
 
 .cta-label {
-    position: absolute;
-    left: 33%;
+    left: 34%;
     right: 6%;
     top: 0;
     bottom: 0;
-    font-size: 18px;
+    font-size: 40px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(242, 232, 196);
@@ -1116,7 +1158,7 @@
     -unity-slice-right: 38;
     -unity-slice-top: 21;
     -unity-slice-bottom: 21;
-    -unity-slice-scale: 0.50;
+    -unity-slice-scale: 0.50px;
 }
 
 .bottom-tab-selected .bottom-tab-frame {
@@ -1158,7 +1200,7 @@
     right: 5%;
     top: 0;
     bottom: 0;
-    font-size: 18px;
+    font-size: 24px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(242, 232, 196);

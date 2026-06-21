@@ -110,7 +110,8 @@ When a mockup conflicts with these shared chrome rules, prefer the shared UI sys
 14. Refresh UI Builder in the shadow project.
 15. Reconfirm the `Match Game View` check-mark toggle is enabled, click `Fit Viewport`, then recapture, recrop, and regenerate the contact sheet.
 16. Update the tracker with artifact paths, validation, and the current status.
-17. Stop at user-verification gates instead of continuing into more screens.
+17. Continue to the next screen when the latest static/UI Builder result is visually satisfactory and no explicit approval gate is active.
+18. Stop only for unresolved visual direction, missing target assets, capture/tooling failure, explicit user pause, or a screen-specific approval gate.
 
 ## Crop Quality Rule
 
@@ -180,7 +181,7 @@ Do not use editor tooling to bypass the visual scope by running gameplay or chan
 
 ## Handoff Rule
 
-A screen should move to user verification when:
+A screen can move forward to the next surface when:
 
 - the latest contact sheet is based on a clean UI Builder/static crop;
 - the user-requested resolution/canvas path was used;
@@ -189,7 +190,7 @@ A screen should move to user verification when:
 - `git diff --check` passes;
 - no forbidden source files were edited for the current visual scope.
 
-Do not mark a screen `Target matched` until the user explicitly approves it.
+Do not mark a screen `Target matched` until the user explicitly approves it. For the remaining-screen loop, use `Satisfied for current pass` when the screen is clean enough to continue without per-screen approval.
 
 SCN-02 approval means:
 
@@ -210,7 +211,7 @@ For each future screen:
 6. Fix obvious asset/PPU/9-slice problems.
 7. Tune layout and typography in small slices.
 8. Save the accepted artifact path in the tracker.
-9. Stop for user verification before moving to the next screen.
+9. Continue to the next screen if the result is visually satisfactory and no blocker remains.
 
 ## SCN-02 Lessons To Reuse
 

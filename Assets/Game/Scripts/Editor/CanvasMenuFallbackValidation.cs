@@ -5,6 +5,7 @@ using Unity.Entities;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public static class CanvasMenuFallbackValidation
@@ -18,6 +19,11 @@ public static class CanvasMenuFallbackValidation
     private static double startedAt;
     private static bool completed;
     private static bool screenshotRequested;
+    private static int deployValidationFrameCount;
+    private static int deployValidationSubmitFrame;
+    private static double deployValidationStartedAt;
+    private static bool deployValidationCompleted;
+    private static bool deployValidationSubmitted;
 
     public static void Run()
     {
@@ -51,6 +57,36 @@ public static class CanvasMenuFallbackValidation
         }
     }
 
+    public static void RunDeployClickValidation()
+    {
+        try
+        {
+            RuntimeUiConfig config = AssetDatabase.LoadAssetAtPath<RuntimeUiConfig>(RuntimeUiConfigPath);
+            if (config == null)
+                throw new InvalidOperationException($"Missing runtime UI config: {RuntimeUiConfigPath}");
+
+            SetRuntimeUiMode(config, RuntimeUiMode.Canvas);
+            EditorUtility.SetDirty(config);
+            AssetDatabase.SaveAssets();
+
+            EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+
+            deployValidationFrameCount = 0;
+            deployValidationSubmitFrame = 0;
+            deployValidationStartedAt = EditorApplication.timeSinceStartup;
+            deployValidationCompleted = false;
+            deployValidationSubmitted = false;
+            EditorApplication.update -= ContinueDeployClickValidation;
+            EditorApplication.update += ContinueDeployClickValidation;
+            EditorApplication.EnterPlaymode();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[CanvasMenuDeployClickValidation] result=Failed\n{exception}");
+            EditorApplication.Exit(1);
+        }
+    }
+
     private static void Continue()
     {
         if (completed)
@@ -58,16 +94,21 @@ public static class CanvasMenuFallbackValidation
 
         try
         {
-            if (EditorApplication.timeSinceStartup - startedAt > 45d)
-            {
-                Complete(false, $"Timed out before Canvas menu deploy UI became visible. {DescribeRuntimeState()}");
-                return;
-            }
-
             if (!EditorApplication.isPlaying)
                 return;
 
             frameCount++;
+            if (frameCount == 1)
+                startedAt = EditorApplication.timeSinceStartup;
+            if (EditorApplication.timeSinceStartup - startedAt > 60d)
+            {
+                string timeoutPrefix = screenshotRequested
+                    ? "Timed out while waiting for Canvas menu render validation."
+                    : "Timed out before Canvas menu deploy UI became visible.";
+                Complete(false, $"{timeoutPrefix} {DescribeRuntimeState()}");
+                return;
+            }
+
             if (frameCount < 45)
                 return;
 
@@ -104,7 +145,6 @@ public static class CanvasMenuFallbackValidation
 
             if (!screenshotRequested)
             {
-                ScreenCapture.CaptureScreenshot(ScreenshotPath);
                 screenshotRequested = true;
                 screenshotRequestedFrame = frameCount;
                 return;
@@ -113,19 +153,12 @@ public static class CanvasMenuFallbackValidation
             if (frameCount - screenshotRequestedFrame < 12)
                 return;
 
-            if (!File.Exists(ScreenshotPath))
-                return;
-
-            Texture2D screenshot = new(2, 2, TextureFormat.RGBA32, false);
-            if (!screenshot.LoadImage(File.ReadAllBytes(ScreenshotPath)))
+            if (!TryRenderCameraLuma(bootstrap.UiCamera, ScreenshotPath, out float luma, out string renderError))
             {
-                UnityEngine.Object.DestroyImmediate(screenshot);
-                Complete(false, $"Captured Canvas menu screenshot could not be read. path={ScreenshotPath}");
+                Complete(false, renderError);
                 return;
             }
 
-            float luma = EstimateAverageLuma(screenshot);
-            UnityEngine.Object.DestroyImmediate(screenshot);
             if (luma < 0.05f)
             {
                 Complete(false, $"Captured Canvas menu screenshot is still black or near-black. luma={luma:0.000} path={ScreenshotPath}");
@@ -137,6 +170,78 @@ public static class CanvasMenuFallbackValidation
         catch (Exception exception)
         {
             Complete(false, exception.ToString());
+        }
+    }
+
+    private static void ContinueDeployClickValidation()
+    {
+        if (deployValidationCompleted)
+            return;
+
+        try
+        {
+            if (!EditorApplication.isPlaying)
+                return;
+
+            deployValidationFrameCount++;
+            if (deployValidationFrameCount == 1)
+                deployValidationStartedAt = EditorApplication.timeSinceStartup;
+            if (EditorApplication.timeSinceStartup - deployValidationStartedAt > 120d)
+            {
+                CompleteDeployClickValidation(false, $"Timed out waiting for Canvas Deploy click to route to Match. {DescribeDeployRuntimeState()} {DescribeRuntimeState()}");
+                return;
+            }
+
+            if (deployValidationFrameCount < 45)
+                return;
+
+            MenuBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
+            if (bootstrap == null)
+            {
+                CompleteDeployClickValidation(false, "Menu scene is missing MenuBootstrapView in PlayMode.");
+                return;
+            }
+
+            bootstrap.ApplyRuntimeUiMode();
+            if (bootstrap.IsUiToolkitMode)
+            {
+                CompleteDeployClickValidation(false, "RuntimeUiConfig is not in Canvas mode.");
+                return;
+            }
+
+            if (!deployValidationSubmitted)
+            {
+                Button deployButton = FindVisibleDeployButton();
+                if (deployButton == null)
+                    return;
+
+                deployButton.onClick.Invoke();
+                deployValidationSubmitted = true;
+                deployValidationSubmitFrame = deployValidationFrameCount;
+                Debug.Log("[CanvasMenuDeployClickValidation] deployActionSubmitted=UnityUIButton target=DeployCommandButton");
+                return;
+            }
+
+            if (UiShellRuntimeGateway.TryReadShellState(out UiShellStateModel shellState) &&
+                shellState.ActiveRoute == UIRoute.Match &&
+                (shellState.CurrentMode == UiShellMode.Loading || shellState.CurrentMode == UiShellMode.MatchHud))
+            {
+                CompleteDeployClickValidation(true, $"Canvas Deploy routed to Match. {DescribeDeployRuntimeState()}");
+                return;
+            }
+
+            if (deployValidationFrameCount - deployValidationSubmitFrame < 12)
+                return;
+
+            if (TryReadSceneLifecycleState(out SceneLifecycleStateComponent lifecycleState) &&
+                lifecycleState.Status == SceneLifecycleStatusKind.Failed)
+            {
+                CompleteDeployClickValidation(false, $"Deploy Match scene load failed. {DescribeDeployRuntimeState()}");
+            }
+        }
+        catch (Exception exception)
+        {
+            CompleteDeployClickValidation(false, exception.ToString());
         }
     }
 
@@ -160,9 +265,8 @@ public static class CanvasMenuFallbackValidation
             if (rect == null)
                 continue;
 
-            Vector3[] corners = new Vector3[4];
-            rect.GetWorldCorners(corners);
-            if (Vector3.Distance(corners[0], corners[2]) <= 1f)
+            Rect localRect = rect.rect;
+            if (localRect.width <= 1f || localRect.height <= 1f)
                 continue;
 
             return button;
@@ -182,6 +286,23 @@ public static class CanvasMenuFallbackValidation
             Debug.Log($"[CanvasMenuFallbackValidation] result=Passed {message}");
         else
             Debug.LogError($"[CanvasMenuFallbackValidation] result=Failed {message}");
+
+        if (EditorApplication.isPlaying)
+            EditorApplication.ExitPlaymode();
+        EditorApplication.Exit(success ? 0 : 1);
+    }
+
+    private static void CompleteDeployClickValidation(bool success, string message)
+    {
+        if (deployValidationCompleted)
+            return;
+
+        deployValidationCompleted = true;
+        EditorApplication.update -= ContinueDeployClickValidation;
+        if (success)
+            Debug.Log($"[CanvasMenuDeployClickValidation] result=Passed {message}");
+        else
+            Debug.LogError($"[CanvasMenuDeployClickValidation] result=Failed {message}");
 
         if (EditorApplication.isPlaying)
             EditorApplication.ExitPlaymode();
@@ -227,7 +348,42 @@ public static class CanvasMenuFallbackValidation
             }
         }
 
-        return $"{DescribeCanvasState(canvas, "canvas")} shellChildren={shellChildren} contentVersion={contentVersion} activeButtons={activeButtons} buttonNames=[{DescribeButtonNames(activeButtonObjects)}] regions=[{DescribeRegions(bootstrap)}] {shellState}";
+        return $"{DescribeCanvasState(canvas, "canvas")} shellChildren={shellChildren} contentVersion={contentVersion} activeButtons={activeButtons} buttonNames=[{DescribeButtonNames(activeButtonObjects)}] deployCandidates=[{DescribeDeployCandidates(activeButtonObjects)}] regions=[{DescribeRegions(bootstrap)}] {shellState}";
+    }
+
+    private static string DescribeDeployRuntimeState()
+    {
+        string shell = UiShellRuntimeGateway.TryReadShellState(out UiShellStateModel shellState)
+            ? $"shell(mode={shellState.CurrentMode},route={shellState.ActiveRoute},phase={shellState.Phase},transition={shellState.IsTransitionRunning},seq={shellState.TransitionSequenceId})"
+            : "shell=unavailable";
+        string loading = UiShellRuntimeGateway.TryReadLoadingProgress(out UiShellLoadingProgressModel loadingState)
+            ? $"loading(progress={loadingState.Progress01:0.00},complete={loadingState.IsComplete},status={loadingState.Status})"
+            : "loading=unavailable";
+        string lifecycle = TryReadSceneLifecycleState(out SceneLifecycleStateComponent lifecycleState)
+            ? $"scene(status={lifecycleState.Status},busy={lifecycleState.IsBusy},loaded={lifecycleState.IsMatchLoaded},progress={lifecycleState.Progress01:0.00})"
+            : "scene=unavailable";
+        Scene matchScene = SceneManager.GetSceneByName(SceneLifecycleSystem.MatchSceneName);
+        string unityScene = $"unityScene(valid={matchScene.IsValid()},loaded={matchScene.isLoaded})";
+        return $"{shell}; {loading}; {lifecycle}; {unityScene}";
+    }
+
+    private static bool TryReadSceneLifecycleState(out SceneLifecycleStateComponent lifecycleState)
+    {
+        lifecycleState = default;
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<SceneLifecycleBoundaryComponent>(),
+            ComponentType.ReadOnly<SceneLifecycleStateComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity entity = query.GetSingletonEntity();
+        lifecycleState = entityManager.GetComponentData<SceneLifecycleStateComponent>(entity);
+        return true;
     }
 
     private static string DescribeButtonNames(Button[] buttons)
@@ -248,6 +404,48 @@ public static class CanvasMenuFallbackValidation
 
         if (buttons.Length > count)
             builder.Append(",...");
+
+        return builder.ToString();
+    }
+
+    private static string DescribeDeployCandidates(Button[] buttons)
+    {
+        if (buttons == null || buttons.Length == 0)
+            return "";
+
+        StringBuilder builder = new();
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            Button button = buttons[i];
+            if (button == null)
+                continue;
+
+            string objectName = button.gameObject.name;
+            if (!string.Equals(objectName, "DeployCommandButton", StringComparison.Ordinal) &&
+                !string.Equals(objectName, "DeployOperationButton", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (builder.Length > 0)
+                builder.Append(';');
+
+            RectTransform rect = button.transform as RectTransform;
+            Rect localRect = rect != null ? rect.rect : default;
+            builder.Append(objectName);
+            builder.Append(":enabled=");
+            builder.Append(button.isActiveAndEnabled ? "1" : "0");
+            builder.Append(",interactable=");
+            builder.Append(button.IsInteractable() ? "1" : "0");
+            builder.Append(",rect=");
+            builder.Append(localRect.width.ToString("0.0"));
+            builder.Append('x');
+            builder.Append(localRect.height.ToString("0.0"));
+            builder.Append(",sizeDelta=");
+            builder.Append(rect != null ? rect.sizeDelta.ToString("F1") : "null");
+            builder.Append(",lossyScale=");
+            builder.Append(rect != null ? rect.lossyScale.ToString("F2") : "null");
+        }
 
         return builder.ToString();
     }
@@ -307,6 +505,49 @@ public static class CanvasMenuFallbackValidation
         }
 
         return count > 0 ? (float)(total / count) : 0f;
+    }
+
+    private static bool TryRenderCameraLuma(Camera camera, string screenshotPath, out float luma, out string error)
+    {
+        luma = 0f;
+        if (camera == null)
+        {
+            error = "Canvas menu validation could not render because the UI camera reference is missing.";
+            return false;
+        }
+
+        RenderTexture previousTarget = camera.targetTexture;
+        RenderTexture previousActive = RenderTexture.active;
+        RenderTexture renderTexture = null;
+        Texture2D texture = null;
+        try
+        {
+            renderTexture = new RenderTexture(1280, 720, 24, RenderTextureFormat.ARGB32);
+            texture = new Texture2D(renderTexture.width, renderTexture.height, TextureFormat.RGBA32, false);
+            camera.targetTexture = renderTexture;
+            camera.Render();
+            RenderTexture.active = renderTexture;
+            texture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+            texture.Apply(false, false);
+            File.WriteAllBytes(screenshotPath, texture.EncodeToPNG());
+            luma = EstimateAverageLuma(texture);
+            error = null;
+            return true;
+        }
+        catch (Exception exception)
+        {
+            error = $"Canvas menu validation render failed. {exception}";
+            return false;
+        }
+        finally
+        {
+            camera.targetTexture = previousTarget;
+            RenderTexture.active = previousActive;
+            if (texture != null)
+                UnityEngine.Object.DestroyImmediate(texture);
+            if (renderTexture != null)
+                UnityEngine.Object.DestroyImmediate(renderTexture);
+        }
     }
 
     private static void SetRuntimeUiMode(RuntimeUiConfig runtimeConfig, RuntimeUiMode mode)

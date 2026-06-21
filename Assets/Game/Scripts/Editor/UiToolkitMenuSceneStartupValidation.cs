@@ -32,6 +32,10 @@ public static class UiToolkitMenuSceneStartupValidation
     private static bool screenshotValidationCompleted;
     private static bool screenshotCaptureRequested;
     private static bool screenshotValidationShouldExitEditor;
+    private static string lastScreenshotRenderState;
+    private static RenderTexture screenshotPanelTexture;
+    private static RenderTexture previousPanelTexture;
+    private static PanelSettings screenshotPanelSettings;
     private static int deployValidationFrameCount;
     private static int deployValidationSubmitFrame;
     private static double deployValidationStartedAt;
@@ -105,6 +109,11 @@ public static class UiToolkitMenuSceneStartupValidation
             document,
             shellRoot,
             shellView);
+        if (bootstrap.UiCanvas != null && bootstrap.UiCanvas.transform.localScale != Vector3.one)
+        {
+            bootstrap.UiCanvas.transform.localScale = Vector3.one;
+            EditorUtility.SetDirty(bootstrap.UiCanvas.transform);
+        }
 
         EditorUtility.SetDirty(runtimeConfig);
         EditorUtility.SetDirty(panelSettings);
@@ -180,6 +189,8 @@ public static class UiToolkitMenuSceneStartupValidation
             screenshotValidationCompleted = false;
             screenshotCaptureRequested = false;
             screenshotValidationShouldExitEditor = true;
+            lastScreenshotRenderState = string.Empty;
+            ClearScreenshotPanelTexture();
             EditorApplication.update -= ContinuePlayModeScreenshotValidation;
             EditorApplication.update += ContinuePlayModeScreenshotValidation;
             EditorApplication.EnterPlaymode();
@@ -503,7 +514,7 @@ public static class UiToolkitMenuSceneStartupValidation
             double elapsed = EditorApplication.timeSinceStartup - screenshotValidationStartedAt;
             if (elapsed > 45d)
             {
-                CompleteScreenshotValidation(false, "Timed out before a non-black Menu screenshot could be captured.");
+                CompleteScreenshotValidation(false, $"Timed out before a non-black Menu screenshot could be captured. {lastScreenshotRenderState}");
                 return;
             }
 
@@ -541,9 +552,16 @@ public static class UiToolkitMenuSceneStartupValidation
                 return;
             }
 
+            lastScreenshotRenderState = DescribeMenuRenderState(shellView);
+
             if (!screenshotCaptureRequested)
             {
-                ScreenCapture.CaptureScreenshot(ScreenshotPath);
+                if (!TryBeginPanelTextureCapture(bootstrap.UiToolkitDocument, out string beginCaptureError))
+                {
+                    CompleteScreenshotValidation(false, beginCaptureError);
+                    return;
+                }
+
                 screenshotCaptureRequested = true;
                 screenshotCaptureRequestedFrame = screenshotFrameCount;
                 return;
@@ -552,19 +570,11 @@ public static class UiToolkitMenuSceneStartupValidation
             if (screenshotFrameCount - screenshotCaptureRequestedFrame < 12)
                 return;
 
-            if (!File.Exists(ScreenshotPath))
-                return;
-
-            Texture2D screenshot = new(2, 2, TextureFormat.RGBA32, false);
-            if (!screenshot.LoadImage(File.ReadAllBytes(ScreenshotPath)))
+            if (!TryWritePanelTextureScreenshot(ScreenshotPath, out float luma, out string captureError))
             {
-                UnityEngine.Object.DestroyImmediate(screenshot);
-                CompleteScreenshotValidation(false, $"Captured Menu screenshot could not be read. path={ScreenshotPath}");
+                CompleteScreenshotValidation(false, captureError);
                 return;
             }
-
-            float luma = EstimateAverageLuma(screenshot);
-            UnityEngine.Object.DestroyImmediate(screenshot);
 
             if (luma < 0.05f)
             {
@@ -661,6 +671,70 @@ public static class UiToolkitMenuSceneStartupValidation
         return count == 0 ? 0f : total / (count * 255000f);
     }
 
+    private static bool TryBeginPanelTextureCapture(UIDocument document, out string error)
+    {
+        error = null;
+        if (document == null)
+        {
+            error = "UI Toolkit screenshot validation cannot capture because UIDocument is missing.";
+            return false;
+        }
+
+        PanelSettings panelSettings = document.panelSettings;
+        if (panelSettings == null)
+        {
+            error = "UI Toolkit screenshot validation cannot capture because PanelSettings is missing.";
+            return false;
+        }
+
+        ClearScreenshotPanelTexture();
+        screenshotPanelSettings = panelSettings;
+        previousPanelTexture = panelSettings.targetTexture;
+        screenshotPanelTexture = new RenderTexture(1920, 1080, 24, RenderTextureFormat.ARGB32)
+        {
+            name = "UiToolkitMenuSceneStartupValidationTexture"
+        };
+        screenshotPanelTexture.Create();
+        panelSettings.targetTexture = screenshotPanelTexture;
+        document.rootVisualElement?.MarkDirtyRepaint();
+        return true;
+    }
+
+    private static bool TryWritePanelTextureScreenshot(string screenshotPath, out float luma, out string error)
+    {
+        luma = 0f;
+        error = null;
+        if (screenshotPanelTexture == null)
+        {
+            error = "UI Toolkit screenshot validation cannot read because no panel render texture was created.";
+            return false;
+        }
+
+        RenderTexture previousActive = RenderTexture.active;
+        Texture2D texture = null;
+        try
+        {
+            texture = new Texture2D(screenshotPanelTexture.width, screenshotPanelTexture.height, TextureFormat.RGBA32, false);
+            RenderTexture.active = screenshotPanelTexture;
+            texture.ReadPixels(new Rect(0, 0, screenshotPanelTexture.width, screenshotPanelTexture.height), 0, 0);
+            texture.Apply(false, false);
+            File.WriteAllBytes(screenshotPath, texture.EncodeToPNG());
+            luma = EstimateAverageLuma(texture);
+            return true;
+        }
+        catch (Exception exception)
+        {
+            error = $"UI Toolkit panel texture screenshot failed. {exception}";
+            return false;
+        }
+        finally
+        {
+            RenderTexture.active = previousActive;
+            if (texture != null)
+                UnityEngine.Object.DestroyImmediate(texture);
+        }
+    }
+
     private static bool IsMatchSceneLoaded()
     {
         Scene matchScene = SceneManager.GetSceneByName(SceneLifecycleSystem.MatchSceneName);
@@ -735,6 +809,7 @@ public static class UiToolkitMenuSceneStartupValidation
     {
         screenshotValidationCompleted = true;
         EditorApplication.update -= ContinuePlayModeScreenshotValidation;
+        ClearScreenshotPanelTexture();
         if (success)
             Debug.Log($"[UiToolkitMenuSceneStartupValidation] screenshotResult=Passed {message}");
         else
@@ -745,6 +820,20 @@ public static class UiToolkitMenuSceneStartupValidation
 
         if (Application.isBatchMode || screenshotValidationShouldExitEditor)
             EditorApplication.delayCall += () => EditorApplication.Exit(success ? 0 : 1);
+    }
+
+    private static void ClearScreenshotPanelTexture()
+    {
+        if (screenshotPanelSettings != null && screenshotPanelSettings.targetTexture == screenshotPanelTexture)
+            screenshotPanelSettings.targetTexture = previousPanelTexture;
+        screenshotPanelSettings = null;
+        previousPanelTexture = null;
+        if (screenshotPanelTexture != null)
+        {
+            screenshotPanelTexture.Release();
+            UnityEngine.Object.DestroyImmediate(screenshotPanelTexture);
+            screenshotPanelTexture = null;
+        }
     }
 
     private static void CompleteDeployValidation(bool success, string message)

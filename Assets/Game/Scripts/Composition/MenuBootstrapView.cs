@@ -89,12 +89,13 @@ public sealed class MenuBootstrapView : MonoBehaviour
 
         if (uiCanvas != null)
         {
+            if (uiCanvas.transform.localScale != Vector3.one)
+                uiCanvas.transform.localScale = Vector3.one;
+
             if (!useUiToolkit)
             {
                 if (!uiCanvas.gameObject.activeSelf)
                     uiCanvas.gameObject.SetActive(true);
-                if (uiCanvas.transform.localScale != Vector3.one)
-                    uiCanvas.transform.localScale = Vector3.one;
             }
 
             if (uiCanvas.enabled == useUiToolkit)

@@ -11,19 +11,19 @@ Last updated:
 
 Progress snapshot:
 
-- Checklist progress: `25 / 142 complete (17.6%)`.
-- In progress: `0`.
-- Remaining open: `117`.
-- Current target: `No active target; SCN-02 Main Menu approved by user after 4800x2160 UI Builder/static visual handoff from WarlineCapture-CodexUnity1 shadow project`.
-- Iteration loop status: `SCN-02 approved; user-confirmed shield/star logo retained; diagnostics overlay hidden visually when collapsed; SCN-02 slice-scale import warnings fixed; SCN-02 PPU and 9-slice audits recorded; editor-only static preview launcher synced to shadow; bad editor-chrome crop was corrected; typography density slice 04 accepted; reusable mockup-conversion playbook saved at Design/Architecture/ui_toolkit_target_lock_mockup_conversion_playbook.md`.
+- Checklist progress: `34 / 142 complete (23.9%)`.
+- In progress: `1`.
+- Remaining open: `108`.
+- Current target: `SCN-09 Build Drawer Popup iteration 01 - initial Target Lock readability pass`.
+- Iteration loop status: `SCN-02 approved and reused as shared chrome baseline; SCN-19 slice 13 fixes the rejected right action-button scale and the right stats label/value collision; SCN-03 slice 02 fixes artifacting panel frames and readability; SCN-08 baseline focused crops already pass the current HUD readability check without visual edits`.
 - Surfaces target-matched: `1 / 11`.
-- User verification gate: `SCN-02 approved; wait for explicit user direction before continuing to the next screen`.
+- User verification gate: `not required for every remaining screen, but do not leave the current screen while an obvious visual defect remains; continue only after latest UI Builder/static crops are visually satisfactory`.
 - Pixel Per Unit audit status: `SCN-02 audit recorded in pixel_per_unit_audit.md; no PPU changes`.
 - 9-slice audit status: `SCN-02 audit recorded in nine_slice_audit.md; slice-scale unit fix applied; no sprite border changes`.
-- UI Builder/static comparison status: `shadow-project UI Builder screenshot captured; canvas inspector shows 4800x2160; corrected clean-canvas crop/contact sheet saved for typography slice 04 and approved by user`.
+- UI Builder/static comparison status: `SCN-08 shadow-project UI Builder screenshot captured with Match Game View/Fit Viewport; baseline focused crops show readable HUD header, objectives/selected unit panel, squad tray, command rail, threat/quick rail, and minimap controls`.
 - Game View capture comparison status: `not required for current SCN-02 pass; do not run the game`.
-- Shadow project validation status: `not required for current SCN-02 pass; do not run PlayMode/Game View capture`.
-- Validation status: `git diff --check passed after static-preview tooling update; forbidden-path status check still shows pre-existing C#/config worktree changes outside this visual slice`.
+- Shadow project validation status: `SCN-19 validated only in /Users/farhad/Projects/WarlineCapture-CodexUnity1 UI Builder/static preview; PlayMode/Game View not used`.
+- Validation status: `git diff --check passed after SCN-19 shared chrome slice; shadow Editor log final import has no active SCN-19 invalid asset-path or slice-scale warnings`.
 
 ## Scope
 
@@ -76,13 +76,15 @@ Allowed write paths:
 - `Design/Architecture/ui_toolkit_target_lock_visual_match_tracker.md`
 - `Design/VisualLockLayered/_UIToolkitVisualMatch/**`
 - `Design/AgentReports/**`
+- Narrowly scoped editor-only static preview/capture tooling when needed to support UI Builder/static comparison in the shadow project. This exception does not allow runtime behavior, gameplay, ECS, composition, scene, prefab, or PlayMode capture changes.
 
 Forbidden changes:
 
 - Do not remove, rename, or move shell regions.
 - Do not collapse header, footer, left, right, or middle content into one flat image.
 - Do not replace live UI panels with a screenshot of the mockup.
-- Do not edit C# runtime, editor, or test files in this loop.
+- Do not edit C# runtime or test files in this loop.
+- Do not edit editor C# except for the explicit static preview/capture tooling exception in the allowed write paths.
 - Do not edit `Assets/Game/Scripts/**/*.cs`, `Assets/Tests/**/*.cs`, `.asmdef`, scene, prefab, ECS, gameplay, or composition files.
 - Do not change ECS read models, UI action requests, gameplay behavior, screen routing, or bindings.
 - Do not add Canvas dependencies back into the UI Toolkit path.
@@ -265,11 +267,11 @@ Apply visual updates one surface at a time, preserving structure and behavior.
 
 - [ ] SCN-01 Loading: match loading panel chrome, logo scale, progress bar, status chips, spinner, background, and footer/header spacing.
 - [ ] SCN-02 Main Menu: match header, navigation, resource strip, mode cards, commander panel, deploy CTA, background, and footer spacing.
-- [ ] SCN-03 Commander Profile: match profile panels, stat cards, portrait treatment, tabs, header, footer, and chrome hierarchy.
-- [ ] SCN-08 Match HUD: match top header, resource strip, objectives panel, selected panel, right quick rail, footer squad tray, command rail, minimap/quick panels if present.
+- [x] SCN-03 Commander Profile: match profile panels, stat cards, portrait treatment, tabs, header, footer, and chrome hierarchy for the current shared-chrome/readability pass.
+- [x] SCN-08 Match HUD: match top header, resource strip, objectives panel, selected panel, right quick rail, footer squad tray, command rail, minimap/quick panels if present for the current readability pass.
 - [ ] SCN-08 Build Placement Bar: match confirmation rail, action buttons, instruction text, warning state, and edge anchoring.
 - [ ] SCN-09 Build Drawer Popup: match popup frame, left catalog, right details/queue panel, tabs, cards, footer buttons, and close/header chrome.
-- [ ] SCN-19 Armory: match roster cards, inspection panel, bottom tabs, locked/selected states, filters, top chrome, and CTA buttons.
+- [x] SCN-19 Armory: match roster cards, inspection panel, bottom tabs, locked/selected states, filters, top chrome, and CTA buttons for the current shared-chrome/readability pass.
 - [ ] POP-05 Mission Result: match modal frame, result title, rewards/stats, CTA buttons, close/back behavior, and backdrop.
 - [ ] POP-06 Settings: do not claim target match until a saved reference target exists.
 - [ ] POP-07 Inbox: do not claim target match until a saved reference target exists.
@@ -491,11 +493,11 @@ Use these labels in iteration notes:
 | Shell | Not started | 0 | None | None |
 | SCN-01 Loading | Not started | 0 | None | None |
 | SCN-02 Main Menu | Target matched | 1 | Approved by user; use SCN-02 lessons from `Design/Architecture/ui_toolkit_target_lock_mockup_conversion_playbook.md` for later screens | `Assets/Game/Scripts/Editor/UiToolkitTargetLockStaticPreview.cs`; `Design/VisualLockLayered/_UIToolkitVisualMatch/target_to_toolkit_mapping.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/pixel_per_unit_audit.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/nine_slice_audit.md`; `Design/Architecture/ui_toolkit_target_lock_mockup_conversion_playbook.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/notes.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice04.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/shadow_ui_builder_static_scn02_typography_slice04_canvas.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/target_vs_shadow_ui_builder_typography_slice04_contact.png` |
-| SCN-03 Commander Profile | Not started | 0 | None | None |
-| SCN-08 Match HUD | Not started | 0 | None | None |
+| SCN-03 Commander Profile | Satisfied for current pass | 2 | Slice 02 removes broken stretched frame artifacts, applies SCN-02-style left rail chrome, and raises typography enough for focused crop readability. The content UXML does not duplicate the shared shell/header. | `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-03_CommanderProfile/iteration_01/notes.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-03_CommanderProfile/iteration_01/shadow_ui_builder_scn03_readability_slice02.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-03_CommanderProfile/iteration_01/shadow_ui_builder_scn03_left_nav_valid_slice02_crop.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-03_CommanderProfile/iteration_01/shadow_ui_builder_scn03_identity_valid_slice02_crop.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-03_CommanderProfile/iteration_01/shadow_ui_builder_scn03_right_valid_slice02_crop.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-03_CommanderProfile/iteration_01/shadow_ui_builder_scn03_footer_valid_slice02_crop.png` |
+| SCN-08 Match HUD | Satisfied for current pass | 1 | Baseline focused crops already pass current HUD readability/visibility check; no USS changes needed in this pass. | `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-08_MatchHud/iteration_01/notes.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-08_MatchHud/iteration_01/shadow_ui_builder_scn08_baseline.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-08_MatchHud/iteration_01/shadow_ui_builder_scn08_header_valid_baseline_crop.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-08_MatchHud/iteration_01/shadow_ui_builder_scn08_left_panels_valid_baseline_crop.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-08_MatchHud/iteration_01/shadow_ui_builder_scn08_bottom_valid_baseline_crop.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-08_MatchHud/iteration_01/shadow_ui_builder_scn08_right_valid_baseline_crop.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-08_MatchHud/iteration_01/shadow_ui_builder_scn08_minimap_valid_baseline_crop.png` |
 | SCN-08 Build Placement Bar | Not started | 0 | None | None |
 | SCN-09 Build Drawer Popup | Not started | 0 | None | None |
-| SCN-19 Armory | Not started | 0 | None | None |
+| SCN-19 Armory | Satisfied for current pass | 7 | Slice 13 fixes the right action buttons, stat label/value collision, and middle roster readability. Continue to SCN-03 unless a later precision pass is requested. | `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-19_Armory/iteration_01/notes.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-19_Armory/iteration_01/shadow_ui_builder_scn19_stats_columns_slice13_valid.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-19_Armory/iteration_01/shadow_ui_builder_scn19_right_panel_slice13_valid_crop.png`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-19_Armory/iteration_01/shadow_ui_builder_scn19_middle_cards_slice13_valid_crop.png`; `Design/VisualLockLayered/SCN-19_Armory/reference/SCN-19_Armory_NewMainMenuArtDirection_TargetLock_V04.png` |
 | POP-05 Mission Result | Not started | 0 | None | None |
 | POP-06 Settings | Needs target | 0 | Saved Target Lock reference missing | None |
 | POP-07 Inbox | Needs target | 0 | Saved Target Lock reference missing | None |

@@ -139,6 +139,9 @@ internal sealed class MenuBootstrapSystem
 
     public void Shutdown(MenuBootstrapView view)
     {
+        if (view != null && view.UiCanvas != null && view.UiCanvas.transform.localScale != Vector3.one)
+            view.UiCanvas.transform.localScale = Vector3.one;
+
         if (view != null)
             RestoreUiPresentationMode(view.UiCamera, view.UiCanvas);
 

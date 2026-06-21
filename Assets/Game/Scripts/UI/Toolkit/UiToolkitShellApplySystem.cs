@@ -169,6 +169,8 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
 
         if (isExecuting)
             return;
+        if (shellView == null || !shellView.IsMounted)
+            return;
 
         if (!UiShellRuntimeGateway.TryConsumePresentationCommands(commandScratch))
             return;

@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36d1249a574846a7a8e48a2df3be5e4f, type: 3}
   m_Name: RuntimeUiConfig
   m_EditorClassIdentifier: 
-  mode: 0
+  mode: 1

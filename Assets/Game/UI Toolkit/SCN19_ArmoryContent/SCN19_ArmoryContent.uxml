@@ -60,26 +60,31 @@
                     <ui:VisualElement name="Frame" class="category-frame" />
                     <ui:VisualElement name="Icon" class="category-icon units-icon" />
                     <ui:Label name="Label" class="category-label" text="UNITS" />
+                    <ui:VisualElement name="Chevron" class="category-chevron" />
                 </ui:Button>
                 <ui:Button name="Nav_Vehicles" class="category-button" text="">
                     <ui:VisualElement name="Frame" class="category-frame" />
                     <ui:VisualElement name="Icon" class="category-icon vehicles-icon" />
                     <ui:Label name="Label" class="category-label" text="VEHICLES" />
+                    <ui:VisualElement name="Chevron" class="category-chevron" />
                 </ui:Button>
                 <ui:Button name="Nav_Aircraft" class="category-button" text="">
                     <ui:VisualElement name="Frame" class="category-frame" />
                     <ui:VisualElement name="Icon" class="category-icon aircraft-icon" />
                     <ui:Label name="Label" class="category-label" text="AIRCRAFT" />
+                    <ui:VisualElement name="Chevron" class="category-chevron" />
                 </ui:Button>
                 <ui:Button name="Nav_Buildings" class="category-button" text="">
                     <ui:VisualElement name="Frame" class="category-frame" />
                     <ui:VisualElement name="Icon" class="category-icon buildings-icon" />
                     <ui:Label name="Label" class="category-label" text="BUILDINGS" />
+                    <ui:VisualElement name="Chevron" class="category-chevron" />
                 </ui:Button>
                 <ui:Button name="Nav_Upgrades" class="category-button" text="">
                     <ui:VisualElement name="Frame" class="category-frame" />
                     <ui:VisualElement name="Icon" class="category-icon upgrades-icon" />
                     <ui:Label name="Label" class="category-label" text="UPGRADES" />
+                    <ui:VisualElement name="Chevron" class="category-chevron" />
                 </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
@@ -99,6 +104,7 @@
             <ui:ScrollView name="Scroll_View" class="armory-scroll-view" mode="Vertical">
                 <ui:VisualElement name="Content" class="armory-catalog-grid">
                     <ui:Button name="ItemView" class="armory-item-view item-card selected item-rifle" text="">
+                        <ui:VisualElement name="Backing" class="item-backing" />
                         <ui:VisualElement name="Frame" class="item-frame" />
                         <ui:VisualElement name="Rarity" class="item-rarity rarity-gold" />
                         <ui:VisualElement name="Art" class="item-art rifle-art" />
@@ -116,6 +122,7 @@
                         </ui:VisualElement>
                     </ui:Button>
                     <ui:Button name="ItemView_FastApc" class="armory-item-view item-card item-vehicle" text="">
+                        <ui:VisualElement name="Backing" class="item-backing" />
                         <ui:VisualElement name="Frame" class="item-frame" />
                         <ui:VisualElement name="Rarity" class="item-rarity rarity-gold" />
                         <ui:VisualElement name="Art" class="item-art vehicle-art" />
@@ -133,6 +140,7 @@
                         </ui:VisualElement>
                     </ui:Button>
                     <ui:Button name="ItemView_ReconDrone" class="armory-item-view item-card item-aircraft" text="">
+                        <ui:VisualElement name="Backing" class="item-backing" />
                         <ui:VisualElement name="Frame" class="item-frame" />
                         <ui:VisualElement name="Rarity" class="item-rarity rarity-gold" />
                         <ui:VisualElement name="Art" class="item-art aircraft-art" />
@@ -150,6 +158,7 @@
                         </ui:VisualElement>
                     </ui:Button>
                     <ui:Button name="ItemView_BombSuit" class="armory-item-view item-card item-rifle" text="">
+                        <ui:VisualElement name="Backing" class="item-backing" />
                         <ui:VisualElement name="Frame" class="item-frame" />
                         <ui:VisualElement name="Rarity" class="item-rarity rarity-gold" />
                         <ui:VisualElement name="Art" class="item-art bomb-art" />
@@ -167,6 +176,7 @@
                         </ui:VisualElement>
                     </ui:Button>
                     <ui:Button name="ItemView_HeavyTank" class="armory-item-view item-card locked item-vehicle" text="">
+                        <ui:VisualElement name="Backing" class="item-backing" />
                         <ui:VisualElement name="Frame" class="item-frame" />
                         <ui:VisualElement name="Rarity" class="item-rarity rarity-purple" />
                         <ui:VisualElement name="Art" class="item-art tank-art" />
@@ -182,6 +192,7 @@
                         </ui:VisualElement>
                     </ui:Button>
                     <ui:Button name="ItemView_AttackHelicopter" class="armory-item-view item-card locked item-aircraft" text="">
+                        <ui:VisualElement name="Backing" class="item-backing" />
                         <ui:VisualElement name="Frame" class="item-frame" />
                         <ui:VisualElement name="Rarity" class="item-rarity rarity-purple" />
                         <ui:VisualElement name="Art" class="item-art helicopter-art" />
@@ -197,6 +208,7 @@
                         </ui:VisualElement>
                     </ui:Button>
                     <ui:Button name="ItemView_RocketArtillery" class="armory-item-view item-card locked item-vehicle" text="">
+                        <ui:VisualElement name="Backing" class="item-backing" />
                         <ui:VisualElement name="Frame" class="item-frame" />
                         <ui:VisualElement name="Rarity" class="item-rarity rarity-purple" />
                         <ui:VisualElement name="Art" class="item-art artillery-art" />
@@ -212,6 +224,7 @@
                         </ui:VisualElement>
                     </ui:Button>
                     <ui:Button name="ItemView_SniperTeam" class="armory-item-view item-card locked item-rifle" text="">
+                        <ui:VisualElement name="Backing" class="item-backing" />
                         <ui:VisualElement name="Frame" class="item-frame" />
                         <ui:VisualElement name="Rarity" class="item-rarity rarity-purple" />
                         <ui:VisualElement name="Art" class="item-art sniper-art" />
@@ -232,18 +245,22 @@
 
         <ui:VisualElement name="RightContent" class="right-content">
             <ui:VisualElement name="InspectionPanel" class="inspection-panel">
-                <ui:VisualElement name="Backing" class="inspection-backing" />
-                <ui:VisualElement name="Frame" class="inspection-frame" />
-                <ui:Label name="Name" class="inspection-name" text="RIFLE SQUAD" />
-                <ui:Label name="Type" class="inspection-type" text="INFANTRY" />
+                <ui:VisualElement name="TitleSection" class="inspection-section title-section">
+                    <ui:VisualElement name="TitleBacking" class="section-backing" />
+                    <ui:VisualElement name="TitleFrame" class="section-frame" />
+                    <ui:Label name="Name" class="inspection-name" text="RIFLE SQUAD" />
+                    <ui:Label name="Type" class="inspection-type" text="INFANTRY" />
+                </ui:VisualElement>
                 <ui:VisualElement name="PortraitSection" class="inspection-section portrait-section">
-                    <ui:VisualElement name="SectionBacking" class="section-bar-backing" />
+                    <ui:VisualElement name="SectionBacking" class="portrait-backing" />
+                    <ui:VisualElement name="SectionFrame" class="portrait-frame" />
                     <ui:VisualElement name="PortraitFrame" class="inspection-portrait-frame">
                         <ui:VisualElement name="PortraitArt" class="inspection-portrait-art" />
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="LevelSection" class="inspection-section level-section">
-                    <ui:VisualElement name="SectionBacking" class="section-bar-backing" />
+                    <ui:VisualElement name="SectionBacking" class="section-backing" />
+                    <ui:VisualElement name="SectionFrame" class="section-frame" />
                     <ui:Label name="LevelLabel" class="level-label" text="LEVEL" />
                     <ui:Label name="LevelValue" class="level-value" text="12 / 20" />
                     <ui:VisualElement name="LevelTrack" class="level-track">
@@ -252,7 +269,8 @@
                     <ui:Label name="XpValue" class="xp-value" text="2,750 / 4,000" />
                 </ui:VisualElement>
                 <ui:VisualElement name="StatsSection" class="inspection-section stats-section">
-                    <ui:VisualElement name="SectionBacking" class="section-bar-backing" />
+                    <ui:VisualElement name="SectionBacking" class="section-backing" />
+                    <ui:VisualElement name="SectionFrame" class="section-frame" />
                     <ui:VisualElement name="StatsPanel" class="stats-panel">
                         <ui:VisualElement name="Stat_Health" class="stat-row">
                             <ui:VisualElement class="stat-icon health-icon" />
@@ -281,18 +299,22 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:Button name="UpgradeButton" class="cta-button primary-cta" text="">
-                    <ui:VisualElement name="Icon" class="cta-icon upgrade-cta-icon" />
-                    <ui:Label name="Label" class="cta-label" text="UPGRADE" />
-                </ui:Button>
-                <ui:Button name="EquipButton" class="cta-button equip-cta" text="">
-                    <ui:VisualElement name="Icon" class="cta-icon equip-cta-icon" />
-                    <ui:Label name="Label" class="cta-label" text="EQUIP" />
-                </ui:Button>
-                <ui:Button name="CloseButton" class="cta-button close-cta" text="">
-                    <ui:Label name="Icon" class="close-x" text="X" />
-                    <ui:Label name="Label" class="cta-label" text="CLOSE" />
-                </ui:Button>
+                <ui:VisualElement name="ActionSection" class="inspection-section action-section">
+                    <ui:VisualElement name="SectionBacking" class="section-backing" />
+                    <ui:VisualElement name="SectionFrame" class="section-frame" />
+                    <ui:Button name="UpgradeButton" class="cta-button primary-cta" text="">
+                        <ui:VisualElement name="Icon" class="cta-icon upgrade-cta-icon" />
+                        <ui:Label name="Label" class="cta-label" text="UPGRADE" />
+                    </ui:Button>
+                    <ui:Button name="EquipButton" class="cta-button equip-cta" text="">
+                        <ui:VisualElement name="Icon" class="cta-icon equip-cta-icon" />
+                        <ui:Label name="Label" class="cta-label" text="EQUIP" />
+                    </ui:Button>
+                    <ui:Button name="CloseButton" class="cta-button close-cta" text="">
+                        <ui:Label name="Icon" class="close-x" text="X" />
+                        <ui:Label name="Label" class="cta-label" text="CLOSE" />
+                    </ui:Button>
+                </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
 

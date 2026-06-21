@@ -49,6 +49,7 @@ internal sealed class MenuBootstrapSystem
     private SelectionUiReadModelSystem boundSelectionUiReadModel;
     private MainMenuPlayUI boundMainMenu;
     private IBuildingUiCommand boundUiToolkitBuildingUiCommand;
+    private UiToolkitMatchHudMinimapSurface boundUiToolkitMinimapSurface;
     private int boundContentVersion = -1;
 
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => performanceDiagnosticsSystem;
@@ -127,7 +128,7 @@ internal sealed class MenuBootstrapSystem
         if (useUiToolkit)
         {
             ApplyUiToolkitPresentationMode(view.UiCamera, view.UiCanvas);
-            BindUiToolkitMatchReadModels(shellState);
+            BindUiToolkitMatchReadModels(view, shellState);
             ClearBoundMatchRuntimeUi();
             return;
         }
@@ -425,7 +426,7 @@ internal sealed class MenuBootstrapSystem
         boundContentVersion = contentVersion;
     }
 
-    private void BindUiToolkitMatchReadModels(UiShellStateComponent shellState)
+    private void BindUiToolkitMatchReadModels(MenuBootstrapView view, UiShellStateComponent shellState)
     {
         if (shellState.ActiveRoute != UIRoute.Match)
         {
@@ -442,6 +443,11 @@ internal sealed class MenuBootstrapSystem
         }
 
         MatchBootstrapSystem matchBootstrap = matchScene.MatchBootstrap;
+        MainMenuPlayUI mainMenu = matchBootstrap != null
+            ? matchBootstrap.EnsureMainMenuRuntimeDependencies()
+            : null;
+        BindUiToolkitMinimapSurface(view, mainMenu);
+
         IBuildingUiCommand command = matchBootstrap != null
             ? matchBootstrap.BuildingUiCommandContract
             : null;
@@ -454,11 +460,41 @@ internal sealed class MenuBootstrapSystem
 
     private void ClearUiToolkitMatchReadModels()
     {
+        ClearUiToolkitMinimapSurface();
         if (boundUiToolkitBuildingUiCommand == null && !UiBuildPlacementReadModelSource.HasBuildingUiCommand)
             return;
 
         UiBuildPlacementReadModelSource.Clear();
         boundUiToolkitBuildingUiCommand = null;
+    }
+
+    private void BindUiToolkitMinimapSurface(MenuBootstrapView view, MainMenuPlayUI mainMenu)
+    {
+        if (view == null || view.UiToolkitShellRoot == null || view.UiToolkitShellView == null || mainMenu == null)
+        {
+            ClearUiToolkitMinimapSurface();
+            return;
+        }
+
+        UiToolkitMatchHudMinimapSurface surface =
+            UiToolkitMatchHudMinimapSurface.Ensure(view.UiToolkitShellRoot);
+        if (surface == null)
+        {
+            ClearUiToolkitMinimapSurface();
+            return;
+        }
+
+        surface.Configure(view.UiToolkitShellView, mainMenu);
+        boundUiToolkitMinimapSurface = surface;
+    }
+
+    private void ClearUiToolkitMinimapSurface()
+    {
+        if (boundUiToolkitMinimapSurface == null)
+            return;
+
+        boundUiToolkitMinimapSurface.Clear();
+        boundUiToolkitMinimapSurface = null;
     }
 
     private void ClearBoundMatchRuntimeUi()

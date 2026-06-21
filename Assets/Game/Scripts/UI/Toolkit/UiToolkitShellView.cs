@@ -184,6 +184,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private Button matchHudFeedbackBoardAllAction;
     private Button matchHudFeedbackCancelAction;
     private VisualElement matchHudMinimapPanel;
+    private VisualElement matchHudMinimapMap;
     private VisualElement matchHudMinimapViewport;
     private VisualElement matchHudMinimapFriendlyA;
     private VisualElement matchHudMinimapFriendlyB;
@@ -453,6 +454,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
     public Button MatchHudFeedbackBoardAllAction => matchHudFeedbackBoardAllAction;
     public Button MatchHudFeedbackCancelAction => matchHudFeedbackCancelAction;
     public VisualElement MatchHudMinimapPanel => matchHudMinimapPanel;
+    public VisualElement MatchHudMinimapMap => matchHudMinimapMap;
     public VisualElement MatchHudMinimapViewport => matchHudMinimapViewport;
     public VisualElement MatchHudMinimapFriendlyA => matchHudMinimapFriendlyA;
     public VisualElement MatchHudMinimapFriendlyB => matchHudMinimapFriendlyB;
@@ -2860,6 +2862,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
         matchHudFeedbackBoardAllAction = matchHudFeedbackPanel?.Q<Button>("BoardAllButton");
         matchHudFeedbackCancelAction = matchHudFeedbackPanel?.Q<Button>("CancelButton");
         matchHudMinimapPanel = matchHudContentRoot.Q<VisualElement>("MinimapPanel");
+        matchHudMinimapMap = matchHudMinimapPanel?.Q<VisualElement>("Map");
         matchHudMinimapViewport = matchHudMinimapPanel?.Q<VisualElement>("Viewport");
         matchHudMinimapFriendlyA = matchHudMinimapPanel?.Q<VisualElement>("FriendlyA");
         matchHudMinimapFriendlyB = matchHudMinimapPanel?.Q<VisualElement>("FriendlyB");
@@ -3142,6 +3145,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
         matchHudFeedbackBoardAllAction = null;
         matchHudFeedbackCancelAction = null;
         matchHudMinimapPanel = null;
+        matchHudMinimapMap = null;
         matchHudMinimapViewport = null;
         matchHudMinimapFriendlyA = null;
         matchHudMinimapFriendlyB = null;

@@ -19,6 +19,10 @@ public sealed class UiToolkitMatchHudMinimapSurface : MonoBehaviour
     private UiImage mapImage;
     private MatchHudMinimapView minimapView;
     private MainMenuPlayUI boundMainMenu;
+    private Rect lastScreenRect;
+    private bool hasLastScreenRect;
+    private bool overlayVisible;
+    private bool toolkitMinimapHidden;
     private bool isBound;
 
     public static UiToolkitMatchHudMinimapSurface Ensure(GameObject owner)
@@ -61,6 +65,7 @@ public sealed class UiToolkitMatchHudMinimapSurface : MonoBehaviour
 
         isBound = false;
         boundMainMenu = null;
+        hasLastScreenRect = false;
         SetOverlayVisible(false);
         SetToolkitMinimapLiveSurfaceHidden(false);
         shellView = null;
@@ -75,8 +80,7 @@ public sealed class UiToolkitMatchHudMinimapSurface : MonoBehaviour
         if (!visible)
             return;
 
-        panelRect.anchoredPosition = new Vector2(screenRect.xMin, screenRect.yMin);
-        panelRect.sizeDelta = screenRect.size;
+        ApplyScreenRect(screenRect);
     }
 
     private void OnDisable()
@@ -142,6 +146,7 @@ public sealed class UiToolkitMatchHudMinimapSurface : MonoBehaviour
         outline.effectDistance = new Vector2(2f, -2f);
 
         minimapView.Configure(mapImage, mapRect, viewportRect, null, null, mapRect);
+        minimapView.SetProjectionMode(useFullMapProjection: true);
         SetOverlayVisible(false);
     }
 
@@ -174,12 +179,20 @@ public sealed class UiToolkitMatchHudMinimapSurface : MonoBehaviour
 
     private void SetOverlayVisible(bool visible)
     {
-        if (overlayCanvas != null && overlayCanvas.enabled != visible)
+        if (overlayVisible == visible)
+            return;
+
+        overlayVisible = visible;
+        if (overlayCanvas != null)
             overlayCanvas.enabled = visible;
     }
 
     private void SetToolkitMinimapLiveSurfaceHidden(bool hidden)
     {
+        if (toolkitMinimapHidden == hidden)
+            return;
+
+        toolkitMinimapHidden = hidden;
         SetVisibility(shellView != null ? shellView.MatchHudMinimapMap : null, hidden);
         SetVisibility(shellView != null ? shellView.MatchHudMinimapViewport : null, hidden);
         SetVisibility(shellView != null ? shellView.MatchHudMinimapFriendlyA : null, hidden);
@@ -194,5 +207,30 @@ public sealed class UiToolkitMatchHudMinimapSurface : MonoBehaviour
             return;
 
         element.style.visibility = hidden ? Visibility.Hidden : Visibility.Visible;
+    }
+
+    private void ApplyScreenRect(Rect screenRect)
+    {
+        if (panelRect == null)
+            return;
+
+        if (hasLastScreenRect &&
+            Approximately(lastScreenRect.xMin, screenRect.xMin) &&
+            Approximately(lastScreenRect.yMin, screenRect.yMin) &&
+            Approximately(lastScreenRect.width, screenRect.width) &&
+            Approximately(lastScreenRect.height, screenRect.height))
+        {
+            return;
+        }
+
+        panelRect.anchoredPosition = new Vector2(screenRect.xMin, screenRect.yMin);
+        panelRect.sizeDelta = screenRect.size;
+        lastScreenRect = screenRect;
+        hasLastScreenRect = true;
+    }
+
+    private static bool Approximately(float a, float b)
+    {
+        return Mathf.Abs(a - b) < 0.5f;
     }
 }

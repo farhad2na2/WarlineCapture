@@ -16,7 +16,10 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
     private bool _draggingViewport;
     private bool _dragMoved;
     private bool _hasManualViewportOverride;
+    private bool _hasLastViewportLayout;
     private Rect _manualViewportNormalizedRect;
+    private Vector2 _lastViewportAnchoredPosition;
+    private Vector2 _lastViewportSize;
     private Vector2 _viewportDragOffset;
     private readonly Vector3[] _worldCorners = new Vector3[4];
 
@@ -29,6 +32,7 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
     public bool IsDraggingViewport => _draggingViewport;
     public bool HasManualViewportOverride => _hasManualViewportOverride;
     public Rect ManualViewportNormalizedRect => _manualViewportNormalizedRect;
+    public bool UseFullMapProjection { get; private set; }
 
     public event Action<Vector2> FocusRequested;
     public event Action<int, bool> ZoomHeldChanged;
@@ -59,6 +63,7 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
         _draggingViewport = false;
         _dragMoved = false;
         _hasManualViewportOverride = false;
+        _hasLastViewportLayout = false;
     }
 
     public void Configure(
@@ -89,6 +94,13 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
         mapImage.raycastTarget = true;
     }
 
+    public void SetProjectionMode(bool useFullMapProjection)
+    {
+        UseFullMapProjection = useFullMapProjection;
+        _hasManualViewportOverride = false;
+        _hasLastViewportLayout = false;
+    }
+
     public void SetViewportNormalizedRect(Rect normalizedRect)
     {
         RectTransform rectTransform = MapRect;
@@ -112,11 +124,25 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
             ? new Vector2(parent.rect.xMin, parent.rect.yMax)
             : Vector2.zero;
 
+        Vector2 anchoredPosition = new(left - parentTopLeft.x, top - parentTopLeft.y);
+        Vector2 size = new(width, height);
+        if (_hasLastViewportLayout &&
+            Approximately(_lastViewportAnchoredPosition.x, anchoredPosition.x) &&
+            Approximately(_lastViewportAnchoredPosition.y, anchoredPosition.y) &&
+            Approximately(_lastViewportSize.x, size.x) &&
+            Approximately(_lastViewportSize.y, size.y))
+        {
+            return;
+        }
+
         viewportRect.anchorMin = new Vector2(0f, 1f);
         viewportRect.anchorMax = new Vector2(0f, 1f);
         viewportRect.pivot = new Vector2(0f, 1f);
-        viewportRect.anchoredPosition = new Vector2(left - parentTopLeft.x, top - parentTopLeft.y);
-        viewportRect.sizeDelta = new Vector2(width, height);
+        viewportRect.anchoredPosition = anchoredPosition;
+        viewportRect.sizeDelta = size;
+        _lastViewportAnchoredPosition = anchoredPosition;
+        _lastViewportSize = size;
+        _hasLastViewportLayout = true;
     }
 
     private bool TryGetMapRectInViewportParent(RectTransform map, out Rect parentRect)
@@ -168,6 +194,11 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
     private static bool IsFinite(float value)
     {
         return !float.IsNaN(value) && !float.IsInfinity(value);
+    }
+
+    private static bool Approximately(float a, float b)
+    {
+        return Mathf.Abs(a - b) < 0.5f;
     }
 
     public void OnPointerDown(PointerEventData eventData)

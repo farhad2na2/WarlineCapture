@@ -121,10 +121,12 @@ public sealed class MatchHudMinimapInputSystem
             return;
 
         Camera worldCamera = _selectionUiCameraSystem != null ? _selectionUiCameraSystem.WorldCamera : null;
-        MatchHudMinimapProjectionGrid desiredProjectionGrid = MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(
-            grid,
-            worldCamera,
-            ResolveMapAspect());
+        MatchHudMinimapProjectionGrid desiredProjectionGrid = _view.UseFullMapProjection
+            ? MatchHudMinimapProjectionGrid.FromGridModel(grid)
+            : MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(
+                grid,
+                worldCamera,
+                ResolveMapAspect());
         desiredProjectionGrid = ApplyMinimapZoom(desiredProjectionGrid);
         bool cameraRefreshBlocked = IsCameraRefreshBlocked();
 
@@ -210,10 +212,12 @@ public sealed class MatchHudMinimapInputSystem
         _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
         MatchHudMinimapProjectionGrid projectionGrid = _currentProjectionGrid.Width > 0f
             ? _currentProjectionGrid
-            : MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(
-                grid,
-                _selectionUiCameraSystem.WorldCamera,
-                ResolveMapAspect());
+            : _view != null && _view.UseFullMapProjection
+                ? MatchHudMinimapProjectionGrid.FromGridModel(grid)
+                : MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(
+                    grid,
+                    _selectionUiCameraSystem.WorldCamera,
+                    ResolveMapAspect());
         Vector3 focusWorld = MatchHudMinimapProjectionSystem.ClampWorldToGrid(
             grid,
             MatchHudMinimapProjectionSystem.NormalizedToWorld(projectionGrid, normalized));
@@ -257,6 +261,8 @@ public sealed class MatchHudMinimapInputSystem
     {
         if (!_hasCapturedProjectionGrid)
             return true;
+        if (_view != null && _view.UseFullMapProjection)
+            return false;
         if (_view != null && _view.IsDraggingViewport)
             return false;
         if (cameraRefreshBlocked)
@@ -404,10 +410,23 @@ public sealed class MatchHudMinimapInputSystem
         Vector2 mapPoint = new(
             mapRect.xMin + mapRect.width * Mathf.Clamp01(normalized.x),
             mapRect.yMin + mapRect.height * Mathf.Clamp01(normalized.y));
-        rect.anchoredPosition = new Vector2(
+        Vector2 anchoredPosition = new(
             mapPoint.x - parentTopLeft.x,
             mapPoint.y - parentTopLeft.y);
-        marker.color = color;
+        if (!Approximately(rect.anchoredPosition.x, anchoredPosition.x) ||
+            !Approximately(rect.anchoredPosition.y, anchoredPosition.y))
+        {
+            rect.anchoredPosition = anchoredPosition;
+        }
+
+        if (!ApproximatelyColor(marker.color.r, color.r) ||
+            !ApproximatelyColor(marker.color.g, color.g) ||
+            !ApproximatelyColor(marker.color.b, color.b) ||
+            !ApproximatelyColor(marker.color.a, color.a))
+        {
+            marker.color = color;
+        }
+
         if (!marker.gameObject.activeSelf)
             marker.gameObject.SetActive(true);
     }
@@ -461,6 +480,16 @@ public sealed class MatchHudMinimapInputSystem
 
         rect = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
         return rect.width > 0f && rect.height > 0f;
+    }
+
+    private static bool Approximately(float a, float b)
+    {
+        return Mathf.Abs(a - b) < 0.5f;
+    }
+
+    private static bool ApproximatelyColor(float a, float b)
+    {
+        return Mathf.Abs(a - b) < 0.001f;
     }
 
     private static Color ResolveMarkerColor(MatchHudMinimapMarkerAllegiance allegiance)

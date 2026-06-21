@@ -1880,6 +1880,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
         SetClass(matchHudBuildCommand, "command-button-selected", buildSelected);
         SetClass(matchHudScanCommand, "command-button-selected", activeMode == TacticalCommandMode.Scan);
         SetClass(matchHudSupportCommand, "command-button-selected", activeMode == TacticalCommandMode.Special);
+        SetClass(matchHudSelectedBoardAction, "selected-action-selected", activeMode == TacticalCommandMode.Board);
         SetClass(matchHudRightBuildCommand, "quick-command-selected", buildSelected);
         SetClass(matchHudRightSupportCommand, "quick-command-selected", activeMode == TacticalCommandMode.Special);
         return true;

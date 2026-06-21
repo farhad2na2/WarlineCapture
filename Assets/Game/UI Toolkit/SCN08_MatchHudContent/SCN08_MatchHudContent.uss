@@ -558,6 +558,10 @@
     -unity-slice-bottom: 60;
 }
 
+.selected-action-selected .rect-button-frame {
+    -unity-background-image-tint-color: rgb(255, 229, 145);
+}
+
 .selected-action-button .return-icon,
 .selected-action-button .destroy-icon,
 .selected-action-button .board-icon {

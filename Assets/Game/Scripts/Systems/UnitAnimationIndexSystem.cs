@@ -96,7 +96,6 @@ public partial struct UnitAnimationIndexSystem : ISystem
 
     [BurstCompile]
     [WithNone(typeof(StaticGridBlocker))]
-    [WithChangeFilter(typeof(UnitAttackAnimationComponent))]
     private partial struct ResolveAnimationIndexJob : IJobEntity
     {
         public float DeltaTime;

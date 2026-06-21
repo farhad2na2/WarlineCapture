@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
@@ -10,9 +11,15 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
     private static EntityQuery boundaryQuery;
     private static EntityQuery focusedSelectionQuery;
     private static EntityQuery selectionInputQuery;
+    private static EntityQuery selectedUnitsQuery;
+    private static EntityQuery minimapMarkerQuery;
+    private static EntityQuery gridConfigQuery;
     private static bool hasBoundaryQuery;
     private static bool hasFocusedSelectionQuery;
     private static bool hasSelectionInputQuery;
+    private static bool hasSelectedUnitsQuery;
+    private static bool hasMinimapMarkerQuery;
+    private static bool hasGridConfigQuery;
 
     private UiShellEcsGateway()
     {
@@ -28,6 +35,9 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         hasBoundaryQuery = false;
         hasFocusedSelectionQuery = false;
         hasSelectionInputQuery = false;
+        hasSelectedUnitsQuery = false;
+        hasMinimapMarkerQuery = false;
+        hasGridConfigQuery = false;
         UiShellRuntimeGateway.Register(Shared);
     }
 
@@ -185,6 +195,9 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             hasBoundaryQuery = false;
             hasFocusedSelectionQuery = false;
             hasSelectionInputQuery = false;
+            hasSelectedUnitsQuery = false;
+            hasMinimapMarkerQuery = false;
+            hasGridConfigQuery = false;
         }
 
         if (!hasFocusedSelectionQuery)
@@ -195,12 +208,12 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         }
 
         if (focusedSelectionQuery.IsEmptyIgnoreFilter)
-            return true;
+            return TryBuildSelectedGroupModel(world.EntityManager, out selection);
 
         FocusedUnitUiReadModelComponent component =
             focusedSelectionQuery.GetSingleton<FocusedUnitUiReadModelComponent>();
         if (component.HasFocusedUnit == 0)
-            return true;
+            return TryBuildSelectedGroupModel(world.EntityManager, out selection);
 
         string title = component.Label.ToString();
         if (string.IsNullOrWhiteSpace(title))
@@ -224,7 +237,6 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             : 0f;
 
         bool owned = component.OwnedByPlayer != 0;
-        bool hasTransportCapacity = component.TransportPassengerCapacity > 0;
         selection = new UiMatchHudSelectionPanelModel(
             true,
             title,
@@ -235,8 +247,234 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             component.IsVehicle == 0,
             owned,
             owned,
-            owned && component.IsVehicle != 0 && hasTransportCapacity);
+            ResolveBoardEnabled(world.EntityManager, component.FocusedUnit));
         return true;
+    }
+
+    private static bool TryBuildSelectedGroupModel(EntityManager entityManager, out UiMatchHudSelectionPanelModel selection)
+    {
+        selection = UiMatchHudSelectionPanelModel.Hidden;
+        EnsureSelectedUnitsQuery(entityManager);
+        if (selectedUnitsQuery.IsEmptyIgnoreFilter)
+            return true;
+
+        SelectedGroupSummary summary = BuildSelectedGroupSummary(entityManager);
+        if (summary.SelectedCount <= 0)
+            return true;
+
+        selection = new UiMatchHudSelectionPanelModel(
+            true,
+            summary.Title,
+            summary.Subtitle,
+            summary.OrderText,
+            string.IsNullOrWhiteSpace(summary.HealthText) ? "-" : summary.HealthText,
+            summary.Health01,
+            false,
+            true,
+            true,
+            ResolveSelectedBoardEnabled(entityManager));
+        return true;
+    }
+
+    private static SelectedGroupSummary BuildSelectedGroupSummary(EntityManager entityManager)
+    {
+        SelectedGroupSummary summary = new();
+        EntityTypeHandle entityType = entityManager.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = selectedUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (!entityManager.Exists(entity))
+                    continue;
+
+                summary.SelectedCount++;
+                bool vehicle = IsVehicleUnit(entityManager, entity);
+                bool aircraft = entityManager.HasComponent<UnitAirComponent>(entity) ||
+                                entityManager.HasComponent<UnitAirMovement>(entity);
+                if (aircraft)
+                    summary.AircraftCount++;
+                else if (vehicle)
+                    summary.VehicleCount++;
+                else
+                    summary.SoldierCount++;
+
+                if (entityManager.HasComponent<UnitHealth>(entity))
+                {
+                    UnitHealth health = entityManager.GetComponentData<UnitHealth>(entity);
+                    summary.HealthCurrent += math.max(0, health.Current);
+                    summary.HealthMax += math.max(0, health.Max);
+                }
+
+                string order = ResolveEntityOrderText(entityManager, entity);
+                if (summary.OrderText == null)
+                    summary.OrderText = order;
+                else if (summary.OrderText != order)
+                    summary.MixedOrders = true;
+            }
+        }
+
+        summary.OrderText = summary.MixedOrders ? "Mixed orders" : summary.OrderText ?? "Idle";
+        if (summary.HealthMax > 0)
+        {
+            summary.Health01 = Mathf.Clamp01((float)summary.HealthCurrent / summary.HealthMax);
+            summary.HealthText = $"{summary.HealthCurrent} / {summary.HealthMax}";
+        }
+        else
+        {
+            summary.Health01 = 0f;
+            summary.HealthText = "HEALTH -";
+        }
+
+        if (summary.SelectedCount == summary.SoldierCount)
+        {
+            summary.Title = summary.SelectedCount == 1 ? "SOLDIER" : $"{summary.SelectedCount} SOLDIERS";
+            summary.Subtitle = "INFANTRY GROUP";
+        }
+        else if (summary.SelectedCount == summary.VehicleCount)
+        {
+            summary.Title = summary.SelectedCount == 1 ? "VEHICLE" : $"{summary.SelectedCount} VEHICLES";
+            summary.Subtitle = "ARMORED GROUP";
+        }
+        else if (summary.SelectedCount == summary.AircraftCount)
+        {
+            summary.Title = summary.SelectedCount == 1 ? "AIRCRAFT" : $"{summary.SelectedCount} AIRCRAFT";
+            summary.Subtitle = "AIR GROUP";
+        }
+        else
+        {
+            summary.Title = $"{summary.SelectedCount} SELECTED";
+            summary.Subtitle = "MIXED GROUP";
+        }
+
+        return summary;
+    }
+
+    private static string ResolveEntityOrderText(EntityManager entityManager, Entity entity)
+    {
+        if (entityManager.HasComponent<UnitTransportBoardingTarget>(entity))
+            return "Boarding transport";
+        if (entityManager.HasComponent<EngageTarget>(entity))
+            return "Engaging target";
+        if (entityManager.HasComponent<ManualMoveOrderTag>(entity) ||
+            entityManager.HasComponent<ManualMoveGroupMemberTag>(entity))
+        {
+            return "Moving";
+        }
+
+        if (entityManager.HasComponent<HoldPositionOrderTag>(entity))
+            return "Holding";
+        return "Idle";
+    }
+
+    private static void EnsureSelectedUnitsQuery(EntityManager entityManager)
+    {
+        if (hasSelectedUnitsQuery && cachedWorld == entityManager.World)
+            return;
+
+        selectedUnitsQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        hasSelectedUnitsQuery = true;
+    }
+
+    private static bool ResolveSelectedBoardEnabled(EntityManager entityManager)
+    {
+        EnsureSelectedUnitsQuery(entityManager);
+        if (selectedUnitsQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        EntityTypeHandle entityType = entityManager.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = selectedUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        {
+            NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                if (ResolveBoardEnabled(entityManager, entities[i]))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool ResolveBoardEnabled(EntityManager entityManager, Entity entity)
+    {
+        if (!entityManager.Exists(entity) ||
+            !entityManager.HasComponent<Faction>(entity) ||
+            !FactionIdentity.IsPlayerControlled(entityManager.GetComponentData<Faction>(entity).Id))
+        {
+            return false;
+        }
+
+        if (entityManager.HasComponent<UnitTransportPassenger>(entity) ||
+            entityManager.HasComponent<UnitTransportCargoPassenger>(entity))
+        {
+            return false;
+        }
+
+        if (IsTransportWithOpenCapacity(entityManager, entity))
+            return true;
+
+        return IsSoldierBoardingCandidate(entityManager, entity);
+    }
+
+    private static bool IsSoldierBoardingCandidate(EntityManager entityManager, Entity entity)
+    {
+        return entityManager.HasComponent<UnitMove>(entity) &&
+               !IsVehicleUnit(entityManager, entity) &&
+               !entityManager.HasComponent<UnitAirComponent>(entity) &&
+               !entityManager.HasComponent<UnitAirMovement>(entity);
+    }
+
+    private static bool IsTransportWithOpenCapacity(EntityManager entityManager, Entity entity)
+    {
+        int capacity = 0;
+        if (entityManager.HasComponent<UnitTransportCapacity>(entity))
+            capacity += math.max(0, entityManager.GetComponentData<UnitTransportCapacity>(entity).SoldierCapacity);
+        if (entityManager.HasComponent<UnitTransportCargoCapacity>(entity))
+        {
+            UnitTransportCargoCapacity cargoCapacity = entityManager.GetComponentData<UnitTransportCargoCapacity>(entity);
+            capacity += math.max(0, cargoCapacity.SoldierCapacity) + math.max(0, cargoCapacity.VehicleCapacity);
+        }
+
+        if (capacity <= 0)
+            return false;
+
+        int occupied = entityManager.HasBuffer<UnitTransportPassengerElement>(entity)
+            ? entityManager.GetBuffer<UnitTransportPassengerElement>(entity, true).Length
+            : 0;
+        return occupied < capacity;
+    }
+
+    private static bool IsVehicleUnit(EntityManager entityManager, Entity entity)
+    {
+        if (!entityManager.HasComponent<UnitFootprint>(entity) ||
+            !entityManager.HasComponent<UnitMovementBehavior>(entity))
+        {
+            return false;
+        }
+
+        return UnitVehicleMovementUtility.IsVehicle(
+            entityManager.GetComponentData<UnitFootprint>(entity),
+            entityManager.GetComponentData<UnitMovementBehavior>(entity));
+    }
+
+    private struct SelectedGroupSummary
+    {
+        public int SelectedCount;
+        public int SoldierCount;
+        public int VehicleCount;
+        public int AircraftCount;
+        public int HealthCurrent;
+        public int HealthMax;
+        public bool MixedOrders;
+        public string Title;
+        public string Subtitle;
+        public string OrderText;
+        public string HealthText;
+        public float Health01;
     }
 
     public static bool TryReadMatchHudCommandState(out UiMatchHudCommandStateModel commandState)
@@ -435,6 +673,16 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
 
         EnsureMatchHudMinimapState(entityManager, boundary);
         UiMatchHudMinimapComponent component = entityManager.GetComponentData<UiMatchHudMinimapComponent>(boundary);
+        UiMatchHudMinimapMarkerModel friendlyA = default;
+        UiMatchHudMinimapMarkerModel friendlyB = default;
+        UiMatchHudMinimapMarkerModel hostileA = default;
+        UiMatchHudMinimapMarkerModel neutral = default;
+        bool hasRuntimeMarkers = TryReadRuntimeMinimapMarkers(
+            out friendlyA,
+            out friendlyB,
+            out hostileA,
+            out neutral);
+
         minimap = new UiMatchHudMinimapModel(
             component.ViewportLeftPercent,
             component.ViewportTopPercent,
@@ -443,23 +691,118 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             component.ZoomInEnabled != 0,
             component.ZoomOutEnabled != 0,
             component.FocusEnabled != 0,
-            new UiMatchHudMinimapMarkerModel(
-                component.FriendlyAVisible != 0,
-                component.FriendlyALeftPercent,
-                component.FriendlyATopPercent),
-            new UiMatchHudMinimapMarkerModel(
-                component.FriendlyBVisible != 0,
-                component.FriendlyBLeftPercent,
-                component.FriendlyBTopPercent),
-            new UiMatchHudMinimapMarkerModel(
-                component.HostileAVisible != 0,
-                component.HostileALeftPercent,
-                component.HostileATopPercent),
-            new UiMatchHudMinimapMarkerModel(
-                component.CivilianVisible != 0,
-                component.CivilianLeftPercent,
-            component.CivilianTopPercent));
+            hasRuntimeMarkers
+                ? friendlyA
+                : new UiMatchHudMinimapMarkerModel(false, component.FriendlyALeftPercent, component.FriendlyATopPercent),
+            hasRuntimeMarkers
+                ? friendlyB
+                : new UiMatchHudMinimapMarkerModel(false, component.FriendlyBLeftPercent, component.FriendlyBTopPercent),
+            hasRuntimeMarkers
+                ? hostileA
+                : new UiMatchHudMinimapMarkerModel(false, component.HostileALeftPercent, component.HostileATopPercent),
+            hasRuntimeMarkers
+                ? neutral
+                : new UiMatchHudMinimapMarkerModel(false, component.CivilianLeftPercent, component.CivilianTopPercent));
         return true;
+    }
+
+    private static bool TryReadRuntimeMinimapMarkers(
+        out UiMatchHudMinimapMarkerModel friendlyA,
+        out UiMatchHudMinimapMarkerModel friendlyB,
+        out UiMatchHudMinimapMarkerModel hostileA,
+        out UiMatchHudMinimapMarkerModel neutral)
+    {
+        friendlyA = default;
+        friendlyB = default;
+        hostileA = default;
+        neutral = default;
+
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager entityManager = world.EntityManager;
+        EnsureMinimapMarkerQuery(entityManager);
+        EnsureGridConfigQuery(entityManager);
+        if (minimapMarkerQuery.IsEmptyIgnoreFilter || gridConfigQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity markerEntity = minimapMarkerQuery.GetSingletonEntity();
+        DynamicBuffer<MatchHudMinimapMarkerElement> markers =
+            entityManager.GetBuffer<MatchHudMinimapMarkerElement>(markerEntity, true);
+        if (markers.Length == 0)
+            return false;
+
+        GridConfig grid = gridConfigQuery.GetSingleton<GridConfig>();
+        bool hasFriendlyA = false;
+        bool hasFriendlyB = false;
+        bool hasHostileA = false;
+        bool hasNeutral = false;
+        for (int i = 0; i < markers.Length; i++)
+        {
+            MatchHudMinimapMarkerElement marker = markers[i];
+            UiMatchHudMinimapMarkerModel model = ToMinimapMarkerModel(marker.Position, grid);
+            if (FactionIdentity.IsPlayerControlled(marker.FactionId))
+            {
+                if (!hasFriendlyA)
+                {
+                    friendlyA = model;
+                    hasFriendlyA = true;
+                }
+                else if (!hasFriendlyB)
+                {
+                    friendlyB = model;
+                    hasFriendlyB = true;
+                }
+            }
+            else if (FactionIdentity.IsHostileToPlayer(marker.FactionId))
+            {
+                if (!hasHostileA)
+                {
+                    hostileA = model;
+                    hasHostileA = true;
+                }
+            }
+            else if (!hasNeutral)
+            {
+                neutral = model;
+                hasNeutral = true;
+            }
+
+            if (hasFriendlyA && hasFriendlyB && hasHostileA && hasNeutral)
+                break;
+        }
+
+        return hasFriendlyA || hasFriendlyB || hasHostileA || hasNeutral;
+    }
+
+    private static void EnsureMinimapMarkerQuery(EntityManager entityManager)
+    {
+        if (hasMinimapMarkerQuery && cachedWorld == entityManager.World)
+            return;
+
+        minimapMarkerQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+            ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
+        hasMinimapMarkerQuery = true;
+    }
+
+    private static void EnsureGridConfigQuery(EntityManager entityManager)
+    {
+        if (hasGridConfigQuery && cachedWorld == entityManager.World)
+            return;
+
+        gridConfigQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        hasGridConfigQuery = true;
+    }
+
+    private static UiMatchHudMinimapMarkerModel ToMinimapMarkerModel(float3 worldPosition, GridConfig grid)
+    {
+        float width = math.max(1f, grid.Width * grid.CellSize);
+        float height = math.max(1f, grid.Height * grid.CellSize);
+        float left = math.saturate((worldPosition.x - grid.Origin.x) / width) * 100f;
+        float top = (1f - math.saturate((worldPosition.z - grid.Origin.z) / height)) * 100f;
+        return new UiMatchHudMinimapMarkerModel(true, left, top);
     }
 
     public static bool TryReadBuildDrawer(out UiBuildDrawerModel drawer)

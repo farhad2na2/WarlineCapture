@@ -169,47 +169,102 @@
                 <ui:VisualElement name="Frame" class="squad-tray-frame">
                     <ui:Button name="SquadCard1" class="squad-card squad-card-selected" text="">
                         <ui:VisualElement name="Frame" class="squad-card-frame">
+                            <ui:VisualElement name="SelectedGlow" class="squad-selected-glow" />
                             <ui:Label name="Number" class="squad-number" text="1" />
                             <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-1" />
                             <ui:Label name="Title" class="squad-card-title" text="RIFLE SQUAD" />
                             <ui:VisualElement name="HealthFrame" class="squad-health-frame"><ui:VisualElement name="HealthFill" class="squad-health-fill" /></ui:VisualElement>
                             <ui:Label name="HealthText" class="squad-health-text" text="120/120" />
+                            <ui:VisualElement name="HealthPips" class="squad-health-pips">
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                            </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:Button>
                     <ui:Button name="SquadCard2" class="squad-card" text="">
                         <ui:VisualElement name="Frame" class="squad-card-frame">
+                            <ui:VisualElement name="SelectedGlow" class="squad-selected-glow" />
                             <ui:Label name="Number" class="squad-number" text="2" />
                             <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-2" />
                             <ui:Label name="Title" class="squad-card-title" text="FAST APC" />
                             <ui:VisualElement name="HealthFrame" class="squad-health-frame"><ui:VisualElement name="HealthFill" class="squad-health-fill" /></ui:VisualElement>
                             <ui:Label name="HealthText" class="squad-health-text" text="240/240" />
+                            <ui:VisualElement name="HealthPips" class="squad-health-pips">
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                            </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:Button>
-                    <ui:Button name="SquadCard3" class="squad-card" text="">
+                    <ui:Button name="SquadCard3" class="squad-card squad-card-damaged" text="">
                         <ui:VisualElement name="Frame" class="squad-card-frame">
+                            <ui:VisualElement name="SelectedGlow" class="squad-selected-glow" />
                             <ui:Label name="Number" class="squad-number" text="3" />
                             <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-3" />
                             <ui:Label name="Title" class="squad-card-title" text="RECON DRONE" />
                             <ui:VisualElement name="HealthFrame" class="squad-health-frame"><ui:VisualElement name="HealthFill" class="squad-health-fill short-fill" /></ui:VisualElement>
                             <ui:Label name="HealthText" class="squad-health-text" text="80/80" />
+                            <ui:VisualElement name="HealthPips" class="squad-health-pips">
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip squad-health-pip-dim" />
+                                <ui:VisualElement class="squad-health-pip squad-health-pip-dim" />
+                                <ui:VisualElement class="squad-health-pip squad-health-pip-dim" />
+                                <ui:VisualElement class="squad-health-pip squad-health-pip-dim" />
+                            </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:Button>
                     <ui:Button name="SquadCard4" class="squad-card" text="">
                         <ui:VisualElement name="Frame" class="squad-card-frame">
+                            <ui:VisualElement name="SelectedGlow" class="squad-selected-glow" />
                             <ui:Label name="Number" class="squad-number" text="4" />
                             <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-4" />
                             <ui:Label name="Title" class="squad-card-title" text="BOMB SUIT" />
                             <ui:VisualElement name="HealthFrame" class="squad-health-frame"><ui:VisualElement name="HealthFill" class="squad-health-fill" /></ui:VisualElement>
                             <ui:Label name="HealthText" class="squad-health-text" text="100/100" />
+                            <ui:VisualElement name="HealthPips" class="squad-health-pips">
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                                <ui:VisualElement class="squad-health-pip" />
+                            </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:Button>
-                    <ui:Button name="SquadCard5" class="squad-card" text="">
+                    <ui:Button name="SquadCard5" class="squad-card squad-card-empty" text="">
                         <ui:VisualElement name="Frame" class="squad-card-frame">
+                            <ui:VisualElement name="SelectedGlow" class="squad-selected-glow" />
                             <ui:Label name="Number" class="squad-number" text="5" />
                             <ui:VisualElement name="Portrait" class="squad-portrait squad-portrait-5" />
                             <ui:Label name="Title" class="squad-card-title" text="RESERVE" />
                             <ui:VisualElement name="HealthFrame" class="squad-health-frame"><ui:VisualElement name="HealthFill" class="squad-health-fill empty-fill" /></ui:VisualElement>
                             <ui:Label name="HealthText" class="squad-health-text" text="0/0" />
+                            <ui:VisualElement name="HealthPips" class="squad-health-pips">
+                                <ui:VisualElement class="squad-health-pip squad-health-pip-dim" />
+                                <ui:VisualElement class="squad-health-pip squad-health-pip-dim" />
+                                <ui:VisualElement class="squad-health-pip squad-health-pip-dim" />
+                                <ui:VisualElement class="squad-health-pip squad-health-pip-dim" />
+                                <ui:VisualElement class="squad-health-pip squad-health-pip-dim" />
+                                <ui:VisualElement class="squad-health-pip squad-health-pip-dim" />
+                                <ui:VisualElement class="squad-health-pip squad-health-pip-dim" />
+                                <ui:VisualElement class="squad-health-pip squad-health-pip-dim" />
+                            </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:Button>
                 </ui:VisualElement>

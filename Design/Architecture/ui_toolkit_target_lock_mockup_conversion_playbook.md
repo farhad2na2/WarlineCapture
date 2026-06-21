@@ -154,6 +154,33 @@ Reject the artifact and recrop when:
 
 For SCN-02, the bad crop made the UI look wrong by clipping the left side and including the inspector. The corrected clean-canvas crop changed the decision from layout speculation to typography-density tuning.
 
+## Repeated Template Gate
+
+Repeated UI is accepted by template quality, not by overall screen readability.
+
+Before moving to another screen, make a focused crop for each repeated family that can hide defects in a broad screenshot:
+
+- squad cards, unit cards, catalog cards, commander cards, and inventory cards;
+- left navigation buttons, footer buttons, command buttons, and right-rail buttons;
+- list rows, stat rows, tab rows, progress bars, sliders, and segmented status strips.
+
+Reject the screen and keep iterating when any repeated item has:
+
+- overlapping progress/slider/value text;
+- extra progress bars, sliders, or decorative strips that are not present in the reference;
+- unreadable title, value, or state label;
+- status bars that are missing, clipped, or visually detached from the card;
+- inconsistent spacing between repeated siblings;
+- chrome that is visibly weaker, thicker, stretched, or misaligned compared with the approved shared baseline.
+
+When the reference shows one repeated item in selected, highlighted, hover, disabled, or damaged state, treat it as a state example. Keep the base template identical across siblings, then express the variant as a reusable class or pseudo-class that can move to any item at runtime.
+
+SCN-08 correction:
+
+- The Match HUD was incorrectly advanced from a broad crop while the five squad cards still had poor hierarchy and health/slider overlap.
+- The corrected pass required a focused squad-tray crop, larger repeated cards, separated health bar/value text, segmented status pips, and a reusable selected/hover state instead of a one-off first-card treatment.
+- Future HUD and catalog screens must not move forward until their repeated-card crop has the same level of evidence.
+
 ## Typography Rule
 
 Tune typography only after the crop is clean.
@@ -212,6 +239,8 @@ A screen can move forward to the next surface when:
 - the user-requested resolution/canvas path was used;
 - artifacts are saved under the surface iteration folder;
 - PPU and 9-slice findings are recorded;
+- every repeated template has a focused crop or clearly visible full-screen crop, including every card, row, tab, and button family;
+- every crop is reviewed for overlaps, clipped text, missing status bars, stretched/chrome artifacts, and mismatched reference hierarchy;
 - `git diff --check` passes;
 - no forbidden source files were edited for the current visual scope.
 

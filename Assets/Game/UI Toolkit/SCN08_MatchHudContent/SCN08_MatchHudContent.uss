@@ -187,10 +187,70 @@
     -unity-slice-right: 92;
     -unity-slice-top: 86;
     -unity-slice-bottom: 86;
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-left-color: rgba(255, 230, 98, 0);
+    border-right-color: rgba(255, 230, 98, 0);
+    border-top-color: rgba(255, 230, 98, 0);
+    border-bottom-color: rgba(255, 230, 98, 0);
 }
 
+.squad-card:hover .squad-card-frame,
+.squad-card:focus .squad-card-frame,
 .squad-card-selected .squad-card-frame {
-    -unity-background-image-tint-color: rgb(255, 225, 140);
+    -unity-background-image-tint-color: rgb(255, 246, 182);
+    border-left-color: rgba(255, 230, 98, 0.9);
+    border-right-color: rgba(255, 230, 98, 0.9);
+    border-top-color: rgba(255, 230, 98, 0.9);
+    border-bottom-color: rgba(255, 230, 98, 0.9);
+}
+
+.squad-selected-glow {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    top: 6%;
+    bottom: 6%;
+    background-color: rgba(255, 211, 70, 0);
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-left-color: rgba(255, 222, 72, 0);
+    border-right-color: rgba(255, 222, 72, 0);
+    border-top-color: rgba(255, 222, 72, 0);
+    border-bottom-color: rgba(255, 222, 72, 0);
+}
+
+.squad-card:hover .squad-selected-glow,
+.squad-card:focus .squad-selected-glow {
+    background-color: rgba(255, 211, 70, 0.10);
+    border-left-color: rgba(255, 222, 72, 0.54);
+    border-right-color: rgba(255, 222, 72, 0.54);
+    border-top-color: rgba(255, 222, 72, 0.54);
+    border-bottom-color: rgba(255, 222, 72, 0.54);
+}
+
+.squad-card-selected .squad-selected-glow {
+    background-color: rgba(255, 211, 70, 0.16);
+    border-left-color: rgba(255, 230, 98, 0.86);
+    border-right-color: rgba(255, 230, 98, 0.86);
+    border-top-color: rgba(255, 230, 98, 0.86);
+    border-bottom-color: rgba(255, 230, 98, 0.86);
+}
+
+.squad-card:hover .squad-number,
+.squad-card:focus .squad-number,
+.squad-card-selected .squad-number,
+.squad-card:hover .squad-card-title,
+.squad-card:focus .squad-card-title,
+.squad-card-selected .squad-card-title,
+.squad-card:hover .squad-health-text,
+.squad-card:focus .squad-health-text,
+.squad-card-selected .squad-health-text {
+    color: rgb(255, 239, 174);
 }
 
 .command-rail-frame,
@@ -982,24 +1042,24 @@
 
 .squad-card {
     position: absolute;
-    top: 14%;
-    width: 17.7%;
-    height: 72%;
+    top: 3%;
+    width: 18.6%;
+    height: 93%;
 }
 
-#SquadCard1 { left: 3.1%; }
-#SquadCard2 { left: 22.5%; }
-#SquadCard3 { left: 41.9%; }
-#SquadCard4 { left: 61.3%; }
-#SquadCard5 { left: 80.7%; }
+#SquadCard1 { left: 1.1%; }
+#SquadCard2 { left: 20.6%; }
+#SquadCard3 { left: 40.1%; }
+#SquadCard4 { left: 59.6%; }
+#SquadCard5 { left: 79.1%; }
 
 .squad-number {
     position: absolute;
-    left: 9%;
-    top: 8%;
+    left: 7%;
+    top: 4%;
     width: 16%;
-    height: 15%;
-    font-size: 18px;
+    height: 14%;
+    font-size: 22px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(230, 196, 74);
@@ -1007,20 +1067,20 @@
 
 .squad-portrait {
     position: absolute;
-    left: 9%;
-    right: 9%;
-    top: 22%;
-    height: 34%;
+    left: 8%;
+    right: 8%;
+    top: 17%;
+    height: 39%;
     -unity-background-scale-mode: scale-and-crop;
 }
 
 .squad-card-title {
     position: absolute;
-    left: 7%;
-    right: 7%;
-    top: 59%;
+    left: 6%;
+    right: 6%;
+    top: 58%;
     height: 14%;
-    font-size: 15px;
+    font-size: 19px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(239, 232, 202);
@@ -1028,9 +1088,10 @@
 
 .squad-health-frame {
     left: 10%;
-    right: 10%;
-    bottom: 17%;
-    height: 7%;
+    right: 38%;
+    top: auto;
+    bottom: 16%;
+    height: 9%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_track_frame.png");
     -unity-slice-left: 52;
     -unity-slice-right: 52;
@@ -1062,14 +1123,54 @@
 
 .squad-health-text {
     position: absolute;
-    left: 8%;
-    right: 8%;
-    bottom: 5%;
-    height: 10%;
-    font-size: 14px;
+    left: 65%;
+    right: 4%;
+    bottom: 14%;
+    height: 14%;
+    font-size: 15px;
     -unity-font-style: bold;
-    -unity-text-align: middle-center;
+    -unity-text-align: middle-left;
     color: rgb(239, 232, 202);
+}
+
+.squad-health-pips {
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    bottom: 4%;
+    height: 8%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.squad-health-pip {
+    height: 100%;
+    width: 10.2%;
+    background-color: rgb(145, 176, 48);
+}
+
+.squad-card:hover .squad-health-pip,
+.squad-card:focus .squad-health-pip,
+.squad-card-selected .squad-health-pip {
+    background-color: rgb(182, 209, 62);
+}
+
+.squad-health-pip-dim,
+.squad-card-empty .squad-health-pip {
+    background-color: rgba(90, 95, 70, 0.62);
+}
+
+.squad-card:hover .squad-health-pip-dim,
+.squad-card:focus .squad-health-pip-dim,
+.squad-card-selected .squad-health-pip-dim,
+.squad-card-empty:hover .squad-health-pip,
+.squad-card-empty:focus .squad-health-pip,
+.squad-card-empty.squad-card-selected .squad-health-pip {
+    background-color: rgba(120, 129, 83, 0.72);
+}
+
+.squad-card-empty .squad-portrait {
+    opacity: 0.64;
 }
 
 .command-rail {

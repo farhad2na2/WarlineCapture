@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [InitializeOnLoad]
@@ -8,6 +9,7 @@ internal static class MatchPlayModeMenuRedirectEditor
     private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
     private const string RestoreMatchSceneKey = "Game.RestoreMatchSceneAfterPlay";
+    private const string RestoreScenePathKey = "Game.RestoreScenePathAfterPlay";
 
     static MatchPlayModeMenuRedirectEditor()
     {
@@ -29,7 +31,9 @@ internal static class MatchPlayModeMenuRedirectEditor
         }
 
         Scene activeScene = SceneManager.GetActiveScene();
-        if (activeScene.path != MatchScenePath)
+        bool startedFromMatchScene = activeScene.path == MatchScenePath;
+        bool startedFromCameralessPreviewScene = ShouldStartMenuFromCameralessPreviewScene(activeScene);
+        if (!startedFromMatchScene && !startedFromCameralessPreviewScene)
         {
             return;
         }
@@ -40,25 +44,74 @@ internal static class MatchPlayModeMenuRedirectEditor
             return;
         }
 
-        SessionState.SetBool(RestoreMatchSceneKey, true);
+        SessionState.SetBool(RestoreMatchSceneKey, startedFromMatchScene);
+        if (ShouldRestoreSceneAfterPlay(activeScene.path))
+            SessionState.SetString(RestoreScenePathKey, activeScene.path);
+        else
+            SessionState.EraseString(RestoreScenePathKey);
+
         EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
     }
 
     private static void RestoreMatchSceneAfterPlay()
     {
-        if (!SessionState.GetBool(RestoreMatchSceneKey, false))
+        string restoreScenePath = SessionState.GetString(RestoreScenePathKey, string.Empty);
+        bool restoreMatchScene = SessionState.GetBool(RestoreMatchSceneKey, false);
+        if (!restoreMatchScene && string.IsNullOrEmpty(restoreScenePath))
         {
             return;
         }
 
         SessionState.EraseBool(RestoreMatchSceneKey);
+        SessionState.EraseString(RestoreScenePathKey);
 
         Scene activeScene = SceneManager.GetActiveScene();
-        if (activeScene.path == MatchScenePath)
+        string targetScenePath = restoreMatchScene ? MatchScenePath : restoreScenePath;
+        if (activeScene.path == targetScenePath)
         {
             return;
         }
 
-        EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
+        EditorSceneManager.OpenScene(targetScenePath, OpenSceneMode.Single);
+    }
+
+    private static bool ShouldStartMenuFromCameralessPreviewScene(Scene scene)
+    {
+        if (scene.path == MenuScenePath || scene.path == MatchScenePath)
+            return false;
+
+        return IsPreviewLikeScenePath(scene.path) && !HasEnabledCamera(scene);
+    }
+
+    private static bool IsPreviewLikeScenePath(string scenePath)
+    {
+        return string.IsNullOrEmpty(scenePath) || scenePath.StartsWith("Temp/", System.StringComparison.Ordinal);
+    }
+
+    private static bool ShouldRestoreSceneAfterPlay(string scenePath)
+    {
+        return !string.IsNullOrEmpty(scenePath) &&
+            scenePath.StartsWith("Assets/", System.StringComparison.Ordinal) &&
+            scenePath != MenuScenePath;
+    }
+
+    private static bool HasEnabledCamera(Scene scene)
+    {
+        if (!scene.IsValid() || !scene.isLoaded)
+            return false;
+
+        GameObject[] rootGameObjects = scene.GetRootGameObjects();
+        for (int i = 0; i < rootGameObjects.Length; i++)
+        {
+            Camera[] cameras = rootGameObjects[i].GetComponentsInChildren<Camera>(true);
+            for (int cameraIndex = 0; cameraIndex < cameras.Length; cameraIndex++)
+            {
+                Camera camera = cameras[cameraIndex];
+                if (camera != null && camera.enabled && camera.gameObject.activeInHierarchy)
+                    return true;
+            }
+        }
+
+        return false;
     }
 }

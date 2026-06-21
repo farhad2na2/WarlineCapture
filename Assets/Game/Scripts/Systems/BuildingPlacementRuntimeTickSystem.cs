@@ -8,6 +8,7 @@ internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
     private const double ProductionIntervalSeconds = 0.1d;
     private const double ResourceProductionIntervalSeconds = 1d;
     private const double ResourceHaulerIntervalSeconds = 0.25d;
+    private const double ResourceVisualIntervalSeconds = 0.25d;
     private const double ReservationCleanupIntervalSeconds = 0.5d;
     private const double DestroyedCleanupIntervalSeconds = 0.5d;
     private static readonly ProfilerMarker ProcessPendingProductionsMarker = new("BuildingPlacementRuntimeTick.ProcessPendingProductions");
@@ -27,6 +28,7 @@ internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
     private double _nextProductionAt;
     private double _nextResourceProductionAt;
     private double _nextResourceHaulerAt;
+    private double _nextResourceVisualAt;
     private double _nextReservationCleanupAt;
     private double _nextDestroyedCleanupAt;
 
@@ -234,9 +236,14 @@ internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
             }
             afterHaulers = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-            using (UpdateBuildingResourceVisualsMarker.Auto())
+            now = afterHaulers;
+            if (now >= _nextResourceVisualAt)
             {
-                context.UpdateBuildingResourceVisuals?.Invoke();
+                _nextResourceVisualAt = now + ResourceVisualIntervalSeconds;
+                using (UpdateBuildingResourceVisualsMarker.Auto())
+                {
+                    context.UpdateBuildingResourceVisuals?.Invoke();
+                }
             }
             afterResourceVisuals = UnityEngine.Time.realtimeSinceStartupAsDouble;
 

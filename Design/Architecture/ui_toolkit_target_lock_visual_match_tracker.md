@@ -11,18 +11,19 @@ Last updated:
 
 Progress snapshot:
 
-- Checklist progress: `0 / 136 complete (0.0%)`.
-- In progress: `0`.
-- Remaining open: `136`.
-- Current target: `Phase 0 - baseline, structure lock, and reference inventory`.
-- Iteration loop status: `not started`.
+- Checklist progress: `9 / 140 complete (6.4%)`.
+- In progress: `1`.
+- Remaining open: `131`.
+- Current target: `SCN-02 Main Menu iteration 01 - shadow baseline capture pending approval`.
+- Iteration loop status: `SCN-02 prep and mapping complete; first shadow capture pending`.
 - Surfaces target-matched: `0 / 11`.
-- Pixel Per Unit audit status: `not started`.
-- 9-slice audit status: `not started`.
-- UI Builder comparison status: `not started`.
-- Game View capture comparison status: `not started`.
-- Shadow project validation status: `not started`.
-- Validation status: `not started`.
+- User verification gate: `stop after SCN-02 Main Menu target-match handoff`.
+- Pixel Per Unit audit status: `SCN-02 initial meta/USS audit started; no PPU changes`.
+- 9-slice audit status: `SCN-02 initial meta/USS audit started; no slice changes`.
+- UI Builder comparison status: `not run`.
+- Game View capture comparison status: `pending shadow capture`.
+- Shadow project validation status: `shadow project exists; sync/capture pending approval`.
+- Validation status: `git diff --check passed for SCN-02 prep slice`.
 
 ## Scope
 
@@ -149,14 +150,14 @@ A surface is target-matched only when:
 Goal:
 Freeze the existing UI Toolkit hierarchy, collect canonical targets, and define what is allowed to move visually.
 
-- [ ] Confirm `Design/Architecture/ui_toolkit_canvas_replacement_plan.md` remains behavior-complete before visual restyle starts.
-- [ ] Inventory every UXML file under `Assets/Game/UI Toolkit`.
-- [ ] Record shell regions from `UIShellAppCanvas.uxml`: `HeaderRegion`, `LeftRegion`, `MiddleRegion`, `RightRegion`, `FooterRegion`, and `MenuBackgroundRegion`.
+- [x] Confirm `Design/Architecture/ui_toolkit_canvas_replacement_plan.md` remains behavior-complete before visual restyle starts.
+- [x] Inventory every UXML file under `Assets/Game/UI Toolkit`.
+- [x] Record shell regions from `UIShellAppCanvas.uxml`: `HeaderRegion`, `LeftRegion`, `MiddleRegion`, `RightRegion`, `FooterRegion`, and `MenuBackgroundRegion`.
 - [ ] Record each screen's root visual element and top-level header/left/right/middle/footer content elements.
-- [ ] Create a structure-lock table with `UXML path`, `element name`, `region role`, `may move visually`, `may resize`, and `may not rename`.
-- [ ] Confirm all canonical reference PNGs listed in the scope table exist.
-- [ ] Mark POP-06 Settings as `Needs target` if no saved target exists.
-- [ ] Mark POP-07 Inbox as `Needs target` if no saved target exists.
+- [x] Create a structure-lock table with `UXML path`, `element name`, `region role`, `may move visually`, `may resize`, and `may not rename`.
+- [x] Confirm all canonical reference PNGs listed in the scope table exist.
+- [x] Mark POP-06 Settings as `Needs target` if no saved target exists.
+- [x] Mark POP-07 Inbox as `Needs target` if no saved target exists.
 - [ ] Capture current UI Toolkit Game View screenshots for every route at 16:9.
 - [ ] Capture current UI Toolkit Game View screenshots for every route at 20:9.
 - [ ] Capture current UI Builder screenshots or exported previews for every editable UXML surface.
@@ -175,7 +176,7 @@ Acceptance:
 Goal:
 Map every important target element to an existing UI Toolkit element without changing screen structure.
 
-- [ ] Create `Design/VisualLockLayered/_UIToolkitVisualMatch/target_to_toolkit_mapping.md`.
+- [x] Create `Design/VisualLockLayered/_UIToolkitVisualMatch/target_to_toolkit_mapping.md`.
 - [ ] Add one table per surface.
 - [ ] For each visible target element, record target bounds, current UXML element, USS class, sprite asset, font style, expected region, and QA status.
 - [ ] Mark each element as `header`, `footer`, `left`, `right`, `middle`, `background`, `modal`, or `diagnostic`.
@@ -345,7 +346,7 @@ Acceptance:
 Goal:
 Validate and compare in `/Users/farhad/Projects/WarlineCapture-CodexUnity1` without opening or mutating the main project.
 
-- [ ] Verify the shadow project exists: `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
+- [x] Verify the shadow project exists: `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
 - [ ] Verify the shadow project Unity version and packages match the main project closely enough for UI Toolkit rendering comparison.
 - [ ] Define the sync command for allowed paths only: UI Toolkit UXML/USS, UI art PNG/meta, and comparison notes.
 - [ ] Request approval before syncing files to the shadow project when the current sandbox does not allow writes outside `/Users/farhad/Projects/WarlineCapture`.
@@ -472,7 +473,7 @@ Use these labels in iteration notes:
 | --- | --- | ---: | --- | --- |
 | Shell | Not started | 0 | None | None |
 | SCN-01 Loading | Not started | 0 | None | None |
-| SCN-02 Main Menu | Not started | 0 | None | None |
+| SCN-02 Main Menu | In progress | 1 | Shadow sync/capture approval pending | `Design/VisualLockLayered/_UIToolkitVisualMatch/target_to_toolkit_mapping.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/notes.md` |
 | SCN-03 Commander Profile | Not started | 0 | None | None |
 | SCN-08 Match HUD | Not started | 0 | None | None |
 | SCN-08 Build Placement Bar | Not started | 0 | None | None |
@@ -483,6 +484,13 @@ Use these labels in iteration notes:
 | POP-07 Inbox | Needs target | 0 | Saved Target Lock reference missing | None |
 
 ## Suggested Work Order
+
+Main-menu verification gate:
+
+- [ ] Complete SCN-02 Main Menu first.
+- [ ] Save final SCN-02 UI Builder preview, shadow-project 16:9 capture, shadow-project 20:9 capture, comparison contact sheet, focused crops, Pixel Per Unit notes, 9-slice notes, and validation result.
+- [ ] Mark SCN-02 as `Pending user verification`, not `Target matched`, until the user reviews it.
+- [ ] Stop implementation after the SCN-02 handoff and do not continue to SCN-19 or later surfaces until the user approves the main-menu result.
 
 1. SCN-02 Main Menu, because it defines the main Target Lock chrome language for menu screens.
 2. SCN-19 Armory, because it has dense cards, tabs, locked/selected states, and known chrome sensitivity.

@@ -3,17 +3,8 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingRuntimeBoundaryPublishSystem : SystemBase
+internal sealed class BuildingRuntimeBoundaryPublishSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
     public readonly struct Context

@@ -16,15 +16,15 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `21 / 83 complete (25.3%)`.
+- Checklist progress: `38 / 100 complete (38.0%)`.
 - In progress: `0`.
 - Remaining open: `62`.
-- Current target: `D7 helper fold complete for P7-0070/P7-0137/P7-0061/P7-0069/P7-0068/P7-0067; continue with the next low-risk Agent D row before broad spawn/production owners`.
+- Current target: `D7 helper fold complete for P7-0070/P7-0137/P7-0061/P7-0069/P7-0068/P7-0067/P7-0125/P7-0091/P7-0102/P7-0107/P7-0120/P7-0122/P7-0128/P7-0121/P7-0112/P7-0116/P7-0118/P7-0126/P7-0092/P7-0064/P7-0081/P7-0082/P7-0108/P7-0073/P7-0074; continue with the next low-risk Agent D row before broad spawn/production owners`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
-- Retired/folded helpers: `6`.
+- Retired/folded helpers: `25`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `P7-0070 BuildingGameplayGridDataSystem, P7-0137 BuildingSurfacePlacementSystem, P7-0061 BuildingGameplayBindingSystem, P7-0069 BuildingGameplayEcsQuerySystem, P7-0068 BuildingGameplayDisposalSystem, and P7-0067 BuildingGameplayDisposalCompositionSystem folded from disabled SystemBase wrappers into plain helpers. Compile, git diff check, map-surface, placement command, building composition smoke, and Phase 7 architecture validations passed. Logs: /private/tmp/warline-phase7-agent-d-helper-fold-map-surface.log, /private/tmp/warline-phase7-agent-d-helper-fold-placement-command.log, /private/tmp/warline-phase7-agent-d-helper-fold-composition-smoke.log, /private/tmp/warline-phase7-agent-d-binding-helper-fold-composition-smoke.log, /private/tmp/warline-phase7-agent-d-ecs-query-helper-fold-composition-smoke.log, /private/tmp/warline-phase7-agent-d-disposal-helper-fold-composition-smoke.log, /private/tmp/warline-phase7-agent-a-architecture.log.`
+- Validation status: `P7-0070 BuildingGameplayGridDataSystem, P7-0137 BuildingSurfacePlacementSystem, P7-0061 BuildingGameplayBindingSystem, P7-0069 BuildingGameplayEcsQuerySystem, P7-0068 BuildingGameplayDisposalSystem, P7-0067 BuildingGameplayDisposalCompositionSystem, P7-0125 BuildingRuntimeTickCompositionSystem, P7-0091 BuildingPlacementRuntimeTickContextSystem, P7-0102 BuildingProductionTickCompositionSystem, P7-0107 BuildingRuntimeBoundaryCompositionSystem, P7-0120 BuildingRuntimeResourcePrefabCompositionSystem, P7-0122 BuildingRuntimeSideEffectCompositionSystem, P7-0128 BuildingSelectionClickCompositionSystem, P7-0121 BuildingRuntimeResourcePrefabContextSystem, P7-0112 BuildingRuntimeCompositionSystem, P7-0116 BuildingRuntimeFocusPositionSystem, P7-0118 BuildingRuntimeOwnershipSystem, P7-0126 BuildingRuntimeUpdateSystem, P7-0092 BuildingPlacementRuntimeTickDiagnosticsSystem, P7-0064 BuildingGameplayCompositionSourceSystem, P7-0081 BuildingPlacementInputTickCompositionSystem, P7-0082 BuildingPlacementInteractionCompositionSystem, P7-0108 BuildingRuntimeBoundaryPublishSystem, P7-0073 BuildingPlacementAdapterSystem, and P7-0074 BuildingPlacementCommandCompositionSystem folded from disabled SystemBase wrappers into plain helpers. Compile, git diff check, map-surface, placement command, building composition smoke, and Phase 7 architecture validations passed. Logs: /private/tmp/warline-phase7-agent-d-helper-fold-map-surface.log, /private/tmp/warline-phase7-agent-d-helper-fold-placement-command.log, /private/tmp/warline-phase7-agent-d-helper-fold-composition-smoke.log, /private/tmp/warline-phase7-agent-d-binding-helper-fold-composition-smoke.log, /private/tmp/warline-phase7-agent-d-ecs-query-helper-fold-composition-smoke.log, /private/tmp/warline-phase7-agent-d-disposal-helper-fold-composition-smoke.log, /private/tmp/warline-phase7-agent-d-placement-command-composition-fold-smoke.log, /private/tmp/warline-phase7-agent-a-architecture.log.`
 
 Owned files:
 
@@ -223,9 +223,26 @@ Acceptance:
 Goal:
 Remove wrappers that no longer need to be systems.
 
-- [x] Identify disabled, unused, or wrapper building `SystemBase` types. Completed for `P7-0070`, `P7-0137`, `P7-0061`, `P7-0069`, `P7-0068`, and `P7-0067`.
-- [x] Search for serialized, reflection, and code references before removal. Completed for `P7-0070`, `P7-0137`, `P7-0061`, `P7-0069`, `P7-0068`, and `P7-0067`.
-- [x] Fold pure helper logic into static domain methods or the nearest narrow `ISystem` only when ownership is obvious. Completed by folding six wrappers into plain direct-owned helpers.
+- [x] Identify disabled, unused, or wrapper building `SystemBase` types. Completed for `P7-0070`, `P7-0137`, `P7-0061`, `P7-0069`, `P7-0068`, `P7-0067`, `P7-0125`, `P7-0091`, `P7-0102`, `P7-0107`, `P7-0120`, `P7-0122`, `P7-0128`, `P7-0121`, `P7-0112`, `P7-0116`, `P7-0118`, `P7-0126`, `P7-0092`, `P7-0064`, `P7-0081`, `P7-0082`, `P7-0108`, `P7-0073`, and `P7-0074`.
+- [x] Search for serialized, reflection, and code references before removal. Completed for `P7-0070`, `P7-0137`, `P7-0061`, `P7-0069`, `P7-0068`, `P7-0067`, `P7-0125`, `P7-0091`, `P7-0102`, `P7-0107`, `P7-0120`, `P7-0122`, `P7-0128`, `P7-0121`, `P7-0112`, `P7-0116`, `P7-0118`, `P7-0126`, `P7-0092`, `P7-0064`, `P7-0081`, `P7-0082`, `P7-0108`, `P7-0073`, and `P7-0074`.
+- [x] Fold pure helper logic into static domain methods or the nearest narrow `ISystem` only when ownership is obvious. Completed by folding twenty-five wrappers into plain direct-owned helpers.
+- [x] Fold `P7-0102 BuildingProductionTickCompositionSystem` from a disabled `SystemBase` wrapper into a plain production tick context helper; behavior remained in existing `BuildingProductionRuntimeTickSystem.Context` wiring.
+- [x] Fold `P7-0107 BuildingRuntimeBoundaryCompositionSystem` from a disabled `SystemBase` wrapper into a plain runtime-boundary publish context helper; behavior remained in existing `BuildingRuntimeBoundaryPublishSystem.Context` wiring.
+- [x] Fold `P7-0120 BuildingRuntimeResourcePrefabCompositionSystem` from a disabled `SystemBase` wrapper into a plain resource-prefab context helper; source ownership now uses direct construction instead of `World.GetOrCreateSystemManaged`.
+- [x] Fold `P7-0122 BuildingRuntimeSideEffectCompositionSystem` from a disabled `SystemBase` wrapper into a plain deferred runtime side-effect helper; behavior remained in existing placement redirect and invalid-cell side-effect calls.
+- [x] Fold `P7-0128 BuildingSelectionClickCompositionSystem` from a disabled `SystemBase` wrapper into a plain selection-click context helper; behavior remained in existing `BuildingSelectionClickSystem.Context` wiring.
+- [x] Fold `P7-0121 BuildingRuntimeResourcePrefabContextSystem` from a disabled `SystemBase` wrapper into a plain runtime resource/prefab context helper; source ownership now uses direct construction instead of `World.GetOrCreateSystemManaged`.
+- [x] Fold `P7-0112 BuildingRuntimeCompositionSystem` from a disabled `SystemBase` wrapper into a plain runtime composition context helper; behavior remained in existing runtime source/entity/context wiring.
+- [x] Fold `P7-0116 BuildingRuntimeFocusPositionSystem` from a disabled `SystemBase` wrapper into a static runtime focus-position helper; avoided creating an empty replacement `ISystem` shell for static-only behavior.
+- [x] Fold `P7-0118 BuildingRuntimeOwnershipSystem` from a disabled `SystemBase` wrapper into a plain runtime ownership helper; behavior remained in existing faction component, wall gate pass, and faction visual update paths.
+- [x] Fold `P7-0126 BuildingRuntimeUpdateSystem` from a disabled `SystemBase` wrapper into a public plain runtime update dispatcher; startup and simulation callbacks stayed unchanged.
+- [x] Fold `P7-0092 BuildingPlacementRuntimeTickDiagnosticsSystem` from a disabled `SystemBase` wrapper into a plain diagnostics helper; timing context, cooldown state, and gated log formatting stayed unchanged.
+- [x] Fold `P7-0064 BuildingGameplayCompositionSourceSystem` from a disabled `SystemBase` wrapper into a plain explicit child-system graph owner; direct construction and default-world visual boundary lookups stayed unchanged.
+- [x] Fold `P7-0081 BuildingPlacementInputTickCompositionSystem` from a disabled `SystemBase` wrapper into a plain placement input tick context composer; command flush, entity-manager access, and selection-click context wiring stayed unchanged.
+- [x] Fold `P7-0082 BuildingPlacementInteractionCompositionSystem` from a disabled `SystemBase` wrapper into a plain placement interaction context composer; UI query, placement command, production request, selection, and breach-target wiring stayed unchanged.
+- [x] Fold `P7-0108 BuildingRuntimeBoundaryPublishSystem` from a disabled `SystemBase` wrapper into a plain runtime boundary publish helper; entity query acquisition, boundary update dispatch, and frame/time arguments stayed unchanged.
+- [x] Fold `P7-0073 BuildingPlacementAdapterSystem` from a disabled `SystemBase` wrapper into a plain placement adapter helper; grid, placement validity, wall gate alignment, and initial placement origin adapter behavior stayed unchanged.
+- [x] Fold `P7-0074 BuildingPlacementCommandCompositionSystem` from a disabled `SystemBase` wrapper into a plain placement command-context helper; command context construction, placement visual delegate wiring, build purchase callbacks, minimap refresh, and selection clearing behavior stayed unchanged.
 - [x] Do not delete a referenced scene/prefab script without a serialized-reference migration approved by Agent A. No script assets were deleted.
 - [ ] Update tests that referenced retired helpers.
 - [x] Record retired/folded count in the progress snapshot.

@@ -1,17 +1,7 @@
 using System;
-using Unity.Entities;
 
-public sealed partial class BuildingRuntimeUpdateSystem : SystemBase
+public sealed class BuildingRuntimeUpdateSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public readonly struct Context
     {
         public readonly Action UpdateBuildingStartupTick;

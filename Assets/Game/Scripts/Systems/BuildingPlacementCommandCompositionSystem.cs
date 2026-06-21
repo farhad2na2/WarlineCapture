@@ -1,18 +1,8 @@
-using Unity.Entities;
 using UnityEngine;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 
-internal sealed partial class BuildingPlacementCommandCompositionSystem : SystemBase
+internal sealed class BuildingPlacementCommandCompositionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     internal delegate Vector2Int GetCenterScreenPlacementOriginDelegate(
         BuildingGameplayCompositionSourceSystem source,
         Vector2Int footprintCells);

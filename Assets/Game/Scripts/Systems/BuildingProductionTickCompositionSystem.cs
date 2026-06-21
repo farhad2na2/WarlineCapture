@@ -1,17 +1,7 @@
 using System;
-using Unity.Entities;
 
-internal sealed partial class BuildingProductionTickCompositionSystem : SystemBase
+internal sealed class BuildingProductionTickCompositionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public BuildingProductionRuntimeTickSystem.Context Create(
         BuildingGameplayCompositionSourceSystem source,
         Func<BuildingGameplayCompositionSourceSystem, BuildingProductionContextSystem.Source> createProductionRuntimeContextSource,

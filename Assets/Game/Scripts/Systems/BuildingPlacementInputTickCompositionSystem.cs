@@ -1,18 +1,8 @@
 using System;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingPlacementInputTickCompositionSystem : SystemBase
+internal sealed class BuildingPlacementInputTickCompositionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public BuildingPlacementInputRuntimeTickSystem.Context Create(
         BuildingGameplayCompositionSourceSystem source,
         BuildingPlacementInteractionSystem.Context interactionContext,

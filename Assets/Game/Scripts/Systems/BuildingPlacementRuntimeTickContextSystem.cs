@@ -1,7 +1,7 @@
 using System;
 using Unity.Entities;
 
-internal sealed partial class BuildingPlacementRuntimeTickContextSystem : SystemBase
+internal sealed class BuildingPlacementRuntimeTickContextSystem
 {
     public readonly struct Source
     {
@@ -47,15 +47,6 @@ internal sealed partial class BuildingPlacementRuntimeTickContextSystem : System
     private readonly BuildingProductionRuntimeTickSystem _productionRuntimeTickSystem = new();
     private readonly BuildingRuntimeBoundaryPublishSystem _runtimeBoundaryPublishSystem = new();
     private readonly BuildingPlacementRuntimeTickDiagnosticsSystem _diagnosticsSystem = new();
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public BuildingPlacementRuntimeTickSystem.Context Create(Source source)
     {

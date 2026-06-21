@@ -1,16 +1,5 @@
-using Unity.Entities;
-
-internal sealed partial class BuildingGameplayCompositionSourceSystem : SystemBase
+internal sealed class BuildingGameplayCompositionSourceSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     internal RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
     internal readonly RuntimeDiagnosticsSystem RuntimeDiagnosticsSystem = new();
     internal readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem = new();
@@ -176,17 +165,11 @@ internal sealed partial class BuildingGameplayCompositionSourceSystem : SystemBa
 
     private static BuildingRuntimeResourcePrefabCompositionSystem ResolveBuildingRuntimeResourcePrefabCompositionSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<BuildingRuntimeResourcePrefabCompositionSystem>()
-            : null;
+        return new BuildingRuntimeResourcePrefabCompositionSystem();
     }
 
     private static BuildingRuntimeResourcePrefabContextSystem ResolveBuildingRuntimeResourcePrefabContextSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<BuildingRuntimeResourcePrefabContextSystem>()
-            : null;
+        return new BuildingRuntimeResourcePrefabContextSystem();
     }
 }

@@ -1,8 +1,7 @@
 using System;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingPlacementRuntimeTickDiagnosticsSystem : SystemBase
+internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystem
 {
     private const double SlowLogThresholdSeconds = 0.01d;
     private const double SlowLogCooldownSeconds = 1d;
@@ -81,15 +80,6 @@ internal sealed partial class BuildingPlacementRuntimeTickDiagnosticsSystem : Sy
     public static Context CreateContext(Func<bool> shouldLogDiagnostics, Func<int> getRuntimeBuildingCount, Action<string> log)
     {
         return new Context(shouldLogDiagnostics, getRuntimeBuildingCount, log);
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     public void LogIfSlow(Context context, Timing timing)

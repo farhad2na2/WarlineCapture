@@ -1,16 +1,5 @@
-using Unity.Entities;
-
-internal sealed partial class BuildingRuntimeResourcePrefabCompositionSystem : SystemBase
+internal sealed class BuildingRuntimeResourcePrefabCompositionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public static BuildingRuntimeResourcePrefabContextSystem.Source Create(
         BuildingRuntimeResourcePrefabCompositionSystem system,
         BuildingGameplayCompositionSourceSystem source)

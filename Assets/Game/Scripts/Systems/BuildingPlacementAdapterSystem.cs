@@ -2,17 +2,8 @@ using Unity.Entities;
 using UnityEngine;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 
-internal sealed partial class BuildingPlacementAdapterSystem : SystemBase
+internal sealed class BuildingPlacementAdapterSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     internal delegate bool TryGetGridDataDelegate(
         BuildingGameplayCompositionSourceSystem source,
         out Entity gridEntity,

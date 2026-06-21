@@ -3,17 +3,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed partial class BuildingPlacementInteractionCompositionSystem : SystemBase
+internal sealed class BuildingPlacementInteractionCompositionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     internal delegate bool TryGetGridForPlacementInputDelegate(
         BuildingGameplayCompositionSourceSystem source,
         out GridConfig grid);

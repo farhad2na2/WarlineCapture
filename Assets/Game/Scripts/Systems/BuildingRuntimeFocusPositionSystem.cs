@@ -1,17 +1,7 @@
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingRuntimeFocusPositionSystem : SystemBase
+internal static class BuildingRuntimeFocusPositionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public static Vector3 Resolve(
         BuildingRuntimeContextSystem.RuntimeSource runtimeSource,
         RuntimeBuildingEntity building)

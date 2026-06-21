@@ -1,7 +1,7 @@
 using System;
 using Unity.Entities;
 
-internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : SystemBase
+internal sealed class BuildingRuntimeResourcePrefabContextSystem
 {
     public readonly struct Source
     {
@@ -42,15 +42,6 @@ internal sealed partial class BuildingRuntimeResourcePrefabContextSystem : Syste
             LivePlayerUnitsQuery = livePlayerUnitsQuery;
             CreateCurrentSource = createCurrentSource;
         }
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     public static Source CreateSource(

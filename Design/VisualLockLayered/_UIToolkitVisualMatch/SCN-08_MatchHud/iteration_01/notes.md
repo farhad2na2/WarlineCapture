@@ -35,13 +35,17 @@ Findings:
 - Slice 08 added a `SelectedGlow` layer to all five cards, but user review correctly rejected it as a cheap inner overlay that did not cover the chrome like the mockup.
 - Slice 09 removes the `SelectedGlow` elements entirely and changes `squad-card-selected`, `:hover`, and `:focus` to replace the card chrome with `scn08_v02_squad_card_selected_frame.png`.
 - Slice 09 balances the five-card tray margins: the cards remain `18.6%` wide, with `1.2%` left and right outer padding and consistent internal gaps.
+- Slice 09 squad-card follow-up adds the same professional impact language as the command rail: selected cards sit slightly raised and scaled, hover/focus lifts and scales a little more, and the selected squad-card chrome expands beyond the normal frame.
 - Runtime already moves `squad-card-selected` based on `UiMatchHudSquadTrayModel.SelectedSlot` in `UiToolkitShellView.ApplyMatchHudSquadTray`, so the selected visual state can apply to any squad card when selected.
 - Slice 09 keeps card 1 as only the static selected-state example in UI Builder; runtime selection remains class-driven.
 - Slice 09 also updates the command rail selected-state example shown by `MoveCommand`: `command-button-selected`, `:hover`, and `:focus` now replace the command button chrome with `scn08_v02_square_button_selected_frame.png` instead of tinting the normal frame.
+- Slice 09 command-button follow-up adds professional impact states: selected buttons sit slightly raised and scaled, hover/focus lifts and scales a little more, the selected chrome expands beyond the normal frame, and the icon/label brighten together.
 - Runtime already moves `command-button-selected` based on the active tactical command mode in `UiToolkitShellView.ApplyMatchHudCommandState`, so the selected visual state can apply to Select, Move, Attack, Hold, Stop, Build, Scan, and Support.
 - Validation slice 09: `git diff --check` passed.
 - Validation slice 09: shadow Unity batch import/compile passed with no SCN-08 asset/import/compile errors in `/private/tmp/warline-scn08-slice09-shadow-batch.log`.
 - Validation slice 09 command-button follow-up: shadow Unity batch import/compile passed with no command selected-frame import/compile errors in `/private/tmp/warline-scn08-command-selected-shadow-batch.log`.
+- Validation slice 09 command-button effects follow-up: shadow Unity batch import/compile passed with no new transform/transition USS warnings in `/private/tmp/warline-scn08-command-button-effects-shadow-batch.log`; the only USS warning remains the existing line-36 `picking-mode` warning.
+- Validation slice 09 squad-card effects follow-up: shadow Unity batch import/compile passed with no new transform/transition USS warnings in `/private/tmp/warline-scn08-squad-button-effects-shadow-batch.log`; the only USS warning remains the existing line-36 `picking-mode` warning.
 - Right threat banner and quick rail controls are visible.
 - Visual-only UXML/USS changes were required for the squad tray. Runtime bindings were preserved: `Title`, `HealthFrame`, `HealthFill`, `HealthText`, and `Portrait`.
 

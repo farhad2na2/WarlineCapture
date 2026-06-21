@@ -171,6 +171,10 @@
 .command-button:hover .command-button-frame,
 .command-button:focus .command-button-frame,
 .command-button-selected .command-button-frame {
+    left: -7%;
+    right: -7%;
+    top: -5%;
+    bottom: -5%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_selected_frame.png");
     -unity-background-image-tint-color: rgb(255, 255, 255);
 }
@@ -194,6 +198,10 @@
 .squad-card:hover .squad-card-frame,
 .squad-card:focus .squad-card-frame,
 .squad-card-selected .squad-card-frame {
+    left: -3%;
+    right: -3%;
+    top: -2.5%;
+    bottom: -2.5%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_selected_frame.png");
     -unity-background-image-tint-color: rgb(255, 255, 255);
 }
@@ -1002,6 +1010,30 @@
     top: 3%;
     width: 18.6%;
     height: 93%;
+    overflow: visible;
+    transform-origin: center;
+    translate: 0 0;
+    scale: 1 1;
+    transition-property: translate, scale;
+    transition-duration: 90ms;
+    transition-timing-function: ease-out;
+}
+
+.squad-card-selected {
+    translate: 0 -2px;
+    scale: 1.025 1.025;
+}
+
+.squad-card:hover,
+.squad-card:focus {
+    translate: 0 -3px;
+    scale: 1.04 1.04;
+}
+
+.squad-card-selected:hover,
+.squad-card-selected:focus {
+    translate: 0 -4px;
+    scale: 1.045 1.045;
 }
 
 #SquadCard1 { left: 1.2%; }
@@ -1143,6 +1175,29 @@
     top: 9%;
     width: 13.6%;
     height: 82%;
+    transform-origin: center;
+    translate: 0 0;
+    scale: 1 1;
+    transition-property: translate, scale;
+    transition-duration: 90ms;
+    transition-timing-function: ease-out;
+}
+
+.command-button-selected {
+    translate: 0 -2px;
+    scale: 1.04 1.04;
+}
+
+.command-button:hover,
+.command-button:focus {
+    translate: 0 -4px;
+    scale: 1.07 1.07;
+}
+
+.command-button-selected:hover,
+.command-button-selected:focus {
+    translate: 0 -5px;
+    scale: 1.08 1.08;
 }
 
 #SelectCommand { left: 5.2%; }

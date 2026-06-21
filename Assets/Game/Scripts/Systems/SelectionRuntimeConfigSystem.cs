@@ -1,7 +1,6 @@
-using Unity.Entities;
 using UnityEngine;
 
-public sealed partial class SelectionRuntimeConfigSystem : SystemBase
+public sealed class SelectionRuntimeConfigSystem
 {
     private const float DefaultPanSensitivity = 0.03f;
     private const float DefaultZoomSpeed = 20f;
@@ -49,15 +48,6 @@ public sealed partial class SelectionRuntimeConfigSystem : SystemBase
 
         Normalize(ref state);
         return state;
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     private static State CreateDefaultState(Camera worldCamera)

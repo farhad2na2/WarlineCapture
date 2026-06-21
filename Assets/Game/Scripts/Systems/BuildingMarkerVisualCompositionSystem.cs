@@ -1,18 +1,8 @@
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingMarkerVisualCompositionSystem : SystemBase
+internal sealed class BuildingMarkerVisualCompositionSystem
 {
     private MaterialPropertyBlock _markerPropertyBlock;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public static MaterialPropertyBlock GetMarkerPropertyBlock(BuildingMarkerVisualCompositionSystem system)
     {

@@ -11,7 +11,7 @@ internal sealed partial class BuildingGameplayCompositionSystem : SystemBase
     private readonly BuildingGameplayBindingSystem _bindingSystem = new();
     private readonly BuildingCitizenPopulationCompositionSystem _citizenPopulationCompositionSystem = ResolveBuildingCitizenPopulationCompositionSystem();
     private readonly BuildingGameplayDisposalCompositionSystem _disposalCompositionSystem = new();
-    private readonly BuildingMarkerVisualCompositionSystem _markerVisualCompositionSystem = ResolveBuildingMarkerVisualCompositionSystem();
+    private readonly BuildingMarkerVisualCompositionSystem _markerVisualCompositionSystem = new();
     private readonly BuildingRuntimeTickCompositionSystem _runtimeTickCompositionSystem = new();
     private readonly BuildingPlacementInputTickCompositionSystem _placementInputTickCompositionSystem = new();
     private readonly BuildingRuntimeBoundaryCompositionSystem _runtimeBoundaryCompositionSystem = new();
@@ -613,14 +613,6 @@ internal sealed partial class BuildingGameplayCompositionSystem : SystemBase
             _disposalCompositionSystem.CreateDisposeAction(
                 childSystems,
                 () => createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock)));
-    }
-
-    private static BuildingMarkerVisualCompositionSystem ResolveBuildingMarkerVisualCompositionSystem()
-    {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<BuildingMarkerVisualCompositionSystem>()
-            : null;
     }
 
     private static BuildingCitizenPopulationCompositionSystem ResolveBuildingCitizenPopulationCompositionSystem()

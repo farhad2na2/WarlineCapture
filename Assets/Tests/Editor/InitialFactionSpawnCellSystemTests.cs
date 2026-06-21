@@ -39,13 +39,15 @@ public sealed class InitialFactionSpawnCellSystemTests
             SpawnCell = new int2(31, 47)
         });
 
-        InitialFactionSpawnCellSystem system = world.GetOrCreateSystemManaged<InitialFactionSpawnCellSystem>();
+        InitialFactionSpawnCellSystem system = new();
         InitialUnitsSpawnerAuthoringConfig fallbackConfig = CreateFallbackConfig(3, new Vector2Int(99, 100));
         try
         {
-            system.Configure(fallbackConfig);
-
-            Assert.IsTrue(system.TryGetConfiguredFactionSpawnCell(3, out int2 spawnCell));
+            Assert.IsTrue(system.TryGetConfiguredFactionSpawnCell(
+                em,
+                CreateFallbackEntries(fallbackConfig),
+                3,
+                out int2 spawnCell));
             Assert.AreEqual(new int2(31, 47), spawnCell);
         }
         finally
@@ -61,10 +63,13 @@ public sealed class InitialFactionSpawnCellSystemTests
         InitialUnitsSpawnerAuthoringConfig fallbackConfig = CreateFallbackConfig(4, new Vector2Int(44, 55));
         try
         {
-            InitialFactionSpawnCellSystem system = world.GetOrCreateSystemManaged<InitialFactionSpawnCellSystem>();
-            system.Configure(fallbackConfig);
+            InitialFactionSpawnCellSystem system = new();
 
-            Assert.IsTrue(system.TryGetConfiguredFactionSpawnCell(4, out int2 spawnCell));
+            Assert.IsTrue(system.TryGetConfiguredFactionSpawnCell(
+                world.EntityManager,
+                CreateFallbackEntries(fallbackConfig),
+                4,
+                out int2 spawnCell));
             Assert.AreEqual(new int2(44, 55), spawnCell);
         }
         finally
@@ -81,6 +86,20 @@ public sealed class InitialFactionSpawnCellSystemTests
         SetPrivateField(factionEntry, "spawnCell", spawnCell);
         SetPrivateField(config, "factions", new List<InitialUnitsSpawnerAuthoringConfig.FactionEntry> { factionEntry });
         return config;
+    }
+
+    private static InitialFactionSpawnCellFallbackEntry[] CreateFallbackEntries(InitialUnitsSpawnerAuthoringConfig config)
+    {
+        InitialFactionSpawnCellFallbackEntry[] entries = new InitialFactionSpawnCellFallbackEntry[config.Factions.Count];
+        for (int i = 0; i < entries.Length; i++)
+        {
+            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = config.Factions[i];
+            entries[i] = new InitialFactionSpawnCellFallbackEntry(
+                (byte)Mathf.Clamp(faction.FactionId, 0, byte.MaxValue),
+                new int2(faction.SpawnCell.x, faction.SpawnCell.y));
+        }
+
+        return entries;
     }
 
     private static void SetPrivateField<T>(object target, string fieldName, T value)

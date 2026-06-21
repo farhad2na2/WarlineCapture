@@ -57,8 +57,11 @@ public sealed class AIFactionControlStartupSystemValidationTests
         AIControllerConfig playerAuto = LoadAIConfig("Assets/Game/Configs/Scene/Game_AI_PlayerAuto_Config.asset");
         using var world = new World("AIFactionControlStartupSystemValidationTests");
 
-        AIFactionControlStartupSystem system = world.GetOrCreateSystemManaged<AIFactionControlStartupSystem>();
-        AIFactionControlStartupSystem.Result result = system.Initialize(world.EntityManager, new[] { enemy, playerAuto });
+        AIFactionControlStartupSystem system = new();
+        AIFactionControlStartupSystem.Result result = system.Initialize(
+            world.EntityManager,
+            new[] { ToStartupEntry(enemy), ToStartupEntry(playerAuto) },
+            AISettingsRuntimeState.CurrentSnapshot);
 
         DynamicBuffer<FactionControlEntry> entries = GetFactionControlEntries(world.EntityManager);
         Assert.IsTrue(result.HasPlayerAutoMode);
@@ -73,8 +76,11 @@ public sealed class AIFactionControlStartupSystemValidationTests
     {
         using var world = new World("AIFactionControlStartupSystemEmptyConfigTests");
 
-        AIFactionControlStartupSystem system = world.GetOrCreateSystemManaged<AIFactionControlStartupSystem>();
-        AIFactionControlStartupSystem.Result result = system.Initialize(world.EntityManager, new AIControllerConfig[0]);
+        AIFactionControlStartupSystem system = new();
+        AIFactionControlStartupSystem.Result result = system.Initialize(
+            world.EntityManager,
+            System.Array.Empty<AIFactionControlStartupEntry>(),
+            AISettingsRuntimeState.CurrentSnapshot);
 
         DynamicBuffer<FactionControlEntry> entries = GetFactionControlEntries(world.EntityManager);
         Assert.IsTrue(result.HasPlayerAutoMode);
@@ -92,8 +98,8 @@ public sealed class AIFactionControlStartupSystemValidationTests
         EntityManager em = world.EntityManager;
         Entity configEntity = em.CreateEntity(typeof(FactionControlConfigTag));
 
-        AIFactionControlStartupSystem system = world.GetOrCreateSystemManaged<AIFactionControlStartupSystem>();
-        system.Initialize(em, new[] { enemy });
+        AIFactionControlStartupSystem system = new();
+        system.Initialize(em, new[] { ToStartupEntry(enemy) }, AISettingsRuntimeState.CurrentSnapshot);
 
         Assert.IsTrue(em.HasBuffer<FactionControlEntry>(configEntity));
         DynamicBuffer<FactionControlEntry> entries = em.GetBuffer<FactionControlEntry>(configEntity);
@@ -107,6 +113,14 @@ public sealed class AIFactionControlStartupSystemValidationTests
         AIControllerConfig config = AssetDatabase.LoadAssetAtPath<AIControllerConfig>(path);
         Assert.NotNull(config, $"Missing AI config asset at {path}");
         return config;
+    }
+
+    private static AIFactionControlStartupEntry ToStartupEntry(AIControllerConfig config)
+    {
+        return new AIFactionControlStartupEntry(
+            config.Enabled,
+            config.Role,
+            (byte)UnityEngine.Mathf.Clamp(config.FactionId, 0, byte.MaxValue));
     }
 
     private static DynamicBuffer<FactionControlEntry> GetFactionControlEntries(EntityManager em)

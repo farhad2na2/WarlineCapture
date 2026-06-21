@@ -1,8 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-[DisableAutoCreation]
-public sealed partial class SelectionUiCommandSystem : SystemBase, ISelectionUiCommand
+public sealed class SelectionUiCommandSystem : ISelectionUiCommand
 {
     private readonly RtsSelectionInputSystem _inputSystem = new();
     private readonly FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem = new();
@@ -11,15 +10,6 @@ public sealed partial class SelectionUiCommandSystem : SystemBase, ISelectionUiC
     public SelectionUiCommandSystem(System.Func<bool> isGameplayInputLocked = null)
     {
         _isGameplayInputLocked = isGameplayInputLocked;
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     public void CaptureUiClickSequence()

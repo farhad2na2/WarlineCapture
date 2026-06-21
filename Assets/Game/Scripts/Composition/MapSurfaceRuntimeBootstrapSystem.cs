@@ -3,28 +3,16 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-[UpdateInGroup(typeof(InitializationSystemGroup))]
-internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
+internal sealed class MapSurfaceRuntimeBootstrapSystem
 {
     private const float SceneOverlayPadding = 0.1f;
 
-    private World createdWorld;
+    private readonly World createdWorld;
     private bool runtimeSurfaceDisposed;
 
-    protected override void OnCreate()
+    public MapSurfaceRuntimeBootstrapSystem(World world)
     {
-        createdWorld = World;
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
-    protected override void OnDestroy()
-    {
-        DisposeRuntimeSurface();
-        createdWorld = null;
+        createdWorld = world;
     }
 
     public bool Ensure(MapSurfaceAuthoring authoring)
@@ -49,7 +37,9 @@ internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
         if (surfaceData == null)
             return false;
 
-        EntityManager entityManager = EntityManager;
+        if (!TryGetLiveEntityManager(out EntityManager entityManager))
+            return false;
+
         if (!surfaceData.TryCreateRuntimeBlobAsset(Allocator.Persistent, out BlobAssetReference<MapSurfaceBlob> surfaceBlob))
         {
             Debug.LogWarning("[MapSurfaceRuntimeBootstrap] missingRuntimeSurfaceBlob");
@@ -102,7 +92,8 @@ internal sealed partial class MapSurfaceRuntimeBootstrapSystem : SystemBase
         if (authoring == null)
             return;
 
-        EntityManager entityManager = EntityManager;
+        if (!TryGetLiveEntityManager(out EntityManager entityManager))
+            return;
         if (surfaceEntity == Entity.Null || !entityManager.Exists(surfaceEntity))
             surfaceEntity = ResolveRuntimeSurfaceEntity(entityManager);
         if (!entityManager.HasBuffer<MapSurfaceSceneOverlay>(surfaceEntity))

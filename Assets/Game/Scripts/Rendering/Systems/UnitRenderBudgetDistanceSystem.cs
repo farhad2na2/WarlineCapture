@@ -4,7 +4,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Transforms;
-using UnityEngine;
 
 public readonly struct UnitRenderBudgetDistance
 {
@@ -18,7 +17,7 @@ public readonly struct UnitRenderBudgetDistance
     }
 
     public void Collect(
-        Camera camera,
+        RuntimeCameraSnapshotComponent camera,
         NativeArray<Entity> units,
         NativeArray<LocalTransform> transforms,
         NativeList<UnitDistance> distances,
@@ -28,7 +27,7 @@ public readonly struct UnitRenderBudgetDistance
         float viewportPadding,
         float edgeSafetyMargin)
     {
-        if (camera == null || !units.IsCreated || !transforms.IsCreated || !distances.IsCreated)
+        if (camera.IsValid == 0 || !units.IsCreated || !transforms.IsCreated || !distances.IsCreated)
         {
             if (distances.IsCreated)
                 distances.Clear();
@@ -42,7 +41,6 @@ public readonly struct UnitRenderBudgetDistance
         if (count == 0)
             return;
 
-        float4x4 worldToCamera = ToFloat4x4(camera.worldToCameraMatrix);
         new CollectDistanceJob
         {
             Units = units,
@@ -50,9 +48,9 @@ public readonly struct UnitRenderBudgetDistance
             PassengerLookup = passengerLookup,
             EntityStorageInfoLookup = entityStorageInfoLookup,
             Distances = distances.AsParallelWriter(),
-            CameraPosition = camera.transform.position,
-            WorldToCamera = worldToCamera,
-            ViewProjection = math.mul(ToFloat4x4(camera.projectionMatrix), worldToCamera),
+            CameraPosition = camera.Position,
+            WorldToCamera = camera.WorldToCamera,
+            ViewProjection = camera.ViewProjection,
             AlwaysDetailedDistanceSq = alwaysDetailedDistanceSq,
             ViewportPadding = viewportPadding,
             EdgeSafetyMargin = edgeSafetyMargin
@@ -116,14 +114,5 @@ public readonly struct UnitRenderBudgetDistance
                 ScreenEdge = screenEdge ? (byte)1 : (byte)0
             });
         }
-    }
-
-    private static float4x4 ToFloat4x4(Matrix4x4 value)
-    {
-        return new float4x4(
-            new float4(value.m00, value.m10, value.m20, value.m30),
-            new float4(value.m01, value.m11, value.m21, value.m31),
-            new float4(value.m02, value.m12, value.m22, value.m32),
-            new float4(value.m03, value.m13, value.m23, value.m33));
     }
 }

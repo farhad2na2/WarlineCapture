@@ -16,9 +16,9 @@ internal sealed partial class BuildingPlacementContextSystem : SystemBase
     {
     }
 
-    public readonly struct Source
+    public struct Source
     {
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly BuildingPlacementLifecycleSystem LifecycleSystem;
         public readonly BuildingPlacementInputSystem InputSystem;
         public readonly BuildingPlacementPreviewSystem PreviewSystem;

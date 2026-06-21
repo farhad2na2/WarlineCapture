@@ -6,8 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-[DisableAutoCreation]
-public sealed partial class RtsSelectionCommandResultFlushSystem : SystemBase
+public sealed class RtsSelectionCommandResultFlushSystem
 {
     public delegate bool TryGetEntityManagerAction(out EntityManager em);
     public delegate void ClearCurrentSelectionAction(EntityManager em, string reason);
@@ -20,15 +19,6 @@ public sealed partial class RtsSelectionCommandResultFlushSystem : SystemBase
     private readonly List<RtsSelectionCommandResultElement> _scanCommandResultScratch = new();
     private readonly List<RtsSelectionCommandResultElement> _transportCommandResultScratch = new();
     private readonly List<Entity> _selectedAttackSourceScratch = new();
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public readonly struct Context
     {

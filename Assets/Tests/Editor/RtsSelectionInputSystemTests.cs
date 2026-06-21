@@ -2326,7 +2326,7 @@ public sealed class RtsSelectionInputSystemTests
         string transportCommands = File.ReadAllText("Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs");
         string boarding = ExtractBlockAfter(transportCommands, "bool TryIssueBoardNearestSoldierOrders");
 
-        int planningIndex = boarding.IndexOf("plannedOrders.Add(new PendingTransportBoardingOrder", StringComparison.Ordinal);
+        int planningIndex = boarding.IndexOf("plannedOrders.Add(", StringComparison.Ordinal);
         int mutationIndex = boarding.IndexOf("UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder", StringComparison.Ordinal);
         Assert.GreaterOrEqual(planningIndex, 0, "Board All transport boarding must collect planned orders before mutating ECS components.");
         Assert.GreaterOrEqual(mutationIndex, 0, "Board All transport boarding must still issue movement orders after planning.");
@@ -2343,10 +2343,10 @@ public sealed class RtsSelectionInputSystemTests
         string boarding = ExtractBlockAfter(transportCommands, "bool TryIssueBoardNearestSoldierOrders");
 
         StringAssert.Contains("ResolveTransportSlotAvailability(", boarding);
-        StringAssert.Contains("availableSoldierSeats", boarding);
-        StringAssert.Contains("availableVehicleSlots", boarding);
-        StringAssert.Contains("plannedSoldierSeats >= availableSoldierSeats", boarding);
-        StringAssert.Contains("plannedVehicleSlots >= availableVehicleSlots", boarding);
+        StringAssert.Contains("slotAvailability.AvailableSoldierSeats", boarding);
+        StringAssert.Contains("slotAvailability.AvailableVehicleSlots", boarding);
+        StringAssert.Contains("plannedSoldierSeats >= slotAvailability.AvailableSoldierSeats", boarding);
+        StringAssert.Contains("plannedVehicleSlots >= slotAvailability.AvailableVehicleSlots", boarding);
     }
 
     [Test]
@@ -3084,7 +3084,7 @@ public sealed class RtsSelectionInputSystemTests
 
             var pointerSystem = new RtsSelectionPointerTargetCommandSystem();
             var context = new RtsSelectionPointerTargetCommandSystem.Context(
-                runtimeGameplayStateSystem: null,
+                runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(),
                 inputSystem: null,
                 selectionStateSystem: new SelectionStateSystem(),
                 focusedUnitLifecycleSystem: null,

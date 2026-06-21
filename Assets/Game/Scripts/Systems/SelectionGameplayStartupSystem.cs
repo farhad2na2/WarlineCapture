@@ -4,18 +4,8 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[DisableAutoCreation]
-internal sealed partial class SelectionGameplayStartupSystem : SystemBase
+internal sealed class SelectionGameplayStartupSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public readonly struct Result
     {
         public readonly System.Action<IMatchRuntimeUi> BindSelectionMainMenu;
@@ -75,10 +65,7 @@ internal sealed partial class SelectionGameplayStartupSystem : SystemBase
     {
         IMatchIntroStateQuery resolvedMatchIntroStateQuery = matchIntroStateQuery ?? NullMatchIntroStateQuery.Instance;
         SelectionRuntimeDiagnosticsSystem selectionRuntimeDiagnosticsSystem = ResolveSelectionRuntimeDiagnosticsSystem();
-        SelectionRuntimeConfigSystem selectionRuntimeConfigSystem = ResolveSelectionRuntimeConfigSystem();
-        SelectionRuntimeConfigSystem.State runtimeConfig = selectionRuntimeConfigSystem != null
-            ? selectionRuntimeConfigSystem.CreateState(rtsSelectionConfig, worldCamera)
-            : SelectionRuntimeConfigSystem.CreateStateFromConfig(rtsSelectionConfig, worldCamera);
+        SelectionRuntimeConfigSystem.State runtimeConfig = SelectionRuntimeConfigSystem.CreateStateFromConfig(rtsSelectionConfig, worldCamera);
         var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
         var rtsSelectionInputSystem = new RtsSelectionInputSystem();
         var rtsSelectionRuntimeInputSystem = new RtsSelectionRuntimeInputSystem();
@@ -91,7 +78,7 @@ internal sealed partial class SelectionGameplayStartupSystem : SystemBase
         var selectionUiCommand = new SelectionUiCommandSystem(IsMatchIntroGameplayInputLocked);
         var selectionUiReadModel = new SelectionUiReadModelSystem();
         var selectionUiCamera = new SelectionUiCameraSystem(rtsCameraSystem, rtsCameraRequestSystem);
-        SelectionScreenMarkerSystem selectionScreenMarkers = ResolveSelectionScreenMarkerSystem();
+        var selectionScreenMarkers = new SelectionScreenMarkerSystem();
         var selectionStateSystem = new SelectionStateSystem();
         var selectionUiReadModelLookup = new SelectionUiReadModelLookup();
         var focusedUnitUiReadModelSystem = new FocusedUnitUiReadModelSystem();
@@ -902,28 +889,9 @@ internal sealed partial class SelectionGameplayStartupSystem : SystemBase
             : null;
     }
 
-    private static SelectionScreenMarkerSystem ResolveSelectionScreenMarkerSystem()
-    {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<SelectionScreenMarkerSystem>()
-            : null;
-    }
-
-    private static SelectionRuntimeConfigSystem ResolveSelectionRuntimeConfigSystem()
-    {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<SelectionRuntimeConfigSystem>()
-            : null;
-    }
-
     private static SelectionRuntimeDiagnosticsSystem ResolveSelectionRuntimeDiagnosticsSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<SelectionRuntimeDiagnosticsSystem>()
-            : null;
+        return new SelectionRuntimeDiagnosticsSystem();
     }
 
     private static string ResolveUnitSourceName(EntityManager em, Entity entity)

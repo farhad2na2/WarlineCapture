@@ -8,6 +8,42 @@ public sealed class RuntimeGameplayStateSystemTests
     private World _previousWorld;
     private World _world;
 
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(test => test.SettingGameplayFlag_WritesLegacyAndEcsSingleton());
+            RunCase(test => test.SettingCameraInput_WritesLegacyAndEcsSingleton());
+            RunCase(test => test.TryConsumeInitialCameraFocus_ReturnsWorldAndClearsRequest());
+            RunCase(test => test.ReadGameplayState_MirrorsLegacyStateIntoEcsSingleton());
+            RunCase(test => test.ResetForGameplayStart_RequestsPlayWithoutActivatingSimulation());
+            RunCase(test => test.ReadGameplayState_DoesNotOverwriteEcsWhenLegacyIsUnchanged());
+            RunCase(test => test.ReadGameplayState_MirrorsLaterLegacyChangeOnceDetected());
+            UnityEngine.Debug.Log("[RuntimeGameplayStateValidation] result=Passed tests=7");
+            ValidationExit.Passed();
+        }
+        catch (System.Exception exception)
+        {
+            UnityEngine.Debug.LogError("[RuntimeGameplayStateValidation] result=Failed");
+            UnityEngine.Debug.LogException(exception);
+            ValidationExit.Failed();
+        }
+    }
+
+    private static void RunCase(System.Action<RuntimeGameplayStateSystemTests> testCase)
+    {
+        var tests = new RuntimeGameplayStateSystemTests();
+        tests.SetUp();
+        try
+        {
+            testCase(tests);
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {

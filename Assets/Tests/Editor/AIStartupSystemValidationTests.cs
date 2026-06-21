@@ -59,8 +59,9 @@ public sealed class AIStartupSystemValidationTests
         aiSettings.EnemyAICount = 1;
         AISettingsRuntimeState.ResetDefaults();
 
-        AIStartupSystem system = world.GetOrCreateSystemManaged<AIStartupSystem>();
+        var system = new AIStartupSystem();
         AIStartupSystem.Result result = system.Initialize(
+            world.EntityManager,
             new[] { enemy, playerAuto },
             planEntryConfig,
             TryResolveFactionSpawnCell,

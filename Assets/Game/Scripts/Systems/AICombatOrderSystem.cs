@@ -38,7 +38,7 @@ public partial struct AICombatOrderSystem : ISystem
         public readonly Entity Entity;
         public readonly RuntimeBuildingCombatInfo Info;
         public readonly UnitHealth Health;
-        public readonly LocalTransform Transform;
+        public readonly LocalTransform LocalPose;
 
         public RuntimeBuildingCombatRecord(
             Entity entity,
@@ -49,7 +49,7 @@ public partial struct AICombatOrderSystem : ISystem
             Entity = entity;
             Info = info;
             Health = health;
-            Transform = transform;
+            LocalPose = transform;
         }
     }
 
@@ -554,7 +554,7 @@ public partial struct AICombatOrderSystem : ISystem
         RuntimeBuildingCombatInfo breachInfo = breachRecord.Info;
         breachTarget = breachRecord.Entity;
         breachCell = GetCenterCell(breachInfo);
-        breachPosition = breachRecord.Transform.Position;
+        breachPosition = breachRecord.LocalPose.Position;
 
         if (gridBreachContext.IsValid &&
             BuildingBarrierSystem.TryFindBreachApproachCell(
@@ -739,7 +739,7 @@ public partial struct AICombatOrderSystem : ISystem
             index = i;
             info = record.Info;
             health = record.Health;
-            transform = record.Transform;
+            transform = record.LocalPose;
             return true;
         }
 

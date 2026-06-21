@@ -1,9 +1,7 @@
 using Unity.Entities;
 
-public sealed partial class RuntimeDiagnosticsSystem : SystemBase
+public partial struct RuntimeDiagnosticsSystem : ISystem
 {
-    private World _cachedWorld;
-    private Entity _diagnosticsEntity;
     private bool _hasCachedLegacyState;
     private RuntimeDiagnosticsStateComponent _lastLegacyState;
 
@@ -43,12 +41,11 @@ public sealed partial class RuntimeDiagnosticsSystem : SystemBase
 
     public bool ShouldLogBuildingRuntimeSlices => InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics;
 
-    protected override void OnCreate()
+    public void OnCreate(ref SystemState state)
     {
-        Enabled = false;
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
     }
 
@@ -79,7 +76,7 @@ public sealed partial class RuntimeDiagnosticsSystem : SystemBase
             entityManager.SetComponentData(entity, state);
     }
 
-    private bool TryGetDiagnosticsEntity(out EntityManager entityManager, out Entity entity)
+    private static bool TryGetDiagnosticsEntity(out EntityManager entityManager, out Entity entity)
     {
         entityManager = default;
         entity = Entity.Null;
@@ -90,48 +87,28 @@ public sealed partial class RuntimeDiagnosticsSystem : SystemBase
         if (world == null || !world.IsCreated)
             return false;
 
-        if (_cachedWorld == world &&
-            _diagnosticsEntity != Entity.Null &&
-            entityManager.Exists(_diagnosticsEntity) &&
-            entityManager.HasComponent<RuntimeDiagnosticsStateComponent>(_diagnosticsEntity))
-        {
-            entity = _diagnosticsEntity;
-            return true;
-        }
-
         using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
         if (query.CalculateEntityCount() > 0)
         {
             entity = query.GetSingletonEntity();
-            CacheDiagnosticsEntity(world, entity);
             return true;
         }
 
         entity = entityManager.CreateEntity(typeof(RuntimeDiagnosticsStateComponent));
         entityManager.SetName(entity, "RuntimeDiagnosticsState");
         entityManager.SetComponentData(entity, LegacyDiagnosticsState());
-        CacheDiagnosticsEntity(world, entity);
         return true;
     }
 
-    private bool TryGetLiveEntityManager(out EntityManager entityManager)
+    private static bool TryGetLiveEntityManager(out EntityManager entityManager)
     {
         entityManager = default;
-        try
-        {
-            entityManager = EntityManager;
-            return true;
-        }
-        catch (System.InvalidOperationException)
-        {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
             return false;
-        }
-    }
 
-    private void CacheDiagnosticsEntity(World world, Entity entity)
-    {
-        _cachedWorld = world;
-        _diagnosticsEntity = entity;
+        entityManager = world.EntityManager;
+        return true;
     }
 
     private void CacheLegacyState(RuntimeDiagnosticsStateComponent state)

@@ -58,9 +58,9 @@ internal sealed partial class BuildingPlacementLifecycleSystem : SystemBase
         }
     }
 
-    public readonly struct BeginContext
+    public struct BeginContext
     {
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly BuildingPlacementInputSystem InputSystem;
         public readonly BuildingPlacementPreviewSystem PreviewSystem;
         public readonly Transform BuildingRoot;

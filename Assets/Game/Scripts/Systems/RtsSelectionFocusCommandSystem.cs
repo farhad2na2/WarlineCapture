@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-[DisableAutoCreation]
-public sealed partial class RtsSelectionFocusCommandSystem : SystemBase
+public sealed class RtsSelectionFocusCommandSystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
 
-    public readonly struct Context
+    public struct Context
     {
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RtsSelectionInputSystem InputSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
         public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
@@ -86,15 +85,6 @@ public sealed partial class RtsSelectionFocusCommandSystem : SystemBase
     }
 
     private readonly List<RtsSelectionCommandIntentRequestElement> _externalSelectionCommandScratch = new();
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public bool QueueFocusUnitCommand(Context context, Vector2 screenPosition)
     {

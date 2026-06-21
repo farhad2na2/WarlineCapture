@@ -11,7 +11,7 @@ internal sealed partial class RoadBuildCompositionSourceSystem : SystemBase
     {
     }
 
-    public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
+    public RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
     public readonly RoadBuildStartupSystem RoadBuildStartupSystem = new();
     public readonly RoadBuildDependencySystem RoadBuildDependencySystem = new();
     public readonly RoadBuildReadModelSystem RoadBuildReadModelSystem = new();

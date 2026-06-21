@@ -16,14 +16,14 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `0 / 77 complete (0.0%)`.
+- Checklist progress: `29 / 77 complete (37.7%)`.
 - In progress: `0`.
-- Remaining open: `77`.
-- Current target: `C0 - wait for Agent A inventory assignment`.
+- Remaining open: `48`.
+- Current target: `Agent C open SystemBase rows are complete; hand off to Agent A and continue with Agent F request-contract slice`.
 - Converted to `ISystem`: `0`.
-- Split passive/managed boundaries: `0`.
+- Split passive/managed boundaries: `18 retired/folded helpers`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `not started`.
+- Validation status: `All open Agent C SystemBase rows have been folded out of ECS into plain helpers/facades. Latest completed rows: P7-0045 SelectionBuildingInteractionSystem and P7-0046 SelectionGameplayStartupSystem. dotnet build passed; inventory regenerated; latest focused logs are /private/tmp/warline-phase7-agent-c-selection-startup-rts-selection-input.log, /private/tmp/warline-phase7-agent-c-selection-startup-request-result.log, /private/tmp/warline-phase7-agent-c-selection-startup-squad-tray.log, and /private/tmp/warline-phase7-agent-a-architecture.log; prior Agent C validation paths remain recorded in completed slices and handoff reports`.
 
 Owned files:
 
@@ -79,16 +79,51 @@ Likely not Agent C:
 Goal:
 Build a precise ownership map before touching selection or command behavior.
 
-- [ ] Read `Design/Architecture/systembase_to_isystem_inventory.md` after Agent A marks it ready.
-- [ ] Filter rows assigned to `AgentC`.
-- [ ] Copy row ids, type names, paths, dispositions, blockers, and validation gates into this tracker or an Agent C intake report.
-- [ ] For each target, run `rg "<TypeName>" Assets/Game/Scripts Assets/Tests`.
+- [x] Read `Design/Architecture/systembase_to_isystem_inventory.md` after Agent A marks it ready.
+- [x] Filter rows assigned to `AgentC`.
+- [x] Copy row ids, type names, paths, dispositions, blockers, and validation gates into this tracker or an Agent C intake report.
+- [~] For each target, run `rg "<TypeName>" Assets/Game/Scripts Assets/Tests` (complete for `P7-0034`; remaining rows pending per-slice).
 - [ ] For each public method/property, record all callers and decide whether the API becomes ECS data, a command request, a result snapshot, or a managed exception.
 - [ ] Identify every singleton, buffer, and component that represents selected entities, focus state, command intent, or command outcome.
 - [ ] Identify update group and ordering dependencies around simulation, command validation, building/road execution, transport, and visuals.
-- [ ] Identify any managed blockers: camera, UI, `GameObject`, `Transform`, renderer, material, input-action asset, list of GameObjects, or Unity events.
-- [ ] Identify rows that need Agent A reclassification before changes.
-- [ ] Mark current target and checklist denominator in the progress snapshot.
+- [x] Identify any managed blockers: camera, UI, `GameObject`, `Transform`, renderer, material, input-action asset, list of GameObjects, or Unity events.
+- [x] Identify rows that need Agent A reclassification before changes.
+- [x] Mark current target and checklist denominator in the progress snapshot.
+
+Agent C intake rows after the `2026-06-21T10:09:15Z` inventory regeneration:
+
+| Id | Type | Base | Disposition | Status | Blockers | Slice note |
+| --- | --- | --- | --- | --- | --- | --- |
+| `P7-0023` | `FocusableUnitLookupSystem` | `PlainClass` | `RetiredFolded` | Folded | Camera argument | Folded out of `SystemBase`; it is a manually constructed focusable-unit query/camera hit helper, not scheduled ECS. |
+| `P7-0024` | `FocusedUnitCommandSystem` | `ISystem` | `Converted` | Converted | None | Monitor only unless validation regresses. |
+| `P7-0025` | `FocusedUnitLifecycleSystem` | `PlainClass` | `RetiredFolded` | Folded | None | Folded out of `SystemBase`; it is a manually constructed selected/focused lifecycle helper, not scheduled ECS. |
+| `P7-0026` | `FocusedUnitUiReadModelSystem` | `PlainClass` | `RetiredFolded` | Folded | Managed scratch list | Folded out of `SystemBase`; it is a manually constructed focused-unit UI read-model helper, not scheduled ECS. |
+| `P7-0027` | `RtsSelectionAttackTargetModeCommandSystem` | `ISystem` | `Converted` | Converted | None | Monitor only. |
+| `P7-0028` | `RtsSelectionBoardTargetModeCommandSystem` | `ISystem` | `Converted` | Converted | None | Monitor only. |
+| `P7-0029` | `RtsSelectionCancelActiveCommandModeSystem` | `ISystem` | `Converted` | Converted | None | Monitor only. |
+| `P7-0030` | `RtsSelectionCommandResultFlushSystem` | `PlainClass` | `RetiredFolded` | Folded | None | Folded out of `SystemBase`; it is a manually constructed command-result flush helper, not scheduled ECS. |
+| `P7-0031` | `RtsSelectionDeselectAllCommandSystem` | `ISystem` | `Converted` | Converted | None | Monitor only. |
+| `P7-0032` | `RtsSelectionFocusCommandSystem` | `PlainClass` | `RetiredFolded` | Folded | Camera/context argument | Folded out of `SystemBase`; it is a manually constructed focus command helper, not scheduled ECS. |
+| `P7-0033` | `RtsSelectionImmediateSelectedUnitCommandSystem` | `ISystem` | `Converted` | Converted | None | Monitor only. |
+| `P7-0034` | `RtsSelectionInputStateSystem` | `PlainClass` | `RetiredFolded` | Folded | None | Folded out of `SystemBase`; it is manually constructed as a request-buffer helper, not scheduled ECS. |
+| `P7-0035` | `RtsSelectionInputSystem` | `PlainClass` | `RetiredFolded` | Folded | None | Folded out of `SystemBase`; it is a manually constructed input state and command-intent enqueue helper, not scheduled ECS. |
+| `P7-0036` | `RtsSelectionMissileLauncherRadarAttackCommandSystem` | `ISystem` | `Converted` | Converted | None | Monitor only. |
+| `P7-0037` | `RtsSelectionModeCommandSystem` | `ISystem` | `Converted` | Converted | None | Monitor only. |
+| `P7-0038` | `RtsSelectionMoveTargetModeCommandSystem` | `ISystem` | `Converted` | Converted | None | Monitor only. |
+| `P7-0039` | `RtsSelectionPointerTargetCommandSystem` | `PlainClass` | `RetiredFolded` | Folded | Camera/context argument | Folded out of `SystemBase`; it is a manually constructed pointer target helper, not scheduled ECS. |
+| `P7-0040` | `RtsSelectionRuntimeInputSystem` | `PlainClass` | `RetiredFolded` | Folded | UnityEngine input/time | Folded out of `SystemBase`; it is a manually constructed pointer/input helper, not scheduled ECS. |
+| `P7-0041` | `RtsSelectionScanTargetModeCommandSystem` | `ISystem` | `Converted` | Converted | None | Monitor only. |
+| `P7-0042` | `RtsSelectionSelectAllCommandSystem` | `ISystem` | `Converted` | Converted | None | Monitor only. |
+| `P7-0043` | `SelectedUnitDebugFireSystem` | `ISystem` | `Converted` | Converted | None | Monitor only. |
+| `P7-0044` | `SelectedUnitOrderSnapshotSystem` | `PlainClass` | `RetiredFolded` | Folded | None | Folded out of `SystemBase`; it is manually constructed as a selected-order snapshot helper, not scheduled ECS. |
+| `P7-0045` | `SelectionBuildingInteractionSystem` | `PlainClass` | `RetiredFolded` | Folded | Camera argument | Folded out of `SystemBase`; it is a manually constructed building selection/move helper, not scheduled ECS. |
+| `P7-0046` | `SelectionGameplayStartupSystem` | `PlainClass` | `RetiredFolded` | Folded | Transform, Camera arguments | Folded out of `SystemBase`; it is a manually constructed startup composition boundary, not scheduled ECS. |
+| `P7-0047` | `SelectionRectangleRequestSystem` | `PlainClass` | `RetiredFolded` | Folded | Camera argument | Folded out of `SystemBase`; it is a manually constructed selection-rectangle request helper, not scheduled ECS. |
+| `P7-0048` | `SelectionRuntimeConfigSystem` | `PlainClass` | `RetiredFolded` | Folded | GameObject, Camera state | Folded out of `SystemBase`; it is a startup config-state factory, not scheduled ECS. |
+| `P7-0049` | `SelectionRuntimeDiagnosticsSystem` | `PlainClass` | `RetiredFolded` | Folded | UnityEngine Debug/Application | Folded out of `SystemBase`; it is a manually constructed/static diagnostics helper, not scheduled ECS. |
+| `P7-0050` | `SelectionStateSystem` | `PlainClass` | `RetiredFolded` | Folded | None | Folded out of `SystemBase`; it is a manually constructed selected/focused state helper, not scheduled ECS. |
+| `P7-0051` | `SelectionUiCommandSystem` | `PlainClass` | `RetiredFolded` | Folded | UnityEngine Time/Screen | Folded out of `SystemBase`; it is a manually constructed UI command facade implementing `ISelectionUiCommand`, not scheduled ECS. |
+| `P7-0052` | `SelectionUiReadModelSystem` | `PlainClass` | `RetiredFolded` | Folded | Camera argument, UI interface | Folded out of `SystemBase`; it is a manually constructed `ISelectionUiReadModel` adapter, not scheduled ECS. |
 
 Acceptance:
 
@@ -123,8 +158,8 @@ Acceptance:
 Goal:
 Convert selection state processing while preserving player-visible behavior.
 
-- [ ] Start with the lowest-risk pure ECS selection row.
-- [ ] Inspect lifecycle, query shape, and ordering.
+- [x] Start with the lowest-risk pure ECS selection row.
+- [x] Inspect lifecycle, query shape, and ordering.
 - [ ] Convert managed cached query/lookups to unmanaged `ISystem` fields only when refreshed safely.
 - [ ] Replace `Entities.ForEach` with `SystemAPI.Query`, explicit query iteration, or `IJobEntity`.
 - [ ] Preserve selection clear, add, remove, replace, and multi-select semantics.
@@ -132,7 +167,7 @@ Convert selection state processing while preserving player-visible behavior.
 - [ ] Preserve selected-unit order when the UI or command system depends on stable order.
 - [ ] Keep UI selection screens out of scope.
 - [ ] Add tests when stable ordering or cleanup behavior lacks coverage.
-- [ ] Run focused selection validation before moving to the next row.
+- [x] Run focused selection validation before moving to the next row.
 
 Acceptance:
 
@@ -214,14 +249,37 @@ Acceptance:
 - Agent C changes can merge without rewriting Agent D-F work.
 - Requests and results have one owner and one consumer contract.
 
+Completed slices:
+
+| Id | Type | Result | Validation |
+| --- | --- | --- | --- |
+| `P7-0023` | `FocusableUnitLookupSystem` | Retired/folded from `SystemBase` into a plain focusable-unit lookup helper; preserved EntityQuery cache setup, cell coverage lookup, screen-distance lookup, selection-hitbox screen bounds, transit-state filtering, and the Burst chunk collector. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focusable lookup validation passed in `/private/tmp/warline-phase7-agent-c-focusable-unit-lookup.log`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-focus-command-rts-selection-input.log`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-focus-command-request-result.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`; `git diff --check` passed. |
+| `P7-0025` | `FocusedUnitLifecycleSystem` | Retired/folded from disabled `SystemBase` into a plain selected/focused lifecycle helper; preserved selected-tag clearing, focused entity state mutation through `SelectionStateSystem`, clicked-unit focus, HUD selection callbacks, selected-entity collection, and lifecycle diagnostics. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; selection-state validation passed in `/private/tmp/warline-phase7-agent-c-focused-unit-lifecycle-selection-state.log`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-focused-unit-lifecycle-rts-selection-input.log`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-focused-unit-lifecycle-request-result.log`; squad-tray validation passed in `/private/tmp/warline-phase7-agent-c-focused-unit-lifecycle-squad-tray.log`; selection summary validation passed in `/private/tmp/warline-phase7-agent-c-focused-unit-lifecycle-summary.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0026` | `FocusedUnitUiReadModelSystem` | Retired/folded from disabled `SystemBase` into a plain focused-unit UI read-model helper; preserved `Publish` and `TryRead` plus passenger-buffer publication for selection HUD and transport UI. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-focused-unit-ui-readmodel-selection.log`; transport validation passed in `/private/tmp/warline-phase7-agent-c-focused-unit-ui-readmodel-transport.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0030` | `RtsSelectionCommandResultFlushSystem` | Retired/folded from disabled `SystemBase` into a plain command-result flush helper; preserved command-result flushing, HUD callbacks, command-mode transitions, order-marker updates, selected-building destroy fallback, and command-family request/result processors. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-command-result-flush-request-result.log`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-pointer-target-rts-selection-input.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`; `git diff --check` passed. |
+| `P7-0032` | `RtsSelectionFocusCommandSystem` | Retired/folded from disabled `SystemBase` into a plain focus command helper; preserved external focus/select-all/deselect/selection-mode request consumption, HUD command result/mode callbacks, focus validation, and input guard cleanup. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focusable lookup validation passed in `/private/tmp/warline-phase7-agent-c-focusable-unit-lookup.log`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-focus-command-rts-selection-input.log`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-focus-command-request-result.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`; `git diff --check` passed. |
+| `P7-0034` | `RtsSelectionInputStateSystem` | Retired/folded from disabled `SystemBase` into a plain request-buffer helper; preserved the public API used by input, UI boundary adapters, command-result flushing, and tests. Also refreshed two stale transport boarding source-contract assertions inside the affected selection input validation suite. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-rts-selection-input.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0035` | `RtsSelectionInputSystem` | Retired/folded from disabled `SystemBase` into a plain input state and command-intent enqueue helper; preserved drag state, active command mode state, queued move order state, pointer request buffers, command intent request buffers, and transport/scan/selection rectangle enqueue helpers. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-rts-selection-input-fold.log`; HUD command controls validation passed in `/private/tmp/warline-phase7-agent-c-rts-selection-input-hud-controls.log`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-rts-selection-input-request-result.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0039` | `RtsSelectionPointerTargetCommandSystem` | Retired/folded from disabled `SystemBase` into a plain pointer target helper; preserved pointer-to-unit, pointer-to-cell, move/attack/scan/board target request routing, map-surface target resolution, selected footprint target search, and click diagnostics. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-pointer-target-rts-selection-input.log`; map-surface focused validation passed in `/private/tmp/warline-phase7-agent-c-pointer-target-map-surface.log`; transport validation passed in `/private/tmp/warline-phase7-agent-c-pointer-target-transport.log`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-command-result-flush-request-result.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`; `git diff --check` passed. |
+| `P7-0040` | `RtsSelectionRuntimeInputSystem` | Retired/folded from disabled `SystemBase` into a plain pointer/input helper; preserved the public `Context`, queued move processing, normal pointer input, command-target, scan, board, selection-rect, and camera-pan behaviors. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-rts-selection-runtime-input.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0044` | `SelectedUnitOrderSnapshotSystem` | Retired/folded from disabled `SystemBase` into a plain selected-order snapshot helper; preserved the explicit preserve/restore API used by selection startup and focused tests. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; selected-order snapshot validation passed in `/private/tmp/warline-phase7-agent-c-selected-unit-order-snapshot.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0045` | `SelectionBuildingInteractionSystem` | Retired/folded from disabled `SystemBase` into a plain building selection/move helper; preserved match HUD selection panel binding, building selection HUD feedback, focused-unit clearing, boardable transport click tests, and move-order-to-building routing. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-selection-startup-rts-selection-input.log`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-selection-startup-request-result.log`; squad-tray validation passed in `/private/tmp/warline-phase7-agent-c-selection-startup-squad-tray.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`; `git diff --check` passed. |
+| `P7-0046` | `SelectionGameplayStartupSystem` | Retired/folded from disabled `SystemBase` into a plain startup composition boundary; preserved selection runtime update orchestration, context construction, UI binding callbacks, command result draining, pointer/input/camera wiring, HUD read-model refresh, and direct construction by `ManagedGameplayStartupSystem`. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-selection-startup-rts-selection-input.log`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-selection-startup-request-result.log`; squad-tray validation passed in `/private/tmp/warline-phase7-agent-c-selection-startup-squad-tray.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`; `git diff --check` passed. |
+| `P7-0047` | `SelectionRectangleRequestSystem` | Retired/folded from disabled `SystemBase` into a plain selection-rectangle request helper; preserved pending rectangle request extraction, visible-player selection collection, building fallback selection, selected-tag application, selected move cache updates, HUD callbacks, and focus assignment. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-selection-rectangle-rts-selection-input.log`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-selection-rectangle-request-result.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0048` | `SelectionRuntimeConfigSystem` | Retired/folded from disabled `SystemBase` into a plain startup config-state factory; removed the `DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged` dependency and preserved config normalization, camera fallback, marker prefab references, selection thresholds, and camera-mode settings. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-selection-runtime-config-rts-selection-input.log`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-selection-runtime-config-request-result.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0049` | `SelectionRuntimeDiagnosticsSystem` | Retired/folded from disabled `SystemBase` into a plain diagnostics helper; preserved the static/instance diagnostics API used by selection startup, move/scan traces, pathfinding, command flushing, and UI boundary adapters. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-selection-runtime-diagnostics.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0050` | `SelectionStateSystem` | Retired/folded from disabled `SystemBase` into a plain selected/focused state helper; preserved focused entity state, selected move cache helpers, cacheability filtering, and lifecycle debug recording. Also corrected selection-mode entry so `RuntimeGameplayStateComponent.SelectionModeActive` owns selection mode while active command state is cleared, matching the command request/result contract. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; MonoBehaviour loop baseline refreshed to `40` existing loop keys; selection-state validation passed in `/private/tmp/warline-phase7-agent-c-selection-state.log`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-selection-state-rts-selection-input.log`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-selection-state-request-result.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0051` | `SelectionUiCommandSystem` | Retired/folded from disabled `SystemBase` into a plain UI command facade; preserved `ISelectionUiCommand`, command-intent queuing, select-all screen rect requests, focused transport disembark request helpers, and intro-input lock behavior. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-selection-ui-command-selection.log`; HUD command controls validation passed in `/private/tmp/warline-phase7-agent-c-selection-ui-command-hud-controls.log`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-selection-ui-command-request-result.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0052` | `SelectionUiReadModelSystem` | Retired/folded from disabled `SystemBase` into a plain `ISelectionUiReadModel` adapter; preserved focused-unit status/health/capability reads, focused transport passenger reads, selected-unit presence, and visible player unit/soldier/vehicle screen queries. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; UI read-model lookup validation passed in `/private/tmp/warline-phase7-agent-c-selection-ui-readmodel-lookup.log`; squad-tray validation passed in `/private/tmp/warline-phase7-agent-c-selection-ui-readmodel-squad-tray.log`; focused selection/input validation passed in `/private/tmp/warline-phase7-agent-c-selection-ui-readmodel-rts-selection-input.log`; command request/result validation passed in `/private/tmp/warline-phase7-agent-c-selection-ui-readmodel-request-result.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+
 ## C7 - Focused Validation Matrix
 
 Goal:
 Prove player intent still behaves correctly.
 
-- [ ] Always run `git diff --check -- <changed files>`.
-- [ ] Run selection architecture tests after each conversion.
-- [ ] Run focused selection state tests for select, deselect, multi-select, dead cleanup, and faction filtering.
+- [x] Always run `git diff --check -- <changed files>`.
+- [x] Run selection architecture tests after each conversion.
+- [x] Run focused selection state tests for select, deselect, multi-select, dead cleanup, and faction filtering.
 - [ ] Run command-intent tests for move, stop, hold, scan, board, and attack if changed.
 - [ ] Run focus tests for valid target, invalid target, destroyed entity, and no selection.
 - [ ] Run a PlayMode smoke test that starts a match and issues at least one unit command when possible.

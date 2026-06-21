@@ -14,9 +14,9 @@ internal sealed partial class RoadBuildInteractionContextSystem : SystemBase
     {
     }
 
-    public readonly struct Context
+    public struct Context
     {
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RoadBuildSessionSystem SessionSystem;
         public readonly RoadBuildSessionSystem.State SessionState;
         public readonly RoadBuildInputSystem InputSystem;

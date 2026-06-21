@@ -1,9 +1,25 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
 
-public sealed partial class AIFactionControlStartupSystem : SystemBase
+public readonly struct AIFactionControlStartupEntry
+{
+    public readonly bool Enabled;
+    public readonly AIControllerRole Role;
+    public readonly byte FactionId;
+
+    public AIFactionControlStartupEntry(
+        bool enabled,
+        AIControllerRole role,
+        byte factionId)
+    {
+        Enabled = enabled;
+        Role = role;
+        FactionId = factionId;
+    }
+}
+
+public partial struct AIFactionControlStartupSystem : ISystem
 {
     public readonly struct Result
     {
@@ -17,25 +33,17 @@ public sealed partial class AIFactionControlStartupSystem : SystemBase
         }
     }
 
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
+    public void OnCreate(ref SystemState state)
     {
     }
 
-    public Result Initialize(EntityManager em, IReadOnlyList<AIControllerConfig> aiControllerConfigs)
+    public void OnUpdate(ref SystemState state)
     {
-        Result result = Initialize(em, aiControllerConfigs, AISettingsRuntimeState.CurrentSnapshot);
-        AISettingsRuntimeState.PlayerAutoAIEnabled = result.PlayerAutoModeEnabled;
-        return result;
     }
 
     public Result Initialize(
         EntityManager em,
-        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        IReadOnlyList<AIFactionControlStartupEntry> aiControllerConfigs,
         AISettingsSnapshot aiSettings)
     {
         if (aiControllerConfigs == null)
@@ -77,15 +85,13 @@ public sealed partial class AIFactionControlStartupSystem : SystemBase
         int enemyConfigIndex = 0;
         for (int i = 0; i < aiControllerConfigs.Count; i++)
         {
-            AIControllerConfig config = aiControllerConfigs[i];
-            if (config == null)
-                continue;
+            AIFactionControlStartupEntry config = aiControllerConfigs[i];
             if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex, aiSettings))
                 continue;
 
-            byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
+            byte factionId = config.FactionId;
             bool isPlayer = config.Role == AIControllerRole.PlayerAuto;
-            bool isAIControlled = aiSettings.ResolveEnabled(config) && (!isPlayer || aiSettings.PlayerAutoAIEnabled);
+            bool isAIControlled = ResolveEnabled(config, aiSettings) && (!isPlayer || aiSettings.PlayerAutoAIEnabled);
             entries.Add(new FactionControlEntry
             {
                 FactionId = factionId,
@@ -130,15 +136,23 @@ public sealed partial class AIFactionControlStartupSystem : SystemBase
     }
 
     private static bool ShouldIncludeAIConfig(
-        AIControllerConfig config,
+        AIFactionControlStartupEntry config,
         ref int enemyConfigIndex,
         AISettingsSnapshot aiSettings)
     {
-        if (config == null || config.Role != AIControllerRole.Enemy)
+        if (config.Role != AIControllerRole.Enemy)
             return true;
 
         int currentIndex = enemyConfigIndex;
         enemyConfigIndex++;
         return aiSettings.IsEnemyAIIndexEnabled(currentIndex);
+    }
+
+    private static bool ResolveEnabled(AIFactionControlStartupEntry config, AISettingsSnapshot aiSettings)
+    {
+        if (!config.Enabled)
+            return false;
+
+        return config.Role != AIControllerRole.PlayerAuto || aiSettings.PlayerAutoAIEnabled;
     }
 }

@@ -48,7 +48,7 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
             Entity staleSubsceneSurface = em.CreateEntity(typeof(MapSurfaceComponent));
             em.SetComponentData(staleSubsceneSurface, CreateSurfaceComponent(staleBlob));
 
-            MapSurfaceRuntimeBootstrapSystem bootstrap = world.GetOrCreateSystemManaged<MapSurfaceRuntimeBootstrapSystem>();
+            MapSurfaceRuntimeBootstrapSystem bootstrap = new(world);
             MethodInfo ensure = bootstrap.GetType().GetMethod(
                 "Ensure",
                 new[] { typeof(MapSurfaceDataAsset) });
@@ -71,10 +71,8 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
         }
         finally
         {
-            MapSurfaceRuntimeBootstrapSystem bootstrap = world.IsCreated
-                ? world.GetExistingSystemManaged<MapSurfaceRuntimeBootstrapSystem>()
-                : null;
-            bootstrap?.DisposeRuntimeSurface();
+            if (world.IsCreated)
+                new MapSurfaceRuntimeBootstrapSystem(world).DisposeRuntimeSurface();
             if (staleBlob.IsCreated)
                 staleBlob.Dispose();
             if (authoredSourceBlob.IsCreated)
@@ -88,7 +86,7 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
     public void DisposeRuntimeSurfaceAfterWorldDisposeDoesNotThrow()
     {
         World world = new("MapSurfaceRuntimeBootstrapSystemDisposeTests");
-        MapSurfaceRuntimeBootstrapSystem bootstrap = world.GetOrCreateSystemManaged<MapSurfaceRuntimeBootstrapSystem>();
+        MapSurfaceRuntimeBootstrapSystem bootstrap = new(world);
 
         world.Dispose();
 

@@ -2,8 +2,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-[DisableAutoCreation]
-public sealed partial class SelectionUiReadModelSystem : SystemBase, ISelectionUiReadModel
+public sealed class SelectionUiReadModelSystem : ISelectionUiReadModel
 {
     public readonly struct TransportPassengerUiInfo
     {
@@ -40,15 +39,6 @@ public sealed partial class SelectionUiReadModelSystem : SystemBase, ISelectionU
 
     private Unity.Entities.World _queryWorld;
     private EntityQuery _selectedTagQuery;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public bool HasFocusedUnit =>
         TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) &&

@@ -3,23 +3,13 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-[DisableAutoCreation]
-public sealed partial class RtsSelectionRuntimeInputSystem : SystemBase
+public sealed class RtsSelectionRuntimeInputSystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
 
-    protected override void OnCreate()
+    public struct Context
     {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
-    public readonly struct Context
-    {
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RtsSelectionInputSystem InputSystem;
         public readonly IMatchRuntimeUi MainMenuPlayUi;
         public readonly float DragThresholdPixels;

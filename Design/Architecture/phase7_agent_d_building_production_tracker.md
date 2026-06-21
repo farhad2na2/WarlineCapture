@@ -16,15 +16,15 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `0 / 83 complete (0.0%)`.
+- Checklist progress: `21 / 83 complete (25.3%)`.
 - In progress: `0`.
-- Remaining open: `83`.
-- Current target: `D0 - wait for Agent A inventory assignment`.
+- Remaining open: `62`.
+- Current target: `D7 helper fold complete for P7-0070/P7-0137/P7-0061/P7-0069/P7-0068/P7-0067; continue with the next low-risk Agent D row before broad spawn/production owners`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
-- Retired/folded helpers: `0`.
+- Retired/folded helpers: `6`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `not started`.
+- Validation status: `P7-0070 BuildingGameplayGridDataSystem, P7-0137 BuildingSurfacePlacementSystem, P7-0061 BuildingGameplayBindingSystem, P7-0069 BuildingGameplayEcsQuerySystem, P7-0068 BuildingGameplayDisposalSystem, and P7-0067 BuildingGameplayDisposalCompositionSystem folded from disabled SystemBase wrappers into plain helpers. Compile, git diff check, map-surface, placement command, building composition smoke, and Phase 7 architecture validations passed. Logs: /private/tmp/warline-phase7-agent-d-helper-fold-map-surface.log, /private/tmp/warline-phase7-agent-d-helper-fold-placement-command.log, /private/tmp/warline-phase7-agent-d-helper-fold-composition-smoke.log, /private/tmp/warline-phase7-agent-d-binding-helper-fold-composition-smoke.log, /private/tmp/warline-phase7-agent-d-ecs-query-helper-fold-composition-smoke.log, /private/tmp/warline-phase7-agent-d-disposal-helper-fold-composition-smoke.log, /private/tmp/warline-phase7-agent-a-architecture.log.`
 
 Owned files:
 
@@ -82,9 +82,9 @@ Likely not Agent D:
 Goal:
 Start from the authoritative Phase 7 row list and reconcile with earlier building conversion plans.
 
-- [ ] Read `Design/Architecture/systembase_to_isystem_inventory.md` after Agent A marks it ready.
-- [ ] Filter rows assigned to `AgentD`.
-- [ ] Read `Design/Architecture/five_systembase_to_isystem_conversion_tracker.md`.
+- [x] Read `Design/Architecture/systembase_to_isystem_inventory.md` after Agent A marks it ready.
+- [x] Filter rows assigned to `AgentD`.
+- [x] Read `Design/Architecture/five_systembase_to_isystem_conversion_tracker.md`.
 - [ ] Map each Agent D row to any existing five-SystemBase tracker item.
 - [ ] Identify building systems already converted before Phase 7 and mark them as baseline, not new Phase 7 progress.
 - [ ] For each target, run `rg "<TypeName>" Assets/Game/Scripts Assets/Tests`.
@@ -223,12 +223,12 @@ Acceptance:
 Goal:
 Remove wrappers that no longer need to be systems.
 
-- [ ] Identify disabled, unused, or wrapper building `SystemBase` types.
-- [ ] Search for serialized, reflection, and code references before removal.
-- [ ] Fold pure helper logic into static domain methods or the nearest narrow `ISystem` only when ownership is obvious.
-- [ ] Do not delete a referenced scene/prefab script without a serialized-reference migration approved by Agent A.
+- [x] Identify disabled, unused, or wrapper building `SystemBase` types. Completed for `P7-0070`, `P7-0137`, `P7-0061`, `P7-0069`, `P7-0068`, and `P7-0067`.
+- [x] Search for serialized, reflection, and code references before removal. Completed for `P7-0070`, `P7-0137`, `P7-0061`, `P7-0069`, `P7-0068`, and `P7-0067`.
+- [x] Fold pure helper logic into static domain methods or the nearest narrow `ISystem` only when ownership is obvious. Completed by folding six wrappers into plain direct-owned helpers.
+- [x] Do not delete a referenced scene/prefab script without a serialized-reference migration approved by Agent A. No script assets were deleted.
 - [ ] Update tests that referenced retired helpers.
-- [ ] Record retired/folded count in the progress snapshot.
+- [x] Record retired/folded count in the progress snapshot.
 
 Acceptance:
 
@@ -240,14 +240,14 @@ Acceptance:
 Goal:
 Prove building placement and production still work.
 
-- [ ] Always run `git diff --check -- <changed files>`.
-- [ ] Run architecture tests for no forbidden blockers in converted `ISystem` files.
-- [ ] Run placement validation tests for valid/invalid placement, rotation, blocked cells, and cancellation.
+- [x] Always run `git diff --check -- <changed files>`.
+- [x] Run architecture tests for no forbidden blockers in converted `ISystem` files.
+- [x] Run placement validation tests for valid/invalid placement, rotation, blocked cells, and cancellation.
 - [ ] Run building spawn validation for initial components, faction, health, and footprint occupancy.
 - [ ] Run production validation for queue, progress, produced unit entity, cancellation, and rally/spawn point.
-- [ ] Run a smoke test that opens build gameplay and confirms buildable items are populated.
+- [x] Run a smoke test that opens build gameplay and confirms buildable items are populated. Building gameplay composition smoke passed for this helper-fold slice.
 - [ ] Run a smoke test that starts a match, places a building, and produces a unit when practical.
-- [ ] Check Unity logs for missing prefab entity, empty build menu, and runtime exceptions.
+- [x] Check Unity logs for missing prefab entity, empty build menu, and runtime exceptions.
 - [ ] If Unity is locked, retry once, then use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` shadow validation when available.
 
 Suggested commands:
@@ -275,14 +275,14 @@ Acceptance:
 Goal:
 Make Agent D integration safe.
 
-- [ ] Create a dated handoff report under `Design/AgentReports/`.
-- [ ] Include inventory row ids, files changed, and final disposition.
-- [ ] Include split map: old system responsibilities to new systems/boundaries.
-- [ ] Include converted-to-`ISystem`, split passive/managed-boundary, retired/folded, and managed-exception counts.
-- [ ] Include validation commands and outcomes.
-- [ ] Include any Agent C/E/F coordination notes.
-- [ ] Include any rows returned to Agent A for reclassification.
-- [ ] Confirm this tracker progress snapshot is current.
+- [x] Create a dated handoff report under `Design/AgentReports/`.
+- [x] Include inventory row ids, files changed, and final disposition.
+- [x] Include split map: old system responsibilities to new systems/boundaries.
+- [x] Include converted-to-`ISystem`, split passive/managed-boundary, retired/folded, and managed-exception counts.
+- [x] Include validation commands and outcomes.
+- [x] Include any Agent C/E/F coordination notes.
+- [x] Include any rows returned to Agent A for reclassification.
+- [x] Confirm this tracker progress snapshot is current.
 
 Handoff template:
 

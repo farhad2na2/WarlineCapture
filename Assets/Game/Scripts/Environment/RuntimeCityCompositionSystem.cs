@@ -78,7 +78,7 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
     private readonly RuntimeCityIngressState _fallbackRuntimeCityIngress = new();
     private RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem;
     private RuntimeCityReadModelSystem _runtimeCityReadModelSystem;
-    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
+    private RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RuntimeCityStartupSystem.TryGetPendingInitialUnitsDelegate _tryGetPendingInitialUnits;
     private readonly RuntimeCityStartupSystem.TryGetRoadCellSizeDelegate _tryGetRoadCellSize;
     private readonly RuntimeCityStartupSystem.TryGetGridDataDelegate _tryGetGridData;

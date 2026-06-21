@@ -430,21 +430,21 @@ public sealed class BuildingPlacementValidationSystemTests
 
         var tickSystem = new BuildingPlacementInputRuntimeTickSystem();
         BuildingPlacementInputRuntimeTickSystem.Context tickContext = new(
-            () => null,
-            () => null,
-            null,
-            default,
-            () => false,
-            () => false,
-            null,
-            () => false,
-            null,
-            () => null,
-            null,
-            default,
-            () => false,
-            8f,
-            () => commandSystem.ProcessPendingUiPlacementCommandsIfPresent(
+            getWorldCamera: () => null,
+            getActivePlacement: () => null,
+            placementInputSystem: null,
+            activePlacementPointerContext: default,
+            isPlayRequested: () => false,
+            isBuildModeActive: () => false,
+            placementPreviewSystem: null,
+            hasActiveBuilding: () => false,
+            runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(),
+            getMainMenu: () => null,
+            selectionClickSystem: null,
+            selectionClickContext: default,
+            shouldBlockBuildingSelectionClick: () => false,
+            clickDragThresholdPixels: 8f,
+            processPendingPlacementCommands: () => commandSystem.ProcessPendingUiPlacementCommandsIfPresent(
                 world.EntityManager,
                 commandContext));
 

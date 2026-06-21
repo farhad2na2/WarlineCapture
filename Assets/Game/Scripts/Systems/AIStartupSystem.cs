@@ -5,13 +5,8 @@ using Unity.Mathematics;
 using UnityEngine;
 
 [UpdateInGroup(typeof(InitializationSystemGroup))]
-public sealed partial class AIStartupSystem : SystemBase
+public partial struct AIStartupSystem : ISystem
 {
-    private RuntimeDiagnosticsSystem _runtimeDiagnosticsSystem;
-    private readonly FactionEconomyStartupSystem _factionEconomyStartupSystem = new();
-    private AIFactionControlStartupSystem _factionControlStartupSystem;
-    private AIPlanEntryStartupSystem _planEntryStartupSystem;
-
     public delegate bool TryResolveFactionSpawnCell(byte factionId, out int2 spawnCell);
 
     public readonly struct Result
@@ -26,15 +21,11 @@ public sealed partial class AIStartupSystem : SystemBase
         }
     }
 
-    protected override void OnCreate()
+    public void OnCreate(ref SystemState state)
     {
-        Enabled = false;
-        _runtimeDiagnosticsSystem = World.GetOrCreateSystemManaged<RuntimeDiagnosticsSystem>();
-        _factionControlStartupSystem = World.GetOrCreateSystemManaged<AIFactionControlStartupSystem>();
-        _planEntryStartupSystem = World.GetOrCreateSystemManaged<AIPlanEntryStartupSystem>();
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
     }
 
@@ -56,15 +47,41 @@ public sealed partial class AIStartupSystem : SystemBase
         TryResolveFactionSpawnCell resolveFactionSpawnCell,
         AISettingsSnapshot aiSettings)
     {
+        if (!TryGetLiveEntityManager(out EntityManager em))
+            return default;
+
+        return Initialize(
+            em,
+            aiControllerConfigs,
+            planEntryConfig,
+            resolveFactionSpawnCell,
+            aiSettings);
+    }
+
+    public Result Initialize(
+        EntityManager em,
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        AIPlanEntryStartupConfig planEntryConfig,
+        TryResolveFactionSpawnCell resolveFactionSpawnCell,
+        AISettingsSnapshot aiSettings)
+    {
+        if (!em.World.IsCreated)
+            return default;
+
         Result result = default;
 
-        EntityManager em = EntityManager;
         if (aiControllerConfigs != null)
         {
-            double elapsedTime = World != null && World.IsCreated ? World.Time.ElapsedTime : 0d;
+            double elapsedTime = em.World.Time.ElapsedTime;
             float startupTime = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
-            _factionEconomyStartupSystem.Initialize(em, aiControllerConfigs, aiSettings);
-            AIFactionControlStartupSystem.Result factionControlResult = _factionControlStartupSystem.Initialize(em, aiControllerConfigs, aiSettings);
+            var factionEconomyStartupEntries = new List<FactionEconomyStartupEntry>();
+            BuildFactionEconomyStartupEntries(aiControllerConfigs, factionEconomyStartupEntries);
+            var factionEconomyStartupSystem = new FactionEconomyStartupSystem();
+            factionEconomyStartupSystem.Initialize(em, factionEconomyStartupEntries, aiSettings);
+            var factionControlStartupEntries = new List<AIFactionControlStartupEntry>();
+            BuildFactionControlStartupEntries(aiControllerConfigs, factionControlStartupEntries);
+            var factionControlStartupSystem = new AIFactionControlStartupSystem();
+            AIFactionControlStartupSystem.Result factionControlResult = factionControlStartupSystem.Initialize(em, factionControlStartupEntries, aiSettings);
             result = new Result(factionControlResult.HasPlayerAutoMode, factionControlResult.PlayerAutoModeEnabled);
             EnsureAIBuildPlansInitialized(em, aiControllerConfigs, planEntryConfig, resolveFactionSpawnCell, aiSettings, startupTime);
             EnsureAIProductionPlansInitialized(em, aiControllerConfigs, planEntryConfig, aiSettings, startupTime);
@@ -73,6 +90,57 @@ public sealed partial class AIStartupSystem : SystemBase
         }
 
         return result;
+    }
+
+    private static void BuildFactionEconomyStartupEntries(
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        List<FactionEconomyStartupEntry> entries)
+    {
+        entries.Clear();
+
+        if (aiControllerConfigs == null)
+            return;
+
+        for (int i = 0; i < aiControllerConfigs.Count; i++)
+        {
+            AIControllerConfig config = aiControllerConfigs[i];
+            if (config == null)
+                continue;
+
+            byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
+            entries.Add(new FactionEconomyStartupEntry(
+                config.Enabled,
+                config.Role,
+                factionId,
+                config.StartingMoney,
+                config.IncomeMultiplier,
+                config.OilSellPrice,
+                config.FuelSellPrice,
+                config.BuildIntervalSeconds));
+        }
+    }
+
+    private static void BuildFactionControlStartupEntries(
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        List<AIFactionControlStartupEntry> entries)
+    {
+        entries.Clear();
+
+        if (aiControllerConfigs == null)
+            return;
+
+        for (int i = 0; i < aiControllerConfigs.Count; i++)
+        {
+            AIControllerConfig config = aiControllerConfigs[i];
+            if (config == null)
+                continue;
+
+            byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
+            entries.Add(new AIFactionControlStartupEntry(
+                config.Enabled,
+                config.Role,
+                factionId));
+        }
     }
 
     public void LogConfigValidation(IReadOnlyList<AIControllerConfig> aiControllerConfigs)
@@ -142,13 +210,15 @@ public sealed partial class AIStartupSystem : SystemBase
 
     private bool ShouldQueueAIConfigDiagnostics()
     {
-        return _runtimeDiagnosticsSystem != null &&
-               _runtimeDiagnosticsSystem.ReadDiagnosticsState().VerboseAILogs != 0;
+        var runtimeDiagnosticsSystem = new RuntimeDiagnosticsSystem();
+        return runtimeDiagnosticsSystem.ReadDiagnosticsState().VerboseAILogs != 0;
     }
 
-    private bool TryEnqueueAIDiagnostic(FixedString512Bytes message, byte severity = AIDiagnosticLogComponent.LogSeverity)
+    private static bool TryEnqueueAIDiagnostic(FixedString512Bytes message, byte severity = AIDiagnosticLogComponent.LogSeverity)
     {
-        EntityManager em = EntityManager;
+        if (!TryGetLiveEntityManager(out EntityManager em))
+            return false;
+
         using EntityQuery query = em.CreateEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
@@ -173,16 +243,17 @@ public sealed partial class AIStartupSystem : SystemBase
         return true;
     }
 
-    private void FlushQueuedAIDiagnostics(bool queuedDiagnostics)
+    private static void FlushQueuedAIDiagnostics(bool queuedDiagnostics)
     {
         if (!queuedDiagnostics)
             return;
 
-        if (World == null || !World.IsCreated)
+        if (!TryGetLiveEntityManager(out EntityManager em))
             return;
 
-        SystemHandle flushSystem = World.GetOrCreateSystem<AIDiagnosticLogFlushSystem>();
-        flushSystem.Update(World.Unmanaged);
+        World world = em.World;
+        SystemHandle flushSystem = world.GetOrCreateSystem<AIDiagnosticLogFlushSystem>();
+        flushSystem.Update(world.Unmanaged);
     }
 
     private void EnsureAIBuildPlansInitialized(
@@ -249,7 +320,11 @@ public sealed partial class AIStartupSystem : SystemBase
 
             DynamicBuffer<AIBuildPlanEntry> entries = em.GetBuffer<AIBuildPlanEntry>(planEntity);
             entries.Clear();
-            _planEntryStartupSystem.WriteBuildPlanEntries(entries, config.PreferredBuildingIds, planEntryConfig);
+            var planEntryStartupSystem = new AIPlanEntryStartupSystem();
+            planEntryStartupSystem.WriteBuildPlanEntries(
+                entries,
+                config.PreferredBuildingIds,
+                planEntryConfig != null ? planEntryConfig.FallbackBuildingIds : null);
         }
     }
 
@@ -314,11 +389,12 @@ public sealed partial class AIStartupSystem : SystemBase
 
             DynamicBuffer<AIProductionPlanEntry> entries = em.GetBuffer<AIProductionPlanEntry>(planEntity);
             entries.Clear();
-            _planEntryStartupSystem.WriteProductionPlanEntries(
+            var planEntryStartupSystem = new AIPlanEntryStartupSystem();
+            planEntryStartupSystem.WriteProductionPlanEntries(
                 entries,
                 config.PreferredUnitIds,
                 config.PreferredVehicleIds,
-                planEntryConfig);
+                planEntryConfig != null ? planEntryConfig.FallbackProductionUnitIds : null);
         }
     }
 
@@ -444,5 +520,16 @@ public sealed partial class AIStartupSystem : SystemBase
         int currentIndex = enemyConfigIndex;
         enemyConfigIndex++;
         return aiSettings.IsEnemyAIIndexEnabled(currentIndex);
+    }
+
+    private static bool TryGetLiveEntityManager(out EntityManager entityManager)
+    {
+        entityManager = default;
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        entityManager = world.EntityManager;
+        return true;
     }
 }

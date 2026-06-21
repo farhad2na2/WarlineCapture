@@ -18,7 +18,7 @@ internal sealed partial class BuildingPlacementInputRuntimeTickSystem : SystemBa
     {
     }
 
-    public readonly struct Context
+    public struct Context
     {
         public readonly Func<Camera> GetWorldCamera;
         public readonly Func<BuildingPlacementLifecycleSystem.PlacementState> GetActivePlacement;
@@ -28,7 +28,7 @@ internal sealed partial class BuildingPlacementInputRuntimeTickSystem : SystemBa
         public readonly Func<bool> IsBuildModeActive;
         public readonly BuildingPlacementPreviewSystem PlacementPreviewSystem;
         public readonly Func<bool> HasActiveBuilding;
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly Func<IMatchRuntimeUi> GetMainMenu;
         public readonly BuildingSelectionClickSystem SelectionClickSystem;
         public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
@@ -152,8 +152,7 @@ internal sealed partial class BuildingPlacementInputRuntimeTickSystem : SystemBa
                 gate.HasActiveBuilding)
             {
                 _pendingBuildingSelectionClick = false;
-                if (context.RuntimeGameplayStateSystem != null)
-                    context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
+                context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
                 afterInput = UnityEngine.Time.realtimeSinceStartupAsDouble;
                 return new Result(afterOutline, afterMouse, afterUi, afterInput, afterInput);
             }

@@ -5,6 +5,30 @@ using UnityEditor;
 
 public sealed class FactionEconomyStartupSystemValidationTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new FactionEconomyStartupSystemValidationTests();
+            tests.SetUp();
+            tests.Initialize_ProjectsAiEconomyConfigIntoFactionEconomy();
+            tests.TearDown();
+            tests.SetUp();
+            tests.Initialize_ProjectsDisabledPlayerAutoPolicy();
+            tests.TearDown();
+            tests.SetUp();
+            tests.Initialize_AddsMissingPolicyToExistingEconomyEntity();
+            tests.TearDown();
+            UnityEngine.Debug.Log("[FactionEconomyStartupValidation] result=Passed tests=3");
+        }
+        catch (System.Exception exception)
+        {
+            UnityEngine.Debug.LogError("[FactionEconomyStartupValidation] result=Failed");
+            UnityEngine.Debug.LogException(exception);
+            throw;
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -25,7 +49,7 @@ public sealed class FactionEconomyStartupSystemValidationTests
         using var world = new World("FactionEconomyStartupSystemValidationTests");
 
         FactionEconomyStartupSystem system = new();
-        system.Initialize(world.EntityManager, new[] { enemy });
+        system.Initialize(world.EntityManager, new[] { ToStartupEntry(enemy) }, AISettingsRuntimeState.CurrentSnapshot);
 
         EntityManager em = world.EntityManager;
         Entity economyEntity = GetEntityForFaction(em, FactionIdentity.EnemyFactionId);
@@ -52,7 +76,7 @@ public sealed class FactionEconomyStartupSystemValidationTests
         using var world = new World("FactionEconomyStartupSystemPlayerAutoPolicyTests");
 
         FactionEconomyStartupSystem system = new();
-        system.Initialize(world.EntityManager, new[] { playerAuto });
+        system.Initialize(world.EntityManager, new[] { ToStartupEntry(playerAuto) }, AISettingsRuntimeState.CurrentSnapshot);
 
         EntityManager em = world.EntityManager;
         Entity economyEntity = GetEntityForFaction(em, FactionIdentity.PlayerFactionId);
@@ -74,7 +98,7 @@ public sealed class FactionEconomyStartupSystemValidationTests
         em.SetComponentData(economyEntity, new FactionEconomy { FactionId = FactionIdentity.EnemyFactionId, Money = 1 });
 
         FactionEconomyStartupSystem system = new();
-        system.Initialize(em, new[] { enemy });
+        system.Initialize(em, new[] { ToStartupEntry(enemy) }, AISettingsRuntimeState.CurrentSnapshot);
 
         Assert.IsTrue(em.HasComponent<FactionEconomyPolicy>(economyEntity));
         Assert.AreEqual(75000, em.GetComponentData<FactionEconomy>(economyEntity).Money);
@@ -86,6 +110,19 @@ public sealed class FactionEconomyStartupSystemValidationTests
         AIControllerConfig config = AssetDatabase.LoadAssetAtPath<AIControllerConfig>(path);
         Assert.NotNull(config, $"Missing AI config asset at {path}");
         return config;
+    }
+
+    private static FactionEconomyStartupEntry ToStartupEntry(AIControllerConfig config)
+    {
+        return new FactionEconomyStartupEntry(
+            config.Enabled,
+            config.Role,
+            (byte)UnityEngine.Mathf.Clamp(config.FactionId, 0, byte.MaxValue),
+            config.StartingMoney,
+            config.IncomeMultiplier,
+            config.OilSellPrice,
+            config.FuelSellPrice,
+            config.BuildIntervalSeconds);
     }
 
     private static Entity GetEntityForFaction(EntityManager em, byte factionId)

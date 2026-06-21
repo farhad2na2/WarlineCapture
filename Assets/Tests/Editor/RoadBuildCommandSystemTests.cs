@@ -12,7 +12,7 @@ public sealed class RoadBuildCommandSystemTests
         {
             var tests = new RoadBuildCommandSystemTests();
             tests.RoadBuildCommandRequest_EnterWritesAcceptedResult();
-            tests.RoadBuildCommandRequest_EnterRejectsMissingRuntimeState();
+            tests.RoadBuildCommandRequest_EnterAcceptsDefaultRuntimeState();
             tests.RoadBuildCommandRequest_ConfirmWritesAcceptedResult();
             tests.RoadBuildCommandRequest_CancelWritesAcceptedResult();
             tests.RoadBuildCommandRequest_ExitWritesAcceptedResult();
@@ -69,12 +69,12 @@ public sealed class RoadBuildCommandSystemTests
     }
 
     [Test]
-    public void RoadBuildCommandRequest_EnterRejectsMissingRuntimeState()
+    public void RoadBuildCommandRequest_EnterAcceptsDefaultRuntimeState()
     {
-        using World world = new("RoadBuildCommandEnterMissingRuntimeStateTest");
+        using World world = new("RoadBuildCommandEnterDefaultRuntimeStateTest");
         RoadBuildCommandTestState state = new();
         RoadBuildCommandSystem.Context context = new(
-            null,
+            new RuntimeGameplayStateSystem(),
             state.SessionSystem,
             state.CommandContext.SessionContext,
             () => state.ClearRoadBuildDragStateCount++);
@@ -87,11 +87,10 @@ public sealed class RoadBuildCommandSystemTests
             state.CommandSystem,
             requestId,
             RoadBuildCommandRequestElement.KindEnterRoadBuildMode,
-            accepted: false,
-            RoadBuildCommandResultElement.MissingRuntimeState);
-        Assert.AreEqual(RoadBuildSessionSystem.BuildToolMode.None, state.SessionState.ActiveBuildTool);
-        Assert.AreEqual(0, state.CaptureSnapshotCount);
-        Assert.AreEqual(0, state.ApplyBuildCommandModeCount);
+            accepted: true);
+        Assert.AreEqual(RoadBuildSessionSystem.BuildToolMode.Road, state.SessionState.ActiveBuildTool);
+        Assert.AreEqual(1, state.CaptureSnapshotCount);
+        Assert.AreEqual(1, state.ApplyBuildCommandModeCount);
         AssertRequestBufferCleared(world.EntityManager);
     }
 
@@ -261,7 +260,7 @@ public sealed class RoadBuildCommandSystemTests
 
     private sealed class RoadBuildCommandTestState
     {
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
         public readonly RoadBuildSessionSystem SessionSystem = new();
         public readonly RoadBuildSessionSystem.State SessionState = new();
         public readonly RoadBuildCommandSystem CommandSystem = new();

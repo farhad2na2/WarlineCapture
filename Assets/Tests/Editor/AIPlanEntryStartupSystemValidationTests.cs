@@ -33,11 +33,11 @@ public sealed class AIPlanEntryStartupSystemValidationTests
         Entity entity = em.CreateEntity();
         DynamicBuffer<AIBuildPlanEntry> entries = em.AddBuffer<AIBuildPlanEntry>(entity);
 
-        AIPlanEntryStartupSystem system = world.GetOrCreateSystemManaged<AIPlanEntryStartupSystem>();
+        AIPlanEntryStartupSystem system = default;
         system.WriteBuildPlanEntries(
             entries,
             new[] { "Custom_Barracks", "", "  ", "Custom_Refinery" },
-            LoadPlanEntryConfig());
+            LoadPlanEntryConfig().FallbackBuildingIds);
 
         Assert.AreEqual(2, entries.Length);
         Assert.AreEqual("Custom_Barracks", entries[0].BuildingId.ToString());
@@ -52,8 +52,8 @@ public sealed class AIPlanEntryStartupSystemValidationTests
         Entity entity = em.CreateEntity();
         DynamicBuffer<AIBuildPlanEntry> entries = em.AddBuffer<AIBuildPlanEntry>(entity);
 
-        AIPlanEntryStartupSystem system = world.GetOrCreateSystemManaged<AIPlanEntryStartupSystem>();
-        system.WriteBuildPlanEntries(entries, null, LoadPlanEntryConfig());
+        AIPlanEntryStartupSystem system = default;
+        system.WriteBuildPlanEntries(entries, null, LoadPlanEntryConfig().FallbackBuildingIds);
 
         Assert.AreEqual(5, entries.Length);
         Assert.AreEqual("Tent_Regular", entries[0].BuildingId.ToString());
@@ -71,12 +71,12 @@ public sealed class AIPlanEntryStartupSystemValidationTests
         Entity entity = em.CreateEntity();
         DynamicBuffer<AIProductionPlanEntry> entries = em.AddBuffer<AIProductionPlanEntry>(entity);
 
-        AIPlanEntryStartupSystem system = world.GetOrCreateSystemManaged<AIPlanEntryStartupSystem>();
+        AIPlanEntryStartupSystem system = default;
         system.WriteProductionPlanEntries(
             entries,
             new[] { "Custom_Rifleman", "" },
             new[] { "Custom_APC", " " },
-            LoadPlanEntryConfig());
+            LoadPlanEntryConfig().FallbackProductionUnitIds);
 
         Assert.AreEqual(2, entries.Length);
         Assert.AreEqual("custom_rifleman", entries[0].UnitId.ToString());
@@ -91,8 +91,8 @@ public sealed class AIPlanEntryStartupSystemValidationTests
         Entity entity = em.CreateEntity();
         DynamicBuffer<AIProductionPlanEntry> entries = em.AddBuffer<AIProductionPlanEntry>(entity);
 
-        AIPlanEntryStartupSystem system = world.GetOrCreateSystemManaged<AIPlanEntryStartupSystem>();
-        system.WriteProductionPlanEntries(entries, null, null, LoadPlanEntryConfig());
+        AIPlanEntryStartupSystem system = default;
+        system.WriteProductionPlanEntries(entries, null, null, LoadPlanEntryConfig().FallbackProductionUnitIds);
 
         Assert.AreEqual(1, entries.Length);
         Assert.AreEqual("unit_chr_soldier_male_02_alt_04", entries[0].UnitId.ToString());

@@ -29,10 +29,10 @@ public sealed partial class RoadBuildInputSystem : SystemBase
         public DragFirstAxis DragFirstAxis;
     }
 
-    public readonly struct Context
+    public struct Context
     {
         public readonly State State;
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RoadBuildSessionSystem SessionSystem;
         public readonly RoadBuildSessionSystem.State SessionState;
         public readonly RoadPathPlanningSystem PathPlanningSystem;

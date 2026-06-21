@@ -2,17 +2,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed partial class BuildingSurfacePlacementSystem : SystemBase
+internal sealed class BuildingSurfacePlacementSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public readonly struct Result
     {
         public readonly bool IsValid;

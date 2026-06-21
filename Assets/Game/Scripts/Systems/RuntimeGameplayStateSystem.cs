@@ -2,25 +2,15 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed partial class RuntimeGameplayStateSystem : SystemBase
+public partial struct RuntimeGameplayStateSystem : ISystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
+    public void OnCreate(ref SystemState state)
     {
     }
 
-    private Unity.Entities.World _cachedWorld;
-    private Entity _stateEntity;
-    private bool _hasCachedLegacyGameplayState;
-    private bool _hasCachedLegacyCameraInput;
-    private bool _hasCachedLegacyCameraFocusRequest;
-    private RuntimeGameplayStateComponent _lastLegacyGameplayState;
-    private RuntimeCameraInputComponent _lastLegacyCameraInput;
-    private RuntimeCameraFocusRequestComponent _lastLegacyCameraFocusRequest;
+    public void OnUpdate(ref SystemState state)
+    {
+    }
 
     public bool PlayRequested
     {
@@ -194,10 +184,13 @@ public sealed partial class RuntimeGameplayStateSystem : SystemBase
         RuntimeGameplayStateComponent state = LegacyGameplayState();
         if (TryGetStateEntity(out EntityManager entityManager, out Entity entity))
         {
-            if (!_hasCachedLegacyGameplayState || !GameplayStateEquals(state, _lastLegacyGameplayState))
+            RuntimeGameplayLegacyMirrorComponent mirror = entityManager.GetComponentData<RuntimeGameplayLegacyMirrorComponent>(entity);
+            if (mirror.HasGameplayState == 0 || !GameplayStateEquals(state, mirror.GameplayState))
             {
                 entityManager.SetComponentData(entity, state);
-                CacheLegacyGameplayState(state);
+                mirror.HasGameplayState = 1;
+                mirror.GameplayState = state;
+                entityManager.SetComponentData(entity, mirror);
                 return state;
             }
 
@@ -212,10 +205,13 @@ public sealed partial class RuntimeGameplayStateSystem : SystemBase
         RuntimeCameraInputComponent input = LegacyCameraInput();
         if (TryGetStateEntity(out EntityManager entityManager, out Entity entity))
         {
-            if (!_hasCachedLegacyCameraInput || !CameraInputEquals(input, _lastLegacyCameraInput))
+            RuntimeGameplayLegacyMirrorComponent mirror = entityManager.GetComponentData<RuntimeGameplayLegacyMirrorComponent>(entity);
+            if (mirror.HasCameraInput == 0 || !CameraInputEquals(input, mirror.CameraInput))
             {
                 entityManager.SetComponentData(entity, input);
-                CacheLegacyCameraInput(input);
+                mirror.HasCameraInput = 1;
+                mirror.CameraInput = input;
+                entityManager.SetComponentData(entity, mirror);
                 return input;
             }
 
@@ -230,10 +226,13 @@ public sealed partial class RuntimeGameplayStateSystem : SystemBase
         RuntimeCameraFocusRequestComponent request = LegacyCameraFocusRequest();
         if (TryGetStateEntity(out EntityManager entityManager, out Entity entity))
         {
-            if (!_hasCachedLegacyCameraFocusRequest || !CameraFocusRequestEquals(request, _lastLegacyCameraFocusRequest))
+            RuntimeGameplayLegacyMirrorComponent mirror = entityManager.GetComponentData<RuntimeGameplayLegacyMirrorComponent>(entity);
+            if (mirror.HasCameraFocusRequest == 0 || !CameraFocusRequestEquals(request, mirror.CameraFocusRequest))
             {
                 entityManager.SetComponentData(entity, request);
-                CacheLegacyCameraFocusRequest(request);
+                mirror.HasCameraFocusRequest = 1;
+                mirror.CameraFocusRequest = request;
+                entityManager.SetComponentData(entity, mirror);
                 return request;
             }
 
@@ -247,30 +246,45 @@ public sealed partial class RuntimeGameplayStateSystem : SystemBase
     {
         RuntimeGameplayStateComponent state = mutate(LegacyGameplayState());
         ApplyLegacyGameplayState(state);
-        CacheLegacyGameplayState(state);
         if (TryGetStateEntity(out EntityManager entityManager, out Entity entity))
+        {
             entityManager.SetComponentData(entity, state);
+            RuntimeGameplayLegacyMirrorComponent mirror = entityManager.GetComponentData<RuntimeGameplayLegacyMirrorComponent>(entity);
+            mirror.HasGameplayState = 1;
+            mirror.GameplayState = state;
+            entityManager.SetComponentData(entity, mirror);
+        }
     }
 
     private void WriteCameraInput(System.Func<RuntimeCameraInputComponent, RuntimeCameraInputComponent> mutate)
     {
         RuntimeCameraInputComponent input = mutate(LegacyCameraInput());
         ApplyLegacyCameraInput(input);
-        CacheLegacyCameraInput(input);
         if (TryGetStateEntity(out EntityManager entityManager, out Entity entity))
+        {
             entityManager.SetComponentData(entity, input);
+            RuntimeGameplayLegacyMirrorComponent mirror = entityManager.GetComponentData<RuntimeGameplayLegacyMirrorComponent>(entity);
+            mirror.HasCameraInput = 1;
+            mirror.CameraInput = input;
+            entityManager.SetComponentData(entity, mirror);
+        }
     }
 
     private void WriteCameraFocusRequest(System.Func<RuntimeCameraFocusRequestComponent, RuntimeCameraFocusRequestComponent> mutate)
     {
         RuntimeCameraFocusRequestComponent request = mutate(LegacyCameraFocusRequest());
         ApplyLegacyCameraFocusRequest(request);
-        CacheLegacyCameraFocusRequest(request);
         if (TryGetStateEntity(out EntityManager entityManager, out Entity entity))
+        {
             entityManager.SetComponentData(entity, request);
+            RuntimeGameplayLegacyMirrorComponent mirror = entityManager.GetComponentData<RuntimeGameplayLegacyMirrorComponent>(entity);
+            mirror.HasCameraFocusRequest = 1;
+            mirror.CameraFocusRequest = request;
+            entityManager.SetComponentData(entity, mirror);
+        }
     }
 
-    private bool TryGetStateEntity(out EntityManager entityManager, out Entity entity)
+    private static bool TryGetStateEntity(out EntityManager entityManager, out Entity entity)
     {
         entityManager = default;
         entity = Entity.Null;
@@ -279,59 +293,33 @@ public sealed partial class RuntimeGameplayStateSystem : SystemBase
             return false;
 
         entityManager = world.EntityManager;
-        if (_cachedWorld == world &&
-            _stateEntity != Entity.Null &&
-            entityManager.Exists(_stateEntity) &&
-            entityManager.HasComponent<RuntimeGameplayStateComponent>(_stateEntity))
-        {
-            entity = _stateEntity;
-            EnsureStateComponents(entityManager, entity);
-            return true;
-        }
-
         using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
         if (query.CalculateEntityCount() > 0)
         {
             entity = query.GetSingletonEntity();
             EnsureStateComponents(entityManager, entity);
-            CacheStateEntity(world, entity);
             return true;
         }
 
         entity = entityManager.CreateEntity(
             typeof(RuntimeGameplayStateComponent),
             typeof(RuntimeCameraInputComponent),
-            typeof(RuntimeCameraFocusRequestComponent));
+            typeof(RuntimeCameraFocusRequestComponent),
+            typeof(RuntimeGameplayLegacyMirrorComponent));
         entityManager.SetName(entity, "RuntimeGameplayState");
         entityManager.SetComponentData(entity, LegacyGameplayState());
         entityManager.SetComponentData(entity, LegacyCameraInput());
         entityManager.SetComponentData(entity, LegacyCameraFocusRequest());
-        CacheStateEntity(world, entity);
+        entityManager.SetComponentData(entity, new RuntimeGameplayLegacyMirrorComponent
+        {
+            HasGameplayState = 1,
+            HasCameraInput = 1,
+            HasCameraFocusRequest = 1,
+            GameplayState = LegacyGameplayState(),
+            CameraInput = LegacyCameraInput(),
+            CameraFocusRequest = LegacyCameraFocusRequest()
+        });
         return true;
-    }
-
-    private void CacheStateEntity(Unity.Entities.World world, Entity entity)
-    {
-        _cachedWorld = world;
-        _stateEntity = entity;
-    }
-
-    private void CacheLegacyGameplayState(RuntimeGameplayStateComponent state)
-    {
-        _lastLegacyGameplayState = state;
-        _hasCachedLegacyGameplayState = true;
-    }
-
-    private void CacheLegacyCameraInput(RuntimeCameraInputComponent input)
-    {
-        _lastLegacyCameraInput = input;
-        _hasCachedLegacyCameraInput = true;
-    }
-
-    private void CacheLegacyCameraFocusRequest(RuntimeCameraFocusRequestComponent request)
-    {
-        _lastLegacyCameraFocusRequest = request;
-        _hasCachedLegacyCameraFocusRequest = true;
     }
 
     private static void EnsureStateComponents(EntityManager entityManager, Entity entity)
@@ -340,6 +328,18 @@ public sealed partial class RuntimeGameplayStateSystem : SystemBase
             entityManager.AddComponentData(entity, LegacyCameraInput());
         if (!entityManager.HasComponent<RuntimeCameraFocusRequestComponent>(entity))
             entityManager.AddComponentData(entity, LegacyCameraFocusRequest());
+        if (!entityManager.HasComponent<RuntimeGameplayLegacyMirrorComponent>(entity))
+        {
+            entityManager.AddComponentData(entity, new RuntimeGameplayLegacyMirrorComponent
+            {
+                HasGameplayState = 1,
+                HasCameraInput = 1,
+                HasCameraFocusRequest = 1,
+                GameplayState = LegacyGameplayState(),
+                CameraInput = LegacyCameraInput(),
+                CameraFocusRequest = LegacyCameraFocusRequest()
+            });
+        }
     }
 
     private static RuntimeGameplayStateComponent LegacyGameplayState()

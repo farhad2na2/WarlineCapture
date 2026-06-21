@@ -1,27 +1,52 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
 
-public sealed partial class FactionEconomyStartupSystem : SystemBase
+public readonly struct FactionEconomyStartupEntry
 {
-    protected override void OnCreate()
+    public readonly bool Enabled;
+    public readonly AIControllerRole Role;
+    public readonly byte FactionId;
+    public readonly int StartingMoney;
+    public readonly float IncomeMultiplier;
+    public readonly int OilSellPrice;
+    public readonly int FuelSellPrice;
+    public readonly float BuildIntervalSeconds;
+
+    public FactionEconomyStartupEntry(
+        bool enabled,
+        AIControllerRole role,
+        byte factionId,
+        int startingMoney,
+        float incomeMultiplier,
+        int oilSellPrice,
+        int fuelSellPrice,
+        float buildIntervalSeconds)
     {
-        Enabled = false;
+        Enabled = enabled;
+        Role = role;
+        FactionId = factionId;
+        StartingMoney = startingMoney;
+        IncomeMultiplier = incomeMultiplier;
+        OilSellPrice = oilSellPrice;
+        FuelSellPrice = fuelSellPrice;
+        BuildIntervalSeconds = buildIntervalSeconds;
+    }
+}
+
+public partial struct FactionEconomyStartupSystem : ISystem
+{
+    public void OnCreate(ref SystemState state)
+    {
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
-    }
-
-    public void Initialize(EntityManager em, IReadOnlyList<AIControllerConfig> aiControllerConfigs)
-    {
-        Initialize(em, aiControllerConfigs, AISettingsRuntimeState.CurrentSnapshot);
     }
 
     public void Initialize(
         EntityManager em,
-        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        IReadOnlyList<FactionEconomyStartupEntry> aiControllerConfigs,
         AISettingsSnapshot aiSettings)
     {
         if (aiControllerConfigs == null)
@@ -49,13 +74,11 @@ public sealed partial class FactionEconomyStartupSystem : SystemBase
         int enemyConfigIndex = 0;
         for (int i = 0; i < aiControllerConfigs.Count; i++)
         {
-            AIControllerConfig config = aiControllerConfigs[i];
-            if (config == null)
-                continue;
+            FactionEconomyStartupEntry config = aiControllerConfigs[i];
             if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex, aiSettings))
                 continue;
 
-            byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
+            byte factionId = config.FactionId;
             if (!economyEntitiesByFaction.TryGetValue(factionId, out Entity economyEntity) || economyEntity == Entity.Null)
             {
                 economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
@@ -80,25 +103,33 @@ public sealed partial class FactionEconomyStartupSystem : SystemBase
 
             em.SetComponentData(economyEntity, new FactionEconomyPolicy
             {
-                Enabled = aiSettings.ResolveEnabled(config) ? (byte)1 : (byte)0,
+                Enabled = ResolveEnabled(config, aiSettings) ? (byte)1 : (byte)0,
                 IncomeMultiplier = aiSettings.ApplyIncomeMultiplier(config.IncomeMultiplier, config.Role),
-                OilSellPrice = Mathf.Max(0, config.OilSellPrice),
-                FuelSellPrice = Mathf.Max(0, config.FuelSellPrice),
-                SellIntervalSeconds = Mathf.Max(1f, config.BuildIntervalSeconds)
+                OilSellPrice = config.OilSellPrice < 0 ? 0 : config.OilSellPrice,
+                FuelSellPrice = config.FuelSellPrice < 0 ? 0 : config.FuelSellPrice,
+                SellIntervalSeconds = config.BuildIntervalSeconds < 1f ? 1f : config.BuildIntervalSeconds
             });
         }
     }
 
     private static bool ShouldIncludeAIConfig(
-        AIControllerConfig config,
+        FactionEconomyStartupEntry config,
         ref int enemyConfigIndex,
         AISettingsSnapshot aiSettings)
     {
-        if (config == null || config.Role != AIControllerRole.Enemy)
+        if (config.Role != AIControllerRole.Enemy)
             return true;
 
         int currentIndex = enemyConfigIndex;
         enemyConfigIndex++;
         return aiSettings.IsEnemyAIIndexEnabled(currentIndex);
+    }
+
+    private static bool ResolveEnabled(FactionEconomyStartupEntry config, AISettingsSnapshot aiSettings)
+    {
+        if (!config.Enabled)
+            return false;
+
+        return config.Role != AIControllerRole.PlayerAuto || aiSettings.PlayerAutoAIEnabled;
     }
 }

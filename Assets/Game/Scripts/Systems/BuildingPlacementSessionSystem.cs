@@ -4,9 +4,9 @@ using UnityEngine;
 
 internal sealed partial class BuildingPlacementSessionSystem : SystemBase
 {
-    public readonly struct Context
+    public struct Context
     {
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly BuildingPlacementLifecycleSystem LifecycleSystem;
         public readonly BuildingPlacementInputSystem InputSystem;
         public readonly BuildingPlacementPreviewSystem PreviewSystem;
@@ -104,8 +104,7 @@ internal sealed partial class BuildingPlacementSessionSystem : SystemBase
     public void CancelBuildingPlacement(Context context)
     {
         CancelActivePlacement(context);
-        if (context.RuntimeGameplayStateSystem != null)
-            context.RuntimeGameplayStateSystem.BuildModeActive = false;
+        context.RuntimeGameplayStateSystem.BuildModeActive = false;
         context.ClearCommandMode?.Invoke();
     }
 
@@ -117,8 +116,7 @@ internal sealed partial class BuildingPlacementSessionSystem : SystemBase
     public void ExitBuildMode(Context context, bool clearBuildingSelection)
     {
         bool shouldClearSelection = clearBuildingSelection && !_preserveBuildingSelectionOnNextExitBuildMode;
-        if (context.RuntimeGameplayStateSystem != null)
-            context.RuntimeGameplayStateSystem.BuildModeActive = false;
+        context.RuntimeGameplayStateSystem.BuildModeActive = false;
         context.InputSystem?.Reset();
         CancelActivePlacement(context);
         if (shouldClearSelection)

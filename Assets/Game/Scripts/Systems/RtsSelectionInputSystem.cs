@@ -2,22 +2,12 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-[DisableAutoCreation]
-public sealed partial class RtsSelectionInputSystem : SystemBase
+public sealed class RtsSelectionInputSystem
 {
     public const float MoveTargetDoubleClickSeconds = 0.35f;
     public const float MoveTargetDoubleClickPixels = 48f;
 
     private readonly RtsSelectionInputStateSystem _inputStateSystem = new();
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public Vector2 DragStart
     {

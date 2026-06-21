@@ -13,9 +13,9 @@ public sealed partial class RoadBuildCommandSystem : SystemBase
     {
     }
 
-    public readonly struct Context
+    public struct Context
     {
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RoadBuildSessionSystem SessionSystem;
         public readonly RoadBuildSessionSystem.Context SessionContext;
         public readonly Action ClearRoadBuildDragState;
@@ -159,12 +159,6 @@ public sealed partial class RoadBuildCommandSystem : SystemBase
         bool requiresRuntimeState =
             request.RequestKind == RoadBuildCommandRequestElement.KindEnterRoadBuildMode ||
             request.RequestKind == RoadBuildCommandRequestElement.KindExitBuildMode;
-        if (requiresRuntimeState && context.RuntimeGameplayStateSystem == null)
-        {
-            resultCode = RoadBuildCommandResultElement.MissingRuntimeState;
-            return false;
-        }
-
         switch (request.RequestKind)
         {
             case RoadBuildCommandRequestElement.KindEnterRoadBuildMode:

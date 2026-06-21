@@ -4,8 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-[DisableAutoCreation]
-public sealed partial class SelectionRectangleRequestSystem : SystemBase
+public sealed class SelectionRectangleRequestSystem
 {
     public delegate void ClearCurrentSelectionAction(EntityManager em, string reason);
     public delegate void CacheSelectedEntitiesAction(EntityManager em, List<Entity> entities);
@@ -15,15 +14,6 @@ public sealed partial class SelectionRectangleRequestSystem : SystemBase
     public delegate bool TrySelectBuildingInRectAction(Rect screenRect);
 
     private readonly List<RtsSelectionPointerRequestElement> _pendingRectangleRequests = new();
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public bool ProcessPendingRequests(
         EntityManager em,

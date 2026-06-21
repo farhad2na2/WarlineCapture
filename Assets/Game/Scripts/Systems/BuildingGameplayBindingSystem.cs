@@ -1,17 +1,7 @@
 using System;
-using Unity.Entities;
 
-internal sealed partial class BuildingGameplayBindingSystem : SystemBase
+internal sealed class BuildingGameplayBindingSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public Action<IMatchRuntimeUi> CreateMainMenuBinding(
         BuildingGameplayCompositionSourceSystem childSystems,
         DayNightSystem dayNight)

@@ -21,9 +21,9 @@ public sealed partial class RtsSelectionRuntimeCameraSystem : SystemBase
     {
     }
 
-    public readonly struct Context
+    public struct Context
     {
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RtsSelectionInputSystem InputSystem;
         public readonly RtsCameraSystem CameraSystem;
         public readonly RtsCameraRequestSystem CameraRequestSystem;

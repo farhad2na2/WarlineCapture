@@ -1,19 +1,9 @@
 using Unity.Entities;
 
-[DisableAutoCreation]
-public sealed partial class RtsSelectionInputStateSystem : SystemBase
+public sealed class RtsSelectionInputStateSystem
 {
     private Unity.Entities.World _world;
     private Entity _stateEntity;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public bool TryRead(out EntityManager em, out RtsSelectionInputStateComponent state)
     {

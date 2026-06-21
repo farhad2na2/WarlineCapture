@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed partial class SelectionRuntimeDiagnosticsSystem : SystemBase
+public sealed class SelectionRuntimeDiagnosticsSystem
 {
     public static readonly bool EnableSelectionClickDiagnostics = false;
     public static readonly bool EnableMoveCommandTrace = false;
@@ -11,15 +11,6 @@ public sealed partial class SelectionRuntimeDiagnosticsSystem : SystemBase
     private const string SelectionClickPrefix = "[SelectionClick]";
     private const string MoveCommandTracePrefix = "[MoveCommandTrace]";
     private const string ScanCommandTracePrefix = "[ScanCommandTrace]";
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void EnqueueSelectionDiagnostic(string message)
     {

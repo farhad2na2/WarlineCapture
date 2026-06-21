@@ -2,35 +2,34 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 
-public sealed partial class AIPlanEntryStartupSystem : SystemBase
+public partial struct AIPlanEntryStartupSystem : ISystem
 {
-    protected override void OnCreate()
+    public void OnCreate(ref SystemState state)
     {
-        Enabled = false;
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
     }
 
     public void WriteBuildPlanEntries(
         DynamicBuffer<AIBuildPlanEntry> entries,
         IReadOnlyList<string> preferredBuildingIds,
-        AIPlanEntryStartupConfig config)
+        IReadOnlyList<string> fallbackBuildingIds)
     {
         WritePreferredBuildPlanEntries(entries, preferredBuildingIds);
 
         if (entries.Length > 0)
             return;
 
-        WritePreferredBuildPlanEntries(entries, config != null ? config.FallbackBuildingIds : null);
+        WritePreferredBuildPlanEntries(entries, fallbackBuildingIds);
     }
 
     public void WriteProductionPlanEntries(
         DynamicBuffer<AIProductionPlanEntry> entries,
         IReadOnlyList<string> preferredUnitIds,
         IReadOnlyList<string> preferredVehicleIds,
-        AIPlanEntryStartupConfig config)
+        IReadOnlyList<string> fallbackProductionUnitIds)
     {
         WritePreferredProductionPlanEntries(entries, preferredUnitIds);
         WritePreferredProductionPlanEntries(entries, preferredVehicleIds);
@@ -38,10 +37,10 @@ public sealed partial class AIPlanEntryStartupSystem : SystemBase
         if (entries.Length > 0)
             return;
 
-        WritePreferredProductionPlanEntries(entries, config != null ? config.FallbackProductionUnitIds : null);
+        WritePreferredProductionPlanEntries(entries, fallbackProductionUnitIds);
     }
 
-    private void WritePreferredBuildPlanEntries(
+    private static void WritePreferredBuildPlanEntries(
         DynamicBuffer<AIBuildPlanEntry> entries,
         IReadOnlyList<string> preferredBuildingIds)
     {
@@ -58,7 +57,7 @@ public sealed partial class AIPlanEntryStartupSystem : SystemBase
         }
     }
 
-    private void WritePreferredProductionPlanEntries(
+    private static void WritePreferredProductionPlanEntries(
         DynamicBuffer<AIProductionPlanEntry> entries,
         IReadOnlyList<string> preferredUnitIds)
     {

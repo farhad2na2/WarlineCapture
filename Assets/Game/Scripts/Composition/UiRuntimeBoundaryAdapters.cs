@@ -113,7 +113,7 @@ internal sealed class BuildingUiQueryAdapter : IBuildingUiQuery
 
 internal sealed class MatchRuntimeStateAdapter : IMatchRuntimeState
 {
-    private readonly RuntimeGameplayStateSystem state;
+    private RuntimeGameplayStateSystem state;
 
     public MatchRuntimeStateAdapter(RuntimeGameplayStateSystem state)
     {
@@ -122,72 +122,44 @@ internal sealed class MatchRuntimeStateAdapter : IMatchRuntimeState
 
     public bool PlayRequested
     {
-        get => state != null && state.PlayRequested;
-        set
-        {
-            if (state != null)
-                state.PlayRequested = value;
-        }
+        get => state.PlayRequested;
+        set => state.PlayRequested = value;
     }
 
     public bool SimulationActive
     {
-        get => state != null && state.SimulationActive;
-        set
-        {
-            if (state != null)
-                state.SimulationActive = value;
-        }
+        get => state.SimulationActive;
+        set => state.SimulationActive = value;
     }
 
     public bool SelectionModeActive
     {
-        get => state != null && state.SelectionModeActive;
-        set
-        {
-            if (state != null)
-                state.SelectionModeActive = value;
-        }
+        get => state.SelectionModeActive;
+        set => state.SelectionModeActive = value;
     }
 
     public bool BuildModeActive
     {
-        get => state != null && state.BuildModeActive;
-        set
-        {
-            if (state != null)
-                state.BuildModeActive = value;
-        }
+        get => state.BuildModeActive;
+        set => state.BuildModeActive = value;
     }
 
     public bool ZoomInHeld
     {
-        get => state != null && state.ZoomInHeld;
-        set
-        {
-            if (state != null)
-                state.ZoomInHeld = value;
-        }
+        get => state.ZoomInHeld;
+        set => state.ZoomInHeld = value;
     }
 
     public bool ZoomOutHeld
     {
-        get => state != null && state.ZoomOutHeld;
-        set
-        {
-            if (state != null)
-                state.ZoomOutHeld = value;
-        }
+        get => state.ZoomOutHeld;
+        set => state.ZoomOutHeld = value;
     }
 
     public bool SuppressNextWorldClick
     {
-        get => state != null && state.SuppressNextWorldClick;
-        set
-        {
-            if (state != null)
-                state.SuppressNextWorldClick = value;
-        }
+        get => state.SuppressNextWorldClick;
+        set => state.SuppressNextWorldClick = value;
     }
 }
 

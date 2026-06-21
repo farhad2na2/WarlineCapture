@@ -2,8 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-[DisableAutoCreation]
-public sealed partial class SelectionBuildingInteractionSystem : SystemBase
+public sealed class SelectionBuildingInteractionSystem
 {
     private readonly FocusedUnitLifecycleSystem _focusedUnitLifecycleSystem = new();
     private readonly SelectionHudFeedbackBoundary _selectionHudFeedbackSystem = new();
@@ -18,15 +17,6 @@ public sealed partial class SelectionBuildingInteractionSystem : SystemBase
     private Unity.Entities.World _queryWorld;
     private EntityQuery _gridConfigQuery;
     private EntityQuery _mapSurfaceQuery;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void Init(
         SelectionStateSystem selectionStateSystem,

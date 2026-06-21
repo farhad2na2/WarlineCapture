@@ -65,7 +65,7 @@ public partial struct UnitModelSpawnSystem : ISystem
         int releasedVisibleCharacterLodCount = 0;
         string midPrefabSamples = string.Empty;
         EntityManager em = state.EntityManager;
-        RuntimeCameraReferenceSystem.TryGetWorldCamera(state.World, out Camera camera);
+        bool hasCameraSnapshot = RuntimeCameraReferenceSystem.TryGetCameraSnapshot(state.World, out RuntimeCameraSnapshotComponent camera);
         var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
         using NativeHashSet<Entity> deferredThisFrame = new(256, Allocator.Temp);
 
@@ -73,7 +73,7 @@ public partial struct UnitModelSpawnSystem : ISystem
                  .Query<RefRO<UnitVisibleCharacterLodSpawnDeferredTag>>()
                  .WithEntityAccess())
         {
-            if (!IsVisibleCharacter(em, entity, camera))
+            if (!hasCameraSnapshot || !IsVisibleCharacter(em, entity, camera))
             {
                 ecb.RemoveComponent<UnitVisibleCharacterLodSpawnDeferredTag>(entity);
                 releasedVisibleCharacterLodCount++;
@@ -117,7 +117,7 @@ public partial struct UnitModelSpawnSystem : ISystem
                 ecb.SetComponent(entity, visualRef);
             }
 
-            bool visibleCharacter = IsVisibleCharacter(em, entity, camera);
+            bool visibleCharacter = hasCameraSnapshot && IsVisibleCharacter(em, entity, camera);
             bool spawnedMid = TrySpawnMidLod(
                 ref ecb,
                 ref spawnedCount,
@@ -381,9 +381,9 @@ public partial struct UnitModelSpawnSystem : ISystem
                prefabName.StartsWith("ProxyLOD_Unit_Chr_Soldier_Male_02_Alt_04", System.StringComparison.Ordinal);
     }
 
-    private static bool IsVisibleCharacter(EntityManager em, Entity entity, Camera camera)
+    private static bool IsVisibleCharacter(EntityManager em, Entity entity, RuntimeCameraSnapshotComponent camera)
     {
-        if (camera == null ||
+        if (camera.IsValid == 0 ||
             !em.Exists(entity) ||
             !em.HasComponent<UnitSourcePrefabKey>(entity) ||
             !em.HasComponent<LocalTransform>(entity))
@@ -396,9 +396,15 @@ public partial struct UnitModelSpawnSystem : ISystem
             return false;
 
         float3 position = em.GetComponentData<LocalTransform>(entity).Position;
-        Vector3 viewportPosition = camera.WorldToViewportPoint(new Vector3(position.x, position.y, position.z));
-        return viewportPosition.z > 0f &&
-               viewportPosition.x >= -0.05f && viewportPosition.x <= 1.05f &&
-               viewportPosition.y >= -0.05f && viewportPosition.y <= 1.05f;
+        float4 worldPosition = new(position, 1f);
+        float4 cameraPosition = math.mul(camera.WorldToCamera, worldPosition);
+        float4 clipPosition = math.mul(camera.ViewProjection, worldPosition);
+        float invW = math.abs(clipPosition.w) > 0.000001f ? 1f / clipPosition.w : 0f;
+        float viewportX = clipPosition.x * invW * 0.5f + 0.5f;
+        float viewportY = clipPosition.y * invW * 0.5f + 0.5f;
+        float viewportZ = -cameraPosition.z;
+        return viewportZ > 0f &&
+               viewportX >= -0.05f && viewportX <= 1.05f &&
+               viewportY >= -0.05f && viewportY <= 1.05f;
     }
 }

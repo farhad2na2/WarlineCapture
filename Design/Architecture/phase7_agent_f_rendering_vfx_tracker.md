@@ -17,15 +17,22 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `0 / 89 complete (0.0%)`.
+- Checklist progress: `10 / 89 complete (11.2%)`.
 - In progress: `0`.
-- Remaining open: `89`.
-- Current target: `F0 - wait for Agent A inventory assignment`.
-- Converted to `ISystem`: `0`.
-- Split passive/managed boundaries: `0`.
-- Managed presentation `SystemBase` exceptions: `0`.
-- Retired/folded helpers: `0`.
-- Validation status: `not started`.
+- Remaining open: `79`.
+- Current target: `Agent F request-contract slice completed for P7-0283/P7-0284; next heartbeat should move to Agent D building/production lane unless the user redirects`.
+- Converted to `ISystem`: `3`.
+- Split passive/managed boundaries: `1`.
+- Managed presentation `SystemBase` exceptions: `2`.
+- Retired/folded helpers: `2`.
+- Validation status: `P7-0281 SelectionScreenMarkerSystem folded from disabled SystemBase to plain request relay; compile, selection marker, selection request/result, and architecture validations passed. P7-0259 BuildingMarkerVisualCompositionSystem folded from disabled SystemBase to plain MaterialPropertyBlock helper; compile, building selection marker, building placement command, and architecture validations passed. P7-0249 UnitModelSpawnSystem and P7-0251 UnitRenderBudgetSystem now consume RuntimeCameraSnapshotComponent instead of managed Camera; runtime camera reference, render budget, and architecture validations passed. P7-0283 CombatGameObjectVfxPlaybackSystem and P7-0284 UnitAttackVfxRequestSystem moved to UnitAttackVfxSystems.cs as reviewed managed presentation exceptions consuming ECS VFX request data; UnitAttackSystem is now cleanly inventoried as Converted with no GameObject blocker. Logs: /private/tmp/warline-phase7-agent-f-vfx-boundary-unit-combat.log, /private/tmp/warline-phase7-agent-f-vfx-boundary-ground-missile-visual.log, /private/tmp/warline-phase7-agent-a-architecture.log. Prior Agent F logs: /private/tmp/warline-phase7-agent-f-selection-screen-marker-order-marker.log, /private/tmp/warline-phase7-agent-f-selection-screen-marker-request-result.log, /private/tmp/warline-phase7-agent-f-building-marker-composition-selection-marker.log, /private/tmp/warline-phase7-agent-f-building-marker-composition-placement-validation.log, /private/tmp/warline-phase7-agent-f-camera-snapshot-reference.log, /private/tmp/warline-phase7-agent-f-camera-snapshot-render-budget.log. Residual unrelated validation note: /private/tmp/warline-phase7-agent-f-building-marker-composition-placement-runtime.log failed an existing runtime-tick cadence assertion (Expected 2, But was 1).`
+
+Completed slices:
+
+- `2026-06-21` - `P7-0281` `SelectionScreenMarkerSystem`: folded disabled event-only `SystemBase` into a plain request relay. `SelectionGameplayStartupSystem` now creates the relay directly instead of registering it in the ECS World. This preserves the existing move/attack/hide screen marker events while removing one non-UI production `SystemBase` declaration from the inventory.
+- `2026-06-21` - `P7-0259` `BuildingMarkerVisualCompositionSystem`: folded disabled marker-property-block `SystemBase` into a plain helper. `BuildingGameplayCompositionSystem` now owns the helper directly instead of resolving it from the ECS World. This preserves shared marker property-block reuse while removing one non-UI production `SystemBase` declaration from the inventory.
+- `2026-06-21` - `P7-0249` `UnitModelSpawnSystem` and `P7-0251` `UnitRenderBudgetSystem`: split managed camera sampling into `RuntimeCameraReferenceSystem` and `RuntimeCameraSnapshotComponent`. Both `ISystem` rows now consume value-type camera snapshot data instead of direct `Camera` references, and the inventory marks both rows `Converted`.
+- `2026-06-21` - `P7-0283` `CombatGameObjectVfxPlaybackSystem` and `P7-0284` `UnitAttackVfxRequestSystem`: moved managed GameObject VFX playback out of `UnitAttackSystem.cs` into `UnitAttackVfxSystems.cs`. Gameplay continues to emit ECS request entities, managed playback consumes those requests and unwraps authored `UnityObjectRef<GameObject>` values only at the presentation boundary, and `P7-0338` `UnitAttackSystem` is now inventoried as a clean converted `ISystem`.
 
 Owned files:
 
@@ -171,8 +178,8 @@ Preserve authored VFX quality while decoupling gameplay triggers from Unity obje
 - [ ] Identify the authored effect type: `ParticleSystem`, `VisualEffect`, `LineRenderer`, `TrailRenderer`, light flash, mesh effect, or material animation.
 - [ ] Keep authored ParticleSystem/VisualEffect assets unless the user explicitly approves replacement.
 - [ ] Convert combat/VFX trigger data to ECS requests when possible.
-- [ ] Keep playback/pooling of Unity VFX objects in a managed presentation `SystemBase` exception when ticking is required.
-- [ ] Ensure `Play` calls are triggered by the managed presentation system consuming ECS requests, not by gameplay processors.
+- [x] Keep playback/pooling of Unity VFX objects in a managed presentation `SystemBase` exception when ticking is required. Completed for `P7-0283` and `P7-0284`.
+- [x] Ensure `Play` calls are triggered by the managed presentation system consuming ECS requests, not by gameplay processors. Completed for `P7-0283` and `P7-0284`.
 - [ ] Do not introduce `ExplosionVfxPresenter.Update()` or similar MonoBehaviour loops.
 - [ ] Preserve pooling semantics, lifetime, scale, position, rotation, faction color, and quality gating.
 - [ ] Validate visually or via smoke tests that effects still spawn at the right place and time.
@@ -206,11 +213,11 @@ Acceptance:
 Goal:
 Keep camera/quality Unity object ownership managed while converting data policy where safe.
 
-- [ ] Identify assigned camera reference, visual quality, or render config systems.
+- [x] Identify assigned camera reference, visual quality, or render config systems. Completed P7-0249/P7-0251 camera snapshot slice for render-budget/model-spawn consumers.
 - [ ] Split quality policy/state calculation into ECS data when possible.
-- [ ] Keep actual `Camera`, `RenderSettings`, renderer, material, volume, or pipeline API application in a managed `SystemBase` exception.
-- [ ] Do not use `Camera.main` or hierarchy lookup.
-- [ ] Preserve explicit serialized camera/reference assignment boundaries.
+- [x] Keep actual `Camera`, `RenderSettings`, renderer, material, volume, or pipeline API application in a managed `SystemBase` exception. `RuntimeCameraReferenceSystem` remains the managed `Camera` owner.
+- [x] Do not use `Camera.main` or hierarchy lookup.
+- [x] Preserve explicit serialized camera/reference assignment boundaries.
 - [ ] Preserve low-quality setting behavior while avoiding accidental ignored quality config.
 - [ ] Validate quality changes are applied and not responsible for gameplay FPS regressions unless evidence shows otherwise.
 
@@ -242,12 +249,12 @@ Acceptance:
 Goal:
 Remove dead visual wrappers only when safe.
 
-- [ ] Identify disabled, unused, or wrapper visual `SystemBase` types.
-- [ ] Search code, serialized references, prefab references, and reflection before retiring.
+- [x] Identify disabled, unused, or wrapper visual `SystemBase` types. `P7-0281` was an event-only disabled relay with no query/update work.
+- [x] Search code, serialized references, prefab references, and reflection before retiring. `P7-0281` call sites are limited to selection startup/building interaction request forwarding.
 - [ ] Do not delete referenced scripts without Agent A-approved serialized-reference migration.
-- [ ] Fold pure data helper logic into static functions or a narrow `ISystem` only when ownership is obvious.
+- [x] Fold pure data helper logic into static functions or a narrow `ISystem` only when ownership is obvious. `P7-0281` was folded into a plain direct-owned request relay rather than forced into `ISystem` because it exposes managed events to presentation.
 - [ ] Keep asset-linked presentation scripts when removing them would create missing scripts.
-- [ ] Record retired/folded count in the progress snapshot.
+- [x] Record retired/folded count in the progress snapshot.
 
 Acceptance:
 

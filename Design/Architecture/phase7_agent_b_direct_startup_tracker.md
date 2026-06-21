@@ -16,14 +16,14 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `0 / 72 complete (0.0%)`.
+- Checklist progress: `51 / 72 complete (70.8%)`.
 - In progress: `0`.
-- Remaining open: `72`.
-- Current target: `B0 - wait for Agent A inventory assignment`.
-- Converted to `ISystem`: `0`.
-- Retired/folded helpers: `0`.
+- Remaining open: `21`.
+- Current target: `Agent B actionable code queue complete; proceed to Agent C selection/commands lane unless Agent A reclassifies held Agent B boundary rows`.
+- Converted to `ISystem`: `8`.
+- Retired/folded helpers: `2`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `not started`.
+- Validation status: `P7-0010 AIPlanEntryStartupSystem, P7-0015 FactionEconomyStartupSystem, P7-0008 AIFactionControlStartupSystem, P7-0016 InitialFactionSpawnCellSystem, P7-0021 RuntimeDiagnosticsSystem, P7-0022 RuntimeGameplayStateSystem, P7-0013 AIStartupSystem, and P7-0005 AICombatOrderSystem converted/cleaned and validated; P7-0020 PerformanceDiagnosticsSystem and P7-0002 MapSurfaceRuntimeBootstrapSystem retired/folded out of ECS and validated; logs /private/tmp/warline-phase7-agent-b-ai-plan-entry-startup.log, /private/tmp/warline-phase7-agent-b-faction-economy-startup.log, /private/tmp/warline-phase7-agent-b-ai-faction-control-startup.log, /private/tmp/warline-phase7-agent-b-ai-startup-after-faction-control.log, /private/tmp/warline-phase7-agent-b-initial-faction-spawn-cell.log, /private/tmp/warline-phase7-agent-b-ai-startup-after-spawn-cell.log, /private/tmp/warline-phase7-agent-b-runtime-diagnostics.log, /private/tmp/warline-phase7-agent-b-runtime-gameplay-state.log, /private/tmp/warline-phase7-agent-b-ai-startup.log, /private/tmp/warline-phase7-agent-b-ai-combat-order.log, /private/tmp/warline-phase7-agent-b-performance-diagnostics.log, /private/tmp/warline-phase7-agent-b-map-surface-runtime-bootstrap.log, and /private/tmp/warline-phase7-agent-a-architecture.log`.
 
 Owned files:
 
@@ -78,18 +78,89 @@ Likely not Agent B even if they look small:
 Goal:
 Start only from the authoritative inventory and avoid duplicate work with other agents.
 
-- [ ] Read `Design/Architecture/systembase_to_isystem_inventory.md` after Agent A marks it ready.
-- [ ] Filter rows assigned to `AgentB`.
-- [ ] Confirm every selected row has one of these dispositions: `DirectConvert`, `RetireFold`, `SplitThenConvert`, or `ReviewRequired`.
-- [ ] Reject or return any row with Unity object blockers unless Agent A explicitly marks a managed exception or split boundary.
-- [ ] Copy the Agent B rows into this tracker or into an Agent B report with ids, type names, paths, disposition, blockers, and validation gates.
-- [ ] Sort rows by risk: retired/folded helpers first, pure ECS direct conversions second, one-shot startup projection third, diagnostics last.
-- [ ] Identify rows with public methods/properties and list every caller with `rg`.
-- [ ] Identify update group/order attributes for each target.
-- [ ] Identify singleton dependencies and required creation order for each target.
-- [ ] Identify any jobs, native containers, entity queries, and cached lookups that need `OnDestroy` cleanup or type-handle refresh.
-- [ ] Record rows that need Agent A reclassification before code changes.
-- [ ] Update the progress snapshot with the Agent B checklist denominator and current target.
+- [x] Read `Design/Architecture/systembase_to_isystem_inventory.md` after Agent A marks it ready.
+- [x] Filter rows assigned to `AgentB`.
+- [x] Confirm every selected row has one of these dispositions: `DirectConvert`, `RetireFold`, `SplitThenConvert`, or `ReviewRequired`.
+- [x] Reject or return any row with Unity object blockers unless Agent A explicitly marks a managed exception or split boundary.
+- [x] Copy the Agent B rows into this tracker or into an Agent B report with ids, type names, paths, disposition, blockers, and validation gates.
+- [x] Sort rows by risk: retired/folded helpers first, pure ECS direct conversions second, one-shot startup projection third, diagnostics last.
+- [x] Identify rows with public methods/properties and list every caller with `rg`.
+- [x] Identify update group/order attributes for each target.
+- [x] Identify singleton dependencies and required creation order for each target.
+- [x] Identify any jobs, native containers, entity queries, and cached lookups that need `OnDestroy` cleanup or type-handle refresh.
+- [x] Record rows that need Agent A reclassification before code changes.
+- [x] Update the progress snapshot with the Agent B checklist denominator and current target.
+
+Intake command record:
+
+```bash
+python3 - <<'PY'
+from pathlib import Path
+p=Path('Design/Architecture/systembase_to_isystem_inventory.md')
+for line in p.read_text().splitlines():
+    if '| `P7-' in line and '| `AgentB` |' in line:
+        print(line)
+PY
+
+rg -n "GameplaySceneBindingSystem|MapSurfaceRuntimeBootstrapSystem|MatchSceneReferenceBoundarySystem|AIFactionControlStartupSystem|AIPlanEntryStartupSystem|AIStartupSystem|FactionEconomyStartupSystem|InitialFactionSpawnCellSystem|PerformanceDiagnosticsReferenceBoundarySystem|PerformanceDiagnosticsSystem|RuntimeDiagnosticsSystem|RuntimeGameplayStateSystem" Assets/Game/Scripts Assets/Tests -g '*.cs'
+```
+
+Agent B row intake:
+
+| Id | Type | Current | Disposition | Status | Risk order | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `P7-0003` | `MatchSceneReferenceBoundarySystem` | `SystemBase` | `RetireFold` | `ReturnedForReclassification` | Hold | Stores a managed `MatchSceneView` shared across menu/start/match composition; direct retire would require static mutable state or a managed component. Needs Agent A disposition review before code changes. |
+| `P7-0019` | `PerformanceDiagnosticsReferenceBoundarySystem` | `SystemBase` | `RetireFold` | `ReturnedForReclassification` | Hold | Stores managed diagnostics presentation references across menu/match composition; direct retire has the same managed-reference boundary risk as `P7-0003`. Needs Agent A disposition review before code changes. |
+| `P7-0020` | `PerformanceDiagnosticsSystem` | `PlainClass` | `RetiredFolded` | `Folded` | Done | Folded out of ECS inheritance; remains a manually owned diagnostics helper for menu/bootstrap composition and no longer counts in the ECS system inventory. |
+| `P7-0001` | `GameplaySceneBindingSystem` | `SystemBase` | `DirectConvert` | `ReturnedForReclassification` | Hold | Not safe for unmanaged conversion: it reads `GridAuthoring.Instances` and `grid.gameObject.scene` to bind scene authoring debug views. Needs Agent A reclassification as scene-authoring composition/presentation boundary or retire/fold helper. |
+| `P7-0008` | `AIFactionControlStartupSystem` | `ISystem` | `Converted` | `Converted` | Done | Converted in current Agent B slice; `AIControllerConfig` and `AISettingsRuntimeState` reads now stay outside the unmanaged startup system, which receives `AIFactionControlStartupEntry` values. |
+| `P7-0010` | `AIPlanEntryStartupSystem` | `ISystem` | `Converted` | `Converted` | Done | Converted in current Agent B slice; public helpers now take plain fallback id lists instead of `AIPlanEntryStartupConfig`, so the unmanaged system does not reference a `ScriptableObject`. |
+| `P7-0013` | `AIStartupSystem` | `ISystem` | `Converted` | `Converted` | Done | Converted in current Agent B slice; startup projection now has no managed fields and uses local startup-entry/projector values plus an `EntityManager` overload for validation. |
+| `P7-0015` | `FactionEconomyStartupSystem` | `ISystem` | `Converted` | `Converted` | Done | Converted in current Agent B slice; `AIControllerConfig` ScriptableObject reads now stay in `AIStartupSystem`, which projects plain `FactionEconomyStartupEntry` values into the unmanaged system. |
+| `P7-0016` | `InitialFactionSpawnCellSystem` | `ISystem` | `Converted` | `Converted` | Done | Converted in current Agent B slice; serialized fallback initial-units config is projected by `MatchBootstrapSystem` into `InitialFactionSpawnCellFallbackEntry` values before the unmanaged resolver runs. |
+| `P7-0021` | `RuntimeDiagnosticsSystem` | `ISystem` | `Converted` | `Converted` | Done | Converted in current Agent B slice; the public diagnostics API now resolves the default world diagnostics singleton explicitly instead of relying on `SystemBase.EntityManager`. |
+| `P7-0022` | `RuntimeGameplayStateSystem` | `ISystem` | `Converted` | `Converted` | Done | Converted in current Agent B slice; legacy mirror cache now lives in ECS data (`RuntimeGameplayLegacyMirrorComponent`) so the runtime state accessor has no managed system fields. |
+| `P7-0002` | `MapSurfaceRuntimeBootstrapSystem` | `PlainClass` | `RetiredFolded` | `Folded` | Done | Folded out of ECS inheritance; remains an explicit composition helper because it must scan scene authoring `MeshFilter`/`Renderer` overlays while installing runtime map-surface ECS data. |
+| `P7-0005` | `AICombatOrderSystem` | `ISystem` | `Converted` | `Converted` | Done | Already `ISystem`; false-positive blocker removed by renaming the `LocalTransform` record member away from `Transform` and deleting the stale manual inventory override. |
+| `P7-0004` | `AIBuildPlannerSystem` | `ISystem` | `Converted` | `Converted` | Done | Keep clean; no Agent B code work needed unless validation flags regression. |
+| `P7-0006` | `AIDiagnosticLogFlushSystem` | `ISystem` | `Converted` | `Converted` | Done | Keep clean. |
+| `P7-0007` | `AIEconomySystem` | `ISystem` | `Converted` | `Converted` | Done | Keep clean. |
+| `P7-0009` | `AIFactionControlSystem` | `ISystem` | `Converted` | `Converted` | Done | Keep clean. |
+| `P7-0011` | `AIProductionSystem` | `ISystem` | `Converted` | `Converted` | Done | Keep clean. |
+| `P7-0012` | `AISquadSystem` | `ISystem` | `Converted` | `Converted` | Done | Keep clean. |
+| `P7-0014` | `AITargetingSystem` | `ISystem` | `Converted` | `Converted` | Done | Keep clean. |
+| `P7-0017` | `InitialUnitsBlockerChurnSystem` | `ISystem` | `Converted` | `Converted` | Done | Keep clean. |
+| `P7-0018` | `InitialUnitsSpawnSystem` | `ISystem` | `Converted` | `Converted` | Done | Keep clean. |
+
+Rows requiring Agent A reclassification before code changes:
+
+- `P7-0003` current `RetireFold` disposition is unsafe without an approved replacement design because the system holds a managed `MatchSceneView` reference shared across menu/start/match composition.
+- `P7-0001` current `DirectConvert` disposition is unsafe because the system owns scene-authoring binding through `GridAuthoring.Instances` and `gameObject.scene`; this is a managed composition boundary, not ECS data work.
+- `P7-0019` current `RetireFold` disposition has the same managed-reference boundary risk for performance diagnostics presentation state.
+- `P7-0002` was folded out of ECS inheritance instead of converted because its managed scene-overlay extraction is a composition boundary; runtime blob/entity behavior remains method-scoped and validated.
+- `P7-0005` is now clean in the regenerated inventory: `AICombatOrderSystem` remains `ISystem`, reports no managed blockers, and no longer needs a split/conversion slice.
+
+Call-site and dependency notes:
+
+- `MatchSceneReferenceBoundarySystem`, `MapSurfaceRuntimeBootstrapSystem`, `AIStartupSystem`, `InitialFactionSpawnCellSystem`, `GameplaySceneBindingSystem`, and `PerformanceDiagnosticsSystem` are called primarily by `Assets/Game/Scripts/Composition/MatchBootstrapSystem.cs`.
+- Startup projection systems have focused validation tests under `Assets/Tests/Editor/*StartupSystemValidationTests.cs` or dedicated spawn-cell tests.
+- `RuntimeGameplayStateSystem` converted after call-site cleanup across road, selection, building placement, camera, runtime city, UI adapter, and focused tests; value-type contexts that write runtime state are intentionally mutable wrappers.
+- Converted `ISystem` rows need no type-handle cleanup unless touched by validation; existing converted rows stay in monitoring status.
+
+Completed slices:
+
+| Id | Type | Result | Validation |
+| --- | --- | --- | --- |
+| `P7-0010` | `AIPlanEntryStartupSystem` | Converted from `SystemBase` to `ISystem`; public API no longer accepts `AIPlanEntryStartupConfig`; inventory generator key stabilized so the row id survived the inheritance change. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; AI plan-entry validation passed in `/private/tmp/warline-phase7-agent-b-ai-plan-entry-startup.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0015` | `FactionEconomyStartupSystem` | Converted from `SystemBase` to `ISystem`; added `FactionEconomyStartupEntry` value projection so unmanaged startup economy logic does not reference `AIControllerConfig` or UnityEngine APIs. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; faction economy startup validation passed in `/private/tmp/warline-phase7-agent-b-faction-economy-startup.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0008` | `AIFactionControlStartupSystem` | Converted from `SystemBase` to `ISystem`; added `AIFactionControlStartupEntry` value projection so unmanaged startup control logic does not reference `AIControllerConfig`, `AISettingsRuntimeState`, or UnityEngine APIs. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; faction-control startup validation passed in `/private/tmp/warline-phase7-agent-b-ai-faction-control-startup.log`; affected AI startup validation passed in `/private/tmp/warline-phase7-agent-b-ai-startup-after-faction-control.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0016` | `InitialFactionSpawnCellSystem` | Converted from `SystemBase` to `ISystem`; moved serialized fallback spawn-cell config ownership into `MatchBootstrapSystem` as plain `InitialFactionSpawnCellFallbackEntry` values. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; spawn-cell validation passed in `/private/tmp/warline-phase7-agent-b-initial-faction-spawn-cell.log`; affected AI startup validation passed in `/private/tmp/warline-phase7-agent-b-ai-startup-after-spawn-cell.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0021` | `RuntimeDiagnosticsSystem` | Converted from `SystemBase` to `ISystem`; removed `SystemBase.EntityManager` dependency and managed world/entity caches while preserving legacy-state mirroring into `RuntimeDiagnosticsStateComponent`. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; runtime diagnostics validation passed in `/private/tmp/warline-phase7-agent-b-runtime-diagnostics.log`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0022` | `RuntimeGameplayStateSystem` | Converted from `SystemBase` to `ISystem`; moved last-legacy mirror cache into ECS data, added focused batchmode validation, and updated runtime-state call sites/tests for value-type ownership. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; runtime gameplay state validation passed in `/private/tmp/warline-phase7-agent-b-runtime-gameplay-state.log`; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0013` | `AIStartupSystem` | Converted from `SystemBase` to `ISystem`; removed managed fields/lists, kept startup-only config projection in the composition/startup boundary, and added an `EntityManager` overload for deterministic validation. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; AI startup validation passed in `/private/tmp/warline-phase7-agent-b-ai-startup.log`; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0020` | `PerformanceDiagnosticsSystem` | Retired/folded from `SystemBase` into a plain diagnostics helper; removed disabled ECS lifecycle inheritance while preserving manual bootstrap/menu ownership and allocation behavior. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; performance diagnostics allocation validation passed in `/private/tmp/warline-phase7-agent-b-performance-diagnostics.log`; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0002` | `MapSurfaceRuntimeBootstrapSystem` | Retired/folded from `SystemBase` into a plain composition helper; removed disabled ECS lifecycle inheritance while preserving runtime blob install/disposal and managed scene-overlay extraction. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; map-surface runtime bootstrap validation passed in `/private/tmp/warline-phase7-agent-b-map-surface-runtime-bootstrap.log`; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
+| `P7-0005` | `AICombatOrderSystem` | Cleaned the stale false-positive inventory blocker; `AICombatOrderSystem` was already an `ISystem`, and the only blocker came from a `LocalTransform` record member named `Transform`. | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` passed; `git diff --check` passed; AI combat order focused validation passed in `/private/tmp/warline-phase7-agent-b-ai-combat-order.log`; inventory regenerated to `Design/Architecture/systembase_to_isystem_inventory.md`; architecture guard passed in `/private/tmp/warline-phase7-agent-a-architecture.log`. |
 
 Acceptance:
 
@@ -102,26 +173,26 @@ Acceptance:
 Goal:
 Use one repeatable pattern for pure ECS data systems.
 
-- [ ] Inspect the whole file before editing, including attributes, public API, nested types, and comments.
-- [ ] Inspect all call sites with `rg "<TypeName>" Assets/Game/Scripts Assets/Tests`.
-- [ ] Decide whether the public API must become ECS singleton data, a request component, a result component, or a static pure helper.
-- [ ] Convert `public sealed partial class X : SystemBase` to `public partial struct X : ISystem` only when no managed fields remain.
-- [ ] Replace `OnCreate()` with `OnCreate(ref SystemState state)`.
-- [ ] Replace `OnUpdate()` with `OnUpdate(ref SystemState state)`.
-- [ ] Replace `OnDestroy()` with `OnDestroy(ref SystemState state)` only when cleanup is required.
-- [ ] Replace `RequireForUpdate<T>()` with `state.RequireForUpdate<T>()`.
-- [ ] Replace `EntityManager` property usage with `state.EntityManager` or `SystemAPI` calls appropriate for unmanaged systems.
-- [ ] Replace cached `EntityQuery` fields with local query builders, `SystemAPI.Query`, or `state.GetEntityQuery` when caching is safe in unmanaged fields.
-- [ ] Replace cached `ComponentLookup<T>` and `BufferLookup<T>` with unmanaged fields only when they are refreshed every update.
-- [ ] Replace `Entities.ForEach` with `SystemAPI.Query`, `IJobEntity`, or explicit query iteration.
-- [ ] Keep `state.Dependency` handling explicit when jobs are scheduled.
-- [ ] Use `EntityCommandBuffer` only from safe world-owned allocators or singleton ECB systems; dispose temporary ECBs.
-- [ ] Add `[BurstCompile]` only after managed blockers are gone and the code is deterministic under Burst.
-- [ ] Preserve existing update group/order attributes exactly unless a validation failure proves they need adjustment.
-- [ ] Avoid broad cleanup while converting; do not rename gameplay concepts outside the target file unless required for compile.
-- [ ] Run `git diff --check` after the slice.
-- [ ] Run the target's focused test, architecture test, or Unity compile validation.
-- [ ] Write a handoff note with the inventory row id, changed files, validation command, and residual risk.
+- [x] Inspect the whole file before editing, including attributes, public API, nested types, and comments.
+- [x] Inspect all call sites with `rg "<TypeName>" Assets/Game/Scripts Assets/Tests`.
+- [x] Decide whether the public API must become ECS singleton data, a request component, a result component, or a static pure helper.
+- [x] Convert `public sealed partial class X : SystemBase` to `public partial struct X : ISystem` only when no managed fields remain.
+- [x] Replace `OnCreate()` with `OnCreate(ref SystemState state)`.
+- [x] Replace `OnUpdate()` with `OnUpdate(ref SystemState state)`.
+- [x] Replace `OnDestroy()` with `OnDestroy(ref SystemState state)` only when cleanup is required.
+- [x] Replace `RequireForUpdate<T>()` with `state.RequireForUpdate<T>()`.
+- [x] Replace `EntityManager` property usage with `state.EntityManager` or `SystemAPI` calls appropriate for unmanaged systems.
+- [x] Replace cached `EntityQuery` fields with local query builders, `SystemAPI.Query`, or `state.GetEntityQuery` when caching is safe in unmanaged fields.
+- [x] Replace cached `ComponentLookup<T>` and `BufferLookup<T>` with unmanaged fields only when they are refreshed every update.
+- [x] Replace `Entities.ForEach` with `SystemAPI.Query`, `IJobEntity`, or explicit query iteration.
+- [x] Keep `state.Dependency` handling explicit when jobs are scheduled.
+- [x] Use `EntityCommandBuffer` only from safe world-owned allocators or singleton ECB systems; dispose temporary ECBs.
+- [x] Add `[BurstCompile]` only after managed blockers are gone and the code is deterministic under Burst.
+- [x] Preserve existing update group/order attributes exactly unless a validation failure proves they need adjustment.
+- [x] Avoid broad cleanup while converting; do not rename gameplay concepts outside the target file unless required for compile.
+- [x] Run `git diff --check` after the slice.
+- [x] Run the target's focused test, architecture test, or Unity compile validation.
+- [x] Write a handoff note with the inventory row id, changed files, validation command, and residual risk.
 
 Acceptance:
 
@@ -134,14 +205,14 @@ Acceptance:
 Goal:
 Convert one-shot startup systems without creating hidden managed state.
 
-- [ ] Identify whether the target is one-shot bootstrap, per-match startup, per-world startup, or scene/runtime startup.
-- [ ] Confirm startup trigger: singleton tag, request component, scene entity, subscene baked data, or composition call.
-- [ ] Replace public `Initialize`/`Configure` style calls with ECS data written by the existing composition boundary when safe.
-- [ ] Keep serialized config and ScriptableObject reads outside unmanaged `ISystem`; project them into ECS data through an existing managed boundary or a counted managed config exception.
-- [ ] Ensure one-shot systems are gated by completion tags or disabled request entities so they do not repeat.
-- [ ] Preserve deterministic startup order with update groups and `UpdateBefore`/`UpdateAfter` attributes.
-- [ ] Do not create static mutable startup registries.
-- [ ] Do not move scene reference ownership into the `ISystem`.
+- [x] Identify whether the target is one-shot bootstrap, per-match startup, per-world startup, or scene/runtime startup.
+- [x] Confirm startup trigger: singleton tag, request component, scene entity, subscene baked data, or composition call.
+- [x] Replace public `Initialize`/`Configure` style calls with ECS data written by the existing composition boundary when safe.
+- [x] Keep serialized config and ScriptableObject reads outside unmanaged `ISystem`; project them into ECS data through an existing managed boundary or a counted managed config exception.
+- [x] Ensure one-shot systems are gated by completion tags or disabled request entities so they do not repeat.
+- [x] Preserve deterministic startup order with update groups and `UpdateBefore`/`UpdateAfter` attributes.
+- [x] Do not create static mutable startup registries.
+- [x] Do not move scene reference ownership into the `ISystem`.
 - [ ] Validate a fresh match start and a second match restart if the target participates in lifecycle setup.
 
 Acceptance:
@@ -194,14 +265,14 @@ Acceptance:
 Goal:
 Run validation that matches the risk of each converted row.
 
-- [ ] Always run `git diff --check -- <changed files>`.
-- [ ] Run existing architecture tests that enforce no new non-UI `SystemBase` and no forbidden managed blockers.
-- [ ] For startup systems, run the focused EditMode/PlayMode test that starts a match or relevant mode.
+- [x] Always run `git diff --check -- <changed files>`.
+- [x] Run existing architecture tests that enforce no new non-UI `SystemBase` and no forbidden managed blockers.
+- [x] For startup systems, run the focused EditMode/PlayMode test that starts a match or relevant mode.
 - [ ] For diagnostics systems, run a compile validation plus any diagnostic toggle test.
-- [ ] For faction/AI startup systems, validate initial faction state, spawn cells, resource setup, and plan-entry availability.
+- [x] For faction/AI startup systems, validate initial faction state, spawn cells, resource setup, and plan-entry availability.
 - [ ] For runtime state systems, validate shutdown/restart does not throw `InvalidOperationException` from destroyed `SystemBase` state.
-- [ ] If Unity is locked, retry once, then use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` shadow validation when available.
-- [ ] Save validation command, result, and log path in the handoff.
+- [x] If Unity is locked, retry once, then use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` shadow validation when available.
+- [x] Save validation command, result, and log path in the handoff.
 
 Suggested commands:
 

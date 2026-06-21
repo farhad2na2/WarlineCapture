@@ -1,17 +1,8 @@
 using System;
 using Unity.Entities;
 
-internal sealed partial class BuildingGameplayDisposalSystem : SystemBase
+internal sealed class BuildingGameplayDisposalSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     internal readonly struct Source
     {
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;

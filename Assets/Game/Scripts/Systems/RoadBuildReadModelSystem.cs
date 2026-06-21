@@ -12,9 +12,9 @@ public sealed partial class RoadBuildReadModelSystem : SystemBase
     {
     }
 
-    internal readonly struct Context
+    internal struct Context
     {
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RoadBuildSessionSystem RoadBuildSessionSystem;
         public readonly RoadBuildSessionSystem.State RoadBuildSessionState;
         public readonly RoadBuildInputSystem RoadBuildInputSystem;
@@ -141,7 +141,7 @@ public sealed partial class RoadBuildReadModelSystem : SystemBase
 
             if (HasSelectedBuilding)
                 return "Building selected";
-            if (_context.RuntimeGameplayStateSystem != null && _context.RuntimeGameplayStateSystem.BuildModeActive)
+            if (_context.RuntimeGameplayStateSystem.BuildModeActive)
                 return "Build mode active";
             return "Simulation running";
         }

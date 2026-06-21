@@ -22,11 +22,12 @@ internal sealed class MatchBootstrapSystem
         Complete
     }
 
-    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
+    private RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem;
     private VisualQualitySettingsSystem _visualQualitySettingsSystem;
     private AIStartupSystem _aiStartupSystem;
-    private InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem;
+    private readonly InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem = new();
+    private readonly List<InitialFactionSpawnCellFallbackEntry> _initialFactionSpawnCellFallbackEntries = new();
     private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
     private RuntimeRootSystem _runtimeRootSystem;
     private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
@@ -344,9 +345,9 @@ internal sealed class MatchBootstrapSystem
         RuntimeCity = null;
         _runtimeGridBootstrapSystem = null;
         _mapSurfaceRuntimeBootstrapSystem = null;
-        _initialFactionSpawnCellSystem = null;
+        _initialFactionSpawnCellFallbackEntries.Clear();
         _customGameStartupSystem = null;
-        _aiStartupSystem = null;
+        _aiStartupSystem = default;
         _gameplayStartRequested = false;
         _gameplayStartComplete = false;
         _managedRuntimeInitialized = false;
@@ -450,7 +451,6 @@ internal sealed class MatchBootstrapSystem
         MapSurfaceRuntimeBootstrapSystem mapSurfaceRuntimeBootstrapSystem,
         GridAuthoringConfig runtimeGridConfig,
         MapSurfaceAuthoring mapSurfaceAuthoring,
-        InitialFactionSpawnCellSystem initialFactionSpawnCellSystem,
         BuildingPlacementSystemConfig buildingPlacementConfig,
         AIStartupSystem aiStartupSystem,
         IReadOnlyList<AIControllerConfig> aiControllerConfigs,
@@ -480,19 +480,9 @@ internal sealed class MatchBootstrapSystem
         }
 
         mapSurfaceRuntimeBootstrapSystem.Ensure(mapSurfaceAuthoring);
-        if (initialFactionSpawnCellSystem == null)
-        {
-            Debug.LogWarning("[MatchBootstrap] missingInitialFactionSpawnCellSystem");
-            return;
-        }
-
-        initialFactionSpawnCellSystem.Configure(buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
-        if (aiStartupSystem == null)
-        {
-            Debug.LogWarning("[MatchBootstrap] missingAIStartupSystem");
-            return;
-        }
-
+        ProjectInitialFactionSpawnCellFallbackEntries(
+            buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null,
+            _initialFactionSpawnCellFallbackEntries);
         aiStartupSystem.LogConfigValidation(aiControllerConfigs, aiSettings);
     }
 
@@ -503,12 +493,6 @@ internal sealed class MatchBootstrapSystem
         AISettingsSnapshot aiSettings,
         AIStartupSystem.TryResolveFactionSpawnCell tryResolveFactionSpawnCell)
     {
-        if (aiStartupSystem == null)
-        {
-            Debug.LogWarning("[MatchBootstrap] missingAIStartupSystem");
-            return default;
-        }
-
         return aiStartupSystem.Initialize(
             aiControllerConfigs,
             aiPlanEntryConfig,
@@ -828,7 +812,6 @@ internal sealed class MatchBootstrapSystem
                     ResolveMapSurfaceRuntimeBootstrapSystem(World.DefaultGameObjectInjectionWorld),
                     RuntimeGridConfig,
                     MapSurfaceAuthoring,
-                    ResolveInitialFactionSpawnCellSystem(World.DefaultGameObjectInjectionWorld),
                     BuildingPlacementConfig,
                     ResolveAIStartupSystem(World.DefaultGameObjectInjectionWorld),
                     AIControllerConfigs,
@@ -860,9 +843,7 @@ internal sealed class MatchBootstrapSystem
                     AIControllerConfigs,
                     AIPlanEntryConfig,
                     _pendingAiSettingsSnapshot,
-                    _initialFactionSpawnCellSystem != null
-                        ? new AIStartupSystem.TryResolveFactionSpawnCell(_initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell)
-                        : null);
+                    ResolveInitialFactionSpawnCell);
                 if (_pendingAiStartupResult.HasPlayerAutoMode)
                     _runtimeGameplayStateSystem.PlayerAutoModeEnabled = _pendingAiStartupResult.PlayerAutoModeEnabled;
                 _gameplayStartStep = GameplayStartStep.BindMainMenu;
@@ -888,9 +869,7 @@ internal sealed class MatchBootstrapSystem
                 FocusInitialCameraOnConfiguredFactionBase(
                     World.DefaultGameObjectInjectionWorld,
                     SelectionUiCamera,
-                    _initialFactionSpawnCellSystem != null
-                        ? new TryResolveFactionSpawnCell(_initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell)
-                        : null,
+                    ResolveInitialFactionSpawnCell,
                     0);
                 _gameplayStartStep = GameplayStartStep.Complete;
                 break;
@@ -922,17 +901,48 @@ internal sealed class MatchBootstrapSystem
         if (world == null || !world.IsCreated)
             return null;
 
-        _mapSurfaceRuntimeBootstrapSystem = world.GetOrCreateSystemManaged<MapSurfaceRuntimeBootstrapSystem>();
+        if (_mapSurfaceRuntimeBootstrapSystem == null)
+            _mapSurfaceRuntimeBootstrapSystem = new MapSurfaceRuntimeBootstrapSystem(world);
         return _mapSurfaceRuntimeBootstrapSystem;
     }
 
-    private InitialFactionSpawnCellSystem ResolveInitialFactionSpawnCellSystem(World world)
+    private bool ResolveInitialFactionSpawnCell(byte factionId, out int2 spawnCell)
     {
+        World world = World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
-            return null;
+        {
+            spawnCell = default;
+            return false;
+        }
 
-        _initialFactionSpawnCellSystem = world.GetOrCreateSystemManaged<InitialFactionSpawnCellSystem>();
-        return _initialFactionSpawnCellSystem;
+        return _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell(
+            world.EntityManager,
+            _initialFactionSpawnCellFallbackEntries,
+            factionId,
+            out spawnCell);
+    }
+
+    private static void ProjectInitialFactionSpawnCellFallbackEntries(
+        InitialUnitsSpawnerAuthoringConfig config,
+        List<InitialFactionSpawnCellFallbackEntry> entries)
+    {
+        entries.Clear();
+
+        if (config == null || config.Factions == null)
+            return;
+
+        for (int i = 0; i < config.Factions.Count; i++)
+        {
+            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = config.Factions[i];
+            if (faction == null)
+                continue;
+
+            byte factionId = (byte)Mathf.Clamp(faction.FactionId, 0, byte.MaxValue);
+            Vector2Int spawnCell = faction.SpawnCell;
+            entries.Add(new InitialFactionSpawnCellFallbackEntry(
+                factionId,
+                new int2(spawnCell.x, spawnCell.y)));
+        }
     }
 
     private CustomGameStartupSystem ResolveCustomGameStartupSystem(World world)
@@ -946,10 +956,7 @@ internal sealed class MatchBootstrapSystem
 
     private AIStartupSystem ResolveAIStartupSystem(World world)
     {
-        if (world == null || !world.IsCreated)
-            return null;
-
-        _aiStartupSystem = world.GetOrCreateSystemManaged<AIStartupSystem>();
+        _aiStartupSystem = new AIStartupSystem();
         return _aiStartupSystem;
     }
 

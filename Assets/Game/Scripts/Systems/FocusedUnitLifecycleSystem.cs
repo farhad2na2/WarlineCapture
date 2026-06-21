@@ -3,22 +3,13 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed partial class FocusedUnitLifecycleSystem : SystemBase
+public sealed class FocusedUnitLifecycleSystem
 {
     public delegate bool TryGetClickedUnitEntityDelegate(Vector2 screenPosition, EntityManager em, out Entity entity);
     public delegate string DescribeEntityDelegate(EntityManager em, Entity entity);
 
     private World _queryWorld;
     private EntityQuery _selectedTagQuery;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void EnsureEntityQueries(EntityManager em)
     {

@@ -124,7 +124,7 @@ public sealed class RuntimeDiagnosticsSystemTests
 
     private RuntimeDiagnosticsSystem ResolveDiagnosticsSystem()
     {
-        return _world.GetOrCreateSystemManaged<RuntimeDiagnosticsSystem>();
+        return new RuntimeDiagnosticsSystem();
     }
 
     private T ReadSingleton<T>() where T : unmanaged, IComponentData

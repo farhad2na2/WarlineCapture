@@ -24,3 +24,13 @@ public struct RuntimeCameraFocusRequestComponent : IComponentData
     public byte Requested;
     public float3 World;
 }
+
+public struct RuntimeGameplayLegacyMirrorComponent : IComponentData
+{
+    public byte HasGameplayState;
+    public byte HasCameraInput;
+    public byte HasCameraFocusRequest;
+    public RuntimeGameplayStateComponent GameplayState;
+    public RuntimeCameraInputComponent CameraInput;
+    public RuntimeCameraFocusRequestComponent CameraFocusRequest;
+}

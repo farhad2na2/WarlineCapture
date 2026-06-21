@@ -158,7 +158,7 @@ public sealed partial class UnitRenderBudgetSystemTests
 
             using var distances = new NativeList<UnitRenderBudgetDistance.UnitDistance>(2, Allocator.TempJob);
             UnitRenderBudgetDistanceTestSystem system = world.GetOrCreateSystemManaged<UnitRenderBudgetDistanceTestSystem>();
-            system.Camera = camera;
+            system.Camera = CreateCameraSnapshot(camera);
             system.Distances = distances;
             system.Update();
 
@@ -187,7 +187,7 @@ public sealed partial class UnitRenderBudgetSystemTests
         distances.Add(new UnitRenderBudgetDistance.UnitDistance { Unit = TestEntity(10), DistanceSq = 25f });
 
         Assert.DoesNotThrow(() => new UnitRenderBudgetDistance().Collect(
-            null,
+            default,
             units,
             transforms,
             distances,
@@ -1416,7 +1416,7 @@ public sealed partial class UnitRenderBudgetSystemTests
     [DisableAutoCreation]
     private sealed partial class UnitRenderBudgetDistanceTestSystem : SystemBase
     {
-        public Camera Camera;
+        public RuntimeCameraSnapshotComponent Camera;
         public NativeList<UnitRenderBudgetDistance.UnitDistance> Distances;
 
         protected override void OnUpdate()
@@ -1437,5 +1437,29 @@ public sealed partial class UnitRenderBudgetSystemTests
                 viewportPadding: 0.35f,
                 edgeSafetyMargin: 0.18f);
         }
+    }
+
+    private static RuntimeCameraSnapshotComponent CreateCameraSnapshot(Camera camera)
+    {
+        float4x4 worldToCamera = ToFloat4x4(camera.worldToCameraMatrix);
+        float4x4 projection = ToFloat4x4(camera.projectionMatrix);
+        return new RuntimeCameraSnapshotComponent
+        {
+            IsValid = 1,
+            Position = camera.transform.position,
+            Rotation = camera.transform.rotation,
+            WorldToCamera = worldToCamera,
+            Projection = projection,
+            ViewProjection = math.mul(projection, worldToCamera)
+        };
+    }
+
+    private static float4x4 ToFloat4x4(Matrix4x4 value)
+    {
+        return new float4x4(
+            new float4(value.m00, value.m10, value.m20, value.m30),
+            new float4(value.m01, value.m11, value.m21, value.m31),
+            new float4(value.m02, value.m12, value.m22, value.m32),
+            new float4(value.m03, value.m13, value.m23, value.m33));
     }
 }

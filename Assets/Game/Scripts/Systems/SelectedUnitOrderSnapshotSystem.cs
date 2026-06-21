@@ -2,8 +2,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 
-[DisableAutoCreation]
-public sealed partial class SelectedUnitOrderSnapshotSystem : SystemBase
+public sealed class SelectedUnitOrderSnapshotSystem
 {
     private struct PreservedOrderState
     {
@@ -23,15 +22,6 @@ public sealed partial class SelectedUnitOrderSnapshotSystem : SystemBase
     private Unity.Entities.World _queryWorld;
     private EntityQuery _selectedTagQuery;
     private readonly List<PreservedOrderState> _preservedOrders = new();
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void EnsureEntityQueries(EntityManager em)
     {

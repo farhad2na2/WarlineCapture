@@ -6,8 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-[DisableAutoCreation]
-public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
+public sealed class RtsSelectionPointerTargetCommandSystem
 {
     private const float UnitClickScreenFallbackRadiusPixels = 54f;
     private const int TraversableTargetSearchRadius = 24;
@@ -15,9 +14,9 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
     public delegate bool TryGetPointerPositionDelegate(out Vector2 pointerPosition);
 
-    public readonly struct Context
+    public struct Context
     {
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RtsSelectionInputSystem InputSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
         public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
@@ -131,15 +130,6 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
     private readonly MapSurfacePathfindingSnapshot _mapSurfaceReadSystem = new();
     private readonly UnitMoveOrderSystem _mapSurfaceMoveOrderSystem = new();
     private readonly List<Entity> _mapSurfaceSelectedMoveEntities = new();
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public readonly struct MapSurfaceCommandTargetResult
     {
@@ -795,8 +785,7 @@ public sealed partial class RtsSelectionPointerTargetCommandSystem : SystemBase
         int cachedCount = cached?.Count ?? 0;
         string selected0 = cachedCount > 0 ? DescribeClickDebugEntity(em, cached[0]) : "none";
         int selectedTagCount = CountSelectedTags(em);
-        bool suppressNextWorldClick = context.RuntimeGameplayStateSystem != null &&
-                                      context.RuntimeGameplayStateSystem.SuppressNextWorldClick;
+        bool suppressNextWorldClick = context.RuntimeGameplayStateSystem.SuppressNextWorldClick;
         int ignoreWorldCommandsUntilFrame = context.InputSystem != null
             ? context.InputSystem.IgnoreWorldCommandsUntilFrame
             : 0;

@@ -7,17 +7,8 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-public sealed partial class PerformanceDiagnosticsSystem : SystemBase
+public sealed class PerformanceDiagnosticsSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     private const double FreezeLogThresholdSeconds = 0.15d;
     private const double LowFpsDiagThreshold = 55d;
     private const double FrameRateDiagIntervalSeconds = 2d;

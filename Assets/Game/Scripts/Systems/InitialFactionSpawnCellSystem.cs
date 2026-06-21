@@ -1,36 +1,44 @@
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-public sealed partial class InitialFactionSpawnCellSystem : SystemBase
+public readonly struct InitialFactionSpawnCellFallbackEntry
 {
-    private InitialUnitsSpawnerAuthoringConfig _fallbackInitialUnitsConfig;
+    public readonly byte FactionId;
+    public readonly int2 SpawnCell;
 
-    protected override void OnCreate()
+    public InitialFactionSpawnCellFallbackEntry(byte factionId, int2 spawnCell)
     {
-        Enabled = false;
+        FactionId = factionId;
+        SpawnCell = spawnCell;
+    }
+}
+
+public partial struct InitialFactionSpawnCellSystem : ISystem
+{
+    public void OnCreate(ref SystemState state)
+    {
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
     }
 
-    public void Configure(InitialUnitsSpawnerAuthoringConfig fallbackInitialUnitsConfig)
+    public bool TryGetConfiguredFactionSpawnCell(
+        EntityManager em,
+        IReadOnlyList<InitialFactionSpawnCellFallbackEntry> fallbackFactionSpawns,
+        byte factionId,
+        out int2 spawnCell)
     {
-        _fallbackInitialUnitsConfig = fallbackInitialUnitsConfig;
-    }
-
-    public bool TryGetConfiguredFactionSpawnCell(byte factionId, out int2 spawnCell)
-    {
-        if (TryGetBakedFactionSpawnCell(factionId, out spawnCell))
+        if (TryGetBakedFactionSpawnCell(em, factionId, out spawnCell))
             return true;
 
-        return TryGetFallbackFactionSpawnCell(factionId, out spawnCell);
+        return TryGetFallbackFactionSpawnCell(fallbackFactionSpawns, factionId, out spawnCell);
     }
 
-    private bool TryGetBakedFactionSpawnCell(byte factionId, out int2 spawnCell)
+    private static bool TryGetBakedFactionSpawnCell(EntityManager em, byte factionId, out int2 spawnCell)
     {
-        EntityManager em = EntityManager;
         using EntityQuery query = em.CreateEntityQuery(
             ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
             ComponentType.ReadOnly<InitialUnitsFactionSpawnEntry>());
@@ -58,21 +66,24 @@ public sealed partial class InitialFactionSpawnCellSystem : SystemBase
         return false;
     }
 
-    private bool TryGetFallbackFactionSpawnCell(byte factionId, out int2 spawnCell)
+    private static bool TryGetFallbackFactionSpawnCell(
+        IReadOnlyList<InitialFactionSpawnCellFallbackEntry> fallbackFactionSpawns,
+        byte factionId,
+        out int2 spawnCell)
     {
-        if (_fallbackInitialUnitsConfig == null || _fallbackInitialUnitsConfig.Factions == null)
+        if (fallbackFactionSpawns == null)
         {
             spawnCell = default;
             return false;
         }
 
-        for (int i = 0; i < _fallbackInitialUnitsConfig.Factions.Count; i++)
+        for (int i = 0; i < fallbackFactionSpawns.Count; i++)
         {
-            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = _fallbackInitialUnitsConfig.Factions[i];
-            if (faction == null || faction.FactionId != factionId)
+            InitialFactionSpawnCellFallbackEntry faction = fallbackFactionSpawns[i];
+            if (faction.FactionId != factionId)
                 continue;
 
-            spawnCell = new int2(faction.SpawnCell.x, faction.SpawnCell.y);
+            spawnCell = faction.SpawnCell;
             return true;
         }
 

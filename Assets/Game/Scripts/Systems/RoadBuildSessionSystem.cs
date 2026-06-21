@@ -28,10 +28,10 @@ public sealed partial class RoadBuildSessionSystem : SystemBase
         public int SkipBuildClickFrames;
     }
 
-    public readonly struct Context
+    public struct Context
     {
         public readonly State State;
-        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly Func<RoadNetworkSystem.Snapshot> CaptureRoadBuildSessionSnapshot;
         public readonly Action<RoadNetworkSystem.Snapshot> RestoreRoadBuildSession;
         public readonly Action RemoveRuntimeBlockersUnderRoads;

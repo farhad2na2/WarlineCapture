@@ -127,7 +127,7 @@ internal sealed class MenuBootstrapSystem
         UpdateActualLoadingProgress(entityManager, boundary, shellState);
         if (useUiToolkit)
         {
-            ApplyUiToolkitPresentationMode(view.UiCamera, view.UiCanvas);
+            ApplyUiToolkitPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
             BindUiToolkitMatchReadModels(view, shellState);
             ClearBoundMatchRuntimeUi();
             return;
@@ -547,7 +547,7 @@ internal sealed class MenuBootstrapSystem
         RestoreUiPresentationMode(uiCamera, uiCanvas);
     }
 
-    private void ApplyUiToolkitPresentationMode(Camera uiCamera, Canvas uiCanvas)
+    private void ApplyUiToolkitPresentationMode(Camera uiCamera, Canvas uiCanvas, UiShellStateComponent shellState, EntityManager entityManager)
     {
         CaptureUiPresentationMode(uiCamera, uiCanvas);
 
@@ -557,10 +557,19 @@ internal sealed class MenuBootstrapSystem
         if (uiCamera == null)
             return;
 
-        if (uiCamera.clearFlags != CameraClearFlags.Depth)
-            uiCamera.clearFlags = CameraClearFlags.Depth;
-        if (uiCamera.enabled)
-            uiCamera.enabled = false;
+        if (shellState.ActiveRoute == UIRoute.Match && IsMatchSceneLoaded(entityManager))
+        {
+            if (uiCamera.clearFlags != CameraClearFlags.Depth)
+                uiCamera.clearFlags = CameraClearFlags.Depth;
+            if (uiCamera.enabled)
+                uiCamera.enabled = false;
+            return;
+        }
+
+        if (uiCamera.clearFlags != CameraClearFlags.SolidColor)
+            uiCamera.clearFlags = CameraClearFlags.SolidColor;
+        if (!uiCamera.enabled)
+            uiCamera.enabled = true;
     }
 
     private void CaptureUiPresentationMode(Camera uiCamera, Canvas uiCanvas)

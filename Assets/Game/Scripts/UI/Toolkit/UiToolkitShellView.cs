@@ -1431,8 +1431,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
         if (!HasRequiredDiagnosticsBindings)
             return false;
 
-        if (diagnosticsFpsValueLabel != null)
-            diagnosticsFpsValueLabel.text = Mathf.Max(0, diagnostics.Fps).ToString();
+        SetLabelText(diagnosticsFpsValueLabel, Mathf.Max(0, diagnostics.Fps).ToString(), "0");
 
         SetLabelText(diagnosticsLogTextLabel, diagnostics.LogText, "Runtime log ready.");
         SetShellHidden(diagnosticsLogPanel, !diagnostics.LogVisible);
@@ -1691,17 +1690,21 @@ public sealed class UiToolkitShellView : MonoBehaviour
         {
             if (!target.ClassListContains("shell-hidden"))
                 target.AddToClassList("shell-hidden");
-            target.pickingMode = PickingMode.Ignore;
+            if (target.pickingMode != PickingMode.Ignore)
+                target.pickingMode = PickingMode.Ignore;
             return;
         }
 
-        target.RemoveFromClassList("shell-hidden");
-        target.pickingMode = PickingMode.Position;
+        if (target.ClassListContains("shell-hidden"))
+            target.RemoveFromClassList("shell-hidden");
+        if (target.pickingMode != PickingMode.Position)
+            target.pickingMode = PickingMode.Position;
     }
 
     private static void SetElementEnabled(VisualElement target, bool enabled)
     {
-        target?.SetEnabled(enabled);
+        if (target != null && target.enabledSelf != enabled)
+            target.SetEnabled(enabled);
     }
 
     public bool ApplyMainMenuRouteState(UIRoute route)
@@ -2138,24 +2141,35 @@ public sealed class UiToolkitShellView : MonoBehaviour
             return false;
         }
 
-        mainMenuCreditsValueLabel.text = string.IsNullOrWhiteSpace(resources.CreditsText)
-            ? DefaultCreditsText
-            : resources.CreditsText;
-        mainMenuSuppliesValueLabel.text = string.IsNullOrWhiteSpace(resources.SuppliesText)
-            ? DefaultSuppliesText
-            : resources.SuppliesText;
-        mainMenuCommandValueLabel.text = string.IsNullOrWhiteSpace(resources.CommandText)
-            ? DefaultCommandText
-            : resources.CommandText;
+        SetLabelText(mainMenuCreditsValueLabel, resources.CreditsText, DefaultCreditsText);
+        SetLabelText(mainMenuSuppliesValueLabel, resources.SuppliesText, DefaultSuppliesText);
+        SetLabelText(mainMenuCommandValueLabel, resources.CommandText, DefaultCommandText);
         return true;
     }
 
     private void ApplyMainMenuRouteClass(UIRoute route)
     {
+        string resolvedRouteClass = ResolveMainMenuRouteClass(route);
+        bool hasResolvedRoute = false;
+        bool hasStaleRoute = false;
         for (int i = 0; i < MainMenuRouteClasses.Length; i++)
-            mainMenuContentRoot.RemoveFromClassList(MainMenuRouteClasses[i]);
+        {
+            bool hasClass = mainMenuContentRoot.ClassListContains(MainMenuRouteClasses[i]);
+            hasResolvedRoute |= hasClass && MainMenuRouteClasses[i] == resolvedRouteClass;
+            hasStaleRoute |= hasClass && MainMenuRouteClasses[i] != resolvedRouteClass;
+        }
 
-        mainMenuContentRoot.AddToClassList(ResolveMainMenuRouteClass(route));
+        if (hasResolvedRoute && !hasStaleRoute)
+            return;
+
+        for (int i = 0; i < MainMenuRouteClasses.Length; i++)
+        {
+            if (mainMenuContentRoot.ClassListContains(MainMenuRouteClasses[i]))
+                mainMenuContentRoot.RemoveFromClassList(MainMenuRouteClasses[i]);
+        }
+
+        if (!mainMenuContentRoot.ClassListContains(resolvedRouteClass))
+            mainMenuContentRoot.AddToClassList(resolvedRouteClass);
     }
 
     private static string ResolveMainMenuRouteClass(UIRoute route)
@@ -2204,7 +2218,8 @@ public sealed class UiToolkitShellView : MonoBehaviour
             return;
         }
 
-        target.RemoveFromClassList(className);
+        if (target.ClassListContains(className))
+            target.RemoveFromClassList(className);
     }
 
     private static void ApplyKnownClass(VisualElement target, string[] knownClasses, string className)
@@ -2212,10 +2227,24 @@ public sealed class UiToolkitShellView : MonoBehaviour
         if (target == null)
             return;
 
+        bool hasRequestedClass = !string.IsNullOrWhiteSpace(className) && target.ClassListContains(className);
+        bool hasStaleClass = false;
         for (int i = 0; i < knownClasses.Length; i++)
-            target.RemoveFromClassList(knownClasses[i]);
+        {
+            if (knownClasses[i] != className && target.ClassListContains(knownClasses[i]))
+                hasStaleClass = true;
+        }
 
-        if (!string.IsNullOrWhiteSpace(className))
+        if (hasRequestedClass && !hasStaleClass)
+            return;
+
+        for (int i = 0; i < knownClasses.Length; i++)
+        {
+            if (target.ClassListContains(knownClasses[i]))
+                target.RemoveFromClassList(knownClasses[i]);
+        }
+
+        if (!string.IsNullOrWhiteSpace(className) && !target.ClassListContains(className))
             target.AddToClassList(className);
     }
 
@@ -2251,9 +2280,11 @@ public sealed class UiToolkitShellView : MonoBehaviour
         if (label == null)
             return;
 
-        label.text = string.IsNullOrWhiteSpace(text)
+        string nextText = string.IsNullOrWhiteSpace(text)
             ? fallback
             : text;
+        if (label.text != nextText)
+            label.text = nextText;
     }
 
     private void ApplyBuildDrawerActiveProduction(UiBuildDrawerActiveProductionModel activeProduction)

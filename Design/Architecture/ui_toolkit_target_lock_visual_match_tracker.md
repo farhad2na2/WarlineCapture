@@ -11,19 +11,19 @@ Last updated:
 
 Progress snapshot:
 
-- Checklist progress: `9 / 140 complete (6.4%)`.
+- Checklist progress: `19 / 140 complete (13.6%)`.
 - In progress: `1`.
-- Remaining open: `131`.
-- Current target: `SCN-02 Main Menu iteration 01 - shadow baseline capture pending approval`.
-- Iteration loop status: `SCN-02 prep and mapping complete; first shadow capture pending`.
+- Remaining open: `121`.
+- Current target: `SCN-02 Main Menu iteration 01 - typography, slice-scale import, and SCN-02 audit docs applied; post-fix runtime screenshot blocked on shadow capture tooling`.
+- Iteration loop status: `SCN-02 prep and mapping complete; user-confirmed shield/star logo retained; provisional 20:9 artifact saved; typography scale pass applied; SCN-02 slice-scale import warnings fixed; SCN-02 PPU and 9-slice audits recorded`.
 - Surfaces target-matched: `0 / 11`.
 - User verification gate: `stop after SCN-02 Main Menu target-match handoff`.
-- Pixel Per Unit audit status: `SCN-02 initial meta/USS audit started; no PPU changes`.
-- 9-slice audit status: `SCN-02 initial meta/USS audit started; no slice changes`.
+- Pixel Per Unit audit status: `SCN-02 audit recorded in pixel_per_unit_audit.md; no PPU changes`.
+- 9-slice audit status: `SCN-02 audit recorded in nine_slice_audit.md; slice-scale unit fix applied; no sprite border changes`.
 - UI Builder comparison status: `not run`.
-- Game View capture comparison status: `pending shadow capture`.
-- Shadow project validation status: `shadow project exists; sync/capture pending approval`.
-- Validation status: `git diff --check passed for SCN-02 prep slice`.
+- Game View capture comparison status: `provisional existing 20:9 contact sheet saved; post-fix runtime screenshot still pending`.
+- Shadow project validation status: `allowed visual files synced; shadow import validation passed with no SCN-02 USS warnings; current screenshot runner still missing in shadow`.
+- Validation status: `git diff --check passed for SCN-02 audit-doc slice; forbidden-path status check still shows pre-existing C# worktree changes outside this visual slice`.
 
 ## Scope
 
@@ -297,8 +297,8 @@ Verify the actual runtime render in the shadow project, not just static UXML pre
 
 For each surface and iteration:
 
-- [ ] Confirm `/Users/farhad/Projects/WarlineCapture-CodexUnity1` exists and opens independently from the main project.
-- [ ] Sync only allowed changed files into `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
+- [x] Confirm `/Users/farhad/Projects/WarlineCapture-CodexUnity1` exists and opens independently from the main project.
+- [x] Sync only allowed changed files into `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
 - [ ] Launch Unity validation/capture path against `/Users/farhad/Projects/WarlineCapture-CodexUnity1`, not the main project.
 - [ ] Capture 16:9 Game View from the shadow project at the canonical target size or nearest project-standard size.
 - [ ] Capture 20:9 Game View from the shadow project.
@@ -347,16 +347,16 @@ Goal:
 Validate and compare in `/Users/farhad/Projects/WarlineCapture-CodexUnity1` without opening or mutating the main project.
 
 - [x] Verify the shadow project exists: `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
-- [ ] Verify the shadow project Unity version and packages match the main project closely enough for UI Toolkit rendering comparison.
-- [ ] Define the sync command for allowed paths only: UI Toolkit UXML/USS, UI art PNG/meta, and comparison notes.
-- [ ] Request approval before syncing files to the shadow project when the current sandbox does not allow writes outside `/Users/farhad/Projects/WarlineCapture`.
-- [ ] Do not sync C# files into the shadow project for this loop.
-- [ ] Do not run Unity against `/Users/farhad/Projects/WarlineCapture` for visual comparison unless the user explicitly requests main-project validation.
-- [ ] Run batchmode/open validation on `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
-- [ ] Save shadow logs under `/private/tmp/warline-ui-target-lock-<surface>-shadow.log`.
+- [x] Verify the shadow project Unity version and packages match the main project closely enough for UI Toolkit rendering comparison.
+- [x] Define the sync command for allowed paths only: UI Toolkit UXML/USS, UI art PNG/meta, and comparison notes.
+- [x] Request approval before syncing files to the shadow project when the current sandbox does not allow writes outside `/Users/farhad/Projects/WarlineCapture`.
+- [x] Do not sync C# files into the shadow project for this loop.
+- [x] Do not run Unity against `/Users/farhad/Projects/WarlineCapture` for visual comparison unless the user explicitly requests main-project validation.
+- [x] Run batchmode/open validation on `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
+- [x] Save shadow logs under `/private/tmp/warline-ui-target-lock-<surface>-shadow.log`.
 - [ ] Save shadow captures under `Design/VisualLockLayered/_UIToolkitVisualMatch/<SurfaceId>/iteration_##/`.
 - [ ] Compare shadow captures to the saved target and UI Builder preview.
-- [ ] If shadow project is stale or missing required assets, refresh only the allowed UI Toolkit/art paths from main to shadow.
+- [x] If shadow project is stale or missing required assets, refresh only the allowed UI Toolkit/art paths from main to shadow.
 - [ ] If shadow project cannot open, record `Blocked - shadow project unavailable` and do not fall back to mutating the main project silently.
 
 Suggested shadow validation command shape:
@@ -473,7 +473,7 @@ Use these labels in iteration notes:
 | --- | --- | ---: | --- | --- |
 | Shell | Not started | 0 | None | None |
 | SCN-01 Loading | Not started | 0 | None | None |
-| SCN-02 Main Menu | In progress | 1 | Shadow sync/capture approval pending | `Design/VisualLockLayered/_UIToolkitVisualMatch/target_to_toolkit_mapping.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/notes.md` |
+| SCN-02 Main Menu | In progress | 1 | Post-fix screenshot blocked: shadow lacks the current UI Toolkit screenshot runner; C# sync is forbidden in this loop | `Design/VisualLockLayered/_UIToolkitVisualMatch/target_to_toolkit_mapping.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/pixel_per_unit_audit.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/nine_slice_audit.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/notes.md`; `Design/VisualLockLayered/_UIToolkitVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_01/provisional_target_vs_existing_20x9_contact.png`; `/private/tmp/warline-ui-target-lock-scn02-shadow-import-after-slice.log` |
 | SCN-03 Commander Profile | Not started | 0 | None | None |
 | SCN-08 Match HUD | Not started | 0 | None | None |
 | SCN-08 Build Placement Bar | Not started | 0 | None | None |

@@ -12,12 +12,14 @@ public partial struct UiDiagnosticsReadModelSystem : ISystem
     private EntityQuery boundaryQuery;
     private double accumulatedSeconds;
     private int accumulatedFrames;
+    private int appliedLogVersion;
 
     public void OnCreate(ref SystemState state)
     {
         boundaryQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<UiShellBoundaryComponent>(),
             ComponentType.ReadWrite<UiDiagnosticsOverlayComponent>());
+        appliedLogVersion = -1;
         UiDiagnosticsRuntimeLogBuffer.EnsureSubscribed();
     }
 
@@ -35,18 +37,38 @@ public partial struct UiDiagnosticsReadModelSystem : ISystem
         UiDiagnosticsOverlayComponent component =
             state.EntityManager.GetComponentData<UiDiagnosticsOverlayComponent>(boundary);
 
+        bool changed = false;
         accumulatedFrames++;
         accumulatedSeconds += Mathf.Max(0f, UnityEngine.Time.unscaledDeltaTime);
         if (accumulatedSeconds >= FpsUpdateIntervalSeconds)
         {
             double fps = accumulatedSeconds > 0d ? accumulatedFrames / accumulatedSeconds : 0d;
-            component.Fps = Mathf.Max(0, Mathf.RoundToInt((float)fps));
+            int nextFps = Mathf.Max(0, Mathf.RoundToInt((float)fps));
+            if (component.Fps != nextFps)
+            {
+                component.Fps = nextFps;
+                changed = true;
+            }
+
             accumulatedFrames = 0;
             accumulatedSeconds = 0d;
         }
 
-        component.LogText = UiDiagnosticsRuntimeLogBuffer.BuildLogText();
-        state.EntityManager.SetComponentData(boundary, component);
+        int logVersion = UiDiagnosticsRuntimeLogBuffer.Version;
+        if (component.LogVisible != 0 || logVersion != appliedLogVersion)
+        {
+            FixedString4096Bytes logText = UiDiagnosticsRuntimeLogBuffer.BuildLogText();
+            if (!component.LogText.Equals(logText))
+            {
+                component.LogText = logText;
+                changed = true;
+            }
+
+            appliedLogVersion = logVersion;
+        }
+
+        if (changed)
+            state.EntityManager.SetComponentData(boundary, component);
     }
 }
 
@@ -56,6 +78,9 @@ public static class UiDiagnosticsRuntimeLogBuffer
     private static readonly Queue<RuntimeLogEntry> RuntimeLogEntries = new(MaxVisibleLogEntries);
     private static readonly StringBuilder RuntimeLogBuilder = new(8192);
     private static bool subscribed;
+    private static int version;
+
+    public static int Version => version;
 
     private readonly struct RuntimeLogEntry
     {
@@ -121,6 +146,7 @@ public static class UiDiagnosticsRuntimeLogBuffer
             RuntimeLogEntries.Dequeue();
 
         RuntimeLogEntries.Enqueue(new RuntimeLogEntry(message, type));
+        version++;
     }
 
     private static string BuildRuntimeLogMessage(string condition, string stackTrace, LogType type)

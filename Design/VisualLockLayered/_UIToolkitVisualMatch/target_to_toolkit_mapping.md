@@ -68,6 +68,11 @@ Main imported art folder:
 Design layer source:
 `Design/VisualLockLayered/SCN-02C_MainMenuBrightCommand/layers/`
 
+SCN-02 audit docs:
+
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/pixel_per_unit_audit.md`
+- `Design/VisualLockLayered/_UIToolkitVisualMatch/nine_slice_audit.md`
+
 ### SCN-02 Region Structure
 
 | UXML element | Region role | May rename | May remove | May move structurally | Visual tuning allowed |
@@ -87,7 +92,7 @@ Design layer source:
 | Command table background | `BackgroundArt` | `.background-art` | `scn02c_background_command_table_no_ui.png` | Background | Needs runtime capture comparison |
 | Dark readability overlay | `BackgroundArtOverlay` | `.background-art-overlay` | USS color overlay | Background | Needs opacity comparison |
 | Header frame | `HeaderBackPlate` | `.header-back-plate` | `scn02c_header_bar_frame.png` | Header | Needs PPU and 9-slice crop check |
-| Logo lockup | `Logo` | `.header-logo` | currently `scn01_v04_logo_lockup.png` | Header | Needs sprite-source decision; target layer has `scn02c_brand_logo_lockup.png` |
+| Logo lockup | `Logo` | `.header-logo` | `scn01_v04_logo_lockup.png` | Header | User-confirmed canonical shield/star logo; do not replace with `scn02c_brand_logo_lockup.png` in this pass. |
 | Credits resource chip | `CreditsPanel/Frame` | `.resource-frame` | `scn02c_resource_chip_frame.png` | Header | Needs PPU and 9-slice crop check |
 | Credits icon | `CreditsPanel/Icon` | `.credits-icon` | `scn02c_resource_crate_icon.png` | Header | Needs scale/centering check |
 | Credits value | `CreditsPanel/Value` | `.resource-value` | Runtime text | Header | Needs font size check |
@@ -119,23 +124,31 @@ Design layer source:
 
 | Area | Observation | First classification | Next action |
 | --- | --- | --- | --- |
-| Logo | USS uses Splash Loading `scn01_v04_logo_lockup.png`; SCN-02 layer pack includes `scn02c_brand_logo_lockup.png`. | `sprite` | Compare target; likely switch to SCN-02 brand logo if target crop confirms. |
+| Logo | USS uses Splash Loading `scn01_v04_logo_lockup.png`; user confirmed this is the correct Main Menu logo. | `sprite` | Keep current shield/star logo; do not treat `scn02c_brand_logo_lockup.png` as the SCN-02 target unless the user later revises the reference. |
 | Frame/chrome PPU | Main SCN-02 frame sprites currently import with `spritePixelsToUnits: 100`. | `PPU` | Do not tune until UI Builder/runtime crop shows chrome too heavy or too thin. |
 | Header frame | USS slice values match sprite border values `110/52`; slice scale is `0.28`. | `9-slice` | Check header crop before layout edits. |
 | Resource chip | USS slice values match sprite border values `135/82`; slice scale is `0.2`. | `9-slice` | Check chip crop before layout edits. |
 | Nav buttons | USS slice values match sprite border values `130/95`; slice scale is `0.22`. | `9-slice` | Check selected/normal nav crops. |
 | Mode cards | USS slice values match sprite border values `72/104`; slice scale is `0.32`. | `9-slice` | Check cards for border weight and corner distortion. |
 | Deploy button | USS slice left/right match sprite border, but USS top/bottom are `116/96` while meta border is `{x:155,y:96,z:155,w:116}`. | `9-slice` | Verify orientation visually; do not change until crop confirms distortion. |
+| Typography scale | Provisional existing 20:9 capture shows oversized labels and text collisions across resource chips, nav, mode cards, commander panel, and deploy CTA. | `font` | Iteration 01 reduced SCN-02 font sizes; recapture before any PPU, 9-slice, or panel-position changes. |
+| USS slice scale syntax | Shadow Unity import rejected bare decimal `-unity-slice-scale` values as missing units in `SCN02_MainMenuContent.uss`. | `9-slice` | Iteration 01 retained the same intended values but added `px` units; fresh shadow import reports no SCN-02 slice-scale warnings. |
 
 ### SCN-02 Existing Shadow Capture Tooling
 
-Existing C# methods found by reference only; do not edit them in this loop:
+Current main-project UI Toolkit screenshot entrypoint:
 
-- `WarlineCaptureUiPhase1PrefabBuilder.BuildMainMenuScreen`
-- `WarlineCaptureUiPhase1PrefabBuilder.CaptureMainMenuVisual`
-- `WarlineCaptureUiPhase1PrefabBuilder.CaptureMainMenuVisual20x9`
+- `UiToolkitMenuSceneStartupValidation.RunPlayModeScreenshot`
 
-Likely shadow command shape, pending sync approval:
+Shadow-project blocker:
+
+- `/Users/farhad/Projects/WarlineCapture-CodexUnity1` uses the same Unity version as the main project.
+- The shadow project currently lacks `Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uxml`.
+- The shadow project currently lacks `Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uss`.
+- The shadow project currently lacks `Assets/Game/Scripts/Editor/UiToolkitMenuSceneStartupValidation.cs`.
+- This visual-match loop does not allow C# edits or C# syncs into the shadow project, so the existing UI Toolkit screenshot path cannot be used there yet.
+
+Stale earlier command shape kept only as historical context; do not run unless that builder exists again:
 
 ```bash
 "/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" \
@@ -154,4 +167,4 @@ Likely shadow command shape, pending sync approval:
 ```
 
 Status:
-Capture not run in this slice because syncing current allowed UI Toolkit/art files to `/Users/farhad/Projects/WarlineCapture-CodexUnity1` requires approval to write outside the current workspace.
+Capture not run in this slice because syncing current allowed UI Toolkit/art files to `/Users/farhad/Projects/WarlineCapture-CodexUnity1` requires approval to write outside the current workspace, and the current screenshot runner is C# that is not allowed to be synced by this loop.

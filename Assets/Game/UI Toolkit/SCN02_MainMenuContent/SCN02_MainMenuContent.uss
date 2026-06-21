@@ -66,7 +66,7 @@
     -unity-slice-right: 110;
     -unity-slice-top: 52;
     -unity-slice-bottom: 52;
-    -unity-slice-scale: 0.28;
+    -unity-slice-scale: 0.28px;
 }
 
 .header-logo-panel {
@@ -123,7 +123,7 @@
     -unity-slice-right: 135;
     -unity-slice-top: 82;
     -unity-slice-bottom: 82;
-    -unity-slice-scale: 0.2;
+    -unity-slice-scale: 0.2px;
 }
 
 .resource-icon {
@@ -151,7 +151,7 @@
     right: 15%;
     top: 0;
     bottom: 0;
-    font-size: 54px;
+    font-size: 38px;
     color: rgb(242, 232, 196);
     -unity-text-align: middle-center;
     white-space: nowrap;
@@ -193,7 +193,7 @@
     -unity-slice-right: 150;
     -unity-slice-top: 150;
     -unity-slice-bottom: 150;
-    -unity-slice-scale: 0.18;
+    -unity-slice-scale: 0.18px;
 }
 
 .header-action-icon {
@@ -258,7 +258,7 @@
     -unity-slice-right: 130;
     -unity-slice-top: 95;
     -unity-slice-bottom: 95;
-    -unity-slice-scale: 0.22;
+    -unity-slice-scale: 0.22px;
 }
 
 .nav-item-selected .nav-frame {
@@ -302,7 +302,7 @@
     right: 10%;
     top: 0;
     bottom: 0;
-    font-size: 44px;
+    font-size: 32px;
     color: rgb(242, 232, 196);
     -unity-text-align: middle-left;
     white-space: nowrap;
@@ -363,7 +363,7 @@
     -unity-slice-right: 72;
     -unity-slice-top: 104;
     -unity-slice-bottom: 104;
-    -unity-slice-scale: 0.32;
+    -unity-slice-scale: 0.32px;
 }
 
 .campaign-card-fill {
@@ -411,7 +411,7 @@
     -unity-slice-right: 72;
     -unity-slice-top: 104;
     -unity-slice-bottom: 104;
-    -unity-slice-scale: 0.32;
+    -unity-slice-scale: 0.32px;
 }
 
 .campaign-frame {
@@ -436,7 +436,7 @@
     -unity-slice-right: 135;
     -unity-slice-top: 92;
     -unity-slice-bottom: 92;
-    -unity-slice-scale: 0.2;
+    -unity-slice-scale: 0.2px;
 }
 
 .campaign-label-plate {
@@ -498,7 +498,7 @@
     right: 2.5%;
     bottom: 8.7%;
     height: 10.2%;
-    font-size: 70px;
+    font-size: 50px;
     color: rgb(248, 239, 205);
     -unity-text-align: middle-center;
     white-space: nowrap;
@@ -615,7 +615,7 @@
     -unity-slice-right: 130;
     -unity-slice-top: 95;
     -unity-slice-bottom: 95;
-    -unity-slice-scale: 0.22;
+    -unity-slice-scale: 0.22px;
 }
 
 .commander-section-frame {
@@ -625,7 +625,7 @@
     -unity-slice-right: 130;
     -unity-slice-top: 95;
     -unity-slice-bottom: 95;
-    -unity-slice-scale: 0.22;
+    -unity-slice-scale: 0.22px;
 }
 
 .commander-portrait-backing {
@@ -634,7 +634,7 @@
     -unity-slice-right: 72;
     -unity-slice-top: 104;
     -unity-slice-bottom: 104;
-    -unity-slice-scale: 0.32;
+    -unity-slice-scale: 0.32px;
 }
 
 .commander-portrait-frame {
@@ -643,7 +643,7 @@
     -unity-slice-right: 72;
     -unity-slice-top: 104;
     -unity-slice-bottom: 104;
-    -unity-slice-scale: 0.32;
+    -unity-slice-scale: 0.32px;
 }
 
 .commander-title {
@@ -651,7 +651,7 @@
     right: 10%;
     top: 0;
     bottom: 0;
-    font-size: 52px;
+    font-size: 36px;
     color: rgb(242, 232, 196);
     -unity-text-align: middle-center;
     white-space: nowrap;
@@ -704,7 +704,7 @@
     -unity-slice-right: 150;
     -unity-slice-top: 150;
     -unity-slice-bottom: 150;
-    -unity-slice-scale: 0.14;
+    -unity-slice-scale: 0.14px;
 }
 
 .commander-edit-icon {
@@ -737,14 +737,14 @@
 .identity-name {
     top: 7%;
     height: 50%;
-    font-size: 40px;
+    font-size: 29px;
     color: rgb(242, 232, 196);
 }
 
 .identity-level {
     bottom: 6%;
     height: 38%;
-    font-size: 31px;
+    font-size: 22px;
     color: rgb(167, 179, 80);
 }
 
@@ -753,7 +753,7 @@
     top: 13%;
     width: 16.5%;
     height: 74%;
-    font-size: 48px;
+    font-size: 34px;
     color: rgb(248, 204, 64);
     -unity-text-align: middle-center;
     background-color: rgba(23, 26, 24, 0.8);
@@ -780,7 +780,7 @@
     top: 10%;
     width: 40%;
     height: 80%;
-    font-size: 34px;
+    font-size: 24px;
     color: rgb(215, 196, 139);
     -unity-text-align: middle-right;
     white-space: nowrap;
@@ -791,7 +791,7 @@
     right: 0;
     top: 5%;
     height: 36%;
-    font-size: 36px;
+    font-size: 25px;
     color: rgb(201, 190, 153);
     -unity-text-align: middle-center;
 }
@@ -850,7 +850,7 @@
     -unity-slice-right: 155;
     -unity-slice-top: 116;
     -unity-slice-bottom: 96;
-    -unity-slice-scale: 0.22;
+    -unity-slice-scale: 0.22px;
 }
 
 .deploy-text {
@@ -858,7 +858,7 @@
     right: 16%;
     top: 3%;
     height: 74%;
-    font-size: 92px;
+    font-size: 66px;
     color: rgb(255, 243, 196);
     -unity-text-align: middle-center;
     white-space: nowrap;

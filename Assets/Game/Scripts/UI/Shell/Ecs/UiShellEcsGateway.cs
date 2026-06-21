@@ -14,12 +14,15 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
     private static EntityQuery selectedUnitsQuery;
     private static EntityQuery minimapMarkerQuery;
     private static EntityQuery gridConfigQuery;
+    private static FixedString4096Bytes cachedDiagnosticsLogFixedText;
+    private static string cachedDiagnosticsLogText;
     private static bool hasBoundaryQuery;
     private static bool hasFocusedSelectionQuery;
     private static bool hasSelectionInputQuery;
     private static bool hasSelectedUnitsQuery;
     private static bool hasMinimapMarkerQuery;
     private static bool hasGridConfigQuery;
+    private static bool hasCachedDiagnosticsLogText;
 
     private UiShellEcsGateway()
     {
@@ -38,6 +41,9 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         hasSelectedUnitsQuery = false;
         hasMinimapMarkerQuery = false;
         hasGridConfigQuery = false;
+        hasCachedDiagnosticsLogText = false;
+        cachedDiagnosticsLogFixedText = default;
+        cachedDiagnosticsLogText = string.Empty;
         UiShellRuntimeGateway.Register(Shared);
     }
 
@@ -117,10 +123,11 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         EnsureDiagnosticsOverlayState(entityManager, boundary);
         UiDiagnosticsOverlayComponent component =
             entityManager.GetComponentData<UiDiagnosticsOverlayComponent>(boundary);
+        bool logVisible = component.LogVisible != 0;
         diagnostics = new UiDiagnosticsOverlayModel(
             Mathf.Max(0, component.Fps),
-            component.LogVisible != 0,
-            component.LogText.ToString());
+            logVisible,
+            logVisible ? GetDiagnosticsLogText(component.LogText) : string.Empty);
         return true;
     }
 
@@ -1113,6 +1120,17 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             LogVisible = 0,
             LogText = new FixedString4096Bytes("Runtime log ready.")
         });
+    }
+
+    private static string GetDiagnosticsLogText(FixedString4096Bytes logText)
+    {
+        if (hasCachedDiagnosticsLogText && cachedDiagnosticsLogFixedText.Equals(logText))
+            return cachedDiagnosticsLogText;
+
+        cachedDiagnosticsLogFixedText = logText;
+        cachedDiagnosticsLogText = logText.ToString();
+        hasCachedDiagnosticsLogText = true;
+        return cachedDiagnosticsLogText;
     }
 
     private static void EnsureUiActionRequestBuffer(EntityManager entityManager, Entity boundary)

@@ -1,7 +1,6 @@
 using System.Collections;
-using Unity.Entities;
 
-internal sealed partial class RuntimeCityLifecycleSystem : SystemBase
+internal sealed class RuntimeCityLifecycleSystem
 {
     private readonly RuntimeCityLifecycleState _state = new();
 
@@ -9,15 +8,6 @@ internal sealed partial class RuntimeCityLifecycleSystem : SystemBase
 
     public bool IsSpawned => _state.IsSpawned;
     public bool IsGenerating => _state.IsGenerating;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public bool HasSpawned(int cityCount)
     {

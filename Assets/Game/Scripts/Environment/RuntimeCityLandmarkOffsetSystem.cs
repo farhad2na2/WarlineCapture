@@ -1,20 +1,10 @@
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class RuntimeCityLandmarkOffsetSystem : SystemBase
+internal sealed class RuntimeCityLandmarkOffsetSystem
 {
     private readonly RuntimeCityLandmarkOffsetState _state = new();
 
     public RuntimeCityLandmarkOffsetState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public Vector2Int[] HallOffsets => _state.HallOffsets;
     public Vector2Int[] ClockTowerOffsets => _state.ClockTowerOffsets;

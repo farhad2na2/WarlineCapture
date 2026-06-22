@@ -2,20 +2,11 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class RuntimeCityRoadBuildBridgeSystem : SystemBase
+internal sealed class RuntimeCityRoadBuildBridgeSystem
 {
     private readonly RuntimeCityRoadBuildBridgeState _state = new();
 
     public RuntimeCityRoadBuildBridgeState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public bool HasRoadRuntimeGenerationSystem => _state.HasRoadRuntimeGenerationSystem;
 

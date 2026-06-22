@@ -2,17 +2,8 @@ using System;
 using Unity.Collections;
 using Unity.Entities;
 
-public sealed partial class RoadBuildCommandSystem : SystemBase
+public sealed class RoadBuildCommandSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public struct Context
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;

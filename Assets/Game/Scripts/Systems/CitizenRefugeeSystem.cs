@@ -1,7 +1,6 @@
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class CitizenRefugeeSystem : SystemBase
+internal sealed class CitizenRefugeeSystem
 {
     public delegate CitizenHouseholdRecordComponent StoreHouseholdAction(CitizenHouseholdRecordComponent household);
     public delegate CitizenRecordComponent StoreCitizenAction(CitizenRecordComponent citizen);
@@ -15,15 +14,6 @@ internal sealed partial class CitizenRefugeeSystem : SystemBase
     }
 
     private int _lastRefugeeUpkeepChargedDay;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public static void Reset(CitizenRefugeeSystem system, ref State refugeeState)
     {

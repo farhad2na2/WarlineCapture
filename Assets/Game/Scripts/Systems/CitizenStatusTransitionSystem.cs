@@ -1,17 +1,6 @@
-using Unity.Entities;
-
-internal sealed partial class CitizenStatusTransitionSystem : SystemBase
+internal sealed class CitizenStatusTransitionSystem
 {
     public delegate CitizenRecordComponent StoreCitizenAction(CitizenRecordComponent citizen);
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public static void SetCitizenStatus(
         CitizenStatusTransitionSystem system,

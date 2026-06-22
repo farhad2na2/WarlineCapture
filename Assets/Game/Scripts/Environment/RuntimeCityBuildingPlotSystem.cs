@@ -1,23 +1,13 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 
-internal sealed partial class RuntimeCityBuildingPlotSystem : SystemBase
+internal sealed class RuntimeCityBuildingPlotSystem
 {
     private readonly RuntimeCityBuildingPlotState _state = new();
 
     public RuntimeCityBuildingPlotState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public struct PlotCandidate
     {

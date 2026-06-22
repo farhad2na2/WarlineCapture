@@ -1,19 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class RoadRuntimeGenerationSystem : SystemBase
+internal sealed class RoadRuntimeGenerationSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public delegate bool TryGetRoadCellSizeInGridCellsDelegate(out int roadCellSizeInGridCells);
     public delegate void RuntimeAction();
     public delegate void CreateStrokeDelegate(

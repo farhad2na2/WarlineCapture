@@ -1,17 +1,7 @@
 using System;
-using Unity.Entities;
 
-public sealed partial class RoadBuildSessionSystem : SystemBase
+public sealed class RoadBuildSessionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public enum BuildToolMode
     {
         None,

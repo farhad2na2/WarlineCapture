@@ -1,24 +1,14 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using CityChainAxis = RuntimeCityLayoutSystem.CityChainAxis;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed partial class RuntimeCityLayoutSystem : SystemBase
+internal sealed class RuntimeCityLayoutSystem
 {
     private readonly RuntimeCityLayoutState _state = new();
 
     public RuntimeCityLayoutState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public enum CityChainAxis
     {

@@ -227,10 +227,7 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
 
     private static CitizenStatusTransitionSystem ResolveCitizenStatusTransitionSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenStatusTransitionSystem>()
-            : null;
+        return new CitizenStatusTransitionSystem();
     }
 
     private static CitizenTravelSystem ResolveCitizenTravelSystem()
@@ -251,18 +248,12 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
 
     private static CitizenHouseholdRegistrationSystem ResolveCitizenHouseholdRegistrationSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenHouseholdRegistrationSystem>()
-            : null;
+        return new CitizenHouseholdRegistrationSystem();
     }
 
     private static CitizenRefugeeSystem ResolveCitizenRefugeeSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenRefugeeSystem>()
-            : null;
+        return new CitizenRefugeeSystem();
     }
 
     private static CitizenPopulationDebugSystem ResolveCitizenPopulationDebugSystem()

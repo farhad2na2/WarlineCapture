@@ -151,10 +151,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadRuntimeGenerationSystem ResolveRoadRuntimeGenerationSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RoadRuntimeGenerationSystem>()
-            : null;
+        return new RoadRuntimeGenerationSystem();
     }
 
     private static RoadRuntimeGenerationContextSystem ResolveRoadRuntimeGenerationContextSystem()

@@ -649,18 +649,12 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityLifecycleSystem ResolveRuntimeCityLifecycleSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityLifecycleSystem>()
-            : null;
+        return new RuntimeCityLifecycleSystem();
     }
 
     private static RuntimeCityLayoutSystem ResolveRuntimeCityLayoutSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityLayoutSystem>()
-            : null;
+        return new RuntimeCityLayoutSystem();
     }
 
     private static RuntimeCityRoadLayoutSystem ResolveRuntimeCityRoadLayoutSystem()
@@ -673,18 +667,12 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityWalkabilitySystem ResolveRuntimeCityWalkabilitySystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityWalkabilitySystem>()
-            : null;
+        return new RuntimeCityWalkabilitySystem();
     }
 
     private static RuntimeCityBuildingPlotSystem ResolveRuntimeCityBuildingPlotSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityBuildingPlotSystem>()
-            : null;
+        return new RuntimeCityBuildingPlotSystem();
     }
 
     private static RuntimeCityBulkPlotPlanSystem ResolveRuntimeCityBulkPlotPlanSystem()
@@ -705,10 +693,7 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityLandmarkOffsetSystem ResolveRuntimeCityLandmarkOffsetSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityLandmarkOffsetSystem>()
-            : null;
+        return new RuntimeCityLandmarkOffsetSystem();
     }
 
     private static RuntimeCityHallSpawnSystem ResolveRuntimeCityHallSpawnSystem()
@@ -846,10 +831,7 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityRoadBuildBridgeSystem ResolveRuntimeCityRoadBuildBridgeSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityRoadBuildBridgeSystem>()
-            : null;
+        return new RuntimeCityRoadBuildBridgeSystem();
     }
 
     private static RuntimeCityBuildingPlacementSystem ResolveRuntimeCityBuildingPlacementSystem()

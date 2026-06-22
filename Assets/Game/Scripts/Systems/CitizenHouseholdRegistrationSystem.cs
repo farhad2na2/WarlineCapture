@@ -1,22 +1,13 @@
 using UnityEngine;
 using Unity.Entities;
 
-internal sealed partial class CitizenHouseholdRegistrationSystem : SystemBase
+internal sealed class CitizenHouseholdRegistrationSystem
 {
     public delegate CitizenHouseholdRecordComponent StoreHouseholdAction(CitizenHouseholdRecordComponent household);
     public delegate CitizenRecordComponent StoreCitizenAction(CitizenRecordComponent citizen);
     public delegate bool TryRehouseDisplacedHouseholdAction(int newHomeBuildingId);
     public delegate void DisplaceHouseholdAction(CitizenHouseholdRecordComponent household, string reason);
     public delegate float EstimateTravelSecondsAction(CitizenRecordComponent citizen, int targetBuildingId);
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public static void SyncRemovedHouses(
         CitizenHouseholdRegistrationSystem system,

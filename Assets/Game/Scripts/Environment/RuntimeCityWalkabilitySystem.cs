@@ -1,23 +1,13 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed partial class RuntimeCityWalkabilitySystem : SystemBase
+internal sealed class RuntimeCityWalkabilitySystem
 {
     private readonly RuntimeCityWalkabilityState _state = new();
 
     public RuntimeCityWalkabilityState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public struct ReservedFootprint
     {

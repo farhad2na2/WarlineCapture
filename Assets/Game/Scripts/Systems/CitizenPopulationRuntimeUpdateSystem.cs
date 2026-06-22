@@ -1,21 +1,8 @@
-using Unity.Collections;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
 using UnityEngine;
 
-internal sealed partial class CitizenPopulationRuntimeUpdateSystem : SystemBase
+internal sealed class CitizenPopulationRuntimeUpdateSystem
 {
     private CitizenPopulationCompositionSystem.Result _systems;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void Bind(CitizenPopulationCompositionSystem.Result systems)
     {
@@ -27,7 +14,7 @@ internal sealed partial class CitizenPopulationRuntimeUpdateSystem : SystemBase
         _systems = null;
     }
 
-    public new void Update()
+    public void Update()
     {
         if (_systems == null)
             return;

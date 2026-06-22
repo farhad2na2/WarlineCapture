@@ -1,23 +1,7 @@
-using Unity.Entities;
-
-public sealed partial class RoadMinimapEventSystem : SystemBase
+public sealed class RoadMinimapEventSystem
 {
     private IMatchRuntimeUi _mainMenuPlayUi;
     private bool _staticMinimapChanged;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnDestroy()
-    {
-        Clear();
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void Configure(IMatchRuntimeUi mainMenuPlayUi)
     {

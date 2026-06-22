@@ -1,22 +1,12 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed partial class RuntimeCityRoadCommitSystem : SystemBase
+internal sealed class RuntimeCityRoadCommitSystem
 {
     private readonly RuntimeCityRoadCommitState _state = new();
 
     public RuntimeCityRoadCommitState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void CommitCityRoadNetwork(Context context, CityLayoutData city, HashSet<Vector2Int> occupiedRoadCells)
     {

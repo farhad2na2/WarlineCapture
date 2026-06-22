@@ -1,23 +1,13 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 
-internal sealed partial class RuntimeCityCorridorBuildingSpawnSystem : SystemBase
+internal sealed class RuntimeCityCorridorBuildingSpawnSystem
 {
     private readonly RuntimeCityCorridorBuildingSpawnState _state = new();
 
     public RuntimeCityCorridorBuildingSpawnState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void SpawnCorridorEntranceBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,

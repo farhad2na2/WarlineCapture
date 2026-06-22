@@ -1,24 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using CityChainAxis = RuntimeCityLayoutSystem.CityChainAxis;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed partial class RuntimeCityRoadLayoutSystem : SystemBase
+internal sealed class RuntimeCityRoadLayoutSystem
 {
     private readonly RuntimeCityRoadLayoutState _state = new();
 
     public RuntimeCityRoadLayoutState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public List<List<Vector2Int>> BuildTownRoadStrokes(
         Vector2Int center,

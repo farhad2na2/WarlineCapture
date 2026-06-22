@@ -1,21 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using EdgeKey = RoadNetworkSystem.EdgeKey;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
 
-public sealed partial class RoadPathPlanningSystem : SystemBase
+public sealed class RoadPathPlanningSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public enum DragFirstAxis
     {
         None,

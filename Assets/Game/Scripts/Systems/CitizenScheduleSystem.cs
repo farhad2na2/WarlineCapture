@@ -1,6 +1,4 @@
-using Unity.Entities;
-
-internal sealed partial class CitizenScheduleSystem : SystemBase
+internal sealed class CitizenScheduleSystem
 {
     private const float WeekdayWorkStartHour = 8f;
     private const float WeekdayWorkEndHour = 17f;
@@ -20,15 +18,6 @@ internal sealed partial class CitizenScheduleSystem : SystemBase
     private const float RefugeeLunchShelterEndHour = 13.5f;
     private const float RefugeeEveningWalkStartHour = 16f;
     private const float RefugeeEveningWalkEndHour = 18.5f;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public static CitizenStatus GetScheduledStatus(
         CitizenScheduleSystem system,

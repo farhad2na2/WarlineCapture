@@ -1,8 +1,7 @@
 using System;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class CitizenPopulationLifecycleSystem : SystemBase
+internal sealed class CitizenPopulationLifecycleSystem
 {
     private const float LogicalCitizenUpdateIntervalSeconds = 0.2f;
     private const float VisibleCitizenSyncIntervalSeconds = 0.12f;
@@ -16,15 +15,6 @@ internal sealed partial class CitizenPopulationLifecycleSystem : SystemBase
     }
 
     private State _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public static void Reset(CitizenPopulationLifecycleSystem system, ref State state)
     {

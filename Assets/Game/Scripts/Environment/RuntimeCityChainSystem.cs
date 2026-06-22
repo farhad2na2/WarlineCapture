@@ -1,22 +1,12 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed partial class RuntimeCityChainSystem : SystemBase
+internal sealed class RuntimeCityChainSystem
 {
     private readonly RuntimeCityChainState _state = new();
 
     public RuntimeCityChainState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public bool TryPlanNextCity(
         Context context,

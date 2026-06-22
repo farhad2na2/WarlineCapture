@@ -1,16 +1,5 @@
-using Unity.Entities;
-
-internal sealed partial class CitizenPopulationTotalsSystem : SystemBase
+internal sealed class CitizenPopulationTotalsSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public static bool HasCitizenData(CitizenPopulationTotalsSystem system, CitizenPopulationStateSystem state)
     {
         return system != null

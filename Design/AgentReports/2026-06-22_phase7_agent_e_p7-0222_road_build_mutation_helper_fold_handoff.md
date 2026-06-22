@@ -1,0 +1,49 @@
+# Phase 7 Agent E Handoff - 2026-06-22 - P7-0222 RoadBuildMutationSystem
+
+Branch:
+`codex/phase7-agent-e-road-city-citizen`
+
+Rows completed:
+- `P7-0222` - `RoadBuildMutationSystem` - `Retired/Folded`
+
+Scope:
+- Folded `RoadBuildMutationSystem` from a disabled `SystemBase` wrapper into a plain road-build mutation helper.
+- Preserved stroke creation/deletion, road-build session snapshot/restore, dirty-cell refresh callbacks, and road composition callers.
+
+Files changed:
+- `Assets/Game/Scripts/Systems/RoadBuildMutationSystem.cs`
+- `Design/Architecture/systembase_to_isystem_inventory.md`
+- `Design/Architecture/phase7_agent_e_road_city_citizen_tracker.md`
+- `Design/Architecture/phase7_agent_a_inventory_guardrails_tracker.md`
+- `Design/Architecture/ecs_architecture_performance_quality_improvement_tracker.md`
+
+Contracts changed:
+- None. No ECS request/result component or public behavior contract changed.
+
+Counts after inventory regeneration:
+- Total ECS system declarations: `230`
+- Production `SystemBase`/legacy declarations: `96`
+- Production `ISystem` declarations: `134`
+- Current production `ISystem` share: `58.3%`
+- Production non-UI rows: `222`
+- Production UI rows: `8`
+- Agent E owner rows: `48`
+- DirectConvert dispositions: `13`
+- Open rows: `74`
+
+Agent E counts:
+- Converted to ISystem: `0`
+- Split passive/managed boundaries: `0`
+- Managed SystemBase exceptions: `0`
+- Retired/folded: `49`
+
+Validation:
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed with `0 Warning(s), 0 Error(s)`.
+- `python3 Tools/Architecture/generate_systembase_to_isystem_inventory.py --root Assets/Game/Scripts --output Design/Architecture/systembase_to_isystem_inventory.md`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RoadBuildCommandSystemTests.RunFocusedValidation -logFile /private/tmp/warline-phase7-agent-e-road-build-mutation-helper-fold-road-command.log`: passed, marker `[RoadBuildCommandRequestValidation] result=Passed tests=7`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonUiSystemBaseMigrationArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-phase7-agent-a-architecture.log`: passed, marker `[NonUiSystemBaseMigrationArchitectureValidation] result=Passed tests=18`.
+- `git diff --check`: passed.
+
+Notes:
+- No Agent B/C/D/F coordination needed for this helper-only road-build mutation fold.
+- Next direct Agent E candidates from the regenerated inventory include `P7-0228 RoadDeletePromptSystem` and `P7-0230 RoadMinimapEventSystem`; larger split rows remain open for separate validation batches.

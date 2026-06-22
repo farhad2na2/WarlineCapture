@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 using RoadsidePlan = RuntimeCityRoadsideBuildingSpawnSystem.Plan;
 
-internal sealed partial class RuntimeCityRoadsideBuildingSpawnSystem : SystemBase
+internal sealed class RuntimeCityRoadsideBuildingSpawnSystem
 {
     public readonly struct Plan
     {
@@ -24,15 +23,6 @@ internal sealed partial class RuntimeCityRoadsideBuildingSpawnSystem : SystemBas
     private readonly RuntimeCityRoadsideBuildingSpawnState _state = new();
 
     public RuntimeCityRoadsideBuildingSpawnState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public RoadsidePlan CreatePlan(RuntimeCityBuildingSpawnContextSystem.Context context)
     {

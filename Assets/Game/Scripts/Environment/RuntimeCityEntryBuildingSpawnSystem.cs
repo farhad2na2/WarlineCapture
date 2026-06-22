@@ -1,23 +1,13 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed partial class RuntimeCityEntryBuildingSpawnSystem : SystemBase
+internal sealed class RuntimeCityEntryBuildingSpawnSystem
 {
     private readonly RuntimeCityEntryBuildingSpawnState _state = new();
 
     public RuntimeCityEntryBuildingSpawnState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void PlaceEntryShops(
         RuntimeCityBuildingSpawnContextSystem.Context context,

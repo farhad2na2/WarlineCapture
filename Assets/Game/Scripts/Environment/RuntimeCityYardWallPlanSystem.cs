@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed partial class RuntimeCityYardWallPlanSystem : SystemBase
+internal sealed class RuntimeCityYardWallPlanSystem
 {
     private readonly RuntimeCityYardWallPlanState _state = new();
 
@@ -20,15 +19,6 @@ internal sealed partial class RuntimeCityYardWallPlanSystem : SystemBase
     }
 
     public RuntimeCityYardWallPlanState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public HousePlan CreateHousePlan(
         List<RectInt> houseFootprints,

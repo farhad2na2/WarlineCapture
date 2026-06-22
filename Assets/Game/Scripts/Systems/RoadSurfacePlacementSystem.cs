@@ -1,19 +1,9 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed partial class RoadSurfacePlacementSystem : SystemBase
+internal sealed class RoadSurfacePlacementSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     private const float MaxRoadSurfaceHeightDelta = 0.35f;
     private const float MaxRoadSurfaceSlopeDegrees = 35f;
 

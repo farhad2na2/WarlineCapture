@@ -469,6 +469,7 @@ internal sealed class MatchBootstrapSystem
         }
 
         runtimeGridBootstrapSystem.Ensure(
+            world.EntityManager,
             runtimeGridConfig.Width,
             runtimeGridConfig.Height,
             runtimeGridConfig.CellSize,
@@ -892,7 +893,7 @@ internal sealed class MatchBootstrapSystem
         if (world == null || !world.IsCreated)
             return null;
 
-        _runtimeGridBootstrapSystem = world.GetOrCreateSystemManaged<RuntimeGridBootstrapSystem>();
+        _runtimeGridBootstrapSystem ??= new RuntimeGridBootstrapSystem();
         return _runtimeGridBootstrapSystem;
     }
 

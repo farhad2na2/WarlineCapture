@@ -161,10 +161,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadMinimapEventSystem ResolveRoadMinimapEventSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RoadMinimapEventSystem>()
-            : null;
+        return new RoadMinimapEventSystem();
     }
 
     private static RoadBuildRuntimeActionSystem ResolveRoadBuildRuntimeActionSystem()

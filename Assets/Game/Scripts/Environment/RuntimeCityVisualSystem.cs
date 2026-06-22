@@ -107,10 +107,7 @@ internal sealed partial class RuntimeCityVisualSystem : SystemBase
 
     private static RuntimeCitySurfaceIntegrationSystem ResolveRuntimeCitySurfaceIntegrationSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCitySurfaceIntegrationSystem>()
-            : null;
+        return new RuntimeCitySurfaceIntegrationSystem();
     }
 
     private static bool TryGetLocalBounds(GameObject target, out Bounds bounds)

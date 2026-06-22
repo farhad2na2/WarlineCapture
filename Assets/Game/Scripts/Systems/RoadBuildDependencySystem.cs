@@ -1,16 +1,5 @@
-using Unity.Entities;
-
-internal sealed partial class RoadBuildDependencySystem : SystemBase
+internal sealed class RoadBuildDependencySystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     internal sealed class State
     {
         public BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;

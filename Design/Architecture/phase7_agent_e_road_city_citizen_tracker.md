@@ -16,15 +16,15 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `30 / 91 complete (33.0%)`.
+- Checklist progress: `55 / 105 complete (52.4%)`.
 - In progress: `0`.
-- Remaining open: `61`.
-- Current target: `E7 helper fold complete for P7-0168 RuntimeCityMinimapEventSystem; continue with remaining Agent E runtime-city/citizen/environment rows`.
+- Remaining open: `42`.
+- Current target: `E7 helper fold complete for P7-0144 RuntimeCityArchwaySpawnSystem; continue with remaining Agent E split/managed-exception candidates`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
-- Retired/folded helpers: `30`.
+- Retired/folded helpers: `55`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `RuntimeCityMinimapEventSystem folded from a disabled SystemBase wrapper into a plain runtime-city minimap event helper. Compile, inventory regeneration, runtime-city focused validation, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-phase7-agent-e-runtime-city-minimap-event-helper-fold-city.log and /private/tmp/warline-phase7-agent-a-architecture.log. Inventory now reports 115 production SystemBase/legacy declarations, 134 production ISystem declarations, and 53.8% production ISystem share.`
+- Validation status: `RuntimeCityArchwaySpawnSystem folded from a disabled SystemBase wrapper into a plain runtime-city archway spawn helper. Compile, inventory regeneration, runtime-city generation validation, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-phase7-agent-e-runtime-city-archway-spawn-helper-fold-city-generation.log and /private/tmp/warline-phase7-agent-a-architecture.log. Inventory now reports 90 production SystemBase/legacy declarations, 134 production ISystem declarations, and 59.8% production ISystem share.`
 
 Owned files:
 
@@ -240,6 +240,31 @@ Remove dead wrappers instead of converting them.
 - [x] Fold `P7-0164 RuntimeCityLandmarkOffsetSystem` from a disabled `SystemBase` wrapper into a plain runtime-city landmark-offset helper; landmark offset arrays, hall-distance filtering, state access, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0163 RuntimeCityIngressSystem` from a disabled `SystemBase` wrapper into a plain runtime-city ingress helper; city layout creation, incoming-anchor stroke wiring, connection-cell math, ingress corridor pruning, state access, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0168 RuntimeCityMinimapEventSystem` from a disabled `SystemBase` wrapper into a plain runtime-city minimap event helper; static minimap change publication, UI-facing flush, clear behavior, and runtime-city composition callers stayed unchanged.
+- [x] Fold `P7-0173 RuntimeCityRoadCommitSystem` from a disabled `SystemBase` wrapper into a plain runtime-city road commit helper; road network commit, source-exit/autobahn commit, standalone connector handoff, state access, and runtime-city composition/generation callers stayed unchanged.
+- [x] Fold `P7-0174 RuntimeCityRoadLayoutSystem` from a disabled `SystemBase` wrapper into a plain runtime-city road layout helper; town road stroke creation, straight/autobahn path planning, stroke append behavior, state access, and runtime-city composition callers stayed unchanged.
+- [x] Fold `P7-0149 RuntimeCityBulkPlotPlanSystem` from a disabled `SystemBase` wrapper into a plain runtime-city bulk plot plan helper; central/outer/entry plot plan creation, prefab-selection shuffling, state access, and runtime-city composition callers stayed unchanged.
+- [x] Fold `P7-0150 RuntimeCityChainSystem` from a disabled `SystemBase` wrapper into a plain runtime-city chain helper; next-city planning, exit/autobahn path validation, chain context, state access, and runtime-city composition/generation callers stayed unchanged.
+- [x] Fold `P7-0154 RuntimeCityCorridorBuildingSpawnSystem` from a disabled `SystemBase` wrapper into a plain runtime-city corridor building spawn helper; corridor roadside plot placement, shop/house spawn calls, state access, and runtime-city composition callers stayed unchanged.
+- [x] Fold `P7-0158 RuntimeCityEntryBuildingSpawnSystem` from a disabled `SystemBase` wrapper into a plain runtime-city entry building spawn helper; entry shop/house plot placement, state access, and runtime-city composition callers stayed unchanged.
+- [x] Fold `P7-0175 RuntimeCityRoadsideBuildingSpawnSystem` from a disabled `SystemBase` wrapper into a plain runtime-city roadside building spawn helper; roadside plan creation, gas station/shop/house placement, state access, and runtime-city composition callers stayed unchanged.
+- [x] Fold `P7-0179 RuntimeCitySurfaceIntegrationSystem` from a disabled `SystemBase` wrapper into a plain runtime-city surface integration helper; building footprint surface checks, road path surface validation, primary surface sampling, and runtime-city visual callers stayed unchanged.
+- [x] Fold `P7-0182 RuntimeCityYardWallPlanSystem` from a disabled `SystemBase` wrapper into a plain runtime-city yard-wall plan helper; house-plan shuffling, yard rectangle search, state access, and runtime-city composition callers stayed unchanged.
+- [x] Fold `P7-0190 CitizenPopulationDebugSystem` from a disabled `SystemBase` wrapper into a plain citizen debug helper; debug snapshot/status/kill helpers, ECS projection reads, delegate type, and citizen composition callers stayed unchanged.
+- [x] Fold `P7-0193 CitizenPopulationEventSystem` from a disabled `SystemBase` wrapper into a plain citizen population event helper; home-building destroyed and visible-citizen destroyed event paths, refugee handoff delegates, and citizen composition callers stayed unchanged.
+- [x] Fold `P7-0194 CitizenPopulationLifecycleSystem` from a disabled `SystemBase` wrapper into a plain citizen population lifecycle helper; update interval state, path-job skip handling, totals refresh, and citizen composition/runtime update callers stayed unchanged.
+- [x] Fold `P7-0196 CitizenPopulationRuntimeUpdateSystem` from a disabled `SystemBase` wrapper into a plain citizen population runtime update helper; runtime bind/reset, logical citizen update, visible sync, store/death callbacks, and citizen composition callers stayed unchanged.
+- [x] Fold `P7-0198 CitizenPopulationTotalsSystem` from a disabled `SystemBase` wrapper into a plain citizen population totals helper; totals calculation, citizen/household data checks, read-model refresh, and citizen composition callers stayed unchanged.
+- [x] Fold `P7-0202 CitizenResourceSystem` from a disabled `SystemBase` wrapper into a plain citizen resource helper; resource context delegates, configuration checks, dollar spend clamping, and citizen refugee callers stayed unchanged.
+- [x] Fold `P7-0203 CitizenScheduleSystem` from a disabled `SystemBase` wrapper into a plain citizen schedule helper; schedule phase, target-building, weekday/weekend/refugee status policy, and citizen runtime callers stayed unchanged.
+- [x] Fold `P7-0216 RoadBuildDependencySystem` from a disabled `SystemBase` wrapper into a plain road-build dependency helper; dependency state, building-interaction binding, command-mode calls, minimap configuration, and road composition callers stayed unchanged.
+- [x] Fold `P7-0217 RoadBuildDisposalSystem` from a disabled `SystemBase` wrapper into a plain road-build disposal helper; disposal context, runtime root cleanup, visual/cache cleanup, ECS boundary cleanup, road tile clearing, and road composition lifecycle callers stayed unchanged.
+- [x] Fold `P7-0222 RoadBuildMutationSystem` from a disabled `SystemBase` wrapper into a plain road-build mutation helper; stroke creation/deletion, session snapshot/restore, dirty-cell refresh, and road composition callers stayed unchanged.
+- [x] Fold `P7-0228 RoadDeletePromptSystem` from a disabled `SystemBase` wrapper into a plain road-delete prompt helper; existing IMGUI prompt rendering, delete/cancel actions, session prompt state, and road-build runtime callers stayed unchanged.
+- [x] Fold `P7-0230 RoadMinimapEventSystem` from a disabled `SystemBase` wrapper into a plain road-minimap event helper; direct source ownership, static minimap change notification, UI binding, clear/flush behavior, and road composition callers stayed unchanged.
+- [x] Fold `P7-0232 RoadPathPlanningSystem` from a disabled `SystemBase` wrapper into a plain road-path planning helper; drag-axis resolution, path building, preview-plan dirty cells/edges, preview masks, and road-build input/preview callers stayed unchanged.
+- [x] Fold `P7-0237 RoadSurfacePlacementSystem` from a disabled `SystemBase` wrapper into a plain road-surface placement helper; surface configuration, path validation, primary sample evaluation, road surface type resolution, and road-build/runtime-city callers stayed unchanged.
+- [x] Fold `P7-0238 RuntimeGridBootstrapSystem` from a disabled `SystemBase` wrapper into a plain runtime-grid bootstrap helper; explicit EntityManager bootstrap, grid config projection, grid buffers, dynamic blocker/occupancy storage, path pool setup, and match-bootstrap caller behavior stayed unchanged.
+- [x] Fold `P7-0144 RuntimeCityArchwaySpawnSystem` from a disabled `SystemBase` wrapper into a plain runtime-city archway spawn helper; central archway placement, prefab list handling, plot spacing, reserved footprints, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0146 RuntimeCityBuildingPlotSystem` from a disabled `SystemBase` wrapper into a plain runtime-city plot algorithm helper; plot candidate types, state access, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0166 RuntimeCityLayoutSystem` from a disabled `SystemBase` wrapper into a plain runtime-city layout algorithm helper; city layout types, state access, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0180 RuntimeCityWalkabilitySystem` from a disabled `SystemBase` wrapper into a plain runtime-city walkability helper; reserved-footprint types, state access, and runtime-city composition callers stayed unchanged.

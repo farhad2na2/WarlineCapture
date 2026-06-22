@@ -3,27 +3,16 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-[UpdateInGroup(typeof(InitializationSystemGroup))]
-internal sealed partial class RuntimeGridBootstrapSystem : SystemBase
+internal sealed class RuntimeGridBootstrapSystem
 {
     private const string FixMarker = "RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26";
 
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
-    public bool Ensure(int width, int height, float cellSize, Vector3 origin)
+    public bool Ensure(EntityManager entityManager, int width, int height, float cellSize, Vector3 origin)
     {
         width = Mathf.Max(1, width);
         height = Mathf.Max(1, height);
         cellSize = Mathf.Max(0.01f, cellSize);
 
-        EntityManager entityManager = EntityManager;
         Entity gridEntity = ResolveGridEntity(entityManager);
         entityManager.SetComponentData(gridEntity, new GridConfig
         {

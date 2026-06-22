@@ -1,7 +1,6 @@
-using Unity.Entities;
 using UnityEngine;
 
-public sealed partial class CitizenPopulationEventSystem : SystemBase
+public sealed class CitizenPopulationEventSystem
 {
     private CitizenPopulationStateSystem _state;
     private CitizenBuildingReadSystem _buildingReadSystem;
@@ -15,15 +14,6 @@ public sealed partial class CitizenPopulationEventSystem : SystemBase
     private CitizenRefugeeSystem.TryGetHouseholdReferenceWorldPositionAction _tryGetHouseholdReferenceWorldPosition;
     private CitizenRefugeeSystem.EstimateTravelSecondsAction _estimateTravelSeconds;
     private CitizenRefugeeSystem.MarkCitizenDeadAction _markCitizenDead;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     internal void Init(
         CitizenPopulationStateSystem state,

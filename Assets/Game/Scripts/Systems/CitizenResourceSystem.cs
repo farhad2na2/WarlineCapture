@@ -1,8 +1,7 @@
 using System;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class CitizenResourceSystem : SystemBase
+internal sealed class CitizenResourceSystem
 {
     public readonly struct Context
     {
@@ -14,15 +13,6 @@ internal sealed partial class CitizenResourceSystem : SystemBase
             GetDollars = getDollars;
             SetDollars = setDollars;
         }
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     public static bool IsConfigured(CitizenResourceSystem system, Context context)

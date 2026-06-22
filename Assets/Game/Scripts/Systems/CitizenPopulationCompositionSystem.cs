@@ -195,34 +195,22 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
 
     private static CitizenResourceSystem ResolveCitizenResourceSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenResourceSystem>()
-            : null;
+        return new CitizenResourceSystem();
     }
 
     private static CitizenPopulationTotalsSystem ResolveCitizenPopulationTotalsSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenPopulationTotalsSystem>()
-            : null;
+        return new CitizenPopulationTotalsSystem();
     }
 
     private static CitizenPopulationLifecycleSystem ResolveCitizenPopulationLifecycleSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenPopulationLifecycleSystem>()
-            : null;
+        return new CitizenPopulationLifecycleSystem();
     }
 
     private static CitizenScheduleSystem ResolveCitizenScheduleSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenScheduleSystem>()
-            : null;
+        return new CitizenScheduleSystem();
     }
 
     private static CitizenStatusTransitionSystem ResolveCitizenStatusTransitionSystem()
@@ -258,17 +246,11 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
 
     private static CitizenPopulationDebugSystem ResolveCitizenPopulationDebugSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenPopulationDebugSystem>()
-            : null;
+        return new CitizenPopulationDebugSystem();
     }
 
     private static CitizenPopulationEventSystem ResolveCitizenPopulationEventSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenPopulationEventSystem>()
-            : null;
+        return new CitizenPopulationEventSystem();
     }
 }

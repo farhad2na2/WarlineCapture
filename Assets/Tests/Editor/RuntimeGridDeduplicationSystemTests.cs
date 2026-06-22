@@ -18,7 +18,7 @@ public sealed class RuntimeGridDeduplicationSystemTests
             var tests = new RuntimeGridDeduplicationSystemTests();
             tests.RunWithFixture(tests.Deduplication_RemovesRuntimeGridWhenAuthoredGridExists);
             tests.RunWithFixture(tests.Deduplication_KeepsRuntimeGridWhenNoAuthoredGridExists);
-            tests.RunWithFixture(tests.RuntimeGridBootstrapSystemCreatesRuntimeGridFromWorldManagedBoundary);
+            tests.RunWithFixture(tests.RuntimeGridBootstrapSystemCreatesRuntimeGridFromPlainHelper);
             Debug.Log("[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=3");
             ValidationExit.Exit(0);
         }
@@ -68,11 +68,11 @@ public sealed class RuntimeGridDeduplicationSystemTests
     }
 
     [Test]
-    public void RuntimeGridBootstrapSystemCreatesRuntimeGridFromWorldManagedBoundary()
+    public void RuntimeGridBootstrapSystemCreatesRuntimeGridFromPlainHelper()
     {
-        RuntimeGridBootstrapSystem system = _world.GetOrCreateSystemManaged<RuntimeGridBootstrapSystem>();
+        var system = new RuntimeGridBootstrapSystem();
 
-        Assert.IsTrue(system.Ensure(12, 10, 1.5f, new Vector3(2f, 0f, 3f)));
+        Assert.IsTrue(system.Ensure(_entityManager, 12, 10, 1.5f, new Vector3(2f, 0f, 3f)));
 
         using EntityQuery query = _entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<GridConfig>(),

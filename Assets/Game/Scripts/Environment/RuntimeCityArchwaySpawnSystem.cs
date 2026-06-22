@@ -1,22 +1,12 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed partial class RuntimeCityArchwaySpawnSystem : SystemBase
+internal sealed class RuntimeCityArchwaySpawnSystem
 {
     private readonly RuntimeCityArchwaySpawnState _state = new();
 
     public RuntimeCityArchwaySpawnState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public int PlaceCentralArchwayBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,

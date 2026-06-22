@@ -1,19 +1,9 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using RoadTileData = RoadNetworkSystem.RoadTileData;
 
-internal sealed partial class RoadBuildDisposalSystem : SystemBase
+internal sealed class RoadBuildDisposalSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public readonly struct Context
     {
         public readonly RoadBuildStartupSystem StartupSystem;

@@ -656,10 +656,7 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityRoadLayoutSystem ResolveRuntimeCityRoadLayoutSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityRoadLayoutSystem>()
-            : null;
+        return new RuntimeCityRoadLayoutSystem();
     }
 
     private static RuntimeCityWalkabilitySystem ResolveRuntimeCityWalkabilitySystem()
@@ -674,10 +671,7 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityBulkPlotPlanSystem ResolveRuntimeCityBulkPlotPlanSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityBulkPlotPlanSystem>()
-            : null;
+        return new RuntimeCityBulkPlotPlanSystem();
     }
 
     private static RuntimeCityPrefabSelectionSystem ResolveRuntimeCityPrefabSelectionSystem()
@@ -711,18 +705,12 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityEntryBuildingSpawnSystem ResolveRuntimeCityEntryBuildingSpawnSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityEntryBuildingSpawnSystem>()
-            : null;
+        return new RuntimeCityEntryBuildingSpawnSystem();
     }
 
     private static RuntimeCityRoadsideBuildingSpawnSystem ResolveRuntimeCityRoadsideBuildingSpawnSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityRoadsideBuildingSpawnSystem>()
-            : null;
+        return new RuntimeCityRoadsideBuildingSpawnSystem();
     }
 
     private static RuntimeCityRuralBuildingSpawnSystem ResolveRuntimeCityRuralBuildingSpawnSystem()
@@ -743,18 +731,12 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityCorridorBuildingSpawnSystem ResolveRuntimeCityCorridorBuildingSpawnSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityCorridorBuildingSpawnSystem>()
-            : null;
+        return new RuntimeCityCorridorBuildingSpawnSystem();
     }
 
     private static RuntimeCityYardWallPlanSystem ResolveRuntimeCityYardWallPlanSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityYardWallPlanSystem>()
-            : null;
+        return new RuntimeCityYardWallPlanSystem();
     }
 
     private static RuntimeCityYardGateSystem ResolveRuntimeCityYardGateSystem()
@@ -796,10 +778,7 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityArchwaySpawnSystem ResolveRuntimeCityArchwaySpawnSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityArchwaySpawnSystem>()
-            : null;
+        return new RuntimeCityArchwaySpawnSystem();
     }
 
     private static RuntimeCityFreeScatterDecorationSystem ResolveRuntimeCityFreeScatterDecorationSystem()
@@ -849,18 +828,12 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityChainSystem ResolveRuntimeCityChainSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityChainSystem>()
-            : null;
+        return new RuntimeCityChainSystem();
     }
 
     private static RuntimeCityRoadCommitSystem ResolveRuntimeCityRoadCommitSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityRoadCommitSystem>()
-            : null;
+        return new RuntimeCityRoadCommitSystem();
     }
 
     private static RuntimeCityIngressSystem ResolveRuntimeCityIngressSystem()

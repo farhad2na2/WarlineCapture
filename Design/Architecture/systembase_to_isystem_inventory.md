@@ -1,31 +1,30 @@
 # SystemBase To ISystem Inventory
 
-Generated: `2026-06-22T22:37:43Z`.
-Command: `python3 Tools/Architecture/generate_systembase_to_isystem_inventory.py --root Assets/Game/Scripts --output Design/Architecture/systembase_to_isystem_inventory.md`.
+Generated: `2026-06-22T23:13:18Z`.
+Command: `python3 Tools/Architecture/generate_systembase_to_isystem_inventory.py --root Assets/Game/Scripts --output Design/Architecture/systembase_to_isystem_inventory.md --json-output /private/tmp/warline-phase7-systembase-inventory.json`.
 Source root: `Assets/Game/Scripts`.
-Source commit: `6a8b4dcb`.
+Source commit: `93f1a6ac`.
 Worktree state during generation: `dirty`.
 
 ## Summary
 
-- Total ECS system declarations: `165`.
-- Production `SystemBase`/legacy declarations: `27`.
+- Total ECS system declarations: `163`.
+- Production `SystemBase`/legacy declarations: `25`.
 - Production `ISystem` declarations: `138`.
-- Current production `ISystem` share: `83.6%`.
-- Production non-UI rows: `157`.
+- Current production `ISystem` share: `84.7%`.
+- Production non-UI rows: `155`.
 - Production UI rows: `8`.
 - Editor rows: `0`.
 - Test rows: `0`.
-- Scopes: `ProductionNonUI` 157, `ProductionUI` 8.
-- Owner lanes: `AgentB` 19, `AgentC` 12, `AgentD` 9, `AgentE` 10, `AgentF` 34, `Integration` 81.
-- Dispositions: `Converted` 131, `ManagedPresentationSystemBaseException` 24, `RetireFold` 2, `UIOutOfScope` 8.
-- Statuses: `Converted` 131, `Deferred` 8, `ManagedException` 24, `Open` 2.
+- Scopes: `ProductionNonUI` 155, `ProductionUI` 8.
+- Owner lanes: `AgentB` 17, `AgentC` 12, `AgentD` 9, `AgentE` 10, `AgentF` 34, `Integration` 81.
+- Dispositions: `Converted` 131, `ManagedPresentationSystemBaseException` 24, `UIOutOfScope` 8.
+- Statuses: `Converted` 131, `Deferred` 8, `ManagedException` 24.
 
 ## Inventory
 
 | Id | Type | Kind | Current base | Path | Line | UI/editor/test scope | Owner lane | Disposition | Managed blockers | Gameplay policy risk | Public API/call sites | First safe slice | Replacement target | Validation gate | Status |
 | --- | --- | --- | --- | --- | ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `P7-0003` | `MatchSceneReferenceBoundarySystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Composition/MatchSceneReferenceSystem.cs` | 4 | `ProductionNonUI` | `AgentB` | `RetireFold` | None | None | Clear (method), MatchSceneReferenceSystem (property), Register (method), TryGetLoadedMatchSceneView (method), View (property) | Search call sites and fold helper behavior into the owning ECS system or pure static helper. | Folded helper or retired file. | Architecture guard + compile + startup/diagnostics focused validation | `Open` |
 | `P7-0004` | `AIBuildPlannerSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs` | 7 | `ProductionNonUI` | `AgentB` | `Converted` | None | Medium: Economy, Spawn | Execute (method), OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `AIBuildPlannerSystem : ISystem` | Architecture guard + compile + startup/diagnostics focused validation | `Converted` |
 | `P7-0005` | `AICombatOrderSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs` | 7 | `ProductionNonUI` | `AgentB` | `Converted` | None | Medium: Attack, Combat, Command, Health | OnCreate (method), OnDestroy (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `AICombatOrderSystem : ISystem` | Architecture guard + compile + startup/diagnostics focused validation | `Converted` |
 | `P7-0006` | `AIDiagnosticLogFlushSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/AIDiagnosticLogFlushSystem.cs` | 4 | `ProductionNonUI` | `AgentB` | `Converted` | None | Medium: Combat | OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `AIDiagnosticLogFlushSystem : ISystem` | Architecture guard + compile + startup/diagnostics focused validation | `Converted` |
@@ -41,7 +40,6 @@ Worktree state during generation: `dirty`.
 | `P7-0016` | `InitialFactionSpawnCellSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/InitialFactionSpawnCellSystem.cs` | 18 | `ProductionNonUI` | `AgentB` | `Converted` | None | Medium: Spawn | InitialFactionSpawnCellFallbackEntry (property), OnCreate (method), OnUpdate (method), TryGetConfiguredFactionSpawnCell (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `InitialFactionSpawnCellSystem : ISystem` | Architecture guard + compile + startup/diagnostics focused validation | `Converted` |
 | `P7-0017` | `InitialUnitsBlockerChurnSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/InitialUnitsBlockerChurnSystem.cs` | 7 | `ProductionNonUI` | `AgentB` | `Converted` | None | Medium: Command | OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `InitialUnitsBlockerChurnSystem : ISystem` | Architecture guard + compile + startup/diagnostics focused validation | `Converted` |
 | `P7-0018` | `InitialUnitsSpawnSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs` | 9 | `ProductionNonUI` | `AgentB` | `Converted` | None | Medium: BuildingPlacement, Command, Economy, Path | Actionable (method), ApplyInitialResourceTotals (method), ApplyInitialUnitSpawnedCount (method), Dispose (method), EnqueueConfiguredInitialBuildingRequests (method), EnqueueInitialFactionBaseRequests (method), EnqueueLog (method), EnqueueWarning (method), EnsureQueue (method), InitialBlockerSpawnResult (property), InitializeInitialSpawnProgress (method), InitialSpawnDiagnosticLogWriter (property), InitialUnitSpawnEntryBatch (property), NotActionable (method), OnCreate (method), OnUpdate (method), SpawnInitialBlockerBatch (method), TryCreateInitialUnitSpawnEntryBatch (method), TryFindInitialUnitSpawnCell (method), TryGetCustomGameUnitSourceKey (method), TryGetInitialAirPlatformSpawn (method), TrySkipMissingPrefabUnit (method), UpdateInitialSpawnCompletion (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `InitialUnitsSpawnSystem : ISystem` | Architecture guard + compile + startup/diagnostics focused validation | `Converted` |
-| `P7-0019` | `PerformanceDiagnosticsReferenceBoundarySystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/PerformanceDiagnosticsReferenceSystem.cs` | 3 | `ProductionNonUI` | `AgentB` | `RetireFold` | None | None | Clear (method), Diagnostics (property), PerformanceDiagnosticsReferenceSystem (property), Register (method), TryGet (method) | Search call sites and fold helper behavior into the owning ECS system or pure static helper. | Folded helper or retired file. | Architecture guard + compile + startup/diagnostics focused validation | `Open` |
 | `P7-0021` | `RuntimeDiagnosticsSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs` | 3 | `ProductionNonUI` | `AgentB` | `Converted` | None | None | BuildingRuntimeSliceDiagnostics (property), OnCreate (method), OnUpdate (method), ReadDiagnosticsState (method), TransportBoardingDiagnostics (property), VerboseAILogs (property) | Keep as `ISystem`; verify no managed blockers are introduced. | `RuntimeDiagnosticsSystem : ISystem` | Architecture guard + compile + startup/diagnostics focused validation | `Converted` |
 | `P7-0022` | `RuntimeGameplayStateSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs` | 5 | `ProductionNonUI` | `AgentB` | `Converted` | None | Medium: Selection | BuildModeActive (property), FullscreenMapIsoMode (property), FullscreenMapOpen (property), InitialCameraFocusRequested (property), InitialCameraFocusWorld (property), OnCreate (method), OnUpdate (method), PlayerAutoModeEnabled (property), PlayRequested (property), ReadCameraFocusRequest (method), ReadCameraInput (method), ReadGameplayState (method), ResetForGameplayStart (method), SelectionModeActive (property), SimulationActive (property), SuppressNextWorldClick (property), TryConsumeInitialCameraFocus (method), ZoomInHeld (property), ZoomOutHeld (property) | Keep as `ISystem`; verify no managed blockers are introduced. | `RuntimeGameplayStateSystem : ISystem` | Architecture guard + compile + startup/diagnostics focused validation | `Converted` |
 | `P7-0024` | `FocusedUnitCommandSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs` | 5 | `ProductionNonUI` | `AgentC` | `Converted` | None | Medium: Attack, Combat, Command, MoveOrder | EnableFocusedUnitAutoAttack (method), EnsureEntityQueries (method), IssueImmediateSelectedUnitOrder (method), OnCreate (method), OnUpdate (method), ReturnFocusedUnitToBase (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `FocusedUnitCommandSystem : ISystem` | Architecture guard + compile + selection/command focused validation | `Converted` |
@@ -195,11 +193,10 @@ Worktree state during generation: `dirty`.
 
 ### AgentB
 
-Rows: `19`.
+Rows: `17`.
 
 | Id | Type | Base | Disposition | Status | Path | First safe slice | Validation gate |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `P7-0003` | `MatchSceneReferenceBoundarySystem` | `SystemBase` | `RetireFold` | `Open` | `Assets/Game/Scripts/Composition/MatchSceneReferenceSystem.cs` | Search call sites and fold helper behavior into the owning ECS system or pure static helper. | Architecture guard + compile + startup/diagnostics focused validation |
 | `P7-0004` | `AIBuildPlannerSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + startup/diagnostics focused validation |
 | `P7-0005` | `AICombatOrderSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + startup/diagnostics focused validation |
 | `P7-0006` | `AIDiagnosticLogFlushSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/AIDiagnosticLogFlushSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + startup/diagnostics focused validation |
@@ -215,7 +212,6 @@ Rows: `19`.
 | `P7-0016` | `InitialFactionSpawnCellSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/InitialFactionSpawnCellSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + startup/diagnostics focused validation |
 | `P7-0017` | `InitialUnitsBlockerChurnSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/InitialUnitsBlockerChurnSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + startup/diagnostics focused validation |
 | `P7-0018` | `InitialUnitsSpawnSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + startup/diagnostics focused validation |
-| `P7-0019` | `PerformanceDiagnosticsReferenceBoundarySystem` | `SystemBase` | `RetireFold` | `Open` | `Assets/Game/Scripts/Systems/PerformanceDiagnosticsReferenceSystem.cs` | Search call sites and fold helper behavior into the owning ECS system or pure static helper. | Architecture guard + compile + startup/diagnostics focused validation |
 | `P7-0021` | `RuntimeDiagnosticsSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + startup/diagnostics focused validation |
 | `P7-0022` | `RuntimeGameplayStateSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + startup/diagnostics focused validation |
 
@@ -515,7 +511,6 @@ Rows: `60`.
 
 | Id | Accessibility | Namespace | Attributes | Lifecycle methods | Public members | ECS access shape | Managed field categories | Stable key |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `P7-0003` | `public` | `None` | None | OnCreate, OnUpdate, OnDestroy | Clear (method), MatchSceneReferenceSystem (property), Register (method), TryGetLoadedMatchSceneView (method), View (property) | None | None | `Assets/Game/Scripts/Composition/MatchSceneReferenceSystem.cs\|MatchSceneReferenceBoundarySystem` |
 | `P7-0004` | `public` | `None` | None | OnCreate, OnUpdate, Update | Execute (method), OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager, jobs, .Schedule | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs\|AIBuildPlannerSystem` |
 | `P7-0005` | `public` | `None` | None | OnCreate, OnUpdate, OnDestroy, Update | OnCreate (method), OnDestroy (method), OnUpdate (method) | EntityQuery, EntityManager, GetComponentLookup, GetBufferLookup, ECB | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs\|AICombatOrderSystem` |
 | `P7-0006` | `public` | `None` | None | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method) | EntityQuery | query/lookup/cache | `Assets/Game/Scripts/Systems/AIDiagnosticLogFlushSystem.cs\|AIDiagnosticLogFlushSystem` |
@@ -531,7 +526,6 @@ Rows: `60`.
 | `P7-0016` | `public` | `None` | None | OnCreate, OnUpdate | InitialFactionSpawnCellFallbackEntry (property), OnCreate (method), OnUpdate (method), TryGetConfiguredFactionSpawnCell (method) | EntityQuery, EntityManager | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/InitialFactionSpawnCellSystem.cs\|InitialFactionSpawnCellSystem` |
 | `P7-0017` | `public` | `None` | None | OnCreate, OnUpdate, Update | OnCreate (method), OnUpdate (method) | SystemAPI.Query, EntityQuery, EntityManager, ECB | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/InitialUnitsBlockerChurnSystem.cs\|InitialUnitsBlockerChurnSystem` |
 | `P7-0018` | `public` | `None` | None | OnCreate, OnUpdate, Update | Actionable (method), ApplyInitialResourceTotals (method), ApplyInitialUnitSpawnedCount (method), Dispose (method), EnqueueConfiguredInitialBuildingRequests (method), EnqueueInitialFactionBaseRequests (method), EnqueueLog (method), EnqueueWarning (method), EnsureQueue (method), InitialBlockerSpawnResult (property), InitializeInitialSpawnProgress (method), InitialSpawnDiagnosticLogWriter (property), InitialUnitSpawnEntryBatch (property), NotActionable (method), OnCreate (method), OnUpdate (method), SpawnInitialBlockerBatch (method), TryCreateInitialUnitSpawnEntryBatch (method), TryFindInitialUnitSpawnCell (method), TryGetCustomGameUnitSourceKey (method), TryGetInitialAirPlatformSpawn (method), TrySkipMissingPrefabUnit (method), UpdateInitialSpawnCompletion (method) | EntityQuery, EntityManager, GetComponentLookup, ECB | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs\|InitialUnitsSpawnSystem` |
-| `P7-0019` | `public` | `None` | None | OnCreate, OnUpdate, OnDestroy | Clear (method), Diagnostics (property), PerformanceDiagnosticsReferenceSystem (property), Register (method), TryGet (method) | None | None | `Assets/Game/Scripts/Systems/PerformanceDiagnosticsReferenceSystem.cs\|PerformanceDiagnosticsReferenceBoundarySystem` |
 | `P7-0021` | `public` | `None` | None | OnCreate, OnUpdate | BuildingRuntimeSliceDiagnostics (property), OnCreate (method), OnUpdate (method), ReadDiagnosticsState (method), TransportBoardingDiagnostics (property), VerboseAILogs (property) | EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs\|RuntimeDiagnosticsSystem` |
 | `P7-0022` | `public` | `None` | None | OnCreate, OnUpdate | BuildModeActive (property), FullscreenMapIsoMode (property), FullscreenMapOpen (property), InitialCameraFocusRequested (property), InitialCameraFocusWorld (property), OnCreate (method), OnUpdate (method), PlayerAutoModeEnabled (property), PlayRequested (property), ReadCameraFocusRequest (method), ReadCameraInput (method), ReadGameplayState (method), ResetForGameplayStart (method), SelectionModeActive (property), SimulationActive (property), SuppressNextWorldClick (property), TryConsumeInitialCameraFocus (method), ZoomInHeld (property), ZoomOutHeld (property) | EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs\|RuntimeGameplayStateSystem` |
 | `P7-0024` | `public` | `None` | None | OnCreate, OnUpdate | EnableFocusedUnitAutoAttack (method), EnsureEntityQueries (method), IssueImmediateSelectedUnitOrder (method), OnCreate (method), OnUpdate (method), ReturnFocusedUnitToBase (method) | EntityQuery, EntityManager, ECB | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs\|FocusedUnitCommandSystem` |

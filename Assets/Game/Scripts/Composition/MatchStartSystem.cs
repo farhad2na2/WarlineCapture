@@ -138,10 +138,10 @@ public sealed class MatchStartSystem
     private bool TryStartLoadedMatch(out MatchStartStatusKind waitStatus, out string message, out float progress01)
     {
         progress01 = 0f;
-        if (!_matchSceneReferenceSystem.TryGetLoadedMatchSceneView(World.DefaultGameObjectInjectionWorld, out MatchSceneView matchScene))
+        if (!_matchSceneReferenceSystem.TryGetLoadedMatchSceneView(out MatchSceneView matchScene))
         {
             waitStatus = MatchStartStatusKind.WaitingForMatchLoaded;
-            message = "Loaded Match scene has no registered MatchSceneView.";
+            message = "Loaded Match scene has no MatchSceneView.";
             return false;
         }
 

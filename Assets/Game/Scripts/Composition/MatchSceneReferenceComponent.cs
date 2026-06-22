@@ -1,1 +1,1 @@
-// Match scene references are owned by MatchSceneReferenceBoundarySystem.
+// Match scene references are resolved from the loaded Match scene by MatchSceneReferenceSystem.

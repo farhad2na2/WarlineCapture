@@ -1,1 +1,1 @@
-// Performance diagnostics references are owned by PerformanceDiagnosticsReferenceBoundarySystem.
+// Performance diagnostics references are resolved from the loaded Menu scene by PerformanceDiagnosticsReferenceSystem.

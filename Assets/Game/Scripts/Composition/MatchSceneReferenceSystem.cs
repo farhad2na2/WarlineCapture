@@ -1,106 +1,52 @@
-using Unity.Entities;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-
-[DisableAutoCreation]
-public sealed partial class MatchSceneReferenceBoundarySystem : SystemBase
-{
-    public MatchSceneView View { get; set; }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
-    protected override void OnDestroy()
-    {
-        View = null;
-    }
-}
 
 public sealed class MatchSceneReferenceSystem
 {
-    private World _referenceWorld;
-    private MatchSceneReferenceBoundarySystem _referenceBoundary;
-
-    public void Register(MatchSceneView view)
+    public bool TryGetLoadedMatchSceneView(out MatchSceneView view)
     {
-        if (view == null || !TryGetOrCreateReference(out MatchSceneReferenceBoundarySystem boundary))
-            return;
-
-        boundary.View = view;
+        return TryGetLoadedSceneView(SceneLifecycleSystem.MatchSceneName, out view);
     }
 
-    public void Clear(MatchSceneView view)
-    {
-        if (!TryGetReference(out MatchSceneReferenceBoundarySystem boundary))
-            return;
-
-        if (view == null || boundary.View == view)
-            boundary.View = null;
-    }
-
-    public bool TryGetLoadedMatchSceneView(World world, out MatchSceneView view)
+    public bool TryGetLoadedSceneView(string sceneName, out MatchSceneView view)
     {
         view = null;
-        if (!TryGetReference(world, out MatchSceneReferenceBoundarySystem boundary))
+
+        if (string.IsNullOrEmpty(sceneName))
             return false;
 
-        MatchSceneView candidate = boundary.View;
-        if (!IsLoadedMatchSceneView(candidate))
-            return false;
-
-        view = candidate;
-        return true;
+        Scene scene = SceneManager.GetSceneByName(sceneName);
+        return TryGetLoadedSceneView(scene, out view);
     }
 
-    private bool TryGetReference(out MatchSceneReferenceBoundarySystem boundary)
+    public bool TryGetLoadedSceneView(Scene scene, out MatchSceneView view)
     {
-        return TryGetReference(World.DefaultGameObjectInjectionWorld, out boundary);
-    }
+        view = null;
 
-    private bool TryGetReference(World world, out MatchSceneReferenceBoundarySystem boundary)
-    {
-        boundary = null;
-
-        if (world == null || !world.IsCreated)
+        if (!scene.IsValid() || !scene.isLoaded)
             return false;
 
-        if (_referenceWorld == world && _referenceBoundary != null)
+        GameObject[] roots = scene.GetRootGameObjects();
+        for (int i = 0; i < roots.Length; i++)
         {
-            boundary = _referenceBoundary;
+            GameObject root = roots[i];
+            if (root == null)
+                continue;
+
+            if (!root.TryGetComponent(out MatchSceneView candidate))
+                continue;
+
+            if (!IsLoadedSceneView(candidate, scene))
+                continue;
+
+            view = candidate;
             return true;
         }
 
-        MatchSceneReferenceBoundarySystem existing = world.GetExistingSystemManaged<MatchSceneReferenceBoundarySystem>();
-        if (existing == null)
-            return false;
-
-        _referenceWorld = world;
-        _referenceBoundary = existing;
-        boundary = existing;
-        return true;
+        return false;
     }
 
-    private bool TryGetOrCreateReference(out MatchSceneReferenceBoundarySystem boundary)
-    {
-        if (TryGetReference(out boundary))
-            return true;
-
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        boundary = world.GetOrCreateSystemManaged<MatchSceneReferenceBoundarySystem>();
-        _referenceWorld = world;
-        _referenceBoundary = boundary;
-        return true;
-    }
-
-    private static bool IsLoadedMatchSceneView(MatchSceneView view)
+    private static bool IsLoadedSceneView(MatchSceneView view, Scene expectedScene)
     {
         if (view == null || view.gameObject == null)
             return false;
@@ -108,6 +54,6 @@ public sealed class MatchSceneReferenceSystem
         Scene scene = view.gameObject.scene;
         return scene.IsValid() &&
                scene.isLoaded &&
-               scene.name == SceneLifecycleSystem.MatchSceneName;
+               scene == expectedScene;
     }
 }

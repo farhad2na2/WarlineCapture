@@ -34,6 +34,7 @@ public sealed class MenuBootstrapView : MonoBehaviour
     public UIShellContentView ContentSystem => contentSystem;
     public UIRouterView Router => router;
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => menuBootstrapSystem.PerformanceDiagnostics;
+    public bool IsPerformanceDiagnosticsInitialized => menuBootstrapSystem.IsPerformanceDiagnosticsInitialized;
 
 #if UNITY_EDITOR
     private static long editorAllocationBytes;

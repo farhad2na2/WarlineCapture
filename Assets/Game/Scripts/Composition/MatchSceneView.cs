@@ -79,11 +79,6 @@ public sealed class MatchSceneView : MonoBehaviour
         matchBootstrapSystem.Awake(this, transform, gameObject.layer);
     }
 
-    private void Start()
-    {
-        matchBootstrapSystem.Start();
-    }
-
     private void Update()
     {
         matchBootstrapSystem.Update();

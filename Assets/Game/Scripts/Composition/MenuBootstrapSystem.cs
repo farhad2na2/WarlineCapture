@@ -11,7 +11,6 @@ internal sealed class MenuBootstrapSystem
     private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
     private readonly MatchStartSystem matchStartSystem = new();
     private readonly PerformanceDiagnosticsSystem performanceDiagnosticsSystem = new();
-    private readonly PerformanceDiagnosticsReferenceSystem performanceDiagnosticsReferenceSystem = new();
     private readonly MatchSceneReferenceSystem matchSceneReferenceSystem = new();
     private readonly QuickCustomGameConfigStore quickCustomGameConfigStore = new();
     private readonly MatchLaunchCommand matchLaunchCommand = new();
@@ -56,6 +55,7 @@ internal sealed class MenuBootstrapSystem
     private int boundContentVersion = -1;
 
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => performanceDiagnosticsSystem;
+    public bool IsPerformanceDiagnosticsInitialized => diagnosticsInitialized;
 
     public void Initialize(MenuBootstrapView view)
     {
@@ -150,7 +150,6 @@ internal sealed class MenuBootstrapSystem
 
         initialized = false;
         hasCapturedUiPresentation = false;
-        performanceDiagnosticsReferenceSystem.Clear(performanceDiagnosticsSystem);
         deferredMatchLoadFrame = -1;
         ResetLoadingMinimumWindow();
         ResetMatchReadyHoldWindow();
@@ -167,15 +166,11 @@ internal sealed class MenuBootstrapSystem
     private void EnsurePersistentDiagnosticsInitialized()
     {
         if (diagnosticsInitialized)
-        {
-            performanceDiagnosticsReferenceSystem.Register(performanceDiagnosticsSystem);
             return;
-        }
 
         Application.runInBackground = true;
         performanceDiagnosticsSystem.Initialize();
         diagnosticsInitialized = true;
-        performanceDiagnosticsReferenceSystem.Register(performanceDiagnosticsSystem);
     }
 
     private static void SetLoading(EntityManager entityManager, Entity boundary, float progress01, bool complete)
@@ -389,9 +384,7 @@ internal sealed class MenuBootstrapSystem
         if (view == null || view.ContentSystem == null)
             return;
 
-        if (!matchSceneReferenceSystem.TryGetLoadedMatchSceneView(
-                World.DefaultGameObjectInjectionWorld,
-                out MatchSceneView matchScene))
+        if (!matchSceneReferenceSystem.TryGetLoadedMatchSceneView(out MatchSceneView matchScene))
         {
             return;
         }
@@ -440,9 +433,7 @@ internal sealed class MenuBootstrapSystem
             return;
         }
 
-        if (!matchSceneReferenceSystem.TryGetLoadedMatchSceneView(
-                World.DefaultGameObjectInjectionWorld,
-                out MatchSceneView matchScene))
+        if (!matchSceneReferenceSystem.TryGetLoadedMatchSceneView(out MatchSceneView matchScene))
         {
             ClearUiToolkitMatchReadModels();
             return;

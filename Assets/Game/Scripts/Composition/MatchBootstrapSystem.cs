@@ -34,7 +34,6 @@ internal sealed class MatchBootstrapSystem
     private RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem;
     private MapSurfaceRuntimeBootstrapSystem _mapSurfaceRuntimeBootstrapSystem;
     private CustomGameStartupSystem _customGameStartupSystem;
-    private readonly MatchSceneReferenceSystem _matchSceneReferenceSystem = new();
     private readonly PerformanceDiagnosticsReferenceSystem _performanceDiagnosticsReferenceSystem = new();
     private readonly MatchIntroEcsStateQuery matchIntroStateQuery = new();
 
@@ -168,7 +167,6 @@ internal sealed class MatchBootstrapSystem
     public void Awake(MatchSceneView view, Transform ownerTransform, int ownerLayer)
     {
         Initialize(view);
-        _matchSceneReferenceSystem.Register(view);
         _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystem();
         _runtimeCameraReferenceSystem = ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld);
 
@@ -179,11 +177,6 @@ internal sealed class MatchBootstrapSystem
             ref _runtimeTransportsRoot,
             ref _runtimeUiRoot);
         _runtimeCameraReferenceSystem?.SetWorldCamera(WorldCamera);
-    }
-
-    public void Start()
-    {
-        _matchSceneReferenceSystem.Register(sceneView);
     }
 
     public void BeginGameplay()
@@ -365,14 +358,13 @@ internal sealed class MatchBootstrapSystem
 
     public void Shutdown()
     {
-        _matchSceneReferenceSystem.Clear(sceneView);
         matchIntroStateQuery.Reset();
         sceneView = null;
     }
 
     public PerformanceDiagnosticsSystem ResolvePerformanceDiagnosticsSystem()
     {
-        if (_performanceDiagnosticsReferenceSystem.TryGet(World.DefaultGameObjectInjectionWorld, out PerformanceDiagnosticsSystem persistentDiagnostics))
+        if (_performanceDiagnosticsReferenceSystem.TryGet(out PerformanceDiagnosticsSystem persistentDiagnostics))
             return persistentDiagnostics;
 
         if (!fallbackPerformanceDiagnosticsInitialized)

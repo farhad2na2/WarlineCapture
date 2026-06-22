@@ -1,17 +1,7 @@
 using System.Collections.Generic;
-using Unity.Entities;
 
-public sealed partial class GameplaySceneBindingSystem : SystemBase
+public sealed class GameplaySceneBindingSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public void BindRuntimeGridBlockerDebugViews(RuntimeGridBlockerSystem runtimeGridBlockers)
     {
         IReadOnlyList<GridAuthoring> grids = GridAuthoring.Instances;

@@ -16,14 +16,14 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `51 / 72 complete (70.8%)`.
+- Checklist progress: `52 / 73 complete (71.2%)`.
 - In progress: `0`.
-- Remaining open: `21`.
-- Current target: `Agent B actionable code queue complete; proceed to Agent C selection/commands lane unless Agent A reclassifies held Agent B boundary rows`.
+- Remaining open: `20`.
+- Current target: `Agent B P7-0001 GameplaySceneBindingSystem helper fold completed; P7-0003/P7-0019 remain held pending an explicit managed-reference boundary guardrail/model change; continue remaining Integration rows as directed by Agent A`.
 - Converted to `ISystem`: `8`.
-- Retired/folded helpers: `2`.
+- Retired/folded helpers: `3`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `P7-0010 AIPlanEntryStartupSystem, P7-0015 FactionEconomyStartupSystem, P7-0008 AIFactionControlStartupSystem, P7-0016 InitialFactionSpawnCellSystem, P7-0021 RuntimeDiagnosticsSystem, P7-0022 RuntimeGameplayStateSystem, P7-0013 AIStartupSystem, and P7-0005 AICombatOrderSystem converted/cleaned and validated; P7-0020 PerformanceDiagnosticsSystem and P7-0002 MapSurfaceRuntimeBootstrapSystem retired/folded out of ECS and validated; logs /private/tmp/warline-phase7-agent-b-ai-plan-entry-startup.log, /private/tmp/warline-phase7-agent-b-faction-economy-startup.log, /private/tmp/warline-phase7-agent-b-ai-faction-control-startup.log, /private/tmp/warline-phase7-agent-b-ai-startup-after-faction-control.log, /private/tmp/warline-phase7-agent-b-initial-faction-spawn-cell.log, /private/tmp/warline-phase7-agent-b-ai-startup-after-spawn-cell.log, /private/tmp/warline-phase7-agent-b-runtime-diagnostics.log, /private/tmp/warline-phase7-agent-b-runtime-gameplay-state.log, /private/tmp/warline-phase7-agent-b-ai-startup.log, /private/tmp/warline-phase7-agent-b-ai-combat-order.log, /private/tmp/warline-phase7-agent-b-performance-diagnostics.log, /private/tmp/warline-phase7-agent-b-map-surface-runtime-bootstrap.log, and /private/tmp/warline-phase7-agent-a-architecture.log`.
+- Validation status: `P7-0001 GameplaySceneBindingSystem folded out of ECS into a plain direct-owned scene binding helper; it was a disabled SystemBase with empty OnUpdate and remains owned by MatchBootstrapSystem/GameplayFeatureStartupSystem for runtime grid blocker debug-view scene binding. Compile, inventory regeneration, git diff --check, and Phase 7 architecture guard passed; inventory now reports 42 production SystemBase/legacy declarations, 134 production ISystem declarations, and 76.1% production ISystem share. Bootstrap/script architecture focused runners were attempted but are blocked by pre-existing UI Toolkit architecture debt in UiToolkitShellView.cs, not this slice. P7-0003/P7-0019 managed-reference boundary reclassification was tested and rejected by the current Phase 7 guard because those rows have no concrete Unity-object blockers; the override was removed and both rows remain held. Prior P7-0010 AIPlanEntryStartupSystem, P7-0015 FactionEconomyStartupSystem, P7-0008 AIFactionControlStartupSystem, P7-0016 InitialFactionSpawnCellSystem, P7-0021 RuntimeDiagnosticsSystem, P7-0022 RuntimeGameplayStateSystem, P7-0013 AIStartupSystem, and P7-0005 AICombatOrderSystem converted/cleaned and validated; P7-0020 PerformanceDiagnosticsSystem and P7-0002 MapSurfaceRuntimeBootstrapSystem retired/folded out of ECS and validated. Latest logs: /private/tmp/warline-phase7-agent-b-gameplay-scene-binding-helper-fold-bootstrap.log, /private/tmp/warline-phase7-agent-b-gameplay-scene-binding-helper-fold-assembly-boundary.log, and /private/tmp/warline-phase7-agent-a-architecture.log.`
 
 Owned files:
 
@@ -112,7 +112,7 @@ Agent B row intake:
 | `P7-0003` | `MatchSceneReferenceBoundarySystem` | `SystemBase` | `RetireFold` | `ReturnedForReclassification` | Hold | Stores a managed `MatchSceneView` shared across menu/start/match composition; direct retire would require static mutable state or a managed component. Needs Agent A disposition review before code changes. |
 | `P7-0019` | `PerformanceDiagnosticsReferenceBoundarySystem` | `SystemBase` | `RetireFold` | `ReturnedForReclassification` | Hold | Stores managed diagnostics presentation references across menu/match composition; direct retire has the same managed-reference boundary risk as `P7-0003`. Needs Agent A disposition review before code changes. |
 | `P7-0020` | `PerformanceDiagnosticsSystem` | `PlainClass` | `RetiredFolded` | `Folded` | Done | Folded out of ECS inheritance; remains a manually owned diagnostics helper for menu/bootstrap composition and no longer counts in the ECS system inventory. |
-| `P7-0001` | `GameplaySceneBindingSystem` | `SystemBase` | `DirectConvert` | `ReturnedForReclassification` | Hold | Not safe for unmanaged conversion: it reads `GridAuthoring.Instances` and `grid.gameObject.scene` to bind scene authoring debug views. Needs Agent A reclassification as scene-authoring composition/presentation boundary or retire/fold helper. |
+| `P7-0001` | `GameplaySceneBindingSystem` | `PlainClass` | `RetiredFolded` | `Folded` | Done | Folded out of ECS inheritance as a direct-owned scene binding helper. It still reads `GridAuthoring.Instances` and `grid.gameObject.scene`, so it is intentionally not an unmanaged `ISystem`. |
 | `P7-0008` | `AIFactionControlStartupSystem` | `ISystem` | `Converted` | `Converted` | Done | Converted in current Agent B slice; `AIControllerConfig` and `AISettingsRuntimeState` reads now stay outside the unmanaged startup system, which receives `AIFactionControlStartupEntry` values. |
 | `P7-0010` | `AIPlanEntryStartupSystem` | `ISystem` | `Converted` | `Converted` | Done | Converted in current Agent B slice; public helpers now take plain fallback id lists instead of `AIPlanEntryStartupConfig`, so the unmanaged system does not reference a `ScriptableObject`. |
 | `P7-0013` | `AIStartupSystem` | `ISystem` | `Converted` | `Converted` | Done | Converted in current Agent B slice; startup projection now has no managed fields and uses local startup-entry/projector values plus an `EntityManager` overload for validation. |
@@ -138,6 +138,10 @@ Rows requiring Agent A reclassification before code changes:
 - `P7-0001` current `DirectConvert` disposition is unsafe because the system owns scene-authoring binding through `GridAuthoring.Instances` and `gameObject.scene`; this is a managed composition boundary, not ECS data work.
 - `P7-0019` current `RetireFold` disposition has the same managed-reference boundary risk for performance diagnostics presentation state.
 - `P7-0002` was folded out of ECS inheritance instead of converted because its managed scene-overlay extraction is a composition boundary; runtime blob/entity behavior remains method-scoped and validated.
+
+Completed follow-up slices:
+
+- `2026-06-22` - `P7-0001` `GameplaySceneBindingSystem`: folded disabled scene-binding `SystemBase` wrapper into a plain direct-owned helper. `MatchBootstrapSystem` still owns the helper directly and `GameplayFeatureStartupSystem` still invokes runtime grid blocker debug-view binding; no scene authoring lookup behavior changed.
 - `P7-0005` is now clean in the regenerated inventory: `AICombatOrderSystem` remains `ISystem`, reports no managed blockers, and no longer needs a split/conversion slice.
 
 Call-site and dependency notes:

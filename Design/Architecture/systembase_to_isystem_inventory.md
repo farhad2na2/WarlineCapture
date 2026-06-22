@@ -1,31 +1,30 @@
 # SystemBase To ISystem Inventory
 
-Generated: `2026-06-22T20:24:28Z`.
+Generated: `2026-06-22T20:43:19Z`.
 Command: `python3 Tools/Architecture/generate_systembase_to_isystem_inventory.py --root Assets/Game/Scripts --output Design/Architecture/systembase_to_isystem_inventory.md`.
 Source root: `Assets/Game/Scripts`.
-Source commit: `12681273`.
+Source commit: `52330110`.
 Worktree state during generation: `dirty`.
 
 ## Summary
 
-- Total ECS system declarations: `177`.
-- Production `SystemBase`/legacy declarations: `43`.
+- Total ECS system declarations: `176`.
+- Production `SystemBase`/legacy declarations: `42`.
 - Production `ISystem` declarations: `134`.
-- Current production `ISystem` share: `75.7%`.
-- Production non-UI rows: `169`.
+- Current production `ISystem` share: `76.1%`.
+- Production non-UI rows: `168`.
 - Production UI rows: `8`.
 - Editor rows: `0`.
 - Test rows: `0`.
-- Scopes: `ProductionNonUI` 169, `ProductionUI` 8.
-- Owner lanes: `AgentB` 20, `AgentC` 12, `AgentD` 9, `AgentE` 10, `AgentF` 34, `Integration` 92.
-- Dispositions: `Converted` 127, `DirectConvert` 7, `ManagedPresentationSystemBaseException` 24, `RetireFold` 2, `SplitThenConvert` 9, `UIOutOfScope` 8.
-- Statuses: `Converted` 127, `Deferred` 8, `ManagedException` 24, `Open` 18.
+- Scopes: `ProductionNonUI` 168, `ProductionUI` 8.
+- Owner lanes: `AgentB` 19, `AgentC` 12, `AgentD` 9, `AgentE` 10, `AgentF` 34, `Integration` 92.
+- Dispositions: `Converted` 127, `DirectConvert` 6, `ManagedPresentationSystemBaseException` 24, `RetireFold` 2, `SplitThenConvert` 9, `UIOutOfScope` 8.
+- Statuses: `Converted` 127, `Deferred` 8, `ManagedException` 24, `Open` 17.
 
 ## Inventory
 
 | Id | Type | Kind | Current base | Path | Line | UI/editor/test scope | Owner lane | Disposition | Managed blockers | Gameplay policy risk | Public API/call sites | First safe slice | Replacement target | Validation gate | Status |
 | --- | --- | --- | --- | --- | ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `P7-0001` | `GameplaySceneBindingSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Composition/GameplaySceneBindingSystem.cs` | 4 | `ProductionNonUI` | `AgentB` | `DirectConvert` | None | None | BindRuntimeGridBlockerDebugViews (method) | Convert `GameplaySceneBindingSystem` to `ISystem` preserving update attributes and ECS inputs/outputs. | `GameplaySceneBindingSystem : ISystem` | Architecture guard + compile + startup/diagnostics focused validation | `Open` |
 | `P7-0003` | `MatchSceneReferenceBoundarySystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Composition/MatchSceneReferenceSystem.cs` | 4 | `ProductionNonUI` | `AgentB` | `RetireFold` | None | None | Clear (method), MatchSceneReferenceSystem (property), Register (method), TryGetLoadedMatchSceneView (method), View (property) | Search call sites and fold helper behavior into the owning ECS system or pure static helper. | Folded helper or retired file. | Architecture guard + compile + startup/diagnostics focused validation | `Open` |
 | `P7-0004` | `AIBuildPlannerSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs` | 7 | `ProductionNonUI` | `AgentB` | `Converted` | None | Medium: Economy, Spawn | Execute (method), OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `AIBuildPlannerSystem : ISystem` | Architecture guard + compile + startup/diagnostics focused validation | `Converted` |
 | `P7-0005` | `AICombatOrderSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs` | 7 | `ProductionNonUI` | `AgentB` | `Converted` | None | Medium: Attack, Combat, Command, Health | OnCreate (method), OnDestroy (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `AICombatOrderSystem : ISystem` | Architecture guard + compile + startup/diagnostics focused validation | `Converted` |
@@ -207,11 +206,10 @@ Worktree state during generation: `dirty`.
 
 ### AgentB
 
-Rows: `20`.
+Rows: `19`.
 
 | Id | Type | Base | Disposition | Status | Path | First safe slice | Validation gate |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `P7-0001` | `GameplaySceneBindingSystem` | `SystemBase` | `DirectConvert` | `Open` | `Assets/Game/Scripts/Composition/GameplaySceneBindingSystem.cs` | Convert `GameplaySceneBindingSystem` to `ISystem` preserving update attributes and ECS inputs/outputs. | Architecture guard + compile + startup/diagnostics focused validation |
 | `P7-0003` | `MatchSceneReferenceBoundarySystem` | `SystemBase` | `RetireFold` | `Open` | `Assets/Game/Scripts/Composition/MatchSceneReferenceSystem.cs` | Search call sites and fold helper behavior into the owning ECS system or pure static helper. | Architecture guard + compile + startup/diagnostics focused validation |
 | `P7-0004` | `AIBuildPlannerSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + startup/diagnostics focused validation |
 | `P7-0005` | `AICombatOrderSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + startup/diagnostics focused validation |
@@ -539,7 +537,6 @@ Rows: `58`.
 
 | Id | Accessibility | Namespace | Attributes | Lifecycle methods | Public members | ECS access shape | Managed field categories | Stable key |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `P7-0001` | `public` | `None` | None | OnCreate, OnUpdate | BindRuntimeGridBlockerDebugViews (method) | None | None | `Assets/Game/Scripts/Composition/GameplaySceneBindingSystem.cs\|GameplaySceneBindingSystem` |
 | `P7-0003` | `public` | `None` | None | OnCreate, OnUpdate, OnDestroy | Clear (method), MatchSceneReferenceSystem (property), Register (method), TryGetLoadedMatchSceneView (method), View (property) | None | None | `Assets/Game/Scripts/Composition/MatchSceneReferenceSystem.cs\|MatchSceneReferenceBoundarySystem` |
 | `P7-0004` | `public` | `None` | None | OnCreate, OnUpdate, Update | Execute (method), OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager, jobs, .Schedule | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs\|AIBuildPlannerSystem` |
 | `P7-0005` | `public` | `None` | None | OnCreate, OnUpdate, OnDestroy, Update | OnCreate (method), OnDestroy (method), OnUpdate (method) | EntityQuery, EntityManager, GetComponentLookup, GetBufferLookup, ECB | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs\|AICombatOrderSystem` |

@@ -625,10 +625,7 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityMinimapEventSystem ResolveRuntimeCityMinimapEventSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityMinimapEventSystem>()
-            : null;
+        return new RuntimeCityMinimapEventSystem();
     }
 
     private static RuntimeCityConfigSystem ResolveRuntimeCityConfigSystem()
@@ -868,9 +865,6 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityIngressSystem ResolveRuntimeCityIngressSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityIngressSystem>()
-            : null;
+        return new RuntimeCityIngressSystem();
     }
 }

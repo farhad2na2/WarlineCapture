@@ -1,25 +1,25 @@
 # SystemBase To ISystem Inventory
 
-Generated: `2026-06-22T09:52:24Z`.
+Generated: `2026-06-22T10:15:16Z`.
 Command: `python3 Tools/Architecture/generate_systembase_to_isystem_inventory.py --root Assets/Game/Scripts --output Design/Architecture/systembase_to_isystem_inventory.md`.
 Source root: `Assets/Game/Scripts`.
-Source commit: `d78ff706`.
+Source commit: `2ea2bd73`.
 Worktree state during generation: `dirty`.
 
 ## Summary
 
-- Total ECS system declarations: `250`.
-- Production `SystemBase`/legacy declarations: `117`.
-- Production `ISystem` declarations: `133`.
-- Current production `ISystem` share: `53.2%`.
-- Production non-UI rows: `243`.
-- Production UI rows: `7`.
+- Total ECS system declarations: `249`.
+- Production `SystemBase`/legacy declarations: `115`.
+- Production `ISystem` declarations: `134`.
+- Current production `ISystem` share: `53.8%`.
+- Production non-UI rows: `241`.
+- Production UI rows: `8`.
 - Editor rows: `0`.
 - Test rows: `0`.
-- Scopes: `ProductionNonUI` 243, `ProductionUI` 7.
-- Owner lanes: `AgentB` 20, `AgentC` 12, `AgentD` 9, `AgentE` 69, `AgentF` 49, `Integration` 91.
-- Dispositions: `Converted` 126, `DirectConvert` 34, `ManagedPresentationSystemBaseException` 22, `RetireFold` 3, `SplitThenConvert` 58, `UIOutOfScope` 7.
-- Statuses: `Converted` 126, `Deferred` 7, `ManagedException` 22, `Open` 95.
+- Scopes: `ProductionNonUI` 241, `ProductionUI` 8.
+- Owner lanes: `AgentB` 20, `AgentC` 12, `AgentD` 9, `AgentE` 67, `AgentF` 49, `Integration` 92.
+- Dispositions: `Converted` 126, `DirectConvert` 32, `ManagedPresentationSystemBaseException` 22, `RetireFold` 3, `SplitThenConvert` 58, `UIOutOfScope` 8.
+- Statuses: `Converted` 126, `Deferred` 8, `ManagedException` 22, `Open` 93.
 
 ## Inventory
 
@@ -83,9 +83,7 @@ Worktree state during generation: `dirty`.
 | `P7-0160` | `RuntimeCityGenerationSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs` | 7 | `ProductionNonUI` | `AgentE` | `SplitThenConvert` | GameObject, List<GameObject> | High: managed blockers mixed with BuildingPlacement, Path, Selection, Spawn | CollectInitialBaseExclusionRoadRectsDelegate (method), Context (property), RuntimeCityGenerationState (property), ShouldYieldDelegate (method), TryBegin (method) | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Narrow `ISystem` processors plus explicit managed boundary if needed. | Architecture guard + compile + road/city/citizen focused validation | `Open` |
 | `P7-0161` | `RuntimeCityHallSpawnSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Environment/RuntimeCityHallSpawnSystem.cs` | 7 | `ProductionNonUI` | `AgentE` | `SplitThenConvert` | GameObject, List<GameObject> | High: managed blockers mixed with BuildingPlacement, Health, Selection, Spawn | EnsureCityHall (method), RuntimeCityHallSpawnState (property) | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Narrow `ISystem` processors plus explicit managed boundary if needed. | Architecture guard + compile + road/city/citizen focused validation | `Open` |
 | `P7-0162` | `RuntimeCityHouseYardWallSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Environment/RuntimeCityHouseYardWallSystem.cs` | 7 | `ProductionNonUI` | `AgentE` | `SplitThenConvert` | GameObject, List<GameObject> | High: managed blockers mixed with BuildingPlacement, Selection, Spawn | PlaceHouseYardWalls (method), RuntimeCityHouseYardWallState (property) | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Narrow `ISystem` processors plus explicit managed boundary if needed. | Architecture guard + compile + road/city/citizen focused validation | `Open` |
-| `P7-0163` | `RuntimeCityIngressSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Environment/RuntimeCityIngressSystem.cs` | 6 | `ProductionNonUI` | `AgentE` | `DirectConvert` | None | None | Context (property), CreateCityLayout (method), GetCityConnectionOffset (method), GetCityInnerConnectionCell (method), PruneIngressCorridorStrokes (method), RuntimeCityIngressState (property) | Convert `RuntimeCityIngressSystem` to `ISystem` preserving update attributes and ECS inputs/outputs. | `RuntimeCityIngressSystem : ISystem` | Architecture guard + compile + road/city/citizen focused validation | `Open` |
 | `P7-0165` | `RuntimeCityLandmarkSpawnSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Environment/RuntimeCityLandmarkSpawnSystem.cs` | 6 | `ProductionNonUI` | `AgentE` | `SplitThenConvert` | GameObject | High: managed blockers mixed with BuildingPlacement, Health, Selection, Spawn | RuntimeCityLandmarkSpawnState (property), SpawnLandmarks (method) | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Narrow `ISystem` processors plus explicit managed boundary if needed. | Architecture guard + compile + road/city/citizen focused validation | `Open` |
-| `P7-0168` | `RuntimeCityMinimapEventSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Environment/RuntimeCityMinimapEventSystem.cs` | 3 | `ProductionNonUI` | `AgentE` | `DirectConvert` | None | None | Clear (method), Configure (method), Flush (method), PublishStaticMinimapChanged (method) | Convert `RuntimeCityMinimapEventSystem` to `ISystem` preserving update attributes and ECS inputs/outputs. | `RuntimeCityMinimapEventSystem : ISystem` | Architecture guard + compile + road/city/citizen focused validation | `Open` |
 | `P7-0169` | `RuntimeCityPrefabSelectionSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Environment/RuntimeCityPrefabSelectionSystem.cs` | 5 | `ProductionNonUI` | `AgentE` | `SplitThenConvert` | GameObject, Renderer, List<GameObject>, Dictionary<..., GameObject> | High: managed blockers mixed with Selection | GetCachedFootprintCells (method), GetMajorFootprint (method), GetMinorFootprint (method), GetRandomPrefab (method), IsConfiguredPrefab (method), RuntimeCityPrefabSelectionState (property) | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Narrow `ISystem` processors plus explicit managed boundary if needed. | Architecture guard + compile + road/city/citizen focused validation | `Open` |
 | `P7-0173` | `RuntimeCityRoadCommitSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Environment/RuntimeCityRoadCommitSystem.cs` | 6 | `ProductionNonUI` | `AgentE` | `DirectConvert` | None | Medium: Path | CommitCityRoadNetwork (method), Context (property), PopulateCityRoadCells (method), RuntimeCityRoadCommitState (property), TryCommitAutobahn (method), TryCommitSourceExitRoad (method), TryCreateStandaloneConnector (method) | Convert `RuntimeCityRoadCommitSystem` to `ISystem` preserving update attributes and ECS inputs/outputs. | `RuntimeCityRoadCommitSystem : ISystem` | Architecture guard + compile + road/city/citizen focused validation | `Open` |
 | `P7-0174` | `RuntimeCityRoadLayoutSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Environment/RuntimeCityRoadLayoutSystem.cs` | 8 | `ProductionNonUI` | `AgentE` | `DirectConvert` | None | Medium: Path | AddStroke (method), AutobahnAnchorCandidate (property), BuildAutobahnPath (method), BuildCityToCityAutobahnPath (method), BuildStraightRoadPath (method), BuildTownRoadStrokes (method), RuntimeCityRoadLayoutState (property) | Convert `RuntimeCityRoadLayoutSystem` to `ISystem` preserving update attributes and ECS inputs/outputs. | `RuntimeCityRoadLayoutSystem : ISystem` | Architecture guard + compile + road/city/citizen focused validation | `Open` |
@@ -269,12 +267,13 @@ Worktree state during generation: `dirty`.
 | `P7-0373` | `VehicleWreckCleanupSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/VehicleWreckCleanupSystem.cs` | 6 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Health | Execute (method), OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `VehicleWreckCleanupSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0374` | `VisibleUnitSelectionSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/VisibleUnitSelectionSystem.cs` | 10 | `ProductionNonUI` | `Integration` | `SplitThenConvert` | Camera | High: managed blockers mixed with Selection | ApplySelectedUnitTags (method), CollectVisiblePlayerUnits (method), EnsureEntityQueries (method), Execute (method), Filter (property), HasVisiblePlayerUnits (method) | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Narrow `ISystem` processors plus explicit managed boundary if needed. | Architecture guard + compile | `Open` |
 | `P7-0375` | `UiActionRequestSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs` | 3 | `ProductionUI` | `Integration` | `UIOutOfScope` | None | Medium: Attack, BuildingPlacement, Combat, Command | OnCreate (method), OnUpdate (method) | Out of Phase 7 non-UI gameplay denominator. | UIOutOfScope | Out of Phase 7 validation matrix. | `Deferred` |
+| `P7-0382` | `UiBuildDrawerReadModelSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs` | 469 | `ProductionUI` | `Integration` | `UIOutOfScope` | None | Medium: BuildingPlacement, Command, Production, Selection | Clear (method), Configure (method), OnCreate (method), OnUpdate (method), ProcessPrimaryRequest (method), ProcessProductionRequest (method), UiBuildDrawerReadModelSource (property), WriteReadModel (method) | Out of Phase 7 non-UI gameplay denominator. | UIOutOfScope | Out of Phase 7 validation matrix. | `Deferred` |
 | `P7-0376` | `UiBuildPlacementReadModelSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs` | 24 | `ProductionUI` | `Integration` | `UIOutOfScope` | None | Medium: BuildingPlacement, Command | Clear (method), Configure (method), OnCreate (method), OnUpdate (method), UiBuildPlacementReadModelSource (property) | Out of Phase 7 non-UI gameplay denominator. | UIOutOfScope | Out of Phase 7 validation matrix. | `Deferred` |
 | `P7-0377` | `UiDiagnosticsReadModelSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs` | 7 | `ProductionUI` | `Integration` | `UIOutOfScope` | None | None | BuildLogText (method), EnsureSubscribed (method), OnCreate (method), OnDestroy (method), OnUpdate (method), ReleaseSubscription (method), UiDiagnosticsRuntimeLogBuffer (property) | Out of Phase 7 non-UI gameplay denominator. | UIOutOfScope | Out of Phase 7 validation matrix. | `Deferred` |
 | `P7-0378` | `UiShellArmoryCategorySystem` | `struct` | `ISystem` | `Assets/Game/Scripts/UI/Shell/Ecs/UiShellArmoryCategorySystem.cs` | 3 | `ProductionUI` | `Integration` | `UIOutOfScope` | None | None | OnCreate (method), OnUpdate (method) | Out of Phase 7 non-UI gameplay denominator. | UIOutOfScope | Out of Phase 7 validation matrix. | `Deferred` |
 | `P7-0379` | `UiShellBoundarySystem` | `struct` | `ISystem` | `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs` | 4 | `ProductionUI` | `Integration` | `UIOutOfScope` | None | Medium: Command, Production, Resource | OnCreate (method), OnUpdate (method) | Out of Phase 7 non-UI gameplay denominator. | UIOutOfScope | Out of Phase 7 validation matrix. | `Deferred` |
 | `P7-0380` | `UiShellFlowSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs` | 3 | `ProductionUI` | `Integration` | `UIOutOfScope` | None | Medium: Command | OnCreate (method), OnUpdate (method) | Out of Phase 7 non-UI gameplay denominator. | UIOutOfScope | Out of Phase 7 validation matrix. | `Deferred` |
-| `P7-0381` | `UiToolkitShellApplySystem` | `class` | `SystemBase` | `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs` | 4 | `ProductionUI` | `Integration` | `UIOutOfScope` | None | Medium: Command, Resource, Selection | ClearShellView (method), ConfigureShellView (method) | Out of Phase 7 non-UI gameplay denominator. | UIOutOfScope | Out of Phase 7 validation matrix. | `Deferred` |
+| `P7-0381` | `UiToolkitShellApplySystem` | `class` | `SystemBase` | `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs` | 5 | `ProductionUI` | `Integration` | `UIOutOfScope` | None | Medium: Command, Health, Production, Resource | ClearShellView (method), ConfigureShellView (method) | Out of Phase 7 non-UI gameplay denominator. | UIOutOfScope | Out of Phase 7 validation matrix. | `Deferred` |
 
 ## Owner Lane Assignments
 
@@ -342,7 +341,7 @@ Rows: `9`.
 
 ### AgentE
 
-Rows: `69`.
+Rows: `67`.
 
 | Id | Type | Base | Disposition | Status | Path | First safe slice | Validation gate |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -363,9 +362,7 @@ Rows: `69`.
 | `P7-0160` | `RuntimeCityGenerationSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs` | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Architecture guard + compile + road/city/citizen focused validation |
 | `P7-0161` | `RuntimeCityHallSpawnSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Environment/RuntimeCityHallSpawnSystem.cs` | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Architecture guard + compile + road/city/citizen focused validation |
 | `P7-0162` | `RuntimeCityHouseYardWallSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Environment/RuntimeCityHouseYardWallSystem.cs` | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Architecture guard + compile + road/city/citizen focused validation |
-| `P7-0163` | `RuntimeCityIngressSystem` | `SystemBase` | `DirectConvert` | `Open` | `Assets/Game/Scripts/Environment/RuntimeCityIngressSystem.cs` | Convert `RuntimeCityIngressSystem` to `ISystem` preserving update attributes and ECS inputs/outputs. | Architecture guard + compile + road/city/citizen focused validation |
 | `P7-0165` | `RuntimeCityLandmarkSpawnSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Environment/RuntimeCityLandmarkSpawnSystem.cs` | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Architecture guard + compile + road/city/citizen focused validation |
-| `P7-0168` | `RuntimeCityMinimapEventSystem` | `SystemBase` | `DirectConvert` | `Open` | `Assets/Game/Scripts/Environment/RuntimeCityMinimapEventSystem.cs` | Convert `RuntimeCityMinimapEventSystem` to `ISystem` preserving update attributes and ECS inputs/outputs. | Architecture guard + compile + road/city/citizen focused validation |
 | `P7-0169` | `RuntimeCityPrefabSelectionSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Environment/RuntimeCityPrefabSelectionSystem.cs` | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Architecture guard + compile + road/city/citizen focused validation |
 | `P7-0173` | `RuntimeCityRoadCommitSystem` | `SystemBase` | `DirectConvert` | `Open` | `Assets/Game/Scripts/Environment/RuntimeCityRoadCommitSystem.cs` | Convert `RuntimeCityRoadCommitSystem` to `ISystem` preserving update attributes and ECS inputs/outputs. | Architecture guard + compile + road/city/citizen focused validation |
 | `P7-0174` | `RuntimeCityRoadLayoutSystem` | `SystemBase` | `DirectConvert` | `Open` | `Assets/Game/Scripts/Environment/RuntimeCityRoadLayoutSystem.cs` | Convert `RuntimeCityRoadLayoutSystem` to `ISystem` preserving update attributes and ECS inputs/outputs. | Architecture guard + compile + road/city/citizen focused validation |
@@ -474,7 +471,7 @@ Rows: `49`.
 
 ### Integration
 
-Rows: `91`.
+Rows: `92`.
 
 | Id | Type | Base | Disposition | Status | Path | First safe slice | Validation gate |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -563,6 +560,7 @@ Rows: `91`.
 | `P7-0373` | `VehicleWreckCleanupSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/VehicleWreckCleanupSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0374` | `VisibleUnitSelectionSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Systems/VisibleUnitSelectionSystem.cs` | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Architecture guard + compile |
 | `P7-0375` | `UiActionRequestSystem` | `ISystem` | `UIOutOfScope` | `Deferred` | `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs` | Out of Phase 7 non-UI gameplay denominator. | Out of Phase 7 validation matrix. |
+| `P7-0382` | `UiBuildDrawerReadModelSystem` | `ISystem` | `UIOutOfScope` | `Deferred` | `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs` | Out of Phase 7 non-UI gameplay denominator. | Out of Phase 7 validation matrix. |
 | `P7-0376` | `UiBuildPlacementReadModelSystem` | `ISystem` | `UIOutOfScope` | `Deferred` | `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs` | Out of Phase 7 non-UI gameplay denominator. | Out of Phase 7 validation matrix. |
 | `P7-0377` | `UiDiagnosticsReadModelSystem` | `ISystem` | `UIOutOfScope` | `Deferred` | `Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs` | Out of Phase 7 non-UI gameplay denominator. | Out of Phase 7 validation matrix. |
 | `P7-0378` | `UiShellArmoryCategorySystem` | `ISystem` | `UIOutOfScope` | `Deferred` | `Assets/Game/Scripts/UI/Shell/Ecs/UiShellArmoryCategorySystem.cs` | Out of Phase 7 non-UI gameplay denominator. | Out of Phase 7 validation matrix. |
@@ -743,9 +741,7 @@ Rows: `58`.
 | `P7-0160` | `internal` | `None` | None | OnCreate, OnUpdate, Coroutine:GenerateCityRoutine, Coroutine:SpawnCityBulkBuildingsRoutine | CollectInitialBaseExclusionRoadRectsDelegate (method), Context (property), RuntimeCityGenerationState (property), ShouldYieldDelegate (method), TryBegin (method) | None | prefab/reference, managed collection | `Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs\|RuntimeCityGenerationSystem` |
 | `P7-0161` | `internal` | `None` | None | OnCreate, OnUpdate | EnsureCityHall (method), RuntimeCityHallSpawnState (property) | None | prefab/reference, managed collection | `Assets/Game/Scripts/Environment/RuntimeCityHallSpawnSystem.cs\|RuntimeCityHallSpawnSystem` |
 | `P7-0162` | `internal` | `None` | None | OnCreate, OnUpdate | PlaceHouseYardWalls (method), RuntimeCityHouseYardWallState (property) | None | prefab/reference, managed collection | `Assets/Game/Scripts/Environment/RuntimeCityHouseYardWallSystem.cs\|RuntimeCityHouseYardWallSystem` |
-| `P7-0163` | `internal` | `None` | None | OnCreate, OnUpdate | Context (property), CreateCityLayout (method), GetCityConnectionOffset (method), GetCityInnerConnectionCell (method), PruneIngressCorridorStrokes (method), RuntimeCityIngressState (property) | None | None | `Assets/Game/Scripts/Environment/RuntimeCityIngressSystem.cs\|RuntimeCityIngressSystem` |
 | `P7-0165` | `internal` | `None` | None | OnCreate, OnUpdate | RuntimeCityLandmarkSpawnState (property), SpawnLandmarks (method) | None | prefab/reference | `Assets/Game/Scripts/Environment/RuntimeCityLandmarkSpawnSystem.cs\|RuntimeCityLandmarkSpawnSystem` |
-| `P7-0168` | `internal` | `None` | None | OnCreate, OnUpdate, OnDestroy | Clear (method), Configure (method), Flush (method), PublishStaticMinimapChanged (method) | None | None | `Assets/Game/Scripts/Environment/RuntimeCityMinimapEventSystem.cs\|RuntimeCityMinimapEventSystem` |
 | `P7-0169` | `internal` | `None` | None | OnCreate, OnUpdate | GetCachedFootprintCells (method), GetMajorFootprint (method), GetMinorFootprint (method), GetRandomPrefab (method), IsConfiguredPrefab (method), RuntimeCityPrefabSelectionState (property) | None | prefab/reference, presentation view, managed collection | `Assets/Game/Scripts/Environment/RuntimeCityPrefabSelectionSystem.cs\|RuntimeCityPrefabSelectionSystem` |
 | `P7-0173` | `internal` | `None` | None | OnCreate, OnUpdate | CommitCityRoadNetwork (method), Context (property), PopulateCityRoadCells (method), RuntimeCityRoadCommitState (property), TryCommitAutobahn (method), TryCommitSourceExitRoad (method), TryCreateStandaloneConnector (method) | None | None | `Assets/Game/Scripts/Environment/RuntimeCityRoadCommitSystem.cs\|RuntimeCityRoadCommitSystem` |
 | `P7-0174` | `internal` | `None` | None | OnCreate, OnUpdate | AddStroke (method), AutobahnAnchorCandidate (property), BuildAutobahnPath (method), BuildCityToCityAutobahnPath (method), BuildStraightRoadPath (method), BuildTownRoadStrokes (method), RuntimeCityRoadLayoutState (property) | None | None | `Assets/Game/Scripts/Environment/RuntimeCityRoadLayoutSystem.cs\|RuntimeCityRoadLayoutSystem` |
@@ -929,6 +925,7 @@ Rows: `58`.
 | `P7-0373` | `public` | `None` | None | OnCreate, OnUpdate | Execute (method), OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager, jobs, .ScheduleParallel | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/VehicleWreckCleanupSystem.cs\|VehicleWreckCleanupSystem` |
 | `P7-0374` | `public` | `None` | None | OnCreate, OnUpdate | ApplySelectedUnitTags (method), CollectVisiblePlayerUnits (method), EnsureEntityQueries (method), Execute (method), Filter (property), HasVisiblePlayerUnits (method) | EntityQuery, EntityManager, jobs, .Run | presentation view, native container, query/lookup/cache | `Assets/Game/Scripts/Systems/VisibleUnitSelectionSystem.cs\|VisibleUnitSelectionSystem` |
 | `P7-0375` | `public` | `None` | None | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs\|UiActionRequestSystem` |
+| `P7-0382` | `public` | `None` | None | OnCreate, OnUpdate | Clear (method), Configure (method), OnCreate (method), OnUpdate (method), ProcessPrimaryRequest (method), ProcessProductionRequest (method), UiBuildDrawerReadModelSource (property), WriteReadModel (method) | EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs\|UiBuildDrawerReadModelSystem` |
 | `P7-0376` | `public` | `None` | None | OnCreate, OnUpdate | Clear (method), Configure (method), OnCreate (method), OnUpdate (method), UiBuildPlacementReadModelSource (property) | EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs\|UiBuildPlacementReadModelSystem` |
 | `P7-0377` | `public` | `None` | None | OnCreate, OnUpdate, OnDestroy | BuildLogText (method), EnsureSubscribed (method), OnCreate (method), OnDestroy (method), OnUpdate (method), ReleaseSubscription (method), UiDiagnosticsRuntimeLogBuffer (property) | EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs\|UiDiagnosticsReadModelSystem` |
 | `P7-0378` | `public` | `None` | None | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/UI/Shell/Ecs/UiShellArmoryCategorySystem.cs\|UiShellArmoryCategorySystem` |

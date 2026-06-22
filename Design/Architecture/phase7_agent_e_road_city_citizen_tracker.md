@@ -16,15 +16,15 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `28 / 91 complete (30.8%)`.
+- Checklist progress: `30 / 91 complete (33.0%)`.
 - In progress: `0`.
-- Remaining open: `63`.
-- Current target: `E7 helper fold complete for P7-0164 RuntimeCityLandmarkOffsetSystem; continue with remaining Agent E runtime-city/citizen/environment rows`.
+- Remaining open: `61`.
+- Current target: `E7 helper fold complete for P7-0168 RuntimeCityMinimapEventSystem; continue with remaining Agent E runtime-city/citizen/environment rows`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
-- Retired/folded helpers: `28`.
+- Retired/folded helpers: `30`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `RuntimeCityLandmarkOffsetSystem folded from a disabled SystemBase wrapper into a plain runtime-city landmark-offset helper. Compile, inventory regeneration, runtime-city focused validation, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-phase7-agent-e-runtime-city-landmark-offset-helper-fold-city.log and /private/tmp/warline-phase7-agent-a-architecture.log. Inventory now reports 117 production SystemBase/legacy declarations, 133 production ISystem declarations, and 53.2% production ISystem share.`
+- Validation status: `RuntimeCityMinimapEventSystem folded from a disabled SystemBase wrapper into a plain runtime-city minimap event helper. Compile, inventory regeneration, runtime-city focused validation, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-phase7-agent-e-runtime-city-minimap-event-helper-fold-city.log and /private/tmp/warline-phase7-agent-a-architecture.log. Inventory now reports 115 production SystemBase/legacy declarations, 134 production ISystem declarations, and 53.8% production ISystem share.`
 
 Owned files:
 
@@ -238,6 +238,8 @@ Remove dead wrappers instead of converting them.
 - [x] Fold `P7-0235 RoadRuntimeGenerationSystem` from a disabled `SystemBase` wrapper into a plain runtime road generation helper; runtime road stroke creation, deferred ECS sync callbacks, special visual bridge calls, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0208 RoadBuildCommandSystem` from a disabled `SystemBase` wrapper into a plain road-build command helper; EntityManager command queue/buffer API, synchronous command processing, result writing, and road composition callers stayed unchanged.
 - [x] Fold `P7-0164 RuntimeCityLandmarkOffsetSystem` from a disabled `SystemBase` wrapper into a plain runtime-city landmark-offset helper; landmark offset arrays, hall-distance filtering, state access, and runtime-city composition callers stayed unchanged.
+- [x] Fold `P7-0163 RuntimeCityIngressSystem` from a disabled `SystemBase` wrapper into a plain runtime-city ingress helper; city layout creation, incoming-anchor stroke wiring, connection-cell math, ingress corridor pruning, state access, and runtime-city composition callers stayed unchanged.
+- [x] Fold `P7-0168 RuntimeCityMinimapEventSystem` from a disabled `SystemBase` wrapper into a plain runtime-city minimap event helper; static minimap change publication, UI-facing flush, clear behavior, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0146 RuntimeCityBuildingPlotSystem` from a disabled `SystemBase` wrapper into a plain runtime-city plot algorithm helper; plot candidate types, state access, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0166 RuntimeCityLayoutSystem` from a disabled `SystemBase` wrapper into a plain runtime-city layout algorithm helper; city layout types, state access, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0180 RuntimeCityWalkabilitySystem` from a disabled `SystemBase` wrapper into a plain runtime-city walkability helper; reserved-footprint types, state access, and runtime-city composition callers stayed unchanged.

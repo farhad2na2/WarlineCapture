@@ -1,22 +1,12 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed partial class RuntimeCityIngressSystem : SystemBase
+internal sealed class RuntimeCityIngressSystem
 {
     private readonly RuntimeCityIngressState _state = new();
 
     public RuntimeCityIngressState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public CityLayoutData CreateCityLayout(
         Context context,

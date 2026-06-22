@@ -145,8 +145,7 @@ public sealed class BuildingDestroyedVisualSystemTests
 
     private BuildingDestroyedVisualSystem CreateBuildingDestroyedVisualSystem()
     {
-        _world ??= new World(nameof(BuildingDestroyedVisualSystemTests));
-        return _world.GetOrCreateSystemManaged<BuildingDestroyedVisualSystem>();
+        return new BuildingDestroyedVisualSystem();
     }
 
     private RuntimeBuildingEntity CreateBuilding()

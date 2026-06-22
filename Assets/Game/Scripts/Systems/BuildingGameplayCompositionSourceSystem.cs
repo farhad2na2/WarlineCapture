@@ -133,10 +133,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingDestroyedVisualSystem ResolveBuildingDestroyedVisualSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<BuildingDestroyedVisualSystem>()
-            : null;
+        return new BuildingDestroyedVisualSystem();
     }
 
     private static BuildingPlacementVisualSystem ResolveBuildingPlacementVisualSystem()

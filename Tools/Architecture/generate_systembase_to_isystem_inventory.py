@@ -314,9 +314,14 @@ MANUAL_REVIEW_OVERRIDES: dict[tuple[str, str, str], tuple[str, str, str]] = {
         "Counted managed light presentation `SystemBase` exception consuming ECS attached-light buffer data",
     ),
     ("Assets/Game/Scripts/Rendering/Systems/UnitSelectionMarkerSystem.cs", "UnitSelectionMarkerSystem", "ISystem"): (
-        "SplitThenConvert",
-        "Manual review: already `ISystem` but creates/materializes selection `Material` state. Split marker decisions from managed material/presentation setup.",
-        "Selection marker `ISystem` plus managed material presentation boundary",
+        "Converted",
+        "Keep as `ISystem`; marker instance and scale decisions stay ECS-only while object-outline materials/meshes are split to `UnitSelectionObjectOutlinePresentationSystem`.",
+        "`UnitSelectionMarkerSystem : ISystem` with managed object-outline presentation boundary",
+    ),
+    ("Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs", "UnitSelectionObjectOutlinePresentationSystem", "SystemBase"): (
+        "ManagedPresentationSystemBaseException",
+        "Manual review: consumes selected unit marker ECS state and owns only selection object-outline `Material`, `Mesh`, and render-mesh presentation setup.",
+        "Counted managed selection object-outline presentation `SystemBase` exception",
     ),
     ("Assets/Game/Scripts/Systems/BuildingPlacementVisualCompositionSystem.cs", "BuildingPlacementVisualCompositionSystem", "SystemBase"): (
         "RetireFold",
@@ -358,6 +363,8 @@ MANUAL_REVIEW_OVERRIDES: dict[tuple[str, str, str], tuple[str, str, str]] = {
 MANUAL_RISK_OVERRIDES: dict[tuple[str, str, str], str] = {
     ("Assets/Game/Scripts/Rendering/Systems/UnitAttachedLightSystem.cs", "UnitAttachedLightSystem", "SystemBase"):
         "Low: reviewed managed attached-light presentation boundary only",
+    ("Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs", "UnitSelectionObjectOutlinePresentationSystem", "SystemBase"):
+        "Low: reviewed managed selection outline presentation boundary only",
     ("Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs", "CombatGameObjectVfxPlaybackSystem", "SystemBase"):
         "Low: reviewed managed VFX playback boundary only",
     ("Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs", "UnitAttackVfxRequestSystem", "SystemBase"):

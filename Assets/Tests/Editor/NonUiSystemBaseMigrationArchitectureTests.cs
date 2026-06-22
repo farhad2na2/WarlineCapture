@@ -67,7 +67,10 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
         // vocabulary, but the systems only unwrap UnityObjectRef<GameObject> values and
         // play authored visual effects at the presentation boundary.
         "P7-0283",
-        "P7-0284"
+        "P7-0284",
+        // This row consumes selected-unit marker state whose names contain selection
+        // vocabulary, but only creates ECS object-outline render entities/materials.
+        "P7-0383"
     };
 
     public static void RunFocusedValidation()

@@ -988,18 +988,14 @@ internal sealed class MatchBootstrapSystem
         return _runtimeRootSystem;
     }
 
-    private static UnitAttackTraceSystem ResolveUnitAttackTraceSystem(World world)
+    private static UnitAttackTraceSystem ResolveUnitAttackTraceSystem()
     {
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged(typeof(UnitAttackTraceSystem)) as UnitAttackTraceSystem
-            : null;
+        return new UnitAttackTraceSystem();
     }
 
-    private static UnitImpostorRenderSystem ResolveUnitImpostorRenderSystem(World world)
+    private static UnitImpostorRenderSystem ResolveUnitImpostorRenderSystem()
     {
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged(typeof(UnitImpostorRenderSystem)) as UnitImpostorRenderSystem
-            : null;
+        return new UnitImpostorRenderSystem();
     }
 
     private static ISelectionRectangleView EnsureSelectionRectangleView(
@@ -1113,11 +1109,11 @@ internal sealed class MatchBootstrapSystem
 
     private void InitializeRenderingSystems(int ownerLayer)
     {
-        UnitAttackTraceSystem unitAttackTraces = ResolveUnitAttackTraceSystem(World.DefaultGameObjectInjectionWorld);
+        UnitAttackTraceSystem unitAttackTraces = ResolveUnitAttackTraceSystem();
         unitAttackTraces?.Init(UnitAttackTraceConfig, WorldCamera, ownerLayer);
         UnitAttackTraces = unitAttackTraces;
 
-        UnitImpostorRenderSystem unitImpostors = ResolveUnitImpostorRenderSystem(World.DefaultGameObjectInjectionWorld);
+        UnitImpostorRenderSystem unitImpostors = ResolveUnitImpostorRenderSystem();
         unitImpostors?.Init(
             WorldCamera,
             ownerLayer,

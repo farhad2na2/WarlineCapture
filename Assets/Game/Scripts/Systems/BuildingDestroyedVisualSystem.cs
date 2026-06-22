@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 
-public sealed partial class BuildingDestroyedVisualSystem : SystemBase
+public sealed class BuildingDestroyedVisualSystem
 {
     public readonly struct Context
     {
@@ -16,15 +15,6 @@ public sealed partial class BuildingDestroyedVisualSystem : SystemBase
             VisualSystem = visualSystem;
             DestroyObject = destroyObject;
         }
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     internal void BeginDestroyedVisual(Context context, RuntimeBuildingEntity building)

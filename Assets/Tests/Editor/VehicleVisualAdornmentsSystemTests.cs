@@ -296,8 +296,10 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponent<SelectedUnitTag>(character);
 
         SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        SystemHandle outlineSystem = world.CreateSystem<UnitSelectionObjectOutlinePresentationSystem>();
         SystemHandle visibilitySystem = world.CreateSystem<SelectionMarkerVisibilitySystem>();
         system.Update(world.Unmanaged);
+        outlineSystem.Update(world.Unmanaged);
 
         Entity vehicleOutline = AssertSelectionObjectOutline(em, vehicle, vehicleRenderer, "Vehicle");
         Entity characterOutline = AssertSelectionObjectOutline(em, character, characterRenderer, "Character");
@@ -335,8 +337,10 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponent<SelectedUnitTag>(aircraft);
 
         SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        SystemHandle outlineSystem = world.CreateSystem<UnitSelectionObjectOutlinePresentationSystem>();
         SystemHandle visibilitySystem = world.CreateSystem<SelectionMarkerVisibilitySystem>();
         system.Update(world.Unmanaged);
+        outlineSystem.Update(world.Unmanaged);
         visibilitySystem.Update(world.Unmanaged);
         em.CompleteAllTrackedJobs();
 
@@ -371,8 +375,10 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponent<SelectedUnitTag>(aircraft);
 
         SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        SystemHandle outlineSystem = world.CreateSystem<UnitSelectionObjectOutlinePresentationSystem>();
         SystemHandle visibilitySystem = world.CreateSystem<SelectionMarkerVisibilitySystem>();
         system.Update(world.Unmanaged);
+        outlineSystem.Update(world.Unmanaged);
         visibilitySystem.Update(world.Unmanaged);
         em.CompleteAllTrackedJobs();
 
@@ -419,7 +425,9 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponent<SelectedUnitTag>(helicopter);
 
         SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        SystemHandle outlineSystem = world.CreateSystem<UnitSelectionObjectOutlinePresentationSystem>();
         system.Update(world.Unmanaged);
+        outlineSystem.Update(world.Unmanaged);
 
         Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(helicopter).Instance;
         DynamicBuffer<SelectionObjectOutlineInstanceElement> outlines = em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker);
@@ -473,7 +481,9 @@ public sealed class VehicleVisualAdornmentsSystemTests
         });
 
         SystemHandle system = world.CreateSystem<UnitSelectionMarkerSystem>();
+        SystemHandle outlineSystem = world.CreateSystem<UnitSelectionObjectOutlinePresentationSystem>();
         system.Update(world.Unmanaged);
+        outlineSystem.Update(world.Unmanaged);
 
         Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(character));
         Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(character).Instance;

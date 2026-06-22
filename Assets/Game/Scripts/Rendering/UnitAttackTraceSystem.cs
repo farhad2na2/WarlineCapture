@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed partial class UnitAttackTraceSystem : SystemBase, IUnitAttackTraceRenderer
+public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
 {
     private const int MaxBatchSize = 1023;
     private const int MaxTraceOriginCount = 4;
@@ -43,20 +43,6 @@ public sealed partial class UnitAttackTraceSystem : SystemBase, IUnitAttackTrace
     private readonly Matrix4x4[] _matrices = new Matrix4x4[MaxBatchSize];
     private readonly Vector4[] _colors = new Vector4[MaxBatchSize];
     private readonly Vector4[] _traceParams = new Vector4[MaxBatchSize];
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
-    protected override void OnDestroy()
-    {
-        DisposeRenderResources();
-    }
 
     public void Init(UnitAttackTraceSystemConfig configAsset, Camera sceneWorldCamera, int renderLayer)
     {

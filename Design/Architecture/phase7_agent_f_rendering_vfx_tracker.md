@@ -17,15 +17,15 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `18 / 95 complete (18.9%)`.
+- Checklist progress: `22 / 99 complete (22.2%)`.
 - In progress: `0`.
-- Remaining open: `71`.
-- Current target: `Agent F managed presentation exception confirmed for P7-0245 UnitAttachedLightSystem; continue remaining Agent F visual split/direct candidates`.
-- Converted to `ISystem`: `3`.
-- Split passive/managed boundaries: `1`.
-- Managed presentation `SystemBase` exceptions: `7`.
-- Retired/folded helpers: `9`.
-- Validation status: `P7-0245 UnitAttachedLightSystem confirmed as a counted managed light presentation SystemBase exception. It consumes ECS attached-light setup/cleanup data but must tick Unity Light GameObjects and managed instance ownership. Compile, inventory regeneration, combat-death focused validation, and Phase 7 architecture guard passed. Latest logs: /private/tmp/warline-phase7-agent-f-unit-attached-light-managed-exception-combat-death.log and /private/tmp/warline-phase7-agent-a-architecture.log. Inventory now reports 51 production SystemBase/legacy declarations, 134 production ISystem declarations, and 72.4% production ISystem share; open rows dropped to 28 and managed exceptions increased to 23. Prior Agent F logs include /private/tmp/warline-phase7-agent-f-runtime-city-yard-wall-visual-helper-fold-runtime-city-generation.log, /private/tmp/warline-phase7-agent-f-runtime-city-visual-helper-fold-runtime-city-generation.log, /private/tmp/warline-phase7-agent-f-building-placement-visual-update-helper-fold-placement-runtime.log, /private/tmp/warline-phase7-agent-f-building-placement-visual-composition-helper-fold-placement-runtime.log, /private/tmp/warline-phase7-agent-f-road-visual-refresh-helper-fold-road-build-command.log, /private/tmp/warline-phase7-agent-f-camera-helper-fold-rts-camera.log, and /private/tmp/warline-phase7-agent-f-camera-helper-fold-runtime-camera-reference.log. Residual unrelated validation note: /private/tmp/warline-phase7-agent-f-building-marker-composition-placement-runtime.log failed an existing runtime-tick cadence assertion (Expected 2, But was 1).`
+- Remaining open: `67`.
+- Current target: `Agent F helper fold completed for P7-0256 BuildingDestroyedVisualSystem; continue remaining Agent F visual split/direct candidates`.
+- Converted to `ISystem`: `4`.
+- Split passive/managed boundaries: `2`.
+- Managed presentation `SystemBase` exceptions: `8`.
+- Retired/folded helpers: `12`.
+- Validation status: `P7-0256 BuildingDestroyedVisualSystem folded out of ECS into a plain direct-owned visual helper. The destroyed visual helper was a disabled SystemBase with empty OnUpdate; BuildingGameplayCompositionSourceSystem now creates it directly while preserving destroyed-prefab spawning, alive-root hiding, and cleanup behavior. Compile, inventory regeneration, BuildingDestroyedVisual focused validation, and Phase 7 architecture guard passed. Latest logs: /private/tmp/warline-phase7-agent-f-building-destroyed-visual-helper-fold.log and /private/tmp/warline-phase7-agent-a-architecture.log. Inventory now reports 49 production SystemBase/legacy declarations, 134 production ISystem declarations, and 73.2% production ISystem share; open rows dropped to 24 and managed exceptions remain 24. Prior Agent F logs include /private/tmp/warline-phase7-agent-f-unit-impostor-helper-fold-render-budget.log, /private/tmp/warline-phase7-agent-f-unit-attack-trace-helper-fold-unit-combat.log, /private/tmp/warline-phase7-agent-f-unit-selection-marker-outline-split-vehicle-visual.log, /private/tmp/warline-phase7-agent-f-runtime-city-yard-wall-visual-helper-fold-runtime-city-generation.log, /private/tmp/warline-phase7-agent-f-runtime-city-visual-helper-fold-runtime-city-generation.log, /private/tmp/warline-phase7-agent-f-building-placement-visual-update-helper-fold-placement-runtime.log, /private/tmp/warline-phase7-agent-f-building-placement-visual-composition-helper-fold-placement-runtime.log, /private/tmp/warline-phase7-agent-f-road-visual-refresh-helper-fold-road-build-command.log, /private/tmp/warline-phase7-agent-f-camera-helper-fold-rts-camera.log, and /private/tmp/warline-phase7-agent-f-camera-helper-fold-runtime-camera-reference.log. Residual unrelated validation note: /private/tmp/warline-phase7-agent-f-building-marker-composition-placement-runtime.log failed an existing runtime-tick cadence assertion (Expected 2, But was 1).`
 
 Completed slices:
 
@@ -40,6 +40,10 @@ Completed slices:
 - `2026-06-22` - `P7-0241` `RuntimeCityVisualSystem`: folded disabled runtime city visual `SystemBase` wrapper into a plain direct-owned helper. Runtime city visual root creation, visual-only prefab spawning, surface integration, and disposal behavior stayed unchanged.
 - `2026-06-22` - `P7-0242` `RuntimeCityYardWallVisualSystem`: folded disabled runtime city yard-wall visual `SystemBase` wrapper into a plain direct-owned helper. Yard boundary visual state, wall/gate/pillar spawning, and runtime city visual helper calls stayed unchanged.
 - `2026-06-22` - `P7-0245` `UnitAttachedLightSystem`: confirmed counted managed light presentation `SystemBase` exception. ECS setup/cleanup data remains value typed, while Unity `Light` GameObject lifecycle and transform updates stay in the managed presentation boundary.
+- `2026-06-22` - `P7-0252` `UnitSelectionMarkerSystem` and `P7-0383` `UnitSelectionObjectOutlinePresentationSystem`: split object-outline `Material`/`Mesh` presentation setup out of the marker `ISystem`. Marker instance ownership, selection/health/passenger decisions, and marker scaling remain in the `ISystem`; selection object-outline render entity/material setup now runs in a counted managed presentation `SystemBase` exception.
+- `2026-06-22` - `P7-0253` `UnitAttackTraceSystem`: folded disabled attack-trace `SystemBase` wrapper into a plain direct-owned renderer helper. `MatchBootstrapSystem` now instantiates the helper directly; trace config, ECS trace reads, `Graphics.DrawMeshInstanced` batching, and disposal behavior stayed unchanged.
+- `2026-06-22` - `P7-0254` `UnitImpostorRenderSystem`: folded disabled impostor-render `SystemBase` wrapper into a plain direct-owned renderer helper. `MatchBootstrapSystem` now instantiates the helper directly; registry prefab lookup, atlas/material setup, query-driven impostor candidate selection, `Graphics.RenderMeshInstanced` batching, and disposal behavior stayed unchanged.
+- `2026-06-22` - `P7-0256` `BuildingDestroyedVisualSystem`: folded disabled destroyed-building visual `SystemBase` wrapper into a plain direct-owned helper. `BuildingGameplayCompositionSourceSystem` now instantiates the helper directly; destroyed-prefab spawning, alive visual root hiding, existing destroyed instance reuse, and cleanup behavior stayed unchanged.
 
 Owned files:
 

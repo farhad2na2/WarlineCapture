@@ -8,7 +8,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public sealed partial class UnitImpostorRenderSystem : SystemBase, IUnitImpostorRenderer
+public sealed class UnitImpostorRenderSystem : IUnitImpostorRenderer
 {
     private static readonly bool EnableImpostorAtlasDiagnostics = false;
     private const int MaxBatchSize = 1023;
@@ -76,20 +76,6 @@ public sealed partial class UnitImpostorRenderSystem : SystemBase, IUnitImpostor
     public int LastDrawnCount { get; private set; }
     public int LastCulledCandidateCount { get; private set; }
     public int LastSourceKeyFallbackCandidateCount { get; private set; }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
-    protected override void OnDestroy()
-    {
-        Dispose();
-    }
 
     public void Init(
         Camera camera,

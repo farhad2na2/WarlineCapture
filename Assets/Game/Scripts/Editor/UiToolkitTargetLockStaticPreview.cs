@@ -5,15 +5,23 @@ using UnityEngine.UIElements;
 
 public static class UiToolkitTargetLockStaticPreview
 {
+    private const string ShellUxmlPath = "Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uxml";
+    private const string ShellUssPath = "Assets/Game/UI Toolkit/UIShellAppCanvas/UIShellAppCanvas.uss";
+    private const string LoadingUxmlPath = "Assets/Game/UI Toolkit/SCN01_LoadingContent/SCN01_LoadingContent.uxml";
+    private const string LoadingUssPath = "Assets/Game/UI Toolkit/SCN01_LoadingContent/SCN01_LoadingContent.uss";
     private const string MainMenuUxmlPath = "Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uxml";
     private const string CommanderProfileUxmlPath = "Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uxml";
     private const string CommanderProfileUssPath = "Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uss";
     private const string MatchHudUxmlPath = "Assets/Game/UI Toolkit/SCN08_MatchHudContent/SCN08_MatchHudContent.uxml";
     private const string MatchHudUssPath = "Assets/Game/UI Toolkit/SCN08_MatchHudContent/SCN08_MatchHudContent.uss";
+    private const string BuildPlacementConfirmationBarUxmlPath = "Assets/Game/UI Toolkit/SCN08_BuildPlacementConfirmationBar/SCN08_BuildPlacementConfirmationBar.uxml";
+    private const string BuildPlacementConfirmationBarUssPath = "Assets/Game/UI Toolkit/SCN08_BuildPlacementConfirmationBar/SCN08_BuildPlacementConfirmationBar.uss";
     private const string BuildDrawerUxmlPath = "Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_BuildDrawerPopup.uxml";
     private const string BuildDrawerUssPath = "Assets/Game/UI Toolkit/SCN09_BuildDrawerPopup/SCN09_BuildDrawerPopup.uss";
     private const string ArmoryUxmlPath = "Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryContent.uxml";
     private const string ArmoryUssPath = "Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryContent.uss";
+    private const string MissionResultUxmlPath = "Assets/Game/UI Toolkit/POP05_MissionResultPopup/POP05_MissionResultPopup.uxml";
+    private const string MissionResultUssPath = "Assets/Game/UI Toolkit/POP05_MissionResultPopup/POP05_MissionResultPopup.uss";
     private const string ArmoryArtFolderPath = "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo";
     private const string CommanderProfileArtFolderPath = "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01";
     private const string MainMenuArtFolderPath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites";
@@ -21,6 +29,20 @@ public static class UiToolkitTargetLockStaticPreview
     private const string BuildDrawerArtFolderPath = "Assets/Game/Art/UI/Generated/BuildDrawer/LayeredOneGo";
     private const string SplashArtFolderPath = "Assets/Game/Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites";
     private const string UiBuilderMenuPath = "Window/UI Toolkit/UI Builder";
+
+    [MenuItem("Game/UI Toolkit/Target Lock/Open Shell Static Preview")]
+    public static void OpenShellStaticPreview()
+    {
+        RefreshShellPreviewAssets();
+        OpenStaticPreview(ShellUxmlPath, "Shell");
+    }
+
+    [MenuItem("Game/UI Toolkit/Target Lock/Open SCN-01 Loading Static Preview")]
+    public static void OpenScn01LoadingStaticPreview()
+    {
+        RefreshLoadingPreviewAssets();
+        OpenStaticPreview(LoadingUxmlPath, "SCN-01 Loading");
+    }
 
     [MenuItem("Game/UI Toolkit/Target Lock/Open SCN-02 Main Menu Static Preview")]
     public static void OpenScn02MainMenuStaticPreview()
@@ -42,6 +64,13 @@ public static class UiToolkitTargetLockStaticPreview
         OpenStaticPreview(MatchHudUxmlPath, "SCN-08 Match HUD");
     }
 
+    [MenuItem("Game/UI Toolkit/Target Lock/Open SCN-08 Build Placement Bar Static Preview")]
+    public static void OpenScn08BuildPlacementConfirmationBarStaticPreview()
+    {
+        RefreshBuildPlacementConfirmationBarPreviewAssets();
+        OpenStaticPreview(BuildPlacementConfirmationBarUxmlPath, "SCN-08 Build Placement Bar");
+    }
+
     [MenuItem("Game/UI Toolkit/Target Lock/Open SCN-09 Build Drawer Static Preview")]
     public static void OpenScn09BuildDrawerStaticPreview()
     {
@@ -56,6 +85,13 @@ public static class UiToolkitTargetLockStaticPreview
         OpenStaticPreview(ArmoryUxmlPath, "SCN-19 Armory");
     }
 
+    [MenuItem("Game/UI Toolkit/Target Lock/Open POP-05 Mission Result Static Preview")]
+    public static void OpenPop05MissionResultStaticPreview()
+    {
+        RefreshMissionResultPreviewAssets();
+        OpenStaticPreview(MissionResultUxmlPath, "POP-05 Mission Result");
+    }
+
     private static void RefreshArmoryPreviewAssets()
     {
         AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
@@ -65,6 +101,21 @@ public static class UiToolkitTargetLockStaticPreview
         AssetDatabase.ImportAsset(SplashArtFolderPath, ImportAssetOptions.ImportRecursive | ImportAssetOptions.ForceUpdate);
         AssetDatabase.ImportAsset(ArmoryUssPath, ImportAssetOptions.ForceUpdate);
         AssetDatabase.ImportAsset(ArmoryUxmlPath, ImportAssetOptions.ForceUpdate);
+    }
+
+    private static void RefreshShellPreviewAssets()
+    {
+        AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(ShellUssPath, ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(ShellUxmlPath, ImportAssetOptions.ForceUpdate);
+    }
+
+    private static void RefreshLoadingPreviewAssets()
+    {
+        AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(SplashArtFolderPath, ImportAssetOptions.ImportRecursive | ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(LoadingUssPath, ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(LoadingUxmlPath, ImportAssetOptions.ForceUpdate);
     }
 
     private static void RefreshCommanderProfilePreviewAssets()
@@ -86,6 +137,15 @@ public static class UiToolkitTargetLockStaticPreview
         AssetDatabase.ImportAsset(MatchHudUxmlPath, ImportAssetOptions.ForceUpdate);
     }
 
+    private static void RefreshBuildPlacementConfirmationBarPreviewAssets()
+    {
+        AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(BuildDrawerArtFolderPath, ImportAssetOptions.ImportRecursive | ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(MatchHudArtFolderPath, ImportAssetOptions.ImportRecursive | ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(BuildPlacementConfirmationBarUssPath, ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(BuildPlacementConfirmationBarUxmlPath, ImportAssetOptions.ForceUpdate);
+    }
+
     private static void RefreshBuildDrawerPreviewAssets()
     {
         AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
@@ -93,6 +153,15 @@ public static class UiToolkitTargetLockStaticPreview
         AssetDatabase.ImportAsset(MatchHudArtFolderPath, ImportAssetOptions.ImportRecursive | ImportAssetOptions.ForceUpdate);
         AssetDatabase.ImportAsset(BuildDrawerUssPath, ImportAssetOptions.ForceUpdate);
         AssetDatabase.ImportAsset(BuildDrawerUxmlPath, ImportAssetOptions.ForceUpdate);
+    }
+
+    private static void RefreshMissionResultPreviewAssets()
+    {
+        AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(ArmoryArtFolderPath, ImportAssetOptions.ImportRecursive | ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(MatchHudArtFolderPath, ImportAssetOptions.ImportRecursive | ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(MissionResultUssPath, ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(MissionResultUxmlPath, ImportAssetOptions.ForceUpdate);
     }
 
     private static void OpenStaticPreview(string uxmlPath, string label)

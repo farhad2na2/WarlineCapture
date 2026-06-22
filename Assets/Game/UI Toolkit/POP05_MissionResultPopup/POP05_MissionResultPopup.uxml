@@ -6,83 +6,177 @@
         <ui:VisualElement name="PopupFrame" class="popup-frame shell-motion shell-motion-popup-hidden">
             <ui:VisualElement name="Chrome" class="popup-chrome" />
 
-            <ui:VisualElement name="HeaderPanel" class="header-panel">
-                <ui:VisualElement name="ResultBadge" class="result-badge victory-badge" />
-                <ui:Label name="Title" class="result-title" text="VICTORY" />
-                <ui:Label name="Subtitle" class="result-subtitle" text="Sector secured. Command net restored." />
+            <ui:VisualElement name="ModalHeader" class="modal-header">
+                <ui:VisualElement name="ModalHeaderBadge" class="modal-header-badge" />
+                <ui:Label name="ModalTitle" class="modal-title" text="MISSION RESULT" />
+                <ui:Button name="CloseVisualButton" class="close-visual-button" text="">
+                    <ui:VisualElement name="Frame" class="close-frame" />
+                    <ui:VisualElement name="Icon" class="close-icon" />
+                </ui:Button>
             </ui:VisualElement>
 
-            <ui:VisualElement name="SummaryPanel" class="summary-panel">
-                <ui:Label name="SummaryTitle" class="panel-title" text="MISSION SUMMARY" />
-                <ui:Label name="SummaryBody" class="summary-body" text="Primary objectives completed with acceptable losses. Civilian risk stabilized and remaining hostile cells are retreating." />
-                <ui:VisualElement name="ObjectiveRows" class="objective-rows">
-                    <ui:VisualElement name="PrimaryObjectiveRow" class="objective-row completed">
-                        <ui:VisualElement name="Icon" class="objective-icon check-icon" />
-                        <ui:Label name="Label" class="objective-label" text="Neutralize hostile patrol" />
-                        <ui:Label name="Value" class="objective-value" text="COMPLETE" />
-                    </ui:VisualElement>
-                    <ui:VisualElement name="CivilianObjectiveRow" class="objective-row completed">
-                        <ui:VisualElement name="Icon" class="objective-icon check-icon" />
-                        <ui:Label name="Label" class="objective-label" text="Protect civilians" />
-                        <ui:Label name="Value" class="objective-value" text="COMPLETE" />
-                    </ui:VisualElement>
-                    <ui:VisualElement name="LossObjectiveRow" class="objective-row completed">
-                        <ui:VisualElement name="Icon" class="objective-icon star-icon" />
-                        <ui:Label name="Label" class="objective-label" text="Keep losses low" />
-                        <ui:Label name="Value" class="objective-value" text="BONUS" />
-                    </ui:VisualElement>
+            <ui:VisualElement name="ResultChoiceBand" class="result-choice-band">
+                <ui:VisualElement name="HeaderPanel" class="header-panel result-choice-panel result-choice-selected">
+                    <ui:VisualElement name="SelectedPointer" class="selected-pointer" />
+                    <ui:VisualElement name="ResultBadge" class="result-badge victory-badge" />
+                    <ui:Label name="Title" class="result-title" text="VICTORY" />
+                    <ui:Label name="Subtitle" class="result-subtitle" text="ALL OBJECTIVES COMPLETED" />
+                </ui:VisualElement>
+                <ui:VisualElement name="DefeatPanel" class="result-choice-panel result-choice-inactive">
+                    <ui:VisualElement name="DefeatBadge" class="result-badge defeat-badge" />
+                    <ui:Label name="DefeatTitle" class="result-title defeat-title" text="DEFEAT" />
+                    <ui:Label name="DefeatSubtitle" class="result-subtitle defeat-subtitle" text="MISSION FAILED" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="MissionRatingPanel" class="mission-rating-panel">
+                <ui:VisualElement name="LeftRule" class="rating-rule" />
+                <ui:Label name="RatingTitle" class="rating-title" text="MISSION RATING" />
+                <ui:VisualElement name="RightRule" class="rating-rule" />
+                <ui:VisualElement name="StarsRow" class="stars-row">
+                    <ui:VisualElement name="StarOne" class="rating-star rating-star-filled" />
+                    <ui:VisualElement name="StarTwo" class="rating-star rating-star-filled" />
+                    <ui:VisualElement name="StarThree" class="rating-star rating-star-empty" />
                 </ui:VisualElement>
             </ui:VisualElement>
 
             <ui:VisualElement name="StatsPanel" class="stats-panel">
-                <ui:Label name="StatsTitle" class="panel-title" text="FIELD REPORT" />
                 <ui:VisualElement name="StatsGrid" class="stats-grid">
                     <ui:VisualElement name="TimeStat" class="stat-card">
-                        <ui:Label name="Label" class="stat-label" text="TIME" />
-                        <ui:Label name="Value" class="stat-value" text="07:42" />
+                        <ui:VisualElement name="Icon" class="stat-icon time-icon" />
+                        <ui:Label name="Label" class="stat-label" text="MISSION TIME" />
+                        <ui:Label name="Value" class="stat-value" text="12:34" />
                     </ui:VisualElement>
                     <ui:VisualElement name="UnitsLostStat" class="stat-card">
-                        <ui:Label name="Label" class="stat-label" text="UNITS LOST" />
-                        <ui:Label name="Value" class="stat-value" text="0" />
+                        <ui:VisualElement name="Icon" class="stat-icon units-icon" />
+                        <ui:Label name="Label" class="stat-label" text="UNITS DEPLOYED" />
+                        <ui:Label name="Value" class="stat-value" text="18/20" />
                     </ui:VisualElement>
-                    <ui:VisualElement name="CiviliansStat" class="stat-card">
-                        <ui:Label name="Label" class="stat-label" text="CIVILIAN RISK" />
-                        <ui:Label name="Value" class="stat-value" text="LOW" />
+                    <ui:VisualElement name="EnemiesStat" class="stat-card">
+                        <ui:VisualElement name="Icon" class="stat-icon enemies-icon" />
+                        <ui:Label name="Label" class="stat-label" text="ENEMIES ELIMINATED" />
+                        <ui:Label name="Value" class="stat-value" text="142" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="BuildingsStat" class="stat-card">
+                        <ui:VisualElement name="Icon" class="stat-icon buildings-icon" />
+                        <ui:Label name="Label" class="stat-label" text="BUILDINGS CAPTURED" />
+                        <ui:Label name="Value" class="stat-value" text="5/5" />
                     </ui:VisualElement>
                     <ui:VisualElement name="ScoreStat" class="stat-card highlighted">
-                        <ui:Label name="Label" class="stat-label" text="SCORE" />
-                        <ui:Label name="Value" class="stat-value" text="18,450" />
+                        <ui:VisualElement name="Icon" class="stat-icon accuracy-icon" />
+                        <ui:Label name="Label" class="stat-label" text="ACCURACY" />
+                        <ui:Label name="Value" class="stat-value" text="87%" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
 
-            <ui:VisualElement name="RewardsPanel" class="rewards-panel">
-                <ui:Label name="RewardsTitle" class="panel-title" text="REWARDS" />
-                <ui:VisualElement name="RewardCredits" class="reward-row">
-                    <ui:VisualElement name="Icon" class="reward-icon credits-icon" />
-                    <ui:Label name="Label" class="reward-label" text="Credits" />
-                    <ui:Label name="Value" class="reward-value" text="+4,200" />
+            <ui:VisualElement name="LowerPanels" class="lower-panels">
+                <ui:VisualElement name="SummaryPanel" class="summary-panel result-detail-panel">
+                    <ui:Label name="SummaryTitle" class="panel-title" text="OBJECTIVES" />
+                    <ui:Label name="SummaryBody" class="summary-body" text="Primary objectives completed with acceptable losses. Civilian risk stabilized and remaining hostile cells are retreating." />
+                    <ui:VisualElement name="ObjectiveRows" class="objective-rows">
+                        <ui:VisualElement name="PrimaryObjectiveRow" class="objective-row completed">
+                            <ui:VisualElement name="Icon" class="objective-icon focus-icon" />
+                            <ui:Label name="Label" class="objective-label" text="Neutralize hostile patrol" />
+                            <ui:VisualElement name="StateIcon" class="objective-state check-icon" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="CivilianObjectiveRow" class="objective-row completed">
+                            <ui:VisualElement name="Icon" class="objective-icon civilians-icon" />
+                            <ui:Label name="Label" class="objective-label" text="Protect civilians" />
+                            <ui:VisualElement name="StateIcon" class="objective-state check-icon" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="CommandPostObjectiveRow" class="objective-row completed">
+                            <ui:VisualElement name="Icon" class="objective-icon flag-icon" />
+                            <ui:Label name="Label" class="objective-label" text="Capture command post" />
+                            <ui:VisualElement name="StateIcon" class="objective-state check-icon" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="SuppliesObjectiveRow" class="objective-row completed">
+                            <ui:VisualElement name="Icon" class="objective-icon supply-icon" />
+                            <ui:Label name="Label" class="objective-label" text="Destroy enemy supplies" />
+                            <ui:VisualElement name="StateIcon" class="objective-state check-icon" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="ExtractionObjectiveRow" class="objective-row completed">
+                            <ui:VisualElement name="Icon" class="objective-icon extract-icon" />
+                            <ui:Label name="Label" class="objective-label" text="Extract surviving units" />
+                            <ui:VisualElement name="StateIcon" class="objective-state check-icon" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement name="RewardSupply" class="reward-row">
-                    <ui:VisualElement name="Icon" class="reward-icon supply-icon" />
-                    <ui:Label name="Label" class="reward-label" text="Supply" />
-                    <ui:Label name="Value" class="reward-value" text="+80" />
+
+                <ui:VisualElement name="RewardsPanel" class="rewards-panel result-detail-panel">
+                    <ui:Label name="RewardsTitle" class="panel-title" text="REWARDS" />
+                    <ui:VisualElement name="RewardCredits" class="reward-row">
+                        <ui:VisualElement name="Icon" class="reward-icon credits-icon" />
+                        <ui:Label name="Label" class="reward-label" text="CREDITS" />
+                        <ui:Label name="Value" class="reward-value" text="18,750" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="RewardFuel" class="reward-row">
+                        <ui:VisualElement name="Icon" class="reward-icon fuel-icon" />
+                        <ui:Label name="Label" class="reward-label" text="FUEL" />
+                        <ui:Label name="Value" class="reward-value" text="600" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="RewardSupply" class="reward-row">
+                        <ui:VisualElement name="Icon" class="reward-icon supply-icon" />
+                        <ui:Label name="Label" class="reward-label" text="SUPPLY" />
+                        <ui:Label name="Value" class="reward-value" text="12" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="RewardIntel" class="reward-row">
+                        <ui:VisualElement name="Icon" class="reward-icon intel-icon" />
+                        <ui:Label name="Label" class="reward-label" text="XP" />
+                        <ui:Label name="Value" class="reward-value" text="2,450" />
+                    </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement name="RewardIntel" class="reward-row">
-                    <ui:VisualElement name="Icon" class="reward-icon intel-icon" />
-                    <ui:Label name="Label" class="reward-label" text="Intel" />
-                    <ui:Label name="Value" class="reward-value" text="+2" />
+
+                <ui:VisualElement name="CasualtiesPanel" class="casualties-panel result-detail-panel">
+                    <ui:Label name="CasualtiesTitle" class="panel-title" text="CASUALTIES" />
+                    <ui:VisualElement name="CasualtyFriendly" class="casualty-row friendly-row">
+                        <ui:VisualElement name="Icon" class="casualty-icon friendly-icon" />
+                        <ui:Label name="Label" class="casualty-label friendly-label" text="FRIENDLY" />
+                        <ui:Label name="Value" class="casualty-value" text="3" />
+                        <ui:VisualElement name="Pips" class="casualty-pips friendly-pips">
+                            <ui:VisualElement class="casualty-pip casualty-pip-on" />
+                            <ui:VisualElement class="casualty-pip casualty-pip-on" />
+                            <ui:VisualElement class="casualty-pip casualty-pip-on" />
+                            <ui:VisualElement class="casualty-pip" />
+                            <ui:VisualElement class="casualty-pip" />
+                            <ui:VisualElement class="casualty-pip" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="CasualtyEnemy" class="casualty-row enemy-row">
+                        <ui:VisualElement name="Icon" class="casualty-icon enemy-icon" />
+                        <ui:Label name="Label" class="casualty-label enemy-label" text="ENEMY" />
+                        <ui:Label name="Value" class="casualty-value" text="56" />
+                        <ui:VisualElement name="Pips" class="casualty-pips enemy-pips">
+                            <ui:VisualElement class="casualty-pip casualty-pip-on" />
+                            <ui:VisualElement class="casualty-pip casualty-pip-on" />
+                            <ui:VisualElement class="casualty-pip casualty-pip-on" />
+                            <ui:VisualElement class="casualty-pip casualty-pip-on" />
+                            <ui:VisualElement class="casualty-pip casualty-pip-on" />
+                            <ui:VisualElement class="casualty-pip" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement name="ScorePanel" class="score-panel result-detail-panel">
+                    <ui:Label name="ScoreTitle" class="panel-title" text="SCORE" />
+                    <ui:VisualElement name="ScoreBadge" class="score-badge" />
+                    <ui:Label name="ScoreValue" class="score-value" text="1,845" />
+                    <ui:Label name="ScoreRank" class="score-rank" text="OUTSTANDING" />
                 </ui:VisualElement>
             </ui:VisualElement>
 
             <ui:VisualElement name="ActionsPanel" class="actions-panel">
-                <ui:Button name="ContinueButton" class="result-action primary-action" text="">
+                <ui:Button name="ContinueButton" class="result-action primary-action selected-action" text="">
                     <ui:VisualElement name="Frame" class="action-frame primary-frame" />
                     <ui:Label name="Label" class="action-label" text="CONTINUE" />
                 </ui:Button>
                 <ui:Button name="ReplayButton" class="result-action secondary-action" text="">
                     <ui:VisualElement name="Frame" class="action-frame secondary-frame" />
                     <ui:Label name="Label" class="action-label" text="REPLAY" />
+                </ui:Button>
+                <ui:Button name="MainMenuButton" class="result-action secondary-action" text="">
+                    <ui:VisualElement name="Frame" class="action-frame secondary-frame" />
+                    <ui:Label name="Label" class="action-label" text="MAIN MENU" />
                 </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>

@@ -9,7 +9,7 @@
             <ui:VisualElement name="DrawerFrame" class="drawer-frame">
                 <ui:VisualElement name="OuterFrame" class="outer-frame">
                     <ui:VisualElement name="BuildIcon" class="build-icon" />
-                    <ui:Label name="Title" class="drawer-title" text="BUILD" />
+                    <ui:Label name="Title" class="drawer-title" text="BUILD DRAWER" />
                     <ui:Label name="Subtitle" class="drawer-subtitle" text="Production and field placement" />
                 </ui:VisualElement>
 
@@ -39,13 +39,160 @@
 
                     <ui:ScrollView name="CatalogScrollView" class="catalog-scroll-view" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden">
                         <ui:VisualElement name="Content" class="catalog-content">
-                            <ui:Instance name="ItemView" template="BuildCatalogItemView" />
-                            <ui:Instance name="ItemView_1" template="BuildCatalogItemView" />
-                            <ui:Instance name="ItemView_2" template="BuildCatalogItemView" />
-                            <ui:Instance name="ItemView_3" template="BuildCatalogItemView" />
-                            <ui:Instance name="ItemView_4" template="BuildCatalogItemView" />
-                            <ui:Instance name="ItemView_5" template="BuildCatalogItemView" />
-                            <ui:Instance name="ItemView_6" template="BuildCatalogItemView" />
+                            <ui:Button name="ItemView" class="catalog-item-view selected" text="">
+                                <ui:VisualElement name="Frame" class="catalog-item-frame" />
+                                <ui:VisualElement name="Thumb" class="catalog-thumb thumb-watchtower" />
+                                <ui:VisualElement name="TopOverlay" class="catalog-top-overlay" />
+                                <ui:VisualElement name="BottomOverlay" class="catalog-bottom-overlay" />
+                                <ui:Label name="Title" class="catalog-title" text="GUARD TOWER" />
+                                <ui:Label name="Role" class="catalog-role" text="Defensive structure" />
+                                <ui:VisualElement name="CostPanel" class="catalog-cost-panel">
+                                    <ui:VisualElement name="CreditsTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon credits-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="350" />
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="SuppliesTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon supplies-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="80" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement name="TimeTinyCost" class="time-tiny-cost">
+                                    <ui:VisualElement name="Icon" class="tiny-cost-icon time-icon" />
+                                    <ui:Label name="Value" class="tiny-cost-value" text="00:30" />
+                                </ui:VisualElement>
+                            </ui:Button>
+                            <ui:Button name="ItemView_1" class="catalog-item-view" text="">
+                                <ui:VisualElement name="Frame" class="catalog-item-frame" />
+                                <ui:VisualElement name="Thumb" class="catalog-thumb thumb-barracks" />
+                                <ui:VisualElement name="TopOverlay" class="catalog-top-overlay" />
+                                <ui:VisualElement name="BottomOverlay" class="catalog-bottom-overlay" />
+                                <ui:Label name="Title" class="catalog-title" text="BARRACKS" />
+                                <ui:Label name="Role" class="catalog-role" text="Infantry production" />
+                                <ui:VisualElement name="CostPanel" class="catalog-cost-panel">
+                                    <ui:VisualElement name="CreditsTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon credits-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="450" />
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="SuppliesTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon supplies-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="120" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement name="TimeTinyCost" class="time-tiny-cost">
+                                    <ui:VisualElement name="Icon" class="tiny-cost-icon time-icon" />
+                                    <ui:Label name="Value" class="tiny-cost-value" text="00:45" />
+                                </ui:VisualElement>
+                            </ui:Button>
+                            <ui:Button name="ItemView_2" class="catalog-item-view" text="">
+                                <ui:VisualElement name="Frame" class="catalog-item-frame" />
+                                <ui:VisualElement name="Thumb" class="catalog-thumb thumb-vehicle-depot" />
+                                <ui:VisualElement name="TopOverlay" class="catalog-top-overlay" />
+                                <ui:VisualElement name="BottomOverlay" class="catalog-bottom-overlay" />
+                                <ui:Label name="Title" class="catalog-title" text="VEHICLE DEPOT" />
+                                <ui:Label name="Role" class="catalog-role" text="Armor production" />
+                                <ui:VisualElement name="CostPanel" class="catalog-cost-panel">
+                                    <ui:VisualElement name="CreditsTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon credits-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="700" />
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="SuppliesTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon supplies-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="180" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement name="TimeTinyCost" class="time-tiny-cost">
+                                    <ui:VisualElement name="Icon" class="tiny-cost-icon time-icon" />
+                                    <ui:Label name="Value" class="tiny-cost-value" text="01:10" />
+                                </ui:VisualElement>
+                            </ui:Button>
+                            <ui:Button name="ItemView_3" class="catalog-item-view" text="">
+                                <ui:VisualElement name="Frame" class="catalog-item-frame" />
+                                <ui:VisualElement name="Thumb" class="catalog-thumb thumb-supply-depot" />
+                                <ui:VisualElement name="TopOverlay" class="catalog-top-overlay" />
+                                <ui:VisualElement name="BottomOverlay" class="catalog-bottom-overlay" />
+                                <ui:Label name="Title" class="catalog-title" text="SUPPLY DEPOT" />
+                                <ui:Label name="Role" class="catalog-role" text="Logistics storage" />
+                                <ui:VisualElement name="CostPanel" class="catalog-cost-panel">
+                                    <ui:VisualElement name="CreditsTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon credits-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="500" />
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="SuppliesTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon supplies-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="150" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement name="TimeTinyCost" class="time-tiny-cost">
+                                    <ui:VisualElement name="Icon" class="tiny-cost-icon time-icon" />
+                                    <ui:Label name="Value" class="tiny-cost-value" text="00:55" />
+                                </ui:VisualElement>
+                            </ui:Button>
+                            <ui:Button name="ItemView_4" class="catalog-item-view" text="">
+                                <ui:VisualElement name="Frame" class="catalog-item-frame" />
+                                <ui:VisualElement name="Thumb" class="catalog-thumb thumb-oil-pump" />
+                                <ui:VisualElement name="TopOverlay" class="catalog-top-overlay" />
+                                <ui:VisualElement name="BottomOverlay" class="catalog-bottom-overlay" />
+                                <ui:Label name="Title" class="catalog-title" text="OIL PUMP" />
+                                <ui:Label name="Role" class="catalog-role" text="Fuel extraction" />
+                                <ui:VisualElement name="CostPanel" class="catalog-cost-panel">
+                                    <ui:VisualElement name="CreditsTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon credits-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="600" />
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="SuppliesTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon supplies-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="200" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement name="TimeTinyCost" class="time-tiny-cost">
+                                    <ui:VisualElement name="Icon" class="tiny-cost-icon time-icon" />
+                                    <ui:Label name="Value" class="tiny-cost-value" text="01:00" />
+                                </ui:VisualElement>
+                            </ui:Button>
+                            <ui:Button name="ItemView_5" class="catalog-item-view" text="">
+                                <ui:VisualElement name="Frame" class="catalog-item-frame" />
+                                <ui:VisualElement name="Thumb" class="catalog-thumb thumb-fuel-bladder" />
+                                <ui:VisualElement name="TopOverlay" class="catalog-top-overlay" />
+                                <ui:VisualElement name="BottomOverlay" class="catalog-bottom-overlay" />
+                                <ui:Label name="Title" class="catalog-title" text="FUEL BLADDER" />
+                                <ui:Label name="Role" class="catalog-role" text="Fuel reserve" />
+                                <ui:VisualElement name="CostPanel" class="catalog-cost-panel">
+                                    <ui:VisualElement name="CreditsTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon credits-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="400" />
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="SuppliesTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon supplies-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="100" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement name="TimeTinyCost" class="time-tiny-cost">
+                                    <ui:VisualElement name="Icon" class="tiny-cost-icon time-icon" />
+                                    <ui:Label name="Value" class="tiny-cost-value" text="00:40" />
+                                </ui:VisualElement>
+                            </ui:Button>
+                            <ui:Button name="ItemView_6" class="catalog-item-view" text="">
+                                <ui:VisualElement name="Frame" class="catalog-item-frame" />
+                                <ui:VisualElement name="Thumb" class="catalog-thumb thumb-radar" />
+                                <ui:VisualElement name="TopOverlay" class="catalog-top-overlay" />
+                                <ui:VisualElement name="BottomOverlay" class="catalog-bottom-overlay" />
+                                <ui:Label name="Title" class="catalog-title" text="RADAR ARRAY" />
+                                <ui:Label name="Role" class="catalog-role" text="Detection grid" />
+                                <ui:VisualElement name="CostPanel" class="catalog-cost-panel">
+                                    <ui:VisualElement name="CreditsTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon credits-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="900" />
+                                    </ui:VisualElement>
+                                    <ui:VisualElement name="SuppliesTinyCost" class="tiny-cost">
+                                        <ui:VisualElement name="Icon" class="tiny-cost-icon supplies-icon" />
+                                        <ui:Label name="Value" class="tiny-cost-value" text="250" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement name="TimeTinyCost" class="time-tiny-cost">
+                                    <ui:VisualElement name="Icon" class="tiny-cost-icon time-icon" />
+                                    <ui:Label name="Value" class="tiny-cost-value" text="01:30" />
+                                </ui:VisualElement>
+                            </ui:Button>
                         </ui:VisualElement>
                     </ui:ScrollView>
 

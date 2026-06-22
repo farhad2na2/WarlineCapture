@@ -116,6 +116,14 @@ These rules override pixel-level target matching for future screens.
 - Repeated controls must use the same base template. A selected example in the mockup is a state example, not permission to make the first item a one-off layout.
 - Before leaving a repeated card/button/row family, compare left/right padding, outer margins, repeated gap values, and state coverage for every item in the family.
 
+### Button Interaction Standard
+
+- Every remaining button-like control family must have explicit `selected`/active, `:hover`, and `:focus` visual states unless the control is purely passive or hidden.
+- Button states should use premium chrome-level treatment: selected/hover/focus frame replacement, state sprite, or state-specific frame expansion, not only text color or a flat overlay.
+- Add a restrained interaction impact for clickable controls: short `translate`/`scale` transitions that make selected/hover/focus controls sit visibly forward without causing overlap or layout shift.
+- Tune the amount per layout density. Dense repeated cards should use smaller scale/lift than isolated square command buttons.
+- Apply state styling to the whole button family, not just the mockup example item. A highlighted mockup item, such as Move or squad 1, defines the reusable state for all peers.
+
 ### Target Match Priority
 
 When a mockup conflicts with these shared chrome rules, prefer the shared UI system rule:
@@ -188,6 +196,36 @@ SCN-08 correction:
 - The Match HUD was incorrectly advanced from a broad crop while the five squad cards still had poor hierarchy and health/slider overlap.
 - The corrected pass required a focused squad-tray crop, larger repeated cards, separated health bar/value text, segmented status pips, and a reusable selected/hover state instead of a one-off first-card treatment.
 - Future HUD and catalog screens must not move forward until their repeated-card crop has the same level of evidence.
+
+## Panel-By-Panel Cleanliness Gate
+
+Do not accept a dense screen from one broad full-screen screenshot. Every visible panel region needs its own focused alignment pass before the screen can be `Satisfied for current pass` or `Target matched`.
+
+For each screen, inspect and crop each major panel group separately:
+
+- header/resources/current-order area;
+- left panel stack;
+- middle content area;
+- right panel stack or quick-rail;
+- footer/tray/command/minimap areas;
+- every popup, drawer, modal, and overlay panel.
+
+Reject the screen and keep iterating when any panel group has:
+
+- panel edges that do not align to neighboring chrome or the mockup grid;
+- inconsistent left/right/top/bottom padding inside related panels;
+- text, icons, sliders, progress bars, or values touching chrome borders;
+- baked multi-section backgrounds where live panel-by-panel composition is required;
+- mismatched frame thickness, bad 9-slice corners, or inconsistent Pixel Per Unit;
+- unclear selected/hover/focus/active button states;
+- visual clutter that makes the panel read as messy even when all elements are technically visible.
+
+SCN-08 Match HUD rule:
+
+- Do not advance SCN-08 from the bottom squad/command fixes alone.
+- Recheck header/resources/current order, left objectives/selected-unit stack, right threat/quick rail, minimap, feedback panel, footer command rail, and squad tray as separate focused crops.
+- When user feedback identifies one bad panel group on a dense HUD, audit the neighboring and symmetrical panel groups in the same pass. Do not only repair the specific panel named by the user while leaving other obvious alignment, padding, state, or crop mismatches visible.
+- Keep SCN-08 `In progress` until those panel groups are aligned, clean, and comparable to the reference, or until a user-approved exception is recorded.
 
 ## Typography Rule
 

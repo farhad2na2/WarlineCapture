@@ -3,7 +3,6 @@
     height: 100%;
     position: relative;
     overflow: hidden;
-    pointer-events: none;
     -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf");
     color: rgb(232, 226, 198);
     background-color: rgba(0, 0, 0, 0);
@@ -28,11 +27,10 @@
 
 .build-placement-confirmation-bar-root {
     position: absolute;
-    left: 25.5%;
-    right: 27.5%;
-    bottom: 20.5%;
-    height: 18%;
-    pointer-events: auto;
+    left: 3.6%;
+    right: 3.6%;
+    bottom: 5.5%;
+    height: 29%;
 }
 
 .bar-frame {
@@ -41,51 +39,95 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: url("../../Art/UI/Panels/scn08_command_bar_rail_frame.png");
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 52;
-    -unity-slice-right: 52;
-    -unity-slice-top: 34;
-    -unity-slice-bottom: 34;
+    -unity-slice-left: 92;
+    -unity-slice-right: 92;
+    -unity-slice-top: 62;
+    -unity-slice-bottom: 62;
+}
+
+.building-preview-card {
+    position: absolute;
+    left: 3.1%;
+    top: 12.5%;
+    width: 13.3%;
+    height: 73%;
+}
+
+.preview-card-frame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_08_card_frame_standard.png");
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.building-preview-image {
+    position: absolute;
+    left: 9%;
+    right: 9%;
+    top: 9%;
+    bottom: 9%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/thumb_03_building_watchtower_thumb.png");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.building-preview-badge {
+    position: absolute;
+    left: -4%;
+    bottom: -4%;
+    width: 24%;
+    height: 24%;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_squad_badge.png");
+    -unity-background-scale-mode: scale-to-fit;
 }
 
 .placement-title {
     position: absolute;
-    left: 7%;
-    top: 6%;
-    width: 32%;
-    height: 27%;
-    font-size: 26px;
+    left: 18.8%;
+    top: 12.5%;
+    width: 26%;
+    height: 22%;
+    font-size: 72px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
-    color: rgb(245, 224, 171);
+    color: rgb(241, 232, 203);
 }
 
 .status-chip {
     position: absolute;
-    left: 40.5%;
-    top: 7%;
-    width: 17%;
-    height: 25%;
-    min-width: 17%;
-    max-width: 17%;
-    background-image: url("../../Art/UI/Panels/scn09_panel_small_status_chip_bg.png");
+    left: 18.8%;
+    top: 38%;
+    width: 25%;
+    height: 18.5%;
+    min-width: 25%;
+    max-width: 25%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_13_small_status_chip_bg.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 18;
-    -unity-slice-right: 18;
-    -unity-slice-top: 12;
-    -unity-slice-bottom: 12;
     background-color: rgba(24, 66, 28, 0.64);
     overflow: hidden;
 }
 
+.status-icon {
+    position: absolute;
+    left: 4.5%;
+    top: 12%;
+    width: 14%;
+    height: 76%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/icon_08_icon_confirm.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
 .status-text {
     position: absolute;
-    left: 8%;
-    right: 8%;
-    top: 12%;
-    bottom: 12%;
-    font-size: 17px;
+    left: 22%;
+    right: 6%;
+    top: 8%;
+    bottom: 8%;
+    font-size: 46px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(158, 250, 89);
@@ -111,28 +153,70 @@
 
 .metric-icon {
     position: absolute;
-    top: 8%;
-    width: 4.5%;
-    height: 22%;
+    top: 65.3%;
+    width: 3.5%;
+    height: 15.5%;
     -unity-background-scale-mode: scale-to-fit;
 }
 
+.metric-chip {
+    position: absolute;
+    top: 61.5%;
+    height: 23.5%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_13_small_status_chip_bg.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: rgba(13, 15, 14, 0.68);
+    overflow: hidden;
+}
+
+.cost-chip {
+    left: 18.8%;
+    width: 12.5%;
+}
+
+.time-chip {
+    left: 32%;
+    width: 12.5%;
+}
+
 .credits-icon {
-    left: 60%;
-    background-image: url("../../Art/UI/Icons/scn09_icon_credits_star_coin.png");
+    left: 20.1%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/icon_01_icon_credits.png");
 }
 
 .time-icon {
-    left: 77%;
-    background-image: url("../../Art/UI/Icons/scn09_icon_time_clock.png");
+    left: 33.2%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/icon_05_icon_time.png");
+}
+
+.metric-label {
+    position: absolute;
+    top: 63.3%;
+    height: 8%;
+    font-size: 26px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    color: rgba(238, 231, 199, 0.78);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.cost-label {
+    left: 24.4%;
+    width: 5.2%;
+}
+
+.time-label {
+    left: 37.4%;
+    width: 5.2%;
 }
 
 .cost-text,
 .duration-text {
     position: absolute;
-    top: 6%;
-    height: 26%;
-    font-size: 22px;
+    top: 70.1%;
+    height: 11.5%;
+    font-size: 50px;
     -unity-font-style: bold;
     -unity-text-align: middle-left;
     color: rgb(245, 241, 220);
@@ -141,45 +225,75 @@
 }
 
 .cost-text {
-    left: 65.5%;
-    width: 9.5%;
-    min-width: 9.5%;
-    max-width: 9.5%;
+    left: 24.4%;
+    width: 5.8%;
+    min-width: 5.8%;
+    max-width: 5.8%;
+    color: rgb(230, 196, 74);
 }
 
 .duration-text {
-    left: 81.5%;
-    width: 10.5%;
-    min-width: 10.5%;
-    max-width: 10.5%;
+    left: 37.4%;
+    width: 6.5%;
+    min-width: 6.5%;
+    max-width: 6.5%;
+    color: rgb(230, 196, 74);
+}
+
+.section-divider {
+    position: absolute;
+    top: 15%;
+    width: 0.24%;
+    height: 70%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_11_thin_divider.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    opacity: 0.8;
+}
+
+.info-divider {
+    left: 45.4%;
+}
+
+.action-divider {
+    left: 67.9%;
 }
 
 .placement-action,
 .rotate-action {
     position: absolute;
     -unity-background-scale-mode: stretch-to-fill;
+    overflow: visible;
+    transform-origin: center;
+    translate: 0 0;
+    scale: 1 1;
+    transition-property: translate, scale;
+    transition-duration: 90ms;
+    transition-timing-function: ease-out;
 }
 
 .placement-action {
-    top: 37%;
-    height: 36%;
-    -unity-slice-left: 30;
-    -unity-slice-right: 30;
-    -unity-slice-top: 16;
-    -unity-slice-bottom: 16;
+    top: 18%;
+    height: 66%;
+    width: 8.8%;
 }
 
 .cancel-action {
-    left: 3%;
-    width: 35%;
-    background-image: url("../../Art/UI/Panels/scn09_panel_secondary_button_bg.png");
+    left: 69.6%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_12_secondary_button_bg.png");
+    -unity-slice-left: 30;
+    -unity-slice-right: 30;
+    -unity-slice-top: 30;
+    -unity-slice-bottom: 30;
     background-color: rgba(46, 43, 38, 0.72);
 }
 
 .confirm-action {
-    right: 3%;
-    width: 32%;
-    background-image: url("../../Art/UI/Panels/scn09_panel_gold_action_button_bg.png");
+    right: 2.8%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_06_gold_action_button_bg.png");
+    -unity-slice-left: 40;
+    -unity-slice-right: 40;
+    -unity-slice-top: 25;
+    -unity-slice-bottom: 25;
     background-color: rgba(183, 122, 28, 0.72);
 }
 
@@ -189,52 +303,92 @@
 }
 
 .rotate-action {
-    left: 47%;
-    top: 35%;
-    width: 8%;
-    height: 41%;
-    background-image: url("../../Art/UI/Panels/scn08_small_square_button_frame.png");
-    -unity-slice-left: 24;
-    -unity-slice-right: 24;
-    -unity-slice-top: 18;
-    -unity-slice-bottom: 18;
+    left: 79.8%;
+    top: 18%;
+    width: 8.8%;
+    height: 66%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_12_secondary_button_bg.png");
+    -unity-slice-left: 30;
+    -unity-slice-right: 30;
+    -unity-slice-top: 30;
+    -unity-slice-bottom: 30;
     background-color: rgba(33, 36, 33, 0.72);
+}
+
+.placement-action:hover,
+.placement-action:focus,
+.rotate-action:hover,
+.rotate-action:focus {
+    translate: 0 -4px;
+    scale: 1.045 1.045;
+}
+
+.placement-action:active,
+.rotate-action:active {
+    translate: 0 -1px;
+    scale: 0.985 0.985;
+}
+
+.cancel-action:hover,
+.cancel-action:focus,
+.rotate-action:hover,
+.rotate-action:focus {
+    background-color: rgba(67, 60, 45, 0.84);
+}
+
+.confirm-action:hover,
+.confirm-action:focus {
+    background-color: rgba(196, 143, 35, 0.9);
 }
 
 .action-icon {
     position: absolute;
-    left: 13%;
-    top: 20%;
-    width: 17%;
-    height: 60%;
+    left: 28%;
+    right: 28%;
+    top: 13%;
+    height: 36%;
     -unity-background-scale-mode: scale-to-fit;
 }
 
 .cancel-icon {
-    background-image: url("../../Art/UI/Icons/scn09_icon_close_x.png");
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/icon_20_icon_close.png");
 }
 
 .confirm-icon {
-    background-image: url("../../Art/UI/Icons/scn09_icon_check_confirm.png");
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/icon_08_icon_confirm.png");
 }
 
 .rotate-icon {
     position: absolute;
-    left: 20%;
-    right: 20%;
-    top: 18%;
-    bottom: 18%;
-    background-image: url("../../Art/UI/Icons/scn09_icon_placement_corners.png");
+    left: 27%;
+    right: 27%;
+    top: 13%;
+    height: 37%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/icon_17_icon_placement_corners.png");
     -unity-background-scale-mode: scale-to-fit;
 }
 
 .action-label {
     position: absolute;
-    left: 25%;
-    right: 7%;
-    top: 10%;
-    bottom: 10%;
-    font-size: 18px;
+    left: 8%;
+    right: 8%;
+    top: 54%;
+    bottom: 7%;
+    font-size: 38px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(245, 241, 220);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.rotate-label {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 54%;
+    bottom: 7%;
+    font-size: 38px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(245, 241, 220);
@@ -244,38 +398,69 @@
 
 .instruction-strip {
     position: absolute;
-    left: 3%;
-    right: 3%;
-    bottom: 4%;
-    height: 17%;
-    background-image: url("../../Art/UI/Panels/scn09_panel_bottom_instruction_strip.png");
+    left: 46.6%;
+    top: 24%;
+    width: 20.2%;
+    height: 52%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_14_bottom_instruction_strip.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 24;
-    -unity-slice-right: 24;
-    -unity-slice-top: 14;
-    -unity-slice-bottom: 14;
     background-color: rgba(13, 15, 14, 0.72);
 }
 
 .info-icon {
     position: absolute;
-    left: 27%;
-    top: 12%;
-    width: 5.5%;
-    height: 75%;
-    background-image: url("../../Art/UI/Icons/scn09_icon_info.png");
+    left: 41%;
+    top: 4%;
+    width: 18%;
+    height: 30%;
+    background-image: url("../../Art/UI/Generated/BuildDrawer/LayeredOneGo/icon_18_icon_placement_cursor.png");
     -unity-background-scale-mode: scale-to-fit;
 }
 
 .instruction-text {
     position: absolute;
-    left: 33%;
-    top: 8%;
-    width: 50%;
-    height: 84%;
-    font-size: 15px;
-    -unity-text-align: middle-left;
-    color: rgba(204, 201, 184, 0.92);
+    left: 8%;
+    right: 8%;
+    top: 36%;
+    height: 21%;
+    font-size: 39px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(241, 232, 203);
     white-space: nowrap;
     overflow: hidden;
+}
+
+.instruction-secondary-text {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 59%;
+    height: 17%;
+    font-size: 32px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgba(238, 231, 199, 0.78);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.placement-progress-pips {
+    position: absolute;
+    left: 21%;
+    right: 21%;
+    bottom: 7%;
+    height: 10%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.placement-progress-pip {
+    width: 12%;
+    height: 100%;
+    background-color: rgba(116, 112, 75, 0.72);
+}
+
+.placement-progress-pip-active {
+    background-color: rgb(142, 209, 44);
 }

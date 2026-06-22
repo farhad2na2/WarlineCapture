@@ -4,7 +4,7 @@ Date:
 2026-06-21
 
 Status:
-In progress after slice 09 selected-state correction. The earlier `Satisfied for current pass` status was incorrect because it accepted the squad tray from a weak broad crop and did not compare each repeated squad card against the reference. User review identified the five squad panels as visually poor, with the health/slider area not cleanly separated from the cards, a non-reference yellow strip pinned to the top of each card, card 1 being treated as a one-off design instead of the selected-state example, a weak inner selected overlay, and visibly asymmetric left/right squad-tray padding.
+Satisfied for current pass after slice 11 panel-by-panel cleanup. The earlier `Satisfied for current pass` status was incorrect because it accepted the squad tray from a weak broad crop and did not compare each repeated squad card against the reference. User review identified the five squad panels as visually poor, with the health/slider area not cleanly separated from the cards, a non-reference yellow strip pinned to the top of each card, card 1 being treated as a one-off design instead of the selected-state example, a weak inner selected overlay, and visibly asymmetric left/right squad-tray padding. The next user review also correctly identified a broader process issue: improving the bottom squad/command rail is not enough while the selected-unit, threat/quick rail, minimap, feedback, and header panel groups still lack focused cleanup.
 
 Scope:
 
@@ -24,6 +24,13 @@ Validation:
 - Squad tray full slice 08 capture: `shadow_ui_builder_scn08_squad_tray_slice08_full.png`.
 - Squad tray focused slice 08 crop: `shadow_ui_builder_scn08_squad_tray_slice08_crop.png`.
 - Squad tray slice 09 capture: pending. Shadow Unity batch import/compile passed, but the controllable GUI preview was not available long enough to capture a fresh UI Builder crop in this pass.
+- Slice 10 full screenshots: `shadow_ui_builder_scn08_slice10_fullscreen.png`, `shadow_ui_builder_scn08_slice10_zoomed_fullscreen.png`.
+- Slice 11 final full screenshot: `shadow_ui_builder_scn08_slice11b_zoomed_fullscreen.png`.
+- Slice 11 focused left stack crop: `shadow_ui_builder_scn08_slice11_left_stack_crop_retina.png`.
+- Slice 11 focused right-edge controls crop: `shadow_ui_builder_scn08_slice11_right_edge_controls_wide_crop_retina.png`.
+- Slice 11 focused minimap controls crop: `shadow_ui_builder_scn08_slice11_minimap_controls_wide_crop_retina.png`.
+- Slice 11 focused footer crop: `shadow_ui_builder_scn08_slice11_footer_crop_retina.png`.
+- Slice 11 focused header crop: `shadow_ui_builder_scn08_slice11_header_crop_retina.png`.
 
 Findings:
 
@@ -48,8 +55,17 @@ Findings:
 - Validation slice 09 squad-card effects follow-up: shadow Unity batch import/compile passed with no new transform/transition USS warnings in `/private/tmp/warline-scn08-squad-button-effects-shadow-batch.log`; the only USS warning remains the existing line-36 `picking-mode` warning.
 - Right threat banner and quick rail controls are visible.
 - Visual-only UXML/USS changes were required for the squad tray. Runtime bindings were preserved: `Title`, `HealthFrame`, `HealthFill`, `HealthText`, and `Portrait`.
+- Slice 10 replaces the selected-unit portrait background with `scn08_v02_selected_squad_group_portrait.png`, a reference-derived squad portrait crop, so the selected panel no longer shows the wrong landscape/table image.
+- Slice 10 adds chrome-level hover/focus/selected treatment and restrained lift/scale impact outside the bottom rail: header menu, selected-unit action buttons, passenger chip/drawer controls, threat jump button, right quick rail buttons, minimap zoom/focus controls, and feedback actions.
+- Slice 10 preserves runtime-bound UXML control names such as `ReturnButton`, `DestroyButton`, `BoardButton`, `JumpButton`, `RightBuildCommand`, and `RightSupportCommand`. The mockup action labels/icons differ from the live selection actions, so this pass does not rename controls or change behavior.
+- Slice 10 local validation: `git diff --check` passed before shadow sync/import validation.
+- Slice 11 raises objective text/readability, adds subtle objective row separators, removes the unsupported `picking-mode` USS property, and switches minimap side controls to `scn08_v02_square_panel_frame.png` with matching 96px slices instead of overriding the square button sprite border.
+- Slice 11 final shadow UI Builder screenshot shows the selected-unit portrait, objective panel, right quick rail, minimap controls, feedback rail, command rail, and squad tray clean enough for the current pass.
+- Slice 11 validation: `git diff --check` passed.
+- Slice 11 validation: shadow Unity batch import/compile passed in `/private/tmp/warline-scn08-panel-cleanup-shadow-batch-v2.log`.
+- Slice 11 validation: shadow GUI static preview opened from `/Users/farhad/Projects/WarlineCapture-CodexUnity1` with `playMode=False`; final log section after line 1159 has no new errors, Unknown property warnings, or sprite-border override warnings.
 
 Next loop:
 
-- Continue the remaining UI Toolkit surfaces with the same focused repeated-template crop gate.
-- Do not mark future screens satisfied from broad screenshots when a card, row, button, or slider family has not been reviewed in a focused crop.
+- Continue to `SCN-08 Build Placement Bar` using the same shadow UI Builder workflow.
+- Keep the panel-by-panel gate active for the next screens: do not accept a broad screenshot when a panel group, button family, card family, progress row, or side control stack is still visibly weak.

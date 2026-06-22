@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Unity.Entities;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,17 +15,54 @@ public static class CanvasMenuFallbackValidation
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
     private const string RuntimeUiConfigPath = "Assets/Game/Data/UI/RuntimeUiConfig.asset";
     private const string ScreenshotPath = "/private/tmp/warline-canvas-menu-fallback.png";
+    private const int DefaultScreenshotWidth = 1280;
+    private const int DefaultScreenshotHeight = 720;
 
     private static int frameCount;
     private static int screenshotRequestedFrame;
     private static double startedAt;
     private static bool completed;
     private static bool screenshotRequested;
+    private static string screenshotPath;
+    private static int screenshotWidth;
+    private static int screenshotHeight;
     private static int deployValidationFrameCount;
     private static int deployValidationSubmitFrame;
     private static double deployValidationStartedAt;
     private static bool deployValidationCompleted;
     private static bool deployValidationSubmitted;
+    private static int routeCaptureFrameCount;
+    private static int routeCaptureConfiguredFrame;
+    private static double routeCaptureStartedAt;
+    private static bool routeCaptureCompleted;
+    private static bool routeCaptureConfigured;
+    private static UIRoute routeCaptureRoute;
+    private static UiShellPopupKind routeCapturePopup;
+    private static bool routeCaptureShouldShowPopup;
+    private static string routeCaptureOverlay;
+    private static string routeCaptureModal;
+    private static int performanceFrameCount;
+    private static int performanceConfiguredFrame;
+    private static int performanceWarmupFrames;
+    private static int performanceSampleFrames;
+    private static double performanceStartedAt;
+    private static bool performanceCompleted;
+    private static bool performanceConfigured;
+    private static bool performanceCanvasActive;
+    private static UIRoute performanceRoute;
+    private static readonly List<float> performanceFrameTimes = new();
+    private static int performanceCanvasRenderEvents;
+    private static ProfilerRecorder performanceDrawCalls;
+    private static ProfilerRecorder performanceBatches;
+    private static ProfilerRecorder performanceSetPassCalls;
+    private static ProfilerRecorder performanceTriangles;
+    private static ProfilerRecorder performanceVertices;
+    private static long performanceDrawCallsTotal;
+    private static long performanceBatchesTotal;
+    private static long performanceSetPassCallsTotal;
+    private static long performanceTrianglesTotal;
+    private static long performanceVerticesTotal;
+    private static int performanceProfilerSamples;
 
     public static void Run()
     {
@@ -37,9 +76,12 @@ public static class CanvasMenuFallbackValidation
             EditorUtility.SetDirty(config);
             AssetDatabase.SaveAssets();
 
+            screenshotPath = ResolveScreenshotPath();
+            screenshotWidth = ResolveScreenshotDimension("WARLINE_CANVAS_SCREENSHOT_WIDTH", DefaultScreenshotWidth);
+            screenshotHeight = ResolveScreenshotDimension("WARLINE_CANVAS_SCREENSHOT_HEIGHT", DefaultScreenshotHeight);
             EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
-            if (File.Exists(ScreenshotPath))
-                File.Delete(ScreenshotPath);
+            if (File.Exists(screenshotPath))
+                File.Delete(screenshotPath);
 
             frameCount = 0;
             screenshotRequestedFrame = 0;
@@ -83,6 +125,80 @@ public static class CanvasMenuFallbackValidation
         catch (Exception exception)
         {
             Debug.LogError($"[CanvasMenuDeployClickValidation] result=Failed\n{exception}");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    public static void RunRouteCapture()
+    {
+        try
+        {
+            RuntimeUiConfig config = AssetDatabase.LoadAssetAtPath<RuntimeUiConfig>(RuntimeUiConfigPath);
+            if (config == null)
+                throw new InvalidOperationException($"Missing runtime UI config: {RuntimeUiConfigPath}");
+
+            SetRuntimeUiMode(config, RuntimeUiMode.Canvas);
+            EditorUtility.SetDirty(config);
+            AssetDatabase.SaveAssets();
+
+            screenshotPath = ResolveScreenshotPath();
+            screenshotWidth = ResolveScreenshotDimension("WARLINE_CANVAS_SCREENSHOT_WIDTH", DefaultScreenshotWidth);
+            screenshotHeight = ResolveScreenshotDimension("WARLINE_CANVAS_SCREENSHOT_HEIGHT", DefaultScreenshotHeight);
+            routeCaptureRoute = ResolveRouteCaptureRoute();
+            routeCaptureShouldShowPopup = ResolveRouteCapturePopup(out routeCapturePopup);
+            routeCaptureOverlay = ResolveRouteCaptureOverlay();
+            routeCaptureModal = ResolveRouteCaptureModal();
+            EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+            if (File.Exists(screenshotPath))
+                File.Delete(screenshotPath);
+
+            routeCaptureFrameCount = 0;
+            routeCaptureConfiguredFrame = 0;
+            routeCaptureStartedAt = EditorApplication.timeSinceStartup;
+            routeCaptureCompleted = false;
+            routeCaptureConfigured = false;
+            EditorApplication.update -= ContinueRouteCapture;
+            EditorApplication.update += ContinueRouteCapture;
+            EditorApplication.EnterPlaymode();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[CanvasRouteCaptureValidation] result=Failed\n{exception}");
+            EditorApplication.Exit(1);
+        }
+    }
+
+    public static void RunCanvasPerformanceBaseline()
+    {
+        try
+        {
+            RuntimeUiConfig config = AssetDatabase.LoadAssetAtPath<RuntimeUiConfig>(RuntimeUiConfigPath);
+            if (config == null)
+                throw new InvalidOperationException($"Missing runtime UI config: {RuntimeUiConfigPath}");
+
+            SetRuntimeUiMode(config, RuntimeUiMode.Canvas);
+            EditorUtility.SetDirty(config);
+            AssetDatabase.SaveAssets();
+
+            performanceRoute = ResolvePerformanceRoute();
+            performanceCanvasActive = ResolvePerformanceCanvasActive();
+            performanceWarmupFrames = ResolvePositiveIntEnvironment("WARLINE_CANVAS_PERF_WARMUP_FRAMES", 90);
+            performanceSampleFrames = ResolvePositiveIntEnvironment("WARLINE_CANVAS_PERF_SAMPLE_FRAMES", 240);
+            EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+
+            performanceFrameCount = 0;
+            performanceConfiguredFrame = 0;
+            performanceStartedAt = EditorApplication.timeSinceStartup;
+            performanceCompleted = false;
+            performanceConfigured = false;
+            ResetPerformanceSamples();
+            EditorApplication.update -= ContinueCanvasPerformanceBaseline;
+            EditorApplication.update += ContinueCanvasPerformanceBaseline;
+            EditorApplication.EnterPlaymode();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[CanvasPerformanceBaseline] result=Failed\n{exception}");
             EditorApplication.Exit(1);
         }
     }
@@ -153,7 +269,7 @@ public static class CanvasMenuFallbackValidation
             if (frameCount - screenshotRequestedFrame < 12)
                 return;
 
-            if (!TryRenderCameraLuma(bootstrap.UiCamera, ScreenshotPath, out float luma, out string renderError))
+            if (!TryRenderCameraLuma(bootstrap.UiCamera, screenshotPath, screenshotWidth, screenshotHeight, out float luma, out string renderError))
             {
                 Complete(false, renderError);
                 return;
@@ -161,11 +277,11 @@ public static class CanvasMenuFallbackValidation
 
             if (luma < 0.05f)
             {
-                Complete(false, $"Captured Canvas menu screenshot is still black or near-black. luma={luma:0.000} path={ScreenshotPath}");
+                Complete(false, $"Captured Canvas menu screenshot is still black or near-black. luma={luma:0.000} path={screenshotPath}");
                 return;
             }
 
-            Complete(true, $"Canvas menu deploy UI is visible. luma={luma:0.000} path={ScreenshotPath}");
+            Complete(true, $"Canvas menu deploy UI is visible. luma={luma:0.000} size={screenshotWidth}x{screenshotHeight} path={screenshotPath}");
         }
         catch (Exception exception)
         {
@@ -245,6 +361,314 @@ public static class CanvasMenuFallbackValidation
         }
     }
 
+    private static void ContinueRouteCapture()
+    {
+        if (routeCaptureCompleted)
+            return;
+
+        try
+        {
+            if (!EditorApplication.isPlaying)
+                return;
+
+            routeCaptureFrameCount++;
+            if (routeCaptureFrameCount == 1)
+                routeCaptureStartedAt = EditorApplication.timeSinceStartup;
+            if (EditorApplication.timeSinceStartup - routeCaptureStartedAt > 60d)
+            {
+                CompleteRouteCapture(false, $"Timed out waiting for Canvas route capture. route={routeCaptureRoute} popup={DescribeRouteCapturePopup()} overlay={DescribeRouteCaptureOverlay()} modal={DescribeRouteCaptureModal()} {DescribeRuntimeState()}");
+                return;
+            }
+
+            if (routeCaptureFrameCount < 45)
+                return;
+
+            MenuBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
+            if (bootstrap == null)
+            {
+                CompleteRouteCapture(false, "Menu scene is missing MenuBootstrapView in PlayMode.");
+                return;
+            }
+
+            bootstrap.ApplyRuntimeUiMode();
+            if (bootstrap.IsUiToolkitMode)
+            {
+                CompleteRouteCapture(false, "RuntimeUiConfig is not in Canvas mode.");
+                return;
+            }
+
+            Canvas canvas = bootstrap.UiCanvas;
+            if (canvas == null || !canvas.enabled || !canvas.gameObject.activeInHierarchy)
+            {
+                CompleteRouteCapture(false, DescribeCanvasState(canvas, "Canvas is not active and enabled."));
+                return;
+            }
+
+            if (!routeCaptureConfigured)
+            {
+                if (!TryConfigureRouteCapture(bootstrap, out string configurationError))
+                {
+                    CompleteRouteCapture(false, configurationError);
+                    return;
+                }
+
+                routeCaptureConfigured = true;
+                routeCaptureConfiguredFrame = routeCaptureFrameCount;
+                return;
+            }
+
+            if (routeCaptureFrameCount - routeCaptureConfiguredFrame < 12)
+                return;
+
+            if (!TryRenderCameraLuma(bootstrap.UiCamera, screenshotPath, screenshotWidth, screenshotHeight, out float luma, out string renderError))
+            {
+                CompleteRouteCapture(false, renderError);
+                return;
+            }
+
+            float minimumLuma = ResolveRouteCaptureMinimumLuma();
+            if (luma < minimumLuma)
+            {
+                CompleteRouteCapture(false, $"Captured Canvas route screenshot is still black or near-black. route={routeCaptureRoute} popup={DescribeRouteCapturePopup()} overlay={DescribeRouteCaptureOverlay()} modal={DescribeRouteCaptureModal()} luma={luma:0.000} minimum={minimumLuma:0.000} path={screenshotPath}");
+                return;
+            }
+
+            CompleteRouteCapture(true, $"Canvas route is visible. route={routeCaptureRoute} popup={DescribeRouteCapturePopup()} overlay={DescribeRouteCaptureOverlay()} modal={DescribeRouteCaptureModal()} luma={luma:0.000} size={screenshotWidth}x{screenshotHeight} path={screenshotPath}");
+        }
+        catch (Exception exception)
+        {
+            CompleteRouteCapture(false, exception.ToString());
+        }
+    }
+
+    private static void ContinueCanvasPerformanceBaseline()
+    {
+        if (performanceCompleted)
+            return;
+
+        try
+        {
+            if (!EditorApplication.isPlaying)
+                return;
+
+            performanceFrameCount++;
+            if (performanceFrameCount == 1)
+                performanceStartedAt = EditorApplication.timeSinceStartup;
+            if (EditorApplication.timeSinceStartup - performanceStartedAt > 120d)
+            {
+                CompleteCanvasPerformanceBaseline(false, $"Timed out waiting for Canvas performance baseline. route={performanceRoute} canvas={(performanceCanvasActive ? "Active" : "Disabled")} {DescribeRuntimeState()}");
+                return;
+            }
+
+            if (performanceFrameCount < 45)
+                return;
+
+            MenuBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
+            if (bootstrap == null)
+            {
+                CompleteCanvasPerformanceBaseline(false, "Menu scene is missing MenuBootstrapView in PlayMode.");
+                return;
+            }
+
+            bootstrap.ApplyRuntimeUiMode();
+            if (bootstrap.IsUiToolkitMode)
+            {
+                CompleteCanvasPerformanceBaseline(false, "RuntimeUiConfig is not in Canvas mode.");
+                return;
+            }
+
+            Canvas canvas = bootstrap.UiCanvas;
+            if (canvas == null)
+            {
+                CompleteCanvasPerformanceBaseline(false, "Menu scene is missing the runtime Canvas reference.");
+                return;
+            }
+
+            if (!performanceConfigured)
+            {
+                routeCaptureRoute = performanceRoute;
+                routeCaptureShouldShowPopup = false;
+                routeCaptureOverlay = string.Empty;
+                routeCaptureModal = string.Empty;
+                if (!TryConfigureRouteCapture(bootstrap, out string configurationError))
+                {
+                    CompleteCanvasPerformanceBaseline(false, configurationError);
+                    return;
+                }
+
+                canvas.gameObject.SetActive(performanceCanvasActive);
+                Canvas.willRenderCanvases -= CountPerformanceCanvasRender;
+                Canvas.willRenderCanvases += CountPerformanceCanvasRender;
+                StartPerformanceRecorders();
+                performanceConfigured = true;
+                performanceConfiguredFrame = performanceFrameCount;
+                return;
+            }
+
+            int sampledFrame = performanceFrameCount - performanceConfiguredFrame - performanceWarmupFrames;
+            if (sampledFrame < 0)
+                return;
+
+            float deltaSeconds = Time.unscaledDeltaTime;
+            if (deltaSeconds > 0f)
+                performanceFrameTimes.Add(deltaSeconds);
+
+            SamplePerformanceRecorders();
+            if (performanceFrameTimes.Count >= performanceSampleFrames)
+                CompleteCanvasPerformanceBaseline(true, BuildPerformanceResultMessage());
+        }
+        catch (Exception exception)
+        {
+            CompleteCanvasPerformanceBaseline(false, exception.ToString());
+        }
+    }
+
+    private static bool TryConfigureRouteCapture(MenuBootstrapView bootstrap, out string error)
+    {
+        error = null;
+        UIShellContentView content = bootstrap != null ? bootstrap.ContentSystem : null;
+        if (content == null)
+        {
+            error = "Menu scene is missing UIShellContentView for Canvas route capture.";
+            return false;
+        }
+
+        switch (routeCaptureRoute)
+        {
+            case UIRoute.Splash:
+                content.PrepareForCommandSequence(new[]
+                {
+                    new UiShellPresentationCommandModel(
+                        UiShellCommandKind.ShowLoading,
+                        UiShellRegionId.LoadingLayer,
+                        UIRoute.Splash,
+                        UiShellMode.Loading,
+                        1)
+                });
+                break;
+            case UIRoute.MainMenu:
+            case UIRoute.Armory:
+                content.InstallMenuRouteBody(routeCaptureRoute);
+                break;
+            case UIRoute.Match:
+                content.PrepareForCommandSequence(new[]
+                {
+                    new UiShellPresentationCommandModel(
+                        UiShellCommandKind.EnterMatchHud,
+                        UiShellRegionId.None,
+                        UIRoute.Match,
+                        UiShellMode.MatchHud,
+                        1)
+                });
+                break;
+            default:
+                error = $"Canvas route capture does not support route={routeCaptureRoute}. Supported routes: Splash, MainMenu, Armory, Match.";
+                return false;
+        }
+
+        if (routeCaptureShouldShowPopup)
+        {
+            if (routeCapturePopup != UiShellPopupKind.BuildDrawer)
+            {
+                error = $"Canvas route capture does not support popup={routeCapturePopup}. Supported popup: BuildDrawer.";
+                return false;
+            }
+
+            GameObject popup = content.InstallBuildDrawerPopup();
+            if (popup == null)
+            {
+                error = "Canvas route capture could not install BuildDrawer popup.";
+                return false;
+            }
+        }
+
+        if (!TryConfigureRouteCaptureOverlay(out error))
+            return false;
+
+        if (!TryConfigureRouteCaptureModal(bootstrap, out error))
+            return false;
+
+        return true;
+    }
+
+    private static bool TryConfigureRouteCaptureOverlay(out string error)
+    {
+        error = null;
+        if (string.IsNullOrWhiteSpace(routeCaptureOverlay))
+            return true;
+
+        if (!string.Equals(routeCaptureOverlay, "BuildPlacementBar", StringComparison.OrdinalIgnoreCase))
+        {
+            error = $"Canvas route capture does not support overlay={routeCaptureOverlay}. Supported overlay: BuildPlacementBar.";
+            return false;
+        }
+
+        if (routeCaptureRoute != UIRoute.Match)
+        {
+            error = "BuildPlacementBar overlay capture requires WARLINE_CANVAS_ROUTE=Match.";
+            return false;
+        }
+
+        BuildPlacementConfirmationBarView placementBar =
+            UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
+        if (placementBar == null)
+        {
+            error = "Canvas route capture could not find BuildPlacementConfirmationBarView after Match HUD install.";
+            return false;
+        }
+
+        placementBar.BindRuntimeCommands(new RouteCaptureBuildingUiCommand(), null);
+        return true;
+    }
+
+    private static bool TryConfigureRouteCaptureModal(MenuBootstrapView bootstrap, out string error)
+    {
+        error = null;
+        if (string.IsNullOrWhiteSpace(routeCaptureModal))
+            return true;
+
+        if (!TryResolveRouteCaptureModalPath(routeCaptureModal, out string prefabPath))
+        {
+            error = $"Canvas route capture does not support modal={routeCaptureModal}. Supported modals: MissionResult, ConfirmRaid, EndOfDayReport, IntelReveal, AbilityUpgradeDetail, BuildPlacementPanel, PauseMenu, PopupFrame, RewardUnlock, ThreatAlert.";
+            return false;
+        }
+
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        if (prefab == null)
+        {
+            error = $"Canvas route capture could not load modal prefab at {prefabPath}.";
+            return false;
+        }
+
+        RectTransform parent = bootstrap != null && bootstrap.UiCanvas != null
+            ? bootstrap.UiCanvas.transform as RectTransform
+            : null;
+        if (parent == null)
+        {
+            error = "Canvas route capture could not find a Canvas RectTransform for modal capture.";
+            return false;
+        }
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab, parent, false);
+        instance.name = prefab.name;
+        instance.SetActive(true);
+
+        RectTransform rect = instance.transform as RectTransform;
+        if (rect != null)
+        {
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.identity;
+            rect.anchoredPosition = Vector2.zero;
+            rect.SetAsLastSibling();
+        }
+        else
+        {
+            instance.transform.SetAsLastSibling();
+        }
+
+        return true;
+    }
+
     private static Button FindVisibleDeployButton()
     {
         Button[] buttons = UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude);
@@ -307,6 +731,171 @@ public static class CanvasMenuFallbackValidation
         if (EditorApplication.isPlaying)
             EditorApplication.ExitPlaymode();
         EditorApplication.Exit(success ? 0 : 1);
+    }
+
+    private static void CompleteRouteCapture(bool success, string message)
+    {
+        if (routeCaptureCompleted)
+            return;
+
+        routeCaptureCompleted = true;
+        EditorApplication.update -= ContinueRouteCapture;
+        if (success)
+            Debug.Log($"[CanvasRouteCaptureValidation] result=Passed {message}");
+        else
+            Debug.LogError($"[CanvasRouteCaptureValidation] result=Failed {message}");
+
+        if (EditorApplication.isPlaying)
+            EditorApplication.ExitPlaymode();
+        EditorApplication.Exit(success ? 0 : 1);
+    }
+
+    private static void CompleteCanvasPerformanceBaseline(bool success, string message)
+    {
+        if (performanceCompleted)
+            return;
+
+        performanceCompleted = true;
+        EditorApplication.update -= ContinueCanvasPerformanceBaseline;
+        Canvas.willRenderCanvases -= CountPerformanceCanvasRender;
+        DisposePerformanceRecorders();
+        if (success)
+            Debug.Log($"[CanvasPerformanceBaseline] result=Passed {message}");
+        else
+            Debug.LogError($"[CanvasPerformanceBaseline] result=Failed {message}");
+
+        if (EditorApplication.isPlaying)
+            EditorApplication.ExitPlaymode();
+        EditorApplication.Exit(success ? 0 : 1);
+    }
+
+    private static void CountPerformanceCanvasRender()
+    {
+        performanceCanvasRenderEvents++;
+    }
+
+    private static void ResetPerformanceSamples()
+    {
+        performanceFrameTimes.Clear();
+        performanceCanvasRenderEvents = 0;
+        performanceDrawCallsTotal = 0;
+        performanceBatchesTotal = 0;
+        performanceSetPassCallsTotal = 0;
+        performanceTrianglesTotal = 0;
+        performanceVerticesTotal = 0;
+        performanceProfilerSamples = 0;
+        DisposePerformanceRecorders();
+    }
+
+    private static void StartPerformanceRecorders()
+    {
+        DisposePerformanceRecorders();
+        performanceDrawCalls = TryStartPerformanceRecorder("Draw Calls Count");
+        performanceBatches = TryStartPerformanceRecorder("Batches Count");
+        performanceSetPassCalls = TryStartPerformanceRecorder("SetPass Calls Count");
+        performanceTriangles = TryStartPerformanceRecorder("Triangles Count");
+        performanceVertices = TryStartPerformanceRecorder("Vertices Count");
+    }
+
+    private static ProfilerRecorder TryStartPerformanceRecorder(string statName)
+    {
+        try
+        {
+            return ProfilerRecorder.StartNew(ProfilerCategory.Render, statName);
+        }
+        catch
+        {
+            return default;
+        }
+    }
+
+    private static void SamplePerformanceRecorders()
+    {
+        bool hasAnyRecorder = false;
+        if (performanceDrawCalls.Valid)
+        {
+            performanceDrawCallsTotal += performanceDrawCalls.LastValue;
+            hasAnyRecorder = true;
+        }
+
+        if (performanceBatches.Valid)
+        {
+            performanceBatchesTotal += performanceBatches.LastValue;
+            hasAnyRecorder = true;
+        }
+
+        if (performanceSetPassCalls.Valid)
+        {
+            performanceSetPassCallsTotal += performanceSetPassCalls.LastValue;
+            hasAnyRecorder = true;
+        }
+
+        if (performanceTriangles.Valid)
+        {
+            performanceTrianglesTotal += performanceTriangles.LastValue;
+            hasAnyRecorder = true;
+        }
+
+        if (performanceVertices.Valid)
+        {
+            performanceVerticesTotal += performanceVertices.LastValue;
+            hasAnyRecorder = true;
+        }
+
+        if (hasAnyRecorder)
+            performanceProfilerSamples++;
+    }
+
+    private static void DisposePerformanceRecorders()
+    {
+        if (performanceDrawCalls.Valid)
+            performanceDrawCalls.Dispose();
+        if (performanceBatches.Valid)
+            performanceBatches.Dispose();
+        if (performanceSetPassCalls.Valid)
+            performanceSetPassCalls.Dispose();
+        if (performanceTriangles.Valid)
+            performanceTriangles.Dispose();
+        if (performanceVertices.Valid)
+            performanceVertices.Dispose();
+
+        performanceDrawCalls = default;
+        performanceBatches = default;
+        performanceSetPassCalls = default;
+        performanceTriangles = default;
+        performanceVertices = default;
+    }
+
+    private static string BuildPerformanceResultMessage()
+    {
+        float averageDelta = 0f;
+        float minDelta = float.MaxValue;
+        float maxDelta = 0f;
+        for (int i = 0; i < performanceFrameTimes.Count; i++)
+        {
+            float delta = performanceFrameTimes[i];
+            averageDelta += delta;
+            if (delta < minDelta)
+                minDelta = delta;
+            if (delta > maxDelta)
+                maxDelta = delta;
+        }
+
+        averageDelta /= performanceFrameTimes.Count;
+        List<float> sortedFrameTimes = new(performanceFrameTimes);
+        sortedFrameTimes.Sort();
+        int p95Index = Mathf.Clamp(Mathf.CeilToInt(sortedFrameTimes.Count * 0.95f) - 1, 0, sortedFrameTimes.Count - 1);
+        float p95Delta = sortedFrameTimes[p95Index];
+        float fps = averageDelta > 0f ? 1f / averageDelta : 0f;
+        return $"route={performanceRoute} canvas={(performanceCanvasActive ? "Active" : "Disabled")} samples={performanceFrameTimes.Count} warmupFrames={performanceWarmupFrames} avgMs={averageDelta * 1000f:0.000} fps={fps:0.0} minMs={minDelta * 1000f:0.000} p95Ms={p95Delta * 1000f:0.000} maxMs={maxDelta * 1000f:0.000} canvasRenderEvents={performanceCanvasRenderEvents} profilerSamples={performanceProfilerSamples} drawCallsAvg={FormatPerformanceAverage(performanceDrawCallsTotal)} batchesAvg={FormatPerformanceAverage(performanceBatchesTotal)} setPassAvg={FormatPerformanceAverage(performanceSetPassCallsTotal)} trianglesAvg={FormatPerformanceAverage(performanceTrianglesTotal)} verticesAvg={FormatPerformanceAverage(performanceVerticesTotal)}";
+    }
+
+    private static string FormatPerformanceAverage(long total)
+    {
+        if (performanceProfilerSamples <= 0)
+            return "unavailable";
+
+        return (total / (double)performanceProfilerSamples).ToString("0.0");
     }
 
     private static string DescribeCanvasState(Canvas canvas, string prefix)
@@ -507,7 +1096,7 @@ public static class CanvasMenuFallbackValidation
         return count > 0 ? (float)(total / count) : 0f;
     }
 
-    private static bool TryRenderCameraLuma(Camera camera, string screenshotPath, out float luma, out string error)
+    private static bool TryRenderCameraLuma(Camera camera, string screenshotPath, int width, int height, out float luma, out string error)
     {
         luma = 0f;
         if (camera == null)
@@ -522,7 +1111,11 @@ public static class CanvasMenuFallbackValidation
         Texture2D texture = null;
         try
         {
-            renderTexture = new RenderTexture(1280, 720, 24, RenderTextureFormat.ARGB32);
+            string directory = Path.GetDirectoryName(screenshotPath);
+            if (!string.IsNullOrEmpty(directory))
+                Directory.CreateDirectory(directory);
+
+            renderTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
             texture = new Texture2D(renderTexture.width, renderTexture.height, TextureFormat.RGBA32, false);
             camera.targetTexture = renderTexture;
             camera.Render();
@@ -547,6 +1140,189 @@ public static class CanvasMenuFallbackValidation
                 UnityEngine.Object.DestroyImmediate(texture);
             if (renderTexture != null)
                 UnityEngine.Object.DestroyImmediate(renderTexture);
+        }
+    }
+
+    private static string ResolveScreenshotPath()
+    {
+        string configuredPath = Environment.GetEnvironmentVariable("WARLINE_CANVAS_SCREENSHOT_PATH");
+        return string.IsNullOrWhiteSpace(configuredPath) ? ScreenshotPath : configuredPath;
+    }
+
+    private static int ResolveScreenshotDimension(string environmentVariableName, int fallback)
+    {
+        string configuredValue = Environment.GetEnvironmentVariable(environmentVariableName);
+        return int.TryParse(configuredValue, out int value) && value > 0 ? value : fallback;
+    }
+
+    private static UIRoute ResolveRouteCaptureRoute()
+    {
+        string configuredRoute = Environment.GetEnvironmentVariable("WARLINE_CANVAS_ROUTE");
+        return Enum.TryParse(configuredRoute, true, out UIRoute route) ? route : UIRoute.MainMenu;
+    }
+
+    private static bool ResolveRouteCapturePopup(out UiShellPopupKind popup)
+    {
+        string configuredPopup = Environment.GetEnvironmentVariable("WARLINE_CANVAS_POPUP");
+        if (string.IsNullOrWhiteSpace(configuredPopup))
+        {
+            popup = default;
+            return false;
+        }
+
+        if (Enum.TryParse(configuredPopup, true, out popup))
+            return true;
+
+        throw new InvalidOperationException($"Unsupported WARLINE_CANVAS_POPUP value: {configuredPopup}");
+    }
+
+    private static UIRoute ResolvePerformanceRoute()
+    {
+        string configuredRoute = Environment.GetEnvironmentVariable("WARLINE_CANVAS_PERF_ROUTE");
+        if (string.IsNullOrWhiteSpace(configuredRoute))
+            return UIRoute.MainMenu;
+
+        if (Enum.TryParse(configuredRoute, true, out UIRoute route) &&
+            (route == UIRoute.MainMenu || route == UIRoute.Match))
+        {
+            return route;
+        }
+
+        throw new InvalidOperationException($"Unsupported WARLINE_CANVAS_PERF_ROUTE value: {configuredRoute}. Supported routes: MainMenu, Match.");
+    }
+
+    private static bool ResolvePerformanceCanvasActive()
+    {
+        string configuredMode = Environment.GetEnvironmentVariable("WARLINE_CANVAS_PERF_CANVAS");
+        return !string.Equals(configuredMode, "Disabled", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static int ResolvePositiveIntEnvironment(string environmentVariableName, int fallback)
+    {
+        string configuredValue = Environment.GetEnvironmentVariable(environmentVariableName);
+        return int.TryParse(configuredValue, out int value) && value > 0 ? value : fallback;
+    }
+
+    private static string DescribeRouteCapturePopup()
+    {
+        return routeCaptureShouldShowPopup ? routeCapturePopup.ToString() : "None";
+    }
+
+    private static string ResolveRouteCaptureOverlay()
+    {
+        string configuredOverlay = Environment.GetEnvironmentVariable("WARLINE_CANVAS_OVERLAY");
+        return string.IsNullOrWhiteSpace(configuredOverlay) ? string.Empty : configuredOverlay.Trim();
+    }
+
+    private static string DescribeRouteCaptureOverlay()
+    {
+        return string.IsNullOrWhiteSpace(routeCaptureOverlay) ? "None" : routeCaptureOverlay;
+    }
+
+    private static string ResolveRouteCaptureModal()
+    {
+        string configuredModal = Environment.GetEnvironmentVariable("WARLINE_CANVAS_MODAL");
+        return string.IsNullOrWhiteSpace(configuredModal) ? string.Empty : configuredModal.Trim();
+    }
+
+    private static string DescribeRouteCaptureModal()
+    {
+        return string.IsNullOrWhiteSpace(routeCaptureModal) ? "None" : routeCaptureModal;
+    }
+
+    private static bool TryResolveRouteCaptureModalPath(string modalName, out string prefabPath)
+    {
+        switch (modalName.Trim().ToLowerInvariant())
+        {
+            case "missionresult":
+                prefabPath = "Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab";
+                return true;
+            case "confirmraid":
+                prefabPath = "Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab";
+                return true;
+            case "endofdayreport":
+                prefabPath = "Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab";
+                return true;
+            case "intelreveal":
+                prefabPath = "Assets/Game/Prefabs/UI/Popups/IntelRevealPopup.prefab";
+                return true;
+            case "abilityupgradedetail":
+                prefabPath = "Assets/Game/Prefabs/UI/Popups/AbilityUpgradeDetailPopup.prefab";
+                return true;
+            case "buildplacementpanel":
+                prefabPath = "Assets/Game/Prefabs/UI/Popups/BuildPlacementPanel.prefab";
+                return true;
+            case "pausemenu":
+                prefabPath = "Assets/Game/Prefabs/UI/Popups/PauseMenuPopup.prefab";
+                return true;
+            case "popupframe":
+                prefabPath = "Assets/Game/Prefabs/UI/Popups/PopupFrameView.prefab";
+                return true;
+            case "rewardunlock":
+                prefabPath = "Assets/Game/Prefabs/UI/Popups/RewardUnlockPopup.prefab";
+                return true;
+            case "threatalert":
+                prefabPath = "Assets/Game/Prefabs/UI/Popups/ThreatAlertPopup.prefab";
+                return true;
+            default:
+                prefabPath = null;
+                return false;
+        }
+    }
+
+    private static float ResolveRouteCaptureMinimumLuma()
+    {
+        if (routeCaptureRoute == UIRoute.Match &&
+            !routeCaptureShouldShowPopup &&
+            string.IsNullOrWhiteSpace(routeCaptureOverlay))
+        {
+            return 0.035f;
+        }
+
+        if (string.Equals(routeCaptureModal, "PopupFrame", StringComparison.OrdinalIgnoreCase))
+            return 0.035f;
+
+        return 0.05f;
+    }
+
+    private sealed class RouteCaptureBuildingUiCommand : IBuildingUiCommand
+    {
+        public int CurrentDollars => 12500;
+        public bool HasPendingBuildingPlacement => true;
+        public bool CanConfirmBuildingPlacement => true;
+        public string PlacementStatusText => "Barracks: Valid placement";
+        public int ActivePlacementCost => 650;
+        public float ActivePlacementDurationSeconds => 45f;
+
+        public BuildingUiCommandFailure GetCampRequestFailure(GameObject prefab, int price, out string requiredBuildingDisplayName)
+        {
+            requiredBuildingDisplayName = string.Empty;
+            return default;
+        }
+
+        public BuildingUiCommandFailure TryRequestCampItem(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess)
+        {
+            requiredBuildingDisplayName = string.Empty;
+            return default;
+        }
+
+        public bool CancelProduction(int buildingId, int pendingProductionIndex)
+        {
+            return false;
+        }
+
+        public bool ConfirmBuildingPlacement()
+        {
+            return true;
+        }
+
+        public void CancelBuildingPlacement()
+        {
+        }
+
+        public bool RotateBuildingPlacement()
+        {
+            return true;
         }
     }
 

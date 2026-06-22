@@ -149,18 +149,12 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingPlacementVisualUpdateSystem ResolveBuildingPlacementVisualUpdateSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<BuildingPlacementVisualUpdateSystem>()
-            : null;
+        return new BuildingPlacementVisualUpdateSystem();
     }
 
     private static BuildingPlacementVisualCompositionSystem ResolveBuildingPlacementVisualCompositionSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<BuildingPlacementVisualCompositionSystem>()
-            : null;
+        return new BuildingPlacementVisualCompositionSystem();
     }
 
     private static BuildingRuntimeResourcePrefabCompositionSystem ResolveBuildingRuntimeResourcePrefabCompositionSystem()

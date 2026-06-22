@@ -16,15 +16,15 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `86 / 109 complete (78.9%)`.
+- Checklist progress: `87 / 109 complete (79.8%)`.
 - In progress: `0`.
-- Remaining open: `11`.
-- Current target: `E7 helper fold complete for P7-0189 CitizenPopulationCompositionSystem; continue with remaining Agent E split/managed-exception candidates`.
+- Remaining open: `10`.
+- Current target: `E7 helper fold complete for P7-0206 CitizenVisibleUnitSystem; Agent E open split candidates complete; review remaining counted managed exceptions`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
-- Retired/folded helpers: `86`.
+- Retired/folded helpers: `87`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `CitizenPopulationCompositionSystem folded from a disabled SystemBase wrapper into a plain citizen population composition helper. Compile, inventory regeneration, citizen visible-unit focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-phase7-agent-e-citizen-population-composition-helper-fold-citizen-visible-unit.log and /private/tmp/warline-phase7-agent-a-architecture.log. Inventory now reports 59 production SystemBase/legacy declarations, 134 production ISystem declarations, and 69.4% production ISystem share.`
+- Validation status: `CitizenVisibleUnitSystem folded from a disabled SystemBase wrapper into a plain citizen visible-unit helper. Compile, inventory regeneration, citizen visible-unit focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-phase7-agent-e-citizen-visible-unit-helper-fold-citizen-visible-unit.log and /private/tmp/warline-phase7-agent-a-architecture.log. Inventory now reports 58 production SystemBase/legacy declarations, 134 production ISystem declarations, and 69.8% production ISystem share.`
 
 Owned files:
 
@@ -293,6 +293,7 @@ Remove dead wrappers instead of converting them.
 - [x] Fold `P7-0183 RuntimeDecorationSpawnerSystem` from a disabled `SystemBase` wrapper into a plain runtime decoration spawner helper; config application, prefab selection, decoration placement, combine scheduling, update/dispose behavior, and gameplay startup callers stayed unchanged.
 - [x] Fold `P7-0184 RuntimeGridBlockerSystem` from a disabled `SystemBase` wrapper into a plain runtime grid blocker helper; blocker config, prefab metadata, ECS dependency-state publication, blocker entity/object creation, removal, update/dispose behavior, and gameplay startup callers stayed unchanged.
 - [x] Fold `P7-0189 CitizenPopulationCompositionSystem` from a disabled `SystemBase` wrapper into a plain citizen population composition helper; child helper creation, initialization, visible-citizen cleanup, read-model refresh, event binding, disposal, and building composition callers stayed unchanged.
+- [x] Fold `P7-0206 CitizenVisibleUnitSystem` from a disabled `SystemBase` wrapper into a plain citizen visible-unit helper; sync, spawn, remove, clear, same-frame entity setup, movement-command enqueueing, and citizen population callers stayed unchanged.
 - [x] Fold `P7-0219 RoadBuildInputSystem` from a disabled `SystemBase` wrapper into a plain road build input helper; pointer handling, build/delete gesture state, preview callbacks, building placement drag handling, and road composition callers stayed unchanged.
 - [x] Fold `P7-0221 RoadBuildInteractionSystem` from a disabled `SystemBase` wrapper into a plain road build interaction helper; building placement commit, selection hit tests, building selection, deletion, ECS entity cleanup, and storage callbacks stayed unchanged.
 - [x] Fold `P7-0223 RoadBuildPlacementStorageSystem` from a disabled `SystemBase` wrapper into a plain road build placement storage helper; runtime building collection state, active placement storage, building id allocation, selection state, and road composition callers stayed unchanged.

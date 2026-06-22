@@ -308,6 +308,11 @@ MANUAL_REVIEW_OVERRIDES: dict[tuple[str, str, str], tuple[str, str, str]] = {
         "Keep as `ISystem`; render budget math now consumes `RuntimeCameraSnapshotComponent` instead of managed `Camera`.",
         "`UnitRenderBudgetSystem : ISystem` with camera snapshot boundary data",
     ),
+    ("Assets/Game/Scripts/Rendering/Systems/UnitAttachedLightSystem.cs", "UnitAttachedLightSystem", "SystemBase"): (
+        "ManagedPresentationSystemBaseException",
+        "Manual review: consumes ECS attached-light setup and cleanup data, but must tick Unity `Light` GameObjects and managed instance ownership.",
+        "Counted managed light presentation `SystemBase` exception consuming ECS attached-light buffer data",
+    ),
     ("Assets/Game/Scripts/Rendering/Systems/UnitSelectionMarkerSystem.cs", "UnitSelectionMarkerSystem", "ISystem"): (
         "SplitThenConvert",
         "Manual review: already `ISystem` but creates/materializes selection `Material` state. Split marker decisions from managed material/presentation setup.",
@@ -351,6 +356,8 @@ MANUAL_REVIEW_OVERRIDES: dict[tuple[str, str, str], tuple[str, str, str]] = {
 }
 
 MANUAL_RISK_OVERRIDES: dict[tuple[str, str, str], str] = {
+    ("Assets/Game/Scripts/Rendering/Systems/UnitAttachedLightSystem.cs", "UnitAttachedLightSystem", "SystemBase"):
+        "Low: reviewed managed attached-light presentation boundary only",
     ("Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs", "CombatGameObjectVfxPlaybackSystem", "SystemBase"):
         "Low: reviewed managed VFX playback boundary only",
     ("Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs", "UnitAttackVfxRequestSystem", "SystemBase"):

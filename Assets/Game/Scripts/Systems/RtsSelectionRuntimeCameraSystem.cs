@@ -2,7 +2,7 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed partial class RtsSelectionRuntimeCameraSystem : SystemBase
+public sealed class RtsSelectionRuntimeCameraSystem
 {
     private const float MatchIntroZoomOutHeightOffset = 8f;
     private const float MatchIntroFieldOfViewOffset = 5f;
@@ -11,15 +11,6 @@ public sealed partial class RtsSelectionRuntimeCameraSystem : SystemBase
 
     public delegate bool TryGetEntityManagerAction(out EntityManager em);
     public delegate bool IsPointerOverGameplayUiAction(Vector2 screenPosition, out string source);
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public struct Context
     {

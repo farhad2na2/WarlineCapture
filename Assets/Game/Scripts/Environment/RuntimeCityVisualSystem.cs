@@ -1,25 +1,10 @@
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class RuntimeCityVisualSystem : SystemBase
+internal sealed class RuntimeCityVisualSystem
 {
     private RuntimeCitySurfaceIntegrationSystem _surfaceIntegrationSystem;
     private Transform _runtimeRoot;
     private Transform _cityVisualRoot;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
-    protected override void OnDestroy()
-    {
-        Dispose();
-    }
 
     public void SetRuntimeRoot(Transform runtimeRoot)
     {

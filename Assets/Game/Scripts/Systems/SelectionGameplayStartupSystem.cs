@@ -883,10 +883,7 @@ internal sealed class SelectionGameplayStartupSystem
 
     private static RtsSelectionRuntimeCameraSystem ResolveRtsSelectionRuntimeCameraSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RtsSelectionRuntimeCameraSystem>()
-            : null;
+        return new RtsSelectionRuntimeCameraSystem();
     }
 
     private static SelectionRuntimeDiagnosticsSystem ResolveSelectionRuntimeDiagnosticsSystem()

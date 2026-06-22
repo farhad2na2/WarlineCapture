@@ -603,10 +603,7 @@ public sealed class RuntimeCityCompositionSystem
 
     private static RuntimeCityVisualSystem ResolveRuntimeCityVisualSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityVisualSystem>()
-            : null;
+        return new RuntimeCityVisualSystem();
     }
 
     private static RuntimeCityMinimapEventSystem ResolveRuntimeCityMinimapEventSystem()
@@ -711,10 +708,7 @@ public sealed class RuntimeCityCompositionSystem
 
     private static RuntimeCityYardWallVisualSystem ResolveRuntimeCityYardWallVisualSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityYardWallVisualSystem>()
-            : null;
+        return new RuntimeCityYardWallVisualSystem();
     }
 
     private static RuntimeCityHouseYardWallSystem ResolveRuntimeCityHouseYardWallSystem()

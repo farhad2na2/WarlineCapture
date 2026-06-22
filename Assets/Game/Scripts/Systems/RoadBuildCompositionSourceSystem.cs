@@ -116,10 +116,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadVisualRefreshSystem ResolveRoadVisualRefreshSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RoadVisualRefreshSystem>()
-            : null;
+        return new RoadVisualRefreshSystem();
     }
 
     private static RoadChunkVisualSystem ResolveRoadChunkVisualSystem()

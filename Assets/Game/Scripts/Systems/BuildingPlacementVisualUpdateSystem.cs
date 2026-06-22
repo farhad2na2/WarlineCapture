@@ -3,7 +3,7 @@ using Unity.Entities;
 using UnityEngine;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 
-internal sealed partial class BuildingPlacementVisualUpdateSystem : SystemBase
+internal sealed class BuildingPlacementVisualUpdateSystem
 {
     internal delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
     internal delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
@@ -79,15 +79,6 @@ internal sealed partial class BuildingPlacementVisualUpdateSystem : SystemBase
             CreateBuildingBarrierContext = createBuildingBarrierContext;
             SelectAndFocusBuilding = selectAndFocusBuilding;
         }
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     internal void FocusActivePlacement(Context context, PlacementState placement)

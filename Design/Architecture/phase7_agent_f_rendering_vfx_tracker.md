@@ -17,15 +17,15 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `10 / 89 complete (11.2%)`.
+- Checklist progress: `18 / 95 complete (18.9%)`.
 - In progress: `0`.
-- Remaining open: `79`.
-- Current target: `Agent F request-contract slice completed for P7-0283/P7-0284; next heartbeat should move to Agent D building/production lane unless the user redirects`.
+- Remaining open: `71`.
+- Current target: `Agent F managed presentation exception confirmed for P7-0245 UnitAttachedLightSystem; continue remaining Agent F visual split/direct candidates`.
 - Converted to `ISystem`: `3`.
 - Split passive/managed boundaries: `1`.
-- Managed presentation `SystemBase` exceptions: `2`.
-- Retired/folded helpers: `2`.
-- Validation status: `P7-0281 SelectionScreenMarkerSystem folded from disabled SystemBase to plain request relay; compile, selection marker, selection request/result, and architecture validations passed. P7-0259 BuildingMarkerVisualCompositionSystem folded from disabled SystemBase to plain MaterialPropertyBlock helper; compile, building selection marker, building placement command, and architecture validations passed. P7-0249 UnitModelSpawnSystem and P7-0251 UnitRenderBudgetSystem now consume RuntimeCameraSnapshotComponent instead of managed Camera; runtime camera reference, render budget, and architecture validations passed. P7-0283 CombatGameObjectVfxPlaybackSystem and P7-0284 UnitAttackVfxRequestSystem moved to UnitAttackVfxSystems.cs as reviewed managed presentation exceptions consuming ECS VFX request data; UnitAttackSystem is now cleanly inventoried as Converted with no GameObject blocker. Logs: /private/tmp/warline-phase7-agent-f-vfx-boundary-unit-combat.log, /private/tmp/warline-phase7-agent-f-vfx-boundary-ground-missile-visual.log, /private/tmp/warline-phase7-agent-a-architecture.log. Prior Agent F logs: /private/tmp/warline-phase7-agent-f-selection-screen-marker-order-marker.log, /private/tmp/warline-phase7-agent-f-selection-screen-marker-request-result.log, /private/tmp/warline-phase7-agent-f-building-marker-composition-selection-marker.log, /private/tmp/warline-phase7-agent-f-building-marker-composition-placement-validation.log, /private/tmp/warline-phase7-agent-f-camera-snapshot-reference.log, /private/tmp/warline-phase7-agent-f-camera-snapshot-render-budget.log. Residual unrelated validation note: /private/tmp/warline-phase7-agent-f-building-marker-composition-placement-runtime.log failed an existing runtime-tick cadence assertion (Expected 2, But was 1).`
+- Managed presentation `SystemBase` exceptions: `7`.
+- Retired/folded helpers: `9`.
+- Validation status: `P7-0245 UnitAttachedLightSystem confirmed as a counted managed light presentation SystemBase exception. It consumes ECS attached-light setup/cleanup data but must tick Unity Light GameObjects and managed instance ownership. Compile, inventory regeneration, combat-death focused validation, and Phase 7 architecture guard passed. Latest logs: /private/tmp/warline-phase7-agent-f-unit-attached-light-managed-exception-combat-death.log and /private/tmp/warline-phase7-agent-a-architecture.log. Inventory now reports 51 production SystemBase/legacy declarations, 134 production ISystem declarations, and 72.4% production ISystem share; open rows dropped to 28 and managed exceptions increased to 23. Prior Agent F logs include /private/tmp/warline-phase7-agent-f-runtime-city-yard-wall-visual-helper-fold-runtime-city-generation.log, /private/tmp/warline-phase7-agent-f-runtime-city-visual-helper-fold-runtime-city-generation.log, /private/tmp/warline-phase7-agent-f-building-placement-visual-update-helper-fold-placement-runtime.log, /private/tmp/warline-phase7-agent-f-building-placement-visual-composition-helper-fold-placement-runtime.log, /private/tmp/warline-phase7-agent-f-road-visual-refresh-helper-fold-road-build-command.log, /private/tmp/warline-phase7-agent-f-camera-helper-fold-rts-camera.log, and /private/tmp/warline-phase7-agent-f-camera-helper-fold-runtime-camera-reference.log. Residual unrelated validation note: /private/tmp/warline-phase7-agent-f-building-marker-composition-placement-runtime.log failed an existing runtime-tick cadence assertion (Expected 2, But was 1).`
 
 Completed slices:
 
@@ -33,6 +33,13 @@ Completed slices:
 - `2026-06-21` - `P7-0259` `BuildingMarkerVisualCompositionSystem`: folded disabled marker-property-block `SystemBase` into a plain helper. `BuildingGameplayCompositionSystem` now owns the helper directly instead of resolving it from the ECS World. This preserves shared marker property-block reuse while removing one non-UI production `SystemBase` declaration from the inventory.
 - `2026-06-21` - `P7-0249` `UnitModelSpawnSystem` and `P7-0251` `UnitRenderBudgetSystem`: split managed camera sampling into `RuntimeCameraReferenceSystem` and `RuntimeCameraSnapshotComponent`. Both `ISystem` rows now consume value-type camera snapshot data instead of direct `Camera` references, and the inventory marks both rows `Converted`.
 - `2026-06-21` - `P7-0283` `CombatGameObjectVfxPlaybackSystem` and `P7-0284` `UnitAttackVfxRequestSystem`: moved managed GameObject VFX playback out of `UnitAttackSystem.cs` into `UnitAttackVfxSystems.cs`. Gameplay continues to emit ECS request entities, managed playback consumes those requests and unwraps authored `UnityObjectRef<GameObject>` values only at the presentation boundary, and `P7-0338` `UnitAttackSystem` is now inventoried as a clean converted `ISystem`.
+- `2026-06-22` - `P7-0278` `RtsSelectionRuntimeCameraSystem` and `P7-0282` `SelectionUiCameraSystem`: folded disabled camera coordination `SystemBase` wrappers into plain direct-owned helpers. The actual Unity camera/reference/render quality boundaries remain in counted managed `SystemBase` exceptions, while the plain helpers keep request queuing, UI camera controls, and match-intro camera behavior unchanged.
+- `2026-06-22` - `P7-0273` `RoadVisualRefreshSystem`: folded disabled static-helper `SystemBase` wrapper into a plain direct-owned helper. Road visual refresh, road ECS sync, dirty chunk rebuild, and special-road rebuild behavior stayed unchanged.
+- `2026-06-22` - `P7-0260` `BuildingPlacementVisualCompositionSystem`: folded disabled placement visual composition `SystemBase` wrapper into a plain direct-owned helper. Building placement visual update, validation, focus, and commit callback wiring stayed unchanged.
+- `2026-06-22` - `P7-0262` `BuildingPlacementVisualUpdateSystem`: folded disabled placement visual update `SystemBase` wrapper into a plain direct-owned helper. Placement visual update, wall preview rebuild, validation, focus, and placement commit behavior stayed unchanged.
+- `2026-06-22` - `P7-0241` `RuntimeCityVisualSystem`: folded disabled runtime city visual `SystemBase` wrapper into a plain direct-owned helper. Runtime city visual root creation, visual-only prefab spawning, surface integration, and disposal behavior stayed unchanged.
+- `2026-06-22` - `P7-0242` `RuntimeCityYardWallVisualSystem`: folded disabled runtime city yard-wall visual `SystemBase` wrapper into a plain direct-owned helper. Yard boundary visual state, wall/gate/pillar spawning, and runtime city visual helper calls stayed unchanged.
+- `2026-06-22` - `P7-0245` `UnitAttachedLightSystem`: confirmed counted managed light presentation `SystemBase` exception. ECS setup/cleanup data remains value typed, while Unity `Light` GameObject lifecycle and transform updates stay in the managed presentation boundary.
 
 Owned files:
 
@@ -161,6 +168,7 @@ Keep required Unity object ticking explicit, small, and counted.
 - [ ] Keep managed exceptions read-only from gameplay perspective, except consuming visual requests and updating Unity presentation.
 - [ ] Gate expensive work by visibility, request count, or changed state.
 - [ ] Avoid hot-path allocations, LINQ, per-frame string formatting, or ungated logs.
+- [x] Record managed light presentation exception `P7-0245 UnitAttachedLightSystem` in the Agent F handoff for Agent A's denominator after confirming it consumes ECS setup/cleanup data and owns only Unity Light GameObject lifecycle/positioning.
 - [ ] Record every managed exception in the Agent F handoff for Agent A's denominator.
 
 Acceptance:
@@ -218,6 +226,7 @@ Keep camera/quality Unity object ownership managed while converting data policy 
 - [x] Keep actual `Camera`, `RenderSettings`, renderer, material, volume, or pipeline API application in a managed `SystemBase` exception. `RuntimeCameraReferenceSystem` remains the managed `Camera` owner.
 - [x] Do not use `Camera.main` or hierarchy lookup.
 - [x] Preserve explicit serialized camera/reference assignment boundaries.
+- [x] Fold disabled camera coordination wrappers `P7-0278 RtsSelectionRuntimeCameraSystem` and `P7-0282 SelectionUiCameraSystem` into plain direct-owned helpers while preserving request queue and UI camera behavior.
 - [ ] Preserve low-quality setting behavior while avoiding accidental ignored quality config.
 - [ ] Validate quality changes are applied and not responsible for gameplay FPS regressions unless evidence shows otherwise.
 
@@ -253,6 +262,12 @@ Remove dead visual wrappers only when safe.
 - [x] Search code, serialized references, prefab references, and reflection before retiring. `P7-0281` call sites are limited to selection startup/building interaction request forwarding.
 - [ ] Do not delete referenced scripts without Agent A-approved serialized-reference migration.
 - [x] Fold pure data helper logic into static functions or a narrow `ISystem` only when ownership is obvious. `P7-0281` was folded into a plain direct-owned request relay rather than forced into `ISystem` because it exposes managed events to presentation.
+- [x] Fold disabled camera helper wrappers `P7-0278` and `P7-0282` into plain direct-owned helpers after checking startup wiring, tests, and UI/camera call sites.
+- [x] Fold disabled road visual helper wrapper `P7-0273 RoadVisualRefreshSystem` into a plain direct-owned helper after checking road-build composition source/context call sites.
+- [x] Fold disabled building placement visual composition wrapper `P7-0260 BuildingPlacementVisualCompositionSystem` into a plain direct-owned helper after checking composition source and placement callback call sites.
+- [x] Fold disabled building placement visual update wrapper `P7-0262 BuildingPlacementVisualUpdateSystem` into a plain direct-owned helper after checking composition source and placement visual callback call sites.
+- [x] Fold disabled runtime city visual wrapper `P7-0241 RuntimeCityVisualSystem` into a plain direct-owned helper after checking runtime city composition owner, spawn context, yard-wall call sites, and disposal.
+- [x] Fold disabled runtime city yard-wall visual wrapper `P7-0242 RuntimeCityYardWallVisualSystem` into a plain direct-owned helper after checking runtime city composition owner, spawn context, house yard-wall call sites, and visual state ownership.
 - [ ] Keep asset-linked presentation scripts when removing them would create missing scripts.
 - [x] Record retired/folded count in the progress snapshot.
 

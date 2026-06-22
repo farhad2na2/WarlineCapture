@@ -1,22 +1,12 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using RoadTileData = RoadNetworkSystem.RoadTileData;
 using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
-internal sealed partial class RoadVisualRefreshSystem : SystemBase
+internal sealed class RoadVisualRefreshSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public readonly struct Context
     {
         public readonly RoadNetworkSystem RoadNetworkSystem;

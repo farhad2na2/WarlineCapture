@@ -2,7 +2,7 @@ using Unity.Entities;
 using UnityEngine;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 
-internal sealed partial class BuildingPlacementVisualCompositionSystem : SystemBase
+internal sealed class BuildingPlacementVisualCompositionSystem
 {
     internal delegate bool TryGetGridCellDelegate(
         BuildingGameplayCompositionSourceSystem source,
@@ -35,15 +35,6 @@ internal sealed partial class BuildingPlacementVisualCompositionSystem : SystemB
         BuildingGameplayCompositionSourceSystem source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock);
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void UpdatePlacement(
         BuildingGameplayCompositionSourceSystem source,

@@ -1,8 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-[DisableAutoCreation]
-public sealed partial class SelectionUiCameraSystem : SystemBase
+public sealed class SelectionUiCameraSystem
 {
     private const float DefaultMinZoomHeight = 10f;
     private const float DefaultMaxZoomHeight = 45f;
@@ -26,15 +25,6 @@ public sealed partial class SelectionUiCameraSystem : SystemBase
     {
         _cameraSystem = cameraSystem ?? ResolveDefaultCameraSystem();
         _cameraRequestSystem = cameraRequestSystem ?? ResolveDefaultCameraRequestSystem();
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     public bool IsNormalIsoModeActive => _cameraSystem != null && _cameraSystem.NormalIsoModeActive;

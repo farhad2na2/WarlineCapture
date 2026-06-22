@@ -1,21 +1,11 @@
-using Unity.Entities;
 using UnityEngine;
 using YardSide = RuntimeCityYardGateSystem.YardSide;
 
-internal sealed partial class RuntimeCityYardWallVisualSystem : SystemBase
+internal sealed class RuntimeCityYardWallVisualSystem
 {
     private readonly RuntimeCityYardWallVisualState _state = new();
 
     public RuntimeCityYardWallVisualState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void BuildYardBoundaryVisuals(
         RuntimeCityBuildingSpawnContextSystem.Context context,

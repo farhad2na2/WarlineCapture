@@ -135,6 +135,7 @@ public sealed class MenuBootstrapView : MonoBehaviour
         if (useUiToolkit && uiToolkitShellView != null)
         {
             UiToolkitShellApplySystem applySystem = world.GetOrCreateSystemManaged<UiToolkitShellApplySystem>();
+            applySystem.Enabled = true;
             if (!uiToolkitShellView.IsMounted)
                 uiToolkitShellView.Mount();
             applySystem.ConfigureShellView(uiToolkitShellView);
@@ -142,7 +143,11 @@ public sealed class MenuBootstrapView : MonoBehaviour
         }
 
         UiToolkitShellApplySystem existingSystem = world.GetExistingSystemManaged<UiToolkitShellApplySystem>();
-        existingSystem?.ClearShellView(uiToolkitShellView);
+        if (existingSystem == null)
+            return;
+
+        existingSystem.ClearShellView(uiToolkitShellView);
+        existingSystem.Enabled = false;
     }
 
     private void Awake()

@@ -220,6 +220,10 @@ internal sealed class MatchHudCameraControlAdapter : IMatchHudCameraControl
 internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSource
 {
     private const int MaxMinimapRasterSamplesPerAxis = 256;
+    private Entity cachedGridEntity = Entity.Null;
+    private Entity cachedGridRoadEntity = Entity.Null;
+    private Entity cachedMarkerBoundaryEntity = Entity.Null;
+    private Entity cachedMapSurfaceEntity = Entity.Null;
 
     public bool TryGetGrid(out MatchHudMinimapGridModel grid)
     {
@@ -241,14 +245,10 @@ internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSou
         if (!TryGetDefaultEntityManager(out EntityManager em))
             return;
 
-        using EntityQuery query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
-            ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        if (entities.Length == 0)
+        if (!TryGetMarkerBoundaryEntity(em, out Entity markerEntity))
             return;
 
-        DynamicBuffer<MatchHudMinimapMarkerElement> buffer = em.GetBuffer<MatchHudMinimapMarkerElement>(entities[0], true);
+        DynamicBuffer<MatchHudMinimapMarkerElement> buffer = em.GetBuffer<MatchHudMinimapMarkerElement>(markerEntity, true);
         for (int i = 0; i < buffer.Length; i++)
         {
             MatchHudMinimapMarkerElement marker = buffer[i];
@@ -353,19 +353,22 @@ internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSou
         return true;
     }
 
-    private static bool TryGetGridEntity(EntityManager em, out Entity gridEntity)
+    private bool TryGetGridEntity(EntityManager em, out Entity gridEntity)
     {
-        gridEntity = Entity.Null;
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        if (entities.Length == 0)
+        if (IsValidEntity(em, cachedGridEntity, ComponentType.ReadOnly<GridConfig>()))
+        {
+            gridEntity = cachedGridEntity;
+            return true;
+        }
+
+        if (!TryFindSingleEntity(em, out gridEntity, ComponentType.ReadOnly<GridConfig>()))
             return false;
 
-        gridEntity = entities[0];
+        cachedGridEntity = gridEntity;
         return true;
     }
 
-    private static bool TryGetGridRoadBuffers(
+    private bool TryGetGridRoadBuffers(
         EntityManager em,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
@@ -377,12 +380,21 @@ internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSou
         sidewalks = default;
         dirtRoads = default;
 
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<GridRoad>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        if (entities.Length == 0)
+        if (!IsValidEntity(
+                em,
+                cachedGridRoadEntity,
+                ComponentType.ReadOnly<GridConfig>(),
+                ComponentType.ReadOnly<GridRoad>()) &&
+            !TryFindSingleEntity(
+                em,
+                out cachedGridRoadEntity,
+                ComponentType.ReadOnly<GridConfig>(),
+                ComponentType.ReadOnly<GridRoad>()))
+        {
             return false;
+        }
 
-        Entity gridEntity = entities[0];
+        Entity gridEntity = cachedGridRoadEntity;
         grid = em.GetComponentData<GridConfig>(gridEntity);
         roads = em.GetBuffer<GridRoad>(gridEntity, true);
         if (em.HasBuffer<GridRoadSidewalk>(gridEntity))
@@ -392,7 +404,7 @@ internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSou
         return true;
     }
 
-    private static bool TryGetMapSurface(
+    private bool TryGetMapSurface(
         EntityManager em,
         out MapSurfaceComponent surface,
         out DynamicBuffer<MapSurfaceSceneOverlay> sceneOverlays,
@@ -401,12 +413,13 @@ internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSou
         surface = default;
         sceneOverlays = default;
         hasSceneOverlays = false;
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        if (entities.Length == 0)
+        if (!IsValidEntity(em, cachedMapSurfaceEntity, ComponentType.ReadOnly<MapSurfaceComponent>()) &&
+            !TryFindSingleEntity(em, out cachedMapSurfaceEntity, ComponentType.ReadOnly<MapSurfaceComponent>()))
+        {
             return false;
+        }
 
-        Entity entity = entities[0];
+        Entity entity = cachedMapSurfaceEntity;
         surface = em.GetComponentData<MapSurfaceComponent>(entity);
         if (em.HasBuffer<MapSurfaceSceneOverlay>(entity))
         {
@@ -414,6 +427,59 @@ internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSou
             hasSceneOverlays = sceneOverlays.IsCreated && sceneOverlays.Length > 0;
         }
 
+        return true;
+    }
+
+    private bool TryGetMarkerBoundaryEntity(EntityManager em, out Entity markerEntity)
+    {
+        if (IsValidEntity(
+                em,
+                cachedMarkerBoundaryEntity,
+                ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+                ComponentType.ReadOnly<MatchHudMinimapMarkerElement>()))
+        {
+            markerEntity = cachedMarkerBoundaryEntity;
+            return true;
+        }
+
+        if (!TryFindSingleEntity(
+                em,
+                out markerEntity,
+                ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+                ComponentType.ReadOnly<MatchHudMinimapMarkerElement>()))
+        {
+            return false;
+        }
+
+        cachedMarkerBoundaryEntity = markerEntity;
+        return true;
+    }
+
+    private static bool IsValidEntity(EntityManager em, Entity entity, ComponentType requiredComponent)
+    {
+        return entity != Entity.Null &&
+               em.Exists(entity) &&
+               em.HasComponent(entity, requiredComponent);
+    }
+
+    private static bool IsValidEntity(EntityManager em, Entity entity, ComponentType firstRequiredComponent, ComponentType secondRequiredComponent)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return false;
+
+        return em.HasComponent(entity, firstRequiredComponent) &&
+               em.HasComponent(entity, secondRequiredComponent);
+    }
+
+    private static bool TryFindSingleEntity(EntityManager em, out Entity entity, params ComponentType[] requiredComponents)
+    {
+        entity = Entity.Null;
+        using EntityQuery query = em.CreateEntityQuery(requiredComponents);
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        if (entities.Length == 0)
+            return false;
+
+        entity = entities[0];
         return true;
     }
 

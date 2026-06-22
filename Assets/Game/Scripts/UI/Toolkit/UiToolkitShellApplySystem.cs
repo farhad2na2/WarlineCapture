@@ -132,6 +132,9 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
 
     protected override void OnUpdate()
     {
+        if (shellView == null)
+            return;
+
         hasShellState = UiShellRuntimeGateway.TryReadShellState(out lastShellState);
         hasLoadingProgress = UiShellRuntimeGateway.TryReadLoadingProgress(out lastLoadingProgress);
         hasDiagnosticsOverlay = UiShellRuntimeGateway.TryReadDiagnosticsOverlay(out lastDiagnosticsOverlay);

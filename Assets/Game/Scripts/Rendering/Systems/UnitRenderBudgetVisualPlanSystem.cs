@@ -233,7 +233,7 @@ public readonly struct UnitRenderBudgetVisualPlan
             forceImmediateDetailVisual = false;
         }
 
-        if (request.IsSelectedUnit && !request.IsCharacter)
+        if (request.IsSelectedUnit)
         {
             shouldShowDetail = true;
             shouldShowMid = false;

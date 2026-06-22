@@ -26,7 +26,9 @@ public sealed class MatchHudMinimapInputSystem
     private const float CameraDragRecaptureDebounceSeconds = 0.45f;
     private const float CameraViewportEdgeRefreshMargin = 0.12f;
     private const float MinimapZoomedInScale = 0.5f;
-    private const float MarkerRefreshSeconds = 0.1f;
+    private const float ViewportRefreshSeconds = 0.15f;
+    private const float ViewportDragRefreshSeconds = 0.05f;
+    private const float MarkerRefreshSeconds = 0.2f;
     private const int MinRasterFeatureCount = 24;
 
     private MatchHudMinimapView _view;
@@ -54,6 +56,7 @@ public sealed class MatchHudMinimapInputSystem
     private MatchHudMinimapProjectionGrid _capturedProjectionGrid;
     private MatchHudMinimapProjectionGrid _currentProjectionGrid;
     private MatchHudMinimapGridModel _cachedGrid;
+    private float _nextViewportRefreshTime;
     private float _nextMarkerRefreshTime;
     private float _cameraDragRefreshBlockedUntil;
     private bool _minimapZoomedIn;
@@ -85,6 +88,7 @@ public sealed class MatchHudMinimapInputSystem
         _currentProjectionGrid = default;
         _capturedProjectionGrid = default;
         _nextMarkerRefreshTime = 0f;
+        _nextViewportRefreshTime = 0f;
         _nextStaticMapRetryTime = 0f;
         _cameraDragRefreshBlockedUntil = 0f;
         _warmupStaticMapRefreshesRemaining = 0;
@@ -124,6 +128,7 @@ public sealed class MatchHudMinimapInputSystem
     {
         _staticMapDirty = true;
         _markersDirty = true;
+        _nextViewportRefreshTime = 0f;
     }
 
     public void Update()
@@ -197,18 +202,7 @@ public sealed class MatchHudMinimapInputSystem
             _staticMapDirty = true;
         }
 
-        if (MatchHudMinimapProjectionSystem.TryGetCameraViewportRect(worldCamera, projectionGrid, out Rect viewport))
-        {
-            if (_view.HasManualViewportOverride)
-            {
-                _view.SetViewportNormalizedRect(_view.ManualViewportNormalizedRect);
-            }
-            else
-            {
-                _view.SetViewportNormalizedRect(viewport);
-            }
-        }
-
+        UpdateViewportIfDue(worldCamera, projectionGrid);
         UpdateMarkersIfDue(projectionGrid);
     }
 
@@ -237,8 +231,10 @@ public sealed class MatchHudMinimapInputSystem
         if (!_view.IsDraggingViewport)
         {
             _view.ClearManualViewportOverride();
-            _staticMapDirty = true;
+            if (!_view.UseFullMapProjection)
+                _staticMapDirty = true;
             _nextStaticMapRetryTime = 0f;
+            _nextViewportRefreshTime = 0f;
         }
         Update();
     }
@@ -323,6 +319,7 @@ public sealed class MatchHudMinimapInputSystem
         _staticMapDirty = true;
         _markersDirty = true;
         _nextStaticMapRetryTime = 0f;
+        _nextViewportRefreshTime = 0f;
         Update();
     }
 
@@ -384,6 +381,27 @@ public sealed class MatchHudMinimapInputSystem
         _markersDirty = false;
         _nextMarkerRefreshTime = Time.unscaledTime + MarkerRefreshSeconds;
         UpdateMarkers(grid);
+    }
+
+    private void UpdateViewportIfDue(Camera worldCamera, MatchHudMinimapProjectionGrid projectionGrid)
+    {
+        if (_view == null)
+            return;
+
+        float now = Time.unscaledTime;
+        bool dragging = _view.IsDraggingViewport;
+        if (!dragging && now < _nextViewportRefreshTime)
+            return;
+
+        _nextViewportRefreshTime = now + (dragging ? ViewportDragRefreshSeconds : ViewportRefreshSeconds);
+        if (_view.HasManualViewportOverride)
+        {
+            _view.SetViewportNormalizedRect(_view.ManualViewportNormalizedRect);
+            return;
+        }
+
+        if (MatchHudMinimapProjectionSystem.TryGetCameraViewportRect(worldCamera, projectionGrid, out Rect viewport))
+            _view.SetViewportNormalizedRect(viewport);
     }
 
     private void UpdateMarkers(MatchHudMinimapProjectionGrid grid)

@@ -50,7 +50,11 @@ public partial struct VisibleUnitSelectionCandidateSystem : ISystem
         int candidateCapacity = _visiblePlayerUnitQuery.CalculateEntityCount();
         using NativeList<VisibleUnitSelectionSystem.VisibleUnitSelectionCandidate> candidates =
             new(candidateCapacity, Allocator.TempJob);
-        VisibleUnitSelectionCandidateCollector.Collect(ref state, _visiblePlayerUnitQuery, candidates);
+        VisibleUnitSelectionCandidateCollector.Collect(
+            state.EntityManager,
+            _visiblePlayerUnitQuery,
+            VisibleUnitSelectionSystem.Filter.All,
+            candidates);
 
         for (int i = 0; i < candidates.Length; i++)
         {
@@ -93,6 +97,7 @@ internal static class VisibleUnitSelectionCandidateCollector
         NativeList<VisibleUnitSelectionSystem.VisibleUnitSelectionCandidate> candidates)
     {
         candidates.Clear();
+        em.CompleteDependencyBeforeRO<LocalToWorld>();
         new CollectVisibleUnitCandidatesJob
         {
             Filter = (byte)filter,
@@ -112,6 +117,7 @@ internal static class VisibleUnitSelectionCandidateCollector
         NativeList<VisibleUnitSelectionSystem.VisibleUnitSelectionCandidate> candidates)
     {
         candidates.Clear();
+        state.EntityManager.CompleteDependencyBeforeRO<LocalToWorld>();
         new CollectVisibleUnitCandidatesJob
         {
             Filter = (byte)VisibleUnitSelectionSystem.Filter.All,

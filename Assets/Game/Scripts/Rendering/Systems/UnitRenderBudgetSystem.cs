@@ -11,15 +11,15 @@ using UnitDistance = UnitRenderBudgetDistance.UnitDistance;
 [UpdateAfter(typeof(UnitMassRenderSettingsSystem))]
 public partial struct UnitRenderBudgetSystem : ISystem
 {
-    private const int MaxDetailedUnits = 192;
-    private const int MaxMidLodUnits = 192;
-    private const int MaxLowLodUnits = 192;
+    private const int MaxDetailedUnits = 48;
+    private const int MaxMidLodUnits = 128;
+    private const int MaxLowLodUnits = 128;
     private const int MaxUpdatesPerFrame = 4096;
     private const int UpdateIntervalFrames = 10;
-    private const float AlwaysDetailedDistanceSq = 256f * 256f;
-    private const float VisibleCharacterLowDistanceSq = 32f * 32f;
-    private const float VisibleCharacterImpostorNearDistance = 48f;
-    private const float VisibleCharacterImpostorFarDistance = 48f;
+    private const float AlwaysDetailedDistanceSq = 48f * 48f;
+    private const float VisibleCharacterLowDistanceSq = 72f * 72f;
+    private const float VisibleCharacterImpostorNearDistance = 96f;
+    private const float VisibleCharacterImpostorFarDistance = 128f;
     private const float EnemyAlwaysDetailedDistanceSq = 14f * 14f;
     private const float EnemyLowLodDistanceSq = 20f * 20f;
     private const float EnemyImpostorDistanceSq = 28f * 28f;

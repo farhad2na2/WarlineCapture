@@ -100,10 +100,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadBuildVisualContextSystem ResolveRoadBuildVisualContextSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RoadBuildVisualContextSystem>()
-            : null;
+        return new RoadBuildVisualContextSystem();
     }
 
     private static RoadVisualResolutionSystem ResolveRoadVisualResolutionSystem()

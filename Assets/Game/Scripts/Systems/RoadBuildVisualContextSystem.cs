@@ -1,23 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Entities;
 using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
 using MarkerLayoutData = RoadVisualVariantSystem.MarkerLayoutData;
 using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
-internal sealed partial class RoadBuildVisualContextSystem : SystemBase
+internal sealed class RoadBuildVisualContextSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public readonly struct Context
     {
         public readonly RoadNetworkSystem RoadNetworkSystem;

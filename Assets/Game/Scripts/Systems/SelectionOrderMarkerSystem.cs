@@ -6,8 +6,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-[DisableAutoCreation]
-public sealed partial class SelectionOrderMarkerSystem : SystemBase
+public sealed class SelectionOrderMarkerSystem
 {
     public delegate bool IsPreviewTargetValidWithSourceDelegate(EntityManager em, Entity source, Entity target);
     public delegate bool TryResolveRuntimeBuildingInstanceDelegate(Entity combatEntity, int runtimeBuildingId, out GameObject instance);
@@ -87,20 +86,6 @@ public sealed partial class SelectionOrderMarkerSystem : SystemBase
     private static readonly Color ScanMarkerOuterColor = new(0.22f, 1f, 0.9f, 0.98f);
     private static readonly Color ScanMarkerInnerColor = new(0.12f, 0.72f, 1f, 0.66f);
     private static readonly Color ScanMarkerBracketColor = new(0.54f, 1f, 0.96f, 1f);
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
-    protected override void OnDestroy()
-    {
-        Dispose();
-    }
 
     public void EnsureEntityQueries(EntityManager em)
     {

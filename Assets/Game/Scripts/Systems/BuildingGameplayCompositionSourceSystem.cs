@@ -122,10 +122,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingSelectionMarkerSystem ResolveBuildingSelectionMarkerSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<BuildingSelectionMarkerSystem>()
-            : null;
+        return new BuildingSelectionMarkerSystem();
     }
 
     private static BuildingDestroyedVisualSystem ResolveBuildingDestroyedVisualSystem()

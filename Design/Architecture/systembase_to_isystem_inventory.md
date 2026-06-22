@@ -1,25 +1,25 @@
 # SystemBase To ISystem Inventory
 
-Generated: `2026-06-22T19:59:09Z`.
+Generated: `2026-06-22T20:08:33Z`.
 Command: `python3 Tools/Architecture/generate_systembase_to_isystem_inventory.py --root Assets/Game/Scripts --output Design/Architecture/systembase_to_isystem_inventory.md`.
 Source root: `Assets/Game/Scripts`.
-Source commit: `221a1fc7`.
+Source commit: `686468d9`.
 Worktree state during generation: `dirty`.
 
 ## Summary
 
-- Total ECS system declarations: `180`.
-- Production `SystemBase`/legacy declarations: `46`.
+- Total ECS system declarations: `179`.
+- Production `SystemBase`/legacy declarations: `45`.
 - Production `ISystem` declarations: `134`.
-- Current production `ISystem` share: `74.4%`.
-- Production non-UI rows: `172`.
+- Current production `ISystem` share: `74.9%`.
+- Production non-UI rows: `171`.
 - Production UI rows: `8`.
 - Editor rows: `0`.
 - Test rows: `0`.
-- Scopes: `ProductionNonUI` 172, `ProductionUI` 8.
-- Owner lanes: `AgentB` 20, `AgentC` 12, `AgentD` 9, `AgentE` 10, `AgentF` 37, `Integration` 92.
-- Dispositions: `Converted` 127, `DirectConvert` 7, `ManagedPresentationSystemBaseException` 24, `RetireFold` 2, `SplitThenConvert` 12, `UIOutOfScope` 8.
-- Statuses: `Converted` 127, `Deferred` 8, `ManagedException` 24, `Open` 21.
+- Scopes: `ProductionNonUI` 171, `ProductionUI` 8.
+- Owner lanes: `AgentB` 20, `AgentC` 12, `AgentD` 9, `AgentE` 10, `AgentF` 36, `Integration` 92.
+- Dispositions: `Converted` 127, `DirectConvert` 7, `ManagedPresentationSystemBaseException` 24, `RetireFold` 2, `SplitThenConvert` 11, `UIOutOfScope` 8.
+- Statuses: `Converted` 127, `Deferred` 8, `ManagedException` 24, `Open` 20.
 
 ## Inventory
 
@@ -90,7 +90,6 @@ Worktree state during generation: `dirty`.
 | `P7-0383` | `UnitSelectionObjectOutlinePresentationSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs` | 12 | `ProductionNonUI` | `AgentF` | `ManagedPresentationSystemBaseException` | Material | Low: reviewed managed selection outline presentation boundary only | DestroySelectionObjectOutlines (method) | Manual review: consumes selected unit marker ECS state and owns only selection object-outline `Material`, `Mesh`, and render-mesh presentation setup. | Counted managed selection object-outline presentation `SystemBase` exception | Architecture guard + compile + rendering/VFX focused validation | `ManagedException` |
 | `P7-0255` | `AirMissileLauncherReloadVisualSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | 833 | `ProductionNonUI` | `AgentF` | `Converted` | None | Medium: Combat, Command, Damage, Health | MoveAngleRadians (method), OnCreate (method), OnUpdate (method), ResolveDesiredLocalYaw (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `AirMissileLauncherReloadVisualSystem : ISystem` | Architecture guard + compile + rendering/VFX focused validation | `Converted` |
 | `P7-0257` | `BuildingFactionVisualSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/BuildingFactionVisualSystem.cs` | 4 | `ProductionNonUI` | `AgentF` | `ManagedPresentationSystemBaseException` | Transform, Material, Renderer | Low: managed boundary only | ApplyOwnerFaction (method), CacheBuildingRenderers (method), Clear (method), Context (property) | Document concrete Unity-object ticking blocker and ensure no gameplay policy remains here. | Counted managed presentation/config/camera `SystemBase` exception. | Architecture guard + compile + rendering/VFX focused validation | `ManagedException` |
-| `P7-0264` | `BuildingSelectionMarkerSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/BuildingSelectionMarkerSystem.cs` | 6 | `ProductionNonUI` | `AgentF` | `SplitThenConvert` | GameObject, Transform, UnityEngine.Object, Object.Instantiate, Object.Destroy, Renderer | High: managed blockers mixed with Selection | Context (property), DestroyObjectDelegate (method), Dispose (method), GetFootprintCenterDelegate (method), Hide (method), Refresh (method), TryGetGridDelegate (method) | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Narrow `ISystem` processors plus explicit managed boundary if needed. | Architecture guard + compile + rendering/VFX focused validation | `Open` |
 | `P7-0265` | `BuildingVisualSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/BuildingVisualSystem.cs` | 6 | `ProductionNonUI` | `AgentF` | `ManagedPresentationSystemBaseException` | Transform, Material, Renderer | Low: managed boundary only | AnimatedPart (property), ApplyMarkerColor (method), FindAnimatedBuildingParts (method), FindDescendantByName (method), SetTransformVisible (method), UpdateAnimatedBuildingParts (method) | Document concrete Unity-object ticking blocker and ensure no gameplay policy remains here. | Counted managed presentation/config/camera `SystemBase` exception. | Architecture guard + compile + rendering/VFX focused validation | `ManagedException` |
 | `P7-0266` | `GroundMissileFlyingRocketVisualSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs` | 385 | `ProductionNonUI` | `AgentF` | `Converted` | None | Medium: Attack, Combat, Command, Damage | Execute (method), OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `GroundMissileFlyingRocketVisualSystem : ISystem` | Architecture guard + compile + rendering/VFX focused validation | `Converted` |
 | `P7-0267` | `GroundMissileLauncherVisualSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs` | 263 | `ProductionNonUI` | `AgentF` | `Converted` | None | Medium: Attack, Combat, Command, Damage | Execute (method), OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `GroundMissileLauncherVisualSystem : ISystem` | Architecture guard + compile + rendering/VFX focused validation | `Converted` |
@@ -289,7 +288,7 @@ Rows: `10`.
 
 ### AgentF
 
-Rows: `37`.
+Rows: `36`.
 
 | Id | Type | Base | Disposition | Status | Path | First safe slice | Validation gate |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -307,7 +306,6 @@ Rows: `37`.
 | `P7-0383` | `UnitSelectionObjectOutlinePresentationSystem` | `SystemBase` | `ManagedPresentationSystemBaseException` | `ManagedException` | `Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs` | Manual review: consumes selected unit marker ECS state and owns only selection object-outline `Material`, `Mesh`, and render-mesh presentation setup. | Architecture guard + compile + rendering/VFX focused validation |
 | `P7-0255` | `AirMissileLauncherReloadVisualSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + rendering/VFX focused validation |
 | `P7-0257` | `BuildingFactionVisualSystem` | `SystemBase` | `ManagedPresentationSystemBaseException` | `ManagedException` | `Assets/Game/Scripts/Systems/BuildingFactionVisualSystem.cs` | Document concrete Unity-object ticking blocker and ensure no gameplay policy remains here. | Architecture guard + compile + rendering/VFX focused validation |
-| `P7-0264` | `BuildingSelectionMarkerSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Systems/BuildingSelectionMarkerSystem.cs` | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Architecture guard + compile + rendering/VFX focused validation |
 | `P7-0265` | `BuildingVisualSystem` | `SystemBase` | `ManagedPresentationSystemBaseException` | `ManagedException` | `Assets/Game/Scripts/Systems/BuildingVisualSystem.cs` | Document concrete Unity-object ticking blocker and ensure no gameplay policy remains here. | Architecture guard + compile + rendering/VFX focused validation |
 | `P7-0266` | `GroundMissileFlyingRocketVisualSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + rendering/VFX focused validation |
 | `P7-0267` | `GroundMissileLauncherVisualSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + rendering/VFX focused validation |
@@ -610,7 +608,6 @@ Rows: `58`.
 | `P7-0383` | `public` | `None` | None | OnCreate, OnUpdate | DestroySelectionObjectOutlines (method) | EntityQuery, EntityManager, ToEntityArray | presentation view, native container, query/lookup/cache | `Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs\|UnitSelectionObjectOutlinePresentationSystem` |
 | `P7-0255` | `public` | `None` | None | OnCreate, OnUpdate | MoveAngleRadians (method), OnCreate (method), OnUpdate (method), ResolveDesiredLocalYaw (method) | SystemAPI.Query, EntityQuery, EntityManager, GetComponentLookup, ECB, jobs, .ScheduleParallel | query/lookup/cache | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs\|AirMissileLauncherReloadVisualSystem` |
 | `P7-0257` | `internal` | `None` | None | OnCreate, OnUpdate | ApplyOwnerFaction (method), CacheBuildingRenderers (method), Clear (method), Context (property) | None | presentation view | `Assets/Game/Scripts/Systems/BuildingFactionVisualSystem.cs\|BuildingFactionVisualSystem` |
-| `P7-0264` | `internal` | `None` | None | OnCreate, OnUpdate | Context (property), DestroyObjectDelegate (method), Dispose (method), GetFootprintCenterDelegate (method), Hide (method), Refresh (method), TryGetGridDelegate (method) | None | prefab/reference, presentation view | `Assets/Game/Scripts/Systems/BuildingSelectionMarkerSystem.cs\|BuildingSelectionMarkerSystem` |
 | `P7-0265` | `public` | `None` | None | OnCreate, OnUpdate | AnimatedPart (property), ApplyMarkerColor (method), FindAnimatedBuildingParts (method), FindDescendantByName (method), SetTransformVisible (method), UpdateAnimatedBuildingParts (method) | None | presentation view | `Assets/Game/Scripts/Systems/BuildingVisualSystem.cs\|BuildingVisualSystem` |
 | `P7-0266` | `public` | `None` | None | OnCreate, OnUpdate, Update | Execute (method), OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager, GetComponentLookup, ECB, jobs, .ScheduleParallel | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs\|GroundMissileFlyingRocketVisualSystem` |
 | `P7-0267` | `public` | `None` | None | OnCreate, OnUpdate, Update | Execute (method), OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager, GetComponentLookup, ECB, jobs, .ScheduleParallel | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs\|GroundMissileLauncherVisualSystem` |

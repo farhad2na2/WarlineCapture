@@ -302,8 +302,7 @@ public sealed class BuildingSelectionMarkerSystemTests
 
     private BuildingSelectionMarkerSystem CreateBuildingSelectionMarkerSystem()
     {
-        _world ??= new World(nameof(BuildingSelectionMarkerSystemTests));
-        return _world.GetOrCreateSystemManaged<BuildingSelectionMarkerSystem>();
+        return new BuildingSelectionMarkerSystem();
     }
 
     private RuntimeBuildingEntity CreateBuilding(int id, Vector2Int origin, Vector2Int footprint, float y)

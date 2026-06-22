@@ -3,17 +3,8 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingPlacementCommandSystem : SystemBase
+internal sealed class BuildingPlacementCommandSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     internal readonly struct Context
     {
         public readonly BuildingPlacementStartupSystem StartupSystem;

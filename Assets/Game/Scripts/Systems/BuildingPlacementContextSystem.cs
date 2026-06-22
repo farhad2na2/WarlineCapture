@@ -1,20 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingPlacementContextSystem : SystemBase
+internal sealed class BuildingPlacementContextSystem
 {
     private readonly List<BuildingPlacementCommitSystem.WallRun> _wallCommitRuns = new();
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public struct Source
     {

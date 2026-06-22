@@ -2,18 +2,9 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed partial class BuildingCombatSystem : SystemBase
+public sealed class BuildingCombatSystem
 {
     private readonly List<int> _destroyedCleanupIdsScratch = new();
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public enum RuntimeCombatState : byte
     {

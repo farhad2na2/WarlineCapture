@@ -1,19 +1,9 @@
 using Unity.Collections;
-using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed partial class BuildingSpawnCellSystem : SystemBase
+internal sealed class BuildingSpawnCellSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public int2 FindSpawnCellAdjacentToBuilding(
         ref Unity.Mathematics.Random rng,
         in GridConfig grid,

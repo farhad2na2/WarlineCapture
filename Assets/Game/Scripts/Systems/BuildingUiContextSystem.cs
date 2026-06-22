@@ -3,17 +3,8 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingUiContextSystem : SystemBase
+internal sealed class BuildingUiContextSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public readonly struct Source
     {
         public readonly RuntimeResourceSystem RuntimeResourceSystem;

@@ -1,17 +1,7 @@
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingDefinitionAuthoringMetadataSystem : SystemBase
+internal static class BuildingDefinitionAuthoringMetadataSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public static bool TryGetBuildingDefinitionMetadata(
         GameObject prefab,
         out BuildingDefinitionSystem.BuildingDefinitionMetadata metadata)

@@ -4,17 +4,8 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed partial class BuildingUiQuerySystem : SystemBase
+public sealed class BuildingUiQuerySystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
     public delegate bool TryGetSelectedBuildingHealthDelegate(out int current, out int max);
     public delegate bool TryGetSelectedBuildingPreviewPrefabDelegate(out GameObject prefab);

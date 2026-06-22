@@ -5,17 +5,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed partial class BuildingPlacementValidationSystem : SystemBase
+public sealed class BuildingPlacementValidationSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     internal delegate Vector2Int GetWallSegmentFootprintDelegate(BuildingDefinition definition, bool vertical);
 
     internal readonly struct WallValidationContext

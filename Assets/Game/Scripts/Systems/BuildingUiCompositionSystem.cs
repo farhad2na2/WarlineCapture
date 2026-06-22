@@ -3,17 +3,8 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingUiCompositionSystem : SystemBase
+internal sealed class BuildingUiCompositionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public BuildingUiContextSystem.Source CreateSource(
         BuildingGameplayCompositionSourceSystem source,
         BuildingPlacementInteractionSystem.Context interactionContext,

@@ -3,17 +3,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed partial class BuildingPlacementInteractionContextSystem : SystemBase
+internal sealed class BuildingPlacementInteractionContextSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public readonly struct Source
     {
         public readonly Func<bool> HasPendingBuildingPlacement;

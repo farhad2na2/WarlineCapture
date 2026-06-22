@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingRuntimeSpawnSystem : SystemBase
+internal sealed class BuildingRuntimeSpawnSystem
 {
     public delegate bool TryGetGridDataDelegate(
         out Entity gridEntity,
@@ -81,15 +81,6 @@ internal sealed partial class BuildingRuntimeSpawnSystem : SystemBase
             RegisterRuntimeBuilding = registerRuntimeBuilding;
             SetRuntimeBuildingOwnerFaction = setRuntimeBuildingOwnerFaction;
         }
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     public void SpawnInitialTestRoster(

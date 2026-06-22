@@ -1,17 +1,7 @@
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingProductionUnitMetadataSystem : SystemBase
+internal static class BuildingProductionUnitMetadataSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public static void PrepareTransportDropVisual(GameObject visual)
     {
         if (visual != null && visual.TryGetComponent(out UnitGridAuthoring authoring))

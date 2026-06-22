@@ -1,22 +1,12 @@
 using System;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingPlacementInputRuntimeTickSystem : SystemBase
+internal sealed class BuildingPlacementInputRuntimeTickSystem
 {
     private const float DefaultClickDragThresholdPixels = 8f;
 
     private bool _pendingBuildingSelectionClick;
     private Vector2 _buildingSelectionPressPosition;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public struct Context
     {

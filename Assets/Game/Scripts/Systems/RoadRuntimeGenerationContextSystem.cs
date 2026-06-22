@@ -1,16 +1,5 @@
-using Unity.Entities;
-
-internal sealed partial class RoadRuntimeGenerationContextSystem : SystemBase
+internal sealed class RoadRuntimeGenerationContextSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public readonly struct Context
     {
         public readonly RoadRuntimeGenerationSystem.TryGetRoadCellSizeInGridCellsDelegate TryGetRoadCellSizeInGridCells;

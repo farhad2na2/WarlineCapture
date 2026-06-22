@@ -1,7 +1,6 @@
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class CitizenPopulationDiagnosticSystem : SystemBase
+internal sealed class CitizenPopulationDiagnosticSystem
 {
     private static readonly bool EnableCitizenPopulationDiagnostics = false;
     private const double FreezeLogThresholdSeconds = 0.05d;
@@ -16,15 +15,6 @@ internal sealed partial class CitizenPopulationDiagnosticSystem : SystemBase
         public double AfterVisible;
         public double AfterTotals;
         public bool SkippedForPathfinding;
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     public static FrameTimings BeginFrame(CitizenPopulationDiagnosticSystem system)

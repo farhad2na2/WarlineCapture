@@ -8,7 +8,7 @@ using UnityEngine;
 using static UnityEngine.Object;
 using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
 
-internal sealed partial class BuildingProductionTransportSystem : SystemBase
+internal sealed class BuildingProductionTransportSystem
 {
     private const float ProductionTransportLaneSpacing = 12f;
     private const float RunwaySurfaceClearance = 0.03f;
@@ -30,15 +30,6 @@ internal sealed partial class BuildingProductionTransportSystem : SystemBase
     private Transform _runtimeRoot;
     private bool[] _laneUsage = new bool[4];
     private int _createdTransportStateCount;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public readonly struct Context
     {

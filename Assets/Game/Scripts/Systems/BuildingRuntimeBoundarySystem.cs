@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
+public sealed class BuildingRuntimeBoundarySystem
 {
     private const float PublishIntervalSeconds = 0.5f;
     private const int MaxRuntimeSpawnRequestsPerUpdate = 16;
@@ -56,15 +56,6 @@ public sealed partial class BuildingRuntimeBoundarySystem : SystemBase
     {
         public int ProducedCount;
         public int QueuedCount;
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     internal void Update(

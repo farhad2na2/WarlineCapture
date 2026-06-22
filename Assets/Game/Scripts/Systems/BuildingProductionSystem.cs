@@ -4,17 +4,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed partial class BuildingProductionSystem : SystemBase
+public sealed class BuildingProductionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     private const string HelicopterTransportPrefabName = "Unit_Veh_Helicopter_Transport";
     private const string HelicopterTransportLookupKey = "unit_veh_helicopter_transport";
     private const string PlaneTransportPrefabName = "Unit_Veh_Plane_Transport";

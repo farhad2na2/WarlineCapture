@@ -1,16 +1,5 @@
-using Unity.Entities;
-
-internal sealed partial class RoadBuildCompositionSourceSystem : SystemBase
+internal sealed class RoadBuildCompositionSourceSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
     public readonly RoadBuildStartupSystem RoadBuildStartupSystem = new();
     public readonly RoadBuildDependencySystem RoadBuildDependencySystem = new();
@@ -170,10 +159,7 @@ internal sealed partial class RoadBuildCompositionSourceSystem : SystemBase
 
     private static RoadRuntimeGenerationContextSystem ResolveRoadRuntimeGenerationContextSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RoadRuntimeGenerationContextSystem>()
-            : null;
+        return new RoadRuntimeGenerationContextSystem();
     }
 
     private static RoadMinimapEventSystem ResolveRoadMinimapEventSystem()

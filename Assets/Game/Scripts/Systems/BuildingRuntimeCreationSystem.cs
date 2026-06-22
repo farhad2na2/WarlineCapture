@@ -2,17 +2,8 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingRuntimeCreationSystem : SystemBase
+internal sealed class BuildingRuntimeCreationSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     private const float RuntimeBuildingMaxSurfaceHeightDelta = 0.5f;
     private const float RuntimeBuildingMaxSurfaceSlopeDegrees = 45f;
 

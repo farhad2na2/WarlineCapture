@@ -1,7 +1,6 @@
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class RuntimeCityYardGateSystem : SystemBase
+internal sealed class RuntimeCityYardGateSystem
 {
     private readonly RuntimeCityYardGateState _state = new();
 
@@ -14,15 +13,6 @@ internal sealed partial class RuntimeCityYardGateSystem : SystemBase
     }
 
     public RuntimeCityYardGateState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public int GetCenteredOpeningStart(int totalLength, int openingLength)
     {

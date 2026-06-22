@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed partial class BuildingPlacementRedirectSystem : SystemBase
+internal sealed class BuildingPlacementRedirectSystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
     public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
@@ -17,15 +17,6 @@ internal sealed partial class BuildingPlacementRedirectSystem : SystemBase
     private bool _pendingMarkerRefresh;
 
     public bool IsDeferringSideEffects => _deferSideEffectsDepth > 0;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public readonly struct Context
     {

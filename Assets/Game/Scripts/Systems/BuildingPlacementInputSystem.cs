@@ -1,23 +1,13 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingPlacementInputSystem : SystemBase
+internal sealed class BuildingPlacementInputSystem
 {
     private readonly List<Vector2Int> _wallPlacementOriginsScratch = new();
     private readonly List<Vector2Int> _allWallPlacementOriginsScratch = new();
     private readonly List<WallRun> _finalWallRunsScratch = new();
     private readonly List<Vector2Int> _finalWallCurrentOriginsScratch = new();
     private readonly WallRun _currentWallRunScratch = new();
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public enum DragFirstAxis
     {

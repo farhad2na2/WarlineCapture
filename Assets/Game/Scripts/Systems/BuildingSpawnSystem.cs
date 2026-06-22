@@ -5,22 +5,13 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed partial class BuildingSpawnSystem : SystemBase
+internal sealed class BuildingSpawnSystem
 {
     public delegate bool TryGetProductionSourceKeyDelegate(BuildingDefinition definition, int index, out FixedString64Bytes sourceKey);
     public delegate bool RuntimeBuildingMatchesIdDelegate(RuntimeBuildingEntity building, string normalizedBuildingId);
     public delegate bool TryGetRuntimeBoundaryEntityDelegate(EntityManager em, out Entity boundaryEntity);
 
     private const int MaxProductionSpawnRequestHistory = 256;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public readonly struct Context
     {

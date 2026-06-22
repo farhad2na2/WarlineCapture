@@ -16,15 +16,15 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `0 / 79 complete (0.0%)`.
+- Checklist progress: `12 / 91 complete (13.2%)`.
 - In progress: `0`.
 - Remaining open: `79`.
-- Current target: `E0 - wait for Agent A inventory assignment`.
+- Current target: `E7 helper fold complete for P7-0181 RuntimeCityYardGateSystem; continue with the next low-risk Agent E row`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
-- Retired/folded helpers: `0`.
+- Retired/folded helpers: `12`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `not started`.
+- Validation status: `RuntimeCityYardGateSystem folded from disabled SystemBase wrapper into a plain runtime-city yard-gate helper. Compile, inventory regeneration, runtime-city focused validation, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-phase7-agent-e-runtime-city-yard-gate-helper-fold-city.log and /private/tmp/warline-phase7-agent-a-architecture.log. Inventory now reports 133 production SystemBase/legacy declarations, 133 production ISystem declarations, and 50.0% production ISystem share.`
 
 Owned files:
 
@@ -219,6 +219,18 @@ Remove dead wrappers instead of converting them.
 - [ ] Do not delete referenced scene/prefab scripts without Agent A-approved serialized-reference migration.
 - [ ] Update tests that referenced retired helpers.
 - [ ] Record retired/folded count in the progress snapshot.
+- [x] Fold `P7-0147 RuntimeCityBuildingSpawnContextSystem` from a disabled `SystemBase` wrapper into a plain runtime-city spawn context helper; context creation, fallback context creation, building spawn system package data, and runtime city composition ownership stayed unchanged.
+- [x] Fold `P7-0157 RuntimeCityDiagnosticSystem` from a disabled `SystemBase` wrapper into a plain runtime-city diagnostic helper; diagnostic logging behavior and runtime city composition ownership stayed unchanged.
+- [x] Fold `P7-0170 RuntimeCityReadModelSystem` from a disabled `SystemBase` wrapper into a plain runtime-city read-model helper; read-model properties, `Publish`, and runtime grid/decorations consumers stayed unchanged.
+- [x] Fold `P7-0171 RuntimeCityReadinessQuerySystem` from a disabled `SystemBase` wrapper into a plain runtime-city readiness query helper; grid, initial spawn, and base-exclusion query behavior stayed unchanged.
+- [x] Fold `P7-0191 CitizenPopulationDiagnosticSystem` from a disabled `SystemBase` wrapper into a plain citizen diagnostics helper; frame timing APIs and citizen lifecycle callers stayed unchanged.
+- [x] Fold `P7-0195 CitizenPopulationReadModelSystem` from a disabled `SystemBase` wrapper into a plain citizen read-model helper; totals state, refresh/reset APIs, and runtime/UI read callers stayed unchanged.
+- [x] Fold `P7-0211 RoadBuildCompositionSourceSystem` from a disabled `SystemBase` wrapper into a plain road build composition source helper; child-system source fields, resolver state, and direct road composition ownership stayed unchanged.
+- [x] Fold `P7-0214 RoadBuildContextSystem` from a disabled `SystemBase` wrapper into a plain road build context helper; ECS boundary context construction and road composition callers stayed unchanged.
+- [x] Fold `P7-0220 RoadBuildInteractionContextSystem` from a disabled `SystemBase` wrapper into a plain road build interaction context helper; session/input/command/delete prompt context construction and road runtime action callers stayed unchanged.
+- [x] Fold `P7-0224 RoadBuildReadModelSystem` from a disabled `SystemBase` wrapper into a plain road build read-model helper; public read properties, configure/clear API, and selection/camera consumers stayed unchanged.
+- [x] Fold `P7-0234 RoadRuntimeGenerationContextSystem` from a disabled `SystemBase` wrapper into a plain road runtime generation context helper; deferred road ECS sync context construction and road runtime generation callers stayed unchanged.
+- [x] Fold `P7-0181 RuntimeCityYardGateSystem` from a disabled `SystemBase` wrapper into a plain runtime-city yard-gate helper; gate-side/opening calculations, state access, and runtime-city composition callers stayed unchanged.
 
 Acceptance:
 

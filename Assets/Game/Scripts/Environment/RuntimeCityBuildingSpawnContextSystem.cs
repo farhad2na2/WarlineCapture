@@ -1,16 +1,5 @@
-using Unity.Entities;
-
-internal sealed partial class RuntimeCityBuildingSpawnContextSystem : SystemBase
+internal sealed class RuntimeCityBuildingSpawnContextSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public Context Create(
         RuntimeCityConfigSystem.Snapshot config,
         RuntimeCityBuildingPlotState buildingPlotSystem,

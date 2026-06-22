@@ -1,17 +1,8 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingCitizenPopulationCompositionSystem : SystemBase
+internal sealed class BuildingCitizenPopulationCompositionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public static CitizenPopulationCompositionSystem CreateBoundary(BuildingCitizenPopulationCompositionSystem system)
     {
         return system != null ? system.CreateBoundary() : CreateBoundaryState();

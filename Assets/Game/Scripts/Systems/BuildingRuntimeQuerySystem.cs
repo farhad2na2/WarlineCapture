@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed partial class BuildingRuntimeQuerySystem : SystemBase
+internal sealed class BuildingRuntimeQuerySystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
     public delegate bool TryGetRuntimeBoundaryEntityDelegate(EntityManager entityManager, out Entity boundaryEntity);
@@ -72,15 +72,6 @@ internal sealed partial class BuildingRuntimeQuerySystem : SystemBase
             IsWallGateDefinition = isWallGateDefinition;
             TryResolveBaseBreachTarget = tryResolveBaseBreachTarget;
         }
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     public int CountRuntimeBuildingsForFaction(Context context, byte factionId)

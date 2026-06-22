@@ -2,17 +2,8 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingRuntimeCompositionQuerySystem : SystemBase
+internal sealed class BuildingRuntimeCompositionQuerySystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
     internal delegate bool TryGetGridDataDelegate(

@@ -12,7 +12,7 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
         public readonly CitizenPopulationStateSystem State = new();
         public readonly CitizenPopulationEcsProjectionSystem EcsProjection = new();
         public readonly CitizenPopulationTotalsSystem TotalsSystem = ResolveCitizenPopulationTotalsSystem();
-        public readonly CitizenPopulationReadModelSystem ReadModel = ResolveCitizenPopulationReadModelSystem();
+        public readonly CitizenPopulationReadModelSystem ReadModel = new();
         public CitizenPopulationReadModelSystem.State ReadModelState;
         public readonly CitizenBuildingReadSystem BuildingReadSystem = new();
         public readonly CitizenHouseholdRegistrationSystem HouseholdRegistrationSystem = ResolveCitizenHouseholdRegistrationSystem();
@@ -27,7 +27,7 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
         public readonly CitizenVisibleUnitSystem VisibleUnitSystem = new();
         public readonly CitizenPopulationEventSystem EventSystem = ResolveCitizenPopulationEventSystem();
         public readonly CitizenPopulationDebugSystem DebugSystem = ResolveCitizenPopulationDebugSystem();
-        public readonly CitizenPopulationDiagnosticSystem DiagnosticSystem = ResolveCitizenPopulationDiagnosticSystem();
+        public readonly CitizenPopulationDiagnosticSystem DiagnosticSystem = new();
         public readonly CitizenPopulationLifecycleSystem LifecycleSystem = ResolveCitizenPopulationLifecycleSystem();
         public CitizenPopulationLifecycleSystem.State LifecycleState;
         public readonly CitizenPopulationRuntimeUpdateSystem RuntimeUpdateSystem = new();
@@ -209,14 +209,6 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
             : null;
     }
 
-    private static CitizenPopulationReadModelSystem ResolveCitizenPopulationReadModelSystem()
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenPopulationReadModelSystem>()
-            : null;
-    }
-
     private static CitizenPopulationLifecycleSystem ResolveCitizenPopulationLifecycleSystem()
     {
         World world = World.DefaultGameObjectInjectionWorld;
@@ -278,14 +270,6 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<CitizenPopulationDebugSystem>()
-            : null;
-    }
-
-    private static CitizenPopulationDiagnosticSystem ResolveCitizenPopulationDiagnosticSystem()
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenPopulationDiagnosticSystem>()
             : null;
     }
 

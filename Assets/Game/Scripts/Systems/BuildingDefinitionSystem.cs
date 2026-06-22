@@ -6,17 +6,8 @@ using UnityEngine;
 using ConfiguredSpawnableEntry = BuildingUiCommandBoundary.ConfiguredSpawnableEntry;
 using ConfiguredUnitEntry = BuildingUiCommandBoundary.ConfiguredUnitEntry;
 
-internal sealed partial class BuildingDefinitionSystem : SystemBase
+internal sealed class BuildingDefinitionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public delegate void ObjectAction(UnityEngine.Object target);
     public delegate bool TryGetBuildingDefinitionMetadataDelegate(GameObject prefab, out BuildingDefinitionMetadata metadata);
     public delegate bool TryGetUnitDefinitionMetadataDelegate(GameObject prefab, out UnitDefinitionMetadata metadata);

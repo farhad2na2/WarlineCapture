@@ -1,18 +1,8 @@
 using System;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingGameplayCompositionResultSystem : SystemBase
+internal sealed class BuildingGameplayCompositionResultSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public Result Create(
         BuildingSelectionClickSystem selectionClick,
         BuildingSelectionClickSystem.Context selectionClickContext,

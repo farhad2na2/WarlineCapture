@@ -4,17 +4,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed partial class BuildingResourceHaulerBridgeSystem : SystemBase
+internal sealed class BuildingResourceHaulerBridgeSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     private static readonly bool VerboseResourceHaulerLogs = false;
 
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);

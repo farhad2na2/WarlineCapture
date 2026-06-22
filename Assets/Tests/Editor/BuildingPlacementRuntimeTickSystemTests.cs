@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using Unity.Entities;
 
 public sealed class BuildingPlacementRuntimeTickSystemTests
 {
@@ -12,7 +11,7 @@ public sealed class BuildingPlacementRuntimeTickSystemTests
             var tests = new BuildingPlacementRuntimeTickSystemTests();
             tests.StartupTickRunsBoundaryBeforeAndAfterMapPlacementQueues();
             tests.SimulationTickKeepsMapPlacementQueuesAliveBeforeBoundary();
-            tests.SimulationTickUpdatesVisibleProductionTransportsAndResourceVisualsEveryFrame();
+            tests.SimulationTickUpdatesProductionTransportsEveryFrameAndThrottlesResourceVisuals();
             UnityEngine.Debug.Log("[BuildingPlacementRuntimeTickFocusedValidation] result=Passed tests=3");
         }
         catch (System.Exception exception)
@@ -25,8 +24,7 @@ public sealed class BuildingPlacementRuntimeTickSystemTests
     [Test]
     public void StartupTickRunsBoundaryBeforeAndAfterMapPlacementQueues()
     {
-        using World world = new("BuildingPlacementRuntimeTickStartupTests");
-        BuildingPlacementRuntimeTickSystem tickSystem = world.CreateSystemManaged<BuildingPlacementRuntimeTickSystem>();
+        BuildingPlacementRuntimeTickSystem tickSystem = new();
         var calls = new List<string>();
 
         tickSystem.UpdateStartup(CreateContext(
@@ -43,8 +41,7 @@ public sealed class BuildingPlacementRuntimeTickSystemTests
     [Test]
     public void SimulationTickKeepsMapPlacementQueuesAliveBeforeBoundary()
     {
-        using World world = new("BuildingPlacementRuntimeTickSimulationTests");
-        BuildingPlacementRuntimeTickSystem tickSystem = world.CreateSystemManaged<BuildingPlacementRuntimeTickSystem>();
+        BuildingPlacementRuntimeTickSystem tickSystem = new();
         var calls = new List<string>();
 
         tickSystem.UpdateSimulation(CreateContext(
@@ -60,10 +57,9 @@ public sealed class BuildingPlacementRuntimeTickSystemTests
     }
 
     [Test]
-    public void SimulationTickUpdatesVisibleProductionTransportsAndResourceVisualsEveryFrame()
+    public void SimulationTickUpdatesProductionTransportsEveryFrameAndThrottlesResourceVisuals()
     {
-        using World world = new("BuildingPlacementRuntimeTickVisualCadenceTests");
-        BuildingPlacementRuntimeTickSystem tickSystem = world.CreateSystemManaged<BuildingPlacementRuntimeTickSystem>();
+        BuildingPlacementRuntimeTickSystem tickSystem = new();
         var calls = new List<string>();
 
         BuildingPlacementRuntimeTickSystem.Context context = CreateContext(
@@ -78,7 +74,7 @@ public sealed class BuildingPlacementRuntimeTickSystemTests
         tickSystem.UpdateSimulation(context);
 
         Assert.AreEqual(2, calls.Count(call => call == "activeTransport"));
-        Assert.AreEqual(2, calls.Count(call => call == "visuals"));
+        Assert.AreEqual(1, calls.Count(call => call == "visuals"));
     }
 
     private static BuildingPlacementRuntimeTickSystem.Context CreateContext(

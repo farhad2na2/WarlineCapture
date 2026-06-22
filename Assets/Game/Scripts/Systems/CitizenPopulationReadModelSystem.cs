@@ -1,6 +1,4 @@
-using Unity.Entities;
-
-internal sealed partial class CitizenPopulationReadModelSystem : SystemBase
+internal sealed class CitizenPopulationReadModelSystem
 {
     public struct State
     {
@@ -10,15 +8,6 @@ internal sealed partial class CitizenPopulationReadModelSystem : SystemBase
     private CitizenPopulationTotals _totals;
 
     public CitizenPopulationTotals Totals => _totals;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public static void Reset(CitizenPopulationReadModelSystem system, ref State state)
     {

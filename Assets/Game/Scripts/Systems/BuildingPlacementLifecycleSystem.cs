@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingPlacementLifecycleSystem : SystemBase
+internal sealed class BuildingPlacementLifecycleSystem
 {
     public sealed class PlacementState : BuildingPlacementInputSystem.IPlacementState
     {
@@ -138,15 +137,6 @@ internal sealed partial class BuildingPlacementLifecycleSystem : SystemBase
     public int ActivePlacementCost { get; private set; }
     public bool HasPendingBuildingPlacement => ActivePlacement != null;
     public bool CanConfirmBuildingPlacement => ActivePlacement != null && ActivePlacement.IsValid;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void SetActivePlacementCost(int cost)
     {

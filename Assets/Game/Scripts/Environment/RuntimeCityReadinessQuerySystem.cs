@@ -3,25 +3,11 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class RuntimeCityReadinessQuerySystem : SystemBase
+internal sealed class RuntimeCityReadinessQuerySystem
 {
     private World _queryWorld;
     private EntityQuery _gridDataQuery;
     private bool _hasGridDataQuery;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
-    protected override void OnDestroy()
-    {
-        Clear();
-    }
 
     public bool TryGetGridConfig(out GridConfig grid)
     {
@@ -130,15 +116,12 @@ internal sealed partial class RuntimeCityReadinessQuerySystem : SystemBase
     private bool TryGetLiveEntityManager(out EntityManager entityManager)
     {
         entityManager = default;
-        try
-        {
-            entityManager = EntityManager;
-            return true;
-        }
-        catch (System.InvalidOperationException)
-        {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
             return false;
-        }
+
+        entityManager = world.EntityManager;
+        return true;
     }
 
     public void Clear()

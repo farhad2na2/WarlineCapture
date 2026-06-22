@@ -376,19 +376,19 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
         _runtimeCityMinimapEventSystem ??= ResolveRuntimeCityMinimapEventSystem();
 
     private RuntimeCityReadinessQuerySystem RuntimeCityReadinessQuerySystem =>
-        _runtimeCityReadinessQuerySystem ??= ResolveRuntimeCityReadinessQuerySystem();
+        _runtimeCityReadinessQuerySystem ??= new RuntimeCityReadinessQuerySystem();
 
     private RuntimeCityReadModelSystem RuntimeCityReadModelSystem =>
-        _runtimeCityReadModelSystem ??= ResolveRuntimeCityReadModelSystem();
+        _runtimeCityReadModelSystem ??= new RuntimeCityReadModelSystem();
 
     private RuntimeCityConfigSystem RuntimeCityConfigSystem =>
         _runtimeCityConfigSystem ??= ResolveRuntimeCityConfigSystem();
 
     private RuntimeCityDiagnosticSystem RuntimeCityDiagnosticSystem =>
-        _runtimeCityDiagnosticSystem ??= ResolveRuntimeCityDiagnosticSystem();
+        _runtimeCityDiagnosticSystem ??= new RuntimeCityDiagnosticSystem();
 
     private RuntimeCityBuildingSpawnContextSystem RuntimeCityBuildingSpawnContextSystem =>
-        _runtimeCityBuildingSpawnContextSystem ??= ResolveRuntimeCityBuildingSpawnContextSystem();
+        _runtimeCityBuildingSpawnContextSystem ??= new RuntimeCityBuildingSpawnContextSystem();
 
     private RuntimeCityStartupSystem RuntimeCityStartupSystem =>
         _runtimeCityStartupSystem ??= ResolveRuntimeCityStartupSystem();
@@ -631,43 +631,11 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
             : null;
     }
 
-    private static RuntimeCityReadinessQuerySystem ResolveRuntimeCityReadinessQuerySystem()
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityReadinessQuerySystem>()
-            : null;
-    }
-
-    private static RuntimeCityReadModelSystem ResolveRuntimeCityReadModelSystem()
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityReadModelSystem>()
-            : null;
-    }
-
     private static RuntimeCityConfigSystem ResolveRuntimeCityConfigSystem()
     {
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
             ? world.GetOrCreateSystemManaged<RuntimeCityConfigSystem>()
-            : null;
-    }
-
-    private static RuntimeCityDiagnosticSystem ResolveRuntimeCityDiagnosticSystem()
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityDiagnosticSystem>()
-            : null;
-    }
-
-    private static RuntimeCityBuildingSpawnContextSystem ResolveRuntimeCityBuildingSpawnContextSystem()
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityBuildingSpawnContextSystem>()
             : null;
     }
 
@@ -809,10 +777,7 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityYardGateSystem ResolveRuntimeCityYardGateSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityYardGateSystem>()
-            : null;
+        return new RuntimeCityYardGateSystem();
     }
 
     private static RuntimeCityYardWallVisualSystem ResolveRuntimeCityYardWallVisualSystem()

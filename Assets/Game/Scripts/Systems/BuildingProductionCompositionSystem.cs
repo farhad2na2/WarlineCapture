@@ -2,17 +2,8 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class BuildingProductionCompositionSystem : SystemBase
+internal sealed class BuildingProductionCompositionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public BuildingProductionContextSystem.Source CreateRuntimeContextSource(
         BuildingGameplayCompositionSourceSystem source,
         Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,

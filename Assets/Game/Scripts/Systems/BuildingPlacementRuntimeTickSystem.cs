@@ -1,9 +1,8 @@
 using System;
-using Unity.Entities;
 using Unity.Profiling;
 using UnityEngine;
 
-internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
+internal sealed class BuildingPlacementRuntimeTickSystem
 {
     private const double ProductionIntervalSeconds = 0.1d;
     private const double ResourceProductionIntervalSeconds = 1d;
@@ -86,15 +85,6 @@ internal sealed partial class BuildingPlacementRuntimeTickSystem : SystemBase
             DiagnosticsSystem = diagnosticsSystem;
             DiagnosticsContext = diagnosticsContext;
         }
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     public void UpdateStartup(Context context)

@@ -1,8 +1,7 @@
 using System;
-using Unity.Entities;
 using UnityEngine;
 
-public sealed partial class BuildingSelectionClickSystem : SystemBase
+public sealed class BuildingSelectionClickSystem
 {
     public delegate bool TryGetGridDelegate(out GridConfig grid);
     public delegate bool TryGetGridCellDelegate(Vector2 screenPosition, GridConfig grid, out Vector2Int cell);
@@ -46,15 +45,6 @@ public sealed partial class BuildingSelectionClickSystem : SystemBase
             TryGetGridCell = tryGetGridCell;
             HandleCellSelection = handleCellSelection;
         }
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     public bool HandleBuildingSelectionClick(Context context, Vector2 screenPosition)

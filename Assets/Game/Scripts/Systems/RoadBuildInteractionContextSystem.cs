@@ -1,19 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class RoadBuildInteractionContextSystem : SystemBase
+internal sealed class RoadBuildInteractionContextSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public struct Context
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;

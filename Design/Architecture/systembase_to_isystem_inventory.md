@@ -1,25 +1,25 @@
 # SystemBase To ISystem Inventory
 
-Generated: `2026-06-22T20:43:19Z`.
+Generated: `2026-06-22T20:55:53Z`.
 Command: `python3 Tools/Architecture/generate_systembase_to_isystem_inventory.py --root Assets/Game/Scripts --output Design/Architecture/systembase_to_isystem_inventory.md`.
 Source root: `Assets/Game/Scripts`.
-Source commit: `52330110`.
+Source commit: `5e1baf64`.
 Worktree state during generation: `dirty`.
 
 ## Summary
 
 - Total ECS system declarations: `176`.
-- Production `SystemBase`/legacy declarations: `42`.
-- Production `ISystem` declarations: `134`.
-- Current production `ISystem` share: `76.1%`.
+- Production `SystemBase`/legacy declarations: `41`.
+- Production `ISystem` declarations: `135`.
+- Current production `ISystem` share: `76.7%`.
 - Production non-UI rows: `168`.
 - Production UI rows: `8`.
 - Editor rows: `0`.
 - Test rows: `0`.
 - Scopes: `ProductionNonUI` 168, `ProductionUI` 8.
 - Owner lanes: `AgentB` 19, `AgentC` 12, `AgentD` 9, `AgentE` 10, `AgentF` 34, `Integration` 92.
-- Dispositions: `Converted` 127, `DirectConvert` 6, `ManagedPresentationSystemBaseException` 24, `RetireFold` 2, `SplitThenConvert` 9, `UIOutOfScope` 8.
-- Statuses: `Converted` 127, `Deferred` 8, `ManagedException` 24, `Open` 17.
+- Dispositions: `Converted` 128, `DirectConvert` 5, `ManagedPresentationSystemBaseException` 24, `RetireFold` 2, `SplitThenConvert` 9, `UIOutOfScope` 8.
+- Statuses: `Converted` 128, `Deferred` 8, `ManagedException` 24, `Open` 16.
 
 ## Inventory
 
@@ -115,7 +115,7 @@ Worktree state during generation: `dirty`.
 | `P7-0294` | `AirMissileLauncherSupportLinkSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | 8 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Combat, Command, Damage, Health | MoveAngleRadians (method), OnCreate (method), OnUpdate (method), ResolveDesiredLocalYaw (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `AirMissileLauncherSupportLinkSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0295` | `AirMissileLauncherTargetAcquisitionSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | 92 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Combat, Command, Damage, Health | MoveAngleRadians (method), OnCreate (method), OnUpdate (method), ResolveDesiredLocalYaw (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `AirMissileLauncherTargetAcquisitionSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0296` | `AirMissileLauncherTurretAimSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | 237 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Combat, Command, Damage, Health | MoveAngleRadians (method), OnCreate (method), OnUpdate (method), ResolveDesiredLocalYaw (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `AirMissileLauncherTurretAimSystem : ISystem` | Architecture guard + compile | `Converted` |
-| `P7-0297` | `AirMissileProjectileTrailSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | 583 | `ProductionNonUI` | `Integration` | `DirectConvert` | None | Medium: Combat, Command, Damage, Health | MoveAngleRadians (method), OnCreate (method), OnUpdate (method), ResolveDesiredLocalYaw (method) | Convert `AirMissileProjectileTrailSystem` to `ISystem` preserving update attributes and ECS inputs/outputs. | `AirMissileProjectileTrailSystem : ISystem` | Architecture guard + compile | `Open` |
+| `P7-0297` | `AirMissileProjectileTrailSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | 583 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Combat, Command, Damage, Health | MoveAngleRadians (method), OnCreate (method), OnUpdate (method), ResolveDesiredLocalYaw (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `AirMissileProjectileTrailSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0298` | `AttackOrderCommandSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs` | 8 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Attack, BuildingPlacement, Combat, Command | Accepted (method), CollectSelectedAttackSourcesDelegate (method), EnsureEntityQueries (method), IssueAttackTarget (method), NoCommand (method), OnCreate (method), OnUpdate (method), ProcessCommandIntentRequests (method), Rejected (method), Result (property), TryGetClickedUnitEntityDelegate (method), TryRequestAttackOrderToClickedUnit (method), TryResolveBaseBreachTargetDelegate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `AttackOrderCommandSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0299` | `BaseBreachOrderSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/BaseBreachOrderSystem.cs` | 7 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Attack, Command, Health, MoveOrder | OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `BaseBreachOrderSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0300` | `CustomGameStartupSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/CustomGameStartupSystem.cs` | 7 | `ProductionNonUI` | `Integration` | `SplitThenConvert` | GameObject | High: managed blockers mixed with Health, Selection, Spawn | Initialize (method), InitializeFromLegacyConfigs (method), Result (property) | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Narrow `ISystem` processors plus explicit managed boundary if needed. | Architecture guard + compile | `Open` |
@@ -335,7 +335,7 @@ Rows: `92`.
 | `P7-0294` | `AirMissileLauncherSupportLinkSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0295` | `AirMissileLauncherTargetAcquisitionSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0296` | `AirMissileLauncherTurretAimSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
-| `P7-0297` | `AirMissileProjectileTrailSystem` | `SystemBase` | `DirectConvert` | `Open` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | Convert `AirMissileProjectileTrailSystem` to `ISystem` preserving update attributes and ECS inputs/outputs. | Architecture guard + compile |
+| `P7-0297` | `AirMissileProjectileTrailSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0298` | `AttackOrderCommandSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0299` | `BaseBreachOrderSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/BaseBreachOrderSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0300` | `CustomGameStartupSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Systems/CustomGameStartupSystem.cs` | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Architecture guard + compile |
@@ -470,7 +470,7 @@ Rows: `10`.
 
 Converted rows in this section already use `ISystem`, but still expose public/internal helper APIs beyond lifecycle/runner methods. Domain conversion slices must replace these helpers with ECS request/result data, plain stateless helpers, or documented integration exceptions before marking the related Phase 7 row finally clean.
 
-Rows: `58`.
+Rows: `59`.
 
 | Id | Type | Helper count | Owner lane | Path | Helper APIs |
 | --- | --- | ---: | --- | --- | --- |
@@ -513,6 +513,7 @@ Rows: `58`.
 | `P7-0294` | `AirMissileLauncherSupportLinkSystem` | 2 | `Integration` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | MoveAngleRadians (method), ResolveDesiredLocalYaw (method) |
 | `P7-0295` | `AirMissileLauncherTargetAcquisitionSystem` | 2 | `Integration` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | MoveAngleRadians (method), ResolveDesiredLocalYaw (method) |
 | `P7-0296` | `AirMissileLauncherTurretAimSystem` | 2 | `Integration` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | MoveAngleRadians (method), ResolveDesiredLocalYaw (method) |
+| `P7-0297` | `AirMissileProjectileTrailSystem` | 2 | `Integration` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | MoveAngleRadians (method), ResolveDesiredLocalYaw (method) |
 | `P7-0298` | `AttackOrderCommandSystem` | 11 | `Integration` | `Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs` | Accepted (method), CollectSelectedAttackSourcesDelegate (method), EnsureEntityQueries (method), IssueAttackTarget (method), NoCommand (method), ProcessCommandIntentRequests (method), Rejected (method), Result (property), TryGetClickedUnitEntityDelegate (method), TryRequestAttackOrderToClickedUnit (method), TryResolveBaseBreachTargetDelegate (method) |
 | `P7-0306` | `FixedWingRunwayHomeInitializationSystem` | 2 | `Integration` | `Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs` | FixedWingRunwayUnitUtility (property), IsFixedWingRunwayUnit (method) |
 | `P7-0313` | `InitialUnitSpawnApplySystem` | 1 | `Integration` | `Assets/Game/Scripts/Systems/InitialUnitSpawnApplySystem.cs` | InstantiateAndConfigureSpawnedUnit (method) |

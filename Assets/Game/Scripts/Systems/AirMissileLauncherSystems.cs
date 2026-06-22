@@ -582,14 +582,14 @@ public partial struct AirMissileLauncherFireControlSystem : ISystem
 
 [UpdateAfter(typeof(AirMissileHomingProjectileSystem))]
 [UpdateBefore(typeof(AirMissileImpactSystem))]
-public partial class AirMissileProjectileTrailSystem : SystemBase
+public partial struct AirMissileProjectileTrailSystem : ISystem
 {
-    protected override void OnCreate()
+    public void OnCreate(ref SystemState state)
     {
-        RequireForUpdate<AirMissileProjectileTrailComponent>();
+        state.RequireForUpdate<AirMissileProjectileTrailComponent>();
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
         foreach (var (projectile, transform, entity) in SystemAPI
                      .Query<RefRO<AirMissileProjectileComponent>, RefRO<LocalTransform>>()

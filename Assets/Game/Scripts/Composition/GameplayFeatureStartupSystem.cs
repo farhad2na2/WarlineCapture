@@ -81,23 +81,20 @@ internal sealed class GameplayFeatureStartupSystem
     {
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeGridBlockerSystem>()
+            ? new RuntimeGridBlockerSystem()
             : null;
     }
 
     private static RuntimeCityCompositionSystem ResolveRuntimeCityCompositionSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityCompositionSystem>()
-            : null;
+        return new RuntimeCityCompositionSystem();
     }
 
     private static RuntimeDecorationSpawnerSystem ResolveRuntimeDecorationSpawnerSystem()
     {
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeDecorationSpawnerSystem>()
+            ? new RuntimeDecorationSpawnerSystem()
             : null;
     }
 }

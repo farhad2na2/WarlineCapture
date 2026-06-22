@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class CitizenDangerSystem : SystemBase
+internal sealed class CitizenDangerSystem
 {
     private const float DangerDetectRadius = 35f;
     private const float DangerScanIntervalSeconds = 1f;
@@ -10,15 +9,6 @@ internal sealed partial class CitizenDangerSystem : SystemBase
     private readonly List<Transform> _dangerSourceTransforms = new();
     private readonly List<Vector3> _dangerWorldPositions = new();
     private float _nextDangerScanAt;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public static void Reset(CitizenDangerSystem system)
     {

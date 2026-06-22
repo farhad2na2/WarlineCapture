@@ -1,23 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed partial class RuntimeCityGenerationSystem : SystemBase
+internal sealed class RuntimeCityGenerationSystem
 {
     private readonly RuntimeCityGenerationState _state = new();
 
     public RuntimeCityGenerationState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public bool TryBegin(Context context)
     {

@@ -1,17 +1,8 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class RoadBuildRuntimeActionSystem : SystemBase
+internal sealed class RoadBuildRuntimeActionSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     internal sealed class State
     {
         public RoadBuildInteractionContextSystem InteractionContextSystem;

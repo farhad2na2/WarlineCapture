@@ -1,20 +1,10 @@
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class RuntimeCitySpawnBridgeSystem : SystemBase
+internal sealed class RuntimeCitySpawnBridgeSystem
 {
     private readonly RuntimeCitySpawnBridgeState _state = new();
 
     public RuntimeCitySpawnBridgeState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public bool HasSpawnSystem => _state.HasSpawnSystem;
 

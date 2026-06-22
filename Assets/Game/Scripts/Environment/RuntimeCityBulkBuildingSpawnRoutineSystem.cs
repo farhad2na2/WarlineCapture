@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed partial class RuntimeCityBulkBuildingSpawnRoutineSystem : SystemBase
+internal sealed class RuntimeCityBulkBuildingSpawnRoutineSystem
 {
     private readonly RuntimeCityBulkBuildingSpawnRoutineState _state = new();
 
@@ -38,15 +37,6 @@ internal sealed partial class RuntimeCityBulkBuildingSpawnRoutineSystem : System
         List<RectInt> shopAndHouseFootprints);
 
     public RuntimeCityBulkBuildingSpawnRoutineState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public IEnumerator SpawnRoutine(
         RuntimeCityBuildingSpawnContextSystem.Context context,

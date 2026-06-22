@@ -79,10 +79,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadRuntimeRootSystem ResolveRoadRuntimeRootSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RoadRuntimeRootSystem>()
-            : null;
+        return new RoadRuntimeRootSystem();
     }
 
     private static RoadVisualVariantSystem ResolveRoadVisualVariantSystem()
@@ -143,10 +140,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadPreviewSystem ResolveRoadPreviewSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RoadPreviewSystem>()
-            : null;
+        return new RoadPreviewSystem();
     }
 
     private static RoadRuntimeGenerationSystem ResolveRoadRuntimeGenerationSystem()
@@ -166,9 +160,6 @@ internal sealed class RoadBuildCompositionSourceSystem
 
     private static RoadBuildRuntimeActionSystem ResolveRoadBuildRuntimeActionSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RoadBuildRuntimeActionSystem>()
-            : null;
+        return new RoadBuildRuntimeActionSystem();
     }
 }

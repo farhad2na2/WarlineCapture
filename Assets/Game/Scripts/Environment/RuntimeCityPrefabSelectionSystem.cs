@@ -1,21 +1,11 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class RuntimeCityPrefabSelectionSystem : SystemBase
+internal sealed class RuntimeCityPrefabSelectionSystem
 {
     private readonly RuntimeCityPrefabSelectionState _state = new();
 
     public RuntimeCityPrefabSelectionState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public bool IsConfiguredPrefab(GameObject prefab, List<GameObject> configuredPrefabs)
     {

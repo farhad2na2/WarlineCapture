@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed partial class RuntimeCityCompositionSystem : SystemBase
+public sealed class RuntimeCityCompositionSystem
 {
     private RuntimeCitySpawnerSystemConfig _config;
     private readonly List<GameObject> _fallbackCityPrefabs = new();
@@ -105,20 +105,6 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
         _tryGetPendingInitialUnits = TryGetPendingInitialUnits;
         _tryGetRoadCellSize = TryGetRoadCellSizeInGridCells;
         _tryGetGridData = TryGetGridConfig;
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
-    protected override void OnDestroy()
-    {
-        Dispose();
     }
 
     public string DescribeStartupBlocker(int frameCount)
@@ -630,18 +616,12 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityConfigSystem ResolveRuntimeCityConfigSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityConfigSystem>()
-            : null;
+        return new RuntimeCityConfigSystem();
     }
 
     private static RuntimeCityStartupSystem ResolveRuntimeCityStartupSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityStartupSystem>()
-            : null;
+        return new RuntimeCityStartupSystem();
     }
 
     private static RuntimeCityLifecycleSystem ResolveRuntimeCityLifecycleSystem()
@@ -676,10 +656,7 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityPrefabSelectionSystem ResolveRuntimeCityPrefabSelectionSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityPrefabSelectionSystem>()
-            : null;
+        return new RuntimeCityPrefabSelectionSystem();
     }
 
     private static RuntimeCityLandmarkOffsetSystem ResolveRuntimeCityLandmarkOffsetSystem()
@@ -689,18 +666,12 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityHallSpawnSystem ResolveRuntimeCityHallSpawnSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityHallSpawnSystem>()
-            : null;
+        return new RuntimeCityHallSpawnSystem();
     }
 
     private static RuntimeCityLandmarkSpawnSystem ResolveRuntimeCityLandmarkSpawnSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityLandmarkSpawnSystem>()
-            : null;
+        return new RuntimeCityLandmarkSpawnSystem();
     }
 
     private static RuntimeCityEntryBuildingSpawnSystem ResolveRuntimeCityEntryBuildingSpawnSystem()
@@ -715,18 +686,12 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityRuralBuildingSpawnSystem ResolveRuntimeCityRuralBuildingSpawnSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityRuralBuildingSpawnSystem>()
-            : null;
+        return new RuntimeCityRuralBuildingSpawnSystem();
     }
 
     private static RuntimeCityBulkBuildingSpawnRoutineSystem ResolveRuntimeCityBulkBuildingSpawnRoutineSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityBulkBuildingSpawnRoutineSystem>()
-            : null;
+        return new RuntimeCityBulkBuildingSpawnRoutineSystem();
     }
 
     private static RuntimeCityCorridorBuildingSpawnSystem ResolveRuntimeCityCorridorBuildingSpawnSystem()
@@ -754,26 +719,17 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityHouseYardWallSystem ResolveRuntimeCityHouseYardWallSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityHouseYardWallSystem>()
-            : null;
+        return new RuntimeCityHouseYardWallSystem();
     }
 
     private static RuntimeCityDecorationPrefabGroupSystem ResolveRuntimeCityDecorationPrefabGroupSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityDecorationPrefabGroupSystem>()
-            : null;
+        return new RuntimeCityDecorationPrefabGroupSystem();
     }
 
     private static RuntimeCityClothCoverSpawnSystem ResolveRuntimeCityClothCoverSpawnSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityClothCoverSpawnSystem>()
-            : null;
+        return new RuntimeCityClothCoverSpawnSystem();
     }
 
     private static RuntimeCityArchwaySpawnSystem ResolveRuntimeCityArchwaySpawnSystem()
@@ -783,26 +739,17 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityFreeScatterDecorationSystem ResolveRuntimeCityFreeScatterDecorationSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityFreeScatterDecorationSystem>()
-            : null;
+        return new RuntimeCityFreeScatterDecorationSystem();
     }
 
     private static RuntimeCityDecorationBuildingSpawnSystem ResolveRuntimeCityDecorationBuildingSpawnSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityDecorationBuildingSpawnSystem>()
-            : null;
+        return new RuntimeCityDecorationBuildingSpawnSystem();
     }
 
     private static RuntimeCitySpawnBridgeSystem ResolveRuntimeCitySpawnBridgeSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCitySpawnBridgeSystem>()
-            : null;
+        return new RuntimeCitySpawnBridgeSystem();
     }
 
     private static RuntimeCityRoadBuildBridgeSystem ResolveRuntimeCityRoadBuildBridgeSystem()
@@ -812,18 +759,12 @@ public sealed partial class RuntimeCityCompositionSystem : SystemBase
 
     private static RuntimeCityBuildingPlacementSystem ResolveRuntimeCityBuildingPlacementSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityBuildingPlacementSystem>()
-            : null;
+        return new RuntimeCityBuildingPlacementSystem();
     }
 
     private static RuntimeCityGenerationSystem ResolveRuntimeCityGenerationSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<RuntimeCityGenerationSystem>()
-            : null;
+        return new RuntimeCityGenerationSystem();
     }
 
     private static RuntimeCityChainSystem ResolveRuntimeCityChainSystem()

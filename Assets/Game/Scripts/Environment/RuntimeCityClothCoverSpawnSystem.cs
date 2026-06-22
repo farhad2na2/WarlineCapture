@@ -1,22 +1,12 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed partial class RuntimeCityClothCoverSpawnSystem : SystemBase
+internal sealed class RuntimeCityClothCoverSpawnSystem
 {
     private readonly RuntimeCityClothCoverSpawnState _state = new();
 
     public RuntimeCityClothCoverSpawnState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public int PlaceClothCoverBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,

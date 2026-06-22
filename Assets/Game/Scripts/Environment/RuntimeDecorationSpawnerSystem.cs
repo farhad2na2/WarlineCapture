@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed partial class RuntimeDecorationSpawnerSystem : SystemBase
+public sealed class RuntimeDecorationSpawnerSystem
 {
     private enum DecorationPrefabKind
     {
@@ -41,20 +41,6 @@ public sealed partial class RuntimeDecorationSpawnerSystem : SystemBase
     private int _combineAfterFrames = -1;
     public bool HasSpawned => _spawned || !_spawnOnStart || _prefabs == null || _prefabs.Count == 0 || _decorationCount <= 0;
 
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
-    protected override void OnDestroy()
-    {
-        Dispose();
-    }
-
     public void Init(RuntimeDecorationSpawnerSystemConfig config, Transform rootTransform, CombinedMeshBaker combinedMeshBaker, RuntimeCityReadModelSystem cityReadModel, RuntimeGridBlockerSystem gridBlockers)
     {
         _rootTransform = rootTransform;
@@ -64,7 +50,7 @@ public sealed partial class RuntimeDecorationSpawnerSystem : SystemBase
         ApplyConfig(config);
     }
 
-    public new void Update()
+    public void Update()
     {
         if (_combineAfterFrames >= 0)
         {

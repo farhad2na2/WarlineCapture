@@ -1,18 +1,8 @@
-using Unity.Entities;
 using UnityEngine;
 using static UnityEngine.Object;
 
-public sealed partial class RoadRuntimeRootSystem : SystemBase
+public sealed class RoadRuntimeRootSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public readonly struct Roots
     {
         public readonly Transform RoadRoot;

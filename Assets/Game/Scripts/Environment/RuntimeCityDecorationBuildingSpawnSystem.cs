@@ -1,22 +1,12 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed partial class RuntimeCityDecorationBuildingSpawnSystem : SystemBase
+internal sealed class RuntimeCityDecorationBuildingSpawnSystem
 {
     private readonly RuntimeCityDecorationBuildingSpawnState _state = new();
 
     public RuntimeCityDecorationBuildingSpawnState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void PlaceCityDecorationBuildings(
         RuntimeCityBuildingSpawnContextSystem.Context context,

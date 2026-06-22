@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class RuntimeCityDecorationPrefabGroupSystem : SystemBase
+internal sealed class RuntimeCityDecorationPrefabGroupSystem
 {
     public readonly struct Groups
     {
@@ -22,15 +21,6 @@ internal sealed partial class RuntimeCityDecorationPrefabGroupSystem : SystemBas
     private readonly RuntimeCityDecorationPrefabGroupState _state = new();
 
     public RuntimeCityDecorationPrefabGroupState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public Groups CreateGroups(List<GameObject> prefabs)
     {

@@ -1,22 +1,12 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed partial class RuntimeCityLandmarkSpawnSystem : SystemBase
+internal sealed class RuntimeCityLandmarkSpawnSystem
 {
     private readonly RuntimeCityLandmarkSpawnState _state = new();
 
     public RuntimeCityLandmarkSpawnState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void SpawnLandmarks(
         RuntimeCityBuildingSpawnContextSystem.Context context,

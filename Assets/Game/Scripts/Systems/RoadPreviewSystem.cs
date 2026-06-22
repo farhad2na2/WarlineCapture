@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
 using DragFirstAxis = RoadPathPlanningSystem.DragFirstAxis;
@@ -7,22 +6,8 @@ using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
-public sealed partial class RoadPreviewSystem : SystemBase
+public sealed class RoadPreviewSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnDestroy()
-    {
-        DisposePreview();
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public delegate RoadVisualType ResolveVisualTypeAction(Vector2Int cell, TileConnectionMask mask);
     public delegate bool TryGetVariantAction(RoadVisualType type, TileConnectionMask mask, out VariantData variant);
 

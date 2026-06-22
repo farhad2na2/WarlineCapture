@@ -1,25 +1,15 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using PlacementRequest = RuntimeCityBuildingPlacementSystem.Request;
 using PlacementResult = RuntimeCityBuildingPlacementSystem.Result;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed partial class RuntimeCityBuildingPlacementSystem : SystemBase
+internal sealed class RuntimeCityBuildingPlacementSystem
 {
     private readonly RuntimeCityBuildingPlacementState _state = new();
 
     public RuntimeCityBuildingPlacementState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public readonly struct Request
     {

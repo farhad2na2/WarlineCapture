@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
+internal sealed class CitizenPopulationCompositionSystem
 {
     public sealed class Result
     {
@@ -35,15 +35,6 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
         public DayNightSystem DayNightSystem;
         public Camera WorldCamera;
         public bool PopulationEnabled;
-    }
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
     }
 
     public static Result Create()
@@ -228,10 +219,7 @@ internal sealed partial class CitizenPopulationCompositionSystem : SystemBase
 
     private static CitizenDangerSystem ResolveCitizenDangerSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenDangerSystem>()
-            : null;
+        return new CitizenDangerSystem();
     }
 
     private static CitizenHouseholdRegistrationSystem ResolveCitizenHouseholdRegistrationSystem()

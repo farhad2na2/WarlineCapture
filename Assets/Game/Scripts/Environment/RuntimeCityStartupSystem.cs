@@ -1,19 +1,9 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 
-internal sealed partial class RuntimeCityStartupSystem : SystemBase
+internal sealed class RuntimeCityStartupSystem
 {
     private readonly RuntimeCityStartupState _state = new();
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public Result Evaluate(Context context)
     {

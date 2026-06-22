@@ -3,11 +3,11 @@
 Purpose:
 Capture the existing MonoBehaviour runtime loop surface before Phase 7 domain conversions. The Phase 7 architecture guard fails if a new loop key appears outside this baseline.
 
-Generated: `2026-06-21T10:42:43Z`.
+Generated: `2026-06-22T14:05:57Z`.
 Command: `python3 Tools/Architecture/generate_phase7_monobehaviour_loop_baseline.py --root Assets/Game/Scripts --output Design/Architecture/phase7_monobehaviour_loop_baseline.md`.
 Source root: `Assets/Game/Scripts`.
-Source commit: `d37d63e8`.
-Rows: `40`.
+Source commit: `833214b6`.
+Rows: `41`.
 
 ## Baseline
 
@@ -15,7 +15,7 @@ Rows: `40`.
 | --- | --- | --- | --- | ---: | --- |
 | `Assets/Game/Scripts/Composition/MatchSceneView.cs\|MatchSceneView\|LateUpdate` | `Assets/Game/Scripts/Composition/MatchSceneView.cs` | `MatchSceneView` | `LateUpdate` | 102 | `ProductionNonUI` |
 | `Assets/Game/Scripts/Composition/MatchSceneView.cs\|MatchSceneView\|Update` | `Assets/Game/Scripts/Composition/MatchSceneView.cs` | `MatchSceneView` | `Update` | 87 | `ProductionNonUI` |
-| `Assets/Game/Scripts/Composition/MenuBootstrapView.cs\|MenuBootstrapView\|Update` | `Assets/Game/Scripts/Composition/MenuBootstrapView.cs` | `MenuBootstrapView` | `Update` | 143 | `ProductionNonUI` |
+| `Assets/Game/Scripts/Composition/MenuBootstrapView.cs\|MenuBootstrapView\|Update` | `Assets/Game/Scripts/Composition/MenuBootstrapView.cs` | `MenuBootstrapView` | `Update` | 157 | `ProductionNonUI` |
 | `Assets/Game/Scripts/Composition/UiToolkitMatchHudMinimapSurface.cs\|UiToolkitMatchHudMinimapSurface\|LateUpdate` | `Assets/Game/Scripts/Composition/UiToolkitMatchHudMinimapSurface.cs` | `UiToolkitMatchHudMinimapSurface` | `LateUpdate` | 75 | `ProductionNonUI` |
 | `Assets/Game/Scripts/Effects/MissileTrailVfxView.cs\|MissileTrailVfxView\|Update` | `Assets/Game/Scripts/Effects/MissileTrailVfxView.cs` | `MissileTrailVfxView` | `Update` | 66 | `ProductionNonUI` |
 | `Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs\|UnitAttackImpactVfxView\|Update` | `Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs` | `UnitAttackImpactVfxView` | `Update` | 74 | `ProductionNonUI` |
@@ -53,3 +53,4 @@ Rows: `40`.
 | `Assets/Game/Scripts/UI/Shell/UIShellContentView.cs\|UIShellContentView\|Update` | `Assets/Game/Scripts/UI/Shell/UIShellContentView.cs` | `UIShellContentView` | `Update` | 115 | `ProductionUI` |
 | `Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs\|UIShellEcsPresentationSystem\|Update` | `Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs` | `UIShellEcsPresentationSystem` | `Update` | 46 | `ProductionUI` |
 | `Assets/Game/Scripts/UI/Shell/UIShellLoadingProgressView.cs\|UIShellLoadingProgressView\|Update` | `Assets/Game/Scripts/UI/Shell/UIShellLoadingProgressView.cs` | `UIShellLoadingProgressView` | `Update` | 35 | `ProductionUI` |
+| `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs\|UiToolkitShellView\|LateUpdate` | `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs` | `UiToolkitShellView` | `LateUpdate` | 1665 | `ProductionUI` |

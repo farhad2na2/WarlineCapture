@@ -1,22 +1,12 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed partial class RuntimeCityFreeScatterDecorationSystem : SystemBase
+internal sealed class RuntimeCityFreeScatterDecorationSystem
 {
     private readonly RuntimeCityFreeScatterDecorationState _state = new();
 
     public RuntimeCityFreeScatterDecorationState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void PlaceFreeScatterDecorations(
         RuntimeCityBuildingSpawnContextSystem.Context context,

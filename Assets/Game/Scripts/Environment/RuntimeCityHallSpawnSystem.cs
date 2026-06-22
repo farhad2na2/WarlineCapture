@@ -1,23 +1,13 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed partial class RuntimeCityHallSpawnSystem : SystemBase
+internal sealed class RuntimeCityHallSpawnSystem
 {
     private readonly RuntimeCityHallSpawnState _state = new();
 
     public RuntimeCityHallSpawnState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void EnsureCityHall(
         RuntimeCityBuildingSpawnContextSystem.Context context,

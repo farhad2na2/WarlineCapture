@@ -17,7 +17,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
     {
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<CitizenPopulationCompositionSystem>()
+            ? new CitizenPopulationCompositionSystem()
             : null;
     }
 

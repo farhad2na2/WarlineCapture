@@ -1,23 +1,13 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 using YardSide = RuntimeCityYardGateSystem.YardSide;
 
-internal sealed partial class RuntimeCityHouseYardWallSystem : SystemBase
+internal sealed class RuntimeCityHouseYardWallSystem
 {
     private readonly RuntimeCityHouseYardWallState _state = new();
 
     public RuntimeCityHouseYardWallState State => _state;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void PlaceHouseYardWalls(
         RuntimeCityBuildingSpawnContextSystem.Context context,

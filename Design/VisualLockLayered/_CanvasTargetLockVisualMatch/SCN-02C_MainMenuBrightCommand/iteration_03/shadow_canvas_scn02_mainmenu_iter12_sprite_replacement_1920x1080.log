@@ -1,0 +1,794 @@
+Unity Editor version:    6000.4.0f1 (8cf496087c8f)
+Branch:                  6000.4/staging
+Build type:              Release
+Batch mode:              YES
+macOS version:           Version 26.5.1 (Build 25F80)
+Darwin version:          25.5.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-06-22T15:36:50Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad" at "2026-06-22T15:36:50.620799Z"
+Launching external process: /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity
+-batchmode
+-projectPath
+/Users/farhad/Projects/WarlineCapture-CodexUnity1
+-executeMethod
+CanvasMenuFallbackValidation.RunRouteCapture
+-logFile
+/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_03/shadow_canvas_scn02_mainmenu_iter12_sprite_replacement_1920x1080.log
+Successfully changed project path to: /Users/farhad/Projects/WarlineCapture-CodexUnity1
+/Users/farhad/Projects/WarlineCapture-CodexUnity1
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Player connection [8455773824]  Target information:
+
+Player connection [8455773824]  * "[IP] 192.168.2.175 [Port] 55505 [Flags] 2 [Guid] 2021828895 [EditorId] 2021828895 [Version] 1048832 [Id] OSXEditor(0,Farhads-Air-2) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8455773824] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8455773824] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Licensing::Client] Error: HandshakeResponse reported an error:
+	ResponseCode: 505
+	ResponseStatus: Unsupported protocol version '1.18.1'.
+[Licensing::Module] Error: Failed to handshake to channel: "LicenseClient-farhad"
+[Licensing::IpcConnector] LicenseClient-farhad channel disconnected successfully.
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-6000.4.0" at "2026-06-22T15:36:50.845796Z"
+[Package Manager] Connected to IPC stream "Upm-24372" after 0.2 seconds.
+[Licensing::Module] Licensing is not yet initialized.
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.1+9fbee8e
+  Session Id:              34fe9b801114456ab25454880e07ba0e
+  Correlation Id:          05eee0febff2d53332a8ec5335000719
+  External correlation Id: 7709352811949115555
+  Machine Id:              10T5sSSYWiUOOlqtQecUz0BYTYA=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-farhad-6000.4.0" (connect: 0.00s, validation: 0.00s, handshake: 0.18s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-6000.4.0-notifications" at "2026-06-22T15:36:51.02462Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 2197950-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.41s
+[Licensing::Module] Licensing is initialized (took 0.12s).
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Initialize engine version: 6000.4.0f1 (8cf496087c8f)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /Users/farhad/Projects/WarlineCapture-CodexUnity1/Assets
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Initialize mono
+Mono path[0] = '/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Resources/Scripting/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/lib/mono/unityjit-macos'
+Mono config path = '/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56372
+CodeReloadManager initialized
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+Register platform support module: /Applications/Unity/Hub/Editor/6000.4.0f1/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+Register platform support module: /Applications/Unity/Hub/Editor/6000.4.0f1/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+Register platform support module: /Applications/Unity/Hub/Editor/6000.4.0f1/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll
+Registered in 0.003327 seconds.
+[usbmuxd] Start listen thread
+[usbmuxd] Listen thread started
+[usbmuxd] Send listen message
+Native extension for iOS target not found
+Native extension for Android target not found
+Multiple ADB server instances found, the following ADB server instance have been terminated due to being run from another SDK. 
+If instance restarts during deployment, this may cause unexpected issues. Please check that ADB versions are consistent across instances. 
+Process paths: 
+/opt/homebrew/Caskroom/android-platform-tools/37.0.0/platform-tools/adb
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+UnityEditor.Android.AndroidDeploymentTargetsExtension:GetKnownTargets (UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext,UnityEditor.ProgressHandler) (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs:384)
+UnityEditor.Android.TargetScanWorker:ScanSync () (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/TargetScanWorker.cs:164)
+UnityEditor.Android.TargetExtension:OnUsbDevicesChanged (UnityEditor.Hardware.UsbDevice[]) (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/ExtensionModule.cs:114)
+UnityEditor.Android.TargetExtension:OnLoad () (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/ExtensionModule.cs:75)
+UnityEditor.Modules.ModuleManager:InitializePlatformSupportModules () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Modules/ModuleManager.cs:144)
+
+(Filename: /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs Line: 384)
+
+Unable to list connected devices. 
+List of devices attached
+* daemon not running; starting now at tcp:5037
+* daemon started successfully
+error: protocol fault (couldn't read status): Connection reset by peer
+
+UnityEditor.Android.CommandInvokationFailure: Unable to list connected devices. 
+/Applications/Unity/Hub/Editor/6000.4.0f1/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb devices
+
+Environment Variables:
+ZSH_TMUX_AUTOSTART = false
+COLORTERM = 
+ZSH_TMUX_AUTOSTARTED = true
+WARLINE_CANVAS_SCREENSHOT_HEIGHT = 1080
+LOG_FORMAT = json
+__CFBundleIdentifier = com.openai.codex
+XPC_FLAGS = 0x0
+CODEX_SHELL = 1
+DISABLE_AUTO_UPDATE = true
+RUST_LOG = warn
+SHLVL = 1
+COMMAND_MODE = unix2003
+TERM = dumb
+NO_COLOR = 1
+OLDPWD = /Users/farhad/Projects/WarlineCapture
+WARLINE_CANVAS_SCREENSHOT_WIDTH = 1920
+LANG = C.UTF-8
+LC_CTYPE = C.UTF-8
+XPC_SERVICE_NAME = 0
+USER = farhad
+MallocNanoZone = 0
+LOGNAME = farhad
+WARLINE_CANVAS_ROUTE = MainMenu
+OMLX_API_KEY = 4488
+SHELL = /bin/zsh
+OSLogRateLimit = 64
+PATH = /Users/farhad/.codex/tmp/arg0/codex-arg00Q6r4e:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/usr/local/share/dotnet:~/.dotnet/tools:/opt/homebrew/bin:/Users/farhad/.lmstudio/bin:/Applications/Codex.app/Contents/Resources
+WARLINE_CANVAS_ROUTE_CAPTURE_SETTLE_FRAMES = 90
+GH_PAGER = cat
+SSH_AUTH_SOCK = /var/run/com.apple.launchd.vTFA1lHW28/Listeners
+PAGER = cat
+HOME = /Users/farhad
+_ = /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity
+GIT_PAGER = cat
+WARLINE_CANVAS_SCREENSHOT_PATH = /Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_03/shadow_canvas_scn02_mainmenu_iter12_sprite_replacement_1920x1080.png
+TMPDIR = /var/folders/db/jvv773z13272j7lkn6ydkmvm0000gn/T/
+__CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
+CODEX_INTERNAL_ORIGINATOR_OVERRIDE = Codex Desktop
+LC_ALL = C.UTF-8
+CODEX_THREAD_ID = 019e0794-3625-7b20-9a58-36516234c972
+CODEX_CI = 1
+PWD = /Users/farhad/Projects/WarlineCapture
+
+
+stderr[
+* daemon not running; starting now at tcp:5037
+* daemon started successfully
+error: protocol fault (couldn't read status): Connection reset by peer
+]
+stdout[
+List of devices attached
+]
+exit code: 1
+  at UnityEditor.Android.Command.WaitForProgramToRun (UnityEditor.Utils.Program p, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x0002c] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/Command.cs:212 
+  at UnityEditor.Android.Command.Run (System.Diagnostics.ProcessStartInfo psi, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x00017] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/Command.cs:159 
+  at UnityEditor.Android.Command.Run (System.String command, System.String args, System.String workingdir, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg, System.Text.Encoding inputEncoding) [0x0000c] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/Command.cs:117 
+  at UnityEditor.Android.ADB.RunInternal (System.String[] command, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x00008] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/ADB.cs:240 
+  at UnityEditor.Android.ADB.Run (System.String[] command, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x00013] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/ADB.cs:233 
+  at UnityEditor.Android.AndroidDeploymentTargetsExtension.GetKnownTargets (UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext context, UnityEditor.ProgressHandler progressHandler) [0x0029d] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs:393 
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+UnityEditor.Android.AndroidDeploymentTargetsExtension:GetKnownTargets (UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext,UnityEditor.ProgressHandler) (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs:456)
+UnityEditor.Android.TargetScanWorker:ScanSync () (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/TargetScanWorker.cs:164)
+UnityEditor.Android.TargetExtension:OnUsbDevicesChanged (UnityEditor.Hardware.UsbDevice[]) (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/ExtensionModule.cs:114)
+UnityEditor.Android.TargetExtension:OnLoad () (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/ExtensionModule.cs:75)
+UnityEditor.Modules.ModuleManager:InitializePlatformSupportModules () (at /Users/bokken/build/output/unity/unity/Editor/Mono/Modules/ModuleManager.cs:144)
+
+(Filename: /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs Line: 456)
+
+Android Extension - Scanning For ADB Devices 3181 ms
+Native extension for WindowsStandalone target not found
+Native extension for OSXStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  3.442 seconds
+Domain Reload Profiling: 3690ms
+	BeginReloadAssembly (83ms)
+		CreateAndSetChildDomain (15ms)
+	RebuildCommonClasses (20ms)
+	RebuildNativeTypeToScriptingClass (6ms)
+	initialDomainReloadingComplete (30ms)
+	LoadAllAssembliesAndSetupDomain (109ms)
+		LoadAssemblies (69ms)
+		AnalyzeDomain (101ms)
+			TypeCache.Refresh (100ms)
+				TypeCache.ScanAssembly (91ms)
+	FinalizeReload (3443ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (3272ms)
+			BeforeProcessingInitializeOnLoad (46ms)
+			ProcessInitializeOnLoadAttributes (44ms)
+			ProcessInitializeOnLoadMethodAttributes (48ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 65 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.collab-proxy@2.11.4 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.collab-proxy@a5329f833fa8)
+    com.unity.ide.rider@3.0.40 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.ide.rider@e4950c6d131b)
+    com.unity.ide.visualstudio@2.0.27 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.ide.visualstudio@dc1ddd4f09b6)
+    com.unity.inputsystem@1.19.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83)
+    com.unity.postprocessing@3.5.4 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.postprocessing@141166b789e3)
+    com.unity.probuilder@6.0.9 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.probuilder@1f279ab829b7)
+    com.unity.serialization@3.1.2 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.serialization@582cbf30bbfd)
+    com.unity.timeline@1.8.11 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.timeline@bfd27f8016ff)
+    com.unity.visualscripting@1.9.10 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.visualscripting@eb6004dcc707)
+    com.unity.burst@1.8.28 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.burst@07790c2d06d9)
+    com.unity.searcher@4.9.4 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.searcher@d45a78918735)
+    com.unity.settings-manager@2.1.1 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86)
+    com.unity.mathematics@1.3.3 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.mathematics@19a9377c4ffa)
+    com.unity.nuget.mono-cecil@1.11.6 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.profiling.core@1.0.3 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.profiling.core@8a49f7027d06)
+    com.unity.scriptablebuildpipeline@2.6.1 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.scriptablebuildpipeline@36e3b5898ee2)
+    com.unity.test-framework.performance@3.2.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.test-framework.performance@0840f58e4562)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.2d.sprite@929df5adbb1f)
+    com.unity.entities@6.4.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.entities@d66668920c3f)
+    com.unity.entities.graphics@6.4.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.entities.graphics@2ad17cac7401)
+    com.unity.multiplayer.center@1.0.1 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.multiplayer.center@f01f4ba8d00a)
+    com.unity.render-pipelines.universal@17.4.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.render-pipelines.universal@0c5162adfb45)
+    com.unity.shadergraph@17.4.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.shadergraph@c6e5f4d3afa5)
+    com.unity.test-framework@1.6.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.test-framework@629486125cfc)
+    com.unity.ugui@2.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.ugui@3dd2fbd8c1f1)
+    com.unity.modules.accessibility@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.jsonserialize)
+    com.unity.modules.screencapture@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.screencapture)
+    com.unity.modules.tilemap@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.video)
+    com.unity.modules.vr@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.vr)
+    com.unity.modules.wind@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.xr)
+    com.unity.modules.physics@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.physics)
+    com.unity.modules.subsystems@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.hierarchycore)
+    com.unity.modules.physics2d@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.physics2d)
+    com.unity.modules.particlesystem@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.particlesystem)
+    com.unity.ext.nunit@2.0.5 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.ext.nunit@d8c07649098d)
+    com.unity.render-pipelines.core@17.4.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.render-pipelines.core@6a60abc179f8)
+    com.unity.collections@6.4.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.collections@538ace9075bc)
+    com.unity.render-pipelines.universal-config@17.4.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.render-pipelines.universal-config@0db4263b9e6b)
+    com.unity.modules.terrain@1.0.0 (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Library/PackageCache/com.unity.modules.terrain)
+  Embedded packages:
+    com.sniveler-code.gpu-animation@file:/Users/farhad/Projects/WarlineCapture-CodexUnity1/Packages/com.sniveler-code.gpu-animation (location: /Users/farhad/Projects/WarlineCapture-CodexUnity1/Packages/com.sniveler-code.gpu-animation)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://unix:/tmp/ilpp.sock-b4ec84c031c239252d01ca6208c174fd
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/farhad/Projects/WarlineCapture-CodexUnity1
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - 200 - application/grpc 23.9645ms
+Starting: /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Resources/BuildPipeline/bee_backend --ipc --defer-dag-verification --dagfile="Library/Bee/200b0aEDbg.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: /Users/farhad/Projects/WarlineCapture-CodexUnity1
+DisplayProgressbar: Compiling Scripts
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly unityeditor.ios.extensions.xcode has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.iOS.Extensions.Xcode.dll" in favor of "/Applications/Unity/Hub/Editor/6000.4.0f1/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll"
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.runtime.interopservices.windowsruntime has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Runtime.InteropServices.WindowsRuntime.dll" in favor of "/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Resources/Scripting/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll"
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.componentmodel.composition has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/System.ComponentModel.Composition.dll" in favor of "/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Resources/Scripting/NetStandard/compat/2.1.0/shims/netfx/System.ComponentModel.Composition.dll"
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@07790c2d06d9/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/200b0aEDbg.dag/Unity.Entities.dll
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - 200 - application/grpc 17.2620ms
+ExitCode: 0 Duration: 0s395ms
+[1025/1392  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra build success (0.38 seconds), 1 items updated, 1392 evaluated
+AssetDatabase: script compilation time: 0.885346s
+Begin MonoManager ReloadAssembly
+Total cache size 268255558
+Total cache size after purge 268255558, took 00:00:00.1929349
+Assembly Assembly-CSharp-Editor-firstpass.dll at Library/ScriptAssemblies/Assembly-CSharp-Editor-firstpass.dll not valid. Loading of assembly skipped.
+Assembly Assembly-CSharp-Editor.dll at Library/ScriptAssemblies/Assembly-CSharp-Editor.dll not valid. Loading of assembly skipped.
+Assembly Assembly-CSharp-firstpass.dll at Library/ScriptAssemblies/Assembly-CSharp-firstpass.dll not valid. Loading of assembly skipped.
+Assembly Assembly-CSharp.dll at Library/ScriptAssemblies/Assembly-CSharp.dll not valid. Loading of assembly skipped.
+Assembly DocCodeExamples.dll at Library/ScriptAssemblies/DocCodeExamples.dll not valid. Loading of assembly skipped.
+Assembly DocCodeSamples.dll at Library/ScriptAssemblies/DocCodeSamples.dll not valid. Loading of assembly skipped.
+Assembly MockTests.dll at Library/ScriptAssemblies/MockTests.dll not valid. Loading of assembly skipped.
+Assembly TestNewCustomAssembly.dll at Library/ScriptAssemblies/TestNewCustomAssembly.dll not valid. Loading of assembly skipped.
+Assembly TypeDependencyCacheTestAssembly.dll at Library/ScriptAssemblies/TypeDependencyCacheTestAssembly.dll not valid. Loading of assembly skipped.
+Assembly Unity.2D.Sprite.Package.EditorTests.dll at Library/ScriptAssemblies/Unity.2D.Sprite.Package.EditorTests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Burst.Tests.dll at Library/ScriptAssemblies/Unity.Burst.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Collections.BurstCompatibilityGen.dll at Library/ScriptAssemblies/Unity.Collections.BurstCompatibilityGen.dll not valid. Loading of assembly skipped.
+Assembly Unity.Collections.DocCodeSamples.dll at Library/ScriptAssemblies/Unity.Collections.DocCodeSamples.dll not valid. Loading of assembly skipped.
+Assembly Unity.Collections.PerformanceTests.dll at Library/ScriptAssemblies/Unity.Collections.PerformanceTests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Collections.Tests.dll at Library/ScriptAssemblies/Unity.Collections.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Collections.Tests.Playmode.dll at Library/ScriptAssemblies/Unity.Collections.Tests.Playmode.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.CodeGen.Tests.dll at Library/ScriptAssemblies/Unity.Entities.CodeGen.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.ContentDelivery.Tests.dll at Library/ScriptAssemblies/Unity.Entities.ContentDelivery.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.Editor.PerformanceTests.dll at Library/ScriptAssemblies/Unity.Entities.Editor.PerformanceTests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.Editor.Tests.dll at Library/ScriptAssemblies/Unity.Entities.Editor.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.Graphics.Tests.dll at Library/ScriptAssemblies/Unity.Entities.Graphics.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.Hybrid.EndToEnd.Tests.dll at Library/ScriptAssemblies/Unity.Entities.Hybrid.EndToEnd.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.Hybrid.PerformanceTests.dll at Library/ScriptAssemblies/Unity.Entities.Hybrid.PerformanceTests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.Hybrid.Tests.dll at Library/ScriptAssemblies/Unity.Entities.Hybrid.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.Hybrid.Tests.ExcludedAssembly.dll at Library/ScriptAssemblies/Unity.Entities.Hybrid.Tests.ExcludedAssembly.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.Hybrid.Tests.SeparateAssembly.dll at Library/ScriptAssemblies/Unity.Entities.Hybrid.Tests.SeparateAssembly.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.PerformanceTests.dll at Library/ScriptAssemblies/Unity.Entities.PerformanceTests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.TestComponents.dll at Library/ScriptAssemblies/Unity.Entities.TestComponents.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.Tests.dll at Library/ScriptAssemblies/Unity.Entities.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.Tests.InAnotherAssembly.dll at Library/ScriptAssemblies/Unity.Entities.Tests.InAnotherAssembly.dll not valid. Loading of assembly skipped.
+Assembly Unity.Entities.Tests.InAnotherEmptyAssembly.dll at Library/ScriptAssemblies/Unity.Entities.Tests.InAnotherEmptyAssembly.dll not valid. Loading of assembly skipped.
+Assembly Unity.InputSystem.IntegrationTests.dll at Library/ScriptAssemblies/Unity.InputSystem.IntegrationTests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Mathematics.Extensions.Tests.dll at Library/ScriptAssemblies/Unity.Mathematics.Extensions.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Mathematics.Tests.dll at Library/ScriptAssemblies/Unity.Mathematics.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Multiplayer.Center.Editor.Tests.dll at Library/ScriptAssemblies/Unity.Multiplayer.Center.Editor.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Multiplayer.Center.Tests.dll at Library/ScriptAssemblies/Unity.Multiplayer.Center.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Nuget.Mono-Cecil.dll at Library/ScriptAssemblies/Unity.Nuget.Mono-Cecil.dll not valid. Loading of assembly skipped.
+Assembly Unity.PathTracing.Editor.Tests.dll at Library/ScriptAssemblies/Unity.PathTracing.Editor.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.PathTracing.Runtime.Tests.dll at Library/ScriptAssemblies/Unity.PathTracing.Runtime.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Postprocessing.Editor.Tests.dll at Library/ScriptAssemblies/Unity.Postprocessing.Editor.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Postprocessing.Runtime.Tests.dll at Library/ScriptAssemblies/Unity.Postprocessing.Runtime.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.RenderPipelines.Core.Editor.Tests.dll at Library/ScriptAssemblies/Unity.RenderPipelines.Core.Editor.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.RenderPipelines.Core.Runtime.Tests.dll at Library/ScriptAssemblies/Unity.RenderPipelines.Core.Runtime.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.RenderPipelines.Universal.Config.Editor.Tests.dll at Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Config.Editor.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.RenderPipelines.Universal.Editor.Tests.dll at Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Editor.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.RenderPipelines.Universal.Runtime.Tests.dll at Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Scenes.Editor.PerformanceTests.dll at Library/ScriptAssemblies/Unity.Scenes.Editor.PerformanceTests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Scenes.Editor.Tests.dll at Library/ScriptAssemblies/Unity.Scenes.Editor.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Scenes.Hybrid.Tests.dll at Library/ScriptAssemblies/Unity.Scenes.Hybrid.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Scenes.Hybrid.Tests.Editmode.Content.dll at Library/ScriptAssemblies/Unity.Scenes.Hybrid.Tests.Editmode.Content.dll not valid. Loading of assembly skipped.
+Assembly Unity.Scenes.Hybrid.Tests.Playmode.dll at Library/ScriptAssemblies/Unity.Scenes.Hybrid.Tests.Playmode.dll not valid. Loading of assembly skipped.
+Assembly Unity.Scenes.PerformanceTests.dll at Library/ScriptAssemblies/Unity.Scenes.PerformanceTests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Scenes.Tests.dll at Library/ScriptAssemblies/Unity.Scenes.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.ScriptableBuildPipeline.Editor.Tests.dll at Library/ScriptAssemblies/Unity.ScriptableBuildPipeline.Editor.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.ScriptableBuildPipeline.Tests.dll at Library/ScriptAssemblies/Unity.ScriptableBuildPipeline.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.ScriptableBuildPipelineTests.Runtime.Tests.dll at Library/ScriptAssemblies/Unity.ScriptableBuildPipelineTests.Runtime.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Searcher.EditorTests.dll at Library/ScriptAssemblies/Unity.Searcher.EditorTests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Serialization.Tests.dll at Library/ScriptAssemblies/Unity.Serialization.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Settings.Tests.dll at Library/ScriptAssemblies/Unity.Settings.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.ShaderGraph.Editor.Tests.dll at Library/ScriptAssemblies/Unity.ShaderGraph.Editor.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.TextMeshPro.Editor.Tests.dll at Library/ScriptAssemblies/Unity.TextMeshPro.Editor.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.TextMeshPro.Tests.dll at Library/ScriptAssemblies/Unity.TextMeshPro.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Transforms.Hybrid.Tests.dll at Library/ScriptAssemblies/Unity.Transforms.Hybrid.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Transforms.PerformanceTests.dll at Library/ScriptAssemblies/Unity.Transforms.PerformanceTests.dll not valid. Loading of assembly skipped.
+Assembly Unity.Transforms.Tests.dll at Library/ScriptAssemblies/Unity.Transforms.Tests.dll not valid. Loading of assembly skipped.
+Assembly Unity.UnifiedRayTracing.Editor.Tests.dll at Library/ScriptAssemblies/Unity.UnifiedRayTracing.Editor.Tests.dll not valid. Loading of assembly skipped.
+Assembly UnityEditor.UI.Common.Tests.dll at Library/ScriptAssemblies/UnityEditor.UI.Common.Tests.dll not valid. Loading of assembly skipped.
+Assembly UnityEditor.UI.EditorTests.dll at Library/ScriptAssemblies/UnityEditor.UI.EditorTests.dll not valid. Loading of assembly skipped.
+Assembly UnityEngine.UI.Tests.dll at Library/ScriptAssemblies/UnityEngine.UI.Tests.dll not valid. Loading of assembly skipped.
+Start importing Assets/Game/Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Source using Guid(5791baa5882a527cbf62783bfb4ced88) (DefaultImporter) -> (Import Result ID: 'a2b91849c6df2d03d230094e0578e260') in 0.014164167 seconds [static dependencies only]. Details - ImportResultOutputID=bd16200a041197ae60556e7bd13d1254 DependenciesID=bf46caad28bfef7da5f4c9f76c0e880e StaticDependenciesID=d3b9863262e5635731e6f97e49a8cced 
+Start importing Assets/Game/Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites using Guid(57124da3183b8624c7ce152164f6b7f1) (DefaultImporter) -> (Import Result ID: '9f1636714173e2b6b78dc7c202de16e4') in 0.000721291 seconds [static dependencies only]. Details - ImportResultOutputID=b53c4307ed438fed883402fd73c795db DependenciesID=c0b23e583001ba490564af79c329d5eb StaticDependenciesID=c2f349f61b84e562de81946ec781b4bb 
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for WindowsStandalone target not found
+Native extension for OSXStandalone target not found
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+TypeManager.Initialize took: 94ms
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-WarlineCapture
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  4.765 seconds
+Domain Reload Profiling: 5217ms
+	BeginReloadAssembly (80ms)
+		DisableScriptedObjects (18ms)
+		CreateAndSetChildDomain (21ms)
+	RebuildCommonClasses (16ms)
+	RebuildNativeTypeToScriptingClass (6ms)
+	initialDomainReloadingComplete (41ms)
+	LoadAllAssembliesAndSetupDomain (309ms)
+		LoadAssemblies (171ms)
+		AnalyzeDomain (159ms)
+			TypeCache.Refresh (121ms)
+				TypeCache.ScanAssembly (110ms)
+			BuildScriptInfoCaches (32ms)
+			ResolveRequiredComponents (5ms)
+	FinalizeReload (4765ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (18ms)
+			BeforeProcessingInitializeOnLoad (113ms)
+			ProcessInitializeOnLoadAttributes (2114ms)
+			ProcessInitializeOnLoadMethodAttributes (2384ms)
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_blue.png using Guid(80a652a82afd4eea93286e10d8157a83) (TextureImporter) -> (Import Result ID: '0590796723c476c39a6d169e9f83233e') in 0.033977458 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f317e0123c5836c7ec7f58a346270bc4 DependenciesID=39d3363b5f7ae5a3dc3076a3315eb469 StaticDependenciesID=c09c8d3a1fab46efd64f434bda10f672 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_campaign_valley.png using Guid(b0ca626a86d24d43956adc902b5608a3) (TextureImporter) -> (Import Result ID: 'eb2717c306ab66017aa6870b7dff3012') in 0.058847958 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3743456470397bb7f77c01e83d9a098d DependenciesID=cac84ce796cda62387d0c24cbe73599d StaticDependenciesID=6ce973b898ef5cb3b890310dea8ec4d3 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_campaign_target_icon.png using Guid(2159ae31beaf455dadc0249ac2dc0625) (TextureImporter) -> (Import Result ID: 'dd26cfd4a9bfd10095f0c7b6c5f00368') in 0.01576875 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d38cb7515147d77e3c90c82d0c521538 DependenciesID=aeb9b2444e48fec5adce3fe6e97f7fa3 StaticDependenciesID=17a8c4271f82f1bd7cb56649be731662 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_background_command_table_no_ui.png using Guid(31760621cc3a4cde8149751f5f9097df) (TextureImporter) -> (Import Result ID: '6cdcec23e4fce8d4d5bdd89018baf1c6') in 0.052208625 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f007bb37f9dca9142a1833af75046cec DependenciesID=644e97811cd87dc162f3a14300a67130 StaticDependenciesID=bed3de52eae263a49d3c28d2bddd8c6c 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png using Guid(724e0d3880254650ae94be0c64a16f66) (TextureImporter) -> (Import Result ID: '103d235da9cde13682387c7174eadebe') in 0.022550667 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d0ceeb3e0830a7923e25c6303d736a78 DependenciesID=f039c9eb01490681e5ac8d5e0b3cc644 StaticDependenciesID=ab284dfce1d20dc60d9f5a632fdf304f 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_operations_star_icon.png using Guid(f2d4869ed29a44eba0bcaae70ecf07c1) (TextureImporter) -> (Import Result ID: '5475612252d6e7b092078101d7acfe1d') in 0.019517541 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e22a1cdcbea1c2f4987f013d80879f59 DependenciesID=eefdcf6e74552d460c1e37282b9f1703 StaticDependenciesID=18ef2cb107f2ebddbd809d2552821e3e 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_header_square_button_frame_default.png using Guid(1359c1df4fa34415998ac5ca9a2eacc5) (TextureImporter) -> (Import Result ID: '516e218000c4d43a75a377cc37201860') in 0.025835125 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a16bf10e2c98aab563c2e0554d2063c7 DependenciesID=01638a4cc4692b4a28bb0934a40dd296 StaticDependenciesID=d2c504d77ed5c3b350974aa39d4af1bf 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_amber.png using Guid(8346f422363f464e802af24b614db463) (TextureImporter) -> (Import Result ID: '2f2f030bdd73e960f2f9025bfeee3382') in 0.021379125 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=cb0625b89b91b3746e308fe1d7e4eba8 DependenciesID=05bf0291d96498aae839499ce7a7b359 StaticDependenciesID=957f6de342220110c7442021c63a39d4 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_amber.png using Guid(74b16baf3d2b4e04b4b2598f34db0954) (TextureImporter) -> (Import Result ID: '3f9a6dd483a6602322048e9bf4ee13ee') in 0.020426917 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5a8396eb16ef7e0a4d8ede5a6637e1e9 DependenciesID=aca0a62e312b23c11f9d5179ef805c77 StaticDependenciesID=9f0c8e7cafce7cc08f2e66e163cf84fe 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_settings_gear_icon.png using Guid(b4dbd61e22b6415ba21f392ab0a44693) (TextureImporter) -> (Import Result ID: '7822f5ec3bf56b1f6fb550ba4c450097') in 0.019409291 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=05d5a3c01c7abaf61fee20bd23d87885 DependenciesID=f35b8f35a8ee60cc0338b61359fadb19 StaticDependenciesID=37087e2d9d2a0d6541e8812a74e5f7c3 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_blue.png using Guid(059bc9f8c6244a0fa30ebb2882625644) (TextureImporter) -> (Import Result ID: '7f518536d50e5f5534b44dc0b35b6bf2') in 0.018989291 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d3e1768932a930fc3f3c77f9cf1c2979 DependenciesID=83804562a818bcaa2f04779b0b35a752 StaticDependenciesID=bcafff3e9e2bcd3d3e5d1d38111a9d5c 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame.png using Guid(85a5c7a695204b82a65b7f66516e77b7) (TextureImporter) -> (Import Result ID: 'afe9159b9ff7e413e50d89fa35504b92') in 0.028105083 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d095059f4d6c36c78828a91c7bb0afbc DependenciesID=776542407feaf37d790a13b0c62b8855 StaticDependenciesID=d393ac0fe483c40e42389b1e14bd4c39 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_blue.png using Guid(1612a35e27c44b25a0ede39e6ff61fb0) (TextureImporter) -> (Import Result ID: 'e2c611360f1be2fc351c435b44f0881f') in 0.021613667 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4543f6aa15e5174d0b6819e108f898f4 DependenciesID=608a42aa22cdb1bfb70bfcb6896d639f StaticDependenciesID=3b8c3831b2b9bc96f81995b30073e464 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_crate_icon.png using Guid(97c7c7b589cd4b2683928f4c70c64a54) (TextureImporter) -> (Import Result ID: 'd23427e236d160c5bb48b2116fb1624b') in 0.020129542 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ea428f3430314ec80c2fcb046d9392c4 DependenciesID=ab522c11c3097e56633cbddb020abe32 StaticDependenciesID=a94e992bdf3bbc85d4091278a7e0a3aa 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_command_shield_icon.png using Guid(e7395f880a5942f2b64f6ab5cd8bd0b7) (TextureImporter) -> (Import Result ID: '818c86236fdbe138f1509231a27a07c5') in 0.021185375 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=95b03cfd2e4606676be5b460a8cda734 DependenciesID=51f605acbfc19f84864a80f25a35c743 StaticDependenciesID=e9da73dbe9581b0e0b27c5803205ed46 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait.png using Guid(080f032a5c114c7982020369a54e3337) (TextureImporter) -> (Import Result ID: 'f7d71895096d56a793da337babeeaddb') in 0.0499165 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=dfaefa66a6cb7cd5cbe58bbb5a33e145 DependenciesID=ccc187a15ad53528179419075b3d7189 StaticDependenciesID=d973b37d4201dcf1feb7a9491fb8f610 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_selected.png using Guid(a870635301254a8389f5ac70b96cbb43) (TextureImporter) -> (Import Result ID: '90bf9343b60756da6996d1dd5270fea7') in 0.021063375 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=dc113ce60ff6cb2888b478703949a8d9 DependenciesID=67c91f294e8d3bc679a21479275fb7cd StaticDependenciesID=82885a84f0f2ab801dae9a950a857ec1 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_default.png using Guid(4917d7d5139742d0a675ab6af0e385df) (TextureImporter) -> (Import Result ID: '518464dd0e2ba86b358fef654358596b') in 0.026173625 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=20487deeb6a0a3ebaa91527f107e3eaf DependenciesID=db894072a240239b04c53edc0769d563 StaticDependenciesID=d3dc8d2e4139532515cdfe815fae8d1e 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_brand_logo_lockup.png using Guid(7ae2dbb259d04e418e2a4d1b3aadcd24) (TextureImporter) -> (Import Result ID: 'c3c31c87b53f7a4f1551dbde1e4a0441') in 0.029999375 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=740ed2ad031bb562db55d5a142f93bda DependenciesID=01f5239e50d364848fa430b5d6a57802 StaticDependenciesID=881daf0cb45a9512601e6b38e2a3c2f0 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png using Guid(ba84fccf9b98476fb544c3e8f1fba255) (TextureImporter) -> (Import Result ID: '9230c156b15142a5bde941c1ee500f1c') in 0.030923375 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6f0c7bfd8546f67380e37e5c729f8122 DependenciesID=058baee925890c1ea501d98d80be6ca5 StaticDependenciesID=5c5efba1e334076dfbeb579bee2d0aee 
+Start importing Assets/Game/Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Source/scn01_v04_layers_green_source.png using Guid(da570c206839b8a8169b9ce2a646204d) (TextureImporter) -> (Import Result ID: '912e46325e04fa872935e28ce847a45c') in 0.056747583 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=213c5e34ce5bd0477acdb3d01ae22516 DependenciesID=453f31314c1340f661c28dc06e1a1728 StaticDependenciesID=46fe54f22ebd5d15f4a39f7c32597a28 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_amber.png using Guid(1bc96e0c5b734b73a61ab1054efb3a35) (TextureImporter) -> (Import Result ID: 'acd32a25c7b6b7af81d4fe8e278f6175') in 0.023250167 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=adc08b817b40cd942fa1c6ca2e7ab042 DependenciesID=3ed6e00c0ff4729b6ea34cd08e76d910 StaticDependenciesID=9000e39c9193a02482957be34b70bc07 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_skirmish_crossed_weapons_icon.png using Guid(1c82f4a1891e44d0af53ed247470ad0d) (TextureImporter) -> (Import Result ID: '3aa258111c8c3dcadb544cc58ba67345') in 0.024272583 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b24f802b4a14d5f4cb6c36590d74a070 DependenciesID=323183a6c250600000e43640fe25f80f StaticDependenciesID=53b78d8c19ec915aab98ec52a01bae77 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_selected.png using Guid(2c392f7ee1ca4715a523067bddc80147) (TextureImporter) -> (Import Result ID: '88f1c579760f6a86ce82f18b257afa52') in 0.021814291 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=fd7b7587ef39ac8d3e0cdf802e29dd6a DependenciesID=25140a5e45a81dc2fb10bcd15b4a4d7b StaticDependenciesID=65861371d2f4e35e86659127f8da5206 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_skirmish_airbase.png using Guid(bcb4f083a5884dbd85a6aa9cdbb09453) (TextureImporter) -> (Import Result ID: '01425c50e4af1732a6633e66549ad648') in 0.051760458 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5a1030a5669fb062520558796b1a3bb6 DependenciesID=e579331b78068909037f70752843958f StaticDependenciesID=6b75e814b17f83cffeca0474c752c742 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_supply_crate_icon.png using Guid(4d99b42b112a448e875428e32835f8da) (TextureImporter) -> (Import Result ID: '63a0615c2d5c87223009974fe6b60343') in 0.019872792 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d558b7b7e9f212751f4dac289e7b7f69 DependenciesID=e46b8b8cdfde3cb5c7ae799ce9db432c StaticDependenciesID=2c70e8953e23c469e46a7030669b9b04 
+Start importing Assets/Game/Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Source/scn01_v04_background_no_ui_source.png using Guid(9d96f593fda6a9cdfc8301042b8c949c) (TextureImporter) -> (Import Result ID: 'e6f3dc8aaec48018a1e198489638f29d') in 0.066487083 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=307a93fdd28755b180148e5b6fae6b2f DependenciesID=5dd23ccc61bdc7a44f51277b90d16c57 StaticDependenciesID=db8504657fda210c9e0ef4d82fecd713 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_backing_default.png using Guid(4e29893d9c2f4dc2af78c368b7629dec) (TextureImporter) -> (Import Result ID: 'e3fedefa208f639072abc413fb1a5a1b') in 0.0166145 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a0bea98df203a880cedb4598550bca2e DependenciesID=95d6c28b0f2333713c5ef3e343a44402 StaticDependenciesID=f0229f0141c5ba29e46b5674f8eda149 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_campaign_target_icon.png using Guid(afe3a0deecc54f21963ce5148131909e) (TextureImporter) -> (Import Result ID: 'e63e6874735dfbac67825e3da2fec5a0') in 0.016439542 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=fe4ecd231863b1d1fdc507fabae10797 DependenciesID=ecad2af209fe9ff0938c391edbebb876 StaticDependenciesID=7d62a812f332a4045f4c0bd2bf624070 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_operations_radar.png using Guid(ef1ef96ecfdc4b9399583544edd128d7) (TextureImporter) -> (Import Result ID: 'fc5cced5eb5f37d233a0d0fcd1045906') in 0.053268708 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=937779d3c6e922952da1951b09259d03 DependenciesID=006c65026db000f3e3383092f189cbe8 StaticDependenciesID=b438124a6aa25d992cf9d95d975a7eb3 
+Start importing Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_diamond_icon.png using Guid(ff3a6b06e7e940e19202a37ba75d335b) (TextureImporter) -> (Import Result ID: 'a4e899b4150e84dd1a8c732df95444e8') in 0.014420708 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ddd009657623eeb75cf924ade47f81b8 DependenciesID=21e88667e782749b1e2e5cf78dd23a60 StaticDependenciesID=24d3459633b1cdd6e28ffa5901aecf34 
+Start importing Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab using Guid(28a740560e67f41888ea431b45bb7d33) (PrefabImporter) -> (Import Result ID: 'ab920f20b44b9356b10eaa1e3498596f') in 0.04258775 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e1515018ecea2aeb008a442c07843823 DependenciesID=8786a3eb495de43249902d9f21dea2b5 StaticDependenciesID=b301f6abb318513d04955df1c311b1f7 
+Start importing Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uss using Guid(6a8a84e3d46d54dc79a3ac2e4ef3c2bf) (ScriptedImporter)Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uss (line 8): warning: Unknown property 'picking-mode' (did you mean 'padding-top'?)
+    picking-mode: ignore
+Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uss (line 26): warning: Unknown property 'picking-mode' (did you mean 'padding-top'?)
+    picking-mode: position
+Assets/Game/UI Toolkit/SCN02_MainMenuContent/SCN02_MainMenuContent.uss (line 31): warning: Unknown property 'picking-mode' (did you mean 'padding-top'?)
+    picking-mode: ignore
+ -> (Import Result ID: '86cbb55346d3917aec79bb9152be8a7a') in 0.108438625 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=40270238684eb7341c051aef5389b459 DependenciesID=b7510ebb61733d47e46c4b3eff6961d5 StaticDependenciesID=52a3859e72ee9d5994719573f7090162 
+Start importing Assets/Game/UI Toolkit/POP05_MissionResultPopup/POP05_MissionResultPopup.uss using Guid(1cc126d0235be4a80a3b1675da905055) (ScriptedImporter) -> (Import Result ID: '9d133f8e01d9e47602ed9487ba583816') in 0.032096792 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a6f8c3e9770b2db23873e07e866cb9c8 DependenciesID=159d4f4bb2e691f4964cf2bd2ed050e9 StaticDependenciesID=1a4f1dbf1f63ac0e927f2eb2acfbbce0 
+Start importing Assets/Game/UI Toolkit/SCN19_ArmoryContent/SCN19_ArmoryContent.uss using Guid(ad74ebf07d4b4702963af6a51231d2f1) (ScriptedImporter) -> (Import Result ID: 'a0c963f6dfb64e11ee34ed47a125d3b3') in 0.051974625 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a2ccbc720bdace3e6894240d0b76c330 DependenciesID=0cb9df846cc55c18bf6e0ab9d124b6e6 StaticDependenciesID=b1c7709c9cc54060d667429f543ec169 
+Start importing Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uss using Guid(cf03a10925d12431e9adf652feea5e9f) (ScriptedImporter)Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uss (line 120): warning: Expected (<length>) but found '0.38'
+    -unity-slice-scale: 0.38 -> Property expects a unit. Did you forget to add px or %?
+Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uss (line 279): warning: Expected (<length>) but found '0.28'
+    -unity-slice-scale: 0.28 -> Property expects a unit. Did you forget to add px or %?
+Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uss (line 307): warning: Expected (<length>) but found '0.36'
+    -unity-slice-scale: 0.36 -> Property expects a unit. Did you forget to add px or %?
+Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uss (line 522): warning: Expected (<length>) but found '0.40'
+    -unity-slice-scale: 0.40 -> Property expects a unit. Did you forget to add px or %?
+Assets/Game/UI Toolkit/SCN03_CommanderProfileContent/SCN03_CommanderProfileContent.uss (line 566): warning: Expected (<length>) but found '0.24'
+    -unity-slice-scale: 0.24 -> Property expects a unit. Did you forget to add px or %?
+ -> (Import Result ID: '24cb753c8630b10bee5906da2db8216b') in 0.037765542 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c6aefaad7a5476fd1cadbaa6235b4de9 DependenciesID=823457545c368d262381450423b7ffd0 StaticDependenciesID=5752ab8b7ad1775ac3d2841f7b384262 
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.EditorApplication:Internal_CallProjectHasChanged () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:459)
+
+(Filename: Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs Line: 46)
+
+(Values over 0.050ms)
+Asset Pipeline Refresh (id=cfdec7dd926914bc7b64b092e77b988c): Total: 9.506 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	Summary:
+		Imports: total=12 (actual=7, local cache=5, cache server=0)
+		Asset DB Process Time: managed=12 ms, native=7657 ms
+		Asset DB Callback time: managed=423 ms, native=13 ms
+		Scripting: domain reloads=1, domain reload time=452 ms, compile time=886 ms, other=61 ms
+		Project Asset Count: scripts=2387, non-scripts=15749
+		Asset File Changes: new=4, changed=34, moved=0, deleted=1
+		Scan Filter Count: 1
+	InvokePackagesCallback: 8.274ms
+	ApplyChangesToAssetFolders: 0.263ms
+	Scan: 1146.481ms
+	OnSourceAssetsModified: 0.587ms
+	CategorizeScriptCompilationAssets: 42.829ms
+	ProcessAssetsWithTransientArtifactChanges: 36.824ms
+	CategorizeAssets: 183.115ms
+	CompileScripts: 885.885ms
+	ImportOutOfDateAssets: 6123.528ms (4770.668ms without children)
+		ImportManagerImport: 1345.991ms (111.596ms without children)
+		ReloadNativeAssets: 0.557ms
+		UnloadImportedAssets: 1.799ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 3.139ms
+		OnDemandSchedulerStart: 1.362ms
+	PostProcessAllAssets: 411.633ms
+		SpriteAtlasDatabase.OnAssetPostprocessCallback 1.251ms
+		VCAutoAddAssetPostprocess 0.884ms
+		ShaderAssetModifiedCallback 0.467ms
+		PostProcessCallbackCreateDeferredMaterials 0.090ms
+		XRBuildSystem.XRAssetImported 0.079ms
+		MonoPostProcessAllAssets: 408.164ms
+			AssetPostprocessor.OnPostprocessAllAssets 303.748ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 41.286ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 35.979ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 5.730ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 2.488ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 2.236ms
+			SceneAssetPostProcessor.OnPostprocessAllAssets 2.141ms
+			SyncVS.PostprocessSyncProject 1.403ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.911ms
+			AssetChangedListener.OnPostprocessAllAssets 0.893ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.829ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 0.826ms
+			MaterialPostprocessor.OnPostprocessAllAssets 0.564ms
+			PostProcessor.OnPostprocessAllAssets 0.524ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.407ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.349ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.255ms
+			CubeLutAssetImporter.OnPostprocessAllAssets 0.223ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.205ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.204ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.194ms
+			UVCSAssetPostprocessor.OnPostprocessAllAssets 0.172ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.139ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.122ms
+			AssetEvents.OnPostprocessAllAssets 0.107ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.104ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.102ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.090ms
+			SamplePostprocessor.OnPostprocessAllAssets 0.072ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.062ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.055ms
+	PostAssetChangesProfiler: 259.961ms
+	GatherAllCurrentPrimaryImportResultRevisions: 0.238ms
+	UnloadStreamsBegin: 3.845ms
+	PersistCurrentRevisions: 0.840ms
+	GenerateScriptTypeHashes: 2.342ms
+	GenerateScriptTypeSerializationHashes: 3.709ms
+	Untracked: 639.969ms
+
+Application.AssetDatabase Initial Refresh End
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Launching external process: /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Helpers/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.04 seconds
+Scanning for USB devices : 0.236ms
+Initializing Unity extensions:
+Script 'Library/PackageCache/com.unity.test-framework@629486125cfc/Tests/TestNewCustomAssembly/TestNewCustomAssembly.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.Hybrid.Tests/Baking/ExcludedAssemblyTest/Unity.Entities.Hybrid.Tests.ExcludedAssembly.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.mathematics@19a9377c4ffa/Tests/Unity.Mathematics.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@538ace9075bc/Unity.Collections.Tests/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.xml' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.PerformanceTests/Unity.Entities.PerformanceTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.Tests/InAnotherEmptyAssembly/Unity.Entities.Tests.InAnotherEmptyAssembly.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Transforms.PerformanceTests/Unity.Transforms.PerformanceTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Transforms.Tests/Unity.Transforms.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@538ace9075bc/DocCodeSamples.Tests/DocCodeSamples.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.Editor.PerformanceTests/Unity.Entities.Editor.PerformanceTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Scenes.Hybrid.Tests/Playmode/Unity.Scenes.Hybrid.Tests.Playmode.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Scenes.Tests/Unity.Scenes.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Scenes.Editor.Tests/TypeDependencyCacheTestAssembly/TypeDependencyCacheTestAssembly.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.serialization@582cbf30bbfd/Tests/Unity.Serialization.Tests/Unity.Serialization.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.scriptablebuildpipeline@36e3b5898ee2/Tests/Runtime/TestAssets/Unity.ScriptableBuildPipelineTests.Runtime.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@538ace9075bc/Unity.Collections.PerformanceTests/Unity.Collections.PerformanceTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.postprocessing@141166b789e3/Tests/Runtime/Unity.Postprocessing.Runtime.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.timeline@bfd27f8016ff/DocCodeExamples/DocCodeExamples.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.multiplayer.center@f01f4ba8d00a/Tests/Runtime/Unity.Multiplayer.Center.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.Hybrid.EndToEnd.Tests/Unity.Entities.Hybrid.EndToEnd.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Scenes.Hybrid.Tests/Editmode/Content/Unity.Scenes.Hybrid.Tests.Editmode.Content.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.Tests/Content/ContentDeliveryTests/Unity.Entities.ContentDeliveryGlobalState.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.Hybrid.Tests/Baking/SeparateAssembly/Unity.Entities.Hybrid.Tests.SeparateAssembly.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.render-pipelines.core@6a60abc179f8/Tests/Runtime/Threading/FunctionTestsGroup.compute' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/DocCodeSamples.Tests/DocCodeSamples.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.render-pipelines.core@6a60abc179f8/Tests/Runtime/PathTracing/UniformAlbedoMetaPass.shader' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.ugui@3dd2fbd8c1f1/Tests/Runtime/UGUI/UnityEngine.UI.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.inputsystem@21a28c3a6c83/Tests/IntegrationTests/Unity.InputSystem.IntegrationTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Transforms.Hybrid.Tests/Unity.Transforms.Hybrid.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@538ace9075bc/Unity.Collections.Tests.Playmode/FixedListPlayModeTests.tt' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.serialization@582cbf30bbfd/Tests/Unity.Serialization.Editor.Tests/Unity.Serialization.Editor.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.Hybrid.PerformanceTests/Unity.Entities.Hybrid.PerformanceTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Scenes.Hybrid.Tests/Editmode/Unity.Scenes.Hybrid.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Burst.Tests/Unity.Burst.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.ugui@3dd2fbd8c1f1/Tests/Runtime/TMP/Unity.TextMeshPro.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities.graphics@2ad17cac7401/Unity.Entities.Graphics.Tests/Unity.Entities.Graphics.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.render-pipelines.universal@0c5162adfb45/Tests/Runtime/Unity.RenderPipelines.Universal.Runtime.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.Tests/InAnotherAssembly/Unity.Entities.Tests.InAnotherAssembly.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Mathematics.Extensions.Tests/Unity.Mathematics.Extensions.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.scriptablebuildpipeline@36e3b5898ee2/Tests/Runtime/Unity.ScriptableBuildPipeline.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.Hybrid.Tests/Unity.Entities.Hybrid.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.Tests/Unity.Entities.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Scenes.Editor.Tests/Unity.Scenes.Editor.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.TestComponents/Unity.TestComponents.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Scenes.Editor.PerformanceTests/Unity.Scenes.Editor.PerformanceTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.CodeGen.Tests/Unity.Entities.CodeGen.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.collections@538ace9075bc/Unity.Collections.BurstCompatibilityGen/Unity.Collections.BurstCompatibilityGen.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Entities.Editor.Tests/Unity.Entities.Editor.Tests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+Script 'Library/PackageCache/com.unity.entities@d66668920c3f/Unity.Scenes.PerformanceTests/Unity.Scenes.PerformanceTests.asmdef' will not be compiled because it exists outside the Assets folder and does not to belong to any assembly definition file.
+2026-06-22 17:37:06.205 Unity[24372:2607282] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xa72aeebc0 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+Unloading 50 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 9854 unused Assets / (6.4 MB). Loaded Objects now: 10398.
+Memory consumption went from 402.1 MB to 395.7 MB.
+Total: 11.300000 ms (FindLiveObjects: 0.322333 ms CreateObjectMapping: 0.354209 ms MarkObjects: 8.354584 ms  DeleteObjects: 2.268750 ms)
+
+2026-06-22 17:37:06.265 Unity[24372:2607282] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xa72af9b80 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+2026-06-22 17:37:06.284 Unity[24372:2607282] [XcodeApplications] Failed to read NSDictionary from path ;/Contents/Info.plist
+Start importing Assets/Game/Data/UI/RuntimeUiConfig.asset using Guid(d2c44335263b4a319f6ef8cebdde548a) (NativeFormatImporter) -> (Import Result ID: '39eddd83c8dadd53f02e571cb11961fa') in 0.000881 seconds [static dependencies only]. Details - ImportResultOutputID=5a0bb9f38e66257519ba6953a15a4d9c DependenciesID=33cf197984036216b06cf5aab7236deb StaticDependenciesID=7234ad994a771508e2b0dd4bcf6a6130 
+Asset Pipeline Refresh (id=8a9cc689552c443f788dcd5912dfe1e2): Total: 0.015 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Opening scene 'Assets/Game/Scenes/Menu.unity'
+Unloading 785 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Game/Scenes/Menu.unity'
+	Deserialize:            431.371 ms
+	Integration:            294.837 ms
+	Integration of assets:  594.900 ms
+	Thread Wait Time:       -0.003 ms
+	Total Operation Time:   1321.104 ms
+Unloading 11 unused Assets / (2.0 KB). Loaded Objects now: 19728.
+Memory consumption went from 0.83 GB to 0.83 GB.
+Total: 11.173000 ms (FindLiveObjects: 0.469875 ms CreateObjectMapping: 0.229083 ms MarkObjects: 10.436292 ms  DeleteObjects: 0.036167 ms)
+
+[Project] Loading completed in 17.031 seconds
+	Project init time: 				15.142 seconds
+		Template init time: 		0.000 seconds
+		Package Manager init time: 		0.276 seconds
+		Asset Database init time: 		0.546 seconds
+		Global illumination init time: 	0.001 seconds
+		Assemblies load time: 			3.730 seconds
+		Unity extensions init time: 	0.008 seconds
+		Asset Database refresh time: 	9.507 seconds
+	Scene opening time: 			1.761 seconds
+##utp:{"type":"ProjectInfo","version":2,"phase":"Immediate","time":1782142627644,"processId":24372,"projectLoad":17.031180458,"projectInit":15.142030542,"templateInit":0.0,"packageManagerInit":0.2762515,"assetDatabaseInit":0.546125833,"globalIlluminationInit":0.000887792,"assembliesLoad":3.729959458,"unityExtensionsInit":0.007852916,"assetDatabaseRefresh":9.506647834,"sceneOpening":1.760894083}
+##utp:{"type":"EditorInfo","version":2,"phase":"Immediate","time":1782142627644,"processId":24372,"editorVersion":"6000.4.0f1 (8cf496087c8f)","branch":"6000.4/staging","buildType":"Release","platform":"OSX"}
+Subscribe to USB device events
+Thread 0x368053000 may have been prematurely finalized
+Entering Playmode with Reload Domain disabled.
+If you experience any issues, please disable "Enter Play Mode Options" in Editor Settings
+Entering Playmode with Reload Scene disabled. If you experience any issues, please disable "Enter Play Mode Options" in Editor Settings
+(Values over 0.050ms)
+Asset Pipeline Refresh (id=57fef8d9c86f04dc1bada9011436ca93): Total: 0.432 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=431 ms
+		Asset DB Callback time: managed=0 ms, native=0 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=2387, non-scripts=15749
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 1
+	ApplyChangesToAssetFolders: 0.150ms
+	Scan: 338.631ms
+	CategorizeScriptCompilationAssets: 0.084ms
+	ProcessAssetsWithTransientArtifactChanges: 0.287ms
+	CategorizeAssets: 70.334ms
+	ImportOutOfDateAssets: 2.454ms (0.585ms without children)
+		ReloadNativeAssets: 0.218ms
+		UnloadImportedAssets: 0.076ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.107ms
+		OnDemandSchedulerStart: 0.468ms
+	GatherAllCurrentPrimaryImportResultRevisions: 0.640ms
+	UnloadStreamsBegin: 3.325ms
+	PersistCurrentRevisions: 0.347ms
+	Untracked: 15.129ms
+
+[Licensing::Client] Successfully resolved entitlement details
+Start Indexing on Editor startup
+[Indexing] Starting Initial Indexing for Assets
+Created GICache directory at /Users/farhad/Library/Caches/com.unity3d.UnityEditor/GiCache. Took: 0.004s, timestamps: [17.615 - 17.619]
+[Licensing::Client] Successfully resolved entitlement details
+[CanvasRouteCaptureValidation] result=Passed Canvas route is visible. route=MainMenu popup=None overlay=None modal=None luma=0.274 size=1920x1080 path=/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_03/shadow_canvas_scn02_mainmenu_iter12_sprite_replacement_1920x1080.png
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+CanvasMenuFallbackValidation:CompleteRouteCapture (bool,string) (at Assets/Game/Scripts/Editor/CanvasMenuFallbackValidation.cs:794)
+CanvasMenuFallbackValidation:ContinueRouteCapture () (at Assets/Game/Scripts/Editor/CanvasMenuFallbackValidation.cs:442)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:401)
+
+(Filename: Assets/Game/Scripts/Editor/CanvasMenuFallbackValidation.cs Line: 794)
+
+Killing ADB server in 0.174996 seconds.
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+[Licensing::IpcConnector] LicenseClient-farhad-6000.4.0-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-farhad-6000.4.0 channel disconnected successfully.
+Thread 0x1701b7000 may have been prematurely finalized
+Thread 0x170243000 may have been prematurely finalized
+Thread 0x1703e7000 may have been prematurely finalized
+Thread 0x1702cf000 may have been prematurely finalized
+Thread 0x17035b000 may have been prematurely finalized
+Thread 0x170473000 may have been prematurely finalized
+Thread 0x1704ff000 may have been prematurely finalized
+Thread 0x17058b000 may have been prematurely finalized
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+CodeReloadManager destroyed
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      ALC ILPP context 1 is unloading
+17:37:10.419 |V| RiderPlugin                    | :1                             | AppDomain.CurrentDomain.DomainUnload lifetimeDefinition.Terminate
+debugger-agent: Unable to listen on 44
+[usbmuxd] Stop listen thread
+[usbmuxd] Error: 
+[usbmuxd] Listen thread exiting

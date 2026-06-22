@@ -460,7 +460,7 @@ public sealed class PerformanceDiagnosticsSystem
         if (!_enableFrameRateDiagnostics)
             return;
 
-        if (_applicationPaused || !Application.isFocused)
+        if (_applicationPaused || (!Application.isFocused && !Application.isBatchMode))
         {
             ResetFrameRateDiagnosticWindow(now);
             return;
@@ -587,7 +587,7 @@ public sealed class PerformanceDiagnosticsSystem
     {
         if (!_enableSlowFrameDiagnostics || totalSeconds < SlowFrameDiagThresholdSeconds || now < _nextSlowFrameDiagTimestamp)
             return;
-        if (!Application.isFocused)
+        if (!Application.isFocused && !Application.isBatchMode)
             return;
 
         _nextSlowFrameDiagTimestamp = now + SlowFrameDiagCooldownSeconds;

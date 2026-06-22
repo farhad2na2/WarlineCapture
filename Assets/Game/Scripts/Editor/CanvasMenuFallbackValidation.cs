@@ -33,6 +33,7 @@ public static class CanvasMenuFallbackValidation
     private static bool deployValidationSubmitted;
     private static int routeCaptureFrameCount;
     private static int routeCaptureConfiguredFrame;
+    private static int routeCaptureSettleFrames;
     private static double routeCaptureStartedAt;
     private static bool routeCaptureCompleted;
     private static bool routeCaptureConfigured;
@@ -148,6 +149,7 @@ public static class CanvasMenuFallbackValidation
             routeCaptureShouldShowPopup = ResolveRouteCapturePopup(out routeCapturePopup);
             routeCaptureOverlay = ResolveRouteCaptureOverlay();
             routeCaptureModal = ResolveRouteCaptureModal();
+            routeCaptureSettleFrames = ResolvePositiveIntEnvironment("WARLINE_CANVAS_ROUTE_CAPTURE_SETTLE_FRAMES", 12);
             EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
             if (File.Exists(screenshotPath))
                 File.Delete(screenshotPath);
@@ -236,6 +238,7 @@ public static class CanvasMenuFallbackValidation
             }
 
             bootstrap.ApplyRuntimeUiMode();
+            DisableMenuDiagnosticsOverlay();
             if (bootstrap.IsUiToolkitMode)
             {
                 Complete(false, "RuntimeUiConfig is not in Canvas mode.");
@@ -319,6 +322,7 @@ public static class CanvasMenuFallbackValidation
             }
 
             bootstrap.ApplyRuntimeUiMode();
+            DisableMenuDiagnosticsOverlay();
             if (bootstrap.IsUiToolkitMode)
             {
                 CompleteDeployClickValidation(false, "RuntimeUiConfig is not in Canvas mode.");
@@ -414,12 +418,14 @@ public static class CanvasMenuFallbackValidation
 
                 routeCaptureConfigured = true;
                 routeCaptureConfiguredFrame = routeCaptureFrameCount;
+                DisableMenuDiagnosticsOverlay();
                 return;
             }
 
-            if (routeCaptureFrameCount - routeCaptureConfiguredFrame < 12)
+            if (routeCaptureFrameCount - routeCaptureConfiguredFrame < routeCaptureSettleFrames)
                 return;
 
+            DisableMenuDiagnosticsOverlay();
             if (!TryRenderCameraLuma(bootstrap.UiCamera, screenshotPath, screenshotWidth, screenshotHeight, out float luma, out string renderError))
             {
                 CompleteRouteCapture(false, renderError);
@@ -549,6 +555,14 @@ public static class CanvasMenuFallbackValidation
             case UIRoute.MainMenu:
             case UIRoute.Armory:
                 content.InstallMenuRouteBody(routeCaptureRoute);
+                ResetRouteCaptureRegions(
+                    bootstrap,
+                    UIShellRegionId.MenuBackgroundRegion,
+                    UIShellRegionId.HeaderRegion,
+                    UIShellRegionId.LeftRegion,
+                    UIShellRegionId.MiddleRegion,
+                    UIShellRegionId.RightRegion,
+                    UIShellRegionId.FooterRegion);
                 break;
             case UIRoute.Match:
                 content.PrepareForCommandSequence(new[]
@@ -589,6 +603,42 @@ public static class CanvasMenuFallbackValidation
             return false;
 
         return true;
+    }
+
+    private static void ResetRouteCaptureRegions(MenuBootstrapView bootstrap, params UIShellRegionId[] regionIds)
+    {
+        if (bootstrap == null || bootstrap.ShellView == null || regionIds == null)
+            return;
+
+        for (int i = 0; i < regionIds.Length; i++)
+        {
+            if (bootstrap.ShellView.TryGetRegion(regionIds[i], out UIShellRegionView region) && region != null)
+                region.ResetVisualState();
+        }
+    }
+
+    private static void DisableMenuDiagnosticsOverlay()
+    {
+        Scene activeScene = SceneManager.GetActiveScene();
+        GameObject[] objects = Resources.FindObjectsOfTypeAll<GameObject>();
+        for (int i = 0; i < objects.Length; i++)
+        {
+            GameObject candidate = objects[i];
+            if (candidate == null ||
+                !candidate.scene.IsValid() ||
+                candidate.scene != activeScene)
+            {
+                continue;
+            }
+
+            string name = candidate.name;
+            if (string.Equals(name, "MenuDiagnosticsPanel", StringComparison.Ordinal) ||
+                string.Equals(name, "Panel_FPS", StringComparison.Ordinal) ||
+                string.Equals(name, "Label_FPS", StringComparison.Ordinal))
+            {
+                candidate.SetActive(false);
+            }
+        }
     }
 
     private static bool TryConfigureRouteCaptureOverlay(out string error)

@@ -169,18 +169,6 @@ internal sealed class BuildingPlacementRuntimeTickSystem
         double afterInput = startTime;
         try
         {
-            using (EnqueueMapBuildingPlacementsMarker.Auto())
-            {
-                context.EnqueueMapBuildingPlacements?.Invoke();
-            }
-
-            using (EnqueueMapVehiclePlacementsMarker.Auto())
-            {
-                context.EnqueueMapVehiclePlacements?.Invoke();
-            }
-
-            afterMapPlacements = UnityEngine.Time.realtimeSinceStartupAsDouble;
-
             using (UpdateBuildingRuntimeBoundaryMarker.Auto())
             {
                 context.UpdateBuildingRuntimeBoundary?.Invoke();

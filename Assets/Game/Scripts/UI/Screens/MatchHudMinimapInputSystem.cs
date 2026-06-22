@@ -26,6 +26,7 @@ public sealed class MatchHudMinimapInputSystem
     private const float CameraDragRecaptureDebounceSeconds = 0.45f;
     private const float CameraViewportEdgeRefreshMargin = 0.12f;
     private const float MinimapZoomedInScale = 0.5f;
+    private const float MarkerRefreshSeconds = 0.1f;
     private const int MinRasterFeatureCount = 24;
 
     private MatchHudMinimapView _view;
@@ -48,8 +49,12 @@ public sealed class MatchHudMinimapInputSystem
     private float _nextStaticMapRetryTime;
     private int _warmupStaticMapRefreshesRemaining;
     private bool _hasCapturedProjectionGrid;
+    private bool _hasCachedGrid;
+    private bool _markersDirty = true;
     private MatchHudMinimapProjectionGrid _capturedProjectionGrid;
     private MatchHudMinimapProjectionGrid _currentProjectionGrid;
+    private MatchHudMinimapGridModel _cachedGrid;
+    private float _nextMarkerRefreshTime;
     private float _cameraDragRefreshBlockedUntil;
     private bool _minimapZoomedIn;
 
@@ -74,13 +79,18 @@ public sealed class MatchHudMinimapInputSystem
         _view.FocusRequested += HandleFocusRequested;
         _view.ZoomHeldChanged += HandleZoomHeldChanged;
         _hasCapturedProjectionGrid = false;
+        _hasCachedGrid = false;
+        _markersDirty = true;
+        _cachedGrid = default;
         _currentProjectionGrid = default;
         _capturedProjectionGrid = default;
+        _nextMarkerRefreshTime = 0f;
         _nextStaticMapRetryTime = 0f;
         _cameraDragRefreshBlockedUntil = 0f;
         _warmupStaticMapRefreshesRemaining = 0;
         _minimapZoomedIn = false;
         _staticMapDirty = true;
+        _view.SetProjectionMode(useFullMapProjection: true);
         Update();
     }
 
@@ -113,11 +123,12 @@ public sealed class MatchHudMinimapInputSystem
     public void NotifyStaticMapChanged()
     {
         _staticMapDirty = true;
+        _markersDirty = true;
     }
 
     public void Update()
     {
-        if (_view == null || !TryGetGrid(out MatchHudMinimapGridModel grid))
+        if (_view == null || !_view.isActiveAndEnabled || !TryGetGrid(out MatchHudMinimapGridModel grid))
             return;
 
         Camera worldCamera = _selectionUiCameraSystem != null ? _selectionUiCameraSystem.WorldCamera : null;
@@ -158,6 +169,7 @@ public sealed class MatchHudMinimapInputSystem
                     _currentProjectionGrid = renderedProjectionGrid;
                     _capturedProjectionGrid = renderedProjectionGrid;
                     _hasCapturedProjectionGrid = true;
+                    _markersDirty = true;
                     if (!_view.IsDraggingViewport)
                         _view.ClearManualViewportOverride();
                 }
@@ -197,7 +209,7 @@ public sealed class MatchHudMinimapInputSystem
             }
         }
 
-        UpdateMarkers(projectionGrid);
+        UpdateMarkersIfDue(projectionGrid);
     }
 
     private void HandleFocusRequested(Vector2 normalized)
@@ -309,6 +321,7 @@ public sealed class MatchHudMinimapInputSystem
         if (_runtimeGameplayStateSystem != null)
             _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
         _staticMapDirty = true;
+        _markersDirty = true;
         _nextStaticMapRetryTime = 0f;
         Update();
     }
@@ -361,6 +374,16 @@ public sealed class MatchHudMinimapInputSystem
         }
 
         _view.SetMapSprite(_captureSprite);
+    }
+
+    private void UpdateMarkersIfDue(MatchHudMinimapProjectionGrid grid)
+    {
+        if (!_markersDirty && Time.unscaledTime < _nextMarkerRefreshTime)
+            return;
+
+        _markersDirty = false;
+        _nextMarkerRefreshTime = Time.unscaledTime + MarkerRefreshSeconds;
+        UpdateMarkers(grid);
     }
 
     private void UpdateMarkers(MatchHudMinimapProjectionGrid grid)
@@ -458,8 +481,19 @@ public sealed class MatchHudMinimapInputSystem
 
     private bool TryGetGrid(out MatchHudMinimapGridModel grid)
     {
+        if (_hasCachedGrid && _cachedGrid.IsValid)
+        {
+            grid = _cachedGrid;
+            return true;
+        }
+
         grid = default;
-        return _minimapDataSource != null && _minimapDataSource.TryGetGrid(out grid) && grid.IsValid;
+        if (_minimapDataSource == null || !_minimapDataSource.TryGetGrid(out grid) || !grid.IsValid)
+            return false;
+
+        _cachedGrid = grid;
+        _hasCachedGrid = true;
+        return true;
     }
 
     private static bool TryGetRectInParentSpace(RectTransform source, RectTransform parent, Vector3[] corners, out Rect rect)

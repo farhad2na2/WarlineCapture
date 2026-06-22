@@ -90,7 +90,7 @@ internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystem
             !context.ShouldLogDiagnostics() ||
             elapsed < SlowLogThresholdSeconds ||
             now < _nextSlowLogAt ||
-            !Application.isFocused)
+            (!Application.isFocused && !Application.isBatchMode))
             return;
 
         _nextSlowLogAt = now + SlowLogCooldownSeconds;

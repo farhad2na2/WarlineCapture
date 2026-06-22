@@ -17,22 +17,47 @@ Approved visual source:
 
 ## Progress Snapshot
 
-- Checklist progress: `40 / 144 complete (27.8%)`.
-- In progress: `0`.
-- Remaining open: `104`.
-- Current target: `Phase 2 - shell/header/global background Canvas chrome pass`.
+- Checklist progress: `58 / 158 complete (36.7%)`.
+- In progress: `1`.
+- Remaining open: `100`.
+- Current target: `Phase 3 - SCN-02 Main Menu final user verification`.
 - Active Canvas shell/modal surfaces target-matched: `0 / 12`.
 - Secondary/reference Canvas popup surfaces target-matched: `1 / 6`.
 - Secondary/reference Canvas popup baseline captured or decisioned: `6 / 6`.
 - Shared Canvas chrome baseline status: `asset map and contact sheet complete; left-nav state seed applied to active Main Menu and Armory Canvas nav instances; Main Menu mode-card state seed applied; PopupFrameView shared modal seed and UIShellAppCanvas placeholder modal fallback seed applied; shared chrome material audit confirms default UI materials on seeded chrome`.
-- Button/selectable interaction standard status: `left-nav route button, Main Menu mode-card, PopupFrame close-button, and shell placeholder close-button state seeds applied; broader button/card/selectable audit pending`.
+- Button/selectable interaction standard status: `left-nav route button, Main Menu mode-card, Main Menu Inbox/Settings header actions, Main Menu deploy CTA, Main Menu commander profile hotspot, PopupFrame close-button, and shell placeholder close-button state seeds applied; broader non-SCN-02 button/card/selectable audit pending`.
 - Responsive CanvasScaler validation status: `not started`.
 - Performance validation status: `Phase 0 shadow batchmode baselines captured for Main Menu and Match HUD with Canvas active vs disabled; render counter recorder returned zero draw/batch values in batchmode, so real Game View/device profiling remains separate`.
-- Shadow-project validation status: `Canvas main menu/deploy UI fallback validation passed at 1280x720, 1920x1080, 2400x1080, and 4800x2160; 4800x2160, 1920x1080, and 2400x1080 captures passed for reachable Loading, Armory, Match HUD, Build Drawer, and Build Placement Bar surfaces; 4800x2160 captures passed for active Mission Result, Confirm Raid, End Of Day Report, and Intel Reveal modal prefabs; 4800x2160 captures passed for secondary/reference Ability Upgrade Detail, Build Placement Panel, Pause Menu, Popup Frame, Reward Unlock, and Threat Alert popup prefabs; Main Menu and Match HUD Canvas active/disabled performance baselines passed; shared left-nav state seed 4800x2160 Main Menu and Armory captures passed; Main Menu and Armory left-nav overlap validation passed at 1920x1080; Main Menu header/logo scale validation passed at 1280x720; Main Menu route smoke passed after mode-card state seed; PopupFrame target-lock seed 4800x2160 modal capture passed; Main Menu route smoke passed after UIShellAppCanvas placeholder modal fallback seed in /Users/farhad/Projects/WarlineCapture-CodexUnity1`.
+- Shadow-project validation status: `Canvas main menu/deploy UI fallback validation passed at 1280x720, 1920x1080, 2400x1080, and 4800x2160; 4800x2160, 1920x1080, and 2400x1080 captures passed for reachable Loading, Armory, Match HUD, Build Drawer, and Build Placement Bar surfaces; 4800x2160 captures passed for active Mission Result, Confirm Raid, End Of Day Report, and Intel Reveal modal prefabs; 4800x2160 captures passed for secondary/reference Ability Upgrade Detail, Build Placement Panel, Pause Menu, Popup Frame, Reward Unlock, and Threat Alert popup prefabs; Main Menu and Match HUD Canvas active/disabled performance baselines passed; shared left-nav state seed 4800x2160 Main Menu and Armory captures passed; Main Menu and Armory left-nav overlap validation passed at 1920x1080; Main Menu header/logo scale validation passed at 1280x720; Main Menu route smoke passed after mode-card state seed; PopupFrame target-lock seed 4800x2160 modal capture passed; Main Menu route smoke passed after UIShellAppCanvas placeholder modal fallback seed; SCN-02 Canvas Main Menu iteration 41 all-aspect captures passed at 1280x720, 2400x1080, and 4800x2160 after adding the sixth PROFILE row, retuning SCN-02 sliced chrome PPUs, overscanning the background, and tightening the commander panel. Visual approval is not complete because user approval remains open`.
 - Main-project validation status: `RuntimeUiConfig is now Canvas by default; no main-project capture validation yet`.
 
 Recent slice notes:
 
+- Replaced all known visible legacy `MainMenuV15C` and Synty sprite references in `SCN02_MainMenuContent.prefab` with the SCN-02C Target Lock sprite family or the UI Toolkit-approved logo. The latest prefab GUID audit still finds no known visible legacy sprite GUIDs; remaining visible sprite references are SCN-02C Target Lock sprites plus `scn01_v04_logo_lockup.png`.
+- Iterated the SCN-02 Canvas mode cards into live lower label plates using existing attached card children: `ProgressMeter` now renders the bottom plate, `TitleIcon` renders the badge icon above the plate, stale progress text/segments are disabled, and the transparent card hotspot remains the raycast target.
+- Converted the SCN-02 right commander area away from one tall baked-looking block into live Canvas subpanels: the existing header frame, portrait frame, identity row, readiness row, and lower status row now render separate Target Lock chrome Images. Iteration 32 narrows the stack so the right chrome edge remains visible and turns the lower block into two readable status rows.
+- Updated the Canvas left-nav instances to use Target Lock labels/icons/chrome in the approved order: CAMPAIGN, ARMORY, SUPPLY, COMMAND, TECH TREE, PROFILE. The sixth PROFILE row uses the approved `scn02c_nav_profile_tag_icon` and routes to `UIRoute.CommandFeed`, matching the UI Toolkit main menu behavior.
+- Fixed the commander panel render order after sprite replacement so the portrait renders above the panel backing again.
+- Latest shadow-project artifact: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_07/shadow_canvas_scn02_mainmenu_iter18_card_restore_commander_1920x1080.png`. The capture passed technically, but this is not a final visual match candidate.
+- Continued the first focused Canvas SCN-02 Main Menu Target Lock loop: corrected the logo/header treatment to use the UI Toolkit-approved logo lockup without the old Canvas logo chip, switched the tactical table background/cards/commander portrait to Target Lock assets, cleaned mode-card layering so labels render above chrome, and rebuilt the deploy CTA with balanced chevrons, a center star tab, and Canvas Button state targeting on the visible frame.
+- Correction: SCN-02 is not complete or approved yet. The latest capture is cleaner and the known visible legacy sprite GUID audit is clean, but the screen still needs strict panel-by-panel and button-by-button target comparison before it can be counted as target-matched.
+- Strengthened the SCN-02 loop gates after user review: the main menu is not complete until every visible old-art-direction sprite is replaced or explicitly documented as invisible/runtime-only, every panel family has a focused crop, every selectable family has full state coverage, and the final candidate matches the approved UI Toolkit Target Lock baseline panel-by-panel.
+- User correction for SCN-02 Canvas header actions: keep exactly two header action buttons, `Inbox` and `Settings`. Do not add a visual-only hamburger/menu button to Canvas just because the UI Toolkit reference has one.
+- SCN-02 Canvas header action correction applied and validated in the shadow project: the old long action backing is disabled, the bound `InboxButton` and `SettingsButton` render as two separate square Target Lock buttons, and no hamburger/menu action exists in the prefab. Latest artifact: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_12/shadow_canvas_scn02_mainmenu_iter23_two_header_actions_1920x1080.png`.
+- User correction applied for single-panel multi-section art: the one-piece commander background candidate was removed and the right side must stay split into separate Canvas panels. Current commander work uses separate portrait and row frame sprites with PPU-tuned sliced imports; it remains visually open until scale, spacing, and row content are finished.
+- User correction applied for SCN-02 mode-card art containment: all three thumbnail viewports now stay inside the card chrome instead of bleeding above the frame, using the existing `RectMask2D` viewports with corrected top inset and width.
+- User correction applied for SCN-02 deploy CTA: the visible deploy frame and both route hit targets now use full sprite-state transitions, the deploy frame import is PPU-tuned for thinner chrome, and the CTA was resized with less crowded chevrons/text. Latest artifact: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_16/shadow_canvas_scn02_mainmenu_iter27_deploy_tight_1920x1080.png`.
+- SCN-02 commander margin pass captured in the shadow project after moving the separate right-panel stack inward. Focused review crops were saved at `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_17/crops/scn02_iter28_panel_crop_contact.png`. The crops show header actions, card containment, and deploy CTA are no longer the first blockers; commander row/content polish and final button-state proof remain open.
+- SCN-02 focused card/commander iteration 32 captured in the shadow project at `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_18/shadow_canvas_scn02_mainmenu_iter32_commander_edge_1920x1080.png`; focused crops were saved under `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_18/crops/`. This pass tightens the card art masks, preserves separate commander panels, exposes the commander right edge, and makes the readiness/status rows readable.
+- SCN-02 commander profile hotspot state coverage added: the active route button targets Commander Profile through `UIRoute.CommandFeed` and now uses the visible portrait frame as its target graphic with matching default, hover, pressed, selected, and disabled sliced sprite states. The active-button audit reports no missing sprite-state coverage; contact sheet saved at `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_19/scn02_iter33_commander_button_state_contact.png`.
+- SCN-02 final legacy sprite re-audit passed after the commander button-state slice: `0 / 28` old `Assets/Game/Art/UI/Generated/MainMenuV15C` GUIDs are referenced by `SCN02_MainMenuContent.prefab`. Remaining sprite Image references are the approved logo, SCN-02C/Target Lock sprite families, and documented shared UI chrome.
+- SCN-02 focused visual proof set is complete for the current candidate: iteration 32 contains crops for header actions, left nav, mode cards, right commander panel, and deploy CTA; iteration 19 contains the commander button-state contact sheet after the final active-button state audit.
+- SCN-02 all-aspect validation captured in the shadow project under `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_20/`: 1280x720, 2400x1080, and 4800x2160 stay readable, aligned, and unclipped.
+- SCN-02 target comparison artifact saved at `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_20/scn02_iter34_reference_vs_canvas_candidate_1920x1080.png` for the previous candidate. Iteration 41 supersedes it; remaining intentional deviations are documented rather than hidden: Canvas keeps the user-approved two header action buttons, and the right side stays split into separate live Canvas panels instead of a one-piece baked background.
+- SCN-02 iteration 41 replaces the prior final candidate: the sixth PROFILE nav row is now present, all remaining SCN-02 sliced structural frame sprites have `spritePixelsToUnits: 300` for cleaner thin chrome, the background viewport/art is overscanned to avoid 16:9 camera-clear bands, the commander portrait area has a separate dark Canvas backing rather than raw map bleed, and the right commander stack has a restored outer margin.
+- SCN-02 iteration 41 all-aspect shadow captures are saved under `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_21/`: `shadow_canvas_scn02_mainmenu_iter41_aspect_1280x720.png`, `shadow_canvas_scn02_mainmenu_iter41_aspect_2400x1080.png`, and `shadow_canvas_scn02_mainmenu_iter41_aspect_4800x2160.png`. These are the current user-verification candidates.
+- Added editor-only route-capture cleanup for `MenuDiagnosticsPanel`/`Panel_FPS`/`Label_FPS` so visual screenshots do not include the scene FPS diagnostics overlay. This does not change runtime route behavior or gameplay.
+- Latest shadow-project approval artifact: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_02/shadow_canvas_scn02_mainmenu_iter11_no_diagnostics_1920x1080.png`.
 - Applied the shared card state seed to the existing SCN-02 Main Menu mode cards without renaming runtime-bound objects: the transparent hotspot remains the raycast target, while each Button now targets the visible full-frame card Image for default/hover/pressed/selected/disabled sprite swapping.
 - Applied the shared popup foundation to `PopupFrameView.prefab`: sliced Target Lock panel frame, header bar, close button frame, and full-frame close button hover/pressed/selected states.
 - Applied the same Target Lock modal fallback seed to the inline `UIShellAppCanvas.prefab` placeholder modal: sliced panel frame, rectangular close button frame, and full-frame close button hover/pressed/selected states.
@@ -198,7 +223,7 @@ Settings and Inbox were checked during Phase 0. No active Canvas `Settings` or `
 - Shared Canvas chrome mapping was created at `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/shared/canvas_shared_chrome_asset_map.md`.
 - The map ties approved SCN-02 UI Toolkit sprites to Canvas usage for header frames, logo, resource chips, header icon buttons, left navigation, card frames, label plates, HUD panels, rectangular buttons, square buttons, Build Drawer tabs, and Build Drawer card highlights.
 - Import audit notes confirm the SCN-02 shared menu chrome is already imported under `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/`, HUD/shared utility chrome under `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/`, and Build Drawer chrome under `Assets/Game/Art/UI/Generated/BuildDrawer/LayeredOneGo/`.
-- PPU audit note: SCN-02 shared chrome is consistently `spritePixelsToUnits: 100`, while several HUD button/panel sprites intentionally import at `300`; do not normalize these globally until Canvas screenshots prove the mismatch causes distortion.
+- PPU audit note: SCN-02 shared chrome originally mixed `spritePixelsToUnits: 100` with several `300` HUD/button-style imports. The SCN-02 structural frame sprites used by the Canvas main menu are now normalized to `300` after screenshot evidence showed oversized chrome at `100`; do not normalize unrelated screens globally until their own Canvas screenshots prove the mismatch causes distortion.
 - 9-slice audit note: SCN-02 frame assets already have usable sprite borders; some Build Drawer tab/card sprites have zero borders and must be used fixed-size or border-tuned before heavy stretching.
 - Scope note: no runtime, scene, prefab, or UI Toolkit files were changed in this slice; only mapping documentation was added.
 
@@ -285,6 +310,25 @@ Use this loop for every screen or popup:
 12. Update this tracker with progress, artifact paths, and validation status.
 13. Continue only when the current surface passes a full panel-by-panel visual audit or has a recorded user-approved exception.
 
+Strict completion gates for every screen:
+
+- The screen is not complete after one good screenshot. Continue the loop until the capture is visually matched against the approved target or an explicit user exception is recorded.
+- Every visible panel is audited separately: header, nav, middle/content, right side, footer, modal/popup, repeated cards, and every nested sub-panel.
+- Every button/selectable family is audited separately: default, hover/highlight, selected/current, pressed/impact, disabled, icon, text alignment, padding, target graphic, and state sprite coverage.
+- All visible legacy sprites from the previous art direction must be replaced. A screen may keep only invisible runtime placeholders, transparent raycast images, or documented runtime-only references that do not render.
+- Before marking a screen complete, run a sprite GUID audit for that prefab and record any remaining non-Target-Lock sprite references with a reason.
+- If the approved UI Toolkit screen uses different shared chrome than the raw mockup, the approved UI Toolkit chrome wins.
+- If a screenshot passes the technical capture helper but still has old sprites, wrong iconography, poor alignment, unreadable text, or missing button states, it remains in progress.
+
+SCN-02 Main Menu strict loop:
+
+- Use the UI Toolkit-approved SCN-02 main menu as the primary visual baseline.
+- Use the correct UI Toolkit-approved logo lockup from `Assets/Game/Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_logo_lockup.png`.
+- Replace all visible old MainMenuV15C/Synty sprites in the Canvas prefab with SCN-02C Target Lock sprites or documented shared Target Lock chrome.
+- Nav labels/icons must match the approved SCN-02 family, not the legacy Canvas labels.
+- Header resource chips, action buttons, left nav, center cards, right commander panel, footer/deploy CTA, and all button states must pass focused crop review.
+- Do not ask for approval until the strict gates pass; approval is only for the final candidate capture, not for stopping the loop early.
+
 ## Phase 0 - Inventory, Baseline, And Safety
 
 Goal:
@@ -344,7 +388,7 @@ Goal:
 Make the Canvas shell match the approved Target Lock visual language while preserving the shell structure.
 
 - [ ] Update `UIShellAppCanvas.prefab` static background strategy without increasing menu overdraw unnecessarily.
-- [ ] Port the approved SCN-02 logo/header treatment into Canvas shell/header regions.
+- [x] Port the approved SCN-02 logo/header treatment into Canvas shell/header regions.
 - [x] Port the approved SCN-02 left navigation background into Canvas.
 - [x] Update `MainMenuLeftNavButton.prefab` to use the shared Target Lock button states.
 - [ ] Confirm menu-adjacent screens reuse the same header prefab/style.
@@ -366,10 +410,24 @@ Acceptance:
 Goal:
 Update Canvas menu screens using the shared shell, header, and left nav baseline.
 
-- [ ] SCN-02 Main Menu: update center mode cards to approved Target Lock card style.
-- [ ] SCN-02 Main Menu: update right commander panel as separate live Canvas panels, not a baked multi-section image.
-- [ ] SCN-02 Main Menu: update footer/deploy controls with full interaction states.
-- [ ] SCN-02 Main Menu: validate readable text and clean panel alignment at all target aspects.
+- [x] SCN-02 Main Menu: update center mode cards to approved Target Lock card style.
+- [x] SCN-02 Main Menu: replace all visible legacy MainMenuV15C/Synty sprites with Target Lock sprites or documented shared Target Lock chrome.
+- [x] SCN-02 Main Menu: update header resource chips and header action buttons to the approved SCN-02C sprite family.
+- [x] SCN-02 Main Menu: tune header resource chips, plus buttons, Inbox/Settings buttons, and spacing until they match the approved Target Lock header style while preserving the user-approved two-button Canvas header action rule.
+- [x] SCN-02 Main Menu: update left navigation labels/icons/chrome to match the approved SCN-02 UI Toolkit main menu family.
+- [x] SCN-02 Main Menu: resolve the approved sixth `PROFILE` nav-row parity either by safely adding it or recording an explicit user-approved exception.
+- [x] SCN-02 Main Menu: tune mode-card badge, lower plate, title, star/divider, and image spacing from focused crops, not only full-screen review.
+- [x] SCN-02 Main Menu: update right commander panel as separate live Canvas panels, not a baked multi-section image.
+- [x] SCN-02 Main Menu: tune commander portrait, identity row, readiness row, faction-standing row, and row values to match the approved separate-panel structure.
+- [x] SCN-02 Main Menu: update footer/deploy controls with full interaction states.
+- [x] SCN-02 Main Menu: verify every button/selectable has default, hover/highlight, selected/current, pressed/impact, and disabled state coverage.
+- [x] SCN-02 Main Menu: run and record the prefab sprite GUID audit; document any remaining non-Target-Lock sprite references.
+- [x] SCN-02 Main Menu: rerun the sprite GUID audit after final visual edits and confirm every remaining non-Target-Lock sprite is invisible, transparent raycast-only, or documented runtime-only.
+- [x] SCN-02 Main Menu: reject any candidate that still shows old sprites, mismatched chrome, partial hover overlays, unreadable text, asymmetric padding, or button states that do not cover the full frame.
+- [x] SCN-02 Main Menu: capture focused crops for header, left nav, mode cards, right commander panel, footer/deploy CTA, and button states.
+- [x] SCN-02 Main Menu: compare final candidate against the approved UI Toolkit SCN-02 capture and the Target Lock reference.
+- [x] SCN-02 Main Menu: validate readable text and clean panel alignment at all target aspects.
+- [ ] SCN-02 Main Menu: user approves final candidate capture before the surface is counted as target-matched.
 - [ ] SCN-03 Commander Profile: reuse shared header and left nav.
 - [ ] SCN-03 Commander Profile: split profile/stat/loadout areas into clean panel sections.
 - [ ] SCN-03 Commander Profile: update portrait, rank, stats, and action buttons.

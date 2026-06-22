@@ -219,6 +219,8 @@ internal sealed class MatchHudCameraControlAdapter : IMatchHudCameraControl
 
 internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSource
 {
+    private const int MaxMinimapRasterSamplesPerAxis = 256;
+
     public bool TryGetGrid(out MatchHudMinimapGridModel grid)
     {
         grid = default;
@@ -282,10 +284,16 @@ internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSou
         int minY = math.clamp((int)math.floor((area.Origin.z - grid.Origin.z) / grid.CellSize) - 2, 0, height - 1);
         int maxY = math.clamp((int)math.ceil((area.Origin.z + area.Height - grid.Origin.z) / grid.CellSize) + 2, 0, height - 1);
 
-        for (int y = minY; y <= maxY; y++)
+        int spanX = maxX - minX + 1;
+        int spanY = maxY - minY + 1;
+        int sampleStride = math.max(1, math.max(
+            (int)math.ceil(spanX / (float)MaxMinimapRasterSamplesPerAxis),
+            (int)math.ceil(spanY / (float)MaxMinimapRasterSamplesPerAxis)));
+
+        for (int y = minY; y <= maxY; y += sampleStride)
         {
             int rowOffset = y * width;
-            for (int x = minX; x <= maxX; x++)
+            for (int x = minX; x <= maxX; x += sampleStride)
             {
                 int index = rowOffset + x;
                 if ((uint)index >= (uint)roads.Length || roads[index].Value == 0)
@@ -429,10 +437,16 @@ internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSou
         int minY = math.clamp((int)math.floor((area.Origin.z - surface.GridOrigin.z) / surface.CellSize) - 2, 0, surface.Dimensions.y - 1);
         int maxY = math.clamp((int)math.ceil((area.Origin.z + area.Height - surface.GridOrigin.z) / surface.CellSize) + 2, 0, surface.Dimensions.y - 1);
 
-        for (int y = minY; y <= maxY; y++)
+        int spanX = maxX - minX + 1;
+        int spanY = maxY - minY + 1;
+        int sampleStride = math.max(1, math.max(
+            (int)math.ceil(spanX / (float)MaxMinimapRasterSamplesPerAxis),
+            (int)math.ceil(spanY / (float)MaxMinimapRasterSamplesPerAxis)));
+
+        for (int y = minY; y <= maxY; y += sampleStride)
         {
             int rowOffset = y * surface.Dimensions.x;
-            for (int x = minX; x <= maxX; x++)
+            for (int x = minX; x <= maxX; x += sampleStride)
             {
                 int index = rowOffset + x;
                 if ((uint)index >= (uint)blob.Cells.Length)

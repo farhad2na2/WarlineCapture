@@ -368,3 +368,77 @@
     padding-top: 10px;
     padding-bottom: 10px;
 }
+
+/* ========================================================================
+   BUTTON STATES
+   Shell fallback/debug buttons still get target-lock sprite feedback.
+   ======================================================================== */
+.placeholder-close-button,
+.diagnostics-fps-button,
+.diagnostics-close-button {
+    transform-origin: center;
+    translate: 0 0;
+    scale: 1 1;
+    transition-property: translate, scale;
+    transition-duration: 90ms;
+    transition-timing-function: ease-out;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 56;
+    -unity-slice-right: 56;
+    -unity-slice-top: 34;
+    -unity-slice-bottom: 34;
+}
+
+.diagnostics-fps-button {
+    -unity-slice-scale: 0.62px;
+}
+
+.placeholder-close-button:hover,
+.placeholder-close-button:focus,
+.diagnostics-fps-button:hover,
+.diagnostics-fps-button:focus,
+.diagnostics-close-button:hover,
+.diagnostics-close-button:focus,
+.placeholder-close-button-selected,
+.diagnostics-fps-button-selected,
+.diagnostics-close-button-selected {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png");
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.placeholder-close-button:hover,
+.placeholder-close-button:focus {
+    translate: 0 -4px;
+    scale: 1.035 1.035;
+}
+
+.diagnostics-fps-button:hover,
+.diagnostics-fps-button:focus,
+.diagnostics-close-button:hover,
+.diagnostics-close-button:focus {
+    translate: 0 -2px;
+    scale: 1.04 1.04;
+}
+
+.placeholder-close-button:active,
+.diagnostics-fps-button:active,
+.diagnostics-close-button:active {
+    translate: 0 -1px;
+    scale: 0.99 0.99;
+}
+
+.placeholder-close-button:hover .placeholder-close-label,
+.placeholder-close-button:focus .placeholder-close-label,
+.placeholder-close-button-selected .placeholder-close-label,
+.diagnostics-close-button:hover .diagnostics-close-label,
+.diagnostics-close-button:focus .diagnostics-close-label,
+.diagnostics-close-button-selected .diagnostics-close-label {
+    color: rgb(255, 239, 174);
+}
+
+.diagnostics-fps-button:hover .diagnostics-fps-value,
+.diagnostics-fps-button:focus .diagnostics-fps-value,
+.diagnostics-fps-button-selected .diagnostics-fps-value {
+    color: rgb(255, 239, 174);
+}

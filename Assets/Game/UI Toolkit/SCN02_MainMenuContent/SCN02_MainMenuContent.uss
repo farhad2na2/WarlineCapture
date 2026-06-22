@@ -890,3 +890,205 @@
     background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_star_icon.png");
     -unity-background-scale-mode: scale-to-fit;
 }
+
+/* ========================================================================
+   BUTTON STATES
+   Match-HUD style interaction language: sprite swap, lift, selected chrome.
+   ======================================================================== */
+.header-icon-button,
+.nav-item,
+.mode-card,
+.commander-panel {
+    transform-origin: center;
+    translate: 0 0;
+    scale: 1 1;
+    transition-property: translate, scale;
+    transition-duration: 90ms;
+    transition-timing-function: ease-out;
+}
+
+.deploy-operation-button {
+    transform-origin: center;
+    scale: 1 1;
+    transition-property: translate, scale;
+    transition-duration: 90ms;
+    transition-timing-function: ease-out;
+}
+
+.header-icon-button:hover,
+.header-icon-button:focus {
+    translate: 0 -4px;
+    scale: 1.045 1.045;
+}
+
+.header-icon-button:active {
+    translate: 0 -1px;
+    scale: 0.985 0.985;
+}
+
+.header-icon-button:hover .header-icon-button-frame,
+.header-icon-button:focus .header-icon-button-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_selected_frame.png");
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.header-icon-button:active .header-icon-button-frame {
+    -unity-background-image-tint-color: rgb(204, 176, 104);
+}
+
+.header-icon-button:hover .header-action-icon,
+.header-icon-button:focus .header-action-icon {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}
+
+.nav-item:hover,
+.nav-item:focus {
+    translate: 7px 0;
+    scale: 1.015 1.015;
+}
+
+.nav-item:active {
+    translate: 2px 0;
+    scale: 0.99 0.99;
+}
+
+.nav-item:hover .nav-frame,
+.nav-item:focus .nav-frame,
+.nav-item-selected .nav-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png");
+}
+
+.nav-item:hover .nav-icon,
+.nav-item:focus .nav-icon,
+.nav-item-selected .nav-icon,
+.nav-item:hover .nav-chevron,
+.nav-item:focus .nav-chevron,
+.nav-item-selected .nav-chevron {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}
+
+.nav-item:hover .nav-text,
+.nav-item:focus .nav-text,
+.nav-item-selected .nav-text {
+    color: rgb(255, 239, 174);
+}
+
+.mode-card-selected {
+    translate: 0 -3px;
+    scale: 1.012 1.012;
+}
+
+.mode-card:hover,
+.mode-card:focus {
+    translate: 0 -8px;
+    scale: 1.025 1.025;
+}
+
+.mode-card:active {
+    translate: 0 -2px;
+    scale: 0.992 0.992;
+}
+
+.mode-card-selected:hover,
+.mode-card-selected:focus {
+    translate: 0 -9px;
+    scale: 1.032 1.032;
+}
+
+.mode-card:hover .mode-card-frame,
+.mode-card:focus .mode-card-frame,
+.mode-card-selected .mode-card-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.mode-card:hover .mode-card-fill,
+.mode-card:focus .mode-card-fill,
+.mode-card-selected .mode-card-fill {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_selected.png");
+}
+
+.mode-card:hover .mode-card-label-plate,
+.mode-card:focus .mode-card-label-plate,
+.mode-card-selected .mode-card-label-plate {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_selected.png");
+}
+
+.mode-card:hover .mode-badge-frame,
+.mode-card:focus .mode-badge-frame,
+.mode-card-selected .mode-badge-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_badge_frame_selected.png");
+}
+
+.mode-card:hover .mode-badge-icon,
+.mode-card:focus .mode-badge-icon,
+.mode-card-selected .mode-badge-icon,
+.mode-card:hover .mode-bottom-star,
+.mode-card:focus .mode-bottom-star,
+.mode-card-selected .mode-bottom-star {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}
+
+.mode-card:hover .mode-title,
+.mode-card:focus .mode-title,
+.mode-card-selected .mode-title {
+    color: rgb(255, 239, 174);
+}
+
+.commander-panel:hover,
+.commander-panel:focus {
+    translate: 0 -5px;
+    scale: 1.014 1.014;
+}
+
+.commander-panel:active {
+    translate: 0 -1px;
+    scale: 0.992 0.992;
+}
+
+.commander-panel:hover .commander-section-frame,
+.commander-panel:focus .commander-section-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png");
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.commander-panel:hover .commander-portrait-frame,
+.commander-panel:focus .commander-portrait-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png");
+}
+
+.commander-panel:hover .commander-edit-frame,
+.commander-panel:focus .commander-edit-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_selected_frame.png");
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.commander-panel:hover .commander-title,
+.commander-panel:focus .commander-title,
+.commander-panel:hover .identity-name,
+.commander-panel:focus .identity-name {
+    color: rgb(255, 239, 174);
+}
+
+.deploy-operation-button:hover,
+.deploy-operation-button:focus {
+    translate: -50% -6px;
+    scale: 1.035 1.035;
+}
+
+.deploy-operation-button:active {
+    translate: -50% -1px;
+    scale: 0.992 0.992;
+}
+
+.deploy-operation-button:hover .deploy-frame,
+.deploy-operation-button:focus .deploy-frame {
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.deploy-operation-button:hover .deploy-chevron,
+.deploy-operation-button:focus .deploy-chevron,
+.deploy-operation-button:hover .deploy-star,
+.deploy-operation-button:focus .deploy-star {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}

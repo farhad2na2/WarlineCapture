@@ -1206,3 +1206,232 @@
     color: rgb(242, 232, 196);
     white-space: nowrap;
 }
+
+/* ========================================================================
+   BUTTON STATES
+   Reuses the approved main-menu/match-HUD target-lock interaction language.
+   ======================================================================== */
+.header-menu-button,
+.category-button,
+.dropdown,
+.armory-item-view,
+.cta-button,
+.bottom-tab {
+    transform-origin: center;
+    translate: 0 0;
+    scale: 1 1;
+    transition-property: translate, scale;
+    transition-duration: 90ms;
+    transition-timing-function: ease-out;
+}
+
+.header-menu-button:hover,
+.header-menu-button:focus {
+    translate: 0 -4px;
+    scale: 1.045 1.045;
+}
+
+.header-menu-button:active {
+    translate: 0 -1px;
+    scale: 0.985 0.985;
+}
+
+.header-menu-button:hover .header-menu-frame,
+.header-menu-button:focus .header-menu-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_selected_frame.png");
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.header-menu-button:hover .header-menu-icon,
+.header-menu-button:focus .header-menu-icon {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}
+
+.category-button:hover,
+.category-button:focus {
+    translate: 7px 0;
+    scale: 1.015 1.015;
+}
+
+.category-button:active {
+    translate: 2px 0;
+    scale: 0.99 0.99;
+}
+
+.category-button:hover .category-frame,
+.category-button:focus .category-frame,
+.category-selected .category-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png");
+}
+
+.category-button:hover .category-icon,
+.category-button:focus .category-icon,
+.category-selected .category-icon {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}
+
+.category-button:hover .category-label,
+.category-button:focus .category-label,
+.category-selected .category-label {
+    color: rgb(255, 239, 174);
+}
+
+.dropdown:hover,
+.dropdown:focus {
+    translate: 0 -3px;
+    scale: 1.018 1.018;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png");
+    -unity-slice-left: 90;
+    -unity-slice-right: 90;
+    -unity-slice-top: 60;
+    -unity-slice-bottom: 60;
+    -unity-slice-scale: 0.26px;
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.dropdown:active {
+    translate: 0 -1px;
+    scale: 0.992 0.992;
+}
+
+.dropdown:hover .dropdown-label,
+.dropdown:focus .dropdown-label {
+    color: rgb(255, 239, 174);
+}
+
+.dropdown:hover .dropdown-chevron,
+.dropdown:focus .dropdown-chevron {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}
+
+.armory-item-view.selected {
+    translate: 0 -3px;
+    scale: 1.012 1.012;
+}
+
+.armory-item-view:hover,
+.armory-item-view:focus {
+    translate: 0 -7px;
+    scale: 1.024 1.024;
+}
+
+.armory-item-view:active {
+    translate: 0 -1px;
+    scale: 0.992 0.992;
+}
+
+.armory-item-view.selected:hover,
+.armory-item-view.selected:focus {
+    translate: 0 -8px;
+    scale: 1.032 1.032;
+}
+
+.armory-item-view:hover .item-backing,
+.armory-item-view:focus .item-backing,
+.armory-item-view.selected .item-backing {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_selected.png");
+}
+
+.armory-item-view:hover .item-frame,
+.armory-item-view:focus .item-frame,
+.armory-item-view.selected .item-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.armory-item-view.locked:hover .item-backing,
+.armory-item-view.locked:focus .item-backing {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_amber.png");
+    opacity: 0.78;
+}
+
+.armory-item-view.locked:hover .item-frame,
+.armory-item-view.locked:focus .item-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_amber.png");
+    -unity-background-image-tint-color: rgb(255, 232, 158);
+}
+
+.armory-item-view:hover .item-rarity,
+.armory-item-view:focus .item-rarity,
+.armory-item-view.selected .item-rarity,
+.armory-item-view:hover .item-action-icon,
+.armory-item-view:focus .item-action-icon,
+.armory-item-view.selected .item-action-icon {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}
+
+.armory-item-view:hover .item-name,
+.armory-item-view:focus .item-name,
+.armory-item-view.selected .item-name,
+.armory-item-view:hover .item-action-label,
+.armory-item-view:focus .item-action-label,
+.armory-item-view.selected .item-action-label {
+    color: rgb(255, 239, 174);
+}
+
+.cta-button:hover,
+.cta-button:focus {
+    translate: 0 -5px;
+    scale: 1.028 1.028;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png");
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.primary-cta:hover,
+.primary-cta:focus {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame.png");
+}
+
+.cta-button:active {
+    translate: 0 -1px;
+    scale: 0.99 0.99;
+}
+
+.cta-button:hover .cta-icon,
+.cta-button:focus .cta-icon {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}
+
+.cta-button:hover .cta-label,
+.cta-button:focus .cta-label {
+    color: rgb(255, 239, 174);
+}
+
+.primary-cta:hover .cta-label,
+.primary-cta:focus .cta-label {
+    color: rgb(37, 31, 13);
+}
+
+.bottom-tab-selected {
+    translate: 0 -2px;
+    scale: 1.012 1.012;
+}
+
+.bottom-tab:hover,
+.bottom-tab:focus {
+    translate: 0 -5px;
+    scale: 1.024 1.024;
+}
+
+.bottom-tab:active {
+    translate: 0 -1px;
+    scale: 0.992 0.992;
+}
+
+.bottom-tab:hover .bottom-tab-frame,
+.bottom-tab:focus .bottom-tab-frame,
+.bottom-tab-selected .bottom-tab-frame {
+    background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_bottom_tab_selected_frame.png");
+}
+
+.bottom-tab:hover .bottom-tab-icon,
+.bottom-tab:focus .bottom-tab-icon,
+.bottom-tab-selected .bottom-tab-icon {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}
+
+.bottom-tab:hover .bottom-tab-label,
+.bottom-tab:focus .bottom-tab-label,
+.bottom-tab-selected .bottom-tab-label {
+    color: rgb(255, 239, 174);
+}

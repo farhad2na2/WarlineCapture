@@ -191,3 +191,39 @@
     color: rgb(177, 169, 145);
     white-space: nowrap;
 }
+
+/* ========================================================================
+   BUTTON STATES
+   Popup buttons use the same sprite/transition feedback as HUD actions.
+   ======================================================================== */
+.settings-close-action {
+    transform-origin: center;
+    translate: 0 0;
+    scale: 1 1;
+    transition-property: translate, scale;
+    transition-duration: 90ms;
+    transition-timing-function: ease-out;
+}
+
+.settings-close-action:hover,
+.settings-close-action:focus {
+    translate: 0 -4px;
+    scale: 1.035 1.035;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png");
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.settings-close-action-selected {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png");
+}
+
+.settings-close-action:active {
+    translate: 0 -1px;
+    scale: 0.99 0.99;
+}
+
+.settings-close-action:hover .settings-close-label,
+.settings-close-action:focus .settings-close-label,
+.settings-close-action-selected .settings-close-label {
+    color: rgb(255, 239, 174);
+}

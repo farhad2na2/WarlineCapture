@@ -228,3 +228,77 @@
     color: rgb(177, 169, 145);
     white-space: nowrap;
 }
+
+/* ========================================================================
+   BUTTON STATES
+   Popup close and selectable message rows use target-lock sprite feedback.
+   ======================================================================== */
+.inbox-close-action,
+.inbox-message-row {
+    transform-origin: center;
+    translate: 0 0;
+    scale: 1 1;
+    transition-property: translate, scale;
+    transition-duration: 90ms;
+    transition-timing-function: ease-out;
+}
+
+.inbox-close-action:hover,
+.inbox-close-action:focus {
+    translate: 0 -4px;
+    scale: 1.035 1.035;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png");
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.inbox-close-action-selected {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png");
+}
+
+.inbox-close-action:active {
+    translate: 0 -1px;
+    scale: 0.99 0.99;
+}
+
+.inbox-close-action:hover .inbox-close-label,
+.inbox-close-action:focus .inbox-close-label,
+.inbox-close-action-selected .inbox-close-label {
+    color: rgb(255, 239, 174);
+}
+
+.inbox-message-row:hover,
+.inbox-message-row:focus {
+    translate: 0 -5px;
+    scale: 1.018 1.018;
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png");
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.inbox-message-row-selected,
+.inbox-message-row.unread {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png");
+}
+
+.inbox-message-row-selected {
+    translate: 0 -2px;
+    scale: 1.01 1.01;
+}
+
+.inbox-message-row:active {
+    translate: 0 -1px;
+    scale: 0.992 0.992;
+}
+
+.inbox-message-row:hover .message-title,
+.inbox-message-row:focus .message-title,
+.inbox-message-row-selected .message-title,
+.inbox-message-row.unread .message-title {
+    color: rgb(255, 239, 174);
+}
+
+.inbox-message-row:hover .message-priority,
+.inbox-message-row:focus .message-priority,
+.inbox-message-row-selected .message-priority,
+.inbox-message-row.unread .message-priority {
+    background-color: rgb(247, 217, 99);
+}

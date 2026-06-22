@@ -679,3 +679,136 @@
 .armory-icon {
     background-image: url("../../Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_armory_crossed_weapons.png");
 }
+
+/* ========================================================================
+   BUTTON STATES
+   Shared target-lock interaction language for profile navigation/actions.
+   ======================================================================== */
+.back-button,
+.profile-tab,
+.edit-id-button,
+.claim-button,
+.footer-action {
+    transform-origin: center;
+    translate: 0 0;
+    scale: 1 1;
+    transition-property: translate, scale;
+    transition-duration: 90ms;
+    transition-timing-function: ease-out;
+}
+
+.back-button:hover,
+.back-button:focus,
+.profile-tab:hover,
+.profile-tab:focus {
+    translate: 7px 0;
+    scale: 1.015 1.015;
+}
+
+.back-button:active,
+.profile-tab:active {
+    translate: 2px 0;
+    scale: 0.99 0.99;
+}
+
+.back-button:hover .button-frame,
+.back-button:focus .button-frame,
+.back-button-selected .button-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png");
+}
+
+.profile-tab:hover,
+.profile-tab:focus,
+.profile-tab-selected {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png");
+}
+
+.back-button:hover .back-icon,
+.back-button:focus .back-icon,
+.back-button-selected .back-icon,
+.profile-tab:hover .tab-icon,
+.profile-tab:focus .tab-icon,
+.profile-tab-selected .tab-icon {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}
+
+.back-button:hover .button-label,
+.back-button:focus .button-label,
+.back-button-selected .button-label,
+.profile-tab:hover .tab-label,
+.profile-tab:focus .tab-label,
+.profile-tab-selected .tab-label {
+    color: rgb(255, 239, 174);
+}
+
+.edit-id-button:hover,
+.edit-id-button:focus {
+    translate: 0 -4px;
+    scale: 1.045 1.045;
+}
+
+.edit-id-button:active {
+    translate: 0 -1px;
+    scale: 0.985 0.985;
+}
+
+.edit-id-button:hover .small-button-frame,
+.edit-id-button:focus .small-button-frame,
+.edit-id-button-selected .small-button-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_selected_frame.png");
+    -unity-slice-left: 150;
+    -unity-slice-right: 150;
+    -unity-slice-top: 150;
+    -unity-slice-bottom: 150;
+    -unity-slice-scale: 0.18px;
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.edit-id-button:hover .edit-icon,
+.edit-id-button:focus .edit-icon,
+.edit-id-button-selected .edit-icon {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}
+
+.claim-button:hover,
+.claim-button:focus,
+.footer-action:hover,
+.footer-action:focus {
+    translate: 0 -5px;
+    scale: 1.028 1.028;
+}
+
+.claim-button:active,
+.footer-action:active {
+    translate: 0 -1px;
+    scale: 0.99 0.99;
+}
+
+.claim-button:hover .primary-button-frame,
+.claim-button:focus .primary-button-frame,
+.claim-button-selected .primary-button-frame {
+    background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame.png");
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.footer-action:hover .secondary-button-frame,
+.footer-action:focus .secondary-button-frame,
+.footer-action-selected .secondary-button-frame {
+    background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png");
+    -unity-background-image-tint-color: rgb(255, 248, 205);
+}
+
+.claim-button:hover .button-label,
+.claim-button:focus .button-label,
+.claim-button-selected .button-label,
+.footer-action:hover .button-label,
+.footer-action:focus .button-label,
+.footer-action-selected .button-label {
+    color: rgb(255, 239, 174);
+}
+
+.footer-action:hover .footer-icon,
+.footer-action:focus .footer-icon,
+.footer-action-selected .footer-icon {
+    -unity-background-image-tint-color: rgb(255, 239, 174);
+}

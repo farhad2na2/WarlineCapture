@@ -37,7 +37,19 @@ public partial struct UiBuildPlacementReadModelSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         Entity boundary = boundaryQuery.GetSingletonEntity();
-        state.EntityManager.SetComponentData(boundary, BuildPlacementBar(UiBuildPlacementReadModelSource.BuildingUiCommand));
+        IBuildingUiCommand command = UiBuildPlacementReadModelSource.BuildingUiCommand;
+        if (command == null || !command.HasPendingBuildingPlacement)
+        {
+            UiBuildPlacementConfirmationBarComponent current =
+                state.EntityManager.GetComponentData<UiBuildPlacementConfirmationBarComponent>(boundary);
+            if (current.Visible == 0)
+                return;
+
+            state.EntityManager.SetComponentData(boundary, Hidden());
+            return;
+        }
+
+        state.EntityManager.SetComponentData(boundary, BuildPlacementBar(command));
     }
 
     private static UiBuildPlacementConfirmationBarComponent BuildPlacementBar(IBuildingUiCommand buildingUiCommand)

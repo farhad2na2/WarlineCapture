@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public enum UiShellMode
 {
     None,
@@ -381,6 +383,7 @@ public readonly struct UiBuildDrawerCatalogItemModel
     public readonly bool Visible;
     public readonly bool Enabled;
     public readonly bool Selected;
+    public readonly Sprite ThumbnailSprite;
     public readonly string Title;
     public readonly string Role;
     public readonly string CreditsText;
@@ -395,7 +398,7 @@ public readonly struct UiBuildDrawerCatalogItemModel
         string creditsText,
         string suppliesText,
         string timeText)
-        : this(visible, enabled, false, title, role, creditsText, suppliesText, timeText)
+        : this(visible, enabled, false, null, title, role, creditsText, suppliesText, timeText)
     {
     }
 
@@ -408,10 +411,25 @@ public readonly struct UiBuildDrawerCatalogItemModel
         string creditsText,
         string suppliesText,
         string timeText)
+        : this(visible, enabled, selected, null, title, role, creditsText, suppliesText, timeText)
+    {
+    }
+
+    public UiBuildDrawerCatalogItemModel(
+        bool visible,
+        bool enabled,
+        bool selected,
+        Sprite thumbnailSprite,
+        string title,
+        string role,
+        string creditsText,
+        string suppliesText,
+        string timeText)
     {
         Visible = visible;
         Enabled = enabled;
         Selected = selected;
+        ThumbnailSprite = thumbnailSprite;
         Title = title;
         Role = role;
         CreditsText = creditsText;
@@ -424,6 +442,7 @@ public readonly struct UiBuildDrawerQueueRowModel
 {
     public readonly bool Visible;
     public readonly bool ActionEnabled;
+    public readonly Sprite ThumbnailSprite;
     public readonly string NumberText;
     public readonly string Name;
     public readonly string TimeText;
@@ -434,9 +453,21 @@ public readonly struct UiBuildDrawerQueueRowModel
         string numberText,
         string name,
         string timeText)
+        : this(visible, actionEnabled, null, numberText, name, timeText)
+    {
+    }
+
+    public UiBuildDrawerQueueRowModel(
+        bool visible,
+        bool actionEnabled,
+        Sprite thumbnailSprite,
+        string numberText,
+        string name,
+        string timeText)
     {
         Visible = visible;
         ActionEnabled = actionEnabled;
+        ThumbnailSprite = thumbnailSprite;
         NumberText = numberText;
         Name = name;
         TimeText = timeText;
@@ -447,6 +478,7 @@ public readonly struct UiBuildDrawerActiveProductionModel
 {
     public readonly bool Visible;
     public readonly bool CancelEnabled;
+    public readonly Sprite ThumbnailSprite;
     public readonly string Name;
     public readonly string PercentText;
     public readonly float Progress01;
@@ -457,9 +489,21 @@ public readonly struct UiBuildDrawerActiveProductionModel
         string name,
         string percentText,
         float progress01)
+        : this(visible, cancelEnabled, null, name, percentText, progress01)
+    {
+    }
+
+    public UiBuildDrawerActiveProductionModel(
+        bool visible,
+        bool cancelEnabled,
+        Sprite thumbnailSprite,
+        string name,
+        string percentText,
+        float progress01)
     {
         Visible = visible;
         CancelEnabled = cancelEnabled;
+        ThumbnailSprite = thumbnailSprite;
         Name = name;
         PercentText = percentText;
         Progress01 = progress01;
@@ -488,6 +532,7 @@ public readonly struct UiBuildDrawerModel
     public readonly bool ClearEnabled;
     public readonly bool NoProductionVisible;
     public readonly UiBuildDrawerActiveProductionModel ActiveProduction;
+    public readonly Sprite PreviewSprite;
     public readonly BuildDrawerCategory ActiveCategory;
     public readonly int BuildingsCount;
     public readonly int VehiclesCount;
@@ -553,6 +598,7 @@ public readonly struct UiBuildDrawerModel
             clearEnabled,
             noProductionVisible,
             activeProduction,
+            null,
             BuildDrawerCategory.Buildings,
             0,
             0,
@@ -608,6 +654,81 @@ public readonly struct UiBuildDrawerModel
         int queueRowCount,
         UiBuildDrawerQueueRowModel queueRow0,
         UiBuildDrawerQueueRowModel queueRow1)
+        : this(
+            name,
+            role,
+            description,
+            footprintText,
+            requirementsText,
+            placementText,
+            productionTimeText,
+            creditsCostText,
+            suppliesCostText,
+            instructionText,
+            productionTitle,
+            productionCountText,
+            buildEnabled,
+            rushEnabled,
+            clearEnabled,
+            noProductionVisible,
+            activeProduction,
+            null,
+            activeCategory,
+            buildingsCount,
+            vehiclesCount,
+            aircraftsCount,
+            soldiersCount,
+            selectedCatalogSlot,
+            catalogItemCount,
+            catalogItem0,
+            catalogItem1,
+            catalogItem2,
+            catalogItem3,
+            catalogItem4,
+            catalogItem5,
+            catalogItem6,
+            queueRowCount,
+            queueRow0,
+            queueRow1)
+    {
+    }
+
+    public UiBuildDrawerModel(
+        string name,
+        string role,
+        string description,
+        string footprintText,
+        string requirementsText,
+        string placementText,
+        string productionTimeText,
+        string creditsCostText,
+        string suppliesCostText,
+        string instructionText,
+        string productionTitle,
+        string productionCountText,
+        bool buildEnabled,
+        bool rushEnabled,
+        bool clearEnabled,
+        bool noProductionVisible,
+        UiBuildDrawerActiveProductionModel activeProduction,
+        Sprite previewSprite,
+        BuildDrawerCategory activeCategory,
+        int buildingsCount,
+        int vehiclesCount,
+        int aircraftsCount,
+        int soldiersCount,
+        int selectedCatalogSlot,
+        int catalogItemCount,
+        UiBuildDrawerCatalogItemModel catalogItem0,
+        UiBuildDrawerCatalogItemModel catalogItem1,
+        UiBuildDrawerCatalogItemModel catalogItem2,
+        UiBuildDrawerCatalogItemModel catalogItem3,
+        UiBuildDrawerCatalogItemModel catalogItem4,
+        UiBuildDrawerCatalogItemModel catalogItem5,
+        UiBuildDrawerCatalogItemModel catalogItem6,
+        int queueRowCount,
+        UiBuildDrawerQueueRowModel queueRow0,
+        UiBuildDrawerQueueRowModel queueRow1)
     {
         Name = name;
         Role = role;
@@ -626,6 +747,7 @@ public readonly struct UiBuildDrawerModel
         ClearEnabled = clearEnabled;
         NoProductionVisible = noProductionVisible;
         ActiveProduction = activeProduction;
+        PreviewSprite = previewSprite;
         ActiveCategory = activeCategory;
         BuildingsCount = buildingsCount;
         VehiclesCount = vehiclesCount;

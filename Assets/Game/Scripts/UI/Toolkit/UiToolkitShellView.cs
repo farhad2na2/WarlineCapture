@@ -270,6 +270,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private Label buildDrawerSuppliesCostValueLabel;
     private Label buildDrawerInstructionLabel;
     private Label buildDrawerNoProductionLabel;
+    private VisualElement buildDrawerProductionPanelActive;
     private Label buildDrawerProductionTitleLabel;
     private Label buildDrawerProductionCountLabel;
     private VisualElement buildDrawerActiveProductionRow;
@@ -501,8 +502,10 @@ public sealed class UiToolkitShellView : MonoBehaviour
     public ScrollView BuildDrawerProductionScrollView => buildDrawerProductionScrollView;
     public Label BuildDrawerNameLabel => buildDrawerNameLabel;
     public Label BuildDrawerRoleLabel => buildDrawerRoleLabel;
+    public VisualElement BuildDrawerPreview => buildDrawerPreview;
     public Label BuildDrawerInstructionLabel => buildDrawerInstructionLabel;
     public Label BuildDrawerProductionCountLabel => buildDrawerProductionCountLabel;
+    public VisualElement BuildDrawerProductionPanelActive => buildDrawerProductionPanelActive;
     public VisualElement BuildDrawerActiveProductionRow => buildDrawerActiveProductionRow;
     public VisualElement BuildDrawerActiveProductionImage => buildDrawerActiveProductionImage;
     public VisualElement BuildDrawerActiveProductionFill => buildDrawerActiveProductionFill;
@@ -791,6 +794,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
         && buildDrawerSuppliesCostValueLabel != null
         && buildDrawerInstructionLabel != null
         && buildDrawerNoProductionLabel != null
+        && buildDrawerProductionPanelActive != null
         && buildDrawerProductionTitleLabel != null
         && buildDrawerProductionCountLabel != null
         && buildDrawerActiveProductionRow != null
@@ -1912,11 +1916,14 @@ public sealed class UiToolkitShellView : MonoBehaviour
         SetLabelText(buildDrawerInstructionLabel, drawer.InstructionText, "Select a structure to view details and start construction.");
         SetLabelText(buildDrawerProductionTitleLabel, drawer.ProductionTitle, "PRODUCTION");
         SetLabelText(buildDrawerProductionCountLabel, drawer.ProductionCountText, "0/0");
+        SetBackgroundSprite(buildDrawerPreview, drawer.PreviewSprite);
         SetElementEnabled(buildDrawerBuildAction, drawer.BuildEnabled);
         SetElementEnabled(buildDrawerRushAction, drawer.RushEnabled);
         SetElementEnabled(buildDrawerClearAction, drawer.ClearEnabled);
 
-        SetShellHidden(buildDrawerNoProductionLabel, !drawer.NoProductionVisible);
+        bool hasProduction = drawer.ActiveProduction.Visible;
+        SetShellHidden(buildDrawerProductionPanelActive, !hasProduction);
+        SetShellHidden(buildDrawerNoProductionLabel, hasProduction || !drawer.NoProductionVisible);
         ApplyBuildDrawerTabs(drawer);
         ApplyBuildDrawerActiveProduction(drawer.ActiveProduction);
 
@@ -2259,6 +2266,16 @@ public sealed class UiToolkitShellView : MonoBehaviour
             target.AddToClassList(className);
     }
 
+    private static void SetBackgroundSprite(VisualElement target, Sprite sprite)
+    {
+        if (target == null)
+            return;
+
+        target.style.backgroundImage = sprite != null
+            ? new StyleBackground(sprite)
+            : new StyleBackground(StyleKeyword.Null);
+    }
+
     private static void ApplyObjectiveRow(
         Label label,
         VisualElement icon,
@@ -2309,6 +2326,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
         if (buildDrawerActiveProductionFill != null)
             buildDrawerActiveProductionFill.style.width = Length.Percent(Mathf.Clamp01(activeProduction.Progress01) * 100f);
         SetElementEnabled(buildDrawerActiveProductionCancelAction, activeProduction.CancelEnabled);
+        SetBackgroundSprite(buildDrawerActiveProductionImage, activeProduction.ThumbnailSprite);
     }
 
     private void ApplyBuildDrawerTabs(UiBuildDrawerModel drawer)
@@ -2343,6 +2361,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
         SetElementEnabled(button, item.Enabled);
         SetClass(button, "selected", item.Selected);
+        SetBackgroundSprite(buildDrawerCatalogThumbs[index], item.ThumbnailSprite);
         SetLabelText(buildDrawerCatalogTitleLabels[index], item.Title, "STRUCTURE");
         SetLabelText(buildDrawerCatalogRoleLabels[index], item.Role, "BUILDING");
         SetLabelText(buildDrawerCatalogCreditsLabels[index], item.CreditsText, "0");
@@ -2358,6 +2377,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
             return;
 
         SetLabelText(buildDrawerQueueNumberLabels[index], row.NumberText, (index + 1).ToString());
+        SetBackgroundSprite(buildDrawerQueueImages[index], row.ThumbnailSprite);
         SetLabelText(buildDrawerQueueNameLabels[index], row.Name, "PRODUCTION ITEM");
         SetLabelText(buildDrawerQueueTimeLabels[index], row.TimeText, "00:00");
         SetElementEnabled(buildDrawerQueueOrderActions[index], row.ActionEnabled);
@@ -2571,10 +2591,10 @@ public sealed class UiToolkitShellView : MonoBehaviour
         buildDrawerInstructionInfoIcon = instructionStrip?.Q<VisualElement>("Icon");
         buildDrawerInstructionLabel = instructionStrip?.Q<Label>("Instruction");
         buildDrawerNoProductionLabel = buildDrawerProductionPanel?.Q<Label>("NoProduction");
-        VisualElement productionActivePanel = buildDrawerProductionPanel?.Q<VisualElement>("ProductionPanelActive");
-        buildDrawerProductionTitleLabel = productionActivePanel?.Q<Label>("Name");
-        buildDrawerProductionCountLabel = productionActivePanel?.Q<Label>("Numbers");
-        buildDrawerActiveProductionRow = productionActivePanel?.Q<VisualElement>("ProductionActiveItemView");
+        buildDrawerProductionPanelActive = buildDrawerProductionPanel?.Q<VisualElement>("ProductionPanelActive");
+        buildDrawerProductionTitleLabel = buildDrawerProductionPanelActive?.Q<Label>("Name");
+        buildDrawerProductionCountLabel = buildDrawerProductionPanelActive?.Q<Label>("Numbers");
+        buildDrawerActiveProductionRow = buildDrawerProductionPanelActive?.Q<VisualElement>("ProductionActiveItemView");
         buildDrawerActiveProductionImage = buildDrawerActiveProductionRow?.Q<VisualElement>("Image");
         buildDrawerActiveProductionNameLabel = buildDrawerActiveProductionRow?.Q<Label>("Name");
         buildDrawerActiveProductionPercentLabel = buildDrawerActiveProductionRow?.Q<Label>("PercentageCompleteText");
@@ -3319,6 +3339,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
         buildDrawerSuppliesCostValueLabel = null;
         buildDrawerInstructionLabel = null;
         buildDrawerNoProductionLabel = null;
+        buildDrawerProductionPanelActive = null;
         buildDrawerProductionTitleLabel = null;
         buildDrawerProductionCountLabel = null;
         buildDrawerActiveProductionRow = null;

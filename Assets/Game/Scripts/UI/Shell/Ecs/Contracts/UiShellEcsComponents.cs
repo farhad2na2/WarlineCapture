@@ -131,6 +131,7 @@ public struct UiBuildDrawerDetailComponent : IComponentData
 {
     public FixedString64Bytes Name;
     public FixedString32Bytes Role;
+    public FixedString64Bytes PreviewSpriteKey;
     public FixedString128Bytes Description;
     public FixedString32Bytes FootprintText;
     public FixedString64Bytes RequirementsText;
@@ -161,6 +162,7 @@ public struct UiBuildDrawerActiveProductionComponent : IComponentData
 {
     public byte Visible;
     public byte CancelEnabled;
+    public FixedString64Bytes ThumbnailSpriteKey;
     public FixedString64Bytes Name;
     public FixedString32Bytes PercentText;
     public float Progress01;
@@ -172,6 +174,7 @@ public struct UiBuildDrawerCatalogItemComponent : IBufferElementData
     public byte Enabled;
     public byte Selected;
     public BuildDrawerCategory Category;
+    public FixedString64Bytes ThumbnailSpriteKey;
     public FixedString64Bytes Title;
     public FixedString32Bytes Role;
     public FixedString32Bytes CreditsText;
@@ -183,6 +186,7 @@ public struct UiBuildDrawerQueueRowComponent : IBufferElementData
 {
     public byte Visible;
     public byte ActionEnabled;
+    public FixedString64Bytes ThumbnailSpriteKey;
     public FixedString32Bytes NumberText;
     public FixedString64Bytes Name;
     public FixedString32Bytes TimeText;

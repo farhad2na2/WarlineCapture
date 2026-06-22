@@ -5,6 +5,7 @@
     overflow: hidden;
     -unity-font-definition: url("../../../Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf");
     color: rgb(242, 232, 196);
+    picking-mode: ignore;
 }
 
 .scn02-main-menu-content Button {
@@ -22,6 +23,12 @@
     padding-bottom: 0;
     background-color: rgba(0, 0, 0, 0);
     -unity-text-align: middle-center;
+    picking-mode: position;
+}
+
+.scn02-main-menu-content VisualElement,
+.scn02-main-menu-content Label {
+    picking-mode: ignore;
 }
 
 .menu-background-content,

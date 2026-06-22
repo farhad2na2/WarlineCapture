@@ -11,6 +11,7 @@ public static class UiBuildDrawerReadModelSource
     private static readonly List<BuildDrawerCatalogItem> CountScratch = new();
     private static readonly List<BuildingPendingProductionUiEntry> PendingProductions = new();
     private static readonly List<BuildingPendingProductionUiEntry> ClearProductionScratch = new();
+    private static readonly Dictionary<string, Sprite> SpriteByKey = new();
 
     private static ICatalogPrefabSource unitPrefabSource;
     private static ICatalogPrefabSource buildingPrefabSource;
@@ -32,6 +33,7 @@ public static class UiBuildDrawerReadModelSource
         buildingPrefabSource = configuredBuildingPrefabSource;
         buildingUiCommand = configuredBuildingUiCommand;
         buildingUiQuery = configuredBuildingUiQuery;
+        SpriteByKey.Clear();
         CatalogQuery.ConfigureMetadataResolvers(tryResolveBuildingMetadata, tryResolveUnitMetadata);
     }
 
@@ -45,6 +47,14 @@ public static class UiBuildDrawerReadModelSource
         CountScratch.Clear();
         PendingProductions.Clear();
         ClearProductionScratch.Clear();
+        SpriteByKey.Clear();
+    }
+
+    public static Sprite ResolveSprite(string spriteKey)
+    {
+        return !string.IsNullOrWhiteSpace(spriteKey) && SpriteByKey.TryGetValue(spriteKey, out Sprite sprite)
+            ? sprite
+            : null;
     }
 
     public static void ProcessPrimaryRequest(BuildDrawerCategory category, int selectedSlot)
@@ -160,6 +170,7 @@ public static class UiBuildDrawerReadModelSource
                 Enabled = 1,
                 Selected = i == selectedSlot ? (byte)1 : (byte)0,
                 Category = item.Category,
+                ThumbnailSpriteKey = ToSpriteKey(item.CardPortrait),
                 Title = ToFixed64(item.DisplayName),
                 Role = ToFixed32(item.TypeLabel),
                 CreditsText = ToFixed32(FormatPrice(item.Price)),
@@ -195,6 +206,7 @@ public static class UiBuildDrawerReadModelSource
         {
             Name = ToFixed64(item.DisplayName),
             Role = ToFixed32(item.TypeLabel),
+            PreviewSpriteKey = ToSpriteKey(item.ActionPortrait),
             Description = ToFixed128(item.Description),
             FootprintText = ToFixed32(FormatFootprint(item)),
             RequirementsText = ToFixed64(FormatRequirements(item)),
@@ -252,6 +264,7 @@ public static class UiBuildDrawerReadModelSource
         {
             Visible = 1,
             CancelEnabled = buildingUiCommand != null && active.PendingProductionIndex >= 0 ? (byte)1 : (byte)0,
+            ThumbnailSpriteKey = ToSpriteKey(ResolveQueueThumbnail(active)),
             Name = ToFixed64(ResolveQueueDisplayName(active)),
             PercentText = ToFixed32(FormatPercent(active.Progress01)),
             Progress01 = Mathf.Clamp01(active.Progress01)
@@ -266,6 +279,7 @@ public static class UiBuildDrawerReadModelSource
             {
                 Visible = 1,
                 ActionEnabled = buildingUiCommand != null && entry.PendingProductionIndex >= 0 ? (byte)1 : (byte)0,
+                ThumbnailSpriteKey = ToSpriteKey(ResolveQueueThumbnail(entry)),
                 NumberText = ToFixed32((i + 2).ToString(CultureInfo.InvariantCulture)),
                 Name = ToFixed64(ResolveQueueDisplayName(entry)),
                 TimeText = ToFixed32(FormatRemaining(entry.RemainingSeconds))
@@ -294,6 +308,13 @@ public static class UiBuildDrawerReadModelSource
         return CatalogQuery.TryResolvePrefab(unitPrefabSource, buildingPrefabSource, entry.Prefab, out BuildDrawerCatalogItem item)
             ? item.DisplayName
             : entry.Prefab != null ? entry.Prefab.name : "Production";
+    }
+
+    private static Sprite ResolveQueueThumbnail(BuildingPendingProductionUiEntry entry)
+    {
+        return CatalogQuery.TryResolvePrefab(unitPrefabSource, buildingPrefabSource, entry.Prefab, out BuildDrawerCatalogItem item)
+            ? item.CardPortrait
+            : null;
     }
 
     private static string FormatPrice(int price)
@@ -457,6 +478,16 @@ public static class UiBuildDrawerReadModelSource
         return new FixedString128Bytes(Trim(value, 120));
     }
 
+    private static FixedString64Bytes ToSpriteKey(Sprite sprite)
+    {
+        if (sprite == null)
+            return default;
+
+        string key = sprite.GetEntityId().ToString();
+        SpriteByKey[key] = sprite;
+        return new FixedString64Bytes(key);
+    }
+
     private static string Trim(string value, int maxLength)
     {
         if (string.IsNullOrEmpty(value))
@@ -497,6 +528,12 @@ public partial struct UiBuildDrawerReadModelSystem : ISystem
             state.EntityManager.GetBuffer<UiBuildProductionRequestComponent>(boundary);
         DynamicBuffer<UiBuildPrimaryRequestComponent> primaryRequests =
             state.EntityManager.GetBuffer<UiBuildPrimaryRequestComponent>(boundary);
+        bool hasDrawerRequests =
+            catalogRequests.Length > 0 ||
+            productionRequests.Length > 0 ||
+            primaryRequests.Length > 0;
+        if (!hasDrawerRequests && !IsBuildDrawerVisible(state.EntityManager, boundary))
+            return;
 
         for (int i = 0; i < catalogRequests.Length; i++)
             drawerState.SelectedCatalogSlot = catalogRequests[i].CatalogSlot;
@@ -524,5 +561,15 @@ public partial struct UiBuildDrawerReadModelSystem : ISystem
             catalog,
             queue);
         state.EntityManager.SetComponentData(boundary, drawerState);
+    }
+
+    private static bool IsBuildDrawerVisible(EntityManager entityManager, Entity boundary)
+    {
+        if (!entityManager.HasComponent<UiShellActivePopupComponent>(boundary))
+            return false;
+
+        UiShellActivePopupComponent activePopup =
+            entityManager.GetComponentData<UiShellActivePopupComponent>(boundary);
+        return activePopup.Visible != 0 && activePopup.PopupKind == UiShellPopupKind.BuildDrawer;
     }
 }

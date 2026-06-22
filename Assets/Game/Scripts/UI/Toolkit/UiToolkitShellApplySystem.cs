@@ -135,22 +135,19 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
         hasShellState = UiShellRuntimeGateway.TryReadShellState(out lastShellState);
         hasLoadingProgress = UiShellRuntimeGateway.TryReadLoadingProgress(out lastLoadingProgress);
         hasDiagnosticsOverlay = UiShellRuntimeGateway.TryReadDiagnosticsOverlay(out lastDiagnosticsOverlay);
-        hasCommanderProfile = UiShellRuntimeGateway.TryReadCommanderProfile(out lastCommanderProfile);
-        hasMainMenuResources = UiShellRuntimeGateway.TryReadMainMenuResources(out lastMainMenuResources);
-        hasMissionResult = UiShellRuntimeGateway.TryReadMissionResult(out lastMissionResult);
-        hasMatchHudSelection = UiShellRuntimeGateway.TryReadMatchHudSelection(out lastMatchHudSelection);
-        hasMatchHudCommandState = UiShellRuntimeGateway.TryReadMatchHudCommandState(out lastMatchHudCommandState);
-        hasMatchHudHeader = UiShellRuntimeGateway.TryReadMatchHudHeader(out lastMatchHudHeader);
-        hasMatchHudStatusSurfaces =
-            UiShellRuntimeGateway.TryReadMatchHudStatusSurfaces(out lastMatchHudStatusSurfaces);
-        hasMatchHudMinimap = UiShellRuntimeGateway.TryReadMatchHudMinimap(out lastMatchHudMinimap);
-        hasMatchHudPassengerDrawer =
-            UiShellRuntimeGateway.TryReadMatchHudPassengerDrawer(out lastMatchHudPassengerDrawer);
-        hasMatchHudSquadTray = UiShellRuntimeGateway.TryReadMatchHudSquadTray(out lastMatchHudSquadTray);
-        hasBuildDrawer = UiShellRuntimeGateway.TryReadBuildDrawer(out lastBuildDrawer);
-        hasBuildPlacementConfirmationBar =
-            UiShellRuntimeGateway.TryReadBuildPlacementConfirmationBar(out lastBuildPlacementConfirmationBar);
-        hasArmoryCategory = UiShellRuntimeGateway.TryReadArmoryCategory(out lastArmoryCategory);
+        hasCommanderProfile = false;
+        hasMainMenuResources = false;
+        hasMissionResult = false;
+        hasMatchHudSelection = false;
+        hasMatchHudCommandState = false;
+        hasMatchHudHeader = false;
+        hasMatchHudStatusSurfaces = false;
+        hasMatchHudMinimap = false;
+        hasMatchHudPassengerDrawer = false;
+        hasMatchHudSquadTray = false;
+        hasBuildDrawer = false;
+        hasBuildPlacementConfirmationBar = false;
+        hasArmoryCategory = false;
 
         bool shellMounted = shellView != null && shellView.IsMounted;
 
@@ -167,6 +164,9 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
             hasShellState &&
             lastShellState.CurrentMode == UiShellMode.MainMenu)
         {
+            hasCommanderProfile = UiShellRuntimeGateway.TryReadCommanderProfile(out lastCommanderProfile);
+            hasMainMenuResources = UiShellRuntimeGateway.TryReadMainMenuResources(out lastMainMenuResources);
+
             if (ShouldApplyShellState(lastShellState))
             {
                 if (shellView.EnsureMainMenuVisible(lastShellState.ActiveRoute))
@@ -187,9 +187,9 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
             if (hasMainMenuResources && ShouldApplyMainMenuResources(lastMainMenuResources))
                 MarkMainMenuResourcesApplied(shellView.ApplyMainMenuResources(lastMainMenuResources));
 
-            if (lastShellState.ActiveRoute == UIRoute.Armory &&
-                hasArmoryCategory &&
-                ShouldApplyArmoryCategory(lastArmoryCategory))
+            hasArmoryCategory = lastShellState.ActiveRoute == UIRoute.Armory &&
+                UiShellRuntimeGateway.TryReadArmoryCategory(out lastArmoryCategory);
+            if (hasArmoryCategory && ShouldApplyArmoryCategory(lastArmoryCategory))
             {
                 MarkArmoryCategoryApplied(shellView.ApplyArmoryCategory(lastArmoryCategory));
             }
@@ -199,6 +199,16 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
             hasShellState &&
             lastShellState.CurrentMode == UiShellMode.MatchHud)
         {
+            hasMatchHudSelection = UiShellRuntimeGateway.TryReadMatchHudSelection(out lastMatchHudSelection);
+            hasMatchHudCommandState = UiShellRuntimeGateway.TryReadMatchHudCommandState(out lastMatchHudCommandState);
+            hasMatchHudHeader = UiShellRuntimeGateway.TryReadMatchHudHeader(out lastMatchHudHeader);
+            hasMatchHudStatusSurfaces =
+                UiShellRuntimeGateway.TryReadMatchHudStatusSurfaces(out lastMatchHudStatusSurfaces);
+            hasMatchHudMinimap = UiShellRuntimeGateway.TryReadMatchHudMinimap(out lastMatchHudMinimap);
+            hasMatchHudPassengerDrawer =
+                UiShellRuntimeGateway.TryReadMatchHudPassengerDrawer(out lastMatchHudPassengerDrawer);
+            hasMatchHudSquadTray = UiShellRuntimeGateway.TryReadMatchHudSquadTray(out lastMatchHudSquadTray);
+
             if (ShouldApplyShellState(lastShellState))
             {
                 shellView.MountMatchHudScreen();
@@ -230,8 +240,15 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
                 MarkMatchHudPassengerDrawerApplied(shellView.ApplyMatchHudPassengerDrawer(lastMatchHudPassengerDrawer));
             if (hasMatchHudSquadTray && ShouldApplyMatchHudSquadTray(lastMatchHudSquadTray))
                 MarkMatchHudSquadTrayApplied(shellView.ApplyMatchHudSquadTray(lastMatchHudSquadTray));
+            bool buildDrawerVisible = hasMatchHudCommandState && lastMatchHudCommandState.BuildDrawerVisible;
+            hasBuildDrawer =
+                buildDrawerVisible &&
+                shellView.HasMountedBuildDrawerPopup &&
+                UiShellRuntimeGateway.TryReadBuildDrawer(out lastBuildDrawer);
             if (hasBuildDrawer && ShouldApplyBuildDrawer(lastBuildDrawer))
-                MarkBuildDrawerApplied(shellView.HasMountedBuildDrawerPopup && shellView.ApplyBuildDrawer(lastBuildDrawer));
+                MarkBuildDrawerApplied(shellView.ApplyBuildDrawer(lastBuildDrawer));
+            hasBuildPlacementConfirmationBar =
+                UiShellRuntimeGateway.TryReadBuildPlacementConfirmationBar(out lastBuildPlacementConfirmationBar);
             if (hasBuildPlacementConfirmationBar && ShouldApplyBuildPlacementConfirmationBar(lastBuildPlacementConfirmationBar))
             {
                 bool applied = shellView.ApplyBuildPlacementConfirmationBar(lastBuildPlacementConfirmationBar);
@@ -607,6 +624,7 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
     private static bool Same(UiBuildDrawerActiveProductionModel a, UiBuildDrawerActiveProductionModel b) =>
         a.Visible == b.Visible &&
         a.CancelEnabled == b.CancelEnabled &&
+        a.ThumbnailSprite == b.ThumbnailSprite &&
         SameText(a.Name, b.Name) &&
         SameText(a.PercentText, b.PercentText) &&
         a.Progress01 == b.Progress01;
@@ -615,6 +633,7 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
         a.Visible == b.Visible &&
         a.Enabled == b.Enabled &&
         a.Selected == b.Selected &&
+        a.ThumbnailSprite == b.ThumbnailSprite &&
         SameText(a.Title, b.Title) &&
         SameText(a.Role, b.Role) &&
         SameText(a.CreditsText, b.CreditsText) &&
@@ -624,6 +643,7 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
     private static bool Same(UiBuildDrawerQueueRowModel a, UiBuildDrawerQueueRowModel b) =>
         a.Visible == b.Visible &&
         a.ActionEnabled == b.ActionEnabled &&
+        a.ThumbnailSprite == b.ThumbnailSprite &&
         SameText(a.NumberText, b.NumberText) &&
         SameText(a.Name, b.Name) &&
         SameText(a.TimeText, b.TimeText);
@@ -646,6 +666,7 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
         a.ClearEnabled == b.ClearEnabled &&
         a.NoProductionVisible == b.NoProductionVisible &&
         Same(a.ActiveProduction, b.ActiveProduction) &&
+        a.PreviewSprite == b.PreviewSprite &&
         a.ActiveCategory == b.ActiveCategory &&
         a.BuildingsCount == b.BuildingsCount &&
         a.VehiclesCount == b.VehiclesCount &&

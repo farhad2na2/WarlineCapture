@@ -3488,6 +3488,11 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         UiShellRuntimeGateway.Register(gateway);
 
         GameObject host = new("UiToolkitShellBuildDrawerCatalogActionsSmoke");
+        Sprite previewSprite = CreateTestSprite("BuildDrawerPreviewSprite");
+        Sprite lightApcSprite = CreateTestSprite("BuildDrawerLightApcSprite");
+        Sprite heavyApcSprite = CreateTestSprite("BuildDrawerHeavyApcSprite");
+        Sprite activeProductionSprite = CreateTestSprite("BuildDrawerActiveProductionSprite");
+        Sprite queuedProductionSprite = CreateTestSprite("BuildDrawerQueuedProductionSprite");
         try
         {
             UIDocument document = host.AddComponent<UIDocument>();
@@ -3589,6 +3594,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
                 false,
                 true,
                 default,
+                previewSprite,
                 BuildDrawerCategory.Vehicles,
                 2,
                 3,
@@ -3596,8 +3602,8 @@ public sealed class UiToolkitCanvasMigrationValidationTests
                 1,
                 1,
                 2,
-                new UiBuildDrawerCatalogItemModel(true, true, false, "LIGHT APC", "VEHICLE", "250", "0", "00:10"),
-                new UiBuildDrawerCatalogItemModel(true, true, true, "HEAVY APC", "VEHICLE", "300", "0", "00:12"),
+                new UiBuildDrawerCatalogItemModel(true, true, false, lightApcSprite, "LIGHT APC", "VEHICLE", "250", "0", "00:10"),
+                new UiBuildDrawerCatalogItemModel(true, true, true, heavyApcSprite, "HEAVY APC", "VEHICLE", "300", "0", "00:12"),
                 default,
                 default,
                 default,
@@ -3611,10 +3617,61 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             Assert.IsFalse(tabActions[2].enabledSelf, "Empty Aircrafts tab must be disabled when it is not active.");
             Assert.IsFalse(shellView.BuildDrawerCatalogItems[0].ClassListContains("selected"), "Unselected catalog row must clear selected state.");
             Assert.IsTrue(shellView.BuildDrawerCatalogItems[1].ClassListContains("selected"), "Selected catalog row must show selected state after tab refresh.");
+            AssertBackgroundSprite(shellView.BuildDrawerPreview, previewSprite, "Build Drawer selected detail preview");
+            AssertBackgroundSprite(shellView.BuildDrawerCatalogThumbs[0], lightApcSprite, "Build Drawer catalog row 0 thumbnail");
+            AssertBackgroundSprite(shellView.BuildDrawerCatalogThumbs[1], heavyApcSprite, "Build Drawer catalog row 1 thumbnail");
+            Assert.IsTrue(shellView.BuildDrawerProductionPanelActive.ClassListContains("shell-hidden"), "Build Drawer production progress panel must stay hidden when no production is active.");
+
+            var productionDrawer = new UiBuildDrawerModel(
+                "HEAVY APC",
+                "VEHICLE",
+                "Armored transport.",
+                "-",
+                "Vehicle bay",
+                "-",
+                "00:12",
+                "300",
+                "0",
+                "Producing APC.",
+                "PRODUCTION",
+                "2",
+                true,
+                false,
+                true,
+                false,
+                new UiBuildDrawerActiveProductionModel(true, true, activeProductionSprite, "HEAVY APC", "65%", 0.65f),
+                previewSprite,
+                BuildDrawerCategory.Vehicles,
+                2,
+                3,
+                0,
+                1,
+                1,
+                2,
+                new UiBuildDrawerCatalogItemModel(true, true, false, lightApcSprite, "LIGHT APC", "VEHICLE", "250", "0", "00:10"),
+                new UiBuildDrawerCatalogItemModel(true, true, true, heavyApcSprite, "HEAVY APC", "VEHICLE", "300", "0", "00:12"),
+                default,
+                default,
+                default,
+                default,
+                default,
+                1,
+                new UiBuildDrawerQueueRowModel(true, true, queuedProductionSprite, "2", "LIGHT APC", "00:10"),
+                default);
+            Assert.IsTrue(shellView.ApplyBuildDrawer(productionDrawer), "Build Drawer model with active production must apply.");
+            Assert.IsFalse(shellView.BuildDrawerProductionPanelActive.ClassListContains("shell-hidden"), "Build Drawer production progress panel must show when production is active.");
+            Assert.IsFalse(shellView.BuildDrawerActiveProductionRow.ClassListContains("shell-hidden"), "Build Drawer active production row must show when production is active.");
+            AssertBackgroundSprite(shellView.BuildDrawerActiveProductionImage, activeProductionSprite, "Build Drawer active production thumbnail");
+            AssertBackgroundSprite(shellView.BuildDrawerQueueImages[0], queuedProductionSprite, "Build Drawer queued production thumbnail");
         }
         finally
         {
             UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(previewSprite);
+            UnityEngine.Object.DestroyImmediate(lightApcSprite);
+            UnityEngine.Object.DestroyImmediate(heavyApcSprite);
+            UnityEngine.Object.DestroyImmediate(activeProductionSprite);
+            UnityEngine.Object.DestroyImmediate(queuedProductionSprite);
             UnityEngine.Object.DestroyImmediate(host);
         }
     }
@@ -5556,6 +5613,22 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         StyleLength width = element.style.width;
         Assert.AreEqual(LengthUnit.Percent, width.value.unit, $"{label} must use retained percentage width instead of recreating elements.");
         Assert.AreEqual(expectedPercent, width.value.value, 0.01f, $"{label} width mismatch.");
+    }
+
+    private static void AssertBackgroundSprite(VisualElement element, Sprite expectedSprite, string label)
+    {
+        Assert.IsNotNull(element, $"{label} element is missing.");
+        Assert.AreSame(expectedSprite, element.style.backgroundImage.value.sprite, $"{label} sprite mismatch.");
+    }
+
+    private static Sprite CreateTestSprite(string name)
+    {
+        Sprite sprite = Sprite.Create(
+            Texture2D.whiteTexture,
+            new Rect(0f, 0f, 1f, 1f),
+            new Vector2(0.5f, 0.5f));
+        sprite.name = name;
+        return sprite;
     }
 
     private static void AssertPercentStyle(VisualElement element, string propertyName, float expectedPercent, string label)

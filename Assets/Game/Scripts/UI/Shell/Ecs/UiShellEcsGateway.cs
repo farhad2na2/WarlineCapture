@@ -898,9 +898,11 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             new UiBuildDrawerActiveProductionModel(
                 active.Visible != 0,
                 active.CancelEnabled != 0,
+                ResolveBuildDrawerSprite(active.ThumbnailSpriteKey),
                 active.Name.ToString(),
                 active.PercentText.ToString(),
                 active.Progress01),
+            ResolveBuildDrawerSprite(detail.PreviewSpriteKey),
             drawerState.ActiveCategory,
             drawerState.BuildingsCount,
             drawerState.VehiclesCount,
@@ -1056,6 +1058,7 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             item.Visible != 0,
             item.Enabled != 0,
             item.Selected != 0,
+            ResolveBuildDrawerSprite(item.ThumbnailSpriteKey),
             item.Title.ToString(),
             item.Role.ToString(),
             item.CreditsText.ToString(),
@@ -1068,9 +1071,15 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         return new UiBuildDrawerQueueRowModel(
             row.Visible != 0,
             row.ActionEnabled != 0,
+            ResolveBuildDrawerSprite(row.ThumbnailSpriteKey),
             row.NumberText.ToString(),
             row.Name.ToString(),
             row.TimeText.ToString());
+    }
+
+    private static Sprite ResolveBuildDrawerSprite(FixedString64Bytes spriteKey)
+    {
+        return UiBuildDrawerReadModelSource.ResolveSprite(spriteKey.ToString());
     }
 
     private static bool TryGetBoundary(out EntityManager entityManager, out Entity boundary)

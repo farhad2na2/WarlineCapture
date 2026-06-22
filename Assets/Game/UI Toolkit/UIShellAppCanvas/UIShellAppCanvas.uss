@@ -251,11 +251,13 @@
     width: 78px;
     height: 34px;
     overflow: visible;
+    display: none;
     opacity: 0;
     picking-mode: ignore;
 }
 
 .diagnostics-overlay-expanded {
+    display: flex;
     width: 544px;
     height: 474px;
     opacity: 1;

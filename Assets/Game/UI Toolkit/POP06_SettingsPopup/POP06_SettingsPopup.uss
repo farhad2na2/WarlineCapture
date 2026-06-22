@@ -107,10 +107,10 @@
     height: 70%;
     background-image: url("../../Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png");
     -unity-background-scale-mode: stretch-to-fill;
-    -unity-slice-left: 56;
-    -unity-slice-right: 56;
-    -unity-slice-top: 34;
-    -unity-slice-bottom: 34;
+    -unity-slice-left: 90;
+    -unity-slice-right: 90;
+    -unity-slice-top: 60;
+    -unity-slice-bottom: 60;
 }
 
 .settings-close-label {

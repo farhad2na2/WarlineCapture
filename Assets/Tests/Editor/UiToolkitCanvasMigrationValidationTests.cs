@@ -626,7 +626,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
         StringAssert.Contains("UiShellRuntimeGateway.TryConsumePresentationCommands(commandScratch)", source);
         StringAssert.Contains("UiShellRuntimeGateway.TryEnqueueTransitionComplete(pendingCompletion)", source);
         StringAssert.Contains("shellView.ApplyPresentationCommands(commandScratch)", source);
-        StringAssert.Contains("shellView.ApplyMainMenuRouteState(lastShellState.ActiveRoute)", source);
+        StringAssert.Contains("shellView.EnsureMainMenuVisible(lastShellState.ActiveRoute)", source);
         StringAssert.Contains("\"Unity.Collections\"", asmdef, "The UI Toolkit edge assembly must explicitly reference Unity.Collections when referencing Unity.Entities.");
         StringAssert.Contains("\"Unity.Entities\"", asmdef, "The UI Toolkit edge assembly must explicitly reference Unity.Entities for its managed presentation SystemBase.");
         Assert.IsFalse(source.Contains("VisualElement", StringComparison.Ordinal), "The apply system should not read/write VisualElement directly.");
@@ -1651,12 +1651,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Armory content.");
             Assert.AreSame(armoryAsset, shellView.ArmoryScreenAsset, "Configured Armory asset must be retained by the shell view.");
-            Assert.IsTrue(shellView.HasMountedArmoryScreen, "Configured Armory UXML must mount into ArmoryScreenSlot.");
-            Assert.IsTrue(shellView.HasRequiredArmoryBindings, "Mounted Armory UXML must expose the Phase 7 screen and action bindings.");
-            Assert.IsNotNull(shellView.ArmoryContentRoot, "Mounted Armory content root must be cached.");
-            Assert.AreEqual("SCN19_ArmoryContent", shellView.ArmoryContentRoot.name, "Mounted Armory content must keep its binding root name.");
-            Assert.AreEqual(1, shellView.ArmoryScreenSlot.childCount, "Armory slot must contain a single Armory UXML tree.");
-            Assert.IsTrue(shellView.ArmoryScreenSlot.ClassListContains("shell-hidden"), "Mounted Armory screen must stay hidden until the Armory route is presented.");
+            Assert.IsFalse(shellView.HasMountedArmoryScreen, "Shell mount must not eagerly instantiate the Armory screen while Main Menu is active.");
 
             var commands = new List<UiShellPresentationCommandModel>
             {
@@ -1669,6 +1664,11 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             };
 
             Assert.IsTrue(shellView.ApplyPresentationCommands(commands));
+            Assert.IsTrue(shellView.HasMountedArmoryScreen, "Armory route must mount the configured Armory UXML into ArmoryScreenSlot.");
+            Assert.IsTrue(shellView.HasRequiredArmoryBindings, "Mounted Armory UXML must expose the Phase 7 screen and action bindings.");
+            Assert.IsNotNull(shellView.ArmoryContentRoot, "Mounted Armory content root must be cached.");
+            Assert.AreEqual("SCN19_ArmoryContent", shellView.ArmoryContentRoot.name, "Mounted Armory content must keep its binding root name.");
+            Assert.AreEqual(1, shellView.ArmoryScreenSlot.childCount, "Armory slot must contain a single Armory UXML tree.");
             Assert.IsTrue(shellView.MainMenuScreenSlot.ClassListContains("shell-hidden"), "Armory route must hide the Main Menu body when a dedicated Armory screen is mounted.");
             Assert.IsFalse(shellView.ArmoryScreenSlot.ClassListContains("shell-hidden"), "Armory route must reveal the dedicated Armory screen slot.");
             Assert.IsTrue(shellView.ArmoryScreenSlot.ClassListContains(UiToolkitShellView.GetMotionStateClass(UiToolkitShellMotionState.Visible)), "Armory route must apply the visible motion state to the dedicated Armory slot.");
@@ -1723,6 +1723,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             shellView.Configure(document, shellAsset, null, mainMenuAsset, null, armoryAsset, null, null);
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before Armory retained binding validation.");
+            Assert.IsTrue(shellView.MountArmoryScreen(), "Armory retained binding validation must mount the Armory screen explicitly.");
             Assert.IsTrue(shellView.HasRequiredArmoryRuntimeBindings, "Armory runtime binding cache must include roster, category nav, inspection, tabs, and actions.");
             Assert.IsNotNull(shellView.ArmoryScrollView, "Armory roster scroll view must be cached.");
             Assert.IsNotNull(shellView.ArmoryCatalogContent, "Armory retained item content root must be cached.");
@@ -2014,6 +2015,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             shellView.Configure(document, shellAsset, null, mainMenuAsset, null, armoryAsset, null, null);
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before Armory locked-row validation.");
+            Assert.IsTrue(shellView.MountArmoryScreen(), "Armory locked-row validation must mount the Armory screen explicitly.");
             Assert.IsTrue(shellView.HasRequiredArmoryRuntimeBindings, "Armory locked-row validation requires complete runtime bindings.");
             Assert.IsTrue(shellView.SelectArmoryItem(1), "Unlocked setup selection must succeed before locked-row rejection checks.");
             Assert.AreEqual("FAST APC", shellView.ArmoryInspectionNameLabel.text, "Setup selection title mismatch.");
@@ -2453,18 +2455,10 @@ public sealed class UiToolkitCanvasMigrationValidationTests
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Match HUD content.");
             Assert.AreSame(matchHudAsset, shellView.MatchHudScreenAsset, "Configured Match HUD asset must be retained by the shell view.");
-            Assert.IsTrue(shellView.HasMountedMatchHudScreen, "Configured Match HUD UXML must mount into MatchScreenSlot.");
-            Assert.IsTrue(shellView.HasRequiredMatchHudBindings, "Mounted Match HUD UXML must bind the Phase 4 root regions and command surface.");
-            Assert.IsNotNull(shellView.MatchHudContentRoot, "Mounted Match HUD content root must be cached.");
-            Assert.AreEqual("SCN08_MatchHudContent", shellView.MatchHudContentRoot.name, "Mounted Match HUD content must keep its binding root name.");
-            Assert.AreEqual(1, shellView.MatchScreenSlot.childCount, "Match screen slot must contain a single Match HUD UXML tree.");
-            Assert.IsNotNull(shellView.MatchHudContentRoot.Q<Button>("SelectCommand"), "Mounted Match HUD UXML must expose the select command binding.");
-            Assert.IsNotNull(shellView.MatchHudContentRoot.Q<Button>("BuildCommand"), "Mounted Match HUD UXML must expose the build command binding.");
-            Assert.IsNotNull(shellView.MatchHudContentRoot.Q<VisualElement>("TransportPassengerDrawer"), "Mounted Match HUD UXML must expose the passenger drawer binding.");
-            Assert.IsTrue(shellView.MatchScreenSlot.ClassListContains("shell-hidden"), "Mounted Match HUD must remain hidden until EnterMatchHud is presented.");
+            Assert.IsFalse(shellView.HasMountedMatchHudScreen, "Shell mount must not eagerly instantiate the Match HUD while Main Menu is active.");
 
             Assert.IsTrue(shellView.Mount(), "Repeated shell mount must remain stable.");
-            Assert.AreEqual(1, shellView.MatchScreenSlot.childCount, "Repeated shell mount must not duplicate Match HUD content.");
+            Assert.AreEqual(0, shellView.MatchScreenSlot.childCount, "Repeated shell mount must not create hidden Match HUD content before EnterMatchHud.");
 
             var commands = new List<UiShellPresentationCommandModel>
             {
@@ -2477,6 +2471,14 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             };
 
             Assert.IsTrue(shellView.ApplyPresentationCommands(commands));
+            Assert.IsTrue(shellView.HasMountedMatchHudScreen, "EnterMatchHud must mount the configured Match HUD UXML into MatchScreenSlot.");
+            Assert.IsTrue(shellView.HasRequiredMatchHudBindings, "Mounted Match HUD UXML must bind the Phase 4 root regions and command surface.");
+            Assert.IsNotNull(shellView.MatchHudContentRoot, "Mounted Match HUD content root must be cached.");
+            Assert.AreEqual("SCN08_MatchHudContent", shellView.MatchHudContentRoot.name, "Mounted Match HUD content must keep its binding root name.");
+            Assert.AreEqual(1, shellView.MatchScreenSlot.childCount, "Match screen slot must contain a single Match HUD UXML tree.");
+            Assert.IsNotNull(shellView.MatchHudContentRoot.Q<Button>("SelectCommand"), "Mounted Match HUD UXML must expose the select command binding.");
+            Assert.IsNotNull(shellView.MatchHudContentRoot.Q<Button>("BuildCommand"), "Mounted Match HUD UXML must expose the build command binding.");
+            Assert.IsNotNull(shellView.MatchHudContentRoot.Q<VisualElement>("TransportPassengerDrawer"), "Mounted Match HUD UXML must expose the passenger drawer binding.");
             Assert.IsFalse(shellView.MatchScreenSlot.ClassListContains("shell-hidden"), "EnterMatchHud must reveal the retained Match HUD screen slot.");
             Assert.IsTrue(shellView.MatchScreenSlot.ClassListContains(UiToolkitShellView.GetMotionStateClass(UiToolkitShellMotionState.Visible)), "EnterMatchHud must apply the visible motion state.");
 
@@ -2555,6 +2557,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             shellView.Configure(document, shellAsset, null, null, matchHudAsset);
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before validating Match HUD action requests.");
+            Assert.IsTrue(shellView.MountMatchHudScreen(), "Match HUD action validation must mount the Match HUD screen explicitly.");
             Assert.IsTrue(shellView.HasRequiredMatchHudBindings, "Match HUD action bindings must be present before click routing.");
 
             string shellViewSource = File.ReadAllText("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs");
@@ -3254,7 +3257,8 @@ public sealed class UiToolkitCanvasMigrationValidationTests
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Build Drawer popup content.");
             Assert.AreSame(buildDrawerAsset, shellView.BuildDrawerPopupAsset, "Configured Build Drawer popup asset must be retained by the shell view.");
-            Assert.IsTrue(shellView.HasMountedBuildDrawerPopup, "Configured Build Drawer UXML must mount into PopupScreenSlot.");
+            Assert.IsFalse(shellView.HasMountedBuildDrawerPopup, "Shell mount must not eagerly instantiate the Build Drawer popup while Main Menu is active.");
+            Assert.IsTrue(shellView.MountBuildDrawerPopup(), "Build Drawer popup must mount on demand into PopupScreenSlot.");
             Assert.IsTrue(shellView.HasRequiredBuildDrawerBindings, "Mounted Build Drawer UXML must bind the Phase 5 root panels, scrolls, and actions.");
             Assert.IsNotNull(shellView.BuildDrawerPopupRoot, "Mounted Build Drawer popup root must be cached.");
             Assert.AreEqual("SCN09_BuildDrawerPopup", shellView.BuildDrawerPopupRoot.name, "Mounted Build Drawer content must keep its binding root name.");
@@ -3326,6 +3330,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             shellView.Configure(document, shellAsset, null, null, null, buildDrawerAsset);
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before applying Build Drawer snapshots.");
+            Assert.IsTrue(shellView.MountBuildDrawerPopup(), "Build Drawer retained refresh validation must mount the popup explicitly.");
 
             int catalogChildCount = shellView.BuildDrawerCatalogScrollView.contentContainer.childCount;
             int queueChildCount = shellView.BuildDrawerProductionScrollView.contentContainer.childCount;
@@ -3438,6 +3443,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             shellView.Configure(document, shellAsset, null, null, null, buildDrawerAsset);
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before validating Build Drawer close action.");
+            Assert.IsTrue(shellView.MountBuildDrawerPopup(), "Build Drawer close validation must mount the popup explicitly.");
             Assert.IsNotNull(shellView.BuildDrawerCloseAction, "Build Drawer close action must be cached.");
 
             string shellViewSource = File.ReadAllText("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs");
@@ -3489,6 +3495,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             shellView.Configure(document, shellAsset, null, null, null, buildDrawerAsset);
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before validating Build Drawer catalog actions.");
+            Assert.IsTrue(shellView.MountBuildDrawerPopup(), "Build Drawer catalog action validation must mount the popup explicitly.");
             Assert.AreEqual(7, shellView.BuildDrawerCatalogItems.Count, "Build Drawer must retain seven catalog action slots.");
 
             string shellViewSource = File.ReadAllText("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs");
@@ -3555,6 +3562,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             shellView.Configure(document, shellAsset, null, null, null, buildDrawerAsset);
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before validating Build Drawer production actions.");
+            Assert.IsTrue(shellView.MountBuildDrawerPopup(), "Build Drawer production action validation must mount the popup explicitly.");
             Assert.IsNotNull(shellView.BuildDrawerRushAction, "Build Drawer Rush action must be cached.");
             Assert.IsNotNull(shellView.BuildDrawerClearAction, "Build Drawer Clear action must be cached.");
             Assert.IsNotNull(shellView.BuildDrawerActiveProductionCancelAction, "Build Drawer active production cancel action must be cached.");
@@ -3636,9 +3644,8 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             shellView.Configure(document, shellAsset, null, null, matchHudAsset, buildDrawerAsset);
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before validating Build Drawer popup commands.");
-            Assert.IsTrue(shellView.HasMountedMatchHudScreen, "Match HUD must mount so command selected classes can be validated.");
-            Assert.IsTrue(shellView.HasMountedBuildDrawerPopup, "Build Drawer popup must mount into PopupScreenSlot.");
-            Assert.IsTrue(shellView.PopupScreenSlot.ClassListContains("shell-hidden"), "Build Drawer popup must start hidden.");
+            Assert.IsFalse(shellView.HasMountedMatchHudScreen, "Shell mount must not eagerly instantiate the Match HUD while Main Menu is active.");
+            Assert.IsFalse(shellView.HasMountedBuildDrawerPopup, "Shell mount must not eagerly instantiate the Build Drawer popup.");
             Assert.IsTrue(shellView.ModalOverlay.ClassListContains("shell-hidden"), "Modal overlay must start hidden.");
 
             var commands = new List<UiShellPresentationCommandModel>
@@ -3652,6 +3659,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             };
 
             Assert.IsTrue(shellView.ApplyPresentationCommands(commands), "EnterMatchHud presentation must apply.");
+            Assert.IsTrue(shellView.HasMountedMatchHudScreen, "EnterMatchHud must mount the Match HUD so command selected classes can be validated.");
             Assert.IsFalse(shellView.MatchScreenSlot.ClassListContains("shell-hidden"), "Match HUD must be visible before showing Build Drawer.");
             Assert.IsTrue(shellView.ApplyMatchHudCommandState(new UiMatchHudCommandStateModel(TacticalCommandMode.None, false)), "Closed drawer command state must apply.");
             Assert.IsFalse(shellView.MatchHudBuildCommand.ClassListContains("command-button-selected"), "Build command must start deselected when drawer is closed.");
@@ -3665,6 +3673,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
                 92);
 
             Assert.IsTrue(shellView.ApplyPresentationCommands(commands), "ShowPopup presentation must apply.");
+            Assert.IsTrue(shellView.HasMountedBuildDrawerPopup, "ShowPopup must mount the Build Drawer popup into PopupScreenSlot.");
             Assert.IsFalse(shellView.PopupScreenSlot.ClassListContains("shell-hidden"), "ShowPopup must reveal the popup screen slot.");
             Assert.IsFalse(shellView.ModalOverlay.ClassListContains("shell-hidden"), "ShowPopup must reveal the modal overlay.");
             Assert.IsTrue(shellView.PopupScreenSlot.ClassListContains(UiToolkitShellView.GetMotionStateClass(UiToolkitShellMotionState.PopupVisible)), "ShowPopup must apply popup scale-in motion.");
@@ -3718,6 +3727,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             shellView.Configure(document, shellAsset, null, null, null, buildDrawerAsset);
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before validating Build Drawer primary Build action.");
+            Assert.IsTrue(shellView.MountBuildDrawerPopup(), "Build Drawer primary action validation must mount the popup explicitly.");
             Assert.IsNotNull(shellView.BuildDrawerBuildAction, "Build Drawer primary Build action must be cached.");
 
             string shellViewSource = File.ReadAllText("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs");
@@ -3814,6 +3824,8 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             UIDocument document = host.AddComponent<UIDocument>();
             UiToolkitShellView shellView = host.AddComponent<UiToolkitShellView>();
             shellView.Configure(document, shellAsset, null, null, matchHudAsset, buildDrawerAsset);
+            Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Build Drawer for read-model validation.");
+            Assert.IsTrue(shellView.MountBuildDrawerPopup(), "Build Drawer read-model validation must mount the popup explicitly.");
 
             UiToolkitShellApplySystem applySystem = world.GetOrCreateSystemManaged<UiToolkitShellApplySystem>();
             applySystem.ConfigureShellView(shellView);
@@ -3947,7 +3959,8 @@ public sealed class UiToolkitCanvasMigrationValidationTests
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Build Placement Confirmation Bar content.");
             Assert.AreSame(placementBarAsset, shellView.BuildPlacementConfirmationBarAsset, "Configured Build Placement Confirmation Bar asset must be retained by the shell view.");
-            Assert.IsTrue(shellView.HasMountedBuildPlacementConfirmationBar, "Configured Build Placement Confirmation Bar UXML must mount into MatchScreenSlot.");
+            Assert.IsFalse(shellView.HasMountedBuildPlacementConfirmationBar, "Shell mount must not eagerly instantiate the Build Placement Confirmation Bar while Main Menu is active.");
+            Assert.IsTrue(shellView.MountBuildPlacementConfirmationBar(), "Build Placement Confirmation Bar must mount on demand into MatchScreenSlot.");
             Assert.IsTrue(shellView.HasRequiredBuildPlacementConfirmationBarBindings, "Mounted Build Placement Confirmation Bar UXML must bind Phase 6 title/status/cost/duration/instruction/actions.");
             Assert.IsNotNull(shellView.BuildPlacementConfirmationBarRoot, "Mounted Build Placement Confirmation Bar root must be cached.");
             Assert.AreEqual("SCN08_BuildPlacementConfirmationBar", shellView.BuildPlacementConfirmationBarRoot.name, "Mounted Build Placement Confirmation Bar content must keep its binding root name.");
@@ -4939,9 +4952,7 @@ public sealed class UiToolkitCanvasMigrationValidationTests
 
             Assert.IsTrue(shellView.Mount(), "Shell mount must succeed before mounting Commander/Profile content.");
             Assert.AreSame(commanderAsset, shellView.CommanderProfileScreenAsset, "Configured Commander/Profile asset must be retained by the shell view.");
-            Assert.IsTrue(shellView.HasMountedCommanderProfileScreen, "Configured Commander/Profile UXML must mount into CommanderProfileScreenSlot.");
-            Assert.IsTrue(shellView.HasRequiredCommanderProfileBindings, "Commander/Profile runtime bindings must be cached.");
-            Assert.IsTrue(shellView.CommanderProfileScreenSlot.ClassListContains("shell-hidden"), "Commander/Profile slot must stay hidden until the CommandFeed route is active.");
+            Assert.IsFalse(shellView.HasMountedCommanderProfileScreen, "Shell mount must not eagerly instantiate the Commander/Profile screen while Main Menu is active.");
             VisualElement headerBeforeCommandFeed = shellView.MainMenuHeaderContent;
 
             var commands = new List<UiShellPresentationCommandModel>
@@ -4955,6 +4966,8 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             };
 
             Assert.IsTrue(shellView.ApplyPresentationCommands(commands), "CommandFeed route command must apply successfully.");
+            Assert.IsTrue(shellView.HasMountedCommanderProfileScreen, "CommandFeed route must mount the Commander/Profile UXML into CommanderProfileScreenSlot.");
+            Assert.IsTrue(shellView.HasRequiredCommanderProfileBindings, "Commander/Profile runtime bindings must be cached.");
             Assert.IsTrue(shellView.IsCommanderProfileSubRouteVisible, "CommandFeed route must reveal the Commander/Profile slot.");
             Assert.IsTrue(shellView.CommanderProfileScreenSlot.ClassListContains(UiToolkitShellView.GetMotionStateClass(UiToolkitShellMotionState.Visible)), "CommandFeed route must apply the visible motion class to the Commander/Profile slot.");
             Assert.IsTrue(shellView.HasPersistentMainMenuHeader, "Commander/Profile route must keep the persistent Main Menu header mounted.");

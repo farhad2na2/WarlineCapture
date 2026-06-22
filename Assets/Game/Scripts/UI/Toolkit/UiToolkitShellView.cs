@@ -1042,11 +1042,6 @@ public sealed class UiToolkitShellView : MonoBehaviour
         {
             MountLoadingScreen();
             MountMainMenuScreen();
-            MountMatchHudScreen();
-            MountArmoryScreen();
-            MountCommanderProfileScreen();
-            MountBuildPlacementConfirmationBar();
-            MountBuildDrawerPopup();
         }
 
         return mountedShell;
@@ -1655,6 +1650,8 @@ public sealed class UiToolkitShellView : MonoBehaviour
                 break;
             case UiShellCommandKind.EnterMatchHud:
                 MountMatchHudScreen();
+                if (HasMountedBuildPlacementConfirmationBar)
+                    ApplyBuildPlacementConfirmationBar(UiBuildPlacementConfirmationBarModel.Hidden);
                 SetShellHidden(matchScreenSlot, false);
                 ApplyShellMotion(matchScreenSlot, UiToolkitShellMotionState.Visible);
                 break;
@@ -1936,6 +1933,12 @@ public sealed class UiToolkitShellView : MonoBehaviour
 
     public bool ApplyBuildPlacementConfirmationBar(UiBuildPlacementConfirmationBarModel placementBar)
     {
+        if (!HasRequiredBuildPlacementConfirmationBarBindings &&
+            (placementBar.Visible || HasMountedBuildPlacementConfirmationBar))
+        {
+            MountBuildPlacementConfirmationBar();
+        }
+
         if (!HasRequiredBuildPlacementConfirmationBarBindings)
             return false;
 

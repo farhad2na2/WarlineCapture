@@ -14,17 +14,17 @@ The goal is to retire these broad managed runtime gameplay owners by decomposing
 
 ## Progress Snapshot
 
-- Checklist progress: `25 / 126 complete (19.8%)`.
+- Checklist progress: `29 / 126 complete (23.0%)`.
 - In progress: `1`.
-- Remaining open: `100`.
+- Remaining open: `96`.
 - Target `SystemBase` classes: `5`.
 - Converted target classes to `ISystem` legacy metric: `0 / 5`.
 - Retired broad `SystemBase` gameplay owners: `0 / 5`.
 - Extracted focused ECS `ISystem` processors: `0 / 22 planned`.
 - Split decomposition plans documented: `5 / 5`.
 - Split into passive managed boundaries: `0 / 5`.
-- Validation status: `git diff --check` passed; main-project `BuildingProductionRequestValidation` passed (`tests=21`); main-project `BuildingProductionCameraFocusValidation` passed (`tests=10`); main-project `BuildingUiQueryValidation` passed (`tests=5`).
-- Current target system: `BuildingSpawnSystem` decomposition.
+- Validation status: `git diff --check` passed; main-project `BuildingProductionRequestValidation` passed (`tests=21`); main-project `BuildingProductionCameraFocusValidation` passed (`tests=10`); main-project `BuildingUiQueryValidation` passed (`tests=5`); Integration P7-0318 moved `MapVehiclePlacementSpawnSystem` progress/random/clearance state into ECS `MapVehiclePlacementProgressState` and passed `UnitMovementBlockerValidation` (`/private/tmp/warline-phase7-integration-map-vehicle-placement-progress-state.log`), compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.
+- Current target system: `MapVehiclePlacementSpawnSystem` progress-state split complete; continue placement instantiation, blocker, result, and composition extraction.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
 
 ## Current Disposition
@@ -34,7 +34,7 @@ The goal is to retire these broad managed runtime gameplay owners by decomposing
 | `BuildingSpawnSystem` | `SystemBase` | Fallback `Instance.transform` spawn placement reads plus managed produced-unit list/slot fallbacks when no runtime boundary is available. | Retire as a broad spawn owner. Split into `BuildingProductionSpawnRequestSystem`, `BuildingProductionSlotReservationSystem`, `BuildingProductionPlacementSystem`, `BuildingHelipadSpawnSystem`, `BuildingUnitInstantiationSystem`, and `BuildingProducedUnitStateSystem`; preview/transform projection stays passive. |
 | `BuildingProductionTransportBridgeSystem` | `SystemBase` | Uses produced-unit prefab/object data for footprint and focus decisions. | Retire as a direct bridge. Split into `BuildingProductionTransportRequestSystem`, `BuildingProductionTransportMovementSystem`, `BuildingProductionTransportFocusRequestSystem`, and `BuildingRunwayTransportSystem`; camera/UI application remains passive. |
 | `CitizenVisibleUnitSystem` | `SystemBase` | Managed visible-citizen dictionaries and immediate entity tracking after instantiate. | Retire as same-frame dictionary owner. Split into `CitizenVisibleUnitSpawnRequestSystem`, `CitizenVisibleUnitInstantiateSystem`, `CitizenVisibleUnitMovementStateSystem`, and `CitizenVisibleUnitLifetimeSystem`; presentation state remains passive. |
-| `MapVehiclePlacementSpawnSystem` | `SystemBase` | Placement progress and config lifetime are managed; config still has authored prefab fallback. | Retire as managed update wrapper. Split into `MapVehiclePlacementProgressSystem`, `MapVehiclePlacementInstantiateSystem`, `MapVehiclePlacementBlockerSystem`, and `MapVehiclePlacementResultSystem`; config projection remains passive. |
+| `MapVehiclePlacementSpawnSystem` | Plain direct helper | Instantiation, blocker reservation/cleanup, and completion results still run through the broad direct helper; config still has authored prefab fallback at the managed edge. | Retire as managed update wrapper. Progress/random/clearance state now lives in ECS `MapVehiclePlacementProgressState`; continue split into `MapVehiclePlacementProgressSystem`, `MapVehiclePlacementInstantiateSystem`, `MapVehiclePlacementBlockerSystem`, and `MapVehiclePlacementResultSystem`; config projection remains passive. |
 | `CustomGameStartupSystem` | `SystemBase` | Serialized startup configs and prefab/atlas/impostor projection. | Retire as serialized config/runtime startup owner. Split into `CustomGameFactionStartupSystem`, `CustomGameBuildingStartupSystem`, `CustomGameUnitStartupSystem`, and `CustomGameStartupResultSystem`; serialized config, atlas, sprite, and impostor projection remain passive. |
 
 ## Updated Estimate
@@ -489,9 +489,9 @@ Split visible-citizen spawn, movement state, and lifetime tracking into entity-o
 Purpose:
 Split map vehicle placement progress, instantiation, blocker ownership, and completion results into ECS state.
 
-- [ ] Bake or project placement config into ECS buffers with source key, prefab entity, position, faction, and placement metadata.
-- [ ] Move placement progress fields into an ECS singleton or request buffer.
-- [ ] Move random/progress counters out of managed fields.
+- [x] Bake or project placement config into ECS buffers with source key, prefab entity, position, faction, and placement metadata.
+- [x] Move placement progress fields into an ECS singleton or request buffer.
+- [x] Move random/progress counters out of managed fields.
 - [ ] Ensure runtime execution never reads `VehiclePrefab`; only bootstrap/config projection may derive source keys from authored prefabs.
 - [ ] Keep map vehicle config projection in a passive managed boundary.
 - [ ] Extract placement progress scanning into `MapVehiclePlacementProgressSystem`.
@@ -501,10 +501,19 @@ Split map vehicle placement progress, instantiation, blocker ownership, and comp
 - [ ] Retire or rename the remaining `MapVehiclePlacementSpawnSystem` wrapper so it no longer owns runtime gameplay execution.
 - [ ] Update building gameplay composition to schedule the ECS placement split systems instead of invoking the managed update wrapper.
 - [ ] Add validation that map vehicle placement entries with source keys spawn the same configured entities.
-- [ ] Run `UnitMovementBlockerValidation`.
+- [x] Run `UnitMovementBlockerValidation`.
 - [ ] Run map vehicle placement focused validation or add one if missing.
 - [ ] Run `BuildingGameplayCompositionRuntimeSmokeValidation`.
 - [ ] Run `NonEcsSystemConversionArchitectureValidation`.
+
+Phase 5 progress-state notes:
+
+- P7-0318 added `MapVehiclePlacementProgressState` as ECS component state for placement queue completion, authoring-hidden completion, next placement index, last cleared blocker cells, and random state.
+- `MapVehiclePlacementSpawnSystem` no longer derives from `SystemBase`; it remains a direct helper owned by building gameplay composition, so the broad execution owner is not retired yet.
+- The existing `MapVehiclePlacementReadModel` continues to project source key, prefab entity, position, faction, footprint, and authored transform metadata into ECS buffers.
+- Added `UnitMovementBlockerValidationTests.MapVehiclePlacementProgressStateTracksEmptyConfigCompletion` to prove empty-config completion and authoring-root hiding are tracked through ECS state.
+- Passed: `[UnitMovementBlockerValidation] result=Passed` in `/private/tmp/warline-phase7-integration-map-vehicle-placement-progress-state.log`.
+- Remaining blockers before Phase 5 completion: extract placement scanning, instantiation, blocker reservation/cleanup, completion/result publication, and composition scheduling into focused ECS processors, then retire or rename the direct helper.
 
 ## Phase 6: CustomGameStartupSystem Conversion
 

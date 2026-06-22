@@ -89,6 +89,17 @@ public struct MapVehiclePlacementReadModel : IBufferElementData
     public float3 WorldScale;
 }
 
+public struct MapVehiclePlacementProgressState : IComponentData
+{
+    public const uint InitialRandomState = 0x6D2B79F5u;
+
+    public byte Queued;
+    public byte AuthoringHidden;
+    public int NextPlacementIndex;
+    public int LastClearedBlockerCells;
+    public uint RandomState;
+}
+
 public struct BuildingRuntimeFactionSummary : IBufferElementData
 {
     public byte FactionId;

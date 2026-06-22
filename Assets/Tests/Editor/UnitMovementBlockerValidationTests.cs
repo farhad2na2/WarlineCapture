@@ -25,6 +25,7 @@ public sealed class UnitMovementBlockerValidationTests
             tests.AuthoredUsaTankPlacementsAreVehicleWalkableInBakedSurface();
             tests.LoggedAuthoredUsaTankPlacementHasVehicleDepartureSurface();
             tests.MapVehiclePlacementReadModelProjectsSourceKeyAndPrefabEntityData();
+            tests.MapVehiclePlacementProgressStateTracksEmptyConfigCompletion();
             tests.MapVehiclePlacementClearanceRemovesBlockersUnderVehicleFootprint();
             tests.MapVehiclePlacementDepartureClearanceRemovesPaddedBlockers();
             tests.VehiclePathingCanDepartFromCurrentDynamicBlockedFootprint();
@@ -829,6 +830,57 @@ public sealed class UnitMovementBlockerValidationTests
         {
             Object.DestroyImmediate(config);
             Object.DestroyImmediate(vehiclePrefab);
+        }
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+    }
+
+    [Test]
+    public void MapVehiclePlacementProgressStateTracksEmptyConfigCompletion()
+    {
+        using World world = new("MapVehiclePlacementProgressStateTests");
+        EntityManager em = world.EntityManager;
+        MapVehiclePlacementConfig config = ScriptableObject.CreateInstance<MapVehiclePlacementConfig>();
+        GameObject authoringRoot = new("MapVehicleAuthoringRoot");
+        try
+        {
+            config.EditorSetPlacements(new System.Collections.Generic.List<MapVehiclePlacementConfigEntry>());
+            var runtimeUnitPrefabContext = new RuntimeUnitPrefabSystem.Context(
+                default,
+                TryGetEntityManager,
+                null,
+                null);
+            var context = new MapVehiclePlacementSpawnSystem.Context(
+                config,
+                authoringRoot.transform,
+                new RuntimeUnitPrefabSystem(),
+                runtimeUnitPrefabContext,
+                null,
+                null);
+
+            var system = new MapVehiclePlacementSpawnSystem();
+            system.Update(context);
+
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MapVehiclePlacementProgressState>());
+            Assert.AreEqual(1, query.CalculateEntityCount());
+            Entity progressEntity = query.GetSingletonEntity();
+            MapVehiclePlacementProgressState progress = em.GetComponentData<MapVehiclePlacementProgressState>(progressEntity);
+            Assert.AreEqual(1, progress.Queued);
+            Assert.AreEqual(1, progress.AuthoringHidden);
+            Assert.AreEqual(0, progress.NextPlacementIndex);
+            Assert.AreEqual(0, progress.LastClearedBlockerCells);
+            Assert.AreEqual(MapVehiclePlacementProgressState.InitialRandomState, progress.RandomState);
+            Assert.IsTrue(system.IsComplete);
+            Assert.IsFalse(authoringRoot.activeSelf);
+        }
+        finally
+        {
+            Object.DestroyImmediate(authoringRoot);
+            Object.DestroyImmediate(config);
         }
 
         bool TryGetEntityManager(out EntityManager entityManager)

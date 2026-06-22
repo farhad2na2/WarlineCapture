@@ -172,7 +172,7 @@ internal sealed class MatchBootstrapSystem
         _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystem();
         _runtimeCameraReferenceSystem = ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld);
 
-        ResolveRuntimeRootSystem(World.DefaultGameObjectInjectionWorld)?.Ensure(
+        ResolveRuntimeRootSystem()?.Ensure(
             ownerTransform,
             ref _runtimeBlockerRoot,
             ref _runtimeCityRoot,
@@ -979,12 +979,9 @@ internal sealed class MatchBootstrapSystem
         return _visualQualitySettingsSystem;
     }
 
-    private RuntimeRootSystem ResolveRuntimeRootSystem(World world)
+    private RuntimeRootSystem ResolveRuntimeRootSystem()
     {
-        if (world == null || !world.IsCreated)
-            return null;
-
-        _runtimeRootSystem = world.GetOrCreateSystemManaged<RuntimeRootSystem>();
+        _runtimeRootSystem ??= new RuntimeRootSystem();
         return _runtimeRootSystem;
     }
 

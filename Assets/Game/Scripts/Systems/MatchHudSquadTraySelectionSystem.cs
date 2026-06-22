@@ -6,7 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed partial class MatchHudSquadTraySelectionSystem : SystemBase
+public sealed class MatchHudSquadTraySelectionSystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
 
@@ -57,15 +57,6 @@ public sealed partial class MatchHudSquadTraySelectionSystem : SystemBase
     private MatchHudSquadTraySlot _activeSlot = MatchHudSquadTraySlot.None;
 
     public MatchHudSquadTraySlot ActiveSlot => _activeSlot;
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void ClearActiveSlot(IMatchHudSquadTrayView view)
     {

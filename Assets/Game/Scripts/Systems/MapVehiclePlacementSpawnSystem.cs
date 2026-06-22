@@ -5,17 +5,8 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
+internal sealed class MapVehiclePlacementSpawnSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     private const int MaxPlacementsPerUpdate = 32;
     private const int VehicleDepartureClearancePaddingCells = UnitPathPlacementValidation.VehicleOccupancyPaddingCells;
     private const float UniformScaleEpsilon = 0.0001f;
@@ -77,47 +68,54 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
 
     private readonly InitialUnitSpawnApplySystem _unitSpawnApplySystem = new();
     private readonly InitialUnitSpawnResetSystem _unitSpawnResetSystem = new();
-    private bool _queued;
-    private bool _authoringHidden;
     private bool _warnedMissingConfig;
     private bool _warnedMissingPrefab;
-    private int _nextPlacementIndex;
     private int _lastClearedBlockerCells;
-    private uint _randomState = 0x6D2B79F5u;
+    private bool _isComplete;
 
     internal int LastClearedBlockerCells => _lastClearedBlockerCells;
-    public bool IsComplete => _queued && _authoringHidden;
+    public bool IsComplete => _isComplete;
 
     public void Update(Context context)
     {
-        if (context.Config == null || !context.Config.SpawnOnMatchStart || IsComplete)
+        if (context.Config == null || !context.Config.SpawnOnMatchStart)
+            return;
+
+        if (!TryGetProgressState(context, out EntityManager em, out Entity progressEntity, out MapVehiclePlacementProgressState progress))
+            return;
+
+        SyncProgressSnapshot(progress);
+        if (IsComplete)
             return;
 
         TryPublishPlacementReadModel(context);
 
-        if (_queued)
+        if (progress.Queued != 0)
         {
-            RefreshPlacementClearance(context);
-            HideAuthoringVisuals(context);
+            RefreshPlacementClearance(context, em, ref progress);
+            HideAuthoringVisuals(context, ref progress);
+            SaveProgressState(em, progressEntity, progress);
+            SyncProgressSnapshot(progress);
             return;
         }
 
-        SpawnPlacements(context);
+        SpawnPlacements(context, em, progressEntity, ref progress);
+        SaveProgressState(em, progressEntity, progress);
+        SyncProgressSnapshot(progress);
     }
 
-    private void SpawnPlacements(Context context)
+    private void SpawnPlacements(
+        Context context,
+        EntityManager em,
+        Entity progressEntity,
+        ref MapVehiclePlacementProgressState progress)
     {
         if (context.Config.Placements == null || context.Config.Placements.Count == 0)
         {
             WarnOnce(ref _warnedMissingConfig, context, "[MapVehiclePlacement] no baked map vehicle placements configured.");
-            _queued = true;
-            HideAuthoringVisuals(context);
-            return;
-        }
-
-        if (context.UnitPrefabContext.TryGetEntityManager == null ||
-            !context.UnitPrefabContext.TryGetEntityManager(out EntityManager em))
-        {
+            progress.Queued = 1;
+            HideAuthoringVisuals(context, ref progress);
+            SaveProgressState(em, progressEntity, progress);
             return;
         }
 
@@ -130,9 +128,9 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
 
         using EntityCommandBuffer ecb = new(Allocator.Temp);
         int processed = 0;
-        for (; _nextPlacementIndex < context.Config.Placements.Count && processed < MaxPlacementsPerUpdate; _nextPlacementIndex++, processed++)
+        for (; progress.NextPlacementIndex < context.Config.Placements.Count && processed < MaxPlacementsPerUpdate; progress.NextPlacementIndex++, processed++)
         {
-            MapVehiclePlacementConfigEntry placement = context.Config.Placements[_nextPlacementIndex];
+            MapVehiclePlacementConfigEntry placement = context.Config.Placements[progress.NextPlacementIndex];
             if (placement == null || string.IsNullOrWhiteSpace(placement.VehicleSourceKey))
                 continue;
 
@@ -148,16 +146,16 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
                 continue;
             }
 
-            SpawnVehicle(context, em, ecb, grid, placement, prefabEntity);
+            SpawnVehicle(context, em, ecb, grid, placement, prefabEntity, ref progress);
         }
 
         ecb.Playback(em);
 
-        if (_nextPlacementIndex >= context.Config.Placements.Count)
+        if (progress.NextPlacementIndex >= context.Config.Placements.Count)
         {
-            _queued = true;
-            RefreshPlacementClearance(context);
-            HideAuthoringVisuals(context);
+            progress.Queued = 1;
+            RefreshPlacementClearance(context, em, ref progress);
+            HideAuthoringVisuals(context, ref progress);
         }
     }
 
@@ -167,7 +165,8 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
         EntityCommandBuffer ecb,
         GridConfig grid,
         MapVehiclePlacementConfigEntry placement,
-        Entity prefabEntity)
+        Entity prefabEntity,
+        ref MapVehiclePlacementProgressState progress)
     {
         bool hasPrefab = prefabEntity != Entity.Null && em.Exists(prefabEntity);
         if (!hasPrefab)
@@ -186,10 +185,10 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
             cell,
             position);
 
-        _randomState = math.max(1u, _randomState + 1u);
-        var rng = new Unity.Mathematics.Random(_randomState);
+        progress.RandomState = math.max(1u, progress.RandomState + 1u);
+        var rng = new Unity.Mathematics.Random(progress.RandomState);
         _unitSpawnResetSystem.ResetSpawnedUnitRuntimeState(em, ecb, instance, prefabEntity, hasPrefab, ref rng);
-        _randomState = math.max(1u, rng.state);
+        progress.RandomState = math.max(1u, rng.state);
 
         ApplyAuthoredTransform(em, ecb, instance, prefabEntity, hasPrefab, placement);
         FixedString64Bytes sourceKey = ResolveSpawnedVehicleSourceKey(em, prefabEntity, hasPrefab, placement);
@@ -262,13 +261,14 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
                math.abs(scale.x - scale.z) <= UniformScaleEpsilon;
     }
 
-    private void RefreshPlacementClearance(Context context)
+    private void RefreshPlacementClearance(
+        Context context,
+        EntityManager em,
+        ref MapVehiclePlacementProgressState progress)
     {
-        _lastClearedBlockerCells = 0;
+        progress.LastClearedBlockerCells = 0;
         if (context.Config == null ||
             context.Config.Placements == null ||
-            context.UnitPrefabContext.TryGetEntityManager == null ||
-            !context.UnitPrefabContext.TryGetEntityManager(out EntityManager em) ||
             context.TryGetGridData == null ||
             !context.TryGetGridData(out _, out GridConfig grid, out _, out DynamicBlockerComponent blockerData) ||
             !blockerData.Blocked.IsCreated)
@@ -292,7 +292,7 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
             clearedCells += ClearRuntimeBlockersInFootprint(grid, ref blockerData, centerCell, footprintSize, VehicleDepartureClearancePaddingCells);
         }
 
-        _lastClearedBlockerCells = clearedCells;
+        progress.LastClearedBlockerCells = clearedCells;
     }
 
     private static void TryPublishPlacementReadModel(Context context)
@@ -473,9 +473,9 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
             ecb.AddComponent(instance, component);
     }
 
-    private void HideAuthoringVisuals(Context context)
+    private void HideAuthoringVisuals(Context context, ref MapVehiclePlacementProgressState progress)
     {
-        if (_authoringHidden ||
+        if (progress.AuthoringHidden != 0 ||
             context.Config == null ||
             !context.Config.HideAuthoringVisualsAfterSpawn ||
             context.AuthoringVehiclesRoot == null)
@@ -484,7 +484,60 @@ internal sealed partial class MapVehiclePlacementSpawnSystem : SystemBase
         }
 
         context.AuthoringVehiclesRoot.gameObject.SetActive(false);
-        _authoringHidden = true;
+        progress.AuthoringHidden = 1;
+    }
+
+    private static bool TryGetProgressState(
+        Context context,
+        out EntityManager em,
+        out Entity progressEntity,
+        out MapVehiclePlacementProgressState progress)
+    {
+        em = default;
+        progressEntity = Entity.Null;
+        progress = default;
+        if (context.UnitPrefabContext.TryGetEntityManager == null ||
+            !context.UnitPrefabContext.TryGetEntityManager(out em))
+        {
+            return false;
+        }
+
+        progressEntity = EnsureProgressEntity(em);
+        progress = em.GetComponentData<MapVehiclePlacementProgressState>(progressEntity);
+        if (progress.RandomState == 0)
+        {
+            progress.RandomState = MapVehiclePlacementProgressState.InitialRandomState;
+            em.SetComponentData(progressEntity, progress);
+        }
+
+        return true;
+    }
+
+    private static Entity EnsureProgressEntity(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MapVehiclePlacementProgressState>());
+        if (!query.IsEmptyIgnoreFilter)
+            return query.GetSingletonEntity();
+
+        Entity entity = em.CreateEntity(typeof(MapVehiclePlacementProgressState));
+        em.SetName(entity, "MapVehiclePlacementProgress");
+        em.SetComponentData(entity, new MapVehiclePlacementProgressState
+        {
+            RandomState = MapVehiclePlacementProgressState.InitialRandomState
+        });
+        return entity;
+    }
+
+    private static void SaveProgressState(EntityManager em, Entity progressEntity, MapVehiclePlacementProgressState progress)
+    {
+        if (progressEntity != Entity.Null && em.Exists(progressEntity))
+            em.SetComponentData(progressEntity, progress);
+    }
+
+    private void SyncProgressSnapshot(MapVehiclePlacementProgressState progress)
+    {
+        _lastClearedBlockerCells = progress.LastClearedBlockerCells;
+        _isComplete = progress.Queued != 0 && progress.AuthoringHidden != 0;
     }
 
     private static void WarnOnce(ref bool flag, Context context, string message)

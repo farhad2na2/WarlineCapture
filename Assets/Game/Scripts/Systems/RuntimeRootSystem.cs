@@ -1,21 +1,11 @@
-using Unity.Entities;
 using UnityEngine;
 
-public sealed partial class RuntimeRootSystem : SystemBase
+public sealed class RuntimeRootSystem
 {
     private const string RuntimeBlockersRootName = "RuntimeBlockers";
     private const string RuntimeCityRootName = "RuntimeCity";
     private const string RuntimeTransportsRootName = "RuntimeTransports";
     private const string RuntimeUiRootName = "RuntimeUi";
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     public void Ensure(
         Transform owner,

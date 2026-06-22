@@ -18,10 +18,11 @@ public sealed class SelectionStateSystemTests
             RunCase(test => test.CacheSelectedMoveEntity_KeepsOnlyPlayerMoveUnits());
             RunCase(test => test.VisibleUnitSelection_IgnoresPlayerBuildingsWithoutUnitMove());
             RunCase(test => test.VisibleUnitSelection_UsesSourcePrefixBeforeMovementFallback());
+            RunCase(test => test.VisibleUnitSelectionCandidateSystem_PublishesCandidateSnapshot());
             RunCase(test => test.FocusedUnitLifecycle_ClearCurrentSelection_RemovesSelectedTagsAndClearsCache());
             RunCase(test => test.FocusedUnitLifecycle_RefreshFocusedUnit_FocusesSingleSelectedPlayerUnit());
             RunCase(test => test.FocusedUnitLifecycle_FocusAirUnitClearsAccidentalSelectionMoveThroughRequest());
-            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=7");
+            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=8");
         }
         catch (System.Exception ex)
         {
@@ -196,6 +197,49 @@ public sealed class SelectionStateSystemTests
         {
             UnityEngine.Object.DestroyImmediate(cameraObject);
         }
+    }
+
+    [Test]
+    public void VisibleUnitSelectionCandidateSystem_PublishesCandidateSnapshot()
+    {
+        Entity sourceVehicle = CreateVisibleEntity(hasMove: true, new float3(-1f, 0f, 0f));
+        _entityManager.AddComponentData(sourceVehicle, new UnitSourcePrefabKey
+        {
+            Value = new Unity.Collections.FixedString64Bytes("Unit_Veh_Test_APC")
+        });
+
+        Entity sourceSoldier = CreateVisibleEntity(hasMove: true, new float3(1f, 0f, 0f));
+        _entityManager.AddComponentData(sourceSoldier, new UnitSourcePrefabKey
+        {
+            Value = new Unity.Collections.FixedString64Bytes("Unit_Chr_Test_Soldier")
+        });
+
+        SystemHandle candidateSystem = _world.CreateSystem<VisibleUnitSelectionCandidateSystem>();
+        candidateSystem.Update(_world.Unmanaged);
+
+        EntityQuery snapshotQuery = _entityManager.CreateEntityQuery(
+            typeof(VisibleUnitSelectionCandidateSnapshot),
+            typeof(VisibleUnitSelectionCandidateElement));
+        Assert.AreEqual(1, snapshotQuery.CalculateEntityCount());
+
+        Entity snapshot = snapshotQuery.GetSingletonEntity();
+        DynamicBuffer<VisibleUnitSelectionCandidateElement> candidates =
+            _entityManager.GetBuffer<VisibleUnitSelectionCandidateElement>(snapshot);
+        Assert.AreEqual(2, candidates.Length);
+
+        bool foundVehicle = false;
+        bool foundSoldier = false;
+        for (int i = 0; i < candidates.Length; i++)
+        {
+            VisibleUnitSelectionCandidateElement candidate = candidates[i];
+            if (candidate.Entity == sourceVehicle && candidate.IsVehicle == 1)
+                foundVehicle = true;
+            if (candidate.Entity == sourceSoldier && candidate.IsVehicle == 0)
+                foundSoldier = true;
+        }
+
+        Assert.IsTrue(foundVehicle);
+        Assert.IsTrue(foundSoldier);
     }
 
     [Test]

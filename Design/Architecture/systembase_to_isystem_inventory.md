@@ -1,25 +1,25 @@
 # SystemBase To ISystem Inventory
 
-Generated: `2026-06-22T21:57:15Z`.
+Generated: `2026-06-22T22:37:43Z`.
 Command: `python3 Tools/Architecture/generate_systembase_to_isystem_inventory.py --root Assets/Game/Scripts --output Design/Architecture/systembase_to_isystem_inventory.md`.
 Source root: `Assets/Game/Scripts`.
-Source commit: `f8d15883`.
+Source commit: `6a8b4dcb`.
 Worktree state during generation: `dirty`.
 
 ## Summary
 
-- Total ECS system declarations: `169`.
-- Production `SystemBase`/legacy declarations: `32`.
-- Production `ISystem` declarations: `137`.
-- Current production `ISystem` share: `81.1%`.
-- Production non-UI rows: `161`.
+- Total ECS system declarations: `165`.
+- Production `SystemBase`/legacy declarations: `27`.
+- Production `ISystem` declarations: `138`.
+- Current production `ISystem` share: `83.6%`.
+- Production non-UI rows: `157`.
 - Production UI rows: `8`.
 - Editor rows: `0`.
 - Test rows: `0`.
-- Scopes: `ProductionNonUI` 161, `ProductionUI` 8.
-- Owner lanes: `AgentB` 19, `AgentC` 12, `AgentD` 9, `AgentE` 10, `AgentF` 34, `Integration` 85.
-- Dispositions: `Converted` 130, `ManagedPresentationSystemBaseException` 24, `RetireFold` 2, `SplitThenConvert` 5, `UIOutOfScope` 8.
-- Statuses: `Converted` 130, `Deferred` 8, `ManagedException` 24, `Open` 7.
+- Scopes: `ProductionNonUI` 157, `ProductionUI` 8.
+- Owner lanes: `AgentB` 19, `AgentC` 12, `AgentD` 9, `AgentE` 10, `AgentF` 34, `Integration` 81.
+- Dispositions: `Converted` 131, `ManagedPresentationSystemBaseException` 24, `RetireFold` 2, `UIOutOfScope` 8.
+- Statuses: `Converted` 131, `Deferred` 8, `ManagedException` 24, `Open` 2.
 
 ## Inventory
 
@@ -132,12 +132,8 @@ Worktree state during generation: `dirty`.
 | `P7-0314` | `InitialUnitSpawnResetSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/InitialUnitSpawnResetSystem.cs` | 3 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, Path, Spawn | OnCreate (method), OnUpdate (method), ResetSpawnedUnitRuntimeState (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `InitialUnitSpawnResetSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0316` | `MapSurfaceDiagnosticsSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs` | 6 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command | BuildDiagnostics (method), Equals (method), Execute (method), OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `MapSurfaceDiagnosticsSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0317` | `MapSurfaceFlatEquivalentBootstrapSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/MapSurfaceFlatEquivalentBootstrapSystem.cs` | 5 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: BuildingPlacement, Command, Path | OnCreate (method), OnDestroy (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `MapSurfaceFlatEquivalentBootstrapSystem : ISystem` | Architecture guard + compile | `Converted` |
-| `P7-0318` | `MapVehiclePlacementSpawnSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnSystem.cs` | 8 | `ProductionNonUI` | `Integration` | `SplitThenConvert` | Transform | High: managed blockers mixed with Command, Path, Spawn | ClearRuntimeBlockersInFootprint (method), Context (property), PublishPlacementReadModel (method), TryGetGridDataDelegate (method), TryGetRuntimeBoundaryDelegate (method), Update (method) | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Narrow `ISystem` processors plus explicit managed boundary if needed. | Architecture guard + compile | `Open` |
-| `P7-0319` | `MatchHudSquadTraySelectionSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionSystem.cs` | 9 | `ProductionNonUI` | `Integration` | `SplitThenConvert` | Camera | High: managed blockers mixed with Attack, Combat, Health, Selection | ClearActiveSlot (method), Context (property), SelectSlot (method), TryGetEntityManagerDelegate (method) | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Narrow `ISystem` processors plus explicit managed boundary if needed. | Architecture guard + compile | `Open` |
 | `P7-0321` | `PathPoolMaintenanceSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/PathPoolMaintenanceSystem.cs` | 4 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Path | OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `PathPoolMaintenanceSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0322` | `PreGameEcsActivityDiagnosticsSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/PreGameEcsActivityDiagnosticsSystem.cs` | 4 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Combat, Health, Path, Production | OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `PreGameEcsActivityDiagnosticsSystem : ISystem` | Architecture guard + compile | `Converted` |
-| `P7-0323` | `ResourceHaulerSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/ResourceHaulerSystem.cs` | 5 | `ProductionNonUI` | `Integration` | `SplitThenConvert` | None | Medium: Resource | AdvanceTimedAction (method), CreateOrder (method), GetCargo (method), GetFuelReceivingFreeCapacity (method), GetLoadAmount (method), GetOilReceivingFreeCapacity (method), HasAvailableFuelForHauler (method), HasEnoughSourceResource (method), HasReceivingCapacity (method), IsFuelBuilding (method), IsFuelStorageSourceBuilding (method), IsOilSourceBuilding (method), ResetActionTimer (method), RevertLoad (method), SetPhase (method), SetTravelPhase (method), TryCompleteLoad (method), TryCompleteUnload (method) | Manual review: hauler phase/resource transfer policy. Split order/state transitions into ECS processors and keep helper math static. | Resource hauler `ISystem` processors | Architecture guard + compile | `Open` |
-| `P7-0325` | `RuntimeRootSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/RuntimeRootSystem.cs` | 4 | `ProductionNonUI` | `Integration` | `SplitThenConvert` | GameObject, Transform | Low: managed boundary only | Ensure (method) | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Narrow `ISystem` processors plus explicit managed boundary if needed. | Architecture guard + compile | `Open` |
 | `P7-0326` | `RuntimeUnitPrefabSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/RuntimeUnitPrefabSystem.cs` | 5 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Spawn | Context (property), CreateCitizenPrefabContext (method), OnCreate (method), OnUpdate (method), TryResolveConfiguredUnitPrefabEntity (method), TryResolveSpawnUnitSourceKey (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `RuntimeUnitPrefabSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0327` | `ScanIntelCommandSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs` | 7 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Combat, Command, Health, MoveOrder | EnqueueScan (method), FromCommandResult (method), OnCreate (method), OnUpdate (method), ProcessCommandIntentRequests (method), ProcessPendingRequests (method), Rejected (method), Result (property), Success (method), TryIssueScan (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `ScanIntelCommandSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0329` | `SelectedMoveOrderCommandSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs` | 7 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, MoveOrder, Path, Selection | ClickedCellResolver (method), ClickedUnitResolver (method), OnCreate (method), OnUpdate (method), ProcessCommandIntentRequests (method), Rejected (method), Result (property), Success (method), TryIssueMoveOrder (method), TryIssueMoveOrderToCell (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `SelectedMoveOrderCommandSystem : ISystem` | Architecture guard + compile | `Converted` |
@@ -185,7 +181,7 @@ Worktree state during generation: `dirty`.
 | `P7-0371` | `UnitTurretAimSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/UnitTurretAimSystem.cs` | 6 | `ProductionNonUI` | `Integration` | `Converted` | None | None | OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `UnitTurretAimSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0372` | `VehicleSlopeAlignmentSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/VehicleSlopeAlignmentSystem.cs` | 6 | `ProductionNonUI` | `Integration` | `Converted` | None | None | Execute (method), OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `VehicleSlopeAlignmentSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0373` | `VehicleWreckCleanupSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/VehicleWreckCleanupSystem.cs` | 6 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Health | Execute (method), OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `VehicleWreckCleanupSystem : ISystem` | Architecture guard + compile | `Converted` |
-| `P7-0374` | `VisibleUnitSelectionSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/VisibleUnitSelectionSystem.cs` | 10 | `ProductionNonUI` | `Integration` | `SplitThenConvert` | Camera | High: managed blockers mixed with Selection | ApplySelectedUnitTags (method), CollectVisiblePlayerUnits (method), EnsureEntityQueries (method), Execute (method), Filter (property), HasVisiblePlayerUnits (method) | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Narrow `ISystem` processors plus explicit managed boundary if needed. | Architecture guard + compile | `Open` |
+| `P7-0384` | `VisibleUnitSelectionCandidateSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/VisibleUnitSelectionCandidateSystem.cs` | 18 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Selection | Collect (method), CreateQueryDesc (method), Execute (method), OnCreate (method), OnDestroy (method), OnUpdate (method), VisibleUnitSelectionCandidateCollector (property) | Keep as `ISystem`; verify no managed blockers are introduced. | `VisibleUnitSelectionCandidateSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0375` | `UiActionRequestSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs` | 3 | `ProductionUI` | `Integration` | `UIOutOfScope` | None | Medium: Attack, BuildingPlacement, Combat, Command | OnCreate (method), OnUpdate (method) | Out of Phase 7 non-UI gameplay denominator. | UIOutOfScope | Out of Phase 7 validation matrix. | `Deferred` |
 | `P7-0382` | `UiBuildDrawerReadModelSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs` | 500 | `ProductionUI` | `Integration` | `UIOutOfScope` | None | Medium: BuildingPlacement, Command, Production, Selection | Clear (method), Configure (method), OnCreate (method), OnUpdate (method), ProcessPrimaryRequest (method), ProcessProductionRequest (method), ResolveSprite (method), UiBuildDrawerReadModelSource (property), WriteReadModel (method) | Out of Phase 7 non-UI gameplay denominator. | UIOutOfScope | Out of Phase 7 validation matrix. | `Deferred` |
 | `P7-0376` | `UiBuildPlacementReadModelSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs` | 24 | `ProductionUI` | `Integration` | `UIOutOfScope` | None | Medium: BuildingPlacement, Command | Clear (method), Configure (method), OnCreate (method), OnUpdate (method), UiBuildPlacementReadModelSource (property) | Out of Phase 7 non-UI gameplay denominator. | UIOutOfScope | Out of Phase 7 validation matrix. | `Deferred` |
@@ -318,7 +314,7 @@ Rows: `34`.
 
 ### Integration
 
-Rows: `85`.
+Rows: `81`.
 
 | Id | Type | Base | Disposition | Status | Path | First safe slice | Validation gate |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -345,12 +341,8 @@ Rows: `85`.
 | `P7-0314` | `InitialUnitSpawnResetSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/InitialUnitSpawnResetSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0316` | `MapSurfaceDiagnosticsSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0317` | `MapSurfaceFlatEquivalentBootstrapSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/MapSurfaceFlatEquivalentBootstrapSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
-| `P7-0318` | `MapVehiclePlacementSpawnSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnSystem.cs` | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Architecture guard + compile |
-| `P7-0319` | `MatchHudSquadTraySelectionSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionSystem.cs` | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Architecture guard + compile |
 | `P7-0321` | `PathPoolMaintenanceSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/PathPoolMaintenanceSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0322` | `PreGameEcsActivityDiagnosticsSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/PreGameEcsActivityDiagnosticsSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
-| `P7-0323` | `ResourceHaulerSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Systems/ResourceHaulerSystem.cs` | Manual review: hauler phase/resource transfer policy. Split order/state transitions into ECS processors and keep helper math static. | Architecture guard + compile |
-| `P7-0325` | `RuntimeRootSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Systems/RuntimeRootSystem.cs` | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Architecture guard + compile |
 | `P7-0326` | `RuntimeUnitPrefabSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/RuntimeUnitPrefabSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0327` | `ScanIntelCommandSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0329` | `SelectedMoveOrderCommandSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
@@ -398,7 +390,7 @@ Rows: `85`.
 | `P7-0371` | `UnitTurretAimSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/UnitTurretAimSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0372` | `VehicleSlopeAlignmentSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/VehicleSlopeAlignmentSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0373` | `VehicleWreckCleanupSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/VehicleWreckCleanupSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
-| `P7-0374` | `VisibleUnitSelectionSystem` | `SystemBase` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Systems/VisibleUnitSelectionSystem.cs` | Split pure ECS request/state processing from managed Unity-object/config boundary first. | Architecture guard + compile |
+| `P7-0384` | `VisibleUnitSelectionCandidateSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/VisibleUnitSelectionCandidateSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0375` | `UiActionRequestSystem` | `ISystem` | `UIOutOfScope` | `Deferred` | `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs` | Out of Phase 7 non-UI gameplay denominator. | Out of Phase 7 validation matrix. |
 | `P7-0382` | `UiBuildDrawerReadModelSystem` | `ISystem` | `UIOutOfScope` | `Deferred` | `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs` | Out of Phase 7 non-UI gameplay denominator. | Out of Phase 7 validation matrix. |
 | `P7-0376` | `UiBuildPlacementReadModelSystem` | `ISystem` | `UIOutOfScope` | `Deferred` | `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs` | Out of Phase 7 non-UI gameplay denominator. | Out of Phase 7 validation matrix. |
@@ -418,7 +410,7 @@ No rows currently require manual review.
 
 These rows were previously `ReviewRequired` and were classified by Agent A without converting domain code.
 
-Rows: `9`.
+Rows: `8`.
 
 | Id | Type | Base | Owner lane | Manual disposition | Status | Path | Reviewed first safe slice | Replacement target |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -429,7 +421,6 @@ Rows: `9`.
 | `P7-0383` | `UnitSelectionObjectOutlinePresentationSystem` | `SystemBase` | `AgentF` | `ManagedPresentationSystemBaseException` | `ManagedException` | `Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs` | Manual review: consumes selected unit marker ECS state and owns only selection object-outline `Material`, `Mesh`, and render-mesh presentation setup. | Counted managed selection object-outline presentation `SystemBase` exception |
 | `P7-0283` | `CombatGameObjectVfxPlaybackSystem` | `SystemBase` | `AgentF` | `ManagedPresentationSystemBaseException` | `ManagedException` | `Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs` | Manual review: consumes ECS `CombatGameObjectVfxRequest` entities and unwraps `UnityObjectRef<GameObject>` only to play authored pooled GameObject VFX. | Counted managed presentation `SystemBase` exception consuming ECS combat VFX requests |
 | `P7-0284` | `UnitAttackVfxRequestSystem` | `SystemBase` | `AgentF` | `ManagedPresentationSystemBaseException` | `ManagedException` | `Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs` | Manual review: consumes ECS `UnitAttackVfxRequest` entities and unwraps authored muzzle/impact GameObject prefab refs only at the VFX playback boundary. | Counted managed presentation `SystemBase` exception consuming ECS unit attack VFX requests |
-| `P7-0323` | `ResourceHaulerSystem` | `SystemBase` | `Integration` | `SplitThenConvert` | `Open` | `Assets/Game/Scripts/Systems/ResourceHaulerSystem.cs` | Manual review: hauler phase/resource transfer policy. Split order/state transitions into ECS processors and keep helper math static. | Resource hauler `ISystem` processors |
 | `P7-0338` | `UnitAttackSystem` | `ISystem` | `Integration` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/UnitAttackSystem.cs` | Keep as `ISystem`; authored GameObject VFX playback is split into `UnitAttackVfxSystems.cs` managed presentation boundaries. | `UnitAttackSystem : ISystem` with ECS VFX request data |
 
 ## Broad Converted ISystem Review Debt
@@ -455,7 +446,7 @@ Rows: `10`.
 
 Converted rows in this section already use `ISystem`, but still expose public/internal helper APIs beyond lifecycle/runner methods. Domain conversion slices must replace these helpers with ECS request/result data, plain stateless helpers, or documented integration exceptions before marking the related Phase 7 row finally clean.
 
-Rows: `59`.
+Rows: `60`.
 
 | Id | Type | Helper count | Owner lane | Path | Helper APIs |
 | --- | --- | ---: | --- | --- | --- |
@@ -518,6 +509,7 @@ Rows: `59`.
 | `P7-0361` | `UnitTransportAirdropSystem` | 4 | `Integration` | `Assets/Game/Scripts/Systems/UnitTransportAirdropSystem.cs` | CreateMissingAirdropVisualPrefabMessage (method), CreateNoAirdropLandingCellMessage (method), HasResolvableDropVisualPrefab (method), TryFindLandingCell (method) |
 | `P7-0363` | `UnitTransportCapacitySystem` | 5 | `Integration` | `Assets/Game/Scripts/Systems/UnitTransportCapacitySystem.cs` | IsPersonnelTransportName (method), IsTransportPlaneName (method), ResolveTransportCapacity (method), ResolveTransportCargoCapacity (method), TryEnsureTransportCapacity (method) |
 | `P7-0366` | `UnitTransportPassengerStateSystem` | 2 | `Integration` | `Assets/Game/Scripts/Systems/UnitTransportPassengerStateSystem.cs` | ApplyBoardingOrderState (method), BoardPassenger (method) |
+| `P7-0384` | `VisibleUnitSelectionCandidateSystem` | 3 | `Integration` | `Assets/Game/Scripts/Systems/VisibleUnitSelectionCandidateSystem.cs` | Collect (method), CreateQueryDesc (method), VisibleUnitSelectionCandidateCollector (property) |
 
 ## Extended Details
 
@@ -630,12 +622,8 @@ Rows: `59`.
 | `P7-0314` | `public` | `None` | None | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method), ResetSpawnedUnitRuntimeState (method) | EntityManager, ECB | None | `Assets/Game/Scripts/Systems/InitialUnitSpawnResetSystem.cs\|InitialUnitSpawnResetSystem` |
 | `P7-0316` | `public` | `None` | None | OnCreate, OnUpdate, Update | BuildDiagnostics (method), Equals (method), Execute (method), OnCreate (method), OnUpdate (method) | GetComponentLookup, ECB, jobs, .Schedule | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs\|MapSurfaceDiagnosticsSystem` |
 | `P7-0317` | `public` | `None` | None | OnCreate, OnUpdate, OnDestroy | OnCreate (method), OnDestroy (method), OnUpdate (method) | EntityQuery, EntityManager, ECB | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/MapSurfaceFlatEquivalentBootstrapSystem.cs\|MapSurfaceFlatEquivalentBootstrapSystem` |
-| `P7-0318` | `internal` | `None` | None | OnCreate, OnUpdate, Update | ClearRuntimeBlockersInFootprint (method), Context (property), PublishPlacementReadModel (method), TryGetGridDataDelegate (method), TryGetRuntimeBoundaryDelegate (method), Update (method) | EntityManager, ECB | presentation view | `Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnSystem.cs\|MapVehiclePlacementSpawnSystem` |
-| `P7-0319` | `public` | `None` | None | OnCreate, OnUpdate | ClearActiveSlot (method), Context (property), SelectSlot (method), TryGetEntityManagerDelegate (method) | EntityQuery, EntityManager | presentation view, native container, query/lookup/cache | `Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionSystem.cs\|MatchHudSquadTraySelectionSystem` |
 | `P7-0321` | `public` | `None` | None | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method) | EntityQuery | query/lookup/cache | `Assets/Game/Scripts/Systems/PathPoolMaintenanceSystem.cs\|PathPoolMaintenanceSystem` |
 | `P7-0322` | `public` | `None` | None | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method) | EntityQuery | query/lookup/cache | `Assets/Game/Scripts/Systems/PreGameEcsActivityDiagnosticsSystem.cs\|PreGameEcsActivityDiagnosticsSystem` |
-| `P7-0323` | `public` | `None` | None | OnCreate, OnUpdate | AdvanceTimedAction (method), CreateOrder (method), GetCargo (method), GetFuelReceivingFreeCapacity (method), GetLoadAmount (method), GetOilReceivingFreeCapacity (method), HasAvailableFuelForHauler (method), HasEnoughSourceResource (method), HasReceivingCapacity (method), IsFuelBuilding (method), IsFuelStorageSourceBuilding (method), IsOilSourceBuilding (method), ResetActionTimer (method), RevertLoad (method), SetPhase (method), SetTravelPhase (method), TryCompleteLoad (method), TryCompleteUnload (method) | None | None | `Assets/Game/Scripts/Systems/ResourceHaulerSystem.cs\|ResourceHaulerSystem` |
-| `P7-0325` | `public` | `None` | None | OnCreate, OnUpdate | Ensure (method) | None | prefab/reference, presentation view | `Assets/Game/Scripts/Systems/RuntimeRootSystem.cs\|RuntimeRootSystem` |
 | `P7-0326` | `internal` | `None` | None | OnCreate, OnUpdate | Context (property), CreateCitizenPrefabContext (method), OnCreate (method), OnUpdate (method), TryResolveConfiguredUnitPrefabEntity (method), TryResolveSpawnUnitSourceKey (method) | EntityManager | None | `Assets/Game/Scripts/Systems/RuntimeUnitPrefabSystem.cs\|RuntimeUnitPrefabSystem` |
 | `P7-0327` | `public` | `None` | None | OnCreate, OnUpdate, Update | EnqueueScan (method), FromCommandResult (method), OnCreate (method), OnUpdate (method), ProcessCommandIntentRequests (method), ProcessPendingRequests (method), Rejected (method), Result (property), Success (method), TryIssueScan (method) | EntityQuery, EntityManager | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs\|ScanIntelCommandSystem` |
 | `P7-0329` | `public` | `None` | None | OnCreate, OnUpdate, Update | ClickedCellResolver (method), ClickedUnitResolver (method), OnCreate (method), OnUpdate (method), ProcessCommandIntentRequests (method), Rejected (method), Result (property), Success (method), TryIssueMoveOrder (method), TryIssueMoveOrderToCell (method) | EntityQuery, EntityManager | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs\|SelectedMoveOrderCommandSystem` |
@@ -683,7 +671,7 @@ Rows: `59`.
 | `P7-0371` | `public` | `None` | None | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method) | SystemAPI.Query, GetComponentLookup | None | `Assets/Game/Scripts/Systems/UnitTurretAimSystem.cs\|UnitTurretAimSystem` |
 | `P7-0372` | `public` | `None` | None | OnCreate, OnUpdate | Execute (method), OnCreate (method), OnUpdate (method) | jobs, .ScheduleParallel | None | `Assets/Game/Scripts/Systems/VehicleSlopeAlignmentSystem.cs\|VehicleSlopeAlignmentSystem` |
 | `P7-0373` | `public` | `None` | None | OnCreate, OnUpdate | Execute (method), OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager, jobs, .ScheduleParallel | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/VehicleWreckCleanupSystem.cs\|VehicleWreckCleanupSystem` |
-| `P7-0374` | `public` | `None` | None | OnCreate, OnUpdate | ApplySelectedUnitTags (method), CollectVisiblePlayerUnits (method), EnsureEntityQueries (method), Execute (method), Filter (property), HasVisiblePlayerUnits (method) | EntityQuery, EntityManager, jobs, .Run | presentation view, native container, query/lookup/cache | `Assets/Game/Scripts/Systems/VisibleUnitSelectionSystem.cs\|VisibleUnitSelectionSystem` |
+| `P7-0384` | `public` | `None` | None | OnCreate, OnUpdate, OnDestroy | Collect (method), CreateQueryDesc (method), Execute (method), OnCreate (method), OnDestroy (method), OnUpdate (method), VisibleUnitSelectionCandidateCollector (property) | EntityQuery, EntityManager, jobs, .Run | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/VisibleUnitSelectionCandidateSystem.cs\|VisibleUnitSelectionCandidateSystem` |
 | `P7-0375` | `public` | `None` | None | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs\|UiActionRequestSystem` |
 | `P7-0382` | `public` | `None` | None | OnCreate, OnUpdate | Clear (method), Configure (method), OnCreate (method), OnUpdate (method), ProcessPrimaryRequest (method), ProcessProductionRequest (method), ResolveSprite (method), UiBuildDrawerReadModelSource (property), WriteReadModel (method) | EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs\|UiBuildDrawerReadModelSystem` |
 | `P7-0376` | `public` | `None` | None | OnCreate, OnUpdate | Clear (method), Configure (method), OnCreate (method), OnUpdate (method), UiBuildPlacementReadModelSource (property) | EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs\|UiBuildPlacementReadModelSystem` |

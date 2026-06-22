@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "Game.Authoring",
+        "Game.Catalog.Contracts",
         "Game.Components",
         "Game.Configs",
         "Game.Rendering",

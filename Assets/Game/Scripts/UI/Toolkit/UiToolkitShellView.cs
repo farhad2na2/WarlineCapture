@@ -26,6 +26,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private const string DefaultCreditsText = "12,450";
     private const string DefaultSuppliesText = "1,280";
     private const string DefaultCommandText = "78/100";
+    private const int BuildDrawerCategoryCount = 4;
     private const int BuildDrawerCatalogItemCount = 7;
     private const int BuildDrawerQueueItemCount = 2;
     private const int ArmoryCategoryCount = 5;
@@ -229,6 +230,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private EventCallback<ClickEvent> buildDrawerRushActionCallback;
     private EventCallback<ClickEvent> buildDrawerClearActionCallback;
     private EventCallback<ClickEvent> buildDrawerActiveProductionCancelActionCallback;
+    private readonly EventCallback<ClickEvent>[] buildDrawerTabActionCallbacks = new EventCallback<ClickEvent>[BuildDrawerCategoryCount];
     private EventCallback<ClickEvent> buildPlacementConfirmActionCallback;
     private EventCallback<ClickEvent> buildPlacementCancelActionCallback;
     private EventCallback<ClickEvent> buildPlacementRotateActionCallback;
@@ -277,6 +279,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private VisualElement buildDrawerActiveProductionFill;
     private Button buildDrawerActiveProductionCancelAction;
     private readonly Button[] buildDrawerCatalogItems = new Button[BuildDrawerCatalogItemCount];
+    private readonly Button[] buildDrawerTabActions = new Button[BuildDrawerCategoryCount];
     private readonly VisualElement[] buildDrawerCatalogThumbs = new VisualElement[BuildDrawerCatalogItemCount];
     private readonly Label[] buildDrawerCatalogTitleLabels = new Label[BuildDrawerCatalogItemCount];
     private readonly Label[] buildDrawerCatalogRoleLabels = new Label[BuildDrawerCatalogItemCount];
@@ -773,6 +776,10 @@ public sealed class UiToolkitShellView : MonoBehaviour
         && buildDrawerRushAction != null
         && buildDrawerClearAction != null
         && buildDrawerCloseAction != null
+        && buildDrawerTabActions[(int)BuildDrawerCategory.Buildings] != null
+        && buildDrawerTabActions[(int)BuildDrawerCategory.Vehicles] != null
+        && buildDrawerTabActions[(int)BuildDrawerCategory.Aircrafts] != null
+        && buildDrawerTabActions[(int)BuildDrawerCategory.Soldiers] != null
         && buildDrawerNameLabel != null
         && buildDrawerRoleLabel != null
         && buildDrawerDescriptionLabel != null
@@ -1910,6 +1917,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
         SetElementEnabled(buildDrawerClearAction, drawer.ClearEnabled);
 
         SetShellHidden(buildDrawerNoProductionLabel, !drawer.NoProductionVisible);
+        ApplyBuildDrawerTabs(drawer);
         ApplyBuildDrawerActiveProduction(drawer.ActiveProduction);
 
         int catalogCount = Mathf.Clamp(drawer.CatalogItemCount, 0, buildDrawerCatalogItems.Length);
@@ -2303,6 +2311,29 @@ public sealed class UiToolkitShellView : MonoBehaviour
         SetElementEnabled(buildDrawerActiveProductionCancelAction, activeProduction.CancelEnabled);
     }
 
+    private void ApplyBuildDrawerTabs(UiBuildDrawerModel drawer)
+    {
+        ApplyBuildDrawerTab(BuildDrawerCategory.Buildings, drawer.ActiveCategory, drawer.BuildingsCount);
+        ApplyBuildDrawerTab(BuildDrawerCategory.Vehicles, drawer.ActiveCategory, drawer.VehiclesCount);
+        ApplyBuildDrawerTab(BuildDrawerCategory.Aircrafts, drawer.ActiveCategory, drawer.AircraftsCount);
+        ApplyBuildDrawerTab(BuildDrawerCategory.Soldiers, drawer.ActiveCategory, drawer.SoldiersCount);
+    }
+
+    private void ApplyBuildDrawerTab(BuildDrawerCategory category, BuildDrawerCategory activeCategory, int itemCount)
+    {
+        int index = ToBuildDrawerCategoryIndex(category);
+        if (index < 0)
+            return;
+
+        Button tab = buildDrawerTabActions[index];
+        if (tab == null)
+            return;
+
+        bool selected = category == activeCategory;
+        SetClass(tab, "drawer-tab-selected", selected);
+        SetElementEnabled(tab, selected || itemCount > 0);
+    }
+
     private void ApplyBuildDrawerCatalogItem(int index, bool visible, UiBuildDrawerCatalogItemModel item)
     {
         Button button = buildDrawerCatalogItems[index];
@@ -2311,6 +2342,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
             return;
 
         SetElementEnabled(button, item.Enabled);
+        SetClass(button, "selected", item.Selected);
         SetLabelText(buildDrawerCatalogTitleLabels[index], item.Title, "STRUCTURE");
         SetLabelText(buildDrawerCatalogRoleLabels[index], item.Role, "BUILDING");
         SetLabelText(buildDrawerCatalogCreditsLabels[index], item.CreditsText, "0");
@@ -2329,6 +2361,12 @@ public sealed class UiToolkitShellView : MonoBehaviour
         SetLabelText(buildDrawerQueueNameLabels[index], row.Name, "PRODUCTION ITEM");
         SetLabelText(buildDrawerQueueTimeLabels[index], row.TimeText, "00:00");
         SetElementEnabled(buildDrawerQueueOrderActions[index], row.ActionEnabled);
+    }
+
+    private static int ToBuildDrawerCategoryIndex(BuildDrawerCategory category)
+    {
+        int index = (int)category;
+        return index >= 0 && index < BuildDrawerCategoryCount ? index : -1;
     }
 
     private static string[] BuildPercentLabels()
@@ -2546,6 +2584,11 @@ public sealed class UiToolkitShellView : MonoBehaviour
         buildDrawerRushIcon = buildDrawerRushAction?.Q<VisualElement>("Icon");
         buildDrawerClearIcon = buildDrawerClearAction?.Q<VisualElement>("Icon");
 
+        CacheBuildDrawerTab(BuildDrawerCategory.Buildings, "BuildingsTab");
+        CacheBuildDrawerTab(BuildDrawerCategory.Vehicles, "VehiclesTab");
+        CacheBuildDrawerTab(BuildDrawerCategory.Aircrafts, "AircraftsTab");
+        CacheBuildDrawerTab(BuildDrawerCategory.Soldiers, "SoldiersTab");
+
         for (int i = 0; i < buildDrawerCatalogItems.Length; i++)
             CacheBuildDrawerCatalogItem(i, i == 0 ? "ItemView" : "ItemView_" + i);
 
@@ -2631,6 +2674,17 @@ public sealed class UiToolkitShellView : MonoBehaviour
         buildDrawerCatalogSuppliesLabels[index] = supplies?.Q<Label>("Value");
         buildDrawerCatalogTimeLabels[index] = time?.Q<Label>("Value");
         RegisterBuildDrawerCatalogAction(index);
+    }
+
+    private void CacheBuildDrawerTab(BuildDrawerCategory category, string tabName)
+    {
+        int index = ToBuildDrawerCategoryIndex(category);
+        if (index < 0)
+            return;
+
+        Button tab = buildDrawerPopupRoot?.Q<Button>(tabName);
+        buildDrawerTabActions[index] = tab;
+        RegisterBuildDrawerTabAction(category);
     }
 
     private void CacheBuildDrawerQueueRow(int index, string rowName)
@@ -3273,6 +3327,12 @@ public sealed class UiToolkitShellView : MonoBehaviour
         buildDrawerActiveProductionPercentLabel = null;
         buildDrawerActiveProductionFill = null;
         buildDrawerActiveProductionCancelAction = null;
+        for (int i = 0; i < buildDrawerTabActions.Length; i++)
+        {
+            UnregisterClick(buildDrawerTabActions[i], buildDrawerTabActionCallbacks[i]);
+            buildDrawerTabActionCallbacks[i] = null;
+            buildDrawerTabActions[i] = null;
+        }
         for (int i = 0; i < buildDrawerCatalogItems.Length; i++)
         {
             UnregisterClick(buildDrawerCatalogItems[i], buildDrawerCatalogActionCallbacks[i]);
@@ -3586,6 +3646,25 @@ public sealed class UiToolkitShellView : MonoBehaviour
             evt?.StopPropagation();
         };
         RegisterClick(target, buildDrawerCatalogActionCallbacks[index]);
+    }
+
+    private void RegisterBuildDrawerTabAction(BuildDrawerCategory category)
+    {
+        int index = ToBuildDrawerCategoryIndex(category);
+        if (index < 0)
+            return;
+
+        Button target = buildDrawerTabActions[index];
+        if (target == null)
+            return;
+
+        int payloadId = index;
+        buildDrawerTabActionCallbacks[index] = evt =>
+        {
+            TrySubmitMatchHudAction(UiActionKind.BuildDrawerTab, payloadId);
+            evt?.StopPropagation();
+        };
+        RegisterClick(target, buildDrawerTabActionCallbacks[index]);
     }
 
     private void RegisterBuildDrawerProductionAction(

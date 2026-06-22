@@ -95,6 +95,7 @@ public enum UiActionKind
     BuildProductionCancelActive,
     BuildProductionCancelQueued,
     BuildDrawerPrimaryBuild,
+    BuildDrawerTab,
     BuildPlacementConfirm,
     BuildPlacementCancel,
     BuildPlacementRotate,
@@ -379,6 +380,7 @@ public readonly struct UiBuildDrawerCatalogItemModel
 {
     public readonly bool Visible;
     public readonly bool Enabled;
+    public readonly bool Selected;
     public readonly string Title;
     public readonly string Role;
     public readonly string CreditsText;
@@ -393,9 +395,23 @@ public readonly struct UiBuildDrawerCatalogItemModel
         string creditsText,
         string suppliesText,
         string timeText)
+        : this(visible, enabled, false, title, role, creditsText, suppliesText, timeText)
+    {
+    }
+
+    public UiBuildDrawerCatalogItemModel(
+        bool visible,
+        bool enabled,
+        bool selected,
+        string title,
+        string role,
+        string creditsText,
+        string suppliesText,
+        string timeText)
     {
         Visible = visible;
         Enabled = enabled;
+        Selected = selected;
         Title = title;
         Role = role;
         CreditsText = creditsText;
@@ -472,6 +488,12 @@ public readonly struct UiBuildDrawerModel
     public readonly bool ClearEnabled;
     public readonly bool NoProductionVisible;
     public readonly UiBuildDrawerActiveProductionModel ActiveProduction;
+    public readonly BuildDrawerCategory ActiveCategory;
+    public readonly int BuildingsCount;
+    public readonly int VehiclesCount;
+    public readonly int AircraftsCount;
+    public readonly int SoldiersCount;
+    public readonly int SelectedCatalogSlot;
     public readonly int CatalogItemCount;
     public readonly UiBuildDrawerCatalogItemModel CatalogItem0;
     public readonly UiBuildDrawerCatalogItemModel CatalogItem1;
@@ -513,6 +535,79 @@ public readonly struct UiBuildDrawerModel
         int queueRowCount,
         UiBuildDrawerQueueRowModel queueRow0,
         UiBuildDrawerQueueRowModel queueRow1)
+        : this(
+            name,
+            role,
+            description,
+            footprintText,
+            requirementsText,
+            placementText,
+            productionTimeText,
+            creditsCostText,
+            suppliesCostText,
+            instructionText,
+            productionTitle,
+            productionCountText,
+            buildEnabled,
+            rushEnabled,
+            clearEnabled,
+            noProductionVisible,
+            activeProduction,
+            BuildDrawerCategory.Buildings,
+            0,
+            0,
+            0,
+            0,
+            0,
+            catalogItemCount,
+            catalogItem0,
+            catalogItem1,
+            catalogItem2,
+            catalogItem3,
+            catalogItem4,
+            catalogItem5,
+            catalogItem6,
+            queueRowCount,
+            queueRow0,
+            queueRow1)
+    {
+    }
+
+    public UiBuildDrawerModel(
+        string name,
+        string role,
+        string description,
+        string footprintText,
+        string requirementsText,
+        string placementText,
+        string productionTimeText,
+        string creditsCostText,
+        string suppliesCostText,
+        string instructionText,
+        string productionTitle,
+        string productionCountText,
+        bool buildEnabled,
+        bool rushEnabled,
+        bool clearEnabled,
+        bool noProductionVisible,
+        UiBuildDrawerActiveProductionModel activeProduction,
+        BuildDrawerCategory activeCategory,
+        int buildingsCount,
+        int vehiclesCount,
+        int aircraftsCount,
+        int soldiersCount,
+        int selectedCatalogSlot,
+        int catalogItemCount,
+        UiBuildDrawerCatalogItemModel catalogItem0,
+        UiBuildDrawerCatalogItemModel catalogItem1,
+        UiBuildDrawerCatalogItemModel catalogItem2,
+        UiBuildDrawerCatalogItemModel catalogItem3,
+        UiBuildDrawerCatalogItemModel catalogItem4,
+        UiBuildDrawerCatalogItemModel catalogItem5,
+        UiBuildDrawerCatalogItemModel catalogItem6,
+        int queueRowCount,
+        UiBuildDrawerQueueRowModel queueRow0,
+        UiBuildDrawerQueueRowModel queueRow1)
     {
         Name = name;
         Role = role;
@@ -531,6 +626,12 @@ public readonly struct UiBuildDrawerModel
         ClearEnabled = clearEnabled;
         NoProductionVisible = noProductionVisible;
         ActiveProduction = activeProduction;
+        ActiveCategory = activeCategory;
+        BuildingsCount = buildingsCount;
+        VehiclesCount = vehiclesCount;
+        AircraftsCount = aircraftsCount;
+        SoldiersCount = soldiersCount;
+        SelectedCatalogSlot = selectedCatalogSlot;
         CatalogItemCount = catalogItemCount;
         CatalogItem0 = catalogItem0;
         CatalogItem1 = catalogItem1;

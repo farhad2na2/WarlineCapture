@@ -3501,6 +3501,31 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             string shellViewSource = File.ReadAllText("Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs");
             StringAssert.Contains("RegisterBuildDrawerCatalogAction", shellViewSource, "Build Drawer catalog rows must register retained row callbacks.");
             StringAssert.Contains("UiActionKind.BuildCatalogItem", shellViewSource, "Build Drawer catalog rows must enqueue BuildCatalogItem actions.");
+            StringAssert.Contains("RegisterBuildDrawerTabAction", shellViewSource, "Build Drawer tabs must register retained tab callbacks.");
+            StringAssert.Contains("UiActionKind.BuildDrawerTab", shellViewSource, "Build Drawer tabs must enqueue BuildDrawerTab actions.");
+
+            Button[] tabActions =
+            {
+                shellView.BuildDrawerPopupRoot.Q<Button>("BuildingsTab"),
+                shellView.BuildDrawerPopupRoot.Q<Button>("VehiclesTab"),
+                shellView.BuildDrawerPopupRoot.Q<Button>("AircraftsTab"),
+                shellView.BuildDrawerPopupRoot.Q<Button>("SoldiersTab")
+            };
+
+            for (int i = 0; i < tabActions.Length; i++)
+            {
+                Assert.IsNotNull(tabActions[i], $"Build Drawer tab {i} must expose a button.");
+                Assert.IsTrue(shellView.TrySubmitMatchHudAction(UiActionKind.BuildDrawerTab, i), $"Build Drawer tab action {i} did not submit through the UI action boundary.");
+            }
+
+            Assert.AreEqual(tabActions.Length, gateway.UiActionRequests.Count, "Every Build Drawer tab must enqueue exactly one UI action request before catalog rows are submitted.");
+            for (int i = 0; i < tabActions.Length; i++)
+            {
+                Assert.AreEqual(UiActionKind.BuildDrawerTab, gateway.UiActionRequests[i].Kind, $"Build Drawer tab {i} action kind mismatch.");
+                Assert.AreEqual(i, gateway.UiActionRequests[i].PayloadId, $"Build Drawer tab {i} payload mismatch.");
+            }
+
+            gateway.UiActionRequests.Clear();
 
             for (int i = 0; i < shellView.BuildDrawerCatalogItems.Count; i++)
             {
@@ -3535,6 +3560,57 @@ public sealed class UiToolkitCanvasMigrationValidationTests
             StringAssert.Contains("buildCatalogRequests.Add", catalogBody, "BuildCatalogItem must enqueue an ECS Build Drawer catalog request.");
             StringAssert.Contains("CatalogSlot = request.PayloadId", catalogBody, "BuildCatalogItem must preserve the clicked row payload.");
             StringAssert.Contains("RequestId = queue.LastRequestId", catalogBody, "BuildCatalogItem must stamp the request id on the ECS request.");
+
+            Match tabCase = Regex.Match(
+                requestSystemSource,
+                @"case\s+UiActionKind\.BuildDrawerTab:(?<body>.*?)break;",
+                RegexOptions.Singleline | RegexOptions.CultureInvariant);
+            Assert.IsTrue(tabCase.Success, "UI action request system must process BuildDrawerTab.");
+            string tabBody = tabCase.Groups["body"].Value;
+            StringAssert.Contains("CaptureUiClickSequence", tabBody, "BuildDrawerTab must suppress the underlying world click.");
+            StringAssert.Contains("buildDrawerState.ActiveCategory", tabBody, "BuildDrawerTab must update the active drawer category.");
+            StringAssert.Contains("buildDrawerState.SelectedCatalogSlot = 0", tabBody, "BuildDrawerTab must reset row selection when changing category.");
+
+            var vehicleDrawer = new UiBuildDrawerModel(
+                "APC",
+                "VEHICLE",
+                "Armored transport.",
+                "-",
+                "Vehicle bay",
+                "-",
+                "00:12",
+                "300",
+                "0",
+                "Produce APC.",
+                "PRODUCTION",
+                "0",
+                true,
+                false,
+                false,
+                true,
+                default,
+                BuildDrawerCategory.Vehicles,
+                2,
+                3,
+                0,
+                1,
+                1,
+                2,
+                new UiBuildDrawerCatalogItemModel(true, true, false, "LIGHT APC", "VEHICLE", "250", "0", "00:10"),
+                new UiBuildDrawerCatalogItemModel(true, true, true, "HEAVY APC", "VEHICLE", "300", "0", "00:12"),
+                default,
+                default,
+                default,
+                default,
+                default,
+                0,
+                default,
+                default);
+            Assert.IsTrue(shellView.ApplyBuildDrawer(vehicleDrawer), "Build Drawer model with active Vehicles tab must apply.");
+            Assert.IsTrue(tabActions[1].ClassListContains("drawer-tab-selected"), "Active Vehicles tab must show selected state.");
+            Assert.IsFalse(tabActions[2].enabledSelf, "Empty Aircrafts tab must be disabled when it is not active.");
+            Assert.IsFalse(shellView.BuildDrawerCatalogItems[0].ClassListContains("selected"), "Unselected catalog row must clear selected state.");
+            Assert.IsTrue(shellView.BuildDrawerCatalogItems[1].ClassListContains("selected"), "Selected catalog row must show selected state after tab refresh.");
         }
         finally
         {

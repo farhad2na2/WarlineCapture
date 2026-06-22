@@ -614,6 +614,7 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
     private static bool Same(UiBuildDrawerCatalogItemModel a, UiBuildDrawerCatalogItemModel b) =>
         a.Visible == b.Visible &&
         a.Enabled == b.Enabled &&
+        a.Selected == b.Selected &&
         SameText(a.Title, b.Title) &&
         SameText(a.Role, b.Role) &&
         SameText(a.CreditsText, b.CreditsText) &&
@@ -645,6 +646,12 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
         a.ClearEnabled == b.ClearEnabled &&
         a.NoProductionVisible == b.NoProductionVisible &&
         Same(a.ActiveProduction, b.ActiveProduction) &&
+        a.ActiveCategory == b.ActiveCategory &&
+        a.BuildingsCount == b.BuildingsCount &&
+        a.VehiclesCount == b.VehiclesCount &&
+        a.AircraftsCount == b.AircraftsCount &&
+        a.SoldiersCount == b.SoldiersCount &&
+        a.SelectedCatalogSlot == b.SelectedCatalogSlot &&
         a.CatalogItemCount == b.CatalogItemCount &&
         Same(a.CatalogItem0, b.CatalogItem0) &&
         Same(a.CatalogItem1, b.CatalogItem1) &&

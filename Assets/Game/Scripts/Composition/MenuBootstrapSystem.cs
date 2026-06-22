@@ -49,6 +49,9 @@ internal sealed class MenuBootstrapSystem
     private SelectionUiReadModelSystem boundSelectionUiReadModel;
     private MainMenuPlayUI boundMainMenu;
     private IBuildingUiCommand boundUiToolkitBuildingUiCommand;
+    private IBuildingUiQuery boundUiToolkitBuildingUiQuery;
+    private ICatalogPrefabSource boundUiToolkitUnitPrefabSource;
+    private ICatalogPrefabSource boundUiToolkitBuildingPrefabSource;
     private UiToolkitMatchHudMinimapSurface boundUiToolkitMinimapSurface;
     private int boundContentVersion = -1;
 
@@ -454,21 +457,57 @@ internal sealed class MenuBootstrapSystem
         IBuildingUiCommand command = matchBootstrap != null
             ? matchBootstrap.BuildingUiCommandContract
             : null;
-        if (ReferenceEquals(boundUiToolkitBuildingUiCommand, command))
+        IBuildingUiQuery buildQuery = matchBootstrap != null
+            ? matchBootstrap.BuildingUiQueryContract
+            : null;
+        BuildingPlacementSystemConfig buildingConfig = matchBootstrap != null
+            ? matchBootstrap.BuildingPlacementConfig
+            : null;
+        ICatalogPrefabSource unitPrefabSource = buildingConfig != null && buildingConfig.UnitPrefabRegistryConfig != null
+            ? buildingConfig.UnitPrefabRegistryConfig
+            : buildingConfig;
+        ICatalogPrefabSource buildingPrefabSource = buildingConfig;
+        if (ReferenceEquals(boundUiToolkitBuildingUiCommand, command) &&
+            ReferenceEquals(boundUiToolkitBuildingUiQuery, buildQuery) &&
+            ReferenceEquals(boundUiToolkitUnitPrefabSource, unitPrefabSource) &&
+            ReferenceEquals(boundUiToolkitBuildingPrefabSource, buildingPrefabSource))
+        {
             return;
+        }
 
         UiBuildPlacementReadModelSource.Configure(command);
+        UiBuildDrawerReadModelSource.Configure(
+            unitPrefabSource,
+            buildingPrefabSource,
+            command,
+            buildQuery,
+            UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
+            UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
         boundUiToolkitBuildingUiCommand = command;
+        boundUiToolkitBuildingUiQuery = buildQuery;
+        boundUiToolkitUnitPrefabSource = unitPrefabSource;
+        boundUiToolkitBuildingPrefabSource = buildingPrefabSource;
     }
 
     private void ClearUiToolkitMatchReadModels()
     {
         ClearUiToolkitMinimapSurface();
-        if (boundUiToolkitBuildingUiCommand == null && !UiBuildPlacementReadModelSource.HasBuildingUiCommand)
+        if (boundUiToolkitBuildingUiCommand == null &&
+            boundUiToolkitBuildingUiQuery == null &&
+            boundUiToolkitUnitPrefabSource == null &&
+            boundUiToolkitBuildingPrefabSource == null &&
+            !UiBuildPlacementReadModelSource.HasBuildingUiCommand &&
+            !UiBuildDrawerReadModelSource.HasCatalogSources)
+        {
             return;
+        }
 
         UiBuildPlacementReadModelSource.Clear();
+        UiBuildDrawerReadModelSource.Clear();
         boundUiToolkitBuildingUiCommand = null;
+        boundUiToolkitBuildingUiQuery = null;
+        boundUiToolkitUnitPrefabSource = null;
+        boundUiToolkitBuildingPrefabSource = null;
     }
 
     private void BindUiToolkitMinimapSurface(MenuBootstrapView view, MainMenuPlayUI mainMenu)

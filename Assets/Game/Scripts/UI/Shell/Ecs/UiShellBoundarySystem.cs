@@ -27,6 +27,7 @@ public partial struct UiShellBoundarySystem : ISystem
             EnsureMatchHudHeaderComponent(ref state, existingBoundary);
             EnsureMatchHudStatusSurfacesComponent(ref state, existingBoundary);
             EnsureMatchHudMinimapComponent(ref state, existingBoundary);
+            EnsureBuildDrawerStateComponent(ref state, existingBoundary);
             EnsureBuildDrawerDetailComponent(ref state, existingBoundary);
             EnsureBuildDrawerActiveProductionComponent(ref state, existingBoundary);
             EnsureUiBuildDrawerCatalogBuffer(ref state, existingBoundary);
@@ -85,6 +86,7 @@ public partial struct UiShellBoundarySystem : ISystem
         state.EntityManager.AddComponentData(boundary, DefaultMatchHudHeader());
         state.EntityManager.AddComponentData(boundary, DefaultMatchHudStatusSurfaces());
         state.EntityManager.AddComponentData(boundary, DefaultMatchHudMinimap());
+        state.EntityManager.AddComponentData(boundary, DefaultBuildDrawerState());
         state.EntityManager.AddComponentData(boundary, DefaultBuildDrawerDetail());
         state.EntityManager.AddComponentData(boundary, DefaultBuildDrawerActiveProduction());
         state.EntityManager.AddComponentData(boundary, DefaultBuildPlacementConfirmationBar());
@@ -211,6 +213,14 @@ public partial struct UiShellBoundarySystem : ISystem
         state.EntityManager.AddComponentData(boundary, DefaultBuildDrawerDetail());
     }
 
+    private static void EnsureBuildDrawerStateComponent(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasComponent<UiBuildDrawerStateComponent>(boundary))
+            return;
+
+        state.EntityManager.AddComponentData(boundary, DefaultBuildDrawerState());
+    }
+
     private static void EnsureBuildDrawerActiveProductionComponent(ref SystemState state, Entity boundary)
     {
         if (state.EntityManager.HasComponent<UiBuildDrawerActiveProductionComponent>(boundary))
@@ -334,6 +344,19 @@ public partial struct UiShellBoundarySystem : ISystem
         };
     }
 
+    private static UiBuildDrawerStateComponent DefaultBuildDrawerState()
+    {
+        return new UiBuildDrawerStateComponent
+        {
+            ActiveCategory = BuildDrawerCategory.Buildings,
+            SelectedCatalogSlot = 0,
+            BuildingsCount = 2,
+            VehiclesCount = 0,
+            AircraftsCount = 0,
+            SoldiersCount = 0
+        };
+    }
+
     private static UiBuildDrawerActiveProductionComponent DefaultBuildDrawerActiveProduction()
     {
         return new UiBuildDrawerActiveProductionComponent
@@ -368,6 +391,8 @@ public partial struct UiShellBoundarySystem : ISystem
         {
             Visible = 1,
             Enabled = 1,
+            Selected = 1,
+            Category = BuildDrawerCategory.Buildings,
             Title = new FixedString64Bytes("GUARD TOWER"),
             Role = new FixedString32Bytes("DEFENSE"),
             CreditsText = new FixedString32Bytes("420"),
@@ -378,6 +403,8 @@ public partial struct UiShellBoundarySystem : ISystem
         {
             Visible = 1,
             Enabled = 0,
+            Selected = 0,
+            Category = BuildDrawerCategory.Buildings,
             Title = new FixedString64Bytes("BARRACKS"),
             Role = new FixedString32Bytes("INFANTRY"),
             CreditsText = new FixedString32Bytes("900"),

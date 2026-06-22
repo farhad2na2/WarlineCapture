@@ -147,6 +147,16 @@ public struct UiBuildDrawerDetailComponent : IComponentData
     public byte NoProductionVisible;
 }
 
+public struct UiBuildDrawerStateComponent : IComponentData
+{
+    public BuildDrawerCategory ActiveCategory;
+    public int SelectedCatalogSlot;
+    public int BuildingsCount;
+    public int VehiclesCount;
+    public int AircraftsCount;
+    public int SoldiersCount;
+}
+
 public struct UiBuildDrawerActiveProductionComponent : IComponentData
 {
     public byte Visible;
@@ -160,6 +170,8 @@ public struct UiBuildDrawerCatalogItemComponent : IBufferElementData
 {
     public byte Visible;
     public byte Enabled;
+    public byte Selected;
+    public BuildDrawerCategory Category;
     public FixedString64Bytes Title;
     public FixedString32Bytes Role;
     public FixedString32Bytes CreditsText;

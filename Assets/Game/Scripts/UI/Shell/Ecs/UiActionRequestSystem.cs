@@ -15,6 +15,7 @@ public partial struct UiActionRequestSystem : ISystem
             ComponentType.ReadWrite<UiDiagnosticsOverlayComponent>(),
             ComponentType.ReadWrite<UiMatchHudPassengerDrawerStateComponent>(),
             ComponentType.ReadWrite<UiMatchHudSquadTrayStateComponent>(),
+            ComponentType.ReadWrite<UiBuildDrawerStateComponent>(),
             ComponentType.ReadWrite<UiBuildCatalogRequestComponent>(),
             ComponentType.ReadWrite<UiBuildProductionRequestComponent>(),
             ComponentType.ReadWrite<UiBuildPrimaryRequestComponent>(),
@@ -54,6 +55,8 @@ public partial struct UiActionRequestSystem : ISystem
             state.EntityManager.GetComponentData<UiMatchHudPassengerDrawerStateComponent>(boundary);
         UiMatchHudSquadTrayStateComponent squadTrayState =
             state.EntityManager.GetComponentData<UiMatchHudSquadTrayStateComponent>(boundary);
+        UiBuildDrawerStateComponent buildDrawerState =
+            state.EntityManager.GetComponentData<UiBuildDrawerStateComponent>(boundary);
         UiDiagnosticsOverlayComponent diagnosticsOverlay =
             state.EntityManager.GetComponentData<UiDiagnosticsOverlayComponent>(boundary);
         RtsSelectionInputStateComponent inputState =
@@ -88,6 +91,7 @@ public partial struct UiActionRequestSystem : ISystem
                 ref diagnosticsOverlay,
                 ref passengerDrawerState,
                 ref squadTrayState,
+                ref buildDrawerState,
                 ref placementQueue,
                 frame);
         }
@@ -95,6 +99,7 @@ public partial struct UiActionRequestSystem : ISystem
         actionRequests.Clear();
         state.EntityManager.SetComponentData(boundary, passengerDrawerState);
         state.EntityManager.SetComponentData(boundary, squadTrayState);
+        state.EntityManager.SetComponentData(boundary, buildDrawerState);
         state.EntityManager.SetComponentData(boundary, diagnosticsOverlay);
         state.EntityManager.SetComponentData(selectionInput, inputState);
         state.EntityManager.SetComponentData(selectionInput, queue);
@@ -172,6 +177,7 @@ public partial struct UiActionRequestSystem : ISystem
         ref UiDiagnosticsOverlayComponent diagnosticsOverlay,
         ref UiMatchHudPassengerDrawerStateComponent passengerDrawerState,
         ref UiMatchHudSquadTrayStateComponent squadTrayState,
+        ref UiBuildDrawerStateComponent buildDrawerState,
         ref BuildingUiPlacementCommandQueueComponent placementQueue,
         int frame)
     {
@@ -209,11 +215,20 @@ public partial struct UiActionRequestSystem : ISystem
             case UiActionKind.BuildCatalogItem:
                 CaptureUiClickSequence(ref inputState, commandRequests, frame);
                 queue.LastRequestId++;
+                buildDrawerState.SelectedCatalogSlot = request.PayloadId;
                 buildCatalogRequests.Add(new UiBuildCatalogRequestComponent
                 {
                     CatalogSlot = request.PayloadId,
                     RequestId = queue.LastRequestId
                 });
+                break;
+            case UiActionKind.BuildDrawerTab:
+                CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                if (TryResolveBuildDrawerCategory(request.PayloadId, out BuildDrawerCategory category))
+                {
+                    buildDrawerState.ActiveCategory = category;
+                    buildDrawerState.SelectedCatalogSlot = 0;
+                }
                 break;
             case UiActionKind.BuildDrawerPrimaryBuild:
                 CaptureUiClickSequence(ref inputState, commandRequests, frame);
@@ -453,6 +468,19 @@ public partial struct UiActionRequestSystem : ISystem
             UiActionKind.SquadSlot5 => MatchHudSquadTraySlot.Transport,
             _ => MatchHudSquadTraySlot.None
         };
+    }
+
+    private static bool TryResolveBuildDrawerCategory(int payloadId, out BuildDrawerCategory category)
+    {
+        if (payloadId >= (int)BuildDrawerCategory.Buildings &&
+            payloadId <= (int)BuildDrawerCategory.Soldiers)
+        {
+            category = (BuildDrawerCategory)payloadId;
+            return true;
+        }
+
+        category = BuildDrawerCategory.Buildings;
+        return false;
     }
 
     private static void EnqueuePopup(

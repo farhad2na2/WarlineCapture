@@ -819,6 +819,8 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             return false;
 
         EnsureBuildDrawerState(entityManager, boundary);
+        UiBuildDrawerStateComponent drawerState =
+            entityManager.GetComponentData<UiBuildDrawerStateComponent>(boundary);
         UiBuildDrawerDetailComponent detail = entityManager.GetComponentData<UiBuildDrawerDetailComponent>(boundary);
         UiBuildDrawerActiveProductionComponent active =
             entityManager.GetComponentData<UiBuildDrawerActiveProductionComponent>(boundary);
@@ -899,6 +901,12 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
                 active.Name.ToString(),
                 active.PercentText.ToString(),
                 active.Progress01),
+            drawerState.ActiveCategory,
+            drawerState.BuildingsCount,
+            drawerState.VehiclesCount,
+            drawerState.AircraftsCount,
+            drawerState.SoldiersCount,
+            drawerState.SelectedCatalogSlot,
             catalogCount,
             catalog0,
             catalog1,
@@ -1047,6 +1055,7 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         return new UiBuildDrawerCatalogItemModel(
             item.Visible != 0,
             item.Enabled != 0,
+            item.Selected != 0,
             item.Title.ToString(),
             item.Role.ToString(),
             item.CreditsText.ToString(),
@@ -1141,6 +1150,16 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
 
     private static void EnsureBuildDrawerState(EntityManager entityManager, Entity boundary)
     {
+        if (!entityManager.HasComponent<UiBuildDrawerStateComponent>(boundary))
+        {
+            entityManager.AddComponentData(boundary, new UiBuildDrawerStateComponent
+            {
+                ActiveCategory = BuildDrawerCategory.Buildings,
+                SelectedCatalogSlot = 0,
+                BuildingsCount = 2
+            });
+        }
+
         if (!entityManager.HasComponent<UiBuildDrawerDetailComponent>(boundary))
         {
             entityManager.AddComponentData(boundary, new UiBuildDrawerDetailComponent
@@ -1192,6 +1211,8 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             {
                 Visible = 1,
                 Enabled = 1,
+                Selected = 1,
+                Category = BuildDrawerCategory.Buildings,
                 Title = new FixedString64Bytes("GUARD TOWER"),
                 Role = new FixedString32Bytes("DEFENSE"),
                 CreditsText = new FixedString32Bytes("420"),
@@ -1202,6 +1223,8 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             {
                 Visible = 1,
                 Enabled = 0,
+                Selected = 0,
+                Category = BuildDrawerCategory.Buildings,
                 Title = new FixedString64Bytes("BARRACKS"),
                 Role = new FixedString32Bytes("INFANTRY"),
                 CreditsText = new FixedString32Bytes("900"),

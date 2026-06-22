@@ -3,19 +3,10 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public sealed partial class SceneLifecycleSystem : SystemBase
+public sealed class SceneLifecycleSystem
 {
     public const string MenuSceneName = "Menu";
     public const string MatchSceneName = "Match";
-
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
 
     private Unity.Entities.World _world;
     private Entity _lifecycleEntity;

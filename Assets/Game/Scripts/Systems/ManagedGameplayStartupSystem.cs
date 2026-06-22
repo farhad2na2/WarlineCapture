@@ -2,17 +2,8 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-internal sealed partial class ManagedGameplayStartupSystem : SystemBase
+internal sealed class ManagedGameplayStartupSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     private readonly RoadBuildCompositionSystem _roadBuildCompositionSystem = new();
     private readonly BuildingGameplayCompositionSystem _buildingGameplayCompositionSystem = new();
     private readonly SelectionGameplayStartupSystem _selectionGameplayStartupSystem = new();

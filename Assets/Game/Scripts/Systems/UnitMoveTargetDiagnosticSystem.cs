@@ -1,37 +1,47 @@
-using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
-public partial class UnitMoveTargetDiagnosticSystem : SystemBase
+public partial struct UnitMoveTargetDiagnosticSystem : ISystem
 {
-    private readonly Dictionary<Entity, int2> _lastTargets = new();
-    private readonly List<Entity> _missingTargetScratch = new();
+    private NativeParallelHashMap<Entity, int2> _lastTargets;
+    private NativeList<Entity> _missingTargetScratch;
     private EntityQuery _playerUnitTargetQuery;
     private int _lastPruneFrame;
 
-    protected override void OnCreate()
+    public void OnCreate(ref SystemState state)
     {
-        _playerUnitTargetQuery = EntityManager.CreateEntityQuery(
+        _playerUnitTargetQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<UnitTarget>(),
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<Faction>());
+        _lastTargets = new NativeParallelHashMap<Entity, int2>(64, Allocator.Persistent);
+        _missingTargetScratch = new NativeList<Entity>(64, Allocator.Persistent);
         if (!SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-            Enabled = false;
+            state.Enabled = false;
     }
 
-    protected override void OnUpdate()
+    public void OnDestroy(ref SystemState state)
+    {
+        if (_lastTargets.IsCreated)
+            _lastTargets.Dispose();
+        if (_missingTargetScratch.IsCreated)
+            _missingTargetScratch.Dispose();
+    }
+
+    public void OnUpdate(ref SystemState state)
     {
         if (_playerUnitTargetQuery.IsEmptyIgnoreFilter)
         {
-            if (_lastTargets.Count > 0)
+            if (_lastTargets.Count() > 0)
                 _lastTargets.Clear();
             return;
         }
 
-        EntityManager em = EntityManager;
+        EntityManager em = state.EntityManager;
+        EnsureTargetCapacity(em, _playerUnitTargetQuery.CalculateEntityCount());
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
         ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
         ComponentTypeHandle<UnitTarget> targetType = em.GetComponentTypeHandle<UnitTarget>(true);
@@ -50,16 +60,17 @@ public partial class UnitMoveTargetDiagnosticSystem : SystemBase
                     continue;
 
                 UnitTarget target = targets[i];
-                if (_lastTargets.TryGetValue(entity, out int2 previous) && previous.Equals(target.Cell))
+                int2 previous = default;
+                if (_lastTargets.TryGetValue(entity, out previous) && previous.Equals(target.Cell))
                     continue;
 
                 _lastTargets[entity] = target.Cell;
                 SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
-                    $"playerUnitTargetChanged frame={UnityEngine.Time.frameCount} entity={DescribeEntity(entity)} " +
+                    $"playerUnitTargetChanged frame={UnityEngine.Time.frameCount} entity={DescribeEntity(em, entity)} " +
                     $"previous={(previous.Equals(default) ? "none-or-default" : previous.ToString())} target={target.Cell} " +
-                    $"pathRequest={ResolvePathRequest(entity)} pathFollow={EntityManager.HasComponent<UnitPathFollow>(entity)} " +
-                    $"manual={EntityManager.HasComponent<ManualMoveOrderTag>(entity)} engage={EntityManager.HasComponent<EngageTarget>(entity)} " +
-                    $"selected={EntityManager.HasComponent<SelectedUnitTag>(entity)} autoWander={EntityManager.HasComponent<AutoWanderMoveTag>(entity)}");
+                    $"pathRequest={ResolvePathRequest(em, entity)} pathFollow={em.HasComponent<UnitPathFollow>(entity)} " +
+                    $"manual={em.HasComponent<ManualMoveOrderTag>(entity)} engage={em.HasComponent<EngageTarget>(entity)} " +
+                    $"selected={em.HasComponent<SelectedUnitTag>(entity)} autoWander={em.HasComponent<AutoWanderMoveTag>(entity)}");
             }
         }
 
@@ -67,50 +78,76 @@ public partial class UnitMoveTargetDiagnosticSystem : SystemBase
             return;
 
         _lastPruneFrame = UnityEngine.Time.frameCount;
-        PruneMissingEntities();
+        PruneMissingEntities(em);
     }
 
-    private void PruneMissingEntities()
+    private void EnsureTargetCapacity(EntityManager em, int requiredCapacity)
+    {
+        requiredCapacity = math.max(64, requiredCapacity);
+        if (_lastTargets.Capacity >= requiredCapacity)
+            return;
+
+        NativeParallelHashMap<Entity, int2> resizedTargets =
+            new NativeParallelHashMap<Entity, int2>(requiredCapacity, Allocator.Persistent);
+        NativeArray<Entity> keys = _lastTargets.GetKeyArray(Allocator.Temp);
+        for (int i = 0; i < keys.Length; i++)
+        {
+            Entity entity = keys[i];
+            if (!em.Exists(entity))
+                continue;
+            if (_lastTargets.TryGetValue(entity, out int2 target))
+                resizedTargets.TryAdd(entity, target);
+        }
+
+        keys.Dispose();
+        _lastTargets.Dispose();
+        _lastTargets = resizedTargets;
+    }
+
+    private void PruneMissingEntities(EntityManager em)
     {
         _missingTargetScratch.Clear();
-        foreach (Entity entity in _lastTargets.Keys)
+        NativeArray<Entity> keys = _lastTargets.GetKeyArray(Allocator.Temp);
+        for (int i = 0; i < keys.Length; i++)
         {
-            if (EntityManager.Exists(entity))
+            Entity entity = keys[i];
+            if (em.Exists(entity))
                 continue;
 
             _missingTargetScratch.Add(entity);
         }
+        keys.Dispose();
 
-        if (_missingTargetScratch.Count == 0)
+        if (_missingTargetScratch.Length == 0)
             return;
 
-        for (int i = 0; i < _missingTargetScratch.Count; i++)
+        for (int i = 0; i < _missingTargetScratch.Length; i++)
             _lastTargets.Remove(_missingTargetScratch[i]);
 
         _missingTargetScratch.Clear();
     }
 
-    private string ResolvePathRequest(Entity entity)
+    private static string ResolvePathRequest(EntityManager em, Entity entity)
     {
-        return EntityManager.HasComponent<UnitPathRequest>(entity)
-            ? EntityManager.GetComponentData<UnitPathRequest>(entity).Goal.ToString()
+        return em.HasComponent<UnitPathRequest>(entity)
+            ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString()
             : "none";
     }
 
-    private string DescribeEntity(Entity entity)
+    private static string DescribeEntity(EntityManager em, Entity entity)
     {
-        if (entity == Entity.Null || !EntityManager.Exists(entity))
+        if (entity == Entity.Null || !em.Exists(entity))
             return "null";
 
-        string source = EntityManager.HasComponent<UnitSourcePrefabKey>(entity)
-            ? EntityManager.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
-            : EntityManager.GetName(entity);
-        byte faction = EntityManager.HasComponent<Faction>(entity)
-            ? EntityManager.GetComponentData<Faction>(entity).Id
+        string source = em.HasComponent<UnitSourcePrefabKey>(entity)
+            ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+            : em.GetName(entity);
+        byte faction = em.HasComponent<Faction>(entity)
+            ? em.GetComponentData<Faction>(entity).Id
             : (byte)0;
-        string grid = EntityManager.HasComponent<UnitGrid>(entity)
-            ? EntityManager.GetComponentData<UnitGrid>(entity).Cell.ToString()
+        string grid = em.HasComponent<UnitGrid>(entity)
+            ? em.GetComponentData<UnitGrid>(entity).Cell.ToString()
             : "none";
-        return $"{entity}/{source}/faction={faction}/selected={EntityManager.HasComponent<SelectedUnitTag>(entity)}/grid={grid}";
+        return $"{entity}/{source}/faction={faction}/selected={em.HasComponent<SelectedUnitTag>(entity)}/grid={grid}";
     }
 }

@@ -951,7 +951,7 @@ internal sealed class MatchBootstrapSystem
         if (world == null || !world.IsCreated)
             return null;
 
-        _customGameStartupSystem = world.GetOrCreateSystemManaged<CustomGameStartupSystem>();
+        _customGameStartupSystem ??= new CustomGameStartupSystem(world.EntityManager);
         return _customGameStartupSystem;
     }
 

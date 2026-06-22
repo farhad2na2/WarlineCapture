@@ -1,18 +1,8 @@
 using System.Collections.Generic;
-using Unity.Entities;
 using UnityEngine;
 
-public sealed partial class FactionResourceSystem : SystemBase
+public sealed class FactionResourceSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     public enum ResourceKind : byte
     {
         Oil = 0,

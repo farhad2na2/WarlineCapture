@@ -3,17 +3,8 @@ using Unity.Entities;
 using Unity.Profiling;
 using UnityEngine;
 
-public sealed partial class GameplayRuntimeUpdateSystem : SystemBase
+public sealed class GameplayRuntimeUpdateSystem
 {
-    protected override void OnCreate()
-    {
-        Enabled = false;
-    }
-
-    protected override void OnUpdate()
-    {
-    }
-
     private const int LoadingGateDiagnosticIntervalFrames = 120;
     private const int LoadingGateFailOpenFrames = 1800;
     private static readonly ProfilerMarker BeginUpdateMarker = new("GameplayRuntimeUpdate.BeginUpdate");

@@ -500,14 +500,14 @@ public partial struct GroundMissileFlyingRocketVisualSystem : ISystem
 
 [UpdateAfter(typeof(GroundMissileFlyingRocketVisualSystem))]
 [UpdateBefore(typeof(GroundMissileProjectileFlightSystem))]
-public partial class GroundMissileRocketTrailSystem : SystemBase
+public partial struct GroundMissileRocketTrailSystem : ISystem
 {
-    protected override void OnCreate()
+    public void OnCreate(ref SystemState state)
     {
-        RequireForUpdate<GroundMissileFlyingRocketVisualComponent>();
+        state.RequireForUpdate<GroundMissileFlyingRocketVisualComponent>();
     }
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
         foreach (var (transform, entity) in SystemAPI
                      .Query<RefRO<LocalTransform>>()

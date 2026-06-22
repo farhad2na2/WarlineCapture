@@ -33,7 +33,7 @@ public sealed class CustomGameStartupSystemTests
     public void InitializeFromLegacyConfigsCreatesStartupEntityAndBuffers()
     {
         using var world = new World("CustomGameStartupSystemTests");
-        CustomGameStartupSystem system = world.GetOrCreateSystemManaged<CustomGameStartupSystem>();
+        CustomGameStartupSystem system = new(world.EntityManager);
 
         CustomGameStartupSystem.Result result = system.InitializeFromLegacyConfigs(null, null);
 
@@ -67,7 +67,7 @@ public sealed class CustomGameStartupSystemTests
     public void InitializeFromLegacyConfigsResetsInitialSpawnLifecycleAndRequests()
     {
         using var world = new World("CustomGameStartupLifecycleResetTests");
-        CustomGameStartupSystem system = world.GetOrCreateSystemManaged<CustomGameStartupSystem>();
+        CustomGameStartupSystem system = new(world.EntityManager);
         EntityManager em = world.EntityManager;
 
         Entity startupEntity = em.CreateEntity(
@@ -118,7 +118,7 @@ public sealed class CustomGameStartupSystemTests
     public void InitializeFromLegacyConfigsKeepsFaction2TentBuildingKey()
     {
         using var world = new World("CustomGameStartupFaction2TentTests");
-        CustomGameStartupSystem system = world.GetOrCreateSystemManaged<CustomGameStartupSystem>();
+        CustomGameStartupSystem system = new(world.EntityManager);
         InitialUnitsSpawnerAuthoringConfig initialConfig =
             ScriptableObject.CreateInstance<InitialUnitsSpawnerAuthoringConfig>();
         GameObject tentPrefab = new("Tent_Regular");
@@ -173,7 +173,7 @@ public sealed class CustomGameStartupSystemTests
     public void InitializeCreatesSourceKeyStartupBuffers()
     {
         using var world = new World("CustomGameStartupSourceKeyBufferTests");
-        CustomGameStartupSystem system = world.GetOrCreateSystemManaged<CustomGameStartupSystem>();
+        CustomGameStartupSystem system = new(world.EntityManager);
         CustomGameStartupConfig startupConfig = ScriptableObject.CreateInstance<CustomGameStartupConfig>();
         CustomGameFactionConfig factionConfig = ScriptableObject.CreateInstance<CustomGameFactionConfig>();
         CustomGameUnitRosterConfig unitRosterConfig = ScriptableObject.CreateInstance<CustomGameUnitRosterConfig>();

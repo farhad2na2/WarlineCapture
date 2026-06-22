@@ -297,8 +297,7 @@ public sealed class BuildingSelectionMarkerSystemTests
 
     private BuildingRuntimeVisualSystem CreateBuildingRuntimeVisualSystem()
     {
-        _world ??= new World(nameof(BuildingSelectionMarkerSystemTests));
-        return _world.GetOrCreateSystemManaged<BuildingRuntimeVisualSystem>();
+        return new BuildingRuntimeVisualSystem();
     }
 
     private BuildingSelectionMarkerSystem CreateBuildingSelectionMarkerSystem()

@@ -117,10 +117,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingRuntimeVisualSystem ResolveBuildingRuntimeVisualSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<BuildingRuntimeVisualSystem>()
-            : null;
+        return new BuildingRuntimeVisualSystem();
     }
 
     private static BuildingSelectionMarkerSystem ResolveBuildingSelectionMarkerSystem()
@@ -138,10 +135,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
 
     private static BuildingPlacementVisualSystem ResolveBuildingPlacementVisualSystem()
     {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<BuildingPlacementVisualSystem>()
-            : null;
+        return new BuildingPlacementVisualSystem();
     }
 
     private static BuildingPlacementVisualUpdateSystem ResolveBuildingPlacementVisualUpdateSystem()

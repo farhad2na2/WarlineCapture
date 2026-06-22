@@ -203,9 +203,6 @@ internal sealed class BuildingRuntimeCreationSystem
 
     private static BuildingFoundationVisualSystem ResolveBuildingFoundationVisualSystem()
     {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<BuildingFoundationVisualSystem>()
-            : null;
+        return new BuildingFoundationVisualSystem();
     }
 }

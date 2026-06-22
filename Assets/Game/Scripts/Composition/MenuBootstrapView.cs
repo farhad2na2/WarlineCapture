@@ -112,6 +112,8 @@ public sealed class MenuBootstrapView : MonoBehaviour
             uiToolkitDocument.enabled = useUiToolkit;
         if (uiToolkitShellRoot != null && uiToolkitShellRoot.activeSelf != useUiToolkit)
             uiToolkitShellRoot.SetActive(useUiToolkit);
+        if (useUiToolkit && uiToolkitShellView != null)
+            uiToolkitShellView.ConfigureExternalMenuBackground(uiCamera);
         if (useUiToolkit && uiToolkitShellView != null && !uiToolkitShellView.IsMounted)
         {
             if (uiToolkitShellView.Mount())

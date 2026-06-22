@@ -24,6 +24,7 @@ public static class UiToolkitMenuSceneStartupValidation
     private const string SettingsPopupUxmlPath = "Assets/Game/UI Toolkit/POP06_SettingsPopup/POP06_SettingsPopup.uxml";
     private const string InboxPopupUxmlPath = "Assets/Game/UI Toolkit/POP07_InboxPopup/POP07_InboxPopup.uxml";
     private const string RuntimeThemePath = "Assets/Game/UI Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss";
+    private const string MainMenuBackgroundSpritePath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_background_command_table_no_ui.png";
     private const string ScreenshotPath = "/private/tmp/warline-uitoolkit-menu-startup.png";
     private static readonly Vector2 TargetLockReferenceResolution = new(4800f, 2160f);
     private static readonly Vector2Int TargetLockCaptureResolution = new(3840, 1728);
@@ -76,6 +77,7 @@ public static class UiToolkitMenuSceneStartupValidation
         VisualTreeAsset missionResultAsset = LoadRequired<VisualTreeAsset>(MissionResultPopupUxmlPath);
         VisualTreeAsset settingsAsset = LoadRequired<VisualTreeAsset>(SettingsPopupUxmlPath);
         VisualTreeAsset inboxAsset = LoadRequired<VisualTreeAsset>(InboxPopupUxmlPath);
+        Sprite mainMenuBackgroundSprite = LoadRequired<Sprite>(MainMenuBackgroundSpritePath);
 
         GameObject shellRoot = EnsureChild(bootstrap.transform, "UiToolkitShellRoot");
         UIDocument document = shellRoot.GetComponent<UIDocument>();
@@ -100,6 +102,7 @@ public static class UiToolkitMenuSceneStartupValidation
             missionResultAsset,
             settingsAsset,
             inboxAsset);
+        shellView.ConfigureExternalMenuBackgroundSprite(mainMenuBackgroundSprite);
         bootstrap.Configure(
             bootstrap.UiCamera,
             bootstrap.UiCanvas,
@@ -935,7 +938,7 @@ public static class UiToolkitMenuSceneStartupValidation
         SetSerializedVector2(serializedObject, "m_ReferenceResolution", TargetLockReferenceResolution);
         SetSerializedInt(serializedObject, "m_ScreenMatchMode", 2);
         SetSerializedFloat(serializedObject, "m_Match", 0.5f);
-        SetSerializedBool(serializedObject, "m_ClearDepthStencil", true);
+        SetSerializedBool(serializedObject, "m_ClearDepthStencil", false);
         SetSerializedBool(serializedObject, "m_VertexBudgetAutoAdjust", true);
         serializedObject.ApplyModifiedPropertiesWithoutUndo();
         return panelSettings;

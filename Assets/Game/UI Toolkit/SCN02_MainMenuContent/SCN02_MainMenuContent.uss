@@ -43,6 +43,7 @@
 }
 
 .background-art {
+    display: none;
     left: -1.5%;
     right: -1.5%;
     background-image: url("../../Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_background_command_table_no_ui.png");
@@ -50,7 +51,7 @@
 }
 
 .background-art-overlay {
-    background-color: rgba(8, 9, 8, 0.13);
+    display: none;
 }
 
 .header-content {

@@ -787,6 +787,7 @@ MonoBehaviour:
   settingsPopupAsset: {fileID: 9197481963319205126, guid: db2af03b0053c4510a87520f470a8d22, type: 3}
   inboxPopupAsset: {fileID: 9197481963319205126, guid: 004bef2389bb04602a256d1edc808429, type: 3}
   buildPlacementConfirmationBarAsset: {fileID: 9197481963319205126, guid: 7da0312c479b4c778d7b514c3397435b, type: 3}
+  mainMenuBackgroundSprite: {fileID: 21300000, guid: 31760621cc3a4cde8149751f5f9097df, type: 3}
 --- !u!4 &463212253
 Transform:
   m_ObjectHideFlags: 0

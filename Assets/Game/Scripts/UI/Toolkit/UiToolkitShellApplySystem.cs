@@ -151,7 +151,10 @@ public sealed partial class UiToolkitShellApplySystem : SystemBase
 
         bool shellMounted = shellView != null && shellView.IsMounted;
 
-        if (shellMounted && hasLoadingProgress && ShouldApplyLoadingProgress(lastLoadingProgress))
+        if (shellMounted &&
+            shellView.HasMountedLoadingScreen &&
+            hasLoadingProgress &&
+            ShouldApplyLoadingProgress(lastLoadingProgress))
             MarkLoadingProgressApplied(shellView.ApplyLoadingProgress(lastLoadingProgress));
 
         if (shellMounted && hasDiagnosticsOverlay && ShouldApplyDiagnosticsOverlay(lastDiagnosticsOverlay))

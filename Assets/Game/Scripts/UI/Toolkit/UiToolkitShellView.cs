@@ -31,6 +31,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
     private const int BuildDrawerQueueItemCount = 2;
     private const int ArmoryCategoryCount = 5;
     private const int ArmoryItemCount = 8;
+    private const string ExternalMenuBackgroundName = "UiToolkitExternalMenuBackground";
 
     private static readonly string[] MotionStateClasses =
     {
@@ -78,7 +79,16 @@ public sealed class UiToolkitShellView : MonoBehaviour
     [SerializeField] private VisualTreeAsset settingsPopupAsset;
     [SerializeField] private VisualTreeAsset inboxPopupAsset;
     [SerializeField] private VisualTreeAsset buildPlacementConfirmationBarAsset;
+    [SerializeField] private Sprite mainMenuBackgroundSprite;
 
+    private Camera menuBackgroundCamera;
+    private GameObject externalMenuBackgroundObject;
+    private SpriteRenderer externalMenuBackgroundRenderer;
+    private bool externalMenuBackgroundVisible;
+    private int externalMenuBackgroundScreenWidth;
+    private int externalMenuBackgroundScreenHeight;
+    private float externalMenuBackgroundCameraAspect;
+    private float externalMenuBackgroundOrthographicSize;
     private VisualElement root;
     private VisualElement safeAreaRoot;
     private VisualElement headerBar;
@@ -1005,6 +1015,25 @@ public sealed class UiToolkitShellView : MonoBehaviour
             buildPlacementConfirmationBarAsset = configuredBuildPlacementConfirmationBarAsset;
     }
 
+    public void ConfigureExternalMenuBackground(Camera uiCamera)
+    {
+        menuBackgroundCamera = uiCamera;
+        if (externalMenuBackgroundVisible)
+            ApplyExternalMenuBackground();
+    }
+
+    public void ConfigureExternalMenuBackgroundSprite(Sprite backgroundSprite)
+    {
+        if (backgroundSprite == null)
+            return;
+
+        mainMenuBackgroundSprite = backgroundSprite;
+        if (externalMenuBackgroundRenderer != null)
+            externalMenuBackgroundRenderer.sprite = mainMenuBackgroundSprite;
+        if (externalMenuBackgroundVisible)
+            ApplyExternalMenuBackground();
+    }
+
     public static string GetMotionStateClass(UiToolkitShellMotionState state)
     {
         switch (state)
@@ -1051,8 +1080,8 @@ public sealed class UiToolkitShellView : MonoBehaviour
         bool mountedShell = HasRequiredRegions && HasRequiredScreenSlots;
         if (mountedShell)
         {
-            MountLoadingScreen();
             MountMainMenuScreen();
+            SetExternalMenuBackgroundVisible(true);
         }
 
         return mountedShell;
@@ -1078,6 +1107,17 @@ public sealed class UiToolkitShellView : MonoBehaviour
         return HasRequiredLoadingBindings;
     }
 
+    public void UnmountLoadingScreen()
+    {
+        if (loadingScreenSlot != null)
+            loadingScreenSlot.Clear();
+
+        loadingScreenContainer = null;
+        loadingContentRoot = null;
+        ClearLoadingBindings();
+        ResetLoadingPresentationCache();
+    }
+
     public bool MountMainMenuScreen()
     {
         if (mainMenuScreenSlot == null || mainMenuScreenAsset == null)
@@ -1094,6 +1134,17 @@ public sealed class UiToolkitShellView : MonoBehaviour
         mainMenuScreenSlot.Add(mainMenuScreenContainer);
         BindMainMenuScreen();
         return HasRequiredMainMenuBindings;
+    }
+
+    public void UnmountMainMenuScreen()
+    {
+        if (mainMenuScreenSlot != null)
+            mainMenuScreenSlot.Clear();
+
+        mainMenuScreenContainer = null;
+        mainMenuContentRoot = null;
+        mainMenuHeaderContent = null;
+        ClearMainMenuBindings();
     }
 
     public bool EnsureMainMenuVisible(UIRoute route)
@@ -1148,6 +1199,16 @@ public sealed class UiToolkitShellView : MonoBehaviour
         return HasRequiredMatchHudBindings;
     }
 
+    public void UnmountMatchHudScreen()
+    {
+        if (matchScreenSlot != null)
+            matchScreenSlot.Clear();
+
+        matchHudScreenContainer = null;
+        matchHudContentRoot = null;
+        ClearMatchHudBindings();
+    }
+
     public bool MountArmoryScreen()
     {
         if (armoryScreenSlot == null || armoryScreenAsset == null)
@@ -1167,6 +1228,16 @@ public sealed class UiToolkitShellView : MonoBehaviour
         return HasRequiredArmoryRuntimeBindings;
     }
 
+    public void UnmountArmoryScreen()
+    {
+        if (armoryScreenSlot != null)
+            armoryScreenSlot.Clear();
+
+        armoryScreenContainer = null;
+        armoryContentRoot = null;
+        ClearArmoryBindings();
+    }
+
     public bool MountCommanderProfileScreen()
     {
         if (commanderProfileScreenSlot == null || commanderProfileScreenAsset == null)
@@ -1184,6 +1255,16 @@ public sealed class UiToolkitShellView : MonoBehaviour
         BindCommanderProfileScreen();
         SetShellHidden(commanderProfileScreenSlot, true);
         return HasRequiredCommanderProfileBindings;
+    }
+
+    public void UnmountCommanderProfileScreen()
+    {
+        if (commanderProfileScreenSlot != null)
+            commanderProfileScreenSlot.Clear();
+
+        commanderProfileScreenContainer = null;
+        commanderProfileContentRoot = null;
+        ClearCommanderProfileBindings();
     }
 
     public bool MountBuildDrawerPopup()
@@ -1264,6 +1345,25 @@ public sealed class UiToolkitShellView : MonoBehaviour
         SetShellHidden(popupScreenSlot, true);
         SetShellHidden(modalOverlay, true);
         return HasRequiredInboxBindings;
+    }
+
+    public void UnmountPopupScreens()
+    {
+        if (popupScreenSlot != null)
+            popupScreenSlot.Clear();
+
+        buildDrawerPopupContainer = null;
+        missionResultPopupContainer = null;
+        settingsPopupContainer = null;
+        inboxPopupContainer = null;
+        buildDrawerPopupRoot = null;
+        missionResultPopupRoot = null;
+        settingsPopupRoot = null;
+        inboxPopupRoot = null;
+        ClearBuildDrawerBindings();
+        ClearMissionResultBindings();
+        ClearSettingsBindings();
+        ClearInboxBindings();
     }
 
     public bool MountBuildPlacementConfirmationBar()
@@ -1541,9 +1641,16 @@ public sealed class UiToolkitShellView : MonoBehaviour
         if (target == null)
             return;
 
+        string stateClass = GetMotionStateClass(state);
+        if (target.ClassListContains(MotionBaseClass) &&
+            target.ClassListContains(stateClass) &&
+            !HasOtherMotionState(target, stateClass))
+            return;
+
         RemoveMotionStateClasses(target);
-        target.AddToClassList(MotionBaseClass);
-        target.AddToClassList(GetMotionStateClass(state));
+        if (!target.ClassListContains(MotionBaseClass))
+            target.AddToClassList(MotionBaseClass);
+        target.AddToClassList(stateClass);
     }
 
     public void RemoveShellMotion(VisualElement target)
@@ -1555,8 +1662,34 @@ public sealed class UiToolkitShellView : MonoBehaviour
         RemoveMotionStateClasses(target);
     }
 
+    private void LateUpdate()
+    {
+        if (externalMenuBackgroundVisible)
+            ApplyExternalMenuBackground();
+    }
+
+    private void OnDisable()
+    {
+        if (externalMenuBackgroundRenderer != null)
+            externalMenuBackgroundRenderer.enabled = false;
+    }
+
+    private void OnDestroy()
+    {
+        if (externalMenuBackgroundObject == null)
+            return;
+
+        if (Application.isPlaying)
+            Destroy(externalMenuBackgroundObject);
+        else
+            DestroyImmediate(externalMenuBackgroundObject);
+        externalMenuBackgroundObject = null;
+        externalMenuBackgroundRenderer = null;
+    }
+
     public void ClearCache()
     {
+        SetExternalMenuBackgroundVisible(false);
         root = null;
         safeAreaRoot = null;
         headerBar = null;
@@ -1610,10 +1743,98 @@ public sealed class UiToolkitShellView : MonoBehaviour
         ResetLoadingPresentationCache();
     }
 
+    private void SetExternalMenuBackgroundVisible(bool visible)
+    {
+        if (externalMenuBackgroundVisible == visible)
+        {
+            if (visible)
+                ApplyExternalMenuBackground();
+            return;
+        }
+
+        externalMenuBackgroundVisible = visible;
+        if (visible)
+            ApplyExternalMenuBackground();
+        else if (externalMenuBackgroundRenderer != null)
+            externalMenuBackgroundRenderer.enabled = false;
+    }
+
+    private void ApplyExternalMenuBackground()
+    {
+        if (menuBackgroundCamera == null || mainMenuBackgroundSprite == null)
+            return;
+
+        EnsureExternalMenuBackground();
+        if (externalMenuBackgroundRenderer == null)
+            return;
+
+        externalMenuBackgroundRenderer.enabled = true;
+
+        int screenWidth = Mathf.Max(1, Screen.width);
+        int screenHeight = Mathf.Max(1, Screen.height);
+        float cameraAspect = menuBackgroundCamera.aspect;
+        float orthographicSize = menuBackgroundCamera.orthographicSize;
+        if (externalMenuBackgroundScreenWidth == screenWidth &&
+            externalMenuBackgroundScreenHeight == screenHeight &&
+            Mathf.Approximately(externalMenuBackgroundCameraAspect, cameraAspect) &&
+            Mathf.Approximately(externalMenuBackgroundOrthographicSize, orthographicSize))
+        {
+            return;
+        }
+
+        externalMenuBackgroundScreenWidth = screenWidth;
+        externalMenuBackgroundScreenHeight = screenHeight;
+        externalMenuBackgroundCameraAspect = cameraAspect;
+        externalMenuBackgroundOrthographicSize = orthographicSize;
+
+        Transform backgroundTransform = externalMenuBackgroundObject.transform;
+        backgroundTransform.SetParent(menuBackgroundCamera.transform, false);
+        backgroundTransform.localPosition = new Vector3(0f, 0f, Mathf.Max(1f, menuBackgroundCamera.nearClipPlane + 0.5f));
+        backgroundTransform.localRotation = Quaternion.identity;
+
+        Bounds spriteBounds = mainMenuBackgroundSprite.bounds;
+        float spriteWidth = Mathf.Max(0.001f, spriteBounds.size.x);
+        float spriteHeight = Mathf.Max(0.001f, spriteBounds.size.y);
+        float cameraHeight = Mathf.Max(0.001f, orthographicSize * 2f);
+        float cameraWidth = Mathf.Max(0.001f, cameraHeight * cameraAspect);
+        float coverScale = Mathf.Max(cameraWidth / spriteWidth, cameraHeight / spriteHeight) * 1.03f;
+        backgroundTransform.localScale = new Vector3(coverScale, coverScale, 1f);
+    }
+
+    private void EnsureExternalMenuBackground()
+    {
+        if (externalMenuBackgroundRenderer != null)
+            return;
+
+        Transform existing = transform.Find(ExternalMenuBackgroundName);
+        externalMenuBackgroundObject = existing != null ? existing.gameObject : new GameObject(ExternalMenuBackgroundName);
+        externalMenuBackgroundObject.transform.SetParent(menuBackgroundCamera != null ? menuBackgroundCamera.transform : transform, false);
+        externalMenuBackgroundRenderer = externalMenuBackgroundObject.GetComponent<SpriteRenderer>();
+        if (externalMenuBackgroundRenderer == null)
+            externalMenuBackgroundRenderer = externalMenuBackgroundObject.AddComponent<SpriteRenderer>();
+
+        externalMenuBackgroundRenderer.sprite = mainMenuBackgroundSprite;
+        externalMenuBackgroundRenderer.color = new Color(0.87f, 0.87f, 0.87f, 1f);
+        externalMenuBackgroundRenderer.sortingOrder = -1000;
+        externalMenuBackgroundRenderer.enabled = false;
+    }
+
     private static void RemoveMotionStateClasses(VisualElement target)
     {
         for (int i = 0; i < MotionStateClasses.Length; i++)
             target.RemoveFromClassList(MotionStateClasses[i]);
+    }
+
+    private static bool HasOtherMotionState(VisualElement target, string stateClass)
+    {
+        for (int i = 0; i < MotionStateClasses.Length; i++)
+        {
+            string motionClass = MotionStateClasses[i];
+            if (motionClass != stateClass && target.ClassListContains(motionClass))
+                return true;
+        }
+
+        return false;
     }
 
     private void ApplyPresentationCommand(UiShellPresentationCommandModel command)
@@ -1621,15 +1842,19 @@ public sealed class UiToolkitShellView : MonoBehaviour
         switch (command.Kind)
         {
             case UiShellCommandKind.ShowLoading:
+                SetExternalMenuBackgroundVisible(false);
+                MountLoadingScreen();
                 SetShellHidden(loadingLayer, false);
                 ApplyShellMotion(loadingScreenSlot, UiToolkitShellMotionState.Visible);
                 break;
             case UiShellCommandKind.ExitLoading:
                 ApplyShellMotion(loadingScreenSlot, UiToolkitShellMotionState.FadeOut);
                 SetShellHidden(loadingLayer, true);
+                UnmountLoadingScreen();
                 break;
             case UiShellCommandKind.EnterMenu:
             case UiShellCommandKind.SwapMenuMiddle:
+                SetExternalMenuBackgroundVisible(true);
                 MountMainMenuScreen();
                 if (command.Route == UIRoute.Armory)
                     MountArmoryScreen();
@@ -1656,10 +1881,18 @@ public sealed class UiToolkitShellView : MonoBehaviour
                 }
                 break;
             case UiShellCommandKind.ExitMenu:
+                SetExternalMenuBackgroundVisible(false);
                 ApplyShellMotion(mainMenuScreenSlot, UiToolkitShellMotionState.ScaleOut);
                 SetShellHidden(mainMenuScreenSlot, true);
+                UnmountMainMenuScreen();
+                UnmountArmoryScreen();
+                UnmountCommanderProfileScreen();
                 break;
             case UiShellCommandKind.EnterMatchHud:
+                SetExternalMenuBackgroundVisible(false);
+                UnmountMainMenuScreen();
+                UnmountArmoryScreen();
+                UnmountCommanderProfileScreen();
                 MountMatchHudScreen();
                 if (HasMountedBuildPlacementConfirmationBar)
                     ApplyBuildPlacementConfirmationBar(UiBuildPlacementConfirmationBarModel.Hidden);
@@ -1669,6 +1902,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
             case UiShellCommandKind.ExitMatchHud:
                 ApplyShellMotion(matchScreenSlot, UiToolkitShellMotionState.ScaleOut);
                 SetShellHidden(matchScreenSlot, true);
+                UnmountMatchHudScreen();
                 break;
             case UiShellCommandKind.ShowPopup:
                 if (command.Route == UIRoute.Settings)
@@ -1685,6 +1919,7 @@ public sealed class UiToolkitShellView : MonoBehaviour
                 ApplyShellMotion(popupScreenSlot, UiToolkitShellMotionState.PopupHidden);
                 SetShellHidden(popupScreenSlot, true);
                 SetShellHidden(modalOverlay, true);
+                UnmountPopupScreens();
                 break;
         }
     }

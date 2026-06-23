@@ -76,7 +76,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingGameplayDependencyCompositionSystemHelper BuildingGameplayDependencyCompositionSystemHelper = new();
     internal readonly BuildingRuntimeObjectPresentationSystemHelper RuntimeObjectPresentationHelper = new();
     internal readonly BuildingGameplayDisposalSystem BuildingGameplayDisposalSystem = new();
-    internal readonly BuildingGameplayEcsQuerySystem BuildingGameplayEcsQuerySystem = new();
+    internal readonly BuildingGameplayEcsQueryCompositionSystemHelper BuildingGameplayEcsQueryCompositionSystemHelper = new();
     internal readonly BuildingGameplayGridDataCompositionSystemHelper BuildingGameplayGridDataCompositionSystemHelper = new();
     internal readonly BuildingGridCompositionSystem BuildingGridCompositionSystem = new();
     internal readonly BuildingEntityManagerAccessSystem BuildingEntityManagerAccessSystem = new();

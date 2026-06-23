@@ -13,7 +13,7 @@ internal sealed class BuildingRuntimeBoundaryCompositionSystemHelper
     {
         return new BuildingRuntimeBoundaryPublishCompositionSystemHelper.Context(
             source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
-            source.BuildingGameplayEcsQuerySystem.EnsureEntityQueries,
+            source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,
             source.BuildingRuntimeBoundarySystem,
             source.BuildingDefinitionSystem,
             source.BuildingRuntimeSpawnSystem,
@@ -23,7 +23,7 @@ internal sealed class BuildingRuntimeBoundaryCompositionSystemHelper
             source.BuildingRuntimeQuerySystem,
             source.BuildingRuntimeContextSystem.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
             source.FactionResourceSystem,
-            () => source.BuildingGameplayEcsQuerySystem.BuildingRuntimeBoundaryQuery,
+            () => source.BuildingGameplayEcsQueryCompositionSystemHelper.BuildingRuntimeBoundaryQuery,
             source.RuntimeBuildingSystem.Buildings);
     }
 }

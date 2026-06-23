@@ -24,10 +24,10 @@ internal sealed class BuildingRuntimeResourcePrefabCompositionSystemHelper
             source.RuntimeBuildingSystem,
             source.BuildingSpawnPrefabSystem,
             source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
-            source.BuildingGameplayEcsQuerySystem.EnsureEntityQueries,
-            source.BuildingGameplayEcsQuerySystem.UnitPrefabRegistryQuery,
-            source.BuildingGameplayEcsQuerySystem.SpawnPrefabCandidatesQuery,
-            source.BuildingGameplayEcsQuerySystem.LivePlayerUnitsQuery,
+            source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,
+            source.BuildingGameplayEcsQueryCompositionSystemHelper.UnitPrefabRegistryQuery,
+            source.BuildingGameplayEcsQueryCompositionSystemHelper.SpawnPrefabCandidatesQuery,
+            source.BuildingGameplayEcsQueryCompositionSystemHelper.LivePlayerUnitsQuery,
             createCurrentSource: () => Create(source.BuildingRuntimeResourcePrefabCompositionHelper, source));
     }
 }

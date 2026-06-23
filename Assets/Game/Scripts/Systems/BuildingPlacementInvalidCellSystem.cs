@@ -21,7 +21,7 @@ internal sealed class BuildingPlacementInvalidCellSystem
 
     internal void RebuildPlacementInvalidPrefix(
         BuildingGameplayGridDataCompositionSystemHelper gridDataSystem,
-        BuildingGameplayEcsQuerySystem ecsQuerySystem,
+        BuildingGameplayEcsQueryCompositionSystemHelper ecsQuerySystem,
         BuildingGameplayGridDataCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
         BuildingPlacementStartupSystem startupSystem,
         BuildingGameplayDependencyCompositionSystemHelper dependencySystem)

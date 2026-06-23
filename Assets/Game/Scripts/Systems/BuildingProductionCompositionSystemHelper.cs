@@ -62,8 +62,8 @@ internal sealed class BuildingProductionCompositionSystemHelper
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 runtimeSource.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
             entityManager => runtimeSource.EnsureEntityQueries?.Invoke(entityManager),
-            () => source.BuildingGameplayEcsQuerySystem.HaulerUnitsQuery,
-            () => source.BuildingGameplayEcsQuerySystem.SelectedUnitsQuery,
+            () => source.BuildingGameplayEcsQueryCompositionSystemHelper.HaulerUnitsQuery,
+            () => source.BuildingGameplayEcsQueryCompositionSystemHelper.SelectedUnitsQuery,
             runtimeSource.TryGetRuntimeBuilding,
             runtimeSource.GetEffectivePlacementRect,
             source.PrepareTransportDropVisual);

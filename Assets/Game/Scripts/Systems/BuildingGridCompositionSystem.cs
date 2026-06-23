@@ -21,7 +21,7 @@ internal partial struct BuildingGridCompositionSystem : ISystem
         out DynamicBlockerComponent blockerData)
     {
         return source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridData(
-            source.BuildingGameplayEcsQuerySystem,
+            source.BuildingGameplayEcsQueryCompositionSystemHelper,
             tryGetEntityManager,
             out gridEntity,
             out grid,
@@ -35,7 +35,7 @@ internal partial struct BuildingGridCompositionSystem : ISystem
         out GridConfig grid)
     {
         return source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridForSelection(
-            source.BuildingGameplayEcsQuerySystem,
+            source.BuildingGameplayEcsQueryCompositionSystemHelper,
             tryGetEntityManager,
             out grid);
     }
@@ -46,7 +46,7 @@ internal partial struct BuildingGridCompositionSystem : ISystem
         out GridConfig grid)
     {
         return source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridForPlacementInput(
-            source.BuildingGameplayEcsQuerySystem,
+            source.BuildingGameplayEcsQueryCompositionSystemHelper,
             tryGetEntityManager,
             out grid);
     }

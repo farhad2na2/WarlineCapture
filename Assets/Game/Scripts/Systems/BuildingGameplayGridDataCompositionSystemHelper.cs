@@ -6,7 +6,7 @@ internal sealed class BuildingGameplayGridDataCompositionSystemHelper
     internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
     internal bool TryGetGridForPlacementInput(
-        BuildingGameplayEcsQuerySystem ecsQuerySystem,
+        BuildingGameplayEcsQueryCompositionSystemHelper ecsQuerySystem,
         TryGetEntityManagerDelegate tryGetEntityManager,
         out GridConfig grid)
     {
@@ -14,7 +14,7 @@ internal sealed class BuildingGameplayGridDataCompositionSystemHelper
     }
 
     internal bool TryGetGridForSelection(
-        BuildingGameplayEcsQuerySystem ecsQuerySystem,
+        BuildingGameplayEcsQueryCompositionSystemHelper ecsQuerySystem,
         TryGetEntityManagerDelegate tryGetEntityManager,
         out GridConfig grid)
     {
@@ -22,7 +22,7 @@ internal sealed class BuildingGameplayGridDataCompositionSystemHelper
     }
 
     internal bool TryGetGridData(
-        BuildingGameplayEcsQuerySystem ecsQuerySystem,
+        BuildingGameplayEcsQueryCompositionSystemHelper ecsQuerySystem,
         TryGetEntityManagerDelegate tryGetEntityManager,
         out Entity gridEntity,
         out GridConfig grid,

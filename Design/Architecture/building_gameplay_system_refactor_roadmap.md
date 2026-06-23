@@ -16,7 +16,7 @@ Step 6 startup/config transition size: 2049 lines. Production composition now ro
 
 Step 7 disposal transition size: 2041 lines. Production composition now disposes through `BuildingGameplayDisposalSystem`; `BuildingGameplaySystem.Dispose` remains only as temporary tests/legacy compatibility and delegates to the disposal system.
 
-Step 8 ECS query transition size: 1982 lines. Entity query caching now lives in `BuildingGameplayEcsQuerySystem`; `BuildingGameplaySystem` may temporarily expose query delegates/handles to existing context factories until those factories move out in later phases.
+Step 8 ECS query transition size: 1982 lines. Entity query caching now lives in `BuildingGameplayEcsQueryCompositionSystemHelper`; `BuildingGameplaySystem` may temporarily expose query delegates/handles to existing context factories until those factories move out in later phases.
 
 Step 9 grid-data transition size: 1984 lines. Grid data retrieval and grid-cell pointer conversion now route through `BuildingGameplayGridDataCompositionSystemHelper`; `BuildingGameplaySystem` may temporarily expose wrapper delegates while placement, selection, validation, and runtime tick contexts migrate to narrow factories.
 
@@ -183,12 +183,12 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 ## Phase 3: Move Query And Shared Runtime Data Ownership
 
 8. Complete: Extract ECS query ownership
-   - Create `BuildingGameplayEcsQuerySystem`.
+   - Create `BuildingGameplayEcsQueryCompositionSystemHelper`.
    - Own world/entity query caching and invalidation for grid data, unit prefab registry, spawn prefab candidates, selected units, haulers, live units, faction units, redirect units, and runtime boundary entity.
    - Expected output: no `EntityQuery` fields remain in `BuildingGameplaySystem`.
-   - Added `BuildingGameplayEcsQuerySystem` with the previous query cache and query creation logic.
+   - Added `BuildingGameplayEcsQueryCompositionSystemHelper` with the previous query cache and query creation logic.
    - `BuildingGameplaySourceCompositionSystemHelper` now owns the query system.
-   - `BuildingGameplaySystem` no longer declares `World` or `EntityQuery` cache fields and delegates `EnsureEntityQueries` plus query handle reads to `BuildingGameplayEcsQuerySystem`.
+   - `BuildingGameplaySystem` no longer declares `World` or `EntityQuery` cache fields and delegates `EnsureEntityQueries` plus query handle reads to `BuildingGameplayEcsQueryCompositionSystemHelper`.
 
 9. Complete: Extract grid data access
    - Move `TryGetGridData`, `TryGetGridForSelection`, `TryGetGridForPlacementInput`, and grid-cell pointer conversion into explicit query/input systems.
@@ -385,7 +385,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Expected output: `BuildingRuntimeUpdateSystem` is fully independent from the shell.
    - `BuildingGameplayCompositionSystemHelper.CreateRuntimeTickSource` now accepts `BuildingGameplaySourceCompositionSystemHelper` and uses direct child systems for production tick, boundary publish, visual resource updates, destroyed-building sync, barrier doors, redirect marker flush, and input tick.
    - Removed shell runtime tick/input domain properties and tick-only shell delegates from `BuildingGameplaySystem`.
-   - Runtime boundary publish now uses `BuildingGameplayEcsQuerySystem` and a local composition entity-manager resolver instead of shell wrappers.
+   - Runtime boundary publish now uses `BuildingGameplayEcsQueryCompositionSystemHelper` and a local composition entity-manager resolver instead of shell wrappers.
 
 ## Phase 9: Migrate Consumers And Tests
 

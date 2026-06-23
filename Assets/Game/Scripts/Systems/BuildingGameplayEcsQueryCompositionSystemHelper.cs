@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Transforms;
 
-internal sealed class BuildingGameplayEcsQuerySystem
+internal sealed class BuildingGameplayEcsQueryCompositionSystemHelper
 {
     private Unity.Entities.World _queryWorld;
     private EntityQuery _gridDataQuery;

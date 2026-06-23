@@ -53,7 +53,7 @@ internal sealed class BuildingRuntimeQueryCompositionSystemHelper
         if (building.Instance != null &&
             building.Definition != null &&
             source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridForSelection(
-                source.BuildingGameplayEcsQuerySystem,
+                source.BuildingGameplayEcsQueryCompositionSystemHelper,
                 (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
                 out GridConfig grid))
         {

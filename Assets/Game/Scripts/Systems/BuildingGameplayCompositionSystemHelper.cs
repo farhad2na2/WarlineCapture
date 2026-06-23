@@ -395,19 +395,19 @@ internal sealed class BuildingGameplayCompositionSystemHelper
         Func<BuildingSpawnSystem.Context> createSpawnContext = () =>
         {
             if (tryGetEntityManager(out EntityManager em))
-                childSystems.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
+                childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
             return childSystems.BuildingRuntimeContextSystem.CreateBuildingSpawnContext(createRuntimeContextSource(childSystems));
         };
         Func<BuildingBarrierSystem.Context> createBarrierContext = () =>
         {
             if (tryGetEntityManager(out EntityManager em))
-                childSystems.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
+                childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
             return childSystems.BuildingRuntimeContextSystem.CreateBarrierContext(createRuntimeContextSource(childSystems));
         };
         Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> createCombatContext = () =>
         {
             if (tryGetEntityManager(out EntityManager em))
-                childSystems.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
+                childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
             return childSystems.BuildingRuntimeContextSystem.CreateCombatContext(createRuntimeContextSource(childSystems));
         };
         BuildingPlacementRuntimeTickSystem.Context runtimeTickContext = default;
@@ -420,7 +420,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             if (!tryGetEntityManager(out EntityManager em))
                 return false;
 
-            childSystems.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
+            childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
             BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source runtimeTickSource = _runtimeTickCompositionHelper.Create(
                 childSystems,
                 interactionContext,
@@ -505,8 +505,8 @@ internal sealed class BuildingGameplayCompositionSystemHelper
 
                     bool TryGetMapRuntimeBoundary(EntityManager em, out Entity boundaryEntity)
                     {
-                        source.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
-                        EntityQuery boundaryQuery = source.BuildingGameplayEcsQuerySystem.BuildingRuntimeBoundaryQuery;
+                        source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
+                        EntityQuery boundaryQuery = source.BuildingGameplayEcsQueryCompositionSystemHelper.BuildingRuntimeBoundaryQuery;
                         if (boundaryQuery.IsEmptyIgnoreFilter)
                         {
                             boundaryEntity = Entity.Null;

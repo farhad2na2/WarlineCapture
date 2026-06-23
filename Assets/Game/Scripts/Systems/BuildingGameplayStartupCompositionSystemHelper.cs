@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal sealed class BuildingGameplayStartupCompositionSystem
+internal sealed class BuildingGameplayStartupCompositionSystemHelper
 {
     public void Initialize(
         BuildingGameplayCompositionSourceSystem childSystems,

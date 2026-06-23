@@ -7,13 +7,13 @@ internal sealed class BuildingGameplayCompositionSystem
     private const float DestroyedBuildingLifetimeSeconds = 5f;
     private const float OilBarrelsPerFuelBarrel = 2f;
     private readonly BuildingGameplayChildSystem _childSystem = new();
-    private readonly BuildingGameplayStartupCompositionSystem _startupCompositionSystem = new();
+    private readonly BuildingGameplayStartupCompositionSystemHelper _startupCompositionHelper = new();
     private readonly BuildingGameplayBindingCompositionSystemHelper _bindingCompositionHelper = new();
     private readonly BuildingCitizenPopulationCompositionSystem _citizenPopulationCompositionSystem = ResolveBuildingCitizenPopulationCompositionSystem();
     private readonly BuildingGameplayDisposalCompositionSystemHelper _disposalCompositionHelper = new();
     private readonly BuildingMarkerVisualPresentationSystemHelper _markerVisualPresentationHelper = new();
-    private readonly BuildingRuntimeTickCompositionSystem _runtimeTickCompositionSystem = new();
-    private readonly BuildingPlacementInputTickCompositionSystem _placementInputTickCompositionSystem = new();
+    private readonly BuildingRuntimeTickCompositionSystemHelper _runtimeTickCompositionHelper = new();
+    private readonly BuildingPlacementInputTickCompositionSystemHelper _placementInputTickCompositionHelper = new();
     private readonly BuildingRuntimeBoundaryCompositionSystemHelper _runtimeBoundaryCompositionHelper = new();
     private readonly BuildingProductionTickCompositionSystemHelper _productionTickCompositionHelper = new();
     private readonly BuildingPlacementInteractionCompositionSystem _placementInteractionCompositionSystem = new();
@@ -48,7 +48,7 @@ internal sealed class BuildingGameplayCompositionSystem
         childSystems.BuildingProductionSystem.ConfigureUnitProductionMetadataResolver(tryGetUnitProductionMetadata);
         childSystems.BuildingProductionTransportSystem.SetRuntimeRoot(runtimeTransportsRoot);
         childSystems.PrepareTransportDropVisual = prepareTransportDropVisual;
-        _startupCompositionSystem.Initialize(
+        _startupCompositionHelper.Initialize(
             childSystems,
             buildingPlacementConfig,
             worldCamera,
@@ -57,8 +57,8 @@ internal sealed class BuildingGameplayCompositionSystem
             factionVisuals,
             dayNight);
         BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource =
-            BuildingRuntimeResourcePrefabCompositionSystem.Create(
-                childSystems.BuildingRuntimeResourcePrefabCompositionSystem,
+            BuildingRuntimeResourcePrefabCompositionSystemHelper.Create(
+                childSystems.BuildingRuntimeResourcePrefabCompositionHelper,
                 childSystems);
         bool tryGetEntityManager(out EntityManager entityManager)
         {
@@ -421,12 +421,12 @@ internal sealed class BuildingGameplayCompositionSystem
                 return false;
 
             childSystems.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
-            BuildingPlacementRuntimeTickContextSystem.Source runtimeTickSource = _runtimeTickCompositionSystem.Create(
+            BuildingPlacementRuntimeTickContextSystem.Source runtimeTickSource = _runtimeTickCompositionHelper.Create(
                 childSystems,
                 interactionContext,
                 markerPropertyBlock,
                 createRuntimeContextSource,
-                (source, placementInteractionContext, placementMarkerPropertyBlock) => _placementInputTickCompositionSystem.Create(
+                (source, placementInteractionContext, placementMarkerPropertyBlock) => _placementInputTickCompositionHelper.Create(
                     source,
                     placementInteractionContext,
                     placementMarkerPropertyBlock,
@@ -440,7 +440,7 @@ internal sealed class BuildingGameplayCompositionSystem
                             tryGetGridForPlacementInput,
                             tryGetGridCell,
                             updatePlacementForInteraction),
-                    source => source.BuildingSelectionClickCompositionSystem.Create(
+                    source => source.BuildingSelectionClickCompositionHelper.Create(
                         source,
                         tryGetGridForSelection,
                         tryGetGridCell,
@@ -545,7 +545,7 @@ internal sealed class BuildingGameplayCompositionSystem
         }
         return _resultSystem.Create(
             childSystems.BuildingSelectionClickSystem,
-            childSystems.BuildingSelectionClickCompositionSystem.Create(
+            childSystems.BuildingSelectionClickCompositionHelper.Create(
                 childSystems,
                 tryGetGridForSelection,
                 tryGetGridCell,

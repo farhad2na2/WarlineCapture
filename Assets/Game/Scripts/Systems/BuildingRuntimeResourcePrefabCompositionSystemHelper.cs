@@ -1,7 +1,7 @@
-internal sealed class BuildingRuntimeResourcePrefabCompositionSystem
+internal sealed class BuildingRuntimeResourcePrefabCompositionSystemHelper
 {
     public static BuildingRuntimeResourcePrefabContextSystem.Source Create(
-        BuildingRuntimeResourcePrefabCompositionSystem system,
+        BuildingRuntimeResourcePrefabCompositionSystemHelper system,
         BuildingGameplayCompositionSourceSystem source)
     {
         return system != null ? system.Create(source) : CreateSource(source);
@@ -28,6 +28,6 @@ internal sealed class BuildingRuntimeResourcePrefabCompositionSystem
             source.BuildingGameplayEcsQuerySystem.UnitPrefabRegistryQuery,
             source.BuildingGameplayEcsQuerySystem.SpawnPrefabCandidatesQuery,
             source.BuildingGameplayEcsQuerySystem.LivePlayerUnitsQuery,
-            createCurrentSource: () => Create(source.BuildingRuntimeResourcePrefabCompositionSystem, source));
+            createCurrentSource: () => Create(source.BuildingRuntimeResourcePrefabCompositionHelper, source));
     }
 }

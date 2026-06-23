@@ -68,8 +68,8 @@ internal sealed class BuildingUiCompositionSystem
                 RuntimeUnitPrefabSystem.Context runtimeUnitPrefabContext =
                     BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(
                         source.BuildingRuntimeResourcePrefabContextSystem,
-                        BuildingRuntimeResourcePrefabCompositionSystem.Create(
-                            source.BuildingRuntimeResourcePrefabCompositionSystem,
+                        BuildingRuntimeResourcePrefabCompositionSystemHelper.Create(
+                            source.BuildingRuntimeResourcePrefabCompositionHelper,
                             source));
                 return TryResolveLiveUnitPreviewPrefab(source, runtimeUnitPrefabContext, unitEntity, out prefab);
             },

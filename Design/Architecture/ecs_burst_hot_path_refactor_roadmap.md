@@ -1688,7 +1688,7 @@ Progress notes:
   - `git diff --check` passed.
   - Completed the Phase 9 config-projection checklist item.
   - Progress snapshot is now `125 / 157 complete (79.6%)`, `0 / 157 in progress`, `32 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
-- 2026-06-13: Started the remaining Phase 9 data-only composition cleanup with a narrow startup projection extraction. `BuildingGameplayStartupCompositionSystem` no longer owns the pure initial-dollar config read; `BuildingStartupConfigProjectionSystem.ResolveInitialDollars` now contains that stateless projection, while the composition class only wires the result into `RuntimeResourceSystem`. This preserves startup behavior and keeps authored config reading at the startup boundary.
+- 2026-06-13: Started the remaining Phase 9 data-only composition cleanup with a narrow startup projection extraction. `BuildingGameplayStartupCompositionSystemHelper` no longer owns the pure initial-dollar config read; `BuildingStartupConfigProjectionSystem.ResolveInitialDollars` now contains that stateless projection, while the composition class only wires the result into `RuntimeResourceSystem`. This preserves startup behavior and keeps authored config reading at the startup boundary.
   - Added `Assets/Game/Scripts/Systems/BuildingStartupConfigProjectionSystem.cs` and its `.meta`.
   - Focused validation passed:
     - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-composition-extract-main.log`
@@ -1696,7 +1696,7 @@ Progress notes:
   - `git diff --check` passed.
   - The Phase 9 data-only composition item remains in progress for the broader managed composition sweep.
   - Progress snapshot is now `125 / 157 complete (79.6%)`, `1 / 157 in progress`, `31 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
-- 2026-06-13: Continued the Phase 9 data-only composition cleanup by removing duplicate default-world `EntityManager` helper bodies from `BuildingRuntimeResourcePrefabCompositionSystem`, `BuildingRuntimeBoundaryCompositionSystemHelper`, `BuildingPlacementQueryCompositionSystem`, and `BuildingUiCompositionSystem`. These composition classes now pass the existing `BuildingEntityManagerAccessSystem.TryGetEntityManager` boundary delegate instead of owning the same world-access logic themselves. Runtime behavior is unchanged; the composition classes only wire the boundary.
+- 2026-06-13: Continued the Phase 9 data-only composition cleanup by removing duplicate default-world `EntityManager` helper bodies from `BuildingRuntimeResourcePrefabCompositionSystemHelper`, `BuildingRuntimeBoundaryCompositionSystemHelper`, `BuildingPlacementQueryCompositionSystem`, and `BuildingUiCompositionSystem`. These composition classes now pass the existing `BuildingEntityManagerAccessSystem.TryGetEntityManager` boundary delegate instead of owning the same world-access logic themselves. Runtime behavior is unchanged; the composition classes only wire the boundary.
   - Verified no `private static bool TryGetEntityManager` helper remains in `Assets/Game/Scripts/Systems/*CompositionSystem.cs`.
   - Focused validation passed:
     - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-entitymanager-helper-main.log`
@@ -1722,7 +1722,7 @@ Progress notes:
   - `git diff --check` passed.
   - The Phase 9 data-only composition item remains in progress for the broader managed composition sweep.
   - Progress snapshot is now `125 / 157 complete (79.6%)`, `1 / 157 in progress`, `31 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
-- 2026-06-13: Continued the Phase 9 data-only composition cleanup by moving runtime tick diagnostics context creation out of `BuildingRuntimeTickCompositionSystem` and into `BuildingPlacementRuntimeTickDiagnosticsSystem.CreateContext`. Runtime tick composition now only wires the runtime-building count and logging delegates into the diagnostics boundary.
+- 2026-06-13: Continued the Phase 9 data-only composition cleanup by moving runtime tick diagnostics context creation out of `BuildingRuntimeTickCompositionSystemHelper` and into `BuildingPlacementRuntimeTickDiagnosticsSystem.CreateContext`. Runtime tick composition now only wires the runtime-building count and logging delegates into the diagnostics boundary.
   - Focused validation passed:
     - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-runtime-tick-diagnostics-main.log`
     - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.

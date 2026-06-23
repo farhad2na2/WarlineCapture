@@ -45,7 +45,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingSelectionSystem BuildingSelectionSystem = new();
     internal readonly BuildingSelectionCompositionSystem BuildingSelectionCompositionSystem = new();
     internal readonly BuildingSelectionClickSystem BuildingSelectionClickSystem = new();
-    internal readonly BuildingSelectionClickCompositionSystem BuildingSelectionClickCompositionSystem = new();
+    internal readonly BuildingSelectionClickCompositionSystemHelper BuildingSelectionClickCompositionHelper = new();
     internal readonly BuildingBarrierSystem BuildingBarrierSystem = new();
     internal readonly BuildingRuntimeQuerySystem BuildingRuntimeQuerySystem = new();
     internal readonly BuildingDefinitionSystem BuildingDefinitionSystem = new();
@@ -71,7 +71,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly RuntimeResourceSystem RuntimeResourceSystem = new();
     internal readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem = new();
     internal readonly BuildingRuntimeResourcePrefabContextSystem BuildingRuntimeResourcePrefabContextSystem;
-    internal readonly BuildingRuntimeResourcePrefabCompositionSystem BuildingRuntimeResourcePrefabCompositionSystem;
+    internal readonly BuildingRuntimeResourcePrefabCompositionSystemHelper BuildingRuntimeResourcePrefabCompositionHelper;
     internal readonly BuildingPlacementStartupSystem BuildingPlacementStartupSystem = new();
     internal readonly BuildingGameplayDependencySystem BuildingGameplayDependencySystem = new();
     internal readonly BuildingRuntimeObjectPresentationSystemHelper RuntimeObjectPresentationHelper = new();
@@ -96,7 +96,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
         BuildingPlacementVisualCompositionSystem = ResolveBuildingPlacementVisualCompositionSystem();
         BuildingPlacementVisualSystem = ResolveBuildingPlacementVisualSystem();
         BuildingRuntimeResourcePrefabContextSystem = ResolveBuildingRuntimeResourcePrefabContextSystem();
-        BuildingRuntimeResourcePrefabCompositionSystem = ResolveBuildingRuntimeResourcePrefabCompositionSystem();
+        BuildingRuntimeResourcePrefabCompositionHelper = ResolveBuildingRuntimeResourcePrefabCompositionHelper();
     }
 
     private static BuildingVisualSystem ResolveBuildingVisualSystem()
@@ -145,9 +145,9 @@ internal sealed class BuildingGameplayCompositionSourceSystem
         return new BuildingPlacementVisualCompositionSystem();
     }
 
-    private static BuildingRuntimeResourcePrefabCompositionSystem ResolveBuildingRuntimeResourcePrefabCompositionSystem()
+    private static BuildingRuntimeResourcePrefabCompositionSystemHelper ResolveBuildingRuntimeResourcePrefabCompositionHelper()
     {
-        return new BuildingRuntimeResourcePrefabCompositionSystem();
+        return new BuildingRuntimeResourcePrefabCompositionSystemHelper();
     }
 
     private static BuildingRuntimeResourcePrefabContextSystem ResolveBuildingRuntimeResourcePrefabContextSystem()

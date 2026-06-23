@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 28 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 212 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 211 |
-| Current batch | Building gameplay disposal composition helper naming batch complete |
-| Validation status | Batch 1 through Batch 17 compile and architecture validations passed; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 33 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 207 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 206 |
+| Current batch | Building placement input tick composition helper naming batch complete |
+| Validation status | Batch 1 through Batch 22 compile and architecture validations passed by marker; Batch 22 architecture Unity process was terminated after recording the pass marker because it hung during post-test cleanup; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -364,6 +364,91 @@ This helper creates disposal delegates and disposal source wiring from compositi
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch17-building-gameplay-composition.log`: passed with `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch17-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9`; inventory marker reports `runtimeNonEcsDenominator=211`.
+
+## Batch 18 - Building Gameplay Startup Composition Helper
+
+This helper applies startup dependency wiring and placement startup configuration from composition-owned building dependencies. The managed reason is composition/startup graph wiring, not ECS scheduling.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `BuildingGameplayStartupCompositionSystem` | `BuildingGameplayStartupCompositionSystemHelper` | Creates managed building gameplay startup composition/configuration wiring. |
+
+## Batch 18 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `210`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch18-building-gameplay-composition.log`: passed with `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch18-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9`; inventory marker reports `runtimeNonEcsDenominator=210`.
+
+## Batch 19 - Building Selection Click Composition Helper
+
+This helper creates the building selection-click context from composition-owned grid and selection dependencies. The managed reason is composition graph wiring, not ECS scheduling.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `BuildingSelectionClickCompositionSystem` | `BuildingSelectionClickCompositionSystemHelper` | Creates managed building selection-click context wiring. |
+
+## Batch 19 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `209`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed with one transient Unity PDB copy warning and zero errors.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch19-building-gameplay-composition.log`: passed with `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch19-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9`; inventory marker reports `runtimeNonEcsDenominator=209`.
+
+## Batch 20 - Building Runtime Resource Prefab Composition Helper
+
+This helper creates the runtime resource prefab source from composition-owned resource, prefab, spawn, and ECS-query dependencies. The managed reason is composition graph wiring around prefab/resource boundaries, not ECS scheduling.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `BuildingRuntimeResourcePrefabCompositionSystem` | `BuildingRuntimeResourcePrefabCompositionSystemHelper` | Creates managed runtime resource prefab source wiring. |
+
+## Batch 20 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `208`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed with one transient Unity PDB copy warning and zero errors.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch20-building-gameplay-composition.log`: passed with `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch20-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9`; inventory marker reports `runtimeNonEcsDenominator=208`.
+
+## Batch 21 - Building Runtime Tick Composition Helper
+
+This helper creates the runtime tick source from composition-owned runtime, visual, combat, barrier, production, boundary, spawn, and input tick dependencies. The managed reason is composition graph wiring for runtime tick delegates, not ECS scheduling.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `BuildingRuntimeTickCompositionSystem` | `BuildingRuntimeTickCompositionSystemHelper` | Creates managed runtime tick source wiring. |
+
+## Batch 21 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `207`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch21-building-gameplay-composition.log`: passed with `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch21-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9`; inventory marker reports `runtimeNonEcsDenominator=207`.
+
+## Batch 22 - Building Placement Input Tick Composition Helper
+
+This helper creates the placement input runtime tick context and command-flush delegate from composition-owned placement, selection, and entity-manager boundary dependencies. The managed reason is composition graph wiring for placement input tick behavior, not ECS scheduling.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `BuildingPlacementInputTickCompositionSystem` | `BuildingPlacementInputTickCompositionSystemHelper` | Creates managed placement input tick context wiring. |
+
+## Batch 22 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `206`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch22-building-gameplay-composition.log`: passed with `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch22-architecture.log`: recorded `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=206`; Unity was terminated after the pass marker because the batchmode process hung during post-test cleanup.
 
 ## Open Follow-Up Batches
 

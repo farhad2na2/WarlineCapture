@@ -139,8 +139,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingGameplayChildSystem.Create()` now owns child graph construction; `BuildingGameplayCompositionSystem` no longer exposes `CreateChildSystems()`.
 
 6. Complete: Extract startup/config composition
-   - Move initial dollars, dependency startup, placement startup, and startup-config sequencing into `BuildingGameplayStartupCompositionSystem`.
-   - Result: `BuildingGameplayStartupCompositionSystem.Initialize()` owns initial dollars, dependency startup, road-footprint query configuration, and placement startup wiring.
+   - Move initial dollars, dependency startup, placement startup, and startup-config sequencing into `BuildingGameplayStartupCompositionSystemHelper`.
+   - Result: `BuildingGameplayStartupCompositionSystemHelper.Initialize()` owns initial dollars, dependency startup, road-footprint query configuration, and placement startup wiring.
 
 7. Complete: Extract main menu and gameplay feature binding
    - Move main-menu callback binding, gameplay feature binding, and menu-facing composition glue into `BuildingGameplayBindingCompositionSystemHelper`.
@@ -159,16 +159,16 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingMarkerVisualPresentationSystemHelper` now owns lazy marker `MaterialPropertyBlock` creation and reuse.
 
 11. Complete: Extract runtime resource prefab source
-   - Move `CreateRuntimeResourcePrefabSource` into `BuildingRuntimeResourcePrefabCompositionSystem`.
-   - Result: `BuildingRuntimeResourcePrefabCompositionSystem` now owns runtime resource/unit/building spawn prefab source wiring.
+   - Move `CreateRuntimeResourcePrefabSource` into `BuildingRuntimeResourcePrefabCompositionSystemHelper`.
+   - Result: `BuildingRuntimeResourcePrefabCompositionSystemHelper` now owns runtime resource/unit/building spawn prefab source wiring.
 
 12. Complete: Extract runtime tick source assembly
-   - Move `CreateRuntimeTickSource` into `BuildingRuntimeTickCompositionSystem`.
-   - Result: `BuildingRuntimeTickCompositionSystem` now owns runtime tick source delegate assembly while later steps extract its sub-context creators.
+   - Move `CreateRuntimeTickSource` into `BuildingRuntimeTickCompositionSystemHelper`.
+   - Result: `BuildingRuntimeTickCompositionSystemHelper` now owns runtime tick source delegate assembly while later steps extract its sub-context creators.
 
 13. Complete: Extract input runtime tick context
-   - Move `CreateInputRuntimeTickContext` into `BuildingPlacementInputTickCompositionSystem`.
-   - Result: `BuildingPlacementInputTickCompositionSystem` now owns input runtime tick context wiring while pointer/selection context helpers remain explicit delegate seams for later steps.
+   - Move `CreateInputRuntimeTickContext` into `BuildingPlacementInputTickCompositionSystemHelper`.
+   - Result: `BuildingPlacementInputTickCompositionSystemHelper` now owns input runtime tick context wiring while pointer/selection context helpers remain explicit delegate seams for later steps.
 
 14. Complete: Extract runtime boundary publish context
    - Move `CreateRuntimeBoundaryPublishContext` into `BuildingRuntimeBoundaryCompositionSystemHelper`.
@@ -207,8 +207,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingPlacementAdapterSystem` now owns initial placement origin, screen-origin, active-placement validity, placement validity, and gate-alignment adapters.
 
 23. Complete: Extract selection click context
-   - Move `CreateBuildingSelectionClickContext` into `BuildingSelectionClickCompositionSystem`.
-   - Result: `BuildingSelectionClickCompositionSystem` now owns building-click selection context wiring.
+   - Move `CreateBuildingSelectionClickContext` into `BuildingSelectionClickCompositionSystemHelper`.
+   - Result: `BuildingSelectionClickCompositionSystemHelper` now owns building-click selection context wiring.
 
 24. Complete: Extract building selection runtime context
    - Move `CreateBuildingSelectionContext` and selected-building focus/clear glue into `BuildingSelectionCompositionSystem`.
@@ -240,7 +240,7 @@ Top-level private state, included for extraction tracking:
 
 31. Complete: Remove remaining private context-factory methods from composition
    - Delete all extracted private helper methods from `BuildingGameplayCompositionSystem`.
-   - Result: runtime tick diagnostics context creation now lives in `BuildingRuntimeTickCompositionSystem`; `BuildingGameplayCompositionSystem` no longer declares private context-factory methods.
+   - Result: runtime tick diagnostics context creation now lives in `BuildingRuntimeTickCompositionSystemHelper`; `BuildingGameplayCompositionSystem` no longer declares private context-factory methods.
 
 32. Complete: Remove remaining wrapper/delegate pass-throughs
    - Move any leftover wrapper delegate bodies out of `BuildingGameplayCompositionSystem` or delete them if callers use narrow systems directly.

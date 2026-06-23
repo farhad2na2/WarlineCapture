@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeTickCompositionSystem
+internal sealed class BuildingRuntimeTickCompositionSystemHelper
 {
     public BuildingPlacementRuntimeTickContextSystem.Source Create(
         BuildingGameplayCompositionSourceSystem source,

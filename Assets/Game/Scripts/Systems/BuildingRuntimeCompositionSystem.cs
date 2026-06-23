@@ -235,8 +235,8 @@ internal sealed class BuildingRuntimeCompositionSystem
             source.BuildingSpawnPrefabSystem,
             BuildingRuntimeResourcePrefabContextSystem.CreateBuildingSpawnPrefabContext(
                 source.BuildingRuntimeResourcePrefabContextSystem,
-                BuildingRuntimeResourcePrefabCompositionSystem.Create(
-                    source.BuildingRuntimeResourcePrefabCompositionSystem,
+                BuildingRuntimeResourcePrefabCompositionSystemHelper.Create(
+                    source.BuildingRuntimeResourcePrefabCompositionHelper,
                     source)),
             source.BuildingVisualSystem,
             source.BuildingRuntimeVisualSystem,

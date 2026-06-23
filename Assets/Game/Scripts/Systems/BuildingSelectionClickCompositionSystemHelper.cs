@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal sealed class BuildingSelectionClickCompositionSystem
+internal sealed class BuildingSelectionClickCompositionSystemHelper
 {
     internal delegate bool TryGetGridForSelectionDelegate(
         BuildingGameplayCompositionSourceSystem source,

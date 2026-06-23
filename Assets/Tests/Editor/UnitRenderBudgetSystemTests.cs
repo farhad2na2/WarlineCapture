@@ -23,10 +23,10 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.CharacterClassificationUsesCachedLookups();
             tests.LodReferenceResolutionUsesCachedLookups();
             tests.RenderableQueryUsesCachedLookups();
-            tests.MovingVisibleCharactersUseSafeLowWhenAnimatable();
+            tests.MovingVisibleCharactersUseDetailedModelPath();
             tests.MovingVisibleCharactersFallbackToDetailWhenMeshLodIsNotAnimatable();
-            tests.IdleDistantVisibleCharactersUseFarImpostors();
-            tests.CharacterRenderPolicyDoesNotForceDetailedModelPath();
+            tests.IdleDistantVisibleCharactersStayOnDetailedModelPath();
+            tests.CharacterRenderPolicyForcesDetailedModelPath();
             tests.ImpostorTagRequestUsesCachedLookup();
             tests.UnselectedEnemyBeyondImpostorThresholdUsesFarVisual();
             tests.SelectedVehicleForcesImmediateDetailedVisual();
@@ -414,7 +414,7 @@ public sealed partial class UnitRenderBudgetSystemTests
     }
 
     [Test]
-    public void MovingVisibleCharactersUseSafeLowWhenAnimatable()
+    public void MovingVisibleCharactersUseDetailedModelPath()
     {
         var policy = new UnitRenderBudgetCharacterPolicy();
         UnitRenderVisualKind visual = policy.ResolveVisibleCharacterVisualKind(
@@ -428,7 +428,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             hasSafeLow: true,
             lowRootAnimatable: true);
 
-        Assert.AreEqual(UnitRenderVisualKind.Low, visual);
+        Assert.AreEqual(UnitRenderVisualKind.Detail, visual);
     }
 
     [Test]
@@ -450,7 +450,7 @@ public sealed partial class UnitRenderBudgetSystemTests
     }
 
     [Test]
-    public void IdleDistantVisibleCharactersUseFarImpostors()
+    public void IdleDistantVisibleCharactersStayOnDetailedModelPath()
     {
         var policy = new UnitRenderBudgetCharacterPolicy();
         UnitRenderVisualKind visual = policy.ResolveVisibleCharacterVisualKind(
@@ -464,14 +464,14 @@ public sealed partial class UnitRenderBudgetSystemTests
             hasSafeLow: true,
             lowRootAnimatable: true);
 
-        Assert.AreEqual(UnitRenderVisualKind.Far, visual);
+        Assert.AreEqual(UnitRenderVisualKind.Detail, visual);
     }
 
     [Test]
-    public void CharacterRenderPolicyDoesNotForceDetailedModelPath()
+    public void CharacterRenderPolicyForcesDetailedModelPath()
     {
         var policy = new UnitRenderBudgetCharacterPolicy();
-        Assert.IsFalse(policy.ShouldForceCharacterDetailVisual(true));
+        Assert.IsTrue(policy.ShouldForceCharacterDetailVisual(true));
         Assert.IsFalse(policy.ShouldForceCharacterDetailVisual(false));
     }
 

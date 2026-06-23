@@ -3,14 +3,14 @@ using System;
 internal sealed class BuildingGameplayDisposalCompositionSystemHelper
 {
     public Action CreateDisposeAction(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Func<BuildingPlacementCommandSystem.Context> createPlacementCommandContext)
     {
         return () => source.BuildingGameplayDisposalSystem.Dispose(CreateSource(source, createPlacementCommandContext));
     }
 
     public BuildingGameplayDisposalSystem.Source CreateSource(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Func<BuildingPlacementCommandSystem.Context> createPlacementCommandContext)
     {
         return new BuildingGameplayDisposalSystem.Source(

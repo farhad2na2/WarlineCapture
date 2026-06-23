@@ -1,4 +1,4 @@
-internal sealed class BuildingGameplayCompositionSourceSystem
+internal sealed class BuildingGameplaySourceCompositionSystemHelper
 {
     internal RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
     internal readonly RuntimeDiagnosticsSystem RuntimeDiagnosticsSystem = new();
@@ -85,7 +85,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
     internal uint BuildingSpawnRandomState = 0x12345678u;
 
-    public BuildingGameplayCompositionSourceSystem()
+    public BuildingGameplaySourceCompositionSystemHelper()
     {
         BuildingVisualSystem = ResolveBuildingVisualSystem();
         BuildingRuntimeVisualSystem = ResolveBuildingRuntimeVisualSystem();

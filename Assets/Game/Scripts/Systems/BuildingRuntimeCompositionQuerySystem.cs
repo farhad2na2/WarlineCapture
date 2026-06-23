@@ -7,20 +7,20 @@ internal sealed class BuildingRuntimeCompositionQuerySystem
     internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
     internal delegate bool TryGetGridDataDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
         out DynamicBlockerComponent blockerData);
 
     internal delegate RectInt GetEffectivePlacementRectDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingDefinition definition,
         Vector2Int originCell,
         GridConfig grid,
         bool rotateVertical);
 
-    public bool IsHouseBuilding(BuildingGameplayCompositionSourceSystem source, RuntimeBuildingEntity building)
+    public bool IsHouseBuilding(BuildingGameplaySourceCompositionSystemHelper source, RuntimeBuildingEntity building)
     {
         if (building?.Definition == null)
             return false;
@@ -41,7 +41,7 @@ internal sealed class BuildingRuntimeCompositionQuerySystem
     }
 
     public bool TryResolveBuildingFocusWorldPosition(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         RuntimeBuildingEntity building,
         TryGetEntityManagerDelegate tryGetEntityManager,
         out Vector3 worldPosition)
@@ -74,7 +74,7 @@ internal sealed class BuildingRuntimeCompositionQuerySystem
     }
 
     public bool TryGetRuntimeBuilding(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         int id,
         out RuntimeBuildingEntity building)
     {
@@ -86,7 +86,7 @@ internal sealed class BuildingRuntimeCompositionQuerySystem
     }
 
     public RectInt GetEffectivePlacementRect(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingDefinition definition,
         Vector2Int originCell,
         GridConfig grid,
@@ -102,7 +102,7 @@ internal sealed class BuildingRuntimeCompositionQuerySystem
     }
 
     public bool OverlapsAnyRuntimeBuilding(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         RectInt candidateRect,
         TryGetGridDataDelegate tryGetGridData,
         GetEffectivePlacementRectDelegate getEffectivePlacementRect)

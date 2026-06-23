@@ -5,33 +5,33 @@ using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 internal sealed class BuildingPlacementAdapterSystem
 {
     internal delegate bool TryGetGridDataDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
         out DynamicBlockerComponent blockerData);
 
     internal delegate BuildingRuntimeContextSystem.Source CreateBuildingRuntimeContextSourceDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock);
 
     internal delegate BuildingRuntimeContextSystem.RuntimeSource CreateRuntimeContextSourceDelegate(
-        BuildingGameplayCompositionSourceSystem source);
+        BuildingGameplaySourceCompositionSystemHelper source);
 
     internal delegate RectInt GetEffectivePlacementRectDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingDefinition definition,
         Vector2Int originCell,
         GridConfig grid,
         bool rotateVertical);
 
     internal delegate bool OverlapsAnyRuntimeBuildingDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         RectInt candidateRect);
 
     internal delegate bool IsPlacementValidDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingDefinition definition,
         Vector2Int originCell,
         Vector2Int footprintCells,
@@ -41,7 +41,7 @@ internal sealed class BuildingPlacementAdapterSystem
         DynamicBlockerComponent blockerData);
 
     public bool TryResolveInitialPlacementOrigin(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         BuildingDefinition definition,
@@ -63,7 +63,7 @@ internal sealed class BuildingPlacementAdapterSystem
     }
 
     public Vector2Int GetCenterScreenPlacementOrigin(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Vector2Int footprintCells,
         TryGetGridDataDelegate tryGetGridData)
     {
@@ -79,7 +79,7 @@ internal sealed class BuildingPlacementAdapterSystem
     }
 
     public bool IsActivePlacementValid(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Vector2Int originCell,
         Vector2Int footprintCells,
         GridConfig grid,
@@ -97,7 +97,7 @@ internal sealed class BuildingPlacementAdapterSystem
     }
 
     public bool TryAlignGateToNearbyWall(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Vector2Int originCell,
         BuildingDefinition definition,
         CreateRuntimeContextSourceDelegate createRuntimeContextSource,
@@ -111,7 +111,7 @@ internal sealed class BuildingPlacementAdapterSystem
     }
 
     public bool IsPlacementValid(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingDefinition definition,
         Vector2Int originCell,
         Vector2Int footprintCells,

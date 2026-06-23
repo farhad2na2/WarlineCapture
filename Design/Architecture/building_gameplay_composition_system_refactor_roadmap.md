@@ -52,8 +52,8 @@ Top-level public/internal methods:
 
 - `public Result Initialize(BuildingPlacementSystemConfig buildingPlacementConfig, Camera worldCamera, Transform runtimeUiRoot, RoadFootprintQuerySystem roadFootprintQuerySystem, RoadFootprintQuerySystem.Context roadFootprintQueryContext, FactionVisualSettings factionVisuals, DayNightSystem dayNight)`
 - `internal static int ResolveInitialDollars(BuildingPlacementSystemConfig buildingPlacementConfig)`
-- `internal static BuildingGameplayCompositionSourceSystem CreateChildSystems()`
-- `internal static BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source CreateRuntimeTickSource(BuildingGameplayCompositionSourceSystem source, BuildingPlacementInteractionSystem.Context interactionContext, MaterialPropertyBlock markerPropertyBlock)`
+- `internal static BuildingGameplaySourceCompositionSystemHelper CreateChildSystems()`
+- `internal static BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source CreateRuntimeTickSource(BuildingGameplaySourceCompositionSystemHelper source, BuildingPlacementInteractionSystem.Context interactionContext, MaterialPropertyBlock markerPropertyBlock)`
 - `public void BindSelection(Result building, DayNightSystem dayNight, SelectionUiCameraSystem selectionUiCameraSystem, SelectionBuildingInteractionSystem selectionBuildingInteractionSystem)`
 - `public void InitializeCitizenPopulation(Result building, DayNightSystem dayNight, Camera worldCamera)`
 - `public void BindCitizenPopulation(Result building, DayNightSystem dayNight, SelectionUiCameraSystem selectionUiCameraSystem, SelectionBuildingInteractionSystem selectionBuildingInteractionSystem, CitizenPopulationEventSystem citizenPopulationEventSystem)`
@@ -248,7 +248,7 @@ Top-level private state, included for extraction tracking:
 
 33. Complete: Tighten contract debt allowances
    - Update architecture tests and contract text so extracted responsibilities cannot return to `BuildingGameplayCompositionSystem` or a broad replacement shell.
-   - Result: drift guards name final owners and reject broad replacement files; contract and architecture guards now name extracted final owners, require `BuildingGameplayCompositionSourceSystem` to keep the explicit owner graph, and reject broad replacement files including manager/controller/facade/installer/service/bootstrap/orchestrator shells.
+   - Result: drift guards name final owners and reject broad replacement files; contract and architecture guards now name extracted final owners, require `BuildingGameplaySourceCompositionSystemHelper` to keep the explicit owner graph, and reject broad replacement files including manager/controller/facade/installer/service/bootstrap/orchestrator shells.
 
 34. Complete: Performance and allocation audit
    - Verify the refactor did not add per-frame allocations, extra material property blocks, repeated context construction in hot update paths, or reflection.

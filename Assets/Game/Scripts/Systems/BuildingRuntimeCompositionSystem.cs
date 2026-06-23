@@ -7,39 +7,39 @@ internal sealed class BuildingRuntimeCompositionSystem
     internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
     internal delegate bool TryGetGridDataDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
         out DynamicBlockerComponent blockerData);
 
     internal delegate RectInt GetEffectivePlacementRectDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingDefinition definition,
         Vector2Int originCell,
         GridConfig grid,
         bool rotateVertical);
 
     internal delegate bool OverlapsAnyRuntimeBuildingDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         RectInt candidateRect);
 
     internal delegate bool IsHouseBuildingDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         RuntimeBuildingEntity building);
 
     internal delegate bool TryResolveBuildingFocusWorldPositionDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         RuntimeBuildingEntity building,
         out Vector3 worldPosition);
 
     internal delegate bool TryGetRuntimeBuildingDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         int id,
         out RuntimeBuildingEntity building);
 
     public BuildingRuntimeContextSystem.Source CreateBuildingRuntimeContextSource(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         TryGetEntityManagerDelegate tryGetEntityManager,
@@ -49,8 +49,8 @@ internal sealed class BuildingRuntimeCompositionSystem
         IsHouseBuildingDelegate isHouseBuilding,
         TryResolveBuildingFocusWorldPositionDelegate tryResolveBuildingFocusWorldPosition,
         TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
-        Action<BuildingGameplayCompositionSourceSystem> beginDeferredRuntimeBuildingSideEffects,
-        Action<BuildingGameplayCompositionSourceSystem> endDeferredRuntimeBuildingSideEffects,
+        Action<BuildingGameplaySourceCompositionSystemHelper> beginDeferredRuntimeBuildingSideEffects,
+        Action<BuildingGameplaySourceCompositionSystemHelper> endDeferredRuntimeBuildingSideEffects,
         float destroyedBuildingLifetimeSeconds)
     {
         BuildingRuntimeContextSystem.RuntimeSource CreateRuntimeSource() =>
@@ -192,7 +192,7 @@ internal sealed class BuildingRuntimeCompositionSystem
     }
 
     public BuildingRuntimeEntitySystem.Context CreateBuildingRuntimeEntityContext(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         TryGetEntityManagerDelegate tryGetEntityManager,
         TryGetGridDataDelegate tryGetGridData,
         IsHouseBuildingDelegate isHouseBuilding,
@@ -220,7 +220,7 @@ internal sealed class BuildingRuntimeCompositionSystem
     }
 
     public BuildingRuntimeContextSystem.RuntimeSource CreateRuntimeContextSource(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         TryGetEntityManagerDelegate tryGetEntityManager,
         TryGetGridDataDelegate tryGetGridData,
         IsHouseBuildingDelegate isHouseBuilding,

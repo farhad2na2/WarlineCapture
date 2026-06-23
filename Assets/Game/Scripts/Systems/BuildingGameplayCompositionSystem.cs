@@ -41,7 +41,7 @@ internal sealed class BuildingGameplayCompositionSystem
         BuildingDefinitionSystem.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata = null)
     {
         MaterialPropertyBlock markerPropertyBlock = BuildingMarkerVisualPresentationSystemHelper.GetMarkerPropertyBlock(_markerVisualPresentationHelper);
-        BuildingGameplayCompositionSourceSystem childSystems = _childSystem.Create();
+        BuildingGameplaySourceCompositionSystemHelper childSystems = _childSystem.Create();
         childSystems.BuildingDefinitionSystem.ConfigureAuthoringMetadataResolvers(
             tryGetBuildingDefinitionMetadata,
             tryGetUnitDefinitionMetadata);
@@ -67,7 +67,7 @@ internal sealed class BuildingGameplayCompositionSystem
         BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetGridEntityManager = tryGetEntityManager;
 
         bool tryGetGridData(
-            BuildingGameplayCompositionSourceSystem source,
+            BuildingGameplaySourceCompositionSystemHelper source,
             out Entity gridEntity,
             out GridConfig grid,
             out DynamicBuffer<GridRoad> roads,
@@ -82,7 +82,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 out blockerData);
         }
 
-        bool tryGetGridForSelection(BuildingGameplayCompositionSourceSystem source, out GridConfig grid)
+        bool tryGetGridForSelection(BuildingGameplaySourceCompositionSystemHelper source, out GridConfig grid)
         {
             return source.BuildingGridCompositionSystem.TryGetGridForSelection(
                 source,
@@ -90,7 +90,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 out grid);
         }
 
-        bool tryGetGridForPlacementInput(BuildingGameplayCompositionSourceSystem source, out GridConfig grid)
+        bool tryGetGridForPlacementInput(BuildingGameplaySourceCompositionSystemHelper source, out GridConfig grid)
         {
             return source.BuildingGridCompositionSystem.TryGetGridForPlacementInput(
                 source,
@@ -99,7 +99,7 @@ internal sealed class BuildingGameplayCompositionSystem
         }
 
         bool tryGetGridCell(
-            BuildingGameplayCompositionSourceSystem source,
+            BuildingGameplaySourceCompositionSystemHelper source,
             Vector2 screenPosition,
             GridConfig grid,
             out Vector2Int cell)
@@ -121,14 +121,14 @@ internal sealed class BuildingGameplayCompositionSystem
         BuildingRuntimeCompositionSystem.IsHouseBuildingDelegate isHouseBuilding =
             (source, building) => source.BuildingRuntimeCompositionQuerySystem.IsHouseBuilding(source, building);
         BuildingRuntimeCompositionSystem.TryResolveBuildingFocusWorldPositionDelegate tryResolveBuildingFocusWorldPosition =
-            (BuildingGameplayCompositionSourceSystem source, RuntimeBuildingEntity building, out Vector3 worldPosition) =>
+            (BuildingGameplaySourceCompositionSystemHelper source, RuntimeBuildingEntity building, out Vector3 worldPosition) =>
                 source.BuildingRuntimeCompositionQuerySystem.TryResolveBuildingFocusWorldPosition(
                     source,
                     building,
                     tryGetEntityManager,
                     out worldPosition);
         BuildingRuntimeCompositionSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding =
-            (BuildingGameplayCompositionSourceSystem source, int id, out RuntimeBuildingEntity building) =>
+            (BuildingGameplaySourceCompositionSystemHelper source, int id, out RuntimeBuildingEntity building) =>
                 source.BuildingRuntimeCompositionQuerySystem.TryGetRuntimeBuilding(source, id, out building);
         BuildingRuntimeCompositionSystem.OverlapsAnyRuntimeBuildingDelegate overlapsAnyRuntimeBuilding =
             (source, candidateRect) => source.BuildingRuntimeCompositionQuerySystem.OverlapsAnyRuntimeBuilding(
@@ -136,7 +136,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 candidateRect,
                 tryGetGridData,
                 (querySource, definition, originCell, grid, rotateVertical) => getEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical));
-        Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource =
             source => source.BuildingRuntimeCompositionSystem.CreateRuntimeContextSource(
                 source,
                 tryGetEntityManager,
@@ -145,7 +145,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 tryResolveBuildingFocusWorldPosition,
                 tryGetRuntimeBuilding,
                 getEffectivePlacementRect);
-        Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext =
             source => source.BuildingRuntimeCompositionSystem.CreateBuildingRuntimeEntityContext(
                 source,
                 tryGetEntityManager,
@@ -155,7 +155,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 tryGetRuntimeBuilding,
                 getEffectivePlacementRect,
                 DestroyedBuildingLifetimeSeconds);
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource =
             (source, placementInteractionContext, placementMarkerPropertyBlock) => source.BuildingRuntimeCompositionSystem.CreateBuildingRuntimeContextSource(
                 source,
                 placementInteractionContext,
@@ -175,9 +175,9 @@ internal sealed class BuildingGameplayCompositionSystem
         BuildingPlacementAdapterSystem.CreateBuildingRuntimeContextSourceDelegate createBuildingRuntimeContextSourceForAdapter =
             (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                 createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementQuerySystem.Context> createPlacementQueryContext =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQuerySystem.Context> createPlacementQueryContext =
             source => source.BuildingPlacementQueryCompositionSystem.Create(source);
-        Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext =
             source => source.BuildingSelectionCompositionHelper.Create(
                 source,
                 tryGetGridForSelection,
@@ -204,7 +204,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 tryGetGridData);
         BuildingPlacementCommandCompositionSystemHelper.TryResolveInitialPlacementOriginDelegate tryResolveInitialPlacementOrigin =
             (
-                BuildingGameplayCompositionSourceSystem source,
+                BuildingGameplaySourceCompositionSystemHelper source,
                 BuildingPlacementInteractionSystem.Context placementInteractionContext,
                 MaterialPropertyBlock placementMarkerPropertyBlock,
                 BuildingDefinition definition,
@@ -228,7 +228,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 createRuntimeContextSourceForAdapter,
                 isPlacementValid);
         BuildingPlacementCommandCompositionSystemHelper.TryAlignGateToNearbyWallDelegate tryAlignGateForCommand =
-            (BuildingGameplayCompositionSourceSystem source, Vector2Int originCell, BuildingDefinition definition, out bool gateVertical) =>
+            (BuildingGameplaySourceCompositionSystemHelper source, Vector2Int originCell, BuildingDefinition definition, out bool gateVertical) =>
                 source.BuildingPlacementAdapterSystem.TryAlignGateToNearbyWall(
                     source,
                     originCell,
@@ -236,7 +236,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createRuntimeContextSourceForAdapter,
                     out gateVertical);
         BuildingPlacementVisualCompositionPresentationSystemHelper.TryAlignGateToNearbyWallDelegate tryAlignGateForVisual =
-            (BuildingGameplayCompositionSourceSystem source, Vector2Int originCell, BuildingDefinition definition, out bool gateVertical) =>
+            (BuildingGameplaySourceCompositionSystemHelper source, Vector2Int originCell, BuildingDefinition definition, out bool gateVertical) =>
                 source.BuildingPlacementAdapterSystem.TryAlignGateToNearbyWall(
                     source,
                     originCell,
@@ -337,7 +337,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 tryAlignGateForCommand,
                 createBuildingRuntimeContextSource,
                 createBuildingSelectionContext);
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext =
             (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                 source.BuildingPlacementCommandCompositionSystemHelper.CreateCommandContext(
                     source,

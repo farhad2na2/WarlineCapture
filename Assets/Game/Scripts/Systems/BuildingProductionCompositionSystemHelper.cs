@@ -5,9 +5,9 @@ using UnityEngine;
 internal sealed class BuildingProductionCompositionSystemHelper
 {
     public BuildingProductionContextCompositionSystemHelper.Source CreateRuntimeContextSource(
-        BuildingGameplayCompositionSourceSystem source,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
+        BuildingGameplaySourceCompositionSystemHelper source,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
         BuildingPlacementInteractionSystem.Context interactionContext = default,
         MaterialPropertyBlock markerPropertyBlock = null)
     {
@@ -71,7 +71,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
     }
 
     private static bool EnqueueAndProcessBeginPlacementForConfiguredSpawnable(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementCommandSystem.Context context,
         GameObject prefab)
     {

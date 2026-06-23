@@ -6,23 +6,23 @@ using UnityEngine;
 internal sealed class BuildingPlacementInteractionCompositionSystemHelper
 {
     internal delegate bool TryGetGridForPlacementInputDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         out GridConfig grid);
 
     internal delegate bool TryGetGridCellDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Vector2 screenPosition,
         GridConfig grid,
         out Vector2Int cell);
 
     internal delegate void UpdatePlacementDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Vector2 screenPosition);
 
     public BuildingPlacementInputSystem.ActivePlacementPointerContext CreateActivePlacementPointerContext(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         TryGetGridForPlacementInputDelegate tryGetGridForPlacementInput,
@@ -40,15 +40,15 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
     }
 
     public BuildingPlacementInteractionSystem.Context CreateBuildingPlacementInteractionContext(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Func<BuildingPlacementInteractionSystem.Context> getInteractionContext,
         MaterialPropertyBlock markerPropertyBlock,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingUiQuerySystem.Context> createBuildingUiQueryContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingProductionRequestBoundary.Context> createProductionRequestContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingUiQuerySystem.Context> createBuildingUiQueryContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingProductionRequestBoundary.Context> createProductionRequestContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
     {
         return source.BuildingPlacementInteractionContextSystem.CreateContext(
             source.BuildingPlacementInteractionContextSystem.CreateSource(
@@ -110,7 +110,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
     }
 
     private static void EnqueueAndProcessCreateUnitFromSelectedBuilding(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingProductionRequestBoundary.Context context)
     {
         if (source.BuildingProductionRequestBoundary == null ||
@@ -128,7 +128,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
     }
 
     private static bool EnqueueAndProcessConfirmBuildingPlacement(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementCommandSystem.Context context)
     {
         return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
@@ -137,7 +137,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
     }
 
     private static void EnqueueAndProcessBeginSoldierBasePlacement(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementCommandSystem.Context context)
     {
         if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
@@ -169,7 +169,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
     }
 
     private static void EnqueueAndProcessCancelBuildingPlacement(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementCommandSystem.Context context)
     {
         if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
@@ -179,7 +179,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
     }
 
     private static void EnqueueAndProcessExitBuildMode(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementCommandSystem.Context context)
     {
         if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
@@ -205,7 +205,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
     }
 
     private static bool EnqueueAndProcessDeleteSelectedBuilding(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingSelectionSystem.Context context,
         BuildingSelectionSystem.BuildingIdAction deleteBuildingById)
     {
@@ -215,7 +215,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
     }
 
     private static bool EnqueueAndProcessClearSelectedBuilding(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingSelectionSystem.Context context)
     {
         return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
@@ -224,7 +224,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
     }
 
     private static bool DeleteSelectedBuilding(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingSelectionSystem.Context context,
         BuildingSelectionSystem.BuildingIdAction deleteBuildingById)
     {
@@ -234,7 +234,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
     }
 
     private static bool ClearSelectedBuilding(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingSelectionSystem.Context context)
     {
         source.BuildingSelectionSystem.ClearSelectedBuilding(context);

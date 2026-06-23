@@ -22,7 +22,7 @@ Building selection state stays in `RuntimeBuildingSystem`. Building selection ma
 1. Document this roadmap and the architecture contract rule.
 2. Create `Assets/Game/Prefabs/Buildings/BuildingSelectionMarker.prefab` from the existing building marker visual.
 3. Add `BuildingSelectionMarkerSystem` with an explicit context containing runtime buildings, `RuntimeBuildingSystem`, grid lookup, footprint-center delegate, marker prefab, marker parent/root, visual system, faction visuals, and marker property block.
-4. Wire `BuildingSelectionMarkerSystem` through `BuildingGameplayCompositionSourceSystem`, startup config, and composition context creation.
+4. Wire `BuildingSelectionMarkerSystem` through `BuildingGameplaySourceCompositionSystemHelper`, startup config, and composition context creation.
 5. Replace building marker refresh callbacks so they call `BuildingSelectionMarkerSystem.Refresh`.
 6. Remove building `SelectionMarker` storage from `RuntimeBuildingData` and stop `BuildingRuntimeVisualSystem` from finding or toggling per-building selection markers.
 7. Update combat/destroy paths so selected-building removal clears selection and refreshes the shared marker.

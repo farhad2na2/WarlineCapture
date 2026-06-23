@@ -4,12 +4,12 @@ using UnityEngine;
 internal sealed class BuildingRuntimeBoundaryCompositionSystemHelper
 {
     public BuildingRuntimeBoundaryPublishSystem.Context Create(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingProductionContextCompositionSystemHelper.Source> createProductionRuntimeContextSource,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingProductionContextCompositionSystemHelper.Source> createProductionRuntimeContextSource,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
     {
         return new BuildingRuntimeBoundaryPublishSystem.Context(
             source.BuildingEntityManagerAccessSystem.TryGetEntityManager,

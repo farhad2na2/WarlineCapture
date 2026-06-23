@@ -11,8 +11,8 @@ internal partial struct BuildingGameplayChildSystem : ISystem
     {
     }
 
-    public BuildingGameplayCompositionSourceSystem Create()
+    public BuildingGameplaySourceCompositionSystemHelper Create()
     {
-        return new BuildingGameplayCompositionSourceSystem();
+        return new BuildingGameplaySourceCompositionSystemHelper();
     }
 }

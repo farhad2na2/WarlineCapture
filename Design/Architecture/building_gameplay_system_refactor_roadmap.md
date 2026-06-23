@@ -66,7 +66,7 @@ Step 31 runtime context factory transition size: 1446 lines. Runtime spawn comma
 
 Step 32 production/UI context factory transition size: 1446 lines. Production context source creation now routes through `BuildingProductionContextCompositionSystemHelper.CreateSource`, UI context source creation routes through `BuildingUiContextSystem.CreateSource`, interaction context source creation routes through `BuildingPlacementInteractionContextSystem.CreateSource`, and runtime resource prefab source creation routes through `BuildingRuntimeResourcePrefabContextSystem.CreateSource`.
 
-Step 33 runtime tick composition transition size: 1417 lines. Runtime tick source assembly now uses `BuildingGameplayCompositionSourceSystem` child systems directly for runtime visual/combat/barrier/input/boundary tick phases; `BuildingGameplaySystem` no longer exposes `RuntimeTickSystem`, `RuntimeTickDomains`, `RuntimeInputDomains`, runtime state getter delegates, runtime boundary query delegates, or tick-only production/resource properties.
+Step 33 runtime tick composition transition size: 1417 lines. Runtime tick source assembly now uses `BuildingGameplaySourceCompositionSystemHelper` child systems directly for runtime visual/combat/barrier/input/boundary tick phases; `BuildingGameplaySystem` no longer exposes `RuntimeTickSystem`, `RuntimeTickDomains`, `RuntimeInputDomains`, runtime state getter delegates, runtime boundary query delegates, or tick-only production/resource properties.
 
 Goal: retire `BuildingGameplaySystem.cs` as a broad managed orchestration shell. Runtime building behavior must remain in narrow `*System` boundaries: placement, validation, preview, commit, runtime spawn, runtime query, UI command/query, production, resources, combat, barriers, selection, and runtime tick publication. The final state should have no production source file named `BuildingGameplaySystem.cs`; callers should consume explicit building systems, ECS request/response buffers, or narrow context systems from `BuildingGameplayCompositionSystem.Result`.
 
@@ -149,7 +149,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Pass them through a typed composition result/source.
    - Do not change behavior; only move lifetime ownership.
    - Expected output: `BuildingGameplaySystem` no longer decides which systems exist.
-   - Added `BuildingGameplayCompositionSourceSystem` as the composition-owned child system source.
+   - Added `BuildingGameplaySourceCompositionSystemHelper` as the composition-owned child system source.
    - `BuildingGameplayCompositionSystem.Initialize` now creates child systems and passes them to `BuildingGameplaySystem`.
    - `BuildingGameplaySystem` assigns child system fields from the source instead of constructing them inline.
    - The parameterless shell constructor remains only for temporary test harness compatibility and routes through composition-owned child system creation.
@@ -159,7 +159,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Own menu, selection camera, selection building interaction, grid blocker, runtime city, citizen population, faction visuals, and day/night references.
    - Replace `BuildingGameplaySystem.BindDependencies` storage with dependency-system reads.
    - Added `BuildingGameplayDependencySystem` for menu, selection camera, selection building interaction, runtime blocker, runtime city, citizen population, faction visual, and day/night references.
-   - `BuildingGameplayCompositionSourceSystem` now owns the dependency system.
+   - `BuildingGameplaySourceCompositionSystemHelper` now owns the dependency system.
    - `BuildingGameplaySystem` no longer declares direct dependency fields and routes startup/runtime dependency binding plus callbacks through `BuildingGameplayDependencySystem`.
 
 6. Complete: Move placement startup/config wiring
@@ -176,7 +176,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Remove `BuildingGameplaySystem.Dispose` as the disposal gateway.
    - Expected output: lifecycle is a set of explicit disposal hooks, not shell disposal.
    - Added `BuildingGameplayDisposalSystem` to own runtime building object/entity destruction, runtime registry clearing, and placement startup disposal.
-   - `BuildingGameplayCompositionSourceSystem` now owns the disposal system.
+   - `BuildingGameplaySourceCompositionSystemHelper` now owns the disposal system.
    - `BuildingGameplayCompositionSystem.Result.Dispose` now calls `BuildingGameplayDisposalSystem` directly instead of `building.Dispose`.
    - `BuildingGameplaySystem.Dispose` remains only as temporary compatibility for tests/legacy callers and delegates to `BuildingGameplayDisposalSystem`.
 
@@ -187,7 +187,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Own world/entity query caching and invalidation for grid data, unit prefab registry, spawn prefab candidates, selected units, haulers, live units, faction units, redirect units, and runtime boundary entity.
    - Expected output: no `EntityQuery` fields remain in `BuildingGameplaySystem`.
    - Added `BuildingGameplayEcsQuerySystem` with the previous query cache and query creation logic.
-   - `BuildingGameplayCompositionSourceSystem` now owns the query system.
+   - `BuildingGameplaySourceCompositionSystemHelper` now owns the query system.
    - `BuildingGameplaySystem` no longer declares `World` or `EntityQuery` cache fields and delegates `EnsureEntityQueries` plus query handle reads to `BuildingGameplayEcsQuerySystem`.
 
 9. Complete: Extract grid data access
@@ -195,7 +195,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Systems must reacquire buffers after structural changes.
    - Expected output: placement, selection, validation, and runtime tick contexts read grid data through a narrow query boundary.
    - Added `BuildingGameplayGridDataSystem` with grid data retrieval and grid-cell pointer conversion delegates.
-   - `BuildingGameplayCompositionSourceSystem` now owns the grid data system.
+   - `BuildingGameplaySourceCompositionSystemHelper` now owns the grid data system.
    - `BuildingGameplaySystem` delegates grid-data and grid-cell access to `BuildingGameplayGridDataSystem`, keeping only temporary wrapper methods for existing context factories.
 
 10. Complete: Extract placement invalid-cell cache
@@ -203,7 +203,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Own prefix arrays, prefix dimensions, rebuild flags, road footprint mask creation, runtime blocker checks, and cached-footprint validation.
    - Expected output: road footprint and runtime blocker coupling leaves the broad shell.
    - Added `BuildingPlacementInvalidCellSystem` with invalid-prefix state, rebuild, road footprint mask creation, runtime blocker filtering, cached-footprint checks, and placement rect validation.
-   - `BuildingGameplayCompositionSourceSystem` now owns the invalid-cell system.
+   - `BuildingGameplaySourceCompositionSystemHelper` now owns the invalid-cell system.
    - `BuildingGameplaySystem` no longer stores invalid-prefix arrays/dimensions or directly calls road-footprint/runtime-blocker cache rebuild helpers.
 
 11. Complete: Move building spawn random state
@@ -221,7 +221,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Own `BeginSoldierBasePlacement`, `BeginSoldierTentPlacement`, `BeginFactoryPlacement`, and configured-spawnable placement start.
    - Expected output: UI buttons call a building placement command boundary, not `BuildingGameplaySystem`.
    - Added `BuildingPlacementCommandSystem` with build-button placement commands and configured-spawnable placement start.
-   - `BuildingGameplayCompositionSourceSystem` now owns the placement command system.
+   - `BuildingGameplaySourceCompositionSystemHelper` now owns the placement command system.
    - Interaction and production request context factories now pass command-system delegates for soldier-base and configured-spawnable placement starts.
 
 13. Complete: Move placement confirm/cancel/exit commands
@@ -236,7 +236,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Move active-placement focus, placement visual update, placement validation for confirm, and placement object handoff into placement lifecycle/preview/commit systems.
    - Expected output: `BuildingGameplaySystem` no longer contains placement update or commit helper methods.
    - Added `BuildingPlacementVisualUpdateSystem` to own active-placement focus, placement visual update, confirm validation for wall placement, current placement focus resolution, and placement object handoff to commit/lifecycle systems.
-   - `BuildingGameplayCompositionSourceSystem` now owns the visual-update system.
+   - `BuildingGameplaySourceCompositionSystemHelper` now owns the visual-update system.
    - `BuildingGameplaySystem` delegates placement visual callbacks through `BuildingPlacementVisualUpdateSystem` and no longer calls preview update, pointer hover, wall validation, placement commit, or preview-release methods directly.
 
 15. Complete: Move wall placement preview/commit helpers
@@ -383,7 +383,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplayCompositionSystem.CreateRuntimeTickSource` uses direct systems and context systems only.
    - Remove `BuildingGameplaySystem.RuntimeTickDomains`, `RuntimeInputDomains`, and all shell get/set delegates from the tick source.
    - Expected output: `BuildingRuntimeUpdateSystem` is fully independent from the shell.
-   - `BuildingGameplayCompositionSystem.CreateRuntimeTickSource` now accepts `BuildingGameplayCompositionSourceSystem` and uses direct child systems for production tick, boundary publish, visual resource updates, destroyed-building sync, barrier doors, redirect marker flush, and input tick.
+   - `BuildingGameplayCompositionSystem.CreateRuntimeTickSource` now accepts `BuildingGameplaySourceCompositionSystemHelper` and uses direct child systems for production tick, boundary publish, visual resource updates, destroyed-building sync, barrier doors, redirect marker flush, and input tick.
    - Removed shell runtime tick/input domain properties and tick-only shell delegates from `BuildingGameplaySystem`.
    - Runtime boundary publish now uses `BuildingGameplayEcsQuerySystem` and a local composition entity-manager resolver instead of shell wrappers.
 
@@ -394,7 +394,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Expected output: `rg "BuildingGameplaySystem" Assets/Game -g '*.cs'` finds no production dependency except the file being retired.
    - In progress: citizen population context creation and gameplay feature binding now use composition-owned dependency/resource context systems instead of `BuildingGameplaySystem`.
    - In progress: runtime tick and runtime boundary production source creation now use composition-owned `BuildingProductionContextCompositionSystemHelper.Source` instead of `BuildingGameplaySystem.CreateBuildingProductionContextSource`.
-   - In progress: composition result now exposes selection-click, runtime-city spawn, runtime-query, UI command/query, and placement-interaction systems from `BuildingGameplayCompositionSourceSystem` instead of reading those systems back through `BuildingGameplaySystem`.
+   - In progress: composition result now exposes selection-click, runtime-city spawn, runtime-query, UI command/query, and placement-interaction systems from `BuildingGameplaySourceCompositionSystemHelper` instead of reading those systems back through `BuildingGameplaySystem`.
    - In progress: runtime visual/combat/barrier/query/production composition now uses a composition-owned `CreateRuntimeContextSource` instead of `BuildingGameplaySystem.CreateRuntimeContextSystemSource`.
    - In progress: spawn command, runtime-city spawn, and boundary spawn composition now use a composition-owned `CreateBuildingRuntimeContextSource` instead of `BuildingGameplaySystem.CreateBuildingRuntimeContextSource`.
    - In progress: selection-click composition now uses composition-owned `BuildingSelectionSystem` / `BuildingSelectionClickSystem` contexts instead of `BuildingGameplaySystem.CreateBuildingSelectionClickContext`.

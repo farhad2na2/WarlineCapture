@@ -3,14 +3,14 @@ using UnityEngine;
 internal sealed class BuildingSelectionCompositionSystemHelper
 {
     internal delegate bool TryGetGridForSelectionDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         out GridConfig grid);
 
     public BuildingSelectionSystem.Context Create(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         TryGetGridForSelectionDelegate tryGetGridForSelection,
         System.Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
     {
         return source.BuildingSelectionSystem.CreateContext(new BuildingSelectionSystem.Source(
             source.RuntimeBuildingSystem,

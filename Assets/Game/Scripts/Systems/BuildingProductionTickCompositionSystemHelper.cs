@@ -3,8 +3,8 @@ using System;
 internal sealed class BuildingProductionTickCompositionSystemHelper
 {
     public BuildingProductionRuntimeTickSystem.Context Create(
-        BuildingGameplayCompositionSourceSystem source,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingProductionContextCompositionSystemHelper.Source> createProductionRuntimeContextSource,
+        BuildingGameplaySourceCompositionSystemHelper source,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingProductionContextCompositionSystemHelper.Source> createProductionRuntimeContextSource,
         float oilBarrelsPerFuelBarrel)
     {
         BuildingProductionContextCompositionSystemHelper.Source productionSource = createProductionRuntimeContextSource(source);

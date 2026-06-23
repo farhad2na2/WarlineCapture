@@ -5,20 +5,20 @@ using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
 {
     internal delegate bool TryGetGridCellDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Vector2 screenPosition,
         GridConfig grid,
         out Vector2Int cell);
 
     internal delegate bool TryGetGridDataDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
         out DynamicBlockerComponent blockerData);
 
     internal delegate bool IsActivePlacementValidDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Vector2Int originCell,
         Vector2Int footprintCells,
         GridConfig grid,
@@ -26,18 +26,18 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         DynamicBlockerComponent blockerData);
 
     internal delegate bool TryAlignGateToNearbyWallDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Vector2Int origin,
         BuildingDefinition definition,
         out bool gateVertical);
 
     internal delegate BuildingPlacementContextSystem.Source CreatePlacementContextSourceDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock);
 
     public void UpdatePlacement(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Vector2 screenPosition,
@@ -46,8 +46,8 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         IsActivePlacementValidDelegate isActivePlacementValid,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         CreatePlacementContextSourceDelegate createPlacementContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         if (source?.BuildingPlacementVisualUpdateSystem == null)
             return;
@@ -69,7 +69,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
     }
 
     public BuildingPlacementVisualUpdateSystem.Context CreateUpdateContext(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         TryGetGridCellDelegate tryGetGridCell,
@@ -77,8 +77,8 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         IsActivePlacementValidDelegate isActivePlacementValid,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         CreatePlacementContextSourceDelegate createPlacementContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return new BuildingPlacementVisualUpdateSystem.Context(
             source.BuildingPlacementInputSystem,
@@ -113,7 +113,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
     }
 
     public void FocusActivePlacement(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement,
@@ -122,8 +122,8 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         IsActivePlacementValidDelegate isActivePlacementValid,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         CreatePlacementContextSourceDelegate createPlacementContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         if (source?.BuildingPlacementVisualUpdateSystem == null)
             return;
@@ -144,7 +144,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
     }
 
     public bool ValidateActivePlacementForConfirm(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement,
@@ -153,8 +153,8 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         IsActivePlacementValidDelegate isActivePlacementValid,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         CreatePlacementContextSourceDelegate createPlacementContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         if (source?.BuildingPlacementVisualUpdateSystem == null)
             return false;
@@ -175,7 +175,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
     }
 
     public void UpdatePlacementVisual(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement,
@@ -186,8 +186,8 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         IsActivePlacementValidDelegate isActivePlacementValid,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         CreatePlacementContextSourceDelegate createPlacementContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         if (source?.BuildingPlacementVisualUpdateSystem == null)
             return;
@@ -210,7 +210,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
     }
 
     public void PlaceBuilding(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement,
@@ -219,8 +219,8 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         IsActivePlacementValidDelegate isActivePlacementValid,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         CreatePlacementContextSourceDelegate createPlacementContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         if (source?.BuildingPlacementVisualUpdateSystem == null)
             return;

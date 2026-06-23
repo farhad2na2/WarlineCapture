@@ -4,15 +4,15 @@ using UnityEngine;
 internal sealed class BuildingRuntimeTickCompositionSystemHelper
 {
     public BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source Create(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementInputRuntimeTickSystem.Context> createInputRuntimeTickContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingProductionRuntimeTickSystem.Context> createProductionRuntimeTickContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeBoundaryPublishSystem.Context> createRuntimeBoundaryPublishContext,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, Action> createMapBuildingPlacementSpawnUpdate,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, Action> createMapVehiclePlacementSpawnUpdate,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementInputRuntimeTickSystem.Context> createInputRuntimeTickContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingProductionRuntimeTickSystem.Context> createProductionRuntimeTickContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeBoundaryPublishSystem.Context> createRuntimeBoundaryPublishContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, Action> createMapBuildingPlacementSpawnUpdate,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, Action> createMapVehiclePlacementSpawnUpdate,
         float destroyedBuildingLifetimeSeconds)
     {
         BuildingRuntimeContextSystem.RuntimeSource runtimeSource = createRuntimeContextSource(source);

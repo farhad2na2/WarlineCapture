@@ -4,11 +4,11 @@ using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 internal sealed class BuildingPlacementCommandCompositionSystemHelper
 {
     internal delegate Vector2Int GetCenterScreenPlacementOriginDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Vector2Int footprintCells);
 
     internal delegate bool TryResolveInitialPlacementOriginDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         BuildingDefinition definition,
@@ -16,7 +16,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         out Vector2Int resolvedOrigin);
 
     internal delegate void UpdatePlacementVisualDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement,
@@ -24,47 +24,47 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         Vector2 screenPosition);
 
     internal delegate void FocusActivePlacementDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement);
 
     internal delegate bool ValidateActivePlacementForConfirmDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement);
 
     internal delegate void PlaceBuildingDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement);
 
     internal delegate bool TryGetGridForPlacementInputDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         out GridConfig grid);
 
     internal delegate bool TryGetGridCellDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Vector2 screenPosition,
         GridConfig grid,
         out Vector2Int cell);
 
     internal delegate void UpdatePlacementDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Vector2 screenPosition);
 
     internal delegate bool TryAlignGateToNearbyWallDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Vector2Int origin,
         BuildingDefinition definition,
         out bool gateVertical);
 
     public BuildingPlacementCommandSystem.Context CreateCommandContext(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         GetCenterScreenPlacementOriginDelegate getCenterScreenPlacementOrigin,
@@ -77,8 +77,8 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         TryGetGridCellDelegate tryGetGridCell,
         UpdatePlacementDelegate updatePlacement,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource,
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return source.BuildingPlacementContextSystem.CreateCommandContext(
             CreateContextSource(
@@ -108,7 +108,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
     }
 
     public BuildingPlacementContextSystem.Source CreateContextSource(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         GetCenterScreenPlacementOriginDelegate getCenterScreenPlacementOrigin,
@@ -121,8 +121,8 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         TryGetGridCellDelegate tryGetGridCell,
         UpdatePlacementDelegate updatePlacement,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource,
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return new BuildingPlacementContextSystem.Source(
             source.RuntimeGameplayStateSystem,

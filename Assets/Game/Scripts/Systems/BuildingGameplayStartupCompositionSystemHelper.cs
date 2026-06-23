@@ -3,7 +3,7 @@ using UnityEngine;
 internal sealed class BuildingGameplayStartupCompositionSystemHelper
 {
     public void Initialize(
-        BuildingGameplayCompositionSourceSystem childSystems,
+        BuildingGameplaySourceCompositionSystemHelper childSystems,
         BuildingPlacementSystemConfig buildingPlacementConfig,
         Camera worldCamera,
         Transform runtimeUiRoot,

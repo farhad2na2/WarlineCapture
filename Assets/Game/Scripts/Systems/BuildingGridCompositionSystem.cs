@@ -13,7 +13,7 @@ internal partial struct BuildingGridCompositionSystem : ISystem
     }
 
     public bool TryGetGridData(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetEntityManager,
         out Entity gridEntity,
         out GridConfig grid,
@@ -30,7 +30,7 @@ internal partial struct BuildingGridCompositionSystem : ISystem
     }
 
     public bool TryGetGridForSelection(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetEntityManager,
         out GridConfig grid)
     {
@@ -41,7 +41,7 @@ internal partial struct BuildingGridCompositionSystem : ISystem
     }
 
     public bool TryGetGridForPlacementInput(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetEntityManager,
         out GridConfig grid)
     {
@@ -52,7 +52,7 @@ internal partial struct BuildingGridCompositionSystem : ISystem
     }
 
     public bool TryGetGridCell(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Vector2 screenPosition,
         GridConfig grid,
         out Vector2Int cell)

@@ -3,20 +3,20 @@ using UnityEngine;
 internal sealed class BuildingSelectionClickCompositionSystemHelper
 {
     internal delegate bool TryGetGridForSelectionDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         out GridConfig grid);
 
     internal delegate bool TryGetGridCellDelegate(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         Vector2 screenPosition,
         GridConfig grid,
         out Vector2Int cell);
 
     public BuildingSelectionClickSystem.Context Create(
-        BuildingGameplayCompositionSourceSystem source,
+        BuildingGameplaySourceCompositionSystemHelper source,
         TryGetGridForSelectionDelegate tryGetGridForSelection,
         TryGetGridCellDelegate tryGetGridCell,
-        System.Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return source.BuildingSelectionClickSystem.CreateContext(new BuildingSelectionClickSystem.Source(
             source.UnitPathfindingPendingStateReader.HasPendingPathJob,

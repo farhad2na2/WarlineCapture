@@ -11,7 +11,7 @@ internal partial struct BuildingPlacementQueryCompositionSystem : ISystem
     {
     }
 
-    public BuildingPlacementQuerySystem.Context Create(BuildingGameplayCompositionSourceSystem source)
+    public BuildingPlacementQuerySystem.Context Create(BuildingGameplaySourceCompositionSystemHelper source)
     {
         return source.BuildingPlacementQuerySystem.CreateContext(new BuildingPlacementQuerySystem.Source(
             source.RuntimeBuildingSystem.Buildings,

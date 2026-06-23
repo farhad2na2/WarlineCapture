@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 61 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 179 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 178 |
-| Current batch | Building placement preview presentation helper naming batch complete |
-| Validation status | Batch 1 through Batch 50 compile and architecture validations passed by marker; Batch 22 architecture and Batch 23-32 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 33-50 Unity validations exited cleanly; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 62 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 178 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 177 |
+| Current batch | Building placement startup helper naming batch complete |
+| Validation status | Batch 1 through Batch 51 compile and architecture validations passed by marker; Batch 22 architecture and Batch 23-32 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 33-51 Unity validations exited cleanly; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -925,6 +925,23 @@ This helper owns placement preview presentation: outline object lifetime, materi
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch50-building-gameplay-composition.log`: passed with `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch50-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=178`.
+
+## Batch 51 - Building Placement Startup Helper
+
+This helper owns placement startup/config wiring: config application, world camera/build-plane state, runtime building root creation, configured definition selection, road-footprint state, and placement preview initialization/disposal. The managed reason is scene/config startup wiring, not ECS scheduling.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `BuildingPlacementStartupSystem` | `BuildingPlacementStartupSystemHelper` | Owns managed placement startup/config wiring. |
+
+## Batch 51 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `177`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch51-building-gameplay-composition.log`: passed with `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch51-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=177`.
 
 ## Open Follow-Up Batches
 

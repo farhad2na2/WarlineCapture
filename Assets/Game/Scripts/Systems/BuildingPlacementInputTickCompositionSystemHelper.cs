@@ -13,7 +13,7 @@ internal sealed class BuildingPlacementInputTickCompositionSystemHelper
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionClickSystem.Context> createSelectionClickContext)
     {
         return new BuildingPlacementInputRuntimeTickSystem.Context(
-            () => source.BuildingPlacementStartupSystem.WorldCamera,
+            () => source.BuildingPlacementStartupSystemHelper.WorldCamera,
             () => source.BuildingPlacementLifecycleSystem.ActivePlacement,
             source.BuildingPlacementInputSystem,
             createActivePlacementPointerContext(source, interactionContext, markerPropertyBlock),

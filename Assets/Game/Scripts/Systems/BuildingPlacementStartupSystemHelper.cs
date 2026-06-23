@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class BuildingPlacementStartupSystem
+internal sealed class BuildingPlacementStartupSystemHelper
 {
     private BuildingPlacementSystemConfig _config;
     private Camera _worldCamera;

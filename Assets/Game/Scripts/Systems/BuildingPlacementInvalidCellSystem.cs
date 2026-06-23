@@ -23,7 +23,7 @@ internal sealed class BuildingPlacementInvalidCellSystem
         BuildingGameplayGridDataCompositionSystemHelper gridDataSystem,
         BuildingGameplayEcsQueryCompositionSystemHelper ecsQuerySystem,
         BuildingGameplayGridDataCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
-        BuildingPlacementStartupSystem startupSystem,
+        BuildingPlacementStartupSystemHelper startupSystem,
         BuildingGameplayDependencyCompositionSystemHelper dependencySystem)
     {
         _hasPlacementInvalidPrefix = false;
@@ -54,7 +54,7 @@ internal sealed class BuildingPlacementInvalidCellSystem
         DynamicBuffer<GridRoad> roads,
         DynamicBlockerComponent blockerData,
         BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
-        BuildingPlacementStartupSystem startupSystem,
+        BuildingPlacementStartupSystemHelper startupSystem,
         GetEffectivePlacementRectDelegate getEffectivePlacementRect,
         System.Func<RectInt, bool> overlapsRuntimeBuilding)
     {
@@ -90,7 +90,7 @@ internal sealed class BuildingPlacementInvalidCellSystem
     }
 
     internal bool HasRoadInFootprint(
-        BuildingPlacementStartupSystem startupSystem,
+        BuildingPlacementStartupSystemHelper startupSystem,
         GridConfig grid,
         Vector2Int originCell,
         Vector2Int footprintCells)

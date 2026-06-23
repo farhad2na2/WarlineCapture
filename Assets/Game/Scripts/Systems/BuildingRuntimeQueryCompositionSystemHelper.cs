@@ -61,7 +61,7 @@ internal sealed class BuildingRuntimeQueryCompositionSystemHelper
                 building.OriginCell,
                 building.Definition.FootprintCells,
                 grid,
-                source.BuildingPlacementStartupSystem.BuildPlaneY);
+                source.BuildingPlacementStartupSystemHelper.BuildPlaneY);
             return true;
         }
 
@@ -97,7 +97,7 @@ internal sealed class BuildingRuntimeQueryCompositionSystemHelper
             originCell,
             grid,
             rotateVertical,
-            source.BuildingPlacementStartupSystem.BuildPlaneY,
+            source.BuildingPlacementStartupSystemHelper.BuildPlaneY,
             source.BuildingPlacementGridSystem.GetPlacementFootprint);
     }
 

@@ -6,7 +6,7 @@ internal sealed class BuildingGameplayDisposalExecutionCompositionSystemHelper
     internal readonly struct Source
     {
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
-        public readonly BuildingPlacementStartupSystem PlacementStartupSystem;
+        public readonly BuildingPlacementStartupSystemHelper PlacementStartupSystem;
         public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PlacementPreviewSystem;
         public readonly BuildingRuntimeObjectPresentationSystemHelper RuntimeObjectPresentationHelper;
@@ -15,7 +15,7 @@ internal sealed class BuildingGameplayDisposalExecutionCompositionSystemHelper
 
         public Source(
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
-            BuildingPlacementStartupSystem placementStartupSystem,
+            BuildingPlacementStartupSystemHelper placementStartupSystem,
             BuildingDefinitionSystem definitionSystem,
             BuildingPlacementPreviewPresentationSystemHelper placementPreviewSystem,
             BuildingRuntimeObjectPresentationSystemHelper runtimeObjectPresentationHelper,

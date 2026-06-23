@@ -15,15 +15,15 @@ internal sealed class BuildingSelectionCompositionSystemHelper
         return source.BuildingSelectionSystem.CreateContext(new BuildingSelectionSystem.Source(
             source.RuntimeBuildingSystem,
             source.RuntimeBuildingSystem.Buildings,
-            source.BuildingPlacementStartupSystem.WorldCamera,
+            source.BuildingPlacementStartupSystemHelper.WorldCamera,
             (out GridConfig grid) => tryGetGridForSelection(source, out grid),
-            (origin, footprint, grid) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, grid, source.BuildingPlacementStartupSystem.BuildPlaneY),
+            (origin, footprint, grid) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, grid, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
             () => source.RuntimeGameplayStateSystem.SuppressNextWorldClick = true,
             () => source.BuildingSelectionMarkerSystem.Refresh(
                 source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
                     createRuntimeContextSource(source),
-                    source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
-                    source.BuildingPlacementStartupSystem.BuildingRoot,
+                    source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
+                    source.BuildingPlacementStartupSystemHelper.BuildingRoot,
                     null,
                     source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
             source.BuildingGameplayDependencyCompositionSystemHelper.ClearFocusedUnit,

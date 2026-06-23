@@ -7,14 +7,14 @@ internal sealed class BuildingPlacementCommandSystem
 {
     internal readonly struct Context
     {
-        public readonly BuildingPlacementStartupSystem StartupSystem;
+        public readonly BuildingPlacementStartupSystemHelper StartupSystem;
         public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly BuildingPlacementSessionSystem SessionSystem;
         public readonly BuildingPlacementSessionSystem.Context SessionContext;
         public readonly Action<string> LogWarning;
 
         public Context(
-            BuildingPlacementStartupSystem startupSystem,
+            BuildingPlacementStartupSystemHelper startupSystem,
             BuildingDefinitionSystem definitionSystem,
             BuildingPlacementSessionSystem sessionSystem,
             BuildingPlacementSessionSystem.Context sessionContext,

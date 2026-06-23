@@ -17,7 +17,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
         BuildingProductionContextCompositionSystemHelper.Source productionSource = default;
         productionSource = source.BuildingProductionContextCompositionSystemHelper.CreateSource(
             source.RuntimeBuildingSystem.Buildings,
-            source.BuildingPlacementStartupSystem.WorldCamera,
+            source.BuildingPlacementStartupSystemHelper.WorldCamera,
             source.BuildingDefinitionSystem,
             source.BuildingProductionSystem,
             source.BuildingProductionUpdateSystem,

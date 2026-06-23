@@ -20,8 +20,8 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
         BuildingSelectionMarkerSystem.Context selectionMarkerContext =
             source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
                 runtimeSource,
-                source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
-                source.BuildingPlacementStartupSystem.BuildingRoot,
+                source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
+                source.BuildingPlacementStartupSystemHelper.BuildingRoot,
                 markerPropertyBlock,
                 source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
         BuildingCombatSystem.Context<RuntimeBuildingEntity> combatContext = source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);

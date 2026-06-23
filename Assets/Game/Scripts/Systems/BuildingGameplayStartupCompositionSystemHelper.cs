@@ -17,8 +17,8 @@ internal sealed class BuildingGameplayStartupCompositionSystemHelper
             null,
             factionVisuals,
             dayNight);
-        childSystems.BuildingPlacementStartupSystem.ConfigureRoadFootprintState(roadFootprintState);
-        childSystems.BuildingPlacementStartupSystem.Init(
+        childSystems.BuildingPlacementStartupSystemHelper.ConfigureRoadFootprintState(roadFootprintState);
+        childSystems.BuildingPlacementStartupSystemHelper.Init(
             buildingPlacementConfig,
             worldCamera,
             runtimeUiRoot,

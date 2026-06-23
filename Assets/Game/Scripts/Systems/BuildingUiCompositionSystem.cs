@@ -60,7 +60,7 @@ internal sealed class BuildingUiCompositionSystem
                 out factionId),
             camera => source.BuildingSelectionSystem.HasVisibleSelectableBuilding(
                 createBuildingSelectionContext(source),
-                camera != null ? camera : source.BuildingPlacementStartupSystem.WorldCamera,
+                camera != null ? camera : source.BuildingPlacementStartupSystemHelper.WorldCamera,
                 Screen.width,
                 Screen.height),
             (Entity unitEntity, out GameObject prefab) =>

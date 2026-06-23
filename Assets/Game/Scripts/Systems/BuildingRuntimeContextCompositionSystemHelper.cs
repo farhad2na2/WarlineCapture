@@ -75,14 +75,14 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 destroyedBuildingLifetimeSeconds);
 
         return new BuildingRuntimeContextSystem.Source(
-            source.BuildingPlacementStartupSystem.BuildingRoot,
+            source.BuildingPlacementStartupSystemHelper.BuildingRoot,
             source.BuildingDefinitionSystem,
             source.BuildingRunwaySystem,
             source.BuildingPlacementValidationSystem,
             new BuildingPlacementValidationSystem.WallValidationContext(
                 source.RuntimeBuildingSystem.Buildings,
                 source.BuildingGameplayDependencyCompositionSystemHelper.IsRuntimeBlockerCell,
-                (grid, origin, footprint) => source.BuildingPlacementInvalidCellSystem.HasRoadInFootprint(source.BuildingPlacementStartupSystem, grid, origin, footprint)),
+                (grid, origin, footprint) => source.BuildingPlacementInvalidCellSystem.HasRoadInFootprint(source.BuildingPlacementStartupSystemHelper, grid, origin, footprint)),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
             source.BuildingPlacementGridSystem.GetPlacementFootprint,
@@ -108,7 +108,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 grid,
                 rotateVertical,
                 source.BuildingPlacementGridSystem.GetPlacementFootprint,
-                (origin, footprint, gridConfig) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, gridConfig, source.BuildingPlacementStartupSystem.BuildPlaneY),
+                (origin, footprint, gridConfig) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, gridConfig, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
                 (Vector2Int origin, BuildingDefinition definition, out bool gateVertical) => source.BuildingPlacementAdapterCompositionSystemHelper.TryAlignGateToNearbyWall(
                     source,
                     origin,
@@ -176,8 +176,8 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             () => source.BuildingSelectionMarkerSystem.Refresh(
                 source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
                     CreateRuntimeSource(),
-                    source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
-                    source.BuildingPlacementStartupSystem.BuildingRoot,
+                    source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
+                    source.BuildingPlacementStartupSystemHelper.BuildingRoot,
                     markerPropertyBlock,
                     source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
             (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
@@ -261,7 +261,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
             source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,
-            (origin, footprint, grid) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, grid, source.BuildingPlacementStartupSystem.BuildPlaneY),
+            (origin, footprint, grid) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, grid, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
             building => isHouseBuilding(source, building),
             (RuntimeBuildingEntity building, out Vector3 worldPosition) => tryResolveBuildingFocusWorldPosition(source, building, out worldPosition),
             (int id, out RuntimeBuildingEntity building) => tryGetRuntimeBuilding(source, id, out building),
@@ -288,8 +288,8 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                         tryResolveBuildingFocusWorldPosition,
                         tryGetRuntimeBuilding,
                         getEffectivePlacementRect),
-                    source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
-                    source.BuildingPlacementStartupSystem.BuildingRoot,
+                    source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
+                    source.BuildingPlacementStartupSystemHelper.BuildingRoot,
                     null,
                     source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
             source.BuildingGameplayDependencyCompositionSystemHelper.NotifyStaticMinimapChanged,

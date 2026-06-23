@@ -14,7 +14,7 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
                 source.BuildingGameplayGridDataCompositionSystemHelper,
                 source.BuildingGameplayEcsQueryCompositionSystemHelper,
                 (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
-                source.BuildingPlacementStartupSystem,
+                source.BuildingPlacementStartupSystemHelper,
                 source.BuildingGameplayDependencyCompositionSystemHelper));
     }
 
@@ -50,8 +50,8 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
             () => source.BuildingSelectionMarkerSystem.Refresh(
                 source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
                     runtimeSource,
-                    source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
-                    source.BuildingPlacementStartupSystem.BuildingRoot,
+                    source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
+                    source.BuildingPlacementStartupSystemHelper.BuildingRoot,
                     null,
                     source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
             source.BuildingPlacementInvalidCellSystem.Clear);

@@ -59,7 +59,7 @@ internal partial struct BuildingGridCompositionSystem : ISystem
     {
         return source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridCell(
             source.BuildingPlacementGridSystem,
-            source.BuildingPlacementStartupSystem,
+            source.BuildingPlacementStartupSystemHelper,
             screenPosition,
             grid,
             out cell);

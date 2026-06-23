@@ -12,7 +12,7 @@ Step 4 dependency-injection transition size: 2082 lines. This is a temporary cei
 
 Step 5 dependency-binding transition size: 2071 lines. Dependency references now live in `BuildingGameplayDependencyCompositionSystemHelper`; the shell may read through that boundary only while later startup/context extraction steps remove the remaining shell callbacks.
 
-Step 6 startup/config transition size: 2049 lines. Production composition now routes placement config, world camera, runtime root, road footprint query/context, faction visuals, and day/night directly into `BuildingPlacementStartupSystem` and `BuildingGameplayDependencyCompositionSystemHelper`; `BuildingGameplaySystem.Init` remains only as temporary compatibility debt for tests/legacy callers.
+Step 6 startup/config transition size: 2049 lines. Production composition now routes placement config, world camera, runtime root, road footprint query/context, faction visuals, and day/night directly into `BuildingPlacementStartupSystemHelper` and `BuildingGameplayDependencyCompositionSystemHelper`; `BuildingGameplaySystem.Init` remains only as temporary compatibility debt for tests/legacy callers.
 
 Step 7 disposal transition size: 2041 lines. Production composition now disposes through `BuildingGameplayDisposalExecutionCompositionSystemHelper`; `BuildingGameplaySystem.Dispose` remains only as temporary tests/legacy compatibility and delegates to the disposal system.
 
@@ -163,11 +163,11 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplaySystem` no longer declares direct dependency fields and routes startup/runtime dependency binding plus callbacks through `BuildingGameplayDependencyCompositionSystemHelper`.
 
 6. Complete: Move placement startup/config wiring
-   - Route `BuildingPlacementSystemConfig`, world camera, runtime UI root, road footprint query/context, faction visuals, and day/night into `BuildingPlacementStartupSystem` plus dependency systems directly from composition.
+   - Route `BuildingPlacementSystemConfig`, world camera, runtime UI root, road footprint query/context, faction visuals, and day/night into `BuildingPlacementStartupSystemHelper` plus dependency systems directly from composition.
    - Keep serialized config compatibility unchanged.
    - Expected output: `BuildingGameplaySystem.Init` is no longer the startup/config gateway.
-   - `BuildingGameplayCompositionSystemHelper.Initialize` now configures `BuildingGameplayDependencyCompositionSystemHelper` and `BuildingPlacementStartupSystem` directly before constructing runtime contexts.
-   - `BuildingPlacementStartupSystem` now owns road footprint query/context and exposes road-footprint mask/query helpers.
+   - `BuildingGameplayCompositionSystemHelper.Initialize` now configures `BuildingGameplayDependencyCompositionSystemHelper` and `BuildingPlacementStartupSystemHelper` directly before constructing runtime contexts.
+   - `BuildingPlacementStartupSystemHelper` now owns road footprint query/context and exposes road-footprint mask/query helpers.
    - Added `BuildingRuntimeObjectPresentationSystemHelper` as the narrow runtime object destruction boundary used by startup/disposal compatibility code.
    - `BuildingGameplaySystem` no longer stores road footprint query/context fields, and production composition no longer calls `building.Init(...)`.
 

@@ -73,8 +73,8 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
         return source.BuildingPlacementGridSystem.GetCenterScreenPlacementOrigin(
             footprintCells,
             grid,
-            source.BuildingPlacementStartupSystem.WorldCamera,
-            source.BuildingPlacementStartupSystem.BuildPlaneY,
+            source.BuildingPlacementStartupSystemHelper.WorldCamera,
+            source.BuildingPlacementStartupSystemHelper.BuildPlaneY,
             new Vector2(Screen.width, Screen.height));
     }
 
@@ -131,7 +131,7 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
             roads,
             blockerData,
             source.BuildingGameplayDependencyCompositionSystemHelper,
-            source.BuildingPlacementStartupSystem,
+            source.BuildingPlacementStartupSystemHelper,
             (candidateDefinition, candidateOrigin, candidateGrid, candidateRotateVertical) =>
                 getEffectivePlacementRect(source, candidateDefinition, candidateOrigin, candidateGrid, candidateRotateVertical),
             candidateRect => overlapsAnyRuntimeBuilding(source, candidateRect));

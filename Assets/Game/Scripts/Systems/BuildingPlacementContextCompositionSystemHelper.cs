@@ -178,7 +178,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
 
     public BuildingPlacementCommandSystem.Context CreateCommandContext(
         Source source,
-        BuildingPlacementStartupSystem startupSystem,
+        BuildingPlacementStartupSystemHelper startupSystem,
         BuildingDefinitionSystem definitionSystem,
         BuildingPlacementSessionSystem sessionSystem,
         Action<string> logWarning,

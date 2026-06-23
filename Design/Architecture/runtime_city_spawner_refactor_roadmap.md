@@ -162,7 +162,7 @@ Non-goals:
 26. Complete: Migrate peer dependencies off `RuntimeCitySpawnerSystem`
     - Created `RuntimeCityReadModelCompositionSystemHelper` as the narrow city state read boundary for peer systems.
     - `RuntimeCityCompositionSystem` publishes `SpawnOnStartEnabled`, `HasSpawned`, and `IsGenerating` into the read model.
-    - `RuntimeGridBlockerSystem` and `RuntimeDecorationSpawnerSystem` now depend on `RuntimeCityReadModelCompositionSystemHelper` instead of storing or calling the broad `RuntimeCitySpawnerSystem` shell.
+    - `RuntimeGridBlockerSystem` and `RuntimeDecorationSpawnerPresentationSystemHelper` now depend on `RuntimeCityReadModelCompositionSystemHelper` instead of storing or calling the broad `RuntimeCitySpawnerSystem` shell.
     - Expected output: no peer system stores or calls the broad spawner type.
 
 27. Complete: Delete the spawner shell

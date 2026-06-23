@@ -143,7 +143,7 @@ Road build, road visuals, and road footprint projection:
 
 Runtime city, decorations, and blockers:
 
-- `Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs`, `RuntimeDecorationSpawnerSystem.cs`, and `RuntimeGridBlockerSystem.cs`: runtime city visuals/decorations/blocker visuals use local flat y or flat cell centers.
+- `Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs`, `RuntimeDecorationSpawnerPresentationSystemHelper.cs`, and `RuntimeGridBlockerSystem.cs`: runtime city visuals/decorations/blocker visuals use local flat y or flat cell centers.
 - Runtime city building and road generation must keep existing counts, random order, yield points, and reservation rules while adopting surface queries.
 
 Selection, camera focus, command targeting, and markers:

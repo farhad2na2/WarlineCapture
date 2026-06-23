@@ -38,7 +38,7 @@ public sealed class GameplayRuntimeUpdateSystem
         Camera worldCamera,
         RuntimeCityCompositionSystem runtimeCity,
         RuntimeGridBlockerSystem runtimeGridBlockers,
-        RuntimeDecorationSpawnerSystem runtimeDecorations,
+        RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations,
         DayNightSystem dayNight,
         Action citizenPopulationRuntimeUpdate,
         IMatchRuntimeUi mainMenu,
@@ -240,7 +240,7 @@ public sealed class GameplayRuntimeUpdateSystem
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         RuntimeCityCompositionSystem runtimeCity,
         RuntimeGridBlockerSystem runtimeGridBlockers,
-        RuntimeDecorationSpawnerSystem runtimeDecorations)
+        RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
     {
         if (!gameplayInitialized || !runtimeGameplayStateSystem.PlayRequested)
             return false;
@@ -288,7 +288,7 @@ public sealed class GameplayRuntimeUpdateSystem
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         RuntimeCityCompositionSystem runtimeCity,
         RuntimeGridBlockerSystem runtimeGridBlockers,
-        RuntimeDecorationSpawnerSystem runtimeDecorations)
+        RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
     {
         if (UnityEngine.Time.frameCount < _nextLoadingGateDiagnosticFrame)
             return;

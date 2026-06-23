@@ -16,7 +16,7 @@ Current runtime-city composition size: 215 lines.
 - `RuntimeCitySpawnerSystem.cs` must not be restored.
 - Serialized config names `RuntimeCitySpawnerSystemConfig`, `RuntimeCitySpawnerSystemSceneConfigAsset`, and `Game_RuntimeCitySpawner_Config.asset` are allowed data compatibility debt until a separate asset migration plan exists.
 - Runtime city child system fields, context factories, and update orchestration belong in `RuntimeCityCompositionSystem`.
-- It must not be stored or called by `RuntimeGridBlockerSystem`, `RuntimeDecorationSpawnerSystem`, or future peer systems that only need city lifecycle state; those systems must depend on `RuntimeCityReadModelCompositionSystemHelper` or a narrower explicit result boundary.
+- It must not be stored or called by `RuntimeGridBlockerSystem`, `RuntimeDecorationSpawnerPresentationSystemHelper`, or future peer systems that only need city lifecycle state; those systems must depend on `RuntimeCityReadModelCompositionSystemHelper` or a narrower explicit result boundary.
 - `RuntimeCityCompositionSystem` may receive `BuildingRuntimeCitySpawnSystem` and context at startup only so `RuntimeCitySpawnBridgeSystem` can be configured.
 - `RuntimeCityCompositionSystem` may receive `RoadBuildSystem` at startup only so `RuntimeCityRoadBuildBridgeSystem` can be configured.
 - It must not reintroduce copied `RuntimeCitySpawnerSystemConfig` field assignment; config projection belongs in `RuntimeCityConfigSystem`.

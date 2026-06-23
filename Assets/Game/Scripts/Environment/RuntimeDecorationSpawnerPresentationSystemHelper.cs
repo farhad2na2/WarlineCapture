@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class RuntimeDecorationSpawnerSystem
+public sealed class RuntimeDecorationSpawnerPresentationSystemHelper
 {
     private enum DecorationPrefabKind
     {

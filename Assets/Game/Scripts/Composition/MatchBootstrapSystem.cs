@@ -75,7 +75,7 @@ internal sealed class MatchBootstrapSystem
     private MapSurfaceAuthoring MapSurfaceAuthoring => MatchScene != null ? MatchScene.MapSurfaceAuthoring : null;
 
     public RuntimeGridBlockerSystem RuntimeGridBlockers { get; private set; }
-    public RuntimeDecorationSpawnerSystem RuntimeDecorations { get; private set; }
+    public RuntimeDecorationSpawnerPresentationSystemHelper RuntimeDecorations { get; private set; }
     public RuntimeCityCompositionSystem RuntimeCity { get; private set; }
     public RoadBuildReadModelSystem RoadBuildReadModel { get; private set; }
     public BuildingSelectionClickSystem BuildingSelectionClick { get; private set; }
@@ -620,7 +620,7 @@ internal sealed class MatchBootstrapSystem
         Camera worldCamera,
         RuntimeCityCompositionSystem runtimeCity,
         RuntimeGridBlockerSystem runtimeGridBlockers,
-        RuntimeDecorationSpawnerSystem runtimeDecorations,
+        RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations,
         DayNightSystem dayNight,
         Action citizenPopulationRuntimeUpdate,
         IMatchRuntimeUi mainMenu,
@@ -685,7 +685,7 @@ internal sealed class MatchBootstrapSystem
         IUnitImpostorRenderer unitImpostors,
         Action disposeCitizenPopulation,
         DayNightSystem dayNight,
-        RuntimeDecorationSpawnerSystem runtimeDecorations,
+        RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations,
         RuntimeGridBlockerSystem runtimeGridBlockers,
         RuntimeCityCompositionSystem runtimeCity,
         MapSurfaceRuntimeBootstrapSceneSystemHelper mapSurfaceRuntimeBootstrapSystem,

@@ -416,7 +416,7 @@ Priority bands:
 | C | Selection and command data | `RtsSelection*`, `SelectionStateSystem`, `FocusableUnitLookupSystem`, command-result flush/read models. | Keep pointer/camera/UI input passive; convert command/result processing and selected-state mutations. |
 | D | Building and production | Existing five-SystemBase tracker plus building placement/runtime/boundary systems. | Split broad owners into request, validation, placement, instantiation, state, and result processors; retire managed runtime-building mirrors. |
 | E | Road build | `RoadBuild*`, `RoadNetworkSystem`, `RoadGridProjectionSystem`, road runtime generation/read models. | Convert grid/command/data processors; move preview/visual GameObject work to passive result application. |
-| F | Runtime city and environment | `RuntimeCity*`, `RuntimeGridBlockerSystem`, `RuntimeDecorationSpawnerSystem`, `DayNightSystem`. | Convert generation/state/read-model algorithms; replace visual GameObject spawn ownership with ECS entity prefabs or narrow managed presentation `SystemBase` exceptions. |
+| F | Runtime city and environment | `RuntimeCity*`, `RuntimeGridBlockerSystem`, `RuntimeDecorationSpawnerPresentationSystemHelper`, `DayNightSystem`. | Convert generation/state/read-model algorithms; replace visual GameObject spawn ownership with ECS entity prefabs or narrow managed presentation `SystemBase` exceptions. |
 | G | Citizen population | `Citizen*` population/travel/resource/danger/read-model systems. | Convert population state and movement/resource decisions; split visible citizen presentation. |
 | H | Rendering, VFX, and visual bridges | `UnitAttachedLightSystem`, traces/impostors, missile trails, building/road visuals, selection/order markers. | Convert gameplay decisions to entity-prefab/request/result ECS first; keep Unity object playback in narrow managed presentation `SystemBase` exceptions when visuals cannot be converted without redesign. Do not introduce updating MonoBehaviours. |
 
@@ -576,7 +576,7 @@ Convert road command/grid/read-model work while keeping preview and GameObject v
 Purpose:
 Convert city generation/state/read-model algorithms and retire visual/config managed ECS owners.
 
-- [ ] Inventory all `RuntimeCity*`, `RuntimeGridBlockerSystem`, `RuntimeDecorationSpawnerSystem`, and `DayNightSystem` `SystemBase` targets.
+- [ ] Inventory all `RuntimeCity*`, `RuntimeGridBlockerSystem`, `RuntimeDecorationSpawnerPresentationSystemHelper`, and `DayNightSystem` `SystemBase` targets.
 - [ ] Separate city config snapshot/projection from generation algorithms.
 - [ ] Convert deterministic layout, plot, road layout, ingress, walkability, minimap, read-model, and readiness query systems to `ISystem` when data-only.
 - [ ] Convert city building/decoration spawn decisions only after prefab selection and visual instantiation are represented as ECS entity-prefab requests.
@@ -639,7 +639,7 @@ Convert city generation/state/read-model algorithms and retire visual/config man
 - [x] Fold Agent E `P7-0233 RoadPreviewSystem` from a disabled `SystemBase` wrapper into a plain road preview helper and validate road build command behavior, compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0152 RuntimeCityCompositionSystem` from a disabled `SystemBase` wrapper into a plain runtime-city composition helper and validate runtime-city focused behavior, compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0160 RuntimeCityGenerationSystem` from a disabled `SystemBase` wrapper into a plain runtime-city generation helper and validate runtime-city focused behavior, compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.
-- [x] Fold Agent E `P7-0183 RuntimeDecorationSpawnerSystem` from a disabled `SystemBase` wrapper into a plain runtime decoration spawner helper and validate runtime-city focused behavior, compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.
+- [x] Fold Agent E `P7-0183 RuntimeDecorationSpawnerPresentationSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime decoration spawner helper and validate runtime-city focused behavior, compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0184 RuntimeGridBlockerSystem` from a disabled `SystemBase` wrapper into a plain runtime grid blocker helper and validate runtime-city focused behavior, compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0189 CitizenPopulationCompositionSystem` from a disabled `SystemBase` wrapper into a plain citizen population composition helper and validate citizen visible-unit behavior, compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0206 CitizenVisibleUnitSystem` from a disabled `SystemBase` wrapper into a plain citizen visible-unit helper and validate citizen visible-unit behavior, compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.

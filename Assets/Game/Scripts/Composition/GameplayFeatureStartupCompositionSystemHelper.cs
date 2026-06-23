@@ -8,12 +8,12 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
     {
         public readonly RuntimeCityCompositionSystem RuntimeCity;
         public readonly RuntimeGridBlockerSystem RuntimeGridBlockers;
-        public readonly RuntimeDecorationSpawnerSystem RuntimeDecorations;
+        public readonly RuntimeDecorationSpawnerPresentationSystemHelper RuntimeDecorations;
 
         public Result(
             RuntimeCityCompositionSystem runtimeCity,
             RuntimeGridBlockerSystem runtimeGridBlockers,
-            RuntimeDecorationSpawnerSystem runtimeDecorations)
+            RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
         {
             RuntimeCity = runtimeCity;
             RuntimeGridBlockers = runtimeGridBlockers;
@@ -66,7 +66,7 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
             runtimeCity,
             citizenPopulationEventSystem);
 
-        RuntimeDecorationSpawnerSystem runtimeDecorations = ResolveRuntimeDecorationSpawnerSystem();
+        RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations = ResolveRuntimeDecorationSpawnerPresentationHelper();
         runtimeDecorations?.Init(
             runtimeDecorationSpawnerConfig,
             decorationRoot,
@@ -90,11 +90,11 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
         return new RuntimeCityCompositionSystem();
     }
 
-    private static RuntimeDecorationSpawnerSystem ResolveRuntimeDecorationSpawnerSystem()
+    private static RuntimeDecorationSpawnerPresentationSystemHelper ResolveRuntimeDecorationSpawnerPresentationHelper()
     {
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
-            ? new RuntimeDecorationSpawnerSystem()
+            ? new RuntimeDecorationSpawnerPresentationSystemHelper()
             : null;
     }
 }

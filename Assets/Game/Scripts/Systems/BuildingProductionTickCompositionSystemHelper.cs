@@ -10,7 +10,7 @@ internal sealed class BuildingProductionTickCompositionSystemHelper
         BuildingProductionContextCompositionSystemHelper.Source productionSource = createProductionRuntimeContextSource(source);
         return new BuildingProductionRuntimeTickSystem.Context(
             source.RuntimeBuildingSystem.Buildings,
-            source.BuildingGameplayDependencySystem.DayNightSystem,
+            source.BuildingGameplayDependencyCompositionSystemHelper.DayNightSystem,
             source.FactionResourceSystem,
             source.BuildingProductionUpdateSystem,
             source.BuildingProductionContextCompositionSystemHelper.CreateProductionUpdateContext(productionSource),

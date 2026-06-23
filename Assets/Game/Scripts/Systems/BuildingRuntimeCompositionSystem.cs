@@ -81,7 +81,7 @@ internal sealed class BuildingRuntimeCompositionSystem
             source.BuildingPlacementValidationSystem,
             new BuildingPlacementValidationSystem.WallValidationContext(
                 source.RuntimeBuildingSystem.Buildings,
-                source.BuildingGameplayDependencySystem.IsRuntimeBlockerCell,
+                source.BuildingGameplayDependencyCompositionSystemHelper.IsRuntimeBlockerCell,
                 (grid, origin, footprint) => source.BuildingPlacementInvalidCellSystem.HasRoadInFootprint(source.BuildingPlacementStartupSystem, grid, origin, footprint)),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
@@ -164,7 +164,7 @@ internal sealed class BuildingRuntimeCompositionSystem
             () => source.BuildingPlacementRedirectSystem.IsDeferringSideEffects,
             (out GridConfig grid) => tryGetGridData(source, out _, out grid, out _, out _),
             (definition, origin, grid) => getEffectivePlacementRect(source, definition, origin, grid, false),
-            source.BuildingGameplayDependencySystem.RemoveBlockersOverlappingFootprint,
+            source.BuildingGameplayDependencyCompositionSystemHelper.RemoveBlockersOverlappingFootprint,
             source.BuildingRuntimeEntitySystem,
             CreateRuntimeEntityContext(),
             source.BuildingPlacementRedirectSystem,
@@ -183,9 +183,9 @@ internal sealed class BuildingRuntimeCompositionSystem
             (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
             source.BuildingVisualSystem,
             source.BuildingFactionVisualSystem,
-            source.BuildingGameplayDependencySystem.FactionVisualSettings,
+            source.BuildingGameplayDependencyCompositionSystemHelper.FactionVisualSettings,
             markerPropertyBlock,
-            source.BuildingGameplayDependencySystem.BuildingFactionTintStrength,
+            source.BuildingGameplayDependencyCompositionSystemHelper.BuildingFactionTintStrength,
             buildingId => source.BuildingRuntimeEntitySystem.DeleteBuildingById(CreateRuntimeEntityContext(), buildingId),
             () => beginDeferredRuntimeBuildingSideEffects(source),
             () => endDeferredRuntimeBuildingSideEffects(source));
@@ -247,9 +247,9 @@ internal sealed class BuildingRuntimeCompositionSystem
             source.ResourceHaulerSystem,
             source.FactionResourceSystem,
             source.BuildingProductionContextCompositionSystemHelper,
-            source.BuildingGameplayDependencySystem.FactionVisualSettings,
+            source.BuildingGameplayDependencyCompositionSystemHelper.FactionVisualSettings,
             null,
-            source.BuildingGameplayDependencySystem.BuildingFactionTintStrength,
+            source.BuildingGameplayDependencyCompositionSystemHelper.BuildingFactionTintStrength,
             source.BuildingGameplayEcsQuerySystem.LiveUnitFootprintQuery,
             source.BuildingGameplayEcsQuerySystem.RedirectUnitsQuery,
             source.BuildingGameplayEcsQuerySystem.HaulerUnitsQuery,
@@ -276,7 +276,7 @@ internal sealed class BuildingRuntimeCompositionSystem
                     tryGetRuntimeBuilding,
                     getEffectivePlacementRect)),
                 building),
-            source.BuildingGameplayDependencySystem.NotifyHomeBuildingDestroyed,
+            source.BuildingGameplayDependencyCompositionSystemHelper.NotifyHomeBuildingDestroyed,
             source.RuntimeObjectPresentationHelper.DestroyRuntimeObject,
             () => source.BuildingSelectionMarkerSystem.Refresh(
                 source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
@@ -292,7 +292,7 @@ internal sealed class BuildingRuntimeCompositionSystem
                     source.BuildingPlacementStartupSystem.BuildingRoot,
                     null,
                     source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
-            source.BuildingGameplayDependencySystem.NotifyStaticMinimapChanged,
+            source.BuildingGameplayDependencyCompositionSystemHelper.NotifyStaticMinimapChanged,
             message => Debug.Log(message),
             false);
     }

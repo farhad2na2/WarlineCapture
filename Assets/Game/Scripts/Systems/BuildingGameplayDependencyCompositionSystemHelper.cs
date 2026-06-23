@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-internal sealed class BuildingGameplayDependencySystem
+internal sealed class BuildingGameplayDependencyCompositionSystemHelper
 {
     internal IMatchRuntimeUi MainMenuPlayUi { get; private set; }
     internal SelectionUiCameraSystem SelectionUiCameraSystem { get; private set; }

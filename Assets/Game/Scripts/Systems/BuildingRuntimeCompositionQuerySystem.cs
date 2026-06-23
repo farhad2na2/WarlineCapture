@@ -33,7 +33,7 @@ internal sealed class BuildingRuntimeCompositionQuerySystem
 
         GameObject prefab = building.Definition.Prefab;
         string prefabName = prefab != null ? prefab.name : string.Empty;
-        if (source.BuildingGameplayDependencySystem.IsConfiguredHousePrefab(prefab))
+        if (source.BuildingGameplayDependencyCompositionSystemHelper.IsConfiguredHousePrefab(prefab))
             return true;
 
         return prefabName.IndexOf("house", StringComparison.OrdinalIgnoreCase) >= 0 &&

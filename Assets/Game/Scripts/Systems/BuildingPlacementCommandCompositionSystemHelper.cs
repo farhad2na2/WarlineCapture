@@ -102,9 +102,9 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
             source.BuildingPlacementSessionSystem,
             Debug.LogWarning,
             GameRuntimeStats.RecordBuildingBuilt,
-            source.BuildingGameplayDependencySystem.NotifyStaticMinimapChanged,
+            source.BuildingGameplayDependencyCompositionSystemHelper.NotifyStaticMinimapChanged,
             _ => source.BuildingSelectionSystem.ClearSelectedBuilding(createBuildingSelectionContext(source)),
-            source.BuildingGameplayDependencySystem.ClearCommandMode);
+            source.BuildingGameplayDependencyCompositionSystemHelper.ClearCommandMode);
     }
 
     public BuildingPlacementContextSystem.Source CreateContextSource(
@@ -141,13 +141,13 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
             placement => validateActivePlacementForConfirm(source, interactionContext, markerPropertyBlock, placement),
             source.RuntimeResourceSystem.TrySpendDollars,
             placement => placeBuilding(source, interactionContext, markerPropertyBlock, placement),
-            source.BuildingGameplayDependencySystem.ApplyBuildCommandMode,
+            source.BuildingGameplayDependencyCompositionSystemHelper.ApplyBuildCommandMode,
             () => source.BuildingSelectionSystem.ClearSelectedBuilding(createBuildingSelectionContext(source)),
             (out GridConfig grid) => tryGetGridForPlacementInput(source, out grid),
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => tryGetGridCell(source, screenPosition, grid, out cell),
-            source.BuildingGameplayDependencySystem.IsPointerOverPlacementUi,
+            source.BuildingGameplayDependencyCompositionSystemHelper.IsPointerOverPlacementUi,
             screenPosition => updatePlacement(source, interactionContext, markerPropertyBlock, screenPosition),
-            source.BuildingGameplayDependencySystem.IsRuntimeBlockerCell,
+            source.BuildingGameplayDependencyCompositionSystemHelper.IsRuntimeBlockerCell,
             (grid, origin, footprint) => source.BuildingPlacementInvalidCellSystem.HasRoadInFootprint(source.BuildingPlacementStartupSystem, grid, origin, footprint),
             source.BuildingPlacementVisualSystem.CreateBuildingVisualInstance,
             (instance, originCell, definition, grid, rotateVertical) => source.BuildingPlacementVisualSystem.PositionBuildingObject(

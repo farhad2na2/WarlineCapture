@@ -42,7 +42,7 @@ Step 19 visible-spawn transition size: 642 lines. Visible citizen clear/remove/s
 
 Step 20 visible-travel transition size: 528 lines. Visible citizen spawn/despawn visibility decisions, destroyed-unit handling, missing-transform cleanup, path retry, long-distance move handoff, segment-reached move retargeting, building approach arrival checks, final distance arrival checks, and visible arrival resolution now live in `CitizenVisibleUnitSystem`; the shell delegates the visible sync tick.
 
-Step 21 event-boundary transition size: 520 lines. Visible-citizen-destroyed and home-building-destroyed notifications now live in `CitizenPopulationEventSystem`; `CitizenVisualLifecycleReporter` and `BuildingGameplayDependencySystem` bind the event boundary instead of calling `CitizenPopulationSystem`.
+Step 21 event-boundary transition size: 520 lines. Visible-citizen-destroyed and home-building-destroyed notifications now live in `CitizenPopulationEventSystem`; `CitizenVisualLifecycleReporter` and `BuildingGameplayDependencyCompositionSystemHelper` bind the event boundary instead of calling `CitizenPopulationSystem`.
 
 Step 22 debug-surface transition size: 485 lines. Citizen debug snapshot generation, debug status mutation, and debug kill command routing now live in `CitizenPopulationDebugSystem`; the shell retains temporary public debug wrappers until UI/menu callers move to the debug boundary.
 
@@ -114,7 +114,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
 - Citizen composition is explicit and narrow, with separate systems for lifecycle, state storage, ECS projection, building reads, scheduling, refugee behavior, danger, visible unit sync, movement commands, totals, diagnostics, debug, and event handling.
 - Existing callers consume `CitizenPopulationCompositionSystem` or narrower boundaries.
 - `CitizenVisualLifecycleReporter` no longer binds the broad shell; it publishes into a citizen event/command boundary.
-- `BuildingGameplayDependencySystem` no longer stores the broad shell; building destruction notifications route to a citizen event system.
+- `BuildingGameplayDependencyCompositionSystemHelper` no longer stores the broad shell; building destruction notifications route to a citizen event system.
 - `GameplayRuntimeUpdateSystem` no longer calls `CitizenPopulationSystem.Update`; it calls a narrow citizen runtime update boundary.
 - Architecture tests hard-fail if `CitizenPopulationSystem.cs` returns.
 - Focused validation passes: citizen architecture batch, citizen component/projection tests, schedule/refugee tests, visible citizen spawn/move tests, bootstrap/menu play-button smoke, and one runtime load validation with citizen population enabled.
@@ -303,7 +303,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
    - Added `CitizenPopulationEventSystem.cs`.
    - Moved visible-citizen-destroyed and home-building-destroyed notifications out of `CitizenPopulationSystem.cs`.
    - Updated `CitizenVisualLifecycleReporter` to bind `CitizenPopulationEventSystem`.
-   - Updated `BuildingGameplayDependencySystem` to store and notify `CitizenPopulationEventSystem`.
+   - Updated `BuildingGameplayDependencyCompositionSystemHelper` to store and notify `CitizenPopulationEventSystem`.
    - Added `CitizenPopulationEventSystemMustOwnExternalCitizenEvents` to the focused architecture validation batch.
 
 22. Complete: Extract debug command/read surface
@@ -364,7 +364,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
    - Added `CitizenPopulationMenuReadsMustUseReadModelBoundary` to the focused architecture validation batch.
 
 29. Complete: Migrate building/citizen event coupling
-   - Update `BuildingGameplayDependencySystem` so home-building destroyed notifications route to `CitizenPopulationEventSystem`.
+   - Update `BuildingGameplayDependencyCompositionSystemHelper` so home-building destroyed notifications route to `CitizenPopulationEventSystem`.
    - Remove `CitizenPopulationSystem` storage from building gameplay dependencies.
    - Building gameplay feature binding now accepts `CitizenPopulationEventSystem` directly.
    - `GameplayFeatureStartupCompositionSystemHelper` and `GameBootstrap` pass the composition event boundary instead of the broad shell.

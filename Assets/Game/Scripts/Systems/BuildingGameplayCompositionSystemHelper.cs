@@ -589,7 +589,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 createBuildingSelectionContext),
             childSystems.BuildingPlacementInteractionSystem,
             interactionContext,
-            childSystems.BuildingGameplayDependencySystem,
+            childSystems.BuildingGameplayDependencyCompositionSystemHelper,
             childSystems.BuildingRuntimeResourcePrefabContextSystem,
             runtimeResourcePrefabSource,
             _citizenPopulationCompositionSystem,

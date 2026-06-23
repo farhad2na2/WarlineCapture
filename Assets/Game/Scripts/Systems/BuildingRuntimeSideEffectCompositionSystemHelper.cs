@@ -15,7 +15,7 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
                 source.BuildingGameplayEcsQuerySystem,
                 (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
                 source.BuildingPlacementStartupSystem,
-                source.BuildingGameplayDependencySystem));
+                source.BuildingGameplayDependencyCompositionSystemHelper));
     }
 
     public void EndDeferredRuntimeBuildingSideEffects(

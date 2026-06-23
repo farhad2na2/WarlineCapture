@@ -20,7 +20,7 @@ internal sealed class BuildingPlacementVisualUpdateSystem
         public readonly BuildingPlacementValidationSystem ValidationSystem;
         public readonly BuildingPlacementGridSystem GridSystem;
         public readonly BuildingPlacementStartupSystem StartupSystem;
-        public readonly BuildingGameplayDependencySystem DependencySystem;
+        public readonly BuildingGameplayDependencyCompositionSystemHelper DependencySystem;
         public readonly BuildingPlacementContextSystem ContextSystem;
         public readonly BuildingPlacementCommitSystem CommitSystem;
         public readonly BuildingPlacementLifecycleSystem LifecycleSystem;
@@ -42,7 +42,7 @@ internal sealed class BuildingPlacementVisualUpdateSystem
             BuildingPlacementValidationSystem validationSystem,
             BuildingPlacementGridSystem gridSystem,
             BuildingPlacementStartupSystem startupSystem,
-            BuildingGameplayDependencySystem dependencySystem,
+            BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
             BuildingPlacementContextSystem contextSystem,
             BuildingPlacementCommitSystem commitSystem,
             BuildingPlacementLifecycleSystem lifecycleSystem,

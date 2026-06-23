@@ -26,15 +26,15 @@ internal sealed class BuildingSelectionCompositionSystemHelper
                     source.BuildingPlacementStartupSystem.BuildingRoot,
                     null,
                     source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
-            source.BuildingGameplayDependencySystem.ClearFocusedUnit,
-            building => source.BuildingGameplayDependencySystem.ShowHudSelection(
+            source.BuildingGameplayDependencyCompositionSystemHelper.ClearFocusedUnit,
+            building => source.BuildingGameplayDependencyCompositionSystemHelper.ShowHudSelection(
                 BuildingSelectionPortraitUiSystemHelper.Resolve(building, resolveSelectionPortraitSpriteFromPrefab)),
-            source.BuildingGameplayDependencySystem.SmoothMoveCameraGroundCenterTo,
-            source.BuildingGameplayDependencySystem.IsBoardablePlayerTransportClick,
+            source.BuildingGameplayDependencyCompositionSystemHelper.SmoothMoveCameraGroundCenterTo,
+            source.BuildingGameplayDependencyCompositionSystemHelper.IsBoardablePlayerTransportClick,
             clickedBuildingId => source.BuildingRuntimeContextSystem.TryAssignSelectedHaulerOrders(
                 createRuntimeContextSource(source),
                 clickedBuildingId),
-            source.BuildingGameplayDependencySystem.TryRequestMoveOrderToBuilding,
+            source.BuildingGameplayDependencyCompositionSystemHelper.TryRequestMoveOrderToBuilding,
             BuildingBarrierSystem.ShouldUseExpandedSelectionArea));
     }
 }

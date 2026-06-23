@@ -10,9 +10,9 @@ Current size at roadmap creation: 2021 lines.
 
 Step 4 dependency-injection transition size: 2082 lines. This is a temporary ceiling caused by assigning composition-owned child systems into the shell while the remaining context factories still live there. Later extraction steps should reduce this number; it must not increase without updating this roadmap and guard intentionally.
 
-Step 5 dependency-binding transition size: 2071 lines. Dependency references now live in `BuildingGameplayDependencySystem`; the shell may read through that boundary only while later startup/context extraction steps remove the remaining shell callbacks.
+Step 5 dependency-binding transition size: 2071 lines. Dependency references now live in `BuildingGameplayDependencyCompositionSystemHelper`; the shell may read through that boundary only while later startup/context extraction steps remove the remaining shell callbacks.
 
-Step 6 startup/config transition size: 2049 lines. Production composition now routes placement config, world camera, runtime root, road footprint query/context, faction visuals, and day/night directly into `BuildingPlacementStartupSystem` and `BuildingGameplayDependencySystem`; `BuildingGameplaySystem.Init` remains only as temporary compatibility debt for tests/legacy callers.
+Step 6 startup/config transition size: 2049 lines. Production composition now routes placement config, world camera, runtime root, road footprint query/context, faction visuals, and day/night directly into `BuildingPlacementStartupSystem` and `BuildingGameplayDependencyCompositionSystemHelper`; `BuildingGameplaySystem.Init` remains only as temporary compatibility debt for tests/legacy callers.
 
 Step 7 disposal transition size: 2041 lines. Production composition now disposes through `BuildingGameplayDisposalSystem`; `BuildingGameplaySystem.Dispose` remains only as temporary tests/legacy compatibility and delegates to the disposal system.
 
@@ -38,7 +38,7 @@ Step 17 camp request transition size: 1736 lines. Camp item affordability, reque
 
 Step 18 UI read method transition size: 1742 lines. Selected-building flags, active-building flags, status/label/description/health/preview reads, and selected-building production affordability now route through `BuildingUiQuerySystem`; `BuildingGameplaySystem` keeps only temporary compatibility wrappers that delegate to the UI query boundary.
 
-Step 19 menu binding transition size: 1742 lines. `BuildingGameplayCompositionSystemHelper.Result.BindMainMenu` now binds main-menu runtime dependency state through `BuildingGameplayDependencySystem` directly; menu startup continues to receive explicit UI command, UI query, and placement interaction systems/contexts.
+Step 19 menu binding transition size: 1742 lines. `BuildingGameplayCompositionSystemHelper.Result.BindMainMenu` now binds main-menu runtime dependency state through `BuildingGameplayDependencyCompositionSystemHelper` directly; menu startup continues to receive explicit UI command, UI query, and placement interaction systems/contexts.
 
 Step 20 runtime building read API transition size: 1742 lines. Runtime building id lists, role filters, focus/destroyed/refugee/combat/owner/wall/city/approach reads, faction production count reads, and base-breach target read routing now use `BuildingRuntimeQuerySystem`; composition exposes `RuntimeQuery` and `RuntimeQueryContext` for direct consumers.
 
@@ -155,18 +155,18 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - The parameterless shell constructor remains only for temporary test harness compatibility and routes through composition-owned child system creation.
 
 5. Complete: Extract building dependency binding
-   - Create or extend a narrow `BuildingGameplayDependencySystem`.
+   - Create or extend a narrow `BuildingGameplayDependencyCompositionSystemHelper`.
    - Own menu, selection camera, selection building interaction, grid blocker, runtime city, citizen population, faction visuals, and day/night references.
    - Replace `BuildingGameplaySystem.BindDependencies` storage with dependency-system reads.
-   - Added `BuildingGameplayDependencySystem` for menu, selection camera, selection building interaction, runtime blocker, runtime city, citizen population, faction visual, and day/night references.
+   - Added `BuildingGameplayDependencyCompositionSystemHelper` for menu, selection camera, selection building interaction, runtime blocker, runtime city, citizen population, faction visual, and day/night references.
    - `BuildingGameplaySourceCompositionSystemHelper` now owns the dependency system.
-   - `BuildingGameplaySystem` no longer declares direct dependency fields and routes startup/runtime dependency binding plus callbacks through `BuildingGameplayDependencySystem`.
+   - `BuildingGameplaySystem` no longer declares direct dependency fields and routes startup/runtime dependency binding plus callbacks through `BuildingGameplayDependencyCompositionSystemHelper`.
 
 6. Complete: Move placement startup/config wiring
    - Route `BuildingPlacementSystemConfig`, world camera, runtime UI root, road footprint query/context, faction visuals, and day/night into `BuildingPlacementStartupSystem` plus dependency systems directly from composition.
    - Keep serialized config compatibility unchanged.
    - Expected output: `BuildingGameplaySystem.Init` is no longer the startup/config gateway.
-   - `BuildingGameplayCompositionSystemHelper.Initialize` now configures `BuildingGameplayDependencySystem` and `BuildingPlacementStartupSystem` directly before constructing runtime contexts.
+   - `BuildingGameplayCompositionSystemHelper.Initialize` now configures `BuildingGameplayDependencyCompositionSystemHelper` and `BuildingPlacementStartupSystem` directly before constructing runtime contexts.
    - `BuildingPlacementStartupSystem` now owns road footprint query/context and exposes road-footprint mask/query helpers.
    - Added `BuildingRuntimeObjectPresentationSystemHelper` as the narrow runtime object destruction boundary used by startup/disposal compatibility code.
    - `BuildingGameplaySystem` no longer stores road footprint query/context fields, and production composition no longer calls `building.Init(...)`.
@@ -276,7 +276,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplayCompositionSystemHelper.Result.BindMainMenu` binds narrow UI command/query systems directly.
    - Remove `mainMenu => building.BindDependencies(...)`.
    - Expected output: menu startup no longer needs the shell to bind building UI.
-   - `Result.BindMainMenu` now writes the main-menu dependency into `BuildingGameplayDependencySystem` without calling `BuildingGameplaySystem.BindDependencies`.
+   - `Result.BindMainMenu` now writes the main-menu dependency into `BuildingGameplayDependencyCompositionSystemHelper` without calling `BuildingGameplaySystem.BindDependencies`.
    - `MenuStartupSystem` continues to bind `BuildingUiCommandSystem`, `BuildingUiQuerySystem`, and `BuildingPlacementInteractionSystem` from managed composition.
 
 ## Phase 6: Move Runtime Building Query And Spawn Surface

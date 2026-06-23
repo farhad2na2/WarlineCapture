@@ -207,7 +207,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
 
     public static void Bind(
         BuildingCitizenPopulationCompositionSystem system,
-        BuildingGameplayDependencySystem dependencySystem,
+        BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
         DayNightSystem dayNight,
         SelectionUiCameraSystem selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
@@ -233,7 +233,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
     }
 
     public void Bind(
-        BuildingGameplayDependencySystem dependencySystem,
+        BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
         DayNightSystem dayNight,
         SelectionUiCameraSystem selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
@@ -248,7 +248,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
     }
 
     private static void BindState(
-        BuildingGameplayDependencySystem dependencySystem,
+        BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
         DayNightSystem dayNight,
         SelectionUiCameraSystem selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,

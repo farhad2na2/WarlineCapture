@@ -86,7 +86,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
             source.BuildingPlacementValidationSystem,
             source.BuildingPlacementGridSystem,
             source.BuildingPlacementStartupSystem,
-            source.BuildingGameplayDependencySystem,
+            source.BuildingGameplayDependencyCompositionSystemHelper,
             source.BuildingPlacementContextSystem,
             source.BuildingPlacementCommitSystem,
             source.BuildingPlacementLifecycleSystem,

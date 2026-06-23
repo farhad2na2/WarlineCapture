@@ -27,7 +27,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         BuildingUiQuerySystem.Context uiQueryContext,
         BuildingPlacementInteractionSystem interaction,
         BuildingPlacementInteractionSystem.Context interactionContext,
-        BuildingGameplayDependencySystem dependencySystem,
+        BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
         BuildingRuntimeResourcePrefabContextSystem runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource,
         BuildingCitizenPopulationCompositionSystem citizenPopulationCompositionSystem,
@@ -101,7 +101,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly BuildingUiQuerySystem.Context UiQueryContext;
         public readonly BuildingPlacementInteractionSystem Interaction;
         public readonly BuildingPlacementInteractionSystem.Context InteractionContext;
-        private readonly BuildingGameplayDependencySystem DependencySystem;
+        private readonly BuildingGameplayDependencyCompositionSystemHelper DependencySystem;
         private readonly BuildingRuntimeResourcePrefabContextSystem RuntimeResourcePrefabContextSystem;
         private readonly BuildingRuntimeResourcePrefabContextSystem.Source RuntimeResourcePrefabSource;
         private readonly BuildingCitizenPopulationCompositionSystem CitizenPopulationCompositionBridge;
@@ -137,7 +137,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             BuildingUiQuerySystem.Context uiQueryContext,
             BuildingPlacementInteractionSystem interaction,
             BuildingPlacementInteractionSystem.Context interactionContext,
-            BuildingGameplayDependencySystem dependencySystem,
+            BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
             BuildingRuntimeResourcePrefabContextSystem runtimeResourcePrefabContextSystem,
             BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource,
             BuildingCitizenPopulationCompositionSystem citizenPopulationCompositionSystem,

@@ -130,7 +130,7 @@ internal sealed class BuildingPlacementAdapterSystem
             grid,
             roads,
             blockerData,
-            source.BuildingGameplayDependencySystem,
+            source.BuildingGameplayDependencyCompositionSystemHelper,
             source.BuildingPlacementStartupSystem,
             (candidateDefinition, candidateOrigin, candidateGrid, candidateRotateVertical) =>
                 getEffectivePlacementRect(source, candidateDefinition, candidateOrigin, candidateGrid, candidateRotateVertical),

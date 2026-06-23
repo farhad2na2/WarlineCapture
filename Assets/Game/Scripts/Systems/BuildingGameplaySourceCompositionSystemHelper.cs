@@ -73,7 +73,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingRuntimeResourcePrefabContextSystem BuildingRuntimeResourcePrefabContextSystem;
     internal readonly BuildingRuntimeResourcePrefabCompositionSystemHelper BuildingRuntimeResourcePrefabCompositionHelper;
     internal readonly BuildingPlacementStartupSystem BuildingPlacementStartupSystem = new();
-    internal readonly BuildingGameplayDependencySystem BuildingGameplayDependencySystem = new();
+    internal readonly BuildingGameplayDependencyCompositionSystemHelper BuildingGameplayDependencyCompositionSystemHelper = new();
     internal readonly BuildingRuntimeObjectPresentationSystemHelper RuntimeObjectPresentationHelper = new();
     internal readonly BuildingGameplayDisposalSystem BuildingGameplayDisposalSystem = new();
     internal readonly BuildingGameplayEcsQuerySystem BuildingGameplayEcsQuerySystem = new();

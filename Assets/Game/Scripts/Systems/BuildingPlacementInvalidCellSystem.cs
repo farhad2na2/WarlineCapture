@@ -24,7 +24,7 @@ internal sealed class BuildingPlacementInvalidCellSystem
         BuildingGameplayEcsQuerySystem ecsQuerySystem,
         BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetEntityManager,
         BuildingPlacementStartupSystem startupSystem,
-        BuildingGameplayDependencySystem dependencySystem)
+        BuildingGameplayDependencyCompositionSystemHelper dependencySystem)
     {
         _hasPlacementInvalidPrefix = false;
         if (!gridDataSystem.TryGetGridData(ecsQuerySystem, tryGetEntityManager, out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
@@ -53,7 +53,7 @@ internal sealed class BuildingPlacementInvalidCellSystem
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
         DynamicBlockerComponent blockerData,
-        BuildingGameplayDependencySystem dependencySystem,
+        BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
         BuildingPlacementStartupSystem startupSystem,
         GetEffectivePlacementRectDelegate getEffectivePlacementRect,
         System.Func<RectInt, bool> overlapsRuntimeBuilding)
@@ -99,7 +99,7 @@ internal sealed class BuildingPlacementInvalidCellSystem
     }
 
     internal bool IsRuntimeBlockerCell(
-        BuildingGameplayDependencySystem dependencySystem,
+        BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
         int x,
         int y,
         int width,

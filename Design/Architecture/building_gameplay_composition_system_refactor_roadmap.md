@@ -96,7 +96,7 @@ Nested types:
 
 `Result` private dependency fields that support public result behavior:
 
-- `BuildingGameplayDependencySystem DependencySystem`
+- `BuildingGameplayDependencyCompositionSystemHelper DependencySystem`
 - `BuildingRuntimeResourcePrefabContextSystem RuntimeResourcePrefabContextSystem`
 - `BuildingRuntimeResourcePrefabContextSystem.Source RuntimeResourcePrefabSource`
 - `CitizenPopulationCompositionSystem CitizenPopulationCompositionBoundary`

@@ -22,10 +22,10 @@ internal sealed class BuildingPlacementInputTickCompositionSystemHelper
             source.BuildingPlacementPreviewSystem,
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
             source.RuntimeGameplayStateSystem,
-            () => source.BuildingGameplayDependencySystem.MainMenuPlayUi,
+            () => source.BuildingGameplayDependencyCompositionSystemHelper.MainMenuPlayUi,
             source.BuildingSelectionClickSystem,
             createSelectionClickContext(source),
-            () => source.BuildingGameplayDependencySystem.IsBuildingSelectionClickBlocked(),
+            () => source.BuildingGameplayDependencyCompositionSystemHelper.IsBuildingSelectionClickBlocked(),
             clickDragThresholdPixels,
             () => ProcessPendingPlacementCommands(
                 source,

@@ -13,7 +13,7 @@ internal sealed class BuildingGameplayStartupCompositionSystemHelper
     {
         childSystems.RuntimeResourceSystem.SetInitialDollars(
             BuildingStartupConfigProjectionSystem.ResolveInitialDollars(buildingPlacementConfig));
-        childSystems.BuildingGameplayDependencySystem.SetStartupDependencies(
+        childSystems.BuildingGameplayDependencyCompositionSystemHelper.SetStartupDependencies(
             null,
             factionVisuals,
             dayNight);

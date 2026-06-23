@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityArchwaySpawnSystem
+internal sealed class RuntimeCityArchwaySpawnPrefabSystemHelper
 {
     private readonly RuntimeCityArchwaySpawnState _state = new();
 

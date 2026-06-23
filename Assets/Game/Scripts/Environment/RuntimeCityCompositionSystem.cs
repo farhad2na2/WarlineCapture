@@ -51,7 +51,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityDecorationPrefabGroupState _fallbackRuntimeCityDecorationPrefabGroup = new();
     private RuntimeCityClothCoverSpawnSystem _runtimeCityClothCoverSpawnSystem;
     private readonly RuntimeCityClothCoverSpawnState _fallbackRuntimeCityClothCoverSpawn = new();
-    private RuntimeCityArchwaySpawnSystem _runtimeCityArchwaySpawnSystem;
+    private RuntimeCityArchwaySpawnPrefabSystemHelper _runtimeCityArchwaySpawnHelper;
     private readonly RuntimeCityArchwaySpawnState _fallbackRuntimeCityArchwaySpawn = new();
     private RuntimeCityFreeScatterDecorationSystem _runtimeCityFreeScatterDecorationSystem;
     private readonly RuntimeCityFreeScatterDecorationState _fallbackRuntimeCityFreeScatterDecoration = new();
@@ -506,10 +506,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityClothCoverSpawnSystem ??= ResolveRuntimeCityClothCoverSpawnSystem();
 
     private RuntimeCityArchwaySpawnState RuntimeCityArchwaySpawnState =>
-        RuntimeCityArchwaySpawnSystem?.State ?? _fallbackRuntimeCityArchwaySpawn;
+        RuntimeCityArchwaySpawnHelper?.State ?? _fallbackRuntimeCityArchwaySpawn;
 
-    private RuntimeCityArchwaySpawnSystem RuntimeCityArchwaySpawnSystem =>
-        _runtimeCityArchwaySpawnSystem ??= ResolveRuntimeCityArchwaySpawnSystem();
+    private RuntimeCityArchwaySpawnPrefabSystemHelper RuntimeCityArchwaySpawnHelper =>
+        _runtimeCityArchwaySpawnHelper ??= ResolveRuntimeCityArchwaySpawnHelper();
 
     private RuntimeCityFreeScatterDecorationState RuntimeCityFreeScatterDecorationState =>
         RuntimeCityFreeScatterDecorationSystem?.State ?? _fallbackRuntimeCityFreeScatterDecoration;
@@ -726,9 +726,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityClothCoverSpawnSystem();
     }
 
-    private static RuntimeCityArchwaySpawnSystem ResolveRuntimeCityArchwaySpawnSystem()
+    private static RuntimeCityArchwaySpawnPrefabSystemHelper ResolveRuntimeCityArchwaySpawnHelper()
     {
-        return new RuntimeCityArchwaySpawnSystem();
+        return new RuntimeCityArchwaySpawnPrefabSystemHelper();
     }
 
     private static RuntimeCityFreeScatterDecorationSystem ResolveRuntimeCityFreeScatterDecorationSystem()

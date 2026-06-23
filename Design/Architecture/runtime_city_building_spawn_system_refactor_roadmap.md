@@ -327,11 +327,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Anchor shuffle, prefab cursor behavior, adjacency candidate shuffle, required-touch validation, labels/descriptions, and reservation were moved unchanged.
 
 27. Complete: Extract central archway placement
-   - Create `RuntimeCityArchwaySpawnSystem`.
+   - Create `RuntimeCityArchwaySpawnPrefabSystemHelper`.
    - Move `PlaceCentralArchwayBuildings`.
    - Preserve min/max hall distance, attempts, prefab cycling, labels, descriptions, and reservation.
    - Expected output: archway placement has one owner.
-   - Added `RuntimeCityArchwaySpawnSystem` as the owner for central archway decoration placement.
+   - Added `RuntimeCityArchwaySpawnPrefabSystemHelper` as the owner for central archway decoration placement.
    - `RuntimeCityBuildingSpawnSystem.PlaceCityDecorationBuildings` now delegates archway placement through the archway system.
    - Min/max hall distance, attempt budget, prefab cycling, labels, descriptions, plot spacing, and reservation were moved unchanged.
 

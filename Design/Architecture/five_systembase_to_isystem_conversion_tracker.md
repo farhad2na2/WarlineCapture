@@ -279,7 +279,7 @@ Phase 2 production spawn request notes:
 
 - Added `BuildingProductionSpawnRequest` as an ECS boundary buffer carrying request id, runtime building id, production index, reserved production slot index, owner faction, override flags, unit source key, prefab entity, produced unit, spawn cell, and spawn world position.
 - `MatchBootstrapSystem` and `RuntimeGameplayStateTestHelper` now ensure the production spawn request buffer exists on the runtime boundary entity.
-- `BuildingRuntimeContextSystem.RuntimeSource` now carries `BuildingRuntimeBoundaryQuery`; `BuildingRuntimeCompositionSystem` wires it from `BuildingGameplayEcsQuerySystem`.
+- `BuildingRuntimeContextSystem.RuntimeSource` now carries `BuildingRuntimeBoundaryQuery`; `BuildingRuntimeContextCompositionSystemHelper` wires it from `BuildingGameplayEcsQuerySystem`.
 - `BuildingSpawnSystem.TrySpawnPlayerUnitNearBuilding` publishes a bounded completed request row after successful spawn execution while preserving the current managed execution path.
 - `BuildingProductionSystemTests.BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot` now asserts the ECS request row fields alongside the spawned entity state.
 - Main project validation failed twice with Unity database write errors; shadow validation used `/Users/farhad/Projects/WarlineCapture-CodexUnity1` after syncing the focused boundary/spawn files.

@@ -23,7 +23,7 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
         TryGetEntityManagerDelegate tryGetEntityManager)
     {
         BuildingRuntimeContextSystem.RuntimeSource runtimeSource =
-            source.BuildingRuntimeCompositionSystem.CreateRuntimeContextSource(
+            source.BuildingRuntimeContextCompositionSystemHelper.CreateRuntimeContextSource(
                 source,
                 (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
                 (BuildingGameplaySourceCompositionSystemHelper gridSource, out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>

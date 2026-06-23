@@ -215,8 +215,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingSelectionCompositionSystemHelper` now owns building selection runtime context construction and selected-building focus/order glue.
 
 25. Complete: Extract building runtime context source
-   - Move `CreateBuildingRuntimeContextSource`, `CreateBuildingRuntimeEntityContext`, and `CreateRuntimeContextSource` into `BuildingRuntimeCompositionSystem`.
-   - Result: `BuildingRuntimeCompositionSystem` now owns building runtime context source, runtime entity context, and runtime source construction.
+   - Move `CreateBuildingRuntimeContextSource`, `CreateBuildingRuntimeEntityContext`, and `CreateRuntimeContextSource` into `BuildingRuntimeContextCompositionSystemHelper`.
+   - Result: `BuildingRuntimeContextCompositionSystemHelper` now owns building runtime context source, runtime entity context, and runtime source construction.
 
 26. Complete: Extract runtime query helper policies
    - Move `IsHouseBuilding`, `TryResolveBuildingFocusWorldPosition`, `TryGetRuntimeBuilding`, `GetEffectivePlacementRect`, and `OverlapsAnyRuntimeBuilding` into `BuildingRuntimeQueryCompositionSystemHelper`.

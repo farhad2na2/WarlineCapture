@@ -111,33 +111,33 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 out cell);
         }
 
-        BuildingRuntimeCompositionSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect =
+        BuildingRuntimeContextCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect =
             (source, definition, originCell, grid, rotateVertical) => source.BuildingRuntimeQueryCompositionSystemHelper.GetEffectivePlacementRect(
                 source,
                 definition,
                 originCell,
                 grid,
                 rotateVertical);
-        BuildingRuntimeCompositionSystem.IsHouseBuildingDelegate isHouseBuilding =
+        BuildingRuntimeContextCompositionSystemHelper.IsHouseBuildingDelegate isHouseBuilding =
             (source, building) => source.BuildingRuntimeQueryCompositionSystemHelper.IsHouseBuilding(source, building);
-        BuildingRuntimeCompositionSystem.TryResolveBuildingFocusWorldPositionDelegate tryResolveBuildingFocusWorldPosition =
+        BuildingRuntimeContextCompositionSystemHelper.TryResolveBuildingFocusWorldPositionDelegate tryResolveBuildingFocusWorldPosition =
             (BuildingGameplaySourceCompositionSystemHelper source, RuntimeBuildingEntity building, out Vector3 worldPosition) =>
                 source.BuildingRuntimeQueryCompositionSystemHelper.TryResolveBuildingFocusWorldPosition(
                     source,
                     building,
                     tryGetEntityManager,
                     out worldPosition);
-        BuildingRuntimeCompositionSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding =
+        BuildingRuntimeContextCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding =
             (BuildingGameplaySourceCompositionSystemHelper source, int id, out RuntimeBuildingEntity building) =>
                 source.BuildingRuntimeQueryCompositionSystemHelper.TryGetRuntimeBuilding(source, id, out building);
-        BuildingRuntimeCompositionSystem.OverlapsAnyRuntimeBuildingDelegate overlapsAnyRuntimeBuilding =
+        BuildingRuntimeContextCompositionSystemHelper.OverlapsAnyRuntimeBuildingDelegate overlapsAnyRuntimeBuilding =
             (source, candidateRect) => source.BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyRuntimeBuilding(
                 source,
                 candidateRect,
                 tryGetGridData,
                 (querySource, definition, originCell, grid, rotateVertical) => getEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical));
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource =
-            source => source.BuildingRuntimeCompositionSystem.CreateRuntimeContextSource(
+            source => source.BuildingRuntimeContextCompositionSystemHelper.CreateRuntimeContextSource(
                 source,
                 tryGetEntityManager,
                 tryGetGridData,
@@ -146,7 +146,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 tryGetRuntimeBuilding,
                 getEffectivePlacementRect);
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext =
-            source => source.BuildingRuntimeCompositionSystem.CreateBuildingRuntimeEntityContext(
+            source => source.BuildingRuntimeContextCompositionSystemHelper.CreateBuildingRuntimeEntityContext(
                 source,
                 tryGetEntityManager,
                 tryGetGridData,
@@ -156,7 +156,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 getEffectivePlacementRect,
                 DestroyedBuildingLifetimeSeconds);
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource =
-            (source, placementInteractionContext, placementMarkerPropertyBlock) => source.BuildingRuntimeCompositionSystem.CreateBuildingRuntimeContextSource(
+            (source, placementInteractionContext, placementMarkerPropertyBlock) => source.BuildingRuntimeContextCompositionSystemHelper.CreateBuildingRuntimeContextSource(
                 source,
                 placementInteractionContext,
                 placementMarkerPropertyBlock,

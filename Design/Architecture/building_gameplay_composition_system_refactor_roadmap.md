@@ -211,8 +211,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingSelectionClickCompositionSystemHelper` now owns building-click selection context wiring.
 
 24. Complete: Extract building selection runtime context
-   - Move `CreateBuildingSelectionContext` and selected-building focus/clear glue into `BuildingSelectionCompositionSystem`.
-   - Result: `BuildingSelectionCompositionSystem` now owns building selection runtime context construction and selected-building focus/order glue.
+   - Move `CreateBuildingSelectionContext` and selected-building focus/clear glue into `BuildingSelectionCompositionSystemHelper`.
+   - Result: `BuildingSelectionCompositionSystemHelper` now owns building selection runtime context construction and selected-building focus/order glue.
 
 25. Complete: Extract building runtime context source
    - Move `CreateBuildingRuntimeContextSource`, `CreateBuildingRuntimeEntityContext`, and `CreateRuntimeContextSource` into `BuildingRuntimeCompositionSystem`.

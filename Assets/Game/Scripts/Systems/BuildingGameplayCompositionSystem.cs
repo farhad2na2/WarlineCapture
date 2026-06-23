@@ -178,7 +178,7 @@ internal sealed class BuildingGameplayCompositionSystem
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementQuerySystem.Context> createPlacementQueryContext =
             source => source.BuildingPlacementQueryCompositionSystem.Create(source);
         Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionSystem.Context> createBuildingSelectionContext =
-            source => source.BuildingSelectionCompositionSystem.Create(
+            source => source.BuildingSelectionCompositionHelper.Create(
                 source,
                 tryGetGridForSelection,
                 resolveSelectionPortraitSpriteFromPrefab,

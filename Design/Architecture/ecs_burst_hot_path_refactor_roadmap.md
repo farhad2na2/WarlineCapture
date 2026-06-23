@@ -1712,7 +1712,7 @@ Progress notes:
   - `git diff --check` passed.
   - The Phase 9 data-only composition item remains in progress for the broader managed composition sweep.
   - Progress snapshot is now `125 / 157 complete (79.6%)`, `1 / 157 in progress`, `31 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
-- 2026-06-13: Continued the Phase 9 data-only composition cleanup by moving the building selection portrait fallback out of `BuildingSelectionCompositionSystem` into the stateless `BuildingSelectionPortraitSystem`. Selection composition now wires the HUD selection callback only; the extracted resolver preserves the existing definition-prefab portrait lookup with live-instance fallback.
+- 2026-06-13: Continued the Phase 9 data-only composition cleanup by moving the building selection portrait fallback out of `BuildingSelectionCompositionSystemHelper` into the stateless `BuildingSelectionPortraitSystem`. Selection composition now wires the HUD selection callback only; the extracted resolver preserves the existing definition-prefab portrait lookup with live-instance fallback.
   - Added `Assets/Game/Scripts/Systems/BuildingSelectionPortraitSystem.cs` and its `.meta`.
   - Focused validation passed:
     - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-selection-portrait-main.log`

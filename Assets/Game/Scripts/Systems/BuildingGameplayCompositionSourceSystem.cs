@@ -40,7 +40,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingPlacementCommandCompositionSystemHelper BuildingPlacementCommandCompositionSystemHelper = new();
     internal readonly BuildingPlacementSessionSystem BuildingPlacementSessionSystem = new();
     internal readonly BuildingProductionRequestBoundary BuildingProductionRequestBoundary = new();
-    internal readonly BuildingProductionCompositionSystem BuildingProductionCompositionSystem = new();
+    internal readonly BuildingProductionCompositionSystemHelper BuildingProductionCompositionSystemHelper = new();
     internal readonly BuildingRuntimeCreationSystem BuildingRuntimeCreationSystem = new();
     internal readonly BuildingSelectionSystem BuildingSelectionSystem = new();
     internal readonly BuildingSelectionCompositionSystemHelper BuildingSelectionCompositionHelper = new();

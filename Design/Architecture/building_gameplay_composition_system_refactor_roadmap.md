@@ -179,8 +179,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingProductionTickCompositionSystemHelper` now owns production runtime tick context wiring while production context source extraction remains step 16.
 
 16. Complete: Extract production context source and queue delegates
-   - Move `CreateProductionRuntimeContextSource` and `TryQueuePlayerUnitProduction` into `BuildingProductionCompositionSystem`.
-   - Result: `BuildingProductionCompositionSystem` now owns production context source construction, player-unit queue delegation, and production focus fallback resolution.
+   - Move `CreateProductionRuntimeContextSource` and `TryQueuePlayerUnitProduction` into `BuildingProductionCompositionSystemHelper`.
+   - Result: `BuildingProductionCompositionSystemHelper` now owns production context source construction, player-unit queue delegation, and production focus fallback resolution.
 
 17. Complete: Extract placement interaction context
    - Move `CreateActivePlacementPointerContext` and `CreateBuildingPlacementInteractionContext` into `BuildingPlacementInteractionCompositionSystemHelper`.

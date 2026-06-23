@@ -371,7 +371,7 @@ internal sealed class BuildingGameplayCompositionSystem
             createPlacementCommandContext,
             (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                 source.BuildingProductionContextSystem.CreateProductionRequestContext(
-                    source.BuildingProductionCompositionSystem.CreateRuntimeContextSource(
+                    source.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
                         source,
                         createRuntimeContextSource,
                         createPlacementCommandContext,
@@ -447,7 +447,7 @@ internal sealed class BuildingGameplayCompositionSystem
                         createBuildingSelectionContext)),
                 source => _productionTickCompositionHelper.Create(
                     source,
-                    productionSource => productionSource.BuildingProductionCompositionSystem.CreateRuntimeContextSource(
+                    productionSource => productionSource.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
                         productionSource,
                         createRuntimeContextSource,
                         createPlacementCommandContext),
@@ -457,7 +457,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     placementInteractionContext,
                     placementMarkerPropertyBlock,
                     createBuildingRuntimeContextSource,
-                    boundarySource => boundarySource.BuildingProductionCompositionSystem.CreateRuntimeContextSource(
+                    boundarySource => boundarySource.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
                         boundarySource,
                         createRuntimeContextSource,
                         createPlacementCommandContext),

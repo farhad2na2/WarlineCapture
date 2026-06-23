@@ -2,7 +2,7 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingProductionCompositionSystem
+internal sealed class BuildingProductionCompositionSystemHelper
 {
     public BuildingProductionContextSystem.Source CreateRuntimeContextSource(
         BuildingGameplayCompositionSourceSystem source,

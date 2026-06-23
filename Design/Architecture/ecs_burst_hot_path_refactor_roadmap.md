@@ -1704,7 +1704,7 @@ Progress notes:
   - `git diff --check` passed.
   - The Phase 9 data-only composition item remains in progress for the broader managed composition sweep.
   - Progress snapshot is now `125 / 157 complete (79.6%)`, `1 / 157 in progress`, `31 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
-- 2026-06-13: Continued the Phase 9 data-only composition cleanup by moving the production focus-position fallback out of `BuildingProductionCompositionSystem` into the stateless `BuildingRuntimeFocusPositionSystem`. Production composition now wires `BuildingRuntimeFocusPositionSystem.Resolve` as a delegate; focus-position resolution still first uses the ECS runtime query delegate and only falls back to the managed building instance transform when needed.
+- 2026-06-13: Continued the Phase 9 data-only composition cleanup by moving the production focus-position fallback out of `BuildingProductionCompositionSystemHelper` into the stateless `BuildingRuntimeFocusPositionSystem`. Production composition now wires `BuildingRuntimeFocusPositionSystem.Resolve` as a delegate; focus-position resolution still first uses the ECS runtime query delegate and only falls back to the managed building instance transform when needed.
   - Added `Assets/Game/Scripts/Systems/BuildingRuntimeFocusPositionSystem.cs` and its `.meta`.
   - Focused validation passed:
     - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase9-focus-position-main.log`
@@ -1729,7 +1729,7 @@ Progress notes:
   - `git diff --check` passed.
   - The Phase 9 data-only composition item remains in progress for the broader managed composition sweep.
   - Progress snapshot is now `125 / 157 complete (79.6%)`, `1 / 157 in progress`, `31 / 157 open`; phase progress remains `9 / 11 phases complete`, `1 in progress`, `1 not started`.
-- 2026-06-13: Continued the Phase 9 data-only composition cleanup by moving the player-unit production queue handoff out of `BuildingProductionCompositionSystem` and into `BuildingProductionContextSystem.TryQueuePlayerUnitProduction`. Production composition now only supplies the current timestamp and delegates the entity-manager/queue-context handoff to the production context boundary.
+- 2026-06-13: Continued the Phase 9 data-only composition cleanup by moving the player-unit production queue handoff out of `BuildingProductionCompositionSystemHelper` and into `BuildingProductionContextSystem.TryQueuePlayerUnitProduction`. Production composition now only supplies the current timestamp and delegates the entity-manager/queue-context handoff to the production context boundary.
   - Focused validation passed:
     - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-ecs-burst-building-production-composition-queue-main.log`
     - Log marker: `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.

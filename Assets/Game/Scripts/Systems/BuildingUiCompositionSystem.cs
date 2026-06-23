@@ -21,7 +21,7 @@ internal sealed class BuildingUiCompositionSystem
             source.BuildingProductionSystem,
             source.BuildingProductionRequestBoundary,
             () => source.BuildingProductionContextSystem.CreateProductionRequestContext(
-                source.BuildingProductionCompositionSystem.CreateRuntimeContextSource(
+                source.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
                     source,
                     createRuntimeContextSource,
                     createPlacementCommandContext,

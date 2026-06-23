@@ -8,7 +8,7 @@ internal sealed class BuildingGameplayDisposalExecutionCompositionSystemHelper
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingPlacementStartupSystem PlacementStartupSystem;
         public readonly BuildingDefinitionSystem DefinitionSystem;
-        public readonly BuildingPlacementPreviewSystem PlacementPreviewSystem;
+        public readonly BuildingPlacementPreviewPresentationSystemHelper PlacementPreviewSystem;
         public readonly BuildingRuntimeObjectPresentationSystemHelper RuntimeObjectPresentationHelper;
         public readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader;
         public readonly Action ExitBuildMode;
@@ -17,7 +17,7 @@ internal sealed class BuildingGameplayDisposalExecutionCompositionSystemHelper
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingPlacementStartupSystem placementStartupSystem,
             BuildingDefinitionSystem definitionSystem,
-            BuildingPlacementPreviewSystem placementPreviewSystem,
+            BuildingPlacementPreviewPresentationSystemHelper placementPreviewSystem,
             BuildingRuntimeObjectPresentationSystemHelper runtimeObjectPresentationHelper,
             UnitPathfindingPendingStateReader unitPathfindingPendingStateReadSystem,
             Action exitBuildMode)

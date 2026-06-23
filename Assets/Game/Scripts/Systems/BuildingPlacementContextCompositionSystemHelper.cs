@@ -11,7 +11,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly BuildingPlacementLifecycleSystem LifecycleSystem;
         public readonly BuildingPlacementInputSystem InputSystem;
-        public readonly BuildingPlacementPreviewSystem PreviewSystem;
+        public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
         public readonly BuildingPlacementValidationSystem PlacementValidationSystem;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly Transform BuildingRoot;
@@ -43,7 +43,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             BuildingPlacementLifecycleSystem lifecycleSystem,
             BuildingPlacementInputSystem inputSystem,
-            BuildingPlacementPreviewSystem previewSystem,
+            BuildingPlacementPreviewPresentationSystemHelper previewSystem,
             BuildingPlacementValidationSystem placementValidationSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             Transform buildingRoot,

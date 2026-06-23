@@ -17,7 +17,7 @@ internal sealed class BuildingGameplayDisposalCompositionSystemHelper
             source.RuntimeBuildingSystem,
             source.BuildingPlacementStartupSystem,
             source.BuildingDefinitionSystem,
-            source.BuildingPlacementPreviewSystem,
+            source.BuildingPlacementPreviewPresentationSystemHelper,
             source.RuntimeObjectPresentationHelper,
             source.UnitPathfindingPendingStateReader,
             () => ExitBuildModeWithoutEntityManager(createPlacementCommandContext()));

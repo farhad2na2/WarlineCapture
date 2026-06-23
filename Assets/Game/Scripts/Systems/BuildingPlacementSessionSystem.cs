@@ -8,7 +8,7 @@ internal sealed class BuildingPlacementSessionSystem
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly BuildingPlacementLifecycleSystem LifecycleSystem;
         public readonly BuildingPlacementInputSystem InputSystem;
-        public readonly BuildingPlacementPreviewSystem PreviewSystem;
+        public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
         public readonly Func<BuildingPlacementLifecycleSystem.CancelContext> CreateCancelContext;
         public readonly Func<BuildingPlacementLifecycleSystem.BeginContext> CreateBeginContext;
         public readonly Func<BuildingPlacementLifecycleSystem.ConfirmContext> CreateConfirmContext;
@@ -22,7 +22,7 @@ internal sealed class BuildingPlacementSessionSystem
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             BuildingPlacementLifecycleSystem lifecycleSystem,
             BuildingPlacementInputSystem inputSystem,
-            BuildingPlacementPreviewSystem previewSystem,
+            BuildingPlacementPreviewPresentationSystemHelper previewSystem,
             Func<BuildingPlacementLifecycleSystem.CancelContext> createCancelContext,
             Func<BuildingPlacementLifecycleSystem.BeginContext> createBeginContext,
             Func<BuildingPlacementLifecycleSystem.ConfirmContext> createConfirmContext,

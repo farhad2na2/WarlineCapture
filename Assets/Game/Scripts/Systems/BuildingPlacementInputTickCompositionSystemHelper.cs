@@ -19,7 +19,7 @@ internal sealed class BuildingPlacementInputTickCompositionSystemHelper
             createActivePlacementPointerContext(source, interactionContext, markerPropertyBlock),
             () => source.RuntimeGameplayStateSystem.PlayRequested,
             () => source.RuntimeGameplayStateSystem.BuildModeActive,
-            source.BuildingPlacementPreviewSystem,
+            source.BuildingPlacementPreviewPresentationSystemHelper,
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
             source.RuntimeGameplayStateSystem,
             () => source.BuildingGameplayDependencyCompositionSystemHelper.MainMenuPlayUi,

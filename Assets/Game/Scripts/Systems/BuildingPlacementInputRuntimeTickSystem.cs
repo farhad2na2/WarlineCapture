@@ -16,7 +16,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
         public readonly BuildingPlacementInputSystem.ActivePlacementPointerContext ActivePlacementPointerContext;
         public readonly Func<bool> IsPlayRequested;
         public readonly Func<bool> IsBuildModeActive;
-        public readonly BuildingPlacementPreviewSystem PlacementPreviewSystem;
+        public readonly BuildingPlacementPreviewPresentationSystemHelper PlacementPreviewSystem;
         public readonly Func<bool> HasActiveBuilding;
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly Func<IMatchRuntimeUi> GetMainMenu;
@@ -33,7 +33,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             BuildingPlacementInputSystem.ActivePlacementPointerContext activePlacementPointerContext,
             Func<bool> isPlayRequested,
             Func<bool> isBuildModeActive,
-            BuildingPlacementPreviewSystem placementPreviewSystem,
+            BuildingPlacementPreviewPresentationSystemHelper placementPreviewSystem,
             Func<bool> hasActiveBuilding,
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             Func<IMatchRuntimeUi> getMainMenu,

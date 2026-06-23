@@ -128,7 +128,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
             source.RuntimeGameplayStateSystem,
             source.BuildingPlacementLifecycleSystem,
             source.BuildingPlacementInputSystem,
-            source.BuildingPlacementPreviewSystem,
+            source.BuildingPlacementPreviewPresentationSystemHelper,
             source.BuildingPlacementValidationSystem,
             source.RuntimeBuildingSystem,
             source.BuildingPlacementStartupSystem.BuildingRoot,

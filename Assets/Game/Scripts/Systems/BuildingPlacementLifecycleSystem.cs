@@ -43,12 +43,12 @@ internal sealed class BuildingPlacementLifecycleSystem
     public readonly struct CancelContext
     {
         public readonly BuildingPlacementInputSystem InputSystem;
-        public readonly BuildingPlacementPreviewSystem PreviewSystem;
+        public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
         public readonly DestroyPreviewDelegate DestroyPreview;
 
         public CancelContext(
             BuildingPlacementInputSystem inputSystem,
-            BuildingPlacementPreviewSystem previewSystem,
+            BuildingPlacementPreviewPresentationSystemHelper previewSystem,
             DestroyPreviewDelegate destroyPreview)
         {
             InputSystem = inputSystem;
@@ -61,7 +61,7 @@ internal sealed class BuildingPlacementLifecycleSystem
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly BuildingPlacementInputSystem InputSystem;
-        public readonly BuildingPlacementPreviewSystem PreviewSystem;
+        public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
         public readonly Transform BuildingRoot;
         public readonly CreatePreviewDelegate CreatePreview;
         public readonly DestroyPreviewDelegate DestroyPreview;
@@ -75,7 +75,7 @@ internal sealed class BuildingPlacementLifecycleSystem
         public BeginContext(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             BuildingPlacementInputSystem inputSystem,
-            BuildingPlacementPreviewSystem previewSystem,
+            BuildingPlacementPreviewPresentationSystemHelper previewSystem,
             Transform buildingRoot,
             CreatePreviewDelegate createPreview,
             DestroyPreviewDelegate destroyPreview,

@@ -30,7 +30,7 @@ Step 13 session command transition size: 1919 lines. Placement confirm, cancel, 
 
 Step 14 placement visual-update transition size: 1824 lines. Active-placement focus, placement visual update, confirm validation, and placement object handoff now route through `BuildingPlacementVisualUpdateCompositionSystemHelper`; `BuildingGameplaySystem` keeps only temporary wrapper callbacks and context creation for compatibility.
 
-Step 15 wall helper transition size: 1770 lines. Wall preview scratch state now lives in `BuildingPlacementPreviewSystem`, wall commit scratch state now lives in `BuildingPlacementContextCompositionSystemHelper`, and placement rotate-vertical policy now lives in `BuildingBarrierSystem`; `BuildingGameplaySystem` no longer owns wall-specific helper methods or collections.
+Step 15 wall helper transition size: 1770 lines. Wall preview scratch state now lives in `BuildingPlacementPreviewPresentationSystemHelper`, wall commit scratch state now lives in `BuildingPlacementContextCompositionSystemHelper`, and placement rotate-vertical policy now lives in `BuildingBarrierSystem`; `BuildingGameplaySystem` no longer owns wall-specific helper methods or collections.
 
 Step 16 production button command transition size: 1765 lines. Selected-building production button commands now route through `BuildingUiCommandSystem`; `BuildingProductionRequestBoundary` owns active-building production request execution, and `BuildingUiContextSystem` wires the command boundary to the production request context.
 
@@ -240,9 +240,9 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplaySystem` delegates placement visual callbacks through `BuildingPlacementVisualUpdateCompositionSystemHelper` and no longer calls preview update, pointer hover, wall validation, placement commit, or preview-release methods directly.
 
 15. Complete: Move wall placement preview/commit helpers
-   - Move remaining wall preview runs, wall commit runs, wall footprint clone helpers, wall validation context, and rotate-vertical resolution into `BuildingPlacementPreviewSystem`, `BuildingPlacementCommitSystem`, and `BuildingBarrierSystem`.
+   - Move remaining wall preview runs, wall commit runs, wall footprint clone helpers, wall validation context, and rotate-vertical resolution into `BuildingPlacementPreviewPresentationSystemHelper`, `BuildingPlacementCommitSystem`, and `BuildingBarrierSystem`.
    - Expected output: no wall-specific collections or helper algorithms remain in the shell.
-   - `BuildingPlacementPreviewSystem` now owns wall preview scratch runs and the wall placement preview rebuild helper.
+   - `BuildingPlacementPreviewPresentationSystemHelper` now owns wall preview scratch runs and the wall placement preview rebuild helper.
    - `BuildingPlacementContextCompositionSystemHelper` now owns wall commit scratch runs and creates commit requests without a shell-owned scratch list.
    - `BuildingBarrierSystem` now owns placement rotate-vertical policy for walls and gates.
    - `BuildingGameplaySystem` no longer owns `_wallPreviewRuns`, `_wallCommitRuns`, `RebuildWallPlacementPreview`, `CreateWallValidationContext`, `ResolvePlacementRotateVertical`, or a clone-definition wrapper.

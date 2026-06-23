@@ -16,7 +16,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
     internal readonly struct Context
     {
         public readonly BuildingPlacementInputSystem InputSystem;
-        public readonly BuildingPlacementPreviewSystem PreviewSystem;
+        public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
         public readonly BuildingPlacementValidationSystem ValidationSystem;
         public readonly BuildingPlacementGridSystem GridSystem;
         public readonly BuildingPlacementStartupSystem StartupSystem;
@@ -30,15 +30,15 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
         public readonly GetPlacementFootprintDelegate GetPlacementFootprint;
         public readonly IsPlacementValidDelegate IsPlacementValid;
         public readonly GetFootprintCenterDelegate GetFootprintCenter;
-        public readonly BuildingPlacementPreviewSystem.CreateVisualDelegate CreateBuildingVisualInstance;
-        public readonly BuildingPlacementPreviewSystem.PositionVisualDelegate PositionBuildingObject;
+        public readonly BuildingPlacementPreviewPresentationSystemHelper.CreateVisualDelegate CreateBuildingVisualInstance;
+        public readonly BuildingPlacementPreviewPresentationSystemHelper.PositionVisualDelegate PositionBuildingObject;
         public readonly CreatePlacementContextSourceDelegate CreatePlacementContextSource;
         public readonly CreateBuildingBarrierContextDelegate CreateBuildingBarrierContext;
         public readonly SelectAndFocusBuildingDelegate SelectAndFocusBuilding;
 
         public Context(
             BuildingPlacementInputSystem inputSystem,
-            BuildingPlacementPreviewSystem previewSystem,
+            BuildingPlacementPreviewPresentationSystemHelper previewSystem,
             BuildingPlacementValidationSystem validationSystem,
             BuildingPlacementGridSystem gridSystem,
             BuildingPlacementStartupSystem startupSystem,
@@ -52,8 +52,8 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
             GetPlacementFootprintDelegate getPlacementFootprint,
             IsPlacementValidDelegate isPlacementValid,
             GetFootprintCenterDelegate getFootprintCenter,
-            BuildingPlacementPreviewSystem.CreateVisualDelegate createBuildingVisualInstance,
-            BuildingPlacementPreviewSystem.PositionVisualDelegate positionBuildingObject,
+            BuildingPlacementPreviewPresentationSystemHelper.CreateVisualDelegate createBuildingVisualInstance,
+            BuildingPlacementPreviewPresentationSystemHelper.PositionVisualDelegate positionBuildingObject,
             CreatePlacementContextSourceDelegate createPlacementContextSource,
             CreateBuildingBarrierContextDelegate createBuildingBarrierContext,
             SelectAndFocusBuildingDelegate selectAndFocusBuilding)

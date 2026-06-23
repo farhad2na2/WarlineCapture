@@ -82,7 +82,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
     {
         return new BuildingPlacementVisualUpdateCompositionSystemHelper.Context(
             source.BuildingPlacementInputSystem,
-            source.BuildingPlacementPreviewSystem,
+            source.BuildingPlacementPreviewPresentationSystemHelper,
             source.BuildingPlacementValidationSystem,
             source.BuildingPlacementGridSystem,
             source.BuildingPlacementStartupSystem,

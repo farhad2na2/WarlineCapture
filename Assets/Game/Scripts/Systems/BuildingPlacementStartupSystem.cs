@@ -39,7 +39,7 @@ internal sealed class BuildingPlacementStartupSystem
         Transform runtimeRoot,
         BuildingDefinitionSystem definitionSystem,
         BuildingRunwaySystem runwaySystem,
-        BuildingPlacementPreviewSystem previewSystem,
+        BuildingPlacementPreviewPresentationSystemHelper previewSystem,
         Action<UnityEngine.Object> destroyRuntimeObject)
     {
         _config = configAsset;
@@ -79,7 +79,7 @@ internal sealed class BuildingPlacementStartupSystem
 
     public void Dispose(
         BuildingDefinitionSystem definitionSystem,
-        BuildingPlacementPreviewSystem previewSystem,
+        BuildingPlacementPreviewPresentationSystemHelper previewSystem,
         Action<UnityEngine.Object> destroyRuntimeObject)
     {
         definitionSystem.ClearConfiguredSpawnableDefinitions(target => destroyRuntimeObject?.Invoke(target));

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-internal sealed class BuildingPlacementPreviewSystem
+internal sealed class BuildingPlacementPreviewPresentationSystemHelper
 {
     public readonly struct WallPreviewRun
     {

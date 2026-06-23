@@ -1,7 +1,7 @@
 using UnityEngine;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 
-internal sealed class BuildingPlacementCommandCompositionSystem
+internal sealed class BuildingPlacementCommandCompositionSystemHelper
 {
     internal delegate Vector2Int GetCenterScreenPlacementOriginDelegate(
         BuildingGameplayCompositionSourceSystem source,

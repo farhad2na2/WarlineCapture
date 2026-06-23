@@ -195,8 +195,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingPlacementQueryCompositionSystem` now owns placement read/query context construction.
 
 20. Complete: Extract placement command context source
-   - Move `CreatePlacementCommandContext`, `CreatePlacementContextSource`, and command handoff glue into `BuildingPlacementCommandCompositionSystem`.
-   - Result: `BuildingPlacementCommandCompositionSystem` now owns placement command context/source construction and build-mode command handoffs.
+   - Move `CreatePlacementCommandContext`, `CreatePlacementContextSource`, and command handoff glue into `BuildingPlacementCommandCompositionSystemHelper`.
+   - Result: `BuildingPlacementCommandCompositionSystemHelper` now owns placement command context/source construction and build-mode command handoffs.
 
 21. Complete: Extract placement visual update composition
    - Move `UpdatePlacement`, `CreatePlacementVisualUpdateContext`, `FocusActivePlacement`, `ValidateActivePlacementForConfirm`, `UpdatePlacementVisual`, and `PlaceBuilding` wrappers into `BuildingPlacementVisualCompositionSystem`.

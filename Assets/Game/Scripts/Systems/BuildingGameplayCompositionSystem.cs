@@ -197,12 +197,12 @@ internal sealed class BuildingGameplayCompositionSystem
                     (placementSource, definition, originCell, placementGrid, placementRotateVertical) =>
                         getEffectivePlacementRect(placementSource, definition, originCell, placementGrid, placementRotateVertical),
                     (placementSource, candidateRect) => overlapsAnyRuntimeBuilding(placementSource, candidateRect));
-        BuildingPlacementCommandCompositionSystem.GetCenterScreenPlacementOriginDelegate getCenterScreenPlacementOrigin =
+        BuildingPlacementCommandCompositionSystemHelper.GetCenterScreenPlacementOriginDelegate getCenterScreenPlacementOrigin =
             (source, footprintCells) => source.BuildingPlacementAdapterSystem.GetCenterScreenPlacementOrigin(
                 source,
                 footprintCells,
                 tryGetGridData);
-        BuildingPlacementCommandCompositionSystem.TryResolveInitialPlacementOriginDelegate tryResolveInitialPlacementOrigin =
+        BuildingPlacementCommandCompositionSystemHelper.TryResolveInitialPlacementOriginDelegate tryResolveInitialPlacementOrigin =
             (
                 BuildingGameplayCompositionSourceSystem source,
                 BuildingPlacementInteractionSystem.Context placementInteractionContext,
@@ -227,7 +227,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 blockerData,
                 createRuntimeContextSourceForAdapter,
                 isPlacementValid);
-        BuildingPlacementCommandCompositionSystem.TryAlignGateToNearbyWallDelegate tryAlignGateForCommand =
+        BuildingPlacementCommandCompositionSystemHelper.TryAlignGateToNearbyWallDelegate tryAlignGateForCommand =
             (BuildingGameplayCompositionSourceSystem source, Vector2Int originCell, BuildingDefinition definition, out bool gateVertical) =>
                 source.BuildingPlacementAdapterSystem.TryAlignGateToNearbyWall(
                     source,
@@ -244,7 +244,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createRuntimeContextSourceForAdapter,
                     out gateVertical);
         BuildingPlacementVisualCompositionSystem.CreatePlacementContextSourceDelegate createPlacementContextSource = null;
-        BuildingPlacementCommandCompositionSystem.UpdatePlacementVisualDelegate updatePlacementVisual =
+        BuildingPlacementCommandCompositionSystemHelper.UpdatePlacementVisualDelegate updatePlacementVisual =
             (source, placementInteractionContext, placementMarkerPropertyBlock, placement, updateCellFromPointer, screenPosition) =>
                 source.BuildingPlacementVisualCompositionSystem?.UpdatePlacementVisual(
                     source,
@@ -260,7 +260,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createPlacementContextSource,
                     createRuntimeContextSource,
                     createBuildingSelectionContext);
-        BuildingPlacementCommandCompositionSystem.FocusActivePlacementDelegate focusActivePlacement =
+        BuildingPlacementCommandCompositionSystemHelper.FocusActivePlacementDelegate focusActivePlacement =
             (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
                 source.BuildingPlacementVisualCompositionSystem?.FocusActivePlacement(
                     source,
@@ -274,7 +274,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createPlacementContextSource,
                     createRuntimeContextSource,
                     createBuildingSelectionContext);
-        BuildingPlacementCommandCompositionSystem.ValidateActivePlacementForConfirmDelegate validateActivePlacementForConfirm =
+        BuildingPlacementCommandCompositionSystemHelper.ValidateActivePlacementForConfirmDelegate validateActivePlacementForConfirm =
             (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
                 source.BuildingPlacementVisualCompositionSystem != null &&
                 source.BuildingPlacementVisualCompositionSystem.ValidateActivePlacementForConfirm(
@@ -289,7 +289,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createPlacementContextSource,
                     createRuntimeContextSource,
                     createBuildingSelectionContext);
-        BuildingPlacementCommandCompositionSystem.PlaceBuildingDelegate placeBuilding =
+        BuildingPlacementCommandCompositionSystemHelper.PlaceBuildingDelegate placeBuilding =
             (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
                 source.BuildingPlacementVisualCompositionSystem?.PlaceBuilding(
                     source,
@@ -303,7 +303,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createPlacementContextSource,
                     createRuntimeContextSource,
                     createBuildingSelectionContext);
-        BuildingPlacementCommandCompositionSystem.UpdatePlacementDelegate updatePlacement =
+        BuildingPlacementCommandCompositionSystemHelper.UpdatePlacementDelegate updatePlacement =
             (source, placementInteractionContext, placementMarkerPropertyBlock, screenPosition) =>
                 source.BuildingPlacementVisualCompositionSystem?.UpdatePlacement(
                     source,
@@ -321,7 +321,7 @@ internal sealed class BuildingGameplayCompositionSystem
             (source, placementInteractionContext, placementMarkerPropertyBlock, screenPosition) =>
                 updatePlacement(source, placementInteractionContext, placementMarkerPropertyBlock, screenPosition);
         createPlacementContextSource = (source, placementInteractionContext, placementMarkerPropertyBlock) =>
-            source.BuildingPlacementCommandCompositionSystem.CreateContextSource(
+            source.BuildingPlacementCommandCompositionSystemHelper.CreateContextSource(
                 source,
                 placementInteractionContext,
                 placementMarkerPropertyBlock,
@@ -339,7 +339,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 createBuildingSelectionContext);
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext =
             (source, placementInteractionContext, placementMarkerPropertyBlock) =>
-                source.BuildingPlacementCommandCompositionSystem.CreateCommandContext(
+                source.BuildingPlacementCommandCompositionSystemHelper.CreateCommandContext(
                     source,
                     placementInteractionContext,
                     placementMarkerPropertyBlock,

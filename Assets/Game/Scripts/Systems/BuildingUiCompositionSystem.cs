@@ -11,7 +11,7 @@ internal sealed class BuildingUiCompositionSystem
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQuerySystem.Context> createBuildingPlacementQueryContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return source.BuildingUiContextSystem.CreateSource(
@@ -35,17 +35,17 @@ internal sealed class BuildingUiCompositionSystem
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
             () => source.BuildingPlacementLifecycleCompositionSystemHelper.HasPendingBuildingPlacement,
             () => source.BuildingPlacementLifecycleCompositionSystemHelper.CanConfirmBuildingPlacement,
-            () => source.BuildingPlacementQuerySystem.GetPlacementStatusText(source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement),
-            () => source.BuildingPlacementQuerySystem.GetSelectedBuildingLabel(createBuildingPlacementQueryContext(source)),
+            () => source.BuildingPlacementQueryUiSystemHelper.GetPlacementStatusText(source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement),
+            () => source.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingLabel(createBuildingPlacementQueryContext(source)),
             () => source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacementCost,
-            () => source.BuildingPlacementQuerySystem.GetActivePlacementDurationSeconds(source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement),
-            () => source.BuildingPlacementQuerySystem.GetSelectedBuildingDisplayName(createBuildingPlacementQueryContext(source)),
-            () => source.BuildingPlacementQuerySystem.GetSelectedBuildingDescription(createBuildingPlacementQueryContext(source)),
-            (out int current, out int max) => source.BuildingPlacementQuerySystem.TryGetSelectedBuildingHealth(
+            () => source.BuildingPlacementQueryUiSystemHelper.GetActivePlacementDurationSeconds(source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement),
+            () => source.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingDisplayName(createBuildingPlacementQueryContext(source)),
+            () => source.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingDescription(createBuildingPlacementQueryContext(source)),
+            (out int current, out int max) => source.BuildingPlacementQueryUiSystemHelper.TryGetSelectedBuildingHealth(
                 createBuildingPlacementQueryContext(source),
                 out current,
                 out max),
-            (out GameObject prefab) => source.BuildingPlacementQuerySystem.TryGetSelectedBuildingPreviewPrefab(
+            (out GameObject prefab) => source.BuildingPlacementQueryUiSystemHelper.TryGetSelectedBuildingPreviewPrefab(
                 createBuildingPlacementQueryContext(source),
                 out prefab),
             buildingId => source.BuildingRuntimeQuerySystem.IsRuntimeBuildingWall(
@@ -90,7 +90,7 @@ internal sealed class BuildingUiCompositionSystem
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQuerySystem.Context> createBuildingPlacementQueryContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return source.BuildingUiContextSystem.CreateCommandContext(
@@ -110,7 +110,7 @@ internal sealed class BuildingUiCompositionSystem
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQuerySystem.Context> createBuildingPlacementQueryContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return source.BuildingUiContextSystem.CreateQueryContext(

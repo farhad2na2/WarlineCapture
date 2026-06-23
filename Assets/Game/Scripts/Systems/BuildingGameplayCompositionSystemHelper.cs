@@ -175,7 +175,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
         BuildingPlacementAdapterCompositionSystemHelper.CreateBuildingRuntimeContextSourceDelegate createBuildingRuntimeContextSourceForAdapter =
             (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                 createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQuerySystem.Context> createPlacementQueryContext =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createPlacementQueryContext =
             source => source.BuildingPlacementQueryCompositionSystem.Create(source);
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext =
             source => source.BuildingSelectionCompositionHelper.Create(

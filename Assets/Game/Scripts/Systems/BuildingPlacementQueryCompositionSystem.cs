@@ -11,9 +11,9 @@ internal partial struct BuildingPlacementQueryCompositionSystem : ISystem
     {
     }
 
-    public BuildingPlacementQuerySystem.Context Create(BuildingGameplaySourceCompositionSystemHelper source)
+    public BuildingPlacementQueryUiSystemHelper.Context Create(BuildingGameplaySourceCompositionSystemHelper source)
     {
-        return source.BuildingPlacementQuerySystem.CreateContext(new BuildingPlacementQuerySystem.Source(
+        return source.BuildingPlacementQueryUiSystemHelper.CreateContext(new BuildingPlacementQueryUiSystemHelper.Source(
             source.RuntimeBuildingSystem.Buildings,
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId,
             BuildingDefinitionSystem.GetProductionCount,

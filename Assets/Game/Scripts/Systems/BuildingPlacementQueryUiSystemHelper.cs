@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementQuerySystem
+internal sealed class BuildingPlacementQueryUiSystemHelper
 {
     public delegate int GetProductionCountDelegate(BuildingDefinition definition);
     public delegate GameObject GetProductionPrefabDelegate(BuildingDefinition definition, int index);

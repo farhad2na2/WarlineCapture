@@ -1,7 +1,7 @@
 using System;
 using Unity.Entities;
 
-internal sealed class BuildingGameplayDisposalSystem
+internal sealed class BuildingGameplayDisposalExecutionCompositionSystemHelper
 {
     internal readonly struct Source
     {

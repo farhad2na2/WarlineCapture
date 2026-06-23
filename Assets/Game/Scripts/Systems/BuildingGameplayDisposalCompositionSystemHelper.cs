@@ -6,14 +6,14 @@ internal sealed class BuildingGameplayDisposalCompositionSystemHelper
         BuildingGameplaySourceCompositionSystemHelper source,
         Func<BuildingPlacementCommandSystem.Context> createPlacementCommandContext)
     {
-        return () => source.BuildingGameplayDisposalSystem.Dispose(CreateSource(source, createPlacementCommandContext));
+        return () => source.BuildingGameplayDisposalExecutionCompositionSystemHelper.Dispose(CreateSource(source, createPlacementCommandContext));
     }
 
-    public BuildingGameplayDisposalSystem.Source CreateSource(
+    public BuildingGameplayDisposalExecutionCompositionSystemHelper.Source CreateSource(
         BuildingGameplaySourceCompositionSystemHelper source,
         Func<BuildingPlacementCommandSystem.Context> createPlacementCommandContext)
     {
-        return new BuildingGameplayDisposalSystem.Source(
+        return new BuildingGameplayDisposalExecutionCompositionSystemHelper.Source(
             source.RuntimeBuildingSystem,
             source.BuildingPlacementStartupSystem,
             source.BuildingDefinitionSystem,

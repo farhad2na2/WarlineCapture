@@ -14,7 +14,7 @@ Step 5 dependency-binding transition size: 2071 lines. Dependency references now
 
 Step 6 startup/config transition size: 2049 lines. Production composition now routes placement config, world camera, runtime root, road footprint query/context, faction visuals, and day/night directly into `BuildingPlacementStartupSystem` and `BuildingGameplayDependencyCompositionSystemHelper`; `BuildingGameplaySystem.Init` remains only as temporary compatibility debt for tests/legacy callers.
 
-Step 7 disposal transition size: 2041 lines. Production composition now disposes through `BuildingGameplayDisposalSystem`; `BuildingGameplaySystem.Dispose` remains only as temporary tests/legacy compatibility and delegates to the disposal system.
+Step 7 disposal transition size: 2041 lines. Production composition now disposes through `BuildingGameplayDisposalExecutionCompositionSystemHelper`; `BuildingGameplaySystem.Dispose` remains only as temporary tests/legacy compatibility and delegates to the disposal system.
 
 Step 8 ECS query transition size: 1982 lines. Entity query caching now lives in `BuildingGameplayEcsQueryCompositionSystemHelper`; `BuildingGameplaySystem` may temporarily expose query delegates/handles to existing context factories until those factories move out in later phases.
 
@@ -175,10 +175,10 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Composition disposes runtime objects through the owning systems directly.
    - Remove `BuildingGameplaySystem.Dispose` as the disposal gateway.
    - Expected output: lifecycle is a set of explicit disposal hooks, not shell disposal.
-   - Added `BuildingGameplayDisposalSystem` to own runtime building object/entity destruction, runtime registry clearing, and placement startup disposal.
+   - Added `BuildingGameplayDisposalExecutionCompositionSystemHelper` to own runtime building object/entity destruction, runtime registry clearing, and placement startup disposal.
    - `BuildingGameplaySourceCompositionSystemHelper` now owns the disposal system.
-   - `BuildingGameplayCompositionSystemHelper.Result.Dispose` now calls `BuildingGameplayDisposalSystem` directly instead of `building.Dispose`.
-   - `BuildingGameplaySystem.Dispose` remains only as temporary compatibility for tests/legacy callers and delegates to `BuildingGameplayDisposalSystem`.
+   - `BuildingGameplayCompositionSystemHelper.Result.Dispose` now calls `BuildingGameplayDisposalExecutionCompositionSystemHelper` directly instead of `building.Dispose`.
+   - `BuildingGameplaySystem.Dispose` remains only as temporary compatibility for tests/legacy callers and delegates to `BuildingGameplayDisposalExecutionCompositionSystemHelper`.
 
 ## Phase 3: Move Query And Shared Runtime Data Ownership
 
@@ -400,7 +400,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - In progress: selection-click composition now uses composition-owned `BuildingSelectionSystem` / `BuildingSelectionClickSystem` contexts instead of `BuildingGameplaySystem.CreateBuildingSelectionClickContext`.
    - In progress: runtime input tick composition now creates active-placement pointer and placement visual-update contexts from composition child systems instead of `BuildingGameplaySystem.CreateActivePlacementPointerContext`.
    - In progress: UI command/query composition now uses composition-owned `BuildingUiContextSystem` source construction instead of `BuildingGameplaySystem.CreateBuildingUiCommandContext` / `CreateBuildingUiQueryContext`.
-   - In progress: production composition no longer constructs `BuildingGameplaySystem`; interaction and disposal contexts now compose through `BuildingPlacementInteractionContextCompositionSystemHelper`, `BuildingPlacementCommandSystem`, and `BuildingGameplayDisposalSystem`.
+   - In progress: production composition no longer constructs `BuildingGameplaySystem`; interaction and disposal contexts now compose through `BuildingPlacementInteractionContextCompositionSystemHelper`, `BuildingPlacementCommandSystem`, and `BuildingGameplayDisposalExecutionCompositionSystemHelper`.
    - Completed: `rg "BuildingGameplaySystem" Assets/Game/Scripts -g '*.cs'` now finds only `Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs`.
 
 35. Complete: Replace `BuildingGameplayTestHarness`

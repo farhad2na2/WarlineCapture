@@ -2,7 +2,7 @@ using UnityEngine;
 
 internal sealed class RuntimeCityVisualPresentationSystemHelper
 {
-    private RuntimeCitySurfaceIntegrationSystem _surfaceIntegrationSystem;
+    private RuntimeCitySurfaceIntegrationUtilitySystemHelper _surfaceIntegrationUtilitySystemHelper;
     private Transform _runtimeRoot;
     private Transform _cityVisualRoot;
 
@@ -14,19 +14,19 @@ internal sealed class RuntimeCityVisualPresentationSystemHelper
 
     public void Dispose()
     {
-        _surfaceIntegrationSystem?.Clear();
+        _surfaceIntegrationUtilitySystemHelper?.Clear();
         _cityVisualRoot = null;
         _runtimeRoot = null;
     }
 
     public void ConfigureSurface(MapSurfaceComponent surface)
     {
-        RuntimeCitySurfaceIntegrationSystem?.Configure(surface);
+        RuntimeCitySurfaceIntegrationUtilitySystemHelper?.Configure(surface);
     }
 
     public void ClearSurface()
     {
-        RuntimeCitySurfaceIntegrationSystem?.Clear();
+        RuntimeCitySurfaceIntegrationUtilitySystemHelper?.Clear();
     }
 
     public void EnsureCityVisualRoot()
@@ -57,7 +57,7 @@ internal sealed class RuntimeCityVisualPresentationSystemHelper
         var wrapper = new GameObject($"{prefab.name}_Visual");
         wrapper.transform.SetParent(_cityVisualRoot, false);
         Vector3 center = GetFootprintCenter(originCell, footprintCells, grid);
-        center = RuntimeCitySurfaceIntegrationSystem?.ResolveFootprintCenter(originCell, footprintCells, grid, center) ?? center;
+        center = RuntimeCitySurfaceIntegrationUtilitySystemHelper?.ResolveFootprintCenter(originCell, footprintCells, grid, center) ?? center;
         wrapper.transform.SetPositionAndRotation(center, rotation);
         wrapper.transform.localScale = Vector3.one;
 
@@ -87,12 +87,12 @@ internal sealed class RuntimeCityVisualPresentationSystemHelper
             grid.Origin.z + (originCell.y + footprintCells.y * 0.5f) * grid.CellSize);
     }
 
-    private RuntimeCitySurfaceIntegrationSystem RuntimeCitySurfaceIntegrationSystem =>
-        _surfaceIntegrationSystem ??= ResolveRuntimeCitySurfaceIntegrationSystem();
+    private RuntimeCitySurfaceIntegrationUtilitySystemHelper RuntimeCitySurfaceIntegrationUtilitySystemHelper =>
+        _surfaceIntegrationUtilitySystemHelper ??= ResolveRuntimeCitySurfaceIntegrationUtilitySystemHelper();
 
-    private static RuntimeCitySurfaceIntegrationSystem ResolveRuntimeCitySurfaceIntegrationSystem()
+    private static RuntimeCitySurfaceIntegrationUtilitySystemHelper ResolveRuntimeCitySurfaceIntegrationUtilitySystemHelper()
     {
-        return new RuntimeCitySurfaceIntegrationSystem();
+        return new RuntimeCitySurfaceIntegrationUtilitySystemHelper();
     }
 
     private static bool TryGetLocalBounds(GameObject target, out Bounds bounds)

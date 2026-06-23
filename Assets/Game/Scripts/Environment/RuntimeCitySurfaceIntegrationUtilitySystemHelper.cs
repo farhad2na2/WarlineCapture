@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class RuntimeCitySurfaceIntegrationSystem
+internal sealed class RuntimeCitySurfaceIntegrationUtilitySystemHelper
 {
     private const float RuntimeCityMaxSurfaceHeightDelta = 0.5f;
     private const float RuntimeCityMaxSurfaceSlopeDegrees = 45f;

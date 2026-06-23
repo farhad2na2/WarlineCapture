@@ -345,7 +345,7 @@ Pathfinding integration rule:
 30. Complete: Add runtime city surface integration
    - Runtime city roads, buildings, decorations, and walkable reservations use surface queries.
    - Keep existing runtime city counts, random order, yield points, and placement rules.
-   - Added `RuntimeCitySurfaceIntegrationSystem` as the fail-open surface boundary for city visual grounding, footprint reservation checks, road path checks, and primary-surface lookup.
+   - Added `RuntimeCitySurfaceIntegrationUtilitySystemHelper` as the fail-open surface boundary for city visual grounding, footprint reservation checks, road path checks, and primary-surface lookup.
    - `RuntimeCityVisualPresentationSystemHelper` now routes visual-only city prefab centers through the surface integration boundary when a baked surface is configured.
    - Runtime city generation counts, random order, coroutine/yield behavior, walkability reservation ownership, and road/building placement rules are unchanged.
 

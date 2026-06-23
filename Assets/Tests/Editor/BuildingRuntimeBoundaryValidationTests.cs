@@ -24,7 +24,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
     private GameObject _buildingPrefab;
     private BuildingPlacementSystemConfig _buildingConfig;
     private BuildingGameplayCompositionSystem _buildingComposition;
-    private BuildingGameplayCompositionResultSystem.Result _buildingGameplay;
+    private BuildingGameplayResultCompositionSystemHelper.Result _buildingGameplay;
     private bool _buildingGameplayInitialized;
 
     public static void RunBatchValidation()

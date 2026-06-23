@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-internal sealed class BuildingGameplayCompositionResultSystem
+internal sealed class BuildingGameplayResultCompositionSystemHelper
 {
     public Result Create(
         BuildingSelectionClickSystem selectionClick,

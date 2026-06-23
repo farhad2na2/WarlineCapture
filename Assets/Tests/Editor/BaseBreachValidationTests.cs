@@ -1421,7 +1421,7 @@ public sealed class BaseBreachValidationTests
     {
         private const float DestroyedBuildingLifetimeSeconds = 5f;
 
-        private readonly BuildingGameplayCompositionResultSystem.Result _buildingGameplay;
+        private readonly BuildingGameplayResultCompositionSystemHelper.Result _buildingGameplay;
 
         public BaseBreachBuildingGameplayFixture(BuildingPlacementSystemConfig placementConfig, Transform runtimeRoot)
         {

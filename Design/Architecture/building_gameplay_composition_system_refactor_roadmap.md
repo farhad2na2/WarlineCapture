@@ -127,12 +127,12 @@ Top-level private state, included for extraction tracking:
    - Expected output: migration can prove callers move to narrow boundaries instead of silently adding new broad API.
 
 3. Complete: Add composition result ownership guard
-   - Create or prepare `BuildingGameplayCompositionResultSystem` as the owner of the result carrier and result bind/dispose helpers.
-   - Result: `BuildingGameplayCompositionResultSystem.Result` now owns the result carrier; `BuildingGameplayCompositionSystem` no longer declares the large nested `Result` type.
+   - Create or prepare `BuildingGameplayResultCompositionSystemHelper` as the owner of the result carrier and result bind/dispose helpers.
+   - Result: `BuildingGameplayResultCompositionSystemHelper.Result` now owns the result carrier; `BuildingGameplayCompositionSystem` no longer declares the large nested `Result` type.
 
 4. Complete: Move result bind methods
    - Move `BindSelection`, `InitializeCitizenPopulation`, `DisposeCitizenPopulation`, and `BindCitizenPopulation` result behaviors to the result owner.
-   - Result: result bind/dispose behavior now lives in `BuildingGameplayCompositionResultSystem.Result`; `BuildingGameplayCompositionSystem` keeps only temporary wrapper methods for existing managed startup callers.
+   - Result: result bind/dispose behavior now lives in `BuildingGameplayResultCompositionSystemHelper.Result`; `BuildingGameplayCompositionSystem` keeps only temporary wrapper methods for existing managed startup callers.
 
 5. Complete: Extract child-system construction
    - Move `CreateChildSystems` and child graph creation into `BuildingGameplayChildSystem`.
@@ -236,7 +236,7 @@ Top-level private state, included for extraction tracking:
 
 30. Complete: Collapse `Initialize` to high-level composition calls
    - Rewrite `Initialize` so it sequences named composition systems instead of building all contexts inline.
-   - Result: `Initialize` now delegates result carrier construction to `BuildingGameplayCompositionResultSystem.Create`; remaining inline delegate bundles are tracked by the follow-up private-method and wrapper cleanup steps.
+   - Result: `Initialize` now delegates result carrier construction to `BuildingGameplayResultCompositionSystemHelper.Create`; remaining inline delegate bundles are tracked by the follow-up private-method and wrapper cleanup steps.
 
 31. Complete: Remove remaining private context-factory methods from composition
    - Delete all extracted private helper methods from `BuildingGameplayCompositionSystem`.
@@ -244,7 +244,7 @@ Top-level private state, included for extraction tracking:
 
 32. Complete: Remove remaining wrapper/delegate pass-throughs
    - Move any leftover wrapper delegate bodies out of `BuildingGameplayCompositionSystem` or delete them if callers use narrow systems directly.
-   - Result: managed startup now calls `BuildingGameplayCompositionResultSystem.Result` bind/init behavior directly; `BuildingGameplayCompositionSystem` no longer exposes pass-through bind/citizen wrapper methods.
+   - Result: managed startup now calls `BuildingGameplayResultCompositionSystemHelper.Result` bind/init behavior directly; `BuildingGameplayCompositionSystem` no longer exposes pass-through bind/citizen wrapper methods.
 
 33. Complete: Tighten contract debt allowances
    - Update architecture tests and contract text so extracted responsibilities cannot return to `BuildingGameplayCompositionSystem` or a broad replacement shell.

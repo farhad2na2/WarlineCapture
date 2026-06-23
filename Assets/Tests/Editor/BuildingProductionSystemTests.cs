@@ -2702,7 +2702,7 @@ public sealed class BuildingProductionSystemTests
     {
         var placementConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
         var initialUnitsConfig = ScriptableObject.CreateInstance<InitialUnitsSpawnerAuthoringSceneConfigAsset>();
-        BuildingGameplayCompositionResultSystem.Result result = default;
+        BuildingGameplayResultCompositionSystemHelper.Result result = default;
         try
         {
             SetPrivateField(initialUnitsConfig, "initialDollars", 12345);
@@ -2737,7 +2737,7 @@ public sealed class BuildingProductionSystemTests
         var placementConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
         var initialUnitsConfig = ScriptableObject.CreateInstance<InitialUnitsSpawnerAuthoringSceneConfigAsset>();
         var buildingPrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        BuildingGameplayCompositionResultSystem.Result result = default;
+        BuildingGameplayResultCompositionSystemHelper.Result result = default;
         try
         {
             buildingPrefab.name = "Soldier Base";

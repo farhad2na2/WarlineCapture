@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 41 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 199 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 198 |
-| Current batch | Building production context composition helper naming batch complete |
-| Validation status | Batch 1 through Batch 30 compile and architecture validations passed by marker; Batch 22 architecture and Batch 23-30 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 42 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 198 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 197 |
+| Current batch | Building gameplay result composition helper naming batch complete |
+| Validation status | Batch 1 through Batch 31 compile and architecture validations passed by marker; Batch 22 architecture and Batch 23-31 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -585,6 +585,23 @@ This helper creates production request, update, queue, transport, transport-brid
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch30-building-gameplay-composition.log`: recorded `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`; Unity was terminated after the pass marker because the batchmode process hung during post-test cleanup.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch30-architecture.log`: recorded `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=198`; Unity was terminated after the pass marker because the batchmode process hung during post-test cleanup.
+
+## Batch 31 - Building Gameplay Result Composition Helper
+
+This helper owns the composed building gameplay result carrier plus bind, citizen-population initialization, and disposal helper methods. The managed reason is result composition wiring, not ECS scheduling.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `BuildingGameplayCompositionResultSystem` | `BuildingGameplayResultCompositionSystemHelper` | Creates and owns managed building gameplay composition result wiring. |
+
+## Batch 31 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `197`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch31-building-gameplay-composition.log`: recorded `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`; Unity was terminated after the pass marker because the batchmode process hung during post-test cleanup.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch31-architecture.log`: recorded `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=197`; Unity was terminated after the pass marker because the batchmode process hung during post-test cleanup.
 
 ## Open Follow-Up Batches
 

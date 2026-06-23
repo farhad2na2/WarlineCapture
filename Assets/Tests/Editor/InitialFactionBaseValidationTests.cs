@@ -289,7 +289,7 @@ public sealed class InitialFactionBaseValidationTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        BuildingGameplayCompositionResultSystem.Result buildingGameplay = default;
+        BuildingGameplayResultCompositionSystemHelper.Result buildingGameplay = default;
         bool buildingGameplayInitialized = false;
         GameObject runtimeRoot = null;
 
@@ -349,7 +349,7 @@ public sealed class InitialFactionBaseValidationTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        BuildingGameplayCompositionResultSystem.Result buildingGameplay = default;
+        BuildingGameplayResultCompositionSystemHelper.Result buildingGameplay = default;
         bool buildingGameplayInitialized = false;
         GameObject runtimeRoot = null;
 
@@ -450,7 +450,7 @@ public sealed class InitialFactionBaseValidationTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        BuildingGameplayCompositionResultSystem.Result buildingGameplay = default;
+        BuildingGameplayResultCompositionSystemHelper.Result buildingGameplay = default;
         bool buildingGameplayInitialized = false;
         GameObject runtimeRoot = null;
 
@@ -653,7 +653,7 @@ public sealed class InitialFactionBaseValidationTests
             : key.Trim().ToLowerInvariant().Replace(" ", string.Empty).Replace("_", string.Empty).Replace("-", string.Empty);
     }
 
-    private static BuildingGameplayCompositionResultSystem.Result CreateBuildingGameplay(
+    private static BuildingGameplayResultCompositionSystemHelper.Result CreateBuildingGameplay(
         BuildingPlacementSystemConfig placementConfig,
         Transform runtimeRoot)
     {
@@ -672,7 +672,7 @@ public sealed class InitialFactionBaseValidationTests
     }
 
     private static bool TrySpawnRuntimeBuilding(
-        BuildingGameplayCompositionResultSystem.Result buildingGameplay,
+        BuildingGameplayResultCompositionSystemHelper.Result buildingGameplay,
         GameObject prefab,
         Vector2Int preferredOrigin,
         out int buildingId,
@@ -709,7 +709,7 @@ public sealed class InitialFactionBaseValidationTests
     }
 
     private static int TrySpawnRuntimeWallRun(
-        BuildingGameplayCompositionResultSystem.Result buildingGameplay,
+        BuildingGameplayResultCompositionSystemHelper.Result buildingGameplay,
         GameObject prefab,
         Vector2Int startOrigin,
         Vector2Int endOrigin,
@@ -727,7 +727,7 @@ public sealed class InitialFactionBaseValidationTests
     }
 
     private static bool TrySpawnRuntimeWallSegment(
-        BuildingGameplayCompositionResultSystem.Result buildingGameplay,
+        BuildingGameplayResultCompositionSystemHelper.Result buildingGameplay,
         GameObject prefab,
         Vector2Int origin,
         bool rotateVertical,
@@ -746,7 +746,7 @@ public sealed class InitialFactionBaseValidationTests
     }
 
     private static bool TryGetRuntimeWallSegmentFootprint(
-        BuildingGameplayCompositionResultSystem.Result buildingGameplay,
+        BuildingGameplayResultCompositionSystemHelper.Result buildingGameplay,
         GameObject prefab,
         bool rotateVertical,
         out Vector2Int footprint)
@@ -762,7 +762,7 @@ public sealed class InitialFactionBaseValidationTests
     }
 
     private static bool TryGetRuntimeBuildingPlacementFootprint(
-        BuildingGameplayCompositionResultSystem.Result buildingGameplay,
+        BuildingGameplayResultCompositionSystemHelper.Result buildingGameplay,
         GameObject prefab,
         bool rotateVertical,
         out Vector2Int footprint)

@@ -166,7 +166,7 @@ internal sealed class ManagedGameplayStartupSystem
             runtimeUiRoot);
         RoadBuildReadModelSystem roadBuildReadModel = road.RoadBuildReadModel;
 
-        BuildingGameplayCompositionResultSystem.Result building = _buildingGameplayCompositionSystem.Initialize(
+        BuildingGameplayResultCompositionSystemHelper.Result building = _buildingGameplayCompositionSystem.Initialize(
             buildingPlacementConfig,
             worldCamera,
             runtimeTransportsRoot,

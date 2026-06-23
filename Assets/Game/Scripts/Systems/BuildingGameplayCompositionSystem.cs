@@ -18,9 +18,9 @@ internal sealed class BuildingGameplayCompositionSystem
     private readonly BuildingProductionTickCompositionSystemHelper _productionTickCompositionHelper = new();
     private readonly BuildingPlacementInteractionCompositionSystemHelper _placementInteractionCompositionHelper = new();
     private readonly BuildingPlacementRuntimeTickContextCompositionSystemHelper _runtimeTickContextCompositionHelper = new();
-    private readonly BuildingGameplayCompositionResultSystem _resultSystem = new();
+    private readonly BuildingGameplayResultCompositionSystemHelper _resultSystem = new();
 
-    public BuildingGameplayCompositionResultSystem.Result Initialize(
+    public BuildingGameplayResultCompositionSystemHelper.Result Initialize(
         BuildingPlacementSystemConfig buildingPlacementConfig,
         Camera worldCamera,
         Transform runtimeTransportsRoot,

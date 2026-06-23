@@ -42,7 +42,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "AIControllerConfig",
         "AIControllerSceneConfigAsset",
         "BuildingEntityManagerAccessSystem",
-        "BuildingPlacementAdapterSystem",
+        "BuildingPlacementAdapterCompositionSystemHelper",
     };
 
     private static readonly string[] BootstrapCompositionGuardrailFiles =

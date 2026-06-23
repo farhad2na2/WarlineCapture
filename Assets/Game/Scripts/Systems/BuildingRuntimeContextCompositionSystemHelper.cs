@@ -87,7 +87,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
             source.BuildingPlacementGridSystem.GetPlacementFootprint,
             (definition, origin, grid, rotateVertical) => getEffectivePlacementRect(source, definition, origin, grid, rotateVertical),
-            (definition, origin, footprint, rotateVertical, grid, roads, blockerData) => source.BuildingPlacementAdapterSystem.IsPlacementValid(
+            (definition, origin, footprint, rotateVertical, grid, roads, blockerData) => source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(
                 source,
                 definition,
                 origin,
@@ -109,7 +109,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 rotateVertical,
                 source.BuildingPlacementGridSystem.GetPlacementFootprint,
                 (origin, footprint, gridConfig) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, gridConfig, source.BuildingPlacementStartupSystem.BuildPlaneY),
-                (Vector2Int origin, BuildingDefinition definition, out bool gateVertical) => source.BuildingPlacementAdapterSystem.TryAlignGateToNearbyWall(
+                (Vector2Int origin, BuildingDefinition definition, out bool gateVertical) => source.BuildingPlacementAdapterCompositionSystemHelper.TryAlignGateToNearbyWall(
                     source,
                     origin,
                     definition,

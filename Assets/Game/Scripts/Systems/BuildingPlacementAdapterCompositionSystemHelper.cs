@@ -2,7 +2,7 @@ using Unity.Entities;
 using UnityEngine;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 
-internal sealed class BuildingPlacementAdapterSystem
+internal sealed class BuildingPlacementAdapterCompositionSystemHelper
 {
     internal delegate bool TryGetGridDataDelegate(
         BuildingGameplaySourceCompositionSystemHelper source,

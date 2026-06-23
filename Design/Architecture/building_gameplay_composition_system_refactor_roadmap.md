@@ -203,8 +203,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingPlacementVisualCompositionPresentationSystemHelper` now owns placement visual update context and callback wrappers.
 
 22. Complete: Extract initial placement origin and validation adapters
-   - Move `TryResolveInitialPlacementOrigin`, `GetCenterScreenPlacementOrigin`, `IsActivePlacementValid`, `IsPlacementValid`, and gate alignment adapter glue into `BuildingPlacementAdapterSystem`.
-   - Result: `BuildingPlacementAdapterSystem` now owns initial placement origin, screen-origin, active-placement validity, placement validity, and gate-alignment adapters.
+   - Move `TryResolveInitialPlacementOrigin`, `GetCenterScreenPlacementOrigin`, `IsActivePlacementValid`, `IsPlacementValid`, and gate alignment adapter glue into `BuildingPlacementAdapterCompositionSystemHelper`.
+   - Result: `BuildingPlacementAdapterCompositionSystemHelper` now owns initial placement origin, screen-origin, active-placement validity, placement validity, and gate-alignment adapters.
 
 23. Complete: Extract selection click context
    - Move `CreateBuildingSelectionClickContext` into `BuildingSelectionClickCompositionSystemHelper`.

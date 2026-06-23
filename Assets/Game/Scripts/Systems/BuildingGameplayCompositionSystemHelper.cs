@@ -170,9 +170,9 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 source => source.BuildingRuntimeSideEffectCompositionSystemHelper.BeginDeferredRuntimeBuildingSideEffects(source, tryGetEntityManager),
                 source => source.BuildingRuntimeSideEffectCompositionSystemHelper.EndDeferredRuntimeBuildingSideEffects(source, tryGetEntityManager),
                 DestroyedBuildingLifetimeSeconds);
-        BuildingPlacementAdapterSystem.CreateRuntimeContextSourceDelegate createRuntimeContextSourceForAdapter =
+        BuildingPlacementAdapterCompositionSystemHelper.CreateRuntimeContextSourceDelegate createRuntimeContextSourceForAdapter =
             source => createRuntimeContextSource(source);
-        BuildingPlacementAdapterSystem.CreateBuildingRuntimeContextSourceDelegate createBuildingRuntimeContextSourceForAdapter =
+        BuildingPlacementAdapterCompositionSystemHelper.CreateBuildingRuntimeContextSourceDelegate createBuildingRuntimeContextSourceForAdapter =
             (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                 createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQuerySystem.Context> createPlacementQueryContext =
@@ -183,9 +183,9 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 tryGetGridForSelection,
                 resolveSelectionPortraitSpriteFromPrefab,
                 createRuntimeContextSource);
-        BuildingPlacementAdapterSystem.IsPlacementValidDelegate isPlacementValid =
+        BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValidDelegate isPlacementValid =
             (source, definition, originCell, footprintCells, rotateVertical, grid, roads, blockerData) =>
-                source.BuildingPlacementAdapterSystem.IsPlacementValid(
+                source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(
                     source,
                     definition,
                     originCell,
@@ -198,7 +198,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                         getEffectivePlacementRect(placementSource, definition, originCell, placementGrid, placementRotateVertical),
                     (placementSource, candidateRect) => overlapsAnyRuntimeBuilding(placementSource, candidateRect));
         BuildingPlacementCommandCompositionSystemHelper.GetCenterScreenPlacementOriginDelegate getCenterScreenPlacementOrigin =
-            (source, footprintCells) => source.BuildingPlacementAdapterSystem.GetCenterScreenPlacementOrigin(
+            (source, footprintCells) => source.BuildingPlacementAdapterCompositionSystemHelper.GetCenterScreenPlacementOrigin(
                 source,
                 footprintCells,
                 tryGetGridData);
@@ -209,7 +209,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 MaterialPropertyBlock placementMarkerPropertyBlock,
                 BuildingDefinition definition,
                 Vector2Int preferredOrigin,
-                out Vector2Int resolvedOrigin) => source.BuildingPlacementAdapterSystem.TryResolveInitialPlacementOrigin(
+                out Vector2Int resolvedOrigin) => source.BuildingPlacementAdapterCompositionSystemHelper.TryResolveInitialPlacementOrigin(
                 source,
                 placementInteractionContext,
                 placementMarkerPropertyBlock,
@@ -218,7 +218,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 createBuildingRuntimeContextSourceForAdapter,
                 out resolvedOrigin);
         BuildingPlacementVisualCompositionPresentationSystemHelper.IsActivePlacementValidDelegate isActivePlacementValid =
-            (source, originCell, footprintCells, grid, roads, blockerData) => source.BuildingPlacementAdapterSystem.IsActivePlacementValid(
+            (source, originCell, footprintCells, grid, roads, blockerData) => source.BuildingPlacementAdapterCompositionSystemHelper.IsActivePlacementValid(
                 source,
                 originCell,
                 footprintCells,
@@ -229,7 +229,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 isPlacementValid);
         BuildingPlacementCommandCompositionSystemHelper.TryAlignGateToNearbyWallDelegate tryAlignGateForCommand =
             (BuildingGameplaySourceCompositionSystemHelper source, Vector2Int originCell, BuildingDefinition definition, out bool gateVertical) =>
-                source.BuildingPlacementAdapterSystem.TryAlignGateToNearbyWall(
+                source.BuildingPlacementAdapterCompositionSystemHelper.TryAlignGateToNearbyWall(
                     source,
                     originCell,
                     definition,
@@ -237,7 +237,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                     out gateVertical);
         BuildingPlacementVisualCompositionPresentationSystemHelper.TryAlignGateToNearbyWallDelegate tryAlignGateForVisual =
             (BuildingGameplaySourceCompositionSystemHelper source, Vector2Int originCell, BuildingDefinition definition, out bool gateVertical) =>
-                source.BuildingPlacementAdapterSystem.TryAlignGateToNearbyWall(
+                source.BuildingPlacementAdapterCompositionSystemHelper.TryAlignGateToNearbyWall(
                     source,
                     originCell,
                     definition,

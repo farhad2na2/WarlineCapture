@@ -34,17 +34,17 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
                         out grid,
                         out roads,
                         out blockerData),
-                (querySource, building) => querySource.BuildingRuntimeCompositionQuerySystem.IsHouseBuilding(querySource, building),
+                (querySource, building) => querySource.BuildingRuntimeQueryCompositionSystemHelper.IsHouseBuilding(querySource, building),
                 (BuildingGameplaySourceCompositionSystemHelper querySource, RuntimeBuildingEntity building, out Vector3 worldPosition) =>
-                    querySource.BuildingRuntimeCompositionQuerySystem.TryResolveBuildingFocusWorldPosition(
+                    querySource.BuildingRuntimeQueryCompositionSystemHelper.TryResolveBuildingFocusWorldPosition(
                         querySource,
                         building,
                         (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
                         out worldPosition),
                 (BuildingGameplaySourceCompositionSystemHelper querySource, int id, out RuntimeBuildingEntity building) =>
-                    querySource.BuildingRuntimeCompositionQuerySystem.TryGetRuntimeBuilding(querySource, id, out building),
+                    querySource.BuildingRuntimeQueryCompositionSystemHelper.TryGetRuntimeBuilding(querySource, id, out building),
                 (querySource, definition, originCell, grid, rotateVertical) =>
-                    querySource.BuildingRuntimeCompositionQuerySystem.GetEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical));
+                    querySource.BuildingRuntimeQueryCompositionSystemHelper.GetEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical));
         source.BuildingPlacementRedirectSystem.EndDeferredRuntimeBuildingSideEffects(
             source.BuildingRuntimeContextSystem.CreateRedirectContext(runtimeSource),
             () => source.BuildingSelectionMarkerSystem.Refresh(

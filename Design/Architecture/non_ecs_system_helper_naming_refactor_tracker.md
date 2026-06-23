@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 45 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 195 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 194 |
-| Current batch | Building gameplay dependency composition helper naming batch complete |
-| Validation status | Batch 1 through Batch 34 compile and architecture validations passed by marker; Batch 22 architecture and Batch 23-32 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 33-34 Unity validations exited cleanly; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 46 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 194 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 193 |
+| Current batch | Building runtime query composition helper naming batch complete |
+| Validation status | Batch 1 through Batch 35 compile and architecture validations passed by marker; Batch 22 architecture and Batch 23-32 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 33-35 Unity validations exited cleanly; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -653,6 +653,23 @@ This helper stores managed startup/runtime dependencies for building gameplay co
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch34-building-gameplay-composition.log`: passed with `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch34-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=194`.
+
+## Batch 35 - Building Runtime Query Composition Helper
+
+This helper owns runtime building query composition, including house classification, focus world-position resolution, runtime building lookup, effective placement rects, and runtime-overlap checks. The managed reason is runtime query composition wiring, not ECS scheduling.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `BuildingRuntimeCompositionQuerySystem` | `BuildingRuntimeQueryCompositionSystemHelper` | Owns managed runtime building query composition wiring. |
+
+## Batch 35 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `193`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch35-building-gameplay-composition.log`: passed with `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch35-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=193`.
 
 ## Open Follow-Up Batches
 

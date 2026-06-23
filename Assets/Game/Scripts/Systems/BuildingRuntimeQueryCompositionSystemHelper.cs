@@ -2,7 +2,7 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeCompositionQuerySystem
+internal sealed class BuildingRuntimeQueryCompositionSystemHelper
 {
     internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 

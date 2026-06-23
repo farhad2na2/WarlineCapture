@@ -112,26 +112,26 @@ internal sealed class BuildingGameplayCompositionSystemHelper
         }
 
         BuildingRuntimeCompositionSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect =
-            (source, definition, originCell, grid, rotateVertical) => source.BuildingRuntimeCompositionQuerySystem.GetEffectivePlacementRect(
+            (source, definition, originCell, grid, rotateVertical) => source.BuildingRuntimeQueryCompositionSystemHelper.GetEffectivePlacementRect(
                 source,
                 definition,
                 originCell,
                 grid,
                 rotateVertical);
         BuildingRuntimeCompositionSystem.IsHouseBuildingDelegate isHouseBuilding =
-            (source, building) => source.BuildingRuntimeCompositionQuerySystem.IsHouseBuilding(source, building);
+            (source, building) => source.BuildingRuntimeQueryCompositionSystemHelper.IsHouseBuilding(source, building);
         BuildingRuntimeCompositionSystem.TryResolveBuildingFocusWorldPositionDelegate tryResolveBuildingFocusWorldPosition =
             (BuildingGameplaySourceCompositionSystemHelper source, RuntimeBuildingEntity building, out Vector3 worldPosition) =>
-                source.BuildingRuntimeCompositionQuerySystem.TryResolveBuildingFocusWorldPosition(
+                source.BuildingRuntimeQueryCompositionSystemHelper.TryResolveBuildingFocusWorldPosition(
                     source,
                     building,
                     tryGetEntityManager,
                     out worldPosition);
         BuildingRuntimeCompositionSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding =
             (BuildingGameplaySourceCompositionSystemHelper source, int id, out RuntimeBuildingEntity building) =>
-                source.BuildingRuntimeCompositionQuerySystem.TryGetRuntimeBuilding(source, id, out building);
+                source.BuildingRuntimeQueryCompositionSystemHelper.TryGetRuntimeBuilding(source, id, out building);
         BuildingRuntimeCompositionSystem.OverlapsAnyRuntimeBuildingDelegate overlapsAnyRuntimeBuilding =
-            (source, candidateRect) => source.BuildingRuntimeCompositionQuerySystem.OverlapsAnyRuntimeBuilding(
+            (source, candidateRect) => source.BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyRuntimeBuilding(
                 source,
                 candidateRect,
                 tryGetGridData,

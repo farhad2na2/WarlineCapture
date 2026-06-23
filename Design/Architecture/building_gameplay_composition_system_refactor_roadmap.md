@@ -219,8 +219,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingRuntimeCompositionSystem` now owns building runtime context source, runtime entity context, and runtime source construction.
 
 26. Complete: Extract runtime query helper policies
-   - Move `IsHouseBuilding`, `TryResolveBuildingFocusWorldPosition`, `TryGetRuntimeBuilding`, `GetEffectivePlacementRect`, and `OverlapsAnyRuntimeBuilding` into `BuildingRuntimeCompositionQuerySystem`.
-   - Result: `BuildingRuntimeCompositionQuerySystem` now owns runtime building lookup, focus world-position resolution, house classification, effective placement rects, and runtime-overlap checks.
+   - Move `IsHouseBuilding`, `TryResolveBuildingFocusWorldPosition`, `TryGetRuntimeBuilding`, `GetEffectivePlacementRect`, and `OverlapsAnyRuntimeBuilding` into `BuildingRuntimeQueryCompositionSystemHelper`.
+   - Result: `BuildingRuntimeQueryCompositionSystemHelper` now owns runtime building lookup, focus world-position resolution, house classification, effective placement rects, and runtime-overlap checks.
 
 27. Complete: Extract grid access adapters
    - Move `TryGetGridData`, `TryGetGridForSelection`, `TryGetGridForPlacementInput`, and `TryGetGridCell` into `BuildingGridCompositionSystem`.

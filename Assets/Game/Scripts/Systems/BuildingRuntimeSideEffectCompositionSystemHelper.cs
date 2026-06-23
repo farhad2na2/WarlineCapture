@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeSideEffectCompositionSystem
+internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
 {
     internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 

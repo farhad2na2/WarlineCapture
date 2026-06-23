@@ -57,7 +57,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingRuntimeContextSystem BuildingRuntimeContextSystem = new();
     internal readonly BuildingRuntimeCompositionSystem BuildingRuntimeCompositionSystem = new();
     internal readonly BuildingRuntimeCompositionQuerySystem BuildingRuntimeCompositionQuerySystem = new();
-    internal readonly BuildingRuntimeSideEffectCompositionSystem BuildingRuntimeSideEffectCompositionSystem = new();
+    internal readonly BuildingRuntimeSideEffectCompositionSystemHelper BuildingRuntimeSideEffectCompositionSystemHelper = new();
     internal readonly BuildingRuntimeCitySpawnSystem BuildingRuntimeCitySpawnSystem = new();
     internal readonly BuildingRuntimeOwnershipSystem BuildingRuntimeOwnershipSystem = new();
     internal readonly BuildingRuntimeEntitySystem BuildingRuntimeEntitySystem = new();

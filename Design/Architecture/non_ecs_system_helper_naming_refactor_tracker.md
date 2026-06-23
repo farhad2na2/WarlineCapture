@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 34 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 206 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 205 |
-| Current batch | Building selection composition helper naming batch complete |
-| Validation status | Batch 1 through Batch 23 compile and architecture validations passed by marker; Batch 22 architecture and Batch 23 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 35 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 205 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 204 |
+| Current batch | Building runtime side-effect composition helper naming batch complete |
+| Validation status | Batch 1 through Batch 24 compile and architecture validations passed by marker; Batch 22 architecture and Batch 23-24 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -466,6 +466,23 @@ This helper creates building selection runtime context wiring from composition-o
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch23-building-gameplay-composition.log`: recorded `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`; Unity was terminated after the pass marker because the batchmode process hung during post-test cleanup.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch23-architecture.log`: recorded `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=205`; Unity was terminated after the pass marker because the batchmode process hung during post-test cleanup.
+
+## Batch 24 - Building Runtime Side-Effect Composition Helper
+
+This helper owns deferred runtime-building side-effect begin/end wiring across placement redirects, invalid-cell rebuilds, runtime context creation, and selection marker refresh. The managed reason is composition graph wiring for side-effect lifetime, not ECS scheduling.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `BuildingRuntimeSideEffectCompositionSystem` | `BuildingRuntimeSideEffectCompositionSystemHelper` | Creates managed deferred runtime-building side-effect wiring. |
+
+## Batch 24 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `204`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch24-building-gameplay-composition.log`: recorded `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`; Unity was terminated after the pass marker because the batchmode process hung during post-test cleanup.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch24-architecture.log`: recorded `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=204`; Unity was terminated after the pass marker because the batchmode process hung during post-test cleanup.
 
 ## Open Follow-Up Batches
 

@@ -167,8 +167,8 @@ internal sealed class BuildingGameplayCompositionSystem
                 isHouseBuilding,
                 tryResolveBuildingFocusWorldPosition,
                 tryGetRuntimeBuilding,
-                source => source.BuildingRuntimeSideEffectCompositionSystem.BeginDeferredRuntimeBuildingSideEffects(source, tryGetEntityManager),
-                source => source.BuildingRuntimeSideEffectCompositionSystem.EndDeferredRuntimeBuildingSideEffects(source, tryGetEntityManager),
+                source => source.BuildingRuntimeSideEffectCompositionSystemHelper.BeginDeferredRuntimeBuildingSideEffects(source, tryGetEntityManager),
+                source => source.BuildingRuntimeSideEffectCompositionSystemHelper.EndDeferredRuntimeBuildingSideEffects(source, tryGetEntityManager),
                 DestroyedBuildingLifetimeSeconds);
         BuildingPlacementAdapterSystem.CreateRuntimeContextSourceDelegate createRuntimeContextSourceForAdapter =
             source => createRuntimeContextSource(source);

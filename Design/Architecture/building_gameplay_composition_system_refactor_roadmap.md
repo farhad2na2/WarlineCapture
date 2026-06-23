@@ -227,8 +227,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingGridCompositionSystem` now owns grid data, selection-grid, placement-input-grid, and screen-to-cell adapter calls.
 
 28. Complete: Extract deferred runtime side-effect bridge
-   - Move `BeginDeferredRuntimeBuildingSideEffects` and `EndDeferredRuntimeBuildingSideEffects` composition glue into `BuildingRuntimeSideEffectCompositionSystem`.
-   - Result: `BuildingRuntimeSideEffectCompositionSystem` now owns deferred runtime-building side-effect begin/end sequencing and marker refresh handoff.
+   - Move `BeginDeferredRuntimeBuildingSideEffects` and `EndDeferredRuntimeBuildingSideEffects` composition glue into `BuildingRuntimeSideEffectCompositionSystemHelper`.
+   - Result: `BuildingRuntimeSideEffectCompositionSystemHelper` now owns deferred runtime-building side-effect begin/end sequencing and marker refresh handoff.
 
 29. Complete: Extract entity-manager access edge
    - Replace `TryGetEntityManager` helper ownership with `BuildingEntityManagerAccessSystem` or direct explicit context injection.

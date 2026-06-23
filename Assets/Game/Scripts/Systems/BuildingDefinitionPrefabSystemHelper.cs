@@ -6,7 +6,7 @@ using UnityEngine;
 using ConfiguredSpawnableEntry = BuildingUiCommandBoundary.ConfiguredSpawnableEntry;
 using ConfiguredUnitEntry = BuildingUiCommandBoundary.ConfiguredUnitEntry;
 
-internal sealed class BuildingDefinitionSystem
+internal sealed class BuildingDefinitionPrefabSystemHelper
 {
     public delegate void ObjectAction(UnityEngine.Object target);
     public delegate bool TryGetBuildingDefinitionMetadataDelegate(GameObject prefab, out BuildingDefinitionMetadata metadata);

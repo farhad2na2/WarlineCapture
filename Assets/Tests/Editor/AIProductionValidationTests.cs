@@ -163,7 +163,7 @@ public sealed class AIProductionValidationTests
             LastLogTime = -999f
         });
         DynamicBuffer<AIProductionPlanEntry> entries = em.AddBuffer<AIProductionPlanEntry>(planEntity);
-        entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey("Rifleman")) });
+        entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Rifleman")) });
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);

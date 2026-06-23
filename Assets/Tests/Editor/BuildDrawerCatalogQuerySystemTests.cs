@@ -1275,7 +1275,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             productionSystem,
             queueContext,
             null,
-            BuildingDefinitionSystem.GetProductionPrefab,
+            BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
             null,
             beginPlacement,
             trySpendDollars,

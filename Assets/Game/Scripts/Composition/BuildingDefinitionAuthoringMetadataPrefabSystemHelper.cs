@@ -4,7 +4,7 @@ internal static class BuildingDefinitionAuthoringMetadataPrefabSystemHelper
 {
     public static bool TryGetBuildingDefinitionMetadata(
         GameObject prefab,
-        out BuildingDefinitionSystem.BuildingDefinitionMetadata metadata)
+        out BuildingDefinitionPrefabSystemHelper.BuildingDefinitionMetadata metadata)
     {
         metadata = default;
         if (prefab == null || !prefab.TryGetComponent(out BuildingDefinitionAuthoring authoring))
@@ -16,7 +16,7 @@ internal static class BuildingDefinitionAuthoringMetadataPrefabSystemHelper
         for (int i = 0; i < productionCount; i++)
             productionPrefabs[i] = authoring.GetProductionOrDefault(i)?.spawnUnitPrefab;
 
-        metadata = new BuildingDefinitionSystem.BuildingDefinitionMetadata
+        metadata = new BuildingDefinitionPrefabSystemHelper.BuildingDefinitionMetadata
         {
             DisplayName = authoring.ConfiguredDisplayName,
             Description = authoring.ConfiguredDescription,
@@ -43,13 +43,13 @@ internal static class BuildingDefinitionAuthoringMetadataPrefabSystemHelper
 
     public static bool TryGetUnitDefinitionMetadata(
         GameObject prefab,
-        out BuildingDefinitionSystem.UnitDefinitionMetadata metadata)
+        out BuildingDefinitionPrefabSystemHelper.UnitDefinitionMetadata metadata)
     {
         metadata = default;
         if (prefab == null || !prefab.TryGetComponent(out UnitGridAuthoring authoring))
             return false;
 
-        metadata = new BuildingDefinitionSystem.UnitDefinitionMetadata
+        metadata = new BuildingDefinitionPrefabSystemHelper.UnitDefinitionMetadata
         {
             DisplayName = authoring.ConfiguredDisplayName,
             Description = authoring.ConfiguredDescription,

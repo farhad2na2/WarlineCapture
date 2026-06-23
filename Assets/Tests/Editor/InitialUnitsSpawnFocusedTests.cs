@@ -115,7 +115,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
         readModels.Add(new BuildingConfiguredSpawnableReadModel
         {
-            BuildingId = new FixedString128Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey("Building_Tent")),
+            BuildingId = new FixedString128Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Building_Tent")),
             DisplayName = new FixedString128Bytes("Tent"),
             FootprintCells = new int2(2, 2),
             CanRequest = 1
@@ -177,7 +177,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
         readModels.Add(new BuildingConfiguredSpawnableReadModel
         {
-            BuildingId = new FixedString128Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey("Tent_Regular")),
+            BuildingId = new FixedString128Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Tent_Regular")),
             DisplayName = new FixedString128Bytes("Tent"),
             FootprintCells = new int2(4, 4),
             CanRequest = 1
@@ -218,7 +218,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             Assert.AreEqual(BuildingRuntimeSpawnRequest.KindBuilding, request.RequestKind);
             Assert.AreEqual(2, request.FactionId);
             Assert.AreEqual(new int2(400, 500), request.PreferredOrigin);
-            Assert.AreEqual(BuildingDefinitionSystem.NormalizeSpawnableKey("Tent_Regular"), request.BuildingId.ToString());
+            Assert.AreEqual(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Tent_Regular"), request.BuildingId.ToString());
             Assert.AreEqual(configEntity, request.PlanEntity);
             Assert.AreEqual(BuildingRuntimeSpawnRequest.Pending, request.Status);
         }
@@ -280,9 +280,9 @@ public sealed class InitialUnitsSpawnFocusedTests
             bool sawGateFlankSegment = false;
             bool sawGateBuilding = false;
             bool sawPlayerCore = false;
-            string wallId = BuildingDefinitionSystem.NormalizeSpawnableKey("Wall_Dirt_Straight");
-            string gateId = BuildingDefinitionSystem.NormalizeSpawnableKey("Building_Road_Barrier");
-            string coreId = BuildingDefinitionSystem.NormalizeSpawnableKey("Building_Ammunition_Depot");
+            string wallId = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Wall_Dirt_Straight");
+            string gateId = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Building_Road_Barrier");
+            string coreId = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Building_Ammunition_Depot");
             for (int i = 0; i < requests.Length; i++)
             {
                 BuildingRuntimeSpawnRequest request = requests[i];
@@ -336,7 +336,7 @@ public sealed class InitialUnitsSpawnFocusedTests
     {
         readModels.Add(new BuildingConfiguredSpawnableReadModel
         {
-            BuildingId = new FixedString128Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId)),
+            BuildingId = new FixedString128Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId)),
             DisplayName = new FixedString128Bytes(buildingId),
             FootprintCells = footprint,
             CanRequest = 1
@@ -568,7 +568,7 @@ public sealed class InitialUnitsSpawnFocusedTests
         spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
         {
             FactionId = 1,
-            BuildingId = new FixedString128Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey("Building_Helipad")),
+            BuildingId = new FixedString128Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Building_Helipad")),
             SlotIndex = 0,
             Cell = new int2(7, 8),
             WorldPosition = new float3(7.5f, 0f, 8.5f)

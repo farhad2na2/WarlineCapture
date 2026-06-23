@@ -527,7 +527,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
             em.GetBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity, true);
         bool useHelipad = configuredSpawnOffset.y <= -45;
-        string buildingId = BuildingDefinitionSystem.NormalizeSpawnableKey(useHelipad ? "Building_Helipad" : "Building_Airport");
+        string buildingId = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(useHelipad ? "Building_Helipad" : "Building_Airport");
         int remainingSlotIndex = ResolveInitialAirPlatformSlotIndex(configuredSpawnOffset, useHelipad);
         for (int i = 0; i < spawnPoints.Length; i++)
         {
@@ -1074,7 +1074,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             RequestKind = BuildingRuntimeSpawnRequest.KindBuilding,
             FactionId = factionId,
             HasOwnerFaction = 1,
-            BuildingId = new FixedString128Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId)),
+            BuildingId = new FixedString128Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId)),
             PreferredOrigin = origin,
             EndOrigin = default,
             RotateVertical = 0,
@@ -1301,7 +1301,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
 
         DynamicBuffer<BuildingConfiguredSpawnableReadModel> spawnables =
             em.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundaryEntity, true);
-        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId);
+        string normalized = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId);
         for (int i = 0; i < spawnables.Length; i++)
         {
             BuildingConfiguredSpawnableReadModel candidate = spawnables[i];
@@ -1336,7 +1336,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             RequestKind = requestKind,
             FactionId = factionId,
             HasOwnerFaction = 1,
-            BuildingId = new FixedString128Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId)),
+            BuildingId = new FixedString128Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId)),
             PreferredOrigin = origin,
             EndOrigin = endOrigin,
             RotateVertical = rotateVertical ? (byte)1 : (byte)0,

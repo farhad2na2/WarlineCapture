@@ -176,7 +176,7 @@ Phase 1 footprint read-model notes:
 Phase 1 production slot read-model notes:
 
 - Added `BuildingProductionSlotReadModel` as an ECS boundary buffer with building id, slot index, exact unit source key, and normalized unit id.
-- `BuildingRuntimeBoundarySystem` publishes production slot rows from managed `BuildingDefinitionSystem`/authored production slots, keeping `GameObject` access at the passive boundary.
+- `BuildingRuntimeBoundarySystem` publishes production slot rows from managed `BuildingDefinitionPrefabSystemHelper`/authored production slots, keeping `GameObject` access at the passive boundary.
 - `MatchBootstrapSystem` and `RuntimeGameplayStateTestHelper` now ensure the production slot buffer exists on the boundary entity.
 - Added focused coverage in `BuildingRuntimeBoundaryValidationTests.RuntimeBoundaryPublishesProductionSlotSourceKeyReadModel`.
 - Main project validation was locked twice; shadow validation used `/Users/farhad/Projects/WarlineCapture-CodexUnity1` after syncing `Assets/Game/Scripts`, editor tests, and tracker docs.
@@ -255,8 +255,8 @@ Decompose production spawn execution into focused ECS processors that use source
 
 Phase 2 source-key spawn notes:
 
-- Added `BuildingSpawnSystem.TryGetProductionSourceKeyDelegate` and wired `BuildingRuntimeContextSystem` to `BuildingDefinitionSystem.TryGetProductionSourceKey`.
-- `BuildingDefinition.ProductionSlotDefinition` now carries `SpawnUnitSourceKey`; `BuildingDefinitionSystem` fills it from configured production slots and falls back to the legacy prefab lookup key only at the managed definition edge.
+- Added `BuildingSpawnSystem.TryGetProductionSourceKeyDelegate` and wired `BuildingRuntimeContextSystem` to `BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey`.
+- `BuildingDefinition.ProductionSlotDefinition` now carries `SpawnUnitSourceKey`; `BuildingDefinitionPrefabSystemHelper` fills it from configured production slots and falls back to the legacy prefab lookup key only at the managed definition edge.
 - `BuildingSpawnSystem.TrySpawnPlayerUnitNearBuilding` no longer requires `GetProductionPrefabDelegate`; it resolves the ECS prefab entity from the production source key first.
 - Helicopter production placement now uses the production source key plus ECS prefab entity data instead of `BuildingProductionSystem.IsHelicopterUnitPrefab(GameObject)`.
 - Spawned units always receive `UnitSourcePrefabKey`; the older `RuntimeBuildingEntity.ProducedUnitSourceKeys` spawn mirror has since been removed. `ProducedUnitPrefabs` is written only when a real legacy prefab object is still supplied.
@@ -287,7 +287,7 @@ Phase 2 production spawn request notes:
 
 Phase 2 managed prefab removal notes:
 
-- Removed `BuildingSpawnSystem.GetProductionPrefabDelegate` and the `Context.GetProductionPrefab` field; production spawn execution now requires `BuildingDefinitionSystem.TryGetProductionSourceKey` and ECS prefab entity resolution.
+- Removed `BuildingSpawnSystem.GetProductionPrefabDelegate` and the `Context.GetProductionPrefab` field; production spawn execution now requires `BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey` and ECS prefab entity resolution.
 - Removed `BuildingSpawnSystem` gameplay writes to `RuntimeBuildingEntity.ProducedUnitPrefabs`; spawned units keep `UnitSourcePrefabKey`, `ProducedUnits`, and the ECS `BuildingProductionSpawnRequest` row.
 - `BuildingSpawnSystem` target-file grep now has no `GameObject`, `GetProductionPrefab`, `spawnUnitPrefab`, `GetUnitPrefabSourceKey`, or `ProducedUnitPrefabs[...]` hits.
 - `BuildingUiQuerySystem.AddProducedUnitEntries` now resolves ready produced-unit preview prefabs through the existing passive `TryResolveLiveUnitPreviewPrefab` delegate when the legacy prefab map is empty.

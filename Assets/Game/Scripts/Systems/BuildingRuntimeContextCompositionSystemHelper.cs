@@ -76,7 +76,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
 
         return new BuildingRuntimeContextSystem.Source(
             source.BuildingPlacementStartupSystemHelper.BuildingRoot,
-            source.BuildingDefinitionSystem,
+            source.BuildingDefinitionPrefabSystemHelper,
             source.BuildingRunwaySystem,
             source.BuildingPlacementValidationSystem,
             new BuildingPlacementValidationSystem.WallValidationContext(

@@ -16,8 +16,8 @@ internal partial struct BuildingPlacementQueryCompositionSystem : ISystem
         return source.BuildingPlacementQueryUiSystemHelper.CreateContext(new BuildingPlacementQueryUiSystemHelper.Source(
             source.RuntimeBuildingSystem.Buildings,
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId,
-            BuildingDefinitionSystem.GetProductionCount,
-            BuildingDefinitionSystem.GetProductionPrefab,
+            BuildingDefinitionPrefabSystemHelper.GetProductionCount,
+            BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
             source.BuildingEntityManagerAccessSystem.TryGetEntityManager));
     }
 }

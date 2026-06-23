@@ -77,9 +77,9 @@ internal sealed class BuildingRuntimeEntitySystem
 
     public bool ShouldRuntimeBuildingBlockPathing(BuildingDefinition definition)
     {
-        return !BuildingDefinitionSystem.RuntimeDefinitionMatchesId(
+        return !BuildingDefinitionPrefabSystemHelper.RuntimeDefinitionMatchesId(
             definition,
-            BuildingDefinitionSystem.NormalizeSpawnableKey("Building_Helipad"));
+            BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Building_Helipad"));
     }
 
     public Entity CreateBuildingCombatEntity(Context context, Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation)

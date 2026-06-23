@@ -7,7 +7,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
     {
         public readonly RuntimeResourceSystem RuntimeResourceSystem;
         public readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem;
-        public readonly BuildingDefinitionSystem DefinitionSystem;
+        public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
         public readonly CitizenPrefabSystem.TryGetEntityManagerDelegate TryGetEntityManager;
@@ -20,7 +20,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
         public Source(
             RuntimeResourceSystem runtimeResourceSystem,
             RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
-            BuildingDefinitionSystem definitionSystem,
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
             CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -48,7 +48,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper system,
         RuntimeResourceSystem runtimeResourceSystem,
         RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingSpawnPrefabSystem spawnPrefabSystem,
         CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -88,7 +88,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
     public Source CreateSource(
         RuntimeResourceSystem runtimeResourceSystem,
         RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingSpawnPrefabSystem spawnPrefabSystem,
         CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -115,7 +115,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
     private static Source CreateSourceState(
         RuntimeResourceSystem runtimeResourceSystem,
         RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingSpawnPrefabSystem spawnPrefabSystem,
         CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,

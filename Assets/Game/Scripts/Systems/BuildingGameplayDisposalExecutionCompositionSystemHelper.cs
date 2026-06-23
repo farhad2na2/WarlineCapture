@@ -7,7 +7,7 @@ internal sealed class BuildingGameplayDisposalExecutionCompositionSystemHelper
     {
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingPlacementStartupSystemHelper PlacementStartupSystem;
-        public readonly BuildingDefinitionSystem DefinitionSystem;
+        public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PlacementPreviewSystem;
         public readonly BuildingRuntimeObjectPresentationSystemHelper RuntimeObjectPresentationHelper;
         public readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader;
@@ -16,7 +16,7 @@ internal sealed class BuildingGameplayDisposalExecutionCompositionSystemHelper
         public Source(
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingPlacementStartupSystemHelper placementStartupSystem,
-            BuildingDefinitionSystem definitionSystem,
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
             BuildingPlacementPreviewPresentationSystemHelper placementPreviewSystem,
             BuildingRuntimeObjectPresentationSystemHelper runtimeObjectPresentationHelper,
             UnitPathfindingPendingStateReader unitPathfindingPendingStateReadSystem,

@@ -176,7 +176,7 @@ internal sealed class BuildingSpawnSystem
             return false;
         }
 
-        FixedString128Bytes normalizedBuildingId = new(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId));
+        FixedString128Bytes normalizedBuildingId = new(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId));
         int remainingSlotIndex = math.max(0, flattenedSlotIndex);
         DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
             em.GetBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity, true);
@@ -221,7 +221,7 @@ internal sealed class BuildingSpawnSystem
             return false;
 
         int remainingSlotIndex = math.max(0, flattenedSlotIndex);
-        string normalizedBuildingId = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId);
+        string normalizedBuildingId = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId);
         foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
         {
             RuntimeBuildingEntity building = entry.Value;

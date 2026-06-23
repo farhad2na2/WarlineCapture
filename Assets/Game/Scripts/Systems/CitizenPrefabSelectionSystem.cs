@@ -69,7 +69,7 @@ internal partial struct CitizenPrefabSelectionSystem : ISystem
         CitizenPrefabSystem citizenPrefabSystem,
         CitizenPrefabSystem.Context citizenPrefabContext)
     {
-        string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(sourceName);
+        string sourceKey = BuildingDefinitionPrefabSystemHelper.GetSpawnableLookupKey(sourceName);
         if (string.IsNullOrWhiteSpace(sourceKey))
             return;
 

@@ -59,7 +59,7 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     internal void Update(
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingRuntimeSpawnSystem runtimeSpawnSystem,
         BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
         BuildingProductionRequestBoundary productionRequestSystem,
@@ -112,7 +112,7 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private void ProcessRequests(
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingRuntimeSpawnSystem runtimeSpawnSystem,
         BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
         BuildingProductionRequestBoundary productionRequestSystem,
@@ -133,7 +133,7 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     internal void ProcessRuntimeSpawnRequestsForBoundary(
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingRuntimeSpawnSystem runtimeSpawnSystem,
         BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
         EntityManager em,
@@ -243,7 +243,7 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private void ProcessRuntimeSpawnRequests(
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingRuntimeSpawnSystem runtimeSpawnSystem,
         BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
         EntityManager em,
@@ -287,7 +287,7 @@ public sealed class BuildingRuntimeBoundarySystem
 
             processedRequests++;
             if (!definitionSystem.TryGetConfiguredSpawnable(definition.Prefab, out var spawnable))
-                spawnable = BuildingDefinitionSystem.BuildConfiguredSpawnableEntry(definition);
+                spawnable = BuildingDefinitionPrefabSystemHelper.BuildConfiguredSpawnableEntry(definition);
             if (spawnable.Prefab == null || !spawnable.CanRequest)
             {
                 request.Status = BuildingRuntimeSpawnRequest.Failed;
@@ -380,7 +380,7 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private void PublishReadModelIfDue(
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingRuntimeQuerySystem runtimeQuerySystem,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         FactionResourceSystem factionResourceSystem,
@@ -417,7 +417,7 @@ public sealed class BuildingRuntimeBoundarySystem
         }
     }
 
-    private void PublishConfiguredSpawnablesReadModel(BuildingDefinitionSystem definitionSystem, EntityManager em, Entity boundaryEntity)
+    private void PublishConfiguredSpawnablesReadModel(BuildingDefinitionPrefabSystemHelper definitionSystem, EntityManager em, Entity boundaryEntity)
     {
         DynamicBuffer<BuildingConfiguredSpawnableReadModel> buffer =
             EnsureBoundaryBuffer<BuildingConfiguredSpawnableReadModel>(em, boundaryEntity);
@@ -446,7 +446,7 @@ public sealed class BuildingRuntimeBoundarySystem
         }
     }
 
-    private void PublishConfiguredUnitsReadModel(BuildingDefinitionSystem definitionSystem, EntityManager em, Entity boundaryEntity)
+    private void PublishConfiguredUnitsReadModel(BuildingDefinitionPrefabSystemHelper definitionSystem, EntityManager em, Entity boundaryEntity)
     {
         DynamicBuffer<BuildingConfiguredUnitReadModel> buffer =
             EnsureBoundaryBuffer<BuildingConfiguredUnitReadModel>(em, boundaryEntity);
@@ -477,7 +477,7 @@ public sealed class BuildingRuntimeBoundarySystem
         }
     }
 
-    private void PublishProductionSlotsReadModel(BuildingDefinitionSystem definitionSystem, EntityManager em, Entity boundaryEntity)
+    private void PublishProductionSlotsReadModel(BuildingDefinitionPrefabSystemHelper definitionSystem, EntityManager em, Entity boundaryEntity)
     {
         DynamicBuffer<BuildingProductionSlotReadModel> buffer =
             EnsureBoundaryBuffer<BuildingProductionSlotReadModel>(em, boundaryEntity);
@@ -491,10 +491,10 @@ public sealed class BuildingRuntimeBoundarySystem
                 continue;
 
             FixedString128Bytes buildingId = ResolveBoundaryId(definition.Prefab, definition.DisplayName);
-            int productionCount = BuildingDefinitionSystem.GetProductionCount(definition);
+            int productionCount = BuildingDefinitionPrefabSystemHelper.GetProductionCount(definition);
             for (int slotIndex = 0; slotIndex < productionCount; slotIndex++)
             {
-                GameObject unitPrefab = BuildingDefinitionSystem.GetProductionPrefab(definition, slotIndex);
+                GameObject unitPrefab = BuildingDefinitionPrefabSystemHelper.GetProductionPrefab(definition, slotIndex);
                 if (unitPrefab == null)
                     continue;
 
@@ -542,7 +542,7 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private void PublishRuntimeOwnedBuildingSummaries(
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         EntityManager em,
         Entity boundaryEntity)
@@ -623,7 +623,7 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private void PublishRuntimeUnitProductionSummaries(
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         EntityManager em,
         Entity boundaryEntity)
@@ -781,7 +781,7 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private void PublishConfiguredUnitProductionSummaryRows(
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer)
     {
         for (int factionIndex = 0; factionIndex < _factionIds.Count; factionIndex++)
@@ -857,7 +857,7 @@ public sealed class BuildingRuntimeBoundarySystem
             building.ProducedUnitSourceKeys.TryGetValue(unit, out FixedString64Bytes sourceKeyFromBuilding) &&
             sourceKeyFromBuilding.Length > 0)
         {
-            unitId = ToFixedString128(BuildingDefinitionSystem.NormalizeSpawnableKey(sourceKeyFromBuilding.ToString()));
+            unitId = ToFixedString128(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(sourceKeyFromBuilding.ToString()));
             return unitId.Length > 0;
         }
 
@@ -873,7 +873,7 @@ public sealed class BuildingRuntimeBoundarySystem
             em.Exists(unit) &&
             em.HasComponent<UnitSourcePrefabKey>(unit))
         {
-            unitId = ToFixedString128(BuildingDefinitionSystem.NormalizeSpawnableKey(
+            unitId = ToFixedString128(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(
                 em.GetComponentData<UnitSourcePrefabKey>(unit).Value.ToString()));
             return unitId.Length > 0;
         }
@@ -889,7 +889,7 @@ public sealed class BuildingRuntimeBoundarySystem
     {
         if (producedUnit.UnitSourceKey.Length > 0)
         {
-            unitId = ToFixedString128(BuildingDefinitionSystem.NormalizeSpawnableKey(producedUnit.UnitSourceKey.ToString()));
+            unitId = ToFixedString128(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(producedUnit.UnitSourceKey.ToString()));
             return unitId.Length > 0;
         }
 
@@ -897,7 +897,7 @@ public sealed class BuildingRuntimeBoundarySystem
             em.Exists(producedUnit.Unit) &&
             em.HasComponent<UnitSourcePrefabKey>(producedUnit.Unit))
         {
-            unitId = ToFixedString128(BuildingDefinitionSystem.NormalizeSpawnableKey(
+            unitId = ToFixedString128(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(
                 em.GetComponentData<UnitSourcePrefabKey>(producedUnit.Unit).Value.ToString()));
             return unitId.Length > 0;
         }
@@ -1057,7 +1057,7 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private static bool TryResolveConfiguredBuildingDefinition(
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         string buildingId,
         out BuildingDefinition definition)
     {
@@ -1071,13 +1071,13 @@ public sealed class BuildingRuntimeBoundarySystem
             return true;
         }
 
-        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId);
+        string normalized = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId);
         for (int i = 0; i < definitionSystem.ConfiguredSpawnableCount; i++)
         {
             if (!definitionSystem.TryGetConfiguredDefinition(i, out BuildingDefinition candidate))
                 continue;
 
-            if (!BuildingDefinitionSystem.RuntimeDefinitionMatchesId(candidate, normalized))
+            if (!BuildingDefinitionPrefabSystemHelper.RuntimeDefinitionMatchesId(candidate, normalized))
                 continue;
 
             definition = candidate;
@@ -1216,7 +1216,7 @@ public sealed class BuildingRuntimeBoundarySystem
             if (_boundaryIdsByPrefab.TryGetValue(prefab, out FixedString128Bytes cached))
                 return cached;
 
-            string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(prefab.name);
+            string normalized = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(prefab.name);
             FixedString128Bytes resolved = ToFixedString128(string.IsNullOrEmpty(normalized) ? fallback : normalized);
             _boundaryIdsByPrefab[prefab] = resolved;
             return resolved;
@@ -1226,7 +1226,7 @@ public sealed class BuildingRuntimeBoundarySystem
         if (_boundaryIdsByFallback.TryGetValue(fallbackKey, out FixedString128Bytes fallbackCached))
             return fallbackCached;
 
-        string normalizedFallback = BuildingDefinitionSystem.NormalizeSpawnableKey(fallback);
+        string normalizedFallback = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(fallback);
         FixedString128Bytes fallbackResolved = ToFixedString128(string.IsNullOrEmpty(normalizedFallback) ? fallback : normalizedFallback);
         _boundaryIdsByFallback[fallbackKey] = fallbackResolved;
         return fallbackResolved;

@@ -361,7 +361,7 @@ public sealed class BuildingPlacementValidationSystemTests
     {
         using World world = new("BuildingUiPlacementCommandBeginConfiguredTest");
         var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
-        var definitionSystem = new BuildingDefinitionSystem();
+        var definitionSystem = new BuildingDefinitionPrefabSystemHelper();
         BuildingPlacementCommandRequestCompositionSystemHelper.Context context = CreateActivePlacementCommandContext(
             out BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             out GameObject prefab,
@@ -638,7 +638,7 @@ public sealed class BuildingPlacementValidationSystemTests
         Action<BuildingPlacementLifecycleCompositionSystemHelper.PlacementState> commitPlacement = null,
         BuildingPlacementLifecycleCompositionSystemHelper.ValidateConfirmDelegate validateConfirm = null,
         BuildingPlacementLifecycleCompositionSystemHelper.TrySpendCostDelegate trySpendCost = null,
-        BuildingDefinitionSystem definitionSystem = null)
+        BuildingDefinitionPrefabSystemHelper definitionSystem = null)
     {
         var runtimeStateSystem = new RuntimeGameplayStateSystem();
         lifecycleSystem = new BuildingPlacementLifecycleCompositionSystemHelper();

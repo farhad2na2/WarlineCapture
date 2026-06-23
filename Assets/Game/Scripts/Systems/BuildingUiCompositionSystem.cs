@@ -16,7 +16,7 @@ internal sealed class BuildingUiCompositionSystem
     {
         return source.BuildingUiContextSystem.CreateSource(
             source.RuntimeResourceSystem,
-            source.BuildingDefinitionSystem,
+            source.BuildingDefinitionPrefabSystemHelper,
             source.RuntimeBuildingSystem,
             source.BuildingProductionSystem,
             source.BuildingProductionRequestBoundary,
@@ -189,9 +189,9 @@ internal sealed class BuildingUiCompositionSystem
         out GameObject prefab)
     {
         prefab = null;
-        return source?.BuildingDefinitionSystem != null &&
+        return source?.BuildingDefinitionPrefabSystemHelper != null &&
                sourceKey.Length > 0 &&
-               source.BuildingDefinitionSystem.TryResolveConfiguredUnitSpawnPrefab(sourceKey.ToString(), out prefab) &&
+               source.BuildingDefinitionPrefabSystemHelper.TryResolveConfiguredUnitSpawnPrefab(sourceKey.ToString(), out prefab) &&
                prefab != null;
     }
 

@@ -36,7 +36,7 @@ internal sealed class BuildingRuntimeSpawnSystem
     public readonly struct Context
     {
         public readonly Transform BuildingRoot;
-        public readonly BuildingDefinitionSystem DefinitionSystem;
+        public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly BuildingRunwaySystem RunwaySystem;
         public readonly BuildingPlacementValidationSystem PlacementValidationSystem;
         public readonly BuildingPlacementValidationSystem.WallValidationContext WallValidationContext;
@@ -52,7 +52,7 @@ internal sealed class BuildingRuntimeSpawnSystem
 
         public Context(
             Transform buildingRoot,
-            BuildingDefinitionSystem definitionSystem,
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
             BuildingRunwaySystem runwaySystem,
             BuildingPlacementValidationSystem placementValidationSystem,
             BuildingPlacementValidationSystem.WallValidationContext wallValidationContext,

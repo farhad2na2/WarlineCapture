@@ -253,7 +253,7 @@ public partial struct AIBuildPlannerSystem : ISystem
             normalizedEntries.Add(new BuildCandidateEntry
             {
                 EntryIndex = i,
-                BuildingId = ToFixedString128(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId)),
+                BuildingId = ToFixedString128(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId)),
                 IsValid = 1
             });
         }
@@ -469,7 +469,7 @@ public partial struct AIBuildPlannerSystem : ISystem
             RequestId = ++_nextBuildSpawnRequestId,
             FactionId = factionId,
             HasOwnerFaction = 1,
-            BuildingId = ToFixedString128(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId)),
+            BuildingId = ToFixedString128(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId)),
             PreferredOrigin = preferredOrigin,
             Status = BuildingRuntimeSpawnRequest.Pending,
             PlanEntity = planEntity,

@@ -44,7 +44,7 @@ internal partial struct RuntimeUnitPrefabSystem : ISystem
 
     public bool TryResolveConfiguredUnitPrefabEntity(Context context, string unitPrefabSourceKey, out Entity prefabEntity)
     {
-        string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(unitPrefabSourceKey);
+        string sourceKey = BuildingDefinitionPrefabSystemHelper.GetSpawnableLookupKey(unitPrefabSourceKey);
         return TryResolveConfiguredUnitPrefabEntity(
             context,
             string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey),

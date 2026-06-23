@@ -22,7 +22,7 @@ internal sealed class BuildingGameplayStartupCompositionSystemHelper
             buildingPlacementConfig,
             worldCamera,
             runtimeUiRoot,
-            childSystems.BuildingDefinitionSystem,
+            childSystems.BuildingDefinitionPrefabSystemHelper,
             childSystems.BuildingRunwaySystem,
             childSystems.BuildingPlacementPreviewPresentationSystemHelper,
             childSystems.RuntimeObjectPresentationHelper.DestroyRuntimeObject);

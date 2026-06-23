@@ -537,7 +537,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
                 new() { spawnUnitPrefab = unitPrefab }
             });
 
-            var definitionSystem = new BuildingDefinitionSystem();
+            var definitionSystem = new BuildingDefinitionPrefabSystemHelper();
             definitionSystem.ConfigureAuthoringMetadataResolvers(
                 BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
                 BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
@@ -631,7 +631,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         string buildingId)
     {
         FixedString128Bytes targetBuildingId =
-            new(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId));
+            new(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId));
         for (int i = 0; i < requests.Length; i++)
         {
             BuildingRuntimeSpawnRequest request = requests[i];

@@ -9,7 +9,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Camera WorldCamera;
-        public readonly BuildingDefinitionSystem DefinitionSystem;
+        public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly BuildingProductionUpdateSystem ProductionUpdateSystem;
         public readonly BuildingProductionTransportSystem TransportSystem;
@@ -50,7 +50,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public Source(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Camera worldCamera,
-            BuildingDefinitionSystem definitionSystem,
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
             BuildingProductionSystem productionSystem,
             BuildingProductionUpdateSystem productionUpdateSystem,
             BuildingProductionTransportSystem transportSystem,
@@ -133,7 +133,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
     public Source CreateSource(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         Camera worldCamera,
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingProductionSystem productionSystem,
         BuildingProductionUpdateSystem productionUpdateSystem,
         BuildingProductionTransportSystem transportSystem,
@@ -220,7 +220,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             source.ProductionSystem,
             source.DefinitionSystem?.ConfiguredUnitSpawnPrefabs,
             source.DefinitionSystem?.UnitSpawnPrefabsByKey,
-            BuildingDefinitionSystem.TryGetPrefabLocalBounds,
+            BuildingDefinitionPrefabSystemHelper.TryGetPrefabLocalBounds,
             source.VisualSystem);
         source.TransportSystem?.PrewarmProductionTransportPools(
             source.RuntimeBuildings,
@@ -265,7 +265,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         source.ProductionSystem?.PrewarmProductionTransportSettings(
             source.DefinitionSystem.ConfiguredUnitSpawnPrefabs,
             source.DefinitionSystem.UnitSpawnPrefabsByKey,
-            BuildingDefinitionSystem.TryGetPrefabLocalBounds);
+            BuildingDefinitionPrefabSystemHelper.TryGetPrefabLocalBounds);
 
         return new BuildingProductionRequestBoundary.Context(
             source.RuntimeBuildings,
@@ -277,8 +277,8 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             source.ProductionSystem,
             CreateProductionQueueContext(source),
             source.RunwaySystem,
-            BuildingDefinitionSystem.GetProductionPrefab,
-            BuildingDefinitionSystem.TryGetPrefabLocalBounds,
+            BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
+            BuildingDefinitionPrefabSystemHelper.TryGetPrefabLocalBounds,
             source.BeginPlacementForConfiguredSpawnable,
             source.TrySpendDollars,
             source.RefundDollars,
@@ -303,8 +303,8 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             source.DefinitionSystem.ConfiguredUnitSpawnPrefabs,
             source.DefinitionSystem.UnitSpawnPrefabsByKey,
             source.ProductionSlotSystem,
-            BuildingDefinitionSystem.TryGetPrefabLocalBounds,
-            BuildingDefinitionSystem.RuntimeBuildingMatchesId,
+            BuildingDefinitionPrefabSystemHelper.TryGetPrefabLocalBounds,
+            BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
             source.SpawnContext.TryGetRuntimeBoundaryEntity == null
                 ? null
                 : (BuildingProductionSystem.TryGetRuntimeBoundaryEntityDelegate)(

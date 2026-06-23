@@ -148,8 +148,8 @@ internal sealed class ManagedGameplayStartupSystem
         BuildingProductionSystem.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata,
         BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate prepareTransportDropVisual,
         System.Func<GameObject, string> resolveSpawnableLookupKey,
-        BuildingDefinitionSystem.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata,
-        BuildingDefinitionSystem.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata,
+        BuildingDefinitionPrefabSystemHelper.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata,
+        BuildingDefinitionPrefabSystemHelper.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata,
         Transform mapBuildingAuthoringRoot,
         Transform mapVehicleAuthoringRoot,
         IMatchIntroStateQuery matchIntroStateQuery)

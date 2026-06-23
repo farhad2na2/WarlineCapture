@@ -109,7 +109,7 @@ internal sealed class BuildingProductionTransportBridgeSystem
 
     private static FixedString64Bytes GetUnitPrefabSourceKey(GameObject unitPrefab)
     {
-        string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(unitPrefab);
+        string sourceKey = BuildingDefinitionPrefabSystemHelper.GetSpawnableLookupKey(unitPrefab);
         return string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey);
     }
 

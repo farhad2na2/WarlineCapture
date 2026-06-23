@@ -276,7 +276,7 @@ public sealed class AIEndToEndValidationTests
             LastLogTime = -999f
         });
         DynamicBuffer<AIProductionPlanEntry> entries = em.AddBuffer<AIProductionPlanEntry>(planEntity);
-        entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey("Rifleman")) });
+        entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Rifleman")) });
     }
 
     private static void CreateSquadPlan(EntityManager em)

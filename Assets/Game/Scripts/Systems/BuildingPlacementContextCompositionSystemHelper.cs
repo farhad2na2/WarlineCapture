@@ -179,7 +179,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
     public BuildingPlacementCommandRequestCompositionSystemHelper.Context CreateCommandContext(
         Source source,
         BuildingPlacementStartupSystemHelper startupSystem,
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingPlacementSessionCompositionSystemHelper sessionSystem,
         Action<string> logWarning,
         Action recordBuildingBuilt,

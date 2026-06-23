@@ -16,7 +16,7 @@ internal sealed class BuildingGameplayDisposalCompositionSystemHelper
         return new BuildingGameplayDisposalExecutionCompositionSystemHelper.Source(
             source.RuntimeBuildingSystem,
             source.BuildingPlacementStartupSystemHelper,
-            source.BuildingDefinitionSystem,
+            source.BuildingDefinitionPrefabSystemHelper,
             source.BuildingPlacementPreviewPresentationSystemHelper,
             source.RuntimeObjectPresentationHelper,
             source.UnitPathfindingPendingStateReader,

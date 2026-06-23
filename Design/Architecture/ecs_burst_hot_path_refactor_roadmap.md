@@ -1047,7 +1047,7 @@ Progress notes:
 - 2026-06-12: Completed the current focused AI behavior regression pass:
   - Added execute-method validators for `AIEconomyValidationTests` and `AIEndToEndValidationTests`, because the broad reflection runner intentionally skips AI fixtures that need explicit log-scope handling.
   - Updated editor building-composition test harnesses to use named `BuildingGameplayCompositionSystemHelper.Initialize` arguments after the `runtimeTransportsRoot` / `dayNight` signature change.
-  - Updated hand-built AI production-plan fixture entries to use `BuildingDefinitionSystem.NormalizeSpawnableKey`, matching `AIPlanEntryStartupSystem` and the normalized building runtime boundary IDs.
+  - Updated hand-built AI production-plan fixture entries to use `BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey`, matching `AIPlanEntryStartupSystem` and the normalized building runtime boundary IDs.
   - `AIEconomyValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-economy-focused.log`, marker `[AIEconomyFocusedValidation] result=Passed tests=2`.
   - `AIEndToEndValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-end-to-end-focused.log`, marker `[AIEndToEndFocusedValidation] result=Passed tests=1`.
   - `AIProductionValidationTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-ai-production-focused.log`, marker `[AIProductionFocusedValidation] result=Passed tests=1`.

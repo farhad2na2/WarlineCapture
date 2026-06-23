@@ -15,7 +15,7 @@ internal sealed class BuildingRuntimeBoundaryCompositionSystemHelper
             source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
             source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,
             source.BuildingRuntimeBoundarySystem,
-            source.BuildingDefinitionSystem,
+            source.BuildingDefinitionPrefabSystemHelper,
             source.BuildingRuntimeSpawnSystem,
             source.BuildingRuntimeContextSystem.CreateSpawnContext(createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock)),
             source.BuildingProductionRequestBoundary,

@@ -153,7 +153,7 @@ public sealed class BuildingProductionSystemTests
             }
         };
 
-        Assert.IsTrue(BuildingDefinitionSystem.TryGetProductionSourceKey(sourceKeyOnlyDefinition, 0, out FixedString64Bytes sourceKey));
+        Assert.IsTrue(BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey(sourceKeyOnlyDefinition, 0, out FixedString64Bytes sourceKey));
         Assert.AreEqual(new FixedString64Bytes("unit_veh_tank_usa"), sourceKey);
 
         GameObject unitPrefab = new("Unit_Veh_APC_Heavy");
@@ -164,7 +164,7 @@ public sealed class BuildingProductionSystemTests
                 SpawnUnitPrefab = unitPrefab
             };
 
-            Assert.IsTrue(BuildingDefinitionSystem.TryGetProductionSourceKey(fallbackDefinition, 0, out FixedString64Bytes fallbackSourceKey));
+            Assert.IsTrue(BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey(fallbackDefinition, 0, out FixedString64Bytes fallbackSourceKey));
             Assert.AreEqual(new FixedString64Bytes("unit_veh_apc_heavy"), fallbackSourceKey);
         }
         finally
@@ -259,8 +259,8 @@ public sealed class BuildingProductionSystemTests
                 spawnPrefabSystem,
                 new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
                 new BuildingProductionSlotSystem(),
-                BuildingDefinitionSystem.RuntimeBuildingMatchesId,
-                BuildingDefinitionSystem.TryGetProductionSourceKey,
+                BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
+                BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager _, out Entity entity) =>
                 {
                     entity = boundaryEntity;
@@ -488,8 +488,8 @@ public sealed class BuildingProductionSystemTests
                 spawnPrefabSystem,
                 new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
                 new BuildingProductionSlotSystem(),
-                BuildingDefinitionSystem.RuntimeBuildingMatchesId,
-                BuildingDefinitionSystem.TryGetProductionSourceKey,
+                BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
+                BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager _, out Entity entity) =>
                 {
                     entity = boundaryEntity;
@@ -644,8 +644,8 @@ public sealed class BuildingProductionSystemTests
                 spawnPrefabSystem,
                 new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
                 new BuildingProductionSlotSystem(),
-                BuildingDefinitionSystem.RuntimeBuildingMatchesId,
-                BuildingDefinitionSystem.TryGetProductionSourceKey,
+                BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
+                BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager _, out Entity entity) =>
                 {
                     entity = boundaryEntity;
@@ -803,8 +803,8 @@ public sealed class BuildingProductionSystemTests
                 spawnPrefabSystem,
                 new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
                 new BuildingProductionSlotSystem(),
-                BuildingDefinitionSystem.RuntimeBuildingMatchesId,
-                BuildingDefinitionSystem.TryGetProductionSourceKey,
+                BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
+                BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager _, out Entity entity) =>
                 {
                     entity = boundaryEntity;
@@ -985,8 +985,8 @@ public sealed class BuildingProductionSystemTests
                 spawnPrefabSystem,
                 new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
                 new BuildingProductionSlotSystem(),
-                BuildingDefinitionSystem.RuntimeBuildingMatchesId,
-                BuildingDefinitionSystem.TryGetProductionSourceKey,
+                BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
+                BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager _, out Entity entity) =>
                 {
                     entity = boundaryEntity;
@@ -1197,8 +1197,8 @@ public sealed class BuildingProductionSystemTests
                 spawnPrefabSystem,
                 new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
                 new BuildingProductionSlotSystem(),
-                BuildingDefinitionSystem.RuntimeBuildingMatchesId,
-                BuildingDefinitionSystem.TryGetProductionSourceKey,
+                BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
+                BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager _, out Entity entity) =>
                 {
                     entity = boundaryEntity;
@@ -1929,7 +1929,7 @@ public sealed class BuildingProductionSystemTests
             Assert.AreEqual(1, result.Accepted);
             Assert.AreEqual(BuildingUiCampItemCommandResultElement.PlacementStarted, result.ResultCode);
             Assert.AreEqual(1234, result.Price);
-            Assert.AreEqual(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingPrefab.name), result.ItemId.ToString());
+            Assert.AreEqual(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingPrefab.name), result.ItemId.ToString());
             Assert.IsTrue(beganPlacement);
             Assert.AreEqual(1234, activePlacementCost);
 
@@ -1983,7 +1983,7 @@ public sealed class BuildingProductionSystemTests
             Assert.AreEqual(1, result.Accepted);
             Assert.AreEqual(BuildingUiCampItemCommandResultElement.ProductionQueued, result.ResultCode);
             Assert.AreEqual(5678, result.Price);
-            Assert.AreEqual(BuildingDefinitionSystem.NormalizeSpawnableKey(unitPrefab.name), result.ItemId.ToString());
+            Assert.AreEqual(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(unitPrefab.name), result.ItemId.ToString());
             Assert.AreEqual(1, producer.PendingProductions.Count);
             Assert.AreSame(unitPrefab, producer.PendingProductions[0].Prefab);
             Assert.AreEqual(0, producer.PendingProductions[0].ProductionIndex);
@@ -2035,7 +2035,7 @@ public sealed class BuildingProductionSystemTests
                 frameCount: 42);
 
             boundarySystem.Update(
-                new BuildingDefinitionSystem(),
+                new BuildingDefinitionPrefabSystemHelper(),
                 new BuildingRuntimeSpawnSystem(),
                 default,
                 requestSystem,
@@ -2106,7 +2106,7 @@ public sealed class BuildingProductionSystemTests
                 focusProducerOnSuccess: false);
 
             boundarySystem.Update(
-                new BuildingDefinitionSystem(),
+                new BuildingDefinitionPrefabSystemHelper(),
                 new BuildingRuntimeSpawnSystem(),
                 default,
                 requestSystem,
@@ -2199,7 +2199,7 @@ public sealed class BuildingProductionSystemTests
         var productionSystem = new BuildingProductionSystem();
         var boundarySystem = new BuildingRuntimeBoundarySystem();
         var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
-        var definitionSystem = new BuildingDefinitionSystem();
+        var definitionSystem = new BuildingDefinitionPrefabSystemHelper();
         GameObject unitPrefab = new("Unit_Inf_Regular");
         try
         {
@@ -2867,7 +2867,7 @@ public sealed class BuildingProductionSystemTests
             productionSystem,
             queueContext,
             null,
-            BuildingDefinitionSystem.GetProductionPrefab,
+            BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
             null,
             beginPlacement,
             trySpendDollars,
@@ -2911,7 +2911,7 @@ public sealed class BuildingProductionSystemTests
             productionSystem,
             queueContext,
             null,
-            BuildingDefinitionSystem.GetProductionPrefab,
+            BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
             null,
             null,
             _ => true,
@@ -2962,10 +2962,10 @@ public sealed class BuildingProductionSystemTests
             TryGetEntityManager,
             TryGetRuntimeBoundaryEntity,
             productionSystem,
-            BuildingDefinitionSystem.NormalizeSpawnableKey,
+            BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey,
             _ => false,
-            (building, normalizedId) => BuildingDefinitionSystem.RuntimeDefinitionMatchesId(building?.Definition, normalizedId),
-            (prefab, normalizedId) => BuildingDefinitionSystem.NormalizeSpawnableKey(prefab != null ? prefab.name : string.Empty) == normalizedId,
+            (building, normalizedId) => BuildingDefinitionPrefabSystemHelper.RuntimeDefinitionMatchesId(building?.Definition, normalizedId),
+            (prefab, normalizedId) => BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(prefab != null ? prefab.name : string.Empty) == normalizedId,
             (RuntimeBuildingEntity building, out Vector3 worldPosition) =>
             {
                 worldPosition = Vector3.zero;

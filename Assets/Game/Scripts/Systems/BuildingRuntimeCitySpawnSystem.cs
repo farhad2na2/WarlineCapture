@@ -8,7 +8,7 @@ internal sealed class BuildingRuntimeCitySpawnSystem
     {
         public readonly BuildingRuntimeSpawnCommandBoundary RuntimeSpawnCommandBoundary;
         public readonly BuildingRuntimeSpawnCommandBoundary.Context RuntimeSpawnCommandContext;
-        public readonly BuildingDefinitionSystem DefinitionSystem;
+        public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly BuildingRuntimeBoundarySystem RuntimeBoundarySystem;
         public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Func<int, bool> DeleteBuildingById;
@@ -18,7 +18,7 @@ internal sealed class BuildingRuntimeCitySpawnSystem
         public Context(
             BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommandBoundary,
             BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
-            BuildingDefinitionSystem definitionSystem,
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
             BuildingRuntimeBoundarySystem runtimeBoundarySystem,
             BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate tryGetEntityManager,
             Func<int, bool> deleteBuildingById,
@@ -130,7 +130,7 @@ internal sealed class BuildingRuntimeCitySpawnSystem
             return false;
         }
 
-        string buildingIdKey = BuildingDefinitionSystem.GetSpawnableLookupKey(prefab);
+        string buildingIdKey = BuildingDefinitionPrefabSystemHelper.GetSpawnableLookupKey(prefab);
         if (!context.RuntimeSpawnCommandBoundary.TryEnqueueRuntimeBuildingSpawnRequest(
                 em,
                 buildingIdKey,

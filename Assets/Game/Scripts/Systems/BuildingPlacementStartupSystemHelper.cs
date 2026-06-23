@@ -37,7 +37,7 @@ internal sealed class BuildingPlacementStartupSystemHelper
         BuildingPlacementSystemConfig configAsset,
         Camera sceneWorldCamera,
         Transform runtimeRoot,
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingRunwaySystem runwaySystem,
         BuildingPlacementPreviewPresentationSystemHelper previewSystem,
         Action<UnityEngine.Object> destroyRuntimeObject)
@@ -56,7 +56,7 @@ internal sealed class BuildingPlacementStartupSystemHelper
             destroyRuntimeObject);
     }
 
-    public void ApplyConfigIfAvailable(BuildingDefinitionSystem definitionSystem)
+    public void ApplyConfigIfAvailable(BuildingDefinitionPrefabSystemHelper definitionSystem)
     {
         if (_config == null || definitionSystem == null)
             return;
@@ -78,7 +78,7 @@ internal sealed class BuildingPlacementStartupSystemHelper
     }
 
     public void Dispose(
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingPlacementPreviewPresentationSystemHelper previewSystem,
         Action<UnityEngine.Object> destroyRuntimeObject)
     {
@@ -123,7 +123,7 @@ internal sealed class BuildingPlacementStartupSystemHelper
     }
 
     private void RebuildConfiguredSpawnableDefinitions(
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingRunwaySystem runwaySystem,
         Action<UnityEngine.Object> destroyRuntimeObject)
     {

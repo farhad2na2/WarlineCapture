@@ -12,7 +12,7 @@ internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Action<EntityManager> EnsureEntityQueries;
         public readonly BuildingRuntimeBoundarySystem BoundarySystem;
-        public readonly BuildingDefinitionSystem DefinitionSystem;
+        public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly BuildingRuntimeSpawnSystem RuntimeSpawnSystem;
         public readonly BuildingRuntimeSpawnSystem.Context RuntimeSpawnContext;
         public readonly BuildingProductionRequestBoundary ProductionRequestSystem;
@@ -27,7 +27,7 @@ internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
             TryGetEntityManagerDelegate tryGetEntityManager,
             Action<EntityManager> ensureEntityQueries,
             BuildingRuntimeBoundarySystem boundarySystem,
-            BuildingDefinitionSystem definitionSystem,
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
             BuildingRuntimeSpawnSystem runtimeSpawnSystem,
             BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
             BuildingProductionRequestBoundary productionRequestSystem,

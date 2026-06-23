@@ -133,7 +133,7 @@ internal sealed class BuildingRuntimeContextSystem
     public readonly struct Source
     {
         public readonly Transform BuildingRoot;
-        public readonly BuildingDefinitionSystem DefinitionSystem;
+        public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly BuildingRunwaySystem RunwaySystem;
         public readonly BuildingPlacementValidationSystem PlacementValidationSystem;
         public readonly BuildingPlacementValidationSystem.WallValidationContext WallValidationContext;
@@ -172,7 +172,7 @@ internal sealed class BuildingRuntimeContextSystem
 
         public Source(
             Transform buildingRoot,
-            BuildingDefinitionSystem definitionSystem,
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
             BuildingRunwaySystem runwaySystem,
             BuildingPlacementValidationSystem placementValidationSystem,
             BuildingPlacementValidationSystem.WallValidationContext wallValidationContext,
@@ -338,8 +338,8 @@ internal sealed class BuildingRuntimeContextSystem
             source.SpawnPrefabSystem,
             source.SpawnPrefabContext,
             source.ProductionSlotSystem,
-            BuildingDefinitionSystem.RuntimeBuildingMatchesId,
-            BuildingDefinitionSystem.TryGetProductionSourceKey,
+            BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
+            BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
             (EntityManager em, out Entity boundaryEntity) =>
                 TryGetRuntimeBoundaryEntity(source.BuildingRuntimeBoundaryQuery, em, out boundaryEntity));
     }
@@ -440,10 +440,10 @@ internal sealed class BuildingRuntimeContextSystem
             (EntityManager em, out Entity boundaryEntity) =>
                 TryGetRuntimeBoundaryEntity(source.BuildingRuntimeBoundaryQuery, em, out boundaryEntity),
             source.ProductionSystem,
-            BuildingDefinitionSystem.NormalizeSpawnableKey,
+            BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey,
             source.IsHouseBuilding,
-            BuildingDefinitionSystem.RuntimeBuildingMatchesId,
-            BuildingDefinitionSystem.UnitPrefabMatchesId,
+            BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
+            BuildingDefinitionPrefabSystemHelper.UnitPrefabMatchesId,
             source.TryResolveBuildingFocusWorldPosition,
             (RuntimeBuildingEntity building, int2 unitFootprint, int2 referenceCell, out int2 goal) =>
             {

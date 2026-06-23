@@ -29,7 +29,7 @@ internal sealed class BuildingRuntimeSpawnCommandBoundary
         bool hasOwnerFaction = true)
     {
         requestId = 0;
-        string normalizedBuildingId = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId);
+        string normalizedBuildingId = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId);
         if (string.IsNullOrEmpty(normalizedBuildingId) ||
             !TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity))
         {
@@ -59,7 +59,7 @@ internal sealed class BuildingRuntimeSpawnCommandBoundary
         out int requestId)
     {
         requestId = 0;
-        string normalizedWallId = BuildingDefinitionSystem.NormalizeSpawnableKey(wallId);
+        string normalizedWallId = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(wallId);
         if (string.IsNullOrEmpty(normalizedWallId) ||
             !TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity))
         {
@@ -90,7 +90,7 @@ internal sealed class BuildingRuntimeSpawnCommandBoundary
         out int requestId)
     {
         requestId = 0;
-        string normalizedWallId = BuildingDefinitionSystem.NormalizeSpawnableKey(wallId);
+        string normalizedWallId = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(wallId);
         if (string.IsNullOrEmpty(normalizedWallId) ||
             !TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity))
         {

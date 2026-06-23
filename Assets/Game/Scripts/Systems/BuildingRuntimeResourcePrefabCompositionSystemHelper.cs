@@ -20,7 +20,7 @@ internal sealed class BuildingRuntimeResourcePrefabCompositionSystemHelper
             source.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,
             source.RuntimeResourceSystem,
             source.RuntimeUnitPrefabSystem,
-            source.BuildingDefinitionSystem,
+            source.BuildingDefinitionPrefabSystemHelper,
             source.RuntimeBuildingSystem,
             source.BuildingSpawnPrefabSystem,
             source.BuildingEntityManagerAccessSystem.TryGetEntityManager,

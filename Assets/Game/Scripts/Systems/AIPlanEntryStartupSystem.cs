@@ -71,7 +71,7 @@ public partial struct AIPlanEntryStartupSystem : ISystem
             if (string.IsNullOrWhiteSpace(unitId))
                 continue;
 
-            entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey(unitId)) });
+            entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(unitId)) });
         }
     }
 }

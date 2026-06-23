@@ -441,7 +441,7 @@ internal sealed class MapVehiclePlacementSpawnSystem
 
     private static FixedString64Bytes GetVehiclePrefabSourceKey(MapVehiclePlacementConfigEntry placement)
     {
-        string sourceKey = BuildingDefinitionSystem.GetSpawnableLookupKey(placement?.VehicleSourceKey);
+        string sourceKey = BuildingDefinitionPrefabSystemHelper.GetSpawnableLookupKey(placement?.VehicleSourceKey);
         return string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey);
     }
 

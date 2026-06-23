@@ -150,7 +150,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.BuildingProductionRequestBoundaryMustNotReadAuthoringComponents();
             tests.BuildingProductionTransportSystemMustNotReadAuthoringComponents();
             tests.BuildingSpawnPrefabSystemMustNotReadAuthoringComponents();
-            tests.BuildingDefinitionSystemMustNotReadAuthoringComponents();
+            tests.BuildingDefinitionPrefabSystemHelperMustNotReadAuthoringComponents();
             tests.SceneAndMapAuthoringBootstrapMustStayInComposition();
             tests.RuntimeAssemblyMustNotReferenceAuthoringAssembly();
             tests.RuntimeAssemblyMustNotReferenceConcreteUiRuntimeAssembly();
@@ -638,7 +638,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
         Assert.IsFalse(
             source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
             source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
-            "`BuildingProductionRequestBoundary` must not read authoring components. Use configured-unit read models from `BuildingDefinitionSystem`.");
+            "`BuildingProductionRequestBoundary` must not read authoring components. Use configured-unit read models from `BuildingDefinitionPrefabSystemHelper`.");
     }
 
     [Test]
@@ -666,15 +666,15 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
-    public void BuildingDefinitionSystemMustNotReadAuthoringComponents()
+    public void BuildingDefinitionPrefabSystemHelperMustNotReadAuthoringComponents()
     {
-        string definitionPath = Path.Combine(GameScriptsRoot, "Systems/BuildingDefinitionSystem.cs");
+        string definitionPath = Path.Combine(GameScriptsRoot, "Systems/BuildingDefinitionPrefabSystemHelper.cs");
         string source = File.ReadAllText(definitionPath);
 
         Assert.IsFalse(
             source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
             source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
-            "`BuildingDefinitionSystem` must not read authoring components. Composition can inject building and unit definition metadata.");
+            "`BuildingDefinitionPrefabSystemHelper` must not read authoring components. Composition can inject building and unit definition metadata.");
     }
 
     [Test]

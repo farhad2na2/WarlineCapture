@@ -98,7 +98,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
                 createBuildingRuntimeContextSource,
                 createBuildingSelectionContext),
             source.BuildingPlacementStartupSystemHelper,
-            source.BuildingDefinitionSystem,
+            source.BuildingDefinitionPrefabSystemHelper,
             source.BuildingPlacementSessionCompositionSystemHelper,
             Debug.LogWarning,
             GameRuntimeStats.RecordBuildingBuilt,

@@ -279,7 +279,7 @@ public sealed class UnitTransportValidationTests
         Assert.IsNotNull(authoring.UnitHealthBarPrefab);
         Assert.IsNotNull(authoring.VehicleHealthBarPrefab);
 
-        var definitionSystem = new BuildingDefinitionSystem();
+        var definitionSystem = new BuildingDefinitionPrefabSystemHelper();
         definitionSystem.ConfigureAuthoringMetadataResolvers(null, TryGetTestUnitDefinitionMetadata);
         definitionSystem.RebuildSpawnablesLookup(null, new List<GameObject> { prefab });
         Assert.IsTrue(definitionSystem.TryResolveConfiguredUnitSpawnPrefab("Unit_Veh_Plane_Transport", out GameObject resolvedByPrefabName));
@@ -288,13 +288,13 @@ public sealed class UnitTransportValidationTests
         Assert.AreSame(prefab, resolvedByDisplayName);
     }
 
-    private static bool TryGetTestUnitDefinitionMetadata(GameObject prefab, out BuildingDefinitionSystem.UnitDefinitionMetadata metadata)
+    private static bool TryGetTestUnitDefinitionMetadata(GameObject prefab, out BuildingDefinitionPrefabSystemHelper.UnitDefinitionMetadata metadata)
     {
         metadata = default;
         if (prefab == null || !prefab.TryGetComponent(out UnitGridAuthoring authoring))
             return false;
 
-        metadata = new BuildingDefinitionSystem.UnitDefinitionMetadata
+        metadata = new BuildingDefinitionPrefabSystemHelper.UnitDefinitionMetadata
         {
             DisplayName = authoring.ConfiguredDisplayName,
             Description = authoring.ConfiguredDescription,

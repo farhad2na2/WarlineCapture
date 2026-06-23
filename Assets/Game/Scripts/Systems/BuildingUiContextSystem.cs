@@ -8,7 +8,7 @@ internal sealed class BuildingUiContextSystem
     public readonly struct Source
     {
         public readonly RuntimeResourceSystem RuntimeResourceSystem;
-        public readonly BuildingDefinitionSystem DefinitionSystem;
+        public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly BuildingProductionRequestBoundary ProductionRequestSystem;
@@ -40,7 +40,7 @@ internal sealed class BuildingUiContextSystem
 
         public Source(
             RuntimeResourceSystem runtimeResourceSystem,
-            BuildingDefinitionSystem definitionSystem,
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingProductionSystem productionSystem,
             BuildingProductionRequestBoundary productionRequestSystem,
@@ -105,7 +105,7 @@ internal sealed class BuildingUiContextSystem
 
     public Source CreateSource(
         RuntimeResourceSystem runtimeResourceSystem,
-        BuildingDefinitionSystem definitionSystem,
+        BuildingDefinitionPrefabSystemHelper definitionSystem,
         RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingProductionSystem productionSystem,
         BuildingProductionRequestBoundary productionRequestSystem,

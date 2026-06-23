@@ -984,8 +984,8 @@ internal sealed class BuildingProductionRequestBoundary
                 if (candidatePrefab == null)
                     continue;
 
-                if (BuildingDefinitionSystem.NormalizeSpawnableKey(candidatePrefab.name) == normalizedItemId ||
-                    BuildingDefinitionSystem.RuntimeDefinitionMatchesId(pair.Value, normalizedItemId))
+                if (BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(candidatePrefab.name) == normalizedItemId ||
+                    BuildingDefinitionPrefabSystemHelper.RuntimeDefinitionMatchesId(pair.Value, normalizedItemId))
                 {
                     prefab = candidatePrefab;
                     return true;
@@ -999,7 +999,7 @@ internal sealed class BuildingProductionRequestBoundary
             {
                 BuildingDefinition definition = context.ConfiguredSpawnableDefinitions[i];
                 if (definition?.Prefab == null ||
-                    !BuildingDefinitionSystem.RuntimeDefinitionMatchesId(definition, normalizedItemId))
+                    !BuildingDefinitionPrefabSystemHelper.RuntimeDefinitionMatchesId(definition, normalizedItemId))
                 {
                     continue;
                 }
@@ -1050,7 +1050,7 @@ internal sealed class BuildingProductionRequestBoundary
     private static string ResolveCampItemRequestId(GameObject prefab)
     {
         return prefab != null
-            ? BuildingDefinitionSystem.NormalizeSpawnableKey(prefab.name)
+            ? BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(prefab.name)
             : string.Empty;
     }
 
@@ -1231,7 +1231,7 @@ internal sealed class BuildingProductionRequestBoundary
         price = 0;
         canRequest = false;
 
-        string normalized = unitIdIsNormalized ? unitId : BuildingDefinitionSystem.NormalizeSpawnableKey(unitId);
+        string normalized = unitIdIsNormalized ? unitId : BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(unitId);
         if (string.IsNullOrEmpty(normalized))
             return false;
 
@@ -1265,7 +1265,7 @@ internal sealed class BuildingProductionRequestBoundary
         if (prefab == null)
             return false;
 
-        if (BuildingDefinitionSystem.NormalizeSpawnableKey(prefab.name) == normalizedUnitId)
+        if (BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(prefab.name) == normalizedUnitId)
             return true;
 
         return context.TryGetConfiguredUnitReadModel != null &&
@@ -1276,7 +1276,7 @@ internal sealed class BuildingProductionRequestBoundary
                    out _,
                    out _,
                    out _) &&
-               BuildingDefinitionSystem.NormalizeSpawnableKey(displayName) == normalizedUnitId;
+               BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(displayName) == normalizedUnitId;
     }
 
     private static bool TryBuildConfiguredUnit(Context context, GameObject prefab, out string displayName, out int price, out bool canRequest)

@@ -131,7 +131,7 @@ Remove obvious per-frame allocations and schedule safe data-parallel jobs withou
 
 - [x] Cache `BuildingPlacementInputSystem` scratch `List<Vector2Int>` and `List<WallRun>` allocations as reusable fields.
 - [x] Cache `BuildingBarrierSystem` perimeter dictionary allocations as reusable fields.
-- [x] Cache/evaluate `BuildingVisualSystem`, `SelectionUiReadModelLookup`, `AttackOrderCommandSystem`, and `BuildingDefinitionSystem` scratch allocations where safe.
+- [x] Cache/evaluate `BuildingVisualSystem`, `SelectionUiReadModelLookup`, `AttackOrderCommandSystem`, and `BuildingDefinitionPrefabSystemHelper` scratch allocations where safe.
 - [x] Add focused tests or allocation checks for touched hot paths where existing coverage is weak.
 - [x] Replace `UnitTransportDeployOrderSystem` deploy-entity `ToEntityArray` snapshot with chunk iteration.
 - [x] Replace `RtsSelectionAttackTargetModeCommandSystem` selected-entity `ToEntityArray` snapshots with chunk iteration.
@@ -161,7 +161,7 @@ Phase 2 notes:
 - `BuildingPlacementValidationSystemTests` now includes a focused scratch-list coverage test that verifies immediate preview storage is reused while owned-list results remain independent. Validation passed with `/private/tmp/warline-ecs-audit-building-placement-scratch-test.log` (`BuildingPlacementCommandRequestValidation`, `tests=12`).
 - `SelectionUiReadModelLookup.ResolveHudSelectionStatus` now reuses `_selectionStatusParts`; validation passed with `/private/tmp/warline-ecs-audit-selection-ui-lookup-quickwin.log` and rerun log `/private/tmp/warline-ecs-audit-selection-ui-lookup-quickwin-rerun.log`.
 - `BuildingVisualSystem.FindAnimatedBuildingParts` returns a new array that becomes owned runtime state, so the local list is not a safe scratch-cache-only change.
-- `BuildingDefinitionSystem.BuildProductionSlots` returns an owned list, so caching that list would leak mutable state across definitions.
+- `BuildingDefinitionPrefabSystemHelper.BuildProductionSlots` returns an owned list, so caching that list would leak mutable state across definitions.
 - `AttackOrderCommandSystem` already uses caller-provided scratch in the normal runtime path; the fallback allocation is a compatibility path and should be removed only after all callers are verified.
 - `BuildingCombatSystem.UpdateDestroyedBuildings` now reuses `_destroyedCleanupIdsScratch` instead of allocating a cleanup ID list during runtime ticks. The public `CollectDestroyedCleanupIds` return-list API remains unchanged for tests and external callers. Building combat validation passed with `/private/tmp/warline-ecs-audit-building-combat-cleanup-scratch.log` (`BuildingCombatFocusedValidation`, `tests=4`).
 - `UnitRenderBudgetDistance`, `UnitRenderBudgetSort`, and `UnitRenderBudgetBand` fill `NativeList`/`NativeHashSet` outputs that are consumed immediately. A real scheduled chain needs an output-count/container redesign; replacing `.Run()` with `Schedule().Complete()` is not counted as a useful quick win. Focused render-budget validation passed after this review with `/private/tmp/warline-ecs-audit-render-budget-run-review.log` (`UnitRenderBudgetFocusedValidation`, `tests=28`).
@@ -546,7 +546,7 @@ Retire broad managed building gameplay owners instead of creating large `ISystem
 - [ ] Run building placement, production, build drawer, building selection marker, building faction visual, combat, and PlayMode placement-to-production validations.
 - [x] Fold Agent D `P7-0095 BuildingPlacementStartupSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned placement startup helper and validate placement command, building composition smoke, compile, and Phase 7 architecture guard.
 - [x] Fold Agent D `P7-0058 BuildingCombatSystem` from a disabled `SystemBase` wrapper into a plain direct-owned building combat helper and validate combat helper behavior, building composition smoke, compile, and Phase 7 architecture guard.
-- [x] Fold Agent D `P7-0059 BuildingDefinitionSystem` from a disabled `SystemBase` wrapper into a plain direct-owned building definition helper and validate production metadata, runtime boundary read models, building composition smoke, compile, and Phase 7 architecture guard.
+- [x] Fold Agent D `P7-0059 BuildingDefinitionPrefabSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned building definition helper and validate production metadata, runtime boundary read models, building composition smoke, compile, and Phase 7 architecture guard.
 - [x] Fold Agent D `P7-0101 BuildingProductionSystem` from a disabled `SystemBase` wrapper into a plain direct-owned building production helper and validate production request, production metadata, building composition smoke, compile, and Phase 7 architecture guard.
 - [x] Fold Agent D `P7-0103 BuildingProductionTransportBridgeSystem` from a disabled `SystemBase` wrapper into a plain direct-owned production transport bridge helper and validate production camera focus, production request, building composition smoke, compile, and Phase 7 architecture guard.
 - [x] Fold Agent D `P7-0104 BuildingProductionTransportSystem` from a disabled `SystemBase` wrapper into a plain direct-owned production transport visual helper and validate production request, production metadata, building composition smoke, compile, and Phase 7 architecture guard.

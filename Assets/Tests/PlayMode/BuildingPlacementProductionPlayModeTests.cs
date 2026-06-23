@@ -156,7 +156,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
             productionSystem,
             queueContext,
             null,
-            BuildingDefinitionSystem.GetProductionPrefab,
+            BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
             null,
             beginPlacement,
             trySpendDollars,

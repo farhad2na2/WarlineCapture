@@ -8,14 +8,14 @@ internal sealed class BuildingPlacementCommandRequestCompositionSystemHelper
     internal readonly struct Context
     {
         public readonly BuildingPlacementStartupSystemHelper StartupSystem;
-        public readonly BuildingDefinitionSystem DefinitionSystem;
+        public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly BuildingPlacementSessionCompositionSystemHelper SessionSystem;
         public readonly BuildingPlacementSessionCompositionSystemHelper.Context SessionContext;
         public readonly Action<string> LogWarning;
 
         public Context(
             BuildingPlacementStartupSystemHelper startupSystem,
-            BuildingDefinitionSystem definitionSystem,
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
             BuildingPlacementSessionCompositionSystemHelper sessionSystem,
             BuildingPlacementSessionCompositionSystemHelper.Context sessionContext,
             Action<string> logWarning)
@@ -34,7 +34,7 @@ internal sealed class BuildingPlacementCommandRequestCompositionSystemHelper
             em,
             BuildingUiPlacementCommandRequestElement.KindBeginConfiguredPlacement,
             clearBuildingSelection: true,
-            BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId));
+            BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId));
     }
 
     public bool EnqueueAndProcessBeginConfiguredPlacement(EntityManager em, Context context, string buildingId)
@@ -47,7 +47,7 @@ internal sealed class BuildingPlacementCommandRequestCompositionSystemHelper
 
     public bool EnqueueAndProcessBeginPlacementForConfiguredSpawnable(EntityManager em, Context context, GameObject prefab)
     {
-        string buildingId = BuildingDefinitionSystem.GetSpawnableLookupKey(prefab);
+        string buildingId = BuildingDefinitionPrefabSystemHelper.GetSpawnableLookupKey(prefab);
         if (string.IsNullOrEmpty(buildingId))
             return false;
 
@@ -278,7 +278,7 @@ internal sealed class BuildingPlacementCommandRequestCompositionSystemHelper
         if (context.DefinitionSystem == null)
             return false;
 
-        string normalizedBuildingId = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId.ToString());
+        string normalizedBuildingId = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId.ToString());
         if (string.IsNullOrEmpty(normalizedBuildingId) ||
             !context.DefinitionSystem.TryGetConfiguredSpawnable(normalizedBuildingId, out var spawnable))
         {
@@ -320,7 +320,7 @@ internal sealed class BuildingPlacementCommandRequestCompositionSystemHelper
         em.GetBuffer<BuildingUiPlacementCommandRequestElement>(queueEntity).Add(new BuildingUiPlacementCommandRequestElement
         {
             RequestId = queue.LastRequestId,
-            BuildingId = new FixedString128Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId)),
+            BuildingId = new FixedString128Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId)),
             RequestKind = requestKind,
             ClearBuildingSelection = clearBuildingSelection ? (byte)1 : (byte)0
         });
@@ -332,12 +332,12 @@ internal sealed class BuildingPlacementCommandRequestCompositionSystemHelper
         if (definition == null)
             return string.Empty;
 
-        string displayKey = BuildingDefinitionSystem.NormalizeSpawnableKey(definition.DisplayName);
+        string displayKey = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(definition.DisplayName);
         if (!string.IsNullOrEmpty(displayKey))
             return displayKey;
 
         return definition.Prefab != null
-            ? BuildingDefinitionSystem.GetSpawnableLookupKey(definition.Prefab)
+            ? BuildingDefinitionPrefabSystemHelper.GetSpawnableLookupKey(definition.Prefab)
             : string.Empty;
     }
 

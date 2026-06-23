@@ -6,7 +6,7 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
     internal IMatchRuntimeUi MainMenuPlayUi { get; private set; }
     internal SelectionUiCameraSystem SelectionUiCameraSystem { get; private set; }
     internal SelectionBuildingInteractionSystem SelectionBuildingInteractionSystem { get; private set; }
-    internal RuntimeGridBlockerSystem RuntimeGridBlockerSystem { get; private set; }
+    internal RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers { get; private set; }
     internal RuntimeCityCompositionSystem RuntimeCitySystem { get; private set; }
     internal CitizenPopulationEventSystem CitizenPopulationEventSystem { get; private set; }
     internal FactionVisualSettings FactionVisualSettings { get; private set; }
@@ -29,7 +29,7 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
         DayNightSystem dayNightSystem = null,
         SelectionUiCameraSystem selectionUiCameraSystem = null,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem = null,
-        RuntimeGridBlockerSystem runtimeGridBlockerSystem = null,
+        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null,
         RuntimeCityCompositionSystem runtimeCitySystem = null,
         CitizenPopulationEventSystem citizenPopulationEventSystem = null,
         Func<bool> shouldBlockBuildingSelectionClick = null)
@@ -41,8 +41,8 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
             SelectionUiCameraSystem = selectionUiCameraSystem;
         if (selectionBuildingInteractionSystem != null)
             SelectionBuildingInteractionSystem = selectionBuildingInteractionSystem;
-        if (runtimeGridBlockerSystem != null)
-            RuntimeGridBlockerSystem = runtimeGridBlockerSystem;
+        if (runtimeGridBlockers != null)
+            RuntimeGridBlockers = runtimeGridBlockers;
         if (runtimeCitySystem != null)
             RuntimeCitySystem = runtimeCitySystem;
         if (citizenPopulationEventSystem != null)
@@ -58,13 +58,13 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
 
     internal bool IsRuntimeBlockerCell(int x, int y, int width, int height)
     {
-        return RuntimeGridBlockerSystem != null &&
-               RuntimeGridBlockerSystem.IsRuntimeBlockerCell(x, y, width, height);
+        return RuntimeGridBlockers != null &&
+               RuntimeGridBlockers.IsRuntimeBlockerCell(x, y, width, height);
     }
 
     internal void RemoveBlockersOverlappingFootprint(Vector2Int originCell, Vector2Int footprintCells)
     {
-        RuntimeGridBlockerSystem?.RemoveBlockersOverlappingFootprint(originCell, footprintCells);
+        RuntimeGridBlockers?.RemoveBlockersOverlappingFootprint(originCell, footprintCells);
     }
 
     internal bool IsConfiguredHousePrefab(GameObject prefab)

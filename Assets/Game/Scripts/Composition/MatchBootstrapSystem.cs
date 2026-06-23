@@ -74,7 +74,7 @@ internal sealed class MatchBootstrapSystem
     private GridAuthoringConfig RuntimeGridConfig => MatchScene != null ? MatchScene.RuntimeGridConfig : null;
     private MapSurfaceAuthoring MapSurfaceAuthoring => MatchScene != null ? MatchScene.MapSurfaceAuthoring : null;
 
-    public RuntimeGridBlockerSystem RuntimeGridBlockers { get; private set; }
+    public RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers { get; private set; }
     public RuntimeDecorationSpawnerPresentationSystemHelper RuntimeDecorations { get; private set; }
     public RuntimeCityCompositionSystem RuntimeCity { get; private set; }
     public RoadBuildReadModelSystem RoadBuildReadModel { get; private set; }
@@ -116,9 +116,9 @@ internal sealed class MatchBootstrapSystem
     private Action _roadOnGui;
     private Action _disposeRoad;
     private Action<IMatchRuntimeUi> _bindRoadMainMenu;
-    private Action<IMatchRuntimeUi, RuntimeGridBlockerSystem> _bindRoadGameplayFeatures;
+    private Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> _bindRoadGameplayFeatures;
     private Action<IMatchRuntimeUi> _bindBuildingMainMenu;
-    private Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> _bindBuildingGameplayFeatures;
+    private Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> _bindBuildingGameplayFeatures;
     private Action<IMatchRuntimeUi> _bindSelectionMainMenu;
     private Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private Action _selectionRuntimeUpdate;
@@ -135,7 +135,7 @@ internal sealed class MatchBootstrapSystem
     private bool _mainMenuRoadBindingApplied;
     private bool _mainMenuBuildingBindingApplied;
     private bool _mainMenuSelectionBindingApplied;
-    private RuntimeGridBlockerSystem _mainMenuFeatureBoundGridBlockers;
+    private RuntimeGridBlockerPresentationSystemHelper _mainMenuFeatureBoundGridBlockers;
     private RuntimeCityCompositionSystem _mainMenuFeatureBoundRuntimeCity;
     private IMatchHudSelectionPanelView _pendingMatchHudSelectionPanelView;
     private IMatchHudSelectionPanelView _boundMatchHudSelectionPanelView;
@@ -619,7 +619,7 @@ internal sealed class MatchBootstrapSystem
         Action selectionRuntimeUpdate,
         Camera worldCamera,
         RuntimeCityCompositionSystem runtimeCity,
-        RuntimeGridBlockerSystem runtimeGridBlockers,
+        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations,
         DayNightSystem dayNight,
         Action citizenPopulationRuntimeUpdate,
@@ -686,7 +686,7 @@ internal sealed class MatchBootstrapSystem
         Action disposeCitizenPopulation,
         DayNightSystem dayNight,
         RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations,
-        RuntimeGridBlockerSystem runtimeGridBlockers,
+        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeCityCompositionSystem runtimeCity,
         MapSurfaceRuntimeBootstrapSceneSystemHelper mapSurfaceRuntimeBootstrapSystem,
         RuntimeCameraReferenceSystem runtimeCameraReferenceSystem,

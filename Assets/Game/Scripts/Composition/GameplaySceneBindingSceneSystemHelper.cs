@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public sealed class GameplaySceneBindingSceneSystemHelper
 {
-    public void BindRuntimeGridBlockerDebugViews(RuntimeGridBlockerSystem runtimeGridBlockers)
+    public void BindRuntimeGridBlockerDebugViews(RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers)
     {
         IReadOnlyList<GridAuthoring> grids = GridAuthoring.Instances;
         for (int i = 0; i < grids.Count; i++)

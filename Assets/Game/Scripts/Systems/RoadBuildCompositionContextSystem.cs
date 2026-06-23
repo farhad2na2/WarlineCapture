@@ -371,7 +371,7 @@ internal sealed class RoadBuildCompositionContextSystem
         int width,
         int height)
     {
-        RuntimeGridBlockerSystem runtimeGridBlockers = source.RoadBuildDependencyState.RuntimeGridBlockers;
+        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = source.RoadBuildDependencyState.RuntimeGridBlockers;
         return runtimeGridBlockers != null && runtimeGridBlockers.IsRuntimeBlockerCell(x, y, width, height);
     }
 

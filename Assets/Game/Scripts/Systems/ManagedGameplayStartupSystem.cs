@@ -19,7 +19,7 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly System.Action RoadOnGui;
         public readonly System.Action DisposeRoad;
         public readonly System.Action<IMatchRuntimeUi> BindRoadMainMenu;
-        public readonly System.Action<IMatchRuntimeUi, RuntimeGridBlockerSystem> BindRoadGameplayFeatures;
+        public readonly System.Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> BindRoadGameplayFeatures;
         public readonly BuildingSelectionClickSystem BuildingSelectionClick;
         public readonly BuildingSelectionClickSystem.Context BuildingSelectionClickContext;
         public readonly BuildingRuntimeCitySpawnSystem BuildingRuntimeCitySpawn;
@@ -31,7 +31,7 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteraction;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
         public readonly System.Action<IMatchRuntimeUi> BindBuildingMainMenu;
-        public readonly System.Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindBuildingGameplayFeatures;
+        public readonly System.Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindBuildingGameplayFeatures;
         public readonly System.Action DisposeBuildingGameplay;
         public readonly BuildingRuntimeUpdateSystem BuildingRuntimeUpdate;
         public readonly BuildingRuntimeUpdateSystem.Context BuildingRuntimeUpdateContext;
@@ -58,7 +58,7 @@ internal sealed class ManagedGameplayStartupSystem
             System.Action roadOnGui,
             System.Action disposeRoad,
             System.Action<IMatchRuntimeUi> bindRoadMainMenu,
-            System.Action<IMatchRuntimeUi, RuntimeGridBlockerSystem> bindRoadGameplayFeatures,
+            System.Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> bindRoadGameplayFeatures,
             BuildingSelectionClickSystem buildingSelectionClick,
             BuildingSelectionClickSystem.Context buildingSelectionClickContext,
             BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawn,
@@ -70,7 +70,7 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingPlacementInteractionSystem buildingPlacementInteraction,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
             System.Action<IMatchRuntimeUi> bindBuildingMainMenu,
-            System.Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
+            System.Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
             System.Action disposeBuildingGameplay,
             BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
             BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
@@ -287,7 +287,7 @@ internal sealed class ManagedGameplayStartupSystem
                 building.Interaction,
                 building.InteractionContext,
                 mainMenu);
-        System.Action<IMatchRuntimeUi, RuntimeGridBlockerSystem> bindRoadGameplayFeatures = (mainMenu, runtimeGridBlockers) =>
+        System.Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> bindRoadGameplayFeatures = (mainMenu, runtimeGridBlockers) =>
             _roadBuildCompositionSystem.BindRuntimeGameplayFeatures(
                 road,
                 building.Interaction,

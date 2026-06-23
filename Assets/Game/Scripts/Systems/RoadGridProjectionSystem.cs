@@ -194,7 +194,7 @@ public sealed partial class RoadGridProjectionSystem : SystemBase
         ClearRoadBuffers(roadBuffers);
     }
 
-    public void RemoveRuntimeBlockersUnderRoads(Context context, RuntimeGridBlockerSystem runtimeGridBlockers)
+    public void RemoveRuntimeBlockersUnderRoads(Context context, RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers)
     {
         if (runtimeGridBlockers == null || !TryGetRoadBuffer(out _, out var grid) || context.RoadTiles == null)
             return;

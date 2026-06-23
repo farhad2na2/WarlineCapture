@@ -54,7 +54,7 @@ internal sealed class RoadBuildCompositionLifecycleSystem
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = default,
         IMatchRuntimeUi mainMenuPlayUi = null,
-        RuntimeGridBlockerSystem runtimeGridBlockers = null)
+        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null)
     {
         source.RoadBuildDependencySystem.BindDependencies(
             source.RoadBuildDependencyState,

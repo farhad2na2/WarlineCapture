@@ -37,7 +37,7 @@ public sealed class GameplayRuntimeUpdateSystem
         Action selectionRuntimeUpdate,
         Camera worldCamera,
         RuntimeCityCompositionSystem runtimeCity,
-        RuntimeGridBlockerSystem runtimeGridBlockers,
+        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations,
         DayNightSystem dayNight,
         Action citizenPopulationRuntimeUpdate,
@@ -239,7 +239,7 @@ public sealed class GameplayRuntimeUpdateSystem
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         RuntimeCityCompositionSystem runtimeCity,
-        RuntimeGridBlockerSystem runtimeGridBlockers,
+        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
     {
         if (!gameplayInitialized || !runtimeGameplayStateSystem.PlayRequested)
@@ -287,7 +287,7 @@ public sealed class GameplayRuntimeUpdateSystem
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         RuntimeCityCompositionSystem runtimeCity,
-        RuntimeGridBlockerSystem runtimeGridBlockers,
+        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
     {
         if (UnityEngine.Time.frameCount < _nextLoadingGateDiagnosticFrame)

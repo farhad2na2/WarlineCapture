@@ -7,12 +7,12 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
     public readonly struct Result
     {
         public readonly RuntimeCityCompositionSystem RuntimeCity;
-        public readonly RuntimeGridBlockerSystem RuntimeGridBlockers;
+        public readonly RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers;
         public readonly RuntimeDecorationSpawnerPresentationSystemHelper RuntimeDecorations;
 
         public Result(
             RuntimeCityCompositionSystem runtimeCity,
-            RuntimeGridBlockerSystem runtimeGridBlockers,
+            RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
             RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
         {
             RuntimeCity = runtimeCity;
@@ -27,12 +27,12 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
         RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig,
         RoadRuntimeGenerationSystem roadRuntimeGenerationSystem,
         RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
-        Action<IMatchRuntimeUi, RuntimeGridBlockerSystem> bindRoadGameplayFeatures,
+        Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> bindRoadGameplayFeatures,
         BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawn,
         BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-        Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
+        Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
         IMatchRuntimeUi mainMenu,
         SelectionUiCameraSystem selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
@@ -54,7 +54,7 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
             mainMenu);
 
         RuntimeCityReadModelCompositionSystemHelper runtimeCityReadModel = runtimeCity?.ReadModel;
-        RuntimeGridBlockerSystem runtimeGridBlockers = ResolveRuntimeGridBlockerSystem();
+        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = ResolveRuntimeGridBlockerPresentationHelper();
         runtimeGridBlockers?.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCityReadModel);
         bindRoadGameplayFeatures?.Invoke(mainMenu, runtimeGridBlockers);
         sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(runtimeGridBlockers);
@@ -77,11 +77,11 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
         return new Result(runtimeCity, runtimeGridBlockers, runtimeDecorations);
     }
 
-    private static RuntimeGridBlockerSystem ResolveRuntimeGridBlockerSystem()
+    private static RuntimeGridBlockerPresentationSystemHelper ResolveRuntimeGridBlockerPresentationHelper()
     {
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
-            ? new RuntimeGridBlockerSystem()
+            ? new RuntimeGridBlockerPresentationSystemHelper()
             : null;
     }
 

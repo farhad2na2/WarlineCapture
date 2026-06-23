@@ -12,7 +12,7 @@ internal sealed class RoadBuildInteractionSystem
         public readonly RoadBuildPlacementStorageSystem StorageSystem;
         public readonly RoadBuildEcsBoundarySystem EcsSystem;
         public readonly RoadBuildEcsBoundarySystem.Context EcsContext;
-        public readonly RuntimeGridBlockerSystem RuntimeGridBlockers;
+        public readonly RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers;
         public readonly RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly RoadBuildEcsBoundarySystem.TryGetGridDataDelegate TryGetGridData;
         public readonly TryGetGridCellDelegate TryGetGridCell;
@@ -22,7 +22,7 @@ internal sealed class RoadBuildInteractionSystem
             RoadBuildPlacementStorageSystem storageSystem,
             RoadBuildEcsBoundarySystem ecsSystem,
             RoadBuildEcsBoundarySystem.Context ecsContext,
-            RuntimeGridBlockerSystem runtimeGridBlockers,
+            RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
             RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate tryGetEntityManager,
             RoadBuildEcsBoundarySystem.TryGetGridDataDelegate tryGetGridData,
             TryGetGridCellDelegate tryGetGridCell,

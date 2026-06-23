@@ -91,7 +91,7 @@ Nested types:
 - `CitizenPopulationCompositionSystem.Result CitizenPopulationComposition`
 - `System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings`
 - `Action<MainMenuPlayUI> BindMainMenu`
-- `Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindGameplayFeatures`
+- `Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindGameplayFeatures`
 - `Action Dispose`
 
 `Result` private dependency fields that support public result behavior:

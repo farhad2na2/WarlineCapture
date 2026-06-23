@@ -2,7 +2,7 @@ using Unity.Entities;
 using UnityEngine;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 
-internal sealed class BuildingPlacementVisualCompositionSystem
+internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
 {
     internal delegate bool TryGetGridCellDelegate(
         BuildingGameplayCompositionSourceSystem source,

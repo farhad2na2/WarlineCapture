@@ -199,8 +199,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingPlacementCommandCompositionSystemHelper` now owns placement command context/source construction and build-mode command handoffs.
 
 21. Complete: Extract placement visual update composition
-   - Move `UpdatePlacement`, `CreatePlacementVisualUpdateContext`, `FocusActivePlacement`, `ValidateActivePlacementForConfirm`, `UpdatePlacementVisual`, and `PlaceBuilding` wrappers into `BuildingPlacementVisualCompositionSystem`.
-   - Result: `BuildingPlacementVisualCompositionSystem` now owns placement visual update context and callback wrappers.
+   - Move `UpdatePlacement`, `CreatePlacementVisualUpdateContext`, `FocusActivePlacement`, `ValidateActivePlacementForConfirm`, `UpdatePlacementVisual`, and `PlaceBuilding` wrappers into `BuildingPlacementVisualCompositionPresentationSystemHelper`.
+   - Result: `BuildingPlacementVisualCompositionPresentationSystemHelper` now owns placement visual update context and callback wrappers.
 
 22. Complete: Extract initial placement origin and validation adapters
    - Move `TryResolveInitialPlacementOrigin`, `GetCenterScreenPlacementOrigin`, `IsActivePlacementValid`, `IsPlacementValid`, and gate alignment adapter glue into `BuildingPlacementAdapterSystem`.

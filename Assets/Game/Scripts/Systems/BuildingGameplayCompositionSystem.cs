@@ -217,7 +217,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 preferredOrigin,
                 createBuildingRuntimeContextSourceForAdapter,
                 out resolvedOrigin);
-        BuildingPlacementVisualCompositionSystem.IsActivePlacementValidDelegate isActivePlacementValid =
+        BuildingPlacementVisualCompositionPresentationSystemHelper.IsActivePlacementValidDelegate isActivePlacementValid =
             (source, originCell, footprintCells, grid, roads, blockerData) => source.BuildingPlacementAdapterSystem.IsActivePlacementValid(
                 source,
                 originCell,
@@ -235,7 +235,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     definition,
                     createRuntimeContextSourceForAdapter,
                     out gateVertical);
-        BuildingPlacementVisualCompositionSystem.TryAlignGateToNearbyWallDelegate tryAlignGateForVisual =
+        BuildingPlacementVisualCompositionPresentationSystemHelper.TryAlignGateToNearbyWallDelegate tryAlignGateForVisual =
             (BuildingGameplayCompositionSourceSystem source, Vector2Int originCell, BuildingDefinition definition, out bool gateVertical) =>
                 source.BuildingPlacementAdapterSystem.TryAlignGateToNearbyWall(
                     source,
@@ -243,10 +243,10 @@ internal sealed class BuildingGameplayCompositionSystem
                     definition,
                     createRuntimeContextSourceForAdapter,
                     out gateVertical);
-        BuildingPlacementVisualCompositionSystem.CreatePlacementContextSourceDelegate createPlacementContextSource = null;
+        BuildingPlacementVisualCompositionPresentationSystemHelper.CreatePlacementContextSourceDelegate createPlacementContextSource = null;
         BuildingPlacementCommandCompositionSystemHelper.UpdatePlacementVisualDelegate updatePlacementVisual =
             (source, placementInteractionContext, placementMarkerPropertyBlock, placement, updateCellFromPointer, screenPosition) =>
-                source.BuildingPlacementVisualCompositionSystem?.UpdatePlacementVisual(
+                source.BuildingPlacementVisualCompositionPresentationSystemHelper?.UpdatePlacementVisual(
                     source,
                     placementInteractionContext,
                     placementMarkerPropertyBlock,
@@ -262,7 +262,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createBuildingSelectionContext);
         BuildingPlacementCommandCompositionSystemHelper.FocusActivePlacementDelegate focusActivePlacement =
             (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
-                source.BuildingPlacementVisualCompositionSystem?.FocusActivePlacement(
+                source.BuildingPlacementVisualCompositionPresentationSystemHelper?.FocusActivePlacement(
                     source,
                     placementInteractionContext,
                     placementMarkerPropertyBlock,
@@ -276,8 +276,8 @@ internal sealed class BuildingGameplayCompositionSystem
                     createBuildingSelectionContext);
         BuildingPlacementCommandCompositionSystemHelper.ValidateActivePlacementForConfirmDelegate validateActivePlacementForConfirm =
             (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
-                source.BuildingPlacementVisualCompositionSystem != null &&
-                source.BuildingPlacementVisualCompositionSystem.ValidateActivePlacementForConfirm(
+                source.BuildingPlacementVisualCompositionPresentationSystemHelper != null &&
+                source.BuildingPlacementVisualCompositionPresentationSystemHelper.ValidateActivePlacementForConfirm(
                     source,
                     placementInteractionContext,
                     placementMarkerPropertyBlock,
@@ -291,7 +291,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createBuildingSelectionContext);
         BuildingPlacementCommandCompositionSystemHelper.PlaceBuildingDelegate placeBuilding =
             (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
-                source.BuildingPlacementVisualCompositionSystem?.PlaceBuilding(
+                source.BuildingPlacementVisualCompositionPresentationSystemHelper?.PlaceBuilding(
                     source,
                     placementInteractionContext,
                     placementMarkerPropertyBlock,
@@ -305,7 +305,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createBuildingSelectionContext);
         BuildingPlacementCommandCompositionSystemHelper.UpdatePlacementDelegate updatePlacement =
             (source, placementInteractionContext, placementMarkerPropertyBlock, screenPosition) =>
-                source.BuildingPlacementVisualCompositionSystem?.UpdatePlacement(
+                source.BuildingPlacementVisualCompositionPresentationSystemHelper?.UpdatePlacement(
                     source,
                     placementInteractionContext,
                     placementMarkerPropertyBlock,

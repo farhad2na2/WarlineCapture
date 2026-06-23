@@ -4,7 +4,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly RuntimeDiagnosticsSystem RuntimeDiagnosticsSystem = new();
     internal readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem = new();
     internal readonly BuildingVisualSystem BuildingVisualSystem;
-    internal readonly BuildingRuntimeVisualSystem BuildingRuntimeVisualSystem;
+    internal readonly BuildingRuntimeVisualPresentationSystemHelper BuildingRuntimeVisualPresentationSystemHelper;
     internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem;
     internal readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
     internal readonly BuildingDestroyedVisualPresentationSystemHelper BuildingDestroyedVisualPresentationSystemHelper;
@@ -88,7 +88,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     public BuildingGameplaySourceCompositionSystemHelper()
     {
         BuildingVisualSystem = ResolveBuildingVisualSystem();
-        BuildingRuntimeVisualSystem = ResolveBuildingRuntimeVisualSystem();
+        BuildingRuntimeVisualPresentationSystemHelper = ResolveBuildingRuntimeVisualPresentationSystemHelper();
         BuildingSelectionMarkerSystem = ResolveBuildingSelectionMarkerSystem();
         BuildingFactionVisualSystem = ResolveBuildingFactionVisualSystem();
         BuildingDestroyedVisualPresentationSystemHelper = ResolveBuildingDestroyedVisualPresentationSystemHelper();
@@ -115,9 +115,9 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
             : null;
     }
 
-    private static BuildingRuntimeVisualSystem ResolveBuildingRuntimeVisualSystem()
+    private static BuildingRuntimeVisualPresentationSystemHelper ResolveBuildingRuntimeVisualPresentationSystemHelper()
     {
-        return new BuildingRuntimeVisualSystem();
+        return new BuildingRuntimeVisualPresentationSystemHelper();
     }
 
     private static BuildingSelectionMarkerSystem ResolveBuildingSelectionMarkerSystem()

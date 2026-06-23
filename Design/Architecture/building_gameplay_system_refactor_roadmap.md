@@ -50,7 +50,7 @@ Step 23 configured unit prefab resolution transition size: 1678 lines. Configure
 
 Step 24 initial roster/test helper transition size: 1599 lines. Initial roster and initial-building spawn remain in `BuildingRuntimeSpawnSystem` / `BuildingRuntimeSpawnCommandSystem`; editor-only runtime test helpers moved out of `BuildingGameplaySystem`, and step 35 later deleted `BuildingGameplayTestHarness`.
 
-Step 25 visual helper transition size: 1583 lines. Placement visual instance creation, placement visual positioning, footprint-center delegates, runtime visual initialization, runtime marker visibility refresh, and owner-faction visual tint now route directly through `BuildingPlacementVisualPresentationSystemHelper`, `BuildingPlacementGridSystem`, `BuildingRuntimeVisualSystem`, and `BuildingRuntimeOwnershipSystem`; `BuildingGameplaySystem` no longer keeps visual helper wrapper methods.
+Step 25 visual helper transition size: 1583 lines. Placement visual instance creation, placement visual positioning, footprint-center delegates, runtime visual initialization, runtime marker visibility refresh, and owner-faction visual tint now route directly through `BuildingPlacementVisualPresentationSystemHelper`, `BuildingPlacementGridSystem`, `BuildingRuntimeVisualPresentationSystemHelper`, and `BuildingRuntimeOwnershipSystem`; `BuildingGameplaySystem` no longer keeps visual helper wrapper methods.
 
 Step 26 building selection transition size: 1542 lines. Visible selectable checks, selected-building deletion, select/focus, focus-world-position resolution, and camera-focus selection flow now route through `BuildingSelectionSystem`; `BuildingGameplaySystem` no longer keeps private selection/focus helper wrappers.
 
@@ -320,11 +320,11 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 ## Phase 7: Move Visual, Selection, Combat, Barrier, And Redirect Surface
 
 25. Complete: Move visual instance and positioning helpers
-   - Move `CreateBuildingVisualInstance`, `PositionBuildingObject`, footprint center, transformed bounds, marker visibility, resource visuals, owner faction tint, and visual initialization into `BuildingVisualSystem` / `BuildingRuntimeVisualSystem`.
+   - Move `CreateBuildingVisualInstance`, `PositionBuildingObject`, footprint center, transformed bounds, marker visibility, resource visuals, owner faction tint, and visual initialization into `BuildingVisualSystem` / `BuildingRuntimeVisualPresentationSystemHelper`.
    - Expected output: GameObject visual policy is isolated.
    - Placement visual instance creation and positioning now route directly to `BuildingPlacementVisualPresentationSystemHelper` from context construction.
    - Footprint-center delegates now route directly to `BuildingPlacementGridSystem`.
-   - Runtime visual initialization and marker refresh now route directly to `BuildingRuntimeVisualSystem`, and owner-faction tint remains behind `BuildingRuntimeOwnershipSystem`.
+   - Runtime visual initialization and marker refresh now route directly to `BuildingRuntimeVisualPresentationSystemHelper`, and owner-faction tint remains behind `BuildingRuntimeOwnershipSystem`.
    - `BuildingGameplaySystem` no longer declares visual helper wrapper methods.
 
 26. Complete: Move building selection and camera focus

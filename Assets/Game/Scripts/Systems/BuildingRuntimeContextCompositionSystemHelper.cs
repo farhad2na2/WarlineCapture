@@ -170,7 +170,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             source.BuildingPlacementRedirectCompositionSystemHelper,
             source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,
             () => source.BuildingGameplayEcsQueryCompositionSystemHelper.RedirectUnitsQuery,
-            building => source.BuildingRuntimeVisualSystem.InitializeBuildingVisuals(
+            building => source.BuildingRuntimeVisualPresentationSystemHelper.InitializeBuildingVisuals(
                 source.BuildingRuntimeContextSystem.CreateRuntimeVisualContext(CreateRuntimeSource()),
                 building),
             () => source.BuildingSelectionMarkerSystem.Refresh(
@@ -239,7 +239,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                     source.BuildingRuntimeResourcePrefabCompositionHelper,
                     source)),
             source.BuildingVisualSystem,
-            source.BuildingRuntimeVisualSystem,
+            source.BuildingRuntimeVisualPresentationSystemHelper,
             source.BuildingFactionVisualSystem,
             source.BuildingDestroyedVisualPresentationSystemHelper,
             source.BuildingBarrierSystem,

@@ -9,7 +9,7 @@ Building ownership remains runtime/ECS state. Building faction visual projection
 ## Ownership Rules
 
 - `BuildingFactionVisualSystem` owns applying and clearing building owner-faction visuals.
-- `BuildingRuntimeVisualSystem` caches visible building renderers and their base colors during runtime visual initialization.
+- `BuildingRuntimeVisualPresentationSystemHelper` caches visible building renderers and their base colors during runtime visual initialization.
 - `BuildingRuntimeOwnershipSystem` updates ownership state, combat faction data, gate friendly-pass data, and delegates visual projection to `BuildingFactionVisualSystem`.
 - `BuildingPlacementSystemConfig` owns building-specific faction visual policy such as tint strength.
 - Building prefabs under `Assets/Game/Prefabs/Buildings` must not contain `FactionMarker` children.
@@ -22,7 +22,7 @@ Building ownership remains runtime/ECS state. Building faction visual projection
 2. Add explicit building faction visual config through the building gameplay config path.
 3. Add `BuildingFactionVisualSystem`.
 4. Update `RuntimeBuildingData` to remove `FactionMarker` fields and store cached renderers/base colors.
-5. Update `BuildingRuntimeVisualSystem` to stop finding `FactionMarker` and cache real building renderers.
+5. Update `BuildingRuntimeVisualPresentationSystemHelper` to stop finding `FactionMarker` and cache real building renderers.
 6. Wire `BuildingRuntimeOwnershipSystem` through `BuildingFactionVisualSystem`.
 7. Update destroy/cleanup paths to remove `FactionMarker` visibility handling.
 8. Remove `FactionMarker` children and inherited overrides from building prefabs.

@@ -16,7 +16,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
         float destroyedBuildingLifetimeSeconds)
     {
         BuildingRuntimeContextSystem.RuntimeSource runtimeSource = createRuntimeContextSource(source);
-        BuildingRuntimeVisualSystem.Context runtimeVisualContext = source.BuildingRuntimeContextSystem.CreateRuntimeVisualContext(runtimeSource);
+        BuildingRuntimeVisualPresentationSystemHelper.Context runtimeVisualContext = source.BuildingRuntimeContextSystem.CreateRuntimeVisualContext(runtimeSource);
         BuildingSelectionMarkerSystem.Context selectionMarkerContext =
             source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
                 runtimeSource,
@@ -30,7 +30,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
         return new BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source(
             createProductionRuntimeTickContext(source),
             createRuntimeBoundaryPublishContext(source, interactionContext, markerPropertyBlock),
-            () => source.BuildingRuntimeVisualSystem.UpdateBuildingResourceVisuals(runtimeVisualContext, UnityEngine.Time.time),
+            () => source.BuildingRuntimeVisualPresentationSystemHelper.UpdateBuildingResourceVisuals(runtimeVisualContext, UnityEngine.Time.time),
             () => source.BuildingCombatSystem.SyncDestroyedRuntimeBuildingCombatEntities(
                 combatContext,
                 UnityEngine.Time.time,

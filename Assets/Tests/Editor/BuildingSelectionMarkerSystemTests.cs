@@ -200,9 +200,9 @@ public sealed class BuildingSelectionMarkerSystemTests
             Instance = buildingObject,
             Definition = new BuildingDefinition { FootprintCells = new Vector2Int(4, 4) }
         };
-        BuildingRuntimeVisualSystem visualSystem = CreateBuildingRuntimeVisualSystem();
+        BuildingRuntimeVisualPresentationSystemHelper visualSystem = CreateBuildingRuntimeVisualPresentationSystemHelper();
         var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity> { { 1, building } };
-        var context = new BuildingRuntimeVisualSystem.Context(
+        var context = new BuildingRuntimeVisualPresentationSystemHelper.Context(
             runtimeBuildings,
             CreateBuildingVisualSystem(),
             CreateBuildingFactionVisualSystem(),
@@ -295,9 +295,9 @@ public sealed class BuildingSelectionMarkerSystemTests
         return _world.GetOrCreateSystemManaged<BuildingFactionVisualSystem>();
     }
 
-    private BuildingRuntimeVisualSystem CreateBuildingRuntimeVisualSystem()
+    private BuildingRuntimeVisualPresentationSystemHelper CreateBuildingRuntimeVisualPresentationSystemHelper()
     {
-        return new BuildingRuntimeVisualSystem();
+        return new BuildingRuntimeVisualPresentationSystemHelper();
     }
 
     private BuildingSelectionMarkerSystem CreateBuildingSelectionMarkerSystem()

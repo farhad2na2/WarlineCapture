@@ -12,7 +12,7 @@ Building selection state stays in `RuntimeBuildingSystem`. Building selection ma
 - The marker prefab is passed through explicit building gameplay config/composition.
 - Building marker position is derived from selected runtime building origin, footprint, and grid cell size.
 - Building marker visibility is refreshed from `RuntimeBuildingSystem.CurrentActiveBuildingId`.
-- `BuildingRuntimeVisualSystem` initializes persistent live building visuals only, including `Door_Z`, alive roots, animated parts, and building faction visual renderer caches. Destroyed building visual projection belongs to `BuildingDestroyedVisualPresentationSystemHelper`.
+- `BuildingRuntimeVisualPresentationSystemHelper` initializes persistent live building visuals only, including `Door_Z`, alive roots, animated parts, and building faction visual renderer caches. Destroyed building visual projection belongs to `BuildingDestroyedVisualPresentationSystemHelper`.
 - Building owner-faction visuals are handled by `BuildingFactionVisualSystem`, not per-building `FactionMarker` children.
 - Building prefabs under `Assets/Game/Prefabs/Buildings` must not contain a `SelectionMarker` child.
 - Unit selection marker components and the `SelectionMarker` child in `Assets/Game/Prefabs/Characters/Unit.prefab` are intentionally allowed.
@@ -24,16 +24,16 @@ Building selection state stays in `RuntimeBuildingSystem`. Building selection ma
 3. Add `BuildingSelectionMarkerSystem` with an explicit context containing runtime buildings, `RuntimeBuildingSystem`, grid lookup, footprint-center delegate, marker prefab, marker parent/root, visual system, faction visuals, and marker property block.
 4. Wire `BuildingSelectionMarkerSystem` through `BuildingGameplaySourceCompositionSystemHelper`, startup config, and composition context creation.
 5. Replace building marker refresh callbacks so they call `BuildingSelectionMarkerSystem.Refresh`.
-6. Remove building `SelectionMarker` storage from `RuntimeBuildingData` and stop `BuildingRuntimeVisualSystem` from finding or toggling per-building selection markers.
+6. Remove building `SelectionMarker` storage from `RuntimeBuildingData` and stop `BuildingRuntimeVisualPresentationSystemHelper` from finding or toggling per-building selection markers.
 7. Update combat/destroy paths so selected-building removal clears selection and refreshes the shared marker.
 8. Remove `SelectionMarker` children from `Building.prefab` and `Tent.prefab`.
-9. Add architecture tests preventing `SelectionMarker` children in building prefabs and preventing selection-marker state from returning to `RuntimeBuildingData` or `BuildingRuntimeVisualSystem`.
+9. Add architecture tests preventing `SelectionMarker` children in building prefabs and preventing selection-marker state from returning to `RuntimeBuildingData` or `BuildingRuntimeVisualPresentationSystemHelper`.
 10. Add focused behavior tests covering one shared marker moving between selected buildings, hidden-on-clear, hidden-on-destroy, faction marker tint preservation, and unit marker exemption.
 
 ## Validation Gates
 
 - EditMode: `BuildingSelectionMarkerSystemTests`
-- EditMode: `BuildingRuntimeVisualSystemTests`
+- EditMode: `BuildingRuntimeVisualPresentationSystemHelperTests`
 - EditMode: `RuntimeBuildingSystemTests`
 - EditMode: `GameplayArchitectureContractTests`
 - Prefab scan: no `SelectionMarker` under `Assets/Game/Prefabs/Buildings/*.prefab`
@@ -47,7 +47,7 @@ Building selection state stays in `RuntimeBuildingSystem`. Building selection ma
 - Step 3: Complete. `BuildingSelectionMarkerSystem` owns the shared marker instance, refresh, move, resize, hide, and disposal behavior.
 - Step 4: Complete. Building placement config and managed composition now expose the marker prefab through explicit context wiring.
 - Step 5: Complete. Building marker refresh callbacks now route to `BuildingSelectionMarkerSystem.Refresh`.
-- Step 6: Complete. `RuntimeBuildingData` and `BuildingRuntimeVisualSystem` no longer store or toggle per-building selection markers.
+- Step 6: Complete. `RuntimeBuildingData` and `BuildingRuntimeVisualPresentationSystemHelper` no longer store or toggle per-building selection markers.
 - Step 7: Complete. Combat/destroy paths still clear selection and refresh the shared marker through the existing runtime marker refresh callback.
 - Step 8: Complete. `SelectionMarker` children removed from `Building.prefab` and `Tent.prefab`; variants inherit the cleanup.
 - Step 9: Complete. Architecture drift guard added for building prefab marker children and runtime marker ownership.

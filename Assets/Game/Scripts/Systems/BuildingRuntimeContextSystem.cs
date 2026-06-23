@@ -13,7 +13,7 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
         public readonly BuildingSpawnPrefabSystem.Context SpawnPrefabContext;
         public readonly BuildingVisualSystem BuildingVisualSystem;
-        public readonly BuildingRuntimeVisualSystem RuntimeVisualSystem;
+        public readonly BuildingRuntimeVisualPresentationSystemHelper RuntimeVisualSystem;
         public readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
         public readonly BuildingDestroyedVisualPresentationSystemHelper BuildingDestroyedVisualPresentationSystemHelper;
         public readonly BuildingBarrierSystem BarrierSystem;
@@ -54,7 +54,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingSpawnPrefabSystem spawnPrefabSystem,
             BuildingSpawnPrefabSystem.Context spawnPrefabContext,
             BuildingVisualSystem buildingVisualSystem,
-            BuildingRuntimeVisualSystem runtimeVisualSystem,
+            BuildingRuntimeVisualPresentationSystemHelper runtimeVisualSystem,
             BuildingFactionVisualSystem buildingFactionVisualSystem,
             BuildingDestroyedVisualPresentationSystemHelper buildingDestroyedVisualPresentationHelper,
             BuildingBarrierSystem barrierSystem,
@@ -371,9 +371,9 @@ internal sealed class BuildingRuntimeContextSystem
             destroyedBuildingLifetimeSeconds);
     }
 
-    public BuildingRuntimeVisualSystem.Context CreateRuntimeVisualContext(RuntimeSource source)
+    public BuildingRuntimeVisualPresentationSystemHelper.Context CreateRuntimeVisualContext(RuntimeSource source)
     {
-        return new BuildingRuntimeVisualSystem.Context(
+        return new BuildingRuntimeVisualPresentationSystemHelper.Context(
             source.RuntimeBuildingSystem.Buildings,
             source.BuildingVisualSystem,
             source.BuildingFactionVisualSystem,

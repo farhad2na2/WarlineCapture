@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeVisualSystem
+internal sealed class BuildingRuntimeVisualPresentationSystemHelper
 {
     public readonly struct Context
     {

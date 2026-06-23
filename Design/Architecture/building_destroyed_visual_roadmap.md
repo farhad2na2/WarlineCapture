@@ -10,7 +10,7 @@ Building destruction state remains owned by `BuildingCombatSystem`. Destroyed vi
 
 - `BuildingDefinitionAuthoringConfig` owns the per-building destroyed visual prefab reference.
 - `BuildingDefinitionAuthoring` projects the config reference into `BuildingDefinition`.
-- `BuildingRuntimeVisualSystem` initializes live building visuals only; it must not find or cache `Destroyed` children.
+- `BuildingRuntimeVisualPresentationSystemHelper` initializes live building visuals only; it must not find or cache `Destroyed` children.
 - `BuildingDestroyedVisualPresentationSystemHelper` owns spawning, caching, hiding, and cleanup of runtime destroyed visual instances.
 - `BuildingCombatSystem` owns destroyed state, cleanup deadlines, blocker/entity cleanup, and delegates visual projection to `BuildingDestroyedVisualPresentationSystemHelper` through explicit context.
 - Building prefabs under `Assets/Game/Prefabs/Buildings` must not contain `Destroyed` children after migration.
@@ -36,7 +36,7 @@ Building destruction state remains owned by `BuildingCombatSystem`. Destroyed vi
 - Step 3: Complete. Building definition authoring/config now projects `DestroyedVisualPrefab` into runtime building definitions.
 - Step 4: Complete. Existing prefab `Destroyed` children were extracted into standalone prefabs under `Assets/Game/Prefabs/Buildings/Destroyed`.
 - Step 5: Complete. `BuildingDestroyedVisualPresentationSystemHelper` owns spawned destroyed visual instances and cleanup.
-- Step 6: Complete. `BuildingRuntimeVisualSystem` no longer finds or caches `Destroyed` children from live building prefabs.
+- Step 6: Complete. `BuildingRuntimeVisualPresentationSystemHelper` no longer finds or caches `Destroyed` children from live building prefabs.
 - Step 7: Complete. `BuildingCombatSystem` delegates destroyed visual begin/cleanup through `BuildingDestroyedVisualPresentationSystemHelper`.
 - Step 8: Complete. Live building prefabs no longer contain `Destroyed` children.
 - Step 9: Complete. Architecture and focused destroyed visual behavior tests cover the new boundary.

@@ -143,7 +143,7 @@ Road build, road visuals, and road footprint projection:
 
 Runtime city, decorations, and blockers:
 
-- `Assets/Game/Scripts/Environment/RuntimeCityVisualSystem.cs`, `RuntimeDecorationSpawnerSystem.cs`, and `RuntimeGridBlockerSystem.cs`: runtime city visuals/decorations/blocker visuals use local flat y or flat cell centers.
+- `Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs`, `RuntimeDecorationSpawnerSystem.cs`, and `RuntimeGridBlockerSystem.cs`: runtime city visuals/decorations/blocker visuals use local flat y or flat cell centers.
 - Runtime city building and road generation must keep existing counts, random order, yield points, and reservation rules while adopting surface queries.
 
 Selection, camera focus, command targeting, and markers:
@@ -346,7 +346,7 @@ Pathfinding integration rule:
    - Runtime city roads, buildings, decorations, and walkable reservations use surface queries.
    - Keep existing runtime city counts, random order, yield points, and placement rules.
    - Added `RuntimeCitySurfaceIntegrationSystem` as the fail-open surface boundary for city visual grounding, footprint reservation checks, road path checks, and primary-surface lookup.
-   - `RuntimeCityVisualSystem` now routes visual-only city prefab centers through the surface integration boundary when a baked surface is configured.
+   - `RuntimeCityVisualPresentationSystemHelper` now routes visual-only city prefab centers through the surface integration boundary when a baked surface is configured.
    - Runtime city generation counts, random order, coroutine/yield behavior, walkability reservation ownership, and road/building placement rules are unchanged.
 
 31. Complete: Add command targeting surface resolution

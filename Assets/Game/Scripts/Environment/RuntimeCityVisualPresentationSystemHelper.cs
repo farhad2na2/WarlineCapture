@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal sealed class RuntimeCityVisualSystem
+internal sealed class RuntimeCityVisualPresentationSystemHelper
 {
     private RuntimeCitySurfaceIntegrationSystem _surfaceIntegrationSystem;
     private Transform _runtimeRoot;

@@ -11,7 +11,7 @@ internal sealed class RuntimeCityYardWallVisualSystem
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
-        RuntimeCityVisualSystem visualSystem,
+        RuntimeCityVisualPresentationSystemHelper visualSystem,
         RuntimeCityYardGateState gateSystem,
         RectInt yardRect,
         YardSide gateSide,
@@ -41,7 +41,7 @@ internal sealed class RuntimeCityYardWallVisualState
         RuntimeCityBuildingSpawnContextSystem.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
-        RuntimeCityVisualSystem visualSystem,
+        RuntimeCityVisualPresentationSystemHelper visualSystem,
         RuntimeCityYardGateState gateSystem,
         RectInt yardRect,
         YardSide gateSide,
@@ -80,7 +80,7 @@ internal sealed class RuntimeCityYardWallVisualState
 
     private void PlaceHorizontalWallSide(
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
-        RuntimeCityVisualSystem visualSystem,
+        RuntimeCityVisualPresentationSystemHelper visualSystem,
         RectInt yardRect,
         int yOrigin,
         int totalLength,
@@ -102,7 +102,7 @@ internal sealed class RuntimeCityYardWallVisualState
 
     private void PlaceHorizontalWallRun(
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
-        RuntimeCityVisualSystem visualSystem,
+        RuntimeCityVisualPresentationSystemHelper visualSystem,
         int xOrigin,
         int yOrigin,
         int totalLength,
@@ -141,7 +141,7 @@ internal sealed class RuntimeCityYardWallVisualState
 
     private void PlaceVerticalWallSide(
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
-        RuntimeCityVisualSystem visualSystem,
+        RuntimeCityVisualPresentationSystemHelper visualSystem,
         RectInt yardRect,
         int xOrigin,
         int totalLength,
@@ -162,7 +162,7 @@ internal sealed class RuntimeCityYardWallVisualState
 
     private void PlaceVerticalWallRun(
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
-        RuntimeCityVisualSystem visualSystem,
+        RuntimeCityVisualPresentationSystemHelper visualSystem,
         int xOrigin,
         int yOrigin,
         int totalLength,

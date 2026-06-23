@@ -5,7 +5,7 @@ internal sealed class RuntimeCityBuildingSpawnContextSystem
         RuntimeCityBuildingPlotState buildingPlotSystem,
         RuntimeCityWalkabilityState walkabilitySystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
-        RuntimeCityVisualSystem visualSystem,
+        RuntimeCityVisualPresentationSystemHelper visualSystem,
         RuntimeCitySpawnBridgeState spawnBridgeSystem,
         RuntimeCityDiagnosticsSystemHelper diagnosticSystem)
     {
@@ -24,7 +24,7 @@ internal sealed class RuntimeCityBuildingSpawnContextSystem
         RuntimeCityBuildingPlotState buildingPlotSystem,
         RuntimeCityWalkabilityState walkabilitySystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
-        RuntimeCityVisualSystem visualSystem,
+        RuntimeCityVisualPresentationSystemHelper visualSystem,
         RuntimeCitySpawnBridgeState spawnBridgeSystem,
         RuntimeCityDiagnosticsSystemHelper diagnosticSystem)
     {
@@ -109,7 +109,7 @@ internal sealed class RuntimeCityBuildingSpawnContextSystem
         public readonly RuntimeCityBuildingPlotState BuildingPlotSystem;
         public readonly RuntimeCityWalkabilityState WalkabilitySystem;
         public readonly RuntimeCityPrefabSelectionState PrefabSelectionSystem;
-        public readonly RuntimeCityVisualSystem VisualSystem;
+        public readonly RuntimeCityVisualPresentationSystemHelper VisualSystem;
         public readonly RuntimeCitySpawnBridgeState SpawnBridgeSystem;
         public readonly RuntimeCityDiagnosticsSystemHelper DiagnosticSystem;
 
@@ -118,7 +118,7 @@ internal sealed class RuntimeCityBuildingSpawnContextSystem
             RuntimeCityBuildingPlotState buildingPlotSystem,
             RuntimeCityWalkabilityState walkabilitySystem,
             RuntimeCityPrefabSelectionState prefabSelectionSystem,
-            RuntimeCityVisualSystem visualSystem,
+            RuntimeCityVisualPresentationSystemHelper visualSystem,
             RuntimeCitySpawnBridgeState spawnBridgeSystem,
             RuntimeCityDiagnosticsSystemHelper diagnosticSystem)
         {

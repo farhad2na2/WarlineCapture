@@ -57,7 +57,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityFreeScatterDecorationState _fallbackRuntimeCityFreeScatterDecoration = new();
     private RuntimeCityDecorationBuildingSpawnSystem _runtimeCityDecorationBuildingSpawnSystem;
     private readonly RuntimeCityDecorationBuildingSpawnState _fallbackRuntimeCityDecorationBuildingSpawn = new();
-    private RuntimeCityVisualSystem _runtimeCityVisualSystem;
+    private RuntimeCityVisualPresentationSystemHelper _runtimeCityVisualPresentationSystemHelper;
     private RuntimeCitySpawnBridgeSystem _runtimeCitySpawnBridgeSystem;
     private readonly RuntimeCitySpawnBridgeState _fallbackRuntimeCitySpawnBridge = new();
     private RuntimeCityRoadBuildBridgeSystem _runtimeCityRoadBuildBridgeSystem;
@@ -131,7 +131,7 @@ public sealed class RuntimeCityCompositionSystem
         _config = configAsset;
         RuntimeCityRoadBuildBridgeState.Configure(roadRuntimeGenerationSystem, roadRuntimeGenerationContext);
         RuntimeCitySpawnBridgeState.Configure(buildingRuntimeCitySpawnSystem, buildingRuntimeCitySpawnContext);
-        RuntimeCityVisualSystem?.SetRuntimeRoot(runtimeRoot);
+        RuntimeCityVisualPresentationSystemHelper?.SetRuntimeRoot(runtimeRoot);
         RuntimeCityMinimapEventSystem?.Configure(mainMenuPlayUi);
         ApplyConfigIfAvailable();
         PublishReadModel();
@@ -157,7 +157,7 @@ public sealed class RuntimeCityCompositionSystem
             return;
 
         (_runtimeCityLifecycleSystem?.State ?? _fallbackRuntimeCityLifecycle).CancelGeneration();
-        _runtimeCityVisualSystem?.Dispose();
+        _runtimeCityVisualPresentationSystemHelper?.Dispose();
         (_runtimeCitySpawnBridgeSystem?.State ?? _fallbackRuntimeCitySpawnBridge).Clear();
         (_runtimeCityRoadBuildBridgeSystem?.State ?? _fallbackRuntimeCityRoadBuildBridge).Clear();
         _runtimeCityReadinessQuerySystem?.Clear();
@@ -193,7 +193,7 @@ public sealed class RuntimeCityCompositionSystem
                 RuntimeCityBuildingPlotState,
                 RuntimeCityWalkabilityState,
                 RuntimeCityPrefabSelectionState,
-                RuntimeCityVisualSystem,
+                RuntimeCityVisualPresentationSystemHelper,
                 RuntimeCitySpawnBridgeState,
                 RuntimeCityDiagnosticsSystemHelper)
             : global::RuntimeCityBuildingSpawnContextSystem.CreateFallback(
@@ -201,7 +201,7 @@ public sealed class RuntimeCityCompositionSystem
                 RuntimeCityBuildingPlotState,
                 RuntimeCityWalkabilityState,
                 RuntimeCityPrefabSelectionState,
-                RuntimeCityVisualSystem,
+                RuntimeCityVisualPresentationSystemHelper,
                 RuntimeCitySpawnBridgeState,
                 RuntimeCityDiagnosticsSystemHelper);
     }
@@ -355,8 +355,8 @@ public sealed class RuntimeCityCompositionSystem
             RuntimeCityRoadLayoutState);
     }
 
-    private RuntimeCityVisualSystem RuntimeCityVisualSystem =>
-        _runtimeCityVisualSystem ??= ResolveRuntimeCityVisualSystem();
+    private RuntimeCityVisualPresentationSystemHelper RuntimeCityVisualPresentationSystemHelper =>
+        _runtimeCityVisualPresentationSystemHelper ??= ResolveRuntimeCityVisualPresentationSystemHelper();
 
     private RuntimeCityMinimapEventSystem RuntimeCityMinimapEventSystem =>
         _runtimeCityMinimapEventSystem ??= ResolveRuntimeCityMinimapEventSystem();
@@ -601,9 +601,9 @@ public sealed class RuntimeCityCompositionSystem
             new List<RectInt>();
     }
 
-    private static RuntimeCityVisualSystem ResolveRuntimeCityVisualSystem()
+    private static RuntimeCityVisualPresentationSystemHelper ResolveRuntimeCityVisualPresentationSystemHelper()
     {
-        return new RuntimeCityVisualSystem();
+        return new RuntimeCityVisualPresentationSystemHelper();
     }
 
     private static RuntimeCityMinimapEventSystem ResolveRuntimeCityMinimapEventSystem()

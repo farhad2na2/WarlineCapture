@@ -39,7 +39,7 @@ Goal: split runtime city generation before adding more map/city gameplay, so lay
    - `RuntimeCitySpawnerSystem` still passes category lists from the config snapshot, but no longer owns prefab random selection or footprint cache algorithms.
 
 7. Complete: Extract visual realization
-   - Created `RuntimeCityVisualSystem`.
+   - Created `RuntimeCityVisualPresentationSystemHelper`.
    - Owns `RuntimeCityVisuals` root creation, GameObject visual-only instantiation, parent/root assignment, footprint-center positioning, rotation/scale setup, local-bounds centering, and child visibility toggles.
    - `RuntimeCitySpawnerSystem` consumes footprint values from `RuntimeCityPrefabSelectionSystem`.
 
@@ -149,8 +149,8 @@ Non-goals:
 
 24. Complete: Remove runtime root ownership from the spawner
     - Runtime root creation/lookup remains in `RuntimeRootSystem`.
-    - Runtime city visual root ownership remains in `RuntimeCityVisualSystem`.
-    - Removed `_runtimeRoot` storage from `RuntimeCitySpawnerSystem`; the spawner only passes the composed root into `RuntimeCityVisualSystem`.
+    - Runtime city visual root ownership remains in `RuntimeCityVisualPresentationSystemHelper`.
+    - Removed `_runtimeRoot` storage from `RuntimeCitySpawnerSystem`; the spawner only passes the composed root into `RuntimeCityVisualPresentationSystemHelper`.
     - Expected output: city generation does not own scene hierarchy composition.
 
 25. Complete: Move composition out of the spawner constructor path

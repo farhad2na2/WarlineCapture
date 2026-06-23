@@ -1,23 +1,23 @@
 internal sealed class BuildingRuntimeResourcePrefabCompositionSystemHelper
 {
-    public static BuildingRuntimeResourcePrefabContextSystem.Source Create(
+    public static BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source Create(
         BuildingRuntimeResourcePrefabCompositionSystemHelper system,
         BuildingGameplaySourceCompositionSystemHelper source)
     {
         return system != null ? system.Create(source) : CreateSource(source);
     }
 
-    public BuildingRuntimeResourcePrefabContextSystem.Source Create(
+    public BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source Create(
         BuildingGameplaySourceCompositionSystemHelper source)
     {
         return CreateSource(source);
     }
 
-    private static BuildingRuntimeResourcePrefabContextSystem.Source CreateSource(
+    private static BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source CreateSource(
         BuildingGameplaySourceCompositionSystemHelper source)
     {
-        return BuildingRuntimeResourcePrefabContextSystem.CreateSource(
-            source.BuildingRuntimeResourcePrefabContextSystem,
+        return BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource(
+            source.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,
             source.RuntimeResourceSystem,
             source.RuntimeUnitPrefabSystem,
             source.BuildingDefinitionSystem,

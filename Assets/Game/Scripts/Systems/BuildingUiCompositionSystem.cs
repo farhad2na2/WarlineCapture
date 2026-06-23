@@ -66,8 +66,8 @@ internal sealed class BuildingUiCompositionSystem
             (Entity unitEntity, out GameObject prefab) =>
             {
                 RuntimeUnitPrefabSystem.Context runtimeUnitPrefabContext =
-                    BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(
-                        source.BuildingRuntimeResourcePrefabContextSystem,
+                    BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateRuntimeUnitPrefabContext(
+                        source.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,
                         BuildingRuntimeResourcePrefabCompositionSystemHelper.Create(
                             source.BuildingRuntimeResourcePrefabCompositionHelper,
                             source));

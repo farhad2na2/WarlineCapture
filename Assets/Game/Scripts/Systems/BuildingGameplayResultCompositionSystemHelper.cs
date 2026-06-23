@@ -28,8 +28,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         BuildingPlacementInteractionSystem interaction,
         BuildingPlacementInteractionSystem.Context interactionContext,
         BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
-        BuildingRuntimeResourcePrefabContextSystem runtimeResourcePrefabContextSystem,
-        BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
         BuildingCitizenPopulationCompositionSystem citizenPopulationCompositionSystem,
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
@@ -102,8 +102,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly BuildingPlacementInteractionSystem Interaction;
         public readonly BuildingPlacementInteractionSystem.Context InteractionContext;
         private readonly BuildingGameplayDependencyCompositionSystemHelper DependencySystem;
-        private readonly BuildingRuntimeResourcePrefabContextSystem RuntimeResourcePrefabContextSystem;
-        private readonly BuildingRuntimeResourcePrefabContextSystem.Source RuntimeResourcePrefabSource;
+        private readonly BuildingRuntimeResourcePrefabContextCompositionSystemHelper RuntimeResourcePrefabContextSystem;
+        private readonly BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source RuntimeResourcePrefabSource;
         private readonly BuildingCitizenPopulationCompositionSystem CitizenPopulationCompositionBridge;
         private readonly CitizenPopulationCompositionSystem CitizenPopulationCompositionBoundary;
         public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
@@ -138,8 +138,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             BuildingPlacementInteractionSystem interaction,
             BuildingPlacementInteractionSystem.Context interactionContext,
             BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
-            BuildingRuntimeResourcePrefabContextSystem runtimeResourcePrefabContextSystem,
-            BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource,
+            BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
+            BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
             BuildingCitizenPopulationCompositionSystem citizenPopulationCompositionSystem,
             CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
             CitizenPopulationCompositionSystem.Result citizenPopulationComposition,

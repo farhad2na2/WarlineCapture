@@ -40,8 +40,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
         BuildingCitizenPopulationCompositionSystem system,
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
-        BuildingRuntimeResourcePrefabContextSystem runtimeResourcePrefabContextSystem,
-        BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
         BuildingRuntimeQuerySystem runtimeQuery,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         DayNightSystem dayNight,
@@ -63,8 +63,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
     public void Initialize(
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
-        BuildingRuntimeResourcePrefabContextSystem runtimeResourcePrefabContextSystem,
-        BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
         BuildingRuntimeQuerySystem runtimeQuery,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         DayNightSystem dayNight,
@@ -86,8 +86,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
         BuildingCitizenPopulationCompositionSystem system,
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
-        BuildingRuntimeResourcePrefabContextSystem runtimeResourcePrefabContextSystem,
-        BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
         BuildingRuntimeQuerySystem runtimeQuery,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         DayNightSystem dayNight,
@@ -124,8 +124,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
     public void Initialize(
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
-        BuildingRuntimeResourcePrefabContextSystem runtimeResourcePrefabContextSystem,
-        BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
         BuildingRuntimeQuerySystem runtimeQuery,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         DayNightSystem dayNight,
@@ -147,8 +147,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
     private static void InitializeState(
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
-        BuildingRuntimeResourcePrefabContextSystem runtimeResourcePrefabContextSystem,
-        BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
         BuildingRuntimeQuerySystem runtimeQuery,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         DayNightSystem dayNight,
@@ -156,11 +156,11 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
         bool populationEnabled)
     {
         CitizenResourceSystem.Context resourceContext =
-            BuildingRuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(
+            BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateCitizenResourceContext(
                 runtimeResourcePrefabContextSystem,
                 runtimeResourcePrefabSource);
         CitizenPrefabSystem.Context prefabContext =
-            BuildingRuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(
+            BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateCitizenPrefabContext(
                 runtimeResourcePrefabContextSystem,
                 runtimeResourcePrefabSource);
         CitizenPopulationCompositionSystem.Init(

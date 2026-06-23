@@ -70,7 +70,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingPlacementInputRuntimeTickSystem BuildingPlacementInputRuntimeTickSystem = new();
     internal readonly RuntimeResourceSystem RuntimeResourceSystem = new();
     internal readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem = new();
-    internal readonly BuildingRuntimeResourcePrefabContextSystem BuildingRuntimeResourcePrefabContextSystem;
+    internal readonly BuildingRuntimeResourcePrefabContextCompositionSystemHelper BuildingRuntimeResourcePrefabContextCompositionSystemHelper;
     internal readonly BuildingRuntimeResourcePrefabCompositionSystemHelper BuildingRuntimeResourcePrefabCompositionHelper;
     internal readonly BuildingPlacementStartupSystem BuildingPlacementStartupSystem = new();
     internal readonly BuildingGameplayDependencyCompositionSystemHelper BuildingGameplayDependencyCompositionSystemHelper = new();
@@ -95,7 +95,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
         BuildingPlacementVisualUpdateSystem = ResolveBuildingPlacementVisualUpdateSystem();
         BuildingPlacementVisualCompositionPresentationSystemHelper = ResolveBuildingPlacementVisualCompositionPresentationSystemHelper();
         BuildingPlacementVisualSystem = ResolveBuildingPlacementVisualSystem();
-        BuildingRuntimeResourcePrefabContextSystem = ResolveBuildingRuntimeResourcePrefabContextSystem();
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper = ResolveBuildingRuntimeResourcePrefabContextCompositionSystemHelper();
         BuildingRuntimeResourcePrefabCompositionHelper = ResolveBuildingRuntimeResourcePrefabCompositionHelper();
     }
 
@@ -150,8 +150,8 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
         return new BuildingRuntimeResourcePrefabCompositionSystemHelper();
     }
 
-    private static BuildingRuntimeResourcePrefabContextSystem ResolveBuildingRuntimeResourcePrefabContextSystem()
+    private static BuildingRuntimeResourcePrefabContextCompositionSystemHelper ResolveBuildingRuntimeResourcePrefabContextCompositionSystemHelper()
     {
-        return new BuildingRuntimeResourcePrefabContextSystem();
+        return new BuildingRuntimeResourcePrefabContextCompositionSystemHelper();
     }
 }

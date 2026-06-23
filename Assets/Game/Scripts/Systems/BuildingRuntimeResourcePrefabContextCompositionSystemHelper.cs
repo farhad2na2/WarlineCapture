@@ -1,7 +1,7 @@
 using System;
 using Unity.Entities;
 
-internal sealed class BuildingRuntimeResourcePrefabContextSystem
+internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelper
 {
     public readonly struct Source
     {
@@ -45,7 +45,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
     }
 
     public static Source CreateSource(
-        BuildingRuntimeResourcePrefabContextSystem system,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper system,
         RuntimeResourceSystem runtimeResourceSystem,
         RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
         BuildingDefinitionSystem definitionSystem,
@@ -140,7 +140,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
     }
 
     public static CitizenResourceSystem.Context CreateCitizenResourceContext(
-        BuildingRuntimeResourcePrefabContextSystem system,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper system,
         Source source)
     {
         return system != null
@@ -159,7 +159,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
     }
 
     public static RuntimeUnitPrefabSystem.Context CreateRuntimeUnitPrefabContext(
-        BuildingRuntimeResourcePrefabContextSystem system,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper system,
         Source source)
     {
         return system != null
@@ -183,7 +183,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
     }
 
     public static CitizenPrefabSystem.Context CreateCitizenPrefabContext(
-        BuildingRuntimeResourcePrefabContextSystem system,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper system,
         Source source)
     {
         return system != null
@@ -203,7 +203,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
     }
 
     public static BuildingSpawnPrefabSystem.Context CreateBuildingSpawnPrefabContext(
-        BuildingRuntimeResourcePrefabContextSystem system,
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper system,
         Source source)
     {
         return system != null

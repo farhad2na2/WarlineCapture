@@ -64,7 +64,7 @@ Step 30 placement context factory transition size: 1446 lines. Placement cancel/
 
 Step 31 runtime context factory transition size: 1446 lines. Runtime spawn command context creation now lives in `BuildingRuntimeContextSystem`; managed composition and runtime tick context creation use `BuildingRuntimeContextSystem` directly for runtime visual/combat/query/barrier contexts instead of shell context wrapper methods.
 
-Step 32 production/UI context factory transition size: 1446 lines. Production context source creation now routes through `BuildingProductionContextCompositionSystemHelper.CreateSource`, UI context source creation routes through `BuildingUiContextSystem.CreateSource`, interaction context source creation routes through `BuildingPlacementInteractionContextSystem.CreateSource`, and runtime resource prefab source creation routes through `BuildingRuntimeResourcePrefabContextSystem.CreateSource`.
+Step 32 production/UI context factory transition size: 1446 lines. Production context source creation now routes through `BuildingProductionContextCompositionSystemHelper.CreateSource`, UI context source creation routes through `BuildingUiContextSystem.CreateSource`, interaction context source creation routes through `BuildingPlacementInteractionContextSystem.CreateSource`, and runtime resource prefab source creation routes through `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource`.
 
 Step 33 runtime tick composition transition size: 1417 lines. Runtime tick source assembly now uses `BuildingGameplaySourceCompositionSystemHelper` child systems directly for runtime visual/combat/barrier/input/boundary tick phases; `BuildingGameplaySystem` no longer exposes `RuntimeTickSystem`, `RuntimeTickDomains`, `RuntimeInputDomains`, runtime state getter delegates, runtime boundary query delegates, or tick-only production/resource properties.
 
@@ -307,7 +307,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Move `TryResolveConfiguredUnitPrefabEntity`, `TryResolveSpawnUnitPrefab`, and live-unit preview prefab resolution into `RuntimeUnitPrefabSystem` / `BuildingSpawnPrefabSystem`.
    - Expected output: prefab registry lookup is not owned by building gameplay composition.
    - `RuntimeUnitPrefabSystem` now owns configured unit prefab entity lookup, spawn prefab reverse lookup, and live-unit preview prefab resolution.
-   - `BuildingRuntimeResourcePrefabContextSystem` now includes runtime building data in the runtime unit prefab context for produced-unit preview fallback.
+   - `BuildingRuntimeResourcePrefabContextCompositionSystemHelper` now includes runtime building data in the runtime unit prefab context for produced-unit preview fallback.
    - `BuildingGameplaySystem` prefab methods are now only temporary compatibility wrappers over `RuntimeUnitPrefabSystem`.
 
 24. Complete: Move initial roster/test helpers
@@ -369,7 +369,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingRuntimeContextSystem.CreateSpawnCommandContext` now owns runtime spawn command context construction.
    - `BuildingGameplayCompositionSystemHelper.Initialize` creates runtime spawn command and runtime query contexts through `BuildingRuntimeContextSystem`.
    - `BuildingGameplayCompositionSystemHelper.CreateRuntimeTickSource` creates runtime visual, combat, and barrier contexts through `BuildingRuntimeContextSystem`.
-   - `BuildingRuntimeResourcePrefabContextSystem.CreateSource`, `BuildingSelectionSystem.CreateContext`, and `BuildingSelectionClickSystem.CreateContext` now expose owner-side construction overloads for later shell wrapper removal.
+   - `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource`, `BuildingSelectionSystem.CreateContext`, and `BuildingSelectionClickSystem.CreateContext` now expose owner-side construction overloads for later shell wrapper removal.
 
 32. Complete: Move production and UI context factories
    - Move production update/request/resource-hauler context source, UI command/query context, UI context source, and interaction context source into context systems that consume explicit dependencies.
@@ -377,7 +377,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingProductionContextCompositionSystemHelper.CreateSource` now owns production source construction.
    - `BuildingUiContextSystem.CreateSource` now owns UI command/query source construction.
    - `BuildingPlacementInteractionContextSystem.CreateSource` now owns interaction source construction.
-   - `BuildingRuntimeResourcePrefabContextSystem.CreateSource` is now used by the shell wrapper instead of constructing source data directly.
+   - `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource` is now used by the shell wrapper instead of constructing source data directly.
 
 33. Complete: Update runtime tick composition
    - `BuildingGameplayCompositionSystemHelper.CreateRuntimeTickSource` uses direct systems and context systems only.

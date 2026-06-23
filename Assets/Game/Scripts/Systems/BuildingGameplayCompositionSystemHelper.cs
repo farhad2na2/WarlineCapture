@@ -56,7 +56,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             roadFootprintState,
             factionVisuals,
             dayNight);
-        BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource =
+        BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource =
             BuildingRuntimeResourcePrefabCompositionSystemHelper.Create(
                 childSystems.BuildingRuntimeResourcePrefabCompositionHelper,
                 childSystems);
@@ -490,8 +490,8 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                 {
                     RuntimeUnitPrefabSystem.Context mapVehiclePrefabContext =
-                        BuildingRuntimeResourcePrefabContextSystem.CreateRuntimeUnitPrefabContext(
-                            source.BuildingRuntimeResourcePrefabContextSystem,
+                        BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateRuntimeUnitPrefabContext(
+                            source.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,
                             runtimeResourcePrefabSource);
 
                     bool TryGetMapGridData(
@@ -590,7 +590,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             childSystems.BuildingPlacementInteractionSystem,
             interactionContext,
             childSystems.BuildingGameplayDependencyCompositionSystemHelper,
-            childSystems.BuildingRuntimeResourcePrefabContextSystem,
+            childSystems.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,
             runtimeResourcePrefabSource,
             _citizenPopulationCompositionSystem,
             citizenPopulationCompositionBoundary,

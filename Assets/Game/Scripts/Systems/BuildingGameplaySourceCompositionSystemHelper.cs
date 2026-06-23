@@ -51,7 +51,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingDefinitionSystem BuildingDefinitionSystem = new();
     internal readonly BuildingPlacementLifecycleSystem BuildingPlacementLifecycleSystem = new();
     internal readonly BuildingPlacementGridSystem BuildingPlacementGridSystem = new();
-    internal readonly BuildingPlacementVisualSystem BuildingPlacementVisualSystem;
+    internal readonly BuildingPlacementVisualPresentationSystemHelper BuildingPlacementVisualPresentationSystemHelper;
     internal readonly BuildingRuntimeSpawnSystem BuildingRuntimeSpawnSystem = new();
     internal readonly BuildingRuntimeSpawnCommandBoundary BuildingRuntimeSpawnCommandBoundary = new();
     internal readonly BuildingRuntimeContextSystem BuildingRuntimeContextSystem = new();
@@ -94,7 +94,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
         BuildingDestroyedVisualPresentationSystemHelper = ResolveBuildingDestroyedVisualPresentationSystemHelper();
         BuildingPlacementVisualUpdateSystem = ResolveBuildingPlacementVisualUpdateSystem();
         BuildingPlacementVisualCompositionPresentationSystemHelper = ResolveBuildingPlacementVisualCompositionPresentationSystemHelper();
-        BuildingPlacementVisualSystem = ResolveBuildingPlacementVisualSystem();
+        BuildingPlacementVisualPresentationSystemHelper = ResolveBuildingPlacementVisualPresentationSystemHelper();
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper = ResolveBuildingRuntimeResourcePrefabContextCompositionSystemHelper();
         BuildingRuntimeResourcePrefabCompositionHelper = ResolveBuildingRuntimeResourcePrefabCompositionHelper();
     }
@@ -130,9 +130,9 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
         return new BuildingDestroyedVisualPresentationSystemHelper();
     }
 
-    private static BuildingPlacementVisualSystem ResolveBuildingPlacementVisualSystem()
+    private static BuildingPlacementVisualPresentationSystemHelper ResolveBuildingPlacementVisualPresentationSystemHelper()
     {
-        return new BuildingPlacementVisualSystem();
+        return new BuildingPlacementVisualPresentationSystemHelper();
     }
 
     private static BuildingPlacementVisualUpdateSystem ResolveBuildingPlacementVisualUpdateSystem()

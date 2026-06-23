@@ -100,8 +100,8 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                     getEffectivePlacementRect(placementSource, placementDefinition, placementOrigin, placementGrid, placementRotateVertical),
                 (placementSource, candidateRect) => overlapsAnyRuntimeBuilding(placementSource, candidateRect)),
             source.BuildingPlacementInvalidCellSystem.HasCachedInvalidCellInFootprint,
-            source.BuildingPlacementVisualSystem.CreateBuildingVisualInstance,
-            (instance, originCell, definition, grid, rotateVertical) => source.BuildingPlacementVisualSystem.PositionBuildingObject(
+            source.BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance,
+            (instance, originCell, definition, grid, rotateVertical) => source.BuildingPlacementVisualPresentationSystemHelper.PositionBuildingObject(
                 instance,
                 originCell,
                 definition,

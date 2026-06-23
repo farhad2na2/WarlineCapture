@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal sealed class BuildingPlacementVisualSystem
+internal sealed class BuildingPlacementVisualPresentationSystemHelper
 {
     public delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
     public delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);

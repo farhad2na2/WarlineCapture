@@ -132,7 +132,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
             source.BuildingPlacementValidationSystem,
             source.RuntimeBuildingSystem,
             source.BuildingPlacementStartupSystem.BuildingRoot,
-            source.BuildingPlacementVisualSystem.CreateBuildingVisualInstance,
+            source.BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance,
             preview => source.RuntimeObjectPresentationHelper.DestroyRuntimeObject(preview),
             footprint => getCenterScreenPlacementOrigin(source, footprint),
             (BuildingDefinition definition, Vector2Int preferredOrigin, out Vector2Int resolvedOrigin) => tryResolveInitialPlacementOrigin(source, interactionContext, markerPropertyBlock, definition, preferredOrigin, out resolvedOrigin),
@@ -149,8 +149,8 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
             screenPosition => updatePlacement(source, interactionContext, markerPropertyBlock, screenPosition),
             source.BuildingGameplayDependencyCompositionSystemHelper.IsRuntimeBlockerCell,
             (grid, origin, footprint) => source.BuildingPlacementInvalidCellSystem.HasRoadInFootprint(source.BuildingPlacementStartupSystem, grid, origin, footprint),
-            source.BuildingPlacementVisualSystem.CreateBuildingVisualInstance,
-            (instance, originCell, definition, grid, rotateVertical) => source.BuildingPlacementVisualSystem.PositionBuildingObject(
+            source.BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance,
+            (instance, originCell, definition, grid, rotateVertical) => source.BuildingPlacementVisualPresentationSystemHelper.PositionBuildingObject(
                 instance,
                 originCell,
                 definition,

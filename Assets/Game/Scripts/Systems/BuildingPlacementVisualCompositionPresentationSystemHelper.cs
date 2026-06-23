@@ -97,8 +97,8 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
             source.BuildingPlacementGridSystem.GetPlacementFootprint,
             (origin, footprint, grid, roads, blockerData) => isActivePlacementValid(source, origin, footprint, grid, roads, blockerData),
             (origin, footprint, grid) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, grid, source.BuildingPlacementStartupSystem.BuildPlaneY),
-            source.BuildingPlacementVisualSystem.CreateBuildingVisualInstance,
-            (instance, originCell, definition, grid, rotateVertical) => source.BuildingPlacementVisualSystem.PositionBuildingObject(
+            source.BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance,
+            (instance, originCell, definition, grid, rotateVertical) => source.BuildingPlacementVisualPresentationSystemHelper.PositionBuildingObject(
                 instance,
                 originCell,
                 definition,

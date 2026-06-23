@@ -25,7 +25,7 @@
 
   <rect class="bg" width="1600" height="960"/>
   <text class="title" x="56" y="64">Runtime Lifecycle</text>
-  <text class="subtitle" x="58" y="96">Startup, route transitions, match entry, result popup, and return flow without restoring a broad GameBootstrap.</text>
+  <text class="subtitle" x="58" y="96">Startup, route transitions, match entry, result popup, and return flow through split bootstraps and shell ECS requests.</text>
 
   <rect class="lane" x="60" y="140" width="1480" height="130"/>
   <text class="h" x="90" y="183">Persistent App / Menu Scene</text>
@@ -58,10 +58,10 @@
   <text class="small" x="265" y="584">Raw scene references</text>
   <rect class="node" x="620" y="525" width="280" height="78"/>
   <text class="label" x="645" y="558">MatchBootstrapSystem</text>
-  <text class="small" x="645" y="584">World wiring and startup</text>
+  <text class="small" x="645" y="584">Scene wiring and startup only</text>
   <rect class="nodeBlue" x="1020" y="525" width="280" height="78"/>
   <text class="label" x="1045" y="558">Match Runtime</text>
-  <text class="small" x="1045" y="584">Selection, AI, combat, HUD</text>
+  <text class="small" x="1045" y="584">ISystem gameplay + managed edges</text>
 
   <rect class="lane" x="60" y="685" width="1480" height="150"/>
   <text class="h" x="90" y="728">Result And Return</text>
@@ -88,5 +88,5 @@
   <path class="arrowBlue" d="M900 759 H1020"/>
   <path class="arrowGreen" d="M1160 720 C1450 640 1450 285 1220 243"/>
 
-  <text class="small" x="90" y="900">Rule: route changes animate the shell regions; content swaps do not replace the persistent header unless entering match HUD. Loading overlay has the highest screen priority.</text>
+  <text class="small" x="90" y="900">Rule: route changes flow through shell requests/read models; content swaps preserve the header except match HUD. Loading overlay has highest screen priority. Do not restore a broad GameBootstrap.</text>
 </svg>

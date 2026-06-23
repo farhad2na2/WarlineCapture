@@ -23,7 +23,7 @@
 
   <rect class="bg" width="1600" height="1000"/>
   <text class="title" x="56" y="64">Performance Hot Path</text>
-  <text class="subtitle" x="58" y="96">Profiler evidence first, then one confirmed site/file at a time. Match steady state targets 0 B/frame after warmup.</text>
+  <text class="subtitle" x="58" y="96">Profiler evidence first, then one confirmed site/file at a time. ISystem/Burst hot paths and Match steady state target 0 B/frame after warmup.</text>
 
   <rect class="boxGold" x="80" y="170" width="260" height="110"/>
   <text class="label" x="110" y="205">Scenario</text>
@@ -48,7 +48,7 @@
 
   <text class="h" x="80" y="370">Hot Path Rules</text>
   <rect class="boxBlue" x="80" y="410" width="315" height="140"/>
-  <text class="label" x="110" y="445">Use Burst / Jobs When Fit</text>
+  <text class="label" x="110" y="445">ISystem + Burst / Jobs</text>
   <text class="small" x="110" y="474">Pure frequent data transforms</text>
   <text class="small" x="110" y="502">Chunk/job iteration first</text>
   <rect class="boxBlue" x="435" y="410" width="315" height="140"/>
@@ -87,5 +87,5 @@
   <path class="arrowBlue" d="M947 550 V685"/>
   <path class="arrowBlue" d="M1302 550 V685"/>
 
-  <text class="tiny" x="80" y="925">Validation: focused tests for touched systems, architecture validation for asmdef/hot-path changes, GC/profiler capture for allocation work, Android/device validation for mobile/rendering acceptance.</text>
+  <text class="tiny" x="80" y="925">Validation: focused tests for touched systems, architecture validation for asmdef/hot-path changes, GC/profiler capture for allocation work, Android/device validation for mobile/rendering acceptance. Current scan: most ECS runtime systems are ISystem; remaining SystemBase rows are managed-boundary exceptions or tracked migration debt.</text>
 </svg>

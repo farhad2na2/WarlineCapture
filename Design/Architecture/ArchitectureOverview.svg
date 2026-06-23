@@ -29,7 +29,7 @@
 
   <rect class="bg" width="1600" height="980"/>
   <text class="title" x="56" y="64">Architecture Overview</text>
-  <text class="subtitle" x="58" y="96">ECS-first gameplay, Unity object code at the edges, narrow composition systems, and evidence-backed performance work.</text>
+  <text class="subtitle" x="58" y="96">ECS-first gameplay, ISystem hot paths, Unity object code at the edges, helper suffixes for non-ECS code, and evidence-backed performance work.</text>
 
   <rect class="laneHot" x="50" y="135" width="1500" height="150" rx="18"/>
   <text class="h" x="80" y="176">Unity Edge</text>
@@ -55,11 +55,11 @@
   <text class="label" x="585" y="394">MatchBootstrapSystem</text>
   <text class="small" x="585" y="421">Match scene wiring</text>
   <rect class="box" x="870" y="360" width="310" height="94"/>
-  <text class="label" x="895" y="394">Startup Systems</text>
-  <text class="small" x="895" y="421">Narrow domain startup slices</text>
+  <text class="label" x="895" y="394">Startup / Composition</text>
+  <text class="small" x="895" y="421">ECS systems or helper suffixes</text>
   <rect class="box" x="1225" y="360" width="250" height="94"/>
-  <text class="label" x="1250" y="394">Runtime Update</text>
-  <text class="small" x="1250" y="421">Delegates, no policy blob</text>
+  <text class="label" x="1250" y="394">Managed Edges</text>
+  <text class="small" x="1250" y="421">No gameplay policy blob</text>
 
   <rect class="laneAlt" x="50" y="535" width="1500" height="180" rx="18"/>
   <text class="h" x="80" y="576">ECS Runtime Core</text>
@@ -70,23 +70,23 @@
   <text class="label" x="575" y="609">Request Data</text>
   <text class="small" x="575" y="636">Input and route intents</text>
   <rect class="boxBlue" x="850" y="575" width="250" height="96"/>
-  <text class="label" x="875" y="609">Systems</text>
-  <text class="small" x="875" y="636">Simulation policy</text>
+  <text class="label" x="875" y="609">ISystem First</text>
+  <text class="small" x="875" y="636">Burst/jobs when compatible</text>
   <rect class="boxBlue" x="1150" y="575" width="280" height="96"/>
   <text class="label" x="1175" y="609">Read Models</text>
-  <text class="small" x="1175" y="636">UI and rendering output</text>
+  <text class="small" x="1175" y="636">UI/rendering output only</text>
 
   <rect class="lane" x="50" y="755" width="1500" height="150" rx="18"/>
   <text class="h" x="80" y="796">Presentation And Validation</text>
   <rect class="boxPink" x="250" y="790" width="250" height="82"/>
-  <text class="label" x="275" y="823">UI Shell</text>
-  <text class="small" x="275" y="849">Views display state</text>
+  <text class="label" x="275" y="823">Canvas UI Shell</text>
+  <text class="small" x="275" y="849">Views bind/display only</text>
   <rect class="boxPink" x="550" y="790" width="250" height="82"/>
   <text class="label" x="575" y="823">Rendering</text>
   <text class="small" x="575" y="849">Visual systems and quality</text>
   <rect class="boxPink" x="850" y="790" width="250" height="82"/>
   <text class="label" x="875" y="823">Diagnostics</text>
-  <text class="small" x="875" y="849">Opt-in, gated formatting</text>
+  <text class="small" x="875" y="849">Gated, no hot strings</text>
   <rect class="boxPink" x="1150" y="790" width="280" height="82"/>
   <text class="label" x="1175" y="823">Tests And Reports</text>
   <text class="small" x="1175" y="849">Architecture, GC, Burst</text>
@@ -105,5 +105,5 @@
   <path class="arrowGreen" d="M1290 671 C1290 735 975 735 975 790"/>
 
   <line class="rule" x1="80" y1="930" x2="1520" y2="930"/>
-  <text class="tiny" x="80" y="955">Guardrail: views bind references, systems own behavior, configs hold data, hot paths are profiler-evidence driven, and runtime code must not fall back into Assembly-CSharp.</text>
+  <text class="tiny" x="80" y="955">Guardrail: bare *System means ECS; non-ECS helpers need reason suffixes. Views bind references, systems own behavior, configs hold data, and runtime code must not fall back into Assembly-CSharp.</text>
 </svg>

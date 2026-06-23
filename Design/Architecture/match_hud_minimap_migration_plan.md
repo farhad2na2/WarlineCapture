@@ -14,20 +14,20 @@ The current minimap behaves like a full-screen tactical map compressed into the 
 
 ## Progress Dashboard
 
-Overall progress: 85% - 28 / 33 tracked items complete
+Overall progress: 88% - 29 / 33 tracked items complete
 
 Current phase: Phase 5 - Validation And Performance
 
-Blocked: None.
+Blocked: runtime smoke re-run is blocked while the main Unity editor has `/Users/farhad/Projects/WarlineCapture` open.
 
 | Phase | Status | Progress | Done / Total | Evidence |
 | --- | --- | ---: | ---: | --- |
 | Phase 0 - Contract And Inventory | Complete | 100% | 5 / 5 | This document; current owners and split captured below. |
 | Phase 1 - Data And Projection Split | In progress | 86% | 6 / 7 | `MatchHudMinimapView`, `MatchHudMinimapInputSystem`; focused projection tests still pending. |
 | Phase 2 - Compact HUD Minimap | In progress | 83% | 5 / 6 | HUD minimap uses camera-centered projection and hides zoom/viewport; performance smoke still pending. |
-| Phase 3 - Full-Screen Tactical Map Popup | Complete | 100% | 7 / 7 | `SCN08_FullMapPopup.prefab`; `MatchHudFullMapPopupView`; Menu scene binding. |
+| Phase 3 - Full-Screen Tactical Map Popup | Complete | 100% | 7 / 7 | `SCN08_FullMapPopup.prefab`; larger build-popup-style chrome, close action, low-padding map well, and map fallback refresh. |
 | Phase 4 - Runtime Binding And Input Flow | In progress | 75% | 3 / 4 | Shell and `MainMenuPlayUI` route open/close; gameplay command regression smoke still pending. |
-| Phase 5 - Validation And Performance | In progress | 50% | 2 / 4 | Unity batch validation passed: `/tmp/warlinecapture-fullmap-popup-validate.log`; Menu-to-Match smoke passed: `/tmp/warlinecapture-fullmap-match-smoke.log`. |
+| Phase 5 - Validation And Performance | In progress | 50% | 2 / 4 | Static warning/missing-script scans clean; Unity smoke re-run pending after the main editor releases the project lock. |
 
 ## Progress Update Rules
 
@@ -250,6 +250,7 @@ Completed validation:
 - `rg -n "class .*Controller|class .*Presenter|class .*Bridge|class .*Manager|class .*Button|GameObject\\.Find|FindObjectOfType|FindAnyObjectByType|Camera\\.main" Assets/Game/Scripts/UI/Screens/MatchHudFullMapPopupView.cs Assets/Game/Scripts/Editor/MatchHudFullMapPopupPrefabSetup.cs Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.cs Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputSystem.cs Assets/Game/Scripts/UI/MainMenuPlayUI.cs Assets/Game/Scripts/UI/Shell/UIShellContentView.cs`
 - `"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchHudFullMapPopupPrefabSetup.Validate -logFile /tmp/warlinecapture-fullmap-popup-validate.log`
 - `"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" -batchmode -nographics -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchRuntimeShellSmokeValidation.Run -logFile /tmp/warlinecapture-fullmap-match-smoke.log`
+- `rg -n "m_Script: \\{fileID: 0\\}|warning CS|error CS|The referenced script|Missing|missing|Exception" Assets/Game/Prefabs/UI/Shell/Popups/SCN08_FullMapPopup.prefab /Users/farhad/Library/Logs/Unity/Editor.log`
 
 Validation result:
 
@@ -257,11 +258,15 @@ Validation result:
 - Menu-to-Match shell smoke passed and logged `[MatchRuntimeShellSmokeValidation] result=Passed mode=MatchHud route=Match phase=MatchHudReady ...`.
 - No compiler errors or warnings were reported by the filtered validation log.
 - The Match smoke log includes a Unity/editor shutdown `NullReferenceException` after the pass marker; the feature smoke result itself passed before shutdown.
+- The full-map popup was updated so the close action is larger, the map frame fills more of the panel, initial map color is not black, full-map opening forces a fresh static map refresh, and overly dark live captures fall back to the generated terrain map image.
+- Current static scan reports no missing script references in `SCN08_FullMapPopup.prefab` and no matching compiler/editor warnings in the active editor log.
 
 Attempted validation not yet accepted:
 
 - `"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchHudMinimapProjectionSystemTests.RunFocusedValidation -logFile /tmp/warlinecapture-fullmap-minimap-projection.log`
 - Result: failed existing `CameraProjectionHelpersDoNotAllocateAfterWarmup` allocation assertion in `Assets/Tests/Editor/MatchHudMinimapProjectionSystemTests.cs:179`. The failure is in the focused projection allocation validation and remains part of the Phase 1/5 validation gap.
+- `"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchHudFullMapPopupPrefabSetup.Apply -logFile /tmp/warlinecapture-fullmap-popup-apply.log`
+- Result: blocked because another Unity instance currently has `/Users/farhad/Projects/WarlineCapture` open. The popup prefab was patched directly to match the generator values; re-run the apply/validate/smoke once the editor releases the project lock.
 
 ## Open Decisions
 

@@ -303,12 +303,18 @@ Current architecture source files:
   Completed split from one broad bootstrapper into menu/app and match-scene bootstrap boundaries.
 - `Design/Architecture/ecs_burst_hot_path_refactor_roadmap.md`
   Active Burst/job and hot-path snapshot-copy roadmap.
+- `Design/Architecture/systembase_to_isystem_inventory.md`
+  Current `SystemBase` to `ISystem` migration inventory and managed-boundary exception list.
+- `Design/Architecture/non_ecs_system_helper_naming_refactor_tracker.md`
+  Active refactor tracker reserving bare `*System` names for ECS systems and renaming non-ECS helpers with reason suffixes.
+- `Design/Architecture/file_naming_architecture_contract.md`
+  Naming contract for source files, runtime `*System` ownership, and project-name avoidance.
 - `Design/GC_Allocation_Elimination_Plan.md`
   Active Match runtime GC allocation cleanup plan.
 - `Design/Architecture/performance_regression_contract.md`
   Performance validation rules and metrics.
 
-Current refactor note: assembly split, GC allocation cleanup, and Burst hot-path work are still in progress. Treat the README and contracts as no-new-debt guidance now. Do not add stricter failing gates, new ratchets, or CI blockers for these areas until the active baselines are stable or PM explicitly asks.
+Current refactor note: assembly split, GC allocation cleanup, Burst hot-path work, `SystemBase` to `ISystem` migration, and non-ECS helper renaming are still active refactors. Treat the README and contracts as no-new-debt guidance now. Do not add stricter failing gates, new ratchets, or CI blockers for these areas until the active baselines are stable or PM explicitly asks.
 
 Code and systems architecture overview:
 
@@ -320,19 +326,22 @@ Detailed architecture diagrams:
 - [Runtime Lifecycle](Design/Architecture/RuntimeLifecycle.svg)
 - [ECS Data Flow](Design/Architecture/EcsDataFlow.svg)
 - [UI Shell Architecture](Design/Architecture/UiShellArchitecture.svg)
+- [UI Runtime Shell Transition Architecture](Design/Architecture/ui_runtime_shell_transition_architecture.svg)
 - [Performance Hot Path](Design/Architecture/PerformanceHotPath.svg)
 - [Architecture Guardrails](Design/Architecture/ArchitectureGuardrails.svg)
 
-The old monolithic [Code Systems Architecture](Design/Architecture/CodeSystemsArchitecture.svg) remains as historical reference. Prefer the split diagrams above for current onboarding and reviews.
+The monolithic [Code Systems Architecture](Design/Architecture/CodeSystemsArchitecture.svg) remains as a broad orientation map. Prefer the split diagrams above and the architecture source documents for current onboarding and reviews.
 
 Current runtime assembly boundaries:
 
 - `Game.Components`: ECS components, buffers, tags, and pure data contracts.
+- `Game.Catalog.Contracts`: catalog-facing data contracts.
 - `Game.Configs`: ScriptableObject config data.
 - `Game.Runtime`: gameplay runtime systems and ECS behavior.
 - `Game.Composition`: menu/app and match-scene composition boundaries.
 - `Game.UI.Contracts`: UI-facing contracts that runtime/shell code may depend on.
 - `Game.UI.Runtime`: concrete Canvas views and UI shell runtime.
+- `Game.UI.Shell.Contracts.Ecs`: UI shell ECS-facing contracts.
 - `Game.UI.Shell.Ecs`: UI shell ECS request/data boundary.
 - `Game.Rendering.Contracts`: rendering-facing contracts.
 - `Game.Rendering`: concrete rendering implementation.
@@ -353,7 +362,7 @@ Current code ownership:
 - `Assets/Game/Scripts/Authorings`
   Thin ECS authoring/baker adapters used by scenes/subscenes at bake time.
 - `Assets/Game/Scripts/UI`
-  Canvas `*View` reference holders, UI shell views, screen views, popup views, and UI contracts.
+  Active Canvas `*View` reference holders, UI shell views, screen views, popup views, and UI contracts. UI Toolkit prototypes are design/migration artifacts unless a current plan explicitly enables them.
 - `Assets/Game/Scripts/Rendering`
   Concrete rendering systems, visual quality systems, and rendering implementation boundaries.
 - `Assets/Game/Scripts/Environment`
@@ -375,6 +384,8 @@ The target runtime pattern is ECS-first:
 - Runtime gameplay code must not add singleton access patterns such as `static Instance`, global service locators, or singleton fallback lookups. Static code is acceptable only for pure, stateless math/data conversion helpers.
 - Do not restore `BuildingPlacementSystem.Instance` or similar gameplay facades. Building placement and road/build composition should flow through ECS request/data components, buffers, and narrow `Building*` / `RoadBuild*` systems.
 - New domain gameplay runtime types should end in `Entity`, `Component`, or `System`. Canvas/reference UI types may end in `View`. ScriptableObject data may end in `Config`. Unity conversion-edge types may end in `Authoring` or `Baker`.
+- Bare `*System` is reserved for actual ECS systems: `ISystem`, `SystemBase`, or legacy ECS system bases. Plain non-ECS runtime helpers must use an approved reason suffix such as `UiSystemHelper`, `SceneSystemHelper`, `StartupSystemHelper`, `DiagnosticsSystemHelper`, `PresentationSystemHelper`, `CompositionSystemHelper`, or `UtilitySystemHelper`.
+- Prefer `ISystem` for ECS gameplay/runtime behavior. `SystemBase` is allowed only for documented managed edges such as UI apply, GameObject/prefab presentation, camera/object references, config loading, bootstrap composition, editor tooling, and diagnostics flushing.
 - Source filenames must not start with the project/product name. Use feature/domain prefixes and preserve Unity `.meta` files during moves or renames.
 - Faction control logic must use `FactionIdentitySystem`; do not hard-code `Faction.Id == 0` as player control.
 
@@ -392,7 +403,7 @@ Bootstrap/reference ownership:
   Match scene startup/shutdown, config projection, managed runtime update delegation, and match-scene reference wiring.
 - `UIBootstrap`
   UI-shell edge startup only. It must not own gameplay policy.
-- Domain startup/composition systems such as `GameplayFeatureStartupSystem`, `ManagedGameplayStartupSystem`, `SelectionGameplayStartupSystem`, `CustomGameStartupSystem`, `AIStartupSystem`, `AIFactionControlStartupSystem`, `FactionEconomyStartupSystem`, `MapSurfaceRuntimeBootstrapSystem`, `RuntimeGridBootstrapSystem`, `RuntimeCityStartupSystem`, and the `Building*CompositionSystem` / `RoadBuild*CompositionSystem` families own narrow domain startup or composition slices.
+- Domain startup/composition systems and helpers own narrow startup or composition slices. ECS owners keep bare `*System`; non-ECS startup/composition helpers use reason suffixes such as `StartupSystemHelper`, `SceneSystemHelper`, or `CompositionSystemHelper` while they remain managed.
 
 Bootstrap boundaries may:
 
@@ -425,9 +436,10 @@ When adding a new runtime system:
 - do not add static runtime service facades; use ECS event buffers or shell-injected services for diagnostics/logging
 - do not add new `static Instance` singletons or `ResolveDependency<T>()` fallback locators
 - do not add new gameplay-facing classes ending in `Controller`, `Presenter`, `Manager`, `Bridge`, `Port`, broad `Adapter`, `Facade`, `ServiceLocator`, or `Button`
+- do not add plain non-ECS classes with bare `*System` names; convert to ECS or use an approved helper suffix from `non_ecs_system_helper_naming_refactor_tracker.md`
 - do not add new gameplay-domain `*State`, `*Rules`, `*Builder`, `*Session`, or `*Element` types
 
-`GameBootstrap` is retired and must not be restored. Existing bridge/controller/manager-style names are legacy debt. Do not expand those patterns; retire them by domain slice when touching related behavior. The old `AILog` static facade has been retired and must not be reintroduced.
+`GameBootstrap` is retired and must not be restored. Existing bridge/controller/manager-style names and non-ECS bare `*System` helpers are legacy debt. Do not expand those patterns; retire them by domain slice when touching related behavior. The old `AILog` static facade has been retired and must not be reintroduced.
 
 ## Config Pattern
 
@@ -466,7 +478,7 @@ The active performance architecture direction is:
 
 - Match runtime hot paths target `0 B/frame` managed allocation after warmup.
 - Allocation cleanup is profiler evidence first: capture `GC.Alloc` call stacks, lock the exact edit list from evidence, and fix one confirmed site/file at a time.
-- Pure frequent gameplay simulation/data transforms should be evaluated for Burst and jobs when touched.
+- Pure frequent gameplay simulation/data transforms should be evaluated for `ISystem`, Burst, and jobs when touched. The current direction is to keep increasing `ISystem` share and treat remaining `SystemBase` rows as managed-boundary exceptions or tracked migration debt.
 - Burst belongs in pure ECS/data transforms, not in UI views, GameObject/prefab presentation, config loading, bootstrap composition, editor tooling, or diagnostics flushing.
 - Hot ECS work should prefer chunk/job iteration over per-frame `ToEntityArray` / `ToComponentDataArray` snapshots, managed arrays, LINQ, closures, boxing, string formatting, or sync points.
 - Frequent structural changes should go through `EntityCommandBuffer` unless same-frame playback is required and documented.
@@ -512,6 +524,7 @@ Editor PlayMode budgets catch large regressions only. Android device development
 Keep these rules for upcoming UI and gameplay work:
 
 - Do not add broad UI controllers, presenters, or bridges for new product features. New screens should use small `*View` reference holders plus ECS/shell `*System` code.
+- Do not add plain non-ECS helpers with bare `*System` names. If a helper is not an ECS system yet, give it the approved reason suffix and track it in the helper naming/refactor inventory.
 - Do not replace the working tactical scene in one large change. Add route/screen infrastructure around it and migrate surfaces step by step.
 - Do not separate visual lock from implementation for new UI screens. Each screen must be completed as a testable vertical slice before the next screen is started.
 - Do not bake replaceable UI elements into large background art. Portraits, resources, buttons, icons, text, and panel chrome must remain separate Canvas elements.

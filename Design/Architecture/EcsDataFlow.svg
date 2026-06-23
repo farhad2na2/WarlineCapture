@@ -26,7 +26,7 @@
 
   <rect class="bg" width="1600" height="1000"/>
   <text class="title" x="56" y="64">ECS Data Flow</text>
-  <text class="subtitle" x="58" y="96">Configs and Unity references become ECS data. Systems mutate data. UI and rendering consume read models.</text>
+  <text class="subtitle" x="58" y="96">Configs and Unity references become ECS data. ISystem/Burst systems mutate data. UI and rendering consume read models.</text>
 
   <rect class="zone" x="60" y="140" width="1480" height="210"/>
   <text class="h" x="90" y="181">Authoring And Config Input</text>
@@ -52,11 +52,11 @@
   <text class="label" x="510" y="519">Buffers</text>
   <text class="small" x="510" y="545">Requests and queues</text>
   <rect class="boxBlue" x="820" y="485" width="260" height="90"/>
-  <text class="label" x="845" y="519">Systems</text>
+  <text class="label" x="845" y="519">ISystem / Jobs</text>
   <text class="small" x="845" y="545">Policy and mutation</text>
   <rect class="boxBlue" x="1155" y="485" width="260" height="90"/>
   <text class="label" x="1180" y="519">Read Models</text>
-  <text class="small" x="1180" y="545">Projection output</text>
+  <text class="small" x="1180" y="545">No gameplay policy</text>
 
   <rect class="zone" x="60" y="690" width="1480" height="210"/>
   <text class="h" x="90" y="731">Presentation Edges</text>
@@ -64,14 +64,14 @@
   <text class="label" x="195" y="798">Input Views</text>
   <text class="small" x="195" y="824">Emit ECS requests</text>
   <rect class="boxPink" x="520" y="765" width="260" height="82"/>
-  <text class="label" x="545" y="798">UI Views</text>
-  <text class="small" x="545" y="824">Display read models</text>
+  <text class="label" x="545" y="798">Canvas Views</text>
+  <text class="small" x="545" y="824">Display read models only</text>
   <rect class="boxPink" x="870" y="765" width="260" height="82"/>
   <text class="label" x="895" y="798">Rendering</text>
   <text class="small" x="895" y="824">Draw ECS state</text>
   <rect class="boxPink" x="1220" y="765" width="240" height="82"/>
-  <text class="label" x="1245" y="798">Diagnostics</text>
-  <text class="small" x="1245" y="824">Gated reports</text>
+  <text class="label" x="1245" y="798">Managed Edges</text>
+  <text class="small" x="1245" y="824">Diagnostics/presentation only</text>
 
   <path class="arrow" d="M430 256 H520"/>
   <path class="arrow" d="M780 256 H870"/>
@@ -86,5 +86,5 @@
   <path class="arrowGreen" d="M1285 575 C1285 670 1000 670 1000 765"/>
   <path class="arrowGreen" d="M1285 575 V765"/>
 
-  <text class="tiny" x="90" y="945">Rule: views do not own gameplay policy. They bind references, display read models, and write intent/request data for systems to consume.</text>
+  <text class="tiny" x="90" y="945">Rule: views do not own gameplay policy. They bind references, display read models, and write intent/request data for ECS systems to consume; managed helpers use reason suffixes.</text>
 </svg>

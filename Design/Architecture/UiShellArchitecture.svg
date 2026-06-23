@@ -25,10 +25,10 @@
 
   <rect class="bg" width="1600" height="1040"/>
   <text class="title" x="56" y="64">UI Shell Architecture</text>
-  <text class="subtitle" x="58" y="96">Persistent shell regions, animated route swaps, and popup/loading priority rules.</text>
+  <text class="subtitle" x="58" y="96">Active Canvas shell regions, animated route swaps, ECS request/read-model edges, and popup/loading priority rules.</text>
 
   <rect class="canvas" x="80" y="145" width="960" height="620"/>
-  <text class="h" x="115" y="188">Canvas Environment</text>
+  <text class="h" x="115" y="188">Active Canvas Shell</text>
   <rect class="region2" x="125" y="220" width="870" height="84"/>
   <text class="label" x="155" y="254">Header Region</text>
   <text class="small" x="155" y="281">Persistent in menu/shell routes; exits for match HUD</text>
@@ -61,7 +61,7 @@
   <text class="small" x="1140" y="465">Header remains for menu/shell screens</text>
   <text class="small" x="1140" y="493">Left exits left, right exits right</text>
   <text class="small" x="1140" y="521">Middle scales down, swaps, scales up</text>
-  <text class="small" x="1140" y="549">No hierarchy string lookup for controls</text>
+  <text class="small" x="1140" y="549">UI Toolkit prototypes stay opt-in</text>
 
   <rect class="overlay" x="1110" y="635" width="390" height="210"/>
   <text class="h" x="1140" y="678">Popup Rule</text>
@@ -76,5 +76,5 @@
   <path class="arrow" d="M535 455 V335"/>
   <path class="arrow" d="M535 605 V675"/>
 
-  <text class="tiny" x="100" y="925">Rule: UI classes ending in View bind serialized references and expose visual setters. Route/state policy belongs in shell/ECS systems, not controllers or presenters.</text>
+  <text class="tiny" x="100" y="925">Rule: UI classes ending in View bind serialized references and expose visual setters. Route/state policy belongs in shell/ECS systems, not controllers or presenters; UI Toolkit assets are prototypes until explicitly enabled.</text>
 </svg>

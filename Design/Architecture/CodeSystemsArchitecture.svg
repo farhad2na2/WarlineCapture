@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1800" height="2200" viewBox="0 0 1800 2200" role="img" aria-labelledby="title desc">
-  <title id="title">WarlineCapture Code And Systems Architecture</title>
-  <desc id="desc">Top-level code architecture diagram showing bootstrap, UI shell, authoring/configs, ECS components, domain systems, diagnostics, and service boundaries.</desc>
+  <title id="title">Code And Systems Architecture</title>
+  <desc id="desc">Top-level code architecture diagram showing split bootstraps, active Canvas shell, authoring/configs, ECS components, ISystem-first domain systems, diagnostics, and managed edge boundaries.</desc>
   <defs>
     <style>
       .bg { fill: #07100d; }
@@ -36,8 +36,8 @@
   </defs>
 
   <rect class="bg" x="0" y="0" width="1800" height="2200"/>
-  <text class="header" x="60" y="66">WarlineCapture Code And Systems Architecture</text>
-  <text class="small" x="62" y="98">ECS-first gameplay, Unity object code at the edges, config-driven composition, and narrow domain systems.</text>
+  <text class="header" x="60" y="66">Code And Systems Architecture</text>
+  <text class="small" x="62" y="98">ECS-first gameplay, ISystem hot paths, Unity object code at the edges, config-driven composition, and helper suffixes for non-ECS edges.</text>
 
   <!-- Top-level ownership row -->
   <rect class="panel3" x="50" y="140" width="1700" height="320"/>
@@ -72,18 +72,18 @@
   <text class="tiny" x="925" y="360">No domain policy</text>
 
   <rect class="tag" x="1180" y="220" width="245" height="170"/>
-  <text class="label" x="1200" y="250">WarlineCaptureUi*</text>
-  <text class="small" x="1200" y="282">UiBootstrap / Router</text>
+  <text class="label" x="1200" y="250">UI Shell Views</text>
+  <text class="small" x="1200" y="282">UiBootstrap + shell ECS</text>
   <text class="small" x="1200" y="306">ShellView / region views</text>
   <text class="small" x="1200" y="330">Route and Canvas binding</text>
-  <text class="tiny" x="1200" y="360">UI-only controllers</text>
+  <text class="tiny" x="1200" y="360">Views bind/display only</text>
 
   <rect class="tag" x="1455" y="220" width="245" height="170"/>
-  <text class="label" x="1475" y="250">GameplaySceneBindingSystem</text>
+  <text class="label" x="1475" y="250">Scene Binding Helper</text>
   <text class="small" x="1475" y="282">Explicit scene binding</text>
   <text class="small" x="1475" y="306">No broad Find* lookup</text>
   <text class="small" x="1475" y="330">Injects boundary refs</text>
-  <text class="tiny" x="1475" y="360">Shell-to-ECS edge</text>
+  <text class="tiny" x="1475" y="360">SceneSystemHelper edge</text>
 
   <!-- Central flow -->
   <rect class="panel2" x="50" y="540" width="1700" height="420"/>
@@ -114,7 +114,7 @@
   <text class="small" x="795" y="796">No Unity object refs in hot data</text>
 
   <rect class="panel3" x="1110" y="625" width="300" height="220"/>
-  <text class="label" x="1135" y="660">ManagedGameplayStartupSystem</text>
+  <text class="label" x="1135" y="660">Managed Startup Composition</text>
   <text class="small" x="1135" y="692">Composes runtime domains</text>
   <text class="small" x="1135" y="718">Builds explicit contexts</text>
   <text class="small" x="1135" y="744">Wires UI command/query edges</text>
@@ -122,7 +122,7 @@
   <text class="small" x="1135" y="796">No broad gameplay facade</text>
 
   <rect class="panel3" x="1450" y="625" width="250" height="220"/>
-  <text class="label" x="1475" y="660">GameplayRuntimeUpdateSystem</text>
+  <text class="label" x="1475" y="660">Managed Runtime Update</text>
   <text class="small" x="1475" y="692">Managed tick orchestration</text>
   <text class="small" x="1475" y="718">Calls domain ticks</text>
   <text class="small" x="1475" y="744">Keeps bootstrap thin</text>
@@ -139,7 +139,7 @@
 
   <!-- Domain systems -->
   <rect class="panel" x="50" y="1040" width="1700" height="780"/>
-  <text class="subheader" x="80" y="1082">Gameplay Domain Systems</text>
+  <text class="subheader" x="80" y="1082">Gameplay Domain Systems (ISystem First)</text>
 
   <rect class="panel2" x="90" y="1130" width="355" height="255"/>
   <text class="label" x="115" y="1163">Selection + Camera</text>
@@ -235,13 +235,13 @@
   <text class="subheader" x="80" y="1922">Edges: UI, Services, Tests</text>
 
   <rect class="tag" x="90" y="1965" width="370" height="105"/>
-  <text class="label" x="115" y="1995">UI Views And Systems</text>
+  <text class="label" x="115" y="1995">UI Views And Shell ECS</text>
   <text class="small" x="115" y="2026">UIShellView, UIShellRouteButtonView, screen views</text>
   <text class="small" x="115" y="2052">Display read models and enqueue ECS/UI commands only</text>
 
   <rect class="tag" x="500" y="1965" width="370" height="105"/>
-  <text class="label" x="525" y="1995">Services</text>
-  <text class="small" x="525" y="2026">SettingsService, logging/diagnostics, asset lookup, platform APIs</text>
+  <text class="label" x="525" y="1995">Managed Edge Helpers</text>
+  <text class="small" x="525" y="2026">Settings, diagnostics, asset lookup, platform APIs</text>
   <text class="small" x="525" y="2052">External concerns; no gameplay policy ownership</text>
 
   <rect class="tag" x="910" y="1965" width="370" height="105"/>
@@ -261,5 +261,5 @@
 
   <!-- Legend -->
   <line class="rule" x1="60" y1="2146" x2="1740" y2="2146"/>
-  <text class="tiny" x="80" y="2178">Rule: Bootstrap and UI compose or display only. Gameplay decisions live in ECS data and systems. Configs describe data. Authorings bake Unity references into ECS. Services handle external concerns.</text>
+  <text class="tiny" x="80" y="2178">Rule: Bootstrap and UI compose or display only. Gameplay decisions live in ECS data and systems. Bare *System means ECS; non-ECS helpers use approved reason suffixes. Configs describe data and authorings bake Unity references into ECS.</text>
 </svg>

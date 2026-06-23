@@ -14,13 +14,13 @@ internal partial struct BuildingGridCompositionSystem : ISystem
 
     public bool TryGetGridData(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetEntityManager,
+        BuildingGameplayGridDataCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
         out DynamicBlockerComponent blockerData)
     {
-        return source.BuildingGameplayGridDataSystem.TryGetGridData(
+        return source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridData(
             source.BuildingGameplayEcsQuerySystem,
             tryGetEntityManager,
             out gridEntity,
@@ -31,10 +31,10 @@ internal partial struct BuildingGridCompositionSystem : ISystem
 
     public bool TryGetGridForSelection(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetEntityManager,
+        BuildingGameplayGridDataCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
         out GridConfig grid)
     {
-        return source.BuildingGameplayGridDataSystem.TryGetGridForSelection(
+        return source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridForSelection(
             source.BuildingGameplayEcsQuerySystem,
             tryGetEntityManager,
             out grid);
@@ -42,10 +42,10 @@ internal partial struct BuildingGridCompositionSystem : ISystem
 
     public bool TryGetGridForPlacementInput(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetEntityManager,
+        BuildingGameplayGridDataCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
         out GridConfig grid)
     {
-        return source.BuildingGameplayGridDataSystem.TryGetGridForPlacementInput(
+        return source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridForPlacementInput(
             source.BuildingGameplayEcsQuerySystem,
             tryGetEntityManager,
             out grid);
@@ -57,7 +57,7 @@ internal partial struct BuildingGridCompositionSystem : ISystem
         GridConfig grid,
         out Vector2Int cell)
     {
-        return source.BuildingGameplayGridDataSystem.TryGetGridCell(
+        return source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridCell(
             source.BuildingPlacementGridSystem,
             source.BuildingPlacementStartupSystem,
             screenPosition,

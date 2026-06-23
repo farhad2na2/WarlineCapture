@@ -11,7 +11,7 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
     {
         source.BuildingPlacementRedirectSystem.BeginDeferredRuntimeBuildingSideEffects(
             () => source.BuildingPlacementInvalidCellSystem.RebuildPlacementInvalidPrefix(
-                source.BuildingGameplayGridDataSystem,
+                source.BuildingGameplayGridDataCompositionSystemHelper,
                 source.BuildingGameplayEcsQuerySystem,
                 (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
                 source.BuildingPlacementStartupSystem,

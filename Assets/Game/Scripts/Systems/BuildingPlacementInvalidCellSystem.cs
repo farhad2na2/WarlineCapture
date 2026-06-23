@@ -20,9 +20,9 @@ internal sealed class BuildingPlacementInvalidCellSystem
     }
 
     internal void RebuildPlacementInvalidPrefix(
-        BuildingGameplayGridDataSystem gridDataSystem,
+        BuildingGameplayGridDataCompositionSystemHelper gridDataSystem,
         BuildingGameplayEcsQuerySystem ecsQuerySystem,
-        BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetEntityManager,
+        BuildingGameplayGridDataCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
         BuildingPlacementStartupSystem startupSystem,
         BuildingGameplayDependencyCompositionSystemHelper dependencySystem)
     {

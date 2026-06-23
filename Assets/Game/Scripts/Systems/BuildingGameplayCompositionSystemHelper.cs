@@ -64,7 +64,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
         {
             return childSystems.BuildingEntityManagerAccessSystem.TryGetEntityManager(out entityManager);
         }
-        BuildingGameplayGridDataSystem.TryGetEntityManagerDelegate tryGetGridEntityManager = tryGetEntityManager;
+        BuildingGameplayGridDataCompositionSystemHelper.TryGetEntityManagerDelegate tryGetGridEntityManager = tryGetEntityManager;
 
         bool tryGetGridData(
             BuildingGameplaySourceCompositionSystemHelper source,

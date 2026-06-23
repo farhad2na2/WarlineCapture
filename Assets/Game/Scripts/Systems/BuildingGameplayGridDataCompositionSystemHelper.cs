@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingGameplayGridDataSystem
+internal sealed class BuildingGameplayGridDataCompositionSystemHelper
 {
     internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 

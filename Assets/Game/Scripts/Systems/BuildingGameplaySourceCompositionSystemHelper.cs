@@ -7,7 +7,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingRuntimeVisualSystem BuildingRuntimeVisualSystem;
     internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem;
     internal readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
-    internal readonly BuildingDestroyedVisualSystem BuildingDestroyedVisualSystem;
+    internal readonly BuildingDestroyedVisualPresentationSystemHelper BuildingDestroyedVisualPresentationSystemHelper;
     internal readonly BuildingCombatSystem BuildingCombatSystem = new();
     internal readonly FactionResourceSystem FactionResourceSystem = new();
     internal readonly ResourceHaulerSystem ResourceHaulerSystem = new();
@@ -91,7 +91,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
         BuildingRuntimeVisualSystem = ResolveBuildingRuntimeVisualSystem();
         BuildingSelectionMarkerSystem = ResolveBuildingSelectionMarkerSystem();
         BuildingFactionVisualSystem = ResolveBuildingFactionVisualSystem();
-        BuildingDestroyedVisualSystem = ResolveBuildingDestroyedVisualSystem();
+        BuildingDestroyedVisualPresentationSystemHelper = ResolveBuildingDestroyedVisualPresentationSystemHelper();
         BuildingPlacementVisualUpdateSystem = ResolveBuildingPlacementVisualUpdateSystem();
         BuildingPlacementVisualCompositionPresentationSystemHelper = ResolveBuildingPlacementVisualCompositionPresentationSystemHelper();
         BuildingPlacementVisualSystem = ResolveBuildingPlacementVisualSystem();
@@ -125,9 +125,9 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
         return new BuildingSelectionMarkerSystem();
     }
 
-    private static BuildingDestroyedVisualSystem ResolveBuildingDestroyedVisualSystem()
+    private static BuildingDestroyedVisualPresentationSystemHelper ResolveBuildingDestroyedVisualPresentationSystemHelper()
     {
-        return new BuildingDestroyedVisualSystem();
+        return new BuildingDestroyedVisualPresentationSystemHelper();
     }
 
     private static BuildingPlacementVisualSystem ResolveBuildingPlacementVisualSystem()

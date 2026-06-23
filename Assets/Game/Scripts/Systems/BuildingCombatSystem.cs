@@ -45,8 +45,8 @@ public sealed class BuildingCombatSystem
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingAction<TBuilding> RememberOpenBaseBreach;
         public readonly BuildingIdAction NotifyHomeBuildingDestroyed;
-        public readonly BuildingDestroyedVisualSystem DestroyedVisualSystem;
-        public readonly BuildingDestroyedVisualSystem.Context DestroyedVisualContext;
+        public readonly BuildingDestroyedVisualPresentationSystemHelper DestroyedVisualPresentationHelper;
+        public readonly BuildingDestroyedVisualPresentationSystemHelper.Context DestroyedVisualContext;
         public readonly ObjectAction DestroyObject;
         public readonly System.Action RefreshBuildingMarkerVisibility;
         public readonly System.Action NotifyStaticMinimapChanged;
@@ -59,8 +59,8 @@ public sealed class BuildingCombatSystem
             TryGetEntityManagerDelegate tryGetEntityManager,
             BuildingAction<TBuilding> rememberOpenBaseBreach,
             BuildingIdAction notifyHomeBuildingDestroyed,
-            BuildingDestroyedVisualSystem destroyedVisualSystem,
-            BuildingDestroyedVisualSystem.Context destroyedVisualContext,
+            BuildingDestroyedVisualPresentationSystemHelper destroyedVisualPresentationHelper,
+            BuildingDestroyedVisualPresentationSystemHelper.Context destroyedVisualContext,
             ObjectAction destroyObject,
             System.Action refreshBuildingMarkerVisibility,
             System.Action notifyStaticMinimapChanged,
@@ -73,7 +73,7 @@ public sealed class BuildingCombatSystem
             TryGetEntityManager = tryGetEntityManager;
             RememberOpenBaseBreach = rememberOpenBaseBreach;
             NotifyHomeBuildingDestroyed = notifyHomeBuildingDestroyed;
-            DestroyedVisualSystem = destroyedVisualSystem;
+            DestroyedVisualPresentationHelper = destroyedVisualPresentationHelper;
             DestroyedVisualContext = destroyedVisualContext;
             DestroyObject = destroyObject;
             RefreshBuildingMarkerVisibility = refreshBuildingMarkerVisibility;
@@ -341,7 +341,7 @@ public sealed class BuildingCombatSystem
         }
 
         if (building is RuntimeBuildingEntity runtimeBuilding)
-            context.DestroyedVisualSystem?.BeginDestroyedVisual(context.DestroyedVisualContext, runtimeBuilding);
+            context.DestroyedVisualPresentationHelper?.BeginDestroyedVisual(context.DestroyedVisualContext, runtimeBuilding);
         context.RefreshBuildingMarkerVisibility?.Invoke();
         return true;
     }
@@ -374,7 +374,7 @@ public sealed class BuildingCombatSystem
         DestroyRuntimeBuildingEntities(context, building);
         context.RuntimeBuildingSystem.RemoveBuilding(buildingId);
         if (building is RuntimeBuildingEntity runtimeBuilding)
-            context.DestroyedVisualSystem?.CleanupDestroyedVisual(context.DestroyedVisualContext, runtimeBuilding);
+            context.DestroyedVisualPresentationHelper?.CleanupDestroyedVisual(context.DestroyedVisualContext, runtimeBuilding);
         DestroyRuntimeBuildingObject(context, building.InstanceObject);
         context.RefreshBuildingMarkerVisibility?.Invoke();
     }

@@ -323,7 +323,7 @@ Progress notes:
   Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=8`.
 - 2026-06-13: Confirmed destroyed model and presentation handoff remains in managed boundary systems: `UnitDeathSystem` only uses Burst for death candidate/countdown data passes, while attached light cleanup, wreck setup, child visibility, prefab destroyed-visual spawning, and descendant destruction stay in managed shells (`UnitDeathSystem`, `VehicleDestroyedVisualSystem`, `UnitDestroyedVisualSystem`, `VehicleWreckCleanupSystem`, and building runtime visual systems).
 - 2026-06-13: Focused building destroyed visual validation passed:
-  `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod BuildingDestroyedVisualSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-max-phase3-building-destroyed-visual.log`
+  `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod BuildingDestroyedVisualPresentationSystemHelperTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-max-phase3-building-destroyed-visual.log`
   Log marker: `[BuildingDestroyedVisualFocusedValidation] result=Passed tests=2`.
 - 2026-06-13: Focused building combat destroyed-state validation passed:
   `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod BuildingCombatSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-max-phase3-building-combat.log`

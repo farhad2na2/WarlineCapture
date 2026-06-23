@@ -15,7 +15,7 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingVisualSystem BuildingVisualSystem;
         public readonly BuildingRuntimeVisualSystem RuntimeVisualSystem;
         public readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
-        public readonly BuildingDestroyedVisualSystem BuildingDestroyedVisualSystem;
+        public readonly BuildingDestroyedVisualPresentationSystemHelper BuildingDestroyedVisualPresentationSystemHelper;
         public readonly BuildingBarrierSystem BarrierSystem;
         public readonly BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem;
         public readonly ResourceHaulerSystem ResourceHaulerSystem;
@@ -56,7 +56,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingVisualSystem buildingVisualSystem,
             BuildingRuntimeVisualSystem runtimeVisualSystem,
             BuildingFactionVisualSystem buildingFactionVisualSystem,
-            BuildingDestroyedVisualSystem buildingDestroyedVisualSystem,
+            BuildingDestroyedVisualPresentationSystemHelper buildingDestroyedVisualPresentationHelper,
             BuildingBarrierSystem barrierSystem,
             BuildingResourceHaulerBridgeSystem resourceHaulerBridgeSystem,
             ResourceHaulerSystem resourceHaulerSystem,
@@ -96,7 +96,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingVisualSystem = buildingVisualSystem;
             RuntimeVisualSystem = runtimeVisualSystem;
             BuildingFactionVisualSystem = buildingFactionVisualSystem;
-            BuildingDestroyedVisualSystem = buildingDestroyedVisualSystem;
+            BuildingDestroyedVisualPresentationSystemHelper = buildingDestroyedVisualPresentationHelper;
             BarrierSystem = barrierSystem;
             ResourceHaulerBridgeSystem = resourceHaulerBridgeSystem;
             ResourceHaulerSystem = resourceHaulerSystem;
@@ -421,8 +421,8 @@ internal sealed class BuildingRuntimeContextSystem
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
             source.RememberOpenBaseBreach,
             source.NotifyHomeBuildingDestroyed,
-            source.BuildingDestroyedVisualSystem,
-            new BuildingDestroyedVisualSystem.Context(
+            source.BuildingDestroyedVisualPresentationSystemHelper,
+            new BuildingDestroyedVisualPresentationSystemHelper.Context(
                 source.BuildingVisualSystem,
                 source.DestroyObject),
             source.DestroyObject,

@@ -241,7 +241,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             source.BuildingVisualSystem,
             source.BuildingRuntimeVisualSystem,
             source.BuildingFactionVisualSystem,
-            source.BuildingDestroyedVisualSystem,
+            source.BuildingDestroyedVisualPresentationSystemHelper,
             source.BuildingBarrierSystem,
             source.BuildingResourceHaulerBridgeSystem,
             source.ResourceHaulerSystem,

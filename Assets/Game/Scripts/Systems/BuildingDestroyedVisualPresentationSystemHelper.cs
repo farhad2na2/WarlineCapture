@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public sealed class BuildingDestroyedVisualSystem
+public sealed class BuildingDestroyedVisualPresentationSystemHelper
 {
     public readonly struct Context
     {

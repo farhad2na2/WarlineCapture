@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public sealed class BuildingDestroyedVisualSystemTests
+public sealed class BuildingDestroyedVisualPresentationSystemHelperTests
 {
     private GameObject _root;
     private GameObject _building;
@@ -33,9 +33,9 @@ public sealed class BuildingDestroyedVisualSystemTests
         }
     }
 
-    private static void RunCase(string name, Action<BuildingDestroyedVisualSystemTests> action)
+    private static void RunCase(string name, Action<BuildingDestroyedVisualPresentationSystemHelperTests> action)
     {
-        BuildingDestroyedVisualSystemTests tests = new();
+        BuildingDestroyedVisualPresentationSystemHelperTests tests = new();
         tests.SetUp();
         try
         {
@@ -55,7 +55,7 @@ public sealed class BuildingDestroyedVisualSystemTests
     [SetUp]
     public void SetUp()
     {
-        _root = new GameObject("BuildingDestroyedVisualSystemTestsRoot");
+        _root = new GameObject("BuildingDestroyedVisualPresentationSystemHelperTestsRoot");
         _building = new GameObject("RuntimeBuilding");
         _building.transform.SetParent(_root.transform, false);
         _building.transform.position = new Vector3(4f, 2f, 8f);
@@ -90,8 +90,8 @@ public sealed class BuildingDestroyedVisualSystemTests
     public void BeginDestroyedVisualHidesAliveRootsAndSpawnsConfiguredPrefab()
     {
         RuntimeBuildingEntity building = CreateBuilding();
-        BuildingDestroyedVisualSystem system = CreateBuildingDestroyedVisualSystem();
-        var context = new BuildingDestroyedVisualSystem.Context(
+        BuildingDestroyedVisualPresentationSystemHelper system = CreateBuildingDestroyedVisualPresentationSystemHelper();
+        var context = new BuildingDestroyedVisualPresentationSystemHelper.Context(
             CreateBuildingVisualSystem(),
             Object.DestroyImmediate);
 
@@ -117,8 +117,8 @@ public sealed class BuildingDestroyedVisualSystemTests
     public void BeginDestroyedVisualReusesExistingInstanceAndCleanupDestroysIt()
     {
         RuntimeBuildingEntity building = CreateBuilding();
-        BuildingDestroyedVisualSystem system = CreateBuildingDestroyedVisualSystem();
-        var context = new BuildingDestroyedVisualSystem.Context(
+        BuildingDestroyedVisualPresentationSystemHelper system = CreateBuildingDestroyedVisualPresentationSystemHelper();
+        var context = new BuildingDestroyedVisualPresentationSystemHelper.Context(
             CreateBuildingVisualSystem(),
             Object.DestroyImmediate);
 
@@ -139,13 +139,13 @@ public sealed class BuildingDestroyedVisualSystemTests
 
     private BuildingVisualSystem CreateBuildingVisualSystem()
     {
-        _world ??= new World(nameof(BuildingDestroyedVisualSystemTests));
+        _world ??= new World(nameof(BuildingDestroyedVisualPresentationSystemHelperTests));
         return _world.GetOrCreateSystemManaged<BuildingVisualSystem>();
     }
 
-    private BuildingDestroyedVisualSystem CreateBuildingDestroyedVisualSystem()
+    private BuildingDestroyedVisualPresentationSystemHelper CreateBuildingDestroyedVisualPresentationSystemHelper()
     {
-        return new BuildingDestroyedVisualSystem();
+        return new BuildingDestroyedVisualPresentationSystemHelper();
     }
 
     private RuntimeBuildingEntity CreateBuilding()

@@ -228,8 +228,8 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Move `ConfirmBuildingPlacement`, `CancelBuildingPlacement`, `ExitBuildMode`, and placement pointer notification to `BuildingPlacementCommandSystem` / `BuildingPlacementInteractionSystem`.
    - Preserve build mode and active placement behavior.
    - Expected output: active placement lifecycle is only in placement systems.
-   - `BuildingPlacementCommandSystem` now routes confirm, cancel, exit, pointer-down, and active-placement cost commands to `BuildingPlacementSessionSystem`.
-   - `BuildingGameplaySystem` no longer calls `BuildingPlacementSessionSystem` command methods directly.
+   - `BuildingPlacementCommandSystem` now routes confirm, cancel, exit, pointer-down, and active-placement cost commands to `BuildingPlacementSessionCompositionSystemHelper`.
+   - `BuildingGameplaySystem` no longer calls `BuildingPlacementSessionCompositionSystemHelper` command methods directly.
    - UI and interaction context factories now use command-system delegates for confirm, cancel, and exit.
 
 14. Complete: Move placement focus and visual update callbacks

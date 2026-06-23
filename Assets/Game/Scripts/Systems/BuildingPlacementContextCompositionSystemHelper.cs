@@ -154,14 +154,14 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
         return new BuildingPlacementLifecycleCompositionSystemHelper.RotateContext(source.UpdatePlacementVisual);
     }
 
-    public BuildingPlacementSessionSystem.Context CreateSessionContext(
+    public BuildingPlacementSessionCompositionSystemHelper.Context CreateSessionContext(
         Source source,
         Action recordBuildingBuilt,
         Action notifyStaticMinimapChanged,
         Action<string> clearSelectedBuilding,
         Action clearCommandMode)
     {
-        return new BuildingPlacementSessionSystem.Context(
+        return new BuildingPlacementSessionCompositionSystemHelper.Context(
             source.RuntimeGameplayStateSystem,
             source.LifecycleSystem,
             source.InputSystem,
@@ -180,7 +180,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
         Source source,
         BuildingPlacementStartupSystemHelper startupSystem,
         BuildingDefinitionSystem definitionSystem,
-        BuildingPlacementSessionSystem sessionSystem,
+        BuildingPlacementSessionCompositionSystemHelper sessionSystem,
         Action<string> logWarning,
         Action recordBuildingBuilt,
         Action notifyStaticMinimapChanged,

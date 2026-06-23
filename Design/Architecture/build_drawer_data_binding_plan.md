@@ -226,7 +226,7 @@ Existing systems to integrate with:
 - `BuildingUiCommandSystem`
 - `BuildingProductionRequestBoundary`
 - `BuildingProductionSystem`
-- `BuildingPlacementSessionSystem` / placement command boundary
+- `BuildingPlacementSessionCompositionSystemHelper` / placement command boundary
 - `UIShellContentView` popup binding
 
 ## Implementation Plan

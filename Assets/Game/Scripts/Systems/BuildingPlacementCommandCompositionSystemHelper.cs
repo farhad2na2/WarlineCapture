@@ -99,7 +99,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
                 createBuildingSelectionContext),
             source.BuildingPlacementStartupSystemHelper,
             source.BuildingDefinitionSystem,
-            source.BuildingPlacementSessionSystem,
+            source.BuildingPlacementSessionCompositionSystemHelper,
             Debug.LogWarning,
             GameRuntimeStats.RecordBuildingBuilt,
             source.BuildingGameplayDependencyCompositionSystemHelper.NotifyStaticMinimapChanged,

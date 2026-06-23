@@ -9,15 +9,15 @@ internal sealed class BuildingPlacementCommandSystem
     {
         public readonly BuildingPlacementStartupSystemHelper StartupSystem;
         public readonly BuildingDefinitionSystem DefinitionSystem;
-        public readonly BuildingPlacementSessionSystem SessionSystem;
-        public readonly BuildingPlacementSessionSystem.Context SessionContext;
+        public readonly BuildingPlacementSessionCompositionSystemHelper SessionSystem;
+        public readonly BuildingPlacementSessionCompositionSystemHelper.Context SessionContext;
         public readonly Action<string> LogWarning;
 
         public Context(
             BuildingPlacementStartupSystemHelper startupSystem,
             BuildingDefinitionSystem definitionSystem,
-            BuildingPlacementSessionSystem sessionSystem,
-            BuildingPlacementSessionSystem.Context sessionContext,
+            BuildingPlacementSessionCompositionSystemHelper sessionSystem,
+            BuildingPlacementSessionCompositionSystemHelper.Context sessionContext,
             Action<string> logWarning)
         {
             StartupSystem = startupSystem;

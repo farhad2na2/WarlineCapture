@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-internal sealed class BuildingPlacementSessionSystem
+internal sealed class BuildingPlacementSessionCompositionSystemHelper
 {
     public struct Context
     {

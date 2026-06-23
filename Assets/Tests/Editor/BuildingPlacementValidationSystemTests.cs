@@ -71,7 +71,7 @@ public sealed class BuildingPlacementValidationSystemTests
         using World world = new("BuildingUiPlacementCommandMissingActivePlacementTest");
         var commandSystem = new BuildingPlacementCommandSystem();
         BuildingPlacementCommandSystem.Context context = CreatePlacementCommandContext(
-            new BuildingPlacementSessionSystem());
+            new BuildingPlacementSessionCompositionSystemHelper());
 
         int requestId = commandSystem.EnqueueConfirmBuildingPlacement(world.EntityManager);
         commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
@@ -252,7 +252,7 @@ public sealed class BuildingPlacementValidationSystemTests
         var commandSystem = new BuildingPlacementCommandSystem();
         bool commandModeCleared = false;
         BuildingPlacementCommandSystem.Context context = CreatePlacementCommandContext(
-            new BuildingPlacementSessionSystem(),
+            new BuildingPlacementSessionCompositionSystemHelper(),
             clearCommandMode: () => commandModeCleared = true);
 
         int requestId = commandSystem.EnqueueCancelBuildingPlacement(world.EntityManager);
@@ -326,7 +326,7 @@ public sealed class BuildingPlacementValidationSystemTests
         var commandSystem = new BuildingPlacementCommandSystem();
         int clearSelectionCount = 0;
         BuildingPlacementCommandSystem.Context context = CreatePlacementCommandContext(
-            new BuildingPlacementSessionSystem(),
+            new BuildingPlacementSessionCompositionSystemHelper(),
             clearSelectedBuilding: _ => clearSelectionCount++);
 
         int preservedSelectionRequestId = commandSystem.EnqueueExitBuildMode(
@@ -400,7 +400,7 @@ public sealed class BuildingPlacementValidationSystemTests
         using World world = new("BuildingUiPlacementCommandBeginConfiguredMissingConfigTest");
         var commandSystem = new BuildingPlacementCommandSystem();
         BuildingPlacementCommandSystem.Context context = CreatePlacementCommandContext(
-            new BuildingPlacementSessionSystem());
+            new BuildingPlacementSessionCompositionSystemHelper());
 
         int requestId = commandSystem.EnqueueBeginConfiguredPlacement(world.EntityManager, "missing-building");
         commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
@@ -425,7 +425,7 @@ public sealed class BuildingPlacementValidationSystemTests
         using World world = new("BuildingPlacementInputTickQueuedPlacementCommandTest");
         var commandSystem = new BuildingPlacementCommandSystem();
         BuildingPlacementCommandSystem.Context commandContext = CreatePlacementCommandContext(
-            new BuildingPlacementSessionSystem());
+            new BuildingPlacementSessionCompositionSystemHelper());
         int requestId = commandSystem.EnqueueCancelBuildingPlacement(world.EntityManager);
 
         var tickSystem = new BuildingPlacementInputRuntimeTickSystem();
@@ -642,7 +642,7 @@ public sealed class BuildingPlacementValidationSystemTests
     {
         var runtimeStateSystem = new RuntimeGameplayStateSystem();
         lifecycleSystem = new BuildingPlacementLifecycleCompositionSystemHelper();
-        var sessionSystem = new BuildingPlacementSessionSystem();
+        var sessionSystem = new BuildingPlacementSessionCompositionSystemHelper();
         prefab = new GameObject("PlacementCommandTestPrefab");
         root = new GameObject("PlacementCommandTestRoot");
         Transform rootTransform = root.transform;
@@ -655,7 +655,7 @@ public sealed class BuildingPlacementValidationSystemTests
                 updatePlacement?.Invoke(placement);
             };
 
-        BuildingPlacementSessionSystem.Context sessionContext = new(
+        BuildingPlacementSessionCompositionSystemHelper.Context sessionContext = new(
             runtimeStateSystem,
             activeLifecycleSystem,
             null,
@@ -710,13 +710,13 @@ public sealed class BuildingPlacementValidationSystemTests
     }
 
     private static BuildingPlacementCommandSystem.Context CreatePlacementCommandContext(
-        BuildingPlacementSessionSystem sessionSystem,
+        BuildingPlacementSessionCompositionSystemHelper sessionSystem,
         Action<string> clearSelectedBuilding = null,
         Action clearCommandMode = null)
     {
         var runtimeStateSystem = new RuntimeGameplayStateSystem();
         var lifecycleSystem = new BuildingPlacementLifecycleCompositionSystemHelper();
-        BuildingPlacementSessionSystem.Context sessionContext = new(
+        BuildingPlacementSessionCompositionSystemHelper.Context sessionContext = new(
             runtimeStateSystem,
             lifecycleSystem,
             null,

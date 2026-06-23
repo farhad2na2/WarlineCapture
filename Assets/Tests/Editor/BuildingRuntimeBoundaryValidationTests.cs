@@ -23,7 +23,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
     private GameObject _runtimeRoot;
     private GameObject _buildingPrefab;
     private BuildingPlacementSystemConfig _buildingConfig;
-    private BuildingGameplayCompositionSystem _buildingComposition;
+    private BuildingGameplayCompositionSystemHelper _buildingComposition;
     private BuildingGameplayResultCompositionSystemHelper.Result _buildingGameplay;
     private bool _buildingGameplayInitialized;
 
@@ -159,7 +159,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
 
         CreateGrid(em, 512, 512);
         _runtimeRoot = new GameObject("Faction2InitialConfiguredBuilding_RuntimeRoot");
-        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingComposition = new BuildingGameplayCompositionSystemHelper();
         _buildingGameplay = _buildingComposition.Initialize(
             buildingPlacementConfig: placementConfig,
             worldCamera: null,
@@ -231,7 +231,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
 
         _runtimeRoot = new GameObject("BuildingRuntimeBoundary_RuntimeRoot");
-        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingComposition = new BuildingGameplayCompositionSystemHelper();
         _buildingGameplay = _buildingComposition.Initialize(
             buildingPlacementConfig: _buildingConfig,
             worldCamera: null,
@@ -280,7 +280,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
 
         _runtimeRoot = new GameObject("BuildingRuntimeBoundary_StartupRuntimeRoot");
-        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingComposition = new BuildingGameplayCompositionSystemHelper();
         _buildingGameplay = _buildingComposition.Initialize(
             buildingPlacementConfig: _buildingConfig,
             worldCamera: null,
@@ -329,7 +329,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
 
         _runtimeRoot = new GameObject("BuildingRuntimeSpawnCommand_RuntimeRoot");
-        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingComposition = new BuildingGameplayCompositionSystemHelper();
         _buildingGameplay = _buildingComposition.Initialize(
             buildingPlacementConfig: _buildingConfig,
             worldCamera: null,
@@ -380,7 +380,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
 
         _runtimeRoot = new GameObject("BuildingRuntimeCitySpawnCommand_RuntimeRoot");
-        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingComposition = new BuildingGameplayCompositionSystemHelper();
         _buildingGameplay = _buildingComposition.Initialize(
             buildingPlacementConfig: _buildingConfig,
             worldCamera: null,
@@ -433,7 +433,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
 
         _runtimeRoot = new GameObject("BuildingRuntimeWallRunCommand_RuntimeRoot");
-        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingComposition = new BuildingGameplayCompositionSystemHelper();
         _buildingGameplay = _buildingComposition.Initialize(
             buildingPlacementConfig: _buildingConfig,
             worldCamera: null,
@@ -482,7 +482,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
 
         _runtimeRoot = new GameObject("BuildingRuntimeWallSegmentCommand_RuntimeRoot");
-        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingComposition = new BuildingGameplayCompositionSystemHelper();
         _buildingGameplay = _buildingComposition.Initialize(
             buildingPlacementConfig: _buildingConfig,
             worldCamera: null,

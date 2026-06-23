@@ -1,16 +1,16 @@
-# BuildingGameplayCompositionSystem Refactor Roadmap
+# BuildingGameplayCompositionSystemHelper Refactor Roadmap
 
-This roadmap is the current architecture plan for shrinking `BuildingGameplayCompositionSystem` after `BuildingGameplaySystem` was retired. It is intentionally fixed-scope so the refactor does not drift into an endless sequence of new steps.
+This roadmap is the current architecture plan for shrinking `BuildingGameplayCompositionSystemHelper` after `BuildingGameplaySystem` was retired. It is intentionally fixed-scope so the refactor does not drift into an endless sequence of new steps.
 
 This roadmap has 36 steps.
 
-Target file: `Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs`
+Target file: `Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs`
 
 Current size at roadmap creation: 1273 lines.
 
-Final target: `BuildingGameplayCompositionSystem` remains only as the top-level managed building gameplay composition entrypoint. It may create narrow `*System` collaborators and return the composed result, but it must not own gameplay policy, mutable runtime state, context-factory algorithms, UI command logic, selection logic, production logic, runtime building query logic, visual helper logic, or disposal/resource prefab internals.
+Final target: `BuildingGameplayCompositionSystemHelper` remains only as the top-level managed building gameplay composition entrypoint. It may create narrow `*System` collaborators and return the composed result, but it must not own gameplay policy, mutable runtime state, context-factory algorithms, UI command logic, selection logic, production logic, runtime building query logic, visual helper logic, or disposal/resource prefab internals.
 
-Do not replace `BuildingGameplayCompositionSystem` with `BuildingGameplayCompositionManager`, `BuildingGameplayCompositionController`, `BuildingGameplayCompositionFacade`, `BuildingGameplayInstaller`, or another broad managed shell. New building gameplay domain types must keep ECS-aligned `Entity`, `Component`, or `System` naming. No reflection, singleton fallback lookup, static service locator, or hidden global mutable gameplay state may be introduced while extracting this class.
+Do not replace `BuildingGameplayCompositionSystemHelper` with `BuildingGameplayCompositionManager`, `BuildingGameplayCompositionController`, `BuildingGameplayCompositionFacade`, `BuildingGameplayInstaller`, or another broad managed shell. New building gameplay domain types must keep ECS-aligned `Entity`, `Component`, or `System` naming. No reflection, singleton fallback lookup, static service locator, or hidden global mutable gameplay state may be introduced while extracting this class.
 
 ## Behavior And Performance Constraints
 
@@ -22,7 +22,7 @@ Do not replace `BuildingGameplayCompositionSystem` with `BuildingGameplayComposi
 
 ## Baseline Responsibility Inventory
 
-At roadmap creation, `BuildingGameplayCompositionSystem` owns all of these responsibilities:
+At roadmap creation, `BuildingGameplayCompositionSystemHelper` owns all of these responsibilities:
 
 - constructing the building child-system graph;
 - resolving initial dollars and startup config;
@@ -46,7 +46,7 @@ Step 2 completed by freezing the current public/internal and nested result surfa
 
 Top-level type:
 
-- `internal sealed class BuildingGameplayCompositionSystem`
+- `internal sealed class BuildingGameplayCompositionSystemHelper`
 
 Top-level public/internal methods:
 
@@ -123,20 +123,20 @@ Top-level private state, included for extraction tracking:
    - Expected output: future steps have a fixed target and cannot reframe this as a broad shell rewrite.
 
 2. Complete: Freeze public and nested result surface inventory
-   - Record every public/internal method, nested type, nested delegate, and result field currently exposed by `BuildingGameplayCompositionSystem`.
+   - Record every public/internal method, nested type, nested delegate, and result field currently exposed by `BuildingGameplayCompositionSystemHelper`.
    - Expected output: migration can prove callers move to narrow boundaries instead of silently adding new broad API.
 
 3. Complete: Add composition result ownership guard
    - Create or prepare `BuildingGameplayResultCompositionSystemHelper` as the owner of the result carrier and result bind/dispose helpers.
-   - Result: `BuildingGameplayResultCompositionSystemHelper.Result` now owns the result carrier; `BuildingGameplayCompositionSystem` no longer declares the large nested `Result` type.
+   - Result: `BuildingGameplayResultCompositionSystemHelper.Result` now owns the result carrier; `BuildingGameplayCompositionSystemHelper` no longer declares the large nested `Result` type.
 
 4. Complete: Move result bind methods
    - Move `BindSelection`, `InitializeCitizenPopulation`, `DisposeCitizenPopulation`, and `BindCitizenPopulation` result behaviors to the result owner.
-   - Result: result bind/dispose behavior now lives in `BuildingGameplayResultCompositionSystemHelper.Result`; `BuildingGameplayCompositionSystem` keeps only temporary wrapper methods for existing managed startup callers.
+   - Result: result bind/dispose behavior now lives in `BuildingGameplayResultCompositionSystemHelper.Result`; `BuildingGameplayCompositionSystemHelper` keeps only temporary wrapper methods for existing managed startup callers.
 
 5. Complete: Extract child-system construction
    - Move `CreateChildSystems` and child graph creation into `BuildingGameplayChildSystem`.
-   - Result: `BuildingGameplayChildSystem.Create()` now owns child graph construction; `BuildingGameplayCompositionSystem` no longer exposes `CreateChildSystems()`.
+   - Result: `BuildingGameplayChildSystem.Create()` now owns child graph construction; `BuildingGameplayCompositionSystemHelper` no longer exposes `CreateChildSystems()`.
 
 6. Complete: Extract startup/config composition
    - Move initial dollars, dependency startup, placement startup, and startup-config sequencing into `BuildingGameplayStartupCompositionSystemHelper`.
@@ -239,15 +239,15 @@ Top-level private state, included for extraction tracking:
    - Result: `Initialize` now delegates result carrier construction to `BuildingGameplayResultCompositionSystemHelper.Create`; remaining inline delegate bundles are tracked by the follow-up private-method and wrapper cleanup steps.
 
 31. Complete: Remove remaining private context-factory methods from composition
-   - Delete all extracted private helper methods from `BuildingGameplayCompositionSystem`.
-   - Result: runtime tick diagnostics context creation now lives in `BuildingRuntimeTickCompositionSystemHelper`; `BuildingGameplayCompositionSystem` no longer declares private context-factory methods.
+   - Delete all extracted private helper methods from `BuildingGameplayCompositionSystemHelper`.
+   - Result: runtime tick diagnostics context creation now lives in `BuildingRuntimeTickCompositionSystemHelper`; `BuildingGameplayCompositionSystemHelper` no longer declares private context-factory methods.
 
 32. Complete: Remove remaining wrapper/delegate pass-throughs
-   - Move any leftover wrapper delegate bodies out of `BuildingGameplayCompositionSystem` or delete them if callers use narrow systems directly.
-   - Result: managed startup now calls `BuildingGameplayResultCompositionSystemHelper.Result` bind/init behavior directly; `BuildingGameplayCompositionSystem` no longer exposes pass-through bind/citizen wrapper methods.
+   - Move any leftover wrapper delegate bodies out of `BuildingGameplayCompositionSystemHelper` or delete them if callers use narrow systems directly.
+   - Result: managed startup now calls `BuildingGameplayResultCompositionSystemHelper.Result` bind/init behavior directly; `BuildingGameplayCompositionSystemHelper` no longer exposes pass-through bind/citizen wrapper methods.
 
 33. Complete: Tighten contract debt allowances
-   - Update architecture tests and contract text so extracted responsibilities cannot return to `BuildingGameplayCompositionSystem` or a broad replacement shell.
+   - Update architecture tests and contract text so extracted responsibilities cannot return to `BuildingGameplayCompositionSystemHelper` or a broad replacement shell.
    - Result: drift guards name final owners and reject broad replacement files; contract and architecture guards now name extracted final owners, require `BuildingGameplaySourceCompositionSystemHelper` to keep the explicit owner graph, and reject broad replacement files including manager/controller/facade/installer/service/bootstrap/orchestrator shells.
 
 34. Complete: Performance and allocation audit

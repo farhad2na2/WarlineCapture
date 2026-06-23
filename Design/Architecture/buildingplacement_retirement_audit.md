@@ -11,7 +11,7 @@ Deleted files:
 - `Assets/Game/Scripts/UI/BuildingPlacementSystem.cs`
 - `Assets/Game/Scripts/UI/BuildingPlacementSystem.cs.meta`
 
-Runtime composition constructs `BuildingGameplaySystem` through `BuildingGameplayCompositionSystem` and passes narrow systems, contexts, callbacks, and disposal through managed composition.
+Runtime composition constructs `BuildingGameplaySystem` through `BuildingGameplayCompositionSystemHelper` and passes narrow systems, contexts, callbacks, and disposal through managed composition.
 
 ## Hard Rule
 

@@ -103,7 +103,7 @@ Acceptance target: no measurable regression in path request throughput, no new G
    - Add a temporary-debt note that the static property remains only until the ECS pending-state component migration.
    - Prevent additional public/static members on `UnitPathfindingSystem`.
    - Added the Public/Static Surface Inventory Freeze section above.
-   - Current direct static pending-job readers are `BuildingGameplayCompositionSystem.cs`, `BuildingProductionRuntimeTickSystem.cs`, and `CitizenPopulationLifecycleSystem.cs`.
+   - Current direct static pending-job readers are `BuildingGameplayCompositionSystemHelper.cs`, `BuildingProductionRuntimeTickSystem.cs`, and `CitizenPopulationLifecycleSystem.cs`.
    - Current allowed public static members are only `HasPendingPathJob` and pure helper `CanPlaceForPathing`.
 
 ## Phase 2: Extract Non-Hot Diagnostics And Budget Policy
@@ -327,7 +327,7 @@ Acceptance target: no measurable regression in path request throughput, no new G
    - Move `BuildingProductionRuntimeTickSystem` and building composition callbacks from `UnitPathfindingSystem.HasPendingPathJob` to the ECS pending-state boundary.
    - Added `UnitPathfindingPendingStateReader` as a managed ECS read-model boundary over `UnitPathfindingPendingStateComponent`.
    - `BuildingProductionRuntimeTickSystem.Context` now receives a pending-path delegate from the ECS read-model boundary instead of reading `UnitPathfindingSystem.HasPendingPathJob`.
-   - `BuildingGameplayCompositionSystem` now wires building production and building selection-click callbacks through `UnitPathfindingPendingStateReader.HasPendingPathJob`.
+   - `BuildingGameplayCompositionSystemHelper` now wires building production and building selection-click callbacks through `UnitPathfindingPendingStateReader.HasPendingPathJob`.
    - Remaining temporary static reader after this step was `CitizenPopulationLifecycleSystem.cs`.
 
 29. Complete: Migrate citizen pending-path reads

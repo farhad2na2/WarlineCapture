@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 internal sealed class ManagedGameplayStartupSystem
 {
     private readonly RoadBuildCompositionSystem _roadBuildCompositionSystem = new();
-    private readonly BuildingGameplayCompositionSystem _buildingGameplayCompositionSystem = new();
+    private readonly BuildingGameplayCompositionSystemHelper _buildingGameplayCompositionSystem = new();
     private readonly SelectionGameplayStartupSystem _selectionGameplayStartupSystem = new();
 
     public readonly struct Result

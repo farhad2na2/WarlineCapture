@@ -52,7 +52,7 @@ Step 24 lifecycle transition size: 407 lines. Citizen population update interval
 
 Step 25 composition transition size: 359 lines. Citizen subsystem construction, runtime context storage, initial wiring, event boundary binding, init-time reset policy, and disposal/reset sequencing now live in `CitizenPopulationCompositionSystem`; the shell keeps one composition result while remaining behavior migrates out.
 
-Step 26 managed-startup composition transition size: 363 lines. `BuildingGameplayCompositionSystem` now creates and stores the explicit `CitizenPopulationCompositionSystem.Result`, and exposes the composition result through `ManagedGameplayStartupSystem.Result` for later runtime/read/event migration.
+Step 26 managed-startup composition transition size: 363 lines. `BuildingGameplayCompositionSystemHelper` now creates and stores the explicit `CitizenPopulationCompositionSystem.Result`, and exposes the composition result through `ManagedGameplayStartupSystem.Result` for later runtime/read/event migration.
 
 Step 27 runtime-update transition size: 76 lines. Citizen population runtime update orchestration, logical citizen tick callbacks, visible citizen sync, totals refresh callbacks, record storage callbacks, and death handling now live in `CitizenPopulationRuntimeUpdateSystem`; `GameplayRuntimeUpdateSystem` receives the composition-sourced runtime update action instead of `CitizenPopulationSystem`.
 
@@ -87,7 +87,7 @@ Goal: retire the broad managed `CitizenPopulationSystem` shell by moving citizen
 - Diagnostics: phase timing, pathfinding-skip flagging, slow-frame threshold policy, monotonic timing clamp, and log formatting moved to `CitizenPopulationDiagnosticSystem`.
 - Lifecycle tick: update intervals, next-run timestamps, pathfinding-pending skip policy, forced building refresh before logical updates, phase ordering, visible sync cadence, and totals refresh cadence moved to `CitizenPopulationLifecycleSystem`.
 - Composition: extracted citizen subsystem construction, context storage, init wiring, event boundary binding, and disposal/reset sequencing to `CitizenPopulationCompositionSystem`.
-- Startup composition handoff: `BuildingGameplayCompositionSystem` creates/stores the explicit citizen composition result and `ManagedGameplayStartupSystem.Result` carries it forward for runtime/read/event boundaries.
+- Startup composition handoff: `BuildingGameplayCompositionSystemHelper` creates/stores the explicit citizen composition result and `ManagedGameplayStartupSystem.Result` carries it forward for runtime/read/event boundaries.
 - Runtime update: logical citizen tick callbacks, visible citizen sync, totals refresh callbacks, record storage callbacks, death handling, and lifecycle update invocation moved to `CitizenPopulationRuntimeUpdateSystem`; `GameplayRuntimeUpdateSystem` invokes a composition-sourced runtime update action.
 - Menu/UI reads: population stats reads moved to `CitizenPopulationReadModelSystem`; `MenuStartupSystem` and `MenuView` no longer receive/store the broad shell for stats reads.
 - Building/citizen event coupling: building gameplay feature binding now receives `CitizenPopulationEventSystem` directly from composition instead of passing the broad shell to reach its event boundary.
@@ -342,7 +342,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
 26. Complete: Migrate managed startup to citizen composition
    - Update `ManagedGameplayStartupSystem` and building gameplay composition flow so startup creates `CitizenPopulationCompositionSystem` or receives it from a higher composition boundary.
    - Keep building runtime query, day/night, camera, resource context, and prefab context explicit.
-   - `BuildingGameplayCompositionSystem.Result` now owns a `CitizenPopulationCompositionSystem.Result`.
+   - `BuildingGameplayCompositionSystemHelper.Result` now owns a `CitizenPopulationCompositionSystem.Result`.
    - Later deletion removed the transitional shell handoff; composition now initializes `CitizenPopulationCompositionSystem` directly.
    - `ManagedGameplayStartupSystem.Result` exposes the citizen composition result for later runtime/read/event migration.
    - Added `CitizenPopulationManagedStartupMustCreateComposition` to the focused architecture validation batch.
@@ -380,7 +380,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
    - Delete `Assets/Game/Scripts/Systems/CitizenPopulationSystem.cs` and `.meta`.
    - Fix all production and test references.
    - Expected output: no production or test source references `CitizenPopulationSystem`.
-   - `BuildingGameplayCompositionSystem` initializes and disposes `CitizenPopulationCompositionSystem` directly.
+   - `BuildingGameplayCompositionSystemHelper` initializes and disposes `CitizenPopulationCompositionSystem` directly.
    - `ManagedGameplayStartupSystem` and `GameBootstrap` no longer construct, store, or expose the broad shell.
    - Added `CitizenPopulationShellMustBeDeleted` to the focused architecture validation batch.
 

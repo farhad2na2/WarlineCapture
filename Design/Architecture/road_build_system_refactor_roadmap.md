@@ -207,7 +207,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 23. Complete: Migrate `BuildingGameplaySystem` road queries
     - Replace `_roadBuildController.FillRoadFootprintMask` and `_roadBuildController.HasRoadInFootprint` with `RoadFootprintQuerySystem`.
     - BuildingGameplaySystem now stores RoadFootprintQuerySystem plus context instead of RoadBuildSystem for placement validation.
-    - BuildingGameplayCompositionSystem passes the narrow road footprint boundary during building initialization.
+    - BuildingGameplayCompositionSystemHelper passes the narrow road footprint boundary during building initialization.
     - Expected output: building placement validation depends on road footprint query only.
 
 24. Complete: Migrate selection/camera/menu references

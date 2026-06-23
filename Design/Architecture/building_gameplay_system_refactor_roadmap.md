@@ -38,7 +38,7 @@ Step 17 camp request transition size: 1736 lines. Camp item affordability, reque
 
 Step 18 UI read method transition size: 1742 lines. Selected-building flags, active-building flags, status/label/description/health/preview reads, and selected-building production affordability now route through `BuildingUiQuerySystem`; `BuildingGameplaySystem` keeps only temporary compatibility wrappers that delegate to the UI query boundary.
 
-Step 19 menu binding transition size: 1742 lines. `BuildingGameplayCompositionSystem.Result.BindMainMenu` now binds main-menu runtime dependency state through `BuildingGameplayDependencySystem` directly; menu startup continues to receive explicit UI command, UI query, and placement interaction systems/contexts.
+Step 19 menu binding transition size: 1742 lines. `BuildingGameplayCompositionSystemHelper.Result.BindMainMenu` now binds main-menu runtime dependency state through `BuildingGameplayDependencySystem` directly; menu startup continues to receive explicit UI command, UI query, and placement interaction systems/contexts.
 
 Step 20 runtime building read API transition size: 1742 lines. Runtime building id lists, role filters, focus/destroyed/refugee/combat/owner/wall/city/approach reads, faction production count reads, and base-breach target read routing now use `BuildingRuntimeQuerySystem`; composition exposes `RuntimeQuery` and `RuntimeQueryContext` for direct consumers.
 
@@ -68,7 +68,7 @@ Step 32 production/UI context factory transition size: 1446 lines. Production co
 
 Step 33 runtime tick composition transition size: 1417 lines. Runtime tick source assembly now uses `BuildingGameplaySourceCompositionSystemHelper` child systems directly for runtime visual/combat/barrier/input/boundary tick phases; `BuildingGameplaySystem` no longer exposes `RuntimeTickSystem`, `RuntimeTickDomains`, `RuntimeInputDomains`, runtime state getter delegates, runtime boundary query delegates, or tick-only production/resource properties.
 
-Goal: retire `BuildingGameplaySystem.cs` as a broad managed orchestration shell. Runtime building behavior must remain in narrow `*System` boundaries: placement, validation, preview, commit, runtime spawn, runtime query, UI command/query, production, resources, combat, barriers, selection, and runtime tick publication. The final state should have no production source file named `BuildingGameplaySystem.cs`; callers should consume explicit building systems, ECS request/response buffers, or narrow context systems from `BuildingGameplayCompositionSystem.Result`.
+Goal: retire `BuildingGameplaySystem.cs` as a broad managed orchestration shell. Runtime building behavior must remain in narrow `*System` boundaries: placement, validation, preview, commit, runtime spawn, runtime query, UI command/query, production, resources, combat, barriers, selection, and runtime tick publication. The final state should have no production source file named `BuildingGameplaySystem.cs`; callers should consume explicit building systems, ECS request/response buffers, or narrow context systems from `BuildingGameplayCompositionSystemHelper.Result`.
 
 ## Current Responsibility Inventory
 
@@ -112,7 +112,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 
 - No production source file named `BuildingGameplaySystem.cs`.
 - No production code constructs, stores, or type-references `BuildingGameplaySystem`.
-- `BuildingGameplayCompositionSystem.Result` exposes only narrow systems, contexts, read models, command systems, update delegates, and disposal hooks.
+- `BuildingGameplayCompositionSystemHelper.Result` exposes only narrow systems, contexts, read models, command systems, update delegates, and disposal hooks.
 - `BuildingGameplayTestHarness` is deleted or replaced by narrow editor test fixtures.
 - Architecture tests hard-fail if `BuildingGameplaySystem.cs` returns.
 - Focused validation passes: building architecture guard, building runtime boundary tests, placement validation tests, production/resource tests, bootstrap/menu playmode smoke, and one runtime load/play-button smoke.
@@ -132,7 +132,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Define allowed temporary debt explicitly: temporary `BuildingGameplaySystem` shell compatibility and editor-only `BuildingGameplayTestHarness`.
    - Expected output: future steps cannot claim completion while preserving the broad shell indefinitely.
    - Added contract wording that the final target is deletion of `BuildingGameplaySystem.cs`.
-   - Added temporary-debt wording limiting production usage first to `BuildingGameplayCompositionSystem` and editor usage to `BuildingGameplayTestHarness`; step 34 later removed the production construction allowance.
+   - Added temporary-debt wording limiting production usage first to `BuildingGameplayCompositionSystemHelper` and editor usage to `BuildingGameplayTestHarness`; step 34 later removed the production construction allowance.
    - Added `BuildingGameplayDeletionTargetContractMustBeExplicit` to the focused architecture validation batch.
 
 3. Complete: Freeze public surface inventory
@@ -144,13 +144,13 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 
 ## Phase 2: Move Lifetime And Startup Ownership To Composition
 
-4. Complete: Move child system construction into `BuildingGameplayCompositionSystem`
+4. Complete: Move child system construction into `BuildingGameplayCompositionSystemHelper`
    - Construct all narrow building systems in composition instead of inside `BuildingGameplaySystem`.
    - Pass them through a typed composition result/source.
    - Do not change behavior; only move lifetime ownership.
    - Expected output: `BuildingGameplaySystem` no longer decides which systems exist.
    - Added `BuildingGameplaySourceCompositionSystemHelper` as the composition-owned child system source.
-   - `BuildingGameplayCompositionSystem.Initialize` now creates child systems and passes them to `BuildingGameplaySystem`.
+   - `BuildingGameplayCompositionSystemHelper.Initialize` now creates child systems and passes them to `BuildingGameplaySystem`.
    - `BuildingGameplaySystem` assigns child system fields from the source instead of constructing them inline.
    - The parameterless shell constructor remains only for temporary test harness compatibility and routes through composition-owned child system creation.
 
@@ -166,7 +166,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Route `BuildingPlacementSystemConfig`, world camera, runtime UI root, road footprint query/context, faction visuals, and day/night into `BuildingPlacementStartupSystem` plus dependency systems directly from composition.
    - Keep serialized config compatibility unchanged.
    - Expected output: `BuildingGameplaySystem.Init` is no longer the startup/config gateway.
-   - `BuildingGameplayCompositionSystem.Initialize` now configures `BuildingGameplayDependencySystem` and `BuildingPlacementStartupSystem` directly before constructing runtime contexts.
+   - `BuildingGameplayCompositionSystemHelper.Initialize` now configures `BuildingGameplayDependencySystem` and `BuildingPlacementStartupSystem` directly before constructing runtime contexts.
    - `BuildingPlacementStartupSystem` now owns road footprint query/context and exposes road-footprint mask/query helpers.
    - Added `BuildingRuntimeObjectPresentationSystemHelper` as the narrow runtime object destruction boundary used by startup/disposal compatibility code.
    - `BuildingGameplaySystem` no longer stores road footprint query/context fields, and production composition no longer calls `building.Init(...)`.
@@ -177,7 +177,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Expected output: lifecycle is a set of explicit disposal hooks, not shell disposal.
    - Added `BuildingGameplayDisposalSystem` to own runtime building object/entity destruction, runtime registry clearing, and placement startup disposal.
    - `BuildingGameplaySourceCompositionSystemHelper` now owns the disposal system.
-   - `BuildingGameplayCompositionSystem.Result.Dispose` now calls `BuildingGameplayDisposalSystem` directly instead of `building.Dispose`.
+   - `BuildingGameplayCompositionSystemHelper.Result.Dispose` now calls `BuildingGameplayDisposalSystem` directly instead of `building.Dispose`.
    - `BuildingGameplaySystem.Dispose` remains only as temporary compatibility for tests/legacy callers and delegates to `BuildingGameplayDisposalSystem`.
 
 ## Phase 3: Move Query And Shared Runtime Data Ownership
@@ -273,7 +273,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplaySystem` UI read compatibility wrappers now delegate through `BuildingUiQuerySystem` instead of directly reading placement query or production request systems.
 
 19. Complete: Move menu binding off shell
-   - `BuildingGameplayCompositionSystem.Result.BindMainMenu` binds narrow UI command/query systems directly.
+   - `BuildingGameplayCompositionSystemHelper.Result.BindMainMenu` binds narrow UI command/query systems directly.
    - Remove `mainMenu => building.BindDependencies(...)`.
    - Expected output: menu startup no longer needs the shell to bind building UI.
    - `Result.BindMainMenu` now writes the main-menu dependency into `BuildingGameplayDependencySystem` without calling `BuildingGameplaySystem.BindDependencies`.
@@ -286,13 +286,13 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Expected output: AI/citizen/runtime-city callers consume `BuildingRuntimeQuerySystem.Context`.
    - `BuildingRuntimeQuerySystem` now owns base-breach target read routing through its context.
    - `BuildingRuntimeContextSystem` wires base-breach target routing to the barrier domain while exposing it as a runtime query read.
-   - `BuildingGameplayCompositionSystem.Result` now exposes `RuntimeQuery` and `RuntimeQueryContext`, and citizen population creation consumes those fields directly.
+   - `BuildingGameplayCompositionSystemHelper.Result` now exposes `RuntimeQuery` and `RuntimeQueryContext`, and citizen population creation consumes those fields directly.
    - `BuildingGameplaySystem.TryResolveBaseBreachTarget` is now only a temporary compatibility wrapper over `BuildingRuntimeQuerySystem`.
 
 21. Complete: Move runtime building spawn commands
    - Move `TrySpawnRuntimeBuilding`, initial building spawn, placement origin search, runtime wall segment spawn, wall run spawn, and runtime placement footprint queries into `BuildingRuntimeSpawnCommandSystem`, `BuildingRuntimeSpawnSystem`, and a narrow wall spawn boundary.
    - Expected output: runtime city and tests do not call shell spawn helpers.
-   - `BuildingGameplayCompositionSystem.Result` now exposes `RuntimeSpawnCommand` and `RuntimeSpawnCommandContext` for direct consumers.
+   - `BuildingGameplayCompositionSystemHelper.Result` now exposes `RuntimeSpawnCommand` and `RuntimeSpawnCommandContext` for direct consumers.
    - `BuildingRuntimeCitySpawnSystem` now routes city building spawn through `BuildingRuntimeSpawnCommandSystem` instead of owning a separate `BuildingRuntimeSpawnSystem`.
    - `BuildingGameplaySystem` spawn wrappers remain only as temporary compatibility wrappers over `BuildingRuntimeSpawnCommandSystem` until test and production callers migrate to the composition-owned command context.
 
@@ -358,7 +358,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 
 30. Complete: Move placement context factories
    - Move placement cancel/begin/confirm/session/source/context creation into existing placement context systems.
-   - Expected output: `BuildingGameplayCompositionSystem` can create placement contexts without a `BuildingGameplaySystem` instance.
+   - Expected output: `BuildingGameplayCompositionSystemHelper` can create placement contexts without a `BuildingGameplaySystem` instance.
    - `BuildingPlacementContextSystem.CreateSessionContext` now owns placement session context construction.
    - `BuildingPlacementContextSystem.CreateCommandContext` now owns placement command context construction.
    - `BuildingGameplaySystem` no longer declares private `CreatePlacementCancelContext`, `CreatePlacementBeginContext`, `CreatePlacementConfirmContext`, or `CreatePlacementSessionContext` wrappers.
@@ -367,8 +367,8 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Move runtime context source, runtime spawn command context, runtime query context, runtime resource prefab source, runtime entity context, runtime visual context, combat context, redirect context, barrier context, and selection contexts into owner context systems.
    - Expected output: all runtime tick and runtime city contexts are constructed without shell delegates.
    - `BuildingRuntimeContextSystem.CreateSpawnCommandContext` now owns runtime spawn command context construction.
-   - `BuildingGameplayCompositionSystem.Initialize` creates runtime spawn command and runtime query contexts through `BuildingRuntimeContextSystem`.
-   - `BuildingGameplayCompositionSystem.CreateRuntimeTickSource` creates runtime visual, combat, and barrier contexts through `BuildingRuntimeContextSystem`.
+   - `BuildingGameplayCompositionSystemHelper.Initialize` creates runtime spawn command and runtime query contexts through `BuildingRuntimeContextSystem`.
+   - `BuildingGameplayCompositionSystemHelper.CreateRuntimeTickSource` creates runtime visual, combat, and barrier contexts through `BuildingRuntimeContextSystem`.
    - `BuildingRuntimeResourcePrefabContextSystem.CreateSource`, `BuildingSelectionSystem.CreateContext`, and `BuildingSelectionClickSystem.CreateContext` now expose owner-side construction overloads for later shell wrapper removal.
 
 32. Complete: Move production and UI context factories
@@ -380,10 +380,10 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingRuntimeResourcePrefabContextSystem.CreateSource` is now used by the shell wrapper instead of constructing source data directly.
 
 33. Complete: Update runtime tick composition
-   - `BuildingGameplayCompositionSystem.CreateRuntimeTickSource` uses direct systems and context systems only.
+   - `BuildingGameplayCompositionSystemHelper.CreateRuntimeTickSource` uses direct systems and context systems only.
    - Remove `BuildingGameplaySystem.RuntimeTickDomains`, `RuntimeInputDomains`, and all shell get/set delegates from the tick source.
    - Expected output: `BuildingRuntimeUpdateSystem` is fully independent from the shell.
-   - `BuildingGameplayCompositionSystem.CreateRuntimeTickSource` now accepts `BuildingGameplaySourceCompositionSystemHelper` and uses direct child systems for production tick, boundary publish, visual resource updates, destroyed-building sync, barrier doors, redirect marker flush, and input tick.
+   - `BuildingGameplayCompositionSystemHelper.CreateRuntimeTickSource` now accepts `BuildingGameplaySourceCompositionSystemHelper` and uses direct child systems for production tick, boundary publish, visual resource updates, destroyed-building sync, barrier doors, redirect marker flush, and input tick.
    - Removed shell runtime tick/input domain properties and tick-only shell delegates from `BuildingGameplaySystem`.
    - Runtime boundary publish now uses `BuildingGameplayEcsQuerySystem` and a local composition entity-manager resolver instead of shell wrappers.
 
@@ -406,10 +406,10 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 35. Complete: Replace `BuildingGameplayTestHarness`
    - Migrate editor tests from `BuildingGameplayTestHarness : BuildingGameplaySystem` to focused fixtures around runtime spawn, runtime query, UI command/query, placement command, production, combat/barrier, and boundary publication systems.
    - Expected output: `BuildingGameplayTestHarness.cs` is deleted.
-   - In progress: `BuildingRuntimeBoundaryValidationTests` now uses `BuildingGameplayCompositionSystem.Result` directly for runtime tick/disposal instead of `BuildingGameplayTestHarness`.
+   - In progress: `BuildingRuntimeBoundaryValidationTests` now uses `BuildingGameplayCompositionSystemHelper.Result` directly for runtime tick/disposal instead of `BuildingGameplayTestHarness`.
    - In progress: `AIBuildPlannerValidationTests` and `AIProductionValidationTests` now publish runtime boundary state through a narrow runtime tick action; `AIProductionValidationTests` spawns producer buildings through `BuildingRuntimeSpawnCommandSystem`.
-   - In progress: `AIEndToEndValidationTests` now uses `BuildingGameplayCompositionSystem.Result` for runtime tick/disposal and no longer references `BuildingGameplayTestHarness`.
-   - In progress: `InitialFactionBaseValidationTests` now uses `BuildingGameplayCompositionSystem.Result`, `BuildingRuntimeSpawnCommandSystem`, and `BuildingSpawnSystem` instead of `BuildingGameplayTestHarness`; its runtime placement and helipad resolver paths pass through direct composition systems.
+   - In progress: `AIEndToEndValidationTests` now uses `BuildingGameplayCompositionSystemHelper.Result` for runtime tick/disposal and no longer references `BuildingGameplayTestHarness`.
+   - In progress: `InitialFactionBaseValidationTests` now uses `BuildingGameplayCompositionSystemHelper.Result`, `BuildingRuntimeSpawnCommandSystem`, and `BuildingSpawnSystem` instead of `BuildingGameplayTestHarness`; its runtime placement and helipad resolver paths pass through direct composition systems.
    - In progress: `BaseBreachValidationTests` now uses a local composition-backed fixture over `BuildingRuntimeSpawnCommandSystem`, `BuildingRuntimeQuerySystem`, `BuildingBarrierSystem`, and `BuildingCombatSystem` instead of `BuildingGameplayTestHarness`.
    - Completed: `BuildingGameplayTestHarness.cs` and `.meta` were deleted after all test callers moved to composition-backed systems, narrow runtime tick callbacks, or local fixtures.
    - Known validation gap: the full `InitialFactionBaseValidationTests` group currently has one authored-config failure because faction 1 is configured with zero units, while `SceneInitialUnitsConfig_EnablesFactionBasesWithRealPrefabsAndUnitMinimum` still requires at least five unit types for every faction.

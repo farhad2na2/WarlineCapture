@@ -1425,7 +1425,7 @@ public sealed class BaseBreachValidationTests
 
         public BaseBreachBuildingGameplayFixture(BuildingPlacementSystemConfig placementConfig, Transform runtimeRoot)
         {
-            var composition = new BuildingGameplayCompositionSystem();
+            var composition = new BuildingGameplayCompositionSystemHelper();
             _buildingGameplay = composition.Initialize(
                 buildingPlacementConfig: placementConfig,
                 worldCamera: null,

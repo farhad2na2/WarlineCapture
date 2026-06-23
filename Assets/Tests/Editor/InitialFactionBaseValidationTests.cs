@@ -657,7 +657,7 @@ public sealed class InitialFactionBaseValidationTests
         BuildingPlacementSystemConfig placementConfig,
         Transform runtimeRoot)
     {
-        var composition = new BuildingGameplayCompositionSystem();
+        var composition = new BuildingGameplayCompositionSystemHelper();
         return composition.Initialize(
             buildingPlacementConfig: placementConfig,
             worldCamera: null,

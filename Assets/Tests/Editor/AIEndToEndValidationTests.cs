@@ -13,7 +13,7 @@ public sealed class AIEndToEndValidationTests
 {
     private World _previousDefaultWorld;
     private World _world;
-    private BuildingGameplayCompositionSystem _buildingComposition;
+    private BuildingGameplayCompositionSystemHelper _buildingComposition;
     private BuildingGameplayResultCompositionSystemHelper.Result _buildingGameplay;
     private bool _buildingGameplayInitialized;
     private NativeArray<int> _blockerCounts;
@@ -225,7 +225,7 @@ public sealed class AIEndToEndValidationTests
         SetPrivateField(_buildingConfig, "unitPrefabRegistryConfig", _unitRegistryConfig);
 
         _runtimeRoot = new GameObject("AIEndToEnd_RuntimeRoot");
-        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingComposition = new BuildingGameplayCompositionSystemHelper();
         _buildingGameplay = _buildingComposition.Initialize(
             buildingPlacementConfig: _buildingConfig,
             worldCamera: null,

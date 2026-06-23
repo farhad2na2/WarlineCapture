@@ -2708,7 +2708,7 @@ public sealed class BuildingProductionSystemTests
             SetPrivateField(initialUnitsConfig, "initialDollars", 12345);
             SetPrivateField(placementConfig, "initialUnitsConfig", initialUnitsConfig);
 
-            var composition = new BuildingGameplayCompositionSystem();
+            var composition = new BuildingGameplayCompositionSystemHelper();
             result = composition.Initialize(
                 placementConfig,
                 worldCamera: null,
@@ -2745,7 +2745,7 @@ public sealed class BuildingProductionSystemTests
             SetPrivateField(placementConfig, "initialUnitsConfig", initialUnitsConfig);
             SetPrivateField(placementConfig, "spawnables", new List<GameObject> { buildingPrefab });
 
-            var composition = new BuildingGameplayCompositionSystem();
+            var composition = new BuildingGameplayCompositionSystemHelper();
             result = composition.Initialize(
                 placementConfig,
                 worldCamera: null,

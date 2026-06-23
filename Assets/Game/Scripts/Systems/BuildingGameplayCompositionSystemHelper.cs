@@ -2,7 +2,7 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingGameplayCompositionSystem
+internal sealed class BuildingGameplayCompositionSystemHelper
 {
     private const float DestroyedBuildingLifetimeSeconds = 5f;
     private const float OilBarrelsPerFuelBarrel = 2f;

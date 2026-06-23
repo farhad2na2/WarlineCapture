@@ -12,7 +12,7 @@ public sealed class AIProductionValidationTests
 {
     private World _previousDefaultWorld;
     private World _world;
-    private BuildingGameplayCompositionSystem _buildingComposition;
+    private BuildingGameplayCompositionSystemHelper _buildingComposition;
     private BuildingGameplayResultCompositionSystemHelper.Result _buildingGameplay;
     private bool _buildingGameplayInitialized;
     private NativeArray<int> _blockerCounts;
@@ -114,7 +114,7 @@ public sealed class AIProductionValidationTests
         SetPrivateField(_buildingConfig, "unitPrefabRegistryConfig", _unitRegistryConfig);
 
         _runtimeRoot = new GameObject("AIProduction_RuntimeRoot");
-        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingComposition = new BuildingGameplayCompositionSystemHelper();
         _buildingGameplay = _buildingComposition.Initialize(
             buildingPlacementConfig: _buildingConfig,
             worldCamera: null,

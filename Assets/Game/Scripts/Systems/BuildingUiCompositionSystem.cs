@@ -10,7 +10,7 @@ internal sealed class BuildingUiCompositionSystem
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
@@ -89,7 +89,7 @@ internal sealed class BuildingUiCompositionSystem
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
@@ -109,7 +109,7 @@ internal sealed class BuildingUiCompositionSystem
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
@@ -197,44 +197,44 @@ internal sealed class BuildingUiCompositionSystem
 
     private static bool EnqueueAndProcessConfirmBuildingPlacement(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementCommandSystem.Context context)
+        BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
-            ? source.BuildingPlacementCommandSystem.EnqueueAndProcessConfirmBuildingPlacement(entityManager, context)
+            ? source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessConfirmBuildingPlacement(entityManager, context)
             : ConfirmBuildingPlacementWithoutEntityManager(context);
     }
 
     private static void EnqueueAndProcessCancelBuildingPlacement(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementCommandSystem.Context context)
+        BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
-            source.BuildingPlacementCommandSystem.EnqueueAndProcessCancelBuildingPlacement(entityManager, context);
+            source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessCancelBuildingPlacement(entityManager, context);
         else
             CancelBuildingPlacementWithoutEntityManager(context);
     }
 
     private static bool EnqueueAndProcessRotateBuildingPlacement(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementCommandSystem.Context context)
+        BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
-            ? source.BuildingPlacementCommandSystem.EnqueueAndProcessRotateBuildingPlacement(entityManager, context)
+            ? source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessRotateBuildingPlacement(entityManager, context)
             : RotateBuildingPlacementWithoutEntityManager(context);
     }
 
-    private static bool ConfirmBuildingPlacementWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
+    private static bool ConfirmBuildingPlacementWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         return context.SessionSystem != null &&
                context.SessionSystem.ConfirmBuildingPlacement(context.SessionContext);
     }
 
-    private static void CancelBuildingPlacementWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
+    private static void CancelBuildingPlacementWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         context.SessionSystem?.CancelBuildingPlacement(context.SessionContext);
     }
 
-    private static bool RotateBuildingPlacementWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
+    private static bool RotateBuildingPlacementWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         return context.SessionSystem != null &&
                context.SessionSystem.RotateBuildingPlacement(context.SessionContext);

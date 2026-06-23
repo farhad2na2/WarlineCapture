@@ -63,7 +63,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         BuildingDefinition definition,
         out bool gateVertical);
 
-    public BuildingPlacementCommandSystem.Context CreateCommandContext(
+    public BuildingPlacementCommandRequestCompositionSystemHelper.Context CreateCommandContext(
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,

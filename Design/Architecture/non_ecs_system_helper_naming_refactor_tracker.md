@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 66 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 174 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 173 |
-| Current batch | Building placement session composition helper naming batch complete |
-| Validation status | Batch 1 through Batch 55 compile and architecture validations passed by marker; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, and Batch 55 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 33-53 Unity validations exited cleanly; Batch 54 building runtime boundary validation exited cleanly; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 67 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 173 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 172 |
+| Current batch | Building placement command request composition helper naming batch complete |
+| Validation status | Batch 1 through Batch 56 compile and architecture validations passed by marker; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, and Batch 56 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 33-53 Unity validations exited cleanly; Batch 54 building runtime boundary validation exited cleanly; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -1010,6 +1010,23 @@ This helper owns managed placement session composition: placement begin/confirm/
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingPlacementValidationSystemTests.RunPlacementCommandRequestValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch55-building-placement-command.log`: recorded `[BuildingPlacementCommandRequestValidation] result=Passed tests=13`; Unity was terminated after the pass marker because batchmode hung during post-test cleanup.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch55-architecture.log`: recorded `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=173`; Unity was terminated after the pass marker because batchmode hung during post-test cleanup.
+
+## Batch 56 - Building Placement Command Request Composition Helper
+
+This helper owns managed placement command request composition: ECS placement request/result queue helpers, begin/confirm/rotate/cancel/exit request processing, Soldier Base placement start, placement UI pointer notification, and active-placement cost routing. The managed reason is command request/result composition across ECS queue and managed session/startup/definition boundaries, not ECS scheduling.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `BuildingPlacementCommandSystem` | `BuildingPlacementCommandRequestCompositionSystemHelper` | Owns managed placement command request/result composition. |
+
+## Batch 56 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `172`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingPlacementValidationSystemTests.RunPlacementCommandRequestValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch56-building-placement-command.log`: recorded `[BuildingPlacementCommandRequestValidation] result=Passed tests=13`; Unity was terminated after the pass marker because batchmode hung during post-test cleanup.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch56-architecture-rerun.log`: recorded `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=172`; Unity was terminated after the pass marker because batchmode hung during post-test cleanup.
 
 ## Open Follow-Up Batches
 

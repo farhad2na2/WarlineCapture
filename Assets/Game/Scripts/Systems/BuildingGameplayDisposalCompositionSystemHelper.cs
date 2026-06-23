@@ -4,14 +4,14 @@ internal sealed class BuildingGameplayDisposalCompositionSystemHelper
 {
     public Action CreateDisposeAction(
         BuildingGameplaySourceCompositionSystemHelper source,
-        Func<BuildingPlacementCommandSystem.Context> createPlacementCommandContext)
+        Func<BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext)
     {
         return () => source.BuildingGameplayDisposalExecutionCompositionSystemHelper.Dispose(CreateSource(source, createPlacementCommandContext));
     }
 
     public BuildingGameplayDisposalExecutionCompositionSystemHelper.Source CreateSource(
         BuildingGameplaySourceCompositionSystemHelper source,
-        Func<BuildingPlacementCommandSystem.Context> createPlacementCommandContext)
+        Func<BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext)
     {
         return new BuildingGameplayDisposalExecutionCompositionSystemHelper.Source(
             source.RuntimeBuildingSystem,
@@ -23,7 +23,7 @@ internal sealed class BuildingGameplayDisposalCompositionSystemHelper
             () => ExitBuildModeWithoutEntityManager(createPlacementCommandContext()));
     }
 
-    private static void ExitBuildModeWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
+    private static void ExitBuildModeWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         context.SessionSystem?.ExitBuildMode(context.SessionContext);
     }

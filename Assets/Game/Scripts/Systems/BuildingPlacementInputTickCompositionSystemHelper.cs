@@ -8,7 +8,7 @@ internal sealed class BuildingPlacementInputTickCompositionSystemHelper
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         float clickDragThresholdPixels,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementInputSystem.ActivePlacementPointerContext> createActivePlacementPointerContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionClickSystem.Context> createSelectionClickContext)
     {
@@ -38,16 +38,16 @@ internal sealed class BuildingPlacementInputTickCompositionSystemHelper
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext)
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext)
     {
-        if (source?.BuildingPlacementCommandSystem == null ||
+        if (source?.BuildingPlacementCommandRequestCompositionSystemHelper == null ||
             createPlacementCommandContext == null ||
             !source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out Unity.Entities.EntityManager entityManager))
         {
             return;
         }
 
-        source.BuildingPlacementCommandSystem.ProcessPendingUiPlacementCommandsIfPresent(
+        source.BuildingPlacementCommandRequestCompositionSystemHelper.ProcessPendingUiPlacementCommandsIfPresent(
             entityManager,
             createPlacementCommandContext(source, interactionContext, markerPropertyBlock));
     }

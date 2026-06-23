@@ -337,7 +337,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 tryAlignGateForCommand,
                 createBuildingRuntimeContextSource,
                 createBuildingSelectionContext);
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext =
             (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                 source.BuildingPlacementCommandCompositionSystemHelper.CreateCommandContext(
                     source,

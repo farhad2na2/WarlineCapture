@@ -44,7 +44,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
         Func<BuildingPlacementInteractionSystem.Context> getInteractionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingUiQuerySystem.Context> createBuildingUiQueryContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingProductionRequestBoundary.Context> createProductionRequestContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext,
@@ -129,33 +129,33 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
 
     private static bool EnqueueAndProcessConfirmBuildingPlacement(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementCommandSystem.Context context)
+        BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
-            ? source.BuildingPlacementCommandSystem.EnqueueAndProcessConfirmBuildingPlacement(entityManager, context)
+            ? source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessConfirmBuildingPlacement(entityManager, context)
             : ConfirmBuildingPlacementWithoutEntityManager(context);
     }
 
     private static void EnqueueAndProcessBeginSoldierBasePlacement(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementCommandSystem.Context context)
+        BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
-            source.BuildingPlacementCommandSystem.EnqueueAndProcessBeginSoldierBasePlacement(entityManager, context);
+            source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessBeginSoldierBasePlacement(entityManager, context);
         else
             BeginSoldierBasePlacementWithoutEntityManager(context);
     }
 
-    private static void BeginSoldierBasePlacementWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
+    private static void BeginSoldierBasePlacementWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         BeginConfiguredPlacementWithoutEntityManager(
             context,
             context.StartupSystem?.SoldierBaseDefinition,
-            "BuildingPlacementCommandSystem is missing the Soldier Base spawnable prefab reference.");
+            "BuildingPlacementCommandRequestCompositionSystemHelper is missing the Soldier Base spawnable prefab reference.");
     }
 
     private static void BeginConfiguredPlacementWithoutEntityManager(
-        BuildingPlacementCommandSystem.Context context,
+        BuildingPlacementCommandRequestCompositionSystemHelper.Context context,
         BuildingDefinition definition,
         string missingPrefabWarning)
     {
@@ -170,36 +170,36 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
 
     private static void EnqueueAndProcessCancelBuildingPlacement(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementCommandSystem.Context context)
+        BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
-            source.BuildingPlacementCommandSystem.EnqueueAndProcessCancelBuildingPlacement(entityManager, context);
+            source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessCancelBuildingPlacement(entityManager, context);
         else
             CancelBuildingPlacementWithoutEntityManager(context);
     }
 
     private static void EnqueueAndProcessExitBuildMode(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementCommandSystem.Context context)
+        BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
-            source.BuildingPlacementCommandSystem.EnqueueAndProcessExitBuildMode(entityManager, context);
+            source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessExitBuildMode(entityManager, context);
         else
             ExitBuildModeWithoutEntityManager(context);
     }
 
-    private static bool ConfirmBuildingPlacementWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
+    private static bool ConfirmBuildingPlacementWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         return context.SessionSystem != null &&
                context.SessionSystem.ConfirmBuildingPlacement(context.SessionContext);
     }
 
-    private static void CancelBuildingPlacementWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
+    private static void CancelBuildingPlacementWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         context.SessionSystem?.CancelBuildingPlacement(context.SessionContext);
     }
 
-    private static void ExitBuildModeWithoutEntityManager(BuildingPlacementCommandSystem.Context context)
+    private static void ExitBuildModeWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
     {
         context.SessionSystem?.ExitBuildMode(context.SessionContext);
     }

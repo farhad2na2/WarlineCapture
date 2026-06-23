@@ -65,15 +65,6 @@ public sealed class NonEcsSystemConversionArchitectureTests
 
     private static readonly Dictionary<string, int> ApprovedPublicNonEcsCommandMutatorMethods = new(StringComparer.Ordinal)
     {
-        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessBeginConfiguredPlacement"] = 1,
-        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessBeginPlacementForConfiguredSpawnable"] = 1,
-        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessBeginSoldierBasePlacement"] = 1,
-        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessCancelBuildingPlacement"] = 1,
-        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessConfirmBuildingPlacement"] = 1,
-        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessExitBuildMode"] = 1,
-        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessRotateBuildingPlacement"] = 1,
-        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|ProcessPendingUiPlacementCommands"] = 1,
-        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|ProcessPendingUiPlacementCommandsIfPresent"] = 1,
         ["Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs|EnqueueAndProcessClearSelectedBuilding"] = 1,
         ["Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs|EnqueueAndProcessDeleteSelectedBuilding"] = 1,
         ["Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs|ProcessPendingUiSelectionCommands"] = 1,
@@ -139,7 +130,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "AttackOrderCommandSystem",
         "ScanIntelCommandSystem",
         "TransportBoardingCommandSystem",
-        "BuildingPlacementCommandSystem",
+        "BuildingPlacementCommandRequestCompositionSystemHelper",
         "RoadBuildCommandSystem"
     };
 

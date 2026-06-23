@@ -24,9 +24,9 @@ Step 10 invalid-cell cache transition size: 1958 lines. Placement invalid-cell p
 
 Step 11 spawn random-state transition size: 1951 lines. Building spawn random state now lives in `BuildingSpawnSystem`; production/runtime tick delegates read and write the state through that spawn owner instead of `BuildingGameplaySystem`.
 
-Step 12 build-button command transition size: 1919 lines. Build-button placement start commands now route through `BuildingPlacementCommandSystem`; `BuildingGameplaySystem` keeps only temporary public wrappers for compatibility and context factories pass command-system delegates directly.
+Step 12 build-button command transition size: 1919 lines. Build-button placement start commands now route through `BuildingPlacementCommandRequestCompositionSystemHelper`; `BuildingGameplaySystem` keeps only temporary public wrappers for compatibility and context factories pass command-system delegates directly.
 
-Step 13 session command transition size: 1919 lines. Placement confirm, cancel, exit, pointer-down, and active-placement cost commands now route through `BuildingPlacementCommandSystem`; `BuildingGameplaySystem` keeps only temporary public wrappers for compatibility.
+Step 13 session command transition size: 1919 lines. Placement confirm, cancel, exit, pointer-down, and active-placement cost commands now route through `BuildingPlacementCommandRequestCompositionSystemHelper`; `BuildingGameplaySystem` keeps only temporary public wrappers for compatibility.
 
 Step 14 placement visual-update transition size: 1824 lines. Active-placement focus, placement visual update, confirm validation, and placement object handoff now route through `BuildingPlacementVisualUpdateCompositionSystemHelper`; `BuildingGameplaySystem` keeps only temporary wrapper callbacks and context creation for compatibility.
 
@@ -217,18 +217,18 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 ## Phase 4: Move Placement Command Surface
 
 12. Complete: Extract build-button placement commands
-   - Create `BuildingPlacementCommandSystem` or extend the existing placement interaction boundary.
+   - Create `BuildingPlacementCommandRequestCompositionSystemHelper` or extend the existing placement interaction boundary.
    - Own `BeginSoldierBasePlacement`, `BeginSoldierTentPlacement`, `BeginFactoryPlacement`, and configured-spawnable placement start.
    - Expected output: UI buttons call a building placement command boundary, not `BuildingGameplaySystem`.
-   - Added `BuildingPlacementCommandSystem` with build-button placement commands and configured-spawnable placement start.
+   - Added `BuildingPlacementCommandRequestCompositionSystemHelper` with build-button placement commands and configured-spawnable placement start.
    - `BuildingGameplaySourceCompositionSystemHelper` now owns the placement command system.
    - Interaction and production request context factories now pass command-system delegates for soldier-base and configured-spawnable placement starts.
 
 13. Complete: Move placement confirm/cancel/exit commands
-   - Move `ConfirmBuildingPlacement`, `CancelBuildingPlacement`, `ExitBuildMode`, and placement pointer notification to `BuildingPlacementCommandSystem` / `BuildingPlacementInteractionSystem`.
+   - Move `ConfirmBuildingPlacement`, `CancelBuildingPlacement`, `ExitBuildMode`, and placement pointer notification to `BuildingPlacementCommandRequestCompositionSystemHelper` / `BuildingPlacementInteractionSystem`.
    - Preserve build mode and active placement behavior.
    - Expected output: active placement lifecycle is only in placement systems.
-   - `BuildingPlacementCommandSystem` now routes confirm, cancel, exit, pointer-down, and active-placement cost commands to `BuildingPlacementSessionCompositionSystemHelper`.
+   - `BuildingPlacementCommandRequestCompositionSystemHelper` now routes confirm, cancel, exit, pointer-down, and active-placement cost commands to `BuildingPlacementSessionCompositionSystemHelper`.
    - `BuildingGameplaySystem` no longer calls `BuildingPlacementSessionCompositionSystemHelper` command methods directly.
    - UI and interaction context factories now use command-system delegates for confirm, cancel, and exit.
 
@@ -400,7 +400,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - In progress: selection-click composition now uses composition-owned `BuildingSelectionSystem` / `BuildingSelectionClickSystem` contexts instead of `BuildingGameplaySystem.CreateBuildingSelectionClickContext`.
    - In progress: runtime input tick composition now creates active-placement pointer and placement visual-update contexts from composition child systems instead of `BuildingGameplaySystem.CreateActivePlacementPointerContext`.
    - In progress: UI command/query composition now uses composition-owned `BuildingUiContextSystem` source construction instead of `BuildingGameplaySystem.CreateBuildingUiCommandContext` / `CreateBuildingUiQueryContext`.
-   - In progress: production composition no longer constructs `BuildingGameplaySystem`; interaction and disposal contexts now compose through `BuildingPlacementInteractionContextCompositionSystemHelper`, `BuildingPlacementCommandSystem`, and `BuildingGameplayDisposalExecutionCompositionSystemHelper`.
+   - In progress: production composition no longer constructs `BuildingGameplaySystem`; interaction and disposal contexts now compose through `BuildingPlacementInteractionContextCompositionSystemHelper`, `BuildingPlacementCommandRequestCompositionSystemHelper`, and `BuildingGameplayDisposalExecutionCompositionSystemHelper`.
    - Completed: `rg "BuildingGameplaySystem" Assets/Game/Scripts -g '*.cs'` now finds only `Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs`.
 
 35. Complete: Replace `BuildingGameplayTestHarness`

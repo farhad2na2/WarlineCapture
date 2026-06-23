@@ -7,7 +7,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
     public BuildingProductionContextCompositionSystemHelper.Source CreateRuntimeContextSource(
         BuildingGameplaySourceCompositionSystemHelper source,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         BuildingPlacementInteractionSystem.Context interactionContext = default,
         MaterialPropertyBlock markerPropertyBlock = null)
     {
@@ -35,7 +35,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
                 prefab),
             source.RuntimeResourceSystem.TrySpendDollars,
             source.RuntimeResourceSystem.AddDollars,
-            cost => source.BuildingPlacementCommandSystem.SetActivePlacementCost(
+            cost => source.BuildingPlacementCommandRequestCompositionSystemHelper.SetActivePlacementCost(
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock),
                 cost),
             (building, productionIndex, spawnUnitPrefab) =>
@@ -72,16 +72,16 @@ internal sealed class BuildingProductionCompositionSystemHelper
 
     private static bool EnqueueAndProcessBeginPlacementForConfiguredSpawnable(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementCommandSystem.Context context,
+        BuildingPlacementCommandRequestCompositionSystemHelper.Context context,
         GameObject prefab)
     {
         return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
-            ? source.BuildingPlacementCommandSystem.EnqueueAndProcessBeginPlacementForConfiguredSpawnable(entityManager, context, prefab)
+            ? source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessBeginPlacementForConfiguredSpawnable(entityManager, context, prefab)
             : BeginPlacementForConfiguredSpawnableWithoutEntityManager(context, prefab);
     }
 
     private static bool BeginPlacementForConfiguredSpawnableWithoutEntityManager(
-        BuildingPlacementCommandSystem.Context context,
+        BuildingPlacementCommandRequestCompositionSystemHelper.Context context,
         GameObject prefab)
     {
         if (context.DefinitionSystem == null ||

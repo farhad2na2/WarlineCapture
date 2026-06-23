@@ -176,7 +176,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             clearCommandMode);
     }
 
-    public BuildingPlacementCommandSystem.Context CreateCommandContext(
+    public BuildingPlacementCommandRequestCompositionSystemHelper.Context CreateCommandContext(
         Source source,
         BuildingPlacementStartupSystemHelper startupSystem,
         BuildingDefinitionSystem definitionSystem,
@@ -187,7 +187,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
         Action<string> clearSelectedBuilding,
         Action clearCommandMode)
     {
-        return new BuildingPlacementCommandSystem.Context(
+        return new BuildingPlacementCommandRequestCompositionSystemHelper.Context(
             startupSystem,
             definitionSystem,
             sessionSystem,

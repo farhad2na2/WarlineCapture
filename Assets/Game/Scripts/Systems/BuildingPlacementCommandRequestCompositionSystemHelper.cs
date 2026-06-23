@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementCommandSystem
+internal sealed class BuildingPlacementCommandRequestCompositionSystemHelper
 {
     internal readonly struct Context
     {

@@ -37,7 +37,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
                 destroyedBuildingLifetimeSeconds),
             () => source.BuildingCombatSystem.UpdateDestroyedBuildings(combatContext, UnityEngine.Time.time),
             () => source.BuildingBarrierSystem.UpdateRoadBarrierDoors(barrierContext, UnityEngine.Time.deltaTime),
-            () => source.BuildingPlacementRedirectSystem.FlushPendingMarkerRefresh(
+            () => source.BuildingPlacementRedirectCompositionSystemHelper.FlushPendingMarkerRefresh(
                 () => source.BuildingSelectionMarkerSystem.Refresh(selectionMarkerContext)),
             createMapBuildingPlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
             createMapVehiclePlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),

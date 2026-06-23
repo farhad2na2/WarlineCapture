@@ -155,9 +155,9 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingRuntimeCreationSystem.RemoveOverlappingBlockersDelegate RemoveOverlappingBlockers;
         public readonly BuildingRuntimeEntitySystem RuntimeEntitySystem;
         public readonly BuildingRuntimeEntitySystem.Context RuntimeEntityContext;
-        public readonly BuildingPlacementRedirectSystem PlacementRedirectSystem;
-        public readonly BuildingPlacementRedirectSystem.EnsureEntityQueriesDelegate EnsureEntityQueries;
-        public readonly BuildingPlacementRedirectSystem.GetRedirectUnitsQueryDelegate GetRedirectUnitsQuery;
+        public readonly BuildingPlacementRedirectCompositionSystemHelper PlacementRedirectSystem;
+        public readonly BuildingPlacementRedirectCompositionSystemHelper.EnsureEntityQueriesDelegate EnsureEntityQueries;
+        public readonly BuildingPlacementRedirectCompositionSystemHelper.GetRedirectUnitsQueryDelegate GetRedirectUnitsQuery;
         public readonly BuildingRuntimeCreationSystem.RuntimeBuildingAction InitializeVisuals;
         public readonly BuildingRuntimeCreationSystem.RuntimeAction RefreshMarkers;
         public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;
@@ -194,9 +194,9 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingRuntimeCreationSystem.RemoveOverlappingBlockersDelegate removeOverlappingBlockers,
             BuildingRuntimeEntitySystem runtimeEntitySystem,
             BuildingRuntimeEntitySystem.Context runtimeEntityContext,
-            BuildingPlacementRedirectSystem placementRedirectSystem,
-            BuildingPlacementRedirectSystem.EnsureEntityQueriesDelegate ensureEntityQueries,
-            BuildingPlacementRedirectSystem.GetRedirectUnitsQueryDelegate getRedirectUnitsQuery,
+            BuildingPlacementRedirectCompositionSystemHelper placementRedirectSystem,
+            BuildingPlacementRedirectCompositionSystemHelper.EnsureEntityQueriesDelegate ensureEntityQueries,
+            BuildingPlacementRedirectCompositionSystemHelper.GetRedirectUnitsQueryDelegate getRedirectUnitsQuery,
             BuildingRuntimeCreationSystem.RuntimeBuildingAction initializeVisuals,
             BuildingRuntimeCreationSystem.RuntimeAction refreshMarkers,
             BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -403,9 +403,9 @@ internal sealed class BuildingRuntimeContextSystem
             destroyObject);
     }
 
-    public BuildingPlacementRedirectSystem.Context CreateRedirectContext(RuntimeSource source)
+    public BuildingPlacementRedirectCompositionSystemHelper.Context CreateRedirectContext(RuntimeSource source)
     {
-        return new BuildingPlacementRedirectSystem.Context(
+        return new BuildingPlacementRedirectCompositionSystemHelper.Context(
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
@@ -507,9 +507,9 @@ internal sealed class BuildingRuntimeContextSystem
             });
     }
 
-    private static BuildingPlacementRedirectSystem.Context CreateCreationRedirectContext(Source source)
+    private static BuildingPlacementRedirectCompositionSystemHelper.Context CreateCreationRedirectContext(Source source)
     {
-        return new BuildingPlacementRedirectSystem.Context(
+        return new BuildingPlacementRedirectCompositionSystemHelper.Context(
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),

@@ -58,7 +58,7 @@ Step 27 runtime destruction/entity-link transition size: 1538 lines. Runtime bui
 
 Step 28 runtime entity creation transition size: 1513 lines. Runtime blocker creation, runtime building path-blocking policy, and runtime building combat entity creation now bind inside `BuildingRuntimeContextSystem` against `BuildingRuntimeEntitySystem`; `BuildingGameplaySystem` no longer keeps private creation/policy wrapper methods.
 
-Step 29 redirect/hauler bridge transition size: 1473 lines. Runtime creation redirect callbacks, deferred redirect footprint callbacks, pending marker refresh callbacks, selected hauler order assignment, and building approach checks now bind through `BuildingRuntimeContextSystem` to `BuildingPlacementRedirectSystem` / `BuildingResourceHaulerBridgeSystem`; `BuildingGameplaySystem` no longer keeps private redirect or hauler bridge wrapper methods.
+Step 29 redirect/hauler bridge transition size: 1473 lines. Runtime creation redirect callbacks, deferred redirect footprint callbacks, pending marker refresh callbacks, selected hauler order assignment, and building approach checks now bind through `BuildingRuntimeContextSystem` to `BuildingPlacementRedirectCompositionSystemHelper` / `BuildingResourceHaulerBridgeSystem`; `BuildingGameplaySystem` no longer keeps private redirect or hauler bridge wrapper methods.
 
 Step 30 placement context factory transition size: 1446 lines. Placement cancel/begin/confirm lifecycle context creation plus placement session/command context creation now live in `BuildingPlacementContextCompositionSystemHelper`; `BuildingGameplaySystem` no longer declares private cancel/begin/confirm/session factory wrappers.
 
@@ -347,9 +347,9 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplaySystem` no longer declares private `CreateBlockerEntity`, `ShouldRuntimeBuildingBlockPathing`, or `CreateBuildingCombatEntity` wrappers.
 
 29. Complete: Move redirect and hauler bridge calls
-   - Move redirect-around-building, selected hauler order assignment, hauler approach checks, and deferred marker refresh flushing to `BuildingPlacementRedirectSystem` / `BuildingResourceHaulerBridgeSystem`.
+   - Move redirect-around-building, selected hauler order assignment, hauler approach checks, and deferred marker refresh flushing to `BuildingPlacementRedirectCompositionSystemHelper` / `BuildingResourceHaulerBridgeSystem`.
    - Expected output: resource/transport side effects do not use shell callbacks.
-   - `BuildingRuntimeContextSystem.CreateCreationContext` now binds runtime creation redirect callbacks directly to `BuildingPlacementRedirectSystem`.
+   - `BuildingRuntimeContextSystem.CreateCreationContext` now binds runtime creation redirect callbacks directly to `BuildingPlacementRedirectCompositionSystemHelper`.
    - `BuildingRuntimeContextSystem.CreateRuntimeQueryContext` and `CreateBarrierContext` now bind building approach checks directly to `BuildingResourceHaulerBridgeSystem`.
    - `BuildingRuntimeContextSystem.TryAssignSelectedHaulerOrders` now owns the selected-hauler bridge call used by building selection.
    - `BuildingGameplaySystem` no longer declares private `RedirectUnitsAroundPlacedBuilding`, `TryAssignSelectedHaulerOrders`, `TryGetRuntimeBuildingApproachCell(RuntimeBuildingData, ...)`, `IsRuntimeBuildingApproachCell(RuntimeBuildingData, ...)`, or `IsHaulerAtBuildingApproach` wrappers.

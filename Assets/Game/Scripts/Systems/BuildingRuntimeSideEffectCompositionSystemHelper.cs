@@ -9,7 +9,7 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
         BuildingGameplaySourceCompositionSystemHelper source,
         TryGetEntityManagerDelegate tryGetEntityManager)
     {
-        source.BuildingPlacementRedirectSystem.BeginDeferredRuntimeBuildingSideEffects(
+        source.BuildingPlacementRedirectCompositionSystemHelper.BeginDeferredRuntimeBuildingSideEffects(
             () => source.BuildingPlacementInvalidCellSystem.RebuildPlacementInvalidPrefix(
                 source.BuildingGameplayGridDataCompositionSystemHelper,
                 source.BuildingGameplayEcsQueryCompositionSystemHelper,
@@ -45,7 +45,7 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
                     querySource.BuildingRuntimeQueryCompositionSystemHelper.TryGetRuntimeBuilding(querySource, id, out building),
                 (querySource, definition, originCell, grid, rotateVertical) =>
                     querySource.BuildingRuntimeQueryCompositionSystemHelper.GetEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical));
-        source.BuildingPlacementRedirectSystem.EndDeferredRuntimeBuildingSideEffects(
+        source.BuildingPlacementRedirectCompositionSystemHelper.EndDeferredRuntimeBuildingSideEffects(
             source.BuildingRuntimeContextSystem.CreateRedirectContext(runtimeSource),
             () => source.BuildingSelectionMarkerSystem.Refresh(
                 source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(

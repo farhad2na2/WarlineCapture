@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed class BuildingPlacementRedirectSystem
+internal sealed class BuildingPlacementRedirectCompositionSystemHelper
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
     public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);

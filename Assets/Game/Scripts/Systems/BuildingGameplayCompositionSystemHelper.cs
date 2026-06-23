@@ -9,7 +9,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
     private readonly BuildingGameplayChildSystem _childSystem = new();
     private readonly BuildingGameplayStartupCompositionSystemHelper _startupCompositionHelper = new();
     private readonly BuildingGameplayBindingCompositionSystemHelper _bindingCompositionHelper = new();
-    private readonly BuildingCitizenPopulationCompositionSystem _citizenPopulationCompositionSystem = ResolveBuildingCitizenPopulationCompositionSystem();
+    private readonly BuildingCitizenPopulationCompositionSystemHelper _citizenPopulationCompositionSystem = ResolveBuildingCitizenPopulationCompositionSystemHelper();
     private readonly BuildingGameplayDisposalCompositionSystemHelper _disposalCompositionHelper = new();
     private readonly BuildingMarkerVisualPresentationSystemHelper _markerVisualPresentationHelper = new();
     private readonly BuildingRuntimeTickCompositionSystemHelper _runtimeTickCompositionHelper = new();
@@ -383,9 +383,9 @@ internal sealed class BuildingGameplayCompositionSystemHelper
         BuildingRuntimeContextSystem.Source buildingRuntimeContextSource =
             createBuildingRuntimeContextSource(childSystems, interactionContext, markerPropertyBlock);
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary =
-            BuildingCitizenPopulationCompositionSystem.CreateBoundary(_citizenPopulationCompositionSystem);
+            BuildingCitizenPopulationCompositionSystemHelper.CreateBoundary(_citizenPopulationCompositionSystem);
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition =
-            BuildingCitizenPopulationCompositionSystem.Create(_citizenPopulationCompositionSystem);
+            BuildingCitizenPopulationCompositionSystemHelper.Create(_citizenPopulationCompositionSystem);
 
         var runtimeUpdate = new BuildingRuntimeUpdateSystem();
         BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext =
@@ -606,8 +606,8 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 () => createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock)));
     }
 
-    private static BuildingCitizenPopulationCompositionSystem ResolveBuildingCitizenPopulationCompositionSystem()
+    private static BuildingCitizenPopulationCompositionSystemHelper ResolveBuildingCitizenPopulationCompositionSystemHelper()
     {
-        return new BuildingCitizenPopulationCompositionSystem();
+        return new BuildingCitizenPopulationCompositionSystemHelper();
     }
 }

@@ -1,9 +1,9 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingCitizenPopulationCompositionSystem
+internal sealed class BuildingCitizenPopulationCompositionSystemHelper
 {
-    public static CitizenPopulationCompositionSystem CreateBoundary(BuildingCitizenPopulationCompositionSystem system)
+    public static CitizenPopulationCompositionSystem CreateBoundary(BuildingCitizenPopulationCompositionSystemHelper system)
     {
         return system != null ? system.CreateBoundary() : CreateBoundaryState();
     }
@@ -21,7 +21,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
             : null;
     }
 
-    public static CitizenPopulationCompositionSystem.Result Create(BuildingCitizenPopulationCompositionSystem system)
+    public static CitizenPopulationCompositionSystem.Result Create(BuildingCitizenPopulationCompositionSystemHelper system)
     {
         return system != null ? system.Create() : CreateState();
     }
@@ -37,7 +37,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
     }
 
     public static void Initialize(
-        BuildingCitizenPopulationCompositionSystem system,
+        BuildingCitizenPopulationCompositionSystemHelper system,
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
@@ -83,7 +83,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
     }
 
     public static void Initialize(
-        BuildingCitizenPopulationCompositionSystem system,
+        BuildingCitizenPopulationCompositionSystemHelper system,
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
@@ -176,7 +176,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
     }
 
     public static void Dispose(
-        BuildingCitizenPopulationCompositionSystem system,
+        BuildingCitizenPopulationCompositionSystemHelper system,
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition)
     {
@@ -206,7 +206,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
     }
 
     public static void Bind(
-        BuildingCitizenPopulationCompositionSystem system,
+        BuildingCitizenPopulationCompositionSystemHelper system,
         BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
         DayNightSystem dayNight,
         SelectionUiCameraSystem selectionUiCameraSystem,

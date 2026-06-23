@@ -30,7 +30,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
-        BuildingCitizenPopulationCompositionSystem citizenPopulationCompositionSystem,
+        BuildingCitizenPopulationCompositionSystemHelper citizenPopulationCompositionSystem,
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
         System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -104,7 +104,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         private readonly BuildingGameplayDependencyCompositionSystemHelper DependencySystem;
         private readonly BuildingRuntimeResourcePrefabContextCompositionSystemHelper RuntimeResourcePrefabContextSystem;
         private readonly BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source RuntimeResourcePrefabSource;
-        private readonly BuildingCitizenPopulationCompositionSystem CitizenPopulationCompositionBridge;
+        private readonly BuildingCitizenPopulationCompositionSystemHelper CitizenPopulationCompositionBridge;
         private readonly CitizenPopulationCompositionSystem CitizenPopulationCompositionBoundary;
         public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
         public readonly System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
@@ -140,7 +140,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
-            BuildingCitizenPopulationCompositionSystem citizenPopulationCompositionSystem,
+            BuildingCitizenPopulationCompositionSystemHelper citizenPopulationCompositionSystem,
             CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
             CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
             System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -201,7 +201,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
 
         public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera, RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig)
         {
-            BuildingCitizenPopulationCompositionSystem.Initialize(
+            BuildingCitizenPopulationCompositionSystemHelper.Initialize(
                 CitizenPopulationCompositionBridge,
                 CitizenPopulationCompositionBoundary,
                 CitizenPopulationComposition,
@@ -216,7 +216,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
 
         public void DisposeCitizenPopulation()
         {
-            BuildingCitizenPopulationCompositionSystem.Dispose(
+            BuildingCitizenPopulationCompositionSystemHelper.Dispose(
                 CitizenPopulationCompositionBridge,
                 CitizenPopulationCompositionBoundary,
                 CitizenPopulationComposition);
@@ -228,7 +228,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
             CitizenPopulationEventSystem citizenPopulationEventSystem)
         {
-            BuildingCitizenPopulationCompositionSystem.Bind(
+            BuildingCitizenPopulationCompositionSystemHelper.Bind(
                 CitizenPopulationCompositionBridge,
                 DependencySystem,
                 dayNight,

@@ -147,8 +147,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingGameplayBindingCompositionSystemHelper` now creates the main-menu and gameplay-feature binding delegates used by the composition result.
 
 8. Complete: Extract citizen population bridge
-   - Move citizen resource context creation, citizen population initialization, binding, and disposal callbacks into `BuildingCitizenPopulationCompositionSystem`.
-   - Result: `BuildingCitizenPopulationCompositionSystem` now owns citizen boundary creation, citizen resource/prefab context creation, init, bind, and disposal delegation.
+   - Move citizen resource context creation, citizen population initialization, binding, and disposal callbacks into `BuildingCitizenPopulationCompositionSystemHelper`.
+   - Result: `BuildingCitizenPopulationCompositionSystemHelper` now owns citizen boundary creation, citizen resource/prefab context creation, init, bind, and disposal delegation.
 
 9. Complete: Extract disposal source composition
    - Move `CreateDisposalSource` and disposal callback bundling into `BuildingGameplayDisposalCompositionSystemHelper`.

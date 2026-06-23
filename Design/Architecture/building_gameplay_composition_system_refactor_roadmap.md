@@ -183,8 +183,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingProductionCompositionSystem` now owns production context source construction, player-unit queue delegation, and production focus fallback resolution.
 
 17. Complete: Extract placement interaction context
-   - Move `CreateActivePlacementPointerContext` and `CreateBuildingPlacementInteractionContext` into `BuildingPlacementInteractionCompositionSystem`.
-   - Result: `BuildingPlacementInteractionCompositionSystem` now owns active placement pointer and placement interaction context wiring.
+   - Move `CreateActivePlacementPointerContext` and `CreateBuildingPlacementInteractionContext` into `BuildingPlacementInteractionCompositionSystemHelper`.
+   - Result: `BuildingPlacementInteractionCompositionSystemHelper` now owns active placement pointer and placement interaction context wiring.
 
 18. Complete: Extract building UI context source
    - Move `CreateBuildingUiContextSource`, UI command context creation, and UI query context creation into `BuildingUiCompositionSystem`.

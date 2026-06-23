@@ -16,7 +16,7 @@ internal sealed class BuildingGameplayCompositionSystem
     private readonly BuildingPlacementInputTickCompositionSystemHelper _placementInputTickCompositionHelper = new();
     private readonly BuildingRuntimeBoundaryCompositionSystemHelper _runtimeBoundaryCompositionHelper = new();
     private readonly BuildingProductionTickCompositionSystemHelper _productionTickCompositionHelper = new();
-    private readonly BuildingPlacementInteractionCompositionSystem _placementInteractionCompositionSystem = new();
+    private readonly BuildingPlacementInteractionCompositionSystemHelper _placementInteractionCompositionHelper = new();
     private readonly BuildingPlacementRuntimeTickContextCompositionSystemHelper _runtimeTickContextCompositionHelper = new();
     private readonly BuildingGameplayCompositionResultSystem _resultSystem = new();
 
@@ -317,7 +317,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createPlacementContextSource,
                     createRuntimeContextSource,
                     createBuildingSelectionContext);
-        BuildingPlacementInteractionCompositionSystem.UpdatePlacementDelegate updatePlacementForInteraction =
+        BuildingPlacementInteractionCompositionSystemHelper.UpdatePlacementDelegate updatePlacementForInteraction =
             (source, placementInteractionContext, placementMarkerPropertyBlock, screenPosition) =>
                 updatePlacement(source, placementInteractionContext, placementMarkerPropertyBlock, screenPosition);
         createPlacementContextSource = (source, placementInteractionContext, placementMarkerPropertyBlock) =>
@@ -356,7 +356,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     createBuildingRuntimeContextSource,
                     createBuildingSelectionContext);
         BuildingPlacementInteractionSystem.Context interactionContext = default;
-        interactionContext = _placementInteractionCompositionSystem.CreateBuildingPlacementInteractionContext(
+        interactionContext = _placementInteractionCompositionHelper.CreateBuildingPlacementInteractionContext(
             childSystems,
             () => interactionContext,
             markerPropertyBlock,
@@ -433,7 +433,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     rtsSelectionConfig != null ? rtsSelectionConfig.DragThresholdPixels : 8f,
                     createPlacementCommandContext,
                     (pointerSource, pointerInteractionContext, pointerMarkerPropertyBlock) =>
-                        _placementInteractionCompositionSystem.CreateActivePlacementPointerContext(
+                        _placementInteractionCompositionHelper.CreateActivePlacementPointerContext(
                             pointerSource,
                             pointerInteractionContext,
                             pointerMarkerPropertyBlock,

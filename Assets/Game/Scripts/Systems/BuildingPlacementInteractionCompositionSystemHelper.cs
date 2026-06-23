@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingPlacementInteractionCompositionSystem
+internal sealed class BuildingPlacementInteractionCompositionSystemHelper
 {
     internal delegate bool TryGetGridForPlacementInputDelegate(
         BuildingGameplayCompositionSourceSystem source,

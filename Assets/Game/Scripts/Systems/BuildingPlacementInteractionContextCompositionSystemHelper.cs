@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingPlacementInteractionContextSystem
+internal sealed class BuildingPlacementInteractionContextCompositionSystemHelper
 {
     public readonly struct Source
     {

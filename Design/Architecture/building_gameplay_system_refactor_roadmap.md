@@ -64,7 +64,7 @@ Step 30 placement context factory transition size: 1446 lines. Placement cancel/
 
 Step 31 runtime context factory transition size: 1446 lines. Runtime spawn command context creation now lives in `BuildingRuntimeContextSystem`; managed composition and runtime tick context creation use `BuildingRuntimeContextSystem` directly for runtime visual/combat/query/barrier contexts instead of shell context wrapper methods.
 
-Step 32 production/UI context factory transition size: 1446 lines. Production context source creation now routes through `BuildingProductionContextCompositionSystemHelper.CreateSource`, UI context source creation routes through `BuildingUiContextSystem.CreateSource`, interaction context source creation routes through `BuildingPlacementInteractionContextSystem.CreateSource`, and runtime resource prefab source creation routes through `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource`.
+Step 32 production/UI context factory transition size: 1446 lines. Production context source creation now routes through `BuildingProductionContextCompositionSystemHelper.CreateSource`, UI context source creation routes through `BuildingUiContextSystem.CreateSource`, interaction context source creation routes through `BuildingPlacementInteractionContextCompositionSystemHelper.CreateSource`, and runtime resource prefab source creation routes through `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource`.
 
 Step 33 runtime tick composition transition size: 1417 lines. Runtime tick source assembly now uses `BuildingGameplaySourceCompositionSystemHelper` child systems directly for runtime visual/combat/barrier/input/boundary tick phases; `BuildingGameplaySystem` no longer exposes `RuntimeTickSystem`, `RuntimeTickDomains`, `RuntimeInputDomains`, runtime state getter delegates, runtime boundary query delegates, or tick-only production/resource properties.
 
@@ -376,7 +376,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Expected output: production/runtime tick and menu binding no longer require shell context methods.
    - `BuildingProductionContextCompositionSystemHelper.CreateSource` now owns production source construction.
    - `BuildingUiContextSystem.CreateSource` now owns UI command/query source construction.
-   - `BuildingPlacementInteractionContextSystem.CreateSource` now owns interaction source construction.
+   - `BuildingPlacementInteractionContextCompositionSystemHelper.CreateSource` now owns interaction source construction.
    - `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource` is now used by the shell wrapper instead of constructing source data directly.
 
 33. Complete: Update runtime tick composition
@@ -400,7 +400,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - In progress: selection-click composition now uses composition-owned `BuildingSelectionSystem` / `BuildingSelectionClickSystem` contexts instead of `BuildingGameplaySystem.CreateBuildingSelectionClickContext`.
    - In progress: runtime input tick composition now creates active-placement pointer and placement visual-update contexts from composition child systems instead of `BuildingGameplaySystem.CreateActivePlacementPointerContext`.
    - In progress: UI command/query composition now uses composition-owned `BuildingUiContextSystem` source construction instead of `BuildingGameplaySystem.CreateBuildingUiCommandContext` / `CreateBuildingUiQueryContext`.
-   - In progress: production composition no longer constructs `BuildingGameplaySystem`; interaction and disposal contexts now compose through `BuildingPlacementInteractionContextSystem`, `BuildingPlacementCommandSystem`, and `BuildingGameplayDisposalSystem`.
+   - In progress: production composition no longer constructs `BuildingGameplaySystem`; interaction and disposal contexts now compose through `BuildingPlacementInteractionContextCompositionSystemHelper`, `BuildingPlacementCommandSystem`, and `BuildingGameplayDisposalSystem`.
    - Completed: `rg "BuildingGameplaySystem" Assets/Game/Scripts -g '*.cs'` now finds only `Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs`.
 
 35. Complete: Replace `BuildingGameplayTestHarness`

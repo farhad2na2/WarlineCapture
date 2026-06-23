@@ -50,8 +50,8 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
     {
-        return source.BuildingPlacementInteractionContextSystem.CreateContext(
-            source.BuildingPlacementInteractionContextSystem.CreateSource(
+        return source.BuildingPlacementInteractionContextCompositionSystemHelper.CreateContext(
+            source.BuildingPlacementInteractionContextCompositionSystemHelper.CreateSource(
                 () => source.BuildingPlacementLifecycleSystem.HasPendingBuildingPlacement,
                 () => source.BuildingPlacementLifecycleSystem.CanConfirmBuildingPlacement,
                 () => source.RuntimeBuildingSystem.HasSelectedBuilding(),

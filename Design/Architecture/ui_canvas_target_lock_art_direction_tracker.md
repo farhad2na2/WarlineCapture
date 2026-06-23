@@ -18,18 +18,18 @@ Approved visual source:
 
 ## Progress Snapshot
 
-- Checklist progress: `53 / 158 complete (33.5%)`.
+- Checklist progress: `58 / 158 complete (36.7%)`.
 - In progress: `1`.
-- Remaining open: `105`.
-- Current target: `Phase 3 - SCN-02 Main Menu rejected iteration 57 correction loop`.
+- Remaining open: `100`.
+- Current target: `Phase 3 - SCN-02 Main Menu iteration 61 user visual review after rejected-defect correction`.
 - Active Canvas shell/modal surfaces target-matched: `0 / 12`.
 - Secondary/reference Canvas popup surfaces target-matched: `1 / 6`.
 - Secondary/reference Canvas popup baseline captured or decisioned: `6 / 6`.
 - Shared Canvas chrome baseline status: `asset map and contact sheet complete; left-nav state seed applied to active Main Menu and Armory Canvas nav instances; Main Menu mode-card state seed applied; PopupFrameView shared modal seed and UIShellAppCanvas placeholder modal fallback seed applied; shared chrome material audit confirms default UI materials on seeded chrome`.
 - Button/selectable interaction standard status: `left-nav route button, Main Menu mode-card, Main Menu Inbox/Settings header actions, Main Menu deploy CTA, Main Menu commander profile hotspot, PopupFrame close-button, and shell placeholder close-button state seeds applied; broader non-SCN-02 button/card/selectable audit pending`.
-- Responsive CanvasScaler validation status: `SCN-02 Main Menu iteration 57 shadow captures were technically captured but rejected in visual review; all-aspect validation must rerun after the header, commander, and deploy correction loop; broader surface validation still pending`.
+- Responsive CanvasScaler validation status: `SCN-02 Main Menu iteration 61 shadow captures passed the corrected visual self-check at 1920x1080, 2400x1080, and 4800x2160 after fixing the iteration 60 wide-aspect deploy/card overlap; broader surface validation still pending`.
 - Performance validation status: `Phase 0 shadow batchmode baselines captured for Main Menu and Match HUD with Canvas active vs disabled; render counter recorder returned zero draw/batch values in batchmode, so real Game View/device profiling remains separate`.
-- Shadow-project validation status: `Canvas main menu/deploy UI fallback validation passed at 1280x720, 1920x1080, 2400x1080, and 4800x2160; 4800x2160, 1920x1080, and 2400x1080 captures passed for reachable Loading, Armory, Match HUD, Build Drawer, and Build Placement Bar surfaces; 4800x2160 captures passed for active Mission Result, Confirm Raid, End Of Day Report, and Intel Reveal modal prefabs; 4800x2160 captures passed for secondary/reference Ability Upgrade Detail, Build Placement Panel, Pause Menu, Popup Frame, Reward Unlock, and Threat Alert popup prefabs; Main Menu and Match HUD Canvas active/disabled performance baselines passed; shared left-nav state seed 4800x2160 Main Menu and Armory captures passed; Main Menu and Armory left-nav overlap validation passed at 1920x1080; Main Menu header/logo scale validation passed at 1280x720; Main Menu route smoke passed after mode-card state seed; PopupFrame target-lock seed 4800x2160 modal capture passed; Main Menu route smoke passed after UIShellAppCanvas placeholder modal fallback seed; SCN-02 Canvas Main Menu iteration 57 was captured but rejected by user visual review. No prefab/import/runtime exceptions were found; Unity licensing/Xcode/usbmuxd log noise remains environment-only. Header resource/action scale, commander spacing/text, deploy gap/star, final comparison, and all-aspect validation are reopened`.
+- Shadow-project validation status: `Canvas main menu/deploy UI fallback validation passed at 1280x720, 1920x1080, 2400x1080, and 4800x2160; 4800x2160, 1920x1080, and 2400x1080 captures passed for reachable Loading, Armory, Match HUD, Build Drawer, and Build Placement Bar surfaces; 4800x2160 captures passed for active Mission Result, Confirm Raid, End Of Day Report, and Intel Reveal modal prefabs; 4800x2160 captures passed for secondary/reference Ability Upgrade Detail, Build Placement Panel, Pause Menu, Popup Frame, Reward Unlock, and Threat Alert popup prefabs; Main Menu and Match HUD Canvas active/disabled performance baselines passed; shared left-nav state seed 4800x2160 Main Menu and Armory captures passed; Main Menu and Armory left-nav overlap validation passed at 1920x1080; Main Menu header/logo scale validation passed at 1280x720; Main Menu route smoke passed after mode-card state seed; PopupFrame target-lock seed 4800x2160 modal capture passed; Main Menu route smoke passed after UIShellAppCanvas placeholder modal fallback seed; SCN-02 Canvas Main Menu iteration 61 captured in the shadow project after rejected-defect correction. No prefab/import/runtime exceptions were found; Unity licensing/Xcode/usbmuxd log noise remains environment-only. User visual approval remains open`.
 - Main-project validation status: `RuntimeUiConfig is now Canvas by default; no main-project capture validation yet`.
 
 Recent slice notes:
@@ -68,6 +68,8 @@ Recent slice notes:
 - Iteration 57 improvements: added real Canvas Image divider/star pieces to all three mode-card lower plates using the thin divider and deploy-star sprites; saved focused crop contacts for header actions, left nav, mode cards, right commander panel, and deploy CTA; reran shadow all-aspect captures at 1280x720, 2400x1080, and 4800x2160.
 - User rejected SCN-02 iteration 57 as not approval-ready. Visible defects called out: Settings and Inbox buttons are not the same height/y-position as the resource panels; resource panels are too large against the mockup; resource text is too small and overlaps icons; commander panels overlap and leave excessive empty margin to the right edge; there is a large gap between game modes and deploy; commander text is too small; commander padding is too tight; the deploy star has a black background.
 - Still wrong / next iteration: shrink and align the header resource/action family, increase resource text/icon separation, move and pad the separate commander panel stack, increase commander text readability, raise the deploy CTA toward the mode cards, remove the black deploy-star backing, then rerun focused crops and all-aspect shadow captures before any approval request.
+- SCN-02 iteration 61 supersedes the rejected iteration 57 and the wide-aspect-broken iteration 60. Corrections: resource chips were resized and their values/icons separated; Inbox/Settings were aligned to the chip height/y-position; the commander stack was moved right, widened, and given larger text/padding; the deploy star black tab was disabled; the deploy/card vertical spacing was tuned and revalidated at 1920x1080, 2400x1080, and 4800x2160. Latest artifacts: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_41/shadow_canvas_scn02_mainmenu_iter61_responsive_spacing_1920x1080.png`, `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_41/scn02_iter61_ui_toolkit_vs_canvas_contact.png`, and `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_41/scn02_iter61_all_aspect_contact.png`.
+- Still wrong / next iteration: no known defects from the rejected iteration 57 list remain in the iteration 61 self-check. Remaining action is user visual review; if rejected, fix the called-out panel family before moving to any other screen.
 - Added editor-only route-capture cleanup for `MenuDiagnosticsPanel`/`Panel_FPS`/`Label_FPS` so visual screenshots do not include the scene FPS diagnostics overlay. This does not change runtime route behavior or gameplay.
 - Latest shadow-project approval artifact: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_02/shadow_canvas_scn02_mainmenu_iter11_no_diagnostics_1920x1080.png`.
 - Applied the shared card state seed to the existing SCN-02 Main Menu mode cards without renaming runtime-bound objects: the transparent hotspot remains the raycast target, while each Button now targets the visible full-frame card Image for default/hover/pressed/selected/disabled sprite swapping.
@@ -425,20 +427,20 @@ Update Canvas menu screens using the shared shell, header, and left nav baseline
 - [x] SCN-02 Main Menu: update center mode cards to approved Target Lock card style.
 - [x] SCN-02 Main Menu: replace all visible legacy MainMenuV15C/Synty sprites with Target Lock sprites or documented shared Target Lock chrome.
 - [x] SCN-02 Main Menu: update header resource chips and header action buttons to the approved SCN-02C sprite family.
-- [ ] SCN-02 Main Menu: tune header resource chips, plus buttons, Inbox/Settings buttons, and spacing until they match the approved Target Lock header style while preserving the user-approved two-button Canvas header action rule.
+- [x] SCN-02 Main Menu: tune header resource chips, plus buttons, Inbox/Settings buttons, and spacing until they match the approved Target Lock header style while preserving the user-approved two-button Canvas header action rule.
 - [x] SCN-02 Main Menu: update left navigation labels/icons/chrome to match the approved SCN-02 UI Toolkit main menu family.
 - [x] SCN-02 Main Menu: resolve the approved sixth `PROFILE` nav-row parity either by safely adding it or recording an explicit user-approved exception.
 - [x] SCN-02 Main Menu: tune mode-card badge, lower plate, title, star/divider, and image spacing from focused crops, not only full-screen review.
 - [x] SCN-02 Main Menu: update right commander panel as separate live Canvas panels, not a baked multi-section image.
-- [ ] SCN-02 Main Menu: tune commander portrait, identity row, readiness row, faction-standing row, and row values to match the approved separate-panel structure.
-- [ ] SCN-02 Main Menu: update footer/deploy controls with full interaction states.
+- [x] SCN-02 Main Menu: tune commander portrait, identity row, readiness row, faction-standing row, and row values to match the approved separate-panel structure.
+- [x] SCN-02 Main Menu: update footer/deploy controls with full interaction states.
 - [x] SCN-02 Main Menu: verify every button/selectable has default, hover/highlight, selected/current, pressed/impact, and disabled state coverage.
 - [x] SCN-02 Main Menu: run and record the prefab sprite GUID audit; document any remaining non-Target-Lock sprite references.
 - [x] SCN-02 Main Menu: rerun the sprite GUID audit after final visual edits and confirm every remaining non-Target-Lock sprite is invisible, transparent raycast-only, or documented runtime-only.
 - [x] SCN-02 Main Menu: reject any candidate that still shows old sprites, mismatched chrome, partial hover overlays, unreadable text, asymmetric padding, or button states that do not cover the full frame.
 - [x] SCN-02 Main Menu: capture focused crops for header, left nav, mode cards, right commander panel, footer/deploy CTA, and button states.
-- [ ] SCN-02 Main Menu: compare final candidate against the approved UI Toolkit SCN-02 capture and the Target Lock reference.
-- [ ] SCN-02 Main Menu: validate readable text and clean panel alignment at all target aspects.
+- [x] SCN-02 Main Menu: compare final candidate against the approved UI Toolkit SCN-02 capture and the Target Lock reference.
+- [x] SCN-02 Main Menu: validate readable text and clean panel alignment at all target aspects.
 - [ ] SCN-02 Main Menu: user approves final candidate capture before the surface is counted as target-matched.
 - [ ] SCN-03 Commander Profile: reuse shared header and left nav.
 - [ ] SCN-03 Commander Profile: split profile/stat/loadout areas into clean panel sections.

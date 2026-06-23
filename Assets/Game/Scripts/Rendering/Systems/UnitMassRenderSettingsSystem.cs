@@ -53,6 +53,7 @@ public partial struct UnitMassRenderSettingsSystem : ISystem
         _renderBoundsLookup = state.GetComponentLookup<Unity.Rendering.RenderBounds>();
         _meshLodLookup = state.GetComponentLookup<MeshLODComponent>();
         _meshLodGroupLookup = state.GetComponentLookup<MeshLODGroupComponent>();
+        state.RequireForUpdate(_renderQuery);
     }
 
     public void OnUpdate(ref SystemState state)

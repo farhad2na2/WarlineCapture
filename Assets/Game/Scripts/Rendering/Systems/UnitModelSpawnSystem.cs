@@ -24,6 +24,7 @@ public partial struct UnitModelSpawnSystem : ISystem
     private EntityQuery _midLodInstanceQuery;
     private EntityQuery _lowLodInstanceQuery;
     private EntityQuery _deferredVisibleCharacterLodQuery;
+    private EntityQuery _pendingVisualSpawnQuery;
     private int _lastLoggedTotalVisualUnits;
     private int _lastLoggedDetailReady;
     private int _lastLoggedMidReady;
@@ -40,6 +41,27 @@ public partial struct UnitModelSpawnSystem : ISystem
         _midLodInstanceQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitMidLodInstanceReference>());
         _lowLodInstanceQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitLowLodInstanceReference>());
         _deferredVisibleCharacterLodQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitVisibleCharacterLodSpawnDeferredTag>());
+        _pendingVisualSpawnQuery = state.GetEntityQuery(
+            new EntityQueryDesc
+            {
+                All = new[] { ComponentType.ReadOnly<UnitModelPrefabReference>() },
+                None = new[] { ComponentType.ReadOnly<UnitModelInstanceReference>() }
+            },
+            new EntityQueryDesc
+            {
+                All = new[] { ComponentType.ReadOnly<UnitMidLodPrefabReference>() },
+                None = new[] { ComponentType.ReadOnly<UnitMidLodInstanceReference>() }
+            },
+            new EntityQueryDesc
+            {
+                All = new[] { ComponentType.ReadOnly<UnitLowLodPrefabReference>() },
+                None = new[] { ComponentType.ReadOnly<UnitLowLodInstanceReference>() }
+            },
+            new EntityQueryDesc
+            {
+                All = new[] { ComponentType.ReadOnly<UnitVisibleCharacterLodSpawnDeferredTag>() }
+            });
+        state.RequireForUpdate(_pendingVisualSpawnQuery);
         _lastLoggedTotalVisualUnits = -1;
         _lastLoggedDetailReady = -1;
         _lastLoggedMidReady = -1;

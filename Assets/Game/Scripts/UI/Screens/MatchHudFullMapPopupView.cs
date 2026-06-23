@@ -8,6 +8,8 @@ public sealed class MatchHudFullMapPopupView : MonoBehaviour
     [SerializeField] private MatchHudMinimapView minimap;
     [SerializeField] private Button closeAction;
 
+    private Canvas _cachedCanvas;
+
     public GameObject PopupRoot => popupRoot != null ? popupRoot : gameObject;
     public MatchHudMinimapView Minimap => minimap;
     public bool IsOpen => PopupRoot != null && PopupRoot.activeInHierarchy;
@@ -30,6 +32,11 @@ public sealed class MatchHudFullMapPopupView : MonoBehaviour
     {
         if (closeAction != null)
             closeAction.onClick.RemoveListener(RequestClose);
+    }
+
+    private void OnTransformParentChanged()
+    {
+        _cachedCanvas = null;
     }
 
     public void Show()
@@ -58,12 +65,19 @@ public sealed class MatchHudFullMapPopupView : MonoBehaviour
         CloseRequested?.Invoke();
     }
 
-    private static Camera ResolveEventCamera(RectTransform rect)
+    private Camera ResolveEventCamera(RectTransform rect)
     {
-        Canvas canvas = rect != null ? rect.GetComponentInParent<Canvas>() : null;
+        Canvas canvas = ResolveCanvas(rect);
         if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
             return null;
 
         return canvas.worldCamera;
+    }
+
+    private Canvas ResolveCanvas(RectTransform rect)
+    {
+        if (_cachedCanvas == null && rect != null)
+            _cachedCanvas = rect.GetComponentInParent<Canvas>();
+        return _cachedCanvas;
     }
 }

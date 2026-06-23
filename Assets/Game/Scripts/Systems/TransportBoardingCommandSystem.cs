@@ -5,6 +5,8 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
+[UpdateBefore(typeof(UnitMoveOrderRequestSystem))]
+[UpdateBefore(typeof(UnitTransportBoardingSystem))]
 public partial struct TransportBoardingCommandSystem : ISystem
 {
     private const int TransportPlaneVehicleMaxFootprintSpan = 3;

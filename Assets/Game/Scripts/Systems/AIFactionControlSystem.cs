@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
+[UpdateAfter(typeof(AIEconomySystem))]
 [UpdateBefore(typeof(UnitPathfindingSystem))]
 public partial struct AIFactionControlSystem : ISystem
 {

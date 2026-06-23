@@ -14,6 +14,8 @@ internal sealed class BuildingProductionTransportSystem
     private const float RunwaySurfaceClearance = 0.03f;
     private const int DefaultTransportPoolPrewarmCount = 2;
     private const int DefaultTransportStatePoolPrewarmCount = 32;
+    private static readonly int SnivelerModelShownId = Shader.PropertyToID("_SnivelerModelShown");
+    private static readonly int SnivelerRenderPixelId = Shader.PropertyToID("_SnivelerRenderPixel");
 
     public delegate void PrepareTransportDropVisualDelegate(GameObject visual);
 
@@ -602,8 +604,6 @@ internal sealed class BuildingProductionTransportSystem
             return;
 
         MaterialPropertyBlock propertyBlock = new();
-        int modelShownId = Shader.PropertyToID("_SnivelerModelShown");
-        int renderPixelId = Shader.PropertyToID("_SnivelerRenderPixel");
         var lods = lodGroup.GetLODs();
         for (int i = 0; i < lods.Length; ++i)
         {
@@ -619,8 +619,8 @@ internal sealed class BuildingProductionTransportSystem
                 for (int materialIndex = 0; materialIndex < lodRenderer.sharedMaterials.Length; materialIndex++)
                 {
                     lodRenderer.GetPropertyBlock(propertyBlock, materialIndex);
-                    propertyBlock.SetFloat(modelShownId, 1f);
-                    propertyBlock.SetVector(renderPixelId, new Vector4(startPixel, endPixel, 0f, 0f));
+                    propertyBlock.SetFloat(SnivelerModelShownId, 1f);
+                    propertyBlock.SetVector(SnivelerRenderPixelId, new Vector4(startPixel, endPixel, 0f, 0f));
                     lodRenderer.SetPropertyBlock(propertyBlock, materialIndex);
                 }
             }

@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using TMPro;
 using Unity.Entities;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using Unity.Profiling;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -42,6 +44,12 @@ public static class CanvasMenuFallbackValidation
     private static bool routeCaptureShouldShowPopup;
     private static string routeCaptureOverlay;
     private static string routeCaptureModal;
+    private static string routeCaptureStaticContentPrefabPath;
+    private static bool routeCaptureStaticContentFullRoot;
+    private static bool routeCaptureShouldSetArmoryCategory;
+    private static ArmoryCatalogCategory routeCaptureArmoryCategory;
+    private static string routeCaptureSelectButtonName;
+    private static bool routeCaptureButtonSelectionApplied;
     private static int performanceFrameCount;
     private static int performanceConfiguredFrame;
     private static int performanceWarmupFrames;
@@ -149,6 +157,10 @@ public static class CanvasMenuFallbackValidation
             routeCaptureShouldShowPopup = ResolveRouteCapturePopup(out routeCapturePopup);
             routeCaptureOverlay = ResolveRouteCaptureOverlay();
             routeCaptureModal = ResolveRouteCaptureModal();
+            routeCaptureStaticContentPrefabPath = ResolveRouteCaptureStaticContentPrefabPath();
+            routeCaptureStaticContentFullRoot = ResolveRouteCaptureStaticContentFullRoot();
+            routeCaptureShouldSetArmoryCategory = ResolveRouteCaptureArmoryCategory(out routeCaptureArmoryCategory);
+            routeCaptureSelectButtonName = ResolveRouteCaptureSelectButtonName();
             routeCaptureSettleFrames = ResolvePositiveIntEnvironment("WARLINE_CANVAS_ROUTE_CAPTURE_SETTLE_FRAMES", 12);
             EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
             if (File.Exists(screenshotPath))
@@ -159,6 +171,7 @@ public static class CanvasMenuFallbackValidation
             routeCaptureStartedAt = EditorApplication.timeSinceStartup;
             routeCaptureCompleted = false;
             routeCaptureConfigured = false;
+            routeCaptureButtonSelectionApplied = false;
             EditorApplication.update -= ContinueRouteCapture;
             EditorApplication.update += ContinueRouteCapture;
             EditorApplication.EnterPlaymode();
@@ -203,6 +216,121 @@ public static class CanvasMenuFallbackValidation
             Debug.LogError($"[CanvasPerformanceBaseline] result=Failed\n{exception}");
             EditorApplication.Exit(1);
         }
+    }
+
+    public static void ApplyCommanderProfileTargetLockLayout()
+    {
+        const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN03_CommanderProfileContent.prefab";
+
+        GameObject root = null;
+        try
+        {
+            root = PrefabUtility.LoadPrefabContents(PrefabPath);
+            Transform left = FindChild(root.transform, "LeftContent");
+            Transform middle = FindChild(root.transform, "MiddleContent");
+            Transform right = FindChild(root.transform, "RightContent");
+            Transform footer = FindChild(root.transform, "FooterContent");
+            if (left == null || middle == null || right == null || footer == null)
+                throw new InvalidOperationException("SCN-03 prefab is missing one or more shell content roots.");
+
+            SetActive(FindChild(root.transform, "HeaderContent")?.gameObject, false);
+            HideAllChildren(FindChild(root.transform, "MenuBackgroundContent"));
+            SetRectFromTopLeft(left.gameObject, 52f, 310f, 800f, 1500f);
+            SetRectFromTopLeft(middle.gameObject, 980f, 300f, 1880f, 1700f);
+            SetRectFromTopLeft(right.gameObject, 2980f, 300f, 1740f, 1700f);
+            SetRectFromTopLeft(footer.gameObject, 980f, 1905f, 2860f, 210f);
+
+            GameObject backButton = FindChild(root.transform, "BackButton")?.gameObject;
+            GameObject identityPanel = FindChild(root.transform, "CommanderIdentityPanel")?.gameObject;
+            GameObject overviewPanel = FindChild(root.transform, "OverviewPanel")?.gameObject;
+            GameObject accountPanel = FindChild(root.transform, "AccountSnapshotPanel")?.gameObject;
+            GameObject rewardPanel = FindChild(root.transform, "RewardTrackPanel")?.gameObject;
+            GameObject historyPanel = FindChild(root.transform, "RecentHistoryPanel")?.gameObject;
+            GameObject armoryPanel = FindChild(root.transform, "ArmorySquadsPanel")?.gameObject;
+            GameObject profileRewardsPanel = FindChild(root.transform, "ProfileRewardsPanel")?.gameObject;
+            GameObject openArmoryButton = FindChild(root.transform, "OpenArmoryButton")?.gameObject;
+            GameObject replayButton = FindChild(root.transform, "ReplayButton")?.gameObject;
+            GameObject detailButton = FindChild(root.transform, "DetailButton")?.gameObject;
+
+            MoveTo(backButton, left);
+            SetRectFromTopLeft(backButton, 0f, 0f, 500f, 135f);
+            ApplyButtonFrame(backButton, FrameKind.Secondary);
+            LayoutIconLabelButton(backButton, 64f, 42f, 68f, 52f, 156f, 0f, 310f, 135f, 46f);
+
+            string[] tabNames = { "OverviewTab", "StatsTab", "BadgesTab", "HistoryTab", "UpgradesTab" };
+            string[] tabIconPaths =
+            {
+                "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_hold_shield.png",
+                "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_units_group.png",
+                "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_badge_owned_checkmark.png",
+                "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_attack_reticle.png",
+                "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_upgrades_chevrons.png"
+            };
+            for (int i = 0; i < tabNames.Length; i++)
+            {
+                GameObject tab = FindChild(root.transform, tabNames[i])?.gameObject;
+                MoveTo(tab, left);
+                SetRectFromTopLeft(tab, 0f, 215f + (i * 235f), 800f, 205f);
+                ApplyNavButtonState(tab, i == 0);
+                SetChildSprite(tab, "Icon", tabIconPaths[i], true);
+                LayoutIconLabelButton(tab, 54f, 52f, 124f, 98f, 220f, 0f, 520f, 205f, 56f);
+            }
+            HideDirectChildrenExcept(left, "BackButton", "OverviewTab", "StatsTab", "BadgesTab", "HistoryTab", "UpgradesTab");
+
+            MoveTo(identityPanel, middle);
+            SetRectFromTopLeft(identityPanel, 0f, 0f, 1880f, 760f);
+            ApplyPanelFrame(identityPanel, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_02_commander_identity_panel_frame.png", 4.2f);
+            LayoutCommanderIdentity(identityPanel);
+
+            MoveTo(overviewPanel, middle);
+            SetRectFromTopLeft(overviewPanel, 0f, 800f, 1880f, 350f);
+            ApplyPanelFrame(overviewPanel, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_03_overview_panel_frame.png", 4.4f);
+            LayoutOverviewStats(overviewPanel);
+
+            MoveTo(accountPanel, middle);
+            SetRectFromTopLeft(accountPanel, 0f, 1220f, 1880f, 430f);
+            ApplyPanelFrame(accountPanel, "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png", 4.2f);
+            LayoutAccountSnapshot(accountPanel);
+            HideDirectChildrenExcept(middle, "CommanderIdentityPanel", "OverviewPanel", "AccountSnapshotPanel");
+
+            MoveTo(rewardPanel, right);
+            SetRectFromTopLeft(rewardPanel, 0f, 0f, 1740f, 760f);
+            ApplyPanelFrame(rewardPanel, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_05_reward_track_panel_frame.png", 4.2f);
+            LayoutRewardTrack(rewardPanel);
+
+            MoveTo(historyPanel, right);
+            SetRectFromTopLeft(historyPanel, 0f, 810f, 1740f, 890f);
+            ApplyPanelFrame(historyPanel, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_06_recent_history_panel_frame.png", 4.3f);
+            LayoutRecentHistory(historyPanel);
+            HideDirectChildrenExcept(right, "RewardTrackPanel", "RecentHistoryPanel");
+
+            SetActive(armoryPanel, false);
+            SetActive(profileRewardsPanel, false);
+
+            PrepareFooterButton(openArmoryButton, footer, 0f, "OPEN ARMORY", FrameKind.Primary);
+            PrepareFooterButton(detailButton, footer, 960f, "DETAIL", FrameKind.Secondary);
+            PrepareFooterButton(replayButton, footer, 1780f, "REPLAY", FrameKind.Primary);
+            HideFooterBreadcrumbs(footer, openArmoryButton, detailButton, replayButton);
+            HideDirectChildrenExcept(footer, "OpenArmoryButton", "DetailButton", "ReplayButton");
+
+            ApplyPanelBackground(root);
+            PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+            Debug.Log($"[CanvasCommanderProfileTargetLockLayout] result=Passed prefab={PrefabPath}");
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[CanvasCommanderProfileTargetLockLayout] result=Failed\n{exception}");
+            EditorApplication.Exit(1);
+            return;
+        }
+        finally
+        {
+            if (root != null)
+                PrefabUtility.UnloadPrefabContents(root);
+        }
+
+        AssetDatabase.SaveAssets();
+        EditorApplication.Exit(0);
     }
 
     private static void Continue()
@@ -380,7 +508,7 @@ public static class CanvasMenuFallbackValidation
                 routeCaptureStartedAt = EditorApplication.timeSinceStartup;
             if (EditorApplication.timeSinceStartup - routeCaptureStartedAt > 60d)
             {
-                CompleteRouteCapture(false, $"Timed out waiting for Canvas route capture. route={routeCaptureRoute} popup={DescribeRouteCapturePopup()} overlay={DescribeRouteCaptureOverlay()} modal={DescribeRouteCaptureModal()} {DescribeRuntimeState()}");
+                CompleteRouteCapture(false, $"Timed out waiting for Canvas route capture. route={routeCaptureRoute} popup={DescribeRouteCapturePopup()} overlay={DescribeRouteCaptureOverlay()} modal={DescribeRouteCaptureModal()} armoryCategory={DescribeRouteCaptureArmoryCategory()} {DescribeRuntimeState()}");
                 return;
             }
 
@@ -426,6 +554,14 @@ public static class CanvasMenuFallbackValidation
                 return;
 
             DisableMenuDiagnosticsOverlay();
+            if (!TryApplyRouteCaptureButtonSelection(out string selectionError, out bool waitForSelectionSettle))
+            {
+                CompleteRouteCapture(false, selectionError);
+                return;
+            }
+            if (waitForSelectionSettle)
+                return;
+
             if (!TryRenderCameraLuma(bootstrap.UiCamera, screenshotPath, screenshotWidth, screenshotHeight, out float luma, out string renderError))
             {
                 CompleteRouteCapture(false, renderError);
@@ -435,11 +571,11 @@ public static class CanvasMenuFallbackValidation
             float minimumLuma = ResolveRouteCaptureMinimumLuma();
             if (luma < minimumLuma)
             {
-                CompleteRouteCapture(false, $"Captured Canvas route screenshot is still black or near-black. route={routeCaptureRoute} popup={DescribeRouteCapturePopup()} overlay={DescribeRouteCaptureOverlay()} modal={DescribeRouteCaptureModal()} luma={luma:0.000} minimum={minimumLuma:0.000} path={screenshotPath}");
+                CompleteRouteCapture(false, $"Captured Canvas route screenshot is still black or near-black. route={routeCaptureRoute} popup={DescribeRouteCapturePopup()} overlay={DescribeRouteCaptureOverlay()} modal={DescribeRouteCaptureModal()} armoryCategory={DescribeRouteCaptureArmoryCategory()} selectedButton={DescribeRouteCaptureSelectedButton()} luma={luma:0.000} minimum={minimumLuma:0.000} path={screenshotPath}");
                 return;
             }
 
-            CompleteRouteCapture(true, $"Canvas route is visible. route={routeCaptureRoute} popup={DescribeRouteCapturePopup()} overlay={DescribeRouteCaptureOverlay()} modal={DescribeRouteCaptureModal()} luma={luma:0.000} size={screenshotWidth}x{screenshotHeight} path={screenshotPath}");
+            CompleteRouteCapture(true, $"Canvas route is visible. route={routeCaptureRoute} popup={DescribeRouteCapturePopup()} overlay={DescribeRouteCaptureOverlay()} modal={DescribeRouteCaptureModal()} armoryCategory={DescribeRouteCaptureArmoryCategory()} selectedButton={DescribeRouteCaptureSelectedButton()} luma={luma:0.000} size={screenshotWidth}x{screenshotHeight} path={screenshotPath}");
         }
         catch (Exception exception)
         {
@@ -496,6 +632,7 @@ public static class CanvasMenuFallbackValidation
                 routeCaptureShouldShowPopup = false;
                 routeCaptureOverlay = string.Empty;
                 routeCaptureModal = string.Empty;
+                routeCaptureShouldSetArmoryCategory = false;
                 if (!TryConfigureRouteCapture(bootstrap, out string configurationError))
                 {
                     CompleteCanvasPerformanceBaseline(false, configurationError);
@@ -539,7 +676,24 @@ public static class CanvasMenuFallbackValidation
             return false;
         }
 
-        switch (routeCaptureRoute)
+        if (!string.IsNullOrWhiteSpace(routeCaptureStaticContentPrefabPath))
+        {
+            content.InstallMenuRouteBody(UIRoute.MainMenu);
+            if (!TryMountStaticMenuContent(bootstrap, routeCaptureStaticContentPrefabPath, out error))
+                return false;
+
+            ResetRouteCaptureRegions(
+                bootstrap,
+                UIShellRegionId.MenuBackgroundRegion,
+                UIShellRegionId.HeaderRegion,
+                UIShellRegionId.LeftRegion,
+                UIShellRegionId.MiddleRegion,
+                UIShellRegionId.RightRegion,
+                UIShellRegionId.FooterRegion);
+        }
+        else
+        {
+            switch (routeCaptureRoute)
         {
             case UIRoute.Splash:
                 content.PrepareForCommandSequence(new[]
@@ -563,6 +717,8 @@ public static class CanvasMenuFallbackValidation
                     UIShellRegionId.MiddleRegion,
                     UIShellRegionId.RightRegion,
                     UIShellRegionId.FooterRegion);
+                if (!TryConfigureRouteCaptureArmoryCategory(out error))
+                    return false;
                 break;
             case UIRoute.Match:
                 content.PrepareForCommandSequence(new[]
@@ -578,6 +734,7 @@ public static class CanvasMenuFallbackValidation
             default:
                 error = $"Canvas route capture does not support route={routeCaptureRoute}. Supported routes: Splash, MainMenu, Armory, Match.";
                 return false;
+            }
         }
 
         if (routeCaptureShouldShowPopup)
@@ -603,6 +760,192 @@ public static class CanvasMenuFallbackValidation
             return false;
 
         return true;
+    }
+
+    private static bool TryMountStaticMenuContent(MenuBootstrapView bootstrap, string prefabPath, out string error)
+    {
+        error = null;
+        if (bootstrap == null || bootstrap.ShellView == null)
+        {
+            error = "Canvas route capture could not find UIShellView for static content mounting.";
+            return false;
+        }
+
+        if (routeCaptureStaticContentFullRoot)
+            return TryMountStaticMenuContentRoot(bootstrap, prefabPath, out error);
+
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        if (prefab == null)
+        {
+            error = $"Canvas route capture could not load static content prefab at {prefabPath}.";
+            return false;
+        }
+
+        UIShellContentSectionId[] sectionIds =
+        {
+            UIShellContentSectionId.MenuBackground,
+            UIShellContentSectionId.Left,
+            UIShellContentSectionId.Middle,
+            UIShellContentSectionId.Right,
+            UIShellContentSectionId.Footer
+        };
+
+        bool mountedAny = false;
+        for (int i = 0; i < sectionIds.Length; i++)
+        {
+            UIShellContentSectionId sectionId = sectionIds[i];
+            if (!TryResolveStaticContentSection(prefab, sectionId, out GameObject source) || source == null)
+                continue;
+
+            if (!TryMountStaticSection(bootstrap.ShellView, source, ToRegionId(sectionId), out error))
+                return false;
+
+            mountedAny = true;
+        }
+
+        if (!mountedAny)
+        {
+            error = $"Static content prefab has no mountable menu sections: {prefabPath}.";
+            return false;
+        }
+
+        if (bootstrap.ShellView.TryGetRegion(UIShellRegionId.PopupLayer, out UIShellRegionView popup) && popup != null)
+            popup.ClearContent();
+
+        Debug.Log($"[CanvasRouteCaptureValidation] staticContentPrefab={prefabPath}");
+        return true;
+    }
+
+    private static bool TryMountStaticMenuContentRoot(MenuBootstrapView bootstrap, string prefabPath, out string error)
+    {
+        error = null;
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        if (prefab == null)
+        {
+            error = $"Canvas route capture could not load static content prefab at {prefabPath}.";
+            return false;
+        }
+
+        if (!bootstrap.ShellView.TryGetRegion(UIShellRegionId.MenuBackgroundRegion, out UIShellRegionView background) ||
+            background == null ||
+            background.ContentRoot == null)
+        {
+            error = "Canvas route capture could not find MenuBackgroundRegion for full-root static content mounting.";
+            return false;
+        }
+
+        ClearStaticRegion(bootstrap.ShellView, UIShellRegionId.LeftRegion);
+        ClearStaticRegion(bootstrap.ShellView, UIShellRegionId.MiddleRegion);
+        ClearStaticRegion(bootstrap.ShellView, UIShellRegionId.RightRegion);
+        ClearStaticRegion(bootstrap.ShellView, UIShellRegionId.FooterRegion);
+        ClearStaticRegion(bootstrap.ShellView, UIShellRegionId.PopupLayer);
+        background.ClearContent();
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab, background.ContentRoot, false);
+        instance.name = prefab.name;
+        Stretch(instance.GetComponent<RectTransform>());
+
+        Transform header = FindChild(instance.transform, "HeaderContent");
+        if (header != null)
+            header.gameObject.SetActive(false);
+
+        Debug.Log($"[CanvasRouteCaptureValidation] staticContentPrefab={prefabPath} mount=FullRoot");
+        return true;
+    }
+
+    private static void ClearStaticRegion(UIShellView shellView, UIShellRegionId regionId)
+    {
+        if (shellView != null && shellView.TryGetRegion(regionId, out UIShellRegionView region) && region != null)
+            region.ClearContent();
+    }
+
+    private static bool TryResolveStaticContentSection(
+        GameObject prefab,
+        UIShellContentSectionId sectionId,
+        out GameObject source)
+    {
+        source = null;
+        if (prefab == null)
+            return false;
+
+        UIShellContentSectionsView sections = prefab.GetComponent<UIShellContentSectionsView>();
+        if (sections != null && sections.TryGetSection(sectionId, out source) && source != null)
+            return true;
+
+        string fallbackName = ToStaticContentRootName(sectionId);
+        if (string.IsNullOrWhiteSpace(fallbackName))
+            return false;
+
+        Transform[] transforms = prefab.GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            Transform transform = transforms[i];
+            if (transform != null && string.Equals(transform.name, fallbackName, StringComparison.Ordinal))
+            {
+                source = transform.gameObject;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static string ToStaticContentRootName(UIShellContentSectionId sectionId)
+    {
+        switch (sectionId)
+        {
+            case UIShellContentSectionId.MenuBackground:
+                return "MenuBackgroundContent";
+            case UIShellContentSectionId.Left:
+                return "LeftContent";
+            case UIShellContentSectionId.Middle:
+                return "MiddleContent";
+            case UIShellContentSectionId.Right:
+                return "RightContent";
+            case UIShellContentSectionId.Footer:
+                return "FooterContent";
+            default:
+                return string.Empty;
+        }
+    }
+
+    private static bool TryMountStaticSection(
+        UIShellView shellView,
+        GameObject source,
+        UIShellRegionId regionId,
+        out string error)
+    {
+        error = null;
+        if (!shellView.TryGetRegion(regionId, out UIShellRegionView region) || region == null || region.ContentRoot == null)
+        {
+            error = $"Canvas route capture could not find target region={regionId} for static section={source.name}.";
+            return false;
+        }
+
+        region.ClearContent();
+        GameObject instance = UnityEngine.Object.Instantiate(source, region.ContentRoot, false);
+        instance.name = source.name;
+        Stretch(instance.GetComponent<RectTransform>());
+        return true;
+    }
+
+    private static UIShellRegionId ToRegionId(UIShellContentSectionId sectionId)
+    {
+        switch (sectionId)
+        {
+            case UIShellContentSectionId.MenuBackground:
+                return UIShellRegionId.MenuBackgroundRegion;
+            case UIShellContentSectionId.Left:
+                return UIShellRegionId.LeftRegion;
+            case UIShellContentSectionId.Middle:
+                return UIShellRegionId.MiddleRegion;
+            case UIShellContentSectionId.Right:
+                return UIShellRegionId.RightRegion;
+            case UIShellContentSectionId.Footer:
+                return UIShellRegionId.FooterRegion;
+            default:
+                return UIShellRegionId.MiddleRegion;
+        }
     }
 
     private static void ResetRouteCaptureRegions(MenuBootstrapView bootstrap, params UIShellRegionId[] regionIds)
@@ -717,6 +1060,116 @@ public static class CanvasMenuFallbackValidation
         }
 
         return true;
+    }
+
+    private static bool TryConfigureRouteCaptureArmoryCategory(out string error)
+    {
+        error = null;
+        if (!routeCaptureShouldSetArmoryCategory)
+            return true;
+
+        if (routeCaptureRoute != UIRoute.Armory)
+        {
+            error = "WARLINE_CANVAS_ARMORY_CATEGORY requires WARLINE_CANVAS_ROUTE=Armory.";
+            return false;
+        }
+
+        if (!UiShellRuntimeGateway.TryEnqueueArmoryCategory(routeCaptureArmoryCategory))
+        {
+            error = $"Canvas route capture could not enqueue Armory category={routeCaptureArmoryCategory}.";
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool TryApplyRouteCaptureButtonSelection(out string error, out bool waitForSelectionSettle)
+    {
+        error = null;
+        waitForSelectionSettle = false;
+        if (string.IsNullOrWhiteSpace(routeCaptureSelectButtonName) || routeCaptureButtonSelectionApplied)
+            return true;
+
+        Button button = FindActiveButtonByName(routeCaptureSelectButtonName);
+        if (button == null)
+        {
+            error = $"WARLINE_CANVAS_SELECT_BUTTON could not find active Button or child Button named '{routeCaptureSelectButtonName}'.";
+            return false;
+        }
+
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem != null)
+            eventSystem.SetSelectedGameObject(button.gameObject);
+
+        button.Select();
+        routeCaptureButtonSelectionApplied = true;
+        routeCaptureConfiguredFrame = routeCaptureFrameCount;
+        waitForSelectionSettle = true;
+        Debug.Log($"[CanvasRouteCaptureValidation] selectedButton={routeCaptureSelectButtonName}");
+        return true;
+    }
+
+    private static Button FindActiveButtonByName(string buttonName)
+    {
+        if (string.IsNullOrWhiteSpace(buttonName))
+            return null;
+
+        Transform[] transforms = UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude);
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            Transform transform = transforms[i];
+            if (transform == null || transform.name != buttonName)
+                continue;
+
+            Button directButton = transform.GetComponent<Button>();
+            if (directButton != null && directButton.isActiveAndEnabled)
+                return directButton;
+
+            Button childButton = transform.GetComponentInChildren<Button>(false);
+            if (childButton != null && childButton.isActiveAndEnabled)
+                return childButton;
+        }
+
+        Button[] buttons = UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude);
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            Button button = buttons[i];
+            if (button != null && button.isActiveAndEnabled && button.gameObject.name == buttonName)
+                return button;
+        }
+
+        string normalizedTarget = NormalizeLabel(buttonName);
+        TMP_Text[] labels = UnityEngine.Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Exclude);
+        for (int i = 0; i < labels.Length; i++)
+        {
+            TMP_Text label = labels[i];
+            if (label == null || NormalizeLabel(label.text) != normalizedTarget)
+                continue;
+
+            Button labelButton = label.GetComponentInParent<Button>();
+            if (labelButton != null && labelButton.isActiveAndEnabled)
+                return labelButton;
+        }
+
+        return null;
+    }
+
+    private static string NormalizeLabel(string label)
+    {
+        if (string.IsNullOrWhiteSpace(label))
+            return string.Empty;
+
+        StringBuilder builder = new();
+        for (int i = 0; i < label.Length; i++)
+        {
+            char c = label[i];
+            if (char.IsWhiteSpace(c) || c == '_' || c == '-')
+                continue;
+
+            builder.Append(char.ToUpperInvariant(c));
+        }
+
+        return builder.ToString();
     }
 
     private static Button FindVisibleDeployButton()
@@ -1226,6 +1679,27 @@ public static class CanvasMenuFallbackValidation
         throw new InvalidOperationException($"Unsupported WARLINE_CANVAS_POPUP value: {configuredPopup}");
     }
 
+    private static bool ResolveRouteCaptureArmoryCategory(out ArmoryCatalogCategory category)
+    {
+        string configuredCategory = Environment.GetEnvironmentVariable("WARLINE_CANVAS_ARMORY_CATEGORY");
+        if (string.IsNullOrWhiteSpace(configuredCategory))
+        {
+            category = default;
+            return false;
+        }
+
+        if (Enum.TryParse(configuredCategory, true, out category))
+            return true;
+
+        throw new InvalidOperationException($"Unsupported WARLINE_CANVAS_ARMORY_CATEGORY value: {configuredCategory}. Supported categories: Characters, Vehicles, Aircrafts, Buildings, Support.");
+    }
+
+    private static string ResolveRouteCaptureSelectButtonName()
+    {
+        string configuredName = Environment.GetEnvironmentVariable("WARLINE_CANVAS_SELECT_BUTTON");
+        return string.IsNullOrWhiteSpace(configuredName) ? string.Empty : configuredName.Trim();
+    }
+
     private static UIRoute ResolvePerformanceRoute()
     {
         string configuredRoute = Environment.GetEnvironmentVariable("WARLINE_CANVAS_PERF_ROUTE");
@@ -1275,9 +1749,33 @@ public static class CanvasMenuFallbackValidation
         return string.IsNullOrWhiteSpace(configuredModal) ? string.Empty : configuredModal.Trim();
     }
 
+    private static string ResolveRouteCaptureStaticContentPrefabPath()
+    {
+        string configuredPath = Environment.GetEnvironmentVariable("WARLINE_CANVAS_STATIC_CONTENT_PREFAB");
+        return string.IsNullOrWhiteSpace(configuredPath) ? string.Empty : configuredPath.Trim();
+    }
+
+    private static bool ResolveRouteCaptureStaticContentFullRoot()
+    {
+        string configuredValue = Environment.GetEnvironmentVariable("WARLINE_CANVAS_STATIC_CONTENT_FULL_ROOT");
+        return string.Equals(configuredValue, "1", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(configuredValue, "true", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(configuredValue, "yes", StringComparison.OrdinalIgnoreCase);
+    }
+
     private static string DescribeRouteCaptureModal()
     {
         return string.IsNullOrWhiteSpace(routeCaptureModal) ? "None" : routeCaptureModal;
+    }
+
+    private static string DescribeRouteCaptureArmoryCategory()
+    {
+        return routeCaptureShouldSetArmoryCategory ? routeCaptureArmoryCategory.ToString() : "Default";
+    }
+
+    private static string DescribeRouteCaptureSelectedButton()
+    {
+        return string.IsNullOrWhiteSpace(routeCaptureSelectButtonName) ? "None" : routeCaptureSelectButtonName;
     }
 
     private static bool TryResolveRouteCaptureModalPath(string modalName, out string prefabPath)
@@ -1333,6 +1831,694 @@ public static class CanvasMenuFallbackValidation
             return 0.035f;
 
         return 0.05f;
+    }
+
+    private static void Stretch(RectTransform rect)
+    {
+        if (rect == null)
+            return;
+
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.localScale = Vector3.one;
+        rect.localRotation = Quaternion.identity;
+    }
+
+    private enum FrameKind
+    {
+        Secondary,
+        Primary
+    }
+
+    private static Transform FindChild(Transform root, string childName)
+    {
+        if (root == null || string.IsNullOrWhiteSpace(childName))
+            return null;
+
+        if (string.Equals(root.name, childName, StringComparison.Ordinal))
+            return root;
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform child = FindChild(root.GetChild(i), childName);
+            if (child != null)
+                return child;
+        }
+
+        return null;
+    }
+
+    private static void MoveTo(GameObject target, Transform parent)
+    {
+        if (target == null || parent == null)
+            return;
+
+        target.transform.SetParent(parent, false);
+        target.SetActive(true);
+    }
+
+    private static void SetActive(GameObject target, bool active)
+    {
+        if (target != null)
+            target.SetActive(active);
+    }
+
+    private static void SetRectTopLeft(GameObject target, float x, float y, float width, float height)
+    {
+        RectTransform rect = target != null ? target.transform as RectTransform : null;
+        if (rect == null)
+            return;
+
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(0f, 1f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = new Vector2(x, y);
+        rect.sizeDelta = new Vector2(width, height);
+        rect.localScale = Vector3.one;
+        rect.localRotation = Quaternion.identity;
+    }
+
+    private static void SetRectFromTopLeft(GameObject target, float left, float top, float width, float height)
+    {
+        RectTransform rect = target != null ? target.transform as RectTransform : null;
+        if (rect == null)
+            return;
+
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(0f, 1f);
+        rect.pivot = new Vector2(0f, 1f);
+        rect.anchoredPosition = new Vector2(left, -top);
+        rect.sizeDelta = new Vector2(width, height);
+        rect.localScale = Vector3.one;
+        rect.localRotation = Quaternion.identity;
+    }
+
+    private static void SetRectCenter(GameObject target, float x, float y, float width, float height)
+    {
+        RectTransform rect = target != null ? target.transform as RectTransform : null;
+        if (rect == null)
+            return;
+
+        rect.anchorMin = new Vector2(0.5f, 0.5f);
+        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = new Vector2(x, y);
+        rect.sizeDelta = new Vector2(width, height);
+        rect.localScale = Vector3.one;
+        rect.localRotation = Quaternion.identity;
+    }
+
+    private static void ApplyPanelFrame(GameObject panel, string spritePath, float pixelsPerUnitMultiplier)
+    {
+        if (panel == null)
+            return;
+
+        Image image = GetOrAddImage(panel);
+        ApplySlicedSprite(image, spritePath, pixelsPerUnitMultiplier);
+        image.raycastTarget = false;
+        DisableDecorativeChrome(panel.transform);
+    }
+
+    private static void ApplyButtonFrame(GameObject buttonObject, FrameKind frameKind)
+    {
+        if (buttonObject == null)
+            return;
+
+        Image image = GetOrAddImage(buttonObject);
+        string normalPath = frameKind == FrameKind.Primary
+            ? "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_14_primary_gold_cta_frame.png"
+            : "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_15_secondary_dark_cta_frame.png";
+        string selectedPath = frameKind == FrameKind.Primary
+            ? "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_cta_primary_gold_frame.png"
+            : "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_10_selected_small_button_frame.png";
+
+        ApplySlicedSprite(image, normalPath, frameKind == FrameKind.Primary ? 2.8f : 3.2f);
+        DisableDecorativeChrome(buttonObject.transform);
+        ConfigureButtonState(buttonObject.GetComponent<Button>(), image, normalPath, selectedPath);
+    }
+
+    private static void ApplyNavButtonState(GameObject buttonObject, bool selected)
+    {
+        if (buttonObject == null)
+            return;
+
+        Image image = GetOrAddImage(buttonObject);
+        string normalPath = selected
+            ? "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png"
+            : "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_default.png";
+        string selectedPath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png";
+        ApplySlicedSprite(image, normalPath, 4.4f);
+        DisableDecorativeChrome(buttonObject.transform);
+        ConfigureButtonState(buttonObject.GetComponent<Button>(), image, normalPath, selectedPath);
+    }
+
+    private static void ConfigureButtonState(Button button, Image target, string normalPath, string selectedPath)
+    {
+        if (button == null || target == null)
+            return;
+
+        Sprite normal = LoadSprite(normalPath);
+        Sprite selected = LoadSprite(selectedPath);
+        button.transition = Selectable.Transition.SpriteSwap;
+        button.targetGraphic = target;
+        target.sprite = normal;
+
+        SpriteState state = button.spriteState;
+        state.highlightedSprite = selected;
+        state.pressedSprite = selected;
+        state.selectedSprite = selected;
+        state.disabledSprite = normal;
+        button.spriteState = state;
+    }
+
+    private static void LayoutIconLabelButton(
+        GameObject button,
+        float iconLeft,
+        float iconTop,
+        float iconWidth,
+        float iconHeight,
+        float labelLeft,
+        float labelTop,
+        float labelWidth,
+        float labelHeight,
+        float labelFontSize)
+    {
+        if (button == null)
+            return;
+
+        GameObject icon = FindChild(button.transform, "Icon")?.gameObject;
+        SetRectFromTopLeft(icon, iconLeft, iconTop, iconWidth, iconHeight);
+
+        GameObject label = FindChild(button.transform, "Label")?.gameObject;
+        SetRectFromTopLeft(label, labelLeft, labelTop, labelWidth, labelHeight);
+        TMP_Text text = label != null ? label.GetComponent<TMP_Text>() : null;
+        if (text != null)
+        {
+            text.enableAutoSizing = false;
+            text.fontSize = labelFontSize;
+            text.alignment = TextAlignmentOptions.MidlineLeft;
+            text.color = new Color(0.95f, 0.88f, 0.66f, 1f);
+            text.raycastTarget = false;
+        }
+    }
+
+    private static void SetChildSprite(GameObject root, string childName, string spritePath, bool preserveAspect)
+    {
+        GameObject child = FindChild(root != null ? root.transform : null, childName)?.gameObject;
+        if (child == null)
+            return;
+
+        Image image = GetOrAddImage(child);
+        Sprite sprite = LoadSprite(spritePath);
+        if (sprite == null)
+            return;
+
+        image.sprite = sprite;
+        image.type = Image.Type.Simple;
+        image.preserveAspect = preserveAspect;
+        image.color = Color.white;
+        image.raycastTarget = false;
+    }
+
+    private static void SetTextBlock(
+        Transform root,
+        string childName,
+        float left,
+        float top,
+        float width,
+        float height,
+        float fontSize,
+        TextAlignmentOptions alignment,
+        Color color)
+    {
+        GameObject child = FindChild(root, childName)?.gameObject;
+        SetRectFromTopLeft(child, left, top, width, height);
+        TMP_Text text = child != null ? child.GetComponent<TMP_Text>() : null;
+        if (text == null)
+            return;
+
+        text.enableAutoSizing = false;
+        text.fontSize = fontSize;
+        text.alignment = alignment;
+        text.color = new Color(color.r, color.g, color.b, 1f);
+        text.raycastTarget = false;
+    }
+
+    private static void SetTextValue(Transform root, string childName, string value)
+    {
+        TMP_Text text = FindChild(root, childName)?.GetComponent<TMP_Text>();
+        if (text != null)
+            text.text = value;
+    }
+
+    private static void ConfigureTextChild(
+        GameObject parent,
+        string name,
+        string value,
+        float left,
+        float top,
+        float width,
+        float height,
+        float fontSize,
+        TextAlignmentOptions alignment,
+        Color color)
+    {
+        if (parent == null)
+            return;
+
+        Transform existing = parent.transform.Find(name);
+        GameObject child = existing != null ? existing.gameObject : new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
+        if (existing == null)
+            child.transform.SetParent(parent.transform, false);
+
+        SetRectFromTopLeft(child, left, top, width, height);
+        TextMeshProUGUI text = child.GetComponent<TextMeshProUGUI>();
+        if (text == null)
+            text = child.AddComponent<TextMeshProUGUI>();
+
+        text.text = value;
+        text.enableAutoSizing = false;
+        text.fontSize = fontSize;
+        text.alignment = alignment;
+        text.color = new Color(color.r, color.g, color.b, 1f);
+        text.fontStyle = FontStyles.Bold;
+        text.textWrappingMode = TextWrappingModes.NoWrap;
+        text.overflowMode = TextOverflowModes.Overflow;
+        text.raycastTarget = false;
+    }
+
+    private static void ConfigureSolidImageChild(
+        GameObject parent,
+        string name,
+        float left,
+        float top,
+        float width,
+        float height,
+        Color color)
+    {
+        if (parent == null)
+            return;
+
+        Transform existing = parent.transform.Find(name);
+        GameObject child = existing != null ? existing.gameObject : new GameObject(name, typeof(RectTransform), typeof(Image));
+        if (existing == null)
+            child.transform.SetParent(parent.transform, false);
+
+        SetRectFromTopLeft(child, left, top, width, height);
+        child.transform.SetAsFirstSibling();
+        Image image = GetOrAddImage(child);
+        if (image == null)
+            return;
+
+        image.sprite = null;
+        image.type = Image.Type.Simple;
+        image.color = color;
+        image.raycastTarget = false;
+    }
+
+    private static void ApplySlicedSprite(Image image, string spritePath, float pixelsPerUnitMultiplier)
+    {
+        if (image == null)
+            return;
+
+        Sprite sprite = LoadSprite(spritePath);
+        if (sprite == null)
+            return;
+
+        image.sprite = sprite;
+        image.type = Image.Type.Sliced;
+        image.pixelsPerUnitMultiplier = pixelsPerUnitMultiplier;
+        image.color = Color.white;
+    }
+
+    private static Image GetOrAddImage(GameObject target)
+    {
+        if (target == null)
+            return null;
+
+        Image image = target.GetComponent<Image>();
+        if (image == null)
+            image = target.AddComponent<Image>();
+
+        return image;
+    }
+
+    private static void DisableImage(GameObject target)
+    {
+        Image image = target != null ? target.GetComponent<Image>() : null;
+        if (image != null)
+            image.enabled = false;
+    }
+
+    private static Sprite LoadSprite(string path)
+    {
+        return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+    }
+
+    private static void HideAllChildren(Transform parent)
+    {
+        if (parent == null)
+            return;
+
+        for (int i = 0; i < parent.childCount; i++)
+            parent.GetChild(i).gameObject.SetActive(false);
+    }
+
+    private static void HideDirectChildrenExcept(Transform parent, params string[] keptNames)
+    {
+        if (parent == null)
+            return;
+
+        HashSet<string> kept = new(keptNames, StringComparer.Ordinal);
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            child.gameObject.SetActive(kept.Contains(child.name));
+        }
+    }
+
+    private static void DisableDecorativeChrome(Transform root)
+    {
+        if (root == null)
+            return;
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform child = root.GetChild(i);
+            if (IsDecorativeChromeName(child.name))
+                child.gameObject.SetActive(false);
+            else
+                DisableDecorativeChrome(child);
+        }
+    }
+
+    private static bool IsDecorativeChromeName(string name)
+    {
+        return string.Equals(name, "Frame", StringComparison.Ordinal)
+            || string.Equals(name, "Plate", StringComparison.Ordinal)
+            || string.Equals(name, "HeaderFrame", StringComparison.Ordinal)
+            || name.Contains("Stroke", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static void SetAllTextSize(GameObject root, float size)
+    {
+        if (root == null)
+            return;
+
+        TMP_Text[] labels = root.GetComponentsInChildren<TMP_Text>(true);
+        for (int i = 0; i < labels.Length; i++)
+        {
+            TMP_Text label = labels[i];
+            if (label == null)
+                continue;
+
+            label.enableAutoSizing = false;
+            label.fontSize = size;
+            label.color = new Color(0.93f, 0.87f, 0.67f, 1f);
+            label.raycastTarget = false;
+        }
+    }
+
+    private static void SetStatTextSize(GameObject panel)
+    {
+        if (panel == null)
+            return;
+
+        TMP_Text[] labels = panel.GetComponentsInChildren<TMP_Text>(true);
+        for (int i = 0; i < labels.Length; i++)
+        {
+            TMP_Text label = labels[i];
+            if (label == null)
+                continue;
+
+            string text = label.text ?? string.Empty;
+            if (text.IndexOf("OVERVIEW", StringComparison.OrdinalIgnoreCase) >= 0)
+                label.fontSize = 42f;
+            else if (ContainsDigit(text))
+                label.fontSize = 58f;
+            else
+                label.fontSize = 30f;
+        }
+    }
+
+    private static bool ContainsDigit(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return false;
+
+        for (int i = 0; i < text.Length; i++)
+        {
+            if (char.IsDigit(text[i]))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static void LayoutCommanderIdentity(GameObject panel)
+    {
+        if (panel == null)
+            return;
+
+        GameObject portraitPanel = FindChild(panel.transform, "PortraitPanel")?.gameObject;
+        SetRectFromTopLeft(portraitPanel, 80f, 90f, 620f, 600f);
+        ApplyPanelFrame(portraitPanel, "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png", 4.4f);
+
+        GameObject portrait = FindChild(panel.transform, "Portrait")?.gameObject;
+        if (portraitPanel != null)
+            MoveTo(portrait, portraitPanel.transform);
+        SetRectFromTopLeft(portrait, 58f, 54f, 504f, 492f);
+        Image portraitImage = GetOrAddImage(portrait);
+        Sprite portraitSprite = LoadSprite("Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_portrait_01_commander_portrait_shadowed.png");
+        if (portraitImage != null && portraitSprite != null)
+        {
+            portraitImage.sprite = portraitSprite;
+            portraitImage.type = Image.Type.Simple;
+            portraitImage.preserveAspect = true;
+            portraitImage.color = Color.white;
+        }
+
+        GameObject identityCard = FindChild(panel.transform, "IdentityCard")?.gameObject;
+        SetRectFromTopLeft(identityCard, 760f, 115f, 1040f, 535f);
+        DisableImage(identityCard);
+        ConfigureSolidImageChild(identityCard, "IdentityTextBacking", 190f, 30f, 825f, 420f, new Color(0.02f, 0.025f, 0.022f, 0.58f));
+        SetChildSprite(identityCard, "Badge", "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_02_commander_rank_shield.png", true);
+        ConfigureTextChild(identityCard, "RoleLabel", "FIELD COMMANDER", 235f, 45f, 760f, 64f, 38f, TextAlignmentOptions.MidlineLeft, new Color(0.62f, 0.83f, 0.22f));
+        ConfigureTextChild(identityCard, "CommanderNameLabel", "COL. ALEX MORGAN", 235f, 132f, 790f, 118f, 62f, TextAlignmentOptions.MidlineLeft, new Color(0.95f, 0.9f, 0.76f));
+        ConfigureTextChild(identityCard, "MottoLabel", "VICTORY IS PLANNED", 235f, 275f, 790f, 58f, 34f, TextAlignmentOptions.MidlineLeft, new Color(0.84f, 0.78f, 0.55f));
+        ConfigureTextChild(identityCard, "CommanderLevelLabel", "LEVEL 38", 235f, 370f, 520f, 68f, 40f, TextAlignmentOptions.MidlineLeft, new Color(0.92f, 0.74f, 0.22f));
+        GameObject rankBadge = FindChild(identityCard.transform, "Badge")?.gameObject;
+        SetRectFromTopLeft(rankBadge, 44f, 112f, 160f, 160f);
+
+        GameObject editButton = FindChild(panel.transform, "EditIdButton")?.gameObject;
+        if (portraitPanel != null)
+            MoveTo(editButton, portraitPanel.transform);
+        SetRectFromTopLeft(editButton, 480f, 42f, 105f, 105f);
+        ApplyButtonFrame(editButton, FrameKind.Secondary);
+        SetChildSprite(editButton, "Icon", "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_09_edit_pencil.png", true);
+        GameObject editIcon = FindChild(editButton != null ? editButton.transform : null, "Icon")?.gameObject;
+        SetRectFromTopLeft(editIcon, 28f, 28f, 49f, 49f);
+        HideDirectChildrenExcept(editButton != null ? editButton.transform : null, "Icon");
+        HideDirectChildrenExcept(portraitPanel != null ? portraitPanel.transform : null, "Portrait", "EditIdButton");
+
+        GameObject badgesButton = FindChild(panel.transform, "BadgesButton")?.gameObject;
+        SetActive(badgesButton, false);
+        HideDirectChildrenExcept(identityCard != null ? identityCard.transform : null, "IdentityTextBacking", "Badge", "RoleLabel", "CommanderNameLabel", "MottoLabel", "CommanderLevelLabel");
+        HideDirectChildrenExcept(panel.transform, "PortraitPanel", "IdentityCard");
+    }
+
+    private static void LayoutOverviewStats(GameObject panel)
+    {
+        if (panel == null)
+            return;
+
+        SetTextBlock(panel.transform, "Title", 70f, 28f, 600f, 70f, 44f, TextAlignmentOptions.MidlineLeft, new Color(0.96f, 0.88f, 0.62f));
+        string[] cards = { "VictoriesStatCard", "MissionsStatCard", "CiviliansStatCard", "LostStatCard" };
+        string[] labels = { "VICTORIES", "MISSIONS", "CIVILIANS", "UNITS LOST" };
+        string[] values = { "128", "246", "8,642", "312" };
+        string[] suffixes = { "86% success", "completed", "protected", "lifetime" };
+        string[] iconPaths =
+        {
+            "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_15_reward_wreath.png",
+            "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_armory_crossed_weapons.png",
+            "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_11_roster_group.png",
+            "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_12_vehicle.png"
+        };
+
+        for (int i = 0; i < cards.Length; i++)
+        {
+            GameObject card = FindChild(panel.transform, cards[i])?.gameObject;
+            SetRectFromTopLeft(card, 60f + (i * 455f), 115f, 420f, 190f);
+            ApplyPanelFrame(card, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_12_small_chip_frame.png", 5.2f);
+            SetChildSprite(card, "Icon", iconPaths[i], true);
+            GameObject icon = FindChild(card != null ? card.transform : null, "Icon")?.gameObject;
+            SetRectFromTopLeft(icon, 40f, 58f, 76f, 76f);
+            SetTextValue(card != null ? card.transform : null, "Label", labels[i]);
+            SetTextValue(card != null ? card.transform : null, "Value", values[i]);
+            SetTextValue(card != null ? card.transform : null, "Suffix", suffixes[i]);
+            SetTextBlock(card != null ? card.transform : null, "Label", 142f, 25f, 230f, 48f, 30f, TextAlignmentOptions.Midline, new Color(0.94f, 0.88f, 0.68f));
+            SetTextBlock(card != null ? card.transform : null, "Value", 140f, 74f, 230f, 72f, 54f, TextAlignmentOptions.Midline, new Color(0.92f, 0.74f, 0.22f));
+            SetTextBlock(card != null ? card.transform : null, "Suffix", 140f, 140f, 230f, 38f, 24f, TextAlignmentOptions.Midline, new Color(0.64f, 0.78f, 0.32f));
+            HideDirectChildrenExcept(card != null ? card.transform : null, "Icon", "Label", "Value", "Suffix");
+        }
+
+        HideDirectChildrenExcept(panel.transform, "Title", "VictoriesStatCard", "MissionsStatCard", "CiviliansStatCard", "LostStatCard");
+    }
+
+    private static void LayoutAccountSnapshot(GameObject panel)
+    {
+        if (panel == null)
+            return;
+
+        SetTextBlock(panel.transform, "Title", 70f, 34f, 720f, 70f, 44f, TextAlignmentOptions.MidlineLeft, new Color(0.96f, 0.88f, 0.62f));
+        string[] names = { "CampaignSnapshot", "OperationsSnapshot", "SkirmishSnapshot", "ReadinessSnapshot" };
+        string[] labels = { "CAMPAIGN", "OPERATIONS", "SKIRMISH", "READINESS" };
+        string[] values = { "1,750", "1,620", "1,480", "HIGH" };
+        Vector2[] positions =
+        {
+            new(70f, 145f),
+            new(980f, 145f),
+            new(70f, 315f),
+            new(980f, 315f)
+        };
+
+        for (int i = 0; i < names.Length; i++)
+        {
+            GameObject row = FindChild(panel.transform, names[i])?.gameObject;
+            SetRectFromTopLeft(row, positions[i].x, positions[i].y, 830f, 130f);
+            ApplyPanelFrame(row, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_12_small_chip_frame.png", 5.2f);
+            SetTextValue(row != null ? row.transform : null, "Label", labels[i]);
+            SetTextValue(row != null ? row.transform : null, "Value", values[i]);
+            SetTextBlock(row != null ? row.transform : null, "Label", 58f, 16f, 420f, 42f, 32f, TextAlignmentOptions.MidlineLeft, new Color(0.94f, 0.88f, 0.68f));
+            SetTextBlock(row != null ? row.transform : null, "Value", 58f, 64f, 420f, 52f, 40f, TextAlignmentOptions.MidlineLeft, new Color(0.95f, 0.9f, 0.76f));
+            HideDirectChildrenExcept(row != null ? row.transform : null, "Icon", "Label", "Value");
+        }
+
+        HideDirectChildrenExcept(panel.transform, "Title", "CampaignSnapshot", "OperationsSnapshot", "SkirmishSnapshot", "ReadinessSnapshot");
+    }
+
+    private static void LayoutRewardTrack(GameObject panel)
+    {
+        if (panel == null)
+            return;
+
+        SetTextBlock(panel.transform, "Title", 80f, 35f, 920f, 70f, 46f, TextAlignmentOptions.MidlineLeft, new Color(0.96f, 0.88f, 0.62f));
+        GameObject progress = FindChild(panel.transform, "XpProgress")?.gameObject;
+        SetRectFromTopLeft(progress, 100f, 145f, 1180f, 160f);
+        GameObject track = FindChild(progress != null ? progress.transform : null, "Track")?.gameObject;
+        SetRectFromTopLeft(track, 0f, 36f, 980f, 62f);
+        ApplyPanelFrame(track, "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_progress_meter_empty_frame.png", 4.2f);
+        GameObject fill = FindChild(track != null ? track.transform : null, "Fill")?.gameObject;
+        SetRectFromTopLeft(fill, 22f, 18f, 680f, 28f);
+        SetChildSprite(track, "Fill", "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_progress_fill_olive_segment.png", false);
+        SetTextBlock(progress != null ? progress.transform : null, "XpLabel", 0f, 105f, 980f, 48f, 30f, TextAlignmentOptions.Midline, new Color(0.9f, 0.84f, 0.64f));
+
+        string[] nodeNames = { "Node35", "Node36", "Node37", "Node38", "Node39", "Node40" };
+        for (int i = 0; i < nodeNames.Length; i++)
+        {
+            GameObject node = FindChild(panel.transform, nodeNames[i])?.gameObject;
+            SetRectFromTopLeft(node, 115f + (i * 238f), 350f, 145f, 145f);
+            ApplySlicedSprite(GetOrAddImage(node), i == 3
+                ? "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_18_reward_node_active.png"
+                : "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_19_reward_node_locked.png", 4.6f);
+            SetTextBlock(node != null ? node.transform : null, "Level", 0f, 0f, 145f, 145f, 38f, TextAlignmentOptions.Center, new Color(0.92f, 0.82f, 0.45f));
+            HideDirectChildrenExcept(node != null ? node.transform : null, "Level");
+        }
+
+        SetTextBlock(panel.transform, "RewardText", 105f, 540f, 920f, 55f, 30f, TextAlignmentOptions.MidlineLeft, new Color(0.92f, 0.84f, 0.58f));
+        GameObject claimButton = FindChild(panel.transform, "ClaimButton")?.gameObject;
+        SetRectFromTopLeft(claimButton, 1170f, 560f, 430f, 140f);
+        ApplyButtonFrame(claimButton, FrameKind.Primary);
+        LayoutIconLabelButton(claimButton, 312f, 42f, 58f, 56f, 44f, 0f, 260f, 140f, 42f);
+        SetChildSprite(claimButton, "Icon", "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_20_claim_chevron.png", true);
+        HideDirectChildrenExcept(claimButton != null ? claimButton.transform : null, "Icon", "Label");
+        HideDirectChildrenExcept(panel.transform, "Title", "XpProgress", "Node35", "Node36", "Node37", "Node38", "Node39", "Node40", "RewardText", "ClaimButton");
+    }
+
+    private static void LayoutRecentHistory(GameObject panel)
+    {
+        if (panel == null)
+            return;
+
+        SetTextBlock(panel.transform, "Title", 80f, 34f, 720f, 70f, 46f, TextAlignmentOptions.MidlineLeft, new Color(0.96f, 0.88f, 0.62f));
+        string[] rows = { "FirstContactRow", "OldMarketRow" };
+        for (int i = 0; i < rows.Length; i++)
+        {
+            GameObject row = FindChild(panel.transform, rows[i])?.gameObject;
+            SetRectFromTopLeft(row, 75f, 150f + (i * 165f), 1590f, 135f);
+            ApplyPanelFrame(row, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_12_small_chip_frame.png", 5.2f);
+            SetTextValue(row != null ? row.transform : null, "Title", i == 0 ? "HOSTILE PATROL" : "SUPPLY RUN");
+            SetTextValue(row != null ? row.transform : null, "Subtitle", i == 0 ? "CAMPAIGN  |  VICTORY" : "OPERATIONS  |  VICTORY");
+            SetTextValue(row != null ? row.transform : null, "Time", i == 0 ? "1h ago" : "3h ago");
+            SetTextBlock(row != null ? row.transform : null, "Title", 72f, 18f, 900f, 46f, 36f, TextAlignmentOptions.MidlineLeft, new Color(0.95f, 0.89f, 0.68f));
+            SetTextBlock(row != null ? row.transform : null, "Subtitle", 72f, 72f, 1040f, 38f, 26f, TextAlignmentOptions.MidlineLeft, new Color(0.76f, 0.72f, 0.58f));
+            SetTextBlock(row != null ? row.transform : null, "Time", 1250f, 22f, 250f, 42f, 28f, TextAlignmentOptions.MidlineRight, new Color(0.64f, 0.78f, 0.32f));
+            HideDirectChildrenExcept(row != null ? row.transform : null, "Icon", "Title", "Subtitle", "Time");
+        }
+
+        HideDirectChildrenExcept(panel.transform, "Title", "FirstContactRow", "OldMarketRow");
+    }
+
+    private static void PrepareFooterButton(
+        GameObject button,
+        Transform footer,
+        float x,
+        string labelText,
+        FrameKind frameKind)
+    {
+        MoveTo(button, footer);
+        float width = frameKind == FrameKind.Primary ? 820f : 680f;
+        SetRectFromTopLeft(button, x, 22f, width, 170f);
+        ApplyButtonFrame(button, frameKind);
+        SetButtonLabel(button, labelText);
+        LayoutIconLabelButton(button, 65f, 46f, 78f, 72f, 170f, 0f, width - 215f, 170f, 56f);
+        HideDirectChildrenExcept(button != null ? button.transform : null, "Icon", "Label");
+    }
+
+    private static void SetButtonLabel(GameObject button, string text)
+    {
+        Transform label = button != null ? FindChild(button.transform, "Label") : null;
+        TMP_Text labelText = label != null ? label.GetComponent<TMP_Text>() : null;
+        if (labelText != null)
+            labelText.text = text;
+    }
+
+    private static void HideFooterBreadcrumbs(
+        Transform footer,
+        GameObject openArmoryButton,
+        GameObject detailButton,
+        GameObject replayButton)
+    {
+        if (footer == null)
+            return;
+
+        for (int i = 0; i < footer.childCount; i++)
+        {
+            GameObject child = footer.GetChild(i).gameObject;
+            if (child != openArmoryButton && child != detailButton && child != replayButton)
+                child.SetActive(false);
+        }
+    }
+
+    private static void ApplyPanelBackground(GameObject root)
+    {
+        Transform background = FindChild(root.transform, "MenuBackgroundContent");
+        if (background == null)
+            return;
+
+        Image image = GetOrAddImage(background.gameObject);
+        Sprite sprite = LoadSprite("Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_background_command_table_no_ui.png");
+        if (sprite == null)
+            return;
+
+        image.sprite = sprite;
+        image.type = Image.Type.Simple;
+        image.preserveAspect = false;
+        image.raycastTarget = false;
+        image.color = Color.white;
     }
 
     private sealed class RouteCaptureBuildingUiCommand : IBuildingUiCommand

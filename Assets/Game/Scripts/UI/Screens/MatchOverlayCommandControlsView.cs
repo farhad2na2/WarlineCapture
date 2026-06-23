@@ -14,6 +14,8 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     [SerializeField] private CommandWheelPanelView commandWheelPanel;
     [SerializeField] private MatchOverlayCommandTabGroupView commandTabGroup;
 
+    private Canvas _cachedCanvas;
+
     public Button SelectButton => selectButton;
     public Button MoveButton => moveButton;
     public Button AttackButton => attackButton;
@@ -24,6 +26,11 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     public Button CommandWheelStopButton => commandWheelStopButton;
     public CommandWheelPanelView CommandWheelPanel => commandWheelPanel;
     public MatchOverlayCommandTabGroupView CommandTabGroup => commandTabGroup;
+
+    private void OnTransformParentChanged()
+    {
+        _cachedCanvas = null;
+    }
 
     public bool ContainsScreenPoint(Vector2 screenPosition)
     {
@@ -70,11 +77,18 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
 
     private Camera ResolveEventCamera()
     {
-        Canvas canvas = GetComponentInParent<Canvas>();
+        Canvas canvas = ResolveCanvas();
         if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
             return null;
 
         return canvas.worldCamera;
+    }
+
+    private Canvas ResolveCanvas()
+    {
+        if (_cachedCanvas == null)
+            _cachedCanvas = GetComponentInParent<Canvas>();
+        return _cachedCanvas;
     }
 
     private static bool ContainsButton(Button button, Vector2 screenPosition, Camera eventCamera)

@@ -658,7 +658,7 @@ public partial struct UnitPathFollowCleanupJob : IJobEntity
 
 }
 
-[BurstCompile] 
+[BurstCompile]
 public partial struct UnitGridMovementSystem : ISystem
 {
     private const double FreezeLogThresholdSeconds = 0.05d;

@@ -11,7 +11,7 @@ public interface IMatchRuntimeUi
 
     void ClearMatchHudCommandMode();
 
-    void ConfigureMatchHudRuntimeFeedbackBinding(Action<IBattleHudRuntimeFeedbackView> bindMatchHudRuntimeFeedback);
+    void ConfigureMatchHudRuntimeFeedbackSinkBinding(Action<IBattleHudRuntimeFeedbackSink> bindMatchHudRuntimeFeedback);
 
     void ConfigureMatchHudSelectionPanelBinding(Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel);
 

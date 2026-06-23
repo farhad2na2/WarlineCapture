@@ -287,7 +287,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         var feedback = new SelectionHudFeedbackBoundary();
         var mainMenuPlayUi = new MainMenuPlayUI();
-        mainMenuPlayUi.ConfigureMatchHudRuntimeFeedbackBinding(feedback.BindBattleHudRuntimeFeedback);
+        mainMenuPlayUi.ConfigureMatchHudRuntimeFeedbackSinkBinding(feedback.BindBattleHudRuntimeFeedback);
         content.BindGameplayRuntimeDependencies(new SelectionUiCommandSystem(), mainMenuPlayUi);
 
         feedback.ApplyCommandMode(_world.EntityManager, TacticalCommandMode.Move);

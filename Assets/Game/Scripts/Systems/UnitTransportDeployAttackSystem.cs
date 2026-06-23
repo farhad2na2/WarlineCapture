@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 
@@ -11,47 +12,26 @@ public partial struct UnitTransportDeployAttackSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        EntityManager em = state.EntityManager;
-        EntityCommandBuffer ecb = new(Allocator.Temp);
+        EntityCommandBuffer ecb = new(Allocator.TempJob);
         try
         {
-            foreach (var (attack, entity) in SystemAPI
-                         .Query<RefRO<UnitTransportDeployAttackTarget>>()
-                         .WithNone<Disabled>()
-                         .WithNone<UnitTransportPassenger>()
-                         .WithNone<UnitTransportCargoPassenger>()
-                         .WithNone<UnitTransportParachuteDropComponent>()
-                         .WithNone<UnitTransportCargoDropComponent>()
-                         .WithNone<UnitTransportAirdropSettleComponent>()
-                         .WithEntityAccess())
+            state.Dependency = new ApplyDeployAttackJob
             {
-                UnitTransportDeployAttackTarget target = attack.ValueRO;
-                if (!CanPassengerAttack(em, entity) || !IsLiveAttackTarget(em, target.TargetEntity))
-                {
-                    ecb.RemoveComponent<UnitTransportDeployAttackTarget>(entity);
-                    continue;
-                }
+                Ecb = ecb.AsParallelWriter(),
+                EntityStorageInfoLookup = state.GetEntityStorageInfoLookup(),
+                UnitCombatLookup = SystemAPI.GetComponentLookup<UnitCombat>(true),
+                UnitAttackLookup = SystemAPI.GetComponentLookup<UnitAttack>(true),
+                UnitHealthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true),
+                EngageTargetLookup = SystemAPI.GetComponentLookup<EngageTarget>(true),
+                UnitTargetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true),
+                UnitPathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true),
+                UnitPathFollowLookup = SystemAPI.GetComponentLookup<UnitPathFollow>(true),
+                UnitPathRangeLookup = SystemAPI.GetComponentLookup<UnitPathRange>(true),
+                ManualMoveOrderLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true)
+            }.ScheduleParallel(state.Dependency);
 
-                SetOrAdd(
-                    em,
-                    ecb,
-                    entity,
-                    new EngageTarget
-                    {
-                        Target = target.TargetEntity,
-                        Cell = target.TargetCell,
-                        Position = target.TargetPosition,
-                        IsCommanded = 1
-                    });
-                RemoveIfPresent<UnitTarget>(em, ecb, entity);
-                RemoveIfPresent<UnitPathRequest>(em, ecb, entity);
-                RemoveIfPresent<UnitPathFollow>(em, ecb, entity);
-                RemoveIfPresent<UnitPathRange>(em, ecb, entity);
-                RemoveIfPresent<ManualMoveOrderTag>(em, ecb, entity);
-                ecb.RemoveComponent<UnitTransportDeployAttackTarget>(entity);
-            }
-
-            ecb.Playback(em);
+            state.Dependency.Complete();
+            ecb.Playback(state.EntityManager);
         }
         finally
         {
@@ -59,47 +39,93 @@ public partial struct UnitTransportDeployAttackSystem : ISystem
         }
     }
 
-    private static bool CanPassengerAttack(EntityManager em, Entity entity)
+    [BurstCompile]
+    [WithNone(typeof(Disabled))]
+    [WithNone(typeof(UnitTransportPassenger))]
+    [WithNone(typeof(UnitTransportCargoPassenger))]
+    [WithNone(typeof(UnitTransportParachuteDropComponent))]
+    [WithNone(typeof(UnitTransportCargoDropComponent))]
+    [WithNone(typeof(UnitTransportAirdropSettleComponent))]
+    private partial struct ApplyDeployAttackJob : IJobEntity
     {
-        if (!em.Exists(entity) ||
-            !em.HasComponent<UnitCombat>(entity) ||
-            !em.HasComponent<UnitAttack>(entity))
+        public EntityCommandBuffer.ParallelWriter Ecb;
+        [ReadOnly] public EntityStorageInfoLookup EntityStorageInfoLookup;
+        [ReadOnly] public ComponentLookup<UnitCombat> UnitCombatLookup;
+        [ReadOnly] public ComponentLookup<UnitAttack> UnitAttackLookup;
+        [ReadOnly] public ComponentLookup<UnitHealth> UnitHealthLookup;
+        [ReadOnly] public ComponentLookup<EngageTarget> EngageTargetLookup;
+        [ReadOnly] public ComponentLookup<UnitTarget> UnitTargetLookup;
+        [ReadOnly] public ComponentLookup<UnitPathRequest> UnitPathRequestLookup;
+        [ReadOnly] public ComponentLookup<UnitPathFollow> UnitPathFollowLookup;
+        [ReadOnly] public ComponentLookup<UnitPathRange> UnitPathRangeLookup;
+        [ReadOnly] public ComponentLookup<ManualMoveOrderTag> ManualMoveOrderLookup;
+
+        private void Execute(
+            [ChunkIndexInQuery] int sortKey,
+            Entity entity,
+            in UnitTransportDeployAttackTarget target)
         {
-            return false;
+            if (!CanPassengerAttack(entity) || !IsLiveAttackTarget(target.TargetEntity))
+            {
+                Ecb.RemoveComponent<UnitTransportDeployAttackTarget>(sortKey, entity);
+                return;
+            }
+
+            EngageTarget engageTarget = new()
+            {
+                Target = target.TargetEntity,
+                Cell = target.TargetCell,
+                Position = target.TargetPosition,
+                IsCommanded = 1
+            };
+            if (EngageTargetLookup.HasComponent(entity))
+                Ecb.SetComponent(sortKey, entity, engageTarget);
+            else
+                Ecb.AddComponent(sortKey, entity, engageTarget);
+
+            RemoveIfPresent(UnitTargetLookup, sortKey, entity);
+            RemoveIfPresent(UnitPathRequestLookup, sortKey, entity);
+            RemoveIfPresent(UnitPathFollowLookup, sortKey, entity);
+            RemoveIfPresent(UnitPathRangeLookup, sortKey, entity);
+            RemoveIfPresent(ManualMoveOrderLookup, sortKey, entity);
+            Ecb.RemoveComponent<UnitTransportDeployAttackTarget>(sortKey, entity);
         }
 
-        if (em.GetComponentData<UnitCombat>(entity).CanAttack == 0)
-            return false;
-
-        return !em.HasComponent<UnitHealth>(entity) ||
-               em.GetComponentData<UnitHealth>(entity).Current > 0;
-    }
-
-    private static bool IsLiveAttackTarget(EntityManager em, Entity target)
-    {
-        if (target == Entity.Null ||
-            !em.Exists(target))
+        private bool CanPassengerAttack(Entity entity)
         {
-            return false;
+            if (!UnitCombatLookup.HasComponent(entity) ||
+                !UnitAttackLookup.HasComponent(entity))
+            {
+                return false;
+            }
+
+            if (UnitCombatLookup[entity].CanAttack == 0)
+                return false;
+
+            return !UnitHealthLookup.HasComponent(entity) ||
+                   UnitHealthLookup[entity].Current > 0;
         }
 
-        return !em.HasComponent<UnitHealth>(target) ||
-               em.GetComponentData<UnitHealth>(target).Current > 0;
-    }
+        private bool IsLiveAttackTarget(Entity target)
+        {
+            if (target == Entity.Null ||
+                !EntityStorageInfoLookup.Exists(target))
+            {
+                return false;
+            }
 
-    private static void SetOrAdd<T>(EntityManager em, EntityCommandBuffer ecb, Entity entity, T value)
-        where T : unmanaged, IComponentData
-    {
-        if (em.HasComponent<T>(entity))
-            ecb.SetComponent(entity, value);
-        else
-            ecb.AddComponent(entity, value);
-    }
+            return !UnitHealthLookup.HasComponent(target) ||
+                   UnitHealthLookup[target].Current > 0;
+        }
 
-    private static void RemoveIfPresent<T>(EntityManager em, EntityCommandBuffer ecb, Entity entity)
-        where T : unmanaged, IComponentData
-    {
-        if (em.Exists(entity) && em.HasComponent<T>(entity))
-            ecb.RemoveComponent<T>(entity);
+        private void RemoveIfPresent<T>(
+            ComponentLookup<T> lookup,
+            int sortKey,
+            Entity entity)
+            where T : unmanaged, IComponentData
+        {
+            if (lookup.HasComponent(entity))
+                Ecb.RemoveComponent<T>(sortKey, entity);
+        }
     }
 }

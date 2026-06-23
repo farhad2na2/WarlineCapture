@@ -75,14 +75,14 @@ public sealed class SelectionHudFeedbackBoundary
         }
     }
 
-    private IBattleHudRuntimeFeedbackView _battleHudView;
+    private IBattleHudRuntimeFeedbackSink _battleHudFeedbackSink;
     private IMatchHudSelectionPanelView _matchHudSelectionPanelView;
     private World _queryWorld;
     private EntityQuery _feedbackQuery;
 
     public void ResetViewCache()
     {
-        _battleHudView = null;
+        _battleHudFeedbackSink = null;
     }
 
     public void BindMatchHudSelectionPanel(IMatchHudSelectionPanelView view)
@@ -90,9 +90,9 @@ public sealed class SelectionHudFeedbackBoundary
         _matchHudSelectionPanelView = view;
     }
 
-    public void BindBattleHudRuntimeFeedback(IBattleHudRuntimeFeedbackView view)
+    public void BindBattleHudRuntimeFeedback(IBattleHudRuntimeFeedbackSink feedbackSink)
     {
-        _battleHudView = view;
+        _battleHudFeedbackSink = feedbackSink;
     }
 
     public Entity EnsureFeedbackQueue(EntityManager em)
@@ -202,15 +202,15 @@ public sealed class SelectionHudFeedbackBoundary
         if (feedback.Length == 0)
             return;
 
-        IBattleHudRuntimeFeedbackView view = ResolveBattleHudView();
-        if (view == null)
+        IBattleHudRuntimeFeedbackSink feedbackSink = ResolveBattleHudFeedbackSink();
+        if (feedbackSink == null)
         {
             feedback.Clear();
             return;
         }
 
         for (int i = 0; i < feedback.Length; i++)
-            ApplyFeedback(view, feedback[i]);
+            ApplyFeedback(feedbackSink, feedback[i]);
         feedback.Clear();
     }
 
@@ -953,8 +953,7 @@ public sealed class SelectionHudFeedbackBoundary
 
         QueueCommandMode(em, TacticalCommandMode.Board);
         ProcessPendingFeedback(em);
-        BattleHudRuntimeFeedbackBoundary.ApplyBoardCommandMode(
-            ResolveBattleHudView(),
+        ResolveBattleHudFeedbackSink()?.ApplyBoardCommandMode(
             MapBoardCommandModeDirection(direction),
             boardAllInteractable);
         _matchHudSelectionPanelView?.SetBoardActionSelected(true);
@@ -974,17 +973,17 @@ public sealed class SelectionHudFeedbackBoundary
     {
         QueueClearCommandMode(em);
         ProcessPendingFeedback(em);
-        IBattleHudRuntimeFeedbackView view = ResolveBattleHudView();
+        IBattleHudRuntimeFeedbackSink feedbackSink = ResolveBattleHudFeedbackSink();
         if (!HasStickyCommandMode())
-            view?.ClearCommandModeTabs();
+            feedbackSink?.ClearCommandModeTabs();
         _matchHudSelectionPanelView?.SetBoardActionSelected(false);
     }
 
     public bool HasStickyCommandMode()
     {
-        IBattleHudRuntimeFeedbackView view = ResolveBattleHudView();
-        return view != null &&
-               BattleHudRuntimeFeedbackBoundary.GetState(view).StickyCommandMode != TacticalCommandMode.None;
+        IBattleHudRuntimeFeedbackSink feedbackSink = ResolveBattleHudFeedbackSink();
+        return feedbackSink != null &&
+               feedbackSink.GetState().StickyCommandMode != TacticalCommandMode.None;
     }
 
     public void ClearCommandMode(Context context)
@@ -1030,32 +1029,32 @@ public sealed class SelectionHudFeedbackBoundary
                context.TryGetDefaultEntityManager(out em);
     }
 
-    private void ApplyFeedback(IBattleHudRuntimeFeedbackView view, SelectionHudFeedbackElement feedback)
+    private void ApplyFeedback(IBattleHudRuntimeFeedbackSink feedbackSink, SelectionHudFeedbackElement feedback)
     {
         switch (feedback.Kind)
         {
             case SelectionHudFeedbackKind.Selection:
             case SelectionHudFeedbackKind.SquadSelection:
-                BattleHudRuntimeFeedbackBoundary.ApplySelection(view, feedback.Label.ToString(), feedback.Status.ToString());
+                feedbackSink.ApplySelection(feedback.Label.ToString(), feedback.Status.ToString());
                 _matchHudSelectionPanelView?.SetSelectionVisible(true);
                 break;
             case SelectionHudFeedbackKind.ClearSelection:
-                BattleHudRuntimeFeedbackBoundary.ClearSelection(view);
+                feedbackSink.ClearSelection();
                 _matchHudSelectionPanelView?.SetSelectionVisible(false);
                 break;
             case SelectionHudFeedbackKind.CommandMode:
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(view, (TacticalCommandMode)feedback.CommandMode);
+                feedbackSink.ApplyCommandMode((TacticalCommandMode)feedback.CommandMode);
                 break;
             case SelectionHudFeedbackKind.ClearCommandMode:
-                BattleHudRuntimeFeedbackBoundary.ClearCommandMode(view);
+                feedbackSink.ClearCommandMode();
                 break;
             case SelectionHudFeedbackKind.CommandResult:
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(view, feedback.CommandAccepted != 0
+                feedbackSink.ApplyCommandResult(feedback.CommandAccepted != 0
                     ? TacticalCommandResult.Success(feedback.Message.ToString())
                     : TacticalCommandResult.Rejected((TacticalCommandReasonCode)feedback.ReasonCode, feedback.Message.ToString()));
                 break;
             case SelectionHudFeedbackKind.WorldMarkersVisible:
-                BattleHudRuntimeFeedbackBoundary.SetWorldMarkersVisible(view, feedback.Visible != 0);
+                feedbackSink.SetWorldMarkersVisible(feedback.Visible != 0);
                 break;
         }
     }
@@ -1069,8 +1068,8 @@ public sealed class SelectionHudFeedbackBoundary
         return result;
     }
 
-    private IBattleHudRuntimeFeedbackView ResolveBattleHudView()
+    private IBattleHudRuntimeFeedbackSink ResolveBattleHudFeedbackSink()
     {
-        return _battleHudView;
+        return _battleHudFeedbackSink;
     }
 }

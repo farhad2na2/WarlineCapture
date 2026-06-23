@@ -25,10 +25,12 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
     private ComponentLookup<UnitAirMovement> _airLookup;
     private ComponentLookup<UnitAirComponent> _airStateLookup;
     private ComponentLookup<LocalTransform> _transformLookup;
+    private EntityQuery _airMovementQuery;
 
     public void OnCreate(ref SystemState state)
     {
         s_DiagnosticLogged = false;
+        _airMovementQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitAirMovement>());
         _bladeLookup = state.GetBufferLookup<UnitHelicopterBladeReference>(true);
         _childLookup = state.GetBufferLookup<Child>(true);
         _modelLookup = state.GetComponentLookup<UnitModelInstanceReference>(true);
@@ -41,6 +43,7 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
         _airLookup = state.GetComponentLookup<UnitAirMovement>(true);
         _airStateLookup = state.GetComponentLookup<UnitAirComponent>(true);
         _transformLookup = state.GetComponentLookup<LocalTransform>();
+        state.RequireForUpdate(_airMovementQuery);
     }
 
     public void OnUpdate(ref SystemState state)

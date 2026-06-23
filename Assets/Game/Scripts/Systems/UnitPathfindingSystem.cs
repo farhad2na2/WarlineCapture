@@ -4,6 +4,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
+[UpdateAfter(typeof(UnitMoveOrderRequestSystem))]
 public partial struct UnitPathfindingSystem : ISystem
 {
     private static readonly bool EnablePathDiagnostics = false;
@@ -41,6 +42,7 @@ public partial struct UnitPathfindingSystem : ISystem
     private double _pendingScheduleTime;
     private UnitPathfindingDiagnostics _diagnostics;
     private UnitPathfindingPendingStateStore _pendingState;
+    private EntityQuery _runtimeGameplayStateQuery;
 
     public void OnCreate(ref SystemState state)
     {
@@ -50,6 +52,8 @@ public partial struct UnitPathfindingSystem : ISystem
         _diagnostics.Initialize(ref state);
         _pendingStateQuery = _pendingState.CreateQuery(ref state);
         _pendingState.EnsureSingleton(ref state, _pendingStateQuery);
+        _runtimeGameplayStateQuery = state.GetEntityQuery(ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
+        state.RequireForUpdate(_runtimeGameplayStateQuery);
         _queries.Initialize(ref state);
         _apply.Initialize(ref state);
         _liveUnitSnapshot.Initialize(ref state);

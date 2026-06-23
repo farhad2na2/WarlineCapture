@@ -167,7 +167,7 @@ internal sealed class SelectionGameplayStartupSystem
             hasRuntimeCameraContext = false;
             hasCommandResultFlushContext = false;
             mainMenuPlayUi?.ConfigureMatchHudSelectionPanelBinding(BindMatchHudSelectionPanel);
-            mainMenuPlayUi?.ConfigureMatchHudRuntimeFeedbackBinding(BindBattleHudRuntimeFeedback);
+            mainMenuPlayUi?.ConfigureMatchHudRuntimeFeedbackSinkBinding(BindBattleHudRuntimeFeedback);
             mainMenuPlayUi?.ConfigureMatchHudSquadTrayBinding(BindMatchHudSquadTray);
         }
 
@@ -187,9 +187,9 @@ internal sealed class SelectionGameplayStartupSystem
                 passenger => selectionUiCommand.RequestFocusedTransportPassengerDisembark(ToEntity(passenger)));
         }
 
-        void BindBattleHudRuntimeFeedback(IBattleHudRuntimeFeedbackView view)
+        void BindBattleHudRuntimeFeedback(IBattleHudRuntimeFeedbackSink feedbackSink)
         {
-            selectionHudFeedbackSystem.BindBattleHudRuntimeFeedback(view);
+            selectionHudFeedbackSystem.BindBattleHudRuntimeFeedback(feedbackSink);
             hasCommandResultFlushContext = false;
         }
 

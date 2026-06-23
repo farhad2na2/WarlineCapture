@@ -12,6 +12,7 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
     private ISelectionUiCommand _selectionUiCommandSystem;
     private BattleHudRuntimeFeedbackView _runtimeFeedbackView;
     private bool _buildButtonListenerInstalled;
+    private Canvas _cachedCanvas;
 
     public Button BuildButton => buildButton;
 
@@ -24,6 +25,11 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
     private void OnDisable()
     {
         UninstallBuildButtonListener();
+    }
+
+    private void OnTransformParentChanged()
+    {
+        _cachedCanvas = null;
     }
 
     public void BindBuildCommand(
@@ -102,11 +108,18 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
 
     private Camera ResolveEventCamera()
     {
-        Canvas canvas = GetComponentInParent<Canvas>();
+        Canvas canvas = ResolveCanvas();
         if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
             return null;
 
         return canvas.worldCamera;
+    }
+
+    private Canvas ResolveCanvas()
+    {
+        if (_cachedCanvas == null)
+            _cachedCanvas = GetComponentInParent<Canvas>();
+        return _cachedCanvas;
     }
 
     private static bool ContainsButton(Button button, Vector2 screenPosition, Camera eventCamera)

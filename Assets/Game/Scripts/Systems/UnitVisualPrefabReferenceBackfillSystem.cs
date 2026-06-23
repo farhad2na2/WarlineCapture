@@ -35,6 +35,7 @@ public partial struct UnitVisualPrefabReferenceBackfillSystem : ISystem
         _sourceKeyType = state.GetComponentTypeHandle<UnitSourcePrefabKey>(true);
         _sharedReferencesType = state.GetComponentTypeHandle<UnitSharedVisualPrefabReferences>(true);
         _initialSpawnConfigType = state.GetComponentTypeHandle<InitialUnitsSpawnConfig>(true);
+        state.RequireForUpdate(_unitsToPatchQuery);
     }
 
     public void OnUpdate(ref SystemState state)

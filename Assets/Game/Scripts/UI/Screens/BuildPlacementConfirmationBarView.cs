@@ -38,12 +38,18 @@ public sealed class BuildPlacementConfirmationBarView : MonoBehaviour
     private UnityAction _rotateListener;
     private UnityAction _confirmListener;
     private float _nextRefreshAt;
+    private Canvas _cachedCanvas;
 
     public RectTransform Root => root != null ? root : transform as RectTransform;
 
     private void Awake()
     {
         CacheSerializedLayout();
+    }
+
+    private void OnTransformParentChanged()
+    {
+        _cachedCanvas = null;
     }
 
     public static BuildPlacementConfirmationBarView Ensure(GameObject prefab, RectTransform parent)
@@ -332,10 +338,17 @@ public sealed class BuildPlacementConfirmationBarView : MonoBehaviour
 
     private Camera ResolveEventCamera()
     {
-        Canvas canvas = GetComponentInParent<Canvas>();
+        Canvas canvas = ResolveCanvas();
         if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
             return null;
 
         return canvas.worldCamera;
+    }
+
+    private Canvas ResolveCanvas()
+    {
+        if (_cachedCanvas == null)
+            _cachedCanvas = GetComponentInParent<Canvas>();
+        return _cachedCanvas;
     }
 }

@@ -1,0 +1,23 @@
+attempt to write a readonly database
+attempt to write a readonly database
+Unity Editor version:    6000.4.0f1 (8cf496087c8f)
+Branch:                  6000.4/staging
+Build type:              Release
+Batch mode:              YES
+macOS version:           Version 26.5.1 (Build 25F80)
+Darwin version:          25.5.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-06-23T13:03:20Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Channel LicenseClient-farhad doesn't exist
+Launching external process: /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Helpers/UnityLicensingClient.app/Contents/MacOS/Unity.Licensing.Client
+[Licensing::Module] Successfully launched the LicensingClient (PId: 2078)
+2026-06-23 15:03:21.088 Unity[2060:14629] Failure on line 688 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-06-23 15:03:21.177 Unity[2060:14651] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-06-23 15:03:21.177 Unity[2060:14629] Error received in message reply handler: Connection invalid
+CSSM_ModuleLoad(): One or more parameters passed to a function were not valid.
+[Licensing::IpcConnector] Channel LicenseClient-farhad doesn't exist
+[Licensing::Module] Timed-out after 60.00s, waiting for channel: "LicenseClient-farhad"
+[Licensing::Module] Error: Licensing initialization failed after 74.83s

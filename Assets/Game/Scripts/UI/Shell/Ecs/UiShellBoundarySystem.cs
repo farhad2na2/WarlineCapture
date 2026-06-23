@@ -14,9 +14,10 @@ public partial struct UiShellBoundarySystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!boundaryQuery.IsEmptyIgnoreFilter)
+        int boundaryCount = boundaryQuery.CalculateEntityCount();
+        if (boundaryCount > 0)
         {
-            Entity existingBoundary = boundaryQuery.GetSingletonEntity();
+            Entity existingBoundary = ResolveBoundaryEntity(ref state, boundaryCount);
             EnsureMatchIntroComponent(ref state, existingBoundary);
             EnsureDiagnosticsOverlayComponent(ref state, existingBoundary);
             EnsureCommanderProfileComponent(ref state, existingBoundary);
@@ -37,10 +38,18 @@ public partial struct UiShellBoundarySystem : ISystem
             EnsureUiBuildCatalogRequestBuffer(ref state, existingBoundary);
             EnsureUiBuildProductionRequestBuffer(ref state, existingBoundary);
             EnsureUiBuildPrimaryRequestBuffer(ref state, existingBoundary);
+            EnsureUiShellArmoryCategoryRequestBuffer(ref state, existingBoundary);
+            EnsureUiShellRouteRequestBuffer(ref state, existingBoundary);
+            EnsureUiShellRouteHistoryBuffer(ref state, existingBoundary);
+            EnsureUiShellPopupRequestBuffer(ref state, existingBoundary);
+            EnsureUiShellPresentationCommandBuffer(ref state, existingBoundary);
+            EnsureUiShellTransitionCompleteBuffer(ref state, existingBoundary);
+            state.Enabled = false;
             return;
         }
 
         Entity boundary = state.EntityManager.CreateEntity(typeof(UiShellBoundaryComponent));
+        state.EntityManager.SetName(boundary, "UiShellBoundary");
         state.EntityManager.AddComponentData(boundary, new UiShellStateComponent
         {
             CurrentMode = UiShellMode.None,
@@ -106,6 +115,20 @@ public partial struct UiShellBoundarySystem : ISystem
         state.EntityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);
         state.EntityManager.AddBuffer<UiShellPresentationCommandComponent>(boundary);
         state.EntityManager.AddBuffer<UiShellTransitionCompleteComponent>(boundary);
+        state.Enabled = false;
+    }
+
+    private Entity ResolveBoundaryEntity(ref SystemState state, int boundaryCount)
+    {
+        if (boundaryCount == 1)
+            return boundaryQuery.GetSingletonEntity();
+
+        using NativeArray<Entity> boundaries = boundaryQuery.ToEntityArray(Allocator.Temp);
+        Entity primary = boundaries[0];
+        for (int i = 1; i < boundaries.Length; i++)
+            state.EntityManager.DestroyEntity(boundaries[i]);
+
+        return primary;
     }
 
     private static void EnsureMatchIntroComponent(ref SystemState state, Entity boundary)
@@ -299,6 +322,54 @@ public partial struct UiShellBoundarySystem : ISystem
             return;
 
         state.EntityManager.AddBuffer<UiBuildPrimaryRequestComponent>(boundary);
+    }
+
+    private static void EnsureUiShellArmoryCategoryRequestBuffer(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasBuffer<UiShellArmoryCategoryRequestComponent>(boundary))
+            return;
+
+        state.EntityManager.AddBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
+    }
+
+    private static void EnsureUiShellRouteRequestBuffer(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasBuffer<UiShellRouteRequestComponent>(boundary))
+            return;
+
+        state.EntityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
+    }
+
+    private static void EnsureUiShellRouteHistoryBuffer(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasBuffer<UiShellRouteHistoryComponent>(boundary))
+            return;
+
+        state.EntityManager.AddBuffer<UiShellRouteHistoryComponent>(boundary);
+    }
+
+    private static void EnsureUiShellPopupRequestBuffer(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasBuffer<UiShellPopupRequestComponent>(boundary))
+            return;
+
+        state.EntityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);
+    }
+
+    private static void EnsureUiShellPresentationCommandBuffer(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasBuffer<UiShellPresentationCommandComponent>(boundary))
+            return;
+
+        state.EntityManager.AddBuffer<UiShellPresentationCommandComponent>(boundary);
+    }
+
+    private static void EnsureUiShellTransitionCompleteBuffer(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasBuffer<UiShellTransitionCompleteComponent>(boundary))
+            return;
+
+        state.EntityManager.AddBuffer<UiShellTransitionCompleteComponent>(boundary);
     }
 
     private static UiShellCommanderProfileComponent DefaultCommanderProfile()

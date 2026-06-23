@@ -1,4 +1,3 @@
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -9,20 +8,18 @@ using UnityEngine;
 public partial class UnitAttackVfxRequestSystem : SystemBase
 {
     private const int MaxMuzzleFlashOriginCount = 4;
+    private EntityQuery _requestQuery;
 
     protected override void OnCreate()
     {
-        RequireForUpdate<UnitAttackVfxRequest>();
+        _requestQuery = GetEntityQuery(ComponentType.ReadOnly<UnitAttackVfxRequest>());
+        RequireForUpdate(_requestQuery);
     }
 
     protected override void OnUpdate()
     {
         EntityManager em = EntityManager;
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
-
-        foreach (var (request, entity) in SystemAPI
-                     .Query<RefRO<UnitAttackVfxRequest>>()
-                     .WithEntityAccess())
+        foreach (RefRO<UnitAttackVfxRequest> request in SystemAPI.Query<RefRO<UnitAttackVfxRequest>>())
         {
             UnitAttackVfxRequest value = request.ValueRO;
             switch ((UnitAttackVfxRequestKind)value.Kind)
@@ -34,12 +31,9 @@ public partial class UnitAttackVfxRequestSystem : SystemBase
                     PlayImpact(em, value);
                     break;
             }
-
-            ecb.DestroyEntity(entity);
         }
 
-        ecb.Playback(em);
-        ecb.Dispose();
+        em.DestroyEntity(_requestQuery);
     }
 
     private static void PlayMuzzleFlash(EntityManager em, UnitAttackVfxRequest request)
@@ -182,19 +176,18 @@ public partial class UnitAttackVfxRequestSystem : SystemBase
 [UpdateAfter(typeof(AirMissileImpactSystem))]
 public partial class CombatGameObjectVfxPlaybackSystem : SystemBase
 {
+    private EntityQuery _requestQuery;
+
     protected override void OnCreate()
     {
-        RequireForUpdate<CombatGameObjectVfxRequest>();
+        _requestQuery = GetEntityQuery(ComponentType.ReadOnly<CombatGameObjectVfxRequest>());
+        RequireForUpdate(_requestQuery);
     }
 
     protected override void OnUpdate()
     {
         EntityManager em = EntityManager;
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
-
-        foreach (var (request, entity) in SystemAPI
-                     .Query<RefRO<CombatGameObjectVfxRequest>>()
-                     .WithEntityAccess())
+        foreach (RefRO<CombatGameObjectVfxRequest> request in SystemAPI.Query<RefRO<CombatGameObjectVfxRequest>>())
         {
             CombatGameObjectVfxRequest value = request.ValueRO;
             GameObject prefab = value.Prefab.Value != null ? value.Prefab.Value : value.FallbackPrefab.Value;
@@ -216,12 +209,9 @@ public partial class CombatGameObjectVfxPlaybackSystem : SystemBase
                         break;
                 }
             }
-
-            ecb.DestroyEntity(entity);
         }
 
-        ecb.Playback(em);
-        ecb.Dispose();
+        em.DestroyEntity(_requestQuery);
     }
 
     private static Quaternion ToUnityQuaternion(quaternion rotation)

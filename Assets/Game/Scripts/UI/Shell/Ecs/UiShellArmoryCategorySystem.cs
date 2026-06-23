@@ -12,6 +12,7 @@ public partial struct UiShellArmoryCategorySystem : ISystem
             ComponentType.ReadOnly<UiShellBoundaryComponent>(),
             ComponentType.ReadWrite<UiShellArmoryCategoryComponent>(),
             ComponentType.ReadWrite<UiShellArmoryCategoryRequestComponent>());
+        state.RequireForUpdate(boundaryQuery);
     }
 
     public void OnUpdate(ref SystemState state)

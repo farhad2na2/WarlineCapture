@@ -1,0 +1,27 @@
+attempt to write a readonly database
+attempt to write a readonly database
+Unity Editor version:    6000.4.0f1 (8cf496087c8f)
+Branch:                  6000.4/staging
+Build type:              Release
+Batch mode:              YES
+macOS version:           Version 26.5.1 (Build 25F80)
+Darwin version:          25.5.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-06-23T12:13:06Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+No explicit failure code handling for error of type 1
+[Licensing::IpcConnector] Error: Failed to connect to LicenseClient-farhad channel (error code: 0x80000000) .
+[Licensing::IpcConnector] Error: Connection to channel: "LicenseClient-farhad" failed; code: "0x80000000"
+[Licensing::IpcConnector] Error: Failed to connect to LicenseClient-farhad channel (error code: 0x80000000) .
+[Licensing::IpcConnector] Channel LicenseClient-farhad-6000.4.0 doesn't exist
+Launching external process: /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/Helpers/UnityLicensingClient.app/Contents/MacOS/Unity.Licensing.Client
+[Licensing::Module] Successfully launched the LicensingClient (PId: 24733)
+2026-06-23 14:13:06.658 Unity[24700:4669548] Failure on line 688 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+CSSM_ModuleLoad(): One or more parameters passed to a function were not valid.
+2026-06-23 14:13:07.030 Unity[24700:4669574] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-06-23 14:13:07.030 Unity[24700:4669548] Error received in message reply handler: Connection invalid
+[Licensing::IpcConnector] Channel LicenseClient-farhad-6000.4.0 doesn't exist
+[Licensing::Module] Timed-out after 60.00s, waiting for channel: "LicenseClient-farhad-6000.4.0"
+[Licensing::Module] Error: Licensing initialization failed after 74.84s

@@ -7,6 +7,7 @@ using Unity.Transforms;
 using UnityEngine;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateAfter(typeof(UnitGridMovementSystem))]
 public partial struct UnitTransportBoardingSystem : ISystem
 {
     private const int DiagnosticLogIntervalFrames = 180;

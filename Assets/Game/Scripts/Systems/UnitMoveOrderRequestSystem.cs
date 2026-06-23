@@ -2,6 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
+[UpdateBefore(typeof(UnitPathfindingSystem))]
 public partial struct UnitMoveOrderRequestSystem : ISystem
 {
     private EntityQuery _queueQuery;

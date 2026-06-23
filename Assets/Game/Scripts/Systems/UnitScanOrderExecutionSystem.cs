@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Collections;
@@ -15,100 +16,31 @@ public partial struct UnitScanOrderExecutionSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        EntityCommandBuffer ecb = new(Allocator.Temp);
-        NativeList<PendingScanReveal> pendingReveals = new(16, Allocator.Temp);
-        NativeList<PendingPatrolMove> pendingPatrolMoves = new(16, Allocator.Temp);
-        ComponentLookup<Disabled> disabledLookup = SystemAPI.GetComponentLookup<Disabled>(true);
-        ComponentLookup<UnitDeathAnimationComponent> deathAnimationLookup = SystemAPI.GetComponentLookup<UnitDeathAnimationComponent>(true);
-        ComponentLookup<UnitHealth> healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
-        ComponentLookup<UnitAirComponent> airLookup = SystemAPI.GetComponentLookup<UnitAirComponent>(false);
-        ComponentLookup<UnitAirMovement> airMovementLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true);
-        ComponentLookup<UnitTarget> targetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true);
-        ComponentLookup<UnitPathRequest> pathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true);
-        ComponentLookup<ManualMoveOrderTag> manualMoveOrderLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true);
-        ComponentLookup<EngageTarget> engageTargetLookup = SystemAPI.GetComponentLookup<EngageTarget>(true);
+        EntityCommandBuffer ecb = new(Allocator.TempJob);
+        NativeList<PendingScanReveal> pendingReveals = new(16, Allocator.TempJob);
+        NativeList<PendingPatrolMove> pendingPatrolMoves = new(16, Allocator.TempJob);
         bool hasGridConfig = SystemAPI.TryGetSingleton(out GridConfig gridConfig);
         try
         {
-            float now = (float)SystemAPI.Time.ElapsedTime;
-            foreach (var (scanOrder, unitGrid, entity) in SystemAPI
-                         .Query<RefRW<UnitScanOrder>, RefRO<UnitGrid>>()
-                         .WithEntityAccess())
+            state.Dependency = new ExecuteScanOrdersJob
             {
-                if (IsDeadOrInvalidSource(entity, disabledLookup, deathAnimationLookup, healthLookup))
-                {
-                    ecb.RemoveComponent<UnitScanOrder>(entity);
-                    continue;
-                }
-
-                ref UnitScanOrder order = ref scanOrder.ValueRW;
-                int triggerRadius = math.max(1, order.RadiusCells);
-                bool insideScanArea = ChebyshevDistance(unitGrid.ValueRO.Cell, order.CenterCell) <= triggerRadius;
-                if (order.HasStarted == 0)
-                {
-                    if (!insideScanArea)
-                        continue;
-
-                    order.HasStarted = 1;
-                    order.StartedTimeSeconds = now;
-                    order.NextRevealTimeSeconds = now;
-                }
-
-                if (order.DurationSeconds > 0f &&
-                    now - order.StartedTimeSeconds >= order.DurationSeconds)
-                {
-                    CompleteScanOrder(
-                        ecb,
-                        airLookup,
-                        targetLookup,
-                        pathRequestLookup,
-                        manualMoveOrderLookup,
-                        engageTargetLookup,
-                        entity,
-                        order);
-                    continue;
-                }
-
-                if (!insideScanArea)
-                    continue;
-
-                if (now < order.NextRevealTimeSeconds)
-                {
-                    TryScheduleGroundPatrolMove(
-                        entity,
-                        unitGrid.ValueRO.Cell,
-                        ref order,
-                        now,
-                        hasGridConfig,
-                        gridConfig,
-                        airMovementLookup,
-                        targetLookup,
-                        pendingPatrolMoves);
-                    continue;
-                }
-
-                pendingReveals.Add(new PendingScanReveal
-                {
-                    RequestId = order.RequestId,
-                    Frame = order.StartedFrame,
-                    SourceEntity = entity,
-                    CenterCell = order.CenterCell,
-                    CenterWorld = order.CenterWorld,
-                    RadiusCells = order.RadiusCells
-                });
-                order.NextRevealTimeSeconds = now + RevealIntervalSeconds;
-
-                TryScheduleGroundPatrolMove(
-                    entity,
-                    unitGrid.ValueRO.Cell,
-                    ref order,
-                    now,
-                    hasGridConfig,
-                    gridConfig,
-                    airMovementLookup,
-                    targetLookup,
-                    pendingPatrolMoves);
-            }
+                Ecb = ecb,
+                PendingReveals = pendingReveals,
+                PendingPatrolMoves = pendingPatrolMoves,
+                DisabledLookup = SystemAPI.GetComponentLookup<Disabled>(true),
+                DeathAnimationLookup = SystemAPI.GetComponentLookup<UnitDeathAnimationComponent>(true),
+                HealthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true),
+                AirLookup = SystemAPI.GetComponentLookup<UnitAirComponent>(false),
+                AirMovementLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true),
+                TargetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true),
+                PathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true),
+                ManualMoveOrderLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true),
+                EngageTargetLookup = SystemAPI.GetComponentLookup<EngageTarget>(true),
+                Now = (float)SystemAPI.Time.ElapsedTime,
+                HasGridConfig = hasGridConfig ? (byte)1 : (byte)0,
+                GridConfig = gridConfig
+            }.Schedule(state.Dependency);
+            state.Dependency.Complete();
 
             UnitMoveOrderSystem moveOrderSystem = new();
             for (int i = 0; i < pendingPatrolMoves.Length; i++)
@@ -141,6 +73,102 @@ public partial struct UnitScanOrderExecutionSystem : ISystem
             if (pendingPatrolMoves.IsCreated)
                 pendingPatrolMoves.Dispose();
             ecb.Dispose();
+        }
+    }
+
+    [BurstCompile]
+    private partial struct ExecuteScanOrdersJob : IJobEntity
+    {
+        public EntityCommandBuffer Ecb;
+        public NativeList<PendingScanReveal> PendingReveals;
+        public NativeList<PendingPatrolMove> PendingPatrolMoves;
+        [ReadOnly] public ComponentLookup<Disabled> DisabledLookup;
+        [ReadOnly] public ComponentLookup<UnitDeathAnimationComponent> DeathAnimationLookup;
+        [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;
+        public ComponentLookup<UnitAirComponent> AirLookup;
+        [ReadOnly] public ComponentLookup<UnitAirMovement> AirMovementLookup;
+        [ReadOnly] public ComponentLookup<UnitTarget> TargetLookup;
+        [ReadOnly] public ComponentLookup<UnitPathRequest> PathRequestLookup;
+        [ReadOnly] public ComponentLookup<ManualMoveOrderTag> ManualMoveOrderLookup;
+        [ReadOnly] public ComponentLookup<EngageTarget> EngageTargetLookup;
+        public float Now;
+        public byte HasGridConfig;
+        public GridConfig GridConfig;
+
+        private void Execute(Entity entity, ref UnitScanOrder order, in UnitGrid unitGrid)
+        {
+            if (IsDeadOrInvalidSource(entity, DisabledLookup, DeathAnimationLookup, HealthLookup))
+            {
+                Ecb.RemoveComponent<UnitScanOrder>(entity);
+                return;
+            }
+
+            int triggerRadius = math.max(1, order.RadiusCells);
+            bool insideScanArea = ChebyshevDistance(unitGrid.Cell, order.CenterCell) <= triggerRadius;
+            if (order.HasStarted == 0)
+            {
+                if (!insideScanArea)
+                    return;
+
+                order.HasStarted = 1;
+                order.StartedTimeSeconds = Now;
+                order.NextRevealTimeSeconds = Now;
+            }
+
+            if (order.DurationSeconds > 0f &&
+                Now - order.StartedTimeSeconds >= order.DurationSeconds)
+            {
+                CompleteScanOrder(
+                    Ecb,
+                    AirLookup,
+                    TargetLookup,
+                    PathRequestLookup,
+                    ManualMoveOrderLookup,
+                    EngageTargetLookup,
+                    entity,
+                    order);
+                return;
+            }
+
+            if (!insideScanArea)
+                return;
+
+            if (Now < order.NextRevealTimeSeconds)
+            {
+                TryScheduleGroundPatrolMove(
+                    entity,
+                    unitGrid.Cell,
+                    ref order,
+                    Now,
+                    HasGridConfig != 0,
+                    GridConfig,
+                    AirMovementLookup,
+                    TargetLookup,
+                    PendingPatrolMoves);
+                return;
+            }
+
+            PendingReveals.Add(new PendingScanReveal
+            {
+                RequestId = order.RequestId,
+                Frame = order.StartedFrame,
+                SourceEntity = entity,
+                CenterCell = order.CenterCell,
+                CenterWorld = order.CenterWorld,
+                RadiusCells = order.RadiusCells
+            });
+            order.NextRevealTimeSeconds = Now + RevealIntervalSeconds;
+
+            TryScheduleGroundPatrolMove(
+                entity,
+                unitGrid.Cell,
+                ref order,
+                Now,
+                HasGridConfig != 0,
+                GridConfig,
+                AirMovementLookup,
+                TargetLookup,
+                PendingPatrolMoves);
         }
     }
 

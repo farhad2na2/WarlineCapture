@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Entities;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
@@ -33,12 +34,14 @@ public partial struct UiActionRequestSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        Entity boundary = boundaryQuery.GetSingletonEntity();
+        Entity boundary = ResolveFirstEntity(boundaryQuery);
         DynamicBuffer<UiActionRequestComponent> actionRequests = state.EntityManager.GetBuffer<UiActionRequestComponent>(boundary);
         if (actionRequests.Length == 0)
             return;
 
-        Entity selectionInput = ResolveSelectionInputEntity(ref state);
+        if (!TryResolveSelectionInputEntity(ref state, out Entity selectionInput))
+            return;
+
         DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
             state.EntityManager.GetBuffer<RtsSelectionCommandIntentRequestElement>(selectionInput);
         DynamicBuffer<UiShellPopupRequestComponent> popupRequests =
@@ -69,7 +72,9 @@ public partial struct UiActionRequestSystem : ISystem
         BuildingUiPlacementCommandQueueComponent placementQueue = default;
         if (needsPlacementCommandQueue)
         {
-            placementCommand = ResolveBuildingPlacementCommandEntity(ref state);
+            if (!TryResolveBuildingPlacementCommandEntity(ref state, out placementCommand))
+                return;
+
             placementRequests = state.EntityManager.GetBuffer<BuildingUiPlacementCommandRequestElement>(placementCommand);
             placementQueue = state.EntityManager.GetComponentData<BuildingUiPlacementCommandQueueComponent>(placementCommand);
         }
@@ -107,24 +112,25 @@ public partial struct UiActionRequestSystem : ISystem
             state.EntityManager.SetComponentData(placementCommand, placementQueue);
     }
 
-    private Entity ResolveSelectionInputEntity(ref SystemState state)
+    private bool TryResolveSelectionInputEntity(ref SystemState state, out Entity entity)
     {
+        entity = Entity.Null;
         if (!selectionInputQuery.IsEmptyIgnoreFilter)
         {
-            Entity entity = selectionInputQuery.GetSingletonEntity();
+            entity = ResolveFirstEntity(selectionInputQuery);
             EnsureSelectionBuffers(ref state, entity);
-            return entity;
+            return true;
         }
 
-        Entity created = state.EntityManager.CreateEntity(
+        entity = state.EntityManager.CreateEntity(
             typeof(RtsSelectionInputStateComponent),
             typeof(RtsSelectionInputRequestQueueComponent));
-        state.EntityManager.SetComponentData(created, new RtsSelectionInputStateComponent
+        state.EntityManager.SetComponentData(entity, new RtsSelectionInputStateComponent
         {
             QueuedMoveOrderFrame = -1
         });
-        EnsureSelectionBuffers(ref state, created);
-        return created;
+        EnsureSelectionBuffers(ref state, entity);
+        return false;
     }
 
     private static void EnsureSelectionBuffers(ref SystemState state, Entity entity)
@@ -137,22 +143,24 @@ public partial struct UiActionRequestSystem : ISystem
             state.EntityManager.AddBuffer<RtsSelectionCommandResultElement>(entity);
     }
 
-    private Entity ResolveBuildingPlacementCommandEntity(ref SystemState state)
+    private bool TryResolveBuildingPlacementCommandEntity(ref SystemState state, out Entity entity)
     {
+        entity = Entity.Null;
         if (!buildingPlacementCommandQuery.IsEmptyIgnoreFilter)
         {
-            Entity entity = buildingPlacementCommandQuery.GetSingletonEntity();
+            entity = ResolveFirstEntity(buildingPlacementCommandQuery);
             EnsureBuildingPlacementCommandBuffers(ref state, entity);
-            return entity;
+            return true;
         }
 
-        Entity created = state.EntityManager.CreateEntity(typeof(BuildingUiPlacementCommandQueueComponent));
-        state.EntityManager.SetComponentData(created, new BuildingUiPlacementCommandQueueComponent
+        entity = state.EntityManager.CreateEntity(typeof(BuildingUiPlacementCommandQueueComponent));
+        state.EntityManager.SetName(entity, "BuildingUiPlacementCommands");
+        state.EntityManager.SetComponentData(entity, new BuildingUiPlacementCommandQueueComponent
         {
             LastRequestId = 0
         });
-        EnsureBuildingPlacementCommandBuffers(ref state, created);
-        return created;
+        EnsureBuildingPlacementCommandBuffers(ref state, entity);
+        return false;
     }
 
     private static void EnsureBuildingPlacementCommandBuffers(ref SystemState state, Entity entity)
@@ -161,6 +169,15 @@ public partial struct UiActionRequestSystem : ISystem
             state.EntityManager.AddBuffer<BuildingUiPlacementCommandRequestElement>(entity);
         if (!state.EntityManager.HasBuffer<BuildingUiPlacementCommandResultElement>(entity))
             state.EntityManager.AddBuffer<BuildingUiPlacementCommandResultElement>(entity);
+    }
+
+    private static Entity ResolveFirstEntity(EntityQuery query)
+    {
+        if (query.CalculateEntityCount() == 1)
+            return query.GetSingletonEntity();
+
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        return entities.Length > 0 ? entities[0] : Entity.Null;
     }
 
     private static void ProcessRequest(

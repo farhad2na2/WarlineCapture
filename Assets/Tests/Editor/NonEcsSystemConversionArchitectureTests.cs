@@ -103,8 +103,8 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|SelectionDiagnosticsSinkAdapter",
         "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|SelectionRectangleStateAdapter",
         "Assets/Game/Scripts/Persistence/SaveService.cs|SaveService",
+        "Assets/Game/Scripts/Systems/NullMatchIntroStateQuery.cs|NullMatchIntroStateQuery",
         "Assets/Game/Scripts/UI/Contracts/IMatchIntroStateQuery.cs|IMatchIntroStateQuery",
-        "Assets/Game/Scripts/UI/Contracts/IMatchIntroStateQuery.cs|NullMatchIntroStateQuery",
         "Assets/Game/Scripts/UI/Contracts/UiRuntimeBoundaryContracts.cs|IBuildingUiQuery",
         "Assets/Game/Scripts/UI/Settings/SettingsService.cs|SettingsService"
     };

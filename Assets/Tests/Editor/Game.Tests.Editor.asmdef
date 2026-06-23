@@ -10,6 +10,7 @@
         "Game.Editor",
         "Game.Rendering",
         "Game.Rendering.Contracts",
+        "Game.Tactical.Contracts",
         "Game.UI.Contracts",
         "Game.UI.Shell.Contracts.Ecs",
         "Game.UI.Shell.Ecs",

@@ -29,9 +29,14 @@ public static class MatchRuntimeShellSmokeValidation
     private const string InitialBuildingImmediateStatusKey = "MatchRuntimeShellSmokeValidation.InitialBuildingImmediateStatus";
     private const string FrameDiagKey = "MatchRuntimeShellSmokeValidation.FrameDiag";
     private const string ReadyAtKey = "MatchRuntimeShellSmokeValidation.ReadyAt";
+    private const string LastProgressLogAtKey = "MatchRuntimeShellSmokeValidation.LastProgressLogAt";
+    private const string OverrideEnterPlayModeSettingsKey = "MatchRuntimeShellSmokeValidation.OverrideEnterPlayModeSettings";
+    private const string PreviousEnterPlayModeOptionsEnabledKey = "MatchRuntimeShellSmokeValidation.PreviousEnterPlayModeOptionsEnabled";
+    private const string PreviousEnterPlayModeOptionsKey = "MatchRuntimeShellSmokeValidation.PreviousEnterPlayModeOptions";
     private const string BaselineMetricsReportPath = "/private/tmp/warlinecapture-match-runtime-baseline-metrics.json";
     private const double AirMissileSmokeTimeoutSeconds = 20d;
     private const double TimeoutSeconds = 120d;
+    private const double ProgressLogIntervalSeconds = 5d;
     private const double StableFrameDiagObservationSeconds = 4d;
     private const double BaselineMetricsObservationSeconds = 4d;
     private const double InitialBuildingPostAiObservationSeconds = 10d;
@@ -134,7 +139,9 @@ public static class MatchRuntimeShellSmokeValidation
             SessionState.EraseString(FrameDiagKey);
             SessionState.EraseString(InitialBuildingImmediateStatusKey);
             SessionState.EraseFloat(ReadyAtKey);
+            SessionState.EraseFloat(LastProgressLogAtKey);
 
+            ConfigurePlayModeReloadForBatchValidation();
             RegisterCallbacks();
             EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
             EditorApplication.EnterPlaymode();
@@ -179,6 +186,7 @@ public static class MatchRuntimeShellSmokeValidation
         }
 
         Phase phase = (Phase)SessionState.GetInt(PhaseKey, (int)Phase.Idle);
+        LogProgressIfDue(phase, "polling");
         if (phase == Phase.WaitingForPlayMode)
         {
             EnsurePlayModeRequested();
@@ -602,6 +610,66 @@ public static class MatchRuntimeShellSmokeValidation
         }
 
         SessionState.SetInt(ErrorCountKey, SessionState.GetInt(ErrorCountKey, 0) + 1);
+    }
+
+    private static void ConfigurePlayModeReloadForBatchValidation()
+    {
+        if (!Application.isBatchMode)
+        {
+            SessionState.EraseBool(OverrideEnterPlayModeSettingsKey);
+            return;
+        }
+
+        SessionState.SetBool(OverrideEnterPlayModeSettingsKey, true);
+        SessionState.SetBool(PreviousEnterPlayModeOptionsEnabledKey, EditorSettings.enterPlayModeOptionsEnabled);
+        SessionState.SetInt(PreviousEnterPlayModeOptionsKey, (int)EditorSettings.enterPlayModeOptions);
+
+        EnterPlayModeOptions batchOptions =
+            EditorSettings.enterPlayModeOptions & ~EnterPlayModeOptions.DisableSceneReload;
+        bool batchOptionsEnabled = batchOptions != EnterPlayModeOptions.None;
+        if (EditorSettings.enterPlayModeOptionsEnabled == batchOptionsEnabled &&
+            EditorSettings.enterPlayModeOptions == batchOptions)
+        {
+            return;
+        }
+
+        Debug.Log(
+            "[MatchRuntimeShellSmokeValidation] forcingSceneReloadForBatch " +
+            $"previousEnabled={EditorSettings.enterPlayModeOptionsEnabled} " +
+            $"previousOptions={EditorSettings.enterPlayModeOptions} " +
+            $"batchEnabled={batchOptionsEnabled} batchOptions={batchOptions}");
+        EditorSettings.enterPlayModeOptionsEnabled = batchOptionsEnabled;
+        EditorSettings.enterPlayModeOptions = batchOptions;
+    }
+
+    private static void RestorePlayModeReloadSettings()
+    {
+        if (!SessionState.GetBool(OverrideEnterPlayModeSettingsKey, false))
+            return;
+
+        bool previousEnabled = SessionState.GetBool(PreviousEnterPlayModeOptionsEnabledKey, false);
+        EnterPlayModeOptions previousOptions =
+            (EnterPlayModeOptions)SessionState.GetInt(PreviousEnterPlayModeOptionsKey, (int)EnterPlayModeOptions.None);
+        EditorSettings.enterPlayModeOptionsEnabled = previousEnabled;
+        EditorSettings.enterPlayModeOptions = previousOptions;
+        SessionState.EraseBool(OverrideEnterPlayModeSettingsKey);
+        SessionState.EraseBool(PreviousEnterPlayModeOptionsEnabledKey);
+        SessionState.EraseInt(PreviousEnterPlayModeOptionsKey);
+    }
+
+    private static void LogProgressIfDue(Phase phase, string status)
+    {
+        double now = EditorApplication.timeSinceStartup;
+        double lastLogAt = SessionState.GetFloat(LastProgressLogAtKey, 0f);
+        if (now - lastLogAt < ProgressLogIntervalSeconds)
+            return;
+
+        SessionState.SetFloat(LastProgressLogAtKey, (float)now);
+        Debug.Log(
+            "[MatchRuntimeShellSmokeValidation] progress " +
+            $"phase={phase} isPlaying={EditorApplication.isPlaying} " +
+            $"willChangePlayMode={EditorApplication.isPlayingOrWillChangePlaymode} " +
+            $"frame={Time.frameCount} status={status}");
     }
 
     private static bool IsGameplayStableForFrameDiag(out string status)
@@ -1504,6 +1572,7 @@ public static class MatchRuntimeShellSmokeValidation
         EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
         Application.logMessageReceived -= OnLogMessageReceived;
         CleanupAirMissileSmoke();
+        RestorePlayModeReloadSettings();
         SessionState.EraseBool(ActiveKey);
         SessionState.EraseInt(PhaseKey);
         SessionState.EraseFloat(StartedAtKey);
@@ -1515,6 +1584,7 @@ public static class MatchRuntimeShellSmokeValidation
         SessionState.EraseString(FrameDiagKey);
         SessionState.EraseString(InitialBuildingImmediateStatusKey);
         SessionState.EraseFloat(ReadyAtKey);
+        SessionState.EraseFloat(LastProgressLogAtKey);
         ResetBaselineMetricsState();
     }
 }

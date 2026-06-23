@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
+[UpdateBefore(typeof(UnitMoveOrderRequestSystem))]
 public partial struct SelectedMoveOrderCommandSystem : ISystem
 {
     public delegate bool ClickedUnitResolver(Vector2 screenPosition, EntityManager em, out Entity entity);
@@ -73,6 +74,7 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
             ComponentType.ReadOnly<DynamicOccupancyComponent>());
         _mapSurfaceQuery = state.GetEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
         _entityType = state.GetEntityTypeHandle();
+        state.RequireForUpdate(_commandQueueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

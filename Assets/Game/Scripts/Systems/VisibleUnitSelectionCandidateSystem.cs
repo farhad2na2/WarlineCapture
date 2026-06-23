@@ -18,30 +18,31 @@ public struct VisibleUnitSelectionCandidateElement : IBufferElementData
 public partial struct VisibleUnitSelectionCandidateSystem : ISystem
 {
     private EntityQuery _visiblePlayerUnitQuery;
+    private EntityQuery _snapshotQuery;
     private Entity _snapshotEntity;
 
     public void OnCreate(ref SystemState state)
     {
         _visiblePlayerUnitQuery = state.GetEntityQuery(VisibleUnitSelectionCandidateCollector.CreateQueryDesc());
-        _snapshotEntity = state.EntityManager.CreateEntity(
-            typeof(VisibleUnitSelectionCandidateSnapshot),
-            typeof(VisibleUnitSelectionCandidateElement));
+        _snapshotQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<VisibleUnitSelectionCandidateSnapshot>(),
+            ComponentType.ReadWrite<VisibleUnitSelectionCandidateElement>());
     }
 
     public void OnDestroy(ref SystemState state)
     {
         if (_snapshotEntity != Entity.Null && state.EntityManager.Exists(_snapshotEntity))
-            state.EntityManager.DestroyEntity(_snapshotEntity);
+        {
+            using EntityCommandBuffer ecb = new(Allocator.Temp);
+            ecb.DestroyEntity(_snapshotEntity);
+            ecb.Playback(state.EntityManager);
+        }
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        if (_snapshotEntity == Entity.Null || !state.EntityManager.Exists(_snapshotEntity))
-        {
-            _snapshotEntity = state.EntityManager.CreateEntity(
-                typeof(VisibleUnitSelectionCandidateSnapshot),
-                typeof(VisibleUnitSelectionCandidateElement));
-        }
+        if (!TryResolveSnapshotEntity(ref state))
+            return;
 
         DynamicBuffer<VisibleUnitSelectionCandidateElement> snapshot =
             state.EntityManager.GetBuffer<VisibleUnitSelectionCandidateElement>(_snapshotEntity);
@@ -66,6 +67,32 @@ public partial struct VisibleUnitSelectionCandidateSystem : ISystem
                 IsVehicle = candidate.IsVehicle
             });
         }
+    }
+
+    private bool TryResolveSnapshotEntity(ref SystemState state)
+    {
+        if (_snapshotEntity != Entity.Null && state.EntityManager.Exists(_snapshotEntity))
+            return true;
+
+        if (!_snapshotQuery.IsEmptyIgnoreFilter)
+        {
+            _snapshotEntity = _snapshotQuery.GetSingletonEntity();
+            return true;
+        }
+
+        using (EntityCommandBuffer ecb = new(Allocator.Temp))
+        {
+            Entity snapshotEntity = ecb.CreateEntity();
+            ecb.AddComponent<VisibleUnitSelectionCandidateSnapshot>(snapshotEntity);
+            ecb.AddBuffer<VisibleUnitSelectionCandidateElement>(snapshotEntity);
+            ecb.Playback(state.EntityManager);
+        }
+
+        if (_snapshotQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        _snapshotEntity = _snapshotQuery.GetSingletonEntity();
+        return true;
     }
 }
 

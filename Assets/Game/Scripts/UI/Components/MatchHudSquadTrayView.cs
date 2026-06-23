@@ -35,6 +35,7 @@ public sealed class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayVie
     private Action<MatchHudSquadTraySlot> _cardClicked;
     private float _disabledFlashUntil;
     private int _disabledFlashIndex = -1;
+    private Canvas _cachedCanvas;
 
     private void Awake()
     {
@@ -95,6 +96,11 @@ public sealed class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayVie
     private void OnDestroy()
     {
         Unbind();
+    }
+
+    private void OnTransformParentChanged()
+    {
+        _cachedCanvas = null;
     }
 
     private void Update()
@@ -188,11 +194,18 @@ public sealed class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayVie
 
     private Camera ResolveEventCamera()
     {
-        Canvas canvas = GetComponentInParent<Canvas>();
+        Canvas canvas = ResolveCanvas();
         if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
             return null;
 
         return canvas.worldCamera;
+    }
+
+    private Canvas ResolveCanvas()
+    {
+        if (_cachedCanvas == null)
+            _cachedCanvas = GetComponentInParent<Canvas>();
+        return _cachedCanvas;
     }
 
     private void CacheBaseFrameColors()

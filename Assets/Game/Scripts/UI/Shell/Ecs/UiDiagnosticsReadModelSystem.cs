@@ -21,6 +21,7 @@ public partial struct UiDiagnosticsReadModelSystem : ISystem
             ComponentType.ReadWrite<UiDiagnosticsOverlayComponent>());
         appliedLogVersion = -1;
         UiDiagnosticsRuntimeLogBuffer.EnsureSubscribed();
+        state.RequireForUpdate(boundaryQuery);
     }
 
     public void OnDestroy(ref SystemState state)

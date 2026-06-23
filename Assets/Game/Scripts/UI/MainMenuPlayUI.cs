@@ -24,7 +24,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
     private BuildDrawerView _buildDrawerView;
     private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
     private System.Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
-    private System.Action<IBattleHudRuntimeFeedbackView> _bindMatchHudRuntimeFeedback;
+    private System.Action<IBattleHudRuntimeFeedbackSink> _bindMatchHudRuntimeFeedback;
     private System.Action<IMatchHudSquadTrayView> _bindMatchHudSquadTray;
 
     public void Init(
@@ -173,17 +173,17 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
         _bindMatchHudSelectionPanel?.Invoke(_matchHudSelectionPanelView);
     }
 
-    public void ConfigureMatchHudRuntimeFeedbackBinding(System.Action<IBattleHudRuntimeFeedbackView> bindMatchHudRuntimeFeedback)
+    public void ConfigureMatchHudRuntimeFeedbackSinkBinding(System.Action<IBattleHudRuntimeFeedbackSink> bindMatchHudRuntimeFeedback)
     {
         _bindMatchHudRuntimeFeedback = bindMatchHudRuntimeFeedback;
         if (_matchHudRuntimeFeedbackView != null)
-            _bindMatchHudRuntimeFeedback?.Invoke(_matchHudRuntimeFeedbackView);
+            _bindMatchHudRuntimeFeedback?.Invoke(new BattleHudRuntimeFeedbackSink(_matchHudRuntimeFeedbackView));
     }
 
     public void BindMatchHudRuntimeFeedback(BattleHudRuntimeFeedbackView runtimeFeedbackView)
     {
         _matchHudRuntimeFeedbackView = runtimeFeedbackView;
-        _bindMatchHudRuntimeFeedback?.Invoke(_matchHudRuntimeFeedbackView);
+        _bindMatchHudRuntimeFeedback?.Invoke(new BattleHudRuntimeFeedbackSink(_matchHudRuntimeFeedbackView));
     }
 
     public void ApplyMatchHudCommandMode(TacticalCommandMode mode)

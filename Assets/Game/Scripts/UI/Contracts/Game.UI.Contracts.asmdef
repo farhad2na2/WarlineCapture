@@ -1,7 +1,9 @@
 {
     "name": "Game.UI.Contracts",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "Game.Tactical.Contracts"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

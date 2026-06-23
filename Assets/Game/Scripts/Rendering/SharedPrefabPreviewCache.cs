@@ -59,6 +59,8 @@ public static class SharedPrefabPreviewCache
     }
 
     private const int PreviewLayer = 30;
+    private static readonly int SnivelerModelShownId = Shader.PropertyToID("_SnivelerModelShown");
+    private static readonly int SnivelerRenderPixelId = Shader.PropertyToID("_SnivelerRenderPixel");
     private static readonly Dictionary<PreviewKey, RenderTexture> Cache = new(new PreviewKeyComparer());
     private static GameObject _previewRoot;
     private static Camera _previewCamera;
@@ -480,8 +482,6 @@ public static class SharedPrefabPreviewCache
             return;
 
         MaterialPropertyBlock propertyBlock = new();
-        int modelShownId = Shader.PropertyToID("_SnivelerModelShown");
-        int renderPixelId = Shader.PropertyToID("_SnivelerRenderPixel");
         for (int rendererIndex = 0; rendererIndex < animatedRenderers.Length; rendererIndex++)
         {
             Renderer renderer = animatedRenderers[rendererIndex];
@@ -492,8 +492,8 @@ public static class SharedPrefabPreviewCache
             for (int materialIndex = 0; materialIndex < materialCount; materialIndex++)
             {
                 renderer.GetPropertyBlock(propertyBlock, materialIndex);
-                propertyBlock.SetFloat(modelShownId, 1f);
-                propertyBlock.SetVector(renderPixelId, renderPixel);
+                propertyBlock.SetFloat(SnivelerModelShownId, 1f);
+                propertyBlock.SetVector(SnivelerRenderPixelId, renderPixel);
                 renderer.SetPropertyBlock(propertyBlock, materialIndex);
             }
         }

@@ -258,15 +258,20 @@ public sealed class CustomGameStartupSystem
         using EntityQuery query = em.CreateEntityQuery(
             ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
             ComponentType.ReadWrite<BuildingRuntimeSpawnRequest>());
-        using NativeArray<Entity> boundaryEntities = query.ToEntityArray(Allocator.Temp);
-        for (int boundaryIndex = 0; boundaryIndex < boundaryEntities.Length; boundaryIndex++)
+        EntityTypeHandle entityType = em.GetEntityTypeHandle();
+        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
         {
-            Entity boundaryEntity = boundaryEntities[boundaryIndex];
-            DynamicBuffer<BuildingRuntimeSpawnRequest> requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
-            for (int requestIndex = requests.Length - 1; requestIndex >= 0; requestIndex--)
+            NativeArray<Entity> boundaryEntities = chunks[chunkIndex].GetNativeArray(entityType);
+            for (int boundaryIndex = 0; boundaryIndex < boundaryEntities.Length; boundaryIndex++)
             {
-                if (requests[requestIndex].PlanEntity == planEntity)
-                    requests.RemoveAt(requestIndex);
+                Entity boundaryEntity = boundaryEntities[boundaryIndex];
+                DynamicBuffer<BuildingRuntimeSpawnRequest> requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
+                for (int requestIndex = requests.Length - 1; requestIndex >= 0; requestIndex--)
+                {
+                    if (requests[requestIndex].PlanEntity == planEntity)
+                        requests.RemoveAt(requestIndex);
+                }
             }
         }
     }

@@ -5,6 +5,7 @@
         "Game.Components",
         "Game.Configs",
         "Game.Rendering.Contracts",
+        "Game.Tactical.Contracts",
         "Game.UI.Contracts",
         "sniveler-code.gpu-animation",
         "Unity.Burst",

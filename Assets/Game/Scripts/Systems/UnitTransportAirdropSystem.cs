@@ -1,4 +1,5 @@
 using System;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -47,26 +48,40 @@ public partial struct UnitTransportAirdropSystem : ISystem
         float now = (float)SystemAPI.Time.ElapsedTime;
 
         EntityCommandBuffer ecb = new(Allocator.Temp);
-        ComponentLookup<LocalTransform> transformLookup = SystemAPI.GetComponentLookup<LocalTransform>();
+        ComponentLookup<LocalTransform> transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(false);
+
+        state.Dependency = new UpdateSettleMoveTransformJob
+        {
+            Now = now
+        }.Schedule(state.Dependency);
+        state.Dependency = new UpdateParachuteDropTransformJob
+        {
+            Now = now
+        }.Schedule(state.Dependency);
+        state.Dependency = new UpdateCargoDropTransformJob
+        {
+            Now = now
+        }.Schedule(state.Dependency);
+        state.Dependency.Complete();
 
         foreach (var (transform, settle, entity) in
                  SystemAPI.Query<RefRW<LocalTransform>, RefRO<UnitTransportAirdropSettleComponent>>()
                      .WithEntityAccess())
         {
-            UpdateSettleMove(em, ecb, transform, settle, entity, now);
+            FinishCompletedSettleMove(em, ecb, transform, settle, entity, now);
         }
 
         foreach (var (transform, drop, entity) in
                  SystemAPI.Query<RefRW<LocalTransform>, RefRO<UnitTransportParachuteDropComponent>>()
                      .WithEntityAccess())
         {
-            UpdateParachuteDrop(
+            UpdateParachuteVisualPosition(transformLookup, drop.ValueRO.VisualEntity, transform.ValueRO.Position);
+            FinishCompletedParachuteDrop(
                 em,
                 ecb,
                 transform,
                 drop,
                 entity,
-                transformLookup,
                 now,
                 grid,
                 walkable.AsNativeArray(),
@@ -78,13 +93,13 @@ public partial struct UnitTransportAirdropSystem : ISystem
                  SystemAPI.Query<RefRW<LocalTransform>, RefRO<UnitTransportCargoDropComponent>>()
                      .WithEntityAccess())
         {
-            UpdateCargoDrop(
+            UpdateCargoVisualPosition(transformLookup, drop.ValueRO.VisualEntity, transform.ValueRO.Position);
+            FinishCompletedCargoDrop(
                 em,
                 ecb,
                 transform,
                 drop,
                 entity,
-                transformLookup,
                 now,
                 grid,
                 walkable.AsNativeArray(),
@@ -284,76 +299,108 @@ public partial struct UnitTransportAirdropSystem : ISystem
         }
     }
 
-    private static void UpdateParachuteDrop(
+    [BurstCompile]
+    private partial struct UpdateSettleMoveTransformJob : IJobEntity
+    {
+        public float Now;
+
+        private void Execute(ref LocalTransform transform, in UnitTransportAirdropSettleComponent settle)
+        {
+            float t = ResolveDropProgress(Now, settle.StartedAt, settle.DurationSeconds);
+            transform.Position = math.lerp(settle.StartPosition, settle.EndPosition, SmoothStep(t));
+            if (t >= 1f)
+                transform.Position = settle.EndPosition;
+        }
+    }
+
+    [BurstCompile]
+    private partial struct UpdateParachuteDropTransformJob : IJobEntity
+    {
+        public float Now;
+
+        private void Execute(ref LocalTransform transform, in UnitTransportParachuteDropComponent drop)
+        {
+            float t = ResolveDropProgress(Now, drop.StartedAt, drop.DurationSeconds);
+            transform.Position = math.lerp(drop.StartPosition, drop.EndPosition, SmoothStep(t));
+            if (t >= 1f)
+                transform.Position = drop.EndPosition;
+        }
+    }
+
+    [BurstCompile]
+    private partial struct UpdateCargoDropTransformJob : IJobEntity
+    {
+        public float Now;
+
+        private void Execute(ref LocalTransform transform, in UnitTransportCargoDropComponent drop)
+        {
+            float t = ResolveDropProgress(Now, drop.StartedAt, drop.DurationSeconds);
+            transform.Position = math.lerp(drop.StartPosition, drop.EndPosition, SmoothStep(t));
+            if (t >= 1f)
+                transform.Position = drop.EndPosition;
+        }
+    }
+
+    private static void FinishCompletedParachuteDrop(
         EntityManager em,
         EntityCommandBuffer ecb,
         RefRW<LocalTransform> transform,
         RefRO<UnitTransportParachuteDropComponent> drop,
         Entity entity,
-        ComponentLookup<LocalTransform> transformLookup,
         float now,
         in GridConfig grid,
         in NativeArray<GridWalkable> walkable,
         in NativeBitArray blocked,
         in NativeBitArray occupied)
     {
-        float duration = math.max(0.01f, drop.ValueRO.DurationSeconds);
-        float t = math.saturate((now - drop.ValueRO.StartedAt) / duration);
-        transform.ValueRW.Position = math.lerp(drop.ValueRO.StartPosition, drop.ValueRO.EndPosition, SmoothStep(t));
-        UpdateVisualPosition(transformLookup, drop.ValueRO.VisualEntity, transform.ValueRO.Position + new float3(0f, ParachuteVisualHeight, 0f));
-        if (t >= 1f)
-        {
-            transform.ValueRW.Position = drop.ValueRO.EndPosition;
-            FinishDrop(
-                em,
-                ecb,
-                entity,
-                drop.ValueRO.LandingCell,
-                drop.ValueRO.VisualEntity,
-                now,
-                drop.ValueRO.EndPosition,
-                grid,
-                walkable,
-                blocked,
-                occupied,
-                UnitTransportPassengerKind.Soldier);
-        }
+        if (ResolveDropProgress(now, drop.ValueRO.StartedAt, drop.ValueRO.DurationSeconds) < 1f)
+            return;
+
+        transform.ValueRW.Position = drop.ValueRO.EndPosition;
+        FinishDrop(
+            em,
+            ecb,
+            entity,
+            drop.ValueRO.LandingCell,
+            drop.ValueRO.VisualEntity,
+            now,
+            drop.ValueRO.EndPosition,
+            grid,
+            walkable,
+            blocked,
+            occupied,
+            UnitTransportPassengerKind.Soldier);
     }
 
-    private static void UpdateCargoDrop(
+    private static void FinishCompletedCargoDrop(
         EntityManager em,
         EntityCommandBuffer ecb,
         RefRW<LocalTransform> transform,
         RefRO<UnitTransportCargoDropComponent> drop,
         Entity entity,
-        ComponentLookup<LocalTransform> transformLookup,
         float now,
         in GridConfig grid,
         in NativeArray<GridWalkable> walkable,
         in NativeBitArray blocked,
         in NativeBitArray occupied)
     {
-        float duration = math.max(0.01f, drop.ValueRO.DurationSeconds);
-        float t = math.saturate((now - drop.ValueRO.StartedAt) / duration);
-        transform.ValueRW.Position = math.lerp(drop.ValueRO.StartPosition, drop.ValueRO.EndPosition, SmoothStep(t));
-        UpdateVisualPosition(transformLookup, drop.ValueRO.VisualEntity, transform.ValueRO.Position + new float3(0f, CargoVisualHeight, 0f));
-        if (t >= 1f)
-        {
-            transform.ValueRW.Position = drop.ValueRO.EndPosition;
-            FinishDrop(
-                em,
-                ecb,
-                entity,
-                drop.ValueRO.LandingCell,
-                drop.ValueRO.VisualEntity,
-                now,
-                drop.ValueRO.EndPosition,
-                grid,
-                walkable,
-                blocked,
-                occupied,
-                UnitTransportPassengerKind.Vehicle);
-        }
+        if (ResolveDropProgress(now, drop.ValueRO.StartedAt, drop.ValueRO.DurationSeconds) < 1f)
+            return;
+
+        transform.ValueRW.Position = drop.ValueRO.EndPosition;
+        FinishDrop(
+            em,
+            ecb,
+            entity,
+            drop.ValueRO.LandingCell,
+            drop.ValueRO.VisualEntity,
+            now,
+            drop.ValueRO.EndPosition,
+            grid,
+            walkable,
+            blocked,
+            occupied,
+            UnitTransportPassengerKind.Vehicle);
     }
 
     private static void FinishDrop(
@@ -395,7 +442,7 @@ public partial struct UnitTransportAirdropSystem : ISystem
             ecb.SetComponent(passenger, new UnitMoveVisualComponent { IsMoving = (byte)(settling ? 1 : 0), StillSeconds = 0f });
     }
 
-    private static void UpdateSettleMove(
+    private static void FinishCompletedSettleMove(
         EntityManager em,
         EntityCommandBuffer ecb,
         RefRW<LocalTransform> transform,
@@ -403,10 +450,7 @@ public partial struct UnitTransportAirdropSystem : ISystem
         Entity entity,
         float now)
     {
-        float duration = math.max(0.01f, settle.ValueRO.DurationSeconds);
-        float t = math.saturate((now - settle.ValueRO.StartedAt) / duration);
-        transform.ValueRW.Position = math.lerp(settle.ValueRO.StartPosition, settle.ValueRO.EndPosition, SmoothStep(t));
-        if (t < 1f)
+        if (ResolveDropProgress(now, settle.ValueRO.StartedAt, settle.ValueRO.DurationSeconds) < 1f)
             return;
 
         transform.ValueRW.Position = settle.ValueRO.EndPosition;
@@ -1042,6 +1086,16 @@ public partial struct UnitTransportAirdropSystem : ISystem
         hiddenVisuals.Clear();
     }
 
+    private static void UpdateParachuteVisualPosition(ComponentLookup<LocalTransform> transformLookup, Entity visual, float3 passengerPosition)
+    {
+        UpdateVisualPosition(transformLookup, visual, passengerPosition + new float3(0f, ParachuteVisualHeight, 0f));
+    }
+
+    private static void UpdateCargoVisualPosition(ComponentLookup<LocalTransform> transformLookup, Entity visual, float3 passengerPosition)
+    {
+        UpdateVisualPosition(transformLookup, visual, passengerPosition + new float3(0f, CargoVisualHeight, 0f));
+    }
+
     private static void UpdateVisualPosition(ComponentLookup<LocalTransform> transformLookup, Entity visual, float3 position)
     {
         if (visual == Entity.Null || !transformLookup.HasComponent(visual))
@@ -1050,6 +1104,12 @@ public partial struct UnitTransportAirdropSystem : ISystem
         LocalTransform visualTransform = transformLookup[visual];
         visualTransform.Position = position;
         transformLookup[visual] = visualTransform;
+    }
+
+    private static float ResolveDropProgress(float now, float startedAt, float durationSeconds)
+    {
+        float duration = math.max(0.01f, durationSeconds);
+        return math.saturate((now - startedAt) / duration);
     }
 
     private static float SmoothStep(float t) => t * t * (3f - (2f * t));

@@ -27,6 +27,7 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
     private Vector2 _lastViewportSize;
     private Vector2 _viewportDragOffset;
     private readonly Vector3[] _worldCorners = new Vector3[4];
+    private Canvas _cachedCanvas;
 
     public Image MapImage => mapImage;
     public RectTransform MapRect => mapRect != null ? mapRect : mapImage != null ? mapImage.rectTransform : null;
@@ -72,6 +73,11 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
         _dragMoved = false;
         _hasManualViewportOverride = false;
         _hasLastViewportLayout = false;
+    }
+
+    private void OnTransformParentChanged()
+    {
+        _cachedCanvas = null;
     }
 
     public void Configure(
@@ -207,11 +213,18 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
 
     private Camera ResolveEventCamera()
     {
-        Canvas canvas = GetComponentInParent<Canvas>();
+        Canvas canvas = ResolveCanvas();
         if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
             return null;
 
         return canvas.worldCamera;
+    }
+
+    private Canvas ResolveCanvas()
+    {
+        if (_cachedCanvas == null)
+            _cachedCanvas = GetComponentInParent<Canvas>();
+        return _cachedCanvas;
     }
 
     private static bool ContainsButton(Button button, Vector2 screenPosition, Camera eventCamera)

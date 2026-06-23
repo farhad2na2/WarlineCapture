@@ -2,6 +2,8 @@ using UnityEngine;
 
 public sealed class TerrainLodHeightSwitch : MonoBehaviour
 {
+    private static Camera[] s_cameraScratch = new Camera[8];
+
     [SerializeField] private Transform lod0Root;
     [SerializeField] private Transform lod1Root;
     [SerializeField] private Transform lod2Root;
@@ -96,10 +98,14 @@ public sealed class TerrainLodHeightSwitch : MonoBehaviour
         if (_resolvedCamera != null && _resolvedCamera.isActiveAndEnabled)
             return _resolvedCamera;
 
-        Camera[] cameras = Camera.allCameras;
-        for (int i = 0; i < cameras.Length; i++)
+        int cameraCount = Camera.allCamerasCount;
+        if (s_cameraScratch.Length < cameraCount)
+            s_cameraScratch = new Camera[Mathf.NextPowerOfTwo(cameraCount)];
+
+        Camera.GetAllCameras(s_cameraScratch);
+        for (int i = 0; i < cameraCount; i++)
         {
-            Camera candidate = cameras[i];
+            Camera candidate = s_cameraScratch[i];
             if (candidate == null || !candidate.isActiveAndEnabled || candidate.cameraType != CameraType.Game)
                 continue;
             if (candidate.name.IndexOf("UI", System.StringComparison.OrdinalIgnoreCase) >= 0)

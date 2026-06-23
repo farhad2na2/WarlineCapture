@@ -8,6 +8,26 @@ using Unity.Transforms;
 [UpdateBefore(typeof(FactionVisualSystem))]
 public partial struct UnitFactionTintTargetBackfillSystem : ISystem
 {
+    private EntityQuery _candidateQuery;
+
+    public void OnCreate(ref SystemState state)
+    {
+        _candidateQuery = state.GetEntityQuery(new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<Parent>(),
+                ComponentType.ReadOnly<MaterialMeshInfo>()
+            },
+            None = new[]
+            {
+                ComponentType.ReadOnly<FactionTintTarget>(),
+                ComponentType.ReadOnly<SelectionObjectOutlineTag>()
+            }
+        });
+        state.RequireForUpdate(_candidateQuery);
+    }
+
     public void OnUpdate(ref SystemState state)
     {
         EntityManager em = state.EntityManager;

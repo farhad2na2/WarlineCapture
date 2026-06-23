@@ -9039,8 +9039,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: -148.3}
-  m_SizeDelta: {x: 574, y: 1195}
+  m_AnchoredPosition: {x: 112, y: -148.3}
+  m_SizeDelta: {x: 440, y: 1195}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1051665207904748346
 MonoBehaviour:
@@ -13339,7 +13339,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6145525001170443115, guid: 0b9cc5cc5a1054e41a6a9cfbd80b5c36, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 574
+      value: 440
       objectReference: {fileID: 0}
     - target: {fileID: 6145525001170443115, guid: 0b9cc5cc5a1054e41a6a9cfbd80b5c36, type: 3}
       propertyPath: m_SizeDelta.y
@@ -13557,7 +13557,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6145525001170443115, guid: 0b9cc5cc5a1054e41a6a9cfbd80b5c36, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 574
+      value: 440
       objectReference: {fileID: 0}
     - target: {fileID: 6145525001170443115, guid: 0b9cc5cc5a1054e41a6a9cfbd80b5c36, type: 3}
       propertyPath: m_SizeDelta.y
@@ -13807,7 +13807,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6145525001170443115, guid: 0b9cc5cc5a1054e41a6a9cfbd80b5c36, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 574
+      value: 440
       objectReference: {fileID: 0}
     - target: {fileID: 6145525001170443115, guid: 0b9cc5cc5a1054e41a6a9cfbd80b5c36, type: 3}
       propertyPath: m_SizeDelta.y
@@ -14025,7 +14025,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6145525001170443115, guid: 0b9cc5cc5a1054e41a6a9cfbd80b5c36, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 574
+      value: 440
       objectReference: {fileID: 0}
     - target: {fileID: 6145525001170443115, guid: 0b9cc5cc5a1054e41a6a9cfbd80b5c36, type: 3}
       propertyPath: m_SizeDelta.y
@@ -14243,7 +14243,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6145525001170443115, guid: 0b9cc5cc5a1054e41a6a9cfbd80b5c36, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 574
+      value: 440
       objectReference: {fileID: 0}
     - target: {fileID: 6145525001170443115, guid: 0b9cc5cc5a1054e41a6a9cfbd80b5c36, type: 3}
       propertyPath: m_SizeDelta.y

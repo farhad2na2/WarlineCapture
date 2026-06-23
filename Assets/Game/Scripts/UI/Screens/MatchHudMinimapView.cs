@@ -15,6 +15,11 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
 
     private bool _draggingViewport;
     private bool _dragMoved;
+    private bool _showViewport = true;
+    private bool _allowViewportDrag = true;
+    private bool _allowMapFocus = true;
+    private bool _allowZoom = true;
+    private bool _openFullMapOnClick;
     private bool _hasManualViewportOverride;
     private bool _hasLastViewportLayout;
     private Rect _manualViewportNormalizedRect;
@@ -33,9 +38,11 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
     public bool HasManualViewportOverride => _hasManualViewportOverride;
     public Rect ManualViewportNormalizedRect => _manualViewportNormalizedRect;
     public bool UseFullMapProjection { get; private set; }
+    public bool ShowsViewport => _showViewport;
 
     public event Action<Vector2> FocusRequested;
     public event Action<int, bool> ZoomHeldChanged;
+    public event Action FullMapOpenRequested;
 
     public bool ContainsScreenPoint(Vector2 screenPosition)
     {
@@ -44,8 +51,9 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
         if (rect != null && RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, eventCamera))
             return true;
 
-        return ContainsButton(zoomInButton, screenPosition, eventCamera) ||
-               ContainsButton(zoomOutButton, screenPosition, eventCamera);
+        return _allowZoom &&
+               (ContainsButton(zoomInButton, screenPosition, eventCamera) ||
+                ContainsButton(zoomOutButton, screenPosition, eventCamera));
     }
 
     private void Awake()
@@ -101,10 +109,33 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
         _hasLastViewportLayout = false;
     }
 
+    public void ApplyInteractionOptions(
+        bool useFullMapProjection,
+        bool showViewport,
+        bool allowViewportDrag,
+        bool allowMapFocus,
+        bool allowZoom,
+        bool openFullMapOnClick)
+    {
+        SetProjectionMode(useFullMapProjection);
+        _showViewport = showViewport;
+        _allowViewportDrag = allowViewportDrag;
+        _allowMapFocus = allowMapFocus;
+        _allowZoom = allowZoom;
+        _openFullMapOnClick = openFullMapOnClick;
+        _draggingViewport = false;
+        _dragMoved = false;
+
+        if (viewportRect != null)
+            viewportRect.gameObject.SetActive(showViewport);
+        SetZoomVisible(zoomInButton, allowZoom);
+        SetZoomVisible(zoomOutButton, allowZoom);
+    }
+
     public void SetViewportNormalizedRect(Rect normalizedRect)
     {
         RectTransform rectTransform = MapRect;
-        if (viewportRect == null || rectTransform == null)
+        if (!_showViewport || viewportRect == null || rectTransform == null)
             return;
 
         if (!TryGetMapRectInViewportParent(rectTransform, out Rect map))
@@ -206,8 +237,13 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
         _dragMoved = false;
         _draggingViewport = false;
 
-        if (viewportRect == null || !RectTransformUtility.RectangleContainsScreenPoint(viewportRect, eventData.position, eventData.pressEventCamera))
+        if (!_allowViewportDrag ||
+            viewportRect == null ||
+            !viewportRect.gameObject.activeInHierarchy ||
+            !RectTransformUtility.RectangleContainsScreenPoint(viewportRect, eventData.position, eventData.pressEventCamera))
+        {
             return;
+        }
 
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(viewportRect, eventData.position, eventData.pressEventCamera, out Vector2 localPoint))
         {
@@ -221,7 +257,7 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!_draggingViewport || !TryGetMapLocalPoint(eventData, out Vector2 localPoint))
+        if (!_allowViewportDrag || !_draggingViewport || !TryGetMapLocalPoint(eventData, out Vector2 localPoint))
             return;
 
         _dragMoved = true;
@@ -257,6 +293,15 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
     public void OnPointerClick(PointerEventData eventData)
     {
         if (_dragMoved || _draggingViewport || viewportRect == null && !TryGetNormalizedPoint(eventData, out _))
+            return;
+
+        if (_openFullMapOnClick)
+        {
+            FullMapOpenRequested?.Invoke();
+            return;
+        }
+
+        if (!_allowMapFocus)
             return;
 
         if (viewportRect != null && RectTransformUtility.RectangleContainsScreenPoint(viewportRect, eventData.position, eventData.pressEventCamera))
@@ -306,7 +351,16 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
 
     internal void NotifyZoomHeld(int direction, bool held)
     {
+        if (!_allowZoom)
+            held = false;
+
         ZoomHeldChanged?.Invoke(direction, held);
+    }
+
+    private static void SetZoomVisible(Button button, bool visible)
+    {
+        if (button != null)
+            button.gameObject.SetActive(visible);
     }
 }
 

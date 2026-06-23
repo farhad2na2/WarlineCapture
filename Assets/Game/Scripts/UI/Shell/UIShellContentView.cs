@@ -12,6 +12,7 @@ public sealed class UIShellContentView : MonoBehaviour
     [SerializeField] private GameObject armoryContentPrefab;
     [SerializeField] private GameObject matchHudContentPrefab;
     [SerializeField] private GameObject buildDrawerPopupPrefab;
+    [SerializeField] private GameObject fullMapPopupPrefab;
     [SerializeField] private GameObject buildPlacementConfirmationBarPrefab;
     private readonly MatchOverlayCommandInputSystem _matchOverlayCommandInputSystem = new();
     private ISelectionUiCommand _selectionUiCommandSystem;
@@ -35,6 +36,8 @@ public sealed class UIShellContentView : MonoBehaviour
     private Button _buildDrawerPopupCloseButton;
     private UnityAction _buildDrawerPopupCloseButtonListener;
     private GameObject _buildDrawerPopupInstance;
+    private GameObject _fullMapPopupInstance;
+    private MatchHudFullMapPopupView _fullMapPopupView;
     private int _contentVersion;
 
     public UIShellView ShellView => shellView;
@@ -43,6 +46,7 @@ public sealed class UIShellContentView : MonoBehaviour
     public GameObject ArmoryContentPrefab => armoryContentPrefab;
     public GameObject MatchHudContentPrefab => matchHudContentPrefab;
     public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
+    public GameObject FullMapPopupPrefab => fullMapPopupPrefab;
     public GameObject BuildPlacementConfirmationBarPrefab => buildPlacementConfirmationBarPrefab;
     public int ContentVersion => _contentVersion;
 
@@ -53,6 +57,7 @@ public sealed class UIShellContentView : MonoBehaviour
         GameObject armoryPrefab,
         GameObject matchHudPrefab,
         GameObject buildDrawerPrefab,
+        GameObject fullMapPrefab = null,
         GameObject buildPlacementConfirmationPrefab = null)
     {
         shellView = view;
@@ -61,6 +66,8 @@ public sealed class UIShellContentView : MonoBehaviour
         armoryContentPrefab = armoryPrefab;
         matchHudContentPrefab = matchHudPrefab;
         buildDrawerPopupPrefab = buildDrawerPrefab;
+        if (fullMapPrefab != null)
+            fullMapPopupPrefab = fullMapPrefab;
         if (buildPlacementConfirmationPrefab != null)
             buildPlacementConfirmationBarPrefab = buildPlacementConfirmationPrefab;
     }
@@ -95,12 +102,14 @@ public sealed class UIShellContentView : MonoBehaviour
         ISelectionDiagnosticsSink selectionDiagnosticsSink = null,
         ISelectionUiReadModel selectionUiReadModelSystem = null)
     {
+        UnbindFullMapPopupRequests();
         _selectionUiCommandSystem = selectionUiCommandSystem;
         _selectionUiReadModelSystem = selectionUiReadModelSystem;
         _buildingUiCommandSystem = buildingUiCommandSystem;
         _selectionDiagnosticsSink = selectionDiagnosticsSink;
         _mainMenuPlayUi = mainMenuPlayUi;
         _bindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
+        BindFullMapPopupRequests();
         BindMatchHudSelectionPanel(_matchHudSelectionPanelView);
         BindMatchHudFooter(_matchHudFooterContentView);
         BindMatchHudRightQuickRail(_rightQuickRailView);
@@ -372,8 +381,7 @@ public sealed class UIShellContentView : MonoBehaviour
 
     private void BindMatchHudMinimap(MatchHudMinimapView view)
     {
-        if (view != null)
-            _mainMenuPlayUi?.BindMatchHudMinimap(view);
+        _mainMenuPlayUi?.BindMatchHudMinimap(view);
     }
 
     private void BindMatchHudSquadTray(MatchHudSquadTrayView view)
@@ -409,6 +417,57 @@ public sealed class UIShellContentView : MonoBehaviour
         BindBuildDrawerPopupCloseButton(_buildDrawerPopupInstance);
         BindBuildDrawerRuntimeCommands(_buildDrawerPopupInstance);
         return _buildDrawerPopupInstance;
+    }
+
+    private void OpenFullMapPopup()
+    {
+        _selectionUiCommandSystem?.CaptureUiClickSequence();
+        if (_fullMapPopupInstance != null)
+        {
+            _mainMenuPlayUi?.BindMatchHudFullMapPopup(_fullMapPopupView);
+            return;
+        }
+
+        _fullMapPopupInstance = InstallRoot(fullMapPopupPrefab, UIShellRegionId.PopupLayer);
+        _fullMapPopupView = _fullMapPopupInstance != null
+            ? _fullMapPopupInstance.GetComponent<MatchHudFullMapPopupView>()
+            : null;
+        if (_fullMapPopupView == null)
+        {
+            BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
+                TacticalCommandReasonCode.CommandUnavailable,
+                "Tactical map is not ready."));
+            return;
+        }
+
+        _mainMenuPlayUi?.BindMatchHudFullMapPopup(_fullMapPopupView);
+    }
+
+    private void CloseFullMapPopup()
+    {
+        _mainMenuPlayUi?.BindMatchHudFullMapPopup(null);
+        GameObject popup = _fullMapPopupInstance;
+        _fullMapPopupInstance = null;
+        _fullMapPopupView = null;
+
+        if (popup == null)
+            return;
+
+        if (Application.isPlaying)
+        {
+            UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
+            if (motionView != null && motionView.PlayHide(() =>
+                {
+                    DestroyRegionObject(popup);
+                    MarkContentChanged();
+                }))
+            {
+                return;
+            }
+        }
+
+        DestroyRegionObject(popup);
+        MarkContentChanged();
     }
 
     public void CloseBuildDrawerPopup()
@@ -570,6 +629,9 @@ public sealed class UIShellContentView : MonoBehaviour
         {
             UnbindBuildDrawerPopupCloseButton();
             _mainMenuPlayUi?.BindBuildDrawer(null);
+            _mainMenuPlayUi?.BindMatchHudFullMapPopup(null);
+            _fullMapPopupInstance = null;
+            _fullMapPopupView = null;
         }
 
         if (TryGetRegionContentRoot(regionId, out RectTransform contentRoot))
@@ -579,7 +641,11 @@ public sealed class UIShellContentView : MonoBehaviour
         }
 
         if (regionId == UIShellRegionId.PopupLayer)
+        {
             _buildDrawerPopupInstance = null;
+            _fullMapPopupInstance = null;
+            _fullMapPopupView = null;
+        }
         if (regionId == UIShellRegionId.FooterRegion)
         {
             _buildPlacementConfirmationBarView = null;
@@ -599,6 +665,26 @@ public sealed class UIShellContentView : MonoBehaviour
         {
             _contentVersion++;
         }
+    }
+
+    private void BindFullMapPopupRequests()
+    {
+        if (_mainMenuPlayUi == null)
+            return;
+
+        _mainMenuPlayUi.FullMapPopupRequested -= OpenFullMapPopup;
+        _mainMenuPlayUi.FullMapPopupCloseRequested -= CloseFullMapPopup;
+        _mainMenuPlayUi.FullMapPopupRequested += OpenFullMapPopup;
+        _mainMenuPlayUi.FullMapPopupCloseRequested += CloseFullMapPopup;
+    }
+
+    private void UnbindFullMapPopupRequests()
+    {
+        if (_mainMenuPlayUi == null)
+            return;
+
+        _mainMenuPlayUi.FullMapPopupRequested -= OpenFullMapPopup;
+        _mainMenuPlayUi.FullMapPopupCloseRequested -= CloseFullMapPopup;
     }
 
     private bool TryGetRegionContentRoot(UIShellRegionId regionId, out RectTransform contentRoot)

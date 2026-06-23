@@ -65,11 +65,14 @@ public sealed class MatchHudMinimapInputSystem
         MatchHudMinimapView view,
         IMatchRuntimeState runtimeGameplayStateSystem,
         IMatchHudCameraControl selectionUiCameraSystem,
-        IMatchHudMinimapDataSource minimapDataSource)
+        IMatchHudMinimapDataSource minimapDataSource,
+        bool useFullMapProjection = true,
+        bool showViewport = true,
+        bool allowViewportDrag = true,
+        bool allowMapFocus = true,
+        bool allowZoom = true,
+        bool openFullMapOnClick = false)
     {
-        if (_view == view)
-            return;
-
         Unbind();
         _view = view;
         _runtimeGameplayStateSystem = runtimeGameplayStateSystem;
@@ -94,7 +97,13 @@ public sealed class MatchHudMinimapInputSystem
         _warmupStaticMapRefreshesRemaining = 0;
         _minimapZoomedIn = false;
         _staticMapDirty = true;
-        _view.SetProjectionMode(useFullMapProjection: true);
+        _view.ApplyInteractionOptions(
+            useFullMapProjection,
+            showViewport,
+            allowViewportDrag,
+            allowMapFocus,
+            allowZoom,
+            openFullMapOnClick);
         Update();
     }
 
@@ -386,6 +395,8 @@ public sealed class MatchHudMinimapInputSystem
     private void UpdateViewportIfDue(Camera worldCamera, MatchHudMinimapProjectionGrid projectionGrid)
     {
         if (_view == null)
+            return;
+        if (!_view.ShowsViewport)
             return;
 
         float now = Time.unscaledTime;

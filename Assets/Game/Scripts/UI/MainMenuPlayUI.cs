@@ -9,6 +9,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
     private static readonly ProfilerMarker FeedbackLifetimeMarker = new("MainMenuPlayUI.FeedbackLifetime");
 
     private readonly MatchHudMinimapInputSystem _matchHudMinimapInputSystem = new();
+    private readonly MatchHudMinimapInputSystem _matchHudFullMapInputSystem = new();
     private IMatchRuntimeState _runtimeGameplayStateSystem;
     private ISelectionUiCommand _selectionUiCommandSystem;
     private IMatchHudCameraControl _selectionUiCameraSystem;
@@ -16,6 +17,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
     private MatchOverlayCommandControlsView _matchHudCommandControlsView;
     private MatchHudRightQuickRailView _matchHudRightQuickRailView;
     private MatchHudMinimapView _matchHudMinimapView;
+    private MatchHudFullMapPopupView _matchHudFullMapPopupView;
     private MatchHudSelectionPanelView _matchHudSelectionPanelView;
     private BattleHudRuntimeFeedbackView _matchHudRuntimeFeedbackView;
     private MatchHudSquadTrayView _matchHudSquadTrayView;
@@ -52,9 +54,15 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
     public void Dispose()
     {
         _matchHudMinimapInputSystem.Dispose();
+        _matchHudFullMapInputSystem.Dispose();
+        if (_matchHudMinimapView != null)
+            _matchHudMinimapView.FullMapOpenRequested -= RequestFullMapPopup;
+        if (_matchHudFullMapPopupView != null)
+            _matchHudFullMapPopupView.CloseRequested -= RequestFullMapClose;
         _matchHudCommandControlsView = null;
         _matchHudRightQuickRailView = null;
         _matchHudMinimapView = null;
+        _matchHudFullMapPopupView = null;
         _matchHudSelectionPanelView = null;
         _matchHudRuntimeFeedbackView = null;
         _matchHudSquadTrayView?.Unbind();
@@ -75,6 +83,8 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
         using (MinimapUpdateMarker.Auto())
         {
             _matchHudMinimapInputSystem.Update();
+            if (_matchHudFullMapPopupView != null && _matchHudFullMapPopupView.IsOpen)
+                _matchHudFullMapInputSystem.Update();
         }
 
         using (FeedbackLifetimeMarker.Auto())
@@ -86,16 +96,55 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
     public void NotifyStaticMinimapChanged()
     {
         _matchHudMinimapInputSystem.NotifyStaticMapChanged();
+        _matchHudFullMapInputSystem.NotifyStaticMapChanged();
     }
 
     public void BindMatchHudMinimap(MatchHudMinimapView minimapView)
     {
+        if (_matchHudMinimapView != null)
+            _matchHudMinimapView.FullMapOpenRequested -= RequestFullMapPopup;
+
         _matchHudMinimapView = minimapView;
         _matchHudMinimapInputSystem.Bind(
             minimapView,
             _runtimeGameplayStateSystem,
             _selectionUiCameraSystem,
-            _minimapDataSource);
+            _minimapDataSource,
+            useFullMapProjection: false,
+            showViewport: false,
+            allowViewportDrag: false,
+            allowMapFocus: false,
+            allowZoom: false,
+            openFullMapOnClick: true);
+
+        if (_matchHudMinimapView != null)
+            _matchHudMinimapView.FullMapOpenRequested += RequestFullMapPopup;
+    }
+
+    public void BindMatchHudFullMapPopup(MatchHudFullMapPopupView popupView)
+    {
+        if (_matchHudFullMapPopupView != null)
+            _matchHudFullMapPopupView.CloseRequested -= RequestFullMapClose;
+
+        _matchHudFullMapInputSystem.Unbind();
+        _matchHudFullMapPopupView = popupView;
+
+        if (_matchHudFullMapPopupView == null)
+            return;
+
+        _matchHudFullMapPopupView.CloseRequested += RequestFullMapClose;
+        _matchHudFullMapPopupView.Show();
+        _matchHudFullMapInputSystem.Bind(
+            _matchHudFullMapPopupView.Minimap,
+            _runtimeGameplayStateSystem,
+            _selectionUiCameraSystem,
+            _minimapDataSource,
+            useFullMapProjection: true,
+            showViewport: true,
+            allowViewportDrag: true,
+            allowMapFocus: true,
+            allowZoom: true,
+            openFullMapOnClick: false);
     }
 
     public void BindMatchHudCommandControls(MatchOverlayCommandControlsView commandControlsView)
@@ -171,8 +220,17 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
 
     public bool IsBuildDrawerOpen => _buildDrawerView != null && _buildDrawerView.IsOpen;
 
+    public event System.Action FullMapPopupRequested;
+    public event System.Action FullMapPopupCloseRequested;
+
     public bool IsPointerOverAnyGameplayUi(Vector2 screenPosition, out string source)
     {
+        if (_matchHudFullMapPopupView != null && _matchHudFullMapPopupView.ContainsScreenPoint(screenPosition))
+        {
+            source = "MatchHudFullMapPopup";
+            return true;
+        }
+
         if (_buildDrawerView != null && _buildDrawerView.ContainsScreenPoint(screenPosition))
         {
             source = "BuildDrawer";
@@ -313,5 +371,21 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
 
     private void OnToolbarUiMouseDown(object evt)
     {
+    }
+
+    private void RequestFullMapPopup()
+    {
+        if (_runtimeGameplayStateSystem != null)
+            _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+
+        FullMapPopupRequested?.Invoke();
+    }
+
+    private void RequestFullMapClose()
+    {
+        if (_runtimeGameplayStateSystem != null)
+            _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+
+        FullMapPopupCloseRequested?.Invoke();
     }
 }

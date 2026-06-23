@@ -1,521 +1,568 @@
-# Architecture & Performance Audit — Actionable Implementation Plan
+# Architecture & Performance Remediation Progress Tracker
 
-**Project:** WarlineCapture-Clone (Unity 6, Entities 6.4 / DOTS, URP)
-**Audit date:** 2026-06-23
-**Auditor:** opencode (read-only audit, no files modified)
-**Scope:** `Assets/Game/Scripts` (745 .cs files, 14 asmdefs) + `Packages/com.sniveler-code.gpu-animation`
-**Stack:** Unity 6, URP 17.4, Entities 6.4, Burst, Collections, UI Toolkit + UGUI hybrid, Input System 1.19, Jenkinsfile CI
+**Project:** WarlineCapture
+**Tracker updated:** 2026-06-23
+**Scope:** `Assets/Game/Scripts`, `Assets/Tests`, asmdefs, focused Unity validation.
+**Purpose:** Track safe remediation work from the architecture/performance audit without mixing unrelated refactors or applying stale recommendations literally.
 
-> **For implementing agents:** Each task below is self-contained with: Location, Problem, Acceptance Criteria, Effort, Dependencies, and Verification. Pick up tasks in priority order. P0 first, then P1, then P2. Tasks within the same priority are parallelizable across multiple agents. Do NOT skip the Baseline step.
+## Status Legend
 
----
+| Status | Meaning |
+|---|---|
+| `Pending` | Not started. |
+| `In Progress` | Currently being implemented or validated. |
+| `Blocked` | Cannot continue until the blocker is resolved. |
+| `Complete` | Implementation and required validation are done. |
+| `Skipped` | Intentionally not implemented; reason documented. |
 
-## Baseline (do first, before any remediation)
+## Current Local Snapshot
 
-**Task B-0 — Capture profiler baseline**
-- **Why:** Every perf claim below needs a before/after measurement. `ProfilerCaptures/` is currently empty.
-- **Action:** In Unity Editor, open `Assets/Game/Scenes/Match.unity`, enter Play mode, record a 60s Profiler session with a full match running (units spawned, AI active, combat). Save the `.raw` capture to `ProfilerCaptures/baseline_2026-06-23.raw`. Note the Editor log path for GC allocation callstacks (existing tooling: `Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs`).
-- **Acceptance:** `ProfilerCaptures/baseline_2026-06-23.raw` exists; main-thread ms/frame and GC alloc/frame numbers recorded in `Design/AgentReports/2026-06-23_perf_baseline_numbers.md`.
-- **Effort:** S (manual, no code).
+| Item | Current value |
+|---|---:|
+| `Assets/Game/Scripts` C# files | 747 |
+| C# files without namespace | 743 |
+| Project/test asmdefs with empty `rootNamespace` | 16 |
+| Files containing `ISystem` structs | About 125 |
+| `ISystem` files still needing guard review | About 55 |
+| Confirmed profiler baseline | No |
+| `Game.Runtime -> Game.UI.Runtime` dependency | No |
+| `Game.UI.Contracts` pure implementation state | Needs cleanup |
 
----
+## Non-Negotiable Guardrails
 
-# Priority 0 — Critical (correctness + largest wasted CPU)
+- [ ] Do not trigger Android builds. Android builds remain user-triggered.
+- [ ] Do not commit or revert unrelated in-flight files from other lanes.
+- [ ] Re-check source before each implementation step; do not implement stale audit instructions literally.
+- [ ] Do not add `RequireForUpdate` to a system whose job is to create the entity/query it would require.
+- [ ] Do not cache ECS singleton component data in `OnCreate` unless the data is immutable and guaranteed to exist before system creation.
+- [ ] Do not cache an `EntityCommandBuffer` across frames. Command buffers are frame-scoped.
+- [ ] Do not move UI helper implementations into `Game.UI.Runtime` while `Game.Runtime` still references those helpers.
+- [ ] Do not mix namespace migration with gameplay/performance behavior changes.
 
-## P0-1 — Add `[RequireMatchingQueriesForUpdate]` / `RequireForUpdate` guards to all unguarded ISystem structs
+## Stage Overview
 
-- **Problem:** Zero uses of `[RequireMatchingQueriesForUpdate]` anywhere. ~90 ISystem structs run `OnUpdate` every frame regardless of matching entities. Combined with most `OnCreate` methods lacking `state.RequireForUpdate(...)`, this is the largest wasted-CPU issue in the project.
-- **Already guarded (do NOT touch):** `Systems/EngageTargetSyncSystem.cs:15`, `UnitHealthBarSystem.cs:14`, `UnitGridMovementSystem.cs:681`, `UnitAttackStateEnsureSystem.cs:13`, `UnitAttackTraceStateEnsureSystem.cs:12`, `UnitRotationHoldSystem.cs:13`, `UnitEngagementSystem.cs:61`, `UnitDestroyedVisualSystem.cs:16`, `MapSurfaceDiagnosticsSystem.cs:19`, `UnitAttackVfxSystems.cs:15`.
-- **Approach (pick one per system, prefer the attribute for single-query systems, `RequireForUpdate` in `OnCreate` for multi-query):
-  1. `[RequireMatchingQueriesForUpdate]` on the struct when the system has exactly one primary query and should run only when it matches.
-  2. In `OnCreate`: `state.RequireForUpdate<MyComponent>()` or cache a query ref `state.RequireForUpdate(_myQuery)` for multi-query systems.
-  3. For systems that legitimately run every frame (bootstrap, diagnostics with a static gate), add a comment `// intentionally runs every frame` and skip.
-- **Files to update (high-impact subset, do these first):**
-  - `Systems/UnitPathfindingSystem.cs:7`
-  - `Systems/UnitAttackSystem.cs:9`
-  - `Systems/UnitDeathSystem.cs:9`
-  - `Systems/UnitRespawnSystem.cs:8`
-  - `Systems/AITargetingSystem.cs:8`
-  - `Systems/AICombatOrderSystem.cs:9`
-  - `Systems/AIProductionSystem.cs:8`
-  - `Systems/AIBuildPlannerSystem.cs:8`
-  - `Systems/AISquadSystem.cs:8`
-  - `Systems/AIEconomySystem.cs:7`
-  - `Systems/AIFactionControlSystem.cs:7`
-  - `Systems/UnitMoveOrderSystem.cs:9`
-  - `Systems/UnitMoveOrderRequestSystem.cs:5`
-  - `Systems/UnitTargetOrderSystem.cs:7`
-  - `Systems/UnitAttackOrderRequestSystem.cs:5`
-  - `Systems/UnitTransportBoardingSystem.cs:10` + all 7 `UnitTransport*System.cs`
-  - `Systems/UnitSurfaceTrackingSystem.cs:9`
-  - `Systems/UnitAnimationIndexSystem.cs:12`
-  - `Systems/CitizenMovementCommandSystem.cs:5`
-  - `Systems/MatchHudMinimapMarkerSystem.cs:8`
-  - `Systems/ThreatDetectionWarningSystem.cs:9`
-  - `Rendering/Systems/UnitRenderBudgetSystem.cs:12`
-  - `Rendering/Systems/UnitSelectionMarkerSystem.cs:13`
-  - `Rendering/Systems/UnitHelicopterBladeSpinSystem.cs:12`
-  - `Rendering/Systems/UnitFactionTintTargetBackfillSystem.cs:9`
-- **Then sweep the remaining ~60 systems** listed in the audit's §2.4(a).
-- **Acceptance criteria:**
-  - `rg "RequireMatchingQueriesForUpdate|RequireForUpdate" Assets/Game/Scripts` returns ≥ 90 matches.
-  - No ISystem `OnUpdate` runs unconditionally except bootstrap/diagnostic systems marked with a `// intentionally runs every frame` comment.
-  - Play-mode smoke test: enter Match scene, verify units spawn, AI fights, match completes — no new exceptions.
-  - Profiler: main-thread ms/frame drops on the post-fix capture vs `baseline_2026-06-23.raw`.
-- **Effort:** M (mechanical, ~90 files, ~2h).
-- **Dependencies:** B-0.
-- **Verification:** `rg -c "RequireMatchingQueriesForUpdate|RequireForUpdate" Assets/Game/Scripts | wc -l` ≥ 90; full PlayMode test run.
+| Stage | Priority | Status | Owner | Depends on | Blocks | Validation status |
+|---|---|---|---|---|---|---|
+| 0 - Stabilize Baseline | P0 | Pending | TBD | None | All perf claims | Not run |
+| 1 - Low-Risk Confirmed GC Fixes | P0 | Pending | TBD | Stage 0 preferred | Later perf comparison | Not run |
+| 2 - Refresh ECS Guard Audit + Batch Guards | P0 | Pending | TBD | Stage 0 preferred | Stage 4, Stage 7 | Not run |
+| 3 - UI Shell ECS Creation Safety | P0 | Pending | TBD | Stage 2 preferred | UI shell cleanup | Not run |
+| 4 - ECS System Ordering | P1 | Pending | TBD | Stage 2 | Stage 7, bootstrap split work | Not run |
+| 5 - Safe Singleton + ECB Usage Review | P1 | Pending | TBD | Stage 2 preferred | Hot-path singleton cleanup | Not run |
+| 6 - `Game.UI.Contracts` Cleanup | P1 | Pending | TBD | Current architecture boundary | UI contracts purity | Not run |
+| 7 - Burst + Parallelism | P1 | Pending | TBD | Stages 2, 4 | Hot ECS perf work | Not run |
+| 8 - Runtime Building Transform Link Review | P1 | Pending | TBD | Stage 0 preferred | Building transform optimization | Not run |
+| 9 - Namespace Migration | P2 | Pending | TBD | Separate refactor window | Namespace/rootNamespace cleanup | Not run |
+| 10 - Structural Hygiene | P2 | Pending | TBD | Stages 0-9 as relevant | Long-term maintainability | Not run |
 
-## P0-2 — Fix `MissileTrailVfxView.Update` managed-dictionary foreach
+## Validation Ladder
 
-- **Location:** `Assets/Game/Scripts/Effects/MissileTrailVfxView.cs:66-96` (specifically l.72)
-- **Problem:** `Update()` iterates `_active` (`Dictionary<Entity, TrailInstance>`, l.27) with `foreach (KeyValuePair<Entity, TrailInstance> pair in _active)`. Per-frame enumerator/boxing alloc, scales with active missile count.
-- **Fix:** Maintain a parallel `List<Entity>` key cache (or `NativeList<Entity>` if the view is burst-friendly) updated on add/remove. Iterate the list by index, look up the dict by key only when releasing. Better: replace the `Dictionary` with a `NativeHashMap<Entity, TrailInstance>` + `NativeList<Entity>` order list if the view can be made Burst-friendly; otherwise use `List<KeyValuePair<Entity,TrailInstance>>` populated from the dict on mutation and iterate by index.
-- **Acceptance criteria:**
-  - `rg "foreach.*_active" Assets/Game/Scripts/Effects/MissileTrailVfxView.cs` returns no matches.
-  - GC alloc/frame from this system = 0 in Profiler (filter by `MissileTrailVfxView.Update`).
-  - Trails still render and release correctly during a combat-heavy match.
-- **Effort:** S.
-- **Dependencies:** B-0.
-- **Verification:** Profiler GC alloc on `MissileTrailVfxView.Update` = 0; visual smoke test with 20+ active missiles.
-
-## P0-3 — Fix `TerrainLodHeightSwitch.Update` `Camera.allCameras` array alloc
-
-- **Location:** `Assets/Game/Scripts/Rendering/TerrainLodHeightSwitch.cs:56-59, 91-113` (specifically l.99)
-- **Problem:** `Update()` → `ResolveCamera()` calls `Camera[] cameras = Camera.allCameras;` allocating a new managed array every frame on the no-cache path.
-- **Fix:** Use `Camera.allCamerasCount` + `Camera.GetCameraAt(i)` in a `for` loop (no array alloc), and cache the resolved camera in `_resolvedCamera` on first success (the cache field already exists — just stop allocating the array to probe). Even simpler: since the project avoids `Camera.main`, use a `[SerializeField] Camera` reference or resolve once on `OnEnable`/first `Update`.
-- **Acceptance criteria:**
-  - `rg "Camera\.allCameras[^C]" Assets/Game/Scripts` returns no matches (the `Count` form is allowed).
-  - Profiler: zero array allocs from `TerrainLodHeightSwitch.Update`.
-  - LOD switching still works when the camera moves between height thresholds.
-- **Effort:** S.
-- **Dependencies:** B-0.
-- **Verification:** Profiler GC alloc on `TerrainLodHeightSwitch.Update` = 0; LOD switch test at low/high altitude.
-
-## P0-4 — Add system ordering attributes to the 68 unordered systems
-
-- **Problem:** 68 ISystem structs have no `[UpdateInGroup]`/`[UpdateBefore]`/`[UpdateAfter]` → run at default order. Inter-system producer↔consumer pairs execute in undefined order, causing latent bugs (e.g. movement applied before pathfinding resolves, orders consumed before requests produced).
-- **Highest-risk pairs to order first (producer → consumer):**
-  1. `Systems/UnitPathfindingSystem.cs:7` → `Systems/UnitGridMovementSystem.cs:662` (pathfinding must run before movement application)
-  2. `Systems/UnitMoveOrderRequestSystem.cs:5` → `Systems/UnitMoveOrderSystem.cs:9`
-  3. `Systems/UnitAttackOrderRequestSystem.cs:5` → `Systems/AttackOrderCommandSystem.cs:8`
-  4. `Systems/UnitTargetOrderSystem.cs:7` → consumer systems
-  5. `Systems/UnitTransportBoardingSystem.cs:10` ↔ `Systems/TransportBoardingCommandSystem.cs:8`
-  6. `Systems/UnitTransportDeployOrderSystem.cs:9` → `Systems/UnitTransportDeployAttackSystem.cs:5`
-  7. `Systems/UnitTransportAirPickupSystem.cs:8` → `Systems/UnitTransportAirdropSystem.cs:9`
-  8. `Systems/RuntimeGameplayStateSystem.cs:5` → AI chain head (`AIEconomySystem.cs:7`, `AIFactionControlSystem.cs:7`)
-  9. AI internal chain: `AIEconomySystem` → `AIFactionControlSystem` → `AIBuildPlannerSystem` → `AIProductionSystem` → `AISquadSystem` → `AITargetingSystem` → `AICombatOrderSystem` (some `[UpdateAfter]` exists internally — audit and complete the chain)
-  10. Building systems: `BuildingStartupConfigProjectionSystem.cs:3` → `BuildingGridCompositionSystem.cs:4` → `BuildingSpawnPrefabSystem.cs:4` → `BuildingTargetMoveOrderSystem.cs:5`
-- **Approach:**
-  1. Assign each unordered system to a group: most simulation systems → `[UpdateInGroup(typeof(SimulationSystemGroup))]`; presentation/visual → `PresentationSystemGroup` (some already do — check `UiToolkitShellApplySystem.cs:5`); bootstrap/one-shot → `InitializationSystemGroup` or a custom `MatchBootstrapSystemGroup`.
-  2. Add `[UpdateBefore(typeof(ConsumerSystem))]` on the producer or `[UpdateAfter(typeof(ProducerSystem))]` on the consumer — pick one direction consistently (prefer `[UpdateAfter]` on consumers to keep producers clean).
-  3. For systems with no inter-dependency but which must be in a specific group, only `[UpdateInGroup]` is needed.
-- **Full list of 68 unordered systems:** see audit §2.4(b). Sweep them all.
-- **Acceptance criteria:**
-  - Every ISystem has either `[UpdateInGroup(...)]` or an existing `[UpdateBefore]/[UpdateAfter]` chain that implies a group.
-  - `rg -L "UpdateInGroup|UpdateBefore|UpdateAfter" Assets/Game/Scripts --type cs` (files lacking all three) returns only bootstrap systems explicitly marked `// intentionally default-ordered`.
-  - Play-mode test: run a full match, verify no order-regression bugs (units follow paths, AI issues orders, transport deploys).
-- **Effort:** M-L (68 files, requires understanding each system's role).
-- **Dependencies:** P0-1 (so `RequireForUpdate` guards don't interact with ordering surprises).
-- **Verification:** `rg -l "ISystem" Assets/Game/Scripts | xargs -I{} rg -L "UpdateInGroup|UpdateBefore|UpdateAfter" {}` returns only allowed bootstrap files; full PlayMode test.
-
-## P0-5 — Fix `UiShellBoundarySystem.OnUpdate` direct EntityManager structural changes
-
-- **Location:** `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs:43` (and l.19 `GetSingletonEntity` without guard)
-- **Problem:** `OnUpdate` calls `state.EntityManager.CreateEntity(...)` + ~40 `AddComponentData`/`AddBuffer` calls (l.43-301) when the boundary entity is missing, plus `boundaryQuery.GetSingletonEntity()` (l.19) every frame without `RequireForUpdate` guard (throws if missing).
-- **Fix:**
-  1. Add `state.RequireForUpdate(boundaryQuery)` in `OnCreate` OR check `boundaryQuery.CalculateEntityCount() == 0` before `GetSingletonEntity`.
-  2. Move the boundary-entity creation + component initialization into `OnCreate` (one-shot) guarded by a "already initialized" flag, OR into a separate `InitializationSystemGroup` bootstrap system.
-  3. If creation must be deferred (world not ready in `OnCreate`), use an `EntityCommandBuffer` from `BeginSimulationEntityCommandBufferSystem.Singleton` instead of direct `EntityManager` calls.
-- **Acceptance criteria:**
-  - `rg "EntityManager\.CreateEntity|EntityManager\.AddComponent" Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs` returns no matches inside `OnUpdate`.
-  - No `GetSingletonEntity` called without a prior count/`RequireForUpdate` guard.
-  - UI shell boots correctly into the match scene (transition complete event fires).
-- **Effort:** S-M.
-- **Dependencies:** P0-1.
-- **Verification:** PlayMode test entering Match scene; no exceptions in log; UI shell state transitions work.
-
-## P0-6 — Introduce namespaces per assembly
-
-- **Problem:** 741 of 745 `.cs` files declare NO namespace (global namespace). Every `asmdef` has `rootNamespace: ""`. Type collisions only prevented by file-unique naming; `internal` is effectively project-global; intellisense/Go-to-symbol noisy; external consumers cannot selectively `using` a feature namespace.
-- **Target namespace scheme (match asmdef name):**
-  | asmdef | namespace |
-  |---|---|
-  | Game.Runtime | `Game.Runtime` |
-  | Game.Composition | `Game.Composition` |
-  | Game.Components | `Game.Components` |
-  | Game.Configs | `Game.Configs` |
-  | Game.Authoring | `Game.Authoring` |
-  | Game.Rendering | `Game.Rendering` |
-  | Game.Rendering.Contracts | `Game.Rendering.Contracts` |
-  | Game.UI.Runtime | `Game.UI.Runtime` |
-  | Game.UI.Contracts | `Game.UI.Contracts` |
-  | Game.UI.Toolkit | `Game.UI.Toolkit` |
-  | Game.UI.Shell.Ecs | `Game.UI.Shell.Ecs` |
-  | Game.UI.Shell.Contracts.Ecs | `Game.UI.Shell.Contracts.Ecs` |
-  | Game.Catalog.Contracts | `Game.Catalog.Contracts` |
-  | Game.Editor | `Game.Editor` |
-- **Approach (mechanical, do per-assembly to keep PRs reviewable):**
-  1. For each asmdef, set `rootNamespace` to the target namespace.
-  2. Wrap every `.cs` file in that asmdef's folder in `namespace <target> { ... }` (file-scoped namespaces `namespace <target>;` are preferred for C# 10+ — verify the Unity C# version supports them; Unity 6 supports C# 9 by default, so use block-scoped `namespace X { ... }`).
-  3. Update any `global::` references if they arise.
-  4. Run a compile after each assembly — fix any name collisions that surface (these are the bugs the current global namespace was hiding).
-- **Order (do leaves first, apex last):**
-  1. `Game.Catalog.Contracts`, `Game.UI.Contracts`, `Game.Rendering.Contracts` (leaves, no internal deps)
-  2. `Game.Components`, `Game.Configs`
-  3. `Game.Authoring`, `Game.Rendering`
-  4. `Game.UI.Runtime`, `Game.UI.Toolkit`, `Game.UI.Shell.Contracts.Ecs`, `Game.UI.Shell.Ecs`
-  5. `Game.Runtime`
-  6. `Game.Composition`
-  7. `Game.Editor`
-- **Acceptance criteria:**
-  - `rg -L "^namespace " Assets/Game/Scripts --type cs` returns ≤ 4 files (AssemblyInfo.cs etc.).
-  - Every `asmdef` has non-empty `rootNamespace` matching its name.
-  - Project compiles clean in Unity.
-- **Effort:** L (mechanical but wide; ~741 files; do per-assembly PRs).
-- **Dependencies:** None (independent). Can run in parallel with P0-1..P0-5 if agents own disjoint assemblies.
-- **Verification:** `rg -c "^namespace " Assets/Game/Scripts --type cs` ≈ 741; Unity compile clean; PlayMode smoke test.
+- [ ] Static checks with targeted `rg` commands.
+- [ ] Unity compile with zero errors.
+- [ ] `ScriptArchitectureAlignmentContractTests` after asmdef or dependency-boundary changes.
+- [ ] Focused EditMode tests for touched area.
+- [ ] PlayMode smoke when runtime/bootstrap/UI shell code is touched.
+- [ ] Profiler compare against baseline before claiming performance improvement.
 
 ---
 
-# Priority 1 — Major (perf + architecture)
+## Stage 0 - Stabilize Baseline
 
-## P1-1 — Add `[BurstCompile]` to the ~50 hot-path un-Bursted ISystem structs
+| Field | Value |
+|---|---|
+| Status | Pending |
+| Priority | P0 |
+| Owner | TBD |
+| Dependencies | None |
+| Blocks | All measured performance claims |
+| Validation status | Not run |
 
-- **Problem:** ~112 of 139 ISystem structs have no `[BurstCompile]` on struct or `OnUpdate`. Only 27 carry it on the struct; 28 on `OnUpdate`. Hot-path offenders are the combat, AI, movement, transport, render-budget, and minimap systems.
-- **Files (do in this order — combat/AI/movement first):**
-  - `Systems/UnitAttackSystem.cs:9`
-  - `Systems/UnitDeathSystem.cs:9`
-  - `Systems/UnitRespawnSystem.cs:8`
-  - `Systems/AITargetingSystem.cs:8`, `AICombatOrderSystem.cs:9`, `AIProductionSystem.cs:8`, `AIBuildPlannerSystem.cs:8`, `AISquadSystem.cs:8`, `AIEconomySystem.cs:7`, `AIFactionControlSystem.cs:7`
-  - `Systems/UnitPathfindingSystem.cs:7`
-  - `Systems/UnitMoveOrderSystem.cs:9`, `UnitMoveOrderRequestSystem.cs:5`, `UnitTargetOrderSystem.cs:7`, `UnitAttackOrderRequestSystem.cs:5`
-  - All 7 `Systems/UnitTransport*System.cs` (`Boarding`, `DeployOrder`, `Airdrop`, `AirPickup`, `Capacity`, `PassengerState`, `DeployAttack`, `RopeDisembark`)
-  - `Systems/UnitSurfaceTrackingSystem.cs:9`
-  - `Systems/UnitAnimationIndexSystem.cs:12`
-  - `Systems/CitizenMovementCommandSystem.cs:5`
-  - `Rendering/Systems/UnitRenderBudgetSystem.cs:12`, `UnitFactionTintTargetBackfillSystem.cs:9`, `UnitSelectionMarkerSystem.cs:13`, `UnitHelicopterBladeSpinSystem.cs:12`
-  - `Systems/MatchHudMinimapMarkerSystem.cs:8`
-  - `Systems/ThreatDetectionWarningSystem.cs:9`
-- **Approach per system:**
-  1. Add `[BurstCompile]` on the struct AND on `OnUpdate` (both are required — struct-level does NOT auto-apply to methods).
-  2. If `OnUpdate` uses managed refs (string, `Debug.Log`, `EntityManager` managed APIs, `ComponentLookup<T>` for managed components), either:
-     - Extract the hot loop into a Burst-compiled `IJobEntity`/`IJobChunk` and keep `OnUpdate` as a thin managed orchestrator (no `[BurstCompile]` on `OnUpdate`), OR
-     - Remove the managed call (replace `Debug.Log` with `NativeQueue`/`FixedString` diagnostic buffers; replace `EntityManager` with ECB).
-  3. For systems that already schedule Burst jobs from `OnUpdate` (e.g. `UnitGridMovementSystem`), adding `[BurstCompile]` on `OnUpdate` lets the scheduler itself run in Burst (cheaper schedule calls).
-- **Important note on `UnitGridMovementSystem.cs:662`:** the struct has `[BurstCompile]` but `OnUpdate` does NOT — struct-level Burst does NOT auto-Burst `OnUpdate`. Add `[BurstCompile]` to `OnUpdate` explicitly.
-- **Acceptance criteria:**
-  - `rg -l "ISystem" Assets/Game/Scripts --type cs | xargs -I{} rg -L "BurstCompile" {}` returns only UI Shell/Ecs systems (managed, correctly un-Bursted) and systems with a comment explaining why.
-  - No Burst compile errors in the Unity console (Jobs > Burst > Show Inspector).
-  - Profiler: main-thread ms/frame on simulation systems drops vs baseline.
-- **Effort:** L (per-system work; some need job extraction; ~50 systems).
-- **Dependencies:** P0-1 (RequireForUpdate guards should be in place first so newly-Bursted systems don't run needlessly).
-- **Verification:** Burst AOT settings panel shows 0 errors; Profiler compare vs baseline; full match PlayMode test.
+**Goal:** Establish a clean reference point before changing behavior.
 
-## P1-2 — Cache stable singletons in `OnCreate`
+**Checklist**
 
-- **Problem:** ~15 systems call `SystemAPI.GetSingleton<GridConfig>()` or `SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()` per frame in `OnUpdate`. Both are stable singletons — cache them once in `OnCreate`.
-- **Files:**
-  - `GetSingleton<GridConfig>` per frame (6 systems):
-    - `Systems/DynamicBlockerInitSystem.cs:17,41,44`
-    - `Systems/UnitIdleWanderSystem.cs:26,27`
-    - `Systems/InitialUnitsBlockerChurnSystem.cs:34`
-    - `Systems/EngageTargetSyncSystem.cs:21`
-    - `Systems/AITargetingSystem.cs:75,144,151`
-    - `Rendering/Systems/UnitRenderBudgetSystem.cs:132`
-  - `GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()` per frame (9 systems):
-    - `Systems/UnitGridMovementSystem.cs:727`
-    - `Systems/UnitHealthBarSystem.cs:20`
-    - `Systems/UnitAttackStateEnsureSystem.cs:19`
-    - `Systems/UnitAttackTraceStateEnsureSystem.cs:18`
-    - `Systems/UnitRotationHoldSystem.cs:19`
-    - `Systems/UnitEngagementSystem.cs:113`
-    - `Systems/UnitDestroyedVisualSystem.cs:24`
-    - `Systems/EngageTargetSyncSystem.cs:23`
-    - `Systems/MapSurfaceDiagnosticsSystem.cs:59`
-- **Fix pattern:**
-  ```csharp
-  private GridConfig _gridConfig;
-  public void OnCreate(ref SystemState state) {
-      _gridConfig = SystemAPI.GetSingleton<GridConfig>(); // cache once
-      // OR for ECB: var ecbSys = state.WorldUnmanaged.GetExistingSystemState<EndSimulationEntityCommandBufferSystem>();
-      //             _ecbSingleton = ecbSys.CreateCommandBuffer();
-  }
-  // In OnUpdate: use _gridConfig instead of SystemAPI.GetSingleton<GridConfig>()
-  ```
-  For ECB singletons, cache the `SystemHandle` or use `SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged)` — but the lookup itself is the cost; cache the singleton reference. Note: in Entities 1.0+/6.x, `SystemAPI.GetSingleton<T>()` on a singleton component is cheap-ish but still a query; caching is strictly better.
-- **Acceptance criteria:**
-  - `rg "GetSingleton<GridConfig>" Assets/Game/Scripts/Systems Assets/Game/Scripts/Rendering` returns matches only in `OnCreate` methods (or removed entirely).
-  - `rg "GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>" Assets/Game/Scripts` matches only in `OnCreate`.
-  - No behavior change; full match completes.
-- **Effort:** S-M (mechanical, ~15 files).
-- **Dependencies:** None (independent of P0/P1-1).
-- **Verification:** Profiler shows fewer `GetSingleton` calls; PlayMode smoke test.
+- [ ] Check `git status --short --untracked-files=no` and record unrelated dirty files.
+- [ ] Run Unity compile before code changes.
+- [ ] Run `ScriptArchitectureAlignmentContractTests`.
+- [ ] Capture a 60 second Profiler baseline in Editor with a live match.
+- [ ] Save raw capture as `ProfilerCaptures/baseline_2026-06-23.raw`.
+- [ ] Record main-thread ms/frame, GC alloc/frame, and top hot systems in `Design/AgentReports/2026-06-23_perf_baseline_numbers.md`.
 
-## P1-3 — Move runtime logic out of `Game.UI.Contracts`
+**Acceptance**
 
-- **Problem:** The pure Contracts assembly contains runtime logic.
-- **Task P1-3a (Critical) — `BattleHudRuntimeFeedbackBoundary`:**
-  - **Location:** `Assets/Game/Scripts/UI/Contracts/BattleHudRuntimeFeedbackBoundary.cs:3` (entire file, ~220 lines)
-  - **Problem:** Sealed class with runtime feedback control logic (mutates views, reads `Time.unscaledTime` l.110/120, branches on result strings l.204-211) in the pure Contracts assembly.
-  - **Fix:** Move the file to `Assets/Game/Scripts/UI/` (root of `Game.UI.Runtime` assembly) or a new `UI/Feedback/` subfolder. Update its namespace once P0-6 lands. Update any `using` (none needed while global namespace). Verify no Contracts-assembly code references it ( Contracts shouldn't reference Runtime — if it does, that's a separate cycle bug to fix by inverting the dependency via an interface in Contracts).
-- **Task P1-3b (Major) — `UiShellRuntimeGateway` static facade:**
-  - **Location:** `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs:50` (static class with `Register`/dispatch + `NullUiShellRuntimeGateway` impl l.169-299)
-  - **Problem:** Static mutable service-locator with hidden dispatch in Contracts. Keep only `IUiShellRuntimeGateway` (l.3) in Contracts; move the static `UiShellRuntimeGateway` facade + `NullUiShellRuntimeGateway` to `Game.UI.Runtime`.
-- **Task P1-3c (Major) — `TrySetLoadingProgress` direct EntityManager write:**
-  - **Location:** `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs:74` → impl `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs:103-115`
-  - **Problem:** `TrySetLoadingProgress` performs a direct `EntityManager.SetComponentData` from the UI-facing gateway, bypassing the `TryEnqueue*` `DynamicBuffer` command queue used by all other UI→ECS writes. Inconsistent; risk of per-frame UI-driven mutation.
-  - **Fix:** Introduce a `UiLoadingProgressCommandElement` `IBufferElementData` on the boundary entity; have `TrySetLoadingProgress` append to that buffer (mirroring `TryEnqueueUiAction`); add a small ISystem in `Game.UI.Shell.Ecs` that consumes the buffer and writes `UiShellLoadingProgressComponent`. Remove the direct `EntityManager.SetComponentData` from `UiShellEcsGateway`.
-- **Minor (optional) — relocate borderline types:**
-  - `Contracts/TacticalCommandContracts.cs:178` `TacticalCommandFeedbackText` (static mapping class) → `Game.UI.Runtime`
-  - `Contracts/IMatchIntroStateQuery.cs:8` `NullMatchIntroStateQuery` (impl) → `Game.UI.Runtime`
-- **Acceptance criteria:**
-  - `rg "class BattleHudRuntimeFeedbackBoundary|class UiShellRuntimeGateway|class TacticalCommandFeedbackText|class NullUiShellRuntimeGateway|class NullMatchIntroStateQuery" Assets/Game/Scripts/UI/Contracts` returns no matches.
-  - `Game.UI.Contracts.asmdef` still has zero asmdef references (pure leaf).
-  - UI shell transitions + loading progress bar still work end-to-end.
-- **Effort:** M (P1-3a/b mechanical; P1-3c needs a new buffer + consumer system).
-- **Dependencies:** P0-6 (namespaces) for clean relocation, but can be done before namespaces by just moving files between folders + asmdefs.
-- **Verification:** `rg -l "class " Assets/Game/Scripts/UI/Contracts --type cs` returns only interfaces/structs/enums; PlayMode test of menu→match transition + loading progress.
+- [ ] Compile is clean before remediation.
+- [ ] Architecture tests pass or known failures are documented.
+- [ ] Baseline numbers exist before any performance claim is made.
 
-## P1-4 — Bake-path: dedup `MapSurfaceAuthoring` blobs + cache child refs in `UnitGridAuthoring`
+**Notes**
 
-- **Task P1-4a (Major) — Blob dedup:**
-  - **Location:** `Assets/Game/Scripts/Authorings/MapSurfaceAuthoring.cs:31`
-  - **Problem:** Each `MapSurfaceAuthoring` builds a fresh blob via `TryCreateRuntimeBlobAsset`. Multiple authorings sharing the same `MapSurfaceDataAsset` produce duplicate identical blobs.
-  - **Fix:** Introduce a static `Dictionary<MapSurfaceDataAsset, BlobAssetReference<MapSurfaceBlob>>` cache keyed by the source asset instance (or by a content hash if assets may be duplicated instances). In `Bake`, check the cache first; if present, reuse the `BlobAssetReference` and call `AddBlobAsset(ref existingRef, out _)`. Clear the cache on domain reload (`[InitializeOnLoad]`/`OnDestroy` of a baker registry, or use Unity's `Object`-keyed `BlobAssetRegistry` if available in Entities 6.4).
-  - **Acceptance:** With N authorings referencing the same asset, only 1 blob is built (verify by logging in `TryCreateRuntimeBlobAsset`).
-- **Task P1-4b (Major) — Cache child refs at bake time:**
-  - **Location:** `Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs:471,472,1114` (runtime `transform.Find("Model"/"Destroyed")`)
-  - **Problem:** String-based `Transform.Find` at runtime (spawn/setup) — allocates and searches hierarchy.
-  - **Fix:** During `Bake`, resolve `transform.Find("Model")`/`transform.Find("Destroyed")` once and store the resulting child indices or prefab references in a baked component (e.g. `UnitModelChildReference` holding the child `Entity` or index). At runtime, read the baked reference instead of calling `Transform.Find`.
-  - **Acceptance:** `rg "transform\.Find" Assets/Game/Scripts/Authorings` returns no matches in runtime code paths; unit spawn still wires models correctly.
-- **Effort:** M (P1-4a needs a cache + domain-reload handling; P1-4b needs baked component plumbing).
-- **Dependencies:** None.
-- **Verification:** Bake the MatchSubScene; verify blob count = unique asset count; spawn units and confirm models/destructed states resolve.
-
-## P1-5 — Split `MatchBootstrapSystem` god-object
-
-- **Location:** `Assets/Game/Scripts/Composition/MatchBootstrapSystem.cs` (51 KB, ~770+ lines)
-- **Problem:** Owns boundary init, blob build, spawn orchestration, surface overlay bootstrap, and scene lifecycle in one class. Hard to maintain; any change risks regressions across all features.
-- **Fix:** Split into per-feature bootstrap systems in the `Composition` folder, each in `InitializationSystemGroup` (or a custom `MatchBootstrapSystemGroup`):
-  1. `MatchBoundaryBootstrapSystem` — boundary entity + initial components
-  2. `MatchMapSurfaceBootstrapSystem` — blob build/runtime bootstrap (already partially delegated to `MapSurfaceRuntimeBootstrapSceneSystemHelper.cs`)
-  3. `MatchInitialSpawnBootstrapSystem` — initial faction/unit/building spawn orchestration
-  4. `MatchSceneLifecycleBootstrapSystem` — scene load/unload wiring (already partially in `MatchSceneReferenceSceneSystemHelper.cs` + `MatchStartSceneSystemHelper.cs`)
-  5. `MatchSurfaceOverlayBootstrapSystem` — runtime surface overlay buffer build
-- Keep `MatchBootstrapSystem` as a thin coordinator that creates/orders the sub-systems (or delete it entirely if the sub-systems are self-creating).
-- **Acceptance criteria:**
-  - No single `.cs` file in `Composition/` exceeds ~600 lines.
-  - Match scene boots identically (smoke test: enter match, spawn, play, exit).
-- **Effort:** M-L (refactor; requires understanding the 770 lines).
-- **Dependencies:** P0-4 (ordering) so the split systems run in the right sequence.
-- **Verification:** File-size check; full match lifecycle PlayMode test.
-
-## P1-6 — Convert `.Run()` jobs to `ScheduleParallel` where possible
-
-- **Problem:** Several Burst jobs run single-threaded via `.Run()` on potentially large queries, missing parallelism.
-- **Files:**
-  - `Systems/AITargetingSystem.cs:122` — `AssignTargetsJob` `.Run(_squadQuery)`. Blocker: writes to `_diagnosticEvents` (`NativeList`, not `ParallelWriter`). Fix: split diagnostic accumulation into a `NativeQueue.ParallelWriter` or a per-chunk `NativeList` then merge; convert to `ScheduleParallel`.
-  - `Rendering/Systems/UnitRenderBudgetSortSystem.cs:16` — `SortDistancesJob` `.Run()` every budget frame. Consider a parallel sort or accept given throttling (every ~10 frames). Lower priority.
-  - `Rendering/Systems/UnitRenderBudgetBandSystem.cs:70` — `BuildBandPlanJob` `.Run()`. Cost is capped by constants — acceptable; leave as-is or schedule if easy.
-  - `Systems/AIBuildPlannerSystem.cs`, `AIEconomySystem.cs:209`, `AIProductionSystem.cs:317` — decision jobs `.Run()`. Low frequency per faction; acceptable unless faction count grows. Lower priority.
-- **Acceptance criteria (for `AITargetingSystem` at least):**
-  - `AssignTargetsJob` scheduled via `ScheduleParallel`; diagnostic events accumulated in parallel-safe structure.
-  - No race conditions (run with Jobs > Debugger > Enable Parallel `NativeQueue` race detection if available).
-  - Profiler: targeting pass main-thread time drops.
-- **Effort:** M (AITargetingSystem refactor; others optional).
-- **Dependencies:** P1-1 (Burst on the system).
-- **Verification:** Profiler compare; PlayMode test with multiple AI factions.
-
-## P1-7 — Fix remaining managed-loop GC sources
-
-- **Task P1-7a (Major) — `BuildingResourceHaulerBridgeSystem.cs:308`:** unconditional interpolated-string `Debug.LogWarning` on hot path. Guard behind `VerboseResourceHaulerLogs` like the surrounding lines (l.278-367 are already gated).
-- **Task P1-7b (Major) — `UnitMassRenderSettingsSystem.cs:114-131`:** managed `GetSharedComponentManaged`/`SetSharedComponentManaged` per entity in `OnUpdate` (capped 12000/frame, spike-prone on large spawns). Investigate batching or moving to a shared-component-filter approach; if managed access is unavoidable, spread across frames more aggressively during large spawns.
-- **Task P1-7c (Major) — `UnitAttackTraceSystem.cs:87-143`:** `LateUpdate()` per-entity `EntityManager.GetComponentData`/`HasComponent` loop. Move to an `IJobChunk`/`IJobEntity` writing into pre-allocated `Matrix4x4[]`/`Vector4[]` arrays (the arrays already exist l.43-45); keep only the `Graphics.DrawMeshInstanced` call on main thread.
-- **Task P1-7d (Major) — `BuildingBarrierSystem.cs:133+`:** `foreach` over managed `IReadOnlyDictionary` on AI breach path (called from `AICombatOrderSystem.cs:534`). Convert `RuntimeBuildings` to a `NativeHashMap<int, RuntimeBuildingEntity>` (or a parallel `NativeList` + `NativeHashMap` index) populated by a bridge system; iterate with `for`/`NativeHashMap` enumerator (no boxing).
-- **Acceptance criteria:**
-  - `rg "Debug\.LogWarning.*\$" Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeSystem.cs` returns only gated matches.
-  - Profiler: no GC alloc spikes during large unit spawns or combat.
-- **Effort:** M-L (P1-7c/d are real refactors).
-- **Dependencies:** B-0.
-- **Verification:** Profiler GC alloc during combat + large spawn = 0 from these systems.
-
-## P1-8 — `RuntimeBuildingEntityLink` per-building MonoBehaviour Update
-
-- **Location:** `Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntityLink.cs:40`
-- **Problem:** One MonoBehaviour per runtime building, each `Update` reads `LocalTransform` from ECS and sets `transform` position/rotation. N instances × per-frame ECS read — expensive at large building counts.
-- **Fix options (pick by building count profile):**
-  1. If buildings are rendered by Entities Graphics already (check `Game.Rendering`), remove `RuntimeBuildingEntityLink` entirely and let the hybrid renderer drive transforms.
-  2. If a managed `GameObject` is required per building (for colliders/physics/UI anchor), convert to a single `BuildingTransformSyncSystem` (ISystem, Burst) that iterates all buildings in one job and writes to a `TransformAccessArray` (Unity's `IJobParallelForTransform`).
-  3. If building counts are small (<100), leave as-is but add an early-out when the entity transform hasn't changed (dirty flag).
-- **Acceptance:** `rg "void Update" Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntityLink.cs` returns no matches OR the system is confirmed removed/replaced.
-- **Effort:** M (option 2) / S (option 1 or 3).
-- **Dependencies:** None.
-- **Verification:** Profiler `Update()` cost from `RuntimeBuildingEntityLink` = 0 or negligible; buildings still position correctly.
+- Pending.
 
 ---
 
-# Priority 2 — Minor / hygiene
+## Stage 1 - Low-Risk Confirmed GC Fixes
 
-## P2-1 — Split `Components/CombatComponents.cs` by domain
+| Field | Value |
+|---|---|
+| Status | Pending |
+| Priority | P0 |
+| Owner | TBD |
+| Dependencies | Stage 0 preferred |
+| Blocks | Later perf comparison |
+| Validation status | Not run |
 
-- **Location:** `Assets/Game/Scripts/Components/CombatComponents.cs` (64 structs / 390 fields / 653 lines)
-- **Fix:** Split into `Combat/LauncherComponents.cs`, `Combat/ProjectileComponents.cs`, `Combat/VfxRequestComponents.cs`, `Combat/ImpactComponents.cs`, `Combat/InterceptionComponents.cs`, `Combat/RespawnComponents.cs`, `Combat/ResourceHaulerComponents.cs`. Keep a `Combat/CombatComponents.cs` for shared types.
-- **Acceptance:** No single `*Components.cs` file exceeds ~300 lines.
-- **Effort:** S-M (move structs, update no references since global namespace — but verify after P0-6 lands).
-- **Dependencies:** P0-6 (namespaces) preferred but not required.
+**Goal:** Remove obvious or confirmed managed allocations without changing gameplay order or architecture.
 
-## P2-2 — Split large `IBufferElementData` elements
+**Checklist**
 
-- **Problem:** Several buffer elements are 108–140 bytes; `FixedString64/128Bytes` fields dominate.
-- **Files:**
-  - `Components/SelectionInputRequestComponents.cs:147` `RtsSelectionCommandResultElement` ≈140 B (FixedString64 + 2 Entity + many fields)
-  - `Components/SelectionInputRequestComponents.cs:123` `RtsSelectionCommandIntentRequestElement` ≈120 B
-  - `Components/UnitVisualComponents.cs:233` `UnitAttachedLightSetupElement` ≈108 B — FixedString64 dominates; drop after bake/spawn or split name into a side buffer indexed by `int`.
-  - `Components/BuildingRuntimeEcsBoundaryComponents.cs` (12 buffers, 40–80 B each, several with `FixedString128Bytes` ×2 = 256 B strings)
-- **Fix:** For each large element, audit whether the `FixedString` field is needed at runtime or only at bake/spawn. If bake-only, move it to a separate rarely-accessed buffer (or a blob) keyed by index. If runtime-needed, consider `FixedString32Bytes` if names fit.
-- **Acceptance:** No `IBufferElementData` exceeds ~64 bytes (or has a documented reason).
-- **Effort:** M (per-buffer analysis).
-- **Dependencies:** None.
+- [ ] `TerrainLodHeightSwitch`: replace `Camera.allCameras` array access with `Camera.allCamerasCount` plus `Camera.GetCameraAt(i)`.
+- [ ] Keep/correct the existing resolved-camera cache.
+- [ ] `MissileTrailVfxView`: confirm in Profiler whether concrete `Dictionary<TKey,TValue>` foreach allocates.
+- [ ] If `MissileTrailVfxView` allocates, replace with a no-allocation iteration approach.
+- [ ] If `MissileTrailVfxView` does not allocate, leave it unchanged and mark skipped.
+- [ ] Cache method-path `Shader.PropertyToID` calls as `static readonly int` fields where repeated.
+- [ ] Cache `GetComponentInParent<Canvas>` in repeated UI input paths.
 
-## P2-3 — `UnitActionRequestSystem.OnUpdate` direct EntityManager → ECB
+**Static checks**
 
-- **Location:** `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs:119`
-- **Problem:** `EntityManager.CreateEntity(typeof(...))` and `AddBuffer` calls (l.133-163) inside `OnUpdate`. Should be ECB-backed.
-- **Fix:** Replace with `EntityCommandBuffer` from `BeginSimulationEntityCommandBufferSystem.Singleton` (or `EndSimulation...`). Create entity + add buffer via ECB, Playback at end of frame.
-- **Acceptance:** `rg "EntityManager\.CreateEntity|EntityManager\.AddBuffer" Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs` returns no matches in `OnUpdate`.
-- **Effort:** S.
-- **Dependencies:** P0-5 (same area).
-- **Verification:** PlayMode UI action request test.
+- [ ] `rg "Camera\.allCameras[^C]" Assets/Game/Scripts`
+- [ ] `rg "Shader\.PropertyToID" Assets/Game/Scripts/Systems Assets/Game/Scripts/Rendering Assets/Game/Scripts/UI`
+- [ ] `rg "GetComponentInParent<Canvas>" Assets/Game/Scripts/UI`
 
-## P2-4 — Cache `Shader.PropertyToID` as `static readonly int`
+**Acceptance**
 
-- **Location:** `Assets/Game/Scripts/Systems/BuildingProductionTransportSystem.cs:605-606` (and sweep for other `Shader.PropertyToID` in runtime paths)
-- **Fix:** Replace inline `Shader.PropertyToID("...")` calls with `static readonly int s_IdProp = Shader.PropertyToID("...");` fields.
-- **Acceptance:** `rg "Shader\.PropertyToID" Assets/Game/Scripts/Systems Assets/Game/Scripts/Rendering Assets/Game/Scripts/UI` returns only field initializers (no calls inside methods).
-- **Effort:** S.
-- **Dependencies:** None.
+- [ ] No gameplay order changes.
+- [ ] MonoBehaviour ownership remains in UI/rendering assemblies.
+- [ ] Visual smoke confirms terrain LOD still switches correctly.
+- [ ] Combat smoke confirms missile trails still render if touched.
 
-## P2-5 — Cache `GetComponentInParent<Canvas>` on UI views
+**Notes**
 
-- **Location:** `Assets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs:191` (`ResolveEventCamera`, called from `ContainsScreenPoint` — per pointer event, no cache)
-- **Fix:** Cache the `Canvas`/`Camera` reference in `Awake`/`OnEnable`; refresh only on `OnRectTransformDimensionsChange` if needed. Same pattern for `MatchHudMinimapView.cs:179`, `MatchHudRightQuickRailView.cs:105`, `MatchOverlayCommandControlsView.cs:73`, `BuildPlacementConfirmationBarView.cs:335`, `UIPlaceholderModalButtonView.cs:28`.
-- **Acceptance:** No `GetComponentInParent<Canvas>` in `Update`/input handler paths.
-- **Effort:** S.
-- **Dependencies:** None.
-
-## P2-6 — `GridAuthoring` static `RegisteredInstances` + runtime-world access during bake
-
-- **Location:** `Assets/Game/Scripts/Authorings/GridAuthoring.cs:56` (static mutable `RegisteredInstances` list), `:289-294,320-324,343-344,408-409` (`GetSingletonEntity`/`GetComponentData` in bake helpers reaching into the runtime world)
-- **Problem:** Static mutable list shared across bakers (order-dependent, domain-reload-fragile). Bake helpers reaching into the runtime world via `EntityManager` during bake is fragile (bake world ≠ runtime world assumptions).
-- **Fix:** Replace `RegisteredInstances` with a baker-scoped registry (per-bake-session, cleared on bake complete) or a `BakingSystem`-managed `NativeHashMap`. Move the `GetSingletonEntity`/`GetComponentData` lookups to be inputs passed into `Bake` via the authoring component, or defer to runtime initialization.
-- **Acceptance:** No `static` mutable collections in `GridAuthoring`; no `EntityManager.GetSingletonEntity` in bake helpers.
-- **Effort:** M.
-- **Dependencies:** None.
-
-## P2-7 — USS hygiene for static layout in `UiToolkitShellView`
-
-- **Location:** `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs:1393-1398` (container absolute-fill inline `style.*`), and the dynamic-fill inline styles at l.1515, 2107, 2257, 2291, 2372-2375, 2537-2538, 2562 (these are diff-gated, perf-OK — leave).
-- **Fix:** Move the static absolute-fill container layout (l.1393-1398) into a `.uss` file (create `Assets/Game/UI/Shell/ShellLayout.uss` or similar). Keep inline `style.*` only for truly dynamic values (health/progress fills, minimap markers — already diff-gated).
-- **Acceptance:** A `.uss` file exists under `Assets/Game/` for shell layout; `UiToolkitShellView.cs:1393-1398` uses class names instead of inline `style.position/left/right/top/bottom`.
-- **Effort:** S.
-- **Dependencies:** None.
-
-## P2-8 — `BuildingBarrierSystem` managed dictionary → NativeHashMap (cross-ref P1-7d)
-
-- If P1-7d is done, this is complete. Tracked separately here because the fix touches both perf and the AI breach-path correctness boundary.
-- **Effort:** covered by P1-7d.
+- Pending.
 
 ---
 
-# Dependency graph between tasks
+## Stage 2 - Refresh ECS Guard Audit, Then Add Guards in Batches
 
-```
-B-0 ──┬─> P0-1 ──┬─> P0-4
-      │          └─> P0-5
-      │          └─> P1-1
-      ├─> P0-2
-      ├─> P0-3
-      └─> P1-7
+| Field | Value |
+|---|---|
+| Status | Pending |
+| Priority | P0 |
+| Owner | TBD |
+| Dependencies | Stage 0 preferred |
+| Blocks | Stage 4, Stage 7 |
+| Validation status | Not run |
 
-P0-6 (independent, parallel with everything)
+**Goal:** Stop systems from running when required data does not exist, without blocking bootstrap systems from creating that data.
 
-P1-2 (independent)
-P1-3 (independent; benefits from P0-6)
-P1-4 (independent)
-P1-5 ── depends on P0-4 (ordering) for the split systems
-P1-6 ── depends on P1-1 (Burst)
-P1-8 (independent)
+**Checklist**
 
-P2-* (all independent; P2-1 benefits from P0-6)
+- [ ] Generate current list of `ISystem` files without `RequireForUpdate`, `[RequireMatchingQueriesForUpdate]`, or intentional-run comment.
+- [ ] Classify each unguarded system as `Creator/bootstrap`, `Optional bridge/read model`, `Simulation hot path`, or `Diagnostic`.
+- [ ] Add guards to first batch of 5-10 systems.
+- [ ] Compile and smoke test first batch.
+- [ ] Continue batches until reviewed list is resolved.
+- [ ] Add `// intentionally runs every frame` only where truly required and throttled.
+
+**Forbidden pattern**
+
+Do not add this to systems that create the queried entity:
+
+```csharp
+state.RequireForUpdate(boundaryQuery);
 ```
 
----
+That can prevent the system from ever running to create the boundary.
 
-# Parallelization plan (for multi-agent execution)
+**Static checks**
 
-**Wave 1 (P0, parallel):**
-- Agent A: B-0 (profiler baseline) — blocks perf-verification of others but not code work
-- Agent B: P0-1 (RequireForUpdate guards) — ~90 files
-- Agent C: P0-2 + P0-3 (two small GC fixes)
-- Agent D: P0-5 (UiShellBoundarySystem)
-- Agent E: P0-6 namespaces — start with leaf assemblies (Catalog.Contracts, UI.Contracts, Rendering.Contracts, Components, Configs)
+- [ ] `rg -l "struct .*ISystem|struct .* : ISystem" Assets/Game/Scripts --type cs`
+- [ ] For each file, check for `RequireMatchingQueriesForUpdate`, `RequireForUpdate`, or intentional-run comment.
 
-**Wave 2 (P0 cont. + P1, parallel):**
-- Agent B: P0-4 (system ordering) — after P0-1
-- Agent E: P0-6 namespaces — continue (Authoring, Rendering, UI.*, Runtime, Composition, Editor)
-- Agent F: P1-2 (singleton caching)
-- Agent G: P1-3 (UI Contracts cleanup)
-- Agent H: P1-4 (bake dedup + child refs)
+**Acceptance**
 
-**Wave 3 (P1 cont., parallel):**
-- Agent B: P1-1 (Burst on ~50 systems) — after P0-1
-- Agent F: P1-7 (managed-loop GC) + P2-4/P2-5
-- Agent G: P1-5 (split MatchBootstrapSystem) — after P0-4
-- Agent H: P1-6 (Run→ScheduleParallel) — after P1-1
-- Agent I: P1-8 (RuntimeBuildingEntityLink)
+- [ ] Creator/bootstrap systems are not blocked by requirements for entities they create.
+- [ ] Optional bridge/read-model systems use count checks where appropriate.
+- [ ] Hot simulation systems have clear required data guards.
+- [ ] Compile passes after each batch.
+- [ ] PlayMode smoke passes after runtime/bootstrap batches.
 
-**Wave 4 (P2 hygiene, parallel):**
-- P2-1, P2-2, P2-3, P2-6, P2-7 — distribute among free agents
+**Notes**
+
+- Pending.
 
 ---
 
-# Verification checklist (run before merging any task)
+## Stage 3 - Fix UI Shell ECS Creation Without Blocking Bootstrap
 
-1. **Compile:** Unity console shows 0 errors, 0 new warnings (Burst panel: 0 errors).
-2. **Static checks:**
-   - `rg -c "RequireMatchingQueriesForUpdate|RequireForUpdate" Assets/Game/Scripts` ≥ 90 (after P0-1)
-   - `rg -L "UpdateInGroup|UpdateBefore|UpdateAfter" <unordered-system-files>` empty (after P0-4)
-   - `rg -L "^namespace " Assets/Game/Scripts --type cs` ≤ 4 (after P0-6)
-   - `rg "Camera\.allCameras[^C]" Assets/Game/Scripts` empty (after P0-3)
-   - `rg "foreach.*_active" Assets/Game/Scripts/Effects/MissileTrailVfxView.cs` empty (after P0-2)
-3. **PlayMode test:** Enter Menu → start Match → full match (spawn, AI combat, transport, building, win/lose) → exit. No exceptions in log. Compare against baseline profiler capture.
-4. **Profiler compare:** Load `ProfilerCaptures/baseline_2026-06-23.raw` and the new capture; confirm main-thread ms/frame and GC alloc/frame did not increase (should decrease for perf tasks).
-5. **Test suite:** Run `Game.Tests.Editor` + `Game.Tests.PlayMode` (if present); 0 new failures.
+| Field | Value |
+|---|---|
+| Status | Pending |
+| Priority | P0 |
+| Owner | TBD |
+| Dependencies | Stage 2 preferred |
+| Blocks | UI shell cleanup |
+| Validation status | Not run |
+
+**Files**
+
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs`
+- Related UI shell ECS tests.
+
+**Goal:** Make shell ECS initialization safer without breaking first-run boundary creation.
+
+**Checklist**
+
+- [ ] Keep `UiShellBoundarySystem` in initialization ownership.
+- [ ] Do not add `RequireForUpdate(boundaryQuery)` to `UiShellBoundarySystem`.
+- [ ] Make boundary creation explicitly one-shot.
+- [ ] Add defensive handling for duplicate boundary entities.
+- [ ] Avoid `GetSingletonEntity` unless exactly one entity exists.
+- [ ] Move repeated "ensure component/buffer exists" work out of steady path where practical.
+- [ ] Avoid creating selection/building command queue entities deep inside active request processing in `UiActionRequestSystem`.
+- [ ] Prefer initialization/boundary setup, or a one-shot ECB path followed by processing next frame.
+
+**Acceptance**
+
+- [ ] Shell boundary is created on a clean world.
+- [ ] Duplicate boundary state cannot throw an unhelpful singleton exception.
+- [ ] UI shell route still works.
+- [ ] Loading progress still works.
+- [ ] Armory category, build drawer, and match HUD read models still work.
+
+**Validation**
+
+- [ ] Unity compile.
+- [ ] UI shell focused EditMode tests.
+- [ ] Menu -> Match -> exit smoke.
+
+**Notes**
+
+- Pending.
 
 ---
 
-# Appendix — Strengths (no action needed; preserve these)
+## Stage 4 - ECS System Ordering, Producer/Consumer First
 
-- Assembly DAG is clean; contracts-leaves enforced by asmdef refs.
-- All ~40 Burst jobs correctly annotated + `[ReadOnly]` + dependency-chained.
-- 0 NativeContainer leaks — exemplary `IsCreated`-guarded disposal.
-- 0 per-frame `MaterialPropertyBlock` allocations — all cached with `??=`.
-- 0 `Camera.main` / `FindObjectsOfType` / `InvokeRepeating` in runtime.
-- GPU instancing (`RenderMeshInstanced`/`DrawMeshInstanced`) used for impostors + tracers.
-- Sniveler gpu-animation tint driven from a Burst `ScheduleParallel` job — idiomatic.
-- Managed SystemBase classes correctly retained only for managed-object work; ISystem↔SystemBase bridge is one-directional, no conflicting writers.
-- UI→ECS queue discipline consistent (one exception flagged in P1-3c).
-- All diagnostic `Debug.Log` calls are flag/throttle/freeze-gated.
+| Field | Value |
+|---|---|
+| Status | Pending |
+| Priority | P1 |
+| Owner | TBD |
+| Dependencies | Stage 2 |
+| Blocks | Stage 7, bootstrap split work |
+| Validation status | Not run |
+
+**Goal:** Make update order explicit only where order matters.
+
+**Checklist**
+
+- [ ] Build current producer/consumer table before editing.
+- [ ] Prioritize path request/solve -> movement apply.
+- [ ] Prioritize UI/action request -> command systems.
+- [ ] Prioritize AI economy -> faction control -> build planner -> production -> squad -> targeting -> combat order.
+- [ ] Prioritize building config/projection -> grid composition -> spawn prefab -> building commands.
+- [ ] Prioritize transport board/deploy/pickup/drop chains.
+- [ ] Add `[UpdateInGroup]` to systems with a clear group.
+- [ ] Add `[UpdateAfter]` on consumers where a producer must run first.
+- [ ] Avoid broad ordering attributes added only to satisfy a grep.
+
+**Acceptance**
+
+- [ ] Known producer/consumer pairs have explicit ordering.
+- [ ] No default-order changes are made without a stated reason.
+- [ ] Full match smoke has no movement, attack, transport, or AI regressions.
+
+**Validation**
+
+- [ ] Unity compile.
+- [ ] PlayMode match lifecycle smoke.
+- [ ] Focused tests for pathing, selection commands, and transport if touched.
+
+**Notes**
+
+- Pending.
 
 ---
 
-# Appendix — Full audit findings reference
+## Stage 5 - Safe Singleton and ECB Usage Review
 
-The complete read-only audit findings (with every file:line reference and severity) are in the audit conversation transcript. Key sections:
-- §1 Architecture & Layering — asmdef DAG, namespace failure (741/745 global-ns), SubScene usage.
-- §2 DOTS/ECS Correctness — ISystem vs SystemBase counts, Burst gaps, baking, ordering, ECB, singletons, archetypes.
-- §3 Performance — GC alloc (2 Critical), Burst `.Run()` vs `ScheduleParallel`, NativeContainer leaks (0), rendering/instancing, runtime `Find`/`GetComponentIn*`, MonoBehaviour Update costs.
-- §4 UI Layer — Contracts purity violations, hybrid boundary discipline, USS hygiene, asset references.
+| Field | Value |
+|---|---|
+| Status | Pending |
+| Priority | P1 |
+| Owner | TBD |
+| Dependencies | Stage 2 preferred |
+| Blocks | Hot-path singleton cleanup |
+| Validation status | Not run |
 
-For any task above, refer back to the corresponding audit section for the full file:line list.
+**Goal:** Reduce repeated singleton lookup cost only where it is safe and measured.
+
+**Checklist**
+
+- [ ] Do not implement blanket "cache all singletons in `OnCreate`" guidance.
+- [ ] Cache `EntityQuery` in `OnCreate` where useful.
+- [ ] Cache singleton entity only after query is known to have exactly one entity.
+- [ ] Re-read component data when the component can change.
+- [ ] Use `ComponentLookup<T>` with `.Update(ref state)` for repeated random access.
+- [ ] Require ECB singleton if needed, but create command buffer per update.
+- [ ] Optimize singleton lookups only when profiler shows they matter or they are in a hot loop.
+
+**Acceptance**
+
+- [ ] No stale cached `GridConfig` data if grid can change during boot/reset.
+- [ ] No cached frame-scoped ECB.
+- [ ] No startup exceptions from reading singleton data before it exists.
+
+**Validation**
+
+- [ ] Unity compile.
+- [ ] Match start/exit/restart smoke.
+
+**Notes**
+
+- Pending.
+
+---
+
+## Stage 6 - Clean `Game.UI.Contracts` Without Reintroducing Runtime/UI Cycles
+
+| Field | Value |
+|---|---|
+| Status | Pending |
+| Priority | P1 |
+| Owner | TBD |
+| Dependencies | Current architecture boundary |
+| Blocks | UI contracts purity |
+| Validation status | Not run |
+
+**Goal:** Keep contracts as DTOs/interfaces while preserving the current assembly direction.
+
+**Known implementation-like types currently in contracts**
+
+- [ ] `BattleHudRuntimeFeedbackBoundary`
+- [ ] `UiShellRuntimeGateway` static facade and null implementation
+- [ ] `NullMatchIntroStateQuery`
+- [ ] `TacticalCommandFeedbackText`
+
+**Checklist**
+
+- [ ] Inventory references to each implementation-like type.
+- [ ] For runtime callers, replace direct UI helper usage with contract-level commands, DTOs, or sink interfaces.
+- [ ] Keep only pure interfaces, enums, and DTO/read models in `Game.UI.Contracts`.
+- [ ] Move UI-only implementations to `Game.UI.Runtime` only after no runtime assembly references them.
+- [ ] Design any gateway locator so it does not require `Game.Runtime -> Game.UI.Runtime`.
+- [ ] Avoid mutable service-locator logic in the pure contracts leaf.
+- [ ] Convert `TrySetLoadingProgress` to the same UI-to-ECS queue discipline as other shell writes, unless a direct write is explicitly documented as intentional.
+- [ ] Add or update architecture tests to prevent regression.
+
+**Acceptance**
+
+- [ ] `Game.UI.Contracts` has no UnityEngine-dependent helper implementation unless documented as temporary.
+- [ ] `Game.Runtime` does not reference `Game.UI.Runtime`.
+- [ ] UI shell transitions still work.
+- [ ] Loading progress still works.
+
+**Validation**
+
+- [ ] Unity compile.
+- [ ] `ScriptArchitectureAlignmentContractTests`.
+- [ ] UI shell and HUD feedback tests.
+- [ ] Menu -> Match smoke.
+
+**Notes**
+
+- Pending.
+
+---
+
+## Stage 7 - Burst and Parallelism Only After Guards Are Stable
+
+| Field | Value |
+|---|---|
+| Status | Pending |
+| Priority | P1 |
+| Owner | TBD |
+| Dependencies | Stages 2 and 4 |
+| Blocks | Hot ECS perf work |
+| Validation status | Not run |
+
+**Goal:** Improve hot ECS system CPU cost without fighting managed APIs or startup behavior.
+
+**Checklist**
+
+- [ ] Use profiler baseline to select hot systems.
+- [ ] Add `[BurstCompile]` only to systems/methods that are Burst-compatible.
+- [ ] If `OnUpdate` uses managed APIs, keep `OnUpdate` managed and extract hot loop into a Burst job.
+- [ ] Do not hide `Debug.Log`, string formatting, managed components, or EntityManager managed calls inside Burst paths.
+- [ ] Convert `.Run()` to `ScheduleParallel` only when dependencies and diagnostic collection are parallel-safe.
+- [ ] Confirm Burst inspector has zero compile errors.
+
+**Acceptance**
+
+- [ ] Burst inspector has zero compile errors.
+- [ ] Profiler shows improvement or no regression.
+- [ ] Jobs debugger/race detection shows no introduced safety issues.
+
+**Validation**
+
+- [ ] Unity compile with Burst enabled.
+- [ ] Focused PlayMode tests for touched systems.
+- [ ] Profiler compare against baseline.
+
+**Notes**
+
+- Pending.
+
+---
+
+## Stage 8 - Runtime Building Transform Link Review
+
+| Field | Value |
+|---|---|
+| Status | Pending |
+| Priority | P1 |
+| Owner | TBD |
+| Dependencies | Stage 0 preferred |
+| Blocks | Building transform optimization |
+| Validation status | Not run |
+
+**Goal:** Remove or reduce per-building MonoBehaviour `Update` cost without breaking visible buildings.
+
+**Checklist**
+
+- [ ] Profile `RuntimeBuildingEntityLink.Update` with realistic building counts.
+- [ ] Confirm whether buildings are rendered by Entities Graphics.
+- [ ] Confirm whether GameObjects are still required for colliders, anchors, selection, or UI.
+- [ ] If GameObjects are required, prefer centralized sync or dirty-check early-out.
+- [ ] If GameObjects are not required, remove link only after proving visuals, selection, blockers, and production still work.
+
+**Acceptance**
+
+- [ ] Building visuals remain visible and correctly positioned.
+- [ ] Selection and production interactions still work.
+- [ ] Update cost is reduced or documented as negligible.
+
+**Validation**
+
+- [ ] Match smoke with city/building placement/production.
+- [ ] Profiler compare.
+
+**Notes**
+
+- Pending.
+
+---
+
+## Stage 9 - Namespace Migration as a Separate Architecture Refactor
+
+| Field | Value |
+|---|---|
+| Status | Pending |
+| Priority | P2 |
+| Owner | TBD |
+| Dependencies | Separate refactor window |
+| Blocks | Namespace/rootNamespace cleanup |
+| Validation status | Not run |
+
+**Goal:** Add namespaces aligned with asmdefs without mixing with gameplay/performance changes.
+
+**Namespace target checklist**
+
+- [ ] `Game.Components` -> `Game.Components`
+- [ ] `Game.Configs` -> `Game.Configs`
+- [ ] `Game.Catalog.Contracts` -> `Game.Catalog.Contracts`
+- [ ] `Game.Rendering.Contracts` -> `Game.Rendering.Contracts`
+- [ ] `Game.UI.Contracts` -> `Game.UI.Contracts`
+- [ ] `Game.Authoring` -> `Game.Authoring`
+- [ ] `Game.Rendering` -> `Game.Rendering`
+- [ ] `Game.UI.Runtime` -> `Game.UI.Runtime`
+- [ ] `Game.UI.Toolkit` -> `Game.UI.Toolkit`
+- [ ] `Game.UI.Shell.Ecs` -> `Game.UI.Shell.Ecs`
+- [ ] `Game.UI.Shell.Contracts.Ecs` -> `Game.UI.Shell.Contracts.Ecs`
+- [ ] `Game.Runtime` -> `Game.Runtime`
+- [ ] `Game.Composition` -> `Game.Composition`
+- [ ] `Game.Editor` -> `Game.Editor`
+- [ ] `Game.Tests.Editor` -> `Game.Tests.Editor`
+- [ ] `Game.Tests.PlayMode` -> `Game.Tests.PlayMode`
+
+**Checklist**
+
+- [ ] Verify Unity language version.
+- [ ] Use file-scoped namespaces only if compiler supports them; otherwise use block-scoped namespaces.
+- [ ] Update one leaf assembly at a time.
+- [ ] Set that asmdef's `rootNamespace`.
+- [ ] Compile after each assembly.
+- [ ] Update tests and `InternalsVisibleTo` only when needed.
+- [ ] Move inward from leaves to runtime/composition.
+
+**Acceptance**
+
+- [ ] No source files in `Assets/Game/Scripts` remain in global namespace except intentional files such as `AssemblyInfo.cs`.
+- [ ] All project asmdefs have non-empty `rootNamespace`.
+- [ ] Unity compile passes.
+- [ ] Architecture tests pass.
+
+**Notes**
+
+- Pending.
+
+---
+
+## Stage 10 - Lower-Priority Structural Hygiene
+
+| Field | Value |
+|---|---|
+| Status | Pending |
+| Priority | P2 |
+| Owner | TBD |
+| Dependencies | Stages 0-9 as relevant |
+| Blocks | Long-term maintainability |
+| Validation status | Not run |
+
+**Goal:** Improve maintainability after correctness/perf-sensitive work is stable.
+
+**Checklist**
+
+- [ ] Split `CombatComponents.cs` by domain after namespaces are in place.
+- [ ] Review oversized `IBufferElementData` types and split rarely-read strings into blobs or side buffers only when runtime cost is proven.
+- [ ] Clean `GridAuthoring` static bake-time state and runtime-world assumptions.
+- [ ] Move static UI Toolkit layout rules to USS where they are not dynamic.
+- [ ] Deduplicate bake-time blobs where repeated authoring assets produce identical blob data.
+
+**Acceptance**
+
+- [ ] No gameplay behavior change.
+- [ ] Compile passes after each small refactor.
+- [ ] Focused tests pass after each small refactor.
+
+**Notes**
+
+- Pending.
+
+---
+
+## Recommended Execution Order
+
+1. [ ] Stage 0 - Stabilize baseline and current validation.
+2. [ ] Stage 1 - Low-risk confirmed GC fixes.
+3. [ ] Stage 2 - ECS guard audit and small batches.
+4. [ ] Stage 3 - UI shell ECS initialization safety.
+5. [ ] Stage 4 - Explicit ordering for confirmed producer/consumer chains.
+6. [ ] Stage 5 - Singleton/ECB review only where safe and measured.
+7. [ ] Stage 6 - UI contracts cleanup with bridge/adaptor design.
+8. [ ] Stage 7 - Burst/parallelism on proven hot systems.
+9. [ ] Stage 8 - Building transform link review.
+10. [ ] Stage 9 - Namespace migration as its own refactor.
+11. [ ] Stage 10 - Lower-priority structural hygiene.
+
+## Merge Gate
+
+- [ ] Unity compile has zero errors.
+- [ ] No new architecture-boundary violations.
+- [ ] No unrelated files are committed.
+- [ ] Focused tests for touched code pass.
+- [ ] Match smoke passes when runtime/bootstrap/UI shell code is touched.
+- [ ] Performance claims include before/after profiler evidence.
+

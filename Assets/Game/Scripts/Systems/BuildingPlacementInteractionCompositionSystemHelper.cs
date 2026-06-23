@@ -52,11 +52,11 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
     {
         return source.BuildingPlacementInteractionContextCompositionSystemHelper.CreateContext(
             source.BuildingPlacementInteractionContextCompositionSystemHelper.CreateSource(
-                () => source.BuildingPlacementLifecycleSystem.HasPendingBuildingPlacement,
-                () => source.BuildingPlacementLifecycleSystem.CanConfirmBuildingPlacement,
+                () => source.BuildingPlacementLifecycleCompositionSystemHelper.HasPendingBuildingPlacement,
+                () => source.BuildingPlacementLifecycleCompositionSystemHelper.CanConfirmBuildingPlacement,
                 () => source.RuntimeBuildingSystem.HasSelectedBuilding(),
                 () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
-                () => source.BuildingPlacementLifecycleSystem.HasPendingBuildingPlacement &&
+                () => source.BuildingPlacementLifecycleCompositionSystemHelper.HasPendingBuildingPlacement &&
                       source.BuildingPlacementInputSystem.IsDraggingPlacement,
                 () => source.BuildingUiQuerySystem.PlacementStatusText(
                     createBuildingUiQueryContext(source, getInteractionContext(), markerPropertyBlock)),

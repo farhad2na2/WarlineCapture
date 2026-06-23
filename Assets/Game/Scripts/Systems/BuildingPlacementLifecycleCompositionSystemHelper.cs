@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class BuildingPlacementLifecycleSystem
+internal sealed class BuildingPlacementLifecycleCompositionSystemHelper
 {
     public sealed class PlacementState : BuildingPlacementInputSystem.IPlacementState
     {

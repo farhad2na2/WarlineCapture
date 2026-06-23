@@ -169,7 +169,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 18. Complete: Move legacy runtime building storage out of road build
     - Move `BuildingDefinition`, `RuntimeBuildingData`, `BuildingPlacementState`, `_runtimeBuildings`, `_selectedBuildingId`, and `_nextBuildingId` ownership to building systems.
     - Preserve `RuntimeBuildingEntityLink` behavior through building interaction context, not road build.
-    - Created `BuildingRoadLegacyStorageSystem` backed by existing building-domain contracts: `BuildingDefinition`, `RuntimeBuildingData`, `BuildingPlacementLifecycleSystem.PlacementState`, and `RuntimeBuildingSystem<RuntimeBuildingData>`.
+    - Created `BuildingRoadLegacyStorageSystem` backed by existing building-domain contracts: `BuildingDefinition`, `RuntimeBuildingData`, `BuildingPlacementLifecycleCompositionSystemHelper.PlacementState`, and `RuntimeBuildingSystem<RuntimeBuildingData>`.
     - RoadBuildSystem no longer declares nested building data/state classes or owns `_runtimeBuildings`, `_selectedBuildingId`, `_nextBuildingId`, `_soldierBaseDefinition`, or `_activeBuildingPlacement`.
     - Legacy road runtime links now configure through `BuildingPlacementInteractionSystem` when the compatibility path is available.
 

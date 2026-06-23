@@ -1,6 +1,6 @@
 using Unity.Entities;
 using UnityEngine;
-using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
+using PlacementState = BuildingPlacementLifecycleCompositionSystemHelper.PlacementState;
 
 internal sealed class BuildingPlacementAdapterCompositionSystemHelper
 {
@@ -88,7 +88,7 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
         CreateRuntimeContextSourceDelegate createRuntimeContextSource,
         IsPlacementValidDelegate isPlacementValid)
     {
-        PlacementState activePlacement = source.BuildingPlacementLifecycleSystem.ActivePlacement;
+        PlacementState activePlacement = source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement;
         bool rotateVertical = source.BuildingBarrierSystem.ResolvePlacementRotateVertical(
             source.BuildingRuntimeContextSystem.CreateBarrierContext(createRuntimeContextSource(source)),
             source.BuildingPlacementInputSystem,

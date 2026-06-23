@@ -9,21 +9,21 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
     public struct Source
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly BuildingPlacementLifecycleSystem LifecycleSystem;
+        public readonly BuildingPlacementLifecycleCompositionSystemHelper LifecycleSystem;
         public readonly BuildingPlacementInputSystem InputSystem;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
         public readonly BuildingPlacementValidationSystem PlacementValidationSystem;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly Transform BuildingRoot;
-        public readonly BuildingPlacementLifecycleSystem.CreatePreviewDelegate CreatePreview;
-        public readonly BuildingPlacementLifecycleSystem.DestroyPreviewDelegate DestroyPreview;
-        public readonly BuildingPlacementLifecycleSystem.GetInitialOriginDelegate GetInitialOrigin;
-        public readonly BuildingPlacementLifecycleSystem.TryResolveInitialOriginDelegate TryResolveInitialOrigin;
-        public readonly BuildingPlacementLifecycleSystem.UpdatePlacementVisualDelegate UpdatePlacementVisual;
-        public readonly BuildingPlacementLifecycleSystem.FocusPlacementDelegate FocusPlacement;
-        public readonly BuildingPlacementLifecycleSystem.ValidateConfirmDelegate ValidateConfirm;
-        public readonly BuildingPlacementLifecycleSystem.TrySpendCostDelegate TrySpendCost;
-        public readonly BuildingPlacementLifecycleSystem.CommitPlacementDelegate CommitPlacement;
+        public readonly BuildingPlacementLifecycleCompositionSystemHelper.CreatePreviewDelegate CreatePreview;
+        public readonly BuildingPlacementLifecycleCompositionSystemHelper.DestroyPreviewDelegate DestroyPreview;
+        public readonly BuildingPlacementLifecycleCompositionSystemHelper.GetInitialOriginDelegate GetInitialOrigin;
+        public readonly BuildingPlacementLifecycleCompositionSystemHelper.TryResolveInitialOriginDelegate TryResolveInitialOrigin;
+        public readonly BuildingPlacementLifecycleCompositionSystemHelper.UpdatePlacementVisualDelegate UpdatePlacementVisual;
+        public readonly BuildingPlacementLifecycleCompositionSystemHelper.FocusPlacementDelegate FocusPlacement;
+        public readonly BuildingPlacementLifecycleCompositionSystemHelper.ValidateConfirmDelegate ValidateConfirm;
+        public readonly BuildingPlacementLifecycleCompositionSystemHelper.TrySpendCostDelegate TrySpendCost;
+        public readonly BuildingPlacementLifecycleCompositionSystemHelper.CommitPlacementDelegate CommitPlacement;
         public readonly Action ApplyBuildCommandMode;
         public readonly Action ClearSelectedBuildingForBegin;
         public readonly BuildingPlacementInputSystem.TryGetGridForInputDelegate TryGetGridForPlacementInput;
@@ -41,21 +41,21 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
 
         public Source(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            BuildingPlacementLifecycleSystem lifecycleSystem,
+            BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             BuildingPlacementInputSystem inputSystem,
             BuildingPlacementPreviewPresentationSystemHelper previewSystem,
             BuildingPlacementValidationSystem placementValidationSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             Transform buildingRoot,
-            BuildingPlacementLifecycleSystem.CreatePreviewDelegate createPreview,
-            BuildingPlacementLifecycleSystem.DestroyPreviewDelegate destroyPreview,
-            BuildingPlacementLifecycleSystem.GetInitialOriginDelegate getInitialOrigin,
-            BuildingPlacementLifecycleSystem.TryResolveInitialOriginDelegate tryResolveInitialOrigin,
-            BuildingPlacementLifecycleSystem.UpdatePlacementVisualDelegate updatePlacementVisual,
-            BuildingPlacementLifecycleSystem.FocusPlacementDelegate focusPlacement,
-            BuildingPlacementLifecycleSystem.ValidateConfirmDelegate validateConfirm,
-            BuildingPlacementLifecycleSystem.TrySpendCostDelegate trySpendCost,
-            BuildingPlacementLifecycleSystem.CommitPlacementDelegate commitPlacement,
+            BuildingPlacementLifecycleCompositionSystemHelper.CreatePreviewDelegate createPreview,
+            BuildingPlacementLifecycleCompositionSystemHelper.DestroyPreviewDelegate destroyPreview,
+            BuildingPlacementLifecycleCompositionSystemHelper.GetInitialOriginDelegate getInitialOrigin,
+            BuildingPlacementLifecycleCompositionSystemHelper.TryResolveInitialOriginDelegate tryResolveInitialOrigin,
+            BuildingPlacementLifecycleCompositionSystemHelper.UpdatePlacementVisualDelegate updatePlacementVisual,
+            BuildingPlacementLifecycleCompositionSystemHelper.FocusPlacementDelegate focusPlacement,
+            BuildingPlacementLifecycleCompositionSystemHelper.ValidateConfirmDelegate validateConfirm,
+            BuildingPlacementLifecycleCompositionSystemHelper.TrySpendCostDelegate trySpendCost,
+            BuildingPlacementLifecycleCompositionSystemHelper.CommitPlacementDelegate commitPlacement,
             Action applyBuildCommandMode,
             Action clearSelectedBuildingForBegin,
             BuildingPlacementInputSystem.TryGetGridForInputDelegate tryGetGridForPlacementInput,
@@ -116,17 +116,17 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             source.UpdatePlacement);
     }
 
-    public BuildingPlacementLifecycleSystem.CancelContext CreateCancelContext(Source source)
+    public BuildingPlacementLifecycleCompositionSystemHelper.CancelContext CreateCancelContext(Source source)
     {
-        return new BuildingPlacementLifecycleSystem.CancelContext(
+        return new BuildingPlacementLifecycleCompositionSystemHelper.CancelContext(
             source.InputSystem,
             source.PreviewSystem,
             source.DestroyPreview);
     }
 
-    public BuildingPlacementLifecycleSystem.BeginContext CreateBeginContext(Source source)
+    public BuildingPlacementLifecycleCompositionSystemHelper.BeginContext CreateBeginContext(Source source)
     {
-        return new BuildingPlacementLifecycleSystem.BeginContext(
+        return new BuildingPlacementLifecycleCompositionSystemHelper.BeginContext(
             source.RuntimeGameplayStateSystem,
             source.InputSystem,
             source.PreviewSystem,
@@ -141,17 +141,17 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             source.ClearSelectedBuildingForBegin);
     }
 
-    public BuildingPlacementLifecycleSystem.ConfirmContext CreateConfirmContext(Source source)
+    public BuildingPlacementLifecycleCompositionSystemHelper.ConfirmContext CreateConfirmContext(Source source)
     {
-        return new BuildingPlacementLifecycleSystem.ConfirmContext(
+        return new BuildingPlacementLifecycleCompositionSystemHelper.ConfirmContext(
             source.ValidateConfirm,
             source.TrySpendCost,
             source.CommitPlacement);
     }
 
-    public BuildingPlacementLifecycleSystem.RotateContext CreateRotateContext(Source source)
+    public BuildingPlacementLifecycleCompositionSystemHelper.RotateContext CreateRotateContext(Source source)
     {
-        return new BuildingPlacementLifecycleSystem.RotateContext(source.UpdatePlacementVisual);
+        return new BuildingPlacementLifecycleCompositionSystemHelper.RotateContext(source.UpdatePlacementVisual);
     }
 
     public BuildingPlacementSessionSystem.Context CreateSessionContext(
@@ -210,7 +210,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
 
     public BuildingPlacementCommitSystem.CommitRequest CreateCommitRequest(
         Source source,
-        BuildingPlacementLifecycleSystem.PlacementState placement)
+        BuildingPlacementLifecycleCompositionSystemHelper.PlacementState placement)
     {
         _wallCommitRuns.Clear();
         if (placement.CommittedWallRuns != null)

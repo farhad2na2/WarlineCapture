@@ -210,7 +210,7 @@ public sealed class BuildingPlacementValidationSystemTests
         var commandSystem = new BuildingPlacementCommandSystem();
         int commitCount = 0;
         BuildingPlacementCommandSystem.Context context = CreateActivePlacementCommandContext(
-            out BuildingPlacementLifecycleSystem lifecycleSystem,
+            out BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             out GameObject prefab,
             out GameObject root,
             commitPlacement: _ => commitCount++);
@@ -280,7 +280,7 @@ public sealed class BuildingPlacementValidationSystemTests
         var commandSystem = new BuildingPlacementCommandSystem();
         int updateCount = 0;
         BuildingPlacementCommandSystem.Context context = CreateActivePlacementCommandContext(
-            out BuildingPlacementLifecycleSystem lifecycleSystem,
+            out BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             out GameObject prefab,
             out GameObject root,
             updatePlacement: _ => updateCount++);
@@ -363,7 +363,7 @@ public sealed class BuildingPlacementValidationSystemTests
         var commandSystem = new BuildingPlacementCommandSystem();
         var definitionSystem = new BuildingDefinitionSystem();
         BuildingPlacementCommandSystem.Context context = CreateActivePlacementCommandContext(
-            out BuildingPlacementLifecycleSystem lifecycleSystem,
+            out BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             out GameObject prefab,
             out GameObject root,
             definitionSystem: definitionSystem);
@@ -630,25 +630,25 @@ public sealed class BuildingPlacementValidationSystemTests
     }
 
     private static BuildingPlacementCommandSystem.Context CreateActivePlacementCommandContext(
-        out BuildingPlacementLifecycleSystem lifecycleSystem,
+        out BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
         out GameObject prefab,
         out GameObject root,
         bool placementIsValid = true,
-        Action<BuildingPlacementLifecycleSystem.PlacementState> updatePlacement = null,
-        Action<BuildingPlacementLifecycleSystem.PlacementState> commitPlacement = null,
-        BuildingPlacementLifecycleSystem.ValidateConfirmDelegate validateConfirm = null,
-        BuildingPlacementLifecycleSystem.TrySpendCostDelegate trySpendCost = null,
+        Action<BuildingPlacementLifecycleCompositionSystemHelper.PlacementState> updatePlacement = null,
+        Action<BuildingPlacementLifecycleCompositionSystemHelper.PlacementState> commitPlacement = null,
+        BuildingPlacementLifecycleCompositionSystemHelper.ValidateConfirmDelegate validateConfirm = null,
+        BuildingPlacementLifecycleCompositionSystemHelper.TrySpendCostDelegate trySpendCost = null,
         BuildingDefinitionSystem definitionSystem = null)
     {
         var runtimeStateSystem = new RuntimeGameplayStateSystem();
-        lifecycleSystem = new BuildingPlacementLifecycleSystem();
+        lifecycleSystem = new BuildingPlacementLifecycleCompositionSystemHelper();
         var sessionSystem = new BuildingPlacementSessionSystem();
         prefab = new GameObject("PlacementCommandTestPrefab");
         root = new GameObject("PlacementCommandTestRoot");
         Transform rootTransform = root.transform;
-        BuildingPlacementLifecycleSystem activeLifecycleSystem = lifecycleSystem;
+        BuildingPlacementLifecycleCompositionSystemHelper activeLifecycleSystem = lifecycleSystem;
 
-        BuildingPlacementLifecycleSystem.UpdatePlacementVisualDelegate updatePlacementVisual =
+        BuildingPlacementLifecycleCompositionSystemHelper.UpdatePlacementVisualDelegate updatePlacementVisual =
             (placement, _, _) =>
             {
                 placement.IsValid = placementIsValid;
@@ -660,8 +660,8 @@ public sealed class BuildingPlacementValidationSystemTests
             activeLifecycleSystem,
             null,
             null,
-            () => new BuildingPlacementLifecycleSystem.CancelContext(null, null, UnityEngine.Object.DestroyImmediate),
-            () => new BuildingPlacementLifecycleSystem.BeginContext(
+            () => new BuildingPlacementLifecycleCompositionSystemHelper.CancelContext(null, null, UnityEngine.Object.DestroyImmediate),
+            () => new BuildingPlacementLifecycleCompositionSystemHelper.BeginContext(
                 runtimeStateSystem,
                 null,
                 null,
@@ -674,11 +674,11 @@ public sealed class BuildingPlacementValidationSystemTests
                 null,
                 null,
                 null),
-            () => new BuildingPlacementLifecycleSystem.ConfirmContext(
+            () => new BuildingPlacementLifecycleCompositionSystemHelper.ConfirmContext(
                 validateConfirm ?? (placement => placement.IsValid),
                 trySpendCost ?? (_ => true),
                 placement => commitPlacement?.Invoke(placement)),
-            () => new BuildingPlacementLifecycleSystem.RotateContext(updatePlacementVisual),
+            () => new BuildingPlacementLifecycleCompositionSystemHelper.RotateContext(updatePlacementVisual),
             null,
             null,
             null,
@@ -715,13 +715,13 @@ public sealed class BuildingPlacementValidationSystemTests
         Action clearCommandMode = null)
     {
         var runtimeStateSystem = new RuntimeGameplayStateSystem();
-        var lifecycleSystem = new BuildingPlacementLifecycleSystem();
+        var lifecycleSystem = new BuildingPlacementLifecycleCompositionSystemHelper();
         BuildingPlacementSessionSystem.Context sessionContext = new(
             runtimeStateSystem,
             lifecycleSystem,
             null,
             null,
-            () => new BuildingPlacementLifecycleSystem.CancelContext(null, null, null),
+            () => new BuildingPlacementLifecycleCompositionSystemHelper.CancelContext(null, null, null),
             () => default,
             () => default,
             () => default,

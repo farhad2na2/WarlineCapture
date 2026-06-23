@@ -11,7 +11,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
     public struct Context
     {
         public readonly Func<Camera> GetWorldCamera;
-        public readonly Func<BuildingPlacementLifecycleSystem.PlacementState> GetActivePlacement;
+        public readonly Func<BuildingPlacementLifecycleCompositionSystemHelper.PlacementState> GetActivePlacement;
         public readonly BuildingPlacementInputSystem PlacementInputSystem;
         public readonly BuildingPlacementInputSystem.ActivePlacementPointerContext ActivePlacementPointerContext;
         public readonly Func<bool> IsPlayRequested;
@@ -28,7 +28,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
 
         public Context(
             Func<Camera> getWorldCamera,
-            Func<BuildingPlacementLifecycleSystem.PlacementState> getActivePlacement,
+            Func<BuildingPlacementLifecycleCompositionSystemHelper.PlacementState> getActivePlacement,
             BuildingPlacementInputSystem placementInputSystem,
             BuildingPlacementInputSystem.ActivePlacementPointerContext activePlacementPointerContext,
             Func<bool> isPlayRequested,
@@ -104,7 +104,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
         if (!hasPointer)
             return new Result(afterOutline, afterMouse, afterUi, afterBuildingClick, afterInput);
 
-        BuildingPlacementLifecycleSystem.PlacementState activePlacement = context.GetActivePlacement?.Invoke();
+        BuildingPlacementLifecycleCompositionSystemHelper.PlacementState activePlacement = context.GetActivePlacement?.Invoke();
         if (activePlacement != null)
         {
             _pendingBuildingSelectionClick = false;

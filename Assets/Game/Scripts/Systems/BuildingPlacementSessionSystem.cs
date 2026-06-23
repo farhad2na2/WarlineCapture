@@ -6,13 +6,13 @@ internal sealed class BuildingPlacementSessionSystem
     public struct Context
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly BuildingPlacementLifecycleSystem LifecycleSystem;
+        public readonly BuildingPlacementLifecycleCompositionSystemHelper LifecycleSystem;
         public readonly BuildingPlacementInputSystem InputSystem;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
-        public readonly Func<BuildingPlacementLifecycleSystem.CancelContext> CreateCancelContext;
-        public readonly Func<BuildingPlacementLifecycleSystem.BeginContext> CreateBeginContext;
-        public readonly Func<BuildingPlacementLifecycleSystem.ConfirmContext> CreateConfirmContext;
-        public readonly Func<BuildingPlacementLifecycleSystem.RotateContext> CreateRotateContext;
+        public readonly Func<BuildingPlacementLifecycleCompositionSystemHelper.CancelContext> CreateCancelContext;
+        public readonly Func<BuildingPlacementLifecycleCompositionSystemHelper.BeginContext> CreateBeginContext;
+        public readonly Func<BuildingPlacementLifecycleCompositionSystemHelper.ConfirmContext> CreateConfirmContext;
+        public readonly Func<BuildingPlacementLifecycleCompositionSystemHelper.RotateContext> CreateRotateContext;
         public readonly Action RecordBuildingBuilt;
         public readonly Action NotifyStaticMinimapChanged;
         public readonly Action<string> ClearSelectedBuilding;
@@ -20,13 +20,13 @@ internal sealed class BuildingPlacementSessionSystem
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            BuildingPlacementLifecycleSystem lifecycleSystem,
+            BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             BuildingPlacementInputSystem inputSystem,
             BuildingPlacementPreviewPresentationSystemHelper previewSystem,
-            Func<BuildingPlacementLifecycleSystem.CancelContext> createCancelContext,
-            Func<BuildingPlacementLifecycleSystem.BeginContext> createBeginContext,
-            Func<BuildingPlacementLifecycleSystem.ConfirmContext> createConfirmContext,
-            Func<BuildingPlacementLifecycleSystem.RotateContext> createRotateContext,
+            Func<BuildingPlacementLifecycleCompositionSystemHelper.CancelContext> createCancelContext,
+            Func<BuildingPlacementLifecycleCompositionSystemHelper.BeginContext> createBeginContext,
+            Func<BuildingPlacementLifecycleCompositionSystemHelper.ConfirmContext> createConfirmContext,
+            Func<BuildingPlacementLifecycleCompositionSystemHelper.RotateContext> createRotateContext,
             Action recordBuildingBuilt,
             Action notifyStaticMinimapChanged,
             Action<string> clearSelectedBuilding,
@@ -66,9 +66,9 @@ internal sealed class BuildingPlacementSessionSystem
 
     public bool ConfirmBuildingPlacement(
         Context context,
-        out BuildingPlacementLifecycleSystem.ConfirmFailureReason failureReason)
+        out BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason failureReason)
     {
-        failureReason = BuildingPlacementLifecycleSystem.ConfirmFailureReason.MissingActivePlacement;
+        failureReason = BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.MissingActivePlacement;
         if (context.LifecycleSystem == null)
             return false;
 

@@ -221,7 +221,7 @@ internal sealed class BuildingPlacementCommandSystem
             case BuildingUiPlacementCommandRequestElement.KindConfirmPlacement:
                 if (context.SessionSystem.ConfirmBuildingPlacement(
                         context.SessionContext,
-                        out BuildingPlacementLifecycleSystem.ConfirmFailureReason confirmFailureReason))
+                        out BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason confirmFailureReason))
                 {
                     resultCode = BuildingUiPlacementCommandResultElement.Completed;
                     return true;
@@ -290,17 +290,17 @@ internal sealed class BuildingPlacementCommandSystem
                definition.Prefab != null;
     }
 
-    private static byte ToConfirmFailureResultCode(BuildingPlacementLifecycleSystem.ConfirmFailureReason reason)
+    private static byte ToConfirmFailureResultCode(BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason reason)
     {
         return reason switch
         {
-            BuildingPlacementLifecycleSystem.ConfirmFailureReason.MissingActivePlacement =>
+            BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.MissingActivePlacement =>
                 BuildingUiPlacementCommandResultElement.MissingActivePlacement,
-            BuildingPlacementLifecycleSystem.ConfirmFailureReason.BlockedPlacement =>
+            BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.BlockedPlacement =>
                 BuildingUiPlacementCommandResultElement.BlockedPlacement,
-            BuildingPlacementLifecycleSystem.ConfirmFailureReason.InvalidPlacement =>
+            BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InvalidPlacement =>
                 BuildingUiPlacementCommandResultElement.InvalidPlacement,
-            BuildingPlacementLifecycleSystem.ConfirmFailureReason.NotEnoughMoney =>
+            BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.NotEnoughMoney =>
                 BuildingUiPlacementCommandResultElement.NotEnoughMoney,
             _ => BuildingUiPlacementCommandResultElement.Rejected
         };

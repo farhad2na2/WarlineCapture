@@ -7,7 +7,7 @@ internal sealed class RoadBuildPlacementStorageSystem
 
     public IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings => _runtimeBuildingSystem.Buildings;
     public BuildingDefinition SoldierBaseDefinition { get; private set; }
-    public BuildingPlacementLifecycleSystem.PlacementState ActivePlacement { get; private set; }
+    public BuildingPlacementLifecycleCompositionSystemHelper.PlacementState ActivePlacement { get; private set; }
     public bool HasPendingBuildingPlacement => ActivePlacement != null;
     public bool CanConfirmBuildingPlacement => ActivePlacement != null && ActivePlacement.IsValid;
     public bool HasSelectedBuilding => _runtimeBuildingSystem.HasSelectedBuilding();
@@ -19,7 +19,7 @@ internal sealed class RoadBuildPlacementStorageSystem
 
     public void BeginPlacement(BuildingDefinition definition, GameObject previewInstance, Vector2Int originCell)
     {
-        ActivePlacement = new BuildingPlacementLifecycleSystem.PlacementState
+        ActivePlacement = new BuildingPlacementLifecycleCompositionSystemHelper.PlacementState
         {
             Definition = definition,
             PreviewInstance = previewInstance,

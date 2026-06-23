@@ -99,7 +99,7 @@ internal sealed class RoadBuildBuildingPlacementSystem
 
     public void UpdateBuildingPlacement(Context context, Vector2 screenPosition)
     {
-        BuildingPlacementLifecycleSystem.PlacementState activePlacement = context.StorageSystem?.ActivePlacement;
+        BuildingPlacementLifecycleCompositionSystemHelper.PlacementState activePlacement = context.StorageSystem?.ActivePlacement;
         if (activePlacement == null)
             return;
 
@@ -112,7 +112,7 @@ internal sealed class RoadBuildBuildingPlacementSystem
 
     private void UpdateBuildingPlacementVisual(
         Context context,
-        BuildingPlacementLifecycleSystem.PlacementState placement,
+        BuildingPlacementLifecycleCompositionSystemHelper.PlacementState placement,
         bool updateCellFromPointer,
         Vector2 screenPosition = default)
     {

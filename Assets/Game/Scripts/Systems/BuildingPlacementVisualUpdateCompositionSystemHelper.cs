@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
-using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
+using PlacementState = BuildingPlacementLifecycleCompositionSystemHelper.PlacementState;
 
 internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
 {
@@ -23,7 +23,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
         public readonly BuildingGameplayDependencyCompositionSystemHelper DependencySystem;
         public readonly BuildingPlacementContextCompositionSystemHelper ContextSystem;
         public readonly BuildingPlacementCommitSystem CommitSystem;
-        public readonly BuildingPlacementLifecycleSystem LifecycleSystem;
+        public readonly BuildingPlacementLifecycleCompositionSystemHelper LifecycleSystem;
         public readonly BuildingBarrierSystem BarrierSystem;
         public readonly BuildingPlacementInputSystem.TryGetGridCellDelegate TryGetGridCell;
         public readonly TryGetGridDataDelegate TryGetGridData;
@@ -45,7 +45,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
             BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
             BuildingPlacementContextCompositionSystemHelper contextSystem,
             BuildingPlacementCommitSystem commitSystem,
-            BuildingPlacementLifecycleSystem lifecycleSystem,
+            BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             BuildingBarrierSystem barrierSystem,
             BuildingPlacementInputSystem.TryGetGridCellDelegate tryGetGridCell,
             TryGetGridDataDelegate tryGetGridData,

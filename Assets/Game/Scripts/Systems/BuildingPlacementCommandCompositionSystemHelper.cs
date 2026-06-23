@@ -1,5 +1,5 @@
 using UnityEngine;
-using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
+using PlacementState = BuildingPlacementLifecycleCompositionSystemHelper.PlacementState;
 
 internal sealed class BuildingPlacementCommandCompositionSystemHelper
 {
@@ -126,7 +126,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
     {
         return new BuildingPlacementContextCompositionSystemHelper.Source(
             source.RuntimeGameplayStateSystem,
-            source.BuildingPlacementLifecycleSystem,
+            source.BuildingPlacementLifecycleCompositionSystemHelper,
             source.BuildingPlacementInputSystem,
             source.BuildingPlacementPreviewPresentationSystemHelper,
             source.BuildingPlacementValidationSystem,

@@ -39,7 +39,7 @@ internal sealed class RoadBuildInteractionSystem
         }
     }
 
-    public RuntimeBuildingEntity PlaceBuilding(Context context, BuildingPlacementLifecycleSystem.PlacementState placement)
+    public RuntimeBuildingEntity PlaceBuilding(Context context, BuildingPlacementLifecycleCompositionSystemHelper.PlacementState placement)
     {
         if (placement?.PreviewInstance == null || context.StorageSystem == null)
             return null;

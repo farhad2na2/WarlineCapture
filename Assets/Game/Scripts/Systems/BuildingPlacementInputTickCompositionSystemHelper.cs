@@ -14,7 +14,7 @@ internal sealed class BuildingPlacementInputTickCompositionSystemHelper
     {
         return new BuildingPlacementInputRuntimeTickSystem.Context(
             () => source.BuildingPlacementStartupSystemHelper.WorldCamera,
-            () => source.BuildingPlacementLifecycleSystem.ActivePlacement,
+            () => source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement,
             source.BuildingPlacementInputSystem,
             createActivePlacementPointerContext(source, interactionContext, markerPropertyBlock),
             () => source.RuntimeGameplayStateSystem.PlayRequested,

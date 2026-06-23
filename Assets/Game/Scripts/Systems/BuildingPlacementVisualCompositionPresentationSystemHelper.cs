@@ -1,6 +1,6 @@
 using Unity.Entities;
 using UnityEngine;
-using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
+using PlacementState = BuildingPlacementLifecycleCompositionSystemHelper.PlacementState;
 
 internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
 {
@@ -64,7 +64,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
                 createPlacementContextSource,
                 createRuntimeContextSource,
                 createBuildingSelectionContext),
-            source.BuildingPlacementLifecycleSystem.ActivePlacement,
+            source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement,
             screenPosition);
     }
 
@@ -89,7 +89,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
             source.BuildingGameplayDependencyCompositionSystemHelper,
             source.BuildingPlacementContextCompositionSystemHelper,
             source.BuildingPlacementCommitSystem,
-            source.BuildingPlacementLifecycleSystem,
+            source.BuildingPlacementLifecycleCompositionSystemHelper,
             source.BuildingBarrierSystem,
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => tryGetGridCell(source, screenPosition, grid, out cell),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>

@@ -197,7 +197,7 @@ internal sealed class BuildingPlacementPreviewPresentationSystemHelper
     }
 
     public void RebuildWallPlacementPreview(
-        BuildingPlacementLifecycleSystem.PlacementState placement,
+        BuildingPlacementLifecycleCompositionSystemHelper.PlacementState placement,
         IReadOnlyList<Vector2Int> origins,
         bool vertical,
         GridConfig grid,

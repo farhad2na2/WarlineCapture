@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
+using PlacementState = BuildingPlacementLifecycleCompositionSystemHelper.PlacementState;
 
 internal sealed class BuildingBarrierSystem
 {

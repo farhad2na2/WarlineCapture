@@ -8,7 +8,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public sealed class UnitImpostorRenderSystem : IUnitImpostorRenderer
+public sealed class UnitImpostorPresentationSystemHelper : IUnitImpostorRenderer
 {
     private static readonly bool EnableImpostorAtlasDiagnostics = false;
     private const int MaxBatchSize = 1023;

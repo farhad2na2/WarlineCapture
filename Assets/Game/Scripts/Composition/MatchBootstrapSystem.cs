@@ -982,9 +982,9 @@ internal sealed class MatchBootstrapSystem
         return new UnitAttackTracePresentationSystemHelper();
     }
 
-    private static UnitImpostorRenderSystem ResolveUnitImpostorRenderSystem()
+    private static UnitImpostorPresentationSystemHelper ResolveUnitImpostorPresentationSystemHelper()
     {
-        return new UnitImpostorRenderSystem();
+        return new UnitImpostorPresentationSystemHelper();
     }
 
     private static ISelectionRectangleView EnsureSelectionRectangleView(
@@ -1102,7 +1102,7 @@ internal sealed class MatchBootstrapSystem
         unitAttackTraces?.Init(UnitAttackTraceConfig, WorldCamera, ownerLayer);
         UnitAttackTraces = unitAttackTraces;
 
-        UnitImpostorRenderSystem unitImpostors = ResolveUnitImpostorRenderSystem();
+        UnitImpostorPresentationSystemHelper unitImpostors = ResolveUnitImpostorPresentationSystemHelper();
         unitImpostors?.Init(
             WorldCamera,
             ownerLayer,

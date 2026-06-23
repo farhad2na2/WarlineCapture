@@ -245,10 +245,10 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Moved visible-character detailed-path policy and forced character-detail policy out of `UnitRenderBudgetSystem`.
    - `UnitRenderBudgetSystem` no longer exposes `ResolveVisibleCharacterVisualKind` or `ShouldForceCharacterDetailVisual` as public static helpers.
    - The policy still returns `UnitRenderVisualKind.Detail` for visible characters and `isCharacter` for the force-detail check, preserving current behavior.
-   - High-camera impostor scale/rotation helpers already live in `UnitImpostorRenderSystem`, so no behavior moved for those helpers in this step.
+   - High-camera impostor scale/rotation helpers already live in `UnitImpostorPresentationSystemHelper`, so no behavior moved for those helpers in this step.
    - Validation:
      - `git diff --check` passed for touched render-budget files.
-     - `GameplayArchitectureContractTests.RunUnitRenderBudgetArchitectureBatchValidation` passed in `/Users/farhad/Projects/WarlineCapture-CodexUnity1` after syncing `UnitImpostorRenderSystem` into the validation clone because its public test helpers were present in the main workspace but missing there.
+     - `GameplayArchitectureContractTests.RunUnitRenderBudgetArchitectureBatchValidation` passed in `/Users/farhad/Projects/WarlineCapture-CodexUnity1` after syncing `UnitImpostorPresentationSystemHelper` into the validation clone because its public test helpers were present in the main workspace but missing there.
 
 14. Complete: Migrate render-budget policy tests
    - Update `UnitRenderBudgetSystemTests` to target `UnitRenderBudgetCharacterPolicySystem`.

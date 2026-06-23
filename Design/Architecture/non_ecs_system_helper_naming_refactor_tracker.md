@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 70 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 170 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 169 |
-| Current batch | Unit attack trace presentation helper naming batch complete |
-| Validation status | Batch 1 through Batch 59 compile and architecture validations passed by marker; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, and Batch 59 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 33-53 Unity validations exited cleanly; Batch 54 building runtime boundary validation and Batch 57 production metadata validation exited cleanly; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 71 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 169 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 168 |
+| Current batch | Unit impostor presentation helper naming batch complete |
+| Validation status | Batch 1 through Batch 60 compile and architecture validations passed by marker; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, and Batch 60 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 33-53 Unity validations exited cleanly; Batch 54 building runtime boundary validation and Batch 57 production metadata validation exited cleanly; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -1079,6 +1079,23 @@ This helper owns managed attack-trace presentation: scene camera config, trace m
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitCombatFocusedEditModeTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch59-unit-combat.log`: recorded `[UnitCombatFocusedEditModeValidation] result=Passed tests=1`; Unity was terminated after the pass marker because batchmode hung during post-test cleanup.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch59-architecture.log`: recorded `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=169`; Unity was terminated after the pass marker because batchmode hung during post-test cleanup.
+
+## Batch 60 - Unit Impostor Presentation Helper
+
+This helper owns managed unit impostor presentation: camera-facing billboard mesh/material lifecycle, prefab atlas lookup, ECS read queries for culled/source-key fallback impostor candidates, material batch state, high-camera impostor style selection, and `Graphics.RenderMeshInstanced` playback. The managed reason is camera/material/mesh rendering presentation, not ECS scheduling.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `UnitImpostorRenderSystem` | `UnitImpostorPresentationSystemHelper` | Owns managed unit impostor rendering presentation. |
+
+## Batch 60 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `168`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod UnitRenderBudgetSystemTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch60-unit-render-budget.log`: recorded `[UnitRenderBudgetFocusedValidation] result=Passed tests=31`; Unity was terminated after the pass marker because batchmode hung during post-test cleanup.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch60-architecture.log`: recorded `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=168`; Unity was terminated after the pass marker because batchmode hung during post-test cleanup.
 
 ## Open Follow-Up Batches
 

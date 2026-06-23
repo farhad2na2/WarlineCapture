@@ -1,7 +1,7 @@
 using System;
 using Unity.Entities;
 
-internal sealed class BuildingPlacementRuntimeTickContextSystem
+internal sealed class BuildingPlacementRuntimeTickContextCompositionSystemHelper
 {
     public readonly struct Source
     {

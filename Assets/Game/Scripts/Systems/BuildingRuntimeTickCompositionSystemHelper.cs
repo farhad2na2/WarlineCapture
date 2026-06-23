@@ -3,7 +3,7 @@ using UnityEngine;
 
 internal sealed class BuildingRuntimeTickCompositionSystemHelper
 {
-    public BuildingPlacementRuntimeTickContextSystem.Source Create(
+    public BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source Create(
         BuildingGameplayCompositionSourceSystem source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
@@ -27,7 +27,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
         BuildingCombatSystem.Context<RuntimeBuildingEntity> combatContext = source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
         BuildingBarrierSystem.Context barrierContext = source.BuildingRuntimeContextSystem.CreateBarrierContext(runtimeSource);
         BuildingPlacementInputRuntimeTickSystem.Context inputContext = createInputRuntimeTickContext(source, interactionContext, markerPropertyBlock);
-        return new BuildingPlacementRuntimeTickContextSystem.Source(
+        return new BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source(
             createProductionRuntimeTickContext(source),
             createRuntimeBoundaryPublishContext(source, interactionContext, markerPropertyBlock),
             () => source.BuildingRuntimeVisualSystem.UpdateBuildingResourceVisuals(runtimeVisualContext, UnityEngine.Time.time),

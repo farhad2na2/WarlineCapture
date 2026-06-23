@@ -17,7 +17,7 @@ internal sealed class BuildingGameplayCompositionSystem
     private readonly BuildingRuntimeBoundaryCompositionSystemHelper _runtimeBoundaryCompositionHelper = new();
     private readonly BuildingProductionTickCompositionSystemHelper _productionTickCompositionHelper = new();
     private readonly BuildingPlacementInteractionCompositionSystem _placementInteractionCompositionSystem = new();
-    private readonly BuildingPlacementRuntimeTickContextSystem _runtimeTickContextSystem = new();
+    private readonly BuildingPlacementRuntimeTickContextCompositionSystemHelper _runtimeTickContextCompositionHelper = new();
     private readonly BuildingGameplayCompositionResultSystem _resultSystem = new();
 
     public BuildingGameplayCompositionResultSystem.Result Initialize(
@@ -421,7 +421,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 return false;
 
             childSystems.BuildingGameplayEcsQuerySystem.EnsureEntityQueries(em);
-            BuildingPlacementRuntimeTickContextSystem.Source runtimeTickSource = _runtimeTickCompositionHelper.Create(
+            BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source runtimeTickSource = _runtimeTickCompositionHelper.Create(
                 childSystems,
                 interactionContext,
                 markerPropertyBlock,
@@ -529,7 +529,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     return () => source.MapVehiclePlacementSpawnSystem.Update(mapVehiclePlacementContext);
                 },
                 DestroyedBuildingLifetimeSeconds);
-            runtimeTickContext = _runtimeTickContextSystem.Create(runtimeTickSource);
+            runtimeTickContext = _runtimeTickContextCompositionHelper.Create(runtimeTickSource);
             runtimeTickContextReady = true;
             return true;
         }

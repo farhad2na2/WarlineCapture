@@ -34,7 +34,7 @@ Current owner:
 Current examples:
 - Scene refs: `MenuView`, `Camera`, `Light`, `Volume`, runtime roots, tactical binder.
 - Config refs: selection, road build, building placement, attack trace, city/decorations/blockers, day/night, faction visuals, strings, prefab preview, AI controller configs.
-- Managed gameplay shell object creation and first-pass wiring are delegated to `ManagedGameplayStartupSystem` and its narrower startup systems: `DayNightSystem`, `FactionVisualSettings`, `RoadBuildSystem`, `BuildingGameplaySystem`, selection runtime/UI boundaries, `UnitAttackTraceSystem`, `UnitImpostorRenderSystem`, `CitizenPopulationSystem`, `GameStrings`, and `SharedPrefabPreviewCache`.
+- Managed gameplay shell object creation and first-pass wiring are delegated to `ManagedGameplayStartupSystem` and its narrower startup systems: `DayNightSystem`, `FactionVisualSettings`, `RoadBuildSystem`, `BuildingGameplaySystem`, selection runtime/UI boundaries, `UnitAttackTracePresentationSystemHelper`, `UnitImpostorRenderSystem`, `CitizenPopulationSystem`, `GameStrings`, and `SharedPrefabPreviewCache`.
 - Menu/UI startup binding is delegated to `MenuStartupSystem`: `MenuView` event subscription, menu view initialization, `MainMenuPlayUI` construction, menu dependency rebinding, and scene UI runtime dependency binding.
 - Runtime root creation is delegated to `RuntimeRootSystem` so root names and parent transforms stay centralized behind an ECS-aligned system boundary.
 

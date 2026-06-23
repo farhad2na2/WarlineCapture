@@ -977,9 +977,9 @@ internal sealed class MatchBootstrapSystem
         return _runtimeRootSystem;
     }
 
-    private static UnitAttackTraceSystem ResolveUnitAttackTraceSystem()
+    private static UnitAttackTracePresentationSystemHelper ResolveUnitAttackTracePresentationSystemHelper()
     {
-        return new UnitAttackTraceSystem();
+        return new UnitAttackTracePresentationSystemHelper();
     }
 
     private static UnitImpostorRenderSystem ResolveUnitImpostorRenderSystem()
@@ -1098,7 +1098,7 @@ internal sealed class MatchBootstrapSystem
 
     private void InitializeRenderingSystems(int ownerLayer)
     {
-        UnitAttackTraceSystem unitAttackTraces = ResolveUnitAttackTraceSystem();
+        UnitAttackTracePresentationSystemHelper unitAttackTraces = ResolveUnitAttackTracePresentationSystemHelper();
         unitAttackTraces?.Init(UnitAttackTraceConfig, WorldCamera, ownerLayer);
         UnitAttackTraces = unitAttackTraces;
 

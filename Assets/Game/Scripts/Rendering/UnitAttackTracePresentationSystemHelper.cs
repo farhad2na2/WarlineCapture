@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class UnitAttackTraceSystem : IUnitAttackTraceRenderer
+public sealed class UnitAttackTracePresentationSystemHelper : IUnitAttackTraceRenderer
 {
     private const int MaxBatchSize = 1023;
     private const int MaxTraceOriginCount = 4;

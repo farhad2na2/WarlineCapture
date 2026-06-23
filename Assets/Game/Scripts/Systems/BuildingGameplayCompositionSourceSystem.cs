@@ -15,7 +15,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingProductionUpdateSystem BuildingProductionUpdateSystem = new();
     internal readonly BuildingProductionTransportSystem BuildingProductionTransportSystem = new();
     internal readonly BuildingProductionTransportBridgeSystem BuildingProductionTransportBridgeSystem = new();
-    internal readonly BuildingProductionContextSystem BuildingProductionContextSystem = new();
+    internal readonly BuildingProductionContextCompositionSystemHelper BuildingProductionContextCompositionSystemHelper = new();
     internal readonly BuildingSpawnSystem BuildingSpawnSystem = new();
     internal readonly BuildingSpawnPrefabSystem BuildingSpawnPrefabSystem = new();
     internal readonly BuildingProductionSlotSystem BuildingProductionSlotSystem = new();

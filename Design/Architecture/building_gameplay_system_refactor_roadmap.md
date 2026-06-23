@@ -64,7 +64,7 @@ Step 30 placement context factory transition size: 1446 lines. Placement cancel/
 
 Step 31 runtime context factory transition size: 1446 lines. Runtime spawn command context creation now lives in `BuildingRuntimeContextSystem`; managed composition and runtime tick context creation use `BuildingRuntimeContextSystem` directly for runtime visual/combat/query/barrier contexts instead of shell context wrapper methods.
 
-Step 32 production/UI context factory transition size: 1446 lines. Production context source creation now routes through `BuildingProductionContextSystem.CreateSource`, UI context source creation routes through `BuildingUiContextSystem.CreateSource`, interaction context source creation routes through `BuildingPlacementInteractionContextSystem.CreateSource`, and runtime resource prefab source creation routes through `BuildingRuntimeResourcePrefabContextSystem.CreateSource`.
+Step 32 production/UI context factory transition size: 1446 lines. Production context source creation now routes through `BuildingProductionContextCompositionSystemHelper.CreateSource`, UI context source creation routes through `BuildingUiContextSystem.CreateSource`, interaction context source creation routes through `BuildingPlacementInteractionContextSystem.CreateSource`, and runtime resource prefab source creation routes through `BuildingRuntimeResourcePrefabContextSystem.CreateSource`.
 
 Step 33 runtime tick composition transition size: 1417 lines. Runtime tick source assembly now uses `BuildingGameplayCompositionSourceSystem` child systems directly for runtime visual/combat/barrier/input/boundary tick phases; `BuildingGameplaySystem` no longer exposes `RuntimeTickSystem`, `RuntimeTickDomains`, `RuntimeInputDomains`, runtime state getter delegates, runtime boundary query delegates, or tick-only production/resource properties.
 
@@ -374,7 +374,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 32. Complete: Move production and UI context factories
    - Move production update/request/resource-hauler context source, UI command/query context, UI context source, and interaction context source into context systems that consume explicit dependencies.
    - Expected output: production/runtime tick and menu binding no longer require shell context methods.
-   - `BuildingProductionContextSystem.CreateSource` now owns production source construction.
+   - `BuildingProductionContextCompositionSystemHelper.CreateSource` now owns production source construction.
    - `BuildingUiContextSystem.CreateSource` now owns UI command/query source construction.
    - `BuildingPlacementInteractionContextSystem.CreateSource` now owns interaction source construction.
    - `BuildingRuntimeResourcePrefabContextSystem.CreateSource` is now used by the shell wrapper instead of constructing source data directly.
@@ -393,7 +393,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Update `ManagedGameplayStartupSystem`, `GameplayFeatureStartupCompositionSystemHelper`, `MenuStartupSystem`, `GameplayRuntimeUpdateSystem`, runtime city composition, selection systems, citizen population startup, AI tests/helpers, and any remaining production caller to use composition result fields.
    - Expected output: `rg "BuildingGameplaySystem" Assets/Game -g '*.cs'` finds no production dependency except the file being retired.
    - In progress: citizen population context creation and gameplay feature binding now use composition-owned dependency/resource context systems instead of `BuildingGameplaySystem`.
-   - In progress: runtime tick and runtime boundary production source creation now use composition-owned `BuildingProductionContextSystem.Source` instead of `BuildingGameplaySystem.CreateBuildingProductionContextSource`.
+   - In progress: runtime tick and runtime boundary production source creation now use composition-owned `BuildingProductionContextCompositionSystemHelper.Source` instead of `BuildingGameplaySystem.CreateBuildingProductionContextSource`.
    - In progress: composition result now exposes selection-click, runtime-city spawn, runtime-query, UI command/query, and placement-interaction systems from `BuildingGameplayCompositionSourceSystem` instead of reading those systems back through `BuildingGameplaySystem`.
    - In progress: runtime visual/combat/barrier/query/production composition now uses a composition-owned `CreateRuntimeContextSource` instead of `BuildingGameplaySystem.CreateRuntimeContextSystemSource`.
    - In progress: spawn command, runtime-city spawn, and boundary spawn composition now use a composition-owned `CreateBuildingRuntimeContextSource` instead of `BuildingGameplaySystem.CreateBuildingRuntimeContextSource`.

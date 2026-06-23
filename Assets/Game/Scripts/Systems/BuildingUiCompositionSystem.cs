@@ -20,7 +20,7 @@ internal sealed class BuildingUiCompositionSystem
             source.RuntimeBuildingSystem,
             source.BuildingProductionSystem,
             source.BuildingProductionRequestBoundary,
-            () => source.BuildingProductionContextSystem.CreateProductionRequestContext(
+            () => source.BuildingProductionContextCompositionSystemHelper.CreateProductionRequestContext(
                 source.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
                     source,
                     createRuntimeContextSource,

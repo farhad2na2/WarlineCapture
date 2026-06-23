@@ -20,7 +20,7 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem;
         public readonly ResourceHaulerSystem ResourceHaulerSystem;
         public readonly FactionResourceSystem FactionResourceSystem;
-        public readonly BuildingProductionContextSystem ProductionContextSystem;
+        public readonly BuildingProductionContextCompositionSystemHelper ProductionContextSystem;
         public readonly FactionVisualSettings FactionVisualSettings;
         public readonly MaterialPropertyBlock MarkerPropertyBlock;
         public readonly float BuildingFactionTintStrength;
@@ -61,7 +61,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingResourceHaulerBridgeSystem resourceHaulerBridgeSystem,
             ResourceHaulerSystem resourceHaulerSystem,
             FactionResourceSystem factionResourceSystem,
-            BuildingProductionContextSystem productionContextSystem,
+            BuildingProductionContextCompositionSystemHelper productionContextSystem,
             FactionVisualSettings factionVisualSettings,
             MaterialPropertyBlock markerPropertyBlock,
             float buildingFactionTintStrength,

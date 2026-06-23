@@ -8,7 +8,7 @@ internal sealed class BuildingRuntimeBoundaryCompositionSystemHelper
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource,
-        Func<BuildingGameplayCompositionSourceSystem, BuildingProductionContextSystem.Source> createProductionRuntimeContextSource,
+        Func<BuildingGameplayCompositionSourceSystem, BuildingProductionContextCompositionSystemHelper.Source> createProductionRuntimeContextSource,
         Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
     {
         return new BuildingRuntimeBoundaryPublishSystem.Context(
@@ -19,7 +19,7 @@ internal sealed class BuildingRuntimeBoundaryCompositionSystemHelper
             source.BuildingRuntimeSpawnSystem,
             source.BuildingRuntimeContextSystem.CreateSpawnContext(createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock)),
             source.BuildingProductionRequestBoundary,
-            source.BuildingProductionContextSystem.CreateProductionRequestContext(createProductionRuntimeContextSource(source)),
+            source.BuildingProductionContextCompositionSystemHelper.CreateProductionRequestContext(createProductionRuntimeContextSource(source)),
             source.BuildingRuntimeQuerySystem,
             source.BuildingRuntimeContextSystem.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
             source.FactionResourceSystem,

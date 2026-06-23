@@ -4,7 +4,7 @@ using UnityEngine;
 
 internal sealed class BuildingProductionCompositionSystemHelper
 {
-    public BuildingProductionContextSystem.Source CreateRuntimeContextSource(
+    public BuildingProductionContextCompositionSystemHelper.Source CreateRuntimeContextSource(
         BuildingGameplayCompositionSourceSystem source,
         Func<BuildingGameplayCompositionSourceSystem, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandSystem.Context> createPlacementCommandContext,
@@ -14,8 +14,8 @@ internal sealed class BuildingProductionCompositionSystemHelper
         BuildingRuntimeContextSystem.RuntimeSource runtimeSource = createRuntimeContextSource(source);
         BuildingRuntimeQuerySystem.Context runtimeQueryContext = source.BuildingRuntimeContextSystem.CreateRuntimeQueryContext(runtimeSource);
         BuildingSpawnSystem.Context spawnContext = source.BuildingRuntimeContextSystem.CreateBuildingSpawnContext(runtimeSource);
-        BuildingProductionContextSystem.Source productionSource = default;
-        productionSource = source.BuildingProductionContextSystem.CreateSource(
+        BuildingProductionContextCompositionSystemHelper.Source productionSource = default;
+        productionSource = source.BuildingProductionContextCompositionSystemHelper.CreateSource(
             source.RuntimeBuildingSystem.Buildings,
             source.BuildingPlacementStartupSystem.WorldCamera,
             source.BuildingDefinitionSystem,
@@ -39,7 +39,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock),
                 cost),
             (building, productionIndex, spawnUnitPrefab) =>
-                source.BuildingProductionContextSystem.TryQueuePlayerUnitProduction(
+                source.BuildingProductionContextCompositionSystemHelper.TryQueuePlayerUnitProduction(
                     productionSource,
                     building,
                     productionIndex,

@@ -370,7 +370,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 createBuildingSelectionContext),
             createPlacementCommandContext,
             (source, placementInteractionContext, placementMarkerPropertyBlock) =>
-                source.BuildingProductionContextSystem.CreateProductionRequestContext(
+                source.BuildingProductionContextCompositionSystemHelper.CreateProductionRequestContext(
                     source.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
                         source,
                         createRuntimeContextSource,

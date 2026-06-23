@@ -26,6 +26,7 @@ public static class MatchHudFullMapPopupPrefabSetup
     private const string PhaseKey = "MatchHudFullMapPopupPrefabSetup.Phase";
     private const string StartedAtKey = "MatchHudFullMapPopupPrefabSetup.StartedAt";
     private const string PopupOpenedKey = "MatchHudFullMapPopupPrefabSetup.PopupOpened";
+    private const string CloseInvokedKey = "MatchHudFullMapPopupPrefabSetup.CloseInvoked";
     private const double RuntimeSmokeTimeoutSeconds = 120d;
 
     private enum RuntimeSmokePhase
@@ -86,6 +87,7 @@ public static class MatchHudFullMapPopupPrefabSetup
             SessionState.SetInt(PhaseKey, (int)RuntimeSmokePhase.WaitingForPlayMode);
             SessionState.SetFloat(StartedAtKey, (float)EditorApplication.timeSinceStartup);
             SessionState.SetBool(PopupOpenedKey, false);
+            SessionState.SetBool(CloseInvokedKey, false);
             RegisterRuntimeSmokeCallbacks();
             EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
             EditorApplication.EnterPlaymode();
@@ -181,6 +183,14 @@ public static class MatchHudFullMapPopupPrefabSetup
 
             if (phase == RuntimeSmokePhase.ClosingPopup)
             {
+                if (SessionState.GetBool(CloseInvokedKey, false))
+                {
+                    MatchHudFullMapPopupView openPopup = FindActiveObject<MatchHudFullMapPopupView>();
+                    if (openPopup == null || !openPopup.IsOpen)
+                        FinishRuntimeSmoke(true, "Compact minimap opened full-screen tactical map and close action dismissed it.");
+                    return;
+                }
+
                 MatchHudFullMapPopupView popupView = FindActiveObject<MatchHudFullMapPopupView>();
                 if (popupView == null || !popupView.IsOpen)
                     return;
@@ -197,18 +207,12 @@ public static class MatchHudFullMapPopupPrefabSetup
                     return;
                 }
 
-                InvokeCloseAction(popupView);
-                EditorApplication.delayCall += () =>
-                {
-                    MatchHudFullMapPopupView openPopup = FindActiveObject<MatchHudFullMapPopupView>();
-                    if (openPopup != null && openPopup.IsOpen)
-                    {
-                        FinishRuntimeSmoke(false, "Full-map close action did not close the popup.");
-                        return;
-                    }
+                if (popupView.Minimap.MapImage == null || popupView.Minimap.MapImage.sprite == null)
+                    return;
 
-                    FinishRuntimeSmoke(true, "Compact minimap opened full-screen tactical map and close action dismissed it.");
-                };
+                InvokeCloseAction(popupView);
+                SessionState.SetBool(CloseInvokedKey, true);
+                return;
             }
         }
         catch (Exception exception)
@@ -387,6 +391,7 @@ public static class MatchHudFullMapPopupPrefabSetup
         SessionState.EraseInt(PhaseKey);
         SessionState.EraseFloat(StartedAtKey);
         SessionState.EraseBool(PopupOpenedKey);
+        SessionState.EraseBool(CloseInvokedKey);
 
         if (passed)
             Debug.Log($"[MatchHudFullMapPopupRuntimeSmoke] result=Passed {message}");
@@ -423,10 +428,10 @@ public static class MatchHudFullMapPopupPrefabSetup
 
             GameObject panel = CreateImageObject("TacticalMapPanel", root.transform, outerFrame, Color.white, true, Image.Type.Sliced);
             RectTransform panelRect = panel.GetComponent<RectTransform>();
-            ConfigureRect(panelRect, new Vector2(0.035f, 0.055f), new Vector2(0.965f, 0.945f), Vector2.zero, Vector2.zero);
+            ConfigureRect(panelRect, new Vector2(0.025f, 0.035f), new Vector2(0.975f, 0.965f), Vector2.zero, Vector2.zero);
 
             TMP_Text title = CreateText("Title", panel.transform, "TACTICAL MAP", font, 44f, TextAlignmentOptions.Left);
-            ConfigureRect(title.rectTransform, new Vector2(0.045f, 0.905f), new Vector2(0.55f, 0.97f), Vector2.zero, Vector2.zero);
+            ConfigureRect(title.rectTransform, new Vector2(0.045f, 0.915f), new Vector2(0.55f, 0.975f), Vector2.zero, Vector2.zero);
 
             Button closeAction = CreateIconAction(
                 "CloseAction",
@@ -435,16 +440,16 @@ public static class MatchHudFullMapPopupPrefabSetup
                 closeIcon,
                 new Vector2(1f, 1f),
                 new Vector2(1f, 1f),
-                new Vector2(-70f, -54f),
-                new Vector2(86f, 78f));
+                new Vector2(-104f, -76f),
+                new Vector2(152f, 132f));
 
             GameObject mapFrame = CreateImageObject("MapFrame", panel.transform, innerFrame, Color.white, true, Image.Type.Sliced);
             RectTransform mapFrameRect = mapFrame.GetComponent<RectTransform>();
-            ConfigureRect(mapFrameRect, new Vector2(0.035f, 0.075f), new Vector2(0.965f, 0.88f), Vector2.zero, Vector2.zero);
+            ConfigureRect(mapFrameRect, new Vector2(0.018f, 0.048f), new Vector2(0.982f, 0.91f), Vector2.zero, Vector2.zero);
 
-            GameObject map = CreateImageObject("Map", mapFrame.transform, null, new Color(0.05f, 0.06f, 0.045f, 1f), true, Image.Type.Simple);
+            GameObject map = CreateImageObject("Map", mapFrame.transform, null, new Color(0.48f, 0.43f, 0.34f, 1f), true, Image.Type.Simple);
             RectTransform mapRect = map.GetComponent<RectTransform>();
-            ConfigureRect(mapRect, new Vector2(0.025f, 0.035f), new Vector2(0.975f, 0.965f), Vector2.zero, Vector2.zero);
+            ConfigureRect(mapRect, new Vector2(0.006f, 0.009f), new Vector2(0.994f, 0.991f), Vector2.zero, Vector2.zero);
             MatchHudMinimapView minimapView = map.AddComponent<MatchHudMinimapView>();
 
             GameObject markerRoot = CreateUiObject("Markers", map.transform);
@@ -464,7 +469,7 @@ public static class MatchHudFullMapPopupPrefabSetup
                 zoomFrame,
                 zoomInIcon,
                 new Vector2(0.925f, 0.245f),
-                new Vector2(0.982f, 0.37f),
+                new Vector2(0.975f, 0.365f),
                 Vector2.zero,
                 Vector2.zero);
             Button zoomOut = CreateIconAction(
@@ -473,7 +478,7 @@ public static class MatchHudFullMapPopupPrefabSetup
                 zoomFrame,
                 zoomOutIcon,
                 new Vector2(0.925f, 0.105f),
-                new Vector2(0.982f, 0.23f),
+                new Vector2(0.975f, 0.225f),
                 Vector2.zero,
                 Vector2.zero);
 
@@ -481,6 +486,7 @@ public static class MatchHudFullMapPopupPrefabSetup
             ConfigureRect(instruction.rectTransform, new Vector2(0.22f, 0.015f), new Vector2(0.78f, 0.07f), Vector2.zero, Vector2.zero);
 
             minimapView.Configure(map.GetComponent<Image>(), mapRect, viewportRect, zoomIn, zoomOut, markerRect);
+            RemoveGeneratedZoomRelays(zoomIn, zoomOut);
             var popupObject = new SerializedObject(popupView);
             SetObject(popupObject, "popupRoot", root);
             SetObject(popupObject, "minimap", minimapView);
@@ -549,6 +555,19 @@ public static class MatchHudFullMapPopupPrefabSetup
             throw new System.InvalidOperationException($"{context} minimap is missing MarkerRoot.");
     }
 
+    private static void RemoveGeneratedZoomRelays(params Button[] zoomActions)
+    {
+        for (int i = 0; i < zoomActions.Length; i++)
+        {
+            Button zoomAction = zoomActions[i];
+            MatchHudMinimapZoomPressRelay relay = zoomAction != null
+                ? zoomAction.GetComponent<MatchHudMinimapZoomPressRelay>()
+                : null;
+            if (relay != null)
+                UnityEngine.Object.DestroyImmediate(relay);
+        }
+    }
+
     private static Button CreateIconAction(
         string name,
         Transform parent,
@@ -577,7 +596,7 @@ public static class MatchHudFullMapPopupPrefabSetup
         {
             GameObject iconObject = CreateImageObject("Icon", action.transform, icon, Color.white, false, Image.Type.Simple);
             RectTransform iconRect = iconObject.GetComponent<RectTransform>();
-            ConfigureRect(iconRect, new Vector2(0.25f, 0.25f), new Vector2(0.75f, 0.75f), Vector2.zero, Vector2.zero);
+            ConfigureRect(iconRect, new Vector2(0.20f, 0.20f), new Vector2(0.80f, 0.80f), Vector2.zero, Vector2.zero);
             iconObject.GetComponent<Image>().preserveAspect = true;
         }
 

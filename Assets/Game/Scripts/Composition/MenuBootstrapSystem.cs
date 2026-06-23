@@ -47,11 +47,6 @@ internal sealed class MenuBootstrapSystem
     private SelectionUiCommandSystem boundSelectionUiCommand;
     private SelectionUiReadModelSystem boundSelectionUiReadModel;
     private MainMenuPlayUI boundMainMenu;
-    private IBuildingUiCommand boundUiToolkitBuildingUiCommand;
-    private IBuildingUiQuery boundUiToolkitBuildingUiQuery;
-    private ICatalogPrefabSource boundUiToolkitUnitPrefabSource;
-    private ICatalogPrefabSource boundUiToolkitBuildingPrefabSource;
-    private UiToolkitMatchHudMinimapSurface boundUiToolkitMinimapSurface;
     private int boundContentVersion = -1;
 
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => performanceDiagnosticsSystem;
@@ -65,14 +60,6 @@ internal sealed class MenuBootstrapSystem
         bool wasInitialized = initialized;
         EnsurePersistentDiagnosticsInitialized();
         view.ApplyRuntimeUiMode();
-        if (view.IsUiToolkitMode)
-        {
-            if (!wasInitialized)
-                ResetShellForFreshMenuScene();
-
-            initialized = true;
-            return;
-        }
 
         if (view.ShellEcsPresentation != null)
             view.ShellEcsPresentation.Configure(view.ShellView);
@@ -112,7 +99,6 @@ internal sealed class MenuBootstrapSystem
         if (view == null)
             return;
         view.ApplyRuntimeUiMode();
-        bool useUiToolkit = view.IsUiToolkitMode;
 
         if (!TryGetWorldEntityManager(out EntityManager entityManager))
             return;
@@ -124,19 +110,9 @@ internal sealed class MenuBootstrapSystem
             return;
 
         UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
-        if (!useUiToolkit)
-            ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
+        ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
         QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
         UpdateActualLoadingProgress(entityManager, boundary, shellState);
-        if (useUiToolkit)
-        {
-            ApplyUiToolkitPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
-            BindUiToolkitMatchReadModels(view, shellState);
-            ClearBoundMatchRuntimeUi();
-            return;
-        }
-
-        ClearUiToolkitMatchReadModels();
         BindMatchRuntimeUi(view, shellState);
     }
 
@@ -155,7 +131,6 @@ internal sealed class MenuBootstrapSystem
         ResetMatchReadyHoldWindow();
         matchLoadQueuedForCurrentRoute = false;
         ClearBoundMatchRuntimeUi();
-        ClearUiToolkitMatchReadModels();
         if (!diagnosticsInitialized)
             return;
 
@@ -425,111 +400,6 @@ internal sealed class MenuBootstrapSystem
         boundContentVersion = contentVersion;
     }
 
-    private void BindUiToolkitMatchReadModels(MenuBootstrapView view, UiShellStateComponent shellState)
-    {
-        if (shellState.ActiveRoute != UIRoute.Match)
-        {
-            ClearUiToolkitMatchReadModels();
-            return;
-        }
-
-        if (!matchSceneReferenceSystem.TryGetLoadedMatchSceneView(out MatchSceneView matchScene))
-        {
-            ClearUiToolkitMatchReadModels();
-            return;
-        }
-
-        MatchBootstrapSystem matchBootstrap = matchScene.MatchBootstrap;
-        MainMenuPlayUI mainMenu = matchBootstrap != null
-            ? matchBootstrap.EnsureMainMenuRuntimeDependencies()
-            : null;
-        BindUiToolkitMinimapSurface(view, mainMenu);
-
-        IBuildingUiCommand command = matchBootstrap != null
-            ? matchBootstrap.BuildingUiCommandContract
-            : null;
-        IBuildingUiQuery buildQuery = matchBootstrap != null
-            ? matchBootstrap.BuildingUiQueryContract
-            : null;
-        BuildingPlacementSystemConfig buildingConfig = matchBootstrap != null
-            ? matchBootstrap.BuildingPlacementConfig
-            : null;
-        ICatalogPrefabSource unitPrefabSource = buildingConfig != null && buildingConfig.UnitPrefabRegistryConfig != null
-            ? buildingConfig.UnitPrefabRegistryConfig
-            : buildingConfig;
-        ICatalogPrefabSource buildingPrefabSource = buildingConfig;
-        if (ReferenceEquals(boundUiToolkitBuildingUiCommand, command) &&
-            ReferenceEquals(boundUiToolkitBuildingUiQuery, buildQuery) &&
-            ReferenceEquals(boundUiToolkitUnitPrefabSource, unitPrefabSource) &&
-            ReferenceEquals(boundUiToolkitBuildingPrefabSource, buildingPrefabSource))
-        {
-            return;
-        }
-
-        UiBuildPlacementReadModelSource.Configure(command);
-        UiBuildDrawerReadModelSource.Configure(
-            unitPrefabSource,
-            buildingPrefabSource,
-            command,
-            buildQuery,
-            UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
-            UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
-        boundUiToolkitBuildingUiCommand = command;
-        boundUiToolkitBuildingUiQuery = buildQuery;
-        boundUiToolkitUnitPrefabSource = unitPrefabSource;
-        boundUiToolkitBuildingPrefabSource = buildingPrefabSource;
-    }
-
-    private void ClearUiToolkitMatchReadModels()
-    {
-        ClearUiToolkitMinimapSurface();
-        if (boundUiToolkitBuildingUiCommand == null &&
-            boundUiToolkitBuildingUiQuery == null &&
-            boundUiToolkitUnitPrefabSource == null &&
-            boundUiToolkitBuildingPrefabSource == null &&
-            !UiBuildPlacementReadModelSource.HasBuildingUiCommand &&
-            !UiBuildDrawerReadModelSource.HasCatalogSources)
-        {
-            return;
-        }
-
-        UiBuildPlacementReadModelSource.Clear();
-        UiBuildDrawerReadModelSource.Clear();
-        boundUiToolkitBuildingUiCommand = null;
-        boundUiToolkitBuildingUiQuery = null;
-        boundUiToolkitUnitPrefabSource = null;
-        boundUiToolkitBuildingPrefabSource = null;
-    }
-
-    private void BindUiToolkitMinimapSurface(MenuBootstrapView view, MainMenuPlayUI mainMenu)
-    {
-        if (view == null || view.UiToolkitShellRoot == null || view.UiToolkitShellView == null || mainMenu == null)
-        {
-            ClearUiToolkitMinimapSurface();
-            return;
-        }
-
-        UiToolkitMatchHudMinimapSurface surface =
-            UiToolkitMatchHudMinimapSurface.Ensure(view.UiToolkitShellRoot);
-        if (surface == null)
-        {
-            ClearUiToolkitMinimapSurface();
-            return;
-        }
-
-        surface.Configure(view.UiToolkitShellView, mainMenu);
-        boundUiToolkitMinimapSurface = surface;
-    }
-
-    private void ClearUiToolkitMinimapSurface()
-    {
-        if (boundUiToolkitMinimapSurface == null)
-            return;
-
-        boundUiToolkitMinimapSurface.Clear();
-        boundUiToolkitMinimapSurface = null;
-    }
-
     private void ClearBoundMatchRuntimeUi()
     {
         boundMatchRuntimeView = null;
@@ -575,31 +445,6 @@ internal sealed class MenuBootstrapSystem
         }
 
         RestoreUiPresentationMode(uiCamera, uiCanvas);
-    }
-
-    private void ApplyUiToolkitPresentationMode(Camera uiCamera, Canvas uiCanvas, UiShellStateComponent shellState, EntityManager entityManager)
-    {
-        CaptureUiPresentationMode(uiCamera, uiCanvas);
-
-        if (uiCanvas != null && uiCanvas.enabled)
-            uiCanvas.enabled = false;
-
-        if (uiCamera == null)
-            return;
-
-        if (shellState.ActiveRoute == UIRoute.Match && IsMatchSceneLoaded(entityManager))
-        {
-            if (uiCamera.clearFlags != CameraClearFlags.Depth)
-                uiCamera.clearFlags = CameraClearFlags.Depth;
-            if (uiCamera.enabled)
-                uiCamera.enabled = false;
-            return;
-        }
-
-        if (uiCamera.clearFlags != CameraClearFlags.SolidColor)
-            uiCamera.clearFlags = CameraClearFlags.SolidColor;
-        if (!uiCamera.enabled)
-            uiCamera.enabled = true;
     }
 
     private void CaptureUiPresentationMode(Camera uiCamera, Canvas uiCanvas)

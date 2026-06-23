@@ -14,7 +14,6 @@
         "Game.UI.Shell.Contracts.Ecs",
         "Game.UI.Shell.Ecs",
         "Game.UI.Runtime",
-        "Game.UI.Toolkit",
         "Game.Runtime",
         "sniveler-code.gpu-animation",
         "Unity.Collections",

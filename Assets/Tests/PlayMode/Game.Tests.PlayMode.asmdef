@@ -9,7 +9,6 @@
         "Game.Configs",
         "Game.Rendering.Contracts",
         "Game.UI.Contracts",
-        "Game.UI.Toolkit",
         "Game.UI.Shell.Ecs",
         "Game.UI.Runtime",
         "Game.Runtime",

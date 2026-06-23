@@ -145,6 +145,8 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
             allowMapFocus: true,
             allowZoom: true,
             openFullMapOnClick: false);
+        _matchHudFullMapInputSystem.NotifyStaticMapChanged();
+        _matchHudFullMapInputSystem.Update();
     }
 
     public void BindMatchHudCommandControls(MatchOverlayCommandControlsView commandControlsView)

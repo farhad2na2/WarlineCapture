@@ -43,7 +43,7 @@
 
 | Stage | Priority | Status | Owner | Depends on | Blocks | Validation status |
 |---|---|---|---|---|---|---|
-| 0 - Stabilize Baseline | P0 | Pending | TBD | None | All perf claims | Not run |
+| 0 - Stabilize Baseline | P0 | Blocked | User, then Support | None | All perf claims | Compile passed; architecture validation passed; live profiler baseline missing |
 | 1 - Low-Risk Confirmed GC Fixes | P0 | Pending | TBD | Stage 0 preferred | Later perf comparison | Not run |
 | 2 - Refresh ECS Guard Audit + Batch Guards | P0 | Pending | TBD | Stage 0 preferred | Stage 4, Stage 7 | Not run |
 | 3 - UI Shell ECS Creation Safety | P0 | Pending | TBD | Stage 2 preferred | UI shell cleanup | Not run |
@@ -52,7 +52,7 @@
 | 6 - `Game.UI.Contracts` Cleanup | P1 | Pending | TBD | Current architecture boundary | UI contracts purity | Not run |
 | 7 - Burst + Parallelism | P1 | Pending | TBD | Stages 2, 4 | Hot ECS perf work | Not run |
 | 8 - Runtime Building Transform Link Review | P1 | Pending | TBD | Stage 0 preferred | Building transform optimization | Not run |
-| 9 - Namespace Migration | P2 | Pending | TBD | Separate refactor window | Namespace/rootNamespace cleanup | Not run |
+| 9 - Namespace Migration | P2 | Skipped | User-deferred | Separate refactor window | Namespace/rootNamespace cleanup | Deferred by user |
 | 10 - Structural Hygiene | P2 | Pending | TBD | Stages 0-9 as relevant | Long-term maintainability | Not run |
 
 ## Validation Ladder
@@ -70,33 +70,49 @@
 
 | Field | Value |
 |---|---|
-| Status | Pending |
+| Status | Blocked |
 | Priority | P0 |
-| Owner | TBD |
+| Owner | Support |
 | Dependencies | None |
 | Blocks | All measured performance claims |
-| Validation status | Not run |
+| Validation status | Compile passed; architecture validation passed; live profiler baseline missing |
 
 **Goal:** Establish a clean reference point before changing behavior.
 
 **Checklist**
 
-- [ ] Check `git status --short --untracked-files=no` and record unrelated dirty files.
-- [ ] Run Unity compile before code changes.
-- [ ] Run `ScriptArchitectureAlignmentContractTests`.
+- [x] Check `git status --short --untracked-files=no` and record unrelated dirty files.
+- [x] Run Unity compile before code changes.
+- [x] Run `ScriptArchitectureAlignmentContractTests`.
 - [ ] Capture a 60 second Profiler baseline in Editor with a live match.
 - [ ] Save raw capture as `ProfilerCaptures/baseline_2026-06-23.raw`.
 - [ ] Record main-thread ms/frame, GC alloc/frame, and top hot systems in `Design/AgentReports/2026-06-23_perf_baseline_numbers.md`.
 
 **Acceptance**
 
-- [ ] Compile is clean before remediation.
-- [ ] Architecture tests pass or known failures are documented.
+- [x] Compile is clean before remediation.
+- [x] Architecture tests pass or known failures are documented.
 - [ ] Baseline numbers exist before any performance claim is made.
 
 **Notes**
 
-- Pending.
+- 2026-06-23 heartbeat: `git status --short --untracked-files=no` showed unrelated staged UI visual-lock artifacts:
+  - `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-19_Armory/iteration_04/shadow_canvas_scn19_armory_left_nav_safe_inset_1920x1080.log`
+  - `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-19_Armory/iteration_04/shadow_canvas_scn19_armory_left_nav_safe_inset_1920x1080.png`
+- 2026-06-23 heartbeat: Unity batch validation command compiled the project, then `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation` failed.
+- Original validation log: `/private/tmp/warline-architecture-boundary-stage0.log`.
+- Original failure: `Game.UI.Runtime` directly used ECS APIs through `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs:3` (`using Unity.Entities`), violating `UiRuntimeScriptsMustNotUseDirectEcsApis`.
+- 2026-06-23 follow-up: user confirmed UI Toolkit runtime C# should be deleted while keeping UI Toolkit USS/UXML/style assets.
+- Removed UI Toolkit C# runtime/editor/test code and the `Game.UI.Toolkit` asmdef; Canvas is now the only compiled runtime UI mode.
+- Kept `Assets/Game/UI Toolkit` style/source assets intact; static check found 28 retained `.uss`/`.uxml`/`.tss` assets.
+- Re-ran `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation`; result passed: `[ScriptArchitectureBoundaryValidation] result=Passed tests=28`.
+- Re-ran `UIShellCurrentContentLoadTests.RunFocusedValidation`; result passed: `[UIShellCurrentContentLoadValidation] result=Passed tests=8`.
+- Profiler baseline remains missing; `ProfilerCaptures/` is empty.
+- 2026-06-23 heartbeat: checked existing automated profiler helpers. `MatchGcAllocationCallstackCapture` is useful for GC call-stack ranking, but it writes old 2026-06-11 reports, captures 300 frames, and prior notes say batchmode raw loading is aggregate/not trustworthy for steady per-frame baseline numbers.
+- Exact blocker: a live Editor Profiler capture of a warmed Match session is still required before Stage 1 performance claims.
+- Required user action: open the project in Unity Editor, enter Play Mode, route Menu -> Match, let the match warm up, record about 60 seconds in Unity Profiler with Deep Profile off and GC.Alloc call stacks enabled, then save the raw capture as `ProfilerCaptures/baseline_2026-06-23.raw`.
+- Support follow-up after file exists: read the capture/report, record main-thread ms/frame, GC alloc/frame, and top hot systems in `Design/AgentReports/2026-06-23_perf_baseline_numbers.md`, then move Stage 0 to Complete and continue Stage 1.
+- Stage 0 remains blocked only on the missing live profiler baseline before any measured performance claim.
 
 ---
 
@@ -459,12 +475,12 @@ That can prevent the system from ever running to create the boundary.
 
 | Field | Value |
 |---|---|
-| Status | Pending |
+| Status | Skipped |
 | Priority | P2 |
-| Owner | TBD |
+| Owner | User-deferred |
 | Dependencies | Separate refactor window |
 | Blocks | Namespace/rootNamespace cleanup |
-| Validation status | Not run |
+| Validation status | Deferred by user |
 
 **Goal:** Add namespaces aligned with asmdefs without mixing with gameplay/performance changes.
 
@@ -506,7 +522,7 @@ That can prevent the system from ever running to create the boundary.
 
 **Notes**
 
-- Pending.
+- User deferred namespace migration. Do not work on Stage 9 until the user explicitly resumes it.
 
 ---
 
@@ -554,7 +570,7 @@ That can prevent the system from ever running to create the boundary.
 7. [ ] Stage 6 - UI contracts cleanup with bridge/adaptor design.
 8. [ ] Stage 7 - Burst/parallelism on proven hot systems.
 9. [ ] Stage 8 - Building transform link review.
-10. [ ] Stage 9 - Namespace migration as its own refactor.
+10. [x] Stage 9 - Namespace migration as its own refactor. Deferred by user; do not execute for this remediation pass.
 11. [ ] Stage 10 - Lower-priority structural hygiene.
 
 ## Merge Gate
@@ -565,4 +581,3 @@ That can prevent the system from ever running to create the boundary.
 - [ ] Focused tests for touched code pass.
 - [ ] Match smoke passes when runtime/bootstrap/UI shell code is touched.
 - [ ] Performance claims include before/after profiler evidence.
-

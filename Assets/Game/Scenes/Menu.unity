@@ -755,39 +755,13 @@ GameObject:
   m_Component:
   - component: {fileID: 463212253}
   - component: {fileID: 463212254}
-  - component: {fileID: 463212252}
   m_Layer: 0
   m_Name: UiToolkitShellRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &463212252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 463212251}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f49e9ee74b702491ab8187c305e4dd50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.UI.Toolkit::UiToolkitShellView
-  document: {fileID: 463212254}
-  shellAsset: {fileID: 9197481963319205126, guid: a466ab41bd004cbfaa1dded2736eff8a, type: 3}
-  loadingScreenAsset: {fileID: 9197481963319205126, guid: 5dd0d148d10d6483bbfb89672dd0d3f3, type: 3}
-  mainMenuScreenAsset: {fileID: 9197481963319205126, guid: 91fca1ce2daf54e9fa6e8bd8b6e807c2, type: 3}
-  matchHudScreenAsset: {fileID: 9197481963319205126, guid: 70ee6d9947f8461f8dc9aa4d027325bc, type: 3}
-  armoryScreenAsset: {fileID: 9197481963319205126, guid: 248d5f1134a34a09856eb537fe02dd56, type: 3}
-  commanderProfileScreenAsset: {fileID: 9197481963319205126, guid: 90b52afd578df4d919c71fc639d1760e, type: 3}
-  buildDrawerPopupAsset: {fileID: 9197481963319205126, guid: 016d5f7dbcf6469d88b60e1537c2b282, type: 3}
-  missionResultPopupAsset: {fileID: 9197481963319205126, guid: b577e0043d6c5494a85f2f6cc7bd1b6f, type: 3}
-  settingsPopupAsset: {fileID: 9197481963319205126, guid: db2af03b0053c4510a87520f470a8d22, type: 3}
-  inboxPopupAsset: {fileID: 9197481963319205126, guid: 004bef2389bb04602a256d1edc808429, type: 3}
-  buildPlacementConfirmationBarAsset: {fileID: 9197481963319205126, guid: 7da0312c479b4c778d7b514c3397435b, type: 3}
-  mainMenuBackgroundSprite: {fileID: 21300000, guid: 31760621cc3a4cde8149751f5f9097df, type: 3}
+  m_IsActive: 0
 --- !u!4 &463212253
 Transform:
   m_ObjectHideFlags: 0
@@ -2460,9 +2434,6 @@ MonoBehaviour:
   runtimeUiConfig: {fileID: 11400000, guid: d2c44335263b4a319f6ef8cebdde548a, type: 2}
   uiCamera: {fileID: 348415466}
   uiCanvas: {fileID: 1738460052}
-  uiToolkitDocument: {fileID: 463212254}
-  uiToolkitShellRoot: {fileID: 463212251}
-  uiToolkitShellView: {fileID: 463212252}
   shellView: {fileID: 1818590231}
   shellEcsPresentation: {fileID: 1818590230}
   contentSystem: {fileID: 1818590229}

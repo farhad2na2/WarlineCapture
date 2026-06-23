@@ -18,10 +18,10 @@ Approved visual source:
 
 ## Progress Snapshot
 
-- Checklist progress: `59 / 158 complete (37.3%)`.
+- Checklist progress: `60 / 158 complete (38.0%)`.
 - In progress: `1`.
-- Remaining open: `99`.
-- Current target: `Phase 3 - SCN-19 Armory initial panel-family audit and first correction plan`.
+- Remaining open: `98`.
+- Current target: `Phase 3 - SCN-19 Armory catalog card scale and state pass`.
 - Active Canvas shell/modal surfaces target-matched: `1 / 12`.
 - Secondary/reference Canvas popup surfaces target-matched: `1 / 6`.
 - Secondary/reference Canvas popup baseline captured or decisioned: `6 / 6`.
@@ -74,8 +74,11 @@ Recent slice notes:
 - User approved SCN-02 Canvas Main Menu iteration 66 as the main menu visual baseline. This approval locks the current Canvas main menu choices as the shared reference for later menu-adjacent Canvas screens: UI Toolkit-approved logo, shared header/resource rhythm, two-button Inbox/Settings action rule for Main Menu, left-nav chrome, separate right-side live panels, thin sliced chrome from correct PPU/Image multiplier, and full-frame selectable states.
 - Still wrong / next iteration: no known SCN-02 Main Menu defects remain after user approval. Next action is to start the next tracker surface using the updated playbook and the approved SCN-02 Canvas baseline.
 - SCN-19 Armory initial audit started from the approved SCN-02 Canvas baseline. The new-art reference bitmap now exists despite the stale reference README; baseline comparison artifacts were created under `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-19_Armory/iteration_01/`: `scn19_reference_vs_canvas_baseline_1920x1080.png` and `scn19_focused_baseline_contact.png`.
-- SCN-19 first-panel-family findings: current Canvas Armory does not yet match the approved product family. Header/resource chrome is legacy and not using the approved SCN-02 rhythm; the left-side category/nav area is effectively absent in the active baseline; the right inspection panel is clipped off-screen; bottom navigation is legacy and too small; central catalog cards are not visible in the active baseline. Commander Profile remains prefab-only/not active in the current Canvas route notes, so the next active runtime surface is Armory.
-- Still wrong / next iteration: for SCN-19, first fix only the shared shell/header/left-category panel family before catalog or right-panel work. Exact next fixes: reuse the approved SCN-02 header/logo/resource rhythm where the Armory target allows, establish visible left category buttons with full-frame Target Lock states and safe icon/text padding, keep runtime-bound names intact, then recapture focused header/left-nav crops before moving to center catalog cards.
+- SCN-19 first-panel-family findings: current Canvas Armory does not yet match the approved product family. The Armory mockup header differs from the approved SCN-02 header, but user direction now locks every menu-adjacent Canvas screen to the SCN-02 main menu header unchanged; do not target-match a separate Armory header. The left-side category/nav area was effectively absent in the active baseline; the right inspection panel is clipped off-screen; bottom navigation is legacy and too small; central catalog cards are not visible in the active baseline. Commander Profile remains prefab-only/not active in the current Canvas route notes, so the next active runtime surface is Armory.
+- Still wrong / next iteration: for SCN-19, keep the inherited SCN-02 main menu header unchanged and fix only the left-category panel family before catalog or right-panel work. Exact next fixes: establish visible left category buttons with full-frame Target Lock states and safe icon/text padding, keep runtime-bound names intact, then recapture focused left-nav crops before moving to center catalog cards.
+- SCN-19 locked-header inheritance and left-nav slice validated in the shadow project after refreshing the stale Armory baseline. No Armory-specific header edits were made. Current evidence is saved under `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-19_Armory/iteration_06/`: `shadow_canvas_scn19_armory_left_nav_scaled_fit_1920x1080.png` and `scn19_iter06_reference_vs_canvas_contact.png`.
+- SCN-19 left-nav correction keeps the approved SCN-02 shared chrome/style while adding Armory-only child overrides for the five category rows. The row frames, icons, labels, and chevrons now fit the narrower Armory category column without clipping at the screen edge.
+- Still wrong / next iteration: SCN-19 is not screen-complete. Catalog cards are still too dense/small compared with the Target Lock Armory reference, card state coverage needs a proper default/hover/selected/pressed/disabled audit, the right inspection panel still needs a separate-section padding/readability pass, and footer tabs remain legacy/tiny. Next fix only the catalog-card family before right-detail or footer work.
 - Added editor-only route-capture cleanup for `MenuDiagnosticsPanel`/`Panel_FPS`/`Label_FPS` so visual screenshots do not include the scene FPS diagnostics overlay. This does not change runtime route behavior or gameplay.
 - Latest shadow-project approval artifact: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-02C_MainMenuBrightCommand/iteration_02/shadow_canvas_scn02_mainmenu_iter11_no_diagnostics_1920x1080.png`.
 - Applied the shared card state seed to the existing SCN-02 Main Menu mode cards without renaming runtime-bound objects: the transparent hotspot remains the raycast target, while each Button now targets the visible full-frame card Image for default/hover/pressed/selected/disabled sprite swapping.
@@ -85,7 +88,7 @@ Recent slice notes:
 - Saved shadow validation artifacts under `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/shared/`: `shadow_scn02_mode_card_state_seed_4800x2160.png`, `shadow_popup_frame_target_lock_seed_4800x2160.png`, and `shadow_scn02_shell_placeholder_seed_4800x2160.png`.
 - Verified the shared left-navigation reuse contract for the Canvas Phase 2 pass: SCN-02 Main Menu and SCN-19 Armory use the same seeded left-nav style, while SCN-08 Match HUD remains excluded from menu nav/header reuse.
 - Captured focused Phase 2 shadow evidence under `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/phase2/`: Main Menu and Armory left-nav overlap at `1920x1080`, Main Menu header/logo scale at `1280x720`, and header/nav crop artifacts.
-- Kept the header treatment/header-reuse checklist open because the current Canvas header still needs a dedicated pass before it is claimed as the final shared header baseline.
+- User locked the shared menu header after SCN-02 approval: every menu-adjacent Canvas screen must inherit the approved SCN-02 main menu header unchanged. Future menu-screen passes skip header target-matching unless the shared SCN-02 header itself is explicitly reopened by the user.
 
 ## Decision
 
@@ -287,7 +290,8 @@ Forbidden unless separately approved:
 
 These rules override pixel-level mockup matching when they conflict:
 
-- Reuse the approved SCN-02 main menu header/chrome for main-menu-adjacent Canvas screens.
+- Keep the approved SCN-02 main menu header/chrome unchanged for main-menu-adjacent Canvas screens.
+- Do not create, restyle, resize, or replace per-screen menu headers; ignore mockup header differences outside the approved shared header.
 - Reuse the approved SCN-02 left navigation style for main-menu-adjacent Canvas screens; only icons, labels, and active route change.
 - Match HUD owns its own gameplay header and may differ from menu chrome.
 - If a reference uses one large baked multi-section background, rebuild it as separate Canvas panels like the approved UI Toolkit SCN-02 right commander area.
@@ -411,7 +415,7 @@ Make the Canvas shell match the approved Target Lock visual language while prese
 - [x] Port the approved SCN-02 logo/header treatment into Canvas shell/header regions.
 - [x] Port the approved SCN-02 left navigation background into Canvas.
 - [x] Update `MainMenuLeftNavButton.prefab` to use the shared Target Lock button states.
-- [ ] Confirm menu-adjacent screens reuse the same header prefab/style.
+- [ ] Validate menu-adjacent screens keep the locked SCN-02 main menu header unchanged before each surface is counted target-matched.
 - [x] Confirm menu-adjacent screens reuse the same left navigation prefab/style.
 - [x] Keep Match HUD excluded from menu header/nav reuse.
 - [x] Validate left nav does not overlap the middle region at 4800x2160.
@@ -452,7 +456,7 @@ Update Canvas menu screens using the shared shell, header, and left nav baseline
 - [ ] SCN-03 Commander Profile: split profile/stat/loadout areas into clean panel sections.
 - [ ] SCN-03 Commander Profile: update portrait, rank, stats, and action buttons.
 - [ ] SCN-03 Commander Profile: validate repeated rows and action states.
-- [ ] SCN-19 Armory: reuse shared header and left nav.
+- [x] SCN-19 Armory: reuse shared header and left nav.
 - [ ] SCN-19 Armory: update catalog cards with full default/hover/selected/disabled/pressed states.
 - [ ] SCN-19 Armory: update right inspection panel as separate live sections.
 - [ ] SCN-19 Armory: ensure right-side buttons are readable, large enough, and visible.

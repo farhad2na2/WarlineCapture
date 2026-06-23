@@ -68,9 +68,21 @@ Carry these lessons into every later screen:
 - Never ask for approval while a panel has known visible defects such as uneven padding, sibling overlap, icon-border collision, mismatched chrome thickness, or text that looks too small inside its frame.
 - When a candidate is rejected, update the tracker immediately so future loops do not resume from stale “approval-ready” language.
 
+## Shared Menu Header Lock
+
+SCN-02 Canvas Main Menu iteration 66 is the menu header source of truth.
+
+- All menu-adjacent Canvas screens use the approved SCN-02 main menu header unchanged.
+- Do not create, restyle, resize, or replace per-screen menu headers for Armory, Commander Profile, shop/supply, tech/profile, or other menu screens.
+- Ignore target mockup header differences on menu-adjacent screens; match only the screen-specific content below the shared header.
+- If a menu screen appears to need header work, first verify it is inheriting the SCN-02 header. Fix the mounting/reuse path rather than tuning a new header.
+- Match HUD is the exception: it owns its unique gameplay header.
+
 ## Header And Action Button Rule
 
-Header controls are approved as one family: logo, resource chips, plus buttons, and square action buttons.
+Header controls are approved as one family on the shared SCN-02 main menu header: logo, resource chips, plus buttons, and square action buttons.
+
+Only reopen this family when the task explicitly changes the shared menu header itself. Later menu screens inherit it unchanged.
 
 For each header pass:
 

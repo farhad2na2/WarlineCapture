@@ -88,10 +88,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         ["Assets/Game/Scripts/Systems/SelectionRectangleRequestSystem.cs|ProcessPendingRequests"] = 1
     };
 
-    private static readonly HashSet<string> ApprovedUiRuntimeEcsBoundaryPaths = new(StringComparer.Ordinal)
-    {
-        "Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs"
-    };
+    private static readonly HashSet<string> ApprovedUiRuntimeEcsBoundaryPaths = new(StringComparer.Ordinal);
 
     private static readonly HashSet<string> ApprovedTopLevelNamingEscapeTypes = new(StringComparer.Ordinal)
     {

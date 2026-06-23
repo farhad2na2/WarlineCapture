@@ -239,7 +239,7 @@ public static class CanvasMenuFallbackValidation
 
             bootstrap.ApplyRuntimeUiMode();
             DisableMenuDiagnosticsOverlay();
-            if (bootstrap.IsUiToolkitMode)
+            if (bootstrap.UiMode != RuntimeUiMode.Canvas)
             {
                 Complete(false, "RuntimeUiConfig is not in Canvas mode.");
                 return;
@@ -323,7 +323,7 @@ public static class CanvasMenuFallbackValidation
 
             bootstrap.ApplyRuntimeUiMode();
             DisableMenuDiagnosticsOverlay();
-            if (bootstrap.IsUiToolkitMode)
+            if (bootstrap.UiMode != RuntimeUiMode.Canvas)
             {
                 CompleteDeployClickValidation(false, "RuntimeUiConfig is not in Canvas mode.");
                 return;
@@ -395,7 +395,7 @@ public static class CanvasMenuFallbackValidation
             }
 
             bootstrap.ApplyRuntimeUiMode();
-            if (bootstrap.IsUiToolkitMode)
+            if (bootstrap.UiMode != RuntimeUiMode.Canvas)
             {
                 CompleteRouteCapture(false, "RuntimeUiConfig is not in Canvas mode.");
                 return;
@@ -477,7 +477,7 @@ public static class CanvasMenuFallbackValidation
             }
 
             bootstrap.ApplyRuntimeUiMode();
-            if (bootstrap.IsUiToolkitMode)
+            if (bootstrap.UiMode != RuntimeUiMode.Canvas)
             {
                 CompleteCanvasPerformanceBaseline(false, "RuntimeUiConfig is not in Canvas mode.");
                 return;

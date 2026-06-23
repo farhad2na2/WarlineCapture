@@ -139,7 +139,7 @@ public static class CanvasMatchFpsValidation
             }
 
             bootstrap.ApplyRuntimeUiMode();
-            if (bootstrap.IsUiToolkitMode)
+            if (bootstrap.UiMode != RuntimeUiMode.Canvas)
             {
                 Complete(false, "Runtime UI mode is not Canvas.");
                 return;

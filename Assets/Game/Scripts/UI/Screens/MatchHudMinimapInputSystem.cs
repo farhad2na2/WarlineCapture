@@ -618,7 +618,7 @@ public sealed class MatchHudMinimapInputSystem
         float variance = Mathf.Max(0f, (float)(sumSquares / samples) - average * average);
         float stdDev = Mathf.Sqrt(variance);
         int luminanceRange = max - min;
-        return average < 8f ||
+        return average < 48f ||
                average > 247f ||
                (luminanceRange < 3 && stdDev < 1f);
     }

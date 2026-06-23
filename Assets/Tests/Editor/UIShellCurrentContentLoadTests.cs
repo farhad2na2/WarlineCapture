@@ -88,15 +88,9 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.NotNull(bootstrap, "Menu scene must contain the menu bootstrap view.");
         Assert.NotNull(bootstrap.ContentSystem, "Menu bootstrap must serialize the shell content binder.");
         Assert.NotNull(bootstrap.ShellEcsPresentation, "Menu bootstrap must serialize the shell ECS presentation view.");
-        Assert.NotNull(bootstrap.Router, "Menu bootstrap must keep the UI router serialized for Canvas fallback.");
+        Assert.NotNull(bootstrap.Router, "Menu bootstrap must keep the UI router serialized for Canvas routing.");
         Assert.NotNull(bootstrap.RuntimeUiConfig, "Menu bootstrap must serialize the runtime UI config so startup uses the intended UI mode.");
-        Assert.AreEqual(RuntimeUiMode.UiToolkit, bootstrap.RuntimeUiConfig.Mode, "Menu scene must default to UI Toolkit runtime UI.");
-        Assert.NotNull(bootstrap.UiToolkitDocument, "Menu bootstrap must serialize the UI Toolkit document.");
-        Assert.NotNull(bootstrap.UiToolkitShellRoot, "Menu bootstrap must serialize the UI Toolkit shell root.");
-        Assert.NotNull(bootstrap.UiToolkitShellView, "Menu bootstrap must serialize the UI Toolkit shell view.");
-        Assert.NotNull(bootstrap.UiToolkitShellView.Document, "UI Toolkit shell view must reference its UIDocument.");
-        Assert.NotNull(bootstrap.UiToolkitShellView.ShellAsset, "UI Toolkit shell view must reference the shell UXML.");
-        Assert.NotNull(bootstrap.UiToolkitShellView.MainMenuScreenAsset, "UI Toolkit shell view must reference the Main Menu UXML.");
+        Assert.AreEqual(RuntimeUiMode.Canvas, bootstrap.RuntimeUiConfig.Mode, "Menu scene must default to Canvas runtime UI.");
         Assert.NotNull(bootstrap.Router.ContentRoot, "Serialized UI router must have a content root for initial route instantiation.");
         Assert.AreSame(
             bootstrap.ShellView.transform,

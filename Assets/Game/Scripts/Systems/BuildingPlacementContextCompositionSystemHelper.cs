@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class BuildingPlacementContextSystem
+internal sealed class BuildingPlacementContextCompositionSystemHelper
 {
     private readonly List<BuildingPlacementCommitSystem.WallRun> _wallCommitRuns = new();
 

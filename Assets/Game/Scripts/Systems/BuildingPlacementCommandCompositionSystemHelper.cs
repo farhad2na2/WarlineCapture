@@ -80,7 +80,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
-        return source.BuildingPlacementContextSystem.CreateCommandContext(
+        return source.BuildingPlacementContextCompositionSystemHelper.CreateCommandContext(
             CreateContextSource(
                 source,
                 interactionContext,
@@ -107,7 +107,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
             source.BuildingGameplayDependencyCompositionSystemHelper.ClearCommandMode);
     }
 
-    public BuildingPlacementContextSystem.Source CreateContextSource(
+    public BuildingPlacementContextCompositionSystemHelper.Source CreateContextSource(
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
@@ -124,7 +124,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
-        return new BuildingPlacementContextSystem.Source(
+        return new BuildingPlacementContextCompositionSystemHelper.Source(
             source.RuntimeGameplayStateSystem,
             source.BuildingPlacementLifecycleSystem,
             source.BuildingPlacementInputSystem,

@@ -9,7 +9,7 @@ internal sealed class BuildingPlacementVisualUpdateSystem
     internal delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
     internal delegate bool IsPlacementValidDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid, DynamicBuffer<GridRoad> roads, DynamicBlockerComponent blockerData);
     internal delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
-    internal delegate BuildingPlacementContextSystem.Source CreatePlacementContextSourceDelegate();
+    internal delegate BuildingPlacementContextCompositionSystemHelper.Source CreatePlacementContextSourceDelegate();
     internal delegate BuildingBarrierSystem.Context CreateBuildingBarrierContextDelegate();
     internal delegate void SelectAndFocusBuildingDelegate(RuntimeBuildingEntity building);
 
@@ -21,7 +21,7 @@ internal sealed class BuildingPlacementVisualUpdateSystem
         public readonly BuildingPlacementGridSystem GridSystem;
         public readonly BuildingPlacementStartupSystem StartupSystem;
         public readonly BuildingGameplayDependencyCompositionSystemHelper DependencySystem;
-        public readonly BuildingPlacementContextSystem ContextSystem;
+        public readonly BuildingPlacementContextCompositionSystemHelper ContextSystem;
         public readonly BuildingPlacementCommitSystem CommitSystem;
         public readonly BuildingPlacementLifecycleSystem LifecycleSystem;
         public readonly BuildingBarrierSystem BarrierSystem;
@@ -43,7 +43,7 @@ internal sealed class BuildingPlacementVisualUpdateSystem
             BuildingPlacementGridSystem gridSystem,
             BuildingPlacementStartupSystem startupSystem,
             BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
-            BuildingPlacementContextSystem contextSystem,
+            BuildingPlacementContextCompositionSystemHelper contextSystem,
             BuildingPlacementCommitSystem commitSystem,
             BuildingPlacementLifecycleSystem lifecycleSystem,
             BuildingBarrierSystem barrierSystem,
@@ -196,7 +196,7 @@ internal sealed class BuildingPlacementVisualUpdateSystem
             return;
 
         bool hasGrid = context.TryGetGridData(out _, out GridConfig placementGrid, out _, out _);
-        BuildingPlacementContextSystem.Source placementContextSource = context.CreatePlacementContextSource();
+        BuildingPlacementContextCompositionSystemHelper.Source placementContextSource = context.CreatePlacementContextSource();
         BuildingPlacementCommitSystem.CommitRequest request = context.ContextSystem.CreateCommitRequest(placementContextSource, placement);
         BuildingPlacementCommitSystem.CommitContext commitContext = context.ContextSystem.CreateCommitContext(placementContextSource, hasGrid, placementGrid);
 

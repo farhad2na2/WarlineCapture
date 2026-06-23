@@ -31,7 +31,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         BuildingDefinition definition,
         out bool gateVertical);
 
-    internal delegate BuildingPlacementContextSystem.Source CreatePlacementContextSourceDelegate(
+    internal delegate BuildingPlacementContextCompositionSystemHelper.Source CreatePlacementContextSourceDelegate(
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock);
@@ -87,7 +87,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
             source.BuildingPlacementGridSystem,
             source.BuildingPlacementStartupSystem,
             source.BuildingGameplayDependencyCompositionSystemHelper,
-            source.BuildingPlacementContextSystem,
+            source.BuildingPlacementContextCompositionSystemHelper,
             source.BuildingPlacementCommitSystem,
             source.BuildingPlacementLifecycleSystem,
             source.BuildingBarrierSystem,

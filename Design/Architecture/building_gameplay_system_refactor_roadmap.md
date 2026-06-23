@@ -30,7 +30,7 @@ Step 13 session command transition size: 1919 lines. Placement confirm, cancel, 
 
 Step 14 placement visual-update transition size: 1824 lines. Active-placement focus, placement visual update, confirm validation, and placement object handoff now route through `BuildingPlacementVisualUpdateSystem`; `BuildingGameplaySystem` keeps only temporary wrapper callbacks and context creation for compatibility.
 
-Step 15 wall helper transition size: 1770 lines. Wall preview scratch state now lives in `BuildingPlacementPreviewSystem`, wall commit scratch state now lives in `BuildingPlacementContextSystem`, and placement rotate-vertical policy now lives in `BuildingBarrierSystem`; `BuildingGameplaySystem` no longer owns wall-specific helper methods or collections.
+Step 15 wall helper transition size: 1770 lines. Wall preview scratch state now lives in `BuildingPlacementPreviewSystem`, wall commit scratch state now lives in `BuildingPlacementContextCompositionSystemHelper`, and placement rotate-vertical policy now lives in `BuildingBarrierSystem`; `BuildingGameplaySystem` no longer owns wall-specific helper methods or collections.
 
 Step 16 production button command transition size: 1765 lines. Selected-building production button commands now route through `BuildingUiCommandSystem`; `BuildingProductionRequestBoundary` owns active-building production request execution, and `BuildingUiContextSystem` wires the command boundary to the production request context.
 
@@ -60,7 +60,7 @@ Step 28 runtime entity creation transition size: 1513 lines. Runtime blocker cre
 
 Step 29 redirect/hauler bridge transition size: 1473 lines. Runtime creation redirect callbacks, deferred redirect footprint callbacks, pending marker refresh callbacks, selected hauler order assignment, and building approach checks now bind through `BuildingRuntimeContextSystem` to `BuildingPlacementRedirectSystem` / `BuildingResourceHaulerBridgeSystem`; `BuildingGameplaySystem` no longer keeps private redirect or hauler bridge wrapper methods.
 
-Step 30 placement context factory transition size: 1446 lines. Placement cancel/begin/confirm lifecycle context creation plus placement session/command context creation now live in `BuildingPlacementContextSystem`; `BuildingGameplaySystem` no longer declares private cancel/begin/confirm/session factory wrappers.
+Step 30 placement context factory transition size: 1446 lines. Placement cancel/begin/confirm lifecycle context creation plus placement session/command context creation now live in `BuildingPlacementContextCompositionSystemHelper`; `BuildingGameplaySystem` no longer declares private cancel/begin/confirm/session factory wrappers.
 
 Step 31 runtime context factory transition size: 1446 lines. Runtime spawn command context creation now lives in `BuildingRuntimeContextSystem`; managed composition and runtime tick context creation use `BuildingRuntimeContextSystem` directly for runtime visual/combat/query/barrier contexts instead of shell context wrapper methods.
 
@@ -243,7 +243,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Move remaining wall preview runs, wall commit runs, wall footprint clone helpers, wall validation context, and rotate-vertical resolution into `BuildingPlacementPreviewSystem`, `BuildingPlacementCommitSystem`, and `BuildingBarrierSystem`.
    - Expected output: no wall-specific collections or helper algorithms remain in the shell.
    - `BuildingPlacementPreviewSystem` now owns wall preview scratch runs and the wall placement preview rebuild helper.
-   - `BuildingPlacementContextSystem` now owns wall commit scratch runs and creates commit requests without a shell-owned scratch list.
+   - `BuildingPlacementContextCompositionSystemHelper` now owns wall commit scratch runs and creates commit requests without a shell-owned scratch list.
    - `BuildingBarrierSystem` now owns placement rotate-vertical policy for walls and gates.
    - `BuildingGameplaySystem` no longer owns `_wallPreviewRuns`, `_wallCommitRuns`, `RebuildWallPlacementPreview`, `CreateWallValidationContext`, `ResolvePlacementRotateVertical`, or a clone-definition wrapper.
 
@@ -359,8 +359,8 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 30. Complete: Move placement context factories
    - Move placement cancel/begin/confirm/session/source/context creation into existing placement context systems.
    - Expected output: `BuildingGameplayCompositionSystemHelper` can create placement contexts without a `BuildingGameplaySystem` instance.
-   - `BuildingPlacementContextSystem.CreateSessionContext` now owns placement session context construction.
-   - `BuildingPlacementContextSystem.CreateCommandContext` now owns placement command context construction.
+   - `BuildingPlacementContextCompositionSystemHelper.CreateSessionContext` now owns placement session context construction.
+   - `BuildingPlacementContextCompositionSystemHelper.CreateCommandContext` now owns placement command context construction.
    - `BuildingGameplaySystem` no longer declares private `CreatePlacementCancelContext`, `CreatePlacementBeginContext`, `CreatePlacementConfirmContext`, or `CreatePlacementSessionContext` wrappers.
 
 31. Complete: Move runtime context factories

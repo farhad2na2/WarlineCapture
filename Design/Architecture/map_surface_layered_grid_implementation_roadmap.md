@@ -330,7 +330,7 @@ Pathfinding integration rule:
    - Buildings use footprint average/foundation height.
    - Add validation for max footprint height delta.
    - Defer terrain modification/terraforming to later gameplay tasks.
-   - Added `BuildingFoundationVisualSystem` to apply evaluated foundation height to runtime building visuals and matching combat entities.
+   - Added `BuildingFoundationVisualPresentationSystemHelper` to apply evaluated foundation height to runtime building visuals and matching combat entities.
    - Runtime building creation now records `BuildingSurfaceComponent` on the combat entity from the same footprint result used for visual height.
    - Existing runtime spawn, placement, blocker, and pathing semantics are unchanged; invalid/uneven footprint data is recorded but not retuned here.
 

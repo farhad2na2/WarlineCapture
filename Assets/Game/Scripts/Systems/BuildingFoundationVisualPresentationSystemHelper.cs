@@ -2,7 +2,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed class BuildingFoundationVisualSystem
+internal sealed class BuildingFoundationVisualPresentationSystemHelper
 {
     public void ApplyVisualFoundation(GameObject instance, BuildingSurfacePlacementSystem.Result surfaceResult)
     {

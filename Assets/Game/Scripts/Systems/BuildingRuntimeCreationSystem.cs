@@ -75,7 +75,7 @@ internal sealed class BuildingRuntimeCreationSystem
     }
 
     private readonly BuildingSurfacePlacementSystem _surfacePlacementSystem = new();
-    private BuildingFoundationVisualSystem _foundationVisualSystem;
+    private BuildingFoundationVisualPresentationSystemHelper _foundationVisualPresentationHelper;
 
     public RuntimeBuildingEntity RegisterRuntimeBuilding(
         Context context,
@@ -104,7 +104,7 @@ internal sealed class BuildingRuntimeCreationSystem
             occupiedRect = context.ResolvePlacementRect(definition, originCell, grid);
             hasSurfaceResult = TryEvaluateRuntimeBuildingSurface(context, definition, originCell, out surfaceResult);
             if (hasSurfaceResult && !preserveAuthoredTransform)
-                FoundationVisualSystem?.ApplyVisualFoundation(instance, surfaceResult);
+                FoundationVisualPresentationHelper?.ApplyVisualFoundation(instance, surfaceResult);
         }
 
         bool pathBlocking = context.ShouldBlockPathing == null || context.ShouldBlockPathing(definition);
@@ -118,7 +118,7 @@ internal sealed class BuildingRuntimeCreationSystem
             ? context.CreateCombatEntity(originCell, definition, 0, instance.transform.rotation)
             : Entity.Null;
         if (hasEntityManager && hasSurfaceResult && !preserveAuthoredTransform)
-            FoundationVisualSystem?.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);
+            FoundationVisualPresentationHelper?.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);
 
         if (context.DeferSideEffects)
         {
@@ -198,11 +198,11 @@ internal sealed class BuildingRuntimeCreationSystem
         link.Configure(interactionSystem, interactionContext, building.Id, building.CombatEntity, building.BlockerEntity);
     }
 
-    private BuildingFoundationVisualSystem FoundationVisualSystem =>
-        _foundationVisualSystem ??= ResolveBuildingFoundationVisualSystem();
+    private BuildingFoundationVisualPresentationSystemHelper FoundationVisualPresentationHelper =>
+        _foundationVisualPresentationHelper ??= ResolveBuildingFoundationVisualPresentationHelper();
 
-    private static BuildingFoundationVisualSystem ResolveBuildingFoundationVisualSystem()
+    private static BuildingFoundationVisualPresentationSystemHelper ResolveBuildingFoundationVisualPresentationHelper()
     {
-        return new BuildingFoundationVisualSystem();
+        return new BuildingFoundationVisualPresentationSystemHelper();
     }
 }

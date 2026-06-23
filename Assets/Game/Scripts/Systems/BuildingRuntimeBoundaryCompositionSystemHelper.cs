@@ -3,7 +3,7 @@ using UnityEngine;
 
 internal sealed class BuildingRuntimeBoundaryCompositionSystemHelper
 {
-    public BuildingRuntimeBoundaryPublishSystem.Context Create(
+    public BuildingRuntimeBoundaryPublishCompositionSystemHelper.Context Create(
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
@@ -11,7 +11,7 @@ internal sealed class BuildingRuntimeBoundaryCompositionSystemHelper
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingProductionContextCompositionSystemHelper.Source> createProductionRuntimeContextSource,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
     {
-        return new BuildingRuntimeBoundaryPublishSystem.Context(
+        return new BuildingRuntimeBoundaryPublishCompositionSystemHelper.Context(
             source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
             source.BuildingGameplayEcsQuerySystem.EnsureEntityQueries,
             source.BuildingRuntimeBoundarySystem,

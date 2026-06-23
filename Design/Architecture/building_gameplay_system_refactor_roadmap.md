@@ -28,7 +28,7 @@ Step 12 build-button command transition size: 1919 lines. Build-button placement
 
 Step 13 session command transition size: 1919 lines. Placement confirm, cancel, exit, pointer-down, and active-placement cost commands now route through `BuildingPlacementCommandSystem`; `BuildingGameplaySystem` keeps only temporary public wrappers for compatibility.
 
-Step 14 placement visual-update transition size: 1824 lines. Active-placement focus, placement visual update, confirm validation, and placement object handoff now route through `BuildingPlacementVisualUpdateSystem`; `BuildingGameplaySystem` keeps only temporary wrapper callbacks and context creation for compatibility.
+Step 14 placement visual-update transition size: 1824 lines. Active-placement focus, placement visual update, confirm validation, and placement object handoff now route through `BuildingPlacementVisualUpdateCompositionSystemHelper`; `BuildingGameplaySystem` keeps only temporary wrapper callbacks and context creation for compatibility.
 
 Step 15 wall helper transition size: 1770 lines. Wall preview scratch state now lives in `BuildingPlacementPreviewSystem`, wall commit scratch state now lives in `BuildingPlacementContextCompositionSystemHelper`, and placement rotate-vertical policy now lives in `BuildingBarrierSystem`; `BuildingGameplaySystem` no longer owns wall-specific helper methods or collections.
 
@@ -235,9 +235,9 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 14. Complete: Move placement focus and visual update callbacks
    - Move active-placement focus, placement visual update, placement validation for confirm, and placement object handoff into placement lifecycle/preview/commit systems.
    - Expected output: `BuildingGameplaySystem` no longer contains placement update or commit helper methods.
-   - Added `BuildingPlacementVisualUpdateSystem` to own active-placement focus, placement visual update, confirm validation for wall placement, current placement focus resolution, and placement object handoff to commit/lifecycle systems.
+   - Added `BuildingPlacementVisualUpdateCompositionSystemHelper` to own active-placement focus, placement visual update, confirm validation for wall placement, current placement focus resolution, and placement object handoff to commit/lifecycle systems.
    - `BuildingGameplaySourceCompositionSystemHelper` now owns the visual-update system.
-   - `BuildingGameplaySystem` delegates placement visual callbacks through `BuildingPlacementVisualUpdateSystem` and no longer calls preview update, pointer hover, wall validation, placement commit, or preview-release methods directly.
+   - `BuildingGameplaySystem` delegates placement visual callbacks through `BuildingPlacementVisualUpdateCompositionSystemHelper` and no longer calls preview update, pointer hover, wall validation, placement commit, or preview-release methods directly.
 
 15. Complete: Move wall placement preview/commit helpers
    - Move remaining wall preview runs, wall commit runs, wall footprint clone helpers, wall validation context, and rotate-vertical resolution into `BuildingPlacementPreviewSystem`, `BuildingPlacementCommitSystem`, and `BuildingBarrierSystem`.

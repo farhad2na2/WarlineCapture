@@ -49,10 +49,10 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
-        if (source?.BuildingPlacementVisualUpdateSystem == null)
+        if (source?.BuildingPlacementVisualUpdateCompositionSystemHelper == null)
             return;
 
-        source.BuildingPlacementVisualUpdateSystem.UpdatePlacement(
+        source.BuildingPlacementVisualUpdateCompositionSystemHelper.UpdatePlacement(
             CreateUpdateContext(
                 source,
                 interactionContext,
@@ -68,7 +68,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
             screenPosition);
     }
 
-    public BuildingPlacementVisualUpdateSystem.Context CreateUpdateContext(
+    public BuildingPlacementVisualUpdateCompositionSystemHelper.Context CreateUpdateContext(
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
@@ -80,7 +80,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
-        return new BuildingPlacementVisualUpdateSystem.Context(
+        return new BuildingPlacementVisualUpdateCompositionSystemHelper.Context(
             source.BuildingPlacementInputSystem,
             source.BuildingPlacementPreviewSystem,
             source.BuildingPlacementValidationSystem,
@@ -125,10 +125,10 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
-        if (source?.BuildingPlacementVisualUpdateSystem == null)
+        if (source?.BuildingPlacementVisualUpdateCompositionSystemHelper == null)
             return;
 
-        source.BuildingPlacementVisualUpdateSystem.FocusActivePlacement(
+        source.BuildingPlacementVisualUpdateCompositionSystemHelper.FocusActivePlacement(
             CreateUpdateContext(
                 source,
                 interactionContext,
@@ -156,10 +156,10 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
-        if (source?.BuildingPlacementVisualUpdateSystem == null)
+        if (source?.BuildingPlacementVisualUpdateCompositionSystemHelper == null)
             return false;
 
-        return source.BuildingPlacementVisualUpdateSystem.ValidateActivePlacementForConfirm(
+        return source.BuildingPlacementVisualUpdateCompositionSystemHelper.ValidateActivePlacementForConfirm(
             CreateUpdateContext(
                 source,
                 interactionContext,
@@ -189,10 +189,10 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
-        if (source?.BuildingPlacementVisualUpdateSystem == null)
+        if (source?.BuildingPlacementVisualUpdateCompositionSystemHelper == null)
             return;
 
-        source.BuildingPlacementVisualUpdateSystem.UpdatePlacementVisual(
+        source.BuildingPlacementVisualUpdateCompositionSystemHelper.UpdatePlacementVisual(
             CreateUpdateContext(
                 source,
                 interactionContext,
@@ -222,10 +222,10 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
-        if (source?.BuildingPlacementVisualUpdateSystem == null)
+        if (source?.BuildingPlacementVisualUpdateCompositionSystemHelper == null)
             return;
 
-        source.BuildingPlacementVisualUpdateSystem.PlaceBuilding(
+        source.BuildingPlacementVisualUpdateCompositionSystemHelper.PlaceBuilding(
             CreateUpdateContext(
                 source,
                 interactionContext,

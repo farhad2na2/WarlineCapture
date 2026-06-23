@@ -30,7 +30,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingRunwaySystem BuildingRunwaySystem = new();
     internal readonly BuildingPlacementValidationSystem BuildingPlacementValidationSystem = new();
     internal readonly BuildingPlacementPreviewSystem BuildingPlacementPreviewSystem = new();
-    internal readonly BuildingPlacementVisualUpdateSystem BuildingPlacementVisualUpdateSystem;
+    internal readonly BuildingPlacementVisualUpdateCompositionSystemHelper BuildingPlacementVisualUpdateCompositionSystemHelper;
     internal readonly BuildingPlacementVisualCompositionPresentationSystemHelper BuildingPlacementVisualCompositionPresentationSystemHelper;
     internal readonly BuildingPlacementAdapterCompositionSystemHelper BuildingPlacementAdapterCompositionSystemHelper = new();
     internal readonly BuildingPlacementCommitSystem BuildingPlacementCommitSystem = new();
@@ -92,7 +92,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
         BuildingSelectionMarkerSystem = ResolveBuildingSelectionMarkerSystem();
         BuildingFactionVisualSystem = ResolveBuildingFactionVisualSystem();
         BuildingDestroyedVisualPresentationSystemHelper = ResolveBuildingDestroyedVisualPresentationSystemHelper();
-        BuildingPlacementVisualUpdateSystem = ResolveBuildingPlacementVisualUpdateSystem();
+        BuildingPlacementVisualUpdateCompositionSystemHelper = ResolveBuildingPlacementVisualUpdateCompositionSystemHelper();
         BuildingPlacementVisualCompositionPresentationSystemHelper = ResolveBuildingPlacementVisualCompositionPresentationSystemHelper();
         BuildingPlacementVisualPresentationSystemHelper = ResolveBuildingPlacementVisualPresentationSystemHelper();
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper = ResolveBuildingRuntimeResourcePrefabContextCompositionSystemHelper();
@@ -135,9 +135,9 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
         return new BuildingPlacementVisualPresentationSystemHelper();
     }
 
-    private static BuildingPlacementVisualUpdateSystem ResolveBuildingPlacementVisualUpdateSystem()
+    private static BuildingPlacementVisualUpdateCompositionSystemHelper ResolveBuildingPlacementVisualUpdateCompositionSystemHelper()
     {
-        return new BuildingPlacementVisualUpdateSystem();
+        return new BuildingPlacementVisualUpdateCompositionSystemHelper();
     }
 
     private static BuildingPlacementVisualCompositionPresentationSystemHelper ResolveBuildingPlacementVisualCompositionPresentationSystemHelper()

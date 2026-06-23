@@ -47,8 +47,8 @@ internal sealed class BuildingPlacementRuntimeTickSystem
         public readonly Action EnqueueMapVehiclePlacements;
         public readonly Action UpdateBuildingRuntimeBoundary;
         public readonly Func<BuildingPlacementInputRuntimeTickSystem.Result> UpdateInput;
-        public readonly BuildingPlacementRuntimeTickDiagnosticsSystem DiagnosticsSystem;
-        public readonly BuildingPlacementRuntimeTickDiagnosticsSystem.Context DiagnosticsContext;
+        public readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper DiagnosticsSystem;
+        public readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context DiagnosticsContext;
 
         public Context(
             Action processPendingProductions,
@@ -65,8 +65,8 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             Action enqueueMapVehiclePlacements,
             Action updateBuildingRuntimeBoundary,
             Func<BuildingPlacementInputRuntimeTickSystem.Result> updateInput,
-            BuildingPlacementRuntimeTickDiagnosticsSystem diagnosticsSystem,
-            BuildingPlacementRuntimeTickDiagnosticsSystem.Context diagnosticsContext)
+            BuildingPlacementRuntimeTickDiagnosticsSystemHelper diagnosticsSystem,
+            BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context diagnosticsContext)
         {
             ProcessPendingProductions = processPendingProductions;
             UpdateActiveProductionTransports = updateActiveProductionTransports;
@@ -124,7 +124,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
         {
             context.DiagnosticsSystem?.LogIfSlow(
                 context.DiagnosticsContext,
-                new BuildingPlacementRuntimeTickDiagnosticsSystem.Timing(
+                new BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Timing(
                     startTime,
                     afterMapPlacements,
                     afterBoundary,
@@ -280,7 +280,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
         {
             context.DiagnosticsSystem?.LogIfSlow(
                 context.DiagnosticsContext,
-                new BuildingPlacementRuntimeTickDiagnosticsSystem.Timing(
+                new BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Timing(
                     startTime,
                     afterMapPlacements,
                     afterBoundary,

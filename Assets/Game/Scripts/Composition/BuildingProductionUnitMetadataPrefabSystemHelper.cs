@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal static class BuildingProductionUnitMetadataSystem
+internal static class BuildingProductionUnitMetadataPrefabSystemHelper
 {
     public static void PrepareTransportDropVisual(GameObject visual)
     {

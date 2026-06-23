@@ -179,7 +179,7 @@ internal sealed class BuildingRuntimeCompositionSystem
                     source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
                     source.BuildingPlacementStartupSystem.BuildingRoot,
                     markerPropertyBlock,
-                    source.BuildingRuntimeObjectSystem.DestroyRuntimeObject)),
+                    source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
             (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
             source.BuildingVisualSystem,
             source.BuildingFactionVisualSystem,
@@ -277,7 +277,7 @@ internal sealed class BuildingRuntimeCompositionSystem
                     getEffectivePlacementRect)),
                 building),
             source.BuildingGameplayDependencySystem.NotifyHomeBuildingDestroyed,
-            source.BuildingRuntimeObjectSystem.DestroyRuntimeObject,
+            source.RuntimeObjectPresentationHelper.DestroyRuntimeObject,
             () => source.BuildingSelectionMarkerSystem.Refresh(
                 source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
                     CreateRuntimeContextSource(
@@ -291,7 +291,7 @@ internal sealed class BuildingRuntimeCompositionSystem
                     source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
                     source.BuildingPlacementStartupSystem.BuildingRoot,
                     null,
-                    source.BuildingRuntimeObjectSystem.DestroyRuntimeObject)),
+                    source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
             source.BuildingGameplayDependencySystem.NotifyStaticMinimapChanged,
             message => Debug.Log(message),
             false);

@@ -50,14 +50,14 @@ internal sealed class RuntimeCityLifecycleSystem
         public readonly int CityCount;
         public readonly bool GenerateBuildings;
         public readonly int GenerationYieldInterval;
-        public readonly RuntimeCityDiagnosticSystem Diagnostics;
+        public readonly RuntimeCityDiagnosticsSystemHelper Diagnostics;
 
         public Context(
             int frameCount,
             int cityCount,
             bool generateBuildings,
             int generationYieldInterval,
-            RuntimeCityDiagnosticSystem diagnostics)
+            RuntimeCityDiagnosticsSystemHelper diagnostics)
         {
             FrameCount = frameCount;
             CityCount = cityCount;

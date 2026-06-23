@@ -7,13 +7,13 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class MapSurfaceRuntimeBootstrapSystemTests
+public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
 {
     public static void RunFocusedValidation()
     {
         try
         {
-            var tests = new MapSurfaceRuntimeBootstrapSystemTests();
+            var tests = new MapSurfaceRuntimeBootstrapSceneSystemHelperTests();
             tests.EnsureReplacesStaleSubsceneSurfaceWithAuthoredRuntimeAsset();
             tests.DisposeRuntimeSurfaceAfterWorldDisposeDoesNotThrow();
             Debug.Log("[MapSurfaceRuntimeBootstrapValidation] result=Passed tests=2");
@@ -29,7 +29,7 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
     [Test]
     public void EnsureReplacesStaleSubsceneSurfaceWithAuthoredRuntimeAsset()
     {
-        World world = new("MapSurfaceRuntimeBootstrapSystemTests");
+        World world = new("MapSurfaceRuntimeBootstrapSceneSystemHelperTests");
         BlobAssetReference<MapSurfaceBlob> staleBlob = default;
         BlobAssetReference<MapSurfaceBlob> authoredSourceBlob = default;
         MapSurfaceDataAsset asset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
@@ -48,7 +48,7 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
             Entity staleSubsceneSurface = em.CreateEntity(typeof(MapSurfaceComponent));
             em.SetComponentData(staleSubsceneSurface, CreateSurfaceComponent(staleBlob));
 
-            MapSurfaceRuntimeBootstrapSystem bootstrap = new(world);
+            MapSurfaceRuntimeBootstrapSceneSystemHelper bootstrap = new(world);
             MethodInfo ensure = bootstrap.GetType().GetMethod(
                 "Ensure",
                 new[] { typeof(MapSurfaceDataAsset) });
@@ -72,7 +72,7 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
         finally
         {
             if (world.IsCreated)
-                new MapSurfaceRuntimeBootstrapSystem(world).DisposeRuntimeSurface();
+                new MapSurfaceRuntimeBootstrapSceneSystemHelper(world).DisposeRuntimeSurface();
             if (staleBlob.IsCreated)
                 staleBlob.Dispose();
             if (authoredSourceBlob.IsCreated)
@@ -86,7 +86,7 @@ public sealed class MapSurfaceRuntimeBootstrapSystemTests
     public void DisposeRuntimeSurfaceAfterWorldDisposeDoesNotThrow()
     {
         World world = new("MapSurfaceRuntimeBootstrapSystemDisposeTests");
-        MapSurfaceRuntimeBootstrapSystem bootstrap = new(world);
+        MapSurfaceRuntimeBootstrapSceneSystemHelper bootstrap = new(world);
 
         world.Dispose();
 

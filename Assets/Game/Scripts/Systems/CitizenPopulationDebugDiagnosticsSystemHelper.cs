@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-internal sealed class CitizenPopulationDebugSystem
+internal sealed class CitizenPopulationDebugDiagnosticsSystemHelper
 {
     public delegate bool KillCitizenAction(int citizenId, string reason);
 

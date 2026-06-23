@@ -1,4 +1,4 @@
-public sealed class RuntimeCityReadModelSystem
+public sealed class RuntimeCityReadModelCompositionSystemHelper
 {
     public bool SpawnOnStartEnabled { get; private set; }
     public bool HasSpawned { get; private set; }

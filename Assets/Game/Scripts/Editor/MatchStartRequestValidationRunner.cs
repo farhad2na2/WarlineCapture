@@ -11,7 +11,7 @@ public static class MatchStartRequestValidationRunner
         {
             using World world = new("MatchStartRequestValidationRunner");
             EntityManager em = world.EntityManager;
-            var system = new MatchStartRequestSystem();
+            var system = new MatchStartRequestStartupSystemHelper();
 
             Require(system.QueueStartAfterMatchLoaded(em), "Initial match start request was not queued.");
 

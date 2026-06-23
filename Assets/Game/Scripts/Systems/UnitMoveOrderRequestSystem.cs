@@ -258,39 +258,48 @@ public partial struct UnitMoveOrderRequestSystem : ISystem
 
     private static UnitMoveOrderSystem.MoveOrderCommandResult ApplyTargetPathMoveOrder(EntityManager em, Entity entity, int2 goal)
     {
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+        try
+        {
+            UnitMoveOrderSystem.MoveOrderCommandResult result = ApplyTargetPathMoveOrder(em, ecb, entity, goal);
+            ecb.Playback(em);
+            return result;
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
+    }
+
+    internal static UnitMoveOrderSystem.MoveOrderCommandResult ApplyTargetPathMoveOrder(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        Entity entity,
+        int2 goal)
+    {
         UnitMoveOrderSystem.MoveOrderCommandResult result = new()
         {
             Issued = true,
             PathRequests = 1
         };
-        EntityCommandBuffer ecb = new(Allocator.Temp);
-        try
+        if (em.HasComponent<UnitTarget>(entity))
         {
-            if (em.HasComponent<UnitTarget>(entity))
-            {
-                ecb.SetComponent(entity, new UnitTarget { Cell = goal });
-            }
-            else
-            {
-                ecb.AddComponent(entity, new UnitTarget { Cell = goal });
-                result.StructuralAdds++;
-            }
-
-            if (em.HasComponent<UnitPathRequest>(entity))
-            {
-                ecb.SetComponent(entity, new UnitPathRequest { Goal = goal });
-            }
-            else
-            {
-                ecb.AddComponent(entity, new UnitPathRequest { Goal = goal });
-                result.StructuralAdds++;
-            }
-
-            ecb.Playback(em);
+            ecb.SetComponent(entity, new UnitTarget { Cell = goal });
         }
-        finally
+        else
         {
-            ecb.Dispose();
+            ecb.AddComponent(entity, new UnitTarget { Cell = goal });
+            result.StructuralAdds++;
+        }
+
+        if (em.HasComponent<UnitPathRequest>(entity))
+        {
+            ecb.SetComponent(entity, new UnitPathRequest { Goal = goal });
+        }
+        else
+        {
+            ecb.AddComponent(entity, new UnitPathRequest { Goal = goal });
+            result.StructuralAdds++;
         }
 
         return result;

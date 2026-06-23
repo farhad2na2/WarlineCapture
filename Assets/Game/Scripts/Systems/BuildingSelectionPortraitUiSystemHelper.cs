@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-internal static class BuildingSelectionPortraitSystem
+internal static class BuildingSelectionPortraitUiSystemHelper
 {
     public static Sprite Resolve(
         RuntimeBuildingEntity building,

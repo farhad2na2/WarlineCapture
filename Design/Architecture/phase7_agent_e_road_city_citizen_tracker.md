@@ -220,8 +220,8 @@ Remove dead wrappers instead of converting them.
 - [ ] Update tests that referenced retired helpers.
 - [ ] Record retired/folded count in the progress snapshot.
 - [x] Fold `P7-0147 RuntimeCityBuildingSpawnContextSystem` from a disabled `SystemBase` wrapper into a plain runtime-city spawn context helper; context creation, fallback context creation, building spawn system package data, and runtime city composition ownership stayed unchanged.
-- [x] Fold `P7-0157 RuntimeCityDiagnosticSystem` from a disabled `SystemBase` wrapper into a plain runtime-city diagnostic helper; diagnostic logging behavior and runtime city composition ownership stayed unchanged.
-- [x] Fold `P7-0170 RuntimeCityReadModelSystem` from a disabled `SystemBase` wrapper into a plain runtime-city read-model helper; read-model properties, `Publish`, and runtime grid/decorations consumers stayed unchanged.
+- [x] Fold `P7-0157 RuntimeCityDiagnosticsSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city diagnostic helper; diagnostic logging behavior and runtime city composition ownership stayed unchanged.
+- [x] Fold `P7-0170 RuntimeCityReadModelCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city read-model helper; read-model properties, `Publish`, and runtime grid/decorations consumers stayed unchanged.
 - [x] Fold `P7-0171 RuntimeCityReadinessQuerySystem` from a disabled `SystemBase` wrapper into a plain runtime-city readiness query helper; grid, initial spawn, and base-exclusion query behavior stayed unchanged.
 - [x] Fold `P7-0191 CitizenPopulationDiagnosticSystem` from a disabled `SystemBase` wrapper into a plain citizen diagnostics helper; frame timing APIs and citizen lifecycle callers stayed unchanged.
 - [x] Fold `P7-0195 CitizenPopulationReadModelSystem` from a disabled `SystemBase` wrapper into a plain citizen read-model helper; totals state, refresh/reset APIs, and runtime/UI read callers stayed unchanged.

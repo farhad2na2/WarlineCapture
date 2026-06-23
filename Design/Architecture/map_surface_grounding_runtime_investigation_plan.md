@@ -12,7 +12,7 @@ Risky path:
 
 1. `MapSurfaceAuthoring.BakedSurfaceData` points at `Match_Map_MapSurfaceData.asset`.
 2. `MatchSubScene` can also contain a baked `MapSurfaceComponent`.
-3. `MapSurfaceRuntimeBootstrapSystem.Ensure(World, MapSurfaceDataAsset)` currently returns early when it finds a non-owned baked surface.
+3. `MapSurfaceRuntimeBootstrapSceneSystemHelper.Ensure(World, MapSurfaceDataAsset)` currently returns early when it finds a non-owned baked surface.
 4. That means runtime can keep stale subscene surface data and skip the freshly rebaked asset.
 5. Scene overlays can also be attached to the wrong surface entity if the active surface entity is non-owned.
 
@@ -28,7 +28,7 @@ When Match has authored baked surface data, runtime must make that asset the sin
    Save this file and keep progress visible.
 
 2. **Fix surface ownership selection.**  
-   Update `MapSurfaceRuntimeBootstrapSystem` so `Ensure(world, surfaceData)` always loads the current authored asset blob and publishes it to one active surface entity. It may reuse an existing subscene surface entity, but must replace its component data and tag it as runtime-owned.
+   Update `MapSurfaceRuntimeBootstrapSceneSystemHelper` so `Ensure(world, surfaceData)` always loads the current authored asset blob and publishes it to one active surface entity. It may reuse an existing subscene surface entity, but must replace its component data and tag it as runtime-owned.
 
 3. **Fix overlay attachment.**  
    Ensure `PublishSceneOverlays` writes overlays onto the same active surface entity used by `UnitSurfaceTrackingSystem`.

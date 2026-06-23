@@ -160,14 +160,14 @@ Non-goals:
     - Expected output: startup composition is explicit and narrow.
 
 26. Complete: Migrate peer dependencies off `RuntimeCitySpawnerSystem`
-    - Created `RuntimeCityReadModelSystem` as the narrow city state read boundary for peer systems.
+    - Created `RuntimeCityReadModelCompositionSystemHelper` as the narrow city state read boundary for peer systems.
     - `RuntimeCityCompositionSystem` publishes `SpawnOnStartEnabled`, `HasSpawned`, and `IsGenerating` into the read model.
-    - `RuntimeGridBlockerSystem` and `RuntimeDecorationSpawnerSystem` now depend on `RuntimeCityReadModelSystem` instead of storing or calling the broad `RuntimeCitySpawnerSystem` shell.
+    - `RuntimeGridBlockerSystem` and `RuntimeDecorationSpawnerSystem` now depend on `RuntimeCityReadModelCompositionSystemHelper` instead of storing or calling the broad `RuntimeCitySpawnerSystem` shell.
     - Expected output: no peer system stores or calls the broad spawner type.
 
 27. Complete: Delete the spawner shell
     - Deleted `RuntimeCitySpawnerSystem.cs` and `.meta`.
-    - `GameBootstrap`, `GameplayFeatureStartupSystem`, `GameplayRuntimeUpdateSystem`, and building gameplay binding now use `RuntimeCityCompositionSystem` directly.
+    - `GameBootstrap`, `GameplayFeatureStartupCompositionSystemHelper`, `GameplayRuntimeUpdateSystem`, and building gameplay binding now use `RuntimeCityCompositionSystem` directly.
     - Runtime city update diagnostics now report the step as `RuntimeCity`.
     - Expected output: no broad managed `RuntimeCitySpawnerSystem` orchestrator remains.
 

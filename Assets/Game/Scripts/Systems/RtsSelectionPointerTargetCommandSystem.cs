@@ -196,9 +196,9 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
     public void RequestMoveOrder(Context context, Vector2 screenPosition)
     {
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"issueMoveOrderEnter screen={screenPosition} frame={UnityEngine.Time.frameCount} " +
                 $"hasInput={context.InputSystem != null} hasProcess={context.ProcessMoveCommandRequests != null}");
         }
@@ -210,9 +210,9 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         bool queued = TryQueueResolvedMoveCommand(context, screenPosition, out bool queuedResolvedTarget);
         if (!queued)
         {
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
             {
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                     $"issueMoveOrderQueueFailed screen={screenPosition} frame={UnityEngine.Time.frameCount}");
             }
 
@@ -223,13 +223,13 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             return;
         }
 
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"issueMoveOrderQueued screen={screenPosition} frame={UnityEngine.Time.frameCount}");
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"issueMoveOrderQueued screen={screenPosition} frame={UnityEngine.Time.frameCount}");
         if (!queuedResolvedTarget)
         {
             context.ProcessMoveCommandRequests?.Invoke();
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"issueMoveOrderProcessReturned screen={screenPosition} frame={UnityEngine.Time.frameCount}");
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"issueMoveOrderProcessReturned screen={screenPosition} frame={UnityEngine.Time.frameCount}");
         }
     }
 
@@ -330,26 +330,26 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Scan);
         context.LogSelectionDiagnostic?.Invoke($"scanAttempt pos={screenPosition} frame={UnityEngine.Time.frameCount}");
-        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+        SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
             $"scanTargetTap pos={screenPosition} frame={UnityEngine.Time.frameCount}");
 
         bool queued = TryQueueResolvedScanCommand(context, screenPosition, out bool queuedResolvedTarget);
         if (!queued)
         {
             context.LogSelectionDiagnostic?.Invoke($"scanAttempt result=False reason=QueueFailed pos={screenPosition} frame={UnityEngine.Time.frameCount}");
-            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
                 $"scanTargetTapQueued result=False reason=QueueFailed pos={screenPosition} frame={UnityEngine.Time.frameCount}");
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable));
             return false;
         }
 
-        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+        SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
             $"scanTargetTapQueued result=True resolvedTarget={queuedResolvedTarget} pos={screenPosition} frame={UnityEngine.Time.frameCount}");
 
         if (!queuedResolvedTarget)
         {
             bool processed = context.ProcessScanCommandRequests?.Invoke() == true;
-            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
                 $"scanTargetTapProcessedImmediately result={processed} pos={screenPosition} frame={UnityEngine.Time.frameCount}");
             return processed;
         }
@@ -364,7 +364,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         if (context.TryGetEntityManager == null ||
             !context.TryGetEntityManager(out EntityManager em))
         {
-            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
                 $"scanTargetResolveSkipped reason=NoEntityManager pos={screenPosition} frame={frame}");
             return context.InputSystem.QueueScanCommandRequest(screenPosition, frame);
         }
@@ -372,13 +372,13 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
         if (!targetBoundary.TryGetClickedCell(screenPosition, em, out int2 targetCell, out Vector3 worldPoint))
         {
-            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
                 $"scanTargetResolveSkipped reason=NoClickedCell pos={screenPosition} frame={frame}");
             return context.InputSystem.QueueScanCommandRequest(screenPosition, frame);
         }
 
         queuedResolvedTarget = context.InputSystem.QueueScanCommandRequest(screenPosition, targetCell, worldPoint, frame);
-        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+        SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
             $"scanTargetResolved queued={queuedResolvedTarget} cell={targetCell} world={worldPoint} pos={screenPosition} frame={frame}");
         return queuedResolvedTarget;
     }
@@ -1003,9 +1003,9 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
         cell = target.Cell;
         worldPoint = target.WorldPoint;
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"moveTargetResolved screen={screenPosition} cell={cell} world={worldPoint} surface={target.HasSurface} " +
                 $"surfaceId={(target.HasSurface ? target.Surface.SurfaceId : -1)} layer={(target.HasSurface ? target.Surface.LayerId : -1)} " +
                 $"height={(target.HasSurface ? target.Surface.Height : worldPoint.y):F2}");
@@ -1044,9 +1044,9 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
         cell = target.Cell;
         worldPoint = target.WorldPoint;
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"moveTargetResolved screen={screenPosition} cell={cell} world={worldPoint} surface={target.HasSurface} " +
                 $"surfaceId={(target.HasSurface ? target.Surface.SurfaceId : -1)} layer={(target.HasSurface ? target.Surface.LayerId : -1)} " +
                 $"height={(target.HasSurface ? target.Surface.Height : worldPoint.y):F2}");

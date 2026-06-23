@@ -2,7 +2,7 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class GameplayFeatureStartupSystem
+internal sealed class GameplayFeatureStartupCompositionSystemHelper
 {
     public readonly struct Result
     {
@@ -41,7 +41,7 @@ internal sealed class GameplayFeatureStartupSystem
         Transform runtimeBlockerRoot,
         Transform decorationRoot,
         CombinedMeshBaker decorationCombinedMeshBaker,
-        GameplaySceneBindingSystem sceneBindingSystem)
+        GameplaySceneBindingSceneSystemHelper sceneBindingSystem)
     {
         RuntimeCityCompositionSystem runtimeCity = ResolveRuntimeCityCompositionSystem();
         runtimeCity?.Configure(
@@ -53,7 +53,7 @@ internal sealed class GameplayFeatureStartupSystem
             runtimeCityRoot,
             mainMenu);
 
-        RuntimeCityReadModelSystem runtimeCityReadModel = runtimeCity?.ReadModel;
+        RuntimeCityReadModelCompositionSystemHelper runtimeCityReadModel = runtimeCity?.ReadModel;
         RuntimeGridBlockerSystem runtimeGridBlockers = ResolveRuntimeGridBlockerSystem();
         runtimeGridBlockers?.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCityReadModel);
         bindRoadGameplayFeatures?.Invoke(mainMenu, runtimeGridBlockers);

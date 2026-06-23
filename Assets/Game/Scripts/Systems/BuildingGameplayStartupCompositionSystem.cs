@@ -25,6 +25,6 @@ internal sealed class BuildingGameplayStartupCompositionSystem
             childSystems.BuildingDefinitionSystem,
             childSystems.BuildingRunwaySystem,
             childSystems.BuildingPlacementPreviewSystem,
-            childSystems.BuildingRuntimeObjectSystem.DestroyRuntimeObject);
+            childSystems.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
     }
 }

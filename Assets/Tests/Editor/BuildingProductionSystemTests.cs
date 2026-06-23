@@ -2717,9 +2717,9 @@ public sealed class BuildingProductionSystemTests
                 roadFootprintState: default,
                 factionVisuals: null,
                 dayNight: null,
-                resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
-                tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
-                tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+                resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeyPrefabSystemHelper.ResolveSpawnableLookupKey,
+                tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+                tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
 
             Assert.AreEqual(12345, result.UiCommand.CurrentDollars(result.UiCommandContext));
         }
@@ -2754,9 +2754,9 @@ public sealed class BuildingProductionSystemTests
                 roadFootprintState: default,
                 factionVisuals: null,
                 dayNight: null,
-                resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
-                tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
-                tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+                resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeyPrefabSystemHelper.ResolveSpawnableLookupKey,
+                tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+                tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
 
             BuildingUiCommandBoundary.CampRequestFailure failure = result.UiCommand.TryRequestCampItem(
                 result.UiCommandContext,
@@ -2801,7 +2801,7 @@ public sealed class BuildingProductionSystemTests
     private static BuildingProductionSystem CreateProductionSystem()
     {
         var system = new BuildingProductionSystem();
-        system.ConfigureUnitProductionMetadataResolver(BuildingProductionUnitMetadataSystem.TryGetMetadata);
+        system.ConfigureUnitProductionMetadataResolver(BuildingProductionUnitMetadataPrefabSystemHelper.TryGetMetadata);
         return system;
     }
 

@@ -79,7 +79,7 @@ internal struct UnitPathResultApply
 
             if (manualMoves[i] != 0 && manualTraceCount < 12)
             {
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                     $"pathResult frame={UnityEngine.Time.frameCount} index={i} entity={DescribePathEntity(em, entity)} " +
                     $"matchingRequest={entityHasMatchingRequest} status={status[i]} pathCount={count} pathStart={start} " +
                     $"requestGoal={requests[i].Goal} assignedGoal={assignedGoals[i]} segmented={segmented[i]} " +

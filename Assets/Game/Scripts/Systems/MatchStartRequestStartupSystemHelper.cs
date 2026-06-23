@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-public sealed class MatchStartRequestSystem
+public sealed class MatchStartRequestStartupSystemHelper
 {
     private World _world;
     private Entity _matchStartEntity;

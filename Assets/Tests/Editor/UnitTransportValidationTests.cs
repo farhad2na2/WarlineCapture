@@ -272,8 +272,8 @@ public sealed class UnitTransportValidationTests
         Assert.IsNotNull(authoring.PortraitSprite);
         Assert.IsNotNull(authoring.PortraitCardSprite);
         Assert.IsNotNull(authoring.PortraitActionSprite);
-        Assert.IsNotNull(SelectionPortraitSpriteResolverSystem.ResolveSelectionPortraitSprite(prefab));
-        Assert.IsNotNull(SelectionPortraitSpriteResolverSystem.ResolveSelectionCardPortraitSprite(prefab));
+        Assert.IsNotNull(SelectionPortraitSpriteResolverUiSystemHelper.ResolveSelectionPortraitSprite(prefab));
+        Assert.IsNotNull(SelectionPortraitSpriteResolverUiSystemHelper.ResolveSelectionCardPortraitSprite(prefab));
         Assert.IsNotNull(authoring.UnitSelectionMarkerPrefab);
         Assert.IsNotNull(authoring.VehicleSelectionMarkerPrefab);
         Assert.IsNotNull(authoring.UnitHealthBarPrefab);

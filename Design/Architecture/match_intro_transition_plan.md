@@ -26,7 +26,7 @@ The desired player experience is:
 ## Current Baseline
 
 - Match loading now uses staged startup progress.
-- `MatchBootstrapSystem.GameplayStartComplete` waits for the runtime loading gate before `MatchStartSystem` marks match start complete.
+- `MatchBootstrapSystem.GameplayStartComplete` waits for the runtime loading gate before `MatchStartSceneSystemHelper` marks match start complete.
 - `MenuBootstrapSystem` holds `Match ready` briefly before exiting loading.
 - Existing `UIShellView` / `UIMotionHostView` already supports region transitions and should remain the primary UI motion owner.
 - Current smoke validation can fail under `-nographics` because the minimap render texture path cannot create/render targets in that mode. This is separate from the intro transition and should be accounted for during validation.

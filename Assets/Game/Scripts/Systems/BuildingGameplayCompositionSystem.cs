@@ -8,14 +8,14 @@ internal sealed class BuildingGameplayCompositionSystem
     private const float OilBarrelsPerFuelBarrel = 2f;
     private readonly BuildingGameplayChildSystem _childSystem = new();
     private readonly BuildingGameplayStartupCompositionSystem _startupCompositionSystem = new();
-    private readonly BuildingGameplayBindingSystem _bindingSystem = new();
+    private readonly BuildingGameplayBindingCompositionSystemHelper _bindingCompositionHelper = new();
     private readonly BuildingCitizenPopulationCompositionSystem _citizenPopulationCompositionSystem = ResolveBuildingCitizenPopulationCompositionSystem();
     private readonly BuildingGameplayDisposalCompositionSystem _disposalCompositionSystem = new();
-    private readonly BuildingMarkerVisualCompositionSystem _markerVisualCompositionSystem = new();
+    private readonly BuildingMarkerVisualPresentationSystemHelper _markerVisualPresentationHelper = new();
     private readonly BuildingRuntimeTickCompositionSystem _runtimeTickCompositionSystem = new();
     private readonly BuildingPlacementInputTickCompositionSystem _placementInputTickCompositionSystem = new();
-    private readonly BuildingRuntimeBoundaryCompositionSystem _runtimeBoundaryCompositionSystem = new();
-    private readonly BuildingProductionTickCompositionSystem _productionTickCompositionSystem = new();
+    private readonly BuildingRuntimeBoundaryCompositionSystemHelper _runtimeBoundaryCompositionHelper = new();
+    private readonly BuildingProductionTickCompositionSystemHelper _productionTickCompositionHelper = new();
     private readonly BuildingPlacementInteractionCompositionSystem _placementInteractionCompositionSystem = new();
     private readonly BuildingPlacementRuntimeTickContextSystem _runtimeTickContextSystem = new();
     private readonly BuildingGameplayCompositionResultSystem _resultSystem = new();
@@ -40,7 +40,7 @@ internal sealed class BuildingGameplayCompositionSystem
         BuildingDefinitionSystem.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata = null,
         BuildingDefinitionSystem.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata = null)
     {
-        MaterialPropertyBlock markerPropertyBlock = BuildingMarkerVisualCompositionSystem.GetMarkerPropertyBlock(_markerVisualCompositionSystem);
+        MaterialPropertyBlock markerPropertyBlock = BuildingMarkerVisualPresentationSystemHelper.GetMarkerPropertyBlock(_markerVisualPresentationHelper);
         BuildingGameplayCompositionSourceSystem childSystems = _childSystem.Create();
         childSystems.BuildingDefinitionSystem.ConfigureAuthoringMetadataResolvers(
             tryGetBuildingDefinitionMetadata,
@@ -445,14 +445,14 @@ internal sealed class BuildingGameplayCompositionSystem
                         tryGetGridForSelection,
                         tryGetGridCell,
                         createBuildingSelectionContext)),
-                source => _productionTickCompositionSystem.Create(
+                source => _productionTickCompositionHelper.Create(
                     source,
                     productionSource => productionSource.BuildingProductionCompositionSystem.CreateRuntimeContextSource(
                         productionSource,
                         createRuntimeContextSource,
                         createPlacementCommandContext),
                     OilBarrelsPerFuelBarrel),
-                (source, placementInteractionContext, placementMarkerPropertyBlock) => _runtimeBoundaryCompositionSystem.Create(
+                (source, placementInteractionContext, placementMarkerPropertyBlock) => _runtimeBoundaryCompositionHelper.Create(
                     source,
                     placementInteractionContext,
                     placementMarkerPropertyBlock,
@@ -599,8 +599,8 @@ internal sealed class BuildingGameplayCompositionSystem
             screenRect => childSystems.BuildingSelectionSystem.SelectFirstBuildingInScreenRect(
                 createBuildingSelectionContext(childSystems),
                 screenRect),
-            _bindingSystem.CreateMainMenuBinding(childSystems, dayNight),
-            _bindingSystem.CreateGameplayFeatureBinding(childSystems, dayNight),
+            _bindingCompositionHelper.CreateMainMenuBinding(childSystems, dayNight),
+            _bindingCompositionHelper.CreateGameplayFeatureBinding(childSystems, dayNight),
             _disposalCompositionSystem.CreateDisposeAction(
                 childSystems,
                 () => createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock)));

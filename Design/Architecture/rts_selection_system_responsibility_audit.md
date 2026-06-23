@@ -625,8 +625,8 @@ Step 12 started caller migration off the selection shell:
 - `MatchOverlayCommandControlsController` and `MainMenuPlayUI` no longer hold or call `RTSSelectionSystem`; they enqueue command intents through `SelectionUiCommandSystem`.
 - `SelectionUiReadModelSystem` now owns UI-facing focused-unit, focused transport passenger, selected-unit list, and visible player-unit read calls.
 - `SelectionUiCameraSystem` now owns `MenuView` camera toggle state and fullscreen map camera focus commands through the ECS camera request boundary.
-- `SelectionScreenMarkerSystem` now owns UI-facing move/attack/hide screen-marker events.
-- `MenuView` command buttons now use `SelectionUiCommandSystem`, its focused/selected read-model calls use `SelectionUiReadModelSystem`, its camera calls use `SelectionUiCameraSystem`, and its marker hooks use `SelectionScreenMarkerSystem`; it no longer holds or calls `RTSSelectionSystem`.
+- `SelectionScreenMarkerUiSystemHelper` now owns UI-facing move/attack/hide screen-marker events.
+- `MenuView` command buttons now use `SelectionUiCommandSystem`, its focused/selected read-model calls use `SelectionUiReadModelSystem`, its camera calls use `SelectionUiCameraSystem`, and its marker hooks use `SelectionScreenMarkerUiSystemHelper`; it no longer holds or calls `RTSSelectionSystem`.
 - `AssistantRuntimeBinding` no longer receives or forwards `RTSSelectionSystem`.
 - `MissionCameraSystem` and `MissionStartupSystem` now focus the camera through `SelectionUiCameraSystem` instead of `RTSSelectionSystem`.
 - `BuildingGameplaySystem` now routes active-placement, production-focus, and building-selection camera focus callbacks through `SelectionUiCameraSystem`.

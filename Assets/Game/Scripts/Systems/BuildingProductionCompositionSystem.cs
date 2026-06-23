@@ -51,7 +51,7 @@ internal sealed class BuildingProductionCompositionSystem
             source.BuildingGameplayDependencySystem.ClearFocusedUnit,
             source.BuildingGameplayDependencySystem.IsBuildDrawerOpen,
             source.BuildingGameplayDependencySystem.SmoothMoveCameraGroundCenterTo,
-            building => BuildingRuntimeFocusPositionSystem.Resolve(runtimeSource, building),
+            building => BuildingRuntimeFocusPositionPresentationSystemHelper.Resolve(runtimeSource, building),
             GameRuntimeStats.RecordUnitOrdered,
             Debug.LogWarning,
             (factionId, unitId) => source.BuildingRuntimeQuerySystem.CountPendingProductionsForFaction(runtimeQueryContext, factionId, unitId),

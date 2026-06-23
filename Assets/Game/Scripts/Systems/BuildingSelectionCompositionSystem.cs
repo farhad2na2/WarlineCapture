@@ -25,10 +25,10 @@ internal sealed class BuildingSelectionCompositionSystem
                     source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
                     source.BuildingPlacementStartupSystem.BuildingRoot,
                     null,
-                    source.BuildingRuntimeObjectSystem.DestroyRuntimeObject)),
+                    source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
             source.BuildingGameplayDependencySystem.ClearFocusedUnit,
             building => source.BuildingGameplayDependencySystem.ShowHudSelection(
-                BuildingSelectionPortraitSystem.Resolve(building, resolveSelectionPortraitSpriteFromPrefab)),
+                BuildingSelectionPortraitUiSystemHelper.Resolve(building, resolveSelectionPortraitSpriteFromPrefab)),
             source.BuildingGameplayDependencySystem.SmoothMoveCameraGroundCenterTo,
             source.BuildingGameplayDependencySystem.IsBoardablePlayerTransportClick,
             clickedBuildingId => source.BuildingRuntimeContextSystem.TryAssignSelectedHaulerOrders(

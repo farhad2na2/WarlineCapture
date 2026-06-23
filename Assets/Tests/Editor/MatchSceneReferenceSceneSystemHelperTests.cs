@@ -5,7 +5,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public sealed class MatchSceneReferenceSystemTests
+public sealed class MatchSceneReferenceSceneSystemHelperTests
 {
     public static void RunFocusedValidation()
     {
@@ -44,7 +44,7 @@ public sealed class MatchSceneReferenceSystemTests
         GameObject root = new("Bootstrap");
         root.AddComponent<MatchSceneView>();
 
-        MatchSceneReferenceSystem referenceSystem = new();
+        MatchSceneReferenceSceneSystemHelper referenceSystem = new();
 
         Assert.IsTrue(referenceSystem.TryGetLoadedSceneView(scene, out MatchSceneView view));
         Assert.NotNull(view);
@@ -55,7 +55,7 @@ public sealed class MatchSceneReferenceSystemTests
     public void ReturnsFalseWhenMatchSceneIsNotLoaded()
     {
         EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
-        MatchSceneReferenceSystem referenceSystem = new();
+        MatchSceneReferenceSceneSystemHelper referenceSystem = new();
 
         Assert.IsFalse(referenceSystem.TryGetLoadedMatchSceneView(out MatchSceneView view));
         Assert.IsNull(view);
@@ -63,10 +63,10 @@ public sealed class MatchSceneReferenceSystemTests
 
     private static void RunValidationStep(
         string name,
-        Action<MatchSceneReferenceSystemTests> action,
+        Action<MatchSceneReferenceSceneSystemHelperTests> action,
         ref int passed)
     {
-        var tests = new MatchSceneReferenceSystemTests();
+        var tests = new MatchSceneReferenceSceneSystemHelperTests();
         try
         {
             action(tests);

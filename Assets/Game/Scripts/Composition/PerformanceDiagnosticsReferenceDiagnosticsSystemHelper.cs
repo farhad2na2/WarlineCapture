@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public sealed class PerformanceDiagnosticsReferenceSystem
+public sealed class PerformanceDiagnosticsReferenceDiagnosticsSystemHelper
 {
     public bool TryGet(out PerformanceDiagnosticsSystem diagnostics)
     {

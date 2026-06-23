@@ -7,7 +7,7 @@ internal sealed class RuntimeCityBuildingSpawnContextSystem
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
         RuntimeCitySpawnBridgeState spawnBridgeSystem,
-        RuntimeCityDiagnosticSystem diagnosticSystem)
+        RuntimeCityDiagnosticsSystemHelper diagnosticSystem)
     {
         return CreateFallback(
             config,
@@ -26,7 +26,7 @@ internal sealed class RuntimeCityBuildingSpawnContextSystem
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
         RuntimeCitySpawnBridgeState spawnBridgeSystem,
-        RuntimeCityDiagnosticSystem diagnosticSystem)
+        RuntimeCityDiagnosticsSystemHelper diagnosticSystem)
     {
         return new Context(
             config,
@@ -111,7 +111,7 @@ internal sealed class RuntimeCityBuildingSpawnContextSystem
         public readonly RuntimeCityPrefabSelectionState PrefabSelectionSystem;
         public readonly RuntimeCityVisualSystem VisualSystem;
         public readonly RuntimeCitySpawnBridgeState SpawnBridgeSystem;
-        public readonly RuntimeCityDiagnosticSystem DiagnosticSystem;
+        public readonly RuntimeCityDiagnosticsSystemHelper DiagnosticSystem;
 
         public Context(
             RuntimeCityConfigSystem.Snapshot config,
@@ -120,7 +120,7 @@ internal sealed class RuntimeCityBuildingSpawnContextSystem
             RuntimeCityPrefabSelectionState prefabSelectionSystem,
             RuntimeCityVisualSystem visualSystem,
             RuntimeCitySpawnBridgeState spawnBridgeSystem,
-            RuntimeCityDiagnosticSystem diagnosticSystem)
+            RuntimeCityDiagnosticsSystemHelper diagnosticSystem)
         {
             Config = config;
             BuildingPlotSystem = buildingPlotSystem;

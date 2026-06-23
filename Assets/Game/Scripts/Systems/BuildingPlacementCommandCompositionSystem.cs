@@ -133,7 +133,7 @@ internal sealed class BuildingPlacementCommandCompositionSystem
             source.RuntimeBuildingSystem,
             source.BuildingPlacementStartupSystem.BuildingRoot,
             source.BuildingPlacementVisualSystem.CreateBuildingVisualInstance,
-            preview => source.BuildingRuntimeObjectSystem.DestroyRuntimeObject(preview),
+            preview => source.RuntimeObjectPresentationHelper.DestroyRuntimeObject(preview),
             footprint => getCenterScreenPlacementOrigin(source, footprint),
             (BuildingDefinition definition, Vector2Int preferredOrigin, out Vector2Int resolvedOrigin) => tryResolveInitialPlacementOrigin(source, interactionContext, markerPropertyBlock, definition, preferredOrigin, out resolvedOrigin),
             (placement, updateCellFromPointer, screenPosition) => updatePlacementVisual(source, interactionContext, markerPropertyBlock, placement, updateCellFromPointer, screenPosition),
@@ -167,6 +167,6 @@ internal sealed class BuildingPlacementCommandCompositionSystem
                 removeOverlappingBlockers),
             BuildingRuntimeSpawnSystem.CloneDefinitionWithFootprint,
             source.BuildingPlacementGridSystem.GetPlacementFootprint,
-            source.BuildingRuntimeObjectSystem.DestroyRuntimeObject);
+            source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
     }
 }

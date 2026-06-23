@@ -23,7 +23,7 @@ internal sealed class BuildingRuntimeTickCompositionSystem
                 source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
                 source.BuildingPlacementStartupSystem.BuildingRoot,
                 markerPropertyBlock,
-                source.BuildingRuntimeObjectSystem.DestroyRuntimeObject);
+                source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
         BuildingCombatSystem.Context<RuntimeBuildingEntity> combatContext = source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
         BuildingBarrierSystem.Context barrierContext = source.BuildingRuntimeContextSystem.CreateBarrierContext(runtimeSource);
         BuildingPlacementInputRuntimeTickSystem.Context inputContext = createInputRuntimeTickContext(source, interactionContext, markerPropertyBlock);
@@ -42,7 +42,7 @@ internal sealed class BuildingRuntimeTickCompositionSystem
             createMapBuildingPlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
             createMapVehiclePlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
             () => source.BuildingPlacementInputRuntimeTickSystem.Update(inputContext),
-            BuildingPlacementRuntimeTickDiagnosticsSystem.CreateContext(
+            BuildingPlacementRuntimeTickDiagnosticsSystemHelper.CreateContext(
                 () => source.RuntimeDiagnosticsSystem.ShouldLogBuildingRuntimeSlices,
                 () => source.RuntimeBuildingSystem.Count,
                 Debug.Log));

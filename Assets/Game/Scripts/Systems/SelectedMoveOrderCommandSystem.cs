@@ -99,29 +99,29 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         int currentFrame,
         IReadOnlyList<Entity> cachedSelectedMoveEntities = null)
     {
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveStart frame={currentFrame} screen={screenPosition}");
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"selectedMoveStart frame={currentFrame} screen={screenPosition}");
         using NativeList<Entity> selectedEntities = new(Allocator.Temp);
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
         CollectSelectedMoveEntities(em, selectedMoveQuery, entityType, cachedSelectedMoveEntities, selectedEntities);
         NativeArray<Entity> entities = selectedEntities.AsArray();
         if (entities.Length == 0)
         {
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveRejected reason=NoSelection screen={screenPosition}");
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"selectedMoveRejected reason=NoSelection screen={screenPosition}");
             return Result.Rejected(TacticalCommandReasonCode.NoSelection);
         }
 
         if (tryGetClickedCell == null || !tryGetClickedCell(screenPosition, em, out int2 goal, out Vector3 clickWorldPoint))
         {
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveRejected reason=NoClickedCell screen={screenPosition} selected={entities.Length}");
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"selectedMoveRejected reason=NoClickedCell screen={screenPosition} selected={entities.Length}");
             return Result.Rejected(TacticalCommandReasonCode.TargetBlocked);
         }
 
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"selectedMoveTarget screen={screenPosition} desiredGoal={goal} clickWorld={clickWorldPoint} " +
                 $"selected={entities.Length} first={DescribeMoveEntity(em, entities[0])}");
         }
@@ -234,9 +234,9 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
                 i,
                 surfaceContext);
             issuedGoals[i] = issuedGoal;
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace && i < 12)
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace && i < 12)
             {
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                     $"selectedMoveCandidate index={i} entity={DescribeMoveEntity(em, entity)} " +
                     $"desiredGoal={goal} issuedGoal={issuedGoal} selectedCurrent={ResolveUnitCell(em, entity)}");
             }
@@ -245,8 +245,8 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
             {
                 skipIssue[i] = true;
                 skippedAlreadyMovingCount++;
-                if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace && i < 12)
-                    SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"selectedMoveSkip index={i} reason=AlreadyMoving issuedGoal={issuedGoal} entity={DescribeMoveEntity(em, entity)}");
+                if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace && i < 12)
+                    SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"selectedMoveSkip index={i} reason=AlreadyMoving issuedGoal={issuedGoal} entity={DescribeMoveEntity(em, entity)}");
             }
             else if (!em.HasComponent<UnitAirMovement>(entity))
             {
@@ -285,9 +285,9 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
                 UnitMoveOrderRequestSystem.TryGetResult(em, moveRequestId, out UnitMoveOrderResultElement moveOrderResult)
                     ? ToMoveOrderCommandResult(moveOrderResult)
                     : default;
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace && i < 12)
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace && i < 12)
             {
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                     $"selectedMoveIssued index={i} entity={DescribeMoveEntity(em, entity)} " +
                     $"issuedGoal={issuedGoal} issuePathNow={issuePathNow} resumeFrame={resumeFrame} " +
                     $"targetNow={(em.HasComponent<UnitTarget>(entity) ? em.GetComponentData<UnitTarget>(entity).Cell.ToString() : "none")} " +
@@ -309,9 +309,9 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
 
         if (!issuedMoveOrder)
         {
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
             {
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                     $"selectedMoveRejected reason=TargetBlocked selected={entities.Length} desiredGoal={goal} " +
                     $"skippedAlreadyMoving={skippedAlreadyMovingCount} groundCandidates={groundPathCandidateCount}");
             }
@@ -321,21 +321,21 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
 
         if (EnableGroupMoveValidationLog && entities.Length > 1)
         {
-            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
+            SelectionRuntimeDiagnosticsSystemHelper.LogSelectionClickDebug(
                 $"[GroupMoveValidate] selected={entities.Length} ground={groundPathCandidateCount} immediate={pathRequestCount} " +
                 $"staggered={staggeredPathRequestCount} perFrame={GroupMovePathRequestsPerFrame} maxDelayFrames={maxStaggerDelayFrames} " +
                 $"uniqueGoals={uniqueGoalCount} skippedSameGoal={skippedAlreadyMovingCount} air={airUnitCount} goal={goal}");
         }
 
         if (EnableMoveOrderDiagnostics && entities.Length > 1)
-            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
+            SelectionRuntimeDiagnosticsSystemHelper.LogSelectionClickDebug(
                 $"[MoveOrderDiag] frame={currentFrame} selected={entities.Length} pathRequests={pathRequestCount} " +
                 $"airUnits={airUnitCount} skippedSameGoal={skippedAlreadyMovingCount} structuralAdds={structuralAdds} structuralRemoves={structuralRemoves} " +
                 $"uniqueGoals={uniqueGoalCount} staggeredPathRequests={staggeredPathRequestCount} goal={goal}");
 
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"selectedMoveSuccess frame={currentFrame} selected={entities.Length} desiredGoal={goal} " +
                 $"pathRequests={pathRequestCount} staggeredPathRequests={staggeredPathRequestCount} skippedAlreadyMoving={skippedAlreadyMovingCount} " +
                 $"groundCandidates={groundPathCandidateCount} structuralAdds={structuralAdds} structuralRemoves={structuralRemoves}");
@@ -406,7 +406,7 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         int pendingMoveRequestCount = RemovePendingMoveRequests(
             commandRequests,
             pendingRequests,
-            SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace);
+            SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace);
         if (pendingRequests.Length == 0)
             return false;
 
@@ -416,9 +416,9 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
         {
             RtsSelectionCommandIntentRequestElement request = pendingRequestArray[i];
             Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
             {
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                     $"requestProcess requestId={request.RequestId} requestFrame={request.Frame} " +
                     $"screen={screenPosition} pendingCount={pendingMoveRequestCount}");
             }
@@ -435,9 +435,9 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
                 request.Frame,
                 cachedSelectedMoveEntities);
 
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
             {
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                     $"requestResult requestId={request.RequestId} accepted={result.CommandResult.Accepted} " +
                     $"reason={result.CommandResult.ReasonCode} emitMarker={result.EmitScreenMarker} showWorldMarkers={result.ShowWorldMarkers}");
             }

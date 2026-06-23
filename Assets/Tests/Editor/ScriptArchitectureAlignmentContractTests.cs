@@ -49,7 +49,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
     {
         "Assets/Game/Scripts/Composition/MatchBootstrapSystem.cs",
         "Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs",
-        "Assets/Game/Scripts/Composition/GameplayFeatureStartupSystem.cs",
+        "Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs",
     };
 
@@ -124,8 +124,8 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "BuildingUiCommandBoundary",
         "BuildingUiQuerySystem",
         "SceneLifecycleSystem",
-        "MatchStartRequestSystem",
-        "SelectionRuntimeDiagnosticsSystem",
+        "MatchStartRequestStartupSystemHelper",
+        "SelectionRuntimeDiagnosticsSystemHelper",
         "AISettingsRuntimeState",
     };
 
@@ -682,9 +682,9 @@ public sealed class ScriptArchitectureAlignmentContractTests
     {
         string[] compositionOwnedFiles =
         {
-            "GameplayFeatureStartupSystem.cs",
-            "GameplaySceneBindingSystem.cs",
-            "MapSurfaceRuntimeBootstrapSystem.cs",
+            "GameplayFeatureStartupCompositionSystemHelper.cs",
+            "GameplaySceneBindingSceneSystemHelper.cs",
+            "MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
         };
         List<string> violations = new();
 

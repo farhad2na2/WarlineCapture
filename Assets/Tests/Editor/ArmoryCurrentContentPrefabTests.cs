@@ -109,8 +109,8 @@ public sealed class ArmoryCurrentContentPrefabTests
         Assert.NotNull(inspection);
 
         list.ConfigureCatalogMetadataResolvers(
-            UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
-            UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
+            UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
+            UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
         list.SetInspectionPanel(inspection);
         list.RefreshForTests(ArmoryCatalogCategory.Characters);
 
@@ -144,8 +144,8 @@ public sealed class ArmoryCurrentContentPrefabTests
 
         list.SetInspectionPanel(inspection);
         list.ConfigureCatalogMetadataResolvers(
-            UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
-            UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
+            UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
+            UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
 
         TMP_Text titleText = (TMP_Text)new SerializedObject(inspection)
             .FindProperty("titleText")

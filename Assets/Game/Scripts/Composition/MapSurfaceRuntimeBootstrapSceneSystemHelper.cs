@@ -3,14 +3,14 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class MapSurfaceRuntimeBootstrapSystem
+internal sealed class MapSurfaceRuntimeBootstrapSceneSystemHelper
 {
     private const float SceneOverlayPadding = 0.1f;
 
     private readonly World createdWorld;
     private bool runtimeSurfaceDisposed;
 
-    public MapSurfaceRuntimeBootstrapSystem(World world)
+    public MapSurfaceRuntimeBootstrapSceneSystemHelper(World world)
     {
         createdWorld = world;
     }

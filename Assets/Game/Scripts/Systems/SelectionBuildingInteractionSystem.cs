@@ -12,7 +12,7 @@ public sealed class SelectionBuildingInteractionSystem
     private readonly RtsSelectionPointerTargetCommandSystem _pointerTargetCommandSystem = new();
 
     private SelectionStateSystem _selectionStateSystem;
-    private SelectionScreenMarkerSystem _screenMarkerSystem;
+    private SelectionScreenMarkerUiSystemHelper _screenMarkerHelper;
     private Camera _worldCamera;
     private Unity.Entities.World _queryWorld;
     private EntityQuery _gridConfigQuery;
@@ -20,11 +20,11 @@ public sealed class SelectionBuildingInteractionSystem
 
     public void Init(
         SelectionStateSystem selectionStateSystem,
-        SelectionScreenMarkerSystem screenMarkerSystem,
+        SelectionScreenMarkerUiSystemHelper screenMarkerHelper,
         Camera worldCamera)
     {
         _selectionStateSystem = selectionStateSystem;
-        _screenMarkerSystem = screenMarkerSystem;
+        _screenMarkerHelper = screenMarkerHelper;
         _worldCamera = worldCamera;
         _selectionHudFeedbackSystem.ResetViewCache();
     }
@@ -94,7 +94,7 @@ public sealed class SelectionBuildingInteractionSystem
         _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
 
         if (TryGetPointerPosition(out Vector2 markerScreenPosition))
-            _screenMarkerSystem?.RequestMoveOrderMarker(markerScreenPosition);
+            _screenMarkerHelper?.RequestMoveOrderMarker(markerScreenPosition);
         return true;
     }
 

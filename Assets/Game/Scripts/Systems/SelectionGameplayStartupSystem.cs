@@ -16,7 +16,7 @@ internal sealed class SelectionGameplayStartupSystem
         public readonly SelectionUiReadModelSystem SelectionUiReadModel;
         public readonly SelectionUiCameraSystem SelectionUiCamera;
         public readonly SelectionBuildingInteractionSystem SelectionBuildingInteraction;
-        public readonly SelectionScreenMarkerSystem SelectionScreenMarkers;
+        public readonly SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers;
         public readonly ISelectionRectangleView SelectionRectangleView;
         public readonly System.Func<bool> ShouldBlockBuildingSelectionClick;
 
@@ -29,7 +29,7 @@ internal sealed class SelectionGameplayStartupSystem
             SelectionUiReadModelSystem selectionUiReadModel,
             SelectionUiCameraSystem selectionUiCamera,
             SelectionBuildingInteractionSystem selectionBuildingInteraction,
-            SelectionScreenMarkerSystem selectionScreenMarkers,
+            SelectionScreenMarkerUiSystemHelper selectionScreenMarkers,
             ISelectionRectangleView selectionRectangleView,
             System.Func<bool> shouldBlockBuildingSelectionClick)
         {
@@ -64,7 +64,7 @@ internal sealed class SelectionGameplayStartupSystem
         IMatchIntroStateQuery matchIntroStateQuery)
     {
         IMatchIntroStateQuery resolvedMatchIntroStateQuery = matchIntroStateQuery ?? NullMatchIntroStateQuery.Instance;
-        SelectionRuntimeDiagnosticsSystem selectionRuntimeDiagnosticsSystem = ResolveSelectionRuntimeDiagnosticsSystem();
+        SelectionRuntimeDiagnosticsSystemHelper selectionRuntimeDiagnosticsSystem = ResolveSelectionRuntimeDiagnosticsSystem();
         SelectionRuntimeConfigSystem.State runtimeConfig = SelectionRuntimeConfigSystem.CreateStateFromConfig(rtsSelectionConfig, worldCamera);
         var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
         var rtsSelectionInputSystem = new RtsSelectionInputSystem();
@@ -78,7 +78,7 @@ internal sealed class SelectionGameplayStartupSystem
         var selectionUiCommand = new SelectionUiCommandSystem(IsMatchIntroGameplayInputLocked);
         var selectionUiReadModel = new SelectionUiReadModelSystem();
         var selectionUiCamera = new SelectionUiCameraSystem(rtsCameraSystem, rtsCameraRequestSystem);
-        var selectionScreenMarkers = new SelectionScreenMarkerSystem();
+        var selectionScreenMarkers = new SelectionScreenMarkerUiSystemHelper();
         var selectionStateSystem = new SelectionStateSystem();
         var selectionUiReadModelLookup = new SelectionUiReadModelLookup();
         var focusedUnitUiReadModelSystem = new FocusedUnitUiReadModelSystem();
@@ -714,7 +714,7 @@ internal sealed class SelectionGameplayStartupSystem
             if (selectionRuntimeDiagnosticsSystem != null)
                 selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic(message);
             else
-                SelectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnosticMessage(message);
+                SelectionRuntimeDiagnosticsSystemHelper.EnqueueSelectionDiagnosticMessage(message);
         }
 
         void LogSelectionClickDiagnostic(string message)
@@ -722,7 +722,7 @@ internal sealed class SelectionGameplayStartupSystem
             if (selectionRuntimeDiagnosticsSystem != null)
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(message);
             else
-                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnosticMessage(message);
+                SelectionRuntimeDiagnosticsSystemHelper.LogSelectionClickDiagnosticMessage(message);
         }
 
         Sprite ResolveActiveSquadTrayPortraitSprite()
@@ -849,7 +849,7 @@ internal sealed class SelectionGameplayStartupSystem
             if (mainMenuPlayUi != null &&
                 mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out source))
             {
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                     $"gameplayUiHit source={source} pos={screenPosition} frame={UnityEngine.Time.frameCount}");
                 return true;
             }
@@ -886,9 +886,9 @@ internal sealed class SelectionGameplayStartupSystem
         return new RtsSelectionRuntimeCameraSystem();
     }
 
-    private static SelectionRuntimeDiagnosticsSystem ResolveSelectionRuntimeDiagnosticsSystem()
+    private static SelectionRuntimeDiagnosticsSystemHelper ResolveSelectionRuntimeDiagnosticsSystem()
     {
-        return new SelectionRuntimeDiagnosticsSystem();
+        return new SelectionRuntimeDiagnosticsSystemHelper();
     }
 
     private static string ResolveUnitSourceName(EntityManager em, Entity entity)

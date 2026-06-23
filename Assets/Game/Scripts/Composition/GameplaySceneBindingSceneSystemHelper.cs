@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public sealed class GameplaySceneBindingSystem
+public sealed class GameplaySceneBindingSceneSystemHelper
 {
     public void BindRuntimeGridBlockerDebugViews(RuntimeGridBlockerSystem runtimeGridBlockers)
     {

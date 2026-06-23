@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal static class BuildingRuntimeFocusPositionSystem
+internal static class BuildingRuntimeFocusPositionPresentationSystemHelper
 {
     public static Vector3 Resolve(
         BuildingRuntimeContextSystem.RuntimeSource runtimeSource,

@@ -107,7 +107,7 @@ public sealed class RtsSelectionFocusCommandSystem
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
                 out _))
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"externalSelectionCommandsNoBuffers frame={UnityEngine.Time.frameCount}");
             return false;
         }

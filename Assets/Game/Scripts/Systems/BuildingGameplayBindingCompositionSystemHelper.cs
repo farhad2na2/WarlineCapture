@@ -1,6 +1,6 @@
 using System;
 
-internal sealed class BuildingGameplayBindingSystem
+internal sealed class BuildingGameplayBindingCompositionSystemHelper
 {
     public Action<IMatchRuntimeUi> CreateMainMenuBinding(
         BuildingGameplayCompositionSourceSystem childSystems,

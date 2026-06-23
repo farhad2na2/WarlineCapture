@@ -43,7 +43,7 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly SelectionUiReadModelSystem SelectionUiReadModel;
         public readonly SelectionUiCameraSystem SelectionUiCamera;
         public readonly SelectionBuildingInteractionSystem SelectionBuildingInteraction;
-        public readonly SelectionScreenMarkerSystem SelectionScreenMarkers;
+        public readonly SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers;
         public readonly ISelectionRectangleView SelectionRectangleView;
         public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
         public readonly System.Action DisposeCitizenPopulation;
@@ -82,7 +82,7 @@ internal sealed class ManagedGameplayStartupSystem
             SelectionUiReadModelSystem selectionUiReadModel,
             SelectionUiCameraSystem selectionUiCamera,
             SelectionBuildingInteractionSystem selectionBuildingInteraction,
-            SelectionScreenMarkerSystem selectionScreenMarkers,
+            SelectionScreenMarkerUiSystemHelper selectionScreenMarkers,
             ISelectionRectangleView selectionRectangleView,
             CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
             System.Action disposeCitizenPopulation)

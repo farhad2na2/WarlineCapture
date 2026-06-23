@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal static class BuildingDefinitionAuthoringMetadataSystem
+internal static class BuildingDefinitionAuthoringMetadataPrefabSystemHelper
 {
     public static bool TryGetBuildingDefinitionMetadata(
         GameObject prefab,

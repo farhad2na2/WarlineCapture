@@ -367,7 +367,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
    - Update `BuildingGameplayDependencySystem` so home-building destroyed notifications route to `CitizenPopulationEventSystem`.
    - Remove `CitizenPopulationSystem` storage from building gameplay dependencies.
    - Building gameplay feature binding now accepts `CitizenPopulationEventSystem` directly.
-   - `GameplayFeatureStartupSystem` and `GameBootstrap` pass the composition event boundary instead of the broad shell.
+   - `GameplayFeatureStartupCompositionSystemHelper` and `GameBootstrap` pass the composition event boundary instead of the broad shell.
    - Added `CitizenPopulationBuildingEventCouplingMustUseEventBoundary` to the focused architecture validation batch.
 
 30. Complete: Migrate visual reporter coupling

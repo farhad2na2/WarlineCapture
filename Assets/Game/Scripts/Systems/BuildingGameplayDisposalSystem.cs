@@ -9,7 +9,7 @@ internal sealed class BuildingGameplayDisposalSystem
         public readonly BuildingPlacementStartupSystem PlacementStartupSystem;
         public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly BuildingPlacementPreviewSystem PlacementPreviewSystem;
-        public readonly BuildingRuntimeObjectSystem RuntimeObjectSystem;
+        public readonly BuildingRuntimeObjectPresentationSystemHelper RuntimeObjectPresentationHelper;
         public readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader;
         public readonly Action ExitBuildMode;
 
@@ -18,7 +18,7 @@ internal sealed class BuildingGameplayDisposalSystem
             BuildingPlacementStartupSystem placementStartupSystem,
             BuildingDefinitionSystem definitionSystem,
             BuildingPlacementPreviewSystem placementPreviewSystem,
-            BuildingRuntimeObjectSystem runtimeObjectSystem,
+            BuildingRuntimeObjectPresentationSystemHelper runtimeObjectPresentationHelper,
             UnitPathfindingPendingStateReader unitPathfindingPendingStateReadSystem,
             Action exitBuildMode)
         {
@@ -26,7 +26,7 @@ internal sealed class BuildingGameplayDisposalSystem
             PlacementStartupSystem = placementStartupSystem;
             DefinitionSystem = definitionSystem;
             PlacementPreviewSystem = placementPreviewSystem;
-            RuntimeObjectSystem = runtimeObjectSystem;
+            RuntimeObjectPresentationHelper = runtimeObjectPresentationHelper;
             UnitPathfindingPendingStateReader = unitPathfindingPendingStateReadSystem;
             ExitBuildMode = exitBuildMode;
         }
@@ -44,7 +44,7 @@ internal sealed class BuildingGameplayDisposalSystem
                     continue;
 
                 if (building.Instance != null)
-                    source.RuntimeObjectSystem?.DestroyRuntimeObject(building.Instance);
+                    source.RuntimeObjectPresentationHelper?.DestroyRuntimeObject(building.Instance);
 
                 if (TryGetEntityManager(out EntityManager em))
                 {
@@ -61,7 +61,7 @@ internal sealed class BuildingGameplayDisposalSystem
         source.PlacementStartupSystem?.Dispose(
             source.DefinitionSystem,
             source.PlacementPreviewSystem,
-            target => source.RuntimeObjectSystem?.DestroyRuntimeObject(target));
+            target => source.RuntimeObjectPresentationHelper?.DestroyRuntimeObject(target));
         source.UnitPathfindingPendingStateReader?.Dispose();
     }
 

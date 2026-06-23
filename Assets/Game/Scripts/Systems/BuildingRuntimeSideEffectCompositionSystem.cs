@@ -53,7 +53,7 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystem
                     source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
                     source.BuildingPlacementStartupSystem.BuildingRoot,
                     null,
-                    source.BuildingRuntimeObjectSystem.DestroyRuntimeObject)),
+                    source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
             source.BuildingPlacementInvalidCellSystem.Clear);
     }
 }

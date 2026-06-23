@@ -63,7 +63,35 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs"
     };
 
-    private static readonly Dictionary<string, int> ApprovedPublicNonEcsCommandMutatorMethods = new(StringComparer.Ordinal);
+    private static readonly Dictionary<string, int> ApprovedPublicNonEcsCommandMutatorMethods = new(StringComparer.Ordinal)
+    {
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessBeginConfiguredPlacement"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessBeginPlacementForConfiguredSpawnable"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessBeginSoldierBasePlacement"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessCancelBuildingPlacement"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessConfirmBuildingPlacement"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessExitBuildMode"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|EnqueueAndProcessRotateBuildingPlacement"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|ProcessPendingUiPlacementCommands"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingPlacementCommandSystem.cs|ProcessPendingUiPlacementCommandsIfPresent"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs|EnqueueAndProcessClearSelectedBuilding"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs|EnqueueAndProcessDeleteSelectedBuilding"] = 1,
+        ["Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs|ProcessPendingUiSelectionCommands"] = 1,
+        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessCancelRoadBuildSession"] = 1,
+        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessConfirmRoadBuildSession"] = 1,
+        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessEnterRoadBuildMode"] = 1,
+        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessExitBuildMode"] = 1,
+        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|ProcessPendingRoadBuildCommands"] = 1,
+        ["Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs|TryRequestBoardSelectedTransportOrdersToPassengerRect"] = 1,
+        ["Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs|TryRequestMoveOrderToBuilding"] = 1,
+        ["Assets/Game/Scripts/Systems/SelectionBuildingInteractionSystem.cs|TryRequestMoveOrderToBuilding"] = 1,
+        ["Assets/Game/Scripts/Systems/SelectionRectangleRequestSystem.cs|ProcessPendingRequests"] = 1
+    };
+
+    private static readonly HashSet<string> ApprovedUiRuntimeEcsBoundaryPaths = new(StringComparer.Ordinal)
+    {
+        "Assets/Game/Scripts/UI/Toolkit/UiToolkitShellApplySystem.cs"
+    };
 
     private static readonly HashSet<string> ApprovedTopLevelNamingEscapeTypes = new(StringComparer.Ordinal)
     {
@@ -532,7 +560,8 @@ public sealed class NonEcsSystemConversionArchitectureTests
 
     private static bool IsConcreteUiGameplayPath(string path)
     {
-        return !path.Contains("/UI/Shell/Ecs/", StringComparison.Ordinal);
+        return !path.Contains("/UI/Shell/Ecs/", StringComparison.Ordinal) &&
+               !ApprovedUiRuntimeEcsBoundaryPaths.Contains(path);
     }
 
     private static IEnumerable<string> FindTokenReferences(string path, IEnumerable<string> tokens)

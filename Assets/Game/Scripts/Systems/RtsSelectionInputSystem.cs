@@ -401,8 +401,8 @@ public sealed class RtsSelectionInputSystem
             removed++;
         }
 
-        if (removed > 0 && SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+        if (removed > 0 && SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"pendingMoveRequestsCleared removed={removed} frame={UnityEngine.Time.frameCount}");
 
         return removed;
@@ -461,9 +461,9 @@ public sealed class RtsSelectionInputSystem
             ScreenPosition = ToFloat2(screenPosition),
             HasScreenPosition = 1
         });
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"queueMoveCommandRequest queued={queued} screen={screenPosition} requestFrame={frame} currentFrame={UnityEngine.Time.frameCount}");
         }
 
@@ -484,9 +484,9 @@ public sealed class RtsSelectionInputSystem
             HasWorldPosition = 1,
             HasScreenPosition = 1
         });
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"queueResolvedMoveCommandRequest queued={queued} screen={screenPosition} cell={targetCell} world={worldPosition} requestFrame={frame} currentFrame={UnityEngine.Time.frameCount}");
         }
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal static class UiCatalogAuthoringMetadataSystem
+internal static class UiCatalogAuthoringMetadataUiSystemHelper
 {
     public static bool TryGetBuildingMetadata(GameObject prefab, out UiBuildingCatalogMetadata metadata)
     {

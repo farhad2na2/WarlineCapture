@@ -26,8 +26,8 @@ internal sealed class CitizenPopulationCompositionSystem
         public CitizenPrefabSelectionSystem.State PrefabSelectionState;
         public readonly CitizenVisibleUnitSystem VisibleUnitSystem = new();
         public readonly CitizenPopulationEventSystem EventSystem = ResolveCitizenPopulationEventSystem();
-        public readonly CitizenPopulationDebugSystem DebugSystem = ResolveCitizenPopulationDebugSystem();
-        public readonly CitizenPopulationDiagnosticSystem DiagnosticSystem = new();
+        public readonly CitizenPopulationDebugDiagnosticsSystemHelper DebugSystem = ResolveCitizenPopulationDebugSystem();
+        public readonly CitizenPopulationDiagnosticsSystemHelper DiagnosticSystem = new();
         public readonly CitizenPopulationLifecycleSystem LifecycleSystem = ResolveCitizenPopulationLifecycleSystem();
         public CitizenPopulationLifecycleSystem.State LifecycleState;
         public readonly CitizenPopulationRuntimeUpdateSystem RuntimeUpdateSystem = new();
@@ -232,9 +232,9 @@ internal sealed class CitizenPopulationCompositionSystem
         return new CitizenRefugeeSystem();
     }
 
-    private static CitizenPopulationDebugSystem ResolveCitizenPopulationDebugSystem()
+    private static CitizenPopulationDebugDiagnosticsSystemHelper ResolveCitizenPopulationDebugSystem()
     {
-        return new CitizenPopulationDebugSystem();
+        return new CitizenPopulationDebugDiagnosticsSystemHelper();
     }
 
     private static CitizenPopulationEventSystem ResolveCitizenPopulationEventSystem()

@@ -9,9 +9,9 @@ internal sealed class MenuBootstrapSystem
     private const float MatchReadyHoldSeconds = 0.75f;
 
     private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
-    private readonly MatchStartSystem matchStartSystem = new();
+    private readonly MatchStartSceneSystemHelper matchStartSystem = new();
     private readonly PerformanceDiagnosticsSystem performanceDiagnosticsSystem = new();
-    private readonly MatchSceneReferenceSystem matchSceneReferenceSystem = new();
+    private readonly MatchSceneReferenceSceneSystemHelper matchSceneReferenceSystem = new();
     private readonly QuickCustomGameConfigStore quickCustomGameConfigStore = new();
     private readonly MatchLaunchCommand matchLaunchCommand = new();
 
@@ -79,8 +79,8 @@ internal sealed class MenuBootstrapSystem
         if (view.ContentSystem != null)
         {
             view.ContentSystem.ConfigureCatalogMetadataResolvers(
-                UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
-                UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
+                UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
+                UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
             view.ContentSystem.BindQuickCustomRuntimeDependencies(quickCustomGameConfigStore, matchLaunchCommand);
         }
         if (view.Router != null)
@@ -472,8 +472,8 @@ internal sealed class MenuBootstrapSystem
             buildingPrefabSource,
             command,
             buildQuery,
-            UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
-            UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
+            UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
+            UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
         boundUiToolkitBuildingUiCommand = command;
         boundUiToolkitBuildingUiQuery = buildQuery;
         boundUiToolkitUnitPrefabSource = unitPrefabSource;

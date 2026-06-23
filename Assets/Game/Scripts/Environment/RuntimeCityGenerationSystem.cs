@@ -42,7 +42,7 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly CollectInitialBaseExclusionRoadRectsDelegate CollectInitialBaseExclusionRoadRects;
         public readonly ShouldYieldDelegate ShouldYield;
         public readonly RuntimeCityMinimapEventSystem MinimapEvents;
-        public readonly RuntimeCityDiagnosticSystem Diagnostics;
+        public readonly RuntimeCityDiagnosticsSystemHelper Diagnostics;
 
         public Context(
             RuntimeCityConfigSystem.Snapshot cityConfig,
@@ -67,7 +67,7 @@ internal sealed class RuntimeCityGenerationSystem
             CollectInitialBaseExclusionRoadRectsDelegate collectInitialBaseExclusionRoadRects,
             ShouldYieldDelegate shouldYield,
             RuntimeCityMinimapEventSystem minimapEvents,
-            RuntimeCityDiagnosticSystem diagnostics)
+            RuntimeCityDiagnosticsSystemHelper diagnostics)
         {
             CityConfig = cityConfig;
             Grid = grid;

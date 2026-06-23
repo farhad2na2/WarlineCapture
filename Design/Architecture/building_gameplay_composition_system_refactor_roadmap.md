@@ -143,8 +143,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingGameplayStartupCompositionSystem.Initialize()` owns initial dollars, dependency startup, road-footprint query configuration, and placement startup wiring.
 
 7. Complete: Extract main menu and gameplay feature binding
-   - Move main-menu callback binding, gameplay feature binding, and menu-facing composition glue into `BuildingGameplayBindingSystem`.
-   - Result: `BuildingGameplayBindingSystem` now creates the main-menu and gameplay-feature binding delegates used by the composition result.
+   - Move main-menu callback binding, gameplay feature binding, and menu-facing composition glue into `BuildingGameplayBindingCompositionSystemHelper`.
+   - Result: `BuildingGameplayBindingCompositionSystemHelper` now creates the main-menu and gameplay-feature binding delegates used by the composition result.
 
 8. Complete: Extract citizen population bridge
    - Move citizen resource context creation, citizen population initialization, binding, and disposal callbacks into `BuildingCitizenPopulationCompositionSystem`.
@@ -155,8 +155,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingGameplayDisposalCompositionSystem` now owns the disposal source and dispose action assembly used by the composition result.
 
 10. Complete: Extract marker property block ownership
-   - Move marker `MaterialPropertyBlock` lazy creation and reuse to `BuildingMarkerVisualCompositionSystem`.
-   - Result: `BuildingMarkerVisualCompositionSystem` now owns lazy marker `MaterialPropertyBlock` creation and reuse.
+   - Move marker `MaterialPropertyBlock` lazy creation and reuse to `BuildingMarkerVisualPresentationSystemHelper`.
+   - Result: `BuildingMarkerVisualPresentationSystemHelper` now owns lazy marker `MaterialPropertyBlock` creation and reuse.
 
 11. Complete: Extract runtime resource prefab source
    - Move `CreateRuntimeResourcePrefabSource` into `BuildingRuntimeResourcePrefabCompositionSystem`.
@@ -171,12 +171,12 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingPlacementInputTickCompositionSystem` now owns input runtime tick context wiring while pointer/selection context helpers remain explicit delegate seams for later steps.
 
 14. Complete: Extract runtime boundary publish context
-   - Move `CreateRuntimeBoundaryPublishContext` into `BuildingRuntimeBoundaryCompositionSystem`.
-   - Result: `BuildingRuntimeBoundaryCompositionSystem` now owns ECS runtime boundary publish context wiring.
+   - Move `CreateRuntimeBoundaryPublishContext` into `BuildingRuntimeBoundaryCompositionSystemHelper`.
+   - Result: `BuildingRuntimeBoundaryCompositionSystemHelper` now owns ECS runtime boundary publish context wiring.
 
 15. Complete: Extract production runtime tick context
-   - Move `CreateProductionRuntimeTickContext` into `BuildingProductionTickCompositionSystem`.
-   - Result: `BuildingProductionTickCompositionSystem` now owns production runtime tick context wiring while production context source extraction remains step 16.
+   - Move `CreateProductionRuntimeTickContext` into `BuildingProductionTickCompositionSystemHelper`.
+   - Result: `BuildingProductionTickCompositionSystemHelper` now owns production runtime tick context wiring while production context source extraction remains step 16.
 
 16. Complete: Extract production context source and queue delegates
    - Move `CreateProductionRuntimeContextSource` and `TryQueuePlayerUnitProduction` into `BuildingProductionCompositionSystem`.

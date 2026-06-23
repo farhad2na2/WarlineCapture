@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class SelectionRuntimeDiagnosticsSystem
+public sealed class SelectionRuntimeDiagnosticsSystemHelper
 {
     public static readonly bool EnableSelectionClickDiagnostics = false;
     public static readonly bool EnableMoveCommandTrace = false;

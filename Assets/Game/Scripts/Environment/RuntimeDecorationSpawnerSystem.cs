@@ -34,14 +34,14 @@ public sealed class RuntimeDecorationSpawnerSystem
     private List<GameObject> _prefabs = new();
     private Transform _rootTransform;
     private CombinedMeshBaker _combinedMeshBaker;
-    private RuntimeCityReadModelSystem _cityReadModel;
+    private RuntimeCityReadModelCompositionSystemHelper _cityReadModel;
     private RuntimeGridBlockerSystem _gridBlockers;
     private bool _combinePending;
     private bool _spawned;
     private int _combineAfterFrames = -1;
     public bool HasSpawned => _spawned || !_spawnOnStart || _prefabs == null || _prefabs.Count == 0 || _decorationCount <= 0;
 
-    public void Init(RuntimeDecorationSpawnerSystemConfig config, Transform rootTransform, CombinedMeshBaker combinedMeshBaker, RuntimeCityReadModelSystem cityReadModel, RuntimeGridBlockerSystem gridBlockers)
+    public void Init(RuntimeDecorationSpawnerSystemConfig config, Transform rootTransform, CombinedMeshBaker combinedMeshBaker, RuntimeCityReadModelCompositionSystemHelper cityReadModel, RuntimeGridBlockerSystem gridBlockers)
     {
         _rootTransform = rootTransform;
         _combinedMeshBaker = combinedMeshBaker;
@@ -203,7 +203,7 @@ public sealed class RuntimeDecorationSpawnerSystem
 
     private bool HasPendingCityGeneration()
     {
-        RuntimeCityReadModelSystem cityReadModel = _cityReadModel;
+        RuntimeCityReadModelCompositionSystemHelper cityReadModel = _cityReadModel;
         return cityReadModel != null && cityReadModel.SpawnOnStartEnabled && !cityReadModel.HasSpawned;
     }
 

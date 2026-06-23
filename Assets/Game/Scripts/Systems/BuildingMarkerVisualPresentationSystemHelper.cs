@@ -1,10 +1,10 @@
 using UnityEngine;
 
-internal sealed class BuildingMarkerVisualCompositionSystem
+internal sealed class BuildingMarkerVisualPresentationSystemHelper
 {
     private MaterialPropertyBlock _markerPropertyBlock;
 
-    public static MaterialPropertyBlock GetMarkerPropertyBlock(BuildingMarkerVisualCompositionSystem system)
+    public static MaterialPropertyBlock GetMarkerPropertyBlock(BuildingMarkerVisualPresentationSystemHelper system)
     {
         return system != null
             ? system.GetMarkerPropertyBlock()

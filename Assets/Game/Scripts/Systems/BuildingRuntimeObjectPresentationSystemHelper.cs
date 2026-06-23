@@ -1,7 +1,7 @@
 using UnityEngine;
 using static UnityEngine.Object;
 
-internal sealed class BuildingRuntimeObjectSystem
+internal sealed class BuildingRuntimeObjectPresentationSystemHelper
 {
     internal void DestroyRuntimeObject(Object target)
     {

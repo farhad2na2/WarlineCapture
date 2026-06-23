@@ -92,7 +92,7 @@ Baseline audit notes:
 
 Direct call sites:
 
-- `BuildingSpawnSystem`: held by `BuildingGameplayCompositionSourceSystem`, included in `BuildingGameplayCompositionResultSystem`, invoked through `BuildingProductionRuntimeTickSystem`, `BuildingProductionTickCompositionSystem`, `BuildingProductionCompositionSystem`, and `BuildingRuntimeContextSystem.CreateBuildingSpawnContext`; focused tests call `ResolveProducedUnitFaction`.
+- `BuildingSpawnSystem`: held by `BuildingGameplayCompositionSourceSystem`, included in `BuildingGameplayCompositionResultSystem`, invoked through `BuildingProductionRuntimeTickSystem`, `BuildingProductionTickCompositionSystemHelper`, `BuildingProductionCompositionSystem`, and `BuildingRuntimeContextSystem.CreateBuildingSpawnContext`; focused tests call `ResolveProducedUnitFaction`.
 - `BuildingProductionTransportBridgeSystem`: held by `BuildingGameplayCompositionSourceSystem`, passed through `BuildingProductionContextSystem` and `BuildingProductionTransportSystem`; focused production tests call `FocusNewestPlayerProducedUnit`.
 - `CitizenVisibleUnitSystem`: constructed by `CitizenPopulationCompositionSystem` and directly constructed by `CitizenVisibleUnitSystemTests`.
 - `MapVehiclePlacementSpawnSystem`: held by `BuildingGameplayCompositionSourceSystem`, invoked by `BuildingGameplayCompositionSystem` map placement update callbacks; blocker cleanup helpers are directly covered by `UnitMovementBlockerValidationTests`.
@@ -267,7 +267,7 @@ Phase 2 source-key spawn notes:
 Phase 2 random-state notes:
 
 - Moved production spawn random state ownership from `BuildingSpawnSystem` to `BuildingGameplayCompositionSourceSystem.BuildingSpawnRandomState`.
-- `BuildingProductionTickCompositionSystem` now passes random state through the existing get/set delegates against the composition source instead of the target spawn system.
+- `BuildingProductionTickCompositionSystemHelper` now passes random state through the existing get/set delegates against the composition source instead of the target spawn system.
 - Removed the hidden-random `BuildingSpawnSystem.TryResolveAvailableFactionHelipadSpawn` overloads; callers now pass `ref uint randomState`.
 - Threaded caller-owned random state through `BuildingProductionTransportSystem.TryEnsureActiveProductionTransport` and `BuildingProductionTransportBridgeSystem.TryResolveAvailableFactionHelipadSpawn` for air-self helipad resolution.
 - Updated the initial-faction helipad smoke to pass explicit random state.

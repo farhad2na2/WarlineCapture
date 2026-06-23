@@ -43,9 +43,9 @@ public partial struct UnitMoveOrderSystem : ISystem
         int currentFrame)
     {
         MoveOrderCommandResult result = new() { Issued = true };
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"unitMoveOrderGrouped caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} " +
                 $"goal={goal} issuePathNow={issueGroundPathNow} retry={useGroundPathRetryCooldown} resumeFrame={resumeFrame} frame={currentFrame}");
         }
@@ -105,9 +105,9 @@ public partial struct UnitMoveOrderSystem : ISystem
 
             ecb.Playback(entityManager);
 
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
             {
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                     $"unitMoveOrderGroupedApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal} " +
                     $"pathRequests={result.PathRequests} staggered={result.StaggeredPathRequests} air={result.AirUnits} " +
                     $"adds={result.StructuralAdds} removes={result.StructuralRemoves}");
@@ -123,8 +123,8 @@ public partial struct UnitMoveOrderSystem : ISystem
 
     public void IssueImmediateMoveCommand(EntityManager entityManager, Entity entity, int2 goal)
     {
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderImmediate caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} goal={goal}");
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"unitMoveOrderImmediate caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         EntityCommandBuffer ecb = new(Allocator.Temp);
         try
         {
@@ -153,8 +153,8 @@ public partial struct UnitMoveOrderSystem : ISystem
                 ecb.AddComponent<ManualMoveOrderTag>(entity);
 
             ecb.Playback(entityManager);
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderImmediateApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal}");
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"unitMoveOrderImmediateApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         }
         finally
         {
@@ -164,8 +164,8 @@ public partial struct UnitMoveOrderSystem : ISystem
 
     public void IssueTargetOnlyMoveCommand(EntityManager entityManager, Entity entity, int2 goal)
     {
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderTargetOnly caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} goal={goal}");
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"unitMoveOrderTargetOnly caller={ResolveCaller()} entityBefore={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         EntityCommandBuffer ecb = new(Allocator.Temp);
         try
         {
@@ -181,8 +181,8 @@ public partial struct UnitMoveOrderSystem : ISystem
                 ecb.AddComponent<ManualMoveOrderTag>(entity);
 
             ecb.Playback(entityManager);
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"unitMoveOrderTargetOnlyApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal}");
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"unitMoveOrderTargetOnlyApplied entityAfter={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         }
         finally
         {

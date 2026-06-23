@@ -74,7 +74,7 @@ public sealed class PerformanceDiagnosticsSystemAllocationTests
         GameObject root = new("MenuBootstrap");
         root.AddComponent<MenuBootstrapView>();
 
-        PerformanceDiagnosticsReferenceSystem referenceSystem = new();
+        PerformanceDiagnosticsReferenceDiagnosticsSystemHelper referenceSystem = new();
 
         Assert.IsFalse(referenceSystem.TryGet(scene, out PerformanceDiagnosticsSystem diagnostics));
         Assert.IsNull(diagnostics);
@@ -91,7 +91,7 @@ public sealed class PerformanceDiagnosticsSystemAllocationTests
         try
         {
             Assert.IsTrue(view.IsPerformanceDiagnosticsInitialized);
-            PerformanceDiagnosticsReferenceSystem referenceSystem = new();
+            PerformanceDiagnosticsReferenceDiagnosticsSystemHelper referenceSystem = new();
 
             Assert.IsTrue(referenceSystem.TryGet(scene, out PerformanceDiagnosticsSystem diagnostics));
             Assert.AreSame(view.PerformanceDiagnostics, diagnostics);

@@ -19,7 +19,7 @@ public partial struct UnitMoveTargetDiagnosticSystem : ISystem
             ComponentType.ReadOnly<Faction>());
         _lastTargets = new NativeParallelHashMap<Entity, int2>(64, Allocator.Persistent);
         _missingTargetScratch = new NativeList<Entity>(64, Allocator.Persistent);
-        if (!SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        if (!SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
             state.Enabled = false;
     }
 
@@ -65,7 +65,7 @@ public partial struct UnitMoveTargetDiagnosticSystem : ISystem
                     continue;
 
                 _lastTargets[entity] = target.Cell;
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                     $"playerUnitTargetChanged frame={UnityEngine.Time.frameCount} entity={DescribeEntity(em, entity)} " +
                     $"previous={(previous.Equals(default) ? "none-or-default" : previous.ToString())} target={target.Cell} " +
                     $"pathRequest={ResolvePathRequest(em, entity)} pathFollow={em.HasComponent<UnitPathFollow>(entity)} " +

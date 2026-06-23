@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeBoundaryCompositionSystem
+internal sealed class BuildingRuntimeBoundaryCompositionSystemHelper
 {
     public BuildingRuntimeBoundaryPublishSystem.Context Create(
         BuildingGameplayCompositionSourceSystem source,

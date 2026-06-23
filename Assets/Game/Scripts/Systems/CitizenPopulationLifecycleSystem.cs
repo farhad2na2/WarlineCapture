@@ -38,7 +38,7 @@ internal sealed class CitizenPopulationLifecycleSystem
         CitizenBuildingReadSystem buildingReadSystem,
         CitizenPopulationEcsProjectionSystem ecsProjection,
         CitizenDangerSystem dangerSystem,
-        CitizenPopulationDiagnosticSystem diagnosticSystem,
+        CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
         CitizenPopulationStateSystem populationState,
         Action updateLogicalCitizens,
         Action syncVisibleCitizens,
@@ -80,7 +80,7 @@ internal sealed class CitizenPopulationLifecycleSystem
         CitizenBuildingReadSystem buildingReadSystem,
         CitizenPopulationEcsProjectionSystem ecsProjection,
         CitizenDangerSystem dangerSystem,
-        CitizenPopulationDiagnosticSystem diagnosticSystem,
+        CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
         CitizenPopulationStateSystem state,
         Action updateLogicalCitizens,
         Action syncVisibleCitizens,
@@ -114,7 +114,7 @@ internal sealed class CitizenPopulationLifecycleSystem
         CitizenBuildingReadSystem buildingReadSystem,
         CitizenPopulationEcsProjectionSystem ecsProjection,
         CitizenDangerSystem dangerSystem,
-        CitizenPopulationDiagnosticSystem diagnosticSystem,
+        CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
         CitizenPopulationStateSystem state,
         Action updateLogicalCitizens,
         Action syncVisibleCitizens,
@@ -122,29 +122,29 @@ internal sealed class CitizenPopulationLifecycleSystem
         Func<bool> hasPendingPathJob,
         float now)
     {
-        CitizenPopulationDiagnosticSystem.FrameTimings timings = CitizenPopulationDiagnosticSystem.BeginFrame(diagnosticSystem);
+        CitizenPopulationDiagnosticsSystemHelper.FrameTimings timings = CitizenPopulationDiagnosticsSystemHelper.BeginFrame(diagnosticSystem);
         try
         {
             if (!buildingReadSystem.HasRuntimeBuildingQuery())
                 return;
 
             bool refreshedBuildings = buildingReadSystem.RefreshRuntimeBuildingListsIfDue(now);
-            CitizenPopulationDiagnosticSystem.MarkBuildings(diagnosticSystem, ref timings);
+            CitizenPopulationDiagnosticsSystemHelper.MarkBuildings(diagnosticSystem, ref timings);
 
             if (hasPendingPathJob != null && hasPendingPathJob())
             {
-                CitizenPopulationDiagnosticSystem.MarkSkippedForPathfinding(diagnosticSystem, ref timings);
+                CitizenPopulationDiagnosticsSystemHelper.MarkSkippedForPathfinding(diagnosticSystem, ref timings);
                 RecalculateTotalsIfDue(ref lifecycleState, syncSummaryEntity: false, now, recalculateTotals);
-                CitizenPopulationDiagnosticSystem.MarkTotals(diagnosticSystem, ref timings);
+                CitizenPopulationDiagnosticsSystemHelper.MarkTotals(diagnosticSystem, ref timings);
                 return;
             }
 
             ecsProjection.ResolveEntityManager();
             ecsProjection.EnsurePopulationSummaryEntity();
-            CitizenPopulationDiagnosticSystem.MarkResolve(diagnosticSystem, ref timings);
+            CitizenPopulationDiagnosticsSystemHelper.MarkResolve(diagnosticSystem, ref timings);
 
             CitizenDangerSystem.RefreshDangerSourcesIfNeeded(dangerSystem, now);
-            CitizenPopulationDiagnosticSystem.MarkDanger(diagnosticSystem, ref timings);
+            CitizenPopulationDiagnosticsSystemHelper.MarkDanger(diagnosticSystem, ref timings);
 
             if (now >= lifecycleState.NextLogicalCitizenUpdateAt)
             {
@@ -154,7 +154,7 @@ internal sealed class CitizenPopulationLifecycleSystem
                 updateLogicalCitizens();
             }
 
-            CitizenPopulationDiagnosticSystem.MarkLogical(diagnosticSystem, ref timings);
+            CitizenPopulationDiagnosticsSystemHelper.MarkLogical(diagnosticSystem, ref timings);
 
             if (now >= lifecycleState.NextVisibleCitizenSyncAt)
             {
@@ -162,13 +162,13 @@ internal sealed class CitizenPopulationLifecycleSystem
                 syncVisibleCitizens();
             }
 
-            CitizenPopulationDiagnosticSystem.MarkVisible(diagnosticSystem, ref timings);
+            CitizenPopulationDiagnosticsSystemHelper.MarkVisible(diagnosticSystem, ref timings);
             RecalculateTotalsIfDue(ref lifecycleState, syncSummaryEntity: true, now, recalculateTotals);
-            CitizenPopulationDiagnosticSystem.MarkTotals(diagnosticSystem, ref timings);
+            CitizenPopulationDiagnosticsSystemHelper.MarkTotals(diagnosticSystem, ref timings);
         }
         finally
         {
-            CitizenPopulationDiagnosticSystem.EndFrame(diagnosticSystem, ref timings, state);
+            CitizenPopulationDiagnosticsSystemHelper.EndFrame(diagnosticSystem, ref timings, state);
         }
     }
 

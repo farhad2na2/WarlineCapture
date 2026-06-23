@@ -4,9 +4,9 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public sealed class MatchStartSystem
+public sealed class MatchStartSceneSystemHelper
 {
-    private readonly MatchSceneReferenceSystem _matchSceneReferenceSystem = new();
+    private readonly MatchSceneReferenceSceneSystemHelper _matchSceneReferenceSystem = new();
     private World _world;
     private Entity _matchStartEntity;
 

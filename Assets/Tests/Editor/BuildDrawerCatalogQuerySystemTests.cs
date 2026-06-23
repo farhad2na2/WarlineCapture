@@ -1140,15 +1140,15 @@ public sealed class BuildDrawerCatalogQuerySystemTests
     private static void ConfigureCatalogMetadataResolvers(BuildDrawerCatalogRuntimeView presenter)
     {
         presenter.ConfigureCatalogMetadataResolvers(
-            UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
-            UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
+            UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
+            UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
     }
 
     private static void ConfigureCatalogMetadataResolvers(BuildDrawerCatalogQuerySystem query)
     {
         query.ConfigureMetadataResolvers(
-            UiCatalogAuthoringMetadataSystem.TryGetBuildingMetadata,
-            UiCatalogAuthoringMetadataSystem.TryGetUnitMetadata);
+            UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
+            UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
     }
 
     private GameObject CreateBuilding(string displayName, bool canRequest, BuildingRole role, bool isWall)

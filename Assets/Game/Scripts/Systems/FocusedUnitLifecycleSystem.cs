@@ -56,7 +56,7 @@ public sealed class FocusedUnitLifecycleSystem
         try
         {
             if (entities.Length > 0 || cacheBefore > 0 || (focusedBefore != Entity.Null && em.Exists(focusedBefore)))
-                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
+                SelectionRuntimeDiagnosticsSystemHelper.LogSelectionClickDebug(
                     $"[SelectionClick] ONE_SELECTION_DEBUG action=Clear reason={reason} frame={UnityEngine.Time.frameCount} " +
                     $"selected={entities.Length} cacheBefore={cacheBefore} focusedBefore={DescribeSelectionEntity(em, focusedBefore)}");
             if (entities.Length > 0 || cacheBefore > 0)
@@ -89,7 +89,7 @@ public sealed class FocusedUnitLifecycleSystem
         {
             if (!em.Exists(focusedUnit))
             {
-                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] ONE_SELECTION_DEBUG action=ClearFocused reason=FocusedEntityMissing frame={UnityEngine.Time.frameCount} focused={focusedUnit}");
+                SelectionRuntimeDiagnosticsSystemHelper.LogSelectionClickDebug($"[SelectionClick] ONE_SELECTION_DEBUG action=ClearFocused reason=FocusedEntityMissing frame={UnityEngine.Time.frameCount} focused={focusedUnit}");
                 selectionStateSystem.ClearFocusedUnit();
                 focusedUnit = Entity.Null;
             }
@@ -97,7 +97,7 @@ public sealed class FocusedUnitLifecycleSystem
                      !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(focusedUnit).Id) &&
                      em.HasComponent<SelectedUnitTag>(focusedUnit))
             {
-                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
+                SelectionRuntimeDiagnosticsSystemHelper.LogSelectionClickDebug(
                     $"[SelectionClick] ONE_SELECTION_DEBUG action=RemoveSelected reason=FocusedNotPlayer frame={UnityEngine.Time.frameCount} " +
                     $"focused={DescribeSelectionEntity(em, focusedUnit)}");
                 em.RemoveComponent<SelectedUnitTag>(focusedUnit);
@@ -171,13 +171,13 @@ public sealed class FocusedUnitLifecycleSystem
         bool cacheableAfterAdd = SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity);
         selectionStateSystem.CacheSelectedMoveEntity(em, entity);
         string description = describeEntity != null ? describeEntity(em, entity) : entity.ToString();
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+        SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
             $"focusUnitEntity source={diagnosticSource} result=True entity={description} " +
             $"playerControlled={playerControlled} selectedAfterAdd={selectedAfterAdd} cacheable={cacheableAfterAdd} " +
             $"cacheCount={selectionStateSystem.CachedSelectedMoveEntities.Count} hasMove={em.HasComponent<UnitMove>(entity)} " +
             $"hasGrid={em.HasComponent<UnitGrid>(entity)} disabled={em.HasComponent<Disabled>(entity)} " +
             $"passenger={em.HasComponent<UnitTransportPassenger>(entity)} frame={UnityEngine.Time.frameCount}");
-        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
+        SelectionRuntimeDiagnosticsSystemHelper.LogSelectionClickDebug(
             $"[SelectionClick] ONE_SELECTION_DEBUG action=Focus source={diagnosticSource} frame={UnityEngine.Time.frameCount} " +
             $"entity={description} selectedAfterAdd={selectedAfterAdd} cache={selectionStateSystem.CachedSelectedMoveEntities.Count} " +
             $"playerControlled={playerControlled}");
@@ -213,13 +213,13 @@ public sealed class FocusedUnitLifecycleSystem
         EnsureEntityQueries(em);
         if (!tryGetClickedUnitEntity(screenPosition, em, out Entity bestEntity))
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"tryFocusUnit result=False reason=NoClickedUnit screen={screenPosition} frame={UnityEngine.Time.frameCount}");
             return false;
         }
         if (IsBuildingEntity(em, bestEntity))
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"tryFocusUnit result=False reason=ClickedBuilding entity={DescribeSelectionEntity(em, bestEntity)} screen={screenPosition} frame={UnityEngine.Time.frameCount}");
             return false;
         }

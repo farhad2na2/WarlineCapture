@@ -168,7 +168,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Expected output: `BuildingGameplaySystem.Init` is no longer the startup/config gateway.
    - `BuildingGameplayCompositionSystem.Initialize` now configures `BuildingGameplayDependencySystem` and `BuildingPlacementStartupSystem` directly before constructing runtime contexts.
    - `BuildingPlacementStartupSystem` now owns road footprint query/context and exposes road-footprint mask/query helpers.
-   - Added `BuildingRuntimeObjectSystem` as the narrow runtime object destruction boundary used by startup/disposal compatibility code.
+   - Added `BuildingRuntimeObjectPresentationSystemHelper` as the narrow runtime object destruction boundary used by startup/disposal compatibility code.
    - `BuildingGameplaySystem` no longer stores road footprint query/context fields, and production composition no longer calls `building.Init(...)`.
 
 7. Complete: Move disposal ownership
@@ -390,7 +390,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 ## Phase 9: Migrate Consumers And Tests
 
 34. Complete: Migrate production consumers off `BuildingGameplaySystem`
-   - Update `ManagedGameplayStartupSystem`, `GameplayFeatureStartupSystem`, `MenuStartupSystem`, `GameplayRuntimeUpdateSystem`, runtime city composition, selection systems, citizen population startup, AI tests/helpers, and any remaining production caller to use composition result fields.
+   - Update `ManagedGameplayStartupSystem`, `GameplayFeatureStartupCompositionSystemHelper`, `MenuStartupSystem`, `GameplayRuntimeUpdateSystem`, runtime city composition, selection systems, citizen population startup, AI tests/helpers, and any remaining production caller to use composition result fields.
    - Expected output: `rg "BuildingGameplaySystem" Assets/Game -g '*.cs'` finds no production dependency except the file being retired.
    - In progress: citizen population context creation and gameplay feature binding now use composition-owned dependency/resource context systems instead of `BuildingGameplaySystem`.
    - In progress: runtime tick and runtime boundary production source creation now use composition-owned `BuildingProductionContextSystem.Source` instead of `BuildingGameplaySystem.CreateBuildingProductionContextSource`.

@@ -244,11 +244,15 @@ public partial struct UnitTransportDeployOrderSystem : ISystem
         RemoveIfPresent<UnitTransportAirdropRequest>(em, ecb, entity);
         RemoveIfPresent<UnitResourceHaulOrder>(em, ecb, entity);
 
-        SetOrAdd(em, ecb, entity, new UnitTarget { Cell = deployCell });
         if (em.HasComponent<UnitAirMovement>(entity))
+        {
+            SetOrAdd(em, ecb, entity, new UnitTarget { Cell = deployCell });
             RemoveIfPresent<UnitPathRequest>(em, ecb, entity);
+        }
         else
-            SetOrAdd(em, ecb, entity, new UnitPathRequest { Goal = deployCell });
+        {
+            UnitMoveOrderRequestSystem.ApplyTargetPathMoveOrder(em, ecb, entity, deployCell);
+        }
 
         if (!em.HasComponent<ManualMoveOrderTag>(entity))
             ecb.AddComponent<ManualMoveOrderTag>(entity);

@@ -716,7 +716,7 @@ internal sealed class QuickCustomGameConfigStore : IQuickCustomGameConfigStore
 internal sealed class MatchLaunchCommand : IMatchLaunchCommand
 {
     private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
-    private readonly MatchStartRequestSystem matchStartRequestSystem = new();
+    private readonly MatchStartRequestStartupSystemHelper matchStartRequestSystem = new();
 
     public void LaunchMatch(Component source)
     {
@@ -748,6 +748,6 @@ internal sealed class SelectionDiagnosticsSinkAdapter : ISelectionDiagnosticsSin
 {
     public void LogMoveCommandTrace(string message)
     {
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(message);
+        SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(message);
     }
 }

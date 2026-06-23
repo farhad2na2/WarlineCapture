@@ -73,11 +73,11 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityChainState _fallbackRuntimeCityChain = new();
     private RuntimeCityRoadCommitSystem _runtimeCityRoadCommitSystem;
     private readonly RuntimeCityRoadCommitState _fallbackRuntimeCityRoadCommit = new();
-    private RuntimeCityDiagnosticSystem _runtimeCityDiagnosticSystem;
+    private RuntimeCityDiagnosticsSystemHelper _runtimeCityDiagnosticSystem;
     private RuntimeCityIngressSystem _runtimeCityIngressSystem;
     private readonly RuntimeCityIngressState _fallbackRuntimeCityIngress = new();
     private RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem;
-    private RuntimeCityReadModelSystem _runtimeCityReadModelSystem;
+    private RuntimeCityReadModelCompositionSystemHelper _runtimeCityReadModelSystem;
     private RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RuntimeCityStartupSystem.TryGetPendingInitialUnitsDelegate _tryGetPendingInitialUnits;
     private readonly RuntimeCityStartupSystem.TryGetRoadCellSizeDelegate _tryGetRoadCellSize;
@@ -97,7 +97,7 @@ public sealed class RuntimeCityCompositionSystem
     public bool SpawnOnStartEnabled => spawnOnStart;
     public bool HasSpawned => RuntimeCityLifecycleState.HasSpawned(cityCount);
     public bool IsGenerating => RuntimeCityLifecycleState.IsGenerating;
-    public RuntimeCityReadModelSystem ReadModel => RuntimeCityReadModelSystem;
+    public RuntimeCityReadModelCompositionSystemHelper ReadModel => RuntimeCityReadModelCompositionSystemHelper;
 
     public RuntimeCityCompositionSystem()
     {
@@ -195,7 +195,7 @@ public sealed class RuntimeCityCompositionSystem
                 RuntimeCityPrefabSelectionState,
                 RuntimeCityVisualSystem,
                 RuntimeCitySpawnBridgeState,
-                RuntimeCityDiagnosticSystem)
+                RuntimeCityDiagnosticsSystemHelper)
             : global::RuntimeCityBuildingSpawnContextSystem.CreateFallback(
                 cityConfig,
                 RuntimeCityBuildingPlotState,
@@ -203,7 +203,7 @@ public sealed class RuntimeCityCompositionSystem
                 RuntimeCityPrefabSelectionState,
                 RuntimeCityVisualSystem,
                 RuntimeCitySpawnBridgeState,
-                RuntimeCityDiagnosticSystem);
+                RuntimeCityDiagnosticsSystemHelper);
     }
 
     private void TryAutoSpawn(int frameCount)
@@ -233,7 +233,7 @@ public sealed class RuntimeCityCompositionSystem
 
     private void PublishReadModel()
     {
-        RuntimeCityReadModelSystem?.Publish(SpawnOnStartEnabled, HasSpawned, IsGenerating);
+        RuntimeCityReadModelCompositionSystemHelper?.Publish(SpawnOnStartEnabled, HasSpawned, IsGenerating);
     }
 
     private void GenerateCity(GridConfig grid, int roadCellSizeInGridCells, int frameCount)
@@ -253,7 +253,7 @@ public sealed class RuntimeCityCompositionSystem
             cityCount,
             generateBuildings,
             generationYieldInterval,
-            RuntimeCityDiagnosticSystem);
+            RuntimeCityDiagnosticsSystemHelper);
     }
 
     private RuntimeCityStartupSystem.Context CreateStartupContext(int frameCount)
@@ -274,7 +274,7 @@ public sealed class RuntimeCityCompositionSystem
             _tryGetPendingInitialUnits,
             _tryGetRoadCellSize,
             _tryGetGridData,
-            RuntimeCityDiagnosticSystem);
+            RuntimeCityDiagnosticsSystemHelper);
     }
 
     private RuntimeCityGenerationSystem.Context CreateGenerationContext(GridConfig grid, int roadCellSizeInGridCells, int frameCount)
@@ -302,7 +302,7 @@ public sealed class RuntimeCityCompositionSystem
             CollectInitialBaseExclusionRoadRects,
             ShouldYield,
             RuntimeCityMinimapEventSystem,
-            RuntimeCityDiagnosticSystem);
+            RuntimeCityDiagnosticsSystemHelper);
     }
 
     private RuntimeCityBuildingSpawnContextSystem.Systems CreateBuildingSpawnSystems()
@@ -345,7 +345,7 @@ public sealed class RuntimeCityCompositionSystem
     {
         return new RuntimeCityRoadCommitSystem.Context(
             RuntimeCityRoadBuildBridgeState,
-            RuntimeCityDiagnosticSystem);
+            RuntimeCityDiagnosticsSystemHelper);
     }
 
     private RuntimeCityIngressSystem.Context CreateIngressContext()
@@ -364,14 +364,14 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityReadinessQuerySystem RuntimeCityReadinessQuerySystem =>
         _runtimeCityReadinessQuerySystem ??= new RuntimeCityReadinessQuerySystem();
 
-    private RuntimeCityReadModelSystem RuntimeCityReadModelSystem =>
-        _runtimeCityReadModelSystem ??= new RuntimeCityReadModelSystem();
+    private RuntimeCityReadModelCompositionSystemHelper RuntimeCityReadModelCompositionSystemHelper =>
+        _runtimeCityReadModelSystem ??= new RuntimeCityReadModelCompositionSystemHelper();
 
     private RuntimeCityConfigSystem RuntimeCityConfigSystem =>
         _runtimeCityConfigSystem ??= ResolveRuntimeCityConfigSystem();
 
-    private RuntimeCityDiagnosticSystem RuntimeCityDiagnosticSystem =>
-        _runtimeCityDiagnosticSystem ??= new RuntimeCityDiagnosticSystem();
+    private RuntimeCityDiagnosticsSystemHelper RuntimeCityDiagnosticsSystemHelper =>
+        _runtimeCityDiagnosticSystem ??= new RuntimeCityDiagnosticsSystemHelper();
 
     private RuntimeCityBuildingSpawnContextSystem RuntimeCityBuildingSpawnContextSystem =>
         _runtimeCityBuildingSpawnContextSystem ??= new RuntimeCityBuildingSpawnContextSystem();

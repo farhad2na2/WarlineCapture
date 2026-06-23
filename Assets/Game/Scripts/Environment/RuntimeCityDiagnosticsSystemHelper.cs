@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal sealed class RuntimeCityDiagnosticSystem
+internal sealed class RuntimeCityDiagnosticsSystemHelper
 {
     private bool _enableStateDiagnostics;
 

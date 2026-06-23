@@ -168,9 +168,9 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             roadFootprintState: default,
             factionVisuals: null,
             dayNight: null,
-            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
-            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
-            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeyPrefabSystemHelper.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
         Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
@@ -240,9 +240,9 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             roadFootprintState: default,
             factionVisuals: null,
             dayNight: null,
-            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
-            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
-            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeyPrefabSystemHelper.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
         Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
@@ -289,9 +289,9 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             roadFootprintState: default,
             factionVisuals: null,
             dayNight: null,
-            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
-            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
-            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeyPrefabSystemHelper.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
         Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
@@ -338,9 +338,9 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             roadFootprintState: default,
             factionVisuals: null,
             dayNight: null,
-            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
-            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
-            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeyPrefabSystemHelper.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
         em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
@@ -389,9 +389,9 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             roadFootprintState: default,
             factionVisuals: null,
             dayNight: null,
-            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
-            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
-            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeyPrefabSystemHelper.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
         Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
@@ -442,9 +442,9 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             roadFootprintState: default,
             factionVisuals: null,
             dayNight: null,
-            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
-            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
-            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeyPrefabSystemHelper.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
         em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
@@ -491,9 +491,9 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             roadFootprintState: default,
             factionVisuals: null,
             dayNight: null,
-            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
-            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
-            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeyPrefabSystemHelper.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
         em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
@@ -539,8 +539,8 @@ public sealed class BuildingRuntimeBoundaryValidationTests
 
             var definitionSystem = new BuildingDefinitionSystem();
             definitionSystem.ConfigureAuthoringMetadataResolvers(
-                BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
-                BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata);
+                BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+                BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
             definitionSystem.RebuildSpawnablesLookup(
                 new System.Collections.Generic.List<GameObject> { _buildingPrefab },
                 new System.Collections.Generic.List<GameObject> { unitPrefab });

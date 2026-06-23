@@ -1,6 +1,6 @@
 using System;
 
-internal sealed class BuildingProductionTickCompositionSystem
+internal sealed class BuildingProductionTickCompositionSystemHelper
 {
     public BuildingProductionRuntimeTickSystem.Context Create(
         BuildingGameplayCompositionSourceSystem source,

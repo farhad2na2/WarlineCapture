@@ -53,7 +53,7 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
     {
         CaptureUiClickSequence();
         bool queued = Queue(RtsSelectionCommandIntentKind.EnterMoveTargetMode);
-        SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+        SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
             $"requestMoveCommandMode queued={queued} frame={UnityEngine.Time.frameCount}");
         return queued;
     }
@@ -68,7 +68,7 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
     {
         CaptureUiClickSequence();
         bool queued = Queue(RtsSelectionCommandIntentKind.EnterScanTargetMode);
-        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+        SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
             $"requestScanCommandMode queued={queued} frame={UnityEngine.Time.frameCount}");
         return queued;
     }
@@ -152,12 +152,12 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
     {
         if (IsGameplayInputLocked())
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"uiCommandQueueBlocked kind={kind} reason=GameplayInputLocked frame={UnityEngine.Time.frameCount}");
             if (kind == RtsSelectionCommandIntentKind.EnterScanTargetMode ||
                 kind == RtsSelectionCommandIntentKind.Scan)
             {
-                SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+                SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
                     $"uiCommandQueueBlocked kind={kind} reason=GameplayInputLocked frame={UnityEngine.Time.frameCount}");
             }
             return false;
@@ -166,13 +166,13 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
         bool queued = _inputSystem.QueueCommandIntentRequest(kind, UnityEngine.Time.frameCount);
         if (kind == RtsSelectionCommandIntentKind.EnterMoveTargetMode)
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"uiCommandQueued kind={kind} queued={queued} frame={UnityEngine.Time.frameCount}");
         }
         if (kind == RtsSelectionCommandIntentKind.EnterScanTargetMode ||
             kind == RtsSelectionCommandIntentKind.Scan)
         {
-            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
                 $"uiCommandQueued kind={kind} queued={queued} frame={UnityEngine.Time.frameCount}");
         }
 
@@ -183,7 +183,7 @@ public sealed class SelectionUiCommandSystem : ISelectionUiCommand
     {
         if (IsGameplayInputLocked())
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"uiCommandQueueBlocked kind={kind} reason=GameplayInputLocked frame={UnityEngine.Time.frameCount}");
             return false;
         }

@@ -43,7 +43,7 @@ internal sealed class RuntimeCityStartupSystem
         public readonly TryGetPendingInitialUnitsDelegate TryGetPendingInitialUnits;
         public readonly TryGetRoadCellSizeDelegate TryGetRoadCellSize;
         public readonly TryGetGridDataDelegate TryGetGridData;
-        public readonly RuntimeCityDiagnosticSystem Diagnostics;
+        public readonly RuntimeCityDiagnosticsSystemHelper Diagnostics;
 
         public Context(
             int frameCount,
@@ -61,7 +61,7 @@ internal sealed class RuntimeCityStartupSystem
             TryGetPendingInitialUnitsDelegate tryGetPendingInitialUnits,
             TryGetRoadCellSizeDelegate tryGetRoadCellSize,
             TryGetGridDataDelegate tryGetGridData,
-            RuntimeCityDiagnosticSystem diagnostics)
+            RuntimeCityDiagnosticsSystemHelper diagnostics)
         {
             FrameCount = frameCount;
             SpawnOnStart = spawnOnStart;

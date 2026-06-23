@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public sealed class MatchSceneReferenceSystem
+public sealed class MatchSceneReferenceSceneSystemHelper
 {
     public bool TryGetLoadedMatchSceneView(out MatchSceneView view)
     {

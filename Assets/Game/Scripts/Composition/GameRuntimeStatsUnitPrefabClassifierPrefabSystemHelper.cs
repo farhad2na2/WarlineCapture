@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal static class GameRuntimeStatsUnitPrefabClassifierSystem
+internal static class GameRuntimeStatsUnitPrefabClassifierPrefabSystemHelper
 {
     public static GameRuntimeStats.UnitOrderKind ClassifyUnitPrefab(GameObject prefab)
     {

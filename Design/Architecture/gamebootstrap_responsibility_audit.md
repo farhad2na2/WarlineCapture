@@ -228,7 +228,7 @@ Target behavior:
 
 Migration order:
 1. Done: extract the managed runtime update loop into `GameplayRuntimeUpdateSystem` while preserving update labels and order.
-2. Done: move `EnsureGameplaySystemsInitialized` construction and dependency binding into `GameplayFeatureStartupSystem`.
+2. Done: move `EnsureGameplaySystemsInitialized` construction and dependency binding into `GameplayFeatureStartupCompositionSystemHelper`.
 3. Continue moving managed runtime systems into ECS domain systems by existing domain migrations.
 
 Focused validation:

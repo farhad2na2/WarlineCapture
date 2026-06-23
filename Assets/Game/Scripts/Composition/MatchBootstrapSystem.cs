@@ -28,13 +28,13 @@ internal sealed class MatchBootstrapSystem
     private AIStartupSystem _aiStartupSystem;
     private readonly InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem = new();
     private readonly List<InitialFactionSpawnCellFallbackEntry> _initialFactionSpawnCellFallbackEntries = new();
-    private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
+    private readonly GameplaySceneBindingSceneSystemHelper _gameplaySceneBindingSystem = new();
     private RuntimeRootSystem _runtimeRootSystem;
-    private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
+    private readonly GameplayFeatureStartupCompositionSystemHelper _gameplayFeatureStartupSystem = new();
     private RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem;
-    private MapSurfaceRuntimeBootstrapSystem _mapSurfaceRuntimeBootstrapSystem;
+    private MapSurfaceRuntimeBootstrapSceneSystemHelper _mapSurfaceRuntimeBootstrapSystem;
     private CustomGameStartupSystem _customGameStartupSystem;
-    private readonly PerformanceDiagnosticsReferenceSystem _performanceDiagnosticsReferenceSystem = new();
+    private readonly PerformanceDiagnosticsReferenceDiagnosticsSystemHelper _performanceDiagnosticsReferenceSystem = new();
     private readonly MatchIntroEcsStateQuery matchIntroStateQuery = new();
 
     private readonly ManagedGameplayStartupSystem managedGameplayStartupSystem = new();
@@ -88,7 +88,7 @@ internal sealed class MatchBootstrapSystem
     public SelectionUiReadModelSystem SelectionUiReadModel { get; private set; }
     public SelectionUiCameraSystem SelectionUiCamera { get; private set; }
     public SelectionBuildingInteractionSystem SelectionBuildingInteraction { get; private set; }
-    public SelectionScreenMarkerSystem SelectionScreenMarkers { get; private set; }
+    public SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers { get; private set; }
     public ISelectionRectangleView SelectionRectangle { get; private set; }
     public ISelectionDiagnosticsSink SelectionDiagnosticsSink { get; } = new SelectionDiagnosticsSinkAdapter();
     public MainMenuPlayUI MainMenu { get; private set; }
@@ -425,13 +425,13 @@ internal sealed class MatchBootstrapSystem
             runtimeTransportsRoot,
             runtimeUiRoot,
             createSelectionRectangleView,
-            SelectionPortraitSpriteResolverSystem.ResolveSelectionPortraitSprite,
-            SelectionPortraitSpriteResolverSystem.ResolveSelectionCardPortraitSprite,
-            BuildingProductionUnitMetadataSystem.TryGetMetadata,
-            BuildingProductionUnitMetadataSystem.PrepareTransportDropVisual,
-            BuildingSpawnPrefabLookupKeySystem.ResolveSpawnableLookupKey,
-            BuildingDefinitionAuthoringMetadataSystem.TryGetBuildingDefinitionMetadata,
-            BuildingDefinitionAuthoringMetadataSystem.TryGetUnitDefinitionMetadata,
+            SelectionPortraitSpriteResolverUiSystemHelper.ResolveSelectionPortraitSprite,
+            SelectionPortraitSpriteResolverUiSystemHelper.ResolveSelectionCardPortraitSprite,
+            BuildingProductionUnitMetadataPrefabSystemHelper.TryGetMetadata,
+            BuildingProductionUnitMetadataPrefabSystemHelper.PrepareTransportDropVisual,
+            BuildingSpawnPrefabLookupKeyPrefabSystemHelper.ResolveSpawnableLookupKey,
+            BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+            BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata,
             mapBuildingAuthoringRoot,
             mapVehicleAuthoringRoot,
             matchIntroStateQuery);
@@ -440,7 +440,7 @@ internal sealed class MatchBootstrapSystem
     public void ProjectRuntimeStartupConfig(
         World world,
         RuntimeGridBootstrapSystem runtimeGridBootstrapSystem,
-        MapSurfaceRuntimeBootstrapSystem mapSurfaceRuntimeBootstrapSystem,
+        MapSurfaceRuntimeBootstrapSceneSystemHelper mapSurfaceRuntimeBootstrapSystem,
         GridAuthoringConfig runtimeGridConfig,
         MapSurfaceAuthoring mapSurfaceAuthoring,
         BuildingPlacementSystemConfig buildingPlacementConfig,
@@ -688,7 +688,7 @@ internal sealed class MatchBootstrapSystem
         RuntimeDecorationSpawnerSystem runtimeDecorations,
         RuntimeGridBlockerSystem runtimeGridBlockers,
         RuntimeCityCompositionSystem runtimeCity,
-        MapSurfaceRuntimeBootstrapSystem mapSurfaceRuntimeBootstrapSystem,
+        MapSurfaceRuntimeBootstrapSceneSystemHelper mapSurfaceRuntimeBootstrapSystem,
         RuntimeCameraReferenceSystem runtimeCameraReferenceSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem)
     {
@@ -790,7 +790,7 @@ internal sealed class MatchBootstrapSystem
 
             case GameplayStartStep.ResetStats:
                 SetGameplayStartProgress(0.10f, "Resetting match state");
-                GameRuntimeStats.ConfigureUnitPrefabClassifier(GameRuntimeStatsUnitPrefabClassifierSystem.ClassifyUnitPrefab);
+                GameRuntimeStats.ConfigureUnitPrefabClassifier(GameRuntimeStatsUnitPrefabClassifierPrefabSystemHelper.ClassifyUnitPrefab);
                 GameRuntimeStats.Reset();
                 _pendingAiSettingsSnapshot = AISettingsRuntimeState.CurrentSnapshot;
                 FactionVisualSystem.ProjectConfig(World.DefaultGameObjectInjectionWorld, FactionVisualConfig);
@@ -889,13 +889,13 @@ internal sealed class MatchBootstrapSystem
         return _runtimeGridBootstrapSystem;
     }
 
-    private MapSurfaceRuntimeBootstrapSystem ResolveMapSurfaceRuntimeBootstrapSystem(World world)
+    private MapSurfaceRuntimeBootstrapSceneSystemHelper ResolveMapSurfaceRuntimeBootstrapSystem(World world)
     {
         if (world == null || !world.IsCreated)
             return null;
 
         if (_mapSurfaceRuntimeBootstrapSystem == null)
-            _mapSurfaceRuntimeBootstrapSystem = new MapSurfaceRuntimeBootstrapSystem(world);
+            _mapSurfaceRuntimeBootstrapSystem = new MapSurfaceRuntimeBootstrapSceneSystemHelper(world);
         return _mapSurfaceRuntimeBootstrapSystem;
     }
 
@@ -1140,7 +1140,7 @@ internal sealed class MatchBootstrapSystem
         if (GameplayInitialized)
             return;
 
-        GameplayFeatureStartupSystem.Result gameplaySystems = _gameplayFeatureStartupSystem.Initialize(
+        GameplayFeatureStartupCompositionSystemHelper.Result gameplaySystems = _gameplayFeatureStartupSystem.Initialize(
             RuntimeCitySpawnerConfig,
             RuntimeGridBlockerConfig,
             RuntimeDecorationSpawnerConfig,

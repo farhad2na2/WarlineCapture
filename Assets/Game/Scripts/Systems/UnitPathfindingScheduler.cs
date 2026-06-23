@@ -221,7 +221,7 @@ internal struct UnitPathfindingScheduler
                     bool startWalkable = startInBounds && walkable[startIndex].Value != 0;
                     bool startBlocked = startInBounds && dynamicBlockers.IsCreated && dynamicBlockers.IsSet(startIndex);
                     bool startOccupied = startInBounds && occupied.IsCreated && occupied.IsSet(startIndex);
-                    SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+                    SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                         $"pathSchedule frame={Time.frameCount} index={i} entity={DescribePathEntity(em, requestEntities[i])} " +
                         $"start={start} requestedGoal={requestedGoal} pathGoal={pathGoal} assignedGoal={assignedGoal} " +
                         $"footprint={footprintSize} vehicle={isVehicle} faction={requestFactions[i]} segmented={isSegmentedRequest} " +

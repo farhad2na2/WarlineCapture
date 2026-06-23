@@ -67,11 +67,11 @@ internal sealed class RuntimeCityRoadCommitSystem
     public readonly struct Context
     {
         public readonly RuntimeCityRoadBuildBridgeState RoadBuildBridgeSystem;
-        public readonly RuntimeCityDiagnosticSystem Diagnostics;
+        public readonly RuntimeCityDiagnosticsSystemHelper Diagnostics;
 
         public Context(
             RuntimeCityRoadBuildBridgeState roadBuildBridgeSystem,
-            RuntimeCityDiagnosticSystem diagnostics)
+            RuntimeCityDiagnosticsSystemHelper diagnostics)
         {
             RoadBuildBridgeSystem = roadBuildBridgeSystem;
             Diagnostics = diagnostics;

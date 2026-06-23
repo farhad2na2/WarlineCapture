@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal sealed class CitizenPopulationDiagnosticSystem
+internal sealed class CitizenPopulationDiagnosticsSystemHelper
 {
     private static readonly bool EnableCitizenPopulationDiagnostics = false;
     private const double FreezeLogThresholdSeconds = 0.05d;
@@ -17,7 +17,7 @@ internal sealed class CitizenPopulationDiagnosticSystem
         public bool SkippedForPathfinding;
     }
 
-    public static FrameTimings BeginFrame(CitizenPopulationDiagnosticSystem system)
+    public static FrameTimings BeginFrame(CitizenPopulationDiagnosticsSystemHelper system)
     {
         return system != null
             ? system.BeginFrame()
@@ -29,7 +29,7 @@ internal sealed class CitizenPopulationDiagnosticSystem
         return BeginFrameState();
     }
 
-    public static void MarkBuildings(CitizenPopulationDiagnosticSystem system, ref FrameTimings timings)
+    public static void MarkBuildings(CitizenPopulationDiagnosticsSystemHelper system, ref FrameTimings timings)
     {
         if (system != null)
             system.MarkBuildings(ref timings);
@@ -37,7 +37,7 @@ internal sealed class CitizenPopulationDiagnosticSystem
             MarkBuildingsState(ref timings);
     }
 
-    public static void MarkResolve(CitizenPopulationDiagnosticSystem system, ref FrameTimings timings)
+    public static void MarkResolve(CitizenPopulationDiagnosticsSystemHelper system, ref FrameTimings timings)
     {
         if (system != null)
             system.MarkResolve(ref timings);
@@ -45,7 +45,7 @@ internal sealed class CitizenPopulationDiagnosticSystem
             MarkResolveState(ref timings);
     }
 
-    public static void MarkDanger(CitizenPopulationDiagnosticSystem system, ref FrameTimings timings)
+    public static void MarkDanger(CitizenPopulationDiagnosticsSystemHelper system, ref FrameTimings timings)
     {
         if (system != null)
             system.MarkDanger(ref timings);
@@ -53,7 +53,7 @@ internal sealed class CitizenPopulationDiagnosticSystem
             MarkDangerState(ref timings);
     }
 
-    public static void MarkLogical(CitizenPopulationDiagnosticSystem system, ref FrameTimings timings)
+    public static void MarkLogical(CitizenPopulationDiagnosticsSystemHelper system, ref FrameTimings timings)
     {
         if (system != null)
             system.MarkLogical(ref timings);
@@ -61,7 +61,7 @@ internal sealed class CitizenPopulationDiagnosticSystem
             MarkLogicalState(ref timings);
     }
 
-    public static void MarkVisible(CitizenPopulationDiagnosticSystem system, ref FrameTimings timings)
+    public static void MarkVisible(CitizenPopulationDiagnosticsSystemHelper system, ref FrameTimings timings)
     {
         if (system != null)
             system.MarkVisible(ref timings);
@@ -69,7 +69,7 @@ internal sealed class CitizenPopulationDiagnosticSystem
             MarkVisibleState(ref timings);
     }
 
-    public static void MarkTotals(CitizenPopulationDiagnosticSystem system, ref FrameTimings timings)
+    public static void MarkTotals(CitizenPopulationDiagnosticsSystemHelper system, ref FrameTimings timings)
     {
         if (system != null)
             system.MarkTotals(ref timings);
@@ -77,7 +77,7 @@ internal sealed class CitizenPopulationDiagnosticSystem
             MarkTotalsState(ref timings);
     }
 
-    public static void MarkSkippedForPathfinding(CitizenPopulationDiagnosticSystem system, ref FrameTimings timings)
+    public static void MarkSkippedForPathfinding(CitizenPopulationDiagnosticsSystemHelper system, ref FrameTimings timings)
     {
         if (system != null)
             system.MarkSkippedForPathfinding(ref timings);
@@ -85,7 +85,7 @@ internal sealed class CitizenPopulationDiagnosticSystem
             MarkSkippedForPathfindingState(ref timings);
     }
 
-    public static void EndFrame(CitizenPopulationDiagnosticSystem system, ref FrameTimings timings, CitizenPopulationStateSystem state)
+    public static void EndFrame(CitizenPopulationDiagnosticsSystemHelper system, ref FrameTimings timings, CitizenPopulationStateSystem state)
     {
         if (system != null)
         {

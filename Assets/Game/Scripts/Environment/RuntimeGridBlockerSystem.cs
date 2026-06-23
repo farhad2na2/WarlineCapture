@@ -56,7 +56,7 @@ public sealed class RuntimeGridBlockerSystem : IRuntimeGridBlockerCellLookup
     private float _yPosition;
     private List<GameObject> _prefabs = new();
     private Transform _rootTransform;
-    private RuntimeCityReadModelSystem _cityReadModel;
+    private RuntimeCityReadModelCompositionSystemHelper _cityReadModel;
     private bool _spawned;
     private bool _spawnFinalizing;
     private bool _readyForDependents = true;
@@ -66,7 +66,7 @@ public sealed class RuntimeGridBlockerSystem : IRuntimeGridBlockerCellLookup
     public bool DependentsReadyForPlacement => _readyForDependents;
     public bool HasSpawned => _spawned || !_spawnOnStart || _prefabs == null || _prefabs.Count == 0 || _blockerCount <= 0;
 
-    public void Init(RuntimeGridBlockerSystemConfig config, Transform rootTransform, RuntimeCityReadModelSystem cityReadModel)
+    public void Init(RuntimeGridBlockerSystemConfig config, Transform rootTransform, RuntimeCityReadModelCompositionSystemHelper cityReadModel)
     {
         _rootTransform = rootTransform;
         _cityReadModel = cityReadModel;
@@ -288,7 +288,7 @@ public sealed class RuntimeGridBlockerSystem : IRuntimeGridBlockerCellLookup
 
     private bool HasPendingCityGeneration()
     {
-        RuntimeCityReadModelSystem cityReadModel = _cityReadModel;
+        RuntimeCityReadModelCompositionSystemHelper cityReadModel = _cityReadModel;
         return cityReadModel != null && cityReadModel.SpawnOnStartEnabled && !cityReadModel.HasSpawned;
     }
 
@@ -305,7 +305,7 @@ public sealed class RuntimeGridBlockerSystem : IRuntimeGridBlockerCellLookup
                 : query.GetSingletonEntity();
         }
 
-        RuntimeCityReadModelSystem cityReadModel = _cityReadModel;
+        RuntimeCityReadModelCompositionSystemHelper cityReadModel = _cityReadModel;
         bool pendingCity = cityReadModel != null && cityReadModel.SpawnOnStartEnabled && !cityReadModel.HasSpawned;
         em.SetComponentData(_dependencyStateEntity, new RuntimeGridBlockerDependencyComponent
         {

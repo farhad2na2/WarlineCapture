@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystem
+internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystemHelper
 {
     private const double SlowLogThresholdSeconds = 0.01d;
     private const double SlowLogCooldownSeconds = 1d;

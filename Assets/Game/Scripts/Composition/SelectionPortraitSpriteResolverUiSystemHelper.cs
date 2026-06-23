@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal static class SelectionPortraitSpriteResolverSystem
+internal static class SelectionPortraitSpriteResolverUiSystemHelper
 {
     public static Sprite ResolveSelectionPortraitSprite(GameObject prefab)
     {

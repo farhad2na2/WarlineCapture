@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal static class BuildingSpawnPrefabLookupKeySystem
+internal static class BuildingSpawnPrefabLookupKeyPrefabSystemHelper
 {
     public static string ResolveSpawnableLookupKey(GameObject prefab)
     {

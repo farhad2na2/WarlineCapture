@@ -231,7 +231,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - Update `ManagedGameplayStartupSystem`, `GameBootstrap`, and feature startup to construct/configure extracted road systems.
     - Managed startup now passes road footprint queries, runtime generation, runtime update/gui/dispose actions, and menu/runtime bind actions from RoadBuildCompositionSystem.Result.
     - GameBootstrap no longer stores RoadBuildSystem; it stores the road read/runtime-generation boundaries and narrow actions.
-    - GameplayFeatureStartupSystem now receives RoadRuntimeGenerationSystem plus context and a road gameplay bind action instead of RoadBuildSystem.
+    - GameplayFeatureStartupCompositionSystemHelper now receives RoadRuntimeGenerationSystem plus context and a road gameplay bind action instead of RoadBuildSystem.
     - Expected output: startup does not instantiate `new RoadBuildSystem()`.
 
 27. Complete: Replace runtime update and GUI delegates

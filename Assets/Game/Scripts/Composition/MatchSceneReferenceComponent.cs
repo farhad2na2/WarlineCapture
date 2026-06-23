@@ -1,1 +1,1 @@
-// Match scene references are resolved from the loaded Match scene by MatchSceneReferenceSystem.
+// Match scene references are resolved from the loaded Match scene by MatchSceneReferenceSceneSystemHelper.

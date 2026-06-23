@@ -408,7 +408,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Move);
         if (context.InputSystem != null)
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"enterMoveTargetModeArmed mode={TacticalCommandMode.Move} oneShot=True requiresWorldTarget=True " +
                 $"ignoreWorldUntil={context.InputSystem.IgnoreWorldCommandsUntilFrame} frame={currentFrame}");
             context.LogSelectionClickDiagnostic?.Invoke(
@@ -526,7 +526,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             return false;
         }
 
-        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+        SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
             $"processScanTargetModeCommandRequests accepted=True frame={currentFrame}");
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.BuildingPlacementInteractionSystem?.ExitBuildMode(context.BuildingPlacementInteractionContext);
@@ -603,8 +603,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
     public void ProcessMoveCommandRequests(Context context)
     {
         EnsureFeedbackQueue(context);
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"processMoveCommandRequestsEnter frame={UnityEngine.Time.frameCount}");
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"processMoveCommandRequestsEnter frame={UnityEngine.Time.frameCount}");
 
         if (!TryGetFreshCommandBuffers(
                 context,
@@ -613,17 +613,17 @@ public sealed class RtsSelectionCommandResultFlushSystem
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
                 out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
         {
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"processMoveCommandRequestsNoBuffers frame={UnityEngine.Time.frameCount}");
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"processMoveCommandRequestsNoBuffers frame={UnityEngine.Time.frameCount}");
             context.ClearHudCommandMode?.Invoke();
             context.InputSystem.ClearActiveCommandMode();
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             return;
         }
 
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"processMoveCommandRequestsBuffers commandEntity={commandEntity} totalRequests={commandRequests.Length} " +
                 $"moveRequests={CountRequests(commandRequests, RtsSelectionCommandIntentKind.Move)} resultBuffer={commandResults.Length} frame={UnityEngine.Time.frameCount}");
         }
@@ -648,9 +648,9 @@ public sealed class RtsSelectionCommandResultFlushSystem
         }
 
         DrainResults(commandResults, RtsSelectionCommandIntentKind.Move, _moveCommandResultScratch);
-        if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
         {
-            SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                 $"processMoveCommandRequestsDrained results={_moveCommandResultScratch.Count} remainingResultBuffer={commandResults.Length} frame={UnityEngine.Time.frameCount}");
         }
 
@@ -688,8 +688,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
             if (HasPendingPreResolvedMoveRequest(commandRequests))
                 return;
 
-            if (SelectionRuntimeDiagnosticsSystem.EnableMoveCommandTrace)
-                SelectionRuntimeDiagnosticsSystem.LogMoveCommandTrace($"processMoveCommandRequestsUnhandled frame={UnityEngine.Time.frameCount}");
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"processMoveCommandRequestsUnhandled frame={UnityEngine.Time.frameCount}");
             context.ClearHudCommandMode?.Invoke();
             context.InputSystem.ClearActiveCommandMode();
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
@@ -911,13 +911,13 @@ public sealed class RtsSelectionCommandResultFlushSystem
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
                 out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
         {
-            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
                 $"processScanCommandRequests result=False reason=NoCommandBuffers frame={UnityEngine.Time.frameCount}");
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable));
             return false;
         }
 
-        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+        SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
             $"processScanCommandRequests begin requests={commandRequests.Length} results={commandResults.Length} frame={UnityEngine.Time.frameCount}");
         context.ScanIntelCommandSystem.ProcessCommandIntentRequests(
             em,
@@ -929,20 +929,20 @@ public sealed class RtsSelectionCommandResultFlushSystem
 
         if (!TryRefreshCommandBuffers(em, commandEntity, out _, out commandResults))
         {
-            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
                 $"processScanCommandRequests result=False reason=RefreshBuffersFailed frame={UnityEngine.Time.frameCount}");
             return false;
         }
 
         DrainResults(commandResults, RtsSelectionCommandIntentKind.Scan, _scanCommandResultScratch);
-        SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+        SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
             $"processScanCommandRequests drainedResults={_scanCommandResultScratch.Count} remainingResults={commandResults.Length} frame={UnityEngine.Time.frameCount}");
 
         bool issued = false;
         for (int i = 0; i < _scanCommandResultScratch.Count; i++)
         {
             RtsSelectionCommandResultElement result = _scanCommandResultScratch[i];
-            SelectionRuntimeDiagnosticsSystem.LogScanCommandTrace(
+            SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
                 $"processScanCommandResult index={i} accepted={result.Accepted} reason={(TacticalCommandReasonCode)result.ReasonCode} " +
                 $"hasCommandResult={result.HasCommandResult} revealed={result.RevealedCount} source={result.SourceEntity} frame={UnityEngine.Time.frameCount}");
             if (result.Accepted == 0)

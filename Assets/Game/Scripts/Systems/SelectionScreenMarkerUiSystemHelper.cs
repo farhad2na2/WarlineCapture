@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public sealed class SelectionScreenMarkerSystem
+public sealed class SelectionScreenMarkerUiSystemHelper
 {
     public event Action<Vector2> MoveOrderScreenMarkerRequested;
     public event Action<Vector2> AttackOrderScreenMarkerRequested;

@@ -15,7 +15,7 @@ internal sealed class BuildingPlacementRuntimeTickContextSystem
         public readonly Action EnqueueMapBuildingPlacements;
         public readonly Action EnqueueMapVehiclePlacements;
         public readonly Func<BuildingPlacementInputRuntimeTickSystem.Result> UpdateInput;
-        public readonly BuildingPlacementRuntimeTickDiagnosticsSystem.Context DiagnosticsContext;
+        public readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context DiagnosticsContext;
 
         public Source(
             BuildingProductionRuntimeTickSystem.Context productionContext,
@@ -28,7 +28,7 @@ internal sealed class BuildingPlacementRuntimeTickContextSystem
             Action enqueueMapBuildingPlacements,
             Action enqueueMapVehiclePlacements,
             Func<BuildingPlacementInputRuntimeTickSystem.Result> updateInput,
-            BuildingPlacementRuntimeTickDiagnosticsSystem.Context diagnosticsContext)
+            BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context diagnosticsContext)
         {
             ProductionContext = productionContext;
             BoundaryContext = boundaryContext;
@@ -46,7 +46,7 @@ internal sealed class BuildingPlacementRuntimeTickContextSystem
 
     private readonly BuildingProductionRuntimeTickSystem _productionRuntimeTickSystem = new();
     private readonly BuildingRuntimeBoundaryPublishSystem _runtimeBoundaryPublishSystem = new();
-    private readonly BuildingPlacementRuntimeTickDiagnosticsSystem _diagnosticsSystem = new();
+    private readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper _diagnosticsSystem = new();
 
     public BuildingPlacementRuntimeTickSystem.Context Create(Source source)
     {

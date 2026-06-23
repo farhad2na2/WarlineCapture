@@ -1,6 +1,6 @@
 using System;
 
-internal sealed class BuildingGameplayDisposalCompositionSystem
+internal sealed class BuildingGameplayDisposalCompositionSystemHelper
 {
     public Action CreateDisposeAction(
         BuildingGameplayCompositionSourceSystem source,

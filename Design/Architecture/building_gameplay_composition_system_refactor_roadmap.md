@@ -151,8 +151,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingCitizenPopulationCompositionSystem` now owns citizen boundary creation, citizen resource/prefab context creation, init, bind, and disposal delegation.
 
 9. Complete: Extract disposal source composition
-   - Move `CreateDisposalSource` and disposal callback bundling into `BuildingGameplayDisposalCompositionSystem`.
-   - Result: `BuildingGameplayDisposalCompositionSystem` now owns the disposal source and dispose action assembly used by the composition result.
+   - Move `CreateDisposalSource` and disposal callback bundling into `BuildingGameplayDisposalCompositionSystemHelper`.
+   - Result: `BuildingGameplayDisposalCompositionSystemHelper` now owns the disposal source and dispose action assembly used by the composition result.
 
 10. Complete: Extract marker property block ownership
    - Move marker `MaterialPropertyBlock` lazy creation and reuse to `BuildingMarkerVisualPresentationSystemHelper`.

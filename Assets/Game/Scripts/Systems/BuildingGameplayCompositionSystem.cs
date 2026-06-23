@@ -10,7 +10,7 @@ internal sealed class BuildingGameplayCompositionSystem
     private readonly BuildingGameplayStartupCompositionSystem _startupCompositionSystem = new();
     private readonly BuildingGameplayBindingCompositionSystemHelper _bindingCompositionHelper = new();
     private readonly BuildingCitizenPopulationCompositionSystem _citizenPopulationCompositionSystem = ResolveBuildingCitizenPopulationCompositionSystem();
-    private readonly BuildingGameplayDisposalCompositionSystem _disposalCompositionSystem = new();
+    private readonly BuildingGameplayDisposalCompositionSystemHelper _disposalCompositionHelper = new();
     private readonly BuildingMarkerVisualPresentationSystemHelper _markerVisualPresentationHelper = new();
     private readonly BuildingRuntimeTickCompositionSystem _runtimeTickCompositionSystem = new();
     private readonly BuildingPlacementInputTickCompositionSystem _placementInputTickCompositionSystem = new();
@@ -601,7 +601,7 @@ internal sealed class BuildingGameplayCompositionSystem
                 screenRect),
             _bindingCompositionHelper.CreateMainMenuBinding(childSystems, dayNight),
             _bindingCompositionHelper.CreateGameplayFeatureBinding(childSystems, dayNight),
-            _disposalCompositionSystem.CreateDisposeAction(
+            _disposalCompositionHelper.CreateDisposeAction(
                 childSystems,
                 () => createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock)));
     }

@@ -345,11 +345,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Distance checks, attempt budget, plot spacing, random prefab choice, labels, descriptions, and reservation were moved unchanged.
 
 29. Complete: Extract decoration sequencing
-   - Create `RuntimeCityDecorationBuildingSpawnSystem`.
+   - Create `RuntimeCityDecorationBuildingSpawnPrefabSystemHelper`.
    - Move `PlaceCityDecorationBuildings` orchestration over decoration groups, cloth covers, archways, and free scatter.
    - Preserve placement order and count accounting.
    - Expected output: decoration building sequencing is fully out of the coordinator.
-   - Added `RuntimeCityDecorationBuildingSpawnSystem` as the owner for decoration building sequencing.
+   - Added `RuntimeCityDecorationBuildingSpawnPrefabSystemHelper` as the owner for decoration building sequencing.
    - Moved decoration group creation, cloth-cover placement, archway placement, remaining-count calculation, free-scatter fallback prefabs, and free-scatter placement handoff out of `RuntimeCityBuildingSpawnSystem`.
    - `RuntimeCityBuildingSpawnSystem` now delegates decoration sequencing through a narrow bulk-routine callback without owning decoration count accounting.
 

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityDecorationBuildingSpawnSystem
+internal sealed class RuntimeCityDecorationBuildingSpawnPrefabSystemHelper
 {
     private readonly RuntimeCityDecorationBuildingSpawnState _state = new();
 

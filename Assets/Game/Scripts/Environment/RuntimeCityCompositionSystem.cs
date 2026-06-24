@@ -55,7 +55,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityArchwaySpawnState _fallbackRuntimeCityArchwaySpawn = new();
     private RuntimeCityFreeScatterDecorationPrefabSystemHelper _runtimeCityFreeScatterDecorationHelper;
     private readonly RuntimeCityFreeScatterDecorationState _fallbackRuntimeCityFreeScatterDecoration = new();
-    private RuntimeCityDecorationBuildingSpawnSystem _runtimeCityDecorationBuildingSpawnSystem;
+    private RuntimeCityDecorationBuildingSpawnPrefabSystemHelper _runtimeCityDecorationBuildingSpawnHelper;
     private readonly RuntimeCityDecorationBuildingSpawnState _fallbackRuntimeCityDecorationBuildingSpawn = new();
     private RuntimeCityVisualPresentationSystemHelper _runtimeCityVisualPresentationSystemHelper;
     private RuntimeCitySpawnBridgeSystem _runtimeCitySpawnBridgeSystem;
@@ -518,10 +518,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityFreeScatterDecorationHelper ??= ResolveRuntimeCityFreeScatterDecorationHelper();
 
     private RuntimeCityDecorationBuildingSpawnState RuntimeCityDecorationBuildingSpawnState =>
-        RuntimeCityDecorationBuildingSpawnSystem?.State ?? _fallbackRuntimeCityDecorationBuildingSpawn;
+        RuntimeCityDecorationBuildingSpawnPrefabSystemHelper?.State ?? _fallbackRuntimeCityDecorationBuildingSpawn;
 
-    private RuntimeCityDecorationBuildingSpawnSystem RuntimeCityDecorationBuildingSpawnSystem =>
-        _runtimeCityDecorationBuildingSpawnSystem ??= ResolveRuntimeCityDecorationBuildingSpawnSystem();
+    private RuntimeCityDecorationBuildingSpawnPrefabSystemHelper RuntimeCityDecorationBuildingSpawnPrefabSystemHelper =>
+        _runtimeCityDecorationBuildingSpawnHelper ??= ResolveRuntimeCityDecorationBuildingSpawnPrefabSystemHelper();
 
     private RuntimeCityBuildingPlacementState RuntimeCityBuildingPlacementState =>
         RuntimeCityBuildingPlacementHelper?.State ?? _fallbackRuntimeCityBuildingPlacement;
@@ -736,9 +736,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityFreeScatterDecorationPrefabSystemHelper();
     }
 
-    private static RuntimeCityDecorationBuildingSpawnSystem ResolveRuntimeCityDecorationBuildingSpawnSystem()
+    private static RuntimeCityDecorationBuildingSpawnPrefabSystemHelper ResolveRuntimeCityDecorationBuildingSpawnPrefabSystemHelper()
     {
-        return new RuntimeCityDecorationBuildingSpawnSystem();
+        return new RuntimeCityDecorationBuildingSpawnPrefabSystemHelper();
     }
 
     private static RuntimeCitySpawnBridgeSystem ResolveRuntimeCitySpawnBridgeSystem()

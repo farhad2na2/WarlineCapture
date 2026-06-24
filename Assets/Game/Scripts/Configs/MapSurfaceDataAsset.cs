@@ -39,6 +39,57 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
     public int CompressedPayloadBytes => compressedSurfacePayload?.Length ?? 0;
     public bool HasCompactPayload => compressedSurfacePayload != null && compressedSurfacePayload.Length > 0;
 
+    public Unity.Entities.Hash128 ComputeRuntimeBlobHash()
+    {
+        unchecked
+        {
+            uint h1 = 2166136261u;
+            uint h2 = 2166136261u;
+            uint h3 = 2166136261u;
+            uint h4 = 2166136261u;
+
+            Mix(ref h1, payloadVersion);
+            Mix(ref h1, payloadEncoding);
+            Mix(ref h1, uncompressedPayloadBytes);
+            Mix(ref h1, dimensions.x);
+            Mix(ref h1, dimensions.y);
+            Mix(ref h2, cellSize.GetHashCode());
+            Mix(ref h2, gridOrigin.x.GetHashCode());
+            Mix(ref h2, gridOrigin.y.GetHashCode());
+            Mix(ref h2, gridOrigin.z.GetHashCode());
+            Mix(ref h3, generatedFlatEquivalent ? 1 : 0);
+            Mix(ref h3, surfaceCount);
+            Mix(ref h3, connectionCount);
+
+            byte[] payload = compressedSurfacePayload;
+            if (payload != null)
+            {
+                Mix(ref h4, payload.Length);
+                for (int i = 0; i < payload.Length; i++)
+                {
+                    uint value = payload[i];
+                    switch (i & 3)
+                    {
+                        case 0:
+                            Mix(ref h1, value);
+                            break;
+                        case 1:
+                            Mix(ref h2, value);
+                            break;
+                        case 2:
+                            Mix(ref h3, value);
+                            break;
+                        default:
+                            Mix(ref h4, value);
+                            break;
+                    }
+                }
+            }
+
+            return new Unity.Entities.Hash128(h1, h2, h3, h4);
+        }
+    }
+
     public bool TryCreateRuntimeBlobAsset(
         Allocator allocator,
         out BlobAssetReference<MapSurfaceBlob> surfaceBlob)
@@ -80,6 +131,25 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
             surfaceBlob = default;
             Debug.LogError($"Failed to load baked map surface data '{name}': {exception.Message}", this);
             return false;
+        }
+    }
+
+    private static void Mix(ref uint hash, int value)
+    {
+        unchecked
+        {
+            Mix(ref hash, (uint)value);
+        }
+    }
+
+    private static void Mix(ref uint hash, uint value)
+    {
+        unchecked
+        {
+            hash ^= value;
+            hash *= 16777619u;
+            hash ^= value >> 16;
+            hash *= 16777619u;
         }
     }
 

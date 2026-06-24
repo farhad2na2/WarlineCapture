@@ -27,11 +27,19 @@ public sealed class MapSurfaceAuthoring : MonoBehaviour
         public override void Bake(MapSurfaceAuthoring authoring)
         {
             MapSurfaceDataAsset surfaceData = authoring.BakedSurfaceData;
-            if (surfaceData == null ||
-                !surfaceData.TryCreateRuntimeBlobAsset(Allocator.Persistent, out BlobAssetReference<MapSurfaceBlob> surfaceBlob))
+            if (surfaceData == null)
                 return;
 
-            AddBlobAsset(ref surfaceBlob, out var _);
+            DependsOn(surfaceData);
+
+            Unity.Entities.Hash128 surfaceHash = surfaceData.ComputeRuntimeBlobHash();
+            if (!TryGetBlobAssetReference(surfaceHash, out BlobAssetReference<MapSurfaceBlob> surfaceBlob))
+            {
+                if (!surfaceData.TryCreateRuntimeBlobAsset(Allocator.Persistent, out surfaceBlob))
+                    return;
+
+                AddBlobAssetWithCustomHash(ref surfaceBlob, surfaceHash);
+            }
 
             Entity entity = GetEntity(TransformUsageFlags.None);
             ref MapSurfaceBlob blob = ref surfaceBlob.Value;

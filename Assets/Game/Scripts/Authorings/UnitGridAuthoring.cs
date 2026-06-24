@@ -10,6 +10,9 @@ using Unity.Collections;
 public class UnitGridAuthoring : MonoBehaviour
 {
     [SerializeField] private UnitGridAuthoringConfig config;
+    [Header("Visual Roots")]
+    [SerializeField] private Transform modelRoot;
+    [SerializeField] private Transform destroyedRoot;
     [SerializeField, HideInInspector] private bool allowIdleWander = true;
     [SerializeField, HideInInspector] private bool autoCalculateFootprint;
     [SerializeField, HideInInspector] private Vector2Int footprintCells = new(1, 1);
@@ -468,8 +471,8 @@ public class UnitGridAuthoring : MonoBehaviour
                 }
             }
 
-            Transform model = authoring.transform.Find("Model");
-            Transform destroyed = authoring.transform.Find("Destroyed");
+            Transform model = ResolveModelRoot(authoring);
+            Transform destroyed = ResolveDestroyedRoot(authoring);
             if (model != null)
             {
                 Entity modelEntity = GetEntity(model.gameObject, TransformUsageFlags.Renderable);
@@ -1111,11 +1114,21 @@ public class UnitGridAuthoring : MonoBehaviour
         {
             combinedBounds = default;
 
-            Transform modelRoot = authoring.transform.Find("Model");
+            Transform modelRoot = ResolveModelRoot(authoring);
             if (modelRoot == null)
                 return false;
 
             return TryGetCombinedLocalBounds(modelRoot, authoring.transform.worldToLocalMatrix, out combinedBounds);
+        }
+
+        private static Transform ResolveModelRoot(UnitGridAuthoring authoring)
+        {
+            return authoring.modelRoot != null ? authoring.modelRoot : authoring.transform.Find("Model");
+        }
+
+        private static Transform ResolveDestroyedRoot(UnitGridAuthoring authoring)
+        {
+            return authoring.destroyedRoot != null ? authoring.destroyedRoot : authoring.transform.Find("Destroyed");
         }
 
         private static bool TryGetCombinedLocalBounds(Transform modelRoot, Matrix4x4 worldToLocal, out Bounds combinedBounds)

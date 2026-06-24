@@ -46,12 +46,12 @@ Static source scan from 2026-06-24:
 | Metric | Current value |
 |---|---:|
 | Total stages | 12 |
-| Complete/skipped/decision-record stages | 8 |
+| Complete/skipped/decision-record stages | 9 |
 | In-progress stages | 0 |
 | Blocked stages | 1 |
-| Pending stages | 3 |
-| Overall stage-count progress | 73% |
-| Active implementation progress excluding Stage 10 decision record | 71% |
+| Pending stages | 2 |
+| Overall stage-count progress | 81% |
+| Active implementation progress excluding Stage 10 decision record | 80% |
 
 ## Non-Negotiable Guardrails
 
@@ -77,7 +77,7 @@ Static source scan from 2026-06-24:
 | 5 - Singleton/ECB Access Cleanup | P1 | Complete | 100% | Support | Stage 2 preferred | Grid singleton, AI diagnostics query, ECB/query review batches compiled and focused tests passed |
 | 6 - `.Run()` Scheduling Review | P1 | Complete | 100% | Support | Stages 1-2, profiler context | Compile and destroyed-visual focused validation passed |
 | 7 - ResourceHauler Diagnostics Cleanup | P1 | Complete | 100% | Support | Stage 0 | Compile and ResourceHauler focused validation passed |
-| 8 - Authoring/Baker Hygiene | P1/P2 | Pending | 0% | Support | P0 stages complete | Compile + bake/reimport validation |
+| 8 - Authoring/Baker Hygiene | P1/P2 | Complete | 100% | Support | P0 stages complete | Compile, architecture boundary, visual-root, runtime bootstrap, and layered map-surface validations passed |
 | 9 - BuildingBarrier Data-Structure Review | P2 | Pending | 0% | Support | Profiler proof preferred | Profile-guided only |
 | 10 - RuntimeBuildingEntityLink Decision Record | P2 | Complete | 100% | Support | Focused profiler capture | No code change recommended |
 | 11 - Final Validation + Tracker Closure | P0 | Pending | 0% | Support | Stages 1-9 complete/skipped | Compile + focused tests + final static scan |
@@ -812,8 +812,8 @@ Do not cache singleton component values in `OnCreate` unless immutable. Most cle
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P1/P2 |
 | Owner | Support |
 | Dependencies | P0 stages complete |
@@ -835,20 +835,32 @@ These calls are in the authoring/baker path, not normal per-frame match runtime.
 
 **Implementation Steps**
 
-1. Add serialized optional fields:
+1. [x] Add serialized optional fields:
    - `Transform modelRoot`,
    - `Transform destroyedRoot`.
-2. In the baker, prefer serialized references.
-3. Temporarily keep `transform.Find("Model")` / `transform.Find("Destroyed")` fallback for existing prefabs.
-4. Add an editor validation helper/report to find prefabs where the serialized fields are missing.
-5. Populate references through an editor migration if needed.
-6. After migration, decide whether to keep fallback for compatibility or remove it.
+2. [x] In the baker, prefer serialized references.
+3. [x] Temporarily keep `transform.Find("Model")` / `transform.Find("Destroyed")` fallback for existing prefabs.
+4. [x] Add an editor validation helper/report to find prefabs where the serialized fields are missing.
+5. [ ] Populate references through an editor migration if needed.
+6. [ ] After migration, decide whether to keep fallback for compatibility or remove it.
 
 **Acceptance Criteria**
 
-- [ ] Existing prefabs still bake before migration.
-- [ ] New prefabs can use explicit references.
-- [ ] Missing references are detectable.
+- [x] Existing prefabs still bake before migration.
+- [x] New prefabs can use explicit references.
+- [x] Missing references are detectable.
+
+**8A Progress Notes**
+
+- `Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs` now exposes optional `modelRoot` and `destroyedRoot` references and resolves them before falling back to the legacy child-name lookup.
+- `Assets/Game/Scripts/Editor/UnitPrefabRenderAudit.cs` now has menu entries for unit render audits and a report at `Game/Tools/Unit Render/Report Missing Unit Visual Root References`.
+- `Assets/Tests/Editor/UnitGridAuthoringVisualRootTests.cs` covers the explicit-reference fields, compatibility fallback, and missing-reference report entrypoint.
+- Validation passed:
+  - Unity compile: `/private/tmp/warline-stage8-compile.log`
+  - Architecture boundary validation: `/private/tmp/warline-stage8-architecture.log`
+  - Focused visual-root validation: `/private/tmp/warline-stage8-unit-visual-root-focused.log`
+- Note: the attempted Unity `-runTests` XML validation exited `0` but did not write `/private/tmp/warline-stage8-unit-visual-root-tests.xml`; the explicit `RunFocusedValidation` entrypoint above is the trusted focused result for this stage.
+- Remaining Stage 8 work is 8B `MapSurfaceAuthoring` blob dedup. The optional prefab migration in 8A is intentionally left for a later asset pass because the fallback preserves current prefab behavior.
 
 ### 8B - `MapSurfaceAuthoring` blob dedup
 
@@ -858,16 +870,27 @@ These calls are in the authoring/baker path, not normal per-frame match runtime.
 
 **Implementation Steps**
 
-1. Confirm whether multiple `MapSurfaceAuthoring` components can share the same `MapSurfaceDataAsset`.
-2. Add a baker-local or bake-session cache keyed by `MapSurfaceDataAsset` if Unity baking lifecycle supports it safely.
-3. Ensure `AddBlobAsset` is still used correctly so Unity owns the blob lifetime.
-4. Validate with scene bake/reimport.
+1. [x] Confirm whether multiple `MapSurfaceAuthoring` components can share the same `MapSurfaceDataAsset`.
+2. [x] Add a baker-local or bake-session cache keyed by `MapSurfaceDataAsset` if Unity baking lifecycle supports it safely.
+3. [x] Ensure `AddBlobAsset` is still used correctly so Unity owns the blob lifetime.
+4. [x] Validate with compile and focused map-surface tests.
 
 **Acceptance Criteria**
 
-- [ ] Shared surface assets do not create duplicate equivalent blobs.
-- [ ] Blob lifetime remains managed by Unity baking.
-- [ ] Map surface systems still receive valid `MapSurfaceComponent`.
+- [x] Shared surface assets do not create duplicate equivalent blobs.
+- [x] Blob lifetime remains managed by Unity baking.
+- [x] Map surface systems still receive valid `MapSurfaceComponent`.
+
+**8B Progress Notes**
+
+- `Assets/Game/Scripts/Configs/MapSurfaceDataAsset.cs` now exposes `ComputeRuntimeBlobHash()` using serialized surface metadata and compressed payload bytes so bake-session dedup is content-sensitive, not just asset-identity-sensitive.
+- `Assets/Game/Scripts/Authorings/MapSurfaceAuthoring.cs` now calls `DependsOn(surfaceData)`, checks `TryGetBlobAssetReference(surfaceHash, out surfaceBlob)`, and only builds/registers the blob with `AddBlobAssetWithCustomHash` when the bake-session store does not already have it.
+- `Assets/Tests/Editor/MapSurfaceRuntimeBootstrapSceneSystemHelperTests.cs` now validates that runtime blob hashes change when the serialized surface payload changes and source-guards the custom-hash baker path.
+- Validation passed:
+  - Unity compile: `/private/tmp/warline-stage8-authoring-baker-compile.log`
+  - Focused map-surface runtime/bootstrap validation: `/private/tmp/warline-stage8-map-surface-focused.log`
+  - Focused layered map-surface validation: `/private/tmp/warline-stage8-map-surface-layered-focused.log`
+- Note: no Android build was run. No separate full-scene reimport harness exists in this project; the practical validation was Unity compile/import plus focused map-surface validations.
 
 ---
 

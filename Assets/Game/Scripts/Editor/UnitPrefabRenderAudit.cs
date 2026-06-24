@@ -20,27 +20,13 @@ public static class UnitPrefabRenderAudit
         public bool HasMidLodPrefab;
     }
 
+    [MenuItem("Game/Tools/Unit Render/Audit All Unit Prefabs")]
     private static void AuditAll()
     {
-        string[] guids = AssetDatabase.FindAssets("t:Prefab", new[]
-        {
-            "Assets/Game/Prefabs/Characters",
-            "Assets/Game/Prefabs/Vehicles"
-        });
-        List<GameObject> prefabs = new(guids.Length);
-        for (int i = 0; i < guids.Length; i++)
-        {
-            string path = AssetDatabase.GUIDToAssetPath(guids[i]);
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            if (prefab == null || prefab.GetComponent<UnitGridAuthoring>() == null)
-                continue;
-
-            prefabs.Add(prefab);
-        }
-
-        LogAudit(prefabs, "all");
+        LogAudit(LoadAllUnitPrefabs(), "all");
     }
 
+    [MenuItem("Game/Tools/Unit Render/Audit Selected Unit Prefabs")]
     private static void AuditSelected()
     {
         Object[] selected = Selection.GetFiltered(typeof(GameObject), SelectionMode.Assets);
@@ -61,6 +47,72 @@ public static class UnitPrefabRenderAudit
         }
 
         LogAudit(prefabs, "selected");
+    }
+
+    [MenuItem("Game/Tools/Unit Render/Report Missing Unit Visual Root References")]
+    private static void ReportMissingVisualRootReferences()
+    {
+        List<GameObject> prefabs = LoadAllUnitPrefabs();
+        StringBuilder sb = new();
+        int missingModelRoot = 0;
+        int missingDestroyedRoot = 0;
+
+        sb.AppendLine($"[UnitRenderAudit] visualRootReferenceReport count={prefabs.Count}");
+        for (int i = 0; i < prefabs.Count; i++)
+        {
+            GameObject prefab = prefabs[i];
+            UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
+            if (authoring == null)
+                continue;
+
+            SerializedObject serialized = new(authoring);
+            SerializedProperty modelRoot = serialized.FindProperty("modelRoot");
+            SerializedProperty destroyedRoot = serialized.FindProperty("destroyedRoot");
+            bool hasModelChild = prefab.transform.Find("Model") != null;
+            bool hasDestroyedChild = prefab.transform.Find("Destroyed") != null;
+            bool hasExplicitModelRoot = modelRoot != null && modelRoot.objectReferenceValue != null;
+            bool hasExplicitDestroyedRoot = destroyedRoot != null && destroyedRoot.objectReferenceValue != null;
+
+            if ((!hasModelChild || hasExplicitModelRoot) && (!hasDestroyedChild || hasExplicitDestroyedRoot))
+                continue;
+
+            if (hasModelChild && !hasExplicitModelRoot)
+                missingModelRoot++;
+            if (hasDestroyedChild && !hasExplicitDestroyedRoot)
+                missingDestroyedRoot++;
+
+            sb.AppendLine(
+                $"{prefab.name} | missingModelRoot={(hasModelChild && !hasExplicitModelRoot ? 1 : 0)} " +
+                $"missingDestroyedRoot={(hasDestroyedChild && !hasExplicitDestroyedRoot ? 1 : 0)} " +
+                $"path={AssetDatabase.GetAssetPath(prefab)}");
+        }
+
+        sb.AppendLine($"[UnitRenderAudit] missingModelRoot={missingModelRoot} missingDestroyedRoot={missingDestroyedRoot}");
+        if (missingModelRoot > 0 || missingDestroyedRoot > 0)
+            Debug.LogWarning(sb.ToString());
+        else
+            Debug.Log(sb.ToString());
+    }
+
+    private static List<GameObject> LoadAllUnitPrefabs()
+    {
+        string[] guids = AssetDatabase.FindAssets("t:Prefab", new[]
+        {
+            "Assets/Game/Prefabs/Characters",
+            "Assets/Game/Prefabs/Vehicles"
+        });
+        List<GameObject> prefabs = new(guids.Length);
+        for (int i = 0; i < guids.Length; i++)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab == null || prefab.GetComponent<UnitGridAuthoring>() == null)
+                continue;
+
+            prefabs.Add(prefab);
+        }
+
+        return prefabs;
     }
 
     private static void LogAudit(List<GameObject> prefabs, string scope)
@@ -99,9 +151,7 @@ public static class UnitPrefabRenderAudit
         if (authoring == null)
             return null;
 
-        Transform modelRoot = prefab.transform.Find("Model");
-        if (modelRoot == null)
-            modelRoot = prefab.transform;
+        Transform modelRoot = ResolveModelRoot(prefab, authoring);
 
         Renderer[] renderers = modelRoot.GetComponentsInChildren<Renderer>(true);
         MeshFilter[] meshFilters = modelRoot.GetComponentsInChildren<MeshFilter>(true);
@@ -167,5 +217,16 @@ public static class UnitPrefabRenderAudit
         for (int i = 0; i < subMeshCount; i++)
             triangles += (int)mesh.GetIndexCount(i) / 3;
         return triangles;
+    }
+
+    private static Transform ResolveModelRoot(GameObject prefab, UnitGridAuthoring authoring)
+    {
+        SerializedObject serialized = new(authoring);
+        SerializedProperty modelRoot = serialized.FindProperty("modelRoot");
+        if (modelRoot != null && modelRoot.objectReferenceValue is Transform explicitModelRoot)
+            return explicitModelRoot;
+
+        Transform child = prefab.transform.Find("Model");
+        return child != null ? child : prefab.transform;
     }
 }

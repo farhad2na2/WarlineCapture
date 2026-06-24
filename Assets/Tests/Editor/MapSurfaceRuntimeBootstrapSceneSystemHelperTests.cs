@@ -1,5 +1,6 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
+using System.IO;
 using System.Reflection;
 using NUnit.Framework;
 using Unity.Collections;
@@ -16,7 +17,9 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
             var tests = new MapSurfaceRuntimeBootstrapSceneSystemHelperTests();
             tests.EnsureReplacesStaleSubsceneSurfaceWithAuthoredRuntimeAsset();
             tests.DisposeRuntimeSurfaceAfterWorldDisposeDoesNotThrow();
-            Debug.Log("[MapSurfaceRuntimeBootstrapValidation] result=Passed tests=2");
+            tests.RuntimeBlobHashChangesWhenSurfacePayloadChanges();
+            tests.MapSurfaceAuthoringBakerUsesContentHashDeduplication();
+            Debug.Log("[MapSurfaceRuntimeBootstrapValidation] result=Passed tests=4");
         }
         catch (Exception exception)
         {
@@ -91,6 +94,55 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
         world.Dispose();
 
         Assert.DoesNotThrow(() => bootstrap.DisposeRuntimeSurface());
+    }
+
+    [Test]
+    public void RuntimeBlobHashChangesWhenSurfacePayloadChanges()
+    {
+        BlobAssetReference<MapSurfaceBlob> firstBlob = default;
+        BlobAssetReference<MapSurfaceBlob> secondBlob = default;
+        MapSurfaceDataAsset asset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
+        try
+        {
+            firstBlob = CreateSingleCellSurface(0.125f);
+            asset.ConfigureBakedSurface(
+                Vector3.zero,
+                1f,
+                Vector2Int.one,
+                firstBlob,
+                generatedFlatEquivalent: false);
+            Unity.Entities.Hash128 firstHash = asset.ComputeRuntimeBlobHash();
+
+            secondBlob = CreateSingleCellSurface(9f);
+            asset.ConfigureBakedSurface(
+                Vector3.zero,
+                1f,
+                Vector2Int.one,
+                secondBlob,
+                generatedFlatEquivalent: false);
+            Unity.Entities.Hash128 secondHash = asset.ComputeRuntimeBlobHash();
+
+            Assert.AreNotEqual(firstHash, secondHash);
+        }
+        finally
+        {
+            if (firstBlob.IsCreated)
+                firstBlob.Dispose();
+            if (secondBlob.IsCreated)
+                secondBlob.Dispose();
+            UnityEngine.Object.DestroyImmediate(asset);
+        }
+    }
+
+    [Test]
+    public void MapSurfaceAuthoringBakerUsesContentHashDeduplication()
+    {
+        string source = File.ReadAllText("Assets/Game/Scripts/Authorings/MapSurfaceAuthoring.cs");
+
+        StringAssert.Contains("DependsOn(surfaceData)", source);
+        StringAssert.Contains("surfaceData.ComputeRuntimeBlobHash()", source);
+        StringAssert.Contains("TryGetBlobAssetReference(surfaceHash", source);
+        StringAssert.Contains("AddBlobAssetWithCustomHash(ref surfaceBlob, surfaceHash)", source);
     }
 
     private static MapSurfaceComponent CreateSurfaceComponent(BlobAssetReference<MapSurfaceBlob> blob)

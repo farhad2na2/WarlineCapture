@@ -3,6 +3,7 @@ using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
@@ -121,7 +122,7 @@ public sealed class FocusableUnitLookupSystem
         using NativeList<FocusableScreenDistanceCandidate> candidates = new(
             _focusableUnitsQuery.CalculateEntityCount(),
             Allocator.TempJob);
-        new CollectFocusableScreenDistanceCandidatesJob
+        JobHandle collectHandle = new CollectFocusableScreenDistanceCandidatesJob
         {
             EntityType = em.GetEntityTypeHandle(),
             LocalToWorldType = em.GetComponentTypeHandle<LocalToWorld>(true),
@@ -131,7 +132,8 @@ public sealed class FocusableUnitLookupSystem
             EngageTargetType = em.GetComponentTypeHandle<EngageTarget>(true),
             UnitSelectionHitboxType = em.GetComponentTypeHandle<UnitSelectionHitbox>(true),
             Candidates = candidates
-        }.Run(_focusableUnitsQuery);
+        }.Schedule(_focusableUnitsQuery, default);
+        collectHandle.Complete();
 
         for (int i = 0; i < candidates.Length; i++)
         {

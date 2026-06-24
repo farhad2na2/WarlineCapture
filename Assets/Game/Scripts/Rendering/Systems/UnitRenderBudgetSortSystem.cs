@@ -10,10 +10,11 @@ public readonly struct UnitRenderBudgetSort
         if (distances.Length <= 1)
             return;
 
-        new SortDistancesJob
+        JobHandle sortHandle = new SortDistancesJob
         {
             Distances = distances.AsArray()
-        }.Run();
+        }.Schedule();
+        sortHandle.Complete();
     }
 
     [BurstCompile]

@@ -56,7 +56,7 @@ public readonly struct UnitRenderBudgetBand
         NativeHashSet<Entity> midLodUnits = new(math.max(1, distances.Length), jobSafeAllocator);
         NativeHashSet<Entity> lowLodUnits = new(math.max(1, distances.Length), jobSafeAllocator);
         using NativeArray<int> counts = new(3, Allocator.TempJob);
-        new BuildBandPlanJob
+        JobHandle buildHandle = new BuildBandPlanJob
         {
             Distances = distances.AsArray(),
             DetailedUnits = detailedUnits,
@@ -67,7 +67,8 @@ public readonly struct UnitRenderBudgetBand
             MaxMidLodUnits = maxMidLodUnits,
             MaxLowLodUnits = maxLowLodUnits,
             AlwaysDetailedDistanceSq = alwaysDetailedDistanceSq
-        }.Run();
+        }.Schedule();
+        buildHandle.Complete();
 
         return new Plan(detailedUnits, midLodUnits, lowLodUnits, counts[0], counts[1], counts[2]);
     }

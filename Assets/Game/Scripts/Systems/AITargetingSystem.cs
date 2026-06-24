@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 
 [UpdateAfter(typeof(AISquadSystem))]
@@ -103,7 +104,7 @@ public partial struct AITargetingSystem : ISystem
         using NativeArray<ArchetypeChunk> targetPriorityChunks = _targetPriorityQuery.ToArchetypeChunkArray(Allocator.TempJob);
         _diagnosticEvents.Clear();
 
-        new AssignTargetsJob
+        JobHandle assignTargetsHandle = new AssignTargetsJob
         {
             Now = now,
             ShouldLog = (byte)(shouldLog ? 1 : 0),
@@ -121,7 +122,8 @@ public partial struct AITargetingSystem : ISystem
             GridBlockerSizeLookup = _gridBlockerSizeLookup,
             ResourceHaulerLookup = _resourceHaulerLookup,
             Diagnostics = _diagnosticEvents
-        }.Run(_squadQuery);
+        }.Schedule(_squadQuery, state.Dependency);
+        assignTargetsHandle.Complete();
 
         if (!shouldLog)
             return;

@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Transforms;
 
 public struct VisibleUnitSelectionCandidateSnapshot : IComponentData
@@ -127,7 +128,7 @@ internal static class VisibleUnitSelectionCandidateCollector
     {
         candidates.Clear();
         em.CompleteDependencyBeforeRO<LocalToWorld>();
-        new CollectVisibleUnitCandidatesJob
+        JobHandle collectHandle = new CollectVisibleUnitCandidatesJob
         {
             Filter = (byte)filter,
             EntityType = em.GetEntityTypeHandle(),
@@ -137,7 +138,8 @@ internal static class VisibleUnitSelectionCandidateCollector
             FootprintType = em.GetComponentTypeHandle<UnitFootprint>(true),
             MovementBehaviorType = em.GetComponentTypeHandle<UnitMovementBehavior>(true),
             Candidates = candidates
-        }.Run(query);
+        }.Schedule(query, default);
+        collectHandle.Complete();
     }
 
     public static void Collect(
@@ -147,7 +149,7 @@ internal static class VisibleUnitSelectionCandidateCollector
     {
         candidates.Clear();
         state.EntityManager.CompleteDependencyBeforeRO<LocalToWorld>();
-        new CollectVisibleUnitCandidatesJob
+        JobHandle collectHandle = new CollectVisibleUnitCandidatesJob
         {
             Filter = (byte)VisibleUnitSelectionSystem.Filter.All,
             EntityType = state.GetEntityTypeHandle(),
@@ -157,7 +159,8 @@ internal static class VisibleUnitSelectionCandidateCollector
             FootprintType = state.GetComponentTypeHandle<UnitFootprint>(true),
             MovementBehaviorType = state.GetComponentTypeHandle<UnitMovementBehavior>(true),
             Candidates = candidates
-        }.Run(query);
+        }.Schedule(query, state.Dependency);
+        collectHandle.Complete();
     }
 
     [BurstCompile]

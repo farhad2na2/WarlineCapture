@@ -3,6 +3,7 @@ using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Transforms;
 
 public readonly struct UnitRenderBudgetSnapshot
@@ -36,13 +37,14 @@ public readonly struct UnitRenderBudgetSnapshot
         int capacity = unitQuery.CalculateEntityCount();
         NativeList<Entity> units = new(capacity, allocator);
         NativeList<LocalTransform> transforms = new(capacity, allocator);
-        new CollectSnapshotJob
+        JobHandle collectHandle = new CollectSnapshotJob
         {
             EntityTypeHandle = entityTypeHandle,
             LocalTransformTypeHandle = localTransformTypeHandle,
             Units = units,
             Transforms = transforms
-        }.Run(unitQuery);
+        }.Schedule(unitQuery, default);
+        collectHandle.Complete();
 
         return new Snapshot(units, transforms);
     }

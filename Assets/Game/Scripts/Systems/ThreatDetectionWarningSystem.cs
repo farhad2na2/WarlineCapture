@@ -95,7 +95,7 @@ public partial struct ThreatDetectionWarningSystem : ISystem
         using NativeArray<ArchetypeChunk> sensorChunks = _sensorQuery.ToArchetypeChunkArray(Allocator.TempJob);
         using NativeArray<ArchetypeChunk> targetChunks = _targetQuery.ToArchetypeChunkArray(Allocator.TempJob);
 
-        new ThreatScanJob
+        JobHandle threatScanHandle = new ThreatScanJob
         {
             SensorChunks = sensorChunks,
             TargetChunks = targetChunks,
@@ -124,7 +124,8 @@ public partial struct ThreatDetectionWarningSystem : ISystem
             CurrentAirThreatList = currentAirThreatList,
             CellSize = cellSize,
             Result = result
-        }.Run();
+        }.Schedule(state.Dependency);
+        threatScanHandle.Complete();
 
         ReplacePreviousThreats(_previousGroundThreats, currentGroundThreatList);
         ReplacePreviousThreats(_previousAirThreats, currentAirThreatList);

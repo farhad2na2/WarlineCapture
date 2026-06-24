@@ -5,6 +5,8 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateBefore(typeof(UnitAttackOrderRequestSystem))]
 public partial struct AttackOrderCommandSystem : ISystem
 {
     public delegate bool TryGetClickedUnitEntityDelegate(Vector2 screenPosition, EntityManager em, out Entity entity);

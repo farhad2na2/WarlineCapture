@@ -2,6 +2,10 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateAfter(typeof(RuntimeGridDeduplicationSystem))]
+[UpdateBefore(typeof(StaticGridBlockerUpdateSystem))]
+[UpdateBefore(typeof(DynamicOccupancyRebuildSystem))]
 public partial struct DynamicBlockerInitSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

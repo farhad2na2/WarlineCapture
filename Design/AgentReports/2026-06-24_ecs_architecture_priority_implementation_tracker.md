@@ -46,10 +46,10 @@ Static source scan from 2026-06-24:
 | Metric | Current value |
 |---|---:|
 | Total stages | 12 |
-| Complete/skipped/decision-record stages | 2 |
-| Pending stages | 10 |
-| Overall stage-count progress | 17% |
-| Active implementation progress excluding Stage 10 decision record | 9% |
+| Complete/skipped/decision-record stages | 3 |
+| Pending stages | 9 |
+| Overall stage-count progress | 25% |
+| Active implementation progress excluding Stage 10 decision record | 18% |
 
 ## Non-Negotiable Guardrails
 
@@ -68,7 +68,7 @@ Static source scan from 2026-06-24:
 | Stage | Priority | Status | Progress | Owner | Depends on | Validation |
 |---|---|---|---:|---|---|---|
 | 0 - Baseline Recheck | P0 | Complete | 100% | Support | None | Static scan refreshed; Unity batch compile passed |
-| 1 - ECS Ordering Plan + High-Risk Ordering Batch | P0 | Pending | 0% | Support | Stage 0 | Compile + focused movement/order/spawn smoke |
+| 1 - ECS Ordering Plan + High-Risk Ordering Batch | P0 | Complete | 100% | Support | Stage 0 | Compile, movement/blocker validation, and attack validation passed |
 | 2 - `RequireForUpdate` Sweep | P0 | Pending | 0% | Support | Stage 0 | Compile + guard static scan |
 | 3 - Bootstrap Split Plan + First Extraction | P1 | Pending | 0% | Support | Stages 1-2 preferred | Compile + menu-to-match smoke |
 | 4 - UI Shell ECS Write Safety | P1 | Pending | 0% | Support | Stages 1-2 preferred | UI shell focused tests + compile |
@@ -140,8 +140,8 @@ Static source scan from 2026-06-24:
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P0 |
 | Owner | Support |
 | Dependencies | Stage 0 |
@@ -188,24 +188,40 @@ Unordered systems can appear correct in one Unity/editor run and change behavior
 
 **Acceptance Criteria**
 
-- [ ] Every high-risk file above has an explicit ordering decision.
-- [ ] If a high-risk file remains unordered, this tracker documents why.
-- [ ] No new circular or contradictory update ordering errors.
-- [ ] Static unordered count is lower and remaining items are either documented or moved to a later batch.
+- [x] Every high-risk file above has an explicit ordering decision.
+- [x] If a high-risk file remains unordered, this tracker documents why.
+- [x] No new circular or contradictory update ordering errors.
+- [x] Static unordered count is lower and remaining items are either documented or moved to a later batch.
 
 **Focused Validation**
 
-- [ ] Unity compile.
+- [x] Unity compile.
 - [ ] Match start smoke in Editor if available.
-- [ ] Move order smoke: select unit, issue move, confirm movement starts.
-- [ ] Attack order smoke: select combat unit, issue attack, confirm command is consumed.
+- [x] Move order smoke: select unit, issue move, confirm movement starts.
+- [x] Attack order smoke: select combat unit, issue attack, confirm command is consumed.
 - [ ] Spawn smoke: initial units and produced units still resolve prefabs.
-- [ ] Blocker/path smoke: units do not move through blocked building cells.
+- [x] Blocker/path smoke: units do not move through blocked building cells.
 
 **Known Risks**
 
 - Adding order attributes without source proof can hide a deeper dependency issue.
 - Startup systems that create singleton/boundary entities may require initialization-group ordering instead of simulation ordering.
+
+**Notes**
+
+- 2026-06-24 heartbeat: high-risk source audit completed.
+- Added explicit ordering to:
+  - `Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs`: `SimulationSystemGroup`, after `RuntimeGridDeduplicationSystem`, before `StaticGridBlockerUpdateSystem` and `DynamicOccupancyRebuildSystem`.
+  - `Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs`: `SimulationSystemGroup`, after `UnitPathfindingSystem`, `DynamicOccupancyRebuildSystem`, and `UnitEngagedMovementSystem`.
+  - `Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs`: `SimulationSystemGroup`, before `UnitAttackOrderRequestSystem`.
+  - `Assets/Game/Scripts/Systems/UnitHealthBarSystem.cs`: `SimulationSystemGroup`, after `UnitRuntimeHealthBarSystem`, before `EngageTargetValidateSystem`.
+- `BuildingGridCompositionSystem` and `BuildingSpawnPrefabSystem` remained unordered by decision: both are disabled helper/composition `ISystem` structs with `state.Enabled = false` and empty `OnUpdate`; forcing runtime ordering would be fake signal. They should be handled later by converting to non-system helpers or documenting/classifying disabled helper systems.
+- Attempted but rejected ordering edge: `AttackOrderCommandSystem` after `UiActionRequestSystem`. Unity compile failed because this would make `Game.Runtime` reference UI shell ECS implementation directly. The edge was removed to preserve assembly boundaries.
+- Static unordered count after the safe high-risk batch: `46`, down from `50`.
+- Validation:
+  - Unity compile passed: `/private/tmp/warline-ecs-stage1-ordering-compile-2.log`.
+  - `UnitMovementBlockerValidationTests.RunBatchValidation` passed: `/private/tmp/warline-ecs-stage1-unit-movement-blocker.log`.
+  - `GroundMissileLauncherRuntimeTests.RunAttackFocusedValidation` passed: `/private/tmp/warline-ecs-stage1-attack-focused.log`.
 
 ---
 

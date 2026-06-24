@@ -5,6 +5,9 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [BurstCompile]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateAfter(typeof(UnitRuntimeHealthBarSystem))]
+[UpdateBefore(typeof(EngageTargetValidateSystem))]
 public partial struct UnitHealthBarSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

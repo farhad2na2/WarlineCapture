@@ -14,6 +14,8 @@ public static class PortraitSpritePrefabRenderer
     private const int Size = 2048;
     private const string OutputDirectory = "Assets/Game/Art/UI/Portraits/Generated";
     private static readonly Color ChromaGreen = new(0f, 1f, 0f, 1f);
+    private static readonly int SnivelerModelShownId = Shader.PropertyToID("_SnivelerModelShown");
+    private static readonly int SnivelerRenderPixelId = Shader.PropertyToID("_SnivelerRenderPixel");
 
     public static void RenderUnitChrSoldierMale01()
     {
@@ -303,8 +305,6 @@ public static class PortraitSpritePrefabRenderer
         Vector4 renderPixel = new(animation.start + frame * boneCount, animation.start + nextFrame * boneCount, blend, 0f);
 
         MaterialPropertyBlock propertyBlock = new();
-        int modelShownId = Shader.PropertyToID("_SnivelerModelShown");
-        int renderPixelId = Shader.PropertyToID("_SnivelerRenderPixel");
         Renderer[] renderers = indexAuthoring.GetComponentsInChildren<Renderer>(true);
         for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
         {
@@ -316,8 +316,8 @@ public static class PortraitSpritePrefabRenderer
             for (int materialIndex = 0; materialIndex < materialCount; materialIndex++)
             {
                 renderer.GetPropertyBlock(propertyBlock, materialIndex);
-                propertyBlock.SetFloat(modelShownId, 1f);
-                propertyBlock.SetVector(renderPixelId, renderPixel);
+                propertyBlock.SetFloat(SnivelerModelShownId, 1f);
+                propertyBlock.SetVector(SnivelerRenderPixelId, renderPixel);
                 renderer.SetPropertyBlock(propertyBlock, materialIndex);
             }
         }

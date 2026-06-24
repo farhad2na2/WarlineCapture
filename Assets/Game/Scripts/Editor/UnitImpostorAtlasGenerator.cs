@@ -18,6 +18,8 @@ public static class UnitImpostorAtlasGenerator
     private const int TileSize = 512;
     private const int TilePadding = 24;
     private const int InnerTileSize = TileSize - TilePadding * 2;
+    private static readonly int SnivelerModelShownId = Shader.PropertyToID("_SnivelerModelShown");
+    private static readonly int SnivelerRenderPixelId = Shader.PropertyToID("_SnivelerRenderPixel");
 
     public static void GenerateSoldierMale02Alt04Atlas()
     {
@@ -258,8 +260,6 @@ public static class UnitImpostorAtlasGenerator
             return;
 
         MaterialPropertyBlock propertyBlock = new();
-        int modelShownId = Shader.PropertyToID("_SnivelerModelShown");
-        int renderPixelId = Shader.PropertyToID("_SnivelerRenderPixel");
         for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
         {
             Renderer renderer = renderers[rendererIndex];
@@ -269,8 +269,8 @@ public static class UnitImpostorAtlasGenerator
             for (int materialIndex = 0; materialIndex < renderer.sharedMaterials.Length; materialIndex++)
             {
                 renderer.GetPropertyBlock(propertyBlock, materialIndex);
-                propertyBlock.SetFloat(modelShownId, 1f);
-                propertyBlock.SetVector(renderPixelId, new Vector4(startPixel, endPixel, 0f, 0f));
+                propertyBlock.SetFloat(SnivelerModelShownId, 1f);
+                propertyBlock.SetVector(SnivelerRenderPixelId, new Vector4(startPixel, endPixel, 0f, 0f));
                 renderer.SetPropertyBlock(propertyBlock, materialIndex);
             }
         }

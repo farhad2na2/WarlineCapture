@@ -88,7 +88,7 @@ The audit was committed at `9e2298474`, but its source snapshot says it rechecke
 | 8 - BuildingBarrier Managed Dictionary Closure | P1 | Complete | 100% | Support | Stage 0 | Managed dictionary foreach regression removed. |
 | 9 - RuntimeBuildingEntityLink Update Closure | P1/P2 | Complete | 100% | Support | Stage 0 | Per-building `Update` removed and replaced by batched runtime sync. |
 | 10 - Authoring And Bake Data Hygiene | P1/P2 | Complete | 100% | Support | Stage 0 | MapSurface blob dedup and GridAuthoring bake risks addressed; UnitGrid legacy fallback ledgered. |
-| 11 - Component And Minor Cleanup | P2 | Pending | 0% | Support | P0/P1 stages preferred | Remaining P2 checks complete or explicitly deferred. |
+| 11 - Component And Minor Cleanup | P2 | Complete | 100% | Support | P0/P1 stages preferred | Remaining P2 checks complete or explicitly ledgered. |
 | 12 - Final Audit Closure Validation | P0 | Pending | 0% | Support | Stages 1-11 | Reverification commands pass and no non-namespace audit item is untracked. |
 
 ## Exception Ledger
@@ -104,6 +104,8 @@ Do not leave this empty at final closure. Any remaining scan hit must be listed 
 | Stage 5 managed renderer exception | `Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSystem.cs` | Presentation/render-budget orchestrator touches `UnityEngine.Time`, Entities Graphics/Rendering state, render safety tags, and multiple managed helper subsystems. Stage 7 handles `.Run()` scheduling in its helper systems separately. | Render budget data collection/classification is split into Burst jobs with a managed presentation apply layer. |
 | Stage 5 disabled/helper exception | Disabled helper, UI shell, and diagnostic flush `ISystem` files without `BurstCompile` | These systems are one-shot, disabled facades, UI bridge systems, or diagnostic log flushers. They are not hot simulation loops and several intentionally use managed APIs. | A helper becomes an always-running gameplay loop or appears in profiler hot-path evidence. |
 | Stage 10 baker-only visual-root fallback | `Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs` | `ResolveModelRoot` and `ResolveDestroyedRoot` still use `transform.Find("Model")` / `transform.Find("Destroyed")` only inside the baker as a compatibility path for legacy unit prefabs that have not serialized explicit `modelRoot` / `destroyedRoot` references yet. This is not runtime gameplay lookup. | Unit prefabs are migrated so every prefab with `Model` / `Destroyed` children has explicit serialized visual-root references, then remove the fallback and update `UnitGridAuthoringVisualRootTests`. |
+| Stage 11 UI shell request bridge direct `EntityManager` | `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs` | The remaining direct `EntityManager` calls are in the shell request bridge that moves UI action buffers into ECS request buffers and creates missing request queue entities. This is not a gameplay hot loop; replacing it needs a dedicated UI request command-buffer redesign. | Profiler shows this system as hot, or UI shell request queues are redesigned around an ECB/request producer contract. |
+| Stage 11 cached UI canvas lookups | `Assets/Game/Scripts/UI/**/*.cs` | Remaining `GetComponentInParent<Canvas>` hits populate `_cachedCanvas` fields lazily in view classes. They are not repeated uncached traversal sites in runtime systems. | A view calls `GetComponentInParent<Canvas>` every frame without caching, or profiler identifies canvas resolution as hot. |
 
 ---
 
@@ -1034,8 +1036,8 @@ rg -n "TryCreateRuntimeBlobAsset|BlobAssetReference|Dictionary<.*MapSurface" Ass
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P2 |
 | Owner | Support |
 | Dependencies | P0/P1 stages preferred |
@@ -1055,10 +1057,10 @@ rg -n "TryCreateRuntimeBlobAsset|BlobAssetReference|Dictionary<.*MapSurface" Ass
 
 **Acceptance Criteria**
 
-- [ ] `CombatComponents.cs` split is complete or a smaller split plan is recorded.
-- [ ] P2-2/P2-3/P2-5/P2-7 re-verification result is recorded.
-- [ ] Editor-only cleanup is complete or intentionally left as low-value.
-- [ ] Unity compile passes.
+- [x] `CombatComponents.cs` split is complete or a smaller split plan is recorded.
+- [x] P2-2/P2-3/P2-5/P2-7 re-verification result is recorded.
+- [x] Editor-only cleanup is complete or intentionally left as low-value.
+- [x] Unity compile passes.
 
 **Validation Commands**
 
@@ -1069,7 +1071,39 @@ rg -n "Shader\.PropertyToID|GetComponentInParent<Canvas>|EntityManager\." Assets
 
 **Notes**
 
-- Pending.
+- 2026-06-25 heartbeat Stage 11 refreshed the P2 scan before edits.
+- Split `CombatComponents.cs` from `653` lines of mixed declarations to a one-line marker file plus focused component files:
+  - `FactionAIComponents.cs`: faction economy, AI build/production plans, squad data.
+  - `UnitCombatComponents.cs`: unit combat, threat detection, attack/VFX requests, engage/debug/base-breach, respawn/resource-hauler data.
+  - `GroundMissileComponents.cs`: ground missile launcher/projectile/interception data.
+  - `AirMissileComponents.cs`: air missile launcher/projectile/support data.
+  - `RuntimeBuildingCombatComponents.cs`: runtime building combat tag/info.
+- No namespaces, type names, or component field contracts changed.
+- Unity generated `.meta` files for the new component files during validation; those are part of the stage commit.
+- P2-2 large `IBufferElementData` re-verification:
+  - Current component scan lists buffer elements across components.
+  - Combat split did not identify a new large unmanaged buffer regression requiring a gameplay refactor.
+  - Larger-looking request/read-model buffers outside the combat split remain domain-specific and should be handled only with profiler/source proof, not in this file organization stage.
+- P2-3 `UiActionRequestSystem.OnUpdate` direct `EntityManager` re-verification:
+  - Remaining direct calls are ledgered as the UI shell request bridge.
+  - This stage did not redesign UI request queues because that would be a separate behavior-risky architecture task.
+- P2-5 `GetComponentInParent<Canvas>` re-verification:
+  - Remaining hits are lazy cached view lookups into `_cachedCanvas` fields, not uncached runtime-system loops.
+  - Ledgered as acceptable unless profiler evidence says otherwise.
+- P2-7 USS/static layout hygiene re-verification:
+  - C# UI Toolkit scan for `VisualElement`, `UIDocument`, `UnityEngine.UIElements`, and `StyleSheet` returned no active hits in the checked game script roots.
+  - USS/static styling files remain asset/style data per the user's instruction to keep UI Toolkit CSS/styles while deleting C# code when needed.
+- Editor-only `Shader.PropertyToID` cleanup:
+  - Cached `_SnivelerModelShown` and `_SnivelerRenderPixel` IDs in `UnitImpostorAtlasGenerator`.
+  - Cached `_SnivelerModelShown` and `_SnivelerRenderPixel` IDs in `PortraitSpritePrefabRenderer`.
+  - Remaining project hits are already static readonly caches.
+- Focused combat validation passed:
+  - Command: Unity `6000.4.0f1` batchmode `-executeMethod CombatDeathValidationTests.RunFocusedValidation`.
+  - Log path: `/private/tmp/warline-ecs-reverification-stage11-combat.log`.
+  - Success marker: `[CombatDeathFocusedValidation] result=Passed tests=2`.
+- Unity compile passed:
+  - Log path: `/private/tmp/warline-ecs-reverification-stage11-compile.log`.
+  - Success marker: `Exiting batchmode successfully now!`.
 
 ---
 

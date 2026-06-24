@@ -80,7 +80,7 @@ The audit was committed at `9e2298474`, but its source snapshot says it rechecke
 | 0 - Baseline Reverification Snapshot | P0 | Complete | 100% | Support | None | Fresh counts recorded against current `HEAD`; Unity batch compile passed. |
 | 1 - ECS Ordering Closure | P0 | Complete | 100% | Support | Stage 0 | Runtime unordered scan returns no live systems; Unity batch compile passed. |
 | 2 - `RequireForUpdate` Closure | P0 | Complete | 100% | Support | Stage 0 | Runtime guard scan clean; intentional producer/helper exceptions documented in source. |
-| 3 - UI Shell Boundary Structural Safety | P1 | Pending | 0% | Support | Stage 0 | No unsafe structural `EntityManager` creation path in `OnUpdate`, or one-shot path isolated and documented. |
+| 3 - UI Shell Boundary Structural Safety | P1 | Complete | 100% | Support | Stage 0 | `OnUpdate` is empty; one-shot boundary creation is in `OnCreate`; focused UI shell validation passed. |
 | 4 - Bootstrap Split Unblock And Continue | P1 | Pending | 0% | Support | Stages 1-3 preferred | Bootstrap guardrail passes and `MatchBootstrapSystem` is below target or has remaining split plan. |
 | 5 - Burst Coverage Closure | P1 | Pending | 0% | Support | Stages 1-2 preferred | Hot `ISystem`s are Bursted or managed exceptions are documented. |
 | 6 - Singleton And ECB Query Closure | P1 | Pending | 0% | Support | Stage 2 preferred | Current per-frame `GridConfig`/ECB singleton findings closed. |
@@ -452,8 +452,8 @@ rg -l "partial struct .*ISystem|: ISystem" Assets/Game/Scripts \
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P1 |
 | Owner | Support |
 | Dependencies | Stage 0 |
@@ -473,10 +473,10 @@ rg -l "partial struct .*ISystem|: ISystem" Assets/Game/Scripts \
 
 **Acceptance Criteria**
 
-- [ ] No unsafe repeated structural creation path remains in `OnUpdate`.
-- [ ] If a one-shot path remains, it is self-disabled, documented, and ledgered.
-- [ ] UI shell focused tests pass if available.
-- [ ] Unity compile passes.
+- [x] No unsafe repeated structural creation path remains in `OnUpdate`.
+- [x] If a one-shot path remains, it is self-disabled, documented, and ledgered.
+- [x] UI shell focused tests pass if available.
+- [x] Unity compile passes.
 
 **Validation Commands**
 
@@ -486,7 +486,17 @@ rg -n "CreateEntity|AddComponentData|AddBuffer|SetComponentData" Assets/Game/Scr
 
 **Notes**
 
-- Pending.
+- 2026-06-24 heartbeat Stage 3 source inspection found the audit finding already closed in current code:
+  - `UiShellBoundarySystem.OnCreate` registers the runtime gateway, creates/resolves the boundary, ensures required components/buffers, and then sets `state.Enabled = false`.
+  - `UiShellBoundarySystem.OnUpdate` is empty.
+  - Direct structural calls still exist in the file, but they are isolated to the one-shot `OnCreate`/`EnsureBoundary` path and existing-boundary repair helpers, not a repeated update path.
+- Source check for `OnUpdate` body:
+  - `public void OnUpdate(ref SystemState state) { }`
+- Focused UI shell validation passed:
+  - Command: Unity `6000.4.0f1` batchmode `-executeMethod UIShellCurrentContentLoadTests.RunFocusedValidation`.
+  - Log path: `/private/tmp/warline-ecs-reverification-stage3-ui-shell.log`.
+  - Pass marker: `[UIShellCurrentContentLoadValidation] result=Passed tests=10`.
+- No runtime code changes were needed for Stage 3; this stage closes by verification and tracker update.
 
 ---
 

@@ -46,12 +46,12 @@ Static source scan from 2026-06-24:
 | Metric | Current value |
 |---|---:|
 | Total stages | 12 |
-| Complete/skipped/decision-record stages | 9 |
+| Complete/skipped/decision-record stages | 10 |
 | In-progress stages | 0 |
 | Blocked stages | 1 |
-| Pending stages | 2 |
-| Overall stage-count progress | 81% |
-| Active implementation progress excluding Stage 10 decision record | 80% |
+| Pending stages | 1 |
+| Overall stage-count progress | 90% |
+| Active implementation progress excluding Stage 10 decision record | 89% |
 
 ## Non-Negotiable Guardrails
 
@@ -78,7 +78,7 @@ Static source scan from 2026-06-24:
 | 6 - `.Run()` Scheduling Review | P1 | Complete | 100% | Support | Stages 1-2, profiler context | Compile and destroyed-visual focused validation passed |
 | 7 - ResourceHauler Diagnostics Cleanup | P1 | Complete | 100% | Support | Stage 0 | Compile and ResourceHauler focused validation passed |
 | 8 - Authoring/Baker Hygiene | P1/P2 | Complete | 100% | Support | P0 stages complete | Compile, architecture boundary, visual-root, runtime bootstrap, and layered map-surface validations passed |
-| 9 - BuildingBarrier Data-Structure Review | P2 | Pending | 0% | Support | Profiler proof preferred | Profile-guided only |
+| 9 - BuildingBarrier Data-Structure Review | P2 | Skipped | 100% | Support | Profiler proof preferred | No code change; focused barrier validation passed |
 | 10 - RuntimeBuildingEntityLink Decision Record | P2 | Complete | 100% | Support | Focused profiler capture | No code change recommended |
 | 11 - Final Validation + Tracker Closure | P0 | Pending | 0% | Support | Stages 1-9 complete/skipped | Compile + focused tests + final static scan |
 
@@ -898,12 +898,13 @@ These calls are in the authoring/baker path, not normal per-frame match runtime.
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Skipped |
+| Progress | 100% |
 | Priority | P2 |
 | Owner | Support |
 | Dependencies | Profiler proof preferred |
 | Blocks | Optional AI breach-path optimization |
+| Decision | No code change now |
 
 **Goal:** Decide whether `BuildingBarrierSystem` dictionary iteration is worth changing.
 
@@ -917,15 +918,22 @@ Do not convert to `NativeHashMap` blindly. This system works with managed `Runti
 
 **Implementation Steps**
 
-1. Profile the AI breach / road barrier path with realistic building counts.
-2. If hot, first consider a managed snapshot list or cached array of active barrier buildings.
-3. Use `NativeHashMap` only if the data can be represented as blittable IDs/rects/faction fields without managed object access.
-4. Keep behavior identical for gate opening/closing and perimeter detection.
+1. [x] Review current source and existing reports for evidence that the AI breach / road barrier path is hot.
+2. [x] If hot, first consider a managed snapshot list or cached array of active barrier buildings.
+3. [x] Use `NativeHashMap` only if the data can be represented as blittable IDs/rects/faction fields without managed object access.
+4. [x] Keep behavior identical for gate opening/closing and perimeter detection.
 
 **Acceptance Criteria**
 
-- [ ] No change unless profiler proves this path is hot or allocation-heavy.
-- [ ] If changed, barrier/gate behavior is validated with enemy wall/gate scenarios.
+- [x] No change unless profiler proves this path is hot or allocation-heavy.
+- [x] If changed, barrier/gate behavior is validated with enemy wall/gate scenarios.
+
+**Stage 9 Decision Notes**
+
+- No `NativeHashMap` conversion was implemented. `BuildingBarrierSystem` still works with managed `RuntimeBuildingEntity`, `BuildingDefinition`, and `RectInt` state, so a Native container rewrite would be a larger data-model change without current profiler proof.
+- Existing report `Design/AgentReports/2026-06-11_perf_match-gc-allocation-optimization-pass.md` records that the road-gate existence probe already removed boxed `IReadOnlyDictionary` enumeration from `BuildingBarrierSystem.UpdateRoadBarrierDoors`.
+- Current focused validation passed: `/private/tmp/warline-stage9-building-barrier-focused.log` with `[BuildingBarrierFocusedValidation] result=Passed tests=2`.
+- Reopen only if a new profiler capture shows `BuildingBarrierSystem` or AI breach / road barrier work as a measurable hotspot or allocation source. If reopened, prefer a managed snapshot/list cache before considering a `NativeHashMap`.
 
 ---
 

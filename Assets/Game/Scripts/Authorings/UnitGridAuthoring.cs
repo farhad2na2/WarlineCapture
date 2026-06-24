@@ -1123,11 +1123,13 @@ public class UnitGridAuthoring : MonoBehaviour
 
         private static Transform ResolveModelRoot(UnitGridAuthoring authoring)
         {
+            // Baker-only compatibility fallback for legacy prefabs that have not serialized explicit visual roots yet.
             return authoring.modelRoot != null ? authoring.modelRoot : authoring.transform.Find("Model");
         }
 
         private static Transform ResolveDestroyedRoot(UnitGridAuthoring authoring)
         {
+            // Baker-only compatibility fallback for legacy prefabs that have not serialized explicit visual roots yet.
             return authoring.destroyedRoot != null ? authoring.destroyedRoot : authoring.transform.Find("Destroyed");
         }
 

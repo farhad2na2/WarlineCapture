@@ -7,11 +7,8 @@ using System.Collections.Generic;
 [DisallowMultipleComponent]
 public class GridAuthoring : MonoBehaviour
 {
-    private static readonly List<GridAuthoring> RegisteredInstances = new();
-
     [SerializeField] private GridAuthoringConfig config;
     private IRuntimeGridBlockerCellLookup _runtimeGridBlockers;
-    public static IReadOnlyList<GridAuthoring> Instances => RegisteredInstances;
     public int Width => config != null ? config.Width : 16;
     public int Height => config != null ? config.Height : 16;
     public float CellSize => config != null ? config.CellSize : 1f;
@@ -48,17 +45,6 @@ public class GridAuthoring : MonoBehaviour
     public void BindRuntimeGridBlockers(IRuntimeGridBlockerCellLookup runtimeGridBlockers)
     {
         _runtimeGridBlockers = runtimeGridBlockers;
-    }
-
-    private void OnEnable()
-    {
-        if (!RegisteredInstances.Contains(this))
-            RegisteredInstances.Add(this);
-    }
-
-    private void OnDisable()
-    {
-        RegisteredInstances.Remove(this);
     }
 
     private class GridBaker : Baker<GridAuthoring>
@@ -281,13 +267,12 @@ public class GridAuthoring : MonoBehaviour
         if (world == null || !world.IsCreated)
             return false;
 
-        var entityManager = world.EntityManager;
-        var query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<GridRoad>());
-        if (query.IsEmptyIgnoreFilter)
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<GridRoad>());
+        if (!TryGetFirstQueryEntity(query, out Entity gridEntity))
             return false;
 
-        Entity gridEntity = query.GetSingletonEntity();
-        var grid = entityManager.GetComponentData<GridConfig>(gridEntity);
+        GridConfig grid = entityManager.GetComponentData<GridConfig>(gridEntity);
         roads = entityManager.GetBuffer<GridRoad>(gridEntity);
         width = grid.Width;
         height = grid.Height;
@@ -312,13 +297,12 @@ public class GridAuthoring : MonoBehaviour
         if (world == null || !world.IsCreated)
             return false;
 
-        var entityManager = world.EntityManager;
-        var query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<GridRoadSidewalk>());
-        if (query.IsEmptyIgnoreFilter)
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<GridRoadSidewalk>());
+        if (!TryGetFirstQueryEntity(query, out Entity gridEntity))
             return false;
 
-        Entity gridEntity = query.GetSingletonEntity();
-        var grid = entityManager.GetComponentData<GridConfig>(gridEntity);
+        GridConfig grid = entityManager.GetComponentData<GridConfig>(gridEntity);
         sidewalks = entityManager.GetBuffer<GridRoadSidewalk>(gridEntity);
         width = grid.Width;
         height = grid.Height;
@@ -335,14 +319,13 @@ public class GridAuthoring : MonoBehaviour
         if (world == null || !world.IsCreated)
             return false;
 
-        var entityManager = world.EntityManager;
-        var query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<DynamicBlockerComponent>());
-        if (query.IsEmptyIgnoreFilter)
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<DynamicBlockerComponent>());
+        if (!TryGetFirstQueryEntity(query, out Entity gridEntity))
             return false;
 
-        Entity gridEntity = query.GetSingletonEntity();
-        var grid = entityManager.GetComponentData<GridConfig>(gridEntity);
-        var blockerData = entityManager.GetComponentData<DynamicBlockerComponent>(gridEntity);
+        GridConfig grid = entityManager.GetComponentData<GridConfig>(gridEntity);
+        DynamicBlockerComponent blockerData = entityManager.GetComponentData<DynamicBlockerComponent>(gridEntity);
         if (!blockerData.Blocked.IsCreated)
             return false;
 
@@ -360,8 +343,8 @@ public class GridAuthoring : MonoBehaviour
         if (world == null || !world.IsCreated)
             return false;
 
-        var entityManager = world.EntityManager;
-        var query = entityManager.CreateEntityQuery(
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<UnitFootprint>(),
             ComponentType.ReadOnly<UnitMovementBehavior>());
@@ -400,16 +383,15 @@ public class GridAuthoring : MonoBehaviour
         if (world == null || !world.IsCreated)
             return;
 
-        var entityManager = world.EntityManager;
-        var gridQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<PathPoolComponent>());
-        if (gridQuery.IsEmptyIgnoreFilter)
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery gridQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<PathPoolComponent>());
+        if (!TryGetFirstQueryEntity(gridQuery, out Entity gridEntity))
             return;
 
-        Entity gridEntity = gridQuery.GetSingletonEntity();
         GridConfig grid = entityManager.GetComponentData<GridConfig>(gridEntity);
-        var pathPool = entityManager.GetComponentData<PathPoolComponent>(gridEntity).Cells.AsArray();
+        NativeArray<int2> pathPool = entityManager.GetComponentData<PathPoolComponent>(gridEntity).Cells.AsArray();
 
-        var unitQuery = entityManager.CreateEntityQuery(
+        using EntityQuery unitQuery = entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<UnitTarget>(),
             ComponentType.ReadOnly<ManualMoveOrderTag>());
@@ -457,5 +439,19 @@ public class GridAuthoring : MonoBehaviour
 
             Gizmos.DrawSphere(targetPos + Vector3.up * 0.24f, CellSize * 0.12f);
         }
+    }
+
+    private static bool TryGetFirstQueryEntity(EntityQuery query, out Entity entity)
+    {
+        entity = Entity.Null;
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        if (entities.Length == 0)
+            return false;
+
+        entity = entities[0];
+        return entity != Entity.Null;
     }
 }

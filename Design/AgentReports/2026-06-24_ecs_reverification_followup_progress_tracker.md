@@ -87,7 +87,7 @@ The audit was committed at `9e2298474`, but its source snapshot says it rechecke
 | 7 - `.Run()` Scheduling Closure | P1 | Complete | 100% | Support | Stage 5 preferred | Each `.Run()` site converted or documented with source/profiler reason. |
 | 8 - BuildingBarrier Managed Dictionary Closure | P1 | Complete | 100% | Support | Stage 0 | Managed dictionary foreach regression removed. |
 | 9 - RuntimeBuildingEntityLink Update Closure | P1/P2 | Complete | 100% | Support | Stage 0 | Per-building `Update` removed and replaced by batched runtime sync. |
-| 10 - Authoring And Bake Data Hygiene | P1/P2 | Pending | 0% | Support | Stage 0 | MapSurface blob dedup and GridAuthoring bake risks addressed. |
+| 10 - Authoring And Bake Data Hygiene | P1/P2 | Complete | 100% | Support | Stage 0 | MapSurface blob dedup and GridAuthoring bake risks addressed; UnitGrid legacy fallback ledgered. |
 | 11 - Component And Minor Cleanup | P2 | Pending | 0% | Support | P0/P1 stages preferred | Remaining P2 checks complete or explicitly deferred. |
 | 12 - Final Audit Closure Validation | P0 | Pending | 0% | Support | Stages 1-11 | Reverification commands pass and no non-namespace audit item is untracked. |
 
@@ -103,6 +103,7 @@ Do not leave this empty at final closure. Any remaining scan hit must be listed 
 | Stage 5 managed scheduler exception | `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs` | Uses main-thread `EntityManager` orchestration, `UnityEngine.RectInt`/`Vector2Int`, string reason output, and diagnostic queue creation. Add Burst only after splitting order selection/issue loops into jobs. | AI combat order loop is rewritten as Burst-compatible job/data pipeline. |
 | Stage 5 managed renderer exception | `Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSystem.cs` | Presentation/render-budget orchestrator touches `UnityEngine.Time`, Entities Graphics/Rendering state, render safety tags, and multiple managed helper subsystems. Stage 7 handles `.Run()` scheduling in its helper systems separately. | Render budget data collection/classification is split into Burst jobs with a managed presentation apply layer. |
 | Stage 5 disabled/helper exception | Disabled helper, UI shell, and diagnostic flush `ISystem` files without `BurstCompile` | These systems are one-shot, disabled facades, UI bridge systems, or diagnostic log flushers. They are not hot simulation loops and several intentionally use managed APIs. | A helper becomes an always-running gameplay loop or appears in profiler hot-path evidence. |
+| Stage 10 baker-only visual-root fallback | `Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs` | `ResolveModelRoot` and `ResolveDestroyedRoot` still use `transform.Find("Model")` / `transform.Find("Destroyed")` only inside the baker as a compatibility path for legacy unit prefabs that have not serialized explicit `modelRoot` / `destroyedRoot` references yet. This is not runtime gameplay lookup. | Unit prefabs are migrated so every prefab with `Model` / `Destroyed` children has explicit serialized visual-root references, then remove the fallback and update `UnitGridAuthoringVisualRootTests`. |
 
 ---
 
@@ -943,8 +944,8 @@ rg -n "void Update|LateUpdate|FixedUpdate" Assets/Game/Scripts/RuntimeState/Runt
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P1/P2 |
 | Owner | Support |
 | Dependencies | Stage 0 |
@@ -974,11 +975,11 @@ rg -n "void Update|LateUpdate|FixedUpdate" Assets/Game/Scripts/RuntimeState/Runt
 
 **Acceptance Criteria**
 
-- [ ] Shared map surface assets do not produce duplicate runtime blobs.
-- [ ] `UnitGridAuthoring` has no runtime string hierarchy lookup, or fallback is ledgered as bake-time only.
-- [ ] `GridAuthoring` no longer depends on fragile static registry/runtime singleton access during bake, or exact blockers are documented.
-- [ ] Authoring/baker focused validation passes.
-- [ ] Unity compile passes.
+- [x] Shared map surface assets do not produce duplicate runtime blobs.
+- [x] `UnitGridAuthoring` has no runtime string hierarchy lookup, or fallback is ledgered as bake-time only.
+- [x] `GridAuthoring` no longer depends on fragile static registry/runtime singleton access during bake, or exact blockers are documented.
+- [x] Authoring/baker focused validation passes.
+- [x] Unity compile passes.
 
 **Validation Commands**
 
@@ -989,7 +990,43 @@ rg -n "TryCreateRuntimeBlobAsset|BlobAssetReference|Dictionary<.*MapSurface" Ass
 
 **Notes**
 
-- Pending.
+- 2026-06-24 heartbeat Stage 10 refreshed authoring hygiene scans before edits.
+- Part A - `MapSurfaceAuthoring` blob dedup:
+  - Current source already uses `surfaceData.ComputeRuntimeBlobHash()`, `TryGetBlobAssetReference(surfaceHash, ...)`, and `AddBlobAssetWithCustomHash(ref surfaceBlob, surfaceHash)`.
+  - This closes shared `MapSurfaceDataAsset` duplicate runtime blob creation for identical runtime payloads.
+  - Focused validation already includes `MapSurfaceAuthoringBakerUsesContentHashDeduplication`.
+- Part B - `UnitGridAuthoring.transform.Find`:
+  - Remaining hits are intentionally kept and ledgered:
+    - `ResolveModelRoot`: `authoring.transform.Find("Model")`
+    - `ResolveDestroyedRoot`: `authoring.transform.Find("Destroyed")`
+  - Both are inside `UnitGridBaker` helper methods, not runtime gameplay systems.
+  - Added source comments marking them as baker-only compatibility fallbacks for legacy prefabs without serialized explicit visual roots.
+  - Reopen trigger is in the Exception Ledger: after prefab visual roots are migrated, remove these fallbacks and update `UnitGridAuthoringVisualRootTests`.
+- Part C - `GridAuthoring` static registry and debug singleton access:
+  - Removed static mutable `RegisteredInstances` and `GridAuthoring.Instances`.
+  - Removed `OnEnable` / `OnDisable` registry mutation.
+  - `GameplaySceneBindingSceneSystemHelper` now discovers scene `GridAuthoring` instances through `Object.FindObjectsByType<GridAuthoring>(FindObjectsInactive.Include, FindObjectsSortMode.None)` when binding runtime grid-blocker debug views.
+  - Replaced authoring debug/gizmo `GetSingletonEntity` calls with `TryGetFirstQueryEntity`, using a temporary entity array so duplicate grids no longer throw in debug drawing.
+  - Disposed the debug-created `EntityQuery` instances with `using`.
+- Acceptance scan result:
+  - `RegisteredInstances`: clean in `Assets/Game/Scripts/Authorings`.
+  - `GetSingletonEntity`: clean in `Assets/Game/Scripts/Authorings`.
+  - `transform.Find`: two ledgered baker-only `UnitGridAuthoring` visual-root fallback hits remain.
+- Focused MapSurface validation passed:
+  - Command: Unity `6000.4.0f1` batchmode `-executeMethod MapSurfaceRuntimeBootstrapSceneSystemHelperTests.RunFocusedValidation`.
+  - Log path: `/private/tmp/warline-ecs-reverification-stage10-mapsurface.log`.
+  - Success marker: `[MapSurfaceRuntimeBootstrapValidation] result=Passed tests=4`.
+- Focused UnitGrid authoring visual-root validation passed:
+  - Command: Unity `6000.4.0f1` batchmode `-executeMethod UnitGridAuthoringVisualRootTests.RunFocusedValidation`.
+  - Log path: `/private/tmp/warline-ecs-reverification-stage10-unitgrid.log`.
+  - Success marker: `[UnitGridAuthoringVisualRootValidation] result=Passed tests=2`.
+- Focused runtime grid dedup validation passed:
+  - Command: Unity `6000.4.0f1` batchmode `-executeMethod RuntimeGridDeduplicationSystemTests.RunFocusedValidation`.
+  - Log path: `/private/tmp/warline-ecs-reverification-stage10-griddedup.log`.
+  - Success marker: `[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=3`.
+- Unity compile passed:
+  - Log path: `/private/tmp/warline-ecs-reverification-stage10-compile.log`.
+  - Success marker: `Exiting batchmode successfully now!`.
 
 ---
 

@@ -7,16 +7,20 @@ using Unity.Transforms;
 [UpdateAfter(typeof(UnitMoveVisualStateSystem))]
 public partial struct UnitRotationHoldSystem : ISystem
 {
+    private EntityQuery _ecbSingletonQuery;
+
     public void OnCreate(ref SystemState state)
     {
+        _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
         state.RequireForUpdate<UnitRotationHold>();
-        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate(_ecbSingletonQuery);
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
+        var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
         var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
         var handle = new HoldJob
@@ -45,4 +49,3 @@ public partial struct UnitRotationHoldSystem : ISystem
         }
     }
 }
-

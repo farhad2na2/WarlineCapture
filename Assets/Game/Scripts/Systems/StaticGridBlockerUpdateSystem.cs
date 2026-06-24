@@ -8,6 +8,8 @@ using Unity.Mathematics;
 [UpdateBefore(typeof(UnitPathfindingSystem))]
 public partial struct StaticGridBlockerUpdateSystem : ISystem
 {
+    private EntityQuery _gridQuery;
+
     private static void ApplyDelta(ref NativeArray<int> counts, ref NativeBitArray blocked, int cellIndex, int delta)
     {
         if ((uint)cellIndex >= (uint)counts.Length)
@@ -80,14 +82,15 @@ public partial struct StaticGridBlockerUpdateSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<DynamicBlockerComponent>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
         var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
         var blockerDataRw = SystemAPI.GetComponentRW<DynamicBlockerComponent>(gridEntity);
 

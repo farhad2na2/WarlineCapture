@@ -82,7 +82,7 @@ public partial struct ThreatDetectionWarningSystem : ISystem
 
         CompleteMainThreadReadDependencies(ref state);
 
-        float cellSize = TryGetCellSize(_gridQuery);
+        float cellSize = TryGetCellSize(state.EntityManager, _gridQuery);
 
         int targetCapacity = math.max(16, _targetQuery.CalculateEntityCount() * 2);
         using NativeParallelHashSet<Entity> currentGroundThreats = new(targetCapacity, Allocator.TempJob);
@@ -198,12 +198,13 @@ public partial struct ThreatDetectionWarningSystem : ISystem
             previousThreats.Add(currentThreats[i]);
     }
 
-    private static float TryGetCellSize(EntityQuery gridQuery)
+    private static float TryGetCellSize(EntityManager em, EntityQuery gridQuery)
     {
         if (gridQuery.IsEmptyIgnoreFilter)
             return 1f;
 
-        GridConfig grid = gridQuery.GetSingleton<GridConfig>();
+        Entity gridEntity = gridQuery.GetSingletonEntity();
+        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         return math.max(0.01f, grid.CellSize);
     }
 

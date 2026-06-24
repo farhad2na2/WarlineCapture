@@ -667,6 +667,8 @@ public partial struct UnitGridMovementSystem : ISystem
 {
     private const double FreezeLogThresholdSeconds = 0.05d;
     private static readonly bool EnableGridMovementFreezeLogs = false;
+    private EntityQuery _gridQuery;
+    private EntityQuery _ecbSingletonQuery;
     private EntityQuery _liveUnitsQuery;
     private EntityTypeHandle _liveEntityType;
     private ComponentTypeHandle<UnitGrid> _liveGridType;
@@ -674,7 +676,9 @@ public partial struct UnitGridMovementSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<UnitPathFollow>();
         state.RequireForUpdate<UnitPathRange>();
         state.RequireForUpdate<PathPoolComponent>();
@@ -682,7 +686,7 @@ public partial struct UnitGridMovementSystem : ISystem
         state.RequireForUpdate<GridRoad>();
         state.RequireForUpdate<GridRoadSidewalk>();
         state.RequireForUpdate<GridRoadDirt>();
-        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate(_ecbSingletonQuery);
 
         _liveUnitsQuery = state.GetEntityQuery(new EntityQueryDesc
         {
@@ -707,7 +711,7 @@ public partial struct UnitGridMovementSystem : ISystem
         double startTime = Time.realtimeSinceStartupAsDouble;
         try
         {
-            var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+            Entity gridEntity = _gridQuery.GetSingletonEntity();
             var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
             var pool = state.EntityManager.GetComponentData<PathPoolComponent>(gridEntity);
             var poolArray = pool.Cells.AsArray();
@@ -728,7 +732,8 @@ public partial struct UnitGridMovementSystem : ISystem
             _liveGridType.Update(ref state);
             _liveFootprintType.Update(ref state);
             CollectLiveUnits(ref liveUnitEntities, ref liveUnitGrids, ref liveUnitFootprints);
-            var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+            Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
+            var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
             var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
             var moveHandle = new UnitGridMoveJob

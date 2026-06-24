@@ -7,13 +7,15 @@ using Unity.Transforms;
 [UpdateAfter(typeof(UnitDeathSystem))]
 public partial struct UnitDestroyedVisualSystem : ISystem
 {
+    private EntityQuery _ecbSingletonQuery;
     private ComponentLookup<LocalTransform> _localTransformLookup;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
         state.RequireForUpdate<UnitDestroyedVisualReference>();
-        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate(_ecbSingletonQuery);
         _localTransformLookup = state.GetComponentLookup<LocalTransform>();
     }
 
@@ -21,7 +23,8 @@ public partial struct UnitDestroyedVisualSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         _localTransformLookup.Update(ref state);
-        var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
+        var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
         EntityCommandBuffer ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
         state.Dependency = new InitializeDestroyedVisualJob
         {

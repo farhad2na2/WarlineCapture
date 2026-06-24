@@ -743,7 +743,8 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         if (markers.Length == 0)
             return false;
 
-        GridConfig grid = gridConfigQuery.GetSingleton<GridConfig>();
+        Entity gridEntity = gridConfigQuery.GetSingletonEntity();
+        GridConfig grid = entityManager.GetComponentData<GridConfig>(gridEntity);
         bool hasFriendlyA = false;
         bool hasFriendlyB = false;
         bool hasHostileA = false;

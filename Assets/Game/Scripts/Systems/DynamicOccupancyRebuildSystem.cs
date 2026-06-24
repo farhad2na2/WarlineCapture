@@ -14,6 +14,7 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
         public int2 Size;
     }
 
+    private EntityQuery _gridQuery;
     private EntityQuery _trackedUnitsQuery;
     private EntityQuery _changedGridUnitsQuery;
     private NativeParallelHashMap<Entity, OccupancyRecord> _occupancyRecords;
@@ -121,7 +122,8 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<DynamicOccupancyComponent>();
         state.RequireForUpdate<UnitGrid>();
 
@@ -312,7 +314,7 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         int trackedUnitCount = _trackedUnitsQuery.CalculateEntityCount();
-        var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
         var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
 
         var occRw = SystemAPI.GetComponentRW<DynamicOccupancyComponent>(gridEntity);

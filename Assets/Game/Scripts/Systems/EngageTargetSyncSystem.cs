@@ -8,19 +8,26 @@ using Unity.Transforms;
 [UpdateBefore(typeof(UnitEngagedMovementSystem))]
 public partial struct EngageTargetSyncSystem : ISystem
 {
+    private EntityQuery _gridQuery;
+    private EntityQuery _ecbSingletonQuery;
+
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<EngageTarget>();
-        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate(_ecbSingletonQuery);
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var grid = SystemAPI.GetSingleton<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
+        GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
         var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
-        var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
+        var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
         var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
         var handle = new SyncJob

@@ -11,13 +11,17 @@ using Unity.Transforms;
 public partial struct UnitEngagementSystem : ISystem
 {
     private const double TargetAcquisitionIntervalSeconds = 0.12d;
+    private EntityQuery _gridQuery;
+    private EntityQuery _ecbSingletonQuery;
     private EntityQuery _unitsQuery;
     private EntityQuery _acquisitionQuery;
     private double _nextTargetAcquisitionTime;
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<UnitGrid>();
         state.RequireForUpdate<Faction>();
         state.RequireForUpdate<UnitCombat>();
@@ -58,7 +62,7 @@ public partial struct UnitEngagementSystem : ISystem
             }
         });
 
-        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate(_ecbSingletonQuery);
     }
 
     [BurstCompile]
@@ -70,7 +74,8 @@ public partial struct UnitEngagementSystem : ISystem
 
         _nextTargetAcquisitionTime = now + TargetAcquisitionIntervalSeconds;
 
-        var grid = SystemAPI.GetSingleton<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
+        GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
         int unitCount = _unitsQuery.CalculateEntityCount();
         if (unitCount == 0)
             return;
@@ -110,7 +115,8 @@ public partial struct UnitEngagementSystem : ISystem
         var pathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true);
         var holdPositionLookup = SystemAPI.GetComponentLookup<HoldPositionOrderTag>(true);
         var scanOrderLookup = SystemAPI.GetComponentLookup<UnitScanOrder>(true);
-        var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
+        var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
         var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
         var acquireJob = new AcquireTargetsJob

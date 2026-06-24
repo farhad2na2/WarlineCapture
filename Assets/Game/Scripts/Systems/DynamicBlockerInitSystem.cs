@@ -8,17 +8,20 @@ using Unity.Mathematics;
 [UpdateBefore(typeof(DynamicOccupancyRebuildSystem))]
 public partial struct DynamicBlockerInitSystem : ISystem
 {
+    private EntityQuery _gridQuery;
+
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        state.RequireForUpdate(_gridQuery);
     }
 
     public void OnDestroy(ref SystemState state)
     {
-        if (!SystemAPI.HasSingleton<GridConfig>())
+        if (_gridQuery.IsEmptyIgnoreFilter)
             return;
 
-        var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
         if (!state.EntityManager.HasComponent<DynamicBlockerComponent>(gridEntity))
             return;
 
@@ -42,7 +45,7 @@ public partial struct DynamicBlockerInitSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
         var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
         int gridSize = grid.Width * grid.Height;
 

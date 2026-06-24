@@ -8,12 +8,14 @@ using UnityEngine;
 public partial struct UnitRespawnSystem : ISystem
 {
     private MapSurfaceSpawnGrounding _spawnGroundingSystem;
+    private EntityQuery _gridQuery;
     private EntityQuery _respawnQueueQuery;
 
     public void OnCreate(ref SystemState state)
     {
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
         _respawnQueueQuery = state.GetEntityQuery(ComponentType.ReadOnly<RespawnQueueTag>());
-        state.RequireForUpdate<GridConfig>();
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<DynamicOccupancyComponent>();
         state.RequireForUpdate<DynamicBlockerComponent>();
         state.RequireForUpdate<GridWalkable>();
@@ -26,7 +28,7 @@ public partial struct UnitRespawnSystem : ISystem
         if (buffer.Length == 0)
             return;
 
-        var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
         var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
         var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
         var occupied = SystemAPI.GetComponent<DynamicOccupancyComponent>(gridEntity).Occupied;

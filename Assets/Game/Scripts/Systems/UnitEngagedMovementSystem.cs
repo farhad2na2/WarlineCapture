@@ -9,9 +9,12 @@ using Unity.Transforms;
 [UpdateBefore(typeof(UnitGridMovementSystem))]
 public partial struct UnitEngagedMovementSystem : ISystem
 {
+    private EntityQuery _gridQuery;
+
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<EngageTarget>();
         state.RequireForUpdate<GridRoad>();
         state.RequireForUpdate<GridRoadSidewalk>();
@@ -23,7 +26,7 @@ public partial struct UnitEngagedMovementSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
         var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
         var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
         var blockerData = state.EntityManager.GetComponentData<DynamicBlockerComponent>(gridEntity);

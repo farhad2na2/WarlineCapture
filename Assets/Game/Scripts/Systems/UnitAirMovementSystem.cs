@@ -9,15 +9,20 @@ using Unity.Transforms;
 [UpdateBefore(typeof(UnitGridMovementSystem))]
 public partial struct UnitAirMovementSystem : ISystem
 {
+    private EntityQuery _gridQuery;
+
     public void OnCreate(ref SystemState state)
     {
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<UnitAirMovement>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var grid = SystemAPI.GetSingleton<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
+        GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
         float dt = SystemAPI.Time.DeltaTime;
         var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
         var targetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true);

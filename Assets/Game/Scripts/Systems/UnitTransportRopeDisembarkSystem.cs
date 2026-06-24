@@ -13,6 +13,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
     private const int RopeDropClearanceCells = 2;
     private const float RopeDropDurationSeconds = 1.2f;
     private MapSurfaceSpawnGrounding _spawnGroundingSystem;
+    private EntityQuery _gridQuery;
     private EntityQuery _landingClearanceQuery;
     private EntityTypeHandle _landingEntityType;
     private ComponentTypeHandle<UnitTransportRopeLandingClearance> _landingClearanceType;
@@ -21,7 +22,8 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<UnitTransportRopeDisembarkRequest>();
         _landingClearanceQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<UnitTransportRopeLandingClearance>(),
@@ -44,7 +46,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
             _landingGridType,
             _entityStorageInfoLookup);
 
-        Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
         DynamicBlockerComponent blockerData = em.HasComponent<DynamicBlockerComponent>(gridEntity) ? em.GetComponentData<DynamicBlockerComponent>(gridEntity) : default;
@@ -484,6 +486,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
 public partial struct UnitTransportRopeDropSystem : ISystem
 {
     private MapSurfaceSpawnGrounding _spawnGroundingSystem;
+    private EntityQuery _gridQuery;
     private EntityQuery _liveUnitQuery;
     private EntityTypeHandle _liveEntityType;
     private ComponentTypeHandle<UnitGrid> _liveGridType;
@@ -505,7 +508,8 @@ public partial struct UnitTransportRopeDropSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<UnitTransportRopeDropComponent>();
         _liveUnitQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<UnitGrid>(),
@@ -520,7 +524,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
         UpdateTypeHandles(ref state);
         float now = (float)SystemAPI.Time.ElapsedTime;
         EntityManager em = state.EntityManager;
-        Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
         DynamicBlockerComponent blockerData = em.HasComponent<DynamicBlockerComponent>(gridEntity) ? em.GetComponentData<DynamicBlockerComponent>(gridEntity) : default;

@@ -83,10 +83,12 @@ public partial struct UnitAttackSystem : ISystem
 
     private NativeParallelHashMap<Entity, int> _predictedHealth;
     private NativeParallelHashMap<Entity, AggregatedTargetEffect> _aggregatedEffects;
+    private EntityQuery _gridQuery;
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<UnitCombat>();
         state.RequireForUpdate<UnitAttack>();
         state.RequireForUpdate<UnitAttackCooldownComponent>();
@@ -104,7 +106,8 @@ public partial struct UnitAttackSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var grid = SystemAPI.GetSingleton<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
+        GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
         var em = state.EntityManager;
         var footprintLookup = SystemAPI.GetComponentLookup<UnitFootprint>(true);
         float dt = SystemAPI.Time.DeltaTime;

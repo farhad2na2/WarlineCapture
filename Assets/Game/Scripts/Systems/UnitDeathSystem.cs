@@ -306,7 +306,8 @@ public partial struct UnitDeathSystem : ISystem
         int runtimeGridCount = runtimeGridQuery.CalculateEntityCount();
         if (runtimeGridCount == 1)
         {
-            grid = runtimeGridQuery.GetSingleton<GridConfig>();
+            Entity gridEntity = runtimeGridQuery.GetSingletonEntity();
+            grid = em.GetComponentData<GridConfig>(gridEntity);
             return true;
         }
 
@@ -314,7 +315,8 @@ public partial struct UnitDeathSystem : ISystem
         if (gridQuery.CalculateEntityCount() != 1)
             return false;
 
-        grid = gridQuery.GetSingleton<GridConfig>();
+        Entity fallbackGridEntity = gridQuery.GetSingletonEntity();
+        grid = em.GetComponentData<GridConfig>(fallbackGridEntity);
         return true;
     }
 

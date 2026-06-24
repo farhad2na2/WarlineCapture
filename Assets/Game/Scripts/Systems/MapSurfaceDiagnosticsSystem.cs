@@ -8,6 +8,7 @@ using Unity.Jobs;
 public partial struct MapSurfaceDiagnosticsSystem : ISystem
 {
     private const double DiagnosticsIntervalSeconds = 1d;
+    private EntityQuery _ecbSingletonQuery;
     private ComponentLookup<MapSurfaceDiagnosticsComponent> _diagnosticsLookup;
     private double _nextDiagnosticsTime;
     private SurfaceDiagnosticsSignature _lastSignature;
@@ -16,8 +17,9 @@ public partial struct MapSurfaceDiagnosticsSystem : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
+        _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
         _diagnosticsLookup = state.GetComponentLookup<MapSurfaceDiagnosticsComponent>();
-        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate(_ecbSingletonQuery);
     }
 
     [BurstCompile]
@@ -57,7 +59,8 @@ public partial struct MapSurfaceDiagnosticsSystem : ISystem
             _diagnosticsLookup[surfaceEntity] = diagnostics;
         else
         {
-            var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+            Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
+            var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
             EntityCommandBuffer ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
             ecb.AddComponent(surfaceEntity, diagnostics);
         }

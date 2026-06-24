@@ -27,16 +27,18 @@ public partial struct UnitTransportAirdropSystem : ISystem
     private const float VehicleSettleMinSeconds = 0.75f;
 
     private MapSurfaceSpawnGrounding _spawnGroundingSystem;
+    private EntityQuery _gridQuery;
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        state.RequireForUpdate(_gridQuery);
     }
 
     public void OnUpdate(ref SystemState state)
     {
         EntityManager em = state.EntityManager;
-        Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
         DynamicBlockerComponent blockerData = em.HasComponent<DynamicBlockerComponent>(gridEntity)

@@ -8,13 +8,15 @@ using UnityEngine.InputSystem;
 public partial struct SelectedUnitDebugFireSystem : ISystem
 {
     private const int DebugTargetHealth = 1_000_000_000;
+    private EntityQuery _gridQuery;
     private EntityQuery _activeSourceQuery;
     private EntityQuery _targetQuery;
     private EntityQuery _selectedQuery;
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        state.RequireForUpdate(_gridQuery);
         _activeSourceQuery = state.GetEntityQuery(ComponentType.ReadOnly<SelectedUnitDebugFireState>());
         _targetQuery = state.GetEntityQuery(ComponentType.ReadOnly<DebugFireTargetTag>());
         _selectedQuery = state.GetEntityQuery(
@@ -39,9 +41,10 @@ public partial struct SelectedUnitDebugFireSystem : ISystem
         }
 
         state.Dependency.Complete();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
         ApplyDebugFire(
             state.EntityManager,
-            SystemAPI.GetSingleton<GridConfig>(),
+            state.EntityManager.GetComponentData<GridConfig>(gridEntity),
             fireHeld,
             _activeSourceQuery,
             _targetQuery,

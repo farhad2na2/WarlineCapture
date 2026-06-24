@@ -83,7 +83,7 @@ The audit was committed at `9e2298474`, but its source snapshot says it rechecke
 | 3 - UI Shell Boundary Structural Safety | P1 | Complete | 100% | Support | Stage 0 | `OnUpdate` is empty; one-shot boundary creation is in `OnCreate`; focused UI shell validation passed. |
 | 4 - Bootstrap Split Unblock And Continue | P1 | Complete | 100% | Support | Stages 1-3 preferred | Bootstrap guardrail passes and `MatchBootstrapSystem` is below target or has remaining split plan. |
 | 5 - Burst Coverage Closure | P1 | Complete | 100% | Support | Stages 1-2 preferred | Hot `ISystem`s are Bursted or managed exceptions are documented. |
-| 6 - Singleton And ECB Query Closure | P1 | Pending | 0% | Support | Stage 2 preferred | Current per-frame `GridConfig`/ECB singleton findings closed. |
+| 6 - Singleton And ECB Query Closure | P1 | Complete | 100% | Support | Stage 2 preferred | Current per-frame `GridConfig`/ECB singleton findings closed. |
 | 7 - `.Run()` Scheduling Closure | P1 | Pending | 0% | Support | Stage 5 preferred | Each `.Run()` site converted or documented with source/profiler reason. |
 | 8 - BuildingBarrier Managed Dictionary Closure | P1 | Pending | 0% | Support | Stage 0 | Managed dictionary foreach regression removed. |
 | 9 - RuntimeBuildingEntityLink Update Closure | P1/P2 | Pending | 0% | Support | Stage 0 | Per-building `Update` removed or batched. |
@@ -647,8 +647,8 @@ rg -l "partial struct .*ISystem|: ISystem" Assets/Game/Scripts \
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P1 |
 | Owner | Support |
 | Dependencies | Stage 2 preferred |
@@ -667,10 +667,10 @@ rg -l "partial struct .*ISystem|: ISystem" Assets/Game/Scripts \
 
 **Acceptance Criteria**
 
-- [ ] No repeated same-frame `GridConfig` singleton/entity reads remain in hot paths.
-- [ ] No unsafe per-frame ECB singleton query sites remain.
-- [ ] Any remaining read is ledgered with reason.
-- [ ] Unity compile passes.
+- [x] No repeated same-frame `GridConfig` singleton/entity reads remain in hot paths.
+- [x] No unsafe per-frame ECB singleton query sites remain.
+- [x] Any remaining read is ledgered with reason.
+- [x] Unity compile passes.
 
 **Validation Commands**
 
@@ -681,7 +681,48 @@ rg -n "GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>" Assets/Ga
 
 **Notes**
 
-- Pending.
+- 2026-06-24 heartbeat Stage 6 refreshed the singleton scan before edits:
+  - Initial current scan: `31` hits under runtime systems, rendering systems, and UI shell ECS.
+  - Hit categories: `GridConfig` singleton value/entity reads and `EndSimulationEntityCommandBufferSystem.Singleton` reads.
+- Implementation converted the current scan hits to cached `EntityQuery` fields plus frame-local reads:
+  - `GridConfig` reads now use a cached query, `GetSingletonEntity()`, then `EntityManager.GetComponentData<GridConfig>(...)` or equivalent frame-local component/buffer reads.
+  - ECB singleton reads now use cached singleton queries plus `EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(...)`.
+  - No `EntityCommandBuffer` instance is cached across frames; every command buffer is still created for the current update only.
+  - Mutable `GridConfig` component values are not cached across frames.
+- Files updated:
+  - `Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs`
+  - `Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs`
+  - `Assets/Game/Scripts/Systems/DynamicOccupancyRebuildSystem.cs`
+  - `Assets/Game/Scripts/Systems/EngageTargetSyncSystem.cs`
+  - `Assets/Game/Scripts/Systems/InitialUnitsBlockerChurnSystem.cs`
+  - `Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs`
+  - `Assets/Game/Scripts/Systems/MapSurfaceFlatEquivalentBootstrapSystem.cs`
+  - `Assets/Game/Scripts/Systems/SelectedUnitDebugFireSystem.cs`
+  - `Assets/Game/Scripts/Systems/StaticGridBlockerUpdateSystem.cs`
+  - `Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitAttackStateEnsureSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitAttackSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitAttackTraceStateEnsureSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitDeathSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitDestroyedVisualSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitEngagedMovementSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitEngagementSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitGridSnapSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitHealthBarSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitIdleWanderSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitLookAtTargetSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitRespawnSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitRotationHoldSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitTransportAirdropSystem.cs`
+  - `Assets/Game/Scripts/Systems/UnitTransportRopeDisembarkSystem.cs`
+  - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`
+- Acceptance scan result: clean. Command returned no hits:
+  - `rg -n "GetSingleton<GridConfig>|GetSingletonEntity<GridConfig>|GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>" Assets/Game/Scripts/Systems Assets/Game/Scripts/Rendering/Systems Assets/Game/Scripts/UI/Shell/Ecs`
+- Unity compile passed:
+  - Log path: `/private/tmp/warline-ecs-reverification-stage6-final-compile.log`.
+  - Success marker: `Exiting batchmode successfully now!`.
 
 ---
 

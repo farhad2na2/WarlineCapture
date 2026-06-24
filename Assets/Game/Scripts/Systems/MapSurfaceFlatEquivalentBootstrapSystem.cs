@@ -46,7 +46,8 @@ public partial struct MapSurfaceFlatEquivalentBootstrapSystem : ISystem
             return;
         }
 
-        GridConfig grid = _gridQuery.GetSingleton<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
+        GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
         if (!TryBuildFlatEquivalent(grid, Allocator.Persistent, out BlobAssetReference<MapSurfaceBlob> surfaceBlob))
             return;
 

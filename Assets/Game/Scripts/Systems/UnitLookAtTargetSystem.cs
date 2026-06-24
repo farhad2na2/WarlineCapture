@@ -7,16 +7,20 @@ using Unity.Transforms;
 [UpdateAfter(typeof(UnitGridMovementSystem))]
 public partial struct UnitLookAtTargetSystem : ISystem
 {
+    private EntityQuery _gridQuery;
+
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<UnitTarget>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var grid = SystemAPI.GetSingleton<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
+        GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
         new LookAtTargetJob
         {
             Grid = grid

@@ -14,6 +14,7 @@ public partial struct AIBuildPlannerSystem : ISystem
     private EntityQuery _diagnosticLogQueueQuery;
     private EntityQuery _planQuery;
     private EntityQuery _economyQuery;
+    private EntityQuery _gridQuery;
     private EntityTypeHandle _entityType;
     private ComponentTypeHandle<FactionEconomy> _economyType;
 
@@ -57,12 +58,13 @@ public partial struct AIBuildPlannerSystem : ISystem
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
         _planQuery = state.GetEntityQuery(ComponentType.ReadWrite<AIBuildPlan>(), ComponentType.ReadOnly<AIBuildPlanEntry>());
         _economyQuery = state.GetEntityQuery(ComponentType.ReadOnly<FactionEconomy>());
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
         _entityType = state.GetEntityTypeHandle();
         _economyType = state.GetComponentTypeHandle<FactionEconomy>(true);
         state.RequireForUpdate(_buildingRuntimeBoundaryQuery);
         state.RequireForUpdate<AIBuildPlan>();
         state.RequireForUpdate<FactionEconomy>();
-        state.RequireForUpdate<GridConfig>();
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
 
@@ -76,7 +78,8 @@ public partial struct AIBuildPlannerSystem : ISystem
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
-        GridConfig grid = SystemAPI.GetSingleton<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
+        GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
         bool hasControls = SystemAPI.HasSingleton<FactionControlConfigTag>();
         DynamicBuffer<FactionControlEntry> controls = hasControls
             ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true)

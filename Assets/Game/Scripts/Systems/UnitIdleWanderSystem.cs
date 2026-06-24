@@ -8,11 +8,13 @@ using Unity.Mathematics;
 public partial struct UnitIdleWanderSystem : ISystem
 {
     private const int MaxCandidateAttempts = 18;
+    private EntityQuery _gridQuery;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GridConfig>();
+        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<GridWalkable>();
         state.RequireForUpdate<DynamicBlockerComponent>();
         state.RequireForUpdate<DynamicOccupancyComponent>();
@@ -22,7 +24,7 @@ public partial struct UnitIdleWanderSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        Entity gridEntity = _gridQuery.GetSingletonEntity();
         GridConfig grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
         DynamicBlockerComponent blocker = SystemAPI.GetComponent<DynamicBlockerComponent>(gridEntity);
         DynamicOccupancyComponent occupancy = SystemAPI.GetComponent<DynamicOccupancyComponent>(gridEntity);

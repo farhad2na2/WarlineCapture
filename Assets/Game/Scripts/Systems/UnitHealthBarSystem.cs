@@ -10,17 +10,21 @@ using Unity.Transforms;
 [UpdateBefore(typeof(EngageTargetValidateSystem))]
 public partial struct UnitHealthBarSystem : ISystem
 {
+    private EntityQuery _ecbSingletonQuery;
+
     public void OnCreate(ref SystemState state)
     {
+        _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
         state.RequireForUpdate<UnitHealth>();
         state.RequireForUpdate<HealthBarFill>();
-        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate(_ecbSingletonQuery);
     }
 
     public void OnUpdate(ref SystemState state)
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
-        var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
+        Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
+        var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
         EntityCommandBuffer.ParallelWriter ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
         state.Dependency = new ExpireRecentDamageVisibilityJob
         {

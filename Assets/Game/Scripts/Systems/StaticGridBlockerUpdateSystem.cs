@@ -87,8 +87,8 @@ public partial struct StaticGridBlockerUpdateSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var grid = SystemAPI.GetSingleton<GridConfig>();
         var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
         var blockerDataRw = SystemAPI.GetComponentRW<DynamicBlockerComponent>(gridEntity);
 
         var counts = blockerDataRw.ValueRW.Counts;

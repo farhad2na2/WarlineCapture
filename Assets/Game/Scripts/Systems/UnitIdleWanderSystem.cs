@@ -24,7 +24,7 @@ public partial struct UnitIdleWanderSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         Entity gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
-        GridConfig grid = SystemAPI.GetSingleton<GridConfig>();
+        GridConfig grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
         DynamicBlockerComponent blocker = SystemAPI.GetComponent<DynamicBlockerComponent>(gridEntity);
         DynamicOccupancyComponent occupancy = SystemAPI.GetComponent<DynamicOccupancyComponent>(gridEntity);
         var ecb = new EntityCommandBuffer(Allocator.TempJob);

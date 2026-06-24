@@ -26,8 +26,8 @@ public partial struct UnitRespawnSystem : ISystem
         if (buffer.Length == 0)
             return;
 
-        var grid = SystemAPI.GetSingleton<GridConfig>();
         var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
         var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
         var occupied = SystemAPI.GetComponent<DynamicOccupancyComponent>(gridEntity).Occupied;
         var dynamicBlocked = SystemAPI.GetComponent<DynamicBlockerComponent>(gridEntity).Blocked;

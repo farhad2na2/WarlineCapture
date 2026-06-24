@@ -47,11 +47,11 @@ Static source scan from 2026-06-24:
 |---|---:|
 | Total stages | 12 |
 | Complete/skipped/decision-record stages | 5 |
-| In-progress stages | 0 |
+| In-progress stages | 1 |
 | Blocked stages | 1 |
-| Pending stages | 6 |
-| Overall stage-count progress | 48% |
-| Active implementation progress excluding Stage 10 decision record | 43% |
+| Pending stages | 5 |
+| Overall stage-count progress | 52% |
+| Active implementation progress excluding Stage 10 decision record | 48% |
 
 ## Non-Negotiable Guardrails
 
@@ -74,7 +74,7 @@ Static source scan from 2026-06-24:
 | 2 - `RequireForUpdate` Sweep | P0 | Complete | 100% | Support | Stage 0 | Guard batches and documented boundary exceptions validated |
 | 3 - Bootstrap Split Plan + First Extraction | P1 | Blocked | 75% | Support | Stages 1-2 preferred | First extraction compiled; architecture guardrail blocked by pre-existing MenuBootstrapView hierarchy lookup |
 | 4 - UI Shell ECS Write Safety | P1 | Complete | 100% | Support | Stages 1-2 preferred | Compile and UI shell focused tests passed |
-| 5 - Singleton/ECB Access Cleanup | P1 | Pending | 0% | Support | Stage 2 preferred | Compile + focused ECS tests |
+| 5 - Singleton/ECB Access Cleanup | P1 | In Progress | 50% | Support | Stage 2 preferred | First grid singleton batch compiled and focused tests passed |
 | 6 - `.Run()` Scheduling Review | P1 | Pending | 0% | Support | Stages 1-2, profiler context | Compile + targeted perf smoke |
 | 7 - ResourceHauler Diagnostics Cleanup | P1 | Pending | 0% | Support | Stage 0 | Compile + resource hauler smoke if available |
 | 8 - Authoring/Baker Hygiene | P1/P2 | Pending | 0% | Support | P0 stages complete | Compile + bake/reimport validation |
@@ -511,8 +511,8 @@ Do not rewrite the bootstrap. Extract one cohesive responsibility at a time. Pre
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | In Progress |
+| Progress | 50% |
 | Priority | P1 |
 | Owner | Support |
 | Dependencies | Stage 2 preferred |
@@ -547,8 +547,49 @@ Do not cache singleton component values in `OnCreate` unless immutable. Most cle
 
 - [ ] No cached command buffer is reused across frames.
 - [ ] No mutable singleton data is cached across frames.
-- [ ] Repeated same-frame singleton reads are reduced in touched files.
-- [ ] Unity compile passes.
+- [x] Repeated same-frame singleton reads are reduced in touched files.
+- [x] Unity compile passes.
+
+**Batch 1 - Grid Singleton Pair Cleanup**
+
+| Field | Value |
+|---|---|
+| Status | Complete |
+| Progress | 100% |
+| Scope | Remove paired same-frame `SystemAPI.GetSingleton<GridConfig>()` + `SystemAPI.GetSingletonEntity<GridConfig>()` reads in the touched grid hot paths. |
+
+**Files changed**
+
+- `Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs`
+- `Assets/Game/Scripts/Systems/StaticGridBlockerUpdateSystem.cs`
+- `Assets/Game/Scripts/Systems/DynamicOccupancyRebuildSystem.cs`
+- `Assets/Game/Scripts/Systems/UnitIdleWanderSystem.cs`
+- `Assets/Game/Scripts/Systems/UnitRespawnSystem.cs`
+- `Assets/Game/Scripts/Systems/UnitEngagedMovementSystem.cs`
+- `Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs`
+- `Assets/Tests/Editor/UnitIdleWanderSystemTests.cs`
+
+**Implementation notes**
+
+- Replaced same-frame paired singleton reads with one `SystemAPI.GetSingletonEntity<GridConfig>()` and a frame-local `SystemAPI.GetComponent<GridConfig>(gridEntity)`.
+- Did not cache mutable `GridConfig` across frames.
+- Did not cache `EntityCommandBuffer` or ECB singleton values across frames.
+- Added `UnitIdleWanderSystemTests.RunFocusedValidation` so idle-wander can be validated by batchmode like the other touched systems.
+
+**Validation**
+
+- Unity compile passed: `/private/tmp/warline-ecs-stage5-singleton-grid-compile.log`.
+- `UnitMovementBlockerValidationTests.RunBatchValidation` passed: `/private/tmp/warline-ecs-stage5-unit-movement-blocker.log`.
+- `UnitIdleWanderSystemTests.RunFocusedValidation` passed with `tests=2`: `/private/tmp/warline-ecs-stage5-idle-wander.log`.
+- `InitialUnitsBlockerChurnSystemTests.RunFocusedValidation` passed with `tests=1`: `/private/tmp/warline-ecs-stage5-blocker-churn.log`.
+- `CombatDeathValidationTests.RunFocusedValidation` passed with `tests=2`: `/private/tmp/warline-ecs-stage5-combat-death-respawn.log`.
+- Note: Unity validation processes again logged pass markers and successful shutdown but stayed alive; each stuck process was stopped after its pass marker.
+
+**Remaining Stage 5 work**
+
+- Inventory and clean repeated same-frame runtime-state/diagnostics singleton reads in AI and targeting systems.
+- Review repeated `EndSimulationEntityCommandBufferSystem.Singleton` access sites; keep ECB creation frame-local.
+- Review query creation inside hot `OnUpdate` paths and move safe query creation to `OnCreate`.
 
 ---
 

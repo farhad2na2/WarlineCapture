@@ -313,7 +313,7 @@ public partial struct DynamicOccupancyRebuildSystem : ISystem
     {
         int trackedUnitCount = _trackedUnitsQuery.CalculateEntityCount();
         var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
-        var grid = SystemAPI.GetSingleton<GridConfig>();
+        var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
 
         var occRw = SystemAPI.GetComponentRW<DynamicOccupancyComponent>(gridEntity);
         ref var occ = ref occRw.ValueRW;

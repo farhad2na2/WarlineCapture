@@ -42,10 +42,10 @@ public partial struct DynamicBlockerInitSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var grid = SystemAPI.GetSingleton<GridConfig>();
+        var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
         int gridSize = grid.Width * grid.Height;
 
-        var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
         var ecb = new EntityCommandBuffer(Allocator.Temp);
         bool addedMissingComponents = false;
         if (!state.EntityManager.HasComponent<DynamicBlockerComponent>(gridEntity))

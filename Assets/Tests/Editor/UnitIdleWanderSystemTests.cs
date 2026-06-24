@@ -12,6 +12,37 @@ public sealed class UnitIdleWanderSystemTests
     private NativeBitArray _occupied;
     private NativeArray<byte> _friendlyPassFactionIds;
 
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(nameof(IdleWander_NonFactionUnitIssuesPathRequest), test => test.IdleWander_NonFactionUnitIssuesPathRequest());
+            RunCase(nameof(IdleWander_FactionOwnedUnitStaysIdle), test => test.IdleWander_FactionOwnedUnitStaysIdle());
+            UnityEngine.Debug.Log("[UnitIdleWanderFocusedValidation] result=Passed tests=2");
+            ValidationExit.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            UnityEngine.Debug.LogException(exception);
+            UnityEngine.Debug.LogError("[UnitIdleWanderFocusedValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    private static void RunCase(string name, System.Action<UnitIdleWanderSystemTests> action)
+    {
+        var tests = new UnitIdleWanderSystemTests();
+        try
+        {
+            action(tests);
+            UnityEngine.Debug.Log($"[UnitIdleWanderFocusedValidation] passed={name}");
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [TearDown]
     public void TearDown()
     {

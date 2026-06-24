@@ -707,8 +707,8 @@ public partial struct UnitGridMovementSystem : ISystem
         double startTime = Time.realtimeSinceStartupAsDouble;
         try
         {
-            var grid = SystemAPI.GetSingleton<GridConfig>();
             var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+            var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
             var pool = state.EntityManager.GetComponentData<PathPoolComponent>(gridEntity);
             var poolArray = pool.Cells.AsArray();
             var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();

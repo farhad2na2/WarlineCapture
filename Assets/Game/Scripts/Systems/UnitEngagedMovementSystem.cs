@@ -23,8 +23,8 @@ public partial struct UnitEngagedMovementSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var grid = SystemAPI.GetSingleton<GridConfig>();
         var gridEntity = SystemAPI.GetSingletonEntity<GridConfig>();
+        var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
         var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
         var blockerData = state.EntityManager.GetComponentData<DynamicBlockerComponent>(gridEntity);
         var roads = SystemAPI.GetBuffer<GridRoad>(gridEntity).AsNativeArray();

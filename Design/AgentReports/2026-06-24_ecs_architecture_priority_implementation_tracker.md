@@ -49,8 +49,8 @@ Static source scan from 2026-06-24:
 | Complete/skipped/decision-record stages | 3 |
 | In-progress stages | 1 |
 | Pending stages | 8 |
-| Overall stage-count progress | 29% |
-| Active implementation progress excluding Stage 10 decision record | 23% |
+| Overall stage-count progress | 31% |
+| Active implementation progress excluding Stage 10 decision record | 25% |
 
 ## Non-Negotiable Guardrails
 
@@ -70,7 +70,7 @@ Static source scan from 2026-06-24:
 |---|---|---|---:|---|---|---|
 | 0 - Baseline Recheck | P0 | Complete | 100% | Support | None | Static scan refreshed; Unity batch compile passed |
 | 1 - ECS Ordering Plan + High-Risk Ordering Batch | P0 | Complete | 100% | Support | Stage 0 | Compile, movement/blocker validation, and attack validation passed |
-| 2 - `RequireForUpdate` Sweep | P0 | In Progress | 50% | Support | Stage 0 | Command guard batches compiled and focused tests passed; 30 unguarded remain |
+| 2 - `RequireForUpdate` Sweep | P0 | In Progress | 75% | Support | Stage 0 | Command/startup guard batches compiled and focused tests passed; 2 boundary systems remain |
 | 3 - Bootstrap Split Plan + First Extraction | P1 | Pending | 0% | Support | Stages 1-2 preferred | Compile + menu-to-match smoke |
 | 4 - UI Shell ECS Write Safety | P1 | Pending | 0% | Support | Stages 1-2 preferred | UI shell focused tests + compile |
 | 5 - Singleton/ECB Access Cleanup | P1 | Pending | 0% | Support | Stage 2 preferred | Compile + focused ECS tests |
@@ -231,7 +231,7 @@ Unordered systems can appear correct in one Unity/editor run and change behavior
 | Field | Value |
 |---|---|
 | Status | In Progress |
-| Progress | 50% |
+| Progress | 75% |
 | Priority | P0 |
 | Owner | Support |
 | Dependencies | Stage 0 |
@@ -310,6 +310,30 @@ Initial 2026-06-24 scan found about 45 unguarded systems, including command syst
   - `SelectionCommandRequestResultContractTests.RunBatchValidation` passed again after the RTS selection command batch with `tests=48`: `/private/tmp/warline-ecs-stage2-selection-command-2.log`.
   - `UnitTransportValidationTests.RunBatchValidation` passed with `tests=73`: `/private/tmp/warline-ecs-stage2-transport.log`.
 - Remaining unguarded systems are now mostly startup/bootstrap creators, disabled composition/helper systems, runtime state/read-model systems, and presentation/diagnostics systems. They need classification before adding guards so singleton creators are not deadlocked by requiring the entities they create.
+- 2026-06-24 heartbeat follow-up: classified the remaining unguarded systems and applied the safe batch:
+  - Added `RequireForUpdate(_queueQuery)` to `BuildingTargetMoveOrderSystem` after its command entity is created.
+  - Added `RequireForUpdate(_playerUnitTargetQuery)` to `UnitMoveTargetDiagnosticSystem`; the system is still disabled entirely when move command tracing is off.
+  - Disabled empty scheduled updates for helper/startup/state boundary systems that expose methods but do not have recurring `OnUpdate` work:
+    - `AIStartupSystem`
+    - `AIFactionControlStartupSystem`
+    - `FactionEconomyStartupSystem`
+    - `InitialFactionSpawnCellSystem`
+    - `RuntimeGameplayStateSystem`
+    - `RuntimeDiagnosticsSystem`
+- Latest static scan counts systems without `RequireForUpdate` or an explicit `state.Enabled = false` decision: `2`.
+- Remaining Stage 2 systems:
+  - `VisibleUnitSelectionCandidateSystem`: creates/publishes a visible-selection snapshot boundary. Do not add a simple guard until deciding whether the snapshot entity should be seeded in `OnCreate` or left as current lazy creation.
+  - `MatchHudMinimapMarkerSystem`: creates/publishes minimap marker boundary data. A simple `RequireForUpdate<UnitHealth>()` would miss scan-intel-only marker updates, so it needs a boundary/query decision rather than a naive guard.
+- Validation:
+  - Unity compile passed: `/private/tmp/warline-ecs-stage2-guards-compile-3.log`.
+  - `RuntimeGameplayStateSystemTests.RunFocusedValidation` passed with `tests=7`: `/private/tmp/warline-ecs-stage2-runtime-gameplay-state.log`.
+  - `AIStartupSystemValidationTests.RunFocusedValidation` passed with `tests=1`: `/private/tmp/warline-ecs-stage2-ai-startup.log`.
+  - `AIFactionControlStartupSystemValidationTests.RunFocusedValidation` passed with `tests=3`: `/private/tmp/warline-ecs-stage2-ai-faction-control.log`.
+  - `FactionEconomyStartupSystemValidationTests.RunFocusedValidation` passed with `tests=3`: `/private/tmp/warline-ecs-stage2-faction-economy.log`.
+  - `InitialFactionSpawnCellSystemTests.RunFocusedValidation` passed with `tests=2`: `/private/tmp/warline-ecs-stage2-initial-faction-spawn-cell.log`.
+  - `RuntimeDiagnosticsSystemTests.RunFocusedValidation` passed with `tests=4`: `/private/tmp/warline-ecs-stage2-runtime-diagnostics.log`.
+  - `UnitMoveOrderSystemTests.RunFocusedValidation` passed with `tests=15`: `/private/tmp/warline-ecs-stage2-unit-move-order.log`.
+- Note: several Unity validation processes logged pass markers and successful batchmode quit but stayed alive. Each stuck process was stopped after its pass marker; unrelated `WarlineCapture-Clone` Editor processes were left untouched.
 
 ---
 

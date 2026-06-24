@@ -19,6 +19,7 @@ public partial struct UnitMoveTargetDiagnosticSystem : ISystem
             ComponentType.ReadOnly<Faction>());
         _lastTargets = new NativeParallelHashMap<Entity, int2>(64, Allocator.Persistent);
         _missingTargetScratch = new NativeList<Entity>(64, Allocator.Persistent);
+        state.RequireForUpdate(_playerUnitTargetQuery);
         if (!SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
             state.Enabled = false;
     }

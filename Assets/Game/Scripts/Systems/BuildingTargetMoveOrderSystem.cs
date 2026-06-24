@@ -26,6 +26,7 @@ public partial struct BuildingTargetMoveOrderSystem : ISystem
             ComponentType.ReadOnly<DynamicOccupancyComponent>());
         _entityType = state.GetEntityTypeHandle();
         EnsureCommandEntity(state.EntityManager, _queueQuery);
+        state.RequireForUpdate(_queueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

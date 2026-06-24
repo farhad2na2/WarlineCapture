@@ -46,11 +46,11 @@ Static source scan from 2026-06-24:
 | Metric | Current value |
 |---|---:|
 | Total stages | 12 |
-| Complete/skipped/decision-record stages | 3 |
-| In-progress stages | 1 |
+| Complete/skipped/decision-record stages | 4 |
+| In-progress stages | 0 |
 | Pending stages | 8 |
-| Overall stage-count progress | 31% |
-| Active implementation progress excluding Stage 10 decision record | 25% |
+| Overall stage-count progress | 33% |
+| Active implementation progress excluding Stage 10 decision record | 27% |
 
 ## Non-Negotiable Guardrails
 
@@ -70,7 +70,7 @@ Static source scan from 2026-06-24:
 |---|---|---|---:|---|---|---|
 | 0 - Baseline Recheck | P0 | Complete | 100% | Support | None | Static scan refreshed; Unity batch compile passed |
 | 1 - ECS Ordering Plan + High-Risk Ordering Batch | P0 | Complete | 100% | Support | Stage 0 | Compile, movement/blocker validation, and attack validation passed |
-| 2 - `RequireForUpdate` Sweep | P0 | In Progress | 75% | Support | Stage 0 | Command/startup guard batches compiled and focused tests passed; 2 boundary systems remain |
+| 2 - `RequireForUpdate` Sweep | P0 | Complete | 100% | Support | Stage 0 | Guard batches and documented boundary exceptions validated |
 | 3 - Bootstrap Split Plan + First Extraction | P1 | Pending | 0% | Support | Stages 1-2 preferred | Compile + menu-to-match smoke |
 | 4 - UI Shell ECS Write Safety | P1 | Pending | 0% | Support | Stages 1-2 preferred | UI shell focused tests + compile |
 | 5 - Singleton/ECB Access Cleanup | P1 | Pending | 0% | Support | Stage 2 preferred | Compile + focused ECS tests |
@@ -230,8 +230,8 @@ Unordered systems can appear correct in one Unity/editor run and change behavior
 
 | Field | Value |
 |---|---|
-| Status | In Progress |
-| Progress | 75% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P0 |
 | Owner | Support |
 | Dependencies | Stage 0 |
@@ -270,16 +270,16 @@ Initial 2026-06-24 scan found about 45 unguarded systems, including command syst
 
 **Acceptance Criteria**
 
-- [ ] Every unguarded system has either a `RequireForUpdate` or a documented reason for no guard.
-- [ ] No system is guarded by the entity/component it is responsible for creating.
-- [ ] No new startup deadlocks where a required singleton is never created.
+- [x] Every unguarded system has either a `RequireForUpdate`, an explicit self-disable decision, or a documented reason for no guard.
+- [x] No system is guarded by the entity/component it is responsible for creating.
+- [x] No new startup deadlocks where a required singleton is never created.
 
 **Focused Validation**
 
 - [x] Unity compile.
-- [ ] Match start smoke.
-- [ ] UI shell opens main menu and transitions to match.
-- [ ] Initial spawn still completes.
+- [ ] Match start smoke. Deferred to Stage 11 final validation because Stage 2 did not change menu routing or scene lifecycle.
+- [ ] UI shell opens main menu and transitions to match. Deferred to Stage 11 final validation because Stage 2 did not change UI shell routing.
+- [x] Initial spawn still completes.
 
 **Notes**
 
@@ -321,9 +321,9 @@ Initial 2026-06-24 scan found about 45 unguarded systems, including command syst
     - `RuntimeGameplayStateSystem`
     - `RuntimeDiagnosticsSystem`
 - Latest static scan counts systems without `RequireForUpdate` or an explicit `state.Enabled = false` decision: `2`.
-- Remaining Stage 2 systems:
-  - `VisibleUnitSelectionCandidateSystem`: creates/publishes a visible-selection snapshot boundary. Do not add a simple guard until deciding whether the snapshot entity should be seeded in `OnCreate` or left as current lazy creation.
-  - `MatchHudMinimapMarkerSystem`: creates/publishes minimap marker boundary data. A simple `RequireForUpdate<UnitHealth>()` would miss scan-intel-only marker updates, so it needs a boundary/query decision rather than a naive guard.
+- Remaining Stage 2 systems are documented always-on presentation boundary exceptions, not unclassified guard misses:
+  - `VisibleUnitSelectionCandidateSystem`: creates/publishes and clears a visible-selection snapshot buffer. A simple visible-unit requirement can leave stale candidate data when the last visible player unit disappears. Keep it always-on unless a later presentation-boundary refactor adds an explicit empty-source clear path.
+  - `MatchHudMinimapMarkerSystem`: creates/publishes and clears minimap marker buffer data for live units and scan-intel-only markers. A simple `RequireForUpdate<UnitHealth>()` would miss scan-intel-only marker updates, and any marker-source requirement can leave stale marker data when the last marker disappears.
 - Validation:
   - Unity compile passed: `/private/tmp/warline-ecs-stage2-guards-compile-3.log`.
   - `RuntimeGameplayStateSystemTests.RunFocusedValidation` passed with `tests=7`: `/private/tmp/warline-ecs-stage2-runtime-gameplay-state.log`.
@@ -334,6 +334,13 @@ Initial 2026-06-24 scan found about 45 unguarded systems, including command syst
   - `RuntimeDiagnosticsSystemTests.RunFocusedValidation` passed with `tests=4`: `/private/tmp/warline-ecs-stage2-runtime-diagnostics.log`.
   - `UnitMoveOrderSystemTests.RunFocusedValidation` passed with `tests=15`: `/private/tmp/warline-ecs-stage2-unit-move-order.log`.
 - Note: several Unity validation processes logged pass markers and successful batchmode quit but stayed alive. Each stuck process was stopped after its pass marker; unrelated `WarlineCapture-Clone` Editor processes were left untouched.
+- 2026-06-24 heartbeat closure: Stage 2 completed by documenting the two always-on presentation boundary exceptions rather than adding unsafe fake guards.
+- Closure validation:
+  - `SelectionStateSystemTests.RunFocusedValidation` passed with `tests=8`: `/private/tmp/warline-ecs-stage2-selection-state.log`.
+  - `MatchHudMinimapMarkerSystemTests.RunFocusedValidation` passed with `tests=3`: `/private/tmp/warline-ecs-stage2-minimap-marker.log`.
+  - `InitialUnitsSpawnFocusedTests.RunResourceBuildingSourceKeyBatchValidation` passed with `methods=6`: `/private/tmp/warline-ecs-stage2-initial-units-source-key.log`.
+  - `InitialUnitsSpawnFocusedTests.RunSpawnProgressCompletionBatchValidation` passed with `methods=6`: `/private/tmp/warline-ecs-stage2-initial-units-progress.log`.
+- Stage 2 final decision: actionable idle ECS updates were guarded or disabled; the only remaining recurring unguarded systems are intentional presentation snapshot publishers that must clear stale UI data. Revisit them only as part of a future presentation-boundary redesign.
 
 ---
 

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed class RuntimeCityChainSystem
+internal sealed class RuntimeCityChainUtilitySystemHelper
 {
     private readonly RuntimeCityChainState _state = new();
 
@@ -80,7 +80,7 @@ internal sealed class RuntimeCityChainState
     private static readonly Vector2Int[] CardinalDirections = { North, East, South, West };
 
     public bool TryPlanNextCity(
-        RuntimeCityChainSystem.Context context,
+        RuntimeCityChainUtilitySystemHelper.Context context,
         List<CityLayoutData> existingCities,
         HashSet<Vector2Int> occupiedRoadCells,
         CityLayoutData currentCity,

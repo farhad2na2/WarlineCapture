@@ -69,7 +69,7 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityReadinessQuerySystem _runtimeCityReadinessQuerySystem;
     private RuntimeCityGenerationSystem _runtimeCityGenerationSystem;
     private readonly RuntimeCityGenerationState _fallbackRuntimeCityGeneration = new();
-    private RuntimeCityChainSystem _runtimeCityChainSystem;
+    private RuntimeCityChainUtilitySystemHelper _runtimeCityChainHelper;
     private readonly RuntimeCityChainState _fallbackRuntimeCityChain = new();
     private RuntimeCityRoadCommitSystem _runtimeCityRoadCommitSystem;
     private readonly RuntimeCityRoadCommitState _fallbackRuntimeCityRoadCommit = new();
@@ -329,9 +329,9 @@ public sealed class RuntimeCityCompositionSystem
             RuntimeCityDecorationBuildingSpawnState);
     }
 
-    private RuntimeCityChainSystem.Context CreateChainContext()
+    private RuntimeCityChainUtilitySystemHelper.Context CreateChainContext()
     {
-        return new RuntimeCityChainSystem.Context(
+        return new RuntimeCityChainUtilitySystemHelper.Context(
             cityConfig,
             RuntimeCityLayoutState,
             RuntimeCityRoadLayoutState,
@@ -548,10 +548,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityGenerationSystem ??= ResolveRuntimeCityGenerationSystem();
 
     private RuntimeCityChainState RuntimeCityChainState =>
-        RuntimeCityChainSystem?.State ?? _fallbackRuntimeCityChain;
+        RuntimeCityChainHelper?.State ?? _fallbackRuntimeCityChain;
 
-    private RuntimeCityChainSystem RuntimeCityChainSystem =>
-        _runtimeCityChainSystem ??= ResolveRuntimeCityChainSystem();
+    private RuntimeCityChainUtilitySystemHelper RuntimeCityChainHelper =>
+        _runtimeCityChainHelper ??= ResolveRuntimeCityChainHelper();
 
     private RuntimeCityRoadCommitState RuntimeCityRoadCommitState =>
         RuntimeCityRoadCommitSystem?.State ?? _fallbackRuntimeCityRoadCommit;
@@ -761,9 +761,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityGenerationSystem();
     }
 
-    private static RuntimeCityChainSystem ResolveRuntimeCityChainSystem()
+    private static RuntimeCityChainUtilitySystemHelper ResolveRuntimeCityChainHelper()
     {
-        return new RuntimeCityChainSystem();
+        return new RuntimeCityChainUtilitySystemHelper();
     }
 
     private static RuntimeCityRoadCommitSystem ResolveRuntimeCityRoadCommitSystem()

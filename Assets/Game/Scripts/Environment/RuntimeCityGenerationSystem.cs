@@ -34,7 +34,7 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly RuntimeCityRoadBuildBridgeState RoadBuildBridgeSystem;
         public readonly RuntimeCitySpawnBridgeState SpawnBridgeSystem;
         public readonly RuntimeCityChainState ChainSystem;
-        public readonly RuntimeCityChainSystem.Context ChainContext;
+        public readonly RuntimeCityChainUtilitySystemHelper.Context ChainContext;
         public readonly RuntimeCityRoadCommitState RoadCommitSystem;
         public readonly RuntimeCityRoadCommitSystem.Context RoadCommitContext;
         public readonly RuntimeCityIngressState IngressSystem;
@@ -59,7 +59,7 @@ internal sealed class RuntimeCityGenerationSystem
             RuntimeCityRoadBuildBridgeState roadBuildBridgeSystem,
             RuntimeCitySpawnBridgeState spawnBridgeSystem,
             RuntimeCityChainState chainSystem,
-            RuntimeCityChainSystem.Context chainContext,
+            RuntimeCityChainUtilitySystemHelper.Context chainContext,
             RuntimeCityRoadCommitState roadCommitSystem,
             RuntimeCityRoadCommitSystem.Context roadCommitContext,
             RuntimeCityIngressState ingressSystem,

@@ -118,10 +118,10 @@ Non-goals:
     - `RuntimeCitySpawnerSystem` now starts generation through `RuntimeCityGenerationSystem.TryBegin(...)` and no longer owns the city generation coroutine.
 
 19. Complete: Extract city-chain connection policy
-    - Created `RuntimeCityChainSystem`.
+    - Created `RuntimeCityChainUtilitySystemHelper`.
     - Owns `TryPlanNextCity`, city travel-direction selection, reverse-direction avoidance, target-center candidate policy, city spacing checks, autobahn length policy, source/target connection-cell resolution, city exit validation, and autobahn path validation.
     - Keeps low-level stroke/path construction inside `RuntimeCityRoadLayoutSystem`.
-    - `RuntimeCityGenerationSystem` now requests next-city planning through `RuntimeCityChainSystem`; `RuntimeCitySpawnerSystem` no longer owns city-chain travel policy.
+    - `RuntimeCityGenerationSystem` now requests next-city planning through `RuntimeCityChainUtilitySystemHelper`; `RuntimeCitySpawnerSystem` no longer owns city-chain travel policy.
 
 20. Complete: Extract city road commit sequence
     - Created `RuntimeCityRoadCommitSystem`.
@@ -132,7 +132,7 @@ Non-goals:
 21. Complete: Extract incoming connector/ingress helpers
     - Created `RuntimeCityIngressSystem`.
     - Owns `CreateCityLayout`, incoming-anchor wiring, inner connection-cell math, city connection offset math, and ingress-corridor pruning.
-    - `RuntimeCityGenerationSystem` and `RuntimeCityChainSystem` now request city layout and ingress connector policy through `RuntimeCityIngressSystem`.
+    - `RuntimeCityGenerationSystem` and `RuntimeCityChainUtilitySystemHelper` now request city layout and ingress connector policy through `RuntimeCityIngressSystem`.
     - Expected output: `RuntimeCitySpawnerSystem` no longer owns city connection helper math.
 
 22. Complete: Extract diagnostics/events
@@ -155,7 +155,7 @@ Non-goals:
 
 25. Complete: Move composition out of the spawner constructor path
     - Created `RuntimeCityCompositionSystem`.
-    - Owns creation/wiring of `RuntimeCityConfigSystem`, `RuntimeCityLifecycleSystem`, `RuntimeCityStartupSystem`, `RuntimeCityReadinessQuerySystem`, `RuntimeCityGenerationSystem`, `RuntimeCityChainSystem`, `RuntimeCityRoadCommitSystem`, `RuntimeCityIngressSystem`, `RuntimeCityMinimapEventSystem`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
+    - Owns creation/wiring of `RuntimeCityConfigSystem`, `RuntimeCityLifecycleSystem`, `RuntimeCityStartupSystem`, `RuntimeCityReadinessQuerySystem`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitSystem`, `RuntimeCityIngressSystem`, `RuntimeCityMinimapEventSystem`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
     - `RuntimeCitySpawnerSystem` is now a thin public shell delegating init, update, dispose, public generation, and house-prefab queries to `RuntimeCityCompositionSystem`.
     - Expected output: startup composition is explicit and narrow.
 

@@ -10,7 +10,7 @@ internal sealed class RuntimeCityHallSpawnSystem
     public RuntimeCityHallSpawnState State => _state;
 
     public void EnsureCityHall(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         CityLayoutData city,
@@ -24,7 +24,7 @@ internal sealed class RuntimeCityHallSpawnSystem
 internal sealed class RuntimeCityHallSpawnState
 {
     public void EnsureCityHall(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         CityLayoutData city,
@@ -40,7 +40,7 @@ internal sealed class RuntimeCityHallSpawnState
     }
 
     private static bool TrySpawnHall(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         Vector2Int centerRoadCell,

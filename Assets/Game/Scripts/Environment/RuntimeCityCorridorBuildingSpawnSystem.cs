@@ -10,7 +10,7 @@ internal sealed class RuntimeCityCorridorBuildingSpawnSystem
     public RuntimeCityCorridorBuildingSpawnState State => _state;
 
     public void SpawnCorridorEntranceBuildings(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         CityLayoutData city,
         Vector2Int connectorCell,
@@ -34,7 +34,7 @@ internal sealed class RuntimeCityCorridorBuildingSpawnSystem
 internal sealed class RuntimeCityCorridorBuildingSpawnState
 {
     public void SpawnCorridorEntranceBuildings(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         CityLayoutData city,
         Vector2Int connectorCell,

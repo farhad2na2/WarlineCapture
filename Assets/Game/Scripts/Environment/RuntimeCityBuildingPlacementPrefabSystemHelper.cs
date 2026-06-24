@@ -67,7 +67,7 @@ internal sealed class RuntimeCityBuildingPlacementPrefabSystemHelper
     }
 
     public bool TrySpawnAndReserve(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         Request request,
         out Result result,
         List<RectInt> placementAnchors = null,
@@ -81,13 +81,13 @@ internal sealed class RuntimeCityBuildingPlacementPrefabSystemHelper
             secondaryPlacementAnchors);
     }
 
-    public Vector2Int GetFootprint(RuntimeCityBuildingSpawnContextSystem.Context context, GameObject prefab)
+    public Vector2Int GetFootprint(RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context, GameObject prefab)
     {
         return _state.GetFootprint(context, prefab);
     }
 
     public void PlaceFromPlots(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         List<GameObject> prefabs,
         List<PlotCandidate> candidates,
         int count,
@@ -123,7 +123,7 @@ internal sealed class RuntimeCityBuildingPlacementPrefabSystemHelper
 internal sealed class RuntimeCityBuildingPlacementState
 {
     public bool TrySpawnAndReserve(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         PlacementRequest request,
         out PlacementResult result,
         List<RectInt> placementAnchors = null,
@@ -167,13 +167,13 @@ internal sealed class RuntimeCityBuildingPlacementState
         return true;
     }
 
-    public Vector2Int GetFootprint(RuntimeCityBuildingSpawnContextSystem.Context context, GameObject prefab)
+    public Vector2Int GetFootprint(RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context, GameObject prefab)
     {
         return context.PrefabSelectionSystem.GetCachedFootprintCells(prefab);
     }
 
     public void PlaceFromPlots(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         List<GameObject> prefabs,
         List<PlotCandidate> candidates,
         int count,
@@ -225,13 +225,13 @@ internal sealed class RuntimeCityBuildingPlacementState
         }
     }
 
-    private static bool OverlapsRoad(RuntimeCityBuildingSpawnContextSystem.Context context, RectInt rect, PlacementRequest request)
+    private static bool OverlapsRoad(RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context, RectInt rect, PlacementRequest request)
     {
         return request.RoadCells != null &&
                context.WalkabilitySystem.DoesRectOverlapRoadCells(rect, request.RoadCellSizeInGridCells, request.RoadCells);
     }
 
-    private static bool TouchesRequiredRect(RuntimeCityBuildingSpawnContextSystem.Context context, RectInt actualRect, RectInt? requiredTouchRect)
+    private static bool TouchesRequiredRect(RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context, RectInt actualRect, RectInt? requiredTouchRect)
     {
         return !requiredTouchRect.HasValue || context.WalkabilitySystem.TouchesRect(actualRect, requiredTouchRect.Value);
     }

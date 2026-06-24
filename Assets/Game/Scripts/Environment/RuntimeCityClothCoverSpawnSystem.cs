@@ -9,7 +9,7 @@ internal sealed class RuntimeCityClothCoverSpawnSystem
     public RuntimeCityClothCoverSpawnState State => _state;
 
     public int PlaceClothCoverBuildings(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> clothCoverPrefabs,
         int maxCount,
@@ -31,7 +31,7 @@ internal sealed class RuntimeCityClothCoverSpawnSystem
 internal sealed class RuntimeCityClothCoverSpawnState
 {
     public int PlaceClothCoverBuildings(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> clothCoverPrefabs,
         int maxCount,
@@ -66,7 +66,7 @@ internal sealed class RuntimeCityClothCoverSpawnState
     }
 
     private bool TrySpawnAdjacentDecoration(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         GameObject prefab,
         RectInt anchorRect,

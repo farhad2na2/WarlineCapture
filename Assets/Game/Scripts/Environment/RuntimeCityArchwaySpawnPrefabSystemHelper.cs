@@ -9,7 +9,7 @@ internal sealed class RuntimeCityArchwaySpawnPrefabSystemHelper
     public RuntimeCityArchwaySpawnState State => _state;
 
     public int PlaceCentralArchwayBuildings(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> archwayPrefabs,
         int maxCount,
@@ -37,7 +37,7 @@ internal sealed class RuntimeCityArchwaySpawnPrefabSystemHelper
 internal sealed class RuntimeCityArchwaySpawnState
 {
     public int PlaceCentralArchwayBuildings(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> archwayPrefabs,
         int maxCount,

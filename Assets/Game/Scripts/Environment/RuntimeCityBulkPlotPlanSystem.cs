@@ -28,7 +28,7 @@ internal sealed class RuntimeCityBulkPlotPlanSystem
     }
 
     public Plan CreatePlan(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         CityLayoutData city,
         int townRadius,
         HashSet<Vector2Int> roadCells,
@@ -42,7 +42,7 @@ internal sealed class RuntimeCityBulkPlotPlanSystem
 internal sealed class RuntimeCityBulkPlotPlanState
 {
     public Plan CreatePlan(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         CityLayoutData city,
         int townRadius,
         HashSet<Vector2Int> roadCells,

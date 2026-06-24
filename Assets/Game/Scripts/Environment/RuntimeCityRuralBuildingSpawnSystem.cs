@@ -9,7 +9,7 @@ internal sealed class RuntimeCityRuralBuildingSpawnSystem
     public RuntimeCityRuralBuildingSpawnState State => _state;
 
     public void PlaceRuralBuildings(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> prefabs,
         int count,
@@ -43,7 +43,7 @@ internal sealed class RuntimeCityRuralBuildingSpawnSystem
 internal sealed class RuntimeCityRuralBuildingSpawnState
 {
     public void PlaceRuralBuildings(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> prefabs,
         int count,

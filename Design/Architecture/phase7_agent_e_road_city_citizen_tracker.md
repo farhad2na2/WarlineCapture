@@ -219,7 +219,7 @@ Remove dead wrappers instead of converting them.
 - [ ] Do not delete referenced scene/prefab scripts without Agent A-approved serialized-reference migration.
 - [ ] Update tests that referenced retired helpers.
 - [ ] Record retired/folded count in the progress snapshot.
-- [x] Fold `P7-0147 RuntimeCityBuildingSpawnContextSystem` from a disabled `SystemBase` wrapper into a plain runtime-city spawn context helper; context creation, fallback context creation, building spawn system package data, and runtime city composition ownership stayed unchanged.
+- [x] Fold `P7-0147 RuntimeCityBuildingSpawnContextCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city spawn context helper; context creation, fallback context creation, building spawn system package data, and runtime city composition ownership stayed unchanged.
 - [x] Fold `P7-0157 RuntimeCityDiagnosticsSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city diagnostic helper; diagnostic logging behavior and runtime city composition ownership stayed unchanged.
 - [x] Fold `P7-0170 RuntimeCityReadModelCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city read-model helper; read-model properties, `Publish`, and runtime grid/decorations consumers stayed unchanged.
 - [x] Fold `P7-0171 RuntimeCityReadinessQuerySystem` from a disabled `SystemBase` wrapper into a plain runtime-city readiness query helper; grid, initial spawn, and base-exclusion query behavior stayed unchanged.

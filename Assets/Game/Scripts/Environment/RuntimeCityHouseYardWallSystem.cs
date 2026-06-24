@@ -10,7 +10,7 @@ internal sealed class RuntimeCityHouseYardWallSystem
     public RuntimeCityHouseYardWallState State => _state;
 
     public void PlaceHouseYardWalls(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityWalkabilityState walkabilitySystem,
@@ -60,7 +60,7 @@ internal sealed class RuntimeCityHouseYardWallSystem
 internal sealed class RuntimeCityHouseYardWallState
 {
     public void PlaceHouseYardWalls(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityWalkabilityState walkabilitySystem,
@@ -123,7 +123,7 @@ internal sealed class RuntimeCityHouseYardWallState
     }
 
     private bool TryBuildHouseYardWall(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityWalkabilityState walkabilitySystem,

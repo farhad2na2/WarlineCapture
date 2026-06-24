@@ -24,13 +24,13 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnSystem
 
     public RuntimeCityRoadsideBuildingSpawnState State => _state;
 
-    public RoadsidePlan CreatePlan(RuntimeCityBuildingSpawnContextSystem.Context context)
+    public RoadsidePlan CreatePlan(RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context)
     {
         return _state.CreatePlan(context);
     }
 
     public void PlaceCentralShops(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> centralPlots,
         RoadsidePlan plan,
@@ -53,7 +53,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnSystem
     }
 
     public void PlaceGasStations(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> outerPlots,
         int roadCellSizeInGridCells,
@@ -72,7 +72,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnSystem
     }
 
     public void PlaceOuterShops(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> outerPlots,
         RoadsidePlan plan,
@@ -95,7 +95,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnSystem
     }
 
     public void PlaceRoadsideHouses(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> outerPlots,
         RoadsidePlan plan,
@@ -122,7 +122,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnSystem
 
 internal sealed class RuntimeCityRoadsideBuildingSpawnState
 {
-    public RoadsidePlan CreatePlan(RuntimeCityBuildingSpawnContextSystem.Context context)
+    public RoadsidePlan CreatePlan(RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context)
     {
         RuntimeCityConfigSystem.Snapshot config = context.Config;
         int centralShopTarget = Mathf.Min(config.ShopCount, Mathf.Max(0, Mathf.RoundToInt(config.ShopCount * 0.65f)));
@@ -132,7 +132,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
     }
 
     public void PlaceCentralShops(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> centralPlots,
         RoadsidePlan plan,
@@ -160,7 +160,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
     }
 
     public void PlaceGasStations(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> outerPlots,
         int roadCellSizeInGridCells,
@@ -185,7 +185,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
     }
 
     public void PlaceOuterShops(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> outerPlots,
         RoadsidePlan plan,
@@ -213,7 +213,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
     }
 
     public void PlaceRoadsideHouses(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> outerPlots,
         RoadsidePlan plan,

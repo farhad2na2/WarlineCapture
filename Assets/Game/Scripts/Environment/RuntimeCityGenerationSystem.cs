@@ -27,8 +27,8 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly RuntimeCityLifecycleSystem.Context LifecycleContext;
         public readonly RuntimeCityLayoutState LayoutSystem;
         public readonly RuntimeCityWalkabilityState WalkabilitySystem;
-        public readonly RuntimeCityBuildingSpawnContextSystem.Systems BuildingSpawnSystems;
-        public readonly RuntimeCityBuildingSpawnContextSystem.Context BuildingSpawnContext;
+        public readonly RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems BuildingSpawnSystems;
+        public readonly RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context BuildingSpawnContext;
         public readonly RuntimeCityBuildingPlacementState BuildingPlacementSystem;
         public readonly RuntimeCityCorridorBuildingSpawnState CorridorBuildingSpawnSystem;
         public readonly RuntimeCityRoadBuildBridgeState RoadBuildBridgeSystem;
@@ -52,8 +52,8 @@ internal sealed class RuntimeCityGenerationSystem
             RuntimeCityLifecycleSystem.Context lifecycleContext,
             RuntimeCityLayoutState layoutSystem,
             RuntimeCityWalkabilityState walkabilitySystem,
-            RuntimeCityBuildingSpawnContextSystem.Systems buildingSpawnSystems,
-            RuntimeCityBuildingSpawnContextSystem.Context buildingSpawnContext,
+            RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems buildingSpawnSystems,
+            RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context buildingSpawnContext,
             RuntimeCityBuildingPlacementState buildingPlacementSystem,
             RuntimeCityCorridorBuildingSpawnState corridorBuildingSpawnSystem,
             RuntimeCityRoadBuildBridgeState roadBuildBridgeSystem,
@@ -347,7 +347,7 @@ internal sealed class RuntimeCityGenerationState
                     callbackGrid,
                     ref callbackRng,
                     reservedFootprints),
-            (RuntimeCityBuildingSpawnContextSystem.Context callbackContext, List<GameObject> prefabs, int count, Vector2Int centerRoadCell, int townRadius, int callbackRoadCellSizeInGridCells, HashSet<Vector2Int> roadCells, ref Unity.Mathematics.Random callbackRng, List<Vector2Int> usedPlotCells, List<RuntimeCityWalkabilitySystem.ReservedFootprint> reservedFootprints, List<RectInt> shopAndHouseFootprints) =>
+            (RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context callbackContext, List<GameObject> prefabs, int count, Vector2Int centerRoadCell, int townRadius, int callbackRoadCellSizeInGridCells, HashSet<Vector2Int> roadCells, ref Unity.Mathematics.Random callbackRng, List<Vector2Int> usedPlotCells, List<RuntimeCityWalkabilitySystem.ReservedFootprint> reservedFootprints, List<RectInt> shopAndHouseFootprints) =>
                 context.BuildingSpawnSystems.DecorationBuildingSpawnSystem.PlaceCityDecorationBuildings(
                     callbackContext,
                     context.BuildingSpawnSystems.PlacementSystem,

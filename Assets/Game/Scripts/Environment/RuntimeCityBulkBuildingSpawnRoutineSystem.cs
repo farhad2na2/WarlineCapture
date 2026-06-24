@@ -24,7 +24,7 @@ internal sealed class RuntimeCityBulkBuildingSpawnRoutineSystem
         List<ReservedFootprint> reservedFootprints);
 
     public delegate void PlaceCityDecorationBuildingsAction(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         List<GameObject> prefabs,
         int count,
         Vector2Int centerRoadCell,
@@ -39,7 +39,7 @@ internal sealed class RuntimeCityBulkBuildingSpawnRoutineSystem
     public RuntimeCityBulkBuildingSpawnRoutineState State => _state;
 
     public IEnumerator SpawnRoutine(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityBulkPlotPlanState plotPlanSystem,
         RuntimeCityEntryBuildingSpawnState entryBuildingSpawnSystem,
@@ -71,7 +71,7 @@ internal sealed class RuntimeCityBulkBuildingSpawnRoutineSystem
 internal sealed class RuntimeCityBulkBuildingSpawnRoutineState
 {
     public IEnumerator SpawnRoutine(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityBulkPlotPlanState plotPlanSystem,
         RuntimeCityEntryBuildingSpawnState entryBuildingSpawnSystem,

@@ -10,7 +10,7 @@ internal sealed class RuntimeCityEntryBuildingSpawnSystem
     public RuntimeCityEntryBuildingSpawnState State => _state;
 
     public void PlaceEntryShops(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> entryPlots,
         int roadCellSizeInGridCells,
@@ -31,7 +31,7 @@ internal sealed class RuntimeCityEntryBuildingSpawnSystem
     }
 
     public void PlaceEntryHouses(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> entryPlots,
         int roadCellSizeInGridCells,
@@ -57,7 +57,7 @@ internal sealed class RuntimeCityEntryBuildingSpawnSystem
 internal sealed class RuntimeCityEntryBuildingSpawnState
 {
     public void PlaceEntryShops(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> entryPlots,
         int roadCellSizeInGridCells,
@@ -84,7 +84,7 @@ internal sealed class RuntimeCityEntryBuildingSpawnState
     }
 
     public void PlaceEntryHouses(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<PlotCandidate> entryPlots,
         int roadCellSizeInGridCells,

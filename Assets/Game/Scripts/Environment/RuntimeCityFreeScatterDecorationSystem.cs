@@ -9,7 +9,7 @@ internal sealed class RuntimeCityFreeScatterDecorationSystem
     public RuntimeCityFreeScatterDecorationState State => _state;
 
     public void PlaceFreeScatterDecorations(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> prefabs,
         int remainingCount,
@@ -39,7 +39,7 @@ internal sealed class RuntimeCityFreeScatterDecorationSystem
 internal sealed class RuntimeCityFreeScatterDecorationState
 {
     public void PlaceFreeScatterDecorations(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         List<GameObject> prefabs,
         int remainingCount,

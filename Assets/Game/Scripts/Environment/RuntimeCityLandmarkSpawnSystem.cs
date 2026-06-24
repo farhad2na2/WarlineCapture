@@ -9,7 +9,7 @@ internal sealed class RuntimeCityLandmarkSpawnSystem
     public RuntimeCityLandmarkSpawnState State => _state;
 
     public void SpawnLandmarks(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         Vector2Int centerRoadCell,
@@ -33,7 +33,7 @@ internal sealed class RuntimeCityLandmarkSpawnSystem
 internal sealed class RuntimeCityLandmarkSpawnState
 {
     public void SpawnLandmarks(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         Vector2Int centerRoadCell,
@@ -49,7 +49,7 @@ internal sealed class RuntimeCityLandmarkSpawnState
     }
 
     private static void TrySpawnClockTower(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         Vector2Int centerRoadCell,
@@ -76,7 +76,7 @@ internal sealed class RuntimeCityLandmarkSpawnState
     }
 
     private static void TrySpawnFountain(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         Vector2Int centerRoadCell,
@@ -104,7 +104,7 @@ internal sealed class RuntimeCityLandmarkSpawnState
     }
 
     private static void TrySpawnMonument(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         Vector2Int centerRoadCell,
@@ -132,7 +132,7 @@ internal sealed class RuntimeCityLandmarkSpawnState
     }
 
     private static void TrySpawnPillar(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         Vector2Int centerRoadCell,
@@ -160,7 +160,7 @@ internal sealed class RuntimeCityLandmarkSpawnState
     }
 
     private static void TrySpawnLandmark(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityLandmarkOffsetState offsetSystem,
         GameObject prefab,

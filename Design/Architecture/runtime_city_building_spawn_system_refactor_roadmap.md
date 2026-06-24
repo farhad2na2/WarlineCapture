@@ -35,7 +35,7 @@ New public/internal members must not be added to `RuntimeCityBuildingSpawnSystem
 Allowed temporary public/internal surface:
 
 - `public void Configure(...)`
-  - Target owner: `RuntimeCityBuildingSpawnContextSystem` and `RuntimeCityCompositionSystem`.
+  - Target owner: `RuntimeCityBuildingSpawnContextCompositionSystemHelper` and `RuntimeCityCompositionSystem`.
 - `public void SpawnCityImportantBuildings(...)`
   - Target owner: coordinator delegating to `RuntimeCityHallSpawnSystem` and `RuntimeCityLandmarkSpawnSystem`.
 - `public void EnsureCityHall(...)`
@@ -114,12 +114,12 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
 
 ## Phase 2: Context And Shared Placement Boundary
 
-4. Complete: Create `RuntimeCityBuildingSpawnContextSystem`
+4. Complete: Create `RuntimeCityBuildingSpawnContextCompositionSystemHelper`
    - Move dependency/config context construction into a narrow context system.
    - Context must include config snapshot, plot, walkability, prefab selection, visual, spawn bridge, and diagnostics dependencies.
    - Do not add placement policy here.
    - Expected output: generation systems can receive explicit context instead of mutable fields on `RuntimeCityBuildingSpawnSystem`.
-   - Added `RuntimeCityBuildingSpawnContextSystem` with a `Context` containing config, plot, walkability, prefab selection, visual, spawn bridge, and diagnostic dependencies.
+   - Added `RuntimeCityBuildingSpawnContextCompositionSystemHelper` with a `Context` containing config, plot, walkability, prefab selection, visual, spawn bridge, and diagnostic dependencies.
    - `RuntimeCityCompositionSystem` now constructs building-spawn context through the context system before configuring `RuntimeCityBuildingSpawnSystem`.
    - Added focused architecture guard coverage for context ownership.
 
@@ -365,10 +365,10 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
 
 31. Complete: Remove mutable `Configure` state
    - Remove `_config` and dependency fields from `RuntimeCityBuildingSpawnSystem`.
-   - Replace `Configure` with explicit context construction in `RuntimeCityBuildingSpawnContextSystem` and composition.
+   - Replace `Configure` with explicit context construction in `RuntimeCityBuildingSpawnContextCompositionSystemHelper` and composition.
    - Expected output: coordinator has no mutable runtime config/dependency cache.
    - Removed `RuntimeCityBuildingSpawnSystem.Configure`, cached config, cached dependency fields, and cached building-spawn context.
-   - Generation now passes `RuntimeCityBuildingSpawnContextSystem.Context` explicitly into building-spawn methods.
+   - Generation now passes `RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context` explicitly into building-spawn methods.
    - Composition still creates and stores the generation context, but no longer configures mutable state on the building-spawn coordinator.
 
 32. Complete: Update `RuntimeCityCompositionSystem` ownership
@@ -402,8 +402,8 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - If still meaningful, keep it only as an algorithm-light coordinator and document why.
    - Expected output: no broad shell remains under old or new names.
    - Deleted `Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs` and its `.meta` because generation no longer called it and the remaining methods were pass-through wrappers.
-   - Moved the child-system dependency bundle to `RuntimeCityBuildingSpawnContextSystem.Systems`.
-   - `RuntimeCityCompositionSystem` now creates `RuntimeCityBuildingSpawnContextSystem.Systems`, and `RuntimeCityGenerationSystem` receives that dependency bundle directly.
+   - Moved the child-system dependency bundle to `RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems`.
+   - `RuntimeCityCompositionSystem` now creates `RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems`, and `RuntimeCityGenerationSystem` receives that dependency bundle directly.
    - Added deletion guards so the coordinator shell cannot be restored.
 
 36. Complete: Validation gate
@@ -428,7 +428,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
 - Step 1 complete: roadmap, contract wording, baseline guard, broad replacement guard, and focused architecture batch are in place.
 - Step 2 complete: public/internal surface is inventoried, assigned to target owners, and guarded so it cannot grow while the coordinator is decomposed.
 - Step 3 complete: runtime-city smoke baseline is recorded with cityPrefabs=36, productionCityCount=1, validationCityCount=1, buildingSpawnables=32, and blockerPrefabs=63.
-- Step 4 complete: building-spawn dependency/config context construction moved to `RuntimeCityBuildingSpawnContextSystem`.
+- Step 4 complete: building-spawn dependency/config context construction moved to `RuntimeCityBuildingSpawnContextCompositionSystemHelper`.
 - Step 5 complete: public building-spawn generation entry points delegate through explicit private context-taking methods.
 - Step 6 complete: repeated building spawn/delete/reserve validation moved to `RuntimeCityBuildingPlacementPrefabSystemHelper`.
 - Step 7 complete: shared roadside/corridor plot placement moved to `RuntimeCityBuildingPlacementPrefabSystemHelper.PlaceFromPlots`.

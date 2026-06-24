@@ -8,7 +8,7 @@ internal sealed class RuntimeCityYardWallVisualSystem
     public RuntimeCityYardWallVisualState State => _state;
 
     public void BuildYardBoundaryVisuals(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualPresentationSystemHelper visualSystem,
@@ -38,7 +38,7 @@ internal sealed class RuntimeCityYardWallVisualSystem
 internal sealed class RuntimeCityYardWallVisualState
 {
     public void BuildYardBoundaryVisuals(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
         RuntimeCityVisualPresentationSystemHelper visualSystem,

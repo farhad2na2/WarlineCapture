@@ -1,4 +1,4 @@
-internal sealed class RuntimeCityBuildingSpawnContextSystem
+internal sealed class RuntimeCityBuildingSpawnContextCompositionSystemHelper
 {
     public Context Create(
         RuntimeCityConfigSystem.Snapshot config,

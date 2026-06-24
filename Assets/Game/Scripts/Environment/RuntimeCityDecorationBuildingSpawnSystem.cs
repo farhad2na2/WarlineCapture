@@ -9,7 +9,7 @@ internal sealed class RuntimeCityDecorationBuildingSpawnSystem
     public RuntimeCityDecorationBuildingSpawnState State => _state;
 
     public void PlaceCityDecorationBuildings(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityDecorationPrefabGroupState decorationPrefabGroupSystem,
         RuntimeCityClothCoverSpawnState clothCoverSpawnSystem,
@@ -49,7 +49,7 @@ internal sealed class RuntimeCityDecorationBuildingSpawnSystem
 internal sealed class RuntimeCityDecorationBuildingSpawnState
 {
     public void PlaceCityDecorationBuildings(
-        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
         RuntimeCityBuildingPlacementState placementSystem,
         RuntimeCityDecorationPrefabGroupState decorationPrefabGroupSystem,
         RuntimeCityClothCoverSpawnState clothCoverSpawnSystem,

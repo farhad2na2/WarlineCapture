@@ -18,7 +18,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityWalkabilityState _fallbackRuntimeCityWalkability = new();
     private RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem;
     private readonly RuntimeCityPrefabSelectionState _fallbackRuntimeCityPrefabSelection = new();
-    private RuntimeCityBuildingSpawnContextSystem _runtimeCityBuildingSpawnContextSystem;
+    private RuntimeCityBuildingSpawnContextCompositionSystemHelper _runtimeCityBuildingSpawnContextHelper;
     private RuntimeCityBuildingPlacementPrefabSystemHelper _runtimeCityBuildingPlacementHelper;
     private readonly RuntimeCityBuildingPlacementState _fallbackRuntimeCityBuildingPlacement = new();
     private RuntimeCityLandmarkOffsetSystem _runtimeCityLandmarkOffsetSystem;
@@ -82,7 +82,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityStartupSystem.TryGetPendingInitialUnitsDelegate _tryGetPendingInitialUnits;
     private readonly RuntimeCityStartupSystem.TryGetRoadCellSizeDelegate _tryGetRoadCellSize;
     private readonly RuntimeCityStartupSystem.TryGetGridDataDelegate _tryGetGridData;
-    private RuntimeCityBuildingSpawnContextSystem.Context _runtimeCityBuildingSpawnContext;
+    private RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context _runtimeCityBuildingSpawnContext;
     private bool _configured;
 
     private RuntimeCityConfigSystem.Snapshot cityConfig => RuntimeCityConfigSystem?.Current ?? _fallbackCityConfig;
@@ -186,9 +186,9 @@ public sealed class RuntimeCityCompositionSystem
         else
             _fallbackCityConfig = global::RuntimeCityConfigSystem.Snapshot.From(_config, _fallbackCityPrefabs);
 
-        RuntimeCityBuildingSpawnContextSystem spawnContextSystem = RuntimeCityBuildingSpawnContextSystem;
-        _runtimeCityBuildingSpawnContext = spawnContextSystem != null
-            ? spawnContextSystem.Create(
+        RuntimeCityBuildingSpawnContextCompositionSystemHelper spawnContextHelper = RuntimeCityBuildingSpawnContextHelper;
+        _runtimeCityBuildingSpawnContext = spawnContextHelper != null
+            ? spawnContextHelper.Create(
                 cityConfig,
                 RuntimeCityBuildingPlotState,
                 RuntimeCityWalkabilityState,
@@ -196,7 +196,7 @@ public sealed class RuntimeCityCompositionSystem
                 RuntimeCityVisualPresentationSystemHelper,
                 RuntimeCitySpawnBridgeState,
                 RuntimeCityDiagnosticsSystemHelper)
-            : global::RuntimeCityBuildingSpawnContextSystem.CreateFallback(
+            : global::RuntimeCityBuildingSpawnContextCompositionSystemHelper.CreateFallback(
                 cityConfig,
                 RuntimeCityBuildingPlotState,
                 RuntimeCityWalkabilityState,
@@ -305,9 +305,9 @@ public sealed class RuntimeCityCompositionSystem
             RuntimeCityDiagnosticsSystemHelper);
     }
 
-    private RuntimeCityBuildingSpawnContextSystem.Systems CreateBuildingSpawnSystems()
+    private RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems CreateBuildingSpawnSystems()
     {
-        return new RuntimeCityBuildingSpawnContextSystem.Systems(
+        return new RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems(
             RuntimeCityBuildingPlacementState,
             RuntimeCityLandmarkOffsetState,
             RuntimeCityHallSpawnState,
@@ -373,8 +373,8 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityDiagnosticsSystemHelper RuntimeCityDiagnosticsSystemHelper =>
         _runtimeCityDiagnosticSystem ??= new RuntimeCityDiagnosticsSystemHelper();
 
-    private RuntimeCityBuildingSpawnContextSystem RuntimeCityBuildingSpawnContextSystem =>
-        _runtimeCityBuildingSpawnContextSystem ??= new RuntimeCityBuildingSpawnContextSystem();
+    private RuntimeCityBuildingSpawnContextCompositionSystemHelper RuntimeCityBuildingSpawnContextHelper =>
+        _runtimeCityBuildingSpawnContextHelper ??= new RuntimeCityBuildingSpawnContextCompositionSystemHelper();
 
     private RuntimeCityStartupSystem RuntimeCityStartupSystem =>
         _runtimeCityStartupSystem ??= ResolveRuntimeCityStartupSystem();

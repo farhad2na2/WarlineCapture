@@ -86,7 +86,7 @@ The audit was committed at `9e2298474`, but its source snapshot says it rechecke
 | 6 - Singleton And ECB Query Closure | P1 | Complete | 100% | Support | Stage 2 preferred | Current per-frame `GridConfig`/ECB singleton findings closed. |
 | 7 - `.Run()` Scheduling Closure | P1 | Complete | 100% | Support | Stage 5 preferred | Each `.Run()` site converted or documented with source/profiler reason. |
 | 8 - BuildingBarrier Managed Dictionary Closure | P1 | Complete | 100% | Support | Stage 0 | Managed dictionary foreach regression removed. |
-| 9 - RuntimeBuildingEntityLink Update Closure | P1/P2 | Pending | 0% | Support | Stage 0 | Per-building `Update` removed or batched. |
+| 9 - RuntimeBuildingEntityLink Update Closure | P1/P2 | Complete | 100% | Support | Stage 0 | Per-building `Update` removed and replaced by batched runtime sync. |
 | 10 - Authoring And Bake Data Hygiene | P1/P2 | Pending | 0% | Support | Stage 0 | MapSurface blob dedup and GridAuthoring bake risks addressed. |
 | 11 - Component And Minor Cleanup | P2 | Pending | 0% | Support | P0/P1 stages preferred | Remaining P2 checks complete or explicitly deferred. |
 | 12 - Final Audit Closure Validation | P0 | Pending | 0% | Support | Stages 1-11 | Reverification commands pass and no non-namespace audit item is untracked. |
@@ -878,8 +878,8 @@ rg -n "foreach.*RuntimeBuildings|foreach.*context\.RuntimeBuildings|IReadOnlyDic
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P1/P2 |
 | Owner | Support |
 | Dependencies | Stage 0 |
@@ -899,10 +899,10 @@ rg -n "foreach.*RuntimeBuildings|foreach.*context\.RuntimeBuildings|IReadOnlyDic
 
 **Acceptance Criteria**
 
-- [ ] `RuntimeBuildingEntityLink` has no per-instance `Update`.
-- [ ] Building visuals still track runtime state.
-- [ ] Building selection and destruction behavior still work.
-- [ ] Unity compile passes.
+- [x] `RuntimeBuildingEntityLink` has no per-instance `Update`.
+- [x] Building visuals still track runtime state.
+- [x] Building selection and destruction behavior still work.
+- [x] Unity compile passes.
 
 **Validation Commands**
 
@@ -912,7 +912,30 @@ rg -n "void Update|LateUpdate|FixedUpdate" Assets/Game/Scripts/RuntimeState/Runt
 
 **Notes**
 
-- Pending.
+- 2026-06-24 heartbeat Stage 9 inspected `RuntimeBuildingEntityLink.Update`.
+- The removed per-instance callback did two things:
+  - when the linked ECS entity disappeared, call `HandleRuntimeBuildingEntityDestroyed` and clear the link configuration,
+  - copy linked `LocalTransform` position/rotation/scale back to the building GameObject visual while preserving authored transform offsets when configured.
+- Replaced the per-building Unity `Update` with a static registered-link batch:
+  - `RuntimeBuildingEntityLink.OnEnable` registers the link.
+  - `RuntimeBuildingEntityLink.OnDisable` unregisters the link.
+  - `RuntimeBuildingEntityLink.SyncRegisteredLinks` iterates registered links once per building runtime update and calls `SyncNow`.
+  - `BuildingRuntimeUpdateSystem.UpdateSimulation` runs the batched sync after the normal building simulation tick.
+- Updated `BaseBreachValidationTests` to call `SyncNow` directly instead of reflecting a private `Update` callback.
+- Acceptance scan result: clean. Command returned no hits:
+  - `rg -n "void Update|LateUpdate|FixedUpdate" Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntityLink.cs`
+- Focused runtime building validation passed:
+  - Command: Unity `6000.4.0f1` batchmode `-executeMethod RuntimeBuildingSystemTests.RunFocusedValidation`.
+  - Log path: `/private/tmp/warline-ecs-reverification-stage9-runtimebuilding.log`.
+  - Success marker: `[RuntimeBuildingSystemFocusedValidation] result=Passed tests=5`.
+- Focused building runtime boundary validation passed:
+  - Command: Unity `6000.4.0f1` batchmode `-executeMethod BuildingRuntimeBoundaryValidationTests.RunBatchValidation`.
+  - Log path: `/private/tmp/warline-ecs-reverification-stage9-boundary.log`.
+  - Success marker: `[BuildingRuntimeBoundaryValidation] result=Passed tests=9`.
+- Unity compile passed:
+  - Log path: `/private/tmp/warline-ecs-reverification-stage9-compile.log`.
+  - Success marker: `Exiting batchmode successfully now!`.
+- Practical note: the batched registry intentionally preserves the old inactive-object behavior. Disabled/inactive links do not sync because Unity did not call their `Update` before either.
 
 ---
 

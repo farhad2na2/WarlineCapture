@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
@@ -5,6 +6,8 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class RuntimeBuildingEntityLink : MonoBehaviour
 {
+    private static readonly List<RuntimeBuildingEntityLink> RegisteredLinks = new();
+
     private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
     private int _buildingId;
@@ -17,6 +20,21 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
 
     public Entity Entity => _entity;
     public int BuildingId => _buildingId;
+
+    public static void SyncRegisteredLinks()
+    {
+        for (int i = RegisteredLinks.Count - 1; i >= 0; i--)
+        {
+            RuntimeBuildingEntityLink link = RegisteredLinks[i];
+            if (link == null)
+            {
+                RegisteredLinks.RemoveAt(i);
+                continue;
+            }
+
+            link.SyncNow();
+        }
+    }
 
     public void Configure(
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
@@ -37,7 +55,7 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
         _configured = true;
     }
 
-    private void Update()
+    public void SyncNow()
     {
         if (!_configured)
             return;
@@ -67,6 +85,19 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
         transform.localScale = _preserveAuthoredTransform
             ? _authoredLocalScale
             : Vector3.one * transformData.Scale;
+    }
+
+    private void OnEnable()
+    {
+        if (RegisteredLinks.Contains(this))
+            return;
+
+        RegisteredLinks.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        RegisteredLinks.Remove(this);
     }
 
     private void CacheOffsetFromEntity()

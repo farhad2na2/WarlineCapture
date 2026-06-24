@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
@@ -1296,15 +1295,10 @@ public sealed class BaseBreachValidationTests
 
     private static void InvokeRuntimeBuildingLinks(Transform root)
     {
-        MethodInfo updateMethod = typeof(RuntimeBuildingEntityLink).GetMethod(
-            "Update",
-            BindingFlags.Instance | BindingFlags.NonPublic);
-        Assert.NotNull(updateMethod);
-
         RuntimeBuildingEntityLink[] links = root.GetComponentsInChildren<RuntimeBuildingEntityLink>(true);
         Assert.IsNotEmpty(links);
         for (int i = 0; i < links.Length; i++)
-            updateMethod.Invoke(links[i], null);
+            links[i].SyncNow();
     }
 
     private static Transform FindDescendantByName(Transform root, string name)

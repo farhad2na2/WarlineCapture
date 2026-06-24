@@ -27,5 +27,6 @@ public sealed class BuildingRuntimeUpdateSystem
     public void UpdateSimulation(Context context)
     {
         context.UpdateBuildingSimulationTick?.Invoke();
+        RuntimeBuildingEntityLink.SyncRegisteredLinks();
     }
 }

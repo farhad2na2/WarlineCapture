@@ -23,11 +23,11 @@ public partial struct UnitDestroyedVisualSystem : ISystem
         _localTransformLookup.Update(ref state);
         var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         EntityCommandBuffer ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
-        new InitializeDestroyedVisualJob
+        state.Dependency = new InitializeDestroyedVisualJob
         {
             LocalTransforms = _localTransformLookup,
             Ecb = ecb
-        }.Run();
+        }.Schedule(state.Dependency);
     }
 
     public static void SetChildVisible(EntityManager em, Entity child, bool visible, float visibleScale = 1f)

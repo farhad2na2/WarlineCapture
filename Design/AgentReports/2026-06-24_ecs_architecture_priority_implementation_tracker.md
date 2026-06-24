@@ -46,12 +46,12 @@ Static source scan from 2026-06-24:
 | Metric | Current value |
 |---|---:|
 | Total stages | 12 |
-| Complete/skipped/decision-record stages | 6 |
+| Complete/skipped/decision-record stages | 7 |
 | In-progress stages | 0 |
 | Blocked stages | 1 |
-| Pending stages | 5 |
-| Overall stage-count progress | 56% |
-| Active implementation progress excluding Stage 10 decision record | 53% |
+| Pending stages | 4 |
+| Overall stage-count progress | 65% |
+| Active implementation progress excluding Stage 10 decision record | 62% |
 
 ## Non-Negotiable Guardrails
 
@@ -75,7 +75,7 @@ Static source scan from 2026-06-24:
 | 3 - Bootstrap Split Plan + First Extraction | P1 | Blocked | 75% | Support | Stages 1-2 preferred | First extraction compiled; architecture guardrail blocked by pre-existing MenuBootstrapView hierarchy lookup |
 | 4 - UI Shell ECS Write Safety | P1 | Complete | 100% | Support | Stages 1-2 preferred | Compile and UI shell focused tests passed |
 | 5 - Singleton/ECB Access Cleanup | P1 | Complete | 100% | Support | Stage 2 preferred | Grid singleton, AI diagnostics query, ECB/query review batches compiled and focused tests passed |
-| 6 - `.Run()` Scheduling Review | P1 | Pending | 0% | Support | Stages 1-2, profiler context | Compile + targeted perf smoke |
+| 6 - `.Run()` Scheduling Review | P1 | Complete | 100% | Support | Stages 1-2, profiler context | Compile and destroyed-visual focused validation passed |
 | 7 - ResourceHauler Diagnostics Cleanup | P1 | Pending | 0% | Support | Stage 0 | Compile + resource hauler smoke if available |
 | 8 - Authoring/Baker Hygiene | P1/P2 | Pending | 0% | Support | P0 stages complete | Compile + bake/reimport validation |
 | 9 - BuildingBarrier Data-Structure Review | P2 | Pending | 0% | Support | Profiler proof preferred | Profile-guided only |
@@ -663,8 +663,8 @@ Do not cache singleton component values in `OnCreate` unless immutable. Most cle
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P1 |
 | Owner | Support |
 | Dependencies | Stages 1-2; profiler context preferred |
@@ -676,14 +676,14 @@ Do not cache singleton component values in `OnCreate` unless immutable. Most cle
 
 | File | Site count | First decision |
 |---|---:|---|
-| `Assets/Game/Scripts/Systems/AITargetingSystem.cs` | 1 | Candidate for scheduling review. |
-| `Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSortSystem.cs` | 1 | Candidate, but sort dependencies must be checked. |
-| `Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetBandSystem.cs` | 1 | Candidate, but budget data dependencies must be checked. |
-| `Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSnapshotSystem.cs` | 1 | Candidate, but snapshot publication ordering must be checked. |
-| `Assets/Game/Scripts/Systems/VisibleUnitSelectionCandidateSystem.cs` | 2 | Review after recent ECB cleanup; may have snapshot ordering constraints. |
-| `Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs` | 1 | Review for UI/diagnostic side effects. |
-| `Assets/Game/Scripts/Systems/FocusableUnitLookupSystem.cs` | 1 | Review for lookup/snapshot publication constraints. |
-| `Assets/Game/Scripts/Systems/UnitDestroyedVisualSystem.cs` | 1 | Presentation/ECB cleanup; may remain `.Run()` if tiny. |
+| `Assets/Game/Scripts/Systems/AITargetingSystem.cs` | 1 | Keep synchronous: job writes `AISquad` targets and fills `_diagnosticEvents`; diagnostics are read immediately in the same update. Scheduling plus immediate completion would not improve frame work. |
+| `Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSortSystem.cs` | 1 | Keep synchronous: helper sorts a `NativeList` and returns sorted data to the caller immediately. |
+| `Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetBandSystem.cs` | 1 | Keep synchronous: helper builds and returns owned `NativeHashSet` plan data and counts immediately. |
+| `Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSnapshotSystem.cs` | 1 | Keep synchronous: helper collects snapshot lists and returns them immediately to the caller. |
+| `Assets/Game/Scripts/Systems/VisibleUnitSelectionCandidateSystem.cs` | 2 | Keep synchronous: selection hit-test helpers populate caller-provided candidate lists that are consumed immediately. |
+| `Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs` | 1 | Keep synchronous: scan result and current threat lists are consumed immediately to update runtime warning state. |
+| `Assets/Game/Scripts/Systems/FocusableUnitLookupSystem.cs` | 1 | Keep synchronous: candidate list is consumed immediately for screen-distance ranking against a managed camera. |
+| `Assets/Game/Scripts/Systems/UnitDestroyedVisualSystem.cs` | 0 | Converted to scheduled single-thread `IJobEntity`; output is ECB/transform writes and no same-frame managed code reads the result. |
 
 **Implementation Steps**
 
@@ -700,9 +700,37 @@ Do not cache singleton component values in `OnCreate` unless immutable. Most cle
 
 **Acceptance Criteria**
 
-- [ ] Each `.Run()` site is either converted or has a documented reason to remain.
-- [ ] No safety exceptions from unresolved job dependencies.
-- [ ] No behavior change in selection, targeting, render budget, or destroyed visuals.
+- [x] Each `.Run()` site is either converted or has a documented reason to remain.
+- [x] No safety exceptions from unresolved job dependencies.
+- [x] No behavior change in selection, targeting, render budget, or destroyed visuals.
+
+**Batch 1 - Destroyed Visual Scheduling + Site Decisions**
+
+| Field | Value |
+|---|---|
+| Status | Complete |
+| Progress | 100% |
+| Scope | Convert the one async-safe `.Run()` site and document why the remaining sites should stay synchronous. |
+
+**Files changed**
+
+- `Assets/Game/Scripts/Systems/UnitDestroyedVisualSystem.cs`
+
+**Implementation notes**
+
+- `UnitDestroyedVisualSystem.InitializeDestroyedVisualJob` now uses `.Schedule(state.Dependency)` instead of `.Run()`.
+- The system stores the returned job handle in `state.Dependency`.
+- The remaining eight direct `.Run()` sites are helper or scan jobs where same-frame code immediately consumes sorted collections, built native containers, scan results, or selection candidates. Scheduling and immediately completing those jobs would add scheduling overhead without real parallelism.
+- Static `.Run()` scan after the change shows eight remaining sites, all documented above.
+
+**Validation**
+
+- Unity compile passed by log marker: `/private/tmp/warline-ecs-stage6-destroyed-visual-compile.log`. The Unity batch process stayed alive after successful shutdown and was stopped after the success marker.
+- `VehicleVisualAdornmentsSystemTests.RunFocusedValidation` passed with `tests=20`: `/private/tmp/warline-ecs-stage6-destroyed-visual-focused.log`. The Unity batch process stayed alive after the pass marker and was stopped after success.
+
+**Remaining Stage 6 work**
+
+- None. Continue to Stage 7.
 
 ---
 

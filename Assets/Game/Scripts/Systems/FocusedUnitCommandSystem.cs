@@ -13,6 +13,7 @@ public partial struct FocusedUnitCommandSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled command helper; UI/composition calls methods directly.
         state.Enabled = false;
         _queryWorldSequenceNumber = state.WorldUnmanaged.SequenceNumber;
         _queriesInitialized = true;

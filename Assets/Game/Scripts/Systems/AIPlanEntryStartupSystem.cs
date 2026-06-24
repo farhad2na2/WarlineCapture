@@ -7,6 +7,7 @@ public partial struct AIPlanEntryStartupSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled helper; composition calls its methods directly.
         state.Enabled = false;
     }
 

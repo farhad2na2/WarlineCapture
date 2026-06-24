@@ -10,6 +10,7 @@ public partial struct UiShellBoundarySystem : ISystem
     {
         UiShellEcsGateway.RegisterAsRuntimeGateway();
         boundaryQuery = state.GetEntityQuery(ComponentType.ReadOnly<UiShellBoundaryComponent>());
+        // RequireForUpdate intentionally omitted: this startup boundary creates the singleton it would require.
         EnsureBoundary(ref state);
         state.Enabled = false;
     }

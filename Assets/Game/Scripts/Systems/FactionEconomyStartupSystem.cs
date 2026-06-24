@@ -39,6 +39,7 @@ public partial struct FactionEconomyStartupSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled startup helper; AI startup calls Initialize directly.
         state.Enabled = false;
     }
 

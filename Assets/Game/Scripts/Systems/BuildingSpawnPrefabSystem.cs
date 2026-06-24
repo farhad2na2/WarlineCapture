@@ -23,6 +23,7 @@ internal partial struct BuildingSpawnPrefabSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled helper; runtime systems call prefab lookup methods directly.
         state.Enabled = false;
     }
 

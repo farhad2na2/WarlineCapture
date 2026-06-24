@@ -27,6 +27,7 @@ public partial struct UnitMoveOrderSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled command helper; selection systems call methods directly.
         state.Enabled = false;
     }
 

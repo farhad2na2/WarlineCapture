@@ -8,6 +8,7 @@ public partial struct InitialUnitSpawnApplySystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled spawn helper; initial spawn code calls methods directly.
         state.Enabled = false;
     }
 

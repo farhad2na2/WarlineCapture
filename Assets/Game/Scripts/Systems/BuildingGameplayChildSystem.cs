@@ -5,6 +5,7 @@ internal partial struct BuildingGameplayChildSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled composition helper; OnUpdate never runs.
         state.Enabled = false;
     }
 

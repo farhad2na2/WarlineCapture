@@ -29,6 +29,7 @@ internal partial struct CitizenPrefabSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled helper; composition calls prefab lookup methods directly.
         state.Enabled = false;
     }
 

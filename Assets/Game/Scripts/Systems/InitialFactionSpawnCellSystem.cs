@@ -20,6 +20,7 @@ public partial struct InitialFactionSpawnCellSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled startup helper; composition calls its methods directly.
         state.Enabled = false;
     }
 

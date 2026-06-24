@@ -14,6 +14,7 @@ internal partial struct CitizenMovementCommandSystem : ISystem
             ComponentType.ReadWrite<CitizenMoveCommandRequestElement>(),
             ComponentType.ReadWrite<CitizenMoveCommandResultElement>());
         EnsureCommandEntity(state.EntityManager, _queueQuery);
+        state.RequireForUpdate(_queueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

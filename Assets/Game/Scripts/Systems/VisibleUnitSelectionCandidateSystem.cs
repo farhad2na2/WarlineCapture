@@ -28,6 +28,7 @@ public partial struct VisibleUnitSelectionCandidateSystem : ISystem
         _snapshotQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<VisibleUnitSelectionCandidateSnapshot>(),
             ComponentType.ReadWrite<VisibleUnitSelectionCandidateElement>());
+        // RequireForUpdate intentionally omitted: this producer creates and clears its snapshot even when no units remain.
     }
 
     public void OnDestroy(ref SystemState state)

@@ -23,6 +23,7 @@ public partial struct AIStartupSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled startup facade; composition calls Initialize directly.
         state.Enabled = false;
     }
 

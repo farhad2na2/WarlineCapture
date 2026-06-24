@@ -26,6 +26,7 @@ internal partial struct CitizenPrefabSelectionSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled helper; composition calls selection methods directly.
         state.Enabled = false;
     }
 

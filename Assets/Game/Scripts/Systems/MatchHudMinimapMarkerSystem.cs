@@ -13,6 +13,7 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
 
     private Entity _markerBoundaryEntity;
 
+    // RequireForUpdate intentionally omitted: this producer creates the marker boundary and clears stale markers when no sources remain.
     public void OnUpdate(ref SystemState state)
     {
         EntityManager em = state.EntityManager;

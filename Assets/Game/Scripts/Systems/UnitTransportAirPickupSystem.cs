@@ -12,6 +12,7 @@ public partial struct UnitTransportAirPickupSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled transport helper; command composition calls methods directly.
         state.Enabled = false;
     }
 

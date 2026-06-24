@@ -7,6 +7,7 @@ public partial struct UnitTransportPassengerStateSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled transport helper; boarding/drop systems call methods directly.
         state.Enabled = false;
     }
 

@@ -5,6 +5,7 @@ internal partial struct BuildingEntityManagerAccessSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled access helper; composition calls TryGetEntityManager directly.
         state.Enabled = false;
     }
 

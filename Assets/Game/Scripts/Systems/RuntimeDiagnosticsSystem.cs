@@ -44,6 +44,7 @@ public partial struct RuntimeDiagnosticsSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled diagnostics facade; accessors create/read backing state.
         state.Enabled = false;
     }
 

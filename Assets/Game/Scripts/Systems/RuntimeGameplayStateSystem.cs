@@ -7,6 +7,7 @@ public partial struct RuntimeGameplayStateSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled state facade; public accessors create/read the backing entity.
         state.Enabled = false;
     }
 

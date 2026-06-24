@@ -8,6 +8,7 @@ public partial struct UnitTransportCapacitySystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        // RequireForUpdate intentionally omitted: disabled transport helper; command/runtime composition calls methods directly.
         state.Enabled = false;
     }
 

@@ -2438,6 +2438,7 @@ MonoBehaviour:
   shellEcsPresentation: {fileID: 1818590230}
   contentSystem: {fileID: 1818590229}
   router: {fileID: 1818590233}
+  legacyUiToolkitShellRoot: {fileID: 463212251}
 --- !u!1 &1958929999
 GameObject:
   m_ObjectHideFlags: 0

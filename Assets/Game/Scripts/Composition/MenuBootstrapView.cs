@@ -4,8 +4,6 @@ using UnityEngine.Serialization;
 [DisallowMultipleComponent]
 public sealed class MenuBootstrapView : MonoBehaviour
 {
-    private const string LegacyUiToolkitShellRootName = "UiToolkitShellRoot";
-
     private readonly MenuBootstrapSystem menuBootstrapSystem = new();
 
     [SerializeField] private RuntimeUiConfig runtimeUiConfig;
@@ -17,9 +15,7 @@ public sealed class MenuBootstrapView : MonoBehaviour
     [FormerlySerializedAs("contentPresenter")]
     [SerializeField] private UIShellContentView contentSystem;
     [SerializeField] private UIRouterView router;
-
-    private bool legacyUiToolkitShellRootResolved;
-    private GameObject legacyUiToolkitShellRoot;
+    [SerializeField] private GameObject legacyUiToolkitShellRoot;
 
     public RuntimeUiConfig RuntimeUiConfig => runtimeUiConfig;
     public RuntimeUiMode UiMode => runtimeUiConfig != null ? runtimeUiConfig.Mode : RuntimeUiMode.Canvas;
@@ -96,13 +92,6 @@ public sealed class MenuBootstrapView : MonoBehaviour
 
     private void DisableLegacyUiToolkitShellRoot()
     {
-        if (!legacyUiToolkitShellRootResolved)
-        {
-            legacyUiToolkitShellRootResolved = true;
-            Transform legacyRootTransform = transform.Find(LegacyUiToolkitShellRootName);
-            legacyUiToolkitShellRoot = legacyRootTransform != null ? legacyRootTransform.gameObject : null;
-        }
-
         if (legacyUiToolkitShellRoot != null && legacyUiToolkitShellRoot.activeSelf)
             legacyUiToolkitShellRoot.SetActive(false);
     }

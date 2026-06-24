@@ -635,59 +635,6 @@ internal sealed class MatchBootstrapSystem
         fallbackPerformanceDiagnosticsInitialized = false;
     }
 
-    private void EnsureBuildingRuntimeBoundaryEntity()
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return;
-
-        EntityManager em = world.EntityManager;
-        if (_buildingRuntimeBoundaryEntity == Entity.Null || !em.Exists(_buildingRuntimeBoundaryEntity))
-        {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
-            if (!query.IsEmptyIgnoreFilter)
-            {
-                _buildingRuntimeBoundaryEntity = query.GetSingletonEntity();
-            }
-            else
-            {
-                _buildingRuntimeBoundaryEntity = em.CreateEntity();
-                em.SetName(_buildingRuntimeBoundaryEntity, "BuildingRuntimeBoundaryEntity");
-            }
-        }
-
-        EnsureBuildingRuntimeBoundaryBuffers(em, _buildingRuntimeBoundaryEntity);
-    }
-
-    private static void EnsureBuildingRuntimeBoundaryBuffers(EntityManager em, Entity entity)
-    {
-        if (!em.HasComponent<BuildingRuntimeBoundaryTag>(entity))
-            em.AddComponent<BuildingRuntimeBoundaryTag>(entity);
-        EnsureBuffer<BuildingConfiguredSpawnableReadModel>(em, entity);
-        EnsureBuffer<BuildingConfiguredUnitReadModel>(em, entity);
-        EnsureBuffer<BuildingProductionSlotReadModel>(em, entity);
-        EnsureBuffer<BuildingProductionSpawnRequest>(em, entity);
-        EnsureBuffer<BuildingRecentSpawnReservation>(em, entity);
-        EnsureBuffer<BuildingProducedUnitReadModel>(em, entity);
-        EnsureBuffer<MapVehiclePlacementReadModel>(em, entity);
-        EnsureBuffer<BuildingRuntimeFactionSummary>(em, entity);
-        EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>(em, entity);
-        EnsureBuffer<BuildingRuntimeUnitProductionSummary>(em, entity);
-        EnsureBuffer<BuildingFactionProductionSpawnPointReadModel>(em, entity);
-        EnsureBuffer<BuildingFactionRunwayReadModel>(em, entity);
-        EnsureBuffer<BuildingFactionUnitProductionRequest>(em, entity);
-        EnsureBuffer<BuildingFactionResourceSellRequest>(em, entity);
-        EnsureBuffer<BuildingRuntimeSpawnRequest>(em, entity);
-        EnsureBuffer<BuildingRuntimeSurfaceOverlay>(em, entity);
-    }
-
-    private static void EnsureBuffer<T>(EntityManager em, Entity entity)
-        where T : unmanaged, IBufferElementData
-    {
-        if (!em.HasBuffer<T>(entity))
-            em.AddBuffer<T>(entity);
-    }
-
     private void AdvanceGameplayStartPipeline()
     {
         if (!_gameplayStartRequested || _gameplayStartComplete)
@@ -974,7 +921,7 @@ internal sealed class MatchBootstrapSystem
             : null;
         _citizenPopulationReadModel = managedSystems.CitizenPopulationComposition?.ReadModel;
         _citizenPopulationEventSystem = managedSystems.CitizenPopulationComposition?.EventSystem;
-        EnsureBuildingRuntimeBoundaryEntity();
+        _buildingRuntimeBoundaryEntity = MatchBuildingRuntimeBoundaryBootstrapSystem.Ensure(_buildingRuntimeBoundaryEntity);
         ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld)?.SetWorldCamera(WorldCamera);
         _managedRuntimeInitialized = true;
         if (MainMenu != null)

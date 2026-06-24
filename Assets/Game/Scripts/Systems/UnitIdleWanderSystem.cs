@@ -4,7 +4,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 
 [BurstCompile]
-[UpdateAfter(typeof(UnitMoveVisualStateSystem))]
 [UpdateBefore(typeof(UnitPathfindingSystem))]
 public partial struct UnitIdleWanderSystem : ISystem
 {

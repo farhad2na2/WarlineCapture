@@ -29,7 +29,7 @@ Goal: split runtime city generation before adding more map/city gameplay, so lay
    - `RuntimeCitySpawnerSystem` commits roads through `RuntimeCityRoadBuildBridgeSystem`.
 
 5. Complete: Extract building plot selection
-   - Created `RuntimeCityBuildingPlotSystem`.
+   - Created `RuntimeCityBuildingPlotUtilitySystemHelper`.
    - Owns plot candidate data, roadside/entry/corridor/scatter plot planning, adjacent decoration origin planning, scatter plot selection, plot spacing checks, and plot-to-origin centering.
    - `RuntimeCitySpawnerSystem` owned the actual building/decor spawn loops until step 11 moved them behind `RuntimeCityBuildingSpawnSystem`.
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
-using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
+using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
 internal sealed class RuntimeCityBulkBuildingSpawnRoutineSystem

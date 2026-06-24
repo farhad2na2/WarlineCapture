@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using PlacementRequest = RuntimeCityBuildingPlacementPrefabSystemHelper.Request;
 using PlacementResult = RuntimeCityBuildingPlacementPrefabSystemHelper.Result;
-using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
+using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
 internal sealed class RuntimeCityBuildingPlacementPrefabSystemHelper

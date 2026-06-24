@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
-using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
+using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 
-internal sealed class RuntimeCityBuildingPlotSystem
+internal sealed class RuntimeCityBuildingPlotUtilitySystemHelper
 {
     private readonly RuntimeCityBuildingPlotState _state = new();
 

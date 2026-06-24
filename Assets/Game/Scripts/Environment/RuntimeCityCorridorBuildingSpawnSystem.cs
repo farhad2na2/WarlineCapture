@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
-using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
+using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 
 internal sealed class RuntimeCityCorridorBuildingSpawnSystem
 {

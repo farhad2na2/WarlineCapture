@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
+using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
 internal sealed class RuntimeCityEntryBuildingSpawnSystem

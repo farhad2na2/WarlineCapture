@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using Plan = RuntimeCityBulkPlotPlanSystem.Plan;
-using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
+using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 
 internal sealed class RuntimeCityBulkPlotPlanSystem
 {

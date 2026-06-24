@@ -12,7 +12,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityLayoutState _fallbackRuntimeCityLayout = new();
     private RuntimeCityRoadLayoutSystem _runtimeCityRoadLayoutSystem;
     private readonly RuntimeCityRoadLayoutState _fallbackRuntimeCityRoadLayout = new();
-    private RuntimeCityBuildingPlotSystem _runtimeCityBuildingPlotSystem;
+    private RuntimeCityBuildingPlotUtilitySystemHelper _runtimeCityBuildingPlotHelper;
     private readonly RuntimeCityBuildingPlotState _fallbackRuntimeCityBuildingPlot = new();
     private RuntimeCityWalkabilitySystem _runtimeCityWalkabilitySystem;
     private readonly RuntimeCityWalkabilityState _fallbackRuntimeCityWalkability = new();
@@ -404,10 +404,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityWalkabilitySystem ??= ResolveRuntimeCityWalkabilitySystem();
 
     private RuntimeCityBuildingPlotState RuntimeCityBuildingPlotState =>
-        RuntimeCityBuildingPlotSystem?.State ?? _fallbackRuntimeCityBuildingPlot;
+        RuntimeCityBuildingPlotHelper?.State ?? _fallbackRuntimeCityBuildingPlot;
 
-    private RuntimeCityBuildingPlotSystem RuntimeCityBuildingPlotSystem =>
-        _runtimeCityBuildingPlotSystem ??= ResolveRuntimeCityBuildingPlotSystem();
+    private RuntimeCityBuildingPlotUtilitySystemHelper RuntimeCityBuildingPlotHelper =>
+        _runtimeCityBuildingPlotHelper ??= ResolveRuntimeCityBuildingPlotHelper();
 
     private RuntimeCityBulkPlotPlanState RuntimeCityBulkPlotPlanState =>
         RuntimeCityBulkPlotPlanSystem?.State ?? _fallbackRuntimeCityBulkPlotPlan;
@@ -641,9 +641,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityWalkabilitySystem();
     }
 
-    private static RuntimeCityBuildingPlotSystem ResolveRuntimeCityBuildingPlotSystem()
+    private static RuntimeCityBuildingPlotUtilitySystemHelper ResolveRuntimeCityBuildingPlotHelper()
     {
-        return new RuntimeCityBuildingPlotSystem();
+        return new RuntimeCityBuildingPlotUtilitySystemHelper();
     }
 
     private static RuntimeCityBulkPlotPlanSystem ResolveRuntimeCityBulkPlotPlanSystem()

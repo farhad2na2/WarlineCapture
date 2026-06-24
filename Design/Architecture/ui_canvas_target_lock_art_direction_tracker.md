@@ -6,7 +6,7 @@ Update the existing Unity Canvas screens and popups to use the approved Target L
 This is a Canvas visual migration tracker. It is not a UI Toolkit rewrite, not an ECS task, and not a gameplay behavior migration.
 
 Last updated:
-2026-06-23
+2026-06-24
 
 Approved visual source:
 
@@ -18,18 +18,18 @@ Approved visual source:
 
 ## Progress Snapshot
 
-- Checklist progress: `72 / 158 complete (45.6%)`.
+- Checklist progress: `99 / 158 complete (62.7%)`.
 - In progress: `1`.
-- Remaining open: `86`.
-- Current target: `Phase 4 - SCN-08 Match HUD runtime-bound element inventory`.
+- Remaining open: `59`.
+- Current target: `Phase 5 - popup/modal sprite-only art-direction pass`.
 - Active Canvas shell/modal surfaces target-matched: `3 / 12`.
 - Secondary/reference Canvas popup surfaces target-matched: `1 / 6`.
 - Secondary/reference Canvas popup baseline captured or decisioned: `6 / 6`.
 - Shared Canvas chrome baseline status: `asset map and contact sheet complete; left-nav state seed applied to active Main Menu and Armory Canvas nav instances; Main Menu mode-card state seed applied; PopupFrameView shared modal seed and UIShellAppCanvas placeholder modal fallback seed applied; shared chrome material audit confirms default UI materials on seeded chrome`.
-- Button/selectable interaction standard status: `left-nav route button, Main Menu mode-card, Main Menu Inbox/Settings header actions, Main Menu deploy CTA, Main Menu commander profile hotspot, Armory catalog item card, Armory right action buttons, PopupFrame close-button, and shell placeholder close-button state seeds applied; broader non-SCN-02 button/card/selectable audit pending`.
+- Button/selectable interaction standard status: `active visible Button audit across Assets/Game/Prefabs/UI passes with 0 missing SpriteSwap state issues; left-nav route button, Main Menu mode-card, Main Menu Inbox/Settings header actions, Main Menu deploy CTA, Armory catalog item card, Armory right action buttons, PopupFrame close-button, shell placeholder close-button, SCN-08 Match HUD command/squad/transport/zoom/close buttons, SCN-08 Build Placement Bar buttons, SCN-08 Full Map buttons, SCN-09 Build Drawer buttons/cards/tabs, shell/legacy Mission Result buttons, and active popup close/confirm/action buttons have full highlighted/pressed/selected/disabled sprite states. Documented exceptions are inactive prototype buttons and transparent route Hotspot buttons that must remain nonvisual unless their owning screen is structurally reopened`.
 - Responsive CanvasScaler validation status: `SCN-02 Main Menu iteration 66 is user-approved after shadow captures passed at 1280x720, 1920x1080, 2400x1080, and 4800x2160; broader surface validation still pending`.
 - Performance validation status: `Phase 0 shadow batchmode baselines captured for Main Menu and Match HUD with Canvas active vs disabled; render counter recorder returned zero draw/batch values in batchmode, so real Game View/device profiling remains separate`.
-- Shadow-project validation status: `Canvas main menu/deploy UI fallback validation passed at 1280x720, 1920x1080, 2400x1080, and 4800x2160; 4800x2160, 1920x1080, and 2400x1080 captures passed for reachable Loading, Armory, Match HUD, Build Drawer, and Build Placement Bar surfaces; 4800x2160 captures passed for active Mission Result, Confirm Raid, End Of Day Report, and Intel Reveal modal prefabs; 4800x2160 captures passed for secondary/reference Ability Upgrade Detail, Build Placement Panel, Pause Menu, Popup Frame, Reward Unlock, and Threat Alert popup prefabs; Main Menu and Match HUD Canvas active/disabled performance baselines passed; shared left-nav state seed 4800x2160 Main Menu and Armory captures passed; Main Menu and Armory left-nav overlap validation passed at 1920x1080; Main Menu header/logo scale validation passed at 1280x720; Main Menu route smoke passed after mode-card state seed; PopupFrame target-lock seed 4800x2160 modal capture passed; Main Menu route smoke passed after UIShellAppCanvas placeholder modal fallback seed; SCN-02 Canvas Main Menu iteration 66 captured in the shadow project after rejected header-action/resource correction and approved by the user; SCN-19 Armory catalog-card iteration 11, right action-button iteration 12, right detail section iteration 13, footer-tab iteration 14, all-category iteration 16, and final all-aspect iteration 18 captures passed in the shadow project; SCN-03 Commander Profile static full-root iteration 13 captures passed at 1920x1080 and 2560x1080 in the shadow project. SCN-19 is counted target-matched for the current Canvas runtime behavior; its footer strip is a visual/data tab family with no active content-switching controller in the current Canvas prefab. SCN-03 is counted target-matched for the current prefab/static capture behavior; the runtime router still does not directly expose the content route`.
+- Shadow-project validation status: `Canvas main menu/deploy UI fallback validation passed at 1280x720, 1920x1080, 2400x1080, and 4800x2160; 4800x2160, 1920x1080, and 2400x1080 captures passed for reachable Loading, Armory, Match HUD, Build Drawer, and Build Placement Bar surfaces; 4800x2160 captures passed for active Mission Result, Confirm Raid, End Of Day Report, and Intel Reveal modal prefabs; 4800x2160 captures passed for secondary/reference Ability Upgrade Detail, Build Placement Panel, Pause Menu, Popup Frame, Reward Unlock, and Threat Alert popup prefabs; Main Menu and Match HUD Canvas active/disabled performance baselines passed; shared left-nav state seed 4800x2160 Main Menu and Armory captures passed; Main Menu and Armory left-nav overlap validation passed at 1920x1080; Main Menu header/logo scale validation passed at 1280x720; Main Menu route smoke passed after mode-card state seed; PopupFrame target-lock seed 4800x2160 modal capture passed; Main Menu route smoke passed after UIShellAppCanvas placeholder modal fallback seed; SCN-02 Canvas Main Menu iteration 66 captured in the shadow project after rejected header-action/resource correction and approved by the user; SCN-19 Armory catalog-card iteration 11, right action-button iteration 12, right detail section iteration 13, footer-tab iteration 14, all-category iteration 16, and final all-aspect iteration 18 captures passed in the shadow project; SCN-03 Commander Profile static full-root iteration 13 captures passed at 1920x1080 and 2560x1080 in the shadow project; graphics-enabled shadow captures passed after the SCN-08/SCN-09 sprite-only pass for Match HUD at 1920x1080, Build Drawer at 1920x1080, and Build Placement Bar at 1280x720, 1920x1080, 2400x1080, and 4800x2160; graphics-enabled shadow capture passed for active POP-05 Mission Result after replacing missing legacy sprite references with Target Lock sprite references; graphics-enabled shadow capture passed for Confirm Raid after replacing missing legacy sprite references and correcting the accidental gold backing; graphics-enabled shadow capture passed for Intel Reveal after replacing missing legacy sprite references; graphics-enabled shadow capture passed for End Of Day Report after replacing missing legacy sprite references; graphics-enabled shadow capture passed for Pause Menu after replacing missing legacy sprite references. SCN-19 is counted target-matched for the current Canvas runtime behavior; its footer strip is a visual/data tab family with no active content-switching controller in the current Canvas prefab. SCN-03 is counted target-matched for the current prefab/static capture behavior; the runtime router still does not directly expose the content route`.
 - Main-project validation status: `RuntimeUiConfig is now Canvas by default; no main-project capture validation yet`.
 
 Recent slice notes:
@@ -111,6 +111,24 @@ Recent slice notes:
 - Verified the shared left-navigation reuse contract for the Canvas Phase 2 pass: SCN-02 Main Menu and SCN-19 Armory use the same seeded left-nav style, while SCN-08 Match HUD remains excluded from menu nav/header reuse.
 - Captured focused Phase 2 shadow evidence under `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/phase2/`: Main Menu and Armory left-nav overlap at `1920x1080`, Main Menu header/logo scale at `1280x720`, and header/nav crop artifacts.
 - User locked the shared menu header after SCN-02 approval: every menu-adjacent Canvas screen must inherit the approved SCN-02 main menu header unchanged. Future menu-screen passes skip header target-matching unless the shared SCN-02 header itself is explicitly reopened by the user.
+- SCN-08 Match HUD runtime-bound inventory completed before visual edits. The protected shell install regions, root names, serialized component fields, Button target-graphic constraints, runtime-driven health/map/feedback fields, squad card selected-state sprite contract, and passenger drawer pooling contract are recorded at `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-08_MatchHUD/iteration_00/scn08_match_hud_runtime_bound_inventory.md`.
+- SCN-08 sprite-only Target Lock pass applied to the existing `SCN08_MatchHudContent.prefab` without hierarchy/layout restructuring: resource chips/icons, current-order rail/chevrons, objective/status/progress frames, selected-entity panel chrome, minimap/quick-rail panel chrome, command button frames/icons, squad card frames, squad portraits, and transport/action button families now use direct V02 sprite equivalents where available.
+- SCN-08 button state audit passed after the sprite-only pass: all `24` existing Button components now use SpriteSwap with non-empty highlighted, pressed, selected, and disabled sprites. Command and square buttons use the V02 square selected/default frame pair; transport/action buttons use the V02 rectangular selected/default pair; squad cards use the V02 squad-card selected/default pair.
+- SCN-08 remaining old-sprite audit is intentionally limited to gameplay/minimap marker sprites and icons with no direct V02 equivalent: board vehicle, jump arrow, shield/rank badge, minimap content, and tactical map marker/dot/pin/path/ring sprites. These were not replaced with unrelated art to avoid changing gameplay readability by guessing.
+- Active visible Canvas Button state sweep completed across `Assets/Game/Prefabs/UI`: secondary/reference popups, shell popups, SCN-08 Build Placement Confirmation Bar, SCN-08 Full Map, and SCN-09 Build Drawer now have non-empty highlighted, pressed, selected, and disabled SpriteSwap states using existing Target Lock rect/square/scn09 card/button state sprite pairs. The audit reports `0` active visible Button issues; remaining Button issues are intentionally excluded transparent `Hotspot` route hitboxes or inactive prototype objects.
+- SCN-08 Build Placement Confirmation Bar sprite-only pass completed without hierarchy or layout edits. The serialized panel frame, instruction strip, status chip, cancel/confirm rect buttons, and rotate square button now point to the SCN-08 V02 rail/chip/rect/square chrome family; active visible button state audit reports `0` issues for the bar.
+- SCN-09 Build Drawer sprite-only pass completed without drawer structure or behavior edits. The remaining old `Assets/Game/Art/UI/Panels` card/detail/button sprites were normalized to the existing generated `BuildDrawer/LayeredOneGo` drawer chrome where direct equivalents exist, with shared SCN-08 V02 square chrome only for the close button state. Active visible button state audit reports `0` issues for the drawer.
+- Shadow validation correction: `-nographics` route captures produced false-positive gray screenshots, so the accepted evidence for this slice is graphics-enabled shadow batchmode capture only.
+- SCN-08/SCN-09 graphics-enabled shadow captures passed after the sprite-only pass. Evidence: Match HUD `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-08_MatchHUD/iteration_02/shadow_canvas_scn08_match_hud_sprite_pass_graphics_1920x1080.png`, Build Drawer `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-09_BuildDrawer/iteration_01/shadow_canvas_scn09_build_drawer_sprite_pass_graphics_1920x1080.png`, and Build Placement Bar all-aspect contact `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-08_BuildPlacementConfirmationBar/iteration_01/scn08_build_placement_bar_sprite_pass_all_aspect_contact.png`.
+- Focused crop contacts were saved for the required command buttons, squad cards, drawer cards, drawer detail/queue sections, and build placement rail/button families. The squad-card crop shows no health/progress/value text overlap with the card chrome in the current seeded data.
+- SCN-09 behavior-only checks were validated without runtime or structure edits and recorded at `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/SCN-09_BuildDrawer/iteration_01/scn09_build_drawer_behavior_validation_note.md`. The current capture shows the empty production state, while existing runtime code paths show category changes repopulate card thumbnails, selected items update detail preview imagery, and no active card button/control chrome is clipped in the visible scroll rows.
+- POP-05 Mission Result active/runtime usage was reconciled: `UIShellAppCanvas.prefab` binds `Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab`, while `Assets/Game/Prefabs/UI/Shell/Popups/POP05_MissionResultPopup.prefab` remains reference/shell material. The active prefab had missing legacy sprite GUIDs and rendered as a white modal in the shadow capture; those missing structural/button/icon references were replaced with existing Target Lock sprite references without hierarchy, anchor, C#, or layout edits.
+- POP-05 graphics-enabled shadow captures now pass for the active runtime modal after the sprite-only repair. Evidence: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/POP-05_MissionResult/iteration_01/shadow_canvas_pop05_mission_result_small_check_1920x1080.png`.
+- Confirm Raid active modal sprite-only pass completed without hierarchy, anchor, C#, or layout edits. Missing legacy sprite references were replaced with existing Target Lock panel, row, button, and warning/icon sprites; the first capture exposed an accidental full-modal gold backing from an overbroad progress-fill sprite choice, which was corrected to dark panel chrome. Evidence: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/ConfirmRaid/iteration_01/shadow_canvas_confirm_raid_sprite_pass_dark2_1920x1080.png`.
+- Intel Reveal active modal sprite-only pass completed without hierarchy, anchor, C#, or layout edits. Missing legacy sprite references were replaced with existing Target Lock panel, row, thumbnail, action button, close button, warning, scan, and resource/icon sprites; the active visible button state audit remains clean. Evidence: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/IntelReveal/iteration_01/shadow_canvas_intel_reveal_sprite_pass_1920x1080.png`.
+- End Of Day Report active modal sprite-only pass completed without hierarchy, anchor, C#, or layout edits. Missing legacy sprite references were replaced with existing Target Lock frame, status row, meter, fill, resource, action button, and icon sprites; the active visible button state audit remains clean. Evidence: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/EndOfDayReport/iteration_01/shadow_canvas_end_of_day_sprite_pass_1920x1080.png`.
+- Pause Menu secondary/reference modal sprite-only pass completed without hierarchy, anchor, C#, or layout edits. Missing legacy sprite references were replaced with existing Target Lock frame, resume/action button, secondary button, close/settings/pause/scan/time icons, and panel sprites; the active visible button state audit remains clean. Evidence: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/PauseMenu/iteration_01/shadow_canvas_pause_menu_sprite_pass_1920x1080.png`.
+- Still wrong / next iteration: SCN-08 full HUD panel-by-panel validation remains open because the right quick-rail family can still clip at the right edge in the 1920x1080 static capture, which is a layout/anchoring issue outside the user's latest sprite-only scope. POP-05 Mission Result is no longer white/broken, but the active legacy modal still has oversized/cropped top victory imagery and cramped content scale caused by existing RectTransforms; do not fix these by structure changes unless the user reopens layout work. Confirm Raid is sprite-repaired, but its thumbnail/detail composition remains inherited from the existing modal layout and is not target-matched panel-by-panel under this scope. Intel Reveal and End Of Day Report are sprite-repaired, but their current modal captures are top-cropped by inherited prefab layout; do not fix by moving/resizing objects unless structure work is reopened. Pause Menu is sprite-repaired, but the command icons are oversized by inherited RectTransforms and were not resized under sprite-only scope. Next tracker action is the remaining Phase 5 secondary/reference popup sprite-only pass, starting with Threat Alert or Reward Unlock.
 
 ## Decision
 
@@ -497,24 +515,24 @@ Acceptance:
 Goal:
 Update gameplay Canvas surfaces without hurting runtime performance or gameplay bindings.
 
-- [ ] SCN-08 Match HUD: inventory every runtime-bound HUD element name before editing.
-- [ ] SCN-08 Match HUD: update unique gameplay header/resources/current-order area.
-- [ ] SCN-08 Match HUD: update selected-unit/selection details panel.
-- [ ] SCN-08 Match HUD: update objectives/status panels.
-- [ ] SCN-08 Match HUD: update minimap and right quick-rail panels.
-- [ ] SCN-08 Match HUD: update command buttons with visible hover/selected/focus/press impact states.
-- [ ] SCN-08 Match HUD: update all squad cards from one repeated template.
-- [ ] SCN-08 Match HUD: ensure selected squad state is a full chrome state, not a partial overlay.
-- [ ] SCN-08 Match HUD: ensure squad card health/progress/value text never overlaps chrome.
+- [x] SCN-08 Match HUD: inventory every runtime-bound HUD element name before editing.
+- [x] SCN-08 Match HUD: update unique gameplay header/resources/current-order area.
+- [x] SCN-08 Match HUD: update selected-unit/selection details panel.
+- [x] SCN-08 Match HUD: update objectives/status panels.
+- [x] SCN-08 Match HUD: update minimap and right quick-rail panels.
+- [x] SCN-08 Match HUD: update command buttons with visible hover/selected/focus/press impact states.
+- [x] SCN-08 Match HUD: update all squad cards from one repeated template.
+- [x] SCN-08 Match HUD: ensure selected squad state is a full chrome state, not a partial overlay.
+- [x] SCN-08 Match HUD: ensure squad card health/progress/value text never overlaps chrome.
 - [ ] SCN-08 Match HUD: validate all HUD panels panel-by-panel before moving on.
-- [ ] SCN-08 Build Placement Bar: update rail, preview, cost, time, rotate, cancel, and confirm controls.
-- [ ] SCN-08 Build Placement Bar: validate the bar stays readable and anchored at all target aspects.
-- [ ] SCN-09 Build Drawer Popup: update tabs, catalog cards, right detail, queue, and progress panels.
-- [ ] SCN-09 Build Drawer Popup: ensure build progress panel is hidden by default and only shown when active.
-- [ ] SCN-09 Build Drawer Popup: ensure tab changes update card portraits and selected detail imagery.
-- [ ] SCN-09 Build Drawer Popup: validate scrolling content has no clipped card buttons.
-- [ ] Capture focused crops for command buttons, squad cards, drawer cards, and build placement rail.
-- [ ] Run `git diff --check`.
+- [x] SCN-08 Build Placement Bar: update rail, preview, cost, time, rotate, cancel, and confirm controls.
+- [x] SCN-08 Build Placement Bar: validate the bar stays readable and anchored at all target aspects.
+- [x] SCN-09 Build Drawer Popup: update tabs, catalog cards, right detail, queue, and progress panels.
+- [x] SCN-09 Build Drawer Popup: ensure build progress panel is hidden by default and only shown when active.
+- [x] SCN-09 Build Drawer Popup: ensure tab changes update card portraits and selected detail imagery.
+- [x] SCN-09 Build Drawer Popup: validate scrolling content has no clipped card buttons.
+- [x] Capture focused crops for command buttons, squad cards, drawer cards, and build placement rail.
+- [x] Run `git diff --check`.
 
 Acceptance:
 
@@ -526,19 +544,19 @@ Acceptance:
 Goal:
 Bring Canvas popups into the same Target Lock modal language.
 
-- [ ] POP-05 Mission Result: reconcile shell popup vs legacy MissionResult popup usage.
+- [x] POP-05 Mission Result: reconcile shell popup vs legacy MissionResult popup usage.
 - [ ] POP-05 Mission Result: update modal frame, result header, stat rail, objectives, rewards, casualties, score, and footer actions.
 - [ ] POP-05 Mission Result: validate victory/defeat/neutral states.
-- [ ] Pause Menu: update frame, mission info, settings, resume, retry, quit, and footer controls if active.
+- [x] Pause Menu: update frame, mission info, settings, resume, retry, quit, and footer controls if active.
 - [ ] Threat Alert: update alert frame, icon, severity state, message, and action controls if active.
-- [ ] Confirm Raid: update confirmation frame, risk/reward rows, and confirm/cancel states if active.
+- [x] Confirm Raid: update confirmation frame, risk/reward rows, and confirm/cancel states if active.
 - [ ] Reward Unlock: update reward card, icon/portrait, rarity state, and claim controls if active.
-- [ ] Intel Reveal: update reveal panel, image, text hierarchy, and close/continue controls if active.
-- [ ] End Of Day Report: update summary sections, stat rows, charts, rewards, and action controls if active.
+- [x] Intel Reveal: update reveal panel, image, text hierarchy, and close/continue controls if active.
+- [x] End Of Day Report: update summary sections, stat rows, charts, rewards, and action controls if active.
 - [ ] Ability Upgrade Detail: update detail panel, upgrade rows, requirements, and action controls if active.
 - [ ] Build Placement Panel legacy popup: either retire as inactive or align with build placement shell style.
 - [x] PopupFrameView: make it the shared Target Lock modal foundation where feasible.
-- [ ] Ensure every popup close button has hover/focus/pressed states.
+- [x] Ensure every popup close button has hover/focus/pressed states.
 - [ ] Ensure every destructive or confirm action has distinct but consistent state styling.
 - [ ] Validate popup readability at 4800x2160.
 - [ ] Validate popup readability at 1920x1080.
@@ -555,11 +573,11 @@ Acceptance:
 Goal:
 Make controls feel premium without adding runtime polling or layout instability.
 
-- [ ] Audit every Button, Toggle, selectable card, tab, and row in active Canvas prefabs.
-- [ ] Add default, highlighted/hover, pressed, selected/current, disabled, and focused visuals where supported.
-- [ ] Use sprite-swap or color-tint transitions consistently per control family.
+- [x] Audit every Button, Toggle, selectable card, tab, and row in active Canvas prefabs.
+- [x] Add default, highlighted/hover, pressed, selected/current, disabled, and focused visuals where supported.
+- [x] Use sprite-swap or color-tint transitions consistently per control family.
 - [ ] Add subtle scale/impact animation only through existing Canvas selectable/animator mechanisms.
-- [ ] Confirm hover/selected states cover the full chrome frame where the mockup shows frame replacement.
+- [x] Confirm hover/selected states cover the full chrome frame where the mockup shows frame replacement.
 - [ ] Confirm state transitions do not move neighboring layout or cause overlap.
 - [ ] Confirm selected/current state can move to any repeated item at runtime.
 - [ ] Confirm disabled/locked state remains readable but clearly unavailable.

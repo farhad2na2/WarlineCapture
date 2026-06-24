@@ -41,11 +41,11 @@ Allowed temporary public/internal surface:
 - `public void EnsureCityHall(...)`
   - Target owner: `RuntimeCityHallSpawnSystem`.
 - `public IEnumerator SpawnCityBulkBuildingsRoutine(...)`
-  - Target owner: `RuntimeCityBulkBuildingSpawnRoutineSystem`.
+  - Target owner: `RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper`.
 - `public void SpawnCorridorEntranceBuildings(...)`
   - Target owner: `RuntimeCityCorridorBuildingSpawnSystem`.
 - `public sealed class GenerationRandomState`
-  - Target owner: `RuntimeCityGenerationRandomSystem` or a nested type on `RuntimeCityBulkBuildingSpawnRoutineSystem`.
+  - Target owner: `RuntimeCityGenerationRandomSystem` or a nested type on `RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper`.
 
 ## Architecture Rules
 
@@ -231,20 +231,20 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - `SpawnCityBulkBuildingsRoutine` now delegates both rural house and rural other-building scatter through the rural building spawn boundary.
 
 17. Complete: Extract bulk routine sequencing
-   - Create `RuntimeCityBulkBuildingSpawnRoutineSystem`.
+   - Create `RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper`.
    - Move coroutine sequencing and `yield return null` cadence for entry, roadside, rural, yard walls, other buildings, and decorations.
    - Preserve every existing yield point.
    - Expected output: `SpawnCityBulkBuildingsRoutine` becomes a coordinator delegate.
-   - Added `RuntimeCityBulkBuildingSpawnRoutineSystem` as the owner for the bulk building coroutine sequence and the existing eleven `yield return null` points.
+   - Added `RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper` as the owner for the bulk building coroutine sequence and the existing eleven `yield return null` points.
    - `RuntimeCityBuildingSpawnSystem.SpawnCityBulkBuildingsRoutine` now delegates to the routine system and passes only narrow yard-wall and decoration callbacks for domains that are extracted in later steps.
    - Entry, roadside, rural, yard-wall, other-building, and decoration sequencing now lives outside the coordinator without changing random-state handoff or yield cadence.
 
 18. Complete: Move `GenerationRandomState`
-   - Move the coroutine random-state bridge to `RuntimeCityBulkBuildingSpawnRoutineSystem` or `RuntimeCityGenerationRandomSystem`.
+   - Move the coroutine random-state bridge to `RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper` or `RuntimeCityGenerationRandomSystem`.
    - Update `RuntimeCityGenerationSystem` to use the new owner.
    - Preserve random state handoff back to `RuntimeCityGenerationSystem`.
    - Expected output: coordinator no longer owns coroutine random plumbing.
-   - `GenerationRandomState` now lives in `RuntimeCityBulkBuildingSpawnRoutineSystem`.
+   - `GenerationRandomState` now lives in `RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper`.
    - `RuntimeCityGenerationSystem` creates the bulk-routine random bridge, passes it into `SpawnCityBulkBuildingsRoutine`, and copies the updated value back after the coroutine returns.
    - `RuntimeCityBuildingSpawnSystem` no longer owns a nested random-state bridge type.
 

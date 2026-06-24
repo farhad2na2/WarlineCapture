@@ -255,7 +255,7 @@ internal sealed class RuntimeCityGenerationState
             {
                 if (cityConfig.GenerateBuildings)
                 {
-                    var bulkRng = new RuntimeCityBulkBuildingSpawnRoutineSystem.GenerationRandomState { Value = rng };
+                    var bulkRng = new RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.GenerationRandomState { Value = rng };
                     IEnumerator bulkRoutine = SpawnCityBulkBuildingsRoutine(context, cities[i], bulkRng);
                     while (bulkRoutine.MoveNext())
                         yield return null;
@@ -311,7 +311,7 @@ internal sealed class RuntimeCityGenerationState
             city.ReservedFootprints);
     }
 
-    private static IEnumerator SpawnCityBulkBuildingsRoutine(RuntimeCityGenerationSystem.Context context, CityLayoutData city, RuntimeCityBulkBuildingSpawnRoutineSystem.GenerationRandomState rng)
+    private static IEnumerator SpawnCityBulkBuildingsRoutine(RuntimeCityGenerationSystem.Context context, CityLayoutData city, RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.GenerationRandomState rng)
     {
         return context.BuildingSpawnSystems.BulkBuildingSpawnRoutineSystem.SpawnRoutine(
             context.BuildingSpawnContext,

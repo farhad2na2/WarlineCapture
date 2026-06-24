@@ -35,7 +35,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityRoadsideBuildingSpawnState _fallbackRuntimeCityRoadsideBuildingSpawn = new();
     private RuntimeCityRuralBuildingSpawnSystem _runtimeCityRuralBuildingSpawnSystem;
     private readonly RuntimeCityRuralBuildingSpawnState _fallbackRuntimeCityRuralBuildingSpawn = new();
-    private RuntimeCityBulkBuildingSpawnRoutineSystem _runtimeCityBulkBuildingSpawnRoutineSystem;
+    private RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper _runtimeCityBulkBuildingSpawnRoutineHelper;
     private readonly RuntimeCityBulkBuildingSpawnRoutineState _fallbackRuntimeCityBulkBuildingSpawnRoutine = new();
     private RuntimeCityCorridorBuildingSpawnSystem _runtimeCityCorridorBuildingSpawnSystem;
     private readonly RuntimeCityCorridorBuildingSpawnState _fallbackRuntimeCityCorridorBuildingSpawn = new();
@@ -458,10 +458,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityRuralBuildingSpawnSystem ??= ResolveRuntimeCityRuralBuildingSpawnSystem();
 
     private RuntimeCityBulkBuildingSpawnRoutineState RuntimeCityBulkBuildingSpawnRoutineState =>
-        RuntimeCityBulkBuildingSpawnRoutineSystem?.State ?? _fallbackRuntimeCityBulkBuildingSpawnRoutine;
+        RuntimeCityBulkBuildingSpawnRoutineHelper?.State ?? _fallbackRuntimeCityBulkBuildingSpawnRoutine;
 
-    private RuntimeCityBulkBuildingSpawnRoutineSystem RuntimeCityBulkBuildingSpawnRoutineSystem =>
-        _runtimeCityBulkBuildingSpawnRoutineSystem ??= ResolveRuntimeCityBulkBuildingSpawnRoutineSystem();
+    private RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper RuntimeCityBulkBuildingSpawnRoutineHelper =>
+        _runtimeCityBulkBuildingSpawnRoutineHelper ??= ResolveRuntimeCityBulkBuildingSpawnRoutineHelper();
 
     private RuntimeCityCorridorBuildingSpawnState RuntimeCityCorridorBuildingSpawnState =>
         RuntimeCityCorridorBuildingSpawnSystem?.State ?? _fallbackRuntimeCityCorridorBuildingSpawn;
@@ -686,9 +686,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityRuralBuildingSpawnSystem();
     }
 
-    private static RuntimeCityBulkBuildingSpawnRoutineSystem ResolveRuntimeCityBulkBuildingSpawnRoutineSystem()
+    private static RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper ResolveRuntimeCityBulkBuildingSpawnRoutineHelper()
     {
-        return new RuntimeCityBulkBuildingSpawnRoutineSystem();
+        return new RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper();
     }
 
     private static RuntimeCityCorridorBuildingSpawnSystem ResolveRuntimeCityCorridorBuildingSpawnSystem()

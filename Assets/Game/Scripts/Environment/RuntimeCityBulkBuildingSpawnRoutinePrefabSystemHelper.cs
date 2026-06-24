@@ -5,7 +5,7 @@ using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityBulkBuildingSpawnRoutineSystem
+internal sealed class RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper
 {
     private readonly RuntimeCityBulkBuildingSpawnRoutineState _state = new();
 
@@ -80,9 +80,9 @@ internal sealed class RuntimeCityBulkBuildingSpawnRoutineState
         CityLayoutData city,
         GridConfig grid,
         int roadCellSizeInGridCells,
-        RuntimeCityBulkBuildingSpawnRoutineSystem.GenerationRandomState rng,
-        RuntimeCityBulkBuildingSpawnRoutineSystem.PlaceHouseYardWallsAction placeHouseYardWalls,
-        RuntimeCityBulkBuildingSpawnRoutineSystem.PlaceCityDecorationBuildingsAction placeCityDecorationBuildings)
+        RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.GenerationRandomState rng,
+        RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.PlaceHouseYardWallsAction placeHouseYardWalls,
+        RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.PlaceCityDecorationBuildingsAction placeCityDecorationBuildings)
     {
         RuntimeCityConfigSystem.Snapshot config = context.Config;
         Vector2Int centerRoadCell = city.CenterRoadCell;

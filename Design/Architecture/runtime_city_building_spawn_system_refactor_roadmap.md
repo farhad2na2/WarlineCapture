@@ -43,7 +43,7 @@ Allowed temporary public/internal surface:
 - `public IEnumerator SpawnCityBulkBuildingsRoutine(...)`
   - Target owner: `RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper`.
 - `public void SpawnCorridorEntranceBuildings(...)`
-  - Target owner: `RuntimeCityCorridorBuildingSpawnSystem`.
+  - Target owner: `RuntimeCityCorridorBuildingSpawnPrefabSystemHelper`.
 - `public sealed class GenerationRandomState`
   - Target owner: `RuntimeCityGenerationRandomSystem` or a nested type on `RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper`.
 
@@ -251,11 +251,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
 ## Phase 5: Corridor Entrance Buildings
 
 19. Complete: Extract corridor entrance placement
-   - Create `RuntimeCityCorridorBuildingSpawnSystem`.
+   - Create `RuntimeCityCorridorBuildingSpawnPrefabSystemHelper`.
    - Move `SpawnCorridorEntranceBuildings`.
    - Preserve corridor plot building, shuffle, shop/house counts, labels, descriptions, spacing, and reservation behavior.
    - Expected output: corridor-side buildings have one owner.
-   - Added `RuntimeCityCorridorBuildingSpawnSystem` as the owner for corridor entrance shop/house placement.
+   - Added `RuntimeCityCorridorBuildingSpawnPrefabSystemHelper` as the owner for corridor entrance shop/house placement.
    - `RuntimeCityBuildingSpawnSystem.SpawnCorridorEntranceBuildings` now delegates to the corridor system while preserving the existing public method.
    - Corridor plot building, shuffle, counts, labels, descriptions, zero spacing, and reserved-footprint placement calls were moved unchanged.
 
@@ -264,7 +264,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Keep generation sequencing unchanged.
    - Expected output: corridor placement is no longer implemented by `RuntimeCityBuildingSpawnSystem`.
    - `RuntimeCityCompositionSystem` now owns and passes the explicit building-spawn context, stateless placement system, and corridor spawn system into generation.
-   - `RuntimeCityGenerationSystem` now calls `RuntimeCityCorridorBuildingSpawnSystem.SpawnCorridorEntranceBuildings` directly for corridor-side buildings.
+   - `RuntimeCityGenerationSystem` now calls `RuntimeCityCorridorBuildingSpawnPrefabSystemHelper.SpawnCorridorEntranceBuildings` directly for corridor-side buildings.
    - `RuntimeCityBuildingSpawnSystem.SpawnCorridorEntranceBuildings` remains only as a compatibility wrapper for callers that have not migrated yet.
 
 ## Phase 6: Yard Walls

@@ -3,7 +3,7 @@ using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 
-internal sealed class RuntimeCityCorridorBuildingSpawnSystem
+internal sealed class RuntimeCityCorridorBuildingSpawnPrefabSystemHelper
 {
     private readonly RuntimeCityCorridorBuildingSpawnState _state = new();
 

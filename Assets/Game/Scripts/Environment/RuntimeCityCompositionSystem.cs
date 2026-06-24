@@ -37,7 +37,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityRuralBuildingSpawnState _fallbackRuntimeCityRuralBuildingSpawn = new();
     private RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper _runtimeCityBulkBuildingSpawnRoutineHelper;
     private readonly RuntimeCityBulkBuildingSpawnRoutineState _fallbackRuntimeCityBulkBuildingSpawnRoutine = new();
-    private RuntimeCityCorridorBuildingSpawnSystem _runtimeCityCorridorBuildingSpawnSystem;
+    private RuntimeCityCorridorBuildingSpawnPrefabSystemHelper _runtimeCityCorridorBuildingSpawnHelper;
     private readonly RuntimeCityCorridorBuildingSpawnState _fallbackRuntimeCityCorridorBuildingSpawn = new();
     private RuntimeCityYardWallPlanSystem _runtimeCityYardWallPlanSystem;
     private readonly RuntimeCityYardWallPlanState _fallbackRuntimeCityYardWallPlan = new();
@@ -464,10 +464,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityBulkBuildingSpawnRoutineHelper ??= ResolveRuntimeCityBulkBuildingSpawnRoutineHelper();
 
     private RuntimeCityCorridorBuildingSpawnState RuntimeCityCorridorBuildingSpawnState =>
-        RuntimeCityCorridorBuildingSpawnSystem?.State ?? _fallbackRuntimeCityCorridorBuildingSpawn;
+        RuntimeCityCorridorBuildingSpawnPrefabSystemHelper?.State ?? _fallbackRuntimeCityCorridorBuildingSpawn;
 
-    private RuntimeCityCorridorBuildingSpawnSystem RuntimeCityCorridorBuildingSpawnSystem =>
-        _runtimeCityCorridorBuildingSpawnSystem ??= ResolveRuntimeCityCorridorBuildingSpawnSystem();
+    private RuntimeCityCorridorBuildingSpawnPrefabSystemHelper RuntimeCityCorridorBuildingSpawnPrefabSystemHelper =>
+        _runtimeCityCorridorBuildingSpawnHelper ??= ResolveRuntimeCityCorridorBuildingSpawnPrefabSystemHelper();
 
     private RuntimeCityYardWallPlanState RuntimeCityYardWallPlanState =>
         RuntimeCityYardWallPlanSystem?.State ?? _fallbackRuntimeCityYardWallPlan;
@@ -691,9 +691,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper();
     }
 
-    private static RuntimeCityCorridorBuildingSpawnSystem ResolveRuntimeCityCorridorBuildingSpawnSystem()
+    private static RuntimeCityCorridorBuildingSpawnPrefabSystemHelper ResolveRuntimeCityCorridorBuildingSpawnPrefabSystemHelper()
     {
-        return new RuntimeCityCorridorBuildingSpawnSystem();
+        return new RuntimeCityCorridorBuildingSpawnPrefabSystemHelper();
     }
 
     private static RuntimeCityYardWallPlanSystem ResolveRuntimeCityYardWallPlanSystem()

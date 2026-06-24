@@ -27,7 +27,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityHallSpawnState _fallbackRuntimeCityHallSpawn = new();
     private RuntimeCityLandmarkSpawnSystem _runtimeCityLandmarkSpawnSystem;
     private readonly RuntimeCityLandmarkSpawnState _fallbackRuntimeCityLandmarkSpawn = new();
-    private RuntimeCityBulkPlotPlanSystem _runtimeCityBulkPlotPlanSystem;
+    private RuntimeCityBulkPlotPlanUtilitySystemHelper _runtimeCityBulkPlotPlanHelper;
     private readonly RuntimeCityBulkPlotPlanState _fallbackRuntimeCityBulkPlotPlan = new();
     private RuntimeCityEntryBuildingSpawnSystem _runtimeCityEntryBuildingSpawnSystem;
     private readonly RuntimeCityEntryBuildingSpawnState _fallbackRuntimeCityEntryBuildingSpawn = new();
@@ -410,10 +410,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityBuildingPlotHelper ??= ResolveRuntimeCityBuildingPlotHelper();
 
     private RuntimeCityBulkPlotPlanState RuntimeCityBulkPlotPlanState =>
-        RuntimeCityBulkPlotPlanSystem?.State ?? _fallbackRuntimeCityBulkPlotPlan;
+        RuntimeCityBulkPlotPlanHelper?.State ?? _fallbackRuntimeCityBulkPlotPlan;
 
-    private RuntimeCityBulkPlotPlanSystem RuntimeCityBulkPlotPlanSystem =>
-        _runtimeCityBulkPlotPlanSystem ??= ResolveRuntimeCityBulkPlotPlanSystem();
+    private RuntimeCityBulkPlotPlanUtilitySystemHelper RuntimeCityBulkPlotPlanHelper =>
+        _runtimeCityBulkPlotPlanHelper ??= ResolveRuntimeCityBulkPlotPlanHelper();
 
     private RuntimeCityPrefabSelectionState RuntimeCityPrefabSelectionState =>
         RuntimeCityPrefabSelectionSystem?.State ?? _fallbackRuntimeCityPrefabSelection;
@@ -646,9 +646,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityBuildingPlotUtilitySystemHelper();
     }
 
-    private static RuntimeCityBulkPlotPlanSystem ResolveRuntimeCityBulkPlotPlanSystem()
+    private static RuntimeCityBulkPlotPlanUtilitySystemHelper ResolveRuntimeCityBulkPlotPlanHelper()
     {
-        return new RuntimeCityBulkPlotPlanSystem();
+        return new RuntimeCityBulkPlotPlanUtilitySystemHelper();
     }
 
     private static RuntimeCityPrefabSelectionSystem ResolveRuntimeCityPrefabSelectionSystem()

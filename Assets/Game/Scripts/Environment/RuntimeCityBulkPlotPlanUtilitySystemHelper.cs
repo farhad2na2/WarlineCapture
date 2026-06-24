@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
-using Plan = RuntimeCityBulkPlotPlanSystem.Plan;
+using Plan = RuntimeCityBulkPlotPlanUtilitySystemHelper.Plan;
 using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 
-internal sealed class RuntimeCityBulkPlotPlanSystem
+internal sealed class RuntimeCityBulkPlotPlanUtilitySystemHelper
 {
     private readonly RuntimeCityBulkPlotPlanState _state = new();
 

@@ -195,11 +195,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
 ## Phase 4: Bulk Roadside And Rural Buildings
 
 13. Complete: Extract bulk plot planning
-   - Create `RuntimeCityBulkPlotPlanSystem`.
+   - Create `RuntimeCityBulkPlotPlanUtilitySystemHelper`.
    - Move central, outer, and entry plot collection plus shuffling.
    - Preserve plot ranges, entry-road behavior, and shuffle order.
    - Expected output: bulk generation has explicit plot-plan data.
-   - Added `RuntimeCityBulkPlotPlanSystem` with an explicit `Plan` result for central, outer, and entry plots.
+   - Added `RuntimeCityBulkPlotPlanUtilitySystemHelper` with an explicit `Plan` result for central, outer, and entry plots.
    - Moved central, outer, and entry plot collection plus central-then-outer-then-entry shuffling out of `RuntimeCityBuildingSpawnSystem`.
    - `SpawnCityBulkBuildingsRoutine` now consumes the explicit plot plan before preserving the existing building placement sequence and yield cadence.
 

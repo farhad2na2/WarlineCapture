@@ -90,7 +90,7 @@ internal sealed class RuntimeCityBulkBuildingSpawnRoutineState
         HashSet<Vector2Int> roadCells = city.RoadCells;
         List<ReservedFootprint> reservedFootprints = city.ReservedFootprints;
 
-        RuntimeCityBulkPlotPlanSystem.Plan plotPlan = plotPlanSystem.CreatePlan(context, city, townRadius, roadCells, centerRoadCell, ref rng.Value);
+        RuntimeCityBulkPlotPlanUtilitySystemHelper.Plan plotPlan = plotPlanSystem.CreatePlan(context, city, townRadius, roadCells, centerRoadCell, ref rng.Value);
         List<PlotCandidate> centralPlots = plotPlan.CentralPlots;
         List<PlotCandidate> outerPlots = plotPlan.OuterPlots;
         List<PlotCandidate> entryPlots = plotPlan.EntryPlots;

@@ -7,6 +7,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct UnitTransportRopeDisembarkSystem : ISystem
 {
     private const int RopeDropClearanceCells = 2;
@@ -479,6 +480,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
     }
 }
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct UnitTransportRopeDropSystem : ISystem
 {
     private MapSurfaceSpawnGrounding _spawnGroundingSystem;
@@ -839,6 +841,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
 
 }
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct UnitTransportRopeDisperseSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

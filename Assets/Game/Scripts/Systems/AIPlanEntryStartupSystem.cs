@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct AIPlanEntryStartupSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

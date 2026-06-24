@@ -1,6 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 internal partial struct BuildingGridCompositionSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

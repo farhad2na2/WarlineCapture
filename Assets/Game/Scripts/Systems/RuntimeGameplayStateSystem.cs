@@ -2,6 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct RuntimeGameplayStateSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

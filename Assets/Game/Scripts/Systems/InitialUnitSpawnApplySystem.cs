@@ -3,6 +3,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [DisableAutoCreation]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct InitialUnitSpawnApplySystem : ISystem
 {
     public void OnCreate(ref SystemState state)

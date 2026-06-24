@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Transforms;
 
 [BurstCompile]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct UnitGridSnapSystem : ISystem
 {
     [BurstCompile]

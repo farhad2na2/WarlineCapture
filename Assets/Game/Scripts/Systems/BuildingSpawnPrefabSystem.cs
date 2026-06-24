@@ -1,6 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 internal partial struct BuildingSpawnPrefabSystem : ISystem
 {
     public readonly struct Context

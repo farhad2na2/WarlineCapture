@@ -15,6 +15,7 @@ public readonly struct InitialFactionSpawnCellFallbackEntry
     }
 }
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct InitialFactionSpawnCellSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

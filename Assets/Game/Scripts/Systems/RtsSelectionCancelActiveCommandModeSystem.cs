@@ -1,6 +1,7 @@
 using Unity.Entities;
 
 [DisableAutoCreation]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct RtsSelectionCancelActiveCommandModeSystem : ISystem
 {
     private EntityQuery _commandQueueQuery;

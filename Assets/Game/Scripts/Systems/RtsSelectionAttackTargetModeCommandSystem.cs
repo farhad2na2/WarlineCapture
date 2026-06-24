@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [DisableAutoCreation]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct RtsSelectionAttackTargetModeCommandSystem : ISystem
 {
     private EntityQuery _commandQueueQuery;

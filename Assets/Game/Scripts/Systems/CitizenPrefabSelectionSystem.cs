@@ -1,6 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 internal partial struct CitizenPrefabSelectionSystem : ISystem
 {
     public struct State

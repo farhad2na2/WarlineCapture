@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct AIEconomySystem : ISystem
 {
     private const float MinSellBarrels = 1f;

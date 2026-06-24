@@ -2,6 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct BuildingTargetMoveOrderSystem : ISystem
 {
     private EntityQuery _queueQuery;

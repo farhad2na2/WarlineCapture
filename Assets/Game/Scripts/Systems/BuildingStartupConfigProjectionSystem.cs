@@ -1,5 +1,6 @@
 using Unity.Entities;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 internal partial struct BuildingStartupConfigProjectionSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

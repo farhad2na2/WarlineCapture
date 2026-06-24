@@ -15,6 +15,7 @@ public struct VisibleUnitSelectionCandidateElement : IBufferElementData
     public byte IsVehicle;
 }
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct VisibleUnitSelectionCandidateSystem : ISystem
 {
     private EntityQuery _visiblePlayerUnitQuery;

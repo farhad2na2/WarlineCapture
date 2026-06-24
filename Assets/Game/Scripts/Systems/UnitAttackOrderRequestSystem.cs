@@ -2,6 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct UnitAttackOrderRequestSystem : ISystem
 {
     private EntityQuery _queueQuery;

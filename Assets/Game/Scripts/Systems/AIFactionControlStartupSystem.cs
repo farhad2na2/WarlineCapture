@@ -19,6 +19,7 @@ public readonly struct AIFactionControlStartupEntry
     }
 }
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct AIFactionControlStartupSystem : ISystem
 {
     public readonly struct Result

@@ -2,6 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 
 [DisableAutoCreation]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct RtsSelectionDeselectAllCommandSystem : ISystem
 {
     private EntityQuery _commandQueueQuery;

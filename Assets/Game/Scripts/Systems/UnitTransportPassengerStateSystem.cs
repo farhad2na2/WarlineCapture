@@ -2,6 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 
 [DisableAutoCreation]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct UnitTransportPassengerStateSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

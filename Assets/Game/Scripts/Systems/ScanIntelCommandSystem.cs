@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct ScanIntelCommandSystem : ISystem
 {
     public const int DefaultScanRadiusCells = 12;

@@ -2,6 +2,7 @@ using System;
 using Unity.Collections;
 using Unity.Entities;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 internal partial struct CitizenPrefabSystem : ISystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);

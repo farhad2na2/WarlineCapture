@@ -3,6 +3,7 @@ using Unity.Mathematics;
 using UnityEngine;
 
 [DisableAutoCreation]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct RtsSelectionModeCommandSystem : ISystem
 {
     private EntityQuery _commandQueueQuery;

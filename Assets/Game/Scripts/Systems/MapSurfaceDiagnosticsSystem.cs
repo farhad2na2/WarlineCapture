@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Jobs;
 
 [BurstCompile]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct MapSurfaceDiagnosticsSystem : ISystem
 {
     private const double DiagnosticsIntervalSeconds = 1d;

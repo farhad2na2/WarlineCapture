@@ -1,5 +1,6 @@
 using Unity.Entities;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct RuntimeDiagnosticsSystem : ISystem
 {
     private bool _hasCachedLegacyState;

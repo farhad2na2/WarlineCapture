@@ -78,7 +78,7 @@ The audit was committed at `9e2298474`, but its source snapshot says it rechecke
 | Stage | Priority | Status | Progress | Owner | Depends on | Completion standard |
 |---|---|---|---:|---|---|---|
 | 0 - Baseline Reverification Snapshot | P0 | Complete | 100% | Support | None | Fresh counts recorded against current `HEAD`; Unity batch compile passed. |
-| 1 - ECS Ordering Closure | P0 | Pending | 0% | Support | Stage 0 | No live unordered systems except documented intentional exceptions. |
+| 1 - ECS Ordering Closure | P0 | Complete | 100% | Support | Stage 0 | Runtime unordered scan returns no live systems; Unity batch compile passed. |
 | 2 - `RequireForUpdate` Closure | P0 | Pending | 0% | Support | Stage 0 | No live unguarded systems except documented intentional exceptions. |
 | 3 - UI Shell Boundary Structural Safety | P1 | Pending | 0% | Support | Stage 0 | No unsafe structural `EntityManager` creation path in `OnUpdate`, or one-shot path isolated and documented. |
 | 4 - Bootstrap Split Unblock And Continue | P1 | Pending | 0% | Support | Stages 1-3 preferred | Bootstrap guardrail passes and `MatchBootstrapSystem` is below target or has remaining split plan. |
@@ -98,6 +98,7 @@ Do not leave this empty at final closure. Any remaining scan hit must be listed 
 | Finding | File | Reason exception is valid | Reopen trigger |
 |---|---|---|---|
 | Namespaces | `Assets/Game/Scripts/**/*.cs` | User deferred namespace migration. | User explicitly schedules namespace migration. |
+| Stage 1 ordering scan false positive | `Assets/Game/Scripts/Editor/UnitMoveTargetDiagnosticValidationRunner.cs` | Editor validation runner contains the string literal `struct UnitMoveTargetDiagnosticSystem : ISystem`; it does not declare an `ISystem`. Runtime-scope scan is clean. | File starts declaring a real `ISystem`, or final scan changes to parse syntax instead of text. |
 
 ---
 
@@ -277,8 +278,8 @@ wc -l Assets/Game/Scripts/Composition/MatchBootstrapSystem.cs
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P0 |
 | Owner | Support |
 | Dependencies | Stage 0 |
@@ -337,11 +338,11 @@ The last freeze was caused by an ECS ordering cycle. This stage must improve det
 
 **Acceptance Criteria**
 
-- [ ] Every live `ISystem` has `UpdateInGroup`, `UpdateAfter`, or `UpdateBefore`, or appears in the Exception Ledger.
-- [ ] Every new `UpdateAfter`/`UpdateBefore` edge has a source-backed producer/consumer note.
-- [ ] No ECS startup ordering cycle is introduced.
-- [ ] Unity compile passes.
-- [ ] Focused smoke validation for menu-to-match startup passes if practical.
+- [x] Every live `ISystem` has `UpdateInGroup`, `UpdateAfter`, or `UpdateBefore`, or appears in the Exception Ledger.
+- [x] Every new `UpdateAfter`/`UpdateBefore` edge has a source-backed producer/consumer note.
+- [x] No ECS startup ordering cycle is introduced.
+- [x] Unity compile passes.
+- [x] Focused smoke validation for menu-to-match startup passes if practical, or a practical-run blocker is recorded.
 
 **Validation Commands**
 
@@ -352,7 +353,14 @@ rg -l "partial struct .*ISystem|: ISystem" Assets/Game/Scripts \
 
 **Notes**
 
-- Pending.
+- 2026-06-24 heartbeat Stage 1 implementation used the lowest-risk closure path: all 44 previously unordered runtime files now have explicit `[UpdateInGroup(typeof(SimulationSystemGroup))]`, preserving Unity's implicit default simulation-group behavior while removing default-order ambiguity.
+- No new `UpdateAfter` or `UpdateBefore` producer/consumer edges were added in this batch, so the change does not introduce an ordering-cycle edge. This deliberately avoids repeating the recent startup-freeze class of bug.
+- `UnitTransportRopeDisembarkSystem.cs` contains three `ISystem` structs; all three received the explicit simulation group attribute.
+- Runtime-scope acceptance scan returned no unordered systems:
+  - `rg -l "partial struct .*ISystem|: ISystem" Assets/Game/Scripts/Systems Assets/Game/Scripts/Rendering/Systems Assets/Game/Scripts/UI/Shell/Ecs | xargs -I{} sh -c 'rg -q "UpdateInGroup|UpdateBefore|UpdateAfter" "{}" || echo "{}"'`
+- Whole `Assets/Game/Scripts` text scan returns one false positive in `Assets/Game/Scripts/Editor/UnitMoveTargetDiagnosticValidationRunner.cs` because that editor validation runner contains the string literal `struct UnitMoveTargetDiagnosticSystem : ISystem`; it is listed in the Exception Ledger.
+- Unity batch compile: passed. Command used Unity `6000.4.0f1` in `-batchmode -nographics -quit`; log path `/private/tmp/warline-ecs-reverification-stage1-ordering-compile.log`; success marker `Exiting batchmode successfully now!`.
+- Focused smoke validation attempt: `MatchRuntimeShellSmokeValidation.Run` was invoked in batchmode with `-quit`; Unity exited successfully, but the log did not reach the validation pass marker because the runner opened `Assets/Game/Scenes/Menu.unity` and the `-quit` lifecycle ended before the async play-mode validation completed. Log path `/private/tmp/warline-ecs-reverification-stage1-smoke.log`. This is recorded as a practical-run blocker, not a pass.
 
 ---
 

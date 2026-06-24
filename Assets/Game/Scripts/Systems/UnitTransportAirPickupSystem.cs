@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [DisableAutoCreation]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct UnitTransportAirPickupSystem : ISystem
 {
     private const float AirBoardingGroundedHeightTolerance = TransportBoardingData.AirBoardingGroundedHeightTolerance;

@@ -1,5 +1,6 @@
 using Unity.Entities;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 internal partial struct BuildingPlacementQueryCompositionSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

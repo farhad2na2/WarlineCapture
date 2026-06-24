@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Debug = UnityEngine.Debug;
 
 [DisableAutoCreation]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct UnitMoveOrderSystem : ISystem
 {
     private const int ManualMoveGoalSearchRadiusInfantry = 12;

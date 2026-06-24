@@ -1,6 +1,7 @@
 using Unity.Entities;
 
 [DisableAutoCreation]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct InitialUnitSpawnResetSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

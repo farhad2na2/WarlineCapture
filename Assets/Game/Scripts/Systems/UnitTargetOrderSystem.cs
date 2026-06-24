@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [DisableAutoCreation]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct UnitTargetOrderSystem : ISystem
 {
     public delegate bool TryResolveBaseBreachTargetDelegate(

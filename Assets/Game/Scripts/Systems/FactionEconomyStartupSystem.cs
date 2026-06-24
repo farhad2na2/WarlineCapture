@@ -34,6 +34,7 @@ public readonly struct FactionEconomyStartupEntry
     }
 }
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct FactionEconomyStartupSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

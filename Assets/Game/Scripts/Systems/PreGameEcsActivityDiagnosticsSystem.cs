@@ -1,6 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct PreGameEcsActivityDiagnosticsSystem : ISystem
 {
     private const int LogIntervalFrames = 120;

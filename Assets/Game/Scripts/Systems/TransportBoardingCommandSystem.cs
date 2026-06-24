@@ -186,6 +186,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
             ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>(),
             ComponentType.ReadWrite<RtsSelectionCommandResultElement>());
         EnsureEntityQueries(state.EntityManager);
+        state.RequireForUpdate(_commandQueueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

@@ -134,6 +134,7 @@ public partial struct ScanIntelCommandSystem : ISystem
         _transformType = state.GetComponentTypeHandle<LocalTransform>(true);
         _buildingInfoType = state.GetComponentTypeHandle<RuntimeBuildingCombatInfo>(true);
         EnsureCommandEntity(state.EntityManager, _queueQuery);
+        state.RequireForUpdate(_queueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

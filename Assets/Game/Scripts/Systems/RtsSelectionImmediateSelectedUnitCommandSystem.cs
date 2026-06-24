@@ -25,6 +25,7 @@ public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
             ComponentType.ReadOnly<SelectedUnitTag>(),
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<UnitMove>());
+        state.RequireForUpdate(_commandQueueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

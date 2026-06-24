@@ -19,6 +19,7 @@ public partial struct RtsSelectionMissileLauncherRadarAttackCommandSystem : ISys
         _commandQueueQuery = state.GetEntityQuery(
             ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
             ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
+        state.RequireForUpdate(_commandQueueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

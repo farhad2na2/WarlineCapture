@@ -22,6 +22,7 @@ public partial struct UnitAttackOrderRequestSystem : ISystem
             ComponentType.ReadOnly<LocalTransform>());
         _entityType = state.GetEntityTypeHandle();
         EnsureCommandEntity(state.EntityManager, _queueQuery);
+        state.RequireForUpdate(_queueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

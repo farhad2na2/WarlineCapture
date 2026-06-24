@@ -16,6 +16,7 @@ public partial struct RtsSelectionMoveTargetModeCommandSystem : ISystem
             ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
         _runtimeStateQuery = state.GetEntityQuery(ComponentType.ReadWrite<RuntimeGameplayStateComponent>());
         _selectedMoveQuery = CreateSelectedMoveQuery(ref state);
+        state.RequireForUpdate(_commandQueueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

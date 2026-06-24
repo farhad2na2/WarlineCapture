@@ -13,6 +13,7 @@ public partial struct RtsSelectionDeselectAllCommandSystem : ISystem
             ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
             ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
         _selectedUnitQuery = state.GetEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+        state.RequireForUpdate(_commandQueueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

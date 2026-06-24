@@ -47,9 +47,10 @@ Static source scan from 2026-06-24:
 |---|---:|
 | Total stages | 12 |
 | Complete/skipped/decision-record stages | 3 |
-| Pending stages | 9 |
-| Overall stage-count progress | 25% |
-| Active implementation progress excluding Stage 10 decision record | 18% |
+| In-progress stages | 1 |
+| Pending stages | 8 |
+| Overall stage-count progress | 29% |
+| Active implementation progress excluding Stage 10 decision record | 23% |
 
 ## Non-Negotiable Guardrails
 
@@ -69,7 +70,7 @@ Static source scan from 2026-06-24:
 |---|---|---|---:|---|---|---|
 | 0 - Baseline Recheck | P0 | Complete | 100% | Support | None | Static scan refreshed; Unity batch compile passed |
 | 1 - ECS Ordering Plan + High-Risk Ordering Batch | P0 | Complete | 100% | Support | Stage 0 | Compile, movement/blocker validation, and attack validation passed |
-| 2 - `RequireForUpdate` Sweep | P0 | Pending | 0% | Support | Stage 0 | Compile + guard static scan |
+| 2 - `RequireForUpdate` Sweep | P0 | In Progress | 50% | Support | Stage 0 | Command guard batches compiled and focused tests passed; 30 unguarded remain |
 | 3 - Bootstrap Split Plan + First Extraction | P1 | Pending | 0% | Support | Stages 1-2 preferred | Compile + menu-to-match smoke |
 | 4 - UI Shell ECS Write Safety | P1 | Pending | 0% | Support | Stages 1-2 preferred | UI shell focused tests + compile |
 | 5 - Singleton/ECB Access Cleanup | P1 | Pending | 0% | Support | Stage 2 preferred | Compile + focused ECS tests |
@@ -229,8 +230,8 @@ Unordered systems can appear correct in one Unity/editor run and change behavior
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | In Progress |
+| Progress | 50% |
 | Priority | P0 |
 | Owner | Support |
 | Dependencies | Stage 0 |
@@ -275,10 +276,40 @@ Initial 2026-06-24 scan found about 45 unguarded systems, including command syst
 
 **Focused Validation**
 
-- [ ] Unity compile.
+- [x] Unity compile.
 - [ ] Match start smoke.
 - [ ] UI shell opens main menu and transitions to match.
 - [ ] Initial spawn still completes.
+
+**Notes**
+
+- 2026-06-24 heartbeat: command queue guard batch completed.
+- Added `RequireForUpdate` guards to command queue consumers:
+  - `AttackOrderCommandSystem`
+  - `UnitAttackOrderRequestSystem`
+  - `UnitMoveOrderRequestSystem`
+  - `TransportBoardingCommandSystem`
+  - `ScanIntelCommandSystem`
+- Added `RequireForUpdate` guards to disabled-auto-creation RTS selection command systems that still have live `OnUpdate` command processing when composed:
+  - `RtsSelectionAttackTargetModeCommandSystem`
+  - `RtsSelectionBoardTargetModeCommandSystem`
+  - `RtsSelectionCancelActiveCommandModeSystem`
+  - `RtsSelectionDeselectAllCommandSystem`
+  - `RtsSelectionImmediateSelectedUnitCommandSystem`
+  - `RtsSelectionMissileLauncherRadarAttackCommandSystem`
+  - `RtsSelectionModeCommandSystem`
+  - `RtsSelectionMoveTargetModeCommandSystem`
+  - `RtsSelectionScanTargetModeCommandSystem`
+  - `RtsSelectionSelectAllCommandSystem`
+- Static unguarded count moved from `45` to `40` after the first command batch, then to `30` after the RTS selection command batch.
+- Validation:
+  - Unity compile passed: `/private/tmp/warline-ecs-stage2-guards-compile.log`.
+  - Unity compile passed after RTS selection command batch: `/private/tmp/warline-ecs-stage2-guards-compile-2.log`.
+  - `ScanIntelCommandSystemTests.RunFocusedValidation` logged `result=Passed tests=2`: `/private/tmp/warline-ecs-stage2-scan-focused.log`. The Unity batch process did not exit after the pass marker and was stopped manually after success.
+  - `SelectionCommandRequestResultContractTests.RunBatchValidation` passed with `tests=48`: `/private/tmp/warline-ecs-stage2-selection-command.log`.
+  - `SelectionCommandRequestResultContractTests.RunBatchValidation` passed again after the RTS selection command batch with `tests=48`: `/private/tmp/warline-ecs-stage2-selection-command-2.log`.
+  - `UnitTransportValidationTests.RunBatchValidation` passed with `tests=73`: `/private/tmp/warline-ecs-stage2-transport.log`.
+- Remaining unguarded systems are now mostly startup/bootstrap creators, disabled composition/helper systems, runtime state/read-model systems, and presentation/diagnostics systems. They need classification before adding guards so singleton creators are not deadlocked by requiring the entities they create.
 
 ---
 

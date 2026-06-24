@@ -12,6 +12,7 @@ public partial struct RtsSelectionSelectAllCommandSystem : ISystem
             ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
             ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>(),
             ComponentType.ReadWrite<RtsSelectionPointerRequestElement>());
+        state.RequireForUpdate(_commandQueueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

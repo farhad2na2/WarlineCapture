@@ -71,6 +71,7 @@ public partial struct AttackOrderCommandSystem : ISystem
             ComponentType.ReadOnly<LocalTransform>());
         _entityType = state.GetEntityTypeHandle();
         UnitAttackOrderRequestSystem.EnsureCommandEntity(state.EntityManager);
+        state.RequireForUpdate(_commandQueueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

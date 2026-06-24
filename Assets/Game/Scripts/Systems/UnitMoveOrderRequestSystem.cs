@@ -14,6 +14,7 @@ public partial struct UnitMoveOrderRequestSystem : ISystem
             ComponentType.ReadWrite<UnitMoveOrderRequestElement>(),
             ComponentType.ReadWrite<UnitMoveOrderResultElement>());
         EnsureCommandEntity(state.EntityManager, _queueQuery);
+        state.RequireForUpdate(_queueQuery);
     }
 
     public void OnUpdate(ref SystemState state)

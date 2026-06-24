@@ -47,7 +47,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityYardWallVisualState _fallbackRuntimeCityYardWallVisual = new();
     private RuntimeCityHouseYardWallSystem _runtimeCityHouseYardWallSystem;
     private readonly RuntimeCityHouseYardWallState _fallbackRuntimeCityHouseYardWall = new();
-    private RuntimeCityDecorationPrefabGroupSystem _runtimeCityDecorationPrefabGroupSystem;
+    private RuntimeCityDecorationGroupPrefabSystemHelper _runtimeCityDecorationGroupHelper;
     private readonly RuntimeCityDecorationPrefabGroupState _fallbackRuntimeCityDecorationPrefabGroup = new();
     private RuntimeCityClothCoverSpawnPrefabSystemHelper _runtimeCityClothCoverSpawnHelper;
     private readonly RuntimeCityClothCoverSpawnState _fallbackRuntimeCityClothCoverSpawn = new();
@@ -494,10 +494,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityHouseYardWallSystem ??= ResolveRuntimeCityHouseYardWallSystem();
 
     private RuntimeCityDecorationPrefabGroupState RuntimeCityDecorationPrefabGroupState =>
-        RuntimeCityDecorationPrefabGroupSystem?.State ?? _fallbackRuntimeCityDecorationPrefabGroup;
+        RuntimeCityDecorationGroupHelper?.State ?? _fallbackRuntimeCityDecorationPrefabGroup;
 
-    private RuntimeCityDecorationPrefabGroupSystem RuntimeCityDecorationPrefabGroupSystem =>
-        _runtimeCityDecorationPrefabGroupSystem ??= ResolveRuntimeCityDecorationPrefabGroupSystem();
+    private RuntimeCityDecorationGroupPrefabSystemHelper RuntimeCityDecorationGroupHelper =>
+        _runtimeCityDecorationGroupHelper ??= ResolveRuntimeCityDecorationGroupHelper();
 
     private RuntimeCityClothCoverSpawnState RuntimeCityClothCoverSpawnState =>
         RuntimeCityClothCoverSpawnHelper?.State ?? _fallbackRuntimeCityClothCoverSpawn;
@@ -716,9 +716,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityHouseYardWallSystem();
     }
 
-    private static RuntimeCityDecorationPrefabGroupSystem ResolveRuntimeCityDecorationPrefabGroupSystem()
+    private static RuntimeCityDecorationGroupPrefabSystemHelper ResolveRuntimeCityDecorationGroupHelper()
     {
-        return new RuntimeCityDecorationPrefabGroupSystem();
+        return new RuntimeCityDecorationGroupPrefabSystemHelper();
     }
 
     private static RuntimeCityClothCoverSpawnPrefabSystemHelper ResolveRuntimeCityClothCoverSpawnHelper()

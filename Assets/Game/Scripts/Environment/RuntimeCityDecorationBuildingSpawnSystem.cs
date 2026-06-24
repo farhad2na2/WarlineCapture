@@ -69,7 +69,7 @@ internal sealed class RuntimeCityDecorationBuildingSpawnState
         if (prefabs == null || prefabs.Count == 0 || count <= 0)
             return;
 
-        RuntimeCityDecorationPrefabGroupSystem.Groups decorationGroups = decorationPrefabGroupSystem.CreateGroups(prefabs);
+        RuntimeCityDecorationGroupPrefabSystemHelper.Groups decorationGroups = decorationPrefabGroupSystem.CreateGroups(prefabs);
         int clothPlaced = clothCoverSpawnSystem.PlaceClothCoverBuildings(
             context,
             placementSystem,

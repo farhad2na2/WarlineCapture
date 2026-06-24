@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class RuntimeCityDecorationPrefabGroupSystem
+internal sealed class RuntimeCityDecorationGroupPrefabSystemHelper
 {
     public readonly struct Groups
     {
@@ -30,7 +30,7 @@ internal sealed class RuntimeCityDecorationPrefabGroupSystem
 
 internal sealed class RuntimeCityDecorationPrefabGroupState
 {
-    public RuntimeCityDecorationPrefabGroupSystem.Groups CreateGroups(List<GameObject> prefabs)
+    public RuntimeCityDecorationGroupPrefabSystemHelper.Groups CreateGroups(List<GameObject> prefabs)
     {
         int capacity = prefabs?.Count ?? 0;
         var clothCoverPrefabs = new List<GameObject>(capacity);
@@ -38,7 +38,7 @@ internal sealed class RuntimeCityDecorationPrefabGroupState
         var freeScatterPrefabs = new List<GameObject>(capacity);
 
         if (prefabs == null)
-            return new RuntimeCityDecorationPrefabGroupSystem.Groups(clothCoverPrefabs, archwayPrefabs, freeScatterPrefabs);
+            return new RuntimeCityDecorationGroupPrefabSystemHelper.Groups(clothCoverPrefabs, archwayPrefabs, freeScatterPrefabs);
 
         for (int i = 0; i < prefabs.Count; i++)
         {
@@ -54,6 +54,6 @@ internal sealed class RuntimeCityDecorationPrefabGroupState
                 freeScatterPrefabs.Add(prefab);
         }
 
-        return new RuntimeCityDecorationPrefabGroupSystem.Groups(clothCoverPrefabs, archwayPrefabs, freeScatterPrefabs);
+        return new RuntimeCityDecorationGroupPrefabSystemHelper.Groups(clothCoverPrefabs, archwayPrefabs, freeScatterPrefabs);
     }
 }

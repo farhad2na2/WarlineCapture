@@ -308,12 +308,12 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
 ## Phase 7: Decoration Buildings
 
 25. Complete: Extract decoration prefab classification
-   - Create `RuntimeCityDecorationPrefabGroupSystem`.
+   - Create `RuntimeCityDecorationGroupPrefabSystemHelper`.
    - Move cloth-cover, archway, and free-scatter classification.
    - Avoid repeated LINQ/`FindAll` allocation where practical; generation-time list allocation is acceptable only if explicit and bounded.
    - Preserve current name matching rules.
    - Expected output: decoration classification has one owner.
-   - Added `RuntimeCityDecorationPrefabGroupSystem` with a single-pass grouping method for cloth-cover, archway, and free-scatter decoration prefabs.
+   - Added `RuntimeCityDecorationGroupPrefabSystemHelper` with a single-pass grouping method for cloth-cover, archway, and free-scatter decoration prefabs.
    - `RuntimeCityBuildingSpawnSystem.PlaceCityDecorationBuildings` now consumes grouped decoration prefab lists instead of owning classification.
    - The existing ordinal-ignore-case name matching rules and fallback to the original prefab list when no free-scatter prefabs exist were preserved.
 

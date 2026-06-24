@@ -57,6 +57,9 @@ internal sealed class BuildingBarrierSystem
     }
 
     private readonly List<RuntimeBaseBreach> _openBaseBreaches = new();
+    private readonly List<RuntimeBuildingEntity> _runtimeBuildingSnapshot = new();
+    private IReadOnlyDictionary<int, RuntimeBuildingEntity> _runtimeBuildingSnapshotSource;
+    private int _runtimeBuildingSnapshotCount = -1;
     private readonly Dictionary<BuildingDefinition, bool> _wallGateDefinitionCache = new();
     private readonly Dictionary<byte, RectInt> _enemyWallPerimetersScratch = new();
 
@@ -130,9 +133,10 @@ internal sealed class BuildingBarrierSystem
         if (context.RuntimeBuildings == null)
             return false;
 
-        foreach (var entry in context.RuntimeBuildings)
+        List<RuntimeBuildingEntity> buildings = GetRuntimeBuildingSnapshot(context);
+        for (int i = 0; i < buildings.Count; i++)
         {
-            RuntimeBuildingEntity building = entry.Value;
+            RuntimeBuildingEntity building = buildings[i];
             if (building == null ||
                 building.IsDestroyed ||
                 building.Definition == null ||
@@ -193,9 +197,10 @@ internal sealed class BuildingBarrierSystem
             return false;
         }
 
-        foreach (var entry in context.RuntimeBuildings)
+        List<RuntimeBuildingEntity> buildings = GetRuntimeBuildingSnapshot(context);
+        for (int i = 0; i < buildings.Count; i++)
         {
-            RuntimeBuildingEntity building = entry.Value;
+            RuntimeBuildingEntity building = buildings[i];
             if (building == null ||
                 building.IsDestroyed ||
                 building.Definition == null ||
@@ -336,34 +341,19 @@ internal sealed class BuildingBarrierSystem
             return;
 
         context.EnsureEntityQueries?.Invoke(em);
+        List<RuntimeBuildingEntity> buildings = GetRuntimeBuildingSnapshot(context);
         if (context.GetLiveFactionUnitsQuery == null)
         {
-            if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
-            {
-                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildingMap)
-                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, default, deltaTime);
-            }
-            else
-            {
-                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
-                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, default, deltaTime);
-            }
+            for (int i = 0; i < buildings.Count; i++)
+                UpdateRoadBarrierDoorForBuilding(context, buildings[i], default, deltaTime);
             return;
         }
 
         EntityQuery liveFactionUnitsQuery = context.GetLiveFactionUnitsQuery();
         if (liveFactionUnitsQuery.IsEmptyIgnoreFilter)
         {
-            if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
-            {
-                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildingMap)
-                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, default, deltaTime);
-            }
-            else
-            {
-                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
-                    UpdateRoadBarrierDoorForBuilding(context, entry.Value, default, deltaTime);
-            }
+            for (int i = 0; i < buildings.Count; i++)
+                UpdateRoadBarrierDoorForBuilding(context, buildings[i], default, deltaTime);
             return;
         }
 
@@ -373,16 +363,8 @@ internal sealed class BuildingBarrierSystem
             Allocator.Temp);
         NativeArray<LiveFactionUnitDoorRecord> liveFactionUnitRecords = liveFactionUnits.AsArray();
 
-        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildings)
-        {
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildings)
-                UpdateRoadBarrierDoorForBuilding(context, entry.Value, liveFactionUnitRecords, deltaTime);
-        }
-        else
-        {
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
-                UpdateRoadBarrierDoorForBuilding(context, entry.Value, liveFactionUnitRecords, deltaTime);
-        }
+        for (int i = 0; i < buildings.Count; i++)
+            UpdateRoadBarrierDoorForBuilding(context, buildings[i], liveFactionUnitRecords, deltaTime);
     }
 
     private void UpdateRoadBarrierDoorForBuilding(
@@ -433,20 +415,10 @@ internal sealed class BuildingBarrierSystem
 
     private bool HasActiveRoadGateBuilding(Context context)
     {
-        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        List<RuntimeBuildingEntity> buildings = GetRuntimeBuildingSnapshot(context);
+        for (int i = 0; i < buildings.Count; i++)
         {
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildings)
-            {
-                if (IsActiveRoadGateBuilding(context, entry.Value))
-                    return true;
-            }
-
-            return false;
-        }
-
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
-        {
-            if (IsActiveRoadGateBuilding(context, entry.Value))
+            if (IsActiveRoadGateBuilding(context, buildings[i]))
                 return true;
         }
 
@@ -461,9 +433,10 @@ internal sealed class BuildingBarrierSystem
         if (context.RuntimeBuildings == null)
             return count;
 
-        foreach (var entry in context.RuntimeBuildings)
+        List<RuntimeBuildingEntity> buildings = GetRuntimeBuildingSnapshot(context);
+        for (int i = 0; i < buildings.Count; i++)
         {
-            RuntimeBuildingEntity building = entry.Value;
+            RuntimeBuildingEntity building = buildings[i];
             if (!IsActiveRoadGateBuilding(context, building) ||
                 !building.HasOwnerFaction ||
                 building.OwnerFactionId != factionId)
@@ -519,9 +492,10 @@ internal sealed class BuildingBarrierSystem
         int bestDistance = int.MaxValue;
         bool found = false;
 
-        foreach (var entry in context.RuntimeBuildings)
+        List<RuntimeBuildingEntity> buildings = GetRuntimeBuildingSnapshot(context);
+        for (int i = 0; i < buildings.Count; i++)
         {
-            RuntimeBuildingEntity building = entry.Value;
+            RuntimeBuildingEntity building = buildings[i];
             if (building?.Definition == null || !IsLinearWallDefinition(building.Definition))
                 continue;
 
@@ -604,9 +578,10 @@ internal sealed class BuildingBarrierSystem
         if (context.RuntimeBuildings == null)
             return false;
 
-        foreach (var entry in context.RuntimeBuildings)
+        List<RuntimeBuildingEntity> buildings = GetRuntimeBuildingSnapshot(context);
+        for (int i = 0; i < buildings.Count; i++)
         {
-            RuntimeBuildingEntity building = entry.Value;
+            RuntimeBuildingEntity building = buildings[i];
             if (building == null ||
                 building.IsDestroyed ||
                 building.Definition == null ||
@@ -625,15 +600,16 @@ internal sealed class BuildingBarrierSystem
         return false;
     }
 
-    private static bool TryFindRuntimeBuildingByCombatEntity(Context context, Entity combatEntity, out RuntimeBuildingEntity building)
+    private bool TryFindRuntimeBuildingByCombatEntity(Context context, Entity combatEntity, out RuntimeBuildingEntity building)
     {
         building = null;
         if (combatEntity == Entity.Null || context.RuntimeBuildings == null)
             return false;
 
-        foreach (var entry in context.RuntimeBuildings)
+        List<RuntimeBuildingEntity> buildings = GetRuntimeBuildingSnapshot(context);
+        for (int i = 0; i < buildings.Count; i++)
         {
-            RuntimeBuildingEntity candidate = entry.Value;
+            RuntimeBuildingEntity candidate = buildings[i];
             if (candidate == null || candidate.CombatEntity != combatEntity)
                 continue;
 
@@ -642,6 +618,33 @@ internal sealed class BuildingBarrierSystem
         }
 
         return false;
+    }
+
+    private List<RuntimeBuildingEntity> GetRuntimeBuildingSnapshot(Context context)
+    {
+        IReadOnlyDictionary<int, RuntimeBuildingEntity> source = context.RuntimeBuildings;
+        if (source == null)
+        {
+            _runtimeBuildingSnapshot.Clear();
+            _runtimeBuildingSnapshotSource = null;
+            _runtimeBuildingSnapshotCount = -1;
+            return _runtimeBuildingSnapshot;
+        }
+
+        if (ReferenceEquals(_runtimeBuildingSnapshotSource, source) &&
+            _runtimeBuildingSnapshotCount == source.Count)
+        {
+            return _runtimeBuildingSnapshot;
+        }
+
+        _runtimeBuildingSnapshot.Clear();
+        using IEnumerator<KeyValuePair<int, RuntimeBuildingEntity>> enumerator = source.GetEnumerator();
+        while (enumerator.MoveNext())
+            _runtimeBuildingSnapshot.Add(enumerator.Current.Value);
+
+        _runtimeBuildingSnapshotSource = source;
+        _runtimeBuildingSnapshotCount = source.Count;
+        return _runtimeBuildingSnapshot;
     }
 
     public static bool TryFindBreachApproachCell(

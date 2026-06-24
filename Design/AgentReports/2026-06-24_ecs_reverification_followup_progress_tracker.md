@@ -85,7 +85,7 @@ The audit was committed at `9e2298474`, but its source snapshot says it rechecke
 | 5 - Burst Coverage Closure | P1 | Complete | 100% | Support | Stages 1-2 preferred | Hot `ISystem`s are Bursted or managed exceptions are documented. |
 | 6 - Singleton And ECB Query Closure | P1 | Complete | 100% | Support | Stage 2 preferred | Current per-frame `GridConfig`/ECB singleton findings closed. |
 | 7 - `.Run()` Scheduling Closure | P1 | Complete | 100% | Support | Stage 5 preferred | Each `.Run()` site converted or documented with source/profiler reason. |
-| 8 - BuildingBarrier Managed Dictionary Closure | P1 | Pending | 0% | Support | Stage 0 | Managed dictionary foreach regression removed. |
+| 8 - BuildingBarrier Managed Dictionary Closure | P1 | Complete | 100% | Support | Stage 0 | Managed dictionary foreach regression removed. |
 | 9 - RuntimeBuildingEntityLink Update Closure | P1/P2 | Pending | 0% | Support | Stage 0 | Per-building `Update` removed or batched. |
 | 10 - Authoring And Bake Data Hygiene | P1/P2 | Pending | 0% | Support | Stage 0 | MapSurface blob dedup and GridAuthoring bake risks addressed. |
 | 11 - Component And Minor Cleanup | P2 | Pending | 0% | Support | P0/P1 stages preferred | Remaining P2 checks complete or explicitly deferred. |
@@ -798,8 +798,8 @@ rg -n "\.Run\(" Assets/Game/Scripts/Systems Assets/Game/Scripts/Rendering/System
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P1 |
 | Owner | Support |
 | Dependencies | Stage 0 |
@@ -831,11 +831,11 @@ Do not jump straight to `NativeHashMap` if the data model contains managed refer
 
 **Acceptance Criteria**
 
-- [ ] `BuildingBarrierSystem` no longer enumerates `IReadOnlyDictionary` or `RuntimeBuildings` directly in hot paths.
-- [ ] `rg -n "foreach.*RuntimeBuildings|foreach.*context\.RuntimeBuildings"` returns no hot-path hits.
-- [ ] If any direct enumeration remains, it is outside runtime hot path and ledgered.
-- [ ] Focused BuildingBarrier validation passes.
-- [ ] Unity compile passes.
+- [x] `BuildingBarrierSystem` no longer enumerates `IReadOnlyDictionary` or `RuntimeBuildings` directly in hot paths.
+- [x] `rg -n "foreach.*RuntimeBuildings|foreach.*context\.RuntimeBuildings"` returns no hot-path hits.
+- [x] If any direct enumeration remains, it is outside runtime hot path and ledgered.
+- [x] Focused BuildingBarrier validation passes.
+- [x] Unity compile passes.
 
 **Validation Commands**
 
@@ -845,7 +845,32 @@ rg -n "foreach.*RuntimeBuildings|foreach.*context\.RuntimeBuildings|IReadOnlyDic
 
 **Notes**
 
-- Pending.
+- 2026-06-24 heartbeat Stage 8 refreshed the `BuildingBarrierSystem` scan before closure.
+- Initial Stage 8 target had `10` direct `RuntimeBuildings` foreach sites across:
+  - wall perimeter lookup,
+  - breach building lookup,
+  - road barrier door updates,
+  - active road gate checks,
+  - road gate rect collection,
+  - nearby wall resolution,
+  - wall/gate overlap checks,
+  - combat entity to runtime building lookup.
+- Implemented a cached flat `List<RuntimeBuildingEntity>` snapshot inside `BuildingBarrierSystem`.
+  - Snapshot refreshes when the `RuntimeBuildings` source reference or count changes.
+  - The list stores existing `RuntimeBuildingEntity` references, so normal runtime state mutation on each building remains live without rebuilding the snapshot every loop.
+  - `IReadOnlyDictionary` remains only as the `Context` boundary and as the snapshot refresh source; the runtime hot loops now use indexed list iteration.
+- Acceptance scan result: clean. Command returned no hits:
+  - `rg -n "foreach.*RuntimeBuildings|foreach.*context\.RuntimeBuildings" Assets/Game/Scripts/Systems/BuildingBarrierSystem.cs`
+- Remaining dictionary access is intentionally isolated to `GetRuntimeBuildingSnapshot`.
+  - `GetEnumerator` appears only inside that refresh helper.
+  - Reopen this stage if runtime building map values are replaced in-place without changing map reference/count; the current implementation assumes the map holds stable `RuntimeBuildingEntity` objects whose fields mutate.
+- Focused BuildingBarrier validation passed:
+  - Command: Unity `6000.4.0f1` batchmode `-executeMethod BuildingBarrierSystemTests.RunFocusedValidation`.
+  - Log path: `/private/tmp/warline-ecs-reverification-stage8-buildingbarrier.log`.
+  - Success marker: `[BuildingBarrierFocusedValidation] result=Passed tests=2`.
+- Unity compile passed:
+  - Log path: `/private/tmp/warline-ecs-reverification-stage8-compile.log`.
+  - Success marker: `Exiting batchmode successfully now!`.
 
 ---
 

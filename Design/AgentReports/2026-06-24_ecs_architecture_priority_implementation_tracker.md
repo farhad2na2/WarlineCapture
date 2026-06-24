@@ -21,8 +21,8 @@ Static source scan from 2026-06-24:
 
 | Area | Current finding | Decision |
 |---|---:|---|
-| Unordered `ISystem` structs | About 50 | P0 correctness risk; handle first. |
-| Unguarded `ISystem` structs | About 45 | P0/P1 runtime hygiene; handle with ordering sweep. |
+| Unordered `ISystem` structs | 50 | P0 correctness risk; handle first. |
+| Unguarded `ISystem` structs | 45 | P0/P1 runtime hygiene; handle with ordering sweep. |
 | `MatchBootstrapSystem.cs` size | 1172 lines | P1 maintainability risk; split after P0 ECS safety. |
 | `.Run()` sites in runtime/render ECS systems | 9 direct matches | Review after guards/order are stable; do not blindly parallelize. |
 | `RuntimeBuildingEntityLink.Update` | About 0.163ms/frame in focused capture | No code change unless a future profile makes it hot. |
@@ -46,10 +46,10 @@ Static source scan from 2026-06-24:
 | Metric | Current value |
 |---|---:|
 | Total stages | 12 |
-| Complete/skipped/decision-record stages | 1 |
-| Pending stages | 11 |
-| Overall stage-count progress | 8% |
-| Active implementation progress excluding Stage 10 decision record | 0% |
+| Complete/skipped/decision-record stages | 2 |
+| Pending stages | 10 |
+| Overall stage-count progress | 17% |
+| Active implementation progress excluding Stage 10 decision record | 9% |
 
 ## Non-Negotiable Guardrails
 
@@ -67,7 +67,7 @@ Static source scan from 2026-06-24:
 
 | Stage | Priority | Status | Progress | Owner | Depends on | Validation |
 |---|---|---|---:|---|---|---|
-| 0 - Baseline Recheck | P0 | Pending | 0% | Support | None | Static scan + Unity compile if practical |
+| 0 - Baseline Recheck | P0 | Complete | 100% | Support | None | Static scan refreshed; Unity batch compile passed |
 | 1 - ECS Ordering Plan + High-Risk Ordering Batch | P0 | Pending | 0% | Support | Stage 0 | Compile + focused movement/order/spawn smoke |
 | 2 - `RequireForUpdate` Sweep | P0 | Pending | 0% | Support | Stage 0 | Compile + guard static scan |
 | 3 - Bootstrap Split Plan + First Extraction | P1 | Pending | 0% | Support | Stages 1-2 preferred | Compile + menu-to-match smoke |
@@ -86,8 +86,8 @@ Static source scan from 2026-06-24:
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P0 |
 | Owner | Support |
 | Dependencies | None |
@@ -109,9 +109,9 @@ Static source scan from 2026-06-24:
 
 **Acceptance Criteria**
 
-- [ ] Dirty state documented.
-- [ ] Static counts refreshed.
-- [ ] Baseline compile result recorded or blocker documented.
+- [x] Dirty state documented.
+- [x] Static counts refreshed.
+- [x] Baseline compile result recorded or blocker documented.
 
 **Validation Commands**
 
@@ -123,6 +123,16 @@ Static source scan from 2026-06-24:
 **Notes**
 
 - Initial 2026-06-24 audit found about 50 unordered and 45 unguarded `ISystem` structs.
+- 2026-06-24 heartbeat baseline recheck: `git status --short --untracked-files=no` returned no tracked dirty files.
+- 2026-06-24 heartbeat baseline recheck: Unity Hub and Unity Licensing Client were running, but no Unity Editor process was open.
+- 2026-06-24 heartbeat baseline static scan:
+  - `ISystem` structs scanned: `138`.
+  - unordered `ISystem` structs: `50`.
+  - unguarded `ISystem` structs: `45`.
+  - direct `.Run()` sites in runtime/render/UI shell ECS roots: `9`.
+  - direct UI shell gateway loading-progress write confirmed at `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs:103`.
+  - `UiShellBoundarySystem` structural creation in `OnUpdate` confirmed at `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs:51`.
+- 2026-06-24 heartbeat baseline compile: Unity `6000.4.0f1` batch compile passed with `Exiting batchmode successfully now!`; log: `/private/tmp/warline-ecs-stage0-compile.log`.
 
 ---
 

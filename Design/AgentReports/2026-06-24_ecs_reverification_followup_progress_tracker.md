@@ -82,7 +82,7 @@ The audit was committed at `9e2298474`, but its source snapshot says it rechecke
 | 2 - `RequireForUpdate` Closure | P0 | Complete | 100% | Support | Stage 0 | Runtime guard scan clean; intentional producer/helper exceptions documented in source. |
 | 3 - UI Shell Boundary Structural Safety | P1 | Complete | 100% | Support | Stage 0 | `OnUpdate` is empty; one-shot boundary creation is in `OnCreate`; focused UI shell validation passed. |
 | 4 - Bootstrap Split Unblock And Continue | P1 | Complete | 100% | Support | Stages 1-3 preferred | Bootstrap guardrail passes and `MatchBootstrapSystem` is below target or has remaining split plan. |
-| 5 - Burst Coverage Closure | P1 | Pending | 0% | Support | Stages 1-2 preferred | Hot `ISystem`s are Bursted or managed exceptions are documented. |
+| 5 - Burst Coverage Closure | P1 | Complete | 100% | Support | Stages 1-2 preferred | Hot `ISystem`s are Bursted or managed exceptions are documented. |
 | 6 - Singleton And ECB Query Closure | P1 | Pending | 0% | Support | Stage 2 preferred | Current per-frame `GridConfig`/ECB singleton findings closed. |
 | 7 - `.Run()` Scheduling Closure | P1 | Pending | 0% | Support | Stage 5 preferred | Each `.Run()` site converted or documented with source/profiler reason. |
 | 8 - BuildingBarrier Managed Dictionary Closure | P1 | Pending | 0% | Support | Stage 0 | Managed dictionary foreach regression removed. |
@@ -99,6 +99,10 @@ Do not leave this empty at final closure. Any remaining scan hit must be listed 
 |---|---|---|---|
 | Namespaces | `Assets/Game/Scripts/**/*.cs` | User deferred namespace migration. | User explicitly schedules namespace migration. |
 | Stage 1 ordering scan false positive | `Assets/Game/Scripts/Editor/UnitMoveTargetDiagnosticValidationRunner.cs` | Editor validation runner contains the string literal `struct UnitMoveTargetDiagnosticSystem : ISystem`; it does not declare an `ISystem`. Runtime-scope scan is clean. | File starts declaring a real `ISystem`, or final scan changes to parse syntax instead of text. |
+| Stage 5 managed scheduler exception | `Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs` | Outer system coordinates async path jobs, pending state, budget reduction, and `UnityEngine.Time` diagnostics; expensive path search is already in `[BurstCompile]` `PathfindBatchJob`. | Path scheduler diagnostics are removed or a pure Burst scheduling/apply job boundary is introduced. |
+| Stage 5 managed scheduler exception | `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs` | Uses main-thread `EntityManager` orchestration, `UnityEngine.RectInt`/`Vector2Int`, string reason output, and diagnostic queue creation. Add Burst only after splitting order selection/issue loops into jobs. | AI combat order loop is rewritten as Burst-compatible job/data pipeline. |
+| Stage 5 managed renderer exception | `Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSystem.cs` | Presentation/render-budget orchestrator touches `UnityEngine.Time`, Entities Graphics/Rendering state, render safety tags, and multiple managed helper subsystems. Stage 7 handles `.Run()` scheduling in its helper systems separately. | Render budget data collection/classification is split into Burst jobs with a managed presentation apply layer. |
+| Stage 5 disabled/helper exception | Disabled helper, UI shell, and diagnostic flush `ISystem` files without `BurstCompile` | These systems are one-shot, disabled facades, UI bridge systems, or diagnostic log flushers. They are not hot simulation loops and several intentionally use managed APIs. | A helper becomes an always-running gameplay loop or appears in profiler hot-path evidence. |
 
 ---
 
@@ -578,8 +582,8 @@ rg -n "transform\.Find|GameObject\.Find|FindObjectOfType|FindAnyObjectByType" As
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P1 |
 | Owner | Support |
 | Dependencies | Stages 1-2 preferred |
@@ -604,10 +608,10 @@ rg -n "transform\.Find|GameObject\.Find|FindObjectOfType|FindAnyObjectByType" As
 
 **Acceptance Criteria**
 
-- [ ] Hot systems are Bursted or have managed-exception ledger entries.
-- [ ] `UnitGridMovementSystem.OnUpdate` Burst status is explicitly verified.
-- [ ] Unity compile passes.
-- [ ] Burst-related test/compile warnings are resolved.
+- [x] Hot systems are Bursted or have managed-exception ledger entries.
+- [x] `UnitGridMovementSystem.OnUpdate` Burst status is explicitly verified.
+- [x] Unity compile passes.
+- [x] Burst-related test/compile warnings are resolved.
 
 **Validation Commands**
 
@@ -618,7 +622,24 @@ rg -l "partial struct .*ISystem|: ISystem" Assets/Game/Scripts \
 
 **Notes**
 
-- Pending.
+- 2026-06-24 heartbeat Stage 5 refreshed the runtime no-`BurstCompile` scan after Stage 4:
+  - Runtime no-token count: `71` files across runtime systems, rendering systems, and UI shell ECS.
+  - Command: `rg -l "partial struct .*ISystem|: ISystem" Assets/Game/Scripts/Systems Assets/Game/Scripts/Rendering/Systems Assets/Game/Scripts/UI/Shell/Ecs | xargs -I{} sh -c 'rg -q "BurstCompile" "{}" || echo "{}"' | wc -l`
+- `UnitGridMovementSystem` was explicitly verified:
+  - File: `Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs`
+  - `[BurstCompile]` is present on `UnitGridMoveJob`, `UnitPathFollowCleanupJob`, and `UnitGridMovementSystem`.
+  - `OnUpdate` is a managed scheduler around Burst jobs and uses `UnityEngine.Time` for freeze diagnostics; no extra Burst tag was needed.
+- Hot path coverage/exception review:
+  - `PathfindBatchJob` is `[BurstCompile]` and owns the expensive path search loop. `UnitPathfindingSystem` remains a managed scheduler exception because it coordinates pending async job state, validation metrics, and `UnityEngine.Time` diagnostics.
+  - `UnitAttackSystem`, `UnitDeathSystem`, `AITargetingSystem`, `AIProductionSystem`, `AISquadSystem`, `AIBuildPlannerSystem`, `AIEconomySystem`, and `AIFactionControlSystem` already contain `[BurstCompile]` jobs or job helpers in the hot path.
+  - `AICombatOrderSystem` remains a managed scheduler exception. It should not be mechanically Burst-tagged while it still uses `EntityManager` orchestration, `UnityEngine.RectInt`/`Vector2Int`, string reason plumbing, and diagnostic queue setup.
+  - `UnitRenderBudgetSystem` remains a managed presentation/rendering scheduler exception. Stage 7 still owns the `.Run()` scheduling decisions in render-budget helper systems.
+  - Transport systems are mixed: plane door/deploy attack/airdrop/rope systems have Burst jobs; deploy-order, boarding command, capacity, and passenger-state systems are managed orchestration/helper exceptions.
+- No code change was made in Stage 5 because the safe action is classification and exception capture, not adding misleading Burst attributes to managed schedulers.
+- Unity compile for the current source passed immediately before Stage 5 documentation:
+  - Log path: `/private/tmp/warline-ecs-reverification-stage4-compile.log`.
+  - Success marker: `Exiting batchmode successfully now!`.
+- Burst warning review: no new Burst warnings were introduced because Stage 5 did not add new Burst attributes. Future Burst work should split hot loops into jobs first, then add `[BurstCompile]` to those jobs.
 
 ---
 

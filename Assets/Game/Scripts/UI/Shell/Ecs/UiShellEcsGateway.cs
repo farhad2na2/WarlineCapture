@@ -105,7 +105,10 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
         if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
             return false;
 
-        entityManager.SetComponentData(boundary, new UiShellLoadingProgressComponent
+        EnsureLoadingProgressRequestBuffer(entityManager, boundary);
+        DynamicBuffer<UiShellLoadingProgressRequestComponent> requests =
+            entityManager.GetBuffer<UiShellLoadingProgressRequestComponent>(boundary);
+        requests.Add(new UiShellLoadingProgressRequestComponent
         {
             Progress01 = Mathf.Clamp01(progress01),
             Status = new FixedString64Bytes(status ?? string.Empty),
@@ -1155,6 +1158,12 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
     {
         if (!entityManager.HasBuffer<UiActionRequestComponent>(boundary))
             entityManager.AddBuffer<UiActionRequestComponent>(boundary);
+    }
+
+    private static void EnsureLoadingProgressRequestBuffer(EntityManager entityManager, Entity boundary)
+    {
+        if (!entityManager.HasBuffer<UiShellLoadingProgressRequestComponent>(boundary))
+            entityManager.AddBuffer<UiShellLoadingProgressRequestComponent>(boundary);
     }
 
     private static void EnsureBuildDrawerState(EntityManager entityManager, Entity boundary)

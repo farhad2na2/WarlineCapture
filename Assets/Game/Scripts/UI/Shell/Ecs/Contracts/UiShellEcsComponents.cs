@@ -21,6 +21,13 @@ public struct UiShellLoadingProgressComponent : IComponentData
     public byte IsComplete;
 }
 
+public struct UiShellLoadingProgressRequestComponent : IBufferElementData
+{
+    public float Progress01;
+    public FixedString64Bytes Status;
+    public byte IsComplete;
+}
+
 public struct UiDiagnosticsOverlayComponent : IComponentData
 {
     public int Fps;

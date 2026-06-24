@@ -55,6 +55,14 @@ public sealed class UIShellCurrentContentLoadTests
                 nameof(MenuSceneShellSerializesMatchIntroCurtain),
                 test => test.MenuSceneShellSerializesMatchIntroCurtain(),
                 ref passed);
+            RunValidationStep(
+                nameof(LoadingProgressGatewayQueuesRequestAndFlowAppliesIt),
+                test => test.LoadingProgressGatewayQueuesRequestAndFlowAppliesIt(),
+                ref passed);
+            RunValidationStep(
+                nameof(EnterMatchRouteAndLoadingCompletionTransitionToMatchHud),
+                test => test.EnterMatchRouteAndLoadingCompletionTransitionToMatchHud(),
+                ref passed);
 
             Debug.Log($"[UIShellCurrentContentLoadValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -150,6 +158,95 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.IsFalse(placementBarCanvasGroup.blocksRaycasts, "Build placement confirmation bar must start hidden and non-blocking.");
 
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.MiddleRegion);
+    }
+
+    [Test]
+    public void LoadingProgressGatewayQueuesRequestAndFlowAppliesIt()
+    {
+        _previousWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("UIShellLoadingProgressRequestTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+
+        _world.CreateSystem<UiShellBoundarySystem>();
+        EntityManager em = _world.EntityManager;
+        using EntityQuery boundaryQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadWrite<UiShellLoadingProgressComponent>(),
+            ComponentType.ReadWrite<UiShellLoadingProgressRequestComponent>());
+        Assert.AreEqual(1, boundaryQuery.CalculateEntityCount(), "Boundary setup must create a request-capable shell boundary in OnCreate.");
+
+        Entity boundary = boundaryQuery.GetSingletonEntity();
+        DynamicBuffer<UiShellLoadingProgressRequestComponent> requests =
+            em.GetBuffer<UiShellLoadingProgressRequestComponent>(boundary);
+        Assert.AreEqual(0, requests.Length);
+
+        Assert.IsTrue(UiShellRuntimeGateway.TrySetLoadingProgress(0.42f, "Streaming map", false));
+        Assert.AreEqual(1, requests.Length, "Gateway must enqueue loading progress instead of writing the component directly.");
+
+        SystemHandle flowSystem = _world.CreateSystem<UiShellFlowSystem>();
+        flowSystem.Update(_world.Unmanaged);
+
+        Assert.AreEqual(0, requests.Length, "Flow system must consume queued loading progress requests.");
+        Assert.IsTrue(UiShellRuntimeGateway.TryReadLoadingProgress(out UiShellLoadingProgressModel loading));
+        Assert.AreEqual(0.42f, loading.Progress01, 0.001f);
+        Assert.AreEqual("Streaming map", loading.Status);
+        Assert.IsFalse(loading.IsComplete);
+    }
+
+    [Test]
+    public void EnterMatchRouteAndLoadingCompletionTransitionToMatchHud()
+    {
+        _previousWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("UIShellEnterMatchRouteTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+
+        _world.CreateSystem<UiShellBoundarySystem>();
+        EntityManager em = _world.EntityManager;
+        using EntityQuery boundaryQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadWrite<UiShellStateComponent>(),
+            ComponentType.ReadWrite<UiShellLoadingProgressComponent>(),
+            ComponentType.ReadWrite<UiShellLoadingProgressRequestComponent>(),
+            ComponentType.ReadWrite<MatchIntroTransitionComponent>(),
+            ComponentType.ReadWrite<UiShellRouteRequestComponent>(),
+            ComponentType.ReadWrite<UiShellPresentationCommandComponent>(),
+            ComponentType.ReadWrite<UiShellTransitionCompleteComponent>());
+        Entity boundary = boundaryQuery.GetSingletonEntity();
+        em.SetComponentData(boundary, new UiShellStateComponent
+        {
+            CurrentMode = UiShellMode.MainMenu,
+            ActiveRoute = UIRoute.MainMenu,
+            Phase = UiShellTransitionPhase.MenuReady,
+            TransitionSequenceId = 0,
+            IsTransitionRunning = 0
+        });
+
+        SystemHandle flowSystem = _world.CreateSystem<UiShellFlowSystem>();
+        Assert.IsTrue(UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.EnterMatch, UIRoute.Match, pushHistory: false));
+        flowSystem.Update(_world.Unmanaged);
+
+        UiShellStateComponent shellState = em.GetComponentData<UiShellStateComponent>(boundary);
+        MatchIntroTransitionComponent matchIntro = em.GetComponentData<MatchIntroTransitionComponent>(boundary);
+        Assert.AreEqual(UiShellMode.Loading, shellState.CurrentMode);
+        Assert.AreEqual(UIRoute.Match, shellState.ActiveRoute);
+        Assert.AreEqual(MatchIntroTransitionStateKind.WaitingForWorldReady, matchIntro.State);
+
+        DynamicBuffer<UiShellTransitionCompleteComponent> completions =
+            em.GetBuffer<UiShellTransitionCompleteComponent>(boundary);
+        completions.Add(new UiShellTransitionCompleteComponent
+        {
+            Kind = UiShellCommandKind.ShowLoading,
+            Region = UiShellRegionId.LoadingLayer,
+            SequenceId = shellState.TransitionSequenceId
+        });
+        Assert.IsTrue(UiShellRuntimeGateway.TrySetLoadingProgress(1f, "Ready", true));
+        flowSystem.Update(_world.Unmanaged);
+
+        shellState = em.GetComponentData<UiShellStateComponent>(boundary);
+        matchIntro = em.GetComponentData<MatchIntroTransitionComponent>(boundary);
+        Assert.AreEqual(UiShellMode.MatchHud, shellState.CurrentMode);
+        Assert.AreEqual(UiShellTransitionPhase.EnteringMatchHud, shellState.Phase);
+        Assert.AreEqual(MatchIntroTransitionStateKind.EnteringHud, matchIntro.State);
     }
 
     [Test]

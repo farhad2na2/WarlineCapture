@@ -11,6 +11,7 @@ public partial struct UiShellFlowSystem : ISystem
         boundaryQuery = state.GetEntityQuery(
             ComponentType.ReadWrite<UiShellStateComponent>(),
             ComponentType.ReadWrite<UiShellLoadingProgressComponent>(),
+            ComponentType.ReadWrite<UiShellLoadingProgressRequestComponent>(),
             ComponentType.ReadWrite<MatchIntroTransitionComponent>(),
             ComponentType.ReadWrite<UiShellRouteRequestComponent>(),
             ComponentType.ReadWrite<UiShellRouteHistoryComponent>(),
@@ -27,6 +28,8 @@ public partial struct UiShellFlowSystem : ISystem
         Entity boundary = boundaryQuery.GetSingletonEntity();
         UiShellStateComponent shellState = state.EntityManager.GetComponentData<UiShellStateComponent>(boundary);
         UiShellLoadingProgressComponent loading = state.EntityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
+        DynamicBuffer<UiShellLoadingProgressRequestComponent> loadingRequests =
+            state.EntityManager.GetBuffer<UiShellLoadingProgressRequestComponent>(boundary);
         MatchIntroTransitionComponent matchIntro = state.EntityManager.GetComponentData<MatchIntroTransitionComponent>(boundary);
         DynamicBuffer<UiShellRouteRequestComponent> routeRequests = state.EntityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
         DynamicBuffer<UiShellRouteHistoryComponent> routeHistory = state.EntityManager.GetBuffer<UiShellRouteHistoryComponent>(boundary);
@@ -37,6 +40,14 @@ public partial struct UiShellFlowSystem : ISystem
 
         ConsumeCompletions(ref shellState, ref matchIntro, completions);
         completions.Clear();
+
+        if (TryConsumeLoadingProgressRequest(loadingRequests, out UiShellLoadingProgressRequestComponent loadingRequest))
+        {
+            loading.Progress01 = UnityEngine.Mathf.Clamp01(loadingRequest.Progress01);
+            loading.Status = loadingRequest.Status;
+            loading.IsComplete = loadingRequest.IsComplete;
+            state.EntityManager.SetComponentData(boundary, loading);
+        }
 
         if (shellState.IsTransitionRunning != 0)
         {
@@ -254,6 +265,21 @@ public partial struct UiShellFlowSystem : ISystem
 
         request = routeRequests[0];
         routeRequests.Clear();
+        return true;
+    }
+
+    private static bool TryConsumeLoadingProgressRequest(
+        DynamicBuffer<UiShellLoadingProgressRequestComponent> loadingRequests,
+        out UiShellLoadingProgressRequestComponent request)
+    {
+        if (loadingRequests.Length == 0)
+        {
+            request = default;
+            return false;
+        }
+
+        request = loadingRequests[loadingRequests.Length - 1];
+        loadingRequests.Clear();
         return true;
     }
 

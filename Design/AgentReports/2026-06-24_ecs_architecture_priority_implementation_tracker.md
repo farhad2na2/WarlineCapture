@@ -46,12 +46,12 @@ Static source scan from 2026-06-24:
 | Metric | Current value |
 |---|---:|
 | Total stages | 12 |
-| Complete/skipped/decision-record stages | 4 |
+| Complete/skipped/decision-record stages | 5 |
 | In-progress stages | 0 |
 | Blocked stages | 1 |
-| Pending stages | 7 |
-| Overall stage-count progress | 40% |
-| Active implementation progress excluding Stage 10 decision record | 34% |
+| Pending stages | 6 |
+| Overall stage-count progress | 48% |
+| Active implementation progress excluding Stage 10 decision record | 43% |
 
 ## Non-Negotiable Guardrails
 
@@ -73,7 +73,7 @@ Static source scan from 2026-06-24:
 | 1 - ECS Ordering Plan + High-Risk Ordering Batch | P0 | Complete | 100% | Support | Stage 0 | Compile, movement/blocker validation, and attack validation passed |
 | 2 - `RequireForUpdate` Sweep | P0 | Complete | 100% | Support | Stage 0 | Guard batches and documented boundary exceptions validated |
 | 3 - Bootstrap Split Plan + First Extraction | P1 | Blocked | 75% | Support | Stages 1-2 preferred | First extraction compiled; architecture guardrail blocked by pre-existing MenuBootstrapView hierarchy lookup |
-| 4 - UI Shell ECS Write Safety | P1 | Pending | 0% | Support | Stages 1-2 preferred | UI shell focused tests + compile |
+| 4 - UI Shell ECS Write Safety | P1 | Complete | 100% | Support | Stages 1-2 preferred | Compile and UI shell focused tests passed |
 | 5 - Singleton/ECB Access Cleanup | P1 | Pending | 0% | Support | Stage 2 preferred | Compile + focused ECS tests |
 | 6 - `.Run()` Scheduling Review | P1 | Pending | 0% | Support | Stages 1-2, profiler context | Compile + targeted perf smoke |
 | 7 - ResourceHauler Diagnostics Cleanup | P1 | Pending | 0% | Support | Stage 0 | Compile + resource hauler smoke if available |
@@ -445,8 +445,8 @@ Do not rewrite the bootstrap. Extract one cohesive responsibility at a time. Pre
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P1 |
 | Owner | Support |
 | Dependencies | Stages 1-2 preferred |
@@ -474,21 +474,36 @@ Do not rewrite the bootstrap. Extract one cohesive responsibility at a time. Pre
 
 **Acceptance Criteria**
 
-- [ ] Gateway-facing loading progress writes use command/request flow.
-- [ ] `UiShellBoundarySystem.OnUpdate` no longer performs large structural creation, or the exception is documented with reason.
-- [ ] Main menu loading progress still updates.
-- [ ] Match intro/loading UI still updates.
+- [x] Gateway-facing loading progress writes use command/request flow.
+- [x] `UiShellBoundarySystem.OnUpdate` no longer performs large structural creation, or the exception is documented with reason.
+- [x] Main menu loading progress still updates.
+- [x] Match intro/loading UI still updates.
 
 **Focused Validation**
 
-- [ ] Unity compile.
-- [ ] `UIShellCurrentContentLoadTests` or equivalent focused UI shell validation.
-- [ ] Menu-to-match smoke.
+- [x] Unity compile.
+- [x] `UIShellCurrentContentLoadTests` or equivalent focused UI shell validation.
+- [x] Menu-to-match smoke.
 
 **Risks**
 
 - Moving boundary creation too early can break tests or worlds that expect to seed a boundary manually.
 - Command queues must be available before views call the runtime gateway.
+
+**Notes**
+
+- 2026-06-24 heartbeat: added `UiShellLoadingProgressRequestComponent` request buffer.
+- `UiShellEcsGateway.TrySetLoadingProgress` now enqueues loading-progress requests instead of writing `UiShellLoadingProgressComponent` directly.
+- `UiShellFlowSystem` consumes the latest queued loading-progress request and applies it inside the ECS shell flow.
+- `UiShellBoundarySystem` now seeds/repairs the boundary in `OnCreate`, ensures the loading-progress request buffer, disables itself immediately after setup, and leaves `OnUpdate` empty.
+- Added focused UI shell tests:
+  - `LoadingProgressGatewayQueuesRequestAndFlowAppliesIt`
+  - `EnterMatchRouteAndLoadingCompletionTransitionToMatchHud`
+- Validation:
+  - Unity compile passed: `/private/tmp/warline-ecs-stage4-ui-shell-compile.log`.
+  - `UIShellCurrentContentLoadTests.RunFocusedValidation` passed with `tests=10`: `/private/tmp/warline-ecs-stage4-ui-shell-content-3.log`.
+  - Earlier intermediate UI shell validation passed with `tests=9`: `/private/tmp/warline-ecs-stage4-ui-shell-content-2.log`.
+- Note: Unity validation processes again logged pass markers and successful shutdown but stayed alive; each stuck process was stopped after its pass marker.
 
 ---
 

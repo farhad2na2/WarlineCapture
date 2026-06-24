@@ -10,14 +10,22 @@ public partial struct UiShellBoundarySystem : ISystem
     {
         UiShellEcsGateway.RegisterAsRuntimeGateway();
         boundaryQuery = state.GetEntityQuery(ComponentType.ReadOnly<UiShellBoundaryComponent>());
+        EnsureBoundary(ref state);
+        state.Enabled = false;
     }
 
     public void OnUpdate(ref SystemState state)
+    {
+    }
+
+    private void EnsureBoundary(ref SystemState state)
     {
         int boundaryCount = boundaryQuery.CalculateEntityCount();
         if (boundaryCount > 0)
         {
             Entity existingBoundary = ResolveBoundaryEntity(ref state, boundaryCount);
+            EnsureShellStateComponent(ref state, existingBoundary);
+            EnsureLoadingProgressComponent(ref state, existingBoundary);
             EnsureMatchIntroComponent(ref state, existingBoundary);
             EnsureDiagnosticsOverlayComponent(ref state, existingBoundary);
             EnsureCommanderProfileComponent(ref state, existingBoundary);
@@ -44,7 +52,7 @@ public partial struct UiShellBoundarySystem : ISystem
             EnsureUiShellPopupRequestBuffer(ref state, existingBoundary);
             EnsureUiShellPresentationCommandBuffer(ref state, existingBoundary);
             EnsureUiShellTransitionCompleteBuffer(ref state, existingBoundary);
-            state.Enabled = false;
+            EnsureUiShellLoadingProgressRequestBuffer(ref state, existingBoundary);
             return;
         }
 
@@ -115,7 +123,7 @@ public partial struct UiShellBoundarySystem : ISystem
         state.EntityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);
         state.EntityManager.AddBuffer<UiShellPresentationCommandComponent>(boundary);
         state.EntityManager.AddBuffer<UiShellTransitionCompleteComponent>(boundary);
-        state.Enabled = false;
+        state.EntityManager.AddBuffer<UiShellLoadingProgressRequestComponent>(boundary);
     }
 
     private Entity ResolveBoundaryEntity(ref SystemState state, int boundaryCount)
@@ -129,6 +137,34 @@ public partial struct UiShellBoundarySystem : ISystem
             state.EntityManager.DestroyEntity(boundaries[i]);
 
         return primary;
+    }
+
+    private static void EnsureShellStateComponent(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasComponent<UiShellStateComponent>(boundary))
+            return;
+
+        state.EntityManager.AddComponentData(boundary, new UiShellStateComponent
+        {
+            CurrentMode = UiShellMode.None,
+            ActiveRoute = UIRoute.Splash,
+            Phase = UiShellTransitionPhase.Idle,
+            TransitionSequenceId = 0,
+            IsTransitionRunning = 0
+        });
+    }
+
+    private static void EnsureLoadingProgressComponent(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasComponent<UiShellLoadingProgressComponent>(boundary))
+            return;
+
+        state.EntityManager.AddComponentData(boundary, new UiShellLoadingProgressComponent
+        {
+            Progress01 = 0f,
+            Status = new FixedString64Bytes("Starting"),
+            IsComplete = 0
+        });
     }
 
     private static void EnsureMatchIntroComponent(ref SystemState state, Entity boundary)
@@ -370,6 +406,14 @@ public partial struct UiShellBoundarySystem : ISystem
             return;
 
         state.EntityManager.AddBuffer<UiShellTransitionCompleteComponent>(boundary);
+    }
+
+    private static void EnsureUiShellLoadingProgressRequestBuffer(ref SystemState state, Entity boundary)
+    {
+        if (state.EntityManager.HasBuffer<UiShellLoadingProgressRequestComponent>(boundary))
+            return;
+
+        state.EntityManager.AddBuffer<UiShellLoadingProgressRequestComponent>(boundary);
     }
 
     private static UiShellCommanderProfileComponent DefaultCommanderProfile()

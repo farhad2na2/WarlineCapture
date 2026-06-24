@@ -12,6 +12,7 @@ public partial struct AITargetingSystem : ISystem
     private EntityQuery _squadQuery;
     private EntityQuery _targetQuery;
     private EntityQuery _targetPriorityQuery;
+    private EntityQuery _runtimeDiagnosticsQuery;
     private EntityQuery _diagnosticLogQueueQuery;
     private EntityTypeHandle _entityType;
     private ComponentTypeHandle<AISquad> _squadType;
@@ -45,6 +46,7 @@ public partial struct AITargetingSystem : ISystem
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<UnitHealth>());
         _targetPriorityQuery = state.GetEntityQuery(ComponentType.ReadOnly<AITargetPrioritySetting>());
+        _runtimeDiagnosticsQuery = state.GetEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
@@ -82,7 +84,7 @@ public partial struct AITargetingSystem : ISystem
 
         _nextTargetRefreshTime = now + TargetRefreshSeconds;
 
-        bool shouldLog = ShouldQueueDiagnostics(ref state);
+        bool shouldLog = ShouldQueueDiagnostics(_runtimeDiagnosticsQuery);
         Entity diagnosticQueueEntity = shouldLog ? EnsureDiagnosticQueue(ref state) : Entity.Null;
 
         _entityType.Update(ref state);
@@ -137,11 +139,13 @@ public partial struct AITargetingSystem : ISystem
         }
     }
 
-    private bool ShouldQueueDiagnostics(ref SystemState state)
+    private static bool ShouldQueueDiagnostics(EntityQuery runtimeDiagnosticsQuery)
     {
-        return InitialUnitsRuntimeState.VerboseAILogs ||
-            SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
-            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
+        if (InitialUnitsRuntimeState.VerboseAILogs)
+            return true;
+
+        return runtimeDiagnosticsQuery.CalculateEntityCount() == 1 &&
+            runtimeDiagnosticsQuery.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
     }
 
     private Entity EnsureDiagnosticQueue(ref SystemState state)

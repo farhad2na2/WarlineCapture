@@ -50,8 +50,8 @@ Static source scan from 2026-06-24:
 | In-progress stages | 1 |
 | Blocked stages | 1 |
 | Pending stages | 5 |
-| Overall stage-count progress | 52% |
-| Active implementation progress excluding Stage 10 decision record | 48% |
+| Overall stage-count progress | 54% |
+| Active implementation progress excluding Stage 10 decision record | 50% |
 
 ## Non-Negotiable Guardrails
 
@@ -74,7 +74,7 @@ Static source scan from 2026-06-24:
 | 2 - `RequireForUpdate` Sweep | P0 | Complete | 100% | Support | Stage 0 | Guard batches and documented boundary exceptions validated |
 | 3 - Bootstrap Split Plan + First Extraction | P1 | Blocked | 75% | Support | Stages 1-2 preferred | First extraction compiled; architecture guardrail blocked by pre-existing MenuBootstrapView hierarchy lookup |
 | 4 - UI Shell ECS Write Safety | P1 | Complete | 100% | Support | Stages 1-2 preferred | Compile and UI shell focused tests passed |
-| 5 - Singleton/ECB Access Cleanup | P1 | In Progress | 50% | Support | Stage 2 preferred | First grid singleton batch compiled and focused tests passed |
+| 5 - Singleton/ECB Access Cleanup | P1 | In Progress | 75% | Support | Stage 2 preferred | Grid singleton and AI diagnostics query batches compiled and focused tests passed |
 | 6 - `.Run()` Scheduling Review | P1 | Pending | 0% | Support | Stages 1-2, profiler context | Compile + targeted perf smoke |
 | 7 - ResourceHauler Diagnostics Cleanup | P1 | Pending | 0% | Support | Stage 0 | Compile + resource hauler smoke if available |
 | 8 - Authoring/Baker Hygiene | P1/P2 | Pending | 0% | Support | P0 stages complete | Compile + bake/reimport validation |
@@ -512,7 +512,7 @@ Do not rewrite the bootstrap. Extract one cohesive responsibility at a time. Pre
 | Field | Value |
 |---|---|
 | Status | In Progress |
-| Progress | 50% |
+| Progress | 75% |
 | Priority | P1 |
 | Owner | Support |
 | Dependencies | Stage 2 preferred |
@@ -585,9 +585,41 @@ Do not cache singleton component values in `OnCreate` unless immutable. Most cle
 - `CombatDeathValidationTests.RunFocusedValidation` passed with `tests=2`: `/private/tmp/warline-ecs-stage5-combat-death-respawn.log`.
 - Note: Unity validation processes again logged pass markers and successful shutdown but stayed alive; each stuck process was stopped after its pass marker.
 
+**Batch 2 - AI Diagnostics Singleton Query Cleanup**
+
+| Field | Value |
+|---|---|
+| Status | Complete |
+| Progress | 100% |
+| Scope | Replace direct `SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>()` checks in the AI chain with cached diagnostics queries created in `OnCreate`. |
+
+**Files changed**
+
+- `Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs`
+- `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs`
+- `Assets/Game/Scripts/Systems/AIEconomySystem.cs`
+- `Assets/Game/Scripts/Systems/AIFactionControlSystem.cs`
+- `Assets/Game/Scripts/Systems/AIProductionSystem.cs`
+- `Assets/Game/Scripts/Systems/AISquadSystem.cs`
+- `Assets/Game/Scripts/Systems/AITargetingSystem.cs`
+
+**Implementation notes**
+
+- Added a cached `EntityQuery` for `RuntimeDiagnosticsStateComponent` in each touched AI system.
+- Replaced direct diagnostics singleton reads inside `ShouldQueueDiagnostics` helpers with the cached query.
+- Preserved the existing behavior where `InitialUnitsRuntimeState.VerboseAILogs` immediately enables AI diagnostics.
+- Preserved singleton safety by reading diagnostics only when the cached query has exactly one matching entity.
+- Did not cache mutable diagnostics component data across frames.
+- Did not change `RuntimeGameplayStateComponent` reads or ECB access in this batch.
+
+**Validation**
+
+- Unity compile passed by log marker: `/private/tmp/warline-ecs-stage5-ai-diagnostics-compile.log`. The Unity batch process stayed alive after successful shutdown and was stopped after the success marker.
+- `AIEndToEndValidationTests.RunFocusedValidation` passed with `tests=1`: `/private/tmp/warline-ecs-stage5-ai-diagnostics-endtoend.log`. The Unity batch process stayed alive after the pass marker and was stopped after success.
+- `AISteadyStatePerformanceValidation.RunBatchValidation` passed: `/private/tmp/warline-ecs-stage5-ai-diagnostics-steady.log`. The Unity batch process stayed alive after the pass marker and was stopped after success.
+
 **Remaining Stage 5 work**
 
-- Inventory and clean repeated same-frame runtime-state/diagnostics singleton reads in AI and targeting systems.
 - Review repeated `EndSimulationEntityCommandBufferSystem.Singleton` access sites; keep ECB creation frame-local.
 - Review query creation inside hot `OnUpdate` paths and move safe query creation to `OnCreate`.
 

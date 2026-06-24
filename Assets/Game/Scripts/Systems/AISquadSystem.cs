@@ -8,6 +8,7 @@ using Unity.Mathematics;
 public partial struct AISquadSystem : ISystem
 {
     private const float LogIntervalSeconds = 10f;
+    private EntityQuery _runtimeDiagnosticsQuery;
     private EntityQuery _diagnosticLogQueueQuery;
     private EntityQuery _planQuery;
     private EntityQuery _unitQuery;
@@ -33,6 +34,7 @@ public partial struct AISquadSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        _runtimeDiagnosticsQuery = state.GetEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
@@ -70,7 +72,7 @@ public partial struct AISquadSystem : ISystem
         DynamicBuffer<FactionControlEntry> controls = hasControls
             ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true)
             : default;
-        bool shouldLog = ShouldQueueDiagnostics(ref state);
+        bool shouldLog = ShouldQueueDiagnostics(_runtimeDiagnosticsQuery);
 
         EntityManager em = state.EntityManager;
         _entityType.Update(ref state);
@@ -415,11 +417,13 @@ public partial struct AISquadSystem : ISystem
         return FactionIdentity.IsAiControlledByDefault(factionId);
     }
 
-    private bool ShouldQueueDiagnostics(ref SystemState state)
+    private static bool ShouldQueueDiagnostics(EntityQuery runtimeDiagnosticsQuery)
     {
-        return InitialUnitsRuntimeState.VerboseAILogs ||
-            SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
-            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
+        if (InitialUnitsRuntimeState.VerboseAILogs)
+            return true;
+
+        return runtimeDiagnosticsQuery.CalculateEntityCount() == 1 &&
+            runtimeDiagnosticsQuery.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
     }
 
     private void EnqueueDiagnostic(ref SystemState state, FixedString512Bytes message)

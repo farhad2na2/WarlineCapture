@@ -10,6 +10,7 @@ public partial struct AIFactionControlSystem : ISystem
     private const float LogIntervalSeconds = 10f;
     private const float ControlRefreshSeconds = 0.5f;
     private EntityQuery _buildingRuntimeBoundaryQuery;
+    private EntityQuery _runtimeDiagnosticsQuery;
     private EntityQuery _diagnosticLogQueueQuery;
     private float _nextControlRefreshTime;
 
@@ -18,6 +19,7 @@ public partial struct AIFactionControlSystem : ISystem
         _buildingRuntimeBoundaryQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
             ComponentType.ReadOnly<BuildingRuntimeFactionSummary>());
+        _runtimeDiagnosticsQuery = state.GetEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
@@ -38,7 +40,7 @@ public partial struct AIFactionControlSystem : ISystem
 
         _nextControlRefreshTime = now + ControlRefreshSeconds;
 
-        bool shouldLogDiagnostics = ShouldQueueDiagnostics(ref state);
+        bool shouldLogDiagnostics = ShouldQueueDiagnostics(_runtimeDiagnosticsQuery);
         Entity diagnosticQueueEntity = shouldLogDiagnostics ? EnsureDiagnosticQueue(ref state) : Entity.Null;
         DynamicBuffer<FactionControlEntry> controls = SystemAPI.GetSingletonBuffer<FactionControlEntry>();
         using NativeArray<FactionControlEntry> controlSnapshot = controls.ToNativeArray(Allocator.TempJob);
@@ -114,11 +116,13 @@ public partial struct AIFactionControlSystem : ISystem
         return false;
     }
 
-    private bool ShouldQueueDiagnostics(ref SystemState state)
+    private static bool ShouldQueueDiagnostics(EntityQuery runtimeDiagnosticsQuery)
     {
-        return InitialUnitsRuntimeState.VerboseAILogs ||
-            SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
-            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
+        if (InitialUnitsRuntimeState.VerboseAILogs)
+            return true;
+
+        return runtimeDiagnosticsQuery.CalculateEntityCount() == 1 &&
+            runtimeDiagnosticsQuery.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
     }
 
     private Entity EnsureDiagnosticQueue(ref SystemState state)

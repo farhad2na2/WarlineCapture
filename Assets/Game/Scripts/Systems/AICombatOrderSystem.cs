@@ -13,6 +13,7 @@ public partial struct AICombatOrderSystem : ISystem
     private const int MaxSquadsPerFrame = 8;
     private const int MaxUnitOrderWritesPerFrame = 128;
     private EntityQuery _runtimeBuildingCombatQuery;
+    private EntityQuery _runtimeDiagnosticsQuery;
     private EntityQuery _diagnosticLogQueueQuery;
     private EntityTypeHandle _entityType;
     private ComponentTypeHandle<RuntimeBuildingCombatInfo> _runtimeBuildingCombatInfoType;
@@ -99,6 +100,7 @@ public partial struct AICombatOrderSystem : ISystem
             ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),
             ComponentType.ReadOnly<UnitHealth>(),
             ComponentType.ReadOnly<LocalTransform>());
+        _runtimeDiagnosticsQuery = state.GetEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
@@ -142,7 +144,7 @@ public partial struct AICombatOrderSystem : ISystem
         EntityManager em = state.EntityManager;
         EntityCommandBuffer ecb = default;
         bool hasEcb = false;
-        bool shouldLog = ShouldQueueDiagnostics(ref state);
+        bool shouldLog = ShouldQueueDiagnostics(_runtimeDiagnosticsQuery);
         if (shouldLog)
             EnsureDiagnosticLogQueue(ref state);
 
@@ -873,11 +875,13 @@ public partial struct AICombatOrderSystem : ISystem
         return true;
     }
 
-    private bool ShouldQueueDiagnostics(ref SystemState state)
+    private static bool ShouldQueueDiagnostics(EntityQuery runtimeDiagnosticsQuery)
     {
-        return InitialUnitsRuntimeState.VerboseAILogs ||
-            SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
-            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
+        if (InitialUnitsRuntimeState.VerboseAILogs)
+            return true;
+
+        return runtimeDiagnosticsQuery.CalculateEntityCount() == 1 &&
+            runtimeDiagnosticsQuery.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
     }
 
     private void EnqueueDiagnostic(ref SystemState state, FixedString512Bytes message)

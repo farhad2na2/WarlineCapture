@@ -85,7 +85,7 @@ internal sealed class RuntimeCityClothCoverSpawnState
             Vector2Int preferredOrigin = candidateOrigins[i];
             if (placementSystem.TrySpawnAndReserve(
                 context,
-                new RuntimeCityBuildingPlacementSystem.Request(
+                new RuntimeCityBuildingPlacementPrefabSystemHelper.Request(
                     prefab,
                     preferredOrigin,
                     footprint,

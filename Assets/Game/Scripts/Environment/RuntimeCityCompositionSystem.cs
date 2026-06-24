@@ -19,7 +19,7 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem;
     private readonly RuntimeCityPrefabSelectionState _fallbackRuntimeCityPrefabSelection = new();
     private RuntimeCityBuildingSpawnContextSystem _runtimeCityBuildingSpawnContextSystem;
-    private RuntimeCityBuildingPlacementSystem _runtimeCityBuildingPlacementSystem;
+    private RuntimeCityBuildingPlacementPrefabSystemHelper _runtimeCityBuildingPlacementHelper;
     private readonly RuntimeCityBuildingPlacementState _fallbackRuntimeCityBuildingPlacement = new();
     private RuntimeCityLandmarkOffsetSystem _runtimeCityLandmarkOffsetSystem;
     private readonly RuntimeCityLandmarkOffsetState _fallbackRuntimeCityLandmarkOffset = new();
@@ -524,10 +524,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityDecorationBuildingSpawnSystem ??= ResolveRuntimeCityDecorationBuildingSpawnSystem();
 
     private RuntimeCityBuildingPlacementState RuntimeCityBuildingPlacementState =>
-        RuntimeCityBuildingPlacementSystem?.State ?? _fallbackRuntimeCityBuildingPlacement;
+        RuntimeCityBuildingPlacementHelper?.State ?? _fallbackRuntimeCityBuildingPlacement;
 
-    private RuntimeCityBuildingPlacementSystem RuntimeCityBuildingPlacementSystem =>
-        _runtimeCityBuildingPlacementSystem ??= ResolveRuntimeCityBuildingPlacementSystem();
+    private RuntimeCityBuildingPlacementPrefabSystemHelper RuntimeCityBuildingPlacementHelper =>
+        _runtimeCityBuildingPlacementHelper ??= ResolveRuntimeCityBuildingPlacementHelper();
 
     private RuntimeCitySpawnBridgeState RuntimeCitySpawnBridgeState =>
         RuntimeCitySpawnBridgeSystem?.State ?? _fallbackRuntimeCitySpawnBridge;
@@ -751,9 +751,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityRoadBuildBridgeSystem();
     }
 
-    private static RuntimeCityBuildingPlacementSystem ResolveRuntimeCityBuildingPlacementSystem()
+    private static RuntimeCityBuildingPlacementPrefabSystemHelper ResolveRuntimeCityBuildingPlacementHelper()
     {
-        return new RuntimeCityBuildingPlacementSystem();
+        return new RuntimeCityBuildingPlacementPrefabSystemHelper();
     }
 
     private static RuntimeCityGenerationSystem ResolveRuntimeCityGenerationSystem()

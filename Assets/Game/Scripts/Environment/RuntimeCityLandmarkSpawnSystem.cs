@@ -182,7 +182,7 @@ internal sealed class RuntimeCityLandmarkSpawnState
             Vector2Int preferredOrigin = context.BuildingPlotSystem.GetCenteredOriginForPlot(centerRoadCell + offsets[i], footprint, roadCellSizeInGridCells);
             if (placementSystem.TrySpawnAndReserve(
                 context,
-                new RuntimeCityBuildingPlacementSystem.Request(
+                new RuntimeCityBuildingPlacementPrefabSystemHelper.Request(
                     prefab,
                     preferredOrigin,
                     footprint,

@@ -69,7 +69,7 @@ internal sealed class RuntimeCityHallSpawnState
                 Vector2Int hallOrigin = context.BuildingPlotSystem.GetCenteredOriginForPlot(centerRoadCell + offsets[offsetIndex], footprint, roadCellSizeInGridCells);
                 if (placementSystem.TrySpawnAndReserve(
                     context,
-                    new RuntimeCityBuildingPlacementSystem.Request(
+                    new RuntimeCityBuildingPlacementPrefabSystemHelper.Request(
                         hallPrefab,
                         hallOrigin,
                         footprint,

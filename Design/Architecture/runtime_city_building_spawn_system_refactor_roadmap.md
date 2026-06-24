@@ -131,19 +131,19 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Existing public generation methods now delegate to private context-taking methods; no new public/internal compatibility surface was added.
    - The first seam keeps helper internals unchanged except top-level plot, prefab-shuffle, visual-root, and diagnostic reads that now use the explicit context.
 
-6. Complete: Create `RuntimeCityBuildingPlacementSystem`
+6. Complete: Create `RuntimeCityBuildingPlacementPrefabSystemHelper`
    - Centralize prefab footprint lookup, pre-spawn reserved-footprint checks, `TrySpawnCityBuilding`, post-spawn reserved/road/touch validation, delete-on-failure, reservation, and optional anchor recording.
    - Preserve current spawn bridge behavior and default max health.
    - Expected output: repeated spawn/delete/reserve logic leaves landmark, plot, rural, and decoration algorithms.
-   - Added `RuntimeCityBuildingPlacementSystem` with request/result data and `TrySpawnAndReserve`.
+   - Added `RuntimeCityBuildingPlacementPrefabSystemHelper` with request/result data and `TrySpawnAndReserve`.
    - Routed current building spawn/delete/reserve validation through the placement boundary while preserving algorithm loops, labels, descriptions, reservation padding, road checks, touch checks, and anchor recording.
    - Direct building spawn bridge calls no longer live in `RuntimeCityBuildingSpawnSystem`.
 
 7. Complete: Move shared plot placement helper
-   - Move `PlaceFromPlots` behavior into `RuntimeCityBuildingPlacementSystem` or a narrow `RuntimeCityRoadsidePlacementSystem`.
+   - Move `PlaceFromPlots` behavior into `RuntimeCityBuildingPlacementPrefabSystemHelper` or a narrow `RuntimeCityRoadsidePlacementSystem`.
    - Preserve plot ordering, spacing, random prefab choice, reservation padding, and anchor recording.
    - Expected output: roadside placement can be reused by entry, central, outer, and corridor building systems.
-   - Moved `PlaceFromPlots` into `RuntimeCityBuildingPlacementSystem`.
+   - Moved `PlaceFromPlots` into `RuntimeCityBuildingPlacementPrefabSystemHelper`.
    - Entry, central, outer, gas-station, other-building, and corridor placement calls now route through the shared placement boundary.
    - `RuntimeCityBuildingSpawnSystem` no longer owns the shared roadside plot placement loop.
 
@@ -430,7 +430,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
 - Step 3 complete: runtime-city smoke baseline is recorded with cityPrefabs=36, productionCityCount=1, validationCityCount=1, buildingSpawnables=32, and blockerPrefabs=63.
 - Step 4 complete: building-spawn dependency/config context construction moved to `RuntimeCityBuildingSpawnContextSystem`.
 - Step 5 complete: public building-spawn generation entry points delegate through explicit private context-taking methods.
-- Step 6 complete: repeated building spawn/delete/reserve validation moved to `RuntimeCityBuildingPlacementSystem`.
-- Step 7 complete: shared roadside/corridor plot placement moved to `RuntimeCityBuildingPlacementSystem.PlaceFromPlots`.
+- Step 6 complete: repeated building spawn/delete/reserve validation moved to `RuntimeCityBuildingPlacementPrefabSystemHelper`.
+- Step 7 complete: shared roadside/corridor plot placement moved to `RuntimeCityBuildingPlacementPrefabSystemHelper.PlaceFromPlots`.
 - Step 8 complete: shared placement paths use explicit context/config values instead of coordinator mutable field/property reads.
 - Step 9 complete: landmark offset arrays and hall-distance filtering moved to `RuntimeCityLandmarkOffsetSystem`.

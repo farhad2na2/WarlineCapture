@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
-using PlacementRequest = RuntimeCityBuildingPlacementSystem.Request;
-using PlacementResult = RuntimeCityBuildingPlacementSystem.Result;
+using PlacementRequest = RuntimeCityBuildingPlacementPrefabSystemHelper.Request;
+using PlacementResult = RuntimeCityBuildingPlacementPrefabSystemHelper.Result;
 using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityBuildingPlacementSystem
+internal sealed class RuntimeCityBuildingPlacementPrefabSystemHelper
 {
     private readonly RuntimeCityBuildingPlacementState _state = new();
 

@@ -77,7 +77,7 @@ internal sealed class RuntimeCityArchwaySpawnState
             Vector2Int preferredOrigin = context.BuildingPlotSystem.GetCenteredOriginForPlot(plotCell, footprint, roadCellSizeInGridCells);
             if (!placementSystem.TrySpawnAndReserve(
                     context,
-                    new RuntimeCityBuildingPlacementSystem.Request(
+                    new RuntimeCityBuildingPlacementPrefabSystemHelper.Request(
                     prefab,
                     preferredOrigin,
                     footprint,

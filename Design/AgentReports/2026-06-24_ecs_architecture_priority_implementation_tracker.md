@@ -48,9 +48,10 @@ Static source scan from 2026-06-24:
 | Total stages | 12 |
 | Complete/skipped/decision-record stages | 4 |
 | In-progress stages | 0 |
-| Pending stages | 8 |
-| Overall stage-count progress | 33% |
-| Active implementation progress excluding Stage 10 decision record | 27% |
+| Blocked stages | 1 |
+| Pending stages | 7 |
+| Overall stage-count progress | 40% |
+| Active implementation progress excluding Stage 10 decision record | 34% |
 
 ## Non-Negotiable Guardrails
 
@@ -71,7 +72,7 @@ Static source scan from 2026-06-24:
 | 0 - Baseline Recheck | P0 | Complete | 100% | Support | None | Static scan refreshed; Unity batch compile passed |
 | 1 - ECS Ordering Plan + High-Risk Ordering Batch | P0 | Complete | 100% | Support | Stage 0 | Compile, movement/blocker validation, and attack validation passed |
 | 2 - `RequireForUpdate` Sweep | P0 | Complete | 100% | Support | Stage 0 | Guard batches and documented boundary exceptions validated |
-| 3 - Bootstrap Split Plan + First Extraction | P1 | Pending | 0% | Support | Stages 1-2 preferred | Compile + menu-to-match smoke |
+| 3 - Bootstrap Split Plan + First Extraction | P1 | Blocked | 75% | Support | Stages 1-2 preferred | First extraction compiled; architecture guardrail blocked by pre-existing MenuBootstrapView hierarchy lookup |
 | 4 - UI Shell ECS Write Safety | P1 | Pending | 0% | Support | Stages 1-2 preferred | UI shell focused tests + compile |
 | 5 - Singleton/ECB Access Cleanup | P1 | Pending | 0% | Support | Stage 2 preferred | Compile + focused ECS tests |
 | 6 - `.Run()` Scheduling Review | P1 | Pending | 0% | Support | Stages 1-2, profiler context | Compile + targeted perf smoke |
@@ -348,12 +349,14 @@ Initial 2026-06-24 scan found about 45 unguarded systems, including command syst
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Blocked |
+| Progress | 75% |
 | Priority | P1 |
 | Owner | Support |
 | Dependencies | Stages 1-2 preferred |
 | Blocks | Long-term composition maintainability |
+| Blocker | `ScriptArchitectureAlignmentContractTests.RunBootstrapCompositionGuardrailValidation` fails on pre-existing `Assets/Game/Scripts/Composition/MenuBootstrapView.cs:102` `transform.Find(LegacyUiToolkitShellRootName)`, not on the Stage 3 extraction. |
+| Can another stage continue? | Yes. Stage 4 can continue; fix the `MenuBootstrapView` hierarchy lookup as a separate UI/composition cleanup before requiring the bootstrap guardrail to pass. |
 
 **Goal:** Reduce `MatchBootstrapSystem.cs` from a 1172-line god object into smaller composition helpers without changing scene references, MonoBehaviour identity, or gameplay behavior.
 
@@ -396,17 +399,45 @@ Do not rewrite the bootstrap. Extract one cohesive responsibility at a time. Pre
 
 **Acceptance Criteria**
 
-- [ ] First extraction compiles.
-- [ ] No scene/prefab serialized reference changes.
-- [ ] `MatchBootstrapSystem.cs` line count decreases.
-- [ ] Extracted helper has one responsibility and no hidden global state.
+- [x] First extraction compiles.
+- [x] No scene/prefab serialized reference changes.
+- [x] `MatchBootstrapSystem.cs` line count decreases.
+- [x] Extracted helper has one responsibility and no hidden global state.
 
 **Focused Validation**
 
-- [ ] Unity compile.
+- [x] Unity compile.
 - [ ] Menu opens.
 - [ ] Deploy button enters match.
-- [ ] Existing architecture tests still pass if composition boundaries changed.
+- [ ] Existing architecture tests still pass if composition boundaries changed. Blocked by pre-existing `MenuBootstrapView.cs:102` hierarchy lookup debt.
+
+**Method Inventory**
+
+| Method/group | Responsibility | Fields touched | Extraction target |
+|---|---|---|---|
+| `Awake`, `BeginGameplay`, `Update`, `LateUpdate`, `OnGUI`, `OnDestroy` | MonoBehaviour-style lifecycle adapter called by scene/bootstrap owner. | broad runtime state, roots, systems | Keep in `MatchBootstrapSystem` until lifecycle split. |
+| `InitializeManagedRuntime`, `InitializeManagedRuntimeIfNeeded`, `InitializeGameplaySystemsIfNeeded` | Creates direct-owned runtime/UI composition helpers and binds returned contexts. | most runtime subsystem fields | Later managed runtime/UI composition extraction. |
+| `ProjectRuntimeStartupConfig`, `InitializeAiStartupConfig`, `ProjectInitialFactionSpawnCellFallbackEntries` | Projects grid/surface/startup config into ECS and prepares AI startup inputs. | `_initialFactionSpawnCellFallbackEntries` only via explicit parameter after extraction | Extracted to `MatchBootstrapStartupConfigProjection`. |
+| `FocusInitialCameraOnConfiguredFactionBase` | Computes initial camera focus from configured faction spawn cell. | none after explicit parameters | Extracted to `MatchBootstrapStartupConfigProjection`. |
+| `EnsureBuildingRuntimeBoundaryEntity` and buffer helpers | Ensures building runtime ECS boundary entity and buffers. | `_buildingRuntimeBoundaryEntity` | Candidate for Stage 4/5 boundary setup cleanup. |
+| `EnsureMainMenuRuntimeDependencies`, `ApplyMainMenuBaseBindings`, `ApplyMainMenuFeatureBindingsIfReady`, `BindMatchHudSelectionPanel` | UI binding/composition. | main menu binding flags and UI adapter fields | Later UI binding extraction. |
+| `Resolve*System` methods | Lazy resolver/factory helpers. | individual cached system/helper fields | Later resolver helper extraction if field coupling stays low. |
+| `InitializeRenderingSystems` | Unit attack trace, impostor, and shared preview rendering setup. | rendering fields | Later rendering composition extraction. |
+
+**Notes**
+
+- 2026-06-24 heartbeat: extracted startup projection and initial camera focus logic into `Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs`.
+- `MatchBootstrapSystem.cs` line count decreased from `1172` to `1063`.
+- New helper owns one responsibility: explicit-parameter startup projection/fallback spawn-cell/camera-focus support for the match bootstrap pipeline.
+- No scene, prefab, namespace, serialized field, or MonoBehaviour identity changes were made.
+- Validation:
+  - Unity compile passed: `/private/tmp/warline-ecs-stage3-bootstrap-extract-compile.log`.
+  - `AIStartupSystemValidationTests.RunFocusedValidation` passed with `tests=1`: `/private/tmp/warline-ecs-stage3-ai-startup.log`.
+  - `InitialFactionSpawnCellSystemTests.RunFocusedValidation` passed with `tests=2`: `/private/tmp/warline-ecs-stage3-initial-faction-spawn-cell.log`.
+  - `CustomGameStartupSystemTests.RunFocusedValidation` passed with `tests=4`: `/private/tmp/warline-ecs-stage3-custom-game-startup.log`.
+  - `GameplayRuntimeUpdateValidationRunner.Run` passed with `tests=1`: `/private/tmp/warline-ecs-stage3-gameplay-runtime-update.log`.
+  - `ScriptArchitectureAlignmentContractTests.RunBootstrapCompositionGuardrailValidation` failed on pre-existing unrelated debt: `Assets/Game/Scripts/Composition/MenuBootstrapView.cs:102 uses HierarchyFind: Transform legacyRootTransform = transform.Find(LegacyUiToolkitShellRootName);`. Log: `/private/tmp/warline-ecs-stage3-bootstrap-architecture.log`.
+- Stage 3 blocker is validation-suite debt, not an extraction compile/runtime failure. Do not mix the `MenuBootstrapView` hierarchy lookup cleanup into this extraction commit.
 
 ---
 

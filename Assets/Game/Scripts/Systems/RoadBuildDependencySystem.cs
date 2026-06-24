@@ -4,6 +4,7 @@ internal sealed class RoadBuildDependencySystem
     {
         public BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
         public BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
+        public RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public IMatchRuntimeUi MainMenuPlayUi;
         public RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers;
     }
@@ -28,6 +29,7 @@ internal sealed class RoadBuildDependencySystem
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
         IMatchRuntimeUi mainMenuPlayUi,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
+        RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
         RoadMinimapEventSystem roadMinimapEventSystem)
     {
         BindBuildingInteraction(
@@ -36,6 +38,8 @@ internal sealed class RoadBuildDependencySystem
             buildingPlacementInteractionContext);
 
         state.MainMenuPlayUi = mainMenuPlayUi;
+        if (runtimeBuildingEntityLinks != null)
+            state.RuntimeBuildingEntityLinks = runtimeBuildingEntityLinks;
         roadMinimapEventSystem?.Configure(mainMenuPlayUi);
         if (runtimeGridBlockers != null)
             state.RuntimeGridBlockers = runtimeGridBlockers;

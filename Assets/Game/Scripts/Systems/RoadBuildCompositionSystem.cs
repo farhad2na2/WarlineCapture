@@ -84,26 +84,30 @@ internal sealed class RoadBuildCompositionSystem
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
         IMatchRuntimeUi mainMenu,
-        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers)
+        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
+        RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks)
     {
         BindDependencies(
             buildingPlacementInteraction,
             buildingPlacementInteractionContext,
             mainMenu,
-            runtimeGridBlockers);
+            runtimeGridBlockers,
+            runtimeBuildingEntityLinks);
     }
 
     private void BindDependencies(
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = default,
         IMatchRuntimeUi mainMenu = null,
-        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null)
+        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null,
+        RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks = null)
     {
         _roadSource?.RoadBuildCompositionLifecycleSystem.BindDependencies(
             _roadSource,
             buildingPlacementInteraction,
             buildingPlacementInteractionContext,
             mainMenu,
-            runtimeGridBlockers);
+            runtimeGridBlockers,
+            runtimeBuildingEntityLinks);
     }
 }

@@ -998,6 +998,7 @@ internal sealed class MatchBootstrapSystem
             _runtimeBlockerRoot,
             DecorationRoot,
             DecorationCombinedMeshBaker,
+            MatchScene != null ? MatchScene.RuntimeGridDebugViews : null,
             _gameplaySceneBindingSystem);
 
         RuntimeCity = gameplaySystems.RuntimeCity;

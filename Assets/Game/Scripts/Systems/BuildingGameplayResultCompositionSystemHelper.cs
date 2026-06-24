@@ -30,6 +30,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
+        RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
         BuildingCitizenPopulationCompositionSystemHelper citizenPopulationCompositionSystem,
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
@@ -66,6 +67,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             dependencySystem,
             runtimeResourcePrefabContextSystem,
             runtimeResourcePrefabSource,
+            runtimeBuildingEntityLinks,
             citizenPopulationCompositionSystem,
             citizenPopulationCompositionBoundary,
             citizenPopulationComposition,
@@ -104,6 +106,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         private readonly BuildingGameplayDependencyCompositionSystemHelper DependencySystem;
         private readonly BuildingRuntimeResourcePrefabContextCompositionSystemHelper RuntimeResourcePrefabContextSystem;
         private readonly BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source RuntimeResourcePrefabSource;
+        public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         private readonly BuildingCitizenPopulationCompositionSystemHelper CitizenPopulationCompositionBridge;
         private readonly CitizenPopulationCompositionSystem CitizenPopulationCompositionBoundary;
         public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
@@ -140,6 +143,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
+            RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
             BuildingCitizenPopulationCompositionSystemHelper citizenPopulationCompositionSystem,
             CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
             CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
@@ -175,6 +179,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             DependencySystem = dependencySystem;
             RuntimeResourcePrefabContextSystem = runtimeResourcePrefabContextSystem;
             RuntimeResourcePrefabSource = runtimeResourcePrefabSource;
+            RuntimeBuildingEntityLinks = runtimeBuildingEntityLinks;
             CitizenPopulationCompositionBridge = citizenPopulationCompositionSystem;
             CitizenPopulationCompositionBoundary = citizenPopulationCompositionBoundary;
             CitizenPopulationComposition = citizenPopulationComposition;

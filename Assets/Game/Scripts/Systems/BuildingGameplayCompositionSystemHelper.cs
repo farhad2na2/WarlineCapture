@@ -546,12 +546,15 @@ internal sealed class BuildingGameplayCompositionSystemHelper
         return _resultSystem.Create(
             childSystems.BuildingSelectionClickSystem,
             childSystems.BuildingSelectionClickCompositionHelper.Create(
-                childSystems,
-                tryGetGridForSelection,
-                tryGetGridCell,
-                createBuildingSelectionContext),
+            childSystems,
+            tryGetGridForSelection,
+            tryGetGridCell,
+            createBuildingSelectionContext),
             runtimeUpdate,
-            new BuildingRuntimeUpdateSystem.Context(UpdateBuildingStartupTick, UpdateBuildingSimulationTick),
+            new BuildingRuntimeUpdateSystem.Context(
+                UpdateBuildingStartupTick,
+                UpdateBuildingSimulationTick,
+                childSystems.RuntimeBuildingEntityLinkRegistry),
             childSystems.BuildingRuntimeCitySpawnSystem,
             childSystems.BuildingRuntimeContextSystem.CreateCitySpawnContext(
                 buildingRuntimeContextSource,
@@ -592,6 +595,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             childSystems.BuildingGameplayDependencyCompositionSystemHelper,
             childSystems.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,
             runtimeResourcePrefabSource,
+            childSystems.RuntimeBuildingEntityLinkRegistry,
             _citizenPopulationCompositionSystem,
             citizenPopulationCompositionBoundary,
             citizenPopulationComposition,

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
@@ -41,6 +42,7 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
         Transform runtimeBlockerRoot,
         Transform decorationRoot,
         CombinedMeshBaker decorationCombinedMeshBaker,
+        IReadOnlyList<GridAuthoring> runtimeGridDebugViews,
         GameplaySceneBindingSceneSystemHelper sceneBindingSystem)
     {
         RuntimeCityCompositionSystem runtimeCity = ResolveRuntimeCityCompositionSystem();
@@ -57,7 +59,7 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = ResolveRuntimeGridBlockerPresentationHelper();
         runtimeGridBlockers?.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCityReadModel);
         bindRoadGameplayFeatures?.Invoke(mainMenu, runtimeGridBlockers);
-        sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(runtimeGridBlockers);
+        sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(runtimeGridBlockers, runtimeGridDebugViews);
         bindBuildingGameplayFeatures?.Invoke(
             mainMenu,
             selectionUiCameraSystem,

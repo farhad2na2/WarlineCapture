@@ -293,7 +293,8 @@ internal sealed class ManagedGameplayStartupSystem
                 building.Interaction,
                 building.InteractionContext,
                 mainMenu,
-                runtimeGridBlockers);
+                runtimeGridBlockers,
+                building.RuntimeBuildingEntityLinks);
 
         return new Result(
             dayNight,

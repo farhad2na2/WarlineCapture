@@ -30,6 +30,7 @@ public sealed class MatchSceneView : MonoBehaviour
     [SerializeField] private RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig;
     [SerializeField] private RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig;
     [SerializeField] private GridAuthoringConfig runtimeGridConfig;
+    [SerializeField] private GridAuthoring[] runtimeGridDebugViews = Array.Empty<GridAuthoring>();
     [SerializeField] private DayNightSystemConfig dayNightConfig;
     [SerializeField] private FactionVisualSettingsConfig factionVisualConfig;
     [SerializeField] private GameStringsConfig gameStringsConfig;
@@ -56,6 +57,7 @@ public sealed class MatchSceneView : MonoBehaviour
     public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => runtimeDecorationSpawnerConfig;
     public RuntimeGridBlockerSystemConfig RuntimeGridBlockerConfig => runtimeGridBlockerConfig;
     public GridAuthoringConfig RuntimeGridConfig => runtimeGridConfig;
+    public IReadOnlyList<GridAuthoring> RuntimeGridDebugViews => runtimeGridDebugViews;
     public DayNightSystemConfig DayNightConfig => dayNightConfig;
     public FactionVisualSettingsConfig FactionVisualConfig => factionVisualConfig;
     public GameStringsConfig GameStringsConfig => gameStringsConfig;

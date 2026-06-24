@@ -149,6 +149,7 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingPlacementInteractionSystem RuntimeLinkInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context RuntimeLinkInteractionContext;
+        public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public readonly Func<bool> IsDeferringSideEffects;
         public readonly BuildingRuntimeCreationSystem.TryGetGridDelegate TryGetGridForRuntimeCreation;
         public readonly BuildingRuntimeCreationSystem.ResolvePlacementRectDelegate ResolvePlacementRect;
@@ -188,6 +189,7 @@ internal sealed class BuildingRuntimeContextSystem
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingPlacementInteractionSystem runtimeLinkInteractionSystem,
             BuildingPlacementInteractionSystem.Context runtimeLinkInteractionContext,
+            RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
             Func<bool> isDeferringSideEffects,
             BuildingRuntimeCreationSystem.TryGetGridDelegate tryGetGridForRuntimeCreation,
             BuildingRuntimeCreationSystem.ResolvePlacementRectDelegate resolvePlacementRect,
@@ -226,6 +228,7 @@ internal sealed class BuildingRuntimeContextSystem
             RuntimeBuildingSystem = runtimeBuildingSystem;
             RuntimeLinkInteractionSystem = runtimeLinkInteractionSystem;
             RuntimeLinkInteractionContext = runtimeLinkInteractionContext;
+            RuntimeBuildingEntityLinks = runtimeBuildingEntityLinks;
             IsDeferringSideEffects = isDeferringSideEffects;
             TryGetGridForRuntimeCreation = tryGetGridForRuntimeCreation;
             ResolvePlacementRect = resolvePlacementRect;
@@ -283,6 +286,7 @@ internal sealed class BuildingRuntimeContextSystem
             source.RuntimeBuildingSystem,
             source.RuntimeLinkInteractionSystem,
             source.RuntimeLinkInteractionContext,
+            source.RuntimeBuildingEntityLinks,
             source.IsDeferringSideEffects?.Invoke() == true,
             source.TryGetEntityManager,
             source.TryGetGridForRuntimeCreation,

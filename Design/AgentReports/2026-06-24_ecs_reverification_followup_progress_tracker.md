@@ -89,7 +89,7 @@ The audit was committed at `9e2298474`, but its source snapshot says it rechecke
 | 9 - RuntimeBuildingEntityLink Update Closure | P1/P2 | Complete | 100% | Support | Stage 0 | Per-building `Update` removed and replaced by batched runtime sync. |
 | 10 - Authoring And Bake Data Hygiene | P1/P2 | Complete | 100% | Support | Stage 0 | MapSurface blob dedup and GridAuthoring bake risks addressed; UnitGrid legacy fallback ledgered. |
 | 11 - Component And Minor Cleanup | P2 | Complete | 100% | Support | P0/P1 stages preferred | Remaining P2 checks complete or explicitly ledgered. |
-| 12 - Final Audit Closure Validation | P0 | Pending | 0% | Support | Stages 1-11 | Reverification commands pass and no non-namespace audit item is untracked. |
+| 12 - Final Audit Closure Validation | P0 | Complete | 100% | Support | Stages 1-11 | Reverification commands pass and no non-namespace audit item is untracked. |
 
 ## Exception Ledger
 
@@ -106,6 +106,8 @@ Do not leave this empty at final closure. Any remaining scan hit must be listed 
 | Stage 10 baker-only visual-root fallback | `Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs` | `ResolveModelRoot` and `ResolveDestroyedRoot` still use `transform.Find("Model")` / `transform.Find("Destroyed")` only inside the baker as a compatibility path for legacy unit prefabs that have not serialized explicit `modelRoot` / `destroyedRoot` references yet. This is not runtime gameplay lookup. | Unit prefabs are migrated so every prefab with `Model` / `Destroyed` children has explicit serialized visual-root references, then remove the fallback and update `UnitGridAuthoringVisualRootTests`. |
 | Stage 11 UI shell request bridge direct `EntityManager` | `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs` | The remaining direct `EntityManager` calls are in the shell request bridge that moves UI action buffers into ECS request buffers and creates missing request queue entities. This is not a gameplay hot loop; replacing it needs a dedicated UI request command-buffer redesign. | Profiler shows this system as hot, or UI shell request queues are redesigned around an ECB/request producer contract. |
 | Stage 11 cached UI canvas lookups | `Assets/Game/Scripts/UI/**/*.cs` | Remaining `GetComponentInParent<Canvas>` hits populate `_cachedCanvas` fields lazily in view classes. They are not repeated uncached traversal sites in runtime systems. | A view calls `GetComponentInParent<Canvas>` every frame without caching, or profiler identifies canvas resolution as hot. |
+| Stage 12 editor profiler singleton read | `Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs` | Final `GridConfig` singleton scan returns one editor-only profiler capture helper. It is not runtime gameplay code and does not run in player builds. | The same singleton scan returns a non-editor runtime source file, or this editor helper is moved into runtime assemblies. |
+| Stage 12 BuildingBarrier context dictionary type | `Assets/Game/Scripts/Systems/BuildingBarrierSystem.cs` | Final text scan still sees `IReadOnlyDictionary<int, RuntimeBuildingEntity>` in the context/snapshot boundary. The managed dictionary foreach regression is removed; Stage 8 now snapshots runtime buildings before barrier processing instead of boxing-enumerating the live dictionary path. | A `foreach` over `context.RuntimeBuildings` or the live runtime dictionary is reintroduced in `BuildingBarrierSystem`. |
 
 ---
 
@@ -1111,8 +1113,8 @@ rg -n "Shader\.PropertyToID|GetComponentInParent<Canvas>|EntityManager\." Assets
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P0 |
 | Owner | Support |
 | Dependencies | Stages 1-11 |
@@ -1138,11 +1140,11 @@ rg -n "Shader\.PropertyToID|GetComponentInParent<Canvas>|EntityManager\." Assets
 
 **Acceptance Criteria**
 
-- [ ] Every non-namespace audit item is `Complete`, `Blocked` with exact owner/blocker, or explicitly validated as not applicable.
-- [ ] No stage is closed with unexplained static scan hits.
-- [ ] Unity compile passes.
-- [ ] Focused validations pass or blockers are recorded.
-- [ ] Final commit(s) include only files changed for this tracker.
+- [x] Every non-namespace audit item is `Complete`, `Blocked` with exact owner/blocker, or explicitly validated as not applicable.
+- [x] No stage is closed with unexplained static scan hits.
+- [x] Unity compile passes.
+- [x] Focused validations pass or blockers are recorded.
+- [x] Final commit(s) include only files changed for this tracker.
 
 **Final Validation Commands**
 
@@ -1167,4 +1169,27 @@ wc -l Assets/Game/Scripts/Composition/MatchBootstrapSystem.cs
 
 **Notes**
 
-- Pending.
+- 2026-06-25 final audit ran against `HEAD` `6bdad07f1` before this Stage 12 closure commit.
+- Stage 12 fixed two guardrail regressions found during final validation:
+  - `GameplaySceneBindingSceneSystemHelper` no longer performs runtime scene-wide discovery with `FindObjectsByType`; `MatchSceneView` now exposes explicit serialized `GridAuthoring` debug-view references and composition passes them into the binding helper.
+  - `RuntimeBuildingEntityLink` no longer owns a static mutable `RegisteredLinks` registry. A `RuntimeBuildingEntityLinkRegistry` is now owned by building composition/runtime update and is passed through building and road building-link creation paths for batched sync.
+- Final static scan results:
+  - Ordering scan returns only `Assets/Game/Scripts/Editor/UnitMoveTargetDiagnosticValidationRunner.cs`, the existing editor string-literal false positive in the Exception Ledger.
+  - `RequireForUpdate` scan returns only `Assets/Game/Scripts/Editor/UnitMoveTargetDiagnosticValidationRunner.cs`, the same editor string-literal false positive.
+  - `.Run()` scan in runtime/render/UI shell ECS roots returns no hits.
+  - `GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>` scan returns no hits.
+  - `GetSingleton<GridConfig>` scan returns only `Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs`, now listed as an editor-only profiler-helper exception.
+  - `RuntimeBuildingEntityLink` update-method scan returns no `Update`, `LateUpdate`, or `FixedUpdate` methods.
+  - Composition/runtime/UI shell scene discovery scan returns no `FindObjectsByType`, `Object.Find`, `GameObject.Find`, `Resources.FindObjectsOfTypeAll`, or `transform.Find` hits.
+  - `RuntimeBuildingEntityLink` static-registry scan returns no `RegisteredLinks`, `SyncRegisteredLinks`, or static mutable collection hits.
+  - `BuildingBarrierSystem` dictionary scan still sees context/snapshot `IReadOnlyDictionary` declarations, but no live runtime dictionary foreach regression; this is recorded in the Exception Ledger.
+  - Authoring scan still sees the Stage 10 baker-only `UnitGridAuthoring.transform.Find("Model")` / `transform.Find("Destroyed")` compatibility fallback; this remains ledgered as non-runtime legacy-prefab debt.
+  - `MatchBootstrapSystem.cs` final line count is `1010`; Stage 4 guardrail passes, and remaining split work is no longer blocking this non-namespace reverification closure.
+- Final validation commands/results:
+  - Unity compile passed. Log path: `/private/tmp/warline-ecs-reverification-stage12-compile.log`; no `error CS` / compile-failure markers.
+  - Assembly boundary validation passed. Log path: `/private/tmp/warline-ecs-reverification-stage12-architecture-rerun.log`; pass marker `[ScriptArchitectureBoundaryValidation] result=Passed tests=28`.
+  - Bootstrap composition guardrail passed after the Stage 12 fixes. Log path: `/private/tmp/warline-ecs-reverification-stage12-bootstrap-rerun2.log`; pass marker `[BootstrapCompositionGuardrailValidation] result=Passed tests=5`.
+  - ECS hot-path architecture validation passed. Log path: `/private/tmp/warline-ecs-reverification-stage12-burst-hotpath.log`; pass marker `[EcsBurstHotPathArchitectureValidation] result=Passed tests=9`.
+  - Runtime building focused validation passed. Log path: `/private/tmp/warline-ecs-reverification-stage12-runtime-building.log`; pass marker `[RuntimeBuildingSystemFocusedValidation] result=Passed tests=5`.
+  - Building runtime boundary validation passed. Log path: `/private/tmp/warline-ecs-reverification-stage12-building-boundary.log`; pass marker `[BuildingRuntimeBoundaryValidation] result=Passed tests=9`.
+- Android builds were not triggered; Android validation remains user-triggered only.

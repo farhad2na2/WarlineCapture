@@ -191,6 +191,7 @@ internal sealed class RoadBuildCompositionContextSystem
             (originCell, footprintCells, grid) => GetRoadBuildFootprintCenter(source, originCell, footprintCells, grid),
             source.RoadBuildDependencyState.BuildingPlacementInteractionSystem,
             source.RoadBuildDependencyState.BuildingPlacementInteractionContext,
+            source.RoadBuildDependencyState.RuntimeBuildingEntityLinks,
             source.BuildingSpawnRandomState);
     }
 

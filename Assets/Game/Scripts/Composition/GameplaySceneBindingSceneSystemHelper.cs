@@ -1,16 +1,18 @@
-using UnityEngine;
+using System.Collections.Generic;
 
 public sealed class GameplaySceneBindingSceneSystemHelper
 {
-    public void BindRuntimeGridBlockerDebugViews(RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers)
+    public void BindRuntimeGridBlockerDebugViews(
+        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
+        IReadOnlyList<GridAuthoring> grids)
     {
-        GridAuthoring[] grids = Object.FindObjectsByType<GridAuthoring>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None);
-        for (int i = 0; i < grids.Length; i++)
+        if (grids == null)
+            return;
+
+        for (int i = 0; i < grids.Count; i++)
         {
             GridAuthoring grid = grids[i];
-            if (grid == null || !grid.gameObject.scene.IsValid())
+            if (grid == null)
                 continue;
 
             grid.BindRuntimeGridBlockers(runtimeGridBlockers);

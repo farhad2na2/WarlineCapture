@@ -6,11 +6,16 @@ public sealed class BuildingRuntimeUpdateSystem
     {
         public readonly Action UpdateBuildingStartupTick;
         public readonly Action UpdateBuildingSimulationTick;
+        public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
 
-        public Context(Action updateBuildingStartupTick, Action updateBuildingSimulationTick)
+        public Context(
+            Action updateBuildingStartupTick,
+            Action updateBuildingSimulationTick,
+            RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks)
         {
             UpdateBuildingStartupTick = updateBuildingStartupTick;
             UpdateBuildingSimulationTick = updateBuildingSimulationTick;
+            RuntimeBuildingEntityLinks = runtimeBuildingEntityLinks;
         }
     }
 
@@ -27,6 +32,6 @@ public sealed class BuildingRuntimeUpdateSystem
     public void UpdateSimulation(Context context)
     {
         context.UpdateBuildingSimulationTick?.Invoke();
-        RuntimeBuildingEntityLink.SyncRegisteredLinks();
+        context.RuntimeBuildingEntityLinks?.SyncLinks();
     }
 }

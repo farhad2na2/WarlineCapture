@@ -161,6 +161,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             source.RuntimeBuildingSystem,
             source.BuildingPlacementInteractionSystem,
             interactionContext,
+            source.RuntimeBuildingEntityLinkRegistry,
             () => source.BuildingPlacementRedirectCompositionSystemHelper.IsDeferringSideEffects,
             (out GridConfig grid) => tryGetGridData(source, out _, out grid, out _, out _),
             (definition, origin, grid) => getEffectivePlacementRect(source, definition, origin, grid, false),

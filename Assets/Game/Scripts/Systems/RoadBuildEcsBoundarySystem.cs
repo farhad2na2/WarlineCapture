@@ -19,6 +19,7 @@ internal sealed class RoadBuildEcsBoundarySystem
         public readonly GetFootprintCenterDelegate GetFootprintCenter;
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
+        public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public readonly uint BuildingSpawnRandomState;
 
         public Context(
@@ -27,6 +28,7 @@ internal sealed class RoadBuildEcsBoundarySystem
             GetFootprintCenterDelegate getFootprintCenter,
             BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+            RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
             uint buildingSpawnRandomState)
         {
             TryGetEntityManager = tryGetEntityManager;
@@ -34,6 +36,7 @@ internal sealed class RoadBuildEcsBoundarySystem
             GetFootprintCenter = getFootprintCenter;
             BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
+            RuntimeBuildingEntityLinks = runtimeBuildingEntityLinks;
             BuildingSpawnRandomState = buildingSpawnRandomState;
         }
     }
@@ -145,6 +148,7 @@ internal sealed class RoadBuildEcsBoundarySystem
         link.Configure(
             context.BuildingPlacementInteractionSystem,
             context.BuildingPlacementInteractionContext,
+            context.RuntimeBuildingEntityLinks,
             building.Id,
             building.CombatEntity,
             building.BlockerEntity);

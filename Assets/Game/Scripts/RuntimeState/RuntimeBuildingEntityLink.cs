@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
@@ -6,10 +5,9 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class RuntimeBuildingEntityLink : MonoBehaviour
 {
-    private static readonly List<RuntimeBuildingEntityLink> RegisteredLinks = new();
-
     private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
+    private RuntimeBuildingEntityLinkRegistry _registry;
     private int _buildingId;
     private Entity _entity;
     private Entity _blockerEntity;
@@ -21,30 +19,17 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
     public Entity Entity => _entity;
     public int BuildingId => _buildingId;
 
-    public static void SyncRegisteredLinks()
-    {
-        for (int i = RegisteredLinks.Count - 1; i >= 0; i--)
-        {
-            RuntimeBuildingEntityLink link = RegisteredLinks[i];
-            if (link == null)
-            {
-                RegisteredLinks.RemoveAt(i);
-                continue;
-            }
-
-            link.SyncNow();
-        }
-    }
-
     public void Configure(
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        RuntimeBuildingEntityLinkRegistry registry,
         int buildingId,
         Entity entity,
         Entity blockerEntity)
     {
         _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
         _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
+        SetRegistry(registry);
         _buildingId = buildingId;
         _entity = entity != Entity.Null ? entity : blockerEntity;
         _blockerEntity = blockerEntity;
@@ -89,15 +74,30 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
 
     private void OnEnable()
     {
-        if (RegisteredLinks.Contains(this))
-            return;
-
-        RegisteredLinks.Add(this);
+        _registry?.Register(this);
     }
 
     private void OnDisable()
     {
-        RegisteredLinks.Remove(this);
+        _registry?.Unregister(this);
+    }
+
+    private void OnDestroy()
+    {
+        _registry?.Unregister(this);
+    }
+
+    private void SetRegistry(RuntimeBuildingEntityLinkRegistry registry)
+    {
+        if (_registry == registry)
+        {
+            _registry?.Register(this);
+            return;
+        }
+
+        _registry?.Unregister(this);
+        _registry = registry;
+        _registry?.Register(this);
     }
 
     private void CacheOffsetFromEntity()

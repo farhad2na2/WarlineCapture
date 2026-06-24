@@ -336,11 +336,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Min/max hall distance, attempt budget, prefab cycling, labels, descriptions, plot spacing, and reservation were moved unchanged.
 
 28. Complete: Extract free scatter decoration placement
-   - Create `RuntimeCityFreeScatterDecorationSystem`.
+   - Create `RuntimeCityFreeScatterDecorationPrefabSystemHelper`.
    - Move remaining free-scatter decoration placement from `PlaceCityDecorationBuildings`.
    - Preserve distance checks, attempt count, plot spacing, labels, descriptions, and reservation.
    - Expected output: scatter decoration placement has one owner.
-   - Added `RuntimeCityFreeScatterDecorationSystem` as the owner for free-scatter decoration placement.
+   - Added `RuntimeCityFreeScatterDecorationPrefabSystemHelper` as the owner for free-scatter decoration placement.
    - `RuntimeCityBuildingSpawnSystem.PlaceCityDecorationBuildings` now delegates remaining free-scatter placement through the free-scatter system.
    - Distance checks, attempt budget, plot spacing, random prefab choice, labels, descriptions, and reservation were moved unchanged.
 

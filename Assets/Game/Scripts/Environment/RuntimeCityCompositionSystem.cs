@@ -53,7 +53,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityClothCoverSpawnState _fallbackRuntimeCityClothCoverSpawn = new();
     private RuntimeCityArchwaySpawnPrefabSystemHelper _runtimeCityArchwaySpawnHelper;
     private readonly RuntimeCityArchwaySpawnState _fallbackRuntimeCityArchwaySpawn = new();
-    private RuntimeCityFreeScatterDecorationSystem _runtimeCityFreeScatterDecorationSystem;
+    private RuntimeCityFreeScatterDecorationPrefabSystemHelper _runtimeCityFreeScatterDecorationHelper;
     private readonly RuntimeCityFreeScatterDecorationState _fallbackRuntimeCityFreeScatterDecoration = new();
     private RuntimeCityDecorationBuildingSpawnSystem _runtimeCityDecorationBuildingSpawnSystem;
     private readonly RuntimeCityDecorationBuildingSpawnState _fallbackRuntimeCityDecorationBuildingSpawn = new();
@@ -512,10 +512,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityArchwaySpawnHelper ??= ResolveRuntimeCityArchwaySpawnHelper();
 
     private RuntimeCityFreeScatterDecorationState RuntimeCityFreeScatterDecorationState =>
-        RuntimeCityFreeScatterDecorationSystem?.State ?? _fallbackRuntimeCityFreeScatterDecoration;
+        RuntimeCityFreeScatterDecorationHelper?.State ?? _fallbackRuntimeCityFreeScatterDecoration;
 
-    private RuntimeCityFreeScatterDecorationSystem RuntimeCityFreeScatterDecorationSystem =>
-        _runtimeCityFreeScatterDecorationSystem ??= ResolveRuntimeCityFreeScatterDecorationSystem();
+    private RuntimeCityFreeScatterDecorationPrefabSystemHelper RuntimeCityFreeScatterDecorationHelper =>
+        _runtimeCityFreeScatterDecorationHelper ??= ResolveRuntimeCityFreeScatterDecorationHelper();
 
     private RuntimeCityDecorationBuildingSpawnState RuntimeCityDecorationBuildingSpawnState =>
         RuntimeCityDecorationBuildingSpawnSystem?.State ?? _fallbackRuntimeCityDecorationBuildingSpawn;
@@ -731,9 +731,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityArchwaySpawnPrefabSystemHelper();
     }
 
-    private static RuntimeCityFreeScatterDecorationSystem ResolveRuntimeCityFreeScatterDecorationSystem()
+    private static RuntimeCityFreeScatterDecorationPrefabSystemHelper ResolveRuntimeCityFreeScatterDecorationHelper()
     {
-        return new RuntimeCityFreeScatterDecorationSystem();
+        return new RuntimeCityFreeScatterDecorationPrefabSystemHelper();
     }
 
     private static RuntimeCityDecorationBuildingSpawnSystem ResolveRuntimeCityDecorationBuildingSpawnSystem()

@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 84 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 156 |
+| Renamed in this tracker | 85 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 155 |
 | Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 155 |
-| Current batch | Runtime city decoration group prefab helper naming batch complete |
-| Validation status | Batch 1 through Batch 73 compile and architecture validations passed by marker; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71, Batch 72, and Batch 73 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 building runtime boundary validation and Batch 57 production metadata validation exited cleanly; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Current batch | Runtime city free-scatter decoration prefab helper naming batch complete |
+| Validation status | Batch 1 through Batch 74 compile and architecture validations passed by marker; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71, Batch 72, Batch 73, and Batch 74 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 building runtime boundary validation and Batch 57 production metadata validation exited cleanly; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -1317,6 +1317,23 @@ This helper groups runtime-city decoration prefabs into cloth-cover, archway, an
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RuntimeCityGenerationFocusedTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch73-runtime-city-generation.log`: passed with `[RuntimeCityGenerationFocusedValidation] result=Passed tests=2`.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch73-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=155`.
+
+## Batch 74 - Runtime City Free-Scatter Decoration Prefab Helper
+
+This helper places free-scatter decoration prefabs around runtime-city plots. The managed reason is prefab placement, not ECS scheduling.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `RuntimeCityFreeScatterDecorationSystem` | `RuntimeCityFreeScatterDecorationPrefabSystemHelper` | Owns runtime-city free-scatter decoration prefab placement behavior. |
+
+## Batch 74 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator remains `155` because the removed free-scatter row was offset by an existing composition passive-boundary row surfaced during regeneration.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RuntimeCityGenerationFocusedTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch74-runtime-city-generation.log`: passed with `[RuntimeCityGenerationFocusedValidation] result=Passed tests=2`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch74-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=155`.
 
 ## Open Follow-Up Batches
 

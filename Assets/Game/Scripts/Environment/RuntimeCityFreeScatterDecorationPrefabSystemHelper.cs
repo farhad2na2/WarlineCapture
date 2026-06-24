@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityFreeScatterDecorationSystem
+internal sealed class RuntimeCityFreeScatterDecorationPrefabSystemHelper
 {
     private readonly RuntimeCityFreeScatterDecorationState _state = new();
 

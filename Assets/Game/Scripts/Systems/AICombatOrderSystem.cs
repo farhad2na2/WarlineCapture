@@ -13,6 +13,7 @@ public partial struct AICombatOrderSystem : ISystem
     private const int MaxSquadsPerFrame = 8;
     private const int MaxUnitOrderWritesPerFrame = 128;
     private EntityQuery _runtimeBuildingCombatQuery;
+    private EntityQuery _gridConfigQuery;
     private EntityQuery _runtimeDiagnosticsQuery;
     private EntityQuery _diagnosticLogQueueQuery;
     private EntityTypeHandle _entityType;
@@ -100,6 +101,7 @@ public partial struct AICombatOrderSystem : ISystem
             ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),
             ComponentType.ReadOnly<UnitHealth>(),
             ComponentType.ReadOnly<LocalTransform>());
+        _gridConfigQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
         _runtimeDiagnosticsQuery = state.GetEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
@@ -302,7 +304,7 @@ public partial struct AICombatOrderSystem : ISystem
         }
 
         runtimeBuildings = new RuntimeBuildingCombatData(_runtimeBuildingCombatRecords);
-        gridBreachContext = TryGetGridBreachContext(ref state, out GridBreachContext foundGridContext)
+        gridBreachContext = TryGetGridBreachContext(ref state, _gridConfigQuery, out GridBreachContext foundGridContext)
             ? foundGridContext
             : default;
         breachContextCreated = true;
@@ -845,15 +847,14 @@ public partial struct AICombatOrderSystem : ISystem
         return FactionIdentity.IsAiControlledByDefault(factionId);
     }
 
-    private static bool TryGetGridBreachContext(ref SystemState state, out GridBreachContext context)
+    private static bool TryGetGridBreachContext(ref SystemState state, EntityQuery gridConfigQuery, out GridBreachContext context)
     {
         context = default;
         EntityManager em = state.EntityManager;
-        using EntityQuery gridQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        if (gridQuery.IsEmptyIgnoreFilter)
+        if (gridConfigQuery.IsEmptyIgnoreFilter)
             return false;
 
-        Entity gridEntity = gridQuery.GetSingletonEntity();
+        Entity gridEntity = gridConfigQuery.GetSingletonEntity();
         if (!em.HasBuffer<GridWalkable>(gridEntity) ||
             !em.HasComponent<DynamicBlockerComponent>(gridEntity) ||
             !em.HasComponent<DynamicOccupancyComponent>(gridEntity))

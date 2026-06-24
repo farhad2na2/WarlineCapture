@@ -46,12 +46,12 @@ Static source scan from 2026-06-24:
 | Metric | Current value |
 |---|---:|
 | Total stages | 12 |
-| Complete/skipped/decision-record stages | 5 |
-| In-progress stages | 1 |
+| Complete/skipped/decision-record stages | 6 |
+| In-progress stages | 0 |
 | Blocked stages | 1 |
 | Pending stages | 5 |
-| Overall stage-count progress | 54% |
-| Active implementation progress excluding Stage 10 decision record | 50% |
+| Overall stage-count progress | 56% |
+| Active implementation progress excluding Stage 10 decision record | 53% |
 
 ## Non-Negotiable Guardrails
 
@@ -74,7 +74,7 @@ Static source scan from 2026-06-24:
 | 2 - `RequireForUpdate` Sweep | P0 | Complete | 100% | Support | Stage 0 | Guard batches and documented boundary exceptions validated |
 | 3 - Bootstrap Split Plan + First Extraction | P1 | Blocked | 75% | Support | Stages 1-2 preferred | First extraction compiled; architecture guardrail blocked by pre-existing MenuBootstrapView hierarchy lookup |
 | 4 - UI Shell ECS Write Safety | P1 | Complete | 100% | Support | Stages 1-2 preferred | Compile and UI shell focused tests passed |
-| 5 - Singleton/ECB Access Cleanup | P1 | In Progress | 75% | Support | Stage 2 preferred | Grid singleton and AI diagnostics query batches compiled and focused tests passed |
+| 5 - Singleton/ECB Access Cleanup | P1 | Complete | 100% | Support | Stage 2 preferred | Grid singleton, AI diagnostics query, ECB/query review batches compiled and focused tests passed |
 | 6 - `.Run()` Scheduling Review | P1 | Pending | 0% | Support | Stages 1-2, profiler context | Compile + targeted perf smoke |
 | 7 - ResourceHauler Diagnostics Cleanup | P1 | Pending | 0% | Support | Stage 0 | Compile + resource hauler smoke if available |
 | 8 - Authoring/Baker Hygiene | P1/P2 | Pending | 0% | Support | P0 stages complete | Compile + bake/reimport validation |
@@ -511,8 +511,8 @@ Do not rewrite the bootstrap. Extract one cohesive responsibility at a time. Pre
 
 | Field | Value |
 |---|---|
-| Status | In Progress |
-| Progress | 75% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P1 |
 | Owner | Support |
 | Dependencies | Stage 2 preferred |
@@ -545,8 +545,8 @@ Do not cache singleton component values in `OnCreate` unless immutable. Most cle
 
 **Acceptance Criteria**
 
-- [ ] No cached command buffer is reused across frames.
-- [ ] No mutable singleton data is cached across frames.
+- [x] No cached command buffer is reused across frames.
+- [x] No mutable singleton data is cached across frames.
 - [x] Repeated same-frame singleton reads are reduced in touched files.
 - [x] Unity compile passes.
 
@@ -618,10 +618,44 @@ Do not cache singleton component values in `OnCreate` unless immutable. Most cle
 - `AIEndToEndValidationTests.RunFocusedValidation` passed with `tests=1`: `/private/tmp/warline-ecs-stage5-ai-diagnostics-endtoend.log`. The Unity batch process stayed alive after the pass marker and was stopped after success.
 - `AISteadyStatePerformanceValidation.RunBatchValidation` passed: `/private/tmp/warline-ecs-stage5-ai-diagnostics-steady.log`. The Unity batch process stayed alive after the pass marker and was stopped after success.
 
+**Batch 3 - ECB Review + Hot Query Creation Cleanup**
+
+| Field | Value |
+|---|---|
+| Status | Complete |
+| Progress | 100% |
+| Scope | Review `EndSimulationEntityCommandBufferSystem.Singleton` usage for cross-frame caching risk and remove one per-evaluation query creation in the AI combat hot path. |
+
+**Files changed**
+
+- `Assets/Game/Scripts/Systems/AICombatOrderSystem.cs`
+
+**Implementation notes**
+
+- Added a cached `_gridConfigQuery` in `AICombatOrderSystem.OnCreate`.
+- Reused the cached grid query in `TryGetGridBreachContext` instead of creating and disposing a `GridConfig` query each combat-order evaluation.
+- Reviewed current `EndSimulationEntityCommandBufferSystem.Singleton` usage sites found by source scan:
+  - `EngageTargetSyncSystem`
+  - `UnitHealthBarSystem`
+  - `UnitAttackTraceStateEnsureSystem`
+  - `MapSurfaceDiagnosticsSystem`
+  - `UnitAttackStateEnsureSystem`
+  - `UnitRotationHoldSystem`
+  - `UnitGridMovementSystem`
+  - `UnitEngagementSystem`
+  - `UnitDestroyedVisualSystem`
+- All reviewed ECB paths create command buffers inside `OnUpdate` and pass them to immediate local writes, scheduled jobs, or same-frame playback paths. No reviewed site caches an `EntityCommandBuffer` across frames, so no ECB code change was needed.
+- Did not cache mutable `GridConfig` component data across frames; only the query is cached.
+
+**Validation**
+
+- Unity compile passed by log marker: `/private/tmp/warline-ecs-stage5-ecb-query-compile.log`. The Unity batch process stayed alive after successful shutdown and was stopped after the success marker.
+- `AICombatOrderValidationTests.RunFocusedValidation` passed with `tests=3`: `/private/tmp/warline-ecs-stage5-ecb-query-ai-combat.log`. The Unity batch process stayed alive after the pass marker and was stopped after success.
+- `AIEndToEndValidationTests.RunFocusedValidation` passed with `tests=1`: `/private/tmp/warline-ecs-stage5-ecb-query-ai-endtoend.log`. The Unity batch process stayed alive after the pass marker and was stopped after success.
+
 **Remaining Stage 5 work**
 
-- Review repeated `EndSimulationEntityCommandBufferSystem.Singleton` access sites; keep ECB creation frame-local.
-- Review query creation inside hot `OnUpdate` paths and move safe query creation to `OnCreate`.
+- None. Continue to Stage 6.
 
 ---
 

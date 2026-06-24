@@ -49,7 +49,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityHouseYardWallState _fallbackRuntimeCityHouseYardWall = new();
     private RuntimeCityDecorationPrefabGroupSystem _runtimeCityDecorationPrefabGroupSystem;
     private readonly RuntimeCityDecorationPrefabGroupState _fallbackRuntimeCityDecorationPrefabGroup = new();
-    private RuntimeCityClothCoverSpawnSystem _runtimeCityClothCoverSpawnSystem;
+    private RuntimeCityClothCoverSpawnPrefabSystemHelper _runtimeCityClothCoverSpawnHelper;
     private readonly RuntimeCityClothCoverSpawnState _fallbackRuntimeCityClothCoverSpawn = new();
     private RuntimeCityArchwaySpawnPrefabSystemHelper _runtimeCityArchwaySpawnHelper;
     private readonly RuntimeCityArchwaySpawnState _fallbackRuntimeCityArchwaySpawn = new();
@@ -500,10 +500,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityDecorationPrefabGroupSystem ??= ResolveRuntimeCityDecorationPrefabGroupSystem();
 
     private RuntimeCityClothCoverSpawnState RuntimeCityClothCoverSpawnState =>
-        RuntimeCityClothCoverSpawnSystem?.State ?? _fallbackRuntimeCityClothCoverSpawn;
+        RuntimeCityClothCoverSpawnHelper?.State ?? _fallbackRuntimeCityClothCoverSpawn;
 
-    private RuntimeCityClothCoverSpawnSystem RuntimeCityClothCoverSpawnSystem =>
-        _runtimeCityClothCoverSpawnSystem ??= ResolveRuntimeCityClothCoverSpawnSystem();
+    private RuntimeCityClothCoverSpawnPrefabSystemHelper RuntimeCityClothCoverSpawnHelper =>
+        _runtimeCityClothCoverSpawnHelper ??= ResolveRuntimeCityClothCoverSpawnHelper();
 
     private RuntimeCityArchwaySpawnState RuntimeCityArchwaySpawnState =>
         RuntimeCityArchwaySpawnHelper?.State ?? _fallbackRuntimeCityArchwaySpawn;
@@ -721,9 +721,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityDecorationPrefabGroupSystem();
     }
 
-    private static RuntimeCityClothCoverSpawnSystem ResolveRuntimeCityClothCoverSpawnSystem()
+    private static RuntimeCityClothCoverSpawnPrefabSystemHelper ResolveRuntimeCityClothCoverSpawnHelper()
     {
-        return new RuntimeCityClothCoverSpawnSystem();
+        return new RuntimeCityClothCoverSpawnPrefabSystemHelper();
     }
 
     private static RuntimeCityArchwaySpawnPrefabSystemHelper ResolveRuntimeCityArchwaySpawnHelper()

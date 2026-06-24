@@ -318,11 +318,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - The existing ordinal-ignore-case name matching rules and fallback to the original prefab list when no free-scatter prefabs exist were preserved.
 
 26. Complete: Extract cloth-cover placement
-   - Create `RuntimeCityClothCoverSpawnSystem`.
+   - Create `RuntimeCityClothCoverSpawnPrefabSystemHelper`.
    - Move `PlaceClothCoverBuildings` and `TrySpawnAdjacentDecoration`.
    - Preserve anchor shuffle, prefab cursor behavior, adjacency candidates, touch validation, and reservation.
    - Expected output: adjacent decoration placement has one owner.
-   - Added `RuntimeCityClothCoverSpawnSystem` as the owner for cloth-cover adjacent decoration placement.
+   - Added `RuntimeCityClothCoverSpawnPrefabSystemHelper` as the owner for cloth-cover adjacent decoration placement.
    - `RuntimeCityBuildingSpawnSystem.PlaceCityDecorationBuildings` now delegates cloth-cover placement through the cloth-cover system.
    - Anchor shuffle, prefab cursor behavior, adjacency candidate shuffle, required-touch validation, labels/descriptions, and reservation were moved unchanged.
 

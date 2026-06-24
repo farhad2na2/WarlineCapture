@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityClothCoverSpawnSystem
+internal sealed class RuntimeCityClothCoverSpawnPrefabSystemHelper
 {
     private readonly RuntimeCityClothCoverSpawnState _state = new();
 

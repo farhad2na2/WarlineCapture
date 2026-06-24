@@ -46,12 +46,12 @@ Static source scan from 2026-06-24:
 | Metric | Current value |
 |---|---:|
 | Total stages | 12 |
-| Complete/skipped/decision-record stages | 10 |
+| Complete/skipped/decision-record stages | 11 |
 | In-progress stages | 0 |
 | Blocked stages | 1 |
-| Pending stages | 1 |
-| Overall stage-count progress | 90% |
-| Active implementation progress excluding Stage 10 decision record | 89% |
+| Pending stages | 0 |
+| Overall stage-count progress | 98% |
+| Active implementation progress excluding Stage 10 decision record | 98% |
 
 ## Non-Negotiable Guardrails
 
@@ -80,7 +80,7 @@ Static source scan from 2026-06-24:
 | 8 - Authoring/Baker Hygiene | P1/P2 | Complete | 100% | Support | P0 stages complete | Compile, architecture boundary, visual-root, runtime bootstrap, and layered map-surface validations passed |
 | 9 - BuildingBarrier Data-Structure Review | P2 | Skipped | 100% | Support | Profiler proof preferred | No code change; focused barrier validation passed |
 | 10 - RuntimeBuildingEntityLink Decision Record | P2 | Complete | 100% | Support | Focused profiler capture | No code change recommended |
-| 11 - Final Validation + Tracker Closure | P0 | Pending | 0% | Support | Stages 1-9 complete/skipped | Compile + focused tests + final static scan |
+| 11 - Final Validation + Tracker Closure | P0 | Complete | 100% | Support | Stages 1-9 complete/skipped | Final static scan, Unity compile, and architecture validation passed |
 
 ---
 
@@ -977,8 +977,8 @@ Do not convert to jobs or remove it in this pass. It is not currently an actiona
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P0 |
 | Owner | Support |
 | Dependencies | Stages 1-9 complete/skipped |
@@ -988,21 +988,32 @@ Do not convert to jobs or remove it in this pass. It is not currently an actiona
 
 **Final Checklist**
 
-- [ ] Static unordered `ISystem` count refreshed.
-- [ ] Static unguarded `ISystem` count refreshed.
-- [ ] `.Run()` sites refreshed and documented.
-- [ ] `MatchBootstrapSystem.cs` line count refreshed.
-- [ ] Unity compile passes.
-- [ ] Architecture tests pass if boundaries changed.
-- [ ] Focused tests/smokes for touched systems pass.
-- [ ] This tracker marks every stage `Complete`, `Skipped`, or `Blocked` with blocker and owner.
+- [x] Static unordered `ISystem` count refreshed.
+- [x] Static unguarded `ISystem` count refreshed.
+- [x] `.Run()` sites refreshed and documented.
+- [x] `MatchBootstrapSystem.cs` line count refreshed.
+- [x] Unity compile passes.
+- [x] Architecture tests pass if boundaries changed.
+- [x] Focused tests/smokes for touched systems pass.
+- [x] This tracker marks every stage `Complete`, `Skipped`, or `Blocked` with blocker and owner.
 
 **Final Report Should Include**
 
-- Files changed.
-- Contracts touched.
-- User-visible behavior.
-- Validation run.
-- Validation result.
-- Known gaps.
-- Next recommended task.
+- Files changed: see Stage 8 code/test commit `35c0e1d5f` and Stage 9 decision commit `37c9ee6d4`; Stage 11 only updates this tracker.
+- Contracts touched: no public gameplay contracts changed; Stage 8 added optional serialized authoring references and a content-hash helper on `MapSurfaceDataAsset`.
+- User-visible behavior: no intended runtime gameplay behavior change; no Android build run.
+- Validation run:
+  - Static `ISystem` declaration scan: `124` files.
+  - Static unordered `ISystem` scan: `93` files without `[UpdateInGroup]`.
+  - Static unguarded `ISystem` scan: `28` files without `RequireForUpdate`.
+  - Static `.Run()` scan: `8` sites.
+  - `MatchBootstrapSystem.cs` line count: `1063`.
+  - Unity compile: `/private/tmp/warline-stage11-final-compile.log`.
+  - Architecture boundary validation: `/private/tmp/warline-stage11-architecture.log`.
+- Validation result: compile passed by `Batchmode quit successfully`; architecture validation passed with `[ScriptArchitectureBoundaryValidation] result=Passed tests=28`.
+- Known gaps:
+  - Stage 3 remains blocked at 75% by the pre-existing `MenuBootstrapView` hierarchy lookup guardrail.
+  - Ordering metadata remains the largest static debt by count; the final scan reports `93` `ISystem` files without `[UpdateInGroup]`.
+  - `28` `ISystem` files still lack a direct `RequireForUpdate` string; some may be valid startup/producer exceptions and need source-aware review before changing.
+  - `8` direct `.Run()` sites remain and should be treated as profile-guided candidates, not automatic `ScheduleParallel` rewrites.
+- Next recommended task: resolve the Stage 3 `MenuBootstrapView` hierarchy lookup blocker, then do a source-aware ordering pass on the highest-risk remaining unordered systems.

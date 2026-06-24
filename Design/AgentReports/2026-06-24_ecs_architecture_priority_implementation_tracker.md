@@ -46,12 +46,12 @@ Static source scan from 2026-06-24:
 | Metric | Current value |
 |---|---:|
 | Total stages | 12 |
-| Complete/skipped/decision-record stages | 7 |
+| Complete/skipped/decision-record stages | 8 |
 | In-progress stages | 0 |
 | Blocked stages | 1 |
-| Pending stages | 4 |
-| Overall stage-count progress | 65% |
-| Active implementation progress excluding Stage 10 decision record | 62% |
+| Pending stages | 3 |
+| Overall stage-count progress | 73% |
+| Active implementation progress excluding Stage 10 decision record | 71% |
 
 ## Non-Negotiable Guardrails
 
@@ -76,7 +76,7 @@ Static source scan from 2026-06-24:
 | 4 - UI Shell ECS Write Safety | P1 | Complete | 100% | Support | Stages 1-2 preferred | Compile and UI shell focused tests passed |
 | 5 - Singleton/ECB Access Cleanup | P1 | Complete | 100% | Support | Stage 2 preferred | Grid singleton, AI diagnostics query, ECB/query review batches compiled and focused tests passed |
 | 6 - `.Run()` Scheduling Review | P1 | Complete | 100% | Support | Stages 1-2, profiler context | Compile and destroyed-visual focused validation passed |
-| 7 - ResourceHauler Diagnostics Cleanup | P1 | Pending | 0% | Support | Stage 0 | Compile + resource hauler smoke if available |
+| 7 - ResourceHauler Diagnostics Cleanup | P1 | Complete | 100% | Support | Stage 0 | Compile and ResourceHauler focused validation passed |
 | 8 - Authoring/Baker Hygiene | P1/P2 | Pending | 0% | Support | P0 stages complete | Compile + bake/reimport validation |
 | 9 - BuildingBarrier Data-Structure Review | P2 | Pending | 0% | Support | Profiler proof preferred | Profile-guided only |
 | 10 - RuntimeBuildingEntityLink Decision Record | P2 | Complete | 100% | Support | Focused profiler capture | No code change recommended |
@@ -738,8 +738,8 @@ Do not cache singleton component values in `OnCreate` unless immutable. Most cle
 
 | Field | Value |
 |---|---|
-| Status | Pending |
-| Progress | 0% |
+| Status | Complete |
+| Progress | 100% |
 | Priority | P1 |
 | Owner | Support |
 | Dependencies | Stage 0 |
@@ -772,9 +772,39 @@ Do not cache singleton component values in `OnCreate` unless immutable. Most cle
 
 **Acceptance Criteria**
 
-- [ ] Warning behavior is intentional and documented.
-- [ ] No repeated warning spam from the same invalid hauler.
-- [ ] Resource hauler behavior is unchanged except logging.
+- [x] Warning behavior is intentional and documented.
+- [x] No repeated warning spam from the same invalid hauler.
+- [x] Resource hauler behavior is unchanged except logging.
+
+**Batch 1 - Invalid Capacity Warning Throttle**
+
+| Field | Value |
+|---|---|
+| Status | Complete |
+| Progress | 100% |
+| Scope | Keep invalid hauler capacity visible as a configuration warning, but suppress repeated warnings for the same entity. |
+
+**Files changed**
+
+- `Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeSystem.cs`
+
+**Implementation notes**
+
+- `UnitResourceHauler.BarrelCapacity <= 0` is treated as invalid configuration/state because authoring only adds `UnitResourceHauler` for positive configured hauler capacity.
+- The existing behavior still removes `UnitResourceHaulOrder` when an invalid capacity is encountered.
+- Added `_invalidCapacityWarningEntities` to track which entity has already emitted the invalid-capacity warning.
+- The warning remains visible once per entity: `[ResourceHauler] entity=... invalid-capacity capacity=...`.
+- If the same entity later has a valid positive load amount, the entity is removed from the warning set.
+- `failed-destination-move` remains guarded by `VerboseResourceHaulerLogs`; the earlier audit claim that it was unguarded is stale.
+
+**Validation**
+
+- Unity compile passed by log marker: `/private/tmp/warline-ecs-stage7-resource-hauler-compile.log`. The Unity batch process stayed alive after successful shutdown and was stopped after the success marker.
+- `ResourceHaulerSystemTests.RunFocusedValidation` passed with `tests=9`: `/private/tmp/warline-ecs-stage7-resource-hauler-focused.log`. The log included a UnityConnect timeout after the pass marker; no test failure marker was present, and the Unity batch process was stopped after success.
+
+**Remaining Stage 7 work**
+
+- None. Continue to Stage 8.
 
 ---
 

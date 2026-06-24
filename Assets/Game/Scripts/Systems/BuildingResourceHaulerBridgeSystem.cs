@@ -7,6 +7,7 @@ using UnityEngine;
 internal sealed class BuildingResourceHaulerBridgeSystem
 {
     private static readonly bool VerboseResourceHaulerLogs = false;
+    private readonly HashSet<Entity> _invalidCapacityWarningEntities = new();
 
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
     public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
@@ -208,7 +209,7 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         return IsHaulerAtBuildingApproach(context, currentCell, unitFootprint, building, grid);
     }
 
-    private static void UpdateResourceHauler(Context context, EntityManager em, GridConfig grid, Entity entity, float now)
+    private void UpdateResourceHauler(Context context, EntityManager em, GridConfig grid, Entity entity, float now)
     {
         if (!em.Exists(entity))
             return;
@@ -291,7 +292,7 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         em.SetComponentData(entity, order);
     }
 
-    private static void UpdateLoadingPhase(
+    private void UpdateLoadingPhase(
         Context context,
         EntityManager em,
         Entity entity,
@@ -305,11 +306,13 @@ internal sealed class BuildingResourceHaulerBridgeSystem
         float loadAmount = context.ResourceHaulerSystem.GetLoadAmount(hauler);
         if (loadAmount <= 0f)
         {
-            Debug.LogWarning($"[ResourceHauler] entity={entity} invalid-capacity capacity={hauler.BarrelCapacity}");
+            if (_invalidCapacityWarningEntities.Add(entity))
+                Debug.LogWarning($"[ResourceHauler] entity={entity} invalid-capacity capacity={hauler.BarrelCapacity}");
             em.RemoveComponent<UnitResourceHaulOrder>(entity);
             return;
         }
 
+        _invalidCapacityWarningEntities.Remove(entity);
         float sourceStored = resourceKind == ResourceHaulerSystem.ResourceHaulKind.Fuel ? source.StoredFuelBarrels : source.StoredOilBarrels;
         float currentCargo = resourceKind == ResourceHaulerSystem.ResourceHaulKind.Fuel ? hauler.CargoFuelBarrels : hauler.CargoOilBarrels;
         if (VerboseResourceHaulerLogs)

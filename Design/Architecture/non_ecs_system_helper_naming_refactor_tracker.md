@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 164 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 76 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 76 |
-| Current batch | Road preview presentation helper naming batch complete |
-| Validation status | Batch 1 through Batch 153 compile and architecture validations passed by marker; Batch 84 through Batch 118 Unity validations and Batch 124 through Batch 153 Unity validations exited cleanly, except the first Batch 146 road validation launch was retried serially because Unity rejected concurrent project access and Batch 147 architecture was rerun after removing stale road-command transition allowlist entries; Batch 119 architecture validation, Batch 120 Unity validations, Batch 121 building-placement/architecture Unity validations, Batch 122 Unity validations, and Batch 123 placement/architecture Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 123 runtime-tick focused validation failed on the documented pre-existing `SimulationTickKeepsMapPlacementQueuesAliveBeforeBoundary` ordering assertion (`Expected: "mapBuildings"`, actual: `"boundary"`); Batch 121 selection command contract validation repeatedly failed in `UnitEngagementSystem_ScanOrderAcquiresOnlyTargetsInsideScanArea`, which does not reference the renamed helper and is tracked as an unrelated validation blocker; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71 through Batch 118 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 and Batch 102 building runtime boundary validations and Batch 57 production metadata validation exited cleanly; Batch 103 had no dedicated menu-diagnostics focused runner, so compile plus architecture validation covered the naming-only UI helper slice; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 165 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 75 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 75 |
+| Current batch | Citizen population composition helper naming batch complete |
+| Validation status | Batch 1 through Batch 154 compile and architecture validations passed by marker; Batch 84 through Batch 118 Unity validations and Batch 124 through Batch 154 Unity validations exited cleanly, except the first Batch 146 road validation launch was retried serially because Unity rejected concurrent project access and Batch 147 architecture was rerun after removing stale road-command transition allowlist entries; Batch 119 architecture validation, Batch 120 Unity validations, Batch 121 building-placement/architecture Unity validations, Batch 122 Unity validations, and Batch 123 placement/architecture Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 123 runtime-tick focused validation failed on the documented pre-existing `SimulationTickKeepsMapPlacementQueuesAliveBeforeBoundary` ordering assertion (`Expected: "mapBuildings"`, actual: `"boundary"`); Batch 121 selection command contract validation repeatedly failed in `UnitEngagementSystem_ScanOrderAcquiresOnlyTargetsInsideScanArea`, which does not reference the renamed helper and is tracked as an unrelated validation blocker; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71 through Batch 118 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 and Batch 102 building runtime boundary validations and Batch 57 production metadata validation exited cleanly; Batch 103 had no dedicated menu-diagnostics focused runner, so compile plus architecture validation covered the naming-only UI helper slice; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -813,7 +813,7 @@ This helper owns building-side citizen population composition: population bounda
 
 | Status | Old type/file | New type/file | Reason |
 | --- | --- | --- | --- |
-| Complete | `BuildingCitizenPopulationCompositionSystem` | `BuildingCitizenPopulationCompositionSystemHelper` | Owns managed building citizen-population composition wiring. |
+| Complete | `BuildingCitizenPopulationCompositionSystemHelper` | `BuildingCitizenPopulationCompositionSystemHelper` | Owns managed building citizen-population composition wiring. |
 
 ## Batch 44 Validation Log
 
@@ -2710,6 +2710,23 @@ This helper owns managed road preview presentation, including preview object poo
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RoadBuildCommandCompositionSystemHelperTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch153-road-build-command.log`: passed with `[RoadBuildCommandRequestValidation] result=Passed tests=7`.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch153-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=76`.
+
+## Batch 154 - Citizen Population Composition Helper
+
+This helper owns citizen population composition wiring, including child helper creation, initialization, visible-citizen cleanup, read-model refresh, event binding, disposal, and building composition callers. It remains a plain composition helper and does not introduce an ECS lifecycle.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `CitizenPopulationCompositionSystem` | `CitizenPopulationCompositionSystemHelper` | Coordinates citizen population composition without owning an ECS lifecycle. |
+
+## Batch 154 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `75`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod CitizenVisibleUnitSystemTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch154-citizen-visible.log`: passed with `[CitizenVisibleUnitFocusedValidation] result=Passed tests=3`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch154-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=75`.
 
 ## Open Follow-Up Batches
 

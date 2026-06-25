@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class CitizenPopulationCompositionSystem
+internal sealed class CitizenPopulationCompositionSystemHelper
 {
     public sealed class Result
     {
@@ -43,7 +43,7 @@ internal sealed class CitizenPopulationCompositionSystem
     }
 
     public static void Init(
-        CitizenPopulationCompositionSystem system,
+        CitizenPopulationCompositionSystemHelper system,
         Result result,
         BuildingRuntimeReadModelCompositionSystemHelper buildingRuntimeQuerySystem,
         BuildingRuntimeReadModelCompositionSystemHelper.Context buildingRuntimeQueryContext,
@@ -148,7 +148,7 @@ internal sealed class CitizenPopulationCompositionSystem
             syncSummaryEntity: true);
     }
 
-    public static void Dispose(CitizenPopulationCompositionSystem system, Result result)
+    public static void Dispose(CitizenPopulationCompositionSystemHelper system, Result result)
     {
         if (system != null)
         {

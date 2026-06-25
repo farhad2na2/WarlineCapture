@@ -94,7 +94,7 @@ Direct call sites:
 
 - `BuildingSpawnCompositionSystemHelper`: held by `BuildingGameplaySourceCompositionSystemHelper`, included in `BuildingGameplayResultCompositionSystemHelper`, invoked through `BuildingProductionRuntimeTickCompositionSystemHelper`, `BuildingProductionTickCompositionSystemHelper`, `BuildingProductionCompositionSystemHelper`, and `BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBuildingSpawnContext`; focused tests call `ResolveProducedUnitFaction`.
 - `BuildingProductionTransportBridgeCompositionSystemHelper`: held by `BuildingGameplaySourceCompositionSystemHelper`, passed through `BuildingProductionContextCompositionSystemHelper` and `BuildingProductionTransportPresentationSystemHelper`; focused production tests call `FocusNewestPlayerProducedUnit`.
-- `CitizenVisibleUnitSystem`: constructed by `CitizenPopulationCompositionSystem` and directly constructed by `CitizenVisibleUnitSystemTests`.
+- `CitizenVisibleUnitSystem`: constructed by `CitizenPopulationCompositionSystemHelper` and directly constructed by `CitizenVisibleUnitSystemTests`.
 - `MapVehiclePlacementSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, invoked by `BuildingGameplayCompositionSystemHelper` map placement update callbacks; blocker cleanup helpers are directly covered by `UnitMovementBlockerValidationTests`.
 - `CustomGameStartupSystem`: resolved by `MatchBootstrapSystem` through `World.GetOrCreateSystemManaged<CustomGameStartupSystem>()`; focused tests resolve it through `GetOrCreateSystemManaged`.
 

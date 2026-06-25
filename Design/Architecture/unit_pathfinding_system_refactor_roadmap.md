@@ -332,7 +332,7 @@ Acceptance target: no measurable regression in path request throughput, no new G
 
 29. Complete: Migrate citizen pending-path reads
    - Move citizen lifecycle/runtime update paths from `UnitPathfindingSystem.HasPendingPathJob` to the ECS pending-state boundary.
-   - `CitizenPopulationCompositionSystem.Result` now owns a `UnitPathfindingPendingStateReader`.
+   - `CitizenPopulationCompositionSystemHelper.Result` now owns a `UnitPathfindingPendingStateReader`.
    - `CitizenPopulationRuntimeUpdateSystem` passes `UnitPathfindingPendingStateReader.HasPendingPathJob` into the lifecycle update.
    - `CitizenPopulationLifecycleSystem` now receives a pending-path delegate and no longer reads `UnitPathfindingSystem.HasPendingPathJob`.
 

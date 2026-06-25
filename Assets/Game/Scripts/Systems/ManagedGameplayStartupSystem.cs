@@ -45,7 +45,7 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly SelectionBuildingInteractionSystem SelectionBuildingInteraction;
         public readonly SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers;
         public readonly ISelectionRectangleView SelectionRectangleView;
-        public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
+        public readonly CitizenPopulationCompositionSystemHelper.Result CitizenPopulationComposition;
         public readonly System.Action DisposeCitizenPopulation;
 
         public Result(
@@ -84,7 +84,7 @@ internal sealed class ManagedGameplayStartupSystem
             SelectionBuildingInteractionSystem selectionBuildingInteraction,
             SelectionScreenMarkerUiSystemHelper selectionScreenMarkers,
             ISelectionRectangleView selectionRectangleView,
-            CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
+            CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition,
             System.Action disposeCitizenPopulation)
         {
             DayNight = dayNight;

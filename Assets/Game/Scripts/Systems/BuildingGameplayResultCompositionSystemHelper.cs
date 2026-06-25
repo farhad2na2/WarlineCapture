@@ -32,8 +32,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
         RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
         BuildingCitizenPopulationCompositionSystemHelper citizenPopulationCompositionSystem,
-        CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
-        CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
+        CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary,
+        CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition,
         System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         Func<Rect, bool> trySelectFirstBuildingInScreenRect,
         Action<IMatchRuntimeUi> bindMainMenu,
@@ -108,8 +108,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         private readonly BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source RuntimeResourcePrefabSource;
         public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         private readonly BuildingCitizenPopulationCompositionSystemHelper CitizenPopulationCompositionBridge;
-        private readonly CitizenPopulationCompositionSystem CitizenPopulationCompositionBoundary;
-        public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
+        private readonly CitizenPopulationCompositionSystemHelper CitizenPopulationCompositionBoundary;
+        public readonly CitizenPopulationCompositionSystemHelper.Result CitizenPopulationComposition;
         public readonly System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Func<Rect, bool> TrySelectFirstBuildingInScreenRect;
         public readonly Action<IMatchRuntimeUi> BindMainMenu;
@@ -145,8 +145,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
             RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
             BuildingCitizenPopulationCompositionSystemHelper citizenPopulationCompositionSystem,
-            CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
-            CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
+            CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary,
+            CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition,
             System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Func<Rect, bool> trySelectFirstBuildingInScreenRect,
             Action<IMatchRuntimeUi> bindMainMenu,

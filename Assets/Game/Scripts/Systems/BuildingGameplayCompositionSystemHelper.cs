@@ -382,9 +382,9 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             createRuntimeContextSource);
         BuildingRuntimeContextFactoryCompositionSystemHelper.Source buildingRuntimeContextSource =
             createBuildingRuntimeContextSource(childSystems, interactionContext, markerPropertyBlock);
-        CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary =
+        CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary =
             BuildingCitizenPopulationCompositionSystemHelper.CreateBoundary(_citizenPopulationCompositionSystem);
-        CitizenPopulationCompositionSystem.Result citizenPopulationComposition =
+        CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition =
             BuildingCitizenPopulationCompositionSystemHelper.Create(_citizenPopulationCompositionSystem);
 
         var runtimeUpdate = new BuildingRuntimeUpdateCompositionSystemHelper();

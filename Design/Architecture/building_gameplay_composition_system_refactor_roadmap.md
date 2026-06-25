@@ -88,7 +88,7 @@ Nested types:
 - `BuildingUiQuerySystem.Context UiQueryContext`
 - `BuildingPlacementInteractionBoundaryCompositionSystemHelper Interaction`
 - `BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context InteractionContext`
-- `CitizenPopulationCompositionSystem.Result CitizenPopulationComposition`
+- `CitizenPopulationCompositionSystemHelper.Result CitizenPopulationComposition`
 - `System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings`
 - `Action<MainMenuPlayUI> BindMainMenu`
 - `Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> BindGameplayFeatures`
@@ -99,7 +99,7 @@ Nested types:
 - `BuildingGameplayDependencyCompositionSystemHelper DependencySystem`
 - `BuildingRuntimeResourcePrefabContextCompositionSystemHelper RuntimeResourcePrefabContextSystem`
 - `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source RuntimeResourcePrefabSource`
-- `CitizenPopulationCompositionSystem CitizenPopulationCompositionBoundary`
+- `CitizenPopulationCompositionSystemHelper CitizenPopulationCompositionBoundary`
 
 `Result` public methods:
 

@@ -2,9 +2,9 @@ using UnityEngine;
 
 internal sealed class CitizenPopulationRuntimeUpdateSystem
 {
-    private CitizenPopulationCompositionSystem.Result _systems;
+    private CitizenPopulationCompositionSystemHelper.Result _systems;
 
-    public void Bind(CitizenPopulationCompositionSystem.Result systems)
+    public void Bind(CitizenPopulationCompositionSystemHelper.Result systems)
     {
         _systems = systems;
     }

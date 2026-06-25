@@ -3,43 +3,43 @@ using UnityEngine;
 
 internal sealed class BuildingCitizenPopulationCompositionSystemHelper
 {
-    public static CitizenPopulationCompositionSystem CreateBoundary(BuildingCitizenPopulationCompositionSystemHelper system)
+    public static CitizenPopulationCompositionSystemHelper CreateBoundary(BuildingCitizenPopulationCompositionSystemHelper system)
     {
         return system != null ? system.CreateBoundary() : CreateBoundaryState();
     }
 
-    public CitizenPopulationCompositionSystem CreateBoundary()
+    public CitizenPopulationCompositionSystemHelper CreateBoundary()
     {
         return CreateBoundaryState();
     }
 
-    private static CitizenPopulationCompositionSystem CreateBoundaryState()
+    private static CitizenPopulationCompositionSystemHelper CreateBoundaryState()
     {
         World world = World.DefaultGameObjectInjectionWorld;
         return world != null && world.IsCreated
-            ? new CitizenPopulationCompositionSystem()
+            ? new CitizenPopulationCompositionSystemHelper()
             : null;
     }
 
-    public static CitizenPopulationCompositionSystem.Result Create(BuildingCitizenPopulationCompositionSystemHelper system)
+    public static CitizenPopulationCompositionSystemHelper.Result Create(BuildingCitizenPopulationCompositionSystemHelper system)
     {
         return system != null ? system.Create() : CreateState();
     }
 
-    public CitizenPopulationCompositionSystem.Result Create()
+    public CitizenPopulationCompositionSystemHelper.Result Create()
     {
         return CreateState();
     }
 
-    private static CitizenPopulationCompositionSystem.Result CreateState()
+    private static CitizenPopulationCompositionSystemHelper.Result CreateState()
     {
-        return CitizenPopulationCompositionSystem.Create();
+        return CitizenPopulationCompositionSystemHelper.Create();
     }
 
     public static void Initialize(
         BuildingCitizenPopulationCompositionSystemHelper system,
-        CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
-        CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
+        CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary,
+        CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
@@ -61,8 +61,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
     }
 
     public void Initialize(
-        CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
-        CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
+        CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary,
+        CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
@@ -84,8 +84,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
 
     public static void Initialize(
         BuildingCitizenPopulationCompositionSystemHelper system,
-        CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
-        CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
+        CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary,
+        CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
@@ -122,8 +122,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
     }
 
     public void Initialize(
-        CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
-        CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
+        CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary,
+        CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
@@ -145,8 +145,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
     }
 
     private static void InitializeState(
-        CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
-        CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
+        CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary,
+        CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
@@ -163,7 +163,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateCitizenPrefabContext(
                 runtimeResourcePrefabContextSystem,
                 runtimeResourcePrefabSource);
-        CitizenPopulationCompositionSystem.Init(
+        CitizenPopulationCompositionSystemHelper.Init(
             citizenPopulationCompositionBoundary,
             citizenPopulationComposition,
             runtimeQuery,
@@ -177,8 +177,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
 
     public static void Dispose(
         BuildingCitizenPopulationCompositionSystemHelper system,
-        CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
-        CitizenPopulationCompositionSystem.Result citizenPopulationComposition)
+        CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary,
+        CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition)
     {
         if (system != null)
         {
@@ -190,17 +190,17 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
     }
 
     public void Dispose(
-        CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
-        CitizenPopulationCompositionSystem.Result citizenPopulationComposition)
+        CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary,
+        CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition)
     {
         DisposeState(citizenPopulationCompositionBoundary, citizenPopulationComposition);
     }
 
     private static void DisposeState(
-        CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
-        CitizenPopulationCompositionSystem.Result citizenPopulationComposition)
+        CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary,
+        CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition)
     {
-        CitizenPopulationCompositionSystem.Dispose(
+        CitizenPopulationCompositionSystemHelper.Dispose(
             citizenPopulationCompositionBoundary,
             citizenPopulationComposition);
     }

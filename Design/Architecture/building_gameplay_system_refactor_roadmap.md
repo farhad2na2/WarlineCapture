@@ -32,7 +32,7 @@ Step 14 placement visual-update transition size: 1824 lines. Active-placement fo
 
 Step 15 wall helper transition size: 1770 lines. Wall preview scratch state now lives in `BuildingPlacementPreviewPresentationSystemHelper`, wall commit scratch state now lives in `BuildingPlacementContextCompositionSystemHelper`, and placement rotate-vertical policy now lives in `BuildingBarrierSystem`; `BuildingGameplaySystem` no longer owns wall-specific helper methods or collections.
 
-Step 16 production button command transition size: 1765 lines. Selected-building production button commands now route through `BuildingUiCommandSystem`; `BuildingProductionRequestBoundary` owns active-building production request execution, and `BuildingUiContextSystem` wires the command boundary to the production request context.
+Step 16 production button command transition size: 1765 lines. Selected-building production button commands now route through `BuildingUiCommandSystem`; `BuildingProductionRequestBoundary` owns active-building production request execution, and `BuildingUiContextCompositionSystemHelper` wires the command boundary to the production request context.
 
 Step 17 camp request transition size: 1736 lines. Camp item affordability, request execution, missing-producer failure reporting, focus memory, and deferred focus now route through `BuildingUiCommandSystem` and `BuildingProductionRequestBoundary`; `BuildingGameplaySystem` no longer owns camp request callbacks.
 
@@ -64,7 +64,7 @@ Step 30 placement context factory transition size: 1446 lines. Placement cancel/
 
 Step 31 runtime context factory transition size: 1446 lines. Runtime spawn command context creation now lives in `BuildingRuntimeContextFactoryCompositionSystemHelper`; managed composition and runtime tick context creation use `BuildingRuntimeContextFactoryCompositionSystemHelper` directly for runtime visual/combat/query/barrier contexts instead of shell context wrapper methods.
 
-Step 32 production/UI context factory transition size: 1446 lines. Production context source creation now routes through `BuildingProductionContextCompositionSystemHelper.CreateSource`, UI context source creation routes through `BuildingUiContextSystem.CreateSource`, interaction context source creation routes through `BuildingPlacementInteractionContextCompositionSystemHelper.CreateSource`, and runtime resource prefab source creation routes through `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource`.
+Step 32 production/UI context factory transition size: 1446 lines. Production context source creation now routes through `BuildingProductionContextCompositionSystemHelper.CreateSource`, UI context source creation routes through `BuildingUiContextCompositionSystemHelper.CreateSource`, interaction context source creation routes through `BuildingPlacementInteractionContextCompositionSystemHelper.CreateSource`, and runtime resource prefab source creation routes through `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource`.
 
 Step 33 runtime tick composition transition size: 1417 lines. Runtime tick source assembly now uses `BuildingGameplaySourceCompositionSystemHelper` child systems directly for runtime visual/combat/barrier/input/boundary tick phases; `BuildingGameplaySystem` no longer exposes `RuntimeTickSystem`, `RuntimeTickDomains`, `RuntimeInputDomains`, runtime state getter delegates, runtime boundary query delegates, or tick-only production/resource properties.
 
@@ -255,13 +255,13 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Expected output: UI does not call `BuildingGameplaySystem` for unit production.
    - `BuildingUiCommandSystem` now owns primary/secondary/tertiary/quaternary selected-building and building-id production button commands plus the UI production-arm command.
    - `BuildingProductionRequestBoundary` now owns active-building production request execution.
-   - `BuildingUiContextSystem` wires UI production commands to fresh production request contexts and frame counts.
+   - `BuildingUiContextCompositionSystemHelper` wires UI production commands to fresh production request contexts and frame counts.
    - `BuildingGameplaySystem` production command wrappers now delegate through `BuildingUiCommandSystem`, and placement interaction uses the same UI command boundary.
 
 17. Complete: Move camp item request flow
    - Move camp item affordability, required-building failure, producer focus, and arm-next-production command into `BuildingUiCommandSystem`.
    - Expected output: camp UI command result semantics remain stable but no longer depend on shell private methods.
-   - `BuildingUiContextSystem` now wires `BuildingUiCommandSystem` camp request delegates directly to `BuildingProductionRequestBoundary` using fresh production request contexts.
+   - `BuildingUiContextCompositionSystemHelper` now wires `BuildingUiCommandSystem` camp request delegates directly to `BuildingProductionRequestBoundary` using fresh production request contexts.
    - `BuildingGameplaySystem` no longer owns `GetCampRequestFailure`, `TryRequestCampItem`, or `FocusLastCampProductionRequest` callbacks.
    - Existing camp UI behavior remains routed through `BuildingUiCommandSystem` while production request policy remains in `BuildingProductionRequestBoundary`.
 
@@ -269,7 +269,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Move selected-building health, preview prefab, `CanCreate*`, active/selected building flags, and pending/produced UI entries behind `BuildingUiQuerySystem`.
    - Expected output: menu/HUD reads from UI query/read models only.
    - `BuildingUiQuerySystem` now owns scalar selected-building UI reads and selected-building production affordability reads.
-   - `BuildingUiContextSystem` wires those read delegates and production request context into the UI query context.
+   - `BuildingUiContextCompositionSystemHelper` wires those read delegates and production request context into the UI query context.
    - `BuildingGameplaySystem` UI read compatibility wrappers now delegate through `BuildingUiQuerySystem` instead of directly reading placement query or production request systems.
 
 19. Complete: Move menu binding off shell
@@ -375,7 +375,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Move production update/request/resource-hauler context source, UI command/query context, UI context source, and interaction context source into context systems that consume explicit dependencies.
    - Expected output: production/runtime tick and menu binding no longer require shell context methods.
    - `BuildingProductionContextCompositionSystemHelper.CreateSource` now owns production source construction.
-   - `BuildingUiContextSystem.CreateSource` now owns UI command/query source construction.
+   - `BuildingUiContextCompositionSystemHelper.CreateSource` now owns UI command/query source construction.
    - `BuildingPlacementInteractionContextCompositionSystemHelper.CreateSource` now owns interaction source construction.
    - `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource` is now used by the shell wrapper instead of constructing source data directly.
 
@@ -399,7 +399,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - In progress: spawn command, runtime-city spawn, and boundary spawn composition now use a composition-owned `CreateBuildingRuntimeContextSource` instead of `BuildingGameplaySystem.CreateBuildingRuntimeContextSource`.
    - In progress: selection-click composition now uses composition-owned `BuildingSelectionRuntimeCompositionSystemHelper` / `BuildingSelectionClickUtilitySystemHelper` contexts instead of `BuildingGameplaySystem.CreateBuildingSelectionClickContext`.
    - In progress: runtime input tick composition now creates active-placement pointer and placement visual-update contexts from composition child systems instead of `BuildingGameplaySystem.CreateActivePlacementPointerContext`.
-   - In progress: UI command/query composition now uses composition-owned `BuildingUiContextSystem` source construction instead of `BuildingGameplaySystem.CreateBuildingUiCommandContext` / `CreateBuildingUiQueryContext`.
+   - In progress: UI command/query composition now uses composition-owned `BuildingUiContextCompositionSystemHelper` source construction instead of `BuildingGameplaySystem.CreateBuildingUiCommandContext` / `CreateBuildingUiQueryContext`.
    - In progress: production composition no longer constructs `BuildingGameplaySystem`; interaction and disposal contexts now compose through `BuildingPlacementInteractionContextCompositionSystemHelper`, `BuildingPlacementCommandRequestCompositionSystemHelper`, and `BuildingGameplayDisposalExecutionCompositionSystemHelper`.
    - Completed: `rg "BuildingGameplaySystem" Assets/Game/Scripts -g '*.cs'` now finds only `Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs`.
 

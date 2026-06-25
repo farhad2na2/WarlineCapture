@@ -5,7 +5,7 @@ using UnityEngine;
 
 internal sealed class BuildingUiCompositionSystemHelper
 {
-    public BuildingUiContextSystem.Source CreateSource(
+    public BuildingUiContextCompositionSystemHelper.Source CreateSource(
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
@@ -14,7 +14,7 @@ internal sealed class BuildingUiCompositionSystemHelper
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
-        return source.BuildingUiContextSystem.CreateSource(
+        return source.BuildingUiContextCompositionSystemHelper.CreateSource(
             source.RuntimeResourceSystem,
             source.BuildingDefinitionPrefabSystemHelper,
             source.RuntimeBuildingSystem,
@@ -93,7 +93,7 @@ internal sealed class BuildingUiCompositionSystemHelper
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
-        return source.BuildingUiContextSystem.CreateCommandContext(
+        return source.BuildingUiContextCompositionSystemHelper.CreateCommandContext(
             CreateSource(
                 source,
                 interactionContext,
@@ -113,7 +113,7 @@ internal sealed class BuildingUiCompositionSystemHelper
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
-        return source.BuildingUiContextSystem.CreateQueryContext(
+        return source.BuildingUiContextCompositionSystemHelper.CreateQueryContext(
             CreateSource(
                 source,
                 interactionContext,

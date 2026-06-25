@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingUiContextSystem
+internal sealed class BuildingUiContextCompositionSystemHelper
 {
     public readonly struct Source
     {

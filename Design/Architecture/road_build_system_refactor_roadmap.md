@@ -151,11 +151,11 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - `RoadBuildSystem` command methods now delegate to `RoadBuildCommandCompositionSystemHelper`; the legacy static `SetBuildMode(bool)` is a compatibility wrapper around the command boundary.
     - Campaign mission guard test now calls `RoadBuildCommandCompositionSystemHelper` directly instead of `RoadBuildSystem.SetBuildMode`.
 
-16. Complete: Create `RoadDeletePromptSystem`
+16. Complete: Create `RoadDeletePromptUiSystemHelper`
     - Owns delete-road modal state and result handling.
     - Move IMGUI drawing out of road graph/session logic, or replace it with an existing UI command surface if available.
-    - Created `RoadDeletePromptSystem` with explicit runtime/session/delete-stroke context.
-    - `RoadBuildSystem.OnGui()` is now a temporary wrapper that delegates delete prompt drawing and delete/cancel result handling to RoadDeletePromptSystem.
+    - Created `RoadDeletePromptUiSystemHelper` with explicit runtime/session/delete-stroke context.
+    - `RoadBuildSystem.OnGui()` is now a temporary wrapper that delegates delete prompt drawing and delete/cancel result handling to RoadDeletePromptUiSystemHelper.
 
 ## Phase 5: Remove Legacy Building Responsibility
 
@@ -236,9 +236,9 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 
 27. Complete: Replace runtime update and GUI delegates
     - `GameplayRuntimeUpdateSystem` should call narrow road input/session/projection update systems.
-    - `OnGui` should be removed or delegated to `RoadDeletePromptSystem`.
+    - `OnGui` should be removed or delegated to `RoadDeletePromptUiSystemHelper`.
     - RoadBuildCompositionSystemHelper runtime update action now calls RoadBuildInputCompositionSystemHelper.Update through RoadBuildInputContext and RoadBuildInputCamera.
-    - RoadBuildCompositionSystemHelper GUI action now calls RoadDeletePromptSystem.OnGui through RoadDeletePromptContext.
+    - RoadBuildCompositionSystemHelper GUI action now calls RoadDeletePromptUiSystemHelper.OnGui through RoadDeletePromptContext.
     - Runtime loop wiring no longer uses RoadBuildSystem.Update or RoadBuildSystem.OnGui delegates.
     - Expected output: no runtime loop calls `roadBuild?.Update()` or `roadBuild?.OnGui()`.
 

@@ -27,7 +27,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildInputCompositionSystemHelper RoadBuildInputCompositionSystemHelper = new();
     public readonly RoadBuildInputCompositionSystemHelper.State RoadBuildInputState = new();
     public readonly RoadBuildCommandCompositionSystemHelper RoadBuildCommandCompositionSystemHelper = new();
-    public readonly RoadDeletePromptSystem RoadDeletePromptSystem = new();
+    public readonly RoadDeletePromptUiSystemHelper RoadDeletePromptUiSystemHelper = new();
     public readonly RoadBuildPlacementStorageCompositionSystemHelper RoadBuildPlacementStorageCompositionSystemHelper = new();
     public readonly RoadBuildDefinitionProjectionSystem RoadBuildDefinitionProjectionSystem = new();
     public readonly RoadBuildPlacementVisualSystem RoadBuildPlacementVisualSystem;

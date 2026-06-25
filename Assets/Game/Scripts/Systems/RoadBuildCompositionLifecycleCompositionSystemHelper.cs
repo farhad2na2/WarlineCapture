@@ -36,7 +36,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
             source.RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManager);
         RoadBuildRuntimeActionCompositionSystemHelper.ConfigureGui(
             source.RoadBuildRuntimeActionState,
-            source.RoadDeletePromptSystem,
+            source.RoadDeletePromptUiSystemHelper,
             contextSystem.CreateRoadDeletePromptContext(source));
 
         source.RoadBuildDefinitionProjectionSystem.BuildDefinitions(

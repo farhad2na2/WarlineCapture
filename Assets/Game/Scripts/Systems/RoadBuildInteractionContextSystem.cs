@@ -143,9 +143,9 @@ internal sealed class RoadBuildInteractionContextSystem
             context.ClearRoadBuildDragState);
     }
 
-    public RoadDeletePromptSystem.Context CreateDeletePromptContext(Context context)
+    public RoadDeletePromptUiSystemHelper.Context CreateDeletePromptContext(Context context)
     {
-        return new RoadDeletePromptSystem.Context(
+        return new RoadDeletePromptUiSystemHelper.Context(
             context.RuntimeGameplayStateSystem,
             context.SessionSystem,
             context.SessionState,

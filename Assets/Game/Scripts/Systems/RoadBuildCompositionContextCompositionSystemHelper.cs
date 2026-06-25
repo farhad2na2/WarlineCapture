@@ -90,7 +90,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
         return source.RoadBuildInteractionContextSystem.CreateCommandContext(CreateRoadBuildInteractionContext(source));
     }
 
-    public RoadDeletePromptSystem.Context CreateRoadDeletePromptContext(RoadBuildCompositionSourceSystem source)
+    public RoadDeletePromptUiSystemHelper.Context CreateRoadDeletePromptContext(RoadBuildCompositionSourceSystem source)
     {
         return source.RoadBuildInteractionContextSystem.CreateDeletePromptContext(CreateRoadBuildInteractionContext(source));
     }

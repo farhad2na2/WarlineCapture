@@ -10,8 +10,8 @@ internal sealed class RoadBuildRuntimeActionCompositionSystemHelper
         public RoadBuildCommandCompositionSystemHelper CommandSystem;
         public RoadBuildCommandCompositionSystemHelper.Context CommandContext;
         public RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
-        public RoadDeletePromptSystem DeletePromptSystem;
-        public RoadDeletePromptSystem.Context DeletePromptContext;
+        public RoadDeletePromptUiSystemHelper DeletePromptSystem;
+        public RoadDeletePromptUiSystemHelper.Context DeletePromptContext;
         public Camera WorldCamera;
     }
 
@@ -22,8 +22,8 @@ internal sealed class RoadBuildRuntimeActionCompositionSystemHelper
 
     public static void ConfigureGui(
         State state,
-        RoadDeletePromptSystem deletePromptSystem,
-        RoadDeletePromptSystem.Context deletePromptContext)
+        RoadDeletePromptUiSystemHelper deletePromptSystem,
+        RoadDeletePromptUiSystemHelper.Context deletePromptContext)
     {
         if (state == null)
             return;

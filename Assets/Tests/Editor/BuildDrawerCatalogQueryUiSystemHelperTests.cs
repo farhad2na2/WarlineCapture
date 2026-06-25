@@ -1252,7 +1252,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         BuildingProductionSystem.QueueContext queueContext = new(
             unitPrefabs,
             unitPrefabsByKey,
-            new BuildingProductionSlotSystem(),
+            new BuildingProductionSlotUtilitySystemHelper(),
             null,
             null);
         var configuredDefinitions = new List<BuildingDefinition>();

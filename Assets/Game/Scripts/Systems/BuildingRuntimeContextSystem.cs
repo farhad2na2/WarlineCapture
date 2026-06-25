@@ -9,7 +9,7 @@ internal sealed class BuildingRuntimeContextSystem
     {
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingProductionSystem ProductionSystem;
-        public readonly BuildingProductionSlotSystem ProductionSlotSystem;
+        public readonly BuildingProductionSlotUtilitySystemHelper ProductionSlotSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
         public readonly BuildingSpawnPrefabSystem.Context SpawnPrefabContext;
         public readonly BuildingVisualSystem BuildingVisualSystem;
@@ -50,7 +50,7 @@ internal sealed class BuildingRuntimeContextSystem
         public RuntimeSource(
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingProductionSystem productionSystem,
-            BuildingProductionSlotSystem productionSlotSystem,
+            BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
             BuildingSpawnPrefabSystem.Context spawnPrefabContext,
             BuildingVisualSystem buildingVisualSystem,

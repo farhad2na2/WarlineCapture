@@ -128,7 +128,7 @@ public sealed class BuildingProductionSystem
     {
         public readonly IReadOnlyList<GameObject> UnitSpawnPrefabs;
         public readonly IReadOnlyDictionary<string, GameObject> UnitSpawnPrefabsByKey;
-        public readonly BuildingProductionSlotSystem ProductionSlotSystem;
+        public readonly BuildingProductionSlotUtilitySystemHelper ProductionSlotSystem;
         public readonly TryGetPrefabLocalBoundsDelegate TryGetPrefabLocalBounds;
         public readonly RuntimeBuildingMatchesIdDelegate RuntimeBuildingMatchesId;
         public readonly TryGetRuntimeBoundaryEntityDelegate TryGetRuntimeBoundaryEntity;
@@ -136,7 +136,7 @@ public sealed class BuildingProductionSystem
         public QueueContext(
             IReadOnlyList<GameObject> unitSpawnPrefabs,
             IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
-            BuildingProductionSlotSystem productionSlotSystem,
+            BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
             TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds,
             RuntimeBuildingMatchesIdDelegate runtimeBuildingMatchesId,
             TryGetRuntimeBoundaryEntityDelegate tryGetRuntimeBoundaryEntity = null)

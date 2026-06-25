@@ -142,7 +142,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
         BuildingProductionSystem.QueueContext queueContext = new(
             unitPrefabs,
             unitPrefabsByKey,
-            new BuildingProductionSlotSystem(),
+            new BuildingProductionSlotUtilitySystemHelper(),
             null,
             null);
 

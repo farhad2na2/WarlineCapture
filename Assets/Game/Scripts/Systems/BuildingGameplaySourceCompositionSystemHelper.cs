@@ -18,7 +18,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingProductionContextCompositionSystemHelper BuildingProductionContextCompositionSystemHelper = new();
     internal readonly BuildingSpawnSystem BuildingSpawnSystem = new();
     internal readonly BuildingSpawnPrefabSystem BuildingSpawnPrefabSystem = new();
-    internal readonly BuildingProductionSlotSystem BuildingProductionSlotSystem = new();
+    internal readonly BuildingProductionSlotUtilitySystemHelper BuildingProductionSlotUtilitySystemHelper = new();
     internal readonly BuildingPlacementQueryUiSystemHelper BuildingPlacementQueryUiSystemHelper = new();
     internal readonly BuildingPlacementQueryCompositionSystem BuildingPlacementQueryCompositionSystem = new();
     internal readonly BuildingUiQuerySystem BuildingUiQuerySystem = new();

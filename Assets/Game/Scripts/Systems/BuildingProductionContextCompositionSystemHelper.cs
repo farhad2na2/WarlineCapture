@@ -14,7 +14,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public readonly BuildingProductionUpdateSystem ProductionUpdateSystem;
         public readonly BuildingProductionTransportSystem TransportSystem;
         public readonly BuildingProductionTransportBridgeSystem TransportBridgeSystem;
-        public readonly BuildingProductionSlotSystem ProductionSlotSystem;
+        public readonly BuildingProductionSlotUtilitySystemHelper ProductionSlotSystem;
         public readonly BuildingRunwaySystem RunwaySystem;
         public readonly BuildingVisualSystem VisualSystem;
         public readonly BuildingSpawnSystem SpawnSystem;
@@ -55,7 +55,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             BuildingProductionUpdateSystem productionUpdateSystem,
             BuildingProductionTransportSystem transportSystem,
             BuildingProductionTransportBridgeSystem transportBridgeSystem,
-            BuildingProductionSlotSystem productionSlotSystem,
+            BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
             BuildingRunwaySystem runwaySystem,
             BuildingVisualSystem visualSystem,
             BuildingSpawnSystem spawnSystem,
@@ -138,7 +138,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         BuildingProductionUpdateSystem productionUpdateSystem,
         BuildingProductionTransportSystem transportSystem,
         BuildingProductionTransportBridgeSystem transportBridgeSystem,
-        BuildingProductionSlotSystem productionSlotSystem,
+        BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
         BuildingRunwaySystem runwaySystem,
         BuildingVisualSystem visualSystem,
         BuildingSpawnSystem spawnSystem,

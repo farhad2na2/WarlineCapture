@@ -364,7 +364,7 @@ Phase 2 automatic helicopter source-position read-model notes:
 Phase 2 produced-slot read-model ownership notes:
 
 - Added `ProductionSlotBuildingRuntimeId` to `BuildingProducedUnitReadModel` so cross-building slot ownership, such as a factory-produced helicopter occupying a helipad slot, is represented in ECS data.
-- `BuildingSpawnSystem` now selects available regular production slots from `BuildingFactionProductionSpawnPointReadModel` before falling back to `BuildingProductionSlotSystem.TryGetAvailableProductionSpawnSlot`.
+- `BuildingSpawnSystem` now selects available regular production slots from `BuildingFactionProductionSpawnPointReadModel` before falling back to `BuildingProductionSlotUtilitySystemHelper.TryGetAvailableProductionSpawnSlot`.
 - `BuildingSpawnSystem` now checks slot occupancy through `BuildingProducedUnitReadModel` when `RuntimeBuildingEntity.ProducedUnitSlots` is absent, while still honoring the legacy array when present.
 - Added `BuildingProductionSystemTests.BuildingSpawnSystem_UsesBoundarySpawnPointWithoutManagedSlotArray`, proving a production spawn can use a boundary slot row without `ProductionSpawnLocalPositions` or `ProducedUnitSlots`.
 - Extended helicopter slot tests to assert `ProductionSlotBuildingRuntimeId` points at the helipad runtime id.

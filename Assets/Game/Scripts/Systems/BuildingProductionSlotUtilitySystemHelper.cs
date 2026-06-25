@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingProductionSlotSystem
+internal sealed class BuildingProductionSlotUtilitySystemHelper
 {
     public bool TryReserveProductionSlot(RuntimeBuildingEntity building, EntityManager entityManager, out int reservedProductionSlotIndex)
     {

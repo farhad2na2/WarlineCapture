@@ -232,7 +232,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
         return new BuildingRuntimeContextSystem.RuntimeSource(
             source.RuntimeBuildingSystem,
             source.BuildingProductionSystem,
-            source.BuildingProductionSlotSystem,
+            source.BuildingProductionSlotUtilitySystemHelper,
             source.BuildingSpawnPrefabSystem,
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateBuildingSpawnPrefabContext(
                 source.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,

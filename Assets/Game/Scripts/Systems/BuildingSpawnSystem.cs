@@ -20,7 +20,7 @@ internal sealed class BuildingSpawnSystem
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
         public readonly BuildingSpawnPrefabSystem.Context SpawnPrefabContext;
-        public readonly BuildingProductionSlotSystem ProductionSlotSystem;
+        public readonly BuildingProductionSlotUtilitySystemHelper ProductionSlotSystem;
         public readonly TryGetProductionSourceKeyDelegate TryGetProductionSourceKey;
         public readonly RuntimeBuildingMatchesIdDelegate RuntimeBuildingMatchesId;
         public readonly TryGetRuntimeBoundaryEntityDelegate TryGetRuntimeBoundaryEntity;
@@ -31,7 +31,7 @@ internal sealed class BuildingSpawnSystem
             BuildingProductionSystem productionSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
             BuildingSpawnPrefabSystem.Context spawnPrefabContext,
-            BuildingProductionSlotSystem productionSlotSystem,
+            BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
             RuntimeBuildingMatchesIdDelegate runtimeBuildingMatchesId,
             TryGetProductionSourceKeyDelegate tryGetProductionSourceKey = null,
             TryGetRuntimeBoundaryEntityDelegate tryGetRuntimeBoundaryEntity = null)

@@ -258,7 +258,7 @@ public sealed class BuildingProductionSystemTests
                 null,
                 spawnPrefabSystem,
                 new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
-                new BuildingProductionSlotSystem(),
+                new BuildingProductionSlotUtilitySystemHelper(),
                 BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
                 BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager _, out Entity entity) =>
@@ -487,7 +487,7 @@ public sealed class BuildingProductionSystemTests
                 null,
                 spawnPrefabSystem,
                 new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
-                new BuildingProductionSlotSystem(),
+                new BuildingProductionSlotUtilitySystemHelper(),
                 BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
                 BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager _, out Entity entity) =>
@@ -643,7 +643,7 @@ public sealed class BuildingProductionSystemTests
                 null,
                 spawnPrefabSystem,
                 new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
-                new BuildingProductionSlotSystem(),
+                new BuildingProductionSlotUtilitySystemHelper(),
                 BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
                 BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager _, out Entity entity) =>
@@ -802,7 +802,7 @@ public sealed class BuildingProductionSystemTests
                 null,
                 spawnPrefabSystem,
                 new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
-                new BuildingProductionSlotSystem(),
+                new BuildingProductionSlotUtilitySystemHelper(),
                 BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
                 BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager _, out Entity entity) =>
@@ -984,7 +984,7 @@ public sealed class BuildingProductionSystemTests
                 null,
                 spawnPrefabSystem,
                 new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
-                new BuildingProductionSlotSystem(),
+                new BuildingProductionSlotUtilitySystemHelper(),
                 BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
                 BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager _, out Entity entity) =>
@@ -1196,7 +1196,7 @@ public sealed class BuildingProductionSystemTests
                 null,
                 spawnPrefabSystem,
                 new BuildingSpawnPrefabSystem.Context(registryQuery, prefabCandidatesQuery, liveUnitsQuery),
-                new BuildingProductionSlotSystem(),
+                new BuildingProductionSlotUtilitySystemHelper(),
                 BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
                 BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager _, out Entity entity) =>
@@ -2322,7 +2322,7 @@ public sealed class BuildingProductionSystemTests
             BuildingProductionSystem.QueueContext queueContext = new(
                 new[] { unitPrefab },
                 new Dictionary<string, GameObject>(),
-                new BuildingProductionSlotSystem(),
+                new BuildingProductionSlotUtilitySystemHelper(),
                 null,
                 null,
                 (EntityManager _, out Entity entity) =>
@@ -2853,7 +2853,7 @@ public sealed class BuildingProductionSystemTests
         BuildingProductionSystem.QueueContext queueContext = new(
             unitPrefabs,
             unitPrefabsByKey,
-            new BuildingProductionSlotSystem(),
+            new BuildingProductionSlotUtilitySystemHelper(),
             null,
             null);
 
@@ -2897,7 +2897,7 @@ public sealed class BuildingProductionSystemTests
         BuildingProductionSystem.QueueContext queueContext = new(
             unitPrefabs,
             new Dictionary<string, GameObject>(),
-            new BuildingProductionSlotSystem(),
+            new BuildingProductionSlotUtilitySystemHelper(),
             null,
             null);
 

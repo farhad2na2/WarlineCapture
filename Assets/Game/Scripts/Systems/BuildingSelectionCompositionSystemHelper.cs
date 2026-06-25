@@ -6,13 +6,13 @@ internal sealed class BuildingSelectionCompositionSystemHelper
         BuildingGameplaySourceCompositionSystemHelper source,
         out GridConfig grid);
 
-    public BuildingSelectionSystem.Context Create(
+    public BuildingSelectionRuntimeCompositionSystemHelper.Context Create(
         BuildingGameplaySourceCompositionSystemHelper source,
         TryGetGridForSelectionDelegate tryGetGridForSelection,
         System.Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource)
     {
-        return source.BuildingSelectionSystem.CreateContext(new BuildingSelectionSystem.Source(
+        return source.BuildingSelectionRuntimeCompositionSystemHelper.CreateContext(new BuildingSelectionRuntimeCompositionSystemHelper.Source(
             source.RuntimeBuildingSystem,
             source.RuntimeBuildingSystem.Buildings,
             source.BuildingPlacementStartupSystemHelper.WorldCamera,

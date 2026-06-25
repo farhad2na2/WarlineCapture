@@ -52,7 +52,7 @@ Step 24 initial roster/test helper transition size: 1599 lines. Initial roster a
 
 Step 25 visual helper transition size: 1583 lines. Placement visual instance creation, placement visual positioning, footprint-center delegates, runtime visual initialization, runtime marker visibility refresh, and owner-faction visual tint now route directly through `BuildingPlacementVisualPresentationSystemHelper`, `BuildingPlacementGridSystem`, `BuildingRuntimeVisualPresentationSystemHelper`, and `BuildingRuntimeOwnershipCompositionSystemHelper`; `BuildingGameplaySystem` no longer keeps visual helper wrapper methods.
 
-Step 26 building selection transition size: 1542 lines. Visible selectable checks, selected-building deletion, select/focus, focus-world-position resolution, and camera-focus selection flow now route through `BuildingSelectionSystem`; `BuildingGameplaySystem` no longer keeps private selection/focus helper wrappers.
+Step 26 building selection transition size: 1542 lines. Visible selectable checks, selected-building deletion, select/focus, focus-world-position resolution, and camera-focus selection flow now route through `BuildingSelectionRuntimeCompositionSystemHelper`; `BuildingGameplaySystem` no longer keeps private selection/focus helper wrappers.
 
 Step 27 runtime destruction/entity-link transition size: 1538 lines. Runtime building delete callbacks and runtime entity destroyed callbacks now route through `BuildingRuntimeEntityCompositionSystemHelper` using `BuildingCombatSystem`; `BuildingGameplaySystem` no longer exposes `DeleteBuildingById` or `HandleRuntimeBuildingEntityDestroyed` shell methods.
 
@@ -328,10 +328,10 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplaySystem` no longer declares visual helper wrapper methods.
 
 26. Complete: Move building selection and camera focus
-   - Move visible selectable checks, select/focus building, clear selected building, delete selected building, and focus-world-position callbacks into `BuildingSelectionSystem`, `BuildingSelectionClickUtilitySystemHelper`, and `SelectionUiCameraSystem`.
+   - Move visible selectable checks, select/focus building, clear selected building, delete selected building, and focus-world-position callbacks into `BuildingSelectionRuntimeCompositionSystemHelper`, `BuildingSelectionClickUtilitySystemHelper`, and `SelectionUiCameraSystem`.
    - Expected output: selection does not call shell methods.
-   - `BuildingSelectionSystem` now owns visible selectable checks, selected-building deletion, focus-world-position resolution, and focus/camera routing through its context.
-   - Building UI and interaction context sources now call `BuildingSelectionSystem` directly for selected delete/clear and visible selectable queries instead of routing through shell helper methods.
+   - `BuildingSelectionRuntimeCompositionSystemHelper` now owns visible selectable checks, selected-building deletion, focus-world-position resolution, and focus/camera routing through its context.
+   - Building UI and interaction context sources now call `BuildingSelectionRuntimeCompositionSystemHelper` directly for selected delete/clear and visible selectable queries instead of routing through shell helper methods.
    - `BuildingGameplaySystem` no longer declares private visible-selection, select/focus, or focus-world-position helper wrappers.
 
 27. Complete: Move runtime destruction and entity link callbacks
@@ -369,7 +369,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnCommandContext` now owns runtime spawn command context construction.
    - `BuildingGameplayCompositionSystemHelper.Initialize` creates runtime spawn command and runtime query contexts through `BuildingRuntimeContextFactoryCompositionSystemHelper`.
    - `BuildingGameplayCompositionSystemHelper.CreateRuntimeTickSource` creates runtime visual, combat, and barrier contexts through `BuildingRuntimeContextFactoryCompositionSystemHelper`.
-   - `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource`, `BuildingSelectionSystem.CreateContext`, and `BuildingSelectionClickUtilitySystemHelper.CreateContext` now expose owner-side construction overloads for later shell wrapper removal.
+   - `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource`, `BuildingSelectionRuntimeCompositionSystemHelper.CreateContext`, and `BuildingSelectionClickUtilitySystemHelper.CreateContext` now expose owner-side construction overloads for later shell wrapper removal.
 
 32. Complete: Move production and UI context factories
    - Move production update/request/resource-hauler context source, UI command/query context, UI context source, and interaction context source into context systems that consume explicit dependencies.
@@ -397,7 +397,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - In progress: composition result now exposes selection-click, runtime-city spawn, runtime-query, UI command/query, and placement-interaction systems from `BuildingGameplaySourceCompositionSystemHelper` instead of reading those systems back through `BuildingGameplaySystem`.
    - In progress: runtime visual/combat/barrier/query/production composition now uses a composition-owned `CreateRuntimeContextSource` instead of `BuildingGameplaySystem.CreateRuntimeContextSystemSource`.
    - In progress: spawn command, runtime-city spawn, and boundary spawn composition now use a composition-owned `CreateBuildingRuntimeContextSource` instead of `BuildingGameplaySystem.CreateBuildingRuntimeContextSource`.
-   - In progress: selection-click composition now uses composition-owned `BuildingSelectionSystem` / `BuildingSelectionClickUtilitySystemHelper` contexts instead of `BuildingGameplaySystem.CreateBuildingSelectionClickContext`.
+   - In progress: selection-click composition now uses composition-owned `BuildingSelectionRuntimeCompositionSystemHelper` / `BuildingSelectionClickUtilitySystemHelper` contexts instead of `BuildingGameplaySystem.CreateBuildingSelectionClickContext`.
    - In progress: runtime input tick composition now creates active-placement pointer and placement visual-update contexts from composition child systems instead of `BuildingGameplaySystem.CreateActivePlacementPointerContext`.
    - In progress: UI command/query composition now uses composition-owned `BuildingUiContextSystem` source construction instead of `BuildingGameplaySystem.CreateBuildingUiCommandContext` / `CreateBuildingUiQueryContext`.
    - In progress: production composition no longer constructs `BuildingGameplaySystem`; interaction and disposal contexts now compose through `BuildingPlacementInteractionContextCompositionSystemHelper`, `BuildingPlacementCommandRequestCompositionSystemHelper`, and `BuildingGameplayDisposalExecutionCompositionSystemHelper`.

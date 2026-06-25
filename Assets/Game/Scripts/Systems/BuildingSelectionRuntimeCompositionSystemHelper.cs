@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingSelectionSystem
+internal sealed class BuildingSelectionRuntimeCompositionSystemHelper
 {
     public delegate bool TryGetGridDelegate(out GridConfig grid);
     public delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);

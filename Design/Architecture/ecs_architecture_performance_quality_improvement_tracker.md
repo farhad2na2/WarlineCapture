@@ -550,7 +550,7 @@ Retire broad managed building gameplay owners instead of creating large `ISystem
 - [x] Fold Agent D `P7-0101 BuildingProductionQueueCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned building production helper and validate production request, production metadata, building composition smoke, compile, and Phase 7 architecture guard.
 - [x] Fold Agent D `P7-0103 BuildingProductionTransportBridgeCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned production transport bridge helper and validate production camera focus, production request, building composition smoke, compile, and Phase 7 architecture guard.
 - [x] Fold Agent D `P7-0104 BuildingProductionTransportPresentationSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned production transport visual helper and validate production request, production metadata, building composition smoke, compile, and Phase 7 architecture guard.
-- [x] Fold Agent D `P7-0132 BuildingSelectionSystem` from a disabled `SystemBase` wrapper into a plain direct-owned building selection helper and validate runtime building selection, building composition smoke, compile, and Phase 7 architecture guard.
+- [x] Fold Agent D `P7-0132 BuildingSelectionRuntimeCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned building selection helper and validate runtime building selection, building composition smoke, compile, and Phase 7 architecture guard.
 
 ### Phase 7.6: Road Build And Road Runtime Systems
 

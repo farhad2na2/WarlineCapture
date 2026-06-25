@@ -131,7 +131,7 @@ Initial, runtime, and production spawn:
 Building placement, visuals, production, and selection:
 
 - `Assets/Game/Scripts/Systems/BuildingPlacementStartupSystemHelper.cs`, `BuildingPlacementGridSystem.cs`, `BuildingPlacementVisualUpdateCompositionSystemHelper.cs`, `BuildingRuntimeContextCompositionSystemHelper.cs`, and `BuildingRuntimeQueryCompositionSystemHelper.cs`: placement and runtime building centers use `BuildPlaneY` or flatten world y.
-- `Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs`: building focus/selection positions flatten y.
+- `Assets/Game/Scripts/Systems/BuildingSelectionRuntimeCompositionSystemHelper.cs`: building focus/selection positions flatten y.
 - `Assets/Game/Scripts/Systems/BuildingProductionRequestBoundary.cs`, `BuildingProductionTransportPresentationSystemHelper.cs`, and `BuildingProductionTransportBridgeCompositionSystemHelper.cs`: runway/transport bridge positions and directions assume flat ground or fixed offsets.
 
 Road build, road visuals, and road footprint projection:

@@ -78,7 +78,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         UpdatePlacementDelegate updatePlacement,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextFactoryCompositionSystemHelper.Source> createBuildingRuntimeContextSource,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
         return source.BuildingPlacementContextCompositionSystemHelper.CreateCommandContext(
             CreateContextSource(
@@ -103,7 +103,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
             Debug.LogWarning,
             GameRuntimeStats.RecordBuildingBuilt,
             source.BuildingGameplayDependencyCompositionSystemHelper.NotifyStaticMinimapChanged,
-            _ => source.BuildingSelectionSystem.ClearSelectedBuilding(createBuildingSelectionContext(source)),
+            _ => source.BuildingSelectionRuntimeCompositionSystemHelper.ClearSelectedBuilding(createBuildingSelectionContext(source)),
             source.BuildingGameplayDependencyCompositionSystemHelper.ClearCommandMode);
     }
 
@@ -122,7 +122,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         UpdatePlacementDelegate updatePlacement,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextFactoryCompositionSystemHelper.Source> createBuildingRuntimeContextSource,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
         return new BuildingPlacementContextCompositionSystemHelper.Source(
             source.RuntimeGameplayStateSystem,
@@ -142,7 +142,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
             source.RuntimeResourceSystem.TrySpendDollars,
             placement => placeBuilding(source, interactionContext, markerPropertyBlock, placement),
             source.BuildingGameplayDependencyCompositionSystemHelper.ApplyBuildCommandMode,
-            () => source.BuildingSelectionSystem.ClearSelectedBuilding(createBuildingSelectionContext(source)),
+            () => source.BuildingSelectionRuntimeCompositionSystemHelper.ClearSelectedBuilding(createBuildingSelectionContext(source)),
             (out GridConfig grid) => tryGetGridForPlacementInput(source, out grid),
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => tryGetGridCell(source, screenPosition, grid, out cell),
             source.BuildingGameplayDependencyCompositionSystemHelper.IsPointerOverPlacementUi,

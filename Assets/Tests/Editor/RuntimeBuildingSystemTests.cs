@@ -80,8 +80,8 @@ public sealed class RuntimeBuildingSystemTests
         RuntimeBuildingEntity building = new() { Id = 7 };
         runtimeBuildings.AddBuilding(building.Id, building);
         runtimeBuildings.SelectBuilding(building.Id);
-        var selectionSystem = new BuildingSelectionSystem();
-        BuildingSelectionSystem.Context context = CreateSelectionContext(runtimeBuildings);
+        var selectionSystem = new BuildingSelectionRuntimeCompositionSystemHelper();
+        BuildingSelectionRuntimeCompositionSystemHelper.Context context = CreateSelectionContext(runtimeBuildings);
 
         int requestId = selectionSystem.EnqueueDeleteSelectedBuilding(world.EntityManager);
         selectionSystem.ProcessPendingUiSelectionCommands(
@@ -115,8 +115,8 @@ public sealed class RuntimeBuildingSystemTests
         runtimeBuildings.AddBuilding(building.Id, building);
         runtimeBuildings.SelectBuilding(building.Id);
         int refreshCount = 0;
-        var selectionSystem = new BuildingSelectionSystem();
-        BuildingSelectionSystem.Context context = CreateSelectionContext(runtimeBuildings, () => refreshCount++);
+        var selectionSystem = new BuildingSelectionRuntimeCompositionSystemHelper();
+        BuildingSelectionRuntimeCompositionSystemHelper.Context context = CreateSelectionContext(runtimeBuildings, () => refreshCount++);
 
         int requestId = selectionSystem.EnqueueClearSelectedBuilding(world.EntityManager);
         selectionSystem.ProcessPendingUiSelectionCommands(world.EntityManager, context, null);
@@ -133,11 +133,11 @@ public sealed class RuntimeBuildingSystemTests
         Assert.AreEqual(1, refreshCount);
     }
 
-    private static BuildingSelectionSystem.Context CreateSelectionContext(
+    private static BuildingSelectionRuntimeCompositionSystemHelper.Context CreateSelectionContext(
         RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildings,
-        BuildingSelectionSystem.RuntimeAction refreshMarkers = null)
+        BuildingSelectionRuntimeCompositionSystemHelper.RuntimeAction refreshMarkers = null)
     {
-        var selectionSystem = new BuildingSelectionSystem();
+        var selectionSystem = new BuildingSelectionRuntimeCompositionSystemHelper();
         return selectionSystem.CreateContext(
             runtimeBuildings,
             runtimeBuildings.Buildings,

@@ -177,7 +177,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createPlacementQueryContext =
             source => source.BuildingPlacementQueryCompositionSystem.Create(source);
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext =
             source => source.BuildingSelectionCompositionHelper.Create(
                 source,
                 tryGetGridForSelection,
@@ -600,7 +600,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             citizenPopulationCompositionBoundary,
             citizenPopulationComposition,
             childSystems.RuntimeBuildingSystem.Buildings,
-            screenRect => childSystems.BuildingSelectionSystem.SelectFirstBuildingInScreenRect(
+            screenRect => childSystems.BuildingSelectionRuntimeCompositionSystemHelper.SelectFirstBuildingInScreenRect(
                 createBuildingSelectionContext(childSystems),
                 screenRect),
             _bindingCompositionHelper.CreateMainMenuBinding(childSystems, dayNight),

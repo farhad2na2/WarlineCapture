@@ -65,9 +65,6 @@ public sealed class NonEcsSystemConversionArchitectureTests
 
     private static readonly Dictionary<string, int> ApprovedPublicNonEcsCommandMutatorMethods = new(StringComparer.Ordinal)
     {
-        ["Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs|EnqueueAndProcessClearSelectedBuilding"] = 1,
-        ["Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs|EnqueueAndProcessDeleteSelectedBuilding"] = 1,
-        ["Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs|ProcessPendingUiSelectionCommands"] = 1,
         ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessCancelRoadBuildSession"] = 1,
         ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessConfirmRoadBuildSession"] = 1,
         ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessEnterRoadBuildMode"] = 1,

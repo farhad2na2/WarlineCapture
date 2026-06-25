@@ -47,7 +47,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         CreatePlacementContextSourceDelegate createPlacementContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
         if (source?.BuildingPlacementVisualUpdateCompositionSystemHelper == null)
             return;
@@ -78,7 +78,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         CreatePlacementContextSourceDelegate createPlacementContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
         return new BuildingPlacementVisualUpdateCompositionSystemHelper.Context(
             source.BuildingPlacementInputUiSystemHelper,
@@ -109,7 +109,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
                 (Vector2Int origin, BuildingDefinition definition, out bool gateVertical) => tryAlignGateToNearbyWall(source, origin, definition, out gateVertical)),
             () => createPlacementContextSource(source, interactionContext, markerPropertyBlock),
             () => source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(createRuntimeContextSource(source)),
-            building => source.BuildingSelectionSystem.SelectAndFocusBuilding(createBuildingSelectionContext(source), building));
+            building => source.BuildingSelectionRuntimeCompositionSystemHelper.SelectAndFocusBuilding(createBuildingSelectionContext(source), building));
     }
 
     public void FocusActivePlacement(
@@ -123,7 +123,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         CreatePlacementContextSourceDelegate createPlacementContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
         if (source?.BuildingPlacementVisualUpdateCompositionSystemHelper == null)
             return;
@@ -154,7 +154,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         CreatePlacementContextSourceDelegate createPlacementContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
         if (source?.BuildingPlacementVisualUpdateCompositionSystemHelper == null)
             return false;
@@ -187,7 +187,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         CreatePlacementContextSourceDelegate createPlacementContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
         if (source?.BuildingPlacementVisualUpdateCompositionSystemHelper == null)
             return;
@@ -220,7 +220,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
         CreatePlacementContextSourceDelegate createPlacementContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
         if (source?.BuildingPlacementVisualUpdateCompositionSystemHelper == null)
             return;

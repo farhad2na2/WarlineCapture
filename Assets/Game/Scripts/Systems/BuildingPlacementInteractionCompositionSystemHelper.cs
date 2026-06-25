@@ -46,7 +46,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingUiQuerySystem.Context> createBuildingUiQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingProductionRequestBoundary.Context> createProductionRequestContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeEntityCompositionSystemHelper.Context> createBuildingRuntimeEntityContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource)
     {
@@ -206,38 +206,38 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
 
     private static bool EnqueueAndProcessDeleteSelectedBuilding(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingSelectionSystem.Context context,
-        BuildingSelectionSystem.BuildingIdAction deleteBuildingById)
+        BuildingSelectionRuntimeCompositionSystemHelper.Context context,
+        BuildingSelectionRuntimeCompositionSystemHelper.BuildingIdAction deleteBuildingById)
     {
         return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
-            ? source.BuildingSelectionSystem.EnqueueAndProcessDeleteSelectedBuilding(entityManager, context, deleteBuildingById)
+            ? source.BuildingSelectionRuntimeCompositionSystemHelper.EnqueueAndProcessDeleteSelectedBuilding(entityManager, context, deleteBuildingById)
             : DeleteSelectedBuilding(source, context, deleteBuildingById);
     }
 
     private static bool EnqueueAndProcessClearSelectedBuilding(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingSelectionSystem.Context context)
+        BuildingSelectionRuntimeCompositionSystemHelper.Context context)
     {
         return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
-            ? source.BuildingSelectionSystem.EnqueueAndProcessClearSelectedBuilding(entityManager, context)
+            ? source.BuildingSelectionRuntimeCompositionSystemHelper.EnqueueAndProcessClearSelectedBuilding(entityManager, context)
             : ClearSelectedBuilding(source, context);
     }
 
     private static bool DeleteSelectedBuilding(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingSelectionSystem.Context context,
-        BuildingSelectionSystem.BuildingIdAction deleteBuildingById)
+        BuildingSelectionRuntimeCompositionSystemHelper.Context context,
+        BuildingSelectionRuntimeCompositionSystemHelper.BuildingIdAction deleteBuildingById)
     {
         int? buildingId = source.RuntimeBuildingSystem.CurrentActiveBuildingId;
-        source.BuildingSelectionSystem.DeleteSelectedBuilding(context, deleteBuildingById);
+        source.BuildingSelectionRuntimeCompositionSystemHelper.DeleteSelectedBuilding(context, deleteBuildingById);
         return buildingId.HasValue && !source.RuntimeBuildingSystem.ContainsBuilding(buildingId.Value);
     }
 
     private static bool ClearSelectedBuilding(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingSelectionSystem.Context context)
+        BuildingSelectionRuntimeCompositionSystemHelper.Context context)
     {
-        source.BuildingSelectionSystem.ClearSelectedBuilding(context);
+        source.BuildingSelectionRuntimeCompositionSystemHelper.ClearSelectedBuilding(context);
         return !source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue;
     }
 }

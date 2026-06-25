@@ -70,7 +70,7 @@ Status: [x]
 Files to inspect first:
 
 - `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs`
-- `Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputSystem.cs`
+- `Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs`
 - `Assets/Game/Scripts/UI/Screens/MatchHudRightQuickRailView.cs`
 - `Assets/Game/Scripts/UI/Shell/UIShellContentView.cs`
 
@@ -117,7 +117,7 @@ Files to inspect first:
 
 - `Assets/Game/Scripts/UI/Shell/UIShellContentView.cs`
 - `Assets/Game/Scripts/UI/Screens/MatchHudRightQuickRailView.cs`
-- `Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputSystem.cs`
+- `Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs`
 - `Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab`
 - `Assets/Game/Prefabs/UI/Shell/Popups/SCN09_BuildDrawerPopup.prefab`
 
@@ -126,7 +126,7 @@ Implementation:
 - Add or reuse narrow serialized view fields for Match HUD command controls, runtime feedback, minimap, squad tray, selected panel, and right quick rail.
 - Bind those views through explicit `UIShellContentView` references after region content is installed.
 - Remove self-binding from `MatchHudRightQuickRailView` that reaches upward to `UIShellContentView`.
-- Remove popup fallback code in `MatchOverlayCommandInputSystem` that locates/destroys children by prefab name.
+- Remove popup fallback code in `MatchOverlayCommandInputUiSystemHelper` that locates/destroys children by prefab name.
 - Keep popup open/close ownership in `UIShellContentView` or a narrow popup shell boundary.
 
 Acceptance checks:
@@ -266,5 +266,5 @@ Completion criteria:
 - 2026-06-10: Step 04 in progress. Added an explicit shell-to-gameplay binding path for `BattleHudRuntimeFeedbackView` through `MainMenuPlayUI` and `SelectionHudFeedbackSystem`, reducing selection feedback dependence on `BattleHudRuntimeFeedbackSystem.ResolveActiveView()` while keeping the static compatibility API for remaining callers. Validation passed: `UIShellCurrentContentLoadTests` 8/8; `git diff --check` passed.
 - 2026-06-10: Step 04 state slice complete. Removed the static `StatesByView` dictionary from `BattleHudRuntimeFeedbackSystem`; per-view command mode, sticky mode, and last-result state now lives on `BattleHudRuntimeFeedbackView` and resets with the view lifecycle. Validation passed: `MatchHudCommandFeedbackPanelTests` 3/3, `UIShellCurrentContentLoadTests` 8/8, `git diff --check`. Attempted `BattleHudRuntimeFeedbackSystemConnectionTests`, but the suite is currently blocked by its removed `Assets/Game/Prefabs/UI/Screens/Screen_MatchOverlay.prefab` fixture path.
 - 2026-06-10: Step 04 selection cleanup complete. Removed `SelectionGameplayStartupSystem`'s direct `BattleHudRuntimeFeedbackSystem.ResolveActiveView()` command-clear path; selection command clears now rely on the explicitly bound `SelectionHudFeedbackSystem` feedback view. Validation passed: `UIShellCurrentContentLoadTests` 8/8; `git diff --check` passed.
-- 2026-06-10: Step 04 UI fallback cleanup continued. Removed `ResolveActiveView()` fallbacks from `BuildDrawerPanelView`, `CommandWheelPanelView`, and `UIPopupCloseButtonView`; popup close helpers now accept an explicit feedback binding from `UIShellContentView`. `MatchOverlayCommandInputSystem` now receives the serialized footer runtime-feedback view and uses explicit-view command feedback/sticky-mode calls. Validation passed: `UIShellCurrentContentLoadTests` 8/8, `MatchHudCommandControlsCurrentPrefabTests` 2/2, `MatchHudCommandFeedbackPanelTests` 3/3, `git diff --check`.
+- 2026-06-10: Step 04 UI fallback cleanup continued. Removed `ResolveActiveView()` fallbacks from `BuildDrawerPanelView`, `CommandWheelPanelView`, and `UIPopupCloseButtonView`; popup close helpers now accept an explicit feedback binding from `UIShellContentView`. `MatchOverlayCommandInputUiSystemHelper` now receives the serialized footer runtime-feedback view and uses explicit-view command feedback/sticky-mode calls. Validation passed: `UIShellCurrentContentLoadTests` 8/8, `MatchHudCommandControlsCurrentPrefabTests` 2/2, `MatchHudCommandFeedbackPanelTests` 3/3, `git diff --check`.
 - 2026-06-10: Step 04 Build Drawer feedback cleanup complete. `BuildDrawerCatalogRuntimeView`, `BuildPlacementConfirmationBarView`, and `MatchHudRightQuickRailView` now receive the explicit footer `BattleHudRuntimeFeedbackView` from `UIShellContentView`; their command result and sticky build-mode feedback no longer use parameterless global feedback calls. Validation passed: `BuildDrawerCatalogQueryUiSystemHelperTests` 21/21, `UIShellCurrentContentLoadTests` 8/8, `git diff --check`.

@@ -106,7 +106,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     public void MatchHudCommandButtonsSubmitSelectionCommandRequests()
     {
         MatchOverlayCommandControlsView controls = LoadControls();
-        var inputSystem = new MatchOverlayCommandInputSystem();
+        var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
         inputSystem.Bind(controls, new SelectionUiCommandSystem());
 
         AssertClickQueues(controls.SelectButton, RtsSelectionCommandIntentKind.EnterSelectionMode);
@@ -126,7 +126,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Button supportButton = FindCommandTabButton(controls, "SupportCommand");
         Assert.NotNull(supportButton, "SCN08 Match HUD currently exposes SupportCommand as the legacy scan/support tab.");
 
-        var inputSystem = new MatchOverlayCommandInputSystem();
+        var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
         inputSystem.Bind(controls, new SelectionUiCommandSystem());
 
         AssertClickQueues(supportButton, RtsSelectionCommandIntentKind.EnterScanTargetMode);

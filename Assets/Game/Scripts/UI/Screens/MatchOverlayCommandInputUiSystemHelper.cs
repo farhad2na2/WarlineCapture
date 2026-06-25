@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class MatchOverlayCommandInputSystem
+public sealed class MatchOverlayCommandInputUiSystemHelper
 {
     private readonly Dictionary<MatchOverlayCommandControlsView, Binding> _bindings = new();
 

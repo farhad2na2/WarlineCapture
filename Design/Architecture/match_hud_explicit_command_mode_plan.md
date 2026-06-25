@@ -57,7 +57,7 @@ For V1:
 
 ### UI Command Flow
 
-`MatchOverlayCommandInputSystem` should bind:
+`MatchOverlayCommandInputUiSystemHelper` should bind:
 
 - Move button -> `SelectionUiCommandSystem.RequestMoveCommandMode()`
 - Attack button -> later `RequestAttackCommandMode()` or existing attack fallback through the same command mode boundary
@@ -129,7 +129,7 @@ Use the same state machine for:
 4. [x] Bind Match HUD Move button without rebuilding the prefab.
    - Add serialized `moveButton` and later `attackButton` fields to `MatchOverlayCommandControlsView`.
    - Directly wire the existing prefab references, or use existing serialized tab array if already enough.
-   - Add input binding in `MatchOverlayCommandInputSystem`.
+   - Add input binding in `MatchOverlayCommandInputUiSystemHelper`.
 5. [x] Process Enter Move Mode in the focus/command boundary.
    - Extend `RtsSelectionFocusCommandSystem` external command processing.
    - Validate that selected movable units exist before arming.

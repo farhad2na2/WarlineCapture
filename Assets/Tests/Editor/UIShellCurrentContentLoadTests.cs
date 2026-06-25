@@ -519,9 +519,9 @@ public sealed class UIShellCurrentContentLoadTests
         MatchOverlayCommandControlsView controls = AssertMatchHudFooterView(matchFooter).CommandControls;
         Assert.NotNull(controls);
 
-        var staleInputSystem = new MatchOverlayCommandInputSystem();
+        var staleInputSystem = new MatchOverlayCommandInputUiSystemHelper();
         staleInputSystem.Bind(controls, new SelectionUiCommandSystem());
-        var currentInputSystem = new MatchOverlayCommandInputSystem();
+        var currentInputSystem = new MatchOverlayCommandInputUiSystemHelper();
         currentInputSystem.Bind(controls, new SelectionUiCommandSystem());
 
         controls.MoveButton.onClick.Invoke();

@@ -67,7 +67,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.RuntimeInput_ScanCommandModeAllowsCameraPanWhileTargeting());
             RunCase(test => test.RuntimeInput_ScanCommandModeIssuesScanWithoutFocusFallthrough());
             RunCase(test => test.RuntimeInput_TransportFirstBoardModePansUnlessPassengerDragStarts());
-            RunCase(test => test.MatchOverlayCommandInputSystem_LeavesCommandTabPresentationToHudFeedback());
+            RunCase(test => test.MatchOverlayCommandInputUiSystemHelper_LeavesCommandTabPresentationToHudFeedback());
             RunCase(test => test.PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets());
             RunCase(test => test.BoardAllSelectedTransport_PlansApproachCellsBeforeStructuralOrderMutation());
             RunCase(test => test.BoardAllSelectedTransport_CapsPlannedOrdersAtAvailableSeats());
@@ -2957,9 +2957,9 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
-    public void MatchOverlayCommandInputSystem_LeavesCommandTabPresentationToHudFeedback()
+    public void MatchOverlayCommandInputUiSystemHelper_LeavesCommandTabPresentationToHudFeedback()
     {
-        string commandInput = File.ReadAllText("Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputSystem.cs");
+        string commandInput = File.ReadAllText("Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs");
 
         Assert.IsFalse(commandInput.Contains("MatchOverlayCommandTabVisualSystem", StringComparison.Ordinal));
         Assert.IsFalse(commandInput.Contains("ApplyDefaultSelection", StringComparison.Ordinal));

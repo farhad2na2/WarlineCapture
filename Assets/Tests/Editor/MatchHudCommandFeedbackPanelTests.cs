@@ -414,7 +414,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
         Assert.IsTrue(actions.activeSelf, "Test setup must start with Board feedback actions visible.");
 
         var commandSink = new RecordingSelectionUiCommand();
-        var inputSystem = new MatchOverlayCommandInputSystem();
+        var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
         inputSystem.Bind(controls, commandSink, feedbackView);
 
         selectButton.onClick.Invoke();
@@ -458,7 +458,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
             CanScan = false,
             ScanReason = TacticalCommandReasonCode.ScanUnavailable
         };
-        var inputSystem = new MatchOverlayCommandInputSystem();
+        var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
         inputSystem.Bind(
             controls,
             commandSink,

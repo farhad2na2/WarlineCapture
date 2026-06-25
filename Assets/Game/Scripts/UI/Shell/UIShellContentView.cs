@@ -14,7 +14,7 @@ public sealed class UIShellContentView : MonoBehaviour
     [SerializeField] private GameObject buildDrawerPopupPrefab;
     [SerializeField] private GameObject fullMapPopupPrefab;
     [SerializeField] private GameObject buildPlacementConfirmationBarPrefab;
-    private readonly MatchOverlayCommandInputSystem _matchOverlayCommandInputSystem = new();
+    private readonly MatchOverlayCommandInputUiSystemHelper _matchOverlayCommandInputSystem = new();
     private ISelectionUiCommand _selectionUiCommandSystem;
     private ISelectionUiReadModel _selectionUiReadModelSystem;
     private IBuildingUiCommand _buildingUiCommandSystem;

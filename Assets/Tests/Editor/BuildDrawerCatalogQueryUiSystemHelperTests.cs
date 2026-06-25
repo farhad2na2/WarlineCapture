@@ -8,15 +8,15 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public sealed class BuildDrawerCatalogQuerySystemTests
+public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
 {
     private const string BuildDrawerPrefabPath = "Assets/Game/Prefabs/UI/Shell/Popups/SCN09_BuildDrawerPopup.prefab";
 
     private readonly List<UnityEngine.Object> _createdObjects = new();
     private readonly List<BuildDrawerCatalogItem> _results = new();
-    private readonly BuildDrawerCatalogQuerySystem _query = new();
+    private readonly BuildDrawerCatalogQueryUiSystemHelper _query = new();
 
-    public BuildDrawerCatalogQuerySystemTests()
+    public BuildDrawerCatalogQueryUiSystemHelperTests()
     {
         ConfigureCatalogMetadataResolvers(_query);
     }
@@ -127,10 +127,10 @@ public sealed class BuildDrawerCatalogQuerySystemTests
 
     private static void RunValidationStep(
         string name,
-        Action<BuildDrawerCatalogQuerySystemTests> action,
+        Action<BuildDrawerCatalogQueryUiSystemHelperTests> action,
         ref int passed)
     {
-        var tests = new BuildDrawerCatalogQuerySystemTests();
+        var tests = new BuildDrawerCatalogQueryUiSystemHelperTests();
         try
         {
             action(tests);
@@ -1144,7 +1144,7 @@ public sealed class BuildDrawerCatalogQuerySystemTests
             UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
     }
 
-    private static void ConfigureCatalogMetadataResolvers(BuildDrawerCatalogQuerySystem query)
+    private static void ConfigureCatalogMetadataResolvers(BuildDrawerCatalogQueryUiSystemHelper query)
     {
         query.ConfigureMetadataResolvers(
             UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,

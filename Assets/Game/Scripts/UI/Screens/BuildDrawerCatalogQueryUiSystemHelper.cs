@@ -71,7 +71,7 @@ public static class BuildDrawerCategoryFormatter
     }
 }
 
-public sealed class BuildDrawerCatalogQuerySystem
+public sealed class BuildDrawerCatalogQueryUiSystemHelper
 {
     private TryResolveUiBuildingCatalogMetadata _tryResolveBuildingMetadata;
     private TryResolveUiUnitCatalogMetadata _tryResolveUnitMetadata;

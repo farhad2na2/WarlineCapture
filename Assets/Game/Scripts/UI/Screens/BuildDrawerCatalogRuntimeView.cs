@@ -13,7 +13,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
     [SerializeField] private ScriptableObject unitPrefabRegistryConfig;
     [SerializeField] private ScriptableObject buildingPlacementConfig;
 
-    private readonly BuildDrawerCatalogQuerySystem _query = new();
+    private readonly BuildDrawerCatalogQueryUiSystemHelper _query = new();
     private readonly List<BuildDrawerCatalogItem> _items = new();
     private readonly List<BuildDrawerCatalogItem> _countScratch = new();
     private readonly List<BuildingPendingProductionUiEntry> _pendingProductions = new();

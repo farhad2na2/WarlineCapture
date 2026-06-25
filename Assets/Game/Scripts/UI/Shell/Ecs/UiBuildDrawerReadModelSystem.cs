@@ -6,7 +6,7 @@ using UnityEngine;
 
 public static class UiBuildDrawerReadModelSource
 {
-    private static readonly BuildDrawerCatalogQuerySystem CatalogQuery = new();
+    private static readonly BuildDrawerCatalogQueryUiSystemHelper CatalogQuery = new();
     private static readonly List<BuildDrawerCatalogItem> CatalogItems = new();
     private static readonly List<BuildDrawerCatalogItem> CountScratch = new();
     private static readonly List<BuildingPendingProductionUiEntry> PendingProductions = new();

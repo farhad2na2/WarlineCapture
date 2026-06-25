@@ -364,7 +364,7 @@ internal sealed class MenuBootstrapSystem
             return;
         }
 
-        MatchBootstrapSystem matchBootstrap = matchScene.MatchBootstrap;
+        MatchBootstrapCompositionSystemHelper matchBootstrap = matchScene.MatchBootstrap;
         MainMenuPlayUI mainMenu = matchBootstrap.EnsureMainMenuRuntimeDependencies();
         if (view.ContentSystem.TryGetMatchHudSelectionPanelView(out MatchHudSelectionPanelView selectionPanelView))
             matchBootstrap.BindMatchHudSelectionPanel(selectionPanelView);

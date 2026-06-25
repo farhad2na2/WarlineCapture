@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
 
-internal sealed class MatchBootstrapSystem
+internal sealed class MatchBootstrapCompositionSystemHelper
 {
     private enum GameplayStartStep : byte
     {

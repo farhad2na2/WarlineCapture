@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 [DisallowMultipleComponent]
 public sealed class MatchSceneView : MonoBehaviour
 {
-    private readonly MatchBootstrapSystem matchBootstrapSystem = new();
+    private readonly MatchBootstrapCompositionSystemHelper matchBootstrapSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private Camera worldCamera;
@@ -65,7 +65,7 @@ public sealed class MatchSceneView : MonoBehaviour
     public AIPlanEntryStartupConfig AIPlanEntryConfig => aiPlanEntryConfig;
     public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
 
-    internal MatchBootstrapSystem MatchBootstrap => matchBootstrapSystem;
+    internal MatchBootstrapCompositionSystemHelper MatchBootstrap => matchBootstrapSystem;
     public bool GameplayStartRequested => matchBootstrapSystem.GameplayStartRequested;
     public bool GameplayStartComplete => matchBootstrapSystem.GameplayStartComplete;
     public float GameplayStartProgress01 => matchBootstrapSystem.GameplayStartProgress01;

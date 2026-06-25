@@ -7,8 +7,8 @@ public sealed class RoadBuildReadModelSystem
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RoadBuildSessionSystem RoadBuildSessionSystem;
         public readonly RoadBuildSessionSystem.State RoadBuildSessionState;
-        public readonly RoadBuildInputSystem RoadBuildInputSystem;
-        public readonly RoadBuildInputSystem.State RoadBuildInputState;
+        public readonly RoadBuildInputCompositionSystemHelper RoadBuildInputCompositionSystemHelper;
+        public readonly RoadBuildInputCompositionSystemHelper.State RoadBuildInputState;
         public readonly RoadBuildPlacementStorageSystem PlacementStorageSystem;
         public readonly RoadBuildDependencySystem.State DependencyState;
         public readonly Func<bool> IsDraggingBuildingPlacement;
@@ -17,8 +17,8 @@ public sealed class RoadBuildReadModelSystem
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             RoadBuildSessionSystem roadBuildSessionSystem,
             RoadBuildSessionSystem.State roadBuildSessionState,
-            RoadBuildInputSystem roadBuildInputSystem,
-            RoadBuildInputSystem.State roadBuildInputState,
+            RoadBuildInputCompositionSystemHelper roadBuildInputSystem,
+            RoadBuildInputCompositionSystemHelper.State roadBuildInputState,
             RoadBuildPlacementStorageSystem placementStorageSystem,
             RoadBuildDependencySystem.State dependencyState,
             Func<bool> isDraggingBuildingPlacement)
@@ -26,7 +26,7 @@ public sealed class RoadBuildReadModelSystem
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
             RoadBuildSessionSystem = roadBuildSessionSystem;
             RoadBuildSessionState = roadBuildSessionState;
-            RoadBuildInputSystem = roadBuildInputSystem;
+            RoadBuildInputCompositionSystemHelper = roadBuildInputSystem;
             RoadBuildInputState = roadBuildInputState;
             PlacementStorageSystem = placementStorageSystem;
             DependencyState = dependencyState;
@@ -41,7 +41,7 @@ public sealed class RoadBuildReadModelSystem
         _context.RoadBuildSessionSystem.IsRoadBuildModeActive(CreateSessionContext());
 
     public bool IsDraggingBuildInteraction =>
-        (_context.RoadBuildInputSystem != null && _context.RoadBuildInputSystem.IsDrawing(_context.RoadBuildInputState)) ||
+        (_context.RoadBuildInputCompositionSystemHelper != null && _context.RoadBuildInputCompositionSystemHelper.IsDrawing(_context.RoadBuildInputState)) ||
         (_context.PlacementStorageSystem != null &&
          _context.PlacementStorageSystem.HasPendingBuildingPlacement &&
          _context.IsDraggingBuildingPlacement?.Invoke() == true);

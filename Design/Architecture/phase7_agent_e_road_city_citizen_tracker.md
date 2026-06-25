@@ -16,15 +16,15 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `95 / 109 complete (87.2%)`.
+- Checklist progress: `96 / 109 complete (88.1%)`.
 - In progress: `0`.
-- Remaining open: `2`.
-- Current target: `Agent E naming slice complete for P7-0206 CitizenVisibleUnitPresentationSystemHelper; continue road/city/citizen helper naming in small batches`.
+- Remaining open: `1`.
+- Current target: `Agent E naming slice complete for P7-0219 RoadBuildInputCompositionSystemHelper; continue road/city/citizen helper naming in small batches`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
-- Retired/folded helpers: `95`.
+- Retired/folded helpers: `96`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `CitizenVisibleUnitPresentationSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, citizen visible-unit focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch155-citizen-visible.log with [CitizenVisibleUnitFocusedValidation] result=Passed tests=3 and /private/tmp/warline-non-ecs-helper-naming-batch155-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=74. Previous Batch 154 logs remain /private/tmp/warline-non-ecs-helper-naming-batch154-citizen-visible.log and /private/tmp/warline-non-ecs-helper-naming-batch154-architecture.log.`
+- Validation status: `RoadBuildInputCompositionSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, road build command focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch156-road-build-command.log with [RoadBuildCommandRequestValidation] result=Passed tests=7 and /private/tmp/warline-non-ecs-helper-naming-batch156-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=73. Previous Batch 155 logs remain /private/tmp/warline-non-ecs-helper-naming-batch155-citizen-visible.log and /private/tmp/warline-non-ecs-helper-naming-batch155-architecture.log.`
 
 Owned files:
 
@@ -294,7 +294,7 @@ Remove dead wrappers instead of converting them.
 - [x] Fold `P7-0184 RuntimeGridBlockerPresentationSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime grid blocker helper; blocker config, prefab metadata, ECS dependency-state publication, blocker entity/object creation, removal, update/dispose behavior, and gameplay startup callers stayed unchanged.
 - [x] Fold and rename `P7-0189 CitizenPopulationCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain citizen population composition helper; child helper creation, initialization, visible-citizen cleanup, read-model refresh, event binding, disposal, and building composition callers stayed unchanged.
 - [x] Fold and rename `P7-0206 CitizenVisibleUnitPresentationSystemHelper` from a disabled `SystemBase` wrapper into a plain citizen visible-unit presentation helper; sync, spawn, remove, clear, same-frame entity setup, movement-command enqueueing, and citizen population callers stayed unchanged.
-- [x] Fold `P7-0219 RoadBuildInputSystem` from a disabled `SystemBase` wrapper into a plain road build input helper; pointer handling, build/delete gesture state, preview callbacks, building placement drag handling, and road composition callers stayed unchanged.
+- [x] Fold and rename `P7-0219 RoadBuildInputCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road build input composition helper; pointer handling, build/delete gesture state, preview callbacks, building placement drag handling, and road composition callers stayed unchanged.
 - [x] Fold `P7-0221 RoadBuildInteractionSystem` from a disabled `SystemBase` wrapper into a plain road build interaction helper; building placement commit, selection hit tests, building selection, deletion, ECS entity cleanup, and storage callbacks stayed unchanged.
 - [x] Fold `P7-0223 RoadBuildPlacementStorageSystem` from a disabled `SystemBase` wrapper into a plain road build placement storage helper; runtime building collection state, active placement storage, building id allocation, selection state, and road composition callers stayed unchanged.
 - [x] Fold `P7-0146 RuntimeCityBuildingPlotUtilitySystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city plot algorithm helper; plot candidate types, state access, and runtime-city composition callers stayed unchanged.

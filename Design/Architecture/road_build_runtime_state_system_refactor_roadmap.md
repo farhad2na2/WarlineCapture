@@ -40,8 +40,8 @@ New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. 
   - `RoadFootprintQuerySystem`, `RoadFootprintQueryContext`
   - Target owner: `RoadBuildCompositionSourceSystem` plus `RoadGridContextSystem`.
 - Runtime update / GUI exposure:
-  - `RoadBuildInputSystem`, `RoadBuildInputContext`, `RoadBuildInputCamera`, `RoadDeletePromptSystem`, `RoadDeletePromptContext`, `Update`, `OnGui`
-  - Target owner: `RoadBuildInteractionContextSystem`, `RoadBuildCompositionSystemHelper`, `RoadBuildInputSystem`, and `RoadDeletePromptSystem`.
+  - `RoadBuildInputCompositionSystemHelper`, `RoadBuildInputContext`, `RoadBuildInputCamera`, `RoadDeletePromptSystem`, `RoadDeletePromptContext`, `Update`, `OnGui`
+  - Target owner: `RoadBuildInteractionContextSystem`, `RoadBuildCompositionSystemHelper`, `RoadBuildInputCompositionSystemHelper`, and `RoadDeletePromptSystem`.
 - Read-model exposure:
   - `HasPendingBuildingPlacement`, `CanConfirmBuildingPlacement`, `HasSelectedBuilding`, `IsRoadBuildModeActive`, `IsDraggingBuildInteraction`, `PlacementStatusText`, `SelectedBuildingLabel`, `ActiveModeStatusText`
   - Target owner: `RoadBuildReadModelSystem` plus building interaction/read boundaries.
@@ -270,10 +270,10 @@ Every phase boundary must also run the existing road validation set when feasibl
 ## Phase 6: Runtime Actions And Disposal
 
 25. Complete: Move runtime update action out
-   - Have `RoadBuildCompositionSystemHelper` call `RoadBuildInputSystem.Update` through `RoadBuildInteractionContextSystem` output, not through `RoadBuildRuntimeStateSystem.RoadBuildInputSystem`.
+   - Have `RoadBuildCompositionSystemHelper` call `RoadBuildInputCompositionSystemHelper.Update` through `RoadBuildInteractionContextSystem` output, not through `RoadBuildRuntimeStateSystem.RoadBuildInputCompositionSystemHelper`.
    - Expected output: runtime update action does not touch the temporary holder.
    - Added `RoadBuildRuntimeActionCompositionSystemHelper` as the narrow runtime-update action owner.
-   - `RoadBuildCompositionSystemHelper.Result.RuntimeUpdate` now invokes `RoadBuildRuntimeActionCompositionSystemHelper.Update` through composition source state instead of reading `RoadBuildInputSystem`, `RoadBuildInputContext`, or camera through `RoadBuildRuntimeStateSystem`.
+   - `RoadBuildCompositionSystemHelper.Result.RuntimeUpdate` now invokes `RoadBuildRuntimeActionCompositionSystemHelper.Update` through composition source state instead of reading `RoadBuildInputCompositionSystemHelper`, `RoadBuildInputContext`, or camera through `RoadBuildRuntimeStateSystem`.
 
 26. Complete: Move GUI action out
    - Have `RoadBuildCompositionSystemHelper` call `RoadDeletePromptSystem.OnGui` through `RoadBuildInteractionContextSystem` output, not through `RoadBuildRuntimeStateSystem.RoadDeletePromptSystem`.

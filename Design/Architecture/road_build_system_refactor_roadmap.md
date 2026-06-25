@@ -138,10 +138,10 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - `RoadBuildSystem` now delegates road build activation, road session confirm/cancel, exit build mode, delete-prompt mutation, skip-frame consumption, and minimap event publication.
     - Expected output: road build lifecycle is explicit and UI-independent.
 
-14. Complete: Create `RoadBuildInputSystem`
+14. Complete: Create `RoadBuildInputCompositionSystemHelper`
     - Owns pointer-state processing, pointer-over-UI checks, pressed/released/drag handling, drag-axis updates, pending start cell, and clicked-road delete selection.
     - Consumes `RoadBuildSessionSystem`, `RoadPathPlanningSystem`, `RoadNetworkSystem`, and `RoadPreviewPresentationSystemHelper`.
-    - Created `RoadBuildInputSystem` with pointer-state processing, active road-mode guards, building-placement drag handoff, road stroke drag start/release, drag-axis updates, clicked-road delete selection, and pending road-build cancellation.
+    - Created `RoadBuildInputCompositionSystemHelper` with pointer-state processing, active road-mode guards, building-placement drag handoff, road stroke drag start/release, drag-axis updates, clicked-road delete selection, and pending road-build cancellation.
     - `RoadBuildSystem.Update()` is now a thin input delegation wrapper while stroke creation and building-placement side effects remain behind injected domain callbacks for compatibility.
 
 15. Complete: Create `RoadBuildCommandCompositionSystemHelper`
@@ -237,7 +237,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 27. Complete: Replace runtime update and GUI delegates
     - `GameplayRuntimeUpdateSystem` should call narrow road input/session/projection update systems.
     - `OnGui` should be removed or delegated to `RoadDeletePromptSystem`.
-    - RoadBuildCompositionSystemHelper runtime update action now calls RoadBuildInputSystem.Update through RoadBuildInputContext and RoadBuildInputCamera.
+    - RoadBuildCompositionSystemHelper runtime update action now calls RoadBuildInputCompositionSystemHelper.Update through RoadBuildInputContext and RoadBuildInputCamera.
     - RoadBuildCompositionSystemHelper GUI action now calls RoadDeletePromptSystem.OnGui through RoadDeletePromptContext.
     - Runtime loop wiring no longer uses RoadBuildSystem.Update or RoadBuildSystem.OnGui delegates.
     - Expected output: no runtime loop calls `roadBuild?.Update()` or `roadBuild?.OnGui()`.

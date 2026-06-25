@@ -4,7 +4,7 @@ using UnityEngine;
 using BuildToolMode = RoadBuildSessionSystem.BuildToolMode;
 using DragFirstAxis = RoadPathPlanningSystem.DragFirstAxis;
 
-public sealed class RoadBuildInputSystem
+public sealed class RoadBuildInputCompositionSystemHelper
 {
     public delegate bool TryGetHoveredCellAction(Vector2 screenPosition, out Vector2Int cell);
 

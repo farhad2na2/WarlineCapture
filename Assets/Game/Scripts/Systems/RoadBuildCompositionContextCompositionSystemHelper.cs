@@ -30,7 +30,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RuntimeGameplayStateSystem,
             source.RoadBuildSessionSystem,
             source.RoadBuildSessionState,
-            source.RoadBuildInputSystem,
+            source.RoadBuildInputCompositionSystemHelper,
             source.RoadBuildInputState,
             source.RoadBuildPlacementStorageSystem,
             source.RoadBuildDependencyState,
@@ -43,7 +43,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RuntimeGameplayStateSystem,
             source.RoadBuildSessionSystem,
             source.RoadBuildSessionState,
-            source.RoadBuildInputSystem,
+            source.RoadBuildInputCompositionSystemHelper,
             source.RoadBuildInputState,
             source.RoadBuildCommandCompositionSystemHelper,
             source.RoadPathPlanningSystem,
@@ -59,7 +59,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
                 "RoadBuild.ClearSelectedBuilding"),
             () => source.RoadBuildDependencyState.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.CancelBuildingPlacement(
                 source.RoadBuildDependencyState.BuildingPlacementInteractionContext),
-            () => source.RoadBuildInputSystem.CancelPendingBuild(CreateRoadBuildInputContext(source)),
+            () => source.RoadBuildInputCompositionSystemHelper.CancelPendingBuild(CreateRoadBuildInputContext(source)),
             () => source.RoadBuildPlacementVisualSystem?.HidePlacementOutline(source.RoadBuildPlacementVisualState),
             () => source.RoadPreviewPresentationSystemHelper?.UpdatePreview(
                 CreateRoadPreviewContext(source),
@@ -80,7 +80,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             strokeId => source.RoadBuildMutationSystem.DeleteStroke(CreateRoadBuildMutationContext(source), strokeId));
     }
 
-    public RoadBuildInputSystem.Context CreateRoadBuildInputContext(RoadBuildCompositionSourceSystem source)
+    public RoadBuildInputCompositionSystemHelper.Context CreateRoadBuildInputContext(RoadBuildCompositionSourceSystem source)
     {
         return source.RoadBuildInteractionContextSystem.CreateInputContext(CreateRoadBuildInteractionContext(source));
     }

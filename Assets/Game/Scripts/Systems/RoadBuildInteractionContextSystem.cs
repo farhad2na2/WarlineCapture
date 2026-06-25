@@ -9,8 +9,8 @@ internal sealed class RoadBuildInteractionContextSystem
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RoadBuildSessionSystem SessionSystem;
         public readonly RoadBuildSessionSystem.State SessionState;
-        public readonly RoadBuildInputSystem InputSystem;
-        public readonly RoadBuildInputSystem.State InputState;
+        public readonly RoadBuildInputCompositionSystemHelper InputSystem;
+        public readonly RoadBuildInputCompositionSystemHelper.State InputState;
         public readonly RoadBuildCommandCompositionSystemHelper CommandSystem;
         public readonly RoadPathPlanningSystem PathPlanningSystem;
         public readonly RoadNetworkSystem NetworkSystem;
@@ -25,7 +25,7 @@ internal sealed class RoadBuildInteractionContextSystem
         public readonly Action CancelPendingBuild;
         public readonly Action HidePlacementOutline;
         public readonly Action UpdatePreview;
-        public readonly RoadBuildInputSystem.TryGetHoveredCellAction TryGetHoveredCell;
+        public readonly RoadBuildInputCompositionSystemHelper.TryGetHoveredCellAction TryGetHoveredCell;
         public readonly Action ClearPreview;
         public readonly Action<Vector2> UpdateBuildingPlacement;
         public readonly Action<List<Vector2Int>> CreateStroke;
@@ -39,8 +39,8 @@ internal sealed class RoadBuildInteractionContextSystem
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             RoadBuildSessionSystem sessionSystem,
             RoadBuildSessionSystem.State sessionState,
-            RoadBuildInputSystem inputSystem,
-            RoadBuildInputSystem.State inputState,
+            RoadBuildInputCompositionSystemHelper inputSystem,
+            RoadBuildInputCompositionSystemHelper.State inputState,
             RoadBuildCommandCompositionSystemHelper commandSystem,
             RoadPathPlanningSystem pathPlanningSystem,
             RoadNetworkSystem networkSystem,
@@ -55,7 +55,7 @@ internal sealed class RoadBuildInteractionContextSystem
             Action cancelPendingBuild,
             Action hidePlacementOutline,
             Action updatePreview,
-            RoadBuildInputSystem.TryGetHoveredCellAction tryGetHoveredCell,
+            RoadBuildInputCompositionSystemHelper.TryGetHoveredCellAction tryGetHoveredCell,
             Action clearPreview,
             Action<Vector2> updateBuildingPlacement,
             Action<List<Vector2Int>> createStroke,
@@ -114,9 +114,9 @@ internal sealed class RoadBuildInteractionContextSystem
             context.UpdatePreview);
     }
 
-    public RoadBuildInputSystem.Context CreateInputContext(Context context)
+    public RoadBuildInputCompositionSystemHelper.Context CreateInputContext(Context context)
     {
-        return new RoadBuildInputSystem.Context(
+        return new RoadBuildInputCompositionSystemHelper.Context(
             context.InputState,
             context.RuntimeGameplayStateSystem,
             context.SessionSystem,

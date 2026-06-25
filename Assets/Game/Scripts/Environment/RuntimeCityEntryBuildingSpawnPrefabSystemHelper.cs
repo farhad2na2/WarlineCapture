@@ -3,7 +3,7 @@ using UnityEngine;
 using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityEntryBuildingSpawnSystem
+internal sealed class RuntimeCityEntryBuildingSpawnPrefabSystemHelper
 {
     private readonly RuntimeCityEntryBuildingSpawnState _state = new();
 

@@ -204,11 +204,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - `SpawnCityBulkBuildingsRoutine` now consumes the explicit plot plan before preserving the existing building placement sequence and yield cadence.
 
 14. Complete: Extract entry building placement
-   - Create `RuntimeCityEntryBuildingSpawnSystem`.
+   - Create `RuntimeCityEntryBuildingSpawnPrefabSystemHelper`.
    - Move entry shops and entry houses from the bulk routine.
    - Preserve counts, labels, descriptions, spacing, and anchor recording.
    - Expected output: entrance roadside buildings have one owner.
-   - Added `RuntimeCityEntryBuildingSpawnSystem` as the owner for entry shops and entry houses.
+   - Added `RuntimeCityEntryBuildingSpawnPrefabSystemHelper` as the owner for entry shops and entry houses.
    - Moved entry counts, labels, descriptions, spacing, shared placement calls, and anchor recording out of `RuntimeCityBuildingSpawnSystem`.
    - `SpawnCityBulkBuildingsRoutine` still owns the same two yield points around entry building placement.
 

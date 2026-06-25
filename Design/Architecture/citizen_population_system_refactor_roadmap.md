@@ -38,9 +38,9 @@ Step 17 movement-command transition size: 755 lines. Civilian move-order compone
 
 Step 18 prefab-selection transition size: 719 lines. Male/female visible citizen prefab loading, per-citizen prefab choice, and prefab selection reset now live in `CitizenPrefabSelectionSystem`; entity prefab resolution remains in `CitizenPrefabSystem`.
 
-Step 19 visible-spawn transition size: 642 lines. Visible citizen clear/remove/spawn, civilian entity instantiation, spawn-cell placement, LocalTransform/previous-position setup, grid initialization cleanup, idle/combat disabling, civilian faction assignment, selection/path cleanup, CivilianUnitTag assignment, and visible-record creation now live in `CitizenVisibleUnitSystem`; the then-existing shell still owns the visible sync loop until step 20.
+Step 19 visible-spawn transition size: 642 lines. Visible citizen clear/remove/spawn, civilian entity instantiation, spawn-cell placement, LocalTransform/previous-position setup, grid initialization cleanup, idle/combat disabling, civilian faction assignment, selection/path cleanup, CivilianUnitTag assignment, and visible-record creation now live in `CitizenVisibleUnitPresentationSystemHelper`; the then-existing shell still owns the visible sync loop until step 20.
 
-Step 20 visible-travel transition size: 528 lines. Visible citizen spawn/despawn visibility decisions, destroyed-unit handling, missing-transform cleanup, path retry, long-distance move handoff, segment-reached move retargeting, building approach arrival checks, final distance arrival checks, and visible arrival resolution now live in `CitizenVisibleUnitSystem`; the shell delegates the visible sync tick.
+Step 20 visible-travel transition size: 528 lines. Visible citizen spawn/despawn visibility decisions, destroyed-unit handling, missing-transform cleanup, path retry, long-distance move handoff, segment-reached move retargeting, building approach arrival checks, final distance arrival checks, and visible arrival resolution now live in `CitizenVisibleUnitPresentationSystemHelper`; the shell delegates the visible sync tick.
 
 Step 21 event-boundary transition size: 520 lines. Visible-citizen-destroyed and home-building-destroyed notifications now live in `CitizenPopulationEventSystem`; `CitizenVisualLifecycleReporter` and `BuildingGameplayDependencyCompositionSystemHelper` bind the event boundary instead of calling `CitizenPopulationSystem`.
 
@@ -79,7 +79,7 @@ Goal: retire the broad managed `CitizenPopulationSystem` shell by moving citizen
 - Schedule policy: weekday/weekend/refugee timing constants, day-of-week logic, night policy, shopping cadence, work/lunch/walk/city hall decisions, target resolution, and schedule phase moved to `CitizenScheduleSystem`.
 - Status transition policy: status mutation, travel-status detection, desired-status travel mapping, travel-to-settled mapping, debug status mutation, arrival settling, and death status mutation moved to `CitizenStatusTransitionSystem`.
 - Danger/fleeing behavior: scene transform name scanning for fire/burn/smoke/explosion, danger position cache, danger radius checks, safe-building evaluation, and flee target selection moved to `CitizenDangerSystem`; this transform scan is recorded as temporary performance debt.
-- Visible civilian ECS units: visible spawn/despawn decisions, destroyed-unit handling, path retry, long-distance move handoff, segment-reached retargeting, visible arrival resolution, clear/remove/spawn, and spawn-time component setup moved to `CitizenVisibleUnitSystem`; visible citizen prefab selection moved to `CitizenPrefabSelectionSystem`, and move-order component mutation moved to `CitizenMovementCommandSystem`.
+- Visible civilian ECS units: visible spawn/despawn decisions, destroyed-unit handling, path retry, long-distance move handoff, segment-reached retargeting, visible arrival resolution, clear/remove/spawn, and spawn-time component setup moved to `CitizenVisibleUnitPresentationSystemHelper`; visible citizen prefab selection moved to `CitizenPrefabSelectionSystem`, and move-order component mutation moved to `CitizenMovementCommandSystem`.
 - Movement and path goal helpers: world-to-cell conversion, travel origin selection, citizen reference anchors, visibility anchors, building approach world/cell resolution, long segment goal planning, deferred travel duration, and citizen world-position offsets moved to `CitizenTravelSystem`.
 - Totals/read model: calculation moved to `CitizenPopulationTotalsSystem`, and cached/public totals reads moved to `CitizenPopulationReadModelSystem`.
 - Debug surface: citizen debug snapshot generation, debug status mutation, and debug kill command routing moved to `CitizenPopulationDebugSystem`.
@@ -132,7 +132,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
 - `CitizenScheduleSystem`: owns schedule constants, day/hour policy, desired status/target selection, travel status conversion, and arrival settling policy.
 - `CitizenDangerSystem`: owns danger source scanning, danger source cache, safe-building checks, and flee target selection.
 - `CitizenTravelSystem`: owns travel-origin policy, world/grid conversion, approach-cell goal resolution, segment goal planning, deferred travel duration, and world-position offsets.
-- `CitizenVisibleUnitSystem`: owns visible citizen spawn/despawn, prefab selection, instantiated unit component setup, path retry, visible arrival checks, and visible unit record mutation.
+- `CitizenVisibleUnitPresentationSystemHelper`: owns visible citizen spawn/despawn, prefab selection, instantiated unit component setup, path retry, visible arrival checks, and visible unit record mutation.
 - `CitizenMovementCommandSystem`: owns ECS component mutations for civilian move orders.
 - `CitizenPopulationTotalsSystem`: owns totals calculation, summary publication, and read model projection.
 - `CitizenPopulationDebugSystem`: owns debug snapshot/status/kill commands.
@@ -282,19 +282,19 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
    - Added `CitizenPrefabSelectionSystemMustOwnVisibleCitizenPrefabSelection` to the focused architecture validation batch.
 
 19. Complete: Extract visible citizen spawn setup
-   - Create `CitizenVisibleUnitSystem`.
+   - Create `CitizenVisibleUnitPresentationSystemHelper`.
    - Move visibility distance checks, spawn/despawn decisions, civilian entity instantiation, `UnitGrid`, `LocalTransform`, `UnitPrevWorldPos`, movement behavior, combat disabling, faction assignment, `CivilianUnitTag`, selection clearing, and target/path component cleanup.
-   - Added `CitizenVisibleUnitSystem.cs`.
+   - Added `CitizenVisibleUnitPresentationSystemHelper.cs`.
    - Moved visible citizen clear/remove/spawn, civilian entity instantiation, spawn-cell placement, LocalTransform/previous-position setup, grid initialization cleanup, idle/combat disabling, civilian faction assignment, selection/path cleanup, `CivilianUnitTag` assignment, and visible-record creation out of `CitizenPopulationSystem.cs`.
    - Visibility distance decisions remain in the shell until the visible sync loop moves in step 20.
-   - Added `CitizenVisibleUnitSystemMustOwnVisibleSpawnSetup` to the focused architecture validation batch.
+   - Added `CitizenVisibleUnitPresentationSystemHelperMustOwnVisibleSpawnSetup` to the focused architecture validation batch.
 
 20. Complete: Extract visible citizen travel sync
-   - Move path retry, long-distance move handoff, segment-reached checks, building approach arrival checks, visible unit destroyed checks, and visible arrival resolution into `CitizenVisibleUnitSystem`.
+   - Move path retry, long-distance move handoff, segment-reached checks, building approach arrival checks, visible unit destroyed checks, and visible arrival resolution into `CitizenVisibleUnitPresentationSystemHelper`.
    - Keep actual move command component writes delegated to `CitizenMovementCommandSystem`.
    - Moved visible citizen spawn/despawn visibility decisions, destroyed-unit handling, missing-transform cleanup, path retry, long-distance move handoff, segment-reached move retargeting, building approach arrival checks, final distance arrival checks, and visible arrival resolution out of `CitizenPopulationSystem.cs`.
    - Kept move-order component writes delegated to `CitizenMovementCommandSystem`.
-   - Added `CitizenVisibleUnitSystemMustOwnVisibleTravelSync` to the focused architecture validation batch.
+   - Added `CitizenVisibleUnitPresentationSystemHelperMustOwnVisibleTravelSync` to the focused architecture validation batch.
 
 21. Complete: Extract visible citizen lifecycle events
    - Create `CitizenPopulationEventSystem`.

@@ -6,7 +6,7 @@ Track the remaining high-risk managed `SystemBase` boundaries that were intentio
 
 - `BuildingSpawnCompositionSystemHelper`
 - `BuildingProductionTransportBridgeCompositionSystemHelper`
-- `CitizenVisibleUnitSystem`
+- `CitizenVisibleUnitPresentationSystemHelper`
 - `MapVehiclePlacementSpawnSystem`
 - `CustomGameStartupSystem`
 
@@ -33,7 +33,7 @@ The goal is to retire these broad managed runtime gameplay owners by decomposing
 | --- | --- | --- | --- |
 | `BuildingSpawnCompositionSystemHelper` | `SystemBase` | Fallback `Instance.transform` spawn placement reads plus managed produced-unit list/slot fallbacks when no runtime boundary is available. | Retire as a broad spawn owner. Split into `BuildingProductionSpawnRequestSystem`, `BuildingProductionSlotReservationSystem`, `BuildingProductionPlacementSystem`, `BuildingHelipadSpawnSystem`, `BuildingUnitInstantiationSystem`, and `BuildingProducedUnitStateSystem`; preview/transform projection stays passive. |
 | `BuildingProductionTransportBridgeCompositionSystemHelper` | `SystemBase` | Uses produced-unit prefab/object data for footprint and focus decisions. | Retire as a direct bridge. Split into `BuildingProductionTransportRequestSystem`, `BuildingProductionTransportMovementSystem`, `BuildingProductionTransportFocusRequestSystem`, and `BuildingRunwayTransportSystem`; camera/UI application remains passive. |
-| `CitizenVisibleUnitSystem` | `SystemBase` | Managed visible-citizen dictionaries and immediate entity tracking after instantiate. | Retire as same-frame dictionary owner. Split into `CitizenVisibleUnitSpawnRequestSystem`, `CitizenVisibleUnitInstantiateSystem`, `CitizenVisibleUnitMovementStateSystem`, and `CitizenVisibleUnitLifetimeSystem`; presentation state remains passive. |
+| `CitizenVisibleUnitPresentationSystemHelper` | `SystemBase` | Managed visible-citizen dictionaries and immediate entity tracking after instantiate. | Retire as same-frame dictionary owner. Split into `CitizenVisibleUnitSpawnRequestSystem`, `CitizenVisibleUnitInstantiateSystem`, `CitizenVisibleUnitMovementStateSystem`, and `CitizenVisibleUnitLifetimeSystem`; presentation state remains passive. |
 | `MapVehiclePlacementSpawnSystem` | Plain direct helper | Instantiation, blocker reservation/cleanup, and completion results still run through the broad direct helper; config still has authored prefab fallback at the managed edge. | Retire as managed update wrapper. Progress/random/clearance state now lives in ECS `MapVehiclePlacementProgressState`; continue split into `MapVehiclePlacementProgressSystem`, `MapVehiclePlacementInstantiateSystem`, `MapVehiclePlacementBlockerSystem`, and `MapVehiclePlacementResultSystem`; config projection remains passive. |
 | `CustomGameStartupSystem` | `SystemBase` | Serialized startup configs and prefab/atlas/impostor projection. | Retire as serialized config/runtime startup owner. Split into `CustomGameFactionStartupSystem`, `CustomGameBuildingStartupSystem`, `CustomGameUnitStartupSystem`, and `CustomGameStartupResultSystem`; serialized config, atlas, sprite, and impostor projection remain passive. |
 
@@ -48,7 +48,7 @@ Estimated remaining focused engineering time:
 | --- | --- | --- |
 | `BuildingSpawnCompositionSystemHelper` | Finish transform/fallback removal, then extract six focused production spawn processors and retire the broad owner. | 4-7 hours |
 | `BuildingProductionTransportBridgeCompositionSystemHelper` | Move produced-unit transport, runway movement, and focus requests to ECS data while keeping camera/UI passive. | 2-4 hours |
-| `CitizenVisibleUnitSystem` | Replace same-frame dictionaries with request/state/lifetime systems and passive presentation state. | 4-7 hours |
+| `CitizenVisibleUnitPresentationSystemHelper` | Replace same-frame dictionaries with request/state/lifetime systems and passive presentation state. | 4-7 hours |
 | `MapVehiclePlacementSpawnSystem` | Move config progress, instantiation, blocker ownership, and completion results into ECS. | 4-6 hours |
 | `CustomGameStartupSystem` | Split serialized config projection from faction, building, unit, and result startup processors. | 5-9 hours |
 | Cross-cutting validation | Architecture guards, composition rewiring, and focused Unity/EditMode/PlayMode validation. | 3-6 hours |
@@ -94,7 +94,7 @@ Direct call sites:
 
 - `BuildingSpawnCompositionSystemHelper`: held by `BuildingGameplaySourceCompositionSystemHelper`, included in `BuildingGameplayResultCompositionSystemHelper`, invoked through `BuildingProductionRuntimeTickCompositionSystemHelper`, `BuildingProductionTickCompositionSystemHelper`, `BuildingProductionCompositionSystemHelper`, and `BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBuildingSpawnContext`; focused tests call `ResolveProducedUnitFaction`.
 - `BuildingProductionTransportBridgeCompositionSystemHelper`: held by `BuildingGameplaySourceCompositionSystemHelper`, passed through `BuildingProductionContextCompositionSystemHelper` and `BuildingProductionTransportPresentationSystemHelper`; focused production tests call `FocusNewestPlayerProducedUnit`.
-- `CitizenVisibleUnitSystem`: constructed by `CitizenPopulationCompositionSystemHelper` and directly constructed by `CitizenVisibleUnitSystemTests`.
+- `CitizenVisibleUnitPresentationSystemHelper`: constructed by `CitizenPopulationCompositionSystemHelper` and directly constructed by `CitizenVisibleUnitPresentationSystemHelperTests`.
 - `MapVehiclePlacementSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, invoked by `BuildingGameplayCompositionSystemHelper` map placement update callbacks; blocker cleanup helpers are directly covered by `UnitMovementBlockerValidationTests`.
 - `CustomGameStartupSystem`: resolved by `MatchBootstrapSystem` through `World.GetOrCreateSystemManaged<CustomGameStartupSystem>()`; focused tests resolve it through `GetOrCreateSystemManaged`.
 
@@ -102,7 +102,7 @@ Managed prefab/config inputs:
 
 - `BuildingSpawnCompositionSystemHelper`: `GetProductionPrefabDelegate`, `GameObject spawnUnitPrefab`, `ProducedUnitPrefabs` fallback map, and source-key derivation from managed prefab names.
 - `BuildingProductionTransportBridgeCompositionSystemHelper`: `GameObject spawnUnitPrefab` input and footprint resolution from managed prefab source key.
-- `CitizenVisibleUnitSystem`: no direct `GameObject` grep hit in the target file, but it remains a managed same-frame presentation bridge because visible citizens are instantiated and tracked immediately.
+- `CitizenVisibleUnitPresentationSystemHelper`: no direct `GameObject` grep hit in the target file, but it remains a managed same-frame presentation bridge because visible citizens are instantiated and tracked immediately.
 - `MapVehiclePlacementSpawnSystem`: no direct `GameObject` grep hit in the target file after `vehicleSourceKey`, but config projection still derives missing keys from authored `VehiclePrefab`.
 - `CustomGameStartupSystem`: `UnitSpawnPrefabs`, `GameObject firstUnitPrefab`, `TryResolveConvertedPrefabEntity(GameObject)`, impostor atlas lookup by prefab, building lookup key from prefab.
 
@@ -129,7 +129,7 @@ Current grep snapshot for the five target files:
 - `UnityEngine.Object`: none by direct target-file grep.
 - `List<GameObject>`: none by direct target-file grep.
 - `Dictionary<..., GameObject>`: `BuildingSpawnCompositionSystemHelper`.
-- `MapVehiclePlacementSpawnSystem` and `CitizenVisibleUnitSystem` have no direct `GameObject` grep hits but are still managed boundary classes.
+- `MapVehiclePlacementSpawnSystem` and `CitizenVisibleUnitPresentationSystemHelper` have no direct `GameObject` grep hits but are still managed boundary classes.
 
 Baseline validation notes:
 
@@ -195,8 +195,8 @@ Phase 1 citizen visible-unit ECS state notes:
 
 - Added `CitizenVisibleUnitState` as an ECS component on visible citizen unit entities.
 - `CitizenVisibleUnitState` carries citizen id, prefab source key, owner faction id, life state, status, current target building id, and current goal cell.
-- `CitizenVisibleUnitSystem` writes/refreshes `UnitSourcePrefabKey` and `CitizenVisibleUnitState` when instantiating the visible citizen entity; the existing `VisibleCitizensById` managed dictionary remains in place for current behavior.
-- `CitizenVisibleUnitSystemTests.SpawnVisibleCitizenProjectsPrefabAndQueuesCitizenMovement` now asserts the new ECS state.
+- `CitizenVisibleUnitPresentationSystemHelper` writes/refreshes `UnitSourcePrefabKey` and `CitizenVisibleUnitState` when instantiating the visible citizen entity; the existing `VisibleCitizensById` managed dictionary remains in place for current behavior.
+- `CitizenVisibleUnitPresentationSystemHelperTests.SpawnVisibleCitizenProjectsPrefabAndQueuesCitizenMovement` now asserts the new ECS state.
 - Main project validation was locked twice; shadow validation used `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
 - Passed: `[CitizenVisibleUnitFocusedValidation] result=Passed tests=3`.
 
@@ -463,7 +463,7 @@ Split production transport focus and movement behavior into ECS processors witho
 - [ ] Run `BuildingGameplayCompositionRuntimeSmokeValidation`.
 - [ ] Run `NonEcsSystemConversionArchitectureValidation`.
 
-## Phase 4: CitizenVisibleUnitSystem Conversion
+## Phase 4: CitizenVisibleUnitPresentationSystemHelper Conversion
 
 Purpose:
 Split visible-citizen spawn, movement state, and lifetime tracking into entity-owned ECS processors while preserving visible citizen behavior.
@@ -476,8 +476,8 @@ Split visible-citizen spawn, movement state, and lifetime tracking into entity-o
 - [ ] Extract current target and movement status writes into `CitizenVisibleUnitMovementStateSystem`.
 - [ ] Convert arrival and despawn checks into `CitizenVisibleUnitLifetimeSystem`.
 - [ ] Keep any presentation-only state in a passive managed boundary.
-- [ ] Update citizen population composition so it no longer constructs `new CitizenVisibleUnitSystem()`.
-- [ ] Retire or rename the remaining `CitizenVisibleUnitSystem` shell so it no longer owns runtime gameplay execution.
+- [ ] Update citizen population composition so it no longer constructs `new CitizenVisibleUnitPresentationSystemHelper()`.
+- [ ] Retire or rename the remaining `CitizenVisibleUnitPresentationSystemHelper` shell so it no longer owns runtime gameplay execution.
 - [ ] Remove managed prefab selection inputs from visible-citizen execution.
 - [ ] Run `CitizenVisibleUnitFocusedValidation`.
 - [ ] Run citizen population focused validation.

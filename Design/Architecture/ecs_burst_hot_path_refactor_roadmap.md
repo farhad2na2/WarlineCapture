@@ -28,7 +28,7 @@ Observed:
 - Main array-copy offenders:
   - None remaining under `Assets/Game/Scripts/Systems` for the generic-aware guardrail scanner.
 - Direct structural/component mutation is concentrated in:
-  - `CitizenVisibleUnitSystem`: 1 intentional immediate `Instantiate` for visible-citizen spawn, because the state dictionary needs the real entity in the same frame.
+  - `CitizenVisibleUnitPresentationSystemHelper`: 1 intentional immediate `Instantiate` for visible-citizen spawn, because the state dictionary needs the real entity in the same frame.
 
 Superseded rough audit notes:
 - The first rough scan saw about 400 system files, 14 Burst files, and 55 non-Burst `OnUpdate` matches before the final static baseline was captured. Use the 2026-06-12 numbers above as the active baseline.
@@ -62,7 +62,7 @@ Intentionally managed presentation/config bridges:
 - systems that read ScriptableObject/config references at setup boundaries
 
 Hot managed systems that are not exempt:
-- `CitizenVisibleUnitSystem`
+- `CitizenVisibleUnitPresentationSystemHelper`
 - `CitizenMovementCommandSystem`
 - selection command/input systems
 - transport boarding systems
@@ -787,8 +787,8 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod CitizenMovementCommandSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-citizen-movement-command.log`
   - Log marker: `[CitizenMovementCommandFocusedValidation] result=Passed tests=2`.
   - Static guardrails: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct `EntityManager.*` mutation count `22`, non-Burst `OnUpdate` files `38`, Burst-compiled system files `23`.
-- 2026-06-12: Continued Phase 6 in `CitizenVisibleUnitSystem`. Visible-citizen clear/remove destruction and spawned-citizen setup component writes now use temporary `EntityCommandBuffer` playback while preserving same-frame semantics. The remaining direct call is the visible-citizen spawn `Instantiate`, intentionally left immediate because the visible-citizen state dictionary stores the real created entity in the same frame.
-- 2026-06-12: Continued Phase 6 startup-boundary cleanup in `DynamicBlockerInitSystem`, `MapSurfaceFlatEquivalentBootstrapSystem`, and `UnitPathfindingPendingStateStore`. Missing grid runtime components, flat-equivalent map-surface bootstrap entity creation, and the pathfinding pending-state singleton now use same-frame temporary `EntityCommandBuffer` playback instead of direct `EntityManager.AddComponentData`, `CreateEntity`, or `SetComponentData`. This leaves only the intentional `CitizenVisibleUnitSystem` same-frame spawn as direct literal EntityManager mutation debt.
+- 2026-06-12: Continued Phase 6 in `CitizenVisibleUnitPresentationSystemHelper`. Visible-citizen clear/remove destruction and spawned-citizen setup component writes now use temporary `EntityCommandBuffer` playback while preserving same-frame semantics. The remaining direct call is the visible-citizen spawn `Instantiate`, intentionally left immediate because the visible-citizen state dictionary stores the real created entity in the same frame.
+- 2026-06-12: Continued Phase 6 startup-boundary cleanup in `DynamicBlockerInitSystem`, `MapSurfaceFlatEquivalentBootstrapSystem`, and `UnitPathfindingPendingStateStore`. Missing grid runtime components, flat-equivalent map-surface bootstrap entity creation, and the pathfinding pending-state singleton now use same-frame temporary `EntityCommandBuffer` playback instead of direct `EntityManager.AddComponentData`, `CreateEntity`, or `SetComponentData`. This leaves only the intentional `CitizenVisibleUnitPresentationSystemHelper` same-frame spawn as direct literal EntityManager mutation debt.
 - 2026-06-12: Validation passed after the startup-boundary ECB cleanup:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-startup-ecb.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=5`.
@@ -798,16 +798,16 @@ Progress notes:
   - Static guardrails after the slice: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct literal `EntityManager.*` mutation count `1`, non-Burst `OnUpdate` files `31`, Burst-compiled system files `30`.
   - `SystemState.Get*TypeHandle` scanner result: `NO_TYPE_HANDLE_VIOLATIONS`.
 - 2026-06-12: Guardrail ratchet after startup-boundary ECB cleanup: direct literal `EntityManager.*` mutation ceiling reduced to `1`.
-- 2026-06-12: Added `CitizenVisibleUnitSystemTests.RunFocusedValidation` covering visible-citizen removal and clear-all destruction after the ECB conversion.
+- 2026-06-12: Added `CitizenVisibleUnitPresentationSystemHelperTests.RunFocusedValidation` covering visible-citizen removal and clear-all destruction after the ECB conversion.
 - 2026-06-12: Guardrail ratchet after the visible-citizen ECB slice: direct `EntityManager.*` mutation ceiling reduced to `8`.
 - 2026-06-12: Focused visible-citizen validation passed:
-  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod CitizenVisibleUnitSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-citizen-visible-unit.log`
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod CitizenVisibleUnitPresentationSystemHelperTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-citizen-visible-unit.log`
   - Log marker: `[CitizenVisibleUnitFocusedValidation] result=Passed tests=2`.
   - Static guardrails: `ToEntityArray` / `ToComponentDataArray<T>` count `0`, direct `EntityManager.*` mutation count `8`, non-Burst `OnUpdate` files `38`, Burst-compiled system files `23`.
   - `SystemState.Get*TypeHandle` scanner result: `NO_TYPE_HANDLE_VIOLATIONS`.
   - `git diff --check` passed.
 - 2026-06-12: Classified the remaining direct `EntityManager.*` mutations after the citizen slices:
-  - `CitizenVisibleUnitSystem`: one runtime immediate `Instantiate` retained so the visible-citizen dictionary can store the created entity in the same frame.
+  - `CitizenVisibleUnitPresentationSystemHelper`: one runtime immediate `Instantiate` retained so the visible-citizen dictionary can store the created entity in the same frame.
   - `DynamicBlockerInitSystem`: startup grid support components, initialized once from `GridConfig`.
   - `MapSurfaceFlatEquivalentBootstrapSystem`: initialization-group fallback surface entity creation, then disables itself.
   - `UnitPathfindingPendingStateStore`: pathfinding pending-state singleton creation at initialization.
@@ -1133,7 +1133,7 @@ Purpose:
 Remove direct structural changes from frequent runtime loops while leaving true startup/init code alone.
 
 Target areas:
-- `CitizenVisibleUnitSystem`
+- `CitizenVisibleUnitPresentationSystemHelper`
 - `CitizenMovementCommandSystem`
 - runtime command systems that add/remove path/order components in loops
 
@@ -1151,7 +1151,7 @@ Acceptance checks:
 - [x] No new sync-point regressions appear in diagnostics.
 
 Progress notes:
-- 2026-06-12: Tightened the architecture guardrail for the last direct `EntityManager` mutation. `EcsBurstHotPathArchitectureTests.DirectEntityManagerMutationDebtMustNotIncrease` now requires every remaining direct mutation file to be explicitly classified, not just kept under the numeric ceiling. The single remaining direct mutation is `CitizenVisibleUnitSystem` same-frame citizen presentation spawn; it stays direct because the system immediately needs the real instantiated entity to issue the citizen move command and track it in `VisibleCitizensById`.
+- 2026-06-12: Tightened the architecture guardrail for the last direct `EntityManager` mutation. `EcsBurstHotPathArchitectureTests.DirectEntityManagerMutationDebtMustNotIncrease` now requires every remaining direct mutation file to be explicitly classified, not just kept under the numeric ceiling. The single remaining direct mutation is `CitizenVisibleUnitPresentationSystemHelper` same-frame citizen presentation spawn; it stays direct because the system immediately needs the real instantiated entity to issue the citizen move command and track it in `VisibleCitizensById`.
 - 2026-06-12: Validated same-frame unit move component behavior and Match HUD Move command routing:
   - `UnitMoveOrderSystemTests.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-unit-move-order-focused.log`, marker `[UnitMoveOrderFocusedValidation] result=Passed tests=7`.
   - `EcsBurstSelectionCommandValidationRunner.RunFocusedValidation`: `/private/tmp/warline-ecs-burst-selection-command-move-acceptance.log`, marker `[EcsBurstSelectionCommandValidation] result=Passed tests=70`.
@@ -1215,18 +1215,18 @@ Progress notes:
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
   - `git diff --check` passed.
   - Progress snapshot remains `73 / 157 complete (46.5%)`, `12 / 157 in progress`, `72 / 157 open`.
-- 2026-06-13: Added focused visible-citizen spawn/project coverage without changing runtime spawn behavior. `CitizenVisibleUnitSystemTests.SpawnVisibleCitizenProjectsPrefabAndQueuesCitizenMovement` builds a minimal prefab registry fixture, spawns a visible citizen, verifies conflicting prefab orders are stripped, civilian/manual-move tags are applied, movement target/path request is queued, and the visible-citizen state maps to the spawned instance.
+- 2026-06-13: Added focused visible-citizen spawn/project coverage without changing runtime spawn behavior. `CitizenVisibleUnitPresentationSystemHelperTests.SpawnVisibleCitizenProjectsPrefabAndQueuesCitizenMovement` builds a minimal prefab registry fixture, spawns a visible citizen, verifies conflicting prefab orders are stripped, civilian/manual-move tags are applied, movement target/path request is queued, and the visible-citizen state maps to the spawned instance.
   - Main-project validation passed after the Unity editor was closed.
-  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod CitizenVisibleUnitSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-citizen-visible-spawn-main.log`
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod CitizenVisibleUnitPresentationSystemHelperTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-citizen-visible-spawn-main.log`
   - Log marker: `[CitizenVisibleUnitFocusedValidation] result=Passed tests=3`.
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-citizen-visible-main.log`
   - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
   - Completed the Phase 6 citizen spawn/project acceptance item.
   - Progress snapshot is now `79 / 157 complete (50.3%)`, `12 / 157 in progress`, `66 / 157 open`.
-- 2026-06-13: Closed Phase 6 after re-scanning active runtime systems for direct structural `EntityManager` writes. The only remaining structural write is the classified `CitizenVisibleUnitSystem` visible-citizen `Instantiate`, which remains immediate because the visible-citizen state needs the real created entity in the same frame before issuing the movement command. The remaining `EntityManager.CreateEntityQuery` matches in this scan are query creation, not structural mutation. Repeated command-event paths have focused tests in the notes above, and the architecture guard enforces the current direct-mutation ceiling and classification.
+- 2026-06-13: Closed Phase 6 after re-scanning active runtime systems for direct structural `EntityManager` writes. The only remaining structural write is the classified `CitizenVisibleUnitPresentationSystemHelper` visible-citizen `Instantiate`, which remains immediate because the visible-citizen state needs the real created entity in the same frame before issuing the movement command. The remaining `EntityManager.CreateEntityQuery` matches in this scan are query creation, not structural mutation. Repeated command-event paths have focused tests in the notes above, and the architecture guard enforces the current direct-mutation ceiling and classification.
   - Static scan:
     - `rg -n "EntityManager\.(AddComponent(?:Data)?|RemoveComponent|DestroyEntity|Instantiate|CreateEntity|SetComponent(?:Data)?)" Assets/Game/Scripts/Systems Assets/Game/Scripts/Rendering/Systems`
-    - Structural result: `Assets/Game/Scripts/Systems/CitizenVisibleUnitSystem.cs:254: Entity instance = ecsProjection.EntityManager.Instantiate(prefabEntity);`
+    - Structural result: `Assets/Game/Scripts/Systems/CitizenVisibleUnitPresentationSystemHelper.cs:254: Entity instance = ecsProjection.EntityManager.Instantiate(prefabEntity);`
   - Architecture guard passed in the Phase 8 closure run:
     - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-hot-path-architecture-phase8-close-main.log`
     - Log marker: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.

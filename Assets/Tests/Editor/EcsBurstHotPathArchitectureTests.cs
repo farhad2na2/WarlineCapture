@@ -181,7 +181,7 @@ public sealed class EcsBurstHotPathArchitectureTests
 
     private static readonly Dictionary<string, string> ClassifiedDirectEntityManagerMutationFiles = new(StringComparer.Ordinal)
     {
-        ["Assets/Game/Scripts/Systems/CitizenVisibleUnitSystem.cs"] = "managed citizen presentation bridge; same-frame EntityManager.Instantiate is required so the actual spawned entity can be assigned movement and tracked by VisibleCitizensById immediately.",
+        ["Assets/Game/Scripts/Systems/CitizenVisibleUnitPresentationSystemHelper.cs"] = "managed citizen presentation bridge; same-frame EntityManager.Instantiate is required so the actual spawned entity can be assigned movement and tracked by VisibleCitizensById immediately.",
     };
 
     private static readonly Regex SystemStateMethodSignatureRegex = new(

@@ -24,7 +24,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         public readonly CitizenTravelSystem TravelSystem = ResolveCitizenTravelSystem();
         public readonly CitizenPrefabSelectionSystem PrefabSelectionSystem = new();
         public CitizenPrefabSelectionSystem.State PrefabSelectionState;
-        public readonly CitizenVisibleUnitSystem VisibleUnitSystem = new();
+        public readonly CitizenVisibleUnitPresentationSystemHelper VisibleUnitSystem = new();
         public readonly CitizenPopulationEventSystem EventSystem = ResolveCitizenPopulationEventSystem();
         public readonly CitizenPopulationDebugDiagnosticsSystemHelper DebugSystem = ResolveCitizenPopulationDebugSystem();
         public readonly CitizenPopulationDiagnosticsSystemHelper DiagnosticSystem = new();

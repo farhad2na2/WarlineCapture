@@ -7,13 +7,13 @@ using Unity.Transforms;
 using UnityEditor;
 using UnityEngine;
 
-public sealed class CitizenVisibleUnitSystemTests
+public sealed class CitizenVisibleUnitPresentationSystemHelperTests
 {
     public static void RunFocusedValidation()
     {
         try
         {
-            var tests = new CitizenVisibleUnitSystemTests();
+            var tests = new CitizenVisibleUnitPresentationSystemHelperTests();
             tests.SpawnVisibleCitizenProjectsPrefabAndQueuesCitizenMovement();
             tests.RemoveVisibleCitizenDestroysEntityAndClearsState();
             tests.ClearVisibleCitizensDestroysAllEntitiesAndClearsState();
@@ -31,7 +31,7 @@ public sealed class CitizenVisibleUnitSystemTests
     [Test]
     public void SpawnVisibleCitizenProjectsPrefabAndQueuesCitizenMovement()
     {
-        using World world = new("CitizenVisibleUnitSystemTests");
+        using World world = new("CitizenVisibleUnitPresentationSystemHelperTests");
         World previousWorld = World.DefaultGameObjectInjectionWorld;
         World.DefaultGameObjectInjectionWorld = world;
         try
@@ -110,7 +110,7 @@ public sealed class CitizenVisibleUnitSystemTests
                 Status = CitizenStatus.GoingToWork
             };
 
-            new CitizenVisibleUnitSystem().SpawnVisibleCitizen(
+            new CitizenVisibleUnitPresentationSystemHelper().SpawnVisibleCitizen(
                 state,
                 projection,
                 citizenPrefabSystem,
@@ -170,7 +170,7 @@ public sealed class CitizenVisibleUnitSystemTests
     [Test]
     public void RemoveVisibleCitizenDestroysEntityAndClearsState()
     {
-        using World world = new("CitizenVisibleUnitSystemTests");
+        using World world = new("CitizenVisibleUnitPresentationSystemHelperTests");
         World previousWorld = World.DefaultGameObjectInjectionWorld;
         World.DefaultGameObjectInjectionWorld = world;
         try
@@ -188,7 +188,7 @@ public sealed class CitizenVisibleUnitSystemTests
                 TargetBuildingId = 3
             };
 
-            new CitizenVisibleUnitSystem().RemoveVisibleCitizen(state, projection, 7);
+            new CitizenVisibleUnitPresentationSystemHelper().RemoveVisibleCitizen(state, projection, 7);
 
             Assert.IsFalse(em.Exists(entity));
             Assert.IsFalse(state.VisibleCitizensById.ContainsKey(7));
@@ -202,7 +202,7 @@ public sealed class CitizenVisibleUnitSystemTests
     [Test]
     public void ClearVisibleCitizensDestroysAllEntitiesAndClearsState()
     {
-        using World world = new("CitizenVisibleUnitSystemTests");
+        using World world = new("CitizenVisibleUnitPresentationSystemHelperTests");
         World previousWorld = World.DefaultGameObjectInjectionWorld;
         World.DefaultGameObjectInjectionWorld = world;
         try
@@ -228,7 +228,7 @@ public sealed class CitizenVisibleUnitSystemTests
                 TargetBuildingId = 9
             };
 
-            new CitizenVisibleUnitSystem().ClearVisibleCitizens(state, projection);
+            new CitizenVisibleUnitPresentationSystemHelper().ClearVisibleCitizens(state, projection);
 
             Assert.IsFalse(em.Exists(first));
             Assert.IsFalse(em.Exists(second));

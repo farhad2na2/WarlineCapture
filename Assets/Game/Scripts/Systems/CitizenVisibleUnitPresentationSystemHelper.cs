@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed class CitizenVisibleUnitSystem
+internal sealed class CitizenVisibleUnitPresentationSystemHelper
 {
     private const float VisibleCitizenSpawnDistance = 140f;
     private const float VisibleCitizenDespawnDistance = 170f;

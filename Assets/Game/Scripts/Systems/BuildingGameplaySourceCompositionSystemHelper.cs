@@ -47,7 +47,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingSelectionCompositionSystemHelper BuildingSelectionCompositionHelper = new();
     internal readonly BuildingSelectionClickSystem BuildingSelectionClickSystem = new();
     internal readonly BuildingSelectionClickCompositionSystemHelper BuildingSelectionClickCompositionHelper = new();
-    internal readonly BuildingBarrierSystem BuildingBarrierSystem = new();
+    internal readonly BuildingBarrierUtilitySystemHelper BuildingBarrierUtilitySystemHelper = new();
     internal readonly BuildingRuntimeQuerySystem BuildingRuntimeQuerySystem = new();
     internal readonly BuildingDefinitionPrefabSystemHelper BuildingDefinitionPrefabSystemHelper = new();
     internal readonly BuildingPlacementLifecycleCompositionSystemHelper BuildingPlacementLifecycleCompositionSystemHelper = new();

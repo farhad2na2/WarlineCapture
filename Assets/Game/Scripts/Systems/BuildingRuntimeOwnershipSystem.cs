@@ -65,7 +65,7 @@ internal sealed class BuildingRuntimeOwnershipSystem
     {
         if (building?.Definition == null ||
             building.BlockerEntity == Entity.Null ||
-            !BuildingBarrierSystem.IsWallGateDefinition(building.Definition) ||
+            !BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(building.Definition) ||
             context.TryGetEntityManager == null ||
             !context.TryGetEntityManager(out EntityManager em) ||
             !em.Exists(building.BlockerEntity))

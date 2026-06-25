@@ -25,7 +25,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
                 markerPropertyBlock,
                 source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
         BuildingCombatSystem.Context<RuntimeBuildingEntity> combatContext = source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
-        BuildingBarrierSystem.Context barrierContext = source.BuildingRuntimeContextSystem.CreateBarrierContext(runtimeSource);
+        BuildingBarrierUtilitySystemHelper.Context barrierContext = source.BuildingRuntimeContextSystem.CreateBarrierContext(runtimeSource);
         BuildingPlacementInputRuntimeTickSystem.Context inputContext = createInputRuntimeTickContext(source, interactionContext, markerPropertyBlock);
         return new BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source(
             createProductionRuntimeTickContext(source),
@@ -36,7 +36,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
                 UnityEngine.Time.time,
                 destroyedBuildingLifetimeSeconds),
             () => source.BuildingCombatSystem.UpdateDestroyedBuildings(combatContext, UnityEngine.Time.time),
-            () => source.BuildingBarrierSystem.UpdateRoadBarrierDoors(barrierContext, UnityEngine.Time.deltaTime),
+            () => source.BuildingBarrierUtilitySystemHelper.UpdateRoadBarrierDoors(barrierContext, UnityEngine.Time.deltaTime),
             () => source.BuildingPlacementRedirectCompositionSystemHelper.FlushPendingMarkerRefresh(
                 () => source.BuildingSelectionMarkerSystem.Refresh(selectionMarkerContext)),
             createMapBuildingPlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),

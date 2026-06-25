@@ -6,7 +6,7 @@ using Unity.Transforms;
 using UnityEngine;
 using PlacementState = BuildingPlacementLifecycleCompositionSystemHelper.PlacementState;
 
-internal sealed class BuildingBarrierSystem
+internal sealed class BuildingBarrierUtilitySystemHelper
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
     public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);

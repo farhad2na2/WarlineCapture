@@ -17,8 +17,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         BuildingSpawnSystem spawn,
         BuildingSpawnSystem.Context spawnContext,
         Func<BuildingSpawnSystem.Context> createSpawnContext,
-        BuildingBarrierSystem barrier,
-        Func<BuildingBarrierSystem.Context> createBarrierContext,
+        BuildingBarrierUtilitySystemHelper barrier,
+        Func<BuildingBarrierUtilitySystemHelper.Context> createBarrierContext,
         BuildingCombatSystem combat,
         Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> createCombatContext,
         BuildingUiCommandBoundary uiCommand,
@@ -93,8 +93,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly BuildingSpawnSystem Spawn;
         public readonly BuildingSpawnSystem.Context SpawnContext;
         public readonly Func<BuildingSpawnSystem.Context> CreateSpawnContext;
-        public readonly BuildingBarrierSystem Barrier;
-        public readonly Func<BuildingBarrierSystem.Context> CreateBarrierContext;
+        public readonly BuildingBarrierUtilitySystemHelper Barrier;
+        public readonly Func<BuildingBarrierUtilitySystemHelper.Context> CreateBarrierContext;
         public readonly BuildingCombatSystem Combat;
         public readonly Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> CreateCombatContext;
         public readonly BuildingUiCommandBoundary UiCommand;
@@ -130,8 +130,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             BuildingSpawnSystem spawn,
             BuildingSpawnSystem.Context spawnContext,
             Func<BuildingSpawnSystem.Context> createSpawnContext,
-            BuildingBarrierSystem barrier,
-            Func<BuildingBarrierSystem.Context> createBarrierContext,
+            BuildingBarrierUtilitySystemHelper barrier,
+            Func<BuildingBarrierUtilitySystemHelper.Context> createBarrierContext,
             BuildingCombatSystem combat,
             Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> createCombatContext,
             BuildingUiCommandBoundary uiCommand,

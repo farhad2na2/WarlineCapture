@@ -10,7 +10,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
     internal delegate bool IsPlacementValidDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid, DynamicBuffer<GridRoad> roads, DynamicBlockerComponent blockerData);
     internal delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
     internal delegate BuildingPlacementContextCompositionSystemHelper.Source CreatePlacementContextSourceDelegate();
-    internal delegate BuildingBarrierSystem.Context CreateBuildingBarrierContextDelegate();
+    internal delegate BuildingBarrierUtilitySystemHelper.Context CreateBuildingBarrierContextDelegate();
     internal delegate void SelectAndFocusBuildingDelegate(RuntimeBuildingEntity building);
 
     internal readonly struct Context
@@ -24,7 +24,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
         public readonly BuildingPlacementContextCompositionSystemHelper ContextSystem;
         public readonly BuildingPlacementCommitSystem CommitSystem;
         public readonly BuildingPlacementLifecycleCompositionSystemHelper LifecycleSystem;
-        public readonly BuildingBarrierSystem BarrierSystem;
+        public readonly BuildingBarrierUtilitySystemHelper BarrierSystem;
         public readonly BuildingPlacementInputSystem.TryGetGridCellDelegate TryGetGridCell;
         public readonly TryGetGridDataDelegate TryGetGridData;
         public readonly GetPlacementFootprintDelegate GetPlacementFootprint;
@@ -46,7 +46,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
             BuildingPlacementContextCompositionSystemHelper contextSystem,
             BuildingPlacementCommitSystem commitSystem,
             BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
-            BuildingBarrierSystem barrierSystem,
+            BuildingBarrierUtilitySystemHelper barrierSystem,
             BuildingPlacementInputSystem.TryGetGridCellDelegate tryGetGridCell,
             TryGetGridDataDelegate tryGetGridData,
             GetPlacementFootprintDelegate getPlacementFootprint,
@@ -96,7 +96,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
         if (placement == null)
             return false;
 
-        if (!BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition))
+        if (!BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(placement.Definition))
             return true;
 
         return context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) &&
@@ -139,7 +139,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
             context.TryGetGridCell,
             BuildingPlacementGridSystem.CenterCellToOrigin);
 
-        if (BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition))
+        if (BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(placement.Definition))
         {
             UpdateWallPlacementVisual(context, placement, grid, roads, blockerData, shouldFollowCamera);
             return;
@@ -168,7 +168,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
         if (placement == null)
             return Vector3.zero;
 
-        if (BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition))
+        if (BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(placement.Definition))
         {
             bool vertical = context.InputSystem.IsWallPlacementVertical(placement);
             Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(placement.Definition, vertical);

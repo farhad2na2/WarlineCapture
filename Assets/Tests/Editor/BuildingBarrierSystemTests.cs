@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class BuildingBarrierSystemTests
+public sealed class BuildingBarrierUtilitySystemHelperTests
 {
     private World _world;
     private EntityManager _entityManager;
@@ -14,7 +14,7 @@ public sealed class BuildingBarrierSystemTests
     [SetUp]
     public void SetUp()
     {
-        _world = new World("BuildingBarrierSystemTests");
+        _world = new World("BuildingBarrierUtilitySystemHelperTests");
         _entityManager = _world.EntityManager;
         _doorObject = new GameObject("Door_Z");
     }
@@ -31,9 +31,9 @@ public sealed class BuildingBarrierSystemTests
     [Test]
     public void UpdateRoadBarrierDoors_KeepsGateClosedWithoutNearbyFriendlyUnits()
     {
-        BuildingBarrierSystem system = new();
+        BuildingBarrierUtilitySystemHelper system = new();
         RuntimeBuildingEntity gate = CreateGate(ownerFactionId: 1);
-        BuildingBarrierSystem.Context context = CreateContext(system, gate);
+        BuildingBarrierUtilitySystemHelper.Context context = CreateContext(system, gate);
 
         system.UpdateRoadBarrierDoors(context, 1f);
 
@@ -44,9 +44,9 @@ public sealed class BuildingBarrierSystemTests
     [Test]
     public void UpdateRoadBarrierDoors_OpensGateForNearbyOwnerFactionUnit()
     {
-        BuildingBarrierSystem system = new();
+        BuildingBarrierUtilitySystemHelper system = new();
         RuntimeBuildingEntity gate = CreateGate(ownerFactionId: 1);
-        BuildingBarrierSystem.Context context = CreateContext(system, gate);
+        BuildingBarrierUtilitySystemHelper.Context context = CreateContext(system, gate);
         CreateLiveUnit(factionId: 1, cell: new int2(12, 12), footprint: new int2(1, 1));
 
         system.UpdateRoadBarrierDoors(context, 1f);
@@ -64,9 +64,9 @@ public sealed class BuildingBarrierSystemTests
         Debug.Log("[BuildingBarrierFocusedValidation] result=Passed tests=2");
     }
 
-    private static void RunCase(string name, System.Action<BuildingBarrierSystemTests> action)
+    private static void RunCase(string name, System.Action<BuildingBarrierUtilitySystemHelperTests> action)
     {
-        BuildingBarrierSystemTests tests = new();
+        BuildingBarrierUtilitySystemHelperTests tests = new();
         tests.SetUp();
         try
         {
@@ -103,7 +103,7 @@ public sealed class BuildingBarrierSystemTests
         };
     }
 
-    private BuildingBarrierSystem.Context CreateContext(BuildingBarrierSystem system, RuntimeBuildingEntity gate)
+    private BuildingBarrierUtilitySystemHelper.Context CreateContext(BuildingBarrierUtilitySystemHelper system, RuntimeBuildingEntity gate)
     {
         Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
         {
@@ -114,7 +114,7 @@ public sealed class BuildingBarrierSystemTests
             typeof(UnitGrid),
             typeof(UnitFootprint));
 
-        return new BuildingBarrierSystem.Context(
+        return new BuildingBarrierUtilitySystemHelper.Context(
             runtimeBuildings,
             tryGetEntityManager: (out EntityManager em) =>
             {

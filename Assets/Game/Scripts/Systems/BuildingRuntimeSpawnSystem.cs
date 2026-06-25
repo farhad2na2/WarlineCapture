@@ -174,7 +174,7 @@ internal sealed class BuildingRuntimeSpawnSystem
             return 0;
 
         BuildingDefinition definition = CreateRuntimeWallDefinition(context, prefab);
-        if (!BuildingBarrierSystem.IsLinearWallDefinition(definition))
+        if (!BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(definition))
             return 0;
 
         bool vertical = Mathf.Abs(endOrigin.y - startOrigin.y) > Mathf.Abs(endOrigin.x - startOrigin.x);
@@ -245,7 +245,7 @@ internal sealed class BuildingRuntimeSpawnSystem
             return false;
 
         BuildingDefinition definition = CreateRuntimeWallDefinition(context, prefab);
-        if (!BuildingBarrierSystem.IsLinearWallDefinition(definition))
+        if (!BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(definition))
             return false;
 
         Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, rotateVertical);

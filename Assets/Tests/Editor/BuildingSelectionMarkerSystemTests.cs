@@ -206,7 +206,7 @@ public sealed class BuildingSelectionMarkerSystemTests
             runtimeBuildings,
             CreateBuildingVisualSystem(),
             CreateBuildingFactionVisualSystem(),
-            new BuildingBarrierSystem(),
+            new BuildingBarrierUtilitySystemHelper(),
             null,
             new MaterialPropertyBlock(),
             0.2f);

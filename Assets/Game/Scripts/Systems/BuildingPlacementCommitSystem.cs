@@ -144,7 +144,7 @@ internal sealed class BuildingPlacementCommitSystem
     public static Quaternion ResolvePlacementWorldRotation(BuildingDefinition definition, bool rotateVertical)
     {
         bool rotateNinety = rotateVertical;
-        if (BuildingBarrierSystem.IsLinearWallDefinition(definition) && IsWallLengthAxisLocalZ(definition))
+        if (BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(definition) && IsWallLengthAxisLocalZ(definition))
             rotateNinety = !rotateNinety;
 
         return rotateNinety ? Quaternion.Euler(0f, 90f, 0f) : Quaternion.identity;

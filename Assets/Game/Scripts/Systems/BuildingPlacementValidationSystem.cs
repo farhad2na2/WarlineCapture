@@ -366,7 +366,7 @@ public sealed class BuildingPlacementValidationSystem
         foreach (var entry in runtimeBuildings)
         {
             RuntimeBuildingEntity building = entry.Value;
-            if (building?.Definition == null || !BuildingBarrierSystem.IsLinearWallDefinition(building.Definition))
+            if (building?.Definition == null || !BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(building.Definition))
                 continue;
 
             Vector2Int min = building.OriginCell;
@@ -387,7 +387,7 @@ public sealed class BuildingPlacementValidationSystem
         foreach (var entry in runtimeBuildings)
         {
             RuntimeBuildingEntity building = entry.Value;
-            if (building?.Definition == null || !BuildingBarrierSystem.IsLinearWallDefinition(building.Definition))
+            if (building?.Definition == null || !BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(building.Definition))
                 continue;
 
             bool buildingVertical = building.Definition.FootprintCells.y > building.Definition.FootprintCells.x;

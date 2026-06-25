@@ -35,6 +35,6 @@ internal sealed class BuildingSelectionCompositionSystemHelper
                 createRuntimeContextSource(source),
                 clickedBuildingId),
             source.BuildingGameplayDependencyCompositionSystemHelper.TryRequestMoveOrderToBuilding,
-            BuildingBarrierSystem.ShouldUseExpandedSelectionArea));
+            BuildingBarrierUtilitySystemHelper.ShouldUseExpandedSelectionArea));
     }
 }

@@ -112,7 +112,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             BuildingPlacementGridSystem.CenterCellToOrigin,
             BuildingPlacementCommitSystem.GetWallSegmentFootprint,
             source.IsPointerOverPlacementUi,
-            BuildingBarrierSystem.IsLinearWallDefinition,
+            BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition,
             source.UpdatePlacement);
     }
 
@@ -227,7 +227,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
 
         List<Vector2Int> currentWallOrigins = null;
         bool currentWallVertical = false;
-        if (BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition))
+        if (BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(placement.Definition))
         {
             currentWallVertical = source.InputSystem.IsWallPlacementVertical(placement);
             if (!placement.HideCurrentWallPreview)
@@ -239,7 +239,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             placement.PreviewInstance,
             placement.OriginCell,
             placement.AutoRotateVertical,
-            BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition),
+            BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(placement.Definition),
             placement.HideCurrentWallPreview,
             _wallCommitRuns,
             currentWallOrigins,

@@ -243,7 +243,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             source.BuildingRuntimeVisualPresentationSystemHelper,
             source.BuildingFactionVisualSystem,
             source.BuildingDestroyedVisualPresentationSystemHelper,
-            source.BuildingBarrierSystem,
+            source.BuildingBarrierUtilitySystemHelper,
             source.BuildingResourceHaulerBridgeSystem,
             source.ResourceHaulerSystem,
             source.FactionResourceSystem,
@@ -267,7 +267,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             (RuntimeBuildingEntity building, out Vector3 worldPosition) => tryResolveBuildingFocusWorldPosition(source, building, out worldPosition),
             (int id, out RuntimeBuildingEntity building) => tryGetRuntimeBuilding(source, id, out building),
             (building, grid) => getEffectivePlacementRect(source, building.Definition, building.OriginCell, grid, false),
-            building => source.BuildingBarrierSystem.RememberOpenBaseBreach(
+            building => source.BuildingBarrierUtilitySystemHelper.RememberOpenBaseBreach(
                 source.BuildingRuntimeContextSystem.CreateBarrierContext(CreateRuntimeContextSource(
                     source,
                     tryGetEntityManager,

@@ -89,7 +89,7 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
         IsPlacementValidDelegate isPlacementValid)
     {
         PlacementState activePlacement = source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement;
-        bool rotateVertical = source.BuildingBarrierSystem.ResolvePlacementRotateVertical(
+        bool rotateVertical = source.BuildingBarrierUtilitySystemHelper.ResolvePlacementRotateVertical(
             source.BuildingRuntimeContextSystem.CreateBarrierContext(createRuntimeContextSource(source)),
             source.BuildingPlacementInputSystem,
             activePlacement);
@@ -103,7 +103,7 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
         CreateRuntimeContextSourceDelegate createRuntimeContextSource,
         out bool gateVertical)
     {
-        return source.BuildingBarrierSystem.ShouldAlignGateToNearbyWall(
+        return source.BuildingBarrierUtilitySystemHelper.ShouldAlignGateToNearbyWall(
             source.BuildingRuntimeContextSystem.CreateBarrierContext(createRuntimeContextSource(source)),
             originCell,
             definition,

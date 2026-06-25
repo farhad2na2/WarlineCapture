@@ -90,7 +90,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
             source.BuildingPlacementContextCompositionSystemHelper,
             source.BuildingPlacementCommitSystem,
             source.BuildingPlacementLifecycleCompositionSystemHelper,
-            source.BuildingBarrierSystem,
+            source.BuildingBarrierUtilitySystemHelper,
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => tryGetGridCell(source, screenPosition, grid, out cell),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),

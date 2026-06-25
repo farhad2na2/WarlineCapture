@@ -561,7 +561,7 @@ public partial struct AICombatOrderSystem : ISystem
         breachPosition = breachRecord.LocalPose.Position;
 
         if (gridBreachContext.IsValid &&
-            BuildingBarrierSystem.TryFindBreachApproachCell(
+            BuildingBarrierUtilitySystemHelper.TryFindBreachApproachCell(
                 gridBreachContext.Grid,
                 gridBreachContext.Walkable,
                 gridBreachContext.Blocked,

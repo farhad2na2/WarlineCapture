@@ -16,7 +16,7 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingRuntimeVisualPresentationSystemHelper RuntimeVisualSystem;
         public readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
         public readonly BuildingDestroyedVisualPresentationSystemHelper BuildingDestroyedVisualPresentationSystemHelper;
-        public readonly BuildingBarrierSystem BarrierSystem;
+        public readonly BuildingBarrierUtilitySystemHelper BarrierSystem;
         public readonly BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem;
         public readonly ResourceHaulerSystem ResourceHaulerSystem;
         public readonly FactionResourceSystem FactionResourceSystem;
@@ -57,7 +57,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingRuntimeVisualPresentationSystemHelper runtimeVisualSystem,
             BuildingFactionVisualSystem buildingFactionVisualSystem,
             BuildingDestroyedVisualPresentationSystemHelper buildingDestroyedVisualPresentationHelper,
-            BuildingBarrierSystem barrierSystem,
+            BuildingBarrierUtilitySystemHelper barrierSystem,
             BuildingResourceHaulerBridgeSystem resourceHaulerBridgeSystem,
             ResourceHaulerSystem resourceHaulerSystem,
             FactionResourceSystem factionResourceSystem,
@@ -488,9 +488,9 @@ internal sealed class BuildingRuntimeContextSystem
                     out reason));
     }
 
-    public BuildingBarrierSystem.Context CreateBarrierContext(RuntimeSource source)
+    public BuildingBarrierUtilitySystemHelper.Context CreateBarrierContext(RuntimeSource source)
     {
-        return new BuildingBarrierSystem.Context(
+        return new BuildingBarrierUtilitySystemHelper.Context(
             source.RuntimeBuildingSystem.Buildings,
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>

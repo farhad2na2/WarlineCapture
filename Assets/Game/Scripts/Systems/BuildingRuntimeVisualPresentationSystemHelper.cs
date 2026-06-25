@@ -10,7 +10,7 @@ internal sealed class BuildingRuntimeVisualPresentationSystemHelper
         public readonly Dictionary<int, RuntimeBuildingEntity> RuntimeBuildingMap;
         public readonly BuildingVisualSystem VisualSystem;
         public readonly BuildingFactionVisualSystem FactionVisualSystem;
-        public readonly BuildingBarrierSystem BarrierSystem;
+        public readonly BuildingBarrierUtilitySystemHelper BarrierSystem;
         public readonly FactionVisualSettings FactionVisualSettings;
         public readonly MaterialPropertyBlock MarkerPropertyBlock;
         public readonly float FactionTintStrength;
@@ -19,7 +19,7 @@ internal sealed class BuildingRuntimeVisualPresentationSystemHelper
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             BuildingVisualSystem visualSystem,
             BuildingFactionVisualSystem factionVisualSystem,
-            BuildingBarrierSystem barrierSystem,
+            BuildingBarrierUtilitySystemHelper barrierSystem,
             FactionVisualSettings factionVisualSettings,
             MaterialPropertyBlock markerPropertyBlock,
             float factionTintStrength)

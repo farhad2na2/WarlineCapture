@@ -35,7 +35,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
             BuildingPlacementGridSystem.CenterCellToOrigin,
             BuildingPlacementCommitSystem.GetWallSegmentFootprint,
             source.BuildingGameplayDependencyCompositionSystemHelper.IsPointerOverPlacementUi,
-            BuildingBarrierSystem.IsLinearWallDefinition,
+            BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition,
             screenPosition => updatePlacement(source, interactionContext, markerPropertyBlock, screenPosition));
     }
 

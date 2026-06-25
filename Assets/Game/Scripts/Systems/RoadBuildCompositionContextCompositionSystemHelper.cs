@@ -122,9 +122,9 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadBuildStartupState.RoadGridSize);
     }
 
-    private RoadBuildVisualContextSystem.Context CreateRoadBuildVisualContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildVisualContextPresentationSystemHelper.Context CreateRoadBuildVisualContext(RoadBuildCompositionSourceSystem source)
     {
-        return new RoadBuildVisualContextSystem.Context(
+        return new RoadBuildVisualContextPresentationSystemHelper.Context(
             source.RoadNetworkCompositionSystemHelper,
             source.RoadPathPlanningUtilitySystemHelper,
             source.RoadVisualVariantSystem,
@@ -161,17 +161,17 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
 
     private RoadChunkVisualSystem.Context CreateRoadChunkVisualContext(RoadBuildCompositionSourceSystem source)
     {
-        return RoadBuildVisualContextSystem.CreateChunkContext(CreateRoadBuildVisualContext(source));
+        return RoadBuildVisualContextPresentationSystemHelper.CreateChunkContext(CreateRoadBuildVisualContext(source));
     }
 
     private RoadPreviewPresentationSystemHelper.Context CreateRoadPreviewContext(RoadBuildCompositionSourceSystem source)
     {
-        return RoadBuildVisualContextSystem.CreatePreviewContext(CreateRoadBuildVisualContext(source));
+        return RoadBuildVisualContextPresentationSystemHelper.CreatePreviewContext(CreateRoadBuildVisualContext(source));
     }
 
     private RoadSpecialVisualSystem.Context CreateRoadSpecialVisualContext(RoadBuildCompositionSourceSystem source)
     {
-        return RoadBuildVisualContextSystem.CreateSpecialContext(CreateRoadBuildVisualContext(source));
+        return RoadBuildVisualContextPresentationSystemHelper.CreateSpecialContext(CreateRoadBuildVisualContext(source));
     }
 
     private RoadBuildMutationCompositionSystemHelper.Context CreateRoadBuildMutationContext(RoadBuildCompositionSourceSystem source)

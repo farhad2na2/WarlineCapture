@@ -19,12 +19,12 @@ internal sealed partial class RoadVisualResolutionSystem : SystemBase
     {
         public readonly RoadNetworkCompositionSystemHelper RoadNetworkCompositionSystemHelper;
         public readonly RoadVisualVariantSystem RoadVisualVariantSystem;
-        public readonly RoadBuildVisualContextSystem.Context VisualContext;
+        public readonly RoadBuildVisualContextPresentationSystemHelper.Context VisualContext;
 
         public Context(
             RoadNetworkCompositionSystemHelper roadNetworkSystem,
             RoadVisualVariantSystem roadVisualVariantSystem,
-            RoadBuildVisualContextSystem.Context visualContext)
+            RoadBuildVisualContextPresentationSystemHelper.Context visualContext)
         {
             RoadNetworkCompositionSystemHelper = roadNetworkSystem;
             RoadVisualVariantSystem = roadVisualVariantSystem;
@@ -75,7 +75,7 @@ internal sealed partial class RoadVisualResolutionSystem : SystemBase
 
     public static GameObject GetPrefab(Context context, RoadVisualType type)
     {
-        return RoadBuildVisualContextSystem.GetPrefab(context.VisualContext, type);
+        return RoadBuildVisualContextPresentationSystemHelper.GetPrefab(context.VisualContext, type);
     }
 
     public static bool TryGetVariant(Context context, RoadVisualType type, TileConnectionMask mask, out VariantData variant)

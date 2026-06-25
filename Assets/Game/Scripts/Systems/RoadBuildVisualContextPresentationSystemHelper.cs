@@ -6,7 +6,7 @@ using RoadVisualType = RoadNetworkCompositionSystemHelper.RoadVisualType;
 using TileConnectionMask = RoadNetworkCompositionSystemHelper.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
-internal sealed class RoadBuildVisualContextSystem
+internal sealed class RoadBuildVisualContextPresentationSystemHelper
 {
     public readonly struct Context
     {

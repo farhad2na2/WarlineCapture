@@ -171,7 +171,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 ## Phase 3: Context Factories
 
 9. Complete: Extract road visual context construction
-   - Create `RoadBuildVisualContextSystem`.
+   - Create `RoadBuildVisualContextPresentationSystemHelper`.
    - Move prefab-set creation plus chunk visual, preview, and special visual context construction.
    - Expected output: visual systems receive explicit context from a visual context boundary, not from the temporary holder.
 
@@ -364,7 +364,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 - Step 6 complete: road dependency storage and rebinding moved to `RoadBuildDependencyCompositionSystemHelper`; the temporary holder no longer stores building interaction, menu, minimap, or runtime-grid blocker dependencies directly.
 - Step 7 complete: road read predicates and labels moved to `RoadBuildReadModelCompositionSystemHelper`; composition now returns the source-owned read model instead of configuring facade getter delegates.
 - Step 8 complete: deleted the temporary static `RoadBuildRuntimeStateSystem.SetBuildMode` bridge; runtime build-mode changes must stay on `RoadBuildCommandCompositionSystemHelper`/explicit command contexts.
-- Step 9 complete: chunk, preview, and special-road visual context construction moved to `RoadBuildVisualContextSystem`; visual behavior remains in the existing visual systems.
+- Step 9 complete: chunk, preview, and special-road visual context construction moved to `RoadBuildVisualContextPresentationSystemHelper`; visual behavior remains in the existing visual systems.
 - Step 10 complete: session, input, command, and delete-prompt context construction moved to `RoadBuildInteractionContextSystem`; callbacks remain explicit and narrow.
 - Step 11 complete: runtime road-generation context construction moved to `RoadRuntimeGenerationContextCompositionSystemHelper`; road-cell-size, deferred sync, stroke creation, and special visual handoff remain explicit callbacks.
 - Step 12 complete: footprint query and grid projection context construction moved to `RoadGridContextSystem`; projection behavior and road grid sizing are unchanged.

@@ -4,7 +4,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildStartupSystem RoadBuildStartupSystem = new();
     public readonly RoadBuildDependencyCompositionSystemHelper RoadBuildDependencyCompositionSystemHelper = new();
     public readonly RoadBuildReadModelCompositionSystemHelper RoadBuildReadModelCompositionSystemHelper = new();
-    public readonly RoadBuildVisualContextSystem RoadBuildVisualContextSystem;
+    public readonly RoadBuildVisualContextPresentationSystemHelper RoadBuildVisualContextPresentationSystemHelper;
     public readonly RoadBuildInteractionContextSystem RoadBuildInteractionContextSystem = new();
     public readonly RoadBuildRuntimeActionCompositionSystemHelper RoadBuildRuntimeActionCompositionSystemHelper;
     public readonly RoadBuildRuntimeActionCompositionSystemHelper.State RoadBuildRuntimeActionState;
@@ -52,7 +52,7 @@ internal sealed class RoadBuildCompositionSourceSystem
         RoadGridProjectionSystem = ResolveRoadGridProjectionSystem();
         RoadRuntimeRootSceneSystemHelper = ResolveRoadRuntimeRootSceneSystemHelper();
         RoadVisualVariantSystem = ResolveRoadVisualVariantSystem();
-        RoadBuildVisualContextSystem = ResolveRoadBuildVisualContextSystem();
+        RoadBuildVisualContextPresentationSystemHelper = ResolveRoadBuildVisualContextPresentationSystemHelper();
         RoadVisualResolutionSystem = ResolveRoadVisualResolutionSystem();
         RoadVisualRefreshSystem = ResolveRoadVisualRefreshSystem();
         RoadChunkVisualSystem = ResolveRoadChunkVisualSystem();
@@ -98,9 +98,9 @@ internal sealed class RoadBuildCompositionSourceSystem
             : null;
     }
 
-    private static RoadBuildVisualContextSystem ResolveRoadBuildVisualContextSystem()
+    private static RoadBuildVisualContextPresentationSystemHelper ResolveRoadBuildVisualContextPresentationSystemHelper()
     {
-        return new RoadBuildVisualContextSystem();
+        return new RoadBuildVisualContextPresentationSystemHelper();
     }
 
     private static RoadVisualResolutionSystem ResolveRoadVisualResolutionSystem()

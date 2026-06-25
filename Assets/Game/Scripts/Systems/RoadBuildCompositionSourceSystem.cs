@@ -12,7 +12,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildConfigSystem RoadBuildConfigSystem = new();
     public readonly RoadRuntimeRootSystem RoadRuntimeRootSystem;
     public readonly RoadNetworkCompositionSystemHelper RoadNetworkCompositionSystemHelper = new();
-    public readonly RoadPathPlanningSystem RoadPathPlanningSystem = new();
+    public readonly RoadPathPlanningUtilitySystemHelper RoadPathPlanningUtilitySystemHelper = new();
     public readonly RoadSurfacePlacementSystem RoadSurfacePlacementSystem = new();
     public readonly RoadGridProjectionSystem RoadGridProjectionSystem;
     public readonly RoadVisualVariantSystem RoadVisualVariantSystem;

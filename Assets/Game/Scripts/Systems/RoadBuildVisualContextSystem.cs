@@ -11,7 +11,7 @@ internal sealed class RoadBuildVisualContextSystem
     public readonly struct Context
     {
         public readonly RoadNetworkCompositionSystemHelper RoadNetworkCompositionSystemHelper;
-        public readonly RoadPathPlanningSystem RoadPathPlanningSystem;
+        public readonly RoadPathPlanningUtilitySystemHelper RoadPathPlanningUtilitySystemHelper;
         public readonly RoadVisualVariantSystem RoadVisualVariantSystem;
         public readonly RoadBuildStartupSystem RoadBuildStartupSystem;
         public readonly RoadBuildStartupSystem.State StartupState;
@@ -22,7 +22,7 @@ internal sealed class RoadBuildVisualContextSystem
 
         public Context(
             RoadNetworkCompositionSystemHelper roadNetworkSystem,
-            RoadPathPlanningSystem roadPathPlanningSystem,
+            RoadPathPlanningUtilitySystemHelper roadPathPlanningSystem,
             RoadVisualVariantSystem roadVisualVariantSystem,
             RoadBuildStartupSystem roadBuildStartupSystem,
             RoadBuildStartupSystem.State startupState,
@@ -32,7 +32,7 @@ internal sealed class RoadBuildVisualContextSystem
             RoadSpecialVisualSystem.TryGetVariantAction specialTryGetVariant)
         {
             RoadNetworkCompositionSystemHelper = roadNetworkSystem;
-            RoadPathPlanningSystem = roadPathPlanningSystem;
+            RoadPathPlanningUtilitySystemHelper = roadPathPlanningSystem;
             RoadVisualVariantSystem = roadVisualVariantSystem;
             RoadBuildStartupSystem = roadBuildStartupSystem;
             StartupState = startupState;
@@ -79,7 +79,7 @@ internal sealed class RoadBuildVisualContextSystem
             startupState.RoadGridSize,
             startupState.PreviewAlpha,
             startupState.EndPrefab,
-            context.RoadPathPlanningSystem,
+            context.RoadPathPlanningUtilitySystemHelper,
             context.RoadNetworkCompositionSystemHelper,
             context.ResolveVisualType,
             context.PreviewTryGetVariant);

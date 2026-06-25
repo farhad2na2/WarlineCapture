@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
-using DragFirstAxis = RoadPathPlanningSystem.DragFirstAxis;
+using DragFirstAxis = RoadPathPlanningUtilitySystemHelper.DragFirstAxis;
 using RoadVisualType = RoadNetworkCompositionSystemHelper.RoadVisualType;
 using TileConnectionMask = RoadNetworkCompositionSystemHelper.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
@@ -20,7 +20,7 @@ public sealed class RoadPreviewPresentationSystemHelper
         public readonly float RoadGridSize;
         public readonly float PreviewAlpha;
         public readonly GameObject EndPrefab;
-        public readonly RoadPathPlanningSystem PathPlanningSystem;
+        public readonly RoadPathPlanningUtilitySystemHelper PathPlanningSystem;
         public readonly RoadNetworkCompositionSystemHelper NetworkSystem;
         public readonly ResolveVisualTypeAction ResolveVisualType;
         public readonly TryGetVariantAction TryGetVariant;
@@ -33,7 +33,7 @@ public sealed class RoadPreviewPresentationSystemHelper
             float roadGridSize,
             float previewAlpha,
             GameObject endPrefab,
-            RoadPathPlanningSystem pathPlanningSystem,
+            RoadPathPlanningUtilitySystemHelper pathPlanningSystem,
             RoadNetworkCompositionSystemHelper networkSystem,
             ResolveVisualTypeAction resolveVisualType,
             TryGetVariantAction tryGetVariant)
@@ -105,7 +105,7 @@ public sealed class RoadPreviewPresentationSystemHelper
     {
         ClearPreview();
 
-        RoadPathPlanningSystem.PreviewPlan previewPlan = context.PathPlanningSystem.BuildPreviewPlan(
+        RoadPathPlanningUtilitySystemHelper.PreviewPlan previewPlan = context.PathPlanningSystem.BuildPreviewPlan(
             startCell,
             endCell,
             dragFirstAxis,

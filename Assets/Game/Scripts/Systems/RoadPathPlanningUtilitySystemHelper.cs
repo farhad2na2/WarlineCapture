@@ -4,7 +4,7 @@ using UnityEngine;
 using EdgeKey = RoadNetworkCompositionSystemHelper.EdgeKey;
 using TileConnectionMask = RoadNetworkCompositionSystemHelper.TileConnectionMask;
 
-public sealed class RoadPathPlanningSystem
+public sealed class RoadPathPlanningUtilitySystemHelper
 {
     public enum DragFirstAxis
     {

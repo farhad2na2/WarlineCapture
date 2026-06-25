@@ -76,11 +76,11 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
    - Visual chunk refresh and ECS projection remain in `RoadBuildSystem` until the planned visual/projection phases.
    - Expected output: road graph mutation is data-driven and testable without visuals.
 
-6. Complete: Create `RoadPathPlanningSystem`
+6. Complete: Create `RoadPathPlanningUtilitySystemHelper`
    - Owns drag-axis path planning, straight segment append, endpoint preview connection expansion, adjacent road cell enumeration, and preview mask construction.
    - Keep this pure-data where possible.
-   - Created `RoadPathPlanningSystem` with drag-axis resolution, L-shaped path construction, preview proposed-edge/dirty-cell planning, endpoint preview expansion, and preview mask construction.
-   - `RoadBuildSystem` now delegates release path creation and preview planning/masks to `RoadPathPlanningSystem`.
+   - Created `RoadPathPlanningUtilitySystemHelper` with drag-axis resolution, L-shaped path construction, preview proposed-edge/dirty-cell planning, endpoint preview expansion, and preview mask construction.
+   - `RoadBuildSystem` now delegates release path creation and preview planning/masks to `RoadPathPlanningUtilitySystemHelper`.
    - Preview GameObject pooling and visual placement remain in `RoadBuildSystem` until `RoadPreviewPresentationSystemHelper`.
    - Expected output: input and runtime-city callers use the same road path rules without duplicating math.
 
@@ -140,7 +140,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 
 14. Complete: Create `RoadBuildInputCompositionSystemHelper`
     - Owns pointer-state processing, pointer-over-UI checks, pressed/released/drag handling, drag-axis updates, pending start cell, and clicked-road delete selection.
-    - Consumes `RoadBuildSessionCompositionSystemHelper`, `RoadPathPlanningSystem`, `RoadNetworkCompositionSystemHelper`, and `RoadPreviewPresentationSystemHelper`.
+    - Consumes `RoadBuildSessionCompositionSystemHelper`, `RoadPathPlanningUtilitySystemHelper`, `RoadNetworkCompositionSystemHelper`, and `RoadPreviewPresentationSystemHelper`.
     - Created `RoadBuildInputCompositionSystemHelper` with pointer-state processing, active road-mode guards, building-placement drag handoff, road stroke drag start/release, drag-axis updates, clicked-road delete selection, and pending road-build cancellation.
     - `RoadBuildSystem.Update()` is now a thin input delegation wrapper while stroke creation and building-placement side effects remain behind injected domain callbacks for compatibility.
 

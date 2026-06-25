@@ -46,7 +46,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadBuildInputCompositionSystemHelper,
             source.RoadBuildInputState,
             source.RoadBuildCommandCompositionSystemHelper,
-            source.RoadPathPlanningSystem,
+            source.RoadPathPlanningUtilitySystemHelper,
             source.RoadNetworkCompositionSystemHelper,
             () => source.RoadBuildMutationCompositionSystemHelper.CaptureRoadBuildSessionSnapshot(CreateRoadBuildMutationContext(source)),
             snapshot => source.RoadBuildMutationCompositionSystemHelper.RestoreRoadBuildSession(CreateRoadBuildMutationContext(source), snapshot),
@@ -126,7 +126,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     {
         return new RoadBuildVisualContextSystem.Context(
             source.RoadNetworkCompositionSystemHelper,
-            source.RoadPathPlanningSystem,
+            source.RoadPathPlanningUtilitySystemHelper,
             source.RoadVisualVariantSystem,
             source.RoadBuildStartupSystem,
             source.RoadBuildStartupState,

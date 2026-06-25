@@ -12,7 +12,7 @@ internal sealed class RoadBuildInteractionContextSystem
         public readonly RoadBuildInputCompositionSystemHelper InputSystem;
         public readonly RoadBuildInputCompositionSystemHelper.State InputState;
         public readonly RoadBuildCommandCompositionSystemHelper CommandSystem;
-        public readonly RoadPathPlanningSystem PathPlanningSystem;
+        public readonly RoadPathPlanningUtilitySystemHelper PathPlanningSystem;
         public readonly RoadNetworkCompositionSystemHelper NetworkSystem;
         public readonly Func<RoadNetworkCompositionSystemHelper.Snapshot> CaptureRoadBuildSessionSnapshot;
         public readonly Action<RoadNetworkCompositionSystemHelper.Snapshot> RestoreRoadBuildSession;
@@ -42,7 +42,7 @@ internal sealed class RoadBuildInteractionContextSystem
             RoadBuildInputCompositionSystemHelper inputSystem,
             RoadBuildInputCompositionSystemHelper.State inputState,
             RoadBuildCommandCompositionSystemHelper commandSystem,
-            RoadPathPlanningSystem pathPlanningSystem,
+            RoadPathPlanningUtilitySystemHelper pathPlanningSystem,
             RoadNetworkCompositionSystemHelper networkSystem,
             Func<RoadNetworkCompositionSystemHelper.Snapshot> captureRoadBuildSessionSnapshot,
             Action<RoadNetworkCompositionSystemHelper.Snapshot> restoreRoadBuildSession,

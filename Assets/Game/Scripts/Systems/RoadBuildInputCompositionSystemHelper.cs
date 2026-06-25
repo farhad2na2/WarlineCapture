@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using BuildToolMode = RoadBuildSessionCompositionSystemHelper.BuildToolMode;
-using DragFirstAxis = RoadPathPlanningSystem.DragFirstAxis;
+using DragFirstAxis = RoadPathPlanningUtilitySystemHelper.DragFirstAxis;
 
 public sealed class RoadBuildInputCompositionSystemHelper
 {
@@ -25,7 +25,7 @@ public sealed class RoadBuildInputCompositionSystemHelper
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RoadBuildSessionCompositionSystemHelper SessionSystem;
         public readonly RoadBuildSessionCompositionSystemHelper.State SessionState;
-        public readonly RoadPathPlanningSystem PathPlanningSystem;
+        public readonly RoadPathPlanningUtilitySystemHelper PathPlanningSystem;
         public readonly RoadNetworkCompositionSystemHelper NetworkSystem;
         public readonly TryGetHoveredCellAction TryGetHoveredCell;
         public readonly Action ClearPreview;
@@ -42,7 +42,7 @@ public sealed class RoadBuildInputCompositionSystemHelper
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             RoadBuildSessionCompositionSystemHelper sessionSystem,
             RoadBuildSessionCompositionSystemHelper.State sessionState,
-            RoadPathPlanningSystem pathPlanningSystem,
+            RoadPathPlanningUtilitySystemHelper pathPlanningSystem,
             RoadNetworkCompositionSystemHelper networkSystem,
             TryGetHoveredCellAction tryGetHoveredCell,
             Action clearPreview,

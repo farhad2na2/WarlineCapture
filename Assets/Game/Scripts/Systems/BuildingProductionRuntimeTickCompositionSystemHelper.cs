@@ -12,8 +12,8 @@ internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
         public readonly FactionResourceSystem FactionResourceSystem;
         public readonly BuildingProductionUpdateCompositionSystemHelper ProductionUpdateSystem;
         public readonly BuildingProductionUpdateCompositionSystemHelper.Context ProductionUpdateContext;
-        public readonly BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem;
-        public readonly BuildingResourceHaulerBridgeSystem.Context ResourceHaulerBridgeContext;
+        public readonly BuildingResourceHaulerBridgeCompositionSystemHelper ResourceHaulerBridgeSystem;
+        public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.Context ResourceHaulerBridgeContext;
         public readonly BuildingSpawnSystem SpawnSystem;
         public readonly Func<uint> GetRandomState;
         public readonly Action<uint> SetRandomState;
@@ -28,8 +28,8 @@ internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
             FactionResourceSystem factionResourceSystem,
             BuildingProductionUpdateCompositionSystemHelper productionUpdateSystem,
             BuildingProductionUpdateCompositionSystemHelper.Context productionUpdateContext,
-            BuildingResourceHaulerBridgeSystem resourceHaulerBridgeSystem,
-            BuildingResourceHaulerBridgeSystem.Context resourceHaulerBridgeContext,
+            BuildingResourceHaulerBridgeCompositionSystemHelper resourceHaulerBridgeSystem,
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context resourceHaulerBridgeContext,
             BuildingSpawnSystem spawnSystem,
             Func<uint> getRandomState,
             Action<uint> setRandomState,

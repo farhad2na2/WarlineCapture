@@ -38,13 +38,13 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public readonly BuildingProductionRequestBoundary.CountFactionUnitsDelegate CountRuntimeProducedUnitsForFaction;
         public readonly ResourceHaulerSystem ResourceHaulerSystem;
         public readonly FactionResourceSystem FactionResourceSystem;
-        public readonly BuildingResourceHaulerBridgeSystem.TryGetEntityManagerDelegate TryGetEntityManager;
-        public readonly BuildingResourceHaulerBridgeSystem.TryGetGridDataDelegate TryGetGridData;
-        public readonly BuildingResourceHaulerBridgeSystem.EnsureEntityQueriesDelegate EnsureEntityQueries;
-        public readonly BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate GetHaulerUnitsQuery;
-        public readonly BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate GetSelectedUnitsQuery;
-        public readonly BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
-        public readonly BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
+        public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetGridDataDelegate TryGetGridData;
+        public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.EnsureEntityQueriesDelegate EnsureEntityQueries;
+        public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.GetEntityQueryDelegate GetHaulerUnitsQuery;
+        public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.GetEntityQueryDelegate GetSelectedUnitsQuery;
+        public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
+        public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
         public readonly BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
 
         public Source(
@@ -79,13 +79,13 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             BuildingProductionRequestBoundary.CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction,
             ResourceHaulerSystem resourceHaulerSystem,
             FactionResourceSystem factionResourceSystem,
-            BuildingResourceHaulerBridgeSystem.TryGetEntityManagerDelegate tryGetEntityManager,
-            BuildingResourceHaulerBridgeSystem.TryGetGridDataDelegate tryGetGridData,
-            BuildingResourceHaulerBridgeSystem.EnsureEntityQueriesDelegate ensureEntityQueries,
-            BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate getHaulerUnitsQuery,
-            BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate getSelectedUnitsQuery,
-            BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
-            BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
+            BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
+            BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetGridDataDelegate tryGetGridData,
+            BuildingResourceHaulerBridgeCompositionSystemHelper.EnsureEntityQueriesDelegate ensureEntityQueries,
+            BuildingResourceHaulerBridgeCompositionSystemHelper.GetEntityQueryDelegate getHaulerUnitsQuery,
+            BuildingResourceHaulerBridgeCompositionSystemHelper.GetEntityQueryDelegate getSelectedUnitsQuery,
+            BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
+            BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
             BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
         {
             RuntimeBuildings = runtimeBuildings;
@@ -162,13 +162,13 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         BuildingProductionRequestBoundary.CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction,
         ResourceHaulerSystem resourceHaulerSystem,
         FactionResourceSystem factionResourceSystem,
-        BuildingResourceHaulerBridgeSystem.TryGetEntityManagerDelegate tryGetEntityManager,
-        BuildingResourceHaulerBridgeSystem.TryGetGridDataDelegate tryGetGridData,
-        BuildingResourceHaulerBridgeSystem.EnsureEntityQueriesDelegate ensureEntityQueries,
-        BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate getHaulerUnitsQuery,
-        BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate getSelectedUnitsQuery,
-        BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
-        BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
+        BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
+        BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetGridDataDelegate tryGetGridData,
+        BuildingResourceHaulerBridgeCompositionSystemHelper.EnsureEntityQueriesDelegate ensureEntityQueries,
+        BuildingResourceHaulerBridgeCompositionSystemHelper.GetEntityQueryDelegate getHaulerUnitsQuery,
+        BuildingResourceHaulerBridgeCompositionSystemHelper.GetEntityQueryDelegate getSelectedUnitsQuery,
+        BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
+        BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
         BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
     {
         return new Source(
@@ -330,9 +330,9 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             now);
     }
 
-    public BuildingResourceHaulerBridgeSystem.Context CreateResourceHaulerBridgeContext(Source source)
+    public BuildingResourceHaulerBridgeCompositionSystemHelper.Context CreateResourceHaulerBridgeContext(Source source)
     {
-        return new BuildingResourceHaulerBridgeSystem.Context(
+        return new BuildingResourceHaulerBridgeCompositionSystemHelper.Context(
             source.RuntimeBuildings,
             source.ResourceHaulerSystem,
             source.FactionResourceSystem,

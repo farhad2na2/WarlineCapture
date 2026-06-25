@@ -17,7 +17,7 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
         public readonly BuildingDestroyedVisualPresentationSystemHelper BuildingDestroyedVisualPresentationSystemHelper;
         public readonly BuildingBarrierUtilitySystemHelper BarrierSystem;
-        public readonly BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem;
+        public readonly BuildingResourceHaulerBridgeCompositionSystemHelper ResourceHaulerBridgeSystem;
         public readonly ResourceHaulerSystem ResourceHaulerSystem;
         public readonly FactionResourceSystem FactionResourceSystem;
         public readonly BuildingProductionContextCompositionSystemHelper ProductionContextSystem;
@@ -37,8 +37,8 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingRuntimeEntitySystem.GetFootprintCenterDelegate GetFootprintCenter;
         public readonly BuildingRuntimeQuerySystem.BuildingPredicate IsHouseBuilding;
         public readonly BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate TryResolveBuildingFocusWorldPosition;
-        public readonly BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
-        public readonly BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
+        public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
+        public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
         public readonly BuildingCombatUtilitySystemHelper.BuildingAction<RuntimeBuildingEntity> RememberOpenBaseBreach;
         public readonly BuildingCombatUtilitySystemHelper.BuildingIdAction NotifyHomeBuildingDestroyed;
         public readonly BuildingCombatUtilitySystemHelper.ObjectAction DestroyObject;
@@ -58,7 +58,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingFactionVisualSystem buildingFactionVisualSystem,
             BuildingDestroyedVisualPresentationSystemHelper buildingDestroyedVisualPresentationHelper,
             BuildingBarrierUtilitySystemHelper barrierSystem,
-            BuildingResourceHaulerBridgeSystem resourceHaulerBridgeSystem,
+            BuildingResourceHaulerBridgeCompositionSystemHelper resourceHaulerBridgeSystem,
             ResourceHaulerSystem resourceHaulerSystem,
             FactionResourceSystem factionResourceSystem,
             BuildingProductionContextCompositionSystemHelper productionContextSystem,
@@ -78,8 +78,8 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingRuntimeEntitySystem.GetFootprintCenterDelegate getFootprintCenter,
             BuildingRuntimeQuerySystem.BuildingPredicate isHouseBuilding,
             BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate tryResolveBuildingFocusWorldPosition,
-            BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
-            BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
+            BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
+            BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
             BuildingCombatUtilitySystemHelper.BuildingAction<RuntimeBuildingEntity> rememberOpenBaseBreach,
             BuildingCombatUtilitySystemHelper.BuildingIdAction notifyHomeBuildingDestroyed,
             BuildingCombatUtilitySystemHelper.ObjectAction destroyObject,
@@ -521,9 +521,9 @@ internal sealed class BuildingRuntimeContextSystem
             source.GetRedirectUnitsQuery);
     }
 
-    public BuildingResourceHaulerBridgeSystem.Context CreateResourceHaulerBridgeContext(RuntimeSource source)
+    public BuildingResourceHaulerBridgeCompositionSystemHelper.Context CreateResourceHaulerBridgeContext(RuntimeSource source)
     {
-        return new BuildingResourceHaulerBridgeSystem.Context(
+        return new BuildingResourceHaulerBridgeCompositionSystemHelper.Context(
             source.RuntimeBuildingSystem.Buildings,
             source.ResourceHaulerSystem,
             source.FactionResourceSystem,

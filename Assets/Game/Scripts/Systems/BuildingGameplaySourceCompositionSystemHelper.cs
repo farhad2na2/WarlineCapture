@@ -63,7 +63,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingRuntimeOwnershipSystem BuildingRuntimeOwnershipSystem = new();
     internal readonly BuildingRuntimeEntitySystem BuildingRuntimeEntitySystem = new();
     internal readonly BuildingPlacementRedirectCompositionSystemHelper BuildingPlacementRedirectCompositionSystemHelper = new();
-    internal readonly BuildingResourceHaulerBridgeSystem BuildingResourceHaulerBridgeSystem = new();
+    internal readonly BuildingResourceHaulerBridgeCompositionSystemHelper BuildingResourceHaulerBridgeCompositionSystemHelper = new();
     internal readonly BuildingRuntimeBoundarySystem BuildingRuntimeBoundarySystem = new();
     internal readonly MapBuildingPlacementSpawnSystem MapBuildingPlacementSpawnSystem = new();
     internal readonly MapVehiclePlacementSpawnSystem MapVehiclePlacementSpawnSystem = new();

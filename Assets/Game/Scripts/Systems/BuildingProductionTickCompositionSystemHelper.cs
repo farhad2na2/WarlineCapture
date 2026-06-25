@@ -14,7 +14,7 @@ internal sealed class BuildingProductionTickCompositionSystemHelper
             source.FactionResourceSystem,
             source.BuildingProductionUpdateCompositionSystemHelper,
             source.BuildingProductionContextCompositionSystemHelper.CreateProductionUpdateContext(productionSource),
-            source.BuildingResourceHaulerBridgeSystem,
+            source.BuildingResourceHaulerBridgeCompositionSystemHelper,
             source.BuildingProductionContextCompositionSystemHelper.CreateResourceHaulerBridgeContext(productionSource),
             source.BuildingSpawnSystem,
             () => source.BuildingSpawnRandomState,

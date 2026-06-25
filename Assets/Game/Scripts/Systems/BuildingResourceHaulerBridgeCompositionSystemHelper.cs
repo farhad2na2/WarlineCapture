@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingResourceHaulerBridgeSystem
+internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
 {
     private static readonly bool VerboseResourceHaulerLogs = false;
     private readonly HashSet<Entity> _invalidCapacityWarningEntities = new();

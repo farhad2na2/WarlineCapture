@@ -2,7 +2,7 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class RtsSelectionRuntimeCameraSystem
+public sealed class RtsSelectionRuntimeCameraSystemHelper
 {
     private const float MatchIntroZoomOutHeightOffset = 8f;
     private const float MatchIntroFieldOfViewOffset = 5f;

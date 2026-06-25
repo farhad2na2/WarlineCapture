@@ -45,7 +45,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
    - Owns read-only state currently exposed as `IsRoadBuildModeActive`, `IsDraggingBuildInteraction`, pending placement state, and selected-road/delete-prompt state.
    - Existing camera/runtime callers should read this narrow boundary instead of storing `RoadBuildSystem`.
    - Created `RoadBuildReadModelCompositionSystemHelper`.
-   - `RtsSelectionRuntimeCameraSystem` and its context now consume `RoadBuildReadModelCompositionSystemHelper` instead of `RoadBuildSystem`.
+   - `RtsSelectionRuntimeCameraSystemHelper` and its context now consume `RoadBuildReadModelCompositionSystemHelper` instead of `RoadBuildSystem`.
    - `SelectionGameplayStartupSystem` receives the read model for camera/read state instead of the broad road shell.
    - `ManagedGameplayStartupSystem` composes the read model from the current road shell as a temporary compatibility source until later steps move owned state into extracted road systems.
    - Expected output: selection/camera systems no longer need the broad road shell just to know whether a road/build interaction is active.
@@ -211,7 +211,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - Expected output: building placement validation depends on road footprint query only.
 
 24. Complete: Migrate selection/camera/menu references
-    - Move `RtsSelectionRuntimeCameraSystem`, `SelectionGameplayStartupSystem`, `MainMenuPlayUI`, `MenuStartupSystem`, and `GameplayRuntimeUpdateSystem` off `RoadBuildSystem`.
+    - Move `RtsSelectionRuntimeCameraSystemHelper`, `SelectionGameplayStartupSystem`, `MainMenuPlayUI`, `MenuStartupSystem`, and `GameplayRuntimeUpdateSystem` off `RoadBuildSystem`.
     - Use `RoadBuildReadModelCompositionSystemHelper`, `RoadBuildCommandCompositionSystemHelper`, and narrow update systems.
     - GameplayRuntimeUpdateSystem now receives narrow road runtime update and IMGUI actions instead of RoadBuildSystem.
     - MenuStartupSystem now receives a narrow road menu-bind action, and MainMenuPlayUI no longer accepts RoadBuildSystem.

@@ -69,7 +69,7 @@ internal sealed class SelectionGameplayStartupSystem
         var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
         var rtsSelectionInputSystem = new RtsSelectionInputSystem();
         var rtsSelectionRuntimeInputSystem = new RtsSelectionRuntimeInputSystem();
-        RtsSelectionRuntimeCameraSystem rtsSelectionRuntimeCameraSystem = ResolveRtsSelectionRuntimeCameraSystem();
+        RtsSelectionRuntimeCameraSystemHelper rtsSelectionRuntimeCameraSystem = ResolveRtsSelectionRuntimeCameraSystemHelper();
         var rtsSelectionCommandResultFlushSystem = new RtsSelectionCommandResultFlushSystem();
         var rtsSelectionFocusCommandSystem = new RtsSelectionFocusCommandSystem();
         var rtsSelectionPointerTargetCommandSystem = new RtsSelectionPointerTargetCommandSystem();
@@ -106,7 +106,7 @@ internal sealed class SelectionGameplayStartupSystem
         IMatchHudSquadTrayView matchHudSquadTrayView = null;
         RtsSelectionRuntimeInputSystem.Context runtimeInputContext = default;
         bool hasRuntimeInputContext = false;
-        RtsSelectionRuntimeCameraSystem.Context runtimeCameraContext = default;
+        RtsSelectionRuntimeCameraSystemHelper.Context runtimeCameraContext = default;
         bool hasRuntimeCameraContext = false;
         RtsSelectionCommandResultFlushSystem.Context commandResultFlushContext = default;
         bool hasCommandResultFlushContext = false;
@@ -323,7 +323,7 @@ internal sealed class SelectionGameplayStartupSystem
                     source,
                     target));
 
-            RtsSelectionRuntimeCameraSystem.Context cameraContext = GetRuntimeCameraContext();
+            RtsSelectionRuntimeCameraSystemHelper.Context cameraContext = GetRuntimeCameraContext();
             if (rtsSelectionRuntimeCameraSystem != null &&
                 rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(cameraContext))
             {
@@ -342,7 +342,7 @@ internal sealed class SelectionGameplayStartupSystem
             return runtimeInputContext;
         }
 
-        RtsSelectionRuntimeCameraSystem.Context GetRuntimeCameraContext()
+        RtsSelectionRuntimeCameraSystemHelper.Context GetRuntimeCameraContext()
         {
             if (!hasRuntimeCameraContext)
             {
@@ -425,9 +425,9 @@ internal sealed class SelectionGameplayStartupSystem
                 IsMatchIntroGameplayInputLocked);
         }
 
-        RtsSelectionRuntimeCameraSystem.Context CreateRuntimeCameraContext()
+        RtsSelectionRuntimeCameraSystemHelper.Context CreateRuntimeCameraContext()
         {
-            return new RtsSelectionRuntimeCameraSystem.Context(
+            return new RtsSelectionRuntimeCameraSystemHelper.Context(
                 runtimeGameplayStateSystem,
                 rtsSelectionInputSystem,
                 rtsCameraSystem,
@@ -881,9 +881,9 @@ internal sealed class SelectionGameplayStartupSystem
             : null;
     }
 
-    private static RtsSelectionRuntimeCameraSystem ResolveRtsSelectionRuntimeCameraSystem()
+    private static RtsSelectionRuntimeCameraSystemHelper ResolveRtsSelectionRuntimeCameraSystemHelper()
     {
-        return new RtsSelectionRuntimeCameraSystem();
+        return new RtsSelectionRuntimeCameraSystemHelper();
     }
 
     private static SelectionRuntimeDiagnosticsSystemHelper ResolveSelectionRuntimeDiagnosticsSystem()

@@ -112,7 +112,7 @@ Progress notes:
 - [x] Keep the camera move short and subtle so it feels cinematic without disorienting the player.
 
 Progress notes:
-- 2026-06-08: Reused the existing `RtsCameraRequestSystem` path in `RtsSelectionRuntimeCameraSystem`. On first match play activation, the camera queues a slightly zoomed-out perspective start while the curtain is opaque, then sets zoom transition active so the existing smooth `UpdatePerspectiveMode` request eases back to normal height/FOV.
+- 2026-06-08: Reused the existing `RtsCameraRequestSystem` path in `RtsSelectionRuntimeCameraSystemHelper`. On first match play activation, the camera queues a slightly zoomed-out perspective start while the curtain is opaque, then sets zoom transition active so the existing smooth `UpdatePerspectiveMode` request eases back to normal height/FOV.
 
 ### Phase 7: Input Lock Until Intro Complete
 

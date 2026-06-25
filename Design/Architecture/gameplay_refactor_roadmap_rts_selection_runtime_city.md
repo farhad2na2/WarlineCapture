@@ -194,7 +194,7 @@ Goal: delete the remaining selection context-construction boundary without repla
    - Move HUD helper methods for selection, squad selection, command mode, command result, clear selection, and world marker visibility into `SelectionHudFeedbackSystem` or a narrow feedback context boundary.
 
 6. Complete: Extract camera context builder
-   - Move `CreateRuntimeCameraContext` into `RtsSelectionRuntimeCameraSystem` or a narrow ECS-style context builder.
+   - Move `CreateRuntimeCameraContext` into `RtsSelectionRuntimeCameraSystemHelper` or a narrow ECS-style context builder.
    - Startup should pass concrete camera/request/runtime dependencies, not a broad selection context object.
 
 7. Complete: Extract input context builder

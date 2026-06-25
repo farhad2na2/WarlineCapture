@@ -69,14 +69,14 @@ internal sealed class RoadBuildCompositionContextSystem
                 source.RoadBuildInputState.DragFirstAxis),
             (Vector2 screenPosition, out Vector2Int cell) => TryGetHoveredCell(source, screenPosition, out cell),
             () => source.RoadPreviewSystem?.ClearPreview(),
-            screenPosition => source.RoadBuildBuildingPlacementSystem.UpdateBuildingPlacement(
+            screenPosition => source.RoadBuildBuildingPlacementCompositionSystemHelper.UpdateBuildingPlacement(
                 CreateRoadBuildPlacementContext(source),
                 screenPosition),
             path => source.RoadBuildMutationSystem.CreateStroke(CreateRoadBuildMutationContext(source), path),
             path => source.RoadSurfacePlacementSystem.IsPathSurfaceValid(path),
             () => source.RoadBuildPlacementStorageSystem.HasPendingBuildingPlacement,
-            value => source.RoadBuildBuildingPlacementSystem.SetDragging(source.RoadBuildPlacementState, value),
-            () => source.RoadBuildBuildingPlacementSystem.SetDragging(source.RoadBuildPlacementState, false),
+            value => source.RoadBuildBuildingPlacementCompositionSystemHelper.SetDragging(source.RoadBuildPlacementState, value),
+            () => source.RoadBuildBuildingPlacementCompositionSystemHelper.SetDragging(source.RoadBuildPlacementState, false),
             strokeId => source.RoadBuildMutationSystem.DeleteStroke(CreateRoadBuildMutationContext(source), strokeId));
     }
 
@@ -200,10 +200,10 @@ internal sealed class RoadBuildCompositionContextSystem
         return source.RoadBuildContextSystem.CreateEcsContext(CreateRoadBuildContext(source));
     }
 
-    private RoadBuildBuildingPlacementSystem.Context CreateRoadBuildPlacementContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildBuildingPlacementCompositionSystemHelper.Context CreateRoadBuildPlacementContext(RoadBuildCompositionSourceSystem source)
     {
         RoadBuildStartupSystem.State startupState = source.RoadBuildStartupState;
-        return new RoadBuildBuildingPlacementSystem.Context(
+        return new RoadBuildBuildingPlacementCompositionSystemHelper.Context(
             source.RoadBuildPlacementStorageSystem,
             source.RoadBuildPlacementState,
             source.RoadBuildPlacementVisualSystem,

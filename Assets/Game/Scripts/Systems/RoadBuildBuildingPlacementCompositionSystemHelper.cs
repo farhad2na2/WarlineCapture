@@ -3,7 +3,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using static UnityEngine.Object;
 
-internal sealed class RoadBuildBuildingPlacementSystem
+internal sealed class RoadBuildBuildingPlacementCompositionSystemHelper
 {
     public delegate bool TryGetGridCellDelegate(Vector2 screenPosition, GridConfig grid, out Vector2Int cell);
     public delegate bool IsRuntimeBlockerCellDelegate(int x, int y, int width, int height);

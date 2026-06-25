@@ -35,7 +35,7 @@ Current status:
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyEcsSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildEcsBoundarySystem.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyGridSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildGridQuerySystem.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyInteractionSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildInteractionSystem.cs`
-- [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyPlacementSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildBuildingPlacementSystem.cs`
+- [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyPlacementSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildBuildingPlacementCompositionSystemHelper.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyPlacementVisualSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildPlacementVisualSystem.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyStorageSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildPlacementStorageSystem.cs`
 - [x] `Assets/Game/Scripts/UI/Shell/UILegacyGameStartSystem.cs` -> `Assets/Game/Scripts/UI/Shell/UIGameStartButtonView.cs`
@@ -190,7 +190,7 @@ Candidate target names:
 - `BuildingRoadLegacyStorageSystem` -> `RoadBuildPlacementStorageSystem`
 - `BuildingRoadLegacyDefinitionSystem` -> `RoadBuildDefinitionProjectionSystem`
 - `BuildingRoadLegacyPlacementVisualSystem` -> `RoadBuildPlacementVisualSystem`
-- `BuildingRoadLegacyPlacementSystem` -> `RoadBuildBuildingPlacementSystem`
+- `BuildingRoadLegacyPlacementSystem` -> `RoadBuildBuildingPlacementCompositionSystemHelper`
 - `BuildingRoadLegacyInteractionSystem` -> `RoadBuildInteractionSystem`
 - `BuildingRoadLegacyGridSystem` -> `RoadBuildGridQuerySystem`
 - `BuildingRoadLegacyContextSystem` -> `RoadBuildContextSystem`

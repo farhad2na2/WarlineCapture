@@ -31,7 +31,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildPlacementStorageSystem RoadBuildPlacementStorageSystem = new();
     public readonly RoadBuildDefinitionProjectionSystem RoadBuildDefinitionProjectionSystem = new();
     public readonly RoadBuildPlacementVisualSystem RoadBuildPlacementVisualSystem;
-    public readonly RoadBuildBuildingPlacementSystem RoadBuildBuildingPlacementSystem = new();
+    public readonly RoadBuildBuildingPlacementCompositionSystemHelper RoadBuildBuildingPlacementCompositionSystemHelper = new();
     public readonly RoadBuildInteractionSystem RoadBuildInteractionSystem = new();
     public readonly RoadBuildContextSystem RoadBuildContextSystem = new();
     public readonly RoadBuildEcsBoundarySystem RoadBuildEcsBoundarySystem = new();
@@ -44,7 +44,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public RoadBuildStartupSystem.State RoadBuildStartupState = new();
     public readonly RoadBuildDependencySystem.State RoadBuildDependencyState;
     public readonly RoadBuildPlacementVisualSystem.State RoadBuildPlacementVisualState;
-    public readonly RoadBuildBuildingPlacementSystem.State RoadBuildPlacementState;
+    public readonly RoadBuildBuildingPlacementCompositionSystemHelper.State RoadBuildPlacementState;
     public uint BuildingSpawnRandomState = 0x12345678u;
 
     public RoadBuildCompositionSourceSystem()
@@ -66,7 +66,7 @@ internal sealed class RoadBuildCompositionSourceSystem
         RoadBuildRuntimeActionState = global::RoadBuildRuntimeActionSystem.CreateState();
         RoadBuildDependencyState = RoadBuildDependencySystem.CreateState();
         RoadBuildPlacementVisualState = RoadBuildPlacementVisualSystem?.CreateState() ?? new RoadBuildPlacementVisualSystem.State();
-        RoadBuildPlacementState = RoadBuildBuildingPlacementSystem.CreateState();
+        RoadBuildPlacementState = RoadBuildBuildingPlacementCompositionSystemHelper.CreateState();
     }
 
     private static RoadGridProjectionSystem ResolveRoadGridProjectionSystem()

@@ -19,12 +19,12 @@ Progress snapshot:
 - Checklist progress: `87 / 109 complete (79.8%)`.
 - In progress: `0`.
 - Remaining open: `10`.
-- Current target: `E7 helper fold complete for P7-0206 CitizenVisibleUnitSystem; Agent E open split candidates complete; review remaining counted managed exceptions`.
+- Current target: `Agent E naming slice complete for P7-0207 RoadBuildBuildingPlacementCompositionSystemHelper; continue road/city/citizen helper naming in small batches`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
 - Retired/folded helpers: `87`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `CitizenVisibleUnitSystem folded from a disabled SystemBase wrapper into a plain citizen visible-unit helper. Compile, inventory regeneration, citizen visible-unit focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-phase7-agent-e-citizen-visible-unit-helper-fold-citizen-visible-unit.log and /private/tmp/warline-phase7-agent-a-architecture.log. Inventory now reports 58 production SystemBase/legacy declarations, 134 production ISystem declarations, and 69.8% production ISystem share.`
+- Validation status: `RoadBuildBuildingPlacementCompositionSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, road build command focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch146-road-build-command.log with [RoadBuildCommandRequestValidation] result=Passed tests=7 and /private/tmp/warline-non-ecs-helper-naming-batch146-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=83. Previous citizen visible-unit fold logs remain /private/tmp/warline-phase7-agent-e-citizen-visible-unit-helper-fold-citizen-visible-unit.log and /private/tmp/warline-phase7-agent-a-architecture.log.`
 
 Owned files:
 
@@ -280,7 +280,7 @@ Remove dead wrappers instead of converting them.
 - [x] Fold `P7-0169 RuntimeCityPrefabSelectionPrefabSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city prefab selection helper; prefab membership checks, random selection, shuffling, footprint caching, and composition callers stayed unchanged.
 - [x] Fold `P7-0178 RuntimeCityStartupSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city startup helper; startup readiness evaluation, manual generation evaluation, blocker descriptions, diagnostic wait logging, and composition callers stayed unchanged.
 - [x] Fold `P7-0186 CitizenDangerSystem` from a disabled `SystemBase` wrapper into a plain citizen danger helper; danger-source registration, periodic position refresh, safe-building selection, flee-target selection, and citizen population callers stayed unchanged.
-- [x] Fold `P7-0207 RoadBuildBuildingPlacementSystem` from a disabled `SystemBase` wrapper into a plain road build building placement helper; placement drag state, preview instance creation/cancellation, footprint positioning, validity checks, and placement visual callbacks stayed unchanged.
+- [x] Fold `P7-0207 RoadBuildBuildingPlacementCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road build building placement helper; placement drag state, preview instance creation/cancellation, footprint positioning, validity checks, and placement visual callbacks stayed unchanged.
 - [x] Fold `P7-0236 RoadRuntimeRootSystem` from a disabled `SystemBase` wrapper into a plain road runtime root helper; runtime road/building root creation and disposal, child-root naming, and road build composition callers stayed unchanged.
 - [x] Fold `P7-0210 RoadBuildCompositionLifecycleSystem` from a disabled `SystemBase` wrapper into a plain road build lifecycle helper; initialization, dependency binding, disposal, exit-build-mode fallback, and road composition callers stayed unchanged.
 - [x] Fold `P7-0209 RoadBuildCompositionContextSystem` from a disabled `SystemBase` wrapper into a plain road build context factory helper; road footprint, runtime generation, read-model, input, command, delete prompt, disposal, ECS, visual, mutation, and placement context creation stayed unchanged.

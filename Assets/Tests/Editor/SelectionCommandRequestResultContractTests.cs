@@ -3809,7 +3809,7 @@ public sealed class SelectionCommandRequestResultContractTests
         GameObject movePrefab = CreatePrimitiveMarkerPrefab("MoveFlushMarkerPrefab", PrimitiveType.Quad);
         GameObject attackPrefab = CreatePrimitiveMarkerPrefab("AttackFlushMarkerPrefab", PrimitiveType.Quad);
         GameObject runtimeRoot = new("MarkerRoot");
-        var orderMarkers = new SelectionOrderMarkerSystem();
+        var orderMarkers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             EntityManager em = world.EntityManager;
@@ -3902,7 +3902,7 @@ public sealed class SelectionCommandRequestResultContractTests
         GameObject attackPrefab = CreatePrimitiveMarkerPrefab("AttackFlushMarkerPrefab", PrimitiveType.Quad);
         GameObject targetPrefab = CreatePrimitiveMarkerPrefab("AttackTargetFlushMarkerPrefab", PrimitiveType.Cube);
         GameObject runtimeRoot = new("MarkerRoot");
-        var orderMarkers = new SelectionOrderMarkerSystem();
+        var orderMarkers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             EntityManager em = world.EntityManager;
@@ -4359,7 +4359,7 @@ public sealed class SelectionCommandRequestResultContractTests
         System.Action<TacticalCommandResult> applyHudCommandResult,
         EntityManager em,
         System.Action<EntityManager> ensureEntityQueries = null,
-        SelectionOrderMarkerSystem orderMarkerSystem = null,
+        SelectionOrderMarkerPresentationSystemHelper orderMarkerSystem = null,
         System.Action<bool> setHudWorldMarkersVisible = null,
         System.Action<UnityEngine.Vector2> requestMoveOrderScreenMarker = null,
         System.Action<UnityEngine.Vector2> requestAttackOrderScreenMarker = null,
@@ -4384,7 +4384,7 @@ public sealed class SelectionCommandRequestResultContractTests
         return new RtsSelectionCommandResultFlushSystem.Context(
             inputSystem,
             new SelectionHudFeedbackBoundary(),
-            orderMarkerSystem ?? new SelectionOrderMarkerSystem(),
+            orderMarkerSystem ?? new SelectionOrderMarkerPresentationSystemHelper(),
             new SelectedMoveOrderCommandSystem(),
             new AttackOrderCommandSystem(),
             new ScanIntelCommandSystem(),

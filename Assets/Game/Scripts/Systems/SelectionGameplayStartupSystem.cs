@@ -59,7 +59,7 @@ internal sealed class SelectionGameplayStartupSystem
         SelectionHudFeedbackBoundary.ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite,
         SelectionHudFeedbackBoundary.ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
         System.Func<Sprite> resolveSelectedBuildingPortraitSprite,
-        SelectionOrderMarkerSystem.TryResolveRuntimeBuildingInstanceDelegate tryResolveRuntimeBuildingInstance,
+        SelectionOrderMarkerPresentationSystemHelper.TryResolveRuntimeBuildingInstanceDelegate tryResolveRuntimeBuildingInstance,
         FactionVisualSettings factionVisuals,
         IMatchIntroStateQuery matchIntroStateQuery)
     {
@@ -88,7 +88,7 @@ internal sealed class SelectionGameplayStartupSystem
         var selectedMoveOrderCommandSystem = new SelectedMoveOrderCommandSystem();
         var attackOrderCommandSystem = new AttackOrderCommandSystem();
         var scanIntelCommandSystem = new ScanIntelCommandSystem();
-        var selectionOrderMarkerSystem = new SelectionOrderMarkerSystem();
+        var selectionOrderMarkerSystem = new SelectionOrderMarkerPresentationSystemHelper();
         var selectionHudFeedbackSystem = new SelectionHudFeedbackBoundary();
         var focusedUnitCommandSystem = new FocusedUnitCommandSystem();
         var focusedUnitLifecycleSystem = new FocusedUnitLifecycleSystem();

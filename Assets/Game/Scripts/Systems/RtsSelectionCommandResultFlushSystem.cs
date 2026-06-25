@@ -24,7 +24,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
     {
         public readonly RtsSelectionInputSystem InputSystem;
         public readonly SelectionHudFeedbackBoundary HudFeedbackSystem;
-        public readonly SelectionOrderMarkerSystem OrderMarkerSystem;
+        public readonly SelectionOrderMarkerPresentationSystemHelper OrderMarkerSystem;
         public readonly SelectedMoveOrderCommandSystem SelectedMoveOrderCommandSystem;
         public readonly AttackOrderCommandSystem AttackOrderCommandSystem;
         public readonly ScanIntelCommandSystem ScanIntelCommandSystem;
@@ -68,7 +68,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public Context(
             RtsSelectionInputSystem inputSystem,
             SelectionHudFeedbackBoundary hudFeedbackSystem,
-            SelectionOrderMarkerSystem orderMarkerSystem,
+            SelectionOrderMarkerPresentationSystemHelper orderMarkerSystem,
             SelectedMoveOrderCommandSystem selectedMoveOrderCommandSystem,
             AttackOrderCommandSystem attackOrderCommandSystem,
             ScanIntelCommandSystem scanIntelCommandSystem,
@@ -183,8 +183,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
     public void UpdateCommandPreviewMarkers(
         Context context,
         bool explicitAttackTargetModeActive,
-        SelectionOrderMarkerSystem.IsPreviewTargetValidWithSourceDelegate isValidBoardTransportPreviewTarget,
-        SelectionOrderMarkerSystem.IsPreviewTargetValidWithSourceDelegate isValidBoardPassengerPreviewTarget)
+        SelectionOrderMarkerPresentationSystemHelper.IsPreviewTargetValidWithSourceDelegate isValidBoardTransportPreviewTarget,
+        SelectionOrderMarkerPresentationSystemHelper.IsPreviewTargetValidWithSourceDelegate isValidBoardPassengerPreviewTarget)
     {
         if (context.OrderMarkerSystem == null)
             return;

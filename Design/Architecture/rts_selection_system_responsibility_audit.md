@@ -475,7 +475,7 @@ Transport boarding diagnostics now flow through an ECS diagnostic event path:
 
 ## Thirty-Fifth Extraction Started
 
-`SelectionOrderMarkerSystem` now owns order marker visual runtime behavior that was previously inside `RTSSelectionSystem`:
+`SelectionOrderMarkerPresentationSystemHelper` now owns order marker visual runtime behavior that was previously inside `RTSSelectionSystem`:
 
 - move and attack marker prefab instantiation
 - runtime marker GameObject lifetime

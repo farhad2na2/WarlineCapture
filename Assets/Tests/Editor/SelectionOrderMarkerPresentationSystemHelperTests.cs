@@ -8,7 +8,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public sealed class SelectionOrderMarkerSystemTests
+public sealed class SelectionOrderMarkerPresentationSystemHelperTests
 {
     private const string RtsSelectionConfigPath = "Assets/Game/Configs/Scene/Game_RTSSelection_Config.asset";
     private const string BuildingPlacementConfigPath = "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset";
@@ -57,22 +57,22 @@ public sealed class SelectionOrderMarkerSystemTests
         }
     }
 
-    private static void RunCase(System.Action<SelectionOrderMarkerSystemTests> testCase)
+    private static void RunCase(System.Action<SelectionOrderMarkerPresentationSystemHelperTests> testCase)
     {
-        testCase(new SelectionOrderMarkerSystemTests());
+        testCase(new SelectionOrderMarkerPresentationSystemHelperTests());
     }
 
     [Test]
     public void ShowMoveOrderMarker_ShowsUpgradedMoveMarker()
     {
-        using var world = new World("SelectionOrderMarkerSystemTests_MoveMarker");
+        using var world = new World("SelectionOrderMarkerPresentationSystemHelperTests_MoveMarker");
         EntityManager em = world.EntityManager;
         CreateMarkerGrid(em);
 
         GameObject movePrefab = CreateMarkerPrefab("MoveMarkerPrefab", PrimitiveType.Quad, MoveMarkerMaterialPath);
         GameObject attackPrefab = CreateMarkerPrefab("AttackMarkerPrefab", PrimitiveType.Quad, AttackMarkerMaterialPath);
         GameObject runtimeRoot = new("MarkerRoot");
-        var markers = new SelectionOrderMarkerSystem();
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
@@ -104,14 +104,14 @@ public sealed class SelectionOrderMarkerSystemTests
     [Test]
     public void TryShowCommandResultMarker_ConsumesMoveAttackScanAndBoardResults()
     {
-        using var world = new World("SelectionOrderMarkerSystemTests_ResultMarkers");
+        using var world = new World("SelectionOrderMarkerPresentationSystemHelperTests_ResultMarkers");
         EntityManager em = world.EntityManager;
         CreateMarkerGrid(em);
 
         GameObject movePrefab = CreateMarkerPrefab("MoveMarkerPrefab", PrimitiveType.Quad, MoveMarkerMaterialPath);
         GameObject attackPrefab = CreateMarkerPrefab("AttackMarkerPrefab", PrimitiveType.Quad, AttackMarkerMaterialPath);
         GameObject runtimeRoot = new("MarkerRoot");
-        var markers = new SelectionOrderMarkerSystem();
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
@@ -186,12 +186,12 @@ public sealed class SelectionOrderMarkerSystemTests
     [Test]
     public void ShowScanOrderMarker_UsesReadableCompositeMarker()
     {
-        using var world = new World("SelectionOrderMarkerSystemTests_ScanMarker");
+        using var world = new World("SelectionOrderMarkerPresentationSystemHelperTests_ScanMarker");
         EntityManager em = world.EntityManager;
         CreateMarkerGrid(em);
 
         GameObject runtimeRoot = new("MarkerRoot");
-        var markers = new SelectionOrderMarkerSystem();
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             markers.Initialize(null, null, null, null, 1f, runtimeRoot.transform);
@@ -238,12 +238,12 @@ public sealed class SelectionOrderMarkerSystemTests
     [Test]
     public void ShowScanOrderMarker_UsesOverlayAndStaysReadableAboveSurface()
     {
-        using var world = new World("SelectionOrderMarkerSystemTests_ScanMarkerGrounding");
+        using var world = new World("SelectionOrderMarkerPresentationSystemHelperTests_ScanMarkerGrounding");
         EntityManager em = world.EntityManager;
         CreateMarkerGrid(em, width: 16, height: 16, cellSize: 2f, originY: 5f);
 
         GameObject runtimeRoot = new("MarkerRoot");
-        var markers = new SelectionOrderMarkerSystem();
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             markers.Initialize(null, null, null, null, 1f, runtimeRoot.transform);
@@ -286,7 +286,7 @@ public sealed class SelectionOrderMarkerSystemTests
     [Test]
     public void ShowAttackOrderMarker_UsesSelectionPrefabForBuildingTargets()
     {
-        using var world = new World("SelectionOrderMarkerSystemTests_AttackTargetRing");
+        using var world = new World("SelectionOrderMarkerPresentationSystemHelperTests_AttackTargetRing");
         EntityManager em = world.EntityManager;
         Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent));
         em.SetComponentData(gridEntity, new GridConfig
@@ -309,7 +309,7 @@ public sealed class SelectionOrderMarkerSystemTests
         GameObject attackPrefab = CreateMarkerPrefab("AttackMarkerPrefab", PrimitiveType.Quad, AttackMarkerMaterialPath);
         GameObject attackTargetPrefab = CreateMarkerPrefab("AttackTargetMarkerPrefab", PrimitiveType.Cube, TargetLockMaterialPath);
         GameObject runtimeRoot = new("MarkerRoot");
-        var markers = new SelectionOrderMarkerSystem();
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             markers.Initialize(movePrefab, attackPrefab, attackTargetPrefab, null, 1f, runtimeRoot.transform);
@@ -344,7 +344,7 @@ public sealed class SelectionOrderMarkerSystemTests
     [Test]
     public void ShowAttackOrderMarker_UsesRuntimeBuildingBoundsWhenAvailable()
     {
-        using var world = new World("SelectionOrderMarkerSystemTests_AttackTargetRuntimeBounds");
+        using var world = new World("SelectionOrderMarkerPresentationSystemHelperTests_AttackTargetRuntimeBounds");
         EntityManager em = world.EntityManager;
         Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent));
         em.SetComponentData(gridEntity, new GridConfig
@@ -372,7 +372,7 @@ public sealed class SelectionOrderMarkerSystemTests
         buildingInstance.transform.localScale = new Vector3(2f, 4f, 6f);
         buildingInstance.transform.rotation = Quaternion.Euler(0f, 35f, 0f);
         GameObject runtimeRoot = new("MarkerRoot");
-        var markers = new SelectionOrderMarkerSystem();
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             markers.Initialize(
@@ -413,7 +413,7 @@ public sealed class SelectionOrderMarkerSystemTests
     [Test]
     public void ShowAttackOrderMarker_UsesSelectionPrefabForEntityTargets()
     {
-        using var world = new World("SelectionOrderMarkerSystemTests_AttackTargetEntity");
+        using var world = new World("SelectionOrderMarkerPresentationSystemHelperTests_AttackTargetEntity");
         EntityManager em = world.EntityManager;
         CreateMarkerGrid(em);
         Entity target = em.CreateEntity(typeof(LocalTransform), typeof(UnitFootprint), typeof(Faction), typeof(UnitHealth));
@@ -428,7 +428,7 @@ public sealed class SelectionOrderMarkerSystemTests
         GameObject attackPrefab = CreateMarkerPrefab("AttackMarkerPrefab", PrimitiveType.Quad, AttackMarkerMaterialPath);
         GameObject attackTargetPrefab = CreateMarkerPrefab("AttackTargetMarkerPrefab", PrimitiveType.Cube, TargetLockMaterialPath);
         GameObject runtimeRoot = new("MarkerRoot");
-        var markers = new SelectionOrderMarkerSystem();
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             markers.Initialize(movePrefab, attackPrefab, attackTargetPrefab, null, 1f, runtimeRoot.transform);
@@ -464,7 +464,7 @@ public sealed class SelectionOrderMarkerSystemTests
     [Test]
     public void ShowAttackOrderMarker_FallsBackToPrefabForUntargetedWorldPoint()
     {
-        using var world = new World("SelectionOrderMarkerSystemTests_AttackMarkerFallback");
+        using var world = new World("SelectionOrderMarkerPresentationSystemHelperTests_AttackMarkerFallback");
         EntityManager em = world.EntityManager;
         Entity gridEntity = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent));
         em.SetComponentData(gridEntity, new GridConfig
@@ -479,7 +479,7 @@ public sealed class SelectionOrderMarkerSystemTests
         GameObject movePrefab = CreateMarkerPrefab("MoveMarkerPrefab", PrimitiveType.Quad, MoveMarkerMaterialPath);
         GameObject attackPrefab = CreateMarkerPrefab("AttackMarkerPrefab", PrimitiveType.Quad, AttackMarkerMaterialPath);
         GameObject runtimeRoot = new("MarkerRoot");
-        var markers = new SelectionOrderMarkerSystem();
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
@@ -511,7 +511,7 @@ public sealed class SelectionOrderMarkerSystemTests
     [Test]
     public void UpdateAttackTargetPreviewMarkers_ShowsOnlyLivingHostileTargets()
     {
-        using var world = new World("SelectionOrderMarkerSystemTests_AttackPreview");
+        using var world = new World("SelectionOrderMarkerPresentationSystemHelperTests_AttackPreview");
         EntityManager em = world.EntityManager;
         CreateMarkerGrid(em);
         Entity hostile = CreatePreviewTarget(em, FactionIdentity.EnemyFactionId, new float3(2f, 0f, 3f), 100);
@@ -521,7 +521,7 @@ public sealed class SelectionOrderMarkerSystemTests
         GameObject movePrefab = CreateMarkerPrefab("MoveMarkerPrefab", PrimitiveType.Quad, MoveMarkerMaterialPath);
         GameObject attackPrefab = CreateMarkerPrefab("AttackMarkerPrefab", PrimitiveType.Quad, AttackMarkerMaterialPath);
         GameObject runtimeRoot = new("MarkerRoot");
-        var markers = new SelectionOrderMarkerSystem();
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
@@ -552,7 +552,7 @@ public sealed class SelectionOrderMarkerSystemTests
     [Test]
     public void Initialize_PrewarmsAttackTargetPreviewMarkerPool()
     {
-        using var world = new World("SelectionOrderMarkerSystemTests_AttackPreviewPool");
+        using var world = new World("SelectionOrderMarkerPresentationSystemHelperTests_AttackPreviewPool");
         EntityManager em = world.EntityManager;
         CreateMarkerGrid(em);
         CreatePreviewTarget(em, FactionIdentity.EnemyFactionId, new float3(2f, 0f, 3f), 100);
@@ -560,7 +560,7 @@ public sealed class SelectionOrderMarkerSystemTests
         GameObject movePrefab = CreateMarkerPrefab("MoveMarkerPrefab", PrimitiveType.Quad, MoveMarkerMaterialPath);
         GameObject attackPrefab = CreateMarkerPrefab("AttackMarkerPrefab", PrimitiveType.Quad, AttackMarkerMaterialPath);
         GameObject runtimeRoot = new("MarkerRoot");
-        var markers = new SelectionOrderMarkerSystem();
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
@@ -586,7 +586,7 @@ public sealed class SelectionOrderMarkerSystemTests
     [Test]
     public void UpdateBoardTargetPreviewMarkers_ShowsOnlyValidPlayerTargets()
     {
-        using var world = new World("SelectionOrderMarkerSystemTests_BoardPreview");
+        using var world = new World("SelectionOrderMarkerPresentationSystemHelperTests_BoardPreview");
         EntityManager em = world.EntityManager;
         CreateMarkerGrid(em);
         Entity source = em.CreateEntity();
@@ -597,7 +597,7 @@ public sealed class SelectionOrderMarkerSystemTests
         GameObject movePrefab = CreateMarkerPrefab("MoveMarkerPrefab", PrimitiveType.Quad, MoveMarkerMaterialPath);
         GameObject attackPrefab = CreateMarkerPrefab("AttackMarkerPrefab", PrimitiveType.Quad, AttackMarkerMaterialPath);
         GameObject runtimeRoot = new("MarkerRoot");
-        var markers = new SelectionOrderMarkerSystem();
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
         try
         {
             markers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);

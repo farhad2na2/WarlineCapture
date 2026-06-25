@@ -22,7 +22,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         public readonly Func<Vector2, bool> IsPointerOverGameplayUi;
         public readonly Func<Vector2, bool> TryRequestAttackOrderToClickedUnit;
         public readonly Func<Vector2, bool> TryRequestScanOrder;
-        public readonly SelectionOrderMarkerSystem OrderMarkerSystem;
+        public readonly SelectionOrderMarkerPresentationSystemHelper OrderMarkerSystem;
         public readonly TryGetEntityManagerDelegate TryGetDefaultEntityManager;
         public readonly SelectedMoveOrderCommandSystem.ClickedCellResolver TryGetScanClickedCell;
         public readonly Action<bool> SetHudWorldMarkersVisible;
@@ -53,7 +53,7 @@ public sealed class RtsSelectionRuntimeInputSystem
             Func<Vector2, bool> isPointerOverGameplayUi,
             Func<Vector2, bool> tryIssueAttackOrderToClickedUnit,
             Func<Vector2, bool> tryIssueScanOrder,
-            SelectionOrderMarkerSystem orderMarkerSystem,
+            SelectionOrderMarkerPresentationSystemHelper orderMarkerSystem,
             TryGetEntityManagerDelegate tryGetDefaultEntityManager,
             SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetScanClickedCell,
             Action<bool> setHudWorldMarkersVisible,

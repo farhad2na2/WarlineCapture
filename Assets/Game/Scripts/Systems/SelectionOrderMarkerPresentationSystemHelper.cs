@@ -6,7 +6,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public sealed class SelectionOrderMarkerSystem
+public sealed class SelectionOrderMarkerPresentationSystemHelper
 {
     public delegate bool IsPreviewTargetValidWithSourceDelegate(EntityManager em, Entity source, Entity target);
     public delegate bool TryResolveRuntimeBuildingInstanceDelegate(Entity combatEntity, int runtimeBuildingId, out GameObject instance);

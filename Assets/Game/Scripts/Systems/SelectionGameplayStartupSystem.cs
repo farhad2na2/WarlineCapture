@@ -68,7 +68,7 @@ internal sealed class SelectionGameplayStartupSystem
         SelectionRuntimeConfigSystem.State runtimeConfig = SelectionRuntimeConfigSystem.CreateStateFromConfig(rtsSelectionConfig, worldCamera);
         var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
         var rtsSelectionInputSystem = new RtsSelectionInputCompositionSystemHelper();
-        var rtsSelectionRuntimeInputSystem = new RtsSelectionRuntimeInputSystem();
+        var rtsSelectionRuntimeInputSystem = new RtsSelectionRuntimeInputCompositionSystemHelper();
         RtsSelectionRuntimeCameraSystemHelper rtsSelectionRuntimeCameraSystem = ResolveRtsSelectionRuntimeCameraSystemHelper();
         var rtsSelectionCommandResultFlushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();
         var rtsSelectionFocusCommandSystem = new RtsSelectionFocusCommandCompositionSystemHelper();
@@ -104,7 +104,7 @@ internal sealed class SelectionGameplayStartupSystem
         var transportPassengerPanelItems = new List<MatchHudSelectionPanelPassengerItemModel>();
         IMatchRuntimeUi mainMenuPlayUi = null;
         IMatchHudSquadTrayView matchHudSquadTrayView = null;
-        RtsSelectionRuntimeInputSystem.Context runtimeInputContext = default;
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context runtimeInputContext = default;
         bool hasRuntimeInputContext = false;
         RtsSelectionRuntimeCameraSystemHelper.Context runtimeCameraContext = default;
         bool hasRuntimeCameraContext = false;
@@ -272,7 +272,7 @@ internal sealed class SelectionGameplayStartupSystem
             rtsSelectionCommandResultFlushSystem.ProcessDeselectAllCommandRequests(GetCommandResultFlushContext());
             if (rtsSelectionInputSystem.HasPendingExternalSelectionCommandRequests())
                 rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
-            RtsSelectionRuntimeInputSystem.Context inputContext = GetRuntimeInputContext();
+            RtsSelectionRuntimeInputCompositionSystemHelper.Context inputContext = GetRuntimeInputContext();
             rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
             selectionHudFeedbackSystem.RefreshFocusedSelectionReadModels(
                 CreateHudFeedbackContext(),
@@ -331,7 +331,7 @@ internal sealed class SelectionGameplayStartupSystem
             }
         }
 
-        RtsSelectionRuntimeInputSystem.Context GetRuntimeInputContext()
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context GetRuntimeInputContext()
         {
             if (!hasRuntimeInputContext)
             {
@@ -364,9 +364,9 @@ internal sealed class SelectionGameplayStartupSystem
             return commandResultFlushContext;
         }
 
-        RtsSelectionRuntimeInputSystem.Context CreateRuntimeInputContext()
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context CreateRuntimeInputContext()
         {
-            return new RtsSelectionRuntimeInputSystem.Context(
+            return new RtsSelectionRuntimeInputCompositionSystemHelper.Context(
                 runtimeGameplayStateSystem,
                 rtsSelectionInputSystem,
                 mainMenuPlayUi,

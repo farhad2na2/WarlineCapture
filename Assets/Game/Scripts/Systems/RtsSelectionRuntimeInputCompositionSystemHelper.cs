@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class RtsSelectionRuntimeInputSystem
+public sealed class RtsSelectionRuntimeInputCompositionSystemHelper
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
 

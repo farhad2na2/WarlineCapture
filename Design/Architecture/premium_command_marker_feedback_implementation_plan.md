@@ -56,7 +56,7 @@ This plan is constrained by:
 - `Design/Architecture/premium_world_marker_implementation_plan.md`
 
 - `SelectionOrderMarkerPresentationSystemHelper` owns move command markers, attack command markers, attack target locks, order marker lifetimes, order marker placement, and command marker material property blocks.
-- `RtsSelectionRuntimeInputSystem` may detect pointer input and command mode state, but it must not own marker visuals.
+- `RtsSelectionRuntimeInputCompositionSystemHelper` may detect pointer input and command mode state, but it must not own marker visuals.
 - `RtsSelectionCommandResultFlushCompositionSystemHelper` may route accepted command results into `SelectionOrderMarkerPresentationSystemHelper`, but it must not own visual policy.
 - `SelectionMoveCommandRequestSystem` and selected move-order systems own move validation and move command result publication.
 - `SelectionAttackCommandRequestSystem`, `AttackOrderCommandSystem`, and `UnitTargetOrderSystem` own attack target validation and attack command result publication.
@@ -79,7 +79,7 @@ This plan is constrained by:
 Accepted move command marker flow:
 
 1. UI or hotkey arms `TacticalCommandMode.Move` through existing selection command intent flow.
-2. `RtsSelectionRuntimeInputSystem` captures pointer input and queues ECS input/command requests only.
+2. `RtsSelectionRuntimeInputCompositionSystemHelper` captures pointer input and queues ECS input/command requests only.
 3. Move request systems validate the target and publish command results.
 4. `RtsSelectionCommandResultFlushCompositionSystemHelper` drains accepted move results and calls the `SelectionOrderMarkerPresentationSystemHelper` move marker path.
 5. `SelectionOrderMarkerPresentationSystemHelper` owns the marker instance, placement, material properties, scale, lifetime, and hide/show tick.
@@ -87,7 +87,7 @@ Accepted move command marker flow:
 Accepted attack command marker flow:
 
 1. UI or hotkey arms `TacticalCommandMode.Attack` through existing explicit attack command flow.
-2. `RtsSelectionRuntimeInputSystem` captures pointer input and queues ECS input/command requests only.
+2. `RtsSelectionRuntimeInputCompositionSystemHelper` captures pointer input and queues ECS input/command requests only.
 3. Attack request/order systems validate hostile targets and publish command results.
 4. `RtsSelectionCommandResultFlushCompositionSystemHelper` drains accepted attack results and calls the `SelectionOrderMarkerPresentationSystemHelper` attack marker path.
 5. `SelectionOrderMarkerPresentationSystemHelper` owns the marker instance, placement, material properties, target-bounds scale, lifetime, and hide/show tick.
@@ -155,7 +155,7 @@ Expected files to inspect:
 
 - `Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs`
 - `Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs`
-- `Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputSystem.cs`
+- `Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs`
 - `Assets/Game/Configs/Scene/Game_RTSSelection_Config.asset`
 - `Assets/Game/Prefabs/Shapes/Target_Move.prefab`
 - `Assets/Game/Prefabs/Shapes/Target_Attack.prefab`
@@ -168,7 +168,7 @@ Validation: `/private/tmp/warline-premium-command-marker-result-contract.log` pr
 - [x] Ensure accepted Move mode map taps call the move marker display path.
 - [x] Ensure rejected/invalid move taps do not show a successful move marker.
 - [x] Keep move validation in move command systems; do not move validation into marker code.
-- [x] Keep `RtsSelectionRuntimeInputSystem` as request-input orchestration only; do not make it instantiate or mutate marker visuals.
+- [x] Keep `RtsSelectionRuntimeInputCompositionSystemHelper` as request-input orchestration only; do not make it instantiate or mutate marker visuals.
 - [x] Keep camera panning behavior in Move mode intact.
 - [x] Keep selected units selected after issuing move orders.
 - [x] Add or update focused test coverage for accepted move tap marker routing.

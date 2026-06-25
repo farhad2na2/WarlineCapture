@@ -2564,7 +2564,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void RuntimeInput_DefersUnitSelectionUntilPointerRelease()
     {
-        string runtimeInput = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputSystem.cs");
+        string runtimeInput = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs");
         string pointerPressed = ExtractMethod(runtimeInput, "HandlePointerPressed");
         string pointerReleased = ExtractMethod(runtimeInput, "HandlePointerReleased");
         string worldTargetCommand = ExtractBlockAfter(runtimeInput, "private static bool HandleWorldTargetCommand");
@@ -2632,7 +2632,7 @@ public sealed class RtsSelectionInputSystemTests
         int clearCommandCalls = 0;
         bool cameraDragging = true;
 
-        var context = new RtsSelectionRuntimeInputSystem.Context(
+        var context = new RtsSelectionRuntimeInputCompositionSystemHelper.Context(
             runtimeGameplayStateSystem: runtimeState,
             inputSystem: inputSystem,
             mainMenuPlayUi: null,
@@ -2708,7 +2708,7 @@ public sealed class RtsSelectionInputSystemTests
             oneShot: true,
             requiresWorldTarget: true);
 
-        RtsSelectionRuntimeInputSystem.Context context = CreateRuntimeInputContext(
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context context = CreateRuntimeInputContext(
             runtimeState,
             inputSystem,
             getCameraDragging: () => cameraDragging,
@@ -2750,7 +2750,7 @@ public sealed class RtsSelectionInputSystemTests
             oneShot: true,
             requiresWorldTarget: true);
 
-        RtsSelectionRuntimeInputSystem.Context context = CreateRuntimeInputContext(
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context context = CreateRuntimeInputContext(
             runtimeState,
             inputSystem,
             getCameraDragging: () => cameraDragging,
@@ -2792,7 +2792,7 @@ public sealed class RtsSelectionInputSystemTests
             oneShot: true,
             requiresWorldTarget: true);
 
-        RtsSelectionRuntimeInputSystem.Context context = CreateRuntimeInputContext(
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context context = CreateRuntimeInputContext(
             runtimeState,
             inputSystem,
             getCameraDragging: () => cameraDragging,
@@ -2835,7 +2835,7 @@ public sealed class RtsSelectionInputSystemTests
         int focusCalls = 0;
         bool cameraDragging = true;
 
-        RtsSelectionRuntimeInputSystem.Context context = CreateRuntimeInputContext(
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context context = CreateRuntimeInputContext(
             runtimeState,
             inputSystem,
             getCameraDragging: () => cameraDragging,
@@ -2887,7 +2887,7 @@ public sealed class RtsSelectionInputSystemTests
             transport,
             Time.frameCount,
             oneShot: true);
-        RtsSelectionRuntimeInputSystem.Context nonPassengerContext = CreateRuntimeInputContext(
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context nonPassengerContext = CreateRuntimeInputContext(
             runtimeState,
             inputSystem,
             getCameraDragging: () => cameraDragging,
@@ -2908,7 +2908,7 @@ public sealed class RtsSelectionInputSystemTests
             transport,
             Time.frameCount,
             oneShot: true);
-        RtsSelectionRuntimeInputSystem.Context passengerContext = CreateRuntimeInputContext(
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context passengerContext = CreateRuntimeInputContext(
             runtimeState,
             inputSystem,
             getCameraDragging: () => cameraDragging,
@@ -3195,7 +3195,7 @@ public sealed class RtsSelectionInputSystemTests
         return string.Empty;
     }
 
-    private static RtsSelectionRuntimeInputSystem.Context CreateRuntimeInputContext(
+    private static RtsSelectionRuntimeInputCompositionSystemHelper.Context CreateRuntimeInputContext(
         RuntimeGameplayStateSystem runtimeState,
         RtsSelectionInputCompositionSystemHelper inputSystem,
         Func<bool> getCameraDragging = null,
@@ -3205,7 +3205,7 @@ public sealed class RtsSelectionInputSystemTests
         Func<Vector2, bool> tryIssueScanOrder = null,
         Func<Vector2, bool> tryFocusUnit = null)
     {
-        return new RtsSelectionRuntimeInputSystem.Context(
+        return new RtsSelectionRuntimeInputCompositionSystemHelper.Context(
             runtimeGameplayStateSystem: runtimeState,
             inputSystem: inputSystem,
             mainMenuPlayUi: null,
@@ -3238,21 +3238,21 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     private static void InvokeRuntimePointerPressed(
-        RtsSelectionRuntimeInputSystem.Context context,
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context context,
         Vector2 pointerPosition)
     {
         InvokeRuntimePointerMethod("HandlePointerPressed", context, pointerPosition);
     }
 
     private static void InvokeRuntimePointerHeld(
-        RtsSelectionRuntimeInputSystem.Context context,
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context context,
         Vector2 pointerPosition)
     {
         InvokeRuntimePointerMethod("HandlePointerHeld", context, pointerPosition);
     }
 
     private static void InvokeRuntimePointerRelease(
-        RtsSelectionRuntimeInputSystem.Context context,
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context context,
         Vector2 pointerPosition)
     {
         InvokeRuntimePointerMethod("HandlePointerReleased", context, pointerPosition);
@@ -3260,10 +3260,10 @@ public sealed class RtsSelectionInputSystemTests
 
     private static void InvokeRuntimePointerMethod(
         string methodName,
-        RtsSelectionRuntimeInputSystem.Context context,
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context context,
         Vector2 pointerPosition)
     {
-        System.Reflection.MethodInfo method = typeof(RtsSelectionRuntimeInputSystem).GetMethod(
+        System.Reflection.MethodInfo method = typeof(RtsSelectionRuntimeInputCompositionSystemHelper).GetMethod(
             methodName,
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
         Assert.NotNull(method);

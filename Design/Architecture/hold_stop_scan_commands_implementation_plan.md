@@ -14,7 +14,7 @@ This document tracks the implementation of Hold, Stop, and Scan commands for all
 - `Design/Architecture/gameplay_solid_ecs_contract.md`
 - Current command code paths:
   - `Assets/Game/Scripts/Systems/SelectionUiCommandSystem.cs`
-  - `Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputSystem.cs`
+  - `Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs`
   - `Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs`
   - `Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs`
   - `Assets/Game/Scripts/Systems/RtsSelectionScanTargetModeCommandSystem.cs`
@@ -34,7 +34,7 @@ The final behavior must:
 - Store player command intent in ECS request buffers, not UI objects.
 - Process command behavior in command-specific ECS systems.
 - Publish HUD feedback through `SelectionHudFeedbackBoundary` and ECS feedback data.
-- Keep camera panning, pointer suppression, targeting modes, and world clicks separated through `RtsSelectionRuntimeInputSystem`.
+- Keep camera panning, pointer suppression, targeting modes, and world clicks separated through `RtsSelectionRuntimeInputCompositionSystemHelper`.
 - Prefer `ISystem`, Burst, and jobs for hot behavior. Managed boundary classes are allowed only at UI/runtime seams or as temporary compatibility while converting existing code.
 
 ## Architecture Contract
@@ -44,14 +44,14 @@ The final behavior must:
 - Do not introduce a broad command manager, gameplay facade, or controller.
 - Do not put gameplay state in HUD views, UI buttons, MonoBehaviours, or cached child UI paths.
 - Do not call selection or command mutation directly from `MenuView`, `MainMenuPlayUI`, or match overlay child views.
-- Do not reintroduce pointer-to-gameplay decisions into the runtime loop. Pointer orchestration belongs to `RtsSelectionRuntimeInputSystem`.
+- Do not reintroduce pointer-to-gameplay decisions into the runtime loop. Pointer orchestration belongs to `RtsSelectionRuntimeInputCompositionSystemHelper`.
 - Do not bypass the ECS feedback queue for HUD command mode/result feedback.
 - Do not change pathfinding constants, traversal costs, search limits, or path request scheduling as part of this feature.
 
 ### Ownership
 
 - UI command enqueueing belongs to `SelectionUiCommandSystem` and `ISelectionUiCommand`.
-- Pointer press/release, camera drag, active targeting modes, and world click routing belong to `RtsSelectionRuntimeInputSystem`, backed by `RtsSelectionInputStateComponent` and command intent buffers.
+- Pointer press/release, camera drag, active targeting modes, and world click routing belong to `RtsSelectionRuntimeInputCompositionSystemHelper`, backed by `RtsSelectionInputStateComponent` and command intent buffers.
 - Immediate selected-unit command mutations for Hold and Stop belong to `FocusedUnitCommandSystem` and/or `RtsSelectionImmediateSelectedUnitCommandSystem`.
 - Scan target-mode entry belongs to `RtsSelectionScanTargetModeCommandSystem`.
 - Scan execution, reveal writes, and scan feed entries belong to `ScanIntelCommandSystem` or narrower scan/intel systems.
@@ -327,7 +327,7 @@ Implementation checklist:
 
 Implementation notes:
 
-- `RtsSelectionRuntimeInputSystem.AllowsCameraPanDuringCommandMode` now treats `TacticalCommandMode.Scan` the same as Move and Attack for camera drag, so scan targeting no longer traps the camera.
+- `RtsSelectionRuntimeInputCompositionSystemHelper.AllowsCameraPanDuringCommandMode` now treats `TacticalCommandMode.Scan` the same as Move and Attack for camera drag, so scan targeting no longer traps the camera.
 - Runtime scan tap handling routes through `TryRequestScanOrder` and does not fall through to unit focus/selection when scan mode consumes the tap.
 - `RtsSelectionCommandResultFlushCompositionSystemHelper.ProcessScanCommandRequests` now clears one-shot Scan mode after rejected screen/world taps as well as accepted taps, including HUD command-mode cleanup and camera-drag reset.
 - `ScanIntelCommandSystem` already rejects unresolved scan target cells with `TargetOutOfBounds`; focused coverage confirms that behavior.

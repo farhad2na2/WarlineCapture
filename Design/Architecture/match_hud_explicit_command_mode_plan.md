@@ -16,7 +16,7 @@ This plan keeps the flow aligned with the current ECS request/result architectur
 
 ## Current State
 
-- `RtsSelectionRuntimeInputSystem.HandlePointerReleased` currently falls through to `QueueMoveOrder` when a click is not attack, transport, or focus.
+- `RtsSelectionRuntimeInputCompositionSystemHelper.HandlePointerReleased` currently falls through to `QueueMoveOrder` when a click is not attack, transport, or focus.
 - `RtsSelectionPointerTargetCommandCompositionSystemHelper.RequestMoveOrder` already queues and processes move command requests, but it is called by the automatic empty-click path.
 - `SelectionMoveCommandRequestSystem` already consumes `RtsSelectionCommandIntentKind.Move` requests and uses `SelectedMoveOrderCommandSystem` / `UnitMoveOrderSystem`.
 - `SelectionUiCommandSystem` exposes Select, Hold, Stop, Attack-target, etc., but has no explicit `RequestMoveCommandMode` yet.
@@ -136,7 +136,7 @@ Use the same state machine for:
    - On no selection, publish `NoSelection` feedback and do not arm.
    - On success, arm `TacticalCommandMode.Move`, show `Choose destination`, and suppress the button click release.
 6. [x] Gate map-click move issuing behind active command mode.
-   - Remove the empty-click `QueueMoveOrder` fallback from `RtsSelectionRuntimeInputSystem`.
+   - Remove the empty-click `QueueMoveOrder` fallback from `RtsSelectionRuntimeInputCompositionSystemHelper`.
    - When active mode is Move, issue the move order to the clicked destination.
    - Empty map click with no active command mode should not enqueue Move.
 7. [x] Clear command mode from command results.

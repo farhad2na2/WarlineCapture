@@ -122,7 +122,7 @@ Progress notes:
 - [x] Confirm no move/attack/scan command can be issued during the pre-curtain Match intro window.
 
 Progress notes:
-- 2026-06-08: `SelectionUiCommandSystem` and `RtsSelectionRuntimeInputSystem` now consume a cached ECS lock delegate from `MatchIntroTransitionComponent`. World pointer input, queued move orders, and command-button requests are ignored while the shell-owned intro lock is active. Because the curtain fade is sequenced inside `EnterMatchHud`, `UiShellFlowSystem` does not mark the intro complete until the fade step finishes.
+- 2026-06-08: `SelectionUiCommandSystem` and `RtsSelectionRuntimeInputCompositionSystemHelper` now consume a cached ECS lock delegate from `MatchIntroTransitionComponent`. World pointer input, queued move orders, and command-button requests are ignored while the shell-owned intro lock is active. Because the curtain fade is sequenced inside `EnterMatchHud`, `UiShellFlowSystem` does not mark the intro complete until the fade step finishes.
 - 2026-06-08: Inspected shell route and popup request flow. The intro lock is only injected into gameplay selection/command input systems, while shell route buttons and popup requests continue through `UiShellFlowSystem`; no separate escape/pause gameplay handler is currently gated by the intro lock.
 
 ### Phase 8: Validation And Tuning

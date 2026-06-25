@@ -131,7 +131,7 @@ Goal: finish deleting the legacy `RTSSelectionSystem` source/type without replac
    - Confirm no new compile errors or runtime `ObjectDisposedException` regressions before extraction continues.
 
 2. Complete: Extract runtime input tick
-   - Move queued move-order consumption, normal pointer press/hold/release branching, UI click suppression, selection-hold triggering, live rectangle diffing, and rectangle request queueing into `RtsSelectionRuntimeInputSystem`.
+   - Move queued move-order consumption, normal pointer press/hold/release branching, UI click suppression, selection-hold triggering, live rectangle diffing, and rectangle request queueing into `RtsSelectionRuntimeInputCompositionSystemHelper`.
    - Keep `RTSSelectionSystem` as a temporary context builder/delegate only for this input slice.
 
 3. Complete: Extract camera runtime tick
@@ -198,7 +198,7 @@ Goal: delete the remaining selection context-construction boundary without repla
    - Startup should pass concrete camera/request/runtime dependencies, not a broad selection context object.
 
 7. Complete: Extract input context builder
-   - Move `CreateRuntimeInputContext` into `RtsSelectionRuntimeInputSystem` or a narrow ECS-style context builder.
+   - Move `CreateRuntimeInputContext` into `RtsSelectionRuntimeInputCompositionSystemHelper` or a narrow ECS-style context builder.
    - Pointer input should depend on input state, runtime state, camera delegates, and command request systems only.
 
 8. Complete: Extract command-result context builder

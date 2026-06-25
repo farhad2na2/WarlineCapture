@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 using CampRequestFailure = BuildingUiCommandBoundary.CampRequestFailure;
-using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
+using ProductionTransportMode = BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode;
 
 internal sealed class BuildingProductionRequestBoundary
 {
@@ -70,11 +70,11 @@ internal sealed class BuildingProductionRequestBoundary
         public readonly IReadOnlyList<GameObject> UnitSpawnPrefabs;
         public readonly IReadOnlyDictionary<string, GameObject> UnitSpawnPrefabsByKey;
         public readonly int ResourceDollars;
-        public readonly BuildingProductionSystem ProductionSystem;
-        public readonly BuildingProductionSystem.QueueContext ProductionQueueContext;
+        public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
+        public readonly BuildingProductionQueueCompositionSystemHelper.QueueContext ProductionQueueContext;
         public readonly BuildingRunwaySystem RunwaySystem;
         public readonly GetProductionPrefabDelegate GetProductionPrefab;
-        public readonly BuildingProductionSystem.TryGetPrefabLocalBoundsDelegate TryGetPrefabLocalBounds;
+        public readonly BuildingProductionQueueCompositionSystemHelper.TryGetPrefabLocalBoundsDelegate TryGetPrefabLocalBounds;
         public readonly BeginPlacementForConfiguredSpawnableDelegate BeginPlacementForConfiguredSpawnable;
         public readonly TrySpendDollarsDelegate TrySpendDollars;
         public readonly RefundDollarsDelegate RefundDollars;
@@ -99,11 +99,11 @@ internal sealed class BuildingProductionRequestBoundary
             IReadOnlyList<GameObject> unitSpawnPrefabs,
             IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
             int resourceDollars,
-            BuildingProductionSystem productionSystem,
-            BuildingProductionSystem.QueueContext productionQueueContext,
+            BuildingProductionQueueCompositionSystemHelper productionSystem,
+            BuildingProductionQueueCompositionSystemHelper.QueueContext productionQueueContext,
             BuildingRunwaySystem runwaySystem,
             GetProductionPrefabDelegate getProductionPrefab,
-            BuildingProductionSystem.TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds,
+            BuildingProductionQueueCompositionSystemHelper.TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds,
             BeginPlacementForConfiguredSpawnableDelegate beginPlacementForConfiguredSpawnable,
             TrySpendDollarsDelegate trySpendDollars,
             RefundDollarsDelegate refundDollars,
@@ -629,7 +629,7 @@ internal sealed class BuildingProductionRequestBoundary
         if (building == null || spawnUnitPrefab == null)
             return false;
 
-        BuildingProductionSystem.ProductionTransportSettings transportSettings = context.ProductionSystem.ResolveProductionTransportSettings(
+        BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings transportSettings = context.ProductionSystem.ResolveProductionTransportSettings(
             spawnUnitPrefab,
             context.UnitSpawnPrefabs,
             context.UnitSpawnPrefabsByKey,
@@ -642,7 +642,7 @@ internal sealed class BuildingProductionRequestBoundary
         Context context,
         RuntimeBuildingEntity building,
         GameObject spawnUnitPrefab,
-        BuildingProductionSystem.ProductionTransportSettings transportSettings,
+        BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings transportSettings,
         bool logReason)
     {
         if (building == null || spawnUnitPrefab == null)
@@ -654,7 +654,7 @@ internal sealed class BuildingProductionRequestBoundary
     private static bool CanQueueTransportForAnyProducer(
         Context context,
         GameObject spawnUnitPrefab,
-        BuildingProductionSystem.ProductionTransportSettings transportSettings,
+        BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings transportSettings,
         bool logReason)
     {
         if (transportSettings.TransportPrefab == null)
@@ -812,7 +812,7 @@ internal sealed class BuildingProductionRequestBoundary
         if (unitPrefab == null || context.RuntimeBuildings == null || context.GetProductionPrefab == null)
             return false;
 
-        BuildingProductionSystem.ProductionTransportSettings transportSettings =
+        BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings transportSettings =
             ResolveProductionTransportSettings(context, unitPrefab);
         if (!CanQueueTransportForAnyProducer(context, unitPrefab, transportSettings, false))
             return false;
@@ -1167,7 +1167,7 @@ internal sealed class BuildingProductionRequestBoundary
         if (unitPrefab == null || context.RuntimeBuildings == null || context.GetProductionPrefab == null)
             return false;
 
-        BuildingProductionSystem.ProductionTransportSettings transportSettings =
+        BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings transportSettings =
             ResolveProductionTransportSettings(context, unitPrefab);
         if (!CanQueueTransportForAnyProducer(context, unitPrefab, transportSettings, false))
             return false;
@@ -1192,7 +1192,7 @@ internal sealed class BuildingProductionRequestBoundary
         return false;
     }
 
-    private static BuildingProductionSystem.ProductionTransportSettings ResolveProductionTransportSettings(
+    private static BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings ResolveProductionTransportSettings(
         Context context,
         GameObject unitPrefab)
     {
@@ -1369,7 +1369,7 @@ internal sealed class BuildingProductionRequestBoundary
         if (producerBuilding == null)
             return Vector3.zero;
 
-        BuildingProductionSystem.ProductionTransportSettings transportSettings = context.ProductionSystem.ResolveProductionTransportSettings(
+        BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings transportSettings = context.ProductionSystem.ResolveProductionTransportSettings(
             producedUnitPrefab,
             context.UnitSpawnPrefabs,
             context.UnitSpawnPrefabsByKey,

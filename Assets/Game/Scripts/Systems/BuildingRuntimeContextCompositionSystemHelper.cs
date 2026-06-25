@@ -231,7 +231,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
     {
         return new BuildingRuntimeContextSystem.RuntimeSource(
             source.RuntimeBuildingSystem,
-            source.BuildingProductionSystem,
+            source.BuildingProductionQueueCompositionSystemHelper,
             source.BuildingProductionSlotUtilitySystemHelper,
             source.BuildingSpawnPrefabSystem,
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateBuildingSpawnPrefabContext(

@@ -586,7 +586,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         BuildingProductionRequestBoundary.Context requestContext = CreateProductionRequestContext(
             new Dictionary<int, RuntimeBuildingEntity>(),
             requestSystem,
-            new BuildingProductionSystem(),
+            new BuildingProductionQueueCompositionSystemHelper(),
             Array.Empty<GameObject>(),
             new Dictionary<GameObject, BuildingDefinition> { { buildingPrefab, buildingDefinition } },
             _ => { beganPlacement = true; return true; },
@@ -626,7 +626,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
 
         RuntimeBuildingEntity producer = CreateRuntimeProducerBuilding(7, "Vehicle Factory", vehicle);
         var runtimeBuildings = new Dictionary<int, RuntimeBuildingEntity> { { producer.Id, producer } };
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         var requestSystem = new BuildingProductionRequestBoundary();
         int dollars = 100000;
         BuildingProductionRequestBoundary.Context requestContext = CreateProductionRequestContext(
@@ -1240,7 +1240,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
     private static BuildingProductionRequestBoundary.Context CreateProductionRequestContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         BuildingProductionRequestBoundary requestSystem,
-        BuildingProductionSystem productionSystem,
+        BuildingProductionQueueCompositionSystemHelper productionSystem,
         IReadOnlyList<GameObject> unitPrefabs,
         IReadOnlyDictionary<GameObject, BuildingDefinition> configuredDefinitionsByPrefab,
         BuildingProductionRequestBoundary.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
@@ -1249,7 +1249,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         EntityManager entityManager = default)
     {
         IReadOnlyDictionary<string, GameObject> unitPrefabsByKey = new Dictionary<string, GameObject>();
-        BuildingProductionSystem.QueueContext queueContext = new(
+        BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
             unitPrefabs,
             unitPrefabsByKey,
             new BuildingProductionSlotUtilitySystemHelper(),
@@ -1336,7 +1336,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
     private static BuildingUiQuerySystem.Context CreateProductionQueryContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         BuildingProductionRequestBoundary requestSystem,
-        BuildingProductionSystem productionSystem,
+        BuildingProductionQueueCompositionSystemHelper productionSystem,
         Func<BuildingProductionRequestBoundary.Context> createRequestContext,
         EntityManager entityManager)
     {

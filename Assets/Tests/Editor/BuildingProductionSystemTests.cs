@@ -10,7 +10,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public sealed class BuildingProductionSystemTests
+public sealed class BuildingProductionQueueCompositionSystemHelperTests
 {
     public static void RunBuildingGameplayCompositionRuntimeSmokeValidation()
     {
@@ -19,7 +19,7 @@ public sealed class BuildingProductionSystemTests
         try
         {
             World.DefaultGameObjectInjectionWorld = world;
-            var tests = new BuildingProductionSystemTests();
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
             tests.BuildingGameplayComposition_InitializesRuntimeDollarsFromInitialUnitsConfig();
             tests.BuildingGameplayComposition_CampBuildingRequestStartsConfiguredPlacement();
             Debug.Log("[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed");
@@ -43,7 +43,7 @@ public sealed class BuildingProductionSystemTests
     {
         try
         {
-            var tests = new BuildingProductionSystemTests();
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
             tests.FocusNewestPlayerProducedUnit_RequestsCameraMoveToNewestSpawn();
             tests.FocusNewestPlayerProducedUnit_IgnoresWhenBuildDrawerClosed();
             tests.FocusNewestPlayerProducedUnit_AllowsNeutralOrUnownedProducerOutput();
@@ -69,7 +69,7 @@ public sealed class BuildingProductionSystemTests
     {
         try
         {
-            var tests = new BuildingProductionSystemTests();
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
             tests.ResolveProductionDurationSeconds_UsesUnitAuthoringDuration();
             tests.ResolveProductionTransportSettings_UsesConfiguredTransportAuthoring();
             tests.ResolveProductionTransportSettings_DefaultsLargeVehicleToPlaneTransport();
@@ -88,7 +88,7 @@ public sealed class BuildingProductionSystemTests
     {
         try
         {
-            var tests = new BuildingProductionSystemTests();
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
             tests.PruneProducedUnits_RemovesDeadUnitsAndClearsDeadSlots();
             Debug.Log("[ProducedUnitSourceKeyStateValidation] result=Passed tests=1");
             ValidationExit.Passed();
@@ -105,7 +105,7 @@ public sealed class BuildingProductionSystemTests
     {
         try
         {
-            var tests = new BuildingProductionSystemTests();
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
             tests.BuildingUiProductionCommandRequest_QueuesSelectedBuildingUnitAndWritesResult();
             tests.BuildingUiProductionCommandRequest_RejectsMissingActiveBuilding();
             tests.BuildingUiProductionCommandRequest_RejectsStaleFrame();
@@ -1269,7 +1269,7 @@ public sealed class BuildingProductionSystemTests
     public void InitializePendingProduction_SetsReadyTimeAndTransportFields()
     {
         var pending = new TestPendingProduction();
-        var system = new BuildingProductionSystem();
+        var system = new BuildingProductionQueueCompositionSystemHelper();
 
         system.InitializePendingProduction(
             pending,
@@ -1282,7 +1282,7 @@ public sealed class BuildingProductionSystemTests
             transportArrivalSeconds: 3f,
             transportHoldForNextReadySeconds: 5f,
             transportMaxConcurrent: 2,
-            transportMode: BuildingProductionSystem.ProductionTransportMode.Plane,
+            transportMode: BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Plane,
             transportRequiresAirportRunway: true);
 
         Assert.AreEqual(2, pending.ProductionIndex);
@@ -1292,7 +1292,7 @@ public sealed class BuildingProductionSystemTests
         Assert.AreEqual(3f, pending.TransportArrivalSeconds);
         Assert.AreEqual(5f, pending.TransportHoldForNextReadySeconds);
         Assert.AreEqual(2, pending.TransportMaxConcurrent);
-        Assert.AreEqual(BuildingProductionSystem.ProductionTransportMode.Plane, pending.TransportMode);
+        Assert.AreEqual(BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Plane, pending.TransportMode);
         Assert.IsTrue(pending.TransportRequiresAirportRunway);
     }
 
@@ -1527,7 +1527,7 @@ public sealed class BuildingProductionSystemTests
     public void TryFindFirstFriendlyProducerBuilding_PrefersPlayerProducerOverNeutralFallback()
     {
         var requestSystem = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Attack Helicopter");
         try
         {
@@ -1573,7 +1573,7 @@ public sealed class BuildingProductionSystemTests
     public void TryFindFirstFriendlyProducerBuilding_AllowsNeutralFallbackWhenNoPlayerProducerExists()
     {
         var requestSystem = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Attack Helicopter");
         try
         {
@@ -1613,7 +1613,7 @@ public sealed class BuildingProductionSystemTests
     {
         using World world = new("BuildingUiProductionCommandRequestTest");
         var requestSystem = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Unit");
         try
         {
@@ -1667,7 +1667,7 @@ public sealed class BuildingProductionSystemTests
     {
         using World world = new("BuildingUiProductionCommandMissingActiveBuildingTest");
         var requestSystem = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Unit");
         try
         {
@@ -1702,7 +1702,7 @@ public sealed class BuildingProductionSystemTests
     {
         using World world = new("BuildingUiProductionCommandStaleFrameTest");
         var requestSystem = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Unit");
         try
         {
@@ -1748,7 +1748,7 @@ public sealed class BuildingProductionSystemTests
     {
         using World world = new("BuildingUiProductionCommandUnavailablePrefabTest");
         var requestSystem = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject contextUnitPrefab = new("Context Unit");
         try
         {
@@ -1793,7 +1793,7 @@ public sealed class BuildingProductionSystemTests
     {
         using World world = new("BuildingUiProductionCommandQueueFullTest");
         var requestSystem = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Unit");
         try
         {
@@ -1840,7 +1840,7 @@ public sealed class BuildingProductionSystemTests
     {
         using World world = new("BuildingUiProductionCommandCancelProductionTest");
         var requestSystem = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Unit");
         try
         {
@@ -1949,7 +1949,7 @@ public sealed class BuildingProductionSystemTests
     {
         using World world = new("BuildingUiCampItemCommandUnitProductionTest");
         var requestSystem = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Vehicle");
         try
         {
@@ -1999,7 +1999,7 @@ public sealed class BuildingProductionSystemTests
     {
         using World world = new("BuildingRuntimeBoundaryQueuedUiProductionTest");
         var requestSystem = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         var boundarySystem = new BuildingRuntimeBoundarySystem();
         var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
         GameObject unitPrefab = new("Runtime Boundary Unit");
@@ -2070,7 +2070,7 @@ public sealed class BuildingProductionSystemTests
     {
         using World world = new("BuildingRuntimeBoundaryQueuedCampItemTest");
         var requestSystem = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         var boundarySystem = new BuildingRuntimeBoundarySystem();
         var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
         GameObject unitPrefab = new("Runtime Boundary Vehicle");
@@ -2172,7 +2172,7 @@ public sealed class BuildingProductionSystemTests
         BuildingRuntimeQuerySystem.Context runtimeQueryContext = CreateRuntimeQueryContext(
             runtimeBuildings,
             em,
-            new BuildingProductionSystem(),
+            new BuildingProductionQueueCompositionSystemHelper(),
             boundaryEntity);
 
         Assert.AreEqual(
@@ -2196,7 +2196,7 @@ public sealed class BuildingProductionSystemTests
         using World world = new("BuildingRuntimeBoundary_ProductionSummaryUsesProducedUnitReadModel");
         EntityManager em = world.EntityManager;
         var requestSystem = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         var boundarySystem = new BuildingRuntimeBoundarySystem();
         var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
         var definitionSystem = new BuildingDefinitionPrefabSystemHelper();
@@ -2281,7 +2281,7 @@ public sealed class BuildingProductionSystemTests
     {
         using World world = new("TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy");
         EntityManager em = world.EntityManager;
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Unit_Inf_Regular");
         try
         {
@@ -2319,7 +2319,7 @@ public sealed class BuildingProductionSystemTests
                     }
                 }
             };
-            BuildingProductionSystem.QueueContext queueContext = new(
+            BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
                 new[] { unitPrefab },
                 new Dictionary<string, GameObject>(),
                 new BuildingProductionSlotUtilitySystemHelper(),
@@ -2356,7 +2356,7 @@ public sealed class BuildingProductionSystemTests
             UnitGridAuthoring authoring = prefab.AddComponent<UnitGridAuthoring>();
             SetAuthoringField(authoring, "productionDurationSeconds", 12.5f);
 
-            BuildingProductionSystem system = CreateProductionSystem();
+            BuildingProductionQueueCompositionSystemHelper system = CreateProductionSystem();
 
             Assert.AreEqual(12.5f, system.ResolveProductionDurationSeconds(prefab), 0.0001f);
         }
@@ -2380,8 +2380,8 @@ public sealed class BuildingProductionSystemTests
             SetAuthoringField(transportAuthoring, "productionTransportHoldForNextReadySeconds", 3f);
             SetAuthoringField(transportAuthoring, "productionTransportMaxConcurrent", 4);
 
-            BuildingProductionSystem system = CreateProductionSystem();
-            BuildingProductionSystem.ProductionTransportSettings settings = system.ResolveProductionTransportSettings(
+            BuildingProductionQueueCompositionSystemHelper system = CreateProductionSystem();
+            BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings settings = system.ResolveProductionTransportSettings(
                 producedPrefab,
                 new[] { transportPrefab },
                 new Dictionary<string, GameObject> { ["unit_veh_helicopter_transport"] = transportPrefab },
@@ -2391,7 +2391,7 @@ public sealed class BuildingProductionSystemTests
             Assert.AreEqual(8f, settings.ArrivalSeconds, 0.0001f);
             Assert.AreEqual(3f, settings.HoldForNextReadySeconds, 0.0001f);
             Assert.AreEqual(4, settings.MaxConcurrent);
-            Assert.AreEqual(BuildingProductionSystem.ProductionTransportMode.Helicopter, settings.Mode);
+            Assert.AreEqual(BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Helicopter, settings.Mode);
             Assert.IsFalse(settings.RequiresAirportRunway);
         }
         finally
@@ -2418,8 +2418,8 @@ public sealed class BuildingProductionSystemTests
                 ["unit_veh_helicopter_transport"] = helicopterPrefab,
                 ["unit_veh_plane_transport"] = planePrefab
             };
-            BuildingProductionSystem system = CreateProductionSystem();
-            BuildingProductionSystem.ProductionTransportSettings settings = system.ResolveProductionTransportSettings(
+            BuildingProductionQueueCompositionSystemHelper system = CreateProductionSystem();
+            BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings settings = system.ResolveProductionTransportSettings(
                 producedPrefab,
                 new[] { helicopterPrefab, planePrefab },
                 prefabsByKey,
@@ -2430,7 +2430,7 @@ public sealed class BuildingProductionSystemTests
                 });
 
             Assert.AreSame(planePrefab, settings.TransportPrefab);
-            Assert.AreEqual(BuildingProductionSystem.ProductionTransportMode.Plane, settings.Mode);
+            Assert.AreEqual(BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Plane, settings.Mode);
             Assert.IsTrue(settings.RequiresAirportRunway);
             Assert.AreEqual(1, settings.MaxConcurrent);
         }
@@ -2457,7 +2457,7 @@ public sealed class BuildingProductionSystemTests
             SetAuthoringField(airAuthoring, "productionTransportMaxConcurrent", 1);
             SetAuthoringField(airAuthoring, "productionTransportRequiresAirportRunway", true);
 
-            BuildingProductionSystem productionSystem = CreateProductionSystem();
+            BuildingProductionQueueCompositionSystemHelper productionSystem = CreateProductionSystem();
             BuildingProductionTransportSystem transportSystem = new();
             transportSystem.SetRuntimeRoot(runtimeRoot.transform);
 
@@ -2505,8 +2505,8 @@ public sealed class BuildingProductionSystemTests
                 TransportPrefab = transportPrefab
             };
 
-            var system = new BuildingProductionSystem();
-            BuildingProductionSystem.PendingProductionProgress progress = system.GetProgress(pending, 9.9f, true);
+            var system = new BuildingProductionQueueCompositionSystemHelper();
+            BuildingProductionQueueCompositionSystemHelper.PendingProductionProgress progress = system.GetProgress(pending, 9.9f, true);
 
             Assert.AreEqual(10f, progress.DurationSeconds);
             Assert.AreEqual(0.1f, progress.RemainingSeconds, 0.0001f);
@@ -2532,7 +2532,7 @@ public sealed class BuildingProductionSystemTests
                 TransportArrivalSeconds = 5f
             };
 
-            var system = new BuildingProductionSystem();
+            var system = new BuildingProductionQueueCompositionSystemHelper();
 
             Assert.AreEqual(15f, system.GetTransportLaunchAt(pending));
             Assert.IsFalse(system.ShouldLaunchTransport(pending, 14.9f));
@@ -2557,7 +2557,7 @@ public sealed class BuildingProductionSystemTests
         var third = new TestPendingProduction { StartedAt = 13f, ReadyAt = 18f };
         var pending = new List<TestPendingProduction> { first, second, third };
 
-        var system = new BuildingProductionSystem();
+        var system = new BuildingProductionQueueCompositionSystemHelper();
         system.RebuildPendingProductionTimeline(pending, now: 15f, preserveActiveProgress: true);
 
         Assert.AreEqual(10f, first.StartedAt, 0.0001f);
@@ -2575,9 +2575,9 @@ public sealed class BuildingProductionSystemTests
         var later = new TestPendingProduction { StartedAt = 0f, ReadyAt = 5f };
         var pending = new List<TestPendingProduction> { next, later };
 
-        var system = new BuildingProductionSystem();
+        var system = new BuildingProductionQueueCompositionSystemHelper();
         system.RebuildPendingProductionTimeline(pending, now: 50f, preserveActiveProgress: false);
-        BuildingProductionSystem.PendingProductionProgress progress = system.GetProgress(next, 50f, capTransportProgress: false);
+        BuildingProductionQueueCompositionSystemHelper.PendingProductionProgress progress = system.GetProgress(next, 50f, capTransportProgress: false);
 
         Assert.AreEqual(50f, next.StartedAt, 0.0001f);
         Assert.AreEqual(60f, next.ReadyAt, 0.0001f);
@@ -2594,7 +2594,7 @@ public sealed class BuildingProductionSystemTests
             ReadyAt = 20f
         };
 
-        var system = new BuildingProductionSystem();
+        var system = new BuildingProductionQueueCompositionSystemHelper();
 
         Assert.IsFalse(system.IsReady(pending, 19.9f));
         Assert.IsTrue(system.IsReady(pending, 20f));
@@ -2605,7 +2605,7 @@ public sealed class BuildingProductionSystemTests
     [Test]
     public void PruneProducedUnits_RemovesDeadUnitsAndClearsDeadSlots()
     {
-        using World world = new("BuildingProductionSystemTests");
+        using World world = new("BuildingProductionQueueCompositionSystemHelperTests");
         EntityManager entityManager = world.EntityManager;
         Entity alive = entityManager.CreateEntity(typeof(UnitHealth));
         entityManager.SetComponentData(alive, new UnitHealth { Current = 5, Max = 10 });
@@ -2626,7 +2626,7 @@ public sealed class BuildingProductionSystemTests
 
         try
         {
-            var system = new BuildingProductionSystem();
+            var system = new BuildingProductionQueueCompositionSystemHelper();
             system.PruneProducedUnits(producedUnits, slots, producedUnitPrefabs, entityManager, producedUnitSourceKeys);
 
             Assert.AreEqual(1, producedUnits.Count);
@@ -2666,7 +2666,7 @@ public sealed class BuildingProductionSystemTests
             };
             var pending = new List<TestPendingProduction> { soon, ready, later };
 
-            var system = new BuildingProductionSystem();
+            var system = new BuildingProductionQueueCompositionSystemHelper();
 
             Assert.AreSame(ready, system.FindNextReadyTransportPending(pending, transportPrefab, 10f));
             Assert.AreSame(soon, system.FindNextSoonTransportPending(pending, transportPrefab, 10f, 4f));
@@ -2685,7 +2685,7 @@ public sealed class BuildingProductionSystemTests
         var third = new TestPendingProduction();
         var pending = new List<TestPendingProduction> { first, second, third };
 
-        var system = new BuildingProductionSystem();
+        var system = new BuildingProductionQueueCompositionSystemHelper();
 
         Assert.IsTrue(system.RemovePendingProduction(pending, second));
         Assert.AreEqual(2, pending.Count);
@@ -2776,7 +2776,7 @@ public sealed class BuildingProductionSystemTests
         }
     }
 
-    private sealed class TestPendingProduction : BuildingProductionSystem.IPendingProduction
+    private sealed class TestPendingProduction : BuildingProductionQueueCompositionSystemHelper.IPendingProduction
     {
         public int ProductionIndex { get; set; }
         public GameObject Prefab { get; set; }
@@ -2787,7 +2787,7 @@ public sealed class BuildingProductionSystemTests
         public float TransportArrivalSeconds { get; set; }
         public float TransportHoldForNextReadySeconds { get; set; }
         public int TransportMaxConcurrent { get; set; }
-        public BuildingProductionSystem.ProductionTransportMode TransportMode { get; set; }
+        public BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode TransportMode { get; set; }
         public bool TransportRequiresAirportRunway { get; set; }
     }
 
@@ -2798,9 +2798,9 @@ public sealed class BuildingProductionSystemTests
         field.SetValue(authoring, value);
     }
 
-    private static BuildingProductionSystem CreateProductionSystem()
+    private static BuildingProductionQueueCompositionSystemHelper CreateProductionSystem()
     {
-        var system = new BuildingProductionSystem();
+        var system = new BuildingProductionQueueCompositionSystemHelper();
         system.ConfigureUnitProductionMetadataResolver(BuildingProductionUnitMetadataPrefabSystemHelper.TryGetMetadata);
         return system;
     }
@@ -2849,8 +2849,8 @@ public sealed class BuildingProductionSystemTests
         BuildingProductionRequestBoundary.RefundDollarsDelegate refundDollars,
         BuildingProductionRequestBoundary.SetActivePlacementCostDelegate setActivePlacementCost)
     {
-        var productionSystem = new BuildingProductionSystem();
-        BuildingProductionSystem.QueueContext queueContext = new(
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
+        BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
             unitPrefabs,
             unitPrefabsByKey,
             new BuildingProductionSlotUtilitySystemHelper(),
@@ -2888,13 +2888,13 @@ public sealed class BuildingProductionSystemTests
 
     private static BuildingProductionRequestBoundary.Context CreateProducerSelectionContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
-        BuildingProductionSystem productionSystem,
+        BuildingProductionQueueCompositionSystemHelper productionSystem,
         GameObject unitPrefab,
         EntityManager entityManager = default,
         BuildingProductionRequestBoundary.TryQueuePlayerUnitDelegate tryQueuePlayerUnit = null)
     {
         var unitPrefabs = new List<GameObject> { unitPrefab };
-        BuildingProductionSystem.QueueContext queueContext = new(
+        BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
             unitPrefabs,
             new Dictionary<string, GameObject>(),
             new BuildingProductionSlotUtilitySystemHelper(),
@@ -2939,7 +2939,7 @@ public sealed class BuildingProductionSystemTests
     private static BuildingRuntimeQuerySystem.Context CreateRuntimeQueryContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         EntityManager entityManager,
-        BuildingProductionSystem productionSystem,
+        BuildingProductionQueueCompositionSystemHelper productionSystem,
         Entity runtimeBoundaryEntity = default)
     {
         bool TryGetEntityManager(out EntityManager em)

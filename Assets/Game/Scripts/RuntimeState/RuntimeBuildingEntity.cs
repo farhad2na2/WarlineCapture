@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
+using ProductionTransportMode = BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode;
 
 internal sealed class RuntimeBuildingEntity : BuildingCombatUtilitySystemHelper.IRuntimeBuildingVisualState, FactionResourceSystem.IResourceBuilding
 {
@@ -45,7 +45,7 @@ internal sealed class RuntimeBuildingEntity : BuildingCombatUtilitySystemHelper.
         public PendingDropVisual ActiveDrop;
     }
 
-    internal sealed class PendingProduction : BuildingProductionSystem.IPendingProduction
+    internal sealed class PendingProduction : BuildingProductionQueueCompositionSystemHelper.IPendingProduction
     {
         public int ProductionIndex { get; set; }
         public GameObject Prefab { get; set; }

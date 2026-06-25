@@ -10,7 +10,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Camera WorldCamera;
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
-        public readonly BuildingProductionSystem ProductionSystem;
+        public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
         public readonly BuildingProductionUpdateSystem ProductionUpdateSystem;
         public readonly BuildingProductionTransportSystem TransportSystem;
         public readonly BuildingProductionTransportBridgeSystem TransportBridgeSystem;
@@ -51,7 +51,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Camera worldCamera,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
-            BuildingProductionSystem productionSystem,
+            BuildingProductionQueueCompositionSystemHelper productionSystem,
             BuildingProductionUpdateSystem productionUpdateSystem,
             BuildingProductionTransportSystem transportSystem,
             BuildingProductionTransportBridgeSystem transportBridgeSystem,
@@ -134,7 +134,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         Camera worldCamera,
         BuildingDefinitionPrefabSystemHelper definitionSystem,
-        BuildingProductionSystem productionSystem,
+        BuildingProductionQueueCompositionSystemHelper productionSystem,
         BuildingProductionUpdateSystem productionUpdateSystem,
         BuildingProductionTransportSystem transportSystem,
         BuildingProductionTransportBridgeSystem transportBridgeSystem,
@@ -297,9 +297,9 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             source.DefinitionSystem.TryGetConfiguredUnitReadModel);
     }
 
-    public BuildingProductionSystem.QueueContext CreateProductionQueueContext(Source source)
+    public BuildingProductionQueueCompositionSystemHelper.QueueContext CreateProductionQueueContext(Source source)
     {
-        return new BuildingProductionSystem.QueueContext(
+        return new BuildingProductionQueueCompositionSystemHelper.QueueContext(
             source.DefinitionSystem.ConfiguredUnitSpawnPrefabs,
             source.DefinitionSystem.UnitSpawnPrefabsByKey,
             source.ProductionSlotSystem,
@@ -307,7 +307,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
             source.SpawnContext.TryGetRuntimeBoundaryEntity == null
                 ? null
-                : (BuildingProductionSystem.TryGetRuntimeBoundaryEntityDelegate)(
+                : (BuildingProductionQueueCompositionSystemHelper.TryGetRuntimeBoundaryEntityDelegate)(
                     (EntityManager em, out Entity entity) => source.SpawnContext.TryGetRuntimeBoundaryEntity(em, out entity)));
     }
 

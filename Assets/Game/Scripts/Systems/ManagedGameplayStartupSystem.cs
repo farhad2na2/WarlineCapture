@@ -145,7 +145,7 @@ internal sealed class ManagedGameplayStartupSystem
         System.Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
         System.Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab,
         System.Func<GameObject, Sprite> resolveSelectionCardPortraitSpriteFromPrefab,
-        BuildingProductionSystem.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata,
+        BuildingProductionQueueCompositionSystemHelper.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata,
         BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate prepareTransportDropVisual,
         System.Func<GameObject, string> resolveSpawnableLookupKey,
         BuildingDefinitionPrefabSystemHelper.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata,

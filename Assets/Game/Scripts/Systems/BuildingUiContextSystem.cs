@@ -10,7 +10,7 @@ internal sealed class BuildingUiContextSystem
         public readonly RuntimeResourceSystem RuntimeResourceSystem;
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
-        public readonly BuildingProductionSystem ProductionSystem;
+        public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
         public readonly BuildingProductionRequestBoundary ProductionRequestSystem;
         public readonly Func<BuildingProductionRequestBoundary.Context> CreateProductionRequestContext;
         public readonly Func<int?> GetActiveBuildingId;
@@ -42,7 +42,7 @@ internal sealed class BuildingUiContextSystem
             RuntimeResourceSystem runtimeResourceSystem,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
-            BuildingProductionSystem productionSystem,
+            BuildingProductionQueueCompositionSystemHelper productionSystem,
             BuildingProductionRequestBoundary productionRequestSystem,
             Func<BuildingProductionRequestBoundary.Context> createProductionRequestContext,
             Func<int?> getActiveBuildingId,
@@ -107,7 +107,7 @@ internal sealed class BuildingUiContextSystem
         RuntimeResourceSystem runtimeResourceSystem,
         BuildingDefinitionPrefabSystemHelper definitionSystem,
         RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
-        BuildingProductionSystem productionSystem,
+        BuildingProductionQueueCompositionSystemHelper productionSystem,
         BuildingProductionRequestBoundary productionRequestSystem,
         Func<BuildingProductionRequestBoundary.Context> createProductionRequestContext,
         Func<int?> getActiveBuildingId,

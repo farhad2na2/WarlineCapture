@@ -12,7 +12,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
         using var world = new World("BuildDrawerPlacementThenProduction_UsesRuntimeBoundaryData");
         EntityManager em = world.EntityManager;
         var requestBoundary = new BuildingProductionRequestBoundary();
-        var productionSystem = new BuildingProductionSystem();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject buildingPrefab = new("PlayMode Barracks");
         GameObject unitPrefab = new("PlayMode Rifleman");
 
@@ -130,7 +130,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
         BuildingDefinition placementDefinition,
         GameObject buildingPrefab,
         GameObject unitPrefab,
-        BuildingProductionSystem productionSystem,
+        BuildingProductionQueueCompositionSystemHelper productionSystem,
         EntityManager em,
         BuildingProductionRequestBoundary.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
         BuildingProductionRequestBoundary.TrySpendDollarsDelegate trySpendDollars,
@@ -139,7 +139,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
     {
         var unitPrefabs = new List<GameObject> { unitPrefab };
         var unitPrefabsByKey = new Dictionary<string, GameObject>();
-        BuildingProductionSystem.QueueContext queueContext = new(
+        BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
             unitPrefabs,
             unitPrefabsByKey,
             new BuildingProductionSlotUtilitySystemHelper(),

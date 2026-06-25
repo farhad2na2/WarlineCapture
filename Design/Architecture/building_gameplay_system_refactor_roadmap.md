@@ -448,7 +448,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Run building production/resource tests.
    - Run bootstrap/menu playmode smoke.
    - Passed `GameplayArchitectureContractTests.RunBuildingGameplayArchitectureBatchValidation` in Unity batchmode.
-   - Passed `BuildingRuntimeBoundaryValidationTests`, `BuildingPlacementValidationUtilitySystemHelperTests`, `BuildingProductionSystemTests`, `FactionResourceSystemTests`, and `BaseBreachValidationTests` in Unity edit-mode validation.
+   - Passed `BuildingRuntimeBoundaryValidationTests`, `BuildingPlacementValidationUtilitySystemHelperTests`, `BuildingProductionQueueCompositionSystemHelperTests`, `FactionResourceSystemTests`, and `BaseBreachValidationTests` in Unity edit-mode validation.
    - Resource validation exposed and fixed destroyed storage being counted in `FactionResourceSystem`.
    - Run one focused runtime load/play-button smoke with buildings, initial units, production, and selection.
    - Passed `RuntimeFpsPlayButtonProbe.Run` in Unity batchmode without `-nographics`: result completed, Game button clicked, runtime initialized, AI build/production/squad logs advanced, units spawned, average sample FPS 309.0. The earlier `-nographics` pass was discarded as noisy because URP/Entities Graphics emitted render-target and package GC errors that did not reproduce with graphics enabled.

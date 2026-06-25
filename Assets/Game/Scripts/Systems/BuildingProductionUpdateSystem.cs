@@ -7,13 +7,13 @@ internal sealed class BuildingProductionUpdateSystem
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Dictionary<int, RuntimeBuildingEntity> RuntimeBuildingMap;
-        public readonly BuildingProductionSystem ProductionSystem;
+        public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
         public readonly BuildingProductionTransportSystem TransportSystem;
         public readonly BuildingProductionTransportSystem.Context TransportContext;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
-            BuildingProductionSystem productionSystem,
+            BuildingProductionQueueCompositionSystemHelper productionSystem,
             BuildingProductionTransportSystem transportSystem,
             BuildingProductionTransportSystem.Context transportContext)
         {
@@ -90,7 +90,7 @@ internal sealed class BuildingProductionUpdateSystem
                 continue;
             }
 
-            BuildingProductionSystem.PendingProductionProgress progress = context.ProductionSystem.GetProgress(
+            BuildingProductionQueueCompositionSystemHelper.PendingProductionProgress progress = context.ProductionSystem.GetProgress(
                 pending,
                 now,
                 pending.TransportPrefab != null);

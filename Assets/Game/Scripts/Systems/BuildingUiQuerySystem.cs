@@ -17,7 +17,7 @@ public sealed class BuildingUiQuerySystem
         internal readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         internal readonly Func<int?> GetActiveBuildingId;
         internal readonly TryGetEntityManagerDelegate TryGetEntityManager;
-        internal readonly BuildingProductionSystem ProductionSystem;
+        internal readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
         internal readonly Func<float> GetNow;
         internal readonly Func<bool> HasSelectedBuilding;
         internal readonly Func<bool> HasActiveBuilding;
@@ -39,7 +39,7 @@ public sealed class BuildingUiQuerySystem
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Func<int?> getActiveBuildingId,
             TryGetEntityManagerDelegate tryGetEntityManager,
-            BuildingProductionSystem productionSystem,
+            BuildingProductionQueueCompositionSystemHelper productionSystem,
             Func<float> getNow,
             Func<bool> hasSelectedBuilding,
             Func<bool> hasActiveBuilding,
@@ -135,7 +135,7 @@ public sealed class BuildingUiQuerySystem
     public void GetProducedUnits(
         List<Entity> producedUnits,
         EntityManager entityManager,
-        BuildingProductionSystem productionSystem,
+        BuildingProductionQueueCompositionSystemHelper productionSystem,
         List<Entity> results)
     {
         results?.Clear();
@@ -266,9 +266,9 @@ public sealed class BuildingUiQuerySystem
         List<Entity> producedUnits,
         Dictionary<Entity, GameObject> producedUnitPrefabs,
         Dictionary<Entity, FixedString64Bytes> producedUnitSourceKeys,
-        IEnumerable<BuildingProductionSystem.IPendingProduction> pendingProductions,
+        IEnumerable<BuildingProductionQueueCompositionSystemHelper.IPendingProduction> pendingProductions,
         EntityManager entityManager,
-        BuildingProductionSystem productionSystem,
+        BuildingProductionQueueCompositionSystemHelper productionSystem,
         float now,
         List<ProducedUnitUiEntry> entries,
         TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab = null)
@@ -299,20 +299,20 @@ public sealed class BuildingUiQuerySystem
     }
 
     public void AddPendingProducedUnitEntries(
-        IEnumerable<BuildingProductionSystem.IPendingProduction> pendingProductions,
-        BuildingProductionSystem productionSystem,
+        IEnumerable<BuildingProductionQueueCompositionSystemHelper.IPendingProduction> pendingProductions,
+        BuildingProductionQueueCompositionSystemHelper productionSystem,
         float now,
         List<ProducedUnitUiEntry> entries)
     {
         if (pendingProductions == null || productionSystem == null || entries == null)
             return;
 
-        foreach (BuildingProductionSystem.IPendingProduction pending in pendingProductions)
+        foreach (BuildingProductionQueueCompositionSystemHelper.IPendingProduction pending in pendingProductions)
         {
             if (pending == null || pending.Prefab == null)
                 continue;
 
-            BuildingProductionSystem.PendingProductionProgress progress = productionSystem.GetProgress(pending, now, true);
+            BuildingProductionQueueCompositionSystemHelper.PendingProductionProgress progress = productionSystem.GetProgress(pending, now, true);
             entries.Add(new ProducedUnitUiEntry(Entity.Null, pending.Prefab, false, progress.Progress01));
         }
     }
@@ -458,8 +458,8 @@ public sealed class BuildingUiQuerySystem
 
     public void AddPendingProductionUiEntries(
         int buildingId,
-        IEnumerable<BuildingProductionSystem.IPendingProduction> pendingProductions,
-        BuildingProductionSystem productionSystem,
+        IEnumerable<BuildingProductionQueueCompositionSystemHelper.IPendingProduction> pendingProductions,
+        BuildingProductionQueueCompositionSystemHelper productionSystem,
         float now,
         List<PendingProductionUiEntry> entries,
         string producerDisplayName = "")
@@ -468,7 +468,7 @@ public sealed class BuildingUiQuerySystem
             return;
 
         int pendingIndex = 0;
-        foreach (BuildingProductionSystem.IPendingProduction pending in pendingProductions)
+        foreach (BuildingProductionQueueCompositionSystemHelper.IPendingProduction pending in pendingProductions)
         {
             if (pending == null || pending.Prefab == null)
             {
@@ -476,7 +476,7 @@ public sealed class BuildingUiQuerySystem
                 continue;
             }
 
-            BuildingProductionSystem.PendingProductionProgress progress = productionSystem.GetProgress(pending, now, false);
+            BuildingProductionQueueCompositionSystemHelper.PendingProductionProgress progress = productionSystem.GetProgress(pending, now, false);
             entries.Add(new PendingProductionUiEntry(
                 buildingId,
                 pendingIndex,

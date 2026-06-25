@@ -11,7 +11,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingCombatUtilitySystemHelper BuildingCombatUtilitySystemHelper = new();
     internal readonly FactionResourceSystem FactionResourceSystem = new();
     internal readonly ResourceHaulerSystem ResourceHaulerSystem = new();
-    internal readonly BuildingProductionSystem BuildingProductionSystem = new();
+    internal readonly BuildingProductionQueueCompositionSystemHelper BuildingProductionQueueCompositionSystemHelper = new();
     internal readonly BuildingProductionUpdateSystem BuildingProductionUpdateSystem = new();
     internal readonly BuildingProductionTransportSystem BuildingProductionTransportSystem = new();
     internal readonly BuildingProductionTransportBridgeSystem BuildingProductionTransportBridgeSystem = new();

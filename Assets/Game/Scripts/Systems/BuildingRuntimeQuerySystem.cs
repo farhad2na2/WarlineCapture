@@ -32,7 +32,7 @@ internal sealed class BuildingRuntimeQuerySystem
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly TryGetRuntimeBoundaryEntityDelegate TryGetRuntimeBoundaryEntity;
-        public readonly BuildingProductionSystem ProductionSystem;
+        public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
         public readonly StringNormalizer NormalizeId;
         public readonly BuildingPredicate IsHouseBuilding;
         public readonly BuildingIdPredicate RuntimeBuildingMatchesId;
@@ -47,7 +47,7 @@ internal sealed class BuildingRuntimeQuerySystem
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetRuntimeBoundaryEntityDelegate tryGetRuntimeBoundaryEntity,
-            BuildingProductionSystem productionSystem,
+            BuildingProductionQueueCompositionSystemHelper productionSystem,
             StringNormalizer normalizeId,
             BuildingPredicate isHouseBuilding,
             BuildingIdPredicate runtimeBuildingMatchesId,

@@ -17,7 +17,7 @@ internal sealed class BuildingSpawnSystem
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly EntityQuery LiveUnitFootprintQuery;
-        public readonly BuildingProductionSystem ProductionSystem;
+        public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
         public readonly BuildingSpawnPrefabSystem.Context SpawnPrefabContext;
         public readonly BuildingProductionSlotUtilitySystemHelper ProductionSlotSystem;
@@ -28,7 +28,7 @@ internal sealed class BuildingSpawnSystem
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             EntityQuery liveUnitFootprintQuery,
-            BuildingProductionSystem productionSystem,
+            BuildingProductionQueueCompositionSystemHelper productionSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
             BuildingSpawnPrefabSystem.Context spawnPrefabContext,
             BuildingProductionSlotUtilitySystemHelper productionSlotSystem,

@@ -6,7 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using static UnityEngine.Object;
-using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
+using ProductionTransportMode = BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode;
 
 internal sealed class BuildingProductionTransportSystem
 {
@@ -37,7 +37,7 @@ internal sealed class BuildingProductionTransportSystem
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Camera WorldCamera;
-        public readonly BuildingProductionSystem ProductionSystem;
+        public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
         public readonly BuildingVisualSystem VisualSystem;
         public readonly BuildingRunwaySystem RunwaySystem;
         public readonly BuildingProductionTransportBridgeSystem TransportBridgeSystem;
@@ -47,7 +47,7 @@ internal sealed class BuildingProductionTransportSystem
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Camera worldCamera,
-            BuildingProductionSystem productionSystem,
+            BuildingProductionQueueCompositionSystemHelper productionSystem,
             BuildingVisualSystem visualSystem,
             BuildingRunwaySystem runwaySystem,
             BuildingProductionTransportBridgeSystem transportBridgeSystem,
@@ -469,10 +469,10 @@ internal sealed class BuildingProductionTransportSystem
     }
 
     public void PrewarmConfiguredProductionTransportPools(
-        BuildingProductionSystem productionSystem,
+        BuildingProductionQueueCompositionSystemHelper productionSystem,
         IReadOnlyList<GameObject> unitSpawnPrefabs,
         IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
-        BuildingProductionSystem.TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds,
+        BuildingProductionQueueCompositionSystemHelper.TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds,
         BuildingVisualSystem visualSystem)
     {
         if (productionSystem == null || unitSpawnPrefabs == null)
@@ -498,7 +498,7 @@ internal sealed class BuildingProductionTransportSystem
             if (unitPrefab == null)
                 continue;
 
-            BuildingProductionSystem.ProductionTransportSettings settings =
+            BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings settings =
                 productionSystem.ResolveProductionTransportSettings(
                     unitPrefab,
                     unitSpawnPrefabs,

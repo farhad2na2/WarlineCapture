@@ -18,7 +18,7 @@ internal sealed class BuildingUiCompositionSystem
             source.RuntimeResourceSystem,
             source.BuildingDefinitionPrefabSystemHelper,
             source.RuntimeBuildingSystem,
-            source.BuildingProductionSystem,
+            source.BuildingProductionQueueCompositionSystemHelper,
             source.BuildingProductionRequestBoundary,
             () => source.BuildingProductionContextCompositionSystemHelper.CreateProductionRequestContext(
                 source.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(

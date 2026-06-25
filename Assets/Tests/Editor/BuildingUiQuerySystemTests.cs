@@ -48,7 +48,7 @@ public sealed class BuildingUiQuerySystemTests
                 var uiQuery = new BuildingUiQuerySystem();
                 uiQuery.AddPendingProducedUnitEntries(
                     new[] { pending },
-                    new BuildingProductionSystem(),
+                    new BuildingProductionQueueCompositionSystemHelper(),
                     9.9f,
                     entries);
 
@@ -87,7 +87,7 @@ public sealed class BuildingUiQuerySystemTests
             uiQuery.AddPendingProductionUiEntries(
                 42,
                 new[] { pending },
-                new BuildingProductionSystem(),
+                new BuildingProductionQueueCompositionSystemHelper(),
                 10f,
                 entries);
 
@@ -120,7 +120,7 @@ public sealed class BuildingUiQuerySystemTests
         var results = new List<Entity>();
 
         var uiQuery = new BuildingUiQuerySystem();
-        uiQuery.GetProducedUnits(produced, entityManager, new BuildingProductionSystem(), results);
+        uiQuery.GetProducedUnits(produced, entityManager, new BuildingProductionQueueCompositionSystemHelper(), results);
 
         Assert.AreEqual(1, produced.Count);
         Assert.AreEqual(alive, produced[0]);
@@ -149,7 +149,7 @@ public sealed class BuildingUiQuerySystemTests
                 null,
                 null,
                 entityManager,
-                new BuildingProductionSystem(),
+                new BuildingProductionQueueCompositionSystemHelper(),
                 0f,
                 entries,
                 (Entity unit, out GameObject resolvedPrefab) =>
@@ -222,7 +222,7 @@ public sealed class BuildingUiQuerySystemTests
                     em = entityManager;
                     return true;
                 },
-                new BuildingProductionSystem(),
+                new BuildingProductionQueueCompositionSystemHelper(),
                 () => 10f,
                 null,
                 null,
@@ -313,7 +313,7 @@ public sealed class BuildingUiQuerySystemTests
                 runtimeBuildings,
                 null,
                 null,
-                new BuildingProductionSystem(),
+                new BuildingProductionQueueCompositionSystemHelper(),
                 () => 12.5f,
                 null,
                 null,
@@ -347,7 +347,7 @@ public sealed class BuildingUiQuerySystemTests
         }
     }
 
-    private sealed class TestPendingProduction : BuildingProductionSystem.IPendingProduction
+    private sealed class TestPendingProduction : BuildingProductionQueueCompositionSystemHelper.IPendingProduction
     {
         public int ProductionIndex { get; set; }
         public GameObject Prefab { get; set; }
@@ -358,7 +358,7 @@ public sealed class BuildingUiQuerySystemTests
         public float TransportArrivalSeconds { get; set; }
         public float TransportHoldForNextReadySeconds { get; set; }
         public int TransportMaxConcurrent { get; set; }
-        public BuildingProductionSystem.ProductionTransportMode TransportMode { get; set; }
+        public BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode TransportMode { get; set; }
         public bool TransportRequiresAirportRunway { get; set; }
     }
 }

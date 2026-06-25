@@ -8,11 +8,11 @@ internal static class BuildingProductionUnitMetadataPrefabSystemHelper
             authoring.enabled = false;
     }
 
-    public static bool TryGetMetadata(GameObject prefab, out BuildingProductionSystem.UnitProductionMetadata metadata)
+    public static bool TryGetMetadata(GameObject prefab, out BuildingProductionQueueCompositionSystemHelper.UnitProductionMetadata metadata)
     {
         if (prefab != null && prefab.TryGetComponent(out UnitGridAuthoring authoring))
         {
-            metadata = new BuildingProductionSystem.UnitProductionMetadata(
+            metadata = new BuildingProductionQueueCompositionSystemHelper.UnitProductionMetadata(
                 authoring.ProductionDurationSeconds,
                 authoring.ProductionTransportPrefab,
                 authoring.IsAirUnit,

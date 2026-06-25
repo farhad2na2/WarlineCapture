@@ -186,7 +186,7 @@ Phase 1 produced-unit source-key state notes:
 
 - `RuntimeBuildingEntity` still stores produced unit entities in `ProducedUnits`; produced source keys now live on spawned entities through `UnitSourcePrefabKey` and on the boundary through `BuildingProducedUnitReadModel`.
 - `BuildingSpawnSystem` writes `UnitSourcePrefabKey` onto each spawned unit entity; the older `ProducedUnitSourceKeys` spawn mirror has been removed. `ProducedUnitPrefabs` remains only as a legacy UI/prefab fallback outside spawn execution.
-- `BuildingProductionSystem.PruneProducedUnits` now has focused test coverage proving it removes stale `ProducedUnitSourceKeys` entries together with stale produced entities and legacy prefab entries.
+- `BuildingProductionQueueCompositionSystemHelper.PruneProducedUnits` now has focused test coverage proving it removes stale `ProducedUnitSourceKeys` entries together with stale produced entities and legacy prefab entries.
 - `BuildingRuntimeBoundarySystem` and `BuildingRuntimeQuerySystem` resolve produced-unit ids from `ProducedUnitSourceKeys` before falling back to `ProducedUnitPrefabs` or the entity `UnitSourcePrefabKey` component.
 - Main project validation was locked twice; shadow validation used `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
 - Passed: `[ProducedUnitSourceKeyStateValidation] result=Passed tests=1`.
@@ -258,9 +258,9 @@ Phase 2 source-key spawn notes:
 - Added `BuildingSpawnSystem.TryGetProductionSourceKeyDelegate` and wired `BuildingRuntimeContextSystem` to `BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey`.
 - `BuildingDefinition.ProductionSlotDefinition` now carries `SpawnUnitSourceKey`; `BuildingDefinitionPrefabSystemHelper` fills it from configured production slots and falls back to the legacy prefab lookup key only at the managed definition edge.
 - `BuildingSpawnSystem.TrySpawnPlayerUnitNearBuilding` no longer requires `GetProductionPrefabDelegate`; it resolves the ECS prefab entity from the production source key first.
-- Helicopter production placement now uses the production source key plus ECS prefab entity data instead of `BuildingProductionSystem.IsHelicopterUnitPrefab(GameObject)`.
+- Helicopter production placement now uses the production source key plus ECS prefab entity data instead of `BuildingProductionQueueCompositionSystemHelper.IsHelicopterUnitPrefab(GameObject)`.
 - Spawned units always receive `UnitSourcePrefabKey`; the older `RuntimeBuildingEntity.ProducedUnitSourceKeys` spawn mirror has since been removed. `ProducedUnitPrefabs` is written only when a real legacy prefab object is still supplied.
-- Added focused coverage in `BuildingProductionSystemTests.BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot`, proving source-key-only production slots spawn without a managed prefab delegate.
+- Added focused coverage in `BuildingProductionQueueCompositionSystemHelperTests.BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot`, proving source-key-only production slots spawn without a managed prefab delegate.
 - Main project validation failed twice with Unity database write errors; shadow validation used `/Users/farhad/Projects/WarlineCapture-CodexUnity1` after syncing the focused production files.
 - Passed: `[BuildingProductionRequestValidation] result=Passed tests=12`.
 
@@ -281,7 +281,7 @@ Phase 2 production spawn request notes:
 - `MatchBootstrapSystem` and `RuntimeGameplayStateTestHelper` now ensure the production spawn request buffer exists on the runtime boundary entity.
 - `BuildingRuntimeContextSystem.RuntimeSource` now carries `BuildingRuntimeBoundaryQuery`; `BuildingRuntimeContextCompositionSystemHelper` wires it from `BuildingGameplayEcsQueryCompositionSystemHelper`.
 - `BuildingSpawnSystem.TrySpawnPlayerUnitNearBuilding` publishes a bounded completed request row after successful spawn execution while preserving the current managed execution path.
-- `BuildingProductionSystemTests.BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot` now asserts the ECS request row fields alongside the spawned entity state.
+- `BuildingProductionQueueCompositionSystemHelperTests.BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot` now asserts the ECS request row fields alongside the spawned entity state.
 - Main project validation failed twice with Unity database write errors; shadow validation used `/Users/farhad/Projects/WarlineCapture-CodexUnity1` after syncing the focused boundary/spawn files.
 - Passed: `[BuildingProductionRequestValidation] result=Passed tests=12`.
 
@@ -301,7 +301,7 @@ Phase 2 spawn-owner conversion notes:
 - Started the `BuildingSpawnSystem` owner conversion item by moving one read path to ECS boundary data first.
 - Added an overload of `BuildingSpawnSystem.TryGetFactionProductionSpawnPoint` that reads `BuildingFactionProductionSpawnPointReadModel` from the runtime boundary entity before falling back to the managed `RuntimeBuildingEntity.Instance.transform` path.
 - Existing callers without `EntityManager` continue using the legacy runtime-building fallback, so behavior is preserved while ECS-owned callers can avoid managed transform reads.
-- Added `BuildingProductionSystemTests.BuildingSpawnSystem_ResolvesFactionProductionSpawnPointFromBoundaryReadModel`.
+- Added `BuildingProductionQueueCompositionSystemHelperTests.BuildingSpawnSystem_ResolvesFactionProductionSpawnPointFromBoundaryReadModel`.
 - Remaining blockers before the actual `ISystem` flip: `TryResolveSpawnPlacement` still depends on `RuntimeBuildingEntity.Instance.transform`, production slot occupancy still mutates `RuntimeBuildingEntity.ProducedUnitSlots`, and recent spawn reservations still live in a managed `List<RecentSpawnReservation>`.
 - Passed: `git diff --check`.
 - Passed: main-project `[BuildingProductionRequestValidation] result=Passed tests=13`.
@@ -311,7 +311,7 @@ Phase 2 recent-spawn reservation notes:
 - Added `BuildingRecentSpawnReservation` as an ECS boundary buffer carrying cell, footprint size, and expiration time for short-lived spawn exclusion zones.
 - `MatchBootstrapSystem` and `RuntimeGameplayStateTestHelper` now ensure the recent-reservation buffer exists on the runtime boundary entity.
 - `BuildingSpawnSystem` now reserves, overlaps, prunes, and writes recent spawn reservations through `BuildingRecentSpawnReservation` when `TryGetRuntimeBoundaryEntity` is available; the old managed `List<RecentSpawnReservation>` remains only as fallback for call paths that do not expose the boundary yet.
-- Added `BuildingProductionSystemTests.BuildingSpawnSystem_WritesRecentSpawnReservationToBoundaryBuffer` with a non-air source-key-only spawn.
+- Added `BuildingProductionQueueCompositionSystemHelperTests.BuildingSpawnSystem_WritesRecentSpawnReservationToBoundaryBuffer` with a non-air source-key-only spawn.
 - Remaining blockers before the actual `ISystem` flip: `TryResolveSpawnPlacement` still depends on `RuntimeBuildingEntity.Instance.transform`, and successful production still mutates `RuntimeBuildingEntity.ProducedUnits` and `ProducedUnitSlots`.
 - Passed: `git diff --check`.
 - Passed: main-project `[BuildingProductionRequestValidation] result=Passed tests=14`.
@@ -321,7 +321,7 @@ Phase 2 produced-unit read-model notes:
 - Added `BuildingProducedUnitReadModel` as an ECS boundary buffer carrying runtime building id, production index, production slot index, owner faction, produced entity, and unit source key.
 - `MatchBootstrapSystem` and `RuntimeGameplayStateTestHelper` now ensure the produced-unit read-model buffer exists on the runtime boundary entity.
 - `BuildingSpawnSystem.TrySpawnPlayerUnitNearBuilding` now appends a produced-unit read-model row immediately after successful spawn initialization, in addition to preserving the current managed `RuntimeBuildingEntity.ProducedUnits` write.
-- Extended `BuildingProductionSystemTests.BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot` to verify the produced-unit read-model row mirrors the spawned entity and source key.
+- Extended `BuildingProductionQueueCompositionSystemHelperTests.BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot` to verify the produced-unit read-model row mirrors the spawned entity and source key.
 - Remaining blockers before the actual `ISystem` flip: `TryResolveSpawnPlacement` still depends on `RuntimeBuildingEntity.Instance.transform`, and successful production still mutates `RuntimeBuildingEntity.ProducedUnits` and `ProducedUnitSlots`; later slices can migrate readers to `BuildingProducedUnitReadModel` before removing those managed writes.
 - Passed: `git diff --check`.
 - Passed: main-project `[BuildingProductionRequestValidation] result=Passed tests=14`.
@@ -331,7 +331,7 @@ Phase 2 production-slot read-model placement notes:
 - Added `BuildingRuntimeId` to `BuildingFactionProductionSpawnPointReadModel` and populated it in `BuildingRuntimeBoundarySystem`.
 - `BuildingSpawnSystem.TryResolveSpawnPlacement` now resolves regular production-slot spawn cell/world position from `BuildingFactionProductionSpawnPointReadModel` by runtime building id and slot index before falling back to `RuntimeBuildingEntity.Instance.transform`.
 - Fixed recent-reservation buffer lookup so read/overlap paths do not add missing buffers after grid buffer native arrays have been captured; only the write path creates the buffer.
-- Added `BuildingProductionSystemTests.BuildingSpawnSystem_UsesBoundarySpawnPointForProductionSlotPlacement`, which uses a runtime building without a `GameObject` instance and verifies the spawned unit lands on the ECS read-model cell.
+- Added `BuildingProductionQueueCompositionSystemHelperTests.BuildingSpawnSystem_UsesBoundarySpawnPointForProductionSlotPlacement`, which uses a runtime building without a `GameObject` instance and verifies the spawned unit lands on the ECS read-model cell.
 - Remaining blockers before the actual `ISystem` flip: helicopter slot resolution and fallback placement still use managed runtime-building transforms, and successful production still mirrors into managed produced-unit collections/slots.
 - Passed: `git diff --check`.
 - Passed: main-project `[BuildingProductionRequestValidation] result=Passed tests=15`.
@@ -339,7 +339,7 @@ Phase 2 production-slot read-model placement notes:
 Phase 2 helicopter override slot read-model notes:
 
 - `BuildingSpawnSystem.TryResolveProductionSlotAtCell` now resolves override helicopter slot ownership from `BuildingFactionProductionSpawnPointReadModel` before falling back to runtime-building marker transforms.
-- Added `BuildingProductionSystemTests.BuildingSpawnSystem_UsesBoundarySpawnPointForOverrideHelicopterSlot`, which maps an override helicopter spawn cell to a helipad slot through the ECS boundary read model while the helipad has no `GameObject` instance.
+- Added `BuildingProductionQueueCompositionSystemHelperTests.BuildingSpawnSystem_UsesBoundarySpawnPointForOverrideHelicopterSlot`, which maps an override helicopter spawn cell to a helipad slot through the ECS boundary read model while the helipad has no `GameObject` instance.
 - Remaining blockers before the actual `ISystem` flip: automatic helicopter helipad search still uses managed runtime-building transforms, fallback placement paths still read `Instance.transform`, and successful production still mirrors into managed produced-unit collections/slots.
 - Passed: `git diff --check`.
 - Passed: main-project `[BuildingProductionRequestValidation] result=Passed tests=16`.
@@ -347,7 +347,7 @@ Phase 2 helicopter override slot read-model notes:
 Phase 2 automatic helicopter read-model notes:
 
 - `BuildingSpawnSystem.TryResolveHelicopterSpawnForFaction` now resolves available helipad spawn slots from `BuildingFactionProductionSpawnPointReadModel` before falling back to runtime-building marker transforms.
-- Added `BuildingProductionSystemTests.BuildingSpawnSystem_UsesBoundarySpawnPointForAutomaticHelicopterSpawn`, which spawns a helicopter through the automatic resolver using a helipad with no `GameObject` instance.
+- Added `BuildingProductionQueueCompositionSystemHelperTests.BuildingSpawnSystem_UsesBoundarySpawnPointForAutomaticHelicopterSpawn`, which spawns a helicopter through the automatic resolver using a helipad with no `GameObject` instance.
 - The fallback transform path remains for worlds without boundary spawn-point rows; no-boundary fallback nearest-slot distance still uses the producer transform when available.
 - Remaining blockers before the actual `ISystem` flip: fallback placement paths still read `Instance.transform`, no-boundary nearest-slot ranking can still read the producer transform, and successful production still mirrors into managed produced-unit collections/slots.
 - Passed: `git diff --check`.
@@ -366,7 +366,7 @@ Phase 2 produced-slot read-model ownership notes:
 - Added `ProductionSlotBuildingRuntimeId` to `BuildingProducedUnitReadModel` so cross-building slot ownership, such as a factory-produced helicopter occupying a helipad slot, is represented in ECS data.
 - `BuildingSpawnSystem` now selects available regular production slots from `BuildingFactionProductionSpawnPointReadModel` before falling back to `BuildingProductionSlotUtilitySystemHelper.TryGetAvailableProductionSpawnSlot`.
 - `BuildingSpawnSystem` now checks slot occupancy through `BuildingProducedUnitReadModel` when `RuntimeBuildingEntity.ProducedUnitSlots` is absent, while still honoring the legacy array when present.
-- Added `BuildingProductionSystemTests.BuildingSpawnSystem_UsesBoundarySpawnPointWithoutManagedSlotArray`, proving a production spawn can use a boundary slot row without `ProductionSpawnLocalPositions` or `ProducedUnitSlots`.
+- Added `BuildingProductionQueueCompositionSystemHelperTests.BuildingSpawnSystem_UsesBoundarySpawnPointWithoutManagedSlotArray`, proving a production spawn can use a boundary slot row without `ProductionSpawnLocalPositions` or `ProducedUnitSlots`.
 - Extended helicopter slot tests to assert `ProductionSlotBuildingRuntimeId` points at the helipad runtime id.
 - Remaining blockers before the actual `ISystem` flip: fallback placement paths still read `Instance.transform`, nearest-slot ranking can still read the producer transform, and successful production still mirrors into managed produced-unit collections/source-key dictionaries for legacy readers.
 - Passed: `git diff --check`.
@@ -386,7 +386,7 @@ Phase 2 produced-unit read-model reader migration notes:
 - `BuildingProductionTransportBridgeSystem` now resolves the newest produced unit from `BuildingProducedUnitReadModel` before falling back to `RuntimeBuildingEntity.ProducedUnits`.
 - `MoveNewestProducedUnitToCell`, `AlignNewestProducedUnitRotation`, and `FocusNewestPlayerProducedUnit` all use the shared newest-produced-unit helper, reducing reliance on spawn's managed produced-unit list mirror.
 - `BuildingProductionTransportSystem.ConfigureNewestRunwayUnit` now uses the bridge helper instead of directly reading `RuntimeBuildingEntity.ProducedUnits`.
-- Added `BuildingProductionSystemTests.FocusNewestPlayerProducedUnit_UsesProducedUnitReadModel`, which focuses a produced unit from the ECS boundary read model while the runtime building has no produced-unit list.
+- Added `BuildingProductionQueueCompositionSystemHelperTests.FocusNewestPlayerProducedUnit_UsesProducedUnitReadModel`, which focuses a produced unit from the ECS boundary read model while the runtime building has no produced-unit list.
 - Remaining blockers before the actual `ISystem` flip: `BuildingSpawnSystem` still writes managed `ProducedUnits` for legacy UI readers, and fallback spawn placement still reads runtime-building transforms.
 - Passed: `git diff --check`.
 - Passed: main-project `[BuildingProductionCameraFocusValidation] result=Passed tests=10`.
@@ -395,7 +395,7 @@ Phase 2 produced-unit count read-model notes:
 
 - `BuildingRuntimeQuerySystem.Context` now carries a passive runtime-boundary entity getter, wired from `BuildingRuntimeContextSystem.RuntimeSource.BuildingRuntimeBoundaryQuery`.
 - `BuildingRuntimeQuerySystem.CountRuntimeProducedUnitsForFaction` now counts live produced units from `BuildingProducedUnitReadModel` before falling back to `RuntimeBuildingEntity.ProducedUnits`.
-- Added `BuildingProductionSystemTests.CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel`, which counts a produced unit from the ECS read model while the runtime building has no managed produced-unit list.
+- Added `BuildingProductionQueueCompositionSystemHelperTests.CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel`, which counts a produced unit from the ECS read model while the runtime building has no managed produced-unit list.
 - Remaining blockers before the actual `ISystem` flip: `BuildingSpawnSystem` still writes managed `ProducedUnits` for legacy UI readers, and fallback spawn placement still reads runtime-building transforms.
 - Passed: `git diff --check`.
 - Passed: main-project `[BuildingProductionRequestValidation] result=Passed tests=19`.
@@ -404,7 +404,7 @@ Phase 2 production summary read-model notes:
 
 - `BuildingRuntimeBoundarySystem.PublishRuntimeUnitProductionSummaries` now publishes produced counts from `BuildingProducedUnitReadModel` before falling back to `RuntimeBuildingEntity.ProducedUnits`.
 - The read-model path is selected per runtime building only when produced-unit rows exist for that building, preserving legacy produced-unit list behavior for older runtime state with no ECS rows.
-- Added `BuildingProductionSystemTests.BuildingRuntimeBoundary_ProductionSummaryUsesProducedUnitReadModel`, which publishes a production summary while the runtime building has no managed produced-unit list.
+- Added `BuildingProductionQueueCompositionSystemHelperTests.BuildingRuntimeBoundary_ProductionSummaryUsesProducedUnitReadModel`, which publishes a production summary while the runtime building has no managed produced-unit list.
 - Remaining blockers before the actual `ISystem` flip: `BuildingSpawnSystem` still writes managed `ProducedUnits` for remaining legacy UI readers, and fallback spawn placement still reads runtime-building transforms.
 - Passed: `git diff --check`.
 - Passed: main-project `[BuildingProductionRequestValidation] result=Passed tests=20`.
@@ -413,18 +413,18 @@ Phase 2 produced-unit source-key mirror removal notes:
 
 - `BuildingSpawnSystem.TrySpawnPlayerUnitNearBuilding` no longer creates or writes `RuntimeBuildingEntity.ProducedUnitSourceKeys`.
 - Produced units still receive the ECS `UnitSourcePrefabKey` component and the boundary `BuildingProducedUnitReadModel` row, which now feed the non-UI count and summary readers.
-- Updated `BuildingProductionSystemTests.BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot` to assert the ECS component and absent managed source-key dictionary.
+- Updated `BuildingProductionQueueCompositionSystemHelperTests.BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot` to assert the ECS component and absent managed source-key dictionary.
 - Remaining blockers before the actual `ISystem` flip: `BuildingSpawnSystem` still writes managed `ProducedUnits` for legacy UI readers, still writes managed `ProducedUnitSlots` for legacy slot occupancy mirrors, and fallback spawn placement still reads runtime-building transforms.
 - Passed: `git diff --check`.
 - Passed: main-project `[BuildingProductionRequestValidation] result=Passed tests=20`.
 
 Phase 2 production-slot read-model reservation notes:
 
-- `BuildingProductionSystem.QueueContext` now carries the passive runtime-boundary entity getter from `BuildingSpawnSystem.Context`.
+- `BuildingProductionQueueCompositionSystemHelper.QueueContext` now carries the passive runtime-boundary entity getter from `BuildingSpawnSystem.Context`.
 - `TryQueuePlayerUnitFromBuilding` now treats live `BuildingProducedUnitReadModel` rows as occupied production slots before queueing another unit, so reservation no longer depends only on `RuntimeBuildingEntity.ProducedUnitSlots`.
 - `BuildingSpawnSystem.TrySpawnPlayerUnitNearBuilding` now writes `ProducedUnitSlots` only as a fallback when the produced-unit read-model row cannot be published; boundary-backed spawns use `BuildingProducedUnitReadModel` for slot ownership.
 - Updated production spawn tests to assert managed slot arrays remain `Entity.Null` when the ECS produced-unit read-model row is written.
-- Added `BuildingProductionSystemTests.TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy`.
+- Added `BuildingProductionQueueCompositionSystemHelperTests.TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy`.
 - Remaining blockers before the actual `ISystem` flip: `BuildingSpawnSystem` still writes managed `ProducedUnits` for remaining legacy readers, and fallback spawn placement still reads runtime-building transforms.
 - Passed: `git diff --check`.
 - Passed: main-project `[BuildingProductionRequestValidation] result=Passed tests=21`.
@@ -459,7 +459,7 @@ Split production transport focus and movement behavior into ECS processors witho
 - [ ] Update production transport composition to use ECS request/result data instead of direct managed bridge calls.
 - [ ] Remove obsolete prefab source-key helper methods from this file after callers stop passing `GameObject`.
 - [ ] Run `BuildingProductionRequestValidation`.
-- [ ] Run focused production transport tests in `BuildingProductionSystemTests`.
+- [ ] Run focused production transport tests in `BuildingProductionQueueCompositionSystemHelperTests`.
 - [ ] Run `BuildingGameplayCompositionRuntimeSmokeValidation`.
 - [ ] Run `NonEcsSystemConversionArchitectureValidation`.
 

@@ -19,7 +19,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
             source.RuntimeBuildingSystem.Buildings,
             source.BuildingPlacementStartupSystemHelper.WorldCamera,
             source.BuildingDefinitionPrefabSystemHelper,
-            source.BuildingProductionSystem,
+            source.BuildingProductionQueueCompositionSystemHelper,
             source.BuildingProductionUpdateSystem,
             source.BuildingProductionTransportSystem,
             source.BuildingProductionTransportBridgeSystem,

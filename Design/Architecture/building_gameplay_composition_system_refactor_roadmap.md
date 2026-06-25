@@ -260,7 +260,7 @@ Top-level private state, included for extraction tracking:
 
 36. Complete: Final architecture validation gate
    - Run architecture tests, building gameplay composition batch validation, focused building runtime tests, and Unity smoke validation in `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
-   - Result: final gate passed with `git diff --check`, `GameplayArchitectureContractTests.RunBuildingGameplayCompositionArchitectureBatchValidation`, `BuildingProductionSystemTests.RunBuildingGameplayCompositionRuntimeSmokeValidation`, `BuildingRuntimeBoundaryValidationTests.RunBatchValidation`, and `InitialFactionBaseValidationTests.RunBuildingGameplayRuntimeSmokeValidation` in `/Users/farhad/Projects/WarlineCapture-CodexUnity1`. Output is compile-clean for the focused gate, broad shell replacements are still rejected, context-factory drift remains guarded, and all 36 roadmap steps are complete.
+   - Result: final gate passed with `git diff --check`, `GameplayArchitectureContractTests.RunBuildingGameplayCompositionArchitectureBatchValidation`, `BuildingProductionQueueCompositionSystemHelperTests.RunBuildingGameplayCompositionRuntimeSmokeValidation`, `BuildingRuntimeBoundaryValidationTests.RunBatchValidation`, and `InitialFactionBaseValidationTests.RunBuildingGameplayRuntimeSmokeValidation` in `/Users/farhad/Projects/WarlineCapture-CodexUnity1`. Output is compile-clean for the focused gate, broad shell replacements are still rejected, context-factory drift remains guarded, and all 36 roadmap steps are complete.
 
 ## Heartbeat Instruction
 

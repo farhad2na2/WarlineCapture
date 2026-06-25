@@ -37,7 +37,7 @@ Primary design references:
 | Unit identity | `ConfiguredDisplayName`, `ConfiguredDescription`, `PortraitSprite`, `PortraitCardSprite`, `PortraitActionSprite` |
 | Unit production | `Price`, `ProductionDurationSeconds`, `ProductionTransportPrefab`, transport/runway flags |
 | Unit category | `IsAirUnit`, `UsesVehicleMotion`, footprint, transport capacity, identity tokens |
-| Queue runtime | `BuildingProductionSystem`, `BuildingProductionRequestBoundary`, queue context and producer building state |
+| Queue runtime | `BuildingProductionQueueCompositionSystemHelper`, `BuildingProductionRequestBoundary`, queue context and producer building state |
 | Resource runtime | Current dollar/credits source from `BuildingUiCommandSystem.Context.GetCurrentDollars`; other resources need confirmation |
 
 ## Category And Visibility Rules
@@ -225,7 +225,7 @@ Existing systems to integrate with:
 
 - `BuildingUiCommandSystem`
 - `BuildingProductionRequestBoundary`
-- `BuildingProductionSystem`
+- `BuildingProductionQueueCompositionSystemHelper`
 - `BuildingPlacementSessionCompositionSystemHelper` / placement command boundary
 - `UIShellContentView` popup binding
 

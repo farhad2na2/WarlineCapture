@@ -146,7 +146,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
             var tests = new ScriptArchitectureAlignmentContractTests();
             tests.UiAndCompositionAssembliesMustNotReferenceUnusedHeavyPackages();
             tests.GameRuntimeStatsMustNotReadAuthoringComponents();
-            tests.BuildingProductionSystemMustNotReadAuthoringComponents();
+            tests.BuildingProductionQueueCompositionSystemHelperMustNotReadAuthoringComponents();
             tests.BuildingProductionRequestBoundaryMustNotReadAuthoringComponents();
             tests.BuildingProductionTransportSystemMustNotReadAuthoringComponents();
             tests.BuildingSpawnPrefabSystemMustNotReadAuthoringComponents();
@@ -618,15 +618,15 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
-    public void BuildingProductionSystemMustNotReadAuthoringComponents()
+    public void BuildingProductionQueueCompositionSystemHelperMustNotReadAuthoringComponents()
     {
-        string productionPath = Path.Combine(GameScriptsRoot, "Systems/BuildingProductionSystem.cs");
+        string productionPath = Path.Combine(GameScriptsRoot, "Systems/BuildingProductionQueueCompositionSystemHelper.cs");
         string source = File.ReadAllText(productionPath);
 
         Assert.IsFalse(
             source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
             source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
-            "`BuildingProductionSystem` must not read authoring components. Composition can inject unit production metadata through `ConfigureUnitProductionMetadataResolver`.");
+            "`BuildingProductionQueueCompositionSystemHelper` must not read authoring components. Composition can inject unit production metadata through `ConfigureUnitProductionMetadataResolver`.");
     }
 
     [Test]

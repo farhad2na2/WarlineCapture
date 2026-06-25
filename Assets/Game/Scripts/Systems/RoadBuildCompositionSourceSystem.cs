@@ -17,7 +17,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadGridProjectionSystem RoadGridProjectionSystem;
     public readonly RoadVisualVariantSystem RoadVisualVariantSystem;
     public readonly RoadVisualResolutionSystem RoadVisualResolutionSystem;
-    public readonly RoadVisualRefreshSystem RoadVisualRefreshSystem;
+    public readonly RoadVisualRefreshPresentationSystemHelper RoadVisualRefreshPresentationSystemHelper;
     public readonly RoadChunkVisualSystem RoadChunkVisualSystem;
     public readonly RoadPreviewPresentationSystemHelper RoadPreviewPresentationSystemHelper;
     public readonly RoadSpecialVisualSystem RoadSpecialVisualSystem;
@@ -54,7 +54,7 @@ internal sealed class RoadBuildCompositionSourceSystem
         RoadVisualVariantSystem = ResolveRoadVisualVariantSystem();
         RoadBuildVisualContextPresentationSystemHelper = ResolveRoadBuildVisualContextPresentationSystemHelper();
         RoadVisualResolutionSystem = ResolveRoadVisualResolutionSystem();
-        RoadVisualRefreshSystem = ResolveRoadVisualRefreshSystem();
+        RoadVisualRefreshPresentationSystemHelper = ResolveRoadVisualRefreshPresentationSystemHelper();
         RoadChunkVisualSystem = ResolveRoadChunkVisualSystem();
         RoadSpecialVisualSystem = ResolveRoadSpecialVisualSystem();
         RoadPreviewPresentationSystemHelper = ResolveRoadPreviewPresentationSystemHelper();
@@ -111,9 +111,9 @@ internal sealed class RoadBuildCompositionSourceSystem
             : null;
     }
 
-    private static RoadVisualRefreshSystem ResolveRoadVisualRefreshSystem()
+    private static RoadVisualRefreshPresentationSystemHelper ResolveRoadVisualRefreshPresentationSystemHelper()
     {
-        return new RoadVisualRefreshSystem();
+        return new RoadVisualRefreshPresentationSystemHelper();
     }
 
     private static RoadChunkVisualSystem ResolveRoadChunkVisualSystem()

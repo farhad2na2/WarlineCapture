@@ -201,7 +201,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 14. Complete: Extract road stroke mutation bridge
    - Create `RoadBuildMutationCompositionSystemHelper`.
    - Move `CreateStroke`, `DeleteStroke`, dirty-cell refresh triggering, and network snapshot restore handoff.
-   - Use `RoadNetworkCompositionSystemHelper` for graph mutation and `RoadVisualRefreshSystem` for visual/ECS refresh.
+   - Use `RoadNetworkCompositionSystemHelper` for graph mutation and `RoadVisualRefreshPresentationSystemHelper` for visual/ECS refresh.
    - Expected output: stroke mutation no longer lives beside startup and legacy building behavior.
 
 15. Complete: Extract visual type resolution
@@ -211,13 +211,13 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Expected output: visual resolution is testable and not tied to runtime state.
 
 16. Complete: Extract dirty-cell visual refresh
-   - Create `RoadVisualRefreshSystem`.
+   - Create `RoadVisualRefreshPresentationSystemHelper`.
    - Move `RefreshCells`, `RefreshCell`, chunk dirtying, road tile updates/removal, ECS sync requests, and special-road rebuild triggers.
    - Preserve dirty-cell/chunk behavior and avoid full rebuilds except rollback/full restore.
    - Expected output: road graph changes refresh visuals and ECS through a narrow visual refresh boundary.
 
 17. Complete: Extract road state rebuild/rollback refresh
-   - Move `RebuildRoadStateFromCurrentTiles`, special road metadata rebuild, chunk clear/re-add, ECS full sync, and special visual full rebuild into `RoadVisualRefreshSystem` or a narrow `RoadBuildRollbackSystem`.
+   - Move `RebuildRoadStateFromCurrentTiles`, special road metadata rebuild, chunk clear/re-add, ECS full sync, and special visual full rebuild into `RoadVisualRefreshPresentationSystemHelper` or a narrow `RoadBuildRollbackSystem`.
    - Expected output: session restore no longer calls back into broad runtime state.
 
 18. Complete: Move deferred road ECS sync wrappers out
@@ -371,8 +371,8 @@ Every phase boundary must also run the existing road validation set when feasibl
 - Step 13 complete: legacy building ECS context construction moved to `BuildingRoadLegacyContextSystem`; entity manager, grid, footprint, interaction, and spawn-random callbacks remain explicit.
 - Step 14 complete: road stroke creation/deletion plus session snapshot capture/restore mutation moved to `RoadBuildMutationCompositionSystemHelper`; runtime state only supplies refresh/rebuild callbacks pending steps 16-17.
 - Step 15 complete: visual type resolution plus prefab/variant lookup handoff moved to `RoadVisualResolutionSystem`; visual-type rules are unchanged.
-- Step 16 complete: dirty-cell road tile refresh, chunk dirtying, ECS sync request, and special-road dirty rebuild trigger moved to `RoadVisualRefreshSystem`.
-- Step 17 complete: full road state rollback/rebuild refresh moved to `RoadVisualRefreshSystem`; snapshot restore now triggers the visual refresh boundary instead of broad runtime-state rebuild code.
+- Step 16 complete: dirty-cell road tile refresh, chunk dirtying, ECS sync request, and special-road dirty rebuild trigger moved to `RoadVisualRefreshPresentationSystemHelper`.
+- Step 17 complete: full road state rollback/rebuild refresh moved to `RoadVisualRefreshPresentationSystemHelper`; snapshot restore now triggers the visual refresh boundary instead of broad runtime-state rebuild code.
 - Step 18 complete: deferred road ECS sync begin/end callbacks moved to `RoadRuntimeGenerationContextCompositionSystemHelper`, which now calls `RoadGridProjectionSystem` directly.
 - Step 19 complete: soldier-base definition construction and prefab local-bounds caching moved to `BuildingRoadLegacyDefinitionSystem`.
 - Step 29 complete: remaining context construction moved to `RoadBuildCompositionContextCompositionSystemHelper`, startup/bind/dispose sequencing moved to `RoadBuildCompositionLifecycleCompositionSystemHelper`, persistent state moved into `RoadBuildCompositionSourceSystem`, and `RoadBuildRuntimeStateSystem` is now only a 58-line delegating adapter. Step 30 can delete the adapter file once composition and tests stop referencing it.

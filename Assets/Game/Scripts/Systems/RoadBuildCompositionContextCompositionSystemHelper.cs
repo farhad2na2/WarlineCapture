@@ -146,9 +146,9 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             CreateRoadBuildVisualContext(source));
     }
 
-    private RoadVisualRefreshSystem.Context CreateRoadVisualRefreshContext(RoadBuildCompositionSourceSystem source)
+    private RoadVisualRefreshPresentationSystemHelper.Context CreateRoadVisualRefreshContext(RoadBuildCompositionSourceSystem source)
     {
-        return new RoadVisualRefreshSystem.Context(
+        return new RoadVisualRefreshPresentationSystemHelper.Context(
             source.RoadNetworkCompositionSystemHelper,
             source.RoadGridProjectionSystem,
             CreateRoadGridProjectionContext(source),
@@ -178,8 +178,8 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     {
         return new RoadBuildMutationCompositionSystemHelper.Context(
             source.RoadNetworkCompositionSystemHelper,
-            dirtyCells => RoadVisualRefreshSystem.RefreshCells(CreateRoadVisualRefreshContext(source), dirtyCells),
-            () => RoadVisualRefreshSystem.RebuildRoadStateFromCurrentTiles(CreateRoadVisualRefreshContext(source)));
+            dirtyCells => RoadVisualRefreshPresentationSystemHelper.RefreshCells(CreateRoadVisualRefreshContext(source), dirtyCells),
+            () => RoadVisualRefreshPresentationSystemHelper.RebuildRoadStateFromCurrentTiles(CreateRoadVisualRefreshContext(source)));
     }
 
     private RoadBuildContextSystem.Context CreateRoadBuildContext(RoadBuildCompositionSourceSystem source)

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class CitizenDangerSystem
+internal sealed class CitizenDangerCompositionSystemHelper
 {
     private const float DangerDetectRadius = 35f;
     private const float DangerScanIntervalSeconds = 1f;
@@ -10,7 +10,7 @@ internal sealed class CitizenDangerSystem
     private readonly List<Vector3> _dangerWorldPositions = new();
     private float _nextDangerScanAt;
 
-    public static void Reset(CitizenDangerSystem system)
+    public static void Reset(CitizenDangerCompositionSystemHelper system)
     {
         system?.Reset();
     }
@@ -22,7 +22,7 @@ internal sealed class CitizenDangerSystem
         _nextDangerScanAt = 0f;
     }
 
-    public static void RegisterDangerSource(CitizenDangerSystem system, Transform source)
+    public static void RegisterDangerSource(CitizenDangerCompositionSystemHelper system, Transform source)
     {
         system?.RegisterDangerSource(source);
     }
@@ -35,7 +35,7 @@ internal sealed class CitizenDangerSystem
         _dangerSourceTransforms.Add(source);
     }
 
-    public static void UnregisterDangerSource(CitizenDangerSystem system, Transform source)
+    public static void UnregisterDangerSource(CitizenDangerCompositionSystemHelper system, Transform source)
     {
         system?.UnregisterDangerSource(source);
     }
@@ -46,7 +46,7 @@ internal sealed class CitizenDangerSystem
             _dangerSourceTransforms.Remove(source);
     }
 
-    public static void RefreshDangerSourcesIfNeeded(CitizenDangerSystem system, float now)
+    public static void RefreshDangerSourcesIfNeeded(CitizenDangerCompositionSystemHelper system, float now)
     {
         system?.RefreshDangerSourcesIfNeeded(now);
     }
@@ -72,7 +72,7 @@ internal sealed class CitizenDangerSystem
     }
 
     public static bool TryGetDangerFleeTarget(
-        CitizenDangerSystem system,
+        CitizenDangerCompositionSystemHelper system,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenRecordComponent citizen,
         out int fleeTargetBuildingId)

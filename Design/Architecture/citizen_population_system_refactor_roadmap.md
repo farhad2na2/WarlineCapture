@@ -30,7 +30,7 @@ Step 13 schedule-policy transition size: 1213 lines. Weekday/weekend/refugee sch
 
 Step 14 status-transition transition size: 1143 lines. Status mutation, travel-status detection, desired-status travel mapping, travel-to-settled mapping, debug status mutation, arrival settling, and death status mutation now live in `CitizenStatusTransitionSystem`; the then-existing shell still coordinates schedule, danger, visible-unit side effects, and totals refresh until later extraction steps.
 
-Step 15 danger-scanning transition size: 1015 lines. Danger source scan cadence, scene transform name scanning, danger radius checks, safe-building checks, flee target selection, and nearest-safe-building search now live in `CitizenDangerSystem`; the transform scan remains temporary performance debt until authored danger markers or ECS events replace it.
+Step 15 danger-scanning transition size: 1015 lines. Danger source scan cadence, scene transform name scanning, danger radius checks, safe-building checks, flee target selection, and nearest-safe-building search now live in `CitizenDangerCompositionSystemHelper`; the transform scan remains temporary performance debt until authored danger markers or ECS events replace it.
 
 Step 16 travel-grid transition size: 786 lines. World-to-cell conversion, travel origin selection, citizen reference anchors, visibility anchors, building approach world/cell resolution, long segment goal planning, deferred travel duration, and citizen world-position offsets now live in `CitizenTravelSystem`; the then-existing shell still coordinates visible unit spawning until visible-unit extraction.
 
@@ -78,7 +78,7 @@ Goal: retire the broad managed `CitizenPopulationSystem` shell by moving citizen
 - Refugee and displacement behavior: home destruction, missing-home displacement, refugee tent assignment, tent loss, occupancy, assignment release, refugee state transitions, and daily upkeep moved to `CitizenRefugeeSystem`.
 - Schedule policy: weekday/weekend/refugee timing constants, day-of-week logic, night policy, shopping cadence, work/lunch/walk/city hall decisions, target resolution, and schedule phase moved to `CitizenScheduleSystem`.
 - Status transition policy: status mutation, travel-status detection, desired-status travel mapping, travel-to-settled mapping, debug status mutation, arrival settling, and death status mutation moved to `CitizenStatusTransitionSystem`.
-- Danger/fleeing behavior: scene transform name scanning for fire/burn/smoke/explosion, danger position cache, danger radius checks, safe-building evaluation, and flee target selection moved to `CitizenDangerSystem`; this transform scan is recorded as temporary performance debt.
+- Danger/fleeing behavior: scene transform name scanning for fire/burn/smoke/explosion, danger position cache, danger radius checks, safe-building evaluation, and flee target selection moved to `CitizenDangerCompositionSystemHelper`; this transform scan is recorded as temporary performance debt.
 - Visible civilian ECS units: visible spawn/despawn decisions, destroyed-unit handling, path retry, long-distance move handoff, segment-reached retargeting, visible arrival resolution, clear/remove/spawn, and spawn-time component setup moved to `CitizenVisibleUnitPresentationSystemHelper`; visible citizen prefab selection moved to `CitizenPrefabSelectionSystem`, and move-order component mutation moved to `CitizenMovementCommandSystem`.
 - Movement and path goal helpers: world-to-cell conversion, travel origin selection, citizen reference anchors, visibility anchors, building approach world/cell resolution, long segment goal planning, deferred travel duration, and citizen world-position offsets moved to `CitizenTravelSystem`.
 - Totals/read model: calculation moved to `CitizenPopulationTotalsSystem`, and cached/public totals reads moved to `CitizenPopulationReadModelSystem`.
@@ -130,7 +130,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
 - `CitizenHouseholdRegistrationSystem`: owns new house registration, target assignment, rehousing, removed-house detection, and household-to-home mapping policies.
 - `CitizenRefugeeSystem`: owns displacement, refugee tent assignment, tent loss, occupancy counting, upkeep charging, and refugee death policy.
 - `CitizenScheduleSystem`: owns schedule constants, day/hour policy, desired status/target selection, travel status conversion, and arrival settling policy.
-- `CitizenDangerSystem`: owns danger source scanning, danger source cache, safe-building checks, and flee target selection.
+- `CitizenDangerCompositionSystemHelper`: owns danger source scanning, danger source cache, safe-building checks, and flee target selection.
 - `CitizenTravelSystem`: owns travel-origin policy, world/grid conversion, approach-cell goal resolution, segment goal planning, deferred travel duration, and world-position offsets.
 - `CitizenVisibleUnitPresentationSystemHelper`: owns visible citizen spawn/despawn, prefab selection, instantiated unit component setup, path retry, visible arrival checks, and visible unit record mutation.
 - `CitizenMovementCommandSystem`: owns ECS component mutations for civilian move orders.
@@ -249,10 +249,10 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
    - Added `CitizenStatusTransitionSystemMustOwnStatusTransitions` to the focused architecture validation batch.
 
 15. Complete: Extract danger source scanning
-   - Create `CitizenDangerSystem`.
+   - Create `CitizenDangerCompositionSystemHelper`.
    - Move danger source cache, scan interval, transform scanning, name filters, danger radius, safe-building checks, flee target selection, and nearest-safe-building policy.
    - Record the current scene-transform scan as temporary performance debt; later replacement should use authored danger markers or ECS events.
-   - Added `CitizenDangerSystem.cs`.
+   - Added `CitizenDangerCompositionSystemHelper.cs`.
    - Moved danger source cache, scan interval, transform name scanning, danger radius, safe-building checks, flee target selection, and nearest-safe-building search out of `CitizenPopulationSystem.cs`.
    - Added `CitizenDangerSystemMustOwnDangerScanning` to the focused architecture validation batch.
 

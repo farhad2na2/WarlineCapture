@@ -20,7 +20,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         public CitizenRefugeeSystem.State RefugeeState;
         public readonly CitizenScheduleSystem ScheduleSystem = ResolveCitizenScheduleSystem();
         public readonly CitizenStatusTransitionSystem StatusTransitionSystem = ResolveCitizenStatusTransitionSystem();
-        public readonly CitizenDangerSystem DangerSystem = ResolveCitizenDangerSystem();
+        public readonly CitizenDangerCompositionSystemHelper DangerSystem = ResolveCitizenDangerSystem();
         public readonly CitizenTravelSystem TravelSystem = ResolveCitizenTravelSystem();
         public readonly CitizenPrefabSelectionSystem PrefabSelectionSystem = new();
         public CitizenPrefabSelectionSystem.State PrefabSelectionState;
@@ -122,7 +122,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         CitizenPopulationReadModelSystem.Reset(result.ReadModel, ref result.ReadModelState);
         CitizenPopulationLifecycleSystem.Reset(result.LifecycleSystem, ref result.LifecycleState);
         CitizenRefugeeSystem.Reset(result.RefugeeSystem, ref result.RefugeeState);
-        CitizenDangerSystem.Reset(result.DangerSystem);
+        CitizenDangerCompositionSystemHelper.Reset(result.DangerSystem);
         result.PrefabSelectionSystem.Init(
             ref result.PrefabSelectionState,
             result.CitizenPrefabSystem,
@@ -171,7 +171,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         result.State.Reset();
         CitizenPopulationReadModelSystem.Reset(result.ReadModel, ref result.ReadModelState);
         result.BuildingReadSystem.Dispose();
-        CitizenDangerSystem.Reset(result.DangerSystem);
+        CitizenDangerCompositionSystemHelper.Reset(result.DangerSystem);
         CitizenPopulationLifecycleSystem.Reset(result.LifecycleSystem, ref result.LifecycleState);
         CitizenRefugeeSystem.Reset(result.RefugeeSystem, ref result.RefugeeState);
         result.PrefabSelectionSystem.Reset(ref result.PrefabSelectionState);
@@ -217,9 +217,9 @@ internal sealed class CitizenPopulationCompositionSystemHelper
             : null;
     }
 
-    private static CitizenDangerSystem ResolveCitizenDangerSystem()
+    private static CitizenDangerCompositionSystemHelper ResolveCitizenDangerSystem()
     {
-        return new CitizenDangerSystem();
+        return new CitizenDangerCompositionSystemHelper();
     }
 
     private static CitizenHouseholdRegistrationSystem ResolveCitizenHouseholdRegistrationSystem()

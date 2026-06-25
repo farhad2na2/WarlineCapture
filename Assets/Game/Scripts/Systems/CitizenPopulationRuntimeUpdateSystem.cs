@@ -190,7 +190,7 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
                 continue;
             }
 
-            if (CitizenDangerSystem.TryGetDangerFleeTarget(_systems.DangerSystem, _systems.BuildingReadSystem, citizen, out int fleeTargetBuildingId))
+            if (CitizenDangerCompositionSystemHelper.TryGetDangerFleeTarget(_systems.DangerSystem, _systems.BuildingReadSystem, citizen, out int fleeTargetBuildingId))
             {
                 if (citizen.Status != CitizenStatus.Fleeing || citizen.CurrentTargetBuildingId != fleeTargetBuildingId)
                 {

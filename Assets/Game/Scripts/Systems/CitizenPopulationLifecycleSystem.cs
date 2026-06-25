@@ -37,7 +37,7 @@ internal sealed class CitizenPopulationLifecycleSystem
         ref State state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenPopulationEcsProjectionSystem ecsProjection,
-        CitizenDangerSystem dangerSystem,
+        CitizenDangerCompositionSystemHelper dangerSystem,
         CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
         CitizenPopulationStateSystem populationState,
         Action updateLogicalCitizens,
@@ -79,7 +79,7 @@ internal sealed class CitizenPopulationLifecycleSystem
     public void Update(
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenPopulationEcsProjectionSystem ecsProjection,
-        CitizenDangerSystem dangerSystem,
+        CitizenDangerCompositionSystemHelper dangerSystem,
         CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
         CitizenPopulationStateSystem state,
         Action updateLogicalCitizens,
@@ -113,7 +113,7 @@ internal sealed class CitizenPopulationLifecycleSystem
         ref State lifecycleState,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenPopulationEcsProjectionSystem ecsProjection,
-        CitizenDangerSystem dangerSystem,
+        CitizenDangerCompositionSystemHelper dangerSystem,
         CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
         CitizenPopulationStateSystem state,
         Action updateLogicalCitizens,
@@ -143,7 +143,7 @@ internal sealed class CitizenPopulationLifecycleSystem
             ecsProjection.EnsurePopulationSummaryEntity();
             CitizenPopulationDiagnosticsSystemHelper.MarkResolve(diagnosticSystem, ref timings);
 
-            CitizenDangerSystem.RefreshDangerSourcesIfNeeded(dangerSystem, now);
+            CitizenDangerCompositionSystemHelper.RefreshDangerSourcesIfNeeded(dangerSystem, now);
             CitizenPopulationDiagnosticsSystemHelper.MarkDanger(diagnosticSystem, ref timings);
 
             if (now >= lifecycleState.NextLogicalCitizenUpdateAt)

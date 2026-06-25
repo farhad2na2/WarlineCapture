@@ -7,7 +7,7 @@ public sealed class RtsSelectionInputSystem
     public const float MoveTargetDoubleClickSeconds = 0.35f;
     public const float MoveTargetDoubleClickPixels = 48f;
 
-    private readonly RtsSelectionInputStateSystem _inputStateSystem = new();
+    private readonly RtsSelectionInputStateCompositionSystemHelper _inputStateSystem = new();
 
     public Vector2 DragStart
     {

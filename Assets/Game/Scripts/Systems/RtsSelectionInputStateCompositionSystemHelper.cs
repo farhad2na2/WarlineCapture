@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-public sealed class RtsSelectionInputStateSystem
+public sealed class RtsSelectionInputStateCompositionSystemHelper
 {
     private Unity.Entities.World _world;
     private Entity _stateEntity;

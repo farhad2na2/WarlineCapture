@@ -116,7 +116,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "RuntimeGameplayStateSystem",
         "SelectionUiCameraSystemHelper",
         "RtsSelectionInputSystem",
-        "RtsSelectionInputStateSystem",
+        "RtsSelectionInputStateCompositionSystemHelper",
         "RtsSelectionPointerTargetCommandSystem",
         "SelectedMoveOrderCommandSystem",
         "AttackOrderCommandSystem",

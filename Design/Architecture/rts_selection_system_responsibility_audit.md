@@ -551,7 +551,7 @@ No behavior migrated in this step. Runtime behavior should remain unchanged unti
 Step 2 moved pointer/session state into ECS:
 
 - `RtsSelectionInputStateComponent` stores drag origin/current positions, pointer UI suppression flags, pending release suppression, selection-hold state, queued move-order click state, live selection rectangle state, and last-known pointer position.
-- `RtsSelectionInputStateSystem` owns singleton creation/cache and ensures request buffers exist on the same entity.
+- `RtsSelectionInputStateCompositionSystemHelper` owns singleton creation/cache and ensures request buffers exist on the same entity.
 - `RtsSelectionInputSystem` remains a temporary compatibility accessor, but it no longer owns those values as managed fields.
 - Follow-up deletion work moved normal pointer input runtime orchestration into `RtsSelectionRuntimeInputSystem`, including queued move-order consumption, pointer press/hold/release branching, selection-hold triggering, live selection rectangle diffing, and rectangle request queueing. `RTSSelectionSystem` now builds a narrow context and delegates this tick slice while remaining shell behavior is retired.
 
@@ -615,7 +615,7 @@ Step 10 moved M01 assistant/tutorial commands into ECS request/result processing
 
 Step 11 moved selection rectangle GUI drawing to the UI view boundary:
 
-- `SelectionRectangleView` reads `RtsSelectionInputStateComponent` through `RtsSelectionInputStateSystem` and draws only the current live rectangle.
+- `SelectionRectangleView` reads `RtsSelectionInputStateComponent` through `RtsSelectionInputStateCompositionSystemHelper` and draws only the current live rectangle.
 - `RTSSelectionSystem` no longer owns selection rectangle GUI colors, the 1x1 GUI texture, `OnGui`, or GUI draw helpers.
 - `GameplayRuntimeUpdateSystem.OnGui` now routes selection rectangle rendering through the view while keeping road-build GUI drawing on its existing path.
 

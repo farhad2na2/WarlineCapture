@@ -166,7 +166,7 @@ internal sealed class MatchRuntimeStateAdapter : IMatchRuntimeState
 internal sealed class SelectionRectangleStateAdapter : ISelectionRectangleState
 {
     private readonly IMatchRuntimeState runtimeState;
-    private readonly RtsSelectionInputStateSystem inputStateSystem = new();
+    private readonly RtsSelectionInputStateCompositionSystemHelper inputStateSystem = new();
 
     public SelectionRectangleStateAdapter(IMatchRuntimeState runtimeState)
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal sealed class RuntimeCityYardGateSystem
+internal sealed class RuntimeCityYardGateUtilitySystemHelper
 {
     private readonly RuntimeCityYardGateState _state = new();
 
@@ -35,15 +35,15 @@ internal sealed class RuntimeCityYardGateState
         return Mathf.Clamp((totalLength - openingLength) / 2, 1, Mathf.Max(1, totalLength - openingLength - 1));
     }
 
-    public RuntimeCityYardGateSystem.YardSide GetPreferredYardGateSide(RectInt houseRect, Vector2Int centerRoadCell)
+    public RuntimeCityYardGateUtilitySystemHelper.YardSide GetPreferredYardGateSide(RectInt houseRect, Vector2Int centerRoadCell)
     {
         Vector2 houseCenter = new(houseRect.center.x, houseRect.center.y);
         Vector2 cityCenter = new(centerRoadCell.x, centerRoadCell.y);
         Vector2 delta = cityCenter - houseCenter;
 
         if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
-            return delta.x >= 0f ? RuntimeCityYardGateSystem.YardSide.East : RuntimeCityYardGateSystem.YardSide.West;
+            return delta.x >= 0f ? RuntimeCityYardGateUtilitySystemHelper.YardSide.East : RuntimeCityYardGateUtilitySystemHelper.YardSide.West;
 
-        return delta.y >= 0f ? RuntimeCityYardGateSystem.YardSide.North : RuntimeCityYardGateSystem.YardSide.South;
+        return delta.y >= 0f ? RuntimeCityYardGateUtilitySystemHelper.YardSide.North : RuntimeCityYardGateUtilitySystemHelper.YardSide.South;
     }
 }

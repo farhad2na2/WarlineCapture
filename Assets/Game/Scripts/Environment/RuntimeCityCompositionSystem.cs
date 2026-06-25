@@ -41,7 +41,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityCorridorBuildingSpawnState _fallbackRuntimeCityCorridorBuildingSpawn = new();
     private RuntimeCityYardWallPlanSystem _runtimeCityYardWallPlanSystem;
     private readonly RuntimeCityYardWallPlanState _fallbackRuntimeCityYardWallPlan = new();
-    private RuntimeCityYardGateSystem _runtimeCityYardGateSystem;
+    private RuntimeCityYardGateUtilitySystemHelper _runtimeCityYardGateHelper;
     private readonly RuntimeCityYardGateState _fallbackRuntimeCityYardGate = new();
     private RuntimeCityYardWallVisualSystem _runtimeCityYardWallVisualSystem;
     private readonly RuntimeCityYardWallVisualState _fallbackRuntimeCityYardWallVisual = new();
@@ -476,10 +476,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityYardWallPlanSystem ??= ResolveRuntimeCityYardWallPlanSystem();
 
     private RuntimeCityYardGateState RuntimeCityYardGateState =>
-        RuntimeCityYardGateSystem?.State ?? _fallbackRuntimeCityYardGate;
+        RuntimeCityYardGateUtilitySystemHelper?.State ?? _fallbackRuntimeCityYardGate;
 
-    private RuntimeCityYardGateSystem RuntimeCityYardGateSystem =>
-        _runtimeCityYardGateSystem ??= ResolveRuntimeCityYardGateSystem();
+    private RuntimeCityYardGateUtilitySystemHelper RuntimeCityYardGateUtilitySystemHelper =>
+        _runtimeCityYardGateHelper ??= ResolveRuntimeCityYardGateUtilitySystemHelper();
 
     private RuntimeCityYardWallVisualState RuntimeCityYardWallVisualState =>
         RuntimeCityYardWallVisualSystem?.State ?? _fallbackRuntimeCityYardWallVisual;
@@ -701,9 +701,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityYardWallPlanSystem();
     }
 
-    private static RuntimeCityYardGateSystem ResolveRuntimeCityYardGateSystem()
+    private static RuntimeCityYardGateUtilitySystemHelper ResolveRuntimeCityYardGateUtilitySystemHelper()
     {
-        return new RuntimeCityYardGateSystem();
+        return new RuntimeCityYardGateUtilitySystemHelper();
     }
 
     private static RuntimeCityYardWallVisualSystem ResolveRuntimeCityYardWallVisualSystem()

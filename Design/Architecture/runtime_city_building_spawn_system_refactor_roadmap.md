@@ -279,11 +279,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - `RuntimeCityBuildingSpawnSystem` now keeps only yard-wall orchestration, gate choice, visual spawning, and reservation for later extraction steps.
 
 22. Complete: Extract yard gate math
-   - Create `RuntimeCityYardGateSystem`.
+   - Create `RuntimeCityYardGateUtilitySystemHelper`.
    - Move `YardSide`, `GetPreferredYardGateSide`, and `GetCenteredOpeningStart`.
    - Preserve gate-side decision and opening clamp behavior.
    - Expected output: gate policy is pure and testable.
-   - Added `RuntimeCityYardGateSystem` as the owner for `YardSide`, preferred gate-side selection, and centered opening start math.
+   - Added `RuntimeCityYardGateUtilitySystemHelper` as the owner for `YardSide`, preferred gate-side selection, and centered opening start math.
    - `RuntimeCityBuildingSpawnSystem` now depends on the yard gate system for gate side and opening positions.
    - Gate-side decision and opening clamp behavior were moved unchanged.
 

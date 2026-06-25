@@ -1,5 +1,5 @@
 using UnityEngine;
-using YardSide = RuntimeCityYardGateSystem.YardSide;
+using YardSide = RuntimeCityYardGateUtilitySystemHelper.YardSide;
 
 internal sealed class RuntimeCityYardWallVisualSystem
 {

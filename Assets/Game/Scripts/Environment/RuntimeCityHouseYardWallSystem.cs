@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
-using YardSide = RuntimeCityYardGateSystem.YardSide;
+using YardSide = RuntimeCityYardGateUtilitySystemHelper.YardSide;
 
 internal sealed class RuntimeCityHouseYardWallSystem
 {

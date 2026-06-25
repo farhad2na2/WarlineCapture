@@ -15,7 +15,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         public readonly CitizenPopulationReadModelSystem ReadModel = new();
         public CitizenPopulationReadModelSystem.State ReadModelState;
         public readonly CitizenBuildingReadCompositionSystemHelper BuildingReadSystem = new();
-        public readonly CitizenHouseholdRegistrationSystem HouseholdRegistrationSystem = ResolveCitizenHouseholdRegistrationSystem();
+        public readonly CitizenHouseholdRegistrationCompositionSystemHelper HouseholdRegistrationSystem = ResolveCitizenHouseholdRegistrationSystem();
         public readonly CitizenRefugeeSystem RefugeeSystem = ResolveCitizenRefugeeSystem();
         public CitizenRefugeeSystem.State RefugeeState;
         public readonly CitizenScheduleSystem ScheduleSystem = ResolveCitizenScheduleSystem();
@@ -222,9 +222,9 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         return new CitizenDangerCompositionSystemHelper();
     }
 
-    private static CitizenHouseholdRegistrationSystem ResolveCitizenHouseholdRegistrationSystem()
+    private static CitizenHouseholdRegistrationCompositionSystemHelper ResolveCitizenHouseholdRegistrationSystem()
     {
-        return new CitizenHouseholdRegistrationSystem();
+        return new CitizenHouseholdRegistrationCompositionSystemHelper();
     }
 
     private static CitizenRefugeeSystem ResolveCitizenRefugeeSystem()

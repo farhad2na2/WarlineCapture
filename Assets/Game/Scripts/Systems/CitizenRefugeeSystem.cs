@@ -35,7 +35,7 @@ internal sealed class CitizenRefugeeSystem
         CitizenRefugeeSystem system,
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         int buildingId,
         StoreHouseholdAction storeHousehold,
         StoreCitizenAction storeCitizen,
@@ -73,7 +73,7 @@ internal sealed class CitizenRefugeeSystem
     public void NotifyHomeBuildingDestroyed(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         int buildingId,
         StoreHouseholdAction storeHousehold,
         StoreCitizenAction storeCitizen,
@@ -97,7 +97,7 @@ internal sealed class CitizenRefugeeSystem
         CitizenRefugeeSystem system,
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         StoreHouseholdAction storeHousehold,
         StoreCitizenAction storeCitizen,
         TryGetHouseholdReferenceWorldPositionAction tryGetHouseholdReferenceWorldPosition,
@@ -132,7 +132,7 @@ internal sealed class CitizenRefugeeSystem
     public void UpdateRefugeeTentState(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         StoreHouseholdAction storeHousehold,
         StoreCitizenAction storeCitizen,
         TryGetHouseholdReferenceWorldPositionAction tryGetHouseholdReferenceWorldPosition,
@@ -154,7 +154,7 @@ internal sealed class CitizenRefugeeSystem
         CitizenRefugeeSystem system,
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenHouseholdRecordComponent household,
         string reason,
         StoreHouseholdAction storeHousehold,
@@ -195,7 +195,7 @@ internal sealed class CitizenRefugeeSystem
     public void DisplaceHousehold(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenHouseholdRecordComponent household,
         string reason,
         StoreHouseholdAction storeHousehold,
@@ -243,7 +243,7 @@ internal sealed class CitizenRefugeeSystem
     public static int GetAssignedRefugeeOccupancy(
         CitizenRefugeeSystem system,
         CitizenPopulationStateSystem state,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         int refugeeTentBuildingId)
     {
         return system != null
@@ -253,7 +253,7 @@ internal sealed class CitizenRefugeeSystem
 
     public int GetAssignedRefugeeOccupancy(
         CitizenPopulationStateSystem state,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         int refugeeTentBuildingId)
     {
         return GetAssignedRefugeeOccupancyState(state, householdRegistrationSystem, refugeeTentBuildingId);
@@ -264,7 +264,7 @@ internal sealed class CitizenRefugeeSystem
         ref State refugeeState,
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenResourceSystem citizenResourceSystem,
         CitizenResourceSystem.Context citizenResourceContext,
         DayNightSystem dayNightSystem,
@@ -300,7 +300,7 @@ internal sealed class CitizenRefugeeSystem
     public void UpdateRefugeeUpkeep(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenResourceSystem citizenResourceSystem,
         CitizenResourceSystem.Context citizenResourceContext,
         DayNightSystem dayNightSystem,
@@ -351,7 +351,7 @@ internal sealed class CitizenRefugeeSystem
     private static void NotifyHomeBuildingDestroyedState(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         int buildingId,
         StoreHouseholdAction storeHousehold,
         StoreCitizenAction storeCitizen,
@@ -380,14 +380,14 @@ internal sealed class CitizenRefugeeSystem
     private static void UpdateRefugeeTentStateState(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         StoreHouseholdAction storeHousehold,
         StoreCitizenAction storeCitizen,
         TryGetHouseholdReferenceWorldPositionAction tryGetHouseholdReferenceWorldPosition,
         EstimateTravelSecondsAction estimateTravelSeconds,
         MarkCitizenDeadAction markCitizenDead)
     {
-        if (!CitizenHouseholdRegistrationSystem.HasHouseholdData(householdRegistrationSystem, state))
+        if (!CitizenHouseholdRegistrationCompositionSystemHelper.HasHouseholdData(householdRegistrationSystem, state))
             return;
 
         state.PopulateHouseholdIds();
@@ -427,7 +427,7 @@ internal sealed class CitizenRefugeeSystem
     private static void DisplaceHouseholdState(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenHouseholdRecordComponent household,
         string reason,
         StoreHouseholdAction storeHousehold,
@@ -466,7 +466,7 @@ internal sealed class CitizenRefugeeSystem
 
     private static int GetAssignedRefugeeOccupancyState(
         CitizenPopulationStateSystem state,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         int refugeeTentBuildingId)
     {
         int occupied = 0;
@@ -478,7 +478,7 @@ internal sealed class CitizenRefugeeSystem
             if (household.RefugeeTentBuildingId != refugeeTentBuildingId)
                 continue;
 
-            occupied += CitizenHouseholdRegistrationSystem.CountLivingHouseholdRefugees(householdRegistrationSystem, state, household);
+            occupied += CitizenHouseholdRegistrationCompositionSystemHelper.CountLivingHouseholdRefugees(householdRegistrationSystem, state, household);
         }
 
         return occupied;
@@ -488,7 +488,7 @@ internal sealed class CitizenRefugeeSystem
         ref State refugeeState,
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenResourceSystem citizenResourceSystem,
         CitizenResourceSystem.Context citizenResourceContext,
         DayNightSystem dayNightSystem,
@@ -521,7 +521,7 @@ internal sealed class CitizenRefugeeSystem
             if (!buildingReadSystem.TryGetRuntimeBuildingRefugeeSettings(household.RefugeeTentBuildingId, out _, out int upkeepPerCitizenPerDay))
                 continue;
 
-            int householdRefugees = CitizenHouseholdRegistrationSystem.CountLivingHouseholdRefugees(householdRegistrationSystem, state, household);
+            int householdRefugees = CitizenHouseholdRegistrationCompositionSystemHelper.CountLivingHouseholdRefugees(householdRegistrationSystem, state, household);
             if (householdRefugees <= 0)
                 continue;
 
@@ -542,7 +542,7 @@ internal sealed class CitizenRefugeeSystem
             if (!state.TryGetHousehold(state.ScratchHouseholdIds[i], out CitizenHouseholdRecordComponent household))
                 continue;
 
-            int householdRefugees = CitizenHouseholdRegistrationSystem.CountLivingHouseholdRefugees(householdRegistrationSystem, state, household);
+            int householdRefugees = CitizenHouseholdRegistrationCompositionSystemHelper.CountLivingHouseholdRefugees(householdRegistrationSystem, state, household);
             if (householdRefugees <= 0)
                 continue;
 
@@ -584,7 +584,7 @@ internal sealed class CitizenRefugeeSystem
     private static int FindNearestAvailableRefugeeTent(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenHouseholdRecordComponent household,
         TryGetHouseholdReferenceWorldPositionAction tryGetHouseholdReferenceWorldPosition)
     {
@@ -594,7 +594,7 @@ internal sealed class CitizenRefugeeSystem
         if (!tryGetHouseholdReferenceWorldPosition(household, out Vector3 originPosition))
             return 0;
 
-        int requiredSlots = Mathf.Max(1, CitizenHouseholdRegistrationSystem.CountLivingHouseholdMembers(householdRegistrationSystem, state, household));
+        int requiredSlots = Mathf.Max(1, CitizenHouseholdRegistrationCompositionSystemHelper.CountLivingHouseholdMembers(householdRegistrationSystem, state, household));
         int bestBuildingId = 0;
         float bestDistanceSq = float.MaxValue;
         for (int i = 0; i < buildingReadSystem.RefugeeTentBuildingIds.Count; i++)

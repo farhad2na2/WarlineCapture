@@ -695,7 +695,7 @@ Convert citizen simulation/read-model work and retire same-frame managed present
 - [ ] Keep citizen UI display passive and out of conversion scope.
 - [ ] Add focused citizen population, visible unit, resource/refugee, and read-model validations.
 - [ ] Run movement and combat/death validations if citizen visibility or danger state touches unit state.
-- [x] Fold Agent E `P7-0187 CitizenHouseholdRegistrationSystem` from a disabled `SystemBase` wrapper into a plain direct-owned citizen household registration helper and validate citizen focused behavior, compile, and Phase 7 architecture guard.
+- [x] Fold Agent E `P7-0187 CitizenHouseholdRegistrationCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned citizen household registration helper and validate citizen focused behavior, compile, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0192 CitizenPopulationEcsProjectionSystem` from a disabled `SystemBase` wrapper into a plain direct-owned citizen ECS projection helper and validate citizen visible-unit behavior, compile, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0201 CitizenRefugeeSystem` from a disabled `SystemBase` wrapper into a plain direct-owned citizen refugee helper and validate citizen visible-unit behavior, compile, and Phase 7 architecture guard.
 

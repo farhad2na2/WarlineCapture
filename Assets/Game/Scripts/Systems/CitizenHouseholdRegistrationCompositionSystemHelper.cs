@@ -1,7 +1,7 @@
 using UnityEngine;
 using Unity.Entities;
 
-internal sealed class CitizenHouseholdRegistrationSystem
+internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
 {
     public delegate CitizenHouseholdRecordComponent StoreHouseholdAction(CitizenHouseholdRecordComponent household);
     public delegate CitizenRecordComponent StoreCitizenAction(CitizenRecordComponent citizen);
@@ -10,7 +10,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
     public delegate float EstimateTravelSecondsAction(CitizenRecordComponent citizen, int targetBuildingId);
 
     public static void SyncRemovedHouses(
-        CitizenHouseholdRegistrationSystem system,
+        CitizenHouseholdRegistrationCompositionSystemHelper system,
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         DisplaceHouseholdAction displaceHousehold)
@@ -33,7 +33,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
     }
 
     public static void RegisterNewHouses(
-        CitizenHouseholdRegistrationSystem system,
+        CitizenHouseholdRegistrationCompositionSystemHelper system,
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         TryRehouseDisplacedHouseholdAction tryRehouseDisplacedHousehold,
@@ -75,7 +75,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
     }
 
     public static bool TryRehouseDisplacedHousehold(
-        CitizenHouseholdRegistrationSystem system,
+        CitizenHouseholdRegistrationCompositionSystemHelper system,
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int newHomeBuildingId,
@@ -118,7 +118,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
     }
 
     public static int CountLivingHouseholdMembers(
-        CitizenHouseholdRegistrationSystem system,
+        CitizenHouseholdRegistrationCompositionSystemHelper system,
         CitizenPopulationStateSystem state,
         CitizenHouseholdRecordComponent household)
     {
@@ -133,7 +133,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
     }
 
     public static int CountLivingHouseholdRefugees(
-        CitizenHouseholdRegistrationSystem system,
+        CitizenHouseholdRegistrationCompositionSystemHelper system,
         CitizenPopulationStateSystem state,
         CitizenHouseholdRecordComponent household)
     {
@@ -148,7 +148,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
     }
 
     public static bool IsCitizenAlive(
-        CitizenHouseholdRegistrationSystem system,
+        CitizenHouseholdRegistrationCompositionSystemHelper system,
         CitizenPopulationStateSystem state,
         int citizenId)
     {
@@ -162,7 +162,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
         return IsCitizenAliveState(state, citizenId);
     }
 
-    public static bool HasHouseholdData(CitizenHouseholdRegistrationSystem system, CitizenPopulationStateSystem state)
+    public static bool HasHouseholdData(CitizenHouseholdRegistrationCompositionSystemHelper system, CitizenPopulationStateSystem state)
     {
         return system != null
             ? system.HasHouseholdData(state)

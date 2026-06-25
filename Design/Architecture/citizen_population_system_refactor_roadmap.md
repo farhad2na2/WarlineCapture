@@ -18,9 +18,9 @@ Step 7 totals/read-model transition size: 1895 lines. Citizen totals calculation
 
 Step 8 building-read transition size: 1790 lines. Runtime building query dependencies, role id caches, house id set, refresh cadence, and building query wrappers now live in `CitizenBuildingReadCompositionSystemHelper`; the then-existing shell still delegates building reads until household/refugee/schedule/danger behavior moves out.
 
-Step 9 household-registration transition size: 1692 lines. New-house registration, removed-house synchronization, initial household/citizen creation, and initial work/shop/walk/city hall assignment now live in `CitizenHouseholdRegistrationSystem`; the then-existing shell still delegates rehousing and refugee displacement until the next steps move those policies out.
+Step 9 household-registration transition size: 1692 lines. New-house registration, removed-house synchronization, initial household/citizen creation, and initial work/shop/walk/city hall assignment now live in `CitizenHouseholdRegistrationCompositionSystemHelper`; the then-existing shell still delegates rehousing and refugee displacement until the next steps move those policies out.
 
-Step 10 rehousing-helper transition size: 1598 lines. Displaced-household search, rehouse-citizen mutation, living member/refugee counts, and rehousing assignment updates now live in `CitizenHouseholdRegistrationSystem`; the then-existing shell still delegates refugee-specific displacement and upkeep until step 11.
+Step 10 rehousing-helper transition size: 1598 lines. Displaced-household search, rehouse-citizen mutation, living member/refugee counts, and rehousing assignment updates now live in `CitizenHouseholdRegistrationCompositionSystemHelper`; the then-existing shell still delegates refugee-specific displacement and upkeep until step 11.
 
 Step 11 refugee-displacement transition size: 1460 lines. Home-destroyed notification handling, displacement, nearest refugee tent selection, tent-loss replacement, refugee occupancy, assignment release, and refugee state transitions now live in `CitizenRefugeeSystem`; the then-existing shell still owns daily refugee upkeep until step 12.
 
@@ -74,7 +74,7 @@ Goal: retire the broad managed `CitizenPopulationSystem` shell by moving citizen
 - ECS query and entity projection: moved to `CitizenPopulationEcsProjectionSystem`.
 - Citizen and household record storage: state storage moved to `CitizenPopulationStateSystem`.
 - Runtime building read cache: moved to `CitizenBuildingReadCompositionSystemHelper`.
-- Household registration and rehousing: new-house registration, removed-house synchronization, displaced-household search, rehouse-citizen mutation, assignment updates, and living member/refugee counts moved to `CitizenHouseholdRegistrationSystem`.
+- Household registration and rehousing: new-house registration, removed-house synchronization, displaced-household search, rehouse-citizen mutation, assignment updates, and living member/refugee counts moved to `CitizenHouseholdRegistrationCompositionSystemHelper`.
 - Refugee and displacement behavior: home destruction, missing-home displacement, refugee tent assignment, tent loss, occupancy, assignment release, refugee state transitions, and daily upkeep moved to `CitizenRefugeeSystem`.
 - Schedule policy: weekday/weekend/refugee timing constants, day-of-week logic, night policy, shopping cadence, work/lunch/walk/city hall decisions, target resolution, and schedule phase moved to `CitizenScheduleSystem`.
 - Status transition policy: status mutation, travel-status detection, desired-status travel mapping, travel-to-settled mapping, debug status mutation, arrival settling, and death status mutation moved to `CitizenStatusTransitionSystem`.
@@ -127,7 +127,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
 - `CitizenPopulationStateSystem`: owns citizen/household records, ids, dictionaries, visible-citizen records, scratch collections, and pure record mutation.
 - `CitizenPopulationEcsProjectionSystem`: owns ECS world/query/entity creation, component synchronization, summary entity publication, and entity destruction.
 - `CitizenBuildingReadCompositionSystemHelper`: owns runtime building role caches and building read delegates against `BuildingRuntimeReadModelCompositionSystemHelper`.
-- `CitizenHouseholdRegistrationSystem`: owns new house registration, target assignment, rehousing, removed-house detection, and household-to-home mapping policies.
+- `CitizenHouseholdRegistrationCompositionSystemHelper`: owns new house registration, target assignment, rehousing, removed-house detection, and household-to-home mapping policies.
 - `CitizenRefugeeSystem`: owns displacement, refugee tent assignment, tent loss, occupancy counting, upkeep charging, and refugee death policy.
 - `CitizenScheduleSystem`: owns schedule constants, day/hour policy, desired status/target selection, travel status conversion, and arrival settling policy.
 - `CitizenDangerCompositionSystemHelper`: owns danger source scanning, danger source cache, safe-building checks, and flee target selection.
@@ -206,17 +206,17 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
    - Added `CitizenBuildingReadSystemMustOwnRuntimeBuildingCache` to the focused architecture validation batch.
 
 9. Complete: Extract household registration
-   - Create `CitizenHouseholdRegistrationSystem`.
+   - Create `CitizenHouseholdRegistrationCompositionSystemHelper`.
    - Move new-house detection, household creation, male/female citizen creation, work/shop/lunch/walk/city hall target assignment, removed-house sync, and household rehome candidate selection.
    - Expected output: house lifecycle behavior is isolated from schedule/visible-unit behavior.
-   - Added `CitizenHouseholdRegistrationSystem.cs`.
+   - Added `CitizenHouseholdRegistrationCompositionSystemHelper.cs`.
    - Moved removed-house synchronization, new-house detection, household/citizen id allocation, initial household creation, male/female citizen creation, and initial building assignment out of `CitizenPopulationSystem.cs`.
    - Added `CitizenHouseholdRegistrationSystemMustOwnNewHouseRegistration` to the focused architecture validation batch.
 
 10. Complete: Extract rehousing and assignment helpers
    - Move rehouse-citizen mutation, displaced-household search, household reference position, living member counts, and assignment updates into the household/refugee boundary.
    - Keep record writes routed through `CitizenPopulationStateSystem`.
-   - Moved displaced-household search, rehouse-citizen mutation, assignment updates, living member counts, refugee member counts, and alive/awaiting-rehousing checks into `CitizenHouseholdRegistrationSystem.cs`.
+   - Moved displaced-household search, rehouse-citizen mutation, assignment updates, living member counts, refugee member counts, and alive/awaiting-rehousing checks into `CitizenHouseholdRegistrationCompositionSystemHelper.cs`.
    - Added `CitizenHouseholdRegistrationSystemMustOwnRehousingHelpers` to the focused architecture validation batch.
 
 11. Complete: Extract refugee displacement behavior

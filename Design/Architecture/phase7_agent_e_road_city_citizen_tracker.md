@@ -19,12 +19,12 @@ Progress snapshot:
 - Checklist progress: `109 / 109 complete (100.0%)`.
 - In progress: `0`.
 - Remaining open: `0`.
-- Current target: `Agent E naming-only Batch 188 CitizenDangerCompositionSystemHelper complete; continue road/city/citizen helper naming in small batches`.
+- Current target: `Agent E naming-only Batch 189 CitizenHouseholdRegistrationCompositionSystemHelper complete; continue road/city/citizen helper naming in small batches`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
 - Retired/folded helpers: `109`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `CitizenDangerCompositionSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, citizen visible-unit focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch188-citizen-visible.log with [CitizenVisibleUnitFocusedValidation] result=Passed tests=3 and /private/tmp/warline-non-ecs-helper-naming-batch188-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=41. Previous CitizenBuildingReadCompositionSystemHelper naming logs remain /private/tmp/warline-non-ecs-helper-naming-batch187-citizen-visible.log and /private/tmp/warline-non-ecs-helper-naming-batch187-architecture.log.`
+- Validation status: `CitizenHouseholdRegistrationCompositionSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, citizen visible-unit focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch189-citizen-visible.log with [CitizenVisibleUnitFocusedValidation] result=Passed tests=3 and /private/tmp/warline-non-ecs-helper-naming-batch189-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=40. Previous CitizenDangerCompositionSystemHelper naming logs remain /private/tmp/warline-non-ecs-helper-naming-batch188-citizen-visible.log and /private/tmp/warline-non-ecs-helper-naming-batch188-architecture.log.`
 
 Owned files:
 
@@ -306,6 +306,7 @@ Remove dead wrappers instead of converting them.
 - [x] Fold `P7-0185 CitizenBuildingReadSystem` from a disabled `SystemBase` wrapper into a plain citizen building read helper; runtime building list refresh, lookup helpers, and citizen composition callers stayed unchanged.
 - [x] Rename `P7-0185 CitizenBuildingReadSystem` to `CitizenBuildingReadCompositionSystemHelper` with preserved `.meta` GUID and focused citizen/architecture validation.
 - [x] Fold `P7-0187 CitizenHouseholdRegistrationSystem` from a disabled `SystemBase` wrapper into a plain citizen household registration helper; household assignment, dwelling registration, delegate types, and citizen composition callers stayed unchanged.
+- [x] Rename `P7-0187 CitizenHouseholdRegistrationSystem` to `CitizenHouseholdRegistrationCompositionSystemHelper` with preserved `.meta` GUID and focused citizen/architecture validation.
 - [x] Fold `P7-0192 CitizenPopulationEcsProjectionSystem` from a disabled `SystemBase` wrapper into a plain citizen ECS projection helper; entity-manager resolution, summary publication, entity projection, and visible-citizen callers stayed unchanged.
 - [x] Fold `P7-0201 CitizenRefugeeSystem` from a disabled `SystemBase` wrapper into a plain citizen refugee helper; displacement, tent assignment, refugee upkeep, delegate types, and citizen composition callers stayed unchanged.
 

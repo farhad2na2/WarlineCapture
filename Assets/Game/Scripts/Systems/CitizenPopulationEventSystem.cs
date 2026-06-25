@@ -4,7 +4,7 @@ public sealed class CitizenPopulationEventSystem
 {
     private CitizenPopulationStateSystem _state;
     private CitizenBuildingReadCompositionSystemHelper _buildingReadSystem;
-    private CitizenHouseholdRegistrationSystem _householdRegistrationSystem;
+    private CitizenHouseholdRegistrationCompositionSystemHelper _householdRegistrationSystem;
     private CitizenRefugeeSystem _refugeeSystem;
     private CitizenTravelSystem _travelSystem;
     private CitizenPopulationEcsProjectionSystem _ecsProjection;
@@ -18,7 +18,7 @@ public sealed class CitizenPopulationEventSystem
     internal void Init(
         CitizenPopulationStateSystem state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationSystem householdRegistrationSystem,
+        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenRefugeeSystem refugeeSystem,
         CitizenTravelSystem travelSystem,
         CitizenPopulationEcsProjectionSystem ecsProjection,

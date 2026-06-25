@@ -110,7 +110,7 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
 
     private void UpdateLogicalCitizenPopulation()
     {
-        CitizenHouseholdRegistrationSystem.SyncRemovedHouses(
+        CitizenHouseholdRegistrationCompositionSystemHelper.SyncRemovedHouses(
             _systems.HouseholdRegistrationSystem,
             _systems.State,
             _systems.BuildingReadSystem,
@@ -126,11 +126,11 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
                 (CitizenHouseholdRecordComponent household, out Vector3 worldPosition) => CitizenTravelSystem.TryGetHouseholdReferenceWorldPosition(_systems.TravelSystem, _systems.State, _systems.EcsProjection, _systems.BuildingReadSystem, _systems.StatusTransitionSystem, household, out worldPosition),
                 (CitizenRecordComponent citizen, int targetBuildingId) => CitizenTravelSystem.EstimateTravelSeconds(_systems.TravelSystem, _systems.State, _systems.BuildingReadSystem, citizen, targetBuildingId),
                 HandleCitizenDeath));
-        CitizenHouseholdRegistrationSystem.RegisterNewHouses(
+        CitizenHouseholdRegistrationCompositionSystemHelper.RegisterNewHouses(
             _systems.HouseholdRegistrationSystem,
             _systems.State,
             _systems.BuildingReadSystem,
-            newHomeBuildingId => CitizenHouseholdRegistrationSystem.TryRehouseDisplacedHousehold(
+            newHomeBuildingId => CitizenHouseholdRegistrationCompositionSystemHelper.TryRehouseDisplacedHousehold(
                 _systems.HouseholdRegistrationSystem,
                 _systems.State,
                 _systems.BuildingReadSystem,

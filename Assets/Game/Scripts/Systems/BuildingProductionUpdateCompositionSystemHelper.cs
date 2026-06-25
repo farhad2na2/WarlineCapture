@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class BuildingProductionUpdateSystem
+internal sealed class BuildingProductionUpdateCompositionSystemHelper
 {
     public readonly struct Context
     {

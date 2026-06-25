@@ -11,7 +11,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public readonly Camera WorldCamera;
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
-        public readonly BuildingProductionUpdateSystem ProductionUpdateSystem;
+        public readonly BuildingProductionUpdateCompositionSystemHelper ProductionUpdateSystem;
         public readonly BuildingProductionTransportPresentationSystemHelper TransportSystem;
         public readonly BuildingProductionTransportBridgeCompositionSystemHelper TransportBridgeSystem;
         public readonly BuildingProductionSlotUtilitySystemHelper ProductionSlotSystem;
@@ -52,7 +52,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             Camera worldCamera,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             BuildingProductionQueueCompositionSystemHelper productionSystem,
-            BuildingProductionUpdateSystem productionUpdateSystem,
+            BuildingProductionUpdateCompositionSystemHelper productionUpdateSystem,
             BuildingProductionTransportPresentationSystemHelper transportSystem,
             BuildingProductionTransportBridgeCompositionSystemHelper transportBridgeSystem,
             BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
@@ -135,7 +135,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         Camera worldCamera,
         BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingProductionQueueCompositionSystemHelper productionSystem,
-        BuildingProductionUpdateSystem productionUpdateSystem,
+        BuildingProductionUpdateCompositionSystemHelper productionUpdateSystem,
         BuildingProductionTransportPresentationSystemHelper transportSystem,
         BuildingProductionTransportBridgeCompositionSystemHelper transportBridgeSystem,
         BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
@@ -213,7 +213,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             prepareTransportDropVisual);
     }
 
-    public BuildingProductionUpdateSystem.Context CreateProductionUpdateContext(Source source)
+    public BuildingProductionUpdateCompositionSystemHelper.Context CreateProductionUpdateContext(Source source)
     {
         source.ProductionSystem?.PrewarmPendingProductionPool();
         source.TransportSystem?.PrewarmConfiguredProductionTransportPools(
@@ -226,7 +226,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             source.RuntimeBuildings,
             source.VisualSystem);
 
-        return new BuildingProductionUpdateSystem.Context(
+        return new BuildingProductionUpdateCompositionSystemHelper.Context(
             source.RuntimeBuildings,
             source.ProductionSystem,
             source.TransportSystem,

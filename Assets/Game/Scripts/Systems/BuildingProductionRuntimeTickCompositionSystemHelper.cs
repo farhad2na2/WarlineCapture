@@ -10,8 +10,8 @@ internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
         public readonly Dictionary<int, RuntimeBuildingEntity> RuntimeBuildingMap;
         public readonly DayNightSystem DayNightSystem;
         public readonly FactionResourceSystem FactionResourceSystem;
-        public readonly BuildingProductionUpdateSystem ProductionUpdateSystem;
-        public readonly BuildingProductionUpdateSystem.Context ProductionUpdateContext;
+        public readonly BuildingProductionUpdateCompositionSystemHelper ProductionUpdateSystem;
+        public readonly BuildingProductionUpdateCompositionSystemHelper.Context ProductionUpdateContext;
         public readonly BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem;
         public readonly BuildingResourceHaulerBridgeSystem.Context ResourceHaulerBridgeContext;
         public readonly BuildingSpawnSystem SpawnSystem;
@@ -26,8 +26,8 @@ internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             DayNightSystem dayNightSystem,
             FactionResourceSystem factionResourceSystem,
-            BuildingProductionUpdateSystem productionUpdateSystem,
-            BuildingProductionUpdateSystem.Context productionUpdateContext,
+            BuildingProductionUpdateCompositionSystemHelper productionUpdateSystem,
+            BuildingProductionUpdateCompositionSystemHelper.Context productionUpdateContext,
             BuildingResourceHaulerBridgeSystem resourceHaulerBridgeSystem,
             BuildingResourceHaulerBridgeSystem.Context resourceHaulerBridgeContext,
             BuildingSpawnSystem spawnSystem,

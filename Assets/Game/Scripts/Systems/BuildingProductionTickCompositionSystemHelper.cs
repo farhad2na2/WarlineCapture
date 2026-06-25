@@ -12,7 +12,7 @@ internal sealed class BuildingProductionTickCompositionSystemHelper
             source.RuntimeBuildingSystem.Buildings,
             source.BuildingGameplayDependencyCompositionSystemHelper.DayNightSystem,
             source.FactionResourceSystem,
-            source.BuildingProductionUpdateSystem,
+            source.BuildingProductionUpdateCompositionSystemHelper,
             source.BuildingProductionContextCompositionSystemHelper.CreateProductionUpdateContext(productionSource),
             source.BuildingResourceHaulerBridgeSystem,
             source.BuildingProductionContextCompositionSystemHelper.CreateResourceHaulerBridgeContext(productionSource),

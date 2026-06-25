@@ -48,7 +48,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingProductionRequestBoundary.Context> createProductionRequestContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource)
     {
         return source.BuildingPlacementInteractionContextCompositionSystemHelper.CreateContext(
             source.BuildingPlacementInteractionContextCompositionSystemHelper.CreateSource(
@@ -98,7 +98,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
                     out int2 breachCell,
                     out float3 breachPosition,
                     out string reason) => source.BuildingRuntimeQuerySystem.TryResolveBaseBreachTarget(
-                    source.BuildingRuntimeContextSystem.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
+                    source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
                     attackerFactionId,
                     finalTarget,
                     finalTargetCell,

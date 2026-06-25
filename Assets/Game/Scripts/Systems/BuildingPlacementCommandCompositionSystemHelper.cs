@@ -77,7 +77,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         TryGetGridCellDelegate tryGetGridCell,
         UpdatePlacementDelegate updatePlacement,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource,
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextFactoryCompositionSystemHelper.Source> createBuildingRuntimeContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return source.BuildingPlacementContextCompositionSystemHelper.CreateCommandContext(
@@ -121,7 +121,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         TryGetGridCellDelegate tryGetGridCell,
         UpdatePlacementDelegate updatePlacement,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource,
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextFactoryCompositionSystemHelper.Source> createBuildingRuntimeContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return new BuildingPlacementContextCompositionSystemHelper.Source(
@@ -160,7 +160,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
                 (origin, footprint, gridConfig) => source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(origin, footprint, gridConfig, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
                 (Vector2Int origin, BuildingDefinition definition, out bool gateVertical) => tryAlignGateToNearbyWall(source, origin, definition, out gateVertical)),
             (definition, instance, originCell, removeOverlappingBlockers) => source.BuildingRuntimeCreationSystem.RegisterRuntimeBuilding(
-                source.BuildingRuntimeContextSystem.CreateCreationContext(createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock)),
+                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCreationContext(createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock)),
                 definition,
                 instance,
                 originCell,

@@ -3,7 +3,7 @@ using UnityEngine;
 internal static class BuildingRuntimeFocusPositionPresentationSystemHelper
 {
     public static Vector3 Resolve(
-        BuildingRuntimeContextSystem.RuntimeSource runtimeSource,
+        BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource,
         RuntimeBuildingEntity building)
     {
         if (runtimeSource.TryResolveBuildingFocusWorldPosition != null &&

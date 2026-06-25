@@ -10,7 +10,7 @@ internal sealed class BuildingSelectionCompositionSystemHelper
         BuildingGameplaySourceCompositionSystemHelper source,
         TryGetGridForSelectionDelegate tryGetGridForSelection,
         System.Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource)
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource)
     {
         return source.BuildingSelectionSystem.CreateContext(new BuildingSelectionSystem.Source(
             source.RuntimeBuildingSystem,
@@ -20,7 +20,7 @@ internal sealed class BuildingSelectionCompositionSystemHelper
             (origin, footprint, grid) => source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(origin, footprint, grid, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
             () => source.RuntimeGameplayStateSystem.SuppressNextWorldClick = true,
             () => source.BuildingSelectionMarkerSystem.Refresh(
-                source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
+                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
                     createRuntimeContextSource(source),
                     source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
                     source.BuildingPlacementStartupSystemHelper.BuildingRoot,
@@ -31,7 +31,7 @@ internal sealed class BuildingSelectionCompositionSystemHelper
                 BuildingSelectionPortraitUiSystemHelper.Resolve(building, resolveSelectionPortraitSpriteFromPrefab)),
             source.BuildingGameplayDependencyCompositionSystemHelper.SmoothMoveCameraGroundCenterTo,
             source.BuildingGameplayDependencyCompositionSystemHelper.IsBoardablePlayerTransportClick,
-            clickedBuildingId => source.BuildingRuntimeContextSystem.TryAssignSelectedHaulerOrders(
+            clickedBuildingId => source.BuildingRuntimeContextFactoryCompositionSystemHelper.TryAssignSelectedHaulerOrders(
                 createRuntimeContextSource(source),
                 clickedBuildingId),
             source.BuildingGameplayDependencyCompositionSystemHelper.TryRequestMoveOrderToBuilding,

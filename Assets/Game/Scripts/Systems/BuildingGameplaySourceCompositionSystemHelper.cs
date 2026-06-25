@@ -55,7 +55,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingPlacementVisualPresentationSystemHelper BuildingPlacementVisualPresentationSystemHelper;
     internal readonly BuildingRuntimeSpawnSystem BuildingRuntimeSpawnSystem = new();
     internal readonly BuildingRuntimeSpawnCommandBoundary BuildingRuntimeSpawnCommandBoundary = new();
-    internal readonly BuildingRuntimeContextSystem BuildingRuntimeContextSystem = new();
+    internal readonly BuildingRuntimeContextFactoryCompositionSystemHelper BuildingRuntimeContextFactoryCompositionSystemHelper = new();
     internal readonly BuildingRuntimeContextCompositionSystemHelper BuildingRuntimeContextCompositionSystemHelper = new();
     internal readonly BuildingRuntimeQueryCompositionSystemHelper BuildingRuntimeQueryCompositionSystemHelper = new();
     internal readonly BuildingRuntimeSideEffectCompositionSystemHelper BuildingRuntimeSideEffectCompositionSystemHelper = new();

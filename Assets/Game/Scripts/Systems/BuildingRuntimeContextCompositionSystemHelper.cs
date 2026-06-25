@@ -38,7 +38,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
         int id,
         out RuntimeBuildingEntity building);
 
-    public BuildingRuntimeContextSystem.Source CreateBuildingRuntimeContextSource(
+    public BuildingRuntimeContextFactoryCompositionSystemHelper.Source CreateBuildingRuntimeContextSource(
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
@@ -53,7 +53,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
         Action<BuildingGameplaySourceCompositionSystemHelper> endDeferredRuntimeBuildingSideEffects,
         float destroyedBuildingLifetimeSeconds)
     {
-        BuildingRuntimeContextSystem.RuntimeSource CreateRuntimeSource() =>
+        BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource CreateRuntimeSource() =>
             CreateRuntimeContextSource(
                 source,
                 tryGetEntityManager,
@@ -74,7 +74,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 getEffectivePlacementRect,
                 destroyedBuildingLifetimeSeconds);
 
-        return new BuildingRuntimeContextSystem.Source(
+        return new BuildingRuntimeContextFactoryCompositionSystemHelper.Source(
             source.BuildingPlacementStartupSystemHelper.BuildingRoot,
             source.BuildingDefinitionPrefabSystemHelper,
             source.BuildingRunwaySystem,
@@ -123,7 +123,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                         getEffectivePlacementRect),
                     out gateVertical)),
             (definition, instance, originCell, removeOverlappingBlockers) => source.BuildingRuntimeCreationSystem.RegisterRuntimeBuilding(
-                source.BuildingRuntimeContextSystem.CreateCreationContext(CreateBuildingRuntimeContextSource(
+                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCreationContext(CreateBuildingRuntimeContextSource(
                     source,
                     interactionContext,
                     markerPropertyBlock,
@@ -142,7 +142,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 originCell,
                 removeOverlappingBlockers),
             (building, ownerFactionId) => source.BuildingRuntimeOwnershipSystem.SetRuntimeBuildingOwnerFaction(
-                source.BuildingRuntimeContextSystem.CreateOwnershipContext(CreateBuildingRuntimeContextSource(
+                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateOwnershipContext(CreateBuildingRuntimeContextSource(
                     source,
                     interactionContext,
                     markerPropertyBlock,
@@ -172,10 +172,10 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,
             () => source.BuildingGameplayEcsQueryCompositionSystemHelper.RedirectUnitsQuery,
             building => source.BuildingRuntimeVisualPresentationSystemHelper.InitializeBuildingVisuals(
-                source.BuildingRuntimeContextSystem.CreateRuntimeVisualContext(CreateRuntimeSource()),
+                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeVisualContext(CreateRuntimeSource()),
                 building),
             () => source.BuildingSelectionMarkerSystem.Refresh(
-                source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
+                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
                     CreateRuntimeSource(),
                     source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
                     source.BuildingPlacementStartupSystemHelper.BuildingRoot,
@@ -202,7 +202,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
         GetEffectivePlacementRectDelegate getEffectivePlacementRect,
         float destroyedBuildingLifetimeSeconds)
     {
-        BuildingRuntimeContextSystem.RuntimeSource runtimeSource = CreateRuntimeContextSource(
+        BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource = CreateRuntimeContextSource(
             source,
             (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
             tryGetGridData,
@@ -211,8 +211,8 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             tryGetRuntimeBuilding,
             getEffectivePlacementRect);
         BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> combatContext =
-            source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
-        return source.BuildingRuntimeContextSystem.CreateRuntimeEntityContext(
+            source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCombatContext(runtimeSource);
+        return source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeEntityContext(
             runtimeSource,
             source.BuildingCombatUtilitySystemHelper,
             combatContext,
@@ -220,7 +220,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             destroyedBuildingLifetimeSeconds);
     }
 
-    public BuildingRuntimeContextSystem.RuntimeSource CreateRuntimeContextSource(
+    public BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource CreateRuntimeContextSource(
         BuildingGameplaySourceCompositionSystemHelper source,
         TryGetEntityManagerDelegate tryGetEntityManager,
         TryGetGridDataDelegate tryGetGridData,
@@ -229,7 +229,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
         TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
         GetEffectivePlacementRectDelegate getEffectivePlacementRect)
     {
-        return new BuildingRuntimeContextSystem.RuntimeSource(
+        return new BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource(
             source.RuntimeBuildingSystem,
             source.BuildingProductionQueueCompositionSystemHelper,
             source.BuildingProductionSlotUtilitySystemHelper,
@@ -268,7 +268,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             (int id, out RuntimeBuildingEntity building) => tryGetRuntimeBuilding(source, id, out building),
             (building, grid) => getEffectivePlacementRect(source, building.Definition, building.OriginCell, grid, false),
             building => source.BuildingBarrierUtilitySystemHelper.RememberOpenBaseBreach(
-                source.BuildingRuntimeContextSystem.CreateBarrierContext(CreateRuntimeContextSource(
+                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(CreateRuntimeContextSource(
                     source,
                     tryGetEntityManager,
                     tryGetGridData,
@@ -280,7 +280,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             source.BuildingGameplayDependencyCompositionSystemHelper.NotifyHomeBuildingDestroyed,
             source.RuntimeObjectPresentationHelper.DestroyRuntimeObject,
             () => source.BuildingSelectionMarkerSystem.Refresh(
-                source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
+                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
                     CreateRuntimeContextSource(
                         source,
                         tryGetEntityManager,

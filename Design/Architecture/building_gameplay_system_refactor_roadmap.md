@@ -56,13 +56,13 @@ Step 26 building selection transition size: 1542 lines. Visible selectable check
 
 Step 27 runtime destruction/entity-link transition size: 1538 lines. Runtime building delete callbacks and runtime entity destroyed callbacks now route through `BuildingRuntimeEntitySystem` using `BuildingCombatSystem`; `BuildingGameplaySystem` no longer exposes `DeleteBuildingById` or `HandleRuntimeBuildingEntityDestroyed` shell methods.
 
-Step 28 runtime entity creation transition size: 1513 lines. Runtime blocker creation, runtime building path-blocking policy, and runtime building combat entity creation now bind inside `BuildingRuntimeContextSystem` against `BuildingRuntimeEntitySystem`; `BuildingGameplaySystem` no longer keeps private creation/policy wrapper methods.
+Step 28 runtime entity creation transition size: 1513 lines. Runtime blocker creation, runtime building path-blocking policy, and runtime building combat entity creation now bind inside `BuildingRuntimeContextFactoryCompositionSystemHelper` against `BuildingRuntimeEntitySystem`; `BuildingGameplaySystem` no longer keeps private creation/policy wrapper methods.
 
-Step 29 redirect/hauler bridge transition size: 1473 lines. Runtime creation redirect callbacks, deferred redirect footprint callbacks, pending marker refresh callbacks, selected hauler order assignment, and building approach checks now bind through `BuildingRuntimeContextSystem` to `BuildingPlacementRedirectCompositionSystemHelper` / `BuildingResourceHaulerBridgeCompositionSystemHelper`; `BuildingGameplaySystem` no longer keeps private redirect or hauler bridge wrapper methods.
+Step 29 redirect/hauler bridge transition size: 1473 lines. Runtime creation redirect callbacks, deferred redirect footprint callbacks, pending marker refresh callbacks, selected hauler order assignment, and building approach checks now bind through `BuildingRuntimeContextFactoryCompositionSystemHelper` to `BuildingPlacementRedirectCompositionSystemHelper` / `BuildingResourceHaulerBridgeCompositionSystemHelper`; `BuildingGameplaySystem` no longer keeps private redirect or hauler bridge wrapper methods.
 
 Step 30 placement context factory transition size: 1446 lines. Placement cancel/begin/confirm lifecycle context creation plus placement session/command context creation now live in `BuildingPlacementContextCompositionSystemHelper`; `BuildingGameplaySystem` no longer declares private cancel/begin/confirm/session factory wrappers.
 
-Step 31 runtime context factory transition size: 1446 lines. Runtime spawn command context creation now lives in `BuildingRuntimeContextSystem`; managed composition and runtime tick context creation use `BuildingRuntimeContextSystem` directly for runtime visual/combat/query/barrier contexts instead of shell context wrapper methods.
+Step 31 runtime context factory transition size: 1446 lines. Runtime spawn command context creation now lives in `BuildingRuntimeContextFactoryCompositionSystemHelper`; managed composition and runtime tick context creation use `BuildingRuntimeContextFactoryCompositionSystemHelper` directly for runtime visual/combat/query/barrier contexts instead of shell context wrapper methods.
 
 Step 32 production/UI context factory transition size: 1446 lines. Production context source creation now routes through `BuildingProductionContextCompositionSystemHelper.CreateSource`, UI context source creation routes through `BuildingUiContextSystem.CreateSource`, interaction context source creation routes through `BuildingPlacementInteractionContextCompositionSystemHelper.CreateSource`, and runtime resource prefab source creation routes through `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource`.
 
@@ -285,7 +285,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Move runtime building ids, role filters, focus position, destroyed state, refugee settings, owner faction, wall/gate flags, combat info, approach-cell queries, and base-breach target resolution into `BuildingRuntimeQuerySystem`.
    - Expected output: AI/citizen/runtime-city callers consume `BuildingRuntimeQuerySystem.Context`.
    - `BuildingRuntimeQuerySystem` now owns base-breach target read routing through its context.
-   - `BuildingRuntimeContextSystem` wires base-breach target routing to the barrier domain while exposing it as a runtime query read.
+   - `BuildingRuntimeContextFactoryCompositionSystemHelper` wires base-breach target routing to the barrier domain while exposing it as a runtime query read.
    - `BuildingGameplayCompositionSystemHelper.Result` now exposes `RuntimeQuery` and `RuntimeQueryContext`, and citizen population creation consumes those fields directly.
    - `BuildingGameplaySystem.TryResolveBaseBreachTarget` is now only a temporary compatibility wrapper over `BuildingRuntimeQuerySystem`.
 
@@ -343,15 +343,15 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 28. Complete: Move combat and blocker creation
    - Move blocker entity creation, path-blocking policy, combat entity creation, and gate friendly-pass faction update into `BuildingRuntimeEntitySystem`, `BuildingCombatSystem`, and `BuildingBarrierSystem`.
    - Expected output: ECS combat/blocker entities are created by their domain owners.
-   - `BuildingRuntimeContextSystem.CreateCreationContext` now binds path-blocking, blocker creation, and combat entity creation directly to `BuildingRuntimeEntitySystem`.
+   - `BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCreationContext` now binds path-blocking, blocker creation, and combat entity creation directly to `BuildingRuntimeEntitySystem`.
    - `BuildingGameplaySystem` no longer declares private `CreateBlockerEntity`, `ShouldRuntimeBuildingBlockPathing`, or `CreateBuildingCombatEntity` wrappers.
 
 29. Complete: Move redirect and hauler bridge calls
    - Move redirect-around-building, selected hauler order assignment, hauler approach checks, and deferred marker refresh flushing to `BuildingPlacementRedirectCompositionSystemHelper` / `BuildingResourceHaulerBridgeCompositionSystemHelper`.
    - Expected output: resource/transport side effects do not use shell callbacks.
-   - `BuildingRuntimeContextSystem.CreateCreationContext` now binds runtime creation redirect callbacks directly to `BuildingPlacementRedirectCompositionSystemHelper`.
-   - `BuildingRuntimeContextSystem.CreateRuntimeQueryContext` and `CreateBarrierContext` now bind building approach checks directly to `BuildingResourceHaulerBridgeCompositionSystemHelper`.
-   - `BuildingRuntimeContextSystem.TryAssignSelectedHaulerOrders` now owns the selected-hauler bridge call used by building selection.
+   - `BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCreationContext` now binds runtime creation redirect callbacks directly to `BuildingPlacementRedirectCompositionSystemHelper`.
+   - `BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext` and `CreateBarrierContext` now bind building approach checks directly to `BuildingResourceHaulerBridgeCompositionSystemHelper`.
+   - `BuildingRuntimeContextFactoryCompositionSystemHelper.TryAssignSelectedHaulerOrders` now owns the selected-hauler bridge call used by building selection.
    - `BuildingGameplaySystem` no longer declares private `RedirectUnitsAroundPlacedBuilding`, `TryAssignSelectedHaulerOrders`, `TryGetRuntimeBuildingApproachCell(RuntimeBuildingData, ...)`, `IsRuntimeBuildingApproachCell(RuntimeBuildingData, ...)`, or `IsHaulerAtBuildingApproach` wrappers.
 
 ## Phase 8: Move Context Factories Out Of The Shell
@@ -366,9 +366,9 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 31. Complete: Move runtime context factories
    - Move runtime context source, runtime spawn command context, runtime query context, runtime resource prefab source, runtime entity context, runtime visual context, combat context, redirect context, barrier context, and selection contexts into owner context systems.
    - Expected output: all runtime tick and runtime city contexts are constructed without shell delegates.
-   - `BuildingRuntimeContextSystem.CreateSpawnCommandContext` now owns runtime spawn command context construction.
-   - `BuildingGameplayCompositionSystemHelper.Initialize` creates runtime spawn command and runtime query contexts through `BuildingRuntimeContextSystem`.
-   - `BuildingGameplayCompositionSystemHelper.CreateRuntimeTickSource` creates runtime visual, combat, and barrier contexts through `BuildingRuntimeContextSystem`.
+   - `BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnCommandContext` now owns runtime spawn command context construction.
+   - `BuildingGameplayCompositionSystemHelper.Initialize` creates runtime spawn command and runtime query contexts through `BuildingRuntimeContextFactoryCompositionSystemHelper`.
+   - `BuildingGameplayCompositionSystemHelper.CreateRuntimeTickSource` creates runtime visual, combat, and barrier contexts through `BuildingRuntimeContextFactoryCompositionSystemHelper`.
    - `BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource`, `BuildingSelectionSystem.CreateContext`, and `BuildingSelectionClickSystem.CreateContext` now expose owner-side construction overloads for later shell wrapper removal.
 
 32. Complete: Move production and UI context factories

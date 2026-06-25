@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeContextSystem
+internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
 {
     public readonly struct RuntimeSource
     {

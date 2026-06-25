@@ -136,7 +136,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 candidateRect,
                 tryGetGridData,
                 (querySource, definition, originCell, grid, rotateVertical) => getEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical));
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource =
             source => source.BuildingRuntimeContextCompositionSystemHelper.CreateRuntimeContextSource(
                 source,
                 tryGetEntityManager,
@@ -155,7 +155,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 tryGetRuntimeBuilding,
                 getEffectivePlacementRect,
                 DestroyedBuildingLifetimeSeconds);
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextFactoryCompositionSystemHelper.Source> createBuildingRuntimeContextSource =
             (source, placementInteractionContext, placementMarkerPropertyBlock) => source.BuildingRuntimeContextCompositionSystemHelper.CreateBuildingRuntimeContextSource(
                 source,
                 placementInteractionContext,
@@ -380,7 +380,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             createBuildingSelectionContext,
             createBuildingRuntimeEntityContext,
             createRuntimeContextSource);
-        BuildingRuntimeContextSystem.Source buildingRuntimeContextSource =
+        BuildingRuntimeContextFactoryCompositionSystemHelper.Source buildingRuntimeContextSource =
             createBuildingRuntimeContextSource(childSystems, interactionContext, markerPropertyBlock);
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary =
             BuildingCitizenPopulationCompositionSystemHelper.CreateBoundary(_citizenPopulationCompositionSystem);
@@ -389,26 +389,26 @@ internal sealed class BuildingGameplayCompositionSystemHelper
 
         var runtimeUpdate = new BuildingRuntimeUpdateSystem();
         BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext =
-            childSystems.BuildingRuntimeContextSystem.CreateSpawnCommandContext(
+            childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnCommandContext(
                 buildingRuntimeContextSource,
                 childSystems.BuildingRuntimeSpawnSystem);
         Func<BuildingSpawnSystem.Context> createSpawnContext = () =>
         {
             if (tryGetEntityManager(out EntityManager em))
                 childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
-            return childSystems.BuildingRuntimeContextSystem.CreateBuildingSpawnContext(createRuntimeContextSource(childSystems));
+            return childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBuildingSpawnContext(createRuntimeContextSource(childSystems));
         };
         Func<BuildingBarrierUtilitySystemHelper.Context> createBarrierContext = () =>
         {
             if (tryGetEntityManager(out EntityManager em))
                 childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
-            return childSystems.BuildingRuntimeContextSystem.CreateBarrierContext(createRuntimeContextSource(childSystems));
+            return childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(createRuntimeContextSource(childSystems));
         };
         Func<BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>> createCombatContext = () =>
         {
             if (tryGetEntityManager(out EntityManager em))
                 childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
-            return childSystems.BuildingRuntimeContextSystem.CreateCombatContext(createRuntimeContextSource(childSystems));
+            return childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCombatContext(createRuntimeContextSource(childSystems));
         };
         BuildingPlacementRuntimeTickCompositionSystemHelper.Context runtimeTickContext = default;
         bool runtimeTickContextReady = false;
@@ -464,10 +464,10 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                     createRuntimeContextSource),
                 (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                 {
-                    BuildingRuntimeContextSystem.Source mapRuntimeContextSource =
+                    BuildingRuntimeContextFactoryCompositionSystemHelper.Source mapRuntimeContextSource =
                         createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
                     BuildingRuntimeSpawnSystem.Context mapSpawnContext =
-                        source.BuildingRuntimeContextSystem.CreateSpawnContext(mapRuntimeContextSource);
+                        source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnContext(mapRuntimeContextSource);
                     bool TryGetMapGridData(
                         out Entity gridEntity,
                         out GridConfig grid,
@@ -556,13 +556,13 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 UpdateBuildingSimulationTick,
                 childSystems.RuntimeBuildingEntityLinkRegistry),
             childSystems.BuildingRuntimeCitySpawnBridgeCompositionSystemHelper,
-            childSystems.BuildingRuntimeContextSystem.CreateCitySpawnContext(
+            childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCitySpawnContext(
                 buildingRuntimeContextSource,
                 childSystems.BuildingRuntimeSpawnCommandBoundary,
                 runtimeSpawnCommandContext,
                 childSystems.BuildingRuntimeBoundaryProcessingCompositionSystemHelper),
             childSystems.BuildingRuntimeQuerySystem,
-            childSystems.BuildingRuntimeContextSystem.CreateRuntimeQueryContext(createRuntimeContextSource(childSystems)),
+            childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(childSystems)),
             childSystems.BuildingRuntimeSpawnCommandBoundary,
             runtimeSpawnCommandContext,
             childSystems.BuildingSpawnSystem,

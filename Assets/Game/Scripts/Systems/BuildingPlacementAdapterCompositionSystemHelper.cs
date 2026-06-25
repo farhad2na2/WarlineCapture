@@ -11,12 +11,12 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
         out DynamicBuffer<GridRoad> roads,
         out DynamicBlockerComponent blockerData);
 
-    internal delegate BuildingRuntimeContextSystem.Source CreateBuildingRuntimeContextSourceDelegate(
+    internal delegate BuildingRuntimeContextFactoryCompositionSystemHelper.Source CreateBuildingRuntimeContextSourceDelegate(
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock);
 
-    internal delegate BuildingRuntimeContextSystem.RuntimeSource CreateRuntimeContextSourceDelegate(
+    internal delegate BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource CreateRuntimeContextSourceDelegate(
         BuildingGameplaySourceCompositionSystemHelper source);
 
     internal delegate RectInt GetEffectivePlacementRectDelegate(
@@ -53,7 +53,7 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
         if (source.BuildingRuntimeSpawnSystem == null)
             return false;
 
-        BuildingRuntimeSpawnSystem.Context context = source.BuildingRuntimeContextSystem.CreateSpawnContext(
+        BuildingRuntimeSpawnSystem.Context context = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnContext(
             createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock));
         return source.BuildingRuntimeSpawnSystem.TryResolveInitialPlacementOrigin(
                    context,
@@ -90,7 +90,7 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
     {
         PlacementState activePlacement = source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement;
         bool rotateVertical = source.BuildingBarrierUtilitySystemHelper.ResolvePlacementRotateVertical(
-            source.BuildingRuntimeContextSystem.CreateBarrierContext(createRuntimeContextSource(source)),
+            source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(createRuntimeContextSource(source)),
             source.BuildingPlacementInputUiSystemHelper,
             activePlacement);
         return isPlacementValid(source, activePlacement?.Definition, originCell, footprintCells, rotateVertical, grid, roads, blockerData);
@@ -104,7 +104,7 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
         out bool gateVertical)
     {
         return source.BuildingBarrierUtilitySystemHelper.ShouldAlignGateToNearbyWall(
-            source.BuildingRuntimeContextSystem.CreateBarrierContext(createRuntimeContextSource(source)),
+            source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(createRuntimeContextSource(source)),
             originCell,
             definition,
             out gateVertical);

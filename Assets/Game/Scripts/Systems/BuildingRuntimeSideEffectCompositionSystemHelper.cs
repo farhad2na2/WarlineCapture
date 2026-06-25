@@ -22,7 +22,7 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
         BuildingGameplaySourceCompositionSystemHelper source,
         TryGetEntityManagerDelegate tryGetEntityManager)
     {
-        BuildingRuntimeContextSystem.RuntimeSource runtimeSource =
+        BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource =
             source.BuildingRuntimeContextCompositionSystemHelper.CreateRuntimeContextSource(
                 source,
                 (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
@@ -46,9 +46,9 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
                 (querySource, definition, originCell, grid, rotateVertical) =>
                     querySource.BuildingRuntimeQueryCompositionSystemHelper.GetEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical));
         source.BuildingPlacementRedirectCompositionSystemHelper.EndDeferredRuntimeBuildingSideEffects(
-            source.BuildingRuntimeContextSystem.CreateRedirectContext(runtimeSource),
+            source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRedirectContext(runtimeSource),
             () => source.BuildingSelectionMarkerSystem.Refresh(
-                source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
+                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
                     runtimeSource,
                     source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
                     source.BuildingPlacementStartupSystemHelper.BuildingRoot,

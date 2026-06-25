@@ -7,7 +7,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementInputRuntimeTickUiSystemHelper.Context> createInputRuntimeTickContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingProductionRuntimeTickCompositionSystemHelper.Context> createProductionRuntimeTickContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeBoundaryPublishCompositionSystemHelper.Context> createRuntimeBoundaryPublishContext,
@@ -15,17 +15,17 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, Action> createMapVehiclePlacementSpawnUpdate,
         float destroyedBuildingLifetimeSeconds)
     {
-        BuildingRuntimeContextSystem.RuntimeSource runtimeSource = createRuntimeContextSource(source);
-        BuildingRuntimeVisualPresentationSystemHelper.Context runtimeVisualContext = source.BuildingRuntimeContextSystem.CreateRuntimeVisualContext(runtimeSource);
+        BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource = createRuntimeContextSource(source);
+        BuildingRuntimeVisualPresentationSystemHelper.Context runtimeVisualContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeVisualContext(runtimeSource);
         BuildingSelectionMarkerSystem.Context selectionMarkerContext =
-            source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
+            source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
                 runtimeSource,
                 source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
                 source.BuildingPlacementStartupSystemHelper.BuildingRoot,
                 markerPropertyBlock,
                 source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
-        BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> combatContext = source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
-        BuildingBarrierUtilitySystemHelper.Context barrierContext = source.BuildingRuntimeContextSystem.CreateBarrierContext(runtimeSource);
+        BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> combatContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCombatContext(runtimeSource);
+        BuildingBarrierUtilitySystemHelper.Context barrierContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(runtimeSource);
         BuildingPlacementInputRuntimeTickUiSystemHelper.Context inputContext = createInputRuntimeTickContext(source, interactionContext, markerPropertyBlock);
         return new BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source(
             createProductionRuntimeTickContext(source),

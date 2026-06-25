@@ -6,14 +6,14 @@ internal sealed class BuildingProductionCompositionSystemHelper
 {
     public BuildingProductionContextCompositionSystemHelper.Source CreateRuntimeContextSource(
         BuildingGameplaySourceCompositionSystemHelper source,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext = default,
         MaterialPropertyBlock markerPropertyBlock = null)
     {
-        BuildingRuntimeContextSystem.RuntimeSource runtimeSource = createRuntimeContextSource(source);
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext = source.BuildingRuntimeContextSystem.CreateRuntimeQueryContext(runtimeSource);
-        BuildingSpawnSystem.Context spawnContext = source.BuildingRuntimeContextSystem.CreateBuildingSpawnContext(runtimeSource);
+        BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource = createRuntimeContextSource(source);
+        BuildingRuntimeQuerySystem.Context runtimeQueryContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(runtimeSource);
+        BuildingSpawnSystem.Context spawnContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBuildingSpawnContext(runtimeSource);
         BuildingProductionContextCompositionSystemHelper.Source productionSource = default;
         productionSource = source.BuildingProductionContextCompositionSystemHelper.CreateSource(
             source.RuntimeBuildingSystem.Buildings,

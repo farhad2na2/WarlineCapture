@@ -92,7 +92,7 @@ Baseline audit notes:
 
 Direct call sites:
 
-- `BuildingSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, included in `BuildingGameplayResultCompositionSystemHelper`, invoked through `BuildingProductionRuntimeTickCompositionSystemHelper`, `BuildingProductionTickCompositionSystemHelper`, `BuildingProductionCompositionSystemHelper`, and `BuildingRuntimeContextSystem.CreateBuildingSpawnContext`; focused tests call `ResolveProducedUnitFaction`.
+- `BuildingSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, included in `BuildingGameplayResultCompositionSystemHelper`, invoked through `BuildingProductionRuntimeTickCompositionSystemHelper`, `BuildingProductionTickCompositionSystemHelper`, `BuildingProductionCompositionSystemHelper`, and `BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBuildingSpawnContext`; focused tests call `ResolveProducedUnitFaction`.
 - `BuildingProductionTransportBridgeCompositionSystemHelper`: held by `BuildingGameplaySourceCompositionSystemHelper`, passed through `BuildingProductionContextCompositionSystemHelper` and `BuildingProductionTransportPresentationSystemHelper`; focused production tests call `FocusNewestPlayerProducedUnit`.
 - `CitizenVisibleUnitSystem`: constructed by `CitizenPopulationCompositionSystem` and directly constructed by `CitizenVisibleUnitSystemTests`.
 - `MapVehiclePlacementSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, invoked by `BuildingGameplayCompositionSystemHelper` map placement update callbacks; blocker cleanup helpers are directly covered by `UnitMovementBlockerValidationTests`.
@@ -255,7 +255,7 @@ Decompose production spawn execution into focused ECS processors that use source
 
 Phase 2 source-key spawn notes:
 
-- Added `BuildingSpawnSystem.TryGetProductionSourceKeyDelegate` and wired `BuildingRuntimeContextSystem` to `BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey`.
+- Added `BuildingSpawnSystem.TryGetProductionSourceKeyDelegate` and wired `BuildingRuntimeContextFactoryCompositionSystemHelper` to `BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey`.
 - `BuildingDefinition.ProductionSlotDefinition` now carries `SpawnUnitSourceKey`; `BuildingDefinitionPrefabSystemHelper` fills it from configured production slots and falls back to the legacy prefab lookup key only at the managed definition edge.
 - `BuildingSpawnSystem.TrySpawnPlayerUnitNearBuilding` no longer requires `GetProductionPrefabDelegate`; it resolves the ECS prefab entity from the production source key first.
 - Helicopter production placement now uses the production source key plus ECS prefab entity data instead of `BuildingProductionQueueCompositionSystemHelper.IsHelicopterUnitPrefab(GameObject)`.
@@ -279,7 +279,7 @@ Phase 2 production spawn request notes:
 
 - Added `BuildingProductionSpawnRequest` as an ECS boundary buffer carrying request id, runtime building id, production index, reserved production slot index, owner faction, override flags, unit source key, prefab entity, produced unit, spawn cell, and spawn world position.
 - `MatchBootstrapSystem` and `RuntimeGameplayStateTestHelper` now ensure the production spawn request buffer exists on the runtime boundary entity.
-- `BuildingRuntimeContextSystem.RuntimeSource` now carries `BuildingRuntimeBoundaryQuery`; `BuildingRuntimeContextCompositionSystemHelper` wires it from `BuildingGameplayEcsQueryCompositionSystemHelper`.
+- `BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource` now carries `BuildingRuntimeBoundaryQuery`; `BuildingRuntimeContextCompositionSystemHelper` wires it from `BuildingGameplayEcsQueryCompositionSystemHelper`.
 - `BuildingSpawnSystem.TrySpawnPlayerUnitNearBuilding` publishes a bounded completed request row after successful spawn execution while preserving the current managed execution path.
 - `BuildingProductionQueueCompositionSystemHelperTests.BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot` now asserts the ECS request row fields alongside the spawned entity state.
 - Main project validation failed twice with Unity database write errors; shadow validation used `/Users/farhad/Projects/WarlineCapture-CodexUnity1` after syncing the focused boundary/spawn files.
@@ -393,7 +393,7 @@ Phase 2 produced-unit read-model reader migration notes:
 
 Phase 2 produced-unit count read-model notes:
 
-- `BuildingRuntimeQuerySystem.Context` now carries a passive runtime-boundary entity getter, wired from `BuildingRuntimeContextSystem.RuntimeSource.BuildingRuntimeBoundaryQuery`.
+- `BuildingRuntimeQuerySystem.Context` now carries a passive runtime-boundary entity getter, wired from `BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource.BuildingRuntimeBoundaryQuery`.
 - `BuildingRuntimeQuerySystem.CountRuntimeProducedUnitsForFaction` now counts live produced units from `BuildingProducedUnitReadModel` before falling back to `RuntimeBuildingEntity.ProducedUnits`.
 - Added `BuildingProductionQueueCompositionSystemHelperTests.CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel`, which counts a produced unit from the ECS read model while the runtime building has no managed produced-unit list.
 - Remaining blockers before the actual `ISystem` flip: `BuildingSpawnSystem` still writes managed `ProducedUnits` for legacy UI readers, and fallback spawn placement still reads runtime-building transforms.

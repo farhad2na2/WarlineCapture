@@ -212,7 +212,7 @@ internal sealed class BuildingPlacementPreviewPresentationSystemHelper
         {
             for (int runIndex = 0; runIndex < placement.CommittedWallRuns.Count; runIndex++)
             {
-                BuildingPlacementInputSystem.WallRun run = placement.CommittedWallRuns[runIndex];
+                BuildingPlacementInputUiSystemHelper.WallRun run = placement.CommittedWallRuns[runIndex];
                 if (run?.Origins == null)
                     continue;
 

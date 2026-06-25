@@ -91,7 +91,7 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
         PlacementState activePlacement = source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement;
         bool rotateVertical = source.BuildingBarrierUtilitySystemHelper.ResolvePlacementRotateVertical(
             source.BuildingRuntimeContextSystem.CreateBarrierContext(createRuntimeContextSource(source)),
-            source.BuildingPlacementInputSystem,
+            source.BuildingPlacementInputUiSystemHelper,
             activePlacement);
         return isPlacementValid(source, activePlacement?.Definition, originCell, footprintCells, rotateVertical, grid, roads, blockerData);
     }

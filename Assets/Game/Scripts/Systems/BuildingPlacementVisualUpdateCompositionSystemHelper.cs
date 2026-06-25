@@ -15,7 +15,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
 
     internal readonly struct Context
     {
-        public readonly BuildingPlacementInputSystem InputSystem;
+        public readonly BuildingPlacementInputUiSystemHelper InputSystem;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
         public readonly BuildingPlacementValidationSystem ValidationSystem;
         public readonly BuildingPlacementGridCameraSystemHelper GridSystem;
@@ -25,7 +25,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
         public readonly BuildingPlacementCommitCompositionSystemHelper CommitSystem;
         public readonly BuildingPlacementLifecycleCompositionSystemHelper LifecycleSystem;
         public readonly BuildingBarrierUtilitySystemHelper BarrierSystem;
-        public readonly BuildingPlacementInputSystem.TryGetGridCellDelegate TryGetGridCell;
+        public readonly BuildingPlacementInputUiSystemHelper.TryGetGridCellDelegate TryGetGridCell;
         public readonly TryGetGridDataDelegate TryGetGridData;
         public readonly GetPlacementFootprintDelegate GetPlacementFootprint;
         public readonly IsPlacementValidDelegate IsPlacementValid;
@@ -37,7 +37,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
         public readonly SelectAndFocusBuildingDelegate SelectAndFocusBuilding;
 
         public Context(
-            BuildingPlacementInputSystem inputSystem,
+            BuildingPlacementInputUiSystemHelper inputSystem,
             BuildingPlacementPreviewPresentationSystemHelper previewSystem,
             BuildingPlacementValidationSystem validationSystem,
             BuildingPlacementGridCameraSystemHelper gridSystem,
@@ -47,7 +47,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
             BuildingPlacementCommitCompositionSystemHelper commitSystem,
             BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             BuildingBarrierUtilitySystemHelper barrierSystem,
-            BuildingPlacementInputSystem.TryGetGridCellDelegate tryGetGridCell,
+            BuildingPlacementInputUiSystemHelper.TryGetGridCellDelegate tryGetGridCell,
             TryGetGridDataDelegate tryGetGridData,
             GetPlacementFootprintDelegate getPlacementFootprint,
             IsPlacementValidDelegate isPlacementValid,

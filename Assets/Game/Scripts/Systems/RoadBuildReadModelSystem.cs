@@ -87,7 +87,7 @@ public sealed class RoadBuildReadModelSystem
                 return interaction.PlacementStatusText(_context.DependencyState.BuildingPlacementInteractionContext);
             }
 
-            BuildingPlacementInputSystem.IPlacementState activePlacement = _context.PlacementStorageSystem?.ActivePlacement;
+            BuildingPlacementInputUiSystemHelper.IPlacementState activePlacement = _context.PlacementStorageSystem?.ActivePlacement;
             if (activePlacement == null)
                 return "Choose a build type.";
 

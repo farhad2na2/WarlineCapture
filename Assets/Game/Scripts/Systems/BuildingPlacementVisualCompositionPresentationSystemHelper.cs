@@ -81,7 +81,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
         return new BuildingPlacementVisualUpdateCompositionSystemHelper.Context(
-            source.BuildingPlacementInputSystem,
+            source.BuildingPlacementInputUiSystemHelper,
             source.BuildingPlacementPreviewPresentationSystemHelper,
             source.BuildingPlacementValidationSystem,
             source.BuildingPlacementGridCameraSystemHelper,

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class BuildingPlacementInputSystem
+internal sealed class BuildingPlacementInputUiSystemHelper
 {
     private readonly List<Vector2Int> _wallPlacementOriginsScratch = new();
     private readonly List<Vector2Int> _allWallPlacementOriginsScratch = new();

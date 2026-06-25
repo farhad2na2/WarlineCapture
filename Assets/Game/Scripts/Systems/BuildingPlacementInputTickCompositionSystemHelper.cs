@@ -9,13 +9,13 @@ internal sealed class BuildingPlacementInputTickCompositionSystemHelper
         MaterialPropertyBlock markerPropertyBlock,
         float clickDragThresholdPixels,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementInputSystem.ActivePlacementPointerContext> createActivePlacementPointerContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementInputUiSystemHelper.ActivePlacementPointerContext> createActivePlacementPointerContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionClickSystem.Context> createSelectionClickContext)
     {
         return new BuildingPlacementInputRuntimeTickUiSystemHelper.Context(
             () => source.BuildingPlacementStartupSystemHelper.WorldCamera,
             () => source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement,
-            source.BuildingPlacementInputSystem,
+            source.BuildingPlacementInputUiSystemHelper,
             createActivePlacementPointerContext(source, interactionContext, markerPropertyBlock),
             () => source.RuntimeGameplayStateSystem.PlayRequested,
             () => source.RuntimeGameplayStateSystem.BuildModeActive,

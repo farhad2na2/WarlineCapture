@@ -10,7 +10,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly BuildingPlacementLifecycleCompositionSystemHelper LifecycleSystem;
-        public readonly BuildingPlacementInputSystem InputSystem;
+        public readonly BuildingPlacementInputUiSystemHelper InputSystem;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
         public readonly BuildingPlacementValidationSystem PlacementValidationSystem;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
@@ -26,10 +26,10 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
         public readonly BuildingPlacementLifecycleCompositionSystemHelper.CommitPlacementDelegate CommitPlacement;
         public readonly Action ApplyBuildCommandMode;
         public readonly Action ClearSelectedBuildingForBegin;
-        public readonly BuildingPlacementInputSystem.TryGetGridForInputDelegate TryGetGridForPlacementInput;
-        public readonly BuildingPlacementInputSystem.TryGetGridCellDelegate TryGetGridCell;
-        public readonly BuildingPlacementInputSystem.IsPointerOverPlacementUiDelegate IsPointerOverPlacementUi;
-        public readonly BuildingPlacementInputSystem.UpdatePlacementFromPointerDelegate UpdatePlacement;
+        public readonly BuildingPlacementInputUiSystemHelper.TryGetGridForInputDelegate TryGetGridForPlacementInput;
+        public readonly BuildingPlacementInputUiSystemHelper.TryGetGridCellDelegate TryGetGridCell;
+        public readonly BuildingPlacementInputUiSystemHelper.IsPointerOverPlacementUiDelegate IsPointerOverPlacementUi;
+        public readonly BuildingPlacementInputUiSystemHelper.UpdatePlacementFromPointerDelegate UpdatePlacement;
         public readonly Func<int, int, int, int, bool> IsRuntimeBlockerCell;
         public readonly Func<GridConfig, Vector2Int, Vector2Int, bool> HasRoadInFootprint;
         public readonly BuildingPlacementCommitCompositionSystemHelper.CreateVisualDelegate CreateBuildingVisualInstance;
@@ -42,7 +42,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
         public Source(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
-            BuildingPlacementInputSystem inputSystem,
+            BuildingPlacementInputUiSystemHelper inputSystem,
             BuildingPlacementPreviewPresentationSystemHelper previewSystem,
             BuildingPlacementValidationSystem placementValidationSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
@@ -58,10 +58,10 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             BuildingPlacementLifecycleCompositionSystemHelper.CommitPlacementDelegate commitPlacement,
             Action applyBuildCommandMode,
             Action clearSelectedBuildingForBegin,
-            BuildingPlacementInputSystem.TryGetGridForInputDelegate tryGetGridForPlacementInput,
-            BuildingPlacementInputSystem.TryGetGridCellDelegate tryGetGridCell,
-            BuildingPlacementInputSystem.IsPointerOverPlacementUiDelegate isPointerOverPlacementUi,
-            BuildingPlacementInputSystem.UpdatePlacementFromPointerDelegate updatePlacement,
+            BuildingPlacementInputUiSystemHelper.TryGetGridForInputDelegate tryGetGridForPlacementInput,
+            BuildingPlacementInputUiSystemHelper.TryGetGridCellDelegate tryGetGridCell,
+            BuildingPlacementInputUiSystemHelper.IsPointerOverPlacementUiDelegate isPointerOverPlacementUi,
+            BuildingPlacementInputUiSystemHelper.UpdatePlacementFromPointerDelegate updatePlacement,
             Func<int, int, int, int, bool> isRuntimeBlockerCell,
             Func<GridConfig, Vector2Int, Vector2Int, bool> hasRoadInFootprint,
             BuildingPlacementCommitCompositionSystemHelper.CreateVisualDelegate createBuildingVisualInstance,
@@ -104,9 +104,9 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
         }
     }
 
-    public BuildingPlacementInputSystem.ActivePlacementPointerContext CreateActivePlacementPointerContext(Source source)
+    public BuildingPlacementInputUiSystemHelper.ActivePlacementPointerContext CreateActivePlacementPointerContext(Source source)
     {
-        return new BuildingPlacementInputSystem.ActivePlacementPointerContext(
+        return new BuildingPlacementInputUiSystemHelper.ActivePlacementPointerContext(
             source.TryGetGridForPlacementInput,
             source.TryGetGridCell,
             BuildingPlacementGridCameraSystemHelper.CenterCellToOrigin,
@@ -217,7 +217,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
         {
             for (int i = 0; i < placement.CommittedWallRuns.Count; i++)
             {
-                BuildingPlacementInputSystem.WallRun run = placement.CommittedWallRuns[i];
+                BuildingPlacementInputUiSystemHelper.WallRun run = placement.CommittedWallRuns[i];
                 if (run?.Origins == null || run.Origins.Count == 0)
                     continue;
 

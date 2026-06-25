@@ -127,7 +127,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         return new BuildingPlacementContextCompositionSystemHelper.Source(
             source.RuntimeGameplayStateSystem,
             source.BuildingPlacementLifecycleCompositionSystemHelper,
-            source.BuildingPlacementInputSystem,
+            source.BuildingPlacementInputUiSystemHelper,
             source.BuildingPlacementPreviewPresentationSystemHelper,
             source.BuildingPlacementValidationSystem,
             source.RuntimeBuildingSystem,

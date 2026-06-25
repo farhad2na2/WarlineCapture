@@ -7,7 +7,7 @@ internal sealed class BuildingPlacementSessionCompositionSystemHelper
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly BuildingPlacementLifecycleCompositionSystemHelper LifecycleSystem;
-        public readonly BuildingPlacementInputSystem InputSystem;
+        public readonly BuildingPlacementInputUiSystemHelper InputSystem;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
         public readonly Func<BuildingPlacementLifecycleCompositionSystemHelper.CancelContext> CreateCancelContext;
         public readonly Func<BuildingPlacementLifecycleCompositionSystemHelper.BeginContext> CreateBeginContext;
@@ -21,7 +21,7 @@ internal sealed class BuildingPlacementSessionCompositionSystemHelper
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
-            BuildingPlacementInputSystem inputSystem,
+            BuildingPlacementInputUiSystemHelper inputSystem,
             BuildingPlacementPreviewPresentationSystemHelper previewSystem,
             Func<BuildingPlacementLifecycleCompositionSystemHelper.CancelContext> createCancelContext,
             Func<BuildingPlacementLifecycleCompositionSystemHelper.BeginContext> createBeginContext,

@@ -12,8 +12,8 @@ internal sealed class BuildingPlacementInputRuntimeTickUiSystemHelper
     {
         public readonly Func<Camera> GetWorldCamera;
         public readonly Func<BuildingPlacementLifecycleCompositionSystemHelper.PlacementState> GetActivePlacement;
-        public readonly BuildingPlacementInputSystem PlacementInputSystem;
-        public readonly BuildingPlacementInputSystem.ActivePlacementPointerContext ActivePlacementPointerContext;
+        public readonly BuildingPlacementInputUiSystemHelper PlacementInputSystem;
+        public readonly BuildingPlacementInputUiSystemHelper.ActivePlacementPointerContext ActivePlacementPointerContext;
         public readonly Func<bool> IsPlayRequested;
         public readonly Func<bool> IsBuildModeActive;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PlacementPreviewSystem;
@@ -29,8 +29,8 @@ internal sealed class BuildingPlacementInputRuntimeTickUiSystemHelper
         public Context(
             Func<Camera> getWorldCamera,
             Func<BuildingPlacementLifecycleCompositionSystemHelper.PlacementState> getActivePlacement,
-            BuildingPlacementInputSystem placementInputSystem,
-            BuildingPlacementInputSystem.ActivePlacementPointerContext activePlacementPointerContext,
+            BuildingPlacementInputUiSystemHelper placementInputSystem,
+            BuildingPlacementInputUiSystemHelper.ActivePlacementPointerContext activePlacementPointerContext,
             Func<bool> isPlayRequested,
             Func<bool> isBuildModeActive,
             BuildingPlacementPreviewPresentationSystemHelper placementPreviewSystem,

@@ -202,8 +202,8 @@ public sealed class BuildingPlacementValidationSystem
     }
 
     internal bool AreAllPendingWallRunsValid(
-        BuildingPlacementInputSystem.IPlacementState placement,
-        BuildingPlacementInputSystem inputSystem,
+        BuildingPlacementInputUiSystemHelper.IPlacementState placement,
+        BuildingPlacementInputUiSystemHelper inputSystem,
         GetWallSegmentFootprintDelegate getWallSegmentFootprint,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
@@ -213,14 +213,14 @@ public sealed class BuildingPlacementValidationSystem
         if (inputSystem == null || getWallSegmentFootprint == null)
             return false;
 
-        IReadOnlyList<BuildingPlacementInputSystem.WallRun> runs =
+        IReadOnlyList<BuildingPlacementInputUiSystemHelper.WallRun> runs =
             inputSystem.BuildFinalWallRunsScratch(placement, getWallSegmentFootprint.Invoke);
         if (runs.Count == 0)
             return false;
 
         for (int runIndex = 0; runIndex < runs.Count; runIndex++)
         {
-            BuildingPlacementInputSystem.WallRun run = runs[runIndex];
+            BuildingPlacementInputUiSystemHelper.WallRun run = runs[runIndex];
             if (run?.Origins == null || run.Origins.Count == 0)
                 return false;
 
@@ -235,7 +235,7 @@ public sealed class BuildingPlacementValidationSystem
                     if (otherRunIndex == runIndex)
                         continue;
 
-                    BuildingPlacementInputSystem.WallRun otherRun = runs[otherRunIndex];
+                    BuildingPlacementInputUiSystemHelper.WallRun otherRun = runs[otherRunIndex];
                     if (otherRun?.Origins == null || otherRun.Origins.Count == 0)
                         continue;
 
@@ -255,7 +255,7 @@ public sealed class BuildingPlacementValidationSystem
     }
 
     internal bool AreWallPlacementOriginsValid(
-        BuildingPlacementInputSystem.IPlacementState placement,
+        BuildingPlacementInputUiSystemHelper.IPlacementState placement,
         IReadOnlyList<Vector2Int> origins,
         Vector2Int footprintCells,
         bool vertical,
@@ -278,7 +278,7 @@ public sealed class BuildingPlacementValidationSystem
         {
             for (int runIndex = 0; runIndex < placement.CommittedWallRuns.Count; runIndex++)
             {
-                BuildingPlacementInputSystem.WallRun run = placement.CommittedWallRuns[runIndex];
+                BuildingPlacementInputUiSystemHelper.WallRun run = placement.CommittedWallRuns[runIndex];
                 if (run?.Origins == null)
                     continue;
 

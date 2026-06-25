@@ -101,7 +101,7 @@ internal sealed class BuildingPlacementQueryUiSystemHelper
         }
     }
 
-    public string GetPlacementStatusText(BuildingPlacementInputSystem.IPlacementState placement)
+    public string GetPlacementStatusText(BuildingPlacementInputUiSystemHelper.IPlacementState placement)
     {
         if (placement == null)
             return "Choose a build type.";
@@ -112,7 +112,7 @@ internal sealed class BuildingPlacementQueryUiSystemHelper
         return $"{placement.Definition.DisplayName}: {state} ({origin.x},{origin.y}) {size.x}x{size.y}";
     }
 
-    public float GetActivePlacementDurationSeconds(BuildingPlacementInputSystem.IPlacementState placement)
+    public float GetActivePlacementDurationSeconds(BuildingPlacementInputUiSystemHelper.IPlacementState placement)
     {
         return placement?.Definition != null
             ? placement.Definition.ProductionDurationSeconds

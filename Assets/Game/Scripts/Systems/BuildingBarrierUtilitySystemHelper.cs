@@ -521,7 +521,7 @@ internal sealed class BuildingBarrierUtilitySystemHelper
         return IsWallGateDefinition(definition) && TryResolveNearbyWallVertical(context, originCell, definition, out vertical);
     }
 
-    public bool ResolvePlacementRotateVertical(Context context, BuildingPlacementInputSystem inputSystem, PlacementState placement)
+    public bool ResolvePlacementRotateVertical(Context context, BuildingPlacementInputUiSystemHelper inputSystem, PlacementState placement)
     {
         if (placement?.Definition == null)
             return false;

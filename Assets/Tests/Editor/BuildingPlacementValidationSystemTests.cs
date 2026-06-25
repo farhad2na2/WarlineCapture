@@ -593,7 +593,7 @@ public sealed class BuildingPlacementValidationSystemTests
     [Test]
     public void BuildingPlacementInputScratchLists_ReuseImmediatePreviewStorageWithoutSharingOwnedResults()
     {
-        var input = new BuildingPlacementInputSystem();
+        var input = new BuildingPlacementInputUiSystemHelper();
         var placement = new ScratchPlacementState
         {
             Definition = new BuildingDefinition { FootprintCells = new Vector2Int(1, 1) },
@@ -616,8 +616,8 @@ public sealed class BuildingPlacementValidationSystemTests
         Assert.AreEqual(4, owned.Count);
         Assert.AreEqual(new Vector2Int(4, 1), owned[3]);
 
-        IReadOnlyList<BuildingPlacementInputSystem.WallRun> firstRuns = input.BuildFinalWallRunsScratch(placement, UnitFootprint);
-        IReadOnlyList<BuildingPlacementInputSystem.WallRun> secondRuns = input.BuildFinalWallRunsScratch(placement, UnitFootprint);
+        IReadOnlyList<BuildingPlacementInputUiSystemHelper.WallRun> firstRuns = input.BuildFinalWallRunsScratch(placement, UnitFootprint);
+        IReadOnlyList<BuildingPlacementInputUiSystemHelper.WallRun> secondRuns = input.BuildFinalWallRunsScratch(placement, UnitFootprint);
         Assert.AreSame(firstRuns, secondRuns);
         Assert.AreEqual(1, secondRuns.Count);
         Assert.AreEqual(secondScratch.Count, secondRuns[0].Origins.Count);
@@ -756,19 +756,19 @@ public sealed class BuildingPlacementValidationSystemTests
         };
     }
 
-    private sealed class ScratchPlacementState : BuildingPlacementInputSystem.IPlacementState
+    private sealed class ScratchPlacementState : BuildingPlacementInputUiSystemHelper.IPlacementState
     {
         public BuildingDefinition Definition { get; set; }
         public Vector2Int OriginCell { get; set; }
         public Vector2Int CommittedOriginCell { get; set; }
         public Vector2Int DragStartOriginCell { get; set; }
         public Vector2Int DragCurrentOriginCell { get; set; }
-        public BuildingPlacementInputSystem.DragFirstAxis DragFirstAxis { get; set; }
+        public BuildingPlacementInputUiSystemHelper.DragFirstAxis DragFirstAxis { get; set; }
         public bool HideCurrentWallPreview { get; set; }
         public bool IsValid { get; set; } = true;
         public float LastPointerMovedAt { get; set; }
         public Vector2 LastPointerScreenPosition { get; set; }
-        public List<BuildingPlacementInputSystem.WallRun> CommittedWallRuns { get; set; }
+        public List<BuildingPlacementInputUiSystemHelper.WallRun> CommittedWallRuns { get; set; }
     }
 }
 #endif

@@ -4,7 +4,7 @@ using UnityEngine;
 
 internal sealed class BuildingPlacementLifecycleCompositionSystemHelper
 {
-    public sealed class PlacementState : BuildingPlacementInputSystem.IPlacementState
+    public sealed class PlacementState : BuildingPlacementInputUiSystemHelper.IPlacementState
     {
         public BuildingDefinition Definition { get; set; }
         public GameObject PreviewInstance { get; set; }
@@ -12,9 +12,9 @@ internal sealed class BuildingPlacementLifecycleCompositionSystemHelper
         public Vector2Int CommittedOriginCell { get; set; }
         public Vector2Int DragStartOriginCell { get; set; }
         public Vector2Int DragCurrentOriginCell { get; set; }
-        public BuildingPlacementInputSystem.DragFirstAxis DragFirstAxis { get; set; }
+        public BuildingPlacementInputUiSystemHelper.DragFirstAxis DragFirstAxis { get; set; }
         public bool AutoRotateVertical { get; set; }
-        public List<BuildingPlacementInputSystem.WallRun> CommittedWallRuns { get; set; }
+        public List<BuildingPlacementInputUiSystemHelper.WallRun> CommittedWallRuns { get; set; }
         public bool HideCurrentWallPreview { get; set; }
         public bool IsValid { get; set; }
         public float LastPointerMovedAt { get; set; }
@@ -42,12 +42,12 @@ internal sealed class BuildingPlacementLifecycleCompositionSystemHelper
 
     public readonly struct CancelContext
     {
-        public readonly BuildingPlacementInputSystem InputSystem;
+        public readonly BuildingPlacementInputUiSystemHelper InputSystem;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
         public readonly DestroyPreviewDelegate DestroyPreview;
 
         public CancelContext(
-            BuildingPlacementInputSystem inputSystem,
+            BuildingPlacementInputUiSystemHelper inputSystem,
             BuildingPlacementPreviewPresentationSystemHelper previewSystem,
             DestroyPreviewDelegate destroyPreview)
         {
@@ -60,7 +60,7 @@ internal sealed class BuildingPlacementLifecycleCompositionSystemHelper
     public struct BeginContext
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly BuildingPlacementInputSystem InputSystem;
+        public readonly BuildingPlacementInputUiSystemHelper InputSystem;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
         public readonly Transform BuildingRoot;
         public readonly CreatePreviewDelegate CreatePreview;
@@ -74,7 +74,7 @@ internal sealed class BuildingPlacementLifecycleCompositionSystemHelper
 
         public BeginContext(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            BuildingPlacementInputSystem inputSystem,
+            BuildingPlacementInputUiSystemHelper inputSystem,
             BuildingPlacementPreviewPresentationSystemHelper previewSystem,
             Transform buildingRoot,
             CreatePreviewDelegate createPreview,
@@ -143,7 +143,7 @@ internal sealed class BuildingPlacementLifecycleCompositionSystemHelper
         ActivePlacementCost = Mathf.Max(0, cost);
     }
 
-    public void NotifyPlacementUiPointerDown(BuildingPlacementInputSystem inputSystem)
+    public void NotifyPlacementUiPointerDown(BuildingPlacementInputUiSystemHelper inputSystem)
     {
         if (ActivePlacement != null)
             inputSystem?.NotifyPlacementUiPointerDown(ActivePlacement);
@@ -177,9 +177,9 @@ internal sealed class BuildingPlacementLifecycleCompositionSystemHelper
             CommittedOriginCell = origin,
             DragStartOriginCell = origin,
             DragCurrentOriginCell = origin,
-            DragFirstAxis = BuildingPlacementInputSystem.DragFirstAxis.None,
+            DragFirstAxis = BuildingPlacementInputUiSystemHelper.DragFirstAxis.None,
             AutoRotateVertical = false,
-            CommittedWallRuns = new List<BuildingPlacementInputSystem.WallRun>(),
+            CommittedWallRuns = new List<BuildingPlacementInputUiSystemHelper.WallRun>(),
             HideCurrentWallPreview = false,
             LastPointerMovedAt = UnityEngine.Time.time,
             LastPointerScreenPosition = GamePointerInput.TryGetPointerPosition(out Vector2 pointerPosition) ? pointerPosition : Vector2.zero

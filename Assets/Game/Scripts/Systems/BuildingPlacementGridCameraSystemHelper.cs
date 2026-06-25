@@ -71,7 +71,7 @@ internal sealed class BuildingPlacementGridCameraSystemHelper
     }
 
     public Vector3 ResolvePlacementFocusWorldPosition(
-        BuildingPlacementInputSystem.IPlacementState placement,
+        BuildingPlacementInputUiSystemHelper.IPlacementState placement,
         IReadOnlyList<Vector2Int> allOrigins,
         GridConfig grid,
         Vector2Int wallFootprint,

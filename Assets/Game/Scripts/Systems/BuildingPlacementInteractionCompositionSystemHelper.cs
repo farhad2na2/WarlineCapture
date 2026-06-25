@@ -21,7 +21,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
         MaterialPropertyBlock markerPropertyBlock,
         Vector2 screenPosition);
 
-    public BuildingPlacementInputSystem.ActivePlacementPointerContext CreateActivePlacementPointerContext(
+    public BuildingPlacementInputUiSystemHelper.ActivePlacementPointerContext CreateActivePlacementPointerContext(
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
@@ -29,7 +29,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
         TryGetGridCellDelegate tryGetGridCell,
         UpdatePlacementDelegate updatePlacement)
     {
-        return new BuildingPlacementInputSystem.ActivePlacementPointerContext(
+        return new BuildingPlacementInputUiSystemHelper.ActivePlacementPointerContext(
             (out GridConfig grid) => tryGetGridForPlacementInput(source, out grid),
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => tryGetGridCell(source, screenPosition, grid, out cell),
             BuildingPlacementGridCameraSystemHelper.CenterCellToOrigin,
@@ -57,7 +57,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
                 () => source.RuntimeBuildingSystem.HasSelectedBuilding(),
                 () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
                 () => source.BuildingPlacementLifecycleCompositionSystemHelper.HasPendingBuildingPlacement &&
-                      source.BuildingPlacementInputSystem.IsDraggingPlacement,
+                      source.BuildingPlacementInputUiSystemHelper.IsDraggingPlacement,
                 () => source.BuildingUiQuerySystem.PlacementStatusText(
                     createBuildingUiQueryContext(source, getInteractionContext(), markerPropertyBlock)),
                 () => source.BuildingUiQuerySystem.SelectedBuildingLabel(

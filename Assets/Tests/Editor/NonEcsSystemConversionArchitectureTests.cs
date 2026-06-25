@@ -114,7 +114,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "SelectionUiCommandSystem",
         "BuildingUiCommandBoundary",
         "RuntimeGameplayStateSystem",
-        "SelectionUiCameraSystem",
+        "SelectionUiCameraSystemHelper",
         "RtsSelectionInputSystem",
         "RtsSelectionInputStateSystem",
         "RtsSelectionPointerTargetCommandSystem",

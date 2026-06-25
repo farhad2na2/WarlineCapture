@@ -107,7 +107,7 @@ Progress notes:
 
 - [x] Add a small camera-intro request path that does not mutate the camera directly from UI.
 - [x] Preferred behavior: start slightly zoomed out, then ease into the default match camera zoom/focus.
-- [x] Reuse `SelectionUiCameraSystem` or existing camera request buffers if they can express smooth focus/zoom.
+- [x] Reuse `SelectionUiCameraSystemHelper` or existing camera request buffers if they can express smooth focus/zoom.
 - [x] If existing systems cannot express this cleanly, add a narrow ECS request component consumed by the camera system.
 - [x] Keep the camera move short and subtle so it feels cinematic without disorienting the player.
 

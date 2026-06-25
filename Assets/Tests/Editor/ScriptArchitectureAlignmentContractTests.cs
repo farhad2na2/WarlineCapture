@@ -119,7 +119,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
     private static readonly string[] RuntimeTypesForbiddenInUiRuntime =
     {
         "RuntimeGameplayStateSystem",
-        "SelectionUiCameraSystem",
+        "SelectionUiCameraSystemHelper",
         "RtsSelectionInputStateSystem",
         "BuildingUiCommandBoundary",
         "BuildingUiQuerySystem",

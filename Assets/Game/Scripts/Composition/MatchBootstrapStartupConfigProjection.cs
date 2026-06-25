@@ -64,7 +64,7 @@ internal static class MatchBootstrapStartupConfigProjection
 
     public static bool FocusInitialCameraOnConfiguredFactionBase(
         World world,
-        SelectionUiCameraSystem selectionUiCameraSystem,
+        SelectionUiCameraSystemHelper selectionUiCameraSystem,
         AIStartupSystem.TryResolveFactionSpawnCell resolveFactionSpawnCell,
         byte fallbackFactionId)
     {

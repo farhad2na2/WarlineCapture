@@ -328,7 +328,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplaySystem` no longer declares visual helper wrapper methods.
 
 26. Complete: Move building selection and camera focus
-   - Move visible selectable checks, select/focus building, clear selected building, delete selected building, and focus-world-position callbacks into `BuildingSelectionRuntimeCompositionSystemHelper`, `BuildingSelectionClickUtilitySystemHelper`, and `SelectionUiCameraSystem`.
+   - Move visible selectable checks, select/focus building, clear selected building, delete selected building, and focus-world-position callbacks into `BuildingSelectionRuntimeCompositionSystemHelper`, `BuildingSelectionClickUtilitySystemHelper`, and `SelectionUiCameraSystemHelper`.
    - Expected output: selection does not call shell methods.
    - `BuildingSelectionRuntimeCompositionSystemHelper` now owns visible selectable checks, selected-building deletion, focus-world-position resolution, and focus/camera routing through its context.
    - Building UI and interaction context sources now call `BuildingSelectionRuntimeCompositionSystemHelper` directly for selected delete/clear and visible selectable queries instead of routing through shell helper methods.

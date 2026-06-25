@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class SelectionUiCameraSystem
+public sealed class SelectionUiCameraSystemHelper
 {
     private const float DefaultMinZoomHeight = 10f;
     private const float DefaultMaxZoomHeight = 45f;
@@ -21,7 +21,7 @@ public sealed class SelectionUiCameraSystem
     private float _fullscreenIsoYaw = 10f;
     private float _fullscreenIsoOrthographicSize = 24f;
 
-    public SelectionUiCameraSystem(RtsCameraSystem cameraSystem, RtsCameraRequestSystem cameraRequestSystem)
+    public SelectionUiCameraSystemHelper(RtsCameraSystem cameraSystem, RtsCameraRequestSystem cameraRequestSystem)
     {
         _cameraSystem = cameraSystem ?? ResolveDefaultCameraSystem();
         _cameraRequestSystem = cameraRequestSystem ?? ResolveDefaultCameraRequestSystem();

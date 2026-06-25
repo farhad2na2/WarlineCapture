@@ -9,7 +9,7 @@ internal sealed class BuildingGameplayBindingCompositionSystemHelper
         return mainMenu => childSystems.BuildingGameplayDependencyCompositionSystemHelper.BindRuntimeDependencies(mainMenu, dayNight);
     }
 
-    public Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> CreateGameplayFeatureBinding(
+    public Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> CreateGameplayFeatureBinding(
         BuildingGameplaySourceCompositionSystemHelper childSystems,
         DayNightSystem dayNight)
     {

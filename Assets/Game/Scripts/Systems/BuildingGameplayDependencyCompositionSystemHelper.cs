@@ -4,7 +4,7 @@ using UnityEngine;
 internal sealed class BuildingGameplayDependencyCompositionSystemHelper
 {
     internal IMatchRuntimeUi MainMenuPlayUi { get; private set; }
-    internal SelectionUiCameraSystem SelectionUiCameraSystem { get; private set; }
+    internal SelectionUiCameraSystemHelper SelectionUiCameraSystemHelper { get; private set; }
     internal SelectionBuildingInteractionSystem SelectionBuildingInteractionSystem { get; private set; }
     internal RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers { get; private set; }
     internal RuntimeCityCompositionSystemHelper RuntimeCitySystem { get; private set; }
@@ -27,7 +27,7 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
     internal void BindRuntimeDependencies(
         IMatchRuntimeUi mainMenuPlayUi,
         DayNightSystem dayNightSystem = null,
-        SelectionUiCameraSystem selectionUiCameraSystem = null,
+        SelectionUiCameraSystemHelper selectionUiCameraSystem = null,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem = null,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null,
         RuntimeCityCompositionSystemHelper runtimeCitySystem = null,
@@ -38,7 +38,7 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
         if (dayNightSystem != null)
             DayNightSystem = dayNightSystem;
         if (selectionUiCameraSystem != null)
-            SelectionUiCameraSystem = selectionUiCameraSystem;
+            SelectionUiCameraSystemHelper = selectionUiCameraSystem;
         if (selectionBuildingInteractionSystem != null)
             SelectionBuildingInteractionSystem = selectionBuildingInteractionSystem;
         if (runtimeGridBlockers != null)
@@ -102,12 +102,12 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
 
     internal void SmoothMoveCameraGroundCenterTo(Vector3 worldPosition)
     {
-        SelectionUiCameraSystem?.SmoothMoveCameraGroundCenterTo(worldPosition);
+        SelectionUiCameraSystemHelper?.SmoothMoveCameraGroundCenterTo(worldPosition);
     }
 
     internal void FollowCameraGroundCenterTo(Vector3 worldPosition)
     {
-        SelectionUiCameraSystem?.FollowCameraGroundCenterTo(worldPosition);
+        SelectionUiCameraSystemHelper?.FollowCameraGroundCenterTo(worldPosition);
     }
 
     internal void ClearFocusedUnit()

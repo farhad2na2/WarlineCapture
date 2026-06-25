@@ -14,7 +14,7 @@ internal sealed class SelectionGameplayStartupSystem
         public readonly System.Action DisposeSelection;
         public readonly SelectionUiCommandSystem SelectionUiCommand;
         public readonly SelectionUiReadModelSystem SelectionUiReadModel;
-        public readonly SelectionUiCameraSystem SelectionUiCamera;
+        public readonly SelectionUiCameraSystemHelper SelectionUiCamera;
         public readonly SelectionBuildingInteractionSystem SelectionBuildingInteraction;
         public readonly SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers;
         public readonly ISelectionRectangleView SelectionRectangleView;
@@ -27,7 +27,7 @@ internal sealed class SelectionGameplayStartupSystem
             System.Action disposeSelection,
             SelectionUiCommandSystem selectionUiCommand,
             SelectionUiReadModelSystem selectionUiReadModel,
-            SelectionUiCameraSystem selectionUiCamera,
+            SelectionUiCameraSystemHelper selectionUiCamera,
             SelectionBuildingInteractionSystem selectionBuildingInteraction,
             SelectionScreenMarkerUiSystemHelper selectionScreenMarkers,
             ISelectionRectangleView selectionRectangleView,
@@ -77,7 +77,7 @@ internal sealed class SelectionGameplayStartupSystem
         RtsCameraRequestSystem rtsCameraRequestSystem = ResolveRtsCameraRequestSystem();
         var selectionUiCommand = new SelectionUiCommandSystem(IsMatchIntroGameplayInputLocked);
         var selectionUiReadModel = new SelectionUiReadModelSystem();
-        var selectionUiCamera = new SelectionUiCameraSystem(rtsCameraSystem, rtsCameraRequestSystem);
+        var selectionUiCamera = new SelectionUiCameraSystemHelper(rtsCameraSystem, rtsCameraRequestSystem);
         var selectionScreenMarkers = new SelectionScreenMarkerUiSystemHelper();
         var selectionStateSystem = new SelectionStateSystem();
         var selectionUiReadModelLookup = new SelectionUiReadModelLookup();

@@ -85,7 +85,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public BuildingRuntimeUpdateCompositionSystemHelper BuildingRuntimeUpdate { get; private set; }
     public SelectionUiCommandSystem SelectionUiCommand { get; private set; }
     public SelectionUiReadModelSystem SelectionUiReadModel { get; private set; }
-    public SelectionUiCameraSystem SelectionUiCamera { get; private set; }
+    public SelectionUiCameraSystemHelper SelectionUiCamera { get; private set; }
     public SelectionBuildingInteractionSystem SelectionBuildingInteraction { get; private set; }
     public SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers { get; private set; }
     public ISelectionRectangleView SelectionRectangle { get; private set; }
@@ -117,7 +117,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     private Action<IMatchRuntimeUi> _bindRoadMainMenu;
     private Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> _bindRoadGameplayFeatures;
     private Action<IMatchRuntimeUi> _bindBuildingMainMenu;
-    private Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> _bindBuildingGameplayFeatures;
+    private Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> _bindBuildingGameplayFeatures;
     private Action<IMatchRuntimeUi> _bindSelectionMainMenu;
     private Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private Action _selectionRuntimeUpdate;

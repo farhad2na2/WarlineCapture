@@ -54,9 +54,9 @@ Top-level public/internal methods:
 - `internal static int ResolveInitialDollars(BuildingPlacementSystemConfig buildingPlacementConfig)`
 - `internal static BuildingGameplaySourceCompositionSystemHelper CreateChildSystems()`
 - `internal static BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source CreateRuntimeTickSource(BuildingGameplaySourceCompositionSystemHelper source, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext, MaterialPropertyBlock markerPropertyBlock)`
-- `public void BindSelection(Result building, DayNightSystem dayNight, SelectionUiCameraSystem selectionUiCameraSystem, SelectionBuildingInteractionSystem selectionBuildingInteractionSystem)`
+- `public void BindSelection(Result building, DayNightSystem dayNight, SelectionUiCameraSystemHelper selectionUiCameraSystem, SelectionBuildingInteractionSystem selectionBuildingInteractionSystem)`
 - `public void InitializeCitizenPopulation(Result building, DayNightSystem dayNight, Camera worldCamera)`
-- `public void BindCitizenPopulation(Result building, DayNightSystem dayNight, SelectionUiCameraSystem selectionUiCameraSystem, SelectionBuildingInteractionSystem selectionBuildingInteractionSystem, CitizenPopulationEventSystem citizenPopulationEventSystem)`
+- `public void BindCitizenPopulation(Result building, DayNightSystem dayNight, SelectionUiCameraSystemHelper selectionUiCameraSystem, SelectionBuildingInteractionSystem selectionBuildingInteractionSystem, CitizenPopulationEventSystem citizenPopulationEventSystem)`
 
 Nested types:
 
@@ -91,7 +91,7 @@ Nested types:
 - `CitizenPopulationCompositionSystemHelper.Result CitizenPopulationComposition`
 - `System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings`
 - `Action<MainMenuPlayUI> BindMainMenu`
-- `Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> BindGameplayFeatures`
+- `Action<MainMenuPlayUI, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> BindGameplayFeatures`
 - `Action Dispose`
 
 `Result` private dependency fields that support public result behavior:
@@ -104,10 +104,10 @@ Nested types:
 `Result` public methods:
 
 - `public Result(...)`
-- `public void BindSelection(DayNightSystem dayNight, SelectionUiCameraSystem selectionUiCameraSystem, SelectionBuildingInteractionSystem selectionBuildingInteractionSystem)`
+- `public void BindSelection(DayNightSystem dayNight, SelectionUiCameraSystemHelper selectionUiCameraSystem, SelectionBuildingInteractionSystem selectionBuildingInteractionSystem)`
 - `public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera)`
 - `public void DisposeCitizenPopulation()`
-- `public void BindCitizenPopulation(DayNightSystem dayNight, SelectionUiCameraSystem selectionUiCameraSystem, SelectionBuildingInteractionSystem selectionBuildingInteractionSystem, CitizenPopulationEventSystem citizenPopulationEventSystem)`
+- `public void BindCitizenPopulation(DayNightSystem dayNight, SelectionUiCameraSystemHelper selectionUiCameraSystem, SelectionBuildingInteractionSystem selectionBuildingInteractionSystem, CitizenPopulationEventSystem citizenPopulationEventSystem)`
 
 Top-level private state, included for extraction tracking:
 

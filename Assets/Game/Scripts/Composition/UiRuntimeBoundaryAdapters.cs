@@ -201,9 +201,9 @@ internal sealed class SelectionRectangleStateAdapter : ISelectionRectangleState
 
 internal sealed class MatchHudCameraControlAdapter : IMatchHudCameraControl
 {
-    private readonly SelectionUiCameraSystem cameraSystem;
+    private readonly SelectionUiCameraSystemHelper cameraSystem;
 
-    public MatchHudCameraControlAdapter(SelectionUiCameraSystem cameraSystem)
+    public MatchHudCameraControlAdapter(SelectionUiCameraSystemHelper cameraSystem)
     {
         this.cameraSystem = cameraSystem;
     }

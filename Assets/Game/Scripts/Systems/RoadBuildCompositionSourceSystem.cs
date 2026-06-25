@@ -8,7 +8,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildInteractionContextSystem RoadBuildInteractionContextSystem = new();
     public readonly RoadBuildRuntimeActionCompositionSystemHelper RoadBuildRuntimeActionCompositionSystemHelper;
     public readonly RoadBuildRuntimeActionCompositionSystemHelper.State RoadBuildRuntimeActionState;
-    public readonly RoadBuildDisposalSystem RoadBuildDisposalSystem = new();
+    public readonly RoadBuildDisposalCompositionSystemHelper RoadBuildDisposalCompositionSystemHelper = new();
     public readonly RoadBuildConfigSystem RoadBuildConfigSystem = new();
     public readonly RoadRuntimeRootSystem RoadRuntimeRootSystem;
     public readonly RoadNetworkSystem RoadNetworkSystem = new();

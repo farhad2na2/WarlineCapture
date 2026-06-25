@@ -53,7 +53,7 @@ New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. 
   - Target owner: `RoadFootprintQuerySystem` plus `RoadGridContextSystem`.
 - Startup/lifecycle:
   - `Init`, `BindDependencies`, `Dispose`
-  - Target owner: `RoadBuildStartupSystem`, `RoadBuildDependencyCompositionSystemHelper`, `RoadBuildDisposalSystem`, and `RoadBuildCompositionSystemHelper`.
+  - Target owner: `RoadBuildStartupSystem`, `RoadBuildDependencyCompositionSystemHelper`, `RoadBuildDisposalCompositionSystemHelper`, and `RoadBuildCompositionSystemHelper`.
 - Road build commands:
   - `SetBuildMode`, `ActivateRoadBuildMode`, `ConfirmRoadBuildSession`, `CancelRoadBuildSession`, `ExitBuildMode`
   - Target owner: `RoadBuildCommandCompositionSystemHelper`; static `SetBuildMode` was deleted in step 8.
@@ -282,11 +282,11 @@ Every phase boundary must also run the existing road validation set when feasibl
    - `RoadBuildCompositionSystemHelper.Result.OnGui` now invokes `RoadBuildRuntimeActionCompositionSystemHelper.OnGui` through composition source state instead of reading `RoadDeletePromptSystem` or context through `RoadBuildRuntimeStateSystem`.
 
 27. Complete: Extract road disposal sequencing
-   - Create `RoadBuildDisposalSystem`.
+   - Create `RoadBuildDisposalCompositionSystemHelper`.
    - Move root disposal, preview disposal, chunk disposal, special visual disposal, cached visual data disposal, minimap event clear, ECS road clear, legacy building cleanup, and storage clear.
    - Expected output: cleanup is explicit and can be invoked without broad runtime state.
-   - Added `RoadBuildDisposalSystem` as the owner for teardown sequencing across runtime roots, placement outline visuals, variant cache, preview, chunks, legacy building entities/visuals, special visuals, minimap events, ECS road data, road tiles, and legacy storage.
-   - `RoadBuildRuntimeStateSystem.Dispose` now only exits build mode, resets skip-click session state, and delegates cleanup sequencing through `RoadBuildDisposalSystem`.
+   - Added `RoadBuildDisposalCompositionSystemHelper` as the owner for teardown sequencing across runtime roots, placement outline visuals, variant cache, preview, chunks, legacy building entities/visuals, special visuals, minimap events, ECS road data, road tiles, and legacy storage.
+   - `RoadBuildRuntimeStateSystem.Dispose` now only exits build mode, resets skip-click session state, and delegates cleanup sequencing through `RoadBuildDisposalCompositionSystemHelper`.
 
 28. Complete: Move command/public API consumers to narrow systems
    - Migrate any remaining production/test calls to `ActivateRoadBuildMode`, `ConfirmRoadBuildSession`, `CancelRoadBuildSession`, `ExitBuildMode`, road generation wrappers, footprint wrappers, update/gui, and dispose.

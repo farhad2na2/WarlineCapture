@@ -182,7 +182,7 @@ Candidate first-pass files:
 
 - [x] Audit each `BuildingRoadLegacy*System` responsibility.
 - [x] Rename the group to current domain names without changing behavior.
-- [x] Update `RoadBuildCompositionSourceSystem`, `RoadBuildCompositionContextCompositionSystemHelper`, `RoadBuildCompositionLifecycleCompositionSystemHelper`, `RoadBuildDisposalSystem`, and `RoadBuildReadModelCompositionSystemHelper`.
+- [x] Update `RoadBuildCompositionSourceSystem`, `RoadBuildCompositionContextCompositionSystemHelper`, `RoadBuildCompositionLifecycleCompositionSystemHelper`, `RoadBuildDisposalCompositionSystemHelper`, and `RoadBuildReadModelCompositionSystemHelper`.
 - [x] Remove the word `Legacy` from active runtime road/build composition code.
 - [x] Add compile and targeted road/build placement validation.
 

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using RoadTileData = RoadNetworkSystem.RoadTileData;
 
-internal sealed class RoadBuildDisposalSystem
+internal sealed class RoadBuildDisposalCompositionSystemHelper
 {
     public readonly struct Context
     {

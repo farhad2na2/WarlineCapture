@@ -95,9 +95,9 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
         return source.RoadBuildInteractionContextSystem.CreateDeletePromptContext(CreateRoadBuildInteractionContext(source));
     }
 
-    public RoadBuildDisposalSystem.Context CreateRoadBuildDisposalContext(RoadBuildCompositionSourceSystem source)
+    public RoadBuildDisposalCompositionSystemHelper.Context CreateRoadBuildDisposalContext(RoadBuildCompositionSourceSystem source)
     {
-        return new RoadBuildDisposalSystem.Context(
+        return new RoadBuildDisposalCompositionSystemHelper.Context(
             source.RoadBuildStartupSystem,
             source.RoadBuildStartupState,
             source.RoadRuntimeRootSystem,

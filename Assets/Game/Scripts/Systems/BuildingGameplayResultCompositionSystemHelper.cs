@@ -8,8 +8,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         BuildingSelectionClickSystem.Context selectionClickContext,
         BuildingRuntimeUpdateSystem runtimeUpdate,
         BuildingRuntimeUpdateSystem.Context runtimeUpdateContext,
-        BuildingRuntimeCitySpawnSystem runtimeCitySpawn,
-        BuildingRuntimeCitySpawnSystem.Context runtimeCitySpawnContext,
+        BuildingRuntimeCitySpawnBridgeCompositionSystemHelper runtimeCitySpawn,
+        BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context runtimeCitySpawnContext,
         BuildingRuntimeQuerySystem runtimeQuery,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommand,
@@ -84,8 +84,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
         public readonly BuildingRuntimeUpdateSystem RuntimeUpdate;
         public readonly BuildingRuntimeUpdateSystem.Context RuntimeUpdateContext;
-        public readonly BuildingRuntimeCitySpawnSystem RuntimeCitySpawn;
-        public readonly BuildingRuntimeCitySpawnSystem.Context RuntimeCitySpawnContext;
+        public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper RuntimeCitySpawn;
+        public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context RuntimeCitySpawnContext;
         public readonly BuildingRuntimeQuerySystem RuntimeQuery;
         public readonly BuildingRuntimeQuerySystem.Context RuntimeQueryContext;
         public readonly BuildingRuntimeSpawnCommandBoundary RuntimeSpawnCommand;
@@ -121,8 +121,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             BuildingSelectionClickSystem.Context selectionClickContext,
             BuildingRuntimeUpdateSystem runtimeUpdate,
             BuildingRuntimeUpdateSystem.Context runtimeUpdateContext,
-            BuildingRuntimeCitySpawnSystem runtimeCitySpawn,
-            BuildingRuntimeCitySpawnSystem.Context runtimeCitySpawnContext,
+            BuildingRuntimeCitySpawnBridgeCompositionSystemHelper runtimeCitySpawn,
+            BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context runtimeCitySpawnContext,
             BuildingRuntimeQuerySystem runtimeQuery,
             BuildingRuntimeQuerySystem.Context runtimeQueryContext,
             BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommand,

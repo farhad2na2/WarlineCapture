@@ -9,8 +9,8 @@ internal sealed class RuntimeCitySpawnBridgePrefabSystemHelper
     public bool HasSpawnSystem => _state.HasSpawnSystem;
 
     public void Configure(
-        BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawnSystem,
-        BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext)
+        BuildingRuntimeCitySpawnBridgeCompositionSystemHelper buildingRuntimeCitySpawnSystem,
+        BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context buildingRuntimeCitySpawnContext)
     {
         _state.Configure(buildingRuntimeCitySpawnSystem, buildingRuntimeCitySpawnContext);
     }
@@ -61,14 +61,14 @@ internal sealed class RuntimeCitySpawnBridgePrefabSystemHelper
 
 internal sealed class RuntimeCitySpawnBridgeState
 {
-    private BuildingRuntimeCitySpawnSystem _buildingRuntimeCitySpawnSystem;
-    private BuildingRuntimeCitySpawnSystem.Context _buildingRuntimeCitySpawnContext;
+    private BuildingRuntimeCitySpawnBridgeCompositionSystemHelper _buildingRuntimeCitySpawnSystem;
+    private BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context _buildingRuntimeCitySpawnContext;
 
     public bool HasSpawnSystem => _buildingRuntimeCitySpawnSystem != null;
 
     public void Configure(
-        BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawnSystem,
-        BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext)
+        BuildingRuntimeCitySpawnBridgeCompositionSystemHelper buildingRuntimeCitySpawnSystem,
+        BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context buildingRuntimeCitySpawnContext)
     {
         _buildingRuntimeCitySpawnSystem = buildingRuntimeCitySpawnSystem;
         _buildingRuntimeCitySpawnContext = buildingRuntimeCitySpawnContext;

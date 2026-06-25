@@ -99,8 +99,8 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public BuildingSelectionClickSystem.Context BuildingSelectionClickContext { get; private set; }
     public BuildingUiCommandBoundary.Context BuildingUiCommandContext => _buildingUiCommandContext;
     public BuildingUiQuerySystem.Context BuildingUiQueryContext => _buildingUiQueryContext;
-    private BuildingRuntimeCitySpawnSystem _buildingRuntimeCitySpawn;
-    private BuildingRuntimeCitySpawnSystem.Context _buildingRuntimeCitySpawnContext;
+    private BuildingRuntimeCitySpawnBridgeCompositionSystemHelper _buildingRuntimeCitySpawn;
+    private BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context _buildingRuntimeCitySpawnContext;
     private BuildingUiCommandBoundary.Context _buildingUiCommandContext;
     private BuildingUiQuerySystem.Context _buildingUiQueryContext;
     private IMatchRuntimeState _matchRuntimeState;

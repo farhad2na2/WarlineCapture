@@ -44,9 +44,9 @@ Goal: split runtime city generation before adding more map/city gameplay, so lay
    - `RuntimeCitySpawnerSystem` consumes footprint values from `RuntimeCityPrefabSelectionPrefabSystemHelper`.
 
 8. Complete: Extract ECS spawn request bridge
-   - Created `RuntimeCitySpawnBridgePrefabSystemHelper` over the existing `BuildingRuntimeCitySpawnSystem`.
+   - Created `RuntimeCitySpawnBridgePrefabSystemHelper` over the existing `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper`.
    - Owns city building runtime/ECS spawn/delete calls and deferred side-effect begin/end handoff.
-   - `RuntimeCitySpawnerSystem` still receives the managed spawn dependencies at startup, but no longer stores `BuildingRuntimeCitySpawnSystem`, its context, or private spawn/delete wrappers.
+   - `RuntimeCitySpawnerSystem` still receives the managed spawn dependencies at startup, but no longer stores `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper`, its context, or private spawn/delete wrappers.
 
 9. Complete: Extract RoadBuild coupling
    - Created `RuntimeCityRoadBuildBridgeCompositionSystemHelper`.

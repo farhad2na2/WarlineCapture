@@ -69,8 +69,8 @@ Nested types:
 - `BuildingSelectionClickSystem.Context SelectionClickContext`
 - `BuildingRuntimeUpdateSystem RuntimeUpdate`
 - `BuildingRuntimeUpdateSystem.Context RuntimeUpdateContext`
-- `BuildingRuntimeCitySpawnSystem RuntimeCitySpawn`
-- `BuildingRuntimeCitySpawnSystem.Context RuntimeCitySpawnContext`
+- `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper RuntimeCitySpawn`
+- `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context RuntimeCitySpawnContext`
 - `BuildingRuntimeQuerySystem RuntimeQuery`
 - `BuildingRuntimeQuerySystem.Context RuntimeQueryContext`
 - `BuildingRuntimeSpawnCommandSystem RuntimeSpawnCommand`

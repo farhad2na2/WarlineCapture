@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 143 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 97 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 97 |
-| Current batch | Building runtime boundary processing composition helper naming batch complete |
-| Validation status | Batch 1 through Batch 132 compile and architecture validations passed by marker; Batch 84 through Batch 118 Unity validations and Batch 124 through Batch 132 Unity validations exited cleanly; Batch 119 architecture validation, Batch 120 Unity validations, Batch 121 building-placement/architecture Unity validations, Batch 122 Unity validations, and Batch 123 placement/architecture Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 123 runtime-tick focused validation failed on the documented pre-existing `SimulationTickKeepsMapPlacementQueuesAliveBeforeBoundary` ordering assertion (`Expected: "mapBuildings"`, actual: `"boundary"`); Batch 121 selection command contract validation repeatedly failed in `UnitEngagementSystem_ScanOrderAcquiresOnlyTargetsInsideScanArea`, which does not reference the renamed helper and is tracked as an unrelated validation blocker; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71 through Batch 118 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 and Batch 102 building runtime boundary validations and Batch 57 production metadata validation exited cleanly; Batch 103 had no dedicated menu-diagnostics focused runner, so compile plus architecture validation covered the naming-only UI helper slice; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 144 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 96 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 96 |
+| Current batch | Building runtime city spawn bridge composition helper naming batch complete |
+| Validation status | Batch 1 through Batch 133 compile and architecture validations passed by marker; Batch 84 through Batch 118 Unity validations and Batch 124 through Batch 133 Unity validations exited cleanly; Batch 119 architecture validation, Batch 120 Unity validations, Batch 121 building-placement/architecture Unity validations, Batch 122 Unity validations, and Batch 123 placement/architecture Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 123 runtime-tick focused validation failed on the documented pre-existing `SimulationTickKeepsMapPlacementQueuesAliveBeforeBoundary` ordering assertion (`Expected: "mapBuildings"`, actual: `"boundary"`); Batch 121 selection command contract validation repeatedly failed in `UnitEngagementSystem_ScanOrderAcquiresOnlyTargetsInsideScanArea`, which does not reference the renamed helper and is tracked as an unrelated validation blocker; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71 through Batch 118 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 and Batch 102 building runtime boundary validations and Batch 57 production metadata validation exited cleanly; Batch 103 had no dedicated menu-diagnostics focused runner, so compile plus architecture validation covered the naming-only UI helper slice; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -1422,7 +1422,7 @@ This helper samples rural plots and spawns/reserves rural building prefabs. The 
 
 ## Batch 80 - Runtime City Spawn Bridge Prefab Helper
 
-This helper bridges runtime-city generated building prefab spawn/delete calls and deferred side effects over `BuildingRuntimeCitySpawnSystem`. The managed reason is prefab spawn bridging, not ECS scheduling.
+This helper bridges runtime-city generated building prefab spawn/delete calls and deferred side effects over `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper`. The managed reason is prefab spawn bridging, not ECS scheduling.
 
 | Status | Old type/file | New type/file | Reason |
 | --- | --- | --- | --- |
@@ -2338,6 +2338,25 @@ This helper owns managed runtime boundary processing: faction resource sell requ
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionQueueCompositionSystemHelperTests.RunProductionRequestValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch132-building-production-request.log`: passed with `[BuildingProductionRequestValidation] result=Passed tests=21`.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionQueueCompositionSystemHelperTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch132-building-gameplay-smoke.log`: passed with `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch132-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=97`.
+
+## Batch 133 - Building Runtime City Spawn Bridge Composition Helper
+
+This helper owns managed runtime-city generated building spawn/delete bridging, ECS runtime spawn request routing, fallback runtime spawn, and deferred side-effect callbacks. It remains a plain composition helper and does not introduce an ECS lifecycle.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `BuildingRuntimeCitySpawnSystem` | `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper` | Bridges runtime-city prefab spawn/delete calls through building runtime spawn commands and fallback managed spawn boundaries. |
+
+## Batch 133 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `96`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingRuntimeBoundaryValidationTests.RunBatchValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch133-building-runtime-boundary.log`: passed with `[BuildingRuntimeBoundaryValidation] result=Passed tests=9`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RuntimeCityGenerationFocusedTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch133-runtime-city-generation.log`: passed with `[RuntimeCityGenerationFocusedValidation] result=Passed tests=2`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingProductionQueueCompositionSystemHelperTests.RunBuildingGameplayCompositionRuntimeSmokeValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch133-building-gameplay-smoke.log`: passed with `[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch133-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=96`.
 
 ## Open Follow-Up Batches
 

@@ -122,8 +122,8 @@ public sealed class RuntimeCityCompositionSystemHelper
         RuntimeCitySpawnerSystemConfig configAsset,
         RoadRuntimeGenerationSystem roadRuntimeGenerationSystem,
         RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
-        BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawnSystem,
-        BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
+        BuildingRuntimeCitySpawnBridgeCompositionSystemHelper buildingRuntimeCitySpawnSystem,
+        BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context buildingRuntimeCitySpawnContext,
         Transform runtimeRoot,
         IMatchRuntimeUi mainMenuPlayUi)
     {

@@ -2,7 +2,7 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeCitySpawnSystem
+internal sealed class BuildingRuntimeCitySpawnBridgeCompositionSystemHelper
 {
     public readonly struct Context
     {

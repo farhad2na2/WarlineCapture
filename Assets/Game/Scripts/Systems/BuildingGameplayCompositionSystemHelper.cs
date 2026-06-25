@@ -555,7 +555,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 UpdateBuildingStartupTick,
                 UpdateBuildingSimulationTick,
                 childSystems.RuntimeBuildingEntityLinkRegistry),
-            childSystems.BuildingRuntimeCitySpawnSystem,
+            childSystems.BuildingRuntimeCitySpawnBridgeCompositionSystemHelper,
             childSystems.BuildingRuntimeContextSystem.CreateCitySpawnContext(
                 buildingRuntimeContextSource,
                 childSystems.BuildingRuntimeSpawnCommandBoundary,

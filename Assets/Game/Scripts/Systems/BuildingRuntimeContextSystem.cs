@@ -316,13 +316,13 @@ internal sealed class BuildingRuntimeContextSystem
             source.BuildingFactionTintStrength);
     }
 
-    public BuildingRuntimeCitySpawnSystem.Context CreateCitySpawnContext(
+    public BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context CreateCitySpawnContext(
         Source source,
         BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommandBoundary,
         BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
         BuildingRuntimeBoundaryProcessingCompositionSystemHelper runtimeBoundarySystem)
     {
-        return new BuildingRuntimeCitySpawnSystem.Context(
+        return new BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context(
             runtimeSpawnCommandBoundary,
             runtimeSpawnCommandContext,
             source.DefinitionSystem,

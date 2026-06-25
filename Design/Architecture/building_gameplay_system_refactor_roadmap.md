@@ -293,7 +293,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Move `TrySpawnRuntimeBuilding`, initial building spawn, placement origin search, runtime wall segment spawn, wall run spawn, and runtime placement footprint queries into `BuildingRuntimeSpawnCommandSystem`, `BuildingRuntimeSpawnSystem`, and a narrow wall spawn boundary.
    - Expected output: runtime city and tests do not call shell spawn helpers.
    - `BuildingGameplayCompositionSystemHelper.Result` now exposes `RuntimeSpawnCommand` and `RuntimeSpawnCommandContext` for direct consumers.
-   - `BuildingRuntimeCitySpawnSystem` now routes city building spawn through `BuildingRuntimeSpawnCommandSystem` instead of owning a separate `BuildingRuntimeSpawnSystem`.
+   - `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper` now routes city building spawn through `BuildingRuntimeSpawnCommandSystem` instead of owning a separate `BuildingRuntimeSpawnSystem`.
    - `BuildingGameplaySystem` spawn wrappers remain only as temporary compatibility wrappers over `BuildingRuntimeSpawnCommandSystem` until test and production callers migrate to the composition-owned command context.
 
 22. Complete: Move faction spawn point queries

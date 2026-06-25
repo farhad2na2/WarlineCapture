@@ -921,7 +921,7 @@ internal sealed class MatchBootstrapSystem
             : null;
         _citizenPopulationReadModel = managedSystems.CitizenPopulationComposition?.ReadModel;
         _citizenPopulationEventSystem = managedSystems.CitizenPopulationComposition?.EventSystem;
-        _buildingRuntimeBoundaryEntity = MatchBuildingRuntimeBoundaryBootstrapSystem.Ensure(_buildingRuntimeBoundaryEntity);
+        _buildingRuntimeBoundaryEntity = MatchBuildingRuntimeBoundaryBootstrapStartupSystemHelper.Ensure(_buildingRuntimeBoundaryEntity);
         ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld)?.SetWorldCamera(WorldCamera);
         _managedRuntimeInitialized = true;
         if (MainMenu != null)

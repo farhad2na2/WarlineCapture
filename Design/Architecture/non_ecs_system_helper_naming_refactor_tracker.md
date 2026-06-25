@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 112 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 128 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 128 |
-| Current batch | Runtime city generation composition helper naming batch complete |
-| Validation status | Batch 1 through Batch 101 compile and architecture validations passed by marker; Batch 84 through Batch 101 Unity validations exited cleanly; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71 through Batch 101 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 building runtime boundary validation and Batch 57 production metadata validation exited cleanly; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 113 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 127 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 127 |
+| Current batch | Match building runtime boundary bootstrap startup helper naming batch complete |
+| Validation status | Batch 1 through Batch 102 compile and architecture validations passed by marker; Batch 84 through Batch 102 Unity validations exited cleanly; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71 through Batch 102 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 and Batch 102 building runtime boundary validations and Batch 57 production metadata validation exited cleanly; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -1793,6 +1793,23 @@ This helper owns runtime-city generation coroutine orchestration, lifecycle gati
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RuntimeCityGenerationFocusedTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch101-runtime-city-generation.log`: passed with `[RuntimeCityGenerationFocusedValidation] result=Passed tests=2`.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch101-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=128`.
+
+## Batch 102 - Match Building Runtime Boundary Bootstrap Startup Helper
+
+This helper is a static startup/composition boundary that ensures the building runtime ECS boundary entity and explicit read-model/request buffers exist. It does not own gameplay policy or a frame update loop.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `MatchBuildingRuntimeBoundaryBootstrapSystem` | `MatchBuildingRuntimeBoundaryBootstrapStartupSystemHelper` | Ensures the building runtime boundary entity and buffers during match startup. |
+
+## Batch 102 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `127`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingRuntimeBoundaryValidationTests.RunBatchValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch102-building-runtime-boundary.log`: passed with `[BuildingRuntimeBoundaryValidation] result=Passed tests=9`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch102-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=127`.
 
 ## Open Follow-Up Batches
 

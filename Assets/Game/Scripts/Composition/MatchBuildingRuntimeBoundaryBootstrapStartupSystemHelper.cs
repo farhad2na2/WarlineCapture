@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-internal static class MatchBuildingRuntimeBoundaryBootstrapSystem
+internal static class MatchBuildingRuntimeBoundaryBootstrapStartupSystemHelper
 {
     public static Entity Ensure(Entity currentEntity)
     {

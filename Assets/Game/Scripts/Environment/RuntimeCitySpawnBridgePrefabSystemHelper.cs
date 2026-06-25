@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal sealed class RuntimeCitySpawnBridgeSystem
+internal sealed class RuntimeCitySpawnBridgePrefabSystemHelper
 {
     private readonly RuntimeCitySpawnBridgeState _state = new();
 

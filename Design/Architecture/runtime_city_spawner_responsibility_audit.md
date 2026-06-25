@@ -17,7 +17,7 @@ Current runtime-city composition size: 215 lines.
 - Serialized config names `RuntimeCitySpawnerSystemConfig`, `RuntimeCitySpawnerSystemSceneConfigAsset`, and `Game_RuntimeCitySpawner_Config.asset` are allowed data compatibility debt until a separate asset migration plan exists.
 - Runtime city child system fields, context factories, and update orchestration belong in `RuntimeCityCompositionSystem`.
 - It must not be stored or called by `RuntimeGridBlockerPresentationSystemHelper`, `RuntimeDecorationSpawnerPresentationSystemHelper`, or future peer systems that only need city lifecycle state; those systems must depend on `RuntimeCityReadModelCompositionSystemHelper` or a narrower explicit result boundary.
-- `RuntimeCityCompositionSystem` may receive `BuildingRuntimeCitySpawnSystem` and context at startup only so `RuntimeCitySpawnBridgeSystem` can be configured.
+- `RuntimeCityCompositionSystem` may receive `BuildingRuntimeCitySpawnSystem` and context at startup only so `RuntimeCitySpawnBridgePrefabSystemHelper` can be configured.
 - `RuntimeCityCompositionSystem` may receive `RoadBuildSystem` at startup only so `RuntimeCityRoadBuildBridgeSystem` can be configured.
 - It must not reintroduce copied `RuntimeCitySpawnerSystemConfig` field assignment; config projection belongs in `RuntimeCityConfigSystem`.
 - It must not reintroduce town radius, city-center planning, road-grid bounds, base exclusion checks, or city-center spacing helpers; those belong in `RuntimeCityLayoutSystem`.
@@ -28,7 +28,7 @@ Current runtime-city composition size: 215 lines.
 - It must not reintroduce random prefab selection, list shuffle, configured-prefab membership loops, prefab footprint cache state, renderer-bounds footprint estimation, or major/minor footprint helpers; those belong in `RuntimeCityPrefabSelectionSystem`.
 - It must not reintroduce runtime city visual root ownership, visual-only prefab instantiation, footprint-center positioning, local-bounds centering, descendant visibility toggles, or visual wrapper transform setup; those belong in `RuntimeCityVisualPresentationSystemHelper`.
 - It must not store `_runtimeRoot`, assign `_runtimeRoot = runtimeRoot`, or clear `_runtimeRoot`; runtime root creation belongs in `RuntimeRootSystem`, and runtime city visual root parenting belongs in `RuntimeCityVisualPresentationSystemHelper`.
-- It must not reintroduce stored `BuildingRuntimeCitySpawnSystem` state, stored city-spawn context, private city spawn/delete wrappers, or direct deferred side-effect calls; those belong in `RuntimeCitySpawnBridgeSystem`.
+- It must not reintroduce stored `BuildingRuntimeCitySpawnSystem` state, stored city-spawn context, private city spawn/delete wrappers, or direct deferred side-effect calls; those belong in `RuntimeCitySpawnBridgePrefabSystemHelper`.
 - It must not call `BuildingPlacementSystem`, `BuildingPlacementSystem.Instance`, or `_buildingPlacement`.
 - It must not reintroduce city hall/landmark placement, corridor entrance building placement, bulk roadside/rural building placement, yard wall visual algorithms, or decoration building sequencing; those belong in the extracted runtime-city building-spawn child systems composed by `RuntimeCityCompositionSystem` and called by `RuntimeCityGenerationSystem`.
 - It must not reintroduce `_spawned`, `_generationRoutine`, `_generationStartedFrame`, `_generationMoveNextCount`, `_nextGenerationDiagnosticFrame`, or direct `IEnumerator.MoveNext()` ownership; those belong in `RuntimeCityLifecycleSystem`.
@@ -50,7 +50,7 @@ Current runtime-city composition size: 215 lines.
 - `RuntimeCityBuildingPlotUtilitySystemHelper`: plot candidate data, plot scoring, roadside/entry/corridor/scatter plot planning, adjacent origin planning, plot spacing, and plot-to-origin centering. Extracted in step 5.
 - `RuntimeCityPrefabSelectionSystem`: configured-prefab membership checks, random prefab selection, list shuffling, footprint estimation/cache, and major/minor footprint helpers. Extracted in step 6.
 - `RuntimeCityVisualPresentationSystemHelper`: runtime city visual root ownership, GameObject instantiation, parent/root assignment, rotation, scale, child visibility, and decoration visuals. Extracted in step 7; root ownership tightened in step 24.
-- `RuntimeCitySpawnBridgeSystem`: runtime city generation spawn/delete/deferred-side-effect bridge over `BuildingRuntimeCitySpawnSystem`. Extracted in step 8.
+- `RuntimeCitySpawnBridgePrefabSystemHelper`: runtime city generation spawn/delete/deferred-side-effect bridge over `BuildingRuntimeCitySpawnSystem`. Extracted in step 8.
 - `BuildingRuntimeCitySpawnSystem`: low-level city building runtime/ECS spawn and delete handoff.
 - `RuntimeCityRoadBuildBridgeSystem`: calls into `RoadBuildSystem`, road cell-size queries, deferred road ECS sync, road/autobahn stroke commit, and temporary standalone straight-chain connector handoff. Extracted in step 9.
 - `RuntimeCityWalkabilitySystem`: reserved footprint data, entrance-corridor reservation, reserved-footprint spacing checks, road-overlap checks, yard-fit validation, rectangle expansion, and adjacency/touch validation. Extracted in step 10.
@@ -76,7 +76,7 @@ Current runtime-city composition size: 215 lines.
 - Road build handoff: `RuntimeCityCompositionSystem` calls `RuntimeCityRoadBuildBridgeSystem.TryGetRoadCellSizeInGridCells`; `RuntimeCityRoadCommitSystem` calls road stroke, autobahn, and standalone connector commit methods; `RuntimeCityGenerationSystem` owns deferred road ECS sync begin/end ordering.
 - Building placement and plots: city hall/landmark placement, corridor entrance building placement, bulk roadside/rural building placement, yard wall visuals, and decoration building sequencing are delegated to the extracted runtime-city building-spawn child systems; plot data, roadside/entry/corridor/scatter planning, adjacent origin planning, and plot spacing helpers are delegated to `RuntimeCityBuildingPlotUtilitySystemHelper`; reserved footprint, road-overlap, yard-fit, and touch helpers are delegated to `RuntimeCityWalkabilitySystem`.
 - Prefabs and visuals: `RuntimeCityPrefabSelectionSystem.GetRandomPrefab`, `Shuffle`, `GetCachedFootprintCells`, `GetMajorFootprint`, and `GetMinorFootprint`; runtime city visual root creation and visual-only prefab instantiation are delegated to `RuntimeCityVisualPresentationSystemHelper`.
-- Runtime building bridge: `RuntimeCitySpawnBridgeSystem.TrySpawnCityBuilding`, `DeleteCityBuilding`, `BeginDeferredSideEffects`, and `EndDeferredSideEffects`.
+- Runtime building bridge: `RuntimeCitySpawnBridgePrefabSystemHelper.TrySpawnCityBuilding`, `DeleteCityBuilding`, `BeginDeferredSideEffects`, and `EndDeferredSideEffects`.
 
 ## Step 1 Guards
 
@@ -90,7 +90,7 @@ Current runtime-city composition size: 215 lines.
 - `GameplayArchitectureContractTests.RuntimeCityWalkabilityMustLiveInRuntimeCityWalkabilitySystem` prevents reserved footprint and road-overlap helpers from returning to `RuntimeCityBuildingPlotUtilitySystemHelper` or `RuntimeCitySpawnerSystem`.
 - `GameplayArchitectureContractTests.RuntimeCityPrefabSelectionMustLiveInRuntimeCityPrefabSelectionSystem` prevents prefab random selection, shuffle, and footprint-cache helpers from returning to `RuntimeCitySpawnerSystem`.
 - `GameplayArchitectureContractTests.RuntimeCityVisualRealizationMustLiveInRuntimeCityVisualPresentationSystemHelper` prevents runtime visual root/instantiation helpers from returning to `RuntimeCitySpawnerSystem`.
-- `GameplayArchitectureContractTests.RuntimeCitySpawnBridgeMustLiveInRuntimeCitySpawnBridgeSystem` prevents city generated building spawn/delete/deferred-side-effect wrappers from returning to `RuntimeCitySpawnerSystem`.
+- `GameplayArchitectureContractTests.RuntimeCitySpawnBridgeMustLiveInRuntimeCitySpawnBridgePrefabSystemHelper` prevents city generated building spawn/delete/deferred-side-effect wrappers from returning to `RuntimeCitySpawnerSystem`.
 - `GameplayArchitectureContractTests.RuntimeCityRoadBuildCouplingMustLiveInRuntimeCityRoadBuildBridgeSystem` prevents road build controller state and direct road build calls from returning to `RuntimeCitySpawnerSystem`.
 - `GameplayArchitectureContractTests.RuntimeCityBuildingSpawnSequencingMustLiveInRuntimeCityBuildingSpawnSystem` prevents city building/decor spawn sequencing from returning to `RuntimeCitySpawnerSystem` and verifies the current child-system call path.
 - `GameplayArchitectureContractTests.RuntimeCityBuildingSpawnAuditMustBlockDriftBackToBroadShells` prevents extracted runtime-city building-spawn responsibilities from returning to `RuntimeCityBuildingSpawnSystem`, `RuntimeCitySpawnerSystem`, or a replacement broad shell.

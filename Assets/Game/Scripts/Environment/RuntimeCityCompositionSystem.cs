@@ -58,7 +58,7 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityDecorationBuildingSpawnPrefabSystemHelper _runtimeCityDecorationBuildingSpawnHelper;
     private readonly RuntimeCityDecorationBuildingSpawnState _fallbackRuntimeCityDecorationBuildingSpawn = new();
     private RuntimeCityVisualPresentationSystemHelper _runtimeCityVisualPresentationSystemHelper;
-    private RuntimeCitySpawnBridgeSystem _runtimeCitySpawnBridgeSystem;
+    private RuntimeCitySpawnBridgePrefabSystemHelper _runtimeCitySpawnBridgeHelper;
     private readonly RuntimeCitySpawnBridgeState _fallbackRuntimeCitySpawnBridge = new();
     private RuntimeCityRoadBuildBridgeSystem _runtimeCityRoadBuildBridgeSystem;
     private readonly RuntimeCityRoadBuildBridgeState _fallbackRuntimeCityRoadBuildBridge = new();
@@ -158,7 +158,7 @@ public sealed class RuntimeCityCompositionSystem
 
         (_runtimeCityLifecycleSystem?.State ?? _fallbackRuntimeCityLifecycle).CancelGeneration();
         _runtimeCityVisualPresentationSystemHelper?.Dispose();
-        (_runtimeCitySpawnBridgeSystem?.State ?? _fallbackRuntimeCitySpawnBridge).Clear();
+        (_runtimeCitySpawnBridgeHelper?.State ?? _fallbackRuntimeCitySpawnBridge).Clear();
         (_runtimeCityRoadBuildBridgeSystem?.State ?? _fallbackRuntimeCityRoadBuildBridge).Clear();
         _runtimeCityReadinessQuerySystem?.Clear();
         _runtimeCityMinimapEventSystem?.Clear();
@@ -530,10 +530,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityBuildingPlacementHelper ??= ResolveRuntimeCityBuildingPlacementHelper();
 
     private RuntimeCitySpawnBridgeState RuntimeCitySpawnBridgeState =>
-        RuntimeCitySpawnBridgeSystem?.State ?? _fallbackRuntimeCitySpawnBridge;
+        RuntimeCitySpawnBridgePrefabSystemHelper?.State ?? _fallbackRuntimeCitySpawnBridge;
 
-    private RuntimeCitySpawnBridgeSystem RuntimeCitySpawnBridgeSystem =>
-        _runtimeCitySpawnBridgeSystem ??= ResolveRuntimeCitySpawnBridgeSystem();
+    private RuntimeCitySpawnBridgePrefabSystemHelper RuntimeCitySpawnBridgePrefabSystemHelper =>
+        _runtimeCitySpawnBridgeHelper ??= ResolveRuntimeCitySpawnBridgePrefabSystemHelper();
 
     private RuntimeCityRoadBuildBridgeState RuntimeCityRoadBuildBridgeState =>
         RuntimeCityRoadBuildBridgeSystem?.State ?? _fallbackRuntimeCityRoadBuildBridge;
@@ -741,9 +741,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityDecorationBuildingSpawnPrefabSystemHelper();
     }
 
-    private static RuntimeCitySpawnBridgeSystem ResolveRuntimeCitySpawnBridgeSystem()
+    private static RuntimeCitySpawnBridgePrefabSystemHelper ResolveRuntimeCitySpawnBridgePrefabSystemHelper()
     {
-        return new RuntimeCitySpawnBridgeSystem();
+        return new RuntimeCitySpawnBridgePrefabSystemHelper();
     }
 
     private static RuntimeCityRoadBuildBridgeSystem ResolveRuntimeCityRoadBuildBridgeSystem()

@@ -16,7 +16,7 @@ Step 6 ECS-projection transition size: 1943 lines. ECS world/query/entity handle
 
 Step 7 totals/read-model transition size: 1895 lines. Citizen totals calculation now lives in `CitizenPopulationTotalsSystem`, and cached/public totals reads now live in `CitizenPopulationReadModelSystem`; the then-existing shell still delegates public totals calls until composition/read-model callers move off it.
 
-Step 8 building-read transition size: 1790 lines. Runtime building query dependencies, role id caches, house id set, refresh cadence, and building query wrappers now live in `CitizenBuildingReadSystem`; the then-existing shell still delegates building reads until household/refugee/schedule/danger behavior moves out.
+Step 8 building-read transition size: 1790 lines. Runtime building query dependencies, role id caches, house id set, refresh cadence, and building query wrappers now live in `CitizenBuildingReadCompositionSystemHelper`; the then-existing shell still delegates building reads until household/refugee/schedule/danger behavior moves out.
 
 Step 9 household-registration transition size: 1692 lines. New-house registration, removed-house synchronization, initial household/citizen creation, and initial work/shop/walk/city hall assignment now live in `CitizenHouseholdRegistrationSystem`; the then-existing shell still delegates rehousing and refugee displacement until the next steps move those policies out.
 
@@ -73,7 +73,7 @@ Goal: retire the broad managed `CitizenPopulationSystem` shell by moving citizen
 - Managed composition and lifecycle: subsystem construction, runtime context storage, initial wiring, event boundary binding, init-time reset policy, and disposal/reset sequencing moved to `CitizenPopulationCompositionSystemHelper`. Update cadence, pathfinding skip behavior, forced building refresh, visible sync cadence, totals cadence, and diagnostic phase sequencing moved to `CitizenPopulationLifecycleSystem`.
 - ECS query and entity projection: moved to `CitizenPopulationEcsProjectionSystem`.
 - Citizen and household record storage: state storage moved to `CitizenPopulationStateSystem`.
-- Runtime building read cache: moved to `CitizenBuildingReadSystem`.
+- Runtime building read cache: moved to `CitizenBuildingReadCompositionSystemHelper`.
 - Household registration and rehousing: new-house registration, removed-house synchronization, displaced-household search, rehouse-citizen mutation, assignment updates, and living member/refugee counts moved to `CitizenHouseholdRegistrationSystem`.
 - Refugee and displacement behavior: home destruction, missing-home displacement, refugee tent assignment, tent loss, occupancy, assignment release, refugee state transitions, and daily upkeep moved to `CitizenRefugeeSystem`.
 - Schedule policy: weekday/weekend/refugee timing constants, day-of-week logic, night policy, shopping cadence, work/lunch/walk/city hall decisions, target resolution, and schedule phase moved to `CitizenScheduleSystem`.
@@ -126,7 +126,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
 - `CitizenPopulationRuntimeUpdateSystem`: owns citizen runtime update orchestration, lifecycle callbacks, record storage callbacks, visible sync handoff, totals refresh callbacks, and death handling.
 - `CitizenPopulationStateSystem`: owns citizen/household records, ids, dictionaries, visible-citizen records, scratch collections, and pure record mutation.
 - `CitizenPopulationEcsProjectionSystem`: owns ECS world/query/entity creation, component synchronization, summary entity publication, and entity destruction.
-- `CitizenBuildingReadSystem`: owns runtime building role caches and building read delegates against `BuildingRuntimeReadModelCompositionSystemHelper`.
+- `CitizenBuildingReadCompositionSystemHelper`: owns runtime building role caches and building read delegates against `BuildingRuntimeReadModelCompositionSystemHelper`.
 - `CitizenHouseholdRegistrationSystem`: owns new house registration, target assignment, rehousing, removed-house detection, and household-to-home mapping policies.
 - `CitizenRefugeeSystem`: owns displacement, refugee tent assignment, tent loss, occupancy counting, upkeep charging, and refugee death policy.
 - `CitizenScheduleSystem`: owns schedule constants, day/hour policy, desired status/target selection, travel status conversion, and arrival settling policy.
@@ -198,10 +198,10 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
    - Added `CitizenPopulationTotalsAndReadModelMustLiveOutsideShell` to the focused architecture validation batch.
 
 8. Complete: Extract runtime building read cache
-   - Create `CitizenBuildingReadSystem`.
+   - Create `CitizenBuildingReadCompositionSystemHelper`.
    - Move role-list refresh cadence, house/shop/city hall/refugee tent/military camp lists, role id sets, building focus/destroyed/refugee/approach reads, and nearest-building helpers.
    - Keep all building reads behind `BuildingRuntimeReadModelCompositionSystemHelper`; no building placement facade access.
-   - Added `CitizenBuildingReadSystem.cs`.
+   - Added `CitizenBuildingReadCompositionSystemHelper.cs`.
    - Moved `BuildingRuntimeReadModelCompositionSystemHelper` dependency storage, role id caches, house id set, refresh cadence, focus/destroyed/refugee/approach query wrappers, and role list read accessors out of `CitizenPopulationSystem.cs`.
    - Added `CitizenBuildingReadSystemMustOwnRuntimeBuildingCache` to the focused architecture validation batch.
 
@@ -259,7 +259,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
 16. Complete: Extract travel and grid goal planning
    - Create `CitizenTravelSystem`.
    - Move world-to-cell conversion, travel origin policy, anchor position resolution, building approach world/cell helpers, segment goal planning, deferred travel duration, and citizen offset positioning.
-   - The system may depend on `CitizenBuildingReadSystem`, `CitizenPopulationEcsProjectionSystem`, and `CitizenPopulationStateSystem`, but must not own visible unit spawning.
+   - The system may depend on `CitizenBuildingReadCompositionSystemHelper`, `CitizenPopulationEcsProjectionSystem`, and `CitizenPopulationStateSystem`, but must not own visible unit spawning.
    - Added `CitizenTravelSystem.cs`.
    - Moved world-to-cell conversion, travel origin selection, citizen/household reference anchors, visibility anchors, building approach world/cell resolution, long segment goal planning, deferred travel duration, and citizen world-position offsets out of `CitizenPopulationSystem.cs`.
    - Added `CitizenTravelSystemMustOwnTravelAndGridPlanning` to the focused architecture validation batch.

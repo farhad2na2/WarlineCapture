@@ -73,7 +73,7 @@ internal sealed class CitizenDangerSystem
 
     public static bool TryGetDangerFleeTarget(
         CitizenDangerSystem system,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenRecordComponent citizen,
         out int fleeTargetBuildingId)
     {
@@ -82,7 +82,7 @@ internal sealed class CitizenDangerSystem
     }
 
     public bool TryGetDangerFleeTarget(
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenRecordComponent citizen,
         out int fleeTargetBuildingId)
     {
@@ -117,7 +117,7 @@ internal sealed class CitizenDangerSystem
         return fleeTargetBuildingId != 0;
     }
 
-    private bool IsBuildingSafeFromDanger(CitizenBuildingReadSystem buildingReadSystem, int buildingId)
+    private bool IsBuildingSafeFromDanger(CitizenBuildingReadCompositionSystemHelper buildingReadSystem, int buildingId)
     {
         if (buildingReadSystem == null ||
             !buildingReadSystem.HasRuntimeBuildingQuery() ||
@@ -136,7 +136,7 @@ internal sealed class CitizenDangerSystem
         return true;
     }
 
-    private int FindNearestSafeBuilding(CitizenBuildingReadSystem buildingReadSystem, int originBuildingId)
+    private int FindNearestSafeBuilding(CitizenBuildingReadCompositionSystemHelper buildingReadSystem, int originBuildingId)
     {
         int safeTarget = FindNearestSafeBuildingFromList(buildingReadSystem, originBuildingId, buildingReadSystem.CityHallBuildingIds);
         if (safeTarget != 0)
@@ -154,7 +154,7 @@ internal sealed class CitizenDangerSystem
     }
 
     private int FindNearestSafeBuildingFromList(
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int originBuildingId,
         IReadOnlyList<int> candidates,
         int excludeBuildingId = 0)

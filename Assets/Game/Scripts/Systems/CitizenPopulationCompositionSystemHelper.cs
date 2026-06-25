@@ -14,7 +14,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         public readonly CitizenPopulationTotalsSystem TotalsSystem = ResolveCitizenPopulationTotalsSystem();
         public readonly CitizenPopulationReadModelSystem ReadModel = new();
         public CitizenPopulationReadModelSystem.State ReadModelState;
-        public readonly CitizenBuildingReadSystem BuildingReadSystem = new();
+        public readonly CitizenBuildingReadCompositionSystemHelper BuildingReadSystem = new();
         public readonly CitizenHouseholdRegistrationSystem HouseholdRegistrationSystem = ResolveCitizenHouseholdRegistrationSystem();
         public readonly CitizenRefugeeSystem RefugeeSystem = ResolveCitizenRefugeeSystem();
         public CitizenRefugeeSystem.State RefugeeState;

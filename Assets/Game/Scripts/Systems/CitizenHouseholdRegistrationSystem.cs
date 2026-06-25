@@ -12,7 +12,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
     public static void SyncRemovedHouses(
         CitizenHouseholdRegistrationSystem system,
         CitizenPopulationStateSystem state,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         DisplaceHouseholdAction displaceHousehold)
     {
         if (system != null)
@@ -26,7 +26,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
 
     public void SyncRemovedHouses(
         CitizenPopulationStateSystem state,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         DisplaceHouseholdAction displaceHousehold)
     {
         SyncRemovedHousesState(state, buildingReadSystem, displaceHousehold);
@@ -35,7 +35,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
     public static void RegisterNewHouses(
         CitizenHouseholdRegistrationSystem system,
         CitizenPopulationStateSystem state,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         TryRehouseDisplacedHouseholdAction tryRehouseDisplacedHousehold,
         StoreHouseholdAction storeHousehold,
         StoreCitizenAction storeCitizen)
@@ -61,7 +61,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
 
     public void RegisterNewHouses(
         CitizenPopulationStateSystem state,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         TryRehouseDisplacedHouseholdAction tryRehouseDisplacedHousehold,
         StoreHouseholdAction storeHousehold,
         StoreCitizenAction storeCitizen)
@@ -77,7 +77,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
     public static bool TryRehouseDisplacedHousehold(
         CitizenHouseholdRegistrationSystem system,
         CitizenPopulationStateSystem state,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int newHomeBuildingId,
         StoreHouseholdAction storeHousehold,
         StoreCitizenAction storeCitizen,
@@ -102,7 +102,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
 
     public bool TryRehouseDisplacedHousehold(
         CitizenPopulationStateSystem state,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int newHomeBuildingId,
         StoreHouseholdAction storeHousehold,
         StoreCitizenAction storeCitizen,
@@ -176,7 +176,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
 
     private static void SyncRemovedHousesState(
         CitizenPopulationStateSystem state,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         DisplaceHouseholdAction displaceHousehold)
     {
         if (state.HouseholdIdsByHomeBuildingId.Count == 0)
@@ -210,7 +210,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
 
     private static void RegisterNewHousesState(
         CitizenPopulationStateSystem state,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         TryRehouseDisplacedHouseholdAction tryRehouseDisplacedHousehold,
         StoreHouseholdAction storeHousehold,
         StoreCitizenAction storeCitizen)
@@ -287,7 +287,7 @@ internal sealed class CitizenHouseholdRegistrationSystem
 
     private static bool TryRehouseDisplacedHouseholdState(
         CitizenPopulationStateSystem state,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int newHomeBuildingId,
         StoreHouseholdAction storeHousehold,
         StoreCitizenAction storeCitizen,

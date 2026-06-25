@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class CitizenBuildingReadSystem
+internal sealed class CitizenBuildingReadCompositionSystemHelper
 {
     private const float RuntimeBuildingListRefreshIntervalSeconds = 0.25f;
 

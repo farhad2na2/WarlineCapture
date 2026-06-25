@@ -680,7 +680,7 @@ Convert city generation/state/read-model algorithms and retire visual/config man
 - [x] Fold Agent E `P7-0195 CitizenPopulationReadModelSystem` from a disabled `SystemBase` wrapper into a plain direct-owned citizen read-model helper and validate citizen focused behavior, compile, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0204 CitizenStatusTransitionSystem` from a disabled `SystemBase` wrapper into a plain direct-owned citizen status transition helper and validate citizen focused behavior, compile, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0197 CitizenPopulationStateSystem` from a disabled `SystemBase` wrapper into a plain direct-owned citizen population state holder and validate citizen focused behavior, compile, and Phase 7 architecture guard.
-- [x] Fold Agent E `P7-0185 CitizenBuildingReadSystem` from a disabled `SystemBase` wrapper into a plain direct-owned citizen building read helper and validate citizen focused behavior, compile, and Phase 7 architecture guard.
+- [x] Fold Agent E `P7-0185 CitizenBuildingReadCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned citizen building read helper and validate citizen focused behavior, compile, and Phase 7 architecture guard.
 - [ ] Run steady-state performance validation for runtime-city generation and post-generation gameplay.
 
 ### Phase 7.8: Citizen Population Systems

@@ -118,7 +118,7 @@ public sealed class CitizenVisibleUnitPresentationSystemHelperTests
                 prefabSelectionSystem,
                 prefabSelectionState,
                 new CitizenTravelSystem(),
-                new CitizenBuildingReadSystem(),
+                new CitizenBuildingReadCompositionSystemHelper(),
                 new CitizenStatusTransitionSystem(),
                 citizen,
                 new Vector3(4f, 0f, 6f));

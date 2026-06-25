@@ -19,7 +19,7 @@ Progress snapshot:
 - Checklist progress: `94 / 120 complete (78.3%)`.
 - In progress: `0`.
 - Remaining open: `28`.
-- Current target: `Agent D naming-only Batch 186 BuildingUiQueryUiSystemHelper complete; next non-ECS helper row is CitizenBuildingReadSystem`.
+- Current target: `Agent D naming-only Batch 186 BuildingUiQueryUiSystemHelper complete; next non-ECS helper row was handed to Agent E as P7-0185 CitizenBuildingReadCompositionSystemHelper`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
 - Retired/folded helpers: `81`.

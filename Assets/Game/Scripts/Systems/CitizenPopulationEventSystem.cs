@@ -3,7 +3,7 @@ using UnityEngine;
 public sealed class CitizenPopulationEventSystem
 {
     private CitizenPopulationStateSystem _state;
-    private CitizenBuildingReadSystem _buildingReadSystem;
+    private CitizenBuildingReadCompositionSystemHelper _buildingReadSystem;
     private CitizenHouseholdRegistrationSystem _householdRegistrationSystem;
     private CitizenRefugeeSystem _refugeeSystem;
     private CitizenTravelSystem _travelSystem;
@@ -17,7 +17,7 @@ public sealed class CitizenPopulationEventSystem
 
     internal void Init(
         CitizenPopulationStateSystem state,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationSystem householdRegistrationSystem,
         CitizenRefugeeSystem refugeeSystem,
         CitizenTravelSystem travelSystem,

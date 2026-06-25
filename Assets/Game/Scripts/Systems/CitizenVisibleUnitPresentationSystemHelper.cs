@@ -18,7 +18,7 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
     public void SyncVisibleCitizens(
         CitizenPopulationStateSystem state,
         CitizenPopulationEcsProjectionSystem ecsProjection,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
         CitizenPrefabSystem citizenPrefabSystem,
         CitizenPrefabSystem.Context citizenPrefabContext,
@@ -108,7 +108,7 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
     private void SyncVisibleCitizenTravel(
         CitizenPopulationStateSystem state,
         CitizenPopulationEcsProjectionSystem ecsProjection,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
         CitizenTravelSystem travelSystem,
         float now,
@@ -231,7 +231,7 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
         CitizenPrefabSelectionSystem prefabSelectionSystem,
         CitizenPrefabSelectionSystem.State prefabSelectionState,
         CitizenTravelSystem travelSystem,
-        CitizenBuildingReadSystem buildingReadSystem,
+        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
         CitizenRecordComponent citizen,
         Vector3 worldPosition)

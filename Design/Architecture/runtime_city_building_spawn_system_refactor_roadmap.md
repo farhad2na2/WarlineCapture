@@ -222,11 +222,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Preserved the existing four yield points around central market, gas station, outer shop, and roadside house placement.
 
 16. Complete: Extract rural scatter placement
-   - Create `RuntimeCityRuralBuildingSpawnSystem`.
+   - Create `RuntimeCityRuralBuildingSpawnPrefabSystemHelper`.
    - Move `PlaceRuralHouses` behavior for rural houses and rural other buildings.
    - Preserve distance limits, attempt limits, road rejection, spacing, random prefab choice, reservation, and anchor recording.
    - Expected output: rural scatter placement has one owner.
-   - Added `RuntimeCityRuralBuildingSpawnSystem` as the owner for rural house and rural other-building scatter placement.
+   - Added `RuntimeCityRuralBuildingSpawnPrefabSystemHelper` as the owner for rural house and rural other-building scatter placement.
    - Moved rural scatter attempt limits, distance checks, road rejection, spacing, random prefab choice, spawn/reserve calls, and anchor recording out of `RuntimeCityBuildingSpawnSystem`.
    - `SpawnCityBulkBuildingsRoutine` now delegates both rural house and rural other-building scatter through the rural building spawn boundary.
 

@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RoadBuildCompositionLifecycleSystem
+internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
 {
     public void Init(
         RoadBuildCompositionSourceSystem source,

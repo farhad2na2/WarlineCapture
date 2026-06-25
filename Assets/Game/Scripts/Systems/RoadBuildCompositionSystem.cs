@@ -42,7 +42,7 @@ internal sealed class RoadBuildCompositionSystem
         var roadSource = new RoadBuildCompositionSourceSystem();
         _roadSource = roadSource;
         RoadBuildCompositionContextCompositionSystemHelper contextSystem = roadSource.RoadBuildCompositionContextCompositionSystemHelper;
-        RoadBuildCompositionLifecycleSystem lifecycleSystem = roadSource.RoadBuildCompositionLifecycleSystem;
+        RoadBuildCompositionLifecycleCompositionSystemHelper lifecycleSystem = roadSource.RoadBuildCompositionLifecycleCompositionSystemHelper;
         lifecycleSystem.Init(roadSource, contextSystem, roadBuildConfig, worldCamera, runtimeUiRoot, null);
 
         RoadBuildReadModelSystem roadBuildReadModel = roadSource.RoadBuildReadModelSystem;
@@ -102,7 +102,7 @@ internal sealed class RoadBuildCompositionSystem
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null,
         RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks = null)
     {
-        _roadSource?.RoadBuildCompositionLifecycleSystem.BindDependencies(
+        _roadSource?.RoadBuildCompositionLifecycleCompositionSystemHelper.BindDependencies(
             _roadSource,
             buildingPlacementInteraction,
             buildingPlacementInteractionContext,

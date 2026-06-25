@@ -131,7 +131,7 @@ Use the same state machine for:
    - Directly wire the existing prefab references, or use existing serialized tab array if already enough.
    - Add input binding in `MatchOverlayCommandInputUiSystemHelper`.
 5. [x] Process Enter Move Mode in the focus/command boundary.
-   - Extend `RtsSelectionFocusCommandSystem` external command processing.
+   - Extend `RtsSelectionFocusCommandCompositionSystemHelper` external command processing.
    - Validate that selected movable units exist before arming.
    - On no selection, publish `NoSelection` feedback and do not arm.
    - On success, arm `TacticalCommandMode.Move`, show `Choose destination`, and suppress the button click release.

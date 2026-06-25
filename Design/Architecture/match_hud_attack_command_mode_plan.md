@@ -37,7 +37,7 @@ This must remain ECS-aligned: UI emits intent only, command systems validate and
 ### Command State
 
 - Add `EnterAttackTargetMode` as a distinct command intent.
-- `RtsSelectionFocusCommandSystem` consumes the intent.
+- `RtsSelectionFocusCommandCompositionSystemHelper` consumes the intent.
 - It validates that at least one selected player unit can attack.
 - On valid selection, it arms `TacticalCommandMode.Attack` as a one-shot world-target command and shows HUD feedback.
 - On no selection or non-attacking selection, it rejects with centralized feedback and does not arm.

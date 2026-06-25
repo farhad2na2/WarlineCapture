@@ -377,7 +377,7 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=438 skipped=23`.
   - `git diff --check` passed.
-- 2026-06-12: Continued Phase 3 with a narrow `RtsSelectionFocusCommandSystem` cleanup. Entering Board mode now resolves selected transport and passenger candidates through one selected-entity scan while preserving transport-first priority.
+- 2026-06-12: Continued Phase 3 with a narrow `RtsSelectionFocusCommandCompositionSystemHelper` cleanup. Entering Board mode now resolves selected transport and passenger candidates through one selected-entity scan while preserving transport-first priority.
 - 2026-06-12: Added `RtsSelectionInputSystemTests.BoardTargetMode_SelectedTransportAndPassengerUsesTransportFirstMode`.
 - 2026-06-12: Guardrail ratchet after the second Phase 3 slice: `ToEntityArray` / `ToComponentDataArray` ceiling reduced to `106`.
 - 2026-06-12: Validation passed after the second Phase 3 slice:
@@ -388,7 +388,7 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=439 skipped=23`.
   - `git diff --check` passed.
-- 2026-06-12: Continued Phase 3 with another narrow `RtsSelectionFocusCommandSystem` cleanup. Entering Attack mode now resolves selected air-defense and normal attack-capable units through one selected-entity scan while preserving air-defense-only auto-engage feedback.
+- 2026-06-12: Continued Phase 3 with another narrow `RtsSelectionFocusCommandCompositionSystemHelper` cleanup. Entering Attack mode now resolves selected air-defense and normal attack-capable units through one selected-entity scan while preserving air-defense-only auto-engage feedback.
 - 2026-06-12: Added `RtsSelectionInputSystemTests.AttackTargetMode_MixedAirDefenseAndAttackUnitEntersTargetMode`.
 - 2026-06-12: Guardrail ratchet after the third Phase 3 slice: `ToEntityArray` / `ToComponentDataArray` ceiling reduced to `105`.
 - 2026-06-12: Validation passed after the third Phase 3 slice:
@@ -651,7 +651,7 @@ Progress notes:
 - 2026-06-12: Continued contained runtime/building cleanup in `DynamicOccupancyRebuildSystem`, `GroundMissileLauncherSystems`, `BuildingRuntimeBoundaryProcessingCompositionSystemHelper`, `BuildingSpawnCompositionSystemHelper`, `BuildingSpawnPrefabSystem`, and `BuildingResourceHaulerBridgeCompositionSystemHelper`. These now use chunk traversal or chunk-collected entity lists while preserving existing ECB impact timing, spawn overlap behavior, prefab lookup, and resource-hauler ordering.
 - 2026-06-12: Guardrail ratchet after the contained runtime/building cleanup slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `56`.
 - 2026-06-12: Static count after the contained runtime/building cleanup slice: non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `40`; generic-aware count confirmed at `56`.
-- 2026-06-12: Continued startup/presentation/debug/selection cleanup in `AIStartupSystem`, `UnitVisualPrefabReferenceBackfillSystem`, `SelectedUnitDebugFireSystem`, `FocusableUnitLookupSystem`, and `RtsSelectionFocusCommandSystem`. These now use chunk traversal or chunk-collected entity lists for plan/production/squad/target-priority startup scans, visual-prefab reference backfill, selected debug-fire cleanup, focusable lookup refresh, and selected move/attack/board command checks.
+- 2026-06-12: Continued startup/presentation/debug/selection cleanup in `AIStartupSystem`, `UnitVisualPrefabReferenceBackfillSystem`, `SelectedUnitDebugFireSystem`, `FocusableUnitLookupSystem`, and `RtsSelectionFocusCommandCompositionSystemHelper`. These now use chunk traversal or chunk-collected entity lists for plan/production/squad/target-priority startup scans, visual-prefab reference backfill, selected debug-fire cleanup, focusable lookup refresh, and selected move/attack/board command checks.
 - 2026-06-12: Guardrail ratchet after the startup/presentation/debug/selection cleanup slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `39`.
 - 2026-06-12: Static count after the startup/presentation/debug/selection cleanup slice: non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `23`; generic-aware count confirmed at `39`.
 - 2026-06-12: Continued transport cleanup in `TransportBoardingCommandSystem`. Selected passenger source scans, nearby-transport searches, pending-boarding counts, and paired pathing live-unit arrays now use chunk traversal or chunk-filled `NativeList` buffers, preserving existing approach-cell and air-pickup helper behavior.
@@ -851,7 +851,7 @@ Reduce the largest known source of main-thread query snapshots while keeping act
 
 Target areas:
 - [x] `SelectionGameplayStartupSystem`
-- [x] `RtsSelectionFocusCommandSystem`
+- [x] `RtsSelectionFocusCommandCompositionSystemHelper`
 - [x] `FocusableUnitLookupSystem`
 - [x] `SelectionSummaryQuerySystem`
 - [x] `SelectionUiReadModelSystem`
@@ -876,7 +876,7 @@ Progress notes:
 - 2026-06-12: Re-validated Match HUD command arming and UI-click suppression through `EcsBurstSelectionCommandValidationRunner.RunFocusedValidation`:
   - `/private/tmp/warline-ecs-burst-selection-command-move-acceptance.log`, marker `[EcsBurstSelectionCommandValidation] result=Passed tests=70`.
   - Covered Move/Attack/Board/Hold/Stop command request queuing, command-mode state, and suppress-release behavior for command buttons.
-- 2026-06-13: Closed the `SelectionGameplayStartupSystem` target item and selected-entity snapshot replacement item after static verification found no `ToEntityArray` / `ToComponentDataArray<T>` calls in the active Phase 3 selection files, including `SelectionGameplayStartupSystem`, `RtsSelectionFocusCommandSystem`, `FocusableUnitLookupSystem`, `SelectionSummaryQuerySystem`, `SelectionUiReadModelSystem`, `VisibleUnitSelectionSystem`, `SelectionOrderMarkerPresentationSystemHelper`, `FocusedUnitLifecycleSystem`, `SelectedMoveOrderCommandSystem`, `FocusedUnitCommandSystem`, `BuildingTargetMoveOrderSystem`, `AttackOrderCommandSystem`, and `RtsSelectionPointerTargetCommandSystem`. The same scan found no `Camera.main`, `Object.Find*`, or `GameObject.Find` usage in those files. Follow-up hot-path architecture validation passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-13: Closed the `SelectionGameplayStartupSystem` target item and selected-entity snapshot replacement item after static verification found no `ToEntityArray` / `ToComponentDataArray<T>` calls in the active Phase 3 selection files, including `SelectionGameplayStartupSystem`, `RtsSelectionFocusCommandCompositionSystemHelper`, `FocusableUnitLookupSystem`, `SelectionSummaryQuerySystem`, `SelectionUiReadModelSystem`, `VisibleUnitSelectionSystem`, `SelectionOrderMarkerPresentationSystemHelper`, `FocusedUnitLifecycleSystem`, `SelectedMoveOrderCommandSystem`, `FocusedUnitCommandSystem`, `BuildingTargetMoveOrderSystem`, `AttackOrderCommandSystem`, and `RtsSelectionPointerTargetCommandSystem`. The same scan found no `Camera.main`, `Object.Find*`, or `GameObject.Find` usage in those files. Follow-up hot-path architecture validation passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
 - 2026-06-13: Added focused squad-tray selection acceptance coverage in `MatchHudSquadTraySelectionSystemTests` and wired it into `EcsBurstSelectionCommandValidationRunner`. The tests validate selecting a four-soldier cluster, selecting two ground combat vehicles while excluding trucks/soldiers, and selecting attack helicopter, jet, and transport slots through the real squad-tray selection system. Validation passed:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchHudSquadTraySelectionSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-squad-tray-selection-main.log`
   - Log marker: `[MatchHudSquadTraySelectionFocusedValidation] result=Passed tests=3`.

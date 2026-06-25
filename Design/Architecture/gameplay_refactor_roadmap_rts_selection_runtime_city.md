@@ -206,7 +206,7 @@ Goal: delete the remaining selection context-construction boundary without repla
    - Command result flushing must own its ECS buffer/read dependencies directly.
 
 9. Complete: Extract focus command context builder
-   - Move `CreateFocusCommandContext` into `RtsSelectionFocusCommandSystem` or a narrow context builder.
+   - Move `CreateFocusCommandContext` into `RtsSelectionFocusCommandCompositionSystemHelper` or a narrow context builder.
    - Focus/select-all/clear command flow must not require `SelectionRuntimeContextSystem`.
 
 10. Complete: Extract pointer-target context builder

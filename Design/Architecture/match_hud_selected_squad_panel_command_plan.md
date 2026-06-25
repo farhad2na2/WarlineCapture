@@ -109,7 +109,7 @@ Completed:
 - Added `MatchHudSelectionPanelView.Model` and serialized references for title, subtitle, current order, health fill/text, badge, and Return/Destroy/Board action surfaces.
 - Bound Return/Destroy/Board panel-root buttons through `SelectionGameplayStartupSystem` to `SelectionUiCommandSystem` request methods.
 - Added `RtsSelectionCommandIntentKind.BoardNearestSoldiers` so selected-transport boarding does not collide with the existing click-to-transport `BoardTransport` command path.
-- Routed Return and selected-transport Board through `RtsSelectionFocusCommandSystem`.
+- Routed Return and selected-transport Board through `RtsSelectionFocusCommandCompositionSystemHelper`.
 - Added panel projection for focused units, squads, and selected buildings.
 - Added focused unit/squad Return, focused unit Destroy, selected-tag unit/squad Destroy fallback, selected building Destroy, and focused transport Board-nearest-soldiers behavior.
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class RtsSelectionFocusCommandSystem
+public sealed class RtsSelectionFocusCommandCompositionSystemHelper
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
 

@@ -2393,7 +2393,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void SelectAll_ClearsPriorCommandModeFeedbackBeforeSelecting()
     {
-        string focusCommands = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionFocusCommandSystem.cs");
+        string focusCommands = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionFocusCommandCompositionSystemHelper.cs");
         string selectAll = ExtractBlockAfter(focusCommands, "public void SelectAllVisiblePlayerUnits");
 
         int clearModeIndex = selectAll.IndexOf("context.InputSystem.ClearActiveCommandMode()", StringComparison.Ordinal);

@@ -288,11 +288,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Gate-side decision and opening clamp behavior were moved unchanged.
 
 23. Complete: Extract yard wall visuals
-   - Create `RuntimeCityYardWallVisualSystem`.
+   - Create `RuntimeCityYardWallVisualPresentationSystemHelper`.
    - Move boundary visual spawning, horizontal/vertical side placement, wall-run splitting, gate placement, pillar placement, and rotation choices.
    - Preserve wall/gate/pillar footprint math and visual-only spawn calls.
    - Expected output: visual spawning logic is isolated from placement planning.
-   - Added `RuntimeCityYardWallVisualSystem` as the owner for yard boundary visual spawning, side placement, wall-run splitting, gate placement, pillar placement, and rotation choices.
+   - Added `RuntimeCityYardWallVisualPresentationSystemHelper` as the owner for yard boundary visual spawning, side placement, wall-run splitting, gate placement, pillar placement, and rotation choices.
    - `RuntimeCityBuildingSpawnSystem` now delegates yard visual spawning through the visual system while preserving reservation timing after successful visual creation.
    - Wall/gate/pillar footprint math and visual-only spawn calls were moved unchanged.
 

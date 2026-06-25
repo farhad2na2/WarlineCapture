@@ -1,7 +1,7 @@
 using UnityEngine;
 using YardSide = RuntimeCityYardGateUtilitySystemHelper.YardSide;
 
-internal sealed class RuntimeCityYardWallVisualSystem
+internal sealed class RuntimeCityYardWallVisualPresentationSystemHelper
 {
     private readonly RuntimeCityYardWallVisualState _state = new();
 

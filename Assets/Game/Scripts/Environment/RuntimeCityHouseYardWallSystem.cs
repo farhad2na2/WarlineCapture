@@ -16,7 +16,7 @@ internal sealed class RuntimeCityHouseYardWallSystem
         RuntimeCityWalkabilityState walkabilitySystem,
         RuntimeCityYardWallPlanState yardWallPlanSystem,
         RuntimeCityYardGateState yardGateSystem,
-        RuntimeCityYardWallVisualState yardWallVisualSystem,
+        RuntimeCityYardWallVisualState yardWallVisualHelper,
         RuntimeCityVisualPresentationSystemHelper visualSystem,
         List<GameObject> houseWallPrefabs,
         GameObject houseWallGatePrefab,
@@ -39,7 +39,7 @@ internal sealed class RuntimeCityHouseYardWallSystem
             walkabilitySystem,
             yardWallPlanSystem,
             yardGateSystem,
-            yardWallVisualSystem,
+            yardWallVisualHelper,
             visualSystem,
             houseWallPrefabs,
             houseWallGatePrefab,
@@ -66,7 +66,7 @@ internal sealed class RuntimeCityHouseYardWallState
         RuntimeCityWalkabilityState walkabilitySystem,
         RuntimeCityYardWallPlanState yardWallPlanSystem,
         RuntimeCityYardGateState yardGateSystem,
-        RuntimeCityYardWallVisualState yardWallVisualSystem,
+        RuntimeCityYardWallVisualState yardWallVisualHelper,
         RuntimeCityVisualPresentationSystemHelper visualSystem,
         List<GameObject> houseWallPrefabs,
         GameObject houseWallGatePrefab,
@@ -102,7 +102,7 @@ internal sealed class RuntimeCityHouseYardWallState
                     walkabilitySystem,
                     yardWallPlanSystem,
                     yardGateSystem,
-                    yardWallVisualSystem,
+                    yardWallVisualHelper,
                     visualSystem,
                     houseWallPrefabs,
                     houseWallGatePrefab,
@@ -129,7 +129,7 @@ internal sealed class RuntimeCityHouseYardWallState
         RuntimeCityWalkabilityState walkabilitySystem,
         RuntimeCityYardWallPlanState yardWallPlanSystem,
         RuntimeCityYardGateState yardGateSystem,
-        RuntimeCityYardWallVisualState yardWallVisualSystem,
+        RuntimeCityYardWallVisualState yardWallVisualHelper,
         RuntimeCityVisualPresentationSystemHelper visualSystem,
         List<GameObject> houseWallPrefabs,
         GameObject houseWallGatePrefab,
@@ -168,7 +168,7 @@ internal sealed class RuntimeCityHouseYardWallState
         if (wallPrefab == null)
             return false;
 
-        yardWallVisualSystem.BuildYardBoundaryVisuals(context, placementSystem, prefabSelectionSystem, visualSystem, yardGateSystem, yardRect, gateSide, wallPrefab, houseWallGatePrefab, houseWallPillarPrefab, grid);
+        yardWallVisualHelper.BuildYardBoundaryVisuals(context, placementSystem, prefabSelectionSystem, visualSystem, yardGateSystem, yardRect, gateSide, wallPrefab, houseWallGatePrefab, houseWallPillarPrefab, grid);
         walkabilitySystem.ReserveFootprint(reservedFootprints, yardRect.position, yardRect.size, 0);
         return true;
     }

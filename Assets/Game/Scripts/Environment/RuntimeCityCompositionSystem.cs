@@ -43,7 +43,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityYardWallPlanState _fallbackRuntimeCityYardWallPlan = new();
     private RuntimeCityYardGateUtilitySystemHelper _runtimeCityYardGateHelper;
     private readonly RuntimeCityYardGateState _fallbackRuntimeCityYardGate = new();
-    private RuntimeCityYardWallVisualSystem _runtimeCityYardWallVisualSystem;
+    private RuntimeCityYardWallVisualPresentationSystemHelper _runtimeCityYardWallVisualHelper;
     private readonly RuntimeCityYardWallVisualState _fallbackRuntimeCityYardWallVisual = new();
     private RuntimeCityHouseYardWallSystem _runtimeCityHouseYardWallSystem;
     private readonly RuntimeCityHouseYardWallState _fallbackRuntimeCityHouseYardWall = new();
@@ -482,10 +482,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityYardGateHelper ??= ResolveRuntimeCityYardGateUtilitySystemHelper();
 
     private RuntimeCityYardWallVisualState RuntimeCityYardWallVisualState =>
-        RuntimeCityYardWallVisualSystem?.State ?? _fallbackRuntimeCityYardWallVisual;
+        RuntimeCityYardWallVisualPresentationSystemHelper?.State ?? _fallbackRuntimeCityYardWallVisual;
 
-    private RuntimeCityYardWallVisualSystem RuntimeCityYardWallVisualSystem =>
-        _runtimeCityYardWallVisualSystem ??= ResolveRuntimeCityYardWallVisualSystem();
+    private RuntimeCityYardWallVisualPresentationSystemHelper RuntimeCityYardWallVisualPresentationSystemHelper =>
+        _runtimeCityYardWallVisualHelper ??= ResolveRuntimeCityYardWallVisualPresentationSystemHelper();
 
     private RuntimeCityHouseYardWallState RuntimeCityHouseYardWallState =>
         RuntimeCityHouseYardWallSystem?.State ?? _fallbackRuntimeCityHouseYardWall;
@@ -706,9 +706,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityYardGateUtilitySystemHelper();
     }
 
-    private static RuntimeCityYardWallVisualSystem ResolveRuntimeCityYardWallVisualSystem()
+    private static RuntimeCityYardWallVisualPresentationSystemHelper ResolveRuntimeCityYardWallVisualPresentationSystemHelper()
     {
-        return new RuntimeCityYardWallVisualSystem();
+        return new RuntimeCityYardWallVisualPresentationSystemHelper();
     }
 
     private static RuntimeCityHouseYardWallSystem ResolveRuntimeCityHouseYardWallSystem()

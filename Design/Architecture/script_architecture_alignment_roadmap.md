@@ -32,7 +32,7 @@ Current status:
 
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyContextSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildContextSystem.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyDefinitionSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildDefinitionProjectionSystem.cs`
-- [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyEcsSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildEcsBoundarySystem.cs`
+- [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyEcsSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildEcsBoundaryCompositionSystemHelper.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyGridSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildGridQuerySystem.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyInteractionSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildInteractionSystem.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyPlacementSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildBuildingPlacementCompositionSystemHelper.cs`
@@ -194,7 +194,7 @@ Candidate target names:
 - `BuildingRoadLegacyInteractionSystem` -> `RoadBuildInteractionSystem`
 - `BuildingRoadLegacyGridSystem` -> `RoadBuildGridQuerySystem`
 - `BuildingRoadLegacyContextSystem` -> `RoadBuildContextSystem`
-- `BuildingRoadLegacyEcsSystem` -> `RoadBuildEcsBoundarySystem`
+- `BuildingRoadLegacyEcsSystem` -> `RoadBuildEcsBoundaryCompositionSystemHelper`
 
 ### Phase 7: Folder And Suffix Cleanup
 

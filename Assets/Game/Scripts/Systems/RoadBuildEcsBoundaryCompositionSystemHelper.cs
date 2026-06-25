@@ -6,7 +6,7 @@ using Unity.Transforms;
 using UnityEngine;
 using static UnityEngine.Object;
 
-internal sealed class RoadBuildEcsBoundarySystem
+internal sealed class RoadBuildEcsBoundaryCompositionSystemHelper
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
     public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);

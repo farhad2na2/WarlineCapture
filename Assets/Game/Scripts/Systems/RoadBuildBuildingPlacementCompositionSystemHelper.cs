@@ -25,7 +25,7 @@ internal sealed class RoadBuildBuildingPlacementCompositionSystemHelper
         public readonly float PlacementOutlineHeight;
         public readonly Color PlacementValidColor;
         public readonly Color PlacementInvalidColor;
-        public readonly RoadBuildEcsBoundarySystem.TryGetGridDataDelegate TryGetGridData;
+        public readonly RoadBuildEcsBoundaryCompositionSystemHelper.TryGetGridDataDelegate TryGetGridData;
         public readonly TryGetGridCellDelegate TryGetGridCell;
         public readonly IsRuntimeBlockerCellDelegate IsRuntimeBlockerCell;
 
@@ -40,7 +40,7 @@ internal sealed class RoadBuildBuildingPlacementCompositionSystemHelper
             float placementOutlineHeight,
             Color placementValidColor,
             Color placementInvalidColor,
-            RoadBuildEcsBoundarySystem.TryGetGridDataDelegate tryGetGridData,
+            RoadBuildEcsBoundaryCompositionSystemHelper.TryGetGridDataDelegate tryGetGridData,
             TryGetGridCellDelegate tryGetGridCell,
             IsRuntimeBlockerCellDelegate isRuntimeBlockerCell)
         {

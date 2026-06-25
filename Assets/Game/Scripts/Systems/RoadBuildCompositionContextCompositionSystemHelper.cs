@@ -106,7 +106,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadVisualVariantSystem,
             source.RoadPreviewSystem,
             source.RoadChunkVisualSystem,
-            source.RoadBuildEcsBoundarySystem,
+            source.RoadBuildEcsBoundaryCompositionSystemHelper,
             source.RoadBuildPlacementStorageSystem,
             source.RoadSpecialVisualSystem,
             source.RoadMinimapEventSystem,
@@ -185,7 +185,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     private RoadBuildContextSystem.Context CreateRoadBuildContext(RoadBuildCompositionSourceSystem source)
     {
         return new RoadBuildContextSystem.Context(
-            source.RoadBuildEcsBoundarySystem.TryGetEntityManager,
+            source.RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManager,
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 TryGetRoadBuildGridData(source, out gridEntity, out grid, out roads, out blockerData),
             (originCell, footprintCells, grid) => GetRoadBuildFootprintCenter(source, originCell, footprintCells, grid),
@@ -195,7 +195,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.BuildingSpawnRandomState);
     }
 
-    private RoadBuildEcsBoundarySystem.Context CreateRoadBuildEcsContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildEcsBoundaryCompositionSystemHelper.Context CreateRoadBuildEcsContext(RoadBuildCompositionSourceSystem source)
     {
         return source.RoadBuildContextSystem.CreateEcsContext(CreateRoadBuildContext(source));
     }

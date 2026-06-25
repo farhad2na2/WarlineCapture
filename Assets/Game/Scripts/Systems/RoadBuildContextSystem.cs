@@ -2,18 +2,18 @@ internal sealed class RoadBuildContextSystem
 {
     public readonly struct Context
     {
-        public readonly RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate TryGetEntityManager;
-        public readonly RoadBuildEcsBoundarySystem.TryGetGridDataDelegate TryGetGridData;
-        public readonly RoadBuildEcsBoundarySystem.GetFootprintCenterDelegate GetFootprintCenter;
+        public readonly RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly RoadBuildEcsBoundaryCompositionSystemHelper.TryGetGridDataDelegate TryGetGridData;
+        public readonly RoadBuildEcsBoundaryCompositionSystemHelper.GetFootprintCenterDelegate GetFootprintCenter;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public readonly uint BuildingSpawnRandomState;
 
         public Context(
-            RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate tryGetEntityManager,
-            RoadBuildEcsBoundarySystem.TryGetGridDataDelegate tryGetGridData,
-            RoadBuildEcsBoundarySystem.GetFootprintCenterDelegate getFootprintCenter,
+            RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
+            RoadBuildEcsBoundaryCompositionSystemHelper.TryGetGridDataDelegate tryGetGridData,
+            RoadBuildEcsBoundaryCompositionSystemHelper.GetFootprintCenterDelegate getFootprintCenter,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
@@ -29,9 +29,9 @@ internal sealed class RoadBuildContextSystem
         }
     }
 
-    public RoadBuildEcsBoundarySystem.Context CreateEcsContext(Context context)
+    public RoadBuildEcsBoundaryCompositionSystemHelper.Context CreateEcsContext(Context context)
     {
-        return new RoadBuildEcsBoundarySystem.Context(
+        return new RoadBuildEcsBoundaryCompositionSystemHelper.Context(
             context.TryGetEntityManager,
             context.TryGetGridData,
             context.GetFootprintCenter,

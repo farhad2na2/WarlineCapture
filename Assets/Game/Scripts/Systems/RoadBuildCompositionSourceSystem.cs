@@ -34,7 +34,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildBuildingPlacementCompositionSystemHelper RoadBuildBuildingPlacementCompositionSystemHelper = new();
     public readonly RoadBuildInteractionSystem RoadBuildInteractionSystem = new();
     public readonly RoadBuildContextSystem RoadBuildContextSystem = new();
-    public readonly RoadBuildEcsBoundarySystem RoadBuildEcsBoundarySystem = new();
+    public readonly RoadBuildEcsBoundaryCompositionSystemHelper RoadBuildEcsBoundaryCompositionSystemHelper = new();
     public readonly RoadRuntimeGenerationSystem RoadRuntimeGenerationSystem;
     public readonly RoadRuntimeGenerationContextSystem RoadRuntimeGenerationContextSystem;
     public readonly RoadBuildMutationSystem RoadBuildMutationSystem = new();

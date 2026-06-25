@@ -10,21 +10,21 @@ internal sealed class RoadBuildInteractionSystem
     public readonly struct Context
     {
         public readonly RoadBuildPlacementStorageSystem StorageSystem;
-        public readonly RoadBuildEcsBoundarySystem EcsSystem;
-        public readonly RoadBuildEcsBoundarySystem.Context EcsContext;
+        public readonly RoadBuildEcsBoundaryCompositionSystemHelper EcsSystem;
+        public readonly RoadBuildEcsBoundaryCompositionSystemHelper.Context EcsContext;
         public readonly RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers;
-        public readonly RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate TryGetEntityManager;
-        public readonly RoadBuildEcsBoundarySystem.TryGetGridDataDelegate TryGetGridData;
+        public readonly RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly RoadBuildEcsBoundaryCompositionSystemHelper.TryGetGridDataDelegate TryGetGridData;
         public readonly TryGetGridCellDelegate TryGetGridCell;
         public readonly IsPointerOverUiDelegate IsPointerOverUi;
 
         public Context(
             RoadBuildPlacementStorageSystem storageSystem,
-            RoadBuildEcsBoundarySystem ecsSystem,
-            RoadBuildEcsBoundarySystem.Context ecsContext,
+            RoadBuildEcsBoundaryCompositionSystemHelper ecsSystem,
+            RoadBuildEcsBoundaryCompositionSystemHelper.Context ecsContext,
             RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
-            RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate tryGetEntityManager,
-            RoadBuildEcsBoundarySystem.TryGetGridDataDelegate tryGetGridData,
+            RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
+            RoadBuildEcsBoundaryCompositionSystemHelper.TryGetGridDataDelegate tryGetGridData,
             TryGetGridCellDelegate tryGetGridCell,
             IsPointerOverUiDelegate isPointerOverUi)
         {

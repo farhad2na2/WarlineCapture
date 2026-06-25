@@ -33,7 +33,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
             source.RoadBuildRuntimeActionState,
             source.RoadBuildCommandCompositionSystemHelper,
             contextSystem.CreateRoadBuildCommandContext(source),
-            source.RoadBuildEcsBoundarySystem.TryGetEntityManager);
+            source.RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManager);
         RoadBuildRuntimeActionCompositionSystemHelper.ConfigureGui(
             source.RoadBuildRuntimeActionState,
             source.RoadDeletePromptSystem,
@@ -72,7 +72,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
         RoadBuildCompositionContextCompositionSystemHelper contextSystem)
     {
         RoadBuildCommandCompositionSystemHelper.Context commandContext = contextSystem.CreateRoadBuildCommandContext(source);
-        if (source.RoadBuildEcsBoundarySystem.TryGetEntityManager(out EntityManager entityManager))
+        if (source.RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManager(out EntityManager entityManager))
             source.RoadBuildCommandCompositionSystemHelper.EnqueueAndProcessExitBuildMode(entityManager, commandContext);
         else
             ExitBuildModeWithoutEntityManager(commandContext);

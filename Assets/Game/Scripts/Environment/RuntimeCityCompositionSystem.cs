@@ -74,7 +74,7 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityRoadCommitCompositionSystemHelper _runtimeCityRoadCommitHelper;
     private readonly RuntimeCityRoadCommitState _fallbackRuntimeCityRoadCommit = new();
     private RuntimeCityDiagnosticsSystemHelper _runtimeCityDiagnosticSystem;
-    private RuntimeCityIngressSystem _runtimeCityIngressSystem;
+    private RuntimeCityIngressUtilitySystemHelper _runtimeCityIngressHelper;
     private readonly RuntimeCityIngressState _fallbackRuntimeCityIngress = new();
     private RuntimeCityMinimapEventUiSystemHelper _runtimeCityMinimapEventHelper;
     private RuntimeCityReadModelCompositionSystemHelper _runtimeCityReadModelSystem;
@@ -348,9 +348,9 @@ public sealed class RuntimeCityCompositionSystem
             RuntimeCityDiagnosticsSystemHelper);
     }
 
-    private RuntimeCityIngressSystem.Context CreateIngressContext()
+    private RuntimeCityIngressUtilitySystemHelper.Context CreateIngressContext()
     {
-        return new RuntimeCityIngressSystem.Context(
+        return new RuntimeCityIngressUtilitySystemHelper.Context(
             cityConfig,
             RuntimeCityRoadLayoutState);
     }
@@ -560,10 +560,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityRoadCommitHelper ??= ResolveRuntimeCityRoadCommitCompositionSystemHelper();
 
     private RuntimeCityIngressState RuntimeCityIngressState =>
-        RuntimeCityIngressSystem?.State ?? _fallbackRuntimeCityIngress;
+        RuntimeCityIngressUtilitySystemHelper?.State ?? _fallbackRuntimeCityIngress;
 
-    private RuntimeCityIngressSystem RuntimeCityIngressSystem =>
-        _runtimeCityIngressSystem ??= ResolveRuntimeCityIngressSystem();
+    private RuntimeCityIngressUtilitySystemHelper RuntimeCityIngressUtilitySystemHelper =>
+        _runtimeCityIngressHelper ??= ResolveRuntimeCityIngressUtilitySystemHelper();
 
     private bool TryGetPendingInitialUnits(out int totalConfigs, out int initializedConfigs)
     {
@@ -771,8 +771,8 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityRoadCommitCompositionSystemHelper();
     }
 
-    private static RuntimeCityIngressSystem ResolveRuntimeCityIngressSystem()
+    private static RuntimeCityIngressUtilitySystemHelper ResolveRuntimeCityIngressUtilitySystemHelper()
     {
-        return new RuntimeCityIngressSystem();
+        return new RuntimeCityIngressUtilitySystemHelper();
     }
 }

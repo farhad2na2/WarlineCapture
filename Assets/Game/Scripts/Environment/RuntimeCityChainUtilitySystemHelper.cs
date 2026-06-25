@@ -49,7 +49,7 @@ internal sealed class RuntimeCityChainUtilitySystemHelper
         public readonly RuntimeCityPrefabSelectionState PrefabSelectionSystem;
         public readonly RuntimeCityRoadCommitState RoadCommitSystem;
         public readonly RuntimeCityIngressState IngressSystem;
-        public readonly RuntimeCityIngressSystem.Context IngressContext;
+        public readonly RuntimeCityIngressUtilitySystemHelper.Context IngressContext;
 
         public Context(
             RuntimeCityConfigCompositionSystemHelper.Snapshot cityConfig,
@@ -58,7 +58,7 @@ internal sealed class RuntimeCityChainUtilitySystemHelper
             RuntimeCityPrefabSelectionState prefabSelectionSystem,
             RuntimeCityRoadCommitState roadCommitSystem,
             RuntimeCityIngressState ingressSystem,
-            RuntimeCityIngressSystem.Context ingressContext)
+            RuntimeCityIngressUtilitySystemHelper.Context ingressContext)
         {
             CityConfig = cityConfig;
             LayoutSystem = layoutSystem;

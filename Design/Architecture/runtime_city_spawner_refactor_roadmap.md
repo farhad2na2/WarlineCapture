@@ -130,9 +130,9 @@ Non-goals:
     - `RuntimeCityGenerationSystem` now requests road commits through a narrow result-returning boundary; `RuntimeCitySpawnerSystem` no longer owns city road commit helpers.
 
 21. Complete: Extract incoming connector/ingress helpers
-    - Created `RuntimeCityIngressSystem`.
+    - Created `RuntimeCityIngressUtilitySystemHelper`.
     - Owns `CreateCityLayout`, incoming-anchor wiring, inner connection-cell math, city connection offset math, and ingress-corridor pruning.
-    - `RuntimeCityGenerationSystem` and `RuntimeCityChainUtilitySystemHelper` now request city layout and ingress connector policy through `RuntimeCityIngressSystem`.
+    - `RuntimeCityGenerationSystem` and `RuntimeCityChainUtilitySystemHelper` now request city layout and ingress connector policy through `RuntimeCityIngressUtilitySystemHelper`.
     - Expected output: `RuntimeCitySpawnerSystem` no longer owns city connection helper math.
 
 22. Complete: Extract diagnostics/events
@@ -155,7 +155,7 @@ Non-goals:
 
 25. Complete: Move composition out of the spawner constructor path
     - Created `RuntimeCityCompositionSystem`.
-    - Owns creation/wiring of `RuntimeCityConfigCompositionSystemHelper`, `RuntimeCityLifecycleCompositionSystemHelper`, `RuntimeCityStartupSystemHelper`, `RuntimeCityReadinessQueryCompositionSystemHelper`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressSystem`, `RuntimeCityMinimapEventUiSystemHelper`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
+    - Owns creation/wiring of `RuntimeCityConfigCompositionSystemHelper`, `RuntimeCityLifecycleCompositionSystemHelper`, `RuntimeCityStartupSystemHelper`, `RuntimeCityReadinessQueryCompositionSystemHelper`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressUtilitySystemHelper`, `RuntimeCityMinimapEventUiSystemHelper`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
     - `RuntimeCitySpawnerSystem` is now a thin public shell delegating init, update, dispose, public generation, and house-prefab queries to `RuntimeCityCompositionSystem`.
     - Expected output: startup composition is explicit and narrow.
 

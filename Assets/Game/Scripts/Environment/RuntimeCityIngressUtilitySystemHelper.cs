@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed class RuntimeCityIngressSystem
+internal sealed class RuntimeCityIngressUtilitySystemHelper
 {
     private readonly RuntimeCityIngressState _state = new();
 
@@ -65,7 +65,7 @@ internal sealed class RuntimeCityIngressSystem
 internal sealed class RuntimeCityIngressState
 {
     public CityLayoutData CreateCityLayout(
-        RuntimeCityIngressSystem.Context context,
+        RuntimeCityIngressUtilitySystemHelper.Context context,
         Vector2Int centerRoadCell,
         int townRadius,
         Vector2Int? incomingAnchorCell,

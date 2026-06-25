@@ -38,7 +38,7 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly RuntimeCityRoadCommitState RoadCommitSystem;
         public readonly RuntimeCityRoadCommitCompositionSystemHelper.Context RoadCommitContext;
         public readonly RuntimeCityIngressState IngressSystem;
-        public readonly RuntimeCityIngressSystem.Context IngressContext;
+        public readonly RuntimeCityIngressUtilitySystemHelper.Context IngressContext;
         public readonly CollectInitialBaseExclusionRoadRectsDelegate CollectInitialBaseExclusionRoadRects;
         public readonly ShouldYieldDelegate ShouldYield;
         public readonly RuntimeCityMinimapEventUiSystemHelper MinimapEvents;
@@ -63,7 +63,7 @@ internal sealed class RuntimeCityGenerationSystem
             RuntimeCityRoadCommitState roadCommitSystem,
             RuntimeCityRoadCommitCompositionSystemHelper.Context roadCommitContext,
             RuntimeCityIngressState ingressSystem,
-            RuntimeCityIngressSystem.Context ingressContext,
+            RuntimeCityIngressUtilitySystemHelper.Context ingressContext,
             CollectInitialBaseExclusionRoadRectsDelegate collectInitialBaseExclusionRoadRects,
             ShouldYieldDelegate shouldYield,
             RuntimeCityMinimapEventUiSystemHelper minimapEvents,

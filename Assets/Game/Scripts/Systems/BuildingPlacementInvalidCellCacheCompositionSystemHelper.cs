@@ -33,7 +33,7 @@ internal sealed class BuildingPlacementInvalidCellCacheCompositionSystemHelper
         bool[] roadFootprintMask = new bool[grid.Width * grid.Height];
         startupSystem.FillRoadFootprintMask(grid, roadFootprintMask);
 
-        BuildingPlacementValidationSystem.RebuildInvalidPrefix(
+        BuildingPlacementValidationUtilitySystemHelper.RebuildInvalidPrefix(
             grid,
             roads,
             blockerData,
@@ -62,7 +62,7 @@ internal sealed class BuildingPlacementInvalidCellCacheCompositionSystemHelper
             ? getEffectivePlacementRect(definition, originCell, grid, rotateVertical)
             : new RectInt(originCell, footprintCells);
 
-        return BuildingPlacementValidationSystem.IsPlacementRectValid(
+        return BuildingPlacementValidationUtilitySystemHelper.IsPlacementRectValid(
             placementRect,
             grid,
             roads,
@@ -81,7 +81,7 @@ internal sealed class BuildingPlacementInvalidCellCacheCompositionSystemHelper
         if (!_hasPlacementInvalidPrefix)
             return false;
 
-        return BuildingPlacementValidationSystem.HasCachedInvalidCellInFootprint(
+        return BuildingPlacementValidationUtilitySystemHelper.HasCachedInvalidCellInFootprint(
             _placementInvalidPrefix,
             _placementInvalidPrefixWidth,
             _placementInvalidPrefixHeight,

@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class BuildingPlacementValidationSystem
+public sealed class BuildingPlacementValidationUtilitySystemHelper
 {
     internal delegate Vector2Int GetWallSegmentFootprintDelegate(BuildingDefinition definition, bool vertical);
 

@@ -77,7 +77,7 @@ Every phase boundary must also run when feasible:
 
 - `GameplayArchitectureContractTests.RunRuntimeCityArchitectureBatchValidation`.
 - `RuntimeCitySpawnerStep13Validation.RunGameSceneSmokeValidation`.
-- EditMode `BuildingPlacementValidationSystemTests`, because city building spawn depends on building footprint/road validity.
+- EditMode `BuildingPlacementValidationUtilitySystemHelperTests`, because city building spawn depends on building footprint/road validity.
 - PlayMode `BootstrapAndMenuPlayModeTests`, because runtime city starts after the menu play flow.
 - Runtime FPS play-button probe when a step changes coroutine sequencing, generation yield points, or placement loops.
 
@@ -410,7 +410,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Run focused runtime-city building-spawn architecture validation.
    - Run `GameplayArchitectureContractTests.RunRuntimeCityArchitectureBatchValidation`.
    - Run `RuntimeCitySpawnerStep13Validation.RunGameSceneSmokeValidation`.
-   - Run EditMode `BuildingPlacementValidationSystemTests`.
+   - Run EditMode `BuildingPlacementValidationUtilitySystemHelperTests`.
    - Run PlayMode `BootstrapAndMenuPlayModeTests`.
    - Run runtime FPS play-button probe if coroutine sequencing, yield points, or placement loops changed in the final batch.
    - Write a WarlineCapture handoff report under `Design/AgentReports`.
@@ -418,7 +418,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Focused runtime-city building-spawn architecture validation passed: `[RuntimeCityBuildingSpawnArchitectureValidation] result=Passed methods=7`.
    - Broader runtime-city architecture validation passed: `[RuntimeCityArchitectureValidation] result=Passed methods=28`.
    - Runtime city Game scene smoke passed: `[RuntimeCityGameSceneSmokeValidation] result=Passed cityPrefabs=36 productionCityCount=1 validationCityCount=1 buildingSpawnables=32 blockerPrefabs=63`.
-   - Unity TestRunner commands for `BuildingPlacementValidationSystemTests` and `BootstrapAndMenuPlayModeTests` exited cleanly but did not emit XML or summary lines in batchmode; this matches the existing Unity TestRunner caveat on this project.
+   - Unity TestRunner commands for `BuildingPlacementValidationUtilitySystemHelperTests` and `BootstrapAndMenuPlayModeTests` exited cleanly but did not emit XML or summary lines in batchmode; this matches the existing Unity TestRunner caveat on this project.
    - Runtime FPS play-button probe completed: `[RuntimeFpsPlayButtonProbe] result=completed avgFps=297.0 minFps=3.3 maxFps=387.4 logs=9 output=/private/tmp/warlinecapture-runtime-fps-probe.json`.
    - Known validation caveats: Unity QuickSearch emitted its startup indexing exception during the FPS probe, and `UnitPathfindingPendingStateReader.Dispose` logged an EntityQuery disposal null reference during editor teardown after the probe result was already written.
    - Wrote handoff report: `Design/AgentReports/2026-05-27_gameplay_runtime_city_building_spawn_refactor_final.md`.

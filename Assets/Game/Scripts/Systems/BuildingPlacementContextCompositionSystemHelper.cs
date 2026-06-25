@@ -12,7 +12,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
         public readonly BuildingPlacementLifecycleCompositionSystemHelper LifecycleSystem;
         public readonly BuildingPlacementInputUiSystemHelper InputSystem;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
-        public readonly BuildingPlacementValidationSystem PlacementValidationSystem;
+        public readonly BuildingPlacementValidationUtilitySystemHelper PlacementValidationSystem;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly Transform BuildingRoot;
         public readonly BuildingPlacementLifecycleCompositionSystemHelper.CreatePreviewDelegate CreatePreview;
@@ -44,7 +44,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             BuildingPlacementInputUiSystemHelper inputSystem,
             BuildingPlacementPreviewPresentationSystemHelper previewSystem,
-            BuildingPlacementValidationSystem placementValidationSystem,
+            BuildingPlacementValidationUtilitySystemHelper placementValidationSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             Transform buildingRoot,
             BuildingPlacementLifecycleCompositionSystemHelper.CreatePreviewDelegate createPreview,
@@ -200,9 +200,9 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             logWarning);
     }
 
-    public BuildingPlacementValidationSystem.WallValidationContext CreateWallValidationContext(Source source)
+    public BuildingPlacementValidationUtilitySystemHelper.WallValidationContext CreateWallValidationContext(Source source)
     {
-        return new BuildingPlacementValidationSystem.WallValidationContext(
+        return new BuildingPlacementValidationUtilitySystemHelper.WallValidationContext(
             source.RuntimeBuildingSystem.Buildings,
             source.IsRuntimeBlockerCell,
             source.HasRoadInFootprint);

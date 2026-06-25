@@ -6,7 +6,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class BuildingPlacementValidationSystemTests
+public sealed class BuildingPlacementValidationUtilitySystemHelperTests
 {
     private World _world;
 
@@ -14,7 +14,7 @@ public sealed class BuildingPlacementValidationSystemTests
     {
         try
         {
-            var tests = new BuildingPlacementValidationSystemTests();
+            var tests = new BuildingPlacementValidationUtilitySystemHelperTests();
             tests.BuildingUiPlacementCommandRequest_RejectsMissingSession();
             tests.BuildingUiPlacementCommandRequest_ConfirmRejectsMissingActivePlacement();
             tests.BuildingUiPlacementCommandRequest_ConfirmRejectsBlockedPlacement();
@@ -466,7 +466,7 @@ public sealed class BuildingPlacementValidationSystemTests
         roads[GridUtils.CellToIndex(new Unity.Mathematics.int2(1, 1), grid.Width)] = new GridRoad { Value = 1 };
         DynamicBlockerComponent blockerData = default;
 
-        Assert.IsFalse(BuildingPlacementValidationSystem.IsPlacementRectValid(
+        Assert.IsFalse(BuildingPlacementValidationUtilitySystemHelper.IsPlacementRectValid(
             new RectInt(1, 1, 1, 1),
             grid,
             roads,
@@ -479,7 +479,7 @@ public sealed class BuildingPlacementValidationSystemTests
             null,
             null));
 
-        Assert.IsFalse(BuildingPlacementValidationSystem.IsPlacementRectValid(
+        Assert.IsFalse(BuildingPlacementValidationUtilitySystemHelper.IsPlacementRectValid(
             new RectInt(2, 2, 1, 1),
             grid,
             roads,
@@ -504,7 +504,7 @@ public sealed class BuildingPlacementValidationSystemTests
 
         try
         {
-            Assert.IsFalse(BuildingPlacementValidationSystem.IsPlacementRectValid(
+            Assert.IsFalse(BuildingPlacementValidationUtilitySystemHelper.IsPlacementRectValid(
                 new RectInt(1, 2, 1, 1),
                 grid,
                 roads,
@@ -517,7 +517,7 @@ public sealed class BuildingPlacementValidationSystemTests
                 null,
                 null));
 
-            Assert.IsTrue(BuildingPlacementValidationSystem.IsPlacementRectValid(
+            Assert.IsTrue(BuildingPlacementValidationUtilitySystemHelper.IsPlacementRectValid(
                 new RectInt(1, 2, 1, 1),
                 grid,
                 roads,
@@ -545,7 +545,7 @@ public sealed class BuildingPlacementValidationSystemTests
         roadFootprintMask[GridUtils.CellToIndex(new Unity.Mathematics.int2(2, 1), grid.Width)] = true;
         int[] prefix = null;
 
-        BuildingPlacementValidationSystem.RebuildInvalidPrefix(
+        BuildingPlacementValidationUtilitySystemHelper.RebuildInvalidPrefix(
             grid,
             roads,
             default,
@@ -557,15 +557,15 @@ public sealed class BuildingPlacementValidationSystemTests
             out bool hasPrefix);
 
         Assert.IsTrue(hasPrefix);
-        Assert.IsFalse(BuildingPlacementValidationSystem.HasCachedInvalidCellInFootprint(prefix, prefixWidth, prefixHeight, new Vector2Int(0, 0), new Vector2Int(1, 1)));
-        Assert.IsTrue(BuildingPlacementValidationSystem.HasCachedInvalidCellInFootprint(prefix, prefixWidth, prefixHeight, new Vector2Int(2, 1), new Vector2Int(1, 1)));
-        Assert.IsTrue(BuildingPlacementValidationSystem.HasCachedInvalidCellInFootprint(prefix, prefixWidth, prefixHeight, new Vector2Int(4, 4), new Vector2Int(1, 1)));
+        Assert.IsFalse(BuildingPlacementValidationUtilitySystemHelper.HasCachedInvalidCellInFootprint(prefix, prefixWidth, prefixHeight, new Vector2Int(0, 0), new Vector2Int(1, 1)));
+        Assert.IsTrue(BuildingPlacementValidationUtilitySystemHelper.HasCachedInvalidCellInFootprint(prefix, prefixWidth, prefixHeight, new Vector2Int(2, 1), new Vector2Int(1, 1)));
+        Assert.IsTrue(BuildingPlacementValidationUtilitySystemHelper.HasCachedInvalidCellInFootprint(prefix, prefixWidth, prefixHeight, new Vector2Int(4, 4), new Vector2Int(1, 1)));
     }
 
     [Test]
     public void WallSegmentConflict_OnlyRejectsOverlappingSameAxisSegments()
     {
-        Assert.IsTrue(BuildingPlacementValidationSystem.DoWallSegmentsConflict(
+        Assert.IsTrue(BuildingPlacementValidationUtilitySystemHelper.DoWallSegmentsConflict(
             new Vector2Int(1, 1),
             new Vector2Int(1, 4),
             true,
@@ -573,7 +573,7 @@ public sealed class BuildingPlacementValidationSystemTests
             new Vector2Int(1, 4),
             true));
 
-        Assert.IsFalse(BuildingPlacementValidationSystem.DoWallSegmentsConflict(
+        Assert.IsFalse(BuildingPlacementValidationUtilitySystemHelper.DoWallSegmentsConflict(
             new Vector2Int(1, 1),
             new Vector2Int(1, 4),
             true,
@@ -581,7 +581,7 @@ public sealed class BuildingPlacementValidationSystemTests
             new Vector2Int(4, 1),
             false));
 
-        Assert.IsFalse(BuildingPlacementValidationSystem.DoWallSegmentsConflict(
+        Assert.IsFalse(BuildingPlacementValidationUtilitySystemHelper.DoWallSegmentsConflict(
             new Vector2Int(1, 1),
             new Vector2Int(1, 4),
             true,
@@ -740,7 +740,7 @@ public sealed class BuildingPlacementValidationSystemTests
 
     private void CreateRoadBuffer(int width, int height, out GridConfig grid, out DynamicBuffer<GridRoad> roads)
     {
-        _world ??= new World("BuildingPlacementValidationSystemTests");
+        _world ??= new World("BuildingPlacementValidationUtilitySystemHelperTests");
         Entity entity = _world.EntityManager.CreateEntity();
         roads = _world.EntityManager.AddBuffer<GridRoad>(entity);
         roads.ResizeUninitialized(width * height);

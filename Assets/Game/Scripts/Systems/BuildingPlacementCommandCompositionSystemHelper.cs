@@ -129,7 +129,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
             source.BuildingPlacementLifecycleCompositionSystemHelper,
             source.BuildingPlacementInputUiSystemHelper,
             source.BuildingPlacementPreviewPresentationSystemHelper,
-            source.BuildingPlacementValidationSystem,
+            source.BuildingPlacementValidationUtilitySystemHelper,
             source.RuntimeBuildingSystem,
             source.BuildingPlacementStartupSystemHelper.BuildingRoot,
             source.BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance,

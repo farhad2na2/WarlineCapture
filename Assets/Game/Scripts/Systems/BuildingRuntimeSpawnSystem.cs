@@ -38,8 +38,8 @@ internal sealed class BuildingRuntimeSpawnSystem
         public readonly Transform BuildingRoot;
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly BuildingRunwaySystem RunwaySystem;
-        public readonly BuildingPlacementValidationSystem PlacementValidationSystem;
-        public readonly BuildingPlacementValidationSystem.WallValidationContext WallValidationContext;
+        public readonly BuildingPlacementValidationUtilitySystemHelper PlacementValidationSystem;
+        public readonly BuildingPlacementValidationUtilitySystemHelper.WallValidationContext WallValidationContext;
         public readonly TryGetGridDataDelegate TryGetGridData;
         public readonly GetPlacementFootprintDelegate GetPlacementFootprint;
         public readonly GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
@@ -54,8 +54,8 @@ internal sealed class BuildingRuntimeSpawnSystem
             Transform buildingRoot,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             BuildingRunwaySystem runwaySystem,
-            BuildingPlacementValidationSystem placementValidationSystem,
-            BuildingPlacementValidationSystem.WallValidationContext wallValidationContext,
+            BuildingPlacementValidationUtilitySystemHelper placementValidationSystem,
+            BuildingPlacementValidationUtilitySystemHelper.WallValidationContext wallValidationContext,
             TryGetGridDataDelegate tryGetGridData,
             GetPlacementFootprintDelegate getPlacementFootprint,
             GetEffectivePlacementRectDelegate getEffectivePlacementRect,

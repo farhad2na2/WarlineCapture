@@ -17,7 +17,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
     {
         public readonly BuildingPlacementInputUiSystemHelper InputSystem;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
-        public readonly BuildingPlacementValidationSystem ValidationSystem;
+        public readonly BuildingPlacementValidationUtilitySystemHelper ValidationSystem;
         public readonly BuildingPlacementGridCameraSystemHelper GridSystem;
         public readonly BuildingPlacementStartupSystemHelper StartupSystem;
         public readonly BuildingGameplayDependencyCompositionSystemHelper DependencySystem;
@@ -39,7 +39,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
         public Context(
             BuildingPlacementInputUiSystemHelper inputSystem,
             BuildingPlacementPreviewPresentationSystemHelper previewSystem,
-            BuildingPlacementValidationSystem validationSystem,
+            BuildingPlacementValidationUtilitySystemHelper validationSystem,
             BuildingPlacementGridCameraSystemHelper gridSystem,
             BuildingPlacementStartupSystemHelper startupSystem,
             BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
@@ -220,7 +220,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
         bool vertical = context.InputSystem.IsWallPlacementVertical(placement);
         placement.AutoRotateVertical = vertical;
         Vector2Int wallFootprint = BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint(placement.Definition, vertical);
-        BuildingPlacementValidationSystem.WallValidationContext validationContext =
+        BuildingPlacementValidationUtilitySystemHelper.WallValidationContext validationContext =
             context.ContextSystem.CreateWallValidationContext(context.CreatePlacementContextSource());
         placement.IsValid = placement.HideCurrentWallPreview
             ? context.ValidationSystem.AreAllPendingWallRunsValid(

@@ -78,8 +78,8 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             source.BuildingPlacementStartupSystemHelper.BuildingRoot,
             source.BuildingDefinitionPrefabSystemHelper,
             source.BuildingRunwaySystem,
-            source.BuildingPlacementValidationSystem,
-            new BuildingPlacementValidationSystem.WallValidationContext(
+            source.BuildingPlacementValidationUtilitySystemHelper,
+            new BuildingPlacementValidationUtilitySystemHelper.WallValidationContext(
                 source.RuntimeBuildingSystem.Buildings,
                 source.BuildingGameplayDependencyCompositionSystemHelper.IsRuntimeBlockerCell,
                 (grid, origin, footprint) => source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.HasRoadInFootprint(source.BuildingPlacementStartupSystemHelper, grid, origin, footprint)),

@@ -83,7 +83,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
         return new BuildingPlacementVisualUpdateCompositionSystemHelper.Context(
             source.BuildingPlacementInputUiSystemHelper,
             source.BuildingPlacementPreviewPresentationSystemHelper,
-            source.BuildingPlacementValidationSystem,
+            source.BuildingPlacementValidationUtilitySystemHelper,
             source.BuildingPlacementGridCameraSystemHelper,
             source.BuildingPlacementStartupSystemHelper,
             source.BuildingGameplayDependencyCompositionSystemHelper,

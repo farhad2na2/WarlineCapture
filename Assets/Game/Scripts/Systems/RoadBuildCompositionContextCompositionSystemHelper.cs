@@ -51,7 +51,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             () => source.RoadBuildMutationCompositionSystemHelper.CaptureRoadBuildSessionSnapshot(CreateRoadBuildMutationContext(source)),
             snapshot => source.RoadBuildMutationCompositionSystemHelper.RestoreRoadBuildSession(CreateRoadBuildMutationContext(source), snapshot),
             () => RemoveRuntimeBlockersUnderRoads(source),
-            () => source.RoadMinimapEventSystem?.PublishStaticMinimapChanged(),
+            () => source.RoadMinimapEventUiSystemHelper?.PublishStaticMinimapChanged(),
             () => ApplyBuildCommandMode(source),
             () => ClearCommandMode(source),
             () => source.RoadBuildDependencyState.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
@@ -109,7 +109,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadBuildEcsBoundaryCompositionSystemHelper,
             source.RoadBuildPlacementStorageCompositionSystemHelper,
             source.RoadSpecialVisualSystem,
-            source.RoadMinimapEventSystem,
+            source.RoadMinimapEventUiSystemHelper,
             source.RoadGridProjectionSystem,
             source.RoadNetworkSystem.RoadTiles);
     }

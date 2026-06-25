@@ -17,7 +17,7 @@ internal sealed class RoadBuildDisposalCompositionSystemHelper
         public readonly RoadBuildEcsBoundaryCompositionSystemHelper EcsBoundarySystem;
         public readonly RoadBuildPlacementStorageCompositionSystemHelper PlacementStorageSystem;
         public readonly RoadSpecialVisualSystem SpecialVisualSystem;
-        public readonly RoadMinimapEventSystem MinimapEventSystem;
+        public readonly RoadMinimapEventUiSystemHelper MinimapEventSystem;
         public readonly RoadGridProjectionSystem GridProjectionSystem;
         public readonly IDictionary<Vector2Int, RoadTileData> RoadTiles;
 
@@ -33,7 +33,7 @@ internal sealed class RoadBuildDisposalCompositionSystemHelper
             RoadBuildEcsBoundaryCompositionSystemHelper ecsBoundarySystem,
             RoadBuildPlacementStorageCompositionSystemHelper placementStorageSystem,
             RoadSpecialVisualSystem specialVisualSystem,
-            RoadMinimapEventSystem minimapEventSystem,
+            RoadMinimapEventUiSystemHelper minimapEventSystem,
             RoadGridProjectionSystem gridProjectionSystem,
             IDictionary<Vector2Int, RoadTileData> roadTiles)
         {

@@ -497,7 +497,7 @@ Convert the smallest pure ECS state/request systems first and prove the process.
 - [ ] Ratchet guardrail counts after the batch.
 
 Candidate examples to verify, not pre-approved:
-`MatchStartRequestStartupSystemHelper`, `RuntimeGameplayStateSystem`, `RuntimeDiagnosticsSystem`, `SelectionRuntimeConfigSystem`, `RtsSelectionInputStateSystem`, `CitizenPopulationTotalsSystem`, `CitizenStatusTransitionSystem`, `RoadMinimapEventSystem`, `RuntimeCityMinimapEventUiSystemHelper`.
+`MatchStartRequestStartupSystemHelper`, `RuntimeGameplayStateSystem`, `RuntimeDiagnosticsSystem`, `SelectionRuntimeConfigSystem`, `RtsSelectionInputStateSystem`, `CitizenPopulationTotalsSystem`, `CitizenStatusTransitionSystem`, `RoadMinimapEventUiSystemHelper`, `RuntimeCityMinimapEventUiSystemHelper`.
 
 ### Phase 7.3: Direct Conversion Batch 2 - Startup And Config Projection
 
@@ -609,7 +609,7 @@ Convert city generation/state/read-model algorithms and retire visual/config man
 - [x] Fold and rename Agent E `P7-0217 RoadBuildDisposalCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned road-build disposal helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
 - [x] Fold and rename Agent E `P7-0222 RoadBuildMutationCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned road-build mutation helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
 - [x] Fold and rename Agent E `P7-0228 RoadDeletePromptUiSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned road-delete prompt helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
-- [x] Fold Agent E `P7-0230 RoadMinimapEventSystem` from a disabled `SystemBase` wrapper into a plain direct-owned road-minimap event helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
+- [x] Fold and rename Agent E `P7-0230 RoadMinimapEventUiSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned road-minimap event helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0232 RoadPathPlanningSystem` from a disabled `SystemBase` wrapper into a plain direct-owned road-path planning helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0237 RoadSurfacePlacementSystem` from a disabled `SystemBase` wrapper into a plain direct-owned road-surface placement helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0238 RuntimeGridBootstrapSystem` from a disabled `SystemBase` wrapper into a plain direct-owned runtime-grid bootstrap helper and validate runtime-grid deduplication, road-build command behavior, compile, and Phase 7 architecture guard.

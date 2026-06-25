@@ -134,7 +134,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 13. Complete: Create `RoadBuildSessionCompositionSystemHelper`
     - Owns build-mode activation, road session begin/confirm/cancel, delete-road prompt state, session snapshot handoff, and minimap dirty event publication.
     - Created `RoadBuildSessionCompositionSystemHelper` with session state, active tool mode, delete-prompt state, build-click skip frames, road session snapshot storage, road/soldier-base build-mode activation, confirm/cancel road session commands, and exit-build-mode command flow.
-    - Created `RoadMinimapEventSystem` as the road minimap event boundary; RoadBuildSystem no longer invokes `MainMenuPlayUI.NotifyStaticMinimapChanged` directly.
+    - Created `RoadMinimapEventUiSystemHelper` as the road minimap event boundary; RoadBuildSystem no longer invokes `MainMenuPlayUI.NotifyStaticMinimapChanged` directly.
     - `RoadBuildSystem` now delegates road build activation, road session confirm/cancel, exit build mode, delete-prompt mutation, skip-frame consumption, and minimap event publication.
     - Expected output: road build lifecycle is explicit and UI-independent.
 

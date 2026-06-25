@@ -64,7 +64,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
             mainMenuPlayUi,
             runtimeGridBlockers,
             runtimeBuildingEntityLinks,
-            source.RoadMinimapEventSystem);
+            source.RoadMinimapEventUiSystemHelper);
     }
 
     public void Dispose(

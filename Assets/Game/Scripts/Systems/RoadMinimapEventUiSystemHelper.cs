@@ -1,4 +1,4 @@
-public sealed class RoadMinimapEventSystem
+public sealed class RoadMinimapEventUiSystemHelper
 {
     private IMatchRuntimeUi _mainMenuPlayUi;
     private bool _staticMinimapChanged;

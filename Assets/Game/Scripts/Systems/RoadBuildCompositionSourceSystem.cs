@@ -23,7 +23,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadSpecialVisualSystem RoadSpecialVisualSystem;
     public readonly RoadBuildSessionCompositionSystemHelper RoadBuildSessionCompositionSystemHelper = new();
     public readonly RoadBuildSessionCompositionSystemHelper.State RoadBuildSessionState = new();
-    public readonly RoadMinimapEventSystem RoadMinimapEventSystem;
+    public readonly RoadMinimapEventUiSystemHelper RoadMinimapEventUiSystemHelper;
     public readonly RoadBuildInputCompositionSystemHelper RoadBuildInputCompositionSystemHelper = new();
     public readonly RoadBuildInputCompositionSystemHelper.State RoadBuildInputState = new();
     public readonly RoadBuildCommandCompositionSystemHelper RoadBuildCommandCompositionSystemHelper = new();
@@ -60,7 +60,7 @@ internal sealed class RoadBuildCompositionSourceSystem
         RoadPreviewPresentationSystemHelper = ResolveRoadPreviewPresentationSystemHelper();
         RoadRuntimeGenerationSystem = ResolveRoadRuntimeGenerationSystem();
         RoadRuntimeGenerationContextSystem = ResolveRoadRuntimeGenerationContextSystem();
-        RoadMinimapEventSystem = ResolveRoadMinimapEventSystem();
+        RoadMinimapEventUiSystemHelper = ResolveRoadMinimapEventUiSystemHelper();
         RoadBuildRuntimeActionCompositionSystemHelper = ResolveRoadBuildRuntimeActionCompositionSystemHelper();
         RoadBuildPlacementVisualSystem = ResolveRoadBuildPlacementVisualSystem();
         RoadBuildRuntimeActionState = global::RoadBuildRuntimeActionCompositionSystemHelper.CreateState();
@@ -147,9 +147,9 @@ internal sealed class RoadBuildCompositionSourceSystem
         return new RoadRuntimeGenerationContextSystem();
     }
 
-    private static RoadMinimapEventSystem ResolveRoadMinimapEventSystem()
+    private static RoadMinimapEventUiSystemHelper ResolveRoadMinimapEventUiSystemHelper()
     {
-        return new RoadMinimapEventSystem();
+        return new RoadMinimapEventUiSystemHelper();
     }
 
     private static RoadBuildRuntimeActionCompositionSystemHelper ResolveRoadBuildRuntimeActionCompositionSystemHelper()

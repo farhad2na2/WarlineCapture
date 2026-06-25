@@ -30,7 +30,7 @@ internal sealed class RoadBuildDependencyCompositionSystemHelper
         IMatchRuntimeUi mainMenuPlayUi,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
-        RoadMinimapEventSystem roadMinimapEventSystem)
+        RoadMinimapEventUiSystemHelper roadMinimapEventSystem)
     {
         BindBuildingInteraction(
             state,

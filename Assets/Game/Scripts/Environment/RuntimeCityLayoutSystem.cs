@@ -30,7 +30,7 @@ internal sealed class RuntimeCityLayoutSystem
         public List<ReservedFootprint> ReservedFootprints = new();
     }
 
-    public int CalculateTownRadius(RuntimeCityConfigSystem.Snapshot config)
+    public int CalculateTownRadius(RuntimeCityConfigCompositionSystemHelper.Snapshot config)
     {
         return _state.CalculateTownRadius(config);
     }
@@ -48,7 +48,7 @@ internal sealed class RuntimeCityLayoutSystem
         int roadCellSizeInGridCells,
         int townRadius,
         CityChainAxis chainAxis,
-        RuntimeCityConfigSystem.Snapshot config,
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config,
         ref Unity.Mathematics.Random rng)
     {
         return _state.BuildCityCenters(grid, roadCellSizeInGridCells, townRadius, chainAxis, config, ref rng);
@@ -91,7 +91,7 @@ internal sealed class RuntimeCityLayoutSystem
         List<CityLayoutData> existingCities,
         int townRadius,
         List<RectInt> baseExclusionRoadRects,
-        RuntimeCityConfigSystem.Snapshot config)
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config)
     {
         return _state.IsCityCenterFarEnough(candidateCenter, existingCities, townRadius, baseExclusionRoadRects, config);
     }
@@ -130,7 +130,7 @@ internal sealed class RuntimeCityLayoutSystem
 
 internal sealed class RuntimeCityLayoutState
 {
-    public int CalculateTownRadius(RuntimeCityConfigSystem.Snapshot config)
+    public int CalculateTownRadius(RuntimeCityConfigCompositionSystemHelper.Snapshot config)
     {
         int totalBuildings = 1 +
             Mathf.Max(0, config.GasStationCount) +
@@ -161,7 +161,7 @@ internal sealed class RuntimeCityLayoutState
         int roadCellSizeInGridCells,
         int townRadius,
         CityChainAxis chainAxis,
-        RuntimeCityConfigSystem.Snapshot config,
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config,
         ref Unity.Mathematics.Random rng)
     {
         int requestedCount = Mathf.Max(0, config.CityCount);
@@ -257,7 +257,7 @@ internal sealed class RuntimeCityLayoutState
         List<CityLayoutData> existingCities,
         int townRadius,
         List<RectInt> baseExclusionRoadRects,
-        RuntimeCityConfigSystem.Snapshot config)
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config)
     {
         if (IsRoadCellInsideAnyBaseExclusion(candidateCenter, baseExclusionRoadRects))
             return false;

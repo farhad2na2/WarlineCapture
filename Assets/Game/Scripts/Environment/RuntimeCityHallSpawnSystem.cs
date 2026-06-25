@@ -48,7 +48,7 @@ internal sealed class RuntimeCityHallSpawnState
         ref Unity.Mathematics.Random rng,
         List<ReservedFootprint> reservedFootprints)
     {
-        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
         if (config.HallPrefabs == null || config.HallPrefabs.Count == 0)
             return false;
 

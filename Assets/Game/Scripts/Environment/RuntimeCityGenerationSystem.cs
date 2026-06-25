@@ -20,7 +20,7 @@ internal sealed class RuntimeCityGenerationSystem
 
     public readonly struct Context
     {
-        public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
+        public readonly RuntimeCityConfigCompositionSystemHelper.Snapshot CityConfig;
         public readonly GridConfig Grid;
         public readonly int RoadCellSizeInGridCells;
         public readonly RuntimeCityLifecycleState LifecycleState;
@@ -45,7 +45,7 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly RuntimeCityDiagnosticsSystemHelper Diagnostics;
 
         public Context(
-            RuntimeCityConfigSystem.Snapshot cityConfig,
+            RuntimeCityConfigCompositionSystemHelper.Snapshot cityConfig,
             GridConfig grid,
             int roadCellSizeInGridCells,
             RuntimeCityLifecycleState lifecycleState,
@@ -112,7 +112,7 @@ internal sealed class RuntimeCityGenerationState
 
     private IEnumerator GenerateCityRoutine(RuntimeCityGenerationSystem.Context context)
     {
-        RuntimeCityConfigSystem.Snapshot cityConfig = context.CityConfig;
+        RuntimeCityConfigCompositionSystemHelper.Snapshot cityConfig = context.CityConfig;
         if (context.LifecycleState.IsSpawned)
             yield break;
 

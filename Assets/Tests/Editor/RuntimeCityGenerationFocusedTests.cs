@@ -30,7 +30,7 @@ public sealed class RuntimeCityGenerationFocusedTests
     public void CityCenterPlanning_ClampsStartOutsideBaseExclusions()
     {
         RuntimeCityLayoutState layout = new();
-        RuntimeCityConfigSystem.Snapshot config = CreateCityConfig(
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config = CreateCityConfig(
             cityCount: 3,
             startCell: new Vector2Int(80, 80));
         GridConfig grid = CreateGrid(width: 256, height: 256);
@@ -164,10 +164,10 @@ public sealed class RuntimeCityGenerationFocusedTests
         };
     }
 
-    private static RuntimeCityConfigSystem.Snapshot CreateCityConfig(int cityCount, Vector2Int startCell)
+    private static RuntimeCityConfigCompositionSystemHelper.Snapshot CreateCityConfig(int cityCount, Vector2Int startCell)
     {
         List<GameObject> emptyPrefabs = new();
-        return new RuntimeCityConfigSystem.Snapshot(
+        return new RuntimeCityConfigCompositionSystemHelper.Snapshot(
             spawnOnStart: true,
             generateBuildings: false,
             randomSeed: 24681357,

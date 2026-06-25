@@ -43,7 +43,7 @@ internal sealed class RuntimeCityChainUtilitySystemHelper
 
     public readonly struct Context
     {
-        public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
+        public readonly RuntimeCityConfigCompositionSystemHelper.Snapshot CityConfig;
         public readonly RuntimeCityLayoutState LayoutSystem;
         public readonly RuntimeCityRoadLayoutState RoadLayoutSystem;
         public readonly RuntimeCityPrefabSelectionState PrefabSelectionSystem;
@@ -52,7 +52,7 @@ internal sealed class RuntimeCityChainUtilitySystemHelper
         public readonly RuntimeCityIngressSystem.Context IngressContext;
 
         public Context(
-            RuntimeCityConfigSystem.Snapshot cityConfig,
+            RuntimeCityConfigCompositionSystemHelper.Snapshot cityConfig,
             RuntimeCityLayoutState layoutSystem,
             RuntimeCityRoadLayoutState roadLayoutSystem,
             RuntimeCityPrefabSelectionState prefabSelectionSystem,

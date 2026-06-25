@@ -43,7 +43,7 @@ internal sealed class RuntimeCityCorridorBuildingSpawnState
         int roadCellSizeInGridCells,
         ref Unity.Mathematics.Random rng)
     {
-        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
         if (corridorLength <= 0)
             return;
 

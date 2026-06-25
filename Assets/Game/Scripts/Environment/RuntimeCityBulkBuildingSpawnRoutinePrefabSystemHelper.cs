@@ -84,7 +84,7 @@ internal sealed class RuntimeCityBulkBuildingSpawnRoutineState
         RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.PlaceHouseYardWallsAction placeHouseYardWalls,
         RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.PlaceCityDecorationBuildingsAction placeCityDecorationBuildings)
     {
-        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
         Vector2Int centerRoadCell = city.CenterRoadCell;
         int townRadius = city.TownRadius;
         HashSet<Vector2Int> roadCells = city.RoadCells;

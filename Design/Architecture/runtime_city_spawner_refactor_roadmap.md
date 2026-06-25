@@ -14,9 +14,9 @@ Goal: split runtime city generation before adding more map/city gameplay, so lay
    - Baseline architecture guard expectations are in `GameplayArchitectureContractTests` so drift is visible during the refactor instead of only at the final validation gate.
 
 2. Complete: Extract city config read model
-   - Created `RuntimeCityConfigSystem`.
+   - Created `RuntimeCityConfigCompositionSystemHelper`.
    - Owns config snapshot/default handling, seed values, density, counts, placement policy numbers, and prefab category lists.
-   - `RuntimeCitySpawnerSystem` now consumes a `RuntimeCityConfigSystem.Snapshot` instead of copying every config field locally.
+   - `RuntimeCitySpawnerSystem` now consumes a `RuntimeCityConfigCompositionSystemHelper.Snapshot` instead of copying every config field locally.
 
 3. Complete: Extract city layout planning
    - Created `RuntimeCityLayoutSystem`.
@@ -155,7 +155,7 @@ Non-goals:
 
 25. Complete: Move composition out of the spawner constructor path
     - Created `RuntimeCityCompositionSystem`.
-    - Owns creation/wiring of `RuntimeCityConfigSystem`, `RuntimeCityLifecycleSystem`, `RuntimeCityStartupSystemHelper`, `RuntimeCityReadinessQuerySystem`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressSystem`, `RuntimeCityMinimapEventSystem`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
+    - Owns creation/wiring of `RuntimeCityConfigCompositionSystemHelper`, `RuntimeCityLifecycleSystem`, `RuntimeCityStartupSystemHelper`, `RuntimeCityReadinessQuerySystem`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressSystem`, `RuntimeCityMinimapEventSystem`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
     - `RuntimeCitySpawnerSystem` is now a thin public shell delegating init, update, dispose, public generation, and house-prefab queries to `RuntimeCityCompositionSystem`.
     - Expected output: startup composition is explicit and narrow.
 

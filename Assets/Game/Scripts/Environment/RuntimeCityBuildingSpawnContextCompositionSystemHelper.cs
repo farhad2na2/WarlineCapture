@@ -1,7 +1,7 @@
 internal sealed class RuntimeCityBuildingSpawnContextCompositionSystemHelper
 {
     public Context Create(
-        RuntimeCityConfigSystem.Snapshot config,
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config,
         RuntimeCityBuildingPlotState buildingPlotSystem,
         RuntimeCityWalkabilityState walkabilitySystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
@@ -20,7 +20,7 @@ internal sealed class RuntimeCityBuildingSpawnContextCompositionSystemHelper
     }
 
     public static Context CreateFallback(
-        RuntimeCityConfigSystem.Snapshot config,
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config,
         RuntimeCityBuildingPlotState buildingPlotSystem,
         RuntimeCityWalkabilityState walkabilitySystem,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
@@ -105,7 +105,7 @@ internal sealed class RuntimeCityBuildingSpawnContextCompositionSystemHelper
 
     public readonly struct Context
     {
-        public readonly RuntimeCityConfigSystem.Snapshot Config;
+        public readonly RuntimeCityConfigCompositionSystemHelper.Snapshot Config;
         public readonly RuntimeCityBuildingPlotState BuildingPlotSystem;
         public readonly RuntimeCityWalkabilityState WalkabilitySystem;
         public readonly RuntimeCityPrefabSelectionState PrefabSelectionSystem;
@@ -114,7 +114,7 @@ internal sealed class RuntimeCityBuildingSpawnContextCompositionSystemHelper
         public readonly RuntimeCityDiagnosticsSystemHelper DiagnosticSystem;
 
         public Context(
-            RuntimeCityConfigSystem.Snapshot config,
+            RuntimeCityConfigCompositionSystemHelper.Snapshot config,
             RuntimeCityBuildingPlotState buildingPlotSystem,
             RuntimeCityWalkabilityState walkabilitySystem,
             RuntimeCityPrefabSelectionState prefabSelectionSystem,

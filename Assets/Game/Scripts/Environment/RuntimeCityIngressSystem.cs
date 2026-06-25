@@ -26,14 +26,14 @@ internal sealed class RuntimeCityIngressSystem
     }
 
     public Vector2Int GetCityInnerConnectionCell(
-        RuntimeCityConfigSystem.Snapshot cityConfig,
+        RuntimeCityConfigCompositionSystemHelper.Snapshot cityConfig,
         Vector2Int centerRoadCell,
         Vector2Int outwardDirection)
     {
         return _state.GetCityInnerConnectionCell(cityConfig, centerRoadCell, outwardDirection);
     }
 
-    public int GetCityConnectionOffset(RuntimeCityConfigSystem.Snapshot cityConfig, int townRadius)
+    public int GetCityConnectionOffset(RuntimeCityConfigCompositionSystemHelper.Snapshot cityConfig, int townRadius)
     {
         return _state.GetCityConnectionOffset(cityConfig, townRadius);
     }
@@ -49,11 +49,11 @@ internal sealed class RuntimeCityIngressSystem
 
     public readonly struct Context
     {
-        public readonly RuntimeCityConfigSystem.Snapshot CityConfig;
+        public readonly RuntimeCityConfigCompositionSystemHelper.Snapshot CityConfig;
         public readonly RuntimeCityRoadLayoutState RoadLayoutSystem;
 
         public Context(
-            RuntimeCityConfigSystem.Snapshot cityConfig,
+            RuntimeCityConfigCompositionSystemHelper.Snapshot cityConfig,
             RuntimeCityRoadLayoutState roadLayoutSystem)
         {
             CityConfig = cityConfig;
@@ -95,7 +95,7 @@ internal sealed class RuntimeCityIngressState
     }
 
     public Vector2Int GetCityInnerConnectionCell(
-        RuntimeCityConfigSystem.Snapshot cityConfig,
+        RuntimeCityConfigCompositionSystemHelper.Snapshot cityConfig,
         Vector2Int centerRoadCell,
         Vector2Int outwardDirection)
     {
@@ -103,7 +103,7 @@ internal sealed class RuntimeCityIngressState
         return centerRoadCell + outwardDirection * ringRadius;
     }
 
-    public int GetCityConnectionOffset(RuntimeCityConfigSystem.Snapshot cityConfig, int townRadius)
+    public int GetCityConnectionOffset(RuntimeCityConfigCompositionSystemHelper.Snapshot cityConfig, int townRadius)
     {
         return Mathf.Max(townRadius + cityConfig.HallPlazaRadiusRoadCells + 3, cityConfig.HallPlazaRadiusRoadCells + 5);
     }

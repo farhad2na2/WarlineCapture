@@ -16,7 +16,7 @@ Final target: `RuntimeCityBuildingSpawnSystem` may remain only as an algorithm-l
 
 ## Current Responsibility Inventory
 
-- Mutable config/dependency storage: stores a `RuntimeCityConfigSystem.Snapshot` plus plot, walkability, prefab selection, visual, spawn bridge, and diagnostic systems through `Configure`.
+- Mutable config/dependency storage: stores a `RuntimeCityConfigCompositionSystemHelper.Snapshot` plus plot, walkability, prefab selection, visual, spawn bridge, and diagnostic systems through `Configure`.
 - Config projection helpers: exposes many private property wrappers for city counts, spacing, landmark config, health, and prefab lists.
 - Public generation surface: `SpawnCityImportantBuildings`, `EnsureCityHall`, `SpawnCityBulkBuildingsRoutine`, and `SpawnCorridorEntranceBuildings`.
 - Random state bridge: nested `GenerationRandomState` class exists only so coroutine sequencing can update Unity.Mathematics random state.

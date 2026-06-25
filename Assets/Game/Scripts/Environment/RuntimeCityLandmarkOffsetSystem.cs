@@ -12,7 +12,7 @@ internal sealed class RuntimeCityLandmarkOffsetSystem
     public Vector2Int[] MonumentOffsets => _state.MonumentOffsets;
     public Vector2Int[] PillarOffsets => _state.PillarOffsets;
 
-    public bool IsTooCloseToHall(RuntimeCityConfigSystem.Snapshot config, Vector2Int offset)
+    public bool IsTooCloseToHall(RuntimeCityConfigCompositionSystemHelper.Snapshot config, Vector2Int offset)
     {
         return _state.IsTooCloseToHall(config, offset);
     }
@@ -115,7 +115,7 @@ internal sealed class RuntimeCityLandmarkOffsetState
     public Vector2Int[] MonumentOffsets => MonumentOffsetsValue;
     public Vector2Int[] PillarOffsets => PillarOffsetsValue;
 
-    public bool IsTooCloseToHall(RuntimeCityConfigSystem.Snapshot config, Vector2Int offset)
+    public bool IsTooCloseToHall(RuntimeCityConfigCompositionSystemHelper.Snapshot config, Vector2Int offset)
     {
         int distance = Mathf.Abs(offset.x) + Mathf.Abs(offset.y);
         return distance < Mathf.Max(1, config.LandmarkMinDistanceFromHallRoadCells);

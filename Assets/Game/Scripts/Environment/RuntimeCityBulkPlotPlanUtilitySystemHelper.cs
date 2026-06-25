@@ -49,7 +49,7 @@ internal sealed class RuntimeCityBulkPlotPlanState
         Vector2Int centerRoadCell,
         ref Unity.Mathematics.Random rng)
     {
-        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
         List<PlotCandidate> centralPlots = context.BuildingPlotSystem.CollectRoadsidePlots(
             roadCells,
             centerRoadCell,

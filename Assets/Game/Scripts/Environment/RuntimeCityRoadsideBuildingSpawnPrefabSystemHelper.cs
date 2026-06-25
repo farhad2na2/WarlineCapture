@@ -124,7 +124,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
 {
     public RoadsidePlan CreatePlan(RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context)
     {
-        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
         int centralShopTarget = Mathf.Min(config.ShopCount, Mathf.Max(0, Mathf.RoundToInt(config.ShopCount * 0.65f)));
         int ruralHouseTarget = Mathf.RoundToInt(Mathf.Max(0, config.HouseCount) * Mathf.Clamp01(config.RuralHouseRatio));
         int roadsideHouseTarget = Mathf.Max(0, config.HouseCount - ruralHouseTarget);
@@ -142,7 +142,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
         List<ReservedFootprint> reservedFootprints,
         List<RectInt> shopAndHouseFootprints)
     {
-        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
         placementSystem.PlaceFromPlots(
             context,
             config.ShopPrefabs,
@@ -168,7 +168,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
         List<Vector2Int> usedPlotCells,
         List<ReservedFootprint> reservedFootprints)
     {
-        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
         placementSystem.PlaceFromPlots(
             context,
             config.GasStationPrefabs,
@@ -195,7 +195,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
         List<ReservedFootprint> reservedFootprints,
         List<RectInt> shopAndHouseFootprints)
     {
-        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
         placementSystem.PlaceFromPlots(
             context,
             config.ShopPrefabs,
@@ -224,7 +224,7 @@ internal sealed class RuntimeCityRoadsideBuildingSpawnState
         List<RectInt> shopAndHouseFootprints,
         List<RectInt> houseFootprints)
     {
-        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
         placementSystem.PlaceFromPlots(
             context,
             config.HousePrefabs,

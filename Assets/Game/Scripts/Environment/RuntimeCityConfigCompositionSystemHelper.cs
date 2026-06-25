@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class RuntimeCityConfigSystem
+internal sealed class RuntimeCityConfigCompositionSystemHelper
 {
     private readonly List<GameObject> _emptyPrefabs = new();
 
-    public RuntimeCityConfigSystem()
+    public RuntimeCityConfigCompositionSystemHelper()
     {
         Current = Snapshot.Default(_emptyPrefabs);
     }

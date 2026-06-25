@@ -6,8 +6,8 @@ public sealed class RuntimeCityCompositionSystem
 {
     private RuntimeCitySpawnerSystemConfig _config;
     private readonly List<GameObject> _fallbackCityPrefabs = new();
-    private RuntimeCityConfigSystem _runtimeCityConfigSystem;
-    private RuntimeCityConfigSystem.Snapshot _fallbackCityConfig;
+    private RuntimeCityConfigCompositionSystemHelper _runtimeCityConfigHelper;
+    private RuntimeCityConfigCompositionSystemHelper.Snapshot _fallbackCityConfig;
     private RuntimeCityLayoutSystem _runtimeCityLayoutSystem;
     private readonly RuntimeCityLayoutState _fallbackRuntimeCityLayout = new();
     private RuntimeCityRoadLayoutUtilitySystemHelper _runtimeCityRoadLayoutHelper;
@@ -85,7 +85,7 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context _runtimeCityBuildingSpawnContext;
     private bool _configured;
 
-    private RuntimeCityConfigSystem.Snapshot cityConfig => RuntimeCityConfigSystem?.Current ?? _fallbackCityConfig;
+    private RuntimeCityConfigCompositionSystemHelper.Snapshot cityConfig => RuntimeCityConfigCompositionSystemHelper?.Current ?? _fallbackCityConfig;
     private bool spawnOnStart => cityConfig.SpawnOnStart;
     private bool generateBuildings => cityConfig.GenerateBuildings;
     private int cityCount => cityConfig.CityCount;
@@ -101,7 +101,7 @@ public sealed class RuntimeCityCompositionSystem
 
     public RuntimeCityCompositionSystem()
     {
-        _fallbackCityConfig = global::RuntimeCityConfigSystem.Snapshot.Default(_fallbackCityPrefabs);
+        _fallbackCityConfig = global::RuntimeCityConfigCompositionSystemHelper.Snapshot.Default(_fallbackCityPrefabs);
         _tryGetPendingInitialUnits = TryGetPendingInitialUnits;
         _tryGetRoadCellSize = TryGetRoadCellSizeInGridCells;
         _tryGetGridData = TryGetGridConfig;
@@ -180,11 +180,11 @@ public sealed class RuntimeCityCompositionSystem
 
     private void ApplyConfigIfAvailable()
     {
-        RuntimeCityConfigSystem configSystem = RuntimeCityConfigSystem;
-        if (configSystem != null)
-            configSystem.Apply(_config);
+        RuntimeCityConfigCompositionSystemHelper configHelper = RuntimeCityConfigCompositionSystemHelper;
+        if (configHelper != null)
+            configHelper.Apply(_config);
         else
-            _fallbackCityConfig = global::RuntimeCityConfigSystem.Snapshot.From(_config, _fallbackCityPrefabs);
+            _fallbackCityConfig = global::RuntimeCityConfigCompositionSystemHelper.Snapshot.From(_config, _fallbackCityPrefabs);
 
         RuntimeCityBuildingSpawnContextCompositionSystemHelper spawnContextHelper = RuntimeCityBuildingSpawnContextHelper;
         _runtimeCityBuildingSpawnContext = spawnContextHelper != null
@@ -367,8 +367,8 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityReadModelCompositionSystemHelper RuntimeCityReadModelCompositionSystemHelper =>
         _runtimeCityReadModelSystem ??= new RuntimeCityReadModelCompositionSystemHelper();
 
-    private RuntimeCityConfigSystem RuntimeCityConfigSystem =>
-        _runtimeCityConfigSystem ??= ResolveRuntimeCityConfigSystem();
+    private RuntimeCityConfigCompositionSystemHelper RuntimeCityConfigCompositionSystemHelper =>
+        _runtimeCityConfigHelper ??= ResolveRuntimeCityConfigCompositionSystemHelper();
 
     private RuntimeCityDiagnosticsSystemHelper RuntimeCityDiagnosticsSystemHelper =>
         _runtimeCityDiagnosticSystem ??= new RuntimeCityDiagnosticsSystemHelper();
@@ -611,9 +611,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityMinimapEventSystem();
     }
 
-    private static RuntimeCityConfigSystem ResolveRuntimeCityConfigSystem()
+    private static RuntimeCityConfigCompositionSystemHelper ResolveRuntimeCityConfigCompositionSystemHelper()
     {
-        return new RuntimeCityConfigSystem();
+        return new RuntimeCityConfigCompositionSystemHelper();
     }
 
     private static RuntimeCityStartupSystemHelper ResolveRuntimeCityStartupSystemHelper()

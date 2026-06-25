@@ -66,7 +66,7 @@ internal sealed class RuntimeCityEntryBuildingSpawnState
         List<ReservedFootprint> reservedFootprints,
         List<RectInt> shopAndHouseFootprints)
     {
-        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
         placementSystem.PlaceFromPlots(
             context,
             config.ShopPrefabs,
@@ -94,7 +94,7 @@ internal sealed class RuntimeCityEntryBuildingSpawnState
         List<RectInt> shopAndHouseFootprints,
         List<RectInt> houseFootprints)
     {
-        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
         placementSystem.PlaceFromPlots(
             context,
             config.HousePrefabs,

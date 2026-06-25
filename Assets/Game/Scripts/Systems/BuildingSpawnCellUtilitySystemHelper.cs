@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingSpawnCellSystem
+internal sealed class BuildingSpawnCellUtilitySystemHelper
 {
     public int2 FindSpawnCellAdjacentToBuilding(
         ref Unity.Mathematics.Random rng,

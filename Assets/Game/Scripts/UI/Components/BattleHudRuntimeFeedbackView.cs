@@ -5,7 +5,7 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRuntimeFeedbackView
 {
-    private static readonly MatchOverlayCommandTabFeedbackSystem CommandTabFeedbackSystem = new();
+    private static readonly MatchOverlayCommandTabFeedbackUiSystemHelper CommandTabFeedbackHelper = new();
 
     [SerializeField] private BattleHudTacticalFeedbackView tacticalFeedback;
     [SerializeField] private MatchOverlayCommandTabGroupView[] commandTabGroups;
@@ -236,12 +236,12 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRunt
 
     public void ApplyCommandModeTabs(TacticalCommandMode mode)
     {
-        CommandTabFeedbackSystem.ApplyCommandMode(commandTabGroups, mode);
+        CommandTabFeedbackHelper.ApplyCommandMode(commandTabGroups, mode);
     }
 
     public void ClearCommandModeTabs()
     {
-        CommandTabFeedbackSystem.ClearCommandMode(commandTabGroups);
+        CommandTabFeedbackHelper.ClearCommandMode(commandTabGroups);
     }
 
     public void ShowSelectedEntity(string displayName, string status)

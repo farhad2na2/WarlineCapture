@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public sealed class MatchOverlayCommandTabFeedbackSystem
+public sealed class MatchOverlayCommandTabFeedbackUiSystemHelper
 {
     public void ApplyCommandMode(MatchOverlayCommandTabGroupView[] configuredGroups, TacticalCommandMode mode)
     {

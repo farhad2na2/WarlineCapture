@@ -23,7 +23,7 @@ Blocked: runtime smoke re-run is blocked while the main Unity editor has `/Users
 | Phase | Status | Progress | Done / Total | Evidence |
 | --- | --- | ---: | ---: | --- |
 | Phase 0 - Contract And Inventory | Complete | 100% | 5 / 5 | This document; current owners and split captured below. |
-| Phase 1 - Data And Projection Split | In progress | 86% | 6 / 7 | `MatchHudMinimapView`, `MatchHudMinimapInputSystem`; focused projection tests still pending. |
+| Phase 1 - Data And Projection Split | In progress | 86% | 6 / 7 | `MatchHudMinimapView`, `MatchHudMinimapInputUiSystemHelper`; focused projection tests still pending. |
 | Phase 2 - Compact HUD Minimap | In progress | 83% | 5 / 6 | HUD minimap uses camera-centered projection and hides zoom/viewport; performance smoke still pending. |
 | Phase 3 - Full-Screen Tactical Map Popup | Complete | 100% | 7 / 7 | `SCN08_FullMapPopup.prefab`; larger build-popup-style chrome, close action, low-padding map well, and map fallback refresh. |
 | Phase 4 - Runtime Binding And Input Flow | In progress | 75% | 3 / 4 | Shell and `MainMenuPlayUI` route open/close; gameplay command regression smoke still pending. |
@@ -150,10 +150,10 @@ Read-model and request-processing systems should be `ISystem` by default. If any
 
 ### Phase 0 - Contract And Inventory
 
-- [x] Inventory current `MatchHudMinimapView`, `MatchHudMinimapInputSystem`, `MatchHudMinimapProjectionSystem`, marker read model, and shell binding.
+- [x] Inventory current `MatchHudMinimapView`, `MatchHudMinimapInputUiSystemHelper`, `MatchHudMinimapProjectionSystem`, marker read model, and shell binding.
 - [x] Inventory Build Drawer popup chrome, close button, modal overlay, and popup motion ownership.
 - [x] Identify which current minimap behavior moves to full-screen map and which remains in HUD.
-- [x] Decide whether to split or rename the existing non-ECS `MatchHudMinimapInputSystem` so no new bare non-ECS `*System` debt is added.
+- [x] Decide whether to split or rename the existing non-ECS `MatchHudMinimapInputUiSystemHelper` so no new bare non-ECS `*System` debt is added.
 - [x] Write exact prefab hierarchy changes for `SCN08_MatchHudContent` and the new full-screen popup prefab.
 
 Done criteria:
@@ -247,7 +247,7 @@ Exact commands should be filled in during implementation. Expected validation se
 Completed validation:
 
 - `git diff --check`
-- `rg -n "class .*Controller|class .*Presenter|class .*Bridge|class .*Manager|class .*Button|GameObject\\.Find|FindObjectOfType|FindAnyObjectByType|Camera\\.main" Assets/Game/Scripts/UI/Screens/MatchHudFullMapPopupView.cs Assets/Game/Scripts/Editor/MatchHudFullMapPopupPrefabSetup.cs Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.cs Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputSystem.cs Assets/Game/Scripts/UI/MainMenuPlayUI.cs Assets/Game/Scripts/UI/Shell/UIShellContentView.cs`
+- `rg -n "class .*Controller|class .*Presenter|class .*Bridge|class .*Manager|class .*Button|GameObject\\.Find|FindObjectOfType|FindAnyObjectByType|Camera\\.main" Assets/Game/Scripts/UI/Screens/MatchHudFullMapPopupView.cs Assets/Game/Scripts/Editor/MatchHudFullMapPopupPrefabSetup.cs Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.cs Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs Assets/Game/Scripts/UI/MainMenuPlayUI.cs Assets/Game/Scripts/UI/Shell/UIShellContentView.cs`
 - `"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchHudFullMapPopupPrefabSetup.Validate -logFile /tmp/warlinecapture-fullmap-popup-validate.log`
 - `"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" -batchmode -nographics -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchRuntimeShellSmokeValidation.Run -logFile /tmp/warlinecapture-fullmap-match-smoke.log`
 - `rg -n "m_Script: \\{fileID: 0\\}|warning CS|error CS|The referenced script|Missing|missing|Exception" Assets/Game/Prefabs/UI/Shell/Popups/SCN08_FullMapPopup.prefab /Users/farhad/Library/Logs/Unity/Editor.log`
@@ -271,5 +271,5 @@ Attempted validation not yet accepted:
 ## Open Decisions
 
 - Whether the full-screen map popup should be a shell popup route or a Match HUD-owned overlay. Recommendation: shell popup route if it needs modal ordering above other popups; Match HUD-owned overlay only if it is strictly in-match and never coexists with other shell popups.
-- Whether to rename/split current non-ECS `MatchHudMinimapInputSystem` during this feature. Recommendation: split now because the feature changes its responsibility anyway.
+- Whether to rename/split current non-ECS `MatchHudMinimapInputUiSystemHelper` during this feature. Recommendation: split now because the feature changes its responsibility anyway.
 - Whether compact minimap static capture should reuse the full-map texture cropped by projection, or render a local capture. Recommendation: reuse one cached full-map/static source when possible and crop/project locally, to avoid expensive capture churn.

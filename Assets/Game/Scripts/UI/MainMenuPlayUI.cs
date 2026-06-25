@@ -8,8 +8,8 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
     private static readonly ProfilerMarker MinimapUpdateMarker = new("MainMenuPlayUI.MinimapUpdate");
     private static readonly ProfilerMarker FeedbackLifetimeMarker = new("MainMenuPlayUI.FeedbackLifetime");
 
-    private readonly MatchHudMinimapInputSystem _matchHudMinimapInputSystem = new();
-    private readonly MatchHudMinimapInputSystem _matchHudFullMapInputSystem = new();
+    private readonly MatchHudMinimapInputUiSystemHelper _matchHudMinimapInputSystem = new();
+    private readonly MatchHudMinimapInputUiSystemHelper _matchHudFullMapInputSystem = new();
     private IMatchRuntimeState _runtimeGameplayStateSystem;
     private ISelectionUiCommand _selectionUiCommandSystem;
     private IMatchHudCameraControl _selectionUiCameraSystem;

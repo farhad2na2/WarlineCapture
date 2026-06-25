@@ -304,7 +304,7 @@ public sealed class MatchHudMinimapProjectionSystemTests
         GameObject panel = new("MinimapPanel_RuntimeBind");
         GameObject cameraObject = new("MinimapRuntimeBindCamera");
         Texture2D defaultTexture = new(4, 4, TextureFormat.RGBA32, false);
-        MatchHudMinimapInputSystem inputSystem = null;
+        MatchHudMinimapInputUiSystemHelper inputSystem = null;
         bool restoreLogAssertIgnore = false;
         try
         {
@@ -338,7 +338,7 @@ public sealed class MatchHudMinimapProjectionSystemTests
                     MatchHudMinimapRoadKind.Road));
             }
 
-            inputSystem = new MatchHudMinimapInputSystem();
+            inputSystem = new MatchHudMinimapInputUiSystemHelper();
             if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
             {
                 LogAssert.ignoreFailingMessages = true;

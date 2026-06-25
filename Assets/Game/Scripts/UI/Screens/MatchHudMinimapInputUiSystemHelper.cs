@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-public sealed class MatchHudMinimapInputSystem
+public sealed class MatchHudMinimapInputUiSystemHelper
 {
     private const int CaptureResolution = 512;
     private static readonly Color32 RasterBackgroundA = new(150, 136, 116, 255);

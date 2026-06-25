@@ -64,8 +64,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
         BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
         BuildingProductionRequestBoundary productionRequestSystem,
         BuildingProductionRequestBoundary.Context productionRequestContext,
-        BuildingRuntimeQuerySystem runtimeQuerySystem,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         FactionResourceSystem factionResourceSystem,
         EntityManager em,
         EntityQuery boundaryQuery,
@@ -117,8 +117,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
         BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
         BuildingProductionRequestBoundary productionRequestSystem,
         BuildingProductionRequestBoundary.Context productionRequestContext,
-        BuildingRuntimeQuerySystem runtimeQuerySystem,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         FactionResourceSystem factionResourceSystem,
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         EntityManager em,
@@ -205,8 +205,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
     private void ProcessProductionRequests(
         BuildingProductionRequestBoundary productionRequestSystem,
         BuildingProductionRequestBoundary.Context productionRequestContext,
-        BuildingRuntimeQuerySystem runtimeQuerySystem,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         EntityManager em,
         Entity boundaryEntity,
         float now)
@@ -381,8 +381,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
 
     private void PublishReadModelIfDue(
         BuildingDefinitionPrefabSystemHelper definitionSystem,
-        BuildingRuntimeQuerySystem runtimeQuerySystem,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         FactionResourceSystem factionResourceSystem,
         EntityManager em,
         Entity boundaryEntity,
@@ -511,8 +511,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
 
     private void PublishRuntimeFactionSummaries(
         FactionResourceSystem factionResourceSystem,
-        BuildingRuntimeQuerySystem runtimeQuerySystem,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         EntityManager em,
         Entity boundaryEntity,
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
@@ -624,7 +624,7 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
 
     private void PublishRuntimeUnitProductionSummaries(
         BuildingDefinitionPrefabSystemHelper definitionSystem,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         EntityManager em,
         Entity boundaryEntity)
     {
@@ -679,7 +679,7 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
     }
 
     private void AccumulateRuntimeUnitProductionSummaryForBuilding(
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         EntityManager producedUnitEntityManager,
         bool hasEntityManager,
         RuntimeBuildingEntity building)

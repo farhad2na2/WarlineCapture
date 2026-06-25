@@ -2001,7 +2001,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         var boundarySystem = new BuildingRuntimeBoundaryProcessingCompositionSystemHelper();
-        var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
+        var runtimeQuerySystem = new BuildingRuntimeReadModelCompositionSystemHelper();
         GameObject unitPrefab = new("Runtime Boundary Unit");
         try
         {
@@ -2023,7 +2023,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 productionSystem,
                 unitPrefab,
                 world.EntityManager);
-            BuildingRuntimeQuerySystem.Context runtimeQueryContext = CreateRuntimeQueryContext(
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext = CreateRuntimeQueryContext(
                 runtimeBuildings,
                 world.EntityManager,
                 productionSystem);
@@ -2072,7 +2072,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         var boundarySystem = new BuildingRuntimeBoundaryProcessingCompositionSystemHelper();
-        var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
+        var runtimeQuerySystem = new BuildingRuntimeReadModelCompositionSystemHelper();
         GameObject unitPrefab = new("Runtime Boundary Vehicle");
         try
         {
@@ -2094,7 +2094,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 productionSystem,
                 unitPrefab,
                 world.EntityManager);
-            BuildingRuntimeQuerySystem.Context runtimeQueryContext = CreateRuntimeQueryContext(
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext = CreateRuntimeQueryContext(
                 runtimeBuildings,
                 world.EntityManager,
                 productionSystem);
@@ -2140,7 +2140,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     {
         using World world = new("CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel");
         EntityManager em = world.EntityManager;
-        var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
+        var runtimeQuerySystem = new BuildingRuntimeReadModelCompositionSystemHelper();
         Entity producedUnit = em.CreateEntity(typeof(UnitHealth));
         em.SetComponentData(producedUnit, new UnitHealth { Current = 10, Max = 10 });
         Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
@@ -2169,7 +2169,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         {
             [producer.Id] = producer
         };
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext = CreateRuntimeQueryContext(
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext = CreateRuntimeQueryContext(
             runtimeBuildings,
             em,
             new BuildingProductionQueueCompositionSystemHelper(),
@@ -2198,7 +2198,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         var boundarySystem = new BuildingRuntimeBoundaryProcessingCompositionSystemHelper();
-        var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
+        var runtimeQuerySystem = new BuildingRuntimeReadModelCompositionSystemHelper();
         var definitionSystem = new BuildingDefinitionPrefabSystemHelper();
         GameObject unitPrefab = new("Unit_Inf_Regular");
         try
@@ -2239,7 +2239,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 productionSystem,
                 unitPrefab,
                 em);
-            BuildingRuntimeQuerySystem.Context runtimeQueryContext = CreateRuntimeQueryContext(
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext = CreateRuntimeQueryContext(
                 runtimeBuildings,
                 em,
                 productionSystem,
@@ -2936,7 +2936,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             (_, _) => 0);
     }
 
-    private static BuildingRuntimeQuerySystem.Context CreateRuntimeQueryContext(
+    private static BuildingRuntimeReadModelCompositionSystemHelper.Context CreateRuntimeQueryContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         EntityManager entityManager,
         BuildingProductionQueueCompositionSystemHelper productionSystem,
@@ -2957,7 +2957,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                    em.Exists(boundaryEntity);
         }
 
-        return new BuildingRuntimeQuerySystem.Context(
+        return new BuildingRuntimeReadModelCompositionSystemHelper.Context(
             runtimeBuildings,
             TryGetEntityManager,
             TryGetRuntimeBoundaryEntity,

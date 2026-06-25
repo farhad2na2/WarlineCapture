@@ -20,7 +20,7 @@ internal sealed class BuildingRuntimeBoundaryCompositionSystemHelper
             source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnContext(createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock)),
             source.BuildingProductionRequestBoundary,
             source.BuildingProductionContextCompositionSystemHelper.CreateProductionRequestContext(createProductionRuntimeContextSource(source)),
-            source.BuildingRuntimeQuerySystem,
+            source.BuildingRuntimeReadModelCompositionSystemHelper,
             source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
             source.FactionResourceSystem,
             () => source.BuildingGameplayEcsQueryCompositionSystemHelper.BuildingRuntimeBoundaryQuery,

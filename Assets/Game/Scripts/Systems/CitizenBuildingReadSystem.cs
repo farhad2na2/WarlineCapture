@@ -6,8 +6,8 @@ internal sealed class CitizenBuildingReadSystem
 {
     private const float RuntimeBuildingListRefreshIntervalSeconds = 0.25f;
 
-    private BuildingRuntimeQuerySystem _buildingRuntimeQuerySystem;
-    private BuildingRuntimeQuerySystem.Context _buildingRuntimeQueryContext;
+    private BuildingRuntimeReadModelCompositionSystemHelper _buildingRuntimeQuerySystem;
+    private BuildingRuntimeReadModelCompositionSystemHelper.Context _buildingRuntimeQueryContext;
     private readonly List<int> _runtimeHouseBuildingIds = new();
     private readonly List<int> _runtimeShopBuildingIds = new();
     private readonly List<int> _runtimeCityHallBuildingIds = new();
@@ -22,7 +22,7 @@ internal sealed class CitizenBuildingReadSystem
     public IReadOnlyList<int> RefugeeTentBuildingIds => _runtimeRefugeeTentBuildingIds;
     public IReadOnlyList<int> MilitaryCampBuildingIds => _runtimeMilitaryCampBuildingIds;
 
-    public void Init(BuildingRuntimeQuerySystem buildingRuntimeQuerySystem, BuildingRuntimeQuerySystem.Context buildingRuntimeQueryContext)
+    public void Init(BuildingRuntimeReadModelCompositionSystemHelper buildingRuntimeQuerySystem, BuildingRuntimeReadModelCompositionSystemHelper.Context buildingRuntimeQueryContext)
     {
         _buildingRuntimeQuerySystem = buildingRuntimeQuerySystem;
         _buildingRuntimeQueryContext = buildingRuntimeQueryContext;

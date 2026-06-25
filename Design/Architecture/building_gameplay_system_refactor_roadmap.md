@@ -40,7 +40,7 @@ Step 18 UI read method transition size: 1742 lines. Selected-building flags, act
 
 Step 19 menu binding transition size: 1742 lines. `BuildingGameplayCompositionSystemHelper.Result.BindMainMenu` now binds main-menu runtime dependency state through `BuildingGameplayDependencyCompositionSystemHelper` directly; menu startup continues to receive explicit UI command, UI query, and placement interaction systems/contexts.
 
-Step 20 runtime building read API transition size: 1742 lines. Runtime building id lists, role filters, focus/destroyed/refugee/combat/owner/wall/city/approach reads, faction production count reads, and base-breach target read routing now use `BuildingRuntimeQuerySystem`; composition exposes `RuntimeQuery` and `RuntimeQueryContext` for direct consumers.
+Step 20 runtime building read API transition size: 1742 lines. Runtime building id lists, role filters, focus/destroyed/refugee/combat/owner/wall/city/approach reads, faction production count reads, and base-breach target read routing now use `BuildingRuntimeReadModelCompositionSystemHelper`; composition exposes `RuntimeQuery` and `RuntimeQueryContext` for direct consumers.
 
 Step 21 runtime building spawn command transition size: 1742 lines. Runtime building spawn commands, initial roster/test spawn, runtime wall run/segment spawn, runtime footprint queries, and initial placement origin search remain behind `BuildingRuntimeSpawnCommandSystem`; composition now exposes `RuntimeSpawnCommand` and `RuntimeSpawnCommandContext`, and runtime-city spawn routes through the same command boundary instead of its own spawn-system instance.
 
@@ -282,12 +282,12 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 ## Phase 6: Move Runtime Building Query And Spawn Surface
 
 20. Complete: Move runtime building read API
-   - Move runtime building ids, role filters, focus position, destroyed state, refugee settings, owner faction, wall/gate flags, combat info, approach-cell queries, and base-breach target resolution into `BuildingRuntimeQuerySystem`.
-   - Expected output: AI/citizen/runtime-city callers consume `BuildingRuntimeQuerySystem.Context`.
-   - `BuildingRuntimeQuerySystem` now owns base-breach target read routing through its context.
+   - Move runtime building ids, role filters, focus position, destroyed state, refugee settings, owner faction, wall/gate flags, combat info, approach-cell queries, and base-breach target resolution into `BuildingRuntimeReadModelCompositionSystemHelper`.
+   - Expected output: AI/citizen/runtime-city callers consume `BuildingRuntimeReadModelCompositionSystemHelper.Context`.
+   - `BuildingRuntimeReadModelCompositionSystemHelper` now owns base-breach target read routing through its context.
    - `BuildingRuntimeContextFactoryCompositionSystemHelper` wires base-breach target routing to the barrier domain while exposing it as a runtime query read.
    - `BuildingGameplayCompositionSystemHelper.Result` now exposes `RuntimeQuery` and `RuntimeQueryContext`, and citizen population creation consumes those fields directly.
-   - `BuildingGameplaySystem.TryResolveBaseBreachTarget` is now only a temporary compatibility wrapper over `BuildingRuntimeQuerySystem`.
+   - `BuildingGameplaySystem.TryResolveBaseBreachTarget` is now only a temporary compatibility wrapper over `BuildingRuntimeReadModelCompositionSystemHelper`.
 
 21. Complete: Move runtime building spawn commands
    - Move `TrySpawnRuntimeBuilding`, initial building spawn, placement origin search, runtime wall segment spawn, wall run spawn, and runtime placement footprint queries into `BuildingRuntimeSpawnCommandSystem`, `BuildingRuntimeSpawnSystem`, and a narrow wall spawn boundary.
@@ -297,7 +297,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplaySystem` spawn wrappers remain only as temporary compatibility wrappers over `BuildingRuntimeSpawnCommandSystem` until test and production callers migrate to the composition-owned command context.
 
 22. Complete: Move faction spawn point queries
-   - Move faction production spawn point and available helipad spawn resolution into `BuildingRuntimeSpawnSystem` or `BuildingRuntimeQuerySystem`.
+   - Move faction production spawn point and available helipad spawn resolution into `BuildingRuntimeSpawnSystem` or `BuildingRuntimeReadModelCompositionSystemHelper`.
    - Expected output: AI production/transport spawn logic reads a narrow building runtime boundary.
    - `BuildingSpawnSystem` now owns faction production spawn-slot lookup from runtime building data.
    - `BuildingGameplaySystem.TryGetFactionProductionSpawnPoint` is now only a temporary compatibility wrapper over `BuildingSpawnSystem`.
@@ -410,7 +410,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - In progress: `AIBuildPlannerValidationTests` and `AIProductionValidationTests` now publish runtime boundary state through a narrow runtime tick action; `AIProductionValidationTests` spawns producer buildings through `BuildingRuntimeSpawnCommandSystem`.
    - In progress: `AIEndToEndValidationTests` now uses `BuildingGameplayCompositionSystemHelper.Result` for runtime tick/disposal and no longer references `BuildingGameplayTestHarness`.
    - In progress: `InitialFactionBaseValidationTests` now uses `BuildingGameplayCompositionSystemHelper.Result`, `BuildingRuntimeSpawnCommandSystem`, and `BuildingSpawnSystem` instead of `BuildingGameplayTestHarness`; its runtime placement and helipad resolver paths pass through direct composition systems.
-   - In progress: `BaseBreachValidationTests` now uses a local composition-backed fixture over `BuildingRuntimeSpawnCommandSystem`, `BuildingRuntimeQuerySystem`, `BuildingBarrierSystem`, and `BuildingCombatSystem` instead of `BuildingGameplayTestHarness`.
+   - In progress: `BaseBreachValidationTests` now uses a local composition-backed fixture over `BuildingRuntimeSpawnCommandSystem`, `BuildingRuntimeReadModelCompositionSystemHelper`, `BuildingBarrierSystem`, and `BuildingCombatSystem` instead of `BuildingGameplayTestHarness`.
    - Completed: `BuildingGameplayTestHarness.cs` and `.meta` were deleted after all test callers moved to composition-backed systems, narrow runtime tick callbacks, or local fixtures.
    - Known validation gap: the full `InitialFactionBaseValidationTests` group currently has one authored-config failure because faction 1 is configured with zero units, while `SceneInitialUnitsConfig_EnablesFactionBasesWithRealPrefabsAndUnitMinimum` still requires at least five unit types for every faction.
 

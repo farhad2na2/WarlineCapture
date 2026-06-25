@@ -126,7 +126,7 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
 - `CitizenPopulationRuntimeUpdateSystem`: owns citizen runtime update orchestration, lifecycle callbacks, record storage callbacks, visible sync handoff, totals refresh callbacks, and death handling.
 - `CitizenPopulationStateSystem`: owns citizen/household records, ids, dictionaries, visible-citizen records, scratch collections, and pure record mutation.
 - `CitizenPopulationEcsProjectionSystem`: owns ECS world/query/entity creation, component synchronization, summary entity publication, and entity destruction.
-- `CitizenBuildingReadSystem`: owns runtime building role caches and building read delegates against `BuildingRuntimeQuerySystem`.
+- `CitizenBuildingReadSystem`: owns runtime building role caches and building read delegates against `BuildingRuntimeReadModelCompositionSystemHelper`.
 - `CitizenHouseholdRegistrationSystem`: owns new house registration, target assignment, rehousing, removed-house detection, and household-to-home mapping policies.
 - `CitizenRefugeeSystem`: owns displacement, refugee tent assignment, tent loss, occupancy counting, upkeep charging, and refugee death policy.
 - `CitizenScheduleSystem`: owns schedule constants, day/hour policy, desired status/target selection, travel status conversion, and arrival settling policy.
@@ -200,9 +200,9 @@ The broad shell has been deleted. Do not add a source file named `CitizenPopulat
 8. Complete: Extract runtime building read cache
    - Create `CitizenBuildingReadSystem`.
    - Move role-list refresh cadence, house/shop/city hall/refugee tent/military camp lists, role id sets, building focus/destroyed/refugee/approach reads, and nearest-building helpers.
-   - Keep all building reads behind `BuildingRuntimeQuerySystem`; no building placement facade access.
+   - Keep all building reads behind `BuildingRuntimeReadModelCompositionSystemHelper`; no building placement facade access.
    - Added `CitizenBuildingReadSystem.cs`.
-   - Moved `BuildingRuntimeQuerySystem` dependency storage, role id caches, house id set, refresh cadence, focus/destroyed/refugee/approach query wrappers, and role list read accessors out of `CitizenPopulationSystem.cs`.
+   - Moved `BuildingRuntimeReadModelCompositionSystemHelper` dependency storage, role id caches, house id set, refresh cadence, focus/destroyed/refugee/approach query wrappers, and role list read accessors out of `CitizenPopulationSystem.cs`.
    - Added `CitizenBuildingReadSystemMustOwnRuntimeBuildingCache` to the focused architecture validation batch.
 
 9. Complete: Extract household registration

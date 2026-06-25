@@ -35,8 +35,8 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         public readonly BuildingRuntimeEntityCompositionSystemHelper.TryGetGridDataDelegate TryGetGridData;
         public readonly Action<EntityManager> EnsureEntityQueries;
         public readonly BuildingRuntimeEntityCompositionSystemHelper.GetFootprintCenterDelegate GetFootprintCenter;
-        public readonly BuildingRuntimeQuerySystem.BuildingPredicate IsHouseBuilding;
-        public readonly BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate TryResolveBuildingFocusWorldPosition;
+        public readonly BuildingRuntimeReadModelCompositionSystemHelper.BuildingPredicate IsHouseBuilding;
+        public readonly BuildingRuntimeReadModelCompositionSystemHelper.TryResolveBuildingWorldPositionDelegate TryResolveBuildingFocusWorldPosition;
         public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
         public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
         public readonly BuildingCombatUtilitySystemHelper.BuildingAction<RuntimeBuildingEntity> RememberOpenBaseBreach;
@@ -76,8 +76,8 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             BuildingRuntimeEntityCompositionSystemHelper.TryGetGridDataDelegate tryGetGridData,
             Action<EntityManager> ensureEntityQueries,
             BuildingRuntimeEntityCompositionSystemHelper.GetFootprintCenterDelegate getFootprintCenter,
-            BuildingRuntimeQuerySystem.BuildingPredicate isHouseBuilding,
-            BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate tryResolveBuildingFocusWorldPosition,
+            BuildingRuntimeReadModelCompositionSystemHelper.BuildingPredicate isHouseBuilding,
+            BuildingRuntimeReadModelCompositionSystemHelper.TryResolveBuildingWorldPositionDelegate tryResolveBuildingFocusWorldPosition,
             BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
             BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
             BuildingCombatUtilitySystemHelper.BuildingAction<RuntimeBuildingEntity> rememberOpenBaseBreach,
@@ -436,9 +436,9 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             source.EnableDestroyDiagnostics);
     }
 
-    public BuildingRuntimeQuerySystem.Context CreateRuntimeQueryContext(RuntimeSource source)
+    public BuildingRuntimeReadModelCompositionSystemHelper.Context CreateRuntimeQueryContext(RuntimeSource source)
     {
-        return new BuildingRuntimeQuerySystem.Context(
+        return new BuildingRuntimeReadModelCompositionSystemHelper.Context(
             source.RuntimeBuildingSystem.Buildings,
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
             (EntityManager em, out Entity boundaryEntity) =>

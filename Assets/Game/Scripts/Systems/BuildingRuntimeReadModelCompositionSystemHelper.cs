@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeQuerySystem
+internal sealed class BuildingRuntimeReadModelCompositionSystemHelper
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
     public delegate bool TryGetRuntimeBoundaryEntityDelegate(EntityManager entityManager, out Entity boundaryEntity);

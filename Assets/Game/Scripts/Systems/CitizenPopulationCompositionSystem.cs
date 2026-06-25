@@ -45,8 +45,8 @@ internal sealed class CitizenPopulationCompositionSystem
     public static void Init(
         CitizenPopulationCompositionSystem system,
         Result result,
-        BuildingRuntimeQuerySystem buildingRuntimeQuerySystem,
-        BuildingRuntimeQuerySystem.Context buildingRuntimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper buildingRuntimeQuerySystem,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context buildingRuntimeQueryContext,
         DayNightSystem dayNightSystem,
         Camera worldCamera,
         bool populationEnabled,
@@ -80,8 +80,8 @@ internal sealed class CitizenPopulationCompositionSystem
 
     public void Init(
         Result result,
-        BuildingRuntimeQuerySystem buildingRuntimeQuerySystem,
-        BuildingRuntimeQuerySystem.Context buildingRuntimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper buildingRuntimeQuerySystem,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context buildingRuntimeQueryContext,
         DayNightSystem dayNightSystem,
         Camera worldCamera,
         bool populationEnabled,
@@ -101,8 +101,8 @@ internal sealed class CitizenPopulationCompositionSystem
 
     private static void InitState(
         Result result,
-        BuildingRuntimeQuerySystem buildingRuntimeQuerySystem,
-        BuildingRuntimeQuerySystem.Context buildingRuntimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper buildingRuntimeQuerySystem,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context buildingRuntimeQueryContext,
         DayNightSystem dayNightSystem,
         Camera worldCamera,
         bool populationEnabled,

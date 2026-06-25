@@ -17,8 +17,8 @@ internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
         public readonly BuildingRuntimeSpawnSystem.Context RuntimeSpawnContext;
         public readonly BuildingProductionRequestBoundary ProductionRequestSystem;
         public readonly BuildingProductionRequestBoundary.Context ProductionRequestContext;
-        public readonly BuildingRuntimeQuerySystem RuntimeQuerySystem;
-        public readonly BuildingRuntimeQuerySystem.Context RuntimeQueryContext;
+        public readonly BuildingRuntimeReadModelCompositionSystemHelper RuntimeQuerySystem;
+        public readonly BuildingRuntimeReadModelCompositionSystemHelper.Context RuntimeQueryContext;
         public readonly FactionResourceSystem FactionResourceSystem;
         public readonly Func<EntityQuery> GetBoundaryQuery;
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
@@ -32,8 +32,8 @@ internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
             BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
             BuildingProductionRequestBoundary productionRequestSystem,
             BuildingProductionRequestBoundary.Context productionRequestContext,
-            BuildingRuntimeQuerySystem runtimeQuerySystem,
-            BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+            BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
             FactionResourceSystem factionResourceSystem,
             Func<EntityQuery> getBoundaryQuery,
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)

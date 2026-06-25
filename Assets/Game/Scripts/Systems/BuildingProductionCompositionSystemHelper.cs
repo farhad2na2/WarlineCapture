@@ -12,7 +12,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
         MaterialPropertyBlock markerPropertyBlock = null)
     {
         BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource = createRuntimeContextSource(source);
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(runtimeSource);
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(runtimeSource);
         BuildingSpawnSystem.Context spawnContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBuildingSpawnContext(runtimeSource);
         BuildingProductionContextCompositionSystemHelper.Source productionSource = default;
         productionSource = source.BuildingProductionContextCompositionSystemHelper.CreateSource(
@@ -54,8 +54,8 @@ internal sealed class BuildingProductionCompositionSystemHelper
             building => BuildingRuntimeFocusPositionPresentationSystemHelper.Resolve(runtimeSource, building),
             GameRuntimeStats.RecordUnitOrdered,
             Debug.LogWarning,
-            (factionId, unitId) => source.BuildingRuntimeQuerySystem.CountPendingProductionsForFaction(runtimeQueryContext, factionId, unitId),
-            (factionId, unitId) => source.BuildingRuntimeQuerySystem.CountRuntimeProducedUnitsForFaction(runtimeQueryContext, factionId, unitId),
+            (factionId, unitId) => source.BuildingRuntimeReadModelCompositionSystemHelper.CountPendingProductionsForFaction(runtimeQueryContext, factionId, unitId),
+            (factionId, unitId) => source.BuildingRuntimeReadModelCompositionSystemHelper.CountRuntimeProducedUnitsForFaction(runtimeQueryContext, factionId, unitId),
             source.ResourceHaulerSystem,
             source.FactionResourceSystem,
             (out EntityManager entityManager) => runtimeSource.TryGetEntityManager(out entityManager),

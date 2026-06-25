@@ -71,8 +71,8 @@ Nested types:
 - `BuildingRuntimeUpdateSystem.Context RuntimeUpdateContext`
 - `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper RuntimeCitySpawn`
 - `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context RuntimeCitySpawnContext`
-- `BuildingRuntimeQuerySystem RuntimeQuery`
-- `BuildingRuntimeQuerySystem.Context RuntimeQueryContext`
+- `BuildingRuntimeReadModelCompositionSystemHelper RuntimeQuery`
+- `BuildingRuntimeReadModelCompositionSystemHelper.Context RuntimeQueryContext`
 - `BuildingRuntimeSpawnCommandSystem RuntimeSpawnCommand`
 - `BuildingRuntimeSpawnCommandSystem.Context RuntimeSpawnCommandContext`
 - `BuildingSpawnSystem Spawn`

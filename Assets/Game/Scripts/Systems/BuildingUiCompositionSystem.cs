@@ -48,13 +48,13 @@ internal sealed class BuildingUiCompositionSystem
             (out GameObject prefab) => source.BuildingPlacementQueryUiSystemHelper.TryGetSelectedBuildingPreviewPrefab(
                 createBuildingPlacementQueryContext(source),
                 out prefab),
-            buildingId => source.BuildingRuntimeQuerySystem.IsRuntimeBuildingWall(
+            buildingId => source.BuildingRuntimeReadModelCompositionSystemHelper.IsRuntimeBuildingWall(
                 source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
                 buildingId),
-            buildingId => source.BuildingRuntimeQuerySystem.IsRuntimeBuildingCityGenerated(
+            buildingId => source.BuildingRuntimeReadModelCompositionSystemHelper.IsRuntimeBuildingCityGenerated(
                 source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
                 buildingId),
-            (int buildingId, out byte factionId) => source.BuildingRuntimeQuerySystem.TryGetRuntimeBuildingOwnerFaction(
+            (int buildingId, out byte factionId) => source.BuildingRuntimeReadModelCompositionSystemHelper.TryGetRuntimeBuildingOwnerFaction(
                 source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
                 buildingId,
                 out factionId),

@@ -10,8 +10,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         BuildingRuntimeUpdateSystem.Context runtimeUpdateContext,
         BuildingRuntimeCitySpawnBridgeCompositionSystemHelper runtimeCitySpawn,
         BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context runtimeCitySpawnContext,
-        BuildingRuntimeQuerySystem runtimeQuery,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommand,
         BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
         BuildingSpawnSystem spawn,
@@ -86,8 +86,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly BuildingRuntimeUpdateSystem.Context RuntimeUpdateContext;
         public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper RuntimeCitySpawn;
         public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context RuntimeCitySpawnContext;
-        public readonly BuildingRuntimeQuerySystem RuntimeQuery;
-        public readonly BuildingRuntimeQuerySystem.Context RuntimeQueryContext;
+        public readonly BuildingRuntimeReadModelCompositionSystemHelper RuntimeQuery;
+        public readonly BuildingRuntimeReadModelCompositionSystemHelper.Context RuntimeQueryContext;
         public readonly BuildingRuntimeSpawnCommandBoundary RuntimeSpawnCommand;
         public readonly BuildingRuntimeSpawnCommandBoundary.Context RuntimeSpawnCommandContext;
         public readonly BuildingSpawnSystem Spawn;
@@ -123,8 +123,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             BuildingRuntimeUpdateSystem.Context runtimeUpdateContext,
             BuildingRuntimeCitySpawnBridgeCompositionSystemHelper runtimeCitySpawn,
             BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context runtimeCitySpawnContext,
-            BuildingRuntimeQuerySystem runtimeQuery,
-            BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+            BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
             BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommand,
             BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
             BuildingSpawnSystem spawn,

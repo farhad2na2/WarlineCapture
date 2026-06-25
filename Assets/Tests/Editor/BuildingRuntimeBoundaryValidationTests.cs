@@ -555,7 +555,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
                 default,
                 new BuildingProductionRequestBoundary(),
                 default,
-                new BuildingRuntimeQuerySystem(),
+                new BuildingRuntimeReadModelCompositionSystemHelper(),
                 default,
                 new FactionResourceSystem(),
                 em,

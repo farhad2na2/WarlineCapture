@@ -561,7 +561,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 childSystems.BuildingRuntimeSpawnCommandBoundary,
                 runtimeSpawnCommandContext,
                 childSystems.BuildingRuntimeBoundaryProcessingCompositionSystemHelper),
-            childSystems.BuildingRuntimeQuerySystem,
+            childSystems.BuildingRuntimeReadModelCompositionSystemHelper,
             childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(childSystems)),
             childSystems.BuildingRuntimeSpawnCommandBoundary,
             runtimeSpawnCommandContext,

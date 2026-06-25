@@ -97,7 +97,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
                     out Entity breachTarget,
                     out int2 breachCell,
                     out float3 breachPosition,
-                    out string reason) => source.BuildingRuntimeQuerySystem.TryResolveBaseBreachTarget(
+                    out string reason) => source.BuildingRuntimeReadModelCompositionSystemHelper.TryResolveBaseBreachTarget(
                     source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
                     attackerFactionId,
                     finalTarget,

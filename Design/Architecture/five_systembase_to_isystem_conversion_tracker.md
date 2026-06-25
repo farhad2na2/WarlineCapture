@@ -187,7 +187,7 @@ Phase 1 produced-unit source-key state notes:
 - `RuntimeBuildingEntity` still stores produced unit entities in `ProducedUnits`; produced source keys now live on spawned entities through `UnitSourcePrefabKey` and on the boundary through `BuildingProducedUnitReadModel`.
 - `BuildingSpawnSystem` writes `UnitSourcePrefabKey` onto each spawned unit entity; the older `ProducedUnitSourceKeys` spawn mirror has been removed. `ProducedUnitPrefabs` remains only as a legacy UI/prefab fallback outside spawn execution.
 - `BuildingProductionQueueCompositionSystemHelper.PruneProducedUnits` now has focused test coverage proving it removes stale `ProducedUnitSourceKeys` entries together with stale produced entities and legacy prefab entries.
-- `BuildingRuntimeBoundaryProcessingCompositionSystemHelper` and `BuildingRuntimeQuerySystem` resolve produced-unit ids from `ProducedUnitSourceKeys` before falling back to `ProducedUnitPrefabs` or the entity `UnitSourcePrefabKey` component.
+- `BuildingRuntimeBoundaryProcessingCompositionSystemHelper` and `BuildingRuntimeReadModelCompositionSystemHelper` resolve produced-unit ids from `ProducedUnitSourceKeys` before falling back to `ProducedUnitPrefabs` or the entity `UnitSourcePrefabKey` component.
 - Main project validation was locked twice; shadow validation used `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
 - Passed: `[ProducedUnitSourceKeyStateValidation] result=Passed tests=1`.
 
@@ -393,8 +393,8 @@ Phase 2 produced-unit read-model reader migration notes:
 
 Phase 2 produced-unit count read-model notes:
 
-- `BuildingRuntimeQuerySystem.Context` now carries a passive runtime-boundary entity getter, wired from `BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource.BuildingRuntimeBoundaryQuery`.
-- `BuildingRuntimeQuerySystem.CountRuntimeProducedUnitsForFaction` now counts live produced units from `BuildingProducedUnitReadModel` before falling back to `RuntimeBuildingEntity.ProducedUnits`.
+- `BuildingRuntimeReadModelCompositionSystemHelper.Context` now carries a passive runtime-boundary entity getter, wired from `BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource.BuildingRuntimeBoundaryQuery`.
+- `BuildingRuntimeReadModelCompositionSystemHelper.CountRuntimeProducedUnitsForFaction` now counts live produced units from `BuildingProducedUnitReadModel` before falling back to `RuntimeBuildingEntity.ProducedUnits`.
 - Added `BuildingProductionQueueCompositionSystemHelperTests.CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel`, which counts a produced unit from the ECS read model while the runtime building has no managed produced-unit list.
 - Remaining blockers before the actual `ISystem` flip: `BuildingSpawnSystem` still writes managed `ProducedUnits` for legacy UI readers, and fallback spawn placement still reads runtime-building transforms.
 - Passed: `git diff --check`.

@@ -42,8 +42,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
-        BuildingRuntimeQuerySystem runtimeQuery,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         DayNightSystem dayNight,
         Camera worldCamera)
     {
@@ -65,8 +65,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
-        BuildingRuntimeQuerySystem runtimeQuery,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         DayNightSystem dayNight,
         Camera worldCamera)
     {
@@ -88,8 +88,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
-        BuildingRuntimeQuerySystem runtimeQuery,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         DayNightSystem dayNight,
         Camera worldCamera,
         bool populationEnabled)
@@ -126,8 +126,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
-        BuildingRuntimeQuerySystem runtimeQuery,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         DayNightSystem dayNight,
         Camera worldCamera,
         bool populationEnabled)
@@ -149,8 +149,8 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
-        BuildingRuntimeQuerySystem runtimeQuery,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         DayNightSystem dayNight,
         Camera worldCamera,
         bool populationEnabled)

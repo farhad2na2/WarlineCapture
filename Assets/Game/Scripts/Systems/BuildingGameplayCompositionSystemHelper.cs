@@ -581,7 +581,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 createPlacementCommandContext,
                 createPlacementQueryContext,
                 createBuildingSelectionContext),
-            childSystems.BuildingUiQuerySystem,
+            childSystems.BuildingUiQueryUiSystemHelper,
             childSystems.BuildingUiCompositionSystemHelper.CreateQueryContext(
                 childSystems,
                 interactionContext,

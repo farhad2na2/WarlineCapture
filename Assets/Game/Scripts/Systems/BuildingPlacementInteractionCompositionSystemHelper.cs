@@ -43,7 +43,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
         BuildingGameplaySourceCompositionSystemHelper source,
         Func<BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context> getInteractionContext,
         MaterialPropertyBlock markerPropertyBlock,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingUiQuerySystem.Context> createBuildingUiQueryContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingUiQueryUiSystemHelper.Context> createBuildingUiQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingProductionRequestBoundary.Context> createProductionRequestContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext,
@@ -58,9 +58,9 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
                 () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
                 () => source.BuildingPlacementLifecycleCompositionSystemHelper.HasPendingBuildingPlacement &&
                       source.BuildingPlacementInputUiSystemHelper.IsDraggingPlacement,
-                () => source.BuildingUiQuerySystem.PlacementStatusText(
+                () => source.BuildingUiQueryUiSystemHelper.PlacementStatusText(
                     createBuildingUiQueryContext(source, getInteractionContext(), markerPropertyBlock)),
-                () => source.BuildingUiQuerySystem.SelectedBuildingLabel(
+                () => source.BuildingUiQueryUiSystemHelper.SelectedBuildingLabel(
                     createBuildingUiQueryContext(source, getInteractionContext(), markerPropertyBlock)),
                 () => EnqueueAndProcessBeginSoldierBasePlacement(
                     source,

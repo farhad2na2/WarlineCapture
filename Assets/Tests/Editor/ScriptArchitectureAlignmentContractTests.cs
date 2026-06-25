@@ -122,7 +122,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "SelectionUiCameraSystemHelper",
         "RtsSelectionInputStateCompositionSystemHelper",
         "BuildingUiCommandBoundary",
-        "BuildingUiQuerySystem",
+        "BuildingUiQueryUiSystemHelper",
         "SceneLifecycleSystem",
         "MatchStartRequestStartupSystemHelper",
         "SelectionRuntimeDiagnosticsSystemHelper",

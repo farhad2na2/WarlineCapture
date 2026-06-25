@@ -73,11 +73,11 @@ internal sealed class BuildingUiCommandAdapter : IBuildingUiCommand
 
 internal sealed class BuildingUiQueryAdapter : IBuildingUiQuery
 {
-    private readonly BuildingUiQuerySystem system;
-    private readonly BuildingUiQuerySystem.Context context;
-    private readonly List<BuildingUiQuerySystem.PendingProductionUiEntry> scratch = new();
+    private readonly BuildingUiQueryUiSystemHelper system;
+    private readonly BuildingUiQueryUiSystemHelper.Context context;
+    private readonly List<BuildingUiQueryUiSystemHelper.PendingProductionUiEntry> scratch = new();
 
-    public BuildingUiQueryAdapter(BuildingUiQuerySystem system, BuildingUiQuerySystem.Context context)
+    public BuildingUiQueryAdapter(BuildingUiQueryUiSystemHelper system, BuildingUiQueryUiSystemHelper.Context context)
     {
         this.system = system;
         this.context = context;
@@ -96,7 +96,7 @@ internal sealed class BuildingUiQueryAdapter : IBuildingUiQuery
         system.GetFriendlyPendingProductionUiEntries(context, scratch);
         for (int i = 0; i < scratch.Count; i++)
         {
-            BuildingUiQuerySystem.PendingProductionUiEntry entry = scratch[i];
+            BuildingUiQueryUiSystemHelper.PendingProductionUiEntry entry = scratch[i];
             entries.Add(new BuildingPendingProductionUiEntry(
                 entry.BuildingId,
                 entry.PendingProductionIndex,

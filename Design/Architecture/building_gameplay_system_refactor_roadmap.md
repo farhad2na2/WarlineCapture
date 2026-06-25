@@ -36,7 +36,7 @@ Step 16 production button command transition size: 1765 lines. Selected-building
 
 Step 17 camp request transition size: 1736 lines. Camp item affordability, request execution, missing-producer failure reporting, focus memory, and deferred focus now route through `BuildingUiCommandSystem` and `BuildingProductionRequestBoundary`; `BuildingGameplaySystem` no longer owns camp request callbacks.
 
-Step 18 UI read method transition size: 1742 lines. Selected-building flags, active-building flags, status/label/description/health/preview reads, and selected-building production affordability now route through `BuildingUiQuerySystem`; `BuildingGameplaySystem` keeps only temporary compatibility wrappers that delegate to the UI query boundary.
+Step 18 UI read method transition size: 1742 lines. Selected-building flags, active-building flags, status/label/description/health/preview reads, and selected-building production affordability now route through `BuildingUiQueryUiSystemHelper`; `BuildingGameplaySystem` keeps only temporary compatibility wrappers that delegate to the UI query boundary.
 
 Step 19 menu binding transition size: 1742 lines. `BuildingGameplayCompositionSystemHelper.Result.BindMainMenu` now binds main-menu runtime dependency state through `BuildingGameplayDependencyCompositionSystemHelper` directly; menu startup continues to receive explicit UI command, UI query, and placement interaction systems/contexts.
 
@@ -96,7 +96,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 - UI query/read owner: `HasSelectedBuilding`, `PlacementStatusText`, `SelectedBuildingLabel`, `SelectedBuildingDescription`, `CanCreatePrimaryUnitFromSelectedBuilding`, `CanCreateSecondaryUnitFromSelectedBuilding`, `CanCreateTertiaryUnitFromSelectedBuilding`, `CanCreateQuaternaryUnitFromSelectedBuilding`, `CanCreateUnitFromSelectedBuilding`.
 - Production command owner: `CreateUnitFromSelectedBuilding`, `CreateUnitFromBuilding`, `CreateSecondaryUnitFromSelectedBuilding`, `CreateSecondaryUnitFromBuilding`, `CreateTertiaryUnitFromSelectedBuilding`, `CreateTertiaryUnitFromBuilding`, `CreateQuaternaryUnitFromSelectedBuilding`, `CreateQuaternaryUnitFromBuilding`, `ArmNextProductionFromUi`, `CreateSoldierFromSelectedBuilding`.
 - Runtime building query/spawn owner: `GetRuntimeHouseBuildingIds`, `GetRuntimeBuildingIdsByRole`, `TryGetRuntimeBuildingFocusWorldPosition`, `TryGetRuntimeBuildingDestroyedState`, `TryGetRuntimeBuildingRefugeeSettings`, `TryGetRuntimeBuildingCombatInfo`, `TryResolveBaseBreachTarget`, `TryGetRuntimeBuildingApproachCell`, `IsRuntimeBuildingApproachCell`, `TryGetRuntimeBuildingPlacementFootprint`, `TryGetRuntimeWallSegmentFootprint`, `TryGetFactionProductionSpawnPoint`, `TryResolveAvailableFactionHelipadSpawn`, `TrySpawnRuntimeBuilding`, `TrySpawnRuntimeWallRun`, `TrySpawnRuntimeWallSegment`, `SpawnInitialTestRoster`.
-- Selection/combat/barrier owner: `BuildingSelectionClickUtilitySystemHelper`, `BuildingPlacementInteractionBoundaryCompositionSystemHelper`, `BuildingUiCommandSystem`, `BuildingUiQuerySystem`, `ClearSelectedBuilding`, `DeleteSelectedBuilding`, `SyncDestroyedRuntimeBuildingCombatEntitiesForTests`, `TickRuntimeForTests`, `UpdateRoadBarrierDoorsForTests`, `TryGetRuntimeBuildingDoorOpen01ForTests`, `TryGetRuntimeBuildingEntitiesForTests`, `IsRuntimeBuildingDestroyedForTests`, `GetRuntimeRoadBarrierGateRectsForTests`.
+- Selection/combat/barrier owner: `BuildingSelectionClickUtilitySystemHelper`, `BuildingPlacementInteractionBoundaryCompositionSystemHelper`, `BuildingUiCommandSystem`, `BuildingUiQueryUiSystemHelper`, `ClearSelectedBuilding`, `DeleteSelectedBuilding`, `SyncDestroyedRuntimeBuildingCombatEntitiesForTests`, `TickRuntimeForTests`, `UpdateRoadBarrierDoorsForTests`, `TryGetRuntimeBuildingDoorOpen01ForTests`, `TryGetRuntimeBuildingEntitiesForTests`, `IsRuntimeBuildingDestroyedForTests`, `GetRuntimeRoadBarrierGateRectsForTests`.
 - Context factory owner: `CreateBuildingProductionContextSource`, `CreateBuildingRuntimeContextSource`, `CreateRuntimeContextSystemSource`, `CreateBuildingRuntimeQueryContext`, `CreateBuildingUiCommandContext`, `CreateBuildingUiQueryContext`, `CreateBuildingPlacementInteractionContext`, `CreateBuildingRuntimeVisualContext`, `CreateBuildingPlacementRedirectContext`, `CreateBuildingCombatContext`, `CreateBuildingRuntimeQueryContext`, `CreateBuildingSelectionClickContext`, `CreateBuildingBarrierContext`.
 
 ## Non-Goals
@@ -266,18 +266,18 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Existing camp UI behavior remains routed through `BuildingUiCommandSystem` while production request policy remains in `BuildingProductionRequestBoundary`.
 
 18. Complete: Move UI read methods
-   - Move selected-building health, preview prefab, `CanCreate*`, active/selected building flags, and pending/produced UI entries behind `BuildingUiQuerySystem`.
+   - Move selected-building health, preview prefab, `CanCreate*`, active/selected building flags, and pending/produced UI entries behind `BuildingUiQueryUiSystemHelper`.
    - Expected output: menu/HUD reads from UI query/read models only.
-   - `BuildingUiQuerySystem` now owns scalar selected-building UI reads and selected-building production affordability reads.
+   - `BuildingUiQueryUiSystemHelper` now owns scalar selected-building UI reads and selected-building production affordability reads.
    - `BuildingUiContextCompositionSystemHelper` wires those read delegates and production request context into the UI query context.
-   - `BuildingGameplaySystem` UI read compatibility wrappers now delegate through `BuildingUiQuerySystem` instead of directly reading placement query or production request systems.
+   - `BuildingGameplaySystem` UI read compatibility wrappers now delegate through `BuildingUiQueryUiSystemHelper` instead of directly reading placement query or production request systems.
 
 19. Complete: Move menu binding off shell
    - `BuildingGameplayCompositionSystemHelper.Result.BindMainMenu` binds narrow UI command/query systems directly.
    - Remove `mainMenu => building.BindDependencies(...)`.
    - Expected output: menu startup no longer needs the shell to bind building UI.
    - `Result.BindMainMenu` now writes the main-menu dependency into `BuildingGameplayDependencyCompositionSystemHelper` without calling `BuildingGameplaySystem.BindDependencies`.
-   - `MenuStartupSystem` continues to bind `BuildingUiCommandSystem`, `BuildingUiQuerySystem`, and `BuildingPlacementInteractionBoundaryCompositionSystemHelper` from managed composition.
+   - `MenuStartupSystem` continues to bind `BuildingUiCommandSystem`, `BuildingUiQueryUiSystemHelper`, and `BuildingPlacementInteractionBoundaryCompositionSystemHelper` from managed composition.
 
 ## Phase 6: Move Runtime Building Query And Spawn Surface
 

@@ -43,9 +43,9 @@ public sealed class BuildingUiQuerySystemTests
             };
             try
             {
-                var entries = new List<BuildingUiQuerySystem.ProducedUnitUiEntry>();
+                var entries = new List<BuildingUiQueryUiSystemHelper.ProducedUnitUiEntry>();
 
-                var uiQuery = new BuildingUiQuerySystem();
+                var uiQuery = new BuildingUiQueryUiSystemHelper();
                 uiQuery.AddPendingProducedUnitEntries(
                     new[] { pending },
                     new BuildingProductionQueueCompositionSystemHelper(),
@@ -81,9 +81,9 @@ public sealed class BuildingUiQuerySystemTests
                 StartedAt = 5f,
                 ReadyAt = 15f
             };
-            var entries = new List<BuildingUiQuerySystem.PendingProductionUiEntry>();
+            var entries = new List<BuildingUiQueryUiSystemHelper.PendingProductionUiEntry>();
 
-            var uiQuery = new BuildingUiQuerySystem();
+            var uiQuery = new BuildingUiQueryUiSystemHelper();
             uiQuery.AddPendingProductionUiEntries(
                 42,
                 new[] { pending },
@@ -119,7 +119,7 @@ public sealed class BuildingUiQuerySystemTests
         var produced = new List<Entity> { alive, dead, Entity.Null };
         var results = new List<Entity>();
 
-        var uiQuery = new BuildingUiQuerySystem();
+        var uiQuery = new BuildingUiQueryUiSystemHelper();
         uiQuery.GetProducedUnits(produced, entityManager, new BuildingProductionQueueCompositionSystemHelper(), results);
 
         Assert.AreEqual(1, produced.Count);
@@ -140,9 +140,9 @@ public sealed class BuildingUiQuerySystemTests
         try
         {
             var produced = new List<Entity> { alive };
-            var entries = new List<BuildingUiQuerySystem.ProducedUnitUiEntry>();
+            var entries = new List<BuildingUiQueryUiSystemHelper.ProducedUnitUiEntry>();
 
-            var uiQuery = new BuildingUiQuerySystem();
+            var uiQuery = new BuildingUiQueryUiSystemHelper();
             uiQuery.AddProducedUnitEntries(
                 produced,
                 null,
@@ -214,7 +214,7 @@ public sealed class BuildingUiQuerySystemTests
         GameObject previewPrefab = new("UnitPreview");
         try
         {
-            BuildingUiQuerySystem.Context context = new(
+            BuildingUiQueryUiSystemHelper.Context context = new(
                 runtimeBuildings,
                 () => selectedBuilding.Id,
                 (out EntityManager em) =>
@@ -243,7 +243,7 @@ public sealed class BuildingUiQuerySystemTests
                     prefab = unit == alive ? previewPrefab : null;
                     return prefab != null;
                 });
-            var uiQuery = new BuildingUiQuerySystem();
+            var uiQuery = new BuildingUiQueryUiSystemHelper();
             var producedUnitResults = new List<Entity>();
             uiQuery.GetSelectedBuildingProducedUnits(context, producedUnitResults);
 
@@ -251,7 +251,7 @@ public sealed class BuildingUiQuerySystemTests
             Assert.AreEqual(alive, producedUnitResults[0]);
             Assert.IsNull(selectedBuilding.ProducedUnits);
 
-            var entries = new List<BuildingUiQuerySystem.ProducedUnitUiEntry>();
+            var entries = new List<BuildingUiQueryUiSystemHelper.ProducedUnitUiEntry>();
             uiQuery.GetSelectedBuildingProducedUnitEntries(context, entries);
 
             Assert.AreEqual(1, entries.Count);
@@ -309,7 +309,7 @@ public sealed class BuildingUiQuerySystemTests
                 [playerProducer.Id] = playerProducer,
                 [enemyProducer.Id] = enemyProducer
             };
-            BuildingUiQuerySystem.Context context = new(
+            BuildingUiQueryUiSystemHelper.Context context = new(
                 runtimeBuildings,
                 null,
                 null,
@@ -330,9 +330,9 @@ public sealed class BuildingUiQuerySystemTests
                 null,
                 null,
                 null);
-            var entries = new List<BuildingUiQuerySystem.PendingProductionUiEntry>();
+            var entries = new List<BuildingUiQueryUiSystemHelper.PendingProductionUiEntry>();
 
-            var uiQuery = new BuildingUiQuerySystem();
+            var uiQuery = new BuildingUiQueryUiSystemHelper();
             uiQuery.GetFriendlyPendingProductionUiEntries(context, entries);
 
             Assert.AreEqual(1, entries.Count);

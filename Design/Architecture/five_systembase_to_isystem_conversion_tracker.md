@@ -290,7 +290,7 @@ Phase 2 managed prefab removal notes:
 - Removed `BuildingSpawnCompositionSystemHelper.GetProductionPrefabDelegate` and the `Context.GetProductionPrefab` field; production spawn execution now requires `BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey` and ECS prefab entity resolution.
 - Removed `BuildingSpawnCompositionSystemHelper` gameplay writes to `RuntimeBuildingEntity.ProducedUnitPrefabs`; spawned units keep `UnitSourcePrefabKey`, `ProducedUnits`, and the ECS `BuildingProductionSpawnRequest` row.
 - `BuildingSpawnCompositionSystemHelper` target-file grep now has no `GameObject`, `GetProductionPrefab`, `spawnUnitPrefab`, `GetUnitPrefabSourceKey`, or `ProducedUnitPrefabs[...]` hits.
-- `BuildingUiQuerySystem.AddProducedUnitEntries` now resolves ready produced-unit preview prefabs through the existing passive `TryResolveLiveUnitPreviewPrefab` delegate when the legacy prefab map is empty.
+- `BuildingUiQueryUiSystemHelper.AddProducedUnitEntries` now resolves ready produced-unit preview prefabs through the existing passive `TryResolveLiveUnitPreviewPrefab` delegate when the legacy prefab map is empty.
 - Added `BuildingUiQuerySystemTests.AddProducedUnitEntries_ResolvesReadyPrefabFromPassivePreviewDelegate` to cover source-key/ECS-only produced units in UI query output.
 - Passed: `git diff --check`.
 - Passed: main-project `[BuildingProductionRequestValidation] result=Passed tests=12`.
@@ -431,7 +431,7 @@ Phase 2 production-slot read-model reservation notes:
 
 Phase 2 produced-unit list fallback removal notes:
 
-- `BuildingUiQuerySystem` now reads selected-building ready produced units from `BuildingProducedUnitReadModel` when a runtime boundary entity is present, and still uses the passive preview-prefab delegate for UI presentation.
+- `BuildingUiQueryUiSystemHelper` now reads selected-building ready produced units from `BuildingProducedUnitReadModel` when a runtime boundary entity is present, and still uses the passive preview-prefab delegate for UI presentation.
 - `BuildingSpawnCompositionSystemHelper.TrySpawnPlayerUnitNearBuilding` now writes `RuntimeBuildingEntity.ProducedUnits` only as fallback when it cannot publish a produced-unit read-model row; boundary-backed spawns keep produced-unit ownership in ECS data.
 - Updated boundary-backed production spawn tests to read the spawned entity from `BuildingProducedUnitReadModel` and assert `RuntimeBuildingEntity.ProducedUnits` remains unset.
 - Added `BuildingUiQuerySystemTests.SelectedBuildingProducedUnits_ReadsProducedUnitReadModel`.

@@ -15,7 +15,7 @@ internal sealed class BuildingUiContextCompositionSystemHelper
         public readonly Func<BuildingProductionRequestBoundary.Context> CreateProductionRequestContext;
         public readonly Func<int?> GetActiveBuildingId;
         public readonly Func<int> GetFrameCount;
-        public readonly BuildingUiQuerySystem.TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly BuildingUiQueryUiSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Func<float> GetNow;
         public readonly Func<bool> HasSelectedBuilding;
         public readonly Func<bool> HasActiveBuilding;
@@ -27,13 +27,13 @@ internal sealed class BuildingUiContextCompositionSystemHelper
         public readonly Func<float> GetActivePlacementDurationSeconds;
         public readonly Func<string> GetSelectedBuildingDisplayName;
         public readonly Func<string> GetSelectedBuildingDescription;
-        public readonly BuildingUiQuerySystem.TryGetSelectedBuildingHealthDelegate TryGetSelectedBuildingHealth;
-        public readonly BuildingUiQuerySystem.TryGetSelectedBuildingPreviewPrefabDelegate TryGetSelectedBuildingPreviewPrefab;
+        public readonly BuildingUiQueryUiSystemHelper.TryGetSelectedBuildingHealthDelegate TryGetSelectedBuildingHealth;
+        public readonly BuildingUiQueryUiSystemHelper.TryGetSelectedBuildingPreviewPrefabDelegate TryGetSelectedBuildingPreviewPrefab;
         public readonly Func<int, bool> IsRuntimeBuildingWall;
         public readonly Func<int, bool> IsRuntimeBuildingCityGenerated;
-        public readonly BuildingUiQuerySystem.TryGetRuntimeBuildingOwnerFactionDelegate TryGetRuntimeBuildingOwnerFaction;
+        public readonly BuildingUiQueryUiSystemHelper.TryGetRuntimeBuildingOwnerFactionDelegate TryGetRuntimeBuildingOwnerFaction;
         public readonly Func<Camera, bool> HasVisibleSelectableBuilding;
-        public readonly BuildingUiQuerySystem.TryResolveLiveUnitPreviewPrefabDelegate TryResolveLiveUnitPreviewPrefab;
+        public readonly BuildingUiQueryUiSystemHelper.TryResolveLiveUnitPreviewPrefabDelegate TryResolveLiveUnitPreviewPrefab;
         public readonly Func<bool> ConfirmBuildingPlacement;
         public readonly Action CancelBuildingPlacement;
         public readonly Func<bool> RotateBuildingPlacement;
@@ -47,7 +47,7 @@ internal sealed class BuildingUiContextCompositionSystemHelper
             Func<BuildingProductionRequestBoundary.Context> createProductionRequestContext,
             Func<int?> getActiveBuildingId,
             Func<int> getFrameCount,
-            BuildingUiQuerySystem.TryGetEntityManagerDelegate tryGetEntityManager,
+            BuildingUiQueryUiSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
             Func<float> getNow,
             Func<bool> hasSelectedBuilding,
             Func<bool> hasActiveBuilding,
@@ -59,13 +59,13 @@ internal sealed class BuildingUiContextCompositionSystemHelper
             Func<float> getActivePlacementDurationSeconds,
             Func<string> getSelectedBuildingDisplayName,
             Func<string> getSelectedBuildingDescription,
-            BuildingUiQuerySystem.TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
-            BuildingUiQuerySystem.TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab,
+            BuildingUiQueryUiSystemHelper.TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
+            BuildingUiQueryUiSystemHelper.TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab,
             Func<int, bool> isRuntimeBuildingWall,
             Func<int, bool> isRuntimeBuildingCityGenerated,
-            BuildingUiQuerySystem.TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
+            BuildingUiQueryUiSystemHelper.TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
             Func<Camera, bool> hasVisibleSelectableBuilding,
-            BuildingUiQuerySystem.TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab,
+            BuildingUiQueryUiSystemHelper.TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab,
             Func<bool> confirmBuildingPlacement,
             Action cancelBuildingPlacement,
             Func<bool> rotateBuildingPlacement = null)
@@ -112,7 +112,7 @@ internal sealed class BuildingUiContextCompositionSystemHelper
         Func<BuildingProductionRequestBoundary.Context> createProductionRequestContext,
         Func<int?> getActiveBuildingId,
         Func<int> getFrameCount,
-        BuildingUiQuerySystem.TryGetEntityManagerDelegate tryGetEntityManager,
+        BuildingUiQueryUiSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
         Func<float> getNow,
         Func<bool> hasSelectedBuilding,
         Func<bool> hasActiveBuilding,
@@ -124,13 +124,13 @@ internal sealed class BuildingUiContextCompositionSystemHelper
         Func<float> getActivePlacementDurationSeconds,
         Func<string> getSelectedBuildingDisplayName,
         Func<string> getSelectedBuildingDescription,
-        BuildingUiQuerySystem.TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
-        BuildingUiQuerySystem.TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab,
+        BuildingUiQueryUiSystemHelper.TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
+        BuildingUiQueryUiSystemHelper.TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab,
         Func<int, bool> isRuntimeBuildingWall,
         Func<int, bool> isRuntimeBuildingCityGenerated,
-        BuildingUiQuerySystem.TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
+        BuildingUiQueryUiSystemHelper.TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
         Func<Camera, bool> hasVisibleSelectableBuilding,
-        BuildingUiQuerySystem.TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab,
+        BuildingUiQueryUiSystemHelper.TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab,
         Func<bool> confirmBuildingPlacement,
         Action cancelBuildingPlacement,
         Func<bool> rotateBuildingPlacement = null)
@@ -261,10 +261,10 @@ internal sealed class BuildingUiContextCompositionSystemHelper
                source.TryGetEntityManager(out entityManager);
     }
 
-    public BuildingUiQuerySystem.Context CreateQueryContext(Source source)
+    public BuildingUiQueryUiSystemHelper.Context CreateQueryContext(Source source)
     {
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings = source.RuntimeBuildingSystem.Buildings;
-        return new BuildingUiQuerySystem.Context(
+        return new BuildingUiQueryUiSystemHelper.Context(
             runtimeBuildings,
             source.GetActiveBuildingId,
             source.TryGetEntityManager,

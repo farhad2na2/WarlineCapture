@@ -646,7 +646,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             },
             _ => { },
             world.EntityManager);
-        BuildingUiQuerySystem.Context queryContext = CreateProductionQueryContext(
+        BuildingUiQueryUiSystemHelper.Context queryContext = CreateProductionQueryContext(
             runtimeBuildings,
             requestSystem,
             productionSystem,
@@ -658,7 +658,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         presenter.BindRuntimeCommands(
             new BuildingUiCommandAdapter(new BuildingUiCommandBoundary(), CreateRealCommandContext(requestSystem, () => requestContext)),
             () => closed = true);
-        presenter.BindRuntimeQueries(new BuildingUiQueryAdapter(new BuildingUiQuerySystem(), queryContext));
+        presenter.BindRuntimeQueries(new BuildingUiQueryAdapter(new BuildingUiQueryUiSystemHelper(), queryContext));
         presenter.SelectCategoryForTests(BuildDrawerCategory.Vehicles);
 
         Assert.AreEqual(0, producer.PendingProductions.Count);
@@ -1333,14 +1333,14 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             null);
     }
 
-    private static BuildingUiQuerySystem.Context CreateProductionQueryContext(
+    private static BuildingUiQueryUiSystemHelper.Context CreateProductionQueryContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         BuildingProductionRequestBoundary requestSystem,
         BuildingProductionQueueCompositionSystemHelper productionSystem,
         Func<BuildingProductionRequestBoundary.Context> createRequestContext,
         EntityManager entityManager)
     {
-        return new BuildingUiQuerySystem.Context(
+        return new BuildingUiQueryUiSystemHelper.Context(
             runtimeBuildings,
             () => null,
             (out EntityManager em) =>

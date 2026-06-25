@@ -23,8 +23,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         Func<BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>> createCombatContext,
         BuildingUiCommandBoundary uiCommand,
         BuildingUiCommandBoundary.Context uiCommandContext,
-        BuildingUiQuerySystem uiQuery,
-        BuildingUiQuerySystem.Context uiQueryContext,
+        BuildingUiQueryUiSystemHelper uiQuery,
+        BuildingUiQueryUiSystemHelper.Context uiQueryContext,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper interaction,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
@@ -99,8 +99,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly Func<BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>> CreateCombatContext;
         public readonly BuildingUiCommandBoundary UiCommand;
         public readonly BuildingUiCommandBoundary.Context UiCommandContext;
-        public readonly BuildingUiQuerySystem UiQuery;
-        public readonly BuildingUiQuerySystem.Context UiQueryContext;
+        public readonly BuildingUiQueryUiSystemHelper UiQuery;
+        public readonly BuildingUiQueryUiSystemHelper.Context UiQueryContext;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper Interaction;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context InteractionContext;
         private readonly BuildingGameplayDependencyCompositionSystemHelper DependencySystem;
@@ -136,8 +136,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             Func<BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>> createCombatContext,
             BuildingUiCommandBoundary uiCommand,
             BuildingUiCommandBoundary.Context uiCommandContext,
-            BuildingUiQuerySystem uiQuery,
-            BuildingUiQuerySystem.Context uiQueryContext,
+            BuildingUiQueryUiSystemHelper uiQuery,
+            BuildingUiQueryUiSystemHelper.Context uiQueryContext,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper interaction,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
             BuildingGameplayDependencyCompositionSystemHelper dependencySystem,

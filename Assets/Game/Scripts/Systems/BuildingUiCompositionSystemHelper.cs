@@ -104,7 +104,7 @@ internal sealed class BuildingUiCompositionSystemHelper
                 createBuildingSelectionContext));
     }
 
-    public BuildingUiQuerySystem.Context CreateQueryContext(
+    public BuildingUiQueryUiSystemHelper.Context CreateQueryContext(
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,

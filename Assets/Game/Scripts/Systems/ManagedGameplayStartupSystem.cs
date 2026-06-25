@@ -26,8 +26,8 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context BuildingRuntimeCitySpawnContext;
         public readonly BuildingUiCommandBoundary BuildingUiCommand;
         public readonly BuildingUiCommandBoundary.Context BuildingUiCommandContext;
-        public readonly BuildingUiQuerySystem BuildingUiQuery;
-        public readonly BuildingUiQuerySystem.Context BuildingUiQueryContext;
+        public readonly BuildingUiQueryUiSystemHelper BuildingUiQuery;
+        public readonly BuildingUiQueryUiSystemHelper.Context BuildingUiQueryContext;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteraction;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly System.Action<IMatchRuntimeUi> BindBuildingMainMenu;
@@ -65,8 +65,8 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context buildingRuntimeCitySpawnContext,
             BuildingUiCommandBoundary buildingUiCommand,
             BuildingUiCommandBoundary.Context buildingUiCommandContext,
-            BuildingUiQuerySystem buildingUiQuery,
-            BuildingUiQuerySystem.Context buildingUiQueryContext,
+            BuildingUiQueryUiSystemHelper buildingUiQuery,
+            BuildingUiQueryUiSystemHelper.Context buildingUiQueryContext,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteraction,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             System.Action<IMatchRuntimeUi> bindBuildingMainMenu,

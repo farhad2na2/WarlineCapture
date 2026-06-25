@@ -79,7 +79,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public RoadBuildReadModelCompositionSystemHelper RoadBuildReadModel { get; private set; }
     public BuildingSelectionClickUtilitySystemHelper BuildingSelectionClick { get; private set; }
     public BuildingUiCommandBoundary BuildingUiCommand { get; private set; }
-    public BuildingUiQuerySystem BuildingUiQuery { get; private set; }
+    public BuildingUiQueryUiSystemHelper BuildingUiQuery { get; private set; }
     public IBuildingUiCommand BuildingUiCommandContract { get; private set; }
     public IBuildingUiQuery BuildingUiQueryContract { get; private set; }
     public BuildingRuntimeUpdateCompositionSystemHelper BuildingRuntimeUpdate { get; private set; }
@@ -98,11 +98,11 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public bool GameplayInitialized { get; private set; }
     public BuildingSelectionClickUtilitySystemHelper.Context BuildingSelectionClickContext { get; private set; }
     public BuildingUiCommandBoundary.Context BuildingUiCommandContext => _buildingUiCommandContext;
-    public BuildingUiQuerySystem.Context BuildingUiQueryContext => _buildingUiQueryContext;
+    public BuildingUiQueryUiSystemHelper.Context BuildingUiQueryContext => _buildingUiQueryContext;
     private BuildingRuntimeCitySpawnBridgeCompositionSystemHelper _buildingRuntimeCitySpawn;
     private BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context _buildingRuntimeCitySpawnContext;
     private BuildingUiCommandBoundary.Context _buildingUiCommandContext;
-    private BuildingUiQuerySystem.Context _buildingUiQueryContext;
+    private BuildingUiQueryUiSystemHelper.Context _buildingUiQueryContext;
     private IMatchRuntimeState _matchRuntimeState;
     private IMatchHudCameraControl _matchHudCameraControl;
     private IMatchHudMinimapDataSource _matchHudMinimapDataSource;

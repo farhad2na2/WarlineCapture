@@ -84,8 +84,8 @@ Nested types:
 - `Func<BuildingCombatSystem.Context<RuntimeBuildingData>> CreateCombatContext`
 - `BuildingUiCommandSystem UiCommand`
 - `BuildingUiCommandSystem.Context UiCommandContext`
-- `BuildingUiQuerySystem UiQuery`
-- `BuildingUiQuerySystem.Context UiQueryContext`
+- `BuildingUiQueryUiSystemHelper UiQuery`
+- `BuildingUiQueryUiSystemHelper.Context UiQueryContext`
 - `BuildingPlacementInteractionBoundaryCompositionSystemHelper Interaction`
 - `BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context InteractionContext`
 - `CitizenPopulationCompositionSystemHelper.Result CitizenPopulationComposition`

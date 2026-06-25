@@ -33,8 +33,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly UnitTransportCapacitySystem UnitTransportCapacitySystem;
         public readonly UnitTransportAirPickupSystem UnitTransportAirPickupSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
-        public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
-        public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly EntityQuery SelectedMoveQuery;
         public readonly EntityQuery SelectedTagQuery;
         public readonly EntityQuery GridConfigQuery;
@@ -77,8 +77,8 @@ public sealed class RtsSelectionCommandResultFlushSystem
             UnitTransportCapacitySystem unitTransportCapacitySystem,
             UnitTransportAirPickupSystem unitTransportAirPickupSystem,
             SelectionStateSystem selectionStateSystem,
-            BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-            BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             EntityQuery selectedMoveQuery,
             EntityQuery selectedTagQuery,
             EntityQuery gridConfigQuery,
@@ -120,7 +120,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             UnitTransportCapacitySystem = unitTransportCapacitySystem;
             UnitTransportAirPickupSystem = unitTransportAirPickupSystem;
             SelectionStateSystem = selectionStateSystem;
-            BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             SelectedMoveQuery = selectedMoveQuery;
             SelectedTagQuery = selectedTagQuery;
@@ -263,13 +263,13 @@ public sealed class RtsSelectionCommandResultFlushSystem
         if (processedKind != RtsSelectionCommandIntentKind.DestroyFocusedUnit ||
             accepted ||
             rejectionReason != TacticalCommandReasonCode.NoSelection ||
-            context.BuildingPlacementInteractionSystem == null ||
-            !context.BuildingPlacementInteractionSystem.HasSelectedBuilding(context.BuildingPlacementInteractionContext))
+            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper == null ||
+            !context.BuildingPlacementInteractionBoundaryCompositionSystemHelper.HasSelectedBuilding(context.BuildingPlacementInteractionContext))
         {
             return false;
         }
 
-        context.BuildingPlacementInteractionSystem.DeleteSelectedBuilding(context.BuildingPlacementInteractionContext);
+        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper.DeleteSelectedBuilding(context.BuildingPlacementInteractionContext);
         context.ClearHudSelection?.Invoke();
         context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success("Destroyed selected building."));
         return true;
@@ -325,9 +325,9 @@ public sealed class RtsSelectionCommandResultFlushSystem
         context.SetHudWorldMarkersVisible?.Invoke(false);
         if (hasCommandMode)
         {
-            context.BuildingPlacementInteractionSystem?.ExitBuildMode(context.BuildingPlacementInteractionContext);
-            context.BuildingPlacementInteractionSystem?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
-            context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ExitBuildMode(context.BuildingPlacementInteractionContext);
+            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
+            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
                 context.BuildingPlacementInteractionContext,
                 $"SelectionUiCommandSystem.{mode}");
             context.SetCameraDragging?.Invoke(false);
@@ -391,7 +391,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         }
 
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
-        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
             "SelectionUiCommandSystem.EnterMoveTargetMode");
         context.SetCameraDragging?.Invoke(false);
@@ -441,7 +441,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         if (enterAttackTargetMode)
         {
             context.SetExplicitAttackTargetModeActive?.Invoke(false);
-            context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
                 context.BuildingPlacementInteractionContext,
                 "SelectionUiCommandSystem.EnterAttackTargetMode");
         }
@@ -496,7 +496,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         if (enteredSelectionMode)
         {
             context.SetExplicitAttackTargetModeActive?.Invoke(false);
-            context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
                 context.BuildingPlacementInteractionContext,
                 "SelectionUiCommandSystem.EnterSelectionMode");
         }
@@ -529,9 +529,9 @@ public sealed class RtsSelectionCommandResultFlushSystem
         SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
             $"processScanTargetModeCommandRequests accepted=True frame={currentFrame}");
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
-        context.BuildingPlacementInteractionSystem?.ExitBuildMode(context.BuildingPlacementInteractionContext);
-        context.BuildingPlacementInteractionSystem?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
-        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ExitBuildMode(context.BuildingPlacementInteractionContext);
+        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
+        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
             "SelectionUiCommandSystem.EnterScanTargetMode");
         context.SetCameraDragging?.Invoke(false);
@@ -558,7 +558,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         }
 
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
-        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
             "SelectionUiCommandSystem.EnterBoardTargetMode");
         context.SetCameraDragging?.Invoke(false);
@@ -802,7 +802,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             commandResults,
             context.TryGetAttackClickedUnitEntity,
             (sourceEm, sources) => CollectSelectedAttackSources(context, sourceEm, sources),
-            context.BuildingPlacementInteractionSystem,
+            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper,
             context.BuildingPlacementInteractionContext,
             _selectedAttackSourceScratch);
 

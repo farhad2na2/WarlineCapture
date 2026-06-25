@@ -160,10 +160,10 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 ## Phase 5: Remove Legacy Building Responsibility
 
 17. Complete: Move soldier-base placement commands to building gameplay
-    - Move `BeginSoldierBasePlacement`, `ConfirmBuildingPlacement`, `CancelBuildingPlacement`, `DeleteSelectedBuilding`, `ClearSelectedBuilding`, and `ExitBuildMode` compatibility paths to `BuildingPlacementInteractionSystem` / `BuildingGameplaySystem` command boundaries.
+    - Move `BeginSoldierBasePlacement`, `ConfirmBuildingPlacement`, `CancelBuildingPlacement`, `DeleteSelectedBuilding`, `ClearSelectedBuilding`, and `ExitBuildMode` compatibility paths to `BuildingPlacementInteractionBoundaryCompositionSystemHelper` / `BuildingGameplaySystem` command boundaries.
     - Road build should only clear or block road interactions when building placement is active through a read model.
-    - Added `ExitBuildMode` to `BuildingPlacementInteractionSystem` and its context source, backed by `BuildingGameplaySystem.ExitBuildMode`.
-    - RoadBuildSystem building command wrappers now delegate to BuildingPlacementInteractionSystem instead of running fallback building placement, production, selection, or delete logic.
+    - Added `ExitBuildMode` to `BuildingPlacementInteractionBoundaryCompositionSystemHelper` and its context source, backed by `BuildingGameplaySystem.ExitBuildMode`.
+    - RoadBuildSystem building command wrappers now delegate to BuildingPlacementInteractionBoundaryCompositionSystemHelper instead of running fallback building placement, production, selection, or delete logic.
     - Road session cancellation now calls the building interaction cancel wrapper rather than road-owned `CancelBuildingPlacementInternal`.
 
 18. Complete: Move legacy runtime building storage out of road build
@@ -171,7 +171,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - Preserve `RuntimeBuildingEntityLink` behavior through building interaction context, not road build.
     - Created `BuildingRoadLegacyStorageSystem` backed by existing building-domain contracts: `BuildingDefinition`, `RuntimeBuildingData`, `BuildingPlacementLifecycleCompositionSystemHelper.PlacementState`, and `RuntimeBuildingSystem<RuntimeBuildingData>`.
     - RoadBuildSystem no longer declares nested building data/state classes or owns `_runtimeBuildings`, `_selectedBuildingId`, `_nextBuildingId`, `_soldierBaseDefinition`, or `_activeBuildingPlacement`.
-    - Legacy road runtime links now configure through `BuildingPlacementInteractionSystem` when the compatibility path is available.
+    - Legacy road runtime links now configure through `BuildingPlacementInteractionBoundaryCompositionSystemHelper` when the compatibility path is available.
 
 19. Complete: Move building ECS creation helpers out of road build
     - Move blocker entity creation, combat entity creation, runtime link attachment, and player-unit spawn-near-building helper to building systems.
@@ -184,7 +184,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - Replace `HandleRuntimeBuildingEntityDestroyed` road callback with a building-owned destruction path.
     - Update `RuntimeBuildingEntityLink` to call building interaction only.
     - Removed the RoadBuildSystem destruction callback and RuntimeBuildingEntityLink road-controller fallback overload.
-    - Runtime building links now call BuildingPlacementInteractionSystem only.
+    - Runtime building links now call BuildingPlacementInteractionBoundaryCompositionSystemHelper only.
     - Expected output: destroyed building cleanup no longer reaches through road build.
 
 ## Phase 6: Extract Runtime-City Road API

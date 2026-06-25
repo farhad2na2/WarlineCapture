@@ -17,8 +17,8 @@ internal sealed class RoadBuildEcsBoundarySystem
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly TryGetGridDataDelegate TryGetGridData;
         public readonly GetFootprintCenterDelegate GetFootprintCenter;
-        public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
-        public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public readonly uint BuildingSpawnRandomState;
 
@@ -26,15 +26,15 @@ internal sealed class RoadBuildEcsBoundarySystem
             TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetGridDataDelegate tryGetGridData,
             GetFootprintCenterDelegate getFootprintCenter,
-            BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-            BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
             uint buildingSpawnRandomState)
         {
             TryGetEntityManager = tryGetEntityManager;
             TryGetGridData = tryGetGridData;
             GetFootprintCenter = getFootprintCenter;
-            BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             RuntimeBuildingEntityLinks = runtimeBuildingEntityLinks;
             BuildingSpawnRandomState = buildingSpawnRandomState;
@@ -138,7 +138,7 @@ internal sealed class RoadBuildEcsBoundarySystem
 
     public void AttachRuntimeLink(Context context, RuntimeBuildingEntity building)
     {
-        if (context.BuildingPlacementInteractionSystem == null || building?.Instance == null)
+        if (context.BuildingPlacementInteractionBoundaryCompositionSystemHelper == null || building?.Instance == null)
             return;
 
         RuntimeBuildingEntityLink link = building.Instance.GetComponent<RuntimeBuildingEntityLink>();
@@ -146,7 +146,7 @@ internal sealed class RoadBuildEcsBoundarySystem
             link = building.Instance.AddComponent<RuntimeBuildingEntityLink>();
 
         link.Configure(
-            context.BuildingPlacementInteractionSystem,
+            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper,
             context.BuildingPlacementInteractionContext,
             context.RuntimeBuildingEntityLinks,
             building.Id,

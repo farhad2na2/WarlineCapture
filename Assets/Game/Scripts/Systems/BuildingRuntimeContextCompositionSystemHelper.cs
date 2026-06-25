@@ -40,7 +40,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
 
     public BuildingRuntimeContextSystem.Source CreateBuildingRuntimeContextSource(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionSystem.Context interactionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         TryGetEntityManagerDelegate tryGetEntityManager,
         TryGetGridDataDelegate tryGetGridData,
@@ -159,7 +159,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 building,
                 ownerFactionId),
             source.RuntimeBuildingSystem,
-            source.BuildingPlacementInteractionSystem,
+            source.BuildingPlacementInteractionBoundaryCompositionSystemHelper,
             interactionContext,
             source.RuntimeBuildingEntityLinkRegistry,
             () => source.BuildingPlacementRedirectCompositionSystemHelper.IsDeferringSideEffects,

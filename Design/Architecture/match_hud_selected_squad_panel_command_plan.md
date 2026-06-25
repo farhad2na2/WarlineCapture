@@ -115,7 +115,7 @@ Completed:
 
 Known gaps:
 
-- Selected-building Return and selected-building Board with capacity splitting are not complete because `SelectionGameplayStartupSystem.Initialize(...)` currently receives only `BuildingPlacementInteractionSystem.Context`, which exposes selected-building label/delete but not the richer produced-unit ownership and building health data from `BuildingUiQuerySystem.Context`.
+- Selected-building Return and selected-building Board with capacity splitting are not complete because `SelectionGameplayStartupSystem.Initialize(...)` currently receives only `BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context`, which exposes selected-building label/delete but not the richer produced-unit ownership and building health data from `BuildingUiQuerySystem.Context`.
 - Selected-building health currently displays `Health: -` until the richer building query context is passed into this selection startup path.
 - Badge visibility is wired for character selections, but no new badge sprite resolver has been added; the existing prefab badge art is preserved when visible.
 

@@ -155,7 +155,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 tryGetRuntimeBuilding,
                 getEffectivePlacementRect,
                 DestroyedBuildingLifetimeSeconds);
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextSystem.Source> createBuildingRuntimeContextSource =
             (source, placementInteractionContext, placementMarkerPropertyBlock) => source.BuildingRuntimeContextCompositionSystemHelper.CreateBuildingRuntimeContextSource(
                 source,
                 placementInteractionContext,
@@ -205,7 +205,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
         BuildingPlacementCommandCompositionSystemHelper.TryResolveInitialPlacementOriginDelegate tryResolveInitialPlacementOrigin =
             (
                 BuildingGameplaySourceCompositionSystemHelper source,
-                BuildingPlacementInteractionSystem.Context placementInteractionContext,
+                BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context placementInteractionContext,
                 MaterialPropertyBlock placementMarkerPropertyBlock,
                 BuildingDefinition definition,
                 Vector2Int preferredOrigin,
@@ -337,7 +337,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 tryAlignGateForCommand,
                 createBuildingRuntimeContextSource,
                 createBuildingSelectionContext);
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext =
             (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                 source.BuildingPlacementCommandCompositionSystemHelper.CreateCommandContext(
                     source,
@@ -355,7 +355,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                     tryAlignGateForCommand,
                     createBuildingRuntimeContextSource,
                     createBuildingSelectionContext);
-        BuildingPlacementInteractionSystem.Context interactionContext = default;
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext = default;
         interactionContext = _placementInteractionCompositionHelper.CreateBuildingPlacementInteractionContext(
             childSystems,
             () => interactionContext,
@@ -590,7 +590,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 createPlacementCommandContext,
                 createPlacementQueryContext,
                 createBuildingSelectionContext),
-            childSystems.BuildingPlacementInteractionSystem,
+            childSystems.BuildingPlacementInteractionBoundaryCompositionSystemHelper,
             interactionContext,
             childSystems.BuildingGameplayDependencyCompositionSystemHelper,
             childSystems.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,

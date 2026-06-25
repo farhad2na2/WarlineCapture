@@ -2,8 +2,8 @@ internal sealed class RoadBuildDependencySystem
 {
     internal sealed class State
     {
-        public BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
-        public BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
+        public BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
+        public BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public IMatchRuntimeUi MainMenuPlayUi;
         public RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers;
@@ -16,17 +16,17 @@ internal sealed class RoadBuildDependencySystem
 
     public void BindBuildingInteraction(
         State state,
-        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext)
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext)
     {
-        state.BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+        state.BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
         state.BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
     }
 
     public void BindDependencies(
         State state,
-        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
         IMatchRuntimeUi mainMenuPlayUi,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,

@@ -53,7 +53,7 @@ Top-level public/internal methods:
 - `public Result Initialize(BuildingPlacementSystemConfig buildingPlacementConfig, Camera worldCamera, Transform runtimeUiRoot, RoadFootprintQuerySystem roadFootprintQuerySystem, RoadFootprintQuerySystem.Context roadFootprintQueryContext, FactionVisualSettings factionVisuals, DayNightSystem dayNight)`
 - `internal static int ResolveInitialDollars(BuildingPlacementSystemConfig buildingPlacementConfig)`
 - `internal static BuildingGameplaySourceCompositionSystemHelper CreateChildSystems()`
-- `internal static BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source CreateRuntimeTickSource(BuildingGameplaySourceCompositionSystemHelper source, BuildingPlacementInteractionSystem.Context interactionContext, MaterialPropertyBlock markerPropertyBlock)`
+- `internal static BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source CreateRuntimeTickSource(BuildingGameplaySourceCompositionSystemHelper source, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext, MaterialPropertyBlock markerPropertyBlock)`
 - `public void BindSelection(Result building, DayNightSystem dayNight, SelectionUiCameraSystem selectionUiCameraSystem, SelectionBuildingInteractionSystem selectionBuildingInteractionSystem)`
 - `public void InitializeCitizenPopulation(Result building, DayNightSystem dayNight, Camera worldCamera)`
 - `public void BindCitizenPopulation(Result building, DayNightSystem dayNight, SelectionUiCameraSystem selectionUiCameraSystem, SelectionBuildingInteractionSystem selectionBuildingInteractionSystem, CitizenPopulationEventSystem citizenPopulationEventSystem)`
@@ -86,8 +86,8 @@ Nested types:
 - `BuildingUiCommandSystem.Context UiCommandContext`
 - `BuildingUiQuerySystem UiQuery`
 - `BuildingUiQuerySystem.Context UiQueryContext`
-- `BuildingPlacementInteractionSystem Interaction`
-- `BuildingPlacementInteractionSystem.Context InteractionContext`
+- `BuildingPlacementInteractionBoundaryCompositionSystemHelper Interaction`
+- `BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context InteractionContext`
 - `CitizenPopulationCompositionSystem.Result CitizenPopulationComposition`
 - `System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings`
 - `Action<MainMenuPlayUI> BindMainMenu`

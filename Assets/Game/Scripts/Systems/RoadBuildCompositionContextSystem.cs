@@ -54,10 +54,10 @@ internal sealed class RoadBuildCompositionContextSystem
             () => source.RoadMinimapEventSystem?.PublishStaticMinimapChanged(),
             () => ApplyBuildCommandMode(source),
             () => ClearCommandMode(source),
-            () => source.RoadBuildDependencyState.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+            () => source.RoadBuildDependencyState.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
                 source.RoadBuildDependencyState.BuildingPlacementInteractionContext,
                 "RoadBuild.ClearSelectedBuilding"),
-            () => source.RoadBuildDependencyState.BuildingPlacementInteractionSystem?.CancelBuildingPlacement(
+            () => source.RoadBuildDependencyState.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.CancelBuildingPlacement(
                 source.RoadBuildDependencyState.BuildingPlacementInteractionContext),
             () => source.RoadBuildInputSystem.CancelPendingBuild(CreateRoadBuildInputContext(source)),
             () => source.RoadBuildPlacementVisualSystem?.HidePlacementOutline(source.RoadBuildPlacementVisualState),
@@ -189,7 +189,7 @@ internal sealed class RoadBuildCompositionContextSystem
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 TryGetRoadBuildGridData(source, out gridEntity, out grid, out roads, out blockerData),
             (originCell, footprintCells, grid) => GetRoadBuildFootprintCenter(source, originCell, footprintCells, grid),
-            source.RoadBuildDependencyState.BuildingPlacementInteractionSystem,
+            source.RoadBuildDependencyState.BuildingPlacementInteractionBoundaryCompositionSystemHelper,
             source.RoadBuildDependencyState.BuildingPlacementInteractionContext,
             source.RoadBuildDependencyState.RuntimeBuildingEntityLinks,
             source.BuildingSpawnRandomState);

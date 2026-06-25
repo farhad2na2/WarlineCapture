@@ -21,8 +21,8 @@ internal sealed class BuildingRuntimeCreationSystem
     public readonly struct Context
     {
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
-        public readonly BuildingPlacementInteractionSystem RuntimeLinkInteractionSystem;
-        public readonly BuildingPlacementInteractionSystem.Context RuntimeLinkInteractionContext;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper RuntimeLinkInteractionSystem;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context RuntimeLinkInteractionContext;
         public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public readonly bool DeferSideEffects;
         public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;
@@ -40,8 +40,8 @@ internal sealed class BuildingRuntimeCreationSystem
 
         public Context(
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
-            BuildingPlacementInteractionSystem runtimeLinkInteractionSystem,
-            BuildingPlacementInteractionSystem.Context runtimeLinkInteractionContext,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper runtimeLinkInteractionSystem,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context runtimeLinkInteractionContext,
             RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
             bool deferSideEffects,
             BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -191,8 +191,8 @@ internal sealed class BuildingRuntimeCreationSystem
     }
 
     private static void AttachRuntimeLink(
-        BuildingPlacementInteractionSystem interactionSystem,
-        BuildingPlacementInteractionSystem.Context interactionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper interactionSystem,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         RuntimeBuildingEntityLinkRegistry registry,
         RuntimeBuildingEntity building)
     {

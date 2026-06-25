@@ -13,7 +13,7 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
 
     internal delegate BuildingRuntimeContextSystem.Source CreateBuildingRuntimeContextSourceDelegate(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionSystem.Context interactionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock);
 
     internal delegate BuildingRuntimeContextSystem.RuntimeSource CreateRuntimeContextSourceDelegate(
@@ -42,7 +42,7 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
 
     public bool TryResolveInitialPlacementOrigin(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionSystem.Context interactionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         BuildingDefinition definition,
         Vector2Int preferredOrigin,

@@ -5,8 +5,8 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class RuntimeBuildingEntityLink : MonoBehaviour
 {
-    private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
-    private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
+    private BuildingPlacementInteractionBoundaryCompositionSystemHelper _buildingPlacementInteractionSystem;
+    private BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context _buildingPlacementInteractionContext;
     private RuntimeBuildingEntityLinkRegistry _registry;
     private int _buildingId;
     private Entity _entity;
@@ -20,8 +20,8 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
     public int BuildingId => _buildingId;
 
     public void Configure(
-        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
         RuntimeBuildingEntityLinkRegistry registry,
         int buildingId,
         Entity entity,

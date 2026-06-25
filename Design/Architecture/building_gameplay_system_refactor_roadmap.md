@@ -96,7 +96,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 - UI query/read owner: `HasSelectedBuilding`, `PlacementStatusText`, `SelectedBuildingLabel`, `SelectedBuildingDescription`, `CanCreatePrimaryUnitFromSelectedBuilding`, `CanCreateSecondaryUnitFromSelectedBuilding`, `CanCreateTertiaryUnitFromSelectedBuilding`, `CanCreateQuaternaryUnitFromSelectedBuilding`, `CanCreateUnitFromSelectedBuilding`.
 - Production command owner: `CreateUnitFromSelectedBuilding`, `CreateUnitFromBuilding`, `CreateSecondaryUnitFromSelectedBuilding`, `CreateSecondaryUnitFromBuilding`, `CreateTertiaryUnitFromSelectedBuilding`, `CreateTertiaryUnitFromBuilding`, `CreateQuaternaryUnitFromSelectedBuilding`, `CreateQuaternaryUnitFromBuilding`, `ArmNextProductionFromUi`, `CreateSoldierFromSelectedBuilding`.
 - Runtime building query/spawn owner: `GetRuntimeHouseBuildingIds`, `GetRuntimeBuildingIdsByRole`, `TryGetRuntimeBuildingFocusWorldPosition`, `TryGetRuntimeBuildingDestroyedState`, `TryGetRuntimeBuildingRefugeeSettings`, `TryGetRuntimeBuildingCombatInfo`, `TryResolveBaseBreachTarget`, `TryGetRuntimeBuildingApproachCell`, `IsRuntimeBuildingApproachCell`, `TryGetRuntimeBuildingPlacementFootprint`, `TryGetRuntimeWallSegmentFootprint`, `TryGetFactionProductionSpawnPoint`, `TryResolveAvailableFactionHelipadSpawn`, `TrySpawnRuntimeBuilding`, `TrySpawnRuntimeWallRun`, `TrySpawnRuntimeWallSegment`, `SpawnInitialTestRoster`.
-- Selection/combat/barrier owner: `BuildingSelectionClickSystem`, `BuildingPlacementInteractionSystem`, `BuildingUiCommandSystem`, `BuildingUiQuerySystem`, `ClearSelectedBuilding`, `DeleteSelectedBuilding`, `SyncDestroyedRuntimeBuildingCombatEntitiesForTests`, `TickRuntimeForTests`, `UpdateRoadBarrierDoorsForTests`, `TryGetRuntimeBuildingDoorOpen01ForTests`, `TryGetRuntimeBuildingEntitiesForTests`, `IsRuntimeBuildingDestroyedForTests`, `GetRuntimeRoadBarrierGateRectsForTests`.
+- Selection/combat/barrier owner: `BuildingSelectionClickSystem`, `BuildingPlacementInteractionBoundaryCompositionSystemHelper`, `BuildingUiCommandSystem`, `BuildingUiQuerySystem`, `ClearSelectedBuilding`, `DeleteSelectedBuilding`, `SyncDestroyedRuntimeBuildingCombatEntitiesForTests`, `TickRuntimeForTests`, `UpdateRoadBarrierDoorsForTests`, `TryGetRuntimeBuildingDoorOpen01ForTests`, `TryGetRuntimeBuildingEntitiesForTests`, `IsRuntimeBuildingDestroyedForTests`, `GetRuntimeRoadBarrierGateRectsForTests`.
 - Context factory owner: `CreateBuildingProductionContextSource`, `CreateBuildingRuntimeContextSource`, `CreateRuntimeContextSystemSource`, `CreateBuildingRuntimeQueryContext`, `CreateBuildingUiCommandContext`, `CreateBuildingUiQueryContext`, `CreateBuildingPlacementInteractionContext`, `CreateBuildingRuntimeVisualContext`, `CreateBuildingPlacementRedirectContext`, `CreateBuildingCombatContext`, `CreateBuildingRuntimeQueryContext`, `CreateBuildingSelectionClickContext`, `CreateBuildingBarrierContext`.
 
 ## Non-Goals
@@ -225,7 +225,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Interaction and production request context factories now pass command-system delegates for soldier-base and configured-spawnable placement starts.
 
 13. Complete: Move placement confirm/cancel/exit commands
-   - Move `ConfirmBuildingPlacement`, `CancelBuildingPlacement`, `ExitBuildMode`, and placement pointer notification to `BuildingPlacementCommandRequestCompositionSystemHelper` / `BuildingPlacementInteractionSystem`.
+   - Move `ConfirmBuildingPlacement`, `CancelBuildingPlacement`, `ExitBuildMode`, and placement pointer notification to `BuildingPlacementCommandRequestCompositionSystemHelper` / `BuildingPlacementInteractionBoundaryCompositionSystemHelper`.
    - Preserve build mode and active placement behavior.
    - Expected output: active placement lifecycle is only in placement systems.
    - `BuildingPlacementCommandRequestCompositionSystemHelper` now routes confirm, cancel, exit, pointer-down, and active-placement cost commands to `BuildingPlacementSessionCompositionSystemHelper`.
@@ -277,7 +277,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - Remove `mainMenu => building.BindDependencies(...)`.
    - Expected output: menu startup no longer needs the shell to bind building UI.
    - `Result.BindMainMenu` now writes the main-menu dependency into `BuildingGameplayDependencyCompositionSystemHelper` without calling `BuildingGameplaySystem.BindDependencies`.
-   - `MenuStartupSystem` continues to bind `BuildingUiCommandSystem`, `BuildingUiQuerySystem`, and `BuildingPlacementInteractionSystem` from managed composition.
+   - `MenuStartupSystem` continues to bind `BuildingUiCommandSystem`, `BuildingUiQuerySystem`, and `BuildingPlacementInteractionBoundaryCompositionSystemHelper` from managed composition.
 
 ## Phase 6: Move Runtime Building Query And Spawn Surface
 

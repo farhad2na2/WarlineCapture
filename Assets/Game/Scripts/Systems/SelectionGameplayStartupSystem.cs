@@ -53,8 +53,8 @@ internal sealed class SelectionGameplayStartupSystem
         Transform runtimeUiRoot,
         System.Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
         RoadBuildReadModelSystem roadBuildReadModel,
-        BuildingPlacementInteractionSystem buildingInteraction,
-        BuildingPlacementInteractionSystem.Context buildingInteractionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingInteraction,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingInteractionContext,
         System.Func<Rect, bool> trySelectFirstBuildingInScreenRect,
         SelectionHudFeedbackBoundary.ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite,
         SelectionHudFeedbackBoundary.ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
@@ -121,8 +121,8 @@ internal sealed class SelectionGameplayStartupSystem
         SelectionRectangleRequestSystem.ApplyHudSquadSelectionAction applyRectangleHudSquadSelectionAction = ApplyHudSquadSelection;
         System.Action clearHudSelectionAction = ClearHudSelection;
         RoadBuildReadModelSystem roadBuildReadState = roadBuildReadModel;
-        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem = buildingInteraction;
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = buildingInteractionContext;
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem = buildingInteraction;
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext = buildingInteractionContext;
         bool explicitAttackTargetModeActive = false;
         bool attackModeOrderSnapshotActive = false;
         string attackModeOrderSnapshotText = string.Empty;

@@ -59,7 +59,7 @@ New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. 
   - Target owner: `RoadBuildCommandSystem`; static `SetBuildMode` was deleted in step 8.
 - Legacy building compatibility commands:
   - `BeginSoldierBasePlacement`, `ConfirmBuildingPlacement`, `CancelBuildingPlacement`, `CreateSoldierFromSelectedBuilding`, `DeleteSelectedBuilding`, `ClearSelectedBuilding`
-  - Target owner: `BuildingPlacementInteractionSystem` and the temporary building-road legacy systems until compatibility is deleted.
+  - Target owner: `BuildingPlacementInteractionBoundaryCompositionSystemHelper` and the temporary building-road legacy systems until compatibility is deleted.
 
 ## Architecture Rules
 
@@ -241,7 +241,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 21. Complete: Move legacy building placement lifecycle
    - Create `BuildingRoadLegacyPlacementSystem`.
    - Move begin/cancel placement, center-screen origin selection, pointer placement update, validity evaluation, and placement preview positioning.
-   - Preserve fallback behavior only for compatibility when `BuildingPlacementInteractionSystem` is absent.
+   - Preserve fallback behavior only for compatibility when `BuildingPlacementInteractionBoundaryCompositionSystemHelper` is absent.
    - Expected output: road runtime state no longer owns building placement lifecycle.
    - Added `BuildingRoadLegacyPlacementSystem` as the owner for legacy placement drag state, begin/cancel placement, center-screen origin selection, pointer placement updates, validity checks, and preview positioning.
    - `RoadBuildRuntimeStateSystem` now delegates those lifecycle operations through an explicit context; building commit, selection, and delete remain for step 22.
@@ -262,10 +262,10 @@ Every phase boundary must also run the existing road validation set when feasibl
 
 24. Complete: Delete legacy building command wrappers from road state
    - Remove `BeginSoldierBasePlacement`, `ConfirmBuildingPlacement`, `CancelBuildingPlacement`, `CreateSoldierFromSelectedBuilding`, `DeleteSelectedBuilding`, `ClearSelectedBuilding`, `CanConfirmBuildingPlacement`, and `HasSelectedBuilding` from the temporary road holder.
-   - Route production callers through `BuildingPlacementInteractionSystem` or the legacy compatibility owner directly.
+   - Route production callers through `BuildingPlacementInteractionBoundaryCompositionSystemHelper` or the legacy compatibility owner directly.
    - Expected output: road runtime state has no building gameplay command surface.
    - Removed the public legacy building command wrappers from `RoadBuildRuntimeStateSystem`.
-   - Road interaction cancel/clear callbacks now call `BuildingPlacementInteractionSystem` through explicit callbacks instead of keeping road-owned public command surface.
+   - Road interaction cancel/clear callbacks now call `BuildingPlacementInteractionBoundaryCompositionSystemHelper` through explicit callbacks instead of keeping road-owned public command surface.
 
 ## Phase 6: Runtime Actions And Disposal
 

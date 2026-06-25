@@ -94,8 +94,8 @@ public partial struct AttackOrderCommandSystem : ISystem
         Vector2 screenPosition,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         CollectSelectedAttackSourcesDelegate collectSelectedAttackSources,
-        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
         bool explicitAttackTargetModeActive,
         List<Entity> selectedAttackSourceScratch = null)
     {
@@ -148,8 +148,8 @@ public partial struct AttackOrderCommandSystem : ISystem
         DynamicBuffer<RtsSelectionCommandResultElement> commandResults,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         CollectSelectedAttackSourcesDelegate collectSelectedAttackSources,
-        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
         List<Entity> selectedAttackSourceScratch = null)
     {
         bool handledAny = false;
@@ -515,8 +515,8 @@ public partial struct AttackOrderCommandSystem : ISystem
     }
 
     private static bool TryResolveBaseBreachTargetForAttackOrder(
-        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
         byte factionId,
         Entity targetEntity,
         int2 targetCell,

@@ -33,12 +33,12 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
 
     internal delegate BuildingPlacementContextCompositionSystemHelper.Source CreatePlacementContextSourceDelegate(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionSystem.Context interactionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock);
 
     public void UpdatePlacement(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionSystem.Context interactionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Vector2 screenPosition,
         TryGetGridCellDelegate tryGetGridCell,
@@ -70,7 +70,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
 
     public BuildingPlacementVisualUpdateCompositionSystemHelper.Context CreateUpdateContext(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionSystem.Context interactionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         TryGetGridCellDelegate tryGetGridCell,
         TryGetGridDataDelegate tryGetGridData,
@@ -114,7 +114,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
 
     public void FocusActivePlacement(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionSystem.Context interactionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement,
         TryGetGridCellDelegate tryGetGridCell,
@@ -145,7 +145,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
 
     public bool ValidateActivePlacementForConfirm(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionSystem.Context interactionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement,
         TryGetGridCellDelegate tryGetGridCell,
@@ -176,7 +176,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
 
     public void UpdatePlacementVisual(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionSystem.Context interactionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement,
         bool updateCellFromPointer,
@@ -211,7 +211,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
 
     public void PlaceBuilding(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionSystem.Context interactionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement,
         TryGetGridCellDelegate tryGetGridCell,

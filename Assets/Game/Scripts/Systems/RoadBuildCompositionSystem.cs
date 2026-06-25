@@ -59,8 +59,8 @@ internal sealed class RoadBuildCompositionSystem
 
     public void BindBuildingInteraction(
         Result result,
-        BuildingPlacementInteractionSystem buildingPlacementInteraction,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext)
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteraction,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext)
     {
         BindDependencies(
             buildingPlacementInteraction,
@@ -69,8 +69,8 @@ internal sealed class RoadBuildCompositionSystem
 
     public void BindMainMenu(
         Result result,
-        BuildingPlacementInteractionSystem buildingPlacementInteraction,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteraction,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
         IMatchRuntimeUi mainMenu)
     {
         BindDependencies(
@@ -81,8 +81,8 @@ internal sealed class RoadBuildCompositionSystem
 
     public void BindRuntimeGameplayFeatures(
         Result result,
-        BuildingPlacementInteractionSystem buildingPlacementInteraction,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteraction,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
         IMatchRuntimeUi mainMenu,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks)
@@ -96,8 +96,8 @@ internal sealed class RoadBuildCompositionSystem
     }
 
     private void BindDependencies(
-        BuildingPlacementInteractionSystem buildingPlacementInteraction,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = default,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteraction,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext = default,
         IMatchRuntimeUi mainMenu = null,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null,
         RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks = null)

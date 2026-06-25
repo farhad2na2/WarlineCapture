@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class BuildingPlacementInteractionSystem
+public sealed class BuildingPlacementInteractionBoundaryCompositionSystemHelper
 {
     public delegate bool TryResolveBaseBreachTargetDelegate(
         byte attackerFactionId,

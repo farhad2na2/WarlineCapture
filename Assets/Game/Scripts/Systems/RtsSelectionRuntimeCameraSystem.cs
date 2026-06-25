@@ -21,8 +21,8 @@ public sealed class RtsSelectionRuntimeCameraSystem
         public readonly Camera WorldCamera;
         public readonly IMatchRuntimeUi MainMenuPlayUi;
         public readonly RoadBuildReadModelSystem RoadBuildReadModel;
-        public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
-        public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly TryGetEntityManagerAction TryGetDefaultEntityManager;
         public readonly IMatchIntroStateQuery MatchIntroStateQuery;
         public readonly IsPointerOverGameplayUiAction IsPointerOverGameplayUi;
@@ -54,8 +54,8 @@ public sealed class RtsSelectionRuntimeCameraSystem
             Camera worldCamera,
             IMatchRuntimeUi mainMenuPlayUi,
             RoadBuildReadModelSystem roadBuildReadModel,
-            BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-            BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             TryGetEntityManagerAction tryGetDefaultEntityManager,
             IMatchIntroStateQuery matchIntroStateQuery,
             IsPointerOverGameplayUiAction isPointerOverGameplayUi,
@@ -86,7 +86,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
             WorldCamera = worldCamera;
             MainMenuPlayUi = mainMenuPlayUi;
             RoadBuildReadModel = roadBuildReadModel;
-            BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             TryGetDefaultEntityManager = tryGetDefaultEntityManager;
             MatchIntroStateQuery = matchIntroStateQuery ?? NullMatchIntroStateQuery.Instance;
@@ -374,14 +374,14 @@ public sealed class RtsSelectionRuntimeCameraSystem
         context.UpdateLastKnownPointerPosition?.Invoke(pointerPosition);
         bool pointerOverGameplayUi = context.IsPointerOverGameplayUi?.Invoke(pointerPosition, out _) == true;
         bool pointerOverBuildToolMenu = context.MainMenuPlayUi != null && context.MainMenuPlayUi.IsPointerOverBuildToolMenu(pointerPosition);
-        bool hasPendingBuildingPlacement = context.BuildingPlacementInteractionSystem != null &&
-                                           context.BuildingPlacementInteractionSystem.HasPendingBuildingPlacement(context.BuildingPlacementInteractionContext);
+        bool hasPendingBuildingPlacement = context.BuildingPlacementInteractionBoundaryCompositionSystemHelper != null &&
+                                           context.BuildingPlacementInteractionBoundaryCompositionSystemHelper.HasPendingBuildingPlacement(context.BuildingPlacementInteractionContext);
         bool roadToolActive = context.RoadBuildReadModel != null && context.RoadBuildReadModel.IsRoadBuildModeActive;
         bool idleBuildMode = !hasPendingBuildingPlacement && !roadToolActive;
         bool interactionActive =
             (context.RoadBuildReadModel != null && context.RoadBuildReadModel.IsDraggingBuildInteraction) ||
-            (context.BuildingPlacementInteractionSystem != null &&
-             context.BuildingPlacementInteractionSystem.IsDraggingPlacementPreview(context.BuildingPlacementInteractionContext));
+            (context.BuildingPlacementInteractionBoundaryCompositionSystemHelper != null &&
+             context.BuildingPlacementInteractionBoundaryCompositionSystemHelper.IsDraggingPlacementPreview(context.BuildingPlacementInteractionContext));
 
         if (pointerOverGameplayUi)
         {

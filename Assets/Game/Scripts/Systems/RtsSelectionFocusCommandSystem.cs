@@ -13,8 +13,8 @@ public sealed class RtsSelectionFocusCommandSystem
         public readonly RtsSelectionInputSystem InputSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
         public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
-        public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
-        public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly Camera WorldCamera;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Action<EntityManager> EnsureEntityQueries;
@@ -38,8 +38,8 @@ public sealed class RtsSelectionFocusCommandSystem
             RtsSelectionInputSystem inputSystem,
             SelectionStateSystem selectionStateSystem,
             FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
-            BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-            BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             Camera worldCamera,
             TryGetEntityManagerDelegate tryGetEntityManager,
             Action<EntityManager> ensureEntityQueries,
@@ -62,7 +62,7 @@ public sealed class RtsSelectionFocusCommandSystem
             InputSystem = inputSystem;
             SelectionStateSystem = selectionStateSystem;
             FocusedUnitLifecycleSystem = focusedUnitLifecycleSystem;
-            BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             WorldCamera = worldCamera;
             TryGetEntityManager = tryGetEntityManager;
@@ -210,7 +210,7 @@ public sealed class RtsSelectionFocusCommandSystem
             return false;
         }
 
-        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(context.BuildingPlacementInteractionContext, "RTSSelection.FocusUnitEntity");
+        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(context.BuildingPlacementInteractionContext, "RTSSelection.FocusUnitEntity");
         context.InputSystem.ClearActiveCommandMode();
         context.InputSystem.ClearQueuedMoveOrder();
         int removedMoveCommands = context.InputSystem.ClearPendingMoveCommandRequests();
@@ -311,7 +311,7 @@ public sealed class RtsSelectionFocusCommandSystem
     {
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.InputSystem.ClearActiveCommandMode();
-        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
             "SelectionUiCommandSystem.EnterSelectionMode");
         context.InputSystem.ClearQueuedMoveOrder();

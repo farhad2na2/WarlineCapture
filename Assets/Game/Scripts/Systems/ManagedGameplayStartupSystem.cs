@@ -28,8 +28,8 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly BuildingUiCommandBoundary.Context BuildingUiCommandContext;
         public readonly BuildingUiQuerySystem BuildingUiQuery;
         public readonly BuildingUiQuerySystem.Context BuildingUiQueryContext;
-        public readonly BuildingPlacementInteractionSystem BuildingPlacementInteraction;
-        public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteraction;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly System.Action<IMatchRuntimeUi> BindBuildingMainMenu;
         public readonly System.Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> BindBuildingGameplayFeatures;
         public readonly System.Action DisposeBuildingGameplay;
@@ -67,8 +67,8 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingUiCommandBoundary.Context buildingUiCommandContext,
             BuildingUiQuerySystem buildingUiQuery,
             BuildingUiQuerySystem.Context buildingUiQueryContext,
-            BuildingPlacementInteractionSystem buildingPlacementInteraction,
-            BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteraction,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             System.Action<IMatchRuntimeUi> bindBuildingMainMenu,
             System.Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
             System.Action disposeBuildingGameplay,

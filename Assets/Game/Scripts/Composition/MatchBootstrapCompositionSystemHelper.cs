@@ -107,8 +107,8 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     private IMatchHudCameraControl _matchHudCameraControl;
     private IMatchHudMinimapDataSource _matchHudMinimapDataSource;
     private ISelectionRectangleState _selectionRectangleState;
-    private BuildingPlacementInteractionSystem _buildingPlacementInteraction;
-    private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
+    private BuildingPlacementInteractionBoundaryCompositionSystemHelper _buildingPlacementInteraction;
+    private BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context _buildingPlacementInteractionContext;
     private RoadRuntimeGenerationSystem _roadRuntimeGeneration;
     private RoadRuntimeGenerationSystem.Context _roadRuntimeGenerationContext;
     private Action _roadRuntimeUpdate;

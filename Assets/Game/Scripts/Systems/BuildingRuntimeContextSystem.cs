@@ -147,8 +147,8 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingRuntimeSpawnSystem.RegisterRuntimeBuildingDelegate RegisterRuntimeBuilding;
         public readonly BuildingRuntimeSpawnSystem.SetRuntimeBuildingOwnerFactionDelegate SetRuntimeBuildingOwnerFaction;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
-        public readonly BuildingPlacementInteractionSystem RuntimeLinkInteractionSystem;
-        public readonly BuildingPlacementInteractionSystem.Context RuntimeLinkInteractionContext;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper RuntimeLinkInteractionSystem;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context RuntimeLinkInteractionContext;
         public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public readonly Func<bool> IsDeferringSideEffects;
         public readonly BuildingRuntimeCreationSystem.TryGetGridDelegate TryGetGridForRuntimeCreation;
@@ -187,8 +187,8 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingRuntimeSpawnSystem.RegisterRuntimeBuildingDelegate registerRuntimeBuilding,
             BuildingRuntimeSpawnSystem.SetRuntimeBuildingOwnerFactionDelegate setRuntimeBuildingOwnerFaction,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
-            BuildingPlacementInteractionSystem runtimeLinkInteractionSystem,
-            BuildingPlacementInteractionSystem.Context runtimeLinkInteractionContext,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper runtimeLinkInteractionSystem,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context runtimeLinkInteractionContext,
             RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
             Func<bool> isDeferringSideEffects,
             BuildingRuntimeCreationSystem.TryGetGridDelegate tryGetGridForRuntimeCreation,

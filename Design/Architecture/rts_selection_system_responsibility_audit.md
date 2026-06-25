@@ -468,7 +468,7 @@ Transport boarding diagnostics now flow through an ECS diagnostic event path:
 - clicked attack target resolution handoff
 - attack target validation dispatch
 - attack order issue dispatch into `UnitTargetOrderSystem`
-- base-breach target resolution bridge through `BuildingPlacementInteractionSystem`
+- base-breach target resolution bridge through `BuildingPlacementInteractionBoundaryCompositionSystemHelper`
 - attack command result and target-position return contract
 
 `RTSSelectionSystem` still owns the pointer entry point, attack marker visual emission, HUD result application, command mode cleanup, and focus clearing after a successful attack command, but it no longer owns the attack-click command algorithm.

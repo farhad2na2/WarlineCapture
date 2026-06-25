@@ -5,8 +5,8 @@ internal sealed class RoadBuildContextSystem
         public readonly RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly RoadBuildEcsBoundarySystem.TryGetGridDataDelegate TryGetGridData;
         public readonly RoadBuildEcsBoundarySystem.GetFootprintCenterDelegate GetFootprintCenter;
-        public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
-        public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public readonly uint BuildingSpawnRandomState;
 
@@ -14,15 +14,15 @@ internal sealed class RoadBuildContextSystem
             RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate tryGetEntityManager,
             RoadBuildEcsBoundarySystem.TryGetGridDataDelegate tryGetGridData,
             RoadBuildEcsBoundarySystem.GetFootprintCenterDelegate getFootprintCenter,
-            BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-            BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
             uint buildingSpawnRandomState)
         {
             TryGetEntityManager = tryGetEntityManager;
             TryGetGridData = tryGetGridData;
             GetFootprintCenter = getFootprintCenter;
-            BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             RuntimeBuildingEntityLinks = runtimeBuildingEntityLinks;
             BuildingSpawnRandomState = buildingSpawnRandomState;
@@ -35,7 +35,7 @@ internal sealed class RoadBuildContextSystem
             context.TryGetEntityManager,
             context.TryGetGridData,
             context.GetFootprintCenter,
-            context.BuildingPlacementInteractionSystem,
+            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper,
             context.BuildingPlacementInteractionContext,
             context.RuntimeBuildingEntityLinks,
             context.BuildingSpawnRandomState);

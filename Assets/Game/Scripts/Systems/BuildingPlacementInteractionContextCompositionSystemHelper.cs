@@ -22,7 +22,7 @@ internal sealed class BuildingPlacementInteractionContextCompositionSystemHelper
         public readonly Action<string> ClearSelectedBuilding;
         public readonly Action ExitBuildMode;
         public readonly Action<int, Entity, GameObject> HandleRuntimeBuildingEntityDestroyed;
-        public readonly BuildingPlacementInteractionSystem.TryResolveBaseBreachTargetDelegate TryResolveBaseBreachTarget;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.TryResolveBaseBreachTargetDelegate TryResolveBaseBreachTarget;
 
         public Source(
             Func<bool> hasPendingBuildingPlacement,
@@ -40,7 +40,7 @@ internal sealed class BuildingPlacementInteractionContextCompositionSystemHelper
             Action<string> clearSelectedBuilding,
             Action exitBuildMode,
             Action<int, Entity, GameObject> handleRuntimeBuildingEntityDestroyed,
-            BuildingPlacementInteractionSystem.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget)
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget)
         {
             HasPendingBuildingPlacement = hasPendingBuildingPlacement;
             CanConfirmBuildingPlacement = canConfirmBuildingPlacement;
@@ -77,7 +77,7 @@ internal sealed class BuildingPlacementInteractionContextCompositionSystemHelper
         Action<string> clearSelectedBuilding,
         Action exitBuildMode,
         Action<int, Entity, GameObject> handleRuntimeBuildingEntityDestroyed,
-        BuildingPlacementInteractionSystem.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget)
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget)
     {
         return new Source(
             hasPendingBuildingPlacement,
@@ -98,9 +98,9 @@ internal sealed class BuildingPlacementInteractionContextCompositionSystemHelper
             tryResolveBaseBreachTarget);
     }
 
-    public BuildingPlacementInteractionSystem.Context CreateContext(Source source)
+    public BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context CreateContext(Source source)
     {
-        return new BuildingPlacementInteractionSystem.Context(
+        return new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
             source.HasPendingBuildingPlacement,
             source.CanConfirmBuildingPlacement,
             source.HasSelectedBuilding,

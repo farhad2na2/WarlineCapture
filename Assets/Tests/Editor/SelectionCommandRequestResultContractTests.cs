@@ -128,8 +128,8 @@ public sealed class SelectionCommandRequestResultContractTests
         int cameraDraggingCount = 0;
         bool cameraDragging = true;
         int refreshFocusedCount = 0;
-        var buildingInteraction = new BuildingPlacementInteractionSystem();
-        var buildingContext = new BuildingPlacementInteractionSystem.Context(
+        var buildingInteraction = new BuildingPlacementInteractionBoundaryCompositionSystemHelper();
+        var buildingContext = new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
             null,
             null,
             () => true,
@@ -417,8 +417,8 @@ public sealed class SelectionCommandRequestResultContractTests
             bool cameraDragging = true;
             int diagnosticCount = 0;
             string lastDiagnostic = string.Empty;
-            var buildingInteraction = new BuildingPlacementInteractionSystem();
-            var buildingContext = new BuildingPlacementInteractionSystem.Context(
+            var buildingInteraction = new BuildingPlacementInteractionBoundaryCompositionSystemHelper();
+            var buildingContext = new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
                 null,
                 null,
                 () => true,
@@ -543,8 +543,8 @@ public sealed class SelectionCommandRequestResultContractTests
             bool cameraDragging = true;
             int diagnosticCount = 0;
             string lastDiagnostic = string.Empty;
-            var buildingInteraction = new BuildingPlacementInteractionSystem();
-            var buildingContext = new BuildingPlacementInteractionSystem.Context(
+            var buildingInteraction = new BuildingPlacementInteractionBoundaryCompositionSystemHelper();
+            var buildingContext = new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
                 null,
                 null,
                 () => true,
@@ -675,8 +675,8 @@ public sealed class SelectionCommandRequestResultContractTests
             bool cameraDragging = true;
             int diagnosticCount = 0;
             string lastDiagnostic = string.Empty;
-            var buildingInteraction = new BuildingPlacementInteractionSystem();
-            var buildingContext = new BuildingPlacementInteractionSystem.Context(
+            var buildingInteraction = new BuildingPlacementInteractionBoundaryCompositionSystemHelper();
+            var buildingContext = new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
                 null,
                 null,
                 () => true,
@@ -823,8 +823,8 @@ public sealed class SelectionCommandRequestResultContractTests
         bool cameraDragging = true;
         int diagnosticCount = 0;
         string lastDiagnostic = string.Empty;
-        var buildingInteraction = new BuildingPlacementInteractionSystem();
-        var buildingContext = new BuildingPlacementInteractionSystem.Context(
+        var buildingInteraction = new BuildingPlacementInteractionBoundaryCompositionSystemHelper();
+        var buildingContext = new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
             null,
             null,
             () => true,
@@ -954,8 +954,8 @@ public sealed class SelectionCommandRequestResultContractTests
         bool cameraDragging = true;
         int diagnosticCount = 0;
         string lastDiagnostic = string.Empty;
-        var buildingInteraction = new BuildingPlacementInteractionSystem();
-        var buildingContext = new BuildingPlacementInteractionSystem.Context(
+        var buildingInteraction = new BuildingPlacementInteractionBoundaryCompositionSystemHelper();
+        var buildingContext = new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
             null,
             null,
             () => true,
@@ -1078,8 +1078,8 @@ public sealed class SelectionCommandRequestResultContractTests
         bool cameraDragging = true;
         int diagnosticCount = 0;
         string lastDiagnostic = string.Empty;
-        var buildingInteraction = new BuildingPlacementInteractionSystem();
-        var buildingContext = new BuildingPlacementInteractionSystem.Context(
+        var buildingInteraction = new BuildingPlacementInteractionBoundaryCompositionSystemHelper();
+        var buildingContext = new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
             null,
             null,
             () => true,
@@ -1456,8 +1456,8 @@ public sealed class SelectionCommandRequestResultContractTests
         bool cameraDragging = true;
         int diagnosticCount = 0;
         string lastDiagnostic = string.Empty;
-        var buildingInteraction = new BuildingPlacementInteractionSystem();
-        var buildingContext = new BuildingPlacementInteractionSystem.Context(
+        var buildingInteraction = new BuildingPlacementInteractionBoundaryCompositionSystemHelper();
+        var buildingContext = new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
             null,
             null,
             () => true,
@@ -1589,8 +1589,8 @@ public sealed class SelectionCommandRequestResultContractTests
         bool cameraDragging = true;
         int diagnosticCount = 0;
         string lastDiagnostic = string.Empty;
-        var buildingInteraction = new BuildingPlacementInteractionSystem();
-        var buildingContext = new BuildingPlacementInteractionSystem.Context(
+        var buildingInteraction = new BuildingPlacementInteractionBoundaryCompositionSystemHelper();
+        var buildingContext = new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
             null,
             null,
             () => true,
@@ -1711,8 +1711,8 @@ public sealed class SelectionCommandRequestResultContractTests
         bool cameraDragging = true;
         int diagnosticCount = 0;
         string lastDiagnostic = string.Empty;
-        var buildingInteraction = new BuildingPlacementInteractionSystem();
-        var buildingContext = new BuildingPlacementInteractionSystem.Context(
+        var buildingInteraction = new BuildingPlacementInteractionBoundaryCompositionSystemHelper();
+        var buildingContext = new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
             null,
             null,
             () => true,
@@ -1832,8 +1832,8 @@ public sealed class SelectionCommandRequestResultContractTests
             bool cameraDragging = true;
             int diagnosticCount = 0;
             string lastDiagnostic = string.Empty;
-            var buildingInteraction = new BuildingPlacementInteractionSystem();
-            var buildingContext = new BuildingPlacementInteractionSystem.Context(
+            var buildingInteraction = new BuildingPlacementInteractionBoundaryCompositionSystemHelper();
+            var buildingContext = new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
                 null,
                 null,
                 () => true,
@@ -2180,8 +2180,8 @@ public sealed class SelectionCommandRequestResultContractTests
         int clearHudSelectionCount = 0;
         TacticalCommandResult feedback = default;
         bool hasFeedback = false;
-        var buildingInteraction = new BuildingPlacementInteractionSystem();
-        var buildingContext = new BuildingPlacementInteractionSystem.Context(
+        var buildingInteraction = new BuildingPlacementInteractionBoundaryCompositionSystemHelper();
+        var buildingContext = new BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context(
             null,
             null,
             () => true,
@@ -4363,8 +4363,8 @@ public sealed class SelectionCommandRequestResultContractTests
         System.Action<bool> setHudWorldMarkersVisible = null,
         System.Action<UnityEngine.Vector2> requestMoveOrderScreenMarker = null,
         System.Action<UnityEngine.Vector2> requestAttackOrderScreenMarker = null,
-        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem = null,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = default,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem = null,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext = default,
         SelectionStateSystem selectionStateSystem = null,
         System.Action clearHudSelection = null,
         System.Action clearHudCommandMode = null,

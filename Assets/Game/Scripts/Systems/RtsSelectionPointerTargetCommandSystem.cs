@@ -27,8 +27,8 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         public readonly UnitTransportCapacitySystem UnitTransportCapacitySystem;
         public readonly UnitTransportAirPickupSystem UnitTransportAirPickupSystem;
         public readonly BuildingTargetMoveOrderSystem BuildingTargetMoveOrderSystem;
-        public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
-        public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly Camera WorldCamera;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly TryGetPointerPositionDelegate TryGetPointerPosition;
@@ -60,8 +60,8 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             UnitTransportCapacitySystem unitTransportCapacitySystem,
             UnitTransportAirPickupSystem unitTransportAirPickupSystem,
             BuildingTargetMoveOrderSystem buildingTargetMoveOrderSystem,
-            BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-            BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             Camera worldCamera,
             TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetPointerPositionDelegate tryGetPointerPosition,
@@ -96,7 +96,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             UnitTransportCapacitySystem = unitTransportCapacitySystem;
             UnitTransportAirPickupSystem = unitTransportAirPickupSystem;
             BuildingTargetMoveOrderSystem = buildingTargetMoveOrderSystem;
-            BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             WorldCamera = worldCamera;
             TryGetEntityManager = tryGetEntityManager;
@@ -698,7 +698,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             return false;
         }
 
-        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(context.BuildingPlacementInteractionContext, "RTSSelection.TryFocusUnit");
+        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(context.BuildingPlacementInteractionContext, "RTSSelection.TryFocusUnit");
         context.InputSystem.ClearQueuedMoveOrder();
         int removedMoveCommands = context.InputSystem.ClearPendingMoveCommandRequests();
         context.InputSystem.IgnoreWorldCommandsUntilFrame = UnityEngine.Time.frameCount + 1;

@@ -9,8 +9,8 @@ internal sealed class RoadBuildCompositionLifecycleSystem
         RoadBuildSystemConfig configAsset,
         Camera sceneWorldCamera,
         Transform runtimeRoot,
-        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = default)
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext = default)
     {
         source.RoadBuildStartupState = source.RoadBuildStartupSystem.Initialize(
             configAsset,
@@ -51,8 +51,8 @@ internal sealed class RoadBuildCompositionLifecycleSystem
 
     public void BindDependencies(
         RoadBuildCompositionSourceSystem source,
-        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = default,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext = default,
         IMatchRuntimeUi mainMenuPlayUi = null,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null,
         RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks = null)

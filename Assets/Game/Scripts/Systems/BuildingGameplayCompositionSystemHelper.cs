@@ -404,7 +404,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
             return childSystems.BuildingRuntimeContextSystem.CreateBarrierContext(createRuntimeContextSource(childSystems));
         };
-        Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> createCombatContext = () =>
+        Func<BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>> createCombatContext = () =>
         {
             if (tryGetEntityManager(out EntityManager em))
                 childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
@@ -570,7 +570,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             createSpawnContext,
             childSystems.BuildingBarrierUtilitySystemHelper,
             createBarrierContext,
-            childSystems.BuildingCombatSystem,
+            childSystems.BuildingCombatUtilitySystemHelper,
             createCombatContext,
             childSystems.BuildingUiCommandBoundary,
             childSystems.BuildingUiCompositionSystem.CreateCommandContext(

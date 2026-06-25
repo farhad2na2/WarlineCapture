@@ -6,7 +6,7 @@ using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
 
-public sealed class BuildingCombatSystemTests
+public sealed class BuildingCombatUtilitySystemHelperTests
 {
     private World _world;
 
@@ -33,9 +33,9 @@ public sealed class BuildingCombatSystemTests
         }
     }
 
-    private static void RunCase(string name, Action<BuildingCombatSystemTests> action)
+    private static void RunCase(string name, Action<BuildingCombatUtilitySystemHelperTests> action)
     {
-        BuildingCombatSystemTests tests = new();
+        BuildingCombatUtilitySystemHelperTests tests = new();
         try
         {
             action(tests);
@@ -63,7 +63,7 @@ public sealed class BuildingCombatSystemTests
     public void TryMarkDestroyed_SetsDestroyedStateAndCleanupDeadline()
     {
         var building = new TestRuntimeBuilding { Id = 7 };
-        var system = new BuildingCombatSystem();
+        var system = new BuildingCombatUtilitySystemHelper();
 
         Assert.IsTrue(system.TryMarkDestroyed(building, 10f, 5f));
         Assert.IsTrue(building.IsDestroyed);
@@ -82,7 +82,7 @@ public sealed class BuildingCombatSystemTests
             { 3, new TestRuntimeBuilding { Id = 3, IsDestroyed = false, DestroyedCleanupAt = 1f } }
         };
 
-        var system = new BuildingCombatSystem();
+        var system = new BuildingCombatUtilitySystemHelper();
         List<int> cleanupIds = system.CollectDestroyedCleanupIds(buildings, 10f);
 
         Assert.IsNotNull(cleanupIds);
@@ -92,7 +92,7 @@ public sealed class BuildingCombatSystemTests
     [Test]
     public void ResolveRuntimeCombatState_DetectsMissingAndDeadCombatEntities()
     {
-        _world = new World("BuildingCombatSystemTests");
+        _world = new World("BuildingCombatUtilitySystemHelperTests");
         EntityManager em = _world.EntityManager;
         Entity live = em.CreateEntity(typeof(UnitHealth));
         em.SetComponentData(live, new UnitHealth { Current = 25, Max = 100 });
@@ -101,35 +101,35 @@ public sealed class BuildingCombatSystemTests
         Entity missing = em.CreateEntity(typeof(UnitHealth));
         em.DestroyEntity(missing);
 
-        var system = new BuildingCombatSystem();
+        var system = new BuildingCombatUtilitySystemHelper();
 
         Assert.AreEqual(
-            BuildingCombatSystem.RuntimeCombatState.Active,
+            BuildingCombatUtilitySystemHelper.RuntimeCombatState.Active,
             system.ResolveRuntimeCombatState(new TestRuntimeBuilding { CombatEntity = live }, em));
         Assert.AreEqual(
-            BuildingCombatSystem.RuntimeCombatState.DeadCombatEntity,
+            BuildingCombatUtilitySystemHelper.RuntimeCombatState.DeadCombatEntity,
             system.ResolveRuntimeCombatState(new TestRuntimeBuilding { CombatEntity = dead }, em));
         Assert.AreEqual(
-            BuildingCombatSystem.RuntimeCombatState.MissingCombatEntity,
+            BuildingCombatUtilitySystemHelper.RuntimeCombatState.MissingCombatEntity,
             system.ResolveRuntimeCombatState(new TestRuntimeBuilding { CombatEntity = missing }, em));
     }
 
     [Test]
     public void DestroyBlockerEntity_DestroysEntityAndClearsReference()
     {
-        _world = new World("BuildingCombatSystemTests");
+        _world = new World("BuildingCombatUtilitySystemHelperTests");
         EntityManager em = _world.EntityManager;
         Entity blocker = em.CreateEntity();
         var building = new TestRuntimeBuilding { BlockerEntity = blocker };
 
-        var system = new BuildingCombatSystem();
+        var system = new BuildingCombatUtilitySystemHelper();
         system.DestroyBlockerEntity(building, em);
 
         Assert.IsFalse(em.Exists(blocker));
         Assert.AreEqual(Entity.Null, building.BlockerEntity);
     }
 
-    private sealed class TestRuntimeBuilding : BuildingCombatSystem.IRuntimeBuilding
+    private sealed class TestRuntimeBuilding : BuildingCombatUtilitySystemHelper.IRuntimeBuilding
     {
         public int Id { get; set; }
         public bool IsDestroyed { get; set; }

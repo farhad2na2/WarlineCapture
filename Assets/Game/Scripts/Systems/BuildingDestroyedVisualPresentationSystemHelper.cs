@@ -6,11 +6,11 @@ public sealed class BuildingDestroyedVisualPresentationSystemHelper
     public readonly struct Context
     {
         public readonly BuildingVisualSystem VisualSystem;
-        public readonly BuildingCombatSystem.ObjectAction DestroyObject;
+        public readonly BuildingCombatUtilitySystemHelper.ObjectAction DestroyObject;
 
         public Context(
             BuildingVisualSystem visualSystem,
-            BuildingCombatSystem.ObjectAction destroyObject)
+            BuildingCombatUtilitySystemHelper.ObjectAction destroyObject)
         {
             VisualSystem = visualSystem;
             DestroyObject = destroyObject;

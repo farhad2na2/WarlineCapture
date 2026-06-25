@@ -15,8 +15,8 @@ internal sealed class BuildingRuntimeEntitySystem
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly TryGetGridDataDelegate TryGetGridData;
         public readonly GetFootprintCenterDelegate GetFootprintCenter;
-        public readonly BuildingCombatSystem CombatSystem;
-        public readonly BuildingCombatSystem.Context<RuntimeBuildingEntity> CombatContext;
+        public readonly BuildingCombatUtilitySystemHelper CombatSystem;
+        public readonly BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> CombatContext;
         public readonly System.Func<float> GetTime;
         public readonly float DestroyedBuildingLifetimeSeconds;
 
@@ -24,8 +24,8 @@ internal sealed class BuildingRuntimeEntitySystem
             TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetGridDataDelegate tryGetGridData,
             GetFootprintCenterDelegate getFootprintCenter,
-            BuildingCombatSystem combatSystem,
-            BuildingCombatSystem.Context<RuntimeBuildingEntity> combatContext,
+            BuildingCombatUtilitySystemHelper combatSystem,
+            BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> combatContext,
             System.Func<float> getTime,
             float destroyedBuildingLifetimeSeconds)
         {

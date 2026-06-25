@@ -19,8 +19,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         Func<BuildingSpawnSystem.Context> createSpawnContext,
         BuildingBarrierUtilitySystemHelper barrier,
         Func<BuildingBarrierUtilitySystemHelper.Context> createBarrierContext,
-        BuildingCombatSystem combat,
-        Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> createCombatContext,
+        BuildingCombatUtilitySystemHelper combat,
+        Func<BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>> createCombatContext,
         BuildingUiCommandBoundary uiCommand,
         BuildingUiCommandBoundary.Context uiCommandContext,
         BuildingUiQuerySystem uiQuery,
@@ -95,8 +95,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly Func<BuildingSpawnSystem.Context> CreateSpawnContext;
         public readonly BuildingBarrierUtilitySystemHelper Barrier;
         public readonly Func<BuildingBarrierUtilitySystemHelper.Context> CreateBarrierContext;
-        public readonly BuildingCombatSystem Combat;
-        public readonly Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> CreateCombatContext;
+        public readonly BuildingCombatUtilitySystemHelper Combat;
+        public readonly Func<BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>> CreateCombatContext;
         public readonly BuildingUiCommandBoundary UiCommand;
         public readonly BuildingUiCommandBoundary.Context UiCommandContext;
         public readonly BuildingUiQuerySystem UiQuery;
@@ -132,8 +132,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             Func<BuildingSpawnSystem.Context> createSpawnContext,
             BuildingBarrierUtilitySystemHelper barrier,
             Func<BuildingBarrierUtilitySystemHelper.Context> createBarrierContext,
-            BuildingCombatSystem combat,
-            Func<BuildingCombatSystem.Context<RuntimeBuildingEntity>> createCombatContext,
+            BuildingCombatUtilitySystemHelper combat,
+            Func<BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>> createCombatContext,
             BuildingUiCommandBoundary uiCommand,
             BuildingUiCommandBoundary.Context uiCommandContext,
             BuildingUiQuerySystem uiQuery,

@@ -39,12 +39,12 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate TryResolveBuildingFocusWorldPosition;
         public readonly BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
         public readonly BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
-        public readonly BuildingCombatSystem.BuildingAction<RuntimeBuildingEntity> RememberOpenBaseBreach;
-        public readonly BuildingCombatSystem.BuildingIdAction NotifyHomeBuildingDestroyed;
-        public readonly BuildingCombatSystem.ObjectAction DestroyObject;
+        public readonly BuildingCombatUtilitySystemHelper.BuildingAction<RuntimeBuildingEntity> RememberOpenBaseBreach;
+        public readonly BuildingCombatUtilitySystemHelper.BuildingIdAction NotifyHomeBuildingDestroyed;
+        public readonly BuildingCombatUtilitySystemHelper.ObjectAction DestroyObject;
         public readonly Action RefreshBuildingMarkerVisibility;
         public readonly Action NotifyStaticMinimapChanged;
-        public readonly BuildingCombatSystem.LogAction Log;
+        public readonly BuildingCombatUtilitySystemHelper.LogAction Log;
         public readonly bool EnableDestroyDiagnostics;
 
         public RuntimeSource(
@@ -80,12 +80,12 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate tryResolveBuildingFocusWorldPosition,
             BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
             BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
-            BuildingCombatSystem.BuildingAction<RuntimeBuildingEntity> rememberOpenBaseBreach,
-            BuildingCombatSystem.BuildingIdAction notifyHomeBuildingDestroyed,
-            BuildingCombatSystem.ObjectAction destroyObject,
+            BuildingCombatUtilitySystemHelper.BuildingAction<RuntimeBuildingEntity> rememberOpenBaseBreach,
+            BuildingCombatUtilitySystemHelper.BuildingIdAction notifyHomeBuildingDestroyed,
+            BuildingCombatUtilitySystemHelper.ObjectAction destroyObject,
             Action refreshBuildingMarkerVisibility,
             Action notifyStaticMinimapChanged,
-            BuildingCombatSystem.LogAction log,
+            BuildingCombatUtilitySystemHelper.LogAction log,
             bool enableDestroyDiagnostics)
         {
             RuntimeBuildingSystem = runtimeBuildingSystem;
@@ -360,8 +360,8 @@ internal sealed class BuildingRuntimeContextSystem
 
     public BuildingRuntimeEntitySystem.Context CreateRuntimeEntityContext(
         RuntimeSource source,
-        BuildingCombatSystem combatSystem,
-        BuildingCombatSystem.Context<RuntimeBuildingEntity> combatContext,
+        BuildingCombatUtilitySystemHelper combatSystem,
+        BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> combatContext,
         Func<float> getTime,
         float destroyedBuildingLifetimeSeconds)
     {
@@ -417,9 +417,9 @@ internal sealed class BuildingRuntimeContextSystem
             () => source.RedirectUnitsQuery);
     }
 
-    public BuildingCombatSystem.Context<RuntimeBuildingEntity> CreateCombatContext(RuntimeSource source)
+    public BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> CreateCombatContext(RuntimeSource source)
     {
-        return new BuildingCombatSystem.Context<RuntimeBuildingEntity>(
+        return new BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>(
             source.RuntimeBuildingSystem,
             source.RuntimeBuildingSystem.Buildings,
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),

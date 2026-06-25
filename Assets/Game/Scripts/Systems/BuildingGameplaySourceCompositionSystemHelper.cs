@@ -8,7 +8,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem;
     internal readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
     internal readonly BuildingDestroyedVisualPresentationSystemHelper BuildingDestroyedVisualPresentationSystemHelper;
-    internal readonly BuildingCombatSystem BuildingCombatSystem = new();
+    internal readonly BuildingCombatUtilitySystemHelper BuildingCombatUtilitySystemHelper = new();
     internal readonly FactionResourceSystem FactionResourceSystem = new();
     internal readonly ResourceHaulerSystem ResourceHaulerSystem = new();
     internal readonly BuildingProductionSystem BuildingProductionSystem = new();

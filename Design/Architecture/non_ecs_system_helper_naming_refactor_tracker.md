@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 126 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 114 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 114 |
-| Current batch | Building barrier utility helper naming batch complete |
-| Validation status | Batch 1 through Batch 115 compile and architecture validations passed by marker; Batch 84 through Batch 115 Unity validations exited cleanly; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71 through Batch 115 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 and Batch 102 building runtime boundary validations and Batch 57 production metadata validation exited cleanly; Batch 103 had no dedicated menu-diagnostics focused runner, so compile plus architecture validation covered the naming-only UI helper slice; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 127 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 113 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 113 |
+| Current batch | Building combat utility helper naming batch complete |
+| Validation status | Batch 1 through Batch 116 compile and architecture validations passed by marker; Batch 84 through Batch 116 Unity validations exited cleanly; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71 through Batch 116 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 and Batch 102 building runtime boundary validations and Batch 57 production metadata validation exited cleanly; Batch 103 had no dedicated menu-diagnostics focused runner, so compile plus architecture validation covered the naming-only UI helper slice; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -2034,6 +2034,23 @@ This helper owns barrier/gate utility behavior for base-breach memory, wall/gate
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingBarrierUtilitySystemHelperTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch115-building-barrier.log`: passed with `[BuildingBarrierFocusedValidation] result=Passed tests=2`.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch115-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=114`.
+
+## Batch 116 - Building Combat Utility Helper
+
+This helper owns destroyed-building state, cleanup-id collection, runtime combat-state resolution, blocker destruction, runtime entity destruction sync, destroyed visual handoff, and marker/minimap callbacks. It remains a plain helper and does not introduce an ECS lifecycle.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `BuildingCombatSystem` | `BuildingCombatUtilitySystemHelper` | Provides building combat/destruction utility behavior used by building runtime composition. |
+
+## Batch 116 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `113`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod BuildingCombatUtilitySystemHelperTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch116-building-combat.log`: passed with `[BuildingCombatFocusedValidation] result=Passed tests=4`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch116-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=113`.
 
 ## Open Follow-Up Batches
 

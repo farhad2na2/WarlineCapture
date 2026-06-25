@@ -210,11 +210,11 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             tryResolveBuildingFocusWorldPosition,
             tryGetRuntimeBuilding,
             getEffectivePlacementRect);
-        BuildingCombatSystem.Context<RuntimeBuildingEntity> combatContext =
+        BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> combatContext =
             source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
         return source.BuildingRuntimeContextSystem.CreateRuntimeEntityContext(
             runtimeSource,
-            source.BuildingCombatSystem,
+            source.BuildingCombatUtilitySystemHelper,
             combatContext,
             () => UnityEngine.Time.time,
             destroyedBuildingLifetimeSeconds);

@@ -24,18 +24,18 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
                 source.BuildingPlacementStartupSystemHelper.BuildingRoot,
                 markerPropertyBlock,
                 source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
-        BuildingCombatSystem.Context<RuntimeBuildingEntity> combatContext = source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
+        BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> combatContext = source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
         BuildingBarrierUtilitySystemHelper.Context barrierContext = source.BuildingRuntimeContextSystem.CreateBarrierContext(runtimeSource);
         BuildingPlacementInputRuntimeTickSystem.Context inputContext = createInputRuntimeTickContext(source, interactionContext, markerPropertyBlock);
         return new BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source(
             createProductionRuntimeTickContext(source),
             createRuntimeBoundaryPublishContext(source, interactionContext, markerPropertyBlock),
             () => source.BuildingRuntimeVisualPresentationSystemHelper.UpdateBuildingResourceVisuals(runtimeVisualContext, UnityEngine.Time.time),
-            () => source.BuildingCombatSystem.SyncDestroyedRuntimeBuildingCombatEntities(
+            () => source.BuildingCombatUtilitySystemHelper.SyncDestroyedRuntimeBuildingCombatEntities(
                 combatContext,
                 UnityEngine.Time.time,
                 destroyedBuildingLifetimeSeconds),
-            () => source.BuildingCombatSystem.UpdateDestroyedBuildings(combatContext, UnityEngine.Time.time),
+            () => source.BuildingCombatUtilitySystemHelper.UpdateDestroyedBuildings(combatContext, UnityEngine.Time.time),
             () => source.BuildingBarrierUtilitySystemHelper.UpdateRoadBarrierDoors(barrierContext, UnityEngine.Time.deltaTime),
             () => source.BuildingPlacementRedirectCompositionSystemHelper.FlushPendingMarkerRefresh(
                 () => source.BuildingSelectionMarkerSystem.Refresh(selectionMarkerContext)),

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class BuildingCombatSystem
+public sealed class BuildingCombatUtilitySystemHelper
 {
     private readonly List<int> _destroyedCleanupIdsScratch = new();
 

@@ -120,8 +120,8 @@ public sealed class RuntimeCityCompositionSystemHelper
 
     internal void Configure(
         RuntimeCitySpawnerSystemConfig configAsset,
-        RoadRuntimeGenerationSystem roadRuntimeGenerationSystem,
-        RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
+        RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGenerationHelper,
+        RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext,
         BuildingRuntimeCitySpawnBridgeCompositionSystemHelper buildingRuntimeCitySpawnSystem,
         BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context buildingRuntimeCitySpawnContext,
         Transform runtimeRoot,
@@ -129,7 +129,7 @@ public sealed class RuntimeCityCompositionSystemHelper
     {
         _configured = true;
         _config = configAsset;
-        RuntimeCityRoadBuildBridgeState.Configure(roadRuntimeGenerationSystem, roadRuntimeGenerationContext);
+        RuntimeCityRoadBuildBridgeState.Configure(roadRuntimeGenerationHelper, roadRuntimeGenerationContext);
         RuntimeCitySpawnBridgeState.Configure(buildingRuntimeCitySpawnSystem, buildingRuntimeCitySpawnContext);
         RuntimeCityVisualPresentationSystemHelper?.SetRuntimeRoot(runtimeRoot);
         RuntimeCityMinimapEventUiSystemHelper?.Configure(mainMenuPlayUi);
@@ -266,7 +266,7 @@ public sealed class RuntimeCityCompositionSystemHelper
             _runtimeGameplayStateSystem.PlayRequested,
             false,
             generateBuildings,
-            RuntimeCityRoadBuildBridgeState.HasRoadRuntimeGenerationSystem,
+            RuntimeCityRoadBuildBridgeState.HasRoadRuntimeGenerationCompositionSystemHelper,
             RuntimeCitySpawnBridgeState.HasSpawnSystem,
             hallPrefabs,
             shopPrefabs,

@@ -13,8 +13,8 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly DayNightSystem DayNight;
         public readonly FactionVisualSettings FactionVisuals;
         public readonly RoadBuildReadModelCompositionSystemHelper RoadBuildReadModel;
-        public readonly RoadRuntimeGenerationSystem RoadRuntimeGeneration;
-        public readonly RoadRuntimeGenerationSystem.Context RoadRuntimeGenerationContext;
+        public readonly RoadRuntimeGenerationCompositionSystemHelper RoadRuntimeGeneration;
+        public readonly RoadRuntimeGenerationCompositionSystemHelper.Context RoadRuntimeGenerationContext;
         public readonly System.Action RoadRuntimeUpdate;
         public readonly System.Action RoadOnGui;
         public readonly System.Action DisposeRoad;
@@ -52,8 +52,8 @@ internal sealed class ManagedGameplayStartupSystem
             DayNightSystem dayNight,
             FactionVisualSettings factionVisuals,
             RoadBuildReadModelCompositionSystemHelper roadBuildReadModel,
-            RoadRuntimeGenerationSystem roadRuntimeGeneration,
-            RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
+            RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGeneration,
+            RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext,
             System.Action roadRuntimeUpdate,
             System.Action roadOnGui,
             System.Action disposeRoad,

@@ -8,8 +8,8 @@ internal sealed class RoadBuildCompositionSystemHelper
     public readonly struct Result
     {
         public readonly RoadBuildReadModelCompositionSystemHelper RoadBuildReadModel;
-        public readonly RoadRuntimeGenerationSystem RoadRuntimeGeneration;
-        public readonly RoadRuntimeGenerationSystem.Context RoadRuntimeGenerationContext;
+        public readonly RoadRuntimeGenerationCompositionSystemHelper RoadRuntimeGeneration;
+        public readonly RoadRuntimeGenerationCompositionSystemHelper.Context RoadRuntimeGenerationContext;
         public readonly RoadGridProjectionSystem.RoadFootprintState RoadFootprintState;
         public readonly Action RuntimeUpdate;
         public readonly Action OnGui;
@@ -17,8 +17,8 @@ internal sealed class RoadBuildCompositionSystemHelper
 
         public Result(
             RoadBuildReadModelCompositionSystemHelper roadBuildReadModel,
-            RoadRuntimeGenerationSystem roadRuntimeGeneration,
-            RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
+            RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGeneration,
+            RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext,
             RoadGridProjectionSystem.RoadFootprintState roadFootprintState,
             Action runtimeUpdate,
             Action onGui,
@@ -49,7 +49,7 @@ internal sealed class RoadBuildCompositionSystemHelper
 
         return new Result(
             roadBuildReadModel,
-            roadSource.RoadRuntimeGenerationSystem,
+            roadSource.RoadRuntimeGenerationCompositionSystemHelper,
             contextSystem.CreateRoadRuntimeGenerationContext(roadSource),
             contextSystem.CreateRoadFootprintState(roadSource),
             () => RoadBuildRuntimeActionCompositionSystemHelper.Update(roadSource.RoadBuildRuntimeActionState),

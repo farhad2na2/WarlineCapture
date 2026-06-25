@@ -189,18 +189,18 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 
 ## Phase 6: Extract Runtime-City Road API
 
-21. Complete: Create `RoadRuntimeGenerationSystem`
+21. Complete: Create `RoadRuntimeGenerationCompositionSystemHelper`
     - Owns runtime-city-facing road generation commands: create road stroke from cells, create autobahn stroke, standalone connector chain, connector road-cell lookup, chain-end lookup, and debug city road generation if still needed.
-    - Created `RoadRuntimeGenerationSystem` for runtime-city-facing road commands and road generation read/sync helpers.
+    - Created `RoadRuntimeGenerationCompositionSystemHelper` for runtime-city-facing road commands and road generation read/sync helpers.
     - RoadBuildSystem now delegates runtime road generation wrappers to this boundary while callers migrate in step 22.
     - Runtime city should depend on this boundary through `RuntimeCityRoadBuildBridgeCompositionSystemHelper`, not on `RoadBuildSystem`.
     - Expected output: runtime city no longer requires the broad road shell.
 
 22. Complete: Migrate `RuntimeCityRoadBuildBridgeCompositionSystemHelper`
-    - Change bridge configuration from `RoadBuildSystem` to `RoadRuntimeGenerationSystem` plus any required read/query systems.
-    - RuntimeCityRoadBuildBridgeCompositionSystemHelper now stores RoadRuntimeGenerationSystem plus its context.
+    - Change bridge configuration from `RoadBuildSystem` to `RoadRuntimeGenerationCompositionSystemHelper` plus any required read/query systems.
+    - RuntimeCityRoadBuildBridgeCompositionSystemHelper now stores RoadRuntimeGenerationCompositionSystemHelper plus its context.
     - RuntimeCityCompositionSystemHelper receives the runtime road generation boundary instead of a RoadBuildSystem for road generation.
-    - Runtime city startup readiness now checks HasRoadRuntimeGenerationSystem.
+    - Runtime city startup readiness now checks HasRoadRuntimeGenerationCompositionSystemHelper.
     - Preserve runtime-city validation smoke behavior.
     - Expected output: runtime city road build bridge has no direct broad-shell reference.
 
@@ -231,7 +231,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - Update `ManagedGameplayStartupSystem`, `GameBootstrap`, and feature startup to construct/configure extracted road systems.
     - Managed startup now passes road footprint queries, runtime generation, runtime update/gui/dispose actions, and menu/runtime bind actions from RoadBuildCompositionSystemHelper.Result.
     - GameBootstrap no longer stores RoadBuildSystem; it stores the road read/runtime-generation boundaries and narrow actions.
-    - GameplayFeatureStartupCompositionSystemHelper now receives RoadRuntimeGenerationSystem plus context and a road gameplay bind action instead of RoadBuildSystem.
+    - GameplayFeatureStartupCompositionSystemHelper now receives RoadRuntimeGenerationCompositionSystemHelper plus context and a road gameplay bind action instead of RoadBuildSystem.
     - Expected output: startup does not instantiate `new RoadBuildSystem()`.
 
 27. Complete: Replace runtime update and GUI delegates

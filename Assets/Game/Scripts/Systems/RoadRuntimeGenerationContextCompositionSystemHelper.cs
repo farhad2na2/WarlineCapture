@@ -2,18 +2,18 @@ internal sealed class RoadRuntimeGenerationContextCompositionSystemHelper
 {
     public readonly struct Context
     {
-        public readonly RoadRuntimeGenerationSystem.TryGetRoadCellSizeInGridCellsDelegate TryGetRoadCellSizeInGridCells;
+        public readonly RoadRuntimeGenerationCompositionSystemHelper.TryGetRoadCellSizeInGridCellsDelegate TryGetRoadCellSizeInGridCells;
         public readonly RoadGridProjectionSystem RoadGridProjectionSystem;
         public readonly RoadGridProjectionSystem.Context RoadGridProjectionContext;
-        public readonly RoadRuntimeGenerationSystem.CreateStrokeDelegate CreateStroke;
+        public readonly RoadRuntimeGenerationCompositionSystemHelper.CreateStrokeDelegate CreateStroke;
         public readonly RoadSpecialVisualSystem SpecialVisualSystem;
         public readonly RoadSpecialVisualSystem.Context SpecialVisualContext;
 
         public Context(
-            RoadRuntimeGenerationSystem.TryGetRoadCellSizeInGridCellsDelegate tryGetRoadCellSizeInGridCells,
+            RoadRuntimeGenerationCompositionSystemHelper.TryGetRoadCellSizeInGridCellsDelegate tryGetRoadCellSizeInGridCells,
             RoadGridProjectionSystem roadGridProjectionSystem,
             RoadGridProjectionSystem.Context roadGridProjectionContext,
-            RoadRuntimeGenerationSystem.CreateStrokeDelegate createStroke,
+            RoadRuntimeGenerationCompositionSystemHelper.CreateStrokeDelegate createStroke,
             RoadSpecialVisualSystem specialVisualSystem,
             RoadSpecialVisualSystem.Context specialVisualContext)
         {
@@ -26,9 +26,9 @@ internal sealed class RoadRuntimeGenerationContextCompositionSystemHelper
         }
     }
 
-    public static RoadRuntimeGenerationSystem.Context CreateContext(Context context)
+    public static RoadRuntimeGenerationCompositionSystemHelper.Context CreateContext(Context context)
     {
-        return new RoadRuntimeGenerationSystem.Context(
+        return new RoadRuntimeGenerationCompositionSystemHelper.Context(
             context.TryGetRoadCellSizeInGridCells,
             () => BeginDeferredRoadEcsSync(context),
             () => EndDeferredRoadEcsSync(context),

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class RoadRuntimeGenerationSystem
+internal sealed class RoadRuntimeGenerationCompositionSystemHelper
 {
     public delegate bool TryGetRoadCellSizeInGridCellsDelegate(out int roadCellSizeInGridCells);
     public delegate void RuntimeAction();

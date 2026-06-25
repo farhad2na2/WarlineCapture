@@ -19,7 +19,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadBuildStartupState.RoadGridSize);
     }
 
-    public RoadRuntimeGenerationSystem.Context CreateRoadRuntimeGenerationContext(RoadBuildCompositionSourceSystem source)
+    public RoadRuntimeGenerationCompositionSystemHelper.Context CreateRoadRuntimeGenerationContext(RoadBuildCompositionSourceSystem source)
     {
         return RoadRuntimeGenerationContextCompositionSystemHelper.CreateContext(CreateRoadRuntimeGenerationContextSource(source));
     }

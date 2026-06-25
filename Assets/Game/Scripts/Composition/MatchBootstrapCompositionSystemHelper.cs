@@ -109,8 +109,8 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     private ISelectionRectangleState _selectionRectangleState;
     private BuildingPlacementInteractionBoundaryCompositionSystemHelper _buildingPlacementInteraction;
     private BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context _buildingPlacementInteractionContext;
-    private RoadRuntimeGenerationSystem _roadRuntimeGeneration;
-    private RoadRuntimeGenerationSystem.Context _roadRuntimeGenerationContext;
+    private RoadRuntimeGenerationCompositionSystemHelper _roadRuntimeGeneration;
+    private RoadRuntimeGenerationCompositionSystemHelper.Context _roadRuntimeGenerationContext;
     private Action _roadRuntimeUpdate;
     private Action _roadOnGui;
     private Action _disposeRoad;

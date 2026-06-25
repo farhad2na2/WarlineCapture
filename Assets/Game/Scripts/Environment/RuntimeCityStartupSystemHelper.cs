@@ -35,7 +35,7 @@ internal sealed class RuntimeCityStartupSystemHelper
         public readonly bool PlayRequested;
         public readonly bool IsMissionExcluded;
         public readonly bool GenerateBuildings;
-        public readonly bool HasRoadRuntimeGenerationSystem;
+        public readonly bool HasRoadRuntimeGenerationCompositionSystemHelper;
         public readonly bool HasSpawnSystem;
         public readonly IReadOnlyCollection<GameObject> HallPrefabs;
         public readonly IReadOnlyCollection<GameObject> ShopPrefabs;
@@ -53,7 +53,7 @@ internal sealed class RuntimeCityStartupSystemHelper
             bool playRequested,
             bool isMissionExcluded,
             bool generateBuildings,
-            bool hasRoadRuntimeGenerationSystem,
+            bool hasRoadRuntimeGenerationCompositionSystemHelper,
             bool hasSpawnSystem,
             IReadOnlyCollection<GameObject> hallPrefabs,
             IReadOnlyCollection<GameObject> shopPrefabs,
@@ -70,7 +70,7 @@ internal sealed class RuntimeCityStartupSystemHelper
             PlayRequested = playRequested;
             IsMissionExcluded = isMissionExcluded;
             GenerateBuildings = generateBuildings;
-            HasRoadRuntimeGenerationSystem = hasRoadRuntimeGenerationSystem;
+            HasRoadRuntimeGenerationCompositionSystemHelper = hasRoadRuntimeGenerationCompositionSystemHelper;
             HasSpawnSystem = hasSpawnSystem;
             HallPrefabs = hallPrefabs;
             ShopPrefabs = shopPrefabs;
@@ -164,8 +164,8 @@ internal sealed class RuntimeCityStartupState
         {
             return $"pendingInitialUnits configs={initialSpawnConfigs} initialized={initializedInitialSpawnConfigs}";
         }
-        if (!context.HasRoadRuntimeGenerationSystem)
-            return "missingRoadRuntimeGenerationSystem";
+        if (!context.HasRoadRuntimeGenerationCompositionSystemHelper)
+            return "missingRoadRuntimeGenerationCompositionSystemHelper";
         if (context.GenerateBuildings && !context.HasSpawnSystem)
             return "missingBuildingSpawnSystem";
         if (context.TryGetRoadCellSize == null)
@@ -189,7 +189,7 @@ internal sealed class RuntimeCityStartupState
 
     private static RuntimeCityStartupSystemHelper.Result TryCreateGenerateResult(RuntimeCityStartupSystemHelper.Context context)
     {
-        if (!context.HasRoadRuntimeGenerationSystem)
+        if (!context.HasRoadRuntimeGenerationCompositionSystemHelper)
             return RuntimeCityStartupSystemHelper.Result.None;
         if (context.GenerateBuildings && !context.HasSpawnSystem)
             return RuntimeCityStartupSystemHelper.Result.None;

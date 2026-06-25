@@ -8,13 +8,13 @@ internal sealed class RuntimeCityRoadBuildBridgeCompositionSystemHelper
 
     public RuntimeCityRoadBuildBridgeState State => _state;
 
-    public bool HasRoadRuntimeGenerationSystem => _state.HasRoadRuntimeGenerationSystem;
+    public bool HasRoadRuntimeGenerationCompositionSystemHelper => _state.HasRoadRuntimeGenerationCompositionSystemHelper;
 
     public void Configure(
-        RoadRuntimeGenerationSystem roadRuntimeGenerationSystem,
-        RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext)
+        RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGenerationHelper,
+        RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext)
     {
-        _state.Configure(roadRuntimeGenerationSystem, roadRuntimeGenerationContext);
+        _state.Configure(roadRuntimeGenerationHelper, roadRuntimeGenerationContext);
     }
 
     public void Clear()
@@ -73,30 +73,30 @@ internal sealed class RuntimeCityRoadBuildBridgeState
 {
     private const int DefaultRoadCellSizeInGridCells = 10;
     private const string RoadCellSizeFallbackFixTag = "RuntimeCityRoadCellFallbackFix_2026-05-26";
-    private RoadRuntimeGenerationSystem _roadRuntimeGenerationSystem;
-    private RoadRuntimeGenerationSystem.Context _roadRuntimeGenerationContext;
+    private RoadRuntimeGenerationCompositionSystemHelper _roadRuntimeGenerationHelper;
+    private RoadRuntimeGenerationCompositionSystemHelper.Context _roadRuntimeGenerationContext;
 
-    public bool HasRoadRuntimeGenerationSystem => _roadRuntimeGenerationSystem != null;
+    public bool HasRoadRuntimeGenerationCompositionSystemHelper => _roadRuntimeGenerationHelper != null;
 
     public void Configure(
-        RoadRuntimeGenerationSystem roadRuntimeGenerationSystem,
-        RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext)
+        RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGenerationHelper,
+        RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext)
     {
-        _roadRuntimeGenerationSystem = roadRuntimeGenerationSystem;
+        _roadRuntimeGenerationHelper = roadRuntimeGenerationHelper;
         _roadRuntimeGenerationContext = roadRuntimeGenerationContext;
     }
 
     public void Clear()
     {
-        _roadRuntimeGenerationSystem = null;
+        _roadRuntimeGenerationHelper = null;
         _roadRuntimeGenerationContext = default;
     }
 
     public bool TryGetRoadCellSizeInGridCells(out int roadCellSizeInGridCells)
     {
         roadCellSizeInGridCells = 0;
-        if (_roadRuntimeGenerationSystem != null &&
-            _roadRuntimeGenerationSystem.TryGetRoadCellSizeInGridCells(
+        if (_roadRuntimeGenerationHelper != null &&
+            _roadRuntimeGenerationHelper.TryGetRoadCellSizeInGridCells(
                 _roadRuntimeGenerationContext,
                 out roadCellSizeInGridCells))
         {
@@ -116,18 +116,18 @@ internal sealed class RuntimeCityRoadBuildBridgeState
 
     public void BeginDeferredRoadEcsSync()
     {
-        _roadRuntimeGenerationSystem?.BeginDeferredRoadEcsSync(_roadRuntimeGenerationContext);
+        _roadRuntimeGenerationHelper?.BeginDeferredRoadEcsSync(_roadRuntimeGenerationContext);
     }
 
     public void EndDeferredRoadEcsSync()
     {
-        _roadRuntimeGenerationSystem?.EndDeferredRoadEcsSync(_roadRuntimeGenerationContext);
+        _roadRuntimeGenerationHelper?.EndDeferredRoadEcsSync(_roadRuntimeGenerationContext);
     }
 
     public bool CreateRoadStrokeFromRoadCells(IReadOnlyList<Vector2Int> cells)
     {
-        return _roadRuntimeGenerationSystem != null &&
-            _roadRuntimeGenerationSystem.CreateRoadStrokeFromRoadCells(
+        return _roadRuntimeGenerationHelper != null &&
+            _roadRuntimeGenerationHelper.CreateRoadStrokeFromRoadCells(
                 _roadRuntimeGenerationContext,
                 cells);
     }
@@ -137,8 +137,8 @@ internal sealed class RuntimeCityRoadBuildBridgeState
         bool useAutobahnConnectorAtStart,
         bool useAutobahnConnectorAtEnd)
     {
-        return _roadRuntimeGenerationSystem != null &&
-            _roadRuntimeGenerationSystem.CreateAutobahnStrokeFromRoadCells(
+        return _roadRuntimeGenerationHelper != null &&
+            _roadRuntimeGenerationHelper.CreateAutobahnStrokeFromRoadCells(
                 _roadRuntimeGenerationContext,
                 cells,
                 useAutobahnConnectorAtStart,
@@ -150,8 +150,8 @@ internal sealed class RuntimeCityRoadBuildBridgeState
         Vector2Int direction,
         int length)
     {
-        return _roadRuntimeGenerationSystem != null &&
-            _roadRuntimeGenerationSystem.CreateStandaloneStraightRoadChainFromConnector(
+        return _roadRuntimeGenerationHelper != null &&
+            _roadRuntimeGenerationHelper.CreateStandaloneStraightRoadChainFromConnector(
                 _roadRuntimeGenerationContext,
                 connectorCell,
                 direction,
@@ -163,8 +163,8 @@ internal sealed class RuntimeCityRoadBuildBridgeState
         out Vector2Int roadConnectionCell)
     {
         roadConnectionCell = default;
-        return _roadRuntimeGenerationSystem != null &&
-            _roadRuntimeGenerationSystem.TryGetStandaloneStraightChainEndRoadCell(
+        return _roadRuntimeGenerationHelper != null &&
+            _roadRuntimeGenerationHelper.TryGetStandaloneStraightChainEndRoadCell(
                 _roadRuntimeGenerationContext,
                 direction,
                 out roadConnectionCell);

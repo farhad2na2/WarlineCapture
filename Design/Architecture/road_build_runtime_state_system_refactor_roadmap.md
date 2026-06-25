@@ -34,7 +34,7 @@ Final target: delete `RoadBuildRuntimeStateSystem.cs` and `.meta`. `RoadBuildCom
 New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. Later steps may remove members from this list as callers migrate to the target owners.
 
 - Runtime generation exposure:
-  - `RoadRuntimeGenerationSystem`, `RoadRuntimeGenerationContext`
+  - `RoadRuntimeGenerationCompositionSystemHelper`, `RoadRuntimeGenerationContext`
   - Target owner: `RoadBuildCompositionSourceSystem` plus `RoadRuntimeGenerationContextCompositionSystemHelper`.
 - Road footprint exposure:
   - `RoadFootprintQuerySystem`, `RoadFootprintQueryContext`
@@ -47,7 +47,7 @@ New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. 
   - Target owner: `RoadBuildReadModelCompositionSystemHelper` plus building interaction/read boundaries.
 - Runtime-city road generation commands:
   - `BeginDeferredRoadEcsSync`, `EndDeferredRoadEcsSync`, `TryGetRoadCellSizeInGridCells`, `CreateRoadStrokeFromRoadCells`, `CreateAutobahnStrokeFromRoadCells`, `TryGetAutobahnConnectorRoadCell`, `TryLogRoadConnectMarkers`, `CreateStandaloneStraightRoadChainFromConnector`, `TryGetStandaloneStraightChainEndRoadCell`, `CreateStandaloneDebugCityRoadNetworkFromStraightChain`
-  - Target owner: `RoadRuntimeGenerationSystem`, `RoadRuntimeGenerationContextCompositionSystemHelper`, and `RoadGridProjectionSystem`.
+  - Target owner: `RoadRuntimeGenerationCompositionSystemHelper`, `RoadRuntimeGenerationContextCompositionSystemHelper`, and `RoadGridProjectionSystem`.
 - Road footprint commands:
   - `HasRoadInFootprint`, `FillRoadFootprintMask`
   - Target owner: `RoadFootprintQuerySystem` plus `RoadGridContextSystem`.
@@ -184,7 +184,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 11. Complete: Extract road runtime-generation context construction
    - Create `RoadRuntimeGenerationContextCompositionSystemHelper`.
    - Move road-cell-size query binding, deferred road ECS sync callbacks, stroke creation callback, and special visual context handoff.
-   - Expected output: runtime city uses `RoadRuntimeGenerationSystem` plus context without touching the temporary holder.
+   - Expected output: runtime city uses `RoadRuntimeGenerationCompositionSystemHelper` plus context without touching the temporary holder.
 
 12. Complete: Extract footprint/grid-projection context construction
    - Create `RoadGridContextSystem`.
@@ -292,7 +292,7 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Migrate any remaining production/test calls to `ActivateRoadBuildMode`, `ConfirmRoadBuildSession`, `CancelRoadBuildSession`, `ExitBuildMode`, road generation wrappers, footprint wrappers, update/gui, and dispose.
    - Expected output: `rg "RoadBuildRuntimeStateSystem" Assets/Game/Scripts -g '*.cs'` finds only the file being retired and temporary composition construction until deletion.
    - Removed the remaining public road-generation, footprint-query, runtime update, GUI, and road-command wrapper methods from `RoadBuildRuntimeStateSystem`.
-   - Runtime generation and footprint consumers now receive `RoadRuntimeGenerationSystem`, `RoadRuntimeGenerationSystem.Context`, `RoadFootprintQuerySystem`, and `RoadFootprintQuerySystem.Context` from `RoadBuildCompositionSystemHelper.Result`.
+   - Runtime generation and footprint consumers now receive `RoadRuntimeGenerationCompositionSystemHelper`, `RoadRuntimeGenerationCompositionSystemHelper.Context`, `RoadFootprintQuerySystem`, and `RoadFootprintQuerySystem.Context` from `RoadBuildCompositionSystemHelper.Result`.
    - Runtime update and GUI consumers now use `RoadBuildRuntimeActionCompositionSystemHelper` through composition, not `RoadBuildRuntimeStateSystem.Update` or `OnGui`.
    - The temporary holder keeps only startup/bind/disposal compatibility and internal context creation needed for steps 29-30.
 

@@ -35,7 +35,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildInteractionCompositionSystemHelper RoadBuildInteractionCompositionSystemHelper = new();
     public readonly RoadBuildContextSystem RoadBuildContextSystem = new();
     public readonly RoadBuildEcsBoundaryCompositionSystemHelper RoadBuildEcsBoundaryCompositionSystemHelper = new();
-    public readonly RoadRuntimeGenerationSystem RoadRuntimeGenerationSystem;
+    public readonly RoadRuntimeGenerationCompositionSystemHelper RoadRuntimeGenerationCompositionSystemHelper;
     public readonly RoadRuntimeGenerationContextCompositionSystemHelper RoadRuntimeGenerationContextCompositionSystemHelper;
     public readonly RoadBuildMutationCompositionSystemHelper RoadBuildMutationCompositionSystemHelper = new();
     public readonly RoadBuildCompositionContextCompositionSystemHelper RoadBuildCompositionContextCompositionSystemHelper = new();
@@ -58,7 +58,7 @@ internal sealed class RoadBuildCompositionSourceSystem
         RoadChunkVisualSystem = ResolveRoadChunkVisualSystem();
         RoadSpecialVisualSystem = ResolveRoadSpecialVisualSystem();
         RoadPreviewPresentationSystemHelper = ResolveRoadPreviewPresentationSystemHelper();
-        RoadRuntimeGenerationSystem = ResolveRoadRuntimeGenerationSystem();
+        RoadRuntimeGenerationCompositionSystemHelper = ResolveRoadRuntimeGenerationCompositionSystemHelper();
         RoadRuntimeGenerationContextCompositionSystemHelper = ResolveRoadRuntimeGenerationContextCompositionSystemHelper();
         RoadMinimapEventUiSystemHelper = ResolveRoadMinimapEventUiSystemHelper();
         RoadBuildRuntimeActionCompositionSystemHelper = ResolveRoadBuildRuntimeActionCompositionSystemHelper();
@@ -137,9 +137,9 @@ internal sealed class RoadBuildCompositionSourceSystem
         return new RoadPreviewPresentationSystemHelper();
     }
 
-    private static RoadRuntimeGenerationSystem ResolveRoadRuntimeGenerationSystem()
+    private static RoadRuntimeGenerationCompositionSystemHelper ResolveRoadRuntimeGenerationCompositionSystemHelper()
     {
-        return new RoadRuntimeGenerationSystem();
+        return new RoadRuntimeGenerationCompositionSystemHelper();
     }
 
     private static RoadRuntimeGenerationContextCompositionSystemHelper ResolveRoadRuntimeGenerationContextCompositionSystemHelper()

@@ -26,8 +26,8 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
         RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
         RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig,
         RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig,
-        RoadRuntimeGenerationSystem roadRuntimeGenerationSystem,
-        RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
+        RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGenerationHelper,
+        RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext,
         Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> bindRoadGameplayFeatures,
         BuildingRuntimeCitySpawnBridgeCompositionSystemHelper buildingRuntimeCitySpawn,
         BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context buildingRuntimeCitySpawnContext,
@@ -48,7 +48,7 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
         RuntimeCityCompositionSystemHelper runtimeCity = ResolveRuntimeCityCompositionSystemHelper();
         runtimeCity?.Configure(
             runtimeCitySpawnerConfig,
-            roadRuntimeGenerationSystem,
+            roadRuntimeGenerationHelper,
             roadRuntimeGenerationContext,
             buildingRuntimeCitySpawn,
             buildingRuntimeCitySpawnContext,

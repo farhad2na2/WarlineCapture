@@ -9,7 +9,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementInputRuntimeTickUiSystemHelper.Context> createInputRuntimeTickContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingProductionRuntimeTickSystem.Context> createProductionRuntimeTickContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingProductionRuntimeTickCompositionSystemHelper.Context> createProductionRuntimeTickContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeBoundaryPublishCompositionSystemHelper.Context> createRuntimeBoundaryPublishContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, Action> createMapBuildingPlacementSpawnUpdate,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, Action> createMapVehiclePlacementSpawnUpdate,

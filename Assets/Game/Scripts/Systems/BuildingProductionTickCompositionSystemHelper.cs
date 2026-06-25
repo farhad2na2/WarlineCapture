@@ -2,13 +2,13 @@ using System;
 
 internal sealed class BuildingProductionTickCompositionSystemHelper
 {
-    public BuildingProductionRuntimeTickSystem.Context Create(
+    public BuildingProductionRuntimeTickCompositionSystemHelper.Context Create(
         BuildingGameplaySourceCompositionSystemHelper source,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingProductionContextCompositionSystemHelper.Source> createProductionRuntimeContextSource,
         float oilBarrelsPerFuelBarrel)
     {
         BuildingProductionContextCompositionSystemHelper.Source productionSource = createProductionRuntimeContextSource(source);
-        return new BuildingProductionRuntimeTickSystem.Context(
+        return new BuildingProductionRuntimeTickCompositionSystemHelper.Context(
             source.RuntimeBuildingSystem.Buildings,
             source.BuildingGameplayDependencyCompositionSystemHelper.DayNightSystem,
             source.FactionResourceSystem,

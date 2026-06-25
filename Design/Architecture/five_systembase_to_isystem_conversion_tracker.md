@@ -92,7 +92,7 @@ Baseline audit notes:
 
 Direct call sites:
 
-- `BuildingSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, included in `BuildingGameplayResultCompositionSystemHelper`, invoked through `BuildingProductionRuntimeTickSystem`, `BuildingProductionTickCompositionSystemHelper`, `BuildingProductionCompositionSystemHelper`, and `BuildingRuntimeContextSystem.CreateBuildingSpawnContext`; focused tests call `ResolveProducedUnitFaction`.
+- `BuildingSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, included in `BuildingGameplayResultCompositionSystemHelper`, invoked through `BuildingProductionRuntimeTickCompositionSystemHelper`, `BuildingProductionTickCompositionSystemHelper`, `BuildingProductionCompositionSystemHelper`, and `BuildingRuntimeContextSystem.CreateBuildingSpawnContext`; focused tests call `ResolveProducedUnitFaction`.
 - `BuildingProductionTransportBridgeSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, passed through `BuildingProductionContextCompositionSystemHelper` and `BuildingProductionTransportSystem`; focused production tests call `FocusNewestPlayerProducedUnit`.
 - `CitizenVisibleUnitSystem`: constructed by `CitizenPopulationCompositionSystem` and directly constructed by `CitizenVisibleUnitSystemTests`.
 - `MapVehiclePlacementSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, invoked by `BuildingGameplayCompositionSystemHelper` map placement update callbacks; blocker cleanup helpers are directly covered by `UnitMovementBlockerValidationTests`.

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class BuildingProductionRuntimeTickSystem
+internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
 {
     public readonly struct Context
     {

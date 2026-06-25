@@ -24,17 +24,17 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
             buildingPlacementInteractionSystem,
             buildingPlacementInteractionContext);
         source.RoadBuildReadModelSystem.Configure(contextSystem.CreateRoadBuildReadModelContext(source));
-        RoadBuildRuntimeActionSystem.ConfigureInput(
+        RoadBuildRuntimeActionCompositionSystemHelper.ConfigureInput(
             source.RoadBuildRuntimeActionState,
             source.RoadBuildInteractionContextSystem,
             contextSystem.CreateRoadBuildInteractionContext(source),
             source.RoadBuildStartupState.WorldCamera);
-        RoadBuildRuntimeActionSystem.ConfigureCommands(
+        RoadBuildRuntimeActionCompositionSystemHelper.ConfigureCommands(
             source.RoadBuildRuntimeActionState,
             source.RoadBuildCommandCompositionSystemHelper,
             contextSystem.CreateRoadBuildCommandContext(source),
             source.RoadBuildEcsBoundarySystem.TryGetEntityManager);
-        RoadBuildRuntimeActionSystem.ConfigureGui(
+        RoadBuildRuntimeActionCompositionSystemHelper.ConfigureGui(
             source.RoadBuildRuntimeActionState,
             source.RoadDeletePromptSystem,
             contextSystem.CreateRoadDeletePromptContext(source));

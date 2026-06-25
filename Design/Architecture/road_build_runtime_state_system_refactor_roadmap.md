@@ -272,14 +272,14 @@ Every phase boundary must also run the existing road validation set when feasibl
 25. Complete: Move runtime update action out
    - Have `RoadBuildCompositionSystemHelper` call `RoadBuildInputSystem.Update` through `RoadBuildInteractionContextSystem` output, not through `RoadBuildRuntimeStateSystem.RoadBuildInputSystem`.
    - Expected output: runtime update action does not touch the temporary holder.
-   - Added `RoadBuildRuntimeActionSystem` as the narrow runtime-update action owner.
-   - `RoadBuildCompositionSystemHelper.Result.RuntimeUpdate` now invokes `RoadBuildRuntimeActionSystem.Update` through composition source state instead of reading `RoadBuildInputSystem`, `RoadBuildInputContext`, or camera through `RoadBuildRuntimeStateSystem`.
+   - Added `RoadBuildRuntimeActionCompositionSystemHelper` as the narrow runtime-update action owner.
+   - `RoadBuildCompositionSystemHelper.Result.RuntimeUpdate` now invokes `RoadBuildRuntimeActionCompositionSystemHelper.Update` through composition source state instead of reading `RoadBuildInputSystem`, `RoadBuildInputContext`, or camera through `RoadBuildRuntimeStateSystem`.
 
 26. Complete: Move GUI action out
    - Have `RoadBuildCompositionSystemHelper` call `RoadDeletePromptSystem.OnGui` through `RoadBuildInteractionContextSystem` output, not through `RoadBuildRuntimeStateSystem.RoadDeletePromptSystem`.
    - Expected output: GUI action does not touch the temporary holder.
-   - Extended `RoadBuildRuntimeActionSystem` to own the delete-prompt GUI action.
-   - `RoadBuildCompositionSystemHelper.Result.OnGui` now invokes `RoadBuildRuntimeActionSystem.OnGui` through composition source state instead of reading `RoadDeletePromptSystem` or context through `RoadBuildRuntimeStateSystem`.
+   - Extended `RoadBuildRuntimeActionCompositionSystemHelper` to own the delete-prompt GUI action.
+   - `RoadBuildCompositionSystemHelper.Result.OnGui` now invokes `RoadBuildRuntimeActionCompositionSystemHelper.OnGui` through composition source state instead of reading `RoadDeletePromptSystem` or context through `RoadBuildRuntimeStateSystem`.
 
 27. Complete: Extract road disposal sequencing
    - Create `RoadBuildDisposalSystem`.
@@ -293,7 +293,7 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Expected output: `rg "RoadBuildRuntimeStateSystem" Assets/Game/Scripts -g '*.cs'` finds only the file being retired and temporary composition construction until deletion.
    - Removed the remaining public road-generation, footprint-query, runtime update, GUI, and road-command wrapper methods from `RoadBuildRuntimeStateSystem`.
    - Runtime generation and footprint consumers now receive `RoadRuntimeGenerationSystem`, `RoadRuntimeGenerationSystem.Context`, `RoadFootprintQuerySystem`, and `RoadFootprintQuerySystem.Context` from `RoadBuildCompositionSystemHelper.Result`.
-   - Runtime update and GUI consumers now use `RoadBuildRuntimeActionSystem` through composition, not `RoadBuildRuntimeStateSystem.Update` or `OnGui`.
+   - Runtime update and GUI consumers now use `RoadBuildRuntimeActionCompositionSystemHelper` through composition, not `RoadBuildRuntimeStateSystem.Update` or `OnGui`.
    - The temporary holder keeps only startup/bind/disposal compatibility and internal context creation needed for steps 29-30.
 
 29. Complete: Convert temporary holder to empty adapter or skip directly to deletion

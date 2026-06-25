@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RoadBuildRuntimeActionSystem
+internal sealed class RoadBuildRuntimeActionCompositionSystemHelper
 {
     internal sealed class State
     {

@@ -177,8 +177,8 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
     {
         using World world = new("RoadBuildRuntimeActionCommandQueueTest");
         RoadBuildCommandTestState state = new();
-        RoadBuildRuntimeActionSystem.State runtimeState = RoadBuildRuntimeActionSystem.CreateState();
-        RoadBuildRuntimeActionSystem.ConfigureCommands(
+        RoadBuildRuntimeActionCompositionSystemHelper.State runtimeState = RoadBuildRuntimeActionCompositionSystemHelper.CreateState();
+        RoadBuildRuntimeActionCompositionSystemHelper.ConfigureCommands(
             runtimeState,
             state.CommandSystem,
             state.CommandContext,
@@ -189,7 +189,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
             });
 
         int requestId = state.CommandSystem.EnqueueEnterRoadBuildMode(world.EntityManager);
-        RoadBuildRuntimeActionSystem.Update(runtimeState);
+        RoadBuildRuntimeActionCompositionSystemHelper.Update(runtimeState);
 
         AssertRoadBuildResult(
             world.EntityManager,

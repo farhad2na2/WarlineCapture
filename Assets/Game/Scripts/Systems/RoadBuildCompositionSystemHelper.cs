@@ -52,8 +52,8 @@ internal sealed class RoadBuildCompositionSystemHelper
             roadSource.RoadRuntimeGenerationSystem,
             contextSystem.CreateRoadRuntimeGenerationContext(roadSource),
             contextSystem.CreateRoadFootprintState(roadSource),
-            () => RoadBuildRuntimeActionSystem.Update(roadSource.RoadBuildRuntimeActionState),
-            () => RoadBuildRuntimeActionSystem.OnGui(roadSource.RoadBuildRuntimeActionState),
+            () => RoadBuildRuntimeActionCompositionSystemHelper.Update(roadSource.RoadBuildRuntimeActionState),
+            () => RoadBuildRuntimeActionCompositionSystemHelper.OnGui(roadSource.RoadBuildRuntimeActionState),
             () => lifecycleSystem.Dispose(roadSource, contextSystem));
     }
 

@@ -6,8 +6,8 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildReadModelSystem RoadBuildReadModelSystem = new();
     public readonly RoadBuildVisualContextSystem RoadBuildVisualContextSystem;
     public readonly RoadBuildInteractionContextSystem RoadBuildInteractionContextSystem = new();
-    public readonly RoadBuildRuntimeActionSystem RoadBuildRuntimeActionSystem;
-    public readonly RoadBuildRuntimeActionSystem.State RoadBuildRuntimeActionState;
+    public readonly RoadBuildRuntimeActionCompositionSystemHelper RoadBuildRuntimeActionCompositionSystemHelper;
+    public readonly RoadBuildRuntimeActionCompositionSystemHelper.State RoadBuildRuntimeActionState;
     public readonly RoadBuildDisposalSystem RoadBuildDisposalSystem = new();
     public readonly RoadBuildConfigSystem RoadBuildConfigSystem = new();
     public readonly RoadRuntimeRootSystem RoadRuntimeRootSystem;
@@ -61,9 +61,9 @@ internal sealed class RoadBuildCompositionSourceSystem
         RoadRuntimeGenerationSystem = ResolveRoadRuntimeGenerationSystem();
         RoadRuntimeGenerationContextSystem = ResolveRoadRuntimeGenerationContextSystem();
         RoadMinimapEventSystem = ResolveRoadMinimapEventSystem();
-        RoadBuildRuntimeActionSystem = ResolveRoadBuildRuntimeActionSystem();
+        RoadBuildRuntimeActionCompositionSystemHelper = ResolveRoadBuildRuntimeActionCompositionSystemHelper();
         RoadBuildPlacementVisualSystem = ResolveRoadBuildPlacementVisualSystem();
-        RoadBuildRuntimeActionState = global::RoadBuildRuntimeActionSystem.CreateState();
+        RoadBuildRuntimeActionState = global::RoadBuildRuntimeActionCompositionSystemHelper.CreateState();
         RoadBuildDependencyState = RoadBuildDependencySystem.CreateState();
         RoadBuildPlacementVisualState = RoadBuildPlacementVisualSystem?.CreateState() ?? new RoadBuildPlacementVisualSystem.State();
         RoadBuildPlacementState = RoadBuildBuildingPlacementCompositionSystemHelper.CreateState();
@@ -152,8 +152,8 @@ internal sealed class RoadBuildCompositionSourceSystem
         return new RoadMinimapEventSystem();
     }
 
-    private static RoadBuildRuntimeActionSystem ResolveRoadBuildRuntimeActionSystem()
+    private static RoadBuildRuntimeActionCompositionSystemHelper ResolveRoadBuildRuntimeActionCompositionSystemHelper()
     {
-        return new RoadBuildRuntimeActionSystem();
+        return new RoadBuildRuntimeActionCompositionSystemHelper();
     }
 }

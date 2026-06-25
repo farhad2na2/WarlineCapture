@@ -16,15 +16,15 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `90 / 109 complete (82.6%)`.
+- Checklist progress: `91 / 109 complete (83.5%)`.
 - In progress: `0`.
-- Remaining open: `7`.
-- Current target: `Agent E naming slice complete for P7-0212 RoadBuildCompositionSystemHelper; continue road/city/citizen helper naming in small batches`.
+- Remaining open: `6`.
+- Current target: `Agent E naming slice complete for P7-0225 RoadBuildRuntimeActionCompositionSystemHelper; continue road/city/citizen helper naming in small batches`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
-- Retired/folded helpers: `90`.
+- Retired/folded helpers: `91`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `RoadBuildCompositionSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, road build command focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch150-road-build-command.log with [RoadBuildCommandRequestValidation] result=Passed tests=7 and /private/tmp/warline-non-ecs-helper-naming-batch150-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=79. Previous Batch 149 logs remain /private/tmp/warline-non-ecs-helper-naming-batch149-road-build-command.log and /private/tmp/warline-non-ecs-helper-naming-batch149-architecture.log.`
+- Validation status: `RoadBuildRuntimeActionCompositionSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, road build command focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch151-road-build-command.log with [RoadBuildCommandRequestValidation] result=Passed tests=7 and /private/tmp/warline-non-ecs-helper-naming-batch151-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=78. Previous Batch 150 logs remain /private/tmp/warline-non-ecs-helper-naming-batch150-road-build-command.log and /private/tmp/warline-non-ecs-helper-naming-batch150-architecture.log.`
 
 Owned files:
 
@@ -285,7 +285,7 @@ Remove dead wrappers instead of converting them.
 - [x] Fold and rename `P7-0210 RoadBuildCompositionLifecycleCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road build lifecycle helper; initialization, dependency binding, disposal, exit-build-mode fallback, and road composition callers stayed unchanged.
 - [x] Fold and rename `P7-0209 RoadBuildCompositionContextCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road build context factory helper; road footprint, runtime generation, read-model, input, command, delete prompt, disposal, ECS, visual, mutation, and placement context creation stayed unchanged.
 - [x] Fold and rename `P7-0212 RoadBuildCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road build composition helper; initialization result, runtime update/GUI/dispose delegates, dependency binding, and managed startup callers stayed unchanged.
-- [x] Fold `P7-0225 RoadBuildRuntimeActionSystem` from a disabled `SystemBase` wrapper into a plain road build runtime action helper; command processing, input update, GUI prompt routing, state creation, and road composition source callers stayed unchanged.
+- [x] Fold and rename `P7-0225 RoadBuildRuntimeActionCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road build runtime action helper; command processing, input update, GUI prompt routing, state creation, and road composition source callers stayed unchanged.
 - [x] Fold `P7-0218 RoadBuildEcsBoundarySystem` from a disabled `SystemBase` wrapper into a plain road build ECS boundary helper; entity-manager resolution, blocker/combat entity creation, runtime link attachment, player unit spawn, and runtime building disposal stayed unchanged.
 - [x] Fold `P7-0233 RoadPreviewSystem` from a disabled `SystemBase` wrapper into a plain road preview helper; preview object pooling, material alpha copies, path preview rebuild, clear/update/dispose API, and road composition callers stayed unchanged.
 - [x] Fold `P7-0152 RuntimeCityCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city composition helper; startup configuration, lifecycle tick, read-model publication, manual generation entry point, child-boundary composition, and disposal callers stayed unchanged.

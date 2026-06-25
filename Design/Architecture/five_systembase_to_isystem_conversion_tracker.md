@@ -93,7 +93,7 @@ Baseline audit notes:
 Direct call sites:
 
 - `BuildingSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, included in `BuildingGameplayResultCompositionSystemHelper`, invoked through `BuildingProductionRuntimeTickCompositionSystemHelper`, `BuildingProductionTickCompositionSystemHelper`, `BuildingProductionCompositionSystemHelper`, and `BuildingRuntimeContextSystem.CreateBuildingSpawnContext`; focused tests call `ResolveProducedUnitFaction`.
-- `BuildingProductionTransportBridgeCompositionSystemHelper`: held by `BuildingGameplaySourceCompositionSystemHelper`, passed through `BuildingProductionContextCompositionSystemHelper` and `BuildingProductionTransportSystem`; focused production tests call `FocusNewestPlayerProducedUnit`.
+- `BuildingProductionTransportBridgeCompositionSystemHelper`: held by `BuildingGameplaySourceCompositionSystemHelper`, passed through `BuildingProductionContextCompositionSystemHelper` and `BuildingProductionTransportPresentationSystemHelper`; focused production tests call `FocusNewestPlayerProducedUnit`.
 - `CitizenVisibleUnitSystem`: constructed by `CitizenPopulationCompositionSystem` and directly constructed by `CitizenVisibleUnitSystemTests`.
 - `MapVehiclePlacementSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, invoked by `BuildingGameplayCompositionSystemHelper` map placement update callbacks; blocker cleanup helpers are directly covered by `UnitMovementBlockerValidationTests`.
 - `CustomGameStartupSystem`: resolved by `MatchBootstrapSystem` through `World.GetOrCreateSystemManaged<CustomGameStartupSystem>()`; focused tests resolve it through `GetOrCreateSystemManaged`.
@@ -269,7 +269,7 @@ Phase 2 random-state notes:
 - Moved production spawn random state ownership from `BuildingSpawnSystem` to `BuildingGameplaySourceCompositionSystemHelper.BuildingSpawnRandomState`.
 - `BuildingProductionTickCompositionSystemHelper` now passes random state through the existing get/set delegates against the composition source instead of the target spawn system.
 - Removed the hidden-random `BuildingSpawnSystem.TryResolveAvailableFactionHelipadSpawn` overloads; callers now pass `ref uint randomState`.
-- Threaded caller-owned random state through `BuildingProductionTransportSystem.TryEnsureActiveProductionTransport` and `BuildingProductionTransportBridgeCompositionSystemHelper.TryResolveAvailableFactionHelipadSpawn` for air-self helipad resolution.
+- Threaded caller-owned random state through `BuildingProductionTransportPresentationSystemHelper.TryEnsureActiveProductionTransport` and `BuildingProductionTransportBridgeCompositionSystemHelper.TryResolveAvailableFactionHelipadSpawn` for air-self helipad resolution.
 - Updated the initial-faction helipad smoke to pass explicit random state.
 - Shadow validation used `/Users/farhad/Projects/WarlineCapture-CodexUnity1` because the main project had already failed both Unity database write attempts in this run.
 - Passed: `[BuildingProductionRequestValidation] result=Passed tests=12`.
@@ -385,7 +385,7 @@ Phase 2 produced-unit read-model reader migration notes:
 
 - `BuildingProductionTransportBridgeCompositionSystemHelper` now resolves the newest produced unit from `BuildingProducedUnitReadModel` before falling back to `RuntimeBuildingEntity.ProducedUnits`.
 - `MoveNewestProducedUnitToCell`, `AlignNewestProducedUnitRotation`, and `FocusNewestPlayerProducedUnit` all use the shared newest-produced-unit helper, reducing reliance on spawn's managed produced-unit list mirror.
-- `BuildingProductionTransportSystem.ConfigureNewestRunwayUnit` now uses the bridge helper instead of directly reading `RuntimeBuildingEntity.ProducedUnits`.
+- `BuildingProductionTransportPresentationSystemHelper.ConfigureNewestRunwayUnit` now uses the bridge helper instead of directly reading `RuntimeBuildingEntity.ProducedUnits`.
 - Added `BuildingProductionQueueCompositionSystemHelperTests.FocusNewestPlayerProducedUnit_UsesProducedUnitReadModel`, which focuses a produced unit from the ECS boundary read model while the runtime building has no produced-unit list.
 - Remaining blockers before the actual `ISystem` flip: `BuildingSpawnSystem` still writes managed `ProducedUnits` for legacy UI readers, and fallback spawn placement still reads runtime-building transforms.
 - Passed: `git diff --check`.

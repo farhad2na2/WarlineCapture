@@ -89,7 +89,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
     private static readonly HashSet<string> StaticGameplayRegistryDebtAllowlist = new(StringComparer.Ordinal)
     {
         "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs|Cache",
-        "Assets/Game/Scripts/Systems/BuildingProductionTransportSystem.cs|EmptyTransformList",
+        "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs|EmptyTransformList",
         "Assets/Game/Scripts/Utilities/GameStrings.cs|Entries",
         "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs|RestoreEntries",
         "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs|VisitedEntities",
@@ -148,7 +148,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.GameRuntimeStatsMustNotReadAuthoringComponents();
             tests.BuildingProductionQueueCompositionSystemHelperMustNotReadAuthoringComponents();
             tests.BuildingProductionRequestBoundaryMustNotReadAuthoringComponents();
-            tests.BuildingProductionTransportSystemMustNotReadAuthoringComponents();
+            tests.BuildingProductionTransportPresentationSystemHelperMustNotReadAuthoringComponents();
             tests.BuildingSpawnPrefabSystemMustNotReadAuthoringComponents();
             tests.BuildingDefinitionPrefabSystemHelperMustNotReadAuthoringComponents();
             tests.SceneAndMapAuthoringBootstrapMustStayInComposition();
@@ -642,15 +642,15 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
-    public void BuildingProductionTransportSystemMustNotReadAuthoringComponents()
+    public void BuildingProductionTransportPresentationSystemHelperMustNotReadAuthoringComponents()
     {
-        string productionTransportPath = Path.Combine(GameScriptsRoot, "Systems/BuildingProductionTransportSystem.cs");
+        string productionTransportPath = Path.Combine(GameScriptsRoot, "Systems/BuildingProductionTransportPresentationSystemHelper.cs");
         string source = File.ReadAllText(productionTransportPath);
 
         Assert.IsFalse(
             source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
             source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
-            "`BuildingProductionTransportSystem` must not read authoring components. Composition can inject transport-drop visual preparation.");
+            "`BuildingProductionTransportPresentationSystemHelper` must not read authoring components. Composition can inject transport-drop visual preparation.");
     }
 
     [Test]

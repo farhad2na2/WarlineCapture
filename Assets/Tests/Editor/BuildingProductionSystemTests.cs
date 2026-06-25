@@ -2458,7 +2458,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             SetAuthoringField(airAuthoring, "productionTransportRequiresAirportRunway", true);
 
             BuildingProductionQueueCompositionSystemHelper productionSystem = CreateProductionSystem();
-            BuildingProductionTransportSystem transportSystem = new();
+            BuildingProductionTransportPresentationSystemHelper transportSystem = new();
             transportSystem.SetRuntimeRoot(runtimeRoot.transform);
 
             transportSystem.PrewarmConfiguredProductionTransportPools(

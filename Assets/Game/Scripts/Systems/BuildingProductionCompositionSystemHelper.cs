@@ -21,7 +21,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
             source.BuildingDefinitionPrefabSystemHelper,
             source.BuildingProductionQueueCompositionSystemHelper,
             source.BuildingProductionUpdateSystem,
-            source.BuildingProductionTransportSystem,
+            source.BuildingProductionTransportPresentationSystemHelper,
             source.BuildingProductionTransportBridgeCompositionSystemHelper,
             source.BuildingProductionSlotUtilitySystemHelper,
             source.BuildingRunwaySystem,

@@ -8,7 +8,7 @@ using UnityEngine;
 using static UnityEngine.Object;
 using ProductionTransportMode = BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode;
 
-internal sealed class BuildingProductionTransportSystem
+internal sealed class BuildingProductionTransportPresentationSystemHelper
 {
     private const float ProductionTransportLaneSpacing = 12f;
     private const float RunwaySurfaceClearance = 0.03f;

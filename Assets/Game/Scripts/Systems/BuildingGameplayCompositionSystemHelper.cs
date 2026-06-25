@@ -35,7 +35,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
         Transform mapVehicleAuthoringRoot = null,
         Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab = null,
         BuildingProductionQueueCompositionSystemHelper.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata = null,
-        BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
+        BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
         Func<GameObject, string> resolveSpawnableLookupKey = null,
         BuildingDefinitionPrefabSystemHelper.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata = null,
         BuildingDefinitionPrefabSystemHelper.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata = null)
@@ -46,7 +46,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             tryGetBuildingDefinitionMetadata,
             tryGetUnitDefinitionMetadata);
         childSystems.BuildingProductionQueueCompositionSystemHelper.ConfigureUnitProductionMetadataResolver(tryGetUnitProductionMetadata);
-        childSystems.BuildingProductionTransportSystem.SetRuntimeRoot(runtimeTransportsRoot);
+        childSystems.BuildingProductionTransportPresentationSystemHelper.SetRuntimeRoot(runtimeTransportsRoot);
         childSystems.PrepareTransportDropVisual = prepareTransportDropVisual;
         _startupCompositionHelper.Initialize(
             childSystems,

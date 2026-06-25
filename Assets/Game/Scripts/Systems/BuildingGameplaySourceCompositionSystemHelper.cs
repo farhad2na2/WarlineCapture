@@ -13,7 +13,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly ResourceHaulerSystem ResourceHaulerSystem = new();
     internal readonly BuildingProductionQueueCompositionSystemHelper BuildingProductionQueueCompositionSystemHelper = new();
     internal readonly BuildingProductionUpdateSystem BuildingProductionUpdateSystem = new();
-    internal readonly BuildingProductionTransportSystem BuildingProductionTransportSystem = new();
+    internal readonly BuildingProductionTransportPresentationSystemHelper BuildingProductionTransportPresentationSystemHelper = new();
     internal readonly BuildingProductionTransportBridgeCompositionSystemHelper BuildingProductionTransportBridgeCompositionSystemHelper = new();
     internal readonly BuildingProductionContextCompositionSystemHelper BuildingProductionContextCompositionSystemHelper = new();
     internal readonly BuildingSpawnSystem BuildingSpawnSystem = new();
@@ -83,7 +83,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingEntityManagerAccessSystem BuildingEntityManagerAccessSystem = new();
     internal readonly BuildingPlacementInvalidCellCacheCompositionSystemHelper BuildingPlacementInvalidCellCacheCompositionSystemHelper = new();
     internal readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader = new();
-    internal BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
+    internal BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
     internal uint BuildingSpawnRandomState = 0x12345678u;
 
     public BuildingGameplaySourceCompositionSystemHelper()

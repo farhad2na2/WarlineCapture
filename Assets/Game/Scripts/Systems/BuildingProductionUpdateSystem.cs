@@ -8,14 +8,14 @@ internal sealed class BuildingProductionUpdateSystem
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Dictionary<int, RuntimeBuildingEntity> RuntimeBuildingMap;
         public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
-        public readonly BuildingProductionTransportSystem TransportSystem;
-        public readonly BuildingProductionTransportSystem.Context TransportContext;
+        public readonly BuildingProductionTransportPresentationSystemHelper TransportSystem;
+        public readonly BuildingProductionTransportPresentationSystemHelper.Context TransportContext;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             BuildingProductionQueueCompositionSystemHelper productionSystem,
-            BuildingProductionTransportSystem transportSystem,
-            BuildingProductionTransportSystem.Context transportContext)
+            BuildingProductionTransportPresentationSystemHelper transportSystem,
+            BuildingProductionTransportPresentationSystemHelper.Context transportContext)
         {
             RuntimeBuildings = runtimeBuildings;
             RuntimeBuildingMap = runtimeBuildings as Dictionary<int, RuntimeBuildingEntity>;
@@ -110,7 +110,7 @@ internal sealed class BuildingProductionUpdateSystem
             if (progress.RemainingSeconds > 0f || !context.ProductionSystem.IsReady(pending, now))
                 continue;
 
-            if (BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuilding(
+            if (BuildingProductionTransportPresentationSystemHelper.TrySpawnPlayerUnitNearBuilding(
                     context.TransportContext,
                     building,
                     pending.ProductionIndex,

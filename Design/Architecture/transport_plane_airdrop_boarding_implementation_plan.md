@@ -25,7 +25,7 @@ Each phase below should be updated to `Pending`, `In Progress`, `Complete`, or `
 - Legacy soldier-only passenger candidate logic rejects vehicles; plane-aware boarding now allows eligible player ground vehicles when the target transport is the cargo-capable transport plane.
 - Current airborne exit path is helicopter rope-only and identifies `Unit_Veh_Helicopter_Transport`.
 - The transport plane prefab has a rear door object named `Door_X`; `UnitGridAuthoring` now bakes it into `UnitTransportPlaneDoorReference` and `UnitTransportPlaneDoorState`.
-- `BuildingProductionTransportSystem` already has plane door/interior/rollout logic for delivering newly produced vehicles. The gameplay transport boarding plan should mirror the same door/ramp concept through pure ECS data and unmanaged systems; any shared code must be stateless math/data extraction, not a managed prefab/VFX bridge.
+- `BuildingProductionTransportPresentationSystemHelper` already has plane door/interior/rollout logic for delivering newly produced vehicles. The gameplay transport boarding plan should mirror the same door/ramp concept through pure ECS data and unmanaged systems; any shared code must be stateless math/data extraction, not a managed prefab/VFX bridge.
 - The requested soldier parachute prefab exists.
 - The requested vehicle/cargo emergency drop prefab exists.
 

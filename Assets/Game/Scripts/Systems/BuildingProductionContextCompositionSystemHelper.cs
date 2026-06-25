@@ -12,7 +12,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
         public readonly BuildingProductionUpdateSystem ProductionUpdateSystem;
-        public readonly BuildingProductionTransportSystem TransportSystem;
+        public readonly BuildingProductionTransportPresentationSystemHelper TransportSystem;
         public readonly BuildingProductionTransportBridgeCompositionSystemHelper TransportBridgeSystem;
         public readonly BuildingProductionSlotUtilitySystemHelper ProductionSlotSystem;
         public readonly BuildingRunwaySystem RunwaySystem;
@@ -45,7 +45,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public readonly BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate GetSelectedUnitsQuery;
         public readonly BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
         public readonly BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
-        public readonly BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
+        public readonly BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
 
         public Source(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -53,7 +53,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             BuildingProductionQueueCompositionSystemHelper productionSystem,
             BuildingProductionUpdateSystem productionUpdateSystem,
-            BuildingProductionTransportSystem transportSystem,
+            BuildingProductionTransportPresentationSystemHelper transportSystem,
             BuildingProductionTransportBridgeCompositionSystemHelper transportBridgeSystem,
             BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
             BuildingRunwaySystem runwaySystem,
@@ -86,7 +86,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate getSelectedUnitsQuery,
             BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
             BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
-            BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
+            BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
         {
             RuntimeBuildings = runtimeBuildings;
             WorldCamera = worldCamera;
@@ -136,7 +136,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingProductionQueueCompositionSystemHelper productionSystem,
         BuildingProductionUpdateSystem productionUpdateSystem,
-        BuildingProductionTransportSystem transportSystem,
+        BuildingProductionTransportPresentationSystemHelper transportSystem,
         BuildingProductionTransportBridgeCompositionSystemHelper transportBridgeSystem,
         BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
         BuildingRunwaySystem runwaySystem,
@@ -169,7 +169,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         BuildingResourceHaulerBridgeSystem.GetEntityQueryDelegate getSelectedUnitsQuery,
         BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
         BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
-        BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
+        BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
     {
         return new Source(
             runtimeBuildings,
@@ -233,9 +233,9 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             CreateProductionTransportContext(source));
     }
 
-    public BuildingProductionTransportSystem.Context CreateProductionTransportContext(Source source)
+    public BuildingProductionTransportPresentationSystemHelper.Context CreateProductionTransportContext(Source source)
     {
-        return new BuildingProductionTransportSystem.Context(
+        return new BuildingProductionTransportPresentationSystemHelper.Context(
             source.RuntimeBuildings,
             source.WorldCamera,
             source.ProductionSystem,

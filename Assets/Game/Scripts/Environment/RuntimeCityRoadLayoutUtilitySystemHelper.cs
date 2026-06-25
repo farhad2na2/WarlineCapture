@@ -4,7 +4,7 @@ using UnityEngine;
 using CityChainAxis = RuntimeCityLayoutSystem.CityChainAxis;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed class RuntimeCityRoadLayoutSystem
+internal sealed class RuntimeCityRoadLayoutUtilitySystemHelper
 {
     private readonly RuntimeCityRoadLayoutState _state = new();
 

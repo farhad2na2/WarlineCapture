@@ -10,7 +10,7 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityConfigSystem.Snapshot _fallbackCityConfig;
     private RuntimeCityLayoutSystem _runtimeCityLayoutSystem;
     private readonly RuntimeCityLayoutState _fallbackRuntimeCityLayout = new();
-    private RuntimeCityRoadLayoutSystem _runtimeCityRoadLayoutSystem;
+    private RuntimeCityRoadLayoutUtilitySystemHelper _runtimeCityRoadLayoutHelper;
     private readonly RuntimeCityRoadLayoutState _fallbackRuntimeCityRoadLayout = new();
     private RuntimeCityBuildingPlotUtilitySystemHelper _runtimeCityBuildingPlotHelper;
     private readonly RuntimeCityBuildingPlotState _fallbackRuntimeCityBuildingPlot = new();
@@ -392,10 +392,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityLayoutSystem ??= ResolveRuntimeCityLayoutSystem();
 
     private RuntimeCityRoadLayoutState RuntimeCityRoadLayoutState =>
-        RuntimeCityRoadLayoutSystem?.State ?? _fallbackRuntimeCityRoadLayout;
+        RuntimeCityRoadLayoutUtilitySystemHelper?.State ?? _fallbackRuntimeCityRoadLayout;
 
-    private RuntimeCityRoadLayoutSystem RuntimeCityRoadLayoutSystem =>
-        _runtimeCityRoadLayoutSystem ??= ResolveRuntimeCityRoadLayoutSystem();
+    private RuntimeCityRoadLayoutUtilitySystemHelper RuntimeCityRoadLayoutUtilitySystemHelper =>
+        _runtimeCityRoadLayoutHelper ??= ResolveRuntimeCityRoadLayoutUtilitySystemHelper();
 
     private RuntimeCityWalkabilityState RuntimeCityWalkabilityState =>
         RuntimeCityWalkabilitySystem?.State ?? _fallbackRuntimeCityWalkability;
@@ -631,9 +631,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityLayoutSystem();
     }
 
-    private static RuntimeCityRoadLayoutSystem ResolveRuntimeCityRoadLayoutSystem()
+    private static RuntimeCityRoadLayoutUtilitySystemHelper ResolveRuntimeCityRoadLayoutUtilitySystemHelper()
     {
-        return new RuntimeCityRoadLayoutSystem();
+        return new RuntimeCityRoadLayoutUtilitySystemHelper();
     }
 
     private static RuntimeCityWalkabilitySystem ResolveRuntimeCityWalkabilitySystem()

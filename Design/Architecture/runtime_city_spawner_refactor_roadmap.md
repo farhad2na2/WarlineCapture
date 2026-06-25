@@ -21,10 +21,10 @@ Goal: split runtime city generation before adding more map/city gameplay, so lay
 3. Complete: Extract city layout planning
    - Created `RuntimeCityLayoutSystem`.
    - Owns layout data containers, town-radius calculation, chain-axis/center planning, road-grid bounds, base exclusion checks, and city-center spacing.
-   - `RuntimeCitySpawnerSystem` now asks `RuntimeCityLayoutSystem` for layout planning helpers while road planning is owned by `RuntimeCityRoadLayoutSystem`.
+   - `RuntimeCitySpawnerSystem` now asks `RuntimeCityLayoutSystem` for layout planning helpers while road planning is owned by `RuntimeCityRoadLayoutUtilitySystemHelper`.
 
 4. Complete: Extract road layout planning
-   - Created `RuntimeCityRoadLayoutSystem`.
+   - Created `RuntimeCityRoadLayoutUtilitySystemHelper`.
    - Owns town road strokes, straight road paths, city-to-city autobahn paths, autobahn anchor selection, and low-level stroke segment helpers.
    - `RuntimeCitySpawnerSystem` commits roads through `RuntimeCityRoadBuildBridgeCompositionSystemHelper`.
 
@@ -120,7 +120,7 @@ Non-goals:
 19. Complete: Extract city-chain connection policy
     - Created `RuntimeCityChainUtilitySystemHelper`.
     - Owns `TryPlanNextCity`, city travel-direction selection, reverse-direction avoidance, target-center candidate policy, city spacing checks, autobahn length policy, source/target connection-cell resolution, city exit validation, and autobahn path validation.
-    - Keeps low-level stroke/path construction inside `RuntimeCityRoadLayoutSystem`.
+    - Keeps low-level stroke/path construction inside `RuntimeCityRoadLayoutUtilitySystemHelper`.
     - `RuntimeCityGenerationSystem` now requests next-city planning through `RuntimeCityChainUtilitySystemHelper`; `RuntimeCitySpawnerSystem` no longer owns city-chain travel policy.
 
 20. Complete: Extract city road commit sequence

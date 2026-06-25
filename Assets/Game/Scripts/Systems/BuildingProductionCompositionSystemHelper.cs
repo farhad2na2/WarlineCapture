@@ -13,7 +13,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
     {
         BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource = createRuntimeContextSource(source);
         BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(runtimeSource);
-        BuildingSpawnSystem.Context spawnContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBuildingSpawnContext(runtimeSource);
+        BuildingSpawnCompositionSystemHelper.Context spawnContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBuildingSpawnContext(runtimeSource);
         BuildingProductionContextCompositionSystemHelper.Source productionSource = default;
         productionSource = source.BuildingProductionContextCompositionSystemHelper.CreateSource(
             source.RuntimeBuildingSystem.Buildings,
@@ -26,7 +26,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
             source.BuildingProductionSlotUtilitySystemHelper,
             source.BuildingRunwaySystem,
             source.BuildingVisualSystem,
-            source.BuildingSpawnSystem,
+            source.BuildingSpawnCompositionSystemHelper,
             spawnContext,
             source.RuntimeResourceSystem.CurrentDollars,
             prefab => EnqueueAndProcessBeginPlacementForConfiguredSpawnable(

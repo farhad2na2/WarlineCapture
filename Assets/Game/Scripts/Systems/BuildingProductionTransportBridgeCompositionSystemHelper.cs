@@ -17,8 +17,8 @@ internal sealed class BuildingProductionTransportBridgeCompositionSystemHelper
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly TryGetGridDataDelegate TryGetGridData;
         public readonly EntityManagerAction EnsureEntityQueries;
-        public readonly BuildingSpawnSystem SpawnSystem;
-        public readonly BuildingSpawnSystem.Context SpawnContext;
+        public readonly BuildingSpawnCompositionSystemHelper SpawnSystem;
+        public readonly BuildingSpawnCompositionSystemHelper.Context SpawnContext;
         public readonly BooleanQuery IsBuildDrawerOpen;
         public readonly CameraFocusAction SmoothMoveCameraGroundCenterTo;
 
@@ -26,8 +26,8 @@ internal sealed class BuildingProductionTransportBridgeCompositionSystemHelper
             TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetGridDataDelegate tryGetGridData,
             EntityManagerAction ensureEntityQueries,
-            BuildingSpawnSystem spawnSystem,
-            BuildingSpawnSystem.Context spawnContext,
+            BuildingSpawnCompositionSystemHelper spawnSystem,
+            BuildingSpawnCompositionSystemHelper.Context spawnContext,
             BooleanQuery isBuildDrawerOpen,
             CameraFocusAction smoothMoveCameraGroundCenterTo)
         {

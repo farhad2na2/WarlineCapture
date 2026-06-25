@@ -17,8 +17,8 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public readonly BuildingProductionSlotUtilitySystemHelper ProductionSlotSystem;
         public readonly BuildingRunwaySystem RunwaySystem;
         public readonly BuildingVisualSystem VisualSystem;
-        public readonly BuildingSpawnSystem SpawnSystem;
-        public readonly BuildingSpawnSystem.Context SpawnContext;
+        public readonly BuildingSpawnCompositionSystemHelper SpawnSystem;
+        public readonly BuildingSpawnCompositionSystemHelper.Context SpawnContext;
         public readonly int ResourceDollars;
         public readonly BuildingProductionRequestBoundary.BeginPlacementForConfiguredSpawnableDelegate BeginPlacementForConfiguredSpawnable;
         public readonly BuildingProductionRequestBoundary.TrySpendDollarsDelegate TrySpendDollars;
@@ -58,8 +58,8 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
             BuildingRunwaySystem runwaySystem,
             BuildingVisualSystem visualSystem,
-            BuildingSpawnSystem spawnSystem,
-            BuildingSpawnSystem.Context spawnContext,
+            BuildingSpawnCompositionSystemHelper spawnSystem,
+            BuildingSpawnCompositionSystemHelper.Context spawnContext,
             int resourceDollars,
             BuildingProductionRequestBoundary.BeginPlacementForConfiguredSpawnableDelegate beginPlacementForConfiguredSpawnable,
             BuildingProductionRequestBoundary.TrySpendDollarsDelegate trySpendDollars,
@@ -141,8 +141,8 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
         BuildingRunwaySystem runwaySystem,
         BuildingVisualSystem visualSystem,
-        BuildingSpawnSystem spawnSystem,
-        BuildingSpawnSystem.Context spawnContext,
+        BuildingSpawnCompositionSystemHelper spawnSystem,
+        BuildingSpawnCompositionSystemHelper.Context spawnContext,
         int resourceDollars,
         BuildingProductionRequestBoundary.BeginPlacementForConfiguredSpawnableDelegate beginPlacementForConfiguredSpawnable,
         BuildingProductionRequestBoundary.TrySpendDollarsDelegate trySpendDollars,

@@ -16,7 +16,7 @@ internal sealed class BuildingProductionTickCompositionSystemHelper
             source.BuildingProductionContextCompositionSystemHelper.CreateProductionUpdateContext(productionSource),
             source.BuildingResourceHaulerBridgeCompositionSystemHelper,
             source.BuildingProductionContextCompositionSystemHelper.CreateResourceHaulerBridgeContext(productionSource),
-            source.BuildingSpawnSystem,
+            source.BuildingSpawnCompositionSystemHelper,
             () => source.BuildingSpawnRandomState,
             value => source.BuildingSpawnRandomState = value,
             GameRuntimeStats.RecordOilExtracted,

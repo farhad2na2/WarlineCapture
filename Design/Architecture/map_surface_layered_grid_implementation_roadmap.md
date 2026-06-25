@@ -125,7 +125,7 @@ Initial, runtime, and production spawn:
 
 - `Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs`, `InitialUnitSpawnApplySystem.cs`, `InitialBlockerSpawnSystem.cs`, and `InitialUnitsBlockerChurnSystem.cs`: initial spawn/blocker positions come from flat cell centers.
 - `Assets/Game/Scripts/Systems/UnitRespawnSystem.cs`: respawn position uses flat cell centers.
-- `Assets/Game/Scripts/Systems/BuildingSpawnSystem.cs` and `BuildingPlacementRedirectCompositionSystemHelper.cs`: runtime unit/building spawn points and redirected produced units use flat cell centers.
+- `Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs` and `BuildingPlacementRedirectCompositionSystemHelper.cs`: runtime unit/building spawn points and redirected produced units use flat cell centers.
 - `Assets/Game/Scripts/Systems/BuildingRoadLegacyEcsSystem.cs`: legacy road/building entity placement still uses flat cell centers.
 
 Building placement, visuals, production, and selection:

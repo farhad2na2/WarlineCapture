@@ -22,7 +22,7 @@ Step 9 grid-data transition size: 1984 lines. Grid data retrieval and grid-cell 
 
 Step 10 invalid-cell cache transition size: 1958 lines. Placement invalid-cell prefix arrays, rebuild state, road-footprint mask creation, runtime blocker filtering, and cached placement validation now live in `BuildingPlacementInvalidCellCacheCompositionSystemHelper`; `BuildingGameplaySystem` may temporarily expose wrapper methods while context factories move out.
 
-Step 11 spawn random-state transition size: 1951 lines. Building spawn random state now lives in `BuildingSpawnSystem`; production/runtime tick delegates read and write the state through that spawn owner instead of `BuildingGameplaySystem`.
+Step 11 spawn random-state transition size: 1951 lines. Building spawn random state now lives in `BuildingSpawnCompositionSystemHelper`; production/runtime tick delegates read and write the state through that spawn owner instead of `BuildingGameplaySystem`.
 
 Step 12 build-button command transition size: 1919 lines. Build-button placement start commands now route through `BuildingPlacementCommandRequestCompositionSystemHelper`; `BuildingGameplaySystem` keeps only temporary public wrappers for compatibility and context factories pass command-system delegates directly.
 
@@ -44,7 +44,7 @@ Step 20 runtime building read API transition size: 1742 lines. Runtime building 
 
 Step 21 runtime building spawn command transition size: 1742 lines. Runtime building spawn commands, initial roster/test spawn, runtime wall run/segment spawn, runtime footprint queries, and initial placement origin search remain behind `BuildingRuntimeSpawnCommandSystem`; composition now exposes `RuntimeSpawnCommand` and `RuntimeSpawnCommandContext`, and runtime-city spawn routes through the same command boundary instead of its own spawn-system instance.
 
-Step 22 faction spawn point query transition size: 1717 lines. Faction production spawn-slot lookup and available faction helipad spawn resolution now route through `BuildingSpawnSystem`; `BuildingGameplaySystem` no longer scans runtime building spawn-slot arrays directly.
+Step 22 faction spawn point query transition size: 1717 lines. Faction production spawn-slot lookup and available faction helipad spawn resolution now route through `BuildingSpawnCompositionSystemHelper`; `BuildingGameplaySystem` no longer scans runtime building spawn-slot arrays directly.
 
 Step 23 configured unit prefab resolution transition size: 1678 lines. Configured unit prefab entity lookup, spawn prefab reverse lookup, and live-unit preview prefab resolution now route through `RuntimeUnitPrefabSystem`; `BuildingGameplaySystem` keeps only temporary compatibility wrappers.
 
@@ -207,12 +207,12 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplaySystem` no longer stores invalid-prefix arrays/dimensions or directly calls road-footprint/runtime-blocker cache rebuild helpers.
 
 11. Complete: Move building spawn random state
-   - Move `_buildingSpawnRandomState` into `BuildingSpawnSystem` or a narrow `BuildingSpawnRandomSystem`.
+   - Move `_buildingSpawnRandomState` into `BuildingSpawnCompositionSystemHelper` or a narrow `BuildingSpawnRandomSystem`.
    - Production/runtime spawn contexts receive explicit get/set delegates from the owner.
    - Expected output: random state is owned by spawn logic, not gameplay composition.
-   - Moved the spawn random-state field and property into `BuildingSpawnSystem`.
+   - Moved the spawn random-state field and property into `BuildingSpawnCompositionSystemHelper`.
    - Added a spawn-owned helipad resolver overload that updates the owned random state internally.
-   - Production runtime tick composition now uses `BuildingSpawnSystem.BuildingSpawnRandomState` get/set delegates instead of routing through `BuildingGameplaySystem`.
+   - Production runtime tick composition now uses `BuildingSpawnCompositionSystemHelper.BuildingSpawnRandomState` get/set delegates instead of routing through `BuildingGameplaySystem`.
 
 ## Phase 4: Move Placement Command Surface
 
@@ -299,9 +299,9 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 22. Complete: Move faction spawn point queries
    - Move faction production spawn point and available helipad spawn resolution into `BuildingRuntimeSpawnCompositionSystemHelper` or `BuildingRuntimeReadModelCompositionSystemHelper`.
    - Expected output: AI production/transport spawn logic reads a narrow building runtime boundary.
-   - `BuildingSpawnSystem` now owns faction production spawn-slot lookup from runtime building data.
-   - `BuildingGameplaySystem.TryGetFactionProductionSpawnPoint` is now only a temporary compatibility wrapper over `BuildingSpawnSystem`.
-   - Available faction helipad spawn remains routed through `BuildingSpawnSystem`.
+   - `BuildingSpawnCompositionSystemHelper` now owns faction production spawn-slot lookup from runtime building data.
+   - `BuildingGameplaySystem.TryGetFactionProductionSpawnPoint` is now only a temporary compatibility wrapper over `BuildingSpawnCompositionSystemHelper`.
+   - Available faction helipad spawn remains routed through `BuildingSpawnCompositionSystemHelper`.
 
 23. Complete: Move configured unit prefab resolution
    - Move `TryResolveConfiguredUnitPrefabEntity`, `TryResolveSpawnUnitPrefab`, and live-unit preview prefab resolution into `RuntimeUnitPrefabSystem` / `BuildingSpawnPrefabSystem`.
@@ -409,7 +409,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - In progress: `BuildingRuntimeBoundaryValidationTests` now uses `BuildingGameplayCompositionSystemHelper.Result` directly for runtime tick/disposal instead of `BuildingGameplayTestHarness`.
    - In progress: `AIBuildPlannerValidationTests` and `AIProductionValidationTests` now publish runtime boundary state through a narrow runtime tick action; `AIProductionValidationTests` spawns producer buildings through `BuildingRuntimeSpawnCommandSystem`.
    - In progress: `AIEndToEndValidationTests` now uses `BuildingGameplayCompositionSystemHelper.Result` for runtime tick/disposal and no longer references `BuildingGameplayTestHarness`.
-   - In progress: `InitialFactionBaseValidationTests` now uses `BuildingGameplayCompositionSystemHelper.Result`, `BuildingRuntimeSpawnCommandSystem`, and `BuildingSpawnSystem` instead of `BuildingGameplayTestHarness`; its runtime placement and helipad resolver paths pass through direct composition systems.
+   - In progress: `InitialFactionBaseValidationTests` now uses `BuildingGameplayCompositionSystemHelper.Result`, `BuildingRuntimeSpawnCommandSystem`, and `BuildingSpawnCompositionSystemHelper` instead of `BuildingGameplayTestHarness`; its runtime placement and helipad resolver paths pass through direct composition systems.
    - In progress: `BaseBreachValidationTests` now uses a local composition-backed fixture over `BuildingRuntimeSpawnCommandSystem`, `BuildingRuntimeReadModelCompositionSystemHelper`, `BuildingBarrierSystem`, and `BuildingCombatSystem` instead of `BuildingGameplayTestHarness`.
    - Completed: `BuildingGameplayTestHarness.cs` and `.meta` were deleted after all test callers moved to composition-backed systems, narrow runtime tick callbacks, or local fixtures.
    - Known validation gap: the full `InitialFactionBaseValidationTests` group currently has one authored-config failure because faction 1 is configured with zero units, while `SceneInitialUnitsConfig_EnablesFactionBasesWithRealPrefabsAndUnitMinimum` still requires at least five unit types for every faction.

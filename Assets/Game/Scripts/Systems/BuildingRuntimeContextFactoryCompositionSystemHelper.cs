@@ -333,9 +333,9 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             source.EndDeferredRuntimeBuildingSideEffects);
     }
 
-    public BuildingSpawnSystem.Context CreateBuildingSpawnContext(RuntimeSource source)
+    public BuildingSpawnCompositionSystemHelper.Context CreateBuildingSpawnContext(RuntimeSource source)
     {
-        return new BuildingSpawnSystem.Context(
+        return new BuildingSpawnCompositionSystemHelper.Context(
             source.RuntimeBuildingSystem.Buildings,
             source.LiveUnitFootprintQuery,
             source.ProductionSystem,

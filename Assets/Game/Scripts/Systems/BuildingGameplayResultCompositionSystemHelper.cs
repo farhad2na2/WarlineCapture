@@ -14,9 +14,9 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommand,
         BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
-        BuildingSpawnSystem spawn,
-        BuildingSpawnSystem.Context spawnContext,
-        Func<BuildingSpawnSystem.Context> createSpawnContext,
+        BuildingSpawnCompositionSystemHelper spawn,
+        BuildingSpawnCompositionSystemHelper.Context spawnContext,
+        Func<BuildingSpawnCompositionSystemHelper.Context> createSpawnContext,
         BuildingBarrierUtilitySystemHelper barrier,
         Func<BuildingBarrierUtilitySystemHelper.Context> createBarrierContext,
         BuildingCombatUtilitySystemHelper combat,
@@ -90,9 +90,9 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly BuildingRuntimeReadModelCompositionSystemHelper.Context RuntimeQueryContext;
         public readonly BuildingRuntimeSpawnCommandBoundary RuntimeSpawnCommand;
         public readonly BuildingRuntimeSpawnCommandBoundary.Context RuntimeSpawnCommandContext;
-        public readonly BuildingSpawnSystem Spawn;
-        public readonly BuildingSpawnSystem.Context SpawnContext;
-        public readonly Func<BuildingSpawnSystem.Context> CreateSpawnContext;
+        public readonly BuildingSpawnCompositionSystemHelper Spawn;
+        public readonly BuildingSpawnCompositionSystemHelper.Context SpawnContext;
+        public readonly Func<BuildingSpawnCompositionSystemHelper.Context> CreateSpawnContext;
         public readonly BuildingBarrierUtilitySystemHelper Barrier;
         public readonly Func<BuildingBarrierUtilitySystemHelper.Context> CreateBarrierContext;
         public readonly BuildingCombatUtilitySystemHelper Combat;
@@ -127,9 +127,9 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
             BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommand,
             BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
-            BuildingSpawnSystem spawn,
-            BuildingSpawnSystem.Context spawnContext,
-            Func<BuildingSpawnSystem.Context> createSpawnContext,
+            BuildingSpawnCompositionSystemHelper spawn,
+            BuildingSpawnCompositionSystemHelper.Context spawnContext,
+            Func<BuildingSpawnCompositionSystemHelper.Context> createSpawnContext,
             BuildingBarrierUtilitySystemHelper barrier,
             Func<BuildingBarrierUtilitySystemHelper.Context> createBarrierContext,
             BuildingCombatUtilitySystemHelper combat,

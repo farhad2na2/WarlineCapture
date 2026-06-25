@@ -14,7 +14,7 @@ internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
         public readonly BuildingProductionUpdateCompositionSystemHelper.Context ProductionUpdateContext;
         public readonly BuildingResourceHaulerBridgeCompositionSystemHelper ResourceHaulerBridgeSystem;
         public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.Context ResourceHaulerBridgeContext;
-        public readonly BuildingSpawnSystem SpawnSystem;
+        public readonly BuildingSpawnCompositionSystemHelper SpawnSystem;
         public readonly Func<uint> GetRandomState;
         public readonly Action<uint> SetRandomState;
         public readonly Action<float> RecordOilExtracted;
@@ -30,7 +30,7 @@ internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
             BuildingProductionUpdateCompositionSystemHelper.Context productionUpdateContext,
             BuildingResourceHaulerBridgeCompositionSystemHelper resourceHaulerBridgeSystem,
             BuildingResourceHaulerBridgeCompositionSystemHelper.Context resourceHaulerBridgeContext,
-            BuildingSpawnSystem spawnSystem,
+            BuildingSpawnCompositionSystemHelper spawnSystem,
             Func<uint> getRandomState,
             Action<uint> setRandomState,
             Action<float> recordOilExtracted,

@@ -75,9 +75,9 @@ Nested types:
 - `BuildingRuntimeReadModelCompositionSystemHelper.Context RuntimeQueryContext`
 - `BuildingRuntimeSpawnCommandSystem RuntimeSpawnCommand`
 - `BuildingRuntimeSpawnCommandSystem.Context RuntimeSpawnCommandContext`
-- `BuildingSpawnSystem Spawn`
-- `BuildingSpawnSystem.Context SpawnContext`
-- `Func<BuildingSpawnSystem.Context> CreateSpawnContext`
+- `BuildingSpawnCompositionSystemHelper Spawn`
+- `BuildingSpawnCompositionSystemHelper.Context SpawnContext`
+- `Func<BuildingSpawnCompositionSystemHelper.Context> CreateSpawnContext`
 - `BuildingBarrierSystem Barrier`
 - `Func<BuildingBarrierSystem.Context> CreateBarrierContext`
 - `BuildingCombatSystem Combat`

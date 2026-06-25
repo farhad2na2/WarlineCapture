@@ -120,13 +120,13 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.BuildingRuntimeBoundary_ProductionSummaryUsesProducedUnitReadModel();
             tests.TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy();
             tests.BuildingDefinitionProductionSourceKey_UsesSlotKeyBeforePrefabFallback();
-            tests.BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot();
-            tests.BuildingSpawnSystem_ResolvesFactionProductionSpawnPointFromBoundaryReadModel();
-            tests.BuildingSpawnSystem_WritesRecentSpawnReservationToBoundaryBuffer();
-            tests.BuildingSpawnSystem_UsesBoundarySpawnPointForProductionSlotPlacement();
-            tests.BuildingSpawnSystem_UsesBoundarySpawnPointWithoutManagedSlotArray();
-            tests.BuildingSpawnSystem_UsesBoundarySpawnPointForOverrideHelicopterSlot();
-            tests.BuildingSpawnSystem_UsesBoundarySpawnPointForAutomaticHelicopterSpawn();
+            tests.BuildingSpawnCompositionSystemHelper_SpawnsSourceKeyOnlyProductionSlot();
+            tests.BuildingSpawnCompositionSystemHelper_ResolvesFactionProductionSpawnPointFromBoundaryReadModel();
+            tests.BuildingSpawnCompositionSystemHelper_WritesRecentSpawnReservationToBoundaryBuffer();
+            tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForProductionSlotPlacement();
+            tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointWithoutManagedSlotArray();
+            tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForOverrideHelicopterSlot();
+            tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForAutomaticHelicopterSpawn();
             Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=21");
             ValidationExit.Passed();
         }
@@ -174,7 +174,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
-    public void BuildingSpawnSystem_SpawnsSourceKeyOnlyProductionSlot()
+    public void BuildingSpawnCompositionSystemHelper_SpawnsSourceKeyOnlyProductionSlot()
     {
         const int width = 8;
         const int height = 8;
@@ -183,7 +183,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        World world = new("BuildingSpawnSystem_SourceKeyOnlyProductionSlot");
+        World world = new("BuildingSpawnCompositionSystemHelper_SourceKeyOnlyProductionSlot");
         EntityManager em = world.EntityManager;
 
         try
@@ -250,9 +250,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 ComponentType.ReadOnly<UnitGrid>(),
                 ComponentType.ReadOnly<UnitFootprint>());
 
-            var spawnSystem = new BuildingSpawnSystem();
+            var spawnSystem = new BuildingSpawnCompositionSystemHelper();
             var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
-            var context = new BuildingSpawnSystem.Context(
+            var context = new BuildingSpawnCompositionSystemHelper.Context(
                 new Dictionary<int, RuntimeBuildingEntity>(),
                 liveUnitFootprintQuery,
                 null,
@@ -350,9 +350,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
-    public void BuildingSpawnSystem_ResolvesFactionProductionSpawnPointFromBoundaryReadModel()
+    public void BuildingSpawnCompositionSystemHelper_ResolvesFactionProductionSpawnPointFromBoundaryReadModel()
     {
-        using World world = new("BuildingSpawnSystem_FactionSpawnPointReadModel");
+        using World world = new("BuildingSpawnCompositionSystemHelper_FactionSpawnPointReadModel");
         EntityManager em = world.EntityManager;
         Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
         DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
@@ -374,8 +374,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             WorldPosition = new float3(4.5f, 0f, 5.5f)
         });
 
-        var spawnSystem = new BuildingSpawnSystem();
-        var context = new BuildingSpawnSystem.Context(
+        var spawnSystem = new BuildingSpawnCompositionSystemHelper();
+        var context = new BuildingSpawnCompositionSystemHelper.Context(
             new Dictionary<int, RuntimeBuildingEntity>(),
             default,
             null,
@@ -405,7 +405,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
-    public void BuildingSpawnSystem_WritesRecentSpawnReservationToBoundaryBuffer()
+    public void BuildingSpawnCompositionSystemHelper_WritesRecentSpawnReservationToBoundaryBuffer()
     {
         const int width = 8;
         const int height = 8;
@@ -414,7 +414,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        World world = new("BuildingSpawnSystem_RecentReservationBoundaryBuffer");
+        World world = new("BuildingSpawnCompositionSystemHelper_RecentReservationBoundaryBuffer");
         EntityManager em = world.EntityManager;
 
         try
@@ -479,9 +479,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 ComponentType.ReadOnly<UnitGrid>(),
                 ComponentType.ReadOnly<UnitFootprint>());
 
-            var spawnSystem = new BuildingSpawnSystem();
+            var spawnSystem = new BuildingSpawnCompositionSystemHelper();
             var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
-            var context = new BuildingSpawnSystem.Context(
+            var context = new BuildingSpawnCompositionSystemHelper.Context(
                 new Dictionary<int, RuntimeBuildingEntity>(),
                 liveUnitFootprintQuery,
                 null,
@@ -550,7 +550,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
-    public void BuildingSpawnSystem_UsesBoundarySpawnPointForProductionSlotPlacement()
+    public void BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForProductionSlotPlacement()
     {
         const int width = 8;
         const int height = 8;
@@ -559,7 +559,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        World world = new("BuildingSpawnSystem_BoundaryProductionSlotPlacement");
+        World world = new("BuildingSpawnCompositionSystemHelper_BoundaryProductionSlotPlacement");
         EntityManager em = world.EntityManager;
 
         try
@@ -635,9 +635,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 ComponentType.ReadOnly<UnitGrid>(),
                 ComponentType.ReadOnly<UnitFootprint>());
 
-            var spawnSystem = new BuildingSpawnSystem();
+            var spawnSystem = new BuildingSpawnCompositionSystemHelper();
             var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
-            var context = new BuildingSpawnSystem.Context(
+            var context = new BuildingSpawnCompositionSystemHelper.Context(
                 new Dictionary<int, RuntimeBuildingEntity>(),
                 liveUnitFootprintQuery,
                 null,
@@ -709,7 +709,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
-    public void BuildingSpawnSystem_UsesBoundarySpawnPointWithoutManagedSlotArray()
+    public void BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointWithoutManagedSlotArray()
     {
         const int width = 8;
         const int height = 8;
@@ -718,7 +718,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        World world = new("BuildingSpawnSystem_BoundaryProductionSlotWithoutManagedArray");
+        World world = new("BuildingSpawnCompositionSystemHelper_BoundaryProductionSlotWithoutManagedArray");
         EntityManager em = world.EntityManager;
 
         try
@@ -794,9 +794,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 ComponentType.ReadOnly<UnitGrid>(),
                 ComponentType.ReadOnly<UnitFootprint>());
 
-            var spawnSystem = new BuildingSpawnSystem();
+            var spawnSystem = new BuildingSpawnCompositionSystemHelper();
             var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
-            var context = new BuildingSpawnSystem.Context(
+            var context = new BuildingSpawnCompositionSystemHelper.Context(
                 new Dictionary<int, RuntimeBuildingEntity>(),
                 liveUnitFootprintQuery,
                 null,
@@ -872,7 +872,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
-    public void BuildingSpawnSystem_UsesBoundarySpawnPointForOverrideHelicopterSlot()
+    public void BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForOverrideHelicopterSlot()
     {
         const int width = 8;
         const int height = 8;
@@ -881,7 +881,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        World world = new("BuildingSpawnSystem_BoundaryOverrideHelicopterSlot");
+        World world = new("BuildingSpawnCompositionSystemHelper_BoundaryOverrideHelicopterSlot");
         EntityManager em = world.EntityManager;
 
         try
@@ -976,9 +976,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 [helipad.Id] = helipad
             };
-            var spawnSystem = new BuildingSpawnSystem();
+            var spawnSystem = new BuildingSpawnCompositionSystemHelper();
             var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
-            var context = new BuildingSpawnSystem.Context(
+            var context = new BuildingSpawnCompositionSystemHelper.Context(
                 runtimeBuildings,
                 liveUnitFootprintQuery,
                 null,
@@ -1052,7 +1052,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
-    public void BuildingSpawnSystem_UsesBoundarySpawnPointForAutomaticHelicopterSpawn()
+    public void BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForAutomaticHelicopterSpawn()
     {
         const int width = 10;
         const int height = 10;
@@ -1061,7 +1061,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        World world = new("BuildingSpawnSystem_BoundaryAutomaticHelicopterSpawn");
+        World world = new("BuildingSpawnCompositionSystemHelper_BoundaryAutomaticHelicopterSpawn");
         EntityManager em = world.EntityManager;
 
         try
@@ -1188,9 +1188,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 [helipad.Id] = helipad,
                 [farHelipad.Id] = farHelipad
             };
-            var spawnSystem = new BuildingSpawnSystem();
+            var spawnSystem = new BuildingSpawnCompositionSystemHelper();
             var spawnPrefabSystem = new BuildingSpawnPrefabSystem();
-            var context = new BuildingSpawnSystem.Context(
+            var context = new BuildingSpawnCompositionSystemHelper.Context(
                 runtimeBuildings,
                 liveUnitFootprintQuery,
                 null,
@@ -1465,7 +1465,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         };
 
         Vector3? requestedFocus = null;
-        BuildingSpawnSystem.Context spawnContext = new(
+        BuildingSpawnCompositionSystemHelper.Context spawnContext = new(
             new Dictionary<int, RuntimeBuildingEntity>(),
             default,
             null,
@@ -1499,24 +1499,24 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     {
         Assert.AreEqual(
             FactionIdentity.PlayerFactionId,
-            BuildingSpawnSystem.ResolveProducedUnitFaction(new RuntimeBuildingEntity { HasOwnerFaction = false }));
+            BuildingSpawnCompositionSystemHelper.ResolveProducedUnitFaction(new RuntimeBuildingEntity { HasOwnerFaction = false }));
         Assert.AreEqual(
             FactionIdentity.PlayerFactionId,
-            BuildingSpawnSystem.ResolveProducedUnitFaction(new RuntimeBuildingEntity
+            BuildingSpawnCompositionSystemHelper.ResolveProducedUnitFaction(new RuntimeBuildingEntity
             {
                 HasOwnerFaction = true,
                 OwnerFactionId = FactionIdentity.NeutralFactionId
             }));
         Assert.AreEqual(
             FactionIdentity.PlayerFactionId,
-            BuildingSpawnSystem.ResolveProducedUnitFaction(new RuntimeBuildingEntity
+            BuildingSpawnCompositionSystemHelper.ResolveProducedUnitFaction(new RuntimeBuildingEntity
             {
                 HasOwnerFaction = true,
                 OwnerFactionId = FactionIdentity.PlayerFactionId
             }));
         Assert.AreEqual(
             FactionIdentity.EnemyFactionId,
-            BuildingSpawnSystem.ResolveProducedUnitFaction(new RuntimeBuildingEntity
+            BuildingSpawnCompositionSystemHelper.ResolveProducedUnitFaction(new RuntimeBuildingEntity
             {
                 HasOwnerFaction = true,
                 OwnerFactionId = FactionIdentity.EnemyFactionId

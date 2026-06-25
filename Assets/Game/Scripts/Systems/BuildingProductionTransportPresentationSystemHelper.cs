@@ -835,7 +835,7 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
             pending.Prefab != null &&
             context.TransportBridgeSystem != null)
         {
-            byte factionId = BuildingSpawnSystem.ResolveProducedUnitFaction(building);
+            byte factionId = BuildingSpawnCompositionSystemHelper.ResolveProducedUnitFaction(building);
             if (context.TransportBridgeSystem.TryResolveAvailableFactionHelipadSpawn(
                     context.TransportBridgeContext,
                     factionId,

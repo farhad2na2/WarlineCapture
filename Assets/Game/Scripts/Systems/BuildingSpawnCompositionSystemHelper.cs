@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed class BuildingSpawnSystem
+internal sealed class BuildingSpawnCompositionSystemHelper
 {
     public delegate bool TryGetProductionSourceKeyDelegate(BuildingDefinition definition, int index, out FixedString64Bytes sourceKey);
     public delegate bool RuntimeBuildingMatchesIdDelegate(RuntimeBuildingEntity building, string normalizedBuildingId);

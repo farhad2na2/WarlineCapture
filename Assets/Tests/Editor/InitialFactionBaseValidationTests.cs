@@ -380,7 +380,7 @@ public sealed class InitialFactionBaseValidationTests
 
             int slotsPerHelipad = CountProductionSpawnPoints(helipad);
             Assert.Greater(slotsPerHelipad, 0);
-            BuildingSpawnSystem.Context spawnContext = buildingGameplay.CreateSpawnContext();
+            BuildingSpawnCompositionSystemHelper.Context spawnContext = buildingGameplay.CreateSpawnContext();
             Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, FactionIdentity.PlayerFactionId, "Building_Helipad", 0, grid, out int2 occupiedCell, out _));
             Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, FactionIdentity.PlayerFactionId, "Building_Helipad", slotsPerHelipad, grid, out int2 freeCell, out _));
             for (int slot = 0; slot < slotsPerHelipad; slot++)

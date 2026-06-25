@@ -415,7 +415,7 @@ Priority bands:
 | B | Startup/config projection | `AIStartupSystem`, `AIFactionControlStartupSystem`, `FactionEconomyStartupSystem`, `RuntimeGridBootstrapSystem`, `InitialFactionSpawnCellSystem`, custom-game startup pieces. | Convert one-shot ECS writes to `ISystem`; move serialized config projection to bakers/passive startup boundaries. |
 | C | Selection and command data | `RtsSelection*`, `SelectionStateSystem`, `FocusableUnitLookupSystem`, command-result flush/read models. | Keep pointer/camera/UI input passive; convert command/result processing and selected-state mutations. |
 | D | Building and production | Existing five-SystemBase tracker plus building placement/runtime/boundary systems. | Split broad owners into request, validation, placement, instantiation, state, and result processors; retire managed runtime-building mirrors. |
-| E | Road build | `RoadBuild*`, `RoadNetworkSystem`, `RoadGridProjectionSystem`, road runtime generation/read models. | Convert grid/command/data processors; move preview/visual GameObject work to passive result application. |
+| E | Road build | `RoadBuild*`, `RoadNetworkCompositionSystemHelper`, `RoadGridProjectionSystem`, road runtime generation/read models. | Convert grid/command/data processors; move preview/visual GameObject work to passive result application. |
 | F | Runtime city and environment | `RuntimeCity*`, `RuntimeGridBlockerPresentationSystemHelper`, `RuntimeDecorationSpawnerPresentationSystemHelper`, `DayNightSystem`. | Convert generation/state/read-model algorithms; replace visual GameObject spawn ownership with ECS entity prefabs or narrow managed presentation `SystemBase` exceptions. |
 | G | Citizen population | `Citizen*` population/travel/resource/danger/read-model systems. | Convert population state and movement/resource decisions; split visible citizen presentation. |
 | H | Rendering, VFX, and visual bridges | `UnitAttachedLightSystem`, traces/impostors, missile trails, building/road visuals, selection/order markers. | Convert gameplay decisions to entity-prefab/request/result ECS first; keep Unity object playback in narrow managed presentation `SystemBase` exceptions when visuals cannot be converted without redesign. Do not introduce updating MonoBehaviours. |
@@ -557,7 +557,7 @@ Retire broad managed building gameplay owners instead of creating large `ISystem
 Purpose:
 Convert road command/grid/read-model work while keeping preview and GameObject visuals passive.
 
-- [ ] Inventory `RoadBuild*`, `Road*Visual*`, `RoadNetworkSystem`, `RoadGridProjectionSystem`, and road runtime generation systems.
+- [ ] Inventory `RoadBuild*`, `Road*Visual*`, `RoadNetworkCompositionSystemHelper`, `RoadGridProjectionSystem`, and road runtime generation systems.
 - [ ] Split road input/pointer/camera state from ECS road command requests.
 - [ ] Convert road command validation, mutation, placement storage, grid projection, and network updates to `ISystem`.
 - [ ] Convert road read-model and minimap event publication to `ISystem` where data-only.
@@ -674,7 +674,7 @@ Convert city generation/state/read-model algorithms and retire visual/config man
 - [x] Fold and rename Agent E `P7-0221 RoadBuildInteractionCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road build interaction helper and validate road build command behavior, compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.
 - [x] Fold and rename Agent E `P7-0223 RoadBuildPlacementStorageCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road build placement storage helper and validate road build command behavior, compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.
 - [x] Fold and rename Agent E `P7-0226 RoadBuildSessionCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned road-build session helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
-- [x] Fold Agent E `P7-0231 RoadNetworkSystem` from a disabled `SystemBase` wrapper into a plain direct-owned road network graph helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
+- [x] Fold and rename Agent E `P7-0231 RoadNetworkCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned road network graph helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0235 RoadRuntimeGenerationSystem` from a disabled `SystemBase` wrapper into a plain direct-owned runtime road generation helper and validate runtime city generation, road-build command behavior, compile, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0191 CitizenPopulationDiagnosticSystem` from a disabled `SystemBase` wrapper into a plain direct-owned citizen diagnostics helper and validate citizen focused behavior, compile, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0195 CitizenPopulationReadModelSystem` from a disabled `SystemBase` wrapper into a plain direct-owned citizen read-model helper and validate citizen focused behavior, compile, and Phase 7 architecture guard.

@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using RoadVisualType = RoadNetworkSystem.RoadVisualType;
-using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
+using RoadVisualType = RoadNetworkCompositionSystemHelper.RoadVisualType;
+using TileConnectionMask = RoadNetworkCompositionSystemHelper.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
 internal sealed class RoadBuildCompositionContextCompositionSystemHelper
@@ -11,7 +11,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     public RoadGridProjectionSystem.RoadFootprintState CreateRoadFootprintState(RoadBuildCompositionSourceSystem source)
     {
         return new RoadGridProjectionSystem.RoadFootprintState(
-            source.RoadNetworkSystem.RoadTiles,
+            source.RoadNetworkCompositionSystemHelper.RoadTiles,
             source.RoadSpecialVisualSystem?.SpecialRoadObjects,
             source.RoadVisualVariantSystem?.VisualData ?? new Dictionary<RoadVisualType, RoadGridProjectionSystem.CombinedRoadVisualData>(),
             source.RoadBuildStartupState.GridOrigin,
@@ -47,7 +47,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadBuildInputState,
             source.RoadBuildCommandCompositionSystemHelper,
             source.RoadPathPlanningSystem,
-            source.RoadNetworkSystem,
+            source.RoadNetworkCompositionSystemHelper,
             () => source.RoadBuildMutationCompositionSystemHelper.CaptureRoadBuildSessionSnapshot(CreateRoadBuildMutationContext(source)),
             snapshot => source.RoadBuildMutationCompositionSystemHelper.RestoreRoadBuildSession(CreateRoadBuildMutationContext(source), snapshot),
             () => RemoveRuntimeBlockersUnderRoads(source),
@@ -111,13 +111,13 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadSpecialVisualSystem,
             source.RoadMinimapEventUiSystemHelper,
             source.RoadGridProjectionSystem,
-            source.RoadNetworkSystem.RoadTiles);
+            source.RoadNetworkCompositionSystemHelper.RoadTiles);
     }
 
     private RoadGridProjectionSystem.Context CreateRoadGridProjectionContext(RoadBuildCompositionSourceSystem source)
     {
         return new RoadGridProjectionSystem.Context(
-            source.RoadNetworkSystem.RoadTiles,
+            source.RoadNetworkCompositionSystemHelper.RoadTiles,
             CreateRoadFootprintState(source),
             source.RoadBuildStartupState.RoadGridSize);
     }
@@ -125,7 +125,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     private RoadBuildVisualContextSystem.Context CreateRoadBuildVisualContext(RoadBuildCompositionSourceSystem source)
     {
         return new RoadBuildVisualContextSystem.Context(
-            source.RoadNetworkSystem,
+            source.RoadNetworkCompositionSystemHelper,
             source.RoadPathPlanningSystem,
             source.RoadVisualVariantSystem,
             source.RoadBuildStartupSystem,
@@ -141,7 +141,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     private RoadVisualResolutionSystem.Context CreateRoadVisualResolutionContext(RoadBuildCompositionSourceSystem source)
     {
         return new RoadVisualResolutionSystem.Context(
-            source.RoadNetworkSystem,
+            source.RoadNetworkCompositionSystemHelper,
             source.RoadVisualVariantSystem,
             CreateRoadBuildVisualContext(source));
     }
@@ -149,7 +149,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     private RoadVisualRefreshSystem.Context CreateRoadVisualRefreshContext(RoadBuildCompositionSourceSystem source)
     {
         return new RoadVisualRefreshSystem.Context(
-            source.RoadNetworkSystem,
+            source.RoadNetworkCompositionSystemHelper,
             source.RoadGridProjectionSystem,
             CreateRoadGridProjectionContext(source),
             source.RoadChunkVisualSystem,
@@ -177,7 +177,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     private RoadBuildMutationCompositionSystemHelper.Context CreateRoadBuildMutationContext(RoadBuildCompositionSourceSystem source)
     {
         return new RoadBuildMutationCompositionSystemHelper.Context(
-            source.RoadNetworkSystem,
+            source.RoadNetworkCompositionSystemHelper,
             dirtyCells => RoadVisualRefreshSystem.RefreshCells(CreateRoadVisualRefreshContext(source), dirtyCells),
             () => RoadVisualRefreshSystem.RebuildRoadStateFromCurrentTiles(CreateRoadVisualRefreshContext(source)));
     }

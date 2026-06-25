@@ -13,9 +13,9 @@ internal sealed class RoadBuildInteractionContextSystem
         public readonly RoadBuildInputCompositionSystemHelper.State InputState;
         public readonly RoadBuildCommandCompositionSystemHelper CommandSystem;
         public readonly RoadPathPlanningSystem PathPlanningSystem;
-        public readonly RoadNetworkSystem NetworkSystem;
-        public readonly Func<RoadNetworkSystem.Snapshot> CaptureRoadBuildSessionSnapshot;
-        public readonly Action<RoadNetworkSystem.Snapshot> RestoreRoadBuildSession;
+        public readonly RoadNetworkCompositionSystemHelper NetworkSystem;
+        public readonly Func<RoadNetworkCompositionSystemHelper.Snapshot> CaptureRoadBuildSessionSnapshot;
+        public readonly Action<RoadNetworkCompositionSystemHelper.Snapshot> RestoreRoadBuildSession;
         public readonly Action RemoveRuntimeBlockersUnderRoads;
         public readonly Action NotifyStaticMinimapChanged;
         public readonly Action ApplyBuildCommandMode;
@@ -43,9 +43,9 @@ internal sealed class RoadBuildInteractionContextSystem
             RoadBuildInputCompositionSystemHelper.State inputState,
             RoadBuildCommandCompositionSystemHelper commandSystem,
             RoadPathPlanningSystem pathPlanningSystem,
-            RoadNetworkSystem networkSystem,
-            Func<RoadNetworkSystem.Snapshot> captureRoadBuildSessionSnapshot,
-            Action<RoadNetworkSystem.Snapshot> restoreRoadBuildSession,
+            RoadNetworkCompositionSystemHelper networkSystem,
+            Func<RoadNetworkCompositionSystemHelper.Snapshot> captureRoadBuildSessionSnapshot,
+            Action<RoadNetworkCompositionSystemHelper.Snapshot> restoreRoadBuildSession,
             Action removeRuntimeBlockersUnderRoads,
             Action notifyStaticMinimapChanged,
             Action applyBuildCommandMode,

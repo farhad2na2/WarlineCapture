@@ -68,11 +68,11 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 
 ## Phase 2: Extract Road Data And Queries
 
-5. Complete: Create `RoadNetworkSystem`
+5. Complete: Create `RoadNetworkCompositionSystemHelper`
    - Owns stroke ids, edge counts, cell-to-stroke index, road-tile map, endpoint connection rules, add/delete stroke mutation, and session snapshot data.
    - Exposes explicit operations: create stroke, delete stroke, restore snapshot, enumerate road tiles, query cell stroke ids.
-   - Created `RoadNetworkSystem` with graph data types, stroke/edge/cell indexes, special-road metadata, create/delete mutation, snapshot capture/restore, and edge/mask queries.
-   - `RoadBuildSystem` now delegates stroke creation/deletion, graph mask queries, special-road metadata rebuild, and session snapshot capture/restore to `RoadNetworkSystem`.
+   - Created `RoadNetworkCompositionSystemHelper` with graph data types, stroke/edge/cell indexes, special-road metadata, create/delete mutation, snapshot capture/restore, and edge/mask queries.
+   - `RoadBuildSystem` now delegates stroke creation/deletion, graph mask queries, special-road metadata rebuild, and session snapshot capture/restore to `RoadNetworkCompositionSystemHelper`.
    - Visual chunk refresh and ECS projection remain in `RoadBuildSystem` until the planned visual/projection phases.
    - Expected output: road graph mutation is data-driven and testable without visuals.
 
@@ -86,7 +86,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 
 7. Complete: Create `RoadFootprintQuerySystem`
    - Owns `HasRoadInFootprint`, `FillRoadFootprintMask`, road world footprint visitors, footprint kind detection, reserve/dirt/sidewalk marker classification, and bounds transform helpers.
-   - Depends on `RoadNetworkSystem` and visual footprint data, not the broad shell.
+   - Depends on `RoadNetworkCompositionSystemHelper` and visual footprint data, not the broad shell.
    - Created `RoadFootprintQuerySystem` with context-driven road tile/special visual/visual footprint reads, road footprint mask queries, footprint visitors, footprint kind classification, grid center bounds checks, and bounds transform helpers.
    - `RoadBuildSystem` now delegates public footprint queries and road projection/blocker footprint visiting to `RoadFootprintQuerySystem`.
    - Shared combined visual footprint data moved behind `RoadFootprintQuerySystem` while chunk rendering remains a temporary consumer until RoadVisualVariantSystem/RoadChunkVisualSystem.
@@ -140,7 +140,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 
 14. Complete: Create `RoadBuildInputCompositionSystemHelper`
     - Owns pointer-state processing, pointer-over-UI checks, pressed/released/drag handling, drag-axis updates, pending start cell, and clicked-road delete selection.
-    - Consumes `RoadBuildSessionCompositionSystemHelper`, `RoadPathPlanningSystem`, `RoadNetworkSystem`, and `RoadPreviewPresentationSystemHelper`.
+    - Consumes `RoadBuildSessionCompositionSystemHelper`, `RoadPathPlanningSystem`, `RoadNetworkCompositionSystemHelper`, and `RoadPreviewPresentationSystemHelper`.
     - Created `RoadBuildInputCompositionSystemHelper` with pointer-state processing, active road-mode guards, building-placement drag handoff, road stroke drag start/release, drag-axis updates, clicked-road delete selection, and pending road-build cancellation.
     - `RoadBuildSystem.Update()` is now a thin input delegation wrapper while stroke creation and building-placement side effects remain behind injected domain callbacks for compatibility.
 

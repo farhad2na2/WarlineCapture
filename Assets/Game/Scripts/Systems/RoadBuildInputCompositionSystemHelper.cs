@@ -26,7 +26,7 @@ public sealed class RoadBuildInputCompositionSystemHelper
         public readonly RoadBuildSessionCompositionSystemHelper SessionSystem;
         public readonly RoadBuildSessionCompositionSystemHelper.State SessionState;
         public readonly RoadPathPlanningSystem PathPlanningSystem;
-        public readonly RoadNetworkSystem NetworkSystem;
+        public readonly RoadNetworkCompositionSystemHelper NetworkSystem;
         public readonly TryGetHoveredCellAction TryGetHoveredCell;
         public readonly Action ClearPreview;
         public readonly Action UpdatePreview;
@@ -43,7 +43,7 @@ public sealed class RoadBuildInputCompositionSystemHelper
             RoadBuildSessionCompositionSystemHelper sessionSystem,
             RoadBuildSessionCompositionSystemHelper.State sessionState,
             RoadPathPlanningSystem pathPlanningSystem,
-            RoadNetworkSystem networkSystem,
+            RoadNetworkCompositionSystemHelper networkSystem,
             TryGetHoveredCellAction tryGetHoveredCell,
             Action clearPreview,
             Action updatePreview,

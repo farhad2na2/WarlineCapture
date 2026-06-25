@@ -3,8 +3,8 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
 using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
-using RoadTileData = RoadNetworkSystem.RoadTileData;
-using RoadVisualType = RoadNetworkSystem.RoadVisualType;
+using RoadTileData = RoadNetworkCompositionSystemHelper.RoadTileData;
+using RoadVisualType = RoadNetworkCompositionSystemHelper.RoadVisualType;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
 public sealed partial class RoadChunkVisualSystem : SystemBase

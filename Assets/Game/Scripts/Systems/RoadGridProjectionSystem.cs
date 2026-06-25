@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using RoadTileData = RoadNetworkSystem.RoadTileData;
-using RoadVisualType = RoadNetworkSystem.RoadVisualType;
+using RoadTileData = RoadNetworkCompositionSystemHelper.RoadTileData;
+using RoadVisualType = RoadNetworkCompositionSystemHelper.RoadVisualType;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 public sealed partial class RoadGridProjectionSystem : SystemBase

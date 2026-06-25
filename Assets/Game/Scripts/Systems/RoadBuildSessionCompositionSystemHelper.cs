@@ -12,7 +12,7 @@ public sealed class RoadBuildSessionCompositionSystemHelper
     public sealed class State
     {
         public BuildToolMode ActiveBuildTool;
-        public RoadNetworkSystem.Snapshot RoadBuildSessionSnapshot;
+        public RoadNetworkCompositionSystemHelper.Snapshot RoadBuildSessionSnapshot;
         public int? PendingDeleteStrokeId;
         public string PendingDeleteMessage;
         public int SkipBuildClickFrames;
@@ -22,8 +22,8 @@ public sealed class RoadBuildSessionCompositionSystemHelper
     {
         public readonly State State;
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly Func<RoadNetworkSystem.Snapshot> CaptureRoadBuildSessionSnapshot;
-        public readonly Action<RoadNetworkSystem.Snapshot> RestoreRoadBuildSession;
+        public readonly Func<RoadNetworkCompositionSystemHelper.Snapshot> CaptureRoadBuildSessionSnapshot;
+        public readonly Action<RoadNetworkCompositionSystemHelper.Snapshot> RestoreRoadBuildSession;
         public readonly Action RemoveRuntimeBlockersUnderRoads;
         public readonly Action NotifyStaticMinimapChanged;
         public readonly Action ApplyBuildCommandMode;
@@ -37,8 +37,8 @@ public sealed class RoadBuildSessionCompositionSystemHelper
         public Context(
             State state,
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            Func<RoadNetworkSystem.Snapshot> captureRoadBuildSessionSnapshot,
-            Action<RoadNetworkSystem.Snapshot> restoreRoadBuildSession,
+            Func<RoadNetworkCompositionSystemHelper.Snapshot> captureRoadBuildSessionSnapshot,
+            Action<RoadNetworkCompositionSystemHelper.Snapshot> restoreRoadBuildSession,
             Action removeRuntimeBlockersUnderRoads,
             Action notifyStaticMinimapChanged,
             Action applyBuildCommandMode,

@@ -264,9 +264,9 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
         public readonly RoadBuildSessionCompositionSystemHelper SessionSystem = new();
         public readonly RoadBuildSessionCompositionSystemHelper.State SessionState = new();
         public readonly RoadBuildCommandCompositionSystemHelper CommandSystem = new();
-        public readonly RoadNetworkSystem.Snapshot CapturedSnapshot = new();
+        public readonly RoadNetworkCompositionSystemHelper.Snapshot CapturedSnapshot = new();
         public readonly RoadBuildCommandCompositionSystemHelper.Context CommandContext;
-        public RoadNetworkSystem.Snapshot RestoredSnapshot;
+        public RoadNetworkCompositionSystemHelper.Snapshot RestoredSnapshot;
         public int CaptureSnapshotCount;
         public int RestoreRoadBuildSessionCount;
         public int RemoveRuntimeBlockersUnderRoadsCount;

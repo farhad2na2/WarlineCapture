@@ -1,7 +1,7 @@
 using UnityEngine;
 using Unity.Entities;
-using RoadVisualType = RoadNetworkSystem.RoadVisualType;
-using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
+using RoadVisualType = RoadNetworkCompositionSystemHelper.RoadVisualType;
+using TileConnectionMask = RoadNetworkCompositionSystemHelper.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
 internal sealed partial class RoadVisualResolutionSystem : SystemBase
@@ -17,16 +17,16 @@ internal sealed partial class RoadVisualResolutionSystem : SystemBase
 
     public readonly struct Context
     {
-        public readonly RoadNetworkSystem RoadNetworkSystem;
+        public readonly RoadNetworkCompositionSystemHelper RoadNetworkCompositionSystemHelper;
         public readonly RoadVisualVariantSystem RoadVisualVariantSystem;
         public readonly RoadBuildVisualContextSystem.Context VisualContext;
 
         public Context(
-            RoadNetworkSystem roadNetworkSystem,
+            RoadNetworkCompositionSystemHelper roadNetworkSystem,
             RoadVisualVariantSystem roadVisualVariantSystem,
             RoadBuildVisualContextSystem.Context visualContext)
         {
-            RoadNetworkSystem = roadNetworkSystem;
+            RoadNetworkCompositionSystemHelper = roadNetworkSystem;
             RoadVisualVariantSystem = roadVisualVariantSystem;
             VisualContext = visualContext;
         }
@@ -34,10 +34,10 @@ internal sealed partial class RoadVisualResolutionSystem : SystemBase
 
     public static RoadVisualType ResolveVisualType(Context context, Vector2Int cell, TileConnectionMask mask)
     {
-        if (context.RoadNetworkSystem.AutobahnConnectorCells.Contains(cell))
+        if (context.RoadNetworkCompositionSystemHelper.AutobahnConnectorCells.Contains(cell))
             return RoadVisualType.AutobahnConnect;
 
-        if (context.RoadNetworkSystem.AutobahnCells.Contains(cell))
+        if (context.RoadNetworkCompositionSystemHelper.AutobahnCells.Contains(cell))
             return RoadVisualType.Autobahn;
 
         bool isStraight = (mask.North && mask.South) || (mask.East && mask.West);

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using RoadTileData = RoadNetworkSystem.RoadTileData;
+using RoadTileData = RoadNetworkCompositionSystemHelper.RoadTileData;
 
 internal sealed class RoadBuildDisposalCompositionSystemHelper
 {

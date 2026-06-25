@@ -5,8 +5,8 @@ using static UnityEngine.Object;
 using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
 using FootprintBoundsData = RoadGridProjectionSystem.RoadFootprintBoundsData;
 using FootprintKind = RoadGridProjectionSystem.RoadFootprintKind;
-using RoadVisualType = RoadNetworkSystem.RoadVisualType;
-using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
+using RoadVisualType = RoadNetworkCompositionSystemHelper.RoadVisualType;
+using TileConnectionMask = RoadNetworkCompositionSystemHelper.TileConnectionMask;
 
 public sealed partial class RoadVisualVariantSystem : SystemBase
 {

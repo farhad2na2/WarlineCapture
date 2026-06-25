@@ -201,7 +201,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 14. Complete: Extract road stroke mutation bridge
    - Create `RoadBuildMutationCompositionSystemHelper`.
    - Move `CreateStroke`, `DeleteStroke`, dirty-cell refresh triggering, and network snapshot restore handoff.
-   - Use `RoadNetworkSystem` for graph mutation and `RoadVisualRefreshSystem` for visual/ECS refresh.
+   - Use `RoadNetworkCompositionSystemHelper` for graph mutation and `RoadVisualRefreshSystem` for visual/ECS refresh.
    - Expected output: stroke mutation no longer lives beside startup and legacy building behavior.
 
 15. Complete: Extract visual type resolution

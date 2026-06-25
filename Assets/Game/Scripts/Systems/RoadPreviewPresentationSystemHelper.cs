@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
 using DragFirstAxis = RoadPathPlanningSystem.DragFirstAxis;
-using RoadVisualType = RoadNetworkSystem.RoadVisualType;
-using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
+using RoadVisualType = RoadNetworkCompositionSystemHelper.RoadVisualType;
+using TileConnectionMask = RoadNetworkCompositionSystemHelper.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
 public sealed class RoadPreviewPresentationSystemHelper
@@ -21,7 +21,7 @@ public sealed class RoadPreviewPresentationSystemHelper
         public readonly float PreviewAlpha;
         public readonly GameObject EndPrefab;
         public readonly RoadPathPlanningSystem PathPlanningSystem;
-        public readonly RoadNetworkSystem NetworkSystem;
+        public readonly RoadNetworkCompositionSystemHelper NetworkSystem;
         public readonly ResolveVisualTypeAction ResolveVisualType;
         public readonly TryGetVariantAction TryGetVariant;
 
@@ -34,7 +34,7 @@ public sealed class RoadPreviewPresentationSystemHelper
             float previewAlpha,
             GameObject endPrefab,
             RoadPathPlanningSystem pathPlanningSystem,
-            RoadNetworkSystem networkSystem,
+            RoadNetworkCompositionSystemHelper networkSystem,
             ResolveVisualTypeAction resolveVisualType,
             TryGetVariantAction tryGetVariant)
         {

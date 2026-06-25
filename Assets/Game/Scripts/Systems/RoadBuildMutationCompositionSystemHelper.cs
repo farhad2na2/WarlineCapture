@@ -6,16 +6,16 @@ internal sealed class RoadBuildMutationCompositionSystemHelper
 {
     public readonly struct Context
     {
-        public readonly RoadNetworkSystem RoadNetworkSystem;
+        public readonly RoadNetworkCompositionSystemHelper RoadNetworkCompositionSystemHelper;
         public readonly Action<HashSet<Vector2Int>> RefreshCells;
         public readonly Action RebuildRoadStateFromCurrentTiles;
 
         public Context(
-            RoadNetworkSystem roadNetworkSystem,
+            RoadNetworkCompositionSystemHelper roadNetworkSystem,
             Action<HashSet<Vector2Int>> refreshCells,
             Action rebuildRoadStateFromCurrentTiles)
         {
-            RoadNetworkSystem = roadNetworkSystem;
+            RoadNetworkCompositionSystemHelper = roadNetworkSystem;
             RefreshCells = refreshCells;
             RebuildRoadStateFromCurrentTiles = rebuildRoadStateFromCurrentTiles;
         }
@@ -28,10 +28,10 @@ internal sealed class RoadBuildMutationCompositionSystemHelper
         bool useAutobahnConnectorAtStart = false,
         bool useAutobahnConnectorAtEnd = false)
     {
-        if (context.RoadNetworkSystem == null)
+        if (context.RoadNetworkCompositionSystemHelper == null)
             return;
 
-        if (context.RoadNetworkSystem.CreateStroke(
+        if (context.RoadNetworkCompositionSystemHelper.CreateStroke(
                 cells,
                 isAutobahn,
                 useAutobahnConnectorAtStart,
@@ -44,24 +44,24 @@ internal sealed class RoadBuildMutationCompositionSystemHelper
 
     public void DeleteStroke(Context context, int strokeId)
     {
-        if (context.RoadNetworkSystem == null)
+        if (context.RoadNetworkCompositionSystemHelper == null)
             return;
 
-        if (context.RoadNetworkSystem.DeleteStroke(strokeId, out var dirtyCells))
+        if (context.RoadNetworkCompositionSystemHelper.DeleteStroke(strokeId, out var dirtyCells))
             context.RefreshCells?.Invoke(dirtyCells);
     }
 
-    public RoadNetworkSystem.Snapshot CaptureRoadBuildSessionSnapshot(Context context)
+    public RoadNetworkCompositionSystemHelper.Snapshot CaptureRoadBuildSessionSnapshot(Context context)
     {
-        return context.RoadNetworkSystem?.CaptureSnapshot();
+        return context.RoadNetworkCompositionSystemHelper?.CaptureSnapshot();
     }
 
-    public void RestoreRoadBuildSession(Context context, RoadNetworkSystem.Snapshot snapshot)
+    public void RestoreRoadBuildSession(Context context, RoadNetworkCompositionSystemHelper.Snapshot snapshot)
     {
-        if (context.RoadNetworkSystem == null)
+        if (context.RoadNetworkCompositionSystemHelper == null)
             return;
 
-        context.RoadNetworkSystem.RestoreSnapshot(snapshot);
+        context.RoadNetworkCompositionSystemHelper.RestoreSnapshot(snapshot);
         context.RebuildRoadStateFromCurrentTiles?.Invoke();
     }
 }

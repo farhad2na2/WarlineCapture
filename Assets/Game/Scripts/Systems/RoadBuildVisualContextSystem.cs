@@ -2,15 +2,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using CombinedRoadVisualData = RoadGridProjectionSystem.CombinedRoadVisualData;
 using MarkerLayoutData = RoadVisualVariantSystem.MarkerLayoutData;
-using RoadVisualType = RoadNetworkSystem.RoadVisualType;
-using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
+using RoadVisualType = RoadNetworkCompositionSystemHelper.RoadVisualType;
+using TileConnectionMask = RoadNetworkCompositionSystemHelper.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
 internal sealed class RoadBuildVisualContextSystem
 {
     public readonly struct Context
     {
-        public readonly RoadNetworkSystem RoadNetworkSystem;
+        public readonly RoadNetworkCompositionSystemHelper RoadNetworkCompositionSystemHelper;
         public readonly RoadPathPlanningSystem RoadPathPlanningSystem;
         public readonly RoadVisualVariantSystem RoadVisualVariantSystem;
         public readonly RoadBuildStartupSystem RoadBuildStartupSystem;
@@ -21,7 +21,7 @@ internal sealed class RoadBuildVisualContextSystem
         public readonly RoadSpecialVisualSystem.TryGetVariantAction SpecialTryGetVariant;
 
         public Context(
-            RoadNetworkSystem roadNetworkSystem,
+            RoadNetworkCompositionSystemHelper roadNetworkSystem,
             RoadPathPlanningSystem roadPathPlanningSystem,
             RoadVisualVariantSystem roadVisualVariantSystem,
             RoadBuildStartupSystem roadBuildStartupSystem,
@@ -31,7 +31,7 @@ internal sealed class RoadBuildVisualContextSystem
             RoadSpecialVisualSystem.GetPrefabAction getPrefab,
             RoadSpecialVisualSystem.TryGetVariantAction specialTryGetVariant)
         {
-            RoadNetworkSystem = roadNetworkSystem;
+            RoadNetworkCompositionSystemHelper = roadNetworkSystem;
             RoadPathPlanningSystem = roadPathPlanningSystem;
             RoadVisualVariantSystem = roadVisualVariantSystem;
             RoadBuildStartupSystem = roadBuildStartupSystem;
@@ -56,10 +56,10 @@ internal sealed class RoadBuildVisualContextSystem
     {
         RoadRuntimeRootSystem.Roots roots = context.StartupState.RuntimeRoots;
         return new RoadChunkVisualSystem.Context(
-            context.RoadNetworkSystem.RoadTiles,
+            context.RoadNetworkCompositionSystemHelper.RoadTiles,
             context.RoadVisualVariantSystem?.VisualData ?? new Dictionary<RoadVisualType, CombinedRoadVisualData>(),
-            context.RoadNetworkSystem.AutobahnCells,
-            context.RoadNetworkSystem.AutobahnConnectorCells,
+            context.RoadNetworkCompositionSystemHelper.AutobahnCells,
+            context.RoadNetworkCompositionSystemHelper.AutobahnConnectorCells,
             roots.RoadRoot,
             context.StartupState.GridOrigin,
             context.StartupState.BuildPlaneY,
@@ -80,7 +80,7 @@ internal sealed class RoadBuildVisualContextSystem
             startupState.PreviewAlpha,
             startupState.EndPrefab,
             context.RoadPathPlanningSystem,
-            context.RoadNetworkSystem,
+            context.RoadNetworkCompositionSystemHelper,
             context.ResolveVisualType,
             context.PreviewTryGetVariant);
     }
@@ -90,8 +90,8 @@ internal sealed class RoadBuildVisualContextSystem
         RoadBuildStartupSystem.State startupState = context.StartupState;
         RoadRuntimeRootSystem.Roots roots = startupState.RuntimeRoots;
         return new RoadSpecialVisualSystem.Context(
-            context.RoadNetworkSystem.RoadTiles,
-            context.RoadNetworkSystem.Strokes,
+            context.RoadNetworkCompositionSystemHelper.RoadTiles,
+            context.RoadNetworkCompositionSystemHelper.Strokes,
             context.RoadVisualVariantSystem?.MarkerLayouts ?? new Dictionary<RoadVisualType, MarkerLayoutData>(),
             context.RoadVisualVariantSystem?.AutobahnConnectorMarkerData,
             roots.RoadRoot,

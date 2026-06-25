@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
-using RoadTileData = RoadNetworkSystem.RoadTileData;
-using RoadVisualType = RoadNetworkSystem.RoadVisualType;
-using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
+using RoadTileData = RoadNetworkCompositionSystemHelper.RoadTileData;
+using RoadVisualType = RoadNetworkCompositionSystemHelper.RoadVisualType;
+using TileConnectionMask = RoadNetworkCompositionSystemHelper.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
 internal sealed class RoadVisualRefreshSystem
 {
     public readonly struct Context
     {
-        public readonly RoadNetworkSystem RoadNetworkSystem;
+        public readonly RoadNetworkCompositionSystemHelper RoadNetworkCompositionSystemHelper;
         public readonly RoadGridProjectionSystem RoadGridProjectionSystem;
         public readonly RoadGridProjectionSystem.Context RoadGridProjectionContext;
         public readonly RoadChunkVisualSystem RoadChunkVisualSystem;
@@ -19,7 +19,7 @@ internal sealed class RoadVisualRefreshSystem
         public readonly RoadVisualResolutionSystem.Context RoadVisualResolutionContext;
 
         public Context(
-            RoadNetworkSystem roadNetworkSystem,
+            RoadNetworkCompositionSystemHelper roadNetworkSystem,
             RoadGridProjectionSystem roadGridProjectionSystem,
             RoadGridProjectionSystem.Context roadGridProjectionContext,
             RoadChunkVisualSystem roadChunkVisualSystem,
@@ -28,7 +28,7 @@ internal sealed class RoadVisualRefreshSystem
             RoadSpecialVisualSystem.Context roadSpecialVisualContext,
             RoadVisualResolutionSystem.Context roadVisualResolutionContext)
         {
-            RoadNetworkSystem = roadNetworkSystem;
+            RoadNetworkCompositionSystemHelper = roadNetworkSystem;
             RoadGridProjectionSystem = roadGridProjectionSystem;
             RoadGridProjectionContext = roadGridProjectionContext;
             RoadChunkVisualSystem = roadChunkVisualSystem;
@@ -51,12 +51,12 @@ internal sealed class RoadVisualRefreshSystem
 
     public static void RebuildRoadStateFromCurrentTiles(Context context)
     {
-        context.RoadNetworkSystem.RebuildSpecialRoadCellMetadata();
+        context.RoadNetworkCompositionSystemHelper.RebuildSpecialRoadCellMetadata();
 
         context.RoadChunkVisualSystem?.ClearChunks();
         context.RoadSpecialVisualSystem?.ClearSpecialRoadObjects();
 
-        foreach (var cell in context.RoadNetworkSystem.RoadTiles.Keys)
+        foreach (var cell in context.RoadNetworkCompositionSystemHelper.RoadTiles.Keys)
             context.RoadChunkVisualSystem?.AddCellToChunk(context.RoadChunkVisualContext, cell);
 
         context.RoadGridProjectionSystem?.SyncRoadCellsToEcs(context.RoadGridProjectionContext);
@@ -66,14 +66,14 @@ internal sealed class RoadVisualRefreshSystem
 
     private static void RefreshCell(Context context, Vector2Int cell)
     {
-        TileConnectionMask mask = context.RoadNetworkSystem.GetMask(cell);
+        TileConnectionMask mask = context.RoadNetworkCompositionSystemHelper.GetMask(cell);
         RoadVisualType targetType = RoadVisualResolutionSystem.ResolveVisualType(
             context.RoadVisualResolutionContext,
             cell,
             mask);
         if (targetType == RoadVisualType.None)
         {
-            context.RoadNetworkSystem.RoadTiles.Remove(cell);
+            context.RoadNetworkCompositionSystemHelper.RoadTiles.Remove(cell);
             context.RoadChunkVisualSystem?.RemoveCellFromChunk(context.RoadChunkVisualContext, cell);
             return;
         }
@@ -87,7 +87,7 @@ internal sealed class RoadVisualRefreshSystem
             return;
         }
 
-        if (context.RoadNetworkSystem.RoadTiles.TryGetValue(cell, out RoadTileData current) &&
+        if (context.RoadNetworkCompositionSystemHelper.RoadTiles.TryGetValue(cell, out RoadTileData current) &&
             current.Type == targetType &&
             current.Mask.Equals(mask) &&
             current.Rotation == variant.Rotation &&
@@ -96,7 +96,7 @@ internal sealed class RoadVisualRefreshSystem
             return;
         }
 
-        context.RoadNetworkSystem.RoadTiles[cell] = new RoadTileData
+        context.RoadNetworkCompositionSystemHelper.RoadTiles[cell] = new RoadTileData
         {
             Type = targetType,
             Mask = mask,

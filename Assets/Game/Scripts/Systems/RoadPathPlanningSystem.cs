@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using EdgeKey = RoadNetworkSystem.EdgeKey;
-using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
+using EdgeKey = RoadNetworkCompositionSystemHelper.EdgeKey;
+using TileConnectionMask = RoadNetworkCompositionSystemHelper.TileConnectionMask;
 
 public sealed class RoadPathPlanningSystem
 {
@@ -65,7 +65,7 @@ public sealed class RoadPathPlanningSystem
         Vector2Int startCell,
         Vector2Int endCell,
         DragFirstAxis dragFirstAxis,
-        RoadNetworkSystem roadNetworkSystem)
+        RoadNetworkCompositionSystemHelper roadNetworkSystem)
     {
         var plan = new PreviewPlan();
         plan.Path.AddRange(BuildPath(startCell, endCell, dragFirstAxis));
@@ -88,7 +88,7 @@ public sealed class RoadPathPlanningSystem
     public TileConnectionMask GetPreviewMask(
         Vector2Int cell,
         HashSet<EdgeKey> proposedEdges,
-        RoadNetworkSystem roadNetworkSystem)
+        RoadNetworkCompositionSystemHelper roadNetworkSystem)
     {
         return new TileConnectionMask(
             HasPreviewEdge(cell, cell + North, proposedEdges, roadNetworkSystem),
@@ -101,7 +101,7 @@ public sealed class RoadPathPlanningSystem
         Vector2Int a,
         Vector2Int b,
         HashSet<EdgeKey> proposedEdges,
-        RoadNetworkSystem roadNetworkSystem)
+        RoadNetworkCompositionSystemHelper roadNetworkSystem)
     {
         var key = new EdgeKey(a, b);
         return roadNetworkSystem.EdgeCounts.ContainsKey(key) || proposedEdges.Contains(key);
@@ -111,7 +111,7 @@ public sealed class RoadPathPlanningSystem
         List<Vector2Int> path,
         HashSet<EdgeKey> proposedEdges,
         HashSet<Vector2Int> dirtyCells,
-        RoadNetworkSystem roadNetworkSystem)
+        RoadNetworkCompositionSystemHelper roadNetworkSystem)
     {
         AddEndpointPreviewConnectionsForCell(path, 0, proposedEdges, dirtyCells, roadNetworkSystem);
         AddEndpointPreviewConnectionsForCell(path, path.Count - 1, proposedEdges, dirtyCells, roadNetworkSystem);
@@ -122,7 +122,7 @@ public sealed class RoadPathPlanningSystem
         int index,
         HashSet<EdgeKey> proposedEdges,
         HashSet<Vector2Int> dirtyCells,
-        RoadNetworkSystem roadNetworkSystem)
+        RoadNetworkCompositionSystemHelper roadNetworkSystem)
     {
         if (path.Count < 2)
             return;

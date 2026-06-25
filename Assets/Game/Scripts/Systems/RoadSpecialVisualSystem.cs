@@ -3,10 +3,10 @@ using Unity.Entities;
 using UnityEngine;
 using ConnectorMarkerData = RoadVisualVariantSystem.ConnectorMarkerData;
 using MarkerLayoutData = RoadVisualVariantSystem.MarkerLayoutData;
-using RoadTileData = RoadNetworkSystem.RoadTileData;
-using RoadVisualType = RoadNetworkSystem.RoadVisualType;
-using StrokeData = RoadNetworkSystem.StrokeData;
-using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
+using RoadTileData = RoadNetworkCompositionSystemHelper.RoadTileData;
+using RoadVisualType = RoadNetworkCompositionSystemHelper.RoadVisualType;
+using StrokeData = RoadNetworkCompositionSystemHelper.StrokeData;
+using TileConnectionMask = RoadNetworkCompositionSystemHelper.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
 public sealed partial class RoadSpecialVisualSystem : SystemBase

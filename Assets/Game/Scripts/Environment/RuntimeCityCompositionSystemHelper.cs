@@ -67,7 +67,7 @@ public sealed class RuntimeCityCompositionSystemHelper
     private RuntimeCityStartupSystemHelper _runtimeCityStartupHelper;
     private readonly RuntimeCityStartupState _fallbackRuntimeCityStartup = new();
     private RuntimeCityReadinessQueryCompositionSystemHelper _runtimeCityReadinessQueryHelper;
-    private RuntimeCityGenerationSystem _runtimeCityGenerationSystem;
+    private RuntimeCityGenerationCompositionSystemHelper _runtimeCityGenerationHelper;
     private readonly RuntimeCityGenerationState _fallbackRuntimeCityGeneration = new();
     private RuntimeCityChainUtilitySystemHelper _runtimeCityChainHelper;
     private readonly RuntimeCityChainState _fallbackRuntimeCityChain = new();
@@ -277,9 +277,9 @@ public sealed class RuntimeCityCompositionSystemHelper
             RuntimeCityDiagnosticsSystemHelper);
     }
 
-    private RuntimeCityGenerationSystem.Context CreateGenerationContext(GridConfig grid, int roadCellSizeInGridCells, int frameCount)
+    private RuntimeCityGenerationCompositionSystemHelper.Context CreateGenerationContext(GridConfig grid, int roadCellSizeInGridCells, int frameCount)
     {
-        return new RuntimeCityGenerationSystem.Context(
+        return new RuntimeCityGenerationCompositionSystemHelper.Context(
             cityConfig,
             grid,
             roadCellSizeInGridCells,
@@ -542,10 +542,10 @@ public sealed class RuntimeCityCompositionSystemHelper
         _runtimeCityRoadBuildBridgeHelper ??= ResolveRuntimeCityRoadBuildBridgeCompositionSystemHelper();
 
     private RuntimeCityGenerationState RuntimeCityGenerationState =>
-        RuntimeCityGenerationSystem?.State ?? _fallbackRuntimeCityGeneration;
+        RuntimeCityGenerationCompositionSystemHelper?.State ?? _fallbackRuntimeCityGeneration;
 
-    private RuntimeCityGenerationSystem RuntimeCityGenerationSystem =>
-        _runtimeCityGenerationSystem ??= ResolveRuntimeCityGenerationSystem();
+    private RuntimeCityGenerationCompositionSystemHelper RuntimeCityGenerationCompositionSystemHelper =>
+        _runtimeCityGenerationHelper ??= ResolveRuntimeCityGenerationCompositionSystemHelper();
 
     private RuntimeCityChainState RuntimeCityChainState =>
         RuntimeCityChainHelper?.State ?? _fallbackRuntimeCityChain;
@@ -756,9 +756,9 @@ public sealed class RuntimeCityCompositionSystemHelper
         return new RuntimeCityBuildingPlacementPrefabSystemHelper();
     }
 
-    private static RuntimeCityGenerationSystem ResolveRuntimeCityGenerationSystem()
+    private static RuntimeCityGenerationCompositionSystemHelper ResolveRuntimeCityGenerationCompositionSystemHelper()
     {
-        return new RuntimeCityGenerationSystem();
+        return new RuntimeCityGenerationCompositionSystemHelper();
     }
 
     private static RuntimeCityChainUtilitySystemHelper ResolveRuntimeCityChainHelper()

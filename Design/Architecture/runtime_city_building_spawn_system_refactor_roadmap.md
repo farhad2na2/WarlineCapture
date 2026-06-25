@@ -12,7 +12,7 @@ Target file: `Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs`
 
 Current size at roadmap creation: 1107 lines. This is an observation, not a hard acceptance limit. The acceptance target is single responsibility.
 
-Final target: `RuntimeCityBuildingSpawnSystem` may remain only as an algorithm-light city-building spawn coordinator with high-level methods used by `RuntimeCityGenerationSystem`. It must not own landmark placement algorithms, roadside plot placement algorithms, rural scatter placement, yard-wall fit/visual algorithms, decoration prefab classification, decoration placement algorithms, spawn/reserve validation, mutable config/dependency state, or broad compatibility surface. If the coordinator becomes pure pass-through after these steps, deletion can be decided inside step 35, not as a surprise step.
+Final target: `RuntimeCityBuildingSpawnSystem` may remain only as an algorithm-light city-building spawn coordinator with high-level methods used by `RuntimeCityGenerationCompositionSystemHelper`. It must not own landmark placement algorithms, roadside plot placement algorithms, rural scatter placement, yard-wall fit/visual algorithms, decoration prefab classification, decoration placement algorithms, spawn/reserve validation, mutable config/dependency state, or broad compatibility surface. If the coordinator becomes pure pass-through after these steps, deletion can be decided inside step 35, not as a surprise step.
 
 ## Current Responsibility Inventory
 
@@ -241,11 +241,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
 
 18. Complete: Move `GenerationRandomState`
    - Move the coroutine random-state bridge to `RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper` or `RuntimeCityGenerationRandomSystem`.
-   - Update `RuntimeCityGenerationSystem` to use the new owner.
-   - Preserve random state handoff back to `RuntimeCityGenerationSystem`.
+   - Update `RuntimeCityGenerationCompositionSystemHelper` to use the new owner.
+   - Preserve random state handoff back to `RuntimeCityGenerationCompositionSystemHelper`.
    - Expected output: coordinator no longer owns coroutine random plumbing.
    - `GenerationRandomState` now lives in `RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper`.
-   - `RuntimeCityGenerationSystem` creates the bulk-routine random bridge, passes it into `SpawnCityBulkBuildingsRoutine`, and copies the updated value back after the coroutine returns.
+   - `RuntimeCityGenerationCompositionSystemHelper` creates the bulk-routine random bridge, passes it into `SpawnCityBulkBuildingsRoutine`, and copies the updated value back after the coroutine returns.
    - `RuntimeCityBuildingSpawnSystem` no longer owns a nested random-state bridge type.
 
 ## Phase 5: Corridor Entrance Buildings
@@ -260,11 +260,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Corridor plot building, shuffle, counts, labels, descriptions, zero spacing, and reserved-footprint placement calls were moved unchanged.
 
 20. Complete: Route generation through corridor boundary
-   - Update `RuntimeCityGenerationSystem` context to consume the corridor spawn system or a coordinator method that delegates only.
+   - Update `RuntimeCityGenerationCompositionSystemHelper` context to consume the corridor spawn system or a coordinator method that delegates only.
    - Keep generation sequencing unchanged.
    - Expected output: corridor placement is no longer implemented by `RuntimeCityBuildingSpawnSystem`.
    - `RuntimeCityCompositionSystemHelper` now owns and passes the explicit building-spawn context, stateless placement system, and corridor spawn system into generation.
-   - `RuntimeCityGenerationSystem` now calls `RuntimeCityCorridorBuildingSpawnPrefabSystemHelper.SpawnCorridorEntranceBuildings` directly for corridor-side buildings.
+   - `RuntimeCityGenerationCompositionSystemHelper` now calls `RuntimeCityCorridorBuildingSpawnPrefabSystemHelper.SpawnCorridorEntranceBuildings` directly for corridor-side buildings.
    - `RuntimeCityBuildingSpawnSystem.SpawnCorridorEntranceBuildings` remains only as a compatibility wrapper for callers that have not migrated yet.
 
 ## Phase 6: Yard Walls
@@ -376,14 +376,14 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Ensure composition remains wiring-only and does not absorb city-building placement policy.
    - Expected output: child system ownership is visible and single-purpose.
    - Moved extracted building-spawn child system instances into `RuntimeCityCompositionSystemHelper`.
-   - Added an explicit `RuntimeCityBuildingSpawnSystem.Systems` dependency set passed through `RuntimeCityGenerationSystem.Context`.
+   - Added an explicit `RuntimeCityBuildingSpawnSystem.Systems` dependency set passed through `RuntimeCityGenerationCompositionSystemHelper.Context`.
    - `RuntimeCityBuildingSpawnSystem` now receives child systems explicitly and no longer hides child-system construction internally.
 
-33. Complete: Update `RuntimeCityGenerationSystem` surface
+33. Complete: Update `RuntimeCityGenerationCompositionSystemHelper` surface
    - Keep generation sequencing stable while replacing broad building-spawn calls with explicit child-system or coordinator calls.
    - Do not change road generation, city chaining, deferred road ECS sync, deferred building side effects, or minimap publication.
    - Expected output: generation no longer depends on a mixed-responsibility building spawn object.
-   - `RuntimeCityGenerationSystem` no longer receives or calls `RuntimeCityBuildingSpawnSystem`.
+   - `RuntimeCityGenerationCompositionSystemHelper` no longer receives or calls `RuntimeCityBuildingSpawnSystem`.
    - Hall, landmark, bulk building, house yard-wall, and decoration sequencing now route directly through the composed child systems in `RuntimeCityBuildingSpawnSystem.Systems`.
    - Road generation, city chaining, deferred road ECS sync, deferred building side effects, minimap publication, yield points, and random-state handoff were left unchanged.
 
@@ -394,7 +394,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Expected output: drift is blocked by tests/docs.
    - Updated the SOLID/ECS contract and runtime-city responsibility audit with the post-step-33 building-spawn boundaries.
    - Added focused architecture guard coverage so extracted responsibilities cannot drift back into `RuntimeCityBuildingSpawnSystem`, the deleted `RuntimeCitySpawnerSystem`, or a broad replacement shell.
-   - Refreshed the broader runtime-city building-spawn sequencing guard to validate direct child-system calls from `RuntimeCityGenerationSystem`.
+   - Refreshed the broader runtime-city building-spawn sequencing guard to validate direct child-system calls from `RuntimeCityGenerationCompositionSystemHelper`.
 
 35. Complete: Coordinator deletion audit
    - Review whether `RuntimeCityBuildingSpawnSystem` is still meaningful or pure pass-through.
@@ -403,7 +403,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Expected output: no broad shell remains under old or new names.
    - Deleted `Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs` and its `.meta` because generation no longer called it and the remaining methods were pass-through wrappers.
    - Moved the child-system dependency bundle to `RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems`.
-   - `RuntimeCityCompositionSystemHelper` now creates `RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems`, and `RuntimeCityGenerationSystem` receives that dependency bundle directly.
+   - `RuntimeCityCompositionSystemHelper` now creates `RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems`, and `RuntimeCityGenerationCompositionSystemHelper` receives that dependency bundle directly.
    - Added deletion guards so the coordinator shell cannot be restored.
 
 36. Complete: Validation gate

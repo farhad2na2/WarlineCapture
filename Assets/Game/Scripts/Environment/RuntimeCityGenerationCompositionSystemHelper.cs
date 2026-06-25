@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
 
-internal sealed class RuntimeCityGenerationSystem
+internal sealed class RuntimeCityGenerationCompositionSystemHelper
 {
     private readonly RuntimeCityGenerationState _state = new();
 
@@ -98,7 +98,7 @@ internal sealed class RuntimeCityGenerationSystem
 
 internal sealed class RuntimeCityGenerationState
 {
-    public bool TryBegin(RuntimeCityGenerationSystem.Context context)
+    public bool TryBegin(RuntimeCityGenerationCompositionSystemHelper.Context context)
     {
         if (context.LifecycleState == null)
             return false;
@@ -110,7 +110,7 @@ internal sealed class RuntimeCityGenerationState
         return context.LifecycleState.TryBeginGeneration(GenerateCityRoutine(context), context.LifecycleContext);
     }
 
-    private IEnumerator GenerateCityRoutine(RuntimeCityGenerationSystem.Context context)
+    private IEnumerator GenerateCityRoutine(RuntimeCityGenerationCompositionSystemHelper.Context context)
     {
         RuntimeCityConfigCompositionSystemHelper.Snapshot cityConfig = context.CityConfig;
         if (context.LifecycleState.IsSpawned)
@@ -280,7 +280,7 @@ internal sealed class RuntimeCityGenerationState
         }
     }
 
-    private static void EnsureCityHall(RuntimeCityGenerationSystem.Context context, CityLayoutData city, ref Unity.Mathematics.Random rng)
+    private static void EnsureCityHall(RuntimeCityGenerationCompositionSystemHelper.Context context, CityLayoutData city, ref Unity.Mathematics.Random rng)
     {
         context.BuildingSpawnSystems.HallSpawnSystem.EnsureCityHall(
             context.BuildingSpawnContext,
@@ -291,7 +291,7 @@ internal sealed class RuntimeCityGenerationState
             ref rng);
     }
 
-    private static void SpawnCityImportantBuildings(RuntimeCityGenerationSystem.Context context, CityLayoutData city, ref Unity.Mathematics.Random rng)
+    private static void SpawnCityImportantBuildings(RuntimeCityGenerationCompositionSystemHelper.Context context, CityLayoutData city, ref Unity.Mathematics.Random rng)
     {
         context.BuildingSpawnSystems.HallSpawnSystem.EnsureCityHall(
             context.BuildingSpawnContext,
@@ -311,7 +311,7 @@ internal sealed class RuntimeCityGenerationState
             city.ReservedFootprints);
     }
 
-    private static IEnumerator SpawnCityBulkBuildingsRoutine(RuntimeCityGenerationSystem.Context context, CityLayoutData city, RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.GenerationRandomState rng)
+    private static IEnumerator SpawnCityBulkBuildingsRoutine(RuntimeCityGenerationCompositionSystemHelper.Context context, CityLayoutData city, RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.GenerationRandomState rng)
     {
         return context.BuildingSpawnSystems.BulkBuildingSpawnRoutineSystem.SpawnRoutine(
             context.BuildingSpawnContext,

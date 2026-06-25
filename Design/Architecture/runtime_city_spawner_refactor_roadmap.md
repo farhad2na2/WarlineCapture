@@ -112,27 +112,27 @@ Non-goals:
     - `RuntimeCitySpawnerSystem` no longer has `Unity.Entities` or `Unity.Collections` dependencies and no longer owns `World`, `EntityQuery`, `EntityManager`, `Allocator`, or direct ECS readiness query setup.
 
 18. Complete: Extract city generation sequence
-    - Created `RuntimeCityGenerationSystem`.
+    - Created `RuntimeCityGenerationCompositionSystemHelper`.
     - Owns `GenerateCity` begin flow, `GenerateCityRoutine`, deferred road sync begin/end ordering, deferred spawn side-effect begin/end ordering, city-list lifetime, RNG lifetime, bulk-building routine stepping, and completion notification.
     - Keeps the existing extracted systems as dependencies and receives the still-pending city-chain/road-commit helpers as explicit delegates until steps 19-21 extract those policies.
-    - `RuntimeCitySpawnerSystem` now starts generation through `RuntimeCityGenerationSystem.TryBegin(...)` and no longer owns the city generation coroutine.
+    - `RuntimeCitySpawnerSystem` now starts generation through `RuntimeCityGenerationCompositionSystemHelper.TryBegin(...)` and no longer owns the city generation coroutine.
 
 19. Complete: Extract city-chain connection policy
     - Created `RuntimeCityChainUtilitySystemHelper`.
     - Owns `TryPlanNextCity`, city travel-direction selection, reverse-direction avoidance, target-center candidate policy, city spacing checks, autobahn length policy, source/target connection-cell resolution, city exit validation, and autobahn path validation.
     - Keeps low-level stroke/path construction inside `RuntimeCityRoadLayoutUtilitySystemHelper`.
-    - `RuntimeCityGenerationSystem` now requests next-city planning through `RuntimeCityChainUtilitySystemHelper`; `RuntimeCitySpawnerSystem` no longer owns city-chain travel policy.
+    - `RuntimeCityGenerationCompositionSystemHelper` now requests next-city planning through `RuntimeCityChainUtilitySystemHelper`; `RuntimeCitySpawnerSystem` no longer owns city-chain travel policy.
 
 20. Complete: Extract city road commit sequence
     - Created `RuntimeCityRoadCommitCompositionSystemHelper`.
     - Owns `CommitCityRoadNetwork`, `PopulateCityRoadCells`, source-exit road commit, autobahn commit, standalone connector handoff, occupied-road-cell mutation, and road commit failure result codes.
     - Keeps actual road-build calls inside `RuntimeCityRoadBuildBridgeCompositionSystemHelper`.
-    - `RuntimeCityGenerationSystem` now requests road commits through a narrow result-returning boundary; `RuntimeCitySpawnerSystem` no longer owns city road commit helpers.
+    - `RuntimeCityGenerationCompositionSystemHelper` now requests road commits through a narrow result-returning boundary; `RuntimeCitySpawnerSystem` no longer owns city road commit helpers.
 
 21. Complete: Extract incoming connector/ingress helpers
     - Created `RuntimeCityIngressUtilitySystemHelper`.
     - Owns `CreateCityLayout`, incoming-anchor wiring, inner connection-cell math, city connection offset math, and ingress-corridor pruning.
-    - `RuntimeCityGenerationSystem` and `RuntimeCityChainUtilitySystemHelper` now request city layout and ingress connector policy through `RuntimeCityIngressUtilitySystemHelper`.
+    - `RuntimeCityGenerationCompositionSystemHelper` and `RuntimeCityChainUtilitySystemHelper` now request city layout and ingress connector policy through `RuntimeCityIngressUtilitySystemHelper`.
     - Expected output: `RuntimeCitySpawnerSystem` no longer owns city connection helper math.
 
 22. Complete: Extract diagnostics/events
@@ -143,7 +143,7 @@ Non-goals:
 
 23. Complete: Move minimap notification to result/event boundary
     - Created `RuntimeCityMinimapEventUiSystemHelper`.
-    - `RuntimeCityGenerationSystem` now publishes a static-minimap-changed event through `RuntimeCityMinimapEventUiSystemHelper` instead of receiving or invoking a direct UI callback.
+    - `RuntimeCityGenerationCompositionSystemHelper` now publishes a static-minimap-changed event through `RuntimeCityMinimapEventUiSystemHelper` instead of receiving or invoking a direct UI callback.
     - `RuntimeCityMinimapEventUiSystemHelper` owns the UI-facing flush to `MainMenuPlayUI.NotifyStaticMinimapChanged`.
     - Expected output: runtime city generation has no direct UI reference.
 
@@ -155,7 +155,7 @@ Non-goals:
 
 25. Complete: Move composition out of the spawner constructor path
     - Created `RuntimeCityCompositionSystemHelper`.
-    - Owns creation/wiring of `RuntimeCityConfigCompositionSystemHelper`, `RuntimeCityLifecycleCompositionSystemHelper`, `RuntimeCityStartupSystemHelper`, `RuntimeCityReadinessQueryCompositionSystemHelper`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressUtilitySystemHelper`, `RuntimeCityMinimapEventUiSystemHelper`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
+    - Owns creation/wiring of `RuntimeCityConfigCompositionSystemHelper`, `RuntimeCityLifecycleCompositionSystemHelper`, `RuntimeCityStartupSystemHelper`, `RuntimeCityReadinessQueryCompositionSystemHelper`, `RuntimeCityGenerationCompositionSystemHelper`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressUtilitySystemHelper`, `RuntimeCityMinimapEventUiSystemHelper`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
     - `RuntimeCitySpawnerSystem` is now a thin public shell delegating init, update, dispose, public generation, and house-prefab queries to `RuntimeCityCompositionSystemHelper`.
     - Expected output: startup composition is explicit and narrow.
 

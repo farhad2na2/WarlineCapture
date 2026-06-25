@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 
-internal sealed class RuntimeCityLandmarkSpawnSystem
+internal sealed class RuntimeCityLandmarkSpawnPrefabSystemHelper
 {
     private readonly RuntimeCityLandmarkSpawnState _state = new();
 

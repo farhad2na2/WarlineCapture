@@ -46,7 +46,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
         public readonly Action EnqueueMapBuildingPlacements;
         public readonly Action EnqueueMapVehiclePlacements;
         public readonly Action UpdateBuildingRuntimeBoundary;
-        public readonly Func<BuildingPlacementInputRuntimeTickSystem.Result> UpdateInput;
+        public readonly Func<BuildingPlacementInputRuntimeTickUiSystemHelper.Result> UpdateInput;
         public readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper DiagnosticsSystem;
         public readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context DiagnosticsContext;
 
@@ -64,7 +64,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             Action enqueueMapBuildingPlacements,
             Action enqueueMapVehiclePlacements,
             Action updateBuildingRuntimeBoundary,
-            Func<BuildingPlacementInputRuntimeTickSystem.Result> updateInput,
+            Func<BuildingPlacementInputRuntimeTickUiSystemHelper.Result> updateInput,
             BuildingPlacementRuntimeTickDiagnosticsSystemHelper diagnosticsSystem,
             BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context diagnosticsContext)
         {
@@ -263,7 +263,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             }
             afterMarkers = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-            BuildingPlacementInputRuntimeTickSystem.Result input;
+            BuildingPlacementInputRuntimeTickUiSystemHelper.Result input;
             using (UpdateInputMarker.Auto())
             {
                 input = context.UpdateInput != null

@@ -14,7 +14,7 @@ internal sealed class BuildingPlacementRuntimeTickContextCompositionSystemHelper
         public readonly Action FlushPendingMarkerRefresh;
         public readonly Action EnqueueMapBuildingPlacements;
         public readonly Action EnqueueMapVehiclePlacements;
-        public readonly Func<BuildingPlacementInputRuntimeTickSystem.Result> UpdateInput;
+        public readonly Func<BuildingPlacementInputRuntimeTickUiSystemHelper.Result> UpdateInput;
         public readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context DiagnosticsContext;
 
         public Source(
@@ -27,7 +27,7 @@ internal sealed class BuildingPlacementRuntimeTickContextCompositionSystemHelper
             Action flushPendingMarkerRefresh,
             Action enqueueMapBuildingPlacements,
             Action enqueueMapVehiclePlacements,
-            Func<BuildingPlacementInputRuntimeTickSystem.Result> updateInput,
+            Func<BuildingPlacementInputRuntimeTickUiSystemHelper.Result> updateInput,
             BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context diagnosticsContext)
         {
             ProductionContext = productionContext;

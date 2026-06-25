@@ -428,8 +428,8 @@ public sealed class BuildingPlacementValidationSystemTests
             new BuildingPlacementSessionCompositionSystemHelper());
         int requestId = commandSystem.EnqueueCancelBuildingPlacement(world.EntityManager);
 
-        var tickSystem = new BuildingPlacementInputRuntimeTickSystem();
-        BuildingPlacementInputRuntimeTickSystem.Context tickContext = new(
+        var tickSystem = new BuildingPlacementInputRuntimeTickUiSystemHelper();
+        BuildingPlacementInputRuntimeTickUiSystemHelper.Context tickContext = new(
             getWorldCamera: () => null,
             getActivePlacement: () => null,
             placementInputSystem: null,

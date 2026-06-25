@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-internal sealed class BuildingPlacementInputRuntimeTickSystem
+internal sealed class BuildingPlacementInputRuntimeTickUiSystemHelper
 {
     private const float DefaultClickDragThresholdPixels = 8f;
 

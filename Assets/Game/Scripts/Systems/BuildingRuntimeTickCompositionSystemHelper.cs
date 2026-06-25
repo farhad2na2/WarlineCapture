@@ -8,7 +8,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextSystem.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementInputRuntimeTickSystem.Context> createInputRuntimeTickContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementInputRuntimeTickUiSystemHelper.Context> createInputRuntimeTickContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingProductionRuntimeTickSystem.Context> createProductionRuntimeTickContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingRuntimeBoundaryPublishCompositionSystemHelper.Context> createRuntimeBoundaryPublishContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, Action> createMapBuildingPlacementSpawnUpdate,
@@ -26,7 +26,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
                 source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
         BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> combatContext = source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
         BuildingBarrierUtilitySystemHelper.Context barrierContext = source.BuildingRuntimeContextSystem.CreateBarrierContext(runtimeSource);
-        BuildingPlacementInputRuntimeTickSystem.Context inputContext = createInputRuntimeTickContext(source, interactionContext, markerPropertyBlock);
+        BuildingPlacementInputRuntimeTickUiSystemHelper.Context inputContext = createInputRuntimeTickContext(source, interactionContext, markerPropertyBlock);
         return new BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source(
             createProductionRuntimeTickContext(source),
             createRuntimeBoundaryPublishContext(source, interactionContext, markerPropertyBlock),
@@ -41,7 +41,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
                 () => source.BuildingSelectionMarkerSystem.Refresh(selectionMarkerContext)),
             createMapBuildingPlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
             createMapVehiclePlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
-            () => source.BuildingPlacementInputRuntimeTickSystem.Update(inputContext),
+            () => source.BuildingPlacementInputRuntimeTickUiSystemHelper.Update(inputContext),
             BuildingPlacementRuntimeTickDiagnosticsSystemHelper.CreateContext(
                 () => source.RuntimeDiagnosticsSystem.ShouldLogBuildingRuntimeSlices,
                 () => source.RuntimeBuildingSystem.Count,

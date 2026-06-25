@@ -3133,7 +3133,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BuildingInput_DefersBuildingSelectionUntilPointerRelease()
     {
-        string buildingInput = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingPlacementInputRuntimeTickSystem.cs");
+        string buildingInput = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingPlacementInputRuntimeTickUiSystemHelper.cs");
         string pointerPressed = ExtractBlockAfter(buildingInput, "if (pointer.WasPressedThisFrame)");
         string pointerReleased = ExtractBlockAfter(buildingInput, "if (pointer.WasReleasedThisFrame)");
         string clickGate = ExtractBlockAfter(buildingInput, "private static BuildingSelectionClickGate GetBuildingSelectionClickGate");

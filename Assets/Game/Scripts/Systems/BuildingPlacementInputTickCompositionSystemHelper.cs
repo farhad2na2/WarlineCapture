@@ -3,7 +3,7 @@ using UnityEngine;
 
 internal sealed class BuildingPlacementInputTickCompositionSystemHelper
 {
-    public BuildingPlacementInputRuntimeTickSystem.Context Create(
+    public BuildingPlacementInputRuntimeTickUiSystemHelper.Context Create(
         BuildingGameplaySourceCompositionSystemHelper source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
@@ -12,7 +12,7 @@ internal sealed class BuildingPlacementInputTickCompositionSystemHelper
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementInputSystem.ActivePlacementPointerContext> createActivePlacementPointerContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionClickSystem.Context> createSelectionClickContext)
     {
-        return new BuildingPlacementInputRuntimeTickSystem.Context(
+        return new BuildingPlacementInputRuntimeTickUiSystemHelper.Context(
             () => source.BuildingPlacementStartupSystemHelper.WorldCamera,
             () => source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement,
             source.BuildingPlacementInputSystem,

@@ -64,7 +64,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityRoadBuildBridgeState _fallbackRuntimeCityRoadBuildBridge = new();
     private RuntimeCityLifecycleSystem _runtimeCityLifecycleSystem;
     private readonly RuntimeCityLifecycleState _fallbackRuntimeCityLifecycle = new();
-    private RuntimeCityStartupSystem _runtimeCityStartupSystem;
+    private RuntimeCityStartupSystemHelper _runtimeCityStartupHelper;
     private readonly RuntimeCityStartupState _fallbackRuntimeCityStartup = new();
     private RuntimeCityReadinessQuerySystem _runtimeCityReadinessQuerySystem;
     private RuntimeCityGenerationSystem _runtimeCityGenerationSystem;
@@ -79,9 +79,9 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem;
     private RuntimeCityReadModelCompositionSystemHelper _runtimeCityReadModelSystem;
     private RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
-    private readonly RuntimeCityStartupSystem.TryGetPendingInitialUnitsDelegate _tryGetPendingInitialUnits;
-    private readonly RuntimeCityStartupSystem.TryGetRoadCellSizeDelegate _tryGetRoadCellSize;
-    private readonly RuntimeCityStartupSystem.TryGetGridDataDelegate _tryGetGridData;
+    private readonly RuntimeCityStartupSystemHelper.TryGetPendingInitialUnitsDelegate _tryGetPendingInitialUnits;
+    private readonly RuntimeCityStartupSystemHelper.TryGetRoadCellSizeDelegate _tryGetRoadCellSize;
+    private readonly RuntimeCityStartupSystemHelper.TryGetGridDataDelegate _tryGetGridData;
     private RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context _runtimeCityBuildingSpawnContext;
     private bool _configured;
 
@@ -109,7 +109,7 @@ public sealed class RuntimeCityCompositionSystem
 
     public string DescribeStartupBlocker(int frameCount)
     {
-        return global::RuntimeCityStartupSystem.DescribeStartupBlocker(CreateStartupContext(frameCount));
+        return global::RuntimeCityStartupSystemHelper.DescribeStartupBlocker(CreateStartupContext(frameCount));
     }
 
     public void MarkSpawnedAfterLoadingGateTimeout()
@@ -172,8 +172,8 @@ public sealed class RuntimeCityCompositionSystem
 
     public void GenerateCity(int frameCount)
     {
-        RuntimeCityStartupSystem.Result result = EvaluateManualGeneration(CreateStartupContext(frameCount));
-        if (result.Kind == RuntimeCityStartupSystem.ResultKind.Generate)
+        RuntimeCityStartupSystemHelper.Result result = EvaluateManualGeneration(CreateStartupContext(frameCount));
+        if (result.Kind == RuntimeCityStartupSystemHelper.ResultKind.Generate)
             GenerateCity(result.Grid, result.RoadCellSizeInGridCells, frameCount);
         PublishReadModel();
     }
@@ -208,24 +208,24 @@ public sealed class RuntimeCityCompositionSystem
 
     private void TryAutoSpawn(int frameCount)
     {
-        RuntimeCityStartupSystem.Result result = EvaluateStartup(CreateStartupContext(frameCount));
-        if (result.Kind == RuntimeCityStartupSystem.ResultKind.MarkSpawned)
+        RuntimeCityStartupSystemHelper.Result result = EvaluateStartup(CreateStartupContext(frameCount));
+        if (result.Kind == RuntimeCityStartupSystemHelper.ResultKind.MarkSpawned)
             RuntimeCityLifecycleState.MarkSpawned();
-        else if (result.Kind == RuntimeCityStartupSystem.ResultKind.Generate)
+        else if (result.Kind == RuntimeCityStartupSystemHelper.ResultKind.Generate)
             GenerateCity(result.Grid, result.RoadCellSizeInGridCells, frameCount);
     }
 
-    private RuntimeCityStartupSystem.Result EvaluateStartup(RuntimeCityStartupSystem.Context context)
+    private RuntimeCityStartupSystemHelper.Result EvaluateStartup(RuntimeCityStartupSystemHelper.Context context)
     {
-        RuntimeCityStartupSystem startupSystem = RuntimeCityStartupSystem;
+        RuntimeCityStartupSystemHelper startupSystem = RuntimeCityStartupSystemHelper;
         return startupSystem != null
             ? startupSystem.Evaluate(context)
             : _fallbackRuntimeCityStartup.Evaluate(context);
     }
 
-    private RuntimeCityStartupSystem.Result EvaluateManualGeneration(RuntimeCityStartupSystem.Context context)
+    private RuntimeCityStartupSystemHelper.Result EvaluateManualGeneration(RuntimeCityStartupSystemHelper.Context context)
     {
-        RuntimeCityStartupSystem startupSystem = RuntimeCityStartupSystem;
+        RuntimeCityStartupSystemHelper startupSystem = RuntimeCityStartupSystemHelper;
         return startupSystem != null
             ? startupSystem.EvaluateManualGeneration(context)
             : _fallbackRuntimeCityStartup.EvaluateManualGeneration(context);
@@ -256,9 +256,9 @@ public sealed class RuntimeCityCompositionSystem
             RuntimeCityDiagnosticsSystemHelper);
     }
 
-    private RuntimeCityStartupSystem.Context CreateStartupContext(int frameCount)
+    private RuntimeCityStartupSystemHelper.Context CreateStartupContext(int frameCount)
     {
-        return new RuntimeCityStartupSystem.Context(
+        return new RuntimeCityStartupSystemHelper.Context(
             frameCount,
             spawnOnStart,
             RuntimeCityLifecycleState.IsSpawned,
@@ -376,8 +376,8 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityBuildingSpawnContextCompositionSystemHelper RuntimeCityBuildingSpawnContextHelper =>
         _runtimeCityBuildingSpawnContextHelper ??= new RuntimeCityBuildingSpawnContextCompositionSystemHelper();
 
-    private RuntimeCityStartupSystem RuntimeCityStartupSystem =>
-        _runtimeCityStartupSystem ??= ResolveRuntimeCityStartupSystem();
+    private RuntimeCityStartupSystemHelper RuntimeCityStartupSystemHelper =>
+        _runtimeCityStartupHelper ??= ResolveRuntimeCityStartupSystemHelper();
 
     private RuntimeCityLifecycleState RuntimeCityLifecycleState =>
         RuntimeCityLifecycleSystem?.State ?? _fallbackRuntimeCityLifecycle;
@@ -616,9 +616,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityConfigSystem();
     }
 
-    private static RuntimeCityStartupSystem ResolveRuntimeCityStartupSystem()
+    private static RuntimeCityStartupSystemHelper ResolveRuntimeCityStartupSystemHelper()
     {
-        return new RuntimeCityStartupSystem();
+        return new RuntimeCityStartupSystemHelper();
     }
 
     private static RuntimeCityLifecycleSystem ResolveRuntimeCityLifecycleSystem()

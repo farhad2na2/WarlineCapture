@@ -100,7 +100,7 @@ Non-goals:
     - `RuntimeCitySpawnerSystem.Update()` no longer directly owns or advances the generation `IEnumerator`.
 
 16. Complete: Extract runtime city startup gate
-    - Created `RuntimeCityStartupSystem`.
+    - Created `RuntimeCityStartupSystemHelper`.
     - Owns spawn-on-start evaluation, play-request readiness, city-count checks, M01/mission exclusion policy, spawn-system availability checks, road-system availability checks, prefab-list readiness, initial-unit readiness gating, and initial-unit wait diagnostic cadence.
     - `RuntimeCitySpawnerSystem.TryAutoSpawn()` now consumes a narrow startup result: `None`, `MarkSpawned`, or `Generate`.
     - Manual `GenerateCity()` also uses the startup gate's dependency/readiness result so dependency checks do not remain duplicated in the spawner.
@@ -155,7 +155,7 @@ Non-goals:
 
 25. Complete: Move composition out of the spawner constructor path
     - Created `RuntimeCityCompositionSystem`.
-    - Owns creation/wiring of `RuntimeCityConfigSystem`, `RuntimeCityLifecycleSystem`, `RuntimeCityStartupSystem`, `RuntimeCityReadinessQuerySystem`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressSystem`, `RuntimeCityMinimapEventSystem`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
+    - Owns creation/wiring of `RuntimeCityConfigSystem`, `RuntimeCityLifecycleSystem`, `RuntimeCityStartupSystemHelper`, `RuntimeCityReadinessQuerySystem`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressSystem`, `RuntimeCityMinimapEventSystem`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
     - `RuntimeCitySpawnerSystem` is now a thin public shell delegating init, update, dispose, public generation, and house-prefab queries to `RuntimeCityCompositionSystem`.
     - Expected output: startup composition is explicit and narrow.
 

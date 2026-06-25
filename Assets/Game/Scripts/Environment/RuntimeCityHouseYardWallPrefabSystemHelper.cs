@@ -3,7 +3,7 @@ using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 using YardSide = RuntimeCityYardGateUtilitySystemHelper.YardSide;
 
-internal sealed class RuntimeCityHouseYardWallSystem
+internal sealed class RuntimeCityHouseYardWallPrefabSystemHelper
 {
     private readonly RuntimeCityHouseYardWallState _state = new();
 

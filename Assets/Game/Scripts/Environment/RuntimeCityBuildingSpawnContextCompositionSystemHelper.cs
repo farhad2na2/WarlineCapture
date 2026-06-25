@@ -74,7 +74,7 @@ internal sealed class RuntimeCityBuildingSpawnContextCompositionSystemHelper
             RuntimeCityYardWallPlanState yardWallPlanSystem,
             RuntimeCityYardGateState yardGateSystem,
             RuntimeCityYardWallVisualState yardWallVisualHelper,
-            RuntimeCityHouseYardWallState houseYardWallSystem,
+            RuntimeCityHouseYardWallState houseYardWallHelper,
             RuntimeCityDecorationPrefabGroupState decorationPrefabGroupSystem,
             RuntimeCityClothCoverSpawnState clothCoverSpawnSystem,
             RuntimeCityArchwaySpawnState archwaySpawnSystem,
@@ -94,7 +94,7 @@ internal sealed class RuntimeCityBuildingSpawnContextCompositionSystemHelper
             YardWallPlanSystem = yardWallPlanSystem;
             YardGateSystem = yardGateSystem;
             YardWallVisualSystem = yardWallVisualHelper;
-            HouseYardWallSystem = houseYardWallSystem;
+            HouseYardWallSystem = houseYardWallHelper;
             DecorationPrefabGroupSystem = decorationPrefabGroupSystem;
             ClothCoverSpawnSystem = clothCoverSpawnSystem;
             ArchwaySpawnSystem = archwaySpawnSystem;

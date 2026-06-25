@@ -45,7 +45,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityYardGateState _fallbackRuntimeCityYardGate = new();
     private RuntimeCityYardWallVisualPresentationSystemHelper _runtimeCityYardWallVisualHelper;
     private readonly RuntimeCityYardWallVisualState _fallbackRuntimeCityYardWallVisual = new();
-    private RuntimeCityHouseYardWallSystem _runtimeCityHouseYardWallSystem;
+    private RuntimeCityHouseYardWallPrefabSystemHelper _runtimeCityHouseYardWallHelper;
     private readonly RuntimeCityHouseYardWallState _fallbackRuntimeCityHouseYardWall = new();
     private RuntimeCityDecorationGroupPrefabSystemHelper _runtimeCityDecorationGroupHelper;
     private readonly RuntimeCityDecorationPrefabGroupState _fallbackRuntimeCityDecorationPrefabGroup = new();
@@ -488,10 +488,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityYardWallVisualHelper ??= ResolveRuntimeCityYardWallVisualPresentationSystemHelper();
 
     private RuntimeCityHouseYardWallState RuntimeCityHouseYardWallState =>
-        RuntimeCityHouseYardWallSystem?.State ?? _fallbackRuntimeCityHouseYardWall;
+        RuntimeCityHouseYardWallPrefabSystemHelper?.State ?? _fallbackRuntimeCityHouseYardWall;
 
-    private RuntimeCityHouseYardWallSystem RuntimeCityHouseYardWallSystem =>
-        _runtimeCityHouseYardWallSystem ??= ResolveRuntimeCityHouseYardWallSystem();
+    private RuntimeCityHouseYardWallPrefabSystemHelper RuntimeCityHouseYardWallPrefabSystemHelper =>
+        _runtimeCityHouseYardWallHelper ??= ResolveRuntimeCityHouseYardWallPrefabSystemHelper();
 
     private RuntimeCityDecorationPrefabGroupState RuntimeCityDecorationPrefabGroupState =>
         RuntimeCityDecorationGroupHelper?.State ?? _fallbackRuntimeCityDecorationPrefabGroup;
@@ -711,9 +711,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityYardWallVisualPresentationSystemHelper();
     }
 
-    private static RuntimeCityHouseYardWallSystem ResolveRuntimeCityHouseYardWallSystem()
+    private static RuntimeCityHouseYardWallPrefabSystemHelper ResolveRuntimeCityHouseYardWallPrefabSystemHelper()
     {
-        return new RuntimeCityHouseYardWallSystem();
+        return new RuntimeCityHouseYardWallPrefabSystemHelper();
     }
 
     private static RuntimeCityDecorationGroupPrefabSystemHelper ResolveRuntimeCityDecorationGroupHelper()

@@ -297,12 +297,12 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Wall/gate/pillar footprint math and visual-only spawn calls were moved unchanged.
 
 24. Complete: Extract house yard wall orchestration
-   - Create `RuntimeCityHouseYardWallSystem`.
+   - Create `RuntimeCityHouseYardWallPrefabSystemHelper`.
    - Move `PlaceHouseYardWalls` and `TryBuildHouseYardWall` orchestration.
    - Use yard plan, gate, visual, walkability, prefab selection, and reservation boundaries.
    - Expected output: house yard walls are fully out of `RuntimeCityBuildingSpawnSystem`.
-   - Added `RuntimeCityHouseYardWallSystem` as the owner for house yard-wall placement orchestration and successful-wall target counting.
-   - `RuntimeCityBuildingSpawnSystem` now passes a narrow callback to the bulk routine that delegates to `RuntimeCityHouseYardWallSystem` with explicit dependencies and config values.
+   - Added `RuntimeCityHouseYardWallPrefabSystemHelper` as the owner for house yard-wall placement orchestration and successful-wall target counting.
+   - `RuntimeCityBuildingSpawnSystem` now passes a narrow callback to the bulk routine that delegates to `RuntimeCityHouseYardWallPrefabSystemHelper` with explicit dependencies and config values.
    - Yard-rect planning, gate selection, visual spawning, prefab selection, and reserved-footprint reservation are now coordinated outside the building-spawn coordinator.
 
 ## Phase 7: Decoration Buildings

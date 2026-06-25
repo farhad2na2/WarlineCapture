@@ -7,7 +7,7 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
     internal SelectionUiCameraSystem SelectionUiCameraSystem { get; private set; }
     internal SelectionBuildingInteractionSystem SelectionBuildingInteractionSystem { get; private set; }
     internal RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers { get; private set; }
-    internal RuntimeCityCompositionSystem RuntimeCitySystem { get; private set; }
+    internal RuntimeCityCompositionSystemHelper RuntimeCitySystem { get; private set; }
     internal CitizenPopulationEventSystem CitizenPopulationEventSystem { get; private set; }
     internal FactionVisualSettings FactionVisualSettings { get; private set; }
     private Func<bool> ShouldBlockBuildingSelectionClick { get; set; }
@@ -30,7 +30,7 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
         SelectionUiCameraSystem selectionUiCameraSystem = null,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem = null,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null,
-        RuntimeCityCompositionSystem runtimeCitySystem = null,
+        RuntimeCityCompositionSystemHelper runtimeCitySystem = null,
         CitizenPopulationEventSystem citizenPopulationEventSystem = null,
         Func<bool> shouldBlockBuildingSelectionClick = null)
     {

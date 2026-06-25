@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class RuntimeCityCompositionSystem
+public sealed class RuntimeCityCompositionSystemHelper
 {
     private RuntimeCitySpawnerSystemConfig _config;
     private readonly List<GameObject> _fallbackCityPrefabs = new();
@@ -99,7 +99,7 @@ public sealed class RuntimeCityCompositionSystem
     public bool IsGenerating => RuntimeCityLifecycleState.IsGenerating;
     public RuntimeCityReadModelCompositionSystemHelper ReadModel => RuntimeCityReadModelCompositionSystemHelper;
 
-    public RuntimeCityCompositionSystem()
+    public RuntimeCityCompositionSystemHelper()
     {
         _fallbackCityConfig = global::RuntimeCityConfigCompositionSystemHelper.Snapshot.Default(_fallbackCityPrefabs);
         _tryGetPendingInitialUnits = TryGetPendingInitialUnits;

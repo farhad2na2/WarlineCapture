@@ -154,20 +154,20 @@ Non-goals:
     - Expected output: city generation does not own scene hierarchy composition.
 
 25. Complete: Move composition out of the spawner constructor path
-    - Created `RuntimeCityCompositionSystem`.
+    - Created `RuntimeCityCompositionSystemHelper`.
     - Owns creation/wiring of `RuntimeCityConfigCompositionSystemHelper`, `RuntimeCityLifecycleCompositionSystemHelper`, `RuntimeCityStartupSystemHelper`, `RuntimeCityReadinessQueryCompositionSystemHelper`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressUtilitySystemHelper`, `RuntimeCityMinimapEventUiSystemHelper`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
-    - `RuntimeCitySpawnerSystem` is now a thin public shell delegating init, update, dispose, public generation, and house-prefab queries to `RuntimeCityCompositionSystem`.
+    - `RuntimeCitySpawnerSystem` is now a thin public shell delegating init, update, dispose, public generation, and house-prefab queries to `RuntimeCityCompositionSystemHelper`.
     - Expected output: startup composition is explicit and narrow.
 
 26. Complete: Migrate peer dependencies off `RuntimeCitySpawnerSystem`
     - Created `RuntimeCityReadModelCompositionSystemHelper` as the narrow city state read boundary for peer systems.
-    - `RuntimeCityCompositionSystem` publishes `SpawnOnStartEnabled`, `HasSpawned`, and `IsGenerating` into the read model.
+    - `RuntimeCityCompositionSystemHelper` publishes `SpawnOnStartEnabled`, `HasSpawned`, and `IsGenerating` into the read model.
     - `RuntimeGridBlockerPresentationSystemHelper` and `RuntimeDecorationSpawnerPresentationSystemHelper` now depend on `RuntimeCityReadModelCompositionSystemHelper` instead of storing or calling the broad `RuntimeCitySpawnerSystem` shell.
     - Expected output: no peer system stores or calls the broad spawner type.
 
 27. Complete: Delete the spawner shell
     - Deleted `RuntimeCitySpawnerSystem.cs` and `.meta`.
-    - `GameBootstrap`, `GameplayFeatureStartupCompositionSystemHelper`, `GameplayRuntimeUpdateSystem`, and building gameplay binding now use `RuntimeCityCompositionSystem` directly.
+    - `GameBootstrap`, `GameplayFeatureStartupCompositionSystemHelper`, `GameplayRuntimeUpdateSystem`, and building gameplay binding now use `RuntimeCityCompositionSystemHelper` directly.
     - Runtime city update diagnostics now report the step as `RuntimeCity`.
     - Expected output: no broad managed `RuntimeCitySpawnerSystem` orchestrator remains.
 

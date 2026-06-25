@@ -75,7 +75,7 @@ internal sealed class MatchBootstrapSystem
 
     public RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers { get; private set; }
     public RuntimeDecorationSpawnerPresentationSystemHelper RuntimeDecorations { get; private set; }
-    public RuntimeCityCompositionSystem RuntimeCity { get; private set; }
+    public RuntimeCityCompositionSystemHelper RuntimeCity { get; private set; }
     public RoadBuildReadModelSystem RoadBuildReadModel { get; private set; }
     public BuildingSelectionClickSystem BuildingSelectionClick { get; private set; }
     public BuildingUiCommandBoundary BuildingUiCommand { get; private set; }
@@ -117,7 +117,7 @@ internal sealed class MatchBootstrapSystem
     private Action<IMatchRuntimeUi> _bindRoadMainMenu;
     private Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> _bindRoadGameplayFeatures;
     private Action<IMatchRuntimeUi> _bindBuildingMainMenu;
-    private Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> _bindBuildingGameplayFeatures;
+    private Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> _bindBuildingGameplayFeatures;
     private Action<IMatchRuntimeUi> _bindSelectionMainMenu;
     private Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private Action _selectionRuntimeUpdate;
@@ -135,7 +135,7 @@ internal sealed class MatchBootstrapSystem
     private bool _mainMenuBuildingBindingApplied;
     private bool _mainMenuSelectionBindingApplied;
     private RuntimeGridBlockerPresentationSystemHelper _mainMenuFeatureBoundGridBlockers;
-    private RuntimeCityCompositionSystem _mainMenuFeatureBoundRuntimeCity;
+    private RuntimeCityCompositionSystemHelper _mainMenuFeatureBoundRuntimeCity;
     private IMatchHudSelectionPanelView _pendingMatchHudSelectionPanelView;
     private IMatchHudSelectionPanelView _boundMatchHudSelectionPanelView;
     private IMatchHudSelectionPanelView _deferredMatchHudSelectionPanelView;
@@ -531,7 +531,7 @@ internal sealed class MatchBootstrapSystem
         BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
         Action selectionRuntimeUpdate,
         Camera worldCamera,
-        RuntimeCityCompositionSystem runtimeCity,
+        RuntimeCityCompositionSystemHelper runtimeCity,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations,
         DayNightSystem dayNight,
@@ -600,7 +600,7 @@ internal sealed class MatchBootstrapSystem
         DayNightSystem dayNight,
         RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
-        RuntimeCityCompositionSystem runtimeCity,
+        RuntimeCityCompositionSystemHelper runtimeCity,
         MapSurfaceRuntimeBootstrapSceneSystemHelper mapSurfaceRuntimeBootstrapSystem,
         RuntimeCameraReferenceSystem runtimeCameraReferenceSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem)

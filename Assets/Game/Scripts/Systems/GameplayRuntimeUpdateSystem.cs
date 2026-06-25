@@ -36,7 +36,7 @@ public sealed class GameplayRuntimeUpdateSystem
         BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
         Action selectionRuntimeUpdate,
         Camera worldCamera,
-        RuntimeCityCompositionSystem runtimeCity,
+        RuntimeCityCompositionSystemHelper runtimeCity,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations,
         DayNightSystem dayNight,
@@ -238,7 +238,7 @@ public sealed class GameplayRuntimeUpdateSystem
     private bool IsGameplayStartComplete(
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-        RuntimeCityCompositionSystem runtimeCity,
+        RuntimeCityCompositionSystemHelper runtimeCity,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
     {
@@ -266,7 +266,7 @@ public sealed class GameplayRuntimeUpdateSystem
     private bool ShouldFailOpenLoadingGate(
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-        RuntimeCityCompositionSystem runtimeCity,
+        RuntimeCityCompositionSystemHelper runtimeCity,
         out string reason)
     {
         reason = string.Empty;
@@ -286,7 +286,7 @@ public sealed class GameplayRuntimeUpdateSystem
     private void LogLoadingGateIfDue(
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-        RuntimeCityCompositionSystem runtimeCity,
+        RuntimeCityCompositionSystemHelper runtimeCity,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
     {

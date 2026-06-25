@@ -64,7 +64,7 @@ public static class RuntimeCitySpawnerStep13Validation
             ValidateBlockerConfig(matchScene.RuntimeGridBlockerConfig);
             ValidateNoMissingScripts();
 
-            RuntimeCityCompositionSystem runtimeCity = new();
+            RuntimeCityCompositionSystemHelper runtimeCity = new();
             try
             {
                 runtimeCity.ConfigureForValidation(disabledConfig);

@@ -35,7 +35,7 @@ New public/internal members must not be added to `RuntimeCityBuildingSpawnSystem
 Allowed temporary public/internal surface:
 
 - `public void Configure(...)`
-  - Target owner: `RuntimeCityBuildingSpawnContextCompositionSystemHelper` and `RuntimeCityCompositionSystem`.
+  - Target owner: `RuntimeCityBuildingSpawnContextCompositionSystemHelper` and `RuntimeCityCompositionSystemHelper`.
 - `public void SpawnCityImportantBuildings(...)`
   - Target owner: coordinator delegating to `RuntimeCityHallSpawnPrefabSystemHelper` and `RuntimeCityLandmarkSpawnPrefabSystemHelper`.
 - `public void EnsureCityHall(...)`
@@ -55,7 +55,7 @@ Allowed temporary public/internal surface:
 - Do not use reflection.
 - Do not move runtime-city building generation into UI, bootstrap, editor tooling, or config assets.
 - Do not make `RuntimeCitySpawnerSystem` grow again. Any extracted behavior must stay out of the old spawner.
-- `RuntimeCityCompositionSystem` may compose systems and contexts, but must not absorb city-building placement policy.
+- `RuntimeCityCompositionSystemHelper` may compose systems and contexts, but must not absorb city-building placement policy.
 
 ## Performance And Behavior Rules
 
@@ -120,14 +120,14 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Do not add placement policy here.
    - Expected output: generation systems can receive explicit context instead of mutable fields on `RuntimeCityBuildingSpawnSystem`.
    - Added `RuntimeCityBuildingSpawnContextCompositionSystemHelper` with a `Context` containing config, plot, walkability, prefab selection, visual, spawn bridge, and diagnostic dependencies.
-   - `RuntimeCityCompositionSystem` now constructs building-spawn context through the context system before configuring `RuntimeCityBuildingSpawnSystem`.
+   - `RuntimeCityCompositionSystemHelper` now constructs building-spawn context through the context system before configuring `RuntimeCityBuildingSpawnSystem`.
    - Added focused architecture guard coverage for context ownership.
 
 5. Complete: Route public methods through explicit context
    - Add context-taking overloads or internal methods for the existing public generation surface.
    - Keep current public methods as temporary compatibility delegates only.
    - Expected output: behavior can move to child systems without depending on coordinator fields.
-   - `RuntimeCityBuildingSpawnSystem.Configure` now receives the explicit building-spawn context assembled by `RuntimeCityCompositionSystem`.
+   - `RuntimeCityBuildingSpawnSystem.Configure` now receives the explicit building-spawn context assembled by `RuntimeCityCompositionSystemHelper`.
    - Existing public generation methods now delegate to private context-taking methods; no new public/internal compatibility surface was added.
    - The first seam keeps helper internals unchanged except top-level plot, prefab-shuffle, visual-root, and diagnostic reads that now use the explicit context.
 
@@ -263,7 +263,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Update `RuntimeCityGenerationSystem` context to consume the corridor spawn system or a coordinator method that delegates only.
    - Keep generation sequencing unchanged.
    - Expected output: corridor placement is no longer implemented by `RuntimeCityBuildingSpawnSystem`.
-   - `RuntimeCityCompositionSystem` now owns and passes the explicit building-spawn context, stateless placement system, and corridor spawn system into generation.
+   - `RuntimeCityCompositionSystemHelper` now owns and passes the explicit building-spawn context, stateless placement system, and corridor spawn system into generation.
    - `RuntimeCityGenerationSystem` now calls `RuntimeCityCorridorBuildingSpawnPrefabSystemHelper.SpawnCorridorEntranceBuildings` directly for corridor-side buildings.
    - `RuntimeCityBuildingSpawnSystem.SpawnCorridorEntranceBuildings` remains only as a compatibility wrapper for callers that have not migrated yet.
 
@@ -371,11 +371,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Generation now passes `RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context` explicitly into building-spawn methods.
    - Composition still creates and stores the generation context, but no longer configures mutable state on the building-spawn coordinator.
 
-32. Complete: Update `RuntimeCityCompositionSystem` ownership
+32. Complete: Update `RuntimeCityCompositionSystemHelper` ownership
    - Compose all extracted child systems explicitly.
    - Ensure composition remains wiring-only and does not absorb city-building placement policy.
    - Expected output: child system ownership is visible and single-purpose.
-   - Moved extracted building-spawn child system instances into `RuntimeCityCompositionSystem`.
+   - Moved extracted building-spawn child system instances into `RuntimeCityCompositionSystemHelper`.
    - Added an explicit `RuntimeCityBuildingSpawnSystem.Systems` dependency set passed through `RuntimeCityGenerationSystem.Context`.
    - `RuntimeCityBuildingSpawnSystem` now receives child systems explicitly and no longer hides child-system construction internally.
 
@@ -403,7 +403,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Expected output: no broad shell remains under old or new names.
    - Deleted `Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs` and its `.meta` because generation no longer called it and the remaining methods were pass-through wrappers.
    - Moved the child-system dependency bundle to `RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems`.
-   - `RuntimeCityCompositionSystem` now creates `RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems`, and `RuntimeCityGenerationSystem` receives that dependency bundle directly.
+   - `RuntimeCityCompositionSystemHelper` now creates `RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems`, and `RuntimeCityGenerationSystem` receives that dependency bundle directly.
    - Added deletion guards so the coordinator shell cannot be restored.
 
 36. Complete: Validation gate

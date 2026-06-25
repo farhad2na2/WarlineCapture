@@ -7,12 +7,12 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
 {
     public readonly struct Result
     {
-        public readonly RuntimeCityCompositionSystem RuntimeCity;
+        public readonly RuntimeCityCompositionSystemHelper RuntimeCity;
         public readonly RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers;
         public readonly RuntimeDecorationSpawnerPresentationSystemHelper RuntimeDecorations;
 
         public Result(
-            RuntimeCityCompositionSystem runtimeCity,
+            RuntimeCityCompositionSystemHelper runtimeCity,
             RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
             RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
         {
@@ -33,7 +33,7 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
         BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-        Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
+        Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
         IMatchRuntimeUi mainMenu,
         SelectionUiCameraSystem selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
@@ -45,7 +45,7 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
         IReadOnlyList<GridAuthoring> runtimeGridDebugViews,
         GameplaySceneBindingSceneSystemHelper sceneBindingSystem)
     {
-        RuntimeCityCompositionSystem runtimeCity = ResolveRuntimeCityCompositionSystem();
+        RuntimeCityCompositionSystemHelper runtimeCity = ResolveRuntimeCityCompositionSystemHelper();
         runtimeCity?.Configure(
             runtimeCitySpawnerConfig,
             roadRuntimeGenerationSystem,
@@ -87,9 +87,9 @@ internal sealed class GameplayFeatureStartupCompositionSystemHelper
             : null;
     }
 
-    private static RuntimeCityCompositionSystem ResolveRuntimeCityCompositionSystem()
+    private static RuntimeCityCompositionSystemHelper ResolveRuntimeCityCompositionSystemHelper()
     {
-        return new RuntimeCityCompositionSystem();
+        return new RuntimeCityCompositionSystemHelper();
     }
 
     private static RuntimeDecorationSpawnerPresentationSystemHelper ResolveRuntimeDecorationSpawnerPresentationHelper()

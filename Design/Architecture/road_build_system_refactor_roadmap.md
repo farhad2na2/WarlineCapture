@@ -199,7 +199,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 22. Complete: Migrate `RuntimeCityRoadBuildBridgeCompositionSystemHelper`
     - Change bridge configuration from `RoadBuildSystem` to `RoadRuntimeGenerationSystem` plus any required read/query systems.
     - RuntimeCityRoadBuildBridgeCompositionSystemHelper now stores RoadRuntimeGenerationSystem plus its context.
-    - RuntimeCityCompositionSystem receives the runtime road generation boundary instead of a RoadBuildSystem for road generation.
+    - RuntimeCityCompositionSystemHelper receives the runtime road generation boundary instead of a RoadBuildSystem for road generation.
     - Runtime city startup readiness now checks HasRoadRuntimeGenerationSystem.
     - Preserve runtime-city validation smoke behavior.
     - Expected output: runtime city road build bridge has no direct broad-shell reference.

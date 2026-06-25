@@ -37,7 +37,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         Func<Rect, bool> trySelectFirstBuildingInScreenRect,
         Action<IMatchRuntimeUi> bindMainMenu,
-        Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindGameplayFeatures,
+        Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> bindGameplayFeatures,
         Action dispose)
     {
         return new Result(
@@ -113,7 +113,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Func<Rect, bool> TrySelectFirstBuildingInScreenRect;
         public readonly Action<IMatchRuntimeUi> BindMainMenu;
-        public readonly Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindGameplayFeatures;
+        public readonly Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> BindGameplayFeatures;
         public readonly Action Dispose;
 
         public Result(
@@ -150,7 +150,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Func<Rect, bool> trySelectFirstBuildingInScreenRect,
             Action<IMatchRuntimeUi> bindMainMenu,
-            Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindGameplayFeatures,
+            Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> bindGameplayFeatures,
             Action dispose)
         {
             SelectionClick = selectionClick;

@@ -122,7 +122,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                         tryGetRuntimeBuilding,
                         getEffectivePlacementRect),
                     out gateVertical)),
-            (definition, instance, originCell, removeOverlappingBlockers) => source.BuildingRuntimeCreationSystem.RegisterRuntimeBuilding(
+            (definition, instance, originCell, removeOverlappingBlockers) => source.BuildingRuntimeCreationCompositionSystemHelper.RegisterRuntimeBuilding(
                 source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCreationContext(CreateBuildingRuntimeContextSource(
                     source,
                     interactionContext,

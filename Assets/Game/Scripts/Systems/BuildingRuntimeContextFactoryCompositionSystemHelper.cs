@@ -151,16 +151,16 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context RuntimeLinkInteractionContext;
         public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public readonly Func<bool> IsDeferringSideEffects;
-        public readonly BuildingRuntimeCreationSystem.TryGetGridDelegate TryGetGridForRuntimeCreation;
-        public readonly BuildingRuntimeCreationSystem.ResolvePlacementRectDelegate ResolvePlacementRect;
-        public readonly BuildingRuntimeCreationSystem.RemoveOverlappingBlockersDelegate RemoveOverlappingBlockers;
+        public readonly BuildingRuntimeCreationCompositionSystemHelper.TryGetGridDelegate TryGetGridForRuntimeCreation;
+        public readonly BuildingRuntimeCreationCompositionSystemHelper.ResolvePlacementRectDelegate ResolvePlacementRect;
+        public readonly BuildingRuntimeCreationCompositionSystemHelper.RemoveOverlappingBlockersDelegate RemoveOverlappingBlockers;
         public readonly BuildingRuntimeEntitySystem RuntimeEntitySystem;
         public readonly BuildingRuntimeEntitySystem.Context RuntimeEntityContext;
         public readonly BuildingPlacementRedirectCompositionSystemHelper PlacementRedirectSystem;
         public readonly BuildingPlacementRedirectCompositionSystemHelper.EnsureEntityQueriesDelegate EnsureEntityQueries;
         public readonly BuildingPlacementRedirectCompositionSystemHelper.GetRedirectUnitsQueryDelegate GetRedirectUnitsQuery;
-        public readonly BuildingRuntimeCreationSystem.RuntimeBuildingAction InitializeVisuals;
-        public readonly BuildingRuntimeCreationSystem.RuntimeAction RefreshMarkers;
+        public readonly BuildingRuntimeCreationCompositionSystemHelper.RuntimeBuildingAction InitializeVisuals;
+        public readonly BuildingRuntimeCreationCompositionSystemHelper.RuntimeAction RefreshMarkers;
         public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingVisualSystem BuildingVisualSystem;
         public readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
@@ -191,16 +191,16 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context runtimeLinkInteractionContext,
             RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
             Func<bool> isDeferringSideEffects,
-            BuildingRuntimeCreationSystem.TryGetGridDelegate tryGetGridForRuntimeCreation,
-            BuildingRuntimeCreationSystem.ResolvePlacementRectDelegate resolvePlacementRect,
-            BuildingRuntimeCreationSystem.RemoveOverlappingBlockersDelegate removeOverlappingBlockers,
+            BuildingRuntimeCreationCompositionSystemHelper.TryGetGridDelegate tryGetGridForRuntimeCreation,
+            BuildingRuntimeCreationCompositionSystemHelper.ResolvePlacementRectDelegate resolvePlacementRect,
+            BuildingRuntimeCreationCompositionSystemHelper.RemoveOverlappingBlockersDelegate removeOverlappingBlockers,
             BuildingRuntimeEntitySystem runtimeEntitySystem,
             BuildingRuntimeEntitySystem.Context runtimeEntityContext,
             BuildingPlacementRedirectCompositionSystemHelper placementRedirectSystem,
             BuildingPlacementRedirectCompositionSystemHelper.EnsureEntityQueriesDelegate ensureEntityQueries,
             BuildingPlacementRedirectCompositionSystemHelper.GetRedirectUnitsQueryDelegate getRedirectUnitsQuery,
-            BuildingRuntimeCreationSystem.RuntimeBuildingAction initializeVisuals,
-            BuildingRuntimeCreationSystem.RuntimeAction refreshMarkers,
+            BuildingRuntimeCreationCompositionSystemHelper.RuntimeBuildingAction initializeVisuals,
+            BuildingRuntimeCreationCompositionSystemHelper.RuntimeAction refreshMarkers,
             BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate tryGetEntityManager,
             BuildingVisualSystem buildingVisualSystem,
             BuildingFactionVisualSystem buildingFactionVisualSystem,
@@ -280,9 +280,9 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             CreateSpawnContext(source));
     }
 
-    public BuildingRuntimeCreationSystem.Context CreateCreationContext(Source source)
+    public BuildingRuntimeCreationCompositionSystemHelper.Context CreateCreationContext(Source source)
     {
-        return new BuildingRuntimeCreationSystem.Context(
+        return new BuildingRuntimeCreationCompositionSystemHelper.Context(
             source.RuntimeBuildingSystem,
             source.RuntimeLinkInteractionSystem,
             source.RuntimeLinkInteractionContext,

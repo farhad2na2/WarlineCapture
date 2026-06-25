@@ -360,7 +360,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             childSystems,
             () => interactionContext,
             markerPropertyBlock,
-            (source, placementInteractionContext, placementMarkerPropertyBlock) => source.BuildingUiCompositionSystem.CreateQueryContext(
+            (source, placementInteractionContext, placementMarkerPropertyBlock) => source.BuildingUiCompositionSystemHelper.CreateQueryContext(
                 source,
                 placementInteractionContext,
                 placementMarkerPropertyBlock,
@@ -573,7 +573,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             childSystems.BuildingCombatUtilitySystemHelper,
             createCombatContext,
             childSystems.BuildingUiCommandBoundary,
-            childSystems.BuildingUiCompositionSystem.CreateCommandContext(
+            childSystems.BuildingUiCompositionSystemHelper.CreateCommandContext(
                 childSystems,
                 interactionContext,
                 markerPropertyBlock,
@@ -582,7 +582,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 createPlacementQueryContext,
                 createBuildingSelectionContext),
             childSystems.BuildingUiQuerySystem,
-            childSystems.BuildingUiCompositionSystem.CreateQueryContext(
+            childSystems.BuildingUiCompositionSystemHelper.CreateQueryContext(
                 childSystems,
                 interactionContext,
                 markerPropertyBlock,

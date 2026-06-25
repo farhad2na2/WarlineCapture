@@ -116,7 +116,7 @@ Existing ECS data already available:
 
 Managed fallback paths to keep outside `ISystem` code:
 
-- UI/live preview prefab fallback in `BuildingUiCompositionSystem` and build drawer presentation.
+- UI/live preview prefab fallback in `BuildingUiCompositionSystemHelper` and build drawer presentation.
 - Legacy `ProducedUnitPrefabs` mapping while UI Toolkit replacement is incomplete.
 - Serialized custom-game config, unit registry, atlas, sprite, and impostor projection.
 - Authored map vehicle prefab fallback for unrebaked configs.
@@ -237,7 +237,7 @@ Decompose production spawn execution into focused ECS processors that use source
 - [x] Ensure spawn position, owner faction, production index, and runtime building id are carried by ECS request data.
 - [x] Move `BuildingSpawnRandomState` into an ECS singleton or explicit caller-owned value.
 - [x] Remove gameplay writes to `ProducedUnitPrefabs`; keep only source-key/entity writes in spawn execution.
-- [x] Move any remaining preview-prefab mapping into `BuildingUiCompositionSystem` or a passive UI boundary.
+- [x] Move any remaining preview-prefab mapping into `BuildingUiCompositionSystemHelper` or a passive UI boundary.
 - [~] Decompose the broad spawn execution owner into focused ECS processors instead of converting the existing class as-is.
 - [ ] Extract production spawn request intake into `BuildingProductionSpawnRequestSystem`.
 - [ ] Extract production slot occupancy and reservation decisions into `BuildingProductionSlotReservationSystem`.

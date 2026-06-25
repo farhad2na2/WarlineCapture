@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingUiCompositionSystem
+internal sealed class BuildingUiCompositionSystemHelper
 {
     public BuildingUiContextSystem.Source CreateSource(
         BuildingGameplaySourceCompositionSystemHelper source,

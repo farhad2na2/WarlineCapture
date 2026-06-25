@@ -187,8 +187,8 @@ Top-level private state, included for extraction tracking:
    - Result: `BuildingPlacementInteractionCompositionSystemHelper` now owns active placement pointer and placement interaction context wiring.
 
 18. Complete: Extract building UI context source
-   - Move `CreateBuildingUiContextSource`, UI command context creation, and UI query context creation into `BuildingUiCompositionSystem`.
-   - Result: `BuildingUiCompositionSystem` now owns building UI source, command context, and query context wiring.
+   - Move `CreateBuildingUiContextSource`, UI command context creation, and UI query context creation into `BuildingUiCompositionSystemHelper`.
+   - Result: `BuildingUiCompositionSystemHelper` now owns building UI source, command context, and query context wiring.
 
 19. Complete: Extract placement query context
    - Move `CreateBuildingPlacementQueryContext` into `BuildingPlacementQueryCompositionSystem`.

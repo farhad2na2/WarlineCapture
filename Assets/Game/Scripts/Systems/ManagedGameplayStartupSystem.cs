@@ -12,7 +12,7 @@ internal sealed class ManagedGameplayStartupSystem
     {
         public readonly DayNightSystem DayNight;
         public readonly FactionVisualSettings FactionVisuals;
-        public readonly RoadBuildReadModelSystem RoadBuildReadModel;
+        public readonly RoadBuildReadModelCompositionSystemHelper RoadBuildReadModel;
         public readonly RoadRuntimeGenerationSystem RoadRuntimeGeneration;
         public readonly RoadRuntimeGenerationSystem.Context RoadRuntimeGenerationContext;
         public readonly System.Action RoadRuntimeUpdate;
@@ -51,7 +51,7 @@ internal sealed class ManagedGameplayStartupSystem
         public Result(
             DayNightSystem dayNight,
             FactionVisualSettings factionVisuals,
-            RoadBuildReadModelSystem roadBuildReadModel,
+            RoadBuildReadModelCompositionSystemHelper roadBuildReadModel,
             RoadRuntimeGenerationSystem roadRuntimeGeneration,
             RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
             System.Action roadRuntimeUpdate,
@@ -164,7 +164,7 @@ internal sealed class ManagedGameplayStartupSystem
             roadBuildConfig,
             worldCamera,
             runtimeUiRoot);
-        RoadBuildReadModelSystem roadBuildReadModel = road.RoadBuildReadModel;
+        RoadBuildReadModelCompositionSystemHelper roadBuildReadModel = road.RoadBuildReadModel;
 
         BuildingGameplayResultCompositionSystemHelper.Result building = _buildingGameplayCompositionSystem.Initialize(
             buildingPlacementConfig,

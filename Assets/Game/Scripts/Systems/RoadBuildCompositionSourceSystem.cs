@@ -3,7 +3,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
     public readonly RoadBuildStartupSystem RoadBuildStartupSystem = new();
     public readonly RoadBuildDependencySystem RoadBuildDependencySystem = new();
-    public readonly RoadBuildReadModelSystem RoadBuildReadModelSystem = new();
+    public readonly RoadBuildReadModelCompositionSystemHelper RoadBuildReadModelCompositionSystemHelper = new();
     public readonly RoadBuildVisualContextSystem RoadBuildVisualContextSystem;
     public readonly RoadBuildInteractionContextSystem RoadBuildInteractionContextSystem = new();
     public readonly RoadBuildRuntimeActionCompositionSystemHelper RoadBuildRuntimeActionCompositionSystemHelper;

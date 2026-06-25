@@ -44,7 +44,7 @@ New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. 
   - Target owner: `RoadBuildInteractionContextSystem`, `RoadBuildCompositionSystemHelper`, `RoadBuildInputCompositionSystemHelper`, and `RoadDeletePromptSystem`.
 - Read-model exposure:
   - `HasPendingBuildingPlacement`, `CanConfirmBuildingPlacement`, `HasSelectedBuilding`, `IsRoadBuildModeActive`, `IsDraggingBuildInteraction`, `PlacementStatusText`, `SelectedBuildingLabel`, `ActiveModeStatusText`
-  - Target owner: `RoadBuildReadModelSystem` plus building interaction/read boundaries.
+  - Target owner: `RoadBuildReadModelCompositionSystemHelper` plus building interaction/read boundaries.
 - Runtime-city road generation commands:
   - `BeginDeferredRoadEcsSync`, `EndDeferredRoadEcsSync`, `TryGetRoadCellSizeInGridCells`, `CreateRoadStrokeFromRoadCells`, `CreateAutobahnStrokeFromRoadCells`, `TryGetAutobahnConnectorRoadCell`, `TryLogRoadConnectMarkers`, `CreateStandaloneStraightRoadChainFromConnector`, `TryGetStandaloneStraightChainEndRoadCell`, `CreateStandaloneDebugCityRoadNetworkFromStraightChain`
   - Target owner: `RoadRuntimeGenerationSystem`, `RoadRuntimeGenerationContextSystem`, and `RoadGridProjectionSystem`.
@@ -150,11 +150,11 @@ Every phase boundary must also run the existing road validation set when feasibl
    - `RoadBuildRuntimeStateSystem` now delegates initial building-interaction binding and later menu/runtime blocker rebinding through the dependency boundary.
    - Added `RoadBuildDependenciesMustLiveInDependencySystem` to the focused architecture batch.
 
-7. Complete: Move road read-model predicates to `RoadBuildReadModelSystem`
+7. Complete: Move road read-model predicates to `RoadBuildReadModelCompositionSystemHelper`
    - Move active road mode, dragging interaction, pending building placement, selected building, confirm placement, placement status text, selected label, and active mode status text reads.
    - Use explicit dependency/read contexts instead of broad holder getters.
    - Expected output: UI/startup reads are fully supplied by the read model boundary.
-   - `RoadBuildReadModelSystem` now owns active road mode, dragging interaction, pending placement, selected building, confirm placement, placement status text, selected label, and active mode status text reads through an explicit context.
+   - `RoadBuildReadModelCompositionSystemHelper` now owns active road mode, dragging interaction, pending placement, selected building, confirm placement, placement status text, selected label, and active mode status text reads through an explicit context.
    - `RoadBuildCompositionSourceSystem` now owns the read-model instance; composition returns that instance instead of creating/configuring delegate wrappers around the temporary holder.
    - Removed the read predicate/text public surface from `RoadBuildRuntimeStateSystem`.
    - Added `RoadBuildReadModelPredicatesMustLiveInReadModelSystem` to the focused architecture batch.
@@ -362,7 +362,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 - Step 4 complete: `RoadBuildCompositionSystemHelper.Result` no longer exposes `RoadState`; only composition keeps a private temporary `_roadState` bridge for bind methods.
 - Step 5 complete: road startup/config application moved to `RoadBuildStartupSystem`; the temporary holder no longer owns serialized config/cache fields, config projection, root creation, or variant-cache warmup.
 - Step 6 complete: road dependency storage and rebinding moved to `RoadBuildDependencySystem`; the temporary holder no longer stores building interaction, menu, minimap, or runtime-grid blocker dependencies directly.
-- Step 7 complete: road read predicates and labels moved to `RoadBuildReadModelSystem`; composition now returns the source-owned read model instead of configuring facade getter delegates.
+- Step 7 complete: road read predicates and labels moved to `RoadBuildReadModelCompositionSystemHelper`; composition now returns the source-owned read model instead of configuring facade getter delegates.
 - Step 8 complete: deleted the temporary static `RoadBuildRuntimeStateSystem.SetBuildMode` bridge; runtime build-mode changes must stay on `RoadBuildCommandCompositionSystemHelper`/explicit command contexts.
 - Step 9 complete: chunk, preview, and special-road visual context construction moved to `RoadBuildVisualContextSystem`; visual behavior remains in the existing visual systems.
 - Step 10 complete: session, input, command, and delete-prompt context construction moved to `RoadBuildInteractionContextSystem`; callbacks remain explicit and narrow.

@@ -24,9 +24,9 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
         return RoadRuntimeGenerationContextSystem.CreateContext(CreateRoadRuntimeGenerationContextSource(source));
     }
 
-    public RoadBuildReadModelSystem.Context CreateRoadBuildReadModelContext(RoadBuildCompositionSourceSystem source)
+    public RoadBuildReadModelCompositionSystemHelper.Context CreateRoadBuildReadModelContext(RoadBuildCompositionSourceSystem source)
     {
-        return new RoadBuildReadModelSystem.Context(
+        return new RoadBuildReadModelCompositionSystemHelper.Context(
             source.RuntimeGameplayStateSystem,
             source.RoadBuildSessionSystem,
             source.RoadBuildSessionState,

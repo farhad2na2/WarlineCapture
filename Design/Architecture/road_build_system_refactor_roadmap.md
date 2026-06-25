@@ -41,11 +41,11 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
    - Added contract wording for the target road boundaries and serialized road config naming exception.
    - Expected output: future steps cannot drift without updating the contract.
 
-2. Complete: Create `RoadBuildReadModelSystem`
+2. Complete: Create `RoadBuildReadModelCompositionSystemHelper`
    - Owns read-only state currently exposed as `IsRoadBuildModeActive`, `IsDraggingBuildInteraction`, pending placement state, and selected-road/delete-prompt state.
    - Existing camera/runtime callers should read this narrow boundary instead of storing `RoadBuildSystem`.
-   - Created `RoadBuildReadModelSystem`.
-   - `RtsSelectionRuntimeCameraSystem` and its context now consume `RoadBuildReadModelSystem` instead of `RoadBuildSystem`.
+   - Created `RoadBuildReadModelCompositionSystemHelper`.
+   - `RtsSelectionRuntimeCameraSystem` and its context now consume `RoadBuildReadModelCompositionSystemHelper` instead of `RoadBuildSystem`.
    - `SelectionGameplayStartupSystem` receives the read model for camera/read state instead of the broad road shell.
    - `ManagedGameplayStartupSystem` composes the read model from the current road shell as a temporary compatibility source until later steps move owned state into extracted road systems.
    - Expected output: selection/camera systems no longer need the broad road shell just to know whether a road/build interaction is active.
@@ -212,10 +212,10 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 
 24. Complete: Migrate selection/camera/menu references
     - Move `RtsSelectionRuntimeCameraSystem`, `SelectionGameplayStartupSystem`, `MainMenuPlayUI`, `MenuStartupSystem`, and `GameplayRuntimeUpdateSystem` off `RoadBuildSystem`.
-    - Use `RoadBuildReadModelSystem`, `RoadBuildCommandCompositionSystemHelper`, and narrow update systems.
+    - Use `RoadBuildReadModelCompositionSystemHelper`, `RoadBuildCommandCompositionSystemHelper`, and narrow update systems.
     - GameplayRuntimeUpdateSystem now receives narrow road runtime update and IMGUI actions instead of RoadBuildSystem.
     - MenuStartupSystem now receives a narrow road menu-bind action, and MainMenuPlayUI no longer accepts RoadBuildSystem.
-    - Selection camera/startup systems remain on RoadBuildReadModelSystem.
+    - Selection camera/startup systems remain on RoadBuildReadModelCompositionSystemHelper.
     - Expected output: no non-road caller stores the broad shell.
 
 ## Phase 7: Composition, Deletion, And Guards
@@ -223,8 +223,8 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 25. Complete: Create temporary `RoadBuildCompositionSystemHelper`
     - Owns wiring of extracted road systems only while callers migrate.
     - Must not own graph algorithms, visual algorithms, ECS buffer writes, input processing, or building placement logic.
-    - RoadBuildCompositionSystemHelper now owns narrow source/context/lifecycle wiring, RoadBuildReadModelSystem wiring, and building-interaction binding after the legacy shell was retired.
-    - ManagedGameplayStartupSystem consumes the composition result instead of directly constructing RoadBuildSystem or RoadBuildReadModelSystem.
+    - RoadBuildCompositionSystemHelper now owns narrow source/context/lifecycle wiring, RoadBuildReadModelCompositionSystemHelper wiring, and building-interaction binding after the legacy shell was retired.
+    - ManagedGameplayStartupSystem consumes the composition result instead of directly constructing RoadBuildSystem or RoadBuildReadModelCompositionSystemHelper.
     - Expected output: constructor/startup wiring is explicit and easy to delete later.
 
 26. Complete: Move managed startup wiring off `RoadBuildSystem`

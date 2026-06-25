@@ -20,7 +20,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
         public readonly RtsCameraRequestSystem CameraRequestSystem;
         public readonly Camera WorldCamera;
         public readonly IMatchRuntimeUi MainMenuPlayUi;
-        public readonly RoadBuildReadModelSystem RoadBuildReadModel;
+        public readonly RoadBuildReadModelCompositionSystemHelper RoadBuildReadModel;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly TryGetEntityManagerAction TryGetDefaultEntityManager;
@@ -53,7 +53,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
             RtsCameraRequestSystem cameraRequestSystem,
             Camera worldCamera,
             IMatchRuntimeUi mainMenuPlayUi,
-            RoadBuildReadModelSystem roadBuildReadModel,
+            RoadBuildReadModelCompositionSystemHelper roadBuildReadModel,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             TryGetEntityManagerAction tryGetDefaultEntityManager,

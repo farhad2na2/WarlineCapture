@@ -23,7 +23,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
             source.RoadBuildDependencyState,
             buildingPlacementInteractionSystem,
             buildingPlacementInteractionContext);
-        source.RoadBuildReadModelSystem.Configure(contextSystem.CreateRoadBuildReadModelContext(source));
+        source.RoadBuildReadModelCompositionSystemHelper.Configure(contextSystem.CreateRoadBuildReadModelContext(source));
         RoadBuildRuntimeActionCompositionSystemHelper.ConfigureInput(
             source.RoadBuildRuntimeActionState,
             source.RoadBuildInteractionContextSystem,

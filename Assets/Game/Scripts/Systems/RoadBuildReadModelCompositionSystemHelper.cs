@@ -1,6 +1,6 @@
 using System;
 
-public sealed class RoadBuildReadModelSystem
+public sealed class RoadBuildReadModelCompositionSystemHelper
 {
     internal struct Context
     {

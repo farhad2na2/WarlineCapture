@@ -7,7 +7,7 @@ internal sealed class RoadBuildCompositionSystemHelper
 
     public readonly struct Result
     {
-        public readonly RoadBuildReadModelSystem RoadBuildReadModel;
+        public readonly RoadBuildReadModelCompositionSystemHelper RoadBuildReadModel;
         public readonly RoadRuntimeGenerationSystem RoadRuntimeGeneration;
         public readonly RoadRuntimeGenerationSystem.Context RoadRuntimeGenerationContext;
         public readonly RoadGridProjectionSystem.RoadFootprintState RoadFootprintState;
@@ -16,7 +16,7 @@ internal sealed class RoadBuildCompositionSystemHelper
         public readonly Action Dispose;
 
         public Result(
-            RoadBuildReadModelSystem roadBuildReadModel,
+            RoadBuildReadModelCompositionSystemHelper roadBuildReadModel,
             RoadRuntimeGenerationSystem roadRuntimeGeneration,
             RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
             RoadGridProjectionSystem.RoadFootprintState roadFootprintState,
@@ -45,7 +45,7 @@ internal sealed class RoadBuildCompositionSystemHelper
         RoadBuildCompositionLifecycleCompositionSystemHelper lifecycleSystem = roadSource.RoadBuildCompositionLifecycleCompositionSystemHelper;
         lifecycleSystem.Init(roadSource, contextSystem, roadBuildConfig, worldCamera, runtimeUiRoot, null);
 
-        RoadBuildReadModelSystem roadBuildReadModel = roadSource.RoadBuildReadModelSystem;
+        RoadBuildReadModelCompositionSystemHelper roadBuildReadModel = roadSource.RoadBuildReadModelCompositionSystemHelper;
 
         return new Result(
             roadBuildReadModel,

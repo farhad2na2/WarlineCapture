@@ -76,7 +76,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers { get; private set; }
     public RuntimeDecorationSpawnerPresentationSystemHelper RuntimeDecorations { get; private set; }
     public RuntimeCityCompositionSystemHelper RuntimeCity { get; private set; }
-    public RoadBuildReadModelSystem RoadBuildReadModel { get; private set; }
+    public RoadBuildReadModelCompositionSystemHelper RoadBuildReadModel { get; private set; }
     public BuildingSelectionClickUtilitySystemHelper BuildingSelectionClick { get; private set; }
     public BuildingUiCommandBoundary BuildingUiCommand { get; private set; }
     public BuildingUiQuerySystem BuildingUiQuery { get; private set; }

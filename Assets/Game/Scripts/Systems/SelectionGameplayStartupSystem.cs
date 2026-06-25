@@ -52,7 +52,7 @@ internal sealed class SelectionGameplayStartupSystem
         Camera worldCamera,
         Transform runtimeUiRoot,
         System.Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
-        RoadBuildReadModelSystem roadBuildReadModel,
+        RoadBuildReadModelCompositionSystemHelper roadBuildReadModel,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingInteraction,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingInteractionContext,
         System.Func<Rect, bool> trySelectFirstBuildingInScreenRect,
@@ -120,7 +120,7 @@ internal sealed class SelectionGameplayStartupSystem
         SelectionRectangleRequestSystem.ApplyHudSelectionAction applyRectangleHudSelectionAction = ApplyHudSelection;
         SelectionRectangleRequestSystem.ApplyHudSquadSelectionAction applyRectangleHudSquadSelectionAction = ApplyHudSquadSelection;
         System.Action clearHudSelectionAction = ClearHudSelection;
-        RoadBuildReadModelSystem roadBuildReadState = roadBuildReadModel;
+        RoadBuildReadModelCompositionSystemHelper roadBuildReadState = roadBuildReadModel;
         BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem = buildingInteraction;
         BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext = buildingInteractionContext;
         bool explicitAttackTargetModeActive = false;

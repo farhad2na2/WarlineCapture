@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class MenuBootstrapSystem
+internal sealed class MenuBootstrapCompositionSystemHelper
 {
     private const int DeferredMatchLoadVisibleFrames = 2;
     private const float MinimumLoadingVisibleSeconds = 2f;

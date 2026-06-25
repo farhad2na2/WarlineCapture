@@ -48,7 +48,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
     private static readonly string[] BootstrapCompositionGuardrailFiles =
     {
         "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs",
+        "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs",
     };
@@ -81,7 +81,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
     private static readonly HashSet<string> SelectionPanelConcreteSystemBindingAllowlist = new(StringComparer.Ordinal)
     {
         "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Composition/MenuBootstrapSystem.cs",
+        "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
     };
 
     private static readonly HashSet<string> StaticUiRegistryDebtAllowlist = new(StringComparer.Ordinal);

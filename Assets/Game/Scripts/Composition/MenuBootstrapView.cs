@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 [DisallowMultipleComponent]
 public sealed class MenuBootstrapView : MonoBehaviour
 {
-    private readonly MenuBootstrapSystem menuBootstrapSystem = new();
+    private readonly MenuBootstrapCompositionSystemHelper menuBootstrapSystem = new();
 
     [SerializeField] private RuntimeUiConfig runtimeUiConfig;
     [SerializeField] private Camera uiCamera;

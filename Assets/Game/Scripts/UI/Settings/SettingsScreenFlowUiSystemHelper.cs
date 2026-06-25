@@ -1,4 +1,4 @@
-internal sealed class SettingsScreenFlowSystem
+internal sealed class SettingsScreenFlowUiSystemHelper
 {
     public UISettingsModel LoadSettings(SettingsScreenView view)
     {

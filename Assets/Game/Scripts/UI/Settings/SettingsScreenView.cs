@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public sealed class SettingsScreenView : UIScreenView
 {
-    private readonly SettingsScreenFlowSystem flowSystem = new();
+    private readonly SettingsScreenFlowUiSystemHelper flowSystem = new();
 
     [SerializeField] private UISliderRowView masterVolumeRow;
     [SerializeField] private UISliderRowView musicVolumeRow;

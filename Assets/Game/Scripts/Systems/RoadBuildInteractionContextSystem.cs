@@ -11,7 +11,7 @@ internal sealed class RoadBuildInteractionContextSystem
         public readonly RoadBuildSessionSystem.State SessionState;
         public readonly RoadBuildInputSystem InputSystem;
         public readonly RoadBuildInputSystem.State InputState;
-        public readonly RoadBuildCommandSystem CommandSystem;
+        public readonly RoadBuildCommandCompositionSystemHelper CommandSystem;
         public readonly RoadPathPlanningSystem PathPlanningSystem;
         public readonly RoadNetworkSystem NetworkSystem;
         public readonly Func<RoadNetworkSystem.Snapshot> CaptureRoadBuildSessionSnapshot;
@@ -41,7 +41,7 @@ internal sealed class RoadBuildInteractionContextSystem
             RoadBuildSessionSystem.State sessionState,
             RoadBuildInputSystem inputSystem,
             RoadBuildInputSystem.State inputState,
-            RoadBuildCommandSystem commandSystem,
+            RoadBuildCommandCompositionSystemHelper commandSystem,
             RoadPathPlanningSystem pathPlanningSystem,
             RoadNetworkSystem networkSystem,
             Func<RoadNetworkSystem.Snapshot> captureRoadBuildSessionSnapshot,
@@ -134,9 +134,9 @@ internal sealed class RoadBuildInteractionContextSystem
             context.SetIsDraggingBuildingPlacement);
     }
 
-    public RoadBuildCommandSystem.Context CreateCommandContext(Context context)
+    public RoadBuildCommandCompositionSystemHelper.Context CreateCommandContext(Context context)
     {
-        return new RoadBuildCommandSystem.Context(
+        return new RoadBuildCommandCompositionSystemHelper.Context(
             context.RuntimeGameplayStateSystem,
             context.SessionSystem,
             CreateSessionContext(context),

@@ -4,13 +4,13 @@ using NUnit.Framework;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class RoadBuildCommandSystemTests
+public sealed class RoadBuildCommandCompositionSystemHelperTests
 {
     public static void RunFocusedValidation()
     {
         try
         {
-            var tests = new RoadBuildCommandSystemTests();
+            var tests = new RoadBuildCommandCompositionSystemHelperTests();
             tests.RoadBuildCommandRequest_EnterWritesAcceptedResult();
             tests.RoadBuildCommandRequest_EnterAcceptsDefaultRuntimeState();
             tests.RoadBuildCommandRequest_ConfirmWritesAcceptedResult();
@@ -73,7 +73,7 @@ public sealed class RoadBuildCommandSystemTests
     {
         using World world = new("RoadBuildCommandEnterDefaultRuntimeStateTest");
         RoadBuildCommandTestState state = new();
-        RoadBuildCommandSystem.Context context = new(
+        RoadBuildCommandCompositionSystemHelper.Context context = new(
             new RuntimeGameplayStateSystem(),
             state.SessionSystem,
             state.CommandContext.SessionContext,
@@ -223,7 +223,7 @@ public sealed class RoadBuildCommandSystemTests
 
     private static void AssertRoadBuildResult(
         EntityManager em,
-        RoadBuildCommandSystem commandSystem,
+        RoadBuildCommandCompositionSystemHelper commandSystem,
         int requestId,
         byte requestKind,
         bool accepted,
@@ -263,9 +263,9 @@ public sealed class RoadBuildCommandSystemTests
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
         public readonly RoadBuildSessionSystem SessionSystem = new();
         public readonly RoadBuildSessionSystem.State SessionState = new();
-        public readonly RoadBuildCommandSystem CommandSystem = new();
+        public readonly RoadBuildCommandCompositionSystemHelper CommandSystem = new();
         public readonly RoadNetworkSystem.Snapshot CapturedSnapshot = new();
-        public readonly RoadBuildCommandSystem.Context CommandContext;
+        public readonly RoadBuildCommandCompositionSystemHelper.Context CommandContext;
         public RoadNetworkSystem.Snapshot RestoredSnapshot;
         public int CaptureSnapshotCount;
         public int RestoreRoadBuildSessionCount;
@@ -306,7 +306,7 @@ public sealed class RoadBuildCommandSystemTests
                 () => HidePlacementOutlineCount++,
                 () => UpdatePreviewCount++);
 
-            CommandContext = new RoadBuildCommandSystem.Context(
+            CommandContext = new RoadBuildCommandCompositionSystemHelper.Context(
                 RuntimeGameplayStateSystem,
                 SessionSystem,
                 sessionContext,

@@ -65,11 +65,6 @@ public sealed class NonEcsSystemConversionArchitectureTests
 
     private static readonly Dictionary<string, int> ApprovedPublicNonEcsCommandMutatorMethods = new(StringComparer.Ordinal)
     {
-        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessCancelRoadBuildSession"] = 1,
-        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessConfirmRoadBuildSession"] = 1,
-        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessEnterRoadBuildMode"] = 1,
-        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|EnqueueAndProcessExitBuildMode"] = 1,
-        ["Assets/Game/Scripts/Systems/RoadBuildCommandSystem.cs|ProcessPendingRoadBuildCommands"] = 1,
         ["Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs|TryRequestBoardSelectedTransportOrdersToPassengerRect"] = 1,
         ["Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs|TryRequestMoveOrderToBuilding"] = 1,
         ["Assets/Game/Scripts/Systems/SelectionBuildingInteractionSystem.cs|TryRequestMoveOrderToBuilding"] = 1,
@@ -128,7 +123,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "ScanIntelCommandSystem",
         "TransportBoardingCommandSystem",
         "BuildingPlacementCommandRequestCompositionSystemHelper",
-        "RoadBuildCommandSystem"
+        "RoadBuildCommandCompositionSystemHelper"
     };
 
     private static readonly string[] PointerCommandBoundaryPaths =

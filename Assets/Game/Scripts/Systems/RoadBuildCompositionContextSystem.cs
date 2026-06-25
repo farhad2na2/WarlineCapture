@@ -45,7 +45,7 @@ internal sealed class RoadBuildCompositionContextSystem
             source.RoadBuildSessionState,
             source.RoadBuildInputSystem,
             source.RoadBuildInputState,
-            source.RoadBuildCommandSystem,
+            source.RoadBuildCommandCompositionSystemHelper,
             source.RoadPathPlanningSystem,
             source.RoadNetworkSystem,
             () => source.RoadBuildMutationSystem.CaptureRoadBuildSessionSnapshot(CreateRoadBuildMutationContext(source)),
@@ -85,7 +85,7 @@ internal sealed class RoadBuildCompositionContextSystem
         return source.RoadBuildInteractionContextSystem.CreateInputContext(CreateRoadBuildInteractionContext(source));
     }
 
-    public RoadBuildCommandSystem.Context CreateRoadBuildCommandContext(RoadBuildCompositionSourceSystem source)
+    public RoadBuildCommandCompositionSystemHelper.Context CreateRoadBuildCommandContext(RoadBuildCompositionSourceSystem source)
     {
         return source.RoadBuildInteractionContextSystem.CreateCommandContext(CreateRoadBuildInteractionContext(source));
     }

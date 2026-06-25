@@ -144,12 +144,12 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - Created `RoadBuildInputSystem` with pointer-state processing, active road-mode guards, building-placement drag handoff, road stroke drag start/release, drag-axis updates, clicked-road delete selection, and pending road-build cancellation.
     - `RoadBuildSystem.Update()` is now a thin input delegation wrapper while stroke creation and building-placement side effects remain behind injected domain callbacks for compatibility.
 
-15. Complete: Create `RoadBuildCommandSystem`
+15. Complete: Create `RoadBuildCommandCompositionSystemHelper`
     - Owns public commands currently on the shell: activate road build mode, confirm/cancel session, exit road mode, and the replacement for static `SetBuildMode(bool)`.
     - Uses `RuntimeGameplayStateSystem` through explicit context.
-    - Created `RoadBuildCommandSystem` with explicit context for runtime gameplay state, road session commands, and road drag cleanup.
-    - `RoadBuildSystem` command methods now delegate to `RoadBuildCommandSystem`; the legacy static `SetBuildMode(bool)` is a compatibility wrapper around the command boundary.
-    - Campaign mission guard test now calls `RoadBuildCommandSystem` directly instead of `RoadBuildSystem.SetBuildMode`.
+    - Created `RoadBuildCommandCompositionSystemHelper` with explicit context for runtime gameplay state, road session commands, and road drag cleanup.
+    - `RoadBuildSystem` command methods now delegate to `RoadBuildCommandCompositionSystemHelper`; the legacy static `SetBuildMode(bool)` is a compatibility wrapper around the command boundary.
+    - Campaign mission guard test now calls `RoadBuildCommandCompositionSystemHelper` directly instead of `RoadBuildSystem.SetBuildMode`.
 
 16. Complete: Create `RoadDeletePromptSystem`
     - Owns delete-road modal state and result handling.
@@ -212,7 +212,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 
 24. Complete: Migrate selection/camera/menu references
     - Move `RtsSelectionRuntimeCameraSystem`, `SelectionGameplayStartupSystem`, `MainMenuPlayUI`, `MenuStartupSystem`, and `GameplayRuntimeUpdateSystem` off `RoadBuildSystem`.
-    - Use `RoadBuildReadModelSystem`, `RoadBuildCommandSystem`, and narrow update systems.
+    - Use `RoadBuildReadModelSystem`, `RoadBuildCommandCompositionSystemHelper`, and narrow update systems.
     - GameplayRuntimeUpdateSystem now receives narrow road runtime update and IMGUI actions instead of RoadBuildSystem.
     - MenuStartupSystem now receives a narrow road menu-bind action, and MainMenuPlayUI no longer accepts RoadBuildSystem.
     - Selection camera/startup systems remain on RoadBuildReadModelSystem.

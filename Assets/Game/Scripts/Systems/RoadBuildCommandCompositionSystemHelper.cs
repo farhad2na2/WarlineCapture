@@ -2,7 +2,7 @@ using System;
 using Unity.Collections;
 using Unity.Entities;
 
-public sealed class RoadBuildCommandSystem
+public sealed class RoadBuildCommandCompositionSystemHelper
 {
     public struct Context
     {

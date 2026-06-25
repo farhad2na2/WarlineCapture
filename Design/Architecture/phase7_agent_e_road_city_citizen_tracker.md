@@ -19,12 +19,12 @@ Progress snapshot:
 - Checklist progress: `87 / 109 complete (79.8%)`.
 - In progress: `0`.
 - Remaining open: `10`.
-- Current target: `Agent E naming slice complete for P7-0207 RoadBuildBuildingPlacementCompositionSystemHelper; continue road/city/citizen helper naming in small batches`.
+- Current target: `Agent E naming slice complete for P7-0208 RoadBuildCommandCompositionSystemHelper; continue road/city/citizen helper naming in small batches`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
 - Retired/folded helpers: `87`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `RoadBuildBuildingPlacementCompositionSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, road build command focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch146-road-build-command.log with [RoadBuildCommandRequestValidation] result=Passed tests=7 and /private/tmp/warline-non-ecs-helper-naming-batch146-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=83. Previous citizen visible-unit fold logs remain /private/tmp/warline-phase7-agent-e-citizen-visible-unit-helper-fold-citizen-visible-unit.log and /private/tmp/warline-phase7-agent-a-architecture.log.`
+- Validation status: `RoadBuildCommandCompositionSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, road build command focused validation, git diff --check, and Phase 7 architecture guard passed after stale road-command transition allowlist entries were removed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch147-road-build-command-rerun.log with [RoadBuildCommandRequestValidation] result=Passed tests=7 and /private/tmp/warline-non-ecs-helper-naming-batch147-architecture-rerun.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=82. Previous Batch 146 logs remain /private/tmp/warline-non-ecs-helper-naming-batch146-road-build-command.log and /private/tmp/warline-non-ecs-helper-naming-batch146-architecture.log.`
 
 Owned files:
 
@@ -236,7 +236,7 @@ Remove dead wrappers instead of converting them.
 - [x] Fold `P7-0226 RoadBuildSessionSystem` from a disabled `SystemBase` wrapper into a plain road-build session helper; build mode/session state, delete prompt state, command callbacks, and road composition callers stayed unchanged.
 - [x] Fold `P7-0231 RoadNetworkSystem` from a disabled `SystemBase` wrapper into a plain road network graph helper; stroke graph state, road tile data, snapshot/restore behavior, and road composition callers stayed unchanged.
 - [x] Fold `P7-0235 RoadRuntimeGenerationSystem` from a disabled `SystemBase` wrapper into a plain runtime road generation helper; runtime road stroke creation, deferred ECS sync callbacks, special visual bridge calls, and runtime-city composition callers stayed unchanged.
-- [x] Fold `P7-0208 RoadBuildCommandSystem` from a disabled `SystemBase` wrapper into a plain road-build command helper; EntityManager command queue/buffer API, synchronous command processing, result writing, and road composition callers stayed unchanged.
+- [x] Fold and rename `P7-0208 RoadBuildCommandCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road-build command composition helper; EntityManager command queue/buffer API, synchronous command processing, result writing, and road composition callers stayed unchanged.
 - [x] Fold `P7-0164 RuntimeCityLandmarkOffsetUtilitySystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city landmark-offset helper; landmark offset arrays, hall-distance filtering, state access, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0163 RuntimeCityIngressUtilitySystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city ingress helper; city layout creation, incoming-anchor stroke wiring, connection-cell math, ingress corridor pruning, state access, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0168 RuntimeCityMinimapEventUiSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city minimap event helper; static minimap change publication, UI-facing flush, clear behavior, and runtime-city composition callers stayed unchanged.

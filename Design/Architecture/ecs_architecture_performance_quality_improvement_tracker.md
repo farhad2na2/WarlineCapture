@@ -350,7 +350,7 @@ Phase 6 notes:
 - Focused EditMode validation passed with `/private/tmp/warline-ecs-audit-phase6-runtime-city-generation-editmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-runtime-city-generation-editmode-results.xml` (`2/2` passed).
 - Added `UnitCombatFocusedEditModeTests.StandardAttack_NonLethalHitDamagesTargetAndRecordsFeedbackState`, covering non-lethal standard attack damage, recent attacker state, health-bar visibility, attack cooldown, and trace state without death cleanup.
 - Focused EditMode validation passed with `/private/tmp/warline-ecs-audit-phase6-unit-combat-editmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-unit-combat-editmode-results.xml` (`1/1` passed).
-- Added road-build command failure-path coverage for missing runtime state and converted `RoadBuildCommandSystemTests.RunFocusedValidation` to `ValidationExit`.
+- Added road-build command failure-path coverage for missing runtime state and converted `RoadBuildCommandCompositionSystemHelperTests.RunFocusedValidation` to `ValidationExit`.
 - Focused EditMode validation passed with `/private/tmp/warline-ecs-audit-phase6-road-build-editmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-road-build-editmode-results.xml` (`7/7` passed).
 - Added building-placement configured-placement rejection coverage for missing config and converted `BuildingPlacementValidationUtilitySystemHelperTests.RunPlacementCommandRequestValidation` to `ValidationExit`.
 - Focused EditMode validation passed with `/private/tmp/warline-ecs-audit-phase6-building-placement-editmode.log` and result XML `/private/tmp/warline-ecs-audit-phase6-building-placement-editmode-results.xml` (`17/17` passed).

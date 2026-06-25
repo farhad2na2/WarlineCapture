@@ -56,7 +56,7 @@ New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. 
   - Target owner: `RoadBuildStartupSystem`, `RoadBuildDependencySystem`, `RoadBuildDisposalSystem`, and `RoadBuildCompositionSystem`.
 - Road build commands:
   - `SetBuildMode`, `ActivateRoadBuildMode`, `ConfirmRoadBuildSession`, `CancelRoadBuildSession`, `ExitBuildMode`
-  - Target owner: `RoadBuildCommandSystem`; static `SetBuildMode` was deleted in step 8.
+  - Target owner: `RoadBuildCommandCompositionSystemHelper`; static `SetBuildMode` was deleted in step 8.
 - Legacy building compatibility commands:
   - `BeginSoldierBasePlacement`, `ConfirmBuildingPlacement`, `CancelBuildingPlacement`, `CreateSoldierFromSelectedBuilding`, `DeleteSelectedBuilding`, `ClearSelectedBuilding`
   - Target owner: `BuildingPlacementInteractionBoundaryCompositionSystemHelper` and the temporary building-road legacy systems until compatibility is deleted.
@@ -68,7 +68,7 @@ New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. 
 - Serialized names such as `RoadBuildSystemConfig` and `RoadBuildSystemSceneConfigAsset` remain allowed data compatibility debt until a separate asset migration plan exists.
 - New runtime behavior must land in narrow `*System` boundaries.
 - View classes remain only for serialized UI references. No gameplay logic belongs in views.
-- Static road commands are forbidden except pure math/data helpers. Runtime build-mode changes must route through `RoadBuildCommandSystem` or an ECS command/request path.
+- Static road commands are forbidden except pure math/data helpers. Runtime build-mode changes must route through `RoadBuildCommandCompositionSystemHelper` or an ECS command/request path.
 - Do not use reflection.
 
 ## Performance Rules
@@ -161,11 +161,11 @@ Every phase boundary must also run the existing road validation set when feasibl
 
 8. Complete: Remove static `SetBuildMode` compatibility
    - Delete `RoadBuildRuntimeStateSystem.SetBuildMode`.
-   - Route remaining build-mode command use through `RoadBuildCommandSystem` or explicit command context.
+   - Route remaining build-mode command use through `RoadBuildCommandCompositionSystemHelper` or explicit command context.
    - Add a contract guard that static road commands cannot return.
    - Expected output: no static road runtime command surface remains.
    - Deleted `RoadBuildRuntimeStateSystem.SetBuildMode`.
-   - Existing command use remains on `RoadBuildCommandSystem.SetBuildMode` and explicit command contexts.
+   - Existing command use remains on `RoadBuildCommandCompositionSystemHelper.SetBuildMode` and explicit command contexts.
    - Updated architecture guards so `RoadBuildRuntimeStateSystem` must have zero public static runtime commands.
 
 ## Phase 3: Context Factories
@@ -363,7 +363,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 - Step 5 complete: road startup/config application moved to `RoadBuildStartupSystem`; the temporary holder no longer owns serialized config/cache fields, config projection, root creation, or variant-cache warmup.
 - Step 6 complete: road dependency storage and rebinding moved to `RoadBuildDependencySystem`; the temporary holder no longer stores building interaction, menu, minimap, or runtime-grid blocker dependencies directly.
 - Step 7 complete: road read predicates and labels moved to `RoadBuildReadModelSystem`; composition now returns the source-owned read model instead of configuring facade getter delegates.
-- Step 8 complete: deleted the temporary static `RoadBuildRuntimeStateSystem.SetBuildMode` bridge; runtime build-mode changes must stay on `RoadBuildCommandSystem`/explicit command contexts.
+- Step 8 complete: deleted the temporary static `RoadBuildRuntimeStateSystem.SetBuildMode` bridge; runtime build-mode changes must stay on `RoadBuildCommandCompositionSystemHelper`/explicit command contexts.
 - Step 9 complete: chunk, preview, and special-road visual context construction moved to `RoadBuildVisualContextSystem`; visual behavior remains in the existing visual systems.
 - Step 10 complete: session, input, command, and delete-prompt context construction moved to `RoadBuildInteractionContextSystem`; callbacks remain explicit and narrow.
 - Step 11 complete: runtime road-generation context construction moved to `RoadRuntimeGenerationContextSystem`; road-cell-size, deferred sync, stroke creation, and special visual handoff remain explicit callbacks.

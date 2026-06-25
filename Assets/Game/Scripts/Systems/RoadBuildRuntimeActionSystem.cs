@@ -7,8 +7,8 @@ internal sealed class RoadBuildRuntimeActionSystem
     {
         public RoadBuildInteractionContextSystem InteractionContextSystem;
         public RoadBuildInteractionContextSystem.Context InteractionContext;
-        public RoadBuildCommandSystem CommandSystem;
-        public RoadBuildCommandSystem.Context CommandContext;
+        public RoadBuildCommandCompositionSystemHelper CommandSystem;
+        public RoadBuildCommandCompositionSystemHelper.Context CommandContext;
         public RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public RoadDeletePromptSystem DeletePromptSystem;
         public RoadDeletePromptSystem.Context DeletePromptContext;
@@ -48,8 +48,8 @@ internal sealed class RoadBuildRuntimeActionSystem
 
     public static void ConfigureCommands(
         State state,
-        RoadBuildCommandSystem commandSystem,
-        RoadBuildCommandSystem.Context commandContext,
+        RoadBuildCommandCompositionSystemHelper commandSystem,
+        RoadBuildCommandCompositionSystemHelper.Context commandContext,
         RoadBuildEcsBoundarySystem.TryGetEntityManagerDelegate tryGetEntityManager)
     {
         if (state == null)

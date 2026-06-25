@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
+using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
 using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 
 internal sealed class RuntimeCityWalkabilityUtilitySystemHelper

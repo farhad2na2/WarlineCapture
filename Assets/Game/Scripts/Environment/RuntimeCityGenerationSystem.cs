@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
+using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
 
 internal sealed class RuntimeCityGenerationSystem
 {

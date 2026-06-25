@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using CityChainAxis = RuntimeCityLayoutSystem.CityChainAxis;
-using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
+using CityChainAxis = RuntimeCityLayoutUtilitySystemHelper.CityChainAxis;
+using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
 using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 
-internal sealed class RuntimeCityLayoutSystem
+internal sealed class RuntimeCityLayoutUtilitySystemHelper
 {
     private readonly RuntimeCityLayoutState _state = new();
 

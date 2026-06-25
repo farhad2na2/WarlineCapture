@@ -70,14 +70,14 @@ public sealed class RuntimeCityGenerationFocusedTests
         Assert.IsFalse(RuntimeCityLayoutState.IsRoadCellInsideAnyBaseExclusion(plannedCenter, baseExclusionRoadRects));
         Assert.IsTrue(RuntimeCityLayoutState.IsRoadCellWithinBounds(plannedCenter, minRoadX, maxRoadX, minRoadY, maxRoadY));
 
-        RuntimeCityLayoutSystem.CityLayoutData existingCity = new()
+        RuntimeCityLayoutUtilitySystemHelper.CityLayoutData existingCity = new()
         {
             CenterRoadCell = plannedCenter,
             TownRadius = townRadius
         };
         Assert.IsFalse(layout.IsCityCenterFarEnough(
             plannedCenter,
-            new List<RuntimeCityLayoutSystem.CityLayoutData> { existingCity },
+            new List<RuntimeCityLayoutUtilitySystemHelper.CityLayoutData> { existingCity },
             townRadius,
             baseExclusionRoadRects,
             config));

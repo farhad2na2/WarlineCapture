@@ -8,7 +8,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly List<GameObject> _fallbackCityPrefabs = new();
     private RuntimeCityConfigCompositionSystemHelper _runtimeCityConfigHelper;
     private RuntimeCityConfigCompositionSystemHelper.Snapshot _fallbackCityConfig;
-    private RuntimeCityLayoutSystem _runtimeCityLayoutSystem;
+    private RuntimeCityLayoutUtilitySystemHelper _runtimeCityLayoutHelper;
     private readonly RuntimeCityLayoutState _fallbackRuntimeCityLayout = new();
     private RuntimeCityRoadLayoutUtilitySystemHelper _runtimeCityRoadLayoutHelper;
     private readonly RuntimeCityRoadLayoutState _fallbackRuntimeCityRoadLayout = new();
@@ -386,10 +386,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityLifecycleHelper ??= ResolveRuntimeCityLifecycleCompositionSystemHelper();
 
     private RuntimeCityLayoutState RuntimeCityLayoutState =>
-        RuntimeCityLayoutSystem?.State ?? _fallbackRuntimeCityLayout;
+        RuntimeCityLayoutUtilitySystemHelper?.State ?? _fallbackRuntimeCityLayout;
 
-    private RuntimeCityLayoutSystem RuntimeCityLayoutSystem =>
-        _runtimeCityLayoutSystem ??= ResolveRuntimeCityLayoutSystem();
+    private RuntimeCityLayoutUtilitySystemHelper RuntimeCityLayoutUtilitySystemHelper =>
+        _runtimeCityLayoutHelper ??= ResolveRuntimeCityLayoutUtilitySystemHelper();
 
     private RuntimeCityRoadLayoutState RuntimeCityRoadLayoutState =>
         RuntimeCityRoadLayoutUtilitySystemHelper?.State ?? _fallbackRuntimeCityRoadLayout;
@@ -626,9 +626,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityLifecycleCompositionSystemHelper();
     }
 
-    private static RuntimeCityLayoutSystem ResolveRuntimeCityLayoutSystem()
+    private static RuntimeCityLayoutUtilitySystemHelper ResolveRuntimeCityLayoutUtilitySystemHelper()
     {
-        return new RuntimeCityLayoutSystem();
+        return new RuntimeCityLayoutUtilitySystemHelper();
     }
 
     private static RuntimeCityRoadLayoutUtilitySystemHelper ResolveRuntimeCityRoadLayoutUtilitySystemHelper()

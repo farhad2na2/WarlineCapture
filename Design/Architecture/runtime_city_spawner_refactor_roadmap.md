@@ -19,9 +19,9 @@ Goal: split runtime city generation before adding more map/city gameplay, so lay
    - `RuntimeCitySpawnerSystem` now consumes a `RuntimeCityConfigCompositionSystemHelper.Snapshot` instead of copying every config field locally.
 
 3. Complete: Extract city layout planning
-   - Created `RuntimeCityLayoutSystem`.
+   - Created `RuntimeCityLayoutUtilitySystemHelper`.
    - Owns layout data containers, town-radius calculation, chain-axis/center planning, road-grid bounds, base exclusion checks, and city-center spacing.
-   - `RuntimeCitySpawnerSystem` now asks `RuntimeCityLayoutSystem` for layout planning helpers while road planning is owned by `RuntimeCityRoadLayoutUtilitySystemHelper`.
+   - `RuntimeCitySpawnerSystem` now asks `RuntimeCityLayoutUtilitySystemHelper` for layout planning helpers while road planning is owned by `RuntimeCityRoadLayoutUtilitySystemHelper`.
 
 4. Complete: Extract road layout planning
    - Created `RuntimeCityRoadLayoutUtilitySystemHelper`.

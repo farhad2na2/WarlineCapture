@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
+using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
 using Plan = RuntimeCityBulkPlotPlanUtilitySystemHelper.Plan;
 using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CityChainAxis = RuntimeCityLayoutSystem.CityChainAxis;
-using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
+using CityChainAxis = RuntimeCityLayoutUtilitySystemHelper.CityChainAxis;
+using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
 
 internal sealed class RuntimeCityRoadLayoutUtilitySystemHelper
 {

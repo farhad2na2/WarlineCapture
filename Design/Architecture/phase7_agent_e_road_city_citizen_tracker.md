@@ -16,15 +16,15 @@ Execution order:
 
 Progress snapshot:
 
-- Checklist progress: `102 / 109 complete (93.6%)`.
+- Checklist progress: `103 / 109 complete (94.5%)`.
 - In progress: `0`.
 - Remaining open: `1`.
-- Current target: `Agent E naming slice complete for P7-0217 RoadBuildDisposalCompositionSystemHelper; continue road/city/citizen helper naming in small batches`.
+- Current target: `Agent E naming slice complete for P7-0222 RoadBuildMutationCompositionSystemHelper; continue road/city/citizen helper naming in small batches`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
-- Retired/folded helpers: `102`.
+- Retired/folded helpers: `103`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `RoadBuildDisposalCompositionSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, road build command focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch162-road-build-command.log with [RoadBuildCommandRequestValidation] result=Passed tests=7 and /private/tmp/warline-non-ecs-helper-naming-batch162-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=67. Previous Batch 161 logs remain /private/tmp/warline-non-ecs-helper-naming-batch161-road-build-command.log and /private/tmp/warline-non-ecs-helper-naming-batch161-architecture.log.`
+- Validation status: `RoadBuildMutationCompositionSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, road build command focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch163-road-build-command.log with [RoadBuildCommandRequestValidation] result=Passed tests=7 and /private/tmp/warline-non-ecs-helper-naming-batch163-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=66. Previous Batch 162 logs remain /private/tmp/warline-non-ecs-helper-naming-batch162-road-build-command.log and /private/tmp/warline-non-ecs-helper-naming-batch162-architecture.log.`
 
 Owned files:
 
@@ -258,7 +258,7 @@ Remove dead wrappers instead of converting them.
 - [x] Fold `P7-0203 CitizenScheduleSystem` from a disabled `SystemBase` wrapper into a plain citizen schedule helper; schedule phase, target-building, weekday/weekend/refugee status policy, and citizen runtime callers stayed unchanged.
 - [x] Fold and rename `P7-0216 RoadBuildDependencyCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road-build dependency helper; dependency state, building-interaction binding, command-mode calls, minimap configuration, and road composition callers stayed unchanged.
 - [x] Fold and rename `P7-0217 RoadBuildDisposalCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road-build disposal helper; disposal context, runtime root cleanup, visual/cache cleanup, ECS boundary cleanup, road tile clearing, and road composition lifecycle callers stayed unchanged.
-- [x] Fold `P7-0222 RoadBuildMutationSystem` from a disabled `SystemBase` wrapper into a plain road-build mutation helper; stroke creation/deletion, session snapshot/restore, dirty-cell refresh, and road composition callers stayed unchanged.
+- [x] Fold and rename `P7-0222 RoadBuildMutationCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road-build mutation helper; stroke creation/deletion, session snapshot/restore, dirty-cell refresh, and road composition callers stayed unchanged.
 - [x] Fold `P7-0228 RoadDeletePromptSystem` from a disabled `SystemBase` wrapper into a plain road-delete prompt helper; existing IMGUI prompt rendering, delete/cancel actions, session prompt state, and road-build runtime callers stayed unchanged.
 - [x] Fold `P7-0230 RoadMinimapEventSystem` from a disabled `SystemBase` wrapper into a plain road-minimap event helper; direct source ownership, static minimap change notification, UI binding, clear/flush behavior, and road composition callers stayed unchanged.
 - [x] Fold `P7-0232 RoadPathPlanningSystem` from a disabled `SystemBase` wrapper into a plain road-path planning helper; drag-axis resolution, path building, preview-plan dirty cells/edges, preview masks, and road-build input/preview callers stayed unchanged.

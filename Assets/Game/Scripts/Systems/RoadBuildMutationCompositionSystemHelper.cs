@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class RoadBuildMutationSystem
+internal sealed class RoadBuildMutationCompositionSystemHelper
 {
     public readonly struct Context
     {

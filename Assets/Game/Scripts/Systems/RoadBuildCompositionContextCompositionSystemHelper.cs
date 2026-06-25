@@ -48,8 +48,8 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadBuildCommandCompositionSystemHelper,
             source.RoadPathPlanningSystem,
             source.RoadNetworkSystem,
-            () => source.RoadBuildMutationSystem.CaptureRoadBuildSessionSnapshot(CreateRoadBuildMutationContext(source)),
-            snapshot => source.RoadBuildMutationSystem.RestoreRoadBuildSession(CreateRoadBuildMutationContext(source), snapshot),
+            () => source.RoadBuildMutationCompositionSystemHelper.CaptureRoadBuildSessionSnapshot(CreateRoadBuildMutationContext(source)),
+            snapshot => source.RoadBuildMutationCompositionSystemHelper.RestoreRoadBuildSession(CreateRoadBuildMutationContext(source), snapshot),
             () => RemoveRuntimeBlockersUnderRoads(source),
             () => source.RoadMinimapEventSystem?.PublishStaticMinimapChanged(),
             () => ApplyBuildCommandMode(source),
@@ -72,12 +72,12 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             screenPosition => source.RoadBuildBuildingPlacementCompositionSystemHelper.UpdateBuildingPlacement(
                 CreateRoadBuildPlacementContext(source),
                 screenPosition),
-            path => source.RoadBuildMutationSystem.CreateStroke(CreateRoadBuildMutationContext(source), path),
+            path => source.RoadBuildMutationCompositionSystemHelper.CreateStroke(CreateRoadBuildMutationContext(source), path),
             path => source.RoadSurfacePlacementSystem.IsPathSurfaceValid(path),
             () => source.RoadBuildPlacementStorageCompositionSystemHelper.HasPendingBuildingPlacement,
             value => source.RoadBuildBuildingPlacementCompositionSystemHelper.SetDragging(source.RoadBuildPlacementState, value),
             () => source.RoadBuildBuildingPlacementCompositionSystemHelper.SetDragging(source.RoadBuildPlacementState, false),
-            strokeId => source.RoadBuildMutationSystem.DeleteStroke(CreateRoadBuildMutationContext(source), strokeId));
+            strokeId => source.RoadBuildMutationCompositionSystemHelper.DeleteStroke(CreateRoadBuildMutationContext(source), strokeId));
     }
 
     public RoadBuildInputCompositionSystemHelper.Context CreateRoadBuildInputContext(RoadBuildCompositionSourceSystem source)
@@ -174,9 +174,9 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
         return RoadBuildVisualContextSystem.CreateSpecialContext(CreateRoadBuildVisualContext(source));
     }
 
-    private RoadBuildMutationSystem.Context CreateRoadBuildMutationContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildMutationCompositionSystemHelper.Context CreateRoadBuildMutationContext(RoadBuildCompositionSourceSystem source)
     {
-        return new RoadBuildMutationSystem.Context(
+        return new RoadBuildMutationCompositionSystemHelper.Context(
             source.RoadNetworkSystem,
             dirtyCells => RoadVisualRefreshSystem.RefreshCells(CreateRoadVisualRefreshContext(source), dirtyCells),
             () => RoadVisualRefreshSystem.RebuildRoadStateFromCurrentTiles(CreateRoadVisualRefreshContext(source)));
@@ -227,7 +227,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadGridProjectionSystem,
             CreateRoadGridProjectionContext(source),
             (cells, isAutobahn, useAutobahnConnectorAtStart, useAutobahnConnectorAtEnd) =>
-                source.RoadBuildMutationSystem.CreateStroke(
+                source.RoadBuildMutationCompositionSystemHelper.CreateStroke(
                     CreateRoadBuildMutationContext(source),
                     cells,
                     isAutobahn,

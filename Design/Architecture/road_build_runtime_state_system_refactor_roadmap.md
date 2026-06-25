@@ -199,7 +199,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 ## Phase 4: Road Mutation, Refresh, And Rebuild
 
 14. Complete: Extract road stroke mutation bridge
-   - Create `RoadBuildMutationSystem`.
+   - Create `RoadBuildMutationCompositionSystemHelper`.
    - Move `CreateStroke`, `DeleteStroke`, dirty-cell refresh triggering, and network snapshot restore handoff.
    - Use `RoadNetworkSystem` for graph mutation and `RoadVisualRefreshSystem` for visual/ECS refresh.
    - Expected output: stroke mutation no longer lives beside startup and legacy building behavior.
@@ -369,7 +369,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 - Step 11 complete: runtime road-generation context construction moved to `RoadRuntimeGenerationContextSystem`; road-cell-size, deferred sync, stroke creation, and special visual handoff remain explicit callbacks.
 - Step 12 complete: footprint query and grid projection context construction moved to `RoadGridContextSystem`; projection behavior and road grid sizing are unchanged.
 - Step 13 complete: legacy building ECS context construction moved to `BuildingRoadLegacyContextSystem`; entity manager, grid, footprint, interaction, and spawn-random callbacks remain explicit.
-- Step 14 complete: road stroke creation/deletion plus session snapshot capture/restore mutation moved to `RoadBuildMutationSystem`; runtime state only supplies refresh/rebuild callbacks pending steps 16-17.
+- Step 14 complete: road stroke creation/deletion plus session snapshot capture/restore mutation moved to `RoadBuildMutationCompositionSystemHelper`; runtime state only supplies refresh/rebuild callbacks pending steps 16-17.
 - Step 15 complete: visual type resolution plus prefab/variant lookup handoff moved to `RoadVisualResolutionSystem`; visual-type rules are unchanged.
 - Step 16 complete: dirty-cell road tile refresh, chunk dirtying, ECS sync request, and special-road dirty rebuild trigger moved to `RoadVisualRefreshSystem`.
 - Step 17 complete: full road state rollback/rebuild refresh moved to `RoadVisualRefreshSystem`; snapshot restore now triggers the visual refresh boundary instead of broad runtime-state rebuild code.

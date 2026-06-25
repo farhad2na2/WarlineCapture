@@ -382,7 +382,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 33. Complete: Update runtime tick composition
    - `BuildingGameplayCompositionSystemHelper.CreateRuntimeTickSource` uses direct systems and context systems only.
    - Remove `BuildingGameplaySystem.RuntimeTickDomains`, `RuntimeInputDomains`, and all shell get/set delegates from the tick source.
-   - Expected output: `BuildingRuntimeUpdateSystem` is fully independent from the shell.
+   - Expected output: `BuildingRuntimeUpdateCompositionSystemHelper` is fully independent from the shell.
    - `BuildingGameplayCompositionSystemHelper.CreateRuntimeTickSource` now accepts `BuildingGameplaySourceCompositionSystemHelper` and uses direct child systems for production tick, boundary publish, visual resource updates, destroyed-building sync, barrier doors, redirect marker flush, and input tick.
    - Removed shell runtime tick/input domain properties and tick-only shell delegates from `BuildingGameplaySystem`.
    - Runtime boundary publish now uses `BuildingGameplayEcsQueryCompositionSystemHelper` and a local composition entity-manager resolver instead of shell wrappers.

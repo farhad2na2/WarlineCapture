@@ -387,7 +387,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition =
             BuildingCitizenPopulationCompositionSystemHelper.Create(_citizenPopulationCompositionSystem);
 
-        var runtimeUpdate = new BuildingRuntimeUpdateSystem();
+        var runtimeUpdate = new BuildingRuntimeUpdateCompositionSystemHelper();
         BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext =
             childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnCommandContext(
                 buildingRuntimeContextSource,
@@ -551,7 +551,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             tryGetGridCell,
             createBuildingSelectionContext),
             runtimeUpdate,
-            new BuildingRuntimeUpdateSystem.Context(
+            new BuildingRuntimeUpdateCompositionSystemHelper.Context(
                 UpdateBuildingStartupTick,
                 UpdateBuildingSimulationTick,
                 childSystems.RuntimeBuildingEntityLinkRegistry),

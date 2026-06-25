@@ -6,8 +6,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
     public Result Create(
         BuildingSelectionClickSystem selectionClick,
         BuildingSelectionClickSystem.Context selectionClickContext,
-        BuildingRuntimeUpdateSystem runtimeUpdate,
-        BuildingRuntimeUpdateSystem.Context runtimeUpdateContext,
+        BuildingRuntimeUpdateCompositionSystemHelper runtimeUpdate,
+        BuildingRuntimeUpdateCompositionSystemHelper.Context runtimeUpdateContext,
         BuildingRuntimeCitySpawnBridgeCompositionSystemHelper runtimeCitySpawn,
         BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context runtimeCitySpawnContext,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
@@ -82,8 +82,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
     {
         public readonly BuildingSelectionClickSystem SelectionClick;
         public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
-        public readonly BuildingRuntimeUpdateSystem RuntimeUpdate;
-        public readonly BuildingRuntimeUpdateSystem.Context RuntimeUpdateContext;
+        public readonly BuildingRuntimeUpdateCompositionSystemHelper RuntimeUpdate;
+        public readonly BuildingRuntimeUpdateCompositionSystemHelper.Context RuntimeUpdateContext;
         public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper RuntimeCitySpawn;
         public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context RuntimeCitySpawnContext;
         public readonly BuildingRuntimeReadModelCompositionSystemHelper RuntimeQuery;
@@ -119,8 +119,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public Result(
             BuildingSelectionClickSystem selectionClick,
             BuildingSelectionClickSystem.Context selectionClickContext,
-            BuildingRuntimeUpdateSystem runtimeUpdate,
-            BuildingRuntimeUpdateSystem.Context runtimeUpdateContext,
+            BuildingRuntimeUpdateCompositionSystemHelper runtimeUpdate,
+            BuildingRuntimeUpdateCompositionSystemHelper.Context runtimeUpdateContext,
             BuildingRuntimeCitySpawnBridgeCompositionSystemHelper runtimeCitySpawn,
             BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context runtimeCitySpawnContext,
             BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,

@@ -1,6 +1,6 @@
 using System;
 
-public sealed class BuildingRuntimeUpdateSystem
+public sealed class BuildingRuntimeUpdateCompositionSystemHelper
 {
     public readonly struct Context
     {

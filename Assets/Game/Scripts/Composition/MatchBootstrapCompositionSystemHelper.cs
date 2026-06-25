@@ -82,7 +82,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public BuildingUiQuerySystem BuildingUiQuery { get; private set; }
     public IBuildingUiCommand BuildingUiCommandContract { get; private set; }
     public IBuildingUiQuery BuildingUiQueryContract { get; private set; }
-    public BuildingRuntimeUpdateSystem BuildingRuntimeUpdate { get; private set; }
+    public BuildingRuntimeUpdateCompositionSystemHelper BuildingRuntimeUpdate { get; private set; }
     public SelectionUiCommandSystem SelectionUiCommand { get; private set; }
     public SelectionUiReadModelSystem SelectionUiReadModel { get; private set; }
     public SelectionUiCameraSystem SelectionUiCamera { get; private set; }
@@ -127,7 +127,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     private CitizenPopulationEventSystem _citizenPopulationEventSystem;
     private Action _disposeSelection;
     private Action _disposeBuildingGameplay;
-    private BuildingRuntimeUpdateSystem.Context _buildingRuntimeUpdateContext;
+    private BuildingRuntimeUpdateCompositionSystemHelper.Context _buildingRuntimeUpdateContext;
     private Entity _buildingRuntimeBoundaryEntity;
     private PerformanceDiagnosticsSystem _performanceDiagnosticsSystem;
     private bool _mainMenuBaseBindingsApplied;
@@ -527,8 +527,8 @@ internal sealed class MatchBootstrapCompositionSystemHelper
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
         Action roadBuildRuntimeUpdate,
-        BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
-        BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
+        BuildingRuntimeUpdateCompositionSystemHelper buildingRuntimeUpdate,
+        BuildingRuntimeUpdateCompositionSystemHelper.Context buildingRuntimeUpdateContext,
         Action selectionRuntimeUpdate,
         Camera worldCamera,
         RuntimeCityCompositionSystemHelper runtimeCity,

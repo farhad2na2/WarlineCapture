@@ -33,8 +33,8 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly System.Action<IMatchRuntimeUi> BindBuildingMainMenu;
         public readonly System.Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> BindBuildingGameplayFeatures;
         public readonly System.Action DisposeBuildingGameplay;
-        public readonly BuildingRuntimeUpdateSystem BuildingRuntimeUpdate;
-        public readonly BuildingRuntimeUpdateSystem.Context BuildingRuntimeUpdateContext;
+        public readonly BuildingRuntimeUpdateCompositionSystemHelper BuildingRuntimeUpdate;
+        public readonly BuildingRuntimeUpdateCompositionSystemHelper.Context BuildingRuntimeUpdateContext;
         public readonly System.Action<IMatchRuntimeUi> BindSelectionMainMenu;
         public readonly System.Action<IMatchHudSelectionPanelView> BindMatchHudSelectionPanel;
         public readonly System.Action SelectionRuntimeUpdate;
@@ -72,8 +72,8 @@ internal sealed class ManagedGameplayStartupSystem
             System.Action<IMatchRuntimeUi> bindBuildingMainMenu,
             System.Action<IMatchRuntimeUi, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
             System.Action disposeBuildingGameplay,
-            BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
-            BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
+            BuildingRuntimeUpdateCompositionSystemHelper buildingRuntimeUpdate,
+            BuildingRuntimeUpdateCompositionSystemHelper.Context buildingRuntimeUpdateContext,
             System.Action<IMatchRuntimeUi> bindSelectionMainMenu,
             System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel,
             System.Action selectionRuntimeUpdate,

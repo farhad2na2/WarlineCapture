@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class BuildingSelectionMarkerSystem
+internal sealed class BuildingSelectionMarkerPresentationSystemHelper
 {
     private const float MarkerSurfaceClearance = 0.12f;
     private const string RuntimeMarkerName = "BuildingSelectionMarkerRuntime";

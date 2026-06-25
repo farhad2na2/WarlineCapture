@@ -17,7 +17,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
     {
         BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource = createRuntimeContextSource(source);
         BuildingRuntimeVisualPresentationSystemHelper.Context runtimeVisualContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeVisualContext(runtimeSource);
-        BuildingSelectionMarkerSystem.Context selectionMarkerContext =
+        BuildingSelectionMarkerPresentationSystemHelper.Context selectionMarkerContext =
             source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
                 runtimeSource,
                 source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
@@ -38,7 +38,7 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
             () => source.BuildingCombatUtilitySystemHelper.UpdateDestroyedBuildings(combatContext, UnityEngine.Time.time),
             () => source.BuildingBarrierUtilitySystemHelper.UpdateRoadBarrierDoors(barrierContext, UnityEngine.Time.deltaTime),
             () => source.BuildingPlacementRedirectCompositionSystemHelper.FlushPendingMarkerRefresh(
-                () => source.BuildingSelectionMarkerSystem.Refresh(selectionMarkerContext)),
+                () => source.BuildingSelectionMarkerPresentationSystemHelper.Refresh(selectionMarkerContext)),
             createMapBuildingPlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
             createMapVehiclePlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
             () => source.BuildingPlacementInputRuntimeTickUiSystemHelper.Update(inputContext),

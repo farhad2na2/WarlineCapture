@@ -47,7 +47,7 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
                     querySource.BuildingRuntimeQueryCompositionSystemHelper.GetEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical));
         source.BuildingPlacementRedirectCompositionSystemHelper.EndDeferredRuntimeBuildingSideEffects(
             source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRedirectContext(runtimeSource),
-            () => source.BuildingSelectionMarkerSystem.Refresh(
+            () => source.BuildingSelectionMarkerPresentationSystemHelper.Refresh(
                 source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
                     runtimeSource,
                     source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,

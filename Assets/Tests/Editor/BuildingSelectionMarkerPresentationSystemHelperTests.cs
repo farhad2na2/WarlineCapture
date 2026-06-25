@@ -4,7 +4,7 @@ using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
 
-public sealed class BuildingSelectionMarkerSystemTests
+public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
 {
     private const string SelectionMarkerMaterialPath = "Assets/Game/Rendering/Materials/Selection/Mat_Selection_Player_Hologram.mat";
 
@@ -33,9 +33,9 @@ public sealed class BuildingSelectionMarkerSystemTests
         }
     }
 
-    private static void RunCase(System.Action<BuildingSelectionMarkerSystemTests> testCase)
+    private static void RunCase(System.Action<BuildingSelectionMarkerPresentationSystemHelperTests> testCase)
     {
-        var test = new BuildingSelectionMarkerSystemTests();
+        var test = new BuildingSelectionMarkerPresentationSystemHelperTests();
         test.SetUp();
         try
         {
@@ -82,8 +82,8 @@ public sealed class BuildingSelectionMarkerSystemTests
         runtimeBuildings.AddBuilding(buildingA.Id, buildingA);
         runtimeBuildings.AddBuilding(buildingB.Id, buildingB);
 
-        BuildingSelectionMarkerSystem system = CreateBuildingSelectionMarkerSystem();
-        BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
+        BuildingSelectionMarkerPresentationSystemHelper system = CreateBuildingSelectionMarkerPresentationSystemHelper();
+        BuildingSelectionMarkerPresentationSystemHelper.Context context = CreateContext(runtimeBuildings);
 
         runtimeBuildings.SelectBuilding(buildingA.Id);
         system.Refresh(context);
@@ -111,8 +111,8 @@ public sealed class BuildingSelectionMarkerSystemTests
         RuntimeBuildingEntity building = CreateBuilding(1, Vector2Int.zero, new Vector2Int(4, 4), 0f);
         runtimeBuildings.AddBuilding(building.Id, building);
 
-        BuildingSelectionMarkerSystem system = CreateBuildingSelectionMarkerSystem();
-        BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
+        BuildingSelectionMarkerPresentationSystemHelper system = CreateBuildingSelectionMarkerPresentationSystemHelper();
+        BuildingSelectionMarkerPresentationSystemHelper.Context context = CreateContext(runtimeBuildings);
 
         runtimeBuildings.SelectBuilding(building.Id);
         system.Refresh(context);
@@ -135,8 +135,8 @@ public sealed class BuildingSelectionMarkerSystemTests
         RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(2, 4), new Vector2Int(6, 4), 0f);
         runtimeBuildings.AddBuilding(building.Id, building);
 
-        BuildingSelectionMarkerSystem system = CreateBuildingSelectionMarkerSystem();
-        BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
+        BuildingSelectionMarkerPresentationSystemHelper system = CreateBuildingSelectionMarkerPresentationSystemHelper();
+        BuildingSelectionMarkerPresentationSystemHelper.Context context = CreateContext(runtimeBuildings);
 
         runtimeBuildings.SelectBuilding(building.Id);
         system.Refresh(context);
@@ -171,8 +171,8 @@ public sealed class BuildingSelectionMarkerSystemTests
 
         runtimeBuildings.AddBuilding(building.Id, building);
 
-        BuildingSelectionMarkerSystem system = CreateBuildingSelectionMarkerSystem();
-        BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
+        BuildingSelectionMarkerPresentationSystemHelper system = CreateBuildingSelectionMarkerPresentationSystemHelper();
+        BuildingSelectionMarkerPresentationSystemHelper.Context context = CreateContext(runtimeBuildings);
 
         runtimeBuildings.SelectBuilding(building.Id);
         system.Refresh(context);
@@ -231,8 +231,8 @@ public sealed class BuildingSelectionMarkerSystemTests
         _objects.Add(model);
         runtimeBuildings.AddBuilding(building.Id, building);
 
-        BuildingSelectionMarkerSystem system = CreateBuildingSelectionMarkerSystem();
-        BuildingSelectionMarkerSystem.Context context = CreateContext(runtimeBuildings);
+        BuildingSelectionMarkerPresentationSystemHelper system = CreateBuildingSelectionMarkerPresentationSystemHelper();
+        BuildingSelectionMarkerPresentationSystemHelper.Context context = CreateContext(runtimeBuildings);
 
         runtimeBuildings.SelectBuilding(building.Id);
         system.Refresh(context);
@@ -254,7 +254,7 @@ public sealed class BuildingSelectionMarkerSystemTests
         system.Dispose(context);
     }
 
-    private BuildingSelectionMarkerSystem.Context CreateContext(RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildings)
+    private BuildingSelectionMarkerPresentationSystemHelper.Context CreateContext(RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildings)
     {
         GridConfig grid = new()
         {
@@ -263,7 +263,7 @@ public sealed class BuildingSelectionMarkerSystemTests
             Height = 64
         };
 
-        return new BuildingSelectionMarkerSystem.Context(
+        return new BuildingSelectionMarkerPresentationSystemHelper.Context(
             runtimeBuildings,
             runtimeBuildings.Buildings,
             (out GridConfig resolvedGrid) =>
@@ -285,13 +285,13 @@ public sealed class BuildingSelectionMarkerSystemTests
 
     private BuildingVisualSystem CreateBuildingVisualSystem()
     {
-        _world ??= new World(nameof(BuildingSelectionMarkerSystemTests));
+        _world ??= new World(nameof(BuildingSelectionMarkerPresentationSystemHelperTests));
         return _world.GetOrCreateSystemManaged<BuildingVisualSystem>();
     }
 
     private BuildingFactionVisualSystem CreateBuildingFactionVisualSystem()
     {
-        _world ??= new World(nameof(BuildingSelectionMarkerSystemTests));
+        _world ??= new World(nameof(BuildingSelectionMarkerPresentationSystemHelperTests));
         return _world.GetOrCreateSystemManaged<BuildingFactionVisualSystem>();
     }
 
@@ -300,9 +300,9 @@ public sealed class BuildingSelectionMarkerSystemTests
         return new BuildingRuntimeVisualPresentationSystemHelper();
     }
 
-    private BuildingSelectionMarkerSystem CreateBuildingSelectionMarkerSystem()
+    private BuildingSelectionMarkerPresentationSystemHelper CreateBuildingSelectionMarkerPresentationSystemHelper()
     {
-        return new BuildingSelectionMarkerSystem();
+        return new BuildingSelectionMarkerPresentationSystemHelper();
     }
 
     private RuntimeBuildingEntity CreateBuilding(int id, Vector2Int origin, Vector2Int footprint, float y)

@@ -62,7 +62,7 @@ This plan is constrained by:
 - `SelectionAttackCommandRequestSystem`, `AttackOrderCommandSystem`, and `UnitTargetOrderSystem` own attack target validation and attack command result publication.
 - `SelectionHudFeedbackSystem` and `BattleHudRuntimeFeedbackSystem` own HUD feedback. This feature must not bypass the ECS feedback queue to write HUD state directly.
 - Preview markers shown while Attack mode is active are separate from accepted-command confirmation markers. Preview rings stay governed by existing target-preview flow; this plan only upgrades accepted move/attack command feedback unless a phase explicitly says otherwise.
-- `BuildingSelectionMarkerSystem` remains responsible only for building selection markers.
+- `BuildingSelectionMarkerPresentationSystemHelper` remains responsible only for building selection markers.
 - `UnitSelectionMarkerSystem` remains responsible only for unit, vehicle, and aircraft selection markers.
 - Do not add a marker manager, marker controller, marker facade, singleton, service locator, or broad orchestration shell.
 - Do not attach command marker state directly to gameplay unit prefabs.

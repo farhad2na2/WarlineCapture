@@ -19,7 +19,7 @@ internal sealed class BuildingSelectionCompositionSystemHelper
             (out GridConfig grid) => tryGetGridForSelection(source, out grid),
             (origin, footprint, grid) => source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(origin, footprint, grid, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
             () => source.RuntimeGameplayStateSystem.SuppressNextWorldClick = true,
-            () => source.BuildingSelectionMarkerSystem.Refresh(
+            () => source.BuildingSelectionMarkerPresentationSystemHelper.Refresh(
                 source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
                     createRuntimeContextSource(source),
                     source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,

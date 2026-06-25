@@ -387,14 +387,14 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             source.BuildingFactionTintStrength);
     }
 
-    public BuildingSelectionMarkerSystem.Context CreateSelectionMarkerContext(
+    public BuildingSelectionMarkerPresentationSystemHelper.Context CreateSelectionMarkerContext(
         RuntimeSource source,
         GameObject markerPrefab,
         Transform markerParent,
         MaterialPropertyBlock markerPropertyBlock,
-        BuildingSelectionMarkerSystem.DestroyObjectDelegate destroyObject)
+        BuildingSelectionMarkerPresentationSystemHelper.DestroyObjectDelegate destroyObject)
     {
-        return new BuildingSelectionMarkerSystem.Context(
+        return new BuildingSelectionMarkerPresentationSystemHelper.Context(
             source.RuntimeBuildingSystem,
             source.RuntimeBuildingSystem.Buildings,
             (out GridConfig grid) => source.TryGetGridData(out _, out grid, out _, out _),

@@ -5,7 +5,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem = new();
     internal readonly BuildingVisualSystem BuildingVisualSystem;
     internal readonly BuildingRuntimeVisualPresentationSystemHelper BuildingRuntimeVisualPresentationSystemHelper;
-    internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem;
+    internal readonly BuildingSelectionMarkerPresentationSystemHelper BuildingSelectionMarkerPresentationSystemHelper;
     internal readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
     internal readonly BuildingDestroyedVisualPresentationSystemHelper BuildingDestroyedVisualPresentationSystemHelper;
     internal readonly BuildingCombatUtilitySystemHelper BuildingCombatUtilitySystemHelper = new();
@@ -90,7 +90,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     {
         BuildingVisualSystem = ResolveBuildingVisualSystem();
         BuildingRuntimeVisualPresentationSystemHelper = ResolveBuildingRuntimeVisualPresentationSystemHelper();
-        BuildingSelectionMarkerSystem = ResolveBuildingSelectionMarkerSystem();
+        BuildingSelectionMarkerPresentationSystemHelper = ResolveBuildingSelectionMarkerPresentationSystemHelper();
         BuildingFactionVisualSystem = ResolveBuildingFactionVisualSystem();
         BuildingDestroyedVisualPresentationSystemHelper = ResolveBuildingDestroyedVisualPresentationSystemHelper();
         BuildingPlacementVisualUpdateCompositionSystemHelper = ResolveBuildingPlacementVisualUpdateCompositionSystemHelper();
@@ -121,9 +121,9 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
         return new BuildingRuntimeVisualPresentationSystemHelper();
     }
 
-    private static BuildingSelectionMarkerSystem ResolveBuildingSelectionMarkerSystem()
+    private static BuildingSelectionMarkerPresentationSystemHelper ResolveBuildingSelectionMarkerPresentationSystemHelper()
     {
-        return new BuildingSelectionMarkerSystem();
+        return new BuildingSelectionMarkerPresentationSystemHelper();
     }
 
     private static BuildingDestroyedVisualPresentationSystemHelper ResolveBuildingDestroyedVisualPresentationSystemHelper()

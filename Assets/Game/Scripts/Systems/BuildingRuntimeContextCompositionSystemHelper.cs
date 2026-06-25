@@ -174,7 +174,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             building => source.BuildingRuntimeVisualPresentationSystemHelper.InitializeBuildingVisuals(
                 source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeVisualContext(CreateRuntimeSource()),
                 building),
-            () => source.BuildingSelectionMarkerSystem.Refresh(
+            () => source.BuildingSelectionMarkerPresentationSystemHelper.Refresh(
                 source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
                     CreateRuntimeSource(),
                     source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
@@ -279,7 +279,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 building),
             source.BuildingGameplayDependencyCompositionSystemHelper.NotifyHomeBuildingDestroyed,
             source.RuntimeObjectPresentationHelper.DestroyRuntimeObject,
-            () => source.BuildingSelectionMarkerSystem.Refresh(
+            () => source.BuildingSelectionMarkerPresentationSystemHelper.Refresh(
                 source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
                     CreateRuntimeContextSource(
                         source,

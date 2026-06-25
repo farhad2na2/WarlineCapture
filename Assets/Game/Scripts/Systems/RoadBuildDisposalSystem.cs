@@ -12,7 +12,7 @@ internal sealed class RoadBuildDisposalSystem
         public readonly RoadBuildPlacementVisualSystem PlacementVisualSystem;
         public readonly RoadBuildPlacementVisualSystem.State PlacementVisualState;
         public readonly RoadVisualVariantSystem VisualVariantSystem;
-        public readonly RoadPreviewSystem PreviewSystem;
+        public readonly RoadPreviewPresentationSystemHelper PreviewSystem;
         public readonly RoadChunkVisualSystem ChunkVisualSystem;
         public readonly RoadBuildEcsBoundaryCompositionSystemHelper EcsBoundarySystem;
         public readonly RoadBuildPlacementStorageSystem PlacementStorageSystem;
@@ -28,7 +28,7 @@ internal sealed class RoadBuildDisposalSystem
             RoadBuildPlacementVisualSystem placementVisualSystem,
             RoadBuildPlacementVisualSystem.State placementVisualState,
             RoadVisualVariantSystem visualVariantSystem,
-            RoadPreviewSystem previewSystem,
+            RoadPreviewPresentationSystemHelper previewSystem,
             RoadChunkVisualSystem chunkVisualSystem,
             RoadBuildEcsBoundaryCompositionSystemHelper ecsBoundarySystem,
             RoadBuildPlacementStorageSystem placementStorageSystem,

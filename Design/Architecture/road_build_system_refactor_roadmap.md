@@ -81,7 +81,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
    - Keep this pure-data where possible.
    - Created `RoadPathPlanningSystem` with drag-axis resolution, L-shaped path construction, preview proposed-edge/dirty-cell planning, endpoint preview expansion, and preview mask construction.
    - `RoadBuildSystem` now delegates release path creation and preview planning/masks to `RoadPathPlanningSystem`.
-   - Preview GameObject pooling and visual placement remain in `RoadBuildSystem` until `RoadPreviewSystem`.
+   - Preview GameObject pooling and visual placement remain in `RoadBuildSystem` until `RoadPreviewPresentationSystemHelper`.
    - Expected output: input and runtime-city callers use the same road path rules without duplicating math.
 
 7. Complete: Create `RoadFootprintQuerySystem`
@@ -116,10 +116,10 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - Preview object pooling and special-road object placement remain in `RoadBuildSystem` until steps 11 and 12.
     - Expected output: chunk rendering can be optimized independently from road graph mutation.
 
-11. Complete: Create `RoadPreviewSystem`
+11. Complete: Create `RoadPreviewPresentationSystemHelper`
     - Owns preview object pool, preview object creation/release, preview path rebuild, preview alpha/material setup, and preview cleanup.
-    - Created `RoadPreviewSystem` with context-driven visual data, road root, grid placement settings, path planning, network state, visual type resolution, and variant lookup.
-    - `RoadBuildSystem` now delegates preview update/clear/disposal to `RoadPreviewSystem` and no longer owns road preview GameObject lists, pools, material alpha setup, preview object creation/release, or preview rebuild loops.
+    - Created `RoadPreviewPresentationSystemHelper` with context-driven visual data, road root, grid placement settings, path planning, network state, visual type resolution, and variant lookup.
+    - `RoadBuildSystem` now delegates preview update/clear/disposal to `RoadPreviewPresentationSystemHelper` and no longer owns road preview GameObject lists, pools, material alpha setup, preview object creation/release, or preview rebuild loops.
     - Expected output: pointer input/session state can ask for preview changes without owning preview GameObjects.
 
 12. Complete: Create `RoadSpecialVisualSystem`
@@ -140,7 +140,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 
 14. Complete: Create `RoadBuildInputSystem`
     - Owns pointer-state processing, pointer-over-UI checks, pressed/released/drag handling, drag-axis updates, pending start cell, and clicked-road delete selection.
-    - Consumes `RoadBuildSessionSystem`, `RoadPathPlanningSystem`, `RoadNetworkSystem`, and `RoadPreviewSystem`.
+    - Consumes `RoadBuildSessionSystem`, `RoadPathPlanningSystem`, `RoadNetworkSystem`, and `RoadPreviewPresentationSystemHelper`.
     - Created `RoadBuildInputSystem` with pointer-state processing, active road-mode guards, building-placement drag handoff, road stroke drag start/release, drag-axis updates, clicked-road delete selection, and pending road-build cancellation.
     - `RoadBuildSystem.Update()` is now a thin input delegation wrapper while stroke creation and building-placement side effects remain behind injected domain callbacks for compatibility.
 

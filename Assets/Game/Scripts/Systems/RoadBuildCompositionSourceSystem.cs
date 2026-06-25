@@ -19,7 +19,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadVisualResolutionSystem RoadVisualResolutionSystem;
     public readonly RoadVisualRefreshSystem RoadVisualRefreshSystem;
     public readonly RoadChunkVisualSystem RoadChunkVisualSystem;
-    public readonly RoadPreviewSystem RoadPreviewSystem;
+    public readonly RoadPreviewPresentationSystemHelper RoadPreviewPresentationSystemHelper;
     public readonly RoadSpecialVisualSystem RoadSpecialVisualSystem;
     public readonly RoadBuildSessionSystem RoadBuildSessionSystem = new();
     public readonly RoadBuildSessionSystem.State RoadBuildSessionState = new();
@@ -57,7 +57,7 @@ internal sealed class RoadBuildCompositionSourceSystem
         RoadVisualRefreshSystem = ResolveRoadVisualRefreshSystem();
         RoadChunkVisualSystem = ResolveRoadChunkVisualSystem();
         RoadSpecialVisualSystem = ResolveRoadSpecialVisualSystem();
-        RoadPreviewSystem = ResolveRoadPreviewSystem();
+        RoadPreviewPresentationSystemHelper = ResolveRoadPreviewPresentationSystemHelper();
         RoadRuntimeGenerationSystem = ResolveRoadRuntimeGenerationSystem();
         RoadRuntimeGenerationContextSystem = ResolveRoadRuntimeGenerationContextSystem();
         RoadMinimapEventSystem = ResolveRoadMinimapEventSystem();
@@ -132,9 +132,9 @@ internal sealed class RoadBuildCompositionSourceSystem
             : null;
     }
 
-    private static RoadPreviewSystem ResolveRoadPreviewSystem()
+    private static RoadPreviewPresentationSystemHelper ResolveRoadPreviewPresentationSystemHelper()
     {
-        return new RoadPreviewSystem();
+        return new RoadPreviewPresentationSystemHelper();
     }
 
     private static RoadRuntimeGenerationSystem ResolveRoadRuntimeGenerationSystem()

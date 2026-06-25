@@ -15,8 +15,8 @@ internal sealed class RoadBuildVisualContextSystem
         public readonly RoadVisualVariantSystem RoadVisualVariantSystem;
         public readonly RoadBuildStartupSystem RoadBuildStartupSystem;
         public readonly RoadBuildStartupSystem.State StartupState;
-        public readonly RoadPreviewSystem.ResolveVisualTypeAction ResolveVisualType;
-        public readonly RoadPreviewSystem.TryGetVariantAction PreviewTryGetVariant;
+        public readonly RoadPreviewPresentationSystemHelper.ResolveVisualTypeAction ResolveVisualType;
+        public readonly RoadPreviewPresentationSystemHelper.TryGetVariantAction PreviewTryGetVariant;
         public readonly RoadSpecialVisualSystem.GetPrefabAction GetPrefab;
         public readonly RoadSpecialVisualSystem.TryGetVariantAction SpecialTryGetVariant;
 
@@ -26,8 +26,8 @@ internal sealed class RoadBuildVisualContextSystem
             RoadVisualVariantSystem roadVisualVariantSystem,
             RoadBuildStartupSystem roadBuildStartupSystem,
             RoadBuildStartupSystem.State startupState,
-            RoadPreviewSystem.ResolveVisualTypeAction resolveVisualType,
-            RoadPreviewSystem.TryGetVariantAction previewTryGetVariant,
+            RoadPreviewPresentationSystemHelper.ResolveVisualTypeAction resolveVisualType,
+            RoadPreviewPresentationSystemHelper.TryGetVariantAction previewTryGetVariant,
             RoadSpecialVisualSystem.GetPrefabAction getPrefab,
             RoadSpecialVisualSystem.TryGetVariantAction specialTryGetVariant)
         {
@@ -67,11 +67,11 @@ internal sealed class RoadBuildVisualContextSystem
             context.StartupState.ChunkSizeInCells);
     }
 
-    public static RoadPreviewSystem.Context CreatePreviewContext(Context context)
+    public static RoadPreviewPresentationSystemHelper.Context CreatePreviewContext(Context context)
     {
         RoadBuildStartupSystem.State startupState = context.StartupState;
         RoadRuntimeRootSystem.Roots roots = startupState.RuntimeRoots;
-        return new RoadPreviewSystem.Context(
+        return new RoadPreviewPresentationSystemHelper.Context(
             context.RoadVisualVariantSystem?.VisualData ?? new Dictionary<RoadVisualType, CombinedRoadVisualData>(),
             roots.RoadRoot,
             startupState.GridOrigin,

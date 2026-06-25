@@ -61,14 +61,14 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
                 source.RoadBuildDependencyState.BuildingPlacementInteractionContext),
             () => source.RoadBuildInputSystem.CancelPendingBuild(CreateRoadBuildInputContext(source)),
             () => source.RoadBuildPlacementVisualSystem?.HidePlacementOutline(source.RoadBuildPlacementVisualState),
-            () => source.RoadPreviewSystem?.UpdatePreview(
+            () => source.RoadPreviewPresentationSystemHelper?.UpdatePreview(
                 CreateRoadPreviewContext(source),
                 source.RoadBuildInputState.IsDrawing,
                 source.RoadBuildInputState.PendingStartCell,
                 source.RoadBuildInputState.CurrentDragCell,
                 source.RoadBuildInputState.DragFirstAxis),
             (Vector2 screenPosition, out Vector2Int cell) => TryGetHoveredCell(source, screenPosition, out cell),
-            () => source.RoadPreviewSystem?.ClearPreview(),
+            () => source.RoadPreviewPresentationSystemHelper?.ClearPreview(),
             screenPosition => source.RoadBuildBuildingPlacementCompositionSystemHelper.UpdateBuildingPlacement(
                 CreateRoadBuildPlacementContext(source),
                 screenPosition),
@@ -104,7 +104,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadBuildPlacementVisualSystem,
             source.RoadBuildPlacementVisualState,
             source.RoadVisualVariantSystem,
-            source.RoadPreviewSystem,
+            source.RoadPreviewPresentationSystemHelper,
             source.RoadChunkVisualSystem,
             source.RoadBuildEcsBoundaryCompositionSystemHelper,
             source.RoadBuildPlacementStorageSystem,
@@ -164,7 +164,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
         return RoadBuildVisualContextSystem.CreateChunkContext(CreateRoadBuildVisualContext(source));
     }
 
-    private RoadPreviewSystem.Context CreateRoadPreviewContext(RoadBuildCompositionSourceSystem source)
+    private RoadPreviewPresentationSystemHelper.Context CreateRoadPreviewContext(RoadBuildCompositionSourceSystem source)
     {
         return RoadBuildVisualContextSystem.CreatePreviewContext(CreateRoadBuildVisualContext(source));
     }

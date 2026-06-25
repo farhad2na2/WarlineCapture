@@ -6,7 +6,7 @@ using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
-public sealed class RoadPreviewSystem
+public sealed class RoadPreviewPresentationSystemHelper
 {
     public delegate RoadVisualType ResolveVisualTypeAction(Vector2Int cell, TileConnectionMask mask);
     public delegate bool TryGetVariantAction(RoadVisualType type, TileConnectionMask mask, out VariantData variant);

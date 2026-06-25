@@ -138,7 +138,7 @@ Road build, road visuals, and road footprint projection:
 
 - `Assets/Game/Scripts/Systems/RoadBuildStartupSystem.cs`: initializes road `BuildPlaneY = 0`.
 - `Assets/Game/Scripts/Systems/RoadBuildCompositionContextCompositionSystemHelper.cs`: projects pointer input to a flat build plane.
-- `Assets/Game/Scripts/Systems/RoadPreviewSystem.cs`, `RoadChunkVisualSystem.cs`, `RoadFootprintQuerySystem.cs`, and `RoadSpecialVisualSystem.cs`: preview, chunk, footprint, and special-road visuals use `BuildPlaneY` or y-zero directions.
+- `Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs`, `RoadChunkVisualSystem.cs`, `RoadFootprintQuerySystem.cs`, and `RoadSpecialVisualSystem.cs`: preview, chunk, footprint, and special-road visuals use `BuildPlaneY` or y-zero directions.
 - `Assets/Game/Scripts/Systems/RoadGridProjectionSystem.cs`: projects road tiles into flat `GridRoad` data. This must remain as the existing road/pathfinding compatibility source until surface flags are mapped in later steps.
 
 Runtime city, decorations, and blockers:

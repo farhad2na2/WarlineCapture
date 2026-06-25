@@ -34,7 +34,7 @@ Current status:
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyDefinitionSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildDefinitionProjectionSystem.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyEcsSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildEcsBoundaryCompositionSystemHelper.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyGridSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildGridQuerySystem.cs`
-- [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyInteractionSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildInteractionSystem.cs`
+- [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyInteractionSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildInteractionCompositionSystemHelper.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyPlacementSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildBuildingPlacementCompositionSystemHelper.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyPlacementVisualSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildPlacementVisualSystem.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyStorageSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildPlacementStorageSystem.cs`
@@ -191,7 +191,7 @@ Candidate target names:
 - `BuildingRoadLegacyDefinitionSystem` -> `RoadBuildDefinitionProjectionSystem`
 - `BuildingRoadLegacyPlacementVisualSystem` -> `RoadBuildPlacementVisualSystem`
 - `BuildingRoadLegacyPlacementSystem` -> `RoadBuildBuildingPlacementCompositionSystemHelper`
-- `BuildingRoadLegacyInteractionSystem` -> `RoadBuildInteractionSystem`
+- `BuildingRoadLegacyInteractionSystem` -> `RoadBuildInteractionCompositionSystemHelper`
 - `BuildingRoadLegacyGridSystem` -> `RoadBuildGridQuerySystem`
 - `BuildingRoadLegacyContextSystem` -> `RoadBuildContextSystem`
 - `BuildingRoadLegacyEcsSystem` -> `RoadBuildEcsBoundaryCompositionSystemHelper`

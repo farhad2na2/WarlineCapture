@@ -32,7 +32,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildDefinitionProjectionSystem RoadBuildDefinitionProjectionSystem = new();
     public readonly RoadBuildPlacementVisualSystem RoadBuildPlacementVisualSystem;
     public readonly RoadBuildBuildingPlacementCompositionSystemHelper RoadBuildBuildingPlacementCompositionSystemHelper = new();
-    public readonly RoadBuildInteractionSystem RoadBuildInteractionSystem = new();
+    public readonly RoadBuildInteractionCompositionSystemHelper RoadBuildInteractionCompositionSystemHelper = new();
     public readonly RoadBuildContextSystem RoadBuildContextSystem = new();
     public readonly RoadBuildEcsBoundaryCompositionSystemHelper RoadBuildEcsBoundaryCompositionSystemHelper = new();
     public readonly RoadRuntimeGenerationSystem RoadRuntimeGenerationSystem;

@@ -2,7 +2,7 @@ using Unity.Entities;
 using UnityEngine;
 using static UnityEngine.Object;
 
-internal sealed class RoadBuildInteractionSystem
+internal sealed class RoadBuildInteractionCompositionSystemHelper
 {
     public delegate bool IsPointerOverUiDelegate(Vector2 screenPosition);
     public delegate bool TryGetGridCellDelegate(Vector2 screenPosition, GridConfig grid, out Vector2Int cell);

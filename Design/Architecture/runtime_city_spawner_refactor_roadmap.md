@@ -34,14 +34,14 @@ Goal: split runtime city generation before adding more map/city gameplay, so lay
    - `RuntimeCitySpawnerSystem` owned the actual building/decor spawn loops until step 11 moved them behind `RuntimeCityBuildingSpawnSystem`.
 
 6. Complete: Extract prefab selection
-   - Created `RuntimeCityPrefabSelectionSystem`.
+   - Created `RuntimeCityPrefabSelectionPrefabSystemHelper`.
    - Owns random prefab choice, configured-prefab membership checks, list shuffling, cached footprint estimation, major/minor footprint helpers, and renderer-bounds based footprint sizing.
    - `RuntimeCitySpawnerSystem` still passes category lists from the config snapshot, but no longer owns prefab random selection or footprint cache algorithms.
 
 7. Complete: Extract visual realization
    - Created `RuntimeCityVisualPresentationSystemHelper`.
    - Owns `RuntimeCityVisuals` root creation, GameObject visual-only instantiation, parent/root assignment, footprint-center positioning, rotation/scale setup, local-bounds centering, and child visibility toggles.
-   - `RuntimeCitySpawnerSystem` consumes footprint values from `RuntimeCityPrefabSelectionSystem`.
+   - `RuntimeCitySpawnerSystem` consumes footprint values from `RuntimeCityPrefabSelectionPrefabSystemHelper`.
 
 8. Complete: Extract ECS spawn request bridge
    - Created `RuntimeCitySpawnBridgePrefabSystemHelper` over the existing `BuildingRuntimeCitySpawnSystem`.

@@ -16,7 +16,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityBuildingPlotState _fallbackRuntimeCityBuildingPlot = new();
     private RuntimeCityWalkabilitySystem _runtimeCityWalkabilitySystem;
     private readonly RuntimeCityWalkabilityState _fallbackRuntimeCityWalkability = new();
-    private RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem;
+    private RuntimeCityPrefabSelectionPrefabSystemHelper _runtimeCityPrefabSelectionHelper;
     private readonly RuntimeCityPrefabSelectionState _fallbackRuntimeCityPrefabSelection = new();
     private RuntimeCityBuildingSpawnContextCompositionSystemHelper _runtimeCityBuildingSpawnContextHelper;
     private RuntimeCityBuildingPlacementPrefabSystemHelper _runtimeCityBuildingPlacementHelper;
@@ -416,10 +416,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityBulkPlotPlanHelper ??= ResolveRuntimeCityBulkPlotPlanHelper();
 
     private RuntimeCityPrefabSelectionState RuntimeCityPrefabSelectionState =>
-        RuntimeCityPrefabSelectionSystem?.State ?? _fallbackRuntimeCityPrefabSelection;
+        RuntimeCityPrefabSelectionPrefabSystemHelper?.State ?? _fallbackRuntimeCityPrefabSelection;
 
-    private RuntimeCityPrefabSelectionSystem RuntimeCityPrefabSelectionSystem =>
-        _runtimeCityPrefabSelectionSystem ??= ResolveRuntimeCityPrefabSelectionSystem();
+    private RuntimeCityPrefabSelectionPrefabSystemHelper RuntimeCityPrefabSelectionPrefabSystemHelper =>
+        _runtimeCityPrefabSelectionHelper ??= ResolveRuntimeCityPrefabSelectionPrefabSystemHelper();
 
     private RuntimeCityLandmarkOffsetState RuntimeCityLandmarkOffsetState =>
         RuntimeCityLandmarkOffsetSystem?.State ?? _fallbackRuntimeCityLandmarkOffset;
@@ -651,9 +651,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityBulkPlotPlanUtilitySystemHelper();
     }
 
-    private static RuntimeCityPrefabSelectionSystem ResolveRuntimeCityPrefabSelectionSystem()
+    private static RuntimeCityPrefabSelectionPrefabSystemHelper ResolveRuntimeCityPrefabSelectionPrefabSystemHelper()
     {
-        return new RuntimeCityPrefabSelectionSystem();
+        return new RuntimeCityPrefabSelectionPrefabSystemHelper();
     }
 
     private static RuntimeCityLandmarkOffsetSystem ResolveRuntimeCityLandmarkOffsetSystem()

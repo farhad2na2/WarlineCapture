@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class RuntimeCityPrefabSelectionSystem
+internal sealed class RuntimeCityPrefabSelectionPrefabSystemHelper
 {
     private readonly RuntimeCityPrefabSelectionState _state = new();
 

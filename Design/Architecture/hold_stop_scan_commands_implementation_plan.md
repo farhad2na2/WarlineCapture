@@ -329,7 +329,7 @@ Implementation notes:
 
 - `RtsSelectionRuntimeInputSystem.AllowsCameraPanDuringCommandMode` now treats `TacticalCommandMode.Scan` the same as Move and Attack for camera drag, so scan targeting no longer traps the camera.
 - Runtime scan tap handling routes through `TryRequestScanOrder` and does not fall through to unit focus/selection when scan mode consumes the tap.
-- `RtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests` now clears one-shot Scan mode after rejected screen/world taps as well as accepted taps, including HUD command-mode cleanup and camera-drag reset.
+- `RtsSelectionCommandResultFlushCompositionSystemHelper.ProcessScanCommandRequests` now clears one-shot Scan mode after rejected screen/world taps as well as accepted taps, including HUD command-mode cleanup and camera-drag reset.
 - `ScanIntelCommandSystem` already rejects unresolved scan target cells with `TargetOutOfBounds`; focused coverage confirms that behavior.
 - Selected scanner source data, scan patrol orders, aircraft recon passes, reveal markers, and minimap/intel feedback remain Phase 5 scope.
 - Validation completed with:

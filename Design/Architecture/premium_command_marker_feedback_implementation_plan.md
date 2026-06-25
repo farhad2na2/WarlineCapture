@@ -57,7 +57,7 @@ This plan is constrained by:
 
 - `SelectionOrderMarkerPresentationSystemHelper` owns move command markers, attack command markers, attack target locks, order marker lifetimes, order marker placement, and command marker material property blocks.
 - `RtsSelectionRuntimeInputSystem` may detect pointer input and command mode state, but it must not own marker visuals.
-- `RtsSelectionCommandResultFlushSystem` may route accepted command results into `SelectionOrderMarkerPresentationSystemHelper`, but it must not own visual policy.
+- `RtsSelectionCommandResultFlushCompositionSystemHelper` may route accepted command results into `SelectionOrderMarkerPresentationSystemHelper`, but it must not own visual policy.
 - `SelectionMoveCommandRequestSystem` and selected move-order systems own move validation and move command result publication.
 - `SelectionAttackCommandRequestSystem`, `AttackOrderCommandSystem`, and `UnitTargetOrderSystem` own attack target validation and attack command result publication.
 - `SelectionHudFeedbackSystem` and `BattleHudRuntimeFeedbackSystem` own HUD feedback. This feature must not bypass the ECS feedback queue to write HUD state directly.
@@ -81,7 +81,7 @@ Accepted move command marker flow:
 1. UI or hotkey arms `TacticalCommandMode.Move` through existing selection command intent flow.
 2. `RtsSelectionRuntimeInputSystem` captures pointer input and queues ECS input/command requests only.
 3. Move request systems validate the target and publish command results.
-4. `RtsSelectionCommandResultFlushSystem` drains accepted move results and calls the `SelectionOrderMarkerPresentationSystemHelper` move marker path.
+4. `RtsSelectionCommandResultFlushCompositionSystemHelper` drains accepted move results and calls the `SelectionOrderMarkerPresentationSystemHelper` move marker path.
 5. `SelectionOrderMarkerPresentationSystemHelper` owns the marker instance, placement, material properties, scale, lifetime, and hide/show tick.
 
 Accepted attack command marker flow:
@@ -89,7 +89,7 @@ Accepted attack command marker flow:
 1. UI or hotkey arms `TacticalCommandMode.Attack` through existing explicit attack command flow.
 2. `RtsSelectionRuntimeInputSystem` captures pointer input and queues ECS input/command requests only.
 3. Attack request/order systems validate hostile targets and publish command results.
-4. `RtsSelectionCommandResultFlushSystem` drains accepted attack results and calls the `SelectionOrderMarkerPresentationSystemHelper` attack marker path.
+4. `RtsSelectionCommandResultFlushCompositionSystemHelper` drains accepted attack results and calls the `SelectionOrderMarkerPresentationSystemHelper` attack marker path.
 5. `SelectionOrderMarkerPresentationSystemHelper` owns the marker instance, placement, material properties, target-bounds scale, lifetime, and hide/show tick.
 
 Rejected commands must publish feedback only through the existing command-result/HUD feedback path and must not show successful command markers.
@@ -148,13 +148,13 @@ Validation: Static code audit; implementation notes below.
 Implementation notes:
 
 - Accepted attack command results already routed to `SelectionOrderMarkerPresentationSystemHelper.ShowAttackOrderMarker`.
-- Accepted move command results did not route to `SelectionOrderMarkerPresentationSystemHelper.ShowMoveOrderMarker` from `RtsSelectionCommandResultFlushSystem`.
+- Accepted move command results did not route to `SelectionOrderMarkerPresentationSystemHelper.ShowMoveOrderMarker` from `RtsSelectionCommandResultFlushCompositionSystemHelper`.
 - `SelectedMoveOrderCommandSystem.TryIssueMoveOrder` had a direct pre-flush move marker call before final acceptance was owned by result flush. That direct visual side effect was removed and the accepted result path now owns projection.
 
 Expected files to inspect:
 
 - `Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs`
-- `Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs`
+- `Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs`
 - `Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputSystem.cs`
 - `Assets/Game/Configs/Scene/Game_RTSSelection_Config.asset`
 - `Assets/Game/Prefabs/Shapes/Target_Move.prefab`
@@ -314,7 +314,7 @@ Validation: Manual checklist with screenshots or notes.
 | --- | --- | --- | --- |
 | Phase 0: Document and reference setup | Complete | Tracker created; imagegen references copied into workspace. Implementation start treated as visual direction approval for this pass. | Documentation-only |
 | Phase 1: Runtime flow audit | Complete | Missing move marker was a result-flush routing gap. Attack accepted-result routing already existed. | Static audit |
-| Phase 2: Accepted move command marker routing | Complete | Accepted move results now call `SelectionOrderMarkerPresentationSystemHelper.ShowMoveOrderMarker` from `RtsSelectionCommandResultFlushSystem`. | `/private/tmp/warline-premium-command-marker-result-contract.log` |
+| Phase 2: Accepted move command marker routing | Complete | Accepted move results now call `SelectionOrderMarkerPresentationSystemHelper.ShowMoveOrderMarker` from `RtsSelectionCommandResultFlushCompositionSystemHelper`. | `/private/tmp/warline-premium-command-marker-result-contract.log` |
 | Phase 3: Accepted attack command marker routing | Complete | Added focused coverage for accepted attack result marker projection and kept validation outside marker code. | `/private/tmp/warline-premium-command-marker-result-contract.log` |
 | Phase 4: Move marker visual asset | Complete / Live Match retest required | `Target_Move.prefab` now uses connected cyan fill, continuous outer ring, continuous inner ring, and flat center dot. Runtime uses accepted world hit height and larger X/Z scale after live terrain clipping report. | `/private/tmp/warline-premium-command-marker-prefab-builder.log`; `/private/tmp/warline-command-marker-terrain-lift-selection-order.log`; pending live screenshot |
 | Phase 5: Attack marker visual asset | Complete | `Target_Attack.prefab` rebuilt as red/orange strike marker with scan fill, reticle arcs, hostile brackets, chevrons, and beacon. Untargeted attack-ground markers now use accepted world hit height. | `/private/tmp/warline-premium-command-marker-prefab-builder.log`; `/private/tmp/warline-command-marker-terrain-lift-selection-order.log`; `/private/tmp/warline_premium_world_marker_visual_qa/attack_command_marker.png` |

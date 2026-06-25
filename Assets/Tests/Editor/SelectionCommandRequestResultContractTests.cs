@@ -150,7 +150,7 @@ public sealed class SelectionCommandRequestResultContractTests
             () => exitBuildModeCount++,
             null,
             null);
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
             default,
             default,
@@ -186,7 +186,7 @@ public sealed class SelectionCommandRequestResultContractTests
             },
             refreshFocusedUnit: (_, _) => refreshFocusedCount++);
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessImmediateSelectedUnitCommandRequests(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessImmediateSelectedUnitCommandRequests(
             flushContext,
             focusedUnit: Entity.Null);
 
@@ -254,7 +254,7 @@ public sealed class SelectionCommandRequestResultContractTests
         int worldMarkerVisibilityCount = 0;
         int cameraDraggingCount = 0;
         int refreshFocusedCount = 0;
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
             default,
             default,
@@ -276,7 +276,7 @@ public sealed class SelectionCommandRequestResultContractTests
             setCameraDragging: _ => cameraDraggingCount++,
             refreshFocusedUnit: (_, _) => refreshFocusedCount++);
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessImmediateSelectedUnitCommandRequests(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessImmediateSelectedUnitCommandRequests(
             flushContext,
             focusedUnit: Entity.Null);
 
@@ -325,7 +325,7 @@ public sealed class SelectionCommandRequestResultContractTests
         int cameraDraggingCount = 0;
         var selectionStateSystem = new SelectionStateSystem();
         selectionStateSystem.SetFocusedUnit(focusedUnit);
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
             default,
             default,
@@ -347,7 +347,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 state.ClearFocusedUnit();
             });
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessImmediateSelectedUnitCommandRequests(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessImmediateSelectedUnitCommandRequests(
             flushContext,
             focusedUnit);
 
@@ -436,7 +436,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 null,
                 null);
             var inputSystem = new RtsSelectionInputSystem();
-            RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
                 inputSystem,
                 default,
                 default,
@@ -472,7 +472,7 @@ public sealed class SelectionCommandRequestResultContractTests
                     lastDiagnostic = message;
                 });
 
-            bool handled = new RtsSelectionCommandResultFlushSystem().ProcessSelectionModeCommandRequests(
+            bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessSelectionModeCommandRequests(
                 flushContext,
                 currentFrame: 320);
 
@@ -562,7 +562,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 null,
                 null);
             var inputSystem = new RtsSelectionInputSystem();
-            RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
                 inputSystem,
                 default,
                 default,
@@ -590,7 +590,7 @@ public sealed class SelectionCommandRequestResultContractTests
                     lastDiagnostic = message;
                 });
 
-            bool handled = new RtsSelectionCommandResultFlushSystem().ProcessSelectionModeCommandRequests(
+            bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessSelectionModeCommandRequests(
                 flushContext,
                 currentFrame: 321);
 
@@ -698,7 +698,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 null,
                 null);
             var inputSystem = new RtsSelectionInputSystem();
-            RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
                 inputSystem,
                 default,
                 default,
@@ -733,7 +733,7 @@ public sealed class SelectionCommandRequestResultContractTests
                     lastDiagnostic = message;
                 });
 
-            bool handled = new RtsSelectionCommandResultFlushSystem().ProcessScanTargetModeCommandRequests(
+            bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessScanTargetModeCommandRequests(
                 flushContext,
                 currentFrame: 322);
 
@@ -846,7 +846,7 @@ public sealed class SelectionCommandRequestResultContractTests
             null,
             null);
         var inputSystem = new RtsSelectionInputSystem();
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             inputSystem,
             default,
             default,
@@ -882,7 +882,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 lastDiagnostic = message;
             });
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessAttackTargetModeCommandRequests(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessAttackTargetModeCommandRequests(
             flushContext,
             currentFrame: 326,
             focusedUnit: Entity.Null);
@@ -972,7 +972,7 @@ public sealed class SelectionCommandRequestResultContractTests
             null,
             null,
             null);
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
             default,
             default,
@@ -1008,7 +1008,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 lastDiagnostic = message;
             });
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessAttackTargetModeCommandRequests(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessAttackTargetModeCommandRequests(
             flushContext,
             currentFrame: 327,
             focusedUnit: Entity.Null);
@@ -1096,7 +1096,7 @@ public sealed class SelectionCommandRequestResultContractTests
             null,
             null,
             null);
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
             default,
             default,
@@ -1132,7 +1132,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 lastDiagnostic = message;
             });
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessAttackTargetModeCommandRequests(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessAttackTargetModeCommandRequests(
             flushContext,
             currentFrame: 328,
             focusedUnit: Entity.Null);
@@ -1213,7 +1213,7 @@ public sealed class SelectionCommandRequestResultContractTests
         bool cameraDragging = true;
         int diagnosticCount = 0;
         string lastDiagnostic = string.Empty;
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             new RtsSelectionInputSystem(),
             default,
             default,
@@ -1247,7 +1247,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 lastDiagnostic = message;
             });
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessAttackTargetModeCommandRequests(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessAttackTargetModeCommandRequests(
             flushContext,
             currentFrame: 329,
             focusedUnit);
@@ -1316,7 +1316,7 @@ public sealed class SelectionCommandRequestResultContractTests
         bool worldMarkersVisible = false;
         int applySelectionCount = 0;
         Entity appliedSelection = Entity.Null;
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
             default,
             default,
@@ -1361,7 +1361,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 state.SetFocusedUnit(entity);
             });
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessFocusedMissileLauncherRadarAttack(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessFocusedMissileLauncherRadarAttack(
             flushContext,
             launcher);
 
@@ -1479,7 +1479,7 @@ public sealed class SelectionCommandRequestResultContractTests
             null,
             null);
         var inputSystem = new RtsSelectionInputSystem();
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             inputSystem,
             default,
             default,
@@ -1516,7 +1516,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 lastDiagnostic = message;
             });
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessBoardTargetModeCommandRequests(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessBoardTargetModeCommandRequests(
             flushContext,
             currentFrame: 323);
 
@@ -1607,7 +1607,7 @@ public sealed class SelectionCommandRequestResultContractTests
             null,
             null,
             null);
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
             default,
             default,
@@ -1643,7 +1643,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 lastDiagnostic = message;
             });
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessBoardTargetModeCommandRequests(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessBoardTargetModeCommandRequests(
             flushContext,
             currentFrame: 324);
 
@@ -1729,7 +1729,7 @@ public sealed class SelectionCommandRequestResultContractTests
             null,
             null,
             null);
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
             default,
             default,
@@ -1761,7 +1761,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 lastDiagnostic = message;
             });
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessBoardTargetModeCommandRequests(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessBoardTargetModeCommandRequests(
             flushContext,
             currentFrame: 325);
 
@@ -1851,7 +1851,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 null,
                 null);
             var inputSystem = new RtsSelectionInputSystem();
-            RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
                 inputSystem,
                 default,
                 default,
@@ -1886,7 +1886,7 @@ public sealed class SelectionCommandRequestResultContractTests
                     lastDiagnostic = message;
                 });
 
-            bool handled = new RtsSelectionCommandResultFlushSystem().ProcessMoveTargetModeCommandRequests(
+            bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessMoveTargetModeCommandRequests(
                 flushContext,
                 currentFrame: 260);
 
@@ -1942,7 +1942,7 @@ public sealed class SelectionCommandRequestResultContractTests
         bool cameraDragging = true;
         int diagnosticCount = 0;
         string lastDiagnostic = string.Empty;
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
             default,
             default,
@@ -1972,7 +1972,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 lastDiagnostic = message;
             });
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessMoveTargetModeCommandRequests(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessMoveTargetModeCommandRequests(
             flushContext,
             currentFrame: 300);
 
@@ -2033,7 +2033,7 @@ public sealed class SelectionCommandRequestResultContractTests
         int explicitAttackModeCount = 0;
         bool explicitAttackModeActive = true;
         int commandResultCount = 0;
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
             default,
             default,
@@ -2057,7 +2057,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 cameraDragging = dragging;
             });
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessCancelActiveCommandModeRequests(flushContext);
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessCancelActiveCommandModeRequests(flushContext);
 
         Assert.IsTrue(handled);
         Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
@@ -2121,7 +2121,7 @@ public sealed class SelectionCommandRequestResultContractTests
             bool explicitAttackModeActive = true;
             int rectangleDrainCount = 0;
             var inputSystem = new RtsSelectionInputSystem();
-            RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+            RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
                 inputSystem,
                 default,
                 default,
@@ -2150,7 +2150,7 @@ public sealed class SelectionCommandRequestResultContractTests
                     cameraDragging = dragging;
                 });
 
-            bool handled = new RtsSelectionCommandResultFlushSystem().ProcessSelectAllCommandRequests(flushContext);
+            bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessSelectAllCommandRequests(flushContext);
 
             Assert.IsTrue(handled);
             Assert.AreEqual(0, em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity).Length);
@@ -2198,7 +2198,7 @@ public sealed class SelectionCommandRequestResultContractTests
             null,
             null,
             null);
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
             default,
             default,
@@ -2213,7 +2213,7 @@ public sealed class SelectionCommandRequestResultContractTests
             buildingPlacementInteractionContext: buildingContext,
             clearHudSelection: () => clearHudSelectionCount++);
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().TryProcessSelectedBuildingDestroyFallback(
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().TryProcessSelectedBuildingDestroyFallback(
             flushContext,
             RtsSelectionCommandIntentKind.DestroyFocusedUnit,
             accepted: false,
@@ -2253,7 +2253,7 @@ public sealed class SelectionCommandRequestResultContractTests
         bool cameraDragging = true;
         int explicitAttackModeCount = 0;
         bool explicitAttackModeActive = true;
-        RtsSelectionCommandResultFlushSystem.Context flushContext = CreateFlushContext(
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
             default,
             default,
@@ -2284,7 +2284,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 state.ClearFocusedUnit();
             });
 
-        bool handled = new RtsSelectionCommandResultFlushSystem().ProcessDeselectAllCommandRequests(flushContext);
+        bool handled = new RtsSelectionCommandResultFlushCompositionSystemHelper().ProcessDeselectAllCommandRequests(flushContext);
 
         Assert.IsTrue(handled);
         Assert.IsFalse(em.HasComponent<SelectedUnitTag>(selectedUnit));
@@ -3516,8 +3516,8 @@ public sealed class SelectionCommandRequestResultContractTests
             using EntityQuery emptyGridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
             using EntityQuery emptyMapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
             int feedbackCount = 0;
-            var flushSystem = new RtsSelectionCommandResultFlushSystem();
-            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+            var flushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();
+            RtsSelectionCommandResultFlushCompositionSystemHelper.Context context = CreateFlushContext(
                 inputSystem,
                 emptySelectedMoveQuery,
                 emptyGridConfigQuery,
@@ -3583,8 +3583,8 @@ public sealed class SelectionCommandRequestResultContractTests
             using EntityQuery emptyMapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
             int feedbackCount = 0;
             TacticalCommandResult lastResult = TacticalCommandResult.Success();
-            var flushSystem = new RtsSelectionCommandResultFlushSystem();
-            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+            var flushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();
+            RtsSelectionCommandResultFlushCompositionSystemHelper.Context context = CreateFlushContext(
                 inputSystem,
                 selectedMoveQuery,
                 gridConfigQuery,
@@ -3662,8 +3662,8 @@ public sealed class SelectionCommandRequestResultContractTests
             int clearHudCount = 0;
             int cameraDraggingCount = 0;
             bool cameraDragging = true;
-            var flushSystem = new RtsSelectionCommandResultFlushSystem();
-            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+            var flushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();
+            RtsSelectionCommandResultFlushCompositionSystemHelper.Context context = CreateFlushContext(
                 inputSystem,
                 selectedMoveQuery,
                 gridConfigQuery,
@@ -3750,8 +3750,8 @@ public sealed class SelectionCommandRequestResultContractTests
             int clearHudCount = 0;
             int cameraDraggingCount = 0;
             bool cameraDragging = true;
-            var flushSystem = new RtsSelectionCommandResultFlushSystem();
-            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+            var flushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();
+            RtsSelectionCommandResultFlushCompositionSystemHelper.Context context = CreateFlushContext(
                 inputSystem,
                 emptySelectedMoveQuery,
                 gridConfigQuery,
@@ -3849,8 +3849,8 @@ public sealed class SelectionCommandRequestResultContractTests
             orderMarkers.Initialize(movePrefab, attackPrefab, null, null, 1f, runtimeRoot.transform);
             int feedbackCount = 0;
             bool hudWorldMarkersVisible = false;
-            var flushSystem = new RtsSelectionCommandResultFlushSystem();
-            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+            var flushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();
+            RtsSelectionCommandResultFlushCompositionSystemHelper.Context context = CreateFlushContext(
                 inputSystem,
                 emptySelectedMoveQuery,
                 gridConfigQuery,
@@ -3947,8 +3947,8 @@ public sealed class SelectionCommandRequestResultContractTests
             orderMarkers.Initialize(movePrefab, attackPrefab, targetPrefab, null, 1f, runtimeRoot.transform);
             int feedbackCount = 0;
             bool hudWorldMarkersVisible = false;
-            var flushSystem = new RtsSelectionCommandResultFlushSystem();
-            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+            var flushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();
+            RtsSelectionCommandResultFlushCompositionSystemHelper.Context context = CreateFlushContext(
                 inputSystem,
                 emptySelectedMoveQuery,
                 gridConfigQuery,
@@ -4011,8 +4011,8 @@ public sealed class SelectionCommandRequestResultContractTests
             using EntityQuery emptyGridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
             using EntityQuery emptyMapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
             int feedbackCount = 0;
-            var flushSystem = new RtsSelectionCommandResultFlushSystem();
-            RtsSelectionCommandResultFlushSystem.Context context = CreateFlushContext(
+            var flushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();
+            RtsSelectionCommandResultFlushCompositionSystemHelper.Context context = CreateFlushContext(
                 inputSystem,
                 emptySelectedMoveQuery,
                 emptyGridConfigQuery,
@@ -4351,7 +4351,7 @@ public sealed class SelectionCommandRequestResultContractTests
         return gridEntity;
     }
 
-    private static RtsSelectionCommandResultFlushSystem.Context CreateFlushContext(
+    private static RtsSelectionCommandResultFlushCompositionSystemHelper.Context CreateFlushContext(
         RtsSelectionInputSystem inputSystem,
         EntityQuery selectedMoveQuery,
         EntityQuery gridConfigQuery,
@@ -4375,13 +4375,13 @@ public sealed class SelectionCommandRequestResultContractTests
         System.Action processSelectionRectangleRequests = null,
         System.Action<string> logSelectionClickDiagnostic = null,
         System.Action<SelectionStateSystem> clearFocusedUnit = null,
-        RtsSelectionCommandResultFlushSystem.RefreshFocusedUnitAction refreshFocusedUnit = null,
-        RtsSelectionCommandResultFlushSystem.SetFocusedUnitAction setFocusedUnit = null,
-        RtsSelectionCommandResultFlushSystem.ApplyHudSelectionAction applyHudSelection = null,
-        RtsSelectionCommandResultFlushSystem.ClearCurrentSelectionAction clearCurrentSelection = null,
+        RtsSelectionCommandResultFlushCompositionSystemHelper.RefreshFocusedUnitAction refreshFocusedUnit = null,
+        RtsSelectionCommandResultFlushCompositionSystemHelper.SetFocusedUnitAction setFocusedUnit = null,
+        RtsSelectionCommandResultFlushCompositionSystemHelper.ApplyHudSelectionAction applyHudSelection = null,
+        RtsSelectionCommandResultFlushCompositionSystemHelper.ClearCurrentSelectionAction clearCurrentSelection = null,
         SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetScanClickedCell = null)
     {
-        return new RtsSelectionCommandResultFlushSystem.Context(
+        return new RtsSelectionCommandResultFlushCompositionSystemHelper.Context(
             inputSystem,
             new SelectionHudFeedbackBoundary(),
             orderMarkerSystem ?? new SelectionOrderMarkerPresentationSystemHelper(),

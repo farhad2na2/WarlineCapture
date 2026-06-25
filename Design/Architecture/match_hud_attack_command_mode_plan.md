@@ -18,7 +18,7 @@ This must remain ECS-aligned: UI emits intent only, command systems validate and
 
 ## Current State
 
-- Attack orders already flow through `RtsSelectionCommandIntentKind.Attack`, `SelectionAttackCommandRequestSystem`, `AttackOrderCommandSystem`, `UnitTargetOrderSystem`, and `RtsSelectionCommandResultFlushSystem`.
+- Attack orders already flow through `RtsSelectionCommandIntentKind.Attack`, `SelectionAttackCommandRequestSystem`, `AttackOrderCommandSystem`, `UnitTargetOrderSystem`, and `RtsSelectionCommandResultFlushCompositionSystemHelper`.
 - The legacy focused attack path uses `ToggleAttackTargetMode` and a separate `explicitAttackTargetModeActive` flag.
 - Match HUD already has a serialized `attackButton` reference on `MatchOverlayCommandControlsView`.
 - Runtime click handling still has an implicit selected-unit attack fallback when no command mode is armed.

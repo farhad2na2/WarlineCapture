@@ -70,7 +70,7 @@ internal sealed class SelectionGameplayStartupSystem
         var rtsSelectionInputSystem = new RtsSelectionInputSystem();
         var rtsSelectionRuntimeInputSystem = new RtsSelectionRuntimeInputSystem();
         RtsSelectionRuntimeCameraSystemHelper rtsSelectionRuntimeCameraSystem = ResolveRtsSelectionRuntimeCameraSystemHelper();
-        var rtsSelectionCommandResultFlushSystem = new RtsSelectionCommandResultFlushSystem();
+        var rtsSelectionCommandResultFlushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();
         var rtsSelectionFocusCommandSystem = new RtsSelectionFocusCommandSystem();
         var rtsSelectionPointerTargetCommandSystem = new RtsSelectionPointerTargetCommandSystem();
         RtsCameraSystem rtsCameraSystem = ResolveRtsCameraSystem();
@@ -108,7 +108,7 @@ internal sealed class SelectionGameplayStartupSystem
         bool hasRuntimeInputContext = false;
         RtsSelectionRuntimeCameraSystemHelper.Context runtimeCameraContext = default;
         bool hasRuntimeCameraContext = false;
-        RtsSelectionCommandResultFlushSystem.Context commandResultFlushContext = default;
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context commandResultFlushContext = default;
         bool hasCommandResultFlushContext = false;
         Unity.Entities.World selectionRuntimeQueryWorld = null;
         EntityQuery selectedMoveQuery = default;
@@ -353,7 +353,7 @@ internal sealed class SelectionGameplayStartupSystem
             return runtimeCameraContext;
         }
 
-        RtsSelectionCommandResultFlushSystem.Context GetCommandResultFlushContext()
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context GetCommandResultFlushContext()
         {
             if (!hasCommandResultFlushContext)
             {
@@ -461,14 +461,14 @@ internal sealed class SelectionGameplayStartupSystem
                 runtimeConfig.ZoomTransitionSmoothTime);
         }
 
-        RtsSelectionCommandResultFlushSystem.Context CreateCommandResultFlushContext()
+        RtsSelectionCommandResultFlushCompositionSystemHelper.Context CreateCommandResultFlushContext()
         {
             if (TryGetDefaultEntityManager(out EntityManager em))
                 EnsureRuntimeSelectionDependencies(em);
 
             SelectionHudFeedbackBoundary.Context hudFeedbackContext = CreateHudFeedbackContext();
 
-            return new RtsSelectionCommandResultFlushSystem.Context(
+            return new RtsSelectionCommandResultFlushCompositionSystemHelper.Context(
                 rtsSelectionInputSystem,
                 selectionHudFeedbackSystem,
                 selectionOrderMarkerSystem,

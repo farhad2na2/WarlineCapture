@@ -202,7 +202,7 @@ Goal: delete the remaining selection context-construction boundary without repla
    - Pointer input should depend on input state, runtime state, camera delegates, and command request systems only.
 
 8. Complete: Extract command-result context builder
-   - Move `CreateCommandResultFlushContext` into `RtsSelectionCommandResultFlushSystem` or a narrow context builder.
+   - Move `CreateCommandResultFlushContext` into `RtsSelectionCommandResultFlushCompositionSystemHelper` or a narrow context builder.
    - Command result flushing must own its ECS buffer/read dependencies directly.
 
 9. Complete: Extract focus command context builder

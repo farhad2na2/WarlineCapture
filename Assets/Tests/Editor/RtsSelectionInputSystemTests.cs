@@ -2352,7 +2352,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BoardAllSelectedTransport_ClearsCommandFeedbackActionsOnSuccess()
     {
-        string flush = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs");
+        string flush = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs");
         string processTransport = ExtractBlockAfter(flush, "public bool ProcessTransportCommandRequests");
 
         int boardAllBranchIndex = processTransport.IndexOf("result.Kind == RtsSelectionCommandIntentKind.BoardAllSelectedTransport", StringComparison.Ordinal);
@@ -2378,7 +2378,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void TransportFirstBoarding_PreservesSelectedTransportAfterSuccess()
     {
-        string flush = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs");
+        string flush = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs");
         string processTransport = ExtractBlockAfter(flush, "public bool ProcessTransportCommandRequests");
         string preserve = ExtractBlockAfter(flush, "private static void PreserveSelectedTransportAfterBoarding");
 
@@ -2413,7 +2413,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void CancelActiveCommandMode_ClearsModeWithoutPersistentCancelMessage()
     {
-        string flushSystem = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs");
+        string flushSystem = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs");
         string cancelProcessor = ExtractBlockAfter(flushSystem, "public bool ProcessCancelActiveCommandModeRequests");
 
         StringAssert.Contains("RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests", cancelProcessor);
@@ -2426,15 +2426,15 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void ImmediateSelectedUnitCommandFeedback_MapsEcsResultsToHudResults()
     {
-        Assert.IsTrue(RtsSelectionCommandResultFlushSystem.TryGetImmediateSelectedUnitCommandMode(
+        Assert.IsTrue(RtsSelectionCommandResultFlushCompositionSystemHelper.TryGetImmediateSelectedUnitCommandMode(
             RtsSelectionCommandIntentKind.HoldPosition,
             out TacticalCommandMode holdMode));
         Assert.AreEqual(TacticalCommandMode.Hold, holdMode);
-        Assert.IsTrue(RtsSelectionCommandResultFlushSystem.TryGetImmediateSelectedUnitCommandMode(
+        Assert.IsTrue(RtsSelectionCommandResultFlushCompositionSystemHelper.TryGetImmediateSelectedUnitCommandMode(
             RtsSelectionCommandIntentKind.Stop,
             out TacticalCommandMode stopMode));
         Assert.AreEqual(TacticalCommandMode.Stop, stopMode);
-        Assert.IsFalse(RtsSelectionCommandResultFlushSystem.TryGetImmediateSelectedUnitCommandMode(
+        Assert.IsFalse(RtsSelectionCommandResultFlushCompositionSystemHelper.TryGetImmediateSelectedUnitCommandMode(
             RtsSelectionCommandIntentKind.ReturnToBase,
             out TacticalCommandMode returnMode));
         Assert.AreEqual(TacticalCommandMode.None, returnMode);
@@ -3288,7 +3288,7 @@ public sealed class RtsSelectionInputSystemTests
         TacticalCommandReasonCode expectedReason,
         string expectedMessage)
     {
-        TacticalCommandResult result = RtsSelectionCommandResultFlushSystem.BuildImmediateSelectedUnitCommandResult(
+        TacticalCommandResult result = RtsSelectionCommandResultFlushCompositionSystemHelper.BuildImmediateSelectedUnitCommandResult(
             kind,
             accepted,
             rejectionReason,

@@ -245,7 +245,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Preserve real Game scene helicopter exit behavior.
    - Expected output: no disembark command setup remains on the boarding tick.
    - `SelectionTransportCommandRequestSystem` now receives and uses `UnitTransportRopeDisembarkCommandSystem` for rope-capability checks and rope request setup.
-   - `RtsSelectionCommandResultFlushSystem` and `RtsSelectionCommandResultContextSystem` now pass the rope command owner through the transport command request path.
+   - `RtsSelectionCommandResultFlushCompositionSystemHelper` and `RtsSelectionCommandResultContextSystem` now pass the rope command owner through the transport command request path.
    - Focused EditMode and PlayMode transport disembark helpers now provide `UnitTransportRopeDisembarkCommandSystem` directly.
    - Temporary wrappers remain on `UnitTransportBoardingSystem` only for compatibility until step 25 removes migrated helper surface.
 
@@ -272,7 +272,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Replace context fields that carry the full `UnitTransportBoardingSystem` with capacity/query/rule/approach/air/rope dependencies as needed.
    - Preserve command result structs and request buffer semantics.
    - Expected output: selection command contexts cannot reach unrelated transport boarding behavior.
-   - `RtsSelectionPointerTargetCommandSystem.Context` and `RtsSelectionCommandResultFlushSystem.Context` now carry explicit capacity, query, rule, approach, air-pickup, and rope-disembark command dependencies.
+   - `RtsSelectionPointerTargetCommandSystem.Context` and `RtsSelectionCommandResultFlushCompositionSystemHelper.Context` now carry explicit capacity, query, rule, approach, air-pickup, and rope-disembark command dependencies.
    - `RtsSelectionPointerTargetCommandContextSystem`, `RtsSelectionCommandResultContextSystem`, and `SelectionGameplayStartupSystem` now compose and pass those narrow transport dependencies.
    - The temporary `UnitTransportBoardingSystem` context field remains only as the migration bridge for steps 21 and 22, where the pointer-target and command-result paths are moved to the narrow dependencies.
 
@@ -286,10 +286,10 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Building-selection click guards and focused transport-click tests were updated to use the rule/query path instead of the broad boarding tick.
 
 22. Complete: Migrate command-result flush path
-   - Update `RtsSelectionCommandResultContextSystem` and `RtsSelectionCommandResultFlushSystem`.
+   - Update `RtsSelectionCommandResultContextSystem` and `RtsSelectionCommandResultFlushCompositionSystemHelper`.
    - Preserve transport board/disembark result handling.
    - Expected output: command result flushing no longer depends on the whole boarding tick.
-   - `RtsSelectionCommandResultFlushSystem.Context` no longer carries `UnitTransportBoardingSystem`.
+   - `RtsSelectionCommandResultFlushCompositionSystemHelper.Context` no longer carries `UnitTransportBoardingSystem`.
    - `RtsSelectionCommandResultContextSystem` no longer composes the whole boarding tick into the command-result flush context.
    - `SelectionTransportCommandRequestSystem` keeps the temporary boarding-tick helper bridge internally until step 23 migrates command execution to the narrow transport systems.
 

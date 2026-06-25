@@ -6,7 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class RtsSelectionCommandResultFlushSystem
+public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
 {
     public delegate bool TryGetEntityManagerAction(out EntityManager em);
     public delegate void ClearCurrentSelectionAction(EntityManager em, string reason);

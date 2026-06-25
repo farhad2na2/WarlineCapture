@@ -89,7 +89,7 @@ This removes the automatic `QueueMoveOrder` fallback.
 Move command results should continue to flow through:
 
 - `SelectionMoveCommandRequestSystem`
-- `RtsSelectionCommandResultFlushSystem`
+- `RtsSelectionCommandResultFlushCompositionSystemHelper`
 - `SelectionHudFeedbackSystem`
 - `BattleHudRuntimeFeedbackSystem`
 

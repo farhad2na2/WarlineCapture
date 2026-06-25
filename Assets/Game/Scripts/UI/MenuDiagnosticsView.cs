@@ -7,7 +7,7 @@ namespace Game.Scripts.UI
     [DisallowMultipleComponent]
     public sealed class MenuDiagnosticsView : MonoBehaviour
     {
-        private readonly MenuDiagnosticsSystem diagnosticsSystem = new();
+        private readonly MenuDiagnosticsUiSystemHelper diagnosticsSystem = new();
 
         [SerializeField] private Button fpsButton;
         [SerializeField] private TMP_Text fpsText;

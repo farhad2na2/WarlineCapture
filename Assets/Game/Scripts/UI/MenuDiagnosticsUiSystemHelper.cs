@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Game.Scripts.UI
 {
-    internal sealed class MenuDiagnosticsSystem
+    internal sealed class MenuDiagnosticsUiSystemHelper
     {
         private const int MaxVisibleLogEntries = 50;
         private const double FpsUiUpdateIntervalSeconds = 0.25d;

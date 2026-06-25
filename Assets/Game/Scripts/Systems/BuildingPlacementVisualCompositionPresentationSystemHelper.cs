@@ -88,7 +88,7 @@ internal sealed class BuildingPlacementVisualCompositionPresentationSystemHelper
             source.BuildingPlacementStartupSystemHelper,
             source.BuildingGameplayDependencyCompositionSystemHelper,
             source.BuildingPlacementContextCompositionSystemHelper,
-            source.BuildingPlacementCommitSystem,
+            source.BuildingPlacementCommitCompositionSystemHelper,
             source.BuildingPlacementLifecycleCompositionSystemHelper,
             source.BuildingBarrierUtilitySystemHelper,
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => tryGetGridCell(source, screenPosition, grid, out cell),

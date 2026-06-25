@@ -183,8 +183,8 @@ internal sealed class BuildingRuntimeSpawnSystem
         else
             endOrigin.y = startOrigin.y;
 
-        Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, vertical);
-        List<Vector2Int> origins = BuildingPlacementCommitSystem.BuildWallRunOrigins(startOrigin, endOrigin, wallFootprint, vertical);
+        Vector2Int wallFootprint = BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint(definition, vertical);
+        List<Vector2Int> origins = BuildingPlacementCommitCompositionSystemHelper.BuildWallRunOrigins(startOrigin, endOrigin, wallFootprint, vertical);
         int spawned = 0;
         for (int i = 0; i < origins.Count; i++)
         {
@@ -227,7 +227,7 @@ internal sealed class BuildingRuntimeSpawnSystem
             return false;
 
         BuildingDefinition definition = CreateRuntimeWallDefinition(context, prefab);
-        footprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, rotateVertical);
+        footprint = BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint(definition, rotateVertical);
         return footprint.x > 0 && footprint.y > 0;
     }
 
@@ -248,7 +248,7 @@ internal sealed class BuildingRuntimeSpawnSystem
         if (!BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(definition))
             return false;
 
-        Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, rotateVertical);
+        Vector2Int wallFootprint = BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint(definition, rotateVertical);
         if (!context.PlacementValidationSystem.IsWallPlacementValid(
                 origin,
                 wallFootprint,

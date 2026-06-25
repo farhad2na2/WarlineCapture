@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementCommitSystem
+internal sealed class BuildingPlacementCommitCompositionSystemHelper
 {
     public readonly struct WallRun
     {

@@ -64,7 +64,7 @@ internal sealed class BuildingPlacementVisualPresentationSystemHelper
         if (definition != null && definition.HasLocalBounds)
             offset = new Vector3(definition.LocalBounds.center.x, 0f, definition.LocalBounds.center.z);
 
-        Quaternion worldRotation = BuildingPlacementCommitSystem.ResolvePlacementWorldRotation(definition, rotateVertical);
+        Quaternion worldRotation = BuildingPlacementCommitCompositionSystemHelper.ResolvePlacementWorldRotation(definition, rotateVertical);
         instance.transform.SetPositionAndRotation(center, worldRotation);
         instance.transform.localScale = Vector3.one;
 

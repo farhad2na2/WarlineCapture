@@ -22,7 +22,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
         public readonly BuildingPlacementStartupSystemHelper StartupSystem;
         public readonly BuildingGameplayDependencyCompositionSystemHelper DependencySystem;
         public readonly BuildingPlacementContextCompositionSystemHelper ContextSystem;
-        public readonly BuildingPlacementCommitSystem CommitSystem;
+        public readonly BuildingPlacementCommitCompositionSystemHelper CommitSystem;
         public readonly BuildingPlacementLifecycleCompositionSystemHelper LifecycleSystem;
         public readonly BuildingBarrierUtilitySystemHelper BarrierSystem;
         public readonly BuildingPlacementInputSystem.TryGetGridCellDelegate TryGetGridCell;
@@ -44,7 +44,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
             BuildingPlacementStartupSystemHelper startupSystem,
             BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
             BuildingPlacementContextCompositionSystemHelper contextSystem,
-            BuildingPlacementCommitSystem commitSystem,
+            BuildingPlacementCommitCompositionSystemHelper commitSystem,
             BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             BuildingBarrierUtilitySystemHelper barrierSystem,
             BuildingPlacementInputSystem.TryGetGridCellDelegate tryGetGridCell,
@@ -103,7 +103,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
                context.ValidationSystem.AreAllPendingWallRunsValid(
                    placement,
                    context.InputSystem,
-                   BuildingPlacementCommitSystem.GetWallSegmentFootprint,
+                   BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint,
                    grid,
                    roads,
                    blockerData,
@@ -171,8 +171,8 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
         if (BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(placement.Definition))
         {
             bool vertical = context.InputSystem.IsWallPlacementVertical(placement);
-            Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(placement.Definition, vertical);
-            IReadOnlyList<Vector2Int> currentOrigins = context.InputSystem.BuildWallPlacementOriginsScratch(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint);
+            Vector2Int wallFootprint = BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint(placement.Definition, vertical);
+            IReadOnlyList<Vector2Int> currentOrigins = context.InputSystem.BuildWallPlacementOriginsScratch(placement, BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint);
             IReadOnlyList<Vector2Int> allOrigins = context.InputSystem.GetAllWallPlacementOriginsScratch(placement, currentOrigins);
             return context.GridSystem.ResolvePlacementFocusWorldPosition(
                 placement,
@@ -197,8 +197,8 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
 
         bool hasGrid = context.TryGetGridData(out _, out GridConfig placementGrid, out _, out _);
         BuildingPlacementContextCompositionSystemHelper.Source placementContextSource = context.CreatePlacementContextSource();
-        BuildingPlacementCommitSystem.CommitRequest request = context.ContextSystem.CreateCommitRequest(placementContextSource, placement);
-        BuildingPlacementCommitSystem.CommitContext commitContext = context.ContextSystem.CreateCommitContext(placementContextSource, hasGrid, placementGrid);
+        BuildingPlacementCommitCompositionSystemHelper.CommitRequest request = context.ContextSystem.CreateCommitRequest(placementContextSource, placement);
+        BuildingPlacementCommitCompositionSystemHelper.CommitContext commitContext = context.ContextSystem.CreateCommitContext(placementContextSource, hasGrid, placementGrid);
 
         RuntimeBuildingEntity building = context.CommitSystem.CommitPlacement(request, commitContext);
         context.LifecycleSystem.ReleasePreviewOwnership(placement);
@@ -216,17 +216,17 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
     {
         IReadOnlyList<Vector2Int> wallOrigins = placement.HideCurrentWallPreview
             ? context.InputSystem.ClearWallPlacementOriginsScratch()
-            : context.InputSystem.BuildWallPlacementOriginsScratch(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint);
+            : context.InputSystem.BuildWallPlacementOriginsScratch(placement, BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint);
         bool vertical = context.InputSystem.IsWallPlacementVertical(placement);
         placement.AutoRotateVertical = vertical;
-        Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(placement.Definition, vertical);
+        Vector2Int wallFootprint = BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint(placement.Definition, vertical);
         BuildingPlacementValidationSystem.WallValidationContext validationContext =
             context.ContextSystem.CreateWallValidationContext(context.CreatePlacementContextSource());
         placement.IsValid = placement.HideCurrentWallPreview
             ? context.ValidationSystem.AreAllPendingWallRunsValid(
                 placement,
                 context.InputSystem,
-                BuildingPlacementCommitSystem.GetWallSegmentFootprint,
+                BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint,
                 grid,
                 roads,
                 blockerData,
@@ -240,7 +240,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
                 roads,
                 blockerData,
                 validationContext,
-                BuildingPlacementCommitSystem.GetWallSegmentFootprint);
+                BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint);
         context.PreviewSystem.RebuildWallPlacementPreview(
             placement,
             wallOrigins,

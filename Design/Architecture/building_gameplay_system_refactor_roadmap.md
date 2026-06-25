@@ -240,7 +240,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplaySystem` delegates placement visual callbacks through `BuildingPlacementVisualUpdateCompositionSystemHelper` and no longer calls preview update, pointer hover, wall validation, placement commit, or preview-release methods directly.
 
 15. Complete: Move wall placement preview/commit helpers
-   - Move remaining wall preview runs, wall commit runs, wall footprint clone helpers, wall validation context, and rotate-vertical resolution into `BuildingPlacementPreviewPresentationSystemHelper`, `BuildingPlacementCommitSystem`, and `BuildingBarrierSystem`.
+   - Move remaining wall preview runs, wall commit runs, wall footprint clone helpers, wall validation context, and rotate-vertical resolution into `BuildingPlacementPreviewPresentationSystemHelper`, `BuildingPlacementCommitCompositionSystemHelper`, and `BuildingBarrierSystem`.
    - Expected output: no wall-specific collections or helper algorithms remain in the shell.
    - `BuildingPlacementPreviewPresentationSystemHelper` now owns wall preview scratch runs and the wall placement preview rebuild helper.
    - `BuildingPlacementContextCompositionSystemHelper` now owns wall commit scratch runs and creates commit requests without a shell-owned scratch list.

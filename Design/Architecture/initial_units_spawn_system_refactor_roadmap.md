@@ -257,10 +257,10 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
 13. Complete: Extract wall-run segment request creation
    - Create `InitialBaseWallRunRequestSystem`.
    - Move wall-run origin generation and segment request enqueueing.
-   - Preserve `BuildingPlacementCommitSystem.BuildWallRunOrigins` behavior and wall orientation decisions.
+   - Preserve `BuildingPlacementCommitCompositionSystemHelper.BuildWallRunOrigins` behavior and wall orientation decisions.
    - Expected output: wall-run request logic no longer lives in the tick.
    - Added `Assets/Game/Scripts/Systems/InitialBaseWallRunRequestSystem.cs`.
-   - Moved wall-run orientation normalization, footprint selection, `BuildingPlacementCommitSystem.BuildWallRunOrigins` expansion, and wall-segment request enqueueing into `InitialBaseWallRunRequestSystem.Enqueue`.
+   - Moved wall-run orientation normalization, footprint selection, `BuildingPlacementCommitCompositionSystemHelper.BuildWallRunOrigins` expansion, and wall-segment request enqueueing into `InitialBaseWallRunRequestSystem.Enqueue`.
    - `InitialFactionBaseRequestSystem.Enqueue` now delegates wall-run segment request creation through `new InitialBaseWallRunRequestSystem().Enqueue(...)` while retaining faction-base layout and flank/core planning ownership.
    - Validation:
      - `git diff --check -- Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs Assets/Game/Scripts/Systems/InitialFactionBaseRequestSystem.cs Assets/Game/Scripts/Systems/InitialBaseWallRunRequestSystem.cs Assets/Game/Scripts/Systems/InitialBaseWallRunRequestSystem.cs.meta Assets/Tests/Editor/GameplayArchitectureContractTests.cs Design/Architecture/initial_units_spawn_system_refactor_roadmap.md` passed.

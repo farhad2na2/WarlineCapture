@@ -65,7 +65,7 @@ internal sealed class BuildingPlacementGridSystem
             return definition.FootprintCells;
 
         if (BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(definition))
-            return BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, true);
+            return BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint(definition, true);
 
         return new Vector2Int(definition.FootprintCells.y, definition.FootprintCells.x);
     }

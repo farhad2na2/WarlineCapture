@@ -33,7 +33,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
             (out GridConfig grid) => tryGetGridForPlacementInput(source, out grid),
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => tryGetGridCell(source, screenPosition, grid, out cell),
             BuildingPlacementGridSystem.CenterCellToOrigin,
-            BuildingPlacementCommitSystem.GetWallSegmentFootprint,
+            BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint,
             source.BuildingGameplayDependencyCompositionSystemHelper.IsPointerOverPlacementUi,
             BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition,
             screenPosition => updatePlacement(source, interactionContext, markerPropertyBlock, screenPosition));

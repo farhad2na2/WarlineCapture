@@ -4,7 +4,7 @@ using UnityEngine;
 
 internal sealed class BuildingPlacementContextCompositionSystemHelper
 {
-    private readonly List<BuildingPlacementCommitSystem.WallRun> _wallCommitRuns = new();
+    private readonly List<BuildingPlacementCommitCompositionSystemHelper.WallRun> _wallCommitRuns = new();
 
     public struct Source
     {
@@ -32,12 +32,12 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
         public readonly BuildingPlacementInputSystem.UpdatePlacementFromPointerDelegate UpdatePlacement;
         public readonly Func<int, int, int, int, bool> IsRuntimeBlockerCell;
         public readonly Func<GridConfig, Vector2Int, Vector2Int, bool> HasRoadInFootprint;
-        public readonly BuildingPlacementCommitSystem.CreateVisualDelegate CreateBuildingVisualInstance;
-        public readonly BuildingPlacementCommitSystem.PositionVisualDelegate PositionBuildingObject;
-        public readonly BuildingPlacementCommitSystem.RegisterRuntimeBuildingDelegate RegisterRuntimeBuilding;
-        public readonly BuildingPlacementCommitSystem.CloneDefinitionWithFootprintDelegate CloneDefinitionWithFootprint;
-        public readonly BuildingPlacementCommitSystem.GetPlacementFootprintDelegate GetPlacementFootprint;
-        public readonly BuildingPlacementCommitSystem.DestroyRuntimeObjectDelegate DestroyRuntimeObject;
+        public readonly BuildingPlacementCommitCompositionSystemHelper.CreateVisualDelegate CreateBuildingVisualInstance;
+        public readonly BuildingPlacementCommitCompositionSystemHelper.PositionVisualDelegate PositionBuildingObject;
+        public readonly BuildingPlacementCommitCompositionSystemHelper.RegisterRuntimeBuildingDelegate RegisterRuntimeBuilding;
+        public readonly BuildingPlacementCommitCompositionSystemHelper.CloneDefinitionWithFootprintDelegate CloneDefinitionWithFootprint;
+        public readonly BuildingPlacementCommitCompositionSystemHelper.GetPlacementFootprintDelegate GetPlacementFootprint;
+        public readonly BuildingPlacementCommitCompositionSystemHelper.DestroyRuntimeObjectDelegate DestroyRuntimeObject;
 
         public Source(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
@@ -64,12 +64,12 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             BuildingPlacementInputSystem.UpdatePlacementFromPointerDelegate updatePlacement,
             Func<int, int, int, int, bool> isRuntimeBlockerCell,
             Func<GridConfig, Vector2Int, Vector2Int, bool> hasRoadInFootprint,
-            BuildingPlacementCommitSystem.CreateVisualDelegate createBuildingVisualInstance,
-            BuildingPlacementCommitSystem.PositionVisualDelegate positionBuildingObject,
-            BuildingPlacementCommitSystem.RegisterRuntimeBuildingDelegate registerRuntimeBuilding,
-            BuildingPlacementCommitSystem.CloneDefinitionWithFootprintDelegate cloneDefinitionWithFootprint,
-            BuildingPlacementCommitSystem.GetPlacementFootprintDelegate getPlacementFootprint,
-            BuildingPlacementCommitSystem.DestroyRuntimeObjectDelegate destroyRuntimeObject)
+            BuildingPlacementCommitCompositionSystemHelper.CreateVisualDelegate createBuildingVisualInstance,
+            BuildingPlacementCommitCompositionSystemHelper.PositionVisualDelegate positionBuildingObject,
+            BuildingPlacementCommitCompositionSystemHelper.RegisterRuntimeBuildingDelegate registerRuntimeBuilding,
+            BuildingPlacementCommitCompositionSystemHelper.CloneDefinitionWithFootprintDelegate cloneDefinitionWithFootprint,
+            BuildingPlacementCommitCompositionSystemHelper.GetPlacementFootprintDelegate getPlacementFootprint,
+            BuildingPlacementCommitCompositionSystemHelper.DestroyRuntimeObjectDelegate destroyRuntimeObject)
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
             LifecycleSystem = lifecycleSystem;
@@ -110,7 +110,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             source.TryGetGridForPlacementInput,
             source.TryGetGridCell,
             BuildingPlacementGridSystem.CenterCellToOrigin,
-            BuildingPlacementCommitSystem.GetWallSegmentFootprint,
+            BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint,
             source.IsPointerOverPlacementUi,
             BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition,
             source.UpdatePlacement);
@@ -208,7 +208,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             source.HasRoadInFootprint);
     }
 
-    public BuildingPlacementCommitSystem.CommitRequest CreateCommitRequest(
+    public BuildingPlacementCommitCompositionSystemHelper.CommitRequest CreateCommitRequest(
         Source source,
         BuildingPlacementLifecycleCompositionSystemHelper.PlacementState placement)
     {
@@ -221,7 +221,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
                 if (run?.Origins == null || run.Origins.Count == 0)
                     continue;
 
-                _wallCommitRuns.Add(new BuildingPlacementCommitSystem.WallRun(run.Origins, run.Vertical));
+                _wallCommitRuns.Add(new BuildingPlacementCommitCompositionSystemHelper.WallRun(run.Origins, run.Vertical));
             }
         }
 
@@ -231,10 +231,10 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
         {
             currentWallVertical = source.InputSystem.IsWallPlacementVertical(placement);
             if (!placement.HideCurrentWallPreview)
-                currentWallOrigins = source.InputSystem.BuildWallPlacementOrigins(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint);
+                currentWallOrigins = source.InputSystem.BuildWallPlacementOrigins(placement, BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint);
         }
 
-        return new BuildingPlacementCommitSystem.CommitRequest(
+        return new BuildingPlacementCommitCompositionSystemHelper.CommitRequest(
             placement.Definition,
             placement.PreviewInstance,
             placement.OriginCell,
@@ -246,9 +246,9 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             currentWallVertical);
     }
 
-    public BuildingPlacementCommitSystem.CommitContext CreateCommitContext(Source source, bool hasGrid, GridConfig placementGrid)
+    public BuildingPlacementCommitCompositionSystemHelper.CommitContext CreateCommitContext(Source source, bool hasGrid, GridConfig placementGrid)
     {
-        return new BuildingPlacementCommitSystem.CommitContext(
+        return new BuildingPlacementCommitCompositionSystemHelper.CommitContext(
             source.BuildingRoot,
             hasGrid,
             placementGrid,
@@ -257,7 +257,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
             source.RegisterRuntimeBuilding,
             source.CloneDefinitionWithFootprint,
             source.GetPlacementFootprint,
-            BuildingPlacementCommitSystem.GetWallSegmentFootprint,
+            BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint,
             source.DestroyRuntimeObject);
     }
 }

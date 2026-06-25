@@ -1249,7 +1249,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             end.y = start.y;
 
         Vector2Int footprint = vertical ? sideWallFootprint : bottomWallFootprint;
-        List<Vector2Int> origins = BuildingPlacementCommitSystem.BuildWallRunOrigins(start, end, footprint, vertical);
+        List<Vector2Int> origins = BuildingPlacementCommitCompositionSystemHelper.BuildWallRunOrigins(start, end, footprint, vertical);
         for (int i = 0; i < origins.Count; i++)
         {
             Vector2Int origin = origins[i];

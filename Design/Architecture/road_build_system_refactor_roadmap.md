@@ -193,12 +193,12 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - Owns runtime-city-facing road generation commands: create road stroke from cells, create autobahn stroke, standalone connector chain, connector road-cell lookup, chain-end lookup, and debug city road generation if still needed.
     - Created `RoadRuntimeGenerationSystem` for runtime-city-facing road commands and road generation read/sync helpers.
     - RoadBuildSystem now delegates runtime road generation wrappers to this boundary while callers migrate in step 22.
-    - Runtime city should depend on this boundary through `RuntimeCityRoadBuildBridgeSystem`, not on `RoadBuildSystem`.
+    - Runtime city should depend on this boundary through `RuntimeCityRoadBuildBridgeCompositionSystemHelper`, not on `RoadBuildSystem`.
     - Expected output: runtime city no longer requires the broad road shell.
 
-22. Complete: Migrate `RuntimeCityRoadBuildBridgeSystem`
+22. Complete: Migrate `RuntimeCityRoadBuildBridgeCompositionSystemHelper`
     - Change bridge configuration from `RoadBuildSystem` to `RoadRuntimeGenerationSystem` plus any required read/query systems.
-    - RuntimeCityRoadBuildBridgeSystem now stores RoadRuntimeGenerationSystem plus its context.
+    - RuntimeCityRoadBuildBridgeCompositionSystemHelper now stores RoadRuntimeGenerationSystem plus its context.
     - RuntimeCityCompositionSystem receives the runtime road generation boundary instead of a RoadBuildSystem for road generation.
     - Runtime city startup readiness now checks HasRoadRuntimeGenerationSystem.
     - Preserve runtime-city validation smoke behavior.

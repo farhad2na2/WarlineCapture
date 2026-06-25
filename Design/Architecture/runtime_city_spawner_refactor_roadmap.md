@@ -26,7 +26,7 @@ Goal: split runtime city generation before adding more map/city gameplay, so lay
 4. Complete: Extract road layout planning
    - Created `RuntimeCityRoadLayoutSystem`.
    - Owns town road strokes, straight road paths, city-to-city autobahn paths, autobahn anchor selection, and low-level stroke segment helpers.
-   - `RuntimeCitySpawnerSystem` commits roads through `RuntimeCityRoadBuildBridgeSystem`.
+   - `RuntimeCitySpawnerSystem` commits roads through `RuntimeCityRoadBuildBridgeCompositionSystemHelper`.
 
 5. Complete: Extract building plot selection
    - Created `RuntimeCityBuildingPlotUtilitySystemHelper`.
@@ -49,7 +49,7 @@ Goal: split runtime city generation before adding more map/city gameplay, so lay
    - `RuntimeCitySpawnerSystem` still receives the managed spawn dependencies at startup, but no longer stores `BuildingRuntimeCitySpawnSystem`, its context, or private spawn/delete wrappers.
 
 9. Complete: Extract RoadBuild coupling
-   - Created `RuntimeCityRoadBuildBridgeSystem`.
+   - Created `RuntimeCityRoadBuildBridgeCompositionSystemHelper`.
    - Owns calls into `RoadBuildSystem`, road cell-size queries, deferred road ECS sync, road/autobahn stroke commit, and temporary standalone straight-chain connector handoff.
    - `RuntimeCitySpawnerSystem` still receives the managed road build dependency at startup, but no longer stores `RoadBuildSystem` or calls road build methods directly.
 
@@ -126,7 +126,7 @@ Non-goals:
 20. Complete: Extract city road commit sequence
     - Created `RuntimeCityRoadCommitSystem`.
     - Owns `CommitCityRoadNetwork`, `PopulateCityRoadCells`, source-exit road commit, autobahn commit, standalone connector handoff, occupied-road-cell mutation, and road commit failure result codes.
-    - Keeps actual road-build calls inside `RuntimeCityRoadBuildBridgeSystem`.
+    - Keeps actual road-build calls inside `RuntimeCityRoadBuildBridgeCompositionSystemHelper`.
     - `RuntimeCityGenerationSystem` now requests road commits through a narrow result-returning boundary; `RuntimeCitySpawnerSystem` no longer owns city road commit helpers.
 
 21. Complete: Extract incoming connector/ingress helpers

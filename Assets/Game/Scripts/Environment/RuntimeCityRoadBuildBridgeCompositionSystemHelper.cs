@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeCityRoadBuildBridgeSystem
+internal sealed class RuntimeCityRoadBuildBridgeCompositionSystemHelper
 {
     private readonly RuntimeCityRoadBuildBridgeState _state = new();
 

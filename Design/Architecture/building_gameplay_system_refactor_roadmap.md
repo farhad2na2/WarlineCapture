@@ -20,7 +20,7 @@ Step 8 ECS query transition size: 1982 lines. Entity query caching now lives in 
 
 Step 9 grid-data transition size: 1984 lines. Grid data retrieval and grid-cell pointer conversion now route through `BuildingGameplayGridDataCompositionSystemHelper`; `BuildingGameplaySystem` may temporarily expose wrapper delegates while placement, selection, validation, and runtime tick contexts migrate to narrow factories.
 
-Step 10 invalid-cell cache transition size: 1958 lines. Placement invalid-cell prefix arrays, rebuild state, road-footprint mask creation, runtime blocker filtering, and cached placement validation now live in `BuildingPlacementInvalidCellSystem`; `BuildingGameplaySystem` may temporarily expose wrapper methods while context factories move out.
+Step 10 invalid-cell cache transition size: 1958 lines. Placement invalid-cell prefix arrays, rebuild state, road-footprint mask creation, runtime blocker filtering, and cached placement validation now live in `BuildingPlacementInvalidCellCacheCompositionSystemHelper`; `BuildingGameplaySystem` may temporarily expose wrapper methods while context factories move out.
 
 Step 11 spawn random-state transition size: 1951 lines. Building spawn random state now lives in `BuildingSpawnSystem`; production/runtime tick delegates read and write the state through that spawn owner instead of `BuildingGameplaySystem`.
 
@@ -199,10 +199,10 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplaySystem` delegates grid-data and grid-cell access to `BuildingGameplayGridDataCompositionSystemHelper`, keeping only temporary wrapper methods for existing context factories.
 
 10. Complete: Extract placement invalid-cell cache
-   - Create `BuildingPlacementInvalidCellSystem`.
+   - Create `BuildingPlacementInvalidCellCacheCompositionSystemHelper`.
    - Own prefix arrays, prefix dimensions, rebuild flags, road footprint mask creation, runtime blocker checks, and cached-footprint validation.
    - Expected output: road footprint and runtime blocker coupling leaves the broad shell.
-   - Added `BuildingPlacementInvalidCellSystem` with invalid-prefix state, rebuild, road footprint mask creation, runtime blocker filtering, cached-footprint checks, and placement rect validation.
+   - Added `BuildingPlacementInvalidCellCacheCompositionSystemHelper` with invalid-prefix state, rebuild, road footprint mask creation, runtime blocker filtering, cached-footprint checks, and placement rect validation.
    - `BuildingGameplaySourceCompositionSystemHelper` now owns the invalid-cell system.
    - `BuildingGameplaySystem` no longer stores invalid-prefix arrays/dimensions or directly calls road-footprint/runtime-blocker cache rebuild helpers.
 

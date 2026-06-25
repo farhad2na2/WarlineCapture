@@ -122,7 +122,7 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
         GetEffectivePlacementRectDelegate getEffectivePlacementRect,
         OverlapsAnyRuntimeBuildingDelegate overlapsAnyRuntimeBuilding)
     {
-        return source.BuildingPlacementInvalidCellSystem.IsPlacementValid(
+        return source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.IsPlacementValid(
             definition,
             originCell,
             footprintCells,

@@ -82,7 +82,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             new BuildingPlacementValidationSystem.WallValidationContext(
                 source.RuntimeBuildingSystem.Buildings,
                 source.BuildingGameplayDependencyCompositionSystemHelper.IsRuntimeBlockerCell,
-                (grid, origin, footprint) => source.BuildingPlacementInvalidCellSystem.HasRoadInFootprint(source.BuildingPlacementStartupSystemHelper, grid, origin, footprint)),
+                (grid, origin, footprint) => source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.HasRoadInFootprint(source.BuildingPlacementStartupSystemHelper, grid, origin, footprint)),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
             source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
@@ -99,7 +99,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 (placementSource, placementDefinition, placementOrigin, placementGrid, placementRotateVertical) =>
                     getEffectivePlacementRect(placementSource, placementDefinition, placementOrigin, placementGrid, placementRotateVertical),
                 (placementSource, candidateRect) => overlapsAnyRuntimeBuilding(placementSource, candidateRect)),
-            source.BuildingPlacementInvalidCellSystem.HasCachedInvalidCellInFootprint,
+            source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.HasCachedInvalidCellInFootprint,
             source.BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance,
             (instance, originCell, definition, grid, rotateVertical) => source.BuildingPlacementVisualPresentationSystemHelper.PositionBuildingObject(
                 instance,

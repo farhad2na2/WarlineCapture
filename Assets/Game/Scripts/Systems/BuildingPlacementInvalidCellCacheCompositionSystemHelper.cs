@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingPlacementInvalidCellSystem
+internal sealed class BuildingPlacementInvalidCellCacheCompositionSystemHelper
 {
     internal delegate RectInt GetEffectivePlacementRectDelegate(
         BuildingDefinition definition,

@@ -148,7 +148,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
             source.BuildingGameplayDependencyCompositionSystemHelper.IsPointerOverPlacementUi,
             screenPosition => updatePlacement(source, interactionContext, markerPropertyBlock, screenPosition),
             source.BuildingGameplayDependencyCompositionSystemHelper.IsRuntimeBlockerCell,
-            (grid, origin, footprint) => source.BuildingPlacementInvalidCellSystem.HasRoadInFootprint(source.BuildingPlacementStartupSystemHelper, grid, origin, footprint),
+            (grid, origin, footprint) => source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.HasRoadInFootprint(source.BuildingPlacementStartupSystemHelper, grid, origin, footprint),
             source.BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance,
             (instance, originCell, definition, grid, rotateVertical) => source.BuildingPlacementVisualPresentationSystemHelper.PositionBuildingObject(
                 instance,

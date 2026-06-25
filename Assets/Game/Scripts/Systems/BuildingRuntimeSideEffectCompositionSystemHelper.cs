@@ -10,7 +10,7 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
         TryGetEntityManagerDelegate tryGetEntityManager)
     {
         source.BuildingPlacementRedirectCompositionSystemHelper.BeginDeferredRuntimeBuildingSideEffects(
-            () => source.BuildingPlacementInvalidCellSystem.RebuildPlacementInvalidPrefix(
+            () => source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.RebuildPlacementInvalidPrefix(
                 source.BuildingGameplayGridDataCompositionSystemHelper,
                 source.BuildingGameplayEcsQueryCompositionSystemHelper,
                 (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
@@ -54,6 +54,6 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystemHelper
                     source.BuildingPlacementStartupSystemHelper.BuildingRoot,
                     null,
                     source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
-            source.BuildingPlacementInvalidCellSystem.Clear);
+            source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.Clear);
     }
 }

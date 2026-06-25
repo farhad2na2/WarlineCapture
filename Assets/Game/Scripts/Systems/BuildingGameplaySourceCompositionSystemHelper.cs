@@ -81,7 +81,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingGameplayGridDataCompositionSystemHelper BuildingGameplayGridDataCompositionSystemHelper = new();
     internal readonly BuildingGridCompositionSystem BuildingGridCompositionSystem = new();
     internal readonly BuildingEntityManagerAccessSystem BuildingEntityManagerAccessSystem = new();
-    internal readonly BuildingPlacementInvalidCellSystem BuildingPlacementInvalidCellSystem = new();
+    internal readonly BuildingPlacementInvalidCellCacheCompositionSystemHelper BuildingPlacementInvalidCellCacheCompositionSystemHelper = new();
     internal readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader = new();
     internal BuildingProductionTransportSystem.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
     internal uint BuildingSpawnRandomState = 0x12345678u;

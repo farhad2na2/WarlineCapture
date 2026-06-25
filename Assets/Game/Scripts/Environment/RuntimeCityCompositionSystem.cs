@@ -62,7 +62,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCitySpawnBridgeState _fallbackRuntimeCitySpawnBridge = new();
     private RuntimeCityRoadBuildBridgeCompositionSystemHelper _runtimeCityRoadBuildBridgeHelper;
     private readonly RuntimeCityRoadBuildBridgeState _fallbackRuntimeCityRoadBuildBridge = new();
-    private RuntimeCityLifecycleSystem _runtimeCityLifecycleSystem;
+    private RuntimeCityLifecycleCompositionSystemHelper _runtimeCityLifecycleHelper;
     private readonly RuntimeCityLifecycleState _fallbackRuntimeCityLifecycle = new();
     private RuntimeCityStartupSystemHelper _runtimeCityStartupHelper;
     private readonly RuntimeCityStartupState _fallbackRuntimeCityStartup = new();
@@ -156,7 +156,7 @@ public sealed class RuntimeCityCompositionSystem
         if (!_configured)
             return;
 
-        (_runtimeCityLifecycleSystem?.State ?? _fallbackRuntimeCityLifecycle).CancelGeneration();
+        (_runtimeCityLifecycleHelper?.State ?? _fallbackRuntimeCityLifecycle).CancelGeneration();
         _runtimeCityVisualPresentationSystemHelper?.Dispose();
         (_runtimeCitySpawnBridgeHelper?.State ?? _fallbackRuntimeCitySpawnBridge).Clear();
         (_runtimeCityRoadBuildBridgeHelper?.State ?? _fallbackRuntimeCityRoadBuildBridge).Clear();
@@ -246,9 +246,9 @@ public sealed class RuntimeCityCompositionSystem
         return RuntimeCityLifecycleState.ShouldYield(completedWorkItems, generationYieldInterval);
     }
 
-    private RuntimeCityLifecycleSystem.Context CreateLifecycleContext(int frameCount)
+    private RuntimeCityLifecycleCompositionSystemHelper.Context CreateLifecycleContext(int frameCount)
     {
-        return new RuntimeCityLifecycleSystem.Context(
+        return new RuntimeCityLifecycleCompositionSystemHelper.Context(
             frameCount,
             cityCount,
             generateBuildings,
@@ -380,10 +380,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityStartupHelper ??= ResolveRuntimeCityStartupSystemHelper();
 
     private RuntimeCityLifecycleState RuntimeCityLifecycleState =>
-        RuntimeCityLifecycleSystem?.State ?? _fallbackRuntimeCityLifecycle;
+        RuntimeCityLifecycleCompositionSystemHelper?.State ?? _fallbackRuntimeCityLifecycle;
 
-    private RuntimeCityLifecycleSystem RuntimeCityLifecycleSystem =>
-        _runtimeCityLifecycleSystem ??= ResolveRuntimeCityLifecycleSystem();
+    private RuntimeCityLifecycleCompositionSystemHelper RuntimeCityLifecycleCompositionSystemHelper =>
+        _runtimeCityLifecycleHelper ??= ResolveRuntimeCityLifecycleCompositionSystemHelper();
 
     private RuntimeCityLayoutState RuntimeCityLayoutState =>
         RuntimeCityLayoutSystem?.State ?? _fallbackRuntimeCityLayout;
@@ -621,9 +621,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityStartupSystemHelper();
     }
 
-    private static RuntimeCityLifecycleSystem ResolveRuntimeCityLifecycleSystem()
+    private static RuntimeCityLifecycleCompositionSystemHelper ResolveRuntimeCityLifecycleCompositionSystemHelper()
     {
-        return new RuntimeCityLifecycleSystem();
+        return new RuntimeCityLifecycleCompositionSystemHelper();
     }
 
     private static RuntimeCityLayoutSystem ResolveRuntimeCityLayoutSystem()

@@ -1,6 +1,6 @@
 using System.Collections;
 
-internal sealed class RuntimeCityLifecycleSystem
+internal sealed class RuntimeCityLifecycleCompositionSystemHelper
 {
     private readonly RuntimeCityLifecycleState _state = new();
 
@@ -102,7 +102,7 @@ internal sealed class RuntimeCityLifecycleState
         _generationRoutine = null;
     }
 
-    public bool TryBeginGeneration(IEnumerator generationRoutine, RuntimeCityLifecycleSystem.Context context)
+    public bool TryBeginGeneration(IEnumerator generationRoutine, RuntimeCityLifecycleCompositionSystemHelper.Context context)
     {
         if (_spawned || _generationRoutine != null || generationRoutine == null)
             return false;
@@ -123,7 +123,7 @@ internal sealed class RuntimeCityLifecycleState
         return true;
     }
 
-    public void Tick(RuntimeCityLifecycleSystem.Context context)
+    public void Tick(RuntimeCityLifecycleCompositionSystemHelper.Context context)
     {
         if (_generationRoutine == null)
             return;
@@ -155,7 +155,7 @@ internal sealed class RuntimeCityLifecycleState
             _spawned);
     }
 
-    public void CompleteGeneration(int generatedCityCount, RuntimeCityLifecycleSystem.Context context)
+    public void CompleteGeneration(int generatedCityCount, RuntimeCityLifecycleCompositionSystemHelper.Context context)
     {
         _spawned = true;
         _generationRoutine = null;

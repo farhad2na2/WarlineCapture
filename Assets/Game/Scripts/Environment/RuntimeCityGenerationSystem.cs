@@ -24,7 +24,7 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly GridConfig Grid;
         public readonly int RoadCellSizeInGridCells;
         public readonly RuntimeCityLifecycleState LifecycleState;
-        public readonly RuntimeCityLifecycleSystem.Context LifecycleContext;
+        public readonly RuntimeCityLifecycleCompositionSystemHelper.Context LifecycleContext;
         public readonly RuntimeCityLayoutState LayoutSystem;
         public readonly RuntimeCityWalkabilityState WalkabilitySystem;
         public readonly RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems BuildingSpawnSystems;
@@ -49,7 +49,7 @@ internal sealed class RuntimeCityGenerationSystem
             GridConfig grid,
             int roadCellSizeInGridCells,
             RuntimeCityLifecycleState lifecycleState,
-            RuntimeCityLifecycleSystem.Context lifecycleContext,
+            RuntimeCityLifecycleCompositionSystemHelper.Context lifecycleContext,
             RuntimeCityLayoutState layoutSystem,
             RuntimeCityWalkabilityState walkabilitySystem,
             RuntimeCityBuildingSpawnContextCompositionSystemHelper.Systems buildingSpawnSystems,

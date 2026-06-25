@@ -94,7 +94,7 @@ Non-goals:
     - Expected output: the smoke can validate runtime city config, road config, building-spawn wiring, and grid blocker wiring without requiring the normal gameplay profile to keep runtime city generation enabled.
 
 15. Complete: Extract city lifecycle state
-    - Created `RuntimeCityLifecycleSystem`.
+    - Created `RuntimeCityLifecycleCompositionSystemHelper`.
     - Owns spawned/generating state, generation routine ownership, generation start/end frame counters, generation move-next counters, generation diagnostic cadence, and generation yield cadence.
     - `RuntimeCitySpawnerSystem` now delegates `HasSpawned`, `IsGenerating`, generation begin/tick/complete/cancel, and `ShouldYield` to the lifecycle boundary.
     - `RuntimeCitySpawnerSystem.Update()` no longer directly owns or advances the generation `IEnumerator`.
@@ -155,7 +155,7 @@ Non-goals:
 
 25. Complete: Move composition out of the spawner constructor path
     - Created `RuntimeCityCompositionSystem`.
-    - Owns creation/wiring of `RuntimeCityConfigCompositionSystemHelper`, `RuntimeCityLifecycleSystem`, `RuntimeCityStartupSystemHelper`, `RuntimeCityReadinessQuerySystem`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressSystem`, `RuntimeCityMinimapEventSystem`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
+    - Owns creation/wiring of `RuntimeCityConfigCompositionSystemHelper`, `RuntimeCityLifecycleCompositionSystemHelper`, `RuntimeCityStartupSystemHelper`, `RuntimeCityReadinessQuerySystem`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressSystem`, `RuntimeCityMinimapEventSystem`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
     - `RuntimeCitySpawnerSystem` is now a thin public shell delegating init, update, dispose, public generation, and house-prefab queries to `RuntimeCityCompositionSystem`.
     - Expected output: startup composition is explicit and narrow.
 

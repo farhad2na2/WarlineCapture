@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
 
-internal sealed class RuntimeCityYardWallPlanSystem
+internal sealed class RuntimeCityYardWallPlanUtilitySystemHelper
 {
     private readonly RuntimeCityYardWallPlanState _state = new();
 
@@ -59,7 +59,7 @@ internal sealed class RuntimeCityYardWallPlanSystem
 
 internal sealed class RuntimeCityYardWallPlanState
 {
-    public RuntimeCityYardWallPlanSystem.HousePlan CreateHousePlan(
+    public RuntimeCityYardWallPlanUtilitySystemHelper.HousePlan CreateHousePlan(
         List<RectInt> houseFootprints,
         float houseWallChance,
         RuntimeCityPrefabSelectionState prefabSelectionSystem,
@@ -69,7 +69,7 @@ internal sealed class RuntimeCityYardWallPlanState
         prefabSelectionSystem.Shuffle(shuffledHouses, ref rng);
 
         int targetCount = Mathf.RoundToInt(shuffledHouses.Count * Mathf.Clamp01(houseWallChance));
-        return new RuntimeCityYardWallPlanSystem.HousePlan(shuffledHouses, targetCount);
+        return new RuntimeCityYardWallPlanUtilitySystemHelper.HousePlan(shuffledHouses, targetCount);
     }
 
     public bool TryFindYardRect(

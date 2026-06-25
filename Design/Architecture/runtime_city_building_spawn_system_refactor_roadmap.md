@@ -270,12 +270,12 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
 ## Phase 6: Yard Walls
 
 21. Complete: Extract yard-wall fit planning
-   - Create `RuntimeCityYardWallPlanSystem`.
+   - Create `RuntimeCityYardWallPlanUtilitySystemHelper`.
    - Move house shuffle, target count, padding candidate creation/shuffle, and yard-rect fit checks.
    - Preserve house wall chance, min/max distance, and `CanPlaceHouseYardRect` calls.
    - Expected output: yard-wall candidate selection has one owner.
-   - Added `RuntimeCityYardWallPlanSystem` with `HousePlan` creation for shuffled houses and success target count.
-   - Moved padding candidate creation/shuffle plus `CanPlaceHouseYardRect` fit checks into `RuntimeCityYardWallPlanSystem.TryFindYardRect`.
+   - Added `RuntimeCityYardWallPlanUtilitySystemHelper` with `HousePlan` creation for shuffled houses and success target count.
+   - Moved padding candidate creation/shuffle plus `CanPlaceHouseYardRect` fit checks into `RuntimeCityYardWallPlanUtilitySystemHelper.TryFindYardRect`.
    - `RuntimeCityBuildingSpawnSystem` now keeps only yard-wall orchestration, gate choice, visual spawning, and reservation for later extraction steps.
 
 22. Complete: Extract yard gate math

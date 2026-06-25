@@ -87,7 +87,7 @@ internal sealed class RuntimeCityHouseYardWallState
         if (houseWallPrefabs == null || houseWallPrefabs.Count == 0 || houseWallGatePrefab == null)
             return;
 
-        RuntimeCityYardWallPlanSystem.HousePlan plan = yardWallPlanSystem.CreateHousePlan(
+        RuntimeCityYardWallPlanUtilitySystemHelper.HousePlan plan = yardWallPlanSystem.CreateHousePlan(
             houseFootprints,
             houseWallChance,
             prefabSelectionSystem,

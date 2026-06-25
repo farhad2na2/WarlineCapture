@@ -39,7 +39,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityBulkBuildingSpawnRoutineState _fallbackRuntimeCityBulkBuildingSpawnRoutine = new();
     private RuntimeCityCorridorBuildingSpawnPrefabSystemHelper _runtimeCityCorridorBuildingSpawnHelper;
     private readonly RuntimeCityCorridorBuildingSpawnState _fallbackRuntimeCityCorridorBuildingSpawn = new();
-    private RuntimeCityYardWallPlanSystem _runtimeCityYardWallPlanSystem;
+    private RuntimeCityYardWallPlanUtilitySystemHelper _runtimeCityYardWallPlanHelper;
     private readonly RuntimeCityYardWallPlanState _fallbackRuntimeCityYardWallPlan = new();
     private RuntimeCityYardGateUtilitySystemHelper _runtimeCityYardGateHelper;
     private readonly RuntimeCityYardGateState _fallbackRuntimeCityYardGate = new();
@@ -470,10 +470,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityCorridorBuildingSpawnHelper ??= ResolveRuntimeCityCorridorBuildingSpawnPrefabSystemHelper();
 
     private RuntimeCityYardWallPlanState RuntimeCityYardWallPlanState =>
-        RuntimeCityYardWallPlanSystem?.State ?? _fallbackRuntimeCityYardWallPlan;
+        RuntimeCityYardWallPlanUtilitySystemHelper?.State ?? _fallbackRuntimeCityYardWallPlan;
 
-    private RuntimeCityYardWallPlanSystem RuntimeCityYardWallPlanSystem =>
-        _runtimeCityYardWallPlanSystem ??= ResolveRuntimeCityYardWallPlanSystem();
+    private RuntimeCityYardWallPlanUtilitySystemHelper RuntimeCityYardWallPlanUtilitySystemHelper =>
+        _runtimeCityYardWallPlanHelper ??= ResolveRuntimeCityYardWallPlanUtilitySystemHelper();
 
     private RuntimeCityYardGateState RuntimeCityYardGateState =>
         RuntimeCityYardGateUtilitySystemHelper?.State ?? _fallbackRuntimeCityYardGate;
@@ -696,9 +696,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityCorridorBuildingSpawnPrefabSystemHelper();
     }
 
-    private static RuntimeCityYardWallPlanSystem ResolveRuntimeCityYardWallPlanSystem()
+    private static RuntimeCityYardWallPlanUtilitySystemHelper ResolveRuntimeCityYardWallPlanUtilitySystemHelper()
     {
-        return new RuntimeCityYardWallPlanSystem();
+        return new RuntimeCityYardWallPlanUtilitySystemHelper();
     }
 
     private static RuntimeCityYardGateUtilitySystemHelper ResolveRuntimeCityYardGateUtilitySystemHelper()

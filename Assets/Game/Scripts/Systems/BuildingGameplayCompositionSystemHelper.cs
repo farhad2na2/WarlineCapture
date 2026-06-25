@@ -410,7 +410,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
             return childSystems.BuildingRuntimeContextSystem.CreateCombatContext(createRuntimeContextSource(childSystems));
         };
-        BuildingPlacementRuntimeTickSystem.Context runtimeTickContext = default;
+        BuildingPlacementRuntimeTickCompositionSystemHelper.Context runtimeTickContext = default;
         bool runtimeTickContextReady = false;
         bool EnsureRuntimeTickContext()
         {
@@ -536,12 +536,12 @@ internal sealed class BuildingGameplayCompositionSystemHelper
         void UpdateBuildingStartupTick()
         {
             if (EnsureRuntimeTickContext())
-                childSystems.BuildingPlacementRuntimeTickSystem.UpdateStartup(runtimeTickContext);
+                childSystems.BuildingPlacementRuntimeTickCompositionSystemHelper.UpdateStartup(runtimeTickContext);
         }
         void UpdateBuildingSimulationTick()
         {
             if (EnsureRuntimeTickContext())
-                childSystems.BuildingPlacementRuntimeTickSystem.UpdateSimulation(runtimeTickContext);
+                childSystems.BuildingPlacementRuntimeTickCompositionSystemHelper.UpdateSimulation(runtimeTickContext);
         }
         return _resultSystem.Create(
             childSystems.BuildingSelectionClickSystem,

@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
-public sealed class BuildingPlacementRuntimeTickSystemTests
+public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
 {
     public static void RunFocusedValidation()
     {
         try
         {
-            var tests = new BuildingPlacementRuntimeTickSystemTests();
+            var tests = new BuildingPlacementRuntimeTickCompositionSystemHelperTests();
             tests.StartupTickRunsBoundaryBeforeAndAfterMapPlacementQueues();
             tests.SimulationTickKeepsMapPlacementQueuesAliveBeforeBoundary();
             tests.SimulationTickUpdatesProductionTransportsEveryFrameAndThrottlesResourceVisuals();
@@ -24,7 +24,7 @@ public sealed class BuildingPlacementRuntimeTickSystemTests
     [Test]
     public void StartupTickRunsBoundaryBeforeAndAfterMapPlacementQueues()
     {
-        BuildingPlacementRuntimeTickSystem tickSystem = new();
+        BuildingPlacementRuntimeTickCompositionSystemHelper tickSystem = new();
         var calls = new List<string>();
 
         tickSystem.UpdateStartup(CreateContext(
@@ -41,7 +41,7 @@ public sealed class BuildingPlacementRuntimeTickSystemTests
     [Test]
     public void SimulationTickKeepsMapPlacementQueuesAliveBeforeBoundary()
     {
-        BuildingPlacementRuntimeTickSystem tickSystem = new();
+        BuildingPlacementRuntimeTickCompositionSystemHelper tickSystem = new();
         var calls = new List<string>();
 
         tickSystem.UpdateSimulation(CreateContext(
@@ -59,10 +59,10 @@ public sealed class BuildingPlacementRuntimeTickSystemTests
     [Test]
     public void SimulationTickUpdatesProductionTransportsEveryFrameAndThrottlesResourceVisuals()
     {
-        BuildingPlacementRuntimeTickSystem tickSystem = new();
+        BuildingPlacementRuntimeTickCompositionSystemHelper tickSystem = new();
         var calls = new List<string>();
 
-        BuildingPlacementRuntimeTickSystem.Context context = CreateContext(
+        BuildingPlacementRuntimeTickCompositionSystemHelper.Context context = CreateContext(
             calls,
             enqueueMapBuildingPlacements: () => calls.Add("mapBuildings"),
             enqueueMapVehiclePlacements: () => calls.Add("mapVehicles"),
@@ -77,7 +77,7 @@ public sealed class BuildingPlacementRuntimeTickSystemTests
         Assert.AreEqual(1, calls.Count(call => call == "visuals"));
     }
 
-    private static BuildingPlacementRuntimeTickSystem.Context CreateContext(
+    private static BuildingPlacementRuntimeTickCompositionSystemHelper.Context CreateContext(
         List<string> calls,
         System.Action enqueueMapBuildingPlacements,
         System.Action enqueueMapVehiclePlacements,
@@ -85,7 +85,7 @@ public sealed class BuildingPlacementRuntimeTickSystemTests
         System.Action updateActiveProductionTransports = null,
         System.Action updateBuildingResourceVisuals = null)
     {
-        return new BuildingPlacementRuntimeTickSystem.Context(
+        return new BuildingPlacementRuntimeTickCompositionSystemHelper.Context(
             processPendingProductions: () => calls.Add("production"),
             updateActiveProductionTransports: updateActiveProductionTransports ?? (() => calls.Add("activeTransport")),
             updateResourceProduction: () => calls.Add("resources"),

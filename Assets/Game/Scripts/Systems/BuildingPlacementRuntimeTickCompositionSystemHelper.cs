@@ -2,7 +2,7 @@ using System;
 using Unity.Profiling;
 using UnityEngine;
 
-internal sealed class BuildingPlacementRuntimeTickSystem
+internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
 {
     private const double ProductionIntervalSeconds = 0.1d;
     private const double ResourceProductionIntervalSeconds = 1d;

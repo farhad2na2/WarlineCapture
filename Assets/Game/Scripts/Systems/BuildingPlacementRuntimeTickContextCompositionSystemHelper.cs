@@ -48,9 +48,9 @@ internal sealed class BuildingPlacementRuntimeTickContextCompositionSystemHelper
     private readonly BuildingRuntimeBoundaryPublishCompositionSystemHelper _runtimeBoundaryPublishSystem = new();
     private readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper _diagnosticsSystem = new();
 
-    public BuildingPlacementRuntimeTickSystem.Context Create(Source source)
+    public BuildingPlacementRuntimeTickCompositionSystemHelper.Context Create(Source source)
     {
-        return new BuildingPlacementRuntimeTickSystem.Context(
+        return new BuildingPlacementRuntimeTickCompositionSystemHelper.Context(
             () => _productionRuntimeTickSystem.ProcessPendingProductions(source.ProductionContext),
             () => _productionRuntimeTickSystem.UpdateActiveProductionTransports(source.ProductionContext),
             () => _productionRuntimeTickSystem.UpdateResourceProduction(source.ProductionContext),

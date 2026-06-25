@@ -45,7 +45,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinkRegistry = new();
     internal readonly BuildingSelectionSystem BuildingSelectionSystem = new();
     internal readonly BuildingSelectionCompositionSystemHelper BuildingSelectionCompositionHelper = new();
-    internal readonly BuildingSelectionClickSystem BuildingSelectionClickSystem = new();
+    internal readonly BuildingSelectionClickUtilitySystemHelper BuildingSelectionClickUtilitySystemHelper = new();
     internal readonly BuildingSelectionClickCompositionSystemHelper BuildingSelectionClickCompositionHelper = new();
     internal readonly BuildingBarrierUtilitySystemHelper BuildingBarrierUtilitySystemHelper = new();
     internal readonly BuildingRuntimeReadModelCompositionSystemHelper BuildingRuntimeReadModelCompositionSystemHelper = new();

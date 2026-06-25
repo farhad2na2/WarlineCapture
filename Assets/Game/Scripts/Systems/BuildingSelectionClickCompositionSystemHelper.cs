@@ -12,13 +12,13 @@ internal sealed class BuildingSelectionClickCompositionSystemHelper
         GridConfig grid,
         out Vector2Int cell);
 
-    public BuildingSelectionClickSystem.Context Create(
+    public BuildingSelectionClickUtilitySystemHelper.Context Create(
         BuildingGameplaySourceCompositionSystemHelper source,
         TryGetGridForSelectionDelegate tryGetGridForSelection,
         TryGetGridCellDelegate tryGetGridCell,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext)
     {
-        return source.BuildingSelectionClickSystem.CreateContext(new BuildingSelectionClickSystem.Source(
+        return source.BuildingSelectionClickUtilitySystemHelper.CreateContext(new BuildingSelectionClickUtilitySystemHelper.Source(
             source.UnitPathfindingPendingStateReader.HasPendingPathJob,
             (out GridConfig grid) => tryGetGridForSelection(source, out grid),
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => tryGetGridCell(source, screenPosition, grid, out cell),

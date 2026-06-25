@@ -10,7 +10,7 @@ internal sealed class BuildingPlacementInputTickCompositionSystemHelper
         float clickDragThresholdPixels,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementInputUiSystemHelper.ActivePlacementPointerContext> createActivePlacementPointerContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionClickSystem.Context> createSelectionClickContext)
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionClickUtilitySystemHelper.Context> createSelectionClickContext)
     {
         return new BuildingPlacementInputRuntimeTickUiSystemHelper.Context(
             () => source.BuildingPlacementStartupSystemHelper.WorldCamera,
@@ -23,7 +23,7 @@ internal sealed class BuildingPlacementInputTickCompositionSystemHelper
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
             source.RuntimeGameplayStateSystem,
             () => source.BuildingGameplayDependencyCompositionSystemHelper.MainMenuPlayUi,
-            source.BuildingSelectionClickSystem,
+            source.BuildingSelectionClickUtilitySystemHelper,
             createSelectionClickContext(source),
             () => source.BuildingGameplayDependencyCompositionSystemHelper.IsBuildingSelectionClickBlocked(),
             clickDragThresholdPixels,

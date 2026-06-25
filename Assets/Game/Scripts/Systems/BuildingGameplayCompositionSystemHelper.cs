@@ -544,7 +544,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 childSystems.BuildingPlacementRuntimeTickCompositionSystemHelper.UpdateSimulation(runtimeTickContext);
         }
         return _resultSystem.Create(
-            childSystems.BuildingSelectionClickSystem,
+            childSystems.BuildingSelectionClickUtilitySystemHelper,
             childSystems.BuildingSelectionClickCompositionHelper.Create(
             childSystems,
             tryGetGridForSelection,

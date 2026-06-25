@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public sealed class BuildingSelectionClickSystem
+public sealed class BuildingSelectionClickUtilitySystemHelper
 {
     public delegate bool TryGetGridDelegate(out GridConfig grid);
     public delegate bool TryGetGridCellDelegate(Vector2 screenPosition, GridConfig grid, out Vector2Int cell);

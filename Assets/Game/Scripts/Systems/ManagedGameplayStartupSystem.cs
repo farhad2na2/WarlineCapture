@@ -20,8 +20,8 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly System.Action DisposeRoad;
         public readonly System.Action<IMatchRuntimeUi> BindRoadMainMenu;
         public readonly System.Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> BindRoadGameplayFeatures;
-        public readonly BuildingSelectionClickSystem BuildingSelectionClick;
-        public readonly BuildingSelectionClickSystem.Context BuildingSelectionClickContext;
+        public readonly BuildingSelectionClickUtilitySystemHelper BuildingSelectionClick;
+        public readonly BuildingSelectionClickUtilitySystemHelper.Context BuildingSelectionClickContext;
         public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper BuildingRuntimeCitySpawn;
         public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context BuildingRuntimeCitySpawnContext;
         public readonly BuildingUiCommandBoundary BuildingUiCommand;
@@ -59,8 +59,8 @@ internal sealed class ManagedGameplayStartupSystem
             System.Action disposeRoad,
             System.Action<IMatchRuntimeUi> bindRoadMainMenu,
             System.Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> bindRoadGameplayFeatures,
-            BuildingSelectionClickSystem buildingSelectionClick,
-            BuildingSelectionClickSystem.Context buildingSelectionClickContext,
+            BuildingSelectionClickUtilitySystemHelper buildingSelectionClick,
+            BuildingSelectionClickUtilitySystemHelper.Context buildingSelectionClickContext,
             BuildingRuntimeCitySpawnBridgeCompositionSystemHelper buildingRuntimeCitySpawn,
             BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context buildingRuntimeCitySpawnContext,
             BuildingUiCommandBoundary buildingUiCommand,

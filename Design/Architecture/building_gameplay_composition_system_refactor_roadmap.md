@@ -65,8 +65,8 @@ Nested types:
 
 `Result` public fields:
 
-- `BuildingSelectionClickSystem SelectionClick`
-- `BuildingSelectionClickSystem.Context SelectionClickContext`
+- `BuildingSelectionClickUtilitySystemHelper SelectionClick`
+- `BuildingSelectionClickUtilitySystemHelper.Context SelectionClickContext`
 - `BuildingRuntimeUpdateCompositionSystemHelper RuntimeUpdate`
 - `BuildingRuntimeUpdateCompositionSystemHelper.Context RuntimeUpdateContext`
 - `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper RuntimeCitySpawn`

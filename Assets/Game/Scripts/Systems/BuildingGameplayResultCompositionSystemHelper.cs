@@ -4,8 +4,8 @@ using UnityEngine;
 internal sealed class BuildingGameplayResultCompositionSystemHelper
 {
     public Result Create(
-        BuildingSelectionClickSystem selectionClick,
-        BuildingSelectionClickSystem.Context selectionClickContext,
+        BuildingSelectionClickUtilitySystemHelper selectionClick,
+        BuildingSelectionClickUtilitySystemHelper.Context selectionClickContext,
         BuildingRuntimeUpdateCompositionSystemHelper runtimeUpdate,
         BuildingRuntimeUpdateCompositionSystemHelper.Context runtimeUpdateContext,
         BuildingRuntimeCitySpawnBridgeCompositionSystemHelper runtimeCitySpawn,
@@ -80,8 +80,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
 
     public readonly struct Result
     {
-        public readonly BuildingSelectionClickSystem SelectionClick;
-        public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
+        public readonly BuildingSelectionClickUtilitySystemHelper SelectionClick;
+        public readonly BuildingSelectionClickUtilitySystemHelper.Context SelectionClickContext;
         public readonly BuildingRuntimeUpdateCompositionSystemHelper RuntimeUpdate;
         public readonly BuildingRuntimeUpdateCompositionSystemHelper.Context RuntimeUpdateContext;
         public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper RuntimeCitySpawn;
@@ -117,8 +117,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly Action Dispose;
 
         public Result(
-            BuildingSelectionClickSystem selectionClick,
-            BuildingSelectionClickSystem.Context selectionClickContext,
+            BuildingSelectionClickUtilitySystemHelper selectionClick,
+            BuildingSelectionClickUtilitySystemHelper.Context selectionClickContext,
             BuildingRuntimeUpdateCompositionSystemHelper runtimeUpdate,
             BuildingRuntimeUpdateCompositionSystemHelper.Context runtimeUpdateContext,
             BuildingRuntimeCitySpawnBridgeCompositionSystemHelper runtimeCitySpawn,

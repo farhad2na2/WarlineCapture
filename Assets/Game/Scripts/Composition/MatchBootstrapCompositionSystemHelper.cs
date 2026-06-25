@@ -77,7 +77,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public RuntimeDecorationSpawnerPresentationSystemHelper RuntimeDecorations { get; private set; }
     public RuntimeCityCompositionSystemHelper RuntimeCity { get; private set; }
     public RoadBuildReadModelSystem RoadBuildReadModel { get; private set; }
-    public BuildingSelectionClickSystem BuildingSelectionClick { get; private set; }
+    public BuildingSelectionClickUtilitySystemHelper BuildingSelectionClick { get; private set; }
     public BuildingUiCommandBoundary BuildingUiCommand { get; private set; }
     public BuildingUiQuerySystem BuildingUiQuery { get; private set; }
     public IBuildingUiCommand BuildingUiCommandContract { get; private set; }
@@ -96,7 +96,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public IUnitAttackTraceRenderer UnitAttackTraces { get; private set; }
     public IUnitImpostorRenderer UnitImpostors { get; private set; }
     public bool GameplayInitialized { get; private set; }
-    public BuildingSelectionClickSystem.Context BuildingSelectionClickContext { get; private set; }
+    public BuildingSelectionClickUtilitySystemHelper.Context BuildingSelectionClickContext { get; private set; }
     public BuildingUiCommandBoundary.Context BuildingUiCommandContext => _buildingUiCommandContext;
     public BuildingUiQuerySystem.Context BuildingUiQueryContext => _buildingUiQueryContext;
     private BuildingRuntimeCitySpawnBridgeCompositionSystemHelper _buildingRuntimeCitySpawn;

@@ -20,8 +20,8 @@ internal sealed class BuildingPlacementInputRuntimeTickUiSystemHelper
         public readonly Func<bool> HasActiveBuilding;
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly Func<IMatchRuntimeUi> GetMainMenu;
-        public readonly BuildingSelectionClickSystem SelectionClickSystem;
-        public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
+        public readonly BuildingSelectionClickUtilitySystemHelper SelectionClickSystem;
+        public readonly BuildingSelectionClickUtilitySystemHelper.Context SelectionClickContext;
         public readonly Func<bool> ShouldBlockBuildingSelectionClick;
         public readonly float ClickDragThresholdPixels;
         public readonly Action ProcessPendingPlacementCommands;
@@ -37,8 +37,8 @@ internal sealed class BuildingPlacementInputRuntimeTickUiSystemHelper
             Func<bool> hasActiveBuilding,
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             Func<IMatchRuntimeUi> getMainMenu,
-            BuildingSelectionClickSystem selectionClickSystem,
-            BuildingSelectionClickSystem.Context selectionClickContext,
+            BuildingSelectionClickUtilitySystemHelper selectionClickSystem,
+            BuildingSelectionClickUtilitySystemHelper.Context selectionClickContext,
             Func<bool> shouldBlockBuildingSelectionClick,
             float clickDragThresholdPixels,
             Action processPendingPlacementCommands = null)

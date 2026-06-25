@@ -7,7 +7,7 @@ internal sealed class RuntimeCitySurfaceIntegrationUtilitySystemHelper
     private const float RuntimeCityMaxSurfaceHeightDelta = 0.5f;
     private const float RuntimeCityMaxSurfaceSlopeDegrees = 45f;
 
-    private readonly BuildingSurfacePlacementSystem _buildingSurfacePlacementSystem = new();
+    private readonly BuildingSurfacePlacementUtilitySystemHelper _buildingSurfacePlacementSystem = new();
     private readonly RoadSurfacePlacementSystem _roadSurfacePlacementSystem = new();
     private MapSurfaceComponent _surface;
     private bool _hasSurface;
@@ -42,7 +42,7 @@ internal sealed class RuntimeCitySurfaceIntegrationUtilitySystemHelper
                 footprintCells,
                 RuntimeCityMaxSurfaceHeightDelta,
                 RuntimeCityMaxSurfaceSlopeDegrees,
-                out BuildingSurfacePlacementSystem.Result surfaceResult))
+                out BuildingSurfacePlacementUtilitySystemHelper.Result surfaceResult))
         {
             return fallbackCenter;
         }
@@ -62,7 +62,7 @@ internal sealed class RuntimeCitySurfaceIntegrationUtilitySystemHelper
                 footprintCells,
                 RuntimeCityMaxSurfaceHeightDelta,
                 RuntimeCityMaxSurfaceSlopeDegrees,
-                out BuildingSurfacePlacementSystem.Result surfaceResult) &&
+                out BuildingSurfacePlacementUtilitySystemHelper.Result surfaceResult) &&
             surfaceResult.IsValid;
     }
 

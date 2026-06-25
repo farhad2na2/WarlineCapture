@@ -284,7 +284,7 @@ The target boundary is a precomputed, layered surface grid:
 - `MapSurfaceComponent` owns the baked surface reference and grid metadata.
 - `MapSurfaceSampler` owns allocation-free height, normal, slope, surface-type, and layer sampling contexts.
 - `MapSurfaceConnectionSearch` owns explicit connectivity between terrain, roads, bridge decks, lower highways, ramps, and authored transitions.
-- `UnitSurfaceTrackingSystem`, `UnitGroundingSystem`, `VehicleSlopeAlignmentSystem`, `BuildingSurfacePlacementSystem`, and `PathfindingSurfaceCostSystem` consume the surface data through narrow contexts.
+- `UnitSurfaceTrackingSystem`, `UnitGroundingSystem`, `VehicleSlopeAlignmentSystem`, `BuildingSurfacePlacementUtilitySystemHelper`, and `PathfindingSurfaceCostSystem` consume the surface data through narrow contexts.
 
 Runtime gameplay must not add per-frame physics raycasts, collider-dependent grounding, broad scene-object lookup, singleton surface registries, or `*Manager` / `*Controller` surface owners for normal unit movement, building placement, pathfinding, or bridge traversal. Static map-surface helpers are allowed only when they are pure stateless data/math operations.
 

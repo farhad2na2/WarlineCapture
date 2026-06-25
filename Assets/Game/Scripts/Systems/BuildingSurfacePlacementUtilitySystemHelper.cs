@@ -2,7 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingSurfacePlacementSystem
+internal sealed class BuildingSurfacePlacementUtilitySystemHelper
 {
     public readonly struct Result
     {

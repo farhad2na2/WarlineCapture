@@ -77,7 +77,7 @@ internal sealed class BuildingRuntimeCreationCompositionSystemHelper
         }
     }
 
-    private readonly BuildingSurfacePlacementSystem _surfacePlacementSystem = new();
+    private readonly BuildingSurfacePlacementUtilitySystemHelper _surfacePlacementSystem = new();
     private BuildingFoundationVisualPresentationSystemHelper _foundationVisualPresentationHelper;
 
     public RuntimeBuildingEntity RegisterRuntimeBuilding(
@@ -98,7 +98,7 @@ internal sealed class BuildingRuntimeCreationCompositionSystemHelper
         MapAuthoredBuildingVisualComponent mapAuthoredVisual = instance.GetComponent<MapAuthoredBuildingVisualComponent>();
         bool preserveAuthoredTransform = mapAuthoredVisual != null && mapAuthoredVisual.PreserveAuthoredTransform;
         bool hasSurfaceResult = false;
-        BuildingSurfacePlacementSystem.Result surfaceResult = default;
+        BuildingSurfacePlacementUtilitySystemHelper.Result surfaceResult = default;
         RectInt occupiedRect = new(originCell, definition.FootprintCells);
         if (context.TryGetGrid != null &&
             context.ResolvePlacementRect != null &&
@@ -171,7 +171,7 @@ internal sealed class BuildingRuntimeCreationCompositionSystemHelper
         Context context,
         BuildingDefinition definition,
         Vector2Int originCell,
-        out BuildingSurfacePlacementSystem.Result surfaceResult)
+        out BuildingSurfacePlacementUtilitySystemHelper.Result surfaceResult)
     {
         surfaceResult = default;
         if (context.TryGetEntityManager == null ||

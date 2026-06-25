@@ -4,7 +4,7 @@ using UnityEngine;
 
 internal sealed class BuildingFoundationVisualPresentationSystemHelper
 {
-    public void ApplyVisualFoundation(GameObject instance, BuildingSurfacePlacementSystem.Result surfaceResult)
+    public void ApplyVisualFoundation(GameObject instance, BuildingSurfacePlacementUtilitySystemHelper.Result surfaceResult)
     {
         if (instance == null)
             return;
@@ -17,8 +17,8 @@ internal sealed class BuildingFoundationVisualPresentationSystemHelper
     public void ApplyCombatEntityFoundation(
         EntityManager em,
         Entity entity,
-        BuildingSurfacePlacementSystem.Result surfaceResult,
-        BuildingSurfacePlacementSystem surfacePlacementSystem)
+        BuildingSurfacePlacementUtilitySystemHelper.Result surfaceResult,
+        BuildingSurfacePlacementUtilitySystemHelper surfacePlacementSystem)
     {
         if (entity == Entity.Null || !em.Exists(entity) || surfacePlacementSystem == null)
             return;

@@ -98,7 +98,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             },
             Array.Empty<MapSurfaceConnection>());
 
-        object placementSystem = Activator.CreateInstance(typeof(BuildingSurfacePlacementSystem), true);
+        object placementSystem = Activator.CreateInstance(typeof(BuildingSurfacePlacementUtilitySystemHelper), true);
         Type resultType = placementSystem.GetType().GetNestedType("Result", BindingFlags.Public);
         MethodInfo method = placementSystem.GetType().GetMethod(
             "TryEvaluateFootprint",

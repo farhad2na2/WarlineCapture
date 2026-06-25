@@ -18,7 +18,7 @@ The map surface is gameplay data:
 - `UnitSurfaceTrackingSystem` keeps units on the correct surface/layer.
 - `UnitGroundingSystem` applies height to units.
 - `VehicleSlopeAlignmentSystem` applies visual pitch/roll from surface normals for vehicles.
-- `BuildingSurfacePlacementSystem` validates building footprint height/slope and produces placement height.
+- `BuildingSurfacePlacementUtilitySystemHelper` validates building footprint height/slope and produces placement height.
 - `PathfindingSurfaceCostSystem` feeds walkability, slope, road, bridge, and layer connectivity into pathfinding.
 
 Authoring and baking are editor/shell edge responsibilities:
@@ -221,7 +221,7 @@ Pathfinding integration rule:
    - Preserve existing spawn order and counts.
 
 13. Complete: Add building placement height query
-   - Add `BuildingSurfacePlacementSystem` footprint sampling.
+   - Add `BuildingSurfacePlacementUtilitySystemHelper` footprint sampling.
    - Compute average height, max height delta, max slope, and selected surface/layer.
    - Do not commit invalid uneven placements.
 

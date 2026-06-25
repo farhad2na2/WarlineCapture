@@ -36,7 +36,7 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly RuntimeCityChainState ChainSystem;
         public readonly RuntimeCityChainUtilitySystemHelper.Context ChainContext;
         public readonly RuntimeCityRoadCommitState RoadCommitSystem;
-        public readonly RuntimeCityRoadCommitSystem.Context RoadCommitContext;
+        public readonly RuntimeCityRoadCommitCompositionSystemHelper.Context RoadCommitContext;
         public readonly RuntimeCityIngressState IngressSystem;
         public readonly RuntimeCityIngressSystem.Context IngressContext;
         public readonly CollectInitialBaseExclusionRoadRectsDelegate CollectInitialBaseExclusionRoadRects;
@@ -61,7 +61,7 @@ internal sealed class RuntimeCityGenerationSystem
             RuntimeCityChainState chainSystem,
             RuntimeCityChainUtilitySystemHelper.Context chainContext,
             RuntimeCityRoadCommitState roadCommitSystem,
-            RuntimeCityRoadCommitSystem.Context roadCommitContext,
+            RuntimeCityRoadCommitCompositionSystemHelper.Context roadCommitContext,
             RuntimeCityIngressState ingressSystem,
             RuntimeCityIngressSystem.Context ingressContext,
             CollectInitialBaseExclusionRoadRectsDelegate collectInitialBaseExclusionRoadRects,

@@ -71,7 +71,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityGenerationState _fallbackRuntimeCityGeneration = new();
     private RuntimeCityChainUtilitySystemHelper _runtimeCityChainHelper;
     private readonly RuntimeCityChainState _fallbackRuntimeCityChain = new();
-    private RuntimeCityRoadCommitSystem _runtimeCityRoadCommitSystem;
+    private RuntimeCityRoadCommitCompositionSystemHelper _runtimeCityRoadCommitHelper;
     private readonly RuntimeCityRoadCommitState _fallbackRuntimeCityRoadCommit = new();
     private RuntimeCityDiagnosticsSystemHelper _runtimeCityDiagnosticSystem;
     private RuntimeCityIngressSystem _runtimeCityIngressSystem;
@@ -341,9 +341,9 @@ public sealed class RuntimeCityCompositionSystem
             CreateIngressContext());
     }
 
-    private RuntimeCityRoadCommitSystem.Context CreateRoadCommitContext()
+    private RuntimeCityRoadCommitCompositionSystemHelper.Context CreateRoadCommitContext()
     {
-        return new RuntimeCityRoadCommitSystem.Context(
+        return new RuntimeCityRoadCommitCompositionSystemHelper.Context(
             RuntimeCityRoadBuildBridgeState,
             RuntimeCityDiagnosticsSystemHelper);
     }
@@ -554,10 +554,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityChainHelper ??= ResolveRuntimeCityChainHelper();
 
     private RuntimeCityRoadCommitState RuntimeCityRoadCommitState =>
-        RuntimeCityRoadCommitSystem?.State ?? _fallbackRuntimeCityRoadCommit;
+        RuntimeCityRoadCommitCompositionSystemHelper?.State ?? _fallbackRuntimeCityRoadCommit;
 
-    private RuntimeCityRoadCommitSystem RuntimeCityRoadCommitSystem =>
-        _runtimeCityRoadCommitSystem ??= ResolveRuntimeCityRoadCommitSystem();
+    private RuntimeCityRoadCommitCompositionSystemHelper RuntimeCityRoadCommitCompositionSystemHelper =>
+        _runtimeCityRoadCommitHelper ??= ResolveRuntimeCityRoadCommitCompositionSystemHelper();
 
     private RuntimeCityIngressState RuntimeCityIngressState =>
         RuntimeCityIngressSystem?.State ?? _fallbackRuntimeCityIngress;
@@ -766,9 +766,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityChainUtilitySystemHelper();
     }
 
-    private static RuntimeCityRoadCommitSystem ResolveRuntimeCityRoadCommitSystem()
+    private static RuntimeCityRoadCommitCompositionSystemHelper ResolveRuntimeCityRoadCommitCompositionSystemHelper()
     {
-        return new RuntimeCityRoadCommitSystem();
+        return new RuntimeCityRoadCommitCompositionSystemHelper();
     }
 
     private static RuntimeCityIngressSystem ResolveRuntimeCityIngressSystem()

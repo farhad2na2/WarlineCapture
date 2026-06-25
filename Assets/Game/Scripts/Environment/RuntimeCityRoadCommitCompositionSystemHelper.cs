@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 
-internal sealed class RuntimeCityRoadCommitSystem
+internal sealed class RuntimeCityRoadCommitCompositionSystemHelper
 {
     private readonly RuntimeCityRoadCommitState _state = new();
 
@@ -81,7 +81,7 @@ internal sealed class RuntimeCityRoadCommitSystem
 
 internal sealed class RuntimeCityRoadCommitState
 {
-    public void CommitCityRoadNetwork(RuntimeCityRoadCommitSystem.Context context, CityLayoutData city, HashSet<Vector2Int> occupiedRoadCells)
+    public void CommitCityRoadNetwork(RuntimeCityRoadCommitCompositionSystemHelper.Context context, CityLayoutData city, HashSet<Vector2Int> occupiedRoadCells)
     {
         PopulateCityRoadCells(city);
         for (int strokeIndex = 0; strokeIndex < city.RoadStrokes.Count; strokeIndex++)
@@ -109,7 +109,7 @@ internal sealed class RuntimeCityRoadCommitState
     }
 
     public bool TryCommitSourceExitRoad(
-        RuntimeCityRoadCommitSystem.Context context,
+        RuntimeCityRoadCommitCompositionSystemHelper.Context context,
         int cityNumber,
         List<Vector2Int> sourceExitRoad,
         CityLayoutData currentCity,
@@ -132,7 +132,7 @@ internal sealed class RuntimeCityRoadCommitState
     }
 
     public bool TryCommitAutobahn(
-        RuntimeCityRoadCommitSystem.Context context,
+        RuntimeCityRoadCommitCompositionSystemHelper.Context context,
         int cityNumber,
         List<Vector2Int> autobahnPath,
         Vector2Int travelDirection,
@@ -163,7 +163,7 @@ internal sealed class RuntimeCityRoadCommitState
     }
 
     public bool TryCreateStandaloneConnector(
-        RuntimeCityRoadCommitSystem.Context context,
+        RuntimeCityRoadCommitCompositionSystemHelper.Context context,
         Vector2Int endConnectorCell,
         Vector2Int travelDirection,
         int roadLength,

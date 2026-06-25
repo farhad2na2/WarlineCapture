@@ -141,7 +141,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 instance,
                 originCell,
                 removeOverlappingBlockers),
-            (building, ownerFactionId) => source.BuildingRuntimeOwnershipSystem.SetRuntimeBuildingOwnerFaction(
+            (building, ownerFactionId) => source.BuildingRuntimeOwnershipCompositionSystemHelper.SetRuntimeBuildingOwnerFaction(
                 source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateOwnershipContext(CreateBuildingRuntimeContextSource(
                     source,
                     interactionContext,

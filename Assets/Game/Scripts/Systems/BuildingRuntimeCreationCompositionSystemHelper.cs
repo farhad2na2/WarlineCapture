@@ -25,7 +25,7 @@ internal sealed class BuildingRuntimeCreationCompositionSystemHelper
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context RuntimeLinkInteractionContext;
         public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public readonly bool DeferSideEffects;
-        public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly BuildingRuntimeOwnershipCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly TryGetGridDelegate TryGetGrid;
         public readonly ResolvePlacementRectDelegate ResolvePlacementRect;
         public readonly ShouldBlockPathingDelegate ShouldBlockPathing;
@@ -44,7 +44,7 @@ internal sealed class BuildingRuntimeCreationCompositionSystemHelper
             BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context runtimeLinkInteractionContext,
             RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
             bool deferSideEffects,
-            BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate tryGetEntityManager,
+            BuildingRuntimeOwnershipCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetGridDelegate tryGetGrid,
             ResolvePlacementRectDelegate resolvePlacementRect,
             ShouldBlockPathingDelegate shouldBlockPathing,

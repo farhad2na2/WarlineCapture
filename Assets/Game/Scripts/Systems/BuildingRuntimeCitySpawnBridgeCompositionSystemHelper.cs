@@ -10,7 +10,7 @@ internal sealed class BuildingRuntimeCitySpawnBridgeCompositionSystemHelper
         public readonly BuildingRuntimeSpawnCommandBoundary.Context RuntimeSpawnCommandContext;
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly BuildingRuntimeBoundaryProcessingCompositionSystemHelper RuntimeBoundarySystem;
-        public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly BuildingRuntimeOwnershipCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Func<int, bool> DeleteBuildingById;
         public readonly Action BeginDeferredRuntimeBuildingSideEffects;
         public readonly Action EndDeferredRuntimeBuildingSideEffects;
@@ -20,7 +20,7 @@ internal sealed class BuildingRuntimeCitySpawnBridgeCompositionSystemHelper
             BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             BuildingRuntimeBoundaryProcessingCompositionSystemHelper runtimeBoundarySystem,
-            BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate tryGetEntityManager,
+            BuildingRuntimeOwnershipCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
             Func<int, bool> deleteBuildingById,
             Action beginDeferredRuntimeBuildingSideEffects,
             Action endDeferredRuntimeBuildingSideEffects)

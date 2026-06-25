@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeOwnershipSystem
+internal sealed class BuildingRuntimeOwnershipCompositionSystemHelper
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 

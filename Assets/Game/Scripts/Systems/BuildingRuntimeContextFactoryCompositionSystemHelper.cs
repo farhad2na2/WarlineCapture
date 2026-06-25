@@ -161,7 +161,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         public readonly BuildingPlacementRedirectCompositionSystemHelper.GetRedirectUnitsQueryDelegate GetRedirectUnitsQuery;
         public readonly BuildingRuntimeCreationCompositionSystemHelper.RuntimeBuildingAction InitializeVisuals;
         public readonly BuildingRuntimeCreationCompositionSystemHelper.RuntimeAction RefreshMarkers;
-        public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly BuildingRuntimeOwnershipCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingVisualSystem BuildingVisualSystem;
         public readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
         public readonly FactionVisualSettings FactionVisualSettings;
@@ -201,7 +201,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             BuildingPlacementRedirectCompositionSystemHelper.GetRedirectUnitsQueryDelegate getRedirectUnitsQuery,
             BuildingRuntimeCreationCompositionSystemHelper.RuntimeBuildingAction initializeVisuals,
             BuildingRuntimeCreationCompositionSystemHelper.RuntimeAction refreshMarkers,
-            BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate tryGetEntityManager,
+            BuildingRuntimeOwnershipCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
             BuildingVisualSystem buildingVisualSystem,
             BuildingFactionVisualSystem buildingFactionVisualSystem,
             FactionVisualSettings factionVisualSettings,
@@ -306,9 +306,9 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             source.RefreshMarkers);
     }
 
-    public BuildingRuntimeOwnershipSystem.Context CreateOwnershipContext(Source source)
+    public BuildingRuntimeOwnershipCompositionSystemHelper.Context CreateOwnershipContext(Source source)
     {
-        return new BuildingRuntimeOwnershipSystem.Context(
+        return new BuildingRuntimeOwnershipCompositionSystemHelper.Context(
             source.TryGetEntityManager,
             source.FactionVisualSettings,
             source.MarkerPropertyBlock,

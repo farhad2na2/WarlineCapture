@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeSpawnSystem
+internal sealed class BuildingRuntimeSpawnCompositionSystemHelper
 {
     public delegate bool TryGetGridDataDelegate(
         out Entity gridEntity,

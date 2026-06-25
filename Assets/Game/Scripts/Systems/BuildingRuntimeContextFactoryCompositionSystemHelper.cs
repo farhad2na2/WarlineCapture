@@ -137,15 +137,15 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         public readonly BuildingRunwaySystem RunwaySystem;
         public readonly BuildingPlacementValidationUtilitySystemHelper PlacementValidationSystem;
         public readonly BuildingPlacementValidationUtilitySystemHelper.WallValidationContext WallValidationContext;
-        public readonly BuildingRuntimeSpawnSystem.TryGetGridDataDelegate TryGetGridData;
-        public readonly BuildingRuntimeSpawnSystem.GetPlacementFootprintDelegate GetPlacementFootprint;
-        public readonly BuildingRuntimeSpawnSystem.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
-        public readonly BuildingRuntimeSpawnSystem.IsPlacementValidDelegate IsPlacementValid;
-        public readonly BuildingRuntimeSpawnSystem.HasCachedInvalidCellInFootprintDelegate HasCachedInvalidCellInFootprint;
-        public readonly BuildingRuntimeSpawnSystem.CreateBuildingVisualInstanceDelegate CreateBuildingVisualInstance;
-        public readonly BuildingRuntimeSpawnSystem.PositionBuildingObjectDelegate PositionBuildingObject;
-        public readonly BuildingRuntimeSpawnSystem.RegisterRuntimeBuildingDelegate RegisterRuntimeBuilding;
-        public readonly BuildingRuntimeSpawnSystem.SetRuntimeBuildingOwnerFactionDelegate SetRuntimeBuildingOwnerFaction;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper.TryGetGridDataDelegate TryGetGridData;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper.GetPlacementFootprintDelegate GetPlacementFootprint;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper.IsPlacementValidDelegate IsPlacementValid;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper.HasCachedInvalidCellInFootprintDelegate HasCachedInvalidCellInFootprint;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper.CreateBuildingVisualInstanceDelegate CreateBuildingVisualInstance;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper.PositionBuildingObjectDelegate PositionBuildingObject;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper.RegisterRuntimeBuildingDelegate RegisterRuntimeBuilding;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper.SetRuntimeBuildingOwnerFactionDelegate SetRuntimeBuildingOwnerFaction;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper RuntimeLinkInteractionSystem;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context RuntimeLinkInteractionContext;
@@ -177,15 +177,15 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             BuildingRunwaySystem runwaySystem,
             BuildingPlacementValidationUtilitySystemHelper placementValidationSystem,
             BuildingPlacementValidationUtilitySystemHelper.WallValidationContext wallValidationContext,
-            BuildingRuntimeSpawnSystem.TryGetGridDataDelegate tryGetGridData,
-            BuildingRuntimeSpawnSystem.GetPlacementFootprintDelegate getPlacementFootprint,
-            BuildingRuntimeSpawnSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
-            BuildingRuntimeSpawnSystem.IsPlacementValidDelegate isPlacementValid,
-            BuildingRuntimeSpawnSystem.HasCachedInvalidCellInFootprintDelegate hasCachedInvalidCellInFootprint,
-            BuildingRuntimeSpawnSystem.CreateBuildingVisualInstanceDelegate createBuildingVisualInstance,
-            BuildingRuntimeSpawnSystem.PositionBuildingObjectDelegate positionBuildingObject,
-            BuildingRuntimeSpawnSystem.RegisterRuntimeBuildingDelegate registerRuntimeBuilding,
-            BuildingRuntimeSpawnSystem.SetRuntimeBuildingOwnerFactionDelegate setRuntimeBuildingOwnerFaction,
+            BuildingRuntimeSpawnCompositionSystemHelper.TryGetGridDataDelegate tryGetGridData,
+            BuildingRuntimeSpawnCompositionSystemHelper.GetPlacementFootprintDelegate getPlacementFootprint,
+            BuildingRuntimeSpawnCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
+            BuildingRuntimeSpawnCompositionSystemHelper.IsPlacementValidDelegate isPlacementValid,
+            BuildingRuntimeSpawnCompositionSystemHelper.HasCachedInvalidCellInFootprintDelegate hasCachedInvalidCellInFootprint,
+            BuildingRuntimeSpawnCompositionSystemHelper.CreateBuildingVisualInstanceDelegate createBuildingVisualInstance,
+            BuildingRuntimeSpawnCompositionSystemHelper.PositionBuildingObjectDelegate positionBuildingObject,
+            BuildingRuntimeSpawnCompositionSystemHelper.RegisterRuntimeBuildingDelegate registerRuntimeBuilding,
+            BuildingRuntimeSpawnCompositionSystemHelper.SetRuntimeBuildingOwnerFactionDelegate setRuntimeBuildingOwnerFaction,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper runtimeLinkInteractionSystem,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context runtimeLinkInteractionContext,
@@ -252,9 +252,9 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         }
     }
 
-    public BuildingRuntimeSpawnSystem.Context CreateSpawnContext(Source source)
+    public BuildingRuntimeSpawnCompositionSystemHelper.Context CreateSpawnContext(Source source)
     {
-        return new BuildingRuntimeSpawnSystem.Context(
+        return new BuildingRuntimeSpawnCompositionSystemHelper.Context(
             source.BuildingRoot,
             source.DefinitionSystem,
             source.RunwaySystem,
@@ -273,7 +273,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
 
     public BuildingRuntimeSpawnCommandBoundary.Context CreateSpawnCommandContext(
         Source source,
-        BuildingRuntimeSpawnSystem runtimeSpawnSystem)
+        BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem)
     {
         return new BuildingRuntimeSpawnCommandBoundary.Context(
             runtimeSpawnSystem,

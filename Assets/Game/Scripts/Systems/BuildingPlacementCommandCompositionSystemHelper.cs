@@ -165,7 +165,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
                 instance,
                 originCell,
                 removeOverlappingBlockers),
-            BuildingRuntimeSpawnSystem.CloneDefinitionWithFootprint,
+            BuildingRuntimeSpawnCompositionSystemHelper.CloneDefinitionWithFootprint,
             source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
             source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
     }

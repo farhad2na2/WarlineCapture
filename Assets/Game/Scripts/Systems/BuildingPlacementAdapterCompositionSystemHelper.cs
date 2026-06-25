@@ -50,12 +50,12 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
         out Vector2Int resolvedOrigin)
     {
         resolvedOrigin = preferredOrigin;
-        if (source.BuildingRuntimeSpawnSystem == null)
+        if (source.BuildingRuntimeSpawnCompositionSystemHelper == null)
             return false;
 
-        BuildingRuntimeSpawnSystem.Context context = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnContext(
+        BuildingRuntimeSpawnCompositionSystemHelper.Context context = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnContext(
             createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock));
-        return source.BuildingRuntimeSpawnSystem.TryResolveInitialPlacementOrigin(
+        return source.BuildingRuntimeSpawnCompositionSystemHelper.TryResolveInitialPlacementOrigin(
                    context,
                    definition,
                    preferredOrigin,

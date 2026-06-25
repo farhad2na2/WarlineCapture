@@ -2036,7 +2036,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
 
             boundarySystem.Update(
                 new BuildingDefinitionPrefabSystemHelper(),
-                new BuildingRuntimeSpawnSystem(),
+                new BuildingRuntimeSpawnCompositionSystemHelper(),
                 default,
                 requestSystem,
                 productionContext,
@@ -2107,7 +2107,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
 
             boundarySystem.Update(
                 new BuildingDefinitionPrefabSystemHelper(),
-                new BuildingRuntimeSpawnSystem(),
+                new BuildingRuntimeSpawnCompositionSystemHelper(),
                 default,
                 requestSystem,
                 productionContext,
@@ -2247,7 +2247,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
 
             boundarySystem.Update(
                 definitionSystem,
-                new BuildingRuntimeSpawnSystem(),
+                new BuildingRuntimeSpawnCompositionSystemHelper(),
                 default,
                 requestSystem,
                 productionContext,

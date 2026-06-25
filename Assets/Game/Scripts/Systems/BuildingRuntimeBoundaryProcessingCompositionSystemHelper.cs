@@ -60,8 +60,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
 
     internal void Update(
         BuildingDefinitionPrefabSystemHelper definitionSystem,
-        BuildingRuntimeSpawnSystem runtimeSpawnSystem,
-        BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
+        BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
+        BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
         BuildingProductionRequestBoundary productionRequestSystem,
         BuildingProductionRequestBoundary.Context productionRequestContext,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
@@ -113,8 +113,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
 
     private void ProcessRequests(
         BuildingDefinitionPrefabSystemHelper definitionSystem,
-        BuildingRuntimeSpawnSystem runtimeSpawnSystem,
-        BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
+        BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
+        BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
         BuildingProductionRequestBoundary productionRequestSystem,
         BuildingProductionRequestBoundary.Context productionRequestContext,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
@@ -134,8 +134,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
 
     internal void ProcessRuntimeSpawnRequestsForBoundary(
         BuildingDefinitionPrefabSystemHelper definitionSystem,
-        BuildingRuntimeSpawnSystem runtimeSpawnSystem,
-        BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
+        BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
+        BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
         EntityManager em,
         Entity boundaryEntity)
     {
@@ -244,8 +244,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
 
     private void ProcessRuntimeSpawnRequests(
         BuildingDefinitionPrefabSystemHelper definitionSystem,
-        BuildingRuntimeSpawnSystem runtimeSpawnSystem,
-        BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
+        BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
+        BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
         EntityManager em,
         Entity boundaryEntity)
     {
@@ -298,7 +298,7 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
 
             // Runtime spawn creates/updates entities, so any DynamicBuffer handle captured before it is invalid afterwards.
             bool placed;
-            BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result = default;
+            BuildingRuntimeSpawnCompositionSystemHelper.SpawnRuntimeBuildingResult result = default;
             if (request.RequestKind == BuildingRuntimeSpawnRequest.KindWallRun)
             {
                 int spawned = runtimeSpawnSystem.TrySpawnRuntimeWallRun(
@@ -328,7 +328,7 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
                     request.AllowExistingWallOverlap != 0);
                 request.SpawnedCount = placed ? 1 : 0;
                 if (placed && resolvedFootprint)
-                    result = new BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult(0, requestedOrigin, wallFootprint);
+                    result = new BuildingRuntimeSpawnCompositionSystemHelper.SpawnRuntimeBuildingResult(0, requestedOrigin, wallFootprint);
             }
             else
             {

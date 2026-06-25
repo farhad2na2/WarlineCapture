@@ -13,8 +13,8 @@ internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
         public readonly Action<EntityManager> EnsureEntityQueries;
         public readonly BuildingRuntimeBoundaryProcessingCompositionSystemHelper BoundarySystem;
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
-        public readonly BuildingRuntimeSpawnSystem RuntimeSpawnSystem;
-        public readonly BuildingRuntimeSpawnSystem.Context RuntimeSpawnContext;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper RuntimeSpawnSystem;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper.Context RuntimeSpawnContext;
         public readonly BuildingProductionRequestBoundary ProductionRequestSystem;
         public readonly BuildingProductionRequestBoundary.Context ProductionRequestContext;
         public readonly BuildingRuntimeReadModelCompositionSystemHelper RuntimeQuerySystem;
@@ -28,8 +28,8 @@ internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
             Action<EntityManager> ensureEntityQueries,
             BuildingRuntimeBoundaryProcessingCompositionSystemHelper boundarySystem,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
-            BuildingRuntimeSpawnSystem runtimeSpawnSystem,
-            BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
+            BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
+            BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
             BuildingProductionRequestBoundary productionRequestSystem,
             BuildingProductionRequestBoundary.Context productionRequestContext,
             BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,

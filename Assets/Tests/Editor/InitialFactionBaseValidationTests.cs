@@ -697,7 +697,7 @@ public sealed class InitialFactionBaseValidationTests
                 isCityGenerated: false,
                 ownerFactionId: ownerFactionId,
                 rotateVertical: rotateVertical,
-                out BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result))
+                out BuildingRuntimeSpawnCompositionSystemHelper.SpawnRuntimeBuildingResult result))
         {
             return false;
         }

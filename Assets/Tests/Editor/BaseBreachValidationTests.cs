@@ -1566,7 +1566,7 @@ public sealed class BaseBreachValidationTests
                     isCityGenerated: false,
                     ownerFactionId: ownerFactionId,
                     rotateVertical: rotateVertical,
-                    out BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result))
+                    out BuildingRuntimeSpawnCompositionSystemHelper.SpawnRuntimeBuildingResult result))
             {
                 return false;
             }

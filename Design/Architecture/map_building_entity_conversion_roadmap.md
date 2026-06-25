@@ -19,7 +19,7 @@ Convert authored `Match` scene map-building model groups into runtime building e
 7. Assign the config and `Map/Buildings` authoring root explicitly through `MatchSceneView`.
 8. Add `MapBuildingPlacementSpawnSystem` as the runtime conversion owner.
 9. Wire the system through building gameplay composition and the building runtime tick.
-10. Spawn authored map buildings through `BuildingRuntimeSpawnSystem` registration so runtime building data, faction ownership, selection, combat, and UI read paths remain shared with normal buildings.
+10. Spawn authored map buildings through `BuildingRuntimeSpawnCompositionSystemHelper` registration so runtime building data, faction ownership, selection, combat, and UI read paths remain shared with normal buildings.
 11. Hide the authored `Map/Buildings` model root after conversion completes.
 
 ## Ownership Rules

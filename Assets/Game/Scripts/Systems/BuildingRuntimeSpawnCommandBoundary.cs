@@ -7,12 +7,12 @@ internal sealed class BuildingRuntimeSpawnCommandBoundary
 {
     public readonly struct Context
     {
-        public readonly BuildingRuntimeSpawnSystem RuntimeSpawnSystem;
-        public readonly BuildingRuntimeSpawnSystem.Context SpawnContext;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper RuntimeSpawnSystem;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper.Context SpawnContext;
 
         public Context(
-            BuildingRuntimeSpawnSystem runtimeSpawnSystem,
-            BuildingRuntimeSpawnSystem.Context spawnContext)
+            BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
+            BuildingRuntimeSpawnCompositionSystemHelper.Context spawnContext)
         {
             RuntimeSpawnSystem = runtimeSpawnSystem;
             SpawnContext = spawnContext;

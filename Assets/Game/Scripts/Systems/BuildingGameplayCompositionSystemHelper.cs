@@ -391,7 +391,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
         BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext =
             childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnCommandContext(
                 buildingRuntimeContextSource,
-                childSystems.BuildingRuntimeSpawnSystem);
+                childSystems.BuildingRuntimeSpawnCompositionSystemHelper);
         Func<BuildingSpawnSystem.Context> createSpawnContext = () =>
         {
             if (tryGetEntityManager(out EntityManager em))
@@ -466,7 +466,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 {
                     BuildingRuntimeContextFactoryCompositionSystemHelper.Source mapRuntimeContextSource =
                         createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
-                    BuildingRuntimeSpawnSystem.Context mapSpawnContext =
+                    BuildingRuntimeSpawnCompositionSystemHelper.Context mapSpawnContext =
                         source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnContext(mapRuntimeContextSource);
                     bool TryGetMapGridData(
                         out Entity gridEntity,
@@ -481,7 +481,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                         new(
                             mapBuildingPlacementConfig,
                             mapBuildingAuthoringRoot,
-                            source.BuildingRuntimeSpawnSystem,
+                            source.BuildingRuntimeSpawnCompositionSystemHelper,
                             mapSpawnContext,
                             TryGetMapGridData,
                             Debug.LogWarning);

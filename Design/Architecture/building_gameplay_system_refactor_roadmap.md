@@ -48,7 +48,7 @@ Step 22 faction spawn point query transition size: 1717 lines. Faction productio
 
 Step 23 configured unit prefab resolution transition size: 1678 lines. Configured unit prefab entity lookup, spawn prefab reverse lookup, and live-unit preview prefab resolution now route through `RuntimeUnitPrefabSystem`; `BuildingGameplaySystem` keeps only temporary compatibility wrappers.
 
-Step 24 initial roster/test helper transition size: 1599 lines. Initial roster and initial-building spawn remain in `BuildingRuntimeSpawnSystem` / `BuildingRuntimeSpawnCommandSystem`; editor-only runtime test helpers moved out of `BuildingGameplaySystem`, and step 35 later deleted `BuildingGameplayTestHarness`.
+Step 24 initial roster/test helper transition size: 1599 lines. Initial roster and initial-building spawn remain in `BuildingRuntimeSpawnCompositionSystemHelper` / `BuildingRuntimeSpawnCommandSystem`; editor-only runtime test helpers moved out of `BuildingGameplaySystem`, and step 35 later deleted `BuildingGameplayTestHarness`.
 
 Step 25 visual helper transition size: 1583 lines. Placement visual instance creation, placement visual positioning, footprint-center delegates, runtime visual initialization, runtime marker visibility refresh, and owner-faction visual tint now route directly through `BuildingPlacementVisualPresentationSystemHelper`, `BuildingPlacementGridSystem`, `BuildingRuntimeVisualPresentationSystemHelper`, and `BuildingRuntimeOwnershipCompositionSystemHelper`; `BuildingGameplaySystem` no longer keeps visual helper wrapper methods.
 
@@ -290,14 +290,14 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplaySystem.TryResolveBaseBreachTarget` is now only a temporary compatibility wrapper over `BuildingRuntimeReadModelCompositionSystemHelper`.
 
 21. Complete: Move runtime building spawn commands
-   - Move `TrySpawnRuntimeBuilding`, initial building spawn, placement origin search, runtime wall segment spawn, wall run spawn, and runtime placement footprint queries into `BuildingRuntimeSpawnCommandSystem`, `BuildingRuntimeSpawnSystem`, and a narrow wall spawn boundary.
+   - Move `TrySpawnRuntimeBuilding`, initial building spawn, placement origin search, runtime wall segment spawn, wall run spawn, and runtime placement footprint queries into `BuildingRuntimeSpawnCommandSystem`, `BuildingRuntimeSpawnCompositionSystemHelper`, and a narrow wall spawn boundary.
    - Expected output: runtime city and tests do not call shell spawn helpers.
    - `BuildingGameplayCompositionSystemHelper.Result` now exposes `RuntimeSpawnCommand` and `RuntimeSpawnCommandContext` for direct consumers.
-   - `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper` now routes city building spawn through `BuildingRuntimeSpawnCommandSystem` instead of owning a separate `BuildingRuntimeSpawnSystem`.
+   - `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper` now routes city building spawn through `BuildingRuntimeSpawnCommandSystem` instead of owning a separate `BuildingRuntimeSpawnCompositionSystemHelper`.
    - `BuildingGameplaySystem` spawn wrappers remain only as temporary compatibility wrappers over `BuildingRuntimeSpawnCommandSystem` until test and production callers migrate to the composition-owned command context.
 
 22. Complete: Move faction spawn point queries
-   - Move faction production spawn point and available helipad spawn resolution into `BuildingRuntimeSpawnSystem` or `BuildingRuntimeReadModelCompositionSystemHelper`.
+   - Move faction production spawn point and available helipad spawn resolution into `BuildingRuntimeSpawnCompositionSystemHelper` or `BuildingRuntimeReadModelCompositionSystemHelper`.
    - Expected output: AI production/transport spawn logic reads a narrow building runtime boundary.
    - `BuildingSpawnSystem` now owns faction production spawn-slot lookup from runtime building data.
    - `BuildingGameplaySystem.TryGetFactionProductionSpawnPoint` is now only a temporary compatibility wrapper over `BuildingSpawnSystem`.
@@ -313,7 +313,7 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
 24. Complete: Move initial roster/test helpers
    - Move `SpawnInitialTestRoster`, `TrySpawnInitialBuilding`, and runtime test tick helpers into editor test fixtures or narrow runtime spawn systems.
    - Expected output: production shell no longer carries test-only spawn behavior.
-   - Initial roster and initial-building spawn commands remain owned by `BuildingRuntimeSpawnSystem` / `BuildingRuntimeSpawnCommandSystem`.
+   - Initial roster and initial-building spawn commands remain owned by `BuildingRuntimeSpawnCompositionSystemHelper` / `BuildingRuntimeSpawnCommandSystem`.
    - `BuildingGameplayTestHarness` now owns editor-only runtime test tick, destroyed-combat sync, barrier-door update/read, runtime entity read, destroyed-state read, and gate-rect read helpers.
    - `BuildingGameplaySystem` no longer exposes initial roster or editor-only runtime test helper methods.
 

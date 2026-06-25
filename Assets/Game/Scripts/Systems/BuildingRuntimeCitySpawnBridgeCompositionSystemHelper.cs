@@ -81,7 +81,7 @@ internal sealed class BuildingRuntimeCitySpawnBridgeCompositionSystemHelper
         if (attemptedRequest)
             return false;
 
-        BuildingRuntimeSpawnSystem runtimeSpawnSystem = context.RuntimeSpawnCommandContext.RuntimeSpawnSystem;
+        BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem = context.RuntimeSpawnCommandContext.RuntimeSpawnSystem;
         if (runtimeSpawnSystem == null ||
             !runtimeSpawnSystem.TrySpawnRuntimeBuilding(
                 context.RuntimeSpawnCommandContext.SpawnContext,
@@ -94,7 +94,7 @@ internal sealed class BuildingRuntimeCitySpawnBridgeCompositionSystemHelper
                 isCityGenerated: true,
                 ownerFactionId: null,
                 rotateVertical: false,
-                out BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result))
+                out BuildingRuntimeSpawnCompositionSystemHelper.SpawnRuntimeBuildingResult result))
         {
             return false;
         }

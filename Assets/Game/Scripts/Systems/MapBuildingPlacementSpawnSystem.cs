@@ -17,16 +17,16 @@ internal sealed class MapBuildingPlacementSpawnSystem
     {
         public readonly MapBuildingPlacementConfig Config;
         public readonly Transform AuthoringBuildingsRoot;
-        public readonly BuildingRuntimeSpawnSystem RuntimeSpawnSystem;
-        public readonly BuildingRuntimeSpawnSystem.Context RuntimeSpawnContext;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper RuntimeSpawnSystem;
+        public readonly BuildingRuntimeSpawnCompositionSystemHelper.Context RuntimeSpawnContext;
         public readonly TryGetGridDataDelegate TryGetGridData;
         public readonly Action<string> LogWarning;
 
         public Context(
             MapBuildingPlacementConfig config,
             Transform authoringBuildingsRoot,
-            BuildingRuntimeSpawnSystem runtimeSpawnSystem,
-            BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
+            BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
+            BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
             TryGetGridDataDelegate tryGetGridData,
             Action<string> logWarning)
         {
@@ -115,7 +115,7 @@ internal sealed class MapBuildingPlacementSpawnSystem
         Vector2Int originCell,
         Vector2Int footprint)
     {
-        BuildingRuntimeSpawnSystem.Context spawnContext = context.RuntimeSpawnContext;
+        BuildingRuntimeSpawnCompositionSystemHelper.Context spawnContext = context.RuntimeSpawnContext;
         if (spawnContext.DefinitionSystem == null ||
             spawnContext.RegisterRuntimeBuilding == null)
         {
@@ -134,7 +134,7 @@ internal sealed class MapBuildingPlacementSpawnSystem
             return false;
 
         RuntimeBuildingEntity building = spawnContext.RegisterRuntimeBuilding(
-            BuildingRuntimeSpawnSystem.CloneDefinitionWithFootprint(definition, footprint),
+            BuildingRuntimeSpawnCompositionSystemHelper.CloneDefinitionWithFootprint(definition, footprint),
             instance,
             originCell,
             true);

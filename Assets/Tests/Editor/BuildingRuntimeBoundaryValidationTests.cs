@@ -551,7 +551,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             using EntityQuery boundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
             boundarySystem.Update(
                 definitionSystem,
-                new BuildingRuntimeSpawnSystem(),
+                new BuildingRuntimeSpawnCompositionSystemHelper(),
                 default,
                 new BuildingProductionRequestBoundary(),
                 default,

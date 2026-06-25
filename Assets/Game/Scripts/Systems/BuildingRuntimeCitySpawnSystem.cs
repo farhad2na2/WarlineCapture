@@ -9,7 +9,7 @@ internal sealed class BuildingRuntimeCitySpawnSystem
         public readonly BuildingRuntimeSpawnCommandBoundary RuntimeSpawnCommandBoundary;
         public readonly BuildingRuntimeSpawnCommandBoundary.Context RuntimeSpawnCommandContext;
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
-        public readonly BuildingRuntimeBoundarySystem RuntimeBoundarySystem;
+        public readonly BuildingRuntimeBoundaryProcessingCompositionSystemHelper RuntimeBoundarySystem;
         public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Func<int, bool> DeleteBuildingById;
         public readonly Action BeginDeferredRuntimeBuildingSideEffects;
@@ -19,7 +19,7 @@ internal sealed class BuildingRuntimeCitySpawnSystem
             BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommandBoundary,
             BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
-            BuildingRuntimeBoundarySystem runtimeBoundarySystem,
+            BuildingRuntimeBoundaryProcessingCompositionSystemHelper runtimeBoundarySystem,
             BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate tryGetEntityManager,
             Func<int, bool> deleteBuildingById,
             Action beginDeferredRuntimeBuildingSideEffects,

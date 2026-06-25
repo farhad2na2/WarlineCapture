@@ -176,7 +176,7 @@ Phase 1 footprint read-model notes:
 Phase 1 production slot read-model notes:
 
 - Added `BuildingProductionSlotReadModel` as an ECS boundary buffer with building id, slot index, exact unit source key, and normalized unit id.
-- `BuildingRuntimeBoundarySystem` publishes production slot rows from managed `BuildingDefinitionPrefabSystemHelper`/authored production slots, keeping `GameObject` access at the passive boundary.
+- `BuildingRuntimeBoundaryProcessingCompositionSystemHelper` publishes production slot rows from managed `BuildingDefinitionPrefabSystemHelper`/authored production slots, keeping `GameObject` access at the passive boundary.
 - `MatchBootstrapSystem` and `RuntimeGameplayStateTestHelper` now ensure the production slot buffer exists on the boundary entity.
 - Added focused coverage in `BuildingRuntimeBoundaryValidationTests.RuntimeBoundaryPublishesProductionSlotSourceKeyReadModel`.
 - Main project validation was locked twice; shadow validation used `/Users/farhad/Projects/WarlineCapture-CodexUnity1` after syncing `Assets/Game/Scripts`, editor tests, and tracker docs.
@@ -187,7 +187,7 @@ Phase 1 produced-unit source-key state notes:
 - `RuntimeBuildingEntity` still stores produced unit entities in `ProducedUnits`; produced source keys now live on spawned entities through `UnitSourcePrefabKey` and on the boundary through `BuildingProducedUnitReadModel`.
 - `BuildingSpawnSystem` writes `UnitSourcePrefabKey` onto each spawned unit entity; the older `ProducedUnitSourceKeys` spawn mirror has been removed. `ProducedUnitPrefabs` remains only as a legacy UI/prefab fallback outside spawn execution.
 - `BuildingProductionQueueCompositionSystemHelper.PruneProducedUnits` now has focused test coverage proving it removes stale `ProducedUnitSourceKeys` entries together with stale produced entities and legacy prefab entries.
-- `BuildingRuntimeBoundarySystem` and `BuildingRuntimeQuerySystem` resolve produced-unit ids from `ProducedUnitSourceKeys` before falling back to `ProducedUnitPrefabs` or the entity `UnitSourcePrefabKey` component.
+- `BuildingRuntimeBoundaryProcessingCompositionSystemHelper` and `BuildingRuntimeQuerySystem` resolve produced-unit ids from `ProducedUnitSourceKeys` before falling back to `ProducedUnitPrefabs` or the entity `UnitSourcePrefabKey` component.
 - Main project validation was locked twice; shadow validation used `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.
 - Passed: `[ProducedUnitSourceKeyStateValidation] result=Passed tests=1`.
 
@@ -328,7 +328,7 @@ Phase 2 produced-unit read-model notes:
 
 Phase 2 production-slot read-model placement notes:
 
-- Added `BuildingRuntimeId` to `BuildingFactionProductionSpawnPointReadModel` and populated it in `BuildingRuntimeBoundarySystem`.
+- Added `BuildingRuntimeId` to `BuildingFactionProductionSpawnPointReadModel` and populated it in `BuildingRuntimeBoundaryProcessingCompositionSystemHelper`.
 - `BuildingSpawnSystem.TryResolveSpawnPlacement` now resolves regular production-slot spawn cell/world position from `BuildingFactionProductionSpawnPointReadModel` by runtime building id and slot index before falling back to `RuntimeBuildingEntity.Instance.transform`.
 - Fixed recent-reservation buffer lookup so read/overlap paths do not add missing buffers after grid buffer native arrays have been captured; only the write path creates the buffer.
 - Added `BuildingProductionQueueCompositionSystemHelperTests.BuildingSpawnSystem_UsesBoundarySpawnPointForProductionSlotPlacement`, which uses a runtime building without a `GameObject` instance and verifies the spawned unit lands on the ECS read-model cell.
@@ -402,7 +402,7 @@ Phase 2 produced-unit count read-model notes:
 
 Phase 2 production summary read-model notes:
 
-- `BuildingRuntimeBoundarySystem.PublishRuntimeUnitProductionSummaries` now publishes produced counts from `BuildingProducedUnitReadModel` before falling back to `RuntimeBuildingEntity.ProducedUnits`.
+- `BuildingRuntimeBoundaryProcessingCompositionSystemHelper.PublishRuntimeUnitProductionSummaries` now publishes produced counts from `BuildingProducedUnitReadModel` before falling back to `RuntimeBuildingEntity.ProducedUnits`.
 - The read-model path is selected per runtime building only when produced-unit rows exist for that building, preserving legacy produced-unit list behavior for older runtime state with no ECS rows.
 - Added `BuildingProductionQueueCompositionSystemHelperTests.BuildingRuntimeBoundary_ProductionSummaryUsesProducedUnitReadModel`, which publishes a production summary while the runtime building has no managed produced-unit list.
 - Remaining blockers before the actual `ISystem` flip: `BuildingSpawnSystem` still writes managed `ProducedUnits` for remaining legacy UI readers, and fallback spawn placement still reads runtime-building transforms.

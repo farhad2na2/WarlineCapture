@@ -14,7 +14,7 @@ internal sealed class BuildingRuntimeBoundaryCompositionSystemHelper
         return new BuildingRuntimeBoundaryPublishCompositionSystemHelper.Context(
             source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
             source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,
-            source.BuildingRuntimeBoundarySystem,
+            source.BuildingRuntimeBoundaryProcessingCompositionSystemHelper,
             source.BuildingDefinitionPrefabSystemHelper,
             source.BuildingRuntimeSpawnSystem,
             source.BuildingRuntimeContextSystem.CreateSpawnContext(createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock)),

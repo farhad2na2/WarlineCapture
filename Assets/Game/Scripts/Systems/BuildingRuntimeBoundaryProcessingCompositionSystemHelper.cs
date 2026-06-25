@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class BuildingRuntimeBoundarySystem
+public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
 {
     private const float PublishIntervalSeconds = 0.5f;
     private const int MaxRuntimeSpawnRequestsPerUpdate = 16;

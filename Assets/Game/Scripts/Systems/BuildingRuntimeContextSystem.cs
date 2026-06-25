@@ -320,7 +320,7 @@ internal sealed class BuildingRuntimeContextSystem
         Source source,
         BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommandBoundary,
         BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
-        BuildingRuntimeBoundarySystem runtimeBoundarySystem)
+        BuildingRuntimeBoundaryProcessingCompositionSystemHelper runtimeBoundarySystem)
     {
         return new BuildingRuntimeCitySpawnSystem.Context(
             runtimeSpawnCommandBoundary,

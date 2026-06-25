@@ -546,7 +546,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
                 new System.Collections.Generic.List<GameObject> { unitPrefab });
             definitionSystem.RebuildConfiguredSpawnableDefinitions(null, Object.DestroyImmediate);
 
-            var boundarySystem = new BuildingRuntimeBoundarySystem();
+            var boundarySystem = new BuildingRuntimeBoundaryProcessingCompositionSystemHelper();
             Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
             using EntityQuery boundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
             boundarySystem.Update(

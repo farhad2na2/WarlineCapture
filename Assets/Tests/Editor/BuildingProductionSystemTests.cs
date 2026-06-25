@@ -2000,7 +2000,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         using World world = new("BuildingRuntimeBoundaryQueuedUiProductionTest");
         var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
-        var boundarySystem = new BuildingRuntimeBoundarySystem();
+        var boundarySystem = new BuildingRuntimeBoundaryProcessingCompositionSystemHelper();
         var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
         GameObject unitPrefab = new("Runtime Boundary Unit");
         try
@@ -2071,7 +2071,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         using World world = new("BuildingRuntimeBoundaryQueuedCampItemTest");
         var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
-        var boundarySystem = new BuildingRuntimeBoundarySystem();
+        var boundarySystem = new BuildingRuntimeBoundaryProcessingCompositionSystemHelper();
         var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
         GameObject unitPrefab = new("Runtime Boundary Vehicle");
         try
@@ -2197,7 +2197,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         EntityManager em = world.EntityManager;
         var requestSystem = new BuildingProductionRequestBoundary();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
-        var boundarySystem = new BuildingRuntimeBoundarySystem();
+        var boundarySystem = new BuildingRuntimeBoundaryProcessingCompositionSystemHelper();
         var runtimeQuerySystem = new BuildingRuntimeQuerySystem();
         var definitionSystem = new BuildingDefinitionPrefabSystemHelper();
         GameObject unitPrefab = new("Unit_Inf_Regular");

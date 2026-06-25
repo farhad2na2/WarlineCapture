@@ -378,11 +378,11 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
 
     private static void ApplyBuildCommandMode(RoadBuildCompositionSourceSystem source)
     {
-        source.RoadBuildDependencySystem.ApplyBuildCommandMode(source.RoadBuildDependencyState);
+        source.RoadBuildDependencyCompositionSystemHelper.ApplyBuildCommandMode(source.RoadBuildDependencyState);
     }
 
     private static void ClearCommandMode(RoadBuildCompositionSourceSystem source)
     {
-        source.RoadBuildDependencySystem.ClearCommandMode(source.RoadBuildDependencyState);
+        source.RoadBuildDependencyCompositionSystemHelper.ClearCommandMode(source.RoadBuildDependencyState);
     }
 }

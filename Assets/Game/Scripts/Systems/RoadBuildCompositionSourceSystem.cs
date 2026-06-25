@@ -2,7 +2,7 @@ internal sealed class RoadBuildCompositionSourceSystem
 {
     public RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
     public readonly RoadBuildStartupSystem RoadBuildStartupSystem = new();
-    public readonly RoadBuildDependencySystem RoadBuildDependencySystem = new();
+    public readonly RoadBuildDependencyCompositionSystemHelper RoadBuildDependencyCompositionSystemHelper = new();
     public readonly RoadBuildReadModelCompositionSystemHelper RoadBuildReadModelCompositionSystemHelper = new();
     public readonly RoadBuildVisualContextSystem RoadBuildVisualContextSystem;
     public readonly RoadBuildInteractionContextSystem RoadBuildInteractionContextSystem = new();
@@ -42,7 +42,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildCompositionLifecycleCompositionSystemHelper RoadBuildCompositionLifecycleCompositionSystemHelper = new();
 
     public RoadBuildStartupSystem.State RoadBuildStartupState = new();
-    public readonly RoadBuildDependencySystem.State RoadBuildDependencyState;
+    public readonly RoadBuildDependencyCompositionSystemHelper.State RoadBuildDependencyState;
     public readonly RoadBuildPlacementVisualSystem.State RoadBuildPlacementVisualState;
     public readonly RoadBuildBuildingPlacementCompositionSystemHelper.State RoadBuildPlacementState;
     public uint BuildingSpawnRandomState = 0x12345678u;
@@ -64,7 +64,7 @@ internal sealed class RoadBuildCompositionSourceSystem
         RoadBuildRuntimeActionCompositionSystemHelper = ResolveRoadBuildRuntimeActionCompositionSystemHelper();
         RoadBuildPlacementVisualSystem = ResolveRoadBuildPlacementVisualSystem();
         RoadBuildRuntimeActionState = global::RoadBuildRuntimeActionCompositionSystemHelper.CreateState();
-        RoadBuildDependencyState = RoadBuildDependencySystem.CreateState();
+        RoadBuildDependencyState = RoadBuildDependencyCompositionSystemHelper.CreateState();
         RoadBuildPlacementVisualState = RoadBuildPlacementVisualSystem?.CreateState() ?? new RoadBuildPlacementVisualSystem.State();
         RoadBuildPlacementState = RoadBuildBuildingPlacementCompositionSystemHelper.CreateState();
     }

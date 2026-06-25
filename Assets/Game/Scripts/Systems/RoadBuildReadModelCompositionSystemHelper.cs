@@ -10,7 +10,7 @@ public sealed class RoadBuildReadModelCompositionSystemHelper
         public readonly RoadBuildInputCompositionSystemHelper RoadBuildInputCompositionSystemHelper;
         public readonly RoadBuildInputCompositionSystemHelper.State RoadBuildInputState;
         public readonly RoadBuildPlacementStorageCompositionSystemHelper PlacementStorageSystem;
-        public readonly RoadBuildDependencySystem.State DependencyState;
+        public readonly RoadBuildDependencyCompositionSystemHelper.State DependencyState;
         public readonly Func<bool> IsDraggingBuildingPlacement;
 
         public Context(
@@ -20,7 +20,7 @@ public sealed class RoadBuildReadModelCompositionSystemHelper
             RoadBuildInputCompositionSystemHelper roadBuildInputSystem,
             RoadBuildInputCompositionSystemHelper.State roadBuildInputState,
             RoadBuildPlacementStorageCompositionSystemHelper placementStorageSystem,
-            RoadBuildDependencySystem.State dependencyState,
+            RoadBuildDependencyCompositionSystemHelper.State dependencyState,
             Func<bool> isDraggingBuildingPlacement)
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;

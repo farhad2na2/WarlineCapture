@@ -19,7 +19,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
             source.RoadBuildConfigSystem,
             source.RoadRuntimeRootSystem,
             source.RoadVisualVariantSystem);
-        source.RoadBuildDependencySystem.BindBuildingInteraction(
+        source.RoadBuildDependencyCompositionSystemHelper.BindBuildingInteraction(
             source.RoadBuildDependencyState,
             buildingPlacementInteractionSystem,
             buildingPlacementInteractionContext);
@@ -57,7 +57,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null,
         RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks = null)
     {
-        source.RoadBuildDependencySystem.BindDependencies(
+        source.RoadBuildDependencyCompositionSystemHelper.BindDependencies(
             source.RoadBuildDependencyState,
             buildingPlacementInteractionSystem,
             buildingPlacementInteractionContext,

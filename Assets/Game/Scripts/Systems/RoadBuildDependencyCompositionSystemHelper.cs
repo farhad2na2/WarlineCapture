@@ -1,4 +1,4 @@
-internal sealed class RoadBuildDependencySystem
+internal sealed class RoadBuildDependencyCompositionSystemHelper
 {
     internal sealed class State
     {

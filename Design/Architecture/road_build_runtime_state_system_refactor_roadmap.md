@@ -53,7 +53,7 @@ New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. 
   - Target owner: `RoadFootprintQuerySystem` plus `RoadGridContextSystem`.
 - Startup/lifecycle:
   - `Init`, `BindDependencies`, `Dispose`
-  - Target owner: `RoadBuildStartupSystem`, `RoadBuildDependencySystem`, `RoadBuildDisposalSystem`, and `RoadBuildCompositionSystemHelper`.
+  - Target owner: `RoadBuildStartupSystem`, `RoadBuildDependencyCompositionSystemHelper`, `RoadBuildDisposalSystem`, and `RoadBuildCompositionSystemHelper`.
 - Road build commands:
   - `SetBuildMode`, `ActivateRoadBuildMode`, `ConfirmRoadBuildSession`, `CancelRoadBuildSession`, `ExitBuildMode`
   - Target owner: `RoadBuildCommandCompositionSystemHelper`; static `SetBuildMode` was deleted in step 8.
@@ -143,10 +143,10 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Added `RoadBuildStartupConfigMustLiveInStartupSystem` to the focused architecture batch.
 
 6. Complete: Extract road dependency binding
-   - Create `RoadBuildDependencySystem`.
+   - Create `RoadBuildDependencyCompositionSystemHelper`.
    - Own current building interaction dependency, building interaction context, main menu/minimap dependency, runtime grid blocker dependency, and dependency rebinding.
    - Expected output: `BindDependencies`, minimap configuration, and runtime blocker storage leave the temporary holder.
-   - Added `RoadBuildDependencySystem` as the owner for road dependency state and dependency rebinding.
+   - Added `RoadBuildDependencyCompositionSystemHelper` as the owner for road dependency state and dependency rebinding.
    - `RoadBuildRuntimeStateSystem` now delegates initial building-interaction binding and later menu/runtime blocker rebinding through the dependency boundary.
    - Added `RoadBuildDependenciesMustLiveInDependencySystem` to the focused architecture batch.
 
@@ -361,7 +361,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 - Step 3 complete: road child-system construction moved to `RoadBuildCompositionSourceSystem`; the temporary holder now consumes a source object instead of constructing child systems directly.
 - Step 4 complete: `RoadBuildCompositionSystemHelper.Result` no longer exposes `RoadState`; only composition keeps a private temporary `_roadState` bridge for bind methods.
 - Step 5 complete: road startup/config application moved to `RoadBuildStartupSystem`; the temporary holder no longer owns serialized config/cache fields, config projection, root creation, or variant-cache warmup.
-- Step 6 complete: road dependency storage and rebinding moved to `RoadBuildDependencySystem`; the temporary holder no longer stores building interaction, menu, minimap, or runtime-grid blocker dependencies directly.
+- Step 6 complete: road dependency storage and rebinding moved to `RoadBuildDependencyCompositionSystemHelper`; the temporary holder no longer stores building interaction, menu, minimap, or runtime-grid blocker dependencies directly.
 - Step 7 complete: road read predicates and labels moved to `RoadBuildReadModelCompositionSystemHelper`; composition now returns the source-owned read model instead of configuring facade getter delegates.
 - Step 8 complete: deleted the temporary static `RoadBuildRuntimeStateSystem.SetBuildMode` bridge; runtime build-mode changes must stay on `RoadBuildCommandCompositionSystemHelper`/explicit command contexts.
 - Step 9 complete: chunk, preview, and special-road visual context construction moved to `RoadBuildVisualContextSystem`; visual behavior remains in the existing visual systems.

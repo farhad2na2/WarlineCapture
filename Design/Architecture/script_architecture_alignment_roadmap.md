@@ -37,7 +37,7 @@ Current status:
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyInteractionSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildInteractionCompositionSystemHelper.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyPlacementSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildBuildingPlacementCompositionSystemHelper.cs`
 - [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyPlacementVisualSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildPlacementVisualSystem.cs`
-- [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyStorageSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildPlacementStorageSystem.cs`
+- [x] `Assets/Game/Scripts/Systems/BuildingRoadLegacyStorageSystem.cs` -> `Assets/Game/Scripts/Systems/RoadBuildPlacementStorageCompositionSystemHelper.cs`
 - [x] `Assets/Game/Scripts/UI/Shell/UILegacyGameStartSystem.cs` -> `Assets/Game/Scripts/UI/Shell/UIGameStartButtonView.cs`
 
 Notes:
@@ -187,7 +187,7 @@ Candidate first-pass files:
 - [x] Add compile and targeted road/build placement validation.
 
 Candidate target names:
-- `BuildingRoadLegacyStorageSystem` -> `RoadBuildPlacementStorageSystem`
+- `BuildingRoadLegacyStorageSystem` -> `RoadBuildPlacementStorageCompositionSystemHelper`
 - `BuildingRoadLegacyDefinitionSystem` -> `RoadBuildDefinitionProjectionSystem`
 - `BuildingRoadLegacyPlacementVisualSystem` -> `RoadBuildPlacementVisualSystem`
 - `BuildingRoadLegacyPlacementSystem` -> `RoadBuildBuildingPlacementCompositionSystemHelper`

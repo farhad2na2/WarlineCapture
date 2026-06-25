@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class RoadBuildPlacementStorageSystem
+internal sealed class RoadBuildPlacementStorageCompositionSystemHelper
 {
     private readonly RuntimeBuildingCollection<RuntimeBuildingEntity> _runtimeBuildingSystem = new();
 

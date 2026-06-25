@@ -9,7 +9,7 @@ public sealed class RoadBuildReadModelSystem
         public readonly RoadBuildSessionSystem.State RoadBuildSessionState;
         public readonly RoadBuildInputCompositionSystemHelper RoadBuildInputCompositionSystemHelper;
         public readonly RoadBuildInputCompositionSystemHelper.State RoadBuildInputState;
-        public readonly RoadBuildPlacementStorageSystem PlacementStorageSystem;
+        public readonly RoadBuildPlacementStorageCompositionSystemHelper PlacementStorageSystem;
         public readonly RoadBuildDependencySystem.State DependencyState;
         public readonly Func<bool> IsDraggingBuildingPlacement;
 
@@ -19,7 +19,7 @@ public sealed class RoadBuildReadModelSystem
             RoadBuildSessionSystem.State roadBuildSessionState,
             RoadBuildInputCompositionSystemHelper roadBuildInputSystem,
             RoadBuildInputCompositionSystemHelper.State roadBuildInputState,
-            RoadBuildPlacementStorageSystem placementStorageSystem,
+            RoadBuildPlacementStorageCompositionSystemHelper placementStorageSystem,
             RoadBuildDependencySystem.State dependencyState,
             Func<bool> isDraggingBuildingPlacement)
         {

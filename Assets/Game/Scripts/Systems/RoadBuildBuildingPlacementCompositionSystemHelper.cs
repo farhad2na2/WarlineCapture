@@ -15,7 +15,7 @@ internal sealed class RoadBuildBuildingPlacementCompositionSystemHelper
 
     public readonly struct Context
     {
-        public readonly RoadBuildPlacementStorageSystem StorageSystem;
+        public readonly RoadBuildPlacementStorageCompositionSystemHelper StorageSystem;
         public readonly State PlacementState;
         public readonly RoadBuildPlacementVisualSystem PlacementVisualSystem;
         public readonly RoadBuildPlacementVisualSystem.State PlacementVisualState;
@@ -30,7 +30,7 @@ internal sealed class RoadBuildBuildingPlacementCompositionSystemHelper
         public readonly IsRuntimeBlockerCellDelegate IsRuntimeBlockerCell;
 
         public Context(
-            RoadBuildPlacementStorageSystem storageSystem,
+            RoadBuildPlacementStorageCompositionSystemHelper storageSystem,
             State placementState,
             RoadBuildPlacementVisualSystem placementVisualSystem,
             RoadBuildPlacementVisualSystem.State placementVisualState,

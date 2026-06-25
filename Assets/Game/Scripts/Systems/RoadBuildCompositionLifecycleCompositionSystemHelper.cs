@@ -42,7 +42,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
         source.RoadBuildDefinitionProjectionSystem.BuildDefinitions(
             source.RoadBuildStartupState.SoldierBasePrefab,
             source.RoadBuildStartupState.SoldierBaseFootprintCells,
-            source.RoadBuildPlacementStorageSystem);
+            source.RoadBuildPlacementStorageCompositionSystemHelper);
         source.RoadBuildPlacementVisualSystem?.CreatePlacementOutline(
             source.RoadBuildPlacementVisualState,
             source.RoadBuildStartupState.RuntimeRoot,

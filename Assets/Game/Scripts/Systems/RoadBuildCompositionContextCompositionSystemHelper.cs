@@ -32,7 +32,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadBuildSessionState,
             source.RoadBuildInputCompositionSystemHelper,
             source.RoadBuildInputState,
-            source.RoadBuildPlacementStorageSystem,
+            source.RoadBuildPlacementStorageCompositionSystemHelper,
             source.RoadBuildDependencyState,
             () => source.RoadBuildPlacementState.IsDraggingBuildingPlacement);
     }
@@ -74,7 +74,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
                 screenPosition),
             path => source.RoadBuildMutationSystem.CreateStroke(CreateRoadBuildMutationContext(source), path),
             path => source.RoadSurfacePlacementSystem.IsPathSurfaceValid(path),
-            () => source.RoadBuildPlacementStorageSystem.HasPendingBuildingPlacement,
+            () => source.RoadBuildPlacementStorageCompositionSystemHelper.HasPendingBuildingPlacement,
             value => source.RoadBuildBuildingPlacementCompositionSystemHelper.SetDragging(source.RoadBuildPlacementState, value),
             () => source.RoadBuildBuildingPlacementCompositionSystemHelper.SetDragging(source.RoadBuildPlacementState, false),
             strokeId => source.RoadBuildMutationSystem.DeleteStroke(CreateRoadBuildMutationContext(source), strokeId));
@@ -107,7 +107,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadPreviewPresentationSystemHelper,
             source.RoadChunkVisualSystem,
             source.RoadBuildEcsBoundaryCompositionSystemHelper,
-            source.RoadBuildPlacementStorageSystem,
+            source.RoadBuildPlacementStorageCompositionSystemHelper,
             source.RoadSpecialVisualSystem,
             source.RoadMinimapEventSystem,
             source.RoadGridProjectionSystem,
@@ -204,7 +204,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     {
         RoadBuildStartupSystem.State startupState = source.RoadBuildStartupState;
         return new RoadBuildBuildingPlacementCompositionSystemHelper.Context(
-            source.RoadBuildPlacementStorageSystem,
+            source.RoadBuildPlacementStorageCompositionSystemHelper,
             source.RoadBuildPlacementState,
             source.RoadBuildPlacementVisualSystem,
             source.RoadBuildPlacementVisualState,

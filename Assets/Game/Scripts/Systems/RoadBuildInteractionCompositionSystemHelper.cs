@@ -9,7 +9,7 @@ internal sealed class RoadBuildInteractionCompositionSystemHelper
 
     public readonly struct Context
     {
-        public readonly RoadBuildPlacementStorageSystem StorageSystem;
+        public readonly RoadBuildPlacementStorageCompositionSystemHelper StorageSystem;
         public readonly RoadBuildEcsBoundaryCompositionSystemHelper EcsSystem;
         public readonly RoadBuildEcsBoundaryCompositionSystemHelper.Context EcsContext;
         public readonly RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers;
@@ -19,7 +19,7 @@ internal sealed class RoadBuildInteractionCompositionSystemHelper
         public readonly IsPointerOverUiDelegate IsPointerOverUi;
 
         public Context(
-            RoadBuildPlacementStorageSystem storageSystem,
+            RoadBuildPlacementStorageCompositionSystemHelper storageSystem,
             RoadBuildEcsBoundaryCompositionSystemHelper ecsSystem,
             RoadBuildEcsBoundaryCompositionSystemHelper.Context ecsContext,
             RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,

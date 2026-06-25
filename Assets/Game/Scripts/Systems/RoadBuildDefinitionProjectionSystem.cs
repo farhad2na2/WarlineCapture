@@ -15,7 +15,7 @@ internal sealed partial class RoadBuildDefinitionProjectionSystem : SystemBase
     public void BuildDefinitions(
         GameObject soldierBasePrefab,
         Vector2Int soldierBaseFootprintCells,
-        RoadBuildPlacementStorageSystem storageSystem)
+        RoadBuildPlacementStorageCompositionSystemHelper storageSystem)
     {
         var soldierBaseDefinition = new BuildingDefinition
         {

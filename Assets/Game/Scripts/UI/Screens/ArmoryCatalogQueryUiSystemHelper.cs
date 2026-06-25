@@ -81,7 +81,7 @@ public readonly struct ArmoryCatalogItem
     }
 }
 
-public sealed class ArmoryCatalogQuerySystem
+public sealed class ArmoryCatalogQueryUiSystemHelper
 {
     private TryResolveUiBuildingCatalogMetadata _tryResolveBuildingMetadata;
     private TryResolveUiUnitCatalogMetadata _tryResolveUnitMetadata;

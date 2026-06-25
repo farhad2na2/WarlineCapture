@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 114 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 126 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 126 |
-| Current batch | Menu diagnostics UI helper naming batch complete |
-| Validation status | Batch 1 through Batch 103 compile and architecture validations passed by marker; Batch 84 through Batch 103 Unity validations exited cleanly; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71 through Batch 103 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 and Batch 102 building runtime boundary validations and Batch 57 production metadata validation exited cleanly; Batch 103 had no dedicated menu-diagnostics focused runner, so compile plus architecture validation covered the naming-only UI helper slice; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 115 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 125 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 125 |
+| Current batch | Armory catalog query UI helper naming batch complete |
+| Validation status | Batch 1 through Batch 104 compile and architecture validations passed by marker; Batch 84 through Batch 104 Unity validations exited cleanly; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71 through Batch 104 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 and Batch 102 building runtime boundary validations and Batch 57 production metadata validation exited cleanly; Batch 103 had no dedicated menu-diagnostics focused runner, so compile plus architecture validation covered the naming-only UI helper slice; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -1827,6 +1827,23 @@ This helper binds menu FPS/log diagnostics UI, subscribes to Unity runtime log c
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - Dedicated menu-diagnostics focused runner: not present; this naming-only UI helper slice was covered by compile plus the architecture guardrail.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch103-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=126`.
+
+## Batch 104 - Armory Catalog Query UI Helper
+
+This helper collects Armory catalog display rows from UI-prefab metadata resolvers and sorts the results for presentation. It reads prefab metadata for UI display and does not own gameplay policy.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `ArmoryCatalogQuerySystem` | `ArmoryCatalogQueryUiSystemHelper` | Queries Armory catalog prefab metadata for UI display rows. |
+
+## Batch 104 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `125`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod ArmoryCurrentContentPrefabTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch104-armory-current-content.log`: passed with `[ArmoryCurrentContentValidation] result=Passed tests=3`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch104-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=125`.
 
 ## Open Follow-Up Batches
 

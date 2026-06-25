@@ -10,7 +10,7 @@ public sealed class ArmoryContentListView : MonoBehaviour
     [SerializeField] private RectTransform contentRoot;
     [SerializeField] private ArmoryCatalogItemView itemTemplate;
 
-    private readonly ArmoryCatalogQuerySystem catalogQuerySystem = new();
+    private readonly ArmoryCatalogQueryUiSystemHelper catalogQuerySystem = new();
     private readonly List<ArmoryCatalogItem> itemScratch = new();
     private readonly List<ArmoryCatalogItemView> runtimeItems = new();
     private readonly List<ItemClickBinding> itemClickBindings = new();

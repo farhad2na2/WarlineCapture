@@ -37,9 +37,9 @@ Allowed temporary public/internal surface:
 - `public void Configure(...)`
   - Target owner: `RuntimeCityBuildingSpawnContextCompositionSystemHelper` and `RuntimeCityCompositionSystem`.
 - `public void SpawnCityImportantBuildings(...)`
-  - Target owner: coordinator delegating to `RuntimeCityHallSpawnSystem` and `RuntimeCityLandmarkSpawnSystem`.
+  - Target owner: coordinator delegating to `RuntimeCityHallSpawnPrefabSystemHelper` and `RuntimeCityLandmarkSpawnSystem`.
 - `public void EnsureCityHall(...)`
-  - Target owner: `RuntimeCityHallSpawnSystem`.
+  - Target owner: `RuntimeCityHallSpawnPrefabSystemHelper`.
 - `public IEnumerator SpawnCityBulkBuildingsRoutine(...)`
   - Target owner: `RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper`.
 - `public void SpawnCorridorEntranceBuildings(...)`
@@ -167,11 +167,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - `RuntimeCityBuildingSpawnSystem` now reads landmark offsets from the offset boundary instead of owning offset arrays.
 
 10. Complete: Extract city hall placement
-   - Create `RuntimeCityHallSpawnSystem`.
+   - Create `RuntimeCityHallSpawnPrefabSystemHelper`.
    - Move `TrySpawnHall` and `EnsureCityHall` behavior.
    - Preserve hall candidate shuffle, centered-origin search, clearance, delete-on-failed-post-validation, reservation, and failure diagnostic.
    - Expected output: city hall placement has one owner.
-   - Added `RuntimeCityHallSpawnSystem` as the city hall placement owner.
+   - Added `RuntimeCityHallSpawnPrefabSystemHelper` as the city hall placement owner.
    - Moved hall candidate shuffle, centered-origin offset search, shared spawn/reserve validation, clearance reservation, and hall failure diagnostics out of `RuntimeCityBuildingSpawnSystem`.
    - `RuntimeCityBuildingSpawnSystem.EnsureCityHall` is now only a compatibility delegate into the hall spawn boundary.
 
@@ -188,7 +188,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Update `RuntimeCityBuildingSpawnSystem.SpawnCityImportantBuildings` to call hall and landmark systems through context.
    - Remove private landmark methods from the coordinator.
    - Expected output: coordinator no longer owns landmark algorithms.
-   - `SpawnCityImportantBuildings` now directly sequences `RuntimeCityHallSpawnSystem` first and `RuntimeCityLandmarkSpawnSystem` second through the explicit context.
+   - `SpawnCityImportantBuildings` now directly sequences `RuntimeCityHallSpawnPrefabSystemHelper` first and `RuntimeCityLandmarkSpawnSystem` second through the explicit context.
    - Removed the private `EnsureCityHall` wrapper so the coordinator no longer owns private hall or landmark placement methods.
    - Added contract coverage requiring the important-building coordinator to remain delegation-only.
 

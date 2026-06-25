@@ -3,7 +3,7 @@ using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
 using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 
-internal sealed class RuntimeCityHallSpawnSystem
+internal sealed class RuntimeCityHallSpawnPrefabSystemHelper
 {
     private readonly RuntimeCityHallSpawnState _state = new();
 

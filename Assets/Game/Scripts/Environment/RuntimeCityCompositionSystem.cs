@@ -23,7 +23,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityBuildingPlacementState _fallbackRuntimeCityBuildingPlacement = new();
     private RuntimeCityLandmarkOffsetUtilitySystemHelper _runtimeCityLandmarkOffsetHelper;
     private readonly RuntimeCityLandmarkOffsetState _fallbackRuntimeCityLandmarkOffset = new();
-    private RuntimeCityHallSpawnSystem _runtimeCityHallSpawnSystem;
+    private RuntimeCityHallSpawnPrefabSystemHelper _runtimeCityHallSpawnHelper;
     private readonly RuntimeCityHallSpawnState _fallbackRuntimeCityHallSpawn = new();
     private RuntimeCityLandmarkSpawnSystem _runtimeCityLandmarkSpawnSystem;
     private readonly RuntimeCityLandmarkSpawnState _fallbackRuntimeCityLandmarkSpawn = new();
@@ -428,10 +428,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityLandmarkOffsetHelper ??= ResolveRuntimeCityLandmarkOffsetUtilitySystemHelper();
 
     private RuntimeCityHallSpawnState RuntimeCityHallSpawnState =>
-        RuntimeCityHallSpawnSystem?.State ?? _fallbackRuntimeCityHallSpawn;
+        RuntimeCityHallSpawnPrefabSystemHelper?.State ?? _fallbackRuntimeCityHallSpawn;
 
-    private RuntimeCityHallSpawnSystem RuntimeCityHallSpawnSystem =>
-        _runtimeCityHallSpawnSystem ??= ResolveRuntimeCityHallSpawnSystem();
+    private RuntimeCityHallSpawnPrefabSystemHelper RuntimeCityHallSpawnPrefabSystemHelper =>
+        _runtimeCityHallSpawnHelper ??= ResolveRuntimeCityHallSpawnPrefabSystemHelper();
 
     private RuntimeCityLandmarkSpawnState RuntimeCityLandmarkSpawnState =>
         RuntimeCityLandmarkSpawnSystem?.State ?? _fallbackRuntimeCityLandmarkSpawn;
@@ -661,9 +661,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityLandmarkOffsetUtilitySystemHelper();
     }
 
-    private static RuntimeCityHallSpawnSystem ResolveRuntimeCityHallSpawnSystem()
+    private static RuntimeCityHallSpawnPrefabSystemHelper ResolveRuntimeCityHallSpawnPrefabSystemHelper()
     {
-        return new RuntimeCityHallSpawnSystem();
+        return new RuntimeCityHallSpawnPrefabSystemHelper();
     }
 
     private static RuntimeCityLandmarkSpawnSystem ResolveRuntimeCityLandmarkSpawnSystem()

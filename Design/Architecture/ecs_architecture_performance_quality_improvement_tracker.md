@@ -534,7 +534,7 @@ Keep UI/camera input passive while converting selection state, focus lookup, com
 Purpose:
 Retire broad managed building gameplay owners instead of creating large `ISystem` replacements.
 
-- [ ] Treat `Design/Architecture/five_systembase_to_isystem_conversion_tracker.md` as the required sub-track for `BuildingSpawnSystem`, `BuildingProductionTransportBridgeSystem`, `CitizenVisibleUnitSystem`, `MapVehiclePlacementSpawnSystem`, and `CustomGameStartupSystem`.
+- [ ] Treat `Design/Architecture/five_systembase_to_isystem_conversion_tracker.md` as the required sub-track for `BuildingSpawnSystem`, `BuildingProductionTransportBridgeCompositionSystemHelper`, `CitizenVisibleUnitSystem`, `MapVehiclePlacementSpawnSystem`, and `CustomGameStartupSystem`.
 - [ ] Generate a complete building-domain `SystemBase` inventory, including placement, runtime boundary, production, selection, combat, visual, and composition systems.
 - [ ] Classify composition-only systems for RetireFold before touching gameplay behavior.
 - [ ] Convert pure placement validation/grid/session data to `ISystem` after managed preview visuals are split out.
@@ -548,7 +548,7 @@ Retire broad managed building gameplay owners instead of creating large `ISystem
 - [x] Fold Agent D `P7-0058 BuildingCombatSystem` from a disabled `SystemBase` wrapper into a plain direct-owned building combat helper and validate combat helper behavior, building composition smoke, compile, and Phase 7 architecture guard.
 - [x] Fold Agent D `P7-0059 BuildingDefinitionPrefabSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned building definition helper and validate production metadata, runtime boundary read models, building composition smoke, compile, and Phase 7 architecture guard.
 - [x] Fold Agent D `P7-0101 BuildingProductionQueueCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned building production helper and validate production request, production metadata, building composition smoke, compile, and Phase 7 architecture guard.
-- [x] Fold Agent D `P7-0103 BuildingProductionTransportBridgeSystem` from a disabled `SystemBase` wrapper into a plain direct-owned production transport bridge helper and validate production camera focus, production request, building composition smoke, compile, and Phase 7 architecture guard.
+- [x] Fold Agent D `P7-0103 BuildingProductionTransportBridgeCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned production transport bridge helper and validate production camera focus, production request, building composition smoke, compile, and Phase 7 architecture guard.
 - [x] Fold Agent D `P7-0104 BuildingProductionTransportSystem` from a disabled `SystemBase` wrapper into a plain direct-owned production transport visual helper and validate production request, production metadata, building composition smoke, compile, and Phase 7 architecture guard.
 - [x] Fold Agent D `P7-0132 BuildingSelectionSystem` from a disabled `SystemBase` wrapper into a plain direct-owned building selection helper and validate runtime building selection, building composition smoke, compile, and Phase 7 architecture guard.
 

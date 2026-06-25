@@ -13,7 +13,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
         public readonly BuildingProductionUpdateSystem ProductionUpdateSystem;
         public readonly BuildingProductionTransportSystem TransportSystem;
-        public readonly BuildingProductionTransportBridgeSystem TransportBridgeSystem;
+        public readonly BuildingProductionTransportBridgeCompositionSystemHelper TransportBridgeSystem;
         public readonly BuildingProductionSlotUtilitySystemHelper ProductionSlotSystem;
         public readonly BuildingRunwaySystem RunwaySystem;
         public readonly BuildingVisualSystem VisualSystem;
@@ -29,7 +29,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public readonly BuildingProductionRequestBoundary.RuntimeGameplayAction SuppressNextWorldClick;
         public readonly BuildingProductionRequestBoundary.RuntimeGameplayAction RefreshBuildingMarkers;
         public readonly BuildingProductionRequestBoundary.RuntimeGameplayAction ClearFocusedUnit;
-        public readonly BuildingProductionTransportBridgeSystem.BooleanQuery IsBuildDrawerOpen;
+        public readonly BuildingProductionTransportBridgeCompositionSystemHelper.BooleanQuery IsBuildDrawerOpen;
         public readonly BuildingProductionRequestBoundary.CameraFocusAction SmoothMoveCameraGroundCenterTo;
         public readonly BuildingProductionRequestBoundary.ResolveBuildingFocusWorldPositionDelegate ResolveBuildingFocusWorldPosition;
         public readonly BuildingProductionRequestBoundary.RecordUnitOrderedDelegate RecordUnitOrdered;
@@ -54,7 +54,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             BuildingProductionQueueCompositionSystemHelper productionSystem,
             BuildingProductionUpdateSystem productionUpdateSystem,
             BuildingProductionTransportSystem transportSystem,
-            BuildingProductionTransportBridgeSystem transportBridgeSystem,
+            BuildingProductionTransportBridgeCompositionSystemHelper transportBridgeSystem,
             BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
             BuildingRunwaySystem runwaySystem,
             BuildingVisualSystem visualSystem,
@@ -70,7 +70,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             BuildingProductionRequestBoundary.RuntimeGameplayAction suppressNextWorldClick,
             BuildingProductionRequestBoundary.RuntimeGameplayAction refreshBuildingMarkers,
             BuildingProductionRequestBoundary.RuntimeGameplayAction clearFocusedUnit,
-            BuildingProductionTransportBridgeSystem.BooleanQuery isBuildDrawerOpen,
+            BuildingProductionTransportBridgeCompositionSystemHelper.BooleanQuery isBuildDrawerOpen,
             BuildingProductionRequestBoundary.CameraFocusAction smoothMoveCameraGroundCenterTo,
             BuildingProductionRequestBoundary.ResolveBuildingFocusWorldPositionDelegate resolveBuildingFocusWorldPosition,
             BuildingProductionRequestBoundary.RecordUnitOrderedDelegate recordUnitOrdered,
@@ -137,7 +137,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         BuildingProductionQueueCompositionSystemHelper productionSystem,
         BuildingProductionUpdateSystem productionUpdateSystem,
         BuildingProductionTransportSystem transportSystem,
-        BuildingProductionTransportBridgeSystem transportBridgeSystem,
+        BuildingProductionTransportBridgeCompositionSystemHelper transportBridgeSystem,
         BuildingProductionSlotUtilitySystemHelper productionSlotSystem,
         BuildingRunwaySystem runwaySystem,
         BuildingVisualSystem visualSystem,
@@ -153,7 +153,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         BuildingProductionRequestBoundary.RuntimeGameplayAction suppressNextWorldClick,
         BuildingProductionRequestBoundary.RuntimeGameplayAction refreshBuildingMarkers,
         BuildingProductionRequestBoundary.RuntimeGameplayAction clearFocusedUnit,
-        BuildingProductionTransportBridgeSystem.BooleanQuery isBuildDrawerOpen,
+        BuildingProductionTransportBridgeCompositionSystemHelper.BooleanQuery isBuildDrawerOpen,
         BuildingProductionRequestBoundary.CameraFocusAction smoothMoveCameraGroundCenterTo,
         BuildingProductionRequestBoundary.ResolveBuildingFocusWorldPositionDelegate resolveBuildingFocusWorldPosition,
         BuildingProductionRequestBoundary.RecordUnitOrderedDelegate recordUnitOrdered,
@@ -246,9 +246,9 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             source.PrepareTransportDropVisual);
     }
 
-    public BuildingProductionTransportBridgeSystem.Context CreateProductionTransportBridgeContext(Source source)
+    public BuildingProductionTransportBridgeCompositionSystemHelper.Context CreateProductionTransportBridgeContext(Source source)
     {
-        return new BuildingProductionTransportBridgeSystem.Context(
+        return new BuildingProductionTransportBridgeCompositionSystemHelper.Context(
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),

@@ -40,8 +40,8 @@ internal sealed class BuildingProductionTransportSystem
         public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
         public readonly BuildingVisualSystem VisualSystem;
         public readonly BuildingRunwaySystem RunwaySystem;
-        public readonly BuildingProductionTransportBridgeSystem TransportBridgeSystem;
-        public readonly BuildingProductionTransportBridgeSystem.Context TransportBridgeContext;
+        public readonly BuildingProductionTransportBridgeCompositionSystemHelper TransportBridgeSystem;
+        public readonly BuildingProductionTransportBridgeCompositionSystemHelper.Context TransportBridgeContext;
         public readonly PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
 
         public Context(
@@ -50,8 +50,8 @@ internal sealed class BuildingProductionTransportSystem
             BuildingProductionQueueCompositionSystemHelper productionSystem,
             BuildingVisualSystem visualSystem,
             BuildingRunwaySystem runwaySystem,
-            BuildingProductionTransportBridgeSystem transportBridgeSystem,
-            BuildingProductionTransportBridgeSystem.Context transportBridgeContext,
+            BuildingProductionTransportBridgeCompositionSystemHelper transportBridgeSystem,
+            BuildingProductionTransportBridgeCompositionSystemHelper.Context transportBridgeContext,
             PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
         {
             RuntimeBuildings = runtimeBuildings;
@@ -371,7 +371,7 @@ internal sealed class BuildingProductionTransportSystem
         }
 
         EntityManager em = Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager;
-        if (!BuildingProductionTransportBridgeSystem.TryGetNewestProducedUnit(
+        if (!BuildingProductionTransportBridgeCompositionSystemHelper.TryGetNewestProducedUnit(
                 context.TransportBridgeContext,
                 building,
                 em,

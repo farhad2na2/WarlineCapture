@@ -22,7 +22,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
             source.BuildingProductionQueueCompositionSystemHelper,
             source.BuildingProductionUpdateSystem,
             source.BuildingProductionTransportSystem,
-            source.BuildingProductionTransportBridgeSystem,
+            source.BuildingProductionTransportBridgeCompositionSystemHelper,
             source.BuildingProductionSlotUtilitySystemHelper,
             source.BuildingRunwaySystem,
             source.BuildingVisualSystem,

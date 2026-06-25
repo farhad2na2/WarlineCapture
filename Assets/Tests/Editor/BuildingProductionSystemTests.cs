@@ -1314,7 +1314,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         };
 
         Vector3? requestedFocus = null;
-        BuildingProductionTransportBridgeSystem.Context context = new(
+        BuildingProductionTransportBridgeCompositionSystemHelper.Context context = new(
             null,
             null,
             null,
@@ -1323,7 +1323,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             () => true,
             worldPosition => requestedFocus = worldPosition);
 
-        Assert.IsTrue(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, building, em));
+        Assert.IsTrue(BuildingProductionTransportBridgeCompositionSystemHelper.FocusNewestPlayerProducedUnit(context, building, em));
         Assert.IsTrue(requestedFocus.HasValue);
         Assert.AreEqual(new Vector3(7f, 0f, 9f), requestedFocus.Value);
     }
@@ -1344,7 +1344,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         };
 
         bool requestedFocus = false;
-        BuildingProductionTransportBridgeSystem.Context context = new(
+        BuildingProductionTransportBridgeCompositionSystemHelper.Context context = new(
             null,
             null,
             null,
@@ -1353,7 +1353,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             () => false,
             _ => requestedFocus = true);
 
-        Assert.IsFalse(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, building, em));
+        Assert.IsFalse(BuildingProductionTransportBridgeCompositionSystemHelper.FocusNewestPlayerProducedUnit(context, building, em));
         Assert.IsFalse(requestedFocus);
     }
 
@@ -1373,7 +1373,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         };
 
         bool requestedFocus = false;
-        BuildingProductionTransportBridgeSystem.Context context = new(
+        BuildingProductionTransportBridgeCompositionSystemHelper.Context context = new(
             null,
             null,
             null,
@@ -1382,7 +1382,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             () => true,
             _ => requestedFocus = true);
 
-        Assert.IsFalse(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, building, em));
+        Assert.IsFalse(BuildingProductionTransportBridgeCompositionSystemHelper.FocusNewestPlayerProducedUnit(context, building, em));
         Assert.IsFalse(requestedFocus);
     }
 
@@ -1407,7 +1407,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         };
 
         int focusCount = 0;
-        BuildingProductionTransportBridgeSystem.Context context = new(
+        BuildingProductionTransportBridgeCompositionSystemHelper.Context context = new(
             null,
             null,
             null,
@@ -1416,8 +1416,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             () => true,
             _ => focusCount++);
 
-        Assert.IsTrue(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, unownedBuilding, em));
-        Assert.IsTrue(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, neutralBuilding, em));
+        Assert.IsTrue(BuildingProductionTransportBridgeCompositionSystemHelper.FocusNewestPlayerProducedUnit(context, unownedBuilding, em));
+        Assert.IsTrue(BuildingProductionTransportBridgeCompositionSystemHelper.FocusNewestPlayerProducedUnit(context, neutralBuilding, em));
         Assert.AreEqual(2, focusCount);
     }
 
@@ -1479,7 +1479,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 entity = boundaryEntity;
                 return true;
             });
-        BuildingProductionTransportBridgeSystem.Context context = new(
+        BuildingProductionTransportBridgeCompositionSystemHelper.Context context = new(
             null,
             null,
             null,
@@ -1488,7 +1488,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             () => true,
             worldPosition => requestedFocus = worldPosition);
 
-        Assert.IsTrue(BuildingProductionTransportBridgeSystem.FocusNewestPlayerProducedUnit(context, building, em));
+        Assert.IsTrue(BuildingProductionTransportBridgeCompositionSystemHelper.FocusNewestPlayerProducedUnit(context, building, em));
         Assert.IsTrue(requestedFocus.HasValue);
         Assert.AreEqual(new Vector3(7f, 0f, 9f), requestedFocus.Value);
         Assert.IsNull(building.ProducedUnits);

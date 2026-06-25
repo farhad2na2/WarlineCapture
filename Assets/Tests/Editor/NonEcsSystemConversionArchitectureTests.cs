@@ -143,7 +143,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
     private static readonly Dictionary<string, string> FiveSystemBaseConversionTargets = new(StringComparer.Ordinal)
     {
         ["Assets/Game/Scripts/Systems/BuildingSpawnSystem.cs"] = "BuildingSpawnSystem",
-        ["Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeSystem.cs"] = "BuildingProductionTransportBridgeSystem",
+        ["Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs"] = "BuildingProductionTransportBridgeCompositionSystemHelper",
         ["Assets/Game/Scripts/Systems/CitizenVisibleUnitSystem.cs"] = "CitizenVisibleUnitSystem",
         ["Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnSystem.cs"] = "MapVehiclePlacementSpawnSystem",
         ["Assets/Game/Scripts/Systems/CustomGameStartupSystem.cs"] = "CustomGameStartupSystem"

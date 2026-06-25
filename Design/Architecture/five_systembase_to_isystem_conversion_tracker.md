@@ -5,7 +5,7 @@
 Track the remaining high-risk managed `SystemBase` boundaries that were intentionally left out of the completed post-roadmap prefab conversion track:
 
 - `BuildingSpawnSystem`
-- `BuildingProductionTransportBridgeSystem`
+- `BuildingProductionTransportBridgeCompositionSystemHelper`
 - `CitizenVisibleUnitSystem`
 - `MapVehiclePlacementSpawnSystem`
 - `CustomGameStartupSystem`
@@ -32,7 +32,7 @@ The goal is to retire these broad managed runtime gameplay owners by decomposing
 | Target | Current inheritance | Main blocker | Intended end state |
 | --- | --- | --- | --- |
 | `BuildingSpawnSystem` | `SystemBase` | Fallback `Instance.transform` spawn placement reads plus managed produced-unit list/slot fallbacks when no runtime boundary is available. | Retire as a broad spawn owner. Split into `BuildingProductionSpawnRequestSystem`, `BuildingProductionSlotReservationSystem`, `BuildingProductionPlacementSystem`, `BuildingHelipadSpawnSystem`, `BuildingUnitInstantiationSystem`, and `BuildingProducedUnitStateSystem`; preview/transform projection stays passive. |
-| `BuildingProductionTransportBridgeSystem` | `SystemBase` | Uses produced-unit prefab/object data for footprint and focus decisions. | Retire as a direct bridge. Split into `BuildingProductionTransportRequestSystem`, `BuildingProductionTransportMovementSystem`, `BuildingProductionTransportFocusRequestSystem`, and `BuildingRunwayTransportSystem`; camera/UI application remains passive. |
+| `BuildingProductionTransportBridgeCompositionSystemHelper` | `SystemBase` | Uses produced-unit prefab/object data for footprint and focus decisions. | Retire as a direct bridge. Split into `BuildingProductionTransportRequestSystem`, `BuildingProductionTransportMovementSystem`, `BuildingProductionTransportFocusRequestSystem`, and `BuildingRunwayTransportSystem`; camera/UI application remains passive. |
 | `CitizenVisibleUnitSystem` | `SystemBase` | Managed visible-citizen dictionaries and immediate entity tracking after instantiate. | Retire as same-frame dictionary owner. Split into `CitizenVisibleUnitSpawnRequestSystem`, `CitizenVisibleUnitInstantiateSystem`, `CitizenVisibleUnitMovementStateSystem`, and `CitizenVisibleUnitLifetimeSystem`; presentation state remains passive. |
 | `MapVehiclePlacementSpawnSystem` | Plain direct helper | Instantiation, blocker reservation/cleanup, and completion results still run through the broad direct helper; config still has authored prefab fallback at the managed edge. | Retire as managed update wrapper. Progress/random/clearance state now lives in ECS `MapVehiclePlacementProgressState`; continue split into `MapVehiclePlacementProgressSystem`, `MapVehiclePlacementInstantiateSystem`, `MapVehiclePlacementBlockerSystem`, and `MapVehiclePlacementResultSystem`; config projection remains passive. |
 | `CustomGameStartupSystem` | `SystemBase` | Serialized startup configs and prefab/atlas/impostor projection. | Retire as serialized config/runtime startup owner. Split into `CustomGameFactionStartupSystem`, `CustomGameBuildingStartupSystem`, `CustomGameUnitStartupSystem`, and `CustomGameStartupResultSystem`; serialized config, atlas, sprite, and impostor projection remain passive. |
@@ -47,7 +47,7 @@ Estimated remaining focused engineering time:
 | Target | Remaining work shape | Estimate |
 | --- | --- | --- |
 | `BuildingSpawnSystem` | Finish transform/fallback removal, then extract six focused production spawn processors and retire the broad owner. | 4-7 hours |
-| `BuildingProductionTransportBridgeSystem` | Move produced-unit transport, runway movement, and focus requests to ECS data while keeping camera/UI passive. | 2-4 hours |
+| `BuildingProductionTransportBridgeCompositionSystemHelper` | Move produced-unit transport, runway movement, and focus requests to ECS data while keeping camera/UI passive. | 2-4 hours |
 | `CitizenVisibleUnitSystem` | Replace same-frame dictionaries with request/state/lifetime systems and passive presentation state. | 4-7 hours |
 | `MapVehiclePlacementSpawnSystem` | Move config progress, instantiation, blocker ownership, and completion results into ECS. | 4-6 hours |
 | `CustomGameStartupSystem` | Split serialized config projection from faction, building, unit, and result startup processors. | 5-9 hours |
@@ -93,7 +93,7 @@ Baseline audit notes:
 Direct call sites:
 
 - `BuildingSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, included in `BuildingGameplayResultCompositionSystemHelper`, invoked through `BuildingProductionRuntimeTickCompositionSystemHelper`, `BuildingProductionTickCompositionSystemHelper`, `BuildingProductionCompositionSystemHelper`, and `BuildingRuntimeContextSystem.CreateBuildingSpawnContext`; focused tests call `ResolveProducedUnitFaction`.
-- `BuildingProductionTransportBridgeSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, passed through `BuildingProductionContextCompositionSystemHelper` and `BuildingProductionTransportSystem`; focused production tests call `FocusNewestPlayerProducedUnit`.
+- `BuildingProductionTransportBridgeCompositionSystemHelper`: held by `BuildingGameplaySourceCompositionSystemHelper`, passed through `BuildingProductionContextCompositionSystemHelper` and `BuildingProductionTransportSystem`; focused production tests call `FocusNewestPlayerProducedUnit`.
 - `CitizenVisibleUnitSystem`: constructed by `CitizenPopulationCompositionSystem` and directly constructed by `CitizenVisibleUnitSystemTests`.
 - `MapVehiclePlacementSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, invoked by `BuildingGameplayCompositionSystemHelper` map placement update callbacks; blocker cleanup helpers are directly covered by `UnitMovementBlockerValidationTests`.
 - `CustomGameStartupSystem`: resolved by `MatchBootstrapSystem` through `World.GetOrCreateSystemManaged<CustomGameStartupSystem>()`; focused tests resolve it through `GetOrCreateSystemManaged`.
@@ -101,7 +101,7 @@ Direct call sites:
 Managed prefab/config inputs:
 
 - `BuildingSpawnSystem`: `GetProductionPrefabDelegate`, `GameObject spawnUnitPrefab`, `ProducedUnitPrefabs` fallback map, and source-key derivation from managed prefab names.
-- `BuildingProductionTransportBridgeSystem`: `GameObject spawnUnitPrefab` input and footprint resolution from managed prefab source key.
+- `BuildingProductionTransportBridgeCompositionSystemHelper`: `GameObject spawnUnitPrefab` input and footprint resolution from managed prefab source key.
 - `CitizenVisibleUnitSystem`: no direct `GameObject` grep hit in the target file, but it remains a managed same-frame presentation bridge because visible citizens are instantiated and tracked immediately.
 - `MapVehiclePlacementSpawnSystem`: no direct `GameObject` grep hit in the target file after `vehicleSourceKey`, but config projection still derives missing keys from authored `VehiclePrefab`.
 - `CustomGameStartupSystem`: `UnitSpawnPrefabs`, `GameObject firstUnitPrefab`, `TryResolveConvertedPrefabEntity(GameObject)`, impostor atlas lookup by prefab, building lookup key from prefab.
@@ -125,7 +125,7 @@ Managed fallback paths to keep outside `ISystem` code:
 Current grep snapshot for the five target files:
 
 - `SystemBase`: all five target files.
-- `GameObject`: `BuildingSpawnSystem`, `BuildingProductionTransportBridgeSystem`, `CustomGameStartupSystem`.
+- `GameObject`: `BuildingSpawnSystem`, `BuildingProductionTransportBridgeCompositionSystemHelper`, `CustomGameStartupSystem`.
 - `UnityEngine.Object`: none by direct target-file grep.
 - `List<GameObject>`: none by direct target-file grep.
 - `Dictionary<..., GameObject>`: `BuildingSpawnSystem`.
@@ -168,7 +168,7 @@ Phase 1 footprint read-model notes:
 
 - `UnitFootprint` is the compact ECS read model for unit dimensions and is keyed by prefab entity once a source key resolves to an entity.
 - `UnitGridAuthoring.Baker` writes `UnitFootprint` onto every baked unit prefab entity from the resolved configured footprint.
-- `BuildingProductionTransportBridgeSystem` already resolves the production source key through `BuildingSpawnPrefabSystem.TryGetSpawnUnitPrefabEntity` and reads `UnitFootprint` from the prefab entity.
+- `BuildingProductionTransportBridgeCompositionSystemHelper` already resolves the production source key through `BuildingSpawnPrefabSystem.TryGetSpawnUnitPrefabEntity` and reads `UnitFootprint` from the prefab entity.
 - `MapVehiclePlacementSpawnSystem` already resolves placement source key through `RuntimeUnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity` and reads `UnitFootprint` from the prefab entity.
 - `InitialUnitsSpawnSystem` already reads `UnitFootprint` directly from the initial unit prefab entity when planning startup placement.
 - No separate source-key-to-footprint table is needed for the current conversion path; later slices can use source key to prefab entity to `UnitFootprint`.
@@ -269,7 +269,7 @@ Phase 2 random-state notes:
 - Moved production spawn random state ownership from `BuildingSpawnSystem` to `BuildingGameplaySourceCompositionSystemHelper.BuildingSpawnRandomState`.
 - `BuildingProductionTickCompositionSystemHelper` now passes random state through the existing get/set delegates against the composition source instead of the target spawn system.
 - Removed the hidden-random `BuildingSpawnSystem.TryResolveAvailableFactionHelipadSpawn` overloads; callers now pass `ref uint randomState`.
-- Threaded caller-owned random state through `BuildingProductionTransportSystem.TryEnsureActiveProductionTransport` and `BuildingProductionTransportBridgeSystem.TryResolveAvailableFactionHelipadSpawn` for air-self helipad resolution.
+- Threaded caller-owned random state through `BuildingProductionTransportSystem.TryEnsureActiveProductionTransport` and `BuildingProductionTransportBridgeCompositionSystemHelper.TryResolveAvailableFactionHelipadSpawn` for air-self helipad resolution.
 - Updated the initial-faction helipad smoke to pass explicit random state.
 - Shadow validation used `/Users/farhad/Projects/WarlineCapture-CodexUnity1` because the main project had already failed both Unity database write attempts in this run.
 - Passed: `[BuildingProductionRequestValidation] result=Passed tests=12`.
@@ -383,7 +383,7 @@ Phase 2 managed fallback field removal notes:
 
 Phase 2 produced-unit read-model reader migration notes:
 
-- `BuildingProductionTransportBridgeSystem` now resolves the newest produced unit from `BuildingProducedUnitReadModel` before falling back to `RuntimeBuildingEntity.ProducedUnits`.
+- `BuildingProductionTransportBridgeCompositionSystemHelper` now resolves the newest produced unit from `BuildingProducedUnitReadModel` before falling back to `RuntimeBuildingEntity.ProducedUnits`.
 - `MoveNewestProducedUnitToCell`, `AlignNewestProducedUnitRotation`, and `FocusNewestPlayerProducedUnit` all use the shared newest-produced-unit helper, reducing reliance on spawn's managed produced-unit list mirror.
 - `BuildingProductionTransportSystem.ConfigureNewestRunwayUnit` now uses the bridge helper instead of directly reading `RuntimeBuildingEntity.ProducedUnits`.
 - Added `BuildingProductionQueueCompositionSystemHelperTests.FocusNewestPlayerProducedUnit_UsesProducedUnitReadModel`, which focuses a produced unit from the ECS boundary read model while the runtime building has no produced-unit list.
@@ -440,7 +440,7 @@ Phase 2 produced-unit list fallback removal notes:
 - Passed: main-project `[BuildingProductionRequestValidation] result=Passed tests=21`.
 - Passed: main-project `[BuildingUiQueryValidation] result=Passed tests=5`.
 
-## Phase 3: BuildingProductionTransportBridgeSystem Conversion
+## Phase 3: BuildingProductionTransportBridgeCompositionSystemHelper Conversion
 
 Purpose:
 Split production transport focus and movement behavior into ECS processors without managed prefab/footprint dependence.
@@ -455,7 +455,7 @@ Split production transport focus and movement behavior into ECS processors witho
 - [ ] Extract focus request emission into `BuildingProductionTransportFocusRequestSystem`.
 - [ ] Extract runway-specific rotation and movement behavior into `BuildingRunwayTransportSystem`.
 - [ ] Keep actual camera/UI focus application in a passive presentation boundary.
-- [ ] Retire or rename the remaining `BuildingProductionTransportBridgeSystem` shell so it no longer owns runtime gameplay execution.
+- [ ] Retire or rename the remaining `BuildingProductionTransportBridgeCompositionSystemHelper` shell so it no longer owns runtime gameplay execution.
 - [ ] Update production transport composition to use ECS request/result data instead of direct managed bridge calls.
 - [ ] Remove obsolete prefab source-key helper methods from this file after callers stop passing `GameObject`.
 - [ ] Run `BuildingProductionRequestValidation`.

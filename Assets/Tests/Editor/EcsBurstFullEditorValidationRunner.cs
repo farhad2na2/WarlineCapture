@@ -20,7 +20,7 @@ public static class EcsBurstFullEditorValidationRunner
         nameof(AIProductionValidationTests),
         nameof(AISquadValidationTests),
         nameof(AITargetingValidationTests),
-        nameof(MatchHudMinimapProjectionSystemTests),
+        nameof(MatchHudMinimapProjectionUiSystemHelperTests),
     };
 
     public static void RunAllNonExplicitTests()

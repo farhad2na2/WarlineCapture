@@ -150,7 +150,7 @@ Read-model and request-processing systems should be `ISystem` by default. If any
 
 ### Phase 0 - Contract And Inventory
 
-- [x] Inventory current `MatchHudMinimapView`, `MatchHudMinimapInputUiSystemHelper`, `MatchHudMinimapProjectionSystem`, marker read model, and shell binding.
+- [x] Inventory current `MatchHudMinimapView`, `MatchHudMinimapInputUiSystemHelper`, `MatchHudMinimapProjectionUiSystemHelper`, marker read model, and shell binding.
 - [x] Inventory Build Drawer popup chrome, close button, modal overlay, and popup motion ownership.
 - [x] Identify which current minimap behavior moves to full-screen map and which remains in HUD.
 - [x] Decide whether to split or rename the existing non-ECS `MatchHudMinimapInputUiSystemHelper` so no new bare non-ECS `*System` debt is added.
@@ -236,7 +236,7 @@ Done criteria:
 
 Exact commands should be filled in during implementation. Expected validation set:
 
-- Focused projection tests for `MatchHudMinimapProjectionSystem` or the renamed projection owner.
+- Focused projection tests for `MatchHudMinimapProjectionUiSystemHelper` or the renamed projection owner.
 - Focused prefab wiring tests for `SCN08_MatchHudContent` and the new full-screen map popup.
 - Canvas Match smoke/FPS validation.
 - Architecture guardrails:
@@ -263,8 +263,8 @@ Validation result:
 
 Attempted validation not yet accepted:
 
-- `"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchHudMinimapProjectionSystemTests.RunFocusedValidation -logFile /tmp/warlinecapture-fullmap-minimap-projection.log`
-- Result: failed existing `CameraProjectionHelpersDoNotAllocateAfterWarmup` allocation assertion in `Assets/Tests/Editor/MatchHudMinimapProjectionSystemTests.cs:179`. The failure is in the focused projection allocation validation and remains part of the Phase 1/5 validation gap.
+- `"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchHudMinimapProjectionUiSystemHelperTests.RunFocusedValidation -logFile /tmp/warlinecapture-fullmap-minimap-projection.log`
+- Result: failed existing `CameraProjectionHelpersDoNotAllocateAfterWarmup` allocation assertion in `Assets/Tests/Editor/MatchHudMinimapProjectionUiSystemHelperTests.cs:179`. The failure is in the focused projection allocation validation and remains part of the Phase 1/5 validation gap.
 - `"/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity" -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchHudFullMapPopupPrefabSetup.Apply -logFile /tmp/warlinecapture-fullmap-popup-apply.log`
 - Result: blocked because another Unity instance currently has `/Users/farhad/Projects/WarlineCapture` open. The popup prefab was patched directly to match the generator values; re-run the apply/validate/smoke once the editor releases the project lock.
 

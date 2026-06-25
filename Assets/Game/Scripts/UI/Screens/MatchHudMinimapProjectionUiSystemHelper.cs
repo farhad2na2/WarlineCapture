@@ -22,7 +22,7 @@ public readonly struct MatchHudMinimapProjectionGrid
     }
 }
 
-public static class MatchHudMinimapProjectionSystem
+public static class MatchHudMinimapProjectionUiSystemHelper
 {
     private const float MinLocalWindowHeight = 160f;
     private const float LocalWindowVisibleScale = 4.5f;

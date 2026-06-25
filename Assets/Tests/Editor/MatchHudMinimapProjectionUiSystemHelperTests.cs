@@ -5,13 +5,13 @@ using UnityEngine.Rendering;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
 
-public sealed class MatchHudMinimapProjectionSystemTests
+public sealed class MatchHudMinimapProjectionUiSystemHelperTests
 {
     public static void RunFocusedValidation()
     {
         try
         {
-            var tests = new MatchHudMinimapProjectionSystemTests();
+            var tests = new MatchHudMinimapProjectionUiSystemHelperTests();
             tests.WorldAndNormalizedProjectionRoundTripUsesGridBounds();
             tests.CameraViewportRectProjectsToNormalizedMapRect();
             tests.CameraCenteredGridUsesLocalWindowAroundCamera();
@@ -39,11 +39,11 @@ public sealed class MatchHudMinimapProjectionSystemTests
         MatchHudMinimapProjectionGrid grid = new(new Vector3(10f, 2f, 20f), 100f, 200f);
         Vector3 world = new(60f, 99f, 120f);
 
-        Assert.IsTrue(MatchHudMinimapProjectionSystem.TryWorldToNormalized(grid, world, out Vector2 normalized));
+        Assert.IsTrue(MatchHudMinimapProjectionUiSystemHelper.TryWorldToNormalized(grid, world, out Vector2 normalized));
         Assert.AreEqual(0.5f, normalized.x, 0.0001f);
         Assert.AreEqual(0.5f, normalized.y, 0.0001f);
 
-        Vector3 roundTrip = MatchHudMinimapProjectionSystem.NormalizedToWorld(grid, normalized);
+        Vector3 roundTrip = MatchHudMinimapProjectionUiSystemHelper.NormalizedToWorld(grid, normalized);
         Assert.AreEqual(60f, roundTrip.x, 0.0001f);
         Assert.AreEqual(2f, roundTrip.y, 0.0001f);
         Assert.AreEqual(120f, roundTrip.z, 0.0001f);
@@ -63,7 +63,7 @@ public sealed class MatchHudMinimapProjectionSystemTests
             camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
 
             MatchHudMinimapProjectionGrid grid = new(Vector3.zero, 100f, 100f);
-            Assert.IsTrue(MatchHudMinimapProjectionSystem.TryGetCameraViewportRect(camera, grid, out Rect rect));
+            Assert.IsTrue(MatchHudMinimapProjectionUiSystemHelper.TryGetCameraViewportRect(camera, grid, out Rect rect));
             Assert.AreEqual(0.25f, rect.xMin, 0.01f);
             Assert.AreEqual(0.25f, rect.yMin, 0.01f);
             Assert.AreEqual(0.5f, rect.width, 0.01f);
@@ -89,7 +89,7 @@ public sealed class MatchHudMinimapProjectionSystemTests
             camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
             MatchHudMinimapGridModel grid = CreateGridModel(100, 100, 10f);
 
-            MatchHudMinimapProjectionGrid localGrid = MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(grid, camera, 1.5f);
+            MatchHudMinimapProjectionGrid localGrid = MatchHudMinimapProjectionUiSystemHelper.CreateCameraCenteredGrid(grid, camera, 1.5f);
 
             Assert.Less(localGrid.Width, 1000f);
             Assert.Less(localGrid.Height, 1000f);
@@ -118,9 +118,9 @@ public sealed class MatchHudMinimapProjectionSystemTests
             camera.transform.rotation = Quaternion.Euler(60f, 0f, 0f);
             MatchHudMinimapGridModel grid = CreateGridModel(100, 100, 10f);
 
-            MatchHudMinimapProjectionGrid localGrid = MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(grid, camera, 1.5f);
+            MatchHudMinimapProjectionGrid localGrid = MatchHudMinimapProjectionUiSystemHelper.CreateCameraCenteredGrid(grid, camera, 1.5f);
 
-            Assert.IsTrue(MatchHudMinimapProjectionSystem.TryGetCameraViewportRect(camera, localGrid, out Rect rect));
+            Assert.IsTrue(MatchHudMinimapProjectionUiSystemHelper.TryGetCameraViewportRect(camera, localGrid, out Rect rect));
             Assert.AreEqual(0.5f, rect.center.x, 0.03f);
             Assert.AreEqual(0.5f, rect.center.y, 0.03f);
         }
@@ -144,10 +144,10 @@ public sealed class MatchHudMinimapProjectionSystemTests
             camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
             MatchHudMinimapGridModel grid = CreateGridModel(100, 100, 10f);
 
-            MatchHudMinimapProjectionGrid localGrid = MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(grid, camera, 1.5f);
+            MatchHudMinimapProjectionGrid localGrid = MatchHudMinimapProjectionUiSystemHelper.CreateCameraCenteredGrid(grid, camera, 1.5f);
 
             Assert.Less(localGrid.Origin.x, 0f);
-            Assert.IsTrue(MatchHudMinimapProjectionSystem.TryGetCameraViewportRect(camera, localGrid, out Rect rect));
+            Assert.IsTrue(MatchHudMinimapProjectionUiSystemHelper.TryGetCameraViewportRect(camera, localGrid, out Rect rect));
             Assert.AreEqual(0.5f, rect.center.x, 0.01f);
             Assert.AreEqual(0.5f, rect.center.y, 0.01f);
         }
@@ -172,8 +172,8 @@ public sealed class MatchHudMinimapProjectionSystemTests
             MatchHudMinimapGridModel gridConfig = CreateGridModel(100, 100, 10f);
             MatchHudMinimapProjectionGrid grid = new(Vector3.zero, 1000f, 1000f);
 
-            Assert.IsTrue(MatchHudMinimapProjectionSystem.TryGetCameraViewportRect(camera, grid, out _));
-            _ = MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(gridConfig, camera, 1.5f);
+            Assert.IsTrue(MatchHudMinimapProjectionUiSystemHelper.TryGetCameraViewportRect(camera, grid, out _));
+            _ = MatchHudMinimapProjectionUiSystemHelper.CreateCameraCenteredGrid(gridConfig, camera, 1.5f);
 
             bool projected = false;
             Assert.That(() =>
@@ -181,9 +181,9 @@ public sealed class MatchHudMinimapProjectionSystemTests
                 bool result = true;
                 for (int i = 0; i < 128; i++)
                 {
-                    result &= MatchHudMinimapProjectionSystem.TryGetCameraViewportRect(camera, grid, out Rect rect);
+                    result &= MatchHudMinimapProjectionUiSystemHelper.TryGetCameraViewportRect(camera, grid, out Rect rect);
                     MatchHudMinimapProjectionGrid localGrid =
-                        MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(gridConfig, camera, 1.5f);
+                        MatchHudMinimapProjectionUiSystemHelper.CreateCameraCenteredGrid(gridConfig, camera, 1.5f);
                     result &= rect.width > 0f && rect.height > 0f && localGrid.Width > 0f && localGrid.Height > 0f;
                 }
 
@@ -208,7 +208,7 @@ public sealed class MatchHudMinimapProjectionSystemTests
             Camera camera = cameraObject.AddComponent<Camera>();
             MatchHudMinimapProjectionGrid grid = new(new Vector3(100f, 0f, 200f), 300f, 200f);
 
-            MatchHudMinimapProjectionSystem.ConfigureCaptureCamera(camera, grid, ~0);
+            MatchHudMinimapProjectionUiSystemHelper.ConfigureCaptureCamera(camera, grid, ~0);
 
             Assert.IsTrue(camera.orthographic);
             Assert.AreEqual(100f, camera.orthographicSize, 0.001f);
@@ -227,7 +227,7 @@ public sealed class MatchHudMinimapProjectionSystemTests
     {
         MatchHudMinimapGridModel grid = CreateGridModel(100, 80, 10f);
 
-        MatchHudMinimapProjectionGrid localGrid = MatchHudMinimapProjectionSystem.CreateCenteredGrid(
+        MatchHudMinimapProjectionGrid localGrid = MatchHudMinimapProjectionUiSystemHelper.CreateCenteredGrid(
             grid,
             new Vector3(-200f, 0f, 2000f),
             new Vector2(120f, 100f),
@@ -244,7 +244,7 @@ public sealed class MatchHudMinimapProjectionSystemTests
     {
         MatchHudMinimapGridModel grid = CreateGridModel(100, 80, 10f);
 
-        Vector3 clamped = MatchHudMinimapProjectionSystem.ClampWorldToGrid(grid, new Vector3(-50f, 999f, 1200f));
+        Vector3 clamped = MatchHudMinimapProjectionUiSystemHelper.ClampWorldToGrid(grid, new Vector3(-50f, 999f, 1200f));
 
         Assert.AreEqual(0f, clamped.x, 0.0001f);
         Assert.AreEqual(0f, clamped.y, 0.0001f);
@@ -256,7 +256,7 @@ public sealed class MatchHudMinimapProjectionSystemTests
     {
         MatchHudMinimapProjectionGrid grid = new(Vector3.zero, 100f, 50f);
 
-        Vector3 world = MatchHudMinimapProjectionSystem.NormalizedToWorld(grid, new Vector2(2f, -1f));
+        Vector3 world = MatchHudMinimapProjectionUiSystemHelper.NormalizedToWorld(grid, new Vector2(2f, -1f));
 
         Assert.AreEqual(100f, world.x, 0.0001f);
         Assert.AreEqual(0f, world.z, 0.0001f);

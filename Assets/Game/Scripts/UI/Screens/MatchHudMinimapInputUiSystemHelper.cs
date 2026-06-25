@@ -148,7 +148,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         Camera worldCamera = _selectionUiCameraSystem != null ? _selectionUiCameraSystem.WorldCamera : null;
         MatchHudMinimapProjectionGrid desiredProjectionGrid = _view.UseFullMapProjection
             ? MatchHudMinimapProjectionGrid.FromGridModel(grid)
-            : MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(
+            : MatchHudMinimapProjectionUiSystemHelper.CreateCameraCenteredGrid(
                 grid,
                 worldCamera,
                 ResolveMapAspect());
@@ -229,13 +229,13 @@ public sealed class MatchHudMinimapInputUiSystemHelper
             ? _currentProjectionGrid
             : _view != null && _view.UseFullMapProjection
                 ? MatchHudMinimapProjectionGrid.FromGridModel(grid)
-                : MatchHudMinimapProjectionSystem.CreateCameraCenteredGrid(
+                : MatchHudMinimapProjectionUiSystemHelper.CreateCameraCenteredGrid(
                     grid,
                     _selectionUiCameraSystem.WorldCamera,
                     ResolveMapAspect());
-        Vector3 focusWorld = MatchHudMinimapProjectionSystem.ClampWorldToGrid(
+        Vector3 focusWorld = MatchHudMinimapProjectionUiSystemHelper.ClampWorldToGrid(
             grid,
-            MatchHudMinimapProjectionSystem.NormalizedToWorld(projectionGrid, normalized));
+            MatchHudMinimapProjectionUiSystemHelper.NormalizedToWorld(projectionGrid, normalized));
         _selectionUiCameraSystem.MoveCameraGroundCenterTo(focusWorld);
         if (!_view.IsDraggingViewport)
         {
@@ -285,7 +285,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         if (cameraRefreshBlocked)
             return false;
 
-        if (!MatchHudMinimapProjectionSystem.TryGetCameraViewportRect(worldCamera, _capturedProjectionGrid, out Rect capturedViewport))
+        if (!MatchHudMinimapProjectionUiSystemHelper.TryGetCameraViewportRect(worldCamera, _capturedProjectionGrid, out Rect capturedViewport))
             return true;
         if (IsViewportNearRefreshEdge(capturedViewport))
             return true;
@@ -411,7 +411,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
             return;
         }
 
-        if (MatchHudMinimapProjectionSystem.TryGetCameraViewportRect(worldCamera, projectionGrid, out Rect viewport))
+        if (MatchHudMinimapProjectionUiSystemHelper.TryGetCameraViewportRect(worldCamera, projectionGrid, out Rect viewport))
             _view.SetViewportNormalizedRect(viewport);
     }
 
@@ -431,7 +431,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         for (int i = 0; i < _markerScratch.Count && markerIndex < MaxMarkers; i++)
         {
             MatchHudMinimapMarkerModel marker = _markerScratch[i];
-            if (!MatchHudMinimapProjectionSystem.TryWorldToNormalized(grid, marker.Position, out Vector2 normalized))
+            if (!MatchHudMinimapProjectionUiSystemHelper.TryWorldToNormalized(grid, marker.Position, out Vector2 normalized))
                 continue;
             if (normalized.x < 0f || normalized.x > 1f || normalized.y < 0f || normalized.y > 1f)
                 continue;
@@ -567,7 +567,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
 
     private void CaptureMap(MatchHudMinimapProjectionGrid grid, int cullingMask)
     {
-        MatchHudMinimapProjectionSystem.ConfigureCaptureCamera(_captureCamera, grid, cullingMask);
+        MatchHudMinimapProjectionUiSystemHelper.ConfigureCaptureCamera(_captureCamera, grid, cullingMask);
 
         RenderTexture previousActive = RenderTexture.active;
         RenderTexture previousTarget = _captureCamera.targetTexture;
@@ -751,7 +751,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         for (int i = 0; i < _roadScratch.Count; i++)
         {
             MatchHudMinimapRoadCellModel road = _roadScratch[i];
-            if (!MatchHudMinimapProjectionSystem.TryWorldToNormalized(projectionGrid, road.WorldPosition, out Vector2 normalized) ||
+            if (!MatchHudMinimapProjectionUiSystemHelper.TryWorldToNormalized(projectionGrid, road.WorldPosition, out Vector2 normalized) ||
                 normalized.x < 0f ||
                 normalized.x > 1f ||
                 normalized.y < 0f ||
@@ -789,7 +789,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
                 continue;
             }
 
-            if (!MatchHudMinimapProjectionSystem.TryWorldToNormalized(projectionGrid, feature.Center, out Vector2 normalized) ||
+            if (!MatchHudMinimapProjectionUiSystemHelper.TryWorldToNormalized(projectionGrid, feature.Center, out Vector2 normalized) ||
                 normalized.x < 0f ||
                 normalized.x > 1f ||
                 normalized.y < 0f ||

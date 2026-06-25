@@ -338,7 +338,7 @@ Pathfinding integration rule:
    - Road build placement queries surface slope/height.
    - Road segments can define whether they are ground roads, bridge decks, or ramps.
    - Preserve current road build session/rollback behavior.
-   - Added `RoadSurfacePlacementSystem` to validate road paths against baked surface height delta, slope, movement mask, layer consistency, and road surface type.
+   - Added `RoadSurfacePlacementUtilitySystemHelper` to validate road paths against baked surface height delta, slope, movement mask, layer consistency, and road surface type.
    - Road input now consults an optional surface-validation delegate before creating a stroke; if no surface context is configured, current flat/no-surface road creation remains unchanged.
    - Road mutation and session snapshot/rollback ownership remain separate from surface validation.
 

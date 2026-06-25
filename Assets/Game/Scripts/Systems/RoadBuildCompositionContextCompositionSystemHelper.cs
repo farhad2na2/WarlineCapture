@@ -73,7 +73,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
                 CreateRoadBuildPlacementContext(source),
                 screenPosition),
             path => source.RoadBuildMutationCompositionSystemHelper.CreateStroke(CreateRoadBuildMutationContext(source), path),
-            path => source.RoadSurfacePlacementSystem.IsPathSurfaceValid(path),
+            path => source.RoadSurfacePlacementUtilitySystemHelper.IsPathSurfaceValid(path),
             () => source.RoadBuildPlacementStorageCompositionSystemHelper.HasPendingBuildingPlacement,
             value => source.RoadBuildBuildingPlacementCompositionSystemHelper.SetDragging(source.RoadBuildPlacementState, value),
             () => source.RoadBuildBuildingPlacementCompositionSystemHelper.SetDragging(source.RoadBuildPlacementState, false),

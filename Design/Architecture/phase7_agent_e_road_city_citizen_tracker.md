@@ -19,12 +19,12 @@ Progress snapshot:
 - Checklist progress: `109 / 109 complete (100.0%)`.
 - In progress: `0`.
 - Remaining open: `0`.
-- Current target: `Agent E naming slice complete for P7-0235 RoadRuntimeGenerationCompositionSystemHelper; continue road/city/citizen helper naming in small batches`.
+- Current target: `Agent E naming slice complete for P7-0237 RoadSurfacePlacementUtilitySystemHelper; continue road/city/citizen helper naming in small batches`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
 - Retired/folded helpers: `109`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `RoadRuntimeGenerationCompositionSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, road build command focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch169-road-build-command.log with [RoadBuildCommandRequestValidation] result=Passed tests=7 and /private/tmp/warline-non-ecs-helper-naming-batch169-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=60. Previous Batch 168 logs remain /private/tmp/warline-non-ecs-helper-naming-batch168-road-build-command.log and /private/tmp/warline-non-ecs-helper-naming-batch168-architecture.log.`
+- Validation status: `RoadSurfacePlacementUtilitySystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, map surface focused validation, road build command focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch170-map-surface.log with [MapSurfaceLayeredGridFocusedValidation] result=Passed tests=15, /private/tmp/warline-non-ecs-helper-naming-batch170-road-build-command.log with [RoadBuildCommandRequestValidation] result=Passed tests=7, and /private/tmp/warline-non-ecs-helper-naming-batch170-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=59. Previous Batch 169 logs remain /private/tmp/warline-non-ecs-helper-naming-batch169-road-build-command.log and /private/tmp/warline-non-ecs-helper-naming-batch169-architecture.log.`
 
 Owned files:
 
@@ -262,7 +262,7 @@ Remove dead wrappers instead of converting them.
 - [x] Fold and rename `P7-0228 RoadDeletePromptUiSystemHelper` from a disabled `SystemBase` wrapper into a plain road-delete prompt UI helper; existing IMGUI prompt rendering, delete/cancel actions, session prompt state, and road-build runtime callers stayed unchanged.
 - [x] Fold and rename `P7-0230 RoadMinimapEventUiSystemHelper` from a disabled `SystemBase` wrapper into a plain road-minimap event UI helper; direct source ownership, static minimap change notification, UI binding, clear/flush behavior, and road composition callers stayed unchanged.
 - [x] Fold and rename `P7-0232 RoadPathPlanningUtilitySystemHelper` from a disabled `SystemBase` wrapper into a plain road-path planning utility helper; drag-axis resolution, path building, preview-plan dirty cells/edges, preview masks, and road-build input/preview callers stayed unchanged.
-- [x] Fold `P7-0237 RoadSurfacePlacementSystem` from a disabled `SystemBase` wrapper into a plain road-surface placement helper; surface configuration, path validation, primary sample evaluation, road surface type resolution, and road-build/runtime-city callers stayed unchanged.
+- [x] Fold and rename `P7-0237 RoadSurfacePlacementUtilitySystemHelper` from a disabled `SystemBase` wrapper into a plain road-surface placement utility helper; surface configuration, path validation, primary sample evaluation, road surface type resolution, and road-build/runtime-city callers stayed unchanged.
 - [x] Fold `P7-0238 RuntimeGridBootstrapSystem` from a disabled `SystemBase` wrapper into a plain runtime-grid bootstrap helper; explicit EntityManager bootstrap, grid config projection, grid buffers, dynamic blocker/occupancy storage, path pool setup, and match-bootstrap caller behavior stayed unchanged.
 - [x] Fold `P7-0144 RuntimeCityArchwaySpawnPrefabSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city archway spawn helper; central archway placement, prefab list handling, plot spacing, reserved footprints, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0145 RuntimeCityBuildingPlacementPrefabSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city building placement helper; request/result contract, footprint lookup, spawn-and-reserve behavior, road overlap checks, reserved-footprint updates, and runtime-city composition callers stayed unchanged.

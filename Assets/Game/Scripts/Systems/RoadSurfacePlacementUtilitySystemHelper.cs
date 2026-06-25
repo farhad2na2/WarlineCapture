@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class RoadSurfacePlacementSystem
+internal sealed class RoadSurfacePlacementUtilitySystemHelper
 {
     private const float MaxRoadSurfaceHeightDelta = 0.35f;
     private const float MaxRoadSurfaceSlopeDegrees = 35f;

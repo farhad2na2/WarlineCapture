@@ -8,7 +8,7 @@ internal sealed class RuntimeCitySurfaceIntegrationUtilitySystemHelper
     private const float RuntimeCityMaxSurfaceSlopeDegrees = 45f;
 
     private readonly BuildingSurfacePlacementUtilitySystemHelper _buildingSurfacePlacementSystem = new();
-    private readonly RoadSurfacePlacementSystem _roadSurfacePlacementSystem = new();
+    private readonly RoadSurfacePlacementUtilitySystemHelper _roadSurfacePlacementSystem = new();
     private MapSurfaceComponent _surface;
     private bool _hasSurface;
 

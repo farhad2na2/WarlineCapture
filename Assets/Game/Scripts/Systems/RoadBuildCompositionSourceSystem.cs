@@ -38,7 +38,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadRuntimeGenerationSystem RoadRuntimeGenerationSystem;
     public readonly RoadRuntimeGenerationContextSystem RoadRuntimeGenerationContextSystem;
     public readonly RoadBuildMutationSystem RoadBuildMutationSystem = new();
-    public readonly RoadBuildCompositionContextSystem RoadBuildCompositionContextSystem = new();
+    public readonly RoadBuildCompositionContextCompositionSystemHelper RoadBuildCompositionContextCompositionSystemHelper = new();
     public readonly RoadBuildCompositionLifecycleSystem RoadBuildCompositionLifecycleSystem = new();
 
     public RoadBuildStartupSystem.State RoadBuildStartupState = new();

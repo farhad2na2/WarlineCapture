@@ -6,7 +6,7 @@ using RoadVisualType = RoadNetworkSystem.RoadVisualType;
 using TileConnectionMask = RoadNetworkSystem.TileConnectionMask;
 using VariantData = RoadVisualVariantSystem.VariantData;
 
-internal sealed class RoadBuildCompositionContextSystem
+internal sealed class RoadBuildCompositionContextCompositionSystemHelper
 {
     public RoadGridProjectionSystem.RoadFootprintState CreateRoadFootprintState(RoadBuildCompositionSourceSystem source)
     {

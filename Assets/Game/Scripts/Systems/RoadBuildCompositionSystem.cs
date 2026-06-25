@@ -41,7 +41,7 @@ internal sealed class RoadBuildCompositionSystem
     {
         var roadSource = new RoadBuildCompositionSourceSystem();
         _roadSource = roadSource;
-        RoadBuildCompositionContextSystem contextSystem = roadSource.RoadBuildCompositionContextSystem;
+        RoadBuildCompositionContextCompositionSystemHelper contextSystem = roadSource.RoadBuildCompositionContextCompositionSystemHelper;
         RoadBuildCompositionLifecycleSystem lifecycleSystem = roadSource.RoadBuildCompositionLifecycleSystem;
         lifecycleSystem.Init(roadSource, contextSystem, roadBuildConfig, worldCamera, runtimeUiRoot, null);
 

@@ -5,7 +5,7 @@ internal sealed class RoadBuildCompositionLifecycleSystem
 {
     public void Init(
         RoadBuildCompositionSourceSystem source,
-        RoadBuildCompositionContextSystem contextSystem,
+        RoadBuildCompositionContextCompositionSystemHelper contextSystem,
         RoadBuildSystemConfig configAsset,
         Camera sceneWorldCamera,
         Transform runtimeRoot,
@@ -69,7 +69,7 @@ internal sealed class RoadBuildCompositionLifecycleSystem
 
     public void Dispose(
         RoadBuildCompositionSourceSystem source,
-        RoadBuildCompositionContextSystem contextSystem)
+        RoadBuildCompositionContextCompositionSystemHelper contextSystem)
     {
         RoadBuildCommandCompositionSystemHelper.Context commandContext = contextSystem.CreateRoadBuildCommandContext(source);
         if (source.RoadBuildEcsBoundarySystem.TryGetEntityManager(out EntityManager entityManager))

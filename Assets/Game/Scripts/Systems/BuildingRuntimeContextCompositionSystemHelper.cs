@@ -85,7 +85,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 (grid, origin, footprint) => source.BuildingPlacementInvalidCellSystem.HasRoadInFootprint(source.BuildingPlacementStartupSystemHelper, grid, origin, footprint)),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
-            source.BuildingPlacementGridSystem.GetPlacementFootprint,
+            source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
             (definition, origin, grid, rotateVertical) => getEffectivePlacementRect(source, definition, origin, grid, rotateVertical),
             (definition, origin, footprint, rotateVertical, grid, roads, blockerData) => source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(
                 source,
@@ -107,8 +107,8 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 definition,
                 grid,
                 rotateVertical,
-                source.BuildingPlacementGridSystem.GetPlacementFootprint,
-                (origin, footprint, gridConfig) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, gridConfig, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
+                source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
+                (origin, footprint, gridConfig) => source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(origin, footprint, gridConfig, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
                 (Vector2Int origin, BuildingDefinition definition, out bool gateVertical) => source.BuildingPlacementAdapterCompositionSystemHelper.TryAlignGateToNearbyWall(
                     source,
                     origin,
@@ -262,7 +262,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
             source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,
-            (origin, footprint, grid) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, grid, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
+            (origin, footprint, grid) => source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(origin, footprint, grid, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
             building => isHouseBuilding(source, building),
             (RuntimeBuildingEntity building, out Vector3 worldPosition) => tryResolveBuildingFocusWorldPosition(source, building, out worldPosition),
             (int id, out RuntimeBuildingEntity building) => tryGetRuntimeBuilding(source, id, out building),

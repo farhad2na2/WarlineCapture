@@ -70,7 +70,7 @@ internal sealed class BuildingPlacementAdapterCompositionSystemHelper
         if (!tryGetGridData(source, out _, out GridConfig grid, out _, out _))
             return Vector2Int.zero;
 
-        return source.BuildingPlacementGridSystem.GetCenterScreenPlacementOrigin(
+        return source.BuildingPlacementGridCameraSystemHelper.GetCenterScreenPlacementOrigin(
             footprintCells,
             grid,
             source.BuildingPlacementStartupSystemHelper.WorldCamera,

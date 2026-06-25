@@ -60,7 +60,7 @@ internal partial struct BuildingGridCompositionSystem : ISystem
         out Vector2Int cell)
     {
         return source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridCell(
-            source.BuildingPlacementGridSystem,
+            source.BuildingPlacementGridCameraSystemHelper,
             source.BuildingPlacementStartupSystemHelper,
             screenPosition,
             grid,

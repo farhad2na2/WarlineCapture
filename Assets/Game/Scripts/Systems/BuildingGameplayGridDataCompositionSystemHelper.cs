@@ -50,7 +50,7 @@ internal sealed class BuildingGameplayGridDataCompositionSystemHelper
     }
 
     internal bool TryGetGridCell(
-        BuildingPlacementGridSystem gridSystem,
+        BuildingPlacementGridCameraSystemHelper gridSystem,
         BuildingPlacementStartupSystemHelper startupSystem,
         Vector2 screenPosition,
         GridConfig grid,

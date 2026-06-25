@@ -32,7 +32,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
         return new BuildingPlacementInputSystem.ActivePlacementPointerContext(
             (out GridConfig grid) => tryGetGridForPlacementInput(source, out grid),
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => tryGetGridCell(source, screenPosition, grid, out cell),
-            BuildingPlacementGridSystem.CenterCellToOrigin,
+            BuildingPlacementGridCameraSystemHelper.CenterCellToOrigin,
             BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint,
             source.BuildingGameplayDependencyCompositionSystemHelper.IsPointerOverPlacementUi,
             BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition,

@@ -18,7 +18,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
         public readonly BuildingPlacementInputSystem InputSystem;
         public readonly BuildingPlacementPreviewPresentationSystemHelper PreviewSystem;
         public readonly BuildingPlacementValidationSystem ValidationSystem;
-        public readonly BuildingPlacementGridSystem GridSystem;
+        public readonly BuildingPlacementGridCameraSystemHelper GridSystem;
         public readonly BuildingPlacementStartupSystemHelper StartupSystem;
         public readonly BuildingGameplayDependencyCompositionSystemHelper DependencySystem;
         public readonly BuildingPlacementContextCompositionSystemHelper ContextSystem;
@@ -40,7 +40,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
             BuildingPlacementInputSystem inputSystem,
             BuildingPlacementPreviewPresentationSystemHelper previewSystem,
             BuildingPlacementValidationSystem validationSystem,
-            BuildingPlacementGridSystem gridSystem,
+            BuildingPlacementGridCameraSystemHelper gridSystem,
             BuildingPlacementStartupSystemHelper startupSystem,
             BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
             BuildingPlacementContextCompositionSystemHelper contextSystem,
@@ -137,7 +137,7 @@ internal sealed class BuildingPlacementVisualUpdateCompositionSystemHelper
             grid,
             UnityEngine.Time.time,
             context.TryGetGridCell,
-            BuildingPlacementGridSystem.CenterCellToOrigin);
+            BuildingPlacementGridCameraSystemHelper.CenterCellToOrigin);
 
         if (BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(placement.Definition))
         {

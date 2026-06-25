@@ -57,7 +57,7 @@ internal sealed class BuildingRuntimeQueryCompositionSystemHelper
                 (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
                 out GridConfig grid))
         {
-            worldPosition = source.BuildingPlacementGridSystem.GetFootprintCenter(
+            worldPosition = source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(
                 building.OriginCell,
                 building.Definition.FootprintCells,
                 grid,
@@ -98,7 +98,7 @@ internal sealed class BuildingRuntimeQueryCompositionSystemHelper
             grid,
             rotateVertical,
             source.BuildingPlacementStartupSystemHelper.BuildPlaneY,
-            source.BuildingPlacementGridSystem.GetPlacementFootprint);
+            source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint);
     }
 
     public bool OverlapsAnyRuntimeBuilding(

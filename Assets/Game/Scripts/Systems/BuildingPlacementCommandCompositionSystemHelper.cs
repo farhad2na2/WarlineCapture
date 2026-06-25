@@ -156,8 +156,8 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
                 definition,
                 grid,
                 rotateVertical,
-                source.BuildingPlacementGridSystem.GetPlacementFootprint,
-                (origin, footprint, gridConfig) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, gridConfig, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
+                source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
+                (origin, footprint, gridConfig) => source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(origin, footprint, gridConfig, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
                 (Vector2Int origin, BuildingDefinition definition, out bool gateVertical) => tryAlignGateToNearbyWall(source, origin, definition, out gateVertical)),
             (definition, instance, originCell, removeOverlappingBlockers) => source.BuildingRuntimeCreationSystem.RegisterRuntimeBuilding(
                 source.BuildingRuntimeContextSystem.CreateCreationContext(createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock)),
@@ -166,7 +166,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
                 originCell,
                 removeOverlappingBlockers),
             BuildingRuntimeSpawnSystem.CloneDefinitionWithFootprint,
-            source.BuildingPlacementGridSystem.GetPlacementFootprint,
+            source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
             source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
     }
 }

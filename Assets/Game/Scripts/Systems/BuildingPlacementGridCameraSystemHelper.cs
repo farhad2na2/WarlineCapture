@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingPlacementGridSystem
+internal sealed class BuildingPlacementGridCameraSystemHelper
 {
     public Vector3 GetFootprintCenter(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid, float buildPlaneY)
     {

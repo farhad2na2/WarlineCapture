@@ -109,7 +109,7 @@ internal sealed class BuildingPlacementContextCompositionSystemHelper
         return new BuildingPlacementInputSystem.ActivePlacementPointerContext(
             source.TryGetGridForPlacementInput,
             source.TryGetGridCell,
-            BuildingPlacementGridSystem.CenterCellToOrigin,
+            BuildingPlacementGridCameraSystemHelper.CenterCellToOrigin,
             BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint,
             source.IsPointerOverPlacementUi,
             BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition,

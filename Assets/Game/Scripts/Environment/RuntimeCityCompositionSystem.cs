@@ -31,7 +31,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityBulkPlotPlanState _fallbackRuntimeCityBulkPlotPlan = new();
     private RuntimeCityEntryBuildingSpawnPrefabSystemHelper _runtimeCityEntryBuildingSpawnHelper;
     private readonly RuntimeCityEntryBuildingSpawnState _fallbackRuntimeCityEntryBuildingSpawn = new();
-    private RuntimeCityRoadsideBuildingSpawnSystem _runtimeCityRoadsideBuildingSpawnSystem;
+    private RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper _runtimeCityRoadsideBuildingSpawnHelper;
     private readonly RuntimeCityRoadsideBuildingSpawnState _fallbackRuntimeCityRoadsideBuildingSpawn = new();
     private RuntimeCityRuralBuildingSpawnSystem _runtimeCityRuralBuildingSpawnSystem;
     private readonly RuntimeCityRuralBuildingSpawnState _fallbackRuntimeCityRuralBuildingSpawn = new();
@@ -446,10 +446,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityEntryBuildingSpawnHelper ??= ResolveRuntimeCityEntryBuildingSpawnPrefabSystemHelper();
 
     private RuntimeCityRoadsideBuildingSpawnState RuntimeCityRoadsideBuildingSpawnState =>
-        RuntimeCityRoadsideBuildingSpawnSystem?.State ?? _fallbackRuntimeCityRoadsideBuildingSpawn;
+        RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper?.State ?? _fallbackRuntimeCityRoadsideBuildingSpawn;
 
-    private RuntimeCityRoadsideBuildingSpawnSystem RuntimeCityRoadsideBuildingSpawnSystem =>
-        _runtimeCityRoadsideBuildingSpawnSystem ??= ResolveRuntimeCityRoadsideBuildingSpawnSystem();
+    private RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper =>
+        _runtimeCityRoadsideBuildingSpawnHelper ??= ResolveRuntimeCityRoadsideBuildingSpawnPrefabSystemHelper();
 
     private RuntimeCityRuralBuildingSpawnState RuntimeCityRuralBuildingSpawnState =>
         RuntimeCityRuralBuildingSpawnSystem?.State ?? _fallbackRuntimeCityRuralBuildingSpawn;
@@ -676,9 +676,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityEntryBuildingSpawnPrefabSystemHelper();
     }
 
-    private static RuntimeCityRoadsideBuildingSpawnSystem ResolveRuntimeCityRoadsideBuildingSpawnSystem()
+    private static RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper ResolveRuntimeCityRoadsideBuildingSpawnPrefabSystemHelper()
     {
-        return new RuntimeCityRoadsideBuildingSpawnSystem();
+        return new RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper();
     }
 
     private static RuntimeCityRuralBuildingSpawnSystem ResolveRuntimeCityRuralBuildingSpawnSystem()

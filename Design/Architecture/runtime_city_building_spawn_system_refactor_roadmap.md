@@ -213,11 +213,11 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - `SpawnCityBulkBuildingsRoutine` still owns the same two yield points around entry building placement.
 
 15. Complete: Extract central and outer roadside placement
-   - Create `RuntimeCityRoadsideBuildingSpawnSystem`.
+   - Create `RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper`.
    - Move central shops, gas stations, outer shops, and roadside houses.
    - Preserve central shop target, gas station spacing, rural ratio split, labels, descriptions, and anchors.
    - Expected output: roadside commercial/residential placement has one owner.
-   - Added `RuntimeCityRoadsideBuildingSpawnSystem` with a `Plan` for central shop, rural house, and roadside house targets.
+   - Added `RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper` with a `Plan` for central shop, rural house, and roadside house targets.
    - Moved central shops, gas stations, outer shops, and roadside houses out of `RuntimeCityBuildingSpawnSystem`.
    - Preserved the existing four yield points around central market, gas station, outer shop, and roadside house placement.
 

@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
-using RoadsidePlan = RuntimeCityRoadsideBuildingSpawnSystem.Plan;
+using RoadsidePlan = RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper.Plan;
 
-internal sealed class RuntimeCityRoadsideBuildingSpawnSystem
+internal sealed class RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper
 {
     public readonly struct Plan
     {

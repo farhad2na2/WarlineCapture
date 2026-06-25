@@ -105,7 +105,7 @@ internal sealed class RuntimeCityBulkBuildingSpawnRoutineState
         entryBuildingSpawnSystem.PlaceEntryHouses(context, placementSystem, entryPlots, roadCellSizeInGridCells, ref rng.Value, usedPlotCells, reservedFootprints, shopAndHouseFootprints, houseFootprints);
         yield return null;
 
-        RuntimeCityRoadsideBuildingSpawnSystem.Plan roadsidePlan = roadsideBuildingSpawnSystem.CreatePlan(context);
+        RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper.Plan roadsidePlan = roadsideBuildingSpawnSystem.CreatePlan(context);
         roadsideBuildingSpawnSystem.PlaceCentralShops(context, placementSystem, centralPlots, roadsidePlan, roadCellSizeInGridCells, ref rng.Value, usedPlotCells, reservedFootprints, shopAndHouseFootprints);
         yield return null;
         roadsideBuildingSpawnSystem.PlaceGasStations(context, placementSystem, outerPlots, roadCellSizeInGridCells, ref rng.Value, usedPlotCells, reservedFootprints);

@@ -158,12 +158,12 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
 ## Phase 3: Landmarks
 
 9. Complete: Extract landmark offset policy
-   - Create `RuntimeCityLandmarkOffsetSystem`.
+   - Create `RuntimeCityLandmarkOffsetUtilitySystemHelper`.
    - Move hall, clock tower, fountain, monument, and pillar offset arrays plus hall-distance filtering.
    - Preserve offset order exactly.
    - Expected output: landmark placement order remains deterministic and testable.
-   - Added `RuntimeCityLandmarkOffsetSystem` with the exact existing hall, clock-tower, fountain, monument, and pillar offset ordering.
-   - Moved landmark hall-distance filtering into `RuntimeCityLandmarkOffsetSystem.IsTooCloseToHall`.
+   - Added `RuntimeCityLandmarkOffsetUtilitySystemHelper` with the exact existing hall, clock-tower, fountain, monument, and pillar offset ordering.
+   - Moved landmark hall-distance filtering into `RuntimeCityLandmarkOffsetUtilitySystemHelper.IsTooCloseToHall`.
    - `RuntimeCityBuildingSpawnSystem` now reads landmark offsets from the offset boundary instead of owning offset arrays.
 
 10. Complete: Extract city hall placement
@@ -433,4 +433,4 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
 - Step 6 complete: repeated building spawn/delete/reserve validation moved to `RuntimeCityBuildingPlacementPrefabSystemHelper`.
 - Step 7 complete: shared roadside/corridor plot placement moved to `RuntimeCityBuildingPlacementPrefabSystemHelper.PlaceFromPlots`.
 - Step 8 complete: shared placement paths use explicit context/config values instead of coordinator mutable field/property reads.
-- Step 9 complete: landmark offset arrays and hall-distance filtering moved to `RuntimeCityLandmarkOffsetSystem`.
+- Step 9 complete: landmark offset arrays and hall-distance filtering moved to `RuntimeCityLandmarkOffsetUtilitySystemHelper`.

@@ -21,7 +21,7 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityBuildingSpawnContextCompositionSystemHelper _runtimeCityBuildingSpawnContextHelper;
     private RuntimeCityBuildingPlacementPrefabSystemHelper _runtimeCityBuildingPlacementHelper;
     private readonly RuntimeCityBuildingPlacementState _fallbackRuntimeCityBuildingPlacement = new();
-    private RuntimeCityLandmarkOffsetSystem _runtimeCityLandmarkOffsetSystem;
+    private RuntimeCityLandmarkOffsetUtilitySystemHelper _runtimeCityLandmarkOffsetHelper;
     private readonly RuntimeCityLandmarkOffsetState _fallbackRuntimeCityLandmarkOffset = new();
     private RuntimeCityHallSpawnSystem _runtimeCityHallSpawnSystem;
     private readonly RuntimeCityHallSpawnState _fallbackRuntimeCityHallSpawn = new();
@@ -422,10 +422,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityPrefabSelectionHelper ??= ResolveRuntimeCityPrefabSelectionPrefabSystemHelper();
 
     private RuntimeCityLandmarkOffsetState RuntimeCityLandmarkOffsetState =>
-        RuntimeCityLandmarkOffsetSystem?.State ?? _fallbackRuntimeCityLandmarkOffset;
+        RuntimeCityLandmarkOffsetUtilitySystemHelper?.State ?? _fallbackRuntimeCityLandmarkOffset;
 
-    private RuntimeCityLandmarkOffsetSystem RuntimeCityLandmarkOffsetSystem =>
-        _runtimeCityLandmarkOffsetSystem ??= ResolveRuntimeCityLandmarkOffsetSystem();
+    private RuntimeCityLandmarkOffsetUtilitySystemHelper RuntimeCityLandmarkOffsetUtilitySystemHelper =>
+        _runtimeCityLandmarkOffsetHelper ??= ResolveRuntimeCityLandmarkOffsetUtilitySystemHelper();
 
     private RuntimeCityHallSpawnState RuntimeCityHallSpawnState =>
         RuntimeCityHallSpawnSystem?.State ?? _fallbackRuntimeCityHallSpawn;
@@ -656,9 +656,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityPrefabSelectionPrefabSystemHelper();
     }
 
-    private static RuntimeCityLandmarkOffsetSystem ResolveRuntimeCityLandmarkOffsetSystem()
+    private static RuntimeCityLandmarkOffsetUtilitySystemHelper ResolveRuntimeCityLandmarkOffsetUtilitySystemHelper()
     {
-        return new RuntimeCityLandmarkOffsetSystem();
+        return new RuntimeCityLandmarkOffsetUtilitySystemHelper();
     }
 
     private static RuntimeCityHallSpawnSystem ResolveRuntimeCityHallSpawnSystem()

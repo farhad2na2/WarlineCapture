@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal sealed class RuntimeCityLandmarkOffsetSystem
+internal sealed class RuntimeCityLandmarkOffsetUtilitySystemHelper
 {
     private readonly RuntimeCityLandmarkOffsetState _state = new();
 

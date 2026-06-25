@@ -7,14 +7,14 @@ public sealed class RoadBuildCommandCompositionSystemHelper
     public struct Context
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly RoadBuildSessionSystem SessionSystem;
-        public readonly RoadBuildSessionSystem.Context SessionContext;
+        public readonly RoadBuildSessionCompositionSystemHelper SessionSystem;
+        public readonly RoadBuildSessionCompositionSystemHelper.Context SessionContext;
         public readonly Action ClearRoadBuildDragState;
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            RoadBuildSessionSystem sessionSystem,
-            RoadBuildSessionSystem.Context sessionContext,
+            RoadBuildSessionCompositionSystemHelper sessionSystem,
+            RoadBuildSessionCompositionSystemHelper.Context sessionContext,
             Action clearRoadBuildDragState)
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;

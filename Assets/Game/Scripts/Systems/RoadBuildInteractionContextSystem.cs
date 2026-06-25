@@ -7,8 +7,8 @@ internal sealed class RoadBuildInteractionContextSystem
     public struct Context
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly RoadBuildSessionSystem SessionSystem;
-        public readonly RoadBuildSessionSystem.State SessionState;
+        public readonly RoadBuildSessionCompositionSystemHelper SessionSystem;
+        public readonly RoadBuildSessionCompositionSystemHelper.State SessionState;
         public readonly RoadBuildInputCompositionSystemHelper InputSystem;
         public readonly RoadBuildInputCompositionSystemHelper.State InputState;
         public readonly RoadBuildCommandCompositionSystemHelper CommandSystem;
@@ -37,8 +37,8 @@ internal sealed class RoadBuildInteractionContextSystem
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            RoadBuildSessionSystem sessionSystem,
-            RoadBuildSessionSystem.State sessionState,
+            RoadBuildSessionCompositionSystemHelper sessionSystem,
+            RoadBuildSessionCompositionSystemHelper.State sessionState,
             RoadBuildInputCompositionSystemHelper inputSystem,
             RoadBuildInputCompositionSystemHelper.State inputState,
             RoadBuildCommandCompositionSystemHelper commandSystem,
@@ -96,9 +96,9 @@ internal sealed class RoadBuildInteractionContextSystem
         }
     }
 
-    public RoadBuildSessionSystem.Context CreateSessionContext(Context context)
+    public RoadBuildSessionCompositionSystemHelper.Context CreateSessionContext(Context context)
     {
-        return new RoadBuildSessionSystem.Context(
+        return new RoadBuildSessionCompositionSystemHelper.Context(
             context.SessionState,
             context.RuntimeGameplayStateSystem,
             context.CaptureRoadBuildSessionSnapshot,

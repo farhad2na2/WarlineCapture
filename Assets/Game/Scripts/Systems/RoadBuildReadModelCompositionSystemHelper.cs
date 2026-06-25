@@ -5,8 +5,8 @@ public sealed class RoadBuildReadModelCompositionSystemHelper
     internal struct Context
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly RoadBuildSessionSystem RoadBuildSessionSystem;
-        public readonly RoadBuildSessionSystem.State RoadBuildSessionState;
+        public readonly RoadBuildSessionCompositionSystemHelper RoadBuildSessionCompositionSystemHelper;
+        public readonly RoadBuildSessionCompositionSystemHelper.State RoadBuildSessionState;
         public readonly RoadBuildInputCompositionSystemHelper RoadBuildInputCompositionSystemHelper;
         public readonly RoadBuildInputCompositionSystemHelper.State RoadBuildInputState;
         public readonly RoadBuildPlacementStorageCompositionSystemHelper PlacementStorageSystem;
@@ -15,8 +15,8 @@ public sealed class RoadBuildReadModelCompositionSystemHelper
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            RoadBuildSessionSystem roadBuildSessionSystem,
-            RoadBuildSessionSystem.State roadBuildSessionState,
+            RoadBuildSessionCompositionSystemHelper roadBuildSessionSystem,
+            RoadBuildSessionCompositionSystemHelper.State roadBuildSessionState,
             RoadBuildInputCompositionSystemHelper roadBuildInputSystem,
             RoadBuildInputCompositionSystemHelper.State roadBuildInputState,
             RoadBuildPlacementStorageCompositionSystemHelper placementStorageSystem,
@@ -24,7 +24,7 @@ public sealed class RoadBuildReadModelCompositionSystemHelper
             Func<bool> isDraggingBuildingPlacement)
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
-            RoadBuildSessionSystem = roadBuildSessionSystem;
+            RoadBuildSessionCompositionSystemHelper = roadBuildSessionSystem;
             RoadBuildSessionState = roadBuildSessionState;
             RoadBuildInputCompositionSystemHelper = roadBuildInputSystem;
             RoadBuildInputState = roadBuildInputState;
@@ -37,8 +37,8 @@ public sealed class RoadBuildReadModelCompositionSystemHelper
     private Context _context;
 
     public bool IsRoadBuildModeActive =>
-        _context.RoadBuildSessionSystem != null &&
-        _context.RoadBuildSessionSystem.IsRoadBuildModeActive(CreateSessionContext());
+        _context.RoadBuildSessionCompositionSystemHelper != null &&
+        _context.RoadBuildSessionCompositionSystemHelper.IsRoadBuildModeActive(CreateSessionContext());
 
     public bool IsDraggingBuildInteraction =>
         (_context.RoadBuildInputCompositionSystemHelper != null && _context.RoadBuildInputCompositionSystemHelper.IsDrawing(_context.RoadBuildInputState)) ||
@@ -123,8 +123,8 @@ public sealed class RoadBuildReadModelCompositionSystemHelper
     {
         get
         {
-            if (_context.RoadBuildSessionSystem != null &&
-                _context.RoadBuildSessionSystem.IsActiveTool(_context.RoadBuildSessionState, RoadBuildSessionSystem.BuildToolMode.Road))
+            if (_context.RoadBuildSessionCompositionSystemHelper != null &&
+                _context.RoadBuildSessionCompositionSystemHelper.IsActiveTool(_context.RoadBuildSessionState, RoadBuildSessionCompositionSystemHelper.BuildToolMode.Road))
             {
                 return "Road build mode active";
             }
@@ -147,9 +147,9 @@ public sealed class RoadBuildReadModelCompositionSystemHelper
         _context = default;
     }
 
-    private RoadBuildSessionSystem.Context CreateSessionContext()
+    private RoadBuildSessionCompositionSystemHelper.Context CreateSessionContext()
     {
-        return new RoadBuildSessionSystem.Context(
+        return new RoadBuildSessionCompositionSystemHelper.Context(
             _context.RoadBuildSessionState,
             _context.RuntimeGameplayStateSystem,
             null,

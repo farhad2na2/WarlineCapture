@@ -58,7 +58,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
             accepted: true);
         Assert.IsTrue(state.RuntimeGameplayStateSystem.BuildModeActive);
         Assert.IsFalse(state.RuntimeGameplayStateSystem.SelectionModeActive);
-        Assert.AreEqual(RoadBuildSessionSystem.BuildToolMode.Road, state.SessionState.ActiveBuildTool);
+        Assert.AreEqual(RoadBuildSessionCompositionSystemHelper.BuildToolMode.Road, state.SessionState.ActiveBuildTool);
         Assert.AreSame(state.CapturedSnapshot, state.SessionState.RoadBuildSessionSnapshot);
         Assert.AreEqual(1, state.CaptureSnapshotCount);
         Assert.AreEqual(1, state.ApplyBuildCommandModeCount);
@@ -88,7 +88,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
             requestId,
             RoadBuildCommandRequestElement.KindEnterRoadBuildMode,
             accepted: true);
-        Assert.AreEqual(RoadBuildSessionSystem.BuildToolMode.Road, state.SessionState.ActiveBuildTool);
+        Assert.AreEqual(RoadBuildSessionCompositionSystemHelper.BuildToolMode.Road, state.SessionState.ActiveBuildTool);
         Assert.AreEqual(1, state.CaptureSnapshotCount);
         Assert.AreEqual(1, state.ApplyBuildCommandModeCount);
         AssertRequestBufferCleared(world.EntityManager);
@@ -145,7 +145,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
         using World world = new("RoadBuildCommandExitTest");
         RoadBuildCommandTestState state = new();
         state.RuntimeGameplayStateSystem.BuildModeActive = true;
-        state.SessionState.ActiveBuildTool = RoadBuildSessionSystem.BuildToolMode.Road;
+        state.SessionState.ActiveBuildTool = RoadBuildSessionCompositionSystemHelper.BuildToolMode.Road;
         state.SessionState.PendingDeleteStrokeId = 7;
         state.SessionState.PendingDeleteMessage = "Delete road?";
 
@@ -159,7 +159,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
             RoadBuildCommandRequestElement.KindExitBuildMode,
             accepted: true);
         Assert.IsFalse(state.RuntimeGameplayStateSystem.BuildModeActive);
-        Assert.AreEqual(RoadBuildSessionSystem.BuildToolMode.None, state.SessionState.ActiveBuildTool);
+        Assert.AreEqual(RoadBuildSessionCompositionSystemHelper.BuildToolMode.None, state.SessionState.ActiveBuildTool);
         Assert.IsNull(state.SessionState.PendingDeleteStrokeId);
         Assert.IsNull(state.SessionState.PendingDeleteMessage);
         Assert.AreEqual(2, state.SessionState.SkipBuildClickFrames);
@@ -198,7 +198,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
             RoadBuildCommandRequestElement.KindEnterRoadBuildMode,
             accepted: true);
         Assert.IsTrue(state.RuntimeGameplayStateSystem.BuildModeActive);
-        Assert.AreEqual(RoadBuildSessionSystem.BuildToolMode.Road, state.SessionState.ActiveBuildTool);
+        Assert.AreEqual(RoadBuildSessionCompositionSystemHelper.BuildToolMode.Road, state.SessionState.ActiveBuildTool);
         Assert.AreEqual(1, state.CaptureSnapshotCount);
         AssertRequestBufferCleared(world.EntityManager);
     }
@@ -209,14 +209,14 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
         using World world = new("RoadBuildCommandEnqueueProcessExitTest");
         RoadBuildCommandTestState state = new();
         state.RuntimeGameplayStateSystem.BuildModeActive = true;
-        state.SessionState.ActiveBuildTool = RoadBuildSessionSystem.BuildToolMode.Road;
+        state.SessionState.ActiveBuildTool = RoadBuildSessionCompositionSystemHelper.BuildToolMode.Road;
 
         Assert.IsTrue(state.CommandSystem.EnqueueAndProcessExitBuildMode(
             world.EntityManager,
             state.CommandContext));
 
         Assert.IsFalse(state.RuntimeGameplayStateSystem.BuildModeActive);
-        Assert.AreEqual(RoadBuildSessionSystem.BuildToolMode.None, state.SessionState.ActiveBuildTool);
+        Assert.AreEqual(RoadBuildSessionCompositionSystemHelper.BuildToolMode.None, state.SessionState.ActiveBuildTool);
         Assert.AreEqual(1, state.ClearRoadBuildDragStateCount);
         AssertRequestBufferCleared(world.EntityManager);
     }
@@ -261,8 +261,8 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
     private sealed class RoadBuildCommandTestState
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
-        public readonly RoadBuildSessionSystem SessionSystem = new();
-        public readonly RoadBuildSessionSystem.State SessionState = new();
+        public readonly RoadBuildSessionCompositionSystemHelper SessionSystem = new();
+        public readonly RoadBuildSessionCompositionSystemHelper.State SessionState = new();
         public readonly RoadBuildCommandCompositionSystemHelper CommandSystem = new();
         public readonly RoadNetworkSystem.Snapshot CapturedSnapshot = new();
         public readonly RoadBuildCommandCompositionSystemHelper.Context CommandContext;
@@ -283,7 +283,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
         public RoadBuildCommandTestState()
         {
             RuntimeGameplayStateSystem.PlayRequested = true;
-            RoadBuildSessionSystem.Context sessionContext = new(
+            RoadBuildSessionCompositionSystemHelper.Context sessionContext = new(
                 SessionState,
                 RuntimeGameplayStateSystem,
                 () =>

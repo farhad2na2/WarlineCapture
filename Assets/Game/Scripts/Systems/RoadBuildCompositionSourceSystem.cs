@@ -21,8 +21,8 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadChunkVisualSystem RoadChunkVisualSystem;
     public readonly RoadPreviewPresentationSystemHelper RoadPreviewPresentationSystemHelper;
     public readonly RoadSpecialVisualSystem RoadSpecialVisualSystem;
-    public readonly RoadBuildSessionSystem RoadBuildSessionSystem = new();
-    public readonly RoadBuildSessionSystem.State RoadBuildSessionState = new();
+    public readonly RoadBuildSessionCompositionSystemHelper RoadBuildSessionCompositionSystemHelper = new();
+    public readonly RoadBuildSessionCompositionSystemHelper.State RoadBuildSessionState = new();
     public readonly RoadMinimapEventSystem RoadMinimapEventSystem;
     public readonly RoadBuildInputCompositionSystemHelper RoadBuildInputCompositionSystemHelper = new();
     public readonly RoadBuildInputCompositionSystemHelper.State RoadBuildInputState = new();

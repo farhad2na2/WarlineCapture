@@ -1,6 +1,6 @@
 using System;
 
-public sealed class RoadBuildSessionSystem
+public sealed class RoadBuildSessionCompositionSystemHelper
 {
     public enum BuildToolMode
     {

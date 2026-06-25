@@ -76,7 +76,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
             source.RoadBuildCommandCompositionSystemHelper.EnqueueAndProcessExitBuildMode(entityManager, commandContext);
         else
             ExitBuildModeWithoutEntityManager(commandContext);
-        source.RoadBuildSessionSystem.ResetSkipBuildClickFrames(source.RoadBuildSessionState);
+        source.RoadBuildSessionCompositionSystemHelper.ResetSkipBuildClickFrames(source.RoadBuildSessionState);
         source.RoadBuildDisposalSystem.Dispose(contextSystem.CreateRoadBuildDisposalContext(source));
     }
 

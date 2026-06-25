@@ -131,16 +131,16 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 
 ## Phase 4: Extract Build Interaction
 
-13. Complete: Create `RoadBuildSessionSystem`
+13. Complete: Create `RoadBuildSessionCompositionSystemHelper`
     - Owns build-mode activation, road session begin/confirm/cancel, delete-road prompt state, session snapshot handoff, and minimap dirty event publication.
-    - Created `RoadBuildSessionSystem` with session state, active tool mode, delete-prompt state, build-click skip frames, road session snapshot storage, road/soldier-base build-mode activation, confirm/cancel road session commands, and exit-build-mode command flow.
+    - Created `RoadBuildSessionCompositionSystemHelper` with session state, active tool mode, delete-prompt state, build-click skip frames, road session snapshot storage, road/soldier-base build-mode activation, confirm/cancel road session commands, and exit-build-mode command flow.
     - Created `RoadMinimapEventSystem` as the road minimap event boundary; RoadBuildSystem no longer invokes `MainMenuPlayUI.NotifyStaticMinimapChanged` directly.
     - `RoadBuildSystem` now delegates road build activation, road session confirm/cancel, exit build mode, delete-prompt mutation, skip-frame consumption, and minimap event publication.
     - Expected output: road build lifecycle is explicit and UI-independent.
 
 14. Complete: Create `RoadBuildInputCompositionSystemHelper`
     - Owns pointer-state processing, pointer-over-UI checks, pressed/released/drag handling, drag-axis updates, pending start cell, and clicked-road delete selection.
-    - Consumes `RoadBuildSessionSystem`, `RoadPathPlanningSystem`, `RoadNetworkSystem`, and `RoadPreviewPresentationSystemHelper`.
+    - Consumes `RoadBuildSessionCompositionSystemHelper`, `RoadPathPlanningSystem`, `RoadNetworkSystem`, and `RoadPreviewPresentationSystemHelper`.
     - Created `RoadBuildInputCompositionSystemHelper` with pointer-state processing, active road-mode guards, building-placement drag handoff, road stroke drag start/release, drag-axis updates, clicked-road delete selection, and pending road-build cancellation.
     - `RoadBuildSystem.Update()` is now a thin input delegation wrapper while stroke creation and building-placement side effects remain behind injected domain callbacks for compatibility.
 

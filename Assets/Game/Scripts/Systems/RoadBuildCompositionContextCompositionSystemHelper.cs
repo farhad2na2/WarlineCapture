@@ -28,7 +28,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     {
         return new RoadBuildReadModelCompositionSystemHelper.Context(
             source.RuntimeGameplayStateSystem,
-            source.RoadBuildSessionSystem,
+            source.RoadBuildSessionCompositionSystemHelper,
             source.RoadBuildSessionState,
             source.RoadBuildInputCompositionSystemHelper,
             source.RoadBuildInputState,
@@ -41,7 +41,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     {
         return new RoadBuildInteractionContextSystem.Context(
             source.RuntimeGameplayStateSystem,
-            source.RoadBuildSessionSystem,
+            source.RoadBuildSessionCompositionSystemHelper,
             source.RoadBuildSessionState,
             source.RoadBuildInputCompositionSystemHelper,
             source.RoadBuildInputState,

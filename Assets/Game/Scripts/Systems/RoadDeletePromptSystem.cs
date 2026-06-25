@@ -6,14 +6,14 @@ public sealed class RoadDeletePromptSystem
     public struct Context
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly RoadBuildSessionSystem SessionSystem;
-        public readonly RoadBuildSessionSystem.State SessionState;
+        public readonly RoadBuildSessionCompositionSystemHelper SessionSystem;
+        public readonly RoadBuildSessionCompositionSystemHelper.State SessionState;
         public readonly Action<int> DeleteStroke;
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            RoadBuildSessionSystem sessionSystem,
-            RoadBuildSessionSystem.State sessionState,
+            RoadBuildSessionCompositionSystemHelper sessionSystem,
+            RoadBuildSessionCompositionSystemHelper.State sessionState,
             Action<int> deleteStroke)
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;

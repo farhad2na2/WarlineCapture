@@ -41,7 +41,7 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly RuntimeCityIngressSystem.Context IngressContext;
         public readonly CollectInitialBaseExclusionRoadRectsDelegate CollectInitialBaseExclusionRoadRects;
         public readonly ShouldYieldDelegate ShouldYield;
-        public readonly RuntimeCityMinimapEventSystem MinimapEvents;
+        public readonly RuntimeCityMinimapEventUiSystemHelper MinimapEvents;
         public readonly RuntimeCityDiagnosticsSystemHelper Diagnostics;
 
         public Context(
@@ -66,7 +66,7 @@ internal sealed class RuntimeCityGenerationSystem
             RuntimeCityIngressSystem.Context ingressContext,
             CollectInitialBaseExclusionRoadRectsDelegate collectInitialBaseExclusionRoadRects,
             ShouldYieldDelegate shouldYield,
-            RuntimeCityMinimapEventSystem minimapEvents,
+            RuntimeCityMinimapEventUiSystemHelper minimapEvents,
             RuntimeCityDiagnosticsSystemHelper diagnostics)
         {
             CityConfig = cityConfig;

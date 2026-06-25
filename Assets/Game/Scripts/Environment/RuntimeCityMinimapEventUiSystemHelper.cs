@@ -1,4 +1,4 @@
-internal sealed class RuntimeCityMinimapEventSystem
+internal sealed class RuntimeCityMinimapEventUiSystemHelper
 {
     private IMatchRuntimeUi _mainMenuPlayUi;
     private bool _staticMinimapChanged;

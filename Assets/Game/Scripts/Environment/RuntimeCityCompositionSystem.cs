@@ -76,7 +76,7 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityDiagnosticsSystemHelper _runtimeCityDiagnosticSystem;
     private RuntimeCityIngressSystem _runtimeCityIngressSystem;
     private readonly RuntimeCityIngressState _fallbackRuntimeCityIngress = new();
-    private RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem;
+    private RuntimeCityMinimapEventUiSystemHelper _runtimeCityMinimapEventHelper;
     private RuntimeCityReadModelCompositionSystemHelper _runtimeCityReadModelSystem;
     private RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RuntimeCityStartupSystemHelper.TryGetPendingInitialUnitsDelegate _tryGetPendingInitialUnits;
@@ -132,7 +132,7 @@ public sealed class RuntimeCityCompositionSystem
         RuntimeCityRoadBuildBridgeState.Configure(roadRuntimeGenerationSystem, roadRuntimeGenerationContext);
         RuntimeCitySpawnBridgeState.Configure(buildingRuntimeCitySpawnSystem, buildingRuntimeCitySpawnContext);
         RuntimeCityVisualPresentationSystemHelper?.SetRuntimeRoot(runtimeRoot);
-        RuntimeCityMinimapEventSystem?.Configure(mainMenuPlayUi);
+        RuntimeCityMinimapEventUiSystemHelper?.Configure(mainMenuPlayUi);
         ApplyConfigIfAvailable();
         PublishReadModel();
     }
@@ -146,7 +146,7 @@ public sealed class RuntimeCityCompositionSystem
     {
         ApplyConfigIfAvailable();
         RuntimeCityLifecycleState.Tick(CreateLifecycleContext(frameCount));
-        RuntimeCityMinimapEventSystem?.Flush();
+        RuntimeCityMinimapEventUiSystemHelper?.Flush();
         TryAutoSpawn(frameCount);
         PublishReadModel();
     }
@@ -161,7 +161,7 @@ public sealed class RuntimeCityCompositionSystem
         (_runtimeCitySpawnBridgeHelper?.State ?? _fallbackRuntimeCitySpawnBridge).Clear();
         (_runtimeCityRoadBuildBridgeHelper?.State ?? _fallbackRuntimeCityRoadBuildBridge).Clear();
         _runtimeCityReadinessQueryHelper?.Clear();
-        _runtimeCityMinimapEventSystem?.Clear();
+        _runtimeCityMinimapEventHelper?.Clear();
         _configured = false;
     }
 
@@ -301,7 +301,7 @@ public sealed class RuntimeCityCompositionSystem
             CreateIngressContext(),
             CollectInitialBaseExclusionRoadRects,
             ShouldYield,
-            RuntimeCityMinimapEventSystem,
+            RuntimeCityMinimapEventUiSystemHelper,
             RuntimeCityDiagnosticsSystemHelper);
     }
 
@@ -358,8 +358,8 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityVisualPresentationSystemHelper RuntimeCityVisualPresentationSystemHelper =>
         _runtimeCityVisualPresentationSystemHelper ??= ResolveRuntimeCityVisualPresentationSystemHelper();
 
-    private RuntimeCityMinimapEventSystem RuntimeCityMinimapEventSystem =>
-        _runtimeCityMinimapEventSystem ??= ResolveRuntimeCityMinimapEventSystem();
+    private RuntimeCityMinimapEventUiSystemHelper RuntimeCityMinimapEventUiSystemHelper =>
+        _runtimeCityMinimapEventHelper ??= ResolveRuntimeCityMinimapEventUiSystemHelper();
 
     private RuntimeCityReadinessQueryCompositionSystemHelper RuntimeCityReadinessQueryCompositionSystemHelper =>
         _runtimeCityReadinessQueryHelper ??= new RuntimeCityReadinessQueryCompositionSystemHelper();
@@ -606,9 +606,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityVisualPresentationSystemHelper();
     }
 
-    private static RuntimeCityMinimapEventSystem ResolveRuntimeCityMinimapEventSystem()
+    private static RuntimeCityMinimapEventUiSystemHelper ResolveRuntimeCityMinimapEventUiSystemHelper()
     {
-        return new RuntimeCityMinimapEventSystem();
+        return new RuntimeCityMinimapEventUiSystemHelper();
     }
 
     private static RuntimeCityConfigCompositionSystemHelper ResolveRuntimeCityConfigCompositionSystemHelper()

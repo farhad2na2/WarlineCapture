@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public sealed class QuickCustomScreenView : UIScreenView
 {
-    private readonly QuickCustomScreenFlowSystem flowSystem = new();
+    private readonly QuickCustomScreenFlowUiSystemHelper flowSystem = new();
 
     [SerializeField] private TMP_Dropdown presetDropdown;
     [SerializeField] private TMP_Dropdown enemyTypeDropdown;

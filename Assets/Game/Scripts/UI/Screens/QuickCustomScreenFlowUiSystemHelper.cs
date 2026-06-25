@@ -1,4 +1,4 @@
-internal sealed class QuickCustomScreenFlowSystem
+internal sealed class QuickCustomScreenFlowUiSystemHelper
 {
     public void Initialize(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)
     {

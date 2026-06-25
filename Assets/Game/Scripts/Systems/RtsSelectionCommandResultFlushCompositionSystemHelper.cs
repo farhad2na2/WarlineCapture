@@ -22,7 +22,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
 
     public readonly struct Context
     {
-        public readonly RtsSelectionInputSystem InputSystem;
+        public readonly RtsSelectionInputCompositionSystemHelper InputSystem;
         public readonly SelectionHudFeedbackBoundary HudFeedbackSystem;
         public readonly SelectionOrderMarkerPresentationSystemHelper OrderMarkerSystem;
         public readonly SelectedMoveOrderCommandSystem SelectedMoveOrderCommandSystem;
@@ -66,7 +66,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         public readonly TransportBoardingCommandSystem.TryGetClickedCellDelegate TryGetTransportClickedCell;
 
         public Context(
-            RtsSelectionInputSystem inputSystem,
+            RtsSelectionInputCompositionSystemHelper inputSystem,
             SelectionHudFeedbackBoundary hudFeedbackSystem,
             SelectionOrderMarkerPresentationSystemHelper orderMarkerSystem,
             SelectedMoveOrderCommandSystem selectedMoveOrderCommandSystem,

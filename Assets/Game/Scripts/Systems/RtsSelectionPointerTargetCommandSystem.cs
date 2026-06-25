@@ -17,7 +17,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     public struct Context
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly RtsSelectionInputSystem InputSystem;
+        public readonly RtsSelectionInputCompositionSystemHelper InputSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
         public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
         public readonly FocusableUnitLookupSystem FocusableUnitLookupSystem;
@@ -52,7 +52,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            RtsSelectionInputSystem inputSystem,
+            RtsSelectionInputCompositionSystemHelper inputSystem,
             SelectionStateSystem selectionStateSystem,
             FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
             FocusableUnitLookupSystem focusableUnitLookupSystem,

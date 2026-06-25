@@ -3,7 +3,7 @@ using UnityEngine;
 
 public sealed class SelectionUiCommandSystem : ISelectionUiCommand
 {
-    private readonly RtsSelectionInputSystem _inputSystem = new();
+    private readonly RtsSelectionInputCompositionSystemHelper _inputSystem = new();
     private readonly FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem = new();
     private readonly System.Func<bool> _isGameplayInputLocked;
 

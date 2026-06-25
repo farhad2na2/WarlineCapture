@@ -2,7 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class RtsSelectionInputSystem
+public sealed class RtsSelectionInputCompositionSystemHelper
 {
     public const float MoveTargetDoubleClickSeconds = 0.35f;
     public const float MoveTargetDoubleClickPixels = 48f;

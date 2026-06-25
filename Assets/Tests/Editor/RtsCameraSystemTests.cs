@@ -230,7 +230,7 @@ public sealed class RtsCameraSystemTests
 
             var context = new RtsSelectionRuntimeCameraSystemHelper.Context(
                 runtime,
-                new RtsSelectionInputSystem(),
+                new RtsSelectionInputCompositionSystemHelper(),
                 cameraSystem,
                 cameraRequestSystem,
                 camera,
@@ -304,7 +304,7 @@ public sealed class RtsCameraSystemTests
 
             var context = new RtsSelectionRuntimeCameraSystemHelper.Context(
                 runtime,
-                new RtsSelectionInputSystem(),
+                new RtsSelectionInputCompositionSystemHelper(),
                 cameraSystem,
                 cameraRequestSystem,
                 camera,

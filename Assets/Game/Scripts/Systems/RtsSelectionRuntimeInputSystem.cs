@@ -10,7 +10,7 @@ public sealed class RtsSelectionRuntimeInputSystem
     public struct Context
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly RtsSelectionInputSystem InputSystem;
+        public readonly RtsSelectionInputCompositionSystemHelper InputSystem;
         public readonly IMatchRuntimeUi MainMenuPlayUi;
         public readonly float DragThresholdPixels;
         public readonly float SelectionModeHoldSeconds;
@@ -41,7 +41,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            RtsSelectionInputSystem inputSystem,
+            RtsSelectionInputCompositionSystemHelper inputSystem,
             IMatchRuntimeUi mainMenuPlayUi,
             float dragThresholdPixels,
             float selectionModeHoldSeconds,
@@ -159,7 +159,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
     public void UpdateNormalPointerInput(Context context)
     {
-        RtsSelectionInputSystem input = context.InputSystem;
+        RtsSelectionInputCompositionSystemHelper input = context.InputSystem;
         RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
         if (!GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer))
             return;
@@ -230,7 +230,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
     private static void HandlePointerPressed(Context context, Vector2 pointerPosition)
     {
-        RtsSelectionInputSystem input = context.InputSystem;
+        RtsSelectionInputCompositionSystemHelper input = context.InputSystem;
         RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
         IMatchRuntimeUi mainMenu = context.MainMenuPlayUi;
         if (mainMenu != null && mainMenu.IsPointerOverSelectionCancelUi(pointerPosition))
@@ -283,7 +283,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
     private static void HandlePointerHeld(Context context, Vector2 pointerPosition)
     {
-        RtsSelectionInputSystem input = context.InputSystem;
+        RtsSelectionInputCompositionSystemHelper input = context.InputSystem;
         RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
         Vector2 frameDelta = pointerPosition - input.LastPointerPosition;
         input.DragCurrent = pointerPosition;
@@ -342,7 +342,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
     private static void HandlePointerReleased(Context context, Vector2 pointerPosition)
     {
-        RtsSelectionInputSystem input = context.InputSystem;
+        RtsSelectionInputCompositionSystemHelper input = context.InputSystem;
         RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
         input.DragCurrent = pointerPosition;
         bool releasePointerOverAnyUi = context.IsPointerOverAnyUi?.Invoke(pointerPosition) == true;
@@ -516,7 +516,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
     private static bool HandleWorldTargetCommand(
         Context context,
-        RtsSelectionInputSystem input,
+        RtsSelectionInputCompositionSystemHelper input,
         TacticalCommandMode activeMode,
         Vector2 pointerPosition)
     {
@@ -622,7 +622,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
     private static bool HandleBoardPassengerRectCommand(
         Context context,
-        RtsSelectionInputSystem input,
+        RtsSelectionInputCompositionSystemHelper input,
         Vector2 pointerPosition)
     {
         if (!input.BoardPassengerDragArmed)
@@ -639,13 +639,13 @@ public sealed class RtsSelectionRuntimeInputSystem
         return context.TryIssueBoardSelectedTransportOrderToPassengerRect.Invoke(transport, screenRect);
     }
 
-    private static bool IsTransportFirstBoardMode(RtsSelectionInputSystem input)
+    private static bool IsTransportFirstBoardMode(RtsSelectionInputCompositionSystemHelper input)
     {
         return input.TryGetActiveBoardCommandMode(out BoardCommandModeDirection direction, out _) &&
                direction == BoardCommandModeDirection.TransportToPassenger;
     }
 
-    private static bool AllowsCameraPanDuringCommandMode(RtsSelectionInputSystem input)
+    private static bool AllowsCameraPanDuringCommandMode(RtsSelectionInputCompositionSystemHelper input)
     {
         if (input.TryGetActiveCommandMode(out TacticalCommandMode activeMode) &&
             (activeMode == TacticalCommandMode.Move ||
@@ -667,7 +667,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
     private static bool IsTransportFirstBoardPassengerPress(
         Context context,
-        RtsSelectionInputSystem input,
+        RtsSelectionInputCompositionSystemHelper input,
         Vector2 pointerPosition)
     {
         if (!input.TryGetActiveBoardCommandMode(out BoardCommandModeDirection direction, out Entity transport) ||
@@ -705,7 +705,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
     private static bool HandlePersistentMoveTargetDoubleClick(
         Context context,
-        RtsSelectionInputSystem input,
+        RtsSelectionInputCompositionSystemHelper input,
         Vector2 pointerPosition)
     {
         if (context.RequestMoveOrder == null)
@@ -741,7 +741,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
     private static void UpdateSelectionModeHold(Context context, bool pointerPressed, Vector2 pointerPosition)
     {
-        RtsSelectionInputSystem input = context.InputSystem;
+        RtsSelectionInputCompositionSystemHelper input = context.InputSystem;
         RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
         IMatchRuntimeUi mainMenu = context.MainMenuPlayUi;
         if (!input.SelectionModeHoldArmed)

@@ -121,7 +121,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BeginPointerPress_SetsDragOriginAndClearsSelectionDrag()
     {
-        var inputSystem = new RtsSelectionInputSystem
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper
         {
             IsDraggingSelection = true,
             SelectionModeHoldArmed = true,
@@ -147,7 +147,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void ResetSelectionDragState_ClearsStaleRectangleAtPointerPosition()
     {
-        var inputSystem = new RtsSelectionInputSystem
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper
         {
             PointerPressedOverUi = true,
             IsDraggingSelection = true,
@@ -174,7 +174,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void LastLiveSelectionRect_RoundTripsAsMinMaxScreenRect()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Rect rightwardDrag = Rect.MinMaxRect(900f, 250f, 1200f, 500f);
 
         inputSystem.LastLiveSelectionRect = rightwardDrag;
@@ -185,7 +185,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void ClearPointerReleaseState_ClearsReleaseScopedFlags()
     {
-        var inputSystem = new RtsSelectionInputSystem
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper
         {
             PointerPressedOverUi = true,
             IsDraggingSelection = true,
@@ -206,7 +206,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void CaptureUiClickSequence_SuppressesWorldReleaseUntilPointerEnds()
     {
-        var inputSystem = new RtsSelectionInputSystem { IsDraggingSelection = true, BoardPassengerDragArmed = true };
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper { IsDraggingSelection = true, BoardPassengerDragArmed = true };
 
         inputSystem.CaptureUiClickSequence();
 
@@ -221,7 +221,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void CaptureUiClickSequence_CancelsQueuedAndPendingMoveOrders()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Vector2 screenPosition = new(123f, 456f);
 
         inputSystem.QueueMoveOrder(screenPosition, Time.frameCount);
@@ -238,7 +238,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void MoveCommandRequest_StoresResolvedTargetCellAndWorldPosition()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Vector2 screenPosition = new(123f, 456f);
         int2 targetCell = new(17, 23);
         Vector3 worldPosition = new(17.5f, 0f, 23.5f);
@@ -263,7 +263,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void ScanCommandRequest_StoresResolvedTargetCellAndWorldPosition()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Vector2 screenPosition = new(321f, 654f);
         int2 targetCell = new(9, 14);
         Vector3 worldPosition = new(9.5f, 0f, 14.5f);
@@ -288,7 +288,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void AttackCommandRequest_StoresResolvedTargetEntity()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Entity target = new() { Index = 64, Version = 2 };
         Vector2 screenPosition = new(444f, 555f);
 
@@ -315,7 +315,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BoardTransportCommandRequest_StoresResolvedTargetEntity()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Entity transport = new() { Index = 42, Version = 7 };
         Vector2 screenPosition = new(222f, 333f);
 
@@ -337,7 +337,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void SelectAllCommandRequest_StoresScreenRect()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Rect screenRect = Rect.MinMaxRect(0f, 0f, 1920f, 1080f);
 
         Assert.IsTrue(inputSystem.QueueSelectAllCommandRequest(screenRect, Time.frameCount));
@@ -360,7 +360,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void SelectAllCommandSystem_QueuesSelectionRectangleAndClearsCommandMode()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Rect screenRect = Rect.MinMaxRect(10f, 20f, 300f, 420f);
         inputSystem.ArmBoardCommandMode(
             BoardCommandModeDirection.TransportToPassenger,
@@ -398,7 +398,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void SelectAllCommandSystem_MapsVariantRequestsToSelectionFilters()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Rect screenRect = Rect.MinMaxRect(0f, 0f, 1280f, 720f);
         Assert.IsTrue(inputSystem.QueueSelectAllCommandRequest(RtsSelectionCommandIntentKind.SelectAll, screenRect, frame: 90));
         Assert.IsTrue(inputSystem.QueueSelectAllCommandRequest(RtsSelectionCommandIntentKind.SelectAllSoldiers, screenRect, frame: 91));
@@ -427,7 +427,7 @@ public sealed class RtsSelectionInputSystemTests
         EntityManager em = _testWorld.EntityManager;
         Entity first = em.CreateEntity(typeof(SelectedUnitTag));
         Entity second = em.CreateEntity(typeof(SelectedUnitTag));
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Attack,
             Time.frameCount,
@@ -457,7 +457,7 @@ public sealed class RtsSelectionInputSystemTests
     {
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: false);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Vector2 pointer = new(12f, 34f);
         inputSystem.UpdateLastKnownPointerPosition(pointer);
         inputSystem.ArmCommandMode(
@@ -505,7 +505,7 @@ public sealed class RtsSelectionInputSystemTests
     {
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Vector2 pointer = new(56f, 78f);
         inputSystem.UpdateLastKnownPointerPosition(pointer);
         inputSystem.IsDraggingSelection = true;
@@ -556,7 +556,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(selectedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(selectedUnit, new UnitGrid { Cell = new int2(2, 3) });
         em.SetComponentData(selectedUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, ArriveDistance = 0.1f });
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Vector2 pointer = new(72f, 96f);
         inputSystem.UpdateLastKnownPointerPosition(pointer);
         inputSystem.QueueMoveOrder(new Vector2(10f, 20f), executeFrame: 130);
@@ -597,7 +597,7 @@ public sealed class RtsSelectionInputSystemTests
     {
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Attack,
             frame: 150,
@@ -632,7 +632,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void HasPendingMoveCommandRequestsOrResults_DetectsMoveResults()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
             out _,
             out _,
@@ -650,7 +650,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void HasPendingAttackCommandRequestsOrResults_DetectsAttackResults()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
             out _,
             out _,
@@ -668,7 +668,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void HasPendingScanCommandRequestsOrResults_DetectsScanResults()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
             out _,
             out _,
@@ -686,7 +686,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void HasPendingTransportCommandRequests_DetectsTransportResults()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
             out _,
             out _,
@@ -716,7 +716,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(selectedMoveUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, ArriveDistance = 0.1f });
 
         var commandSystem = new SelectionUiCommandSystem();
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.UpdateLastKnownPointerPosition(new Vector2(16f, 32f));
 
         Assert.IsTrue(commandSystem.RequestEnterSelectionMode());
@@ -804,7 +804,7 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     private static void AssertSingleQueuedCommandIntent(
-        RtsSelectionInputSystem inputSystem,
+        RtsSelectionInputCompositionSystemHelper inputSystem,
         RtsSelectionCommandIntentKind expectedKind)
     {
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
@@ -815,7 +815,7 @@ public sealed class RtsSelectionInputSystemTests
         Assert.AreEqual(expectedKind, requests[0].Kind);
     }
 
-    private static void AssertNoQueuedCommandIntents(RtsSelectionInputSystem inputSystem)
+    private static void AssertNoQueuedCommandIntents(RtsSelectionInputCompositionSystemHelper inputSystem)
     {
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
             out _,
@@ -845,7 +845,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void CommandModeState_ArmsAndClearsWorldTargetMode()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
 
         Assert.IsFalse(inputSystem.TryGetActiveCommandMode(out _));
         Assert.IsFalse(inputSystem.HasActiveWorldTargetCommandMode(out _));
@@ -870,7 +870,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BoardCommandModeState_StoresDirectionAndLockedTransport()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Entity transport = new Entity { Index = 123, Version = 4 };
 
         inputSystem.ArmBoardCommandMode(
@@ -895,7 +895,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void MoveTargetDoubleClick_RequiresRecentNearbyMoveTargetClick()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Vector2 firstClick = new(100f, 200f);
         Vector2 nearbySecondClick = new(118f, 214f);
         Vector2 farSecondClick = new(240f, 320f);
@@ -916,7 +916,7 @@ public sealed class RtsSelectionInputSystemTests
 
         Assert.IsTrue(commandSystem.RequestMoveCommandMode());
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
         Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
@@ -934,7 +934,7 @@ public sealed class RtsSelectionInputSystemTests
 
         Assert.IsFalse(commandSystem.RequestMoveCommandMode());
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
         Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
@@ -951,7 +951,7 @@ public sealed class RtsSelectionInputSystemTests
 
         Assert.IsTrue(commandSystem.RequestAttackCommandMode());
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
         Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
@@ -968,7 +968,7 @@ public sealed class RtsSelectionInputSystemTests
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         CreateSelectedAttackUnit(em);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Vector2 pointer = new(21f, 43f);
         inputSystem.UpdateLastKnownPointerPosition(pointer);
         inputSystem.QueueMoveOrder(new Vector2(10f, 20f), executeFrame: 150);
@@ -1010,7 +1010,7 @@ public sealed class RtsSelectionInputSystemTests
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         CreateSelectedAirDefenseLauncher(em);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(TacticalCommandMode.Move, frame: 99, oneShot: true, requiresWorldTarget: true);
         inputSystem.QueueMoveOrder(new Vector2(10f, 20f), executeFrame: 160);
         Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(11f, 22f), frame: 161));
@@ -1050,7 +1050,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(UnitMove));
         em.SetComponentData(nonAttackUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(nonAttackUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(TacticalCommandMode.Move, frame: 99, oneShot: true, requiresWorldTarget: true);
         Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame: 11));
 
@@ -1078,7 +1078,7 @@ public sealed class RtsSelectionInputSystemTests
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         CreateSelectedAirDefenseLauncher(em);
         CreateSelectedAttackUnit(em);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame: 11));
 
         bool processed = RtsSelectionAttackTargetModeCommandSystem.ProcessPendingRequests(
@@ -1105,7 +1105,7 @@ public sealed class RtsSelectionInputSystemTests
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         Entity focusedUnit = CreateFocusedAttackUnit(em);
-        var inputSystem = new RtsSelectionInputSystem
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper
         {
             IsDraggingSelection = true,
             IgnoreNextLeftMouseRelease = false
@@ -1157,7 +1157,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(focusedUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
         em.SetComponentData(focusedUnit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(TacticalCommandMode.Move, frame: 80, oneShot: true, requiresWorldTarget: true);
         Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.ToggleAttackTargetMode, frame: 373));
 
@@ -1326,7 +1326,7 @@ public sealed class RtsSelectionInputSystemTests
     {
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Vector2 pointer = new(64f, 128f);
         inputSystem.UpdateLastKnownPointerPosition(pointer);
         inputSystem.QueueMoveOrder(new Vector2(10f, 20f), executeFrame: 170);
@@ -1361,7 +1361,7 @@ public sealed class RtsSelectionInputSystemTests
 
         Assert.IsTrue(commandSystem.RequestBoardTargetMode());
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
         Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
@@ -1379,7 +1379,7 @@ public sealed class RtsSelectionInputSystemTests
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         CreateSelectedBoardPassenger(em);
         Entity transport = CreateSelectedBoardTransport(em);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Vector2 pointer = new(32f, 48f);
         inputSystem.UpdateLastKnownPointerPosition(pointer);
         inputSystem.QueueMoveOrder(new Vector2(10f, 20f), executeFrame: 10);
@@ -1426,7 +1426,7 @@ public sealed class RtsSelectionInputSystemTests
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         CreateSelectedBoardPassenger(em);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterBoardTargetMode, frame: 11));
 
         bool processed = RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
@@ -1458,7 +1458,7 @@ public sealed class RtsSelectionInputSystemTests
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         CreateSelectedCargoVehicleTransportPassenger(em);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterBoardTargetMode, frame: 11));
 
         bool processed = RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
@@ -1489,7 +1489,7 @@ public sealed class RtsSelectionInputSystemTests
     {
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Entity transport = CreateSelectedBoardTransport(em);
         inputSystem.ArmBoardCommandMode(
             BoardCommandModeDirection.TransportToPassenger,
@@ -1526,7 +1526,7 @@ public sealed class RtsSelectionInputSystemTests
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         Entity selected = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction));
         em.SetComponentData(selected, new Faction { Id = FactionIdentity.PlayerFactionId });
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.EnterBoardTargetMode, frame: 11));
 
         bool processed = RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
@@ -1556,7 +1556,7 @@ public sealed class RtsSelectionInputSystemTests
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
         Entity transport = CreateSelectedBoardTransport(em);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmBoardCommandMode(
             BoardCommandModeDirection.TransportToPassenger,
             transport,
@@ -1586,7 +1586,7 @@ public sealed class RtsSelectionInputSystemTests
     {
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Attack,
             frame: 74,
@@ -1632,7 +1632,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(unit, new UnitPathFollow { PathIndex = 2 });
         em.SetComponentData(unit, new UnitPathRange { Start = 1, Length = 3 });
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Attack,
             frame: 440,
@@ -1708,7 +1708,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(airUnit, new UnitTarget { Cell = new int2(20, 21) });
         em.SetComponentData(airUnit, new UnitPathRequest { Goal = new int2(22, 23) });
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Attack,
             frame: 453,
@@ -1764,7 +1764,7 @@ public sealed class RtsSelectionInputSystemTests
     {
         EntityManager em = _testWorld.EntityManager;
         Entity runtimeStateEntity = CreateRuntimeGameplayState(em, selectionModeActive: true);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Attack,
             frame: 460,
@@ -1818,7 +1818,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(unit, new UnitTarget { Cell = new int2(5, 6) });
         em.SetComponentData(unit, new UnitPathRequest { Goal = new int2(7, 8) });
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Attack,
             frame: 480,
@@ -1934,7 +1934,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(airUnit, new UnitTarget { Cell = new int2(25, 26) });
         em.SetComponentData(airUnit, new UnitPathRequest { Goal = new int2(27, 28) });
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Scan,
             frame: 493,
@@ -2013,7 +2013,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(selectedEnemy, new UnitGrid { Cell = new int2(8, 8) });
         em.SetComponentData(selectedEnemy, new UnitMove { Speed = 5f, WalkSpeed = 5f, ArriveDistance = 0.1f });
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Move,
             frame: 500,
@@ -2068,7 +2068,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(second, new UnitMove { Speed = 5f, WalkSpeed = 5f, ArriveDistance = 0.1f });
         em.SetComponentData(enemy, new UnitMove { Speed = 5f, WalkSpeed = 5f, ArriveDistance = 0.1f });
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Move,
             frame: 520,
@@ -2109,7 +2109,7 @@ public sealed class RtsSelectionInputSystemTests
         CreateRespawnQueue(em, FactionIdentity.PlayerFactionId, new int2(5, 5));
         Entity enemy = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction));
         em.SetComponentData(enemy, new Faction { Id = FactionIdentity.EnemyFactionId });
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Move,
             frame: 540,
@@ -2145,7 +2145,7 @@ public sealed class RtsSelectionInputSystemTests
         Entity focusedUnit = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction), typeof(UnitHealth));
         em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(focusedUnit, new UnitHealth { Current = 75, Max = 100 });
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(
             TacticalCommandMode.Move,
             frame: 560,
@@ -2187,7 +2187,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(enemy, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(playerWithHealth, new UnitHealth { Current = 60, Max = 100 });
         em.SetComponentData(enemy, new UnitHealth { Current = 60, Max = 100 });
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.DestroyFocusedUnit, frame: 581));
 
         bool processed = RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
@@ -2224,7 +2224,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(focusedEnemy, new UnitHealth { Current = 50, Max = 100 });
         em.SetComponentData(selectedPlayer, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(selectedPlayer, new UnitHealth { Current = 70, Max = 100 });
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.DestroyFocusedUnit, frame: 601));
 
         bool processed = RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
@@ -2253,7 +2253,7 @@ public sealed class RtsSelectionInputSystemTests
 
         Assert.IsTrue(commandSystem.RequestBoardAllSelectedTransport());
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
         Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
@@ -2271,7 +2271,7 @@ public sealed class RtsSelectionInputSystemTests
 
         Assert.IsTrue(commandSystem.RequestCancelActiveCommandMode());
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
         Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
@@ -2285,7 +2285,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BoardSelectedTransportPassengerRequest_StoresTransportPassengerAndScreenRect()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Entity transport = new Entity { Index = 45, Version = 2 };
         Entity passenger = new Entity { Index = 91, Version = 7 };
         Rect screenRect = Rect.MinMaxRect(10f, 20f, 110f, 220f);
@@ -2504,7 +2504,7 @@ public sealed class RtsSelectionInputSystemTests
 
         Assert.IsTrue(commandSystem.RequestHoldPosition());
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
         Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
@@ -2522,7 +2522,7 @@ public sealed class RtsSelectionInputSystemTests
 
         Assert.IsTrue(commandSystem.RequestStop());
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
         Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
@@ -2536,7 +2536,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void QueueMoveOrder_ConsumesOnlyAtOrAfterExecutionFrame()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Vector2 orderPosition = new(5f, 7f);
 
         inputSystem.QueueMoveOrder(orderPosition, executeFrame: 10);
@@ -2550,7 +2550,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void LastKnownPointerPosition_ReportsOnlyAfterUpdate()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Vector2 pointer = new(9f, 11f);
 
         Assert.IsFalse(inputSystem.TryGetLastKnownPointerPosition(out _));
@@ -2611,7 +2611,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         var runtimeState = new RuntimeGameplayStateSystem
         {
             PlayRequested = true,
@@ -2689,7 +2689,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         var runtimeState = new RuntimeGameplayStateSystem
         {
             PlayRequested = true,
@@ -2731,7 +2731,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void RuntimeInput_AttackCommandModeAllowsCameraPanWhileTargeting()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         var runtimeState = new RuntimeGameplayStateSystem
         {
             PlayRequested = true,
@@ -2773,7 +2773,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void RuntimeInput_ScanCommandModeAllowsCameraPanWhileTargeting()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         var runtimeState = new RuntimeGameplayStateSystem
         {
             PlayRequested = true,
@@ -2815,7 +2815,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void RuntimeInput_ScanCommandModeIssuesScanWithoutFocusFallthrough()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         var runtimeState = new RuntimeGameplayStateSystem
         {
             PlayRequested = true,
@@ -2868,7 +2868,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void RuntimeInput_TransportFirstBoardModePansUnlessPassengerDragStarts()
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         var runtimeState = new RuntimeGameplayStateSystem
         {
             PlayRequested = true,
@@ -3197,7 +3197,7 @@ public sealed class RtsSelectionInputSystemTests
 
     private static RtsSelectionRuntimeInputSystem.Context CreateRuntimeInputContext(
         RuntimeGameplayStateSystem runtimeState,
-        RtsSelectionInputSystem inputSystem,
+        RtsSelectionInputCompositionSystemHelper inputSystem,
         Func<bool> getCameraDragging = null,
         Action<bool> setCameraDragging = null,
         Action<Vector2> panCamera = null,

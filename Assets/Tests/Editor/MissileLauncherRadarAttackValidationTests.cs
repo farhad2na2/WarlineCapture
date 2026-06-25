@@ -185,7 +185,7 @@ public sealed class MissileLauncherRadarAttackValidationTests
 
     private static bool IssueFocusedMissileLauncherRadarAttack(EntityManager em, Entity launcher)
     {
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.ToggleAttackTargetMode, frame: 1));
         return RtsSelectionMissileLauncherRadarAttackCommandSystem.TryIssuePendingFocusedRadarAttack(
             em,

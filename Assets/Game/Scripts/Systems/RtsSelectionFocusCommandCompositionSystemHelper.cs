@@ -10,7 +10,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
     public struct Context
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly RtsSelectionInputSystem InputSystem;
+        public readonly RtsSelectionInputCompositionSystemHelper InputSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
         public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
@@ -35,7 +35,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            RtsSelectionInputSystem inputSystem,
+            RtsSelectionInputCompositionSystemHelper inputSystem,
             SelectionStateSystem selectionStateSystem,
             FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,

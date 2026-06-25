@@ -51,7 +51,7 @@ public sealed class HoldStopScanCommandPlayModeTests
         em.SetComponentData(unit, new UnitTarget { Cell = new int2(6, 7) });
         em.SetComponentData(unit, new UnitPathRequest { Goal = new int2(8, 9) });
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(TacticalCommandMode.Attack, frame: 10, oneShot: true, requiresWorldTarget: true);
         inputSystem.QueueMoveOrder(new Vector2(10f, 20f), executeFrame: 11);
         Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(11f, 22f), frame: 12));
@@ -135,7 +135,7 @@ public sealed class HoldStopScanCommandPlayModeTests
         em.SetComponentData(airUnit, new UnitTarget { Cell = new int2(18, 19) });
         em.SetComponentData(airUnit, new UnitPathRequest { Goal = new int2(20, 21) });
 
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.ArmCommandMode(TacticalCommandMode.Scan, frame: 20, oneShot: true, requiresWorldTarget: true);
         inputSystem.QueueMoveOrder(new Vector2(12f, 24f), executeFrame: 21);
         Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new Vector2(13f, 26f), frame: 22));
@@ -266,7 +266,7 @@ public sealed class HoldStopScanCommandPlayModeTests
         return unit;
     }
 
-    private static void AssertNoQueuedCommandIntents(RtsSelectionInputSystem inputSystem)
+    private static void AssertNoQueuedCommandIntents(RtsSelectionInputCompositionSystemHelper inputSystem)
     {
         Assert.IsTrue(inputSystem.TryGetCommandBuffers(
             out _,

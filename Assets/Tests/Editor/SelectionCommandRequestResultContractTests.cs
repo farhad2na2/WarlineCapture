@@ -435,7 +435,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 null,
                 null,
                 null);
-            var inputSystem = new RtsSelectionInputSystem();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
             RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
                 inputSystem,
                 default,
@@ -561,7 +561,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 null,
                 null,
                 null);
-            var inputSystem = new RtsSelectionInputSystem();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
             RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
                 inputSystem,
                 default,
@@ -697,7 +697,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 () => exitBuildModeCount++,
                 null,
                 null);
-            var inputSystem = new RtsSelectionInputSystem();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
             RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
                 inputSystem,
                 default,
@@ -845,7 +845,7 @@ public sealed class SelectionCommandRequestResultContractTests
             null,
             null,
             null);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             inputSystem,
             default,
@@ -1214,7 +1214,7 @@ public sealed class SelectionCommandRequestResultContractTests
         int diagnosticCount = 0;
         string lastDiagnostic = string.Empty;
         RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
-            new RtsSelectionInputSystem(),
+            new RtsSelectionInputCompositionSystemHelper(),
             default,
             default,
             default,
@@ -1478,7 +1478,7 @@ public sealed class SelectionCommandRequestResultContractTests
             null,
             null,
             null);
-        var inputSystem = new RtsSelectionInputSystem();
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             inputSystem,
             default,
@@ -1850,7 +1850,7 @@ public sealed class SelectionCommandRequestResultContractTests
                 null,
                 null,
                 null);
-            var inputSystem = new RtsSelectionInputSystem();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
             RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
                 inputSystem,
                 default,
@@ -2120,7 +2120,7 @@ public sealed class SelectionCommandRequestResultContractTests
             int explicitAttackModeCount = 0;
             bool explicitAttackModeActive = true;
             int rectangleDrainCount = 0;
-            var inputSystem = new RtsSelectionInputSystem();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
             RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
                 inputSystem,
                 default,
@@ -3501,7 +3501,7 @@ public sealed class SelectionCommandRequestResultContractTests
         try
         {
             EntityManager em = world.EntityManager;
-            var inputSystem = new RtsSelectionInputSystem();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
             Assert.IsTrue(inputSystem.QueueScanCommandRequest(new UnityEngine.Vector2(10f, 20f), 50));
             Assert.IsTrue(inputSystem.QueueScanCommandRequest(new UnityEngine.Vector2(30f, 40f), 51));
             Assert.IsTrue(inputSystem.TryGetCommandBuffers(
@@ -3558,7 +3558,7 @@ public sealed class SelectionCommandRequestResultContractTests
         try
         {
             EntityManager em = world.EntityManager;
-            var inputSystem = new RtsSelectionInputSystem();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
             Assert.IsTrue(inputSystem.QueueScanCommandRequest(new UnityEngine.Vector2(10f, 20f), 70));
             Assert.IsTrue(inputSystem.TryGetCommandBuffers(
                 out _,
@@ -3629,7 +3629,7 @@ public sealed class SelectionCommandRequestResultContractTests
         try
         {
             EntityManager em = world.EntityManager;
-            var inputSystem = new RtsSelectionInputSystem();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
             inputSystem.ArmCommandMode(
                 TacticalCommandMode.Scan,
                 frame: 90,
@@ -3718,7 +3718,7 @@ public sealed class SelectionCommandRequestResultContractTests
         try
         {
             EntityManager em = world.EntityManager;
-            var inputSystem = new RtsSelectionInputSystem();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
             inputSystem.ArmCommandMode(
                 TacticalCommandMode.Scan,
                 frame: 80,
@@ -3814,7 +3814,7 @@ public sealed class SelectionCommandRequestResultContractTests
         {
             EntityManager em = world.EntityManager;
             CreateWalkableGrid(em, 8, 8, out blockerCounts, out friendlyPassFactionIds, out blocked, out occupied);
-            var inputSystem = new RtsSelectionInputSystem();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
             Assert.IsTrue(inputSystem.TryGetCommandBuffers(
                 out _,
                 out Entity commandEntity,
@@ -3913,7 +3913,7 @@ public sealed class SelectionCommandRequestResultContractTests
             em.SetComponentData(target, new Faction { Id = FactionIdentity.EnemyFactionId });
             em.SetComponentData(target, new UnitHealth { Current = 100, Max = 100 });
 
-            var inputSystem = new RtsSelectionInputSystem();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
             Assert.IsTrue(inputSystem.TryGetCommandBuffers(
                 out _,
                 out Entity commandEntity,
@@ -3997,7 +3997,7 @@ public sealed class SelectionCommandRequestResultContractTests
         try
         {
             EntityManager em = world.EntityManager;
-            var inputSystem = new RtsSelectionInputSystem();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
             Assert.IsTrue(inputSystem.QueueMoveCommandRequest(new UnityEngine.Vector2(10f, 20f), 70));
             Assert.IsTrue(inputSystem.TryGetCommandBuffers(
                 out _,
@@ -4352,7 +4352,7 @@ public sealed class SelectionCommandRequestResultContractTests
     }
 
     private static RtsSelectionCommandResultFlushCompositionSystemHelper.Context CreateFlushContext(
-        RtsSelectionInputSystem inputSystem,
+        RtsSelectionInputCompositionSystemHelper inputSystem,
         EntityQuery selectedMoveQuery,
         EntityQuery gridConfigQuery,
         EntityQuery mapSurfaceQuery,

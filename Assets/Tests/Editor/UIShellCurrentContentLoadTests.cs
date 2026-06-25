@@ -685,7 +685,7 @@ public sealed class UIShellCurrentContentLoadTests
 
     private static bool TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests)
     {
-        var inputState = new RtsSelectionInputSystem();
+        var inputState = new RtsSelectionInputCompositionSystemHelper();
         return inputState.TryGetCommandBuffers(
             out _,
             out requests,

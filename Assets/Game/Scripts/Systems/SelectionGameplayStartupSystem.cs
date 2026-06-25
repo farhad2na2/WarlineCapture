@@ -67,7 +67,7 @@ internal sealed class SelectionGameplayStartupSystem
         SelectionRuntimeDiagnosticsSystemHelper selectionRuntimeDiagnosticsSystem = ResolveSelectionRuntimeDiagnosticsSystem();
         SelectionRuntimeConfigSystem.State runtimeConfig = SelectionRuntimeConfigSystem.CreateStateFromConfig(rtsSelectionConfig, worldCamera);
         var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
-        var rtsSelectionInputSystem = new RtsSelectionInputSystem();
+        var rtsSelectionInputSystem = new RtsSelectionInputCompositionSystemHelper();
         var rtsSelectionRuntimeInputSystem = new RtsSelectionRuntimeInputSystem();
         RtsSelectionRuntimeCameraSystemHelper rtsSelectionRuntimeCameraSystem = ResolveRtsSelectionRuntimeCameraSystemHelper();
         var rtsSelectionCommandResultFlushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();

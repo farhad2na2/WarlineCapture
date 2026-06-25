@@ -15,7 +15,7 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
     public struct Context
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly RtsSelectionInputSystem InputSystem;
+        public readonly RtsSelectionInputCompositionSystemHelper InputSystem;
         public readonly RtsCameraSystem CameraSystem;
         public readonly RtsCameraRequestSystem CameraRequestSystem;
         public readonly Camera WorldCamera;
@@ -48,7 +48,7 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            RtsSelectionInputSystem inputSystem,
+            RtsSelectionInputCompositionSystemHelper inputSystem,
             RtsCameraSystem cameraSystem,
             RtsCameraRequestSystem cameraRequestSystem,
             Camera worldCamera,
@@ -363,7 +363,7 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
     private void HandleBuildModeCameraPan(Context context)
     {
         Camera worldCamera = context.WorldCamera;
-        RtsSelectionInputSystem input = context.InputSystem;
+        RtsSelectionInputCompositionSystemHelper input = context.InputSystem;
         if (worldCamera == null)
             return;
 
@@ -416,7 +416,7 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
 
     private void HandleFullscreenIsoCameraPan(Context context)
     {
-        RtsSelectionInputSystem input = context.InputSystem;
+        RtsSelectionInputCompositionSystemHelper input = context.InputSystem;
         if (!GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer))
             return;
 

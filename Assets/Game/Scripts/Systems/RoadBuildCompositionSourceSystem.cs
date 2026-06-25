@@ -10,7 +10,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildRuntimeActionCompositionSystemHelper.State RoadBuildRuntimeActionState;
     public readonly RoadBuildDisposalCompositionSystemHelper RoadBuildDisposalCompositionSystemHelper = new();
     public readonly RoadBuildConfigSystem RoadBuildConfigSystem = new();
-    public readonly RoadRuntimeRootSystem RoadRuntimeRootSystem;
+    public readonly RoadRuntimeRootSceneSystemHelper RoadRuntimeRootSceneSystemHelper;
     public readonly RoadNetworkCompositionSystemHelper RoadNetworkCompositionSystemHelper = new();
     public readonly RoadPathPlanningUtilitySystemHelper RoadPathPlanningUtilitySystemHelper = new();
     public readonly RoadSurfacePlacementUtilitySystemHelper RoadSurfacePlacementUtilitySystemHelper = new();
@@ -50,7 +50,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public RoadBuildCompositionSourceSystem()
     {
         RoadGridProjectionSystem = ResolveRoadGridProjectionSystem();
-        RoadRuntimeRootSystem = ResolveRoadRuntimeRootSystem();
+        RoadRuntimeRootSceneSystemHelper = ResolveRoadRuntimeRootSceneSystemHelper();
         RoadVisualVariantSystem = ResolveRoadVisualVariantSystem();
         RoadBuildVisualContextSystem = ResolveRoadBuildVisualContextSystem();
         RoadVisualResolutionSystem = ResolveRoadVisualResolutionSystem();
@@ -77,9 +77,9 @@ internal sealed class RoadBuildCompositionSourceSystem
             : null;
     }
 
-    private static RoadRuntimeRootSystem ResolveRoadRuntimeRootSystem()
+    private static RoadRuntimeRootSceneSystemHelper ResolveRoadRuntimeRootSceneSystemHelper()
     {
-        return new RoadRuntimeRootSystem();
+        return new RoadRuntimeRootSceneSystemHelper();
     }
 
     private static RoadVisualVariantSystem ResolveRoadVisualVariantSystem()

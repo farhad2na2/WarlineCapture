@@ -54,7 +54,7 @@ internal sealed class RoadBuildVisualContextSystem
 
     public static RoadChunkVisualSystem.Context CreateChunkContext(Context context)
     {
-        RoadRuntimeRootSystem.Roots roots = context.StartupState.RuntimeRoots;
+        RoadRuntimeRootSceneSystemHelper.Roots roots = context.StartupState.RuntimeRoots;
         return new RoadChunkVisualSystem.Context(
             context.RoadNetworkCompositionSystemHelper.RoadTiles,
             context.RoadVisualVariantSystem?.VisualData ?? new Dictionary<RoadVisualType, CombinedRoadVisualData>(),
@@ -70,7 +70,7 @@ internal sealed class RoadBuildVisualContextSystem
     public static RoadPreviewPresentationSystemHelper.Context CreatePreviewContext(Context context)
     {
         RoadBuildStartupSystem.State startupState = context.StartupState;
-        RoadRuntimeRootSystem.Roots roots = startupState.RuntimeRoots;
+        RoadRuntimeRootSceneSystemHelper.Roots roots = startupState.RuntimeRoots;
         return new RoadPreviewPresentationSystemHelper.Context(
             context.RoadVisualVariantSystem?.VisualData ?? new Dictionary<RoadVisualType, CombinedRoadVisualData>(),
             roots.RoadRoot,
@@ -88,7 +88,7 @@ internal sealed class RoadBuildVisualContextSystem
     public static RoadSpecialVisualSystem.Context CreateSpecialContext(Context context)
     {
         RoadBuildStartupSystem.State startupState = context.StartupState;
-        RoadRuntimeRootSystem.Roots roots = startupState.RuntimeRoots;
+        RoadRuntimeRootSceneSystemHelper.Roots roots = startupState.RuntimeRoots;
         return new RoadSpecialVisualSystem.Context(
             context.RoadNetworkCompositionSystemHelper.RoadTiles,
             context.RoadNetworkCompositionSystemHelper.Strokes,

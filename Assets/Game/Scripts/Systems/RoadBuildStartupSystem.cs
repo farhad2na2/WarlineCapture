@@ -17,7 +17,7 @@ internal sealed partial class RoadBuildStartupSystem : SystemBase
         public RoadBuildSystemConfig Config;
         public Camera WorldCamera;
         public Transform RuntimeRoot;
-        public RoadRuntimeRootSystem.Roots RuntimeRoots;
+        public RoadRuntimeRootSceneSystemHelper.Roots RuntimeRoots;
         public GameObject StraightPrefab;
         public GameObject TIntersectionPrefab;
         public GameObject IntersectionPrefab;
@@ -43,7 +43,7 @@ internal sealed partial class RoadBuildStartupSystem : SystemBase
         Camera sceneWorldCamera,
         Transform runtimeRoot,
         RoadBuildConfigSystem configSystem,
-        RoadRuntimeRootSystem runtimeRootSystem,
+        RoadRuntimeRootSceneSystemHelper runtimeRootSystem,
         RoadVisualVariantSystem visualVariantSystem)
     {
         var state = new State
@@ -61,7 +61,7 @@ internal sealed partial class RoadBuildStartupSystem : SystemBase
         return state;
     }
 
-    public void DisposeRuntimeRoots(State state, RoadRuntimeRootSystem runtimeRootSystem)
+    public void DisposeRuntimeRoots(State state, RoadRuntimeRootSceneSystemHelper runtimeRootSystem)
     {
         if (state == null)
             return;

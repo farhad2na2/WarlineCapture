@@ -17,7 +17,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
             sceneWorldCamera,
             runtimeRoot,
             source.RoadBuildConfigSystem,
-            source.RoadRuntimeRootSystem,
+            source.RoadRuntimeRootSceneSystemHelper,
             source.RoadVisualVariantSystem);
         source.RoadBuildDependencyCompositionSystemHelper.BindBuildingInteraction(
             source.RoadBuildDependencyState,

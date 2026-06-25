@@ -20,7 +20,7 @@ Final target: delete `RoadBuildRuntimeStateSystem.cs` and `.meta`. `RoadBuildCom
 
 - Child system ownership: constructs and stores runtime gameplay state, road config, roots, network, path planning, footprint query, grid projection, visual variant, chunk visual, preview, special visual, session, minimap, input, command, delete prompt, legacy building storage/ECS, and runtime generation systems.
 - Serialized/config cache: stores `RoadBuildSystemConfig`, camera, road prefabs, grid origin, build plane, road grid size, chunk size, preview alpha, soldier-base prefab fields, placement outline dimensions, and placement colors.
-- Runtime roots: stores runtime root and road root handles through `RoadRuntimeRootSystem.Roots`.
+- Runtime roots: stores runtime root and road root handles through `RoadRuntimeRootSceneSystemHelper.Roots`.
 - Context factories: constructs contexts for footprint, grid projection, road prefabs, chunk visuals, preview, special visuals, session, input, command, delete prompt, legacy building ECS, and runtime generation.
 - Public compatibility surface: exposes road runtime-generation commands, footprint queries, init/bind/dispose/update/gui, road commands, and building placement commands.
 - Road mutation and refresh: creates/deletes strokes, refreshes dirty cells, resolves visual type, chooses prefab variants, syncs road cells to ECS, rebuilds chunks, and rebuilds special road visuals.

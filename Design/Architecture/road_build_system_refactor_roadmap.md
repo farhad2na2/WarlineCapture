@@ -58,11 +58,11 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
    - Direct `config.*` field projection no longer lives in `RoadBuildSystem`.
    - Expected output: no copied config assignment remains in the broad shell.
 
-4. Complete: Create `RoadRuntimeRootSystem`
+4. Complete: Create `RoadRuntimeRootSceneSystemHelper`
    - Owns creation/disposal of `RuntimeRoads`, `RuntimeAutobahns`, `RuntimeAutobahnConnectors`, `RuntimeDebugStraightRoads`, and any temporary compatibility roots.
    - Preserve exact root names and transforms.
-   - Created `RoadRuntimeRootSystem` with a `Roots` value for road, autobahn, connector, debug-straight, and temporary building roots.
-   - `RoadBuildSystem` now requests roots through `RoadRuntimeRootSystem.CreateRoots` and disposes them through `DisposeRoots`.
+   - Created `RoadRuntimeRootSceneSystemHelper` with a `Roots` value for road, autobahn, connector, debug-straight, and temporary building roots.
+   - `RoadBuildSystem` now requests roots through `RoadRuntimeRootSceneSystemHelper.CreateRoots` and disposes them through `DisposeRoots`.
    - Direct runtime root creation/disposal no longer lives in `RoadBuildSystem`.
    - Expected output: scene hierarchy composition is not owned by road gameplay logic.
 

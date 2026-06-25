@@ -100,7 +100,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
         return new RoadBuildDisposalCompositionSystemHelper.Context(
             source.RoadBuildStartupSystem,
             source.RoadBuildStartupState,
-            source.RoadRuntimeRootSystem,
+            source.RoadRuntimeRootSceneSystemHelper,
             source.RoadBuildPlacementVisualSystem,
             source.RoadBuildPlacementVisualState,
             source.RoadVisualVariantSystem,

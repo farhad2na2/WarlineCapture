@@ -8,7 +8,7 @@ internal sealed class RoadBuildDisposalCompositionSystemHelper
     {
         public readonly RoadBuildStartupSystem StartupSystem;
         public readonly RoadBuildStartupSystem.State StartupState;
-        public readonly RoadRuntimeRootSystem RuntimeRootSystem;
+        public readonly RoadRuntimeRootSceneSystemHelper RuntimeRootSystem;
         public readonly RoadBuildPlacementVisualSystem PlacementVisualSystem;
         public readonly RoadBuildPlacementVisualSystem.State PlacementVisualState;
         public readonly RoadVisualVariantSystem VisualVariantSystem;
@@ -24,7 +24,7 @@ internal sealed class RoadBuildDisposalCompositionSystemHelper
         public Context(
             RoadBuildStartupSystem startupSystem,
             RoadBuildStartupSystem.State startupState,
-            RoadRuntimeRootSystem runtimeRootSystem,
+            RoadRuntimeRootSceneSystemHelper runtimeRootSystem,
             RoadBuildPlacementVisualSystem placementVisualSystem,
             RoadBuildPlacementVisualSystem.State placementVisualState,
             RoadVisualVariantSystem visualVariantSystem,

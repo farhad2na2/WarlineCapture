@@ -1,7 +1,7 @@
 using UnityEngine;
 using static UnityEngine.Object;
 
-public sealed class RoadRuntimeRootSystem
+public sealed class RoadRuntimeRootSceneSystemHelper
 {
     public readonly struct Roots
     {

@@ -52,11 +52,11 @@ Measured on 2026-06-23 from runtime production code under `Assets/Game/Scripts`,
 | Item | Count |
 | --- | ---: |
 | Baseline plain runtime non-ECS `*System` declarations | 240 |
-| Renamed in this tracker | 120 |
-| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 120 |
-| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 120 |
-| Current batch | Match Overlay command tab feedback UI helper naming batch complete |
-| Validation status | Batch 1 through Batch 109 compile and architecture validations passed by marker; Batch 84 through Batch 109 Unity validations exited cleanly; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71 through Batch 109 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 and Batch 102 building runtime boundary validations and Batch 57 production metadata validation exited cleanly; Batch 103 had no dedicated menu-diagnostics focused runner, so compile plus architecture validation covered the naming-only UI helper slice; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
+| Renamed in this tracker | 121 |
+| Remaining known runtime non-ECS bare `*System` declarations, including MonoBehaviour | 119 |
+| Current non-ECS conversion inventory denominator, excluding MonoBehaviour/editor | 119 |
+| Current batch | Match Overlay command tab visual UI helper naming batch complete |
+| Validation status | Batch 1 through Batch 110 compile and architecture validations passed by marker; Batch 84 through Batch 110 Unity validations exited cleanly; Batch 22 architecture, Batch 23-32 Unity validations, Batch 54 architecture, Batch 55 Unity validations, Batch 56 Unity validations, Batch 57 runtime-boundary/architecture validations, Batch 58 Unity validations, Batch 59 Unity validations, Batch 60 Unity validations, Batch 61 Unity validations, Batch 62 Unity validations, Batch 63 Unity validations, Batch 64 Unity validations, Batch 65 Unity validations, Batch 66 Unity validations, Batch 67 Unity validations, Batch 68 Unity validations, Batch 69 Unity validations, and Batch 70 Unity validations were terminated after recording pass markers because batchmode hung during post-test cleanup; Batch 71 through Batch 110 Unity validations exited cleanly; Batch 33-53 Unity validations exited cleanly; Batch 54 and Batch 102 building runtime boundary validations and Batch 57 production metadata validation exited cleanly; Batch 103 had no dedicated menu-diagnostics focused runner, so compile plus architecture validation covered the naming-only UI helper slice; Batch 3 building tick focused validation exposed a pre-existing simulation-order test/contract mismatch unrelated to the rename; Batch 8 bootstrap-composition guard exposed a pre-existing UI Toolkit hierarchy lookup unrelated to the rename |
 
 ## Batch 1 - Static/No-Instance-State Helpers
 
@@ -1931,6 +1931,24 @@ This helper applies command-mode feedback to explicit Match HUD command-tab grou
 - `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod MatchHudCommandFeedbackPanelTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch109-command-feedback.log`: passed with `[MatchHudCommandFeedbackValidation] result=Passed tests=13`.
 - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch109-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=120`.
+
+## Batch 110 - Match Overlay Command Tab Visual UI Helper
+
+This helper applies selected/normal sprites to explicit Match HUD command tabs. It is a UI presentation helper and does not own gameplay policy.
+
+| Status | Old type/file | New type/file | Reason |
+| --- | --- | --- | --- |
+| Complete | `MatchOverlayCommandTabVisualSystem` | `MatchOverlayCommandTabVisualUiSystemHelper` | Applies selected/normal command-tab sprites for Match HUD UI groups. |
+
+## Batch 110 Validation Log
+
+- `python3 Tools/Architecture/generate_non_ecs_system_inventory.py`: completed; inventory denominator is now `119`.
+- `git diff --check`: passed.
+- `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal`: passed.
+- `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal`: passed.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod MatchHudCommandFeedbackPanelTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch110-command-feedback.log`: passed with `[MatchHudCommandFeedbackValidation] result=Passed tests=13`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RtsSelectionInputSystemTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch110-selection-input.log`: passed with `[RtsSelectionInputSystemValidation] result=Passed tests=56`.
+- `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonEcsSystemConversionArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-non-ecs-helper-naming-batch110-architecture.log`: passed with `[NonEcsSystemConversionArchitectureValidation] result=Passed tests=9` and `runtimeNonEcsDenominator=119`.
 
 ## Open Follow-Up Batches
 

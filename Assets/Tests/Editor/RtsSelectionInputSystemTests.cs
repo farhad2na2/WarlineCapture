@@ -2961,7 +2961,7 @@ public sealed class RtsSelectionInputSystemTests
     {
         string commandInput = File.ReadAllText("Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs");
 
-        Assert.IsFalse(commandInput.Contains("MatchOverlayCommandTabVisualSystem", StringComparison.Ordinal));
+        Assert.IsFalse(commandInput.Contains("MatchOverlayCommandTabVisualUiSystemHelper", StringComparison.Ordinal));
         Assert.IsFalse(commandInput.Contains("ApplyDefaultSelection", StringComparison.Ordinal));
         Assert.IsFalse(commandInput.Contains(".Toggle(", StringComparison.Ordinal));
         Assert.IsFalse(commandInput.Contains(".Select(", StringComparison.Ordinal));

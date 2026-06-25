@@ -36,7 +36,7 @@ public sealed class MatchOverlayCommandTabFeedbackUiSystemHelper
             if (!IsLiveGroup(group))
                 continue;
 
-            new MatchOverlayCommandTabVisualSystem(group).Select(null);
+            new MatchOverlayCommandTabVisualUiSystemHelper(group).Select(null);
             ClearSelectedUiObjectIfCommandTab(group);
         }
     }
@@ -47,7 +47,7 @@ public sealed class MatchOverlayCommandTabFeedbackUiSystemHelper
         if (tab == null)
             return false;
 
-        new MatchOverlayCommandTabVisualSystem(group).Select(tab);
+        new MatchOverlayCommandTabVisualUiSystemHelper(group).Select(tab);
         return true;
     }
 

@@ -1,8 +1,8 @@
-public sealed class MatchOverlayCommandTabVisualSystem
+public sealed class MatchOverlayCommandTabVisualUiSystemHelper
 {
     private readonly MatchOverlayCommandTabGroupView _tabGroup;
 
-    public MatchOverlayCommandTabVisualSystem(MatchOverlayCommandTabGroupView tabGroup)
+    public MatchOverlayCommandTabVisualUiSystemHelper(MatchOverlayCommandTabGroupView tabGroup)
     {
         _tabGroup = tabGroup;
     }

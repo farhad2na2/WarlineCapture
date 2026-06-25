@@ -63,7 +63,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 tryGetRuntimeBuilding,
                 getEffectivePlacementRect);
 
-        BuildingRuntimeEntitySystem.Context CreateRuntimeEntityContext() =>
+        BuildingRuntimeEntityCompositionSystemHelper.Context CreateRuntimeEntityContext() =>
             CreateBuildingRuntimeEntityContext(
                 source,
                 tryGetEntityManager,
@@ -166,7 +166,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             (out GridConfig grid) => tryGetGridData(source, out _, out grid, out _, out _),
             (definition, origin, grid) => getEffectivePlacementRect(source, definition, origin, grid, false),
             source.BuildingGameplayDependencyCompositionSystemHelper.RemoveBlockersOverlappingFootprint,
-            source.BuildingRuntimeEntitySystem,
+            source.BuildingRuntimeEntityCompositionSystemHelper,
             CreateRuntimeEntityContext(),
             source.BuildingPlacementRedirectCompositionSystemHelper,
             source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,
@@ -187,12 +187,12 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             source.BuildingGameplayDependencyCompositionSystemHelper.FactionVisualSettings,
             markerPropertyBlock,
             source.BuildingGameplayDependencyCompositionSystemHelper.BuildingFactionTintStrength,
-            buildingId => source.BuildingRuntimeEntitySystem.DeleteBuildingById(CreateRuntimeEntityContext(), buildingId),
+            buildingId => source.BuildingRuntimeEntityCompositionSystemHelper.DeleteBuildingById(CreateRuntimeEntityContext(), buildingId),
             () => beginDeferredRuntimeBuildingSideEffects(source),
             () => endDeferredRuntimeBuildingSideEffects(source));
     }
 
-    public BuildingRuntimeEntitySystem.Context CreateBuildingRuntimeEntityContext(
+    public BuildingRuntimeEntityCompositionSystemHelper.Context CreateBuildingRuntimeEntityContext(
         BuildingGameplaySourceCompositionSystemHelper source,
         TryGetEntityManagerDelegate tryGetEntityManager,
         TryGetGridDataDelegate tryGetGridData,

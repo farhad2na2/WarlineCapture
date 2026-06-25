@@ -47,7 +47,7 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingProductionRequestBoundary.Context> createProductionRequestContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionSystem.Context> createBuildingSelectionContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeEntityCompositionSystemHelper.Context> createBuildingRuntimeEntityContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource)
     {
         return source.BuildingPlacementInteractionContextCompositionSystemHelper.CreateContext(
@@ -77,14 +77,14 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
                 () => EnqueueAndProcessDeleteSelectedBuilding(
                     source,
                     createBuildingSelectionContext(source),
-                    buildingId => source.BuildingRuntimeEntitySystem.DeleteBuildingById(createBuildingRuntimeEntityContext(source), buildingId)),
+                    buildingId => source.BuildingRuntimeEntityCompositionSystemHelper.DeleteBuildingById(createBuildingRuntimeEntityContext(source), buildingId)),
                 _ => EnqueueAndProcessClearSelectedBuilding(
                     source,
                     createBuildingSelectionContext(source)),
                 () => EnqueueAndProcessExitBuildMode(
                     source,
                     createPlacementCommandContext(source, getInteractionContext(), markerPropertyBlock)),
-                (buildingId, blockerEntity, buildingObject) => source.BuildingRuntimeEntitySystem.HandleRuntimeBuildingEntityDestroyed(
+                (buildingId, blockerEntity, buildingObject) => source.BuildingRuntimeEntityCompositionSystemHelper.HandleRuntimeBuildingEntityDestroyed(
                     createBuildingRuntimeEntityContext(source),
                     buildingId,
                     blockerEntity,

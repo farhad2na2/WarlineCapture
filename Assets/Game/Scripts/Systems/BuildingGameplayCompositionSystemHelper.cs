@@ -145,7 +145,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 tryResolveBuildingFocusWorldPosition,
                 tryGetRuntimeBuilding,
                 getEffectivePlacementRect);
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeEntitySystem.Context> createBuildingRuntimeEntityContext =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeEntityCompositionSystemHelper.Context> createBuildingRuntimeEntityContext =
             source => source.BuildingRuntimeContextCompositionSystemHelper.CreateBuildingRuntimeEntityContext(
                 source,
                 tryGetEntityManager,

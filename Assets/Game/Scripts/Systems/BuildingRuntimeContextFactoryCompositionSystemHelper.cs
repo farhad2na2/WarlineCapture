@@ -31,10 +31,10 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         public readonly EntityQuery LiveFactionUnitsQuery;
         public readonly EntityQuery BuildingRuntimeBoundaryQuery;
         public readonly Func<int?> GetActiveBuildingId;
-        public readonly BuildingRuntimeEntitySystem.TryGetEntityManagerDelegate TryGetEntityManager;
-        public readonly BuildingRuntimeEntitySystem.TryGetGridDataDelegate TryGetGridData;
+        public readonly BuildingRuntimeEntityCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly BuildingRuntimeEntityCompositionSystemHelper.TryGetGridDataDelegate TryGetGridData;
         public readonly Action<EntityManager> EnsureEntityQueries;
-        public readonly BuildingRuntimeEntitySystem.GetFootprintCenterDelegate GetFootprintCenter;
+        public readonly BuildingRuntimeEntityCompositionSystemHelper.GetFootprintCenterDelegate GetFootprintCenter;
         public readonly BuildingRuntimeQuerySystem.BuildingPredicate IsHouseBuilding;
         public readonly BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate TryResolveBuildingFocusWorldPosition;
         public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
@@ -72,10 +72,10 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             EntityQuery liveFactionUnitsQuery,
             EntityQuery buildingRuntimeBoundaryQuery,
             Func<int?> getActiveBuildingId,
-            BuildingRuntimeEntitySystem.TryGetEntityManagerDelegate tryGetEntityManager,
-            BuildingRuntimeEntitySystem.TryGetGridDataDelegate tryGetGridData,
+            BuildingRuntimeEntityCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
+            BuildingRuntimeEntityCompositionSystemHelper.TryGetGridDataDelegate tryGetGridData,
             Action<EntityManager> ensureEntityQueries,
-            BuildingRuntimeEntitySystem.GetFootprintCenterDelegate getFootprintCenter,
+            BuildingRuntimeEntityCompositionSystemHelper.GetFootprintCenterDelegate getFootprintCenter,
             BuildingRuntimeQuerySystem.BuildingPredicate isHouseBuilding,
             BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate tryResolveBuildingFocusWorldPosition,
             BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
@@ -154,8 +154,8 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         public readonly BuildingRuntimeCreationCompositionSystemHelper.TryGetGridDelegate TryGetGridForRuntimeCreation;
         public readonly BuildingRuntimeCreationCompositionSystemHelper.ResolvePlacementRectDelegate ResolvePlacementRect;
         public readonly BuildingRuntimeCreationCompositionSystemHelper.RemoveOverlappingBlockersDelegate RemoveOverlappingBlockers;
-        public readonly BuildingRuntimeEntitySystem RuntimeEntitySystem;
-        public readonly BuildingRuntimeEntitySystem.Context RuntimeEntityContext;
+        public readonly BuildingRuntimeEntityCompositionSystemHelper RuntimeEntitySystem;
+        public readonly BuildingRuntimeEntityCompositionSystemHelper.Context RuntimeEntityContext;
         public readonly BuildingPlacementRedirectCompositionSystemHelper PlacementRedirectSystem;
         public readonly BuildingPlacementRedirectCompositionSystemHelper.EnsureEntityQueriesDelegate EnsureEntityQueries;
         public readonly BuildingPlacementRedirectCompositionSystemHelper.GetRedirectUnitsQueryDelegate GetRedirectUnitsQuery;
@@ -194,8 +194,8 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             BuildingRuntimeCreationCompositionSystemHelper.TryGetGridDelegate tryGetGridForRuntimeCreation,
             BuildingRuntimeCreationCompositionSystemHelper.ResolvePlacementRectDelegate resolvePlacementRect,
             BuildingRuntimeCreationCompositionSystemHelper.RemoveOverlappingBlockersDelegate removeOverlappingBlockers,
-            BuildingRuntimeEntitySystem runtimeEntitySystem,
-            BuildingRuntimeEntitySystem.Context runtimeEntityContext,
+            BuildingRuntimeEntityCompositionSystemHelper runtimeEntitySystem,
+            BuildingRuntimeEntityCompositionSystemHelper.Context runtimeEntityContext,
             BuildingPlacementRedirectCompositionSystemHelper placementRedirectSystem,
             BuildingPlacementRedirectCompositionSystemHelper.EnsureEntityQueriesDelegate ensureEntityQueries,
             BuildingPlacementRedirectCompositionSystemHelper.GetRedirectUnitsQueryDelegate getRedirectUnitsQuery,
@@ -358,14 +358,14 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         return boundaryEntity != Entity.Null && em.Exists(boundaryEntity);
     }
 
-    public BuildingRuntimeEntitySystem.Context CreateRuntimeEntityContext(
+    public BuildingRuntimeEntityCompositionSystemHelper.Context CreateRuntimeEntityContext(
         RuntimeSource source,
         BuildingCombatUtilitySystemHelper combatSystem,
         BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> combatContext,
         Func<float> getTime,
         float destroyedBuildingLifetimeSeconds)
     {
-        return new BuildingRuntimeEntitySystem.Context(
+        return new BuildingRuntimeEntityCompositionSystemHelper.Context(
             source.TryGetEntityManager,
             source.TryGetGridData,
             source.GetFootprintCenter,

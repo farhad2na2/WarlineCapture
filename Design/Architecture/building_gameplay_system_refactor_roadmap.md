@@ -54,9 +54,9 @@ Step 25 visual helper transition size: 1583 lines. Placement visual instance cre
 
 Step 26 building selection transition size: 1542 lines. Visible selectable checks, selected-building deletion, select/focus, focus-world-position resolution, and camera-focus selection flow now route through `BuildingSelectionSystem`; `BuildingGameplaySystem` no longer keeps private selection/focus helper wrappers.
 
-Step 27 runtime destruction/entity-link transition size: 1538 lines. Runtime building delete callbacks and runtime entity destroyed callbacks now route through `BuildingRuntimeEntitySystem` using `BuildingCombatSystem`; `BuildingGameplaySystem` no longer exposes `DeleteBuildingById` or `HandleRuntimeBuildingEntityDestroyed` shell methods.
+Step 27 runtime destruction/entity-link transition size: 1538 lines. Runtime building delete callbacks and runtime entity destroyed callbacks now route through `BuildingRuntimeEntityCompositionSystemHelper` using `BuildingCombatSystem`; `BuildingGameplaySystem` no longer exposes `DeleteBuildingById` or `HandleRuntimeBuildingEntityDestroyed` shell methods.
 
-Step 28 runtime entity creation transition size: 1513 lines. Runtime blocker creation, runtime building path-blocking policy, and runtime building combat entity creation now bind inside `BuildingRuntimeContextFactoryCompositionSystemHelper` against `BuildingRuntimeEntitySystem`; `BuildingGameplaySystem` no longer keeps private creation/policy wrapper methods.
+Step 28 runtime entity creation transition size: 1513 lines. Runtime blocker creation, runtime building path-blocking policy, and runtime building combat entity creation now bind inside `BuildingRuntimeContextFactoryCompositionSystemHelper` against `BuildingRuntimeEntityCompositionSystemHelper`; `BuildingGameplaySystem` no longer keeps private creation/policy wrapper methods.
 
 Step 29 redirect/hauler bridge transition size: 1473 lines. Runtime creation redirect callbacks, deferred redirect footprint callbacks, pending marker refresh callbacks, selected hauler order assignment, and building approach checks now bind through `BuildingRuntimeContextFactoryCompositionSystemHelper` to `BuildingPlacementRedirectCompositionSystemHelper` / `BuildingResourceHaulerBridgeCompositionSystemHelper`; `BuildingGameplaySystem` no longer keeps private redirect or hauler bridge wrapper methods.
 
@@ -335,15 +335,15 @@ Step 3 freezes the current `BuildingGameplaySystem` public/internal surface. Eve
    - `BuildingGameplaySystem` no longer declares private visible-selection, select/focus, or focus-world-position helper wrappers.
 
 27. Complete: Move runtime destruction and entity link callbacks
-   - Move destroyed runtime building cleanup, runtime building entity destroyed callbacks, blocker/combat entity link handling, and destroyed combat sync to `BuildingRuntimeEntitySystem` / `BuildingCombatSystem`.
+   - Move destroyed runtime building cleanup, runtime building entity destroyed callbacks, blocker/combat entity link handling, and destroyed combat sync to `BuildingRuntimeEntityCompositionSystemHelper` / `BuildingCombatSystem`.
    - Expected output: entity lifetime callbacks do not pass through the shell.
-   - `BuildingRuntimeEntitySystem.Context` now carries the combat destruction boundary; selected-building delete callbacks, runtime-city delete callbacks, and runtime entity destroyed callbacks route through `BuildingRuntimeEntitySystem`.
+   - `BuildingRuntimeEntityCompositionSystemHelper.Context` now carries the combat destruction boundary; selected-building delete callbacks, runtime-city delete callbacks, and runtime entity destroyed callbacks route through `BuildingRuntimeEntityCompositionSystemHelper`.
    - `BuildingGameplaySystem` no longer exposes public/internal `DeleteBuildingById` or `HandleRuntimeBuildingEntityDestroyed` methods.
 
 28. Complete: Move combat and blocker creation
-   - Move blocker entity creation, path-blocking policy, combat entity creation, and gate friendly-pass faction update into `BuildingRuntimeEntitySystem`, `BuildingCombatSystem`, and `BuildingBarrierSystem`.
+   - Move blocker entity creation, path-blocking policy, combat entity creation, and gate friendly-pass faction update into `BuildingRuntimeEntityCompositionSystemHelper`, `BuildingCombatSystem`, and `BuildingBarrierSystem`.
    - Expected output: ECS combat/blocker entities are created by their domain owners.
-   - `BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCreationContext` now binds path-blocking, blocker creation, and combat entity creation directly to `BuildingRuntimeEntitySystem`.
+   - `BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCreationContext` now binds path-blocking, blocker creation, and combat entity creation directly to `BuildingRuntimeEntityCompositionSystemHelper`.
    - `BuildingGameplaySystem` no longer declares private `CreateBlockerEntity`, `ShouldRuntimeBuildingBlockPathing`, or `CreateBuildingCombatEntity` wrappers.
 
 29. Complete: Move redirect and hauler bridge calls

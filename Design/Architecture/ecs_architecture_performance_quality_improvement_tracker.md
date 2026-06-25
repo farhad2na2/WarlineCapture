@@ -569,7 +569,7 @@ Convert road command/grid/read-model work while keeping preview and GameObject v
 - [x] Fold Agent E `P7-0214 RoadBuildContextSystem` from a disabled `SystemBase` wrapper into a plain direct-owned road build context helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
 - [x] Fold Agent E `P7-0220 RoadBuildInteractionContextSystem` from a disabled `SystemBase` wrapper into a plain direct-owned road build interaction context helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
 - [x] Fold and rename Agent E `P7-0224 RoadBuildReadModelCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned road build read-model helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
-- [x] Fold Agent E `P7-0234 RoadRuntimeGenerationContextSystem` from a disabled `SystemBase` wrapper into a plain direct-owned road runtime generation context helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
+- [x] Fold and rename Agent E `P7-0234 RoadRuntimeGenerationContextCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain direct-owned road runtime generation context helper and validate road-build command behavior, compile, and Phase 7 architecture guard.
 
 ### Phase 7.7: Runtime City And Environment Systems
 

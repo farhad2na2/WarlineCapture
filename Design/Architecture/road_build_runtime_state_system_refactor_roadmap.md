@@ -35,7 +35,7 @@ New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. 
 
 - Runtime generation exposure:
   - `RoadRuntimeGenerationSystem`, `RoadRuntimeGenerationContext`
-  - Target owner: `RoadBuildCompositionSourceSystem` plus `RoadRuntimeGenerationContextSystem`.
+  - Target owner: `RoadBuildCompositionSourceSystem` plus `RoadRuntimeGenerationContextCompositionSystemHelper`.
 - Road footprint exposure:
   - `RoadFootprintQuerySystem`, `RoadFootprintQueryContext`
   - Target owner: `RoadBuildCompositionSourceSystem` plus `RoadGridContextSystem`.
@@ -47,7 +47,7 @@ New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. 
   - Target owner: `RoadBuildReadModelCompositionSystemHelper` plus building interaction/read boundaries.
 - Runtime-city road generation commands:
   - `BeginDeferredRoadEcsSync`, `EndDeferredRoadEcsSync`, `TryGetRoadCellSizeInGridCells`, `CreateRoadStrokeFromRoadCells`, `CreateAutobahnStrokeFromRoadCells`, `TryGetAutobahnConnectorRoadCell`, `TryLogRoadConnectMarkers`, `CreateStandaloneStraightRoadChainFromConnector`, `TryGetStandaloneStraightChainEndRoadCell`, `CreateStandaloneDebugCityRoadNetworkFromStraightChain`
-  - Target owner: `RoadRuntimeGenerationSystem`, `RoadRuntimeGenerationContextSystem`, and `RoadGridProjectionSystem`.
+  - Target owner: `RoadRuntimeGenerationSystem`, `RoadRuntimeGenerationContextCompositionSystemHelper`, and `RoadGridProjectionSystem`.
 - Road footprint commands:
   - `HasRoadInFootprint`, `FillRoadFootprintMask`
   - Target owner: `RoadFootprintQuerySystem` plus `RoadGridContextSystem`.
@@ -182,7 +182,7 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Expected output: road interaction systems can run without `RoadBuildRuntimeStateSystem`.
 
 11. Complete: Extract road runtime-generation context construction
-   - Create `RoadRuntimeGenerationContextSystem`.
+   - Create `RoadRuntimeGenerationContextCompositionSystemHelper`.
    - Move road-cell-size query binding, deferred road ECS sync callbacks, stroke creation callback, and special visual context handoff.
    - Expected output: runtime city uses `RoadRuntimeGenerationSystem` plus context without touching the temporary holder.
 
@@ -221,7 +221,7 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Expected output: session restore no longer calls back into broad runtime state.
 
 18. Complete: Move deferred road ECS sync wrappers out
-   - Move `BeginDeferredRoadEcsSync`, `EndDeferredRoadEcsSync`, and internal sync callbacks into `RoadGridProjectionSystem` / `RoadRuntimeGenerationContextSystem`.
+   - Move `BeginDeferredRoadEcsSync`, `EndDeferredRoadEcsSync`, and internal sync callbacks into `RoadGridProjectionSystem` / `RoadRuntimeGenerationContextCompositionSystemHelper`.
    - Expected output: runtime city no longer reaches through temporary state for deferred sync.
 
 ## Phase 5: Legacy Building Compatibility Removal
@@ -366,14 +366,14 @@ Every phase boundary must also run the existing road validation set when feasibl
 - Step 8 complete: deleted the temporary static `RoadBuildRuntimeStateSystem.SetBuildMode` bridge; runtime build-mode changes must stay on `RoadBuildCommandCompositionSystemHelper`/explicit command contexts.
 - Step 9 complete: chunk, preview, and special-road visual context construction moved to `RoadBuildVisualContextSystem`; visual behavior remains in the existing visual systems.
 - Step 10 complete: session, input, command, and delete-prompt context construction moved to `RoadBuildInteractionContextSystem`; callbacks remain explicit and narrow.
-- Step 11 complete: runtime road-generation context construction moved to `RoadRuntimeGenerationContextSystem`; road-cell-size, deferred sync, stroke creation, and special visual handoff remain explicit callbacks.
+- Step 11 complete: runtime road-generation context construction moved to `RoadRuntimeGenerationContextCompositionSystemHelper`; road-cell-size, deferred sync, stroke creation, and special visual handoff remain explicit callbacks.
 - Step 12 complete: footprint query and grid projection context construction moved to `RoadGridContextSystem`; projection behavior and road grid sizing are unchanged.
 - Step 13 complete: legacy building ECS context construction moved to `BuildingRoadLegacyContextSystem`; entity manager, grid, footprint, interaction, and spawn-random callbacks remain explicit.
 - Step 14 complete: road stroke creation/deletion plus session snapshot capture/restore mutation moved to `RoadBuildMutationCompositionSystemHelper`; runtime state only supplies refresh/rebuild callbacks pending steps 16-17.
 - Step 15 complete: visual type resolution plus prefab/variant lookup handoff moved to `RoadVisualResolutionSystem`; visual-type rules are unchanged.
 - Step 16 complete: dirty-cell road tile refresh, chunk dirtying, ECS sync request, and special-road dirty rebuild trigger moved to `RoadVisualRefreshSystem`.
 - Step 17 complete: full road state rollback/rebuild refresh moved to `RoadVisualRefreshSystem`; snapshot restore now triggers the visual refresh boundary instead of broad runtime-state rebuild code.
-- Step 18 complete: deferred road ECS sync begin/end callbacks moved to `RoadRuntimeGenerationContextSystem`, which now calls `RoadGridProjectionSystem` directly.
+- Step 18 complete: deferred road ECS sync begin/end callbacks moved to `RoadRuntimeGenerationContextCompositionSystemHelper`, which now calls `RoadGridProjectionSystem` directly.
 - Step 19 complete: soldier-base definition construction and prefab local-bounds caching moved to `BuildingRoadLegacyDefinitionSystem`.
 - Step 29 complete: remaining context construction moved to `RoadBuildCompositionContextCompositionSystemHelper`, startup/bind/dispose sequencing moved to `RoadBuildCompositionLifecycleCompositionSystemHelper`, persistent state moved into `RoadBuildCompositionSourceSystem`, and `RoadBuildRuntimeStateSystem` is now only a 58-line delegating adapter. Step 30 can delete the adapter file once composition and tests stop referencing it.
 - Step 30 complete: `RoadBuildRuntimeStateSystem.cs` and `.meta` were deleted. `RoadBuildCompositionSystemHelper` now consumes source/context/lifecycle systems directly, so production code has no temporary road-runtime holder reference.

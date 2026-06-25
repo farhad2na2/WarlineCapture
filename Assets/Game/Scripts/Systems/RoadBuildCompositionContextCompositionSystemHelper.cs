@@ -21,7 +21,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
 
     public RoadRuntimeGenerationSystem.Context CreateRoadRuntimeGenerationContext(RoadBuildCompositionSourceSystem source)
     {
-        return RoadRuntimeGenerationContextSystem.CreateContext(CreateRoadRuntimeGenerationContextSource(source));
+        return RoadRuntimeGenerationContextCompositionSystemHelper.CreateContext(CreateRoadRuntimeGenerationContextSource(source));
     }
 
     public RoadBuildReadModelCompositionSystemHelper.Context CreateRoadBuildReadModelContext(RoadBuildCompositionSourceSystem source)
@@ -220,9 +220,9 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             (int x, int y, int width, int height) => IsRuntimeBlockerCell(source, x, y, width, height));
     }
 
-    private RoadRuntimeGenerationContextSystem.Context CreateRoadRuntimeGenerationContextSource(RoadBuildCompositionSourceSystem source)
+    private RoadRuntimeGenerationContextCompositionSystemHelper.Context CreateRoadRuntimeGenerationContextSource(RoadBuildCompositionSourceSystem source)
     {
-        return new RoadRuntimeGenerationContextSystem.Context(
+        return new RoadRuntimeGenerationContextCompositionSystemHelper.Context(
             (out int roadCellSizeInGridCells) => TryGetRoadCellSizeInGridCellsInternal(source, out roadCellSizeInGridCells),
             source.RoadGridProjectionSystem,
             CreateRoadGridProjectionContext(source),

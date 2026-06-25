@@ -1,4 +1,4 @@
-internal sealed class RoadRuntimeGenerationContextSystem
+internal sealed class RoadRuntimeGenerationContextCompositionSystemHelper
 {
     public readonly struct Context
     {

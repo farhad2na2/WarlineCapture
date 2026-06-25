@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeCityReadinessQuerySystem
+internal sealed class RuntimeCityReadinessQueryCompositionSystemHelper
 {
     private World _queryWorld;
     private EntityQuery _gridDataQuery;

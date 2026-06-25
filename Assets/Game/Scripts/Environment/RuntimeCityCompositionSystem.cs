@@ -66,7 +66,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityLifecycleState _fallbackRuntimeCityLifecycle = new();
     private RuntimeCityStartupSystemHelper _runtimeCityStartupHelper;
     private readonly RuntimeCityStartupState _fallbackRuntimeCityStartup = new();
-    private RuntimeCityReadinessQuerySystem _runtimeCityReadinessQuerySystem;
+    private RuntimeCityReadinessQueryCompositionSystemHelper _runtimeCityReadinessQueryHelper;
     private RuntimeCityGenerationSystem _runtimeCityGenerationSystem;
     private readonly RuntimeCityGenerationState _fallbackRuntimeCityGeneration = new();
     private RuntimeCityChainUtilitySystemHelper _runtimeCityChainHelper;
@@ -160,7 +160,7 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityVisualPresentationSystemHelper?.Dispose();
         (_runtimeCitySpawnBridgeHelper?.State ?? _fallbackRuntimeCitySpawnBridge).Clear();
         (_runtimeCityRoadBuildBridgeHelper?.State ?? _fallbackRuntimeCityRoadBuildBridge).Clear();
-        _runtimeCityReadinessQuerySystem?.Clear();
+        _runtimeCityReadinessQueryHelper?.Clear();
         _runtimeCityMinimapEventSystem?.Clear();
         _configured = false;
     }
@@ -361,8 +361,8 @@ public sealed class RuntimeCityCompositionSystem
     private RuntimeCityMinimapEventSystem RuntimeCityMinimapEventSystem =>
         _runtimeCityMinimapEventSystem ??= ResolveRuntimeCityMinimapEventSystem();
 
-    private RuntimeCityReadinessQuerySystem RuntimeCityReadinessQuerySystem =>
-        _runtimeCityReadinessQuerySystem ??= new RuntimeCityReadinessQuerySystem();
+    private RuntimeCityReadinessQueryCompositionSystemHelper RuntimeCityReadinessQueryCompositionSystemHelper =>
+        _runtimeCityReadinessQueryHelper ??= new RuntimeCityReadinessQueryCompositionSystemHelper();
 
     private RuntimeCityReadModelCompositionSystemHelper RuntimeCityReadModelCompositionSystemHelper =>
         _runtimeCityReadModelSystem ??= new RuntimeCityReadModelCompositionSystemHelper();
@@ -567,15 +567,15 @@ public sealed class RuntimeCityCompositionSystem
 
     private bool TryGetPendingInitialUnits(out int totalConfigs, out int initializedConfigs)
     {
-        RuntimeCityReadinessQuerySystem readinessQuerySystem = RuntimeCityReadinessQuerySystem;
-        if (readinessQuerySystem == null)
+        RuntimeCityReadinessQueryCompositionSystemHelper readinessQueryHelper = RuntimeCityReadinessQueryCompositionSystemHelper;
+        if (readinessQueryHelper == null)
         {
             totalConfigs = 0;
             initializedConfigs = 0;
             return false;
         }
 
-        return readinessQuerySystem.HasPendingInitialUnitsSpawn(out totalConfigs, out initializedConfigs);
+        return readinessQueryHelper.HasPendingInitialUnitsSpawn(out totalConfigs, out initializedConfigs);
     }
 
     private bool TryGetRoadCellSizeInGridCells(out int roadCellSizeInGridCells)
@@ -585,19 +585,19 @@ public sealed class RuntimeCityCompositionSystem
 
     private bool TryGetGridConfig(out GridConfig grid)
     {
-        RuntimeCityReadinessQuerySystem readinessQuerySystem = RuntimeCityReadinessQuerySystem;
-        if (readinessQuerySystem == null)
+        RuntimeCityReadinessQueryCompositionSystemHelper readinessQueryHelper = RuntimeCityReadinessQueryCompositionSystemHelper;
+        if (readinessQueryHelper == null)
         {
             grid = default;
             return false;
         }
 
-        return readinessQuerySystem.TryGetGridConfig(out grid);
+        return readinessQueryHelper.TryGetGridConfig(out grid);
     }
 
     private List<RectInt> CollectInitialBaseExclusionRoadRects(int roadCellSizeInGridCells)
     {
-        return RuntimeCityReadinessQuerySystem?.CollectInitialBaseExclusionRoadRects(roadCellSizeInGridCells) ??
+        return RuntimeCityReadinessQueryCompositionSystemHelper?.CollectInitialBaseExclusionRoadRects(roadCellSizeInGridCells) ??
             new List<RectInt>();
     }
 

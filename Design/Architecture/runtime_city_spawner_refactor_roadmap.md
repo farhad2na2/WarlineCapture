@@ -106,7 +106,7 @@ Non-goals:
     - Manual `GenerateCity()` also uses the startup gate's dependency/readiness result so dependency checks do not remain duplicated in the spawner.
 
 17. Complete: Extract ECS query/readiness ownership
-    - Created `RuntimeCityReadinessQuerySystem`.
+    - Created `RuntimeCityReadinessQueryCompositionSystemHelper`.
     - Owns grid-data query caching, `TryGetGridData`, `TryGetGridConfig`, `HasPendingInitialUnitsSpawn`, and initial base exclusion road-rect collection.
     - Caches grid-data queries per world and clears cached query ownership during runtime city disposal.
     - `RuntimeCitySpawnerSystem` no longer has `Unity.Entities` or `Unity.Collections` dependencies and no longer owns `World`, `EntityQuery`, `EntityManager`, `Allocator`, or direct ECS readiness query setup.
@@ -155,7 +155,7 @@ Non-goals:
 
 25. Complete: Move composition out of the spawner constructor path
     - Created `RuntimeCityCompositionSystem`.
-    - Owns creation/wiring of `RuntimeCityConfigCompositionSystemHelper`, `RuntimeCityLifecycleCompositionSystemHelper`, `RuntimeCityStartupSystemHelper`, `RuntimeCityReadinessQuerySystem`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressSystem`, `RuntimeCityMinimapEventSystem`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
+    - Owns creation/wiring of `RuntimeCityConfigCompositionSystemHelper`, `RuntimeCityLifecycleCompositionSystemHelper`, `RuntimeCityStartupSystemHelper`, `RuntimeCityReadinessQueryCompositionSystemHelper`, `RuntimeCityGenerationSystem`, `RuntimeCityChainUtilitySystemHelper`, `RuntimeCityRoadCommitCompositionSystemHelper`, `RuntimeCityIngressSystem`, `RuntimeCityMinimapEventSystem`, `RuntimeCityDiagnosticSystem`, plot/walkability/prefab/visual/bridge systems, context factories, update orchestration, and disposal.
     - `RuntimeCitySpawnerSystem` is now a thin public shell delegating init, update, dispose, public generation, and house-prefab queries to `RuntimeCityCompositionSystem`.
     - Expected output: startup composition is explicit and narrow.
 

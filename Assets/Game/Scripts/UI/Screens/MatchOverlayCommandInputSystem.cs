@@ -346,8 +346,10 @@ public sealed class MatchOverlayCommandInputSystem
         public void RefreshCommandControlState(ISelectionUiReadModel selectionUiReadModel = null)
         {
             ISelectionUiReadModel readModel = selectionUiReadModel ?? _selectionUiReadModel;
-            ApplyButtonInteractable(_view.HoldButton, readModel == null || readModel.FocusedUnitCanHold);
-            ApplyButtonInteractable(_view.StopButton, readModel == null || readModel.FocusedUnitCanStop);
+            // Keep the bottom command rail interactive so hover/selected feedback remains visible.
+            // Unavailable commands still report the specific rejection reason through TryAcceptCapability.
+            ApplyButtonInteractable(_view.HoldButton, true);
+            ApplyButtonInteractable(_view.StopButton, true);
             ApplyButtonInteractable(_view.CommandWheelStopButton, readModel == null || readModel.FocusedUnitCanStop);
             // Keep Scan pressable so unavailable units surface an explicit rejection message.
             ApplyButtonInteractable(_view.ScanButton, true);

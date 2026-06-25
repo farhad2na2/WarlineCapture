@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
+using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 
 internal sealed class RuntimeCityDecorationBuildingSpawnPrefabSystemHelper
 {

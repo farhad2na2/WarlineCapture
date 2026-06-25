@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
 using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
-using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
+using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 
 internal sealed class RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper
 {

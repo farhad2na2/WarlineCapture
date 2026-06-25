@@ -14,7 +14,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityRoadLayoutState _fallbackRuntimeCityRoadLayout = new();
     private RuntimeCityBuildingPlotUtilitySystemHelper _runtimeCityBuildingPlotHelper;
     private readonly RuntimeCityBuildingPlotState _fallbackRuntimeCityBuildingPlot = new();
-    private RuntimeCityWalkabilitySystem _runtimeCityWalkabilitySystem;
+    private RuntimeCityWalkabilityUtilitySystemHelper _runtimeCityWalkabilityHelper;
     private readonly RuntimeCityWalkabilityState _fallbackRuntimeCityWalkability = new();
     private RuntimeCityPrefabSelectionPrefabSystemHelper _runtimeCityPrefabSelectionHelper;
     private readonly RuntimeCityPrefabSelectionState _fallbackRuntimeCityPrefabSelection = new();
@@ -398,10 +398,10 @@ public sealed class RuntimeCityCompositionSystem
         _runtimeCityRoadLayoutHelper ??= ResolveRuntimeCityRoadLayoutUtilitySystemHelper();
 
     private RuntimeCityWalkabilityState RuntimeCityWalkabilityState =>
-        RuntimeCityWalkabilitySystem?.State ?? _fallbackRuntimeCityWalkability;
+        RuntimeCityWalkabilityUtilitySystemHelper?.State ?? _fallbackRuntimeCityWalkability;
 
-    private RuntimeCityWalkabilitySystem RuntimeCityWalkabilitySystem =>
-        _runtimeCityWalkabilitySystem ??= ResolveRuntimeCityWalkabilitySystem();
+    private RuntimeCityWalkabilityUtilitySystemHelper RuntimeCityWalkabilityUtilitySystemHelper =>
+        _runtimeCityWalkabilityHelper ??= ResolveRuntimeCityWalkabilityUtilitySystemHelper();
 
     private RuntimeCityBuildingPlotState RuntimeCityBuildingPlotState =>
         RuntimeCityBuildingPlotHelper?.State ?? _fallbackRuntimeCityBuildingPlot;
@@ -636,9 +636,9 @@ public sealed class RuntimeCityCompositionSystem
         return new RuntimeCityRoadLayoutUtilitySystemHelper();
     }
 
-    private static RuntimeCityWalkabilitySystem ResolveRuntimeCityWalkabilitySystem()
+    private static RuntimeCityWalkabilityUtilitySystemHelper ResolveRuntimeCityWalkabilityUtilitySystemHelper()
     {
-        return new RuntimeCityWalkabilitySystem();
+        return new RuntimeCityWalkabilityUtilitySystemHelper();
     }
 
     private static RuntimeCityBuildingPlotUtilitySystemHelper ResolveRuntimeCityBuildingPlotHelper()

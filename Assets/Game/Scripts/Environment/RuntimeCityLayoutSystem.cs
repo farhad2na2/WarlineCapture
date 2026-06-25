@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CityChainAxis = RuntimeCityLayoutSystem.CityChainAxis;
 using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;
-using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
+using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 
 internal sealed class RuntimeCityLayoutSystem
 {

@@ -324,7 +324,7 @@ internal sealed class RuntimeCityGenerationState
             context.Grid,
             context.RoadCellSizeInGridCells,
             rng,
-            (List<RectInt> houseFootprints, Vector2Int centerRoadCell, int callbackRoadCellSizeInGridCells, HashSet<Vector2Int> roadCells, GridConfig callbackGrid, ref Unity.Mathematics.Random callbackRng, List<RuntimeCityWalkabilitySystem.ReservedFootprint> reservedFootprints) =>
+            (List<RectInt> houseFootprints, Vector2Int centerRoadCell, int callbackRoadCellSizeInGridCells, HashSet<Vector2Int> roadCells, GridConfig callbackGrid, ref Unity.Mathematics.Random callbackRng, List<RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint> reservedFootprints) =>
                 context.BuildingSpawnSystems.HouseYardWallSystem.PlaceHouseYardWalls(
                     context.BuildingSpawnContext,
                     context.BuildingSpawnSystems.PlacementSystem,
@@ -347,7 +347,7 @@ internal sealed class RuntimeCityGenerationState
                     callbackGrid,
                     ref callbackRng,
                     reservedFootprints),
-            (RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context callbackContext, List<GameObject> prefabs, int count, Vector2Int centerRoadCell, int townRadius, int callbackRoadCellSizeInGridCells, HashSet<Vector2Int> roadCells, ref Unity.Mathematics.Random callbackRng, List<Vector2Int> usedPlotCells, List<RuntimeCityWalkabilitySystem.ReservedFootprint> reservedFootprints, List<RectInt> shopAndHouseFootprints) =>
+            (RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context callbackContext, List<GameObject> prefabs, int count, Vector2Int centerRoadCell, int townRadius, int callbackRoadCellSizeInGridCells, HashSet<Vector2Int> roadCells, ref Unity.Mathematics.Random callbackRng, List<Vector2Int> usedPlotCells, List<RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint> reservedFootprints, List<RectInt> shopAndHouseFootprints) =>
                 context.BuildingSpawnSystems.DecorationBuildingSpawnSystem.PlaceCityDecorationBuildings(
                     callbackContext,
                     context.BuildingSpawnSystems.PlacementSystem,

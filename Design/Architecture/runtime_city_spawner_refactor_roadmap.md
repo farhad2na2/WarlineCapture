@@ -54,7 +54,7 @@ Goal: split runtime city generation before adding more map/city gameplay, so lay
    - `RuntimeCitySpawnerSystem` still receives the managed road build dependency at startup, but no longer stores `RoadBuildSystem` or calls road build methods directly.
 
 10. Complete: Extract occupancy/walkability publication
-    - Created `RuntimeCityWalkabilitySystem`.
+    - Created `RuntimeCityWalkabilityUtilitySystemHelper`.
     - Owns reserved footprint data, entrance-corridor reservation, reserved-footprint spacing checks, road-overlap checks, yard-fit validation, rectangle expansion, and adjacency/touch validation.
     - `RuntimeCitySpawnerSystem` temporarily sequenced building/decor spawn attempts until step 11; occupancy validation and reservations no longer live in the plot system.
 

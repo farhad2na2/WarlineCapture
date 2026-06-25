@@ -14,7 +14,7 @@ Current size at roadmap creation: 1351 lines.
 
 Step 3 composition-source transition size: 1358 lines. Child-system construction now lives in `RoadBuildCompositionSourceSystem`; the temporary holder may read through that source only while later steps move contexts and caller-facing surface out. The temporary static `SetBuildMode` bridge was removed in step 8.
 
-Final target: delete `RoadBuildRuntimeStateSystem.cs` and `.meta`. `RoadBuildCompositionSystem` may remain as a wiring-only composition boundary, but it must not own gameplay policy, scene queries, visual refresh algorithms, legacy building behavior, static commands, or runtime state mutation.
+Final target: delete `RoadBuildRuntimeStateSystem.cs` and `.meta`. `RoadBuildCompositionSystemHelper` may remain as a wiring-only composition boundary, but it must not own gameplay policy, scene queries, visual refresh algorithms, legacy building behavior, static commands, or runtime state mutation.
 
 ## Current Responsibility Inventory
 
@@ -41,7 +41,7 @@ New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. 
   - Target owner: `RoadBuildCompositionSourceSystem` plus `RoadGridContextSystem`.
 - Runtime update / GUI exposure:
   - `RoadBuildInputSystem`, `RoadBuildInputContext`, `RoadBuildInputCamera`, `RoadDeletePromptSystem`, `RoadDeletePromptContext`, `Update`, `OnGui`
-  - Target owner: `RoadBuildInteractionContextSystem`, `RoadBuildCompositionSystem`, `RoadBuildInputSystem`, and `RoadDeletePromptSystem`.
+  - Target owner: `RoadBuildInteractionContextSystem`, `RoadBuildCompositionSystemHelper`, `RoadBuildInputSystem`, and `RoadDeletePromptSystem`.
 - Read-model exposure:
   - `HasPendingBuildingPlacement`, `CanConfirmBuildingPlacement`, `HasSelectedBuilding`, `IsRoadBuildModeActive`, `IsDraggingBuildInteraction`, `PlacementStatusText`, `SelectedBuildingLabel`, `ActiveModeStatusText`
   - Target owner: `RoadBuildReadModelSystem` plus building interaction/read boundaries.
@@ -53,7 +53,7 @@ New public/internal members must not be added to `RoadBuildRuntimeStateSystem`. 
   - Target owner: `RoadFootprintQuerySystem` plus `RoadGridContextSystem`.
 - Startup/lifecycle:
   - `Init`, `BindDependencies`, `Dispose`
-  - Target owner: `RoadBuildStartupSystem`, `RoadBuildDependencySystem`, `RoadBuildDisposalSystem`, and `RoadBuildCompositionSystem`.
+  - Target owner: `RoadBuildStartupSystem`, `RoadBuildDependencySystem`, `RoadBuildDisposalSystem`, and `RoadBuildCompositionSystemHelper`.
 - Road build commands:
   - `SetBuildMode`, `ActivateRoadBuildMode`, `ConfirmRoadBuildSession`, `CancelRoadBuildSession`, `ExitBuildMode`
   - Target owner: `RoadBuildCommandCompositionSystemHelper`; static `SetBuildMode` was deleted in step 8.
@@ -119,16 +119,16 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Do not add gameplay policy here; it is construction/wiring only.
    - Expected output: the temporary state holder no longer decides which road systems exist.
    - Added `RoadBuildCompositionSourceSystem` as the owner for road child-system construction and persistent state objects.
-   - `RoadBuildCompositionSystem` now creates the source and passes it into `RoadBuildRuntimeStateSystem`.
+   - `RoadBuildCompositionSystemHelper` now creates the source and passes it into `RoadBuildRuntimeStateSystem`.
    - `RoadBuildRuntimeStateSystem` now reads child systems through the source and no longer constructs those child systems directly.
    - Added `RoadBuildCompositionSourceMustOwnChildSystemConstruction` to the focused architecture batch.
 
-4. Complete: Migrate `RoadBuildCompositionSystem.Result` off broad `RoadState`
+4. Complete: Migrate `RoadBuildCompositionSystemHelper.Result` off broad `RoadState`
    - Expose narrow systems, contexts, actions, and bind hooks directly from composition.
    - Keep the runtime-state bridge only inside composition while call sites migrate.
    - Expected output: no peer system needs a `RoadBuildRuntimeStateSystem` reference.
-   - Removed `RoadBuildCompositionSystem.Result.RoadState` from the returned result.
-   - `RoadBuildCompositionSystem` now keeps the temporary `RoadBuildRuntimeStateSystem` in private `_roadState` only for its own bind methods.
+   - Removed `RoadBuildCompositionSystemHelper.Result.RoadState` from the returned result.
+   - `RoadBuildCompositionSystemHelper` now keeps the temporary `RoadBuildRuntimeStateSystem` in private `_roadState` only for its own bind methods.
    - Added `RoadBuildCompositionResultMustNotExposeRoadState` to the focused architecture batch.
 
 ## Phase 2: Startup, Dependencies, And Read Model
@@ -270,16 +270,16 @@ Every phase boundary must also run the existing road validation set when feasibl
 ## Phase 6: Runtime Actions And Disposal
 
 25. Complete: Move runtime update action out
-   - Have `RoadBuildCompositionSystem` call `RoadBuildInputSystem.Update` through `RoadBuildInteractionContextSystem` output, not through `RoadBuildRuntimeStateSystem.RoadBuildInputSystem`.
+   - Have `RoadBuildCompositionSystemHelper` call `RoadBuildInputSystem.Update` through `RoadBuildInteractionContextSystem` output, not through `RoadBuildRuntimeStateSystem.RoadBuildInputSystem`.
    - Expected output: runtime update action does not touch the temporary holder.
    - Added `RoadBuildRuntimeActionSystem` as the narrow runtime-update action owner.
-   - `RoadBuildCompositionSystem.Result.RuntimeUpdate` now invokes `RoadBuildRuntimeActionSystem.Update` through composition source state instead of reading `RoadBuildInputSystem`, `RoadBuildInputContext`, or camera through `RoadBuildRuntimeStateSystem`.
+   - `RoadBuildCompositionSystemHelper.Result.RuntimeUpdate` now invokes `RoadBuildRuntimeActionSystem.Update` through composition source state instead of reading `RoadBuildInputSystem`, `RoadBuildInputContext`, or camera through `RoadBuildRuntimeStateSystem`.
 
 26. Complete: Move GUI action out
-   - Have `RoadBuildCompositionSystem` call `RoadDeletePromptSystem.OnGui` through `RoadBuildInteractionContextSystem` output, not through `RoadBuildRuntimeStateSystem.RoadDeletePromptSystem`.
+   - Have `RoadBuildCompositionSystemHelper` call `RoadDeletePromptSystem.OnGui` through `RoadBuildInteractionContextSystem` output, not through `RoadBuildRuntimeStateSystem.RoadDeletePromptSystem`.
    - Expected output: GUI action does not touch the temporary holder.
    - Extended `RoadBuildRuntimeActionSystem` to own the delete-prompt GUI action.
-   - `RoadBuildCompositionSystem.Result.OnGui` now invokes `RoadBuildRuntimeActionSystem.OnGui` through composition source state instead of reading `RoadDeletePromptSystem` or context through `RoadBuildRuntimeStateSystem`.
+   - `RoadBuildCompositionSystemHelper.Result.OnGui` now invokes `RoadBuildRuntimeActionSystem.OnGui` through composition source state instead of reading `RoadDeletePromptSystem` or context through `RoadBuildRuntimeStateSystem`.
 
 27. Complete: Extract road disposal sequencing
    - Create `RoadBuildDisposalSystem`.
@@ -292,7 +292,7 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Migrate any remaining production/test calls to `ActivateRoadBuildMode`, `ConfirmRoadBuildSession`, `CancelRoadBuildSession`, `ExitBuildMode`, road generation wrappers, footprint wrappers, update/gui, and dispose.
    - Expected output: `rg "RoadBuildRuntimeStateSystem" Assets/Game/Scripts -g '*.cs'` finds only the file being retired and temporary composition construction until deletion.
    - Removed the remaining public road-generation, footprint-query, runtime update, GUI, and road-command wrapper methods from `RoadBuildRuntimeStateSystem`.
-   - Runtime generation and footprint consumers now receive `RoadRuntimeGenerationSystem`, `RoadRuntimeGenerationSystem.Context`, `RoadFootprintQuerySystem`, and `RoadFootprintQuerySystem.Context` from `RoadBuildCompositionSystem.Result`.
+   - Runtime generation and footprint consumers now receive `RoadRuntimeGenerationSystem`, `RoadRuntimeGenerationSystem.Context`, `RoadFootprintQuerySystem`, and `RoadFootprintQuerySystem.Context` from `RoadBuildCompositionSystemHelper.Result`.
    - Runtime update and GUI consumers now use `RoadBuildRuntimeActionSystem` through composition, not `RoadBuildRuntimeStateSystem.Update` or `OnGui`.
    - The temporary holder keeps only startup/bind/disposal compatibility and internal context creation needed for steps 29-30.
 
@@ -303,7 +303,7 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Added `RoadBuildCompositionContextCompositionSystemHelper` for remaining context construction and `RoadBuildCompositionLifecycleCompositionSystemHelper` for startup/bind/dispose sequencing.
    - Moved persistent startup/dependency/legacy placement state ownership into `RoadBuildCompositionSourceSystem`.
    - Reduced `RoadBuildRuntimeStateSystem` from 557 lines to a 58-line no-behavior adapter that only delegates to composition context/lifecycle boundaries.
-   - Remaining deletion blockers are mechanical: `RoadBuildCompositionSystem` still constructs the adapter, focused architecture tests still temporarily allow/expect the adapter, and documentation still records temporary holder debt until steps 30-31.
+   - Remaining deletion blockers are mechanical: `RoadBuildCompositionSystemHelper` still constructs the adapter, focused architecture tests still temporarily allow/expect the adapter, and documentation still records temporary holder debt until steps 30-31.
 
 ## Phase 7: Delete Temporary Holder And Remove Debt
 
@@ -312,7 +312,7 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Fix remaining compile references by routing to narrow systems.
    - Expected output: no source file named `RoadBuildRuntimeStateSystem`.
    - Deleted `Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs` and `.meta`.
-   - `RoadBuildCompositionSystem` now wires directly to `RoadBuildCompositionSourceSystem`, `RoadBuildCompositionContextCompositionSystemHelper`, and `RoadBuildCompositionLifecycleCompositionSystemHelper`.
+   - `RoadBuildCompositionSystemHelper` now wires directly to `RoadBuildCompositionSourceSystem`, `RoadBuildCompositionContextCompositionSystemHelper`, and `RoadBuildCompositionLifecycleCompositionSystemHelper`.
    - Runtime generation, footprint query, runtime update, GUI, bind, and dispose paths no longer route through a temporary adapter.
 
 31. Complete: Remove architecture debt allowances
@@ -324,10 +324,10 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Updated focused architecture tests to read the source/context/lifecycle road boundary and to assert the deleted holder file stays absent.
 
 32. Complete: Remove composition `RoadState` exposure
-   - Delete `RoadBuildCompositionSystem.Result.RoadState`.
+   - Delete `RoadBuildCompositionSystemHelper.Result.RoadState`.
    - Ensure composition exposes only narrow systems, contexts, actions, bind hooks, and disposal action.
    - Expected output: no broad road state field remains in startup composition.
-   - Completed early in step 4: `RoadBuildCompositionSystem.Result` no longer exposes `RoadState`; step 30 removed the private temporary bridge as well.
+   - Completed early in step 4: `RoadBuildCompositionSystemHelper.Result` no longer exposes `RoadState`; step 30 removed the private temporary bridge as well.
 
 33. Complete: Update documentation and handoff
    - Update `gameplay_solid_ecs_contract.md`, `road_build_system_refactor_roadmap.md`, and this roadmap with final ownership.
@@ -359,7 +359,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 - Step 1 complete: roadmap, contract wording, baseline line-count guard, broad replacement guard, and focused architecture batch are in place.
 - Step 2 complete: public/internal temporary surface is inventoried, assigned to target owners, and guarded so it can only shrink.
 - Step 3 complete: road child-system construction moved to `RoadBuildCompositionSourceSystem`; the temporary holder now consumes a source object instead of constructing child systems directly.
-- Step 4 complete: `RoadBuildCompositionSystem.Result` no longer exposes `RoadState`; only composition keeps a private temporary `_roadState` bridge for bind methods.
+- Step 4 complete: `RoadBuildCompositionSystemHelper.Result` no longer exposes `RoadState`; only composition keeps a private temporary `_roadState` bridge for bind methods.
 - Step 5 complete: road startup/config application moved to `RoadBuildStartupSystem`; the temporary holder no longer owns serialized config/cache fields, config projection, root creation, or variant-cache warmup.
 - Step 6 complete: road dependency storage and rebinding moved to `RoadBuildDependencySystem`; the temporary holder no longer stores building interaction, menu, minimap, or runtime-grid blocker dependencies directly.
 - Step 7 complete: road read predicates and labels moved to `RoadBuildReadModelSystem`; composition now returns the source-owned read model instead of configuring facade getter delegates.
@@ -376,7 +376,7 @@ Every phase boundary must also run the existing road validation set when feasibl
 - Step 18 complete: deferred road ECS sync begin/end callbacks moved to `RoadRuntimeGenerationContextSystem`, which now calls `RoadGridProjectionSystem` directly.
 - Step 19 complete: soldier-base definition construction and prefab local-bounds caching moved to `BuildingRoadLegacyDefinitionSystem`.
 - Step 29 complete: remaining context construction moved to `RoadBuildCompositionContextCompositionSystemHelper`, startup/bind/dispose sequencing moved to `RoadBuildCompositionLifecycleCompositionSystemHelper`, persistent state moved into `RoadBuildCompositionSourceSystem`, and `RoadBuildRuntimeStateSystem` is now only a 58-line delegating adapter. Step 30 can delete the adapter file once composition and tests stop referencing it.
-- Step 30 complete: `RoadBuildRuntimeStateSystem.cs` and `.meta` were deleted. `RoadBuildCompositionSystem` now consumes source/context/lifecycle systems directly, so production code has no temporary road-runtime holder reference.
+- Step 30 complete: `RoadBuildRuntimeStateSystem.cs` and `.meta` were deleted. `RoadBuildCompositionSystemHelper` now consumes source/context/lifecycle systems directly, so production code has no temporary road-runtime holder reference.
 - Step 31 complete: architecture contract, road-build roadmap, and focused tests now treat `RoadBuildRuntimeStateSystem.cs` as forbidden deleted debt rather than temporary compatibility debt.
 - Step 33 complete: documentation and WarlineCapture handoff report were updated for the deleted road runtime-state holder.
 - Step numbers are fixed. If new work is discovered, update the relevant existing step instead of adding step 35+.

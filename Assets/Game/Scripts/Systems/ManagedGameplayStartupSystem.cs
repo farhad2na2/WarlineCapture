@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 
 internal sealed class ManagedGameplayStartupSystem
 {
-    private readonly RoadBuildCompositionSystem _roadBuildCompositionSystem = new();
+    private readonly RoadBuildCompositionSystemHelper _roadBuildCompositionSystem = new();
     private readonly BuildingGameplayCompositionSystemHelper _buildingGameplayCompositionSystem = new();
     private readonly SelectionGameplayStartupSystem _selectionGameplayStartupSystem = new();
 
@@ -160,7 +160,7 @@ internal sealed class ManagedGameplayStartupSystem
         var factionVisuals = new FactionVisualSettings();
         factionVisuals.Init(factionVisualConfig);
 
-        RoadBuildCompositionSystem.Result road = _roadBuildCompositionSystem.Initialize(
+        RoadBuildCompositionSystemHelper.Result road = _roadBuildCompositionSystem.Initialize(
             roadBuildConfig,
             worldCamera,
             runtimeUiRoot);

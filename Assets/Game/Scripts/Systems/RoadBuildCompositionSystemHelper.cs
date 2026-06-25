@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-internal sealed class RoadBuildCompositionSystem
+internal sealed class RoadBuildCompositionSystemHelper
 {
     private RoadBuildCompositionSourceSystem _roadSource;
 

@@ -220,16 +220,16 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 
 ## Phase 7: Composition, Deletion, And Guards
 
-25. Complete: Create temporary `RoadBuildCompositionSystem`
+25. Complete: Create temporary `RoadBuildCompositionSystemHelper`
     - Owns wiring of extracted road systems only while callers migrate.
     - Must not own graph algorithms, visual algorithms, ECS buffer writes, input processing, or building placement logic.
-    - RoadBuildCompositionSystem now owns narrow source/context/lifecycle wiring, RoadBuildReadModelSystem wiring, and building-interaction binding after the legacy shell was retired.
+    - RoadBuildCompositionSystemHelper now owns narrow source/context/lifecycle wiring, RoadBuildReadModelSystem wiring, and building-interaction binding after the legacy shell was retired.
     - ManagedGameplayStartupSystem consumes the composition result instead of directly constructing RoadBuildSystem or RoadBuildReadModelSystem.
     - Expected output: constructor/startup wiring is explicit and easy to delete later.
 
 26. Complete: Move managed startup wiring off `RoadBuildSystem`
     - Update `ManagedGameplayStartupSystem`, `GameBootstrap`, and feature startup to construct/configure extracted road systems.
-    - Managed startup now passes road footprint queries, runtime generation, runtime update/gui/dispose actions, and menu/runtime bind actions from RoadBuildCompositionSystem.Result.
+    - Managed startup now passes road footprint queries, runtime generation, runtime update/gui/dispose actions, and menu/runtime bind actions from RoadBuildCompositionSystemHelper.Result.
     - GameBootstrap no longer stores RoadBuildSystem; it stores the road read/runtime-generation boundaries and narrow actions.
     - GameplayFeatureStartupCompositionSystemHelper now receives RoadRuntimeGenerationSystem plus context and a road gameplay bind action instead of RoadBuildSystem.
     - Expected output: startup does not instantiate `new RoadBuildSystem()`.
@@ -237,8 +237,8 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 27. Complete: Replace runtime update and GUI delegates
     - `GameplayRuntimeUpdateSystem` should call narrow road input/session/projection update systems.
     - `OnGui` should be removed or delegated to `RoadDeletePromptSystem`.
-    - RoadBuildCompositionSystem runtime update action now calls RoadBuildInputSystem.Update through RoadBuildInputContext and RoadBuildInputCamera.
-    - RoadBuildCompositionSystem GUI action now calls RoadDeletePromptSystem.OnGui through RoadDeletePromptContext.
+    - RoadBuildCompositionSystemHelper runtime update action now calls RoadBuildInputSystem.Update through RoadBuildInputContext and RoadBuildInputCamera.
+    - RoadBuildCompositionSystemHelper GUI action now calls RoadDeletePromptSystem.OnGui through RoadDeletePromptContext.
     - Runtime loop wiring no longer uses RoadBuildSystem.Update or RoadBuildSystem.OnGui delegates.
     - Expected output: no runtime loop calls `roadBuild?.Update()` or `roadBuild?.OnGui()`.
 
@@ -254,7 +254,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - Add hard guard: `RoadBuildSystem.cs` must not exist.
     - Remove any allowlist entries that temporarily permit broad shell references.
     - Keep serialized `RoadBuildSystemConfig` name as documented data compatibility debt until a separate migration.
-    - RoadBuildCompositionSystem exposes no broad `RoadState` or temporary road-runtime holder field.
+    - RoadBuildCompositionSystemHelper exposes no broad `RoadState` or temporary road-runtime holder field.
     - RoadBuildRuntimeStateSystem follow-up roadmap deleted the temporary holder and moved composition wiring to source/context/lifecycle systems.
     - Architecture validation now rejects restoring `RoadBuildSystem.cs`, `RoadBuildSystem.cs.meta`, exact production `RoadBuildSystem` type references, or `RoadBuildRuntimeStateSystem.cs`.
     - Expected output: architecture tests reject shell restoration.

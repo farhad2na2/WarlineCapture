@@ -150,7 +150,7 @@ Selection, camera focus, command targeting, and markers:
 
 - `Assets/Game/Scripts/Systems/RtsCameraSystem.cs`: focus and camera ray projection assume a flat `y = 0` plane.
 - `Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs`: order markers use grid-origin y plus a small offset.
-- `Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs` and `SelectionTransportCommandRequestSystem.cs`: command targets and transport target positions resolve against flat grid/world coordinates.
+- `Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs` and `SelectionTransportCommandRequestSystem.cs`: command targets and transport target positions resolve against flat grid/world coordinates.
 - `Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.cs` and `MissionCameraSystem.cs`: selected/focused unit and mission camera vectors flatten y.
 
 Pathfinding integration rule:

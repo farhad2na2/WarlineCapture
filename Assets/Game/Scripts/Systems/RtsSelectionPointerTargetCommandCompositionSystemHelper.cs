@@ -6,7 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class RtsSelectionPointerTargetCommandSystem
+public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
 {
     private const float UnitClickScreenFallbackRadiusPixels = 54f;
     private const int TraversableTargetSearchRadius = 24;
@@ -159,10 +159,10 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
     private readonly struct PointerTargetBoundaryPass
     {
-        private readonly RtsSelectionPointerTargetCommandSystem _owner;
+        private readonly RtsSelectionPointerTargetCommandCompositionSystemHelper _owner;
         private readonly Context _context;
 
-        public PointerTargetBoundaryPass(RtsSelectionPointerTargetCommandSystem owner, Context context)
+        public PointerTargetBoundaryPass(RtsSelectionPointerTargetCommandCompositionSystemHelper owner, Context context)
         {
             _owner = owner;
             _context = context;

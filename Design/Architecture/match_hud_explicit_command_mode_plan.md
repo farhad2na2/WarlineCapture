@@ -17,7 +17,7 @@ This plan keeps the flow aligned with the current ECS request/result architectur
 ## Current State
 
 - `RtsSelectionRuntimeInputSystem.HandlePointerReleased` currently falls through to `QueueMoveOrder` when a click is not attack, transport, or focus.
-- `RtsSelectionPointerTargetCommandSystem.RequestMoveOrder` already queues and processes move command requests, but it is called by the automatic empty-click path.
+- `RtsSelectionPointerTargetCommandCompositionSystemHelper.RequestMoveOrder` already queues and processes move command requests, but it is called by the automatic empty-click path.
 - `SelectionMoveCommandRequestSystem` already consumes `RtsSelectionCommandIntentKind.Move` requests and uses `SelectedMoveOrderCommandSystem` / `UnitMoveOrderSystem`.
 - `SelectionUiCommandSystem` exposes Select, Hold, Stop, Attack-target, etc., but has no explicit `RequestMoveCommandMode` yet.
 - `MatchOverlayCommandControlsView` has serialized Select, Build, Hold, Stop references, but no explicit Move or Attack button references.

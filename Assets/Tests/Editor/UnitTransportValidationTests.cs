@@ -787,8 +787,8 @@ public sealed class UnitTransportValidationTests
         Entity helicopter = CreateTransport(em, new int2(20, 20), air: true, airborne: false, sourcePrefabKey: "Unit_Veh_Helicopter_Transport");
         Entity vehicle = CreateSelectableVehiclePassenger(em, new int2(17, 12));
         Entity soldier = CreateSelectablePassenger(em, new int2(18, 12));
-        var pointerSystem = new RtsSelectionPointerTargetCommandSystem();
-        RtsSelectionPointerTargetCommandSystem.Context context = default;
+        var pointerSystem = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
+        RtsSelectionPointerTargetCommandCompositionSystemHelper.Context context = default;
 
         Assert.IsTrue(pointerSystem.IsValidBoardPassengerPreviewTarget(context, em, transportPlane, vehicle));
         Assert.IsTrue(pointerSystem.IsValidBoardTransportPreviewTarget(context, em, vehicle, transportPlane));

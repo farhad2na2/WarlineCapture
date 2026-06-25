@@ -210,7 +210,7 @@ Goal: delete the remaining selection context-construction boundary without repla
    - Focus/select-all/clear command flow must not require `SelectionRuntimeContextSystem`.
 
 10. Complete: Extract pointer-target context builder
-    - Move `CreatePointerTargetCommandContext` into `RtsSelectionPointerTargetCommandSystem` or a narrow context builder.
+    - Move `CreatePointerTargetCommandContext` into `RtsSelectionPointerTargetCommandCompositionSystemHelper` or a narrow context builder.
     - Clicked move, attack, transport, focus, and building-target command flow must not require `SelectionRuntimeContextSystem`.
 
 11. Complete: Move remaining compatibility methods

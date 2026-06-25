@@ -65,8 +65,6 @@ public sealed class NonEcsSystemConversionArchitectureTests
 
     private static readonly Dictionary<string, int> ApprovedPublicNonEcsCommandMutatorMethods = new(StringComparer.Ordinal)
     {
-        ["Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs|TryRequestBoardSelectedTransportOrdersToPassengerRect"] = 1,
-        ["Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs|TryRequestMoveOrderToBuilding"] = 1,
         ["Assets/Game/Scripts/Systems/SelectionBuildingInteractionSystem.cs|TryRequestMoveOrderToBuilding"] = 1,
         ["Assets/Game/Scripts/Systems/SelectionRectangleRequestSystem.cs|ProcessPendingRequests"] = 1
     };
@@ -117,7 +115,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "SelectionUiCameraSystemHelper",
         "RtsSelectionInputCompositionSystemHelper",
         "RtsSelectionInputStateCompositionSystemHelper",
-        "RtsSelectionPointerTargetCommandSystem",
+        "RtsSelectionPointerTargetCommandCompositionSystemHelper",
         "SelectedMoveOrderCommandSystem",
         "AttackOrderCommandSystem",
         "ScanIntelCommandSystem",
@@ -128,7 +126,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
 
     private static readonly string[] PointerCommandBoundaryPaths =
     {
-        "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs",
+        "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs"
     };
 

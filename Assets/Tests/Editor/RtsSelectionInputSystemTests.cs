@@ -2310,7 +2310,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BoardPreview_UsesTransportOnlyPredicateForPassengerFirstMode()
     {
-        string pointerTarget = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs");
+        string pointerTarget = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs");
         string previewTarget = ExtractBlockAfter(pointerTarget, "public bool IsValidBoardTransportPreviewTarget");
 
         StringAssert.Contains("TryResolveBoardingPassengerKind(em, target, source", previewTarget);
@@ -2928,7 +2928,7 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets()
     {
-        string pointerTarget = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs");
+        string pointerTarget = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs");
         StringAssert.Contains("private readonly struct PointerTargetBoundaryPass", pointerTarget);
 
         string move = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedMoveCommand");
@@ -3082,8 +3082,8 @@ public sealed class RtsSelectionInputSystemTests
             camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
             Vector3 screen = camera.WorldToScreenPoint(new Vector3(11.5f, 0f, 11.5f));
 
-            var pointerSystem = new RtsSelectionPointerTargetCommandSystem();
-            var context = new RtsSelectionPointerTargetCommandSystem.Context(
+            var pointerSystem = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
+            var context = new RtsSelectionPointerTargetCommandCompositionSystemHelper.Context(
                 runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(),
                 inputSystem: null,
                 selectionStateSystem: new SelectionStateSystem(),

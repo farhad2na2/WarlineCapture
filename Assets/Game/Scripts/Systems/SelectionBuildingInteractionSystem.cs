@@ -9,7 +9,7 @@ public sealed class SelectionBuildingInteractionSystem
     private readonly FocusableUnitLookupSystem _focusableUnitLookupSystem = new();
     private readonly TransportBoardingCommandSystem _transportBoardingCommandSystem = new();
     private readonly BuildingTargetMoveOrderSystem _buildingTargetMoveOrderSystem = new();
-    private readonly RtsSelectionPointerTargetCommandSystem _pointerTargetCommandSystem = new();
+    private readonly RtsSelectionPointerTargetCommandCompositionSystemHelper _pointerTargetCommandSystem = new();
 
     private SelectionStateSystem _selectionStateSystem;
     private SelectionScreenMarkerUiSystemHelper _screenMarkerHelper;
@@ -133,7 +133,7 @@ public sealed class SelectionBuildingInteractionSystem
                 _worldCamera,
                 screenPosition,
                 SelectionState,
-                out RtsSelectionPointerTargetCommandSystem.MapSurfaceCommandTargetResult target))
+                out RtsSelectionPointerTargetCommandCompositionSystemHelper.MapSurfaceCommandTargetResult target))
         {
             return false;
         }

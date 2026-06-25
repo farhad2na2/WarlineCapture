@@ -319,7 +319,7 @@ Implementation checklist:
 - [x] Ensure entering Scan does not enter selection rectangle mode.
 - [x] Ensure camera panning remains active while scan targeting is armed.
 - [x] Confirm tap release after pressing the Scan button is suppressed so the button click does not also scan.
-- [x] Route scan world tap through `RtsSelectionPointerTargetCommandSystem.TryIssueScanOrder`.
+- [x] Route scan world tap through `RtsSelectionPointerTargetCommandCompositionSystemHelper.TryIssueScanOrder`.
 - [x] Queue scan with either pre-resolved cell/world data or screen position using existing command intent buffer.
 - [x] Keep selected scanner/source execution data deferred to Phase 5. Phase 4 owns target-mode input and target payload routing only; selected-unit patrol source data belongs to scan execution.
 - [x] Reject out-of-bounds target with `TargetOutOfBounds`.

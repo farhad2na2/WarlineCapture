@@ -72,7 +72,7 @@ internal sealed class SelectionGameplayStartupSystem
         RtsSelectionRuntimeCameraSystemHelper rtsSelectionRuntimeCameraSystem = ResolveRtsSelectionRuntimeCameraSystemHelper();
         var rtsSelectionCommandResultFlushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();
         var rtsSelectionFocusCommandSystem = new RtsSelectionFocusCommandCompositionSystemHelper();
-        var rtsSelectionPointerTargetCommandSystem = new RtsSelectionPointerTargetCommandSystem();
+        var rtsSelectionPointerTargetCommandSystem = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
         RtsCameraSystem rtsCameraSystem = ResolveRtsCameraSystem();
         RtsCameraRequestSystem rtsCameraRequestSystem = ResolveRtsCameraRequestSystem();
         var selectionUiCommand = new SelectionUiCommandSystem(IsMatchIntroGameplayInputLocked);
@@ -582,11 +582,11 @@ internal sealed class SelectionGameplayStartupSystem
                     screenPosition));
         }
 
-        RtsSelectionPointerTargetCommandSystem.Context CreatePointerTargetCommandContext()
+        RtsSelectionPointerTargetCommandCompositionSystemHelper.Context CreatePointerTargetCommandContext()
         {
             SelectionHudFeedbackBoundary.Context hudFeedbackContext = CreateHudFeedbackContext();
 
-            return new RtsSelectionPointerTargetCommandSystem.Context(
+            return new RtsSelectionPointerTargetCommandCompositionSystemHelper.Context(
                 runtimeGameplayStateSystem,
                 rtsSelectionInputSystem,
                 selectionStateSystem,

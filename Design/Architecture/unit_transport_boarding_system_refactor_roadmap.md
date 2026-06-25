@@ -272,15 +272,15 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Replace context fields that carry the full `UnitTransportBoardingSystem` with capacity/query/rule/approach/air/rope dependencies as needed.
    - Preserve command result structs and request buffer semantics.
    - Expected output: selection command contexts cannot reach unrelated transport boarding behavior.
-   - `RtsSelectionPointerTargetCommandSystem.Context` and `RtsSelectionCommandResultFlushCompositionSystemHelper.Context` now carry explicit capacity, query, rule, approach, air-pickup, and rope-disembark command dependencies.
+   - `RtsSelectionPointerTargetCommandCompositionSystemHelper.Context` and `RtsSelectionCommandResultFlushCompositionSystemHelper.Context` now carry explicit capacity, query, rule, approach, air-pickup, and rope-disembark command dependencies.
    - `RtsSelectionPointerTargetCommandContextSystem`, `RtsSelectionCommandResultContextSystem`, and `SelectionGameplayStartupSystem` now compose and pass those narrow transport dependencies.
    - The temporary `UnitTransportBoardingSystem` context field remains only as the migration bridge for steps 21 and 22, where the pointer-target and command-result paths are moved to the narrow dependencies.
 
 21. Complete: Migrate pointer-target command path
-   - Update `RtsSelectionPointerTargetCommandContextSystem` and `RtsSelectionPointerTargetCommandSystem`.
+   - Update `RtsSelectionPointerTargetCommandContextSystem` and `RtsSelectionPointerTargetCommandCompositionSystemHelper`.
    - Preserve click-to-board and click-to-air-pickup behavior.
    - Expected output: pointer target commands use narrow transport systems.
-   - `RtsSelectionPointerTargetCommandSystem.Context` no longer carries `UnitTransportBoardingSystem`.
+   - `RtsSelectionPointerTargetCommandCompositionSystemHelper.Context` no longer carries `UnitTransportBoardingSystem`.
    - `RtsSelectionPointerTargetCommandContextSystem` now composes pointer-target commands from capacity, query, rule, approach, air-pickup, and rope-disembark dependencies only.
    - Pointer-target boardable-click checks now use `UnitTransportBoardingRuleSystem` and `UnitTransportBoardingQuerySystem`.
    - Building-selection click guards and focused transport-click tests were updated to use the rule/query path instead of the broad boarding tick.

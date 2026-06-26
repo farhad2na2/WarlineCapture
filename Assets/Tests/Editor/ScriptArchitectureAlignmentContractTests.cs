@@ -50,7 +50,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs",
+        "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs",
     };
 
     private static readonly string[] BootstrapCompositionForbiddenPolicyTokens =

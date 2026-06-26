@@ -2,7 +2,7 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-internal sealed class ManagedGameplayStartupSystem
+internal sealed class ManagedGameplayStartupSystemHelper
 {
     private readonly RoadBuildCompositionSystemHelper _roadBuildCompositionSystem = new();
     private readonly BuildingGameplayCompositionSystemHelper _buildingGameplayCompositionSystem = new();

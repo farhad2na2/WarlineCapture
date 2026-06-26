@@ -36,7 +36,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     private readonly PerformanceDiagnosticsReferenceDiagnosticsSystemHelper _performanceDiagnosticsReferenceSystem = new();
     private readonly MatchIntroEcsStateQuery matchIntroStateQuery = new();
 
-    private readonly ManagedGameplayStartupSystem managedGameplayStartupSystem = new();
+    private readonly ManagedGameplayStartupSystemHelper managedGameplayStartupSystem = new();
     private readonly GameplayRuntimeUpdateCompositionSystemHelper gameplayRuntimeUpdateSystem = new();
     private readonly PerformanceDiagnosticsSystem fallbackPerformanceDiagnosticsSystem = new();
     private bool fallbackPerformanceDiagnosticsInitialized;
@@ -388,7 +388,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
             fallbackPerformanceDiagnosticsSystem.OnApplicationPause(pauseStatus);
     }
 
-    public ManagedGameplayStartupSystem.Result InitializeManagedRuntime(
+    public ManagedGameplayStartupSystemHelper.Result InitializeManagedRuntime(
         DayNightSystemConfig dayNightConfig,
         FactionVisualSettingsConfig factionVisualConfig,
         RoadBuildSystemConfig roadBuildConfig,
@@ -849,7 +849,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
         InitializeVisualQualitySettingsIfNeeded();
         int ownerLayer = MatchScene != null ? MatchScene.gameObject.layer : 0;
 
-        ManagedGameplayStartupSystem.Result managedSystems = InitializeManagedRuntime(
+        ManagedGameplayStartupSystemHelper.Result managedSystems = InitializeManagedRuntime(
             DayNightConfig,
             FactionVisualConfig,
             RoadBuildConfig,

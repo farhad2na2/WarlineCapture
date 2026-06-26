@@ -139,7 +139,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
             (placement, updateCellFromPointer, screenPosition) => updatePlacementVisual(source, interactionContext, markerPropertyBlock, placement, updateCellFromPointer, screenPosition),
             placement => focusActivePlacement(source, interactionContext, markerPropertyBlock, placement),
             placement => validateActivePlacementForConfirm(source, interactionContext, markerPropertyBlock, placement),
-            source.RuntimeResourceSystem.TrySpendDollars,
+            source.RuntimeResourceUtilitySystemHelper.TrySpendDollars,
             placement => placeBuilding(source, interactionContext, markerPropertyBlock, placement),
             source.BuildingGameplayDependencyCompositionSystemHelper.ApplyBuildCommandMode,
             () => source.BuildingSelectionRuntimeCompositionSystemHelper.ClearSelectedBuilding(createBuildingSelectionContext(source)),

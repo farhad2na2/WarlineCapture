@@ -15,7 +15,7 @@ internal sealed class BuildingUiCompositionSystemHelper
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
         return source.BuildingUiContextCompositionSystemHelper.CreateSource(
-            source.RuntimeResourceSystem,
+            source.RuntimeResourceUtilitySystemHelper,
             source.BuildingDefinitionPrefabSystemHelper,
             source.RuntimeBuildingSystem,
             source.BuildingProductionQueueCompositionSystemHelper,

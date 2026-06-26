@@ -7,7 +7,7 @@ internal sealed class BuildingUiContextCompositionSystemHelper
 {
     public readonly struct Source
     {
-        public readonly RuntimeResourceSystem RuntimeResourceSystem;
+        public readonly RuntimeResourceUtilitySystemHelper RuntimeResourceUtilitySystemHelper;
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
@@ -39,7 +39,7 @@ internal sealed class BuildingUiContextCompositionSystemHelper
         public readonly Func<bool> RotateBuildingPlacement;
 
         public Source(
-            RuntimeResourceSystem runtimeResourceSystem,
+            RuntimeResourceUtilitySystemHelper runtimeResourceSystem,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingProductionQueueCompositionSystemHelper productionSystem,
@@ -70,7 +70,7 @@ internal sealed class BuildingUiContextCompositionSystemHelper
             Action cancelBuildingPlacement,
             Func<bool> rotateBuildingPlacement = null)
         {
-            RuntimeResourceSystem = runtimeResourceSystem;
+            RuntimeResourceUtilitySystemHelper = runtimeResourceSystem;
             DefinitionSystem = definitionSystem;
             RuntimeBuildingSystem = runtimeBuildingSystem;
             ProductionSystem = productionSystem;
@@ -104,7 +104,7 @@ internal sealed class BuildingUiContextCompositionSystemHelper
     }
 
     public Source CreateSource(
-        RuntimeResourceSystem runtimeResourceSystem,
+        RuntimeResourceUtilitySystemHelper runtimeResourceSystem,
         BuildingDefinitionPrefabSystemHelper definitionSystem,
         RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingProductionQueueCompositionSystemHelper productionSystem,
@@ -171,7 +171,7 @@ internal sealed class BuildingUiContextCompositionSystemHelper
     public BuildingUiCommandBoundary.Context CreateCommandContext(Source source)
     {
         return new BuildingUiCommandBoundary.Context(
-            () => source.RuntimeResourceSystem.CurrentDollars,
+            () => source.RuntimeResourceUtilitySystemHelper.CurrentDollars,
             () => source.DefinitionSystem.ConfiguredSpawnableCount,
             source.DefinitionSystem.TryGetConfiguredSpawnable,
             () => source.DefinitionSystem.ConfiguredUnitCount,

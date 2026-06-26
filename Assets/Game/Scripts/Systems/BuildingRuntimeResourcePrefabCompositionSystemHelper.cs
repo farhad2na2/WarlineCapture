@@ -18,7 +18,7 @@ internal sealed class BuildingRuntimeResourcePrefabCompositionSystemHelper
     {
         return BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource(
             source.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,
-            source.RuntimeResourceSystem,
+            source.RuntimeResourceUtilitySystemHelper,
             source.RuntimeUnitPrefabSystem,
             source.BuildingDefinitionPrefabSystemHelper,
             source.RuntimeBuildingSystem,

@@ -5,7 +5,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
 {
     public readonly struct Source
     {
-        public readonly RuntimeResourceSystem RuntimeResourceSystem;
+        public readonly RuntimeResourceUtilitySystemHelper RuntimeResourceUtilitySystemHelper;
         public readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem;
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
@@ -18,7 +18,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
         public readonly Func<Source> CreateCurrentSource;
 
         public Source(
-            RuntimeResourceSystem runtimeResourceSystem,
+            RuntimeResourceUtilitySystemHelper runtimeResourceSystem,
             RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
@@ -30,7 +30,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
             EntityQuery livePlayerUnitsQuery,
             Func<Source> createCurrentSource = null)
         {
-            RuntimeResourceSystem = runtimeResourceSystem;
+            RuntimeResourceUtilitySystemHelper = runtimeResourceSystem;
             RuntimeUnitPrefabSystem = runtimeUnitPrefabSystem;
             DefinitionSystem = definitionSystem;
             RuntimeBuildingSystem = runtimeBuildingSystem;
@@ -46,7 +46,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
 
     public static Source CreateSource(
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper system,
-        RuntimeResourceSystem runtimeResourceSystem,
+        RuntimeResourceUtilitySystemHelper runtimeResourceSystem,
         RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
         BuildingDefinitionPrefabSystemHelper definitionSystem,
         RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
@@ -86,7 +86,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
     }
 
     public Source CreateSource(
-        RuntimeResourceSystem runtimeResourceSystem,
+        RuntimeResourceUtilitySystemHelper runtimeResourceSystem,
         RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
         BuildingDefinitionPrefabSystemHelper definitionSystem,
         RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
@@ -113,7 +113,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
     }
 
     private static Source CreateSourceState(
-        RuntimeResourceSystem runtimeResourceSystem,
+        RuntimeResourceUtilitySystemHelper runtimeResourceSystem,
         RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
         BuildingDefinitionPrefabSystemHelper definitionSystem,
         RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
@@ -155,7 +155,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
 
     private static CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContextState(Source source)
     {
-        return source.RuntimeResourceSystem.CreateCitizenResourceContext();
+        return source.RuntimeResourceUtilitySystemHelper.CreateCitizenResourceContext();
     }
 
     public static RuntimeUnitPrefabSystem.Context CreateRuntimeUnitPrefabContext(

@@ -28,13 +28,13 @@ internal sealed class BuildingProductionCompositionSystemHelper
             source.BuildingVisualSystem,
             source.BuildingSpawnCompositionSystemHelper,
             spawnContext,
-            source.RuntimeResourceSystem.CurrentDollars,
+            source.RuntimeResourceUtilitySystemHelper.CurrentDollars,
             prefab => EnqueueAndProcessBeginPlacementForConfiguredSpawnable(
                 source,
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock),
                 prefab),
-            source.RuntimeResourceSystem.TrySpendDollars,
-            source.RuntimeResourceSystem.AddDollars,
+            source.RuntimeResourceUtilitySystemHelper.TrySpendDollars,
+            source.RuntimeResourceUtilitySystemHelper.AddDollars,
             cost => source.BuildingPlacementCommandRequestCompositionSystemHelper.SetActivePlacementCost(
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock),
                 cost),

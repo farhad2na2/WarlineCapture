@@ -19,7 +19,7 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenPrefabSystem citizenPrefabSystem,
         CitizenPrefabSystem.Context citizenPrefabContext,
         CitizenPrefabSelectionSystem prefabSelectionSystem,
@@ -28,7 +28,7 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
         Camera worldCamera,
         bool hasCitizenData,
         float now,
-        CitizenStatusTransitionSystem.StoreCitizenAction storeCitizen,
+        CitizenStatusTransitionCompositionSystemHelper.StoreCitizenAction storeCitizen,
         HandleCitizenDeathAction handleCitizenDeath)
     {
         if (worldCamera == null || !hasCitizenData || !ecsProjection.HasWorld)
@@ -109,10 +109,10 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenTravelSystem travelSystem,
         float now,
-        CitizenStatusTransitionSystem.StoreCitizenAction storeCitizen,
+        CitizenStatusTransitionCompositionSystemHelper.StoreCitizenAction storeCitizen,
         HandleCitizenDeathAction handleCitizenDeath,
         int citizenId,
         CitizenRecordComponent citizen,
@@ -140,7 +140,7 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
 
         if (buildingReadSystem.IsRuntimeBuildingApproachCell(citizen.CurrentTargetBuildingId, currentCell, new int2(1, 1)))
         {
-            CitizenStatusTransitionSystem.TryResolveCitizenArrival(statusTransitionSystem, state, citizenId, now, storeCitizen);
+            CitizenStatusTransitionCompositionSystemHelper.TryResolveCitizenArrival(statusTransitionSystem, state, citizenId, now, storeCitizen);
             return;
         }
 
@@ -150,12 +150,12 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
             int dy = math.abs(currentCell.y - finalApproachGoal.y);
             if (math.max(dx, dy) <= 2)
             {
-                CitizenStatusTransitionSystem.TryResolveCitizenArrival(statusTransitionSystem, state, citizenId, now, storeCitizen);
+                CitizenStatusTransitionCompositionSystemHelper.TryResolveCitizenArrival(statusTransitionSystem, state, citizenId, now, storeCitizen);
                 return;
             }
         }
 
-        if (CitizenStatusTransitionSystem.IsTravelStatus(statusTransitionSystem, citizen.Status) && !hasPathFollow && !hasPathRequest)
+        if (CitizenStatusTransitionCompositionSystemHelper.IsTravelStatus(statusTransitionSystem, citizen.Status) && !hasPathFollow && !hasPathRequest)
         {
             if (hasLongMove)
             {
@@ -188,13 +188,13 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
             {
                 if (!buildingReadSystem.TryGetRuntimeBuildingFocusWorldPosition(citizen.CurrentTargetBuildingId, out Vector3 finalTargetPosition))
                 {
-                    CitizenStatusTransitionSystem.TryResolveCitizenArrival(statusTransitionSystem, state, citizenId, now, storeCitizen);
+                    CitizenStatusTransitionCompositionSystemHelper.TryResolveCitizenArrival(statusTransitionSystem, state, citizenId, now, storeCitizen);
                 }
                 else
                 {
                     Vector3 finalWorld = CitizenTravelSystem.ResolveCitizenWorldPosition(travelSystem, citizen, finalTargetPosition);
                     if ((finalWorld - currentPosition).sqrMagnitude <= VisibleCitizenArriveDistance * VisibleCitizenArriveDistance)
-                        CitizenStatusTransitionSystem.TryResolveCitizenArrival(statusTransitionSystem, state, citizenId, now, storeCitizen);
+                        CitizenStatusTransitionCompositionSystemHelper.TryResolveCitizenArrival(statusTransitionSystem, state, citizenId, now, storeCitizen);
                 }
             }
         }
@@ -232,7 +232,7 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
         CitizenPrefabSelectionSystem.State prefabSelectionState,
         CitizenTravelSystem travelSystem,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenRecordComponent citizen,
         Vector3 worldPosition)
     {

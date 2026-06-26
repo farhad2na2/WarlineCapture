@@ -8,7 +8,7 @@ public sealed class CitizenPopulationEventCompositionSystemHelper
     private CitizenRefugeeCompositionSystemHelper _refugeeSystem;
     private CitizenTravelSystem _travelSystem;
     private CitizenPopulationEcsProjectionCompositionSystemHelper _ecsProjection;
-    private CitizenStatusTransitionSystem _statusTransitionSystem;
+    private CitizenStatusTransitionCompositionSystemHelper _statusTransitionSystem;
     private CitizenRefugeeCompositionSystemHelper.StoreHouseholdAction _storeHousehold;
     private CitizenRefugeeCompositionSystemHelper.StoreCitizenAction _storeCitizen;
     private CitizenRefugeeCompositionSystemHelper.TryGetHouseholdReferenceWorldPositionAction _tryGetHouseholdReferenceWorldPosition;
@@ -22,7 +22,7 @@ public sealed class CitizenPopulationEventCompositionSystemHelper
         CitizenRefugeeCompositionSystemHelper refugeeSystem,
         CitizenTravelSystem travelSystem,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenRefugeeCompositionSystemHelper.StoreHouseholdAction storeHousehold,
         CitizenRefugeeCompositionSystemHelper.StoreCitizenAction storeCitizen,
         CitizenRefugeeCompositionSystemHelper.MarkCitizenDeadAction markCitizenDead)

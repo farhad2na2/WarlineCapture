@@ -22,7 +22,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenHouseholdRecordComponent household,
         out Vector3 worldPosition)
     {
@@ -35,7 +35,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenHouseholdRecordComponent household,
         out Vector3 worldPosition)
     {
@@ -74,7 +74,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         Camera worldCamera,
         CitizenRecordComponent citizen,
         float maxDistance,
@@ -89,7 +89,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         Camera worldCamera,
         CitizenRecordComponent citizen,
         float maxDistance,
@@ -126,7 +126,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenRecordComponent citizen,
         out Vector3 worldPosition)
     {
@@ -139,7 +139,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenRecordComponent citizen,
         out Vector3 worldPosition)
     {
@@ -173,7 +173,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenRecordComponent citizen,
         Vector3 currentPosition,
         out int2 goalCell)
@@ -187,7 +187,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenRecordComponent citizen,
         Vector3 currentPosition,
         out int2 goalCell)
@@ -325,7 +325,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenHouseholdRecordComponent household,
         out Vector3 worldPosition)
     {
@@ -363,7 +363,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         Camera worldCamera,
         CitizenRecordComponent citizen,
         float maxDistance,
@@ -414,7 +414,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenRecordComponent citizen,
         out Vector3 worldPosition)
     {
@@ -431,7 +431,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
             return true;
         }
 
-        int anchorBuildingId = CitizenStatusTransitionSystem.IsTravelStatus(statusTransitionSystem, citizen.Status)
+        int anchorBuildingId = CitizenStatusTransitionCompositionSystemHelper.IsTravelStatus(statusTransitionSystem, citizen.Status)
             ? GetTravelOriginBuildingIdState(state, citizen)
             : citizen.CurrentTargetBuildingId;
 
@@ -463,7 +463,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         CitizenRecordComponent citizen,
         Vector3 currentPosition,
         out int2 goalCell)

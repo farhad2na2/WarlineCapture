@@ -1,9 +1,9 @@
-internal sealed class CitizenStatusTransitionSystem
+internal sealed class CitizenStatusTransitionCompositionSystemHelper
 {
     public delegate CitizenRecordComponent StoreCitizenAction(CitizenRecordComponent citizen);
 
     public static void SetCitizenStatus(
-        CitizenStatusTransitionSystem system,
+        CitizenStatusTransitionCompositionSystemHelper system,
         ref CitizenRecordComponent citizen,
         CitizenStatus status,
         int targetBuildingId,
@@ -29,7 +29,7 @@ internal sealed class CitizenStatusTransitionSystem
         SetCitizenStatusState(ref citizen, status, targetBuildingId, stateDurationSeconds, now);
     }
 
-    public static bool IsTravelStatus(CitizenStatusTransitionSystem system, CitizenStatus status)
+    public static bool IsTravelStatus(CitizenStatusTransitionCompositionSystemHelper system, CitizenStatus status)
     {
         return system != null
             ? system.IsTravelStatus(status)
@@ -42,7 +42,7 @@ internal sealed class CitizenStatusTransitionSystem
     }
 
     public static bool ShouldUseTravelStatus(
-        CitizenStatusTransitionSystem system,
+        CitizenStatusTransitionCompositionSystemHelper system,
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenRecordComponent citizen,
         CitizenStatus desiredStatus,
@@ -62,7 +62,7 @@ internal sealed class CitizenStatusTransitionSystem
         return ShouldUseTravelStatusState(state, citizen, desiredStatus, desiredTargetBuildingId);
     }
 
-    public static CitizenStatus GetTravelStatusForDesiredStatus(CitizenStatusTransitionSystem system, CitizenStatus desiredStatus)
+    public static CitizenStatus GetTravelStatusForDesiredStatus(CitizenStatusTransitionCompositionSystemHelper system, CitizenStatus desiredStatus)
     {
         return system != null
             ? system.GetTravelStatusForDesiredStatus(desiredStatus)
@@ -74,7 +74,7 @@ internal sealed class CitizenStatusTransitionSystem
         return GetTravelStatusForDesiredStatusState(desiredStatus);
     }
 
-    public static CitizenStatus GetSettledStatus(CitizenStatusTransitionSystem system, CitizenStatus status)
+    public static CitizenStatus GetSettledStatus(CitizenStatusTransitionCompositionSystemHelper system, CitizenStatus status)
     {
         return system != null
             ? system.GetSettledStatus(status)
@@ -87,7 +87,7 @@ internal sealed class CitizenStatusTransitionSystem
     }
 
     public static bool TrySetCitizenStatus(
-        CitizenStatusTransitionSystem system,
+        CitizenStatusTransitionCompositionSystemHelper system,
         CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         CitizenStatus status,
@@ -114,7 +114,7 @@ internal sealed class CitizenStatusTransitionSystem
     }
 
     public static bool TryResolveCitizenArrival(
-        CitizenStatusTransitionSystem system,
+        CitizenStatusTransitionCompositionSystemHelper system,
         CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         float now,
@@ -135,7 +135,7 @@ internal sealed class CitizenStatusTransitionSystem
     }
 
     public static bool TryMarkCitizenDead(
-        CitizenStatusTransitionSystem system,
+        CitizenStatusTransitionCompositionSystemHelper system,
         CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         string reason,

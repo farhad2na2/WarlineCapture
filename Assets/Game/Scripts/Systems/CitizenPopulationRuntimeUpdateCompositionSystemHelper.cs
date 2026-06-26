@@ -54,7 +54,7 @@ internal sealed class CitizenPopulationRuntimeUpdateCompositionSystemHelper
 
     public bool HandleCitizenDeath(int citizenId, string reason)
     {
-        if (!CitizenStatusTransitionSystem.TryMarkCitizenDead(
+        if (!CitizenStatusTransitionCompositionSystemHelper.TryMarkCitizenDead(
                 _systems.StatusTransitionSystem,
                 _systems.State,
                 citizenId,
@@ -194,7 +194,7 @@ internal sealed class CitizenPopulationRuntimeUpdateCompositionSystemHelper
             {
                 if (citizen.Status != CitizenStatus.Fleeing || citizen.CurrentTargetBuildingId != fleeTargetBuildingId)
                 {
-                    CitizenStatusTransitionSystem.SetCitizenStatus(
+                    CitizenStatusTransitionCompositionSystemHelper.SetCitizenStatus(
                         _systems.StatusTransitionSystem,
                         ref citizen,
                         CitizenStatus.Fleeing,
@@ -220,22 +220,22 @@ internal sealed class CitizenPopulationRuntimeUpdateCompositionSystemHelper
                 _systems.DayNightSystem,
                 citizen,
                 desiredStatus);
-            CitizenStatus nextStatus = CitizenStatusTransitionSystem.ShouldUseTravelStatus(
+            CitizenStatus nextStatus = CitizenStatusTransitionCompositionSystemHelper.ShouldUseTravelStatus(
                     _systems.StatusTransitionSystem,
                     _systems.State,
                     citizen,
                     desiredStatus,
                     desiredTargetBuildingId)
-                ? CitizenStatusTransitionSystem.GetTravelStatusForDesiredStatus(_systems.StatusTransitionSystem, desiredStatus)
+                ? CitizenStatusTransitionCompositionSystemHelper.GetTravelStatusForDesiredStatus(_systems.StatusTransitionSystem, desiredStatus)
                 : desiredStatus;
 
             if (citizen.Status == nextStatus && citizen.CurrentTargetBuildingId == desiredTargetBuildingId)
                 continue;
 
-            float stateDurationSeconds = CitizenStatusTransitionSystem.IsTravelStatus(_systems.StatusTransitionSystem, nextStatus)
+            float stateDurationSeconds = CitizenStatusTransitionCompositionSystemHelper.IsTravelStatus(_systems.StatusTransitionSystem, nextStatus)
                 ? CitizenTravelSystem.EstimateTravelSeconds(_systems.TravelSystem, _systems.State, _systems.BuildingReadSystem, citizen, desiredTargetBuildingId)
                 : 0f;
-            CitizenStatusTransitionSystem.SetCitizenStatus(
+            CitizenStatusTransitionCompositionSystemHelper.SetCitizenStatus(
                 _systems.StatusTransitionSystem,
                 ref citizen,
                 nextStatus,
@@ -258,12 +258,12 @@ internal sealed class CitizenPopulationRuntimeUpdateCompositionSystemHelper
                 continue;
             if (citizen.LifeState == CitizenLifeState.Dead)
                 continue;
-            if (!CitizenStatusTransitionSystem.IsTravelStatus(_systems.StatusTransitionSystem, citizen.Status))
+            if (!CitizenStatusTransitionCompositionSystemHelper.IsTravelStatus(_systems.StatusTransitionSystem, citizen.Status))
                 continue;
             if (citizen.StateEndsAt <= 0f || UnityEngine.Time.time < citizen.StateEndsAt)
                 continue;
 
-            CitizenStatusTransitionSystem.TryResolveCitizenArrival(
+            CitizenStatusTransitionCompositionSystemHelper.TryResolveCitizenArrival(
                 _systems.StatusTransitionSystem,
                 _systems.State,
                 citizenId,

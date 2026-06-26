@@ -49,18 +49,18 @@ internal sealed class CitizenPopulationDebugDiagnosticsSystemHelper
 
     public bool TrySetCitizenStatusForDebug(
         CitizenPopulationStateCompositionSystemHelper state,
-        CitizenStatusTransitionSystem statusTransitionSystem,
+        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
         int citizenId,
         CitizenStatus status,
         int targetBuildingId,
         float stateDurationSeconds,
         float now,
-        CitizenStatusTransitionSystem.StoreCitizenAction storeCitizen)
+        CitizenStatusTransitionCompositionSystemHelper.StoreCitizenAction storeCitizen)
     {
         if (!state.TryGetCitizen(citizenId, out _))
             return false;
 
-        return CitizenStatusTransitionSystem.TrySetCitizenStatus(
+        return CitizenStatusTransitionCompositionSystemHelper.TrySetCitizenStatus(
             statusTransitionSystem,
             state,
             citizenId,

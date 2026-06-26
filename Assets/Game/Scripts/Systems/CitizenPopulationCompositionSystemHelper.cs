@@ -19,7 +19,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         public readonly CitizenRefugeeCompositionSystemHelper RefugeeSystem = ResolveCitizenRefugeeSystem();
         public CitizenRefugeeCompositionSystemHelper.State RefugeeState;
         public readonly CitizenScheduleCompositionSystemHelper ScheduleSystem = ResolveCitizenScheduleCompositionSystemHelper();
-        public readonly CitizenStatusTransitionSystem StatusTransitionSystem = ResolveCitizenStatusTransitionSystem();
+        public readonly CitizenStatusTransitionCompositionSystemHelper StatusTransitionSystem = ResolveCitizenStatusTransitionCompositionSystemHelper();
         public readonly CitizenDangerCompositionSystemHelper DangerSystem = ResolveCitizenDangerSystem();
         public readonly CitizenTravelSystem TravelSystem = ResolveCitizenTravelSystem();
         public readonly CitizenPrefabSelectionSystem PrefabSelectionSystem = new();
@@ -204,9 +204,9 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         return new CitizenScheduleCompositionSystemHelper();
     }
 
-    private static CitizenStatusTransitionSystem ResolveCitizenStatusTransitionSystem()
+    private static CitizenStatusTransitionCompositionSystemHelper ResolveCitizenStatusTransitionCompositionSystemHelper()
     {
-        return new CitizenStatusTransitionSystem();
+        return new CitizenStatusTransitionCompositionSystemHelper();
     }
 
     private static CitizenTravelSystem ResolveCitizenTravelSystem()

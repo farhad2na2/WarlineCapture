@@ -96,7 +96,7 @@ internal sealed class SelectionGameplayStartupSystem
         var buildingTargetMoveOrderSystem = new BuildingTargetMoveOrderSystem();
         var transportBoardingCommandSystem = new TransportBoardingCommandSystem();
         var focusableUnitLookupSystem = new FocusableUnitLookupCameraSystemHelper();
-        var matchHudSquadTraySelectionSystem = new MatchHudSquadTraySelectionSystem();
+        var matchHudSquadTraySelectionSystem = new MatchHudSquadTraySelectionUiSystemHelper();
         var unitTransportCapacitySystem = new UnitTransportCapacitySystem();
         var unitTransportAirPickupSystem = new UnitTransportAirPickupSystem();
         var selectionBuildingInteraction = new SelectionBuildingInteractionSystem();
@@ -647,9 +647,9 @@ internal sealed class SelectionGameplayStartupSystem
             selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext());
         }
 
-        MatchHudSquadTraySelectionSystem.Context CreateSquadTraySelectionContext()
+        MatchHudSquadTraySelectionUiSystemHelper.Context CreateSquadTraySelectionContext()
         {
-            return new MatchHudSquadTraySelectionSystem.Context(
+            return new MatchHudSquadTraySelectionUiSystemHelper.Context(
                 runtimeConfig.WorldCamera,
                 TryGetDefaultEntityManager,
                 EnsureRuntimeSelectionDependencies,

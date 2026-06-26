@@ -6,7 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class MatchHudSquadTraySelectionSystem
+public sealed class MatchHudSquadTraySelectionUiSystemHelper
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
 

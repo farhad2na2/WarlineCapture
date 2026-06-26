@@ -8,13 +8,13 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class MatchHudSquadTraySelectionSystemTests
+public sealed class MatchHudSquadTraySelectionUiSystemHelperTests
 {
     private World _world;
     private EntityManager _entityManager;
     private SelectionStateSystem _selectionState;
     private FocusedUnitLifecycleCompositionSystemHelper _focusedLifecycle;
-    private MatchHudSquadTraySelectionSystem _system;
+    private MatchHudSquadTraySelectionUiSystemHelper _system;
     private TestSquadTrayView _view;
     private Entity _lastHudSelection;
     private int _lastHudSquadCount;
@@ -36,9 +36,9 @@ public sealed class MatchHudSquadTraySelectionSystemTests
         }
     }
 
-    private static void RunCase(Action<MatchHudSquadTraySelectionSystemTests> testCase)
+    private static void RunCase(Action<MatchHudSquadTraySelectionUiSystemHelperTests> testCase)
     {
-        var tests = new MatchHudSquadTraySelectionSystemTests();
+        var tests = new MatchHudSquadTraySelectionUiSystemHelperTests();
         try
         {
             tests.SetUp();
@@ -53,11 +53,11 @@ public sealed class MatchHudSquadTraySelectionSystemTests
     [SetUp]
     public void SetUp()
     {
-        _world = new World("MatchHudSquadTraySelectionSystemTests");
+        _world = new World("MatchHudSquadTraySelectionUiSystemHelperTests");
         _entityManager = _world.EntityManager;
         _selectionState = new SelectionStateSystem();
         _focusedLifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
-        _system = new MatchHudSquadTraySelectionSystem();
+        _system = new MatchHudSquadTraySelectionUiSystemHelper();
         _view = new TestSquadTrayView();
         _lastHudSelection = Entity.Null;
         _lastHudSquadCount = -1;
@@ -139,9 +139,9 @@ public sealed class MatchHudSquadTraySelectionSystemTests
         Assert.AreEqual(MatchHudSquadTraySlot.Transport, _view.SelectedSlot);
     }
 
-    private MatchHudSquadTraySelectionSystem.Context CreateContext()
+    private MatchHudSquadTraySelectionUiSystemHelper.Context CreateContext()
     {
-        return new MatchHudSquadTraySelectionSystem.Context(
+        return new MatchHudSquadTraySelectionUiSystemHelper.Context(
             null,
             TryGetEntityManager,
             _ => { },

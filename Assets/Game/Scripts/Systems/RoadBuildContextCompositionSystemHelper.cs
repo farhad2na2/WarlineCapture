@@ -1,4 +1,4 @@
-internal sealed class RoadBuildContextSystem
+internal sealed class RoadBuildContextCompositionSystemHelper
 {
     public readonly struct Context
     {

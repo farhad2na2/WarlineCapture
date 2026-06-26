@@ -182,9 +182,9 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             () => RoadVisualRefreshPresentationSystemHelper.RebuildRoadStateFromCurrentTiles(CreateRoadVisualRefreshContext(source)));
     }
 
-    private RoadBuildContextSystem.Context CreateRoadBuildContext(RoadBuildCompositionSourceCompositionSystemHelper source)
+    private RoadBuildContextCompositionSystemHelper.Context CreateRoadBuildContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
-        return new RoadBuildContextSystem.Context(
+        return new RoadBuildContextCompositionSystemHelper.Context(
             source.RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManager,
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 TryGetRoadBuildGridData(source, out gridEntity, out grid, out roads, out blockerData),
@@ -197,7 +197,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
 
     private RoadBuildEcsBoundaryCompositionSystemHelper.Context CreateRoadBuildEcsContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
-        return source.RoadBuildContextSystem.CreateEcsContext(CreateRoadBuildContext(source));
+        return source.RoadBuildContextCompositionSystemHelper.CreateEcsContext(CreateRoadBuildContext(source));
     }
 
     private RoadBuildBuildingPlacementCompositionSystemHelper.Context CreateRoadBuildPlacementContext(RoadBuildCompositionSourceCompositionSystemHelper source)

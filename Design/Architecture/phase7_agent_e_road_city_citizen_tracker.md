@@ -19,12 +19,12 @@ Progress snapshot:
 - Checklist progress: `109 / 109 complete (100.0%)`.
 - In progress: `0`.
 - Remaining open: `0`.
-- Current target: `Agent E naming-only Batch 213 RoadBuildCompositionSourceCompositionSystemHelper complete; continue road/city/citizen/resource helper naming in small batches`.
+- Current target: `Agent E naming-only Batch 214 RoadBuildContextCompositionSystemHelper complete; continue road/city/citizen/resource helper naming in small batches`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
 - Retired/folded helpers: `109`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `RoadBuildCompositionSourceCompositionSystemHelper naming slice completed after inventory regeneration, compile, git diff --check, focused road-build command validation, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch213-road-build-command-rerun.log with [RoadBuildCommandRequestValidation] result=Passed tests=7 and /private/tmp/warline-non-ecs-helper-naming-batch213-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=16. Previous FactionResourceCompositionSystemHelper naming logs remain /private/tmp/warline-non-ecs-helper-naming-batch201-faction-resource.log and /private/tmp/warline-non-ecs-helper-naming-batch201-architecture.log.`
+- Validation status: `RoadBuildContextCompositionSystemHelper naming slice completed after inventory regeneration, compile, git diff --check, focused road-build command validation, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch214-road-build-command.log with [RoadBuildCommandRequestValidation] result=Passed tests=7 and /private/tmp/warline-non-ecs-helper-naming-batch214-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=15. Previous FactionResourceCompositionSystemHelper naming logs remain /private/tmp/warline-non-ecs-helper-naming-batch201-faction-resource.log and /private/tmp/warline-non-ecs-helper-naming-batch201-architecture.log.`
 
 Owned files:
 
@@ -229,6 +229,7 @@ Remove dead wrappers instead of converting them.
 - [x] Fold `P7-0211 RoadBuildCompositionSourceSystem` from a disabled `SystemBase` wrapper into a plain road build composition source helper; child-system source fields, resolver state, and direct road composition ownership stayed unchanged.
 - [x] Rename `P7-0211 RoadBuildCompositionSourceSystem` to `RoadBuildCompositionSourceCompositionSystemHelper` with preserved `.meta` GUID, focused road-build command validation, and architecture validation.
 - [x] Fold `P7-0214 RoadBuildContextSystem` from a disabled `SystemBase` wrapper into a plain road build context helper; ECS boundary context construction and road composition callers stayed unchanged.
+- [x] Rename `P7-0214 RoadBuildContextSystem` to `RoadBuildContextCompositionSystemHelper` with preserved `.meta` GUID, focused road-build command validation, and architecture validation.
 - [x] Fold `P7-0220 RoadBuildInteractionContextSystem` from a disabled `SystemBase` wrapper into a plain road build interaction context helper; session/input/command/delete prompt context construction and road runtime action callers stayed unchanged.
 - [x] Fold and rename `P7-0224 RoadBuildReadModelCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road build read-model helper; public read properties, configure/clear API, and selection/camera consumers stayed unchanged.
 - [x] Fold and rename `P7-0234 RoadRuntimeGenerationContextCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road runtime generation context helper; deferred road ECS sync context construction and road runtime generation callers stayed unchanged.

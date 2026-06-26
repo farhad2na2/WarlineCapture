@@ -5,7 +5,7 @@ public sealed class MatchSceneReferenceSceneSystemHelper
 {
     public bool TryGetLoadedMatchSceneView(out MatchSceneView view)
     {
-        return TryGetLoadedSceneView(SceneLifecycleSystem.MatchSceneName, out view);
+        return TryGetLoadedSceneView(SceneLifecycleSceneSystemHelper.MatchSceneName, out view);
     }
 
     public bool TryGetLoadedSceneView(string sceneName, out MatchSceneView view)

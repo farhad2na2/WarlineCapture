@@ -11,7 +11,7 @@ public static class SceneLifecycleValidationRunner
         {
             using World world = new("SceneLifecycleValidationRunner");
             EntityManager em = world.EntityManager;
-            var system = new SceneLifecycleSystem();
+            var system = new SceneLifecycleSceneSystemHelper();
 
             Entity boundary = system.EnsureLifecycleEntity(em);
             Require(boundary != Entity.Null && em.Exists(boundary), "Scene lifecycle boundary was not created.");

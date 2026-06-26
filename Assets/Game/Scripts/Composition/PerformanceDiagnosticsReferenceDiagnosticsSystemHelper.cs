@@ -5,7 +5,7 @@ public sealed class PerformanceDiagnosticsReferenceDiagnosticsSystemHelper
 {
     public bool TryGet(out PerformanceDiagnosticsSystemHelper diagnostics)
     {
-        Scene scene = SceneManager.GetSceneByName(SceneLifecycleSystem.MenuSceneName);
+        Scene scene = SceneManager.GetSceneByName(SceneLifecycleSceneSystemHelper.MenuSceneName);
         return TryGet(scene, out diagnostics);
     }
 

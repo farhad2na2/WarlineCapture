@@ -715,7 +715,7 @@ internal sealed class QuickCustomGameConfigStore : IQuickCustomGameConfigStore
 
 internal sealed class MatchLaunchCommand : IMatchLaunchCommand
 {
-    private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
+    private readonly SceneLifecycleSceneSystemHelper sceneLifecycleSceneSystemHelper = new();
     private readonly MatchStartRequestStartupSystemHelper matchStartRequestSystem = new();
 
     public void LaunchMatch(Component source)
@@ -737,7 +737,7 @@ internal sealed class MatchLaunchCommand : IMatchLaunchCommand
         }
 
         EntityManager entityManager = world.EntityManager;
-        bool loadQueued = sceneLifecycleSystem.QueueLoadMatch(entityManager);
+        bool loadQueued = sceneLifecycleSceneSystemHelper.QueueLoadMatch(entityManager);
         bool startQueued = matchStartRequestSystem.QueueStartAfterMatchLoaded(entityManager);
         if (!loadQueued || !startQueued)
             Debug.LogError($"[GameLaunch] Failed to queue Match start. loadQueued={(loadQueued ? 1 : 0)} startQueued={(startQueued ? 1 : 0)}");

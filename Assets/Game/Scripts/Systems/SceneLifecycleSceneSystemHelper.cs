@@ -3,7 +3,7 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public sealed class SceneLifecycleSystem
+public sealed class SceneLifecycleSceneSystemHelper
 {
     public const string MenuSceneName = "Menu";
     public const string MatchSceneName = "Match";

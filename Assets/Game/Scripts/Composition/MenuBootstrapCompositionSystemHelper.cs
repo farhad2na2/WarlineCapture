@@ -8,7 +8,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
     private const float MinimumLoadingVisibleSeconds = 2f;
     private const float MatchReadyHoldSeconds = 0.75f;
 
-    private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
+    private readonly SceneLifecycleSceneSystemHelper sceneLifecycleSceneSystemHelper = new();
     private readonly MatchStartSceneSystemHelper matchStartSystem = new();
     private readonly PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem = new();
     private readonly MatchSceneReferenceSceneSystemHelper matchSceneReferenceSystem = new();
@@ -103,7 +103,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
         if (!TryGetWorldEntityManager(out EntityManager entityManager))
             return;
 
-        sceneLifecycleSystem.Update(entityManager);
+        sceneLifecycleSceneSystemHelper.Update(entityManager);
         matchStartSystem.Update(entityManager);
 
         if (!TryGetBoundary(entityManager, out Entity boundary))
@@ -247,7 +247,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
             (sceneState.IsBusy != 0 || sceneState.IsMatchLoaded != 0))
         {
             if (sceneState.IsBusy == 0 && sceneState.IsMatchLoaded != 0)
-                sceneLifecycleSystem.QueueUnloadMatch(entityManager);
+                sceneLifecycleSceneSystemHelper.QueueUnloadMatch(entityManager);
 
             float progress = sceneState.Status == SceneLifecycleStatusKind.Unloading ? sceneState.Progress01 : 0f;
             SetLoading(entityManager, boundary, progress, false, "Unloading match");
@@ -332,7 +332,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
         if (Time.frameCount - deferredMatchLoadFrame < DeferredMatchLoadVisibleFrames)
             return;
 
-        if (!sceneLifecycleSystem.QueueLoadMatch(entityManager))
+        if (!sceneLifecycleSceneSystemHelper.QueueLoadMatch(entityManager))
         {
             Debug.LogError("[UiShellRoute] failed to submit deferred Match scene load request.");
             return;

@@ -1454,7 +1454,7 @@ public static class CanvasMenuFallbackValidation
         string lifecycle = TryReadSceneLifecycleState(out SceneLifecycleStateComponent lifecycleState)
             ? $"scene(status={lifecycleState.Status},busy={lifecycleState.IsBusy},loaded={lifecycleState.IsMatchLoaded},progress={lifecycleState.Progress01:0.00})"
             : "scene=unavailable";
-        Scene matchScene = SceneManager.GetSceneByName(SceneLifecycleSystem.MatchSceneName);
+        Scene matchScene = SceneManager.GetSceneByName(SceneLifecycleSceneSystemHelper.MatchSceneName);
         string unityScene = $"unityScene(valid={matchScene.IsValid()},loaded={matchScene.isLoaded})";
         return $"{shell}; {loading}; {lifecycle}; {unityScene}";
     }

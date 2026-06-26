@@ -131,7 +131,7 @@ public sealed class MatchStartSceneSystemHelper
 
     private static bool IsMatchLoaded()
     {
-        Scene scene = SceneManager.GetSceneByName(SceneLifecycleSystem.MatchSceneName);
+        Scene scene = SceneManager.GetSceneByName(SceneLifecycleSceneSystemHelper.MatchSceneName);
         return scene.IsValid() && scene.isLoaded;
     }
 

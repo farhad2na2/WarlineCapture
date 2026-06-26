@@ -7,7 +7,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-public sealed class PerformanceDiagnosticsSystem
+public sealed class PerformanceDiagnosticsSystemHelper
 {
     private const double FreezeLogThresholdSeconds = 0.15d;
     private const double LowFpsDiagThreshold = 55d;

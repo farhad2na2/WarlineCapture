@@ -25,7 +25,7 @@ public sealed class MenuBootstrapView : MonoBehaviour
     public UIShellEcsPresentationSystem ShellEcsPresentation => shellEcsPresentation;
     public UIShellContentView ContentSystem => contentSystem;
     public UIRouterView Router => router;
-    public PerformanceDiagnosticsSystem PerformanceDiagnostics => menuBootstrapSystem.PerformanceDiagnostics;
+    public PerformanceDiagnosticsSystemHelper PerformanceDiagnostics => menuBootstrapSystem.PerformanceDiagnostics;
     public bool IsPerformanceDiagnosticsInitialized => menuBootstrapSystem.IsPerformanceDiagnosticsInitialized;
 
 #if UNITY_EDITOR

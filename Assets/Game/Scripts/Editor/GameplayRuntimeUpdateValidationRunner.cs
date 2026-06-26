@@ -38,7 +38,7 @@ public static class GameplayRuntimeUpdateValidationRunner
 
         var helper = new GameplayRuntimeUpdateCompositionSystemHelper();
         var runtimeState = new RuntimeGameplayStateSystem();
-        var performanceDiagnostics = new PerformanceDiagnosticsSystem();
+        var performanceDiagnostics = new PerformanceDiagnosticsSystemHelper();
         bool gameplayStartPending = false;
 
         helper.Update(

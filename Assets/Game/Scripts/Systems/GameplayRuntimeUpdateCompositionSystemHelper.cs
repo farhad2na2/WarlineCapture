@@ -30,7 +30,7 @@ public sealed class GameplayRuntimeUpdateCompositionSystemHelper
     public void Update(
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-        PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
+        PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem,
         Action roadBuildRuntimeUpdate,
         BuildingRuntimeUpdateCompositionSystemHelper buildingRuntimeUpdate,
         BuildingRuntimeUpdateCompositionSystemHelper.Context buildingRuntimeUpdateContext,
@@ -206,7 +206,7 @@ public sealed class GameplayRuntimeUpdateCompositionSystemHelper
     public void LateUpdate(
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-        PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
+        PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem,
         IUnitAttackTraceRenderer unitAttackTraces,
         IUnitImpostorRenderer unitImpostors)
     {
@@ -222,7 +222,7 @@ public sealed class GameplayRuntimeUpdateCompositionSystemHelper
     public void OnGui(
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-        PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
+        PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem,
         Action roadBuildOnGui,
         ISelectionRectangleView selectionRectangleView)
     {

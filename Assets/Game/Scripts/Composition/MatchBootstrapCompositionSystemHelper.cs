@@ -38,7 +38,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
 
     private readonly ManagedGameplayStartupSystemHelper managedGameplayStartupSystem = new();
     private readonly GameplayRuntimeUpdateCompositionSystemHelper gameplayRuntimeUpdateSystem = new();
-    private readonly PerformanceDiagnosticsSystem fallbackPerformanceDiagnosticsSystem = new();
+    private readonly PerformanceDiagnosticsSystemHelper fallbackPerformanceDiagnosticsSystemHelper = new();
     private bool fallbackPerformanceDiagnosticsInitialized;
     private MatchSceneView sceneView;
 
@@ -129,7 +129,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     private Action _disposeBuildingGameplay;
     private BuildingRuntimeUpdateCompositionSystemHelper.Context _buildingRuntimeUpdateContext;
     private Entity _buildingRuntimeBoundaryEntity;
-    private PerformanceDiagnosticsSystem _performanceDiagnosticsSystem;
+    private PerformanceDiagnosticsSystemHelper _performanceDiagnosticsSystem;
     private bool _mainMenuBaseBindingsApplied;
     private bool _mainMenuRoadBindingApplied;
     private bool _mainMenuBuildingBindingApplied;
@@ -166,7 +166,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public void Awake(MatchSceneView view, Transform ownerTransform, int ownerLayer)
     {
         Initialize(view);
-        _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystem();
+        _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystemHelper();
         _runtimeCameraReferenceSystem = ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld);
 
         ResolveRuntimeRootSystem()?.Ensure(
@@ -225,12 +225,12 @@ internal sealed class MatchBootstrapCompositionSystemHelper
         OnApplicationPause(_performanceDiagnosticsSystem, pauseStatus);
     }
 
-    public void OnApplicationFocus(PerformanceDiagnosticsSystem performanceDiagnosticsSystem, bool hasFocus)
+    public void OnApplicationFocus(PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem, bool hasFocus)
     {
         ForwardApplicationFocus(performanceDiagnosticsSystem, hasFocus);
     }
 
-    public void OnApplicationPause(PerformanceDiagnosticsSystem performanceDiagnosticsSystem, bool pauseStatus)
+    public void OnApplicationPause(PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem, bool pauseStatus)
     {
         ForwardApplicationPause(performanceDiagnosticsSystem, pauseStatus);
     }
@@ -361,31 +361,31 @@ internal sealed class MatchBootstrapCompositionSystemHelper
         sceneView = null;
     }
 
-    public PerformanceDiagnosticsSystem ResolvePerformanceDiagnosticsSystem()
+    public PerformanceDiagnosticsSystemHelper ResolvePerformanceDiagnosticsSystemHelper()
     {
-        if (_performanceDiagnosticsReferenceSystem.TryGet(out PerformanceDiagnosticsSystem persistentDiagnostics))
+        if (_performanceDiagnosticsReferenceSystem.TryGet(out PerformanceDiagnosticsSystemHelper persistentDiagnostics))
             return persistentDiagnostics;
 
         if (!fallbackPerformanceDiagnosticsInitialized)
         {
             Application.runInBackground = true;
-            fallbackPerformanceDiagnosticsSystem.Initialize();
+            fallbackPerformanceDiagnosticsSystemHelper.Initialize();
             fallbackPerformanceDiagnosticsInitialized = true;
         }
 
-        return fallbackPerformanceDiagnosticsSystem;
+        return fallbackPerformanceDiagnosticsSystemHelper;
     }
 
-    private void ForwardApplicationFocus(PerformanceDiagnosticsSystem performanceDiagnosticsSystem, bool hasFocus)
+    private void ForwardApplicationFocus(PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem, bool hasFocus)
     {
-        if (fallbackPerformanceDiagnosticsInitialized && performanceDiagnosticsSystem == fallbackPerformanceDiagnosticsSystem)
-            fallbackPerformanceDiagnosticsSystem.OnApplicationFocus(hasFocus);
+        if (fallbackPerformanceDiagnosticsInitialized && performanceDiagnosticsSystem == fallbackPerformanceDiagnosticsSystemHelper)
+            fallbackPerformanceDiagnosticsSystemHelper.OnApplicationFocus(hasFocus);
     }
 
-    private void ForwardApplicationPause(PerformanceDiagnosticsSystem performanceDiagnosticsSystem, bool pauseStatus)
+    private void ForwardApplicationPause(PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem, bool pauseStatus)
     {
-        if (fallbackPerformanceDiagnosticsInitialized && performanceDiagnosticsSystem == fallbackPerformanceDiagnosticsSystem)
-            fallbackPerformanceDiagnosticsSystem.OnApplicationPause(pauseStatus);
+        if (fallbackPerformanceDiagnosticsInitialized && performanceDiagnosticsSystem == fallbackPerformanceDiagnosticsSystemHelper)
+            fallbackPerformanceDiagnosticsSystemHelper.OnApplicationPause(pauseStatus);
     }
 
     public ManagedGameplayStartupSystemHelper.Result InitializeManagedRuntime(
@@ -525,7 +525,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public void UpdateRuntime(
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-        PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
+        PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem,
         Action roadBuildRuntimeUpdate,
         BuildingRuntimeUpdateCompositionSystemHelper buildingRuntimeUpdate,
         BuildingRuntimeUpdateCompositionSystemHelper.Context buildingRuntimeUpdateContext,
@@ -562,7 +562,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public void LateUpdateRuntime(
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-        PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
+        PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem,
         IUnitAttackTraceRenderer unitAttackTraces,
         IUnitImpostorRenderer unitImpostors)
     {
@@ -577,7 +577,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public void OnGuiRuntime(
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-        PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
+        PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem,
         Action roadBuildOnGui,
         ISelectionRectangleView selectionRectangleView)
     {
@@ -603,7 +603,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
         RuntimeCityCompositionSystemHelper runtimeCity,
         MapSurfaceRuntimeBootstrapSceneSystemHelper mapSurfaceRuntimeBootstrapSystem,
         RuntimeCameraReferenceSystem runtimeCameraReferenceSystem,
-        PerformanceDiagnosticsSystem performanceDiagnosticsSystem)
+        PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem)
     {
         Shutdown();
         mainMenu?.Dispose();
@@ -623,15 +623,15 @@ internal sealed class MatchBootstrapCompositionSystemHelper
         SharedPrefabPreviewCache.ReleaseAll();
     }
 
-    private void ReleasePerformanceDiagnostics(PerformanceDiagnosticsSystem performanceDiagnosticsSystem)
+    private void ReleasePerformanceDiagnostics(PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem)
     {
         if (!fallbackPerformanceDiagnosticsInitialized ||
-            performanceDiagnosticsSystem != fallbackPerformanceDiagnosticsSystem)
+            performanceDiagnosticsSystem != fallbackPerformanceDiagnosticsSystemHelper)
         {
             return;
         }
 
-        fallbackPerformanceDiagnosticsSystem.Dispose();
+        fallbackPerformanceDiagnosticsSystemHelper.Dispose();
         fallbackPerformanceDiagnosticsInitialized = false;
     }
 

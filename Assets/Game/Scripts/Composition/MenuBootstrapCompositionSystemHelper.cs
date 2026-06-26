@@ -10,7 +10,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
 
     private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
     private readonly MatchStartSceneSystemHelper matchStartSystem = new();
-    private readonly PerformanceDiagnosticsSystem performanceDiagnosticsSystem = new();
+    private readonly PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem = new();
     private readonly MatchSceneReferenceSceneSystemHelper matchSceneReferenceSystem = new();
     private readonly QuickCustomGameConfigStore quickCustomGameConfigStore = new();
     private readonly MatchLaunchCommand matchLaunchCommand = new();
@@ -49,7 +49,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
     private MainMenuPlayUI boundMainMenu;
     private int boundContentVersion = -1;
 
-    public PerformanceDiagnosticsSystem PerformanceDiagnostics => performanceDiagnosticsSystem;
+    public PerformanceDiagnosticsSystemHelper PerformanceDiagnostics => performanceDiagnosticsSystem;
     public bool IsPerformanceDiagnosticsInitialized => diagnosticsInitialized;
 
     public void Initialize(MenuBootstrapView view)

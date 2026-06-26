@@ -6,7 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public sealed class PerformanceDiagnosticsSystemAllocationTests
+public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
 {
     public static void RunFocusedValidation()
     {
@@ -39,7 +39,7 @@ public sealed class PerformanceDiagnosticsSystemAllocationTests
     [Test]
     public void EndStepDoesNotAllocateAfterWarmup()
     {
-        var diagnosticsSystem = new PerformanceDiagnosticsSystem();
+        var diagnosticsSystem = new PerformanceDiagnosticsSystemHelper();
         double start = diagnosticsSystem.BeginStep();
         diagnosticsSystem.EndStep("UnitRenderBudgetSystem", start);
         for (int i = 0; i < 256; i++)
@@ -76,7 +76,7 @@ public sealed class PerformanceDiagnosticsSystemAllocationTests
 
         PerformanceDiagnosticsReferenceDiagnosticsSystemHelper referenceSystem = new();
 
-        Assert.IsFalse(referenceSystem.TryGet(scene, out PerformanceDiagnosticsSystem diagnostics));
+        Assert.IsFalse(referenceSystem.TryGet(scene, out PerformanceDiagnosticsSystemHelper diagnostics));
         Assert.IsNull(diagnostics);
     }
 
@@ -93,7 +93,7 @@ public sealed class PerformanceDiagnosticsSystemAllocationTests
             Assert.IsTrue(view.IsPerformanceDiagnosticsInitialized);
             PerformanceDiagnosticsReferenceDiagnosticsSystemHelper referenceSystem = new();
 
-            Assert.IsTrue(referenceSystem.TryGet(scene, out PerformanceDiagnosticsSystem diagnostics));
+            Assert.IsTrue(referenceSystem.TryGet(scene, out PerformanceDiagnosticsSystemHelper diagnostics));
             Assert.AreSame(view.PerformanceDiagnostics, diagnostics);
         }
         finally
@@ -111,10 +111,10 @@ public sealed class PerformanceDiagnosticsSystemAllocationTests
 
     private static void RunValidationStep(
         string name,
-        Action<PerformanceDiagnosticsSystemAllocationTests> action,
+        Action<PerformanceDiagnosticsSystemHelperAllocationTests> action,
         ref int passed)
     {
-        var tests = new PerformanceDiagnosticsSystemAllocationTests();
+        var tests = new PerformanceDiagnosticsSystemHelperAllocationTests();
         try
         {
             action(tests);

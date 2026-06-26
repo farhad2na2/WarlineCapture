@@ -3,13 +3,13 @@ using UnityEngine.SceneManagement;
 
 public sealed class PerformanceDiagnosticsReferenceDiagnosticsSystemHelper
 {
-    public bool TryGet(out PerformanceDiagnosticsSystem diagnostics)
+    public bool TryGet(out PerformanceDiagnosticsSystemHelper diagnostics)
     {
         Scene scene = SceneManager.GetSceneByName(SceneLifecycleSystem.MenuSceneName);
         return TryGet(scene, out diagnostics);
     }
 
-    public bool TryGet(Scene scene, out PerformanceDiagnosticsSystem diagnostics)
+    public bool TryGet(Scene scene, out PerformanceDiagnosticsSystemHelper diagnostics)
     {
         diagnostics = null;
         if (!scene.IsValid() || !scene.isLoaded)
@@ -28,7 +28,7 @@ public sealed class PerformanceDiagnosticsReferenceDiagnosticsSystemHelper
             if (!menuBootstrap.IsPerformanceDiagnosticsInitialized)
                 continue;
 
-            PerformanceDiagnosticsSystem candidate = menuBootstrap.PerformanceDiagnostics;
+            PerformanceDiagnosticsSystemHelper candidate = menuBootstrap.PerformanceDiagnostics;
             if (candidate == null)
                 continue;
 

@@ -114,7 +114,7 @@ internal sealed class CitizenPopulationRuntimeUpdateCompositionSystemHelper
             _systems.HouseholdRegistrationSystem,
             _systems.State,
             _systems.BuildingReadSystem,
-            (household, reason) => CitizenRefugeeSystem.DisplaceHousehold(
+            (household, reason) => CitizenRefugeeCompositionSystemHelper.DisplaceHousehold(
                 _systems.RefugeeSystem,
                 _systems.State,
                 _systems.BuildingReadSystem,
@@ -140,7 +140,7 @@ internal sealed class CitizenPopulationRuntimeUpdateCompositionSystemHelper
                 (CitizenRecordComponent citizen, int targetBuildingId) => CitizenTravelSystem.EstimateTravelSeconds(_systems.TravelSystem, _systems.State, _systems.BuildingReadSystem, citizen, targetBuildingId)),
             StoreHousehold,
             StoreCitizen);
-        CitizenRefugeeSystem.UpdateRefugeeTentState(
+        CitizenRefugeeCompositionSystemHelper.UpdateRefugeeTentState(
             _systems.RefugeeSystem,
             _systems.State,
             _systems.BuildingReadSystem,
@@ -152,7 +152,7 @@ internal sealed class CitizenPopulationRuntimeUpdateCompositionSystemHelper
             HandleCitizenDeath);
         UpdateDeferredCitizenTravel();
         UpdateCitizenSchedules();
-        CitizenRefugeeSystem.UpdateRefugeeUpkeep(
+        CitizenRefugeeCompositionSystemHelper.UpdateRefugeeUpkeep(
             _systems.RefugeeSystem,
             ref _systems.RefugeeState,
             _systems.State,
@@ -312,7 +312,7 @@ internal sealed class CitizenPopulationRuntimeUpdateCompositionSystemHelper
             if (homeExists && !isDestroyed)
                 continue;
 
-            CitizenRefugeeSystem.DisplaceHousehold(
+            CitizenRefugeeCompositionSystemHelper.DisplaceHousehold(
                 _systems.RefugeeSystem,
                 _systems.State,
                 _systems.BuildingReadSystem,

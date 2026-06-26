@@ -5,27 +5,27 @@ public sealed class CitizenPopulationEventCompositionSystemHelper
     private CitizenPopulationStateCompositionSystemHelper _state;
     private CitizenBuildingReadCompositionSystemHelper _buildingReadSystem;
     private CitizenHouseholdRegistrationCompositionSystemHelper _householdRegistrationSystem;
-    private CitizenRefugeeSystem _refugeeSystem;
+    private CitizenRefugeeCompositionSystemHelper _refugeeSystem;
     private CitizenTravelSystem _travelSystem;
     private CitizenPopulationEcsProjectionCompositionSystemHelper _ecsProjection;
     private CitizenStatusTransitionSystem _statusTransitionSystem;
-    private CitizenRefugeeSystem.StoreHouseholdAction _storeHousehold;
-    private CitizenRefugeeSystem.StoreCitizenAction _storeCitizen;
-    private CitizenRefugeeSystem.TryGetHouseholdReferenceWorldPositionAction _tryGetHouseholdReferenceWorldPosition;
-    private CitizenRefugeeSystem.EstimateTravelSecondsAction _estimateTravelSeconds;
-    private CitizenRefugeeSystem.MarkCitizenDeadAction _markCitizenDead;
+    private CitizenRefugeeCompositionSystemHelper.StoreHouseholdAction _storeHousehold;
+    private CitizenRefugeeCompositionSystemHelper.StoreCitizenAction _storeCitizen;
+    private CitizenRefugeeCompositionSystemHelper.TryGetHouseholdReferenceWorldPositionAction _tryGetHouseholdReferenceWorldPosition;
+    private CitizenRefugeeCompositionSystemHelper.EstimateTravelSecondsAction _estimateTravelSeconds;
+    private CitizenRefugeeCompositionSystemHelper.MarkCitizenDeadAction _markCitizenDead;
 
     internal void Init(
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
-        CitizenRefugeeSystem refugeeSystem,
+        CitizenRefugeeCompositionSystemHelper refugeeSystem,
         CitizenTravelSystem travelSystem,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenStatusTransitionSystem statusTransitionSystem,
-        CitizenRefugeeSystem.StoreHouseholdAction storeHousehold,
-        CitizenRefugeeSystem.StoreCitizenAction storeCitizen,
-        CitizenRefugeeSystem.MarkCitizenDeadAction markCitizenDead)
+        CitizenRefugeeCompositionSystemHelper.StoreHouseholdAction storeHousehold,
+        CitizenRefugeeCompositionSystemHelper.StoreCitizenAction storeCitizen,
+        CitizenRefugeeCompositionSystemHelper.MarkCitizenDeadAction markCitizenDead)
     {
         _state = state;
         _buildingReadSystem = buildingReadSystem;
@@ -70,7 +70,7 @@ public sealed class CitizenPopulationEventCompositionSystemHelper
         if (_state == null)
             return;
 
-        CitizenRefugeeSystem.NotifyHomeBuildingDestroyed(
+        CitizenRefugeeCompositionSystemHelper.NotifyHomeBuildingDestroyed(
             _refugeeSystem,
             _state,
             _buildingReadSystem,

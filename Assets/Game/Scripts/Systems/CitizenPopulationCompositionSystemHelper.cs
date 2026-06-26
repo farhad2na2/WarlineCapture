@@ -16,8 +16,8 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         public CitizenPopulationReadModelCompositionSystemHelper.State ReadModelState;
         public readonly CitizenBuildingReadCompositionSystemHelper BuildingReadSystem = new();
         public readonly CitizenHouseholdRegistrationCompositionSystemHelper HouseholdRegistrationSystem = ResolveCitizenHouseholdRegistrationSystem();
-        public readonly CitizenRefugeeSystem RefugeeSystem = ResolveCitizenRefugeeSystem();
-        public CitizenRefugeeSystem.State RefugeeState;
+        public readonly CitizenRefugeeCompositionSystemHelper RefugeeSystem = ResolveCitizenRefugeeSystem();
+        public CitizenRefugeeCompositionSystemHelper.State RefugeeState;
         public readonly CitizenScheduleSystem ScheduleSystem = ResolveCitizenScheduleSystem();
         public readonly CitizenStatusTransitionSystem StatusTransitionSystem = ResolveCitizenStatusTransitionSystem();
         public readonly CitizenDangerCompositionSystemHelper DangerSystem = ResolveCitizenDangerSystem();
@@ -121,7 +121,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         result.State.Reset();
         CitizenPopulationReadModelCompositionSystemHelper.Reset(result.ReadModel, ref result.ReadModelState);
         CitizenPopulationLifecycleCompositionSystemHelper.Reset(result.LifecycleSystem, ref result.LifecycleState);
-        CitizenRefugeeSystem.Reset(result.RefugeeSystem, ref result.RefugeeState);
+        CitizenRefugeeCompositionSystemHelper.Reset(result.RefugeeSystem, ref result.RefugeeState);
         CitizenDangerCompositionSystemHelper.Reset(result.DangerSystem);
         result.PrefabSelectionSystem.Init(
             ref result.PrefabSelectionState,
@@ -173,7 +173,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         result.BuildingReadSystem.Dispose();
         CitizenDangerCompositionSystemHelper.Reset(result.DangerSystem);
         CitizenPopulationLifecycleCompositionSystemHelper.Reset(result.LifecycleSystem, ref result.LifecycleState);
-        CitizenRefugeeSystem.Reset(result.RefugeeSystem, ref result.RefugeeState);
+        CitizenRefugeeCompositionSystemHelper.Reset(result.RefugeeSystem, ref result.RefugeeState);
         result.PrefabSelectionSystem.Reset(ref result.PrefabSelectionState);
         result.EventSystem?.Reset();
         result.RuntimeUpdateSystem.Reset();
@@ -227,9 +227,9 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         return new CitizenHouseholdRegistrationCompositionSystemHelper();
     }
 
-    private static CitizenRefugeeSystem ResolveCitizenRefugeeSystem()
+    private static CitizenRefugeeCompositionSystemHelper ResolveCitizenRefugeeSystem()
     {
-        return new CitizenRefugeeSystem();
+        return new CitizenRefugeeCompositionSystemHelper();
     }
 
     private static CitizenPopulationDebugDiagnosticsSystemHelper ResolveCitizenPopulationDebugSystem()

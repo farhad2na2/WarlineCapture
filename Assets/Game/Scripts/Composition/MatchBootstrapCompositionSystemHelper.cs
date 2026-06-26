@@ -32,7 +32,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     private readonly GameplayFeatureStartupCompositionSystemHelper _gameplayFeatureStartupSystem = new();
     private RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem;
     private MapSurfaceRuntimeBootstrapSceneSystemHelper _mapSurfaceRuntimeBootstrapSystem;
-    private CustomGameStartupSystem _customGameStartupSystem;
+    private CustomGameStartupSystemHelper _customGameStartupSystem;
     private readonly PerformanceDiagnosticsReferenceDiagnosticsSystemHelper _performanceDiagnosticsReferenceSystem = new();
     private readonly MatchIntroEcsStateQuery matchIntroStateQuery = new();
 
@@ -675,16 +675,16 @@ internal sealed class MatchBootstrapCompositionSystemHelper
 
             case GameplayStartStep.CustomGameStartup:
                 SetGameplayStartProgress(0.38f, "Preparing unit prefabs");
-                CustomGameStartupSystem customGameStartupSystem = ResolveCustomGameStartupSystem(World.DefaultGameObjectInjectionWorld);
-                if (customGameStartupSystem != null)
+                CustomGameStartupSystemHelper customGameStartupSystemHelper = ResolveCustomGameStartupSystemHelper(World.DefaultGameObjectInjectionWorld);
+                if (customGameStartupSystemHelper != null)
                 {
-                    customGameStartupSystem.InitializeFromLegacyConfigs(
+                    customGameStartupSystemHelper.InitializeFromLegacyConfigs(
                         BuildingPlacementConfig != null ? BuildingPlacementConfig.InitialUnitsConfig : null,
                         BuildingPlacementConfig != null ? BuildingPlacementConfig.UnitPrefabRegistryConfig : null);
                 }
                 else
                 {
-                    Debug.LogWarning("[MatchBootstrap] missingCustomGameStartupSystem");
+                    Debug.LogWarning("[MatchBootstrap] missingCustomGameStartupSystemHelper");
                 }
 
                 _gameplayStartStep = GameplayStartStep.AiStartup;
@@ -776,12 +776,12 @@ internal sealed class MatchBootstrapCompositionSystemHelper
             out spawnCell);
     }
 
-    private CustomGameStartupSystem ResolveCustomGameStartupSystem(World world)
+    private CustomGameStartupSystemHelper ResolveCustomGameStartupSystemHelper(World world)
     {
         if (world == null || !world.IsCreated)
             return null;
 
-        _customGameStartupSystem ??= new CustomGameStartupSystem(world.EntityManager);
+        _customGameStartupSystem ??= new CustomGameStartupSystemHelper(world.EntityManager);
         return _customGameStartupSystem;
     }
 

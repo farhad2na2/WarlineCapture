@@ -136,7 +136,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         ["Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs"] = "BuildingProductionTransportBridgeCompositionSystemHelper",
         ["Assets/Game/Scripts/Systems/CitizenVisibleUnitPresentationSystemHelper.cs"] = "CitizenVisibleUnitPresentationSystemHelper",
         ["Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnSystem.cs"] = "MapVehiclePlacementSpawnSystem",
-        ["Assets/Game/Scripts/Systems/CustomGameStartupSystem.cs"] = "CustomGameStartupSystem"
+        ["Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs"] = "CustomGameStartupSystemHelper"
     };
 
     private static readonly string[] RetiredDirectCallContextSystemTokens =

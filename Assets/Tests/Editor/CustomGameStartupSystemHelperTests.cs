@@ -8,13 +8,13 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class CustomGameStartupSystemTests
+public sealed class CustomGameStartupSystemHelperTests
 {
     public static void RunFocusedValidation()
     {
         try
         {
-            var tests = new CustomGameStartupSystemTests();
+            var tests = new CustomGameStartupSystemHelperTests();
             tests.InitializeFromLegacyConfigsCreatesStartupEntityAndBuffers();
             tests.InitializeFromLegacyConfigsResetsInitialSpawnLifecycleAndRequests();
             tests.InitializeFromLegacyConfigsKeepsFaction2TentBuildingKey();
@@ -32,10 +32,10 @@ public sealed class CustomGameStartupSystemTests
     [Test]
     public void InitializeFromLegacyConfigsCreatesStartupEntityAndBuffers()
     {
-        using var world = new World("CustomGameStartupSystemTests");
-        CustomGameStartupSystem system = new(world.EntityManager);
+        using var world = new World("CustomGameStartupSystemHelperTests");
+        CustomGameStartupSystemHelper system = new(world.EntityManager);
 
-        CustomGameStartupSystem.Result result = system.InitializeFromLegacyConfigs(null, null);
+        CustomGameStartupSystemHelper.Result result = system.InitializeFromLegacyConfigs(null, null);
 
         Assert.IsTrue(result.Initialized);
         Assert.AreEqual(0, result.FactionCount);
@@ -67,7 +67,7 @@ public sealed class CustomGameStartupSystemTests
     public void InitializeFromLegacyConfigsResetsInitialSpawnLifecycleAndRequests()
     {
         using var world = new World("CustomGameStartupLifecycleResetTests");
-        CustomGameStartupSystem system = new(world.EntityManager);
+        CustomGameStartupSystemHelper system = new(world.EntityManager);
         EntityManager em = world.EntityManager;
 
         Entity startupEntity = em.CreateEntity(
@@ -100,7 +100,7 @@ public sealed class CustomGameStartupSystemTests
             Status = BuildingRuntimeSpawnRequest.Pending
         });
 
-        CustomGameStartupSystem.Result result = system.InitializeFromLegacyConfigs(null, null);
+        CustomGameStartupSystemHelper.Result result = system.InitializeFromLegacyConfigs(null, null);
 
         Assert.IsTrue(result.Initialized);
         Assert.IsFalse(em.HasComponent<InitialUnitsSpawnInitialized>(startupEntity));
@@ -118,7 +118,7 @@ public sealed class CustomGameStartupSystemTests
     public void InitializeFromLegacyConfigsKeepsFaction2TentBuildingKey()
     {
         using var world = new World("CustomGameStartupFaction2TentTests");
-        CustomGameStartupSystem system = new(world.EntityManager);
+        CustomGameStartupSystemHelper system = new(world.EntityManager);
         InitialUnitsSpawnerAuthoringConfig initialConfig =
             ScriptableObject.CreateInstance<InitialUnitsSpawnerAuthoringConfig>();
         GameObject tentPrefab = new("Tent_Regular");
@@ -141,7 +141,7 @@ public sealed class CustomGameStartupSystemTests
                 "factions",
                 new List<InitialUnitsSpawnerAuthoringConfig.FactionEntry> { faction });
 
-            CustomGameStartupSystem.Result result = system.InitializeFromLegacyConfigs(initialConfig, null);
+            CustomGameStartupSystemHelper.Result result = system.InitializeFromLegacyConfigs(initialConfig, null);
 
             Assert.IsTrue(result.Initialized);
             Assert.AreEqual(1, result.FactionCount);
@@ -173,7 +173,7 @@ public sealed class CustomGameStartupSystemTests
     public void InitializeCreatesSourceKeyStartupBuffers()
     {
         using var world = new World("CustomGameStartupSourceKeyBufferTests");
-        CustomGameStartupSystem system = new(world.EntityManager);
+        CustomGameStartupSystemHelper system = new(world.EntityManager);
         CustomGameStartupConfig startupConfig = ScriptableObject.CreateInstance<CustomGameStartupConfig>();
         CustomGameFactionConfig factionConfig = ScriptableObject.CreateInstance<CustomGameFactionConfig>();
         CustomGameUnitRosterConfig unitRosterConfig = ScriptableObject.CreateInstance<CustomGameUnitRosterConfig>();
@@ -216,7 +216,7 @@ public sealed class CustomGameStartupSystemTests
             SetPrivateField(startupConfig, "factionConfig", factionConfig);
             SetPrivateField(startupConfig, "unitRosterConfig", unitRosterConfig);
 
-            CustomGameStartupSystem.Result result = system.Initialize(startupConfig);
+            CustomGameStartupSystemHelper.Result result = system.Initialize(startupConfig);
 
             Assert.IsTrue(result.Initialized);
             Assert.AreEqual(1, result.FactionCount);

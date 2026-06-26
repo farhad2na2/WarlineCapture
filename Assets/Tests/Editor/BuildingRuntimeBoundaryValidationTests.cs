@@ -176,8 +176,8 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
         em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
 
-        CustomGameStartupSystem startupSystem = new(_world.EntityManager);
-        CustomGameStartupSystem.Result startup = startupSystem.InitializeFromLegacyConfigs(initialConfig, null);
+        CustomGameStartupSystemHelper startupSystem = new(_world.EntityManager);
+        CustomGameStartupSystemHelper.Result startup = startupSystem.InitializeFromLegacyConfigs(initialConfig, null);
         Assert.IsTrue(startup.Initialized);
 
         using EntityQuery startupQuery = em.CreateEntityQuery(

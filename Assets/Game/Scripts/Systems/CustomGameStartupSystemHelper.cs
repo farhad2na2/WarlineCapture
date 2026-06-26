@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class CustomGameStartupSystem
+public sealed class CustomGameStartupSystemHelper
 {
     private readonly EntityManager _entityManager;
 
@@ -40,7 +40,7 @@ public sealed class CustomGameStartupSystem
         }
     }
 
-    public CustomGameStartupSystem(EntityManager entityManager)
+    public CustomGameStartupSystemHelper(EntityManager entityManager)
     {
         _entityManager = entityManager;
     }

@@ -6,7 +6,7 @@ internal sealed class ManagedGameplayStartupSystemHelper
 {
     private readonly RoadBuildCompositionSystemHelper _roadBuildCompositionSystem = new();
     private readonly BuildingGameplayCompositionSystemHelper _buildingGameplayCompositionSystem = new();
-    private readonly SelectionGameplayStartupSystem _selectionGameplayStartupSystem = new();
+    private readonly SelectionGameplayStartupSystemHelper _selectionGameplayStartupSystem = new();
 
     public readonly struct Result
     {
@@ -247,7 +247,7 @@ internal sealed class ManagedGameplayStartupSystemHelper
             return true;
         }
 
-        SelectionGameplayStartupSystem.Result selection = _selectionGameplayStartupSystem.Initialize(
+        SelectionGameplayStartupSystemHelper.Result selection = _selectionGameplayStartupSystem.Initialize(
             rtsSelectionConfig,
             worldCamera,
             runtimeUiRoot,

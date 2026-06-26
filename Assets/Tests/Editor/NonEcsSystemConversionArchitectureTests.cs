@@ -126,7 +126,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
     private static readonly string[] PointerCommandBoundaryPaths =
     {
         "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs"
+        "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs"
     };
 
     private static readonly Dictionary<string, string> FiveSystemBaseConversionTargets = new(StringComparer.Ordinal)

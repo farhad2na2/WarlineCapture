@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-internal sealed class SelectionGameplayStartupSystem
+internal sealed class SelectionGameplayStartupSystemHelper
 {
     public readonly struct Result
     {

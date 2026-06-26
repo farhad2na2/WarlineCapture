@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Profiling;
 using UnityEngine;
 
-public sealed class GameplayRuntimeUpdateSystem
+public sealed class GameplayRuntimeUpdateCompositionSystemHelper
 {
     private const int LoadingGateDiagnosticIntervalFrames = 120;
     private const int LoadingGateFailOpenFrames = 1800;

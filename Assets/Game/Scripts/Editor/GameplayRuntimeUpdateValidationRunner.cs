@@ -26,17 +26,17 @@ public static class GameplayRuntimeUpdateValidationRunner
     {
         string sourcePath = Path.Combine(
             Application.dataPath,
-            "Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs");
+            "Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs");
         string source = File.ReadAllText(sourcePath);
-        if (!source.Contains("public sealed class GameplayRuntimeUpdateSystem", StringComparison.Ordinal))
-            throw new InvalidOperationException("GameplayRuntimeUpdateSystem must be a plain direct-owned helper.");
-        if (source.Contains("GameplayRuntimeUpdateSystem : SystemBase", StringComparison.Ordinal))
-            throw new InvalidOperationException("GameplayRuntimeUpdateSystem must not derive from SystemBase.");
+        if (!source.Contains("public sealed class GameplayRuntimeUpdateCompositionSystemHelper", StringComparison.Ordinal))
+            throw new InvalidOperationException("GameplayRuntimeUpdateCompositionSystemHelper must be a plain direct-owned helper.");
+        if (source.Contains("GameplayRuntimeUpdateCompositionSystemHelper : SystemBase", StringComparison.Ordinal))
+            throw new InvalidOperationException("GameplayRuntimeUpdateCompositionSystemHelper must not derive from SystemBase.");
         if (source.Contains("protected override void OnCreate", StringComparison.Ordinal) ||
             source.Contains("protected override void OnUpdate", StringComparison.Ordinal))
-            throw new InvalidOperationException("GameplayRuntimeUpdateSystem must not keep disabled ECS lifecycle methods.");
+            throw new InvalidOperationException("GameplayRuntimeUpdateCompositionSystemHelper must not keep disabled ECS lifecycle methods.");
 
-        var helper = new GameplayRuntimeUpdateSystem();
+        var helper = new GameplayRuntimeUpdateCompositionSystemHelper();
         var runtimeState = new RuntimeGameplayStateSystem();
         var performanceDiagnostics = new PerformanceDiagnosticsSystem();
         bool gameplayStartPending = false;

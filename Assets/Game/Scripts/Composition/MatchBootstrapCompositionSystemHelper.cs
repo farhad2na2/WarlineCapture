@@ -37,7 +37,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     private readonly MatchIntroEcsStateQuery matchIntroStateQuery = new();
 
     private readonly ManagedGameplayStartupSystem managedGameplayStartupSystem = new();
-    private readonly GameplayRuntimeUpdateSystem gameplayRuntimeUpdateSystem = new();
+    private readonly GameplayRuntimeUpdateCompositionSystemHelper gameplayRuntimeUpdateSystem = new();
     private readonly PerformanceDiagnosticsSystem fallbackPerformanceDiagnosticsSystem = new();
     private bool fallbackPerformanceDiagnosticsInitialized;
     private MatchSceneView sceneView;

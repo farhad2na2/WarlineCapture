@@ -79,7 +79,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
         var selectionUiReadModel = new SelectionUiReadModelSystem();
         var selectionUiCamera = new SelectionUiCameraSystemHelper(rtsCameraSystem, rtsCameraRequestSystem);
         var selectionScreenMarkers = new SelectionScreenMarkerUiSystemHelper();
-        var selectionStateSystem = new SelectionStateSystem();
+        var selectionStateSystem = new SelectionStateCompositionSystemHelper();
         var selectionUiReadModelLookup = new SelectionUiReadModelLookup();
         var focusedUnitUiReadModelSystem = new FocusedUnitUiReadModelUiSystemHelper();
         var visibleUnitSelectionSystem = new VisibleUnitSelectionSystem();

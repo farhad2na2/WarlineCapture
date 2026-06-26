@@ -681,7 +681,7 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
             for (int i = 0; i < cachedSelectedMoveEntities.Count; i++)
             {
                 Entity entity = cachedSelectedMoveEntities[i];
-                if (SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity) &&
+                if (SelectionStateCompositionSystemHelper.IsCacheableSelectedMoveEntity(em, entity) &&
                     em.HasComponent<SelectedUnitTag>(entity))
                 {
                     selectedEntities.Add(entity);

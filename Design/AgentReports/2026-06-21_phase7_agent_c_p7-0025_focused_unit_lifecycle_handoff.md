@@ -11,7 +11,7 @@ Lane: `AgentC - Selection, Commands, Focus, And Player Intent`
 The public API and call-site contract were preserved:
 
 - selected-tag clearing and selected-entity collection;
-- focused-unit get/set/clear through `SelectionStateSystem`;
+- focused-unit get/set/clear through `SelectionStateCompositionSystemHelper`;
 - clicked-unit focus through injected delegates;
 - HUD selection and squad callbacks;
 - air-selection cleanup hook;
@@ -52,7 +52,7 @@ Commands:
 ```bash
 dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal
 python3 Tools/Architecture/generate_systembase_to_isystem_inventory.py --root Assets/Game/Scripts --output Design/Architecture/systembase_to_isystem_inventory.md --json-output /private/tmp/warline-phase7-systembase-inventory.json
-/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionStateSystemTests.RunFocusedValidation -logFile /private/tmp/warline-phase7-agent-c-focused-unit-lifecycle-selection-state.log
+/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionStateCompositionSystemHelperTests.RunFocusedValidation -logFile /private/tmp/warline-phase7-agent-c-focused-unit-lifecycle-selection-state.log
 /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod RtsSelectionInputSystemTests.RunFocusedValidation -logFile /private/tmp/warline-phase7-agent-c-focused-unit-lifecycle-rts-selection-input.log
 /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionCommandRequestResultContractTests.RunBatchValidation -logFile /private/tmp/warline-phase7-agent-c-focused-unit-lifecycle-request-result.log
 /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod MatchHudSquadTraySelectionSystemTests.RunFocusedValidation -logFile /private/tmp/warline-phase7-agent-c-focused-unit-lifecycle-squad-tray.log

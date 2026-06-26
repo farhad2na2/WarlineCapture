@@ -12,7 +12,7 @@ Related sources:
 - `Gameplay_UI_Integration_Handoff_Spec.md` defines `BattleHudGameplayBridge`.
 - `M01_FirstContact_Production_Contract.md` defines the first tutorial mission exception rules.
 - `Match_Unit_Command_Behavior_Spec.md` defines per-unit `HOLD`, `STOP`, and `SCAN` behavior, including aircraft return rules, scan auto-engage, and mixed-selection edge cases.
-- Runtime code currently lives under `RTSSelectionSystem`, `RtsSelectionInputSystem`, `SelectionStateSystem`, `SelectionUiQuerySystem`, `GamePointerInput`, and `BattleHudGameplayBridge`.
+- Runtime code currently lives under `RTSSelectionSystem`, `RtsSelectionInputSystem`, `SelectionStateCompositionSystemHelper`, `SelectionUiQuerySystem`, `GamePointerInput`, and `BattleHudGameplayBridge`.
 
 ## Product Rule
 
@@ -21,7 +21,7 @@ Selection is a gameplay-owned state. The HUD can request selection mode or focus
 The required data flow is:
 
 ```text
-Player input -> RTSSelectionSystem -> SelectionStateSystem / ECS refs -> SelectionUiQuerySystem -> BattleHudGameplayBridge -> HUD panels
+Player input -> RTSSelectionSystem -> SelectionStateCompositionSystemHelper / ECS refs -> SelectionUiQuerySystem -> BattleHudGameplayBridge -> HUD panels
 ```
 
 The HUD update call is always one of:
@@ -231,7 +231,7 @@ Required bridge calls:
 | Read touch/mouse pointer | `GamePointerInput` |
 | Track pointer press, drag, UI suppression, queued move | `RtsSelectionInputSystem` |
 | Decide world selection, move, attack, hold, stop, scan, support targeting | `RTSSelectionSystem` and command-specific systems |
-| Store focused/selected ECS refs | `SelectionStateSystem` |
+| Store focused/selected ECS refs | `SelectionStateCompositionSystemHelper` |
 | Build selected display name/status/read model | `SelectionUiQuerySystem` |
 | Update match HUD selected panel and command feedback | `BattleHudGameplayBridge` |
 | Render Canvas command buttons and selected panel | `Screen_MatchOverlay` controllers |

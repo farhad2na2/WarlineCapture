@@ -11,7 +11,7 @@ public sealed class SelectionBuildingInteractionCompositionSystemHelper
     private readonly BuildingTargetMoveOrderSystem _buildingTargetMoveOrderSystem = new();
     private readonly RtsSelectionPointerTargetCommandCompositionSystemHelper _pointerTargetCommandSystem = new();
 
-    private SelectionStateSystem _selectionStateSystem;
+    private SelectionStateCompositionSystemHelper _selectionStateSystem;
     private SelectionScreenMarkerUiSystemHelper _screenMarkerHelper;
     private Camera _worldCamera;
     private Unity.Entities.World _queryWorld;
@@ -19,7 +19,7 @@ public sealed class SelectionBuildingInteractionCompositionSystemHelper
     private EntityQuery _mapSurfaceQuery;
 
     public void Init(
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         SelectionScreenMarkerUiSystemHelper screenMarkerHelper,
         Camera worldCamera)
     {
@@ -98,7 +98,7 @@ public sealed class SelectionBuildingInteractionCompositionSystemHelper
         return true;
     }
 
-    private SelectionStateSystem SelectionState => _selectionStateSystem ??= new SelectionStateSystem();
+    private SelectionStateCompositionSystemHelper SelectionState => _selectionStateSystem ??= new SelectionStateCompositionSystemHelper();
 
     private void EnsureEntityQueries(EntityManager em)
     {

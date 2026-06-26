@@ -21,7 +21,7 @@ public sealed class FocusedUnitLifecycleCompositionSystemHelper
         _selectedTagQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
     }
 
-    public bool TryGetFocusedUnitEntity(EntityManager em, SelectionStateSystem selectionStateSystem, out Entity entity)
+    public bool TryGetFocusedUnitEntity(EntityManager em, SelectionStateCompositionSystemHelper selectionStateSystem, out Entity entity)
     {
         entity = Entity.Null;
         Entity focusedUnit = selectionStateSystem.FocusedUnit;
@@ -32,19 +32,19 @@ public sealed class FocusedUnitLifecycleCompositionSystemHelper
         return true;
     }
 
-    public void ClearFocusedUnit(SelectionStateSystem selectionStateSystem)
+    public void ClearFocusedUnit(SelectionStateCompositionSystemHelper selectionStateSystem)
     {
         selectionStateSystem.ClearFocusedUnit();
     }
 
-    public void SetFocusedUnit(SelectionStateSystem selectionStateSystem, Entity entity)
+    public void SetFocusedUnit(SelectionStateCompositionSystemHelper selectionStateSystem, Entity entity)
     {
         selectionStateSystem.SetFocusedUnit(entity);
     }
 
     public void ClearCurrentSelection(
         EntityManager em,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         string reason,
         System.Action<string> logSelectionDiagnostic,
         System.Action clearHudSelection)
@@ -80,7 +80,7 @@ public sealed class FocusedUnitLifecycleCompositionSystemHelper
 
     public bool RefreshFocusedUnit(
         EntityManager em,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         System.Action<EntityManager, Entity> applyHudSelection)
     {
         EnsureEntityQueries(em);
@@ -127,7 +127,7 @@ public sealed class FocusedUnitLifecycleCompositionSystemHelper
 
     public Entity ApplySelectionFocus(
         EntityManager em,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         IReadOnlyList<Entity> selectedEntities,
         int selectedCount,
         System.Action<EntityManager, Entity> applyHudSelection,
@@ -149,7 +149,7 @@ public sealed class FocusedUnitLifecycleCompositionSystemHelper
     public bool FocusUnitEntity(
         EntityManager em,
         Entity entity,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         string clearReason,
         string diagnosticSource,
         System.Action<string> logSelectionDiagnostic,
@@ -168,7 +168,7 @@ public sealed class FocusedUnitLifecycleCompositionSystemHelper
             em.AddComponent<SelectedUnitTag>(entity);
 
         bool selectedAfterAdd = em.HasComponent<SelectedUnitTag>(entity);
-        bool cacheableAfterAdd = SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity);
+        bool cacheableAfterAdd = SelectionStateCompositionSystemHelper.IsCacheableSelectedMoveEntity(em, entity);
         selectionStateSystem.CacheSelectedMoveEntity(em, entity);
         string description = describeEntity != null ? describeEntity(em, entity) : entity.ToString();
         SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
@@ -199,7 +199,7 @@ public sealed class FocusedUnitLifecycleCompositionSystemHelper
     public bool TryFocusUnit(
         EntityManager em,
         Vector2 screenPosition,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         string clearReason,
         string diagnosticSource,

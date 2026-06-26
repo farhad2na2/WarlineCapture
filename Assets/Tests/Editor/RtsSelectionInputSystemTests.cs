@@ -2385,8 +2385,8 @@ public sealed class RtsSelectionInputSystemTests
         StringAssert.Contains("IsTransportFirstBoardResult(result)", processTransport);
         StringAssert.Contains("context.ClearCurrentSelection?.Invoke(em, \"TransportFirstBoardingPreserveTransport\")", preserve);
         StringAssert.Contains("em.AddComponent<SelectedUnitTag>(transport)", preserve);
-        StringAssert.Contains("context.SelectionStateSystem.CacheSelectedMoveEntity(em, transport)", preserve);
-        StringAssert.Contains("context.SetFocusedUnit?.Invoke(context.SelectionStateSystem, transport)", preserve);
+        StringAssert.Contains("context.SelectionStateCompositionSystemHelper.CacheSelectedMoveEntity(em, transport)", preserve);
+        StringAssert.Contains("context.SetFocusedUnit?.Invoke(context.SelectionStateCompositionSystemHelper, transport)", preserve);
         StringAssert.Contains("context.ApplyHudSelection?.Invoke(em, transport)", preserve);
     }
 
@@ -2981,7 +2981,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(selectedUnit, new UnitGrid { Cell = Unity.Mathematics.int2.zero });
         em.SetComponentData(selectedUnit, new UnitMove { Speed = 1f });
 
-        var selectionState = new SelectionStateSystem();
+        var selectionState = new SelectionStateCompositionSystemHelper();
         selectionState.SetFocusedUnit(selectedUnit);
         selectionState.CacheSelectedMoveEntity(em, selectedUnit);
         var buildingInteractionSystem = new SelectionBuildingInteractionCompositionSystemHelper();
@@ -3019,7 +3019,7 @@ public sealed class RtsSelectionInputSystemTests
             null,
             new SelectionUiReadModelLookup(),
             new VisibleUnitSelectionSystem(),
-            new SelectionStateSystem(),
+            new SelectionStateCompositionSystemHelper(),
             new FocusedUnitLifecycleCompositionSystemHelper(),
             new System.Collections.Generic.List<Entity>(),
             (_, reason) => clearedUnitSelection = reason == "SelectUnitsInRectangle",
@@ -3086,7 +3086,7 @@ public sealed class RtsSelectionInputSystemTests
             var context = new RtsSelectionPointerTargetCommandCompositionSystemHelper.Context(
                 runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(),
                 inputSystem: null,
-                selectionStateSystem: new SelectionStateSystem(),
+                selectionStateSystem: new SelectionStateCompositionSystemHelper(),
                 focusedUnitLifecycleSystem: null,
                 focusableUnitLookupSystem: new FocusableUnitLookupCameraSystemHelper(),
                 transportBoardingCommandSystem: default,

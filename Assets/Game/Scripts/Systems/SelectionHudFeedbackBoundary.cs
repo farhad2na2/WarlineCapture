@@ -9,7 +9,7 @@ public sealed class SelectionHudFeedbackBoundary
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
     public delegate Sprite ResolveSelectionPortraitSpriteDelegate(EntityManager em, Entity entity);
     public delegate void EnsureEntityQueriesDelegate(EntityManager em);
-    public delegate void RefreshFocusedUnitDelegate(EntityManager em, SelectionStateSystem selectionStateSystem);
+    public delegate void RefreshFocusedUnitDelegate(EntityManager em, SelectionStateCompositionSystemHelper selectionStateSystem);
     public delegate bool TryGetAttackModeOrderSnapshotDelegate(out string orderText);
     public delegate bool IsBoardCommandAvailableDelegate(EntityManager em, Entity entity);
     public delegate bool HasSelectedBoardActionDelegate(EntityManager em);
@@ -258,7 +258,7 @@ public sealed class SelectionHudFeedbackBoundary
 
     public void RefreshFocusedSelectionReadModels(
         Context context,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         FocusedUnitUiReadModelUiSystemHelper focusedUnitUiReadModelSystem,
         UnitTransportCapacitySystem unitTransportCapacitySystem,
         EnsureEntityQueriesDelegate ensureEntityQueries,
@@ -280,7 +280,7 @@ public sealed class SelectionHudFeedbackBoundary
 
     public void UpdateMatchHudSelectionPanel(
         Context context,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem,
         FocusedUnitUiReadModelUiSystemHelper focusedUnitUiReadModelSystem,
         List<MatchHudSelectionPanelPassengerItemModel> transportPassengerPanelItems,
@@ -367,7 +367,7 @@ public sealed class SelectionHudFeedbackBoundary
 
     public string ResolveCurrentSelectionOrderTextSnapshot(
         Context context,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem,
         EnsureEntityQueriesDelegate ensureEntityQueries,
         System.Func<bool> hasSelectedBuilding)

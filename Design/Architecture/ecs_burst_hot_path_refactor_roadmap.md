@@ -543,10 +543,10 @@ Progress notes:
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=441 skipped=23`.
   - `git diff --check` passed.
 - 2026-06-12: Continued Phase 3 in `FocusedUnitLifecycleSystem`. Clear-selection now collects selected entities through archetype chunks before removing tags, and single-selected focus refresh uses the selected query singleton path instead of copying selected entities.
-- 2026-06-12: Added focused lifecycle coverage to `SelectionStateSystemTests.RunFocusedValidation`.
+- 2026-06-12: Added focused lifecycle coverage to `SelectionStateCompositionSystemHelperTests.RunFocusedValidation`.
 - 2026-06-12: Guardrail ratchet after the focused-lifecycle slice: generic-aware `ToEntityArray` / `ToComponentDataArray<T>` ceiling reduced to `104`.
 - 2026-06-12: Focused validation passed after the focused-lifecycle slice:
-  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionStateSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-state.log`
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionStateCompositionSystemHelperTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-state.log`
   - Log marker: `[SelectionStateFocusedValidation] result=Passed tests=5`.
   - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `84`; generic-aware count confirmed at `104`.
 - 2026-06-12: Continued Phase 3 in `SelectionOrderMarkerPresentationSystemHelper`. Attack and board target preview markers now walk the preview target query by archetype chunks, reading `Faction`, `LocalTransform`, and optional `UnitHealth` from chunk arrays before applying marker presentation.
@@ -900,9 +900,9 @@ Progress notes:
 - 2026-06-13: Verified the selection camera boundary remains routed through `RtsCameraRequestSystem`. `SelectionUiCameraSystemHelper`, `RtsSelectionRuntimeCameraSystemHelper`, and Match HUD/minimap input code queue camera requests for pan, zoom, focus, drag, and mode changes; UI input code does not mutate camera transforms directly. Static scan also found no `Camera.main`, `Object.Find*`, or `GameObject.Find` usage in the Phase 3 selection/camera files. Completed the Phase 3 camera request-boundary checklist item.
   - Progress snapshot is now `94 / 157 complete (59.9%)`, `11 / 157 in progress`, `52 / 157 open`.
 - 2026-06-13: Started the Phase 3 mixed-boundary/Burst-candidate split in `VisibleUnitSelectionSystem`. Unit visibility candidate filtering now runs through a `[BurstCompile]` `IJobChunk` into a native result list, while Unity camera screen projection remains in the managed boundary. The visible-selection query is narrowed to movable non-prefab/non-static-blocker units, and the job preserves the existing `UnitSourcePrefabKey` prefix override before footprint/movement vehicle fallback. Closest-unit candidate collection remains open.
-  - Added `SelectionStateSystemTests.VisibleUnitSelection_UsesSourcePrefixBeforeMovementFallback` and included it in the focused validation runner.
+  - Added `SelectionStateCompositionSystemHelperTests.VisibleUnitSelection_UsesSourcePrefixBeforeMovementFallback` and included it in the focused validation runner.
   - Validation passed:
-    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionStateSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-visible-selection-main.log`
+    - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionStateCompositionSystemHelperTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-visible-selection-main.log`
     - Log marker: `[SelectionStateFocusedValidation] result=Passed tests=6`.
     - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstSelectionCommandValidationRunner.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-command-visible-selection-main.log`
     - Log marker: `[EcsBurstSelectionCommandValidation] result=Passed tests=77`.
@@ -1836,7 +1836,7 @@ Progress notes:
     - Both exited `0`, but neither produced a `testResults` XML file or a TestRunner summary in the log. Keep the full-suite acceptance open; use the explicit full-editor validation runner as the current usable editor-validation evidence.
   - `git diff --check` passed.
   - Progress snapshot is now `143 / 157 complete (91.1%)`, `0 / 157 in progress`, `14 / 157 open`; phase progress remains `10 / 11 phases complete`, `1 in progress`, `0 not started`.
-- 2026-06-13: Reduced the select/move command-event timing variance by routing `SelectedMoveOrderCommandSystem` through the existing `SelectionStateSystem.CachedSelectedMoveEntities` cache. The command system validates cached entities and falls back to the selected query when the cache is missing or stale, preserving command behavior while avoiding the common selected-entity chunk walk in runtime command processing.
+- 2026-06-13: Reduced the select/move command-event timing variance by routing `SelectedMoveOrderCommandSystem` through the existing `SelectionStateCompositionSystemHelper.CachedSelectedMoveEntities` cache. The command system validates cached entities and falls back to the selected query when the cache is missing or stale, preserving command behavior while avoiding the common selected-entity chunk walk in runtime command processing.
   - Focused validation passed:
     - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod UnitMoveOrderSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-move-cache-final-unit-move-order-main.log`
     - Log marker: `[UnitMoveOrderFocusedValidation] result=Passed tests=9`.

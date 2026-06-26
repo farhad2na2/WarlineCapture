@@ -23,7 +23,7 @@ This slice intentionally did not add an `ISystem`: the helper still has a manage
 
 - `SelectSlot(...)` remains the direct squad tray click-selection API.
 - Camera-centered ranking, viewport prioritization, and soldier-cluster selection behavior remain unchanged.
-- `SelectionStateSystem` cache writes and `FocusedUnitLifecycleSystem` focus application remain unchanged.
+- `SelectionStateCompositionSystemHelper` cache writes and `FocusedUnitLifecycleSystem` focus application remain unchanged.
 - The HUD view still receives selected-slot, disabled-slot, and portrait state through the same interface.
 
 ## Inventory Impact

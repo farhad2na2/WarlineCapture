@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Unity.Entities;
 
-public sealed class SelectionStateSystem
+public sealed class SelectionStateCompositionSystemHelper
 {
     public Entity FocusedUnit { get; private set; } = Entity.Null;
     public List<Entity> CachedSelectedMoveEntities { get; } = new();

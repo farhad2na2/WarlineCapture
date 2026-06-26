@@ -43,7 +43,7 @@ This spec does not own Main Menu, Campaign Map, Operations Dashboard, Store, Com
 | Area | Runtime Owner | UI Owner | Notes |
 |---|---|---|---|
 | Pointer/touch input | `GamePointerInput`, `RtsSelectionInputSystem` | HUD buttons capture/suppress UI clicks | Touch and mouse use the same command semantics. |
-| Selection | `RTSSelectionSystem`, `SelectionStateSystem`, `SelectionUiQuerySystem` | `BattleHudGameplayBridge`, selected panel, squad tray | See child selection spec. |
+| Selection | `RTSSelectionSystem`, `SelectionStateCompositionSystemHelper`, `SelectionUiQuerySystem` | `BattleHudGameplayBridge`, selected panel, squad tray | See child selection spec. |
 | Move/attack/hold/stop | `RTSSelectionSystem`, command-specific systems | Command bar, command wheel, command banner, world markers | Commands produce typed success/reject feedback. |
 | Scan/support | intel, ability, support-call, cooldown/charge, and resource systems | Command bar, support/scan targeting overlay, command banner, world markers | `SCAN` reveals/updates battlefield intel; `SUPPORT` calls off-map or support abilities. |
 | Build/production | `BuildingPlacementSystem`, `RuntimeBuildingSystem`, production services | Build button, build drawer, placement popup/panel | M01 disables build with reason. |

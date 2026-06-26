@@ -399,7 +399,7 @@ public sealed class UnitTransportValidationTests
             transport,
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
-            new SelectionStateSystem());
+            new SelectionStateCompositionSystemHelper());
 
         Assert.IsTrue(result.Accepted);
         Assert.IsTrue(em.HasComponent<UnitTransportBoardingTarget>(vehicle));
@@ -425,7 +425,7 @@ public sealed class UnitTransportValidationTests
             transport,
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
-            new SelectionStateSystem());
+            new SelectionStateCompositionSystemHelper());
 
         Assert.IsTrue(result.Accepted);
         Assert.AreEqual("Boarding transport plane.", result.Message.ToString());
@@ -452,7 +452,7 @@ public sealed class UnitTransportValidationTests
             transport,
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
-            new SelectionStateSystem());
+            new SelectionStateCompositionSystemHelper());
 
         Assert.IsTrue(result.Accepted);
         AssertBoardingMoveOrder(em, passenger, transport);
@@ -476,7 +476,7 @@ public sealed class UnitTransportValidationTests
             transport,
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
-            new SelectionStateSystem());
+            new SelectionStateCompositionSystemHelper());
 
         Assert.IsTrue(result.Accepted);
         Assert.AreEqual("Boarding transport plane.", result.Message.ToString());
@@ -510,7 +510,7 @@ public sealed class UnitTransportValidationTests
                 transport,
                 new UnitTransportAirPickupSystem(),
                 new UnitMoveOrderSystem(),
-                new SelectionStateSystem());
+                new SelectionStateCompositionSystemHelper());
 
             Assert.IsTrue(result.Accepted);
             Assert.AreEqual("Boarding transport plane.", result.Message.ToString());
@@ -564,7 +564,7 @@ public sealed class UnitTransportValidationTests
         }
 
         _occupied.Set(GridUtils.CellToIndex(rampCell, 30), true);
-        var selectionStateSystem = new SelectionStateSystem();
+        var selectionStateSystem = new SelectionStateCompositionSystemHelper();
         selectionStateSystem.CacheSelectedMoveEntities(em, new[] { rampSoldier, passenger });
         var commandSystem = new TransportBoardingCommandSystem();
 
@@ -600,7 +600,7 @@ public sealed class UnitTransportValidationTests
             em.RemoveComponent<SelectedUnitTag>(passenger);
             em.RemoveComponent<SelectedUnitTag>(rampSoldier);
 
-            var selectionStateSystem = new SelectionStateSystem();
+            var selectionStateSystem = new SelectionStateCompositionSystemHelper();
             selectionStateSystem.CacheSelectedMoveEntities(em, new[] { rampSoldier, passenger });
             var commandSystem = new TransportBoardingCommandSystem();
 
@@ -685,7 +685,7 @@ public sealed class UnitTransportValidationTests
             transport,
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
-            new SelectionStateSystem());
+            new SelectionStateCompositionSystemHelper());
 
         Assert.IsTrue(result.Accepted, "Retrying a selected board command must replace stale pending reservations instead of treating them as occupied seats.");
         for (int i = 0; i < passengers.Length; i++)
@@ -717,7 +717,7 @@ public sealed class UnitTransportValidationTests
             transport,
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
-            new SelectionStateSystem());
+            new SelectionStateCompositionSystemHelper());
 
         Assert.IsFalse(result.Accepted);
         Assert.IsFalse(em.HasComponent<UnitTransportBoardingTarget>(passenger));
@@ -854,7 +854,7 @@ public sealed class UnitTransportValidationTests
             transport,
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
-            new SelectionStateSystem());
+            new SelectionStateCompositionSystemHelper());
 
         Assert.IsFalse(result.Accepted);
         Assert.IsFalse(em.HasComponent<UnitTransportBoardingTarget>(vehicle));
@@ -2151,7 +2151,7 @@ public sealed class UnitTransportValidationTests
             Vector2.zero,
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
-            new SelectionStateSystem(),
+            new SelectionStateCompositionSystemHelper(),
             (Vector2 _screenPosition, EntityManager _em, out Entity entity) =>
             {
                 entity = transport;
@@ -2231,7 +2231,7 @@ public sealed class UnitTransportValidationTests
             new UnitTransportCapacitySystem(),
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
-            new SelectionStateSystem(),
+            new SelectionStateCompositionSystemHelper(),
             TryGetNoClickedUnit,
             TryGetNoClickedCell);
 
@@ -2268,7 +2268,7 @@ public sealed class UnitTransportValidationTests
             Frame = 90
         });
 
-        var selectionState = new SelectionStateSystem();
+        var selectionState = new SelectionStateCompositionSystemHelper();
         selectionState.SetFocusedUnit(transport);
         var transportCommandSystem = new TransportBoardingCommandSystem();
 
@@ -2352,7 +2352,7 @@ public sealed class UnitTransportValidationTests
             Frame = 900
         });
 
-        var selectionState = new SelectionStateSystem();
+        var selectionState = new SelectionStateCompositionSystemHelper();
         selectionState.SetFocusedUnit(transport);
         var transportCommandSystem = new TransportBoardingCommandSystem();
 
@@ -2406,7 +2406,7 @@ public sealed class UnitTransportValidationTests
             Frame = 91
         });
 
-        var selectionState = new SelectionStateSystem();
+        var selectionState = new SelectionStateCompositionSystemHelper();
         selectionState.SetFocusedUnit(transport);
         var transportCommandSystem = new TransportBoardingCommandSystem();
 
@@ -3142,7 +3142,7 @@ public sealed class UnitTransportValidationTests
         });
         em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
 
-        var selectionState = new SelectionStateSystem();
+        var selectionState = new SelectionStateCompositionSystemHelper();
         selectionState.SetFocusedUnit(transport);
         var readModelSystem = new FocusedUnitUiReadModelUiSystemHelper();
         readModelSystem.Publish(
@@ -3191,7 +3191,7 @@ public sealed class UnitTransportValidationTests
         transportPassengers.Add(new UnitTransportPassengerElement { Passenger = soldier });
         transportPassengers.Add(new UnitTransportPassengerElement { Passenger = vehicle });
 
-        var selectionState = new SelectionStateSystem();
+        var selectionState = new SelectionStateCompositionSystemHelper();
         selectionState.SetFocusedUnit(transport);
         var readModelSystem = new FocusedUnitUiReadModelUiSystemHelper();
         readModelSystem.Publish(

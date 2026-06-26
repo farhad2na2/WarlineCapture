@@ -98,7 +98,7 @@ public sealed class TransportBoardingPerformanceValidation
             var boardingCommandSystem = new TransportBoardingCommandSystem();
             var airPickupSystem = new UnitTransportAirPickupSystem();
             var moveOrderSystem = new UnitMoveOrderSystem();
-            var selectionStateSystem = new SelectionStateSystem();
+            var selectionStateSystem = new SelectionStateCompositionSystemHelper();
             SystemHandle boardingCommandEcsSystem = world.CreateSystem<TransportBoardingCommandSystem>();
             SystemHandle boardingSystem = world.CreateSystem<UnitTransportBoardingSystem>();
             boardingCommandSystem.EnsureEntityQueries(em);

@@ -270,7 +270,7 @@ Implementation source of truth: `Match_HUD_And_Gameplay_Implementation_Spec.md` 
 | Control | Gameplay Purpose | Route Or Effect | Gameplay Data | Enable Rule |
 |---|---|---|---|---|
 | Squad card | Select/focus combat group. | Updates selection/focus. | `SelectedUnitGroup`, ECS entity refs, health state. | Enabled for alive/available squads. |
-| SELECT | Enter explicit selection mode for tap/drag unit selection. | Cancels active command targeting, sets selection-mode state, then waits for battlefield tap/drag. | `RTSSelectionSystem`, `SelectionStateSystem`, selected ECS refs. | Enabled only when the match accepts explicit selection input; disabled in M01 tutorial scope when direct squad/card selection is the teaching path. See `Match_Selection_Implementation_Spec.md`. |
+| SELECT | Enter explicit selection mode for tap/drag unit selection. | Cancels active command targeting, sets selection-mode state, then waits for battlefield tap/drag. | `RTSSelectionSystem`, `SelectionStateCompositionSystemHelper`, selected ECS refs. | Enabled only when the match accepts explicit selection input; disabled in M01 tutorial scope when direct squad/card selection is the teaching path. See `Match_Selection_Implementation_Spec.md`. |
 | STOP | Cancel movement/active order. | Issues stop command. | `RTSSelectionSystem`, selected units. | Enabled when selection can receive orders. |
 | HOLD | Hold position/defensive stance. | Issues hold command. | Selected unit command capability. | Enabled for controllable combat units. |
 | MOVE | Enter move target mode. | Awaits map target then issues move. | Pathing/grid state. | Enabled for movable selected units. |

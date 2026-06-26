@@ -13,7 +13,7 @@
 - Selected tag clearing and focus refresh.
 - Select-all and rectangle selection entry points.
 
-Target owner: `SelectionStateSystem` plus ECS selected/focused components over time.
+Target owner: `SelectionStateCompositionSystemHelper` plus ECS selected/focused components over time.
 
 ### Input And Drag Selection
 
@@ -70,7 +70,7 @@ Target owner: `RtsCameraSystem` or a shell-edge camera service fed by ECS camera
 
 ## First Extraction Completed
 
-`SelectionStateSystem` now owns:
+`SelectionStateCompositionSystemHelper` now owns:
 
 - Focused unit storage.
 - Selected move-entity cache storage.

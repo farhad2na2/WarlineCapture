@@ -340,7 +340,7 @@ public sealed class SelectionCommandRequestResultContractTests
         int explicitAttackModeCount = 0;
         int worldMarkerVisibilityCount = 0;
         int cameraDraggingCount = 0;
-        var selectionStateSystem = new SelectionStateSystem();
+        var selectionStateSystem = new SelectionStateCompositionSystemHelper();
         selectionStateSystem.SetFocusedUnit(focusedUnit);
         RtsSelectionCommandResultFlushCompositionSystemHelper.Context flushContext = CreateFlushContext(
             null,
@@ -1316,7 +1316,7 @@ public sealed class SelectionCommandRequestResultContractTests
         Entity launcher = CreateRadarAttackLauncher(em, new int2(10, 10));
         CreateThreatDetector(em, FactionIdentity.PlayerFactionId, ThreatDetectionKind.Ground, new int2(20, 20), 40);
         Entity groundTarget = CreateRadarAttackTarget(em, FactionIdentity.EnemyFactionId, new int2(35, 20));
-        var selectionState = new SelectionStateSystem();
+        var selectionState = new SelectionStateCompositionSystemHelper();
 
         int clearSelectionCount = 0;
         string clearReason = string.Empty;
@@ -2258,7 +2258,7 @@ public sealed class SelectionCommandRequestResultContractTests
             Frame = 100
         });
 
-        var selectionState = new SelectionStateSystem();
+        var selectionState = new SelectionStateCompositionSystemHelper();
         selectionState.CachedSelectedMoveEntities.Add(selectedUnit);
         selectionState.SetFocusedUnit(selectedUnit);
         int clearFocusedCount = 0;
@@ -4382,7 +4382,7 @@ public sealed class SelectionCommandRequestResultContractTests
         System.Action<UnityEngine.Vector2> requestAttackOrderScreenMarker = null,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem = null,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext = default,
-        SelectionStateSystem selectionStateSystem = null,
+        SelectionStateCompositionSystemHelper selectionStateSystem = null,
         System.Action clearHudSelection = null,
         System.Action clearHudCommandMode = null,
         System.Action<TacticalCommandMode> applyHudCommandMode = null,
@@ -4391,7 +4391,7 @@ public sealed class SelectionCommandRequestResultContractTests
         System.Action<bool> setCameraDragging = null,
         System.Action processSelectionRectangleRequests = null,
         System.Action<string> logSelectionClickDiagnostic = null,
-        System.Action<SelectionStateSystem> clearFocusedUnit = null,
+        System.Action<SelectionStateCompositionSystemHelper> clearFocusedUnit = null,
         RtsSelectionCommandResultFlushCompositionSystemHelper.RefreshFocusedUnitAction refreshFocusedUnit = null,
         RtsSelectionCommandResultFlushCompositionSystemHelper.SetFocusedUnitAction setFocusedUnit = null,
         RtsSelectionCommandResultFlushCompositionSystemHelper.ApplyHudSelectionAction applyHudSelection = null,
@@ -4409,7 +4409,7 @@ public sealed class SelectionCommandRequestResultContractTests
             new UnitMoveOrderSystem(),
             new UnitTransportCapacitySystem(),
             new UnitTransportAirPickupSystem(),
-            selectionStateSystem ?? new SelectionStateSystem(),
+            selectionStateSystem ?? new SelectionStateCompositionSystemHelper(),
             buildingPlacementInteractionSystem,
             buildingPlacementInteractionContext,
             selectedMoveQuery,

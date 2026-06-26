@@ -635,7 +635,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             em.SetComponentData(vehicle, new UnitFootprint { Size = new int2(3, 3) });
             em.SetComponentData(vehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
 
-            SelectionStateSystem selectionState = new();
+            SelectionStateCompositionSystemHelper selectionState = new();
             selectionState.SetFocusedUnit(vehicle);
             selectionState.CacheSelectedMoveEntity(em, vehicle);
 

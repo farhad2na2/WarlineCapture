@@ -11,7 +11,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RtsSelectionInputCompositionSystemHelper InputSystem;
-        public readonly SelectionStateSystem SelectionStateSystem;
+        public readonly SelectionStateCompositionSystemHelper SelectionStateCompositionSystemHelper;
         public readonly FocusedUnitLifecycleCompositionSystemHelper FocusedUnitLifecycleCompositionSystemHelper;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
@@ -36,7 +36,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             RtsSelectionInputCompositionSystemHelper inputSystem,
-            SelectionStateSystem selectionStateSystem,
+            SelectionStateCompositionSystemHelper selectionStateSystem,
             FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
@@ -60,7 +60,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
             InputSystem = inputSystem;
-            SelectionStateSystem = selectionStateSystem;
+            SelectionStateCompositionSystemHelper = selectionStateSystem;
             FocusedUnitLifecycleCompositionSystemHelper = focusedUnitLifecycleSystem;
             BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
@@ -137,7 +137,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
 
     public void ClearFocusedUnit(Context context)
     {
-        context.FocusedUnitLifecycleCompositionSystemHelper.ClearFocusedUnit(context.SelectionStateSystem);
+        context.FocusedUnitLifecycleCompositionSystemHelper.ClearFocusedUnit(context.SelectionStateCompositionSystemHelper);
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.InputSystem.ClearActiveCommandMode();
         context.ClearHudSelection?.Invoke();
@@ -149,7 +149,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
     {
         if (!context.TryGetEntityManager(out EntityManager em))
         {
-            context.FocusedUnitLifecycleCompositionSystemHelper.ClearFocusedUnit(context.SelectionStateSystem);
+            context.FocusedUnitLifecycleCompositionSystemHelper.ClearFocusedUnit(context.SelectionStateCompositionSystemHelper);
             context.SetExplicitAttackTargetModeActive?.Invoke(false);
             context.InputSystem.ClearActiveCommandMode();
             context.ClearHudSelection?.Invoke();
@@ -159,7 +159,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
         }
 
         context.ClearCurrentSelection?.Invoke(em, reason);
-        context.FocusedUnitLifecycleCompositionSystemHelper.ClearFocusedUnit(context.SelectionStateSystem);
+        context.FocusedUnitLifecycleCompositionSystemHelper.ClearFocusedUnit(context.SelectionStateCompositionSystemHelper);
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.InputSystem.ClearActiveCommandMode();
         context.ClearHudSelection?.Invoke();
@@ -199,7 +199,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
         if (!context.FocusedUnitLifecycleCompositionSystemHelper.FocusUnitEntity(
                 em,
                 entity,
-                context.SelectionStateSystem,
+                context.SelectionStateCompositionSystemHelper,
                 "FocusUnitEntity",
                 "FocusUnitEntity",
                 context.LogSelectionDiagnostic,

@@ -243,7 +243,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         UnitTransportCapacitySystem transportCapacitySystem,
         UnitTransportAirPickupSystem transportAirPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         TryGetClickedCellDelegate tryGetClickedCell)
     {
@@ -336,7 +336,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         var transportCapacitySystem = new UnitTransportCapacitySystem();
         var transportAirPickupSystem = new UnitTransportAirPickupSystem();
         var moveOrderSystem = new UnitMoveOrderSystem();
-        var selectionStateSystem = new SelectionStateSystem();
+        var selectionStateSystem = new SelectionStateCompositionSystemHelper();
 
         for (int i = 0; i < commandRequests.Length;)
         {
@@ -432,7 +432,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         RtsSelectionCommandIntentRequestElement request,
         UnitTransportAirPickupSystem transportAirPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         TryGetClickedCellDelegate tryGetClickedCell)
     {
@@ -454,7 +454,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         RtsSelectionCommandIntentRequestElement request,
         UnitTransportAirPickupSystem transportAirPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
-        SelectionStateSystem selectionStateSystem)
+        SelectionStateCompositionSystemHelper selectionStateSystem)
     {
         Result result = request.HasTargetEntity != 0
             ? TryIssueBoardTransportOrderToTransport(
@@ -510,7 +510,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         EntityManager em,
         RtsSelectionCommandIntentRequestElement request,
         UnitTransportCapacitySystem transportCapacitySystem,
-        SelectionStateSystem selectionStateSystem)
+        SelectionStateCompositionSystemHelper selectionStateSystem)
     {
         if (!TryResolveSelectedBoardTransport(em, selectionStateSystem, out Entity transport))
         {
@@ -662,7 +662,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         Vector2 screenPosition,
         UnitTransportAirPickupSystem airPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         TryGetClickedCellDelegate tryGetClickedCell)
     {
@@ -690,10 +690,10 @@ public partial struct TransportBoardingCommandSystem : ISystem
         Entity transport,
         UnitTransportAirPickupSystem airPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
-        SelectionStateSystem selectionStateSystem)
+        SelectionStateCompositionSystemHelper selectionStateSystem)
     {
         EnsureEntityQueries(em);
-        selectionStateSystem ??= new SelectionStateSystem();
+        selectionStateSystem ??= new SelectionStateCompositionSystemHelper();
         bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
         if (!TryValidateBoardingTransport(
                 em,
@@ -1308,7 +1308,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
 
     private bool TryResolveSelectedBoardTransport(
         EntityManager em,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         out Entity transport)
     {
         transport = Entity.Null;
@@ -1620,7 +1620,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
 
     private int CollectSelectedBoardingSourceEntities(
         EntityManager em,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         List<Entity> selectedEntities,
         out int selectedTagCount,
         out int selectedMoveCount,
@@ -1640,7 +1640,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
             for (int i = 0; i < selectedEntities.Count; i++)
             {
                 Entity entity = selectedEntities[i];
-                if (SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity))
+                if (SelectionStateCompositionSystemHelper.IsCacheableSelectedMoveEntity(em, entity))
                     selectionStateSystem.CachedSelectedMoveEntities.Add(entity);
             }
 
@@ -1659,7 +1659,7 @@ public partial struct TransportBoardingCommandSystem : ISystem
         for (int i = cachedSelectedMoveEntities.Count - 1; i >= 0; i--)
         {
             Entity entity = cachedSelectedMoveEntities[i];
-            if (!SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity))
+            if (!SelectionStateCompositionSystemHelper.IsCacheableSelectedMoveEntity(em, entity))
             {
                 cachedSelectedMoveEntities.RemoveAt(i);
                 continue;

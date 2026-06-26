@@ -49,7 +49,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
             Vector2.zero,
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
-            new SelectionStateSystem(),
+            new SelectionStateCompositionSystemHelper(),
             (Vector2 unusedScreenPosition, EntityManager unusedEntityManager, out Entity clicked) =>
             {
                 clicked = transport;
@@ -94,7 +94,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
                 Vector2.zero,
                 new UnitTransportAirPickupSystem(),
                 new UnitMoveOrderSystem(),
-                new SelectionStateSystem(),
+                new SelectionStateCompositionSystemHelper(),
                 (Vector2 unusedScreenPosition, EntityManager unusedEntityManager, out Entity clicked) =>
                 {
                     clicked = transport;
@@ -210,7 +210,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
             transport,
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
-            new SelectionStateSystem());
+            new SelectionStateCompositionSystemHelper());
 
         Assert.IsTrue(result.Accepted, "Selected soldier should be ordered into the landed transport plane.");
         UnitTransportBoardingTarget target = em.GetComponentData<UnitTransportBoardingTarget>(passenger);
@@ -253,7 +253,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
             transport,
             new UnitTransportAirPickupSystem(),
             new UnitMoveOrderSystem(),
-            new SelectionStateSystem());
+            new SelectionStateCompositionSystemHelper());
 
         Assert.IsTrue(result.Accepted, "Selected vehicle should be ordered into the landed transport plane.");
         UnitTransportBoardingTarget target = em.GetComponentData<UnitTransportBoardingTarget>(vehicle);

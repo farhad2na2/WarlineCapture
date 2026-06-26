@@ -12,7 +12,7 @@ public sealed class FocusedUnitUiReadModelUiSystemHelper
 
     public void Publish(
         EntityManager em,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         SelectionUiReadModelLookup selectionUiReadModelLookup,
         UnitTransportCapacitySystem transportCapacitySystem,
         float timeSeconds)

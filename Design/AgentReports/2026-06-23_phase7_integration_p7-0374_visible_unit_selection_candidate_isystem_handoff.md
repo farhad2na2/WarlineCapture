@@ -17,7 +17,7 @@ The ECS-side candidate collection now lives in `VisibleUnitSelectionCandidateSys
 - `Assets/Game/Scripts/Systems/VisibleUnitSelectionSystem.cs`
 - `Assets/Game/Scripts/Systems/VisibleUnitSelectionCandidateSystem.cs`
 - `Assets/Game/Scripts/Systems/VisibleUnitSelectionCandidateSystem.cs.meta`
-- `Assets/Tests/Editor/SelectionStateSystemTests.cs`
+- `Assets/Tests/Editor/SelectionStateCompositionSystemHelperTests.cs`
 - `Design/Architecture/systembase_to_isystem_inventory.md`
 - `Design/Architecture/phase7_agent_a_inventory_guardrails_tracker.md`
 - `Design/Architecture/ecs_architecture_performance_quality_improvement_tracker.md`
@@ -43,7 +43,7 @@ The ECS-side candidate collection now lives in `VisibleUnitSelectionCandidateSys
 
 ```bash
 dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal
-/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionStateSystemTests.RunFocusedValidation -logFile /private/tmp/warline-phase7-integration-visible-unit-selection-state.log
+/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod SelectionStateCompositionSystemHelperTests.RunFocusedValidation -logFile /private/tmp/warline-phase7-integration-visible-unit-selection-state.log
 python3 Tools/Architecture/generate_systembase_to_isystem_inventory.py --root Assets/Game/Scripts --output Design/Architecture/systembase_to_isystem_inventory.md
 git diff --check
 /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod NonUiSystemBaseMigrationArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-phase7-agent-a-architecture.log

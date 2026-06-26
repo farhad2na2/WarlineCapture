@@ -351,7 +351,7 @@ Validation:
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=441 skipped=23`.
   - `git diff --check` passed.
 - Selection state focused validation after the focused-lifecycle slice:
-  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionStateSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-state.log`
+  - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod SelectionStateCompositionSystemHelperTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-selection-state.log`
   - Log marker: `[SelectionStateFocusedValidation] result=Passed tests=5`.
 - Static count after the focused-lifecycle slice:
   - Static non-generic `ToEntityArray` / `ToComponentDataArray` count confirmed at `84`.

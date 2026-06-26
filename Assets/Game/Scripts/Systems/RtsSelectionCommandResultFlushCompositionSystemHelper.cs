@@ -10,8 +10,8 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
 {
     public delegate bool TryGetEntityManagerAction(out EntityManager em);
     public delegate void ClearCurrentSelectionAction(EntityManager em, string reason);
-    public delegate void RefreshFocusedUnitAction(EntityManager em, SelectionStateSystem selectionStateSystem);
-    public delegate void SetFocusedUnitAction(SelectionStateSystem selectionStateSystem, Entity entity);
+    public delegate void RefreshFocusedUnitAction(EntityManager em, SelectionStateCompositionSystemHelper selectionStateSystem);
+    public delegate void SetFocusedUnitAction(SelectionStateCompositionSystemHelper selectionStateSystem, Entity entity);
     public delegate void ApplyHudSelectionAction(EntityManager em, Entity entity);
 
     private readonly List<RtsSelectionCommandResultElement> _moveCommandResultScratch = new();
@@ -32,7 +32,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         public readonly UnitMoveOrderSystem UnitMoveOrderSystem;
         public readonly UnitTransportCapacitySystem UnitTransportCapacitySystem;
         public readonly UnitTransportAirPickupSystem UnitTransportAirPickupSystem;
-        public readonly SelectionStateSystem SelectionStateSystem;
+        public readonly SelectionStateCompositionSystemHelper SelectionStateCompositionSystemHelper;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly EntityQuery SelectedMoveQuery;
@@ -55,7 +55,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         public readonly Action<Vector2> RequestMoveOrderScreenMarker;
         public readonly Action<Vector2> RequestAttackOrderScreenMarker;
         public readonly Action<bool> SetCameraDragging;
-        public readonly Action<SelectionStateSystem> ClearFocusedUnit;
+        public readonly Action<SelectionStateCompositionSystemHelper> ClearFocusedUnit;
         public readonly RefreshFocusedUnitAction RefreshFocusedUnit;
         public readonly SetFocusedUnitAction SetFocusedUnit;
         public readonly SelectedMoveOrderCommandSystem.ClickedUnitResolver TryGetMoveClickedUnitEntity;
@@ -76,7 +76,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             UnitMoveOrderSystem unitMoveOrderSystem,
             UnitTransportCapacitySystem unitTransportCapacitySystem,
             UnitTransportAirPickupSystem unitTransportAirPickupSystem,
-            SelectionStateSystem selectionStateSystem,
+            SelectionStateCompositionSystemHelper selectionStateSystem,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             EntityQuery selectedMoveQuery,
@@ -99,7 +99,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             Action<Vector2> requestMoveOrderScreenMarker,
             Action<Vector2> requestAttackOrderScreenMarker,
             Action<bool> setCameraDragging,
-            Action<SelectionStateSystem> clearFocusedUnit,
+            Action<SelectionStateCompositionSystemHelper> clearFocusedUnit,
             RefreshFocusedUnitAction refreshFocusedUnit,
             SetFocusedUnitAction setFocusedUnit,
             SelectedMoveOrderCommandSystem.ClickedUnitResolver tryGetMoveClickedUnitEntity,
@@ -119,7 +119,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             UnitMoveOrderSystem = unitMoveOrderSystem;
             UnitTransportCapacitySystem = unitTransportCapacitySystem;
             UnitTransportAirPickupSystem = unitTransportAirPickupSystem;
-            SelectionStateSystem = selectionStateSystem;
+            SelectionStateCompositionSystemHelper = selectionStateSystem;
             BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             SelectedMoveQuery = selectedMoveQuery;
@@ -169,8 +169,8 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             em,
             new Vector3(targetPosition.x, targetPosition.y, targetPosition.z));
         context.ClearCurrentSelection?.Invoke(em, "MissileLauncherRadarAttack");
-        if (context.SelectionStateSystem != null)
-            context.SetFocusedUnit?.Invoke(context.SelectionStateSystem, launcher);
+        if (context.SelectionStateCompositionSystemHelper != null)
+            context.SetFocusedUnit?.Invoke(context.SelectionStateCompositionSystemHelper, launcher);
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.SetCameraDragging?.Invoke(false);
         context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success());
@@ -313,8 +313,8 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
 
         if (destroyFocusedUnit)
         {
-            if (context.SelectionStateSystem != null)
-                context.ClearFocusedUnit?.Invoke(context.SelectionStateSystem);
+            if (context.SelectionStateCompositionSystemHelper != null)
+                context.ClearFocusedUnit?.Invoke(context.SelectionStateCompositionSystemHelper);
             context.ClearHudSelection?.Invoke();
             context.ApplyHudCommandResult?.Invoke(
                 BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
@@ -334,8 +334,8 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             context.ClearHudCommandMode?.Invoke();
             context.ApplyHudCommandResult?.Invoke(
                 BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
-            if (context.SelectionStateSystem != null)
-                context.RefreshFocusedUnit?.Invoke(em, context.SelectionStateSystem);
+            if (context.SelectionStateCompositionSystemHelper != null)
+                context.RefreshFocusedUnit?.Invoke(em, context.SelectionStateCompositionSystemHelper);
             return true;
         }
 
@@ -352,9 +352,9 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             return false;
         }
 
-        context.SelectionStateSystem?.ClearSelectedMoveCache();
-        if (context.SelectionStateSystem != null)
-            context.ClearFocusedUnit?.Invoke(context.SelectionStateSystem);
+        context.SelectionStateCompositionSystemHelper?.ClearSelectedMoveCache();
+        if (context.SelectionStateCompositionSystemHelper != null)
+            context.ClearFocusedUnit?.Invoke(context.SelectionStateCompositionSystemHelper);
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.ClearHudSelection?.Invoke();
         context.ClearHudCommandMode?.Invoke();
@@ -634,7 +634,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             context.SelectedMoveQuery,
             context.GridConfigQuery,
             context.MapSurfaceQuery,
-            context.SelectionStateSystem?.CachedSelectedMoveEntities,
+            context.SelectionStateCompositionSystemHelper?.CachedSelectedMoveEntities,
             context.UnitMoveOrderSystem,
             context.TryGetMoveClickedUnitEntity,
             context.TryGetMoveClickedCell);
@@ -845,9 +845,9 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             return;
 
         context.EnsureEntityQueries?.Invoke(em);
-        TryAddAttackSource(em, context.SelectionStateSystem.FocusedUnit, sources);
+        TryAddAttackSource(em, context.SelectionStateCompositionSystemHelper.FocusedUnit, sources);
 
-        List<Entity> cached = context.SelectionStateSystem.CachedSelectedMoveEntities;
+        List<Entity> cached = context.SelectionStateCompositionSystemHelper.CachedSelectedMoveEntities;
         for (int i = 0; i < cached.Count; i++)
             TryAddAttackSource(em, cached[i], sources);
 
@@ -998,7 +998,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             context.UnitTransportCapacitySystem,
             context.UnitTransportAirPickupSystem,
             context.UnitMoveOrderSystem,
-            context.SelectionStateSystem,
+            context.SelectionStateCompositionSystemHelper,
             context.TryGetTransportClickedUnitEntity,
             context.TryGetTransportClickedCell);
 
@@ -1112,8 +1112,8 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             em.AddComponent<SelectedUnitTag>(transport);
         }
 
-        context.SelectionStateSystem.CacheSelectedMoveEntity(em, transport);
-        context.SetFocusedUnit?.Invoke(context.SelectionStateSystem, transport);
+        context.SelectionStateCompositionSystemHelper.CacheSelectedMoveEntity(em, transport);
+        context.SetFocusedUnit?.Invoke(context.SelectionStateCompositionSystemHelper, transport);
         context.ApplyHudSelection?.Invoke(em, transport);
     }
 

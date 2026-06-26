@@ -20,7 +20,7 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelper
         public readonly Action<EntityManager, Entity> ApplyHudSelection;
         public readonly Action<int> ApplyHudSquadSelection;
         public readonly Action<string> LogSelectionDiagnostic;
-        public readonly SelectionStateSystem SelectionStateSystem;
+        public readonly SelectionStateCompositionSystemHelper SelectionStateCompositionSystemHelper;
         public readonly FocusedUnitLifecycleCompositionSystemHelper FocusedUnitLifecycleCompositionSystemHelper;
 
         public Context(
@@ -32,7 +32,7 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelper
             Action<EntityManager, Entity> applyHudSelection,
             Action<int> applyHudSquadSelection,
             Action<string> logSelectionDiagnostic,
-            SelectionStateSystem selectionStateSystem,
+            SelectionStateCompositionSystemHelper selectionStateSystem,
             FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem)
         {
             WorldCamera = worldCamera;
@@ -43,7 +43,7 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelper
             ApplyHudSelection = applyHudSelection;
             ApplyHudSquadSelection = applyHudSquadSelection;
             LogSelectionDiagnostic = logSelectionDiagnostic;
-            SelectionStateSystem = selectionStateSystem;
+            SelectionStateCompositionSystemHelper = selectionStateSystem;
             FocusedUnitLifecycleCompositionSystemHelper = focusedUnitLifecycleSystem;
         }
     }
@@ -215,10 +215,10 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelper
                 em.AddComponent<SelectedUnitTag>(entity);
         }
 
-        context.SelectionStateSystem.CacheSelectedMoveEntities(em, selected);
+        context.SelectionStateCompositionSystemHelper.CacheSelectedMoveEntities(em, selected);
         context.FocusedUnitLifecycleCompositionSystemHelper.ApplySelectionFocus(
             em,
-            context.SelectionStateSystem,
+            context.SelectionStateCompositionSystemHelper,
             selected,
             selected.Count,
             (entityManager, entity) => context.ApplyHudSelection?.Invoke(entityManager, entity),

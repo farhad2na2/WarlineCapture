@@ -66,7 +66,7 @@ public sealed class SelectionMoveCommandPerformanceValidation
                 ComponentType.ReadOnly<DynamicOccupancyComponent>());
             using EntityQuery mapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
 
-            var selectionStateSystem = new SelectionStateSystem();
+            var selectionStateSystem = new SelectionStateCompositionSystemHelper();
             var selectedMoveOrderCommandSystem = new SelectedMoveOrderCommandSystem();
             var moveOrderSystem = new UnitMoveOrderSystem();
 
@@ -144,7 +144,7 @@ public sealed class SelectionMoveCommandPerformanceValidation
 
     private static int RunFrames(
         EntityManager em,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         SelectedMoveOrderCommandSystem selectedMoveOrderCommandSystem,
         UnitMoveOrderSystem moveOrderSystem,
         EntityQuery selectedMoveQuery,

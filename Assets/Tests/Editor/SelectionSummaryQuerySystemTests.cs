@@ -387,7 +387,7 @@ public sealed class SelectionSummaryQuerySystemTests
             });
             em.AddComponentData(transport, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_Plane_Transport") });
 
-            var selectionState = new SelectionStateSystem();
+            var selectionState = new SelectionStateCompositionSystemHelper();
             selectionState.SetFocusedUnit(transport);
             var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
             var panel = new RecordingSelectionPanelView(fallbackSprite);

@@ -337,7 +337,7 @@ Initial 2026-06-24 scan found about 45 unguarded systems, including command syst
 - Note: several Unity validation processes logged pass markers and successful batchmode quit but stayed alive. Each stuck process was stopped after its pass marker; unrelated `WarlineCapture-Clone` Editor processes were left untouched.
 - 2026-06-24 heartbeat closure: Stage 2 completed by documenting the two always-on presentation boundary exceptions rather than adding unsafe fake guards.
 - Closure validation:
-  - `SelectionStateSystemTests.RunFocusedValidation` passed with `tests=8`: `/private/tmp/warline-ecs-stage2-selection-state.log`.
+  - `SelectionStateCompositionSystemHelperTests.RunFocusedValidation` passed with `tests=8`: `/private/tmp/warline-ecs-stage2-selection-state.log`.
   - `MatchHudMinimapMarkerSystemTests.RunFocusedValidation` passed with `tests=3`: `/private/tmp/warline-ecs-stage2-minimap-marker.log`.
   - `InitialUnitsSpawnFocusedTests.RunResourceBuildingSourceKeyBatchValidation` passed with `methods=6`: `/private/tmp/warline-ecs-stage2-initial-units-source-key.log`.
   - `InitialUnitsSpawnFocusedTests.RunSpawnProgressCompletionBatchValidation` passed with `methods=6`: `/private/tmp/warline-ecs-stage2-initial-units-progress.log`.

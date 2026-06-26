@@ -18,7 +18,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
     {
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RtsSelectionInputCompositionSystemHelper InputSystem;
-        public readonly SelectionStateSystem SelectionStateSystem;
+        public readonly SelectionStateCompositionSystemHelper SelectionStateCompositionSystemHelper;
         public readonly FocusedUnitLifecycleCompositionSystemHelper FocusedUnitLifecycleCompositionSystemHelper;
         public readonly FocusableUnitLookupCameraSystemHelper FocusableUnitLookupCameraSystemHelper;
         public readonly SelectionUiReadModelLookup SelectionUiReadModelLookup;
@@ -53,7 +53,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             RtsSelectionInputCompositionSystemHelper inputSystem,
-            SelectionStateSystem selectionStateSystem,
+            SelectionStateCompositionSystemHelper selectionStateSystem,
             FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem,
             FocusableUnitLookupCameraSystemHelper focusableUnitLookupSystem,
             TransportBoardingCommandSystem transportBoardingCommandSystem,
@@ -87,7 +87,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
             InputSystem = inputSystem;
-            SelectionStateSystem = selectionStateSystem;
+            SelectionStateCompositionSystemHelper = selectionStateSystem;
             FocusedUnitLifecycleCompositionSystemHelper = focusedUnitLifecycleSystem;
             FocusableUnitLookupCameraSystemHelper = focusableUnitLookupSystem;
             SelectionUiReadModelLookup = selectionUiReadModelLookup;
@@ -538,10 +538,10 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
     public bool HasSelectedBoardAction(Context context, EntityManager em)
     {
         if (context.FocusedUnitLifecycleCompositionSystemHelper != null &&
-            context.SelectionStateSystem != null &&
+            context.SelectionStateCompositionSystemHelper != null &&
             context.FocusedUnitLifecycleCompositionSystemHelper.TryGetFocusedUnitEntity(
                 em,
-                context.SelectionStateSystem,
+                context.SelectionStateCompositionSystemHelper,
                 out Entity focusedUnit) &&
             em.Exists(focusedUnit) &&
             TransportBoardingCommandSystem.IsBoardablePlayerTransport(em, focusedUnit) &&
@@ -665,7 +665,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             return false;
 
         context.ClearCurrentSelection?.Invoke(em, "MoveOrderToBuilding");
-        context.FocusedUnitLifecycleCompositionSystemHelper.ClearFocusedUnit(context.SelectionStateSystem);
+        context.FocusedUnitLifecycleCompositionSystemHelper.ClearFocusedUnit(context.SelectionStateCompositionSystemHelper);
         if (context.TryGetPointerPosition(out Vector2 markerScreenPosition))
             context.RequestMoveOrderScreenMarker?.Invoke(markerScreenPosition);
         return true;
@@ -684,7 +684,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         if (!context.FocusedUnitLifecycleCompositionSystemHelper.TryFocusUnit(
                 em,
                 screenPosition,
-                context.SelectionStateSystem,
+                context.SelectionStateCompositionSystemHelper,
                 (Vector2 position, EntityManager entityManager, out Entity entity) => targetBoundary.TryGetClickedUnitEntity(position, entityManager, out entity),
                 "TryFocusUnit",
                 "TryFocusUnit",
@@ -778,7 +778,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         string clickedCell = TryGetClickedCell(context, screenPosition, em, out int2 cell, out Vector3 worldPoint)
             ? $"{cell}@{worldPoint.x:F1},{worldPoint.y:F1},{worldPoint.z:F1}"
             : "none";
-        SelectionStateSystem selectionState = context.SelectionStateSystem;
+        SelectionStateCompositionSystemHelper selectionState = context.SelectionStateCompositionSystemHelper;
         Entity focusedUnit = selectionState != null ? selectionState.FocusedUnit : Entity.Null;
         string focused = DescribeClickDebugEntity(em, focusedUnit);
         List<Entity> cached = selectionState?.CachedSelectedMoveEntities;
@@ -995,7 +995,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
                 grid,
                 context.WorldCamera,
                 screenPosition,
-                context.SelectionStateSystem,
+                context.SelectionStateCompositionSystemHelper,
                 out MapSurfaceCommandTargetResult target))
         {
             return false;
@@ -1036,7 +1036,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
                 grid,
                 context.WorldCamera,
                 screenPosition,
-                context.SelectionStateSystem,
+                context.SelectionStateCompositionSystemHelper,
                 out MapSurfaceCommandTargetResult target))
         {
             return false;
@@ -1063,7 +1063,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         GridConfig grid,
         Camera worldCamera,
         Vector2 screenPosition,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         out MapSurfaceCommandTargetResult result)
     {
         result = default;
@@ -1109,7 +1109,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         GridConfig grid,
         Camera worldCamera,
         Vector2 screenPosition,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         out MapSurfaceCommandTargetResult result)
     {
         if (!TryResolveMapSurfaceCommandTarget(
@@ -1145,7 +1145,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         EntityQuery surfaceQuery,
         Entity gridEntity,
         GridConfig grid,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         int2 desiredGoal,
         out int2 resolvedCell,
         out MapSurfaceCommandTargetResult result)
@@ -1212,7 +1212,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
 
     private bool TryBuildSelectedGroundMoveEntityList(
         EntityManager entityManager,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         out Entity primaryEntity)
     {
         primaryEntity = Entity.Null;
@@ -1236,7 +1236,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
     {
         if (entity == Entity.Null ||
             _mapSurfaceSelectedMoveEntities.Contains(entity) ||
-            !SelectionStateSystem.IsCacheableSelectedMoveEntity(entityManager, entity) ||
+            !SelectionStateCompositionSystemHelper.IsCacheableSelectedMoveEntity(entityManager, entity) ||
             entityManager.HasComponent<UnitAirMovement>(entity) ||
             !entityManager.HasComponent<UnitFootprint>(entity) ||
             !entityManager.HasComponent<UnitMovementBehavior>(entity))
@@ -1415,7 +1415,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
 
     private static void TryResolvePreferredSelectionLayer(
         EntityManager entityManager,
-        SelectionStateSystem selectionStateSystem,
+        SelectionStateCompositionSystemHelper selectionStateSystem,
         out int preferredSurfaceId,
         out int preferredLayerId)
     {
@@ -1457,7 +1457,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
 
     private MapSurfaceMovementMask ResolveSelectedMovementMask(
         EntityManager entityManager,
-        SelectionStateSystem selectionStateSystem)
+        SelectionStateCompositionSystemHelper selectionStateSystem)
     {
         if (selectionStateSystem == null)
             return MapSurfaceMovementMask.Infantry;

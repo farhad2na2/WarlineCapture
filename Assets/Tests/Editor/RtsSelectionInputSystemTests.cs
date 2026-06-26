@@ -3020,7 +3020,7 @@ public sealed class RtsSelectionInputSystemTests
             new SelectionUiReadModelLookup(),
             new VisibleUnitSelectionSystem(),
             new SelectionStateSystem(),
-            new FocusedUnitLifecycleSystem(),
+            new FocusedUnitLifecycleCompositionSystemHelper(),
             new System.Collections.Generic.List<Entity>(),
             (_, reason) => clearedUnitSelection = reason == "SelectUnitsInRectangle",
             (_, _) => { },

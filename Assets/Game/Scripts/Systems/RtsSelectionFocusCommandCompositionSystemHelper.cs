@@ -12,7 +12,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RtsSelectionInputCompositionSystemHelper InputSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
-        public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
+        public readonly FocusedUnitLifecycleCompositionSystemHelper FocusedUnitLifecycleCompositionSystemHelper;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly Camera WorldCamera;
@@ -30,14 +30,14 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
         public readonly Action<bool> SetCameraDragging;
         public readonly Action<bool> SetExplicitAttackTargetModeActive;
         public readonly Action<string> LogSelectionDiagnostic;
-        public readonly FocusedUnitLifecycleSystem.DescribeEntityDelegate DescribeEntity;
+        public readonly FocusedUnitLifecycleCompositionSystemHelper.DescribeEntityDelegate DescribeEntity;
         public readonly Func<Vector2, bool> TryFocusScreenPosition;
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             RtsSelectionInputCompositionSystemHelper inputSystem,
             SelectionStateSystem selectionStateSystem,
-            FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
+            FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             Camera worldCamera,
@@ -55,13 +55,13 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
             Action<bool> setCameraDragging,
             Action<bool> setExplicitAttackTargetModeActive,
             Action<string> logSelectionDiagnostic,
-            FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity,
+            FocusedUnitLifecycleCompositionSystemHelper.DescribeEntityDelegate describeEntity,
             Func<Vector2, bool> tryFocusScreenPosition)
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
             InputSystem = inputSystem;
             SelectionStateSystem = selectionStateSystem;
-            FocusedUnitLifecycleSystem = focusedUnitLifecycleSystem;
+            FocusedUnitLifecycleCompositionSystemHelper = focusedUnitLifecycleSystem;
             BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             WorldCamera = worldCamera;
@@ -137,7 +137,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
 
     public void ClearFocusedUnit(Context context)
     {
-        context.FocusedUnitLifecycleSystem.ClearFocusedUnit(context.SelectionStateSystem);
+        context.FocusedUnitLifecycleCompositionSystemHelper.ClearFocusedUnit(context.SelectionStateSystem);
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.InputSystem.ClearActiveCommandMode();
         context.ClearHudSelection?.Invoke();
@@ -149,7 +149,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
     {
         if (!context.TryGetEntityManager(out EntityManager em))
         {
-            context.FocusedUnitLifecycleSystem.ClearFocusedUnit(context.SelectionStateSystem);
+            context.FocusedUnitLifecycleCompositionSystemHelper.ClearFocusedUnit(context.SelectionStateSystem);
             context.SetExplicitAttackTargetModeActive?.Invoke(false);
             context.InputSystem.ClearActiveCommandMode();
             context.ClearHudSelection?.Invoke();
@@ -159,7 +159,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
         }
 
         context.ClearCurrentSelection?.Invoke(em, reason);
-        context.FocusedUnitLifecycleSystem.ClearFocusedUnit(context.SelectionStateSystem);
+        context.FocusedUnitLifecycleCompositionSystemHelper.ClearFocusedUnit(context.SelectionStateSystem);
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.InputSystem.ClearActiveCommandMode();
         context.ClearHudSelection?.Invoke();
@@ -196,7 +196,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
             return false;
 
         context.EnsureEntityQueries?.Invoke(em);
-        if (!context.FocusedUnitLifecycleSystem.FocusUnitEntity(
+        if (!context.FocusedUnitLifecycleCompositionSystemHelper.FocusUnitEntity(
                 em,
                 entity,
                 context.SelectionStateSystem,

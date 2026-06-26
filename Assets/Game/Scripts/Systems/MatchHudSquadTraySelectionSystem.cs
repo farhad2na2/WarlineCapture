@@ -21,7 +21,7 @@ public sealed class MatchHudSquadTraySelectionSystem
         public readonly Action<int> ApplyHudSquadSelection;
         public readonly Action<string> LogSelectionDiagnostic;
         public readonly SelectionStateSystem SelectionStateSystem;
-        public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
+        public readonly FocusedUnitLifecycleCompositionSystemHelper FocusedUnitLifecycleCompositionSystemHelper;
 
         public Context(
             Camera worldCamera,
@@ -33,7 +33,7 @@ public sealed class MatchHudSquadTraySelectionSystem
             Action<int> applyHudSquadSelection,
             Action<string> logSelectionDiagnostic,
             SelectionStateSystem selectionStateSystem,
-            FocusedUnitLifecycleSystem focusedUnitLifecycleSystem)
+            FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem)
         {
             WorldCamera = worldCamera;
             TryGetEntityManager = tryGetEntityManager;
@@ -44,7 +44,7 @@ public sealed class MatchHudSquadTraySelectionSystem
             ApplyHudSquadSelection = applyHudSquadSelection;
             LogSelectionDiagnostic = logSelectionDiagnostic;
             SelectionStateSystem = selectionStateSystem;
-            FocusedUnitLifecycleSystem = focusedUnitLifecycleSystem;
+            FocusedUnitLifecycleCompositionSystemHelper = focusedUnitLifecycleSystem;
         }
     }
 
@@ -216,7 +216,7 @@ public sealed class MatchHudSquadTraySelectionSystem
         }
 
         context.SelectionStateSystem.CacheSelectedMoveEntities(em, selected);
-        context.FocusedUnitLifecycleSystem.ApplySelectionFocus(
+        context.FocusedUnitLifecycleCompositionSystemHelper.ApplySelectionFocus(
             em,
             context.SelectionStateSystem,
             selected,

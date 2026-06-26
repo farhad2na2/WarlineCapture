@@ -389,7 +389,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
             var selectionState = new SelectionStateSystem();
             selectionState.SetFocusedUnit(transport);
-            var lifecycle = new FocusedUnitLifecycleSystem();
+            var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
             var panel = new RecordingSelectionPanelView(fallbackSprite);
             var feedback = new SelectionHudFeedbackBoundary();
             feedback.BindMatchHudSelectionPanel(panel);

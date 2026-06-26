@@ -4,7 +4,7 @@ using UnityEngine;
 
 public sealed class SelectionBuildingInteractionSystem
 {
-    private readonly FocusedUnitLifecycleSystem _focusedUnitLifecycleSystem = new();
+    private readonly FocusedUnitLifecycleCompositionSystemHelper _focusedUnitLifecycleSystem = new();
     private readonly SelectionHudFeedbackBoundary _selectionHudFeedbackSystem = new();
     private readonly FocusableUnitLookupCameraSystemHelper _focusableUnitLookupSystem = new();
     private readonly TransportBoardingCommandSystem _transportBoardingCommandSystem = new();

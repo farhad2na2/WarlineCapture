@@ -19,7 +19,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RtsSelectionInputCompositionSystemHelper InputSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
-        public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
+        public readonly FocusedUnitLifecycleCompositionSystemHelper FocusedUnitLifecycleCompositionSystemHelper;
         public readonly FocusableUnitLookupCameraSystemHelper FocusableUnitLookupCameraSystemHelper;
         public readonly SelectionUiReadModelLookup SelectionUiReadModelLookup;
         public readonly VisibleUnitSelectionSystem VisibleUnitSelectionSystem;
@@ -47,14 +47,14 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         public readonly Func<bool> ProcessTransportCommandRequests;
         public readonly Action ProcessMoveCommandRequests;
         public readonly Action<string> LogSelectionDiagnostic;
-        public readonly FocusedUnitLifecycleSystem.DescribeEntityDelegate DescribeEntity;
+        public readonly FocusedUnitLifecycleCompositionSystemHelper.DescribeEntityDelegate DescribeEntity;
         public readonly List<Entity> VisibleSelectionScratch;
 
         public Context(
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             RtsSelectionInputCompositionSystemHelper inputSystem,
             SelectionStateSystem selectionStateSystem,
-            FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
+            FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem,
             FocusableUnitLookupCameraSystemHelper focusableUnitLookupSystem,
             TransportBoardingCommandSystem transportBoardingCommandSystem,
             UnitTransportCapacitySystem unitTransportCapacitySystem,
@@ -80,7 +80,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             Func<bool> processTransportCommandRequests,
             Action processMoveCommandRequests,
             Action<string> logSelectionDiagnostic,
-            FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity,
+            FocusedUnitLifecycleCompositionSystemHelper.DescribeEntityDelegate describeEntity,
             SelectionUiReadModelLookup selectionUiReadModelLookup = null,
             VisibleUnitSelectionSystem visibleUnitSelectionSystem = null,
             List<Entity> visibleSelectionScratch = null)
@@ -88,7 +88,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
             InputSystem = inputSystem;
             SelectionStateSystem = selectionStateSystem;
-            FocusedUnitLifecycleSystem = focusedUnitLifecycleSystem;
+            FocusedUnitLifecycleCompositionSystemHelper = focusedUnitLifecycleSystem;
             FocusableUnitLookupCameraSystemHelper = focusableUnitLookupSystem;
             SelectionUiReadModelLookup = selectionUiReadModelLookup;
             VisibleUnitSelectionSystem = visibleUnitSelectionSystem;
@@ -537,9 +537,9 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
 
     public bool HasSelectedBoardAction(Context context, EntityManager em)
     {
-        if (context.FocusedUnitLifecycleSystem != null &&
+        if (context.FocusedUnitLifecycleCompositionSystemHelper != null &&
             context.SelectionStateSystem != null &&
-            context.FocusedUnitLifecycleSystem.TryGetFocusedUnitEntity(
+            context.FocusedUnitLifecycleCompositionSystemHelper.TryGetFocusedUnitEntity(
                 em,
                 context.SelectionStateSystem,
                 out Entity focusedUnit) &&
@@ -665,7 +665,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             return false;
 
         context.ClearCurrentSelection?.Invoke(em, "MoveOrderToBuilding");
-        context.FocusedUnitLifecycleSystem.ClearFocusedUnit(context.SelectionStateSystem);
+        context.FocusedUnitLifecycleCompositionSystemHelper.ClearFocusedUnit(context.SelectionStateSystem);
         if (context.TryGetPointerPosition(out Vector2 markerScreenPosition))
             context.RequestMoveOrderScreenMarker?.Invoke(markerScreenPosition);
         return true;
@@ -681,7 +681,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
 
         context.LogSelectionDiagnostic?.Invoke($"focusAttempt pos={screenPosition} frame={UnityEngine.Time.frameCount}");
         PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
-        if (!context.FocusedUnitLifecycleSystem.TryFocusUnit(
+        if (!context.FocusedUnitLifecycleCompositionSystemHelper.TryFocusUnit(
                 em,
                 screenPosition,
                 context.SelectionStateSystem,

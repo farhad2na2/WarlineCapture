@@ -281,7 +281,7 @@ public sealed class SelectionHudFeedbackBoundary
     public void UpdateMatchHudSelectionPanel(
         Context context,
         SelectionStateSystem selectionStateSystem,
-        FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
+        FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem,
         FocusedUnitUiReadModelSystem focusedUnitUiReadModelSystem,
         List<MatchHudSelectionPanelPassengerItemModel> transportPassengerPanelItems,
         EnsureEntityQueriesDelegate ensureEntityQueries,
@@ -368,7 +368,7 @@ public sealed class SelectionHudFeedbackBoundary
     public string ResolveCurrentSelectionOrderTextSnapshot(
         Context context,
         SelectionStateSystem selectionStateSystem,
-        FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
+        FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem,
         EnsureEntityQueriesDelegate ensureEntityQueries,
         System.Func<bool> hasSelectedBuilding)
     {

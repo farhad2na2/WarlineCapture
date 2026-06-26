@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class FocusedUnitLifecycleSystem
+public sealed class FocusedUnitLifecycleCompositionSystemHelper
 {
     public delegate bool TryGetClickedUnitEntityDelegate(Vector2 screenPosition, EntityManager em, out Entity entity);
     public delegate string DescribeEntityDelegate(EntityManager em, Entity entity);

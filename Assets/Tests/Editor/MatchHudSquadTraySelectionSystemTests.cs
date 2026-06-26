@@ -13,7 +13,7 @@ public sealed class MatchHudSquadTraySelectionSystemTests
     private World _world;
     private EntityManager _entityManager;
     private SelectionStateSystem _selectionState;
-    private FocusedUnitLifecycleSystem _focusedLifecycle;
+    private FocusedUnitLifecycleCompositionSystemHelper _focusedLifecycle;
     private MatchHudSquadTraySelectionSystem _system;
     private TestSquadTrayView _view;
     private Entity _lastHudSelection;
@@ -56,7 +56,7 @@ public sealed class MatchHudSquadTraySelectionSystemTests
         _world = new World("MatchHudSquadTraySelectionSystemTests");
         _entityManager = _world.EntityManager;
         _selectionState = new SelectionStateSystem();
-        _focusedLifecycle = new FocusedUnitLifecycleSystem();
+        _focusedLifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
         _system = new MatchHudSquadTraySelectionSystem();
         _view = new TestSquadTrayView();
         _lastHudSelection = Entity.Null;

@@ -246,7 +246,7 @@ public sealed class SelectionStateSystemTests
     public void FocusedUnitLifecycle_ClearCurrentSelection_RemovesSelectedTagsAndClearsCache()
     {
         var selectionState = new SelectionStateSystem();
-        var lifecycle = new FocusedUnitLifecycleSystem();
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
         Entity unitA = CreateMoveUnit(FactionIdentity.PlayerFactionId);
         Entity unitB = CreateMoveUnit(FactionIdentity.PlayerFactionId);
         _entityManager.AddComponent<SelectedUnitTag>(unitA);
@@ -274,7 +274,7 @@ public sealed class SelectionStateSystemTests
     public void FocusedUnitLifecycle_RefreshFocusedUnit_FocusesSingleSelectedPlayerUnit()
     {
         var selectionState = new SelectionStateSystem();
-        var lifecycle = new FocusedUnitLifecycleSystem();
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
         Entity unit = CreateMoveUnit(FactionIdentity.PlayerFactionId);
         _entityManager.AddComponent<SelectedUnitTag>(unit);
 
@@ -293,7 +293,7 @@ public sealed class SelectionStateSystemTests
     public void FocusedUnitLifecycle_FocusAirUnitClearsAccidentalSelectionMoveThroughRequest()
     {
         var selectionState = new SelectionStateSystem();
-        var lifecycle = new FocusedUnitLifecycleSystem();
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
         Entity unit = CreateMoveUnit(FactionIdentity.PlayerFactionId);
         _entityManager.AddComponent<UnitAirMovement>(unit);
         _entityManager.AddComponent<ManualMoveOrderTag>(unit);

@@ -58,6 +58,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
             return;
 
         bool wasInitialized = initialized;
+        ApplyEditorMenuPerformanceDefaults();
         EnsurePersistentDiagnosticsInitialized();
         view.ApplyRuntimeUiMode();
 
@@ -146,6 +147,14 @@ internal sealed class MenuBootstrapCompositionSystemHelper
         Application.runInBackground = true;
         performanceDiagnosticsSystem.Initialize();
         diagnosticsInitialized = true;
+    }
+
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    private static void ApplyEditorMenuPerformanceDefaults()
+    {
+        // Editor menu benchmarks should stay uncapped; build/runtime settings still own shipped frame limits.
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = -1;
     }
 
     private static void SetLoading(EntityManager entityManager, Entity boundary, float progress01, bool complete)

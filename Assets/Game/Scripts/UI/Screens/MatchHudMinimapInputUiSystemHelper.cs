@@ -44,6 +44,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
     private Texture2D _readbackTexture;
     private Texture2D _rasterTexture;
     private Sprite _captureSprite;
+    private Sprite _rasterSprite;
     private Color32[] _rasterPixels;
     private readonly Vector3[] _mapWorldCorners = new Vector3[4];
     private readonly MatchHudMinimapProjectionGrid[] _rasterProjectionCandidates = new MatchHudMinimapProjectionGrid[4];
@@ -342,7 +343,8 @@ public sealed class MatchHudMinimapInputUiSystemHelper
             return false;
 
         EnsureCaptureResources();
-        bool captured = worldCamera != null && !Application.isBatchMode;
+        // Compact minimap is always visible; avoid a recurring GPU readback there.
+        bool captured = worldCamera != null && !Application.isBatchMode && _view.UseFullMapProjection;
 
         bool readbackMatchesRenderTexture = false;
         if (captured)
@@ -366,20 +368,37 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         if (_view == null || _view.MapImage == null)
             return;
 
-        if (!readbackMatchesRenderTexture)
-            ReadRenderTextureInto(_readbackTexture);
-
-        if (_captureSprite == null)
+        if (readbackMatchesRenderTexture)
         {
-            _captureSprite = Sprite.Create(
-                _readbackTexture,
+            ReadRenderTextureInto(_readbackTexture);
+            if (_captureSprite == null)
+            {
+                _captureSprite = Sprite.Create(
+                    _readbackTexture,
+                    new Rect(0, 0, CaptureResolution, CaptureResolution),
+                    new Vector2(0.5f, 0.5f),
+                    100f);
+                _captureSprite.name = "Runtime_MatchHudMinimapCaptureSprite";
+            }
+
+            _view.SetMapSprite(_captureSprite);
+            return;
+        }
+
+        if (_rasterTexture == null)
+            return;
+
+        if (_rasterSprite == null)
+        {
+            _rasterSprite = Sprite.Create(
+                _rasterTexture,
                 new Rect(0, 0, CaptureResolution, CaptureResolution),
                 new Vector2(0.5f, 0.5f),
                 100f);
-            _captureSprite.name = "Runtime_MatchHudMinimapSprite";
+            _rasterSprite.name = "Runtime_MatchHudMinimapRasterSprite";
         }
 
-        _view.SetMapSprite(_captureSprite);
+        _view.SetMapSprite(_rasterSprite);
     }
 
     private void UpdateMarkersIfDue(MatchHudMinimapProjectionGrid grid)
@@ -665,7 +684,6 @@ public sealed class MatchHudMinimapInputUiSystemHelper
 
         _rasterTexture.SetPixels32(_rasterPixels);
         _rasterTexture.Apply(false, false);
-        Graphics.Blit(_rasterTexture, _renderTexture);
     }
 
     private int FillRasterProjectionCandidates(
@@ -929,6 +947,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
                 Object.DontDestroyOnLoad(cameraObject);
             cameraObject.hideFlags = HideFlags.HideAndDontSave;
             _captureCamera = cameraObject.AddComponent<Camera>();
+            _captureCamera.enabled = false;
             UniversalAdditionalCameraData cameraData = cameraObject.AddComponent<UniversalAdditionalCameraData>();
             cameraData.renderPostProcessing = false;
             cameraData.antialiasing = AntialiasingMode.None;
@@ -939,6 +958,8 @@ public sealed class MatchHudMinimapInputUiSystemHelper
     {
         if (_captureSprite != null)
             DestroyRuntimeObject(_captureSprite);
+        if (_rasterSprite != null)
+            DestroyRuntimeObject(_rasterSprite);
         if (_renderTexture != null)
         {
             _renderTexture.Release();
@@ -955,6 +976,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         _readbackTexture = null;
         _rasterTexture = null;
         _captureSprite = null;
+        _rasterSprite = null;
         _rasterPixels = null;
         _captureCamera = null;
     }

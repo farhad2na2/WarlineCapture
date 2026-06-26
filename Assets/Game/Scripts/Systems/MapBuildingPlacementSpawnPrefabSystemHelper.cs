@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class MapBuildingPlacementSpawnSystem
+internal sealed class MapBuildingPlacementSpawnPrefabSystemHelper
 {
     private const int MaxPlacementsPerUpdate = 32;
 

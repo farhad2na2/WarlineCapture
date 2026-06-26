@@ -477,7 +477,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                         return tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
                     }
 
-                    MapBuildingPlacementSpawnSystem.Context mapSpawnPlacementContext =
+                    MapBuildingPlacementSpawnPrefabSystemHelper.Context mapSpawnPlacementContext =
                         new(
                             mapBuildingPlacementConfig,
                             mapBuildingAuthoringRoot,
@@ -485,7 +485,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                             mapSpawnContext,
                             TryGetMapGridData,
                             Debug.LogWarning);
-                    return () => source.MapBuildingPlacementSpawnSystem.Update(mapSpawnPlacementContext);
+                    return () => source.MapBuildingPlacementSpawnPrefabSystemHelper.Update(mapSpawnPlacementContext);
                 },
                 (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                 {

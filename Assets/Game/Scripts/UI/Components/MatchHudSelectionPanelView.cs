@@ -129,7 +129,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
     {
         SetSelectionVisible(visible);
         if (visible)
-            SetSelectionPortrait(portraitSprite);
+            SetSelectionPortrait(FirstNonNull(portraitSprite, ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad)));
     }
 
     public void SetSelectionPortrait(Sprite portraitSprite)

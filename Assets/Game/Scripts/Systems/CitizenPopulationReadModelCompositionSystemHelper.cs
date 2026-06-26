@@ -28,7 +28,7 @@ internal sealed class CitizenPopulationReadModelCompositionSystemHelper
     public static void Refresh(
         CitizenPopulationReadModelCompositionSystemHelper system,
         ref State state,
-        CitizenPopulationTotalsSystem totalsSystem,
+        CitizenPopulationTotalsCompositionSystemHelper totalsSystem,
         CitizenPopulationStateCompositionSystemHelper populationState,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         bool syncSummaryEntity)
@@ -39,18 +39,18 @@ internal sealed class CitizenPopulationReadModelCompositionSystemHelper
             return;
         }
 
-        state.Totals = CitizenPopulationTotalsSystem.Calculate(totalsSystem, populationState, ecsProjection);
+        state.Totals = CitizenPopulationTotalsCompositionSystemHelper.Calculate(totalsSystem, populationState, ecsProjection);
         if (syncSummaryEntity)
             ecsProjection.TryPublishSummary(state.Totals);
     }
 
     public void Refresh(
-        CitizenPopulationTotalsSystem totalsSystem,
+        CitizenPopulationTotalsCompositionSystemHelper totalsSystem,
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         bool syncSummaryEntity)
     {
-        _totals = CitizenPopulationTotalsSystem.Calculate(totalsSystem, state, ecsProjection);
+        _totals = CitizenPopulationTotalsCompositionSystemHelper.Calculate(totalsSystem, state, ecsProjection);
         if (syncSummaryEntity)
             ecsProjection.TryPublishSummary(_totals);
     }

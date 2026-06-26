@@ -339,11 +339,11 @@ internal sealed class CitizenPopulationRuntimeUpdateCompositionSystemHelper
 
     private bool HasCitizenData()
     {
-        return CitizenPopulationTotalsSystem.HasCitizenData(_systems.TotalsSystem, _systems.State);
+        return CitizenPopulationTotalsCompositionSystemHelper.HasCitizenData(_systems.TotalsSystem, _systems.State);
     }
 
     private bool HasHouseholdData()
     {
-        return CitizenPopulationTotalsSystem.HasHouseholdData(_systems.TotalsSystem, _systems.State, _systems.EcsProjection);
+        return CitizenPopulationTotalsCompositionSystemHelper.HasHouseholdData(_systems.TotalsSystem, _systems.State, _systems.EcsProjection);
     }
 }

@@ -11,7 +11,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         public CitizenPrefabSystem.Context CitizenPrefabContext;
         public readonly CitizenPopulationStateCompositionSystemHelper State = new();
         public readonly CitizenPopulationEcsProjectionCompositionSystemHelper EcsProjection = new();
-        public readonly CitizenPopulationTotalsSystem TotalsSystem = ResolveCitizenPopulationTotalsSystem();
+        public readonly CitizenPopulationTotalsCompositionSystemHelper TotalsSystem = ResolveCitizenPopulationTotalsSystem();
         public readonly CitizenPopulationReadModelCompositionSystemHelper ReadModel = new();
         public CitizenPopulationReadModelCompositionSystemHelper.State ReadModelState;
         public readonly CitizenBuildingReadCompositionSystemHelper BuildingReadSystem = new();
@@ -189,9 +189,9 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         return new CitizenResourceSystem();
     }
 
-    private static CitizenPopulationTotalsSystem ResolveCitizenPopulationTotalsSystem()
+    private static CitizenPopulationTotalsCompositionSystemHelper ResolveCitizenPopulationTotalsSystem()
     {
-        return new CitizenPopulationTotalsSystem();
+        return new CitizenPopulationTotalsCompositionSystemHelper();
     }
 
     private static CitizenPopulationLifecycleCompositionSystemHelper ResolveCitizenPopulationLifecycleCompositionSystemHelper()

@@ -1,6 +1,6 @@
-internal sealed class CitizenPopulationTotalsSystem
+internal sealed class CitizenPopulationTotalsCompositionSystemHelper
 {
-    public static bool HasCitizenData(CitizenPopulationTotalsSystem system, CitizenPopulationStateCompositionSystemHelper state)
+    public static bool HasCitizenData(CitizenPopulationTotalsCompositionSystemHelper system, CitizenPopulationStateCompositionSystemHelper state)
     {
         return system != null
             ? system.HasCitizenData(state)
@@ -13,7 +13,7 @@ internal sealed class CitizenPopulationTotalsSystem
     }
 
     public static bool HasHouseholdData(
-        CitizenPopulationTotalsSystem system,
+        CitizenPopulationTotalsCompositionSystemHelper system,
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
     {
@@ -28,7 +28,7 @@ internal sealed class CitizenPopulationTotalsSystem
     }
 
     public static CitizenPopulationTotals Calculate(
-        CitizenPopulationTotalsSystem system,
+        CitizenPopulationTotalsCompositionSystemHelper system,
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
     {

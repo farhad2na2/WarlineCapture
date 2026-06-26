@@ -1,4 +1,4 @@
-# Phase 7 Agent C Handoff - P7-0047 SelectionRectangleRequestSystem
+# Phase 7 Agent C Handoff - P7-0047 SelectionRectangleRequestCompositionSystemHelper
 
 Date: `2026-06-21`
 
@@ -6,7 +6,7 @@ Lane: `AgentC - Selection, Commands, Focus, And Player Intent`
 
 ## Summary
 
-`SelectionRectangleRequestSystem` was retired/folded from a disabled `SystemBase` shell into a plain manually constructed selection-rectangle request helper.
+`SelectionRectangleRequestCompositionSystemHelper` was retired/folded from a disabled `SystemBase` shell into a plain manually constructed selection-rectangle request helper.
 
 The public behavior was preserved:
 
@@ -22,7 +22,7 @@ No new ECS owner, manager, controller, facade, MonoBehaviour loop, or managed pr
 
 ## Files Changed
 
-- `Assets/Game/Scripts/Systems/SelectionRectangleRequestSystem.cs`
+- `Assets/Game/Scripts/Systems/SelectionRectangleRequestCompositionSystemHelper.cs`
 - `Design/Architecture/systembase_to_isystem_inventory.md`
 - `Design/Architecture/phase7_agent_c_selection_commands_tracker.md`
 - `Design/Architecture/phase7_agent_a_inventory_guardrails_tracker.md`

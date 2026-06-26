@@ -3011,7 +3011,7 @@ public sealed class RtsSelectionInputSystemTests
         bool clearedUnitSelection = false;
         bool selectedBuildingFallback = false;
         bool clearedBuildingSelection = false;
-        var system = new SelectionRectangleRequestSystem();
+        var system = new SelectionRectangleRequestCompositionSystemHelper();
 
         bool processed = system.ProcessPendingRequests(
             em,

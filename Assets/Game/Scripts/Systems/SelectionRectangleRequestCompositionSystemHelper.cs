@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class SelectionRectangleRequestSystem
+public sealed class SelectionRectangleRequestCompositionSystemHelper
 {
     public delegate void ClearCurrentSelectionAction(EntityManager em, string reason);
     public delegate void CacheSelectedEntitiesAction(EntityManager em, List<Entity> entities);

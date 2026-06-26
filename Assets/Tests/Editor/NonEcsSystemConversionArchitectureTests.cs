@@ -63,10 +63,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs"
     };
 
-    private static readonly Dictionary<string, int> ApprovedPublicNonEcsCommandMutatorMethods = new(StringComparer.Ordinal)
-    {
-        ["Assets/Game/Scripts/Systems/SelectionRectangleRequestSystem.cs|ProcessPendingRequests"] = 1
-    };
+    private static readonly Dictionary<string, int> ApprovedPublicNonEcsCommandMutatorMethods = new(StringComparer.Ordinal);
 
     private static readonly HashSet<string> ApprovedUiRuntimeEcsBoundaryPaths = new(StringComparer.Ordinal);
 

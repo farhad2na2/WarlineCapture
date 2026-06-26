@@ -83,7 +83,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
         var selectionUiReadModelLookup = new SelectionUiReadModelLookup();
         var focusedUnitUiReadModelSystem = new FocusedUnitUiReadModelUiSystemHelper();
         var visibleUnitSelectionSystem = new VisibleUnitSelectionSystem();
-        var selectionRectangleRequestSystem = new SelectionRectangleRequestSystem();
+        var selectionRectangleRequestSystem = new SelectionRectangleRequestCompositionSystemHelper();
         var unitMoveOrderSystem = new UnitMoveOrderSystem();
         var selectedMoveOrderCommandSystem = new SelectedMoveOrderCommandSystem();
         var attackOrderCommandSystem = new AttackOrderCommandSystem();
@@ -117,8 +117,8 @@ internal sealed class SelectionGameplayStartupSystemHelper
         EntityQuery mapSurfaceQuery = default;
         System.Action<EntityManager, Entity> applyHudSelectionAction = ApplyHudSelection;
         System.Action<int> applyHudSquadSelectionAction = ApplyHudSquadSelection;
-        SelectionRectangleRequestSystem.ApplyHudSelectionAction applyRectangleHudSelectionAction = ApplyHudSelection;
-        SelectionRectangleRequestSystem.ApplyHudSquadSelectionAction applyRectangleHudSquadSelectionAction = ApplyHudSquadSelection;
+        SelectionRectangleRequestCompositionSystemHelper.ApplyHudSelectionAction applyRectangleHudSelectionAction = ApplyHudSelection;
+        SelectionRectangleRequestCompositionSystemHelper.ApplyHudSquadSelectionAction applyRectangleHudSquadSelectionAction = ApplyHudSquadSelection;
         System.Action clearHudSelectionAction = ClearHudSelection;
         RoadBuildReadModelCompositionSystemHelper roadBuildReadState = roadBuildReadModel;
         BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem = buildingInteraction;

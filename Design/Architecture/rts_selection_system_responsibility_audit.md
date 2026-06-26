@@ -559,7 +559,7 @@ Step 3 moved selection rectangle selection into ECS request processing:
 
 - Live drag and committed rectangle selection now enqueue `RtsSelectionPointerRequestElement` with `SelectionRectUpdated` or `SelectionRectCommitted`.
 - `RtsSelectionPointerRequestElement.SelectionFilter` carries all/soldiers/vehicles selection filters.
-- `SelectionRectangleRequestSystem` consumes rectangle requests, collects visible units, applies selected tags, updates selected move cache, applies focused/squad HUD handoff, and clears selected buildings when a unit selection is made.
+- `SelectionRectangleRequestCompositionSystemHelper` consumes rectangle requests, collects visible units, applies selected tags, updates selected move cache, applies focused/squad HUD handoff, and clears selected buildings when a unit selection is made.
 - `RTSSelectionSystem` still triggers request processing synchronously during the compatibility phase, but it no longer owns the rectangle selection mutation algorithm.
 
 Step 4 moved move command flow into ECS request/result processing:

@@ -28,7 +28,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     private readonly InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem = new();
     private readonly List<InitialFactionSpawnCellFallbackEntry> _initialFactionSpawnCellFallbackEntries = new();
     private readonly GameplaySceneBindingSceneSystemHelper _gameplaySceneBindingSystem = new();
-    private RuntimeRootSystem _runtimeRootSystem;
+    private RuntimeRootSceneSystemHelper _runtimeRootSceneSystemHelper;
     private readonly GameplayFeatureStartupCompositionSystemHelper _gameplayFeatureStartupSystem = new();
     private RuntimeGridBootstrapStartupSystemHelper _runtimeGridBootstrapSystem;
     private MapSurfaceRuntimeBootstrapSceneSystemHelper _mapSurfaceRuntimeBootstrapSystem;
@@ -169,7 +169,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
         _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystemHelper();
         _runtimeCameraReferenceSystem = ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld);
 
-        ResolveRuntimeRootSystem()?.Ensure(
+        ResolveRuntimeRootSceneSystemHelper()?.Ensure(
             ownerTransform,
             ref _runtimeBlockerRoot,
             ref _runtimeCityRoot,
@@ -809,10 +809,10 @@ internal sealed class MatchBootstrapCompositionSystemHelper
         return _visualQualitySettingsSystem;
     }
 
-    private RuntimeRootSystem ResolveRuntimeRootSystem()
+    private RuntimeRootSceneSystemHelper ResolveRuntimeRootSceneSystemHelper()
     {
-        _runtimeRootSystem ??= new RuntimeRootSystem();
-        return _runtimeRootSystem;
+        _runtimeRootSceneSystemHelper ??= new RuntimeRootSceneSystemHelper();
+        return _runtimeRootSceneSystemHelper;
     }
 
     private static UnitAttackTracePresentationSystemHelper ResolveUnitAttackTracePresentationSystemHelper()

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public sealed class RuntimeRootSystem
+public sealed class RuntimeRootSceneSystemHelper
 {
     private const string RuntimeBlockersRootName = "RuntimeBlockers";
     private const string RuntimeCityRootName = "RuntimeCity";

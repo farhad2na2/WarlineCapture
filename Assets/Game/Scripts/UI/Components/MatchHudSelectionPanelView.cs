@@ -117,6 +117,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
     public void HideSelection()
     {
         SetSelectionVisible(false);
+        SetActionState(boardAction, true);
     }
 
     public void SetSelectionVisible(bool visible)
@@ -189,7 +190,9 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
         SetBadge(model.BadgeVisible, model.BadgeSprite);
         SetActionState(returnAction, model.Visible && model.ReturnEnabled);
         SetActionState(destroyAction, model.Visible && model.DestroyEnabled);
-        SetActionState(boardAction, model.Visible && model.BoardEnabled);
+        // BoardButton is hosted in the command rail; keep it pressable so the
+        // command system can show no-selection/invalid-selection feedback.
+        SetActionState(boardAction, true);
         SetBoardActionSelected(_boardActionSelected);
     }
 

@@ -209,7 +209,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         Assert.IsTrue(panel.activeSelf);
         Assert.IsTrue(actions.activeSelf);
-        Assert.AreEqual("Tap soldiers or board all.", text.text);
+        Assert.AreEqual("Select units to board or use BOARD ALL.", text.text);
         Assert.IsTrue(boardAll.gameObject.activeSelf);
         Assert.IsTrue(boardAll.interactable);
         Assert.AreEqual("BOARD ALL", boardAllLabel.text);
@@ -223,7 +223,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
             boardAllInteractable: false);
 
         Assert.IsTrue(actions.activeSelf);
-        Assert.AreEqual("Tap a transport.", text.text);
+        Assert.AreEqual("Select a transport.", text.text);
         Assert.IsFalse(boardAll.gameObject.activeSelf);
         Assert.IsTrue(cancel.gameObject.activeSelf);
 
@@ -340,7 +340,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackBoundary.ErrorFeedbackDurationSeconds + 1f);
 
-        Assert.AreEqual("Tap soldiers or board all.", text.text);
+        Assert.AreEqual("Select units to board or use BOARD ALL.", text.text);
         Assert.IsTrue(actions.activeSelf);
         Assert.IsTrue(boardAll.gameObject.activeSelf);
         Assert.IsTrue(cancel.gameObject.activeSelf);
@@ -622,6 +622,8 @@ public sealed class MatchHudCommandFeedbackPanelTests
             ScanModeRequests++;
             return true;
         }
+
+        public bool RequestBoardTargetMode() => true;
 
         public bool RequestHoldPosition() => true;
 

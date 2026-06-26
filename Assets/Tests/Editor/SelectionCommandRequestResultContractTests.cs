@@ -10,6 +10,23 @@ using UnityEngine;
 
 public sealed class SelectionCommandRequestResultContractTests
 {
+    public static void RunBoardFeedbackValidation()
+    {
+        try
+        {
+            var tests = new SelectionCommandRequestResultContractTests();
+            tests.BoardTargetModeFlush_AppliesRejectedPresentationCleanup();
+            UnityEngine.Debug.Log("[SelectionCommandBoardFeedbackValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            UnityEngine.Debug.LogException(exception);
+            UnityEngine.Debug.LogError("[SelectionCommandBoardFeedbackValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunBatchValidation()
     {
         try
@@ -1662,7 +1679,7 @@ public sealed class SelectionCommandRequestResultContractTests
         Assert.AreEqual(1, commandResultCount);
         Assert.IsFalse(commandResult.Accepted);
         Assert.AreEqual(TacticalCommandReasonCode.NoSelection, commandResult.ReasonCode);
-        Assert.AreEqual("Select units to board.", commandResult.Message);
+        Assert.AreEqual("Select a unit first.", commandResult.Message);
         Assert.AreEqual(1, worldMarkerVisibilityCount);
         Assert.IsFalse(worldMarkersVisible);
         Assert.AreEqual(1, cameraDraggingCount);

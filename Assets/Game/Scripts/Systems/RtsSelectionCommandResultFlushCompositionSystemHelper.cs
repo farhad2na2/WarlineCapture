@@ -575,7 +575,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         {
             string message = rejectionReason == TacticalCommandReasonCode.CommandUnavailable
                 ? "Selected unit cannot board."
-                : "Select units to board.";
+                : "Select a unit first.";
             context.ClearHudCommandMode?.Invoke();
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(rejectionReason, message));
             context.SetHudWorldMarkersVisible?.Invoke(false);

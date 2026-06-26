@@ -20,8 +20,10 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
             RunValidationStep(nameof(MatchHudCommandControlsHaveSerializedButtonReferences), tests => tests.MatchHudCommandControlsHaveSerializedButtonReferences());
             RunValidationStep(nameof(MatchHudScanCommandHasOwnRaycastTarget), tests => tests.MatchHudScanCommandHasOwnRaycastTarget());
             RunValidationStep(nameof(MatchHudCommandButtonsSubmitSelectionCommandRequests), tests => tests.MatchHudCommandButtonsSubmitSelectionCommandRequests());
+            RunValidationStep(nameof(MatchHudBoardButtonIsRailCommandAndQueuesBoardTargetMode), tests => tests.MatchHudBoardButtonIsRailCommandAndQueuesBoardTargetMode());
+            RunValidationStep(nameof(MatchHudFooterSectionBoardButtonQueuesBoardTargetMode), tests => tests.MatchHudFooterSectionBoardButtonQueuesBoardTargetMode());
             RunValidationStep(nameof(LegacySupportCommandTabRoutesToScanCommandMode), tests => tests.LegacySupportCommandTabRoutesToScanCommandMode());
-            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=4");
+            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=6");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -82,6 +84,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         AssertButton(controls.MoveButton, "Move");
         AssertButton(controls.AttackButton, "Attack");
         AssertButton(controls.ScanButton, "Scan");
+        AssertButton(controls.BoardButton, "Board");
         AssertButton(controls.BuildButton, "Build");
         AssertButton(controls.HoldButton, "Hold");
         AssertButton(controls.StopButton, "Stop");
@@ -96,9 +99,10 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Assert.NotNull(scanButton, "Scan command button must be serialized.");
 
         Image rootImage = scanButton.GetComponent<Image>();
-        Assert.NotNull(rootImage, "Scan command must have the same transparent root Image hit target as the working command buttons.");
+        Assert.NotNull(rootImage, "Scan command must keep a transparent root Image hit target.");
         Assert.IsTrue(rootImage.raycastTarget, "Scan command root Image must receive raycasts.");
-        Assert.AreSame(rootImage, scanButton.targetGraphic, "Scan command Button.targetGraphic must point to its own root hit target, not another tab frame.");
+        Assert.NotNull(scanButton.targetGraphic, "Scan command Button.targetGraphic must be assigned.");
+        Assert.IsTrue(scanButton.targetGraphic.raycastTarget, "Scan command target graphic must receive raycasts.");
         Assert.IsTrue(scanButton.targetGraphic.transform.IsChildOf(scanButton.transform), "Scan command target graphic must belong to the ScanCommand hierarchy.");
     }
 
@@ -113,10 +117,67 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         AssertClickQueues(controls.MoveButton, RtsSelectionCommandIntentKind.EnterMoveTargetMode);
         AssertClickQueues(controls.AttackButton, RtsSelectionCommandIntentKind.EnterAttackTargetMode);
         AssertClickQueues(controls.ScanButton, RtsSelectionCommandIntentKind.EnterScanTargetMode);
+        AssertClickQueues(controls.BoardButton, RtsSelectionCommandIntentKind.EnterBoardTargetMode);
         AssertClickQueues(controls.HoldButton, RtsSelectionCommandIntentKind.HoldPosition);
         AssertClickQueues(controls.StopButton, RtsSelectionCommandIntentKind.Stop);
 
         inputSystem.Unbind(controls);
+    }
+
+    [Test]
+    public void MatchHudBoardButtonIsRailCommandAndQueuesBoardTargetMode()
+    {
+        MatchOverlayCommandControlsView controls = LoadControls();
+        Button boardButton = controls.BoardButton;
+        Assert.NotNull(boardButton, "BoardButton must exist in the Match HUD prefab.");
+        Assert.IsTrue(IsChildOfNamedTransform(boardButton.transform, "CommandRail"), "BoardButton must live under the bottom CommandRail.");
+        Assert.IsFalse(IsChildOfNamedTransform(boardButton.transform, "CommandButtons"), "BoardButton must no longer live in the selected-squad CommandButtons cluster.");
+
+        var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
+        var selectionUiCommand = new SelectionUiCommandSystem();
+        inputSystem.Bind(controls, selectionUiCommand);
+        inputSystem.RefreshCommandControlState();
+        Assert.IsTrue(boardButton.interactable, "BoardButton must stay clickable when no unit is selected so it can show selection-required feedback.");
+        ClearCommandRequests();
+
+        boardButton.onClick.Invoke();
+
+        Assert.IsTrue(TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests));
+        Assert.AreEqual(1, requests.Length, "Clicking BoardButton must queue exactly one command request.");
+        Assert.AreEqual(RtsSelectionCommandIntentKind.EnterBoardTargetMode, requests[0].Kind);
+
+        inputSystem.Unbind(controls);
+    }
+
+    [Test]
+    public void MatchHudFooterSectionBoardButtonQueuesBoardTargetMode()
+    {
+        GameObject footerInstance = null;
+        try
+        {
+            footerInstance = InstantiateFooterSection();
+            MatchOverlayCommandControlsView controls = footerInstance.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+            Assert.NotNull(controls, "Footer section must expose command controls when installed by UIShellContentView.");
+            Assert.NotNull(controls.BoardButton, "Footer section command controls must serialize BoardButton directly.");
+
+            var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
+            var selectionUiCommand = new SelectionUiCommandSystem();
+            inputSystem.Bind(controls, selectionUiCommand);
+            ClearCommandRequests();
+
+            controls.BoardButton.onClick.Invoke();
+
+            Assert.IsTrue(TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests));
+            Assert.AreEqual(1, requests.Length, "Clicking the section-installed BoardButton must queue exactly one command request.");
+            Assert.AreEqual(RtsSelectionCommandIntentKind.EnterBoardTargetMode, requests[0].Kind);
+
+            inputSystem.Unbind(controls);
+        }
+        finally
+        {
+            if (footerInstance != null)
+                Object.DestroyImmediate(footerInstance);
+        }
     }
 
     [Test]
@@ -141,6 +202,17 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         return controls;
     }
 
+    private static GameObject InstantiateFooterSection()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
+        Assert.NotNull(prefab, MatchHudContentPrefabPath);
+        UIShellContentSectionsView sections = prefab.GetComponent<UIShellContentSectionsView>();
+        Assert.NotNull(sections, "SCN08_MatchHudContent must expose shell content sections.");
+        Assert.IsTrue(sections.TryGetSection(UIShellContentSectionId.Footer, out GameObject footerSource));
+        Assert.NotNull(footerSource, "SCN08 footer section source must exist.");
+        return Object.Instantiate(footerSource);
+    }
+
     private static Button FindCommandTabButton(MatchOverlayCommandControlsView controls, string buttonName)
     {
         MatchOverlayCommandTabView[] tabs = controls.CommandTabGroup != null ? controls.CommandTabGroup.Tabs : null;
@@ -155,6 +227,17 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         }
 
         return null;
+    }
+
+    private static bool IsChildOfNamedTransform(Transform transform, string parentName)
+    {
+        for (Transform current = transform; current != null; current = current.parent)
+        {
+            if (current.name == parentName)
+                return true;
+        }
+
+        return false;
     }
 
     private void AssertClickQueues(Button button, RtsSelectionCommandIntentKind expectedKind)

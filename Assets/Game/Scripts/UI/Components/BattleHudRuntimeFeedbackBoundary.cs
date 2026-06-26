@@ -47,8 +47,8 @@ public sealed class BattleHudRuntimeFeedbackBoundary
         view.ApplyCommandModeTabs(TacticalCommandMode.Board);
 
         MatchHudCommandFeedbackModel commandFeedback = direction == UiBoardCommandModeDirection.TransportToPassenger
-            ? MatchHudCommandFeedbackModel.Show("Tap soldiers or board all.", CommandFeedbackSeverity.Ready)
-            : MatchHudCommandFeedbackModel.Show("Tap a transport.", CommandFeedbackSeverity.Ready);
+            ? MatchHudCommandFeedbackModel.Show("Select units to board or use BOARD ALL.", CommandFeedbackSeverity.Ready)
+            : MatchHudCommandFeedbackModel.Show("Select a transport.", CommandFeedbackSeverity.Ready);
         MatchHudCommandFeedbackActionsModel actions = direction == UiBoardCommandModeDirection.TransportToPassenger
             ? MatchHudCommandFeedbackActionsModel.BoardPassengerSelection(boardAllInteractable)
             : MatchHudCommandFeedbackActionsModel.CancelOnly;

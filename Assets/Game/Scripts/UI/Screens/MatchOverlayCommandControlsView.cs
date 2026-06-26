@@ -7,6 +7,7 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     [SerializeField] private Button moveButton;
     [SerializeField] private Button attackButton;
     [SerializeField] private Button scanButton;
+    [SerializeField] private Button boardButton;
     [SerializeField] private Button buildButton;
     [SerializeField] private Button holdButton;
     [SerializeField] private Button stopButton;
@@ -20,6 +21,7 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     public Button MoveButton => moveButton;
     public Button AttackButton => attackButton;
     public Button ScanButton => scanButton;
+    public Button BoardButton => boardButton;
     public Button BuildButton => buildButton;
     public Button HoldButton => holdButton;
     public Button StopButton => stopButton;
@@ -43,6 +45,7 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
                ContainsButton(moveButton, screenPosition, eventCamera) ||
                ContainsButton(attackButton, screenPosition, eventCamera) ||
                ContainsButton(scanButton, screenPosition, eventCamera) ||
+               ContainsButton(boardButton, screenPosition, eventCamera) ||
                ContainsButton(buildButton, screenPosition, eventCamera) ||
                ContainsButton(holdButton, screenPosition, eventCamera) ||
                ContainsButton(stopButton, screenPosition, eventCamera) ||
@@ -60,6 +63,8 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
             return "AttackCommand";
         if (ContainsButton(scanButton, screenPosition, eventCamera))
             return "ScanCommand";
+        if (ContainsButton(boardButton, screenPosition, eventCamera))
+            return "BoardCommand";
         if (ContainsButton(buildButton, screenPosition, eventCamera))
             return "BuildCommand";
         if (ContainsButton(holdButton, screenPosition, eventCamera))

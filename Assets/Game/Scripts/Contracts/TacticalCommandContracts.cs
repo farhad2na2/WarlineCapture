@@ -230,7 +230,7 @@ public static class TacticalCommandFeedbackText
             TacticalCommandMode.Hold => "Hold position and return fire.",
             TacticalCommandMode.Stop => "Stop selected units and clear orders.",
             TacticalCommandMode.Scan => "Tap scan area.",
-            TacticalCommandMode.Board => "Tap a transport.",
+            TacticalCommandMode.Board => "Select a transport.",
             TacticalCommandMode.Build => "Choose what to build, produce, or recruit.",
             TacticalCommandMode.Special => "Choose special command.",
             _ => string.Empty

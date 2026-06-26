@@ -55,6 +55,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
         ClearButtonListeners(view.MoveButton);
         ClearButtonListeners(view.AttackButton);
         ClearButtonListeners(view.ScanButton);
+        ClearButtonListeners(view.BoardButton);
         ClearButtonListeners(view.BuildButton);
         ClearButtonListeners(view.HoldButton);
         ClearButtonListeners(view.StopButton);
@@ -110,6 +111,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                 $"matchHudCommandControlsBind view={_view.name} " +
                 $"select={DescribeButton(_view.SelectButton)} move={DescribeButton(_view.MoveButton)} " +
                 $"attack={DescribeButton(_view.AttackButton)} scan={DescribeButton(_view.ScanButton)} " +
+                $"board={DescribeButton(_view.BoardButton)} " +
                 $"build={DescribeButton(_view.BuildButton)} tabs={CountTabs(_view.CommandTabGroup)}");
             _runtimeFeedbackView?.BindFeedbackActionCallbacks(OnBoardAllFeedbackClicked, OnCancelFeedbackClicked);
 
@@ -117,6 +119,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
             _view.MoveButton?.onClick.AddListener(OnMoveButtonClicked);
             _view.AttackButton?.onClick.AddListener(OnAttackButtonClicked);
             _view.ScanButton?.onClick.AddListener(OnScanButtonClicked);
+            _view.BoardButton?.onClick.AddListener(OnBoardButtonClicked);
             _view.BuildButton?.onClick.AddListener(OnBuildButtonClicked);
             _view.HoldButton?.onClick.AddListener(OnHoldButtonClicked);
             _view.StopButton?.onClick.AddListener(OnStopButtonClicked);
@@ -169,6 +172,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
             _view.MoveButton?.onClick.RemoveListener(OnMoveButtonClicked);
             _view.AttackButton?.onClick.RemoveListener(OnAttackButtonClicked);
             _view.ScanButton?.onClick.RemoveListener(OnScanButtonClicked);
+            _view.BoardButton?.onClick.RemoveListener(OnBoardButtonClicked);
             _view.BuildButton?.onClick.RemoveListener(OnBuildButtonClicked);
             _view.HoldButton?.onClick.RemoveListener(OnHoldButtonClicked);
             _view.StopButton?.onClick.RemoveListener(OnStopButtonClicked);
@@ -245,6 +249,18 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                     "Scan command unavailable."));
         }
 
+        private void OnBoardButtonClicked()
+        {
+            CloseBuildDrawerIfOpen();
+            bool queued = _selectionUiCommandSystem != null &&
+                _selectionUiCommandSystem.RequestBoardTargetMode();
+
+            if (!queued)
+                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    TacticalCommandReasonCode.CommandUnavailable,
+                    "Board command unavailable."));
+        }
+
         private void BindCommandTabRuntimeFallbacks()
         {
             MatchOverlayCommandTabView[] tabs = _view.CommandTabGroup != null ? _view.CommandTabGroup.Tabs : null;
@@ -286,6 +302,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                     button == _view.MoveButton ||
                     button == _view.AttackButton ||
                     button == _view.ScanButton ||
+                    button == _view.BoardButton ||
                     button == _view.BuildButton ||
                     button == _view.HoldButton ||
                     button == _view.StopButton ||
@@ -353,6 +370,8 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
             ApplyButtonInteractable(_view.CommandWheelStopButton, readModel == null || readModel.FocusedUnitCanStop);
             // Keep Scan pressable so unavailable units surface an explicit rejection message.
             ApplyButtonInteractable(_view.ScanButton, true);
+            // Keep Board pressable so no-selection and invalid-selection states can surface feedback.
+            ApplyButtonInteractable(_view.BoardButton, true);
         }
 
         private bool TryAcceptCapability(CommandCapability capability)

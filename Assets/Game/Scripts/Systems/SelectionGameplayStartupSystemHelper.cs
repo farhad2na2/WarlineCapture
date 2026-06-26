@@ -65,7 +65,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
     {
         IMatchIntroStateQuery resolvedMatchIntroStateQuery = matchIntroStateQuery ?? NullMatchIntroStateQuery.Instance;
         SelectionRuntimeDiagnosticsSystemHelper selectionRuntimeDiagnosticsSystem = ResolveSelectionRuntimeDiagnosticsSystem();
-        SelectionRuntimeConfigSystem.State runtimeConfig = SelectionRuntimeConfigSystem.CreateStateFromConfig(rtsSelectionConfig, worldCamera);
+        SelectionRuntimeConfigStartupSystemHelper.State runtimeConfig = SelectionRuntimeConfigStartupSystemHelper.CreateStateFromConfig(rtsSelectionConfig, worldCamera);
         var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
         var rtsSelectionInputSystem = new RtsSelectionInputCompositionSystemHelper();
         var rtsSelectionRuntimeInputSystem = new RtsSelectionRuntimeInputCompositionSystemHelper();

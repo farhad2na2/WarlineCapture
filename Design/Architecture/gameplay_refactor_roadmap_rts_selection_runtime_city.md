@@ -179,7 +179,7 @@ Goal: delete the remaining selection context-construction boundary without repla
    - Add/keep guards that `SelectionRuntimeUpdateSystem.cs`, `RTSSelectionSystem.cs`, and the retired `RTSSelectionSystem` type must not be restored.
 
 2. Complete: Extract config state
-   - Move config/default value application out of `SelectionRuntimeContextSystem` into `SelectionRuntimeConfigSystem` or an existing config boundary.
+   - Move config/default value application out of `SelectionRuntimeContextSystem` into `SelectionRuntimeConfigStartupSystemHelper` or an existing config boundary.
    - Keep config data read-only after initialization.
 
 3. Complete: Extract diagnostics helpers

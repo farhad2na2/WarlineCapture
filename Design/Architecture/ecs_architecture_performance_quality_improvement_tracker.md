@@ -497,7 +497,7 @@ Convert the smallest pure ECS state/request systems first and prove the process.
 - [ ] Ratchet guardrail counts after the batch.
 
 Candidate examples to verify, not pre-approved:
-`MatchStartRequestStartupSystemHelper`, `RuntimeGameplayStateSystem`, `RuntimeDiagnosticsSystem`, `SelectionRuntimeConfigSystem`, `RtsSelectionInputStateCompositionSystemHelper`, `CitizenPopulationTotalsSystem`, `CitizenStatusTransitionSystem`, `RoadMinimapEventUiSystemHelper`, `RuntimeCityMinimapEventUiSystemHelper`.
+`MatchStartRequestStartupSystemHelper`, `RuntimeGameplayStateSystem`, `RuntimeDiagnosticsSystem`, `SelectionRuntimeConfigStartupSystemHelper`, `RtsSelectionInputStateCompositionSystemHelper`, `CitizenPopulationTotalsSystem`, `CitizenStatusTransitionSystem`, `RoadMinimapEventUiSystemHelper`, `RuntimeCityMinimapEventUiSystemHelper`.
 
 ### Phase 7.3: Direct Conversion Batch 2 - Startup And Config Projection
 

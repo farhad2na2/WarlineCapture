@@ -1,4 +1,4 @@
-# Phase 7 Agent C Handoff - P7-0048 SelectionRuntimeConfigSystem
+# Phase 7 Agent C Handoff - P7-0048 SelectionRuntimeConfigStartupSystemHelper
 
 Date: `2026-06-21`
 
@@ -6,9 +6,9 @@ Lane: `AgentC - Selection, Commands, Focus, And Player Intent`
 
 ## Summary
 
-`SelectionRuntimeConfigSystem` was retired/folded from a disabled `SystemBase` shell into a plain startup config-state factory.
+`SelectionRuntimeConfigStartupSystemHelper` was retired/folded from a disabled `SystemBase` shell into a plain startup config-state factory.
 
-The fold removed the `DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<SelectionRuntimeConfigSystem>()` dependency from `SelectionGameplayStartupSystem` and replaced it with the existing static `SelectionRuntimeConfigSystem.CreateStateFromConfig(...)` path.
+The fold removed the `DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<SelectionRuntimeConfigStartupSystemHelper>()` dependency from `SelectionGameplayStartupSystem` and replaced it with the existing static `SelectionRuntimeConfigStartupSystemHelper.CreateStateFromConfig(...)` path.
 
 The public behavior was preserved:
 
@@ -25,7 +25,7 @@ No new ECS owner, manager, controller, facade, MonoBehaviour loop, or managed pr
 
 ## Files Changed
 
-- `Assets/Game/Scripts/Systems/SelectionRuntimeConfigSystem.cs`
+- `Assets/Game/Scripts/Systems/SelectionRuntimeConfigStartupSystemHelper.cs`
 - `Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs`
 - `Design/Architecture/systembase_to_isystem_inventory.md`
 - `Design/Architecture/phase7_agent_c_selection_commands_tracker.md`

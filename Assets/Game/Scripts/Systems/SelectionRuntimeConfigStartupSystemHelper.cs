@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public sealed class SelectionRuntimeConfigSystem
+public sealed class SelectionRuntimeConfigStartupSystemHelper
 {
     private const float DefaultPanSensitivity = 0.03f;
     private const float DefaultZoomSpeed = 20f;

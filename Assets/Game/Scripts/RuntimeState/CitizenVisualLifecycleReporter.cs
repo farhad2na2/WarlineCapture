@@ -4,9 +4,9 @@ public sealed class CitizenVisualLifecycleReporter : MonoBehaviour
 {
     public int CitizenId;
     public bool SuppressNotifyOnDestroy;
-    private CitizenPopulationEventSystem _eventSystem;
+    private CitizenPopulationEventCompositionSystemHelper _eventSystem;
 
-    public void Bind(CitizenPopulationEventSystem eventSystem)
+    public void Bind(CitizenPopulationEventCompositionSystemHelper eventSystem)
     {
         _eventSystem = eventSystem;
     }

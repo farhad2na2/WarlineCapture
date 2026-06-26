@@ -37,7 +37,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         Func<Rect, bool> trySelectFirstBuildingInScreenRect,
         Action<IMatchRuntimeUi> bindMainMenu,
-        Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> bindGameplayFeatures,
+        Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> bindGameplayFeatures,
         Action dispose)
     {
         return new Result(
@@ -113,7 +113,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Func<Rect, bool> TrySelectFirstBuildingInScreenRect;
         public readonly Action<IMatchRuntimeUi> BindMainMenu;
-        public readonly Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> BindGameplayFeatures;
+        public readonly Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> BindGameplayFeatures;
         public readonly Action Dispose;
 
         public Result(
@@ -150,7 +150,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             Func<Rect, bool> trySelectFirstBuildingInScreenRect,
             Action<IMatchRuntimeUi> bindMainMenu,
-            Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> bindGameplayFeatures,
+            Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> bindGameplayFeatures,
             Action dispose)
         {
             SelectionClick = selectionClick;
@@ -231,7 +231,7 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             DayNightSystem dayNight,
             SelectionUiCameraSystemHelper selectionUiCameraSystem,
             SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
-            CitizenPopulationEventSystem citizenPopulationEventSystem)
+            CitizenPopulationEventCompositionSystemHelper citizenPopulationEventSystem)
         {
             BuildingCitizenPopulationCompositionSystemHelper.Bind(
                 CitizenPopulationCompositionBridge,

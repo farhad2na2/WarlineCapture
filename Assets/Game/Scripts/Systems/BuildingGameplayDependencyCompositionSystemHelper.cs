@@ -8,7 +8,7 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
     internal SelectionBuildingInteractionSystem SelectionBuildingInteractionSystem { get; private set; }
     internal RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers { get; private set; }
     internal RuntimeCityCompositionSystemHelper RuntimeCitySystem { get; private set; }
-    internal CitizenPopulationEventSystem CitizenPopulationEventSystem { get; private set; }
+    internal CitizenPopulationEventCompositionSystemHelper CitizenPopulationEventCompositionSystemHelper { get; private set; }
     internal FactionVisualSettings FactionVisualSettings { get; private set; }
     private Func<bool> ShouldBlockBuildingSelectionClick { get; set; }
     internal float BuildingFactionTintStrength => FactionVisualSettings != null ? FactionVisualSettings.BuildingFactionTintStrength : 0.45f;
@@ -31,7 +31,7 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem = null,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null,
         RuntimeCityCompositionSystemHelper runtimeCitySystem = null,
-        CitizenPopulationEventSystem citizenPopulationEventSystem = null,
+        CitizenPopulationEventCompositionSystemHelper citizenPopulationEventSystem = null,
         Func<bool> shouldBlockBuildingSelectionClick = null)
     {
         MainMenuPlayUi = mainMenuPlayUi;
@@ -46,7 +46,7 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
         if (runtimeCitySystem != null)
             RuntimeCitySystem = runtimeCitySystem;
         if (citizenPopulationEventSystem != null)
-            CitizenPopulationEventSystem = citizenPopulationEventSystem;
+            CitizenPopulationEventCompositionSystemHelper = citizenPopulationEventSystem;
         if (shouldBlockBuildingSelectionClick != null)
             ShouldBlockBuildingSelectionClick = shouldBlockBuildingSelectionClick;
     }
@@ -134,6 +134,6 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
 
     internal void NotifyHomeBuildingDestroyed(int buildingId)
     {
-        CitizenPopulationEventSystem?.NotifyHomeBuildingDestroyed(buildingId);
+        CitizenPopulationEventCompositionSystemHelper?.NotifyHomeBuildingDestroyed(buildingId);
     }
 }

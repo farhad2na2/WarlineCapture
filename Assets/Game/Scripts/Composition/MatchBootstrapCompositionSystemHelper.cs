@@ -117,14 +117,14 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     private Action<IMatchRuntimeUi> _bindRoadMainMenu;
     private Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> _bindRoadGameplayFeatures;
     private Action<IMatchRuntimeUi> _bindBuildingMainMenu;
-    private Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> _bindBuildingGameplayFeatures;
+    private Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> _bindBuildingGameplayFeatures;
     private Action<IMatchRuntimeUi> _bindSelectionMainMenu;
     private Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
     private Action _selectionRuntimeUpdate;
     private Action _citizenPopulationRuntimeUpdate;
     private Action _disposeCitizenPopulation;
     private CitizenPopulationReadModelSystem _citizenPopulationReadModel;
-    private CitizenPopulationEventSystem _citizenPopulationEventSystem;
+    private CitizenPopulationEventCompositionSystemHelper _citizenPopulationEventSystem;
     private Action _disposeSelection;
     private Action _disposeBuildingGameplay;
     private BuildingRuntimeUpdateCompositionSystemHelper.Context _buildingRuntimeUpdateContext;

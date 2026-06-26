@@ -211,7 +211,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
         DayNightSystem dayNight,
         SelectionUiCameraSystemHelper selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
-        CitizenPopulationEventSystem citizenPopulationEventSystem)
+        CitizenPopulationEventCompositionSystemHelper citizenPopulationEventSystem)
     {
         if (system != null)
         {
@@ -237,7 +237,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
         DayNightSystem dayNight,
         SelectionUiCameraSystemHelper selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
-        CitizenPopulationEventSystem citizenPopulationEventSystem)
+        CitizenPopulationEventCompositionSystemHelper citizenPopulationEventSystem)
     {
         BindState(
             dependencySystem,
@@ -252,7 +252,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
         DayNightSystem dayNight,
         SelectionUiCameraSystemHelper selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
-        CitizenPopulationEventSystem citizenPopulationEventSystem)
+        CitizenPopulationEventCompositionSystemHelper citizenPopulationEventSystem)
     {
         dependencySystem?.BindRuntimeDependencies(
             null,

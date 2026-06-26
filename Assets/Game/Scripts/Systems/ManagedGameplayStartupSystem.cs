@@ -31,7 +31,7 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteraction;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly System.Action<IMatchRuntimeUi> BindBuildingMainMenu;
-        public readonly System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> BindBuildingGameplayFeatures;
+        public readonly System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> BindBuildingGameplayFeatures;
         public readonly System.Action DisposeBuildingGameplay;
         public readonly BuildingRuntimeUpdateCompositionSystemHelper BuildingRuntimeUpdate;
         public readonly BuildingRuntimeUpdateCompositionSystemHelper.Context BuildingRuntimeUpdateContext;
@@ -70,7 +70,7 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteraction,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             System.Action<IMatchRuntimeUi> bindBuildingMainMenu,
-            System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
+            System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> bindBuildingGameplayFeatures,
             System.Action disposeBuildingGameplay,
             BuildingRuntimeUpdateCompositionSystemHelper buildingRuntimeUpdate,
             BuildingRuntimeUpdateCompositionSystemHelper.Context buildingRuntimeUpdateContext,

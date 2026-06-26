@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public sealed class CitizenPopulationEventSystem
+public sealed class CitizenPopulationEventCompositionSystemHelper
 {
     private CitizenPopulationStateSystem _state;
     private CitizenBuildingReadCompositionSystemHelper _buildingReadSystem;

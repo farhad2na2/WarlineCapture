@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 
-public sealed class SelectedUnitOrderSnapshotSystem
+public sealed class SelectedUnitOrderSnapshotCompositionSystemHelper
 {
     private struct PreservedOrderState
     {

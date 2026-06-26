@@ -26,7 +26,7 @@ public sealed class SelectedUnitOrderSnapshotSystemTests
     [Test]
     public void RestorePreservedUnitOrders_RestoresExistingComponentsAndRemovesNewOnes()
     {
-        SelectedUnitOrderSnapshotSystem system = new();
+        SelectedUnitOrderSnapshotCompositionSystemHelper system = new();
         Entity target = _entityManager.CreateEntity();
         Entity selectedWithOrders = _entityManager.CreateEntity(typeof(SelectedUnitTag));
         Entity selectedWithoutOrders = _entityManager.CreateEntity(typeof(SelectedUnitTag));

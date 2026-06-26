@@ -92,7 +92,7 @@ internal sealed class SelectionGameplayStartupSystem
         var selectionHudFeedbackSystem = new SelectionHudFeedbackBoundary();
         var focusedUnitCommandSystem = new FocusedUnitCommandSystem();
         var focusedUnitLifecycleSystem = new FocusedUnitLifecycleCompositionSystemHelper();
-        var selectedUnitOrderSnapshotSystem = new SelectedUnitOrderSnapshotSystem();
+        var selectedUnitOrderSnapshotSystem = new SelectedUnitOrderSnapshotCompositionSystemHelper();
         var buildingTargetMoveOrderSystem = new BuildingTargetMoveOrderSystem();
         var transportBoardingCommandSystem = new TransportBoardingCommandSystem();
         var focusableUnitLookupSystem = new FocusableUnitLookupCameraSystemHelper();

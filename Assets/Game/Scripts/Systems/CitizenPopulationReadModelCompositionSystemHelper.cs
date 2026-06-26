@@ -29,7 +29,7 @@ internal sealed class CitizenPopulationReadModelCompositionSystemHelper
         CitizenPopulationReadModelCompositionSystemHelper system,
         ref State state,
         CitizenPopulationTotalsSystem totalsSystem,
-        CitizenPopulationStateSystem populationState,
+        CitizenPopulationStateCompositionSystemHelper populationState,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         bool syncSummaryEntity)
     {
@@ -46,7 +46,7 @@ internal sealed class CitizenPopulationReadModelCompositionSystemHelper
 
     public void Refresh(
         CitizenPopulationTotalsSystem totalsSystem,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         bool syncSummaryEntity)
     {

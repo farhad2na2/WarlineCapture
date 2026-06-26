@@ -95,7 +95,7 @@ public sealed class CitizenVisibleUnitPresentationSystemHelperTests
             var prefabSelectionState = default(CitizenPrefabSelectionSystem.State);
             prefabSelectionSystem.Init(ref prefabSelectionState, citizenPrefabSystem, citizenPrefabContext);
 
-            var state = new CitizenPopulationStateSystem();
+            var state = new CitizenPopulationStateCompositionSystemHelper();
             var projection = new CitizenPopulationEcsProjectionCompositionSystemHelper();
             projection.ResolveEntityManager();
             SystemHandle movementSystem = world.CreateSystem<CitizenMovementCommandSystem>();
@@ -177,7 +177,7 @@ public sealed class CitizenVisibleUnitPresentationSystemHelperTests
         {
             EntityManager em = world.EntityManager;
             Entity entity = em.CreateEntity(typeof(UnitGrid));
-            var state = new CitizenPopulationStateSystem();
+            var state = new CitizenPopulationStateCompositionSystemHelper();
             var projection = new CitizenPopulationEcsProjectionCompositionSystemHelper();
             projection.ResolveEntityManager();
             state.VisibleCitizensById[7] = new VisibleCitizenComponent
@@ -210,7 +210,7 @@ public sealed class CitizenVisibleUnitPresentationSystemHelperTests
             EntityManager em = world.EntityManager;
             Entity first = em.CreateEntity(typeof(UnitGrid));
             Entity second = em.CreateEntity(typeof(UnitGrid));
-            var state = new CitizenPopulationStateSystem();
+            var state = new CitizenPopulationStateCompositionSystemHelper();
             var projection = new CitizenPopulationEcsProjectionCompositionSystemHelper();
             projection.ResolveEntityManager();
             state.VisibleCitizensById[11] = new VisibleCitizenComponent

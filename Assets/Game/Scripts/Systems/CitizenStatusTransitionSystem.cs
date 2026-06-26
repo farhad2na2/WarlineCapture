@@ -43,7 +43,7 @@ internal sealed class CitizenStatusTransitionSystem
 
     public static bool ShouldUseTravelStatus(
         CitizenStatusTransitionSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenRecordComponent citizen,
         CitizenStatus desiredStatus,
         int desiredTargetBuildingId)
@@ -54,7 +54,7 @@ internal sealed class CitizenStatusTransitionSystem
     }
 
     public bool ShouldUseTravelStatus(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenRecordComponent citizen,
         CitizenStatus desiredStatus,
         int desiredTargetBuildingId)
@@ -88,7 +88,7 @@ internal sealed class CitizenStatusTransitionSystem
 
     public static bool TrySetCitizenStatus(
         CitizenStatusTransitionSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         CitizenStatus status,
         int targetBuildingId,
@@ -102,7 +102,7 @@ internal sealed class CitizenStatusTransitionSystem
     }
 
     public bool TrySetCitizenStatus(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         CitizenStatus status,
         int targetBuildingId,
@@ -115,7 +115,7 @@ internal sealed class CitizenStatusTransitionSystem
 
     public static bool TryResolveCitizenArrival(
         CitizenStatusTransitionSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         float now,
         StoreCitizenAction storeCitizen)
@@ -126,7 +126,7 @@ internal sealed class CitizenStatusTransitionSystem
     }
 
     public bool TryResolveCitizenArrival(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         float now,
         StoreCitizenAction storeCitizen)
@@ -136,7 +136,7 @@ internal sealed class CitizenStatusTransitionSystem
 
     public static bool TryMarkCitizenDead(
         CitizenStatusTransitionSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         string reason,
         float now,
@@ -148,7 +148,7 @@ internal sealed class CitizenStatusTransitionSystem
     }
 
     public bool TryMarkCitizenDead(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         string reason,
         float now,
@@ -184,7 +184,7 @@ internal sealed class CitizenStatusTransitionSystem
     }
 
     private static bool ShouldUseTravelStatusState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenRecordComponent citizen,
         CitizenStatus desiredStatus,
         int desiredTargetBuildingId)
@@ -226,7 +226,7 @@ internal sealed class CitizenStatusTransitionSystem
     }
 
     private static bool TrySetCitizenStatusState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         CitizenStatus status,
         int targetBuildingId,
@@ -243,7 +243,7 @@ internal sealed class CitizenStatusTransitionSystem
     }
 
     private static bool TryResolveCitizenArrivalState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         float now,
         StoreCitizenAction storeCitizen)
@@ -261,7 +261,7 @@ internal sealed class CitizenStatusTransitionSystem
     }
 
     private static bool TryMarkCitizenDeadState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         string reason,
         float now,

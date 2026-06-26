@@ -19,7 +19,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
 
     public static bool TryGetHouseholdReferenceWorldPosition(
         CitizenTravelSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -32,7 +32,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     public bool TryGetHouseholdReferenceWorldPosition(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -50,7 +50,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
 
     public static bool TryGetCitizenReferenceWorldPosition(
         CitizenTravelSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int citizenId,
         out Vector3 worldPosition)
@@ -61,7 +61,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     public bool TryGetCitizenReferenceWorldPosition(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int citizenId,
         out Vector3 worldPosition)
@@ -71,7 +71,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
 
     public static bool ShouldCitizenBeVisible(
         CitizenTravelSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -86,7 +86,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     public bool ShouldCitizenBeVisible(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -108,7 +108,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
 
     public static int GetTravelOriginBuildingId(
         CitizenTravelSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenRecordComponent citizen)
     {
         return system != null
@@ -116,14 +116,14 @@ internal sealed partial class CitizenTravelSystem : SystemBase
             : GetTravelOriginBuildingIdState(state, citizen);
     }
 
-    public int GetTravelOriginBuildingId(CitizenPopulationStateSystem state, CitizenRecordComponent citizen)
+    public int GetTravelOriginBuildingId(CitizenPopulationStateCompositionSystemHelper state, CitizenRecordComponent citizen)
     {
         return GetTravelOriginBuildingIdState(state, citizen);
     }
 
     public static bool TryGetCitizenReferenceAnchorWorldPosition(
         CitizenTravelSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -136,7 +136,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     public bool TryGetCitizenReferenceAnchorWorldPosition(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -170,7 +170,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
 
     public static bool TryGetCitizenMoveGoal(
         CitizenTravelSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -184,7 +184,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     public bool TryGetCitizenMoveGoal(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -204,7 +204,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
 
     public static bool TryGetCitizenSegmentGoalCell(
         CitizenTravelSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenRecordComponent citizen,
@@ -217,7 +217,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     public bool TryGetCitizenSegmentGoalCell(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenRecordComponent citizen,
@@ -235,7 +235,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
 
     public static float EstimateTravelSeconds(
         CitizenTravelSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenRecordComponent citizen,
         int targetBuildingId)
@@ -246,7 +246,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     public float EstimateTravelSeconds(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenRecordComponent citizen,
         int targetBuildingId)
@@ -277,7 +277,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
 
     public static bool TryGetCitizenBuildingApproachWorldPosition(
         CitizenTravelSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int buildingId,
@@ -290,7 +290,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     public bool TryGetCitizenBuildingApproachWorldPosition(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int buildingId,
@@ -322,7 +322,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     private static bool TryGetHouseholdReferenceWorldPositionState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -344,7 +344,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     private static bool TryGetCitizenReferenceWorldPositionState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int citizenId,
         out Vector3 worldPosition)
@@ -360,7 +360,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     private static bool ShouldCitizenBeVisibleState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -387,7 +387,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
         return true;
     }
 
-    private static int GetTravelOriginBuildingIdState(CitizenPopulationStateSystem state, CitizenRecordComponent citizen)
+    private static int GetTravelOriginBuildingIdState(CitizenPopulationStateCompositionSystemHelper state, CitizenRecordComponent citizen)
     {
         if (state.TryGetHousehold(citizen.HouseholdId, out CitizenHouseholdRecordComponent household))
         {
@@ -411,7 +411,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     private static bool TryGetCitizenReferenceAnchorWorldPositionState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -460,7 +460,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     private static bool TryGetCitizenMoveGoalState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -476,7 +476,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     private static bool TryGetCitizenSegmentGoalCellState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenRecordComponent citizen,
@@ -515,7 +515,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     private static float EstimateTravelSecondsState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenRecordComponent citizen,
         int targetBuildingId)
@@ -552,7 +552,7 @@ internal sealed partial class CitizenTravelSystem : SystemBase
     }
 
     private static bool TryGetCitizenBuildingApproachWorldPositionState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int buildingId,

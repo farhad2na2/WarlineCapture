@@ -85,7 +85,7 @@ internal sealed class CitizenPopulationDiagnosticsSystemHelper
             MarkSkippedForPathfindingState(ref timings);
     }
 
-    public static void EndFrame(CitizenPopulationDiagnosticsSystemHelper system, ref FrameTimings timings, CitizenPopulationStateSystem state)
+    public static void EndFrame(CitizenPopulationDiagnosticsSystemHelper system, ref FrameTimings timings, CitizenPopulationStateCompositionSystemHelper state)
     {
         if (system != null)
         {
@@ -108,7 +108,7 @@ internal sealed class CitizenPopulationDiagnosticsSystemHelper
         MarkSkippedForPathfindingState(ref timings);
     }
 
-    public void EndFrame(ref FrameTimings timings, CitizenPopulationStateSystem state)
+    public void EndFrame(ref FrameTimings timings, CitizenPopulationStateCompositionSystemHelper state)
     {
         EndFrameState(ref timings, state);
     }
@@ -141,7 +141,7 @@ internal sealed class CitizenPopulationDiagnosticsSystemHelper
         timings.SkippedForPathfinding = true;
     }
 
-    private static void EndFrameState(ref FrameTimings timings, CitizenPopulationStateSystem state)
+    private static void EndFrameState(ref FrameTimings timings, CitizenPopulationStateCompositionSystemHelper state)
     {
         double elapsed = UnityEngine.Time.realtimeSinceStartupAsDouble - timings.StartTime;
         if (!EnableCitizenPopulationDiagnostics || elapsed < FreezeLogThresholdSeconds)

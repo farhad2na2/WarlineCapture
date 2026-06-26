@@ -48,7 +48,7 @@ internal sealed class CitizenPopulationEcsProjectionCompositionSystemHelper
         _entityManager.AddComponentData(_populationSummaryEntity, default(CitizenPopulationSummary));
     }
 
-    public void DestroyAllCitizenEntities(CitizenPopulationStateSystem state)
+    public void DestroyAllCitizenEntities(CitizenPopulationStateCompositionSystemHelper state)
     {
         if (!HasWorld)
             return;
@@ -129,7 +129,7 @@ internal sealed class CitizenPopulationEcsProjectionCompositionSystemHelper
         });
     }
 
-    public void SyncCitizenEntity(CitizenPopulationStateSystem state, CitizenRecordComponent citizen)
+    public void SyncCitizenEntity(CitizenPopulationStateCompositionSystemHelper state, CitizenRecordComponent citizen)
     {
         if (!HasWorld)
             return;

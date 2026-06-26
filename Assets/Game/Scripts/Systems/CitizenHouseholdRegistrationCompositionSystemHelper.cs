@@ -11,7 +11,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
 
     public static void SyncRemovedHouses(
         CitizenHouseholdRegistrationCompositionSystemHelper system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         DisplaceHouseholdAction displaceHousehold)
     {
@@ -25,7 +25,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
     }
 
     public void SyncRemovedHouses(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         DisplaceHouseholdAction displaceHousehold)
     {
@@ -34,7 +34,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
 
     public static void RegisterNewHouses(
         CitizenHouseholdRegistrationCompositionSystemHelper system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         TryRehouseDisplacedHouseholdAction tryRehouseDisplacedHousehold,
         StoreHouseholdAction storeHousehold,
@@ -60,7 +60,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
     }
 
     public void RegisterNewHouses(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         TryRehouseDisplacedHouseholdAction tryRehouseDisplacedHousehold,
         StoreHouseholdAction storeHousehold,
@@ -76,7 +76,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
 
     public static bool TryRehouseDisplacedHousehold(
         CitizenHouseholdRegistrationCompositionSystemHelper system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int newHomeBuildingId,
         StoreHouseholdAction storeHousehold,
@@ -101,7 +101,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
     }
 
     public bool TryRehouseDisplacedHousehold(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int newHomeBuildingId,
         StoreHouseholdAction storeHousehold,
@@ -119,7 +119,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
 
     public static int CountLivingHouseholdMembers(
         CitizenHouseholdRegistrationCompositionSystemHelper system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenHouseholdRecordComponent household)
     {
         return system != null
@@ -127,14 +127,14 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
             : CountLivingHouseholdMembersState(state, household);
     }
 
-    public int CountLivingHouseholdMembers(CitizenPopulationStateSystem state, CitizenHouseholdRecordComponent household)
+    public int CountLivingHouseholdMembers(CitizenPopulationStateCompositionSystemHelper state, CitizenHouseholdRecordComponent household)
     {
         return CountLivingHouseholdMembersState(state, household);
     }
 
     public static int CountLivingHouseholdRefugees(
         CitizenHouseholdRegistrationCompositionSystemHelper system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenHouseholdRecordComponent household)
     {
         return system != null
@@ -142,14 +142,14 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
             : CountLivingHouseholdRefugeesState(state, household);
     }
 
-    public int CountLivingHouseholdRefugees(CitizenPopulationStateSystem state, CitizenHouseholdRecordComponent household)
+    public int CountLivingHouseholdRefugees(CitizenPopulationStateCompositionSystemHelper state, CitizenHouseholdRecordComponent household)
     {
         return CountLivingHouseholdRefugeesState(state, household);
     }
 
     public static bool IsCitizenAlive(
         CitizenHouseholdRegistrationCompositionSystemHelper system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int citizenId)
     {
         return system != null
@@ -157,25 +157,25 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
             : IsCitizenAliveState(state, citizenId);
     }
 
-    public bool IsCitizenAlive(CitizenPopulationStateSystem state, int citizenId)
+    public bool IsCitizenAlive(CitizenPopulationStateCompositionSystemHelper state, int citizenId)
     {
         return IsCitizenAliveState(state, citizenId);
     }
 
-    public static bool HasHouseholdData(CitizenHouseholdRegistrationCompositionSystemHelper system, CitizenPopulationStateSystem state)
+    public static bool HasHouseholdData(CitizenHouseholdRegistrationCompositionSystemHelper system, CitizenPopulationStateCompositionSystemHelper state)
     {
         return system != null
             ? system.HasHouseholdData(state)
             : HasHouseholdDataState(state);
     }
 
-    public bool HasHouseholdData(CitizenPopulationStateSystem state)
+    public bool HasHouseholdData(CitizenPopulationStateCompositionSystemHelper state)
     {
         return HasHouseholdDataState(state);
     }
 
     private static void SyncRemovedHousesState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         DisplaceHouseholdAction displaceHousehold)
     {
@@ -209,7 +209,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
     }
 
     private static void RegisterNewHousesState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         TryRehouseDisplacedHouseholdAction tryRehouseDisplacedHousehold,
         StoreHouseholdAction storeHousehold,
@@ -286,7 +286,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
     }
 
     private static bool TryRehouseDisplacedHouseholdState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         int newHomeBuildingId,
         StoreHouseholdAction storeHousehold,
@@ -317,7 +317,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
         return true;
     }
 
-    private static int CountLivingHouseholdMembersState(CitizenPopulationStateSystem state, CitizenHouseholdRecordComponent household)
+    private static int CountLivingHouseholdMembersState(CitizenPopulationStateCompositionSystemHelper state, CitizenHouseholdRecordComponent household)
     {
         int count = 0;
         if (IsCitizenAliveState(state, household.MaleCitizenId))
@@ -327,7 +327,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
         return count;
     }
 
-    private static int CountLivingHouseholdRefugeesState(CitizenPopulationStateSystem state, CitizenHouseholdRecordComponent household)
+    private static int CountLivingHouseholdRefugeesState(CitizenPopulationStateCompositionSystemHelper state, CitizenHouseholdRecordComponent household)
     {
         int count = 0;
         if (IsCitizenRefugeeState(state, household.MaleCitizenId))
@@ -337,17 +337,17 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
         return count;
     }
 
-    private static bool IsCitizenAliveState(CitizenPopulationStateSystem state, int citizenId)
+    private static bool IsCitizenAliveState(CitizenPopulationStateCompositionSystemHelper state, int citizenId)
     {
         return state.TryGetCitizen(citizenId, out CitizenRecordComponent citizen) && citizen.LifeState != CitizenLifeState.Dead;
     }
 
-    private static bool HasHouseholdDataState(CitizenPopulationStateSystem state)
+    private static bool HasHouseholdDataState(CitizenPopulationStateCompositionSystemHelper state)
     {
         return state.HouseholdCount > 0;
     }
 
-    private static int FindDisplacedHouseholdForRehousing(CitizenPopulationStateSystem state)
+    private static int FindDisplacedHouseholdForRehousing(CitizenPopulationStateCompositionSystemHelper state)
     {
         state.PopulateHouseholdIds();
         for (int i = 0; i < state.ScratchHouseholdIds.Count; i++)
@@ -368,7 +368,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
     }
 
     private static void RehouseCitizenState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         int newHomeBuildingId,
         int workBuildingId,
@@ -394,7 +394,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
         storeCitizen(citizen);
     }
 
-    private static bool IsCitizenRefugeeState(CitizenPopulationStateSystem state, int citizenId)
+    private static bool IsCitizenRefugeeState(CitizenPopulationStateCompositionSystemHelper state, int citizenId)
     {
         if (!state.TryGetCitizen(citizenId, out CitizenRecordComponent citizen))
             return false;
@@ -403,7 +403,7 @@ internal sealed class CitizenHouseholdRegistrationCompositionSystemHelper
                (citizen.Status == CitizenStatus.RefugeeSeekingShelter || citizen.Status == CitizenStatus.AtRefugeeTent);
     }
 
-    private static bool IsCitizenAwaitingRehousingState(CitizenPopulationStateSystem state, int citizenId)
+    private static bool IsCitizenAwaitingRehousingState(CitizenPopulationStateCompositionSystemHelper state, int citizenId)
     {
         if (!state.TryGetCitizen(citizenId, out CitizenRecordComponent citizen))
             return false;

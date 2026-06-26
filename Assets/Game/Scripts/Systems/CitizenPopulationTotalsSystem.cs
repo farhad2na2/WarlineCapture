@@ -1,20 +1,20 @@
 internal sealed class CitizenPopulationTotalsSystem
 {
-    public static bool HasCitizenData(CitizenPopulationTotalsSystem system, CitizenPopulationStateSystem state)
+    public static bool HasCitizenData(CitizenPopulationTotalsSystem system, CitizenPopulationStateCompositionSystemHelper state)
     {
         return system != null
             ? system.HasCitizenData(state)
             : HasCitizenDataState(state);
     }
 
-    public bool HasCitizenData(CitizenPopulationStateSystem state)
+    public bool HasCitizenData(CitizenPopulationStateCompositionSystemHelper state)
     {
         return HasCitizenDataState(state);
     }
 
     public static bool HasHouseholdData(
         CitizenPopulationTotalsSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
     {
         return system != null
@@ -22,14 +22,14 @@ internal sealed class CitizenPopulationTotalsSystem
             : HasHouseholdDataState(state, ecsProjection);
     }
 
-    public bool HasHouseholdData(CitizenPopulationStateSystem state, CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
+    public bool HasHouseholdData(CitizenPopulationStateCompositionSystemHelper state, CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
     {
         return HasHouseholdDataState(state, ecsProjection);
     }
 
     public static CitizenPopulationTotals Calculate(
         CitizenPopulationTotalsSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
     {
         return system != null
@@ -37,17 +37,17 @@ internal sealed class CitizenPopulationTotalsSystem
             : CalculateState(state, ecsProjection);
     }
 
-    public CitizenPopulationTotals Calculate(CitizenPopulationStateSystem state, CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
+    public CitizenPopulationTotals Calculate(CitizenPopulationStateCompositionSystemHelper state, CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
     {
         return CalculateState(state, ecsProjection);
     }
 
-    private static bool HasCitizenDataState(CitizenPopulationStateSystem state)
+    private static bool HasCitizenDataState(CitizenPopulationStateCompositionSystemHelper state)
     {
         return state.CitizenCount > 0;
     }
 
-    private static bool HasHouseholdDataState(CitizenPopulationStateSystem state, CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
+    private static bool HasHouseholdDataState(CitizenPopulationStateCompositionSystemHelper state, CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
     {
         if (ecsProjection.HasWorld)
             return ecsProjection.HasHouseholdEntities();
@@ -55,7 +55,7 @@ internal sealed class CitizenPopulationTotalsSystem
         return state.HouseholdCount > 0;
     }
 
-    private static CitizenPopulationTotals CalculateState(CitizenPopulationStateSystem state, CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
+    private static CitizenPopulationTotals CalculateState(CitizenPopulationStateCompositionSystemHelper state, CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
     {
         int aliveCitizens = 0;
         int deadCitizens = 0;

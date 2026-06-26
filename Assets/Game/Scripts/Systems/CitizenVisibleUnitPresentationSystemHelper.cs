@@ -16,7 +16,7 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
     public delegate bool HandleCitizenDeathAction(int citizenId, string reason);
 
     public void SyncVisibleCitizens(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -78,7 +78,7 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
         }
     }
 
-    public void ClearVisibleCitizens(CitizenPopulationStateSystem state, CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
+    public void ClearVisibleCitizens(CitizenPopulationStateCompositionSystemHelper state, CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection)
     {
         if (ecsProjection.HasWorld)
         {
@@ -106,7 +106,7 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
     }
 
     private void SyncVisibleCitizenTravel(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenStatusTransitionSystem statusTransitionSystem,
@@ -201,7 +201,7 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
     }
 
     public void RemoveVisibleCitizen(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         int citizenId)
     {
@@ -224,7 +224,7 @@ internal sealed class CitizenVisibleUnitPresentationSystemHelper
     }
 
     public void SpawnVisibleCitizen(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenPrefabSystem citizenPrefabSystem,
         CitizenPrefabSystem.Context citizenPrefabContext,

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public sealed class CitizenPopulationEventCompositionSystemHelper
 {
-    private CitizenPopulationStateSystem _state;
+    private CitizenPopulationStateCompositionSystemHelper _state;
     private CitizenBuildingReadCompositionSystemHelper _buildingReadSystem;
     private CitizenHouseholdRegistrationCompositionSystemHelper _householdRegistrationSystem;
     private CitizenRefugeeSystem _refugeeSystem;
@@ -16,7 +16,7 @@ public sealed class CitizenPopulationEventCompositionSystemHelper
     private CitizenRefugeeSystem.MarkCitizenDeadAction _markCitizenDead;
 
     internal void Init(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenRefugeeSystem refugeeSystem,

@@ -5,7 +5,7 @@ internal sealed class CitizenPopulationDebugDiagnosticsSystemHelper
     public delegate bool KillCitizenAction(int citizenId, string reason);
 
     public bool TryGetCitizenDebugSnapshot(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         int citizenId,
         out string snapshot)
@@ -48,7 +48,7 @@ internal sealed class CitizenPopulationDebugDiagnosticsSystemHelper
     }
 
     public bool TrySetCitizenStatusForDebug(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenStatusTransitionSystem statusTransitionSystem,
         int citizenId,
         CitizenStatus status,

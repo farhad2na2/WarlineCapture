@@ -33,7 +33,7 @@ internal sealed class CitizenRefugeeSystem
 
     public static void NotifyHomeBuildingDestroyed(
         CitizenRefugeeSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         int buildingId,
@@ -71,7 +71,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     public void NotifyHomeBuildingDestroyed(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         int buildingId,
@@ -95,7 +95,7 @@ internal sealed class CitizenRefugeeSystem
 
     public static void UpdateRefugeeTentState(
         CitizenRefugeeSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         StoreHouseholdAction storeHousehold,
@@ -130,7 +130,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     public void UpdateRefugeeTentState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         StoreHouseholdAction storeHousehold,
@@ -152,7 +152,7 @@ internal sealed class CitizenRefugeeSystem
 
     public static void DisplaceHousehold(
         CitizenRefugeeSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenHouseholdRecordComponent household,
@@ -193,7 +193,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     public void DisplaceHousehold(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenHouseholdRecordComponent household,
@@ -219,7 +219,7 @@ internal sealed class CitizenRefugeeSystem
 
     public static void ReleaseHouseholdRefugeeAssignment(
         CitizenRefugeeSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int householdId,
         StoreHouseholdAction storeHousehold)
     {
@@ -233,7 +233,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     public void ReleaseHouseholdRefugeeAssignment(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int householdId,
         StoreHouseholdAction storeHousehold)
     {
@@ -242,7 +242,7 @@ internal sealed class CitizenRefugeeSystem
 
     public static int GetAssignedRefugeeOccupancy(
         CitizenRefugeeSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         int refugeeTentBuildingId)
     {
@@ -252,7 +252,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     public int GetAssignedRefugeeOccupancy(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         int refugeeTentBuildingId)
     {
@@ -262,7 +262,7 @@ internal sealed class CitizenRefugeeSystem
     public static void UpdateRefugeeUpkeep(
         CitizenRefugeeSystem system,
         ref State refugeeState,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenResourceSystem citizenResourceSystem,
@@ -298,7 +298,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     public void UpdateRefugeeUpkeep(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenResourceSystem citizenResourceSystem,
@@ -326,7 +326,7 @@ internal sealed class CitizenRefugeeSystem
 
     public static bool TryFindHouseholdByHomeBuildingId(
         CitizenRefugeeSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int buildingId,
         out CitizenHouseholdRecordComponent household)
     {
@@ -336,7 +336,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     public bool TryFindHouseholdByHomeBuildingId(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int buildingId,
         out CitizenHouseholdRecordComponent household)
     {
@@ -349,7 +349,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     private static void NotifyHomeBuildingDestroyedState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         int buildingId,
@@ -378,7 +378,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     private static void UpdateRefugeeTentStateState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         StoreHouseholdAction storeHousehold,
@@ -425,7 +425,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     private static void DisplaceHouseholdState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenHouseholdRecordComponent household,
@@ -453,7 +453,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     private static void ReleaseHouseholdRefugeeAssignmentState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int householdId,
         StoreHouseholdAction storeHousehold)
     {
@@ -465,7 +465,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     private static int GetAssignedRefugeeOccupancyState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         int refugeeTentBuildingId)
     {
@@ -486,7 +486,7 @@ internal sealed class CitizenRefugeeSystem
 
     private static void UpdateRefugeeUpkeepState(
         ref State refugeeState,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenResourceSystem citizenResourceSystem,
@@ -553,7 +553,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     private static bool TryFindHouseholdByHomeBuildingIdState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int buildingId,
         out CitizenHouseholdRecordComponent household)
     {
@@ -582,7 +582,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     private static int FindNearestAvailableRefugeeTent(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenHouseholdRecordComponent household,
@@ -623,7 +623,7 @@ internal sealed class CitizenRefugeeSystem
     }
 
     private static void MoveCitizenToRefugeeState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         int citizenId,
         int refugeeTentBuildingId,
         string reason,

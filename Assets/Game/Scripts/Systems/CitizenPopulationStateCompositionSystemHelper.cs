@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-internal sealed class CitizenPopulationStateSystem
+internal sealed class CitizenPopulationStateCompositionSystemHelper
 {
     private readonly Dictionary<int, int> _householdIdsByHomeBuildingId = new();
     private readonly Dictionary<int, CitizenHouseholdRecordComponent> _householdsById = new();

@@ -21,7 +21,7 @@ internal sealed class CitizenScheduleSystem
 
     public static CitizenStatus GetScheduledStatus(
         CitizenScheduleSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         DayNightSystem dayNightSystem,
         CitizenRecordComponent citizen)
     {
@@ -31,7 +31,7 @@ internal sealed class CitizenScheduleSystem
     }
 
     public CitizenStatus GetScheduledStatus(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         DayNightSystem dayNightSystem,
         CitizenRecordComponent citizen)
     {
@@ -40,7 +40,7 @@ internal sealed class CitizenScheduleSystem
 
     public static int GetScheduledTargetBuildingId(
         CitizenScheduleSystem system,
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         DayNightSystem dayNightSystem,
         CitizenRecordComponent citizen,
         CitizenStatus status)
@@ -51,7 +51,7 @@ internal sealed class CitizenScheduleSystem
     }
 
     public int GetScheduledTargetBuildingId(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         DayNightSystem dayNightSystem,
         CitizenRecordComponent citizen,
         CitizenStatus status)
@@ -72,7 +72,7 @@ internal sealed class CitizenScheduleSystem
     }
 
     private static CitizenStatus GetScheduledStatusState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         DayNightSystem dayNightSystem,
         CitizenRecordComponent citizen)
     {
@@ -151,7 +151,7 @@ internal sealed class CitizenScheduleSystem
     }
 
     private static int GetScheduledTargetBuildingIdState(
-        CitizenPopulationStateSystem state,
+        CitizenPopulationStateCompositionSystemHelper state,
         DayNightSystem dayNightSystem,
         CitizenRecordComponent citizen,
         CitizenStatus status)

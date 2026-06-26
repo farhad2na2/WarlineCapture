@@ -91,7 +91,7 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
 
     private void RecalculateTotalsFromRecords(bool syncSummaryEntity)
     {
-        CitizenPopulationReadModelSystem.Refresh(
+        CitizenPopulationReadModelCompositionSystemHelper.Refresh(
             _systems.ReadModel,
             ref _systems.ReadModelState,
             _systems.TotalsSystem,

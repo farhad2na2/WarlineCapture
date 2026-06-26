@@ -1,4 +1,4 @@
-internal sealed class CitizenPopulationReadModelSystem
+internal sealed class CitizenPopulationReadModelCompositionSystemHelper
 {
     public struct State
     {
@@ -9,7 +9,7 @@ internal sealed class CitizenPopulationReadModelSystem
 
     public CitizenPopulationTotals Totals => _totals;
 
-    public static void Reset(CitizenPopulationReadModelSystem system, ref State state)
+    public static void Reset(CitizenPopulationReadModelCompositionSystemHelper system, ref State state)
     {
         if (system != null)
         {
@@ -26,7 +26,7 @@ internal sealed class CitizenPopulationReadModelSystem
     }
 
     public static void Refresh(
-        CitizenPopulationReadModelSystem system,
+        CitizenPopulationReadModelCompositionSystemHelper system,
         ref State state,
         CitizenPopulationTotalsSystem totalsSystem,
         CitizenPopulationStateSystem populationState,
@@ -56,7 +56,7 @@ internal sealed class CitizenPopulationReadModelSystem
     }
 
     public static void GetTotals(
-        CitizenPopulationReadModelSystem system,
+        CitizenPopulationReadModelCompositionSystemHelper system,
         ref State state,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         out int households,

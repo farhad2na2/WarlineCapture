@@ -123,7 +123,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     private Action _selectionRuntimeUpdate;
     private Action _citizenPopulationRuntimeUpdate;
     private Action _disposeCitizenPopulation;
-    private CitizenPopulationReadModelSystem _citizenPopulationReadModel;
+    private CitizenPopulationReadModelCompositionSystemHelper _citizenPopulationReadModel;
     private CitizenPopulationEventCompositionSystemHelper _citizenPopulationEventSystem;
     private Action _disposeSelection;
     private Action _disposeBuildingGameplay;

@@ -12,8 +12,8 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         public readonly CitizenPopulationStateSystem State = new();
         public readonly CitizenPopulationEcsProjectionCompositionSystemHelper EcsProjection = new();
         public readonly CitizenPopulationTotalsSystem TotalsSystem = ResolveCitizenPopulationTotalsSystem();
-        public readonly CitizenPopulationReadModelSystem ReadModel = new();
-        public CitizenPopulationReadModelSystem.State ReadModelState;
+        public readonly CitizenPopulationReadModelCompositionSystemHelper ReadModel = new();
+        public CitizenPopulationReadModelCompositionSystemHelper.State ReadModelState;
         public readonly CitizenBuildingReadCompositionSystemHelper BuildingReadSystem = new();
         public readonly CitizenHouseholdRegistrationCompositionSystemHelper HouseholdRegistrationSystem = ResolveCitizenHouseholdRegistrationSystem();
         public readonly CitizenRefugeeSystem RefugeeSystem = ResolveCitizenRefugeeSystem();
@@ -119,7 +119,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         result.EcsProjection.ResolveEntityManager();
         result.VisibleUnitSystem.ClearVisibleCitizens(result.State, result.EcsProjection);
         result.State.Reset();
-        CitizenPopulationReadModelSystem.Reset(result.ReadModel, ref result.ReadModelState);
+        CitizenPopulationReadModelCompositionSystemHelper.Reset(result.ReadModel, ref result.ReadModelState);
         CitizenPopulationLifecycleCompositionSystemHelper.Reset(result.LifecycleSystem, ref result.LifecycleState);
         CitizenRefugeeSystem.Reset(result.RefugeeSystem, ref result.RefugeeState);
         CitizenDangerCompositionSystemHelper.Reset(result.DangerSystem);
@@ -139,7 +139,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
             result.RuntimeUpdateSystem.StoreCitizen,
             result.RuntimeUpdateSystem.HandleCitizenDeath);
         result.EcsProjection.EnsurePopulationSummaryEntity();
-        CitizenPopulationReadModelSystem.Refresh(
+        CitizenPopulationReadModelCompositionSystemHelper.Refresh(
             result.ReadModel,
             ref result.ReadModelState,
             result.TotalsSystem,
@@ -169,7 +169,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         result.EcsProjection.DestroyAllCitizenEntities(result.State);
         result.VisibleUnitSystem.ClearVisibleCitizens(result.State, result.EcsProjection);
         result.State.Reset();
-        CitizenPopulationReadModelSystem.Reset(result.ReadModel, ref result.ReadModelState);
+        CitizenPopulationReadModelCompositionSystemHelper.Reset(result.ReadModel, ref result.ReadModelState);
         result.BuildingReadSystem.Dispose();
         CitizenDangerCompositionSystemHelper.Reset(result.DangerSystem);
         CitizenPopulationLifecycleCompositionSystemHelper.Reset(result.LifecycleSystem, ref result.LifecycleState);

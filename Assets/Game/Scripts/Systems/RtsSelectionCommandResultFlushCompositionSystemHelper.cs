@@ -329,7 +329,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
             context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
                 context.BuildingPlacementInteractionContext,
-                $"SelectionUiCommandSystem.{mode}");
+                $"SelectionUiCommandUiSystemHelper.{mode}");
             context.SetCameraDragging?.Invoke(false);
             context.ClearHudCommandMode?.Invoke();
             context.ApplyHudCommandResult?.Invoke(
@@ -393,7 +393,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
-            "SelectionUiCommandSystem.EnterMoveTargetMode");
+            "SelectionUiCommandUiSystemHelper.EnterMoveTargetMode");
         context.SetCameraDragging?.Invoke(false);
         if (!accepted)
         {
@@ -443,7 +443,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             context.SetExplicitAttackTargetModeActive?.Invoke(false);
             context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
                 context.BuildingPlacementInteractionContext,
-                "SelectionUiCommandSystem.EnterAttackTargetMode");
+                "SelectionUiCommandUiSystemHelper.EnterAttackTargetMode");
         }
 
         if (enterAttackTargetMode || accepted)
@@ -498,7 +498,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             context.SetExplicitAttackTargetModeActive?.Invoke(false);
             context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
                 context.BuildingPlacementInteractionContext,
-                "SelectionUiCommandSystem.EnterSelectionMode");
+                "SelectionUiCommandUiSystemHelper.EnterSelectionMode");
         }
 
         context.SetHudWorldMarkersVisible?.Invoke(false);
@@ -533,7 +533,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
         context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
-            "SelectionUiCommandSystem.EnterScanTargetMode");
+            "SelectionUiCommandUiSystemHelper.EnterScanTargetMode");
         context.SetCameraDragging?.Invoke(false);
         context.SetHudWorldMarkersVisible?.Invoke(false);
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Scan);
@@ -560,7 +560,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
-            "SelectionUiCommandSystem.EnterBoardTargetMode");
+            "SelectionUiCommandUiSystemHelper.EnterBoardTargetMode");
         context.SetCameraDragging?.Invoke(false);
 
         if (toggledOff)

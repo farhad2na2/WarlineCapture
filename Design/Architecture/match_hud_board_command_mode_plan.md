@@ -105,7 +105,7 @@ The older selected-transport "call nearest soldiers to board this transport" beh
 
 ### UI Request
 
-- Board button calls a method on the existing UI command boundary, for example `SelectionUiCommandSystem.RequestBoardTargetMode()`.
+- Board button calls a method on the existing UI command boundary, for example `SelectionUiCommandUiSystemHelper.RequestBoardTargetMode()`.
 - The request captures/suppresses the UI click release so the same click cannot also become a world click.
 - The request enqueues a command intent, for example `RtsSelectionCommandIntentKind.EnterBoardTargetMode`.
 - The command system chooses the Board targeting direction from current selection:
@@ -190,7 +190,7 @@ The older selected-transport "call nearest soldiers to board this transport" beh
 ### Phase 3: UI Wiring And Visuals
 
 - [x] Add or reuse serialized Board button references on the relevant Match HUD `*View`.
-- [x] Add `SelectionUiCommandSystem.RequestBoardTargetMode()`.
+- [x] Add `SelectionUiCommandUiSystemHelper.RequestBoardTargetMode()`.
 - [x] Bind Board button clicks to the request boundary without gameplay policy in the view.
 - [x] Drive Board selected sprite from command-mode read-model state.
 - [x] Verify Board deselects visually when Move, Attack, Scan, Build, Hold, Stop, Return, Destroy, or another command is clicked through shared command-mode clear paths.

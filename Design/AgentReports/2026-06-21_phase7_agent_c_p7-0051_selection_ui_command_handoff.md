@@ -1,14 +1,14 @@
-# Phase 7 Agent C Handoff - P7-0051 SelectionUiCommandSystem
+# Phase 7 Agent C Handoff - P7-0051 SelectionUiCommandUiSystemHelper
 
 ## Scope
 
 - Lane: `AgentC` selection, commands, focus, and player intent.
-- Inventory row: `P7-0051 SelectionUiCommandSystem`.
+- Inventory row: `P7-0051 SelectionUiCommandUiSystemHelper`.
 - Result: retired/folded from disabled `SystemBase` into a plain UI command facade.
 
 ## Changes
 
-- Removed `[DisableAutoCreation]`, `SystemBase` inheritance, and empty ECS lifecycle methods from `SelectionUiCommandSystem`.
+- Removed `[DisableAutoCreation]`, `SystemBase` inheritance, and empty ECS lifecycle methods from `SelectionUiCommandUiSystemHelper`.
 - Preserved the `ISelectionUiCommand` implementation and all public UI command methods:
   - selection mode enter/exit;
   - move, attack, scan, board target modes;

@@ -39,7 +39,7 @@ internal sealed class ManagedGameplayStartupSystemHelper
         public readonly System.Action<IMatchHudSelectionPanelView> BindMatchHudSelectionPanel;
         public readonly System.Action SelectionRuntimeUpdate;
         public readonly System.Action DisposeSelection;
-        public readonly SelectionUiCommandSystem SelectionUiCommand;
+        public readonly SelectionUiCommandUiSystemHelper SelectionUiCommand;
         public readonly SelectionUiReadModelSystem SelectionUiReadModel;
         public readonly SelectionUiCameraSystemHelper SelectionUiCamera;
         public readonly SelectionBuildingInteractionCompositionSystemHelper SelectionBuildingInteraction;
@@ -78,7 +78,7 @@ internal sealed class ManagedGameplayStartupSystemHelper
             System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel,
             System.Action selectionRuntimeUpdate,
             System.Action disposeSelection,
-            SelectionUiCommandSystem selectionUiCommand,
+            SelectionUiCommandUiSystemHelper selectionUiCommand,
             SelectionUiReadModelSystem selectionUiReadModel,
             SelectionUiCameraSystemHelper selectionUiCamera,
             SelectionBuildingInteractionCompositionSystemHelper selectionBuildingInteraction,

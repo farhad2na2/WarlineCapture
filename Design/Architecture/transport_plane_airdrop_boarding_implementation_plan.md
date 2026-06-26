@@ -40,7 +40,7 @@ Each phase below should be updated to `Pending`, `In Progress`, `Complete`, or `
 - Do not move boarding, airdrop, or cargo state into UI, bootstrap, scene scripts, or config-only behavior.
 - Do not make `UnitTransportBoardingSystem` a helper surface. It should remain only the boarding-completion tick that consumes `UnitTransportBoardingTarget`.
 - Do not reuse helicopter rope components for plane parachute/cargo drop state. Plane airdrop gets separate data and systems.
-- Do not hardcode UI button behavior in views. UI must request through `SelectionUiCommandSystem` / ECS command intent flow.
+- Do not hardcode UI button behavior in views. UI must request through `SelectionUiCommandUiSystemHelper` / ECS command intent flow.
 - Do not change pathfinding constants, traversal costs, search limits, or unit movement semantics as part of this feature.
 - Preserve existing helicopter rope behavior.
 - Preserve existing production transport delivery behavior.
@@ -48,7 +48,7 @@ Each phase below should be updated to `Pending`, `In Progress`, `Complete`, or `
 
 ### Ownership
 
-- Board command mode and UI request routing stay with `SelectionUiCommandSystem`, `RtsSelectionInputSystem`, `RtsSelectionBoardTargetModeCommandSystem`, and command intent buffers.
+- Board command mode and UI request routing stay with `SelectionUiCommandUiSystemHelper`, `RtsSelectionInputSystem`, `RtsSelectionBoardTargetModeCommandSystem`, and command intent buffers.
 - Boarding command validation, selected boarding-source collection, and request creation stay with `TransportBoardingCommandSystem` or a narrower transport command system.
 - Boarding completion remains owned by `UnitTransportBoardingSystem`.
 - Capacity metadata stays in `UnitTransportCapacitySystem` or a narrower cargo-capacity system.

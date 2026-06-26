@@ -19,7 +19,7 @@ This plan keeps the flow aligned with the current ECS request/result architectur
 - `RtsSelectionRuntimeInputCompositionSystemHelper.HandlePointerReleased` currently falls through to `QueueMoveOrder` when a click is not attack, transport, or focus.
 - `RtsSelectionPointerTargetCommandCompositionSystemHelper.RequestMoveOrder` already queues and processes move command requests, but it is called by the automatic empty-click path.
 - `SelectionMoveCommandRequestSystem` already consumes `RtsSelectionCommandIntentKind.Move` requests and uses `SelectedMoveOrderCommandSystem` / `UnitMoveOrderSystem`.
-- `SelectionUiCommandSystem` exposes Select, Hold, Stop, Attack-target, etc., but has no explicit `RequestMoveCommandMode` yet.
+- `SelectionUiCommandUiSystemHelper` exposes Select, Hold, Stop, Attack-target, etc., but has no explicit `RequestMoveCommandMode` yet.
 - `MatchOverlayCommandControlsView` has serialized Select, Build, Hold, Stop references, but no explicit Move or Attack button references.
 - `BattleHudRuntimeFeedbackSystem` can show command instructions such as `Choose destination`.
 
@@ -59,7 +59,7 @@ For V1:
 
 `MatchOverlayCommandInputUiSystemHelper` should bind:
 
-- Move button -> `SelectionUiCommandSystem.RequestMoveCommandMode()`
+- Move button -> `SelectionUiCommandUiSystemHelper.RequestMoveCommandMode()`
 - Attack button -> later `RequestAttackCommandMode()` or existing attack fallback through the same command mode boundary
 - Stop button -> immediate `RequestStop()`
 - Hold button -> immediate `RequestHoldPosition()`
@@ -124,7 +124,7 @@ Use the same state machine for:
    - Keep the API command-generic; do not add `IsMoveMode` as the only concept.
 3. [x] Add Move UI command intent.
    - Add `RtsSelectionCommandIntentKind.EnterMoveTargetMode` or reuse `Move` only for target clicks and add a separate mode intent.
-   - Add `SelectionUiCommandSystem.RequestMoveCommandMode()`.
+   - Add `SelectionUiCommandUiSystemHelper.RequestMoveCommandMode()`.
    - Call `CaptureUiClickSequence()` before queuing it.
 4. [x] Bind Match HUD Move button without rebuilding the prefab.
    - Add serialized `moveButton` and later `attackButton` fields to `MatchOverlayCommandControlsView`.

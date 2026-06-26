@@ -300,7 +300,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
                 ExitExplicitSelectionMode(context);
                 return true;
             case RtsSelectionCommandIntentKind.DeselectAll:
-                DeselectAllUnits(context, "SelectionUiCommandSystem");
+                DeselectAllUnits(context, "SelectionUiCommandUiSystemHelper");
                 return true;
             default:
                 return false;
@@ -313,7 +313,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
         context.InputSystem.ClearActiveCommandMode();
         context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
-            "SelectionUiCommandSystem.EnterSelectionMode");
+            "SelectionUiCommandUiSystemHelper.EnterSelectionMode");
         context.InputSystem.ClearQueuedMoveOrder();
         context.InputSystem.ClearPendingMoveCommandRequests();
         Vector2 pointerPosition = context.InputSystem.HasLastKnownPointerPosition

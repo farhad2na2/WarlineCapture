@@ -715,7 +715,7 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(selectedMoveUnit, new UnitGrid { Cell = new int2(2, 3) });
         em.SetComponentData(selectedMoveUnit, new UnitMove { Speed = 1f, WalkSpeed = 1f, ArriveDistance = 0.1f });
 
-        var commandSystem = new SelectionUiCommandSystem();
+        var commandSystem = new SelectionUiCommandUiSystemHelper();
         var inputSystem = new RtsSelectionInputCompositionSystemHelper();
         inputSystem.UpdateLastKnownPointerPosition(new Vector2(16f, 32f));
 
@@ -910,9 +910,9 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
-    public void SelectionUiCommandSystem_MoveButtonQueuesEnterMoveTargetModeAndSuppressesRelease()
+    public void SelectionUiCommandUiSystemHelper_MoveButtonQueuesEnterMoveTargetModeAndSuppressesRelease()
     {
-        var commandSystem = new SelectionUiCommandSystem();
+        var commandSystem = new SelectionUiCommandUiSystemHelper();
 
         Assert.IsTrue(commandSystem.RequestMoveCommandMode());
 
@@ -928,9 +928,9 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
-    public void SelectionUiCommandSystem_MoveButtonDoesNotQueueWhileGameplayInputLocked()
+    public void SelectionUiCommandUiSystemHelper_MoveButtonDoesNotQueueWhileGameplayInputLocked()
     {
-        var commandSystem = new SelectionUiCommandSystem(() => true);
+        var commandSystem = new SelectionUiCommandUiSystemHelper(() => true);
 
         Assert.IsFalse(commandSystem.RequestMoveCommandMode());
 
@@ -945,9 +945,9 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
-    public void SelectionUiCommandSystem_AttackButtonQueuesEnterAttackTargetModeAndSuppressesRelease()
+    public void SelectionUiCommandUiSystemHelper_AttackButtonQueuesEnterAttackTargetModeAndSuppressesRelease()
     {
-        var commandSystem = new SelectionUiCommandSystem();
+        var commandSystem = new SelectionUiCommandUiSystemHelper();
 
         Assert.IsTrue(commandSystem.RequestAttackCommandMode());
 
@@ -1355,9 +1355,9 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
-    public void SelectionUiCommandSystem_BoardButtonQueuesEnterBoardTargetModeAndSuppressesRelease()
+    public void SelectionUiCommandUiSystemHelper_BoardButtonQueuesEnterBoardTargetModeAndSuppressesRelease()
     {
-        var commandSystem = new SelectionUiCommandSystem();
+        var commandSystem = new SelectionUiCommandUiSystemHelper();
 
         Assert.IsTrue(commandSystem.RequestBoardTargetMode());
 
@@ -2247,9 +2247,9 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
-    public void SelectionUiCommandSystem_BoardAllQueuesBoardAllSelectedTransportAndSuppressesRelease()
+    public void SelectionUiCommandUiSystemHelper_BoardAllQueuesBoardAllSelectedTransportAndSuppressesRelease()
     {
-        var commandSystem = new SelectionUiCommandSystem();
+        var commandSystem = new SelectionUiCommandUiSystemHelper();
 
         Assert.IsTrue(commandSystem.RequestBoardAllSelectedTransport());
 
@@ -2265,9 +2265,9 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
-    public void SelectionUiCommandSystem_CancelFeedbackQueuesCancelActiveCommandModeAndSuppressesRelease()
+    public void SelectionUiCommandUiSystemHelper_CancelFeedbackQueuesCancelActiveCommandModeAndSuppressesRelease()
     {
-        var commandSystem = new SelectionUiCommandSystem();
+        var commandSystem = new SelectionUiCommandUiSystemHelper();
 
         Assert.IsTrue(commandSystem.RequestCancelActiveCommandMode());
 
@@ -2498,9 +2498,9 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
-    public void SelectionUiCommandSystem_HoldButtonQueuesHoldAndSuppressesRelease()
+    public void SelectionUiCommandUiSystemHelper_HoldButtonQueuesHoldAndSuppressesRelease()
     {
-        var commandSystem = new SelectionUiCommandSystem();
+        var commandSystem = new SelectionUiCommandUiSystemHelper();
 
         Assert.IsTrue(commandSystem.RequestHoldPosition());
 
@@ -2516,9 +2516,9 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
-    public void SelectionUiCommandSystem_StopButtonQueuesStopAndSuppressesRelease()
+    public void SelectionUiCommandUiSystemHelper_StopButtonQueuesStopAndSuppressesRelease()
     {
-        var commandSystem = new SelectionUiCommandSystem();
+        var commandSystem = new SelectionUiCommandUiSystemHelper();
 
         Assert.IsTrue(commandSystem.RequestStop());
 

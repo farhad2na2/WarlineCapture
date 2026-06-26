@@ -12,7 +12,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
         public readonly System.Action<IMatchHudSelectionPanelView> BindMatchHudSelectionPanel;
         public readonly System.Action SelectionRuntimeUpdate;
         public readonly System.Action DisposeSelection;
-        public readonly SelectionUiCommandSystem SelectionUiCommand;
+        public readonly SelectionUiCommandUiSystemHelper SelectionUiCommand;
         public readonly SelectionUiReadModelSystem SelectionUiReadModel;
         public readonly SelectionUiCameraSystemHelper SelectionUiCamera;
         public readonly SelectionBuildingInteractionCompositionSystemHelper SelectionBuildingInteraction;
@@ -25,7 +25,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
             System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel,
             System.Action selectionRuntimeUpdate,
             System.Action disposeSelection,
-            SelectionUiCommandSystem selectionUiCommand,
+            SelectionUiCommandUiSystemHelper selectionUiCommand,
             SelectionUiReadModelSystem selectionUiReadModel,
             SelectionUiCameraSystemHelper selectionUiCamera,
             SelectionBuildingInteractionCompositionSystemHelper selectionBuildingInteraction,
@@ -75,7 +75,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
         var rtsSelectionPointerTargetCommandSystem = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
         RtsCameraSystem rtsCameraSystem = ResolveRtsCameraSystem();
         RtsCameraRequestSystem rtsCameraRequestSystem = ResolveRtsCameraRequestSystem();
-        var selectionUiCommand = new SelectionUiCommandSystem(IsMatchIntroGameplayInputLocked);
+        var selectionUiCommand = new SelectionUiCommandUiSystemHelper(IsMatchIntroGameplayInputLocked);
         var selectionUiReadModel = new SelectionUiReadModelSystem();
         var selectionUiCamera = new SelectionUiCameraSystemHelper(rtsCameraSystem, rtsCameraRequestSystem);
         var selectionScreenMarkers = new SelectionScreenMarkerUiSystemHelper();

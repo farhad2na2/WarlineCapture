@@ -269,7 +269,7 @@ public sealed class UIShellCurrentContentLoadTests
         MatchOverlayCommandControlsView controls = AssertMatchHudFooterView(matchFooter).CommandControls;
         Assert.NotNull(controls);
 
-        content.BindGameplayRuntimeDependencies(new SelectionUiCommandSystem());
+        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper());
         controls.MoveButton.onClick.Invoke();
 
         Assert.IsTrue(TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests));
@@ -302,7 +302,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         var feedback = new SelectionHudFeedbackBoundary();
         content.BindGameplayRuntimeDependencies(
-            new SelectionUiCommandSystem(),
+            new SelectionUiCommandUiSystemHelper(),
             null,
             feedback.BindMatchHudSelectionPanel);
         Assert.IsFalse(selectedPanel.gameObject.activeSelf, "Runtime binding should start with the selection panel hidden.");
@@ -337,7 +337,7 @@ public sealed class UIShellCurrentContentLoadTests
             ScanReason = TacticalCommandReasonCode.ScanUnavailable
         };
         content.BindGameplayRuntimeDependencies(
-            new SelectionUiCommandSystem(),
+            new SelectionUiCommandUiSystemHelper(),
             selectionUiReadModelSystem: readModel);
         content.RefreshMatchHudCommandControlState();
 
@@ -385,7 +385,7 @@ public sealed class UIShellCurrentContentLoadTests
         var feedback = new SelectionHudFeedbackBoundary();
         var mainMenuPlayUi = new MainMenuPlayUI();
         mainMenuPlayUi.ConfigureMatchHudRuntimeFeedbackSinkBinding(feedback.BindBattleHudRuntimeFeedback);
-        content.BindGameplayRuntimeDependencies(new SelectionUiCommandSystem(), mainMenuPlayUi);
+        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper(), mainMenuPlayUi);
 
         feedback.ApplyCommandMode(_world.EntityManager, TacticalCommandMode.Move);
 
@@ -424,7 +424,7 @@ public sealed class UIShellCurrentContentLoadTests
             "Right quick rail Build button target graphic must have a non-zero rect after layout.");
 
         var mainMenu = new MainMenuPlayUI();
-        content.BindGameplayRuntimeDependencies(new SelectionUiCommandSystem(), mainMenu);
+        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper(), mainMenu);
         Assert.AreNotEqual(
             quickRail.BuildButton.gameObject,
             EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null,
@@ -479,7 +479,7 @@ public sealed class UIShellCurrentContentLoadTests
         UIShellContentView content = FindInScene<UIShellContentView>(scene);
         Assert.NotNull(content, "Menu scene must contain the shell content binder.");
 
-        content.BindGameplayRuntimeDependencies(new SelectionUiCommandSystem());
+        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper());
         int beforeInstallVersion = content.ContentVersion;
 
         content.PrepareForCommandSequence(new[]
@@ -520,9 +520,9 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.NotNull(controls);
 
         var staleInputSystem = new MatchOverlayCommandInputUiSystemHelper();
-        staleInputSystem.Bind(controls, new SelectionUiCommandSystem());
+        staleInputSystem.Bind(controls, new SelectionUiCommandUiSystemHelper());
         var currentInputSystem = new MatchOverlayCommandInputUiSystemHelper();
-        currentInputSystem.Bind(controls, new SelectionUiCommandSystem());
+        currentInputSystem.Bind(controls, new SelectionUiCommandUiSystemHelper());
 
         controls.MoveButton.onClick.Invoke();
 

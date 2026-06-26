@@ -105,7 +105,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
 
     private static readonly string[] ConcreteGameplaySystemTokens =
     {
-        "SelectionUiCommandSystem",
+        "SelectionUiCommandUiSystemHelper",
         "BuildingUiCommandBoundary",
         "RuntimeGameplayStateSystem",
         "SelectionUiCameraSystemHelper",

@@ -14,7 +14,7 @@ This file owns the gameplay meaning of the commands. Parent specs may reference 
 
 ## Architecture Contract
 
-- UI buttons must request commands through `SelectionUiCommandSystem` and `ISelectionUiCommand`.
+- UI buttons must request commands through `SelectionUiCommandUiSystemHelper` and `ISelectionUiCommand`.
 - Command intent must flow through ECS request data such as `RtsSelectionCommandIntentRequestElement`.
 - Pointer/camera/targeting state must stay in `RtsSelectionRuntimeInputSystem` and `RtsSelectionInputStateComponent`.
 - Hold and Stop selected-unit mutations belong to `FocusedUnitCommandSystem`, `RtsSelectionImmediateSelectedUnitCommandSystem`, or narrower command-specific ECS systems.

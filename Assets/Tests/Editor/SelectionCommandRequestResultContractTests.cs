@@ -224,7 +224,7 @@ public sealed class SelectionCommandRequestResultContractTests
         Assert.AreEqual(1, exitBuildModeCount);
         Assert.AreEqual(1, cancelBuildingPlacementCount);
         Assert.AreEqual(1, clearBuildingCount);
-        Assert.AreEqual("SelectionUiCommandSystem.Hold", clearBuildingReason);
+        Assert.AreEqual("SelectionUiCommandUiSystemHelper.Hold", clearBuildingReason);
         Assert.AreEqual(1, clearCommandModeCount);
         Assert.AreEqual(1, commandResultCount);
         Assert.IsTrue(commandResult.Accepted);
@@ -770,7 +770,7 @@ public sealed class SelectionCommandRequestResultContractTests
             Assert.AreEqual(1, exitBuildModeCount);
             Assert.AreEqual(1, cancelBuildingPlacementCount);
             Assert.AreEqual(1, clearBuildingCount);
-            Assert.AreEqual("SelectionUiCommandSystem.EnterScanTargetMode", clearBuildingReason);
+            Assert.AreEqual("SelectionUiCommandUiSystemHelper.EnterScanTargetMode", clearBuildingReason);
             Assert.AreEqual(1, commandModeCount);
             Assert.AreEqual(TacticalCommandMode.Scan, appliedCommandMode);
             Assert.AreEqual(1, worldMarkerVisibilityCount);
@@ -918,7 +918,7 @@ public sealed class SelectionCommandRequestResultContractTests
         Assert.AreEqual(2, explicitAttackModeCount);
         Assert.IsTrue(explicitAttackModeActive);
         Assert.AreEqual(1, clearBuildingCount);
-        Assert.AreEqual("SelectionUiCommandSystem.EnterAttackTargetMode", clearBuildingReason);
+        Assert.AreEqual("SelectionUiCommandUiSystemHelper.EnterAttackTargetMode", clearBuildingReason);
         Assert.AreEqual(1, commandModeCount);
         Assert.AreEqual(TacticalCommandMode.Attack, appliedCommandMode);
         Assert.AreEqual(0, commandResultCount);
@@ -1553,7 +1553,7 @@ public sealed class SelectionCommandRequestResultContractTests
         Assert.AreEqual(1, explicitAttackModeCount);
         Assert.IsFalse(explicitAttackModeActive);
         Assert.AreEqual(1, clearBuildingCount);
-        Assert.AreEqual("SelectionUiCommandSystem.EnterBoardTargetMode", clearBuildingReason);
+        Assert.AreEqual("SelectionUiCommandUiSystemHelper.EnterBoardTargetMode", clearBuildingReason);
         Assert.AreEqual(1, boardCommandModeCount);
         Assert.AreEqual(BoardCommandModeDirection.TransportToPassenger, appliedDirection);
         Assert.IsTrue(appliedBoardAllInteractable);

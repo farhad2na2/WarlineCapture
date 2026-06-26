@@ -1,13 +1,13 @@
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class SelectionUiCommandSystem : ISelectionUiCommand
+public sealed class SelectionUiCommandUiSystemHelper : ISelectionUiCommand
 {
     private readonly RtsSelectionInputCompositionSystemHelper _inputSystem = new();
     private readonly FocusedUnitUiReadModelUiSystemHelper _focusedUnitUiReadModelSystem = new();
     private readonly System.Func<bool> _isGameplayInputLocked;
 
-    public SelectionUiCommandSystem(System.Func<bool> isGameplayInputLocked = null)
+    public SelectionUiCommandUiSystemHelper(System.Func<bool> isGameplayInputLocked = null)
     {
         _isGameplayInputLocked = isGameplayInputLocked;
     }

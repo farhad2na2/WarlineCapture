@@ -44,7 +44,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
     private float activeMatchReadyStartedAt;
     private bool matchLoadQueuedForCurrentRoute;
     private MatchSceneView boundMatchRuntimeView;
-    private SelectionUiCommandSystem boundSelectionUiCommand;
+    private SelectionUiCommandUiSystemHelper boundSelectionUiCommand;
     private SelectionUiReadModelSystem boundSelectionUiReadModel;
     private MainMenuPlayUI boundMainMenu;
     private int boundContentVersion = -1;
@@ -369,7 +369,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
         if (view.ContentSystem.TryGetMatchHudSelectionPanelView(out MatchHudSelectionPanelView selectionPanelView))
             matchBootstrap.BindMatchHudSelectionPanel(selectionPanelView);
 
-        SelectionUiCommandSystem selectionUiCommand = matchBootstrap.SelectionUiCommand;
+        SelectionUiCommandUiSystemHelper selectionUiCommand = matchBootstrap.SelectionUiCommand;
         if (selectionUiCommand == null)
             return;
         SelectionUiReadModelSystem selectionUiReadModel = matchBootstrap.SelectionUiReadModel;

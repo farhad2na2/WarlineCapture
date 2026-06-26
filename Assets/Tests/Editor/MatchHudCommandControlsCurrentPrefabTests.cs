@@ -111,7 +111,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     {
         MatchOverlayCommandControlsView controls = LoadControls();
         var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
-        inputSystem.Bind(controls, new SelectionUiCommandSystem());
+        inputSystem.Bind(controls, new SelectionUiCommandUiSystemHelper());
 
         AssertClickQueues(controls.SelectButton, RtsSelectionCommandIntentKind.EnterSelectionMode);
         AssertClickQueues(controls.MoveButton, RtsSelectionCommandIntentKind.EnterMoveTargetMode);
@@ -134,7 +134,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Assert.IsFalse(IsChildOfNamedTransform(boardButton.transform, "CommandButtons"), "BoardButton must no longer live in the selected-squad CommandButtons cluster.");
 
         var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
-        var selectionUiCommand = new SelectionUiCommandSystem();
+        var selectionUiCommand = new SelectionUiCommandUiSystemHelper();
         inputSystem.Bind(controls, selectionUiCommand);
         inputSystem.RefreshCommandControlState();
         Assert.IsTrue(boardButton.interactable, "BoardButton must stay clickable when no unit is selected so it can show selection-required feedback.");
@@ -161,7 +161,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
             Assert.NotNull(controls.BoardButton, "Footer section command controls must serialize BoardButton directly.");
 
             var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
-            var selectionUiCommand = new SelectionUiCommandSystem();
+            var selectionUiCommand = new SelectionUiCommandUiSystemHelper();
             inputSystem.Bind(controls, selectionUiCommand);
             ClearCommandRequests();
 
@@ -188,7 +188,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Assert.NotNull(supportButton, "SCN08 Match HUD currently exposes SupportCommand as the legacy scan/support tab.");
 
         var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
-        inputSystem.Bind(controls, new SelectionUiCommandSystem());
+        inputSystem.Bind(controls, new SelectionUiCommandUiSystemHelper());
 
         AssertClickQueues(supportButton, RtsSelectionCommandIntentKind.EnterScanTargetMode);
 

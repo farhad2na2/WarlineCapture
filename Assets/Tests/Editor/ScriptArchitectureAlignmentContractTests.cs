@@ -170,7 +170,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.UiRuntimeAssemblyMustNotReferenceConfigsAssembly();
             tests.UiRuntimeAssemblyMustNotReadAuthoringComponents();
             tests.UiRuntimeScriptsMustNotUseDirectEcsApis();
-            tests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandSystem();
+            tests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandUiSystemHelper();
             tests.UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes();
             Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=28");
             ValidationExit.Exit(0);
@@ -410,16 +410,16 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
-    public void UiRuntimeScriptsMustNotReferenceSelectionUiCommandSystem()
+    public void UiRuntimeScriptsMustNotReferenceSelectionUiCommandUiSystemHelper()
     {
         List<string> violations = EnumerateSourceFiles(Path.Combine(GameScriptsRoot, "UI"))
-            .SelectMany(path => FindTokenReferences(path, "SelectionUiCommandSystem"))
+            .SelectMany(path => FindTokenReferences(path, "SelectionUiCommandUiSystemHelper"))
             .OrderBy(violation => violation, StringComparer.Ordinal)
             .ToList();
 
         AssertNoViolations(
             violations,
-            "`Game.UI.Runtime` must use `ISelectionUiCommand` from `Game.UI.Contracts`; the concrete `SelectionUiCommandSystem` stays in runtime/composition.");
+            "`Game.UI.Runtime` must use `ISelectionUiCommand` from `Game.UI.Contracts`; the concrete `SelectionUiCommandUiSystemHelper` stays in runtime/composition.");
     }
 
     [Test]

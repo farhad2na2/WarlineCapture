@@ -22,7 +22,7 @@ The implementation must follow `Design/Architecture/gameplay_solid_ecs_contract.
 
 - `Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs` currently only references `selectedSquadPanel` and `selectedPortraitImage`.
 - `SelectionHudFeedbackSystem` currently toggles the selected panel and portrait, but it does not publish a full panel read model.
-- `SelectionUiCommandSystem` already queues selection commands and has `RequestDestroyFocusedUnit()`, but it does not expose Return or focused nearest-transport Board requests.
+- `SelectionUiCommandUiSystemHelper` already queues selection commands and has `RequestDestroyFocusedUnit()`, but it does not expose Return or focused nearest-transport Board requests.
 - `SelectionInputRequestComponents.cs` already contains `ReturnToBase`, `BoardTransport`, and `DestroyFocusedUnit` intent kinds.
 - `FocusedUnitCommandSystem` already has `ReturnFocusedUnitToBase(...)` and `DestroyFocusedUnit(...)`.
 - Existing transport ownership is split across `TransportBoardingCommandSystem`, `SelectionTransportCommandRequestSystem`, `UnitTransportBoardingQuerySystem`, `UnitTransportBoardingRuleSystem`, `UnitTransportCapacitySystem`, `UnitTransportApproachCellSystem`, and air/rope transport systems.
@@ -82,13 +82,13 @@ The implementation must follow `Design/Architecture/gameplay_solid_ecs_contract.
 ## Implementation Checklist
 
 - [x] Create this trackable implementation plan.
-- [x] Audit current `MatchHudSelectionPanelView`, `SelectionHudFeedbackSystem`, `SelectionUiCommandSystem`, and selection/transport command ownership.
+- [x] Audit current `MatchHudSelectionPanelView`, `SelectionHudFeedbackSystem`, `SelectionUiCommandUiSystemHelper`, and selection/transport command ownership.
 - [x] Add a plain read model for the panel.
 - [x] Expand `MatchHudSelectionPanelView` with serialized references only.
 - [x] Add Unity `Button` components directly to the existing Return, Destroy, and Board panel roots.
 - [x] Wire prefab references for title, subtitle, current order, health bar, health text, character badge, Return, Destroy, and Board.
 - [x] Add UI action binding without gameplay policy in the view.
-- [x] Add Return and Board request methods to `SelectionUiCommandSystem`.
+- [x] Add Return and Board request methods to `SelectionUiCommandUiSystemHelper`.
 - [x] Route Return, Destroy, and Board through ECS command-intent processing.
 - [x] Implement selected-unit/squad Return command behavior.
 - [ ] Implement selected-building Return command behavior.
@@ -107,7 +107,7 @@ The implementation must follow `Design/Architecture/gameplay_solid_ecs_contract.
 Completed:
 
 - Added `MatchHudSelectionPanelView.Model` and serialized references for title, subtitle, current order, health fill/text, badge, and Return/Destroy/Board action surfaces.
-- Bound Return/Destroy/Board panel-root buttons through `SelectionGameplayStartupSystem` to `SelectionUiCommandSystem` request methods.
+- Bound Return/Destroy/Board panel-root buttons through `SelectionGameplayStartupSystem` to `SelectionUiCommandUiSystemHelper` request methods.
 - Added `RtsSelectionCommandIntentKind.BoardNearestSoldiers` so selected-transport boarding does not collide with the existing click-to-transport `BoardTransport` command path.
 - Routed Return and selected-transport Board through `RtsSelectionFocusCommandCompositionSystemHelper`.
 - Added panel projection for focused units, squads, and selected buildings.
@@ -200,7 +200,7 @@ Do not duplicate gameplay mutation here. This system is read-model projection on
 
 ## Step 4 - UI Command Requests
 
-Extend `SelectionUiCommandSystem` with:
+Extend `SelectionUiCommandUiSystemHelper` with:
 
 - `RequestReturnToBase()`
 - `RequestBoardNearestTransport()`

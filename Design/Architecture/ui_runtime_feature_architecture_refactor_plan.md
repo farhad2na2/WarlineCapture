@@ -42,7 +42,7 @@ The recent features are partially aligned:
 
 - Build Drawer catalog filtering uses config requestability.
 - Build Drawer gameplay actions route through `BuildingUiCommandSystem` and production request systems.
-- Match command buttons route through `SelectionUiCommandSystem`.
+- Match command buttons route through `SelectionUiCommandUiSystemHelper`.
 - Most UI elements are `*View` types with serialized fields.
 
 Resolved drift:

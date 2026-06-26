@@ -30,7 +30,7 @@ This must remain ECS-aligned: UI emits intent only, command systems validate and
 ### UI Flow
 
 - `MatchOverlayCommandInputUiSystemHelper` binds `AttackButton`.
-- Attack button calls a new explicit request such as `SelectionUiCommandSystem.RequestAttackCommandMode()`.
+- Attack button calls a new explicit request such as `SelectionUiCommandUiSystemHelper.RequestAttackCommandMode()`.
 - The UI request captures/suppresses the button click release so it cannot also become a world click.
 - Button highlight is driven by command-mode feedback, not by direct UI mutation.
 

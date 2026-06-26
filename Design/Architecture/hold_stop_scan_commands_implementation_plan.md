@@ -13,7 +13,7 @@ This document tracks the implementation of Hold, Stop, and Scan commands for all
 - `Design/Match_Unit_Command_Behavior_Spec.md`
 - `Design/Architecture/gameplay_solid_ecs_contract.md`
 - Current command code paths:
-  - `Assets/Game/Scripts/Systems/SelectionUiCommandSystem.cs`
+  - `Assets/Game/Scripts/Systems/SelectionUiCommandUiSystemHelper.cs`
   - `Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs`
   - `Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs`
   - `Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs`
@@ -30,7 +30,7 @@ Implement reliable, architecture-aligned Hold, Stop, and Scan commands for soldi
 
 The final behavior must:
 
-- Route HUD and command-wheel clicks through `SelectionUiCommandSystem`.
+- Route HUD and command-wheel clicks through `SelectionUiCommandUiSystemHelper`.
 - Store player command intent in ECS request buffers, not UI objects.
 - Process command behavior in command-specific ECS systems.
 - Publish HUD feedback through `SelectionHudFeedbackBoundary` and ECS feedback data.
@@ -50,7 +50,7 @@ The final behavior must:
 
 ### Ownership
 
-- UI command enqueueing belongs to `SelectionUiCommandSystem` and `ISelectionUiCommand`.
+- UI command enqueueing belongs to `SelectionUiCommandUiSystemHelper` and `ISelectionUiCommand`.
 - Pointer press/release, camera drag, active targeting modes, and world click routing belong to `RtsSelectionRuntimeInputCompositionSystemHelper`, backed by `RtsSelectionInputStateComponent` and command intent buffers.
 - Immediate selected-unit command mutations for Hold and Stop belong to `FocusedUnitCommandSystem` and/or `RtsSelectionImmediateSelectedUnitCommandSystem`.
 - Scan target-mode entry belongs to `RtsSelectionScanTargetModeCommandSystem`.
@@ -226,7 +226,7 @@ Status: Complete
 
 Implementation checklist:
 
-- [x] Keep command request entry point in `SelectionUiCommandSystem.RequestStop`.
+- [x] Keep command request entry point in `SelectionUiCommandUiSystemHelper.RequestStop`.
 - [x] Keep command intent kind as `RtsSelectionCommandIntentKind.Stop`.
 - [x] Process Stop in `RtsSelectionImmediateSelectedUnitCommandSystem` or a narrower `ISystem` owned by the immediate selected-unit command domain.
 - [x] Clear active command mode through `RtsSelectionInputStateComponent`.
@@ -241,7 +241,7 @@ Implementation checklist:
 
 Implementation notes:
 
-- No runtime command rewrite was needed in this phase. The existing architecture already routes Stop through `SelectionUiCommandSystem.RequestStop`, `RtsSelectionCommandIntentKind.Stop`, and the `RtsSelectionImmediateSelectedUnitCommandSystem` `ISystem`.
+- No runtime command rewrite was needed in this phase. The existing architecture already routes Stop through `SelectionUiCommandUiSystemHelper.RequestStop`, `RtsSelectionCommandIntentKind.Stop`, and the `RtsSelectionImmediateSelectedUnitCommandSystem` `ISystem`.
 - `UnitMoveOrderSystem.ClearMovementOrderComponents` already owns the movement/order cleanup set used by Stop, including move targets, path requests, path follow/range/retry, long-distance move, manual group membership, auto-wander, hold, engage, transport boarding/disembark, resource haul, and base breach orders.
 - Stop now has focused EditMode coverage for a selected ground vehicle and selected air unit in the same command. The test verifies selected tags remain, accepted count is correct, queued move state clears, active scan/targeting mode clears, drag state clears, vehicle kinematics stop, and aircraft transient attack/taxi/return flags clear while home/runway/airborne state remains intact.
 - Validation completed with:
@@ -268,7 +268,7 @@ Status: Complete
 
 Implementation checklist:
 
-- [x] Keep command request entry point in `SelectionUiCommandSystem.RequestHoldPosition`.
+- [x] Keep command request entry point in `SelectionUiCommandUiSystemHelper.RequestHoldPosition`.
 - [x] Keep command intent kind as `RtsSelectionCommandIntentKind.HoldPosition`.
 - [x] Process Hold in the immediate selected-unit command domain.
 - [x] Decide whether `HoldPositionOrderTag` is sufficient or replace/extend with data component `HoldPositionOrder`.
@@ -282,7 +282,7 @@ Implementation checklist:
 
 Implementation notes:
 
-- `SelectionUiCommandSystem.RequestHoldPosition` still only enqueues `RtsSelectionCommandIntentKind.HoldPosition`.
+- `SelectionUiCommandUiSystemHelper.RequestHoldPosition` still only enqueues `RtsSelectionCommandIntentKind.HoldPosition`.
 - `RtsSelectionImmediateSelectedUnitCommandSystem` remains the active ECS immediate selected-unit command owner for Hold. Hold now uses hold-specific runtime cleanup: it clears active orders and stops vehicle kinematics, but no longer clears `UnitAirComponent` runway/airborne transient state the way Stop does.
 - `FocusedUnitCommandSystem` was updated with the same Hold-vs-Stop cleanup split so compatibility callers and focused tests do not diverge from the active command path.
 - `UnitAirMovementSystem` now respects `HoldPositionOrderTag` when an airborne or idle grounded aircraft has no active target. Held airborne units no longer automatically enter the return-home path; existing takeoff, landing, or returning-home transients continue so aircraft are not stranded mid-runway.
@@ -313,7 +313,7 @@ Status: Complete
 
 Implementation checklist:
 
-- [x] Keep scan command button entry in `SelectionUiCommandSystem.RequestScanCommandMode`.
+- [x] Keep scan command button entry in `SelectionUiCommandUiSystemHelper.RequestScanCommandMode`.
 - [x] Keep scan target-mode entry in `RtsSelectionScanTargetModeCommandSystem`.
 - [x] Ensure entering Scan clears conflicting Move/Attack/Board targeting modes.
 - [x] Ensure entering Scan does not enter selection rectangle mode.

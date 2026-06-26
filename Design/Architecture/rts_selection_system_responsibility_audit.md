@@ -621,12 +621,12 @@ Step 11 moved selection rectangle GUI drawing to the UI view boundary:
 
 Step 12 started caller migration off the selection shell:
 
-- `SelectionUiCommandSystem` now owns UI-facing selection command intent publication for select all, select soldiers, select vehicles, deselect all, hold, stop, attack/target-mode, and focused transport disembark requests.
-- `MatchOverlayCommandControlsController` and `MainMenuPlayUI` no longer hold or call `RTSSelectionSystem`; they enqueue command intents through `SelectionUiCommandSystem`.
+- `SelectionUiCommandUiSystemHelper` now owns UI-facing selection command intent publication for select all, select soldiers, select vehicles, deselect all, hold, stop, attack/target-mode, and focused transport disembark requests.
+- `MatchOverlayCommandControlsController` and `MainMenuPlayUI` no longer hold or call `RTSSelectionSystem`; they enqueue command intents through `SelectionUiCommandUiSystemHelper`.
 - `SelectionUiReadModelSystem` now owns UI-facing focused-unit, focused transport passenger, selected-unit list, and visible player-unit read calls.
 - `SelectionUiCameraSystemHelper` now owns `MenuView` camera toggle state and fullscreen map camera focus commands through the ECS camera request boundary.
 - `SelectionScreenMarkerUiSystemHelper` now owns UI-facing move/attack/hide screen-marker events.
-- `MenuView` command buttons now use `SelectionUiCommandSystem`, its focused/selected read-model calls use `SelectionUiReadModelSystem`, its camera calls use `SelectionUiCameraSystemHelper`, and its marker hooks use `SelectionScreenMarkerUiSystemHelper`; it no longer holds or calls `RTSSelectionSystem`.
+- `MenuView` command buttons now use `SelectionUiCommandUiSystemHelper`, its focused/selected read-model calls use `SelectionUiReadModelSystem`, its camera calls use `SelectionUiCameraSystemHelper`, and its marker hooks use `SelectionScreenMarkerUiSystemHelper`; it no longer holds or calls `RTSSelectionSystem`.
 - `AssistantRuntimeBinding` no longer receives or forwards `RTSSelectionSystem`.
 - `MissionCameraSystem` and `MissionStartupSystem` now focus the camera through `SelectionUiCameraSystemHelper` instead of `RTSSelectionSystem`.
 - `BuildingGameplaySystem` now routes active-placement, production-focus, and building-selection camera focus callbacks through `SelectionUiCameraSystemHelper`.

@@ -209,12 +209,12 @@ internal sealed class CitizenPopulationRuntimeUpdateCompositionSystemHelper
             if (citizen.Status == CitizenStatus.Fleeing)
                 continue;
 
-            CitizenStatus desiredStatus = CitizenScheduleSystem.GetScheduledStatus(
+            CitizenStatus desiredStatus = CitizenScheduleCompositionSystemHelper.GetScheduledStatus(
                 _systems.ScheduleSystem,
                 _systems.State,
                 _systems.DayNightSystem,
                 citizen);
-            int desiredTargetBuildingId = CitizenScheduleSystem.GetScheduledTargetBuildingId(
+            int desiredTargetBuildingId = CitizenScheduleCompositionSystemHelper.GetScheduledTargetBuildingId(
                 _systems.ScheduleSystem,
                 _systems.State,
                 _systems.DayNightSystem,

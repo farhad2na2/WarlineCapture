@@ -1,4 +1,4 @@
-internal sealed class CitizenScheduleSystem
+internal sealed class CitizenScheduleCompositionSystemHelper
 {
     private const float WeekdayWorkStartHour = 8f;
     private const float WeekdayWorkEndHour = 17f;
@@ -20,7 +20,7 @@ internal sealed class CitizenScheduleSystem
     private const float RefugeeEveningWalkEndHour = 18.5f;
 
     public static CitizenStatus GetScheduledStatus(
-        CitizenScheduleSystem system,
+        CitizenScheduleCompositionSystemHelper system,
         CitizenPopulationStateCompositionSystemHelper state,
         DayNightSystem dayNightSystem,
         CitizenRecordComponent citizen)
@@ -39,7 +39,7 @@ internal sealed class CitizenScheduleSystem
     }
 
     public static int GetScheduledTargetBuildingId(
-        CitizenScheduleSystem system,
+        CitizenScheduleCompositionSystemHelper system,
         CitizenPopulationStateCompositionSystemHelper state,
         DayNightSystem dayNightSystem,
         CitizenRecordComponent citizen,
@@ -59,7 +59,7 @@ internal sealed class CitizenScheduleSystem
         return GetScheduledTargetBuildingIdState(state, dayNightSystem, citizen, status);
     }
 
-    public static int GetSchedulePhase(CitizenScheduleSystem system, DayNightSystem dayNightSystem)
+    public static int GetSchedulePhase(CitizenScheduleCompositionSystemHelper system, DayNightSystem dayNightSystem)
     {
         return system != null
             ? system.GetSchedulePhase(dayNightSystem)

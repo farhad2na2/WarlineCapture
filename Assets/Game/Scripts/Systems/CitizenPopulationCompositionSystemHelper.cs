@@ -18,7 +18,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         public readonly CitizenHouseholdRegistrationCompositionSystemHelper HouseholdRegistrationSystem = ResolveCitizenHouseholdRegistrationSystem();
         public readonly CitizenRefugeeCompositionSystemHelper RefugeeSystem = ResolveCitizenRefugeeSystem();
         public CitizenRefugeeCompositionSystemHelper.State RefugeeState;
-        public readonly CitizenScheduleSystem ScheduleSystem = ResolveCitizenScheduleSystem();
+        public readonly CitizenScheduleCompositionSystemHelper ScheduleSystem = ResolveCitizenScheduleCompositionSystemHelper();
         public readonly CitizenStatusTransitionSystem StatusTransitionSystem = ResolveCitizenStatusTransitionSystem();
         public readonly CitizenDangerCompositionSystemHelper DangerSystem = ResolveCitizenDangerSystem();
         public readonly CitizenTravelSystem TravelSystem = ResolveCitizenTravelSystem();
@@ -199,9 +199,9 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         return new CitizenPopulationLifecycleCompositionSystemHelper();
     }
 
-    private static CitizenScheduleSystem ResolveCitizenScheduleSystem()
+    private static CitizenScheduleCompositionSystemHelper ResolveCitizenScheduleCompositionSystemHelper()
     {
-        return new CitizenScheduleSystem();
+        return new CitizenScheduleCompositionSystemHelper();
     }
 
     private static CitizenStatusTransitionSystem ResolveCitizenStatusTransitionSystem()

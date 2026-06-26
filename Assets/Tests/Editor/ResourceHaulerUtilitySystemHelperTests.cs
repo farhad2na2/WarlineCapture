@@ -4,11 +4,11 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
-public sealed class ResourceHaulerSystemTests
+public sealed class ResourceHaulerUtilitySystemHelperTests
 {
     public static void RunFocusedValidation()
     {
-        var tests = new ResourceHaulerSystemTests();
+        var tests = new ResourceHaulerUtilitySystemHelperTests();
         try
         {
             tests.CreateOrder_InitializesTravelToSource();
@@ -34,18 +34,18 @@ public sealed class ResourceHaulerSystemTests
     [Test]
     public void CreateOrder_InitializesTravelToSource()
     {
-        var system = new ResourceHaulerSystem();
+        var system = new ResourceHaulerUtilitySystemHelper();
         UnitResourceHaulOrder order = system.CreateOrder(
             sourceBuildingId: 12,
             destinationBuildingId: 34,
             targetCell: new int2(5, 7),
-            resourceKind: ResourceHaulerSystem.ResourceHaulKind.Fuel);
+            resourceKind: ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel);
 
         Assert.AreEqual(12, order.SourceBuildingId);
         Assert.AreEqual(34, order.DestinationBuildingId);
         Assert.AreEqual(new int2(5, 7), order.TargetCell);
-        Assert.AreEqual((byte)ResourceHaulerSystem.ResourceHaulPhase.ToSource, order.Phase);
-        Assert.AreEqual((byte)ResourceHaulerSystem.ResourceHaulKind.Fuel, order.ResourceKind);
+        Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, order.Phase);
+        Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel, order.ResourceKind);
         Assert.AreEqual(0f, order.ActionEndsAt);
     }
 
@@ -57,10 +57,10 @@ public sealed class ResourceHaulerSystemTests
             ActionEndsAt = 25f
         };
 
-        var system = new ResourceHaulerSystem();
-        system.SetTravelPhase(ref order, ResourceHaulerSystem.ResourceHaulPhase.ToDestination, new int2(9, 4));
+        var system = new ResourceHaulerUtilitySystemHelper();
+        system.SetTravelPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToDestination, new int2(9, 4));
 
-        Assert.AreEqual((byte)ResourceHaulerSystem.ResourceHaulPhase.ToDestination, order.Phase);
+        Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToDestination, order.Phase);
         Assert.AreEqual(new int2(9, 4), order.TargetCell);
         Assert.AreEqual(0f, order.ActionEndsAt);
     }
@@ -70,15 +70,15 @@ public sealed class ResourceHaulerSystemTests
     {
         UnitResourceHaulOrder order = default;
 
-        var system = new ResourceHaulerSystem();
-        ResourceHaulerSystem.TimedActionState started = system.AdvanceTimedAction(ref order, now: 10f, durationSeconds: 3f);
-        ResourceHaulerSystem.TimedActionState waiting = system.AdvanceTimedAction(ref order, now: 12f, durationSeconds: 3f);
-        ResourceHaulerSystem.TimedActionState ready = system.AdvanceTimedAction(ref order, now: 13f, durationSeconds: 3f);
+        var system = new ResourceHaulerUtilitySystemHelper();
+        ResourceHaulerUtilitySystemHelper.TimedActionState started = system.AdvanceTimedAction(ref order, now: 10f, durationSeconds: 3f);
+        ResourceHaulerUtilitySystemHelper.TimedActionState waiting = system.AdvanceTimedAction(ref order, now: 12f, durationSeconds: 3f);
+        ResourceHaulerUtilitySystemHelper.TimedActionState ready = system.AdvanceTimedAction(ref order, now: 13f, durationSeconds: 3f);
 
-        Assert.AreEqual(ResourceHaulerSystem.TimedActionState.Started, started);
+        Assert.AreEqual(ResourceHaulerUtilitySystemHelper.TimedActionState.Started, started);
         Assert.AreEqual(13f, order.ActionEndsAt);
-        Assert.AreEqual(ResourceHaulerSystem.TimedActionState.Waiting, waiting);
-        Assert.AreEqual(ResourceHaulerSystem.TimedActionState.Ready, ready);
+        Assert.AreEqual(ResourceHaulerUtilitySystemHelper.TimedActionState.Waiting, waiting);
+        Assert.AreEqual(ResourceHaulerUtilitySystemHelper.TimedActionState.Ready, ready);
     }
 
     [Test]
@@ -95,8 +95,8 @@ public sealed class ResourceHaulerSystemTests
             CargoFuelBarrels = 4f
         };
 
-        var system = new ResourceHaulerSystem();
-        bool loaded = system.TryCompleteLoad(source, ResourceHaulerSystem.ResourceHaulKind.Oil, 10f, ref hauler);
+        var system = new ResourceHaulerUtilitySystemHelper();
+        bool loaded = system.TryCompleteLoad(source, ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil, 10f, ref hauler);
 
         Assert.IsTrue(loaded);
         Assert.AreEqual(20f, source.StoredOilBarrels);
@@ -114,8 +114,8 @@ public sealed class ResourceHaulerSystemTests
         };
         UnitResourceHauler hauler = default;
 
-        var system = new ResourceHaulerSystem();
-        bool loaded = system.TryCompleteLoad(source, ResourceHaulerSystem.ResourceHaulKind.Oil, 10f, ref hauler);
+        var system = new ResourceHaulerUtilitySystemHelper();
+        bool loaded = system.TryCompleteLoad(source, ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil, 10f, ref hauler);
 
         Assert.IsFalse(loaded);
         Assert.AreEqual(9.5f, source.StoredOilBarrels);
@@ -136,8 +136,8 @@ public sealed class ResourceHaulerSystemTests
             CargoFuelBarrels = 5f
         };
 
-        var system = new ResourceHaulerSystem();
-        system.RevertLoad(source, ResourceHaulerSystem.ResourceHaulKind.Fuel, 5f, ref hauler);
+        var system = new ResourceHaulerUtilitySystemHelper();
+        system.RevertLoad(source, ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel, 5f, ref hauler);
 
         Assert.AreEqual(17f, source.StoredFuelBarrels);
         Assert.AreEqual(0f, hauler.CargoFuelBarrels);
@@ -156,8 +156,8 @@ public sealed class ResourceHaulerSystemTests
             CargoFuelBarrels = 5f
         };
 
-        var system = new ResourceHaulerSystem();
-        bool unloaded = system.TryCompleteUnload(destination, ResourceHaulerSystem.ResourceHaulKind.Fuel, ref hauler);
+        var system = new ResourceHaulerUtilitySystemHelper();
+        bool unloaded = system.TryCompleteUnload(destination, ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel, ref hauler);
 
         Assert.IsTrue(unloaded);
         Assert.AreEqual(20f, destination.StoredFuelBarrels);
@@ -177,8 +177,8 @@ public sealed class ResourceHaulerSystemTests
             CargoFuelBarrels = 5f
         };
 
-        var system = new ResourceHaulerSystem();
-        bool unloaded = system.TryCompleteUnload(destination, ResourceHaulerSystem.ResourceHaulKind.Fuel, ref hauler);
+        var system = new ResourceHaulerUtilitySystemHelper();
+        bool unloaded = system.TryCompleteUnload(destination, ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel, ref hauler);
 
         Assert.IsFalse(unloaded);
         Assert.AreEqual(16f, destination.StoredFuelBarrels);
@@ -200,7 +200,7 @@ public sealed class ResourceHaulerSystemTests
             StoredFuelBarrels = 2f
         };
 
-        var system = new ResourceHaulerSystem();
+        var system = new ResourceHaulerUtilitySystemHelper();
 
         Assert.IsTrue(system.IsOilSourceBuilding(oilSource));
         Assert.IsTrue(system.IsFuelBuilding(fuelSource));

@@ -2,7 +2,7 @@ using Unity.Mathematics;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class ResourceHaulerSystem
+public sealed class ResourceHaulerUtilitySystemHelper
 {
     public enum TimedActionState : byte
     {

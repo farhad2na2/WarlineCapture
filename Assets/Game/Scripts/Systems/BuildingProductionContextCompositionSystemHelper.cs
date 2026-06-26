@@ -36,7 +36,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public readonly BuildingProductionRequestBoundary.LogWarningDelegate LogWarning;
         public readonly BuildingProductionRequestBoundary.CountFactionUnitsDelegate CountPendingProductionsForFaction;
         public readonly BuildingProductionRequestBoundary.CountFactionUnitsDelegate CountRuntimeProducedUnitsForFaction;
-        public readonly ResourceHaulerSystem ResourceHaulerSystem;
+        public readonly ResourceHaulerUtilitySystemHelper ResourceHaulerUtilitySystemHelper;
         public readonly FactionResourceCompositionSystemHelper FactionResourceCompositionSystemHelper;
         public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetGridDataDelegate TryGetGridData;
@@ -77,7 +77,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             BuildingProductionRequestBoundary.LogWarningDelegate logWarning,
             BuildingProductionRequestBoundary.CountFactionUnitsDelegate countPendingProductionsForFaction,
             BuildingProductionRequestBoundary.CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction,
-            ResourceHaulerSystem resourceHaulerSystem,
+            ResourceHaulerUtilitySystemHelper resourceHaulerSystem,
             FactionResourceCompositionSystemHelper factionResourceSystem,
             BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
             BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetGridDataDelegate tryGetGridData,
@@ -117,7 +117,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             LogWarning = logWarning;
             CountPendingProductionsForFaction = countPendingProductionsForFaction;
             CountRuntimeProducedUnitsForFaction = countRuntimeProducedUnitsForFaction;
-            ResourceHaulerSystem = resourceHaulerSystem;
+            ResourceHaulerUtilitySystemHelper = resourceHaulerSystem;
             FactionResourceCompositionSystemHelper = factionResourceSystem;
             TryGetEntityManager = tryGetEntityManager;
             TryGetGridData = tryGetGridData;
@@ -160,7 +160,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         BuildingProductionRequestBoundary.LogWarningDelegate logWarning,
         BuildingProductionRequestBoundary.CountFactionUnitsDelegate countPendingProductionsForFaction,
         BuildingProductionRequestBoundary.CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction,
-        ResourceHaulerSystem resourceHaulerSystem,
+        ResourceHaulerUtilitySystemHelper resourceHaulerSystem,
         FactionResourceCompositionSystemHelper factionResourceSystem,
         BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
         BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetGridDataDelegate tryGetGridData,
@@ -334,7 +334,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
     {
         return new BuildingResourceHaulerBridgeCompositionSystemHelper.Context(
             source.RuntimeBuildings,
-            source.ResourceHaulerSystem,
+            source.ResourceHaulerUtilitySystemHelper,
             source.FactionResourceCompositionSystemHelper,
             source.TryGetEntityManager,
             source.TryGetGridData,

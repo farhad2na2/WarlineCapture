@@ -18,7 +18,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         public readonly BuildingDestroyedVisualPresentationSystemHelper BuildingDestroyedVisualPresentationSystemHelper;
         public readonly BuildingBarrierUtilitySystemHelper BarrierSystem;
         public readonly BuildingResourceHaulerBridgeCompositionSystemHelper ResourceHaulerBridgeSystem;
-        public readonly ResourceHaulerSystem ResourceHaulerSystem;
+        public readonly ResourceHaulerUtilitySystemHelper ResourceHaulerUtilitySystemHelper;
         public readonly FactionResourceCompositionSystemHelper FactionResourceCompositionSystemHelper;
         public readonly BuildingProductionContextCompositionSystemHelper ProductionContextSystem;
         public readonly FactionVisualSettings FactionVisualSettings;
@@ -59,7 +59,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             BuildingDestroyedVisualPresentationSystemHelper buildingDestroyedVisualPresentationHelper,
             BuildingBarrierUtilitySystemHelper barrierSystem,
             BuildingResourceHaulerBridgeCompositionSystemHelper resourceHaulerBridgeSystem,
-            ResourceHaulerSystem resourceHaulerSystem,
+            ResourceHaulerUtilitySystemHelper resourceHaulerSystem,
             FactionResourceCompositionSystemHelper factionResourceSystem,
             BuildingProductionContextCompositionSystemHelper productionContextSystem,
             FactionVisualSettings factionVisualSettings,
@@ -99,7 +99,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             BuildingDestroyedVisualPresentationSystemHelper = buildingDestroyedVisualPresentationHelper;
             BarrierSystem = barrierSystem;
             ResourceHaulerBridgeSystem = resourceHaulerBridgeSystem;
-            ResourceHaulerSystem = resourceHaulerSystem;
+            ResourceHaulerUtilitySystemHelper = resourceHaulerSystem;
             FactionResourceCompositionSystemHelper = factionResourceSystem;
             ProductionContextSystem = productionContextSystem;
             FactionVisualSettings = factionVisualSettings;
@@ -525,7 +525,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
     {
         return new BuildingResourceHaulerBridgeCompositionSystemHelper.Context(
             source.RuntimeBuildingSystem.Buildings,
-            source.ResourceHaulerSystem,
+            source.ResourceHaulerUtilitySystemHelper,
             source.FactionResourceCompositionSystemHelper,
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>

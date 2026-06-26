@@ -20,7 +20,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
     public readonly struct Context
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
-        public readonly ResourceHaulerSystem ResourceHaulerSystem;
+        public readonly ResourceHaulerUtilitySystemHelper ResourceHaulerUtilitySystemHelper;
         public readonly FactionResourceCompositionSystemHelper FactionResourceCompositionSystemHelper;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly TryGetGridDataDelegate TryGetGridData;
@@ -33,7 +33,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
-            ResourceHaulerSystem resourceHaulerSystem,
+            ResourceHaulerUtilitySystemHelper resourceHaulerSystem,
             FactionResourceCompositionSystemHelper factionResourceSystem,
             TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetGridDataDelegate tryGetGridData,
@@ -45,7 +45,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
             GetEffectivePlacementRectDelegate getEffectivePlacementRect)
         {
             RuntimeBuildings = runtimeBuildings;
-            ResourceHaulerSystem = resourceHaulerSystem;
+            ResourceHaulerUtilitySystemHelper = resourceHaulerSystem;
             FactionResourceCompositionSystemHelper = factionResourceSystem;
             TryGetEntityManager = tryGetEntityManager;
             TryGetGridData = tryGetGridData;
@@ -62,7 +62,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
     {
         if (hasPendingPathJob)
             return;
-        if (context.ResourceHaulerSystem == null)
+        if (context.ResourceHaulerUtilitySystemHelper == null)
             return;
         if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
             return;
@@ -91,7 +91,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
 
     public bool TryAssignSelectedHaulerOrders(Context context, int clickedBuildingId)
     {
-        if (context.ResourceHaulerSystem == null || context.FactionResourceCompositionSystemHelper == null)
+        if (context.ResourceHaulerUtilitySystemHelper == null || context.FactionResourceCompositionSystemHelper == null)
             return false;
         if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
             return false;
@@ -114,35 +114,35 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
         if (selected.Length == 0)
             return false;
 
-        bool clickedIsOilSource = context.ResourceHaulerSystem.IsOilSourceBuilding(clickedBuilding);
-        bool clickedIsFuelBuilding = context.ResourceHaulerSystem.IsFuelBuilding(clickedBuilding);
+        bool clickedIsOilSource = context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(clickedBuilding);
+        bool clickedIsFuelBuilding = context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(clickedBuilding);
         bool clickedIsStorage = context.FactionResourceCompositionSystemHelper.IsResourceStorageBuilding(clickedBuilding);
         if (!clickedIsOilSource && !clickedIsFuelBuilding && !clickedIsStorage)
             return false;
 
         RuntimeBuildingEntity source = clickedBuilding;
         RuntimeBuildingEntity destination = clickedBuilding;
-        ResourceHaulerSystem.ResourceHaulKind resourceKind = ResourceHaulerSystem.ResourceHaulKind.Oil;
+        ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil;
         if (clickedIsOilSource)
         {
-            if (!TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerSystem.IsFuelBuilding(candidate), out destination))
+            if (!TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(candidate), out destination))
                 return false;
-            resourceKind = ResourceHaulerSystem.ResourceHaulKind.Oil;
+            resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil;
         }
         else if (clickedIsFuelBuilding)
         {
-            if (!TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerSystem.IsOilSourceBuilding(candidate), out source))
+            if (!TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(candidate), out source))
                 return false;
             destination = clickedBuilding;
-            resourceKind = ResourceHaulerSystem.ResourceHaulKind.Oil;
+            resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil;
         }
         else
         {
             destination = clickedBuilding;
-            if (TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerSystem.HasAvailableFuelForHauler(candidate), out source))
-                resourceKind = ResourceHaulerSystem.ResourceHaulKind.Fuel;
-            else if (TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerSystem.IsOilSourceBuilding(candidate), out source))
-                resourceKind = ResourceHaulerSystem.ResourceHaulKind.Oil;
+            if (TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerUtilitySystemHelper.HasAvailableFuelForHauler(candidate), out source))
+                resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel;
+            else if (TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(candidate), out source))
+                resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil;
             else
                 return false;
         }
@@ -157,7 +157,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
             if (!TryIssueHaulerMoveToBuilding(context, em, unit, source, out int2 sourceGoal))
                 continue;
 
-            UnitResourceHaulOrder order = context.ResourceHaulerSystem.CreateOrder(source.Id, destination.Id, sourceGoal, resourceKind);
+            UnitResourceHaulOrder order = context.ResourceHaulerUtilitySystemHelper.CreateOrder(source.Id, destination.Id, sourceGoal, resourceKind);
 
             if (em.HasComponent<UnitResourceHaulOrder>(unit))
                 em.SetComponentData(unit, order);
@@ -219,7 +219,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
         int2 footprintSize = em.HasComponent<UnitFootprint>(entity)
             ? em.GetComponentData<UnitFootprint>(entity).Size
             : new int2(1, 1);
-        ResourceHaulerSystem.ResourceHaulKind resourceKind = (ResourceHaulerSystem.ResourceHaulKind)order.ResourceKind;
+        ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind = (ResourceHaulerUtilitySystemHelper.ResourceHaulKind)order.ResourceKind;
 
         if (context.TryGetRuntimeBuilding == null ||
             !context.TryGetRuntimeBuilding(order.SourceBuildingId, out RuntimeBuildingEntity source) ||
@@ -230,25 +230,25 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
         }
 
         int2 currentCell = em.GetComponentData<UnitGrid>(entity).Cell;
-        switch ((ResourceHaulerSystem.ResourceHaulPhase)order.Phase)
+        switch ((ResourceHaulerUtilitySystemHelper.ResourceHaulPhase)order.Phase)
         {
-            case ResourceHaulerSystem.ResourceHaulPhase.None:
+            case ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.None:
                 UpdateNonePhase(context, em, entity, source, ref order);
                 break;
 
-            case ResourceHaulerSystem.ResourceHaulPhase.ToSource:
+            case ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource:
                 UpdateTravelToSourcePhase(context, em, grid, entity, source, currentCell, footprintSize, ref order);
                 break;
 
-            case ResourceHaulerSystem.ResourceHaulPhase.Loading:
+            case ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.Loading:
                 UpdateLoadingPhase(context, em, entity, source, destination, resourceKind, ref hauler, ref order, now);
                 break;
 
-            case ResourceHaulerSystem.ResourceHaulPhase.ToDestination:
+            case ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToDestination:
                 UpdateTravelToDestinationPhase(context, em, grid, entity, destination, currentCell, footprintSize, ref order);
                 break;
 
-            case ResourceHaulerSystem.ResourceHaulPhase.Unloading:
+            case ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.Unloading:
                 UpdateUnloadingPhase(context, em, entity, source, destination, resourceKind, ref hauler, ref order, now);
                 break;
         }
@@ -259,7 +259,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
         if (!TryIssueHaulerMoveToBuilding(context, em, entity, source, out int2 goal))
             return;
 
-        context.ResourceHaulerSystem.SetTravelPhase(ref order, ResourceHaulerSystem.ResourceHaulPhase.ToSource, goal);
+        context.ResourceHaulerUtilitySystemHelper.SetTravelPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, goal);
         em.SetComponentData(entity, order);
     }
 
@@ -288,7 +288,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
 
         if (VerboseResourceHaulerLogs)
             Debug.Log($"[ResourceHauler] entity={entity} arrived-source source={source.Id} current={currentCell}");
-        context.ResourceHaulerSystem.SetPhase(ref order, ResourceHaulerSystem.ResourceHaulPhase.Loading);
+        context.ResourceHaulerUtilitySystemHelper.SetPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.Loading);
         em.SetComponentData(entity, order);
     }
 
@@ -298,12 +298,12 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
         Entity entity,
         RuntimeBuildingEntity source,
         RuntimeBuildingEntity destination,
-        ResourceHaulerSystem.ResourceHaulKind resourceKind,
+        ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
         ref UnitResourceHauler hauler,
         ref UnitResourceHaulOrder order,
         float now)
     {
-        float loadAmount = context.ResourceHaulerSystem.GetLoadAmount(hauler);
+        float loadAmount = context.ResourceHaulerUtilitySystemHelper.GetLoadAmount(hauler);
         if (loadAmount <= 0f)
         {
             if (_invalidCapacityWarningEntities.Add(entity))
@@ -313,43 +313,43 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
         }
 
         _invalidCapacityWarningEntities.Remove(entity);
-        float sourceStored = resourceKind == ResourceHaulerSystem.ResourceHaulKind.Fuel ? source.StoredFuelBarrels : source.StoredOilBarrels;
-        float currentCargo = resourceKind == ResourceHaulerSystem.ResourceHaulKind.Fuel ? hauler.CargoFuelBarrels : hauler.CargoOilBarrels;
+        float sourceStored = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel ? source.StoredFuelBarrels : source.StoredOilBarrels;
+        float currentCargo = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel ? hauler.CargoFuelBarrels : hauler.CargoOilBarrels;
         if (VerboseResourceHaulerLogs)
             Debug.Log($"[ResourceHauler] entity={entity} phase=Loading resource={resourceKind} current={em.GetComponentData<UnitGrid>(entity).Cell} source={source.Id} stored={sourceStored:0.##} cargo={currentCargo:0.##}/{loadAmount:0.##} actionEndsAt={order.ActionEndsAt:0.##} now={now:0.##}");
-        if (!context.ResourceHaulerSystem.HasEnoughSourceResource(source, resourceKind, loadAmount))
+        if (!context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(source, resourceKind, loadAmount))
         {
             if (VerboseResourceHaulerLogs)
                 Debug.Log($"[ResourceHauler] entity={entity} waiting-for-resource resource={resourceKind} source={source.Id} stored={sourceStored:0.##} need={loadAmount:0.##}");
             return;
         }
 
-        ResourceHaulerSystem.TimedActionState loadTimer = context.ResourceHaulerSystem.AdvanceTimedAction(ref order, now, hauler.FillDurationSeconds);
-        if (loadTimer == ResourceHaulerSystem.TimedActionState.Started)
+        ResourceHaulerUtilitySystemHelper.TimedActionState loadTimer = context.ResourceHaulerUtilitySystemHelper.AdvanceTimedAction(ref order, now, hauler.FillDurationSeconds);
+        if (loadTimer == ResourceHaulerUtilitySystemHelper.TimedActionState.Started)
         {
             em.SetComponentData(entity, order);
             if (VerboseResourceHaulerLogs)
                 Debug.Log($"[ResourceHauler] entity={entity} loading-started source={source.Id} fillDuration={hauler.FillDurationSeconds:0.##} completeAt={order.ActionEndsAt:0.##}");
             return;
         }
-        if (loadTimer == ResourceHaulerSystem.TimedActionState.Waiting)
+        if (loadTimer == ResourceHaulerUtilitySystemHelper.TimedActionState.Waiting)
         {
             if (VerboseResourceHaulerLogs)
                 Debug.Log($"[ResourceHauler] entity={entity} loading-in-progress source={source.Id} remaining={order.ActionEndsAt - now:0.##}");
             return;
         }
 
-        sourceStored = resourceKind == ResourceHaulerSystem.ResourceHaulKind.Fuel ? source.StoredFuelBarrels : source.StoredOilBarrels;
-        if (!context.ResourceHaulerSystem.HasEnoughSourceResource(source, resourceKind, loadAmount))
+        sourceStored = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel ? source.StoredFuelBarrels : source.StoredOilBarrels;
+        if (!context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(source, resourceKind, loadAmount))
         {
-            context.ResourceHaulerSystem.ResetActionTimer(ref order);
+            context.ResourceHaulerUtilitySystemHelper.ResetActionTimer(ref order);
             em.SetComponentData(entity, order);
             if (VerboseResourceHaulerLogs)
                 Debug.Log($"[ResourceHauler] entity={entity} loading-reset-insufficient-resource resource={resourceKind} source={source.Id} stored={sourceStored:0.##} need={loadAmount:0.##}");
             return;
         }
 
-        if (!context.ResourceHaulerSystem.TryCompleteLoad(source, resourceKind, loadAmount, ref hauler))
+        if (!context.ResourceHaulerUtilitySystemHelper.TryCompleteLoad(source, resourceKind, loadAmount, ref hauler))
             return;
         em.SetComponentData(entity, hauler);
         if (VerboseResourceHaulerLogs)
@@ -357,14 +357,14 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
 
         if (!TryIssueHaulerMoveToBuilding(context, em, entity, destination, out int2 destinationGoal))
         {
-            context.ResourceHaulerSystem.RevertLoad(source, resourceKind, loadAmount, ref hauler);
+            context.ResourceHaulerUtilitySystemHelper.RevertLoad(source, resourceKind, loadAmount, ref hauler);
             em.SetComponentData(entity, hauler);
             if (VerboseResourceHaulerLogs)
                 Debug.LogWarning($"[ResourceHauler] entity={entity} failed-destination-move destination={destination.Id} revertedLoad={loadAmount:0.##}");
             return;
         }
 
-        context.ResourceHaulerSystem.SetTravelPhase(ref order, ResourceHaulerSystem.ResourceHaulPhase.ToDestination, destinationGoal);
+        context.ResourceHaulerUtilitySystemHelper.SetTravelPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToDestination, destinationGoal);
         em.SetComponentData(entity, order);
         if (VerboseResourceHaulerLogs)
             Debug.Log($"[ResourceHauler] entity={entity} to-destination destination={destination.Id} target={destinationGoal}");
@@ -387,7 +387,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
             return;
         }
 
-        context.ResourceHaulerSystem.SetPhase(ref order, ResourceHaulerSystem.ResourceHaulPhase.Unloading);
+        context.ResourceHaulerUtilitySystemHelper.SetPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.Unloading);
         em.SetComponentData(entity, order);
     }
 
@@ -397,49 +397,49 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
         Entity entity,
         RuntimeBuildingEntity source,
         RuntimeBuildingEntity destination,
-        ResourceHaulerSystem.ResourceHaulKind resourceKind,
+        ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
         ref UnitResourceHauler hauler,
         ref UnitResourceHaulOrder order,
         float now)
     {
-        float cargo = context.ResourceHaulerSystem.GetCargo(hauler, resourceKind);
+        float cargo = context.ResourceHaulerUtilitySystemHelper.GetCargo(hauler, resourceKind);
         if (cargo <= 0f)
         {
-            context.ResourceHaulerSystem.SetPhase(ref order, ResourceHaulerSystem.ResourceHaulPhase.None);
+            context.ResourceHaulerUtilitySystemHelper.SetPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.None);
             em.SetComponentData(entity, order);
             return;
         }
 
-        if (!context.ResourceHaulerSystem.HasReceivingCapacity(destination, resourceKind, cargo))
+        if (!context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(destination, resourceKind, cargo))
             return;
 
-        ResourceHaulerSystem.TimedActionState unloadTimer = context.ResourceHaulerSystem.AdvanceTimedAction(ref order, now, hauler.UnloadDurationSeconds);
-        if (unloadTimer == ResourceHaulerSystem.TimedActionState.Started ||
-            unloadTimer == ResourceHaulerSystem.TimedActionState.Waiting)
+        ResourceHaulerUtilitySystemHelper.TimedActionState unloadTimer = context.ResourceHaulerUtilitySystemHelper.AdvanceTimedAction(ref order, now, hauler.UnloadDurationSeconds);
+        if (unloadTimer == ResourceHaulerUtilitySystemHelper.TimedActionState.Started ||
+            unloadTimer == ResourceHaulerUtilitySystemHelper.TimedActionState.Waiting)
         {
             em.SetComponentData(entity, order);
             return;
         }
 
-        if (!context.ResourceHaulerSystem.HasReceivingCapacity(destination, resourceKind, cargo))
+        if (!context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(destination, resourceKind, cargo))
         {
-            context.ResourceHaulerSystem.ResetActionTimer(ref order);
+            context.ResourceHaulerUtilitySystemHelper.ResetActionTimer(ref order);
             em.SetComponentData(entity, order);
             return;
         }
 
-        if (!context.ResourceHaulerSystem.TryCompleteUnload(destination, resourceKind, ref hauler))
+        if (!context.ResourceHaulerUtilitySystemHelper.TryCompleteUnload(destination, resourceKind, ref hauler))
             return;
         em.SetComponentData(entity, hauler);
 
         if (!TryIssueHaulerMoveToBuilding(context, em, entity, source, out int2 sourceGoal))
         {
-            context.ResourceHaulerSystem.SetPhase(ref order, ResourceHaulerSystem.ResourceHaulPhase.None);
+            context.ResourceHaulerUtilitySystemHelper.SetPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.None);
             em.SetComponentData(entity, order);
             return;
         }
 
-        context.ResourceHaulerSystem.SetTravelPhase(ref order, ResourceHaulerSystem.ResourceHaulPhase.ToSource, sourceGoal);
+        context.ResourceHaulerUtilitySystemHelper.SetTravelPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, sourceGoal);
         em.SetComponentData(entity, order);
     }
 

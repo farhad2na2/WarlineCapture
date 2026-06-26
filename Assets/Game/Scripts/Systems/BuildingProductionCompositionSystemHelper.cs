@@ -56,7 +56,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
             Debug.LogWarning,
             (factionId, unitId) => source.BuildingRuntimeReadModelCompositionSystemHelper.CountPendingProductionsForFaction(runtimeQueryContext, factionId, unitId),
             (factionId, unitId) => source.BuildingRuntimeReadModelCompositionSystemHelper.CountRuntimeProducedUnitsForFaction(runtimeQueryContext, factionId, unitId),
-            source.ResourceHaulerSystem,
+            source.ResourceHaulerUtilitySystemHelper,
             source.FactionResourceCompositionSystemHelper,
             (out EntityManager entityManager) => runtimeSource.TryGetEntityManager(out entityManager),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>

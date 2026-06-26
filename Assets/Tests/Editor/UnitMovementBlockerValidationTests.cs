@@ -63,6 +63,26 @@ public sealed class UnitMovementBlockerValidationTests
         }
     }
 
+    public static void RunMapVehiclePlacementFocusedValidation()
+    {
+        try
+        {
+            var tests = new UnitMovementBlockerValidationTests();
+            tests.MapVehiclePlacementReadModelProjectsSourceKeyAndPrefabEntityData();
+            tests.MapVehiclePlacementProgressStateTracksEmptyConfigCompletion();
+            tests.MapVehiclePlacementClearanceRemovesBlockersUnderVehicleFootprint();
+            tests.MapVehiclePlacementDepartureClearanceRemovesPaddedBlockers();
+            Debug.Log("[MapVehiclePlacementValidation] result=Passed tests=4");
+            ValidationExit.Passed();
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[MapVehiclePlacementValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     [Test]
     public void UnitMovementTargetRejectsBuildingBlockerCells()
     {
@@ -802,7 +822,7 @@ public sealed class UnitMovementBlockerValidationTests
                 TryGetEntityManager,
                 null,
                 () => spawnPrefabContext);
-            var context = new MapVehiclePlacementSpawnSystem.Context(
+            var context = new MapVehiclePlacementSpawnPrefabSystemHelper.Context(
                 config,
                 null,
                 new RuntimeUnitPrefabSystem(),
@@ -810,7 +830,7 @@ public sealed class UnitMovementBlockerValidationTests
                 null,
                 null);
 
-            int projected = MapVehiclePlacementSpawnSystem.PublishPlacementReadModel(context, em, boundary);
+            int projected = MapVehiclePlacementSpawnPrefabSystemHelper.PublishPlacementReadModel(context, em, boundary);
 
             Assert.AreEqual(1, projected);
             Assert.IsTrue(em.HasBuffer<MapVehiclePlacementReadModel>(boundary));
@@ -854,7 +874,7 @@ public sealed class UnitMovementBlockerValidationTests
                 TryGetEntityManager,
                 null,
                 null);
-            var context = new MapVehiclePlacementSpawnSystem.Context(
+            var context = new MapVehiclePlacementSpawnPrefabSystemHelper.Context(
                 config,
                 authoringRoot.transform,
                 new RuntimeUnitPrefabSystem(),
@@ -862,7 +882,7 @@ public sealed class UnitMovementBlockerValidationTests
                 null,
                 null);
 
-            var system = new MapVehiclePlacementSpawnSystem();
+            var system = new MapVehiclePlacementSpawnPrefabSystemHelper();
             system.Update(context);
 
             using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MapVehiclePlacementProgressState>());
@@ -1105,7 +1125,7 @@ public sealed class UnitMovementBlockerValidationTests
                 FriendlyPassFactionIds = friendlyPassFactionIds
             };
 
-            int cleared = MapVehiclePlacementSpawnSystem.ClearRuntimeBlockersInFootprint(
+            int cleared = MapVehiclePlacementSpawnPrefabSystemHelper.ClearRuntimeBlockersInFootprint(
                 grid,
                 ref blockerData,
                 center,
@@ -1181,7 +1201,7 @@ public sealed class UnitMovementBlockerValidationTests
                 FriendlyPassFactionIds = friendlyPassFactionIds
             };
 
-            int cleared = MapVehiclePlacementSpawnSystem.ClearRuntimeBlockersInFootprint(
+            int cleared = MapVehiclePlacementSpawnPrefabSystemHelper.ClearRuntimeBlockersInFootprint(
                 grid,
                 ref blockerData,
                 center,

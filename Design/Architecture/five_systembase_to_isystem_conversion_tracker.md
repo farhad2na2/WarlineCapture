@@ -7,7 +7,7 @@ Track the remaining high-risk managed `SystemBase` boundaries that were intentio
 - `BuildingSpawnCompositionSystemHelper`
 - `BuildingProductionTransportBridgeCompositionSystemHelper`
 - `CitizenVisibleUnitPresentationSystemHelper`
-- `MapVehiclePlacementSpawnSystem`
+- `MapVehiclePlacementSpawnPrefabSystemHelper`
 - `CustomGameStartupSystem`
 
 The goal is to retire these broad managed runtime gameplay owners by decomposing each one into focused unmanaged `ISystem` processors plus explicit passive managed boundaries. A target is not complete if it is merely converted into one large `ISystem` with the same responsibilities. Do not force `GameObject`, prefab, camera, UI, serialized config, or `UnityEngine.Object` ownership into unmanaged systems.
@@ -23,8 +23,8 @@ The goal is to retire these broad managed runtime gameplay owners by decomposing
 - Extracted focused ECS `ISystem` processors: `0 / 22 planned`.
 - Split decomposition plans documented: `5 / 5`.
 - Split into passive managed boundaries: `0 / 5`.
-- Validation status: `git diff --check` passed; main-project `BuildingProductionRequestValidation` passed (`tests=21`); main-project `BuildingProductionCameraFocusValidation` passed (`tests=10`); main-project `BuildingUiQueryValidation` passed (`tests=5`); Integration P7-0318 moved `MapVehiclePlacementSpawnSystem` progress/random/clearance state into ECS `MapVehiclePlacementProgressState` and passed `UnitMovementBlockerValidation` (`/private/tmp/warline-phase7-integration-map-vehicle-placement-progress-state.log`), compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.
-- Current target system: `MapVehiclePlacementSpawnSystem` progress-state split complete; continue placement instantiation, blocker, result, and composition extraction.
+- Validation status: `git diff --check` passed; main-project `BuildingProductionRequestValidation` passed (`tests=21`); main-project `BuildingProductionCameraFocusValidation` passed (`tests=10`); main-project `BuildingUiQueryValidation` passed (`tests=5`); Integration P7-0318 moved `MapVehiclePlacementSpawnPrefabSystemHelper` progress/random/clearance state into ECS `MapVehiclePlacementProgressState` and passed `UnitMovementBlockerValidation` (`/private/tmp/warline-phase7-integration-map-vehicle-placement-progress-state.log`), compile, inventory regeneration, `git diff --check`, and Phase 7 architecture guard.
+- Current target system: `MapVehiclePlacementSpawnPrefabSystemHelper` progress-state split complete; continue placement instantiation, blocker, result, and composition extraction.
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
 
 ## Current Disposition
@@ -34,7 +34,7 @@ The goal is to retire these broad managed runtime gameplay owners by decomposing
 | `BuildingSpawnCompositionSystemHelper` | `SystemBase` | Fallback `Instance.transform` spawn placement reads plus managed produced-unit list/slot fallbacks when no runtime boundary is available. | Retire as a broad spawn owner. Split into `BuildingProductionSpawnRequestSystem`, `BuildingProductionSlotReservationSystem`, `BuildingProductionPlacementSystem`, `BuildingHelipadSpawnSystem`, `BuildingUnitInstantiationSystem`, and `BuildingProducedUnitStateSystem`; preview/transform projection stays passive. |
 | `BuildingProductionTransportBridgeCompositionSystemHelper` | `SystemBase` | Uses produced-unit prefab/object data for footprint and focus decisions. | Retire as a direct bridge. Split into `BuildingProductionTransportRequestSystem`, `BuildingProductionTransportMovementSystem`, `BuildingProductionTransportFocusRequestSystem`, and `BuildingRunwayTransportSystem`; camera/UI application remains passive. |
 | `CitizenVisibleUnitPresentationSystemHelper` | `SystemBase` | Managed visible-citizen dictionaries and immediate entity tracking after instantiate. | Retire as same-frame dictionary owner. Split into `CitizenVisibleUnitSpawnRequestSystem`, `CitizenVisibleUnitInstantiateSystem`, `CitizenVisibleUnitMovementStateSystem`, and `CitizenVisibleUnitLifetimeSystem`; presentation state remains passive. |
-| `MapVehiclePlacementSpawnSystem` | Plain direct helper | Instantiation, blocker reservation/cleanup, and completion results still run through the broad direct helper; config still has authored prefab fallback at the managed edge. | Retire as managed update wrapper. Progress/random/clearance state now lives in ECS `MapVehiclePlacementProgressState`; continue split into `MapVehiclePlacementProgressSystem`, `MapVehiclePlacementInstantiateSystem`, `MapVehiclePlacementBlockerSystem`, and `MapVehiclePlacementResultSystem`; config projection remains passive. |
+| `MapVehiclePlacementSpawnPrefabSystemHelper` | Plain direct helper | Instantiation, blocker reservation/cleanup, and completion results still run through the broad direct helper; config still has authored prefab fallback at the managed edge. | Retire as managed update wrapper. Progress/random/clearance state now lives in ECS `MapVehiclePlacementProgressState`; continue split into `MapVehiclePlacementProgressSystem`, `MapVehiclePlacementInstantiateSystem`, `MapVehiclePlacementBlockerSystem`, and `MapVehiclePlacementResultSystem`; config projection remains passive. |
 | `CustomGameStartupSystem` | `SystemBase` | Serialized startup configs and prefab/atlas/impostor projection. | Retire as serialized config/runtime startup owner. Split into `CustomGameFactionStartupSystem`, `CustomGameBuildingStartupSystem`, `CustomGameUnitStartupSystem`, and `CustomGameStartupResultSystem`; serialized config, atlas, sprite, and impostor projection remain passive. |
 
 ## Updated Estimate
@@ -49,7 +49,7 @@ Estimated remaining focused engineering time:
 | `BuildingSpawnCompositionSystemHelper` | Finish transform/fallback removal, then extract six focused production spawn processors and retire the broad owner. | 4-7 hours |
 | `BuildingProductionTransportBridgeCompositionSystemHelper` | Move produced-unit transport, runway movement, and focus requests to ECS data while keeping camera/UI passive. | 2-4 hours |
 | `CitizenVisibleUnitPresentationSystemHelper` | Replace same-frame dictionaries with request/state/lifetime systems and passive presentation state. | 4-7 hours |
-| `MapVehiclePlacementSpawnSystem` | Move config progress, instantiation, blocker ownership, and completion results into ECS. | 4-6 hours |
+| `MapVehiclePlacementSpawnPrefabSystemHelper` | Move config progress, instantiation, blocker ownership, and completion results into ECS. | 4-6 hours |
 | `CustomGameStartupSystem` | Split serialized config projection from faction, building, unit, and result startup processors. | 5-9 hours |
 | Cross-cutting validation | Architecture guards, composition rewiring, and focused Unity/EditMode/PlayMode validation. | 3-6 hours |
 
@@ -95,7 +95,7 @@ Direct call sites:
 - `BuildingSpawnCompositionSystemHelper`: held by `BuildingGameplaySourceCompositionSystemHelper`, included in `BuildingGameplayResultCompositionSystemHelper`, invoked through `BuildingProductionRuntimeTickCompositionSystemHelper`, `BuildingProductionTickCompositionSystemHelper`, `BuildingProductionCompositionSystemHelper`, and `BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBuildingSpawnContext`; focused tests call `ResolveProducedUnitFaction`.
 - `BuildingProductionTransportBridgeCompositionSystemHelper`: held by `BuildingGameplaySourceCompositionSystemHelper`, passed through `BuildingProductionContextCompositionSystemHelper` and `BuildingProductionTransportPresentationSystemHelper`; focused production tests call `FocusNewestPlayerProducedUnit`.
 - `CitizenVisibleUnitPresentationSystemHelper`: constructed by `CitizenPopulationCompositionSystemHelper` and directly constructed by `CitizenVisibleUnitPresentationSystemHelperTests`.
-- `MapVehiclePlacementSpawnSystem`: held by `BuildingGameplaySourceCompositionSystemHelper`, invoked by `BuildingGameplayCompositionSystemHelper` map placement update callbacks; blocker cleanup helpers are directly covered by `UnitMovementBlockerValidationTests`.
+- `MapVehiclePlacementSpawnPrefabSystemHelper`: held by `BuildingGameplaySourceCompositionSystemHelper`, invoked by `BuildingGameplayCompositionSystemHelper` map placement update callbacks; blocker cleanup helpers are directly covered by `UnitMovementBlockerValidationTests`.
 - `CustomGameStartupSystem`: resolved by `MatchBootstrapSystem` through `World.GetOrCreateSystemManaged<CustomGameStartupSystem>()`; focused tests resolve it through `GetOrCreateSystemManaged`.
 
 Managed prefab/config inputs:
@@ -103,7 +103,7 @@ Managed prefab/config inputs:
 - `BuildingSpawnCompositionSystemHelper`: `GetProductionPrefabDelegate`, `GameObject spawnUnitPrefab`, `ProducedUnitPrefabs` fallback map, and source-key derivation from managed prefab names.
 - `BuildingProductionTransportBridgeCompositionSystemHelper`: `GameObject spawnUnitPrefab` input and footprint resolution from managed prefab source key.
 - `CitizenVisibleUnitPresentationSystemHelper`: no direct `GameObject` grep hit in the target file, but it remains a managed same-frame presentation bridge because visible citizens are instantiated and tracked immediately.
-- `MapVehiclePlacementSpawnSystem`: no direct `GameObject` grep hit in the target file after `vehicleSourceKey`, but config projection still derives missing keys from authored `VehiclePrefab`.
+- `MapVehiclePlacementSpawnPrefabSystemHelper`: no direct `GameObject` grep hit in the target file after `vehicleSourceKey`, but config projection still derives missing keys from authored `VehiclePrefab`.
 - `CustomGameStartupSystem`: `UnitSpawnPrefabs`, `GameObject firstUnitPrefab`, `TryResolveConvertedPrefabEntity(GameObject)`, impostor atlas lookup by prefab, building lookup key from prefab.
 
 Existing ECS data already available:
@@ -129,7 +129,7 @@ Current grep snapshot for the five target files:
 - `UnityEngine.Object`: none by direct target-file grep.
 - `List<GameObject>`: none by direct target-file grep.
 - `Dictionary<..., GameObject>`: `BuildingSpawnCompositionSystemHelper`.
-- `MapVehiclePlacementSpawnSystem` and `CitizenVisibleUnitPresentationSystemHelper` have no direct `GameObject` grep hits but are still managed boundary classes.
+- `MapVehiclePlacementSpawnPrefabSystemHelper` and `CitizenVisibleUnitPresentationSystemHelper` have no direct `GameObject` grep hits but are still managed boundary classes.
 
 Baseline validation notes:
 
@@ -169,7 +169,7 @@ Phase 1 footprint read-model notes:
 - `UnitFootprint` is the compact ECS read model for unit dimensions and is keyed by prefab entity once a source key resolves to an entity.
 - `UnitGridAuthoring.Baker` writes `UnitFootprint` onto every baked unit prefab entity from the resolved configured footprint.
 - `BuildingProductionTransportBridgeCompositionSystemHelper` already resolves the production source key through `BuildingSpawnPrefabSystem.TryGetSpawnUnitPrefabEntity` and reads `UnitFootprint` from the prefab entity.
-- `MapVehiclePlacementSpawnSystem` already resolves placement source key through `RuntimeUnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity` and reads `UnitFootprint` from the prefab entity.
+- `MapVehiclePlacementSpawnPrefabSystemHelper` already resolves placement source key through `RuntimeUnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity` and reads `UnitFootprint` from the prefab entity.
 - `InitialUnitsSpawnSystem` already reads `UnitFootprint` directly from the initial unit prefab entity when planning startup placement.
 - No separate source-key-to-footprint table is needed for the current conversion path; later slices can use source key to prefab entity to `UnitFootprint`.
 
@@ -203,7 +203,7 @@ Phase 1 citizen visible-unit ECS state notes:
 Phase 1 map vehicle placement read-model notes:
 
 - Added `MapVehiclePlacementReadModel` as an ECS boundary buffer with placement index, source path, category, normalized vehicle source key, resolved prefab entity, footprint cells, faction id, and authored transform metadata.
-- `MapVehiclePlacementSpawnSystem` now projects the managed `MapVehiclePlacementConfig` edge into `MapVehiclePlacementReadModel` on the `BuildingRuntimeBoundaryTag` entity before the existing spawn/clearance flow runs.
+- `MapVehiclePlacementSpawnPrefabSystemHelper` now projects the managed `MapVehiclePlacementConfig` edge into `MapVehiclePlacementReadModel` on the `BuildingRuntimeBoundaryTag` entity before the existing spawn/clearance flow runs.
 - Existing config fallback from authored `VehiclePrefab.name` remains only at the managed config edge for older baked assets that do not serialize `vehicleSourceKey`; the ECS row stores the normalized key and prefab entity result.
 - `MatchBootstrapSystem` and `RuntimeGameplayStateTestHelper` now ensure the map vehicle placement buffer exists on the boundary entity.
 - Added focused coverage in `UnitMovementBlockerValidationTests.MapVehiclePlacementReadModelProjectsSourceKeyAndPrefabEntityData`.
@@ -484,7 +484,7 @@ Split visible-citizen spawn, movement state, and lifetime tracking into entity-o
 - [ ] Run `BuildingGameplayCompositionRuntimeSmokeValidation`.
 - [ ] Run `NonEcsSystemConversionArchitectureValidation`.
 
-## Phase 5: MapVehiclePlacementSpawnSystem Conversion
+## Phase 5: MapVehiclePlacementSpawnPrefabSystemHelper Conversion
 
 Purpose:
 Split map vehicle placement progress, instantiation, blocker ownership, and completion results into ECS state.
@@ -498,7 +498,7 @@ Split map vehicle placement progress, instantiation, blocker ownership, and comp
 - [ ] Extract prefab entity instantiation and spawn component initialization into `MapVehiclePlacementInstantiateSystem`.
 - [ ] Extract blocker reservation and cleanup into `MapVehiclePlacementBlockerSystem`.
 - [ ] Extract placement completion/result publication into `MapVehiclePlacementResultSystem`.
-- [ ] Retire or rename the remaining `MapVehiclePlacementSpawnSystem` wrapper so it no longer owns runtime gameplay execution.
+- [ ] Retire the remaining `MapVehiclePlacementSpawnPrefabSystemHelper` helper so it no longer owns runtime gameplay execution.
 - [ ] Update building gameplay composition to schedule the ECS placement split systems instead of invoking the managed update wrapper.
 - [ ] Add validation that map vehicle placement entries with source keys spawn the same configured entities.
 - [x] Run `UnitMovementBlockerValidation`.
@@ -509,11 +509,12 @@ Split map vehicle placement progress, instantiation, blocker ownership, and comp
 Phase 5 progress-state notes:
 
 - P7-0318 added `MapVehiclePlacementProgressState` as ECS component state for placement queue completion, authoring-hidden completion, next placement index, last cleared blocker cells, and random state.
-- `MapVehiclePlacementSpawnSystem` no longer derives from `SystemBase`; it remains a direct helper owned by building gameplay composition, so the broad execution owner is not retired yet.
+- `MapVehiclePlacementSpawnPrefabSystemHelper` no longer derives from `SystemBase`; it remains a direct helper owned by building gameplay composition, so the broad execution owner is not retired yet.
+- Non-ECS helper naming Batch 209 renamed `MapVehiclePlacementSpawnSystem` to `MapVehiclePlacementSpawnPrefabSystemHelper`; preserved `.meta` GUID, updated direct building composition and map-vehicle validation call sites, regenerated `Design/Architecture/non_ecs_to_ecs_system_inventory.md`, and reduced the non-ECS denominator to `20`; focused map-vehicle placement validation passed in `/private/tmp/warline-non-ecs-helper-naming-batch209-map-vehicle-placement.log`. Remaining Phase 5 split-decomposition work is unchanged.
 - The existing `MapVehiclePlacementReadModel` continues to project source key, prefab entity, position, faction, footprint, and authored transform metadata into ECS buffers.
 - Added `UnitMovementBlockerValidationTests.MapVehiclePlacementProgressStateTracksEmptyConfigCompletion` to prove empty-config completion and authoring-root hiding are tracked through ECS state.
 - Passed: `[UnitMovementBlockerValidation] result=Passed` in `/private/tmp/warline-phase7-integration-map-vehicle-placement-progress-state.log`.
-- Remaining blockers before Phase 5 completion: extract placement scanning, instantiation, blocker reservation/cleanup, completion/result publication, and composition scheduling into focused ECS processors, then retire or rename the direct helper.
+- Remaining blockers before Phase 5 completion: extract placement scanning, instantiation, blocker reservation/cleanup, completion/result publication, and composition scheduling into focused ECS processors, then retire the direct helper.
 
 ## Phase 6: CustomGameStartupSystem Conversion
 

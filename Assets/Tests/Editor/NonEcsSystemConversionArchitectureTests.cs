@@ -135,7 +135,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         ["Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs"] = "BuildingSpawnCompositionSystemHelper",
         ["Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs"] = "BuildingProductionTransportBridgeCompositionSystemHelper",
         ["Assets/Game/Scripts/Systems/CitizenVisibleUnitPresentationSystemHelper.cs"] = "CitizenVisibleUnitPresentationSystemHelper",
-        ["Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnSystem.cs"] = "MapVehiclePlacementSpawnSystem",
+        ["Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnPrefabSystemHelper.cs"] = "MapVehiclePlacementSpawnPrefabSystemHelper",
         ["Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs"] = "CustomGameStartupSystemHelper"
     };
 

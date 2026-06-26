@@ -66,7 +66,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingResourceHaulerBridgeCompositionSystemHelper BuildingResourceHaulerBridgeCompositionSystemHelper = new();
     internal readonly BuildingRuntimeBoundaryProcessingCompositionSystemHelper BuildingRuntimeBoundaryProcessingCompositionSystemHelper = new();
     internal readonly MapBuildingPlacementSpawnPrefabSystemHelper MapBuildingPlacementSpawnPrefabSystemHelper = new();
-    internal readonly MapVehiclePlacementSpawnSystem MapVehiclePlacementSpawnSystem = new();
+    internal readonly MapVehiclePlacementSpawnPrefabSystemHelper MapVehiclePlacementSpawnPrefabSystemHelper = new();
     internal readonly BuildingPlacementRuntimeTickCompositionSystemHelper BuildingPlacementRuntimeTickCompositionSystemHelper = new();
     internal readonly BuildingPlacementInputRuntimeTickUiSystemHelper BuildingPlacementInputRuntimeTickUiSystemHelper = new();
     internal readonly RuntimeResourceSystem RuntimeResourceSystem = new();

@@ -517,7 +517,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                         return boundaryEntity != Entity.Null && em.Exists(boundaryEntity);
                     }
 
-                    MapVehiclePlacementSpawnSystem.Context mapVehiclePlacementContext =
+                    MapVehiclePlacementSpawnPrefabSystemHelper.Context mapVehiclePlacementContext =
                         new(
                             mapVehiclePlacementConfig,
                             mapVehicleAuthoringRoot,
@@ -526,7 +526,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                             TryGetMapGridData,
                             TryGetMapRuntimeBoundary,
                             Debug.LogWarning);
-                    return () => source.MapVehiclePlacementSpawnSystem.Update(mapVehiclePlacementContext);
+                    return () => source.MapVehiclePlacementSpawnPrefabSystemHelper.Update(mapVehiclePlacementContext);
                 },
                 DestroyedBuildingLifetimeSeconds);
             runtimeTickContext = _runtimeTickContextCompositionHelper.Create(runtimeTickSource);

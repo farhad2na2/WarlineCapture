@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-internal sealed class MapVehiclePlacementSpawnSystem
+internal sealed class MapVehiclePlacementSpawnPrefabSystemHelper
 {
     private const int MaxPlacementsPerUpdate = 32;
     private const int VehicleDepartureClearancePaddingCells = UnitPathPlacementValidation.VehicleOccupancyPaddingCells;

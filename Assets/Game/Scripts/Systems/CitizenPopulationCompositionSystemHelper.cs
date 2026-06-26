@@ -5,8 +5,8 @@ internal sealed class CitizenPopulationCompositionSystemHelper
 {
     public sealed class Result
     {
-        public readonly CitizenResourceSystem CitizenResourceSystem = ResolveCitizenResourceSystem();
-        public CitizenResourceSystem.Context CitizenResourceContext;
+        public readonly CitizenResourceCompositionSystemHelper CitizenResourceCompositionSystemHelper = ResolveCitizenResourceSystem();
+        public CitizenResourceCompositionSystemHelper.Context CitizenResourceContext;
         public readonly CitizenPrefabSystem CitizenPrefabSystem = new();
         public CitizenPrefabSystem.Context CitizenPrefabContext;
         public readonly CitizenPopulationStateCompositionSystemHelper State = new();
@@ -50,7 +50,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         DayNightSystem dayNightSystem,
         Camera worldCamera,
         bool populationEnabled,
-        CitizenResourceSystem.Context citizenResourceContext,
+        CitizenResourceCompositionSystemHelper.Context citizenResourceContext,
         CitizenPrefabSystem.Context citizenPrefabContext)
     {
         if (system != null)
@@ -85,7 +85,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         DayNightSystem dayNightSystem,
         Camera worldCamera,
         bool populationEnabled,
-        CitizenResourceSystem.Context citizenResourceContext,
+        CitizenResourceCompositionSystemHelper.Context citizenResourceContext,
         CitizenPrefabSystem.Context citizenPrefabContext)
     {
         InitState(
@@ -106,7 +106,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         DayNightSystem dayNightSystem,
         Camera worldCamera,
         bool populationEnabled,
-        CitizenResourceSystem.Context citizenResourceContext,
+        CitizenResourceCompositionSystemHelper.Context citizenResourceContext,
         CitizenPrefabSystem.Context citizenPrefabContext)
     {
         result.BuildingReadSystem.Init(buildingRuntimeQuerySystem, buildingRuntimeQueryContext);
@@ -184,9 +184,9 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         result.PopulationEnabled = false;
     }
 
-    private static CitizenResourceSystem ResolveCitizenResourceSystem()
+    private static CitizenResourceCompositionSystemHelper ResolveCitizenResourceSystem()
     {
-        return new CitizenResourceSystem();
+        return new CitizenResourceCompositionSystemHelper();
     }
 
     private static CitizenPopulationTotalsCompositionSystemHelper ResolveCitizenPopulationTotalsSystem()

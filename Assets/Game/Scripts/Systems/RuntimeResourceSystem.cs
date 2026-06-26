@@ -29,9 +29,9 @@ internal sealed class RuntimeResourceSystem
         return true;
     }
 
-    public CitizenResourceSystem.Context CreateCitizenResourceContext()
+    public CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContext()
     {
-        return new CitizenResourceSystem.Context(
+        return new CitizenResourceCompositionSystemHelper.Context(
             () => _dollars,
             value => _dollars = Mathf.Max(0, value));
     }

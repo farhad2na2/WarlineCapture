@@ -139,7 +139,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
             createCurrentSource);
     }
 
-    public static CitizenResourceSystem.Context CreateCitizenResourceContext(
+    public static CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContext(
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper system,
         Source source)
     {
@@ -148,12 +148,12 @@ internal sealed class BuildingRuntimeResourcePrefabContextCompositionSystemHelpe
             : CreateCitizenResourceContextState(source);
     }
 
-    public CitizenResourceSystem.Context CreateCitizenResourceContext(Source source)
+    public CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContext(Source source)
     {
         return CreateCitizenResourceContextState(source);
     }
 
-    private static CitizenResourceSystem.Context CreateCitizenResourceContextState(Source source)
+    private static CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContextState(Source source)
     {
         return source.RuntimeResourceSystem.CreateCitizenResourceContext();
     }

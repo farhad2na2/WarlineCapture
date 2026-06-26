@@ -155,7 +155,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystemHelper
         Camera worldCamera,
         bool populationEnabled)
     {
-        CitizenResourceSystem.Context resourceContext =
+        CitizenResourceCompositionSystemHelper.Context resourceContext =
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateCitizenResourceContext(
                 runtimeResourcePrefabContextSystem,
                 runtimeResourcePrefabSource);

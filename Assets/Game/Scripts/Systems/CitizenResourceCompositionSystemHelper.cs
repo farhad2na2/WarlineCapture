@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-internal sealed class CitizenResourceSystem
+internal sealed class CitizenResourceCompositionSystemHelper
 {
     public readonly struct Context
     {
@@ -15,7 +15,7 @@ internal sealed class CitizenResourceSystem
         }
     }
 
-    public static bool IsConfigured(CitizenResourceSystem system, Context context)
+    public static bool IsConfigured(CitizenResourceCompositionSystemHelper system, Context context)
     {
         return system != null
             ? system.IsConfigured(context)
@@ -27,7 +27,7 @@ internal sealed class CitizenResourceSystem
         return IsConfiguredState(context);
     }
 
-    public static bool TrySpendDollars(CitizenResourceSystem system, Context context, int amount)
+    public static bool TrySpendDollars(CitizenResourceCompositionSystemHelper system, Context context, int amount)
     {
         return system != null
             ? system.TrySpendDollars(context, amount)

@@ -158,7 +158,7 @@ internal sealed class CitizenPopulationRuntimeUpdateCompositionSystemHelper
             _systems.State,
             _systems.BuildingReadSystem,
             _systems.HouseholdRegistrationSystem,
-            _systems.CitizenResourceSystem,
+            _systems.CitizenResourceCompositionSystemHelper,
             _systems.CitizenResourceContext,
             _systems.DayNightSystem,
             HandleCitizenDeath,

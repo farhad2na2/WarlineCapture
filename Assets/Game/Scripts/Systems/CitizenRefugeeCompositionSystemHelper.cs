@@ -265,8 +265,8 @@ internal sealed class CitizenRefugeeCompositionSystemHelper
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
-        CitizenResourceSystem citizenResourceSystem,
-        CitizenResourceSystem.Context citizenResourceContext,
+        CitizenResourceCompositionSystemHelper citizenResourceSystem,
+        CitizenResourceCompositionSystemHelper.Context citizenResourceContext,
         DayNightSystem dayNightSystem,
         MarkCitizenDeadAction markCitizenDead,
         StoreHouseholdAction storeHousehold)
@@ -301,8 +301,8 @@ internal sealed class CitizenRefugeeCompositionSystemHelper
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
-        CitizenResourceSystem citizenResourceSystem,
-        CitizenResourceSystem.Context citizenResourceContext,
+        CitizenResourceCompositionSystemHelper citizenResourceSystem,
+        CitizenResourceCompositionSystemHelper.Context citizenResourceContext,
         DayNightSystem dayNightSystem,
         MarkCitizenDeadAction markCitizenDead,
         StoreHouseholdAction storeHousehold)
@@ -489,14 +489,14 @@ internal sealed class CitizenRefugeeCompositionSystemHelper
         CitizenPopulationStateCompositionSystemHelper state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
-        CitizenResourceSystem citizenResourceSystem,
-        CitizenResourceSystem.Context citizenResourceContext,
+        CitizenResourceCompositionSystemHelper citizenResourceSystem,
+        CitizenResourceCompositionSystemHelper.Context citizenResourceContext,
         DayNightSystem dayNightSystem,
         MarkCitizenDeadAction markCitizenDead,
         StoreHouseholdAction storeHousehold)
     {
         if (dayNightSystem == null ||
-            !CitizenResourceSystem.IsConfigured(citizenResourceSystem, citizenResourceContext) ||
+            !CitizenResourceCompositionSystemHelper.IsConfigured(citizenResourceSystem, citizenResourceContext) ||
             !buildingReadSystem.HasRuntimeBuildingQuery())
         {
             return;
@@ -532,7 +532,7 @@ internal sealed class CitizenRefugeeCompositionSystemHelper
         if (refugeeCitizens <= 0 || totalCost <= 0)
             return;
 
-        if (CitizenResourceSystem.TrySpendDollars(citizenResourceSystem, citizenResourceContext, totalCost))
+        if (CitizenResourceCompositionSystemHelper.TrySpendDollars(citizenResourceSystem, citizenResourceContext, totalCost))
             return;
 
         state.PopulateHouseholdIds();

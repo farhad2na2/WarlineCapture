@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class FocusedUnitUiReadModelSystem
+public sealed class FocusedUnitUiReadModelUiSystemHelper
 {
     private World _queryWorld;
     private EntityQuery _readModelQuery;

@@ -33,7 +33,7 @@ public sealed class SelectionUiReadModelSystem : ISelectionUiReadModel
         AirDefenseReloading = 8
     }
 
-    private readonly FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem = new();
+    private readonly FocusedUnitUiReadModelUiSystemHelper _focusedUnitUiReadModelSystem = new();
     private readonly SelectionUiReadModelLookup _selectionUiReadModelLookup = new();
     private readonly VisibleUnitSelectionSystem _visibleUnitSelectionSystem = new();
 

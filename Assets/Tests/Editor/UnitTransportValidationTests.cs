@@ -3057,7 +3057,7 @@ public sealed class UnitTransportValidationTests
 
         var selectionState = new SelectionStateSystem();
         selectionState.SetFocusedUnit(transport);
-        var readModelSystem = new FocusedUnitUiReadModelSystem();
+        var readModelSystem = new FocusedUnitUiReadModelUiSystemHelper();
         readModelSystem.Publish(
             em,
             selectionState,
@@ -3106,7 +3106,7 @@ public sealed class UnitTransportValidationTests
 
         var selectionState = new SelectionStateSystem();
         selectionState.SetFocusedUnit(transport);
-        var readModelSystem = new FocusedUnitUiReadModelSystem();
+        var readModelSystem = new FocusedUnitUiReadModelUiSystemHelper();
         readModelSystem.Publish(
             em,
             selectionState,

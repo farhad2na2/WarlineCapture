@@ -259,7 +259,7 @@ public sealed class SelectionHudFeedbackBoundary
     public void RefreshFocusedSelectionReadModels(
         Context context,
         SelectionStateSystem selectionStateSystem,
-        FocusedUnitUiReadModelSystem focusedUnitUiReadModelSystem,
+        FocusedUnitUiReadModelUiSystemHelper focusedUnitUiReadModelSystem,
         UnitTransportCapacitySystem unitTransportCapacitySystem,
         EnsureEntityQueriesDelegate ensureEntityQueries,
         RefreshFocusedUnitDelegate refreshFocusedUnit,
@@ -282,7 +282,7 @@ public sealed class SelectionHudFeedbackBoundary
         Context context,
         SelectionStateSystem selectionStateSystem,
         FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem,
-        FocusedUnitUiReadModelSystem focusedUnitUiReadModelSystem,
+        FocusedUnitUiReadModelUiSystemHelper focusedUnitUiReadModelSystem,
         List<MatchHudSelectionPanelPassengerItemModel> transportPassengerPanelItems,
         EnsureEntityQueriesDelegate ensureEntityQueries,
         TryGetAttackModeOrderSnapshotDelegate tryGetAttackModeOrderSnapshot,
@@ -549,7 +549,7 @@ public sealed class SelectionHudFeedbackBoundary
         Context context,
         EntityManager em,
         Entity transport,
-        FocusedUnitUiReadModelSystem focusedUnitUiReadModelSystem,
+        FocusedUnitUiReadModelUiSystemHelper focusedUnitUiReadModelSystem,
         List<MatchHudSelectionPanelPassengerItemModel> transportPassengerPanelItems,
         ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite)
     {

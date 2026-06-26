@@ -91,9 +91,9 @@ public partial struct RtsSelectionSelectAllCommandSystem : ISystem
     {
         return kind switch
         {
-            RtsSelectionCommandIntentKind.SelectAllSoldiers => (byte)VisibleUnitSelectionSystem.Filter.Soldiers,
-            RtsSelectionCommandIntentKind.SelectAllVehicles => (byte)VisibleUnitSelectionSystem.Filter.Vehicles,
-            _ => (byte)VisibleUnitSelectionSystem.Filter.All
+            RtsSelectionCommandIntentKind.SelectAllSoldiers => (byte)VisibleUnitSelectionCameraSystemHelper.Filter.Soldiers,
+            RtsSelectionCommandIntentKind.SelectAllVehicles => (byte)VisibleUnitSelectionCameraSystemHelper.Filter.Vehicles,
+            _ => (byte)VisibleUnitSelectionCameraSystemHelper.Filter.All
         };
     }
 

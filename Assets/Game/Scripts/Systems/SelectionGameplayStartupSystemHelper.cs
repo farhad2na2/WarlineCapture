@@ -82,7 +82,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
         var selectionStateSystem = new SelectionStateCompositionSystemHelper();
         var selectionUiReadModelLookup = new SelectionUiReadModelLookup();
         var focusedUnitUiReadModelSystem = new FocusedUnitUiReadModelUiSystemHelper();
-        var visibleUnitSelectionSystem = new VisibleUnitSelectionSystem();
+        var visibleUnitSelectionSystem = new VisibleUnitSelectionCameraSystemHelper();
         var selectionRectangleRequestSystem = new SelectionRectangleRequestCompositionSystemHelper();
         var unitMoveOrderSystem = new UnitMoveOrderSystem();
         var selectedMoveOrderCommandSystem = new SelectedMoveOrderCommandSystem();
@@ -827,7 +827,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
         void QueueSelectionRectangleRequest(
             Rect screenRect,
             RtsSelectionPointerRequestKind kind,
-            VisibleUnitSelectionSystem.Filter filter = VisibleUnitSelectionSystem.Filter.All)
+            VisibleUnitSelectionCameraSystemHelper.Filter filter = VisibleUnitSelectionCameraSystemHelper.Filter.All)
         {
             rtsSelectionInputSystem.QueueSelectionRectangleRequest(kind, screenRect, UnityEngine.Time.frameCount, filter);
         }

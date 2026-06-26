@@ -104,7 +104,7 @@ public sealed class SelectionStateCompositionSystemHelperTests
         {
             Entity movableUnit = CreateVisibleEntity(hasMove: true, new float3(-1f, 0f, 0f));
             Entity buildingLikeEntity = CreateVisibleEntity(hasMove: false, new float3(1f, 0f, 0f));
-            var system = new VisibleUnitSelectionSystem();
+            var system = new VisibleUnitSelectionCameraSystemHelper();
             var selected = new System.Collections.Generic.List<Entity>();
             Rect screenRect = new(0f, 0f, 100f, 100f);
             var lookup = new SelectionUiReadModelLookup();
@@ -114,20 +114,20 @@ public sealed class SelectionStateCompositionSystemHelperTests
                 camera,
                 lookup,
                 screenRect,
-                VisibleUnitSelectionSystem.Filter.All));
+                VisibleUnitSelectionCameraSystemHelper.Filter.All));
             Assert.IsFalse(system.HasVisiblePlayerUnits(
                 _entityManager,
                 camera,
                 lookup,
                 screenRect,
-                VisibleUnitSelectionSystem.Filter.Vehicles));
+                VisibleUnitSelectionCameraSystemHelper.Filter.Vehicles));
 
             int selectedCount = system.CollectVisiblePlayerUnits(
                 _entityManager,
                 camera,
                 lookup,
                 screenRect,
-                VisibleUnitSelectionSystem.Filter.All,
+                VisibleUnitSelectionCameraSystemHelper.Filter.All,
                 selected);
 
             Assert.AreEqual(1, selectedCount);
@@ -166,7 +166,7 @@ public sealed class SelectionStateCompositionSystemHelperTests
             _entityManager.AddComponentData(sourceCharacterWithVehicleFallback, new UnitFootprint { Size = new int2(2, 2) });
             _entityManager.AddComponentData(sourceCharacterWithVehicleFallback, new UnitMovementBehavior { UsesVehicleMotion = 1 });
 
-            var system = new VisibleUnitSelectionSystem();
+            var system = new VisibleUnitSelectionCameraSystemHelper();
             var selected = new System.Collections.Generic.List<Entity>();
             Rect screenRect = new(0f, 0f, 100f, 100f);
             var lookup = new SelectionUiReadModelLookup();
@@ -176,7 +176,7 @@ public sealed class SelectionStateCompositionSystemHelperTests
                 camera,
                 lookup,
                 screenRect,
-                VisibleUnitSelectionSystem.Filter.Vehicles,
+                VisibleUnitSelectionCameraSystemHelper.Filter.Vehicles,
                 selected);
 
             Assert.AreEqual(1, vehicleCount);
@@ -187,7 +187,7 @@ public sealed class SelectionStateCompositionSystemHelperTests
                 camera,
                 lookup,
                 screenRect,
-                VisibleUnitSelectionSystem.Filter.Soldiers,
+                VisibleUnitSelectionCameraSystemHelper.Filter.Soldiers,
                 selected);
 
             Assert.AreEqual(1, soldierCount);

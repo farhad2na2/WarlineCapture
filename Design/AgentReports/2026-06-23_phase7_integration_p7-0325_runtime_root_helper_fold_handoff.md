@@ -55,6 +55,6 @@ No dedicated focused RuntimeRoot runner exists for this narrow managed root help
 
 Continue remaining Integration split row:
 
-- `P7-0374` `VisibleUnitSelectionSystem`
+- `P7-0374` `VisibleUnitSelectionCameraSystemHelper`
 
 Agent B rows `P7-0003` and `P7-0019` remain held pending an explicit managed-reference boundary guardrail/model change.

@@ -52,17 +52,17 @@ public partial struct VisibleUnitSelectionCandidateSystem : ISystem
         snapshot.Clear();
 
         int candidateCapacity = _visiblePlayerUnitQuery.CalculateEntityCount();
-        using NativeList<VisibleUnitSelectionSystem.VisibleUnitSelectionCandidate> candidates =
+        using NativeList<VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate> candidates =
             new(candidateCapacity, Allocator.TempJob);
         VisibleUnitSelectionCandidateCollector.Collect(
             state.EntityManager,
             _visiblePlayerUnitQuery,
-            VisibleUnitSelectionSystem.Filter.All,
+            VisibleUnitSelectionCameraSystemHelper.Filter.All,
             candidates);
 
         for (int i = 0; i < candidates.Length; i++)
         {
-            VisibleUnitSelectionSystem.VisibleUnitSelectionCandidate candidate = candidates[i];
+            VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate candidate = candidates[i];
             snapshot.Add(new VisibleUnitSelectionCandidateElement
             {
                 Entity = candidate.Entity,
@@ -123,8 +123,8 @@ internal static class VisibleUnitSelectionCandidateCollector
     public static void Collect(
         EntityManager em,
         EntityQuery query,
-        VisibleUnitSelectionSystem.Filter filter,
-        NativeList<VisibleUnitSelectionSystem.VisibleUnitSelectionCandidate> candidates)
+        VisibleUnitSelectionCameraSystemHelper.Filter filter,
+        NativeList<VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate> candidates)
     {
         candidates.Clear();
         em.CompleteDependencyBeforeRO<LocalToWorld>();
@@ -145,13 +145,13 @@ internal static class VisibleUnitSelectionCandidateCollector
     public static void Collect(
         ref SystemState state,
         EntityQuery query,
-        NativeList<VisibleUnitSelectionSystem.VisibleUnitSelectionCandidate> candidates)
+        NativeList<VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate> candidates)
     {
         candidates.Clear();
         state.EntityManager.CompleteDependencyBeforeRO<LocalToWorld>();
         JobHandle collectHandle = new CollectVisibleUnitCandidatesJob
         {
-            Filter = (byte)VisibleUnitSelectionSystem.Filter.All,
+            Filter = (byte)VisibleUnitSelectionCameraSystemHelper.Filter.All,
             EntityType = state.GetEntityTypeHandle(),
             FactionType = state.GetComponentTypeHandle<Faction>(true),
             LocalToWorldType = state.GetComponentTypeHandle<LocalToWorld>(true),
@@ -173,7 +173,7 @@ internal static class VisibleUnitSelectionCandidateCollector
         [ReadOnly] public ComponentTypeHandle<UnitSourcePrefabKey> SourcePrefabKeyType;
         [ReadOnly] public ComponentTypeHandle<UnitFootprint> FootprintType;
         [ReadOnly] public ComponentTypeHandle<UnitMovementBehavior> MovementBehaviorType;
-        public NativeList<VisibleUnitSelectionSystem.VisibleUnitSelectionCandidate> Candidates;
+        public NativeList<VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate> Candidates;
 
         public void Execute(
             in ArchetypeChunk chunk,
@@ -210,12 +210,12 @@ internal static class VisibleUnitSelectionCandidateCollector
                     footprints,
                     hasMovementBehavior,
                     movementBehaviors);
-                if (Filter == (byte)VisibleUnitSelectionSystem.Filter.Soldiers && isVehicle)
+                if (Filter == (byte)VisibleUnitSelectionCameraSystemHelper.Filter.Soldiers && isVehicle)
                     continue;
-                if (Filter == (byte)VisibleUnitSelectionSystem.Filter.Vehicles && !isVehicle)
+                if (Filter == (byte)VisibleUnitSelectionCameraSystemHelper.Filter.Vehicles && !isVehicle)
                     continue;
 
-                Candidates.Add(new VisibleUnitSelectionSystem.VisibleUnitSelectionCandidate
+                Candidates.Add(new VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate
                 {
                     Entity = entities[i],
                     Position = transforms[i].Position,

@@ -20,7 +20,7 @@ Goal: reduce `RTSSelectionSystem` from a gameplay facade into a small input orch
    - Own clicked-unit lookup cache, changed-grid/footprint queries, padded footprint lookup, and focusable candidate policy.
 
 3. Complete: Extract visible screen selection
-   - Create `VisibleUnitSelectionSystem`.
+   - Create `VisibleUnitSelectionCameraSystemHelper`.
    - Own visible player-unit query, select-all all/soldiers/vehicles filtering, screen-rectangle collection, and selected-tag application.
 
 4. Complete: Extract focused-unit command actions

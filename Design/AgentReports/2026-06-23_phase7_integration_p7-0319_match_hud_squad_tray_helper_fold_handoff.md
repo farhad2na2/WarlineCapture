@@ -56,6 +56,6 @@ Continue remaining Integration split rows:
 
 - `P7-0323` `ResourceHaulerSystem`
 - `P7-0325` `RuntimeRootSystem`
-- `P7-0374` `VisibleUnitSelectionSystem`
+- `P7-0374` `VisibleUnitSelectionCameraSystemHelper`
 
 Agent B rows `P7-0003` and `P7-0019` remain held pending an explicit managed-reference boundary guardrail/model change.

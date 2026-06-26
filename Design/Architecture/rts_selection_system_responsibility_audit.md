@@ -389,7 +389,7 @@ Transport boarding diagnostics now flow through an ECS diagnostic event path:
 
 ## Twenty-Eighth Extraction Started
 
-`VisibleUnitSelectionSystem` now owns the visible screen-selection query/filter slice that was previously inside `RTSSelectionSystem`:
+`VisibleUnitSelectionCameraSystemHelper` now owns the visible screen-selection query/filter slice that was previously inside `RTSSelectionSystem`:
 
 - screen-rectangle player unit collection
 - select-all soldiers/vehicles/all filter policy

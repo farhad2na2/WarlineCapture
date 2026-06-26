@@ -303,7 +303,7 @@ public sealed class RtsSelectionRuntimeInputCompositionSystemHelper
                         RtsSelectionPointerRequestKind.SelectionRectUpdated,
                         liveRect,
                         UnityEngine.Time.frameCount,
-                        VisibleUnitSelectionSystem.Filter.All);
+                        VisibleUnitSelectionCameraSystemHelper.Filter.All);
                     context.ProcessSelectionRectangleRequests?.Invoke();
                     input.LastLiveSelectionRect = liveRect;
                     input.HasLiveSelectionRect = true;
@@ -401,7 +401,7 @@ public sealed class RtsSelectionRuntimeInputCompositionSystemHelper
                         RtsSelectionPointerRequestKind.SelectionRectCommitted,
                         GetScreenRect(input.DragStart, input.DragCurrent),
                         UnityEngine.Time.frameCount,
-                        VisibleUnitSelectionSystem.Filter.All);
+                        VisibleUnitSelectionCameraSystemHelper.Filter.All);
                     context.ProcessSelectionRectangleRequests?.Invoke();
                 }
             }

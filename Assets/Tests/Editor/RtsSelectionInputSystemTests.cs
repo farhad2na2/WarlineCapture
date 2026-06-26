@@ -387,7 +387,7 @@ public sealed class RtsSelectionInputSystemTests
         Assert.AreEqual(RtsSelectionPointerRequestKind.SelectionRectCommitted, pointerRequests[0].Kind);
         Assert.AreEqual(new float2(screenRect.min.x, screenRect.min.y), pointerRequests[0].DragStart);
         Assert.AreEqual(new float2(screenRect.max.x, screenRect.max.y), pointerRequests[0].DragCurrent);
-        Assert.AreEqual((byte)VisibleUnitSelectionSystem.Filter.All, pointerRequests[0].SelectionFilter);
+        Assert.AreEqual((byte)VisibleUnitSelectionCameraSystemHelper.Filter.All, pointerRequests[0].SelectionFilter);
         Assert.IsFalse(inputSystem.HasActiveWorldTargetCommandMode(out _));
         Assert.IsFalse(inputSystem.IgnoreNextLeftMouseRelease);
         Assert.IsFalse(inputSystem.SkipNextWorldReleaseAfterSelection);
@@ -416,9 +416,9 @@ public sealed class RtsSelectionInputSystemTests
         DynamicBuffer<RtsSelectionPointerRequestElement> pointerRequests =
             em.GetBuffer<RtsSelectionPointerRequestElement>(commandEntity);
         Assert.AreEqual(3, pointerRequests.Length);
-        Assert.AreEqual((byte)VisibleUnitSelectionSystem.Filter.All, pointerRequests[0].SelectionFilter);
-        Assert.AreEqual((byte)VisibleUnitSelectionSystem.Filter.Soldiers, pointerRequests[1].SelectionFilter);
-        Assert.AreEqual((byte)VisibleUnitSelectionSystem.Filter.Vehicles, pointerRequests[2].SelectionFilter);
+        Assert.AreEqual((byte)VisibleUnitSelectionCameraSystemHelper.Filter.All, pointerRequests[0].SelectionFilter);
+        Assert.AreEqual((byte)VisibleUnitSelectionCameraSystemHelper.Filter.Soldiers, pointerRequests[1].SelectionFilter);
+        Assert.AreEqual((byte)VisibleUnitSelectionCameraSystemHelper.Filter.Vehicles, pointerRequests[2].SelectionFilter);
     }
 
     [Test]
@@ -3005,7 +3005,7 @@ public sealed class RtsSelectionInputSystemTests
             Kind = RtsSelectionPointerRequestKind.SelectionRectCommitted,
             DragStart = new Unity.Mathematics.float2(10f, 20f),
             DragCurrent = new Unity.Mathematics.float2(90f, 120f),
-            SelectionFilter = (byte)VisibleUnitSelectionSystem.Filter.All
+            SelectionFilter = (byte)VisibleUnitSelectionCameraSystemHelper.Filter.All
         });
 
         bool clearedUnitSelection = false;
@@ -3018,7 +3018,7 @@ public sealed class RtsSelectionInputSystemTests
             pointerRequests,
             null,
             new SelectionUiReadModelLookup(),
-            new VisibleUnitSelectionSystem(),
+            new VisibleUnitSelectionCameraSystemHelper(),
             new SelectionStateCompositionSystemHelper(),
             new FocusedUnitLifecycleCompositionSystemHelper(),
             new System.Collections.Generic.List<Entity>(),

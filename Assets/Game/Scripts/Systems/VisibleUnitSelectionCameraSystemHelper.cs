@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class VisibleUnitSelectionSystem
+public sealed class VisibleUnitSelectionCameraSystemHelper
 {
     public enum Filter
     {

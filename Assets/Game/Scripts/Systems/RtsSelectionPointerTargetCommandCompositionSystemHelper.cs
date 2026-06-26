@@ -22,7 +22,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         public readonly FocusedUnitLifecycleCompositionSystemHelper FocusedUnitLifecycleCompositionSystemHelper;
         public readonly FocusableUnitLookupCameraSystemHelper FocusableUnitLookupCameraSystemHelper;
         public readonly SelectionUiReadModelLookup SelectionUiReadModelLookup;
-        public readonly VisibleUnitSelectionSystem VisibleUnitSelectionSystem;
+        public readonly VisibleUnitSelectionCameraSystemHelper VisibleUnitSelectionCameraSystemHelper;
         public readonly TransportBoardingCommandSystem TransportBoardingCommandSystem;
         public readonly UnitTransportCapacitySystem UnitTransportCapacitySystem;
         public readonly UnitTransportAirPickupSystem UnitTransportAirPickupSystem;
@@ -82,7 +82,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             Action<string> logSelectionDiagnostic,
             FocusedUnitLifecycleCompositionSystemHelper.DescribeEntityDelegate describeEntity,
             SelectionUiReadModelLookup selectionUiReadModelLookup = null,
-            VisibleUnitSelectionSystem visibleUnitSelectionSystem = null,
+            VisibleUnitSelectionCameraSystemHelper visibleUnitSelectionSystem = null,
             List<Entity> visibleSelectionScratch = null)
         {
             RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
@@ -91,7 +91,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             FocusedUnitLifecycleCompositionSystemHelper = focusedUnitLifecycleSystem;
             FocusableUnitLookupCameraSystemHelper = focusableUnitLookupSystem;
             SelectionUiReadModelLookup = selectionUiReadModelLookup;
-            VisibleUnitSelectionSystem = visibleUnitSelectionSystem;
+            VisibleUnitSelectionCameraSystemHelper = visibleUnitSelectionSystem;
             TransportBoardingCommandSystem = transportBoardingCommandSystem;
             UnitTransportCapacitySystem = unitTransportCapacitySystem;
             UnitTransportAirPickupSystem = unitTransportAirPickupSystem;
@@ -445,7 +445,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
 
     public bool TryRequestBoardSelectedTransportOrdersToPassengerRect(Context context, Entity transport, Rect screenRect)
     {
-        if (context.VisibleUnitSelectionSystem == null ||
+        if (context.VisibleUnitSelectionCameraSystemHelper == null ||
             context.SelectionUiReadModelLookup == null ||
             context.VisibleSelectionScratch == null ||
             context.WorldCamera == null ||
@@ -456,12 +456,12 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             return false;
         }
 
-        context.VisibleUnitSelectionSystem.CollectVisiblePlayerUnits(
+        context.VisibleUnitSelectionCameraSystemHelper.CollectVisiblePlayerUnits(
             em,
             context.WorldCamera,
             context.SelectionUiReadModelLookup,
             screenRect,
-            VisibleUnitSelectionSystem.Filter.Soldiers,
+            VisibleUnitSelectionCameraSystemHelper.Filter.Soldiers,
             context.VisibleSelectionScratch);
 
         int queued = 0;

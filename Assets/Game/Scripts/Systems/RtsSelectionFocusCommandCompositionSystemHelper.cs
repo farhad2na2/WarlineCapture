@@ -19,7 +19,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Action<EntityManager> EnsureEntityQueries;
         public readonly Action<EntityManager, string> ClearCurrentSelection;
-        public readonly Action<Rect, RtsSelectionPointerRequestKind, VisibleUnitSelectionSystem.Filter> QueueSelectionRectangleRequest;
+        public readonly Action<Rect, RtsSelectionPointerRequestKind, VisibleUnitSelectionCameraSystemHelper.Filter> QueueSelectionRectangleRequest;
         public readonly Action ProcessSelectionRectangleRequests;
         public readonly Action<EntityManager, Entity> ApplyHudSelection;
         public readonly Action<TacticalCommandResult> ApplyHudCommandResult;
@@ -44,7 +44,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
             TryGetEntityManagerDelegate tryGetEntityManager,
             Action<EntityManager> ensureEntityQueries,
             Action<EntityManager, string> clearCurrentSelection,
-            Action<Rect, RtsSelectionPointerRequestKind, VisibleUnitSelectionSystem.Filter> queueSelectionRectangleRequest,
+            Action<Rect, RtsSelectionPointerRequestKind, VisibleUnitSelectionCameraSystemHelper.Filter> queueSelectionRectangleRequest,
             Action processSelectionRectangleRequests,
             Action<EntityManager, Entity> applyHudSelection,
             Action<TacticalCommandResult> applyHudCommandResult,
@@ -167,7 +167,7 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
         context.SetHudWorldMarkersVisible?.Invoke(false);
     }
 
-    public void SelectAllVisiblePlayerUnits(Context context, VisibleUnitSelectionSystem.Filter filter)
+    public void SelectAllVisiblePlayerUnits(Context context, VisibleUnitSelectionCameraSystemHelper.Filter filter)
     {
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.InputSystem.ClearActiveCommandMode();
@@ -285,13 +285,13 @@ public sealed class RtsSelectionFocusCommandCompositionSystemHelper
                 return request.HasScreenPosition != 0 &&
                        context.TryFocusScreenPosition?.Invoke(new Vector2(request.ScreenPosition.x, request.ScreenPosition.y)) == true;
             case RtsSelectionCommandIntentKind.SelectAll:
-                SelectAllVisiblePlayerUnits(context, VisibleUnitSelectionSystem.Filter.All);
+                SelectAllVisiblePlayerUnits(context, VisibleUnitSelectionCameraSystemHelper.Filter.All);
                 return true;
             case RtsSelectionCommandIntentKind.SelectAllSoldiers:
-                SelectAllVisiblePlayerUnits(context, VisibleUnitSelectionSystem.Filter.Soldiers);
+                SelectAllVisiblePlayerUnits(context, VisibleUnitSelectionCameraSystemHelper.Filter.Soldiers);
                 return true;
             case RtsSelectionCommandIntentKind.SelectAllVehicles:
-                SelectAllVisiblePlayerUnits(context, VisibleUnitSelectionSystem.Filter.Vehicles);
+                SelectAllVisiblePlayerUnits(context, VisibleUnitSelectionCameraSystemHelper.Filter.Vehicles);
                 return true;
             case RtsSelectionCommandIntentKind.EnterSelectionMode:
                 EnterExplicitSelectionMode(context);

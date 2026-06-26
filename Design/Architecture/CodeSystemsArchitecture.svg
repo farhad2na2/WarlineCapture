@@ -145,7 +145,7 @@
   <text class="label" x="115" y="1163">Selection + Camera</text>
   <text class="small" x="115" y="1195">RtsSelectionRuntimeInputSystem</text>
   <text class="small" x="115" y="1221">FocusableUnitLookupSystem</text>
-  <text class="small" x="115" y="1247">VisibleUnitSelectionSystem</text>
+  <text class="small" x="115" y="1247">VisibleUnitSelectionCameraSystemHelper</text>
   <text class="small" x="115" y="1273">SelectedMoveOrderCommandSystem</text>
   <text class="small" x="115" y="1299">AttackOrderCommandSystem</text>
   <text class="small" x="115" y="1325">RtsCameraSystem / RequestSystem</text>

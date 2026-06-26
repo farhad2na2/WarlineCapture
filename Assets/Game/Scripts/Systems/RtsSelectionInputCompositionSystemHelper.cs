@@ -412,7 +412,7 @@ public sealed class RtsSelectionInputCompositionSystemHelper
         RtsSelectionPointerRequestKind kind,
         Rect screenRect,
         int frame,
-        VisibleUnitSelectionSystem.Filter filter)
+        VisibleUnitSelectionCameraSystemHelper.Filter filter)
     {
         return _inputStateSystem.TryEnqueuePointerRequest(new RtsSelectionPointerRequestElement
         {

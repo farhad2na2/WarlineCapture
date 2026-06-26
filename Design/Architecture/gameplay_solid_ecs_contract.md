@@ -221,7 +221,7 @@ The retired `RTSSelectionSystem` source/type must not be reintroduced. `Selectio
 
 Allowed direction:
 - clicked-unit focus lookup, focusable-unit cache refresh, padded footprint candidate scoring, and focusable candidate policy belong in `FocusableUnitLookupSystem`.
-- visible player-unit screen selection, select-all filtering, and selected-tag application belong in `VisibleUnitSelectionSystem`.
+- visible player-unit screen selection, select-all filtering, and selected-tag application belong in `VisibleUnitSelectionCameraSystemHelper`.
 - focused-unit lifecycle, focused entity validity checks, selected tag/focus synchronization, clear-selection selected-tag mutation, direct focus assignment, and clicked focus command routing belong in `FocusedUnitLifecycleSystem`.
 - focus/clear/select-all/select-filter compatibility commands, external selection command branching, focus command HUD forwarding, full-screen selection request routing, and select-runtime-entity compatibility belong in `RtsSelectionFocusCommandCompositionSystemHelper`; focus command context construction is startup-boundary wiring in `SelectionGameplayStartupSystem`; do not reintroduce this command branching or focus/select-all mutation logic into the runtime loop.
 - pointer target command dispatch, clicked move/attack/transport/focus queueing, clicked-unit/cell resolution, boardable-transport click tests, and building-target move compatibility belong in `RtsSelectionPointerTargetCommandCompositionSystemHelper` or narrower ECS command systems; pointer-target context construction is startup-boundary wiring in `SelectionGameplayStartupSystem`; do not reintroduce pointer-to-gameplay command decisions into the runtime loop.

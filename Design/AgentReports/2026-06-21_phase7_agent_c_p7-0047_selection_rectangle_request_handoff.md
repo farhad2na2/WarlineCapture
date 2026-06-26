@@ -11,7 +11,7 @@ Lane: `AgentC - Selection, Commands, Focus, And Player Intent`
 The public behavior was preserved:
 
 - extraction and consumption of pending rectangle pointer requests;
-- visible player unit collection through the existing `VisibleUnitSelectionSystem` helper;
+- visible player unit collection through the existing `VisibleUnitSelectionCameraSystemHelper` helper;
 - fallback building selection when no units are in the rectangle;
 - selected unit tag application;
 - selected move cache updates;

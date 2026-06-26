@@ -1,20 +1,20 @@
-# Phase 7 Integration Handoff - P7-0374 VisibleUnitSelectionSystem
+# Phase 7 Integration Handoff - P7-0374 VisibleUnitSelectionCameraSystemHelper
 
 Date: 2026-06-23
 Lane: Integration
-Rows: `P7-0374` `VisibleUnitSelectionSystem`, generated replacement row `P7-0384` `VisibleUnitSelectionCandidateSystem`
+Rows: `P7-0374` `VisibleUnitSelectionCameraSystemHelper`, generated replacement row `P7-0384` `VisibleUnitSelectionCandidateSystem`
 Disposition: `SplitThenConvert`
 Result: Split unmanaged visible-unit candidate collection into `VisibleUnitSelectionCandidateSystem : ISystem`; folded the old disabled `SystemBase` wrapper into a direct managed screen-filter helper.
 
 ## Summary
 
-`VisibleUnitSelectionSystem` no longer derives from `SystemBase` and no longer declares disabled `OnCreate` / empty `OnUpdate` ECS lifecycle methods. Existing selection call sites still use the direct helper API for `Camera.WorldToScreenPoint` and screen-rectangle filtering.
+`VisibleUnitSelectionCameraSystemHelper` no longer derives from `SystemBase` and no longer declares disabled `OnCreate` / empty `OnUpdate` ECS lifecycle methods. Existing selection call sites still use the direct helper API for `Camera.WorldToScreenPoint` and screen-rectangle filtering.
 
 The ECS-side candidate collection now lives in `VisibleUnitSelectionCandidateSystem : ISystem`. It publishes `VisibleUnitSelectionCandidateElement` snapshots containing entity, world position, and vehicle classification. The candidate collector file has no managed camera/UI blockers, so the generated inventory classifies it as `Converted`.
 
 ## Files Changed
 
-- `Assets/Game/Scripts/Systems/VisibleUnitSelectionSystem.cs`
+- `Assets/Game/Scripts/Systems/VisibleUnitSelectionCameraSystemHelper.cs`
 - `Assets/Game/Scripts/Systems/VisibleUnitSelectionCandidateSystem.cs`
 - `Assets/Game/Scripts/Systems/VisibleUnitSelectionCandidateSystem.cs.meta`
 - `Assets/Tests/Editor/SelectionStateCompositionSystemHelperTests.cs`
@@ -24,7 +24,7 @@ The ECS-side candidate collection now lives in `VisibleUnitSelectionCandidateSys
 
 ## Behavior Preserved
 
-- Existing rectangle selection call sites keep the same `VisibleUnitSelectionSystem` direct helper API.
+- Existing rectangle selection call sites keep the same `VisibleUnitSelectionCameraSystemHelper` direct helper API.
 - Camera projection and screen-rectangle filtering remain managed and outside the unmanaged `ISystem`.
 - Player-faction filtering, building/static-blocker exclusion, and move-unit requirements remain unchanged.
 - Vehicle/soldier classification still prefers `UnitSourcePrefabKey` prefixes before movement/footprint fallback.

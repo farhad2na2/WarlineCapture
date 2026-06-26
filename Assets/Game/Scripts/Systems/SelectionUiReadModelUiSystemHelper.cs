@@ -35,7 +35,7 @@ public sealed class SelectionUiReadModelUiSystemHelper : ISelectionUiReadModel
 
     private readonly FocusedUnitUiReadModelUiSystemHelper _focusedUnitUiReadModelSystem = new();
     private readonly SelectionUiReadModelLookup _selectionUiReadModelLookup = new();
-    private readonly VisibleUnitSelectionSystem _visibleUnitSelectionSystem = new();
+    private readonly VisibleUnitSelectionCameraSystemHelper _visibleUnitSelectionSystem = new();
 
     private Unity.Entities.World _queryWorld;
     private EntityQuery _selectedTagQuery;
@@ -165,20 +165,20 @@ public sealed class SelectionUiReadModelUiSystemHelper : ISelectionUiReadModel
 
     public bool HasVisiblePlayerUnits(Camera worldCamera)
     {
-        return HasVisiblePlayerUnits(worldCamera, VisibleUnitSelectionSystem.Filter.All);
+        return HasVisiblePlayerUnits(worldCamera, VisibleUnitSelectionCameraSystemHelper.Filter.All);
     }
 
     public bool HasVisiblePlayerSoldiers(Camera worldCamera)
     {
-        return HasVisiblePlayerUnits(worldCamera, VisibleUnitSelectionSystem.Filter.Soldiers);
+        return HasVisiblePlayerUnits(worldCamera, VisibleUnitSelectionCameraSystemHelper.Filter.Soldiers);
     }
 
     public bool HasVisiblePlayerVehicles(Camera worldCamera)
     {
-        return HasVisiblePlayerUnits(worldCamera, VisibleUnitSelectionSystem.Filter.Vehicles);
+        return HasVisiblePlayerUnits(worldCamera, VisibleUnitSelectionCameraSystemHelper.Filter.Vehicles);
     }
 
-    private bool HasVisiblePlayerUnits(Camera worldCamera, VisibleUnitSelectionSystem.Filter filter)
+    private bool HasVisiblePlayerUnits(Camera worldCamera, VisibleUnitSelectionCameraSystemHelper.Filter filter)
     {
         if (worldCamera == null || !TryGetDefaultEntityManager(out EntityManager em))
             return false;

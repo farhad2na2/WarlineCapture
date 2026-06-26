@@ -20,7 +20,7 @@ public sealed class SelectionRectangleRequestCompositionSystemHelper
         DynamicBuffer<RtsSelectionPointerRequestElement> pointerRequests,
         Camera worldCamera,
         SelectionUiReadModelLookup selectionUiReadModelLookup,
-        VisibleUnitSelectionSystem visibleUnitSelectionSystem,
+        VisibleUnitSelectionCameraSystemHelper visibleUnitSelectionSystem,
         SelectionStateCompositionSystemHelper selectionStateSystem,
         FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem,
         List<Entity> selectedScratch,
@@ -80,10 +80,10 @@ public sealed class SelectionRectangleRequestCompositionSystemHelper
     private static void ApplySelectionRectangle(
         EntityManager em,
         Rect screenRect,
-        VisibleUnitSelectionSystem.Filter filter,
+        VisibleUnitSelectionCameraSystemHelper.Filter filter,
         Camera worldCamera,
         SelectionUiReadModelLookup selectionUiReadModelLookup,
-        VisibleUnitSelectionSystem visibleUnitSelectionSystem,
+        VisibleUnitSelectionCameraSystemHelper visibleUnitSelectionSystem,
         SelectionStateCompositionSystemHelper selectionStateSystem,
         FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem,
         List<Entity> selectedScratch,
@@ -132,10 +132,10 @@ public sealed class SelectionRectangleRequestCompositionSystemHelper
         return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
     }
 
-    private static VisibleUnitSelectionSystem.Filter ResolveFilter(byte value)
+    private static VisibleUnitSelectionCameraSystemHelper.Filter ResolveFilter(byte value)
     {
-        return value <= (byte)VisibleUnitSelectionSystem.Filter.Vehicles
-            ? (VisibleUnitSelectionSystem.Filter)value
-            : VisibleUnitSelectionSystem.Filter.All;
+        return value <= (byte)VisibleUnitSelectionCameraSystemHelper.Filter.Vehicles
+            ? (VisibleUnitSelectionCameraSystemHelper.Filter)value
+            : VisibleUnitSelectionCameraSystemHelper.Filter.All;
     }
 }

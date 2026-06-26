@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal sealed class CitizenPopulationRuntimeUpdateSystem
+internal sealed class CitizenPopulationRuntimeUpdateCompositionSystemHelper
 {
     private CitizenPopulationCompositionSystemHelper.Result _systems;
 

@@ -30,7 +30,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         public readonly CitizenPopulationDiagnosticsSystemHelper DiagnosticSystem = new();
         public readonly CitizenPopulationLifecycleCompositionSystemHelper LifecycleSystem = ResolveCitizenPopulationLifecycleCompositionSystemHelper();
         public CitizenPopulationLifecycleCompositionSystemHelper.State LifecycleState;
-        public readonly CitizenPopulationRuntimeUpdateSystem RuntimeUpdateSystem = new();
+        public readonly CitizenPopulationRuntimeUpdateCompositionSystemHelper RuntimeUpdateSystem = new();
         public readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader = new();
         public DayNightSystem DayNightSystem;
         public Camera WorldCamera;

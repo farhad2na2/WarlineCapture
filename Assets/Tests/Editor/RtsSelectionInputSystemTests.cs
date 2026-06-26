@@ -3088,7 +3088,7 @@ public sealed class RtsSelectionInputSystemTests
                 inputSystem: null,
                 selectionStateSystem: new SelectionStateSystem(),
                 focusedUnitLifecycleSystem: null,
-                focusableUnitLookupSystem: new FocusableUnitLookupSystem(),
+                focusableUnitLookupSystem: new FocusableUnitLookupCameraSystemHelper(),
                 transportBoardingCommandSystem: default,
                 unitTransportCapacitySystem: default,
                 unitTransportAirPickupSystem: default,

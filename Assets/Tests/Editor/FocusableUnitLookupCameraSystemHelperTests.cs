@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class FocusableUnitLookupSystemTests
+public sealed class FocusableUnitLookupCameraSystemHelperTests
 {
     private World _world;
     private EntityManager _entityManager;
@@ -27,9 +27,9 @@ public sealed class FocusableUnitLookupSystemTests
         }
     }
 
-    private static void RunCase(System.Action<FocusableUnitLookupSystemTests> testCase)
+    private static void RunCase(System.Action<FocusableUnitLookupCameraSystemHelperTests> testCase)
     {
-        var tests = new FocusableUnitLookupSystemTests();
+        var tests = new FocusableUnitLookupCameraSystemHelperTests();
         try
         {
             tests.SetUp();
@@ -44,7 +44,7 @@ public sealed class FocusableUnitLookupSystemTests
     [SetUp]
     public void SetUp()
     {
-        _world = new World("FocusableUnitLookupSystemTests");
+        _world = new World("FocusableUnitLookupCameraSystemHelperTests");
         _entityManager = _world.EntityManager;
     }
 
@@ -68,7 +68,7 @@ public sealed class FocusableUnitLookupSystemTests
         {
             CreateGrid(32, 32);
             Entity unit = CreateFocusableUnit(new int2(4, 4), new int2(1, 1));
-            var lookup = new FocusableUnitLookupSystem();
+            var lookup = new FocusableUnitLookupCameraSystemHelper();
 
             Assert.IsTrue(lookup.TryGetClickedUnitEntity(
                 _entityManager,
@@ -139,7 +139,7 @@ public sealed class FocusableUnitLookupSystemTests
             _entityManager.AddComponent<UnitSpawnTransitTag>(groundedIdleTransit);
             _entityManager.AddComponentData(groundedIdleTransit, new UnitAirComponent());
 
-            var lookup = new FocusableUnitLookupSystem();
+            var lookup = new FocusableUnitLookupCameraSystemHelper();
             Assert.IsTrue(lookup.TryGetClickedUnitEntityByScreenDistance(
                 _entityManager,
                 camera,
@@ -184,7 +184,7 @@ public sealed class FocusableUnitLookupSystemTests
                 Extents = new float3(7f, 1f, 1f)
             });
 
-            var lookup = new FocusableUnitLookupSystem();
+            var lookup = new FocusableUnitLookupCameraSystemHelper();
             Assert.IsTrue(lookup.TryGetClickedUnitEntityByScreenDistance(
                 _entityManager,
                 camera,

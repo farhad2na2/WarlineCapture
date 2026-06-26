@@ -8,7 +8,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class FocusableUnitLookupSystem
+public sealed class FocusableUnitLookupCameraSystemHelper
 {
     private const float ClickScreenFallbackTorsoHeight = 0.85f;
     private const float SelectionHitboxScreenPaddingPixels = 8f;

@@ -95,7 +95,7 @@ internal sealed class SelectionGameplayStartupSystem
         var selectedUnitOrderSnapshotSystem = new SelectedUnitOrderSnapshotSystem();
         var buildingTargetMoveOrderSystem = new BuildingTargetMoveOrderSystem();
         var transportBoardingCommandSystem = new TransportBoardingCommandSystem();
-        var focusableUnitLookupSystem = new FocusableUnitLookupSystem();
+        var focusableUnitLookupSystem = new FocusableUnitLookupCameraSystemHelper();
         var matchHudSquadTraySelectionSystem = new MatchHudSquadTraySelectionSystem();
         var unitTransportCapacitySystem = new UnitTransportCapacitySystem();
         var unitTransportAirPickupSystem = new UnitTransportAirPickupSystem();

@@ -6,7 +6,7 @@ public sealed class SelectionBuildingInteractionSystem
 {
     private readonly FocusedUnitLifecycleSystem _focusedUnitLifecycleSystem = new();
     private readonly SelectionHudFeedbackBoundary _selectionHudFeedbackSystem = new();
-    private readonly FocusableUnitLookupSystem _focusableUnitLookupSystem = new();
+    private readonly FocusableUnitLookupCameraSystemHelper _focusableUnitLookupSystem = new();
     private readonly TransportBoardingCommandSystem _transportBoardingCommandSystem = new();
     private readonly BuildingTargetMoveOrderSystem _buildingTargetMoveOrderSystem = new();
     private readonly RtsSelectionPointerTargetCommandCompositionSystemHelper _pointerTargetCommandSystem = new();

@@ -20,7 +20,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         public readonly RtsSelectionInputCompositionSystemHelper InputSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
         public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
-        public readonly FocusableUnitLookupSystem FocusableUnitLookupSystem;
+        public readonly FocusableUnitLookupCameraSystemHelper FocusableUnitLookupCameraSystemHelper;
         public readonly SelectionUiReadModelLookup SelectionUiReadModelLookup;
         public readonly VisibleUnitSelectionSystem VisibleUnitSelectionSystem;
         public readonly TransportBoardingCommandSystem TransportBoardingCommandSystem;
@@ -55,7 +55,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             RtsSelectionInputCompositionSystemHelper inputSystem,
             SelectionStateSystem selectionStateSystem,
             FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
-            FocusableUnitLookupSystem focusableUnitLookupSystem,
+            FocusableUnitLookupCameraSystemHelper focusableUnitLookupSystem,
             TransportBoardingCommandSystem transportBoardingCommandSystem,
             UnitTransportCapacitySystem unitTransportCapacitySystem,
             UnitTransportAirPickupSystem unitTransportAirPickupSystem,
@@ -89,7 +89,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             InputSystem = inputSystem;
             SelectionStateSystem = selectionStateSystem;
             FocusedUnitLifecycleSystem = focusedUnitLifecycleSystem;
-            FocusableUnitLookupSystem = focusableUnitLookupSystem;
+            FocusableUnitLookupCameraSystemHelper = focusableUnitLookupSystem;
             SelectionUiReadModelLookup = selectionUiReadModelLookup;
             VisibleUnitSelectionSystem = visibleUnitSelectionSystem;
             TransportBoardingCommandSystem = transportBoardingCommandSystem;
@@ -717,7 +717,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         bestEntity = Entity.Null;
         bool hasFlatClickedCell = TryGetFlatClickedCell(context, screenPosition, em, out int2 flatClickedCell);
         if (hasFlatClickedCell &&
-            context.FocusableUnitLookupSystem.TryGetClickedUnitEntity(
+            context.FocusableUnitLookupCameraSystemHelper.TryGetClickedUnitEntity(
                 em,
                 context.WorldCamera,
                 flatClickedCell,
@@ -731,7 +731,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         if (!TryGetClickedCellFromBoundary(context, screenPosition, em, out int2 clickedCell, out _) ||
             (hasFlatClickedCell && clickedCell.Equals(flatClickedCell)))
         {
-            bool fallbackHit = context.FocusableUnitLookupSystem.TryGetClickedUnitEntityByScreenDistance(
+            bool fallbackHit = context.FocusableUnitLookupCameraSystemHelper.TryGetClickedUnitEntityByScreenDistance(
                 em,
                 context.WorldCamera,
                 screenPosition,
@@ -741,7 +741,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             return fallbackHit;
         }
 
-        if (context.FocusableUnitLookupSystem.TryGetClickedUnitEntity(
+        if (context.FocusableUnitLookupCameraSystemHelper.TryGetClickedUnitEntity(
             em,
             context.WorldCamera,
             clickedCell,
@@ -752,7 +752,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             return true;
         }
 
-        bool screenHit = context.FocusableUnitLookupSystem.TryGetClickedUnitEntityByScreenDistance(
+        bool screenHit = context.FocusableUnitLookupCameraSystemHelper.TryGetClickedUnitEntityByScreenDistance(
             em,
             context.WorldCamera,
             screenPosition,

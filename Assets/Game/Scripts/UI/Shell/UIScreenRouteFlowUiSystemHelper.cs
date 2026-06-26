@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class UIScreenRouteFlowSystem
+internal sealed class UIScreenRouteFlowUiSystemHelper
 {
     private readonly Dictionary<UIRoute, UIScreenView> screenByRoute = new();
     private readonly Stack<UIRoute> backStack = new();

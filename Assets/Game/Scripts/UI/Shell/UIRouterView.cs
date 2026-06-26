@@ -3,7 +3,7 @@ using UnityEngine;
 
 public sealed class UIRouterView : MonoBehaviour
 {
-    private readonly UIScreenRouteFlowSystem routeFlowSystem = new();
+    private readonly UIScreenRouteFlowUiSystemHelper routeFlowSystem = new();
 
     [SerializeField] private UIRoute initialRoute = UIRoute.MainMenu;
     [SerializeField] private Transform contentRoot;

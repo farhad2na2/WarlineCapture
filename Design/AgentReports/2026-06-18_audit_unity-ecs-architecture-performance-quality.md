@@ -107,7 +107,7 @@ Replace `.Run()` with `.ScheduleParallel()` in systems that do data-parallel wor
 | `Assets/Game/Scripts/Environment/RuntimeDecorationSpawnerSystem.cs` | 150 | Decoration instance |
 | `Assets/Game/Scripts/Environment/RuntimeGridBlockerSystem.cs` | 354 | Grid blocker visual |
 | `Assets/Game/Scripts/Environment/DayNightSystem.cs` | 213 | Skybox material (one-time, acceptable) |
-| `Assets/Game/Scripts/UI/Shell/UIScreenRouteFlowSystem.cs` | 110 | UI screen prefab (UI layer, acceptable) |
+| `Assets/Game/Scripts/UI/Shell/UIScreenRouteFlowUiSystemHelper.cs` | 110 | UI screen prefab (UI layer, acceptable) |
 
 **Solution:**
 Convert prefabs to ECS entity prefabs via baking/subscene. Use `EntityCommandBuffer.Instantiate()` to spawn entity copies, then use a rendering system to associate visual meshes. For markers and UI-adjacent GameObjects that must remain as GameObjects, batch the instantiation in a managed system outside the ECS update loop, or use an object pool.
@@ -127,7 +127,7 @@ Convert prefabs to ECS entity prefabs via baking/subscene. Use `EntityCommandBuf
 3. Track active markers in a `NativeHashMap<Entity, GameObject>` for recycling
 4. See `UnitSelectionMarkerSystem` for partial implementation of this pattern already
 
-**Pattern C — One-time setup (DayNightSystem, UIScreenRouteFlowSystem):**
+**Pattern C — One-time setup (DayNightSystem, UIScreenRouteFlowUiSystemHelper):**
 These are acceptable. One-time instantiation in setup/init is fine. Leave as-is.
 
 ---

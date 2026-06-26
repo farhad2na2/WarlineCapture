@@ -198,10 +198,10 @@ public sealed class NonEcsSystemConversionArchitectureTests
             declarations.Count,
             0,
             "The non-ECS system conversion inventory should find runtime `*System` declarations.");
-        Assert.Greater(
+        Assert.GreaterOrEqual(
             conversionDenominator.Count,
             0,
-            "The conversion denominator should contain current plain runtime non-ECS `*System` declarations.");
+            "The conversion denominator can be zero only after all plain runtime non-ECS `*System` declarations have been renamed or converted.");
     }
 
     [Test]

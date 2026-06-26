@@ -409,7 +409,7 @@ Steps per file:
 
 **Pattern C — One-time setup (acceptable, leave as-is):**
 - `DayNightSystem.cs:213` (skybox material)
-- `UIScreenRouteFlowSystem.cs:110` (UI screen prefab)
+- `UIScreenRouteFlowUiSystemHelper.cs:110` (UI screen prefab)
 
 **Safety notes:**
 - Before converting any Pattern A site, verify the prefab has a baker. If it's authoring-only (no subscene bake), you'll need to create the baker first.

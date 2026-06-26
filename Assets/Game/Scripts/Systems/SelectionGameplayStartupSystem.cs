@@ -15,7 +15,7 @@ internal sealed class SelectionGameplayStartupSystem
         public readonly SelectionUiCommandSystem SelectionUiCommand;
         public readonly SelectionUiReadModelSystem SelectionUiReadModel;
         public readonly SelectionUiCameraSystemHelper SelectionUiCamera;
-        public readonly SelectionBuildingInteractionSystem SelectionBuildingInteraction;
+        public readonly SelectionBuildingInteractionCompositionSystemHelper SelectionBuildingInteraction;
         public readonly SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers;
         public readonly ISelectionRectangleView SelectionRectangleView;
         public readonly System.Func<bool> ShouldBlockBuildingSelectionClick;
@@ -28,7 +28,7 @@ internal sealed class SelectionGameplayStartupSystem
             SelectionUiCommandSystem selectionUiCommand,
             SelectionUiReadModelSystem selectionUiReadModel,
             SelectionUiCameraSystemHelper selectionUiCamera,
-            SelectionBuildingInteractionSystem selectionBuildingInteraction,
+            SelectionBuildingInteractionCompositionSystemHelper selectionBuildingInteraction,
             SelectionScreenMarkerUiSystemHelper selectionScreenMarkers,
             ISelectionRectangleView selectionRectangleView,
             System.Func<bool> shouldBlockBuildingSelectionClick)
@@ -99,7 +99,7 @@ internal sealed class SelectionGameplayStartupSystem
         var matchHudSquadTraySelectionSystem = new MatchHudSquadTraySelectionUiSystemHelper();
         var unitTransportCapacitySystem = new UnitTransportCapacitySystem();
         var unitTransportAirPickupSystem = new UnitTransportAirPickupSystem();
-        var selectionBuildingInteraction = new SelectionBuildingInteractionSystem();
+        var selectionBuildingInteraction = new SelectionBuildingInteractionCompositionSystemHelper();
         var visibleSelectionScratch = new List<Entity>();
         var transportPassengerPanelItems = new List<MatchHudSelectionPanelPassengerItemModel>();
         IMatchRuntimeUi mainMenuPlayUi = null;

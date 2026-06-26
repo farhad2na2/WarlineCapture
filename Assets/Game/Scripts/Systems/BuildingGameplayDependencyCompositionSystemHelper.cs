@@ -5,7 +5,7 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
 {
     internal IMatchRuntimeUi MainMenuPlayUi { get; private set; }
     internal SelectionUiCameraSystemHelper SelectionUiCameraSystemHelper { get; private set; }
-    internal SelectionBuildingInteractionSystem SelectionBuildingInteractionSystem { get; private set; }
+    internal SelectionBuildingInteractionCompositionSystemHelper SelectionBuildingInteraction { get; private set; }
     internal RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers { get; private set; }
     internal RuntimeCityCompositionSystemHelper RuntimeCitySystem { get; private set; }
     internal CitizenPopulationEventCompositionSystemHelper CitizenPopulationEventCompositionSystemHelper { get; private set; }
@@ -28,7 +28,7 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
         IMatchRuntimeUi mainMenuPlayUi,
         DayNightSystem dayNightSystem = null,
         SelectionUiCameraSystemHelper selectionUiCameraSystem = null,
-        SelectionBuildingInteractionSystem selectionBuildingInteractionSystem = null,
+        SelectionBuildingInteractionCompositionSystemHelper selectionBuildingInteractionSystem = null,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null,
         RuntimeCityCompositionSystemHelper runtimeCitySystem = null,
         CitizenPopulationEventCompositionSystemHelper citizenPopulationEventSystem = null,
@@ -40,7 +40,7 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
         if (selectionUiCameraSystem != null)
             SelectionUiCameraSystemHelper = selectionUiCameraSystem;
         if (selectionBuildingInteractionSystem != null)
-            SelectionBuildingInteractionSystem = selectionBuildingInteractionSystem;
+            SelectionBuildingInteraction = selectionBuildingInteractionSystem;
         if (runtimeGridBlockers != null)
             RuntimeGridBlockers = runtimeGridBlockers;
         if (runtimeCitySystem != null)
@@ -112,24 +112,24 @@ internal sealed class BuildingGameplayDependencyCompositionSystemHelper
 
     internal void ClearFocusedUnit()
     {
-        SelectionBuildingInteractionSystem?.ClearFocusedUnit();
+        SelectionBuildingInteraction?.ClearFocusedUnit();
     }
 
     internal void ShowHudSelection(Sprite portraitSprite)
     {
-        SelectionBuildingInteractionSystem?.ApplyBuildingSelectionHudFeedback(portraitSprite);
+        SelectionBuildingInteraction?.ApplyBuildingSelectionHudFeedback(portraitSprite);
     }
 
     internal bool IsBoardablePlayerTransportClick(Vector2 screenPosition)
     {
-        return SelectionBuildingInteractionSystem != null &&
-               SelectionBuildingInteractionSystem.IsBoardablePlayerTransportClick(screenPosition);
+        return SelectionBuildingInteraction != null &&
+               SelectionBuildingInteraction.IsBoardablePlayerTransportClick(screenPosition);
     }
 
     internal bool TryRequestMoveOrderToBuilding(Vector2Int originCell, Vector2Int footprintCells)
     {
-        return SelectionBuildingInteractionSystem != null &&
-               SelectionBuildingInteractionSystem.TryRequestMoveOrderToBuilding(originCell, footprintCells);
+        return SelectionBuildingInteraction != null &&
+               SelectionBuildingInteraction.TryRequestMoveOrderToBuilding(originCell, footprintCells);
     }
 
     internal void NotifyHomeBuildingDestroyed(int buildingId)

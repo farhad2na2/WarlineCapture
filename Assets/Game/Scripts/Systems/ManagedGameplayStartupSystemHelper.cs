@@ -31,7 +31,7 @@ internal sealed class ManagedGameplayStartupSystemHelper
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteraction;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly System.Action<IMatchRuntimeUi> BindBuildingMainMenu;
-        public readonly System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> BindBuildingGameplayFeatures;
+        public readonly System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionCompositionSystemHelper, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> BindBuildingGameplayFeatures;
         public readonly System.Action DisposeBuildingGameplay;
         public readonly BuildingRuntimeUpdateCompositionSystemHelper BuildingRuntimeUpdate;
         public readonly BuildingRuntimeUpdateCompositionSystemHelper.Context BuildingRuntimeUpdateContext;
@@ -42,7 +42,7 @@ internal sealed class ManagedGameplayStartupSystemHelper
         public readonly SelectionUiCommandSystem SelectionUiCommand;
         public readonly SelectionUiReadModelSystem SelectionUiReadModel;
         public readonly SelectionUiCameraSystemHelper SelectionUiCamera;
-        public readonly SelectionBuildingInteractionSystem SelectionBuildingInteraction;
+        public readonly SelectionBuildingInteractionCompositionSystemHelper SelectionBuildingInteraction;
         public readonly SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers;
         public readonly ISelectionRectangleView SelectionRectangleView;
         public readonly CitizenPopulationCompositionSystemHelper.Result CitizenPopulationComposition;
@@ -70,7 +70,7 @@ internal sealed class ManagedGameplayStartupSystemHelper
             BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteraction,
             BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
             System.Action<IMatchRuntimeUi> bindBuildingMainMenu,
-            System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionSystem, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> bindBuildingGameplayFeatures,
+            System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionCompositionSystemHelper, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> bindBuildingGameplayFeatures,
             System.Action disposeBuildingGameplay,
             BuildingRuntimeUpdateCompositionSystemHelper buildingRuntimeUpdate,
             BuildingRuntimeUpdateCompositionSystemHelper.Context buildingRuntimeUpdateContext,
@@ -81,7 +81,7 @@ internal sealed class ManagedGameplayStartupSystemHelper
             SelectionUiCommandSystem selectionUiCommand,
             SelectionUiReadModelSystem selectionUiReadModel,
             SelectionUiCameraSystemHelper selectionUiCamera,
-            SelectionBuildingInteractionSystem selectionBuildingInteraction,
+            SelectionBuildingInteractionCompositionSystemHelper selectionBuildingInteraction,
             SelectionScreenMarkerUiSystemHelper selectionScreenMarkers,
             ISelectionRectangleView selectionRectangleView,
             CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition,

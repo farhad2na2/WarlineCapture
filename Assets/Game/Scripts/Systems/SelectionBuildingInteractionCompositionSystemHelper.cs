@@ -2,7 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class SelectionBuildingInteractionSystem
+public sealed class SelectionBuildingInteractionCompositionSystemHelper
 {
     private readonly FocusedUnitLifecycleCompositionSystemHelper _focusedUnitLifecycleSystem = new();
     private readonly SelectionHudFeedbackBoundary _selectionHudFeedbackSystem = new();

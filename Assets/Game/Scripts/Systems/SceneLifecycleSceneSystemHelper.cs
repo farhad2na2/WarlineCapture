@@ -323,12 +323,7 @@ public sealed class SceneLifecycleSceneSystemHelper
 
     private static void StopMatchGameplay(EntityManager em)
     {
-        InitialUnitsRuntimeState.PlayRequested = false;
-        InitialUnitsRuntimeState.SimulationActive = false;
-        InitialUnitsRuntimeState.SelectionModeActive = false;
-        InitialUnitsRuntimeState.BuildModeActive = false;
-        InitialUnitsRuntimeState.ZoomInHeld = false;
-        InitialUnitsRuntimeState.ZoomOutHeld = false;
+        InitialUnitsRuntimeState.ResetSession();
 
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeGameplayStateComponent>());
         ComponentTypeHandle<RuntimeGameplayStateComponent> stateType = em.GetComponentTypeHandle<RuntimeGameplayStateComponent>(false);
@@ -343,7 +338,47 @@ public sealed class SceneLifecycleSceneSystemHelper
                 state.SimulationActive = 0;
                 state.SelectionModeActive = 0;
                 state.BuildModeActive = 0;
+                state.FullscreenMapOpen = 0;
+                state.FullscreenMapIsoMode = 0;
+                state.SuppressNextWorldClick = 0;
+                state.PlayerAutoModeEnabled = 0;
                 states[i] = state;
+            }
+        }
+
+        using EntityQuery cameraInputQuery = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeCameraInputComponent>());
+        ComponentTypeHandle<RuntimeCameraInputComponent> cameraInputType = em.GetComponentTypeHandle<RuntimeCameraInputComponent>(false);
+        using NativeArray<ArchetypeChunk> cameraInputChunks = cameraInputQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < cameraInputChunks.Length; chunkIndex++)
+        {
+            NativeArray<RuntimeCameraInputComponent> inputs = cameraInputChunks[chunkIndex].GetNativeArray(ref cameraInputType);
+            for (int i = 0; i < inputs.Length; i++)
+                inputs[i] = default;
+        }
+
+        using EntityQuery cameraFocusQuery = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeCameraFocusRequestComponent>());
+        ComponentTypeHandle<RuntimeCameraFocusRequestComponent> cameraFocusType = em.GetComponentTypeHandle<RuntimeCameraFocusRequestComponent>(false);
+        using NativeArray<ArchetypeChunk> cameraFocusChunks = cameraFocusQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < cameraFocusChunks.Length; chunkIndex++)
+        {
+            NativeArray<RuntimeCameraFocusRequestComponent> requests = cameraFocusChunks[chunkIndex].GetNativeArray(ref cameraFocusType);
+            for (int i = 0; i < requests.Length; i++)
+                requests[i] = default;
+        }
+
+        using EntityQuery mirrorQuery = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeGameplayLegacyMirrorComponent>());
+        ComponentTypeHandle<RuntimeGameplayLegacyMirrorComponent> mirrorType = em.GetComponentTypeHandle<RuntimeGameplayLegacyMirrorComponent>(false);
+        using NativeArray<ArchetypeChunk> mirrorChunks = mirrorQuery.ToArchetypeChunkArray(Allocator.Temp);
+        for (int chunkIndex = 0; chunkIndex < mirrorChunks.Length; chunkIndex++)
+        {
+            NativeArray<RuntimeGameplayLegacyMirrorComponent> mirrors = mirrorChunks[chunkIndex].GetNativeArray(ref mirrorType);
+            for (int i = 0; i < mirrors.Length; i++)
+            {
+                RuntimeGameplayLegacyMirrorComponent mirror = mirrors[i];
+                mirror.GameplayState = default;
+                mirror.CameraInput = default;
+                mirror.CameraFocusRequest = default;
+                mirrors[i] = mirror;
             }
         }
     }

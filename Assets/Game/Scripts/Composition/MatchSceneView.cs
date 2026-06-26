@@ -7,6 +7,7 @@ using UnityEngine.Rendering;
 public sealed class MatchSceneView : MonoBehaviour
 {
     private readonly MatchBootstrapCompositionSystemHelper matchBootstrapSystem = new();
+    private bool matchRuntimeBound;
 
     [Header("Scene Refs")]
     [SerializeField] private Camera worldCamera;
@@ -78,7 +79,12 @@ public sealed class MatchSceneView : MonoBehaviour
 
     private void Awake()
     {
-        matchBootstrapSystem.Awake(this, transform, gameObject.layer);
+        EnsureMatchRuntimeBound();
+    }
+
+    private void OnEnable()
+    {
+        EnsureMatchRuntimeBound();
     }
 
     private void Update()
@@ -108,6 +114,29 @@ public sealed class MatchSceneView : MonoBehaviour
 
     private void OnDestroy()
     {
+        ShutdownMatchRuntimeBound();
+    }
+
+    private void OnDisable()
+    {
+        ShutdownMatchRuntimeBound();
+    }
+
+    private void EnsureMatchRuntimeBound()
+    {
+        if (matchRuntimeBound)
+            return;
+
+        matchBootstrapSystem.Awake(this, transform, gameObject.layer);
+        matchRuntimeBound = true;
+    }
+
+    private void ShutdownMatchRuntimeBound()
+    {
+        if (!matchRuntimeBound)
+            return;
+
         matchBootstrapSystem.OnDestroy();
+        matchRuntimeBound = false;
     }
 }

@@ -18,4 +18,27 @@ public static class InitialUnitsRuntimeState
     public static bool BuildingRuntimeSliceDiagnostics = false;
 
     public static bool ShouldLogAI => VerboseAILogs;
+
+    [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetOnSubsystemRegistration()
+    {
+        ResetSession();
+    }
+
+    public static void ResetSession()
+    {
+        PlayRequested = false;
+        SimulationActive = false;
+        WorldCamera = null;
+        InitialCameraFocusRequested = false;
+        InitialCameraFocusWorld = UnityEngine.Vector3.zero;
+        SelectionModeActive = false;
+        BuildModeActive = false;
+        FullscreenMapOpen = false;
+        FullscreenMapIsoMode = false;
+        ZoomInHeld = false;
+        ZoomOutHeld = false;
+        SuppressNextWorldClick = false;
+        PlayerAutoModeEnabled = false;
+    }
 }

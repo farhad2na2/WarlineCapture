@@ -357,6 +357,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
 
     public void Shutdown()
     {
+        InitialUnitsRuntimeState.ResetSession();
         matchIntroStateQuery.Reset();
         sceneView = null;
     }

@@ -37,9 +37,9 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             () => source.RoadBuildPlacementState.IsDraggingBuildingPlacement);
     }
 
-    public RoadBuildInteractionContextSystem.Context CreateRoadBuildInteractionContext(RoadBuildCompositionSourceCompositionSystemHelper source)
+    public RoadBuildInteractionContextCompositionSystemHelper.Context CreateRoadBuildInteractionContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
-        return new RoadBuildInteractionContextSystem.Context(
+        return new RoadBuildInteractionContextCompositionSystemHelper.Context(
             source.RuntimeGameplayStateSystem,
             source.RoadBuildSessionCompositionSystemHelper,
             source.RoadBuildSessionState,
@@ -82,17 +82,17 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
 
     public RoadBuildInputCompositionSystemHelper.Context CreateRoadBuildInputContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
-        return source.RoadBuildInteractionContextSystem.CreateInputContext(CreateRoadBuildInteractionContext(source));
+        return source.RoadBuildInteractionContextCompositionSystemHelper.CreateInputContext(CreateRoadBuildInteractionContext(source));
     }
 
     public RoadBuildCommandCompositionSystemHelper.Context CreateRoadBuildCommandContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
-        return source.RoadBuildInteractionContextSystem.CreateCommandContext(CreateRoadBuildInteractionContext(source));
+        return source.RoadBuildInteractionContextCompositionSystemHelper.CreateCommandContext(CreateRoadBuildInteractionContext(source));
     }
 
     public RoadDeletePromptUiSystemHelper.Context CreateRoadDeletePromptContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
-        return source.RoadBuildInteractionContextSystem.CreateDeletePromptContext(CreateRoadBuildInteractionContext(source));
+        return source.RoadBuildInteractionContextCompositionSystemHelper.CreateDeletePromptContext(CreateRoadBuildInteractionContext(source));
     }
 
     public RoadBuildDisposalCompositionSystemHelper.Context CreateRoadBuildDisposalContext(RoadBuildCompositionSourceCompositionSystemHelper source)

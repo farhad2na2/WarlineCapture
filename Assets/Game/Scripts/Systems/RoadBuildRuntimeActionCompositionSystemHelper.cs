@@ -5,8 +5,8 @@ internal sealed class RoadBuildRuntimeActionCompositionSystemHelper
 {
     internal sealed class State
     {
-        public RoadBuildInteractionContextSystem InteractionContextSystem;
-        public RoadBuildInteractionContextSystem.Context InteractionContext;
+        public RoadBuildInteractionContextCompositionSystemHelper InteractionContextSystem;
+        public RoadBuildInteractionContextCompositionSystemHelper.Context InteractionContext;
         public RoadBuildCommandCompositionSystemHelper CommandSystem;
         public RoadBuildCommandCompositionSystemHelper.Context CommandContext;
         public RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
@@ -34,8 +34,8 @@ internal sealed class RoadBuildRuntimeActionCompositionSystemHelper
 
     public static void ConfigureInput(
         State state,
-        RoadBuildInteractionContextSystem interactionContextSystem,
-        RoadBuildInteractionContextSystem.Context interactionContext,
+        RoadBuildInteractionContextCompositionSystemHelper interactionContextSystem,
+        RoadBuildInteractionContextCompositionSystemHelper.Context interactionContext,
         Camera worldCamera)
     {
         if (state == null)

@@ -26,7 +26,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
         source.RoadBuildReadModelCompositionSystemHelper.Configure(contextSystem.CreateRoadBuildReadModelContext(source));
         RoadBuildRuntimeActionCompositionSystemHelper.ConfigureInput(
             source.RoadBuildRuntimeActionState,
-            source.RoadBuildInteractionContextSystem,
+            source.RoadBuildInteractionContextCompositionSystemHelper,
             contextSystem.CreateRoadBuildInteractionContext(source),
             source.RoadBuildStartupState.WorldCamera);
         RoadBuildRuntimeActionCompositionSystemHelper.ConfigureCommands(

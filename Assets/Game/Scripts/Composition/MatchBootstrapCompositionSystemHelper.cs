@@ -30,7 +30,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     private readonly GameplaySceneBindingSceneSystemHelper _gameplaySceneBindingSystem = new();
     private RuntimeRootSystem _runtimeRootSystem;
     private readonly GameplayFeatureStartupCompositionSystemHelper _gameplayFeatureStartupSystem = new();
-    private RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem;
+    private RuntimeGridBootstrapStartupSystemHelper _runtimeGridBootstrapSystem;
     private MapSurfaceRuntimeBootstrapSceneSystemHelper _mapSurfaceRuntimeBootstrapSystem;
     private CustomGameStartupSystemHelper _customGameStartupSystem;
     private readonly PerformanceDiagnosticsReferenceDiagnosticsSystemHelper _performanceDiagnosticsReferenceSystem = new();
@@ -661,7 +661,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
                 SetGameplayStartProgress(0.24f, "Preparing map data");
                 MatchBootstrapStartupConfigProjection.ProjectRuntimeStartupConfig(
                     World.DefaultGameObjectInjectionWorld,
-                    ResolveRuntimeGridBootstrapSystem(World.DefaultGameObjectInjectionWorld),
+                    ResolveRuntimeGridBootstrapStartupSystemHelper(World.DefaultGameObjectInjectionWorld),
                     ResolveMapSurfaceRuntimeBootstrapSystem(World.DefaultGameObjectInjectionWorld),
                     RuntimeGridConfig,
                     MapSurfaceAuthoring,
@@ -741,12 +741,12 @@ internal sealed class MatchBootstrapCompositionSystemHelper
         _gameplayStartStatus = string.IsNullOrEmpty(status) ? "Starting match" : status;
     }
 
-    private RuntimeGridBootstrapSystem ResolveRuntimeGridBootstrapSystem(World world)
+    private RuntimeGridBootstrapStartupSystemHelper ResolveRuntimeGridBootstrapStartupSystemHelper(World world)
     {
         if (world == null || !world.IsCreated)
             return null;
 
-        _runtimeGridBootstrapSystem ??= new RuntimeGridBootstrapSystem();
+        _runtimeGridBootstrapSystem ??= new RuntimeGridBootstrapStartupSystemHelper();
         return _runtimeGridBootstrapSystem;
     }
 

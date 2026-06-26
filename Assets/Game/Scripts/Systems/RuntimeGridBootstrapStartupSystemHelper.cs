@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class RuntimeGridBootstrapSystem
+internal sealed class RuntimeGridBootstrapStartupSystemHelper
 {
     private const string FixMarker = "RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26";
 

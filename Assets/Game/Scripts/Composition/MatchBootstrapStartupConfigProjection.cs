@@ -7,7 +7,7 @@ internal static class MatchBootstrapStartupConfigProjection
 {
     public static void ProjectRuntimeStartupConfig(
         World world,
-        RuntimeGridBootstrapSystem runtimeGridBootstrapSystem,
+        RuntimeGridBootstrapStartupSystemHelper runtimeGridBootstrapSystem,
         MapSurfaceRuntimeBootstrapSceneSystemHelper mapSurfaceRuntimeBootstrapSystem,
         GridAuthoringConfig runtimeGridConfig,
         MapSurfaceAuthoring mapSurfaceAuthoring,
@@ -25,7 +25,7 @@ internal static class MatchBootstrapStartupConfigProjection
 
         if (runtimeGridBootstrapSystem == null)
         {
-            Debug.LogWarning("[MatchBootstrap] missingRuntimeGridBootstrapSystem");
+            Debug.LogWarning("[MatchBootstrap] missingRuntimeGridBootstrapStartupSystemHelper");
             return;
         }
 

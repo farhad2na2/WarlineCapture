@@ -19,12 +19,12 @@ Progress snapshot:
 - Checklist progress: `109 / 109 complete (100.0%)`.
 - In progress: `0`.
 - Remaining open: `0`.
-- Current target: `Agent E naming-only Batch 215 RoadBuildInteractionContextCompositionSystemHelper complete; continue road/city/citizen/resource helper naming in small batches`.
+- Current target: `Agent E naming-only Batch 216 RuntimeGridBootstrapStartupSystemHelper complete; continue road/city/citizen/resource helper naming in small batches`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
 - Retired/folded helpers: `109`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `RoadBuildInteractionContextCompositionSystemHelper naming slice completed after inventory regeneration, compile, git diff --check, focused road-build command validation, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch215-road-build-command.log with [RoadBuildCommandRequestValidation] result=Passed tests=7 and /private/tmp/warline-non-ecs-helper-naming-batch215-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=14. Previous FactionResourceCompositionSystemHelper naming logs remain /private/tmp/warline-non-ecs-helper-naming-batch201-faction-resource.log and /private/tmp/warline-non-ecs-helper-naming-batch201-architecture.log.`
+- Validation status: `RuntimeGridBootstrapStartupSystemHelper naming slice completed after inventory regeneration, compile, git diff --check, focused runtime-grid deduplication validation, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch216-runtime-grid.log with [RuntimeGridDeduplicationFocusedValidation] result=Passed tests=3 and /private/tmp/warline-non-ecs-helper-naming-batch216-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=13. Previous FactionResourceCompositionSystemHelper naming logs remain /private/tmp/warline-non-ecs-helper-naming-batch201-faction-resource.log and /private/tmp/warline-non-ecs-helper-naming-batch201-architecture.log.`
 
 Owned files:
 
@@ -275,6 +275,7 @@ Remove dead wrappers instead of converting them.
 - [x] Fold and rename `P7-0232 RoadPathPlanningUtilitySystemHelper` from a disabled `SystemBase` wrapper into a plain road-path planning utility helper; drag-axis resolution, path building, preview-plan dirty cells/edges, preview masks, and road-build input/preview callers stayed unchanged.
 - [x] Fold and rename `P7-0237 RoadSurfacePlacementUtilitySystemHelper` from a disabled `SystemBase` wrapper into a plain road-surface placement utility helper; surface configuration, path validation, primary sample evaluation, road surface type resolution, and road-build/runtime-city callers stayed unchanged.
 - [x] Fold `P7-0238 RuntimeGridBootstrapSystem` from a disabled `SystemBase` wrapper into a plain runtime-grid bootstrap helper; explicit EntityManager bootstrap, grid config projection, grid buffers, dynamic blocker/occupancy storage, path pool setup, and match-bootstrap caller behavior stayed unchanged.
+- [x] Rename `P7-0238 RuntimeGridBootstrapSystem` to `RuntimeGridBootstrapStartupSystemHelper` with preserved `.meta` GUID, focused runtime-grid deduplication validation, and architecture validation.
 - [x] Fold `P7-0144 RuntimeCityArchwaySpawnPrefabSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city archway spawn helper; central archway placement, prefab list handling, plot spacing, reserved footprints, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0145 RuntimeCityBuildingPlacementPrefabSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city building placement helper; request/result contract, footprint lookup, spawn-and-reserve behavior, road overlap checks, reserved-footprint updates, and runtime-city composition callers stayed unchanged.
 - [x] Fold `P7-0148 RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper` from a disabled `SystemBase` wrapper into a plain runtime-city bulk building spawn routine helper; generation random state, spawn coroutine sequencing, entry/roadside/rural/decorative placement calls, yard-wall/decor callback delegates, and runtime-city generation callers stayed unchanged.

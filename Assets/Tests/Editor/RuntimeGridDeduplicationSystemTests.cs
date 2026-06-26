@@ -18,7 +18,7 @@ public sealed class RuntimeGridDeduplicationSystemTests
             var tests = new RuntimeGridDeduplicationSystemTests();
             tests.RunWithFixture(tests.Deduplication_RemovesRuntimeGridWhenAuthoredGridExists);
             tests.RunWithFixture(tests.Deduplication_KeepsRuntimeGridWhenNoAuthoredGridExists);
-            tests.RunWithFixture(tests.RuntimeGridBootstrapSystemCreatesRuntimeGridFromPlainHelper);
+            tests.RunWithFixture(tests.RuntimeGridBootstrapStartupSystemHelperCreatesRuntimeGridFromPlainHelper);
             Debug.Log("[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=3");
             ValidationExit.Exit(0);
         }
@@ -68,9 +68,9 @@ public sealed class RuntimeGridDeduplicationSystemTests
     }
 
     [Test]
-    public void RuntimeGridBootstrapSystemCreatesRuntimeGridFromPlainHelper()
+    public void RuntimeGridBootstrapStartupSystemHelperCreatesRuntimeGridFromPlainHelper()
     {
-        var system = new RuntimeGridBootstrapSystem();
+        var system = new RuntimeGridBootstrapStartupSystemHelper();
 
         Assert.IsTrue(system.Ensure(_entityManager, 12, 10, 1.5f, new Vector3(2f, 0f, 3f)));
 

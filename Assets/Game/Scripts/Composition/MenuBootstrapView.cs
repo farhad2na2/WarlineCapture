@@ -15,7 +15,6 @@ public sealed class MenuBootstrapView : MonoBehaviour
     [FormerlySerializedAs("contentPresenter")]
     [SerializeField] private UIShellContentView contentSystem;
     [SerializeField] private UIRouterView router;
-    [SerializeField] private GameObject legacyUiToolkitShellRoot;
 
     public RuntimeUiConfig RuntimeUiConfig => runtimeUiConfig;
     public RuntimeUiMode UiMode => runtimeUiConfig != null ? runtimeUiConfig.Mode : RuntimeUiMode.Canvas;
@@ -69,8 +68,6 @@ public sealed class MenuBootstrapView : MonoBehaviour
 
     public void ApplyRuntimeUiMode()
     {
-        DisableLegacyUiToolkitShellRoot();
-
         if (uiCanvas != null)
         {
             if (uiCanvas.transform.localScale != Vector3.one)
@@ -88,12 +85,6 @@ public sealed class MenuBootstrapView : MonoBehaviour
             contentSystem.enabled = true;
         if (router != null && !router.enabled)
             router.enabled = true;
-    }
-
-    private void DisableLegacyUiToolkitShellRoot()
-    {
-        if (legacyUiToolkitShellRoot != null && legacyUiToolkitShellRoot.activeSelf)
-            legacyUiToolkitShellRoot.SetActive(false);
     }
 
     private void Awake()

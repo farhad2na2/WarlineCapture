@@ -84,7 +84,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public IBuildingUiQuery BuildingUiQueryContract { get; private set; }
     public BuildingRuntimeUpdateCompositionSystemHelper BuildingRuntimeUpdate { get; private set; }
     public SelectionUiCommandUiSystemHelper SelectionUiCommand { get; private set; }
-    public SelectionUiReadModelSystem SelectionUiReadModel { get; private set; }
+    public SelectionUiReadModelUiSystemHelper SelectionUiReadModel { get; private set; }
     public SelectionUiCameraSystemHelper SelectionUiCamera { get; private set; }
     public SelectionBuildingInteractionCompositionSystemHelper SelectionBuildingInteraction { get; private set; }
     public SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers { get; private set; }

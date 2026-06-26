@@ -13,7 +13,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
         public readonly System.Action SelectionRuntimeUpdate;
         public readonly System.Action DisposeSelection;
         public readonly SelectionUiCommandUiSystemHelper SelectionUiCommand;
-        public readonly SelectionUiReadModelSystem SelectionUiReadModel;
+        public readonly SelectionUiReadModelUiSystemHelper SelectionUiReadModel;
         public readonly SelectionUiCameraSystemHelper SelectionUiCamera;
         public readonly SelectionBuildingInteractionCompositionSystemHelper SelectionBuildingInteraction;
         public readonly SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers;
@@ -26,7 +26,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
             System.Action selectionRuntimeUpdate,
             System.Action disposeSelection,
             SelectionUiCommandUiSystemHelper selectionUiCommand,
-            SelectionUiReadModelSystem selectionUiReadModel,
+            SelectionUiReadModelUiSystemHelper selectionUiReadModel,
             SelectionUiCameraSystemHelper selectionUiCamera,
             SelectionBuildingInteractionCompositionSystemHelper selectionBuildingInteraction,
             SelectionScreenMarkerUiSystemHelper selectionScreenMarkers,
@@ -76,7 +76,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
         RtsCameraSystem rtsCameraSystem = ResolveRtsCameraSystem();
         RtsCameraRequestSystem rtsCameraRequestSystem = ResolveRtsCameraRequestSystem();
         var selectionUiCommand = new SelectionUiCommandUiSystemHelper(IsMatchIntroGameplayInputLocked);
-        var selectionUiReadModel = new SelectionUiReadModelSystem();
+        var selectionUiReadModel = new SelectionUiReadModelUiSystemHelper();
         var selectionUiCamera = new SelectionUiCameraSystemHelper(rtsCameraSystem, rtsCameraRequestSystem);
         var selectionScreenMarkers = new SelectionScreenMarkerUiSystemHelper();
         var selectionStateSystem = new SelectionStateCompositionSystemHelper();

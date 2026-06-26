@@ -40,7 +40,7 @@ internal sealed class ManagedGameplayStartupSystemHelper
         public readonly System.Action SelectionRuntimeUpdate;
         public readonly System.Action DisposeSelection;
         public readonly SelectionUiCommandUiSystemHelper SelectionUiCommand;
-        public readonly SelectionUiReadModelSystem SelectionUiReadModel;
+        public readonly SelectionUiReadModelUiSystemHelper SelectionUiReadModel;
         public readonly SelectionUiCameraSystemHelper SelectionUiCamera;
         public readonly SelectionBuildingInteractionCompositionSystemHelper SelectionBuildingInteraction;
         public readonly SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers;
@@ -79,7 +79,7 @@ internal sealed class ManagedGameplayStartupSystemHelper
             System.Action selectionRuntimeUpdate,
             System.Action disposeSelection,
             SelectionUiCommandUiSystemHelper selectionUiCommand,
-            SelectionUiReadModelSystem selectionUiReadModel,
+            SelectionUiReadModelUiSystemHelper selectionUiReadModel,
             SelectionUiCameraSystemHelper selectionUiCamera,
             SelectionBuildingInteractionCompositionSystemHelper selectionBuildingInteraction,
             SelectionScreenMarkerUiSystemHelper selectionScreenMarkers,

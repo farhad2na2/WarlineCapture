@@ -399,7 +399,7 @@ Progress notes:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod EcsBurstFullEditorValidationRunner.RunAllNonExplicitTests -logFile /private/tmp/warline-ecs-burst-full-editor-runner.log`
   - Log marker: `[EcsBurstFullEditorValidation] result=Passed tests=440 skipped=23`.
   - `git diff --check` passed.
-- 2026-06-12: Removed unused `SelectionUiReadModelSystem.GetSelectedUnitEntities` and its `SelectionUiReadModelLookup` helper. This deletes a dead selected-entity snapshot API rather than hiding it behind a helper.
+- 2026-06-12: Removed unused `SelectionUiReadModelUiSystemHelper.GetSelectedUnitEntities` and its `SelectionUiReadModelLookup` helper. This deletes a dead selected-entity snapshot API rather than hiding it behind a helper.
 - 2026-06-12: Guardrail ratchet after the fourth Phase 3 slice: `ToEntityArray` / `ToComponentDataArray` ceiling reduced to `104`.
 - 2026-06-12: Validation passed after the fourth Phase 3 slice. The main project was open in Unity, so validation ran in the synced `WarlineCapture-CodexUnity1` shadow project after mirroring the current script and editor-test trees:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity1 -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation -logFile /private/tmp/warline-shadow-ecs-burst-hot-path-architecture.log`
@@ -854,7 +854,7 @@ Target areas:
 - [x] `RtsSelectionFocusCommandCompositionSystemHelper`
 - [x] `FocusableUnitLookupSystem`
 - [x] `SelectionSummaryQuerySystem`
-- [x] `SelectionUiReadModelSystem`
+- [x] `SelectionUiReadModelUiSystemHelper`
 
 Implementation steps:
 - [x] Split any remaining mixed selection logic into managed shell/input bridge, ECS request writers, Burst-compatible candidate/filter/scoring jobs, and managed UI presentation/read-model apply boundary.
@@ -876,7 +876,7 @@ Progress notes:
 - 2026-06-12: Re-validated Match HUD command arming and UI-click suppression through `EcsBurstSelectionCommandValidationRunner.RunFocusedValidation`:
   - `/private/tmp/warline-ecs-burst-selection-command-move-acceptance.log`, marker `[EcsBurstSelectionCommandValidation] result=Passed tests=70`.
   - Covered Move/Attack/Board/Hold/Stop command request queuing, command-mode state, and suppress-release behavior for command buttons.
-- 2026-06-13: Closed the `SelectionGameplayStartupSystem` target item and selected-entity snapshot replacement item after static verification found no `ToEntityArray` / `ToComponentDataArray<T>` calls in the active Phase 3 selection files, including `SelectionGameplayStartupSystem`, `RtsSelectionFocusCommandCompositionSystemHelper`, `FocusableUnitLookupSystem`, `SelectionSummaryQuerySystem`, `SelectionUiReadModelSystem`, `VisibleUnitSelectionSystem`, `SelectionOrderMarkerPresentationSystemHelper`, `FocusedUnitLifecycleSystem`, `SelectedMoveOrderCommandSystem`, `FocusedUnitCommandSystem`, `BuildingTargetMoveOrderSystem`, `AttackOrderCommandSystem`, and `RtsSelectionPointerTargetCommandCompositionSystemHelper`. The same scan found no `Camera.main`, `Object.Find*`, or `GameObject.Find` usage in those files. Follow-up hot-path architecture validation passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
+- 2026-06-13: Closed the `SelectionGameplayStartupSystem` target item and selected-entity snapshot replacement item after static verification found no `ToEntityArray` / `ToComponentDataArray<T>` calls in the active Phase 3 selection files, including `SelectionGameplayStartupSystem`, `RtsSelectionFocusCommandCompositionSystemHelper`, `FocusableUnitLookupSystem`, `SelectionSummaryQuerySystem`, `SelectionUiReadModelUiSystemHelper`, `VisibleUnitSelectionSystem`, `SelectionOrderMarkerPresentationSystemHelper`, `FocusedUnitLifecycleSystem`, `SelectedMoveOrderCommandSystem`, `FocusedUnitCommandSystem`, `BuildingTargetMoveOrderSystem`, `AttackOrderCommandSystem`, and `RtsSelectionPointerTargetCommandCompositionSystemHelper`. The same scan found no `Camera.main`, `Object.Find*`, or `GameObject.Find` usage in those files. Follow-up hot-path architecture validation passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=6`.
 - 2026-06-13: Added focused squad-tray selection acceptance coverage in `MatchHudSquadTraySelectionSystemTests` and wired it into `EcsBurstSelectionCommandValidationRunner`. The tests validate selecting a four-soldier cluster, selecting two ground combat vehicles while excluding trucks/soldiers, and selecting attack helicopter, jet, and transport slots through the real squad-tray selection system. Validation passed:
   - `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture -executeMethod MatchHudSquadTraySelectionSystemTests.RunFocusedValidation -logFile /private/tmp/warline-ecs-burst-squad-tray-selection-main.log`
   - Log marker: `[MatchHudSquadTraySelectionFocusedValidation] result=Passed tests=3`.

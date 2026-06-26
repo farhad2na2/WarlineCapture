@@ -215,7 +215,7 @@ Goal: delete the remaining selection context-construction boundary without repla
 
 11. Complete: Move remaining compatibility methods
     - Removed the obsolete focused-unit/selected-unit UI read compatibility surface from `SelectionRuntimeContextSystem`.
-    - Focused-unit labels, health/capacity/status, transport passenger rows, selected-unit read lists, and visible-unit read helpers now stay behind `SelectionUiReadModelSystem` and ECS read-model data.
+    - Focused-unit labels, health/capacity/status, transport passenger rows, selected-unit read lists, and visible-unit read helpers now stay behind `SelectionUiReadModelUiSystemHelper` and ECS read-model data.
     - Remaining production dependency on `SelectionRuntimeContextSystem` is runtime context construction/update composition only; that is the deletion target for step 12.
 
 12. Complete: Delete context file

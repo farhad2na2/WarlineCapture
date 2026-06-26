@@ -246,7 +246,7 @@ Note:
 `SelectionGameplayStartupSystem` then started Phase 3 by resolving Match HUD board-button availability through one selected-entity scan instead of separate passenger and transport scans.
 `RtsSelectionFocusCommandSystem` then continued Phase 3 by resolving selected Board-mode transport and passenger candidates through one selected-entity scan while preserving transport-first priority.
 `RtsSelectionFocusCommandSystem` then merged Attack-mode air-defense-only and normal attack-capability checks into one selected-entity scan while preserving mixed-selection Attack mode.
-The unused `SelectionUiReadModelSystem.GetSelectedUnitEntities` API and its `SelectionUiQuerySystem` helper were removed, deleting a dead selected-entity snapshot.
+The unused `SelectionUiReadModelUiSystemHelper.GetSelectedUnitEntities` API and its `SelectionUiQuerySystem` helper were removed, deleting a dead selected-entity snapshot.
 `VisibleUnitSelectionSystem.HasVisiblePlayerUnits` now reuses the same filtered screen-rect scan as `CollectVisiblePlayerUnits` with early exit, deleting a duplicate visible-selection snapshot.
 `FocusableUnitLookupSystem` now uses one combined UnitGrid/UnitFootprint changed-version query for coverage refresh instead of separate changed-grid and changed-footprint snapshots.
 `SelectedUnitDebugFireSystem` now resolves ground-missile debug enemy-base targets through read-only archetype chunk iteration instead of copying all enemy building entities into a flat `ToEntityArray`.

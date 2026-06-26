@@ -1,4 +1,4 @@
-# Phase 7 Agent C Handoff - P7-0052 SelectionUiReadModelSystem
+# Phase 7 Agent C Handoff - P7-0052 SelectionUiReadModelUiSystemHelper
 
 Date: `2026-06-21`
 
@@ -6,7 +6,7 @@ Lane: `AgentC - Selection, Commands, Focus, And Player Intent`
 
 ## Summary
 
-`SelectionUiReadModelSystem` was retired/folded from a disabled `SystemBase` shell into a plain `ISelectionUiReadModel` adapter.
+`SelectionUiReadModelUiSystemHelper` was retired/folded from a disabled `SystemBase` shell into a plain `ISelectionUiReadModel` adapter.
 
 The public behavior was preserved:
 
@@ -20,7 +20,7 @@ No new ECS owner, manager, controller, facade, MonoBehaviour loop, or managed pr
 
 ## Files Changed
 
-- `Assets/Game/Scripts/Systems/SelectionUiReadModelSystem.cs`
+- `Assets/Game/Scripts/Systems/SelectionUiReadModelUiSystemHelper.cs`
 - `Design/Architecture/systembase_to_isystem_inventory.md`
 - `Design/Architecture/phase7_agent_c_selection_commands_tracker.md`
 - `Design/Architecture/phase7_agent_a_inventory_guardrails_tracker.md`

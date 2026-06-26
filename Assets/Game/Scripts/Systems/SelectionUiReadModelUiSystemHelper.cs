@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class SelectionUiReadModelSystem : ISelectionUiReadModel
+public sealed class SelectionUiReadModelUiSystemHelper : ISelectionUiReadModel
 {
     public readonly struct TransportPassengerUiInfo
     {

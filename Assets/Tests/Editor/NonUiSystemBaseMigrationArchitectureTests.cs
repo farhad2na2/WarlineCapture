@@ -13,6 +13,10 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
     private const string InventoryPath = "Design/Architecture/systembase_to_isystem_inventory.md";
     private const string MonoBehaviourLoopBaselinePath = "Design/Architecture/phase7_monobehaviour_loop_baseline.md";
     private const int ManagedExceptionPlanningCap = 30;
+    private const int FinalProductionSystemBaseCount = 24;
+    private const int FinalProductionISystemCount = 138;
+    private const int FinalManagedExceptionCount = 24;
+    private const int FinalUiOutOfScopeCount = 7;
 
     private static readonly Regex TypeDeclarationRegex = new(
         @"^[ \t]*(?:(?:\[[^\]\r\n]*(?:\r?\n[ \t]*\[[^\]\r\n]*)*\][ \t]*)\r?\n[ \t]*)*" +
@@ -359,6 +363,10 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
     {
         int count = LoadInventoryRows().Count(row => row.Disposition == "ManagedPresentationSystemBaseException");
 
+        Assert.AreEqual(
+            FinalManagedExceptionCount,
+            count,
+            "Final Phase 7 managed presentation/config/camera exception count drifted. Update the inventory, tracker, and rationale together if this is intentional.");
         Assert.LessOrEqual(
             count,
             ManagedExceptionPlanningCap,
@@ -373,11 +381,15 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
             .ToList();
         int systemBase = rows.Count(row => IsSystemBaseLike(row.CurrentBase));
         int iSystem = rows.Count(row => row.CurrentBase == "ISystem");
+        int reviewRequired = rows.Count(row => row.Disposition == "ReviewRequired" || row.Status == "ReviewRequired");
+        int uiOutOfScope = rows.Count(row => row.Disposition == "UIOutOfScope");
         float share = iSystem / (float)Math.Max(1, iSystem + systemBase);
 
-        Assert.Greater(iSystem, 0, "Inventory must contain production ISystem rows.");
-        Assert.Greater(systemBase, 0, "Inventory must contain production SystemBase rows before Phase 7 conversion.");
-        Assert.Greater(share, 0f, "Final share formula must be computable.");
+        Assert.AreEqual(FinalProductionSystemBaseCount, systemBase, "Final Phase 7 production SystemBase/legacy count drifted.");
+        Assert.AreEqual(FinalProductionISystemCount, iSystem, "Final Phase 7 production ISystem count drifted.");
+        Assert.AreEqual(FinalUiOutOfScopeCount, uiOutOfScope, "Final Phase 7 UI out-of-scope count drifted.");
+        Assert.AreEqual(0, reviewRequired, "Final Phase 7 inventory must not retain ReviewRequired rows.");
+        Assert.AreEqual(0.852f, share, 0.001f, "Final Phase 7 production ISystem share drifted.");
     }
 
     [Test]

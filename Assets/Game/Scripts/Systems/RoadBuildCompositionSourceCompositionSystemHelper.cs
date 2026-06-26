@@ -1,4 +1,4 @@
-internal sealed class RoadBuildCompositionSourceSystem
+internal sealed class RoadBuildCompositionSourceCompositionSystemHelper
 {
     public RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
     public readonly RoadBuildStartupSystem RoadBuildStartupSystem = new();
@@ -47,7 +47,7 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadBuildBuildingPlacementCompositionSystemHelper.State RoadBuildPlacementState;
     public uint BuildingSpawnRandomState = 0x12345678u;
 
-    public RoadBuildCompositionSourceSystem()
+    public RoadBuildCompositionSourceCompositionSystemHelper()
     {
         RoadGridProjectionSystem = ResolveRoadGridProjectionSystem();
         RoadRuntimeRootSceneSystemHelper = ResolveRoadRuntimeRootSceneSystemHelper();

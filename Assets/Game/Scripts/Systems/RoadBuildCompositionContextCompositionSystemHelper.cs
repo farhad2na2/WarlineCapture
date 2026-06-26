@@ -8,7 +8,7 @@ using VariantData = RoadVisualVariantSystem.VariantData;
 
 internal sealed class RoadBuildCompositionContextCompositionSystemHelper
 {
-    public RoadGridProjectionSystem.RoadFootprintState CreateRoadFootprintState(RoadBuildCompositionSourceSystem source)
+    public RoadGridProjectionSystem.RoadFootprintState CreateRoadFootprintState(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return new RoadGridProjectionSystem.RoadFootprintState(
             source.RoadNetworkCompositionSystemHelper.RoadTiles,
@@ -19,12 +19,12 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadBuildStartupState.RoadGridSize);
     }
 
-    public RoadRuntimeGenerationCompositionSystemHelper.Context CreateRoadRuntimeGenerationContext(RoadBuildCompositionSourceSystem source)
+    public RoadRuntimeGenerationCompositionSystemHelper.Context CreateRoadRuntimeGenerationContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return RoadRuntimeGenerationContextCompositionSystemHelper.CreateContext(CreateRoadRuntimeGenerationContextSource(source));
     }
 
-    public RoadBuildReadModelCompositionSystemHelper.Context CreateRoadBuildReadModelContext(RoadBuildCompositionSourceSystem source)
+    public RoadBuildReadModelCompositionSystemHelper.Context CreateRoadBuildReadModelContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return new RoadBuildReadModelCompositionSystemHelper.Context(
             source.RuntimeGameplayStateSystem,
@@ -37,7 +37,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             () => source.RoadBuildPlacementState.IsDraggingBuildingPlacement);
     }
 
-    public RoadBuildInteractionContextSystem.Context CreateRoadBuildInteractionContext(RoadBuildCompositionSourceSystem source)
+    public RoadBuildInteractionContextSystem.Context CreateRoadBuildInteractionContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return new RoadBuildInteractionContextSystem.Context(
             source.RuntimeGameplayStateSystem,
@@ -80,22 +80,22 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             strokeId => source.RoadBuildMutationCompositionSystemHelper.DeleteStroke(CreateRoadBuildMutationContext(source), strokeId));
     }
 
-    public RoadBuildInputCompositionSystemHelper.Context CreateRoadBuildInputContext(RoadBuildCompositionSourceSystem source)
+    public RoadBuildInputCompositionSystemHelper.Context CreateRoadBuildInputContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return source.RoadBuildInteractionContextSystem.CreateInputContext(CreateRoadBuildInteractionContext(source));
     }
 
-    public RoadBuildCommandCompositionSystemHelper.Context CreateRoadBuildCommandContext(RoadBuildCompositionSourceSystem source)
+    public RoadBuildCommandCompositionSystemHelper.Context CreateRoadBuildCommandContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return source.RoadBuildInteractionContextSystem.CreateCommandContext(CreateRoadBuildInteractionContext(source));
     }
 
-    public RoadDeletePromptUiSystemHelper.Context CreateRoadDeletePromptContext(RoadBuildCompositionSourceSystem source)
+    public RoadDeletePromptUiSystemHelper.Context CreateRoadDeletePromptContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return source.RoadBuildInteractionContextSystem.CreateDeletePromptContext(CreateRoadBuildInteractionContext(source));
     }
 
-    public RoadBuildDisposalCompositionSystemHelper.Context CreateRoadBuildDisposalContext(RoadBuildCompositionSourceSystem source)
+    public RoadBuildDisposalCompositionSystemHelper.Context CreateRoadBuildDisposalContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return new RoadBuildDisposalCompositionSystemHelper.Context(
             source.RoadBuildStartupSystem,
@@ -114,7 +114,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadNetworkCompositionSystemHelper.RoadTiles);
     }
 
-    private RoadGridProjectionSystem.Context CreateRoadGridProjectionContext(RoadBuildCompositionSourceSystem source)
+    private RoadGridProjectionSystem.Context CreateRoadGridProjectionContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return new RoadGridProjectionSystem.Context(
             source.RoadNetworkCompositionSystemHelper.RoadTiles,
@@ -122,7 +122,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadBuildStartupState.RoadGridSize);
     }
 
-    private RoadBuildVisualContextPresentationSystemHelper.Context CreateRoadBuildVisualContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildVisualContextPresentationSystemHelper.Context CreateRoadBuildVisualContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return new RoadBuildVisualContextPresentationSystemHelper.Context(
             source.RoadNetworkCompositionSystemHelper,
@@ -138,7 +138,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
                 TryGetVariant(source, type, mask, out variant));
     }
 
-    private RoadVisualResolutionSystem.Context CreateRoadVisualResolutionContext(RoadBuildCompositionSourceSystem source)
+    private RoadVisualResolutionSystem.Context CreateRoadVisualResolutionContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return new RoadVisualResolutionSystem.Context(
             source.RoadNetworkCompositionSystemHelper,
@@ -146,7 +146,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             CreateRoadBuildVisualContext(source));
     }
 
-    private RoadVisualRefreshPresentationSystemHelper.Context CreateRoadVisualRefreshContext(RoadBuildCompositionSourceSystem source)
+    private RoadVisualRefreshPresentationSystemHelper.Context CreateRoadVisualRefreshContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return new RoadVisualRefreshPresentationSystemHelper.Context(
             source.RoadNetworkCompositionSystemHelper,
@@ -159,22 +159,22 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             CreateRoadVisualResolutionContext(source));
     }
 
-    private RoadChunkVisualSystem.Context CreateRoadChunkVisualContext(RoadBuildCompositionSourceSystem source)
+    private RoadChunkVisualSystem.Context CreateRoadChunkVisualContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return RoadBuildVisualContextPresentationSystemHelper.CreateChunkContext(CreateRoadBuildVisualContext(source));
     }
 
-    private RoadPreviewPresentationSystemHelper.Context CreateRoadPreviewContext(RoadBuildCompositionSourceSystem source)
+    private RoadPreviewPresentationSystemHelper.Context CreateRoadPreviewContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return RoadBuildVisualContextPresentationSystemHelper.CreatePreviewContext(CreateRoadBuildVisualContext(source));
     }
 
-    private RoadSpecialVisualSystem.Context CreateRoadSpecialVisualContext(RoadBuildCompositionSourceSystem source)
+    private RoadSpecialVisualSystem.Context CreateRoadSpecialVisualContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return RoadBuildVisualContextPresentationSystemHelper.CreateSpecialContext(CreateRoadBuildVisualContext(source));
     }
 
-    private RoadBuildMutationCompositionSystemHelper.Context CreateRoadBuildMutationContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildMutationCompositionSystemHelper.Context CreateRoadBuildMutationContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return new RoadBuildMutationCompositionSystemHelper.Context(
             source.RoadNetworkCompositionSystemHelper,
@@ -182,7 +182,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             () => RoadVisualRefreshPresentationSystemHelper.RebuildRoadStateFromCurrentTiles(CreateRoadVisualRefreshContext(source)));
     }
 
-    private RoadBuildContextSystem.Context CreateRoadBuildContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildContextSystem.Context CreateRoadBuildContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return new RoadBuildContextSystem.Context(
             source.RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManager,
@@ -195,12 +195,12 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.BuildingSpawnRandomState);
     }
 
-    private RoadBuildEcsBoundaryCompositionSystemHelper.Context CreateRoadBuildEcsContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildEcsBoundaryCompositionSystemHelper.Context CreateRoadBuildEcsContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return source.RoadBuildContextSystem.CreateEcsContext(CreateRoadBuildContext(source));
     }
 
-    private RoadBuildBuildingPlacementCompositionSystemHelper.Context CreateRoadBuildPlacementContext(RoadBuildCompositionSourceSystem source)
+    private RoadBuildBuildingPlacementCompositionSystemHelper.Context CreateRoadBuildPlacementContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         RoadBuildStartupSystem.State startupState = source.RoadBuildStartupState;
         return new RoadBuildBuildingPlacementCompositionSystemHelper.Context(
@@ -220,7 +220,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             (int x, int y, int width, int height) => IsRuntimeBlockerCell(source, x, y, width, height));
     }
 
-    private RoadRuntimeGenerationContextCompositionSystemHelper.Context CreateRoadRuntimeGenerationContextSource(RoadBuildCompositionSourceSystem source)
+    private RoadRuntimeGenerationContextCompositionSystemHelper.Context CreateRoadRuntimeGenerationContextSource(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return new RoadRuntimeGenerationContextCompositionSystemHelper.Context(
             (out int roadCellSizeInGridCells) => TryGetRoadCellSizeInGridCellsInternal(source, out roadCellSizeInGridCells),
@@ -237,7 +237,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             CreateRoadSpecialVisualContext(source));
     }
 
-    private bool TryGetRoadCellSizeInGridCellsInternal(RoadBuildCompositionSourceSystem source, out int roadCellSizeInGridCells)
+    private bool TryGetRoadCellSizeInGridCellsInternal(RoadBuildCompositionSourceCompositionSystemHelper source, out int roadCellSizeInGridCells)
     {
         roadCellSizeInGridCells = 0;
         RoadBuildStartupSystem.State startupState = source.RoadBuildStartupState;
@@ -253,7 +253,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     }
 
     private static bool TryGetRoadBuildGridData(
-        RoadBuildCompositionSourceSystem source,
+        RoadBuildCompositionSourceCompositionSystemHelper source,
         out Entity gridEntity,
         out GridConfig grid,
         out DynamicBuffer<GridRoad> roads,
@@ -267,7 +267,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
                source.RoadGridProjectionSystem.TryGetGridData(out gridEntity, out grid, out roads, out blockerData);
     }
 
-    private static bool TryGetRoadBuildGridConfig(RoadBuildCompositionSourceSystem source, out GridConfig grid)
+    private static bool TryGetRoadBuildGridConfig(RoadBuildCompositionSourceCompositionSystemHelper source, out GridConfig grid)
     {
         grid = default;
         return source.RoadGridProjectionSystem != null &&
@@ -275,7 +275,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     }
 
     private static Vector3 GetRoadBuildFootprintCenter(
-        RoadBuildCompositionSourceSystem source,
+        RoadBuildCompositionSourceCompositionSystemHelper source,
         Vector2Int originCell,
         Vector2Int footprintCells,
         GridConfig grid)
@@ -287,7 +287,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     }
 
     private static bool TryGetRoadBuildGridCell(
-        RoadBuildCompositionSourceSystem source,
+        RoadBuildCompositionSourceCompositionSystemHelper source,
         Vector2 screenPosition,
         GridConfig grid,
         out Vector2Int cell)
@@ -313,20 +313,20 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     }
 
     private RoadVisualType ResolveVisualType(
-        RoadBuildCompositionSourceSystem source,
+        RoadBuildCompositionSourceCompositionSystemHelper source,
         Vector2Int cell,
         TileConnectionMask mask)
     {
         return RoadVisualResolutionSystem.ResolveVisualType(CreateRoadVisualResolutionContext(source), cell, mask);
     }
 
-    private GameObject GetPrefab(RoadBuildCompositionSourceSystem source, RoadVisualType type)
+    private GameObject GetPrefab(RoadBuildCompositionSourceCompositionSystemHelper source, RoadVisualType type)
     {
         return RoadVisualResolutionSystem.GetPrefab(CreateRoadVisualResolutionContext(source), type);
     }
 
     private bool TryGetVariant(
-        RoadBuildCompositionSourceSystem source,
+        RoadBuildCompositionSourceCompositionSystemHelper source,
         RoadVisualType type,
         TileConnectionMask mask,
         out VariantData variant)
@@ -334,7 +334,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
         return RoadVisualResolutionSystem.TryGetVariant(CreateRoadVisualResolutionContext(source), type, mask, out variant);
     }
 
-    private bool TryGetHoveredCell(RoadBuildCompositionSourceSystem source, Vector2 screenPosition, out Vector2Int cell)
+    private bool TryGetHoveredCell(RoadBuildCompositionSourceCompositionSystemHelper source, Vector2 screenPosition, out Vector2Int cell)
     {
         cell = default;
         RoadBuildStartupSystem.State startupState = source.RoadBuildStartupState;
@@ -358,7 +358,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
         return true;
     }
 
-    private void RemoveRuntimeBlockersUnderRoads(RoadBuildCompositionSourceSystem source)
+    private void RemoveRuntimeBlockersUnderRoads(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         source.RoadGridProjectionSystem?.RemoveRuntimeBlockersUnderRoads(
             CreateRoadGridProjectionContext(source),
@@ -366,7 +366,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     }
 
     private static bool IsRuntimeBlockerCell(
-        RoadBuildCompositionSourceSystem source,
+        RoadBuildCompositionSourceCompositionSystemHelper source,
         int x,
         int y,
         int width,
@@ -376,12 +376,12 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
         return runtimeGridBlockers != null && runtimeGridBlockers.IsRuntimeBlockerCell(x, y, width, height);
     }
 
-    private static void ApplyBuildCommandMode(RoadBuildCompositionSourceSystem source)
+    private static void ApplyBuildCommandMode(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         source.RoadBuildDependencyCompositionSystemHelper.ApplyBuildCommandMode(source.RoadBuildDependencyState);
     }
 
-    private static void ClearCommandMode(RoadBuildCompositionSourceSystem source)
+    private static void ClearCommandMode(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         source.RoadBuildDependencyCompositionSystemHelper.ClearCommandMode(source.RoadBuildDependencyState);
     }

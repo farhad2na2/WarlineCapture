@@ -4,7 +4,7 @@ using UnityEngine;
 internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
 {
     public void Init(
-        RoadBuildCompositionSourceSystem source,
+        RoadBuildCompositionSourceCompositionSystemHelper source,
         RoadBuildCompositionContextCompositionSystemHelper contextSystem,
         RoadBuildSystemConfig configAsset,
         Camera sceneWorldCamera,
@@ -50,7 +50,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
     }
 
     public void BindDependencies(
-        RoadBuildCompositionSourceSystem source,
+        RoadBuildCompositionSourceCompositionSystemHelper source,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
         BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext = default,
         IMatchRuntimeUi mainMenuPlayUi = null,
@@ -68,7 +68,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
     }
 
     public void Dispose(
-        RoadBuildCompositionSourceSystem source,
+        RoadBuildCompositionSourceCompositionSystemHelper source,
         RoadBuildCompositionContextCompositionSystemHelper contextSystem)
     {
         RoadBuildCommandCompositionSystemHelper.Context commandContext = contextSystem.CreateRoadBuildCommandContext(source);

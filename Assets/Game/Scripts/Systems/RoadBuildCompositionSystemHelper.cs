@@ -3,7 +3,7 @@ using UnityEngine;
 
 internal sealed class RoadBuildCompositionSystemHelper
 {
-    private RoadBuildCompositionSourceSystem _roadSource;
+    private RoadBuildCompositionSourceCompositionSystemHelper _roadSource;
 
     public readonly struct Result
     {
@@ -39,7 +39,7 @@ internal sealed class RoadBuildCompositionSystemHelper
         Camera worldCamera,
         Transform runtimeUiRoot)
     {
-        var roadSource = new RoadBuildCompositionSourceSystem();
+        var roadSource = new RoadBuildCompositionSourceCompositionSystemHelper();
         _roadSource = roadSource;
         RoadBuildCompositionContextCompositionSystemHelper contextSystem = roadSource.RoadBuildCompositionContextCompositionSystemHelper;
         RoadBuildCompositionLifecycleCompositionSystemHelper lifecycleSystem = roadSource.RoadBuildCompositionLifecycleCompositionSystemHelper;

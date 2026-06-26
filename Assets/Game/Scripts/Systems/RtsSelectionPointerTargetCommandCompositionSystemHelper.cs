@@ -225,11 +225,11 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
 
         if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
             SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"issueMoveOrderQueued screen={screenPosition} frame={UnityEngine.Time.frameCount}");
-        if (!queuedResolvedTarget)
+        context.ProcessMoveCommandRequests?.Invoke();
+        if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
         {
-            context.ProcessMoveCommandRequests?.Invoke();
-            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
-                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"issueMoveOrderProcessReturned screen={screenPosition} frame={UnityEngine.Time.frameCount}");
+            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
+                $"issueMoveOrderProcessReturned resolvedTarget={queuedResolvedTarget} screen={screenPosition} frame={UnityEngine.Time.frameCount}");
         }
     }
 

@@ -27,6 +27,8 @@ public partial struct UnitTransportPassengerStateSystem : ISystem
         if (!em.HasBuffer<UnitTransportHiddenVisualScale>(passenger))
             ecb.AddBuffer<UnitTransportHiddenVisualScale>(passenger);
 
+        EnsureGroundMovementRuntimeComponents(em, ref ecb, passenger);
+
         var boardingTarget = new UnitTransportBoardingTarget
         {
             Transport = transport,
@@ -41,6 +43,38 @@ public partial struct UnitTransportPassengerStateSystem : ISystem
 
         if (!em.HasComponent<ManualMoveGroupMemberTag>(passenger))
             ecb.AddComponent<ManualMoveGroupMemberTag>(passenger);
+    }
+
+    private static void EnsureGroundMovementRuntimeComponents(EntityManager em, ref EntityCommandBuffer ecb, Entity passenger)
+    {
+        if (!em.Exists(passenger) || em.HasComponent<UnitAirMovement>(passenger))
+            return;
+
+        if (!em.HasComponent<UnitVehicleMovement>(passenger))
+            ecb.AddComponent(passenger, ResolveFallbackVehicleMovement(em, passenger));
+
+        if (!em.HasComponent<UnitVehicleKinematics>(passenger))
+            ecb.AddComponent(passenger, new UnitVehicleKinematics { CurrentSpeed = 0f, StallSeconds = 0f });
+    }
+
+    private static UnitVehicleMovement ResolveFallbackVehicleMovement(EntityManager em, Entity passenger)
+    {
+        UnitFootprint footprint = em.HasComponent<UnitFootprint>(passenger)
+            ? em.GetComponentData<UnitFootprint>(passenger)
+            : new UnitFootprint { Size = new int2(1, 1) };
+        UnitMovementBehavior behavior = em.HasComponent<UnitMovementBehavior>(passenger)
+            ? em.GetComponentData<UnitMovementBehavior>(passenger)
+            : default;
+        bool isVehicle = UnitVehicleMovementUtility.IsVehicle(footprint, behavior);
+        float modelLength = math.max(1f, math.max(footprint.Size.x, footprint.Size.y));
+
+        return new UnitVehicleMovement
+        {
+            TurnSpeedDegrees = isVehicle ? 180f : 720f,
+            Acceleration = isVehicle ? math.max(6f, modelLength * 3f) : 999f,
+            Braking = isVehicle ? math.max(8f, modelLength * 4f) : 999f,
+            RearPivotOffset = isVehicle ? math.max(0.35f, modelLength * 0.22f) : 0f
+        };
     }
 
     public int BoardPassenger(

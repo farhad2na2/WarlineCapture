@@ -258,24 +258,25 @@ public partial struct TransportBoardingCommandSystem : ISystem
                 continue;
             }
 
-            if (IsPreResolvedTransportCommandIntent(request))
-            {
-                i++;
-                continue;
-            }
-
             commandRequests.RemoveAt(i);
             handledAny = true;
             RtsSelectionCommandResultElement result = request.Kind switch
             {
-                RtsSelectionCommandIntentKind.BoardTransport => ProcessBoardTransportRequest(
-                    em,
-                    request,
-                    transportAirPickupSystem,
-                    moveOrderSystem,
-                    selectionStateSystem,
-                    tryGetClickedUnitEntity,
-                    tryGetClickedCell),
+                RtsSelectionCommandIntentKind.BoardTransport => request.HasTargetEntity != 0
+                    ? ProcessBoardTransportTargetRequest(
+                        em,
+                        request,
+                        transportAirPickupSystem,
+                        moveOrderSystem,
+                        selectionStateSystem)
+                    : ProcessBoardTransportRequest(
+                        em,
+                        request,
+                        transportAirPickupSystem,
+                        moveOrderSystem,
+                        selectionStateSystem,
+                        tryGetClickedUnitEntity,
+                        tryGetClickedCell),
                 RtsSelectionCommandIntentKind.BoardSelectedTransport => ProcessBoardSelectedTransportRequest(
                     em,
                     request,

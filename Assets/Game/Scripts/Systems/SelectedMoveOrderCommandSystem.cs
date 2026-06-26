@@ -425,17 +425,28 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
                     $"screen={screenPosition} pendingCount={pendingMoveRequestCount}");
             }
 
-            Result result = TryIssueMoveOrder(
-                em,
-                screenPosition,
-                selectedMoveQuery,
-                gridConfigQuery,
-                mapSurfaceQuery,
-                moveOrderSystem,
-                tryGetClickedUnit,
-                tryGetClickedCell,
-                request.Frame,
-                cachedSelectedMoveEntities);
+            Result result = IsPreResolvedMoveRequest(request)
+                ? TryIssueMoveOrderToCell(
+                    em,
+                    selectedMoveQuery,
+                    gridConfigQuery,
+                    mapSurfaceQuery,
+                    moveOrderSystem,
+                    request.TargetCell,
+                    new Vector3(request.WorldPosition.x, request.WorldPosition.y, request.WorldPosition.z),
+                    request.Frame,
+                    cachedSelectedMoveEntities)
+                : TryIssueMoveOrder(
+                    em,
+                    screenPosition,
+                    selectedMoveQuery,
+                    gridConfigQuery,
+                    mapSurfaceQuery,
+                    moveOrderSystem,
+                    tryGetClickedUnit,
+                    tryGetClickedCell,
+                    request.Frame,
+                    cachedSelectedMoveEntities);
 
             if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
             {
@@ -530,8 +541,7 @@ public partial struct SelectedMoveOrderCommandSystem : ISystem
             if (request.Kind == RtsSelectionCommandIntentKind.Move && countMoveRequests)
                 pendingMoveRequestCount++;
 
-            if (request.Kind != RtsSelectionCommandIntentKind.Move ||
-                IsPreResolvedMoveRequest(request))
+            if (request.Kind != RtsSelectionCommandIntentKind.Move)
             {
                 i++;
                 continue;

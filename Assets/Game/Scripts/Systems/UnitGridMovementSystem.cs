@@ -677,7 +677,11 @@ public partial struct UnitGridMovementSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
+        _ecbSingletonQuery = state.GetEntityQuery(new EntityQueryDesc
+        {
+            All = new[] { ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>() },
+            Options = EntityQueryOptions.IncludeSystems
+        });
         state.RequireForUpdate(_gridQuery);
         state.RequireForUpdate<UnitPathFollow>();
         state.RequireForUpdate<UnitPathRange>();

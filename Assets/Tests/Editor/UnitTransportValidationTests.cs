@@ -33,6 +33,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.TransportPlaneDoorSystem_InterpolatesBakedDoorRotation());
             RunTest(test => test.TransportPlaneBoardingCommand_AllowsSelectedVehiclePassenger());
             RunTest(test => test.TransportPlaneBoardingCommand_UsesRearRampApproachForSoldierPassenger());
+            RunTest(test => test.TransportPlaneBoardingCommand_QueuesPassengerMoveToBoardingGoal());
             RunTest(test => test.TransportPlaneBoardingCommand_SelectedFarSoldierUsesRampWithoutNearbyRequirement());
             RunTest(test => test.TransportPlaneBoardingCommand_NoDoorMetadataStillBoardsSelectedFarSoldier());
             RunTest(test => test.TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockSelectedPassengerGoal());
@@ -104,6 +105,24 @@ public sealed class UnitTransportValidationTests
         {
             Debug.LogException(exception);
             Debug.LogError("[UnitTransportValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    public static void RunBoardMoveValidation()
+    {
+        try
+        {
+            RunTest(test => test.TransportPlaneBoardingCommand_QueuesPassengerMoveToBoardingGoal());
+            RunTest(test => test.BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest());
+            RunTest(test => test.BoardTransportCommandFlush_ConsumesPreResolvedTransportRequestAndOrdersMove());
+            Debug.Log("[UnitTransportBoardMoveValidation] result=Passed tests=3");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[UnitTransportBoardMoveValidation] result=Failed");
             ValidationExit.Failed();
         }
     }
@@ -415,6 +434,28 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(transport, boarding.Transport);
         Assert.AreEqual(UnitTransportPassengerKind.Soldier, boarding.PassengerKind);
         Assert.AreEqual(new int2(12, 7), boarding.Goal);
+    }
+
+    [Test]
+    public void TransportPlaneBoardingCommand_QueuesPassengerMoveToBoardingGoal()
+    {
+        using var world = new World("TransportPlaneBoardingCommand_QueuesPassengerMoveToBoardingGoal");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 30, 30);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        Entity passenger = CreateSelectablePassenger(em, new int2(17, 12));
+        var commandSystem = new TransportBoardingCommandSystem();
+
+        TransportBoardingCommandSystem.Result result = commandSystem.TryIssueBoardTransportOrderToTransport(
+            em,
+            transport,
+            new UnitTransportAirPickupSystem(),
+            new UnitMoveOrderSystem(),
+            new SelectionStateSystem());
+
+        Assert.IsTrue(result.Accepted);
+        AssertBoardingMoveOrder(em, passenger, transport);
     }
 
     [Test]
@@ -2157,6 +2198,52 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(1, results[0].Accepted);
         Assert.AreEqual(1, results[0].HasCommandResult);
         Assert.AreEqual(1, CountBoardingTargets(em, passenger), "The resolved board request should produce the same passenger boarding target as the old screen-click command path.");
+        AssertBoardingMoveOrder(em, passenger, transport);
+    }
+
+    [Test]
+    public void BoardTransportCommandFlush_ConsumesPreResolvedTransportRequestAndOrdersMove()
+    {
+        using var world = new World("BoardTransportCommandFlush_ConsumesPreResolvedTransportRequestAndOrdersMove");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 24, 24);
+
+        Entity transport = CreateTransport(em, new int2(10, 10), air: false, airborne: false);
+        Entity passenger = CreateSelectablePassenger(em, new int2(6, 10));
+        Entity commandEntity = CreateCommandEntity(em);
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardTransport,
+            TargetEntity = transport,
+            TargetKind = RtsSelectionCommandTargetKind.Entity,
+            HasTargetEntity = 1,
+            HasScreenPosition = 1
+        });
+
+        var transportCommandSystem = new TransportBoardingCommandSystem();
+        bool handled = transportCommandSystem.ProcessCommandIntentRequests(
+            em,
+            commandEntity,
+            requests,
+            results,
+            new UnitTransportCapacitySystem(),
+            new UnitTransportAirPickupSystem(),
+            new UnitMoveOrderSystem(),
+            new SelectionStateSystem(),
+            TryGetNoClickedUnit,
+            TryGetNoClickedCell);
+
+        Assert.IsTrue(handled);
+        requests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Assert.AreEqual(0, requests.Length);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.BoardTransport, results[0].Kind);
+        Assert.AreEqual(1, results[0].Accepted);
+        Assert.AreEqual(1, results[0].HasCommandResult);
+        AssertBoardingMoveOrder(em, passenger, transport);
     }
 
     [Test]
@@ -3592,6 +3679,20 @@ public sealed class UnitTransportValidationTests
         }
 
         return count;
+    }
+
+    private static void AssertBoardingMoveOrder(EntityManager em, Entity passenger, Entity transport)
+    {
+        Assert.IsTrue(em.HasComponent<UnitTransportBoardingTarget>(passenger), "Passenger should keep a boarding target after the board command is accepted.");
+        UnitTransportBoardingTarget boarding = em.GetComponentData<UnitTransportBoardingTarget>(passenger);
+        Assert.AreEqual(transport, boarding.Transport);
+        Assert.IsTrue(em.HasComponent<UnitTarget>(passenger), "Boarding passenger should receive a movement target to the transport approach point.");
+        Assert.AreEqual(boarding.Goal, em.GetComponentData<UnitTarget>(passenger).Cell);
+        Assert.IsTrue(em.HasComponent<UnitPathRequest>(passenger), "Boarding passenger should receive a path request so it starts moving toward the transport.");
+        Assert.AreEqual(boarding.Goal, em.GetComponentData<UnitPathRequest>(passenger).Goal);
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(passenger), "Boarding passenger should remain under manual movement while walking to the transport.");
+        Assert.IsTrue(em.HasComponent<UnitVehicleMovement>(passenger), "Boarding passenger should keep or restore UnitVehicleMovement so UnitGridMoveJob can advance it.");
+        Assert.IsTrue(em.HasComponent<UnitVehicleKinematics>(passenger), "Boarding passenger should keep or restore UnitVehicleKinematics so UnitGridMoveJob can advance it.");
     }
 
     private static bool TransportPassengerBufferContains(DynamicBuffer<UnitTransportPassengerElement> passengers, Entity passenger)

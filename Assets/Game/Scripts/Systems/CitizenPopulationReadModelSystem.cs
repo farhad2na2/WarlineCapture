@@ -30,7 +30,7 @@ internal sealed class CitizenPopulationReadModelSystem
         ref State state,
         CitizenPopulationTotalsSystem totalsSystem,
         CitizenPopulationStateSystem populationState,
-        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         bool syncSummaryEntity)
     {
         if (system != null)
@@ -47,7 +47,7 @@ internal sealed class CitizenPopulationReadModelSystem
     public void Refresh(
         CitizenPopulationTotalsSystem totalsSystem,
         CitizenPopulationStateSystem state,
-        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         bool syncSummaryEntity)
     {
         _totals = CitizenPopulationTotalsSystem.Calculate(totalsSystem, state, ecsProjection);
@@ -58,7 +58,7 @@ internal sealed class CitizenPopulationReadModelSystem
     public static void GetTotals(
         CitizenPopulationReadModelSystem system,
         ref State state,
-        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         out int households,
         out int totalCitizens,
         out int housedCitizens,
@@ -88,7 +88,7 @@ internal sealed class CitizenPopulationReadModelSystem
     }
 
     public void GetTotals(
-        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         out int households,
         out int totalCitizens,
         out int housedCitizens,
@@ -107,7 +107,7 @@ internal sealed class CitizenPopulationReadModelSystem
 
     private static void GetTotalsState(
         CitizenPopulationTotals totals,
-        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         out int households,
         out int totalCitizens,
         out int housedCitizens,

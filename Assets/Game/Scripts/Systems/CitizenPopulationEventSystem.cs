@@ -7,7 +7,7 @@ public sealed class CitizenPopulationEventSystem
     private CitizenHouseholdRegistrationCompositionSystemHelper _householdRegistrationSystem;
     private CitizenRefugeeSystem _refugeeSystem;
     private CitizenTravelSystem _travelSystem;
-    private CitizenPopulationEcsProjectionSystem _ecsProjection;
+    private CitizenPopulationEcsProjectionCompositionSystemHelper _ecsProjection;
     private CitizenStatusTransitionSystem _statusTransitionSystem;
     private CitizenRefugeeSystem.StoreHouseholdAction _storeHousehold;
     private CitizenRefugeeSystem.StoreCitizenAction _storeCitizen;
@@ -21,7 +21,7 @@ public sealed class CitizenPopulationEventSystem
         CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
         CitizenRefugeeSystem refugeeSystem,
         CitizenTravelSystem travelSystem,
-        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenStatusTransitionSystem statusTransitionSystem,
         CitizenRefugeeSystem.StoreHouseholdAction storeHousehold,
         CitizenRefugeeSystem.StoreCitizenAction storeCitizen,

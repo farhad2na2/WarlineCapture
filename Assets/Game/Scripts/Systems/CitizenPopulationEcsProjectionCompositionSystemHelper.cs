@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-internal sealed class CitizenPopulationEcsProjectionSystem
+internal sealed class CitizenPopulationEcsProjectionCompositionSystemHelper
 {
     private World _ecsWorld;
     private EntityManager _entityManager;

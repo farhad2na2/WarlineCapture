@@ -36,7 +36,7 @@ internal sealed class CitizenPopulationLifecycleSystem
         CitizenPopulationLifecycleSystem system,
         ref State state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenDangerCompositionSystemHelper dangerSystem,
         CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
         CitizenPopulationStateSystem populationState,
@@ -78,7 +78,7 @@ internal sealed class CitizenPopulationLifecycleSystem
 
     public void Update(
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenDangerCompositionSystemHelper dangerSystem,
         CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
         CitizenPopulationStateSystem state,
@@ -112,7 +112,7 @@ internal sealed class CitizenPopulationLifecycleSystem
     private static void UpdateState(
         ref State lifecycleState,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         CitizenDangerCompositionSystemHelper dangerSystem,
         CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
         CitizenPopulationStateSystem state,

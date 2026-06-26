@@ -10,7 +10,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         public readonly CitizenPrefabSystem CitizenPrefabSystem = new();
         public CitizenPrefabSystem.Context CitizenPrefabContext;
         public readonly CitizenPopulationStateSystem State = new();
-        public readonly CitizenPopulationEcsProjectionSystem EcsProjection = new();
+        public readonly CitizenPopulationEcsProjectionCompositionSystemHelper EcsProjection = new();
         public readonly CitizenPopulationTotalsSystem TotalsSystem = ResolveCitizenPopulationTotalsSystem();
         public readonly CitizenPopulationReadModelSystem ReadModel = new();
         public CitizenPopulationReadModelSystem.State ReadModelState;

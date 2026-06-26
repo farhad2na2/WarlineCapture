@@ -6,7 +6,7 @@ internal sealed class CitizenPopulationDebugDiagnosticsSystemHelper
 
     public bool TryGetCitizenDebugSnapshot(
         CitizenPopulationStateSystem state,
-        CitizenPopulationEcsProjectionSystem ecsProjection,
+        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
         int citizenId,
         out string snapshot)
     {

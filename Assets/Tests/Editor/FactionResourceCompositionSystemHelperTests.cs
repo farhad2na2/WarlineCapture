@@ -4,11 +4,11 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
-public sealed class FactionResourceSystemTests
+public sealed class FactionResourceCompositionSystemHelperTests
 {
     public static void RunFocusedValidation()
     {
-        var tests = new FactionResourceSystemTests();
+        var tests = new FactionResourceCompositionSystemHelperTests();
         try
         {
             tests.GetResourceTotals_CountsStorageBuildingsOnly();
@@ -39,7 +39,7 @@ public sealed class FactionResourceSystemTests
             { 4, new TestResourceBuilding { OilStorageCapacity = 100, StoredOilBarrels = 8f, IsDestroyed = true } }
         };
 
-        var system = new FactionResourceSystem();
+        var system = new FactionResourceCompositionSystemHelper();
         system.GetResourceTotals(buildings, out int oil, out int fuel);
 
         Assert.AreEqual(42, oil);
@@ -56,8 +56,8 @@ public sealed class FactionResourceSystemTests
             { 3, new TestResourceBuilding { HasOwnerFaction = true, OwnerFactionId = 1, OilStorageCapacity = 100, StoredOilBarrels = 99f, OilBarrelsPerDay = 9f } }
         };
 
-        var system = new FactionResourceSystem();
-        bool found = system.TryGetFactionResourceEconomy(buildings, 2, out FactionResourceSystem.ResourceEconomySnapshot snapshot);
+        var system = new FactionResourceCompositionSystemHelper();
+        bool found = system.TryGetFactionResourceEconomy(buildings, 2, out FactionResourceCompositionSystemHelper.ResourceEconomySnapshot snapshot);
 
         Assert.IsTrue(found);
         Assert.AreEqual(2, snapshot.ResourceBuildingCount);
@@ -80,8 +80,8 @@ public sealed class FactionResourceSystemTests
             { 3, otherFaction }
         };
 
-        var system = new FactionResourceSystem();
-        float drained = system.DrainFactionResource(buildings, 2, 8f, FactionResourceSystem.ResourceKind.Oil);
+        var system = new FactionResourceCompositionSystemHelper();
+        float drained = system.DrainFactionResource(buildings, 2, 8f, FactionResourceCompositionSystemHelper.ResourceKind.Oil);
 
         Assert.AreEqual(8f, drained);
         Assert.AreEqual(0f, first.StoredOilBarrels);
@@ -99,7 +99,7 @@ public sealed class FactionResourceSystemTests
             StoredOilBarrels = 7.2f
         };
 
-        var system = new FactionResourceSystem();
+        var system = new FactionResourceCompositionSystemHelper();
         bool found = system.TryGetPrimaryCapacityInfo(building, 2f, out int current, out int max, out float progress01);
 
         Assert.IsTrue(found);
@@ -119,8 +119,8 @@ public sealed class FactionResourceSystemTests
         };
         var buildings = new Dictionary<int, TestResourceBuilding> { { 1, oilPump } };
 
-        var system = new FactionResourceSystem();
-        FactionResourceSystem.ResourceProductionTickResult result = system.UpdateResourceProduction(buildings, 10f, 1f, 2f);
+        var system = new FactionResourceCompositionSystemHelper();
+        FactionResourceCompositionSystemHelper.ResourceProductionTickResult result = system.UpdateResourceProduction(buildings, 10f, 1f, 2f);
 
         Assert.AreEqual(10f, oilPump.StoredOilBarrels);
         Assert.AreEqual(1f, result.OilExtractedBarrels);
@@ -139,8 +139,8 @@ public sealed class FactionResourceSystemTests
         };
         var buildings = new Dictionary<int, TestResourceBuilding> { { 1, refinery } };
 
-        var system = new FactionResourceSystem();
-        FactionResourceSystem.ResourceProductionTickResult result = system.UpdateResourceProduction(buildings, 10f, 1f, 2f);
+        var system = new FactionResourceCompositionSystemHelper();
+        FactionResourceCompositionSystemHelper.ResourceProductionTickResult result = system.UpdateResourceProduction(buildings, 10f, 1f, 2f);
 
         Assert.AreEqual(7f, refinery.StoredOilBarrels);
         Assert.AreEqual(10f, refinery.StoredFuelBarrels);
@@ -148,7 +148,7 @@ public sealed class FactionResourceSystemTests
         Assert.AreEqual(0.5f, result.FuelProducedBarrels);
     }
 
-    private sealed class TestResourceBuilding : FactionResourceSystem.IResourceBuilding
+    private sealed class TestResourceBuilding : FactionResourceCompositionSystemHelper.IResourceBuilding
     {
         public bool IsDestroyed { get; set; }
         public bool HasOwnerFaction { get; set; }

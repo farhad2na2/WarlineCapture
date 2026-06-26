@@ -9,7 +9,7 @@ internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly Dictionary<int, RuntimeBuildingEntity> RuntimeBuildingMap;
         public readonly DayNightSystem DayNightSystem;
-        public readonly FactionResourceSystem FactionResourceSystem;
+        public readonly FactionResourceCompositionSystemHelper FactionResourceCompositionSystemHelper;
         public readonly BuildingProductionUpdateCompositionSystemHelper ProductionUpdateSystem;
         public readonly BuildingProductionUpdateCompositionSystemHelper.Context ProductionUpdateContext;
         public readonly BuildingResourceHaulerBridgeCompositionSystemHelper ResourceHaulerBridgeSystem;
@@ -25,7 +25,7 @@ internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             DayNightSystem dayNightSystem,
-            FactionResourceSystem factionResourceSystem,
+            FactionResourceCompositionSystemHelper factionResourceSystem,
             BuildingProductionUpdateCompositionSystemHelper productionUpdateSystem,
             BuildingProductionUpdateCompositionSystemHelper.Context productionUpdateContext,
             BuildingResourceHaulerBridgeCompositionSystemHelper resourceHaulerBridgeSystem,
@@ -41,7 +41,7 @@ internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
             RuntimeBuildings = runtimeBuildings;
             RuntimeBuildingMap = runtimeBuildings as Dictionary<int, RuntimeBuildingEntity>;
             DayNightSystem = dayNightSystem;
-            FactionResourceSystem = factionResourceSystem;
+            FactionResourceCompositionSystemHelper = factionResourceSystem;
             ProductionUpdateSystem = productionUpdateSystem;
             ProductionUpdateContext = productionUpdateContext;
             ResourceHaulerBridgeSystem = resourceHaulerBridgeSystem;
@@ -86,20 +86,20 @@ internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
 
     public void UpdateResourceProduction(Context context)
     {
-        if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0 || context.FactionResourceSystem == null)
+        if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0 || context.FactionResourceCompositionSystemHelper == null)
             return;
 
         float secondsPerDay = context.DayNightSystem != null
             ? Mathf.Max(1f, context.DayNightSystem.FullDayDurationMinutes * 60f)
             : 300f;
 
-        FactionResourceSystem.ResourceProductionTickResult result = context.RuntimeBuildingMap != null
-            ? context.FactionResourceSystem.UpdateResourceProduction(
+        FactionResourceCompositionSystemHelper.ResourceProductionTickResult result = context.RuntimeBuildingMap != null
+            ? context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
                 context.RuntimeBuildingMap,
                 secondsPerDay,
                 UnityEngine.Time.deltaTime,
                 context.OilBarrelsPerFuelBarrel)
-            : context.FactionResourceSystem.UpdateResourceProduction(
+            : context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
                 context.RuntimeBuildings,
                 secondsPerDay,
                 UnityEngine.Time.deltaTime,

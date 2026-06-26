@@ -66,7 +66,7 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
         BuildingProductionRequestBoundary.Context productionRequestContext,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
         BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
-        FactionResourceSystem factionResourceSystem,
+        FactionResourceCompositionSystemHelper factionResourceSystem,
         EntityManager em,
         EntityQuery boundaryQuery,
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -119,7 +119,7 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
         BuildingProductionRequestBoundary.Context productionRequestContext,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
         BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
-        FactionResourceSystem factionResourceSystem,
+        FactionResourceCompositionSystemHelper factionResourceSystem,
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         EntityManager em,
         Entity boundaryEntity,
@@ -169,7 +169,7 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
     }
 
     private void ProcessResourceSellRequests(
-        FactionResourceSystem factionResourceSystem,
+        FactionResourceCompositionSystemHelper factionResourceSystem,
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         EntityManager em,
         Entity boundaryEntity)
@@ -186,12 +186,12 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
                 runtimeBuildings,
                 request.FactionId,
                 Mathf.Max(0f, request.RequestedOilBarrels),
-                FactionResourceSystem.ResourceKind.Oil);
+                FactionResourceCompositionSystemHelper.ResourceKind.Oil);
             float soldFuel = factionResourceSystem.DrainFactionResource(
                 runtimeBuildings,
                 request.FactionId,
                 Mathf.Max(0f, request.RequestedFuelBarrels),
-                FactionResourceSystem.ResourceKind.Fuel);
+                FactionResourceCompositionSystemHelper.ResourceKind.Fuel);
             request.Status = BuildingFactionResourceSellRequest.Succeeded;
             request.ResultCode = soldOil > 0f || soldFuel > 0f
                 ? (byte)0
@@ -383,7 +383,7 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
         BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
         BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
-        FactionResourceSystem factionResourceSystem,
+        FactionResourceCompositionSystemHelper factionResourceSystem,
         EntityManager em,
         Entity boundaryEntity,
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -510,7 +510,7 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
     }
 
     private void PublishRuntimeFactionSummaries(
-        FactionResourceSystem factionResourceSystem,
+        FactionResourceCompositionSystemHelper factionResourceSystem,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
         BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         EntityManager em,
@@ -528,7 +528,7 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
             factionResourceSystem.TryGetFactionResourceEconomy(
                 runtimeBuildings,
                 factionId,
-                out FactionResourceSystem.ResourceEconomySnapshot economy);
+                out FactionResourceCompositionSystemHelper.ResourceEconomySnapshot economy);
             buffer.Add(new BuildingRuntimeFactionSummary
             {
                 FactionId = factionId,

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public sealed class FactionResourceSystem
+public sealed class FactionResourceCompositionSystemHelper
 {
     public enum ResourceKind : byte
     {

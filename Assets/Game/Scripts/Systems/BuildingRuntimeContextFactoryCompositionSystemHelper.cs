@@ -19,7 +19,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         public readonly BuildingBarrierUtilitySystemHelper BarrierSystem;
         public readonly BuildingResourceHaulerBridgeCompositionSystemHelper ResourceHaulerBridgeSystem;
         public readonly ResourceHaulerSystem ResourceHaulerSystem;
-        public readonly FactionResourceSystem FactionResourceSystem;
+        public readonly FactionResourceCompositionSystemHelper FactionResourceCompositionSystemHelper;
         public readonly BuildingProductionContextCompositionSystemHelper ProductionContextSystem;
         public readonly FactionVisualSettings FactionVisualSettings;
         public readonly MaterialPropertyBlock MarkerPropertyBlock;
@@ -60,7 +60,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             BuildingBarrierUtilitySystemHelper barrierSystem,
             BuildingResourceHaulerBridgeCompositionSystemHelper resourceHaulerBridgeSystem,
             ResourceHaulerSystem resourceHaulerSystem,
-            FactionResourceSystem factionResourceSystem,
+            FactionResourceCompositionSystemHelper factionResourceSystem,
             BuildingProductionContextCompositionSystemHelper productionContextSystem,
             FactionVisualSettings factionVisualSettings,
             MaterialPropertyBlock markerPropertyBlock,
@@ -100,7 +100,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             BarrierSystem = barrierSystem;
             ResourceHaulerBridgeSystem = resourceHaulerBridgeSystem;
             ResourceHaulerSystem = resourceHaulerSystem;
-            FactionResourceSystem = factionResourceSystem;
+            FactionResourceCompositionSystemHelper = factionResourceSystem;
             ProductionContextSystem = productionContextSystem;
             FactionVisualSettings = factionVisualSettings;
             MarkerPropertyBlock = markerPropertyBlock;
@@ -526,7 +526,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         return new BuildingResourceHaulerBridgeCompositionSystemHelper.Context(
             source.RuntimeBuildingSystem.Buildings,
             source.ResourceHaulerSystem,
-            source.FactionResourceSystem,
+            source.FactionResourceCompositionSystemHelper,
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),

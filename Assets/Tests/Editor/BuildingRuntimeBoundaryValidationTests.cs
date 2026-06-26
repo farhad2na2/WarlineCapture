@@ -557,7 +557,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
                 default,
                 new BuildingRuntimeReadModelCompositionSystemHelper(),
                 default,
-                new FactionResourceSystem(),
+                new FactionResourceCompositionSystemHelper(),
                 em,
                 boundaryQuery,
                 new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>(),

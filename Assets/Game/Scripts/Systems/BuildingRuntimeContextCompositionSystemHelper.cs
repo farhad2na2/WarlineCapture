@@ -246,7 +246,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             source.BuildingBarrierUtilitySystemHelper,
             source.BuildingResourceHaulerBridgeCompositionSystemHelper,
             source.ResourceHaulerSystem,
-            source.FactionResourceSystem,
+            source.FactionResourceCompositionSystemHelper,
             source.BuildingProductionContextCompositionSystemHelper,
             source.BuildingGameplayDependencyCompositionSystemHelper.FactionVisualSettings,
             null,

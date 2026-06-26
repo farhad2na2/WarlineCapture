@@ -11,7 +11,7 @@ internal sealed class BuildingProductionTickCompositionSystemHelper
         return new BuildingProductionRuntimeTickCompositionSystemHelper.Context(
             source.RuntimeBuildingSystem.Buildings,
             source.BuildingGameplayDependencyCompositionSystemHelper.DayNightSystem,
-            source.FactionResourceSystem,
+            source.FactionResourceCompositionSystemHelper,
             source.BuildingProductionUpdateCompositionSystemHelper,
             source.BuildingProductionContextCompositionSystemHelper.CreateProductionUpdateContext(productionSource),
             source.BuildingResourceHaulerBridgeCompositionSystemHelper,

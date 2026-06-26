@@ -19,12 +19,12 @@ Progress snapshot:
 - Checklist progress: `109 / 109 complete (100.0%)`.
 - In progress: `0`.
 - Remaining open: `0`.
-- Current target: `Agent E naming-only Batch 200 CitizenStatusTransitionCompositionSystemHelper complete; continue road/city/citizen helper naming in small batches`.
+- Current target: `Agent E naming-only Batch 201 FactionResourceCompositionSystemHelper complete; continue road/city/citizen/resource helper naming in small batches`.
 - Converted to `ISystem`: `0`.
 - Split passive/managed boundaries: `0`.
 - Retired/folded helpers: `109`.
 - Managed `SystemBase` exceptions created: `0`.
-- Validation status: `CitizenStatusTransitionCompositionSystemHelper naming slice completed after prior helper fold. Compile, inventory regeneration, citizen visible-unit focused validation, git diff --check, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch200-citizen-visible.log with [CitizenVisibleUnitFocusedValidation] result=Passed tests=3 and /private/tmp/warline-non-ecs-helper-naming-batch200-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=29. Previous CitizenScheduleCompositionSystemHelper naming logs remain /private/tmp/warline-non-ecs-helper-naming-batch199-citizen-visible.log and /private/tmp/warline-non-ecs-helper-naming-batch199-architecture.log.`
+- Validation status: `FactionResourceCompositionSystemHelper naming slice completed after inventory regeneration, compile, git diff --check, focused faction resource validation, and Phase 7 architecture guard passed. Latest logs include /private/tmp/warline-non-ecs-helper-naming-batch201-faction-resource.log with [FactionResourceFocusedValidation] result=Passed tests=6 and /private/tmp/warline-non-ecs-helper-naming-batch201-architecture.log with [NonEcsSystemConversionArchitectureValidation] result=Passed tests=9 and runtimeNonEcsDenominator=28. Previous CitizenStatusTransitionCompositionSystemHelper naming logs remain /private/tmp/warline-non-ecs-helper-naming-batch200-citizen-visible.log and /private/tmp/warline-non-ecs-helper-naming-batch200-architecture.log.`
 
 Owned files:
 
@@ -261,6 +261,7 @@ Remove dead wrappers instead of converting them.
 - [x] Rename `P7-0198 CitizenPopulationTotalsSystem` to `CitizenPopulationTotalsCompositionSystemHelper` with preserved `.meta` GUID and focused citizen/architecture validation.
 - [x] Fold `P7-0202 CitizenResourceSystem` from a disabled `SystemBase` wrapper into a plain citizen resource helper; resource context delegates, configuration checks, dollar spend clamping, and citizen refugee callers stayed unchanged.
 - [x] Rename `P7-0202 CitizenResourceSystem` to `CitizenResourceCompositionSystemHelper` with preserved `.meta` GUID and focused citizen/architecture validation.
+- [x] Rename resource economy helper `FactionResourceSystem` to `FactionResourceCompositionSystemHelper` with preserved `.meta` GUID; building/resource call sites and focused validation passed in the Batch 201 naming slice.
 - [x] Fold `P7-0203 CitizenScheduleSystem` from a disabled `SystemBase` wrapper into a plain citizen schedule helper; schedule phase, target-building, weekday/weekend/refugee status policy, and citizen runtime callers stayed unchanged.
 - [x] Rename `P7-0203 CitizenScheduleSystem` to `CitizenScheduleCompositionSystemHelper` with preserved `.meta` GUID and focused citizen/architecture validation.
 - [x] Fold and rename `P7-0216 RoadBuildDependencyCompositionSystemHelper` from a disabled `SystemBase` wrapper into a plain road-build dependency helper; dependency state, building-interaction binding, command-mode calls, minimap configuration, and road composition callers stayed unchanged.

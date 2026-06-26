@@ -207,7 +207,7 @@ public sealed class ResourceHaulerSystemTests
         Assert.IsTrue(system.HasAvailableFuelForHauler(fuelSource));
     }
 
-    private sealed class TestHaulerBuilding : FactionResourceSystem.IResourceBuilding
+    private sealed class TestHaulerBuilding : FactionResourceCompositionSystemHelper.IResourceBuilding
     {
         public bool IsDestroyed { get; set; }
         public bool HasOwnerFaction { get; set; }

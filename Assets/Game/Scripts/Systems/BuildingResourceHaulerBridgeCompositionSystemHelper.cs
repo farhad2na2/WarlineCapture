@@ -21,7 +21,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
         public readonly ResourceHaulerSystem ResourceHaulerSystem;
-        public readonly FactionResourceSystem FactionResourceSystem;
+        public readonly FactionResourceCompositionSystemHelper FactionResourceCompositionSystemHelper;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly TryGetGridDataDelegate TryGetGridData;
         public readonly EnsureEntityQueriesDelegate EnsureEntityQueries;
@@ -34,7 +34,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             ResourceHaulerSystem resourceHaulerSystem,
-            FactionResourceSystem factionResourceSystem,
+            FactionResourceCompositionSystemHelper factionResourceSystem,
             TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetGridDataDelegate tryGetGridData,
             EnsureEntityQueriesDelegate ensureEntityQueries,
@@ -46,7 +46,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
         {
             RuntimeBuildings = runtimeBuildings;
             ResourceHaulerSystem = resourceHaulerSystem;
-            FactionResourceSystem = factionResourceSystem;
+            FactionResourceCompositionSystemHelper = factionResourceSystem;
             TryGetEntityManager = tryGetEntityManager;
             TryGetGridData = tryGetGridData;
             EnsureEntityQueries = ensureEntityQueries;
@@ -91,7 +91,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
 
     public bool TryAssignSelectedHaulerOrders(Context context, int clickedBuildingId)
     {
-        if (context.ResourceHaulerSystem == null || context.FactionResourceSystem == null)
+        if (context.ResourceHaulerSystem == null || context.FactionResourceCompositionSystemHelper == null)
             return false;
         if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
             return false;
@@ -116,7 +116,7 @@ internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
 
         bool clickedIsOilSource = context.ResourceHaulerSystem.IsOilSourceBuilding(clickedBuilding);
         bool clickedIsFuelBuilding = context.ResourceHaulerSystem.IsFuelBuilding(clickedBuilding);
-        bool clickedIsStorage = context.FactionResourceSystem.IsResourceStorageBuilding(clickedBuilding);
+        bool clickedIsStorage = context.FactionResourceCompositionSystemHelper.IsResourceStorageBuilding(clickedBuilding);
         if (!clickedIsOilSource && !clickedIsFuelBuilding && !clickedIsStorage)
             return false;
 

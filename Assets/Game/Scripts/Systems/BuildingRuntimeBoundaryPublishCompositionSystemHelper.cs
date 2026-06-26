@@ -19,7 +19,7 @@ internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
         public readonly BuildingProductionRequestBoundary.Context ProductionRequestContext;
         public readonly BuildingRuntimeReadModelCompositionSystemHelper RuntimeQuerySystem;
         public readonly BuildingRuntimeReadModelCompositionSystemHelper.Context RuntimeQueryContext;
-        public readonly FactionResourceSystem FactionResourceSystem;
+        public readonly FactionResourceCompositionSystemHelper FactionResourceCompositionSystemHelper;
         public readonly Func<EntityQuery> GetBoundaryQuery;
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
 
@@ -34,7 +34,7 @@ internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
             BuildingProductionRequestBoundary.Context productionRequestContext,
             BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
             BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
-            FactionResourceSystem factionResourceSystem,
+            FactionResourceCompositionSystemHelper factionResourceSystem,
             Func<EntityQuery> getBoundaryQuery,
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
         {
@@ -48,7 +48,7 @@ internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
             ProductionRequestContext = productionRequestContext;
             RuntimeQuerySystem = runtimeQuerySystem;
             RuntimeQueryContext = runtimeQueryContext;
-            FactionResourceSystem = factionResourceSystem;
+            FactionResourceCompositionSystemHelper = factionResourceSystem;
             GetBoundaryQuery = getBoundaryQuery;
             RuntimeBuildings = runtimeBuildings;
         }
@@ -69,7 +69,7 @@ internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
             context.ProductionRequestContext,
             context.RuntimeQuerySystem,
             context.RuntimeQueryContext,
-            context.FactionResourceSystem,
+            context.FactionResourceCompositionSystemHelper,
             em,
             boundaryQuery,
             context.RuntimeBuildings,

@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using ProductionTransportMode = BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode;
 
-internal sealed class RuntimeBuildingEntity : BuildingCombatUtilitySystemHelper.IRuntimeBuildingVisualState, FactionResourceSystem.IResourceBuilding
+internal sealed class RuntimeBuildingEntity : BuildingCombatUtilitySystemHelper.IRuntimeBuildingVisualState, FactionResourceCompositionSystemHelper.IResourceBuilding
 {
     internal sealed class PendingDropVisual
     {

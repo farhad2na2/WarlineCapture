@@ -26,27 +26,27 @@ public sealed class ResourceHaulerSystem
         Fuel = 1
     }
 
-    public bool IsOilSourceBuilding(FactionResourceSystem.IResourceBuilding building)
+    public bool IsOilSourceBuilding(FactionResourceCompositionSystemHelper.IResourceBuilding building)
     {
         return building != null &&
                building.OilBarrelsPerDay > 0f &&
                building.OilStorageCapacity > 0;
     }
 
-    public bool IsFuelBuilding(FactionResourceSystem.IResourceBuilding building)
+    public bool IsFuelBuilding(FactionResourceCompositionSystemHelper.IResourceBuilding building)
     {
         return building != null &&
                building.FuelBarrelsPerDay > 0f;
     }
 
-    public bool IsFuelStorageSourceBuilding(FactionResourceSystem.IResourceBuilding building)
+    public bool IsFuelStorageSourceBuilding(FactionResourceCompositionSystemHelper.IResourceBuilding building)
     {
         return building != null &&
                building.FuelBarrelsPerDay > 0f &&
                building.FuelStorageCapacity > 0;
     }
 
-    public bool HasAvailableFuelForHauler(FactionResourceSystem.IResourceBuilding building)
+    public bool HasAvailableFuelForHauler(FactionResourceCompositionSystemHelper.IResourceBuilding building)
     {
         return IsFuelStorageSourceBuilding(building) &&
                building.StoredFuelBarrels >= 1f;
@@ -111,7 +111,7 @@ public sealed class ResourceHaulerSystem
             : Mathf.Max(0f, hauler.CargoOilBarrels);
     }
 
-    public float GetOilReceivingFreeCapacity(FactionResourceSystem.IResourceBuilding building)
+    public float GetOilReceivingFreeCapacity(FactionResourceCompositionSystemHelper.IResourceBuilding building)
     {
         if (building == null)
             return 0f;
@@ -125,7 +125,7 @@ public sealed class ResourceHaulerSystem
         return 0f;
     }
 
-    public float GetFuelReceivingFreeCapacity(FactionResourceSystem.IResourceBuilding building)
+    public float GetFuelReceivingFreeCapacity(FactionResourceCompositionSystemHelper.IResourceBuilding building)
     {
         if (building == null)
             return 0f;
@@ -136,7 +136,7 @@ public sealed class ResourceHaulerSystem
         return 0f;
     }
 
-    public bool HasEnoughSourceResource(FactionResourceSystem.IResourceBuilding source, ResourceHaulKind resourceKind, float loadAmount)
+    public bool HasEnoughSourceResource(FactionResourceCompositionSystemHelper.IResourceBuilding source, ResourceHaulKind resourceKind, float loadAmount)
     {
         if (source == null || loadAmount <= 0f)
             return false;
@@ -146,7 +146,7 @@ public sealed class ResourceHaulerSystem
     }
 
     public bool TryCompleteLoad(
-        FactionResourceSystem.IResourceBuilding source,
+        FactionResourceCompositionSystemHelper.IResourceBuilding source,
         ResourceHaulKind resourceKind,
         float loadAmount,
         ref UnitResourceHauler hauler)
@@ -172,7 +172,7 @@ public sealed class ResourceHaulerSystem
     }
 
     public void RevertLoad(
-        FactionResourceSystem.IResourceBuilding source,
+        FactionResourceCompositionSystemHelper.IResourceBuilding source,
         ResourceHaulKind resourceKind,
         float loadAmount,
         ref UnitResourceHauler hauler)
@@ -192,7 +192,7 @@ public sealed class ResourceHaulerSystem
         }
     }
 
-    public bool HasReceivingCapacity(FactionResourceSystem.IResourceBuilding destination, ResourceHaulKind resourceKind, float cargo)
+    public bool HasReceivingCapacity(FactionResourceCompositionSystemHelper.IResourceBuilding destination, ResourceHaulKind resourceKind, float cargo)
     {
         if (destination == null || cargo <= 0f)
             return false;
@@ -204,7 +204,7 @@ public sealed class ResourceHaulerSystem
     }
 
     public bool TryCompleteUnload(
-        FactionResourceSystem.IResourceBuilding destination,
+        FactionResourceCompositionSystemHelper.IResourceBuilding destination,
         ResourceHaulKind resourceKind,
         ref UnitResourceHauler hauler)
     {

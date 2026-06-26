@@ -28,8 +28,8 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         public readonly CitizenPopulationEventCompositionSystemHelper EventSystem = ResolveCitizenPopulationEventCompositionSystemHelper();
         public readonly CitizenPopulationDebugDiagnosticsSystemHelper DebugSystem = ResolveCitizenPopulationDebugSystem();
         public readonly CitizenPopulationDiagnosticsSystemHelper DiagnosticSystem = new();
-        public readonly CitizenPopulationLifecycleSystem LifecycleSystem = ResolveCitizenPopulationLifecycleSystem();
-        public CitizenPopulationLifecycleSystem.State LifecycleState;
+        public readonly CitizenPopulationLifecycleCompositionSystemHelper LifecycleSystem = ResolveCitizenPopulationLifecycleCompositionSystemHelper();
+        public CitizenPopulationLifecycleCompositionSystemHelper.State LifecycleState;
         public readonly CitizenPopulationRuntimeUpdateSystem RuntimeUpdateSystem = new();
         public readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader = new();
         public DayNightSystem DayNightSystem;
@@ -120,7 +120,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         result.VisibleUnitSystem.ClearVisibleCitizens(result.State, result.EcsProjection);
         result.State.Reset();
         CitizenPopulationReadModelSystem.Reset(result.ReadModel, ref result.ReadModelState);
-        CitizenPopulationLifecycleSystem.Reset(result.LifecycleSystem, ref result.LifecycleState);
+        CitizenPopulationLifecycleCompositionSystemHelper.Reset(result.LifecycleSystem, ref result.LifecycleState);
         CitizenRefugeeSystem.Reset(result.RefugeeSystem, ref result.RefugeeState);
         CitizenDangerCompositionSystemHelper.Reset(result.DangerSystem);
         result.PrefabSelectionSystem.Init(
@@ -172,7 +172,7 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         CitizenPopulationReadModelSystem.Reset(result.ReadModel, ref result.ReadModelState);
         result.BuildingReadSystem.Dispose();
         CitizenDangerCompositionSystemHelper.Reset(result.DangerSystem);
-        CitizenPopulationLifecycleSystem.Reset(result.LifecycleSystem, ref result.LifecycleState);
+        CitizenPopulationLifecycleCompositionSystemHelper.Reset(result.LifecycleSystem, ref result.LifecycleState);
         CitizenRefugeeSystem.Reset(result.RefugeeSystem, ref result.RefugeeState);
         result.PrefabSelectionSystem.Reset(ref result.PrefabSelectionState);
         result.EventSystem?.Reset();
@@ -194,9 +194,9 @@ internal sealed class CitizenPopulationCompositionSystemHelper
         return new CitizenPopulationTotalsSystem();
     }
 
-    private static CitizenPopulationLifecycleSystem ResolveCitizenPopulationLifecycleSystem()
+    private static CitizenPopulationLifecycleCompositionSystemHelper ResolveCitizenPopulationLifecycleCompositionSystemHelper()
     {
-        return new CitizenPopulationLifecycleSystem();
+        return new CitizenPopulationLifecycleCompositionSystemHelper();
     }
 
     private static CitizenScheduleSystem ResolveCitizenScheduleSystem()

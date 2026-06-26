@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-internal sealed class CitizenPopulationLifecycleSystem
+internal sealed class CitizenPopulationLifecycleCompositionSystemHelper
 {
     private const float LogicalCitizenUpdateIntervalSeconds = 0.2f;
     private const float VisibleCitizenSyncIntervalSeconds = 0.12f;
@@ -16,7 +16,7 @@ internal sealed class CitizenPopulationLifecycleSystem
 
     private State _state;
 
-    public static void Reset(CitizenPopulationLifecycleSystem system, ref State state)
+    public static void Reset(CitizenPopulationLifecycleCompositionSystemHelper system, ref State state)
     {
         if (system != null)
         {
@@ -33,7 +33,7 @@ internal sealed class CitizenPopulationLifecycleSystem
     }
 
     public static void Update(
-        CitizenPopulationLifecycleSystem system,
+        CitizenPopulationLifecycleCompositionSystemHelper system,
         ref State state,
         CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
         CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,

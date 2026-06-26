@@ -21,7 +21,7 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
         if (!_systems.PopulationEnabled)
             return;
 
-        CitizenPopulationLifecycleSystem.Update(
+        CitizenPopulationLifecycleCompositionSystemHelper.Update(
             _systems.LifecycleSystem,
             ref _systems.LifecycleState,
             _systems.BuildingReadSystem,

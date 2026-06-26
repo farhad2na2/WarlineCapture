@@ -640,9 +640,13 @@ public sealed class SelectionHudFeedbackBoundary
                            tryGetAttackModeOrderSnapshot(out string attackModeOrderText)
             ? attackModeOrderText
             : summary.OrderText;
-        Sprite portraitSprite = _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(summary.PortraitKind);
-        portraitSprite ??= resolveActiveSquadTrayPortraitSprite?.Invoke();
-        portraitSprite ??= _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
+        Sprite portraitSprite = null;
+        if (summary.PortraitKind == SelectionSummaryPortraitKind.GenericSquad)
+        {
+            portraitSprite = resolveActiveSquadTrayPortraitSprite?.Invoke();
+            portraitSprite ??= _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
+        }
+
         return new MatchHudSelectionPanelModel(
             true,
             summary.Title,

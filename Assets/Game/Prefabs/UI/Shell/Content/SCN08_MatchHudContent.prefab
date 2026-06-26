@@ -14460,7 +14460,7 @@ MonoBehaviour:
   passengerChipLabel: {fileID: 5839155888377869773}
   passengerDrawer: {fileID: 3185656278503629633}
   genericSquadPortraitSprite: {fileID: 21300000, guid: 0d555c7e15624083aa3f5b91e2d60159, type: 3}
-  soldierSquadPortraitSprite: {fileID: 21300000, guid: 0d555c7e15624083aa3f5b91e2d60159, type: 3}
+  soldierSquadPortraitSprite: {fileID: 21300000, guid: 2f04b49df707614692d1898031e3694c, type: 3}
   vehicleSquadPortraitSprite: {fileID: 21300000, guid: b4dc1494954f4b31bbefb58fac5f6785, type: 3}
   aircraftSquadPortraitSprite: {fileID: 21300000, guid: 9775b44f6e3641e4845b7efaa2d29bb7, type: 3}
   transportSquadPortraitSprite: {fileID: 21300000, guid: ab5e976b12f24cb59ee6bf779c667463, type: 3}

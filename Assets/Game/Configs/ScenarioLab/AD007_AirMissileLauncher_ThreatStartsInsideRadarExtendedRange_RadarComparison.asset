@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45bd7f27d93144bfda584c6eafe994b6, type: 3}
+  m_Name: AD007_AirMissileLauncher_ThreatStartsInsideRadarExtendedRange_RadarComparison
+  m_EditorClassIdentifier: Game.Runtime::BattleScenarioDefinition
+  scenarioId: AD-007_AirMissileLauncher_ThreatStartsInsideRadarExtendedRange_RadarComparison
+  displayName: AD-007 Threat Starts Inside Radar Extended Range
+  description: Compares no support and nearby radar support when an incoming ground
+    missile starts outside base launcher detection range but inside radar-extended
+    range.
+  fixedDeltaTime: 0.05
+  maxDurationSeconds: 16
+  randomSeed: 72345
+  cameraPreset: 1
+  worldBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 180, y: 50, z: 90}
+  spawnEntries: []
+  scenarioVariants:
+  - VariantId: AD-007-A-NoSupport-OutsideBaseRange
+    Label: No Support / Starts Outside Base Range
+    SupportMode: 0
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 220
+    IncomingThreatAltitude: 10
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 0
+    ExpectedOutcome: 0
+  - VariantId: AD-007-B-RadarNear-InsideExtendedRange
+    Label: Radar Near / Starts Inside Extended Range
+    SupportMode: 1
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 220
+    IncomingThreatAltitude: 10
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 8
+    ExpectedOutcome: 3
+  successCriteria:
+    RequireDetection: 1
+    RequireLaunch: 1
+    RequireInterceptForSupportedNormal: 1
+    RequireSupportedVariantImprovesOrMatchesBaseline: 1
+    MaxSupportedDetectionDelaySeconds: 0
+    MaxSupportedLockDelaySeconds: 0

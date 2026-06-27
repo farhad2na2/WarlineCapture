@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45bd7f27d93144bfda584c6eafe994b6, type: 3}
+  m_Name: AD001_AirMissileLauncher_InterceptIncomingGroundMissile_RadarComparison
+  m_EditorClassIdentifier: Game.Runtime::BattleScenarioDefinition
+  scenarioId: AD-001_AirMissileLauncher_InterceptIncomingGroundMissile_RadarComparison
+  displayName: AD-001 Air Missile Launcher Intercepts Incoming Ground Missile
+  description: Compares an isolated friendly air missile launcher against an incoming
+    enemy ground missile with no support and with nearby radar support.
+  fixedDeltaTime: 0.05
+  maxDurationSeconds: 12
+  randomSeed: 12345
+  cameraPreset: 1
+  worldBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 140, y: 45, z: 90}
+  spawnEntries: []
+  scenarioVariants:
+  - VariantId: AD-001-A-NoSupport-Normal
+    Label: No Support / Normal
+    SupportMode: 0
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 130
+    IncomingThreatAltitude: 8
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 0
+    ExpectedOutcome: 0
+  - VariantId: AD-001-B-RadarNear-Normal
+    Label: Radar Near / Normal
+    SupportMode: 1
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 130
+    IncomingThreatAltitude: 8
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 8
+    ExpectedOutcome: 3
+  - VariantId: AD-001-C-NoSupport-FastThreat
+    Label: No Support / Fast Threat
+    SupportMode: 0
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1.8
+    IncomingThreatStartDistance: 210
+    IncomingThreatAltitude: 10
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 0
+    ExpectedOutcome: 2
+  - VariantId: AD-001-D-RadarNear-FastThreat
+    Label: Radar Near / Fast Threat
+    SupportMode: 1
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1.8
+    IncomingThreatStartDistance: 210
+    IncomingThreatAltitude: 10
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 8
+    ExpectedOutcome: 3
+  successCriteria:
+    RequireDetection: 1
+    RequireLaunch: 1
+    RequireInterceptForSupportedNormal: 1
+    RequireSupportedVariantImprovesOrMatchesBaseline: 1
+    MaxSupportedDetectionDelaySeconds: 0
+    MaxSupportedLockDelaySeconds: 0

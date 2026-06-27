@@ -28,14 +28,14 @@ public sealed class AirMissileLauncherConfig : ScriptableObject
     [SerializeField, Range(0f, 1f)] private float trackingQuality = 0.75f;
 
     [Header("Support")]
-    [SerializeField, Min(0f)] private float radarSupportRangeBonus = 80f;
-    [SerializeField, Range(0.1f, 1f)] private float radarLockTimeMultiplier = 0.75f;
-    [SerializeField, Range(0f, 1f)] private float radarTrackingBonus = 0.12f;
-    [SerializeField, Min(0f)] private float radarTurnRateBonus = 35f;
-    [SerializeField, Min(0f)] private float satelliteSupportRangeBonus = 120f;
-    [SerializeField, Range(0.1f, 1f)] private float satelliteLockTimeMultiplier = 0.65f;
-    [SerializeField, Range(0f, 1f)] private float satelliteTrackingBonus = 0.18f;
-    [SerializeField, Min(0f)] private float satelliteTurnRateBonus = 50f;
+    [SerializeField, Min(0f)] private float radarSupportRangeBonus = AirDefenseSupportTuning.RadarRangeBonus;
+    [SerializeField, Range(0.1f, 1f)] private float radarLockTimeMultiplier = AirDefenseSupportTuning.RadarLockTimeMultiplier;
+    [SerializeField, Range(0f, 1f)] private float radarTrackingBonus = AirDefenseSupportTuning.RadarTrackingBonus;
+    [SerializeField, Min(0f)] private float radarTurnRateBonus = AirDefenseSupportTuning.RadarTurnRateBonus;
+    [SerializeField, Min(0f)] private float satelliteSupportRangeBonus = AirDefenseSupportTuning.SatelliteRangeBonus;
+    [SerializeField, Range(0.1f, 1f)] private float satelliteLockTimeMultiplier = AirDefenseSupportTuning.SatelliteLockTimeMultiplier;
+    [SerializeField, Range(0f, 1f)] private float satelliteTrackingBonus = AirDefenseSupportTuning.SatelliteTrackingBonus;
+    [SerializeField, Min(0f)] private float satelliteTurnRateBonus = AirDefenseSupportTuning.SatelliteTurnRateBonus;
     [SerializeField, Min(0f)] private float maxSupportRangeBonus = 180f;
     [SerializeField, Range(0f, 1f)] private float maxSupportTrackingBonus = 0.3f;
 

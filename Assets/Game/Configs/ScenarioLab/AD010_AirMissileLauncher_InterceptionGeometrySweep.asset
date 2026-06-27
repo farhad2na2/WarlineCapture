@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45bd7f27d93144bfda584c6eafe994b6, type: 3}
+  m_Name: AD010_AirMissileLauncher_InterceptionGeometrySweep
+  m_EditorClassIdentifier: Game.Runtime::BattleScenarioDefinition
+  scenarioId: AD-010_AirMissileLauncher_InterceptionGeometrySweep
+  displayName: AD-010 Interception Geometry Sweep
+  description: Runs head-on, side-shot, tail-chase, and crossing-shot interception
+    geometry against an isolated friendly air missile launcher with nearby radar
+    support.
+  fixedDeltaTime: 0.05
+  maxDurationSeconds: 18
+  randomSeed: 102345
+  cameraPreset: 2
+  worldBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 230, y: 60, z: 190}
+  spawnEntries: []
+  scenarioVariants:
+  - VariantId: AD-010-A-HeadOn
+    Label: Head-On Shot
+    SupportMode: 1
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 180
+    IncomingThreatAltitude: 10
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 8
+    ExpectedOutcome: 1
+  - VariantId: AD-010-B-SideShot
+    Label: Side Shot
+    SupportMode: 1
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 180
+    IncomingThreatAltitude: 10
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 8
+    ExpectedOutcome: 1
+  - VariantId: AD-010-C-TailChase
+    Label: Tail Chase
+    SupportMode: 1
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 180
+    IncomingThreatAltitude: 10
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 8
+    ExpectedOutcome: 1
+  - VariantId: AD-010-D-CrossingShot
+    Label: Crossing Shot
+    SupportMode: 1
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 180
+    IncomingThreatAltitude: 10
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 8
+    ExpectedOutcome: 1
+  successCriteria:
+    RequireDetection: 1
+    RequireLaunch: 1
+    RequireInterceptForSupportedNormal: 1
+    RequireSupportedVariantImprovesOrMatchesBaseline: 1
+    MaxSupportedDetectionDelaySeconds: 0
+    MaxSupportedLockDelaySeconds: 0

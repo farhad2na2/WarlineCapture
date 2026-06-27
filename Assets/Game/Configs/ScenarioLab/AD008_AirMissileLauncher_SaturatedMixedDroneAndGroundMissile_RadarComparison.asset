@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45bd7f27d93144bfda584c6eafe994b6, type: 3}
+  m_Name: AD008_AirMissileLauncher_SaturatedMixedDroneAndGroundMissile_RadarComparison
+  m_EditorClassIdentifier: Game.Runtime::BattleScenarioDefinition
+  scenarioId: AD-008_AirMissileLauncher_SaturatedMixedDroneAndGroundMissile_RadarComparison
+  displayName: AD-008 Saturated Mixed Drone And Ground Missile Attack
+  description: Compares no support and nearby radar support for one isolated friendly
+    air missile launcher defending against a simultaneous enemy drone scout and incoming
+    ground missile.
+  fixedDeltaTime: 0.05
+  maxDurationSeconds: 18
+  randomSeed: 82345
+  cameraPreset: 1
+  worldBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 160, y: 55, z: 110}
+  spawnEntries: []
+  scenarioVariants:
+  - VariantId: AD-008-A-NoSupport-MixedDroneAndGroundMissile
+    Label: No Support / Drone Plus Ground Missile
+    SupportMode: 0
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 145
+    IncomingThreatAltitude: 10
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 0
+    ExpectedOutcome: 0
+  - VariantId: AD-008-B-RadarNear-MixedDroneAndGroundMissile
+    Label: Radar Near / Drone Plus Ground Missile
+    SupportMode: 1
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 145
+    IncomingThreatAltitude: 10
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 8
+    ExpectedOutcome: 3
+  successCriteria:
+    RequireDetection: 1
+    RequireLaunch: 1
+    RequireInterceptForSupportedNormal: 1
+    RequireSupportedVariantImprovesOrMatchesBaseline: 1
+    MaxSupportedDetectionDelaySeconds: 0
+    MaxSupportedLockDelaySeconds: 0

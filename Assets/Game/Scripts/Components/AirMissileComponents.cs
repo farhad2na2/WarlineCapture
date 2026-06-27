@@ -24,6 +24,19 @@ public enum AirDefenseSupportProviderKind : byte
     Satellite = 2
 }
 
+public static class AirDefenseSupportTuning
+{
+    public const float RadarRangeBonus = 100f;
+    public const float RadarLockTimeMultiplier = 0.5f;
+    public const float RadarTrackingBonus = 0.2f;
+    public const float RadarTurnRateBonus = 50f;
+
+    public const float SatelliteRangeBonus = 120f;
+    public const float SatelliteLockTimeMultiplier = 0.65f;
+    public const float SatelliteTrackingBonus = 0.18f;
+    public const float SatelliteTurnRateBonus = 50f;
+}
+
 public struct AirMissileLauncherComponent : IComponentData
 {
     public float MinRange;

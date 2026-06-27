@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45bd7f27d93144bfda584c6eafe994b6, type: 3}
+  m_Name: GM001_GroundMissileLauncher_FiresVisibleRocketAndDamagesTarget
+  m_EditorClassIdentifier: Game.Runtime::BattleScenarioDefinition
+  scenarioId: GM-001_GroundMissileLauncher_FiresVisibleRocketAndDamagesTarget
+  displayName: GM-001 Ground Missile Launcher Fires Visible Rocket And Damages Target
+  description: Runs an isolated enemy ground missile launcher through its real fire,
+    flying rocket visual, projectile flight, and impact damage systems against a
+    friendly ground target.
+  fixedDeltaTime: 0.05
+  maxDurationSeconds: 8
+  randomSeed: 201001
+  cameraPreset: 1
+  worldBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 90, y: 40, z: 40}
+  spawnEntries: []
+  scenarioVariants:
+  - VariantId: GM-001-A-DirectFireVisibleRocket
+    Label: Direct Fire / Visible Rocket
+    SupportMode: 0
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 110
+    IncomingThreatAltitude: 0
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 0
+    ExpectedOutcome: 1
+  successCriteria:
+    RequireDetection: 1
+    RequireLaunch: 1
+    RequireInterceptForSupportedNormal: 1
+    RequireSupportedVariantImprovesOrMatchesBaseline: 1
+    MaxSupportedDetectionDelaySeconds: 0
+    MaxSupportedLockDelaySeconds: 0

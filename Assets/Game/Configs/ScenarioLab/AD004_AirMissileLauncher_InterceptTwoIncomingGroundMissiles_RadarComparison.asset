@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45bd7f27d93144bfda584c6eafe994b6, type: 3}
+  m_Name: AD004_AirMissileLauncher_InterceptTwoIncomingGroundMissiles_RadarComparison
+  m_EditorClassIdentifier: Game.Runtime::BattleScenarioDefinition
+  scenarioId: AD-004_AirMissileLauncher_InterceptTwoIncomingGroundMissiles_RadarComparison
+  displayName: AD-004 Air Missile Launcher Intercepts Two Incoming Ground Missiles
+  description: Compares one isolated friendly air missile launcher against two staggered
+    incoming enemy ground missiles with no support and with nearby radar support.
+  fixedDeltaTime: 0.05
+  maxDurationSeconds: 16
+  randomSeed: 42345
+  cameraPreset: 1
+  worldBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 165, y: 45, z: 100}
+  spawnEntries: []
+  scenarioVariants:
+  - VariantId: AD-004-A-NoSupport-TwoGroundMissiles
+    Label: No Support / Two Ground Missiles
+    SupportMode: 0
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 135
+    IncomingThreatAltitude: 8
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 0
+    ExpectedOutcome: 0
+  - VariantId: AD-004-B-RadarNear-TwoGroundMissiles
+    Label: Radar Near / Two Ground Missiles
+    SupportMode: 1
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 135
+    IncomingThreatAltitude: 8
+    LauncherCount: 1
+    RadarDistanceFromLauncher: 8
+    ExpectedOutcome: 3
+  successCriteria:
+    RequireDetection: 1
+    RequireLaunch: 1
+    RequireInterceptForSupportedNormal: 1
+    RequireSupportedVariantImprovesOrMatchesBaseline: 1
+    MaxSupportedDetectionDelaySeconds: 0
+    MaxSupportedLockDelaySeconds: 0

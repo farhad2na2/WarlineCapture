@@ -758,10 +758,18 @@ public class UnitGridAuthoring : MonoBehaviour
                 Kind = supportKind,
                 Level = 1,
                 SupportRadius = math.max(0, radiusCells),
-                RangeBonus = supportKind == (byte)AirDefenseSupportProviderKind.Satellite ? 120f : 80f,
-                LockTimeMultiplier = supportKind == (byte)AirDefenseSupportProviderKind.Satellite ? 0.65f : 0.75f,
-                TrackingBonus = supportKind == (byte)AirDefenseSupportProviderKind.Satellite ? 0.18f : 0.12f,
-                TurnRateBonus = supportKind == (byte)AirDefenseSupportProviderKind.Satellite ? 50f : 35f
+                RangeBonus = supportKind == (byte)AirDefenseSupportProviderKind.Satellite
+                    ? AirDefenseSupportTuning.SatelliteRangeBonus
+                    : AirDefenseSupportTuning.RadarRangeBonus,
+                LockTimeMultiplier = supportKind == (byte)AirDefenseSupportProviderKind.Satellite
+                    ? AirDefenseSupportTuning.SatelliteLockTimeMultiplier
+                    : AirDefenseSupportTuning.RadarLockTimeMultiplier,
+                TrackingBonus = supportKind == (byte)AirDefenseSupportProviderKind.Satellite
+                    ? AirDefenseSupportTuning.SatelliteTrackingBonus
+                    : AirDefenseSupportTuning.RadarTrackingBonus,
+                TurnRateBonus = supportKind == (byte)AirDefenseSupportProviderKind.Satellite
+                    ? AirDefenseSupportTuning.SatelliteTurnRateBonus
+                    : AirDefenseSupportTuning.RadarTurnRateBonus
             });
         }
 

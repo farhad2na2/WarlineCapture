@@ -62,6 +62,9 @@ public sealed class BattleScenarioLabPlayBootstrap : MonoBehaviour
         if (ScenarioCount <= 0)
             return;
 
+        if (TrySelectNextVisualVariant())
+            return;
+
         SelectScenario((selectedScenarioIndex + 1) % ScenarioCount, runScenario: true);
     }
 
@@ -99,6 +102,42 @@ public sealed class BattleScenarioLabPlayBootstrap : MonoBehaviour
         overlayView?.ShowPending(CurrentScenarioDefinition);
         if (runScenario)
             RunScenario();
+    }
+
+    private bool TrySelectNextVisualVariant()
+    {
+        BattleScenarioDefinition definition = CurrentScenarioDefinition;
+        if (!ShouldAdvanceVariantsWithNext(definition) ||
+            variantDropdown == null ||
+            definition.ScenarioVariants == null ||
+            definition.ScenarioVariants.Length == 0)
+        {
+            return false;
+        }
+
+        int currentValue = variantDropdown.value;
+        if (currentValue <= 0)
+            currentValue = FindPreferredPlaybackIndex(definition.ScenarioVariants) + 1;
+
+        int nextValue = currentValue + 1;
+        if (nextValue > definition.ScenarioVariants.Length)
+            return false;
+
+        visualPlayback?.StopPlaybackAndClear();
+        variantDropdown.SetValueWithoutNotify(nextValue);
+        variantDropdown.RefreshShownValue();
+        overlayView?.ShowPending(CurrentScenarioDefinition);
+        RunScenario();
+        return true;
+    }
+
+    private static bool ShouldAdvanceVariantsWithNext(BattleScenarioDefinition definition)
+    {
+        return definition != null &&
+               string.Equals(
+                   definition.ScenarioId,
+                   BattleScenarioAd011Runner.ScenarioId,
+                   StringComparison.Ordinal);
     }
 
     private BattleScenarioResult RunSelectedScenario(

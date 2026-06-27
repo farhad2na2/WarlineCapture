@@ -34,6 +34,14 @@ public sealed class MissileTrailVfxView : MonoBehaviour
         _instance.SyncInternal(projectile, (Vector3)position, (Vector3)math.normalizesafe(direction, new float3(0f, 0f, 1f)));
     }
 
+    public static void ClearAll()
+    {
+        if (_instance == null)
+            return;
+
+        _instance.ClearAllInternal();
+    }
+
     private static void EnsureInstance()
     {
         if (_instance != null)
@@ -93,6 +101,19 @@ public sealed class MissileTrailVfxView : MonoBehaviour
             DeactivateTrail(trail);
             _pool.Push(trail);
         }
+    }
+
+    private void ClearAllInternal()
+    {
+        foreach (KeyValuePair<Entity, TrailInstance> pair in _active)
+        {
+            TrailInstance trail = pair.Value;
+            DeactivateTrail(trail);
+            _pool.Push(trail);
+        }
+
+        _active.Clear();
+        _releaseScratch.Clear();
     }
 
     private TrailInstance GetOrCreateTrail()

@@ -60,6 +60,14 @@ public sealed class UnitAttackImpactVfxView : MonoBehaviour
         _instance.PrewarmInternal(prefab, count);
     }
 
+    public static void ClearAll()
+    {
+        if (_instance == null)
+            return;
+
+        _instance.ClearAllInternal();
+    }
+
     private static void EnsureInstance()
     {
         if (_instance != null)
@@ -96,6 +104,25 @@ public sealed class UnitAttackImpactVfxView : MonoBehaviour
             pool.Push(instance);
             _active.RemoveAt(i);
         }
+    }
+
+    private void ClearAllInternal()
+    {
+        for (int i = _active.Count - 1; i >= 0; i--)
+        {
+            PooledInstance instance = _active[i];
+            StopAndClear(instance.ParticleSystems);
+            instance.Root.SetActive(false);
+            if (!_availableByPrefab.TryGetValue(instance.Prefab, out Stack<PooledInstance> pool))
+            {
+                pool = new Stack<PooledInstance>();
+                _availableByPrefab.Add(instance.Prefab, pool);
+            }
+
+            pool.Push(instance);
+        }
+
+        _active.Clear();
     }
 
     private void PlayInternal(GameObject prefab, Vector3 position, Quaternion rotation, float maxActiveSeconds)
@@ -219,6 +246,18 @@ public sealed class UnitAttackImpactVfxView : MonoBehaviour
                 continue;
 
             particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+    }
+
+    private static void StopAndClear(ParticleSystem[] particleSystems)
+    {
+        for (int i = 0; i < particleSystems.Length; i++)
+        {
+            ParticleSystem particleSystem = particleSystems[i];
+            if (particleSystem == null)
+                continue;
+
+            particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
     }
 }

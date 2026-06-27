@@ -76,6 +76,8 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
             playbackRoutine = null;
         }
 
+        HidePreviewMarkers();
+        ClearPooledPresentationVfx();
         World world = World.DefaultGameObjectInjectionWorld;
         if (world != null && world.IsCreated)
             ResetPreviousRun(world.EntityManager);
@@ -229,7 +231,7 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
         }
 
         if (defendedTargetVisual != null)
-            defendedTargetVisual.position = (Vector3)DefendedTargetPosition + new Vector3(0f, 1.2f, 0f);
+            defendedTargetVisual.gameObject.SetActive(false);
     }
 
     private void PositionAirTargetAuthoringRoots(BattleScenarioVariant variant)
@@ -252,7 +254,7 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
         }
 
         if (defendedTargetVisual != null)
-            defendedTargetVisual.position = (Vector3)ResolveAirTargetPosition(variant) + new Vector3(0f, -1.2f, 0f);
+            defendedTargetVisual.gameObject.SetActive(false);
     }
 
     private static string ResolveAirTargetPrefabKey(BattleScenarioVariant variant)
@@ -539,13 +541,34 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
         RestoreAirMissileVisuals(em);
         RestoreGroundRocketVisuals(em);
         DestroyScenarioLabUnits(em);
-        DestroyEntitiesWith<GroundMissileProjectileComponent>(em);
-        DestroyEntitiesWith<AirMissileProjectileComponent>(em);
-        DestroyEntitiesWith<GroundMissileImpactRequestComponent>(em);
+        DestroyEntitiesWithTree<GroundMissileProjectileComponent>(em);
+        DestroyEntitiesWithTree<AirMissileProjectileComponent>(em);
+        DestroyEntitiesWithTree<GroundMissileImpactRequestComponent>(em);
+        DestroyEntitiesWithTree<VehicleWreckComponent>(em);
+        DestroyEntitiesWithTree<VehicleDestroyedVisualSpawnRequest>(em);
+        DestroyOrphanRenderableEntities(em);
         RemoveComponentFromAll<AirMissileImpactRequestComponent>(em);
         RemoveComponentFromAll<AirMissileProjectileTrailComponent>(em);
         RemoveComponentFromAll<AirMissileLauncherTargetComponent>(em);
         RemoveComponentFromAll<MissileInterceptedComponent>(em);
+    }
+
+    private void HidePreviewMarkers()
+    {
+        if (groundLauncherRoot != null)
+            groundLauncherRoot.gameObject.SetActive(false);
+        if (airLauncherRoot != null)
+            airLauncherRoot.gameObject.SetActive(false);
+        if (radarRoot != null)
+            radarRoot.gameObject.SetActive(false);
+        if (defendedTargetVisual != null)
+            defendedTargetVisual.gameObject.SetActive(false);
+    }
+
+    private static void ClearPooledPresentationVfx()
+    {
+        MissileTrailVfxView.ClearAll();
+        UnitAttackImpactVfxView.ClearAll();
     }
 
     private static void DestroyScenarioLabUnits(EntityManager em)
@@ -566,8 +589,30 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
                 SourceKeyMatches(key, HelicopterTargetKey) ||
                 SourceKeyMatches(key, DroneTargetKey))
             {
+                DestroyScenarioLabUnitTransientVisuals(em, entity);
                 DestroyLinkedEntityGroup(em, entity);
             }
+        }
+    }
+
+    private static void DestroyScenarioLabUnitTransientVisuals(EntityManager em, Entity entity)
+    {
+        if (em.HasComponent<VehicleDestroyedVisualInstanceReference>(entity))
+        {
+            VehicleDestroyedVisualInstanceReference destroyedVisual = em.GetComponentData<VehicleDestroyedVisualInstanceReference>(entity);
+            VehicleVisualEntityUtility.DestroyVisualTree(em, destroyedVisual.Instance);
+        }
+
+        if (em.HasComponent<UnitSelectionMarkerInstanceReference>(entity))
+        {
+            UnitSelectionMarkerInstanceReference marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(entity);
+            VehicleVisualEntityUtility.DestroyVisualTree(em, marker.Instance);
+        }
+
+        if (em.HasComponent<UnitHealthBarInstanceReference>(entity))
+        {
+            UnitHealthBarInstanceReference healthBar = em.GetComponentData<UnitHealthBarInstanceReference>(entity);
+            VehicleVisualEntityUtility.DestroyVisualTree(em, healthBar.Instance);
         }
     }
 
@@ -576,24 +621,66 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
         if (!em.Exists(root))
             return;
 
-        if (!em.HasBuffer<LinkedEntityGroup>(root))
-        {
-            em.DestroyEntity(root);
-            return;
-        }
-
-        DynamicBuffer<LinkedEntityGroup> linkedGroup = em.GetBuffer<LinkedEntityGroup>(root);
-        NativeArray<Entity> entities = new(linkedGroup.Length, Allocator.Temp);
+        NativeList<Entity> entities = new(16, Allocator.Temp);
         try
         {
-            for (int i = 0; i < linkedGroup.Length; i++)
-                entities[i] = linkedGroup[i].Value;
-            em.DestroyEntity(entities);
+            if (em.HasBuffer<LinkedEntityGroup>(root))
+            {
+                DynamicBuffer<LinkedEntityGroup> linkedGroup = em.GetBuffer<LinkedEntityGroup>(root);
+                for (int i = 0; i < linkedGroup.Length; i++)
+                    CollectEntityTree(em, linkedGroup[i].Value, ref entities);
+            }
+            else
+            {
+                CollectEntityTree(em, root, ref entities);
+            }
+
+            for (int i = entities.Length - 1; i >= 0; i--)
+            {
+                Entity entity = entities[i];
+                if (em.Exists(entity))
+                    em.DestroyEntity(entity);
+            }
         }
         finally
         {
             entities.Dispose();
         }
+    }
+
+    private static void CollectEntityTree(EntityManager em, Entity entity, ref NativeList<Entity> entities)
+    {
+        if (entity == Entity.Null || !em.Exists(entity) || Contains(entities, entity))
+            return;
+
+        entities.Add(entity);
+
+        if (em.HasComponent<UnitModelInstanceReference>(entity))
+            CollectEntityTree(em, em.GetComponentData<UnitModelInstanceReference>(entity).Instance, ref entities);
+        if (em.HasComponent<UnitDetailedVisualReference>(entity))
+            CollectEntityTree(em, em.GetComponentData<UnitDetailedVisualReference>(entity).Root, ref entities);
+        if (em.HasComponent<VehicleDestroyedVisualInstanceReference>(entity))
+            CollectEntityTree(em, em.GetComponentData<VehicleDestroyedVisualInstanceReference>(entity).Instance, ref entities);
+        if (em.HasComponent<UnitSelectionMarkerInstanceReference>(entity))
+            CollectEntityTree(em, em.GetComponentData<UnitSelectionMarkerInstanceReference>(entity).Instance, ref entities);
+        if (em.HasComponent<UnitHealthBarInstanceReference>(entity))
+            CollectEntityTree(em, em.GetComponentData<UnitHealthBarInstanceReference>(entity).Instance, ref entities);
+
+        if (!em.HasBuffer<Child>(entity))
+            return;
+
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(entity);
+        for (int i = 0; i < children.Length; i++)
+            CollectEntityTree(em, children[i].Value, ref entities);
+    }
+
+    private static bool Contains(NativeList<Entity> entities, Entity entity)
+    {
+        for (int i = 0; i < entities.Length; i++)
+            if (entities[i] == entity)
+                return true;
+
+        return false;
     }
 
     private static void RestoreAirMissileVisuals(EntityManager em)
@@ -895,6 +982,34 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
         for (int i = 0; i < entities.Length; i++)
             if (em.Exists(entities[i]))
                 em.DestroyEntity(entities[i]);
+    }
+
+    private static void DestroyEntitiesWithTree<T>(EntityManager em)
+        where T : unmanaged, IComponentData
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<T>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+            if (em.Exists(entities[i]) && !em.HasComponent<Prefab>(entities[i]))
+                DestroyLinkedEntityGroup(em, entities[i]);
+    }
+
+    private static void DestroyOrphanRenderableEntities(EntityManager em)
+    {
+        System.Type materialMeshInfoType = System.Type.GetType("Unity.Rendering.MaterialMeshInfo, Unity.Entities.Graphics");
+        if (materialMeshInfoType == null)
+            return;
+
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly(materialMeshInfoType));
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!em.Exists(entity) || em.HasComponent<Prefab>(entity))
+                continue;
+
+            DestroyLinkedEntityGroup(em, entity);
+        }
     }
 
     private static void RemoveComponentFromAll<T>(EntityManager em)

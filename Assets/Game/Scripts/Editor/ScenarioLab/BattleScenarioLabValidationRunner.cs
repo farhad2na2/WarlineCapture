@@ -63,6 +63,15 @@ public static class BattleScenarioLabValidationRunner
     private const string VisualSwitchSeenAd011TargetKey = "BattleScenarioLab.VisualSwitch.SeenAd011Target";
     private const string VisualSwitchSeenAd011AirProjectileKey = "BattleScenarioLab.VisualSwitch.SeenAd011AirProjectile";
     private const string VisualSwitchSeenAd011ImpactKey = "BattleScenarioLab.VisualSwitch.SeenAd011Impact";
+    private const string VisualSwitchSeenAd011HelicopterTargetKey = "BattleScenarioLab.VisualSwitch.SeenAd011HelicopterTarget";
+    private const string VisualSwitchSeenAd011HelicopterAirProjectileKey = "BattleScenarioLab.VisualSwitch.SeenAd011HelicopterAirProjectile";
+    private const string VisualSwitchSeenAd011HelicopterImpactKey = "BattleScenarioLab.VisualSwitch.SeenAd011HelicopterImpact";
+    private const string VisualSwitchSeenAd011DroneTargetKey = "BattleScenarioLab.VisualSwitch.SeenAd011DroneTarget";
+    private const string VisualSwitchSeenAd011DroneAirProjectileKey = "BattleScenarioLab.VisualSwitch.SeenAd011DroneAirProjectile";
+    private const string VisualSwitchSeenAd011DroneImpactKey = "BattleScenarioLab.VisualSwitch.SeenAd011DroneImpact";
+    private const string VisualSwitchSeenAd011AttackingJetTargetKey = "BattleScenarioLab.VisualSwitch.SeenAd011AttackingJetTarget";
+    private const string VisualSwitchSeenAd011AttackingJetAirProjectileKey = "BattleScenarioLab.VisualSwitch.SeenAd011AttackingJetAirProjectile";
+    private const string VisualSwitchSeenAd011AttackingJetImpactKey = "BattleScenarioLab.VisualSwitch.SeenAd011AttackingJetImpact";
     private const double LiveEcsPlaybackTimeoutSeconds = 40.0;
     private const double VisualSwitchTimeoutSeconds = 75.0;
     private const float LiveEcsPlaybackRequiredClosestMissileDistance = 2.5f;
@@ -907,8 +916,9 @@ public static class BattleScenarioLabValidationRunner
 
         BattleScenarioLabPlayBootstrap bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
         Dropdown scenarioDropdown = GameObject.Find("ScenarioSelector")?.GetComponent<Dropdown>();
+        Dropdown variantDropdown = GameObject.Find("VariantSelector")?.GetComponent<Dropdown>();
         Text titleText = GameObject.Find("Title")?.GetComponent<Text>();
-        if (bootstrap == null || scenarioDropdown == null || titleText == null)
+        if (bootstrap == null || scenarioDropdown == null || variantDropdown == null || titleText == null)
             return;
 
         World world = World.DefaultGameObjectInjectionWorld;
@@ -970,9 +980,74 @@ public static class BattleScenarioLabValidationRunner
                     SessionState.GetBool(VisualSwitchSeenAd011AirProjectileKey, false) &&
                     SessionState.GetBool(VisualSwitchSeenAd011ImpactKey, false))
                 {
+                    bootstrap.SelectNextScenario();
+                    SessionState.SetInt(VisualSwitchPhaseKey, 3);
+                    SessionState.SetFloat(VisualSwitchPhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
+                    Debug.Log("[BattleScenarioLab] Next visual switch validation advanced from AD-011 jet to AD-011 helicopter.");
+                }
+                break;
+
+            case 3:
+                if (scenarioDropdown.value != 10 ||
+                    variantDropdown.value != 2 ||
+                    !titleText.text.Contains(BattleScenarioAd011Runner.ScenarioId, StringComparison.Ordinal))
+                {
+                    break;
+                }
+
+                TrackAirTargetSwitchState(em, HelicopterTargetSourceKey, VisualSwitchSeenAd011HelicopterTargetKey, VisualSwitchSeenAd011HelicopterAirProjectileKey, VisualSwitchSeenAd011HelicopterImpactKey);
+                if (SessionState.GetBool(VisualSwitchSeenAd011HelicopterTargetKey, false) &&
+                    SessionState.GetBool(VisualSwitchSeenAd011HelicopterAirProjectileKey, false) &&
+                    SessionState.GetBool(VisualSwitchSeenAd011HelicopterImpactKey, false) &&
+                    !HasInstantiatedUnit(em, JetTargetSourceKey))
+                {
+                    bootstrap.SelectNextScenario();
+                    SessionState.SetInt(VisualSwitchPhaseKey, 4);
+                    SessionState.SetFloat(VisualSwitchPhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
+                    Debug.Log("[BattleScenarioLab] Next visual switch validation advanced from AD-011 helicopter to AD-011 drone.");
+                }
+                break;
+
+            case 4:
+                if (scenarioDropdown.value != 10 ||
+                    variantDropdown.value != 3 ||
+                    !titleText.text.Contains(BattleScenarioAd011Runner.ScenarioId, StringComparison.Ordinal))
+                {
+                    break;
+                }
+
+                TrackAirTargetSwitchState(em, DroneTargetSourceKey, VisualSwitchSeenAd011DroneTargetKey, VisualSwitchSeenAd011DroneAirProjectileKey, VisualSwitchSeenAd011DroneImpactKey);
+                if (SessionState.GetBool(VisualSwitchSeenAd011DroneTargetKey, false) &&
+                    SessionState.GetBool(VisualSwitchSeenAd011DroneAirProjectileKey, false) &&
+                    SessionState.GetBool(VisualSwitchSeenAd011DroneImpactKey, false) &&
+                    !HasInstantiatedUnit(em, JetTargetSourceKey) &&
+                    !HasInstantiatedUnit(em, HelicopterTargetSourceKey))
+                {
+                    bootstrap.SelectNextScenario();
+                    SessionState.SetInt(VisualSwitchPhaseKey, 5);
+                    SessionState.SetFloat(VisualSwitchPhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
+                    Debug.Log("[BattleScenarioLab] Next visual switch validation advanced from AD-011 drone to AD-011 attacking jet.");
+                }
+                break;
+
+            case 5:
+                if (scenarioDropdown.value != 10 ||
+                    variantDropdown.value != 4 ||
+                    !titleText.text.Contains(BattleScenarioAd011Runner.ScenarioId, StringComparison.Ordinal))
+                {
+                    break;
+                }
+
+                TrackAirTargetSwitchState(em, JetTargetSourceKey, VisualSwitchSeenAd011AttackingJetTargetKey, VisualSwitchSeenAd011AttackingJetAirProjectileKey, VisualSwitchSeenAd011AttackingJetImpactKey);
+                if (SessionState.GetBool(VisualSwitchSeenAd011AttackingJetTargetKey, false) &&
+                    SessionState.GetBool(VisualSwitchSeenAd011AttackingJetAirProjectileKey, false) &&
+                    SessionState.GetBool(VisualSwitchSeenAd011AttackingJetImpactKey, false) &&
+                    !HasInstantiatedUnit(em, HelicopterTargetSourceKey) &&
+                    !HasInstantiatedUnit(em, DroneTargetSourceKey))
+                {
                     CompleteVisualSwitchValidation(
                         true,
-                        "runtime Next stopped the AD-001 missile visual, switched to AD-002 jet visual playback, then advanced to AD-011 jet/helicopter/drone scenario playback with production target and interceptor entities observed");
+                        "runtime Next stopped prior visuals, switched AD-001 to AD-002, then advanced AD-011 through jet, helicopter, drone, and attacking jet variants with old target entities cleaned between runs");
                     return;
                 }
                 break;
@@ -993,6 +1068,9 @@ public static class BattleScenarioLabValidationRunner
                 $"ad011Target={SessionState.GetBool(VisualSwitchSeenAd011TargetKey, false)}, " +
                 $"ad011AirProjectile={SessionState.GetBool(VisualSwitchSeenAd011AirProjectileKey, false)}, " +
                 $"ad011Impact={SessionState.GetBool(VisualSwitchSeenAd011ImpactKey, false)}, " +
+                $"ad011Helicopter={SessionState.GetBool(VisualSwitchSeenAd011HelicopterTargetKey, false)}/{SessionState.GetBool(VisualSwitchSeenAd011HelicopterAirProjectileKey, false)}/{SessionState.GetBool(VisualSwitchSeenAd011HelicopterImpactKey, false)}, " +
+                $"ad011Drone={SessionState.GetBool(VisualSwitchSeenAd011DroneTargetKey, false)}/{SessionState.GetBool(VisualSwitchSeenAd011DroneAirProjectileKey, false)}/{SessionState.GetBool(VisualSwitchSeenAd011DroneImpactKey, false)}, " +
+                $"ad011AttackingJet={SessionState.GetBool(VisualSwitchSeenAd011AttackingJetTargetKey, false)}/{SessionState.GetBool(VisualSwitchSeenAd011AttackingJetAirProjectileKey, false)}/{SessionState.GetBool(VisualSwitchSeenAd011AttackingJetImpactKey, false)}, " +
                 $"groundProjectileNow={HasAnyEntityWith<GroundMissileProjectileComponent>(em)}, " +
                 $"airProjectileNow={HasAnyEntityWith<AirMissileProjectileComponent>(em)}";
             CompleteVisualSwitchValidation(false, reason);
@@ -1050,6 +1128,15 @@ public static class BattleScenarioLabValidationRunner
         SessionState.SetBool(VisualSwitchSeenAd011TargetKey, false);
         SessionState.SetBool(VisualSwitchSeenAd011AirProjectileKey, false);
         SessionState.SetBool(VisualSwitchSeenAd011ImpactKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd011HelicopterTargetKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd011HelicopterAirProjectileKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd011HelicopterImpactKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd011DroneTargetKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd011DroneAirProjectileKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd011DroneImpactKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd011AttackingJetTargetKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd011AttackingJetAirProjectileKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd011AttackingJetImpactKey, false);
     }
 
     private static void TrackAirTargetSwitchState(
@@ -1279,6 +1366,15 @@ public static class BattleScenarioLabValidationRunner
         SessionState.EraseBool(VisualSwitchSeenAd011TargetKey);
         SessionState.EraseBool(VisualSwitchSeenAd011AirProjectileKey);
         SessionState.EraseBool(VisualSwitchSeenAd011ImpactKey);
+        SessionState.EraseBool(VisualSwitchSeenAd011HelicopterTargetKey);
+        SessionState.EraseBool(VisualSwitchSeenAd011HelicopterAirProjectileKey);
+        SessionState.EraseBool(VisualSwitchSeenAd011HelicopterImpactKey);
+        SessionState.EraseBool(VisualSwitchSeenAd011DroneTargetKey);
+        SessionState.EraseBool(VisualSwitchSeenAd011DroneAirProjectileKey);
+        SessionState.EraseBool(VisualSwitchSeenAd011DroneImpactKey);
+        SessionState.EraseBool(VisualSwitchSeenAd011AttackingJetTargetKey);
+        SessionState.EraseBool(VisualSwitchSeenAd011AttackingJetAirProjectileKey);
+        SessionState.EraseBool(VisualSwitchSeenAd011AttackingJetImpactKey);
 
         if (EditorApplication.isPlaying)
         {

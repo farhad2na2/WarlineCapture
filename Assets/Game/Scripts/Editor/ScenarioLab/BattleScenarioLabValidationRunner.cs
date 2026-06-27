@@ -25,6 +25,7 @@ public static class BattleScenarioLabValidationRunner
     public const string Ad008DefinitionPath = "Assets/Game/Configs/ScenarioLab/AD008_AirMissileLauncher_SaturatedMixedDroneAndGroundMissile_RadarComparison.asset";
     public const string Ad009DefinitionPath = "Assets/Game/Configs/ScenarioLab/AD009_AirMissileLauncher_SupportModeComparison_RadarSatelliteCombined.asset";
     public const string Ad010DefinitionPath = "Assets/Game/Configs/ScenarioLab/AD010_AirMissileLauncher_InterceptionGeometrySweep.asset";
+    public const string Ad011DefinitionPath = "Assets/Game/Configs/ScenarioLab/AD011_AirMissileLauncher_TracksAndHitsAirTargetClasses.asset";
     public const string Gm001DefinitionPath = "Assets/Game/Configs/ScenarioLab/GM001_GroundMissileLauncher_FiresVisibleRocketAndDamagesTarget.asset";
     public const string Dr001DefinitionPath = "Assets/Game/Configs/ScenarioLab/DR001_DroneReconDetectionAndThreatWarning.asset";
     private const string LiveEcsPlaybackActiveKey = "BattleScenarioLab.LiveEcsPlayback.Active";
@@ -50,18 +51,36 @@ public static class BattleScenarioLabValidationRunner
     private const string LiveEcsPlaybackVariantDropdownValueKey = "BattleScenarioLab.LiveEcsPlayback.VariantDropdownValue";
     private const string LiveEcsPlaybackVariantRunStartedKey = "BattleScenarioLab.LiveEcsPlayback.VariantRunStarted";
     private const string LiveEcsPlaybackPassedVariantsKey = "BattleScenarioLab.LiveEcsPlayback.PassedVariants";
+    private const string VisualSwitchActiveKey = "BattleScenarioLab.VisualSwitch.Active";
+    private const string VisualSwitchStartedAtKey = "BattleScenarioLab.VisualSwitch.StartedAt";
+    private const string VisualSwitchPhaseKey = "BattleScenarioLab.VisualSwitch.Phase";
+    private const string VisualSwitchPhaseStartedAtKey = "BattleScenarioLab.VisualSwitch.PhaseStartedAt";
+    private const string VisualSwitchFailureKey = "BattleScenarioLab.VisualSwitch.Failure";
+    private const string VisualSwitchSeenAd001GroundProjectileKey = "BattleScenarioLab.VisualSwitch.SeenAd001GroundProjectile";
+    private const string VisualSwitchSeenAd002TargetKey = "BattleScenarioLab.VisualSwitch.SeenAd002Target";
+    private const string VisualSwitchSeenAd002AirProjectileKey = "BattleScenarioLab.VisualSwitch.SeenAd002AirProjectile";
+    private const string VisualSwitchSeenAd002ImpactKey = "BattleScenarioLab.VisualSwitch.SeenAd002Impact";
+    private const string VisualSwitchSeenAd011TargetKey = "BattleScenarioLab.VisualSwitch.SeenAd011Target";
+    private const string VisualSwitchSeenAd011AirProjectileKey = "BattleScenarioLab.VisualSwitch.SeenAd011AirProjectile";
+    private const string VisualSwitchSeenAd011ImpactKey = "BattleScenarioLab.VisualSwitch.SeenAd011Impact";
     private const double LiveEcsPlaybackTimeoutSeconds = 40.0;
+    private const double VisualSwitchTimeoutSeconds = 75.0;
     private const float LiveEcsPlaybackRequiredClosestMissileDistance = 2.5f;
     private const float LiveEcsPlaybackRequiredClosestGroundVisualDistance = 1.5f;
     private const float LiveEcsPlaybackRequiredClosestVisualInterceptDistance = 0.75f;
     private const float LiveEcsPlaybackMaxAllowedGroundMissileAltitude = 24f;
     private const string GroundLauncherSourceKey = "Unit_Veh_Missle_Launcher_Ground";
     private const string AirLauncherSourceKey = "Unit_Veh_Missle_Launcher_Air";
+    private const string JetTargetSourceKey = "Unit_Veh_Jet_01";
+    private const string HelicopterTargetSourceKey = "Unit_Veh_Helicopter_Attack";
+    private const string DroneTargetSourceKey = "Unit_Veh_Drone";
 
     static BattleScenarioLabValidationRunner()
     {
         if (SessionState.GetBool(LiveEcsPlaybackActiveKey, false))
             HookLiveEcsPlaybackValidation();
+        if (SessionState.GetBool(VisualSwitchActiveKey, false))
+            HookVisualSwitchValidation();
         if (SessionState.GetBool(LiveEcsPlaybackPendingExitKey, false))
             HookLiveEcsPlaybackPendingExit();
     }
@@ -447,6 +466,41 @@ public static class BattleScenarioLabValidationRunner
         Debug.Log($"[BattleScenarioLab] AD-010 definition saved: {Ad010DefinitionPath}");
     }
 
+    [MenuItem("Warline Capture/Scenario Lab/Create or Update AD-011 Definition")]
+    public static void CreateOrUpdateAd011DefinitionAsset()
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(Ad011DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
+
+        BattleScenarioDefinition definition = AssetDatabase.LoadAssetAtPath<BattleScenarioDefinition>(Ad011DefinitionPath);
+        if (definition == null && File.Exists(Ad011DefinitionPath))
+            AssetDatabase.DeleteAsset(Ad011DefinitionPath);
+
+        if (definition == null)
+        {
+            definition = ScriptableObject.CreateInstance<BattleScenarioDefinition>();
+            AssetDatabase.CreateAsset(definition, Ad011DefinitionPath);
+        }
+
+        SerializedObject serialized = new(definition);
+        serialized.FindProperty("scenarioId").stringValue = BattleScenarioAd011Runner.ScenarioId;
+        serialized.FindProperty("displayName").stringValue = "AD-011 Air Missile Launcher Hits Air Target Classes";
+        serialized.FindProperty("description").stringValue =
+            "Runs jet, helicopter, drone, and attacking-jet air targets against an isolated friendly air missile launcher with nearby radar support; every variant must be detected, tracked, launched on, and killed.";
+        serialized.FindProperty("fixedDeltaTime").floatValue = 0.05f;
+        serialized.FindProperty("maxDurationSeconds").floatValue = 14f;
+        serialized.FindProperty("randomSeed").intValue = 112345;
+        serialized.FindProperty("cameraPreset").enumValueIndex = (int)BattleScenarioCameraPreset.AirDefenseSideView;
+        serialized.FindProperty("worldBounds").boundsValue = new Bounds(Vector3.zero, new Vector3(360f, 120f, 240f));
+        serialized.FindProperty("spawnEntries").arraySize = 0;
+        WriteVariants(serialized.FindProperty("scenarioVariants"), BattleScenarioAd011Runner.CreateDefaultVariants());
+        WriteSuccessCriteria(serialized.FindProperty("successCriteria"));
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(definition);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"[BattleScenarioLab] AD-011 definition saved: {Ad011DefinitionPath}");
+    }
+
     [MenuItem("Warline Capture/Scenario Lab/Create or Update GM-001 Definition")]
     public static void CreateOrUpdateGm001DefinitionAsset()
     {
@@ -574,8 +628,21 @@ public static class BattleScenarioLabValidationRunner
                 bootstrapSerialized.FindProperty("scenarioDefinition").objectReferenceValue,
                 "bootstrap scenario definition");
             SerializedProperty scenarioDefinitions = bootstrapSerialized.FindProperty("scenarioDefinitions");
-            if (scenarioDefinitions.arraySize < 4)
+            if (scenarioDefinitions.arraySize < 13)
                 throw new InvalidOperationException("Bootstrap scenario definition list has too few entries.");
+            bool hasAd011 = false;
+            for (int i = 0; i < scenarioDefinitions.arraySize; i++)
+            {
+                if (scenarioDefinitions.GetArrayElementAtIndex(i).objectReferenceValue is BattleScenarioDefinition scenario &&
+                    string.Equals(scenario.ScenarioId, BattleScenarioAd011Runner.ScenarioId, StringComparison.Ordinal))
+                {
+                    hasAd011 = true;
+                    break;
+                }
+            }
+
+            if (!hasAd011)
+                throw new InvalidOperationException("Bootstrap scenario definition list is missing AD-011.");
             RequireReference(
                 bootstrapSerialized.FindProperty("overlayView").objectReferenceValue,
                 "bootstrap overlay view");
@@ -603,16 +670,21 @@ public static class BattleScenarioLabValidationRunner
             RequireReference(overlaySerialized.FindProperty("comparisonsText").objectReferenceValue, "overlay comparisons text");
 
             bootstrap.SelectNextScenario();
-            if (scenarioDropdown.value != 0)
-                throw new InvalidOperationException("NextScenarioButton should keep AD-001 selected while cycling visual variants.");
-            if (variantDropdown.value != 1)
-                throw new InvalidOperationException("NextScenarioButton did not advance VariantSelector to the first visual variant.");
+            if (scenarioDropdown.value != 1)
+                throw new InvalidOperationException("NextScenarioButton did not advance from AD-001 to the next scenario.");
             Text titleText = RequireComponent<Text>(RequireObject("Title"));
-            if (!titleText.text.Contains(BattleScenarioAd001Runner.ScenarioId, StringComparison.Ordinal))
-                throw new InvalidOperationException("NextScenarioButton did not run the AD-001 visual scenario.");
+            if (!titleText.text.Contains(BattleScenarioAd002Runner.ScenarioId, StringComparison.Ordinal))
+                throw new InvalidOperationException("NextScenarioButton did not run AD-002 after advancing from AD-001.");
             Text variantsText = RequireComponent<Text>(RequireObject("Variants"));
-            if (!variantsText.text.Contains("AD-001-A-NoSupport-Normal", StringComparison.Ordinal))
-                throw new InvalidOperationException("NextScenarioButton did not run the first AD-001 visual variant.");
+            if (!variantsText.text.Contains("AD-002-A-NoSupport-Jet", StringComparison.Ordinal))
+                throw new InvalidOperationException("NextScenarioButton did not show AD-002 variant metrics.");
+
+            for (int i = 0; i < 9; i++)
+                bootstrap.SelectNextScenario();
+            if (scenarioDropdown.value != 10)
+                throw new InvalidOperationException("Repeated NextScenarioButton did not advance to AD-011.");
+            if (!titleText.text.Contains(BattleScenarioAd011Runner.ScenarioId, StringComparison.Ordinal))
+                throw new InvalidOperationException("Repeated NextScenarioButton did not run AD-011.");
 
             BattleScenarioResult result = BattleScenarioAd001Runner.RunDefinition(references.ScenarioDefinition);
             if (!result.Passed)
@@ -652,12 +724,42 @@ public static class BattleScenarioLabValidationRunner
         }
     }
 
+    [MenuItem("Warline Capture/Scenario Lab/Validate Manual Scene Next Switches Visual Playback")]
+    public static void ValidateManualSceneNextSwitchesVisualPlayback()
+    {
+        try
+        {
+            EditorSceneManager.OpenScene(BattleScenarioLabSceneBuilder.ScenePath, OpenSceneMode.Single);
+            SessionState.SetBool(VisualSwitchActiveKey, true);
+            SessionState.SetFloat(VisualSwitchStartedAtKey, (float)EditorApplication.timeSinceStartup);
+            SessionState.SetFloat(VisualSwitchPhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
+            SessionState.SetInt(VisualSwitchPhaseKey, 0);
+            SessionState.EraseString(VisualSwitchFailureKey);
+            ResetVisualSwitchObservationState();
+            HookVisualSwitchValidation();
+            EditorApplication.EnterPlaymode();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[BattleScenarioLab] Next visual switch validation failed before PlayMode: {ex}");
+            Exit(1);
+        }
+    }
+
     private static void HookLiveEcsPlaybackValidation()
     {
         EditorApplication.update -= OnLiveEcsPlaybackValidationUpdate;
         EditorApplication.update += OnLiveEcsPlaybackValidationUpdate;
         Application.logMessageReceived -= OnLiveEcsPlaybackValidationLog;
         Application.logMessageReceived += OnLiveEcsPlaybackValidationLog;
+    }
+
+    private static void HookVisualSwitchValidation()
+    {
+        EditorApplication.update -= OnVisualSwitchValidationUpdate;
+        EditorApplication.update += OnVisualSwitchValidationUpdate;
+        Application.logMessageReceived -= OnVisualSwitchValidationLog;
+        Application.logMessageReceived += OnVisualSwitchValidationLog;
     }
 
     private static void OnLiveEcsPlaybackValidationLog(string condition, string stackTrace, LogType type)
@@ -669,6 +771,19 @@ public static class BattleScenarioLabValidationRunner
             condition.Contains("Live ECS visual run could not resolve baked production launcher prefab entities", StringComparison.Ordinal))
         {
             SessionState.SetString(LiveEcsPlaybackFailureKey, condition);
+        }
+    }
+
+    private static void OnVisualSwitchValidationLog(string condition, string stackTrace, LogType type)
+    {
+        if (!SessionState.GetBool(VisualSwitchActiveKey, false))
+            return;
+
+        if (type == LogType.Error &&
+            (condition.Contains("Live ECS visual run could not resolve baked production launcher prefab entities", StringComparison.Ordinal) ||
+             condition.Contains("Live ECS visual run could not resolve baked production air launcher/air target prefab entities", StringComparison.Ordinal)))
+        {
+            SessionState.SetString(VisualSwitchFailureKey, condition);
         }
     }
 
@@ -775,6 +890,115 @@ public static class BattleScenarioLabValidationRunner
         }
     }
 
+    private static void OnVisualSwitchValidationUpdate()
+    {
+        if (!SessionState.GetBool(VisualSwitchActiveKey, false))
+            return;
+
+        string failure = SessionState.GetString(VisualSwitchFailureKey, string.Empty);
+        if (!string.IsNullOrEmpty(failure))
+        {
+            CompleteVisualSwitchValidation(false, failure);
+            return;
+        }
+
+        if (!EditorApplication.isPlaying)
+            return;
+
+        BattleScenarioLabPlayBootstrap bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
+        Dropdown scenarioDropdown = GameObject.Find("ScenarioSelector")?.GetComponent<Dropdown>();
+        Text titleText = GameObject.Find("Title")?.GetComponent<Text>();
+        if (bootstrap == null || scenarioDropdown == null || titleText == null)
+            return;
+
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return;
+
+        EntityManager em = world.EntityManager;
+        int phase = SessionState.GetInt(VisualSwitchPhaseKey, 0);
+        switch (phase)
+        {
+            case 0:
+                if (HasAnyEntityWith<GroundMissileProjectileComponent>(em))
+                    SessionState.SetBool(VisualSwitchSeenAd001GroundProjectileKey, true);
+
+                if (SessionState.GetBool(VisualSwitchSeenAd001GroundProjectileKey, false))
+                {
+                    bootstrap.SelectNextScenario();
+                    SessionState.SetInt(VisualSwitchPhaseKey, 1);
+                    SessionState.SetFloat(VisualSwitchPhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
+                    Debug.Log("[BattleScenarioLab] Next visual switch validation advanced from AD-001 to AD-002.");
+                }
+                break;
+
+            case 1:
+                if (scenarioDropdown.value != 1 ||
+                    !titleText.text.Contains(BattleScenarioAd002Runner.ScenarioId, StringComparison.Ordinal))
+                {
+                    break;
+                }
+
+                TrackAirTargetSwitchState(em, JetTargetSourceKey, VisualSwitchSeenAd002TargetKey, VisualSwitchSeenAd002AirProjectileKey, VisualSwitchSeenAd002ImpactKey);
+                if (HasAnyEntityWith<GroundMissileProjectileComponent>(em))
+                {
+                    break;
+                }
+
+                if (SessionState.GetBool(VisualSwitchSeenAd002TargetKey, false) &&
+                    SessionState.GetBool(VisualSwitchSeenAd002AirProjectileKey, false) &&
+                    SessionState.GetBool(VisualSwitchSeenAd002ImpactKey, false))
+                {
+                    for (int i = 0; i < 9; i++)
+                        bootstrap.SelectNextScenario();
+
+                    SessionState.SetInt(VisualSwitchPhaseKey, 2);
+                    SessionState.SetFloat(VisualSwitchPhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
+                    Debug.Log("[BattleScenarioLab] Next visual switch validation advanced from AD-002 to AD-011.");
+                }
+                break;
+
+            case 2:
+                if (scenarioDropdown.value != 10 ||
+                    !titleText.text.Contains(BattleScenarioAd011Runner.ScenarioId, StringComparison.Ordinal))
+                {
+                    break;
+                }
+
+                TrackAirTargetSwitchState(em, JetTargetSourceKey, VisualSwitchSeenAd011TargetKey, VisualSwitchSeenAd011AirProjectileKey, VisualSwitchSeenAd011ImpactKey);
+                if (SessionState.GetBool(VisualSwitchSeenAd011TargetKey, false) &&
+                    SessionState.GetBool(VisualSwitchSeenAd011AirProjectileKey, false) &&
+                    SessionState.GetBool(VisualSwitchSeenAd011ImpactKey, false))
+                {
+                    CompleteVisualSwitchValidation(
+                        true,
+                        "runtime Next stopped the AD-001 missile visual, switched to AD-002 jet visual playback, then advanced to AD-011 jet/helicopter/drone scenario playback with production target and interceptor entities observed");
+                    return;
+                }
+                break;
+        }
+
+        double elapsed = EditorApplication.timeSinceStartup - SessionState.GetFloat(VisualSwitchStartedAtKey, 0f);
+        if (elapsed >= VisualSwitchTimeoutSeconds)
+        {
+            string reason =
+                $"timed out after {VisualSwitchTimeoutSeconds:0.#}s; " +
+                $"phase={SessionState.GetInt(VisualSwitchPhaseKey, 0)}, " +
+                $"selector={scenarioDropdown.value}, " +
+                $"title='{titleText.text}', " +
+                $"ad001Ground={SessionState.GetBool(VisualSwitchSeenAd001GroundProjectileKey, false)}, " +
+                $"ad002Target={SessionState.GetBool(VisualSwitchSeenAd002TargetKey, false)}, " +
+                $"ad002AirProjectile={SessionState.GetBool(VisualSwitchSeenAd002AirProjectileKey, false)}, " +
+                $"ad002Impact={SessionState.GetBool(VisualSwitchSeenAd002ImpactKey, false)}, " +
+                $"ad011Target={SessionState.GetBool(VisualSwitchSeenAd011TargetKey, false)}, " +
+                $"ad011AirProjectile={SessionState.GetBool(VisualSwitchSeenAd011AirProjectileKey, false)}, " +
+                $"ad011Impact={SessionState.GetBool(VisualSwitchSeenAd011ImpactKey, false)}, " +
+                $"groundProjectileNow={HasAnyEntityWith<GroundMissileProjectileComponent>(em)}, " +
+                $"airProjectileNow={HasAnyEntityWith<AirMissileProjectileComponent>(em)}";
+            CompleteVisualSwitchValidation(false, reason);
+        }
+    }
+
     private static bool TryStartLiveEcsPlaybackVariant()
     {
         BattleScenarioLabPlayBootstrap bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
@@ -815,6 +1039,55 @@ public static class BattleScenarioLabValidationRunner
         SessionState.SetFloat(LiveEcsPlaybackClosestGroundVisualDistanceKey, float.PositiveInfinity);
         SessionState.SetFloat(LiveEcsPlaybackClosestVisualInterceptDistanceKey, float.PositiveInfinity);
         SessionState.SetFloat(LiveEcsPlaybackMaxGroundMissileAltitudeKey, 0f);
+    }
+
+    private static void ResetVisualSwitchObservationState()
+    {
+        SessionState.SetBool(VisualSwitchSeenAd001GroundProjectileKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd002TargetKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd002AirProjectileKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd002ImpactKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd011TargetKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd011AirProjectileKey, false);
+        SessionState.SetBool(VisualSwitchSeenAd011ImpactKey, false);
+    }
+
+    private static void TrackAirTargetSwitchState(
+        EntityManager em,
+        string targetSourceKey,
+        string targetSeenKey,
+        string airProjectileSeenKey,
+        string impactSeenKey)
+    {
+        if (HasInstantiatedUnit(em, targetSourceKey))
+            SessionState.SetBool(targetSeenKey, true);
+        if (HasAnyEntityWith<AirMissileProjectileComponent>(em))
+            SessionState.SetBool(airProjectileSeenKey, true);
+        if (HasDestroyedInstantiatedUnit(em, targetSourceKey))
+            SessionState.SetBool(impactSeenKey, true);
+    }
+
+    private static bool HasDestroyedInstantiatedUnit(EntityManager em, string sourceKey)
+    {
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+            ComponentType.ReadOnly<UnitHealth>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!em.Exists(entity) || em.HasComponent<Prefab>(entity))
+                continue;
+
+            string candidate = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
+            if (!string.Equals(candidate, sourceKey, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            if (em.GetComponentData<UnitHealth>(entity).Current <= 0)
+                return true;
+        }
+
+        return false;
     }
 
     private static string ResolveAd001VariantLabel(int dropdownValue)
@@ -990,6 +1263,40 @@ public static class BattleScenarioLabValidationRunner
         FinishLiveEcsPlaybackValidationExit(passed, message);
     }
 
+    private static void CompleteVisualSwitchValidation(bool passed, string message)
+    {
+        EditorApplication.update -= OnVisualSwitchValidationUpdate;
+        Application.logMessageReceived -= OnVisualSwitchValidationLog;
+        SessionState.EraseBool(VisualSwitchActiveKey);
+        SessionState.EraseFloat(VisualSwitchStartedAtKey);
+        SessionState.EraseInt(VisualSwitchPhaseKey);
+        SessionState.EraseFloat(VisualSwitchPhaseStartedAtKey);
+        SessionState.EraseString(VisualSwitchFailureKey);
+        SessionState.EraseBool(VisualSwitchSeenAd001GroundProjectileKey);
+        SessionState.EraseBool(VisualSwitchSeenAd002TargetKey);
+        SessionState.EraseBool(VisualSwitchSeenAd002AirProjectileKey);
+        SessionState.EraseBool(VisualSwitchSeenAd002ImpactKey);
+        SessionState.EraseBool(VisualSwitchSeenAd011TargetKey);
+        SessionState.EraseBool(VisualSwitchSeenAd011AirProjectileKey);
+        SessionState.EraseBool(VisualSwitchSeenAd011ImpactKey);
+
+        if (EditorApplication.isPlaying)
+        {
+            SessionState.SetBool(LiveEcsPlaybackPendingExitKey, true);
+            SessionState.SetBool(LiveEcsPlaybackPendingPassedKey, passed);
+            SessionState.SetString(
+                LiveEcsPlaybackPendingMessageKey,
+                $"Next visual switch validation {(passed ? "passed" : "failed")}: {message}");
+            HookLiveEcsPlaybackPendingExit();
+            EditorApplication.ExitPlaymode();
+            return;
+        }
+
+        FinishLiveEcsPlaybackValidationExit(
+            passed,
+            $"Next visual switch validation {(passed ? "passed" : "failed")}: {message}");
+    }
+
     private static void HookLiveEcsPlaybackPendingExit()
     {
         EditorApplication.update -= OnLiveEcsPlaybackPendingExitUpdate;
@@ -1120,12 +1427,15 @@ public static class BattleScenarioLabValidationRunner
 
         SerializedObject serialized = new(config);
         SerializedProperty prefabs = serialized.FindProperty("unitSpawnPrefabs");
-        if (prefabs == null || prefabs.arraySize < 3)
-            throw new InvalidOperationException("Scenario Lab unit prefab registry must contain the AD-001 production prefabs.");
+        if (prefabs == null || prefabs.arraySize < 6)
+            throw new InvalidOperationException("Scenario Lab unit prefab registry must contain the Scenario Lab production prefabs.");
 
         RequirePrefabInRegistry(prefabs, "Unit_Veh_Missle_Launcher_Ground");
         RequirePrefabInRegistry(prefabs, "Unit_Veh_Missle_Launcher_Air");
         RequirePrefabInRegistry(prefabs, "Unit_Veh_Radar_Tank");
+        RequirePrefabInRegistry(prefabs, JetTargetSourceKey);
+        RequirePrefabInRegistry(prefabs, HelicopterTargetSourceKey);
+        RequirePrefabInRegistry(prefabs, DroneTargetSourceKey);
     }
 
     private static void RequirePrefabInRegistry(SerializedProperty prefabs, string prefabName)

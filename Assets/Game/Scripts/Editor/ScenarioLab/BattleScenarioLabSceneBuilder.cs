@@ -17,6 +17,9 @@ public static class BattleScenarioLabSceneBuilder
     private const string AirLauncherPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Missle_Launcher_Air.prefab";
     private const string GroundLauncherPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Missle_Launcher_Ground.prefab";
     private const string RadarTankPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Radar_Tank.prefab";
+    private const string JetPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Jet_01.prefab";
+    private const string HelicopterPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab";
+    private const string DronePrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Drone.prefab";
 
     [MenuItem("Warline Capture/Scenario Lab/Create Manual Scene Shell")]
     public static void CreateManualSceneShell()
@@ -105,6 +108,7 @@ public static class BattleScenarioLabSceneBuilder
         EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad008DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd008DefinitionAsset);
         EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad009DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd009DefinitionAsset);
         EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad010DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd010DefinitionAsset);
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad011DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd011DefinitionAsset);
         EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Gm001DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateGm001DefinitionAsset);
         EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Dr001DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateDr001DefinitionAsset);
     }
@@ -131,6 +135,7 @@ public static class BattleScenarioLabSceneBuilder
             BattleScenarioLabValidationRunner.Ad008DefinitionPath,
             BattleScenarioLabValidationRunner.Ad009DefinitionPath,
             BattleScenarioLabValidationRunner.Ad010DefinitionPath,
+            BattleScenarioLabValidationRunner.Ad011DefinitionPath,
             BattleScenarioLabValidationRunner.Gm001DefinitionPath,
             BattleScenarioLabValidationRunner.Dr001DefinitionPath
         };
@@ -168,10 +173,13 @@ public static class BattleScenarioLabSceneBuilder
 
         SerializedObject serialized = new(config);
         SerializedProperty prefabs = serialized.FindProperty("unitSpawnPrefabs");
-        prefabs.arraySize = 3;
+        prefabs.arraySize = 6;
         prefabs.GetArrayElementAtIndex(0).objectReferenceValue = RequirePrefab(GroundLauncherPrefabPath);
         prefabs.GetArrayElementAtIndex(1).objectReferenceValue = RequirePrefab(AirLauncherPrefabPath);
         prefabs.GetArrayElementAtIndex(2).objectReferenceValue = RequirePrefab(RadarTankPrefabPath);
+        prefabs.GetArrayElementAtIndex(3).objectReferenceValue = RequirePrefab(JetPrefabPath);
+        prefabs.GetArrayElementAtIndex(4).objectReferenceValue = RequirePrefab(HelicopterPrefabPath);
+        prefabs.GetArrayElementAtIndex(5).objectReferenceValue = RequirePrefab(DronePrefabPath);
         serialized.FindProperty("unitSelectionMarkerPrefab").objectReferenceValue = null;
         serialized.FindProperty("unitHealthBarPrefab").objectReferenceValue = null;
         serialized.ApplyModifiedPropertiesWithoutUndo();
@@ -194,7 +202,10 @@ public static class BattleScenarioLabSceneBuilder
         {
             RequirePrefab(GroundLauncherPrefabPath),
             RequirePrefab(AirLauncherPrefabPath),
-            RequirePrefab(RadarTankPrefabPath)
+            RequirePrefab(RadarTankPrefabPath),
+            RequirePrefab(JetPrefabPath),
+            RequirePrefab(HelicopterPrefabPath),
+            RequirePrefab(DronePrefabPath)
         };
 
         SerializedObject serialized = new(registry);

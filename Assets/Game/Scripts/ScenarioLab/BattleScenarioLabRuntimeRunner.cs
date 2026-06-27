@@ -28,6 +28,8 @@ public static class BattleScenarioLabRuntimeRunner
             return BattleScenarioAd009Runner.RunDefinition(definition);
         if (string.Equals(scenarioId, BattleScenarioAd010Runner.ScenarioId, StringComparison.Ordinal))
             return BattleScenarioAd010Runner.RunDefinition(definition);
+        if (string.Equals(scenarioId, BattleScenarioAd011Runner.ScenarioId, StringComparison.Ordinal))
+            return BattleScenarioAd011Runner.RunDefinition(definition);
         if (string.Equals(scenarioId, BattleScenarioGm001Runner.ScenarioId, StringComparison.Ordinal))
             return BattleScenarioGm001Runner.RunDefinition(definition);
         if (string.Equals(scenarioId, BattleScenarioDr001Runner.ScenarioId, StringComparison.Ordinal))

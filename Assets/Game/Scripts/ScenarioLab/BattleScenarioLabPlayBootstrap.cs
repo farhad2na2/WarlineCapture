@@ -41,8 +41,14 @@ public sealed class BattleScenarioLabPlayBootstrap : MonoBehaviour
                 out BattleScenarioVariant playbackVariant,
                 out BattleScenarioMetrics playbackMetrics);
             overlayView?.ShowResult(result);
-            if (BattleScenarioLabRuntimeRunner.SupportsSingleVariantPlayback(CurrentScenarioDefinition))
-                visualPlayback?.Play(playbackVariant, playbackMetrics);
+            if (visualPlayback != null && visualPlayback.CanPlay(CurrentScenarioDefinition))
+            {
+                visualPlayback.Play(CurrentScenarioDefinition, playbackVariant, playbackMetrics);
+            }
+            else
+            {
+                visualPlayback?.StopPlaybackAndClear();
+            }
         }
         catch (Exception ex)
         {
@@ -55,8 +61,6 @@ public sealed class BattleScenarioLabPlayBootstrap : MonoBehaviour
     {
         if (ScenarioCount <= 0)
             return;
-        if (SelectVisualVariant(1))
-            return;
 
         SelectScenario((selectedScenarioIndex + 1) % ScenarioCount, runScenario: true);
     }
@@ -64,8 +68,6 @@ public sealed class BattleScenarioLabPlayBootstrap : MonoBehaviour
     public void SelectPreviousScenario()
     {
         if (ScenarioCount <= 0)
-            return;
-        if (SelectVisualVariant(-1))
             return;
 
         SelectScenario((selectedScenarioIndex + ScenarioCount - 1) % ScenarioCount, runScenario: true);
@@ -85,6 +87,7 @@ public sealed class BattleScenarioLabPlayBootstrap : MonoBehaviour
             return;
 
         selectedScenarioIndex = Mathf.Clamp(index, 0, ScenarioCount - 1);
+        visualPlayback?.StopPlaybackAndClear();
         scenarioDefinition = CurrentScenarioDefinition;
         if (scenarioDropdown != null && scenarioDropdown.value != selectedScenarioIndex)
         {
@@ -98,37 +101,6 @@ public sealed class BattleScenarioLabPlayBootstrap : MonoBehaviour
             RunScenario();
     }
 
-    private bool SelectVisualVariant(int direction)
-    {
-        BattleScenarioDefinition definition = CurrentScenarioDefinition;
-        if (!BattleScenarioLabRuntimeRunner.SupportsSingleVariantPlayback(definition) ||
-            variantDropdown == null ||
-            definition == null ||
-            definition.ScenarioVariants.Length == 0)
-        {
-            return false;
-        }
-
-        int variantCount = definition.ScenarioVariants.Length;
-        int currentValue = variantDropdown.value;
-        int nextValue;
-        if (direction >= 0)
-        {
-            nextValue = currentValue < 1 ? 1 : currentValue + 1;
-            if (nextValue > variantCount)
-                nextValue = 1;
-        }
-        else
-        {
-            nextValue = currentValue <= 1 ? variantCount : currentValue - 1;
-        }
-
-        variantDropdown.SetValueWithoutNotify(nextValue);
-        variantDropdown.RefreshShownValue();
-        RunScenario();
-        return true;
-    }
-
     private BattleScenarioResult RunSelectedScenario(
         out BattleScenarioVariant playbackVariant,
         out BattleScenarioMetrics playbackMetrics)
@@ -137,26 +109,26 @@ public sealed class BattleScenarioLabPlayBootstrap : MonoBehaviour
         BattleScenarioVariant[] variants = definition != null && definition.ScenarioVariants.Length > 0
             ? definition.ScenarioVariants
             : BattleScenarioAd001Runner.CreateDefaultVariants();
+        int selectedVariantIndex = variantDropdown != null ? variantDropdown.value - 1 : -1;
 
         if (definition == null)
         {
             BattleScenarioResult defaultResult = BattleScenarioAd001Runner.RunDefault();
-            SelectPlaybackVariant(variants, defaultResult, out playbackVariant, out playbackMetrics);
+            SelectPlaybackVariant(variants, defaultResult, -1, out playbackVariant, out playbackMetrics);
             return defaultResult;
         }
 
         if (!BattleScenarioLabRuntimeRunner.SupportsSingleVariantPlayback(definition))
         {
             BattleScenarioResult result = BattleScenarioLabRuntimeRunner.RunDefinition(definition);
-            SelectPlaybackVariant(variants, result, out playbackVariant, out playbackMetrics);
+            SelectPlaybackVariant(variants, result, selectedVariantIndex, out playbackVariant, out playbackMetrics);
             return result;
         }
 
-        int selectedVariantIndex = variantDropdown != null ? variantDropdown.value - 1 : -1;
         if (selectedVariantIndex < 0 || selectedVariantIndex >= variants.Length)
         {
             BattleScenarioResult result = BattleScenarioLabRuntimeRunner.RunDefinition(definition);
-            SelectPlaybackVariant(variants, result, out playbackVariant, out playbackMetrics);
+            SelectPlaybackVariant(variants, result, -1, out playbackVariant, out playbackMetrics);
             return result;
         }
 
@@ -235,13 +207,16 @@ public sealed class BattleScenarioLabPlayBootstrap : MonoBehaviour
     private static void SelectPlaybackVariant(
         BattleScenarioVariant[] variants,
         BattleScenarioResult result,
+        int requestedVariantIndex,
         out BattleScenarioVariant playbackVariant,
         out BattleScenarioMetrics playbackMetrics)
     {
-        int preferredIndex = FindPreferredPlaybackIndex(variants);
         if (variants.Length == 0)
             variants = BattleScenarioAd001Runner.CreateDefaultVariants();
 
+        int preferredIndex = requestedVariantIndex >= 0 && requestedVariantIndex < variants.Length
+            ? requestedVariantIndex
+            : FindPreferredPlaybackIndex(variants);
         preferredIndex = Mathf.Clamp(preferredIndex, 0, variants.Length - 1);
         playbackVariant = variants[preferredIndex];
 
@@ -278,7 +253,10 @@ public sealed class BattleScenarioLabPlayBootstrap : MonoBehaviour
         variantDropdown.ClearOptions();
         BattleScenarioDefinition definition = CurrentScenarioDefinition;
         bool supportsSingleVariant = BattleScenarioLabRuntimeRunner.SupportsSingleVariantPlayback(definition);
-        string allLabel = supportsSingleVariant ? "All variants + live playback" : "Run all variants";
+        bool supportsVisualPlayback = visualPlayback != null && visualPlayback.CanPlay(definition);
+        string allLabel = supportsSingleVariant || supportsVisualPlayback
+            ? "All variants + selected live playback"
+            : "Run all variants";
         var options = new List<Dropdown.OptionData>
         {
             new(allLabel)

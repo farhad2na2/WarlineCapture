@@ -16,6 +16,9 @@ MonoBehaviour:
   - {fileID: 8579631638336695248, guid: 331c6f0f95b4c4353bc9337bdd4b9c1b, type: 3}
   - {fileID: 8579631638336695248, guid: 5e4e89101c0c44839a5c31ca449ce871, type: 3}
   - {fileID: 8579631638336695248, guid: b7087e56a58614db08d7c66c8845747b, type: 3}
+  - {fileID: 5616646512338707422, guid: bff0a8791ec564632b7bddbe3e544ac4, type: 3}
+  - {fileID: 5616646512338707422, guid: ba129d3b5a0324b82a9046e6a52c1149, type: 3}
+  - {fileID: 5616646512338707422, guid: 7ed73828b6ecd4cf8a690c35e7311a1d, type: 3}
   impostorAtlases: []
   unitSelectionMarkerPrefab: {fileID: 0}
   unitHealthBarPrefab: {fileID: 0}

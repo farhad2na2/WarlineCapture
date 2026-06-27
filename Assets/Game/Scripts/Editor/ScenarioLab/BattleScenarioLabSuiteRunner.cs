@@ -67,15 +67,16 @@ public static class BattleScenarioLabSuiteRunner
         {
             result = BattleScenarioLabRuntimeRunner.RunDefinition(definition);
         }
-        catch (NotSupportedException)
+        catch (NotSupportedException ex)
         {
+            bool noRegisteredRunner = ex.Message.StartsWith("No Scenario Lab runner is registered", StringComparison.Ordinal);
             return new BattleScenarioSuiteEntry(
                 scenarioId,
                 assetPath,
                 string.Empty,
-                true,
-                true,
-                "NoRunnerRegistered");
+                noRegisteredRunner,
+                noRegisteredRunner,
+                noRegisteredRunner ? "NoRunnerRegistered" : $"UnsupportedScenarioOperation: {ex.Message}");
         }
 
         File.WriteAllText(reportPath, BattleScenarioReportJson.ToJson(result));

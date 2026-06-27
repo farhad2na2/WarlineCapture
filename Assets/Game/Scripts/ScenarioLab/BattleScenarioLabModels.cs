@@ -17,7 +17,8 @@ public enum BattleScenarioIncomingThreatKind
 {
     GroundMissile = 0,
     Jet = 1,
-    Drone = 2
+    Drone = 2,
+    Helicopter = 3
 }
 
 public enum BattleScenarioExpectedOutcome

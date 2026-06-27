@@ -603,11 +603,13 @@ public partial struct AirMissileProjectileTrailSystem : ISystem
 }
 
 [UpdateAfter(typeof(AirMissileLauncherFireControlSystem))]
+[UpdateAfter(typeof(GroundMissileProjectileFlightSystem))]
 [BurstCompile]
 public partial struct AirMissileHomingProjectileSystem : ISystem
 {
     private EntityQuery _airTargetQuery;
     private EntityQuery _incomingMissileTargetQuery;
+    private EntityQuery _incomingMissileVisualQuery;
 
     public void OnCreate(ref SystemState state)
     {
@@ -616,6 +618,10 @@ public partial struct AirMissileHomingProjectileSystem : ISystem
             ComponentType.ReadOnly<LocalTransform>());
         _incomingMissileTargetQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<MissileInterceptionTargetComponent>(),
+            ComponentType.ReadOnly<GroundMissileProjectileComponent>(),
+            ComponentType.ReadOnly<LocalTransform>());
+        _incomingMissileVisualQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<GroundMissileFlyingRocketVisualComponent>(),
             ComponentType.ReadOnly<LocalTransform>());
         state.RequireForUpdate<AirMissileProjectileComponent>();
     }
@@ -625,50 +631,120 @@ public partial struct AirMissileHomingProjectileSystem : ISystem
     {
         float dt = SystemAPI.Time.DeltaTime;
         int targetCapacity = math.max(1, _airTargetQuery.CalculateEntityCount() + _incomingMissileTargetQuery.CalculateEntityCount());
-        var targetPositions = new NativeParallelHashMap<Entity, float3>(targetCapacity, Allocator.TempJob);
+        var targetSamples = new NativeParallelHashMap<Entity, MovingTargetSample>(targetCapacity, Allocator.TempJob);
+        var visualSamplesByLauncher = new NativeParallelHashMap<Entity, MovingTargetSample>(
+            math.max(1, _incomingMissileVisualQuery.CalculateEntityCount()),
+            Allocator.TempJob);
         var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
         var targetCollectDependency = new CollectAirTargetPositionJob
         {
-            TargetPositions = targetPositions.AsParallelWriter()
+            TargetSamples = targetSamples.AsParallelWriter()
         }.ScheduleParallel(_airTargetQuery, state.Dependency);
+        targetCollectDependency = new CollectIncomingMissileVisualPositionJob
+        {
+            DeltaTime = dt,
+            VisualSamplesByLauncher = visualSamplesByLauncher.AsParallelWriter()
+        }.ScheduleParallel(_incomingMissileVisualQuery, targetCollectDependency);
         targetCollectDependency = new CollectIncomingMissileTargetPositionJob
         {
-            TargetPositions = targetPositions.AsParallelWriter()
+            DeltaTime = dt,
+            VisualSamplesByLauncher = visualSamplesByLauncher,
+            TargetSamples = targetSamples.AsParallelWriter()
         }.ScheduleParallel(_incomingMissileTargetQuery, targetCollectDependency);
 
         state.Dependency = new HomingProjectileJob
         {
             DeltaTime = dt,
-            TargetPositions = targetPositions,
+            TargetSamples = targetSamples,
             Ecb = ecb.AsParallelWriter()
         }.ScheduleParallel(targetCollectDependency);
         state.Dependency.Complete();
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
-        targetPositions.Dispose();
+        targetSamples.Dispose();
+        visualSamplesByLauncher.Dispose();
     }
 
     [BurstCompile]
     private partial struct CollectAirTargetPositionJob : IJobEntity
     {
-        public NativeParallelHashMap<Entity, float3>.ParallelWriter TargetPositions;
+        public NativeParallelHashMap<Entity, MovingTargetSample>.ParallelWriter TargetSamples;
 
         private void Execute(Entity entity, in UnitAirMovement airMovement, in LocalTransform transform)
         {
-            TargetPositions.TryAdd(entity, transform.Position);
+            TargetSamples.TryAdd(entity, new MovingTargetSample
+            {
+                PreviousPosition = transform.Position,
+                CurrentPosition = transform.Position
+            });
+        }
+    }
+
+    [BurstCompile]
+    private partial struct CollectIncomingMissileVisualPositionJob : IJobEntity
+    {
+        public float DeltaTime;
+        public NativeParallelHashMap<Entity, MovingTargetSample>.ParallelWriter VisualSamplesByLauncher;
+
+        private void Execute(
+            in GroundMissileFlyingRocketVisualComponent flying,
+            in LocalTransform transform)
+        {
+            if (flying.Launcher == Entity.Null)
+                return;
+
+            float duration = math.max(0.01f, flying.DurationSeconds);
+            float previousElapsed = math.max(0f, flying.ElapsedSeconds - math.max(0f, DeltaTime));
+            VisualSamplesByLauncher.TryAdd(flying.Launcher, new MovingTargetSample
+            {
+                PreviousPosition = EvaluateGroundMissileVisualPosition(flying, previousElapsed / duration),
+                CurrentPosition = transform.Position
+            });
+        }
+
+        private static float3 EvaluateGroundMissileVisualPosition(GroundMissileFlyingRocketVisualComponent flying, float t)
+        {
+            float3 position = math.lerp(flying.StartPosition, flying.TargetPosition, math.saturate(t));
+            position.y += math.sin(math.saturate(t) * math.PI) * math.max(0f, flying.ArcHeight);
+            return position;
         }
     }
 
     [BurstCompile]
     private partial struct CollectIncomingMissileTargetPositionJob : IJobEntity
     {
-        public NativeParallelHashMap<Entity, float3>.ParallelWriter TargetPositions;
+        public float DeltaTime;
+        [ReadOnly] public NativeParallelHashMap<Entity, MovingTargetSample> VisualSamplesByLauncher;
+        public NativeParallelHashMap<Entity, MovingTargetSample>.ParallelWriter TargetSamples;
 
-        private void Execute(Entity entity, in MissileInterceptionTargetComponent interceptionTarget, in LocalTransform transform)
+        private void Execute(
+            Entity entity,
+            in MissileInterceptionTargetComponent interceptionTarget,
+            in GroundMissileProjectileComponent projectile,
+            in LocalTransform transform)
         {
-            TargetPositions.TryAdd(entity, transform.Position);
+            if (VisualSamplesByLauncher.TryGetValue(projectile.Source, out MovingTargetSample visualSample))
+            {
+                TargetSamples.TryAdd(entity, visualSample);
+                return;
+            }
+
+            float duration = math.max(0.01f, projectile.DurationSeconds);
+            float previousElapsed = math.max(0f, projectile.ElapsedSeconds - math.max(0f, DeltaTime));
+            TargetSamples.TryAdd(entity, new MovingTargetSample
+            {
+                PreviousPosition = EvaluateGroundMissilePosition(projectile, previousElapsed / duration),
+                CurrentPosition = transform.Position
+            });
+        }
+
+        private static float3 EvaluateGroundMissilePosition(GroundMissileProjectileComponent projectile, float t)
+        {
+            float3 position = math.lerp(projectile.StartPosition, projectile.TargetPosition, math.saturate(t));
+            position.y += math.sin(math.saturate(t) * math.PI) * math.max(0f, projectile.ArcHeight);
+            return position;
         }
     }
 
@@ -676,7 +752,7 @@ public partial struct AirMissileHomingProjectileSystem : ISystem
     private partial struct HomingProjectileJob : IJobEntity
     {
         public float DeltaTime;
-        [ReadOnly] public NativeParallelHashMap<Entity, float3> TargetPositions;
+        [ReadOnly] public NativeParallelHashMap<Entity, MovingTargetSample> TargetSamples;
         public EntityCommandBuffer.ParallelWriter Ecb;
 
         private void Execute(
@@ -688,12 +764,13 @@ public partial struct AirMissileHomingProjectileSystem : ISystem
             projectile.ElapsedSeconds += DeltaTime;
 
             if (projectile.Target == entity ||
-                !TargetPositions.TryGetValue(projectile.Target, out float3 targetPosition))
+                !TargetSamples.TryGetValue(projectile.Target, out MovingTargetSample targetSample))
             {
-                QueueImpact(Ecb, entityIndexInQuery, projectile, transform.Position, entity);
+                QueueImpact(Ecb, entityIndexInQuery, projectile, transform.Position, float.PositiveInfinity, entity);
                 return;
             }
 
+            float3 targetPosition = targetSample.CurrentPosition;
             float3 desiredDirection = math.normalizesafe(targetPosition - transform.Position, math.normalizesafe(projectile.Velocity, new float3(0f, 0f, 1f)));
             float currentSpeed = math.length(projectile.Velocity);
             currentSpeed = math.max(0.01f, currentSpeed + projectile.Acceleration * DeltaTime);
@@ -703,16 +780,95 @@ public partial struct AirMissileHomingProjectileSystem : ISystem
             float3 newDirection = RotateTowards(currentDirection, desiredDirection, maxRadians);
             projectile.Velocity = newDirection * currentSpeed;
 
-            float3 newPosition = transform.Position + projectile.Velocity * DeltaTime;
+            float3 previousPosition = transform.Position;
+            float3 newPosition = previousPosition + projectile.Velocity * DeltaTime;
             transform.Position = newPosition;
             transform.Rotation = quaternion.LookRotationSafe(newDirection, math.up());
 
-            float distance = math.distance(newPosition, targetPosition);
-            if (distance <= math.max(0.1f, projectile.ProximityFuseRadius) ||
-                projectile.ElapsedSeconds >= projectile.LifetimeSeconds)
+            float proximityFuseRadius = math.max(0.1f, projectile.ProximityFuseRadius);
+            SegmentClosestPoints(
+                previousPosition,
+                newPosition,
+                targetSample.PreviousPosition,
+                targetSample.CurrentPosition,
+                out float3 closestProjectilePoint,
+                out float3 closestTargetPoint,
+                out float closestApproachDistance);
+            if (closestApproachDistance <= proximityFuseRadius)
             {
-                QueueImpact(Ecb, entityIndexInQuery, projectile, newPosition, entity);
+                float3 impactPosition = projectile.TargetKind == (byte)AirMissileTargetKind.IncomingGroundMissile
+                    ? closestTargetPoint
+                    : closestProjectilePoint;
+                transform.Position = impactPosition;
+                QueueImpact(Ecb, entityIndexInQuery, projectile, impactPosition, closestApproachDistance, entity);
+                return;
             }
+
+            if (projectile.ElapsedSeconds >= projectile.LifetimeSeconds)
+            {
+                QueueMiss(Ecb, entityIndexInQuery, projectile, newPosition, entity);
+            }
+        }
+
+        private static void SegmentClosestPoints(
+            float3 p1,
+            float3 q1,
+            float3 p2,
+            float3 q2,
+            out float3 closest1,
+            out float3 closest2,
+            out float distance)
+        {
+            float3 d1 = q1 - p1;
+            float3 d2 = q2 - p2;
+            float3 r = p1 - p2;
+            float a = math.lengthsq(d1);
+            float e = math.lengthsq(d2);
+            float f = math.dot(d2, r);
+            float s;
+            float t;
+
+            if (a <= 1e-6f && e <= 1e-6f)
+            {
+                s = 0f;
+                t = 0f;
+            }
+            else if (a <= 1e-6f)
+            {
+                s = 0f;
+                t = math.saturate(f / e);
+            }
+            else
+            {
+                float c = math.dot(d1, r);
+                if (e <= 1e-6f)
+                {
+                    t = 0f;
+                    s = math.saturate(-c / a);
+                }
+                else
+                {
+                    float b = math.dot(d1, d2);
+                    float denom = a * e - b * b;
+                    s = denom != 0f ? math.saturate((b * f - c * e) / denom) : 0f;
+                    t = (b * s + f) / e;
+
+                    if (t < 0f)
+                    {
+                        t = 0f;
+                        s = math.saturate(-c / a);
+                    }
+                    else if (t > 1f)
+                    {
+                        t = 1f;
+                        s = math.saturate((b - c) / a);
+                    }
+                }
+            }
+
+            closest1 = p1 + d1 * s;
+            closest2 = p2 + d2 * t;
+            distance = math.distance(closest1, closest2);
         }
 
         private static float3 RotateTowards(float3 current, float3 target, float maxRadians)
@@ -731,6 +887,7 @@ public partial struct AirMissileHomingProjectileSystem : ISystem
             int sortKey,
             AirMissileProjectileComponent projectile,
             float3 position,
+            float visualSeparation,
             Entity projectileEntity)
         {
             ecb.AddComponent(sortKey, projectileEntity, new AirMissileImpactRequestComponent
@@ -740,10 +897,37 @@ public partial struct AirMissileHomingProjectileSystem : ISystem
                 TargetKind = projectile.TargetKind,
                 FactionId = projectile.FactionId,
                 Position = position,
+                VisualSeparation = visualSeparation,
                 Damage = projectile.Damage
             });
             ecb.RemoveComponent<AirMissileProjectileComponent>(sortKey, projectileEntity);
         }
+
+        private static void QueueMiss(
+            EntityCommandBuffer.ParallelWriter ecb,
+            int sortKey,
+            AirMissileProjectileComponent projectile,
+            float3 position,
+            Entity projectileEntity)
+        {
+            ecb.AddComponent(sortKey, projectileEntity, new AirMissileImpactRequestComponent
+            {
+                Source = projectile.Source,
+                Target = Entity.Null,
+                TargetKind = (byte)AirMissileTargetKind.None,
+                FactionId = projectile.FactionId,
+                Position = position,
+                VisualSeparation = float.PositiveInfinity,
+                Damage = 0
+            });
+            ecb.RemoveComponent<AirMissileProjectileComponent>(sortKey, projectileEntity);
+        }
+    }
+
+    private struct MovingTargetSample
+    {
+        public float3 PreviousPosition;
+        public float3 CurrentPosition;
     }
 }
 
@@ -767,7 +951,21 @@ public partial struct AirMissileImpactSystem : ISystem
             if (request.TargetKind == (byte)AirMissileTargetKind.IncomingGroundMissile)
             {
                 if (em.Exists(request.Target) && em.HasComponent<GroundMissileProjectileComponent>(request.Target))
+                {
+                    GroundMissileProjectileComponent interceptedProjectile =
+                        em.GetComponentData<GroundMissileProjectileComponent>(request.Target);
+                    if (!em.HasComponent<MissileInterceptedComponent>(entity))
+                    {
+                        ecb.AddComponent(entity, new MissileInterceptedComponent
+                        {
+                            Interceptor = entity,
+                            VisualSeparation = math.max(0f, request.VisualSeparation)
+                        });
+                    }
+
+                    ClearInterceptedGroundRocketVisual(em, ecb, interceptedProjectile.Source);
                     ecb.DestroyEntity(request.Target);
+                }
             }
             else if (em.Exists(request.Target) && em.HasComponent<UnitHealth>(request.Target))
             {
@@ -807,6 +1005,39 @@ public partial struct AirMissileImpactSystem : ISystem
             ecb.RemoveComponent<AirMissileProjectileTrailComponent>(entity);
         ecb.RemoveComponent<AirMissileFlyingVisualComponent>(entity);
         return true;
+    }
+
+    private static void ClearInterceptedGroundRocketVisual(EntityManager em, EntityCommandBuffer ecb, Entity launcher)
+    {
+        if (launcher == Entity.Null)
+            return;
+
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<GroundMissileFlyingRocketVisualComponent>(),
+            ComponentType.ReadWrite<LocalTransform>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!em.Exists(entity) || !em.HasComponent<GroundMissileFlyingRocketVisualComponent>(entity))
+                continue;
+
+            GroundMissileFlyingRocketVisualComponent visual =
+                em.GetComponentData<GroundMissileFlyingRocketVisualComponent>(entity);
+            if (visual.Launcher != launcher)
+                continue;
+
+            if (visual.OriginalParent != Entity.Null && !em.HasComponent<Parent>(entity))
+                ecb.AddComponent(entity, new Parent { Value = visual.OriginalParent });
+
+            ecb.SetComponent(
+                entity,
+                LocalTransform.FromPositionRotationScale(
+                    visual.InitialLocalPosition,
+                    visual.InitialLocalRotation,
+                    0f));
+            ecb.RemoveComponent<GroundMissileFlyingRocketVisualComponent>(entity);
+        }
     }
 
     private static void EnqueueImpactVfx(

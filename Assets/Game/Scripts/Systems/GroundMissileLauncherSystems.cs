@@ -102,7 +102,13 @@ public partial struct GroundMissileLauncherFireSystem : ISystem
         ComponentLookup<LocalTransform> localTransformLookup,
         ComponentLookup<LocalToWorld> localToWorldLookup)
     {
-        float3 sourcePosition = ResolveLaunchPosition(em, launcherEntity, launcherTransform.Position, localTransformLookup, localToWorldLookup);
+        float3 sourcePosition = ResolveLaunchPosition(
+            em,
+            launcherEntity,
+            launcherState.SelectedRocketSlot,
+            launcherTransform.Position,
+            localTransformLookup,
+            localToWorldLookup);
         float3 targetPosition = launcherState.TargetWorldPosition;
         float distance = math.distance(new float2(sourcePosition.x, sourcePosition.z), new float2(targetPosition.x, targetPosition.z));
         float duration = math.max(MinimumProjectileDurationSeconds, distance / math.max(0.01f, launcher.RocketSpeed));
@@ -229,10 +235,28 @@ public partial struct GroundMissileLauncherFireSystem : ISystem
     private static float3 ResolveLaunchPosition(
         EntityManager em,
         Entity launcherEntity,
+        int selectedRocketSlot,
         float3 fallback,
         ComponentLookup<LocalTransform> localTransformLookup,
         ComponentLookup<LocalToWorld> localToWorldLookup)
     {
+        if (selectedRocketSlot >= 0 && em.HasBuffer<GroundMissileLauncherRocketVisualComponent>(launcherEntity))
+        {
+            DynamicBuffer<GroundMissileLauncherRocketVisualComponent> rockets =
+                em.GetBuffer<GroundMissileLauncherRocketVisualComponent>(launcherEntity);
+            for (int i = 0; i < rockets.Length; i++)
+            {
+                GroundMissileLauncherRocketVisualComponent rocket = rockets[i];
+                if (rocket.SlotIndex != selectedRocketSlot || rocket.Rocket == Entity.Null)
+                    continue;
+
+                if (localToWorldLookup.HasComponent(rocket.Rocket))
+                    return localToWorldLookup[rocket.Rocket].Position;
+                if (localTransformLookup.HasComponent(rocket.Rocket))
+                    return localTransformLookup[rocket.Rocket].Position;
+            }
+        }
+
         if (!em.HasComponent<GroundMissileLauncherVisualReferenceComponent>(launcherEntity))
             return fallback;
 
@@ -477,24 +501,10 @@ public partial struct GroundMissileFlyingRocketVisualSystem : ISystem
     private static float3 EvaluateRocketArc(GroundMissileFlyingRocketVisualComponent flying, float t)
     {
         float3 p0 = flying.StartPosition;
-        float3 p3 = flying.TargetPosition;
-        float3 horizontalDelta = p3 - p0;
-        horizontalDelta.y = 0f;
-        float3 horizontalDirection = math.normalizesafe(horizontalDelta, new float3(0f, 0f, 1f));
-        float distance = math.distance(new float2(p0.x, p0.z), new float2(p3.x, p3.z));
-        float launchControlDistance = math.clamp(distance * 0.35f, 8f, 90f);
-        float apexHeight = math.max(
-            math.max(0f, flying.ArcHeight),
-            math.clamp(distance * 0.25f, 8f, 80f));
-        float3 launchDirection = math.normalizesafe(flying.LaunchDirection, math.up());
-        float3 p1 = p0 + launchDirection * launchControlDistance;
-        float3 p2 = p0 + horizontalDirection * math.max(launchControlDistance, distance * 0.65f) + math.up() * apexHeight;
-
-        float oneMinusT = 1f - t;
-        return oneMinusT * oneMinusT * oneMinusT * p0 +
-               3f * oneMinusT * oneMinusT * t * p1 +
-               3f * oneMinusT * t * t * p2 +
-               t * t * t * p3;
+        float3 p1 = flying.TargetPosition;
+        float3 position = math.lerp(p0, p1, math.saturate(t));
+        position.y += math.sin(math.saturate(t) * math.PI) * math.max(0f, flying.ArcHeight);
+        return position;
     }
 }
 

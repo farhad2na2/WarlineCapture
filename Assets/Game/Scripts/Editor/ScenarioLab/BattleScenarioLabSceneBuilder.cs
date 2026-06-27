@@ -12,20 +12,30 @@ using UnityEngine.UI;
 public static class BattleScenarioLabSceneBuilder
 {
     public const string ScenePath = "Assets/Game/Scenes/ScenarioLab/BattleScenarioLab.unity";
+    public const string BakedPrefabSubScenePath = "Assets/Game/Scenes/ScenarioLab/BattleScenarioLabBakedPrefabs.unity";
+    public const string PrefabRegistryConfigPath = "Assets/Game/Configs/ScenarioLab/BattleScenarioLab_UnitPrefabRegistry.asset";
+    private const string AirLauncherPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Missle_Launcher_Air.prefab";
+    private const string GroundLauncherPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Missle_Launcher_Ground.prefab";
+    private const string RadarTankPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Radar_Tank.prefab";
 
     [MenuItem("Warline Capture/Scenario Lab/Create Manual Scene Shell")]
     public static void CreateManualSceneShell()
     {
         Directory.CreateDirectory(Path.GetDirectoryName(ScenePath) ?? "Assets/Game/Scenes/ScenarioLab");
 
-        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        scene.name = "BattleScenarioLab";
-
         BattleScenarioDefinition definition =
             AssetDatabase.LoadAssetAtPath<BattleScenarioDefinition>(BattleScenarioLabValidationRunner.Ad001DefinitionPath);
         if (definition == null)
             BattleScenarioLabValidationRunner.CreateOrUpdateAd001DefinitionAsset();
         definition = AssetDatabase.LoadAssetAtPath<BattleScenarioDefinition>(BattleScenarioLabValidationRunner.Ad001DefinitionPath);
+        CreateOrUpdatePrefabRegistryConfig();
+        CreateOrUpdateBakedPrefabSubScene();
+
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        scene.name = "BattleScenarioLab";
+        definition = AssetDatabase.LoadAssetAtPath<BattleScenarioDefinition>(BattleScenarioLabValidationRunner.Ad001DefinitionPath);
+        if (definition == null)
+            throw new InvalidOperationException($"Missing AD-001 scenario definition: {BattleScenarioLabValidationRunner.Ad001DefinitionPath}");
 
         GameObject root = new("BattleScenarioLabRoot");
         BattleScenarioLabSceneReferences references = root.AddComponent<BattleScenarioLabSceneReferences>();
@@ -34,9 +44,10 @@ public static class BattleScenarioLabSceneBuilder
 
         Camera camera = CreateCamera();
         GameObject ground = CreateGround();
-        ScenarioLabVisuals visuals = CreateVisuals(root.transform);
+        ScenarioLabVisuals visuals = CreateSceneMarkers(root.transform);
 
         ground.transform.SetParent(root.transform);
+        CreateSubSceneReference(root.transform);
         BattleScenarioLabOverlayView overlay = CreateOverlay(root.transform, definition, bootstrap);
         CreateEventSystem();
 
@@ -51,17 +62,11 @@ public static class BattleScenarioLabSceneBuilder
 
         SerializedObject visualSerialized = new(visualPlayback);
         visualSerialized.FindProperty("scenarioCamera").objectReferenceValue = camera;
-        visualSerialized.FindProperty("groundLauncherVisual").objectReferenceValue = visuals.GroundLauncherVisual;
-        visualSerialized.FindProperty("airLauncherVisual").objectReferenceValue = visuals.AirLauncherVisual;
-        visualSerialized.FindProperty("radarVisual").objectReferenceValue = visuals.RadarVisual;
+        visualSerialized.FindProperty("groundLauncherRoot").objectReferenceValue = visuals.GroundLauncherVisual;
+        visualSerialized.FindProperty("airLauncherRoot").objectReferenceValue = visuals.AirLauncherVisual;
+        visualSerialized.FindProperty("radarRoot").objectReferenceValue = visuals.RadarVisual;
         visualSerialized.FindProperty("defendedTargetVisual").objectReferenceValue = visuals.DefendedTargetVisual;
-        visualSerialized.FindProperty("incomingMissileVisual").objectReferenceValue = visuals.IncomingMissileVisual;
-        visualSerialized.FindProperty("interceptorVisual").objectReferenceValue = visuals.InterceptorVisual;
-        visualSerialized.FindProperty("incomingTrail").objectReferenceValue = visuals.IncomingTrail;
-        visualSerialized.FindProperty("interceptorTrail").objectReferenceValue = visuals.InterceptorTrail;
-        visualSerialized.FindProperty("groundLaunchFlash").objectReferenceValue = visuals.GroundLaunchFlash;
-        visualSerialized.FindProperty("airLaunchFlash").objectReferenceValue = visuals.AirLaunchFlash;
-        visualSerialized.FindProperty("interceptExplosion").objectReferenceValue = visuals.InterceptExplosion;
+        visualSerialized.FindProperty("entityWaitTimeoutSeconds").floatValue = 30f;
         visualSerialized.ApplyModifiedPropertiesWithoutUndo();
 
         SerializedObject bootstrapSerialized = new(bootstrap);
@@ -74,6 +79,83 @@ public static class BattleScenarioLabSceneBuilder
         EditorSceneManager.SaveScene(scene, ScenePath);
         AssetDatabase.Refresh();
         Debug.Log($"[BattleScenarioLab] Manual scene shell saved: {ScenePath}");
+    }
+
+    private static UnitPrefabRegistryAuthoringConfig CreateOrUpdatePrefabRegistryConfig()
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(PrefabRegistryConfigPath) ?? "Assets/Game/Configs/ScenarioLab");
+
+        UnitPrefabRegistryAuthoringConfig config =
+            AssetDatabase.LoadAssetAtPath<UnitPrefabRegistryAuthoringConfig>(PrefabRegistryConfigPath);
+        if (config == null)
+        {
+            config = ScriptableObject.CreateInstance<UnitPrefabRegistryAuthoringConfig>();
+            AssetDatabase.CreateAsset(config, PrefabRegistryConfigPath);
+        }
+
+        SerializedObject serialized = new(config);
+        SerializedProperty prefabs = serialized.FindProperty("unitSpawnPrefabs");
+        prefabs.arraySize = 3;
+        prefabs.GetArrayElementAtIndex(0).objectReferenceValue = RequirePrefab(GroundLauncherPrefabPath);
+        prefabs.GetArrayElementAtIndex(1).objectReferenceValue = RequirePrefab(AirLauncherPrefabPath);
+        prefabs.GetArrayElementAtIndex(2).objectReferenceValue = RequirePrefab(RadarTankPrefabPath);
+        serialized.FindProperty("unitSelectionMarkerPrefab").objectReferenceValue = null;
+        serialized.FindProperty("unitHealthBarPrefab").objectReferenceValue = null;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(config);
+        AssetDatabase.SaveAssets();
+        return config;
+    }
+
+    private static void CreateOrUpdateBakedPrefabSubScene()
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(BakedPrefabSubScenePath) ?? "Assets/Game/Scenes/ScenarioLab");
+
+        Scene subScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        subScene.name = "BattleScenarioLabBakedPrefabs";
+
+        GameObject registryObject = new("ScenarioLabUnitPrefabRegistry");
+        BattleScenarioLabUnitPrefabRegistryAuthoring registry =
+            registryObject.AddComponent<BattleScenarioLabUnitPrefabRegistryAuthoring>();
+        GameObject[] scenarioPrefabs =
+        {
+            RequirePrefab(GroundLauncherPrefabPath),
+            RequirePrefab(AirLauncherPrefabPath),
+            RequirePrefab(RadarTankPrefabPath)
+        };
+
+        SerializedObject serialized = new(registry);
+        SerializedProperty unitSpawnPrefabs = serialized.FindProperty("unitSpawnPrefabs");
+        unitSpawnPrefabs.arraySize = scenarioPrefabs.Length;
+        for (int i = 0; i < scenarioPrefabs.Length; i++)
+            unitSpawnPrefabs.GetArrayElementAtIndex(i).objectReferenceValue = scenarioPrefabs[i];
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(registry);
+        EditorUtility.SetDirty(registryObject);
+
+        EditorSceneManager.SaveScene(subScene, BakedPrefabSubScenePath);
+        AssetDatabase.ImportAsset(BakedPrefabSubScenePath, ImportAssetOptions.ForceUpdate);
+    }
+
+    private static void CreateSubSceneReference(Transform parent)
+    {
+        UnityEngine.Object subSceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(BakedPrefabSubScenePath);
+        if (subSceneAsset == null)
+            throw new InvalidOperationException($"Missing Scenario Lab baked prefab subscene: {BakedPrefabSubScenePath}");
+
+        Type subSceneType = Type.GetType("Unity.Scenes.SubScene, Unity.Scenes");
+        if (subSceneType == null)
+            throw new InvalidOperationException("Unity.Scenes.SubScene type is not available.");
+
+        GameObject subSceneObject = new("BattleScenarioLabBakedPrefabsSubScene");
+        subSceneObject.transform.SetParent(parent);
+        Component subScene = subSceneObject.AddComponent(subSceneType);
+        SerializedObject serialized = new(subScene);
+        serialized.FindProperty("_SceneAsset").objectReferenceValue = subSceneAsset;
+        SerializedProperty autoLoad = serialized.FindProperty("AutoLoadScene");
+        if (autoLoad != null)
+            autoLoad.boolValue = true;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static Camera CreateCamera()
@@ -119,93 +201,41 @@ public static class BattleScenarioLabSceneBuilder
         public Transform AirLauncherVisual;
         public Transform RadarVisual;
         public Transform DefendedTargetVisual;
-        public Transform IncomingMissileVisual;
-        public Transform InterceptorVisual;
-        public LineRenderer IncomingTrail;
-        public LineRenderer InterceptorTrail;
-        public ParticleSystem GroundLaunchFlash;
-        public ParticleSystem AirLaunchFlash;
-        public ParticleSystem InterceptExplosion;
     }
 
-    private static ScenarioLabVisuals CreateVisuals(Transform parent)
+    private static ScenarioLabVisuals CreateSceneMarkers(Transform parent)
     {
-        GameObject visualRoot = new("AD001VisualPlayback");
+        GameObject visualRoot = new("AD001ScenarioMarkers");
         visualRoot.transform.SetParent(parent);
 
         var visuals = new ScenarioLabVisuals
         {
-            GroundLauncherVisual = CreateLauncherVisual(
-                "GroundMissileLauncherVisual",
-                new Vector3(210f, 1.2f, 0f),
-                new Color(0.38f, 0.18f, 0.12f),
-                new Color(0.95f, 0.28f, 0.12f),
-                visualRoot.transform),
-            AirLauncherVisual = CreateLauncherVisual(
-                "AirMissileLauncherVisual",
-                new Vector3(0f, 1.2f, 0f),
-                new Color(0.10f, 0.35f, 0.42f),
-                new Color(0.25f, 0.96f, 1f),
-                visualRoot.transform),
-            RadarVisual = CreateRadarVisual(
-                "RadarSupportVisual",
-                new Vector3(8f, 1.1f, -12f),
-                visualRoot.transform),
+            GroundLauncherVisual = CreateMarker("GroundMissileLauncherSpawnMarker", new Vector3(210f, 0f, 0f), visualRoot.transform),
+            AirLauncherVisual = CreateMarker("AirMissileLauncherSpawnMarker", Vector3.zero, visualRoot.transform),
+            RadarVisual = CreateMarker("RadarSupportSpawnMarker", new Vector3(8f, 0f, -12f), visualRoot.transform),
             DefendedTargetVisual = CreateTargetVisual(
                 "DefendedTargetVisual",
                 new Vector3(-40f, 1.2f, 0f),
-                visualRoot.transform),
-            IncomingMissileVisual = CreateMissileVisual(
-                "IncomingGroundMissileVisual",
-                new Color(1f, 0.28f, 0.10f),
-                visualRoot.transform),
-            InterceptorVisual = CreateMissileVisual(
-                "AirDefenseInterceptorVisual",
-                new Color(0.22f, 0.95f, 1f),
                 visualRoot.transform)
         };
 
-        visuals.IncomingTrail = CreateTrail("IncomingGroundMissileTrail", new Color(1f, 0.36f, 0.08f, 0.92f), 0.65f, visualRoot.transform);
-        visuals.InterceptorTrail = CreateTrail("AirDefenseInterceptorTrail", new Color(0.25f, 0.92f, 1f, 0.92f), 0.52f, visualRoot.transform);
-        visuals.GroundLaunchFlash = CreateBurst("GroundLaunchFlash", visuals.GroundLauncherVisual, new Color(1f, 0.38f, 0.05f));
-        visuals.AirLaunchFlash = CreateBurst("AirLaunchFlash", visuals.AirLauncherVisual, new Color(0.35f, 0.95f, 1f));
-        visuals.InterceptExplosion = CreateBurst("InterceptExplosion", null, new Color(1f, 0.72f, 0.15f), 5f, 44);
-
-        visuals.IncomingMissileVisual.position = new Vector3(130f, 8f, 0f);
-        visuals.InterceptorVisual.position = new Vector3(0f, 3.7f, 0f);
-        visuals.IncomingTrail.enabled = false;
-        visuals.InterceptorTrail.enabled = false;
         return visuals;
     }
 
-    private static Transform CreateLauncherVisual(
-        string name,
-        Vector3 position,
-        Color bodyColor,
-        Color accentColor,
-        Transform parent)
+    private static Transform CreateMarker(string name, Vector3 position, Transform parent)
     {
-        GameObject root = new(name);
-        root.transform.SetParent(parent);
-        root.transform.position = position;
-
-        CreatePrimitiveChild("Body", PrimitiveType.Cube, root.transform, new Vector3(0f, 0f, 0f), new Vector3(7f, 1.4f, 3.2f), bodyColor);
-        CreatePrimitiveChild("Turret", PrimitiveType.Cube, root.transform, new Vector3(0.4f, 1.2f, 0f), new Vector3(4.2f, 0.8f, 2.2f), bodyColor * 1.18f);
-        Transform tube = CreatePrimitiveChild("LaunchTube", PrimitiveType.Cylinder, root.transform, new Vector3(2.6f, 2.1f, 0f), new Vector3(0.65f, 3.8f, 0.65f), accentColor);
-        tube.rotation = Quaternion.Euler(0f, 0f, 82f);
-        return root.transform;
+        GameObject marker = new(name);
+        marker.transform.SetParent(parent);
+        marker.transform.position = position;
+        return marker.transform;
     }
 
-    private static Transform CreateRadarVisual(string name, Vector3 position, Transform parent)
+    private static GameObject RequirePrefab(string path)
     {
-        GameObject root = new(name);
-        root.transform.SetParent(parent);
-        root.transform.position = position;
-        CreatePrimitiveChild("Base", PrimitiveType.Cylinder, root.transform, Vector3.zero, new Vector3(2.2f, 0.7f, 2.2f), new Color(0.12f, 0.42f, 0.2f));
-        CreatePrimitiveChild("Mast", PrimitiveType.Cylinder, root.transform, new Vector3(0f, 2.1f, 0f), new Vector3(0.35f, 2.6f, 0.35f), new Color(0.18f, 0.65f, 0.34f));
-        Transform dish = CreatePrimitiveChild("Dish", PrimitiveType.Sphere, root.transform, new Vector3(0f, 3.7f, 0f), new Vector3(3.2f, 1.2f, 0.28f), new Color(0.22f, 1f, 0.48f));
-        dish.rotation = Quaternion.Euler(0f, 0f, -18f);
-        return root.transform;
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        if (prefab == null)
+            throw new InvalidOperationException($"Missing production prefab: {path}");
+        return prefab;
     }
 
     private static Transform CreateTargetVisual(string name, Vector3 position, Transform parent)
@@ -215,18 +245,6 @@ public static class BattleScenarioLabSceneBuilder
         root.transform.position = position;
         CreatePrimitiveChild("Core", PrimitiveType.Cube, root.transform, Vector3.zero, new Vector3(5.2f, 2.4f, 5.2f), new Color(0.82f, 0.72f, 0.22f));
         CreatePrimitiveChild("Beacon", PrimitiveType.Sphere, root.transform, new Vector3(0f, 2.4f, 0f), new Vector3(1.6f, 1.6f, 1.6f), new Color(1f, 0.92f, 0.28f));
-        return root.transform;
-    }
-
-    private static Transform CreateMissileVisual(string name, Color color, Transform parent)
-    {
-        GameObject root = new(name);
-        root.transform.SetParent(parent);
-        root.transform.localScale = Vector3.one;
-        Transform body = CreatePrimitiveChild("Body", PrimitiveType.Capsule, root.transform, Vector3.zero, new Vector3(0.8f, 2.8f, 0.8f), color);
-        body.localRotation = Quaternion.Euler(90f, 0f, 0f);
-        Transform nose = CreatePrimitiveChild("Nose", PrimitiveType.Sphere, root.transform, new Vector3(0f, 0f, 1.55f), new Vector3(0.75f, 0.75f, 0.75f), color * 1.25f);
-        nose.localScale = new Vector3(0.75f, 0.55f, 0.75f);
         return root.transform;
     }
 
@@ -247,72 +265,6 @@ public static class BattleScenarioLabSceneBuilder
         if (renderer != null)
             renderer.sharedMaterial = CreatePreviewMaterial(parent.name + "_" + name + "_Preview", color);
         return child.transform;
-    }
-
-    private static LineRenderer CreateTrail(string name, Color color, float width, Transform parent)
-    {
-        GameObject trailObject = new(name, typeof(LineRenderer));
-        trailObject.transform.SetParent(parent);
-        LineRenderer line = trailObject.GetComponent<LineRenderer>();
-        line.positionCount = 2;
-        line.startWidth = width;
-        line.endWidth = width * 0.22f;
-        line.numCapVertices = 4;
-        line.material = CreatePreviewMaterial(name + "_Preview", color);
-        line.startColor = color;
-        line.endColor = new Color(color.r, color.g, color.b, 0.05f);
-        return line;
-    }
-
-    private static ParticleSystem CreateBurst(
-        string name,
-        Transform parent,
-        Color color,
-        float size = 2.6f,
-        short count = 26)
-    {
-        GameObject burstObject = new(name, typeof(ParticleSystem));
-        if (parent != null)
-        {
-            burstObject.transform.SetParent(parent);
-            burstObject.transform.localPosition = new Vector3(2.8f, 2.1f, 0f);
-        }
-
-        ParticleSystem particles = burstObject.GetComponent<ParticleSystem>();
-        ParticleSystem.MainModule main = particles.main;
-        main.playOnAwake = false;
-        main.loop = false;
-        main.duration = 0.3f;
-        main.startLifetime = 0.55f;
-        main.startSpeed = 9f;
-        main.startSize = size;
-        main.startColor = color;
-
-        ParticleSystem.EmissionModule emission = particles.emission;
-        emission.rateOverTime = 0f;
-        emission.SetBursts(new[] { new ParticleSystem.Burst(0f, count) });
-
-        ParticleSystem.ShapeModule shape = particles.shape;
-        shape.shapeType = ParticleSystemShapeType.Sphere;
-        shape.radius = 0.35f;
-
-        ParticleSystemRenderer renderer = burstObject.GetComponent<ParticleSystemRenderer>();
-        if (renderer != null)
-            renderer.sharedMaterial = CreatePreviewMaterial(name + "_Preview", color);
-
-        return particles;
-    }
-
-    private static GameObject CreateMarker(string name, Vector3 position, Color color, PrimitiveType primitive)
-    {
-        GameObject marker = GameObject.CreatePrimitive(primitive);
-        marker.name = name;
-        marker.transform.position = position;
-        marker.transform.localScale = Vector3.one * 2.5f;
-        Renderer renderer = marker.GetComponent<Renderer>();
-        if (renderer != null)
-            renderer.sharedMaterial = CreatePreviewMaterial(name + "_Preview", color);
-        return marker;
     }
 
     private static Material CreatePreviewMaterial(string name, Color color)

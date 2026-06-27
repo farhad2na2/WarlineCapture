@@ -140,4 +140,5 @@ public struct MissileInterceptionTargetComponent : IComponentData
 public struct MissileInterceptedComponent : IComponentData
 {
     public Entity Interceptor;
+    public float VisualSeparation;
 }

@@ -175,5 +175,6 @@ public struct AirMissileImpactRequestComponent : IComponentData
     public byte TargetKind;
     public byte FactionId;
     public float3 Position;
+    public float VisualSeparation;
     public int Damage;
 }

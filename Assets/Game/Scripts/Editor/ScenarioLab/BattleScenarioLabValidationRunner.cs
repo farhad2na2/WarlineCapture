@@ -1,11 +1,15 @@
 #if UNITY_EDITOR
 using System;
 using System.IO;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using Unity.Transforms;
 using UnityEngine.UI;
 
 public static class BattleScenarioLabValidationRunner
@@ -23,6 +27,40 @@ public static class BattleScenarioLabValidationRunner
     public const string Ad010DefinitionPath = "Assets/Game/Configs/ScenarioLab/AD010_AirMissileLauncher_InterceptionGeometrySweep.asset";
     public const string Gm001DefinitionPath = "Assets/Game/Configs/ScenarioLab/GM001_GroundMissileLauncher_FiresVisibleRocketAndDamagesTarget.asset";
     public const string Dr001DefinitionPath = "Assets/Game/Configs/ScenarioLab/DR001_DroneReconDetectionAndThreatWarning.asset";
+    private const string LiveEcsPlaybackActiveKey = "BattleScenarioLab.LiveEcsPlayback.Active";
+    private const string LiveEcsPlaybackStartedAtKey = "BattleScenarioLab.LiveEcsPlayback.StartedAt";
+    private const string LiveEcsPlaybackSeenRegistryKey = "BattleScenarioLab.LiveEcsPlayback.SeenRegistry";
+    private const string LiveEcsPlaybackSeenAirLauncherKey = "BattleScenarioLab.LiveEcsPlayback.SeenAirLauncher";
+    private const string LiveEcsPlaybackSeenGroundLauncherKey = "BattleScenarioLab.LiveEcsPlayback.SeenGroundLauncher";
+    private const string LiveEcsPlaybackSeenProjectileKey = "BattleScenarioLab.LiveEcsPlayback.SeenProjectile";
+    private const string LiveEcsPlaybackSeenGroundProjectileKey = "BattleScenarioLab.LiveEcsPlayback.SeenGroundProjectile";
+    private const string LiveEcsPlaybackSeenAirProjectileKey = "BattleScenarioLab.LiveEcsPlayback.SeenAirProjectile";
+    private const string LiveEcsPlaybackSeenGroundRocketVisualKey = "BattleScenarioLab.LiveEcsPlayback.SeenGroundRocketVisual";
+    private const string LiveEcsPlaybackSeenInterceptEventKey = "BattleScenarioLab.LiveEcsPlayback.SeenInterceptEvent";
+    private const string LiveEcsPlaybackGroundRocketClearedAfterInterceptKey = "BattleScenarioLab.LiveEcsPlayback.GroundRocketClearedAfterIntercept";
+    private const string LiveEcsPlaybackClosestMissileDistanceKey = "BattleScenarioLab.LiveEcsPlayback.ClosestMissileDistance";
+    private const string LiveEcsPlaybackClosestGroundVisualDistanceKey = "BattleScenarioLab.LiveEcsPlayback.ClosestGroundVisualDistance";
+    private const string LiveEcsPlaybackClosestVisualInterceptDistanceKey = "BattleScenarioLab.LiveEcsPlayback.ClosestVisualInterceptDistance";
+    private const string LiveEcsPlaybackMaxGroundMissileAltitudeKey = "BattleScenarioLab.LiveEcsPlayback.MaxGroundMissileAltitude";
+    private const string LiveEcsPlaybackFailureKey = "BattleScenarioLab.LiveEcsPlayback.Failure";
+    private const string LiveEcsPlaybackPendingExitKey = "BattleScenarioLab.LiveEcsPlayback.PendingExit";
+    private const string LiveEcsPlaybackPendingPassedKey = "BattleScenarioLab.LiveEcsPlayback.PendingPassed";
+    private const string LiveEcsPlaybackPendingMessageKey = "BattleScenarioLab.LiveEcsPlayback.PendingMessage";
+    private const double LiveEcsPlaybackTimeoutSeconds = 40.0;
+    private const float LiveEcsPlaybackRequiredClosestMissileDistance = 2.5f;
+    private const float LiveEcsPlaybackRequiredClosestGroundVisualDistance = 1.5f;
+    private const float LiveEcsPlaybackRequiredClosestVisualInterceptDistance = 0.75f;
+    private const float LiveEcsPlaybackMaxAllowedGroundMissileAltitude = 24f;
+    private const string GroundLauncherSourceKey = "Unit_Veh_Missle_Launcher_Ground";
+    private const string AirLauncherSourceKey = "Unit_Veh_Missle_Launcher_Air";
+
+    static BattleScenarioLabValidationRunner()
+    {
+        if (SessionState.GetBool(LiveEcsPlaybackActiveKey, false))
+            HookLiveEcsPlaybackValidation();
+        if (SessionState.GetBool(LiveEcsPlaybackPendingExitKey, false))
+            HookLiveEcsPlaybackPendingExit();
+    }
 
     [MenuItem("Warline Capture/Scenario Lab/Run AD-001 Air Defense")]
     public static void RunAirDefenseAd001()
@@ -497,18 +535,13 @@ public static class BattleScenarioLabValidationRunner
             RequireReference(references.IncomingThreatStartMarker, "incoming threat marker");
             RequireReference(references.DefendedTargetMarker, "defended target marker");
             RequireObject("NeutralGroundPlane");
-            RequireObject("AD001VisualPlayback");
-            RequireObject("GroundMissileLauncherVisual");
-            RequireObject("AirMissileLauncherVisual");
-            RequireObject("RadarSupportVisual");
+            RequireObject("AD001ScenarioMarkers");
+            RequireObject("GroundMissileLauncherSpawnMarker");
+            RequireObject("AirMissileLauncherSpawnMarker");
+            RequireObject("RadarSupportSpawnMarker");
             RequireObject("DefendedTargetVisual");
-            RequireObject("IncomingGroundMissileVisual");
-            RequireObject("AirDefenseInterceptorVisual");
-            RequireObject("IncomingGroundMissileTrail");
-            RequireObject("AirDefenseInterceptorTrail");
-            RequireObject("GroundLaunchFlash");
-            RequireObject("AirLaunchFlash");
-            RequireObject("InterceptExplosion");
+            RequireScenarioLabSubSceneReference();
+            RequireScenarioLabPrefabRegistryConfig();
             RequireObject("ScenarioLabOverlay");
             RequireObject("MetricsPanel");
             GameObject eventSystemObject = RequireObject("EventSystem");
@@ -537,17 +570,10 @@ public static class BattleScenarioLabValidationRunner
 
             SerializedObject visualSerialized = new(visualPlayback);
             RequireReference(visualSerialized.FindProperty("scenarioCamera").objectReferenceValue, "visual playback camera");
-            RequireReference(visualSerialized.FindProperty("groundLauncherVisual").objectReferenceValue, "visual playback ground launcher");
-            RequireReference(visualSerialized.FindProperty("airLauncherVisual").objectReferenceValue, "visual playback air launcher");
-            RequireReference(visualSerialized.FindProperty("radarVisual").objectReferenceValue, "visual playback radar");
+            RequireReference(visualSerialized.FindProperty("groundLauncherRoot").objectReferenceValue, "visual playback ground launcher");
+            RequireReference(visualSerialized.FindProperty("airLauncherRoot").objectReferenceValue, "visual playback air launcher");
+            RequireReference(visualSerialized.FindProperty("radarRoot").objectReferenceValue, "visual playback radar");
             RequireReference(visualSerialized.FindProperty("defendedTargetVisual").objectReferenceValue, "visual playback defended target");
-            RequireReference(visualSerialized.FindProperty("incomingMissileVisual").objectReferenceValue, "visual playback incoming missile");
-            RequireReference(visualSerialized.FindProperty("interceptorVisual").objectReferenceValue, "visual playback interceptor");
-            RequireReference(visualSerialized.FindProperty("incomingTrail").objectReferenceValue, "visual playback incoming trail");
-            RequireReference(visualSerialized.FindProperty("interceptorTrail").objectReferenceValue, "visual playback interceptor trail");
-            RequireReference(visualSerialized.FindProperty("groundLaunchFlash").objectReferenceValue, "visual playback ground launch flash");
-            RequireReference(visualSerialized.FindProperty("airLaunchFlash").objectReferenceValue, "visual playback air launch flash");
-            RequireReference(visualSerialized.FindProperty("interceptExplosion").objectReferenceValue, "visual playback intercept explosion");
 
             SerializedObject overlaySerialized = new(overlay);
             RequireReference(overlaySerialized.FindProperty("titleText").objectReferenceValue, "overlay title text");
@@ -567,6 +593,328 @@ public static class BattleScenarioLabValidationRunner
             Debug.LogError($"[BattleScenarioLab] Manual scene smoke validation failed: {ex}");
             Exit(1);
         }
+    }
+
+    [MenuItem("Warline Capture/Scenario Lab/Validate Manual Scene Live ECS Playback")]
+    public static void ValidateManualSceneLiveEcsPlayback()
+    {
+        try
+        {
+            EditorSceneManager.OpenScene(BattleScenarioLabSceneBuilder.ScenePath, OpenSceneMode.Single);
+            SessionState.SetBool(LiveEcsPlaybackActiveKey, true);
+            SessionState.SetFloat(LiveEcsPlaybackStartedAtKey, (float)EditorApplication.timeSinceStartup);
+            SessionState.SetBool(LiveEcsPlaybackSeenRegistryKey, false);
+            SessionState.SetBool(LiveEcsPlaybackSeenAirLauncherKey, false);
+            SessionState.SetBool(LiveEcsPlaybackSeenGroundLauncherKey, false);
+            SessionState.SetBool(LiveEcsPlaybackSeenProjectileKey, false);
+            SessionState.SetBool(LiveEcsPlaybackSeenGroundProjectileKey, false);
+            SessionState.SetBool(LiveEcsPlaybackSeenAirProjectileKey, false);
+            SessionState.SetBool(LiveEcsPlaybackSeenGroundRocketVisualKey, false);
+            SessionState.SetBool(LiveEcsPlaybackSeenInterceptEventKey, false);
+            SessionState.SetBool(LiveEcsPlaybackGroundRocketClearedAfterInterceptKey, false);
+            SessionState.SetFloat(LiveEcsPlaybackClosestMissileDistanceKey, float.PositiveInfinity);
+            SessionState.SetFloat(LiveEcsPlaybackClosestGroundVisualDistanceKey, float.PositiveInfinity);
+            SessionState.SetFloat(LiveEcsPlaybackClosestVisualInterceptDistanceKey, float.PositiveInfinity);
+            SessionState.SetFloat(LiveEcsPlaybackMaxGroundMissileAltitudeKey, 0f);
+            SessionState.EraseString(LiveEcsPlaybackFailureKey);
+            HookLiveEcsPlaybackValidation();
+            EditorApplication.EnterPlaymode();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[BattleScenarioLab] Live ECS playback validation failed before PlayMode: {ex}");
+            Exit(1);
+        }
+    }
+
+    private static void HookLiveEcsPlaybackValidation()
+    {
+        EditorApplication.update -= OnLiveEcsPlaybackValidationUpdate;
+        EditorApplication.update += OnLiveEcsPlaybackValidationUpdate;
+        Application.logMessageReceived -= OnLiveEcsPlaybackValidationLog;
+        Application.logMessageReceived += OnLiveEcsPlaybackValidationLog;
+    }
+
+    private static void OnLiveEcsPlaybackValidationLog(string condition, string stackTrace, LogType type)
+    {
+        if (!SessionState.GetBool(LiveEcsPlaybackActiveKey, false))
+            return;
+
+        if (type == LogType.Error &&
+            condition.Contains("Live ECS visual run could not resolve baked production launcher prefab entities", StringComparison.Ordinal))
+        {
+            SessionState.SetString(LiveEcsPlaybackFailureKey, condition);
+        }
+    }
+
+    private static void OnLiveEcsPlaybackValidationUpdate()
+    {
+        if (!SessionState.GetBool(LiveEcsPlaybackActiveKey, false))
+            return;
+
+        string failure = SessionState.GetString(LiveEcsPlaybackFailureKey, string.Empty);
+        if (!string.IsNullOrEmpty(failure))
+        {
+            CompleteLiveEcsPlaybackValidation(false, failure);
+            return;
+        }
+
+        if (!EditorApplication.isPlaying)
+            return;
+
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world != null && world.IsCreated)
+        {
+            EntityManager em = world.EntityManager;
+            if (HasAnyEntityWith<UnitPrefabRegistryTag>(em))
+                SessionState.SetBool(LiveEcsPlaybackSeenRegistryKey, true);
+            if (HasInstantiatedUnit(em, AirLauncherSourceKey))
+                SessionState.SetBool(LiveEcsPlaybackSeenAirLauncherKey, true);
+            if (HasInstantiatedUnit(em, GroundLauncherSourceKey))
+                SessionState.SetBool(LiveEcsPlaybackSeenGroundLauncherKey, true);
+            if (HasAnyEntityWith<GroundMissileProjectileComponent>(em) ||
+                HasAnyEntityWith<AirMissileProjectileComponent>(em))
+            {
+                SessionState.SetBool(LiveEcsPlaybackSeenProjectileKey, true);
+            }
+            TrackInterceptEventMetrics(em);
+            TrackLiveProjectileMetrics(em);
+        }
+
+        float closestMissileDistance = SessionState.GetFloat(LiveEcsPlaybackClosestMissileDistanceKey, float.PositiveInfinity);
+        float closestGroundVisualDistance = SessionState.GetFloat(LiveEcsPlaybackClosestGroundVisualDistanceKey, float.PositiveInfinity);
+        float closestVisualInterceptDistance = SessionState.GetFloat(LiveEcsPlaybackClosestVisualInterceptDistanceKey, float.PositiveInfinity);
+        float maxGroundAltitude = SessionState.GetFloat(LiveEcsPlaybackMaxGroundMissileAltitudeKey, 0f);
+        bool passed = SessionState.GetBool(LiveEcsPlaybackSeenRegistryKey, false) &&
+            SessionState.GetBool(LiveEcsPlaybackSeenAirLauncherKey, false) &&
+            SessionState.GetBool(LiveEcsPlaybackSeenGroundLauncherKey, false) &&
+            SessionState.GetBool(LiveEcsPlaybackSeenGroundProjectileKey, false) &&
+            SessionState.GetBool(LiveEcsPlaybackSeenAirProjectileKey, false) &&
+            SessionState.GetBool(LiveEcsPlaybackSeenGroundRocketVisualKey, false) &&
+            SessionState.GetBool(LiveEcsPlaybackSeenInterceptEventKey, false) &&
+            SessionState.GetBool(LiveEcsPlaybackGroundRocketClearedAfterInterceptKey, false) &&
+            closestMissileDistance <= LiveEcsPlaybackRequiredClosestMissileDistance &&
+            closestGroundVisualDistance <= LiveEcsPlaybackRequiredClosestGroundVisualDistance &&
+            closestVisualInterceptDistance <= LiveEcsPlaybackRequiredClosestVisualInterceptDistance &&
+            maxGroundAltitude <= LiveEcsPlaybackMaxAllowedGroundMissileAltitude;
+        if (passed)
+        {
+            CompleteLiveEcsPlaybackValidation(
+                true,
+                $"production registry, instantiated launcher entities, near-contact missile intercept, synced visible ground rocket, visual missile contact, and ground rocket clear-after-intercept observed; closest={closestMissileDistance:0.00}m, groundVisual={closestGroundVisualDistance:0.00}m, visualIntercept={closestVisualInterceptDistance:0.00}m, maxGroundAltitude={maxGroundAltitude:0.00}m");
+            return;
+        }
+
+        double elapsed = EditorApplication.timeSinceStartup - SessionState.GetFloat(LiveEcsPlaybackStartedAtKey, 0f);
+        if (elapsed >= LiveEcsPlaybackTimeoutSeconds)
+        {
+            string reason =
+                $"timed out after {LiveEcsPlaybackTimeoutSeconds:0.#}s; " +
+                $"registry={SessionState.GetBool(LiveEcsPlaybackSeenRegistryKey, false)}, " +
+                $"airLauncher={SessionState.GetBool(LiveEcsPlaybackSeenAirLauncherKey, false)}, " +
+                $"groundLauncher={SessionState.GetBool(LiveEcsPlaybackSeenGroundLauncherKey, false)}, " +
+                $"groundProjectile={SessionState.GetBool(LiveEcsPlaybackSeenGroundProjectileKey, false)}, " +
+                $"airProjectile={SessionState.GetBool(LiveEcsPlaybackSeenAirProjectileKey, false)}, " +
+                $"groundRocketVisual={SessionState.GetBool(LiveEcsPlaybackSeenGroundRocketVisualKey, false)}, " +
+                $"interceptEvent={SessionState.GetBool(LiveEcsPlaybackSeenInterceptEventKey, false)}, " +
+                $"groundRocketCleared={SessionState.GetBool(LiveEcsPlaybackGroundRocketClearedAfterInterceptKey, false)}, " +
+                $"closest={closestMissileDistance:0.00}m, " +
+                $"groundVisual={closestGroundVisualDistance:0.00}m, " +
+                $"visualIntercept={closestVisualInterceptDistance:0.00}m, " +
+                $"maxGroundAltitude={maxGroundAltitude:0.00}m";
+            CompleteLiveEcsPlaybackValidation(false, reason);
+        }
+    }
+
+    private static void TrackLiveProjectileMetrics(EntityManager em)
+    {
+        bool hasGround = TryFindFirstPosition<GroundMissileProjectileComponent>(em, out float3 groundPosition);
+        bool hasAir = TryFindFirstPosition<AirMissileProjectileComponent>(em, out float3 airPosition);
+        bool hasGroundVisual = TryFindFirstPosition<GroundMissileFlyingRocketVisualComponent>(em, out float3 groundVisualPosition);
+
+        if (hasGround)
+        {
+            SessionState.SetBool(LiveEcsPlaybackSeenGroundProjectileKey, true);
+            float maxAltitude = SessionState.GetFloat(LiveEcsPlaybackMaxGroundMissileAltitudeKey, 0f);
+            SessionState.SetFloat(LiveEcsPlaybackMaxGroundMissileAltitudeKey, math.max(maxAltitude, groundPosition.y));
+        }
+
+        if (hasAir)
+            SessionState.SetBool(LiveEcsPlaybackSeenAirProjectileKey, true);
+
+        if (hasGroundVisual)
+            SessionState.SetBool(LiveEcsPlaybackSeenGroundRocketVisualKey, true);
+
+        if (!hasGround || !hasAir)
+        {
+            TrackVisualDistances(hasGround, hasAir, hasGroundVisual, groundPosition, airPosition, groundVisualPosition);
+            return;
+        }
+
+        float distance = math.distance(groundPosition, airPosition);
+        float closest = SessionState.GetFloat(LiveEcsPlaybackClosestMissileDistanceKey, float.PositiveInfinity);
+        SessionState.SetFloat(LiveEcsPlaybackClosestMissileDistanceKey, math.min(closest, distance));
+        TrackVisualDistances(hasGround, hasAir, hasGroundVisual, groundPosition, airPosition, groundVisualPosition);
+    }
+
+    private static void TrackInterceptEventMetrics(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MissileInterceptedComponent>());
+        using NativeArray<MissileInterceptedComponent> intercepts = query.ToComponentDataArray<MissileInterceptedComponent>(Allocator.Temp);
+        bool sawIntercept = intercepts.Length > 0;
+        for (int i = 0; i < intercepts.Length; i++)
+        {
+            SessionState.SetBool(LiveEcsPlaybackSeenInterceptEventKey, true);
+            float visualSeparation = intercepts[i].VisualSeparation;
+            if (!math.isfinite(visualSeparation))
+                continue;
+
+            float closestVisualIntercept = SessionState.GetFloat(LiveEcsPlaybackClosestVisualInterceptDistanceKey, float.PositiveInfinity);
+            SessionState.SetFloat(
+                LiveEcsPlaybackClosestVisualInterceptDistanceKey,
+                math.min(closestVisualIntercept, visualSeparation));
+        }
+
+        if (sawIntercept && !HasAnyEntityWith<GroundMissileFlyingRocketVisualComponent>(em))
+            SessionState.SetBool(LiveEcsPlaybackGroundRocketClearedAfterInterceptKey, true);
+    }
+
+    private static void TrackVisualDistances(
+        bool hasGround,
+        bool hasAir,
+        bool hasGroundVisual,
+        float3 groundPosition,
+        float3 airPosition,
+        float3 groundVisualPosition)
+    {
+        if (hasGround && hasGroundVisual)
+        {
+            float visualDistance = math.distance(groundPosition, groundVisualPosition);
+            float closestVisual = SessionState.GetFloat(LiveEcsPlaybackClosestGroundVisualDistanceKey, float.PositiveInfinity);
+            SessionState.SetFloat(LiveEcsPlaybackClosestGroundVisualDistanceKey, math.min(closestVisual, visualDistance));
+        }
+
+        if (hasAir && hasGroundVisual)
+        {
+            float visualInterceptDistance = math.distance(airPosition, groundVisualPosition);
+            float closestVisualIntercept = SessionState.GetFloat(LiveEcsPlaybackClosestVisualInterceptDistanceKey, float.PositiveInfinity);
+            SessionState.SetFloat(
+                LiveEcsPlaybackClosestVisualInterceptDistanceKey,
+                math.min(closestVisualIntercept, visualInterceptDistance));
+        }
+    }
+
+    private static bool HasInstantiatedUnit(EntityManager em, string sourceKey)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<UnitSourcePrefabKey>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!em.Exists(entity) || em.HasComponent<Prefab>(entity))
+                continue;
+
+            string candidate = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
+            if (string.Equals(candidate, sourceKey, StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool HasAnyEntityWith<T>(EntityManager em)
+        where T : unmanaged, IComponentData
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<T>());
+        return query.CalculateEntityCount() > 0;
+    }
+
+    private static bool TryFindFirstPosition<T>(EntityManager em, out float3 position)
+        where T : unmanaged, IComponentData
+    {
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<T>(),
+            ComponentType.ReadOnly<LocalTransform>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!em.Exists(entity) || !em.HasComponent<LocalTransform>(entity))
+                continue;
+
+            position = em.GetComponentData<LocalTransform>(entity).Position;
+            return true;
+        }
+
+        position = float3.zero;
+        return false;
+    }
+
+    private static void CompleteLiveEcsPlaybackValidation(bool passed, string message)
+    {
+        EditorApplication.update -= OnLiveEcsPlaybackValidationUpdate;
+        Application.logMessageReceived -= OnLiveEcsPlaybackValidationLog;
+        SessionState.EraseBool(LiveEcsPlaybackActiveKey);
+        SessionState.EraseFloat(LiveEcsPlaybackStartedAtKey);
+        SessionState.EraseBool(LiveEcsPlaybackSeenRegistryKey);
+        SessionState.EraseBool(LiveEcsPlaybackSeenAirLauncherKey);
+        SessionState.EraseBool(LiveEcsPlaybackSeenGroundLauncherKey);
+        SessionState.EraseBool(LiveEcsPlaybackSeenProjectileKey);
+        SessionState.EraseBool(LiveEcsPlaybackSeenGroundProjectileKey);
+        SessionState.EraseBool(LiveEcsPlaybackSeenAirProjectileKey);
+        SessionState.EraseBool(LiveEcsPlaybackSeenGroundRocketVisualKey);
+        SessionState.EraseBool(LiveEcsPlaybackSeenInterceptEventKey);
+        SessionState.EraseBool(LiveEcsPlaybackGroundRocketClearedAfterInterceptKey);
+        SessionState.EraseFloat(LiveEcsPlaybackClosestMissileDistanceKey);
+        SessionState.EraseFloat(LiveEcsPlaybackClosestGroundVisualDistanceKey);
+        SessionState.EraseFloat(LiveEcsPlaybackClosestVisualInterceptDistanceKey);
+        SessionState.EraseFloat(LiveEcsPlaybackMaxGroundMissileAltitudeKey);
+        SessionState.EraseString(LiveEcsPlaybackFailureKey);
+
+        if (EditorApplication.isPlaying)
+        {
+            SessionState.SetBool(LiveEcsPlaybackPendingExitKey, true);
+            SessionState.SetBool(LiveEcsPlaybackPendingPassedKey, passed);
+            SessionState.SetString(LiveEcsPlaybackPendingMessageKey, message);
+            HookLiveEcsPlaybackPendingExit();
+            EditorApplication.ExitPlaymode();
+            return;
+        }
+
+        FinishLiveEcsPlaybackValidationExit(passed, message);
+    }
+
+    private static void HookLiveEcsPlaybackPendingExit()
+    {
+        EditorApplication.update -= OnLiveEcsPlaybackPendingExitUpdate;
+        EditorApplication.update += OnLiveEcsPlaybackPendingExitUpdate;
+    }
+
+    private static void OnLiveEcsPlaybackPendingExitUpdate()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode)
+            return;
+
+        EditorApplication.update -= OnLiveEcsPlaybackPendingExitUpdate;
+        bool passed = SessionState.GetBool(LiveEcsPlaybackPendingPassedKey, false);
+        string message = SessionState.GetString(LiveEcsPlaybackPendingMessageKey, string.Empty);
+        SessionState.EraseBool(LiveEcsPlaybackPendingExitKey);
+        SessionState.EraseBool(LiveEcsPlaybackPendingPassedKey);
+        SessionState.EraseString(LiveEcsPlaybackPendingMessageKey);
+        FinishLiveEcsPlaybackValidationExit(passed, message);
+    }
+
+    private static void FinishLiveEcsPlaybackValidationExit(bool passed, string message)
+    {
+        if (passed)
+        {
+            Debug.Log($"[BattleScenarioLab] Live ECS playback validation passed: {message}");
+            Exit(0);
+            return;
+        }
+
+        Debug.LogError($"[BattleScenarioLab] Live ECS playback validation failed: {message}");
+        Exit(1);
     }
 
     private static void WriteVariants(SerializedProperty variantsProperty, BattleScenarioVariant[] variants)
@@ -629,6 +977,63 @@ public static class BattleScenarioLabValidationRunner
     {
         if (reference == null)
             throw new InvalidOperationException($"Missing required reference: {label}");
+    }
+
+    private static void RequireScenarioLabSubSceneReference()
+    {
+        GameObject subSceneObject = RequireObject("BattleScenarioLabBakedPrefabsSubScene");
+        Component[] components = subSceneObject.GetComponents<Component>();
+        Component subScene = null;
+        for (int i = 0; i < components.Length; i++)
+        {
+            Component component = components[i];
+            if (component != null && component.GetType().FullName == "Unity.Scenes.SubScene")
+            {
+                subScene = component;
+                break;
+            }
+        }
+
+        if (subScene == null)
+            throw new InvalidOperationException("BattleScenarioLabBakedPrefabsSubScene is missing Unity.Scenes.SubScene.");
+
+        SerializedObject serialized = new(subScene);
+        RequireReference(
+            serialized.FindProperty("_SceneAsset").objectReferenceValue,
+            "Scenario Lab baked prefab subscene asset");
+        SerializedProperty autoLoad = serialized.FindProperty("AutoLoadScene");
+        if (autoLoad != null && !autoLoad.boolValue)
+            throw new InvalidOperationException("Scenario Lab baked prefab subscene must AutoLoadScene.");
+    }
+
+    private static void RequireScenarioLabPrefabRegistryConfig()
+    {
+        UnitPrefabRegistryAuthoringConfig config =
+            AssetDatabase.LoadAssetAtPath<UnitPrefabRegistryAuthoringConfig>(BattleScenarioLabSceneBuilder.PrefabRegistryConfigPath);
+        RequireReference(config, "Scenario Lab unit prefab registry config");
+
+        SerializedObject serialized = new(config);
+        SerializedProperty prefabs = serialized.FindProperty("unitSpawnPrefabs");
+        if (prefabs == null || prefabs.arraySize < 3)
+            throw new InvalidOperationException("Scenario Lab unit prefab registry must contain the AD-001 production prefabs.");
+
+        RequirePrefabInRegistry(prefabs, "Unit_Veh_Missle_Launcher_Ground");
+        RequirePrefabInRegistry(prefabs, "Unit_Veh_Missle_Launcher_Air");
+        RequirePrefabInRegistry(prefabs, "Unit_Veh_Radar_Tank");
+    }
+
+    private static void RequirePrefabInRegistry(SerializedProperty prefabs, string prefabName)
+    {
+        for (int i = 0; i < prefabs.arraySize; i++)
+        {
+            if (prefabs.GetArrayElementAtIndex(i).objectReferenceValue is GameObject prefab &&
+                string.Equals(prefab.name, prefabName, StringComparison.Ordinal))
+            {
+                return;
+            }
+        }
+
+        throw new InvalidOperationException($"Scenario Lab unit prefab registry is missing {prefabName}.");
     }
 
     private static void Exit(int code)

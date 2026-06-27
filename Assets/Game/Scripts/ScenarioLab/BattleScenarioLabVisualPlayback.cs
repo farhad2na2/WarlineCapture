@@ -17,8 +17,17 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
     private const string GroundLauncherKey = "Unit_Veh_Missle_Launcher_Ground";
     private const string AirLauncherKey = "Unit_Veh_Missle_Launcher_Air";
     private const string RadarKey = "Unit_Veh_Radar_Tank";
-    private const float VisualInterceptProximityFuseRadius = 0.25f;
+    private const float VisualInterceptProximityFuseRadius = 0.35f;
     private const float VisualGroundMissileArcHeight = 8f;
+    private const float ScenarioGroundMissileBaseFlightSeconds = 8f;
+    private const float ScenarioAirBaseDetectionRange = 140f;
+    private const float ScenarioAirMaxDetectionRange = 260f;
+    private const float ScenarioAirMissileSpeed = 95f;
+    private const float ScenarioAirMissileTurnRateDegreesPerSecond = 140f;
+    private const float ScenarioAirMissileLifetimeSeconds = 5f;
+    private const float ScenarioAirLockSeconds = 0.9f;
+    private const float ScenarioAirLaunchDelaySeconds = 0.1f;
+    private const float ScenarioAirTrackingQuality = 0.75f;
 
     private static readonly float3 AirLauncherPosition = new(0f, 0f, 0f);
     private static readonly float3 DefendedTargetPosition = new(-40f, 0f, 0f);
@@ -138,7 +147,7 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
 
         ConfigureRadar(em, variant, radar);
         ResetAirLauncher(em, airLauncher);
-        StartGroundMissileLaunch(em, groundLauncher);
+        StartGroundMissileLaunch(em, groundLauncher, variant);
     }
 
     private static void ConfigureRadar(EntityManager em, BattleScenarioVariant variant, Entity radar)
@@ -179,9 +188,23 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
         }
 
         AirMissileLauncherComponent launcher = em.GetComponentData<AirMissileLauncherComponent>(airLauncher);
-        launcher.ProximityFuseRadius = math.min(
-            math.max(0.1f, launcher.ProximityFuseRadius),
-            VisualInterceptProximityFuseRadius);
+        launcher.MinRange = 4f;
+        launcher.BaseDetectionRange = ScenarioAirBaseDetectionRange;
+        launcher.MaxDetectionRange = ScenarioAirMaxDetectionRange;
+        launcher.IncomingMissilePriority = math.max(launcher.IncomingMissilePriority, 100f);
+        launcher.TurretYawSpeedDegreesPerSecond = math.max(launcher.TurretYawSpeedDegreesPerSecond, 900f);
+        launcher.AimToleranceDegrees = math.max(launcher.AimToleranceDegrees, 5f);
+        launcher.LockSeconds = ScenarioAirLockSeconds;
+        launcher.LaunchDelaySeconds = ScenarioAirLaunchDelaySeconds;
+        launcher.MissileSpeed = ScenarioAirMissileSpeed;
+        launcher.MissileAcceleration = 0f;
+        launcher.MissileTurnRateDegreesPerSecond = ScenarioAirMissileTurnRateDegreesPerSecond;
+        launcher.MissileLifetimeSeconds = ScenarioAirMissileLifetimeSeconds;
+        launcher.ProximityFuseRadius = VisualInterceptProximityFuseRadius;
+        launcher.IncomingMissileDamage = math.max(launcher.IncomingMissileDamage, 9999);
+        launcher.TrackingQuality = ScenarioAirTrackingQuality;
+        launcher.MaxSupportRangeBonus = math.max(launcher.MaxSupportRangeBonus, 120f);
+        launcher.MaxSupportTrackingBonus = math.max(launcher.MaxSupportTrackingBonus, 0.3f);
         em.SetComponentData(airLauncher, launcher);
 
         em.SetComponentData(airLauncher, new AirMissileLauncherStateComponent
@@ -203,17 +226,25 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
             em.RemoveComponent<AirMissileLauncherTargetComponent>(airLauncher);
     }
 
-    private static void StartGroundMissileLaunch(EntityManager em, Entity groundLauncher)
+    private static void StartGroundMissileLaunch(EntityManager em, Entity groundLauncher, BattleScenarioVariant variant)
     {
         if (!em.HasComponent<GroundMissileLauncherComponent>(groundLauncher) ||
-            !em.HasComponent<GroundMissileLauncherStateComponent>(groundLauncher))
+            !em.HasComponent<GroundMissileLauncherStateComponent>(groundLauncher) ||
+            !em.HasComponent<LocalTransform>(groundLauncher))
         {
             return;
         }
 
         GroundMissileLauncherComponent launcher = em.GetComponentData<GroundMissileLauncherComponent>(groundLauncher);
+        LocalTransform launcherTransform = em.GetComponentData<LocalTransform>(groundLauncher);
+        float horizontalDistance = math.distance(
+            new float2(launcherTransform.Position.x, launcherTransform.Position.z),
+            new float2(DefendedTargetPosition.x, DefendedTargetPosition.z));
+        float flightSeconds = ScenarioGroundMissileBaseFlightSeconds /
+                              math.max(0.1f, variant.IncomingThreatSpeedMultiplier);
+        launcher.RocketSpeed = horizontalDistance / math.max(0.35f, flightSeconds);
         launcher.ArcHeight = math.min(
-            math.max(0f, launcher.ArcHeight),
+            math.max(0f, variant.IncomingThreatAltitude),
             VisualGroundMissileArcHeight);
         em.SetComponentData(groundLauncher, launcher);
 

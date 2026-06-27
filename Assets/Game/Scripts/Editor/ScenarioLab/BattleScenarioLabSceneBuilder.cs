@@ -23,17 +23,25 @@ public static class BattleScenarioLabSceneBuilder
     {
         Directory.CreateDirectory(Path.GetDirectoryName(ScenePath) ?? "Assets/Game/Scenes/ScenarioLab");
 
-        BattleScenarioDefinition definition =
-            AssetDatabase.LoadAssetAtPath<BattleScenarioDefinition>(BattleScenarioLabValidationRunner.Ad001DefinitionPath);
-        if (definition == null)
-            BattleScenarioLabValidationRunner.CreateOrUpdateAd001DefinitionAsset();
-        definition = AssetDatabase.LoadAssetAtPath<BattleScenarioDefinition>(BattleScenarioLabValidationRunner.Ad001DefinitionPath);
+        EnsureScenarioDefinitionsExist();
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
         CreateOrUpdatePrefabRegistryConfig();
         CreateOrUpdateBakedPrefabSubScene();
 
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         scene.name = "BattleScenarioLab";
-        definition = AssetDatabase.LoadAssetAtPath<BattleScenarioDefinition>(BattleScenarioLabValidationRunner.Ad001DefinitionPath);
+        BattleScenarioDefinition[] definitions = LoadScenarioDefinitions();
+        BattleScenarioDefinition definition = definitions.Length > 0 ? definitions[0] : null;
+        if (definition == null)
+        {
+            BattleScenarioLabValidationRunner.CreateOrUpdateAd001DefinitionAsset();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            definitions = LoadScenarioDefinitions();
+            definition = definitions.Length > 0 ? definitions[0] : null;
+        }
+
         if (definition == null)
             throw new InvalidOperationException($"Missing AD-001 scenario definition: {BattleScenarioLabValidationRunner.Ad001DefinitionPath}");
 
@@ -48,7 +56,7 @@ public static class BattleScenarioLabSceneBuilder
 
         ground.transform.SetParent(root.transform);
         CreateSubSceneReference(root.transform);
-        BattleScenarioLabOverlayView overlay = CreateOverlay(root.transform, definition, bootstrap);
+        BattleScenarioLabOverlayView overlay = CreateOverlay(root.transform, definition, definitions, bootstrap);
         CreateEventSystem();
 
         SerializedObject serialized = new(references);
@@ -71,6 +79,10 @@ public static class BattleScenarioLabSceneBuilder
 
         SerializedObject bootstrapSerialized = new(bootstrap);
         bootstrapSerialized.FindProperty("scenarioDefinition").objectReferenceValue = definition;
+        SerializedProperty scenarioDefinitions = bootstrapSerialized.FindProperty("scenarioDefinitions");
+        scenarioDefinitions.arraySize = definitions.Length;
+        for (int i = 0; i < definitions.Length; i++)
+            scenarioDefinitions.GetArrayElementAtIndex(i).objectReferenceValue = definitions[i];
         bootstrapSerialized.FindProperty("overlayView").objectReferenceValue = overlay;
         bootstrapSerialized.FindProperty("visualPlayback").objectReferenceValue = visualPlayback;
         bootstrapSerialized.FindProperty("runOnStart").boolValue = true;
@@ -79,6 +91,67 @@ public static class BattleScenarioLabSceneBuilder
         EditorSceneManager.SaveScene(scene, ScenePath);
         AssetDatabase.Refresh();
         Debug.Log($"[BattleScenarioLab] Manual scene shell saved: {ScenePath}");
+    }
+
+    private static void EnsureScenarioDefinitionsExist()
+    {
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad001DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd001DefinitionAsset);
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad002DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd002DefinitionAsset);
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad003DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd003DefinitionAsset);
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad004DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd004DefinitionAsset);
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad005DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd005DefinitionAsset);
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad006DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd006DefinitionAsset);
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad007DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd007DefinitionAsset);
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad008DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd008DefinitionAsset);
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad009DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd009DefinitionAsset);
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad010DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd010DefinitionAsset);
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Gm001DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateGm001DefinitionAsset);
+        EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Dr001DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateDr001DefinitionAsset);
+    }
+
+    private static void EnsureScenarioDefinitionExists(string path, Action createOrUpdate)
+    {
+        if (File.Exists(path))
+            return;
+
+        createOrUpdate();
+    }
+
+    private static BattleScenarioDefinition[] LoadScenarioDefinitions()
+    {
+        string[] paths =
+        {
+            BattleScenarioLabValidationRunner.Ad001DefinitionPath,
+            BattleScenarioLabValidationRunner.Ad002DefinitionPath,
+            BattleScenarioLabValidationRunner.Ad003DefinitionPath,
+            BattleScenarioLabValidationRunner.Ad004DefinitionPath,
+            BattleScenarioLabValidationRunner.Ad005DefinitionPath,
+            BattleScenarioLabValidationRunner.Ad006DefinitionPath,
+            BattleScenarioLabValidationRunner.Ad007DefinitionPath,
+            BattleScenarioLabValidationRunner.Ad008DefinitionPath,
+            BattleScenarioLabValidationRunner.Ad009DefinitionPath,
+            BattleScenarioLabValidationRunner.Ad010DefinitionPath,
+            BattleScenarioLabValidationRunner.Gm001DefinitionPath,
+            BattleScenarioLabValidationRunner.Dr001DefinitionPath
+        };
+        var definitions = new System.Collections.Generic.List<BattleScenarioDefinition>(paths.Length);
+        for (int i = 0; i < paths.Length; i++)
+        {
+            string path = paths[i];
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
+            BattleScenarioDefinition definition = AssetDatabase.LoadAssetAtPath<BattleScenarioDefinition>(path);
+            if (definition != null)
+            {
+                definitions.Add(definition);
+                continue;
+            }
+
+            UnityEngine.Object mainAsset = AssetDatabase.LoadMainAssetAtPath(path);
+            string assetType = mainAsset != null ? mainAsset.GetType().FullName : "null";
+            Debug.LogWarning($"[BattleScenarioLab] Scenario definition did not load as BattleScenarioDefinition: {path} (main asset type: {assetType})");
+        }
+
+        return definitions.ToArray();
     }
 
     private static UnitPrefabRegistryAuthoringConfig CreateOrUpdatePrefabRegistryConfig()
@@ -280,6 +353,7 @@ public static class BattleScenarioLabSceneBuilder
     private static BattleScenarioLabOverlayView CreateOverlay(
         Transform parent,
         BattleScenarioDefinition definition,
+        BattleScenarioDefinition[] definitions,
         BattleScenarioLabPlayBootstrap bootstrap)
     {
         GameObject canvasObject = new("ScenarioLabOverlay", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
@@ -299,15 +373,23 @@ public static class BattleScenarioLabSceneBuilder
         Text status = CreateOverlayText("Status", panel.transform, "Waiting for scenario run.", 20, TextAnchor.MiddleLeft);
         Text variants = CreateOverlayText("Variants", panel.transform, string.Empty, 15, TextAnchor.UpperLeft);
         Text comparisons = CreateOverlayText("Comparisons", panel.transform, string.Empty, 15, TextAnchor.UpperLeft);
+        Dropdown scenarioDropdown = CreateScenarioDropdown("ScenarioSelector", panel.transform, definitions, 13);
         Dropdown variantDropdown = CreateOverlayDropdown("VariantSelector", panel.transform, definition, 14);
+        Button previousButton = CreateOverlayButton("PreviousScenarioButton", panel.transform, "PREV", 14);
+        Button nextButton = CreateOverlayButton("NextScenarioButton", panel.transform, "NEXT", 14);
         Button restartButton = CreateOverlayButton("RestartScenarioButton", panel.transform, "RUN AGAIN", 15);
 
         SetRect(title.rectTransform, new Vector2(0.04f, 0.78f), new Vector2(0.96f, 0.95f), Vector2.zero, Vector2.zero);
         SetRect(status.rectTransform, new Vector2(0.04f, 0.68f), new Vector2(0.66f, 0.78f), Vector2.zero, Vector2.zero);
-        SetRect(variantDropdown.GetComponent<RectTransform>(), new Vector2(0.04f, 0.59f), new Vector2(0.66f, 0.67f), Vector2.zero, Vector2.zero);
-        SetRect(restartButton.GetComponent<RectTransform>(), new Vector2(0.68f, 0.59f), new Vector2(0.96f, 0.77f), Vector2.zero, Vector2.zero);
-        SetRect(variants.rectTransform, new Vector2(0.04f, 0.24f), new Vector2(0.96f, 0.64f), Vector2.zero, Vector2.zero);
-        SetRect(comparisons.rectTransform, new Vector2(0.04f, 0.04f), new Vector2(0.96f, 0.22f), Vector2.zero, Vector2.zero);
+        SetRect(scenarioDropdown.GetComponent<RectTransform>(), new Vector2(0.04f, 0.58f), new Vector2(0.96f, 0.67f), Vector2.zero, Vector2.zero);
+        SetRect(variantDropdown.GetComponent<RectTransform>(), new Vector2(0.04f, 0.49f), new Vector2(0.66f, 0.57f), Vector2.zero, Vector2.zero);
+        SetRect(previousButton.GetComponent<RectTransform>(), new Vector2(0.68f, 0.49f), new Vector2(0.77f, 0.57f), Vector2.zero, Vector2.zero);
+        SetRect(nextButton.GetComponent<RectTransform>(), new Vector2(0.78f, 0.49f), new Vector2(0.87f, 0.57f), Vector2.zero, Vector2.zero);
+        SetRect(restartButton.GetComponent<RectTransform>(), new Vector2(0.88f, 0.49f), new Vector2(0.96f, 0.57f), Vector2.zero, Vector2.zero);
+        SetRect(variants.rectTransform, new Vector2(0.04f, 0.22f), new Vector2(0.96f, 0.47f), Vector2.zero, Vector2.zero);
+        SetRect(comparisons.rectTransform, new Vector2(0.04f, 0.04f), new Vector2(0.96f, 0.20f), Vector2.zero, Vector2.zero);
+        UnityEventTools.AddPersistentListener(previousButton.onClick, bootstrap.SelectPreviousScenario);
+        UnityEventTools.AddPersistentListener(nextButton.onClick, bootstrap.SelectNextScenario);
         UnityEventTools.AddPersistentListener(restartButton.onClick, bootstrap.RunScenario);
 
         SerializedObject serialized = new(overlay);
@@ -318,6 +400,7 @@ public static class BattleScenarioLabSceneBuilder
         serialized.ApplyModifiedPropertiesWithoutUndo();
 
         SerializedObject bootstrapSerialized = new(bootstrap);
+        bootstrapSerialized.FindProperty("scenarioDropdown").objectReferenceValue = scenarioDropdown;
         bootstrapSerialized.FindProperty("variantDropdown").objectReferenceValue = variantDropdown;
         bootstrapSerialized.ApplyModifiedPropertiesWithoutUndo();
         return overlay;
@@ -401,6 +484,7 @@ public static class BattleScenarioLabSceneBuilder
         Dropdown dropdown = dropdownObject.GetComponent<Dropdown>();
         dropdown.targetGraphic = image;
         dropdown.captionText = label;
+        ConfigureDropdownTemplate(dropdown, dropdownObject.transform, fontSize);
         dropdown.options.Clear();
         dropdown.options.Add(new Dropdown.OptionData("All AD-001 variants"));
         BattleScenarioVariant[] variants = definition != null
@@ -415,6 +499,114 @@ public static class BattleScenarioLabSceneBuilder
         dropdown.value = 0;
         dropdown.RefreshShownValue();
         return dropdown;
+    }
+
+    private static Dropdown CreateScenarioDropdown(
+        string name,
+        Transform parent,
+        BattleScenarioDefinition[] definitions,
+        int fontSize)
+    {
+        GameObject dropdownObject = new(name, typeof(RectTransform), typeof(Image), typeof(Dropdown));
+        dropdownObject.transform.SetParent(parent);
+
+        Image image = dropdownObject.GetComponent<Image>();
+        image.color = new Color(0.07f, 0.12f, 0.14f, 0.96f);
+
+        Text label = CreateOverlayText("Label", dropdownObject.transform, string.Empty, fontSize, TextAnchor.MiddleLeft);
+        label.color = new Color(0.94f, 1f, 0.96f, 1f);
+        SetRect(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(12f, 2f), new Vector2(-34f, -2f));
+
+        Text arrow = CreateOverlayText("Arrow", dropdownObject.transform, "v", fontSize, TextAnchor.MiddleCenter);
+        arrow.color = new Color(0.76f, 1f, 0.92f, 1f);
+        SetRect(arrow.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(-30f, 0f), new Vector2(-6f, 0f));
+
+        Dropdown dropdown = dropdownObject.GetComponent<Dropdown>();
+        dropdown.targetGraphic = image;
+        dropdown.captionText = label;
+        ConfigureDropdownTemplate(dropdown, dropdownObject.transform, fontSize);
+        dropdown.options.Clear();
+        for (int i = 0; i < definitions.Length; i++)
+        {
+            BattleScenarioDefinition definition = definitions[i];
+            string option = definition != null && !string.IsNullOrWhiteSpace(definition.DisplayName)
+                ? definition.DisplayName
+                : definition != null && !string.IsNullOrWhiteSpace(definition.ScenarioId)
+                    ? definition.ScenarioId
+                    : $"Scenario {i + 1}";
+            dropdown.options.Add(new Dropdown.OptionData(option));
+        }
+
+        dropdown.value = 0;
+        dropdown.RefreshShownValue();
+        return dropdown;
+    }
+
+    private static void ConfigureDropdownTemplate(Dropdown dropdown, Transform parent, int fontSize)
+    {
+        GameObject templateObject = new("Template", typeof(RectTransform), typeof(Image), typeof(ScrollRect));
+        templateObject.transform.SetParent(parent);
+        RectTransform templateRect = templateObject.GetComponent<RectTransform>();
+        SetRect(templateRect, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, -156f), new Vector2(0f, -2f));
+
+        Image templateImage = templateObject.GetComponent<Image>();
+        templateImage.color = new Color(0.025f, 0.045f, 0.05f, 0.98f);
+
+        GameObject viewportObject = new("Viewport", typeof(RectTransform), typeof(Image), typeof(Mask));
+        viewportObject.transform.SetParent(templateObject.transform);
+        RectTransform viewportRect = viewportObject.GetComponent<RectTransform>();
+        SetRect(viewportRect, Vector2.zero, Vector2.one, new Vector2(4f, 4f), new Vector2(-4f, -4f));
+        Image viewportImage = viewportObject.GetComponent<Image>();
+        viewportImage.color = new Color(1f, 1f, 1f, 0.02f);
+        viewportObject.GetComponent<Mask>().showMaskGraphic = false;
+
+        GameObject contentObject = new("Content", typeof(RectTransform));
+        contentObject.transform.SetParent(viewportObject.transform);
+        RectTransform contentRect = contentObject.GetComponent<RectTransform>();
+        SetRect(contentRect, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -28f), Vector2.zero);
+        contentRect.pivot = new Vector2(0.5f, 1f);
+
+        GameObject itemObject = new("Item", typeof(RectTransform), typeof(Toggle));
+        itemObject.transform.SetParent(contentObject.transform);
+        RectTransform itemRect = itemObject.GetComponent<RectTransform>();
+        SetRect(itemRect, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -28f), Vector2.zero);
+        itemRect.pivot = new Vector2(0.5f, 1f);
+
+        GameObject itemBackgroundObject = new("Item Background", typeof(RectTransform), typeof(Image));
+        itemBackgroundObject.transform.SetParent(itemObject.transform);
+        RectTransform itemBackgroundRect = itemBackgroundObject.GetComponent<RectTransform>();
+        SetRect(itemBackgroundRect, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+        Image itemBackground = itemBackgroundObject.GetComponent<Image>();
+        itemBackground.color = new Color(0.08f, 0.14f, 0.15f, 0.92f);
+
+        GameObject checkmarkObject = new("Item Checkmark", typeof(RectTransform), typeof(Image));
+        checkmarkObject.transform.SetParent(itemObject.transform);
+        RectTransform checkmarkRect = checkmarkObject.GetComponent<RectTransform>();
+        SetRect(checkmarkRect, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(8f, 7f), new Vector2(22f, -7f));
+        Image checkmark = checkmarkObject.GetComponent<Image>();
+        checkmark.color = new Color(0.78f, 1f, 0.92f, 1f);
+
+        Text itemLabel = CreateOverlayText("Item Label", itemObject.transform, string.Empty, fontSize, TextAnchor.MiddleLeft);
+        itemLabel.color = new Color(0.94f, 1f, 0.96f, 1f);
+        itemLabel.horizontalOverflow = HorizontalWrapMode.Overflow;
+        SetRect(itemLabel.rectTransform, Vector2.zero, Vector2.one, new Vector2(30f, 2f), new Vector2(-8f, -2f));
+
+        Toggle toggle = itemObject.GetComponent<Toggle>();
+        toggle.targetGraphic = itemBackground;
+        toggle.graphic = checkmark;
+
+        ScrollRect scrollRect = templateObject.GetComponent<ScrollRect>();
+        scrollRect.content = contentRect;
+        scrollRect.viewport = viewportRect;
+        scrollRect.horizontal = false;
+        scrollRect.vertical = true;
+        scrollRect.movementType = ScrollRect.MovementType.Clamped;
+        scrollRect.scrollSensitivity = 18f;
+
+        dropdown.template = templateRect;
+        dropdown.itemText = itemLabel;
+        dropdown.itemImage = itemBackground;
+        templateObject.SetActive(false);
     }
 
     private static void SetRect(

@@ -46,6 +46,10 @@ public static class BattleScenarioLabValidationRunner
     private const string LiveEcsPlaybackPendingExitKey = "BattleScenarioLab.LiveEcsPlayback.PendingExit";
     private const string LiveEcsPlaybackPendingPassedKey = "BattleScenarioLab.LiveEcsPlayback.PendingPassed";
     private const string LiveEcsPlaybackPendingMessageKey = "BattleScenarioLab.LiveEcsPlayback.PendingMessage";
+    private const string LiveEcsPlaybackValidateAllVariantsKey = "BattleScenarioLab.LiveEcsPlayback.ValidateAllVariants";
+    private const string LiveEcsPlaybackVariantDropdownValueKey = "BattleScenarioLab.LiveEcsPlayback.VariantDropdownValue";
+    private const string LiveEcsPlaybackVariantRunStartedKey = "BattleScenarioLab.LiveEcsPlayback.VariantRunStarted";
+    private const string LiveEcsPlaybackPassedVariantsKey = "BattleScenarioLab.LiveEcsPlayback.PassedVariants";
     private const double LiveEcsPlaybackTimeoutSeconds = 40.0;
     private const float LiveEcsPlaybackRequiredClosestMissileDistance = 2.5f;
     private const float LiveEcsPlaybackRequiredClosestGroundVisualDistance = 1.5f;
@@ -547,9 +551,20 @@ public static class BattleScenarioLabValidationRunner
             GameObject eventSystemObject = RequireObject("EventSystem");
             RequireComponent<EventSystem>(eventSystemObject);
             RequireComponent<BaseInputModule>(eventSystemObject);
+            Dropdown scenarioDropdown = RequireComponent<Dropdown>(RequireObject("ScenarioSelector"));
+            if (scenarioDropdown.options.Count < 4)
+                throw new InvalidOperationException("ScenarioSelector has too few scenario options.");
+            RequireDropdownTemplate(scenarioDropdown, "ScenarioSelector");
             Dropdown variantDropdown = RequireComponent<Dropdown>(RequireObject("VariantSelector"));
             if (variantDropdown.options.Count < 2)
                 throw new InvalidOperationException("VariantSelector has no scenario variant options.");
+            RequireDropdownTemplate(variantDropdown, "VariantSelector");
+            Button previousButton = RequireComponent<Button>(RequireObject("PreviousScenarioButton"));
+            if (previousButton.onClick.GetPersistentEventCount() == 0)
+                throw new InvalidOperationException("PreviousScenarioButton has no persistent click listener.");
+            Button nextButton = RequireComponent<Button>(RequireObject("NextScenarioButton"));
+            if (nextButton.onClick.GetPersistentEventCount() == 0)
+                throw new InvalidOperationException("NextScenarioButton has no persistent click listener.");
             Button restartButton = RequireComponent<Button>(RequireObject("RestartScenarioButton"));
             if (restartButton.onClick.GetPersistentEventCount() == 0)
                 throw new InvalidOperationException("RestartScenarioButton has no persistent click listener.");
@@ -558,12 +573,18 @@ public static class BattleScenarioLabValidationRunner
             RequireReference(
                 bootstrapSerialized.FindProperty("scenarioDefinition").objectReferenceValue,
                 "bootstrap scenario definition");
+            SerializedProperty scenarioDefinitions = bootstrapSerialized.FindProperty("scenarioDefinitions");
+            if (scenarioDefinitions.arraySize < 4)
+                throw new InvalidOperationException("Bootstrap scenario definition list has too few entries.");
             RequireReference(
                 bootstrapSerialized.FindProperty("overlayView").objectReferenceValue,
                 "bootstrap overlay view");
             RequireReference(
                 bootstrapSerialized.FindProperty("visualPlayback").objectReferenceValue,
                 "bootstrap visual playback");
+            RequireReference(
+                bootstrapSerialized.FindProperty("scenarioDropdown").objectReferenceValue,
+                "bootstrap scenario dropdown");
             RequireReference(
                 bootstrapSerialized.FindProperty("variantDropdown").objectReferenceValue,
                 "bootstrap variant dropdown");
@@ -580,6 +601,18 @@ public static class BattleScenarioLabValidationRunner
             RequireReference(overlaySerialized.FindProperty("statusText").objectReferenceValue, "overlay status text");
             RequireReference(overlaySerialized.FindProperty("variantsText").objectReferenceValue, "overlay variants text");
             RequireReference(overlaySerialized.FindProperty("comparisonsText").objectReferenceValue, "overlay comparisons text");
+
+            bootstrap.SelectNextScenario();
+            if (scenarioDropdown.value != 0)
+                throw new InvalidOperationException("NextScenarioButton should keep AD-001 selected while cycling visual variants.");
+            if (variantDropdown.value != 1)
+                throw new InvalidOperationException("NextScenarioButton did not advance VariantSelector to the first visual variant.");
+            Text titleText = RequireComponent<Text>(RequireObject("Title"));
+            if (!titleText.text.Contains(BattleScenarioAd001Runner.ScenarioId, StringComparison.Ordinal))
+                throw new InvalidOperationException("NextScenarioButton did not run the AD-001 visual scenario.");
+            Text variantsText = RequireComponent<Text>(RequireObject("Variants"));
+            if (!variantsText.text.Contains("AD-001-A-NoSupport-Normal", StringComparison.Ordinal))
+                throw new InvalidOperationException("NextScenarioButton did not run the first AD-001 visual variant.");
 
             BattleScenarioResult result = BattleScenarioAd001Runner.RunDefinition(references.ScenarioDefinition);
             if (!result.Passed)
@@ -602,21 +635,13 @@ public static class BattleScenarioLabValidationRunner
         {
             EditorSceneManager.OpenScene(BattleScenarioLabSceneBuilder.ScenePath, OpenSceneMode.Single);
             SessionState.SetBool(LiveEcsPlaybackActiveKey, true);
+            SessionState.SetBool(LiveEcsPlaybackValidateAllVariantsKey, true);
+            SessionState.SetInt(LiveEcsPlaybackVariantDropdownValueKey, 1);
+            SessionState.SetInt(LiveEcsPlaybackPassedVariantsKey, 0);
+            SessionState.SetBool(LiveEcsPlaybackVariantRunStartedKey, false);
             SessionState.SetFloat(LiveEcsPlaybackStartedAtKey, (float)EditorApplication.timeSinceStartup);
-            SessionState.SetBool(LiveEcsPlaybackSeenRegistryKey, false);
-            SessionState.SetBool(LiveEcsPlaybackSeenAirLauncherKey, false);
-            SessionState.SetBool(LiveEcsPlaybackSeenGroundLauncherKey, false);
-            SessionState.SetBool(LiveEcsPlaybackSeenProjectileKey, false);
-            SessionState.SetBool(LiveEcsPlaybackSeenGroundProjectileKey, false);
-            SessionState.SetBool(LiveEcsPlaybackSeenAirProjectileKey, false);
-            SessionState.SetBool(LiveEcsPlaybackSeenGroundRocketVisualKey, false);
-            SessionState.SetBool(LiveEcsPlaybackSeenInterceptEventKey, false);
-            SessionState.SetBool(LiveEcsPlaybackGroundRocketClearedAfterInterceptKey, false);
-            SessionState.SetFloat(LiveEcsPlaybackClosestMissileDistanceKey, float.PositiveInfinity);
-            SessionState.SetFloat(LiveEcsPlaybackClosestGroundVisualDistanceKey, float.PositiveInfinity);
-            SessionState.SetFloat(LiveEcsPlaybackClosestVisualInterceptDistanceKey, float.PositiveInfinity);
-            SessionState.SetFloat(LiveEcsPlaybackMaxGroundMissileAltitudeKey, 0f);
             SessionState.EraseString(LiveEcsPlaybackFailureKey);
+            ResetLiveEcsPlaybackObservationState();
             HookLiveEcsPlaybackValidation();
             EditorApplication.EnterPlaymode();
         }
@@ -662,6 +687,12 @@ public static class BattleScenarioLabValidationRunner
         if (!EditorApplication.isPlaying)
             return;
 
+        if (!SessionState.GetBool(LiveEcsPlaybackVariantRunStartedKey, false))
+        {
+            if (!TryStartLiveEcsPlaybackVariant())
+                return;
+        }
+
         World world = World.DefaultGameObjectInjectionWorld;
         if (world != null && world.IsCreated)
         {
@@ -699,9 +730,26 @@ public static class BattleScenarioLabValidationRunner
             maxGroundAltitude <= LiveEcsPlaybackMaxAllowedGroundMissileAltitude;
         if (passed)
         {
+            int currentVariantValue = SessionState.GetInt(LiveEcsPlaybackVariantDropdownValueKey, 1);
+            int passedVariants = SessionState.GetInt(LiveEcsPlaybackPassedVariantsKey, 0) + 1;
+            SessionState.SetInt(LiveEcsPlaybackPassedVariantsKey, passedVariants);
+            int variantCount = BattleScenarioAd001Runner.CreateDefaultVariants().Length;
+            if (SessionState.GetBool(LiveEcsPlaybackValidateAllVariantsKey, false) &&
+                currentVariantValue < variantCount)
+            {
+                Debug.Log(
+                    $"[BattleScenarioLab] Live ECS playback variant {ResolveAd001VariantLabel(currentVariantValue)} passed: " +
+                    $"closest={closestMissileDistance:0.00}m, groundVisual={closestGroundVisualDistance:0.00}m, " +
+                    $"visualIntercept={closestVisualInterceptDistance:0.00}m, maxGroundAltitude={maxGroundAltitude:0.00}m");
+                SessionState.SetInt(LiveEcsPlaybackVariantDropdownValueKey, currentVariantValue + 1);
+                SessionState.SetBool(LiveEcsPlaybackVariantRunStartedKey, false);
+                ResetLiveEcsPlaybackObservationState();
+                return;
+            }
+
             CompleteLiveEcsPlaybackValidation(
                 true,
-                $"production registry, instantiated launcher entities, near-contact missile intercept, synced visible ground rocket, visual missile contact, and ground rocket clear-after-intercept observed; closest={closestMissileDistance:0.00}m, groundVisual={closestGroundVisualDistance:0.00}m, visualIntercept={closestVisualInterceptDistance:0.00}m, maxGroundAltitude={maxGroundAltitude:0.00}m");
+                $"production registry, instantiated launcher entities, near-contact missile intercept, synced visible ground rocket, visual missile contact, and ground rocket clear-after-intercept observed across {passedVariants} AD-001 visual variants; latest={ResolveAd001VariantLabel(currentVariantValue)}, closest={closestMissileDistance:0.00}m, groundVisual={closestGroundVisualDistance:0.00}m, visualIntercept={closestVisualInterceptDistance:0.00}m, maxGroundAltitude={maxGroundAltitude:0.00}m");
             return;
         }
 
@@ -718,12 +766,66 @@ public static class BattleScenarioLabValidationRunner
                 $"groundRocketVisual={SessionState.GetBool(LiveEcsPlaybackSeenGroundRocketVisualKey, false)}, " +
                 $"interceptEvent={SessionState.GetBool(LiveEcsPlaybackSeenInterceptEventKey, false)}, " +
                 $"groundRocketCleared={SessionState.GetBool(LiveEcsPlaybackGroundRocketClearedAfterInterceptKey, false)}, " +
+                $"variant={ResolveAd001VariantLabel(SessionState.GetInt(LiveEcsPlaybackVariantDropdownValueKey, 1))}, " +
                 $"closest={closestMissileDistance:0.00}m, " +
                 $"groundVisual={closestGroundVisualDistance:0.00}m, " +
                 $"visualIntercept={closestVisualInterceptDistance:0.00}m, " +
                 $"maxGroundAltitude={maxGroundAltitude:0.00}m";
             CompleteLiveEcsPlaybackValidation(false, reason);
         }
+    }
+
+    private static bool TryStartLiveEcsPlaybackVariant()
+    {
+        BattleScenarioLabPlayBootstrap bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
+        GameObject variantObject = GameObject.Find("VariantSelector");
+        if (bootstrap == null ||
+            variantObject == null ||
+            !variantObject.TryGetComponent(out Dropdown variantDropdown))
+        {
+            return false;
+        }
+
+        int variantValue = SessionState.GetInt(LiveEcsPlaybackVariantDropdownValueKey, 1);
+        if (variantDropdown.options == null || variantDropdown.options.Count <= variantValue)
+            return false;
+
+        ResetLiveEcsPlaybackObservationState();
+        SessionState.SetBool(LiveEcsPlaybackVariantRunStartedKey, true);
+        SessionState.SetFloat(LiveEcsPlaybackStartedAtKey, (float)EditorApplication.timeSinceStartup);
+        variantDropdown.SetValueWithoutNotify(variantValue);
+        variantDropdown.RefreshShownValue();
+        bootstrap.RunScenario();
+        Debug.Log($"[BattleScenarioLab] Live ECS playback validating {ResolveAd001VariantLabel(variantValue)}.");
+        return true;
+    }
+
+    private static void ResetLiveEcsPlaybackObservationState()
+    {
+        SessionState.SetBool(LiveEcsPlaybackSeenRegistryKey, false);
+        SessionState.SetBool(LiveEcsPlaybackSeenAirLauncherKey, false);
+        SessionState.SetBool(LiveEcsPlaybackSeenGroundLauncherKey, false);
+        SessionState.SetBool(LiveEcsPlaybackSeenProjectileKey, false);
+        SessionState.SetBool(LiveEcsPlaybackSeenGroundProjectileKey, false);
+        SessionState.SetBool(LiveEcsPlaybackSeenAirProjectileKey, false);
+        SessionState.SetBool(LiveEcsPlaybackSeenGroundRocketVisualKey, false);
+        SessionState.SetBool(LiveEcsPlaybackSeenInterceptEventKey, false);
+        SessionState.SetBool(LiveEcsPlaybackGroundRocketClearedAfterInterceptKey, false);
+        SessionState.SetFloat(LiveEcsPlaybackClosestMissileDistanceKey, float.PositiveInfinity);
+        SessionState.SetFloat(LiveEcsPlaybackClosestGroundVisualDistanceKey, float.PositiveInfinity);
+        SessionState.SetFloat(LiveEcsPlaybackClosestVisualInterceptDistanceKey, float.PositiveInfinity);
+        SessionState.SetFloat(LiveEcsPlaybackMaxGroundMissileAltitudeKey, 0f);
+    }
+
+    private static string ResolveAd001VariantLabel(int dropdownValue)
+    {
+        BattleScenarioVariant[] variants = BattleScenarioAd001Runner.CreateDefaultVariants();
+        int index = math.clamp(dropdownValue - 1, 0, math.max(0, variants.Length - 1));
+        if (variants.Length == 0)
+            return $"variant dropdown {dropdownValue}";
+
+        BattleScenarioVariant variant = variants[index];
+        return string.IsNullOrWhiteSpace(variant.VariantId) ? variant.Label : variant.VariantId;
     }
 
     private static void TrackLiveProjectileMetrics(EntityManager em)
@@ -870,6 +972,10 @@ public static class BattleScenarioLabValidationRunner
         SessionState.EraseFloat(LiveEcsPlaybackClosestVisualInterceptDistanceKey);
         SessionState.EraseFloat(LiveEcsPlaybackMaxGroundMissileAltitudeKey);
         SessionState.EraseString(LiveEcsPlaybackFailureKey);
+        SessionState.EraseBool(LiveEcsPlaybackValidateAllVariantsKey);
+        SessionState.EraseInt(LiveEcsPlaybackVariantDropdownValueKey);
+        SessionState.EraseBool(LiveEcsPlaybackVariantRunStartedKey);
+        SessionState.EraseInt(LiveEcsPlaybackPassedVariantsKey);
 
         if (EditorApplication.isPlaying)
         {
@@ -1034,6 +1140,18 @@ public static class BattleScenarioLabValidationRunner
         }
 
         throw new InvalidOperationException($"Scenario Lab unit prefab registry is missing {prefabName}.");
+    }
+
+    private static void RequireDropdownTemplate(Dropdown dropdown, string name)
+    {
+        if (dropdown.template == null)
+            throw new InvalidOperationException($"{name} dropdown template is not assigned.");
+        if (dropdown.template.GetComponentInChildren<Toggle>(true) == null)
+            throw new InvalidOperationException($"{name} dropdown template is missing an item Toggle.");
+        if (dropdown.captionText == null)
+            throw new InvalidOperationException($"{name} dropdown caption text is not assigned.");
+        if (dropdown.itemText == null)
+            throw new InvalidOperationException($"{name} dropdown item text is not assigned.");
     }
 
     private static void Exit(int code)

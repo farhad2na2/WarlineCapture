@@ -63,55 +63,11 @@ public static class BattleScenarioLabSuiteRunner
         string scenarioId = definition.ScenarioId;
         string reportPath = BuildReportPath(scenarioId);
         BattleScenarioResult result;
-        if (string.Equals(scenarioId, BattleScenarioAd001Runner.ScenarioId, StringComparison.Ordinal))
+        try
         {
-            result = BattleScenarioAd001Runner.RunDefinition(definition);
+            result = BattleScenarioLabRuntimeRunner.RunDefinition(definition);
         }
-        else if (string.Equals(scenarioId, BattleScenarioAd002Runner.ScenarioId, StringComparison.Ordinal))
-        {
-            result = BattleScenarioAd002Runner.RunDefinition(definition);
-        }
-        else if (string.Equals(scenarioId, BattleScenarioAd003Runner.ScenarioId, StringComparison.Ordinal))
-        {
-            result = BattleScenarioAd003Runner.RunDefinition(definition);
-        }
-        else if (string.Equals(scenarioId, BattleScenarioAd004Runner.ScenarioId, StringComparison.Ordinal))
-        {
-            result = BattleScenarioAd004Runner.RunDefinition(definition);
-        }
-        else if (string.Equals(scenarioId, BattleScenarioAd005Runner.ScenarioId, StringComparison.Ordinal))
-        {
-            result = BattleScenarioAd005Runner.RunDefinition(definition);
-        }
-        else if (string.Equals(scenarioId, BattleScenarioAd006Runner.ScenarioId, StringComparison.Ordinal))
-        {
-            result = BattleScenarioAd006Runner.RunDefinition(definition);
-        }
-        else if (string.Equals(scenarioId, BattleScenarioAd007Runner.ScenarioId, StringComparison.Ordinal))
-        {
-            result = BattleScenarioAd007Runner.RunDefinition(definition);
-        }
-        else if (string.Equals(scenarioId, BattleScenarioAd008Runner.ScenarioId, StringComparison.Ordinal))
-        {
-            result = BattleScenarioAd008Runner.RunDefinition(definition);
-        }
-        else if (string.Equals(scenarioId, BattleScenarioAd009Runner.ScenarioId, StringComparison.Ordinal))
-        {
-            result = BattleScenarioAd009Runner.RunDefinition(definition);
-        }
-        else if (string.Equals(scenarioId, BattleScenarioAd010Runner.ScenarioId, StringComparison.Ordinal))
-        {
-            result = BattleScenarioAd010Runner.RunDefinition(definition);
-        }
-        else if (string.Equals(scenarioId, BattleScenarioGm001Runner.ScenarioId, StringComparison.Ordinal))
-        {
-            result = BattleScenarioGm001Runner.RunDefinition(definition);
-        }
-        else if (string.Equals(scenarioId, BattleScenarioDr001Runner.ScenarioId, StringComparison.Ordinal))
-        {
-            result = BattleScenarioDr001Runner.RunDefinition(definition);
-        }
-        else
+        catch (NotSupportedException)
         {
             return new BattleScenarioSuiteEntry(
                 scenarioId,

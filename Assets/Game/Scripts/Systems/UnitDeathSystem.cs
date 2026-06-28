@@ -179,9 +179,7 @@ public partial struct UnitDeathSystem : ISystem
     {
         bool hasConfiguredDestroyedVisual = em.HasComponent<VehicleDestroyedVisualPrefabReference>(entity);
         bool hasLegacyDestroyedVisual = em.HasComponent<UnitDestroyedVisualReference>(entity);
-        if ((!hasConfiguredDestroyedVisual && !hasLegacyDestroyedVisual) ||
-            !em.HasComponent<UnitFootprint>(entity) ||
-            !em.HasComponent<UnitGrid>(entity))
+        if (!hasConfiguredDestroyedVisual && !hasLegacyDestroyedVisual)
         {
             return false;
         }
@@ -229,6 +227,23 @@ public partial struct UnitDeathSystem : ISystem
             }
         }
 
+        if (em.HasComponent<UnitFootprint>(entity) && em.HasComponent<UnitGrid>(entity))
+            AddGroundWreckBlocker(em, entity);
+
+        if (em.HasComponent<VehicleWreckComponent>(entity))
+        {
+            em.SetComponentData(entity, new VehicleWreckComponent { TimeRemaining = VehicleWreckLifetimeSeconds });
+        }
+        else
+        {
+            em.AddComponentData(entity, new VehicleWreckComponent { TimeRemaining = VehicleWreckLifetimeSeconds });
+        }
+
+        return true;
+    }
+
+    private static void AddGroundWreckBlocker(EntityManager em, Entity entity)
+    {
         if (!em.HasComponent<StaticGridBlocker>(entity))
             em.AddComponent<StaticGridBlocker>(entity);
 
@@ -241,17 +256,6 @@ public partial struct UnitDeathSystem : ISystem
         {
             em.AddComponentData(entity, new GridBlockerSize { Size = footprint });
         }
-
-        if (em.HasComponent<VehicleWreckComponent>(entity))
-        {
-            em.SetComponentData(entity, new VehicleWreckComponent { TimeRemaining = VehicleWreckLifetimeSeconds });
-        }
-        else
-        {
-            em.AddComponentData(entity, new VehicleWreckComponent { TimeRemaining = VehicleWreckLifetimeSeconds });
-        }
-
-        return true;
     }
 
     private static float ResolveAirWreckGroundY(

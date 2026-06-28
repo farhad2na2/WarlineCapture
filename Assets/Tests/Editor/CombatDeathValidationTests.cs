@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Rendering;
 using UnityEditor;
 using Unity.Transforms;
 using UnityEngine;
@@ -21,8 +22,12 @@ public sealed class CombatDeathValidationTests
         {
             var tests = new CombatDeathValidationTests();
             tests.SoldierAttack_KillsTargetDestroysEntityAndDoesNotRespawn();
+            tests.AirVehicleDeath_WithDestroyedVisual_HidesAliveVisualAndSpawnsDestroyedVisualWithoutGrid();
+            tests.UnitModelSpawn_DoesNotSpawnDuplicateDetailModelWhenDetailedVisualAlreadyExists();
+            tests.UnitRenderVisualExclusivity_HidesInactiveLodRootsRecursively();
+            tests.UnitRenderVisualExclusivity_DestroyedVehicleHidesAliveRootsAndShowsDestroyedRoot();
             tests.VehicleWreckCleanup_FinalizesExpiredWreckAndDescendants();
-            Debug.Log("[CombatDeathFocusedValidation] result=Passed tests=2");
+            Debug.Log("[CombatDeathFocusedValidation] result=Passed tests=6");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -105,6 +110,168 @@ public sealed class CombatDeathValidationTests
     }
 
     [Test]
+    public void AirVehicleDeath_WithDestroyedVisual_HidesAliveVisualAndSpawnsDestroyedVisualWithoutGrid()
+    {
+        using var world = new World(nameof(AirVehicleDeath_WithDestroyedVisual_HidesAliveVisualAndSpawnsDestroyedVisualWithoutGrid));
+        EntityManager em = world.EntityManager;
+        Entity aliveVisual = CreateVisualTree(em);
+        Entity linkedOnlyVisual = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(linkedOnlyVisual, LocalTransform.Identity);
+        DynamicBuffer<LinkedEntityGroup> linkedVisuals = em.AddBuffer<LinkedEntityGroup>(aliveVisual);
+        linkedVisuals.Add(new LinkedEntityGroup { Value = aliveVisual });
+        linkedVisuals.Add(new LinkedEntityGroup { Value = linkedOnlyVisual });
+        Entity destroyedVisualPrefab = em.CreateEntity(typeof(Prefab), typeof(LocalTransform));
+        em.SetComponentData(destroyedVisualPrefab, LocalTransform.Identity);
+        Entity airVehicle = em.CreateEntity(
+            typeof(UnitHealth),
+            typeof(UnitAnimationSettings),
+            typeof(UnitAirComponent),
+            typeof(LocalTransform),
+            typeof(UnitDetailedVisualReference),
+            typeof(VehicleDestroyedVisualPrefabReference));
+        em.SetComponentData(airVehicle, new UnitHealth { Current = 0, Max = 100 });
+        em.SetComponentData(airVehicle, new UnitAnimationSettings { DeathAnimationSeconds = 1f });
+        em.SetComponentData(airVehicle, new UnitAirComponent
+        {
+            HomePosition = new float3(12f, 5f, 0f),
+            HomeInitialized = 1,
+            Airborne = 1
+        });
+        em.SetComponentData(airVehicle, LocalTransform.FromPositionRotationScale(new float3(12f, 18f, 0f), quaternion.identity, 1f));
+        em.SetComponentData(airVehicle, new UnitDetailedVisualReference { Root = aliveVisual });
+        em.SetComponentData(airVehicle, new VehicleDestroyedVisualPrefabReference { Prefab = destroyedVisualPrefab });
+
+        SystemHandle deathSystem = world.CreateSystem<UnitDeathSystem>();
+        SystemHandle destroyedVisualSystem = world.CreateSystem<VehicleDestroyedVisualSystem>();
+
+        world.SetTime(new TimeData(0.1d, 0.1f));
+        deathSystem.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.Exists(airVehicle), "Air vehicles with destroyed visuals should remain briefly as wreck visuals.");
+        Assert.IsTrue(em.HasComponent<VehicleWreckComponent>(airVehicle), "Air vehicles with destroyed visuals should use the same wreck cleanup lifetime.");
+        Assert.IsTrue(em.HasComponent<VehicleDestroyedVisualSpawnRequest>(airVehicle), "A destroyed air vehicle should request its destroyed visual even without grid components.");
+        Assert.IsFalse(em.HasComponent<StaticGridBlocker>(airVehicle), "Air vehicles without grid data must not become ground blockers.");
+        Assert.IsFalse(em.HasComponent<UnitDeathAnimationComponent>(airVehicle), "Destroyed visual vehicles should not also enter the generic death animation path.");
+
+        destroyedVisualSystem.Update(world.Unmanaged);
+
+        AssertVehicleDestroyedAliveHidden(em, aliveVisual, "The alive air vehicle model tree must be hidden when the destroyed visual appears.");
+        AssertVehicleDestroyedAliveEntityHidden(em, linkedOnlyVisual, "Linked alive visual entities must also be hidden when the destroyed visual appears.");
+        Assert.IsTrue(em.HasComponent<VehicleDestroyedVisualInstanceReference>(airVehicle), "The destroyed visual should be spawned through the production presentation system.");
+        Entity destroyedVisual = em.GetComponentData<VehicleDestroyedVisualInstanceReference>(airVehicle).Instance;
+        Assert.IsTrue(em.Exists(destroyedVisual));
+        Assert.AreEqual(airVehicle, em.GetComponentData<Parent>(destroyedVisual).Value);
+    }
+
+    [Test]
+    public void UnitModelSpawn_DoesNotSpawnDuplicateDetailModelWhenDetailedVisualAlreadyExists()
+    {
+        using var world = new World(nameof(UnitModelSpawn_DoesNotSpawnDuplicateDetailModelWhenDetailedVisualAlreadyExists));
+        EntityManager em = world.EntityManager;
+        Entity detailedVisual = em.CreateEntity(typeof(LocalTransform));
+        Entity modelPrefab = em.CreateEntity(typeof(Prefab), typeof(LocalTransform));
+        Entity unit = em.CreateEntity(
+            typeof(UnitModelPrefabReference),
+            typeof(UnitDetailedVisualReference),
+            typeof(UnitModelLocalTransform),
+            typeof(LocalTransform));
+        em.SetComponentData(unit, new UnitModelPrefabReference { Prefab = modelPrefab });
+        em.SetComponentData(unit, new UnitDetailedVisualReference { Root = detailedVisual });
+        em.SetComponentData(unit, new UnitModelLocalTransform
+        {
+            Position = float3.zero,
+            Rotation = quaternion.identity,
+            Scale = 1f
+        });
+        em.SetComponentData(unit, LocalTransform.Identity);
+
+        SystemHandle modelSpawnSystem = world.CreateSystem<UnitModelSpawnSystem>();
+        modelSpawnSystem.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<UnitModelInstanceReference>(unit), "A unit with an authored detailed visual must not spawn a duplicate detail model.");
+        Assert.IsFalse(em.HasComponent<UnitModelPrefabReference>(unit), "The detail model spawn request should be consumed when an authored detailed visual already exists.");
+    }
+
+    [Test]
+    public void UnitRenderVisualExclusivity_HidesInactiveLodRootsRecursively()
+    {
+        using var world = new World(nameof(UnitRenderVisualExclusivity_HidesInactiveLodRootsRecursively));
+        EntityManager em = world.EntityManager;
+        Entity detailRoot = CreateVisualTree(em);
+        Entity midRoot = CreateVisualTree(em);
+        Entity lowRoot = CreateVisualTree(em);
+        Entity unit = em.CreateEntity(
+            typeof(UnitDetailedVisualReference),
+            typeof(UnitMidLodInstanceReference),
+            typeof(UnitLowLodInstanceReference),
+            typeof(UnitRenderVisualComponent));
+        em.SetComponentData(unit, new UnitDetailedVisualReference { Root = detailRoot });
+        em.SetComponentData(unit, new UnitMidLodInstanceReference { Instance = midRoot });
+        em.SetComponentData(unit, new UnitLowLodInstanceReference { Instance = lowRoot });
+        em.SetComponentData(unit, new UnitRenderVisualComponent
+        {
+            Current = (byte)UnitRenderVisualKind.Detail,
+            Desired = (byte)UnitRenderVisualKind.Detail
+        });
+
+        SystemHandle system = world.CreateSystem<UnitRenderVisualExclusivitySystem>();
+        system.Update(world.Unmanaged);
+
+        AssertVisible(em, detailRoot, "The detailed root should remain visible when detail is the active visual.");
+        AssertHidden(em, midRoot, "The mid LOD root must be hidden while detail is active.");
+        AssertHidden(em, lowRoot, "The low LOD root must be hidden while detail is active.");
+
+        em.SetComponentData(unit, new UnitRenderVisualComponent
+        {
+            Current = (byte)UnitRenderVisualKind.Mid,
+            Desired = (byte)UnitRenderVisualKind.Mid
+        });
+        system.Update(world.Unmanaged);
+
+        AssertHidden(em, detailRoot, "The detailed root must be hidden while mid LOD is active.");
+        AssertVisible(em, midRoot, "The mid LOD root should become the only visible LOD root.");
+        AssertHidden(em, lowRoot, "The low LOD root must remain hidden while mid LOD is active.");
+    }
+
+    [Test]
+    public void UnitRenderVisualExclusivity_DestroyedVehicleHidesAliveRootsAndShowsDestroyedRoot()
+    {
+        using var world = new World(nameof(UnitRenderVisualExclusivity_DestroyedVehicleHidesAliveRootsAndShowsDestroyedRoot));
+        EntityManager em = world.EntityManager;
+        Entity detailRoot = CreateVisualTree(em);
+        Entity midRoot = CreateVisualTree(em);
+        Entity unreferencedLinkedRoot = CreateVisualTree(em);
+        Entity destroyedRoot = CreateVisualTree(em);
+        HideTree(em, destroyedRoot);
+        Entity unit = em.CreateEntity(
+            typeof(UnitHealth),
+            typeof(UnitDetailedVisualReference),
+            typeof(UnitMidLodInstanceReference),
+            typeof(VehicleDestroyedVisualInstanceReference),
+            typeof(UnitRenderVisualComponent));
+        DynamicBuffer<LinkedEntityGroup> linkedGroup = em.AddBuffer<LinkedEntityGroup>(unit);
+        linkedGroup.Add(new LinkedEntityGroup { Value = unit });
+        linkedGroup.Add(new LinkedEntityGroup { Value = unreferencedLinkedRoot });
+        em.SetComponentData(unit, new UnitHealth { Current = 0, Max = 100 });
+        em.SetComponentData(unit, new UnitDetailedVisualReference { Root = detailRoot });
+        em.SetComponentData(unit, new UnitMidLodInstanceReference { Instance = midRoot });
+        em.SetComponentData(unit, new VehicleDestroyedVisualInstanceReference { Instance = destroyedRoot });
+        em.SetComponentData(unit, new UnitRenderVisualComponent
+        {
+            Current = (byte)UnitRenderVisualKind.Mid,
+            Desired = (byte)UnitRenderVisualKind.Mid
+        });
+
+        SystemHandle system = world.CreateSystem<UnitRenderVisualExclusivitySystem>();
+        system.Update(world.Unmanaged);
+
+        AssertHidden(em, detailRoot, "Destroyed vehicles must keep the detailed alive model hidden.");
+        AssertHidden(em, midRoot, "Destroyed vehicles must keep LOD alive models hidden.");
+        AssertHidden(em, unreferencedLinkedRoot, "Destroyed vehicles must also hide original linked visual roots that are not covered by detail/mid/low references.");
+        AssertVisible(em, destroyedRoot, "Destroyed vehicles should show only the destroyed visual root.");
+    }
+
+    [Test]
     public void VehicleWreckCleanup_FinalizesExpiredWreckAndDescendants()
     {
         using var world = new World(nameof(VehicleWreckCleanup_FinalizesExpiredWreckAndDescendants));
@@ -163,6 +330,78 @@ public sealed class CombatDeathValidationTests
         walkable.ResizeUninitialized(gridSize);
         for (int i = 0; i < walkable.Length; i++)
             walkable[i] = new GridWalkable { Value = 1 };
+    }
+
+    private static Entity CreateVisualTree(EntityManager em)
+    {
+        Entity root = em.CreateEntity(typeof(LocalTransform));
+        Entity child = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(root, LocalTransform.Identity);
+        em.SetComponentData(child, LocalTransform.Identity);
+        DynamicBuffer<Child> children = em.AddBuffer<Child>(root);
+        children.Add(new Child { Value = child });
+        em.AddComponentData(child, new Parent { Value = root });
+        return root;
+    }
+
+    private static void HideTree(EntityManager em, Entity root)
+    {
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(root);
+        using NativeList<Entity> childEntities = new(Allocator.Temp);
+        for (int i = 0; i < children.Length; i++)
+            childEntities.Add(children[i].Value);
+        em.AddComponent<DisableRendering>(root);
+        em.AddComponent<UnitRenderBudgetCulledTag>(root);
+        for (int i = 0; i < childEntities.Length; i++)
+        {
+            Entity child = childEntities[i];
+            em.AddComponent<DisableRendering>(child);
+            em.AddComponent<UnitRenderBudgetCulledTag>(child);
+        }
+    }
+
+    private static void AssertHidden(EntityManager em, Entity root, string message)
+    {
+        Assert.IsTrue(em.HasComponent<DisableRendering>(root), message);
+        Assert.IsTrue(em.HasComponent<UnitRenderBudgetCulledTag>(root), message);
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(root);
+        for (int i = 0; i < children.Length; i++)
+        {
+            Entity child = children[i].Value;
+            Assert.IsTrue(em.HasComponent<DisableRendering>(child), message);
+            Assert.IsTrue(em.HasComponent<UnitRenderBudgetCulledTag>(child), message);
+        }
+    }
+
+    private static void AssertVisible(EntityManager em, Entity root, string message)
+    {
+        Assert.IsFalse(em.HasComponent<DisableRendering>(root), message);
+        Assert.IsFalse(em.HasComponent<UnitRenderBudgetCulledTag>(root), message);
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(root);
+        for (int i = 0; i < children.Length; i++)
+        {
+            Entity child = children[i].Value;
+            Assert.IsFalse(em.HasComponent<DisableRendering>(child), message);
+            Assert.IsFalse(em.HasComponent<UnitRenderBudgetCulledTag>(child), message);
+        }
+    }
+
+    private static void AssertVehicleDestroyedAliveHidden(EntityManager em, Entity root, string message)
+    {
+        AssertVehicleDestroyedAliveEntityHidden(em, root, message);
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(root);
+        for (int i = 0; i < children.Length; i++)
+        {
+            Entity child = children[i].Value;
+            AssertVehicleDestroyedAliveEntityHidden(em, child, message);
+        }
+    }
+
+    private static void AssertVehicleDestroyedAliveEntityHidden(EntityManager em, Entity entity, string message)
+    {
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(entity).Scale, message);
+        Assert.IsTrue(em.HasComponent<Disabled>(entity), message);
+        Assert.IsTrue(em.HasComponent<UnitRenderBudgetCulledTag>(entity), message);
     }
 
     private static Entity CreateRespawnPrefab(EntityManager em)

@@ -26,6 +26,7 @@ public partial struct UnitModelSpawnSystem : ISystem
     private EntityQuery _lowLodInstanceQuery;
     private EntityQuery _deferredVisibleCharacterLodQuery;
     private EntityQuery _pendingVisualSpawnQuery;
+    private EntityQuery _lodRootsNeedingInitialHideQuery;
     private int _lastLoggedTotalVisualUnits;
     private int _lastLoggedDetailReady;
     private int _lastLoggedMidReady;
@@ -62,6 +63,16 @@ public partial struct UnitModelSpawnSystem : ISystem
             {
                 All = new[] { ComponentType.ReadOnly<UnitVisibleCharacterLodSpawnDeferredTag>() }
             });
+        _lodRootsNeedingInitialHideQuery = state.GetEntityQuery(new EntityQueryDesc
+        {
+            All = new[] { ComponentType.ReadOnly<UnitRenderBudgetCulledTag>() },
+            Any = new[]
+            {
+                ComponentType.ReadOnly<UnitMidLodRenderRootTag>(),
+                ComponentType.ReadOnly<UnitLowLodRenderRootTag>()
+            },
+            None = new[] { ComponentType.ReadOnly<UnitRenderBudgetLodHierarchyHiddenTag>() }
+        });
         state.RequireForUpdate(_pendingVisualSpawnQuery);
         _lastLoggedTotalVisualUnits = -1;
         _lastLoggedDetailReady = -1;
@@ -108,6 +119,11 @@ public partial struct UnitModelSpawnSystem : ISystem
                  .WithNone<UnitModelInstanceReference>()
                  .WithEntityAccess())
         {
+            if (SystemAPI.HasComponent<UnitDetailedVisualReference>(entity))
+            {
+                ecb.RemoveComponent<UnitModelPrefabReference>(entity);
+                continue;
+            }
             if (modelPrefab.ValueRO.Prefab == Entity.Null)
                 continue;
             if (spawnedCount >= MaxModelSpawnsPerFrame)
@@ -217,6 +233,8 @@ public partial struct UnitModelSpawnSystem : ISystem
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+
+        HideInitiallyCulledLodHierarchies(state.EntityManager, _lodRootsNeedingInitialHideQuery);
 
         double elapsed = Time.realtimeSinceStartupAsDouble - startTime;
         int authoredDetailReady = _detailedVisualQuery.CalculateEntityCount();
@@ -357,6 +375,7 @@ public partial struct UnitModelSpawnSystem : ISystem
         spawnedCount++;
         spawnedLowCount++;
         ecb.AddComponent(entity, new UnitLowLodInstanceReference { Instance = modelInstance });
+        ecb.AddComponent(modelInstance, new UnitLowLodRenderRootTag());
         if (em.HasComponent<UnitSafeVisibleCharacterLodTag>(prefab))
         {
             ecb.AddComponent<UnitSafeVisibleCharacterLodTag>(modelInstance);
@@ -398,6 +417,46 @@ public partial struct UnitModelSpawnSystem : ISystem
         }
     }
 
+    internal static void HideInitiallyCulledLodHierarchies(EntityManager em, EntityQuery query)
+    {
+        if (query.IsEmptyIgnoreFilter)
+            return;
+
+        using NativeArray<Entity> roots = query.ToEntityArray(Allocator.Temp);
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        for (int i = 0; i < roots.Length; i++)
+        {
+            Entity root = roots[i];
+            if (!em.Exists(root))
+                continue;
+
+            HideCulledRenderableTree(em, ref ecb, root);
+            if (!em.HasComponent<UnitRenderBudgetLodHierarchyHiddenTag>(root))
+                ecb.AddComponent<UnitRenderBudgetLodHierarchyHiddenTag>(root);
+        }
+
+        ecb.Playback(em);
+        ecb.Dispose();
+    }
+
+    internal static void HideCulledRenderableTree(EntityManager em, ref EntityCommandBuffer ecb, Entity entity)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return;
+
+        if (!em.HasComponent<DisableRendering>(entity))
+            ecb.AddComponent<DisableRendering>(entity);
+        if (!em.HasComponent<UnitRenderBudgetCulledTag>(entity))
+            ecb.AddComponent<UnitRenderBudgetCulledTag>(entity);
+
+        if (!em.HasBuffer<Child>(entity))
+            return;
+
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(entity);
+        for (int i = 0; i < children.Length; i++)
+            HideCulledRenderableTree(em, ref ecb, children[i].Value);
+    }
+
     private static bool IsProxySoldierMidLodPrefab(string prefabName)
     {
         return !string.IsNullOrEmpty(prefabName) &&
@@ -429,5 +488,209 @@ public partial struct UnitModelSpawnSystem : ISystem
         return viewportZ > 0f &&
                viewportX >= -0.05f && viewportX <= 1.05f &&
                viewportY >= -0.05f && viewportY <= 1.05f;
+    }
+}
+
+[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateAfter(typeof(UnitModelSpawnSystem))]
+public partial struct UnitRenderBudgetInitialLodVisibilitySystem : ISystem
+{
+    private EntityQuery _lodRootsNeedingInitialHideQuery;
+
+    public void OnCreate(ref SystemState state)
+    {
+        _lodRootsNeedingInitialHideQuery = state.GetEntityQuery(new EntityQueryDesc
+        {
+            All = new[] { ComponentType.ReadOnly<UnitRenderBudgetCulledTag>() },
+            Any = new[]
+            {
+                ComponentType.ReadOnly<UnitMidLodRenderRootTag>(),
+                ComponentType.ReadOnly<UnitLowLodRenderRootTag>()
+            },
+            None = new[] { ComponentType.ReadOnly<UnitRenderBudgetLodHierarchyHiddenTag>() }
+        });
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        UnitModelSpawnSystem.HideInitiallyCulledLodHierarchies(
+            state.EntityManager,
+            _lodRootsNeedingInitialHideQuery);
+    }
+}
+
+[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateAfter(typeof(UnitRenderBudgetSystem))]
+public partial struct UnitRenderVisualExclusivitySystem : ISystem
+{
+    private EntityQuery _visualRootsQuery;
+
+    public void OnCreate(ref SystemState state)
+    {
+        _visualRootsQuery = state.GetEntityQuery(new EntityQueryDesc
+        {
+            Any = new[]
+            {
+                ComponentType.ReadOnly<UnitDetailedVisualReference>(),
+                ComponentType.ReadOnly<UnitModelInstanceReference>(),
+                ComponentType.ReadOnly<UnitMidLodInstanceReference>(),
+                ComponentType.ReadOnly<UnitLowLodInstanceReference>(),
+                ComponentType.ReadOnly<UnitDestroyedVisualReference>(),
+                ComponentType.ReadOnly<VehicleDestroyedVisualInstanceReference>()
+            },
+            None = new[] { ComponentType.ReadOnly<Prefab>() }
+        });
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        if (_visualRootsQuery.IsEmptyIgnoreFilter)
+            return;
+
+        EntityManager em = state.EntityManager;
+        using NativeArray<Entity> visualRoots = _visualRootsQuery.ToEntityArray(Allocator.Temp);
+        for (int visualRootIndex = 0; visualRootIndex < visualRoots.Length; visualRootIndex++)
+        {
+            Entity entity = visualRoots[visualRootIndex];
+            if (!em.Exists(entity))
+                continue;
+
+            bool destroyed =
+                em.HasComponent<VehicleDestroyedVisualInstanceReference>(entity) ||
+                em.HasComponent<VehicleDestroyedVisualSpawnRequest>(entity) ||
+                (em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current <= 0);
+            if (destroyed)
+            {
+                SetLinkedOriginalVisualsVisible(em, entity, false);
+                SetLiveVisualRootsVisible(em, entity, false, false, false);
+                if (em.HasComponent<UnitDestroyedVisualReference>(entity))
+                {
+                    UnitDestroyedVisualReference visualRef = em.GetComponentData<UnitDestroyedVisualReference>(entity);
+                    SetRenderTreeVisible(em, visualRef.AliveVisual, false);
+                    SetRenderTreeVisible(em, visualRef.DestroyedVisual, false);
+                }
+
+                if (em.HasComponent<VehicleDestroyedVisualInstanceReference>(entity))
+                    SetRenderTreeVisible(em, em.GetComponentData<VehicleDestroyedVisualInstanceReference>(entity).Instance, true);
+                continue;
+            }
+
+            UnitRenderVisualKind currentVisual = UnitRenderVisualKind.Detail;
+            if (em.HasComponent<UnitRenderVisualComponent>(entity))
+            {
+                currentVisual = (UnitRenderVisualKind)em.GetComponentData<UnitRenderVisualComponent>(entity).Current;
+                if (currentVisual == UnitRenderVisualKind.Unknown)
+                    currentVisual = UnitRenderVisualKind.Detail;
+            }
+
+            SetLiveVisualRootsVisible(
+                em,
+                entity,
+                currentVisual == UnitRenderVisualKind.Detail,
+                currentVisual == UnitRenderVisualKind.Mid,
+                currentVisual == UnitRenderVisualKind.Low);
+        }
+    }
+
+    private static void SetLiveVisualRootsVisible(
+        EntityManager em,
+        Entity unit,
+        bool detailVisible,
+        bool midVisible,
+        bool lowVisible)
+    {
+        bool hasAuthoredDetail = em.HasComponent<UnitDetailedVisualReference>(unit);
+        if (hasAuthoredDetail)
+            SetRenderTreeVisible(em, em.GetComponentData<UnitDetailedVisualReference>(unit).Root, detailVisible);
+
+        if (em.HasComponent<UnitModelInstanceReference>(unit))
+            SetRenderTreeVisible(em, em.GetComponentData<UnitModelInstanceReference>(unit).Instance, detailVisible && !hasAuthoredDetail);
+
+        if (em.HasComponent<UnitMidLodInstanceReference>(unit))
+            SetRenderTreeVisible(em, em.GetComponentData<UnitMidLodInstanceReference>(unit).Instance, midVisible);
+
+        if (em.HasComponent<UnitLowLodInstanceReference>(unit))
+            SetRenderTreeVisible(em, em.GetComponentData<UnitLowLodInstanceReference>(unit).Instance, lowVisible);
+    }
+
+    private static void SetRenderTreeVisible(EntityManager em, Entity entity, bool visible)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return;
+
+        using NativeList<Entity> tree = new(Allocator.Temp);
+        using NativeHashSet<Entity> visited = new(16, Allocator.Temp);
+        CollectRenderTree(em, entity, tree, visited);
+        for (int i = 0; i < tree.Length; i++)
+            SetRenderEntityVisible(em, tree[i], visible);
+    }
+
+    private static void SetLinkedOriginalVisualsVisible(EntityManager em, Entity unit, bool visible)
+    {
+        if (unit == Entity.Null || !em.Exists(unit) || !em.HasBuffer<LinkedEntityGroup>(unit))
+            return;
+
+        using NativeList<Entity> tree = new(Allocator.Temp);
+        using NativeHashSet<Entity> visited = new(64, Allocator.Temp);
+        DynamicBuffer<LinkedEntityGroup> linkedEntities = em.GetBuffer<LinkedEntityGroup>(unit);
+        for (int i = 0; i < linkedEntities.Length; i++)
+        {
+            Entity linkedEntity = linkedEntities[i].Value;
+            if (linkedEntity == unit)
+                continue;
+
+            CollectRenderTree(em, linkedEntity, tree, visited);
+        }
+
+        for (int i = 0; i < tree.Length; i++)
+            SetRenderEntityVisible(em, tree[i], visible);
+    }
+
+    private static void CollectRenderTree(EntityManager em, Entity entity, NativeList<Entity> tree, NativeHashSet<Entity> visited)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return;
+        if (!visited.Add(entity))
+            return;
+
+        tree.Add(entity);
+        if (em.HasBuffer<LinkedEntityGroup>(entity))
+        {
+            DynamicBuffer<LinkedEntityGroup> linkedEntities = em.GetBuffer<LinkedEntityGroup>(entity);
+            for (int i = 0; i < linkedEntities.Length; i++)
+                CollectRenderTree(em, linkedEntities[i].Value, tree, visited);
+        }
+
+        if (!em.HasBuffer<Child>(entity))
+            return;
+
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(entity);
+        for (int i = 0; i < children.Length; i++)
+            CollectRenderTree(em, children[i].Value, tree, visited);
+    }
+
+    private static void SetRenderEntityVisible(EntityManager em, Entity entity, bool visible)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return;
+
+        if (visible)
+        {
+            if (em.HasComponent<Disabled>(entity))
+                em.RemoveComponent<Disabled>(entity);
+            if (em.HasComponent<DisableRendering>(entity))
+                em.RemoveComponent<DisableRendering>(entity);
+            if (em.HasComponent<UnitRenderBudgetCulledTag>(entity))
+                em.RemoveComponent<UnitRenderBudgetCulledTag>(entity);
+        }
+        else
+        {
+            if (!em.HasComponent<Disabled>(entity))
+                em.AddComponent<Disabled>(entity);
+            if (!em.HasComponent<DisableRendering>(entity))
+                em.AddComponent<DisableRendering>(entity);
+            if (!em.HasComponent<UnitRenderBudgetCulledTag>(entity))
+                em.AddComponent<UnitRenderBudgetCulledTag>(entity);
+        }
     }
 }

@@ -3,7 +3,9 @@ using System;
 using System.IO;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Entities.Graphics;
 using Unity.Mathematics;
+using Unity.Rendering;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -26,6 +28,7 @@ public static class BattleScenarioLabValidationRunner
     public const string Ad009DefinitionPath = "Assets/Game/Configs/ScenarioLab/AD009_AirMissileLauncher_SupportModeComparison_RadarSatelliteCombined.asset";
     public const string Ad010DefinitionPath = "Assets/Game/Configs/ScenarioLab/AD010_AirMissileLauncher_InterceptionGeometrySweep.asset";
     public const string Ad011DefinitionPath = "Assets/Game/Configs/ScenarioLab/AD011_AirMissileLauncher_TracksAndHitsAirTargetClasses.asset";
+    public const string Ad011HelicopterPostImpactCapturePath = "/private/tmp/warline-scenario-lab-ad011-helicopter-post-impact.png";
     public const string Gm001DefinitionPath = "Assets/Game/Configs/ScenarioLab/GM001_GroundMissileLauncher_FiresVisibleRocketAndDamagesTarget.asset";
     public const string Dr001DefinitionPath = "Assets/Game/Configs/ScenarioLab/DR001_DroneReconDetectionAndThreatWarning.asset";
     private const string LiveEcsPlaybackActiveKey = "BattleScenarioLab.LiveEcsPlayback.Active";
@@ -976,6 +979,9 @@ public static class BattleScenarioLabValidationRunner
                 }
 
                 TrackAirTargetSwitchState(em, JetTargetSourceKey, VisualSwitchSeenAd011TargetKey, VisualSwitchSeenAd011AirProjectileKey, VisualSwitchSeenAd011ImpactKey);
+                if (FailOnDuplicateVisibleTargetVisuals(em, JetTargetSourceKey))
+                    return;
+
                 if (SessionState.GetBool(VisualSwitchSeenAd011TargetKey, false) &&
                     SessionState.GetBool(VisualSwitchSeenAd011AirProjectileKey, false) &&
                     SessionState.GetBool(VisualSwitchSeenAd011ImpactKey, false))
@@ -996,15 +1002,21 @@ public static class BattleScenarioLabValidationRunner
                 }
 
                 TrackAirTargetSwitchState(em, HelicopterTargetSourceKey, VisualSwitchSeenAd011HelicopterTargetKey, VisualSwitchSeenAd011HelicopterAirProjectileKey, VisualSwitchSeenAd011HelicopterImpactKey);
+                if (FailOnDuplicateVisibleTargetVisuals(em, HelicopterTargetSourceKey))
+                    return;
+
                 if (SessionState.GetBool(VisualSwitchSeenAd011HelicopterTargetKey, false) &&
                     SessionState.GetBool(VisualSwitchSeenAd011HelicopterAirProjectileKey, false) &&
                     SessionState.GetBool(VisualSwitchSeenAd011HelicopterImpactKey, false) &&
+                    ScenarioTargetAliveVisualHidden(em, HelicopterTargetSourceKey) &&
                     !HasInstantiatedUnit(em, JetTargetSourceKey))
                 {
+                    FrameScenarioTargetForCloseCapture(em, HelicopterTargetSourceKey);
+                    CapturePlayModeCamera(Ad011HelicopterPostImpactCapturePath);
                     bootstrap.SelectNextScenario();
                     SessionState.SetInt(VisualSwitchPhaseKey, 4);
                     SessionState.SetFloat(VisualSwitchPhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
-                    Debug.Log("[BattleScenarioLab] Next visual switch validation advanced from AD-011 helicopter to AD-011 drone.");
+                    Debug.Log($"[BattleScenarioLab] Next visual switch validation advanced from AD-011 helicopter to AD-011 drone. Capture: {Ad011HelicopterPostImpactCapturePath}");
                 }
                 break;
 
@@ -1017,6 +1029,9 @@ public static class BattleScenarioLabValidationRunner
                 }
 
                 TrackAirTargetSwitchState(em, DroneTargetSourceKey, VisualSwitchSeenAd011DroneTargetKey, VisualSwitchSeenAd011DroneAirProjectileKey, VisualSwitchSeenAd011DroneImpactKey);
+                if (FailOnDuplicateVisibleTargetVisuals(em, DroneTargetSourceKey))
+                    return;
+
                 if (SessionState.GetBool(VisualSwitchSeenAd011DroneTargetKey, false) &&
                     SessionState.GetBool(VisualSwitchSeenAd011DroneAirProjectileKey, false) &&
                     SessionState.GetBool(VisualSwitchSeenAd011DroneImpactKey, false) &&
@@ -1039,6 +1054,9 @@ public static class BattleScenarioLabValidationRunner
                 }
 
                 TrackAirTargetSwitchState(em, JetTargetSourceKey, VisualSwitchSeenAd011AttackingJetTargetKey, VisualSwitchSeenAd011AttackingJetAirProjectileKey, VisualSwitchSeenAd011AttackingJetImpactKey);
+                if (FailOnDuplicateVisibleTargetVisuals(em, JetTargetSourceKey))
+                    return;
+
                 if (SessionState.GetBool(VisualSwitchSeenAd011AttackingJetTargetKey, false) &&
                     SessionState.GetBool(VisualSwitchSeenAd011AttackingJetAirProjectileKey, false) &&
                     SessionState.GetBool(VisualSwitchSeenAd011AttackingJetImpactKey, false) &&
@@ -1071,6 +1089,9 @@ public static class BattleScenarioLabValidationRunner
                 $"ad011Helicopter={SessionState.GetBool(VisualSwitchSeenAd011HelicopterTargetKey, false)}/{SessionState.GetBool(VisualSwitchSeenAd011HelicopterAirProjectileKey, false)}/{SessionState.GetBool(VisualSwitchSeenAd011HelicopterImpactKey, false)}, " +
                 $"ad011Drone={SessionState.GetBool(VisualSwitchSeenAd011DroneTargetKey, false)}/{SessionState.GetBool(VisualSwitchSeenAd011DroneAirProjectileKey, false)}/{SessionState.GetBool(VisualSwitchSeenAd011DroneImpactKey, false)}, " +
                 $"ad011AttackingJet={SessionState.GetBool(VisualSwitchSeenAd011AttackingJetTargetKey, false)}/{SessionState.GetBool(VisualSwitchSeenAd011AttackingJetAirProjectileKey, false)}/{SessionState.GetBool(VisualSwitchSeenAd011AttackingJetImpactKey, false)}, " +
+                $"visibleHelVisualRoots={CountScenarioTargetVisibleVisualRoots(em, HelicopterTargetSourceKey)}, " +
+                $"visibleDroneVisualRoots={CountScenarioTargetVisibleVisualRoots(em, DroneTargetSourceKey)}, " +
+                $"helAliveHidden={ScenarioTargetAliveVisualHidden(em, HelicopterTargetSourceKey)}, " +
                 $"groundProjectileNow={HasAnyEntityWith<GroundMissileProjectileComponent>(em)}, " +
                 $"airProjectileNow={HasAnyEntityWith<AirMissileProjectileComponent>(em)}";
             CompleteVisualSwitchValidation(false, reason);
@@ -1174,6 +1195,324 @@ public static class BattleScenarioLabValidationRunner
                 return true;
         }
 
+        return false;
+    }
+
+    private static bool FailOnDuplicateVisibleTargetVisuals(EntityManager em, string sourceKey)
+    {
+        int visibleRoots = CountScenarioTargetVisibleVisualRoots(em, sourceKey);
+        if (visibleRoots <= 1)
+            return false;
+
+        CompleteVisualSwitchValidation(
+            false,
+            $"{sourceKey} has {visibleRoots} visible visual roots; expected exactly one live or destroyed visual root");
+        return true;
+    }
+
+    private static int CountScenarioTargetVisibleVisualRoots(EntityManager em, string sourceKey)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<UnitSourcePrefabKey>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        int visibleRoots = 0;
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!em.Exists(entity) || em.HasComponent<Prefab>(entity))
+                continue;
+
+            string candidate = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
+            if (!string.Equals(candidate, sourceKey, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            if (em.HasComponent<UnitDetailedVisualReference>(entity) &&
+                IsRenderableVisibleRecursive(em, em.GetComponentData<UnitDetailedVisualReference>(entity).Root, true))
+                visibleRoots++;
+
+            if (em.HasComponent<UnitModelInstanceReference>(entity) &&
+                IsRenderableVisibleRecursive(em, em.GetComponentData<UnitModelInstanceReference>(entity).Instance, true))
+                visibleRoots++;
+
+            if (em.HasComponent<UnitMidLodInstanceReference>(entity) &&
+                IsRenderableVisibleRecursive(em, em.GetComponentData<UnitMidLodInstanceReference>(entity).Instance, true))
+                visibleRoots++;
+
+            if (em.HasComponent<UnitLowLodInstanceReference>(entity) &&
+                IsRenderableVisibleRecursive(em, em.GetComponentData<UnitLowLodInstanceReference>(entity).Instance, true))
+                visibleRoots++;
+
+            if (em.HasComponent<VehicleDestroyedVisualInstanceReference>(entity) &&
+                IsRenderableVisibleRecursive(em, em.GetComponentData<VehicleDestroyedVisualInstanceReference>(entity).Instance, true))
+                visibleRoots++;
+        }
+
+        return visibleRoots;
+    }
+
+    private static bool IsRenderableVisibleRecursive(EntityManager em, Entity entity, bool parentVisible)
+    {
+        using NativeHashSet<Entity> visited = new(16, Allocator.Temp);
+        return IsRenderableVisibleRecursive(em, entity, parentVisible, visited);
+    }
+
+    private static bool IsRenderableVisibleRecursive(EntityManager em, Entity entity, bool parentVisible, NativeHashSet<Entity> visited)
+    {
+        if (entity == Entity.Null || !em.Exists(entity) || !parentVisible)
+            return false;
+        if (!visited.Add(entity))
+            return false;
+
+        bool transformVisible = true;
+        if (em.HasComponent<LocalTransform>(entity))
+            transformVisible = math.abs(em.GetComponentData<LocalTransform>(entity).Scale) > 0.001f;
+
+        bool entityVisible =
+            transformVisible &&
+            !em.HasComponent<Disabled>(entity) &&
+            !em.HasComponent<DisableRendering>(entity) &&
+            !em.HasComponent<UnitRenderBudgetCulledTag>(entity);
+        if (entityVisible &&
+            (em.HasComponent<RenderFilterSettings>(entity) ||
+             em.HasComponent<RenderBounds>(entity) ||
+             em.HasComponent<MaterialMeshInfo>(entity)))
+        {
+            return true;
+        }
+
+        if (em.HasBuffer<LinkedEntityGroup>(entity))
+        {
+            DynamicBuffer<LinkedEntityGroup> linkedEntities = em.GetBuffer<LinkedEntityGroup>(entity);
+            for (int i = 0; i < linkedEntities.Length; i++)
+            {
+                Entity linkedEntity = linkedEntities[i].Value;
+                if (linkedEntity != entity && IsRenderableVisibleRecursive(em, linkedEntity, true, visited))
+                    return true;
+            }
+        }
+
+        if (!em.HasBuffer<Child>(entity))
+            return false;
+
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(entity);
+        for (int i = 0; i < children.Length; i++)
+        {
+            bool childTransformVisible = transformVisible && !em.HasComponent<Disabled>(entity);
+            if (IsRenderableVisibleRecursive(em, children[i].Value, childTransformVisible, visited))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool ScenarioTargetAliveVisualHidden(EntityManager em, string sourceKey)
+    {
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+            ComponentType.ReadOnly<UnitHealth>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!em.Exists(entity) || em.HasComponent<Prefab>(entity))
+                continue;
+
+            string candidate = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
+            if (!string.Equals(candidate, sourceKey, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            if (em.GetComponentData<UnitHealth>(entity).Current > 0)
+                continue;
+
+            if (em.HasComponent<UnitDetailedVisualReference>(entity) &&
+                IsRenderableVisibleRecursive(em, em.GetComponentData<UnitDetailedVisualReference>(entity).Root, true))
+                return false;
+
+            if (em.HasComponent<UnitModelInstanceReference>(entity) &&
+                IsRenderableVisibleRecursive(em, em.GetComponentData<UnitModelInstanceReference>(entity).Instance, true))
+                return false;
+
+            if (em.HasComponent<UnitMidLodInstanceReference>(entity) &&
+                IsRenderableVisibleRecursive(em, em.GetComponentData<UnitMidLodInstanceReference>(entity).Instance, true))
+                return false;
+
+            if (em.HasComponent<UnitLowLodInstanceReference>(entity) &&
+                IsRenderableVisibleRecursive(em, em.GetComponentData<UnitLowLodInstanceReference>(entity).Instance, true))
+                return false;
+
+            if (HasVisibleOriginalLinkedVisuals(em, entity))
+                return false;
+
+            if (em.HasComponent<UnitDestroyedVisualReference>(entity))
+            {
+                UnitDestroyedVisualReference visualRef = em.GetComponentData<UnitDestroyedVisualReference>(entity);
+                if (IsRenderableVisibleRecursive(em, visualRef.AliveVisual, true) ||
+                    IsRenderableVisibleRecursive(em, visualRef.DestroyedVisual, true))
+                    return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool HasVisibleOriginalLinkedVisuals(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null || !em.Exists(entity) || !em.HasBuffer<LinkedEntityGroup>(entity))
+            return false;
+
+        DynamicBuffer<LinkedEntityGroup> linkedEntities = em.GetBuffer<LinkedEntityGroup>(entity);
+        for (int i = 0; i < linkedEntities.Length; i++)
+        {
+            Entity linkedEntity = linkedEntities[i].Value;
+            if (linkedEntity == entity)
+                continue;
+
+            if (IsRenderableVisibleRecursive(em, linkedEntity, true))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static void CapturePlayModeCamera(string path)
+    {
+        Camera camera = ResolveScenarioCamera();
+        if (camera == null)
+            throw new InvalidOperationException("Cannot capture Scenario Lab visual proof because no camera is available.");
+
+        string directory = Path.GetDirectoryName(path);
+        if (!string.IsNullOrEmpty(directory))
+            Directory.CreateDirectory(directory);
+
+        const int width = 1280;
+        const int height = 720;
+        RenderTexture target = new(width, height, 24, RenderTextureFormat.ARGB32)
+        {
+            antiAliasing = 4,
+            name = "ScenarioLabAd011HelicopterPostImpactCapture"
+        };
+        RenderTexture previousTarget = camera.targetTexture;
+        RenderTexture previousActive = RenderTexture.active;
+        Texture2D texture = null;
+        try
+        {
+            camera.targetTexture = target;
+            RenderTexture.active = target;
+            camera.Render();
+
+            texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            texture.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+            texture.Apply(false, false);
+            if (!HasVisiblePixels(texture))
+                throw new InvalidOperationException($"Scenario Lab capture is blank: {path}");
+
+            File.WriteAllBytes(path, texture.EncodeToPNG());
+        }
+        finally
+        {
+            camera.targetTexture = previousTarget;
+            RenderTexture.active = previousActive;
+            if (texture != null)
+                UnityEngine.Object.DestroyImmediate(texture);
+            target.Release();
+            UnityEngine.Object.DestroyImmediate(target);
+        }
+    }
+
+    private static Camera ResolveScenarioCamera()
+    {
+        BattleScenarioLabSceneReferences references = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabSceneReferences>();
+        if (references != null && references.ScenarioCamera != null)
+            return references.ScenarioCamera;
+
+        if (Camera.main != null)
+            return Camera.main;
+
+        return UnityEngine.Object.FindAnyObjectByType<Camera>();
+    }
+
+    private static bool HasVisiblePixels(Texture2D texture)
+    {
+        Color32[] pixels = texture.GetPixels32();
+        for (int i = 0; i < pixels.Length; i += 97)
+        {
+            Color32 pixel = pixels[i];
+            if (pixel.r > 24 || pixel.g > 24 || pixel.b > 24)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static void FrameScenarioTargetForCloseCapture(EntityManager em, string sourceKey)
+    {
+        if (!TryResolveScenarioTargetFocus(em, sourceKey, out Vector3 focus))
+            return;
+
+        Camera camera = ResolveScenarioCamera();
+        if (camera == null)
+            return;
+
+        Vector3 cameraPosition = focus + new Vector3(18f, 11f, -28f);
+        Vector3 direction = focus - cameraPosition;
+        camera.transform.position = cameraPosition;
+        if (direction.sqrMagnitude > 0.0001f)
+            camera.transform.rotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+        camera.nearClipPlane = 0.05f;
+        camera.farClipPlane = 260f;
+        camera.fieldOfView = 38f;
+    }
+
+    private static bool TryResolveScenarioTargetFocus(EntityManager em, string sourceKey, out Vector3 focus)
+    {
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+            ComponentType.ReadOnly<UnitHealth>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!em.Exists(entity) || em.HasComponent<Prefab>(entity))
+                continue;
+
+            string candidate = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
+            if (!string.Equals(candidate, sourceKey, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            if (em.HasComponent<VehicleDestroyedVisualInstanceReference>(entity))
+            {
+                Entity destroyedVisual = em.GetComponentData<VehicleDestroyedVisualInstanceReference>(entity).Instance;
+                if (TryGetWorldPosition(em, destroyedVisual, out focus))
+                    return true;
+            }
+
+            if (TryGetWorldPosition(em, entity, out focus))
+                return true;
+        }
+
+        focus = default;
+        return false;
+    }
+
+    private static bool TryGetWorldPosition(EntityManager em, Entity entity, out Vector3 position)
+    {
+        if (entity != Entity.Null && em.Exists(entity))
+        {
+            if (em.HasComponent<LocalToWorld>(entity))
+            {
+                position = (Vector3)em.GetComponentData<LocalToWorld>(entity).Position;
+                return true;
+            }
+
+            if (em.HasComponent<LocalTransform>(entity))
+            {
+                position = (Vector3)em.GetComponentData<LocalTransform>(entity).Position;
+                return true;
+            }
+        }
+
+        position = default;
         return false;
     }
 

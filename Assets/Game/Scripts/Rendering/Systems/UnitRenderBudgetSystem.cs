@@ -161,6 +161,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
         var animationIndexLookup = SystemAPI.GetComponentLookup<MaterialAnimationIndex>(true);
         var moveVisualLookup = SystemAPI.GetComponentLookup<UnitMoveVisualComponent>(true);
         var movementBehaviorLookup = SystemAPI.GetComponentLookup<UnitMovementBehavior>(true);
+        var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         var sourcePrefabKeyLookup = SystemAPI.GetComponentLookup<UnitSourcePrefabKey>(true);
         var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);
         var selectedLookup = SystemAPI.GetComponentLookup<SelectedUnitTag>(true);
@@ -243,6 +244,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
             AnimationIndexLookup = animationIndexLookup,
             MoveVisualLookup = moveVisualLookup,
             MovementBehaviorLookup = movementBehaviorLookup,
+            HealthLookup = healthLookup,
             SourcePrefabKeyLookup = sourcePrefabKeyLookup,
             FactionLookup = factionLookup,
             SelectedLookup = selectedLookup,

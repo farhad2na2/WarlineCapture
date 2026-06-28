@@ -16,6 +16,7 @@ public readonly struct UnitRenderBudgetDecision
         public ComponentLookup<MaterialAnimationIndex> AnimationIndexLookup;
         public ComponentLookup<UnitMoveVisualComponent> MoveVisualLookup;
         public ComponentLookup<UnitMovementBehavior> MovementBehaviorLookup;
+        public ComponentLookup<UnitHealth> HealthLookup;
         public ComponentLookup<UnitSourcePrefabKey> SourcePrefabKeyLookup;
         public ComponentLookup<Faction> FactionLookup;
         public ComponentLookup<SelectedUnitTag> SelectedLookup;
@@ -94,6 +95,15 @@ public readonly struct UnitRenderBudgetDecision
         for (int i = 0; i < context.Distances.Length; i++)
         {
             Entity unit = context.Distances[i].Unit;
+            UnitRenderBudgetLodReferences.UnitReferences lodReferences = context.LodReferenceSystem.ResolveUnitReferences(
+                unit,
+                context.LodReferenceLookups);
+            if (context.HealthLookup.HasComponent(unit) && context.HealthLookup[unit].Current <= 0)
+            {
+                HideDeadUnitLiveVisualRoots(ref context, lodReferences, ref result);
+                continue;
+            }
+
             bool isCharacter = context.ClassificationSystem.IsCharacterUnit(
                 unit,
                 context.MovementBehaviorLookup,
@@ -104,9 +114,6 @@ public readonly struct UnitRenderBudgetDecision
             bool isMovingUnit =
                 context.MoveVisualLookup.HasComponent(unit) &&
                 context.MoveVisualLookup[unit].IsMoving != 0;
-            UnitRenderBudgetLodReferences.UnitReferences lodReferences = context.LodReferenceSystem.ResolveUnitReferences(
-                unit,
-                context.LodReferenceLookups);
             bool hasMidLodPrefab = lodReferences.HasMidLodPrefab;
             bool hasMidLodInstance = lodReferences.HasMidLodInstance;
             Entity midRoot = lodReferences.MidRoot;
@@ -280,5 +287,51 @@ public readonly struct UnitRenderBudgetDecision
         }
 
         return result;
+    }
+
+    private static void HideDeadUnitLiveVisualRoots(
+        ref Context context,
+        UnitRenderBudgetLodReferences.UnitReferences lodReferences,
+        ref Result result)
+    {
+        Entity detailRoot = lodReferences.DetailRoot;
+        if (detailRoot != Entity.Null)
+            context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(
+                detailRoot,
+                visible: false,
+                context.ChildLookup,
+                context.EntityStorageInfoLookup,
+                context.DisabledLookup,
+                context.DisableRenderingLookup,
+                context.CulledTagLookup,
+                context.EntitiesToShow,
+                context.EntitiesToHide,
+                ref result.Changed);
+
+        if (lodReferences.HasMidLodInstance)
+            context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(
+                lodReferences.MidRoot,
+                visible: false,
+                context.ChildLookup,
+                context.EntityStorageInfoLookup,
+                context.DisabledLookup,
+                context.DisableRenderingLookup,
+                context.CulledTagLookup,
+                context.EntitiesToShow,
+                context.EntitiesToHide,
+                ref result.Changed);
+
+        if (lodReferences.HasLowLodInstance)
+            context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(
+                lodReferences.LowRoot,
+                visible: false,
+                context.ChildLookup,
+                context.EntityStorageInfoLookup,
+                context.DisabledLookup,
+                context.DisableRenderingLookup,
+                context.CulledTagLookup,
+                context.EntitiesToShow,
+                context.EntitiesToHide,
+                ref result.Changed);
     }
 }

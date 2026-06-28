@@ -154,6 +154,14 @@ public struct UnitMidLodRenderRootTag : IComponentData
 {
 }
 
+public struct UnitLowLodRenderRootTag : IComponentData
+{
+}
+
+public struct UnitRenderBudgetLodHierarchyHiddenTag : IComponentData
+{
+}
+
 public struct UnitSafeVisibleCharacterLodTag : IComponentData
 {
 }

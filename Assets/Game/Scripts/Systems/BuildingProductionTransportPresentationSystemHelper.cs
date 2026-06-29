@@ -13,9 +13,16 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
 {
     private const float ProductionTransportLaneSpacing = 12f;
     private const float RunwaySurfaceClearance = 0.03f;
-    private const int HelicopterDropSearchRadiusCells = 36;
+    private const int HelicopterDropSearchRadiusCells = 64;
     private const int HelicopterDropLandingPaddingCells = 1;
-    private const int HelicopterDropBuildingBufferCells = 2;
+    private const int HelicopterDropBuildingBufferCells = 6;
+    private const int HelicopterDropActiveTransportBufferCells = 5;
+    private const int HelicopterDropLiveAirUnitBufferCells = 14;
+    private const int HelicopterDropLiveVehicleBufferCells = 8;
+    private const int HelicopterDropProducedAirUnitBufferCells = 8;
+    private const int HelicopterDropProducedVehicleBufferCells = 8;
+    private const int HelicopterDropProducedGroundUnitBufferCells = 2;
+    private const float HelicopterDropMaxNonRoadLandingHeightDelta = 0.75f;
     private const int DefaultTransportPoolPrewarmCount = 2;
     private const int DefaultTransportStatePoolPrewarmCount = 32;
     private static readonly int SnivelerModelShownId = Shader.PropertyToID("_SnivelerModelShown");
@@ -152,7 +159,7 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
 
             hoverPosition = ResolveProductionTransportHoverPosition(building, pending);
             hoverPosition += ResolveProductionTransportLaneOffset(context, laneIndex, pending.TransportMaxConcurrent);
-            if (TryResolveClearHelicopterDropPosition(context, building, pending, hoverPosition, out _, out Vector3 clearDropPosition))
+            if (TryResolveClearHelicopterDropPosition(context, building, pending, hoverPosition, null, out _, out Vector3 clearDropPosition))
             {
                 hoverPosition.x = clearDropPosition.x;
                 hoverPosition.z = clearDropPosition.z;
@@ -559,7 +566,7 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
         if (transport.Mode == ProductionTransportMode.Helicopter)
         {
             Vector3 preferredDrop = new(transport.HoverPosition.x, finalSpawnPosition.y, transport.HoverPosition.z);
-            if (TryResolveClearHelicopterDropPosition(context, building, pending, preferredDrop, out int2 clearDropCell, out Vector3 clearDropPosition))
+            if (TryResolveClearHelicopterDropPosition(context, building, pending, preferredDrop, transport, out int2 clearDropCell, out Vector3 clearDropPosition))
             {
                 AlignHelicopterTransportAnchorOverDrop(transport, clearDropPosition);
                 Vector3 anchor = ResolveTransportVisualCenterWorld(transport);
@@ -569,9 +576,8 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
             }
             else
             {
-                dropEndPosition = new Vector3(transport.HoverPosition.x, finalSpawnPosition.y, transport.HoverPosition.z);
-                dropStartPosition = new Vector3(dropEndPosition.x, transport.HoverPosition.y, dropEndPosition.z);
-                finalGoalCell = ResolveProductionGroundGoalCell(context, dropEndPosition);
+                transport.NextDropReadyAt = now + 0.25f;
+                return;
             }
         }
 
@@ -710,6 +716,12 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
                 AlignNewestProducedUnitRotation(context, building, -transport.Transform.forward);
                 MoveNewestProducedUnitToCell(context, building, drop.FinalGoalCell);
             }
+        }
+        else if (transport.Mode == ProductionTransportMode.Helicopter)
+        {
+            int2 startCell = ResolveProductionGroundGoalCell(context, drop.EndPosition);
+            if (TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, drop.EndPosition, startCell, ref randomState))
+                MoveNewestProducedUnitToCell(context, building, drop.FinalGoalCell);
         }
         else if (TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, null, null, ref randomState))
         {
@@ -874,6 +886,7 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
         RuntimeBuildingEntity building,
         RuntimeBuildingEntity.PendingProduction pending,
         Vector3 preferredWorld,
+        RuntimeBuildingEntity.ActiveProductionTransport ignoredTransport,
         out int2 dropCell,
         out Vector3 dropPosition)
     {
@@ -900,6 +913,9 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
         try
         {
             ReserveRuntimeBuildingDropBuffers(context, ref reserved, grid, HelicopterDropBuildingBufferCells);
+            ReserveActiveProductionTransportDropBuffers(context, ignoredTransport, ref reserved, grid, HelicopterDropActiveTransportBufferCells);
+            ReserveProducedUnitDropBuffers(context, em, ref reserved, grid);
+            ReserveLiveUnitDropBuffers(em, ref reserved, grid);
             for (int radius = 0; radius <= HelicopterDropSearchRadiusCells; radius++)
             {
                 for (int y = preferredCell.y - radius; y <= preferredCell.y + radius; y++)
@@ -992,10 +1008,24 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
             {
                 return false;
             }
+
+            float heightDelta = resolved.y - grid.Origin.y;
+            if (heightDelta > HelicopterDropMaxNonRoadLandingHeightDelta && !IsRoadLikeHelicopterDropSurface(sample))
+                return false;
         }
 
         dropPosition = new Vector3(resolved.x, resolved.y, resolved.z);
         return true;
+    }
+
+    private static bool IsRoadLikeHelicopterDropSurface(MapSurfaceSample sample)
+    {
+        return sample.SurfaceType == MapSurfaceType.Road ||
+               sample.SurfaceType == MapSurfaceType.DirtRoad ||
+               sample.SurfaceType == MapSurfaceType.Highway ||
+               sample.SurfaceType == MapSurfaceType.BridgeDeck ||
+               sample.SurfaceType == MapSurfaceType.Ramp ||
+               (sample.Flags & (MapSurfaceFlags.Road | MapSurfaceFlags.Bridge | MapSurfaceFlags.Ramp)) != 0;
     }
 
     private static void ReserveRuntimeBuildingDropBuffers(Context context, ref NativeBitArray reserved, GridConfig grid, int extraRadius)
@@ -1021,6 +1051,230 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
                 for (int x = minX; x < maxX; x++)
                     reserved.Set(row + x, true);
             }
+        }
+    }
+
+    private static void ReserveActiveProductionTransportDropBuffers(
+        Context context,
+        RuntimeBuildingEntity.ActiveProductionTransport ignoredTransport,
+        ref NativeBitArray reserved,
+        GridConfig grid,
+        int extraRadius)
+    {
+        if (context.RuntimeBuildings == null || !reserved.IsCreated)
+            return;
+
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+        {
+            RuntimeBuildingEntity.ActiveProductionTransport transport = pair.Value?.ActiveTransport;
+            if (transport == null || ReferenceEquals(transport, ignoredTransport))
+                continue;
+
+            ReserveTransportFootprint(ref reserved, grid, transport, extraRadius);
+            if (transport.ActiveDrop != null)
+                ReserveWorldCellWithRadius(ref reserved, grid, transport.ActiveDrop.EndPosition, extraRadius);
+        }
+    }
+
+    private static void ReserveProducedUnitDropBuffers(
+        Context context,
+        EntityManager em,
+        ref NativeBitArray reserved,
+        GridConfig grid)
+    {
+        if (context.RuntimeBuildings == null || !reserved.IsCreated || em.World == null || !em.World.IsCreated)
+            return;
+
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+        {
+            RuntimeBuildingEntity building = pair.Value;
+            if (building == null)
+                continue;
+
+            if (building.ProducedUnitSlots != null)
+            {
+                for (int i = 0; i < building.ProducedUnitSlots.Length; i++)
+                    ReserveProducedUnitDropBuffer(em, ref reserved, grid, building.ProducedUnitSlots[i]);
+            }
+
+            if (building.ProducedUnits != null)
+            {
+                for (int i = 0; i < building.ProducedUnits.Count; i++)
+                    ReserveProducedUnitDropBuffer(em, ref reserved, grid, building.ProducedUnits[i]);
+            }
+        }
+    }
+
+    private static void ReserveProducedUnitDropBuffer(
+        EntityManager em,
+        ref NativeBitArray reserved,
+        GridConfig grid,
+        Entity unit)
+    {
+        if (unit == Entity.Null ||
+            !em.Exists(unit) ||
+            !em.HasComponent<LocalTransform>(unit))
+        {
+            return;
+        }
+
+        int extraRadius = ResolveUnitDropBufferRadius(em, unit, liveUnit: false);
+        ReserveUnitEntityDropBuffer(em, ref reserved, grid, unit, extraRadius);
+    }
+
+    private static void ReserveLiveUnitDropBuffers(
+        EntityManager em,
+        ref NativeBitArray reserved,
+        GridConfig grid)
+    {
+        if (!reserved.IsCreated || em.World == null || !em.World.IsCreated)
+            return;
+
+        EntityQuery unitQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitFootprint>(),
+            ComponentType.ReadOnly<LocalTransform>());
+        NativeArray<Entity> units = unitQuery.ToEntityArray(Allocator.Temp);
+        try
+        {
+            for (int i = 0; i < units.Length; i++)
+            {
+                Entity unit = units[i];
+                int extraRadius = ResolveUnitDropBufferRadius(em, unit, liveUnit: true);
+                ReserveUnitEntityDropBuffer(em, ref reserved, grid, unit, extraRadius);
+            }
+        }
+        finally
+        {
+            if (units.IsCreated)
+                units.Dispose();
+            unitQuery.Dispose();
+        }
+    }
+
+    private static int ResolveUnitDropBufferRadius(EntityManager em, Entity unit, bool liveUnit)
+    {
+        if (unit == Entity.Null || !em.Exists(unit))
+            return HelicopterDropProducedGroundUnitBufferCells;
+
+        if (em.HasComponent<UnitAirMovement>(unit))
+            return liveUnit ? HelicopterDropLiveAirUnitBufferCells : HelicopterDropProducedAirUnitBufferCells;
+
+        if (em.HasComponent<UnitMovementBehavior>(unit) && em.HasComponent<UnitFootprint>(unit))
+        {
+            UnitFootprint footprint = em.GetComponentData<UnitFootprint>(unit);
+            UnitMovementBehavior movementBehavior = em.GetComponentData<UnitMovementBehavior>(unit);
+            if (UnitVehicleMovementUtility.IsVehicle(footprint, movementBehavior))
+                return liveUnit ? HelicopterDropLiveVehicleBufferCells : HelicopterDropProducedVehicleBufferCells;
+        }
+
+        if (em.HasComponent<UnitFootprint>(unit))
+        {
+            int2 size = UnitFootprintUtility.ClampSize(em.GetComponentData<UnitFootprint>(unit).Size);
+            if (size.x > 1 || size.y > 1)
+                return liveUnit ? HelicopterDropLiveVehicleBufferCells : HelicopterDropProducedVehicleBufferCells;
+        }
+
+        return HelicopterDropProducedGroundUnitBufferCells;
+    }
+
+    private static void ReserveUnitEntityDropBuffer(
+        EntityManager em,
+        ref NativeBitArray reserved,
+        GridConfig grid,
+        Entity unit,
+        int extraRadius)
+    {
+        if (unit == Entity.Null ||
+            !em.Exists(unit) ||
+            em.HasComponent<Prefab>(unit) ||
+            em.HasComponent<Disabled>(unit) ||
+            !em.HasComponent<LocalTransform>(unit))
+        {
+            return;
+        }
+
+        LocalTransform transform = em.GetComponentData<LocalTransform>(unit);
+        bool preferCurrentWorldPosition = em.HasComponent<UnitAirMovement>(unit);
+        int2 center = !preferCurrentWorldPosition && em.HasComponent<UnitGrid>(unit)
+            ? em.GetComponentData<UnitGrid>(unit).Cell
+            : GridUtils.WorldToCell(grid, transform.Position);
+        int2 footprint = em.HasComponent<UnitFootprint>(unit)
+            ? UnitFootprintUtility.ClampSize(em.GetComponentData<UnitFootprint>(unit).Size)
+            : new int2(1, 1);
+        int2 min = UnitFootprintUtility.GetMinCell(center, footprint) - new int2(extraRadius, extraRadius);
+        int2 max = min + footprint + new int2(extraRadius * 2, extraRadius * 2);
+        ReserveCellRect(ref reserved, grid, min.x, min.y, max.x, max.y);
+    }
+
+    private static void ReserveTransportFootprint(
+        ref NativeBitArray reserved,
+        GridConfig grid,
+        RuntimeBuildingEntity.ActiveProductionTransport transport,
+        int extraRadius)
+    {
+        if (transport == null || !reserved.IsCreated)
+            return;
+
+        bool hasBounds = false;
+        Bounds bounds = default;
+        Renderer[] renderers = transport.VisualRenderers;
+        for (int i = 0; renderers != null && i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null || !renderer.enabled)
+                continue;
+
+            if (!hasBounds)
+            {
+                bounds = renderer.bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                bounds.Encapsulate(renderer.bounds);
+            }
+        }
+
+        if (!hasBounds)
+        {
+            ReserveWorldCellWithRadius(ref reserved, grid, transport.HoverPosition, extraRadius);
+            return;
+        }
+
+        int2 minCell = GridUtils.WorldToCell(grid, new float3(bounds.min.x, bounds.min.y, bounds.min.z));
+        int2 maxCell = GridUtils.WorldToCell(grid, new float3(bounds.max.x, bounds.max.y, bounds.max.z));
+        ReserveCellRect(
+            ref reserved,
+            grid,
+            math.min(minCell.x, maxCell.x) - extraRadius,
+            math.min(minCell.y, maxCell.y) - extraRadius,
+            math.max(minCell.x, maxCell.x) + extraRadius + 1,
+            math.max(minCell.y, maxCell.y) + extraRadius + 1);
+    }
+
+    private static void ReserveWorldCellWithRadius(ref NativeBitArray reserved, GridConfig grid, Vector3 worldPosition, int radius)
+    {
+        int2 center = GridUtils.WorldToCell(grid, new float3(worldPosition.x, worldPosition.y, worldPosition.z));
+        ReserveCellRect(
+            ref reserved,
+            grid,
+            center.x - radius,
+            center.y - radius,
+            center.x + radius + 1,
+            center.y + radius + 1);
+    }
+
+    private static void ReserveCellRect(ref NativeBitArray reserved, GridConfig grid, int minX, int minY, int maxX, int maxY)
+    {
+        int clampedMinX = math.max(0, minX);
+        int clampedMinY = math.max(0, minY);
+        int clampedMaxX = math.min(grid.Width, maxX);
+        int clampedMaxY = math.min(grid.Height, maxY);
+        for (int y = clampedMinY; y < clampedMaxY; y++)
+        {
+            int row = y * grid.Width;
+            for (int x = clampedMinX; x < clampedMaxX; x++)
+                reserved.Set(row + x, true);
         }
     }
 

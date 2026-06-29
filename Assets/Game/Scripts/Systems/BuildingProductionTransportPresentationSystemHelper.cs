@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using SnivelerCode.GpuAnimation.Scripts.Authoring;
 using SnivelerCode.GpuAnimation.Scripts.Components;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -12,6 +13,9 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
 {
     private const float ProductionTransportLaneSpacing = 12f;
     private const float RunwaySurfaceClearance = 0.03f;
+    private const int HelicopterDropSearchRadiusCells = 36;
+    private const int HelicopterDropLandingPaddingCells = 1;
+    private const int HelicopterDropBuildingBufferCells = 2;
     private const int DefaultTransportPoolPrewarmCount = 2;
     private const int DefaultTransportStatePoolPrewarmCount = 32;
     private static readonly int SnivelerModelShownId = Shader.PropertyToID("_SnivelerModelShown");
@@ -148,6 +152,11 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
 
             hoverPosition = ResolveProductionTransportHoverPosition(building, pending);
             hoverPosition += ResolveProductionTransportLaneOffset(context, laneIndex, pending.TransportMaxConcurrent);
+            if (TryResolveClearHelicopterDropPosition(context, building, pending, hoverPosition, out _, out Vector3 clearDropPosition))
+            {
+                hoverPosition.x = clearDropPosition.x;
+                hoverPosition.z = clearDropPosition.z;
+            }
             Vector3 horizontalOffset = context.WorldCamera != null
                 ? -context.WorldCamera.transform.right.normalized * 60f
                 : new Vector3(-60f, 0f, 0f);
@@ -547,6 +556,25 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
             ? ResolveProductionGroundGoalCell(context, finalSpawnPosition)
             : ResolveProductionGroundGoalCell(context, dropEndPosition);
 
+        if (transport.Mode == ProductionTransportMode.Helicopter)
+        {
+            Vector3 preferredDrop = new(transport.HoverPosition.x, finalSpawnPosition.y, transport.HoverPosition.z);
+            if (TryResolveClearHelicopterDropPosition(context, building, pending, preferredDrop, out int2 clearDropCell, out Vector3 clearDropPosition))
+            {
+                AlignHelicopterTransportAnchorOverDrop(transport, clearDropPosition);
+                Vector3 anchor = ResolveTransportVisualCenterWorld(transport);
+                dropStartPosition = new Vector3(clearDropPosition.x, anchor.y, clearDropPosition.z);
+                dropEndPosition = clearDropPosition;
+                finalGoalCell = clearDropCell;
+            }
+            else
+            {
+                dropEndPosition = new Vector3(transport.HoverPosition.x, finalSpawnPosition.y, transport.HoverPosition.z);
+                dropStartPosition = new Vector3(dropEndPosition.x, transport.HoverPosition.y, dropEndPosition.z);
+                finalGoalCell = ResolveProductionGroundGoalCell(context, dropEndPosition);
+            }
+        }
+
         GameObject visual = Instantiate(pending.Prefab);
         visual.name = $"{pending.Prefab.name}_TransportDrop";
         HideTransportRuntimeMarkers(visual.transform);
@@ -656,7 +684,8 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
 
         if (drop.Rope != null)
         {
-            drop.Rope.SetPosition(0, ResolveTransportVisualCenterWorld(transport));
+            Vector3 ropeAnchor = ResolveTransportVisualCenterWorld(transport);
+            drop.Rope.SetPosition(0, new Vector3(unitPosition.x, ropeAnchor.y, unitPosition.z));
             drop.Rope.SetPosition(1, unitPosition);
         }
 
@@ -764,6 +793,21 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
         return transport.Transform != null ? transport.Transform.position : transport.Instance.transform.position;
     }
 
+    private static void AlignHelicopterTransportAnchorOverDrop(RuntimeBuildingEntity.ActiveProductionTransport transport, Vector3 dropPosition)
+    {
+        if (transport?.Transform == null)
+            return;
+
+        transport.Transform.position = transport.HoverPosition;
+        Vector3 anchor = ResolveTransportVisualCenterWorld(transport);
+        Vector3 delta = new(dropPosition.x - anchor.x, 0f, dropPosition.z - anchor.z);
+        transport.HoverPosition += delta;
+        transport.TouchdownPosition += delta;
+        transport.EntryPosition += delta;
+        transport.ExitPosition += delta;
+        transport.Transform.position = transport.HoverPosition;
+    }
+
     private static void SetProductionTransportDoorOpen01(RuntimeBuildingEntity.ActiveProductionTransport transport, float open01)
     {
         if (transport?.DoorTransform == null)
@@ -823,6 +867,161 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
     private static Vector3 ResolveProductionTransportHoverPosition(RuntimeBuildingEntity building, RuntimeBuildingEntity.PendingProduction pending)
     {
         return ResolveProductionTransportDropPosition(building, pending) + new Vector3(0f, 8f, 0f);
+    }
+
+    private static bool TryResolveClearHelicopterDropPosition(
+        Context context,
+        RuntimeBuildingEntity building,
+        RuntimeBuildingEntity.PendingProduction pending,
+        Vector3 preferredWorld,
+        out int2 dropCell,
+        out Vector3 dropPosition)
+    {
+        dropCell = default;
+        dropPosition = default;
+        if (context.TransportBridgeSystem == null ||
+            context.TransportBridgeContext.TryGetEntityManager == null ||
+            !context.TransportBridgeContext.TryGetEntityManager(out EntityManager em) ||
+            context.TransportBridgeContext.TryGetGridData == null ||
+            !context.TransportBridgeContext.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerComponent blockerData) ||
+            !em.HasBuffer<GridWalkable>(gridEntity))
+        {
+            return false;
+        }
+
+        NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
+        NativeBitArray occupied = em.HasComponent<DynamicOccupancyComponent>(gridEntity)
+            ? em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied
+            : default;
+        int2 unitFootprint = context.TransportBridgeSystem.ResolveUnitFootprintForPrefab(context.TransportBridgeContext, em, pending?.Prefab);
+        int2 preferredCell = GridUtils.WorldToCell(grid, preferredWorld);
+        int gridSize = math.max(0, grid.Width * grid.Height);
+        NativeBitArray reserved = new(gridSize, Allocator.Temp);
+        try
+        {
+            ReserveRuntimeBuildingDropBuffers(context, ref reserved, grid, HelicopterDropBuildingBufferCells);
+            for (int radius = 0; radius <= HelicopterDropSearchRadiusCells; radius++)
+            {
+                for (int y = preferredCell.y - radius; y <= preferredCell.y + radius; y++)
+                {
+                    for (int x = preferredCell.x - radius; x <= preferredCell.x + radius; x++)
+                    {
+                        if (radius > 0 &&
+                            math.abs(x - preferredCell.x) != radius &&
+                            math.abs(y - preferredCell.y) != radius)
+                        {
+                            continue;
+                        }
+
+                        int2 candidate = new(x, y);
+                        if (!TryResolveHelicopterDropCandidate(
+                                em,
+                                grid,
+                                walkable,
+                                blockerData.Blocked,
+                                occupied,
+                                reserved,
+                                candidate,
+                                unitFootprint,
+                                out Vector3 candidatePosition))
+                        {
+                            continue;
+                        }
+
+                        dropCell = candidate;
+                        dropPosition = candidatePosition;
+                        return true;
+                    }
+                }
+            }
+        }
+        finally
+        {
+            if (reserved.IsCreated)
+                reserved.Dispose();
+        }
+
+        return false;
+    }
+
+    private static bool TryResolveHelicopterDropCandidate(
+        EntityManager em,
+        GridConfig grid,
+        NativeArray<GridWalkable> walkable,
+        NativeBitArray blocked,
+        NativeBitArray occupied,
+        NativeBitArray reserved,
+        int2 candidate,
+        int2 footprintSize,
+        out Vector3 dropPosition)
+    {
+        dropPosition = default;
+        int2 footprint = UnitFootprintUtility.ClampSize(footprintSize);
+        int2 min = UnitFootprintUtility.GetMinCell(candidate, footprint);
+        int2 max = min + footprint;
+        int padding = math.max(0, HelicopterDropLandingPaddingCells);
+        int2 paddedMin = min - new int2(padding, padding);
+        int2 paddedMax = max + new int2(padding, padding);
+        if (paddedMin.x < 0 || paddedMin.y < 0 || paddedMax.x > grid.Width || paddedMax.y > grid.Height)
+            return false;
+
+        for (int y = paddedMin.y; y < paddedMax.y; y++)
+        {
+            int row = y * grid.Width;
+            for (int x = paddedMin.x; x < paddedMax.x; x++)
+            {
+                int index = row + x;
+                if (walkable[index].Value == 0)
+                    return false;
+                if (blocked.IsCreated && blocked.IsSet(index))
+                    return false;
+                if (occupied.IsCreated && occupied.IsSet(index))
+                    return false;
+                if (reserved.IsCreated && reserved.IsSet(index))
+                    return false;
+            }
+        }
+
+        float3 resolved = GridUtils.CellToWorldCenter(grid, candidate);
+        MapSurfaceSpawnGrounding grounding = new();
+        if (grounding.TryGroundCellCenter(em, grid, candidate, ref resolved, out MapSurfaceSample sample))
+        {
+            if (sample.SurfaceType == MapSurfaceType.Blocked ||
+                (sample.Flags & MapSurfaceFlags.Reserved) != 0 ||
+                (sample.MovementMask & MapSurfaceMovementMask.Infantry) == 0)
+            {
+                return false;
+            }
+        }
+
+        dropPosition = new Vector3(resolved.x, resolved.y, resolved.z);
+        return true;
+    }
+
+    private static void ReserveRuntimeBuildingDropBuffers(Context context, ref NativeBitArray reserved, GridConfig grid, int extraRadius)
+    {
+        if (context.RuntimeBuildings == null || !reserved.IsCreated)
+            return;
+
+        int padding = math.max(0, extraRadius);
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+        {
+            RuntimeBuildingEntity building = pair.Value;
+            if (building == null || building.IsDestroyed || building.Definition == null)
+                continue;
+
+            Vector2Int footprint = building.Definition.FootprintCells;
+            int minX = math.max(0, building.OriginCell.x - padding);
+            int minY = math.max(0, building.OriginCell.y - padding);
+            int maxX = math.min(grid.Width, building.OriginCell.x + math.max(1, footprint.x) + padding);
+            int maxY = math.min(grid.Height, building.OriginCell.y + math.max(1, footprint.y) + padding);
+            for (int y = minY; y < maxY; y++)
+            {
+                int row = y * grid.Width;
+                for (int x = minX; x < maxX; x++)
+                    reserved.Set(row + x, true);
+            }
+        }
     }
 
     private static Vector3 ResolveProductionTransportDropPosition(

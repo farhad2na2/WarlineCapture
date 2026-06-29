@@ -12,6 +12,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
 {
     private const int RopeDropClearanceCells = 2;
     private const float RopeDropDurationSeconds = 1.2f;
+    private const float RopeDropMaxNonRoadLandingHeightDelta = 0.75f;
     private MapSurfaceSpawnGrounding _spawnGroundingSystem;
     private EntityQuery _gridQuery;
     private EntityQuery _landingClearanceQuery;
@@ -57,7 +58,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
         List<Entity> droppedPassengers = new();
 
         foreach (var (request, transportGrid, transportFootprint, transportTransform, passengers, transport) in
-                 SystemAPI.Query<RefRW<UnitTransportRopeDisembarkRequest>, RefRO<UnitGrid>, RefRO<UnitFootprint>, RefRO<LocalTransform>, DynamicBuffer<UnitTransportPassengerElement>>()
+                 SystemAPI.Query<RefRW<UnitTransportRopeDisembarkRequest>, RefRO<UnitGrid>, RefRO<UnitFootprint>, RefRW<LocalTransform>, DynamicBuffer<UnitTransportPassengerElement>>()
                      .WithEntityAccess())
         {
             if (passengers.Length <= 0)
@@ -93,17 +94,28 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
                     transportFootprint.ValueRO.Size,
                     request.ValueRO.ReferenceCell,
                     request.ValueRO.DropCount,
-                    out int2 dropCell))
+                    _spawnGroundingSystem,
+                    em,
+                    out int2 dropCell,
+                    out float3 endPosition))
             {
                 passengers.Add(new UnitTransportPassengerElement { Passenger = passenger });
                 request.ValueRW.NextDropAt = now + 0.25f;
                 continue;
             }
 
-            float3 startPosition = ResolveTransportRopeAnchor(em, transport, transportTransform.ValueRO);
-            float3 endPosition = startPosition;
-            endPosition.y = grid.Origin.y;
-            _spawnGroundingSystem.TryGroundWorldPosition(em, grid, ref endPosition, out dropCell, out _);
+            LocalTransform adjustedTransportTransform = transportTransform.ValueRO;
+            float3 anchorOffset = ResolveTransportRopeAnchor(em, transport, adjustedTransportTransform) - adjustedTransportTransform.Position;
+            adjustedTransportTransform.Position.x = endPosition.x - anchorOffset.x;
+            adjustedTransportTransform.Position.z = endPosition.z - anchorOffset.z;
+            transportTransform.ValueRW.Position = adjustedTransportTransform.Position;
+            if (em.HasComponent<LocalToWorld>(transport))
+                ecb.SetComponent(transport, new LocalToWorld { Value = ToLocalToWorldMatrix(adjustedTransportTransform) });
+            if (em.HasComponent<UnitGrid>(transport))
+                ecb.SetComponent(transport, new UnitGrid { Cell = dropCell });
+
+            float3 anchorPosition = ResolveTransportRopeAnchor(em, transport, adjustedTransportTransform);
+            float3 startPosition = new(endPosition.x, anchorPosition.y, endPosition.z);
             int2 shortDisperseCell = ResolveAdjacentDisperseCell(grid, dropCell, request.ValueRO.DropCount);
             if (startPosition.y < endPosition.y + 2f)
                 startPosition.y = endPosition.y + 2f;
@@ -285,9 +297,13 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
         int2 transportSize,
         int2 referenceCell,
         int dropCount,
-        out int2 dropCell)
+        MapSurfaceSpawnGrounding spawnGroundingSystem,
+        EntityManager em,
+        out int2 dropCell,
+        out float3 dropPosition)
     {
         dropCell = default;
+        dropPosition = default;
         int2 size = UnitFootprintUtility.ClampSize(transportSize);
         int2 min = UnitFootprintUtility.GetMinCell(transportCell, size);
         int2 max = min + size;
@@ -303,6 +319,8 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
                 walkable,
                 blocked,
                 occupied,
+                spawnGroundingSystem,
+                em,
                 minX,
                 minY,
                 maxX,
@@ -316,13 +334,16 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
                     walkable,
                     blocked,
                     occupied,
+                    spawnGroundingSystem,
+                    em,
                     minX,
                     minY,
                     maxX,
                     maxY,
                     referenceCell,
                     desiredOrdinal,
-                    out dropCell))
+                    out dropCell,
+                    out dropPosition))
                 return true;
         }
 
@@ -375,13 +396,15 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
         in NativeArray<GridWalkable> walkable,
         in NativeBitArray blocked,
         in NativeBitArray occupied,
+        MapSurfaceSpawnGrounding spawnGroundingSystem,
+        EntityManager em,
         int minX,
         int minY,
         int maxX,
         int maxY)
     {
         int count = 0;
-        ForEachRopeDropRingCell(grid, walkable, blocked, occupied, minX, minY, maxX, maxY, (int2 _) => count++);
+        ForEachRopeDropRingCell(grid, walkable, blocked, occupied, spawnGroundingSystem, em, minX, minY, maxX, maxY, (int2 unusedCell, float3 unusedPosition) => count++);
         return count;
     }
 
@@ -390,26 +413,31 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
         in NativeArray<GridWalkable> walkable,
         in NativeBitArray blocked,
         in NativeBitArray occupied,
+        MapSurfaceSpawnGrounding spawnGroundingSystem,
+        EntityManager em,
         int minX,
         int minY,
         int maxX,
         int maxY,
         int2 referenceCell,
         int desiredOrdinal,
-        out int2 dropCell)
+        out int2 dropCell,
+        out float3 dropPosition)
     {
         dropCell = default;
+        dropPosition = default;
         int ordinal = 0;
         for (int y = minY; y <= maxY; y++)
         {
             for (int x = minX; x <= maxX; x++)
             {
-                if (!IsValidRopeDropRingCell(grid, walkable, blocked, occupied, minX, minY, maxX, maxY, x, y, out int2 candidate))
+                if (!IsValidRopeDropRingCell(grid, walkable, blocked, occupied, spawnGroundingSystem, em, minX, minY, maxX, maxY, x, y, out int2 candidate, out float3 candidatePosition))
                     continue;
 
                 if (ordinal == desiredOrdinal)
                 {
                     dropCell = candidate;
+                    dropPosition = candidatePosition;
                     return true;
                 }
 
@@ -425,19 +453,21 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
         in NativeArray<GridWalkable> walkable,
         in NativeBitArray blocked,
         in NativeBitArray occupied,
+        MapSurfaceSpawnGrounding spawnGroundingSystem,
+        EntityManager em,
         int minX,
         int minY,
         int maxX,
         int maxY,
-        System.Action<int2> action)
+        System.Action<int2, float3> action)
     {
         for (int y = minY; y <= maxY; y++)
         {
             for (int x = minX; x <= maxX; x++)
             {
-                if (!IsValidRopeDropRingCell(grid, walkable, blocked, occupied, minX, minY, maxX, maxY, x, y, out int2 candidate))
+                if (!IsValidRopeDropRingCell(grid, walkable, blocked, occupied, spawnGroundingSystem, em, minX, minY, maxX, maxY, x, y, out int2 candidate, out float3 candidatePosition))
                     continue;
-                action(candidate);
+                action(candidate, candidatePosition);
             }
         }
     }
@@ -447,15 +477,19 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
         in NativeArray<GridWalkable> walkable,
         in NativeBitArray blocked,
         in NativeBitArray occupied,
+        MapSurfaceSpawnGrounding spawnGroundingSystem,
+        EntityManager em,
         int minX,
         int minY,
         int maxX,
         int maxY,
         int x,
         int y,
-        out int2 candidate)
+        out int2 candidate,
+        out float3 candidatePosition)
     {
         candidate = new int2(x, y);
+        candidatePosition = default;
         bool onRing = x == minX || x == maxX || y == minY || y == maxY;
         if (!onRing)
             return false;
@@ -471,7 +505,56 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
         if (occupied.IsCreated && occupied.IsSet(index))
             return false;
 
+        if (!TryResolveRopeLandingPosition(spawnGroundingSystem, em, grid, candidate, out candidatePosition))
+            return false;
+
         return true;
+    }
+
+    private static bool TryResolveRopeLandingPosition(
+        MapSurfaceSpawnGrounding spawnGroundingSystem,
+        EntityManager em,
+        in GridConfig grid,
+        int2 cell,
+        out float3 position)
+    {
+        position = GridUtils.CellToWorldCenter(grid, cell);
+        if (!spawnGroundingSystem.TryGroundCellCenter(em, grid, cell, ref position, out MapSurfaceSample sample))
+        {
+            position.y = grid.Origin.y;
+            return true;
+        }
+
+        if (sample.SurfaceType == MapSurfaceType.Blocked ||
+            (sample.Flags & MapSurfaceFlags.Reserved) != 0 ||
+            (sample.MovementMask & MapSurfaceMovementMask.Infantry) == 0)
+        {
+            return false;
+        }
+
+        float heightDelta = position.y - grid.Origin.y;
+        if (heightDelta > RopeDropMaxNonRoadLandingHeightDelta && !IsRoadLikeRopeLandingSurface(sample))
+            return false;
+
+        return true;
+    }
+
+    private static bool IsRoadLikeRopeLandingSurface(MapSurfaceSample sample)
+    {
+        return sample.SurfaceType == MapSurfaceType.Road ||
+               sample.SurfaceType == MapSurfaceType.DirtRoad ||
+               sample.SurfaceType == MapSurfaceType.Highway ||
+               sample.SurfaceType == MapSurfaceType.BridgeDeck ||
+               sample.SurfaceType == MapSurfaceType.Ramp ||
+               (sample.Flags & (MapSurfaceFlags.Road | MapSurfaceFlags.Bridge | MapSurfaceFlags.Ramp)) != 0;
+    }
+
+    private static float4x4 ToLocalToWorldMatrix(LocalTransform transform)
+    {
+        return float4x4.TRS(
+            transform.Position,
+            transform.Rotation,
+            new float3(transform.Scale, transform.Scale, transform.Scale));
     }
 
     private static void RemoveIfPresent<T>(ref EntityCommandBuffer ecb, EntityManager em, Entity entity)

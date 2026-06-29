@@ -92,7 +92,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.TransportPlane_BoardsClusterAroundResolvedRearRampWithStaleMovementState());
             RunTest(test => test.Transport_DoesNotBoardPassengerThatOnlyReachedFarBoardingGoal());
             RunTest(test => test.HelicopterRopeDisembark_ReleasesPassengersOneAtATime());
-            RunTest(test => test.HelicopterRopeDisembark_DropsStraightDownFromVisualModelCenter());
+            RunTest(test => test.HelicopterRopeDisembark_DropsStraightDownOntoFreeLandingCell());
             RunTest(test => test.HelicopterRopeDisembark_TenPassengersDisperseToDistinctFreeCells());
             RunTest(test => test.FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger());
             RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
@@ -2920,57 +2920,73 @@ public sealed class UnitTransportValidationTests
     }
 
     [Test]
-    public void HelicopterRopeDisembark_DropsStraightDownFromVisualModelCenter()
+    public void HelicopterRopeDisembark_DropsStraightDownOntoFreeLandingCell()
     {
-        using var world = new World("HelicopterRopeDisembark_DropsStraightDownFromVisualModelCenter");
+        using var world = new World("HelicopterRopeDisembark_DropsStraightDownOntoFreeLandingCell");
         EntityManager em = world.EntityManager;
         CreateGrid(em, 24, 24);
-
-        Entity transport = CreateTransport(em, new int2(8, 8), air: true, airborne: true);
-        LocalTransform transportTransform = em.GetComponentData<LocalTransform>(transport);
-        em.AddComponentData(transport, new UnitModelLocalTransform
+        int2 elevatedTentLikeCell = new(6, 6);
+        BlobAssetReference<MapSurfaceBlob> surfaceBlob = CreateFlatSurfaceWithElevatedCell(new int2(24, 24), elevatedTentLikeCell, 3.25f);
+        try
         {
-            Position = new float3(3f, 0f, -2f),
-            Rotation = quaternion.identity,
-            Scale = 1f
-        });
+            AddMapSurface(em, surfaceBlob, new int2(24, 24));
 
-        Entity passenger = CreateLoadedPassenger(em, transport);
-        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
-        passengers.Add(new UnitTransportPassengerElement { Passenger = passenger });
-        em.AddComponentData(transport, new UnitTransportRopeDisembarkRequest
+            Entity transport = CreateTransport(em, new int2(8, 8), air: true, airborne: true);
+            em.AddComponentData(transport, new UnitModelLocalTransform
+            {
+                Position = new float3(3f, 0f, -2f),
+                Rotation = quaternion.identity,
+                Scale = 1f
+            });
+
+            Entity passenger = CreateLoadedPassenger(em, transport);
+            DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+            passengers.Add(new UnitTransportPassengerElement { Passenger = passenger });
+            em.AddComponentData(transport, new UnitTransportRopeDisembarkRequest
+            {
+                ReferenceCell = new int2(12, 8),
+                NextDropAt = 0f,
+                DropIntervalSeconds = 0.8f
+            });
+
+            SystemHandle disembarkSystem = world.CreateSystem<UnitTransportRopeDisembarkSystem>();
+            SystemHandle dropSystem = world.CreateSystem<UnitTransportRopeDropSystem>();
+            world.SetTime(new TimeData(1d, 0.1f));
+            disembarkSystem.Update(world.Unmanaged);
+
+            UnitTransportRopeDropComponent dropState = em.GetComponentData<UnitTransportRopeDropComponent>(passenger);
+            UnitTransportRopeLandingClearance clearance = em.GetComponentData<UnitTransportRopeLandingClearance>(passenger);
+            LocalTransform transportAfterDropStart = em.GetComponentData<LocalTransform>(transport);
+            float3 ropeAnchorAfterReposition = transportAfterDropStart.Position + new float3(3f, 0f, -2f);
+            Assert.That(ropeAnchorAfterReposition.x, Is.EqualTo(dropState.EndPosition.x).Within(0.001f), "Helicopter rope anchor must be above the selected free landing cell in X.");
+            Assert.That(ropeAnchorAfterReposition.z, Is.EqualTo(dropState.EndPosition.z).Within(0.001f), "Helicopter rope anchor must be above the selected free landing cell in Z.");
+            Assert.That(dropState.EndPosition.x, Is.EqualTo(dropState.StartPosition.x).Within(0.001f), "Rope drop must stay vertical in X.");
+            Assert.That(dropState.EndPosition.z, Is.EqualTo(dropState.StartPosition.z).Within(0.001f), "Rope drop must stay vertical in Z.");
+            Assert.That(dropState.EndPosition.y, Is.LessThan(dropState.StartPosition.y), "Rope drop must descend to the ground.");
+            Assert.AreNotEqual(elevatedTentLikeCell, clearance.LandingCell, "Rope drop must reject an elevated scenery-like surface even if the grid blocker buffer does not mark it blocked.");
+            Assert.That(dropState.EndPosition.y, Is.EqualTo(0f).Within(0.001f), "Rope landing should resolve to terrain height, not to the elevated scenery surface.");
+            Assert.IsFalse(_blocked.IsSet(GridUtils.CellToIndex(clearance.LandingCell, 24)), "Rope landing clearance must reserve an unblocked cell.");
+            Assert.AreEqual(clearance.LandingCell, em.GetComponentData<UnitGrid>(passenger).Cell, "Passenger grid cell should match the reserved landing cell.");
+
+            world.SetTime(new TimeData(dropState.StartedAt + dropState.DurationSeconds + 0.1f, 0.1f));
+            dropSystem.Update(world.Unmanaged);
+            Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseComponent>(passenger));
+            UnitTransportRopeDisperseComponent disperseState = em.GetComponentData<UnitTransportRopeDisperseComponent>(passenger);
+            int2 disperseTarget = disperseState.EndCell;
+            int2 landingCell = GridUtils.WorldToCell(em.GetComponentData<GridConfig>(GetGridEntity(em)), dropState.EndPosition);
+            Assert.AreNotEqual(landingCell, disperseTarget, "The post-landing move target should give the passenger somewhere to move away from the rope.");
+            Assert.LessOrEqual(
+                math.max(math.abs(disperseTarget.x - landingCell.x), math.abs(disperseTarget.y - landingCell.y)),
+                12,
+                "The post-landing move target should stay near the rope landing cell.");
+            Assert.IsFalse(em.HasComponent<UnitPathRequest>(passenger));
+            Assert.AreEqual(1, em.GetComponentData<UnitMoveVisualComponent>(passenger).IsMoving);
+        }
+        finally
         {
-            ReferenceCell = new int2(12, 8),
-            NextDropAt = 0f,
-            DropIntervalSeconds = 0.8f
-        });
-
-        SystemHandle disembarkSystem = world.CreateSystem<UnitTransportRopeDisembarkSystem>();
-        SystemHandle dropSystem = world.CreateSystem<UnitTransportRopeDropSystem>();
-        world.SetTime(new TimeData(1d, 0.1f));
-        disembarkSystem.Update(world.Unmanaged);
-
-        UnitTransportRopeDropComponent dropState = em.GetComponentData<UnitTransportRopeDropComponent>(passenger);
-        float3 expectedAnchor = transportTransform.Position + new float3(3f, 0f, -2f);
-        Assert.That(dropState.StartPosition.x, Is.EqualTo(expectedAnchor.x).Within(0.001f), "Rope drop must start from the helicopter visual center X, not the side/drop cell.");
-        Assert.That(dropState.StartPosition.z, Is.EqualTo(expectedAnchor.z).Within(0.001f), "Rope drop must start from the helicopter visual center Z, not the side/drop cell.");
-        Assert.That(dropState.EndPosition.x, Is.EqualTo(dropState.StartPosition.x).Within(0.001f), "Rope drop must stay vertical in X.");
-        Assert.That(dropState.EndPosition.z, Is.EqualTo(dropState.StartPosition.z).Within(0.001f), "Rope drop must stay vertical in Z.");
-        Assert.That(dropState.EndPosition.y, Is.LessThan(dropState.StartPosition.y), "Rope drop must descend to the ground.");
-
-        world.SetTime(new TimeData(dropState.StartedAt + dropState.DurationSeconds + 0.1f, 0.1f));
-        dropSystem.Update(world.Unmanaged);
-        Assert.IsTrue(em.HasComponent<UnitTransportRopeDisperseComponent>(passenger));
-        UnitTransportRopeDisperseComponent disperseState = em.GetComponentData<UnitTransportRopeDisperseComponent>(passenger);
-        int2 disperseTarget = disperseState.EndCell;
-        int2 landingCell = GridUtils.WorldToCell(em.GetComponentData<GridConfig>(GetGridEntity(em)), dropState.EndPosition);
-        Assert.AreNotEqual(landingCell, disperseTarget, "The post-landing move target should give the passenger somewhere to move away from the rope.");
-        Assert.LessOrEqual(
-            math.max(math.abs(disperseTarget.x - landingCell.x), math.abs(disperseTarget.y - landingCell.y)),
-            12,
-            "The post-landing move target should stay near the rope landing cell.");
-        Assert.IsFalse(em.HasComponent<UnitPathRequest>(passenger));
-        Assert.AreEqual(1, em.GetComponentData<UnitMoveVisualComponent>(passenger).IsMoving);
+            if (surfaceBlob.IsCreated)
+                surfaceBlob.Dispose();
+        }
     }
 
     [Test]
@@ -3314,6 +3330,65 @@ public sealed class UnitTransportValidationTests
             sidewalks[i] = new GridRoadSidewalk { Value = 0 };
             dirtRoads[i] = new GridRoadDirt { Value = 0 };
         }
+    }
+
+    private static void AddMapSurface(EntityManager em, BlobAssetReference<MapSurfaceBlob> surfaceBlob, int2 dimensions)
+    {
+        Entity surfaceEntity = em.CreateEntity(typeof(MapSurfaceComponent));
+        em.SetComponentData(surfaceEntity, new MapSurfaceComponent
+        {
+            SurfaceBlob = surfaceBlob,
+            GridOrigin = float3.zero,
+            CellSize = 1f,
+            Dimensions = dimensions,
+            HasSurfaceData = 1
+        });
+    }
+
+    private static BlobAssetReference<MapSurfaceBlob> CreateFlatSurfaceWithElevatedCell(int2 dimensions, int2 elevatedCell, float elevatedHeight)
+    {
+        int cellCount = dimensions.x * dimensions.y;
+        var builder = new BlobBuilder(Allocator.Temp);
+        ref MapSurfaceBlob root = ref builder.ConstructRoot<MapSurfaceBlob>();
+        root.GridOrigin = float3.zero;
+        root.CellSize = 1f;
+        root.Dimensions = dimensions;
+
+        BlobBuilderArray<MapSurfaceCell> cells = builder.Allocate(ref root.Cells, cellCount);
+        BlobBuilderArray<MapSurfaceSample> samples = builder.Allocate(ref root.Samples, cellCount);
+        for (int y = 0; y < dimensions.y; y++)
+        {
+            for (int x = 0; x < dimensions.x; x++)
+            {
+                int index = x + y * dimensions.x;
+                int2 cell = new(x, y);
+                cells[index] = new MapSurfaceCell
+                {
+                    FirstSurfaceIndex = index,
+                    SurfaceCount = 1,
+                    InlineSurfaceIndex = 0
+                };
+                samples[index] = new MapSurfaceSample
+                {
+                    Cell = cell,
+                    SurfaceId = index,
+                    LayerId = 0,
+                    Height = cell.x == elevatedCell.x && cell.y == elevatedCell.y ? elevatedHeight : 0f,
+                    Normal = new float3(0f, 1f, 0f),
+                    SlopeDegrees = 0f,
+                    SurfaceType = MapSurfaceType.Terrain,
+                    MovementMask = MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.AirGrounded,
+                    Flags = MapSurfaceFlags.None,
+                    FirstConnectionIndex = 0,
+                    ConnectionCount = 0
+                };
+            }
+        }
+
+        builder.Allocate(ref root.Connections, 0);
+        BlobAssetReference<MapSurfaceBlob> blob = builder.CreateBlobAssetReference<MapSurfaceBlob>(Allocator.Persistent);
+        builder.Dispose();
+        return blob;
     }
 
     private void BlockAirdropLandingArea(in GridConfig grid, int2 centerCell, int radius)

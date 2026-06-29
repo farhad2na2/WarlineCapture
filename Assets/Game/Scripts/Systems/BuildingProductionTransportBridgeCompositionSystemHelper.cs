@@ -107,6 +107,11 @@ internal sealed class BuildingProductionTransportBridgeCompositionSystemHelper
         return new int2(1, 1);
     }
 
+    public int2 ResolveUnitFootprintForPrefab(Context context, EntityManager em, GameObject spawnUnitPrefab)
+    {
+        return ResolveUnitFootprint(context, em, spawnUnitPrefab);
+    }
+
     private static FixedString64Bytes GetUnitPrefabSourceKey(GameObject unitPrefab)
     {
         string sourceKey = BuildingDefinitionPrefabSystemHelper.GetSpawnableLookupKey(unitPrefab);

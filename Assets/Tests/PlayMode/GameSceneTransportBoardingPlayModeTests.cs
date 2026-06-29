@@ -194,6 +194,39 @@ public sealed class GameSceneTransportBoardingPlayModeTests
     }
 
     [Test]
+    public void DeterministicHelicopterExitCommand_DropsVerticallyOntoFreeCell()
+    {
+        using var world = new World("DeterministicHelicopterExitCommand_DropsVerticallyOntoFreeCell");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 24, 24);
+
+        int2 blockedCellBelowHelicopter = new(10, 10);
+        _blocked.Set(GridUtils.CellToIndex(blockedCellBelowHelicopter, 24), true);
+        Entity transport = CreateTransportHelicopter(em, blockedCellBelowHelicopter, airborne: false);
+        Entity passenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
+
+        Assert.IsTrue(RequestDisembarkTransportForTest(world, em, transport), "Transport exit command must start rope disembark for the helicopter.");
+
+        SystemHandle disembarkSystem = world.CreateSystem<UnitTransportRopeDisembarkSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        disembarkSystem.Update(world.Unmanaged);
+
+        AssertPassengerStartedDrop(em, passenger);
+        UnitTransportRopeDropComponent drop = em.GetComponentData<UnitTransportRopeDropComponent>(passenger);
+        UnitTransportRopeLandingClearance clearance = em.GetComponentData<UnitTransportRopeLandingClearance>(passenger);
+        LocalTransform transportAfterDropStart = em.GetComponentData<LocalTransform>(transport);
+
+        Assert.AreEqual(transportAfterDropStart.Position.x, drop.EndPosition.x, 0.001f, "Helicopter must hover above the selected free landing cell in X.");
+        Assert.AreEqual(transportAfterDropStart.Position.z, drop.EndPosition.z, 0.001f, "Helicopter must hover above the selected free landing cell in Z.");
+        Assert.AreEqual(drop.StartPosition.x, drop.EndPosition.x, 0.001f, "Rope drop should descend straight down in X.");
+        Assert.AreEqual(drop.StartPosition.z, drop.EndPosition.z, 0.001f, "Rope drop should descend straight down in Z.");
+        Assert.AreNotEqual(blockedCellBelowHelicopter, clearance.LandingCell, "Rope drop must not choose a blocked cell below the helicopter.");
+        Assert.IsFalse(_blocked.IsSet(GridUtils.CellToIndex(clearance.LandingCell, 24)), "Rope landing clearance must reserve an unblocked cell.");
+        Assert.AreEqual(clearance.LandingCell, em.GetComponentData<UnitGrid>(passenger).Cell, "Passenger grid cell should match the reserved rope landing cell.");
+    }
+
+    [Test]
     public void DeterministicTransportPlaneBoardingCommand_BoardsSelectedSoldierThroughRearRamp()
     {
         using var world = new World("DeterministicTransportPlaneBoardingCommand_BoardsSelectedSoldierThroughRearRamp");

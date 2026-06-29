@@ -176,6 +176,9 @@ public partial struct UnitTransportBoardingSystem : ISystem
                             decision.OccupiedSeats,
                             decision.Capacity);
                     }
+
+                    if (decision.Reach.MovementFinished)
+                        ReissueBoardingMoveIfStopped(em, ref ecb, decision.Passenger, decision.Reach.BoardingGoal);
                     break;
 
                 case BoardingDecisionKind.ReadyToBoard:
@@ -222,6 +225,34 @@ public partial struct UnitTransportBoardingSystem : ISystem
 
         ecb.Playback(em);
         ecb.Dispose();
+    }
+
+    private static void ReissueBoardingMoveIfStopped(
+        EntityManager em,
+        ref EntityCommandBuffer ecb,
+        Entity passenger,
+        int2 boardingGoal)
+    {
+        if (!em.Exists(passenger) || em.HasComponent<Disabled>(passenger) || em.HasComponent<UnitAirMovement>(passenger))
+            return;
+
+        SetOrAdd(em, ref ecb, passenger, new UnitTarget { Cell = boardingGoal });
+        SetOrAdd(em, ref ecb, passenger, new UnitPathRequest { Goal = boardingGoal });
+        if (!em.HasComponent<ManualMoveOrderTag>(passenger))
+            ecb.AddComponent<ManualMoveOrderTag>(passenger);
+        if (!em.HasComponent<ManualMoveGroupMemberTag>(passenger))
+            ecb.AddComponent<ManualMoveGroupMemberTag>(passenger);
+        if (em.HasComponent<UnitPathRetryCooldown>(passenger))
+            ecb.RemoveComponent<UnitPathRetryCooldown>(passenger);
+    }
+
+    private static void SetOrAdd<T>(EntityManager em, ref EntityCommandBuffer ecb, Entity entity, T component)
+        where T : unmanaged, IComponentData
+    {
+        if (em.HasComponent<T>(entity))
+            ecb.SetComponent(entity, component);
+        else
+            ecb.AddComponent(entity, component);
     }
 
     private enum BoardingDecisionKind : byte

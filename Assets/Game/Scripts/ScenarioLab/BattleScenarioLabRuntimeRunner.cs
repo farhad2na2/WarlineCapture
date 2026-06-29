@@ -34,6 +34,8 @@ public static class BattleScenarioLabRuntimeRunner
             return BattleScenarioGm001Runner.RunDefinition(definition);
         if (string.Equals(scenarioId, BattleScenarioDr001Runner.ScenarioId, StringComparison.Ordinal))
             return BattleScenarioDr001Runner.RunDefinition(definition);
+        if (TransportBoardingScenarioRuntimeRunner.CanRunDefinition(definition))
+            return TransportBoardingScenarioRuntimeRunner.RunDefinition(definition);
 
         throw new NotSupportedException($"No Scenario Lab runner is registered for '{scenarioId}'.");
     }

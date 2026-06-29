@@ -20,6 +20,11 @@ public static class BattleScenarioLabSceneBuilder
     private const string JetPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Jet_01.prefab";
     private const string HelicopterPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab";
     private const string DronePrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Drone.prefab";
+    private const string SoldierPrefabPath = "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_04.prefab";
+    private const string GroundVehicleTransportPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_APC_Heavy.prefab";
+    private const string HelicopterTransportPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Transport.prefab";
+    private const string PlaneTransportPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab";
+    private const string VehicleCargoPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Tank_USA.prefab";
 
     [MenuItem("Warline Capture/Scenario Lab/Create Manual Scene Shell")]
     public static void CreateManualSceneShell()
@@ -111,6 +116,7 @@ public static class BattleScenarioLabSceneBuilder
         EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Ad011DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateAd011DefinitionAsset);
         EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Gm001DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateGm001DefinitionAsset);
         EnsureScenarioDefinitionExists(BattleScenarioLabValidationRunner.Dr001DefinitionPath, BattleScenarioLabValidationRunner.CreateOrUpdateDr001DefinitionAsset);
+        BattleScenarioLabValidationRunner.CreateOrUpdateTransportBoardingDefinitionAssets();
     }
 
     private static void EnsureScenarioDefinitionExists(string path, Action createOrUpdate)
@@ -123,7 +129,7 @@ public static class BattleScenarioLabSceneBuilder
 
     private static BattleScenarioDefinition[] LoadScenarioDefinitions()
     {
-        string[] paths =
+        string[] basePaths =
         {
             BattleScenarioLabValidationRunner.Ad001DefinitionPath,
             BattleScenarioLabValidationRunner.Ad002DefinitionPath,
@@ -139,8 +145,12 @@ public static class BattleScenarioLabSceneBuilder
             BattleScenarioLabValidationRunner.Gm001DefinitionPath,
             BattleScenarioLabValidationRunner.Dr001DefinitionPath
         };
-        var definitions = new System.Collections.Generic.List<BattleScenarioDefinition>(paths.Length);
-        for (int i = 0; i < paths.Length; i++)
+        var paths = new System.Collections.Generic.List<string>(basePaths);
+        for (int i = 0; i < TransportBoardingScenarioCatalog.All.Count; i++)
+            paths.Add(BattleScenarioLabValidationRunner.GetTransportBoardingDefinitionPath(TransportBoardingScenarioCatalog.All[i]));
+
+        var definitions = new System.Collections.Generic.List<BattleScenarioDefinition>(paths.Count);
+        for (int i = 0; i < paths.Count; i++)
         {
             string path = paths[i];
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
@@ -173,13 +183,10 @@ public static class BattleScenarioLabSceneBuilder
 
         SerializedObject serialized = new(config);
         SerializedProperty prefabs = serialized.FindProperty("unitSpawnPrefabs");
-        prefabs.arraySize = 6;
-        prefabs.GetArrayElementAtIndex(0).objectReferenceValue = RequirePrefab(GroundLauncherPrefabPath);
-        prefabs.GetArrayElementAtIndex(1).objectReferenceValue = RequirePrefab(AirLauncherPrefabPath);
-        prefabs.GetArrayElementAtIndex(2).objectReferenceValue = RequirePrefab(RadarTankPrefabPath);
-        prefabs.GetArrayElementAtIndex(3).objectReferenceValue = RequirePrefab(JetPrefabPath);
-        prefabs.GetArrayElementAtIndex(4).objectReferenceValue = RequirePrefab(HelicopterPrefabPath);
-        prefabs.GetArrayElementAtIndex(5).objectReferenceValue = RequirePrefab(DronePrefabPath);
+        GameObject[] scenarioPrefabs = LoadScenarioPrefabRegistryPrefabs();
+        prefabs.arraySize = scenarioPrefabs.Length;
+        for (int i = 0; i < scenarioPrefabs.Length; i++)
+            prefabs.GetArrayElementAtIndex(i).objectReferenceValue = scenarioPrefabs[i];
         serialized.FindProperty("unitSelectionMarkerPrefab").objectReferenceValue = null;
         serialized.FindProperty("unitHealthBarPrefab").objectReferenceValue = null;
         serialized.ApplyModifiedPropertiesWithoutUndo();
@@ -198,15 +205,7 @@ public static class BattleScenarioLabSceneBuilder
         GameObject registryObject = new("ScenarioLabUnitPrefabRegistry");
         BattleScenarioLabUnitPrefabRegistryAuthoring registry =
             registryObject.AddComponent<BattleScenarioLabUnitPrefabRegistryAuthoring>();
-        GameObject[] scenarioPrefabs =
-        {
-            RequirePrefab(GroundLauncherPrefabPath),
-            RequirePrefab(AirLauncherPrefabPath),
-            RequirePrefab(RadarTankPrefabPath),
-            RequirePrefab(JetPrefabPath),
-            RequirePrefab(HelicopterPrefabPath),
-            RequirePrefab(DronePrefabPath)
-        };
+        GameObject[] scenarioPrefabs = LoadScenarioPrefabRegistryPrefabs();
 
         SerializedObject serialized = new(registry);
         SerializedProperty unitSpawnPrefabs = serialized.FindProperty("unitSpawnPrefabs");
@@ -219,6 +218,24 @@ public static class BattleScenarioLabSceneBuilder
 
         EditorSceneManager.SaveScene(subScene, BakedPrefabSubScenePath);
         AssetDatabase.ImportAsset(BakedPrefabSubScenePath, ImportAssetOptions.ForceUpdate);
+    }
+
+    private static GameObject[] LoadScenarioPrefabRegistryPrefabs()
+    {
+        return new[]
+        {
+            RequirePrefab(GroundLauncherPrefabPath),
+            RequirePrefab(AirLauncherPrefabPath),
+            RequirePrefab(RadarTankPrefabPath),
+            RequirePrefab(JetPrefabPath),
+            RequirePrefab(HelicopterPrefabPath),
+            RequirePrefab(DronePrefabPath),
+            RequirePrefab(SoldierPrefabPath),
+            RequirePrefab(GroundVehicleTransportPrefabPath),
+            RequirePrefab(HelicopterTransportPrefabPath),
+            RequirePrefab(PlaneTransportPrefabPath),
+            RequirePrefab(VehicleCargoPrefabPath)
+        };
     }
 
     private static void CreateSubSceneReference(Transform parent)

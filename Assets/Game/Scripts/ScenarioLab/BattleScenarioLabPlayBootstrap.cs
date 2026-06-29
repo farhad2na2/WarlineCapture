@@ -76,6 +76,35 @@ public sealed class BattleScenarioLabPlayBootstrap : MonoBehaviour
         SelectScenario((selectedScenarioIndex + ScenarioCount - 1) % ScenarioCount, runScenario: true);
     }
 
+    public string CurrentScenarioId
+    {
+        get
+        {
+            BattleScenarioDefinition definition = CurrentScenarioDefinition;
+            return definition != null ? definition.ScenarioId : string.Empty;
+        }
+    }
+
+    public bool SelectScenarioById(string scenarioId)
+    {
+        if (string.IsNullOrWhiteSpace(scenarioId))
+            return false;
+
+        NormalizeScenarioDefinitions();
+        for (int i = 0; i < scenarioDefinitions.Length; i++)
+        {
+            BattleScenarioDefinition definition = scenarioDefinitions[i];
+            if (definition != null &&
+                string.Equals(definition.ScenarioId, scenarioId, StringComparison.Ordinal))
+            {
+                SelectScenario(i, runScenario: true);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void SelectScenarioFromDropdown()
     {
         if (scenarioDropdown == null)

@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45bd7f27d93144bfda584c6eafe994b6, type: 3}
+  m_Name: TB-005_TransportPlane_RampBoardAndGroundExit
+  m_EditorClassIdentifier: Game.Runtime::BattleScenarioDefinition
+  scenarioId: TB-005_TransportPlane_RampBoardAndGroundExit
+  displayName: Transport plane ramp board and ground exit
+  description: Soldiers use the resolved rear ramp approach, board the transport
+    plane, then exit through the production ramp flow.
+  fixedDeltaTime: 0.05
+  maxDurationSeconds: 45
+  randomSeed: 41004
+  cameraPreset: 0
+  worldBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 80, y: 45, z: 80}
+  spawnEntries: []
+  scenarioVariants:
+  - VariantId: TB-005_TransportPlane_RampBoardAndGroundExit
+    Label: Transport plane ramp board and ground exit
+    SupportMode: 0
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 0
+    IncomingThreatAltitude: 0
+    LauncherCount: 0
+    RadarDistanceFromLauncher: 0
+    ExpectedOutcome: 0
+  successCriteria:
+    RequireDetection: 1
+    RequireLaunch: 1
+    RequireInterceptForSupportedNormal: 1
+    RequireSupportedVariantImprovesOrMatchesBaseline: 1
+    MaxSupportedDetectionDelaySeconds: 0
+    MaxSupportedLockDelaySeconds: 0

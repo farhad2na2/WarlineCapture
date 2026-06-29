@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45bd7f27d93144bfda584c6eafe994b6, type: 3}
+  m_Name: TB-004_HelicopterTransport_GroundExitBehaviorAudit
+  m_EditorClassIdentifier: Game.Runtime::BattleScenarioDefinition
+  scenarioId: TB-004_HelicopterTransport_GroundExitBehaviorAudit
+  displayName: Helicopter ground exit behavior audit
+  description: 'Documents current production behavior: helicopter disembark starts
+    rope flow even from an initially landed state.'
+  fixedDeltaTime: 0.05
+  maxDurationSeconds: 45
+  randomSeed: 41003
+  cameraPreset: 0
+  worldBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 80, y: 45, z: 80}
+  spawnEntries: []
+  scenarioVariants:
+  - VariantId: TB-004_HelicopterTransport_GroundExitBehaviorAudit
+    Label: Helicopter ground exit behavior audit
+    SupportMode: 0
+    IncomingThreatKind: 0
+    IncomingThreatSpeedMultiplier: 1
+    IncomingThreatStartDistance: 0
+    IncomingThreatAltitude: 0
+    LauncherCount: 0
+    RadarDistanceFromLauncher: 0
+    ExpectedOutcome: 0
+  successCriteria:
+    RequireDetection: 1
+    RequireLaunch: 1
+    RequireInterceptForSupportedNormal: 1
+    RequireSupportedVariantImprovesOrMatchesBaseline: 1
+    MaxSupportedDetectionDelaySeconds: 0
+    MaxSupportedLockDelaySeconds: 0

@@ -19,6 +19,11 @@ MonoBehaviour:
   - {fileID: 5616646512338707422, guid: bff0a8791ec564632b7bddbe3e544ac4, type: 3}
   - {fileID: 5616646512338707422, guid: ba129d3b5a0324b82a9046e6a52c1149, type: 3}
   - {fileID: 5616646512338707422, guid: 7ed73828b6ecd4cf8a690c35e7311a1d, type: 3}
+  - {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+  - {fileID: 8969431421773950753, guid: 12aa3f1b102194c0f87c119f847ebaf7, type: 3}
+  - {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
+  - {fileID: 5616646512338707422, guid: c0213638ba0c6466fadcd5bbe8fe0149, type: 3}
+  - {fileID: 8969431421773950753, guid: d08c88d57a5f34f80a264cbfd1e2da4b, type: 3}
   impostorAtlases: []
   unitSelectionMarkerPrefab: {fileID: 0}
   unitHealthBarPrefab: {fileID: 0}

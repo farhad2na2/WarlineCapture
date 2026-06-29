@@ -25,6 +25,12 @@ public sealed class BattleScenarioLabOverlayView : MonoBehaviour
             return;
         }
 
+        if (TransportBoardingScenarioCatalog.TryGetScenario(result.ScenarioId, out TransportBoardingScenarioDescriptor transportScenario))
+        {
+            ShowTransportBoardingResult(result, transportScenario);
+            return;
+        }
+
         SetText(titleText, result.ScenarioId);
         SetText(statusText, result.Passed ? "PASS" : $"FAIL - {result.FailureReason}");
         SetText(variantsText, BuildVariantSummary(result));
@@ -82,6 +88,76 @@ public sealed class BattleScenarioLabOverlayView : MonoBehaviour
         }
 
         return builder.ToString();
+    }
+
+    private void ShowTransportBoardingResult(BattleScenarioResult result, TransportBoardingScenarioDescriptor scenario)
+    {
+        BattleScenarioFailureReason failureReason = result != null
+            ? result.FailureReason
+            : BattleScenarioFailureReason.None;
+
+        SetText(titleText, scenario.DisplayName);
+        SetText(statusText, scenario.VisualProofRequired
+            ? "VISUAL PLAYBACK - production ECS"
+            : "AUTOMATED AUDIT - no live visual playback");
+        SetText(variantsText, BuildTransportBoardingSummary(scenario, failureReason));
+        SetText(comparisonsText, scenario.Description);
+    }
+
+    private static string BuildTransportBoardingSummary(
+        TransportBoardingScenarioDescriptor scenario,
+        BattleScenarioFailureReason failureReason)
+    {
+        var builder = new StringBuilder(256);
+        builder
+            .Append("Phase: ")
+            .Append(ResolveTransportPhase(scenario.Kind))
+            .Append('\n')
+            .Append("Passenger count: ")
+            .Append(ResolveTransportPassengerCount(scenario.Kind))
+            .Append('\n')
+            .Append("Exit mode: ")
+            .Append(scenario.ExitMode)
+            .Append('\n')
+            .Append("Failure reason: ")
+            .Append(failureReason);
+        return builder.ToString();
+    }
+
+    private static string ResolveTransportPhase(TransportBoardingScenarioKind kind)
+    {
+        return kind switch
+        {
+            TransportBoardingScenarioKind.GroundVehicleBoardAndExit => "board -> ground exit",
+            TransportBoardingScenarioKind.HelicopterBoardAndRopeExit => "board -> rope exit",
+            TransportBoardingScenarioKind.HelicopterAirPickup => "air pickup -> board -> rope exit",
+            TransportBoardingScenarioKind.HelicopterGroundExitAudit => "ground-exit audit",
+            TransportBoardingScenarioKind.PlaneRampBoardAndExit => "ramp board -> ground exit",
+            TransportBoardingScenarioKind.PlaneSoldierAirdrop => "board -> soldier airdrop",
+            TransportBoardingScenarioKind.PlaneVehicleCargoGroundExit => "vehicle cargo board -> ramp exit",
+            TransportBoardingScenarioKind.PlaneVehicleCargoAirdrop => "vehicle cargo onboard -> cargo drop",
+            TransportBoardingScenarioKind.PlaneMixedLoadAirdrop => "mixed load -> airdrop",
+            TransportBoardingScenarioKind.RejectionCases => "negative-case checks",
+            TransportBoardingScenarioKind.NextCleanup => "cleanup switching proof",
+            TransportBoardingScenarioKind.CameraProofPath => "camera proof path",
+            _ => "visual playback"
+        };
+    }
+
+    private static string ResolveTransportPassengerCount(TransportBoardingScenarioKind kind)
+    {
+        return kind switch
+        {
+            TransportBoardingScenarioKind.GroundVehicleBoardAndExit => "1 soldier",
+            TransportBoardingScenarioKind.HelicopterBoardAndRopeExit => "1 soldier",
+            TransportBoardingScenarioKind.HelicopterAirPickup => "1 soldier",
+            TransportBoardingScenarioKind.PlaneRampBoardAndExit => "1 soldier",
+            TransportBoardingScenarioKind.PlaneSoldierAirdrop => "1 soldier",
+            TransportBoardingScenarioKind.PlaneVehicleCargoGroundExit => "1 vehicle cargo",
+            TransportBoardingScenarioKind.PlaneVehicleCargoAirdrop => "1 vehicle cargo",
+            TransportBoardingScenarioKind.PlaneMixedLoadAirdrop => "1 soldier + 1 vehicle cargo",
+            _ => "n/a"
+        };
     }
 
     private static string FormatSeconds(float value)

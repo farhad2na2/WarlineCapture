@@ -11,8 +11,28 @@ public static class BattleScenarioLabVisualProofCapture
 {
     public const string OutputFolder = "Design/VisualLockLayered/_BattleScenarioLab/AD-001";
     public const string ContactSheetPath = OutputFolder + "/ad001_visual_proof_contact_sheet.png";
+    public const string TransportBoardingOutputFolder = "Design/VisualLockLayered/_TransportBoardingScenarioLab";
+    public const string TransportBoardingContactSheetPath = TransportBoardingOutputFolder + "/transport_boarding_visual_proof_contact_sheet.png";
     private const int CaptureWidth = 1280;
     private const int CaptureHeight = 720;
+    private const string TransportCaptureActiveKey = "BattleScenarioLab.TransportVisualProof.Active";
+    private const string TransportCaptureIndexKey = "BattleScenarioLab.TransportVisualProof.Index";
+    private const string TransportCapturePhaseStartedAtKey = "BattleScenarioLab.TransportVisualProof.PhaseStartedAt";
+    private const string TransportCaptureSelectedKey = "BattleScenarioLab.TransportVisualProof.Selected";
+
+    private static readonly string[] TransportProofScenarioIds =
+    {
+        TransportBoardingScenarioCatalog.Tb001GroundVehicleBoardExitId,
+        TransportBoardingScenarioCatalog.Tb002HelicopterBoardRopeExitId,
+        TransportBoardingScenarioCatalog.Tb003HelicopterAirPickupId,
+        TransportBoardingScenarioCatalog.Tb005PlaneRampBoardGroundExitId,
+        TransportBoardingScenarioCatalog.Tb006PlaneSoldierAirdropId,
+        TransportBoardingScenarioCatalog.Tb007PlaneVehicleCargoGroundExitId,
+        TransportBoardingScenarioCatalog.Tb008PlaneVehicleCargoAirdropId,
+        TransportBoardingScenarioCatalog.Tb009PlaneMixedLoadAirdropId,
+        TransportBoardingScenarioCatalog.Tb011NextCleanupId,
+        TransportBoardingScenarioCatalog.Tb012CameraProofPathId
+    };
 
     [MenuItem("Warline Capture/Scenario Lab/Capture AD-001 Visual Proof")]
     public static void CaptureAd001VisualProof()
@@ -27,6 +47,89 @@ public static class BattleScenarioLabVisualProofCapture
         catch (Exception ex)
         {
             Debug.LogError($"[BattleScenarioLab] AD-001 visual proof capture failed: {ex}");
+            if (Application.isBatchMode)
+                EditorApplication.Exit(1);
+        }
+    }
+
+    [MenuItem("Warline Capture/Scenario Lab/Capture Transport Boarding Visual Proof")]
+    public static void CaptureTransportBoardingVisualProof()
+    {
+        try
+        {
+            Directory.CreateDirectory(TransportBoardingOutputFolder);
+            EditorSceneManager.OpenScene(BattleScenarioLabSceneBuilder.ScenePath, OpenSceneMode.Single);
+            SessionState.SetBool(TransportCaptureActiveKey, true);
+            SessionState.SetInt(TransportCaptureIndexKey, 0);
+            SessionState.SetFloat(TransportCapturePhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
+            SessionState.SetBool(TransportCaptureSelectedKey, false);
+            EditorApplication.update -= OnTransportBoardingVisualProofCaptureUpdate;
+            EditorApplication.update += OnTransportBoardingVisualProofCaptureUpdate;
+            EditorApplication.EnterPlaymode();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[BattleScenarioLab] Transport boarding visual proof capture failed before PlayMode: {ex}");
+            ClearTransportBoardingVisualProofCaptureState();
+            if (Application.isBatchMode)
+                EditorApplication.Exit(1);
+        }
+    }
+
+    private static void OnTransportBoardingVisualProofCaptureUpdate()
+    {
+        if (!SessionState.GetBool(TransportCaptureActiveKey, false))
+            return;
+
+        try
+        {
+            if (!EditorApplication.isPlaying)
+                return;
+
+            int index = SessionState.GetInt(TransportCaptureIndexKey, 0);
+            if (index >= TransportProofScenarioIds.Length)
+            {
+                string contactSheet = CreateContactSheet(
+                    TransportBoardingContactSheetPath,
+                    Array.ConvertAll(TransportProofScenarioIds, GetTransportBoardingCapturePath));
+                Debug.Log($"[BattleScenarioLab] Transport boarding visual proof captured: {contactSheet}");
+                ClearTransportBoardingVisualProofCaptureState();
+                EditorApplication.ExitPlaymode();
+                if (Application.isBatchMode)
+                    EditorApplication.Exit(0);
+                return;
+            }
+
+            string scenarioId = TransportProofScenarioIds[index];
+            BattleScenarioLabPlayBootstrap bootstrap = Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
+            Camera camera = Object.FindAnyObjectByType<Camera>();
+            Require(bootstrap != null, "Missing BattleScenarioLabPlayBootstrap for transport proof capture.");
+            Require(camera != null, "Missing Scenario Lab camera for transport proof capture.");
+
+            if (!SessionState.GetBool(TransportCaptureSelectedKey, false))
+            {
+                Require(bootstrap.SelectScenarioById(scenarioId), $"Scenario Lab selector does not contain {scenarioId}.");
+                SessionState.SetBool(TransportCaptureSelectedKey, true);
+                SessionState.SetFloat(TransportCapturePhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
+                return;
+            }
+
+            double elapsed = EditorApplication.timeSinceStartup -
+                SessionState.GetFloat(TransportCapturePhaseStartedAtKey, 0f);
+            if (elapsed < GetTransportBoardingCaptureDelaySeconds(scenarioId))
+                return;
+
+            string path = GetTransportBoardingCapturePath(scenarioId);
+            CaptureCamera(camera, path);
+            SessionState.SetInt(TransportCaptureIndexKey, index + 1);
+            SessionState.SetBool(TransportCaptureSelectedKey, false);
+            SessionState.SetFloat(TransportCapturePhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[BattleScenarioLab] Transport boarding visual proof capture failed: {ex}");
+            ClearTransportBoardingVisualProofCaptureState();
+            EditorApplication.ExitPlaymode();
             if (Application.isBatchMode)
                 EditorApplication.Exit(1);
         }
@@ -55,7 +158,7 @@ public static class BattleScenarioLabVisualProofCapture
         string noSupportPath = CaptureVariant(references, label, "AD-001-A-NoSupport-Normal", "No radar support");
         string radarPath = CaptureVariant(references, label, "AD-001-B-RadarNear-Normal", "Radar near support");
         string fastRadarPath = CaptureVariant(references, label, "AD-001-D-RadarNear-FastThreat", "Radar near, fast threat");
-        string contactSheetPath = CreateContactSheet(noSupportPath, radarPath, fastRadarPath);
+        string contactSheetPath = CreateAd001ContactSheet(noSupportPath, radarPath, fastRadarPath);
         return new[] { noSupportPath, radarPath, fastRadarPath, contactSheetPath };
     }
 
@@ -169,7 +272,12 @@ public static class BattleScenarioLabVisualProofCapture
         }
     }
 
-    private static string CreateContactSheet(params string[] paths)
+    private static string CreateAd001ContactSheet(params string[] paths)
+    {
+        return CreateContactSheet(ContactSheetPath, paths);
+    }
+
+    private static string CreateContactSheet(string outputPath, params string[] paths)
     {
         Texture2D[] captures = new Texture2D[paths.Length];
         Texture2D sheet = null;
@@ -191,8 +299,8 @@ public static class BattleScenarioLabVisualProofCapture
                 Copy(captures[i], sheet, padding + i * (CaptureWidth + padding), padding);
 
             sheet.Apply(false, false);
-            File.WriteAllBytes(ContactSheetPath, sheet.EncodeToPNG());
-            return ContactSheetPath;
+            File.WriteAllBytes(outputPath, sheet.EncodeToPNG());
+            return outputPath;
         }
         finally
         {
@@ -239,6 +347,38 @@ public static class BattleScenarioLabVisualProofCapture
         foreach (char invalid in Path.GetInvalidFileNameChars())
             value = value.Replace(invalid, '_');
         return value;
+    }
+
+    private static string GetTransportBoardingCapturePath(string scenarioId)
+    {
+        return Path.Combine(TransportBoardingOutputFolder, SanitizeFileName(scenarioId) + ".png");
+    }
+
+    private static double GetTransportBoardingCaptureDelaySeconds(string scenarioId)
+    {
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb012CameraProofPathId, StringComparison.Ordinal))
+            return 34.0;
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb011NextCleanupId, StringComparison.Ordinal))
+            return 7.5;
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb009PlaneMixedLoadAirdropId, StringComparison.Ordinal))
+            return 9.0;
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb003HelicopterAirPickupId, StringComparison.Ordinal))
+            return 8.5;
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb002HelicopterBoardRopeExitId, StringComparison.Ordinal))
+            return 7.5;
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb007PlaneVehicleCargoGroundExitId, StringComparison.Ordinal))
+            return 7.0;
+
+        return 6.5;
+    }
+
+    private static void ClearTransportBoardingVisualProofCaptureState()
+    {
+        EditorApplication.update -= OnTransportBoardingVisualProofCaptureUpdate;
+        SessionState.EraseBool(TransportCaptureActiveKey);
+        SessionState.EraseInt(TransportCaptureIndexKey);
+        SessionState.EraseFloat(TransportCapturePhaseStartedAtKey);
+        SessionState.EraseBool(TransportCaptureSelectedKey);
     }
 
     private static void Require(bool condition, string message)

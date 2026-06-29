@@ -63,7 +63,10 @@ public partial struct UnitGridMoveJob : IJobEntity
         int targetIndex = GridUtils.CellToIndex(targetCell, Grid.Width);
         int2 footprintSize = footprint.Size;
         bool isVehicle = UnitVehicleMovementUtility.IsVehicle(footprint, movementBehavior);
-        bool groupedManualMove = !isVehicle && ManualMoveGroupLookup.HasComponent(entity);
+        bool groupedManualMove =
+            !isVehicle &&
+            ManualMoveGroupLookup.HasComponent(entity) &&
+            !BoardingTargetLookup.HasComponent(entity);
         if (!isVehicle)
         {
             int2 worldCell = GridUtils.WorldToCell(Grid, transform.Position);

@@ -20,6 +20,11 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
     private const string JetTargetKey = "Unit_Veh_Jet_01";
     private const string HelicopterTargetKey = "Unit_Veh_Helicopter_Attack";
     private const string DroneTargetKey = "Unit_Veh_Drone";
+    private const string SoldierPassengerKey = "Unit_Chr_Soldier_Male_02_Alt_04";
+    private const string GroundVehicleTransportKey = "Unit_Veh_APC_Heavy";
+    private const string HelicopterTransportKey = "Unit_Veh_Helicopter_Transport";
+    private const string PlaneTransportKey = "Unit_Veh_Plane_Transport";
+    private const string VehicleCargoPassengerKey = "Unit_Veh_Tank_USA";
     private const float VisualInterceptProximityFuseRadius = 0.35f;
     private const float VisualAirTargetProximityFuseRadius = 4f;
     private const float VisualGroundMissileArcHeight = 8f;
@@ -39,13 +44,29 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
     private static readonly float3 DefendedTargetPosition = new(-40f, 0f, 0f);
     private static readonly quaternion AirLauncherRotation = quaternion.RotateY(math.radians(90f));
     private static readonly quaternion GroundLauncherRotation = quaternion.RotateY(math.radians(-90f));
+    private static readonly int2 TransportPlaneSoldierAirdropDropCell = new(23, 23);
+    private static readonly int2 TransportPlaneVehicleCargoDropCell = new(24, 24);
+    private static readonly int2 TransportPlaneMixedAirdropDropCell = new(25, 25);
+    private static readonly Vector3 DefaultCameraPosition = new(80f, 45f, -80f);
+    private static readonly Vector3 DefaultCameraLookAt = new(16f, 0f, 16f);
 
     private Coroutine playbackRoutine;
+    private NativeArray<int> scenarioGridBlockerCounts;
+    private NativeBitArray scenarioGridBlocked;
+    private NativeBitArray scenarioGridOccupied;
+    private NativeArray<byte> scenarioGridFriendlyPassFactionIds;
+    private NativeList<int2> scenarioGridPathPool;
 
     public bool CanPlay(BattleScenarioDefinition definition)
     {
         if (definition == null)
             return true;
+
+        if (TransportBoardingScenarioCatalog.TryGetScenario(definition.ScenarioId, out TransportBoardingScenarioDescriptor transportScenario) &&
+            IsWiredTransportBoardingVisualScenario(transportScenario.Kind))
+        {
+            return true;
+        }
 
         BattleScenarioVariant[] variants = definition.ScenarioVariants;
         if (variants == null || variants.Length == 0)
@@ -80,11 +101,23 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
         ClearPooledPresentationVfx();
         World world = World.DefaultGameObjectInjectionWorld;
         if (world != null && world.IsCreated)
+        {
+            DisposeScenarioGrid(world.EntityManager);
             ResetPreviousRun(world.EntityManager);
+        }
+
+        ResetCameraView();
     }
 
     private IEnumerator PlayLiveEcsRoutine(BattleScenarioDefinition definition, BattleScenarioVariant variant)
     {
+        if (definition != null &&
+            TransportBoardingScenarioCatalog.TryGetScenario(definition.ScenarioId, out TransportBoardingScenarioDescriptor transportScenario))
+        {
+            yield return PlayTransportBoardingLiveEcsRoutine(transportScenario);
+            yield break;
+        }
+
         BattleScenarioVariant resolvedVariant = ResolveVariant(definition, variant);
         if (IsAirTargetKind(resolvedVariant.IncomingThreatKind))
         {
@@ -182,6 +215,433 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
         yield return CameraAirTargetRoutine(em, variant, airLauncher, target);
     }
 
+    private IEnumerator PlayTransportBoardingLiveEcsRoutine(TransportBoardingScenarioDescriptor scenario)
+    {
+        if (!scenario.VisualProofRequired)
+        {
+            ResetCameraView();
+            Debug.Log($"[BattleScenarioLab] {scenario.ScenarioId} is an automated audit scenario and has no live visual playback by design.");
+            yield break;
+        }
+
+        switch (scenario.Kind)
+        {
+            case TransportBoardingScenarioKind.GroundVehicleBoardAndExit:
+                yield return PlayGroundVehicleTransportBoardingLiveEcsRoutine();
+                yield break;
+
+            case TransportBoardingScenarioKind.HelicopterBoardAndRopeExit:
+                yield return PlayHelicopterTransportBoardingLiveEcsRoutine();
+                yield break;
+
+            case TransportBoardingScenarioKind.HelicopterAirPickup:
+                yield return PlayHelicopterAirPickupLiveEcsRoutine();
+                yield break;
+
+            case TransportBoardingScenarioKind.PlaneRampBoardAndExit:
+                yield return PlayTransportPlaneRampBoardingLiveEcsRoutine();
+                yield break;
+
+            case TransportBoardingScenarioKind.PlaneSoldierAirdrop:
+                yield return PlayTransportPlaneSoldierAirdropLiveEcsRoutine();
+                yield break;
+
+            case TransportBoardingScenarioKind.PlaneVehicleCargoGroundExit:
+                yield return PlayTransportPlaneVehicleCargoGroundExitLiveEcsRoutine();
+                yield break;
+
+            case TransportBoardingScenarioKind.PlaneVehicleCargoAirdrop:
+                yield return PlayTransportPlaneVehicleCargoAirdropLiveEcsRoutine();
+                yield break;
+
+            case TransportBoardingScenarioKind.PlaneMixedLoadAirdrop:
+                yield return PlayTransportPlaneMixedLoadAirdropLiveEcsRoutine();
+                yield break;
+
+            case TransportBoardingScenarioKind.NextCleanup:
+                yield return PlayTransportBoardingNextCleanupProofRoutine();
+                yield break;
+
+            case TransportBoardingScenarioKind.CameraProofPath:
+                yield return PlayTransportBoardingCameraProofPathRoutine();
+                yield break;
+
+            default:
+                Debug.LogWarning($"[BattleScenarioLab] Transport boarding visual playback is not wired yet for {scenario.ScenarioId}.");
+                yield break;
+        }
+    }
+
+    private IEnumerator PlayGroundVehicleTransportBoardingLiveEcsRoutine()
+    {
+        SetCamera(new Vector3(18f, 13f, -18f), new Vector3(9f, 1.5f, 8f));
+
+        World world = null;
+        Entity soldierPrefab = Entity.Null;
+        Entity transportPrefab = Entity.Null;
+        float waitStart = Time.realtimeSinceStartup;
+
+        while (Time.realtimeSinceStartup - waitStart < entityWaitTimeoutSeconds)
+        {
+            world = World.DefaultGameObjectInjectionWorld;
+            if (world != null &&
+                TryResolveUnitPrefab(world.EntityManager, SoldierPassengerKey, out soldierPrefab) &&
+                TryResolveUnitPrefab(world.EntityManager, GroundVehicleTransportKey, out transportPrefab))
+            {
+                break;
+            }
+
+            yield return null;
+        }
+
+        if (world == null || soldierPrefab == Entity.Null || transportPrefab == Entity.Null)
+        {
+            Debug.LogError(
+                "[BattleScenarioLab] TB-001 visual run could not resolve production soldier/APC prefab entities " +
+                $"within {entityWaitTimeoutSeconds:0.#}s. The Scenario Lab prefab registry SubScene must include transport boarding prefabs.");
+            yield break;
+        }
+
+        EntityManager em = world.EntityManager;
+        DisposeScenarioGrid(em);
+        ResetPreviousRun(em);
+        CreateScenarioGrid(em, 32, 32);
+
+        Entity transport = InstantiateUnitPrefab(em, transportPrefab);
+        Entity soldier = InstantiateUnitPrefab(em, soldierPrefab);
+        ConfigureTb001GroundVehicleScenario(em, transport, soldier);
+
+        yield return CameraTransportBoardAndGroundExitRoutine(em, transport, soldier);
+    }
+
+    private IEnumerator PlayHelicopterTransportBoardingLiveEcsRoutine()
+    {
+        SetCamera(new Vector3(21f, 16f, -23f), new Vector3(11f, 2f, 10f));
+
+        World world = null;
+        Entity soldierPrefab = Entity.Null;
+        Entity transportPrefab = Entity.Null;
+        float waitStart = Time.realtimeSinceStartup;
+
+        while (Time.realtimeSinceStartup - waitStart < entityWaitTimeoutSeconds)
+        {
+            world = World.DefaultGameObjectInjectionWorld;
+            if (world != null &&
+                TryResolveUnitPrefab(world.EntityManager, SoldierPassengerKey, out soldierPrefab) &&
+                TryResolveUnitPrefab(world.EntityManager, HelicopterTransportKey, out transportPrefab))
+            {
+                break;
+            }
+
+            yield return null;
+        }
+
+        if (world == null || soldierPrefab == Entity.Null || transportPrefab == Entity.Null)
+        {
+            Debug.LogError(
+                "[BattleScenarioLab] TB-002 visual run could not resolve production soldier/helicopter transport prefab entities " +
+                $"within {entityWaitTimeoutSeconds:0.#}s. The Scenario Lab prefab registry SubScene must include transport boarding prefabs.");
+            yield break;
+        }
+
+        EntityManager em = world.EntityManager;
+        DisposeScenarioGrid(em);
+        ResetPreviousRun(em);
+        CreateScenarioGrid(em, 34, 34);
+
+        Entity transport = InstantiateUnitPrefab(em, transportPrefab);
+        Entity soldier = InstantiateUnitPrefab(em, soldierPrefab);
+        ConfigureTb002HelicopterRopeScenario(em, transport, soldier);
+
+        yield return CameraTransportBoardAndRopeExitRoutine(em, transport, soldier);
+    }
+
+    private IEnumerator PlayHelicopterAirPickupLiveEcsRoutine()
+    {
+        SetCamera(new Vector3(27f, 18f, -23f), new Vector3(15f, 4f, 13f));
+
+        World world = null;
+        Entity soldierPrefab = Entity.Null;
+        Entity transportPrefab = Entity.Null;
+        float waitStart = Time.realtimeSinceStartup;
+
+        while (Time.realtimeSinceStartup - waitStart < entityWaitTimeoutSeconds)
+        {
+            world = World.DefaultGameObjectInjectionWorld;
+            if (world != null &&
+                TryResolveUnitPrefab(world.EntityManager, SoldierPassengerKey, out soldierPrefab) &&
+                TryResolveUnitPrefab(world.EntityManager, HelicopterTransportKey, out transportPrefab))
+            {
+                break;
+            }
+
+            yield return null;
+        }
+
+        if (world == null || soldierPrefab == Entity.Null || transportPrefab == Entity.Null)
+        {
+            Debug.LogError(
+                "[BattleScenarioLab] TB-003 visual run could not resolve production soldier/helicopter transport prefab entities " +
+                $"within {entityWaitTimeoutSeconds:0.#}s. The Scenario Lab prefab registry SubScene must include transport boarding prefabs.");
+            yield break;
+        }
+
+        EntityManager em = world.EntityManager;
+        DisposeScenarioGrid(em);
+        ResetPreviousRun(em);
+        CreateScenarioGrid(em, 36, 36);
+
+        Entity transport = InstantiateUnitPrefab(em, transportPrefab);
+        Entity soldier = InstantiateUnitPrefab(em, soldierPrefab);
+        ConfigureTb003HelicopterAirPickupScenario(em, transport, soldier);
+
+        yield return CameraTransportAirPickupBoardAndRopeExitRoutine(em, transport, soldier);
+    }
+
+    private IEnumerator PlayTransportPlaneRampBoardingLiveEcsRoutine()
+    {
+        SetCamera(new Vector3(28f, 16f, -18f), new Vector3(17f, 1.5f, 13f));
+
+        World world = null;
+        Entity soldierPrefab = Entity.Null;
+        Entity transportPrefab = Entity.Null;
+        float waitStart = Time.realtimeSinceStartup;
+
+        while (Time.realtimeSinceStartup - waitStart < entityWaitTimeoutSeconds)
+        {
+            world = World.DefaultGameObjectInjectionWorld;
+            if (world != null &&
+                TryResolveUnitPrefab(world.EntityManager, SoldierPassengerKey, out soldierPrefab) &&
+                TryResolveUnitPrefab(world.EntityManager, PlaneTransportKey, out transportPrefab))
+            {
+                break;
+            }
+
+            yield return null;
+        }
+
+        if (world == null || soldierPrefab == Entity.Null || transportPrefab == Entity.Null)
+        {
+            Debug.LogError(
+                "[BattleScenarioLab] TB-005 visual run could not resolve production soldier/transport-plane prefab entities " +
+                $"within {entityWaitTimeoutSeconds:0.#}s. The Scenario Lab prefab registry SubScene must include transport boarding prefabs.");
+            yield break;
+        }
+
+        EntityManager em = world.EntityManager;
+        DisposeScenarioGrid(em);
+        ResetPreviousRun(em);
+        CreateScenarioGrid(em, 42, 42);
+
+        Entity transport = InstantiateUnitPrefab(em, transportPrefab);
+        Entity soldier = InstantiateUnitPrefab(em, soldierPrefab);
+        ConfigureTb005TransportPlaneRampScenario(em, transport, soldier);
+
+        yield return CameraTransportPlaneRampBoardAndGroundExitRoutine(em, transport, soldier);
+    }
+
+    private IEnumerator PlayTransportPlaneSoldierAirdropLiveEcsRoutine()
+    {
+        SetCamera(new Vector3(34f, 28f, -30f), new Vector3(18f, 18f, 18f));
+
+        World world = null;
+        Entity soldierPrefab = Entity.Null;
+        Entity transportPrefab = Entity.Null;
+        float waitStart = Time.realtimeSinceStartup;
+
+        while (Time.realtimeSinceStartup - waitStart < entityWaitTimeoutSeconds)
+        {
+            world = World.DefaultGameObjectInjectionWorld;
+            if (world != null &&
+                TryResolveUnitPrefab(world.EntityManager, SoldierPassengerKey, out soldierPrefab) &&
+                TryResolveUnitPrefab(world.EntityManager, PlaneTransportKey, out transportPrefab))
+            {
+                break;
+            }
+
+            yield return null;
+        }
+
+        if (world == null || soldierPrefab == Entity.Null || transportPrefab == Entity.Null)
+        {
+            Debug.LogError(
+                "[BattleScenarioLab] TB-006 visual run could not resolve production soldier/transport-plane prefab entities " +
+                $"within {entityWaitTimeoutSeconds:0.#}s. The Scenario Lab prefab registry SubScene must include transport boarding prefabs.");
+            yield break;
+        }
+
+        EntityManager em = world.EntityManager;
+        DisposeScenarioGrid(em);
+        ResetPreviousRun(em);
+        CreateScenarioGrid(em, 48, 48);
+
+        Entity transport = InstantiateUnitPrefab(em, transportPrefab);
+        Entity soldier = InstantiateUnitPrefab(em, soldierPrefab);
+        ConfigureTb006TransportPlaneSoldierAirdropScenario(em, transport, soldier);
+
+        yield return CameraTransportPlaneSoldierAirdropRoutine(em, transport, soldier);
+    }
+
+    private IEnumerator PlayTransportPlaneVehicleCargoGroundExitLiveEcsRoutine()
+    {
+        SetCamera(new Vector3(31f, 17f, -21f), new Vector3(17f, 1.7f, 13f));
+
+        World world = null;
+        Entity vehiclePrefab = Entity.Null;
+        Entity transportPrefab = Entity.Null;
+        float waitStart = Time.realtimeSinceStartup;
+
+        while (Time.realtimeSinceStartup - waitStart < entityWaitTimeoutSeconds)
+        {
+            world = World.DefaultGameObjectInjectionWorld;
+            if (world != null &&
+                TryResolveUnitPrefab(world.EntityManager, VehicleCargoPassengerKey, out vehiclePrefab) &&
+                TryResolveUnitPrefab(world.EntityManager, PlaneTransportKey, out transportPrefab))
+            {
+                break;
+            }
+
+            yield return null;
+        }
+
+        if (world == null || vehiclePrefab == Entity.Null || transportPrefab == Entity.Null)
+        {
+            Debug.LogError(
+                "[BattleScenarioLab] TB-007 visual run could not resolve production vehicle-cargo/transport-plane prefab entities " +
+                $"within {entityWaitTimeoutSeconds:0.#}s. The Scenario Lab prefab registry SubScene must include transport boarding prefabs.");
+            yield break;
+        }
+
+        EntityManager em = world.EntityManager;
+        DisposeScenarioGrid(em);
+        ResetPreviousRun(em);
+        CreateScenarioGrid(em, 48, 48);
+
+        Entity transport = InstantiateUnitPrefab(em, transportPrefab);
+        Entity vehicle = InstantiateUnitPrefab(em, vehiclePrefab);
+        ConfigureTb007TransportPlaneVehicleCargoScenario(em, transport, vehicle);
+
+        yield return CameraTransportPlaneVehicleCargoGroundExitRoutine(em, transport, vehicle);
+    }
+
+    private IEnumerator PlayTransportPlaneVehicleCargoAirdropLiveEcsRoutine()
+    {
+        SetCamera(new Vector3(38f, 30f, -34f), new Vector3(18f, 19f, 18f));
+
+        World world = null;
+        Entity vehiclePrefab = Entity.Null;
+        Entity transportPrefab = Entity.Null;
+        float waitStart = Time.realtimeSinceStartup;
+
+        while (Time.realtimeSinceStartup - waitStart < entityWaitTimeoutSeconds)
+        {
+            world = World.DefaultGameObjectInjectionWorld;
+            if (world != null &&
+                TryResolveUnitPrefab(world.EntityManager, VehicleCargoPassengerKey, out vehiclePrefab) &&
+                TryResolveUnitPrefab(world.EntityManager, PlaneTransportKey, out transportPrefab))
+            {
+                break;
+            }
+
+            yield return null;
+        }
+
+        if (world == null || vehiclePrefab == Entity.Null || transportPrefab == Entity.Null)
+        {
+            Debug.LogError(
+                "[BattleScenarioLab] TB-008 visual run could not resolve production vehicle-cargo/transport-plane prefab entities " +
+                $"within {entityWaitTimeoutSeconds:0.#}s. The Scenario Lab prefab registry SubScene must include transport boarding prefabs.");
+            yield break;
+        }
+
+        EntityManager em = world.EntityManager;
+        DisposeScenarioGrid(em);
+        ResetPreviousRun(em);
+        CreateScenarioGrid(em, 52, 52);
+
+        Entity transport = InstantiateUnitPrefab(em, transportPrefab);
+        Entity vehicle = InstantiateUnitPrefab(em, vehiclePrefab);
+        ConfigureTb008TransportPlaneVehicleCargoAirdropScenario(em, transport, vehicle);
+
+        yield return CameraTransportPlaneVehicleCargoAirdropRoutine(em, transport, vehicle);
+    }
+
+    private IEnumerator PlayTransportPlaneMixedLoadAirdropLiveEcsRoutine()
+    {
+        SetCamera(new Vector3(40f, 32f, -36f), new Vector3(18f, 20f, 18f));
+
+        World world = null;
+        Entity soldierPrefab = Entity.Null;
+        Entity vehiclePrefab = Entity.Null;
+        Entity transportPrefab = Entity.Null;
+        float waitStart = Time.realtimeSinceStartup;
+
+        while (Time.realtimeSinceStartup - waitStart < entityWaitTimeoutSeconds)
+        {
+            world = World.DefaultGameObjectInjectionWorld;
+            if (world != null &&
+                TryResolveUnitPrefab(world.EntityManager, SoldierPassengerKey, out soldierPrefab) &&
+                TryResolveUnitPrefab(world.EntityManager, VehicleCargoPassengerKey, out vehiclePrefab) &&
+                TryResolveUnitPrefab(world.EntityManager, PlaneTransportKey, out transportPrefab))
+            {
+                break;
+            }
+
+            yield return null;
+        }
+
+        if (world == null || soldierPrefab == Entity.Null || vehiclePrefab == Entity.Null || transportPrefab == Entity.Null)
+        {
+            Debug.LogError(
+                "[BattleScenarioLab] TB-009 visual run could not resolve production soldier/vehicle-cargo/transport-plane prefab entities " +
+                $"within {entityWaitTimeoutSeconds:0.#}s. The Scenario Lab prefab registry SubScene must include transport boarding prefabs.");
+            yield break;
+        }
+
+        EntityManager em = world.EntityManager;
+        DisposeScenarioGrid(em);
+        ResetPreviousRun(em);
+        CreateScenarioGrid(em, 56, 56);
+
+        Entity transport = InstantiateUnitPrefab(em, transportPrefab);
+        Entity soldier = InstantiateUnitPrefab(em, soldierPrefab);
+        Entity vehicle = InstantiateUnitPrefab(em, vehiclePrefab);
+        ConfigureTb009TransportPlaneMixedLoadAirdropScenario(em, transport, soldier, vehicle);
+
+        yield return CameraTransportPlaneMixedLoadAirdropRoutine(em, transport, soldier, vehicle);
+    }
+
+    private IEnumerator PlayTransportBoardingCameraProofPathRoutine()
+    {
+        yield return PlayGroundVehicleTransportBoardingLiveEcsRoutine();
+        yield return new WaitForSeconds(0.35f);
+        yield return PlayHelicopterTransportBoardingLiveEcsRoutine();
+        yield return new WaitForSeconds(0.35f);
+        yield return PlayTransportPlaneRampBoardingLiveEcsRoutine();
+        yield return new WaitForSeconds(0.35f);
+        yield return PlayTransportPlaneSoldierAirdropLiveEcsRoutine();
+        yield return new WaitForSeconds(0.35f);
+        yield return PlayTransportPlaneVehicleCargoAirdropLiveEcsRoutine();
+        yield return new WaitForSeconds(0.35f);
+        yield return PlayTransportPlaneMixedLoadAirdropLiveEcsRoutine();
+    }
+
+    private IEnumerator PlayTransportBoardingNextCleanupProofRoutine()
+    {
+        yield return PlayTransportPlaneVehicleCargoAirdropLiveEcsRoutine();
+        yield return new WaitForSeconds(0.5f);
+
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world != null && world.IsCreated)
+        {
+            EntityManager em = world.EntityManager;
+            ResetPreviousRun(em);
+            DisposeScenarioGrid(em);
+        }
+
+        ResetCameraView();
+    }
+
     private static BattleScenarioVariant ResolveVariant(BattleScenarioDefinition definition, BattleScenarioVariant variant)
     {
         if (!string.IsNullOrWhiteSpace(variant.VariantId))
@@ -198,6 +658,20 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
     {
         return variant.IncomingThreatKind == BattleScenarioIncomingThreatKind.GroundMissile ||
                IsAirTargetKind(variant.IncomingThreatKind);
+    }
+
+    private static bool IsWiredTransportBoardingVisualScenario(TransportBoardingScenarioKind kind)
+    {
+        return kind == TransportBoardingScenarioKind.GroundVehicleBoardAndExit ||
+               kind == TransportBoardingScenarioKind.HelicopterBoardAndRopeExit ||
+               kind == TransportBoardingScenarioKind.HelicopterAirPickup ||
+               kind == TransportBoardingScenarioKind.PlaneRampBoardAndExit ||
+               kind == TransportBoardingScenarioKind.PlaneSoldierAirdrop ||
+               kind == TransportBoardingScenarioKind.PlaneVehicleCargoGroundExit ||
+               kind == TransportBoardingScenarioKind.PlaneVehicleCargoAirdrop ||
+               kind == TransportBoardingScenarioKind.PlaneMixedLoadAirdrop ||
+               kind == TransportBoardingScenarioKind.NextCleanup ||
+               kind == TransportBoardingScenarioKind.CameraProofPath;
     }
 
     private static bool IsAirTargetKind(BattleScenarioIncomingThreatKind threatKind)
@@ -416,6 +890,696 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
                variant.VariantId.IndexOf("Attacking", System.StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
+    private void CreateScenarioGrid(EntityManager em, int width, int height)
+    {
+        DisposeScenarioGrid();
+
+        int gridSize = width * height;
+        scenarioGridBlockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+        scenarioGridBlocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        scenarioGridOccupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        scenarioGridFriendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+        for (int i = 0; i < scenarioGridFriendlyPassFactionIds.Length; i++)
+            scenarioGridFriendlyPassFactionIds[i] = byte.MaxValue;
+        scenarioGridPathPool = new NativeList<int2>(1024, Allocator.Persistent);
+
+        Entity gridEntity = em.CreateEntity(
+            typeof(BattleScenarioLabRuntimeGridTag),
+            typeof(GridConfig),
+            typeof(DynamicBlockerComponent),
+            typeof(DynamicOccupancyComponent),
+            typeof(PathPoolComponent));
+        em.SetName(gridEntity, "BattleScenarioLabRuntimeGrid");
+        em.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
+        em.SetComponentData(gridEntity, new DynamicBlockerComponent
+        {
+            GridSize = gridSize,
+            Counts = scenarioGridBlockerCounts,
+            Blocked = scenarioGridBlocked,
+            FriendlyPassFactionIds = scenarioGridFriendlyPassFactionIds
+        });
+        em.SetComponentData(gridEntity, new DynamicOccupancyComponent
+        {
+            GridSize = gridSize,
+            Occupied = scenarioGridOccupied
+        });
+        em.SetComponentData(gridEntity, new PathPoolComponent { Cells = scenarioGridPathPool });
+
+        em.AddBuffer<GridWalkable>(gridEntity);
+        em.AddBuffer<GridRoad>(gridEntity);
+        em.AddBuffer<GridRoadSidewalk>(gridEntity);
+        em.AddBuffer<GridRoadDirt>(gridEntity);
+
+        DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
+        DynamicBuffer<GridRoad> roads = em.GetBuffer<GridRoad>(gridEntity);
+        DynamicBuffer<GridRoadSidewalk> sidewalks = em.GetBuffer<GridRoadSidewalk>(gridEntity);
+        DynamicBuffer<GridRoadDirt> dirtRoads = em.GetBuffer<GridRoadDirt>(gridEntity);
+        walkable.ResizeUninitialized(gridSize);
+        roads.ResizeUninitialized(gridSize);
+        sidewalks.ResizeUninitialized(gridSize);
+        dirtRoads.ResizeUninitialized(gridSize);
+        for (int i = 0; i < gridSize; i++)
+        {
+            walkable[i] = new GridWalkable { Value = 1 };
+            roads[i] = new GridRoad { Value = 0 };
+            sidewalks[i] = new GridRoadSidewalk { Value = 0 };
+            dirtRoads[i] = new GridRoadDirt { Value = 0 };
+        }
+
+        EnsureScenarioRuntimeGameplayState(em);
+    }
+
+    private static GridConfig ResolveScenarioGrid(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        return query.GetSingleton<GridConfig>();
+    }
+
+    private static void EnsureScenarioRuntimeGameplayState(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeGameplayStateComponent>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        if (entities.Length == 0)
+        {
+            Entity entity = em.CreateEntity(
+                typeof(BattleScenarioLabRuntimeGameplayStateTag),
+                typeof(RuntimeGameplayStateComponent));
+            em.SetName(entity, "BattleScenarioLabRuntimeGameplayState");
+            em.SetComponentData(entity, new RuntimeGameplayStateComponent
+            {
+                PlayRequested = 1,
+                SimulationActive = 1
+            });
+            return;
+        }
+
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            RuntimeGameplayStateComponent runtimeState = em.GetComponentData<RuntimeGameplayStateComponent>(entity);
+            runtimeState.PlayRequested = 1;
+            runtimeState.SimulationActive = 1;
+            em.SetComponentData(entity, runtimeState);
+        }
+    }
+
+    private void DisposeScenarioGrid()
+    {
+        if (scenarioGridBlockerCounts.IsCreated)
+            scenarioGridBlockerCounts.Dispose();
+        if (scenarioGridBlocked.IsCreated)
+            scenarioGridBlocked.Dispose();
+        if (scenarioGridOccupied.IsCreated)
+            scenarioGridOccupied.Dispose();
+        if (scenarioGridFriendlyPassFactionIds.IsCreated)
+            scenarioGridFriendlyPassFactionIds.Dispose();
+        if (scenarioGridPathPool.IsCreated)
+            scenarioGridPathPool.Dispose();
+    }
+
+    private void DisposeScenarioGrid(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BattleScenarioLabRuntimeGridTag>());
+        using NativeArray<Entity> grids = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < grids.Length; i++)
+        {
+            Entity grid = grids[i];
+            if (!em.Exists(grid))
+                continue;
+
+            if (em.HasComponent<DynamicBlockerComponent>(grid))
+            {
+                DynamicBlockerComponent blocker = em.GetComponentData<DynamicBlockerComponent>(grid);
+                if (blocker.Counts.IsCreated)
+                    blocker.Counts.Dispose();
+                if (blocker.Blocked.IsCreated)
+                    blocker.Blocked.Dispose();
+                if (blocker.FriendlyPassFactionIds.IsCreated)
+                    blocker.FriendlyPassFactionIds.Dispose();
+                em.SetComponentData(grid, default(DynamicBlockerComponent));
+            }
+
+            if (em.HasComponent<DynamicOccupancyComponent>(grid))
+            {
+                DynamicOccupancyComponent occupancy = em.GetComponentData<DynamicOccupancyComponent>(grid);
+                if (occupancy.Occupied.IsCreated)
+                    occupancy.Occupied.Dispose();
+                em.SetComponentData(grid, default(DynamicOccupancyComponent));
+            }
+
+            if (em.HasComponent<PathPoolComponent>(grid))
+            {
+                PathPoolComponent pool = em.GetComponentData<PathPoolComponent>(grid);
+                if (pool.Cells.IsCreated)
+                    pool.Cells.Dispose();
+                em.SetComponentData(grid, default(PathPoolComponent));
+            }
+        }
+
+        scenarioGridBlockerCounts = default;
+        scenarioGridBlocked = default;
+        scenarioGridOccupied = default;
+        scenarioGridFriendlyPassFactionIds = default;
+        scenarioGridPathPool = default;
+    }
+
+    private static void ConfigureTb001GroundVehicleScenario(EntityManager em, Entity transport, Entity soldier)
+    {
+        int2 transportCell = new(8, 8);
+        int2 soldierCell = new(9, 8);
+        float3 transportPosition = new(transportCell.x + 0.5f, 0f, transportCell.y + 0.5f);
+        float3 soldierPosition = new(soldierCell.x + 0.5f, 0f, soldierCell.y + 0.5f);
+
+        SetFaction(em, transport, FactionIdentity.PlayerFactionId);
+        SetFaction(em, soldier, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, transport, transportPosition, quaternion.RotateY(math.radians(90f)), 1f);
+        SetLocalTransform(em, soldier, soldierPosition, quaternion.identity, 1f);
+        SetOrAdd(em, transport, new UnitGrid { Cell = transportCell });
+        SetOrAdd(em, soldier, new UnitGrid { Cell = soldierCell });
+        SetOrAdd(em, transport, new UnitFootprint { Size = new int2(3, 3) });
+        SetOrAdd(em, soldier, new UnitFootprint { Size = new int2(1, 1) });
+        SetOrAdd(em, transport, new UnitTransportCapacity { SoldierCapacity = 10 });
+        SetOrAdd(em, soldier, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+        ConfigureScenarioGroundMovement(em, soldier, soldierPosition);
+        SetOrAdd(em, soldier, new UnitTransportBoardingTarget { Transport = transport, Goal = soldierCell });
+        if (!em.HasBuffer<UnitTransportPassengerElement>(transport))
+            em.AddBuffer<UnitTransportPassengerElement>(transport);
+        if (!em.HasBuffer<UnitTransportHiddenVisualScale>(soldier))
+            em.AddBuffer<UnitTransportHiddenVisualScale>(soldier);
+    }
+
+    private static void ConfigureTb002HelicopterRopeScenario(EntityManager em, Entity transport, Entity soldier)
+    {
+        int2 transportCell = new(11, 10);
+        int2 soldierCell = new(10, 10);
+        float3 transportPosition = new(transportCell.x + 0.5f, 0f, transportCell.y + 0.5f);
+        float3 soldierPosition = new(soldierCell.x + 0.5f, 0f, soldierCell.y + 0.5f);
+
+        SetFaction(em, transport, FactionIdentity.PlayerFactionId);
+        SetFaction(em, soldier, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, transport, transportPosition, quaternion.RotateY(math.radians(90f)), 1f);
+        SetLocalTransform(em, soldier, soldierPosition, quaternion.identity, 1f);
+        SetOrAdd(em, transport, new UnitGrid { Cell = transportCell });
+        SetOrAdd(em, soldier, new UnitGrid { Cell = soldierCell });
+        SetOrAdd(em, transport, new UnitFootprint { Size = new int2(3, 3) });
+        SetOrAdd(em, soldier, new UnitFootprint { Size = new int2(1, 1) });
+        SetOrAdd(em, transport, new UnitTransportCapacity { SoldierCapacity = 8 });
+        SetOrAdd(em, transport, new UnitMove { Speed = 7f, WalkSpeed = 0f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        SetOrAdd(em, transport, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
+        SetOrAdd(em, transport, new UnitAirComponent
+        {
+            HomePosition = transportPosition,
+            HomeCell = transportCell,
+            HomeInitialized = 1,
+            Airborne = 0,
+            ReturningHome = 0,
+            TakeoffRolling = 0,
+            LandingRolling = 0,
+            AttackRunActive = 0,
+            ReturnApproachInitialized = 0
+        });
+        RemoveIfPresent<UnitTransportRopeDisembarkRequest>(em, transport);
+
+        SetOrAdd(em, soldier, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+        ConfigureScenarioGroundMovement(em, soldier, soldierPosition);
+        SetOrAdd(em, soldier, new UnitTransportBoardingTarget { Transport = transport, Goal = soldierCell });
+        if (!em.HasBuffer<UnitTransportPassengerElement>(transport))
+            em.AddBuffer<UnitTransportPassengerElement>(transport);
+        if (!em.HasBuffer<UnitTransportHiddenVisualScale>(soldier))
+            em.AddBuffer<UnitTransportHiddenVisualScale>(soldier);
+    }
+
+    private static void ConfigureTb003HelicopterAirPickupScenario(EntityManager em, Entity transport, Entity soldier)
+    {
+        int2 transportCell = new(4, 4);
+        int2 soldierCell = new(16, 16);
+        float3 transportGroundPosition = new(transportCell.x + 0.5f, 0f, transportCell.y + 0.5f);
+        float3 transportAirPosition = transportGroundPosition + new float3(0f, 8f, 0f);
+        float3 soldierPosition = new(soldierCell.x + 0.5f, 0f, soldierCell.y + 0.5f);
+
+        SetFaction(em, transport, FactionIdentity.PlayerFactionId);
+        SetFaction(em, soldier, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, transport, transportAirPosition, quaternion.RotateY(math.radians(45f)), 1f);
+        SetLocalTransform(em, soldier, soldierPosition, quaternion.identity, 1f);
+        SetOrAdd(em, transport, new UnitGrid { Cell = transportCell });
+        SetOrAdd(em, soldier, new UnitGrid { Cell = soldierCell });
+        SetOrAdd(em, transport, new UnitFootprint { Size = new int2(1, 1) });
+        SetOrAdd(em, soldier, new UnitFootprint { Size = new int2(1, 1) });
+        SetOrAdd(em, transport, new UnitTransportCapacity { SoldierCapacity = 8 });
+        SetOrAdd(em, transport, new UnitMove { Speed = 9f, WalkSpeed = 0f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        SetOrAdd(em, transport, new UnitAirMovement { CruiseHeight = 8f, RunwayTaxiSpeed = 5f });
+        SetOrAdd(em, transport, new UnitAirComponent
+        {
+            HomePosition = transportGroundPosition,
+            HomeCell = transportCell,
+            HomeInitialized = 1,
+            Airborne = 0,
+            ReturningHome = 0,
+            TakeoffRolling = 0,
+            LandingRolling = 0,
+            AttackRunActive = 0,
+            ReturnApproachInitialized = 0
+        });
+        RemoveIfPresent<UnitTransportRopeDisembarkRequest>(em, transport);
+
+        SetOrAdd(em, soldier, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+        ConfigureScenarioGroundMovement(em, soldier, soldierPosition);
+        SetOrAdd(em, soldier, default(SelectedUnitTag));
+        RemoveIfPresent<UnitTransportBoardingTarget>(em, soldier);
+        if (!em.HasBuffer<UnitTransportPassengerElement>(transport))
+            em.AddBuffer<UnitTransportPassengerElement>(transport);
+        if (!em.HasBuffer<UnitTransportHiddenVisualScale>(soldier))
+            em.AddBuffer<UnitTransportHiddenVisualScale>(soldier);
+    }
+
+    private static void ConfigureTb005TransportPlaneRampScenario(EntityManager em, Entity transport, Entity soldier)
+    {
+        int2 transportCell = new(17, 17);
+        float3 transportPosition = new(transportCell.x + 0.5f, 0f, transportCell.y + 0.5f);
+        quaternion transportRotation = quaternion.identity;
+
+        SetFaction(em, transport, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, transport, transportPosition, transportRotation, 1f);
+        SetOrAdd(em, transport, new UnitGrid { Cell = transportCell });
+        SetOrAdd(em, transport, new UnitFootprint { Size = new int2(7, 7) });
+        SetOrAdd(em, transport, new UnitTransportCapacity { SoldierCapacity = 24 });
+        SetOrAdd(em, transport, new UnitTransportCargoCapacity
+        {
+            SoldierCapacity = 24,
+            VehicleCapacity = 2,
+            CargoWeightCapacity = 0
+        });
+        SetOrAdd(em, transport, new UnitMove { Speed = 9f, WalkSpeed = 0f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        SetOrAdd(em, transport, new UnitAirMovement { CruiseHeight = 18f, RunwayTaxiSpeed = 5f });
+        SetOrAdd(em, transport, new UnitAirComponent
+        {
+            HomePosition = transportPosition,
+            HomeCell = transportCell,
+            HomeInitialized = 1,
+            Airborne = 0,
+            ReturningHome = 0,
+            TakeoffRolling = 0,
+            LandingRolling = 0,
+            AttackRunActive = 0,
+            ReturnApproachInitialized = 0
+        });
+        SetOrAdd(em, transport, new UnitTransportPlaneDoorReference
+        {
+            DoorEntity = Entity.Null,
+            ClosedLocalRotation = quaternion.identity,
+            OpenLocalRotation = quaternion.identity,
+            OpenSeconds = 1.1f,
+            CloseSeconds = 0.9f,
+            DoorLocalPosition = new float3(0f, 0f, -4f),
+            InteriorLocalPosition = new float3(0f, 1.45f, 4f),
+            ApproachLocalPosition = new float3(0f, 0f, -5f),
+            RolloutLocalPosition = new float3(0f, 0f, -5f)
+        });
+        SetOrAdd(em, transport, default(UnitTransportPlaneDoorState));
+        RemoveIfPresent<UnitTransportAirdropRequest>(em, transport);
+        RemoveIfPresent<UnitTransportPlaneDoorOpenRequest>(em, transport);
+
+        GridConfig grid = ResolveScenarioGrid(em);
+        int2 rampCell = TransportBoardingCommandSystem.ResolvePlaneRampApproachCell(em, grid, transport);
+        float3 soldierPosition = new(rampCell.x + 0.5f, 0f, rampCell.y + 0.5f);
+
+        SetFaction(em, soldier, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, soldier, soldierPosition, quaternion.identity, 1f);
+        SetOrAdd(em, soldier, new UnitGrid { Cell = rampCell });
+        SetOrAdd(em, soldier, new UnitFootprint { Size = new int2(1, 1) });
+        SetOrAdd(em, soldier, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+        ConfigureScenarioGroundMovement(em, soldier, soldierPosition);
+        SetOrAdd(em, soldier, new UnitTransportBoardingTarget { Transport = transport, Goal = rampCell });
+        if (!em.HasBuffer<UnitTransportPassengerElement>(transport))
+            em.AddBuffer<UnitTransportPassengerElement>(transport);
+        if (!em.HasBuffer<UnitTransportHiddenVisualScale>(soldier))
+            em.AddBuffer<UnitTransportHiddenVisualScale>(soldier);
+    }
+
+    private static void ConfigureTb006TransportPlaneSoldierAirdropScenario(EntityManager em, Entity transport, Entity soldier)
+    {
+        int2 transportCell = new(18, 18);
+        float3 transportPosition = new(transportCell.x + 0.5f, 38f, transportCell.y + 0.5f);
+        float3 transportHomePosition = new(transportCell.x + 0.5f, 0f, transportCell.y + 0.5f);
+
+        SetFaction(em, transport, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, transport, transportPosition, quaternion.identity, 1f);
+        SetOrAdd(em, transport, new UnitGrid { Cell = transportCell });
+        SetOrAdd(em, transport, new UnitFootprint { Size = new int2(7, 7) });
+        SetOrAdd(em, transport, new UnitTransportCapacity { SoldierCapacity = 24 });
+        SetOrAdd(em, transport, new UnitTransportCargoCapacity
+        {
+            SoldierCapacity = 24,
+            VehicleCapacity = 2,
+            CargoWeightCapacity = 0
+        });
+        SetOrAdd(em, transport, new UnitMove { Speed = 9f, WalkSpeed = 0f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        SetOrAdd(em, transport, new UnitAirMovement { CruiseHeight = 38f, RunwayTaxiSpeed = 5f });
+        SetOrAdd(em, transport, new UnitAirComponent
+        {
+            HomePosition = transportHomePosition,
+            HomeCell = transportCell,
+            HomeInitialized = 1,
+            Airborne = 1,
+            ReturningHome = 0,
+            TakeoffRolling = 0,
+            LandingRolling = 0,
+            AttackRunActive = 0,
+            ReturnApproachInitialized = 0
+        });
+        SetOrAdd(em, transport, new UnitTransportPlaneDoorReference
+        {
+            DoorEntity = Entity.Null,
+            ClosedLocalRotation = quaternion.identity,
+            OpenLocalRotation = quaternion.identity,
+            OpenSeconds = 1.1f,
+            CloseSeconds = 0.9f,
+            DoorLocalPosition = new float3(0f, 0f, -4f),
+            InteriorLocalPosition = new float3(0f, 1.45f, 4f),
+            ApproachLocalPosition = new float3(0f, 0f, -5f),
+            RolloutLocalPosition = new float3(0f, 0f, -5f)
+        });
+        SetOrAdd(em, transport, default(UnitTransportPlaneDoorState));
+        RemoveIfPresent<UnitTransportAirdropRequest>(em, transport);
+        RemoveIfPresent<UnitTransportPlaneDoorOpenRequest>(em, transport);
+        if (!em.HasBuffer<UnitTransportPassengerElement>(transport))
+            em.AddBuffer<UnitTransportPassengerElement>(transport);
+
+        int2 passengerCell = transportCell;
+        SetFaction(em, soldier, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, soldier, transportPosition, quaternion.identity, 1f);
+        SetOrAdd(em, soldier, new UnitGrid { Cell = passengerCell });
+        SetOrAdd(em, soldier, new UnitFootprint { Size = new int2(1, 1) });
+        SetOrAdd(em, soldier, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+        ConfigureScenarioGroundMovement(em, soldier, transportPosition);
+        SetOrAdd(em, soldier, new UnitTransportPassenger { Transport = transport });
+        if (!em.HasComponent<Disabled>(soldier))
+            em.AddComponent<Disabled>(soldier);
+        if (!em.HasBuffer<UnitTransportHiddenVisualScale>(soldier))
+            em.AddBuffer<UnitTransportHiddenVisualScale>(soldier);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = soldier });
+        UnitTransportVisualUtility.SetPassengerVisible(em, soldier, false);
+    }
+
+    private static void ConfigureTb007TransportPlaneVehicleCargoScenario(EntityManager em, Entity transport, Entity vehicle)
+    {
+        int2 transportCell = new(17, 17);
+        float3 transportPosition = new(transportCell.x + 0.5f, 0f, transportCell.y + 0.5f);
+
+        SetFaction(em, transport, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, transport, transportPosition, quaternion.identity, 1f);
+        SetOrAdd(em, transport, new UnitGrid { Cell = transportCell });
+        SetOrAdd(em, transport, new UnitFootprint { Size = new int2(7, 7) });
+        SetOrAdd(em, transport, new UnitTransportCapacity { SoldierCapacity = 24 });
+        SetOrAdd(em, transport, new UnitTransportCargoCapacity
+        {
+            SoldierCapacity = 24,
+            VehicleCapacity = 2,
+            CargoWeightCapacity = 0
+        });
+        SetOrAdd(em, transport, new UnitMove { Speed = 9f, WalkSpeed = 0f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        SetOrAdd(em, transport, new UnitAirMovement { CruiseHeight = 18f, RunwayTaxiSpeed = 5f });
+        SetOrAdd(em, transport, new UnitAirComponent
+        {
+            HomePosition = transportPosition,
+            HomeCell = transportCell,
+            HomeInitialized = 1,
+            Airborne = 0,
+            ReturningHome = 0,
+            TakeoffRolling = 0,
+            LandingRolling = 0,
+            AttackRunActive = 0,
+            ReturnApproachInitialized = 0
+        });
+        SetOrAdd(em, transport, new UnitTransportPlaneDoorReference
+        {
+            DoorEntity = Entity.Null,
+            ClosedLocalRotation = quaternion.identity,
+            OpenLocalRotation = quaternion.identity,
+            OpenSeconds = 1.1f,
+            CloseSeconds = 0.9f,
+            DoorLocalPosition = new float3(0f, 0f, -4f),
+            InteriorLocalPosition = new float3(0f, 1.45f, 4f),
+            ApproachLocalPosition = new float3(0f, 0f, -5f),
+            RolloutLocalPosition = new float3(0f, 0f, -5f)
+        });
+        SetOrAdd(em, transport, default(UnitTransportPlaneDoorState));
+        RemoveIfPresent<UnitTransportAirdropRequest>(em, transport);
+        RemoveIfPresent<UnitTransportPlaneDoorOpenRequest>(em, transport);
+
+        GridConfig grid = ResolveScenarioGrid(em);
+        int2 rampCell = TransportBoardingCommandSystem.ResolvePlaneRampApproachCell(em, grid, transport);
+        float3 vehiclePosition = new(rampCell.x + 0.5f, 0f, rampCell.y + 0.5f);
+
+        SetFaction(em, vehicle, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, vehicle, vehiclePosition, quaternion.identity, 1f);
+        SetOrAdd(em, vehicle, new UnitGrid { Cell = rampCell });
+        SetOrAdd(em, vehicle, new UnitFootprint { Size = new int2(3, 3) });
+        SetOrAdd(em, vehicle, new UnitMove { Speed = 7f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+        ConfigureScenarioVehicleGroundMovement(em, vehicle, vehiclePosition);
+        SetOrAdd(em, vehicle, new UnitTransportBoardingTarget
+        {
+            Transport = transport,
+            Goal = rampCell,
+            PassengerKind = UnitTransportPassengerKind.Vehicle,
+            CargoWeight = 9
+        });
+        if (!em.HasBuffer<UnitTransportPassengerElement>(transport))
+            em.AddBuffer<UnitTransportPassengerElement>(transport);
+        if (!em.HasBuffer<UnitTransportHiddenVisualScale>(vehicle))
+            em.AddBuffer<UnitTransportHiddenVisualScale>(vehicle);
+    }
+
+    private static void ConfigureTb008TransportPlaneVehicleCargoAirdropScenario(EntityManager em, Entity transport, Entity vehicle)
+    {
+        int2 transportCell = new(18, 18);
+        float3 transportPosition = new(transportCell.x + 0.5f, 40f, transportCell.y + 0.5f);
+        float3 transportHomePosition = new(transportCell.x + 0.5f, 0f, transportCell.y + 0.5f);
+
+        SetFaction(em, transport, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, transport, transportPosition, quaternion.identity, 1f);
+        SetOrAdd(em, transport, new UnitGrid { Cell = transportCell });
+        SetOrAdd(em, transport, new UnitFootprint { Size = new int2(7, 7) });
+        SetOrAdd(em, transport, new UnitTransportCapacity { SoldierCapacity = 24 });
+        SetOrAdd(em, transport, new UnitTransportCargoCapacity
+        {
+            SoldierCapacity = 24,
+            VehicleCapacity = 2,
+            CargoWeightCapacity = 0
+        });
+        SetOrAdd(em, transport, new UnitMove { Speed = 9f, WalkSpeed = 0f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        SetOrAdd(em, transport, new UnitAirMovement { CruiseHeight = 40f, RunwayTaxiSpeed = 5f });
+        SetOrAdd(em, transport, new UnitAirComponent
+        {
+            HomePosition = transportHomePosition,
+            HomeCell = transportCell,
+            HomeInitialized = 1,
+            Airborne = 1,
+            ReturningHome = 0,
+            TakeoffRolling = 0,
+            LandingRolling = 0,
+            AttackRunActive = 0,
+            ReturnApproachInitialized = 0
+        });
+        SetOrAdd(em, transport, new UnitTransportPlaneDoorReference
+        {
+            DoorEntity = Entity.Null,
+            ClosedLocalRotation = quaternion.identity,
+            OpenLocalRotation = quaternion.identity,
+            OpenSeconds = 1.1f,
+            CloseSeconds = 0.9f,
+            DoorLocalPosition = new float3(0f, 0f, -4f),
+            InteriorLocalPosition = new float3(0f, 1.45f, 4f),
+            ApproachLocalPosition = new float3(0f, 0f, -5f),
+            RolloutLocalPosition = new float3(0f, 0f, -5f)
+        });
+        SetOrAdd(em, transport, default(UnitTransportPlaneDoorState));
+        RemoveIfPresent<UnitTransportAirdropRequest>(em, transport);
+        RemoveIfPresent<UnitTransportPlaneDoorOpenRequest>(em, transport);
+        if (!em.HasBuffer<UnitTransportPassengerElement>(transport))
+            em.AddBuffer<UnitTransportPassengerElement>(transport);
+
+        SetFaction(em, vehicle, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, vehicle, transportPosition, quaternion.identity, 1f);
+        SetOrAdd(em, vehicle, new UnitGrid { Cell = transportCell });
+        SetOrAdd(em, vehicle, new UnitFootprint { Size = new int2(3, 3) });
+        SetOrAdd(em, vehicle, new UnitMove { Speed = 7f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+        ConfigureScenarioVehicleGroundMovement(em, vehicle, transportPosition);
+        SetOrAdd(em, vehicle, new UnitTransportPassenger { Transport = transport });
+        SetOrAdd(em, vehicle, new UnitTransportCargoPassenger
+        {
+            Transport = transport,
+            PassengerKind = UnitTransportPassengerKind.Vehicle,
+            CargoWeight = 9
+        });
+        if (!em.HasComponent<Disabled>(vehicle))
+            em.AddComponent<Disabled>(vehicle);
+        if (!em.HasBuffer<UnitTransportHiddenVisualScale>(vehicle))
+            em.AddBuffer<UnitTransportHiddenVisualScale>(vehicle);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = vehicle });
+        UnitTransportVisualUtility.SetPassengerVisible(em, vehicle, false);
+    }
+
+    private static void ConfigureTb009TransportPlaneMixedLoadAirdropScenario(EntityManager em, Entity transport, Entity soldier, Entity vehicle)
+    {
+        int2 transportCell = new(18, 18);
+        float3 transportPosition = new(transportCell.x + 0.5f, 42f, transportCell.y + 0.5f);
+        float3 transportHomePosition = new(transportCell.x + 0.5f, 0f, transportCell.y + 0.5f);
+
+        SetFaction(em, transport, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, transport, transportPosition, quaternion.identity, 1f);
+        SetOrAdd(em, transport, new UnitGrid { Cell = transportCell });
+        SetOrAdd(em, transport, new UnitFootprint { Size = new int2(7, 7) });
+        SetOrAdd(em, transport, new UnitTransportCapacity { SoldierCapacity = 24 });
+        SetOrAdd(em, transport, new UnitTransportCargoCapacity
+        {
+            SoldierCapacity = 24,
+            VehicleCapacity = 2,
+            CargoWeightCapacity = 0
+        });
+        SetOrAdd(em, transport, new UnitMove { Speed = 9f, WalkSpeed = 0f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        SetOrAdd(em, transport, new UnitAirMovement { CruiseHeight = 42f, RunwayTaxiSpeed = 5f });
+        SetOrAdd(em, transport, new UnitAirComponent
+        {
+            HomePosition = transportHomePosition,
+            HomeCell = transportCell,
+            HomeInitialized = 1,
+            Airborne = 1,
+            ReturningHome = 0,
+            TakeoffRolling = 0,
+            LandingRolling = 0,
+            AttackRunActive = 0,
+            ReturnApproachInitialized = 0
+        });
+        SetOrAdd(em, transport, new UnitTransportPlaneDoorReference
+        {
+            DoorEntity = Entity.Null,
+            ClosedLocalRotation = quaternion.identity,
+            OpenLocalRotation = quaternion.identity,
+            OpenSeconds = 1.1f,
+            CloseSeconds = 0.9f,
+            DoorLocalPosition = new float3(0f, 0f, -4f),
+            InteriorLocalPosition = new float3(0f, 1.45f, 4f),
+            ApproachLocalPosition = new float3(0f, 0f, -5f),
+            RolloutLocalPosition = new float3(0f, 0f, -5f)
+        });
+        SetOrAdd(em, transport, default(UnitTransportPlaneDoorState));
+        RemoveIfPresent<UnitTransportAirdropRequest>(em, transport);
+        RemoveIfPresent<UnitTransportPlaneDoorOpenRequest>(em, transport);
+        if (!em.HasBuffer<UnitTransportPassengerElement>(transport))
+            em.AddBuffer<UnitTransportPassengerElement>(transport);
+
+        SetFaction(em, soldier, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, soldier, transportPosition, quaternion.identity, 1f);
+        SetOrAdd(em, soldier, new UnitGrid { Cell = transportCell });
+        SetOrAdd(em, soldier, new UnitFootprint { Size = new int2(1, 1) });
+        SetOrAdd(em, soldier, new UnitMove { Speed = 4f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+        ConfigureScenarioGroundMovement(em, soldier, transportPosition);
+        SetOrAdd(em, soldier, new UnitTransportPassenger { Transport = transport });
+        if (!em.HasComponent<Disabled>(soldier))
+            em.AddComponent<Disabled>(soldier);
+        if (!em.HasBuffer<UnitTransportHiddenVisualScale>(soldier))
+            em.AddBuffer<UnitTransportHiddenVisualScale>(soldier);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = soldier });
+        UnitTransportVisualUtility.SetPassengerVisible(em, soldier, false);
+
+        SetFaction(em, vehicle, FactionIdentity.PlayerFactionId);
+        SetLocalTransform(em, vehicle, transportPosition, quaternion.identity, 1f);
+        SetOrAdd(em, vehicle, new UnitGrid { Cell = transportCell });
+        SetOrAdd(em, vehicle, new UnitFootprint { Size = new int2(3, 3) });
+        SetOrAdd(em, vehicle, new UnitMove { Speed = 7f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+        ConfigureScenarioVehicleGroundMovement(em, vehicle, transportPosition);
+        SetOrAdd(em, vehicle, new UnitTransportPassenger { Transport = transport });
+        SetOrAdd(em, vehicle, new UnitTransportCargoPassenger
+        {
+            Transport = transport,
+            PassengerKind = UnitTransportPassengerKind.Vehicle,
+            CargoWeight = 9
+        });
+        if (!em.HasComponent<Disabled>(vehicle))
+            em.AddComponent<Disabled>(vehicle);
+        if (!em.HasBuffer<UnitTransportHiddenVisualScale>(vehicle))
+            em.AddBuffer<UnitTransportHiddenVisualScale>(vehicle);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = vehicle });
+        UnitTransportVisualUtility.SetPassengerVisible(em, vehicle, false);
+    }
+
+    private static void ConfigureScenarioGroundMovement(EntityManager em, Entity entity, float3 worldPosition)
+    {
+        RemoveIfPresent<UnitAirMovement>(em, entity);
+        RemoveIfPresent<UnitAirComponent>(em, entity);
+        SetOrAdd(em, entity, new UnitMovementBehavior { AllowIdleWander = 0, UsesVehicleMotion = 0 });
+        SetOrAdd(em, entity, new UnitVehicleMovement
+        {
+            TurnSpeedDegrees = 720f,
+            Acceleration = 20f,
+            Braking = 20f,
+            RearPivotOffset = 0f
+        });
+        SetOrAdd(em, entity, new UnitVehicleKinematics { CurrentSpeed = 0f, StallSeconds = 0f });
+        SetOrAdd(em, entity, new UnitPrevWorldPos { Value = worldPosition });
+        SetOrAdd(em, entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
+    }
+
+    private static void ConfigureScenarioVehicleGroundMovement(EntityManager em, Entity entity, float3 worldPosition)
+    {
+        ConfigureScenarioGroundMovement(em, entity, worldPosition);
+        SetOrAdd(em, entity, new UnitMovementBehavior { AllowIdleWander = 0, UsesVehicleMotion = 1 });
+        SetOrAdd(em, entity, new UnitVehicleMovement
+        {
+            TurnSpeedDegrees = 360f,
+            Acceleration = 18f,
+            Braking = 18f,
+            RearPivotOffset = 0f
+        });
+    }
+
+    private static void QueueDisembarkCommand(EntityManager em, Entity transport)
+    {
+        QueueDisembarkCommand(em, transport, default, false);
+    }
+
+    private static void QueueDisembarkCommand(EntityManager em, Entity transport, int2 targetCell, bool hasTargetCell)
+    {
+        Entity commandEntity = CreateScenarioCommandQueue(em, "BattleScenarioLabTransportCommand");
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.DisembarkTransport,
+            TargetEntity = transport,
+            TargetCell = targetCell,
+            TargetKind = hasTargetCell
+                ? RtsSelectionCommandTargetKind.Cell
+                : RtsSelectionCommandTargetKind.Entity,
+            HasTargetEntity = 1,
+            HasTargetCell = hasTargetCell ? (byte)1 : (byte)0
+        });
+    }
+
+    private static void QueueBoardTransportCommand(EntityManager em, Entity transport)
+    {
+        Entity commandEntity = CreateScenarioCommandQueue(em, "BattleScenarioLabTransportBoardCommand");
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests =
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        requests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardTransport,
+            TargetEntity = transport,
+            HasTargetEntity = 1
+        });
+    }
+
+    private static Entity CreateScenarioCommandQueue(EntityManager em, string name)
+    {
+        DestroyEntitiesWithTree<BattleScenarioLabCommandTag>(em);
+        Entity commandEntity = em.CreateEntity(typeof(BattleScenarioLabCommandTag), typeof(RtsSelectionInputStateComponent));
+        em.SetName(commandEntity, name);
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        return commandEntity;
+    }
+
     private static void ResetAirLauncherForGroundMissile(EntityManager em, Entity airLauncher)
     {
         ResetAirLauncher(
@@ -546,6 +1710,9 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
         DestroyEntitiesWithTree<GroundMissileImpactRequestComponent>(em);
         DestroyEntitiesWithTree<VehicleWreckComponent>(em);
         DestroyEntitiesWithTree<VehicleDestroyedVisualSpawnRequest>(em);
+        DestroyEntitiesWithTree<BattleScenarioLabRuntimeGridTag>(em);
+        DestroyEntitiesWithTree<BattleScenarioLabRuntimeGameplayStateTag>(em);
+        DestroyEntitiesWithTree<BattleScenarioLabCommandTag>(em);
         DestroyOrphanRenderableEntities(em);
         RemoveComponentFromAll<AirMissileImpactRequestComponent>(em);
         RemoveComponentFromAll<AirMissileProjectileTrailComponent>(em);
@@ -587,7 +1754,12 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
                 SourceKeyMatches(key, RadarKey) ||
                 SourceKeyMatches(key, JetTargetKey) ||
                 SourceKeyMatches(key, HelicopterTargetKey) ||
-                SourceKeyMatches(key, DroneTargetKey))
+                SourceKeyMatches(key, DroneTargetKey) ||
+                SourceKeyMatches(key, SoldierPassengerKey) ||
+                SourceKeyMatches(key, GroundVehicleTransportKey) ||
+                SourceKeyMatches(key, HelicopterTransportKey) ||
+                SourceKeyMatches(key, PlaneTransportKey) ||
+                SourceKeyMatches(key, VehicleCargoPassengerKey))
             {
                 DestroyScenarioLabUnitTransientVisuals(em, entity);
                 DestroyLinkedEntityGroup(em, entity);
@@ -862,6 +2034,607 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
         }
     }
 
+    private IEnumerator CameraTransportBoardAndGroundExitRoutine(EntityManager em, Entity transport, Entity passenger)
+    {
+        float startedAt = Time.time;
+        bool sawBoarded = false;
+        bool queuedExit = false;
+        bool sawExited = false;
+        Vector3 fallbackFocus = new(8.8f, 1.2f, 8.4f);
+
+        while (Time.time - startedAt < 14f)
+        {
+            bool hasTransportPosition = TryGetPosition(em, transport, out float3 transportPosition);
+            bool hasPassengerPosition = TryGetPosition(em, passenger, out float3 passengerPosition);
+            bool passengerLoaded = passenger != Entity.Null &&
+                                   em.Exists(passenger) &&
+                                   em.HasComponent<UnitTransportPassenger>(passenger);
+            bool passengerVisible = passenger != Entity.Null &&
+                                    em.Exists(passenger) &&
+                                    !em.HasComponent<Disabled>(passenger) &&
+                                    !em.HasComponent<UnitTransportPassenger>(passenger);
+
+            Vector3 focus = hasTransportPosition ? (Vector3)transportPosition : fallbackFocus;
+            if (hasPassengerPosition && !passengerLoaded)
+                focus = Vector3.Lerp((Vector3)passengerPosition, focus, 0.55f);
+
+            if (!sawBoarded && passengerLoaded)
+                sawBoarded = true;
+
+            if (sawBoarded && !queuedExit)
+            {
+                yield return new WaitForSeconds(1.2f);
+                if (em.Exists(transport))
+                    QueueDisembarkCommand(em, transport);
+                queuedExit = true;
+            }
+
+            if (sawBoarded && queuedExit && passengerVisible && hasPassengerPosition)
+                sawExited = true;
+
+            if (!sawBoarded)
+            {
+                SetCamera(focus + new Vector3(7f, 5f, -9f), focus);
+            }
+            else if (!sawExited)
+            {
+                SetCamera(focus + new Vector3(5f, 4f, -8f), focus + Vector3.up * 0.5f);
+            }
+            else
+            {
+                Vector3 passengerFocus = hasPassengerPosition ? (Vector3)passengerPosition : focus;
+                SetCamera(passengerFocus + new Vector3(6f, 4f, -8f), Vector3.Lerp(passengerFocus, focus, 0.45f));
+                yield return new WaitForSeconds(2f);
+                break;
+            }
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator CameraTransportBoardAndRopeExitRoutine(EntityManager em, Entity transport, Entity passenger)
+    {
+        float startedAt = Time.time;
+        bool sawBoarded = false;
+        bool queuedExit = false;
+        bool sawRopeDrop = false;
+        bool sawRopeSettled = false;
+        Vector3 fallbackFocus = new(11f, 2f, 10f);
+
+        while (Time.time - startedAt < 18f)
+        {
+            bool hasTransportPosition = TryGetPosition(em, transport, out float3 transportPosition);
+            bool hasPassengerPosition = TryGetPosition(em, passenger, out float3 passengerPosition);
+            bool passengerLoaded = passenger != Entity.Null &&
+                                   em.Exists(passenger) &&
+                                   em.HasComponent<UnitTransportPassenger>(passenger);
+            bool passengerDropping = passenger != Entity.Null &&
+                                     em.Exists(passenger) &&
+                                     em.HasComponent<UnitTransportRopeDropComponent>(passenger);
+            bool passengerSettled = passenger != Entity.Null &&
+                                    em.Exists(passenger) &&
+                                    !em.HasComponent<Disabled>(passenger) &&
+                                    !em.HasComponent<UnitTransportPassenger>(passenger) &&
+                                    !em.HasComponent<UnitTransportRopeDropComponent>(passenger) &&
+                                    sawRopeDrop;
+
+            Vector3 transportFocus = hasTransportPosition ? (Vector3)transportPosition : fallbackFocus;
+            Vector3 focus = transportFocus;
+            if (hasPassengerPosition && (!passengerLoaded || passengerDropping))
+                focus = Vector3.Lerp((Vector3)passengerPosition, transportFocus, passengerDropping ? 0.2f : 0.55f);
+
+            if (!sawBoarded && passengerLoaded)
+                sawBoarded = true;
+
+            if (sawBoarded && !queuedExit)
+            {
+                yield return new WaitForSeconds(1.2f);
+                if (em.Exists(transport))
+                    QueueDisembarkCommand(em, transport);
+                queuedExit = true;
+            }
+
+            if (passengerDropping)
+                sawRopeDrop = true;
+
+            if (passengerSettled)
+                sawRopeSettled = true;
+
+            if (!sawBoarded)
+            {
+                SetCamera(focus + new Vector3(8f, 5f, -10f), focus);
+            }
+            else if (!sawRopeDrop)
+            {
+                SetCamera(transportFocus + new Vector3(9f, 7f, -12f), transportFocus + Vector3.up * 2f);
+            }
+            else if (!sawRopeSettled)
+            {
+                SetCamera(focus + new Vector3(7f, 4f, -8f), focus + Vector3.up * 0.5f);
+            }
+            else
+            {
+                Vector3 passengerFocus = hasPassengerPosition ? (Vector3)passengerPosition : focus;
+                SetCamera(passengerFocus + new Vector3(7f, 5f, -9f), Vector3.Lerp(passengerFocus, transportFocus, 0.35f));
+                yield return new WaitForSeconds(2f);
+                break;
+            }
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator CameraTransportPlaneRampBoardAndGroundExitRoutine(EntityManager em, Entity transport, Entity passenger)
+    {
+        float startedAt = Time.time;
+        bool sawBoarded = false;
+        bool queuedExit = false;
+        bool sawDoorOpen = false;
+        bool sawExited = false;
+        Vector3 fallbackFocus = new(17.5f, 1.5f, 13f);
+
+        while (Time.time - startedAt < 18f)
+        {
+            bool hasTransportPosition = TryGetPosition(em, transport, out float3 transportPosition);
+            bool hasPassengerPosition = TryGetPosition(em, passenger, out float3 passengerPosition);
+            bool passengerLoaded = passenger != Entity.Null &&
+                                   em.Exists(passenger) &&
+                                   em.HasComponent<UnitTransportPassenger>(passenger);
+            bool passengerVisible = passenger != Entity.Null &&
+                                    em.Exists(passenger) &&
+                                    !em.HasComponent<Disabled>(passenger) &&
+                                    !em.HasComponent<UnitTransportPassenger>(passenger) &&
+                                    !em.HasComponent<UnitTransportBoardingTarget>(passenger);
+
+            if (!sawBoarded && passengerLoaded)
+                sawBoarded = true;
+
+            if (!sawDoorOpen && IsPlaneDoorOpening(em, transport))
+                sawDoorOpen = true;
+
+            if (sawBoarded && !queuedExit)
+            {
+                yield return new WaitForSeconds(1.1f);
+                if (em.Exists(transport))
+                    QueueDisembarkCommand(em, transport);
+                queuedExit = true;
+            }
+
+            if (queuedExit && !sawDoorOpen && IsPlaneDoorOpening(em, transport))
+                sawDoorOpen = true;
+
+            if (sawBoarded && queuedExit && passengerVisible && hasPassengerPosition)
+                sawExited = true;
+
+            Vector3 transportFocus = hasTransportPosition ? (Vector3)transportPosition : fallbackFocus;
+            Vector3 passengerFocus = hasPassengerPosition ? (Vector3)passengerPosition : fallbackFocus;
+            Vector3 focus = Vector3.Lerp(passengerFocus, transportFocus, passengerLoaded ? 0.65f : 0.35f);
+
+            if (!sawBoarded)
+            {
+                SetCamera(focus + new Vector3(11f, 6f, -11f), focus + Vector3.up * 1.2f);
+            }
+            else if (!queuedExit || !sawDoorOpen)
+            {
+                SetCamera(transportFocus + new Vector3(12f, 6f, -13f), Vector3.Lerp(transportFocus, passengerFocus, 0.35f) + Vector3.up * 1.4f);
+            }
+            else if (!sawExited)
+            {
+                SetCamera(passengerFocus + new Vector3(8f, 5f, -9f), Vector3.Lerp(passengerFocus, transportFocus, 0.45f) + Vector3.up);
+            }
+            else
+            {
+                SetCamera(passengerFocus + new Vector3(8f, 5f, -9f), Vector3.Lerp(passengerFocus, transportFocus, 0.35f) + Vector3.up);
+                yield return new WaitForSeconds(2f);
+                break;
+            }
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator CameraTransportPlaneSoldierAirdropRoutine(EntityManager em, Entity transport, Entity passenger)
+    {
+        float startedAt = Time.time;
+        bool queuedExit = false;
+        bool sawDrop = false;
+        bool sawSettled = false;
+        Vector3 fallbackFocus = new(18.5f, 24f, 18.5f);
+
+        while (Time.time - startedAt < 22f)
+        {
+            bool hasTransportPosition = TryGetPosition(em, transport, out float3 transportPosition);
+            bool hasPassengerPosition = TryGetPosition(em, passenger, out float3 passengerPosition);
+            bool passengerLoaded = passenger != Entity.Null &&
+                                   em.Exists(passenger) &&
+                                   em.HasComponent<UnitTransportPassenger>(passenger);
+            bool passengerDropping = passenger != Entity.Null &&
+                                     em.Exists(passenger) &&
+                                     em.HasComponent<UnitTransportParachuteDropComponent>(passenger);
+            bool passengerSettled = passenger != Entity.Null &&
+                                    em.Exists(passenger) &&
+                                    !em.HasComponent<Disabled>(passenger) &&
+                                    !em.HasComponent<UnitTransportPassenger>(passenger) &&
+                                    !em.HasComponent<UnitTransportParachuteDropComponent>(passenger) &&
+                                    sawDrop;
+
+            if (!queuedExit)
+            {
+                yield return new WaitForSeconds(0.85f);
+                if (em.Exists(transport))
+                    QueueDisembarkCommand(em, transport, TransportPlaneSoldierAirdropDropCell, true);
+                queuedExit = true;
+            }
+
+            if (passengerDropping)
+                sawDrop = true;
+
+            if (passengerSettled)
+                sawSettled = true;
+
+            Vector3 transportFocus = hasTransportPosition ? (Vector3)transportPosition : fallbackFocus;
+            Vector3 passengerFocus = hasPassengerPosition ? (Vector3)passengerPosition : fallbackFocus;
+            Vector3 focus = passengerLoaded && !passengerDropping
+                ? transportFocus
+                : Vector3.Lerp(passengerFocus, transportFocus, passengerDropping ? 0.15f : 0.35f);
+
+            if (!sawDrop)
+            {
+                SetCamera(transportFocus + new Vector3(18f, 12f, -24f), transportFocus + Vector3.down * 8f);
+            }
+            else if (!sawSettled)
+            {
+                SetCamera(focus + new Vector3(10f, 8f, -13f), focus + Vector3.down * 2f);
+            }
+            else
+            {
+                SetCamera(passengerFocus + new Vector3(8f, 5f, -10f), passengerFocus + Vector3.up);
+                yield return new WaitForSeconds(2f);
+                break;
+            }
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator CameraTransportPlaneVehicleCargoGroundExitRoutine(EntityManager em, Entity transport, Entity vehicle)
+    {
+        float startedAt = Time.time;
+        bool sawBoarded = false;
+        bool queuedExit = false;
+        bool sawDoorOpen = false;
+        bool sawExited = false;
+        Vector3 fallbackFocus = new(17.5f, 1.6f, 13f);
+
+        while (Time.time - startedAt < 22f)
+        {
+            bool hasTransportPosition = TryGetPosition(em, transport, out float3 transportPosition);
+            bool hasVehiclePosition = TryGetPosition(em, vehicle, out float3 vehiclePosition);
+            bool vehicleLoaded = vehicle != Entity.Null &&
+                                 em.Exists(vehicle) &&
+                                 em.HasComponent<UnitTransportPassenger>(vehicle) &&
+                                 em.HasComponent<UnitTransportCargoPassenger>(vehicle);
+            bool vehicleVisible = vehicle != Entity.Null &&
+                                  em.Exists(vehicle) &&
+                                  !em.HasComponent<Disabled>(vehicle) &&
+                                  !em.HasComponent<UnitTransportPassenger>(vehicle) &&
+                                  !em.HasComponent<UnitTransportCargoPassenger>(vehicle) &&
+                                  !em.HasComponent<UnitTransportBoardingTarget>(vehicle);
+
+            if (!sawBoarded && vehicleLoaded)
+                sawBoarded = true;
+
+            if (!sawDoorOpen && IsPlaneDoorOpening(em, transport))
+                sawDoorOpen = true;
+
+            if (sawBoarded && !queuedExit)
+            {
+                yield return new WaitForSeconds(1.1f);
+                if (em.Exists(transport))
+                    QueueDisembarkCommand(em, transport);
+                queuedExit = true;
+            }
+
+            if (queuedExit && !sawDoorOpen && IsPlaneDoorOpening(em, transport))
+                sawDoorOpen = true;
+
+            if (sawBoarded && queuedExit && vehicleVisible && hasVehiclePosition)
+                sawExited = true;
+
+            Vector3 transportFocus = hasTransportPosition ? (Vector3)transportPosition : fallbackFocus;
+            Vector3 vehicleFocus = hasVehiclePosition ? (Vector3)vehiclePosition : fallbackFocus;
+            Vector3 focus = Vector3.Lerp(vehicleFocus, transportFocus, vehicleLoaded ? 0.65f : 0.3f);
+
+            if (!sawBoarded)
+            {
+                SetCamera(focus + new Vector3(13f, 6.5f, -13f), focus + Vector3.up * 1.2f);
+            }
+            else if (!queuedExit || !sawDoorOpen)
+            {
+                SetCamera(transportFocus + new Vector3(13f, 7f, -14f), transportFocus + Vector3.up * 1.5f);
+            }
+            else if (!sawExited)
+            {
+                SetCamera(vehicleFocus + new Vector3(10f, 5.5f, -10f), Vector3.Lerp(vehicleFocus, transportFocus, 0.45f) + Vector3.up);
+            }
+            else
+            {
+                SetCamera(vehicleFocus + new Vector3(10f, 5.5f, -10f), Vector3.Lerp(vehicleFocus, transportFocus, 0.35f) + Vector3.up);
+                yield return new WaitForSeconds(2f);
+                break;
+            }
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator CameraTransportPlaneVehicleCargoAirdropRoutine(EntityManager em, Entity transport, Entity vehicle)
+    {
+        float startedAt = Time.time;
+        bool queuedExit = false;
+        bool sawDrop = false;
+        bool sawSettled = false;
+        Vector3 fallbackFocus = new(18.5f, 24f, 18.5f);
+
+        while (Time.time - startedAt < 24f)
+        {
+            bool hasTransportPosition = TryGetPosition(em, transport, out float3 transportPosition);
+            bool hasVehiclePosition = TryGetPosition(em, vehicle, out float3 vehiclePosition);
+            bool vehicleLoaded = vehicle != Entity.Null &&
+                                 em.Exists(vehicle) &&
+                                 em.HasComponent<UnitTransportPassenger>(vehicle) &&
+                                 em.HasComponent<UnitTransportCargoPassenger>(vehicle);
+            bool vehicleDropping = vehicle != Entity.Null &&
+                                   em.Exists(vehicle) &&
+                                   em.HasComponent<UnitTransportCargoDropComponent>(vehicle);
+            bool vehicleSettled = vehicle != Entity.Null &&
+                                  em.Exists(vehicle) &&
+                                  !em.HasComponent<Disabled>(vehicle) &&
+                                  !em.HasComponent<UnitTransportPassenger>(vehicle) &&
+                                  !em.HasComponent<UnitTransportCargoPassenger>(vehicle) &&
+                                  !em.HasComponent<UnitTransportCargoDropComponent>(vehicle) &&
+                                  sawDrop;
+
+            if (!queuedExit)
+            {
+                yield return new WaitForSeconds(0.85f);
+                if (em.Exists(transport))
+                    QueueDisembarkCommand(em, transport, TransportPlaneVehicleCargoDropCell, true);
+                queuedExit = true;
+            }
+
+            if (vehicleDropping)
+                sawDrop = true;
+
+            if (vehicleSettled)
+                sawSettled = true;
+
+            Vector3 transportFocus = hasTransportPosition ? (Vector3)transportPosition : fallbackFocus;
+            Vector3 vehicleFocus = hasVehiclePosition ? (Vector3)vehiclePosition : fallbackFocus;
+            Vector3 focus = vehicleLoaded && !vehicleDropping
+                ? transportFocus
+                : Vector3.Lerp(vehicleFocus, transportFocus, vehicleDropping ? 0.15f : 0.35f);
+
+            if (!sawDrop)
+            {
+                SetCamera(transportFocus + new Vector3(19f, 13f, -25f), transportFocus + Vector3.down * 9f);
+            }
+            else if (!sawSettled)
+            {
+                SetCamera(focus + new Vector3(12f, 9f, -14f), focus + Vector3.down * 2f);
+            }
+            else
+            {
+                SetCamera(vehicleFocus + new Vector3(11f, 6f, -11f), vehicleFocus + Vector3.up);
+                yield return new WaitForSeconds(2f);
+                break;
+            }
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator CameraTransportPlaneMixedLoadAirdropRoutine(EntityManager em, Entity transport, Entity soldier, Entity vehicle)
+    {
+        float startedAt = Time.time;
+        bool queuedExit = false;
+        bool sawSoldierDrop = false;
+        bool sawVehicleDrop = false;
+        bool sawSoldierSettled = false;
+        bool sawVehicleSettled = false;
+        Vector3 fallbackFocus = new(18.5f, 24f, 18.5f);
+
+        while (Time.time - startedAt < 28f)
+        {
+            bool hasTransportPosition = TryGetPosition(em, transport, out float3 transportPosition);
+            bool hasSoldierPosition = TryGetPosition(em, soldier, out float3 soldierPosition);
+            bool hasVehiclePosition = TryGetPosition(em, vehicle, out float3 vehiclePosition);
+            bool soldierDropping = soldier != Entity.Null &&
+                                   em.Exists(soldier) &&
+                                   em.HasComponent<UnitTransportParachuteDropComponent>(soldier);
+            bool vehicleDropping = vehicle != Entity.Null &&
+                                   em.Exists(vehicle) &&
+                                   em.HasComponent<UnitTransportCargoDropComponent>(vehicle);
+            bool soldierSettled = soldier != Entity.Null &&
+                                  em.Exists(soldier) &&
+                                  !em.HasComponent<Disabled>(soldier) &&
+                                  !em.HasComponent<UnitTransportPassenger>(soldier) &&
+                                  !em.HasComponent<UnitTransportParachuteDropComponent>(soldier) &&
+                                  sawSoldierDrop;
+            bool vehicleSettled = vehicle != Entity.Null &&
+                                  em.Exists(vehicle) &&
+                                  !em.HasComponent<Disabled>(vehicle) &&
+                                  !em.HasComponent<UnitTransportPassenger>(vehicle) &&
+                                  !em.HasComponent<UnitTransportCargoPassenger>(vehicle) &&
+                                  !em.HasComponent<UnitTransportCargoDropComponent>(vehicle) &&
+                                  sawVehicleDrop;
+
+            if (!queuedExit)
+            {
+                yield return new WaitForSeconds(0.85f);
+                if (em.Exists(transport))
+                    QueueDisembarkCommand(em, transport, TransportPlaneMixedAirdropDropCell, true);
+                queuedExit = true;
+            }
+
+            if (soldierDropping)
+                sawSoldierDrop = true;
+            if (vehicleDropping)
+                sawVehicleDrop = true;
+            if (soldierSettled)
+                sawSoldierSettled = true;
+            if (vehicleSettled)
+                sawVehicleSettled = true;
+
+            Vector3 transportFocus = hasTransportPosition ? (Vector3)transportPosition : fallbackFocus;
+            Vector3 soldierFocus = hasSoldierPosition ? (Vector3)soldierPosition : fallbackFocus;
+            Vector3 vehicleFocus = hasVehiclePosition ? (Vector3)vehiclePosition : fallbackFocus;
+            Vector3 dropFocus = Vector3.Lerp(soldierFocus, vehicleFocus, 0.5f);
+
+            if (!sawSoldierDrop && !sawVehicleDrop)
+            {
+                SetCamera(transportFocus + new Vector3(20f, 14f, -27f), transportFocus + Vector3.down * 10f);
+            }
+            else if (!sawSoldierSettled || !sawVehicleSettled)
+            {
+                SetCamera(dropFocus + new Vector3(13f, 10f, -16f), dropFocus + Vector3.down * 2f);
+            }
+            else
+            {
+                SetCamera(dropFocus + new Vector3(12f, 6f, -12f), dropFocus + Vector3.up);
+                yield return new WaitForSeconds(2f);
+                break;
+            }
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator CameraTransportAirPickupBoardAndRopeExitRoutine(EntityManager em, Entity transport, Entity passenger)
+    {
+        float startedAt = Time.time;
+        bool queuedBoard = false;
+        bool sawPickupCommand = false;
+        bool sawLanded = false;
+        bool sawBoarded = false;
+        bool queuedExit = false;
+        bool sawRopeDrop = false;
+        bool sawRopeSettled = false;
+        Vector3 fallbackFocus = new(14f, 3f, 13f);
+
+        while (Time.time - startedAt < 30f)
+        {
+            bool hasTransportPosition = TryGetPosition(em, transport, out float3 transportPosition);
+            bool hasPassengerPosition = TryGetPosition(em, passenger, out float3 passengerPosition);
+            bool passengerLoaded = passenger != Entity.Null &&
+                                   em.Exists(passenger) &&
+                                   em.HasComponent<UnitTransportPassenger>(passenger);
+            bool passengerDropping = passenger != Entity.Null &&
+                                     em.Exists(passenger) &&
+                                     em.HasComponent<UnitTransportRopeDropComponent>(passenger);
+            bool passengerSettled = passenger != Entity.Null &&
+                                    em.Exists(passenger) &&
+                                    !em.HasComponent<Disabled>(passenger) &&
+                                    !em.HasComponent<UnitTransportPassenger>(passenger) &&
+                                    !em.HasComponent<UnitTransportRopeDropComponent>(passenger) &&
+                                    sawRopeDrop;
+
+            if (!queuedBoard)
+            {
+                yield return new WaitForSeconds(0.75f);
+                if (em.Exists(transport))
+                    QueueBoardTransportCommand(em, transport);
+                queuedBoard = true;
+            }
+
+            if (!sawPickupCommand && em.Exists(transport) && em.HasComponent<UnitTarget>(transport))
+                sawPickupCommand = true;
+
+            if (!sawLanded && IsAirTransportGrounded(em, transport))
+                sawLanded = true;
+
+            if (!sawBoarded && passengerLoaded)
+                sawBoarded = true;
+
+            if (sawBoarded && !queuedExit)
+            {
+                yield return new WaitForSeconds(1.2f);
+                if (em.Exists(transport))
+                    QueueDisembarkCommand(em, transport);
+                queuedExit = true;
+            }
+
+            if (passengerDropping)
+                sawRopeDrop = true;
+
+            if (passengerSettled)
+                sawRopeSettled = true;
+
+            Vector3 transportFocus = hasTransportPosition ? (Vector3)transportPosition : fallbackFocus;
+            Vector3 passengerFocus = hasPassengerPosition ? (Vector3)passengerPosition : fallbackFocus;
+            Vector3 focus = Vector3.Lerp(passengerFocus, transportFocus, passengerDropping ? 0.2f : 0.5f);
+
+            if (!sawPickupCommand)
+            {
+                SetCamera(Vector3.Lerp(passengerFocus, transportFocus, 0.45f) + new Vector3(12f, 9f, -15f), Vector3.Lerp(passengerFocus, transportFocus, 0.5f));
+            }
+            else if (!sawLanded || !sawBoarded)
+            {
+                SetCamera(focus + new Vector3(10f, 7f, -13f), focus + Vector3.up * 1.5f);
+            }
+            else if (!sawRopeDrop)
+            {
+                SetCamera(transportFocus + new Vector3(9f, 7f, -12f), transportFocus + Vector3.up * 2f);
+            }
+            else if (!sawRopeSettled)
+            {
+                SetCamera(focus + new Vector3(7f, 4f, -8f), focus + Vector3.up * 0.5f);
+            }
+            else
+            {
+                SetCamera(passengerFocus + new Vector3(7f, 5f, -9f), Vector3.Lerp(passengerFocus, transportFocus, 0.35f));
+                yield return new WaitForSeconds(2f);
+                break;
+            }
+
+            yield return null;
+        }
+    }
+
+    private static bool IsPlaneDoorOpening(EntityManager em, Entity transport)
+    {
+        if (transport == Entity.Null || !em.Exists(transport))
+            return false;
+
+        if (em.HasComponent<UnitTransportPlaneDoorOpenRequest>(transport))
+            return true;
+
+        if (!em.HasComponent<UnitTransportPlaneDoorState>(transport))
+            return false;
+
+        UnitTransportPlaneDoorState doorState = em.GetComponentData<UnitTransportPlaneDoorState>(transport);
+        return doorState.TargetOpen != 0 || doorState.Open01 > 0.01f;
+    }
+
+    private static bool IsAirTransportGrounded(EntityManager em, Entity transport)
+    {
+        if (transport == Entity.Null ||
+            !em.Exists(transport) ||
+            !em.HasComponent<UnitAirComponent>(transport) ||
+            !em.HasComponent<LocalTransform>(transport))
+        {
+            return false;
+        }
+
+        UnitAirComponent air = em.GetComponentData<UnitAirComponent>(transport);
+        LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
+        float groundY = air.HomeInitialized != 0 ? air.HomePosition.y : 0f;
+        return air.Airborne == 0 &&
+               air.TakeoffRolling == 0 &&
+               air.LandingRolling == 0 &&
+               transform.Position.y <= groundY + TransportBoardingData.AirBoardingGroundedHeightTolerance;
+    }
+
     private static void SetFaction(EntityManager em, Entity entity, byte factionId)
     {
         if (entity == Entity.Null || !em.Exists(entity))
@@ -873,12 +2646,31 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
             em.AddComponentData(entity, new Faction { Id = factionId });
     }
 
-    private static void SetLocalTransform(EntityManager em, Entity entity, float3 position, quaternion rotation, float scale)
+    private static void SetOrAdd<T>(EntityManager em, Entity entity, T component)
+        where T : unmanaged, IComponentData
     {
-        if (entity == Entity.Null || !em.Exists(entity) || !em.HasComponent<LocalTransform>(entity))
+        if (entity == Entity.Null || !em.Exists(entity))
             return;
 
-        em.SetComponentData(entity, LocalTransform.FromPositionRotationScale(position, rotation, math.max(0.0001f, scale)));
+        if (em.HasComponent<T>(entity))
+            em.SetComponentData(entity, component);
+        else
+            em.AddComponentData(entity, component);
+    }
+
+    private static void RemoveIfPresent<T>(EntityManager em, Entity entity)
+        where T : unmanaged, IComponentData
+    {
+        if (entity != Entity.Null && em.Exists(entity) && em.HasComponent<T>(entity))
+            em.RemoveComponent<T>(entity);
+    }
+
+    private static void SetLocalTransform(EntityManager em, Entity entity, float3 position, quaternion rotation, float scale)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return;
+
+        SetOrAdd(em, entity, LocalTransform.FromPositionRotationScale(position, rotation, math.max(0.0001f, scale)));
     }
 
     private static bool TryResolveUnitPrefab(EntityManager em, string sourceKey, out Entity prefab)
@@ -1032,4 +2824,21 @@ public sealed class BattleScenarioLabVisualPlayback : MonoBehaviour
         if (direction.sqrMagnitude > 0.001f)
             scenarioCamera.transform.rotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
     }
+
+    private void ResetCameraView()
+    {
+        SetCamera(DefaultCameraPosition, DefaultCameraLookAt);
+    }
+}
+
+public struct BattleScenarioLabRuntimeGridTag : IComponentData
+{
+}
+
+public struct BattleScenarioLabRuntimeGameplayStateTag : IComponentData
+{
+}
+
+public struct BattleScenarioLabCommandTag : IComponentData
+{
 }

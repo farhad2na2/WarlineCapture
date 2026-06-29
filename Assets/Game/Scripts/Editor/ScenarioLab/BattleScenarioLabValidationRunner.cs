@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Unity.Collections;
 using Unity.Entities;
@@ -31,6 +32,7 @@ public static class BattleScenarioLabValidationRunner
     public const string Ad011HelicopterPostImpactCapturePath = "/private/tmp/warline-scenario-lab-ad011-helicopter-post-impact.png";
     public const string Gm001DefinitionPath = "Assets/Game/Configs/ScenarioLab/GM001_GroundMissileLauncher_FiresVisibleRocketAndDamagesTarget.asset";
     public const string Dr001DefinitionPath = "Assets/Game/Configs/ScenarioLab/DR001_DroneReconDetectionAndThreatWarning.asset";
+    public const string TransportBoardingDefinitionFolder = "Assets/Game/Configs/ScenarioLab/TransportBoarding";
     private const string LiveEcsPlaybackActiveKey = "BattleScenarioLab.LiveEcsPlayback.Active";
     private const string LiveEcsPlaybackStartedAtKey = "BattleScenarioLab.LiveEcsPlayback.StartedAt";
     private const string LiveEcsPlaybackSeenRegistryKey = "BattleScenarioLab.LiveEcsPlayback.SeenRegistry";
@@ -75,8 +77,38 @@ public static class BattleScenarioLabValidationRunner
     private const string VisualSwitchSeenAd011AttackingJetTargetKey = "BattleScenarioLab.VisualSwitch.SeenAd011AttackingJetTarget";
     private const string VisualSwitchSeenAd011AttackingJetAirProjectileKey = "BattleScenarioLab.VisualSwitch.SeenAd011AttackingJetAirProjectile";
     private const string VisualSwitchSeenAd011AttackingJetImpactKey = "BattleScenarioLab.VisualSwitch.SeenAd011AttackingJetImpact";
+    private const string TransportBoardingVisualActiveKey = "BattleScenarioLab.TransportBoardingVisual.Active";
+    private const string TransportBoardingVisualStartedAtKey = "BattleScenarioLab.TransportBoardingVisual.StartedAt";
+    private const string TransportBoardingVisualScenarioIdKey = "BattleScenarioLab.TransportBoardingVisual.ScenarioId";
+    private const string TransportBoardingVisualTransportSourceKey = "BattleScenarioLab.TransportBoardingVisual.TransportSource";
+    private const string TransportBoardingVisualScenarioStartedKey = "BattleScenarioLab.TransportBoardingVisual.ScenarioStarted";
+    private const string TransportBoardingVisualFailureKey = "BattleScenarioLab.TransportBoardingVisual.Failure";
+    private const string TransportBoardingVisualSeenRegistryKey = "BattleScenarioLab.TransportBoardingVisual.SeenRegistry";
+    private const string TransportBoardingVisualSeenTransportKey = "BattleScenarioLab.TransportBoardingVisual.SeenTransport";
+    private const string TransportBoardingVisualSeenPassengerKey = "BattleScenarioLab.TransportBoardingVisual.SeenPassenger";
+    private const string TransportBoardingVisualSeenAirPickupKey = "BattleScenarioLab.TransportBoardingVisual.SeenAirPickup";
+    private const string TransportBoardingVisualSeenBoardedKey = "BattleScenarioLab.TransportBoardingVisual.SeenBoarded";
+    private const string TransportBoardingVisualSeenRopeDropKey = "BattleScenarioLab.TransportBoardingVisual.SeenRopeDrop";
+    private const string TransportBoardingVisualSeenPlaneDoorKey = "BattleScenarioLab.TransportBoardingVisual.SeenPlaneDoor";
+    private const string TransportBoardingVisualSeenParachuteDropKey = "BattleScenarioLab.TransportBoardingVisual.SeenParachuteDrop";
+    private const string TransportBoardingVisualSeenCargoDropKey = "BattleScenarioLab.TransportBoardingVisual.SeenCargoDrop";
+    private const string TransportBoardingVisualSeenExitedKey = "BattleScenarioLab.TransportBoardingVisual.SeenExited";
+    private const string TransportBoardingVisualSeenVehiclePassengerKey = "BattleScenarioLab.TransportBoardingVisual.SeenVehiclePassenger";
+    private const string TransportBoardingVisualSeenSoldierExitedKey = "BattleScenarioLab.TransportBoardingVisual.SeenSoldierExited";
+    private const string TransportBoardingVisualSeenVehicleExitedKey = "BattleScenarioLab.TransportBoardingVisual.SeenVehicleExited";
+    private const string TransportBoardingCleanupActiveKey = "BattleScenarioLab.TransportBoardingCleanup.Active";
+    private const string TransportBoardingCleanupStartedAtKey = "BattleScenarioLab.TransportBoardingCleanup.StartedAt";
+    private const string TransportBoardingCleanupPhaseKey = "BattleScenarioLab.TransportBoardingCleanup.Phase";
+    private const string TransportBoardingCleanupPhaseStartedAtKey = "BattleScenarioLab.TransportBoardingCleanup.PhaseStartedAt";
+    private const string TransportBoardingCleanupFailureKey = "BattleScenarioLab.TransportBoardingCleanup.Failure";
+    private const string TransportBoardingCleanupSeenTransportKey = "BattleScenarioLab.TransportBoardingCleanup.SeenTransport";
+    private const string TransportBoardingCleanupSeenPassengerKey = "BattleScenarioLab.TransportBoardingCleanup.SeenPassenger";
+    private const string TransportBoardingCleanupSeenCargoDropKey = "BattleScenarioLab.TransportBoardingCleanup.SeenCargoDrop";
+    private const string TransportBoardingCleanupRunAgainModeKey = "BattleScenarioLab.TransportBoardingCleanup.RunAgainMode";
     private const double LiveEcsPlaybackTimeoutSeconds = 40.0;
     private const double VisualSwitchTimeoutSeconds = 75.0;
+    private const double TransportBoardingVisualTimeoutSeconds = 25.0;
+    private const double TransportBoardingCleanupTimeoutSeconds = 35.0;
     private const float LiveEcsPlaybackRequiredClosestMissileDistance = 2.5f;
     private const float LiveEcsPlaybackRequiredClosestGroundVisualDistance = 1.5f;
     private const float LiveEcsPlaybackRequiredClosestVisualInterceptDistance = 0.75f;
@@ -86,6 +118,12 @@ public static class BattleScenarioLabValidationRunner
     private const string JetTargetSourceKey = "Unit_Veh_Jet_01";
     private const string HelicopterTargetSourceKey = "Unit_Veh_Helicopter_Attack";
     private const string DroneTargetSourceKey = "Unit_Veh_Drone";
+    private const string SoldierSourceKey = "Unit_Chr_Soldier_Male_02_Alt_04";
+    private const string GroundVehicleTransportSourceKey = "Unit_Veh_APC_Heavy";
+    private const string HelicopterTransportSourceKey = "Unit_Veh_Helicopter_Transport";
+    private const string PlaneTransportSourceKey = "Unit_Veh_Plane_Transport";
+    private const string VehicleCargoSourceKey = "Unit_Veh_Tank_USA";
+    private static readonly Vector3 TransportBoardingDefaultCameraPosition = new(80f, 45f, -80f);
 
     static BattleScenarioLabValidationRunner()
     {
@@ -93,6 +131,10 @@ public static class BattleScenarioLabValidationRunner
             HookLiveEcsPlaybackValidation();
         if (SessionState.GetBool(VisualSwitchActiveKey, false))
             HookVisualSwitchValidation();
+        if (SessionState.GetBool(TransportBoardingVisualActiveKey, false))
+            HookTransportBoardingVisualValidation();
+        if (SessionState.GetBool(TransportBoardingCleanupActiveKey, false))
+            HookTransportBoardingCleanupValidation();
         if (SessionState.GetBool(LiveEcsPlaybackPendingExitKey, false))
             HookLiveEcsPlaybackPendingExit();
     }
@@ -583,6 +625,50 @@ public static class BattleScenarioLabValidationRunner
         Debug.Log($"[BattleScenarioLab] DR-001 definition saved: {Dr001DefinitionPath}");
     }
 
+    [MenuItem("Warline Capture/Scenario Lab/Create or Update Transport Boarding Definitions")]
+    public static void CreateOrUpdateTransportBoardingDefinitionAssets()
+    {
+        Directory.CreateDirectory(TransportBoardingDefinitionFolder);
+        for (int i = 0; i < TransportBoardingScenarioCatalog.All.Count; i++)
+        {
+            TransportBoardingScenarioDescriptor descriptor = TransportBoardingScenarioCatalog.All[i];
+            string path = GetTransportBoardingDefinitionPath(descriptor);
+            BattleScenarioDefinition definition = AssetDatabase.LoadAssetAtPath<BattleScenarioDefinition>(path);
+            if (definition == null && File.Exists(path))
+                AssetDatabase.DeleteAsset(path);
+
+            if (definition == null)
+            {
+                definition = ScriptableObject.CreateInstance<BattleScenarioDefinition>();
+                AssetDatabase.CreateAsset(definition, path);
+            }
+
+            SerializedObject serialized = new(definition);
+            serialized.FindProperty("scenarioId").stringValue = descriptor.ScenarioId;
+            serialized.FindProperty("displayName").stringValue = descriptor.DisplayName;
+            serialized.FindProperty("description").stringValue = descriptor.Description;
+            serialized.FindProperty("fixedDeltaTime").floatValue = 0.05f;
+            serialized.FindProperty("maxDurationSeconds").floatValue = 45f;
+            serialized.FindProperty("randomSeed").intValue = 41000 + i;
+            serialized.FindProperty("cameraPreset").enumValueIndex = (int)BattleScenarioCameraPreset.Default;
+            serialized.FindProperty("worldBounds").boundsValue = new Bounds(Vector3.zero, new Vector3(160f, 90f, 160f));
+            serialized.FindProperty("spawnEntries").arraySize = 0;
+            WriteVariants(serialized.FindProperty("scenarioVariants"), new[] { CreateTransportBoardingVariant(descriptor) });
+            WriteSuccessCriteria(serialized.FindProperty("successCriteria"));
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"[BattleScenarioLab] Transport boarding definitions saved: {TransportBoardingDefinitionFolder}");
+    }
+
+    public static string GetTransportBoardingDefinitionPath(TransportBoardingScenarioDescriptor descriptor)
+    {
+        return $"{TransportBoardingDefinitionFolder}/{descriptor.ScenarioId}.asset";
+    }
+
     [MenuItem("Warline Capture/Scenario Lab/Validate Manual Scene Smoke")]
     public static void ValidateManualSceneSmoke()
     {
@@ -618,7 +704,8 @@ public static class BattleScenarioLabValidationRunner
             RequireComponent<EventSystem>(eventSystemObject);
             RequireComponent<BaseInputModule>(eventSystemObject);
             Dropdown scenarioDropdown = RequireComponent<Dropdown>(RequireObject("ScenarioSelector"));
-            if (scenarioDropdown.options.Count < 4)
+            int expectedScenarioCount = 13 + TransportBoardingScenarioCatalog.All.Count;
+            if (scenarioDropdown.options.Count < expectedScenarioCount)
                 throw new InvalidOperationException("ScenarioSelector has too few scenario options.");
             RequireDropdownTemplate(scenarioDropdown, "ScenarioSelector");
             Dropdown variantDropdown = RequireComponent<Dropdown>(RequireObject("VariantSelector"));
@@ -640,21 +727,30 @@ public static class BattleScenarioLabValidationRunner
                 bootstrapSerialized.FindProperty("scenarioDefinition").objectReferenceValue,
                 "bootstrap scenario definition");
             SerializedProperty scenarioDefinitions = bootstrapSerialized.FindProperty("scenarioDefinitions");
-            if (scenarioDefinitions.arraySize < 13)
+            if (scenarioDefinitions.arraySize < expectedScenarioCount)
                 throw new InvalidOperationException("Bootstrap scenario definition list has too few entries.");
             bool hasAd011 = false;
+            var requiredTransportBoardingIds = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < TransportBoardingScenarioCatalog.All.Count; i++)
+                requiredTransportBoardingIds.Add(TransportBoardingScenarioCatalog.All[i].ScenarioId);
+
             for (int i = 0; i < scenarioDefinitions.arraySize; i++)
             {
-                if (scenarioDefinitions.GetArrayElementAtIndex(i).objectReferenceValue is BattleScenarioDefinition scenario &&
-                    string.Equals(scenario.ScenarioId, BattleScenarioAd011Runner.ScenarioId, StringComparison.Ordinal))
+                if (scenarioDefinitions.GetArrayElementAtIndex(i).objectReferenceValue is not BattleScenarioDefinition scenario)
+                    continue;
+
+                if (string.Equals(scenario.ScenarioId, BattleScenarioAd011Runner.ScenarioId, StringComparison.Ordinal))
                 {
                     hasAd011 = true;
-                    break;
                 }
+
+                requiredTransportBoardingIds.Remove(scenario.ScenarioId);
             }
 
             if (!hasAd011)
                 throw new InvalidOperationException("Bootstrap scenario definition list is missing AD-011.");
+            if (requiredTransportBoardingIds.Count > 0)
+                throw new InvalidOperationException($"Bootstrap scenario definition list is missing {requiredTransportBoardingIds.Count} transport boarding scenarios.");
             RequireReference(
                 bootstrapSerialized.FindProperty("overlayView").objectReferenceValue,
                 "bootstrap overlay view");
@@ -758,6 +854,126 @@ public static class BattleScenarioLabValidationRunner
         }
     }
 
+    [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-001 Visual Playback")]
+    public static void ValidateTransportBoardingTb001VisualPlayback()
+    {
+        ValidateTransportBoardingVisualPlayback(
+            TransportBoardingScenarioCatalog.Tb001GroundVehicleBoardExitId,
+            GroundVehicleTransportSourceKey);
+    }
+
+    [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-002 Visual Playback")]
+    public static void ValidateTransportBoardingTb002VisualPlayback()
+    {
+        ValidateTransportBoardingVisualPlayback(
+            TransportBoardingScenarioCatalog.Tb002HelicopterBoardRopeExitId,
+            HelicopterTransportSourceKey);
+    }
+
+    [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-003 Visual Playback")]
+    public static void ValidateTransportBoardingTb003VisualPlayback()
+    {
+        ValidateTransportBoardingVisualPlayback(
+            TransportBoardingScenarioCatalog.Tb003HelicopterAirPickupId,
+            HelicopterTransportSourceKey);
+    }
+
+    [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-005 Visual Playback")]
+    public static void ValidateTransportBoardingTb005VisualPlayback()
+    {
+        ValidateTransportBoardingVisualPlayback(
+            TransportBoardingScenarioCatalog.Tb005PlaneRampBoardGroundExitId,
+            PlaneTransportSourceKey);
+    }
+
+    [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-006 Visual Playback")]
+    public static void ValidateTransportBoardingTb006VisualPlayback()
+    {
+        ValidateTransportBoardingVisualPlayback(
+            TransportBoardingScenarioCatalog.Tb006PlaneSoldierAirdropId,
+            PlaneTransportSourceKey);
+    }
+
+    [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-007 Visual Playback")]
+    public static void ValidateTransportBoardingTb007VisualPlayback()
+    {
+        ValidateTransportBoardingVisualPlayback(
+            TransportBoardingScenarioCatalog.Tb007PlaneVehicleCargoGroundExitId,
+            PlaneTransportSourceKey);
+    }
+
+    [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-008 Visual Playback")]
+    public static void ValidateTransportBoardingTb008VisualPlayback()
+    {
+        ValidateTransportBoardingVisualPlayback(
+            TransportBoardingScenarioCatalog.Tb008PlaneVehicleCargoAirdropId,
+            PlaneTransportSourceKey);
+    }
+
+    [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-009 Visual Playback")]
+    public static void ValidateTransportBoardingTb009VisualPlayback()
+    {
+        ValidateTransportBoardingVisualPlayback(
+            TransportBoardingScenarioCatalog.Tb009PlaneMixedLoadAirdropId,
+            PlaneTransportSourceKey);
+    }
+
+    [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding Next Cleanup Visual Playback")]
+    public static void ValidateTransportBoardingNextCleanupVisualPlayback()
+    {
+        ValidateTransportBoardingCleanupVisualPlayback(runAgainMode: false);
+    }
+
+    [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding Run Again Cleanup Visual Playback")]
+    public static void ValidateTransportBoardingRunAgainCleanupVisualPlayback()
+    {
+        ValidateTransportBoardingCleanupVisualPlayback(runAgainMode: true);
+    }
+
+    private static void ValidateTransportBoardingCleanupVisualPlayback(bool runAgainMode)
+    {
+        try
+        {
+            EditorSceneManager.OpenScene(BattleScenarioLabSceneBuilder.ScenePath, OpenSceneMode.Single);
+            SessionState.SetBool(TransportBoardingCleanupActiveKey, true);
+            SessionState.SetBool(TransportBoardingCleanupRunAgainModeKey, runAgainMode);
+            SessionState.SetFloat(TransportBoardingCleanupStartedAtKey, (float)EditorApplication.timeSinceStartup);
+            SessionState.SetFloat(TransportBoardingCleanupPhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
+            SessionState.SetInt(TransportBoardingCleanupPhaseKey, 0);
+            SessionState.EraseString(TransportBoardingCleanupFailureKey);
+            ResetTransportBoardingCleanupObservationState();
+            HookTransportBoardingCleanupValidation();
+            EditorApplication.EnterPlaymode();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[BattleScenarioLab] Transport boarding cleanup validation failed before PlayMode: {ex}");
+            Exit(1);
+        }
+    }
+
+    private static void ValidateTransportBoardingVisualPlayback(string scenarioId, string transportSourceKey)
+    {
+        try
+        {
+            EditorSceneManager.OpenScene(BattleScenarioLabSceneBuilder.ScenePath, OpenSceneMode.Single);
+            SessionState.SetBool(TransportBoardingVisualActiveKey, true);
+            SessionState.SetFloat(TransportBoardingVisualStartedAtKey, (float)EditorApplication.timeSinceStartup);
+            SessionState.SetString(TransportBoardingVisualScenarioIdKey, scenarioId);
+            SessionState.SetString(TransportBoardingVisualTransportSourceKey, transportSourceKey);
+            SessionState.SetBool(TransportBoardingVisualScenarioStartedKey, false);
+            SessionState.EraseString(TransportBoardingVisualFailureKey);
+            ResetTransportBoardingVisualObservationState();
+            HookTransportBoardingVisualValidation();
+            EditorApplication.EnterPlaymode();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[BattleScenarioLab] {scenarioId} transport boarding visual validation failed before PlayMode: {ex}");
+            Exit(1);
+        }
+    }
+
     private static void HookLiveEcsPlaybackValidation()
     {
         EditorApplication.update -= OnLiveEcsPlaybackValidationUpdate;
@@ -772,6 +988,22 @@ public static class BattleScenarioLabValidationRunner
         EditorApplication.update += OnVisualSwitchValidationUpdate;
         Application.logMessageReceived -= OnVisualSwitchValidationLog;
         Application.logMessageReceived += OnVisualSwitchValidationLog;
+    }
+
+    private static void HookTransportBoardingVisualValidation()
+    {
+        EditorApplication.update -= OnTransportBoardingVisualValidationUpdate;
+        EditorApplication.update += OnTransportBoardingVisualValidationUpdate;
+        Application.logMessageReceived -= OnTransportBoardingVisualValidationLog;
+        Application.logMessageReceived += OnTransportBoardingVisualValidationLog;
+    }
+
+    private static void HookTransportBoardingCleanupValidation()
+    {
+        EditorApplication.update -= OnTransportBoardingCleanupValidationUpdate;
+        EditorApplication.update += OnTransportBoardingCleanupValidationUpdate;
+        Application.logMessageReceived -= OnTransportBoardingCleanupValidationLog;
+        Application.logMessageReceived += OnTransportBoardingCleanupValidationLog;
     }
 
     private static void OnLiveEcsPlaybackValidationLog(string condition, string stackTrace, LogType type)
@@ -796,6 +1028,32 @@ public static class BattleScenarioLabValidationRunner
              condition.Contains("Live ECS visual run could not resolve baked production air launcher/air target prefab entities", StringComparison.Ordinal)))
         {
             SessionState.SetString(VisualSwitchFailureKey, condition);
+        }
+    }
+
+    private static void OnTransportBoardingVisualValidationLog(string condition, string stackTrace, LogType type)
+    {
+        if (!SessionState.GetBool(TransportBoardingVisualActiveKey, false))
+            return;
+
+        if (type == LogType.Error &&
+            (condition.Contains("visual run could not resolve production", StringComparison.Ordinal) ||
+             condition.Contains("Scenario run failed", StringComparison.Ordinal)))
+        {
+            SessionState.SetString(TransportBoardingVisualFailureKey, condition);
+        }
+    }
+
+    private static void OnTransportBoardingCleanupValidationLog(string condition, string stackTrace, LogType type)
+    {
+        if (!SessionState.GetBool(TransportBoardingCleanupActiveKey, false))
+            return;
+
+        if (type == LogType.Error &&
+            (condition.Contains("visual run could not resolve production", StringComparison.Ordinal) ||
+             condition.Contains("Scenario run failed", StringComparison.Ordinal)))
+        {
+            SessionState.SetString(TransportBoardingCleanupFailureKey, condition);
         }
     }
 
@@ -1098,6 +1356,759 @@ public static class BattleScenarioLabValidationRunner
         }
     }
 
+    private static void OnTransportBoardingCleanupValidationUpdate()
+    {
+        if (!SessionState.GetBool(TransportBoardingCleanupActiveKey, false))
+            return;
+
+        string failure = SessionState.GetString(TransportBoardingCleanupFailureKey, string.Empty);
+        if (!string.IsNullOrEmpty(failure))
+        {
+            CompleteTransportBoardingCleanupValidation(false, failure);
+            return;
+        }
+
+        if (!EditorApplication.isPlaying)
+            return;
+
+        BattleScenarioLabPlayBootstrap bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
+        if (bootstrap == null)
+            return;
+
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return;
+
+        EntityManager em = world.EntityManager;
+        bool runAgainMode = SessionState.GetBool(TransportBoardingCleanupRunAgainModeKey, false);
+        int phase = SessionState.GetInt(TransportBoardingCleanupPhaseKey, 0);
+        switch (phase)
+        {
+            case 0:
+                if (!bootstrap.SelectScenarioById(TransportBoardingScenarioCatalog.Tb008PlaneVehicleCargoAirdropId))
+                    break;
+
+                SessionState.SetInt(TransportBoardingCleanupPhaseKey, 1);
+                SessionState.SetFloat(TransportBoardingCleanupPhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
+                Debug.Log("[BattleScenarioLab] Transport boarding cleanup validation started TB-008.");
+                break;
+
+            case 1:
+                if (TryFindInstantiatedUnitIncludingDisabled(em, PlaneTransportSourceKey, out _))
+                    SessionState.SetBool(TransportBoardingCleanupSeenTransportKey, true);
+                if (TryFindInstantiatedUnitIncludingDisabled(em, VehicleCargoSourceKey, out _))
+                    SessionState.SetBool(TransportBoardingCleanupSeenPassengerKey, true);
+                if (CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportCargoDropComponent>()) > 0)
+                    SessionState.SetBool(TransportBoardingCleanupSeenCargoDropKey, true);
+
+                if (SessionState.GetBool(TransportBoardingCleanupSeenTransportKey, false) &&
+                    SessionState.GetBool(TransportBoardingCleanupSeenPassengerKey, false) &&
+                    SessionState.GetBool(TransportBoardingCleanupSeenCargoDropKey, false))
+                {
+                    if (runAgainMode)
+                    {
+                        bootstrap.RunScenario();
+                        if (!ValidateTransportBoardingOverlayCurrent(
+                                TransportBoardingScenarioCatalog.Tb008PlaneVehicleCargoAirdropId,
+                                out string runAgainOverlayReason))
+                        {
+                            CompleteTransportBoardingCleanupValidation(false, runAgainOverlayReason);
+                            return;
+                        }
+
+                        if (HasTransportBoardingRunAgainResidue(em, out string runAgainResidue))
+                        {
+                            CompleteTransportBoardingCleanupValidation(false, $"TB Run Again cleanup left duplicate or stale residue: {runAgainResidue}");
+                            return;
+                        }
+
+                        CompleteTransportBoardingCleanupValidation(
+                            true,
+                            "TB Run Again cleanup removed the prior transport plane, vehicle cargo passenger, cargo-drop state, command queue, and runtime grid before restarting TB-008 with exactly one new baseline run.");
+                        return;
+                    }
+
+                    bootstrap.SelectNextScenario();
+                    SessionState.SetInt(TransportBoardingCleanupPhaseKey, 2);
+                    SessionState.SetFloat(TransportBoardingCleanupPhaseStartedAtKey, (float)EditorApplication.timeSinceStartup);
+                    Debug.Log("[BattleScenarioLab] Transport boarding cleanup validation advanced from TB-008 to the next scenario.");
+                }
+                break;
+
+            case 2:
+                if (!string.Equals(
+                        bootstrap.CurrentScenarioId,
+                        TransportBoardingScenarioCatalog.Tb009PlaneMixedLoadAirdropId,
+                        StringComparison.Ordinal))
+                {
+                    break;
+                }
+
+                if (!ValidateTransportBoardingOverlayCurrent(
+                        TransportBoardingScenarioCatalog.Tb009PlaneMixedLoadAirdropId,
+                        out string overlayReason))
+                {
+                    double overlayElapsed = EditorApplication.timeSinceStartup -
+                        SessionState.GetFloat(TransportBoardingCleanupPhaseStartedAtKey, 0f);
+                    if (overlayElapsed > 2.0)
+                    {
+                        CompleteTransportBoardingCleanupValidation(false, overlayReason);
+                        return;
+                    }
+
+                    break;
+                }
+
+                if (!ValidateTransportBoardingCameraReset(out string cameraReason))
+                {
+                    double cameraElapsed = EditorApplication.timeSinceStartup -
+                        SessionState.GetFloat(TransportBoardingCleanupPhaseStartedAtKey, 0f);
+                    if (cameraElapsed > 2.0)
+                    {
+                        CompleteTransportBoardingCleanupValidation(false, cameraReason);
+                        return;
+                    }
+
+                    break;
+                }
+
+                if (!HasTransportBoardingCleanupResidue(em, out string residue))
+                {
+                    CompleteTransportBoardingCleanupValidation(
+                        true,
+                        "TB Next cleanup removed the prior transport plane, vehicle cargo passenger, cargo-drop state, command queue, runtime grid, stale overlay, and stale camera target before TB-009.");
+                    return;
+                }
+
+                double phaseElapsed = EditorApplication.timeSinceStartup -
+                    SessionState.GetFloat(TransportBoardingCleanupPhaseStartedAtKey, 0f);
+                if (phaseElapsed > 2.0)
+                {
+                    CompleteTransportBoardingCleanupValidation(false, $"TB Next cleanup left residue: {residue}");
+                    return;
+                }
+                break;
+        }
+
+        double elapsed = EditorApplication.timeSinceStartup -
+            SessionState.GetFloat(TransportBoardingCleanupStartedAtKey, 0f);
+        if (elapsed >= TransportBoardingCleanupTimeoutSeconds)
+        {
+            string reason =
+                $"timed out after {TransportBoardingCleanupTimeoutSeconds:0.#}s; " +
+                $"phase={SessionState.GetInt(TransportBoardingCleanupPhaseKey, 0)}, " +
+                $"currentScenario='{bootstrap.CurrentScenarioId}', " +
+                $"runAgainMode={runAgainMode}, " +
+                $"seenTransport={SessionState.GetBool(TransportBoardingCleanupSeenTransportKey, false)}, " +
+                $"seenPassenger={SessionState.GetBool(TransportBoardingCleanupSeenPassengerKey, false)}, " +
+                $"seenCargoDrop={SessionState.GetBool(TransportBoardingCleanupSeenCargoDropKey, false)}, " +
+                BuildTransportBoardingCleanupSnapshot(em);
+            CompleteTransportBoardingCleanupValidation(false, reason);
+        }
+    }
+
+    private static void OnTransportBoardingVisualValidationUpdate()
+    {
+        if (!SessionState.GetBool(TransportBoardingVisualActiveKey, false))
+            return;
+
+        string failure = SessionState.GetString(TransportBoardingVisualFailureKey, string.Empty);
+        if (!string.IsNullOrEmpty(failure))
+        {
+            CompleteTransportBoardingVisualValidation(false, failure);
+            return;
+        }
+
+        if (!EditorApplication.isPlaying)
+            return;
+
+        BattleScenarioLabPlayBootstrap bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
+        if (bootstrap == null)
+            return;
+
+        string scenarioId = SessionState.GetString(
+            TransportBoardingVisualScenarioIdKey,
+            TransportBoardingScenarioCatalog.Tb001GroundVehicleBoardExitId);
+        string transportSourceKey = SessionState.GetString(
+            TransportBoardingVisualTransportSourceKey,
+            GroundVehicleTransportSourceKey);
+        string passengerSourceKey = ResolveTransportBoardingVisualPassengerSourceKey(scenarioId);
+
+        if (!SessionState.GetBool(TransportBoardingVisualScenarioStartedKey, false))
+        {
+            if (!bootstrap.SelectScenarioById(scenarioId))
+            {
+                double selectionElapsed = EditorApplication.timeSinceStartup -
+                    SessionState.GetFloat(TransportBoardingVisualStartedAtKey, 0f);
+                if (selectionElapsed > 5.0)
+                    CompleteTransportBoardingVisualValidation(false, $"{scenarioId} scenario definition was not present in the Scenario Lab selector.");
+                return;
+            }
+
+            SessionState.SetBool(TransportBoardingVisualScenarioStartedKey, true);
+            Debug.Log($"[BattleScenarioLab] {scenarioId} transport boarding visual validation selected the Scenario Lab definition.");
+        }
+
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return;
+
+        EntityManager em = world.EntityManager;
+        if (HasAnyEntityWith<UnitPrefabRegistryTag>(em))
+            SessionState.SetBool(TransportBoardingVisualSeenRegistryKey, true);
+
+        bool hasTransport = TryFindInstantiatedUnitIncludingDisabled(em, transportSourceKey, out Entity transport);
+        bool hasPassenger = TryFindInstantiatedUnitIncludingDisabled(em, passengerSourceKey, out Entity passenger);
+        if (hasTransport)
+            SessionState.SetBool(TransportBoardingVisualSeenTransportKey, true);
+        if (hasPassenger)
+            SessionState.SetBool(TransportBoardingVisualSeenPassengerKey, true);
+
+        bool isTb003 = string.Equals(
+            scenarioId,
+            TransportBoardingScenarioCatalog.Tb003HelicopterAirPickupId,
+            StringComparison.Ordinal);
+        bool isTb005 = string.Equals(
+            scenarioId,
+            TransportBoardingScenarioCatalog.Tb005PlaneRampBoardGroundExitId,
+            StringComparison.Ordinal);
+        bool isTb006 = string.Equals(
+            scenarioId,
+            TransportBoardingScenarioCatalog.Tb006PlaneSoldierAirdropId,
+            StringComparison.Ordinal);
+        bool isTb008 = string.Equals(
+            scenarioId,
+            TransportBoardingScenarioCatalog.Tb008PlaneVehicleCargoAirdropId,
+            StringComparison.Ordinal);
+        bool isTb009 = string.Equals(
+            scenarioId,
+            TransportBoardingScenarioCatalog.Tb009PlaneMixedLoadAirdropId,
+            StringComparison.Ordinal);
+        if (isTb009)
+        {
+            HandleTransportBoardingMixedLoadVisualValidation(em, bootstrap, scenarioId, transportSourceKey, hasTransport, transport);
+            return;
+        }
+
+        bool isVehicleCargoScenario = string.Equals(
+            passengerSourceKey,
+            VehicleCargoSourceKey,
+            StringComparison.Ordinal);
+        if (isTb003 &&
+            hasTransport &&
+            em.HasComponent<UnitTarget>(transport) &&
+            em.HasComponent<UnitAirComponent>(transport) &&
+            em.GetComponentData<UnitAirComponent>(transport).Airborne != 0)
+        {
+            SessionState.SetBool(TransportBoardingVisualSeenAirPickupKey, true);
+        }
+
+        bool passengerBoarded = hasPassenger &&
+                                em.HasComponent<UnitTransportPassenger>(passenger) &&
+                                em.HasComponent<Disabled>(passenger) &&
+                                (!isVehicleCargoScenario || em.HasComponent<UnitTransportCargoPassenger>(passenger));
+        if (passengerBoarded)
+            SessionState.SetBool(TransportBoardingVisualSeenBoardedKey, true);
+
+        bool passengerRopeDropping = hasPassenger && em.HasComponent<UnitTransportRopeDropComponent>(passenger);
+        if (passengerRopeDropping)
+            SessionState.SetBool(TransportBoardingVisualSeenRopeDropKey, true);
+
+        if (isTb005 && hasTransport && IsPlaneDoorOpening(em, transport))
+            SessionState.SetBool(TransportBoardingVisualSeenPlaneDoorKey, true);
+
+        bool passengerParachuteDropping = hasPassenger && em.HasComponent<UnitTransportParachuteDropComponent>(passenger);
+        if (passengerParachuteDropping)
+            SessionState.SetBool(TransportBoardingVisualSeenParachuteDropKey, true);
+
+        bool passengerCargoDropping = hasPassenger && em.HasComponent<UnitTransportCargoDropComponent>(passenger);
+        if (passengerCargoDropping)
+            SessionState.SetBool(TransportBoardingVisualSeenCargoDropKey, true);
+
+        bool requiresRopeDrop = string.Equals(
+            scenarioId,
+            TransportBoardingScenarioCatalog.Tb002HelicopterBoardRopeExitId,
+            StringComparison.Ordinal) ||
+            string.Equals(
+                scenarioId,
+                TransportBoardingScenarioCatalog.Tb003HelicopterAirPickupId,
+            StringComparison.Ordinal);
+        bool passengerExited = SessionState.GetBool(TransportBoardingVisualSeenBoardedKey, false) &&
+                               hasPassenger &&
+                               !em.HasComponent<UnitTransportPassenger>(passenger) &&
+                               !em.HasComponent<Disabled>(passenger) &&
+                               (!isVehicleCargoScenario || !em.HasComponent<UnitTransportCargoPassenger>(passenger)) &&
+                               !em.HasComponent<UnitTransportBoardingTarget>(passenger) &&
+                               (!requiresRopeDrop ||
+                                (SessionState.GetBool(TransportBoardingVisualSeenRopeDropKey, false) &&
+                                 !em.HasComponent<UnitTransportRopeDropComponent>(passenger))) &&
+                               (!isTb003 || SessionState.GetBool(TransportBoardingVisualSeenAirPickupKey, false)) &&
+                               (!isTb005 || SessionState.GetBool(TransportBoardingVisualSeenPlaneDoorKey, false)) &&
+                               (!isTb006 ||
+                                (SessionState.GetBool(TransportBoardingVisualSeenParachuteDropKey, false) &&
+                                 !em.HasComponent<UnitTransportParachuteDropComponent>(passenger))) &&
+                               (!isTb008 ||
+                                (SessionState.GetBool(TransportBoardingVisualSeenCargoDropKey, false) &&
+                                 !em.HasComponent<UnitTransportCargoDropComponent>(passenger))) &&
+                               (!hasTransport || GetTransportPassengerCount(em, transport) == 0);
+        if (passengerExited)
+        {
+            int visiblePassengerRoots = CountScenarioTargetVisibleVisualRoots(em, passengerSourceKey);
+            if (visiblePassengerRoots > 1)
+            {
+                CompleteTransportBoardingVisualValidation(
+                    false,
+                    $"{scenarioId} passenger '{passengerSourceKey}' has {visiblePassengerRoots} visible visual roots after exit/drop; expected no duplicate live/destroyed/drop visual roots.");
+                return;
+            }
+
+            SessionState.SetBool(TransportBoardingVisualSeenExitedKey, true);
+            CompleteTransportBoardingVisualValidation(
+                true,
+                ResolveTransportBoardingVisualPassMessage(scenarioId));
+            return;
+        }
+
+        double elapsed = EditorApplication.timeSinceStartup -
+            SessionState.GetFloat(TransportBoardingVisualStartedAtKey, 0f);
+        if (elapsed >= TransportBoardingVisualTimeoutSeconds)
+        {
+            string reason =
+                $"timed out after {TransportBoardingVisualTimeoutSeconds:0.#}s; " +
+                $"scenarioStarted={SessionState.GetBool(TransportBoardingVisualScenarioStartedKey, false)}, " +
+                $"registry={SessionState.GetBool(TransportBoardingVisualSeenRegistryKey, false)}, " +
+                $"transport={SessionState.GetBool(TransportBoardingVisualSeenTransportKey, false)}, " +
+                $"passenger={SessionState.GetBool(TransportBoardingVisualSeenPassengerKey, false)}, " +
+                $"airPickup={SessionState.GetBool(TransportBoardingVisualSeenAirPickupKey, false)}, " +
+                $"boarded={SessionState.GetBool(TransportBoardingVisualSeenBoardedKey, false)}, " +
+                $"ropeDrop={SessionState.GetBool(TransportBoardingVisualSeenRopeDropKey, false)}, " +
+                $"planeDoor={SessionState.GetBool(TransportBoardingVisualSeenPlaneDoorKey, false)}, " +
+                $"parachuteDrop={SessionState.GetBool(TransportBoardingVisualSeenParachuteDropKey, false)}, " +
+                $"cargoDrop={SessionState.GetBool(TransportBoardingVisualSeenCargoDropKey, false)}, " +
+                $"exited={SessionState.GetBool(TransportBoardingVisualSeenExitedKey, false)}, " +
+                $"vehiclePassenger={SessionState.GetBool(TransportBoardingVisualSeenVehiclePassengerKey, false)}, " +
+                $"soldierExited={SessionState.GetBool(TransportBoardingVisualSeenSoldierExitedKey, false)}, " +
+                $"vehicleExited={SessionState.GetBool(TransportBoardingVisualSeenVehicleExitedKey, false)}, " +
+                $"currentScenario='{bootstrap.CurrentScenarioId}', " +
+                $"expectedScenario='{scenarioId}', " +
+                $"transportSource='{transportSourceKey}', " +
+                $"passengerSource='{passengerSourceKey}', " +
+                $"passengerExists={hasPassenger}, " +
+                $"passengerDisabled={(hasPassenger && em.HasComponent<Disabled>(passenger))}, " +
+                $"passengerTransport={(hasPassenger && em.HasComponent<UnitTransportPassenger>(passenger))}, " +
+                $"passengerCargo={(hasPassenger && em.HasComponent<UnitTransportCargoPassenger>(passenger))}, " +
+                $"passengerCargoDrop={(hasPassenger && em.HasComponent<UnitTransportCargoDropComponent>(passenger))}, " +
+                $"passengerBoardingTarget={(hasPassenger && em.HasComponent<UnitTransportBoardingTarget>(passenger))}, " +
+                $"passengerRopeDrop={(hasPassenger && em.HasComponent<UnitTransportRopeDropComponent>(passenger))}, " +
+                $"transportPassengers={(hasTransport ? GetTransportPassengerCount(em, transport) : -1)}, " +
+                BuildTransportBoardingTransportSnapshot(em, transport) + " " +
+                BuildTransportBoardingCommandSnapshot(em) + " " +
+                BuildTransportBoardingPathfindingSnapshot(em, passenger);
+            CompleteTransportBoardingVisualValidation(false, reason);
+        }
+    }
+
+    private static void HandleTransportBoardingMixedLoadVisualValidation(
+        EntityManager em,
+        BattleScenarioLabPlayBootstrap bootstrap,
+        string scenarioId,
+        string transportSourceKey,
+        bool hasTransport,
+        Entity transport)
+    {
+        bool hasSoldier = TryFindInstantiatedUnitIncludingDisabled(em, SoldierSourceKey, out Entity soldier);
+        bool hasVehicle = TryFindInstantiatedUnitIncludingDisabled(em, VehicleCargoSourceKey, out Entity vehicle);
+        if (hasSoldier)
+            SessionState.SetBool(TransportBoardingVisualSeenPassengerKey, true);
+        if (hasVehicle)
+            SessionState.SetBool(TransportBoardingVisualSeenVehiclePassengerKey, true);
+
+        bool soldierBoarded = hasSoldier &&
+                              em.HasComponent<UnitTransportPassenger>(soldier) &&
+                              em.HasComponent<Disabled>(soldier);
+        bool vehicleBoarded = hasVehicle &&
+                              em.HasComponent<UnitTransportPassenger>(vehicle) &&
+                              em.HasComponent<UnitTransportCargoPassenger>(vehicle) &&
+                              em.HasComponent<Disabled>(vehicle);
+        if (soldierBoarded && vehicleBoarded)
+            SessionState.SetBool(TransportBoardingVisualSeenBoardedKey, true);
+
+        bool soldierParachuteDropping = hasSoldier && em.HasComponent<UnitTransportParachuteDropComponent>(soldier);
+        if (soldierParachuteDropping)
+            SessionState.SetBool(TransportBoardingVisualSeenParachuteDropKey, true);
+
+        bool vehicleCargoDropping = hasVehicle && em.HasComponent<UnitTransportCargoDropComponent>(vehicle);
+        if (vehicleCargoDropping)
+            SessionState.SetBool(TransportBoardingVisualSeenCargoDropKey, true);
+
+        bool soldierExited = SessionState.GetBool(TransportBoardingVisualSeenBoardedKey, false) &&
+                             SessionState.GetBool(TransportBoardingVisualSeenParachuteDropKey, false) &&
+                             hasSoldier &&
+                             !em.HasComponent<UnitTransportPassenger>(soldier) &&
+                             !em.HasComponent<Disabled>(soldier) &&
+                             !em.HasComponent<UnitTransportParachuteDropComponent>(soldier) &&
+                             !em.HasComponent<UnitTransportBoardingTarget>(soldier);
+        if (soldierExited)
+            SessionState.SetBool(TransportBoardingVisualSeenSoldierExitedKey, true);
+
+        bool vehicleExited = SessionState.GetBool(TransportBoardingVisualSeenBoardedKey, false) &&
+                             SessionState.GetBool(TransportBoardingVisualSeenCargoDropKey, false) &&
+                             hasVehicle &&
+                             !em.HasComponent<UnitTransportPassenger>(vehicle) &&
+                             !em.HasComponent<UnitTransportCargoPassenger>(vehicle) &&
+                             !em.HasComponent<Disabled>(vehicle) &&
+                             !em.HasComponent<UnitTransportCargoDropComponent>(vehicle) &&
+                             !em.HasComponent<UnitTransportBoardingTarget>(vehicle);
+        if (vehicleExited)
+            SessionState.SetBool(TransportBoardingVisualSeenVehicleExitedKey, true);
+
+        bool mixedLoadExited =
+            SessionState.GetBool(TransportBoardingVisualSeenRegistryKey, false) &&
+            SessionState.GetBool(TransportBoardingVisualSeenTransportKey, false) &&
+            SessionState.GetBool(TransportBoardingVisualSeenPassengerKey, false) &&
+            SessionState.GetBool(TransportBoardingVisualSeenVehiclePassengerKey, false) &&
+            SessionState.GetBool(TransportBoardingVisualSeenBoardedKey, false) &&
+            SessionState.GetBool(TransportBoardingVisualSeenParachuteDropKey, false) &&
+            SessionState.GetBool(TransportBoardingVisualSeenCargoDropKey, false) &&
+            SessionState.GetBool(TransportBoardingVisualSeenSoldierExitedKey, false) &&
+            SessionState.GetBool(TransportBoardingVisualSeenVehicleExitedKey, false) &&
+            (!hasTransport || GetTransportPassengerCount(em, transport) == 0);
+
+        if (mixedLoadExited)
+        {
+            int visibleSoldierRoots = CountScenarioTargetVisibleVisualRoots(em, SoldierSourceKey);
+            if (visibleSoldierRoots > 1)
+            {
+                CompleteTransportBoardingVisualValidation(
+                    false,
+                    $"{scenarioId} soldier passenger has {visibleSoldierRoots} visible visual roots after mixed airdrop; expected no duplicate live/drop visual roots.");
+                return;
+            }
+
+            int visibleVehicleRoots = CountScenarioTargetVisibleVisualRoots(em, VehicleCargoSourceKey);
+            if (visibleVehicleRoots > 1)
+            {
+                CompleteTransportBoardingVisualValidation(
+                    false,
+                    $"{scenarioId} vehicle cargo passenger has {visibleVehicleRoots} visible visual roots after mixed cargo drop; expected no duplicate live/drop visual roots.");
+                return;
+            }
+
+            SessionState.SetBool(TransportBoardingVisualSeenExitedKey, true);
+            CompleteTransportBoardingVisualValidation(
+                true,
+                ResolveTransportBoardingVisualPassMessage(scenarioId));
+            return;
+        }
+
+        double elapsed = EditorApplication.timeSinceStartup -
+            SessionState.GetFloat(TransportBoardingVisualStartedAtKey, 0f);
+        if (elapsed >= TransportBoardingVisualTimeoutSeconds)
+        {
+            string reason =
+                $"{scenarioId} timed out after {TransportBoardingVisualTimeoutSeconds:0.#}s; " +
+                $"scenarioStarted={SessionState.GetBool(TransportBoardingVisualScenarioStartedKey, false)}, " +
+                $"registry={SessionState.GetBool(TransportBoardingVisualSeenRegistryKey, false)}, " +
+                $"transport={SessionState.GetBool(TransportBoardingVisualSeenTransportKey, false)}, " +
+                $"soldier={SessionState.GetBool(TransportBoardingVisualSeenPassengerKey, false)}, " +
+                $"vehicle={SessionState.GetBool(TransportBoardingVisualSeenVehiclePassengerKey, false)}, " +
+                $"boarded={SessionState.GetBool(TransportBoardingVisualSeenBoardedKey, false)}, " +
+                $"parachuteDrop={SessionState.GetBool(TransportBoardingVisualSeenParachuteDropKey, false)}, " +
+                $"cargoDrop={SessionState.GetBool(TransportBoardingVisualSeenCargoDropKey, false)}, " +
+                $"soldierExited={SessionState.GetBool(TransportBoardingVisualSeenSoldierExitedKey, false)}, " +
+                $"vehicleExited={SessionState.GetBool(TransportBoardingVisualSeenVehicleExitedKey, false)}, " +
+                $"currentScenario='{bootstrap.CurrentScenarioId}', " +
+                $"expectedScenario='{scenarioId}', " +
+                $"transportSource='{transportSourceKey}', " +
+                $"soldierExists={hasSoldier}, " +
+                $"vehicleExists={hasVehicle}, " +
+                $"soldierDisabled={(hasSoldier && em.HasComponent<Disabled>(soldier))}, " +
+                $"vehicleDisabled={(hasVehicle && em.HasComponent<Disabled>(vehicle))}, " +
+                $"soldierTransport={(hasSoldier && em.HasComponent<UnitTransportPassenger>(soldier))}, " +
+                $"vehicleTransport={(hasVehicle && em.HasComponent<UnitTransportPassenger>(vehicle))}, " +
+                $"vehicleCargo={(hasVehicle && em.HasComponent<UnitTransportCargoPassenger>(vehicle))}, " +
+                $"soldierParachute={(hasSoldier && em.HasComponent<UnitTransportParachuteDropComponent>(soldier))}, " +
+                $"vehicleCargoDrop={(hasVehicle && em.HasComponent<UnitTransportCargoDropComponent>(vehicle))}, " +
+                $"transportPassengers={(hasTransport ? GetTransportPassengerCount(em, transport) : -1)}, " +
+                BuildTransportBoardingTransportSnapshot(em, transport) + " " +
+                BuildTransportBoardingCommandSnapshot(em);
+            CompleteTransportBoardingVisualValidation(false, reason);
+        }
+    }
+
+    private static string ResolveTransportBoardingVisualPassengerSourceKey(string scenarioId)
+    {
+        return string.Equals(
+                   scenarioId,
+                   TransportBoardingScenarioCatalog.Tb007PlaneVehicleCargoGroundExitId,
+                   StringComparison.Ordinal) ||
+               string.Equals(
+                   scenarioId,
+                   TransportBoardingScenarioCatalog.Tb008PlaneVehicleCargoAirdropId,
+                   StringComparison.Ordinal)
+            ? VehicleCargoSourceKey
+            : SoldierSourceKey;
+    }
+
+    private static string BuildTransportBoardingTransportSnapshot(EntityManager em, Entity transport)
+    {
+        if (transport == Entity.Null || !em.Exists(transport))
+            return "transportSnapshot=missing";
+
+        string airState = "air=missing";
+        if (em.HasComponent<UnitAirComponent>(transport))
+        {
+            UnitAirComponent air = em.GetComponentData<UnitAirComponent>(transport);
+            airState =
+                $"airborne={air.Airborne} takeoff={air.TakeoffRolling} landing={air.LandingRolling} " +
+                $"attackRun={air.AttackRunActive} returning={air.ReturningHome}";
+        }
+
+        string airdropRequest = "airdropRequest=none";
+        if (em.HasComponent<UnitTransportAirdropRequest>(transport))
+        {
+            UnitTransportAirdropRequest request = em.GetComponentData<UnitTransportAirdropRequest>(transport);
+            airdropRequest =
+                $"airdropRequest=dropCell={request.DropReferenceCell} passReady={request.PassReady} " +
+                $"dropCount={request.DropCount} dropped={request.DroppedCount} soldiers={request.SoldierDropCount} vehicles={request.VehicleDropCount}";
+        }
+
+        string visualPrefabs = "airdropPrefabs=missing";
+        if (em.HasComponent<UnitTransportAirdropVisualPrefabs>(transport))
+        {
+            UnitTransportAirdropVisualPrefabs prefabs = em.GetComponentData<UnitTransportAirdropVisualPrefabs>(transport);
+            visualPrefabs =
+                $"airdropPrefabs=soldierExists={em.Exists(prefabs.SoldierParachuteVisualPrefab)} " +
+                $"vehicleExists={em.Exists(prefabs.VehicleEmergencyDropVisualPrefab)}";
+        }
+
+        int registryEntries = CountAirdropVisualRegistryEntries(em);
+        bool doorOpenRequest = em.HasComponent<UnitTransportPlaneDoorOpenRequest>(transport);
+        bool doorState = em.HasComponent<UnitTransportPlaneDoorState>(transport);
+        return
+            $"transportSnapshot:{airState} {airdropRequest} {visualPrefabs} " +
+            $"airdropRegistryEntries={registryEntries} doorRequest={doorOpenRequest} doorState={doorState}";
+    }
+
+    private static int CountAirdropVisualRegistryEntries(EntityManager em)
+    {
+        int count = 0;
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<UnitTransportAirdropVisualPrefabRegistryEntry>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (em.Exists(entity) && em.HasBuffer<UnitTransportAirdropVisualPrefabRegistryEntry>(entity))
+                count += em.GetBuffer<UnitTransportAirdropVisualPrefabRegistryEntry>(entity).Length;
+        }
+
+        return count;
+    }
+
+    private static string BuildTransportBoardingCommandSnapshot(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BattleScenarioLabCommandTag>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        if (entities.Length == 0)
+            return "commandSnapshot=missing";
+
+        System.Text.StringBuilder builder = new("commandSnapshot:");
+        builder.Append("queues=").Append(entities.Length);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!em.Exists(entity))
+                continue;
+
+            int requestCount = em.HasBuffer<RtsSelectionCommandIntentRequestElement>(entity)
+                ? em.GetBuffer<RtsSelectionCommandIntentRequestElement>(entity).Length
+                : -1;
+            DynamicBuffer<RtsSelectionCommandResultElement> results = em.HasBuffer<RtsSelectionCommandResultElement>(entity)
+                ? em.GetBuffer<RtsSelectionCommandResultElement>(entity)
+                : default;
+            builder.Append(" queue").Append(i)
+                .Append(" requests=").Append(requestCount)
+                .Append(" results=").Append(results.IsCreated ? results.Length : -1);
+            if (!results.IsCreated || results.Length <= 0)
+                continue;
+
+            RtsSelectionCommandResultElement result = results[results.Length - 1];
+            builder.Append(" lastKind=").Append(result.Kind)
+                .Append(" accepted=").Append(result.Accepted)
+                .Append(" reason=").Append(result.ReasonCode)
+                .Append(" targetCell=").Append(result.TargetCell)
+                .Append(" hasTargetCell=").Append(result.HasTargetCell)
+                .Append(" message='").Append(result.Message.ToString()).Append('\'');
+        }
+
+        return builder.ToString();
+    }
+
+    private static string BuildTransportBoardingPathfindingSnapshot(EntityManager em, Entity passenger)
+    {
+        int gridCount = CountEntities(em, ComponentType.ReadOnly<GridConfig>());
+        int blockerGridCount = CountEntities(
+            em,
+            ComponentType.ReadOnly<GridConfig>(),
+            ComponentType.ReadOnly<DynamicBlockerComponent>(),
+            ComponentType.ReadOnly<DynamicOccupancyComponent>());
+        int requestCount = CountEntities(em, ComponentType.ReadOnly<UnitPathRequest>());
+        int followCount = CountEntities(em, ComponentType.ReadOnly<UnitPathFollow>());
+        int runtimeStateCount = CountEntities(em, ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
+        string pendingState = "missing";
+        using (EntityQuery pendingQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitPathfindingPendingStateComponent>()))
+        {
+            if (!pendingQuery.IsEmptyIgnoreFilter)
+            {
+                UnitPathfindingPendingStateComponent pending = pendingQuery.GetSingleton<UnitPathfindingPendingStateComponent>();
+                pendingState =
+                    $"hasPending={pending.HasPendingPathJob} requestCount={pending.RequestCount} " +
+                    $"budget={pending.RequestBudget} frame={pending.ScheduledFrame}";
+            }
+        }
+
+        string passengerPath = "passengerPath=missing";
+        if (passenger != Entity.Null && em.Exists(passenger))
+        {
+            passengerPath =
+                $"passengerGrid={(em.HasComponent<UnitGrid>(passenger) ? em.GetComponentData<UnitGrid>(passenger).Cell.ToString() : "none")} " +
+                $"target={(em.HasComponent<UnitTarget>(passenger) ? em.GetComponentData<UnitTarget>(passenger).Cell.ToString() : "none")} " +
+                $"request={(em.HasComponent<UnitPathRequest>(passenger) ? em.GetComponentData<UnitPathRequest>(passenger).Goal.ToString() : "none")} " +
+                $"follow={em.HasComponent<UnitPathFollow>(passenger)} " +
+                $"range={(em.HasComponent<UnitPathRange>(passenger) ? em.GetComponentData<UnitPathRange>(passenger).Length.ToString() : "none")} " +
+                $"manual={em.HasComponent<ManualMoveOrderTag>(passenger)} " +
+                $"airMove={em.HasComponent<UnitAirMovement>(passenger)} airState={em.HasComponent<UnitAirComponent>(passenger)}";
+        }
+
+        return
+            $"pathfindingSnapshot:grid={gridCount} blockerGrid={blockerGridCount} runtimeState={runtimeStateCount} " +
+            $"requests={requestCount} follows={followCount} pending=({pendingState}) {passengerPath}";
+    }
+
+    private static int CountEntities(EntityManager em, params ComponentType[] componentTypes)
+    {
+        using EntityQuery query = em.CreateEntityQuery(componentTypes);
+        return query.CalculateEntityCount();
+    }
+
+    private static int CountEntitiesIncludingDisabled(EntityManager em, params ComponentType[] componentTypes)
+    {
+        using EntityQuery query = em.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = componentTypes,
+            Options = EntityQueryOptions.IncludeDisabledEntities
+        });
+        return query.CalculateEntityCount();
+    }
+
+    private static bool HasTransportBoardingCleanupResidue(EntityManager em, out string residue)
+    {
+        int planeCount = CountInstantiatedUnitsIncludingDisabled(em, PlaneTransportSourceKey);
+        int vehicleCount = CountInstantiatedUnitsIncludingDisabled(em, VehicleCargoSourceKey);
+        int passengerStateCount = CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportPassenger>()) +
+                                  CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportCargoPassenger>());
+        int dropStateCount = CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportCargoDropComponent>()) +
+                             CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportParachuteDropComponent>()) +
+                             CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportAirdropSettleComponent>()) +
+                             CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportAirdropVisualCleanup>());
+        int runtimeGridCount = CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<BattleScenarioLabRuntimeGridTag>()) +
+                               CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<BattleScenarioLabRuntimeGameplayStateTag>());
+        int commandCount = CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<BattleScenarioLabCommandTag>());
+
+        residue =
+            $"plane={planeCount}, vehicle={vehicleCount}, passengerState={passengerStateCount}, " +
+            $"dropState={dropStateCount}, runtimeGrid={runtimeGridCount}, command={commandCount}";
+        return planeCount > 0 ||
+               vehicleCount > 0 ||
+               passengerStateCount > 0 ||
+               dropStateCount > 0 ||
+               runtimeGridCount > 0 ||
+               commandCount > 0;
+    }
+
+    private static bool HasTransportBoardingRunAgainResidue(EntityManager em, out string residue)
+    {
+        int planeCount = CountInstantiatedUnitsIncludingDisabled(em, PlaneTransportSourceKey);
+        int vehicleCount = CountInstantiatedUnitsIncludingDisabled(em, VehicleCargoSourceKey);
+        int passengerStateCount = CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportPassenger>()) +
+                                  CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportCargoPassenger>());
+        int dropStateCount = CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportCargoDropComponent>()) +
+                             CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportParachuteDropComponent>()) +
+                             CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportAirdropSettleComponent>()) +
+                             CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<UnitTransportAirdropVisualCleanup>());
+        int runtimeGridCount = CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<BattleScenarioLabRuntimeGridTag>()) +
+                               CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<BattleScenarioLabRuntimeGameplayStateTag>());
+        int commandCount = CountEntitiesIncludingDisabled(em, ComponentType.ReadOnly<BattleScenarioLabCommandTag>());
+
+        residue =
+            $"plane={planeCount}, vehicle={vehicleCount}, passengerState={passengerStateCount}, " +
+            $"dropState={dropStateCount}, runtimeGrid={runtimeGridCount}, command={commandCount}";
+        return planeCount != 1 ||
+               vehicleCount != 1 ||
+               passengerStateCount != 2 ||
+               dropStateCount != 0 ||
+               runtimeGridCount != 2 ||
+               commandCount != 0;
+    }
+
+    private static string BuildTransportBoardingCleanupSnapshot(EntityManager em)
+    {
+        HasTransportBoardingCleanupResidue(em, out string residue);
+        return $"cleanupSnapshot:{residue}";
+    }
+
+    private static bool ValidateTransportBoardingOverlayCurrent(string scenarioId, out string reason)
+    {
+        Text titleText = GameObject.Find("Title")?.GetComponent<Text>();
+        Text statusText = GameObject.Find("Status")?.GetComponent<Text>();
+        if (titleText == null || statusText == null)
+        {
+            reason = "transport boarding overlay title/status text was not found";
+            return false;
+        }
+
+        if (!TransportBoardingScenarioCatalog.TryGetScenario(scenarioId, out TransportBoardingScenarioDescriptor descriptor))
+        {
+            reason = $"transport boarding overlay expected unknown scenario '{scenarioId}'";
+            return false;
+        }
+
+        bool titleMatches = titleText.text.Contains(descriptor.DisplayName, StringComparison.Ordinal);
+        bool statusMatches = statusText.text.Contains("VISUAL PLAYBACK", StringComparison.Ordinal);
+        if (titleMatches && statusMatches)
+        {
+            reason = string.Empty;
+            return true;
+        }
+
+        reason =
+            $"transport boarding overlay mismatch for {scenarioId}: " +
+            $"title='{titleText.text}', status='{statusText.text}'";
+        return false;
+    }
+
+    private static bool ValidateTransportBoardingCameraReset(out string reason)
+    {
+        Camera camera = UnityEngine.Object.FindAnyObjectByType<Camera>();
+        if (camera == null)
+        {
+            reason = "transport boarding cleanup could not find a scenario camera";
+            return false;
+        }
+
+        float distance = Vector3.Distance(camera.transform.position, TransportBoardingDefaultCameraPosition);
+        if (distance <= 0.1f)
+        {
+            reason = string.Empty;
+            return true;
+        }
+
+        reason =
+            "transport boarding camera was not reset after cleanup: " +
+            $"position={camera.transform.position}, expected={TransportBoardingDefaultCameraPosition}, distance={distance:0.00}";
+        return false;
+    }
+
     private static bool TryStartLiveEcsPlaybackVariant()
     {
         BattleScenarioLabPlayBootstrap bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
@@ -1158,6 +2169,85 @@ public static class BattleScenarioLabValidationRunner
         SessionState.SetBool(VisualSwitchSeenAd011AttackingJetTargetKey, false);
         SessionState.SetBool(VisualSwitchSeenAd011AttackingJetAirProjectileKey, false);
         SessionState.SetBool(VisualSwitchSeenAd011AttackingJetImpactKey, false);
+    }
+
+    private static void ResetTransportBoardingVisualObservationState()
+    {
+        SessionState.SetBool(TransportBoardingVisualSeenRegistryKey, false);
+        SessionState.SetBool(TransportBoardingVisualSeenTransportKey, false);
+        SessionState.SetBool(TransportBoardingVisualSeenPassengerKey, false);
+        SessionState.SetBool(TransportBoardingVisualSeenAirPickupKey, false);
+        SessionState.SetBool(TransportBoardingVisualSeenBoardedKey, false);
+        SessionState.SetBool(TransportBoardingVisualSeenRopeDropKey, false);
+        SessionState.SetBool(TransportBoardingVisualSeenPlaneDoorKey, false);
+        SessionState.SetBool(TransportBoardingVisualSeenParachuteDropKey, false);
+        SessionState.SetBool(TransportBoardingVisualSeenCargoDropKey, false);
+        SessionState.SetBool(TransportBoardingVisualSeenExitedKey, false);
+        SessionState.SetBool(TransportBoardingVisualSeenVehiclePassengerKey, false);
+        SessionState.SetBool(TransportBoardingVisualSeenSoldierExitedKey, false);
+        SessionState.SetBool(TransportBoardingVisualSeenVehicleExitedKey, false);
+    }
+
+    private static void ResetTransportBoardingCleanupObservationState()
+    {
+        SessionState.SetBool(TransportBoardingCleanupSeenTransportKey, false);
+        SessionState.SetBool(TransportBoardingCleanupSeenPassengerKey, false);
+        SessionState.SetBool(TransportBoardingCleanupSeenCargoDropKey, false);
+    }
+
+    private static string ResolveTransportBoardingVisualPassMessage(string scenarioId)
+    {
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb002HelicopterBoardRopeExitId, StringComparison.Ordinal))
+        {
+            return "TB-002 production visual playback observed registry, helicopter transport, soldier passenger, hidden onboard state, rope drop state, and visible settled rope-exit state.";
+        }
+
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb003HelicopterAirPickupId, StringComparison.Ordinal))
+        {
+            return "TB-003 production visual playback observed registry, airborne helicopter pickup command, soldier passenger, hidden onboard state, rope drop state, and visible settled rope-exit state.";
+        }
+
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb005PlaneRampBoardGroundExitId, StringComparison.Ordinal))
+        {
+            return "TB-005 production visual playback observed registry, transport plane, soldier passenger, hidden onboard state, plane door/ramp request, and visible unloaded ramp-exit state.";
+        }
+
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb006PlaneSoldierAirdropId, StringComparison.Ordinal))
+        {
+            return "TB-006 production visual playback observed registry, transport plane, hidden soldier passenger, production parachute drop state, and visible settled airdrop state.";
+        }
+
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb007PlaneVehicleCargoGroundExitId, StringComparison.Ordinal))
+        {
+            return "TB-007 production visual playback observed registry, transport plane, vehicle cargo passenger, hidden onboard cargo state, plane door/ramp request, and visible unloaded vehicle ramp-exit state.";
+        }
+
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb008PlaneVehicleCargoAirdropId, StringComparison.Ordinal))
+        {
+            return "TB-008 production visual playback observed registry, transport plane, hidden vehicle cargo passenger, production cargo drop state, and visible settled cargo-drop state.";
+        }
+
+        if (string.Equals(scenarioId, TransportBoardingScenarioCatalog.Tb009PlaneMixedLoadAirdropId, StringComparison.Ordinal))
+        {
+            return "TB-009 production visual playback observed registry, transport plane, hidden soldier and vehicle cargo passengers, production parachute and cargo-drop states, and visible settled mixed-load airdrop state.";
+        }
+
+        return "TB-001 production visual playback observed registry, APC transport, soldier passenger, hidden onboard state, and visible unloaded ground-exit state.";
+    }
+
+    private static bool IsPlaneDoorOpening(EntityManager em, Entity transport)
+    {
+        if (transport == Entity.Null || !em.Exists(transport))
+            return false;
+
+        if (em.HasComponent<UnitTransportPlaneDoorOpenRequest>(transport))
+            return true;
+
+        if (!em.HasComponent<UnitTransportPlaneDoorState>(transport))
+            return false;
+
+        UnitTransportPlaneDoorState doorState = em.GetComponentData<UnitTransportPlaneDoorState>(transport);
+        return doorState.TargetOpen != 0 || doorState.Open01 > 0.01f;
     }
 
     private static void TrackAirTargetSwitchState(
@@ -1623,6 +2713,67 @@ public static class BattleScenarioLabValidationRunner
         return false;
     }
 
+    private static int CountInstantiatedUnitsIncludingDisabled(EntityManager em, string sourceKey)
+    {
+        using EntityQuery query = em.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[] { ComponentType.ReadOnly<UnitSourcePrefabKey>() },
+            Options = EntityQueryOptions.IncludeDisabledEntities
+        });
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        int count = 0;
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!em.Exists(entity) || em.HasComponent<Prefab>(entity))
+                continue;
+
+            string candidate = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
+            if (string.Equals(candidate, sourceKey, StringComparison.OrdinalIgnoreCase))
+                count++;
+        }
+
+        return count;
+    }
+
+    private static bool TryFindInstantiatedUnitIncludingDisabled(EntityManager em, string sourceKey, out Entity found)
+    {
+        using EntityQuery query = em.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[] { ComponentType.ReadOnly<UnitSourcePrefabKey>() },
+            Options = EntityQueryOptions.IncludeDisabledEntities
+        });
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!em.Exists(entity) || em.HasComponent<Prefab>(entity))
+                continue;
+
+            string candidate = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
+            if (string.Equals(candidate, sourceKey, StringComparison.OrdinalIgnoreCase))
+            {
+                found = entity;
+                return true;
+            }
+        }
+
+        found = Entity.Null;
+        return false;
+    }
+
+    private static int GetTransportPassengerCount(EntityManager em, Entity transport)
+    {
+        if (transport == Entity.Null ||
+            !em.Exists(transport) ||
+            !em.HasBuffer<UnitTransportPassengerElement>(transport))
+        {
+            return -1;
+        }
+
+        return em.GetBuffer<UnitTransportPassengerElement>(transport).Length;
+    }
+
     private static bool HasAnyEntityWith<T>(EntityManager em)
         where T : unmanaged, IComponentData
     {
@@ -1732,6 +2883,78 @@ public static class BattleScenarioLabValidationRunner
             $"Next visual switch validation {(passed ? "passed" : "failed")}: {message}");
     }
 
+    private static void CompleteTransportBoardingCleanupValidation(bool passed, string message)
+    {
+        EditorApplication.update -= OnTransportBoardingCleanupValidationUpdate;
+        Application.logMessageReceived -= OnTransportBoardingCleanupValidationLog;
+        SessionState.EraseBool(TransportBoardingCleanupActiveKey);
+        SessionState.EraseFloat(TransportBoardingCleanupStartedAtKey);
+        SessionState.EraseBool(TransportBoardingCleanupRunAgainModeKey);
+        SessionState.EraseInt(TransportBoardingCleanupPhaseKey);
+        SessionState.EraseFloat(TransportBoardingCleanupPhaseStartedAtKey);
+        SessionState.EraseString(TransportBoardingCleanupFailureKey);
+        SessionState.EraseBool(TransportBoardingCleanupSeenTransportKey);
+        SessionState.EraseBool(TransportBoardingCleanupSeenPassengerKey);
+        SessionState.EraseBool(TransportBoardingCleanupSeenCargoDropKey);
+
+        if (EditorApplication.isPlaying)
+        {
+            SessionState.SetBool(LiveEcsPlaybackPendingExitKey, true);
+            SessionState.SetBool(LiveEcsPlaybackPendingPassedKey, passed);
+            SessionState.SetString(
+                LiveEcsPlaybackPendingMessageKey,
+                $"Transport boarding cleanup validation {(passed ? "passed" : "failed")}: {message}");
+            HookLiveEcsPlaybackPendingExit();
+            EditorApplication.ExitPlaymode();
+            return;
+        }
+
+        FinishLiveEcsPlaybackValidationExit(
+            passed,
+            $"Transport boarding cleanup validation {(passed ? "passed" : "failed")}: {message}");
+    }
+
+    private static void CompleteTransportBoardingVisualValidation(bool passed, string message)
+    {
+        EditorApplication.update -= OnTransportBoardingVisualValidationUpdate;
+        Application.logMessageReceived -= OnTransportBoardingVisualValidationLog;
+        SessionState.EraseBool(TransportBoardingVisualActiveKey);
+        SessionState.EraseFloat(TransportBoardingVisualStartedAtKey);
+        string scenarioId = SessionState.GetString(
+            TransportBoardingVisualScenarioIdKey,
+            TransportBoardingScenarioCatalog.Tb001GroundVehicleBoardExitId);
+        SessionState.EraseString(TransportBoardingVisualScenarioIdKey);
+        SessionState.EraseString(TransportBoardingVisualTransportSourceKey);
+        SessionState.EraseBool(TransportBoardingVisualScenarioStartedKey);
+        SessionState.EraseString(TransportBoardingVisualFailureKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenRegistryKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenTransportKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenPassengerKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenAirPickupKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenBoardedKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenRopeDropKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenPlaneDoorKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenParachuteDropKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenCargoDropKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenExitedKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenVehiclePassengerKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenSoldierExitedKey);
+        SessionState.EraseBool(TransportBoardingVisualSeenVehicleExitedKey);
+
+        string finalMessage = $"Transport boarding {scenarioId} visual validation {(passed ? "passed" : "failed")}: {message}";
+        if (EditorApplication.isPlaying)
+        {
+            SessionState.SetBool(LiveEcsPlaybackPendingExitKey, true);
+            SessionState.SetBool(LiveEcsPlaybackPendingPassedKey, passed);
+            SessionState.SetString(LiveEcsPlaybackPendingMessageKey, finalMessage);
+            HookLiveEcsPlaybackPendingExit();
+            EditorApplication.ExitPlaymode();
+            return;
+        }
+
+        FinishLiveEcsPlaybackValidationExit(passed, finalMessage);
+    }
+
     private static void HookLiveEcsPlaybackPendingExit()
     {
         EditorApplication.update -= OnLiveEcsPlaybackPendingExitUpdate;
@@ -1783,6 +3006,23 @@ public static class BattleScenarioLabValidationRunner
             element.FindPropertyRelative("RadarDistanceFromLauncher").floatValue = variant.RadarDistanceFromLauncher;
             element.FindPropertyRelative("ExpectedOutcome").enumValueIndex = (int)variant.ExpectedOutcome;
         }
+    }
+
+    private static BattleScenarioVariant CreateTransportBoardingVariant(TransportBoardingScenarioDescriptor descriptor)
+    {
+        return new BattleScenarioVariant
+        {
+            VariantId = descriptor.ScenarioId,
+            Label = descriptor.DisplayName,
+            SupportMode = BattleScenarioSupportMode.None,
+            IncomingThreatKind = BattleScenarioIncomingThreatKind.GroundMissile,
+            IncomingThreatSpeedMultiplier = 1f,
+            IncomingThreatStartDistance = 0f,
+            IncomingThreatAltitude = 0f,
+            LauncherCount = 0,
+            RadarDistanceFromLauncher = 0f,
+            ExpectedOutcome = BattleScenarioExpectedOutcome.Baseline
+        };
     }
 
     private static void WriteSuccessCriteria(SerializedProperty criteria)
@@ -1862,7 +3102,7 @@ public static class BattleScenarioLabValidationRunner
 
         SerializedObject serialized = new(config);
         SerializedProperty prefabs = serialized.FindProperty("unitSpawnPrefabs");
-        if (prefabs == null || prefabs.arraySize < 6)
+        if (prefabs == null || prefabs.arraySize < 11)
             throw new InvalidOperationException("Scenario Lab unit prefab registry must contain the Scenario Lab production prefabs.");
 
         RequirePrefabInRegistry(prefabs, "Unit_Veh_Missle_Launcher_Ground");
@@ -1871,6 +3111,11 @@ public static class BattleScenarioLabValidationRunner
         RequirePrefabInRegistry(prefabs, JetTargetSourceKey);
         RequirePrefabInRegistry(prefabs, HelicopterTargetSourceKey);
         RequirePrefabInRegistry(prefabs, DroneTargetSourceKey);
+        RequirePrefabInRegistry(prefabs, SoldierSourceKey);
+        RequirePrefabInRegistry(prefabs, GroundVehicleTransportSourceKey);
+        RequirePrefabInRegistry(prefabs, HelicopterTransportSourceKey);
+        RequirePrefabInRegistry(prefabs, PlaneTransportSourceKey);
+        RequirePrefabInRegistry(prefabs, VehicleCargoSourceKey);
     }
 
     private static void RequirePrefabInRegistry(SerializedProperty prefabs, string prefabName)

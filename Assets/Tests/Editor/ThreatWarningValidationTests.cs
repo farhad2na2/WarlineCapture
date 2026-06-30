@@ -24,6 +24,8 @@ public sealed class ThreatWarningValidationTests
             tests.ThreatDetectionWarningSystem_GroundRadarWarnsOnlyWhenNewGroundThreatEntersRadius();
             tests.ThreatDetectionWarningSystem_GroundRadarIgnoresEnemySoldiersMovingTowardSensor();
             tests.ThreatDetectionWarningSystem_IgnoresVehiclesMovingAwayFromSensor();
+            tests.ThreatDetectionWarningSystem_CloseAirThreatWarnsWithoutDetectorOrApproachOrder();
+            tests.ThreatDetectionWarningSystem_CloseGroundVehicleWarnsWithoutDetectorButIgnoresSoldiers();
             tests.ThreatDetectionWarningSystem_SatelliteWarnsOnlyForAirThreats();
             tests.ThreatDetectionWarningSystem_CompletesPendingUnitGridWriterBeforeChunkRead();
             Debug.Log("[ThreatWarningValidation] result=Passed");
@@ -87,7 +89,7 @@ public sealed class ThreatWarningValidationTests
             RadiusCells = 20
         });
         CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(30, 20), false, 100, 5f, true, new int2(20, 20));
-        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(24, 20), true, 100, 15f, false, new int2(20, 20));
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(36, 20), true, 100, 15f, false, new int2(20, 20));
 
         SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
         try
@@ -158,7 +160,7 @@ public sealed class ThreatWarningValidationTests
             RadiusCells = 30
         });
 
-        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(30, 20), false, 100, 5f, true, new int2(45, 20));
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(35, 20), false, 100, 5f, true, new int2(45, 20));
         CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(65, 50), true, 100, 15f, false, new int2(90, 50));
 
         SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
@@ -178,6 +180,66 @@ public sealed class ThreatWarningValidationTests
     }
 
     [Test]
+    public void ThreatDetectionWarningSystem_CloseAirThreatWarnsWithoutDetectorOrApproachOrder()
+    {
+        using var world = new World("ThreatDetectionWarningSystem_CloseAir");
+        EntityManager em = world.EntityManager;
+        CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(20, 20), false, 100, 0f);
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(30, 20), true, 100, 0f);
+
+        SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
+        try
+        {
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+            ThreatWarningRuntimeState.Reset();
+
+            system.Update(world.Unmanaged);
+            Assert.IsTrue(ThreatWarningRuntimeState.HasPendingWarning);
+            Assert.AreEqual(ThreatWarningType.Air, ThreatWarningRuntimeState.PendingType);
+            Assert.That(ThreatWarningRuntimeState.PendingEtaSeconds, Is.EqualTo(0f).Within(0.01f));
+
+            ThreatWarningRuntimeState.ClearPendingWarning();
+            system.Update(world.Unmanaged);
+            Assert.IsFalse(ThreatWarningRuntimeState.HasPendingWarning);
+        }
+        finally
+        {
+            InitialUnitsRuntimeState.PlayRequested = false;
+            ThreatWarningRuntimeState.Reset();
+        }
+    }
+
+    [Test]
+    public void ThreatDetectionWarningSystem_CloseGroundVehicleWarnsWithoutDetectorButIgnoresSoldiers()
+    {
+        using var world = new World("ThreatDetectionWarningSystem_CloseGroundVehicle");
+        EntityManager em = world.EntityManager;
+        CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(20, 20), false, 100, 0f);
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(26, 20), false, 100, 0f);
+
+        SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
+        try
+        {
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+            ThreatWarningRuntimeState.Reset();
+
+            system.Update(world.Unmanaged);
+            Assert.IsFalse(ThreatWarningRuntimeState.HasPendingWarning);
+
+            CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(30, 20), false, 100, 0f, true);
+            system.Update(world.Unmanaged);
+            Assert.IsTrue(ThreatWarningRuntimeState.HasPendingWarning);
+            Assert.AreEqual(ThreatWarningType.Ground, ThreatWarningRuntimeState.PendingType);
+            Assert.That(ThreatWarningRuntimeState.PendingEtaSeconds, Is.EqualTo(0f).Within(0.01f));
+        }
+        finally
+        {
+            InitialUnitsRuntimeState.PlayRequested = false;
+            ThreatWarningRuntimeState.Reset();
+        }
+    }
+
+    [Test]
     public void ThreatDetectionWarningSystem_SatelliteWarnsOnlyForAirThreats()
     {
         using var world = new World("ThreatDetectionWarningSystem_Air");
@@ -188,7 +250,7 @@ public sealed class ThreatWarningValidationTests
             Kind = (byte)ThreatDetectionKind.Air,
             RadiusCells = 30
         });
-        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(55, 50), false, 100, 5f, true, new int2(50, 50));
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(75, 50), false, 100, 5f, true, new int2(50, 50));
         CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(65, 50), true, 100, 15f, false, new int2(50, 50));
 
         SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();

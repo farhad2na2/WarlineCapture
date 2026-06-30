@@ -10,6 +10,7 @@ public partial struct ThreatDetectionWarningSystem : ISystem
 {
     private const byte PlayerFactionId = FactionIdentity.PlayerFactionId;
     private const float FallbackThreatSpeed = 5f;
+    private const int CloseContactWarningRadiusCells = 12;
 
     private NativeParallelHashSet<Entity> _previousGroundThreats;
     private NativeParallelHashSet<Entity> _previousAirThreats;
@@ -33,7 +34,6 @@ public partial struct ThreatDetectionWarningSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<ThreatDetector>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
         _previousGroundThreats = new NativeParallelHashSet<Entity>(64, Allocator.Persistent);
         _previousAirThreats = new NativeParallelHashSet<Entity>(64, Allocator.Persistent);
@@ -304,6 +304,7 @@ public partial struct ThreatDetectionWarningSystem : ISystem
                         detector.RadiusCells,
                         detectsAir,
                         detectsGround,
+                        requireApproach: true,
                         ref factionType,
                         ref gridType,
                         ref healthType,
@@ -311,7 +312,49 @@ public partial struct ThreatDetectionWarningSystem : ISystem
                 }
             }
 
+            ScanCloseContactThreats(ref factionType, ref gridType, ref healthType, ref scan);
             Result[0] = scan;
+        }
+
+        private void ScanCloseContactThreats(
+            ref ComponentTypeHandle<Faction> factionType,
+            ref ComponentTypeHandle<UnitGrid> gridType,
+            ref ComponentTypeHandle<UnitHealth> healthType,
+            ref ThreatScanResult scan)
+        {
+            for (int sensorChunkIndex = 0; sensorChunkIndex < TargetChunks.Length; sensorChunkIndex++)
+            {
+                ArchetypeChunk sensorChunk = TargetChunks[sensorChunkIndex];
+                NativeArray<Entity> sensorEntities = sensorChunk.GetNativeArray(EntityType);
+                NativeArray<Faction> sensorFactions = sensorChunk.GetNativeArray(ref factionType);
+                NativeArray<UnitGrid> sensorGrids = sensorChunk.GetNativeArray(ref gridType);
+                NativeArray<UnitHealth> sensorHealths = sensorChunk.GetNativeArray(ref healthType);
+
+                for (int i = 0; i < sensorEntities.Length; i++)
+                {
+                    Entity sensor = sensorEntities[i];
+                    Faction sensorFaction = sensorFactions[i];
+                    if (sensorFaction.Id != PlayerFactionId)
+                        continue;
+
+                    UnitHealth sensorHealth = sensorHealths[i];
+                    if (sensorHealth.Current <= 0)
+                        continue;
+
+                    ScanTargetsForSensor(
+                        sensor,
+                        sensorFaction,
+                        sensorGrids[i].Cell,
+                        CloseContactWarningRadiusCells,
+                        detectsAir: true,
+                        detectsGround: true,
+                        requireApproach: false,
+                        ref factionType,
+                        ref gridType,
+                        ref healthType,
+                        ref scan);
+                }
+            }
         }
 
         private void ScanTargetsForSensor(
@@ -321,6 +364,7 @@ public partial struct ThreatDetectionWarningSystem : ISystem
             int detectorRadiusCells,
             bool detectsAir,
             bool detectsGround,
+            bool requireApproach,
             ref ComponentTypeHandle<Faction> factionType,
             ref ComponentTypeHandle<UnitGrid> gridType,
             ref ComponentTypeHandle<UnitHealth> healthType,
@@ -349,20 +393,29 @@ public partial struct ThreatDetectionWarningSystem : ISystem
                         continue;
 
                     bool isAirTarget = TargetLookups.AirLookup.HasComponent(target);
-                    if ((detectsAir && !isAirTarget) || (detectsGround && isAirTarget))
-                        continue;
-                    if (detectsGround && !IsGroundVehicle(TargetLookups, target))
-                        continue;
+                    if (isAirTarget)
+                    {
+                        if (!detectsAir)
+                            continue;
+                    }
+                    else
+                    {
+                        if (!detectsGround || !IsGroundVehicle(TargetLookups, target))
+                            continue;
+                    }
 
                     int2 targetCell = targetGrids[targetIndex].Cell;
-                    if (!IsMovingTowardCell(TargetLookups, target, targetCell, sensorCell))
-                        continue;
-
                     int cellDistance = ChebyshevDistance(sensorCell, targetCell);
                     if (cellDistance > detectorRadiusCells)
                         continue;
 
-                    float etaSeconds = EstimateEtaSeconds(TargetLookups, target, sensorCell, targetCell, CellSize);
+                    bool movingTowardSensor = IsMovingTowardCell(TargetLookups, target, targetCell, sensorCell);
+                    if (requireApproach && !movingTowardSensor)
+                        continue;
+
+                    float etaSeconds = movingTowardSensor
+                        ? EstimateEtaSeconds(TargetLookups, target, sensorCell, targetCell, CellSize)
+                        : 0f;
                     RegisterThreat(target, isAirTarget, etaSeconds, ref scan);
                 }
             }

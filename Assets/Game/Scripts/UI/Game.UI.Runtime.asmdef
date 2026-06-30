@@ -5,6 +5,7 @@
         "Game.Catalog.Contracts",
         "Game.Tactical.Contracts",
         "Game.UI.Contracts",
+        "Unity.InputSystem",
         "Unity.RenderPipelines.Universal.Runtime",
         "Unity.TextMeshPro",
         "UnityEngine.UI"

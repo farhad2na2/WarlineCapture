@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, IInitializePotentialDragHandler, IDragHandler, IPointerUpHandler, IPointerClickHandler
 {
     internal const float ViewportDragHitPadding = 18f;
-    private const string DragLogTag = "[FullMapViewportDrag]";
 
     [SerializeField] private Image mapImage;
     [SerializeField] private RectTransform mapRect;
@@ -257,14 +256,13 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, II
         if (eventData == null)
             return;
 
-        TryBeginViewportDrag(eventData.position, eventData.pressEventCamera, "view");
+        TryBeginViewportDrag(eventData.position, eventData.pressEventCamera);
     }
 
     public void OnInitializePotentialDrag(PointerEventData eventData)
     {
         if (eventData != null)
             eventData.useDragThreshold = false;
-        Debug.Log($"{DragLogTag} initializePotentialDrag frame={Time.frameCount} view={name} pos={FormatPointerPosition(eventData)} useDragThreshold={(eventData != null ? eventData.useDragThreshold.ToString() : "null")}");
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -272,22 +270,20 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, II
         if (eventData == null)
             return;
 
-        DragViewport(eventData.position, eventData.pressEventCamera, "view");
+        DragViewport(eventData.position, eventData.pressEventCamera);
     }
 
-    internal bool TryBeginViewportDrag(Vector2 screenPosition, Camera eventCamera, string source)
+    internal bool TryBeginViewportDrag(Vector2 screenPosition, Camera eventCamera)
     {
         _dragMoved = false;
         _draggingViewport = false;
         bool containsViewport = ContainsViewportDragPoint(screenPosition, eventCamera);
-        Debug.Log($"{DragLogTag} {source}PointerDown frame={Time.frameCount} view={name} pos={FormatVector2(screenPosition)} allow={_allowViewportDrag} show={_showViewport} viewportExists={viewportRect != null} viewportActive={IsViewportActive()} containsViewport={containsViewport}");
 
         if (!_allowViewportDrag ||
             viewportRect == null ||
             !viewportRect.gameObject.activeInHierarchy ||
             !containsViewport)
         {
-            Debug.Log($"{DragLogTag} {source}PointerDownRejected frame={Time.frameCount} reason={ResolvePointerDownRejectReason(containsViewport)}");
             return false;
         }
 
@@ -297,48 +293,28 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, II
             _viewportDragOffset = new Vector2(
                 Mathf.Clamp(pointerInParent.x - viewportInParent.xMin, 0f, viewportInParent.width),
                 Mathf.Clamp(viewportInParent.yMax - pointerInParent.y, 0f, viewportInParent.height));
-            Debug.Log($"{DragLogTag} {source}PointerDownAccepted frame={Time.frameCount} pointerInParent={FormatVector2(pointerInParent)} viewportInParent={FormatRect(viewportInParent)} dragOffset={FormatVector2(_viewportDragOffset)}");
-        }
-        else
-        {
-            Debug.Log($"{DragLogTag} {source}PointerDownAccepted frame={Time.frameCount} offsetUnavailable=true");
         }
 
         _draggingViewport = true;
         return true;
     }
 
-    internal bool DragViewport(Vector2 screenPosition, Camera eventCamera, string source)
+    internal bool DragViewport(Vector2 screenPosition, Camera eventCamera)
     {
         if (!_allowViewportDrag)
-        {
-            Debug.Log($"{DragLogTag} {source}DragRejected frame={Time.frameCount} reason=ViewportDragDisabled pos={FormatVector2(screenPosition)}");
             return false;
-        }
 
         if (!_draggingViewport)
-        {
-            Debug.Log($"{DragLogTag} {source}DragRejected frame={Time.frameCount} reason=NotDraggingViewport pos={FormatVector2(screenPosition)}");
             return false;
-        }
 
         if (!TryGetPointerLocalPointInViewportParent(screenPosition, eventCamera, out Vector2 pointerInParent))
-        {
-            Debug.Log($"{DragLogTag} {source}DragRejected frame={Time.frameCount} reason=PointerParentPointFailed pos={FormatVector2(screenPosition)}");
             return false;
-        }
 
         if (!TryGetMapRectInViewportParent(MapRect, out Rect map))
-        {
-            Debug.Log($"{DragLogTag} {source}DragRejected frame={Time.frameCount} reason=MapRectInViewportParentFailed pos={FormatVector2(screenPosition)}");
             return false;
-        }
 
         if (!TryGetRectInParentSpace(viewportRect, viewportRect.parent as RectTransform, out Rect viewportInParent))
-        {
-            Debug.Log($"{DragLogTag} {source}DragRejected frame={Time.frameCount} reason=ViewportRectInParentFailed pos={FormatVector2(screenPosition)}");
             return false;
-        }
 
         _dragMoved = true;
         float rectWidth = Mathf.Max(6f, viewportInParent.width);
@@ -360,25 +336,22 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, II
             normalizedHeight);
         _hasManualViewportOverride = true;
         SetViewportNormalizedRect(_manualViewportNormalizedRect);
-        Debug.Log($"{DragLogTag} {source}DragAccepted frame={Time.frameCount} pos={FormatVector2(screenPosition)} pointerInParent={FormatVector2(pointerInParent)} map={FormatRect(map)} viewport={FormatRect(viewportInParent)} normalizedCenter={FormatVector2(normalizedCenter)} manualRect={FormatRect(_manualViewportNormalizedRect)}");
         FocusRequested?.Invoke(normalizedCenter);
         return true;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        EndViewportDrag(eventData != null ? eventData.position : default, "view");
+        EndViewportDrag();
     }
 
-    internal void EndViewportDrag(Vector2 screenPosition, string source)
+    internal void EndViewportDrag()
     {
-        Debug.Log($"{DragLogTag} {source}PointerUp frame={Time.frameCount} view={name} pos={FormatVector2(screenPosition)} wasDragging={_draggingViewport} dragMoved={_dragMoved}");
         _draggingViewport = false;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log($"{DragLogTag} viewPointerClick frame={Time.frameCount} view={name} pos={FormatPointerPosition(eventData)} dragMoved={_dragMoved} dragging={_draggingViewport} openFullMap={_openFullMapOnClick} allowMapFocus={_allowMapFocus}");
         if (_dragMoved || _draggingViewport || viewportRect == null && !TryGetNormalizedPoint(eventData, out _))
             return;
 
@@ -507,7 +480,6 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, II
             relay = viewportRect.gameObject.AddComponent<MatchHudMinimapViewportDragRelay>();
 
         relay.Configure(this);
-        Debug.Log($"{DragLogTag} ensureViewportDragRelay frame={Time.frameCount} view={name} viewport={viewportRect.name} graphicRaycastTarget={(graphic != null ? graphic.raycastTarget.ToString() : "none")} relay={relay.GetType().Name}");
     }
 
     internal void NotifyZoomHeld(int direction, bool held)
@@ -524,38 +496,6 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, II
             button.gameObject.SetActive(visible);
     }
 
-    private bool IsViewportActive()
-    {
-        return viewportRect != null && viewportRect.gameObject.activeInHierarchy;
-    }
-
-    private string ResolvePointerDownRejectReason(bool containsViewport)
-    {
-        if (!_allowViewportDrag)
-            return "ViewportDragDisabled";
-        if (viewportRect == null)
-            return "MissingViewportRect";
-        if (!viewportRect.gameObject.activeInHierarchy)
-            return "ViewportInactive";
-        if (!containsViewport)
-            return "PointerOutsideViewport";
-        return "Unknown";
-    }
-
-    private static string FormatPointerPosition(PointerEventData eventData)
-    {
-        return eventData != null ? FormatVector2(eventData.position) : "null";
-    }
-
-    private static string FormatVector2(Vector2 value)
-    {
-        return $"({value.x:0.###},{value.y:0.###})";
-    }
-
-    private static string FormatRect(Rect rect)
-    {
-        return $"(x:{rect.x:0.###},y:{rect.y:0.###},w:{rect.width:0.###},h:{rect.height:0.###})";
-    }
 }
 
 public sealed class MatchHudMinimapZoomPressRelay : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
@@ -596,7 +536,6 @@ public sealed class MatchHudMinimapViewportDragRelay : MonoBehaviour, IPointerDo
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log($"[FullMapViewportDrag] relayPointerDown frame={Time.frameCount} relay={name} pos={(eventData != null ? eventData.position.ToString() : "null")} viewExists={_view != null}");
         _view?.OnPointerDown(eventData);
     }
 
@@ -609,13 +548,11 @@ public sealed class MatchHudMinimapViewportDragRelay : MonoBehaviour, IPointerDo
 
     public void OnDrag(PointerEventData eventData)
     {
-        Debug.Log($"[FullMapViewportDrag] relayDrag frame={Time.frameCount} relay={name} pos={(eventData != null ? eventData.position.ToString() : "null")} viewExists={_view != null}");
         _view?.OnDrag(eventData);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        Debug.Log($"[FullMapViewportDrag] relayPointerUp frame={Time.frameCount} relay={name} pos={(eventData != null ? eventData.position.ToString() : "null")} viewExists={_view != null}");
         _view?.OnPointerUp(eventData);
     }
 

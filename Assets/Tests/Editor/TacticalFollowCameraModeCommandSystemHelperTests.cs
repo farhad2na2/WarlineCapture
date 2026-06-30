@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -37,6 +38,12 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             RunCase(test => test.SelectedGroupPublishesCentroidAndRadius());
             passed++;
             RunCase(test => test.SelectedUnitPublishesFollowPoseBehindTarget());
+            passed++;
+            RunCase(test => test.SelectedLargeUnitUsesRenderBoundsForFollowDistanceAndHeight());
+            passed++;
+            RunCase(test => test.SelectedLargeUnitPrefersSelectionHitboxOverSafetyPaddedRenderBounds());
+            passed++;
+            RunCase(test => test.SelectedLargeFootprintUnitFramesWithoutRenderBounds());
             passed++;
             RunCase(test => test.ToggleExitPublishesRestorePoseWhenRestoreWasCaptured());
             passed++;
@@ -323,6 +330,94 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.AreEqual(0, pose.Orthographic);
         Assert.Greater(pose.FieldOfView, 1f);
         Assert.Greater(pose.PositionDampingSeconds, 0f);
+    }
+
+    [Test]
+    public void SelectedLargeUnitUsesRenderBoundsForFollowDistanceAndHeight()
+    {
+        Entity selected = CreateSelectedUnit(new float3(10f, 0f, 20f), quaternion.identity);
+        Entity renderChild = _em.CreateEntity(typeof(Parent), typeof(WorldRenderBounds));
+        _em.SetComponentData(renderChild, new Parent { Value = selected });
+        _em.SetComponentData(renderChild, new WorldRenderBounds
+        {
+            Value = new AABB
+            {
+                Center = new float3(10f, 3f, 22f),
+                Extents = new float3(8f, 3f, 14f)
+            }
+        });
+        DynamicBuffer<Child> children = _em.AddBuffer<Child>(selected);
+        children.Add(new Child { Value = renderChild });
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+
+        Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent target));
+        Assert.GreaterOrEqual(target.BoundsRadius, 16f);
+        Assert.GreaterOrEqual(target.DesiredDistance, 49f);
+        Assert.GreaterOrEqual(target.DesiredHeight, 18f);
+        Assert.AreEqual(22f, target.Center.z, 0.001f);
+        Assert.IsTrue(_system.TryReadPose(_em, out TacticalFollowCameraPoseComponent pose));
+        Assert.That(pose.DesiredPosition.z, Is.LessThan(-20f));
+        Assert.That(pose.DesiredPosition.y, Is.GreaterThan(18f));
+    }
+
+    [Test]
+    public void SelectedLargeUnitPrefersSelectionHitboxOverSafetyPaddedRenderBounds()
+    {
+        Entity selected = CreateSelectedUnit(new float3(10f, 0f, 20f), quaternion.identity);
+        _em.AddComponentData(selected, new UnitSelectionHitbox
+        {
+            Center = new float3(0f, 2f, 1f),
+            Extents = new float3(5f, 2f, 11f)
+        });
+        Entity renderChild = _em.CreateEntity(typeof(Parent), typeof(WorldRenderBounds));
+        _em.SetComponentData(renderChild, new Parent { Value = selected });
+        _em.SetComponentData(renderChild, new WorldRenderBounds
+        {
+            Value = new AABB
+            {
+                Center = new float3(10f, 32f, 20f),
+                Extents = new float3(64f, 64f, 64f)
+            }
+        });
+        DynamicBuffer<Child> children = _em.AddBuffer<Child>(selected);
+        children.Add(new Child { Value = renderChild });
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+
+        Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent target));
+        Assert.Greater(target.BoundsRadius, 11f);
+        Assert.Less(target.BoundsRadius, 20f);
+        Assert.Greater(target.DesiredDistance, 36f);
+        Assert.Less(target.DesiredDistance, 70f);
+        Assert.AreEqual(21f, target.Center.z, 0.001f);
+    }
+
+    [Test]
+    public void SelectedLargeFootprintUnitFramesWithoutRenderBounds()
+    {
+        Entity selected = CreateSelectedUnit(new float3(0f, 0f, 0f), quaternion.identity);
+        _em.AddComponentData(selected, new UnitFootprint { Size = new int2(17, 21) });
+        Entity grid = _em.CreateEntity(typeof(GridConfig));
+        _em.SetComponentData(grid, new GridConfig
+        {
+            Width = 200,
+            Height = 200,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+
+        Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent target));
+        Assert.GreaterOrEqual(target.BoundsRadius, 13f);
+        Assert.Greater(target.DesiredDistance, 40f);
+        Assert.Greater(target.DesiredHeight, 15f);
+        Assert.IsTrue(_system.TryReadPose(_em, out TacticalFollowCameraPoseComponent pose));
+        Assert.That(pose.DesiredPosition.z, Is.LessThan(-35f));
     }
 
     [Test]

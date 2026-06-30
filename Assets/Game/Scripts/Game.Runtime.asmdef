@@ -11,8 +11,10 @@
         "Unity.Burst",
         "Unity.Collections",
         "Unity.Entities",
+        "Unity.Entities.Graphics",
         "Unity.InputSystem",
         "Unity.Mathematics",
+        "Unity.Mathematics.Extensions",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.Universal.Runtime",
         "Unity.Transforms"

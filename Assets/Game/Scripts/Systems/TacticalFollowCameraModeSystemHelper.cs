@@ -1,6 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -9,15 +10,22 @@ public sealed class TacticalFollowCameraModeSystemHelper
     private const float SingleUnitRadius = 2f;
     private const float MinGroupRadius = 3f;
     private const float UnitDesiredDistance = 12f;
+    private const float UnitDesiredDistanceRadiusScale = 2.65f;
+    private const float UnitDesiredDistancePadding = 7f;
     private const float GroupDesiredDistancePadding = 10f;
     private const float UnitDesiredHeight = 5f;
+    private const float UnitDesiredHeightRadiusScale = 0.9f;
+    private const float UnitDesiredHeightPadding = 4f;
     private const float GroupDesiredHeightPadding = 4f;
     private const float BuildingDesiredDistancePadding = 14f;
+    private const float BuildingDesiredDistanceRadiusScale = 2.15f;
     private const float BuildingDesiredHeightPadding = 8f;
+    private const float BuildingDesiredHeightRadiusScale = 0.75f;
     private const float MinCameraGroundClearance = 3f;
     private const float MinTargetVerticalClearance = 3f;
     private const float MinTargetHorizontalClearance = 6f;
     private const float TargetRadiusHorizontalClearancePadding = 4f;
+    private const float RenderSafetyBoundsExtentThreshold = 60f;
     private const float TacticalFollowFieldOfView = 38f;
     private const float TacticalFollowPositionDampingSeconds = 0.32f;
     private const float TacticalFollowRotationDampingSeconds = 0.22f;
@@ -372,7 +380,7 @@ public sealed class TacticalFollowCameraModeSystemHelper
 
                 if (followableCount == 1)
                 {
-                    target = BuildSingleUnitTarget(singleEntity, singleTransform);
+                    target = BuildSingleUnitTarget(em, singleEntity, singleTransform);
                     return true;
                 }
 
@@ -418,7 +426,7 @@ public sealed class TacticalFollowCameraModeSystemHelper
         if (!IsFollowableUnitEntity(em, entity) || !em.HasComponent<LocalTransform>(entity))
             return false;
 
-        target = BuildSingleUnitTarget(entity, em.GetComponentData<LocalTransform>(entity));
+        target = BuildSingleUnitTarget(em, entity, em.GetComponentData<LocalTransform>(entity));
         return true;
     }
 
@@ -460,7 +468,7 @@ public sealed class TacticalFollowCameraModeSystemHelper
 
         if (followableCount == 1)
         {
-            target = BuildSingleUnitTarget(singleEntity, singleTransform);
+            target = BuildSingleUnitTarget(em, singleEntity, singleTransform);
             return true;
         }
 
@@ -561,7 +569,7 @@ public sealed class TacticalFollowCameraModeSystemHelper
 
         if (em.HasComponent<LocalTransform>(model.FocusedUnit))
         {
-            target = BuildSingleUnitTarget(model.FocusedUnit, em.GetComponentData<LocalTransform>(model.FocusedUnit));
+            target = BuildSingleUnitTarget(em, model.FocusedUnit, em.GetComponentData<LocalTransform>(model.FocusedUnit));
             return true;
         }
 
@@ -590,14 +598,30 @@ public sealed class TacticalFollowCameraModeSystemHelper
         return false;
     }
 
-    private static TacticalFollowCameraTargetComponent BuildSingleUnitTarget(Entity entity, LocalTransform transform)
+    private static TacticalFollowCameraTargetComponent BuildSingleUnitTarget(EntityManager em, Entity entity, LocalTransform transform)
     {
-        return BuildTarget(
+        float radius = ResolveSingleUnitFootprintRadius(em, entity, transform);
+        float3 center = transform.Position;
+        if (em.HasComponent<UnitSelectionHitbox>(entity) &&
+            TryResolveSelectionHitboxFrame(transform, em.GetComponentData<UnitSelectionHitbox>(entity), out FollowBoundsFrame selectionFrame))
+        {
+            radius = math.max(radius, selectionFrame.HorizontalRadius);
+            center = new float3(selectionFrame.Center.x, transform.Position.y, selectionFrame.Center.z);
+        }
+        else if (TryResolveRenderBoundsFrame(em, entity, out FollowBoundsFrame renderFrame))
+        {
+            radius = math.max(radius, renderFrame.HorizontalRadius);
+            center = new float3(renderFrame.Center.x, transform.Position.y, renderFrame.Center.z);
+        }
+
+        TacticalFollowCameraTargetComponent target = BuildTarget(
             TacticalFollowCameraTargetKind.Unit,
             entity,
-            transform.Position,
+            center,
             math.forward(transform.Rotation),
-            SingleUnitRadius);
+            radius);
+        ApplySingleUnitFraming(ref target);
+        return target;
     }
 
     private static TacticalFollowCameraTargetComponent BuildGroupTarget(NativeArray<LocalTransform> transforms)
@@ -644,9 +668,189 @@ public sealed class TacticalFollowCameraModeSystemHelper
             new Unity.Mathematics.float3(worldPosition.x, worldPosition.y, worldPosition.z),
             BuildingForwardHint,
             math.max(1f, boundsRadius));
-        target.DesiredDistance = math.max(UnitDesiredDistance, target.BoundsRadius + BuildingDesiredDistancePadding);
-        target.DesiredHeight = math.max(UnitDesiredHeight, target.BoundsRadius + BuildingDesiredHeightPadding);
+        target.LookAt = target.Center + new float3(0f, math.clamp(target.BoundsRadius * 0.35f, 3f, 28f), 0f);
+        target.DesiredDistance = math.max(
+            UnitDesiredDistance,
+            math.max(
+                target.BoundsRadius + BuildingDesiredDistancePadding,
+                (target.BoundsRadius * BuildingDesiredDistanceRadiusScale) + BuildingDesiredDistancePadding));
+        target.DesiredHeight = math.max(
+            UnitDesiredHeight,
+            math.max(
+                target.BoundsRadius + BuildingDesiredHeightPadding,
+                (target.BoundsRadius * BuildingDesiredHeightRadiusScale) + BuildingDesiredHeightPadding));
         return true;
+    }
+
+    private static void ApplySingleUnitFraming(ref TacticalFollowCameraTargetComponent target)
+    {
+        target.LookAt = target.Center + new float3(0f, math.clamp(target.BoundsRadius * 0.45f, 1f, 18f), 0f);
+        target.DesiredDistance = math.max(
+            UnitDesiredDistance,
+            (target.BoundsRadius * UnitDesiredDistanceRadiusScale) + UnitDesiredDistancePadding);
+        target.DesiredHeight = math.max(
+            UnitDesiredHeight,
+            (target.BoundsRadius * UnitDesiredHeightRadiusScale) + UnitDesiredHeightPadding);
+    }
+
+    private static float ResolveSingleUnitFootprintRadius(EntityManager em, Entity entity, LocalTransform transform)
+    {
+        float radius = math.max(SingleUnitRadius, math.abs(transform.Scale) * SingleUnitRadius);
+        if (em.HasComponent<UnitFootprint>(entity))
+        {
+            UnitFootprint footprint = em.GetComponentData<UnitFootprint>(entity);
+            int2 size = UnitFootprintUtility.ClampSize(footprint.Size);
+            float cellSize = ResolveGridCellSize(em);
+            float footprintRadius = math.length(new float2(size.x, size.y)) * 0.5f * cellSize;
+            radius = math.max(radius, footprintRadius);
+        }
+
+        return math.max(SingleUnitRadius, radius);
+    }
+
+    private static float ResolveGridCellSize(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        if (query.IsEmptyIgnoreFilter)
+            return 1f;
+
+        GridConfig grid = em.GetComponentData<GridConfig>(query.GetSingletonEntity());
+        return math.max(0.1f, grid.CellSize);
+    }
+
+    private static bool TryResolveSelectionHitboxFrame(
+        LocalTransform transform,
+        UnitSelectionHitbox hitbox,
+        out FollowBoundsFrame frame)
+    {
+        float scale = math.abs(transform.Scale);
+        float3 extents = math.abs(hitbox.Extents) * scale;
+        if (!math.all(math.isfinite(extents)) || math.cmax(extents) <= 0.01f)
+        {
+            frame = default;
+            return false;
+        }
+
+        float3 center = transform.Position + math.rotate(transform.Rotation, hitbox.Center * scale);
+        frame = new FollowBoundsFrame(
+            center,
+            math.max(math.length(new float2(extents.x, extents.z)), math.max(extents.x, extents.z)));
+        return frame.HorizontalRadius > 0.01f;
+    }
+
+    private static bool TryResolveRenderBoundsFrame(EntityManager em, Entity root, out FollowBoundsFrame frame)
+    {
+        var accumulator = new RenderBoundsAccumulator();
+        TryAccumulateRenderBounds(em, root, 0, ref accumulator);
+        if (!accumulator.HasBounds)
+        {
+            frame = default;
+            return false;
+        }
+
+        frame = accumulator.ToFrame();
+        return frame.HorizontalRadius > 0.01f;
+    }
+
+    private static void TryAccumulateRenderBounds(
+        EntityManager em,
+        Entity entity,
+        int depth,
+        ref RenderBoundsAccumulator accumulator)
+    {
+        if (entity == Entity.Null || !em.Exists(entity) || depth > 12)
+            return;
+
+        if (TryReadWorldAabb(em, entity, out AABB bounds))
+            accumulator.Encapsulate(bounds);
+
+        if (!em.HasBuffer<Child>(entity))
+            return;
+
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(entity);
+        for (int i = 0; i < children.Length; i++)
+            TryAccumulateRenderBounds(em, children[i].Value, depth + 1, ref accumulator);
+    }
+
+    private static bool TryReadWorldAabb(EntityManager em, Entity entity, out AABB bounds)
+    {
+        if (em.HasComponent<WorldRenderBounds>(entity))
+        {
+            bounds = em.GetComponentData<WorldRenderBounds>(entity).Value;
+            return IsUsableAabb(bounds);
+        }
+
+        if (em.HasComponent<RenderBounds>(entity) && em.HasComponent<LocalToWorld>(entity))
+        {
+            bounds = AABB.Transform(
+                em.GetComponentData<LocalToWorld>(entity).Value,
+                em.GetComponentData<RenderBounds>(entity).Value);
+            return IsUsableAabb(bounds);
+        }
+
+        bounds = default;
+        return false;
+    }
+
+    private static bool IsUsableAabb(AABB bounds)
+    {
+        return math.all(math.isfinite(bounds.Center)) &&
+               math.all(math.isfinite(bounds.Extents)) &&
+               math.cmax(bounds.Extents) > 0.01f &&
+               !IsRenderSafetyPaddedAabb(bounds);
+    }
+
+    private static bool IsRenderSafetyPaddedAabb(AABB bounds)
+    {
+        float3 extents = math.abs(bounds.Extents);
+        return extents.x >= RenderSafetyBoundsExtentThreshold &&
+               extents.y >= RenderSafetyBoundsExtentThreshold &&
+               extents.z >= RenderSafetyBoundsExtentThreshold;
+    }
+
+    private readonly struct FollowBoundsFrame
+    {
+        public readonly float3 Center;
+        public readonly float HorizontalRadius;
+
+        public FollowBoundsFrame(float3 center, float horizontalRadius)
+        {
+            Center = center;
+            HorizontalRadius = horizontalRadius;
+        }
+    }
+
+    private struct RenderBoundsAccumulator
+    {
+        private float3 _min;
+        private float3 _max;
+
+        public bool HasBounds { get; private set; }
+
+        public void Encapsulate(AABB bounds)
+        {
+            float3 min = bounds.Center - bounds.Extents;
+            float3 max = bounds.Center + bounds.Extents;
+            if (!HasBounds)
+            {
+                _min = min;
+                _max = max;
+                HasBounds = true;
+                return;
+            }
+
+            _min = math.min(_min, min);
+            _max = math.max(_max, max);
+        }
+
+        public FollowBoundsFrame ToFrame()
+        {
+            float3 center = (_min + _max) * 0.5f;
+            float3 extents = (_max - _min) * 0.5f;
+            return new FollowBoundsFrame(
+                center,
+                math.max(math.length(new float2(extents.x, extents.z)), math.max(extents.x, extents.z)));
+        }
     }
 
     private static TacticalFollowCameraTargetComponent BuildTarget(

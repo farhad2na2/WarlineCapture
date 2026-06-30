@@ -22,8 +22,11 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
             RunValidationStep(nameof(MatchHudCommandButtonsSubmitSelectionCommandRequests), tests => tests.MatchHudCommandButtonsSubmitSelectionCommandRequests());
             RunValidationStep(nameof(MatchHudBoardButtonIsRailCommandAndQueuesBoardTargetMode), tests => tests.MatchHudBoardButtonIsRailCommandAndQueuesBoardTargetMode());
             RunValidationStep(nameof(MatchHudFooterSectionBoardButtonQueuesBoardTargetMode), tests => tests.MatchHudFooterSectionBoardButtonQueuesBoardTargetMode());
+            RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonQueuesToggleFollowMode), tests => tests.MatchHudSelectionPanelCameraButtonQueuesToggleFollowMode());
+            RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonUsesCommandButtonSpriteStates), tests => tests.MatchHudSelectionPanelCameraButtonUsesCommandButtonSpriteStates());
+            RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonAppliesEnabledAndSelectedState), tests => tests.MatchHudSelectionPanelCameraButtonAppliesEnabledAndSelectedState());
             RunValidationStep(nameof(LegacySupportCommandTabRoutesToScanCommandMode), tests => tests.LegacySupportCommandTabRoutesToScanCommandMode());
-            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=6");
+            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=9");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -181,6 +184,69 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     }
 
     [Test]
+    public void MatchHudSelectionPanelCameraButtonQueuesToggleFollowMode()
+    {
+        MatchHudSelectionPanelView selectionPanel = _instance.GetComponentInChildren<MatchHudSelectionPanelView>(true);
+        Assert.NotNull(selectionPanel, "SCN08_MatchHudContent must expose MatchHudSelectionPanelView.");
+        Button cameraButton = GetSerializedCameraButton(selectionPanel);
+
+        var selectionUiCommand = new SelectionUiCommandUiSystemHelper();
+        selectionPanel.BindCameraAction(() => selectionUiCommand.RequestToggleTacticalFollowCameraMode());
+        ClearTacticalFollowCameraRequests();
+
+        cameraButton.onClick.Invoke();
+
+        Assert.IsTrue(TryGetTacticalFollowCameraRequests(out DynamicBuffer<TacticalFollowCameraRequestElement> requests));
+        Assert.AreEqual(1, requests.Length, "Clicking CameraButton must queue exactly one follow-camera request.");
+        Assert.AreEqual(TacticalFollowCameraRequestKind.ToggleFollowMode, requests[0].Kind);
+    }
+
+    [Test]
+    public void MatchHudSelectionPanelCameraButtonUsesCommandButtonSpriteStates()
+    {
+        MatchHudSelectionPanelView selectionPanel = _instance.GetComponentInChildren<MatchHudSelectionPanelView>(true);
+        Assert.NotNull(selectionPanel, "SCN08_MatchHudContent must expose MatchHudSelectionPanelView.");
+        Button cameraButton = GetSerializedCameraButton(selectionPanel);
+        Image targetImage = cameraButton.targetGraphic as Image;
+
+        Assert.AreEqual(Selectable.Transition.SpriteSwap, cameraButton.transition, "CameraButton must use SpriteSwap like the other Target Lock command buttons.");
+        Assert.NotNull(targetImage, "CameraButton must use an Image target graphic for sprite-state swaps.");
+        Assert.IsTrue(targetImage.raycastTarget, "CameraButton target graphic must receive raycasts.");
+        Assert.IsTrue(targetImage.transform.IsChildOf(cameraButton.transform), "CameraButton target graphic must belong to the CameraButton hierarchy.");
+        Assert.NotNull(cameraButton.spriteState.highlightedSprite, "CameraButton highlighted/hover sprite is required.");
+        Assert.NotNull(cameraButton.spriteState.pressedSprite, "CameraButton pressed/impact sprite is required.");
+        Assert.NotNull(cameraButton.spriteState.selectedSprite, "CameraButton selected/current sprite is required.");
+        Assert.NotNull(cameraButton.spriteState.disabledSprite, "CameraButton disabled sprite is required.");
+
+        Button[] nestedButtons = cameraButton.GetComponentsInChildren<Button>(true);
+        Assert.AreEqual(1, nestedButtons.Length, "CameraButton must remain the actual clickable root, with no hidden child hotspot buttons.");
+        Assert.AreSame(cameraButton, nestedButtons[0], "CameraButton nested button scan should only find the root button.");
+    }
+
+    [Test]
+    public void MatchHudSelectionPanelCameraButtonAppliesEnabledAndSelectedState()
+    {
+        MatchHudSelectionPanelView selectionPanel = _instance.GetComponentInChildren<MatchHudSelectionPanelView>(true);
+        Assert.NotNull(selectionPanel, "SCN08_MatchHudContent must expose MatchHudSelectionPanelView.");
+        Button cameraButton = GetSerializedCameraButton(selectionPanel);
+        Image targetImage = cameraButton.targetGraphic as Image;
+        Assert.NotNull(targetImage, "CameraButton must use an Image target graphic for state application.");
+
+        selectionPanel.SetSelectionVisible(true);
+        selectionPanel.SetCameraActionEnabled(false);
+        Assert.IsFalse(cameraButton.interactable, "CameraButton must be disabled when the tactical-follow read model has no followable target.");
+
+        selectionPanel.SetCameraActionEnabled(true);
+        Assert.IsTrue(cameraButton.interactable, "CameraButton must be enabled when the tactical-follow read model has a followable target.");
+
+        selectionPanel.SetCameraActionSelected(true);
+        Assert.AreSame(cameraButton.spriteState.selectedSprite, targetImage.sprite, "CameraButton selected state must persist visually while follow mode is active.");
+
+        selectionPanel.SetCameraActionSelected(false);
+        Assert.IsNull(targetImage.sprite, "CameraButton must restore its transparent normal sprite when follow mode exits.");
+    }
+
+    [Test]
     public void LegacySupportCommandTabRoutesToScanCommandMode()
     {
         MatchOverlayCommandControlsView controls = LoadControls();
@@ -240,6 +306,18 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         return false;
     }
 
+    private static Button GetSerializedCameraButton(MatchHudSelectionPanelView selectionPanel)
+    {
+        var serializedPanel = new SerializedObject(selectionPanel);
+        SerializedProperty cameraActionProperty = serializedPanel.FindProperty("cameraAction");
+        Assert.NotNull(cameraActionProperty, "MatchHudSelectionPanelView must serialize cameraAction.");
+        Button cameraButton = cameraActionProperty.objectReferenceValue as Button;
+        Assert.NotNull(cameraButton, "CameraButton must be serialized on MatchHudSelectionPanelView.");
+        Assert.IsTrue(IsChildOfNamedTransform(cameraButton.transform, "CommandButtons"), "CameraButton should remain in the selected-squad CommandButtons cluster.");
+        Assert.IsTrue(cameraButton.interactable, "CameraButton prefab state should be interactable; runtime read model can disable it later.");
+        return cameraButton;
+    }
+
     private void AssertClickQueues(Button button, RtsSelectionCommandIntentKind expectedKind)
     {
         Assert.NotNull(button);
@@ -265,6 +343,28 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
             out _,
             out requests,
             out DynamicBuffer<RtsSelectionCommandResultElement> _);
+    }
+
+    private void ClearTacticalFollowCameraRequests()
+    {
+        if (TryGetTacticalFollowCameraRequests(out DynamicBuffer<TacticalFollowCameraRequestElement> requests))
+            requests.Clear();
+    }
+
+    private bool TryGetTacticalFollowCameraRequests(out DynamicBuffer<TacticalFollowCameraRequestElement> requests)
+    {
+        requests = default;
+        EntityManager em = _world.EntityManager;
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraRequestQueueComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity entity = query.GetSingletonEntity();
+        if (!em.HasBuffer<TacticalFollowCameraRequestElement>(entity))
+            return false;
+
+        requests = em.GetBuffer<TacticalFollowCameraRequestElement>(entity);
+        return true;
     }
 
     private static void AssertButton(Button button, string label)

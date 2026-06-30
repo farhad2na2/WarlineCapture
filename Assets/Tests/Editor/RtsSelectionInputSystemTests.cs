@@ -37,6 +37,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.AttackTargetModeCommandSystem_ToggleArmsAttackModeForFocusedAttackUnit());
             RunCase(test => test.AttackTargetModeCommandSystem_ToggleRejectsFocusedNonAttackUnit());
             RunCase(test => test.ScanTargetModeCommandSystem_ArmsScanModeAndClearsMoveRequests());
+            RunCase(test => test.SelectionUiCommandUiSystemHelper_CameraButtonQueuesToggleFollowModeAndSuppressesRelease());
             RunCase(test => test.BoardTargetModeCommandSystem_SelectedTransportAndPassengerUsesTransportFirstMode());
             RunCase(test => test.BoardTargetModeCommandSystem_SelectedPassengerUsesPassengerToTransportMode());
             RunCase(test => test.BoardTargetModeCommandSystem_SelectedCargoVehicleTransportUsesPassengerToTransportMode());
@@ -65,6 +66,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting());
             RunCase(test => test.RuntimeInput_AttackCommandModeAllowsCameraPanWhileTargeting());
             RunCase(test => test.RuntimeInput_ScanCommandModeAllowsCameraPanWhileTargeting());
+            RunCase(test => test.RuntimeInput_TacticalFollowPanLockStillAllowsScanCommandClick());
             RunCase(test => test.RuntimeInput_ScanCommandModeIssuesScanWithoutFocusFallthrough());
             RunCase(test => test.RuntimeInput_TransportFirstBoardModePansUnlessPassengerDragStarts());
             RunCase(test => test.MatchOverlayCommandInputUiSystemHelper_LeavesCommandTabPresentationToHudFeedback());
@@ -74,7 +76,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.BoardAllSelectedTransport_ClearsCommandFeedbackActionsOnSuccess());
             RunCase(test => test.BoardCommandResult_PreservesAcceptedTargetTransportEntity());
             RunCase(test => test.TransportFirstBoarding_PreservesSelectedTransportAfterSuccess());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=56");
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=58");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -1370,6 +1372,21 @@ public sealed class RtsSelectionInputSystemTests
             out _));
         Assert.AreEqual(1, requests.Length);
         Assert.AreEqual(RtsSelectionCommandIntentKind.EnterBoardTargetMode, requests[0].Kind);
+    }
+
+    [Test]
+    public void SelectionUiCommandUiSystemHelper_CameraButtonQueuesToggleFollowModeAndSuppressesRelease()
+    {
+        var commandSystem = new SelectionUiCommandUiSystemHelper();
+
+        Assert.IsTrue(commandSystem.RequestToggleTacticalFollowCameraMode());
+
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
+        Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(TryGetTacticalFollowCameraRequests(out DynamicBuffer<TacticalFollowCameraRequestElement> requests));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(TacticalFollowCameraRequestKind.ToggleFollowMode, requests[0].Kind);
     }
 
     [Test]
@@ -2813,6 +2830,57 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void RuntimeInput_TacticalFollowPanLockStillAllowsScanCommandClick()
+    {
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
+        var runtimeState = new RuntimeGameplayStateSystem
+        {
+            PlayRequested = true,
+            SelectionModeActive = false,
+            BuildModeActive = false,
+            SuppressNextWorldClick = false
+        };
+        Vector2 pressPosition = new(16f, 24f);
+        Vector2 heldPosition = new(18f, 26f);
+        Vector2 releasePosition = new(19f, 27f);
+        bool tacticalFollowPanLocked = true;
+        bool cameraDragging = false;
+        int panCalls = 0;
+        int scanCalls = 0;
+        inputSystem.ArmCommandMode(
+            TacticalCommandMode.Scan,
+            Time.frameCount,
+            oneShot: true,
+            requiresWorldTarget: true);
+
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context context = CreateRuntimeInputContext(
+            runtimeState,
+            inputSystem,
+            getCameraDragging: () => cameraDragging,
+            setCameraDragging: dragging => cameraDragging = dragging && !tacticalFollowPanLocked,
+            panCamera: _ => panCalls++,
+            tryIssueScanOrder: _ =>
+            {
+                scanCalls++;
+                return true;
+            });
+
+        InvokeRuntimePointerPressed(context, pressPosition);
+        Assert.IsFalse(cameraDragging);
+
+        InvokeRuntimePointerHeld(context, heldPosition);
+        InvokeRuntimePointerRelease(context, releasePosition);
+
+        Assert.AreEqual(0, panCalls);
+        Assert.AreEqual(1, scanCalls);
+        Assert.IsFalse(cameraDragging);
+        Assert.IsFalse(inputSystem.IsDraggingSelection);
+        Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
+        Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode));
+        Assert.AreEqual(TacticalCommandMode.Scan, activeMode);
+    }
+
+    [Test]
     public void RuntimeInput_ScanCommandModeIssuesScanWithoutFocusFallthrough()
     {
         var inputSystem = new RtsSelectionInputCompositionSystemHelper();
@@ -3297,6 +3365,22 @@ public sealed class RtsSelectionInputSystemTests
         Assert.AreEqual(expectedAccepted, result.Accepted);
         Assert.AreEqual(expectedReason, result.ReasonCode);
         Assert.AreEqual(expectedMessage, result.Message);
+    }
+
+    private bool TryGetTacticalFollowCameraRequests(out DynamicBuffer<TacticalFollowCameraRequestElement> requests)
+    {
+        requests = default;
+        EntityManager em = _testWorld.EntityManager;
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraRequestQueueComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity entity = query.GetSingletonEntity();
+        if (!em.HasBuffer<TacticalFollowCameraRequestElement>(entity))
+            return false;
+
+        requests = em.GetBuffer<TacticalFollowCameraRequestElement>(entity);
+        return true;
     }
 
     private static string ExtractBlockAfter(string source, string marker)

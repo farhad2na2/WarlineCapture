@@ -480,6 +480,10 @@ public sealed class SelectionSummaryQuerySystemTests
         {
         }
 
+        public void BindCameraAction(System.Action cameraRequested)
+        {
+        }
+
         public void BindTransportPassengerActions(
             System.Action passengerChipRequested,
             System.Action passengerDrawerCloseRequested,
@@ -502,6 +506,14 @@ public sealed class SelectionSummaryQuerySystemTests
         }
 
         public void SetBoardActionSelected(bool selected)
+        {
+        }
+
+        public void SetCameraActionSelected(bool selected)
+        {
+        }
+
+        public void SetCameraActionEnabled(bool enabled)
         {
         }
 

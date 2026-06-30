@@ -14668,6 +14668,7 @@ MonoBehaviour:
   returnAction: {fileID: 1800108208000012103}
   destroyAction: {fileID: 1800108208000012113}
   boardAction: {fileID: 1800108208000012123}
+  cameraAction: {fileID: 6955436008242197685}
   passengerChipRoot: {fileID: 7454257759964516013}
   passengerChipButton: {fileID: 2058273197910707725}
   passengerChipLabel: {fileID: 5839155888377869773}

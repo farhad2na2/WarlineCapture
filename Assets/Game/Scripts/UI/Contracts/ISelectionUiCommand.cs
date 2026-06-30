@@ -8,6 +8,7 @@ public interface ISelectionUiCommand
     bool RequestAttackCommandMode();
     bool RequestScanCommandMode();
     bool RequestBoardTargetMode();
+    bool RequestToggleTacticalFollowCameraMode();
     bool RequestHoldPosition();
     bool RequestStop();
     bool RequestBoardAllSelectedTransport();

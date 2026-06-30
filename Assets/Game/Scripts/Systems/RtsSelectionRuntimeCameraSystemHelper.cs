@@ -130,6 +130,9 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
             return false;
         }
 
+        if (IsTacticalFollowPanLocked(context))
+            SetCameraDragging(context, false);
+
         if (runtime.FullscreenMapIsoMode)
         {
             if (context.WorldCamera == null)
@@ -187,12 +190,18 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
         if (!context.TryGetDefaultEntityManager(out EntityManager em))
             return;
 
+        if (IsTacticalFollowPanLocked(em))
+            return;
+
         context.CameraRequestSystem.QueuePan(em, screenDelta, context.PanSensitivity);
         ProcessCameraRequests(context, em);
     }
 
     public void SetCameraDragging(Context context, bool isDragging)
     {
+        if (isDragging && IsTacticalFollowPanLocked(context))
+            isDragging = false;
+
         if (context.CameraSystem.IsDragging == isDragging)
             return;
 
@@ -358,6 +367,23 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
         context.CameraRequestSystem.QueueSetSmoothFocusTarget(em, focusWorldPosition, resetVelocity: false);
         context.CameraRequestSystem.QueueClearDragging(em);
         ProcessCameraRequests(context, em);
+    }
+
+    private static bool IsTacticalFollowPanLocked(Context context)
+    {
+        return context.TryGetDefaultEntityManager(out EntityManager em) &&
+               IsTacticalFollowPanLocked(em);
+    }
+
+    private static bool IsTacticalFollowPanLocked(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraModeComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        TacticalFollowCameraModeComponent mode =
+            em.GetComponentData<TacticalFollowCameraModeComponent>(query.GetSingletonEntity());
+        return mode.Enabled != 0 && mode.PanInputLocked != 0;
     }
 
     private void HandleBuildModeCameraPan(Context context)

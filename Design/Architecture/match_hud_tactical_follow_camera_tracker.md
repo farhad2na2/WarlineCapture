@@ -4,21 +4,21 @@ Purpose:
 Add a Match HUD `CameraButton` mode that smoothly switches the existing RTS camera into a third-person tactical follow view for the current selected unit, selected group, or selected building. While that mode is active, launcher-fired missiles from the followed selection temporarily take camera focus until impact/explosion, then the camera returns to the followed selection. The implementation must use existing ECS gameplay state and camera/request boundaries; it must not add a parallel camera/gameplay simulator.
 
 Last updated:
-2026-06-29
+2026-06-30
 
 ## Progress Snapshot
 
-- Checklist progress: `4 / 103 complete (3.9%)`.
+- Checklist progress: `81 / 103 complete (78.6%)`.
 - In progress: `0`.
-- Remaining open: `99`.
-- Current target: `Phase 1 contract/data model design after this tracker is accepted`.
-- Camera button status: `Canvas path exists from user at Canvas (Environment) / SCN08_MatchHudContent / LeftContent / SelectedSquadPanel / Frame / CommandButtons / CameraButton; serialized wiring and runtime contract are still open`.
-- Follow mode status: `not implemented`.
-- Missile temporary follow status: `not implemented`.
-- Input lock status: `not implemented`.
-- UI visual state status: `not implemented`.
-- Validation status: `tracker document created; implementation validation not run yet`.
-- Still wrong / next iteration: `No runtime behavior exists yet. Next iteration should wire ECS/data contracts first, then bind CameraButton through the selected-panel command boundary without adding gameplay MonoBehaviour loops.`
+- Remaining open: `22`.
+- Current target: `Phase 8 live CameraButton hover/press proof, then Phase 9 PlayMode validation`.
+- Camera button status: `CameraButton is serialized on MatchHudSelectionPanelView, included in hit-test suppression, bound through SelectionGameplayStartupSystemHelper, and queues TacticalFollowCameraRequestElement.ToggleFollowMode through ISelectionUiCommand.`
+- Follow mode status: `TacticalFollowCameraModeSystemHelper consumes ToggleFollowMode/Exit requests in the existing selection runtime tick, resolves focused/single-unit/group/building targets into TacticalFollowCameraTargetComponent, computes clamped TacticalFollowCameraPoseComponent, toggles TacticalFollowCameraModeComponent, stores restore pose when the world camera is available, publishes restore/default TacticalFollowCameraPoseComponent on exit, and publishes TacticalFollowCameraUiReadModelComponent.`
+- Missile temporary follow status: `temporary follow now scans production GroundMissileProjectileComponent and AirMissileProjectileComponent entities, adopts the first missile whose Source belongs to the followed unit/group, ignores unrelated missiles, keeps the active missile instead of jittering to later missiles, frames missiles with forward look-ahead, holds ground/air impact or projectile-despawn views briefly before returning to the base target, finishes an already-adopted missile safely when the base target is lost, and has focused validation with missiles created by production ground and air launcher systems. Visual PlayMode proof/captures are still open under Phase 9.`
+- Input lock status: `PanInputLocked is set/cleared in ECS mode data; RtsSelectionRuntimeCameraSystemHelper now blocks pan request creation, refuses drag start, and clears an already-active drag while tactical follow is locked. Mouse-wheel zoom remains allowed for V1 because the user asked to block pan, not zoom. Focused validation proves command clicks can still issue while tactical-follow pan lock refuses camera dragging.`
+- UI visual state status: `prefab CameraButton has SpriteSwap transparent-normal/highlight/pressed/selected/disabled states, remains the actual clickable root with no hidden child hotspot button, applies selected state from TacticalFollowCameraUiReadModelComponent, applies enabled/disabled state from TacticalFollowCameraUiReadModelComponent, restores transparent normal state when follow mode exits, and shows one-shot HUD feedback for invalid click, enter, exit, and target-lost cases. Live hover/press visual proof is still open.`
+- Validation status: `git diff --check passed; TacticalFollowCameraComponentTests.RunFocusedValidation passed with [TacticalFollowCameraComponentValidation] result=Passed tests=3; RtsSelectionInputSystemTests.RunFocusedValidation passed with [RtsSelectionInputSystemValidation] result=Passed tests=58; MatchHudCommandControlsCurrentPrefabTests.RunFocusedValidation passed with [MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=9; TacticalFollowCameraModeCommandSystemHelperTests.RunFocusedValidation passed with [TacticalFollowCameraModeCommandValidation] result=Passed tests=22; RtsCameraSystemTests.RunFocusedValidation passed with [RtsCameraFocusedValidation] result=Passed tests=14. Latest logs: /private/tmp/warline-tactical-follow-feedback-validation.log, /private/tmp/warline-tactical-follow-camera-button-visual-validation-2.log, /private/tmp/warline-tactical-follow-click-safety-validation-2.log, /private/tmp/warline-tactical-follow-production-launcher-validation.log. Non-blocking UnityConnect/package-test asmdef shutdown noise remains.`
+- Still wrong / next iteration: `Follow mode now resolves unit/group/building target data, queues clamped tactical follow poses through the existing RTS camera request path, restores the saved pre-follow camera pose on exit, blocks pan/drag while active without blocking command clicks, has a documented PlayMode smoothness proof path, adopts only followed-source missiles as temporary camera targets, frames missile follow with forward look-ahead, returns to the base target after ground/air impact or projectile despawn, exits safely if the base target is lost during missile follow, validates CameraButton sprite-state wiring and read-model enabled/selected application against the SCN08 prefab, publishes one-shot feedback for no-selection/enter/exit/target-lost, and is validated against missiles fired by production ground/air launcher systems. Actual PlayMode proof execution/captures remain open under Phase 9. Mixed selection, destroyed target, passenger/onboard target-loss handling, and live CameraButton hover/press visual proof remain open.`
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
 
 ## User-Facing Behavior Contract
@@ -97,6 +97,11 @@ Last updated:
 | Ground missile projectile | `GroundMissileProjectileComponent` | Use `Source` to decide whether projectile belongs to followed launcher. |
 | Air missile projectile | `AirMissileProjectileComponent` | Use `Source` to decide whether projectile belongs to followed launcher. |
 | Missile impact requests | `GroundMissileImpactRequestComponent`, `AirMissileImpactRequestComponent` | Resolve temporary missile follow and hold explosion beat before returning. |
+| Camera pan input | `RtsSelectionRuntimeCameraSystemHelper`, `RtsSelectionRuntimeInputCompositionSystemHelper` | Main pan requests funnel through `PanCamera`, `QueuePan`, drag state, build-mode pan, fullscreen-iso pan, and selection-runtime drag fallback. |
+| Focused unit read model | `FocusedUnitUiReadModelComponent` | Already exposes focused entity, player ownership, world position, portrait world position, and portrait forward for single-target follow. |
+| Selected unit group | `SelectedUnitTag` queries with `LocalTransform` | Existing selection systems and tests use this tag as the source for multi-unit command selection. |
+| Selected building edge | `BuildingPlacementInteractionBoundaryCompositionSystemHelper` / `RuntimeBuildingSystem` | Existing selected-building state is still managed-boundary debt; follow mode must use the existing boundary without moving building policy into UI. |
+| Focused tests | `RtsSelectionInputSystemTests`, `MatchHudCommandControlsCurrentPrefabTests`, `RuntimeCameraReferenceSystemTests`, new focused camera-follow tests | Reuse these patterns for command request, prefab button wiring, runtime camera reference, and ECS mode state validation. |
 
 ## Proposed ECS Data Model
 
@@ -189,67 +194,67 @@ Lock the design before code so the implementation does not drift into parallel g
 - [x] Audit existing RTS camera request path: `RtsCameraRequestSystem` and `RtsCameraSystem` already own camera requests, pan, smooth focus, and transform updates.
 - [x] Audit existing selected-panel command pattern: `MatchHudSelectionPanelView`, `ISelectionUiCommand`, and `SelectionUiCommandUiSystemHelper` already show the Board button pattern.
 - [x] Audit missile source data: `GroundMissileProjectileComponent.Source` and `AirMissileProjectileComponent.Source` can identify launcher ownership for temporary missile follow.
-- [ ] Inventory the current camera input loop and exact pan/drag/edge-pan request sources to block them without blocking unrelated UI clicks.
-- [ ] Inventory selected unit, selected group, and selected building read-model/component sources for reliable base target resolution.
-- [ ] Inspect the user-added `CameraButton` serialized reference state in the Canvas prefab/scene.
+- [x] Inventory the current camera input loop and exact pan/drag/edge-pan request sources to block them without blocking unrelated UI clicks.
+- [x] Inventory selected unit, selected group, and selected building read-model/component sources for reliable base target resolution.
+- [x] Inspect the user-added `CameraButton` serialized reference state in the Canvas prefab/scene.
 - [ ] Finalize the exact ECS component/buffer field names before code.
-- [ ] Identify focused tests and existing test assembly boundaries for camera-mode validation.
-- [ ] Update this tracker if discovery shows a better existing owner than the proposed names above.
+- [x] Identify focused tests and existing test assembly boundaries for camera-mode validation.
+- [x] Update this tracker if discovery shows a better existing owner than the proposed names above.
 
 ## Phase 1: ECS Contract And Data Model
 
 Purpose:
 Add data-only ECS contracts for follow mode without touching camera motion yet.
 
-- [ ] Add or extend camera-mode request components/buffers with a `ToggleFollowCamera` request.
-- [ ] Add `TacticalFollowCameraModeComponent` or equivalent data-only mode component.
-- [ ] Add a computed target component or singleton data structure for base/temporary target state.
-- [ ] Add a computed pose component or request payload for desired camera pose.
-- [ ] Add a UI read-model component for `CameraButton` enabled/selected state.
-- [ ] Keep runtime component names ending in `Component` per `gameplay_solid_ecs_contract.md`.
-- [ ] Avoid adding Unity object references to unmanaged gameplay components.
-- [ ] Place code under existing appropriate asmdef boundaries; do not fall back to broad default assembly behavior.
-- [ ] Add component-level tests for default values and request-buffer creation if the repo has a matching pattern.
-- [ ] Run compile/focused validation after this phase.
+- [x] Add or extend camera-mode request components/buffers with a `ToggleFollowCamera` request.
+- [x] Add `TacticalFollowCameraModeComponent` or equivalent data-only mode component.
+- [x] Add a computed target component or singleton data structure for base/temporary target state.
+- [x] Add a computed pose component or request payload for desired camera pose.
+- [x] Add a UI read-model component for `CameraButton` enabled/selected state.
+- [x] Keep runtime component names ending in `Component` per `gameplay_solid_ecs_contract.md`.
+- [x] Avoid adding Unity object references to unmanaged gameplay components.
+- [x] Place code under existing appropriate asmdef boundaries; do not fall back to broad default assembly behavior.
+- [x] Add component-level tests for default values and request-buffer creation if the repo has a matching pattern.
+- [x] Run compile/focused validation after this phase.
 
 ## Phase 2: CameraButton View And Command Wiring
 
 Purpose:
 Bind the user-added Canvas button into the existing command boundary while keeping view responsibilities narrow.
 
-- [ ] Add a serialized `Button cameraAction` field to `MatchHudSelectionPanelView`.
-- [ ] Add bind/unbind logic for the button using the existing Board button pattern.
-- [ ] Add `ContainsScreenPoint` coverage for the CameraButton so world clicks do not leak through.
-- [ ] Add `BindActions` or a narrow binding method extension for camera follow requests without breaking existing callers.
-- [ ] Add `SetCameraActionSelected(bool selected)` and enabled-state application mirroring the Board selected visual approach.
-- [ ] Preserve default, hover/highlight, pressed, disabled, and selected sprites/colors on the Button/SpriteState.
-- [ ] Add `RequestToggleTacticalFollowCameraMode()` or equivalent to `ISelectionUiCommand`.
-- [ ] Implement the UI command helper method by capturing the UI click sequence and enqueueing an ECS request/intent.
-- [ ] Validate that clicking the button does not also select/move/attack in the world on release.
+- [x] Add a serialized `Button cameraAction` field to `MatchHudSelectionPanelView`.
+- [x] Add bind/unbind logic for the button using the existing Board button pattern.
+- [x] Add `ContainsScreenPoint` coverage for the CameraButton so world clicks do not leak through.
+- [x] Add `BindActions` or a narrow binding method extension for camera follow requests without breaking existing callers.
+- [x] Add `SetCameraActionSelected(bool selected)` and enabled-state application mirroring the Board selected visual approach.
+- [x] Preserve default, hover/highlight, pressed, disabled, and selected sprites/colors on the Button/SpriteState.
+- [x] Add `RequestToggleTacticalFollowCameraMode()` or equivalent to `ISelectionUiCommand`.
+- [x] Implement the UI command helper method by capturing the UI click sequence and enqueueing an ECS request/intent.
+- [x] Validate that clicking the button does not also select/move/attack in the world on release.
 
 ## Phase 3: Follow Mode Toggle Command
 
 Purpose:
 Turn button clicks into authoritative ECS mode state.
 
-- [ ] Add a camera follow command intent/request kind.
-- [ ] On toggle request with no valid selection, reject and publish feedback such as `Select a unit or building to follow.`
-- [ ] On toggle request while inactive and selection is valid, enter follow mode.
-- [ ] On toggle request while active, exit follow mode.
-- [ ] Store the current/default camera pose for smooth restore.
-- [ ] Set `PanInputLocked` when mode enters.
-- [ ] Clear `PanInputLocked` when mode exits.
-- [ ] Publish UI selected state from ECS read-model data, not local UI booleans.
-- [ ] Add tests for enter, reject, exit, and selected-read-model state.
+- [x] Add a camera follow command intent/request kind.
+- [x] On toggle request with no valid selection, reject and publish feedback such as `Select a unit or building to follow.`
+- [x] On toggle request while inactive and selection is valid, enter follow mode.
+- [x] On toggle request while active, exit follow mode.
+- [x] Store the current/default camera pose for smooth restore.
+- [x] Set `PanInputLocked` when mode enters.
+- [x] Clear `PanInputLocked` when mode exits.
+- [x] Publish UI selected state from ECS read-model data, not local UI booleans.
+- [x] Add tests for enter, reject, exit, and selected-read-model state.
 
 ## Phase 4: Base Target Resolution
 
 Purpose:
 Resolve the target the camera follows before adding missile handoff.
 
-- [ ] Single selected mobile unit resolves to that entity's world pose and forward/movement direction.
-- [ ] Multiple selected units resolve to group centroid, bounds radius, and dominant forward/movement hint.
-- [ ] Selected building resolves to building bounds center and a stable angled follow pose.
+- [x] Single selected mobile unit resolves to that entity's world pose and forward/movement direction.
+- [x] Multiple selected units resolve to group centroid, bounds radius, and dominant forward/movement hint.
+- [x] Selected building resolves to building bounds center and a stable angled follow pose.
 - [ ] Mixed unit/building selection chooses a deterministic primary target or group-center rule and documents it here.
 - [ ] Base target refreshes when selection changes while follow mode is active.
 - [ ] If the current base target is destroyed/despawned, choose another valid selected target or exit mode.
@@ -262,62 +267,75 @@ Resolve the target the camera follows before adding missile handoff.
 Purpose:
 Make the existing world camera move smoothly into/out of follow mode.
 
-- [ ] Define V1 camera geometry constants in config or a narrow data owner, not magic values scattered through code.
-- [ ] Unit follow pose: behind/above target, look at target center plus readable vertical offset.
-- [ ] Group follow pose: distance scales with selection radius so all selected units stay visible.
-- [ ] Building follow pose: stable angled pose around bounds, not too close to roof/collider geometry.
-- [ ] Smooth transition into follow mode with position and rotation damping.
-- [ ] Keep camera horizon readable; avoid roll.
-- [ ] Clamp camera distance/height to prevent clipping through terrain, buildings, or unit meshes.
-- [ ] Restore default camera smoothly on exit.
-- [ ] Keep camera motion implementation at the camera edge; target/pose decisions stay ECS-owned.
-- [ ] Add PlayMode/manual validation path for visual smoothness and no sudden jumps.
+- [x] Define V1 camera geometry constants in config or a narrow data owner, not magic values scattered through code.
+- [x] Unit follow pose: behind/above target, look at target center plus readable vertical offset.
+- [x] Group follow pose: distance scales with selection radius so all selected units stay visible.
+- [x] Building follow pose: stable angled pose around bounds, not too close to roof/collider geometry.
+- [x] Smooth transition into follow mode with position and rotation damping.
+- [x] Keep camera horizon readable; avoid roll.
+- [x] Clamp camera distance/height to prevent clipping through terrain, buildings, or unit meshes.
+- [x] Restore default camera smoothly on exit.
+- [x] Keep camera motion implementation at the camera edge; target/pose decisions stay ECS-owned.
+- [x] Add PlayMode/manual validation path for visual smoothness and no sudden jumps.
+
+## Manual PlayMode Smoothness Proof Path
+
+Use this path when Phase 9 reaches manual validation. It is a proof procedure, not a parallel gameplay path.
+
+1. Open the production match scene or the current isolated validation scene that uses the production RTS camera, selection, and Canvas Match HUD.
+2. Enter Play Mode with the Canvas HUD active and UI Toolkit disabled/absent.
+3. Select one mobile unit, click `CameraButton`, and verify the camera eases into a readable behind/above view with no instant snap, roll, ground clipping, or mesh clipping.
+4. While follow mode is active, try drag pan, keyboard pan, and edge pan; the camera must not pan, and the selected `CameraButton` state must stay visible.
+5. Click `CameraButton` again and verify the camera smoothly returns to the saved RTS pose, then pan input works again.
+6. Repeat the enter/exit check with a multi-unit selection; the group must stay framed and the camera must keep a readable horizon.
+7. Repeat the enter/exit check with a selected building; the pose must stay outside the building bounds and preserve enough height/distance to avoid roof/collider clipping.
+8. Capture one still or short video for each target kind and record the artifact path in Phase 9 before marking the manual validation gates complete.
 
 ## Phase 6: Missile Temporary Follow
 
 Purpose:
 Follow fired missiles only when they belong to the selected/followed source.
 
-- [ ] Detect new `GroundMissileProjectileComponent` entities whose `Source` is in the followed base target set.
-- [ ] Detect new `AirMissileProjectileComponent` entities whose `Source` is in the followed base target set.
-- [ ] Ignore missiles from unrelated launchers.
-- [ ] When no temporary target is active, adopt the first eligible missile as the temporary target.
-- [ ] While a temporary target is active, do not jitter to later missiles unless a deliberate queue policy is added.
-- [ ] Missile follow pose trails the projectile with look-ahead and readable explosion framing.
-- [ ] On `GroundMissileImpactRequestComponent` or projectile despawn, hold explosion view briefly, then return to base target.
-- [ ] On `AirMissileImpactRequestComponent` or projectile despawn, hold explosion view briefly, then return to base target.
-- [ ] If base target is lost during missile follow, finish missile follow then restore/exit safely.
-- [ ] Add scenario/manual validation with ground missile launcher and air missile launcher firing while follow mode is active.
+- [x] Detect new `GroundMissileProjectileComponent` entities whose `Source` is in the followed base target set.
+- [x] Detect new `AirMissileProjectileComponent` entities whose `Source` is in the followed base target set.
+- [x] Ignore missiles from unrelated launchers.
+- [x] When no temporary target is active, adopt the first eligible missile as the temporary target.
+- [x] While a temporary target is active, do not jitter to later missiles unless a deliberate queue policy is added.
+- [x] Missile follow pose trails the projectile with look-ahead and readable explosion framing.
+- [x] On `GroundMissileImpactRequestComponent` or projectile despawn, hold explosion view briefly, then return to base target.
+- [x] On `AirMissileImpactRequestComponent` or projectile despawn, hold explosion view briefly, then return to base target.
+- [x] If base target is lost during missile follow, finish missile follow then restore/exit safely.
+- [x] Add scenario/manual validation with ground missile launcher and air missile launcher firing while follow mode is active.
 
 ## Phase 7: Pan Lock And Input Safety
 
 Purpose:
 Prevent RTS pan while follow mode is active without breaking UI or command input.
 
-- [ ] Locate every path that queues camera pan/drag/edge-pan/keyboard-pan requests.
-- [ ] Gate pan request creation or processing with the ECS follow-mode `PanInputLocked` state.
-- [ ] Allow CameraButton click to exit follow mode while pan is locked.
-- [ ] Decide whether mouse wheel zoom remains allowed; document the decision before implementation.
-- [ ] Ensure selection/command clicks still work if the design allows changing selection while follow mode is active.
-- [ ] Clear dragging state on follow-mode entry to avoid stuck drag velocity.
-- [ ] Add tests/manual checks that pan input is blocked only during follow mode and restored afterward.
+- [x] Locate every path that queues camera pan/drag/edge-pan/keyboard-pan requests.
+- [x] Gate pan request creation or processing with the ECS follow-mode `PanInputLocked` state.
+- [x] Allow CameraButton click to exit follow mode while pan is locked.
+- [x] Decide whether mouse wheel zoom remains allowed; document the decision before implementation.
+- [x] Ensure selection/command clicks still work if the design allows changing selection while follow mode is active.
+- [x] Clear dragging state on follow-mode entry to avoid stuck drag velocity.
+- [x] Add tests/manual checks that pan input is blocked only during follow mode and restored afterward.
 
 ## Phase 8: UI Visual State And Feedback Polish
 
 Purpose:
 Make the CameraButton feel like the approved command buttons.
 
-- [ ] Use the same Target Lock Canvas command-button sprite family as the other Match HUD command buttons.
-- [ ] Assign normal sprite.
-- [ ] Assign highlighted/hover sprite.
-- [ ] Assign pressed/impact sprite or transition.
-- [ ] Assign selected/current sprite.
-- [ ] Assign disabled sprite/color state.
-- [ ] Verify selected state persists while follow mode is active.
+- [x] Use the same Target Lock Canvas command-button sprite family as the other Match HUD command buttons.
+- [x] Assign normal sprite.
+- [x] Assign highlighted/hover sprite.
+- [x] Assign pressed/impact sprite or transition.
+- [x] Assign selected/current sprite.
+- [x] Assign disabled sprite/color state.
+- [x] Verify selected state persists while follow mode is active.
 - [ ] Verify hover and press states still work when inactive.
-- [ ] Verify disabled state when there is no selected followable target.
-- [ ] Add short feedback for invalid click, enter, exit, and target-lost cases.
-- [ ] Ensure the button remains the actual clickable root; do not add hidden child hotspot buttons.
+- [x] Verify disabled state when there is no selected followable target.
+- [x] Add short feedback for invalid click, enter, exit, and target-lost cases.
+- [x] Ensure the button remains the actual clickable root; do not add hidden child hotspot buttons.
 - [ ] Save focused visual proof if the button prefab needs sprite/PPU/9-slice tuning.
 
 ## Phase 9: Validation And Regression Gates
@@ -325,10 +343,10 @@ Make the CameraButton feel like the approved command buttons.
 Purpose:
 Prove behavior before handing over.
 
-- [ ] Run `git diff --check`.
-- [ ] Run focused compile/EditMode validation for changed systems.
-- [ ] Add/extend tests for ECS request enqueue and mode state transitions.
-- [ ] Add/extend tests for UI read-model selected/enabled state.
+- [x] Run `git diff --check`.
+- [x] Run focused compile/EditMode validation for changed systems.
+- [x] Add/extend tests for ECS request enqueue and mode state transitions.
+- [x] Add/extend tests for UI read-model selected/enabled state.
 - [ ] Add/extend tests for base target resolution.
 - [ ] Add/extend tests for temporary missile follow source filtering.
 - [ ] Add/extend tests for return-after-impact behavior.

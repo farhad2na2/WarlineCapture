@@ -23,6 +23,7 @@ internal sealed class BuildingPlacementInteractionContextCompositionSystemHelper
         public readonly Action ExitBuildMode;
         public readonly Action<int, Entity, GameObject> HandleRuntimeBuildingEntityDestroyed;
         public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.TryResolveBaseBreachTargetDelegate TryResolveBaseBreachTarget;
+        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.TryResolveSelectedBuildingFollowTargetDelegate TryResolveSelectedBuildingFollowTarget;
 
         public Source(
             Func<bool> hasPendingBuildingPlacement,
@@ -40,7 +41,8 @@ internal sealed class BuildingPlacementInteractionContextCompositionSystemHelper
             Action<string> clearSelectedBuilding,
             Action exitBuildMode,
             Action<int, Entity, GameObject> handleRuntimeBuildingEntityDestroyed,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget)
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget,
+            BuildingPlacementInteractionBoundaryCompositionSystemHelper.TryResolveSelectedBuildingFollowTargetDelegate tryResolveSelectedBuildingFollowTarget = null)
         {
             HasPendingBuildingPlacement = hasPendingBuildingPlacement;
             CanConfirmBuildingPlacement = canConfirmBuildingPlacement;
@@ -58,6 +60,7 @@ internal sealed class BuildingPlacementInteractionContextCompositionSystemHelper
             ExitBuildMode = exitBuildMode;
             HandleRuntimeBuildingEntityDestroyed = handleRuntimeBuildingEntityDestroyed;
             TryResolveBaseBreachTarget = tryResolveBaseBreachTarget;
+            TryResolveSelectedBuildingFollowTarget = tryResolveSelectedBuildingFollowTarget;
         }
     }
 
@@ -77,7 +80,8 @@ internal sealed class BuildingPlacementInteractionContextCompositionSystemHelper
         Action<string> clearSelectedBuilding,
         Action exitBuildMode,
         Action<int, Entity, GameObject> handleRuntimeBuildingEntityDestroyed,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget)
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget,
+        BuildingPlacementInteractionBoundaryCompositionSystemHelper.TryResolveSelectedBuildingFollowTargetDelegate tryResolveSelectedBuildingFollowTarget = null)
     {
         return new Source(
             hasPendingBuildingPlacement,
@@ -95,7 +99,8 @@ internal sealed class BuildingPlacementInteractionContextCompositionSystemHelper
             clearSelectedBuilding,
             exitBuildMode,
             handleRuntimeBuildingEntityDestroyed,
-            tryResolveBaseBreachTarget);
+            tryResolveBaseBreachTarget,
+            tryResolveSelectedBuildingFollowTarget);
     }
 
     public BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context CreateContext(Source source)
@@ -116,6 +121,7 @@ internal sealed class BuildingPlacementInteractionContextCompositionSystemHelper
             source.ClearSelectedBuilding,
             source.ExitBuildMode,
             source.HandleRuntimeBuildingEntityDestroyed,
-            source.TryResolveBaseBreachTarget);
+            source.TryResolveBaseBreachTarget,
+            source.TryResolveSelectedBuildingFollowTarget);
     }
 }

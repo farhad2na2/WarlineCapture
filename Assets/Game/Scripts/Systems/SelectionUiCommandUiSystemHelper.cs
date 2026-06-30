@@ -79,6 +79,12 @@ public sealed class SelectionUiCommandUiSystemHelper : ISelectionUiCommand
         return Queue(RtsSelectionCommandIntentKind.EnterBoardTargetMode);
     }
 
+    public bool RequestToggleTacticalFollowCameraMode()
+    {
+        CaptureUiClickSequence();
+        return QueueTacticalFollowCameraRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+    }
+
     public bool RequestHoldPosition()
     {
         CaptureUiClickSequence();
@@ -192,6 +198,49 @@ public sealed class SelectionUiCommandUiSystemHelper : ISelectionUiCommand
             kind,
             new Rect(0f, 0f, Screen.width, Screen.height),
             UnityEngine.Time.frameCount);
+    }
+
+    private bool QueueTacticalFollowCameraRequest(TacticalFollowCameraRequestKind kind)
+    {
+        if (IsGameplayInputLocked())
+            return false;
+
+        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager em = world.EntityManager;
+        Entity entity = EnsureTacticalFollowCameraRequestEntity(em);
+        TacticalFollowCameraRequestQueueComponent queue =
+            em.GetComponentData<TacticalFollowCameraRequestQueueComponent>(entity);
+        queue.LastRequestId++;
+        em.SetComponentData(entity, queue);
+        em.GetBuffer<TacticalFollowCameraRequestElement>(entity).Add(new TacticalFollowCameraRequestElement
+        {
+            Kind = kind,
+            RequestId = queue.LastRequestId
+        });
+        return true;
+    }
+
+    private static Entity EnsureTacticalFollowCameraRequestEntity(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraRequestQueueComponent>());
+        Entity entity;
+        if (!query.IsEmptyIgnoreFilter)
+        {
+            entity = query.GetSingletonEntity();
+        }
+        else
+        {
+            entity = em.CreateEntity(typeof(TacticalFollowCameraRequestQueueComponent));
+            em.SetName(entity, "TacticalFollowCameraRequests");
+        }
+
+        if (!em.HasBuffer<TacticalFollowCameraRequestElement>(entity))
+            em.AddBuffer<TacticalFollowCameraRequestElement>(entity);
+
+        return entity;
     }
 
     private bool IsGameplayInputLocked()

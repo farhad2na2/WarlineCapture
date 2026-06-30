@@ -106,7 +106,61 @@ internal sealed class BuildingPlacementInteractionCompositionSystemHelper
                     out breachTarget,
                     out breachCell,
                     out breachPosition,
-                    out reason)));
+                    out reason),
+                (out Vector3 worldPosition, out float boundsRadius) =>
+                    TryResolveSelectedBuildingFollowTarget(source, out worldPosition, out boundsRadius)));
+    }
+
+    private static bool TryResolveSelectedBuildingFollowTarget(
+        BuildingGameplaySourceCompositionSystemHelper source,
+        out Vector3 worldPosition,
+        out float boundsRadius)
+    {
+        worldPosition = Vector3.zero;
+        boundsRadius = 0f;
+        if (source == null ||
+            !source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue ||
+            !source.BuildingRuntimeQueryCompositionSystemHelper.TryGetRuntimeBuilding(
+                source,
+                source.RuntimeBuildingSystem.CurrentActiveBuildingId.Value,
+                out RuntimeBuildingEntity building))
+        {
+            return false;
+        }
+
+        if (!source.BuildingRuntimeQueryCompositionSystemHelper.TryResolveBuildingFocusWorldPosition(
+                source,
+                building,
+                (out EntityManager entityManager) => source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out entityManager),
+                out worldPosition))
+        {
+            return false;
+        }
+
+        boundsRadius = ResolveBuildingFollowBoundsRadius(source, building);
+        return true;
+    }
+
+    private static float ResolveBuildingFollowBoundsRadius(
+        BuildingGameplaySourceCompositionSystemHelper source,
+        RuntimeBuildingEntity building)
+    {
+        const float fallbackRadius = 6f;
+        if (building?.Definition == null)
+            return fallbackRadius;
+
+        float cellSize = 1f;
+        if (source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridForSelection(
+                source.BuildingGameplayEcsQueryCompositionSystemHelper,
+                (out EntityManager entityManager) => source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out entityManager),
+                out GridConfig grid))
+        {
+            cellSize = Mathf.Max(0.1f, grid.CellSize);
+        }
+
+        Vector2 footprint = building.Definition.FootprintCells;
+        float diagonal = Mathf.Sqrt((footprint.x * footprint.x) + (footprint.y * footprint.y)) * cellSize;
+        return Mathf.Max(fallbackRadius, diagonal * 0.55f);
     }
 
     private static void EnqueueAndProcessCreateUnitFromSelectedBuilding(

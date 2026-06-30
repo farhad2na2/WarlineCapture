@@ -625,6 +625,8 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         public bool RequestBoardTargetMode() => true;
 
+        public bool RequestToggleTacticalFollowCameraMode() => true;
+
         public bool RequestHoldPosition() => true;
 
         public bool RequestStop() => true;

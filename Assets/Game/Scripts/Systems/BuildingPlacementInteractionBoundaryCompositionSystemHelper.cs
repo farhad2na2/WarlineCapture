@@ -5,6 +5,8 @@ using UnityEngine;
 
 public sealed class BuildingPlacementInteractionBoundaryCompositionSystemHelper
 {
+    public delegate bool TryResolveSelectedBuildingFollowTargetDelegate(out Vector3 worldPosition, out float boundsRadius);
+
     public delegate bool TryResolveBaseBreachTargetDelegate(
         byte attackerFactionId,
         Entity finalTarget,
@@ -33,6 +35,7 @@ public sealed class BuildingPlacementInteractionBoundaryCompositionSystemHelper
         public readonly Action ExitBuildMode;
         public readonly Action<int, Entity, GameObject> HandleRuntimeBuildingEntityDestroyed;
         public readonly TryResolveBaseBreachTargetDelegate TryResolveBaseBreachTarget;
+        public readonly TryResolveSelectedBuildingFollowTargetDelegate TryResolveSelectedBuildingFollowTarget;
 
         public Context(
             Func<bool> hasPendingBuildingPlacement,
@@ -50,7 +53,8 @@ public sealed class BuildingPlacementInteractionBoundaryCompositionSystemHelper
             Action<string> clearSelectedBuilding,
             Action exitBuildMode,
             Action<int, Entity, GameObject> handleRuntimeBuildingEntityDestroyed,
-            TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget)
+            TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget,
+            TryResolveSelectedBuildingFollowTargetDelegate tryResolveSelectedBuildingFollowTarget = null)
         {
             HasPendingBuildingPlacement = hasPendingBuildingPlacement;
             CanConfirmBuildingPlacement = canConfirmBuildingPlacement;
@@ -68,6 +72,7 @@ public sealed class BuildingPlacementInteractionBoundaryCompositionSystemHelper
             ExitBuildMode = exitBuildMode;
             HandleRuntimeBuildingEntityDestroyed = handleRuntimeBuildingEntityDestroyed;
             TryResolveBaseBreachTarget = tryResolveBaseBreachTarget;
+            TryResolveSelectedBuildingFollowTarget = tryResolveSelectedBuildingFollowTarget;
         }
     }
 
@@ -177,5 +182,13 @@ public sealed class BuildingPlacementInteractionBoundaryCompositionSystemHelper
                    out breachCell,
                    out breachPosition,
                    out reason);
+    }
+
+    public bool TryResolveSelectedBuildingFollowTarget(Context context, out Vector3 worldPosition, out float boundsRadius)
+    {
+        worldPosition = Vector3.zero;
+        boundsRadius = 0f;
+        return context.TryResolveSelectedBuildingFollowTarget != null &&
+               context.TryResolveSelectedBuildingFollowTarget(out worldPosition, out boundsRadius);
     }
 }

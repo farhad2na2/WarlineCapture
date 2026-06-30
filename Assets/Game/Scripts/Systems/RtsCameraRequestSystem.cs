@@ -187,6 +187,29 @@ public sealed partial class RtsCameraRequestSystem : SystemBase
         return TryEnqueue(entityManager, Request(RtsCameraRequestKind.UpdateSmoothFocus, smoothTime));
     }
 
+    public bool QueueUpdateTacticalFollowPose(
+        EntityManager entityManager,
+        Vector3 desiredPosition,
+        Vector3 lookAt,
+        float fieldOfView,
+        float smoothTime,
+        bool orthographic = false,
+        float orthographicSize = 0f)
+    {
+        return TryEnqueue(entityManager, new RtsCameraRequestElement
+        {
+            Kind = RtsCameraRequestKind.UpdateTacticalFollowPose,
+            WorldPosition = ToFloat3(desiredPosition),
+            Value = lookAt.x,
+            Value2 = lookAt.y,
+            Value3 = lookAt.z,
+            Value4 = fieldOfView,
+            Value5 = smoothTime,
+            Value6 = orthographicSize,
+            Flag = orthographic ? (byte)1 : (byte)0
+        });
+    }
+
     public void ProcessPendingRequests(EntityManager entityManager, RtsCameraSystem cameraSystem, Camera worldCamera, Action orderMarkersHideRequested = null)
     {
         if (cameraSystem == null)
@@ -281,6 +304,16 @@ public sealed partial class RtsCameraRequestSystem : SystemBase
                     Vector3 smoothedCenter = cameraSystem.UpdateSmoothFocus(currentGroundCenter, request.Value);
                     cameraSystem.MoveCameraGroundCenterTo(worldCamera, smoothedCenter);
                 }
+                break;
+            case RtsCameraRequestKind.UpdateTacticalFollowPose:
+                cameraSystem.UpdateTacticalFollowPose(
+                    worldCamera,
+                    ToVector3(request.WorldPosition),
+                    new Vector3(request.Value, request.Value2, request.Value3),
+                    request.Value4,
+                    request.Value5,
+                    request.Flag != 0,
+                    request.Value6);
                 break;
         }
     }

@@ -25,7 +25,8 @@ public enum RtsCameraRequestKind : byte
     MoveGroundCenterTo = 20,
     SetSmoothFocusTarget = 21,
     ClearSmoothFocusTarget = 22,
-    UpdateSmoothFocus = 23
+    UpdateSmoothFocus = 23,
+    UpdateTacticalFollowPose = 24
 }
 
 public struct RtsCameraRequestQueueComponent : IComponentData

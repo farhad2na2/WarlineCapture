@@ -20,12 +20,15 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(ResetSession_ClearsDragAndSmoothFocus), test => test.ResetSession_ClearsDragAndSmoothFocus());
             RunCase(nameof(ResetCameraModeSession_ClearsModeTransitionState), test => test.ResetCameraModeSession_ClearsModeTransitionState());
             RunCase(nameof(PanCamera_MovesAlongFlattenedCameraAxes), test => test.PanCamera_MovesAlongFlattenedCameraAxes());
+            RunCase(nameof(RuntimePanCamera_IgnoresPanAndDragWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresPanAndDragWhenTacticalFollowLocked());
             RunCase(nameof(ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera), test => test.ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera());
             RunCase(nameof(MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter), test => test.MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter());
             RunCase(nameof(UpdateFullscreenIsoZoom_ClampsTargets), test => test.UpdateFullscreenIsoZoom_ClampsTargets());
+            RunCase(nameof(TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue());
+            RunCase(nameof(TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue());
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
-            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=11");
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=14");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -168,6 +171,86 @@ public sealed class RtsCameraSystemTests
     }
 
     [Test]
+    public void RuntimePanCamera_IgnoresPanAndDragWhenTacticalFollowLocked()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowPanLock");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true };
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
+            Camera camera = CreateCamera(new Vector3(0f, 10f, -10f), Quaternion.Euler(45f, 0f, 0f));
+            Entity modeEntity = world.EntityManager.CreateEntity(typeof(TacticalFollowCameraModeComponent));
+            world.EntityManager.SetComponentData(modeEntity, new TacticalFollowCameraModeComponent
+            {
+                Enabled = 1,
+                PanInputLocked = 1
+            });
+            var context = new RtsSelectionRuntimeCameraSystemHelper.Context(
+                runtime,
+                new RtsSelectionInputCompositionSystemHelper(),
+                cameraSystem,
+                cameraRequestSystem,
+                camera,
+                null,
+                null,
+                null,
+                default,
+                TryGetDefaultEntityManager,
+                NullMatchIntroStateQuery.Instance,
+                null,
+                null,
+                null,
+                0.03f,
+                20f,
+                10f,
+                45f,
+                24f,
+                100f,
+                58f,
+                64f,
+                10f,
+                10f,
+                36f,
+                32f,
+                40f,
+                82f,
+                10f,
+                24f,
+                10f);
+
+            Vector3 originalPosition = camera.transform.position;
+
+            runtimeCameraSystem.SetCameraDragging(context, true);
+            runtimeCameraSystem.PanCamera(context, new Vector2(10f, 0f));
+
+            Assert.IsFalse(cameraSystem.IsDragging);
+            Assert.AreEqual(originalPosition, camera.transform.position);
+
+            cameraSystem.SetDragging(true);
+            Assert.IsTrue(runtimeCameraSystem.UpdateRuntimeCameraTick(context));
+
+            Assert.IsFalse(cameraSystem.IsDragging);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+
+        bool TryGetDefaultEntityManager(out EntityManager entityManager)
+        {
+            entityManager = world.EntityManager;
+            return world.IsCreated;
+        }
+    }
+
+    [Test]
     public void ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera()
     {
         RtsCameraSystem cameraSystem = CreateCameraSystem();
@@ -208,6 +291,77 @@ public sealed class RtsCameraSystemTests
 
         Assert.That(cameraSystem.FullscreenIsoTargetHeight, Is.EqualTo(10f).Within(0.0001f));
         Assert.That(cameraSystem.FullscreenIsoTargetOrthographicSize, Is.EqualTo(8f).Within(0.0001f));
+    }
+
+    [Test]
+    public void TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowPose");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            Camera camera = CreateCamera(Vector3.zero, Quaternion.identity);
+
+            cameraRequestSystem.QueueUpdateTacticalFollowPose(
+                world.EntityManager,
+                new Vector3(3f, 6f, -9f),
+                new Vector3(3f, 1f, 1f),
+                38f,
+                0f);
+            cameraRequestSystem.ProcessPendingRequests(world.EntityManager, cameraSystem, camera);
+
+            Assert.AreEqual(new Vector3(3f, 6f, -9f), camera.transform.position);
+            Assert.That(Vector3.Angle(camera.transform.forward, (new Vector3(3f, 1f, 1f) - camera.transform.position).normalized), Is.LessThan(0.01f));
+            Assert.AreEqual(38f, camera.fieldOfView);
+            Assert.IsFalse(camera.orthographic);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowOrthoRestore");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            Camera camera = CreateCamera(Vector3.zero, Quaternion.identity);
+            camera.orthographic = false;
+            camera.orthographicSize = 3f;
+
+            cameraRequestSystem.QueueUpdateTacticalFollowPose(
+                world.EntityManager,
+                new Vector3(8f, 12f, -14f),
+                new Vector3(8f, 2f, 0f),
+                45f,
+                0f,
+                true,
+                11f);
+            cameraRequestSystem.ProcessPendingRequests(world.EntityManager, cameraSystem, camera);
+
+            Assert.AreEqual(new Vector3(8f, 12f, -14f), camera.transform.position);
+            Assert.IsTrue(camera.orthographic);
+            Assert.AreEqual(11f, camera.orthographicSize, 0.001f);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
     }
 
     [Test]

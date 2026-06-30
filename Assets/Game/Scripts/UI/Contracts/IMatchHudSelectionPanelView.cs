@@ -5,6 +5,8 @@ public interface IMatchHudSelectionPanelView
 {
     void BindActions(Action returnRequested, Action destroyRequested, Action boardRequested);
 
+    void BindCameraAction(Action cameraRequested);
+
     void BindTransportPassengerActions(
         Action passengerChipRequested,
         Action passengerDrawerCloseRequested,
@@ -18,6 +20,10 @@ public interface IMatchHudSelectionPanelView
     void SetSelectionVisible(bool visible, Sprite portraitSprite);
 
     void SetBoardActionSelected(bool selected);
+
+    void SetCameraActionSelected(bool selected);
+
+    void SetCameraActionEnabled(bool enabled);
 
     Sprite ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind kind);
 

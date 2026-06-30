@@ -6,6 +6,7 @@ public sealed partial class RtsCameraSystem : SystemBase
     private const float SmoothFocusCompletionDistanceSq = 0.01f;
 
     private Vector3 _smoothFocusVelocity;
+    private Vector3 _tacticalFollowPositionVelocity;
     private float _zoomTransitionVelocity;
     private float _pitchTransitionVelocity;
     private float _yawTransitionVelocity;
@@ -72,6 +73,7 @@ public sealed partial class RtsCameraSystem : SystemBase
     public void ResetTransitionVelocities()
     {
         ResetPerspectiveTransitionVelocities();
+        _tacticalFollowPositionVelocity = Vector3.zero;
         _orthographicSizeTransitionVelocity = 0f;
     }
 
@@ -428,5 +430,81 @@ public sealed partial class RtsCameraSystem : SystemBase
                Mathf.Abs(Mathf.DeltaAngle(newPitch, targetPitch)) <= 0.1f &&
                Mathf.Abs(Mathf.DeltaAngle(newYaw, targetYaw)) <= 0.1f &&
                Mathf.Abs(worldCamera.orthographicSize - targetOrthographicSize) <= 0.05f;
+    }
+
+    public bool UpdateTacticalFollowPose(
+        Camera worldCamera,
+        Vector3 desiredPosition,
+        Vector3 lookAt,
+        float targetFieldOfView,
+        float smoothTime,
+        bool targetOrthographic = false,
+        float targetOrthographicSize = 0f)
+    {
+        if (worldCamera == null)
+            return true;
+
+        if (worldCamera.orthographic != targetOrthographic)
+            worldCamera.orthographic = targetOrthographic;
+
+        float resolvedSmoothTime = Mathf.Max(0f, smoothTime);
+        if (resolvedSmoothTime <= 0.0001f)
+        {
+            worldCamera.transform.position = desiredPosition;
+            ApplyTacticalFollowRotation(worldCamera, desiredPosition, lookAt, 1f);
+            if (targetOrthographic)
+                worldCamera.orthographicSize = Mathf.Max(0.1f, targetOrthographicSize);
+            else
+                worldCamera.fieldOfView = Mathf.Max(1f, targetFieldOfView);
+            return true;
+        }
+
+        worldCamera.transform.position = Vector3.SmoothDamp(
+            worldCamera.transform.position,
+            desiredPosition,
+            ref _tacticalFollowPositionVelocity,
+            resolvedSmoothTime);
+
+        ApplyTacticalFollowRotation(
+            worldCamera,
+            worldCamera.transform.position,
+            lookAt,
+            1f - Mathf.Exp(-UnityEngine.Time.deltaTime / resolvedSmoothTime));
+
+        if (targetOrthographic)
+        {
+            worldCamera.orthographicSize = Mathf.SmoothDamp(
+                worldCamera.orthographicSize,
+                Mathf.Max(0.1f, targetOrthographicSize),
+                ref _orthographicSizeTransitionVelocity,
+                resolvedSmoothTime);
+        }
+        else
+        {
+            worldCamera.fieldOfView = Mathf.SmoothDamp(
+                worldCamera.fieldOfView,
+                Mathf.Max(1f, targetFieldOfView),
+                ref _fieldOfViewTransitionVelocity,
+                resolvedSmoothTime);
+        }
+
+        bool zoomReached = targetOrthographic
+            ? Mathf.Abs(worldCamera.orthographicSize - targetOrthographicSize) <= 0.05f
+            : Mathf.Abs(worldCamera.fieldOfView - targetFieldOfView) <= 0.05f;
+        return Vector3.Distance(worldCamera.transform.position, desiredPosition) <= 0.05f &&
+               zoomReached;
+    }
+
+    private static void ApplyTacticalFollowRotation(Camera worldCamera, Vector3 position, Vector3 lookAt, float t)
+    {
+        Vector3 lookDirection = lookAt - position;
+        if (lookDirection.sqrMagnitude <= 0.0001f)
+            return;
+
+        Quaternion desiredRotation = Quaternion.LookRotation(lookDirection.normalized, Vector3.up);
+        worldCamera.transform.rotation = Quaternion.Slerp(
+            worldCamera.transform.rotation,
+            desiredRotation,
+            Mathf.Clamp01(t));
     }
 }

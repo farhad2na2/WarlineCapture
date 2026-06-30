@@ -95,6 +95,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
         var selectedUnitOrderSnapshotSystem = new SelectedUnitOrderSnapshotCompositionSystemHelper();
         var buildingTargetMoveOrderSystem = new BuildingTargetMoveOrderSystem();
         var transportBoardingCommandSystem = new TransportBoardingCommandSystem();
+        var tacticalFollowCameraModeSystem = new TacticalFollowCameraModeSystemHelper();
         var focusableUnitLookupSystem = new FocusableUnitLookupCameraSystemHelper();
         var matchHudSquadTraySelectionSystem = new MatchHudSquadTraySelectionUiSystemHelper();
         var unitTransportCapacitySystem = new UnitTransportCapacitySystem();
@@ -110,6 +111,8 @@ internal sealed class SelectionGameplayStartupSystemHelper
         bool hasRuntimeCameraContext = false;
         RtsSelectionCommandResultFlushCompositionSystemHelper.Context commandResultFlushContext = default;
         bool hasCommandResultFlushContext = false;
+        IMatchHudSelectionPanelView matchHudSelectionPanelView = null;
+        int lastTacticalFollowCameraFeedbackSequence = 0;
         Unity.Entities.World selectionRuntimeQueryWorld = null;
         EntityQuery selectedMoveQuery = default;
         EntityQuery selectedTagQuery = default;
@@ -173,6 +176,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
 
         void BindMatchHudSelectionPanel(IMatchHudSelectionPanelView view)
         {
+            matchHudSelectionPanelView = view;
             selectionHudFeedbackSystem.BindMatchHudSelectionPanel(view);
             selectionBuildingInteraction.BindMatchHudSelectionPanel(view);
             hasCommandResultFlushContext = false;
@@ -180,6 +184,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
                 () => selectionUiCommand.RequestReturnToBase(),
                 () => selectionUiCommand.RequestDestroyFocusedUnit(),
                 RequestBoardTargetModeFromPanel);
+            view?.BindCameraAction(RequestToggleTacticalFollowCameraModeFromPanel);
             view?.BindTransportPassengerActions(
                 () => { },
                 () => { },
@@ -201,6 +206,16 @@ internal sealed class SelectionGameplayStartupSystemHelper
             selectionHudFeedbackSystem.ApplyCommandResult(
                 CreateHudFeedbackContext(),
                 TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "Board command unavailable."));
+        }
+
+        void RequestToggleTacticalFollowCameraModeFromPanel()
+        {
+            if (selectionUiCommand.RequestToggleTacticalFollowCameraMode())
+                return;
+
+            selectionHudFeedbackSystem.ApplyCommandResult(
+                CreateHudFeedbackContext(),
+                TacticalCommandResult.Rejected(TacticalCommandReasonCode.CameraJumpUnavailable, "Camera follow unavailable."));
         }
 
         void BindMatchHudSquadTray(IMatchHudSquadTrayView view)
@@ -272,6 +287,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
             rtsSelectionCommandResultFlushSystem.ProcessDeselectAllCommandRequests(GetCommandResultFlushContext());
             if (rtsSelectionInputSystem.HasPendingExternalSelectionCommandRequests())
                 rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
+            ProcessTacticalFollowCameraRequests();
             RtsSelectionRuntimeInputCompositionSystemHelper.Context inputContext = GetRuntimeInputContext();
             rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
             selectionHudFeedbackSystem.RefreshFocusedSelectionReadModels(
@@ -308,6 +324,8 @@ internal sealed class SelectionGameplayStartupSystemHelper
                 em => rtsSelectionPointerTargetCommandSystem.HasSelectedBoardAction(
                     CreatePointerTargetCommandContext(),
                     em));
+            RefreshTacticalFollowCameraPose();
+            ApplyTacticalFollowCameraUiReadModel();
             rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(GetCommandResultFlushContext());
             rtsSelectionCommandResultFlushSystem.UpdateCommandPreviewMarkers(
                 GetCommandResultFlushContext(),
@@ -329,6 +347,141 @@ internal sealed class SelectionGameplayStartupSystemHelper
             {
                 rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(inputContext);
             }
+            UpdateTacticalFollowCameraPose();
+        }
+
+        void ProcessTacticalFollowCameraRequests()
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em))
+                return;
+
+            bool processed = tacticalFollowCameraModeSystem.ProcessPendingRequests(
+                em,
+                runtimeConfig.WorldCamera,
+                CreateTacticalFollowCameraContext());
+            if (!processed ||
+                !tacticalFollowCameraModeSystem.TryReadUiReadModel(em, out TacticalFollowCameraUiReadModelComponent readModel) ||
+                readModel.ReasonCode == (int)TacticalCommandReasonCode.None)
+            {
+                return;
+            }
+
+            selectionHudFeedbackSystem.ApplyCommandResult(
+                CreateHudFeedbackContext(),
+                TacticalCommandResult.Rejected((TacticalCommandReasonCode)readModel.ReasonCode));
+        }
+
+        void ApplyTacticalFollowCameraUiReadModel()
+        {
+            if (matchHudSelectionPanelView == null ||
+                !TryGetDefaultEntityManager(out EntityManager em) ||
+                !tacticalFollowCameraModeSystem.TryReadUiReadModel(em, out TacticalFollowCameraUiReadModelComponent readModel))
+            {
+                return;
+            }
+
+            matchHudSelectionPanelView.SetCameraActionEnabled(readModel.Enabled != 0);
+            matchHudSelectionPanelView.SetCameraActionSelected(readModel.Selected != 0);
+            ApplyTacticalFollowCameraFeedback(readModel);
+        }
+
+        void ApplyTacticalFollowCameraFeedback(TacticalFollowCameraUiReadModelComponent readModel)
+        {
+            if (readModel.FeedbackSequence <= 0 ||
+                readModel.FeedbackSequence == lastTacticalFollowCameraFeedbackSequence ||
+                readModel.FeedbackCode == (int)TacticalFollowCameraFeedbackCode.None)
+            {
+                return;
+            }
+
+            lastTacticalFollowCameraFeedbackSequence = readModel.FeedbackSequence;
+            TacticalCommandResult result =
+                (TacticalFollowCameraFeedbackCode)readModel.FeedbackCode switch
+                {
+                    TacticalFollowCameraFeedbackCode.EnteredFollowMode =>
+                        TacticalCommandResult.Success("Camera follow active."),
+                    TacticalFollowCameraFeedbackCode.ExitedFollowMode =>
+                        TacticalCommandResult.Success("RTS camera restored."),
+                    TacticalFollowCameraFeedbackCode.TargetLost =>
+                        TacticalCommandResult.Rejected(TacticalCommandReasonCode.CameraJumpUnavailable, "Follow target lost."),
+                    _ => TacticalCommandResult.Success()
+                };
+
+            if (!string.IsNullOrWhiteSpace(result.Message) || !result.Accepted)
+                selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), result);
+        }
+
+        void RefreshTacticalFollowCameraPose()
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em))
+                return;
+
+            tacticalFollowCameraModeSystem.RefreshActiveTargetAndPose(em, CreateTacticalFollowCameraContext());
+        }
+
+        TacticalFollowCameraModeSystemHelper.Context CreateTacticalFollowCameraContext()
+        {
+            return new TacticalFollowCameraModeSystemHelper.Context(TryResolveSelectedBuildingFollowTarget);
+        }
+
+        bool TryResolveSelectedBuildingFollowTarget(out Vector3 worldPosition, out float boundsRadius)
+        {
+            worldPosition = Vector3.zero;
+            boundsRadius = 0f;
+            return buildingPlacementInteractionSystem != null &&
+                   buildingPlacementInteractionSystem.TryResolveSelectedBuildingFollowTarget(
+                       buildingPlacementInteractionContext,
+                       out worldPosition,
+                       out boundsRadius);
+        }
+
+        void UpdateTacticalFollowCameraPose()
+        {
+            if (rtsSelectionRuntimeCameraSystem == null ||
+                runtimeConfig.WorldCamera == null ||
+                !TryGetDefaultEntityManager(out EntityManager em) ||
+                !tacticalFollowCameraModeSystem.TryReadPose(em, out TacticalFollowCameraPoseComponent pose))
+            {
+                return;
+            }
+
+            rtsCameraRequestSystem.QueueUpdateTacticalFollowPose(
+                em,
+                ToVector3(pose.DesiredPosition),
+                ToVector3(pose.LookAt),
+                pose.FieldOfView,
+                pose.PositionDampingSeconds,
+                pose.Orthographic != 0,
+                pose.OrthographicSize);
+            rtsSelectionRuntimeCameraSystem.ProcessCameraRequests(GetRuntimeCameraContext(), em);
+
+            if (pose.Source == TacticalFollowCameraPoseSource.RestoreDefault &&
+                IsTacticalFollowRestorePoseReached(runtimeConfig.WorldCamera, pose))
+            {
+                tacticalFollowCameraModeSystem.ClearPose(em);
+            }
+        }
+
+        static bool IsTacticalFollowRestorePoseReached(Camera worldCamera, TacticalFollowCameraPoseComponent pose)
+        {
+            if (worldCamera == null)
+                return false;
+
+            Vector3 desiredPosition = ToVector3(pose.DesiredPosition);
+            Vector3 lookAt = ToVector3(pose.LookAt);
+            Vector3 desiredForward = lookAt - desiredPosition;
+            if (desiredForward.sqrMagnitude <= 0.0001f)
+                desiredForward = ToVector3(math.forward(pose.DesiredRotation));
+
+            float positionDistance = Vector3.Distance(worldCamera.transform.position, desiredPosition);
+            float rotationAngle = Vector3.Angle(worldCamera.transform.forward, desiredForward.normalized);
+            float zoomDelta = pose.Orthographic != 0
+                ? Mathf.Abs(worldCamera.orthographicSize - pose.OrthographicSize)
+                : Mathf.Abs(worldCamera.fieldOfView - pose.FieldOfView);
+            return positionDistance <= 0.1f &&
+                   rotationAngle <= 0.5f &&
+                   zoomDelta <= 0.1f &&
+                   worldCamera.orthographic == (pose.Orthographic != 0);
         }
 
         RtsSelectionRuntimeInputCompositionSystemHelper.Context GetRuntimeInputContext()
@@ -936,4 +1089,8 @@ internal sealed class SelectionGameplayStartupSystemHelper
         return $"{sourceName} entity={entity} cell={cell} faction={faction} health={health} seats={passengers}/{capacity}";
     }
 
+    private static Vector3 ToVector3(float3 value)
+    {
+        return new Vector3(value.x, value.y, value.z);
+    }
 }

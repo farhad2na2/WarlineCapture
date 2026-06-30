@@ -19,6 +19,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
     [SerializeField] private Button returnAction;
     [SerializeField] private Button destroyAction;
     [SerializeField] private Button boardAction;
+    [SerializeField] private Button cameraAction;
     [SerializeField] private GameObject passengerChipRoot;
     [SerializeField] private Button passengerChipButton;
     [SerializeField] private TMP_Text passengerChipLabel;
@@ -40,6 +41,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
     private System.Action _returnRequested;
     private System.Action _destroyRequested;
     private System.Action _boardRequested;
+    private Action _cameraRequested;
     private Action _passengerChipRequested;
     private Action _passengerDrawerCloseRequested;
     private Action _passengerExitAllRequested;
@@ -47,11 +49,19 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
     private Button _boundReturnAction;
     private Button _boundDestroyAction;
     private Button _boundBoardAction;
+    private Button _boundCameraAction;
     private Button _boundPassengerChipButton;
     private Sprite _boardActionNormalSprite;
+    private Sprite _cameraActionNormalSprite;
+    private bool _boardActionNormalSpriteCached;
+    private bool _cameraActionNormalSpriteCached;
     private Color _boardActionNormalColor;
+    private Color _cameraActionNormalColor;
     private bool _boardActionNormalColorCached;
+    private bool _cameraActionNormalColorCached;
     private bool _boardActionSelected;
+    private bool _cameraActionSelected;
+    private bool _cameraActionEnabled;
     private bool _passengerDrawerOpen;
     private UiEntityHandle _passengerDrawerTransport;
     private readonly List<MatchHudSelectionPanelPassengerItemModel> _emptyPassengers = new();
@@ -60,6 +70,8 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
     {
         BindUnityEvents();
         CacheBoardActionNormalSprite();
+        CacheCameraActionNormalSprite();
+        _cameraActionEnabled = cameraAction != null && cameraAction.interactable;
         ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
         HideSelection();
     }
@@ -77,6 +89,12 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
         _returnRequested = returnRequested;
         _destroyRequested = destroyRequested;
         _boardRequested = boardRequested;
+    }
+
+    public void BindCameraAction(Action cameraRequested)
+    {
+        BindUnityEvents();
+        _cameraRequested = cameraRequested;
     }
 
     public void BindTransportPassengerActions(
@@ -98,6 +116,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
         _returnRequested = null;
         _destroyRequested = null;
         _boardRequested = null;
+        _cameraRequested = null;
     }
 
     public void ClearTransportPassengerActions()
@@ -118,6 +137,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
     {
         SetSelectionVisible(false);
         SetActionState(boardAction, true);
+        SetActionState(cameraAction, false);
     }
 
     public void SetSelectionVisible(bool visible)
@@ -171,6 +191,7 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
                ContainsScreenPoint(returnAction != null ? returnAction.transform as RectTransform : null, screenPosition) ||
                ContainsScreenPoint(destroyAction != null ? destroyAction.transform as RectTransform : null, screenPosition) ||
                ContainsScreenPoint(boardAction != null ? boardAction.transform as RectTransform : null, screenPosition) ||
+               ContainsScreenPoint(cameraAction != null ? cameraAction.transform as RectTransform : null, screenPosition) ||
                ContainsScreenPoint(passengerChipButton != null ? passengerChipButton.transform as RectTransform : null, screenPosition) ||
                (passengerDrawer != null && passengerDrawer.ContainsScreenPoint(screenPosition));
     }
@@ -194,6 +215,8 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
         // command system can show no-selection/invalid-selection feedback.
         SetActionState(boardAction, true);
         SetBoardActionSelected(_boardActionSelected);
+        SetActionState(cameraAction, model.Visible && _cameraActionEnabled);
+        SetCameraActionSelected(_cameraActionSelected);
     }
 
     public void ToggleTransportPassengerDrawer()
@@ -265,17 +288,53 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
         }
     }
 
+    public void SetCameraActionSelected(bool selected)
+    {
+        if (cameraAction == null || cameraAction.targetGraphic is not Image image)
+            return;
+
+        _cameraActionSelected = selected;
+        CacheCameraActionNormalSprite();
+        CacheCameraActionNormalColor(image);
+        Sprite selectedSprite = cameraAction.spriteState.selectedSprite;
+        if (selected && selectedSprite != null)
+        {
+            image.sprite = selectedSprite;
+            image.color = _cameraActionNormalColorCached ? _cameraActionNormalColor : image.color;
+        }
+        else if (_cameraActionNormalSprite != null)
+        {
+            image.sprite = _cameraActionNormalSprite;
+            image.color = _cameraActionNormalColorCached ? _cameraActionNormalColor : image.color;
+        }
+        else
+        {
+            image.sprite = null;
+            image.color = selected
+                ? cameraAction.colors.selectedColor
+                : (_cameraActionNormalColorCached ? _cameraActionNormalColor : image.color);
+        }
+    }
+
+    public void SetCameraActionEnabled(bool enabled)
+    {
+        _cameraActionEnabled = enabled;
+        SetActionState(cameraAction, selectedSquadPanel == null || selectedSquadPanel.activeSelf ? enabled : false);
+        SetCameraActionSelected(_cameraActionSelected);
+    }
+
     private void BindUnityEvents()
     {
         BindButton(returnAction, ref _boundReturnAction, HandleReturnAction);
         BindButton(destroyAction, ref _boundDestroyAction, HandleDestroyAction);
         BindButton(boardAction, ref _boundBoardAction, HandleBoardAction);
+        BindButton(cameraAction, ref _boundCameraAction, HandleCameraAction);
         BindButton(passengerChipButton, ref _boundPassengerChipButton, HandlePassengerChip);
     }
 
     private void CacheBoardActionNormalSprite()
     {
-        if (_boardActionNormalSprite != null ||
+        if (_boardActionNormalSpriteCached ||
             boardAction == null ||
             boardAction.targetGraphic is not Image image)
         {
@@ -283,6 +342,20 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
         }
 
         _boardActionNormalSprite = image.sprite;
+        _boardActionNormalSpriteCached = true;
+    }
+
+    private void CacheCameraActionNormalSprite()
+    {
+        if (_cameraActionNormalSpriteCached ||
+            cameraAction == null ||
+            cameraAction.targetGraphic is not Image image)
+        {
+            return;
+        }
+
+        _cameraActionNormalSprite = image.sprite;
+        _cameraActionNormalSpriteCached = true;
     }
 
     private void CacheBoardActionNormalColor(Image image)
@@ -294,11 +367,21 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
         _boardActionNormalColorCached = true;
     }
 
+    private void CacheCameraActionNormalColor(Image image)
+    {
+        if (_cameraActionNormalColorCached || image == null)
+            return;
+
+        _cameraActionNormalColor = image.color;
+        _cameraActionNormalColorCached = true;
+    }
+
     private void RemoveUnityEvents()
     {
         UnbindButton(ref _boundReturnAction, HandleReturnAction);
         UnbindButton(ref _boundDestroyAction, HandleDestroyAction);
         UnbindButton(ref _boundBoardAction, HandleBoardAction);
+        UnbindButton(ref _boundCameraAction, HandleCameraAction);
         UnbindButton(ref _boundPassengerChipButton, HandlePassengerChip);
     }
 
@@ -315,6 +398,11 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
     private void HandleBoardAction()
     {
         _boardRequested?.Invoke();
+    }
+
+    private void HandleCameraAction()
+    {
+        _cameraRequested?.Invoke();
     }
 
     private void HandlePassengerChip()

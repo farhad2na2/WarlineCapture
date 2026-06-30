@@ -23,7 +23,9 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(PanCamera_MovesAlongFlattenedCameraAxes), test => test.PanCamera_MovesAlongFlattenedCameraAxes());
             RunCase(nameof(PanCamera_ClampsViewportInsideGroundBoundary), test => test.PanCamera_ClampsViewportInsideGroundBoundary());
             RunCase(nameof(ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid), test => test.ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid());
-            RunCase(nameof(RuntimePanCamera_IgnoresPanAndDragWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresPanAndDragWhenTacticalFollowLocked());
+            RunCase(nameof(RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked());
+            RunCase(nameof(RuntimePanCamera_IgnoresBuildModeDragPanWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresBuildModeDragPanWhenTacticalFollowLocked());
+            RunCase(nameof(RuntimePanCamera_IgnoresFullscreenIsoDragPanWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresFullscreenIsoDragPanWhenTacticalFollowLocked());
             RunCase(nameof(ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera), test => test.ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera());
             RunCase(nameof(MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter), test => test.MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter());
             RunCase(nameof(UpdateFullscreenIsoZoom_ClampsTargets), test => test.UpdateFullscreenIsoZoom_ClampsTargets());
@@ -32,7 +34,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue());
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
-            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=17");
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=19");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -90,6 +92,7 @@ public sealed class RtsCameraSystemTests
         if (_cameraSystemWorld != null && _cameraSystemWorld.IsCreated)
             _cameraSystemWorld.Dispose();
         _cameraSystemWorld = null;
+        InitialUnitsRuntimeState.ResetSession();
     }
 
     [Test]
@@ -228,7 +231,7 @@ public sealed class RtsCameraSystemTests
     }
 
     [Test]
-    public void RuntimePanCamera_IgnoresPanAndDragWhenTacticalFollowLocked()
+    public void RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;
         var world = new World("RtsCameraSystemTests.TacticalFollowPanLock");
@@ -247,38 +250,7 @@ public sealed class RtsCameraSystemTests
                 Enabled = 1,
                 PanInputLocked = 1
             });
-            var context = new RtsSelectionRuntimeCameraSystemHelper.Context(
-                runtime,
-                new RtsSelectionInputCompositionSystemHelper(),
-                cameraSystem,
-                cameraRequestSystem,
-                camera,
-                null,
-                null,
-                null,
-                default,
-                TryGetDefaultEntityManager,
-                NullMatchIntroStateQuery.Instance,
-                null,
-                null,
-                null,
-                0.03f,
-                20f,
-                10f,
-                45f,
-                24f,
-                100f,
-                58f,
-                64f,
-                10f,
-                10f,
-                36f,
-                32f,
-                40f,
-                82f,
-                10f,
-                24f,
-                10f);
+            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
 
             Vector3 originalPosition = camera.transform.position;
 
@@ -292,6 +264,101 @@ public sealed class RtsCameraSystemTests
             Assert.IsTrue(runtimeCameraSystem.UpdateRuntimeCameraTick(context));
 
             Assert.IsFalse(cameraSystem.IsDragging);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+
+        bool TryGetDefaultEntityManager(out EntityManager entityManager)
+        {
+            entityManager = world.EntityManager;
+            return world.IsCreated;
+        }
+    }
+
+    [Test]
+    public void RuntimePanCamera_IgnoresBuildModeDragPanWhenTacticalFollowLocked()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowBuildPanLock");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true, BuildModeActive = true };
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
+            Camera camera = CreateCamera(new Vector3(0f, 100f, -10f), Quaternion.Euler(64f, 10f, 0f));
+            camera.fieldOfView = 32f;
+            cameraSystem.WasPlayRequested = true;
+            cameraSystem.WasBuildModeActive = true;
+            Entity modeEntity = world.EntityManager.CreateEntity(typeof(TacticalFollowCameraModeComponent));
+            world.EntityManager.SetComponentData(modeEntity, new TacticalFollowCameraModeComponent
+            {
+                Enabled = 1,
+                PanInputLocked = 1
+            });
+            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
+
+            Vector3 originalPosition = camera.transform.position;
+            cameraSystem.SetDragging(true);
+
+            Assert.IsFalse(runtimeCameraSystem.UpdateRuntimeCameraTick(context));
+
+            Assert.IsFalse(cameraSystem.IsDragging);
+            Assert.AreEqual(originalPosition, camera.transform.position);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+
+        bool TryGetDefaultEntityManager(out EntityManager entityManager)
+        {
+            entityManager = world.EntityManager;
+            return world.IsCreated;
+        }
+    }
+
+    [Test]
+    public void RuntimePanCamera_IgnoresFullscreenIsoDragPanWhenTacticalFollowLocked()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowFullscreenIsoPanLock");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true, FullscreenMapIsoMode = true };
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
+            Camera camera = CreateCamera(new Vector3(0f, 40f, -10f), Quaternion.Euler(82f, 10f, 0f));
+            camera.orthographic = true;
+            camera.orthographicSize = 24f;
+            cameraSystem.FullscreenIsoTargetHeight = 40f;
+            cameraSystem.FullscreenIsoTargetOrthographicSize = 24f;
+            Entity modeEntity = world.EntityManager.CreateEntity(typeof(TacticalFollowCameraModeComponent));
+            world.EntityManager.SetComponentData(modeEntity, new TacticalFollowCameraModeComponent
+            {
+                Enabled = 1,
+                PanInputLocked = 1
+            });
+            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
+
+            Vector3 originalPosition = camera.transform.position;
+            cameraSystem.SetDragging(true);
+
+            Assert.IsFalse(runtimeCameraSystem.UpdateRuntimeCameraTick(context));
+
+            Assert.IsFalse(cameraSystem.IsDragging);
+            Assert.AreEqual(originalPosition, camera.transform.position);
         }
         finally
         {
@@ -635,6 +702,48 @@ public sealed class RtsCameraSystemTests
     {
         _cameraSystemWorld ??= new World("RtsCameraSystemTests.CameraSystem");
         return _cameraSystemWorld.GetOrCreateSystemManaged<RtsCameraSystem>();
+    }
+
+    private static RtsSelectionRuntimeCameraSystemHelper.Context CreateRuntimeCameraContext(
+        RuntimeGameplayStateSystem runtime,
+        RtsSelectionInputCompositionSystemHelper input,
+        RtsCameraSystem cameraSystem,
+        RtsCameraRequestSystem cameraRequestSystem,
+        Camera camera,
+        RtsSelectionRuntimeCameraSystemHelper.TryGetEntityManagerAction tryGetDefaultEntityManager)
+    {
+        return new RtsSelectionRuntimeCameraSystemHelper.Context(
+            runtime,
+            input,
+            cameraSystem,
+            cameraRequestSystem,
+            camera,
+            null,
+            null,
+            null,
+            default,
+            tryGetDefaultEntityManager,
+            NullMatchIntroStateQuery.Instance,
+            null,
+            null,
+            null,
+            0.03f,
+            20f,
+            10f,
+            45f,
+            24f,
+            100f,
+            58f,
+            64f,
+            10f,
+            10f,
+            36f,
+            32f,
+            40f,
+            82f,
+            10f,
+            24f,
+            10f);
     }
 
     private static void AssertCameraFootprintInside(RtsCameraSystem cameraSystem, Camera camera, Rect boundary)

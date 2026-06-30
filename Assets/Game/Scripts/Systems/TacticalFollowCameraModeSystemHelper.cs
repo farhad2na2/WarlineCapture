@@ -54,7 +54,10 @@ public sealed class TacticalFollowCameraModeSystemHelper
     public bool ProcessPendingRequests(EntityManager em, Camera worldCamera, Context context)
     {
         if (!TryGetRequestEntity(em, out Entity requestEntity))
+        {
+            PublishUiReadModel(em, EnsureModeEntity(em), TacticalCommandReasonCode.None, context);
             return false;
+        }
 
         DynamicBuffer<TacticalFollowCameraRequestElement> requests =
             em.GetBuffer<TacticalFollowCameraRequestElement>(requestEntity);
@@ -341,14 +344,53 @@ public sealed class TacticalFollowCameraModeSystemHelper
             using NativeArray<LocalTransform> transforms = selectedQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
             if (selected.Length > 0)
             {
-                target = selected.Length == 1
-                    ? BuildSingleUnitTarget(selected[0], transforms[0])
-                    : BuildGroupTarget(transforms);
-                return true;
+                Entity singleEntity = Entity.Null;
+                LocalTransform singleTransform = default;
+                int followableCount = 0;
+                using NativeList<LocalTransform> followableTransforms = new NativeList<LocalTransform>(Allocator.Temp);
+                for (int i = 0; i < selected.Length; i++)
+                {
+                    if (!IsFollowableUnitEntity(em, selected[i]))
+                        continue;
+
+                    followableCount++;
+                    if (followableCount == 1)
+                    {
+                        singleEntity = selected[i];
+                        singleTransform = transforms[i];
+                    }
+                    else
+                    {
+                        if (followableCount == 2)
+                            followableTransforms.Add(singleTransform);
+                        followableTransforms.Add(transforms[i]);
+                    }
+                }
+
+                if (followableCount == 1)
+                {
+                    target = BuildSingleUnitTarget(singleEntity, singleTransform);
+                    return true;
+                }
+
+                if (followableCount > 1)
+                {
+                    target = BuildGroupTarget(followableTransforms.AsArray());
+                    return true;
+                }
             }
         }
 
         return TryReadSelectedBuildingTarget(context, out target);
+    }
+
+    private static bool IsFollowableUnitEntity(EntityManager em, Entity entity)
+    {
+        return entity != Entity.Null &&
+               em.Exists(entity) &&
+               !em.HasComponent<Disabled>(entity) &&
+               !em.HasComponent<UnitTransportPassenger>(entity) &&
+               !em.HasComponent<UnitTransportCargoPassenger>(entity);
     }
 
     private static bool TryReadFocusedTarget(EntityManager em, out TacticalFollowCameraTargetComponent target)
@@ -363,7 +405,7 @@ public sealed class TacticalFollowCameraModeSystemHelper
         if (model.HasFocusedUnit == 0 ||
             model.OwnedByPlayer == 0 ||
             model.FocusedUnit == Entity.Null ||
-            !em.Exists(model.FocusedUnit))
+            !IsFollowableUnitEntity(em, model.FocusedUnit))
         {
             return false;
         }

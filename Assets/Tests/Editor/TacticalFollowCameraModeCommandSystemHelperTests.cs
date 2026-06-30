@@ -20,6 +20,8 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         {
             RunCase(test => test.ToggleWithoutSelectionRejectsAndPublishesDisabledReadModel());
             passed++;
+            RunCase(test => test.SelectedUnitWithoutPendingRequestPublishesEnabledReadModel());
+            passed++;
             RunCase(test => test.ToggleWithSelectedUnitEntersFollowModeAndLocksPanData());
             passed++;
             RunCase(test => test.ToggleWhileActiveExitsFollowModeAndClearsPanLockData());
@@ -39,6 +41,14 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             RunCase(test => test.SelectedBuildingPublishesBuildingTargetAndPoseWhenNoUnitsSelected());
             passed++;
             RunCase(test => test.SelectedUnitTakesPriorityOverSelectedBuildingTarget());
+            passed++;
+            RunCase(test => test.SelectedUnitPriorityDocumentsMixedUnitBuildingRule());
+            passed++;
+            RunCase(test => test.SelectionChangeWhileActiveRefreshesBaseTarget());
+            passed++;
+            RunCase(test => test.DestroyedGroupMemberFallsBackToRemainingSelectedUnit());
+            passed++;
+            RunCase(test => test.PassengerSelectedUnitFallsBackToSelectedBuildingTarget());
             passed++;
             RunCase(test => test.BuildingFollowPoseClampsHeightAndDistanceAroundBounds());
             passed++;
@@ -60,7 +70,11 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             passed++;
             RunCase(test => test.ProductionGroundLauncherProjectileIsAdoptedDuringFollowMode());
             passed++;
+            RunCase(test => test.ProductionGroundLauncherProjectileImpactReturnsToBaseTarget());
+            passed++;
             RunCase(test => test.ProductionAirLauncherProjectileIsAdoptedDuringFollowMode());
+            passed++;
+            RunCase(test => test.ProductionAirLauncherProjectileImpactReturnsToBaseTarget());
             passed++;
             UnityEngine.Debug.Log($"[TacticalFollowCameraModeCommandValidation] result=Passed tests={passed}");
             ValidationExit.Passed();
@@ -120,6 +134,20 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.AreEqual((int)TacticalCommandReasonCode.NoSelection, readModel.ReasonCode);
         Assert.AreEqual((int)TacticalFollowCameraFeedbackCode.None, readModel.FeedbackCode);
         Assert.AreEqual(0, readModel.FeedbackSequence);
+    }
+
+    [Test]
+    public void SelectedUnitWithoutPendingRequestPublishesEnabledReadModel()
+    {
+        CreateSelectedUnit(new float3(4f, 0f, 6f), quaternion.identity);
+
+        Assert.IsFalse(_system.ProcessPendingRequests(_em));
+
+        Assert.IsTrue(_system.TryReadUiReadModel(_em, out TacticalFollowCameraUiReadModelComponent readModel));
+        Assert.AreEqual(1, readModel.Visible);
+        Assert.AreEqual(1, readModel.Enabled);
+        Assert.AreEqual(0, readModel.Selected);
+        Assert.AreEqual((int)TacticalCommandReasonCode.None, readModel.ReasonCode);
     }
 
     [Test]
@@ -352,6 +380,92 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent target));
         Assert.AreEqual(TacticalFollowCameraTargetKind.Unit, target.TargetKind);
         Assert.AreEqual(selected, target.TargetEntity);
+    }
+
+    [Test]
+    public void SelectedUnitPriorityDocumentsMixedUnitBuildingRule()
+    {
+        Entity selected = CreateSelectedUnit(new float3(6f, 0f, 9f), quaternion.identity);
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+        var context = new TacticalFollowCameraModeSystemHelper.Context(
+            (out Vector3 worldPosition, out float boundsRadius) =>
+            {
+                worldPosition = new Vector3(18f, 0f, 24f);
+                boundsRadius = 7f;
+                return true;
+            });
+
+        Assert.IsTrue(_system.ProcessPendingRequests(_em, null, context));
+
+        Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
+        Assert.AreEqual(TacticalFollowCameraTargetKind.Unit, mode.BaseTargetKind);
+        Assert.AreEqual(selected, mode.BaseTargetEntity);
+        Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent target));
+        Assert.AreEqual(TacticalFollowCameraTargetKind.Unit, target.TargetKind);
+        Assert.AreEqual(selected, target.TargetEntity);
+    }
+
+    [Test]
+    public void SelectionChangeWhileActiveRefreshesBaseTarget()
+    {
+        Entity first = CreateSelectedUnit(new float3(4f, 0f, 6f), quaternion.identity);
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+        Entity second = CreateSelectedUnit(new float3(14f, 0f, 18f), quaternion.RotateY(math.radians(90f)));
+        _em.RemoveComponent<SelectedUnitTag>(first);
+
+        Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em));
+
+        Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
+        Assert.AreEqual(TacticalFollowCameraTargetKind.Unit, mode.BaseTargetKind);
+        Assert.AreEqual(second, mode.BaseTargetEntity);
+        Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent target));
+        Assert.AreEqual(second, target.TargetEntity);
+        Assert.AreEqual(new float3(14f, 0f, 18f), target.Center);
+    }
+
+    [Test]
+    public void DestroyedGroupMemberFallsBackToRemainingSelectedUnit()
+    {
+        Entity first = CreateSelectedUnit(new float3(0f, 0f, 0f), quaternion.identity);
+        Entity second = CreateSelectedUnit(new float3(10f, 0f, 0f), quaternion.identity);
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+        _em.DestroyEntity(first);
+
+        Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em));
+
+        Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
+        Assert.AreEqual(TacticalFollowCameraTargetKind.Unit, mode.BaseTargetKind);
+        Assert.AreEqual(second, mode.BaseTargetEntity);
+        Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent target));
+        Assert.AreEqual(second, target.TargetEntity);
+        Assert.AreEqual(new float3(10f, 0f, 0f), target.Center);
+    }
+
+    [Test]
+    public void PassengerSelectedUnitFallsBackToSelectedBuildingTarget()
+    {
+        Entity transport = _em.CreateEntity();
+        Entity passenger = CreateSelectedUnit(new float3(4f, 0f, 6f), quaternion.identity);
+        _em.AddComponentData(passenger, new UnitTransportPassenger { Transport = transport });
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+        var context = new TacticalFollowCameraModeSystemHelper.Context(
+            (out Vector3 worldPosition, out float boundsRadius) =>
+            {
+                worldPosition = new Vector3(22f, 0f, 28f);
+                boundsRadius = 6f;
+                return true;
+            });
+
+        Assert.IsTrue(_system.ProcessPendingRequests(_em, null, context));
+
+        Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
+        Assert.AreEqual(TacticalFollowCameraTargetKind.Building, mode.BaseTargetKind);
+        Assert.AreEqual(Entity.Null, mode.BaseTargetEntity);
+        Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent target));
+        Assert.AreEqual(TacticalFollowCameraTargetKind.Building, target.TargetKind);
+        Assert.AreEqual(new float3(22f, 0f, 28f), target.Center);
     }
 
     [Test]
@@ -629,6 +743,49 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
     }
 
     [Test]
+    public void ProductionGroundLauncherProjectileImpactReturnsToBaseTarget()
+    {
+        Entity target = _em.CreateEntity(typeof(LocalTransform));
+        _em.SetComponentData(target, LocalTransform.FromPosition(new float3(60f, 0f, 0f)));
+        Entity launcher = CreateProductionGroundLauncher(new float3(0f, 0f, 0f), target, new float3(60f, 0f, 0f));
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+        SystemHandle fireSystem = _world.CreateSystem<GroundMissileLauncherFireSystem>();
+        _world.SetTime(new TimeData(0.1d, 0.1f));
+        fireSystem.Update(_world.Unmanaged);
+        Entity projectile = GetSingletonEntity<GroundMissileProjectileComponent>();
+        Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em, default, 0.2f));
+        Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
+        Assert.AreEqual(projectile, mode.TemporaryTargetEntity);
+        _em.RemoveComponent<GroundMissileProjectileComponent>(projectile);
+        _em.AddComponentData(projectile, new GroundMissileImpactRequestComponent
+        {
+            Source = launcher,
+            Position = new float3(60f, 0f, 0f)
+        });
+
+        Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em, default, 0.3f));
+
+        Assert.IsTrue(_system.TryReadMode(_em, out mode));
+        Assert.AreEqual(1, mode.HasTemporaryTarget);
+        Assert.Greater(mode.ReturnHoldUntilTime, 0.3f);
+        Assert.IsTrue(_system.TryReadPose(_em, out TacticalFollowCameraPoseComponent pose));
+        Assert.AreEqual(TacticalFollowCameraPoseSource.TemporaryMissile, pose.Source);
+        _em.RemoveComponent<GroundMissileImpactRequestComponent>(projectile);
+        mode.ReturnHoldUntilTime = 0.4f;
+        _em.SetComponentData(GetModeEntity(), mode);
+
+        Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em, default, 0.8f));
+
+        Assert.IsTrue(_system.TryReadMode(_em, out mode));
+        Assert.AreEqual(0, mode.HasTemporaryTarget);
+        Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent followTarget));
+        Assert.AreEqual(launcher, followTarget.TargetEntity);
+        Assert.IsTrue(_system.TryReadPose(_em, out pose));
+        Assert.AreEqual(TacticalFollowCameraPoseSource.BaseTarget, pose.Source);
+    }
+
+    [Test]
     public void ProductionAirLauncherProjectileIsAdoptedDuringFollowMode()
     {
         Entity target = CreateAirTarget(new float3(30f, 10f, 0f));
@@ -649,6 +806,49 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.IsTrue(_system.TryReadPose(_em, out TacticalFollowCameraPoseComponent pose));
         Assert.AreEqual(TacticalFollowCameraPoseSource.TemporaryMissile, pose.Source);
         Assert.AreEqual(launcher, _em.GetComponentData<AirMissileProjectileComponent>(projectile).Source);
+    }
+
+    [Test]
+    public void ProductionAirLauncherProjectileImpactReturnsToBaseTarget()
+    {
+        Entity target = CreateAirTarget(new float3(30f, 10f, 0f));
+        Entity launcher = CreateProductionAirLauncher(new float3(0f, 0f, 0f), target, new float3(30f, 10f, 0f));
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+        SystemHandle fireSystem = _world.CreateSystem<AirMissileLauncherFireControlSystem>();
+        _world.SetTime(new TimeData(0.1d, 0.1f));
+        fireSystem.Update(_world.Unmanaged);
+        Entity projectile = GetSingletonEntity<AirMissileProjectileComponent>();
+        Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em, default, 0.2f));
+        Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
+        Assert.AreEqual(projectile, mode.TemporaryTargetEntity);
+        _em.RemoveComponent<AirMissileProjectileComponent>(projectile);
+        _em.AddComponentData(projectile, new AirMissileImpactRequestComponent
+        {
+            Source = launcher,
+            Position = new float3(30f, 10f, 0f),
+            VisualSeparation = 0f
+        });
+
+        Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em, default, 0.3f));
+
+        Assert.IsTrue(_system.TryReadMode(_em, out mode));
+        Assert.AreEqual(1, mode.HasTemporaryTarget);
+        Assert.Greater(mode.ReturnHoldUntilTime, 0.3f);
+        Assert.IsTrue(_system.TryReadPose(_em, out TacticalFollowCameraPoseComponent pose));
+        Assert.AreEqual(TacticalFollowCameraPoseSource.TemporaryMissile, pose.Source);
+        _em.RemoveComponent<AirMissileImpactRequestComponent>(projectile);
+        mode.ReturnHoldUntilTime = 0.4f;
+        _em.SetComponentData(GetModeEntity(), mode);
+
+        Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em, default, 0.8f));
+
+        Assert.IsTrue(_system.TryReadMode(_em, out mode));
+        Assert.AreEqual(0, mode.HasTemporaryTarget);
+        Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent followTarget));
+        Assert.AreEqual(launcher, followTarget.TargetEntity);
+        Assert.IsTrue(_system.TryReadPose(_em, out pose));
+        Assert.AreEqual(TacticalFollowCameraPoseSource.BaseTarget, pose.Source);
     }
 
     private Entity CreateSelectedUnit(float3 position, quaternion rotation)

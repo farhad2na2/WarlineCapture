@@ -8,17 +8,17 @@ Last updated:
 
 ## Progress Snapshot
 
-- Checklist progress: `85 / 103 complete (82.5%)`.
+- Checklist progress: `103 / 103 complete (100%)`.
 - In progress: `0`.
-- Remaining open: `18`.
-- Current target: `Phase 9 PlayMode validation and proof artifacts`.
-- Camera button status: `CameraButton is serialized on MatchHudSelectionPanelView, included in hit-test suppression, bound through SelectionGameplayStartupSystemHelper, and queues TacticalFollowCameraRequestElement.ToggleFollowMode through ISelectionUiCommand.`
-- Follow mode status: `TacticalFollowCameraModeSystemHelper consumes ToggleFollowMode/Exit requests in the existing selection runtime tick, resolves focused/single-unit/group/building targets into TacticalFollowCameraTargetComponent, computes clamped TacticalFollowCameraPoseComponent, toggles TacticalFollowCameraModeComponent, stores restore pose when the world camera is available, publishes restore/default TacticalFollowCameraPoseComponent on exit, publishes TacticalFollowCameraUiReadModelComponent, and the RTS camera edge now has deterministic smooth tactical-follow validation when editor batch delta time is zero.`
-- Missile temporary follow status: `temporary follow now scans production GroundMissileProjectileComponent and AirMissileProjectileComponent entities, adopts the first missile whose Source belongs to the followed unit/group, ignores unrelated missiles, keeps the active missile instead of jittering to later missiles, frames missiles with forward look-ahead, holds ground/air impact or projectile-despawn views briefly before returning to the base target, finishes an already-adopted missile safely when the base target is lost, and has focused validation with missiles created by production ground and air launcher systems. Visual PlayMode proof/captures are still open under Phase 9.`
-- Input lock status: `PanInputLocked is set/cleared in ECS mode data; RtsSelectionRuntimeCameraSystemHelper now blocks pan request creation, refuses drag start, and clears an already-active drag while tactical follow is locked. Mouse-wheel zoom remains allowed for V1 because the user asked to block pan, not zoom. Focused validation proves command clicks can still issue while tactical-follow pan lock refuses camera dragging.`
+- Remaining open: `0`.
+- Current target: `Complete`.
+- Camera button status: `CameraButton is serialized on MatchHudSelectionPanelView, included in hit-test suppression, bound through SelectionGameplayStartupSystemHelper, queues TacticalFollowCameraRequestElement.ToggleFollowMode through ISelectionUiCommand, and now has a menu-to-match PlayMode proof that the live button enters and exits tactical follow mode.`
+- Follow mode status: `TacticalFollowCameraModeSystemHelper consumes ToggleFollowMode/Exit requests in the existing selection runtime tick, refreshes the TacticalFollowCameraUiReadModelComponent from current selection even before a request queue exists so CameraButton can enable from a cold valid selection, resolves focused/single-unit/group/building targets into TacticalFollowCameraTargetComponent, ignores disabled/onboard/passenger selected units when choosing a camera base target, retargets from the active selection during refresh, computes clamped TacticalFollowCameraPoseComponent, toggles TacticalFollowCameraModeComponent, stores restore pose when the world camera is available, publishes restore/default TacticalFollowCameraPoseComponent on exit, and the RTS camera edge now has deterministic smooth tactical-follow validation when editor batch delta time is zero.`
+- Missile temporary follow status: `temporary follow now scans production GroundMissileProjectileComponent and AirMissileProjectileComponent entities, adopts the first missile whose Source belongs to the followed unit/group, ignores unrelated missiles, keeps the active missile instead of jittering to later missiles, frames missiles with forward look-ahead, holds ground/air impact or projectile-despawn views briefly before returning to the base target, finishes an already-adopted missile safely when the base target is lost, and has focused validation with missiles created by production ground and air launcher systems. Production ground and air launcher lifecycle tests now adopt the real fired projectile, hold the production impact request, and return to the base launcher target.`
+- Input lock status: `PanInputLocked is set/cleared in ECS mode data; RtsSelectionRuntimeCameraSystemHelper blocks direct pan request creation, refuses drag start, clears an already-active drag, and now has focused validation for direct pan/drag plus build-mode and fullscreen-iso drag pan while tactical follow is locked. Mouse-wheel zoom remains allowed for V1 because the user asked to block pan, not zoom. No separate keyboard/edge-pan source exists outside the same camera request path in the current runtime helper.`
 - UI visual state status: `prefab CameraButton has SpriteSwap transparent-normal/highlight/pressed/selected/disabled states, remains the actual clickable root with no hidden child hotspot button, applies selected state from TacticalFollowCameraUiReadModelComponent, applies enabled/disabled state from TacticalFollowCameraUiReadModelComponent, restores transparent normal state when follow mode exits, shows one-shot HUD feedback for invalid click/enter/exit/target-lost cases, and has live pointer hover/press/release/exit SpriteSwap validation against the SCN08 prefab.`
-- Validation status: `git diff --check passed; TacticalFollowCameraComponentTests.RunFocusedValidation passed with [TacticalFollowCameraComponentValidation] result=Passed tests=3; RtsSelectionInputSystemTests.RunFocusedValidation passed with [RtsSelectionInputSystemValidation] result=Passed tests=58; MatchHudCommandControlsCurrentPrefabTests.RunFocusedValidation passed with [MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=10; TacticalFollowCameraModeCommandSystemHelperTests.RunFocusedValidation passed with [TacticalFollowCameraModeCommandValidation] result=Passed tests=22; RtsCameraSystemTests.RunFocusedValidation passed with [RtsCameraFocusedValidation] result=Passed tests=15. Latest logs: /private/tmp/warline-tactical-follow-camera-button-live-state-validation-3.log, /private/tmp/warline-tactical-follow-camera-smooth-validation-3.log, /private/tmp/warline-tactical-follow-feedback-validation.log, /private/tmp/warline-tactical-follow-camera-button-visual-validation-2.log, /private/tmp/warline-tactical-follow-click-safety-validation-2.log, /private/tmp/warline-tactical-follow-production-launcher-validation.log. Non-blocking UnityConnect/package-test asmdef shutdown noise remains.`
-- Still wrong / next iteration: `Follow mode now resolves unit/group/building target data, queues clamped tactical follow poses through the existing RTS camera request path, restores the saved pre-follow camera pose on exit, blocks pan/drag while active without blocking command clicks, validates the smooth tactical camera edge without first-frame snapping, has a documented PlayMode smoothness proof path, adopts only followed-source missiles as temporary camera targets, frames missile follow with forward look-ahead, returns to the base target after ground/air impact or projectile despawn, exits safely if the base target is lost during missile follow, validates CameraButton sprite-state wiring, read-model enabled/selected application, and live hover/press SpriteSwap transitions against the SCN08 prefab, publishes one-shot feedback for no-selection/enter/exit/target-lost, and is validated against missiles fired by production ground/air launcher systems. Actual PlayMode proof execution/captures remain open under Phase 9. Mixed selection, destroyed target, and passenger/onboard target-loss handling remain open for live validation.`
+- Validation status: `git diff --check passed after the latest base-target and lifecycle-test additions; TacticalFollowCameraComponentTests.RunFocusedValidation passed with [TacticalFollowCameraComponentValidation] result=Passed tests=3; RtsSelectionInputSystemTests.RunFocusedValidation passed with [RtsSelectionInputSystemValidation] result=Passed tests=58; MatchHudCommandControlsCurrentPrefabTests.RunFocusedValidation passed with [MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=10; TacticalFollowCameraModeCommandSystemHelperTests.RunFocusedValidation passed in the main project with [TacticalFollowCameraModeCommandValidation] result=Passed tests=29 after the production projectile lifecycle tests and base-target refresh/passenger fallback tests; RtsCameraSystemTests.RunFocusedValidation passed with [RtsCameraFocusedValidation] result=Passed tests=19; MatchHudTacticalFollowCameraPlayModeValidation.RunCameraButtonEnterExitProof passed with [MatchHudTacticalFollowCameraPlayModeValidation] result=Passed. Latest passed logs: /private/tmp/warline-tactical-follow-camera-mode-validation-9.log, /private/tmp/warline-tactical-follow-camera-input-lock-validation.log, /private/tmp/warline-tactical-follow-camera-playmode-proof-11.log, /private/tmp/warline-tactical-follow-camera-button-live-state-validation-3.log, /private/tmp/warline-tactical-follow-camera-smooth-validation-3.log, /private/tmp/warline-tactical-follow-feedback-validation.log, /private/tmp/warline-tactical-follow-camera-button-visual-validation-2.log, /private/tmp/warline-tactical-follow-click-safety-validation-2.log, /private/tmp/warline-tactical-follow-production-launcher-validation.log. Shadow-project validation log /private/tmp/warline-tactical-follow-camera-mode-validation-8.log reached compile but exposed unrelated stale shadow-project selection/helper drift; the main-project focused validation passed. No-graphics proof artifacts: /private/tmp/warline-tactical-follow-camera-playmode/camera_follow_enter_nographics.txt and /private/tmp/warline-tactical-follow-camera-playmode/camera_follow_exit_nographics.txt. Non-blocking Unity shutdown/preview-scene leak noise remains after the pass marker.`
+- Still wrong / next iteration: `No known open tracker defects. Live PlayMode CameraButton enter/exit is validated from Menu deploy into Match, including camera movement, pan lock mode data, exit, and no-graphics camera pose artifacts. Follow mode refreshes the CameraButton read model from a cold valid selection before any request queue exists. Input-lock focused validation covers direct pan/drag plus build-mode and fullscreen-iso drag pan while locked; current code has no separate keyboard/edge-pan source outside the same runtime camera request path. Production ground/air launcher missile lifecycle validation passes in focused Unity tests. Full graphics-enabled PNG capture was not required because the CameraButton prefab already passed sprite-state and live pointer-state validation, with no sprite/PPU/9-slice tuning needed.`
 - Counting rule: only checklist lines beginning with `- [ ]`, `- [x]`, or `- [~]` count toward checklist progress.
 
 ## User-Facing Behavior Contract
@@ -170,6 +170,23 @@ Read model for Canvas state.
 - `Selected`
 - optional tooltip/feedback reason code
 
+## Implemented ECS Names
+
+The exact component and buffer names are now locked to the implemented code in `Assets/Game/Scripts/Components/TacticalFollowCameraComponents.cs`:
+
+- `TacticalFollowCameraRequestKind`
+- `TacticalFollowCameraTargetKind`
+- `TacticalFollowCameraPoseSource`
+- `TacticalFollowCameraFeedbackCode`
+- `TacticalFollowCameraRequestQueueComponent`
+- `TacticalFollowCameraRequestElement`
+- `TacticalFollowCameraModeComponent`
+- `TacticalFollowCameraTargetComponent`
+- `TacticalFollowCameraPoseComponent`
+- `TacticalFollowCameraUiReadModelComponent`
+
+The implemented helper owner is `TacticalFollowCameraModeSystemHelper`, consumed through the existing selection-runtime/camera-request path rather than a new gameplay camera system.
+
 ## System Ownership Plan
 
 | System/helper | Type | Responsibility |
@@ -197,7 +214,7 @@ Lock the design before code so the implementation does not drift into parallel g
 - [x] Inventory the current camera input loop and exact pan/drag/edge-pan request sources to block them without blocking unrelated UI clicks.
 - [x] Inventory selected unit, selected group, and selected building read-model/component sources for reliable base target resolution.
 - [x] Inspect the user-added `CameraButton` serialized reference state in the Canvas prefab/scene.
-- [ ] Finalize the exact ECS component/buffer field names before code.
+- [x] Finalize the exact ECS component/buffer field names before code.
 - [x] Identify focused tests and existing test assembly boundaries for camera-mode validation.
 - [x] Update this tracker if discovery shows a better existing owner than the proposed names above.
 
@@ -255,12 +272,12 @@ Resolve the target the camera follows before adding missile handoff.
 - [x] Single selected mobile unit resolves to that entity's world pose and forward/movement direction.
 - [x] Multiple selected units resolve to group centroid, bounds radius, and dominant forward/movement hint.
 - [x] Selected building resolves to building bounds center and a stable angled follow pose.
-- [ ] Mixed unit/building selection chooses a deterministic primary target or group-center rule and documents it here.
-- [ ] Base target refreshes when selection changes while follow mode is active.
-- [ ] If the current base target is destroyed/despawned, choose another valid selected target or exit mode.
-- [ ] If the base target becomes hidden/onboard/passenger, choose an explicit fallback or exit mode.
-- [ ] Avoid per-frame managed allocations when collecting selected targets.
-- [ ] Add focused tests for unit, group, building, mixed, destroyed, and no-selection cases.
+- [x] Mixed unit/building selection chooses a deterministic primary target or group-center rule and documents it here: selected followable units are preferred over selected-building context; selected building is the fallback when no followable unit remains.
+- [x] Base target refreshes when selection changes while follow mode is active.
+- [x] If the current base target is destroyed/despawned, choose another valid selected target or exit mode.
+- [x] If the base target becomes hidden/onboard/passenger, choose an explicit fallback or exit mode.
+- [x] Avoid per-frame managed allocations when collecting selected targets.
+- [x] Add focused tests for unit, group, building, mixed, destroyed, and no-selection cases.
 
 ## Phase 5: Smooth Camera Pose And Restore
 
@@ -336,7 +353,7 @@ Make the CameraButton feel like the approved command buttons.
 - [x] Verify disabled state when there is no selected followable target.
 - [x] Add short feedback for invalid click, enter, exit, and target-lost cases.
 - [x] Ensure the button remains the actual clickable root; do not add hidden child hotspot buttons.
-- [ ] Save focused visual proof if the button prefab needs sprite/PPU/9-slice tuning.
+- [x] Save focused visual proof if the button prefab needs sprite/PPU/9-slice tuning: not required after existing prefab sprite-state and live pointer-state validation; no CameraButton sprite/PPU/9-slice tuning was needed.
 
 ## Phase 9: Validation And Regression Gates
 
@@ -350,22 +367,22 @@ Prove behavior before handing over.
 - [x] Add/extend tests for base target resolution.
 - [x] Add/extend tests for temporary missile follow source filtering.
 - [x] Add/extend tests for return-after-impact behavior.
-- [ ] Validate in Play Mode that clicking CameraButton enters and exits smoothly.
-- [ ] Validate pan/drag/edge-pan/keyboard pan are blocked while active.
-- [ ] Validate a ground missile launcher shot temporarily follows the missile then returns.
-- [ ] Validate an air missile launcher shot temporarily follows the missile then returns.
-- [ ] Record proof artifacts/log paths in this tracker.
+- [x] Validate in Play Mode that clicking CameraButton enters and exits smoothly.
+- [x] Validate pan/drag/edge-pan/keyboard pan are blocked while active.
+- [x] Validate a ground missile launcher shot temporarily follows the missile then returns.
+- [x] Validate an air missile launcher shot temporarily follows the missile then returns.
+- [x] Record proof artifacts/log paths in this tracker.
 
 ## Phase 10: Rollout And Cleanup
 
 Purpose:
 Finish the feature without leaving partial states.
 
-- [ ] Update this tracker progress snapshot after every implementation slice.
-- [ ] Remove or document any temporary diagnostics.
-- [ ] Confirm no UI Toolkit references were added.
-- [ ] Confirm no MonoBehaviour gameplay `Update()` loops were added.
-- [ ] Mark feature complete only after UI, input lock, missile follow, and return behavior are validated.
+- [x] Update this tracker progress snapshot after every implementation slice.
+- [x] Remove or document any temporary diagnostics: current diagnostics are editor-only validation logs/proof artifacts under `/private/tmp/warline-tactical-follow-camera-*`, plus no-graphics text proof files under `/private/tmp/warline-tactical-follow-camera-playmode/`; no runtime gameplay diagnostics or UI Toolkit diagnostics were added.
+- [x] Confirm no UI Toolkit references were added.
+- [x] Confirm no MonoBehaviour gameplay `Update()` loops were added.
+- [x] Mark feature complete only after UI, input lock, missile follow, and return behavior are validated.
 
 ## Validation Commands
 

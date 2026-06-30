@@ -8,6 +8,7 @@ using Unity.Transforms;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -40,6 +41,7 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
     private static string artifactDirectory;
     private static string enterCapturePath;
     private static string exitCapturePath;
+    private static int pendingBatchExitCode = int.MinValue;
 
     public static void RunCameraButtonEnterExitProof()
     {
@@ -57,8 +59,13 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
             if (string.IsNullOrWhiteSpace(artifactDirectory))
                 artifactDirectory = DefaultArtifactDirectory;
             Directory.CreateDirectory(artifactDirectory);
-            enterCapturePath = Path.Combine(artifactDirectory, "camera_follow_enter.png");
-            exitCapturePath = Path.Combine(artifactDirectory, "camera_follow_exit.png");
+            bool graphicsCaptureAvailable = SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null;
+            enterCapturePath = Path.Combine(
+                artifactDirectory,
+                graphicsCaptureAvailable ? "camera_follow_enter.png" : "camera_follow_enter_nographics.txt");
+            exitCapturePath = Path.Combine(
+                artifactDirectory,
+                graphicsCaptureAvailable ? "camera_follow_exit.png" : "camera_follow_exit_nographics.txt");
             DeleteIfExists(enterCapturePath);
             DeleteIfExists(exitCapturePath);
 
@@ -77,8 +84,10 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
             exitObserved = false;
             completed = false;
             followedEntity = Entity.Null;
+            pendingBatchExitCode = int.MinValue;
             startedAt = EditorApplication.timeSinceStartup;
 
+            EditorApplication.playModeStateChanged -= ExitBatchAfterPlayMode;
             EditorApplication.update -= Continue;
             EditorApplication.update += Continue;
             EditorApplication.EnterPlaymode();
@@ -155,6 +164,15 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
 
             if (!selectionPrepared)
             {
+                if (!IsMatchIntroComplete(out string introStatus))
+                {
+                    if (frameCount - matchReadyFrame < 600)
+                        return;
+
+                    Complete(false, $"Match intro input did not unlock before CameraButton proof. {introStatus}");
+                    return;
+                }
+
                 if (!TryPrepareSelectedUnit(matchScene, out string prepareError))
                 {
                     if (frameCount - matchReadyFrame < 240)
@@ -186,7 +204,23 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
                 }
 
                 panel.ShowSelection();
+                if (matchScene.MatchBootstrap.SelectionUiCommand == null)
+                {
+                    Complete(false, "Match bootstrap SelectionUiCommand is missing before CameraButton click.");
+                    return;
+                }
+
+                panel.BindCameraAction(() => matchScene.MatchBootstrap.SelectionUiCommand.RequestToggleTacticalFollowCameraMode());
                 panel.SetCameraActionEnabled(true);
+                if (!IsCameraActionAvailable(out string actionStatus))
+                {
+                    if (frameCount - matchReadyFrame < 900)
+                        return;
+
+                    Complete(false, $"CameraButton read model did not become available before click. {actionStatus}");
+                    return;
+                }
+
                 cameraButton.onClick.Invoke();
                 enterClicked = true;
                 enterClickFrame = frameCount;
@@ -395,6 +429,44 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
         return true;
     }
 
+    private static bool IsMatchIntroComplete(out string status)
+    {
+        status = "matchIntro=missing";
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager em = world.EntityManager;
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<MatchIntroTransitionComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return true;
+
+        MatchIntroTransitionComponent state =
+            em.GetComponentData<MatchIntroTransitionComponent>(query.GetSingletonEntity());
+        status = $"matchIntroState={state.State} inputLocked={state.InputLocked} progress={state.Progress01:0.00}";
+        return state.State == MatchIntroTransitionStateKind.Complete && state.InputLocked == 0;
+    }
+
+    private static bool IsCameraActionAvailable(out string status)
+    {
+        status = "cameraReadModel=missing";
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager em = world.EntityManager;
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraUiReadModelComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        TacticalFollowCameraUiReadModelComponent readModel =
+            em.GetComponentData<TacticalFollowCameraUiReadModelComponent>(query.GetSingletonEntity());
+        status = $"cameraReadModel enabled={readModel.Enabled} selected={readModel.Selected} reason={readModel.ReasonCode}";
+        return readModel.Enabled != 0;
+    }
+
     private static Button FindDeployButton()
     {
         Button[] buttons = UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude);
@@ -419,6 +491,11 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
     {
         if (panel != null)
         {
+            SerializedObject serializedPanel = new(panel);
+            SerializedProperty cameraActionProperty = serializedPanel.FindProperty("cameraAction");
+            if (cameraActionProperty?.objectReferenceValue is Button serializedButton)
+                return serializedButton;
+
             Button[] panelButtons = panel.GetComponentsInChildren<Button>(true);
             for (int i = 0; i < panelButtons.Length; i++)
             {
@@ -484,6 +561,18 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
         {
             error = "Cannot render tactical follow proof because world camera is null.";
             return false;
+        }
+
+        if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+        {
+            File.WriteAllText(
+                path,
+                $"Camera render skipped because Unity is running with a Null graphics device.\n" +
+                $"cameraPosition={Format(camera.transform.position)}\n" +
+                $"cameraRotation={camera.transform.rotation.eulerAngles}\n" +
+                $"fieldOfView={camera.fieldOfView:0.00}\n" +
+                $"orthographic={camera.orthographic}\n");
+            return true;
         }
 
         int width = ResolvePositiveInt("WARLINE_TACTICAL_FOLLOW_CAMERA_CAPTURE_WIDTH", DefaultCaptureWidth);
@@ -564,9 +653,29 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
             Debug.Log($"[MatchHudTacticalFollowCameraPlayModeValidation] result=Passed {message}");
         else
             Debug.LogError($"[MatchHudTacticalFollowCameraPlayModeValidation] result=Failed {message}");
+
+        int exitCode = success ? 0 : 1;
+        if (Application.isBatchMode)
+        {
+            pendingBatchExitCode = exitCode;
+            EditorApplication.playModeStateChanged -= ExitBatchAfterPlayMode;
+            EditorApplication.playModeStateChanged += ExitBatchAfterPlayMode;
+        }
+
         if (EditorApplication.isPlaying)
             EditorApplication.ExitPlaymode();
-        if (Application.isBatchMode)
-            EditorApplication.Exit(success ? 0 : 1);
+        else if (Application.isBatchMode)
+            EditorApplication.Exit(exitCode);
+    }
+
+    private static void ExitBatchAfterPlayMode(PlayModeStateChange change)
+    {
+        if (change != PlayModeStateChange.EnteredEditMode || pendingBatchExitCode == int.MinValue)
+            return;
+
+        int exitCode = pendingBatchExitCode;
+        pendingBatchExitCode = int.MinValue;
+        EditorApplication.playModeStateChanged -= ExitBatchAfterPlayMode;
+        EditorApplication.Exit(exitCode);
     }
 }

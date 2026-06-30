@@ -28,6 +28,7 @@ public sealed class UIShellContentView : MonoBehaviour
     private MatchOverlayCommandControlsView _matchHudCommandControlsView;
     private MatchHudFooterContentView _matchHudFooterContentView;
     private MatchHudRightQuickRailView _rightQuickRailView;
+    private GameObject _matchHudHeaderContent;
     private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
     private ArmoryContentListView _armoryContentListView;
     private TryResolveUiBuildingCatalogMetadata _tryResolveBuildingCatalogMetadata;
@@ -110,6 +111,7 @@ public sealed class UIShellContentView : MonoBehaviour
         _mainMenuPlayUi = mainMenuPlayUi;
         _bindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
         BindFullMapPopupRequests();
+        _mainMenuPlayUi?.BindMatchHudThreatJumpPanel(_matchHudHeaderContent);
         BindMatchHudSelectionPanel(_matchHudSelectionPanelView);
         BindMatchHudFooter(_matchHudFooterContentView);
         BindMatchHudRightQuickRail(_rightQuickRailView);
@@ -178,12 +180,14 @@ public sealed class UIShellContentView : MonoBehaviour
 
     private void InstallLoading()
     {
+        UnbindMatchHudThreatWarningHeader();
         ClearRegion(UIShellRegionId.MenuBackgroundRegion);
         InstallRoot(loadingContentPrefab, UIShellRegionId.LoadingLayer);
     }
 
     private void InstallMainMenu()
     {
+        UnbindMatchHudThreatWarningHeader();
         InstallSection(mainMenuContentPrefab, UIShellContentSectionId.MenuBackground, UIShellRegionId.MenuBackgroundRegion);
         InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Header, UIShellRegionId.HeaderRegion);
         InstallMainMenuBody();
@@ -214,6 +218,7 @@ public sealed class UIShellContentView : MonoBehaviour
 
     private void InstallArmoryBody()
     {
+        UnbindMatchHudThreatWarningHeader();
         InstallSection(armoryContentPrefab, UIShellContentSectionId.MenuBackground, UIShellRegionId.MenuBackgroundRegion);
         InstallSection(armoryContentPrefab, UIShellContentSectionId.Header, UIShellRegionId.HeaderRegion);
         InstallSection(armoryContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
@@ -276,7 +281,8 @@ public sealed class UIShellContentView : MonoBehaviour
     private void InstallMatchHud()
     {
         ClearRegion(UIShellRegionId.MenuBackgroundRegion);
-        InstallSection(matchHudContentPrefab, UIShellContentSectionId.Header, UIShellRegionId.HeaderRegion);
+        _matchHudHeaderContent = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Header, UIShellRegionId.HeaderRegion);
+        _mainMenuPlayUi?.BindMatchHudThreatJumpPanel(_matchHudHeaderContent);
         GameObject left = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
         _matchHudSelectionPanelView = left != null ? left.GetComponent<MatchHudSelectionPanelView>() : null;
         BindMatchHudSelectionPanel(_matchHudSelectionPanelView);
@@ -619,6 +625,10 @@ public sealed class UIShellContentView : MonoBehaviour
     {
         if (regionId == UIShellRegionId.RightRegion)
             UnbindRightQuickRailBuildButton();
+        else if (regionId == UIShellRegionId.HeaderRegion)
+        {
+            UnbindMatchHudThreatWarningHeader();
+        }
         else if (regionId == UIShellRegionId.LeftRegion)
         {
             _matchHudSelectionPanelView = null;
@@ -665,6 +675,12 @@ public sealed class UIShellContentView : MonoBehaviour
         {
             _contentVersion++;
         }
+    }
+
+    private void UnbindMatchHudThreatWarningHeader()
+    {
+        _matchHudHeaderContent = null;
+        _mainMenuPlayUi?.BindMatchHudThreatJumpPanel(null);
     }
 
     private void BindFullMapPopupRequests()

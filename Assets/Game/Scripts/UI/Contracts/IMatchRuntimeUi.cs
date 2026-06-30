@@ -39,5 +39,7 @@ public interface IMatchRuntimeUi
 
     void TriggerSelectionModeFromHold();
 
+    bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime);
+
     void Update();
 }

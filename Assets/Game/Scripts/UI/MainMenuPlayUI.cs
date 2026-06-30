@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,6 +22,9 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
     private MatchHudSelectionPanelView _matchHudSelectionPanelView;
     private BattleHudRuntimeFeedbackView _matchHudRuntimeFeedbackView;
     private MatchHudSquadTrayView _matchHudSquadTrayView;
+    private GameObject _matchHudThreatJumpPanel;
+    private TMP_Text _matchHudThreatTitle;
+    private float _matchHudThreatVisibleUntil = float.NegativeInfinity;
     private BuildDrawerView _buildDrawerView;
     private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
     private System.Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
@@ -68,6 +72,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
         _matchHudRuntimeFeedbackView = null;
         _matchHudSquadTrayView?.Unbind();
         _matchHudSquadTrayView = null;
+        BindMatchHudThreatJumpPanel(null);
         _buildDrawerView = null;
         _buildPlacementConfirmationBarView = null;
         _bindMatchHudSelectionPanel = null;
@@ -95,6 +100,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
 
         _selectionUiCameraSystem?.UpdateZoomTransition();
         _matchHudRightQuickRailView?.RefreshZoomControls();
+        TickMatchHudThreatWarning(Time.unscaledTime);
     }
 
     public void NotifyStaticMinimapChanged()
@@ -217,6 +223,49 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
         _matchHudSquadTrayView?.Unbind();
         _matchHudSquadTrayView = squadTrayView;
         _bindMatchHudSquadTray?.Invoke(_matchHudSquadTrayView);
+    }
+
+    public void BindMatchHudThreatJumpPanel(GameObject headerContent)
+    {
+        SetMatchHudThreatWarningVisible(false);
+        _matchHudThreatJumpPanel = null;
+        _matchHudThreatTitle = null;
+        _matchHudThreatVisibleUntil = float.NegativeInfinity;
+
+        if (headerContent == null)
+            return;
+
+        Transform panelTransform = headerContent.transform.Find("ThreatJumpPanel");
+        panelTransform ??= headerContent.transform.Find("HeaderContent/ThreatJumpPanel");
+        if (panelTransform == null)
+            return;
+
+        _matchHudThreatJumpPanel = panelTransform.gameObject;
+        Transform titleTransform = panelTransform.Find("Title");
+        _matchHudThreatTitle = titleTransform != null
+            ? titleTransform.GetComponent<TMP_Text>()
+            : panelTransform.GetComponentInChildren<TMP_Text>(true);
+        SetMatchHudThreatWarningVisible(false);
+    }
+
+    public bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime)
+    {
+        if (_matchHudThreatJumpPanel == null || _matchHudThreatTitle == null)
+            return false;
+
+        _matchHudThreatTitle.text = string.IsNullOrWhiteSpace(title) ? "Threat detected" : title;
+        _matchHudThreatVisibleUntil = visibleUntilTime;
+        SetMatchHudThreatWarningVisible(true);
+        return true;
+    }
+
+    public void TickMatchHudThreatWarning(float now)
+    {
+        if (_matchHudThreatJumpPanel == null || !_matchHudThreatJumpPanel.activeSelf)
+            return;
+
+        if (now >= _matchHudThreatVisibleUntil)
+            SetMatchHudThreatWarningVisible(false);
     }
 
     public void BindBuildDrawer(BuildDrawerView buildDrawerView)
@@ -426,5 +475,11 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
         _selectionUiCommandSystem?.CaptureUiClickSequence();
         if (_runtimeGameplayStateSystem != null)
             _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+    }
+
+    private void SetMatchHudThreatWarningVisible(bool visible)
+    {
+        if (_matchHudThreatJumpPanel != null && _matchHudThreatJumpPanel.activeSelf != visible)
+            _matchHudThreatJumpPanel.SetActive(visible);
     }
 }

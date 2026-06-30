@@ -7,6 +7,7 @@ public sealed class GameplayRuntimeUpdateCompositionSystemHelper
 {
     private const int LoadingGateDiagnosticIntervalFrames = 120;
     private const int LoadingGateFailOpenFrames = 1800;
+    private const float ThreatWarningVisibleSeconds = 5f;
     private static readonly ProfilerMarker BeginUpdateMarker = new("GameplayRuntimeUpdate.BeginUpdate");
     private static readonly ProfilerMarker RoadBuildMarker = new("GameplayRuntimeUpdate.RoadBuild");
     private static readonly ProfilerMarker BuildingPlacementMarker = new("GameplayRuntimeUpdate.BuildingPlacement");
@@ -132,6 +133,7 @@ public sealed class GameplayRuntimeUpdateCompositionSystemHelper
         stepStart = performanceDiagnosticsSystem.BeginStep();
         using (MainMenuMarker.Auto())
         {
+            PresentPendingThreatWarning(mainMenu, Time.unscaledTime);
             mainMenu?.Update();
         }
         hadSlowStep |= performanceDiagnosticsSystem.EndStep("MainMenu", stepStart);
@@ -185,6 +187,37 @@ public sealed class GameplayRuntimeUpdateCompositionSystemHelper
                 runtimeGameplayStateSystem.PlayRequested,
                 runtimeGameplayStateSystem.SimulationActive);
         }
+    }
+
+    private static void PresentPendingThreatWarning(IMatchRuntimeUi mainMenu, float now)
+    {
+        if (mainMenu == null || !ThreatWarningRuntimeState.HasPendingWarning)
+            return;
+
+        string title = BuildThreatWarningTitle(
+            ThreatWarningRuntimeState.PendingType,
+            ThreatWarningRuntimeState.PendingEtaSeconds,
+            ThreatWarningRuntimeState.PendingThreatCount);
+        if (mainMenu.TryShowMatchHudThreatWarning(title, now + ThreatWarningVisibleSeconds))
+            ThreatWarningRuntimeState.ClearPendingWarning();
+    }
+
+    private static string BuildThreatWarningTitle(ThreatWarningType type, float etaSeconds, int threatCount)
+    {
+        string key = type == ThreatWarningType.Air ? "warning_air_attack_type" : "warning_ground_attack_type";
+        string fallback = type == ThreatWarningType.Air ? "Air attack detected" : "Ground vehicle attack detected";
+        string title = GameStrings.Get(key);
+        if (string.IsNullOrWhiteSpace(title) || title == key)
+            title = fallback;
+
+        int eta = Mathf.CeilToInt(Mathf.Max(0f, etaSeconds));
+        if (eta > 0)
+            title = $"{title} - ETA {eta}s";
+
+        if (threatCount > 1)
+            title = $"{title} x{threatCount}";
+
+        return title;
     }
 
     public void Dispose()

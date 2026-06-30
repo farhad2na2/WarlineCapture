@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using TMPro;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEditor;
@@ -29,14 +30,31 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
             RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonHoverAndPressUseSpriteSwapStates), tests => tests.MatchHudSelectionPanelCameraButtonHoverAndPressUseSpriteSwapStates());
             RunValidationStep(nameof(MatchHudRightQuickRailZoomButtonsUseSpriteSwapStates), tests => tests.MatchHudRightQuickRailZoomButtonsUseSpriteSwapStates());
             RunValidationStep(nameof(MatchHudRightQuickRailZoomButtonsApplyStepState), tests => tests.MatchHudRightQuickRailZoomButtonsApplyStepState());
+            RunValidationStep(nameof(MatchHudThreatJumpPanelBindsTitleAndAutoHides), tests => tests.MatchHudThreatJumpPanelBindsTitleAndAutoHides());
             RunValidationStep(nameof(LegacySupportCommandTabRoutesToScanCommandMode), tests => tests.LegacySupportCommandTabRoutesToScanCommandMode());
-            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=12");
+            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=13");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[MatchHudCommandControlsCurrentPrefabValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunThreatJumpPanelValidation()
+    {
+        try
+        {
+            RunValidationStep(nameof(MatchHudThreatJumpPanelBindsTitleAndAutoHides), tests => tests.MatchHudThreatJumpPanelBindsTitleAndAutoHides());
+            Debug.Log("[MatchHudThreatJumpPanelValidation] result=Passed tests=1");
+            ValidationExit.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[MatchHudThreatJumpPanelValidation] result=Failed");
             ValidationExit.Exit(1);
         }
     }
@@ -338,6 +356,40 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     }
 
     [Test]
+    public void MatchHudThreatJumpPanelBindsTitleAndAutoHides()
+    {
+        GameObject headerInstance = null;
+        try
+        {
+            headerInstance = InstantiateHeaderSection();
+            Transform panelTransform = headerInstance.transform.Find("ThreatJumpPanel");
+            Assert.NotNull(panelTransform, "HeaderContent must expose ThreatJumpPanel for runtime warnings.");
+            GameObject panel = panelTransform.gameObject;
+            TMP_Text title = panelTransform.Find("Title")?.GetComponent<TMP_Text>();
+            Assert.NotNull(title, "ThreatJumpPanel/Title must be a TMP text object.");
+
+            var ui = new MainMenuPlayUI();
+            ui.BindMatchHudThreatJumpPanel(headerInstance);
+            Assert.IsFalse(panel.activeSelf, "Binding the header must hide the placeholder threat panel until a real warning arrives.");
+
+            Assert.IsTrue(ui.TryShowMatchHudThreatWarning("Ground vehicle attack detected - ETA 12s", 42f));
+            Assert.IsTrue(panel.activeSelf, "A real warning must enable ThreatJumpPanel.");
+            Assert.AreEqual("Ground vehicle attack detected - ETA 12s", title.text);
+
+            ui.TickMatchHudThreatWarning(41.9f);
+            Assert.IsTrue(panel.activeSelf, "The threat panel must remain visible until its timeout.");
+
+            ui.TickMatchHudThreatWarning(42.01f);
+            Assert.IsFalse(panel.activeSelf, "The threat panel must auto-hide after its timeout.");
+        }
+        finally
+        {
+            if (headerInstance != null)
+                Object.DestroyImmediate(headerInstance);
+        }
+    }
+
+    [Test]
     public void LegacySupportCommandTabRoutesToScanCommandMode()
     {
         MatchOverlayCommandControlsView controls = LoadControls();
@@ -368,6 +420,17 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Assert.IsTrue(sections.TryGetSection(UIShellContentSectionId.Footer, out GameObject footerSource));
         Assert.NotNull(footerSource, "SCN08 footer section source must exist.");
         return Object.Instantiate(footerSource);
+    }
+
+    private static GameObject InstantiateHeaderSection()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
+        Assert.NotNull(prefab, MatchHudContentPrefabPath);
+        UIShellContentSectionsView sections = prefab.GetComponent<UIShellContentSectionsView>();
+        Assert.NotNull(sections, "SCN08_MatchHudContent must expose shell content sections.");
+        Assert.IsTrue(sections.TryGetSection(UIShellContentSectionId.Header, out GameObject headerSource));
+        Assert.NotNull(headerSource, "SCN08 header section source must exist.");
+        return Object.Instantiate(headerSource);
     }
 
     private static Button FindCommandTabButton(MatchOverlayCommandControlsView controls, string buttonName)

@@ -93,6 +93,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
             BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(_matchHudRuntimeFeedbackView, Time.unscaledTime);
         }
 
+        _selectionUiCameraSystem?.UpdateZoomTransition();
         _matchHudRightQuickRailView?.RefreshZoomControls();
     }
 

@@ -112,6 +112,7 @@ public interface IMatchHudCameraControl
     Camera WorldCamera { get; }
     bool IsCameraDragging { get; }
     void MoveCameraGroundCenterTo(Vector3 worldPosition);
+    void UpdateZoomTransition();
     MatchHudZoomControlState ReadZoomControlState();
     bool RequestZoomInLevel();
     bool RequestZoomOutLevel();

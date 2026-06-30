@@ -216,6 +216,11 @@ internal sealed class MatchHudCameraControlAdapter : IMatchHudCameraControl
         cameraSystem?.MoveCameraGroundCenterTo(worldPosition);
     }
 
+    public void UpdateZoomTransition()
+    {
+        cameraSystem?.UpdateZoomTransition();
+    }
+
     public MatchHudZoomControlState ReadZoomControlState()
     {
         return cameraSystem != null ? cameraSystem.ReadZoomControlState() : MatchHudZoomControlState.Disabled;

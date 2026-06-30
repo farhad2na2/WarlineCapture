@@ -22,6 +22,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(ResetCameraModeSession_ClearsModeTransitionState), test => test.ResetCameraModeSession_ClearsModeTransitionState());
             RunCase(nameof(PanCamera_MovesAlongFlattenedCameraAxes), test => test.PanCamera_MovesAlongFlattenedCameraAxes());
             RunCase(nameof(PanCamera_ClampsViewportInsideGroundBoundary), test => test.PanCamera_ClampsViewportInsideGroundBoundary());
+            RunCase(nameof(ResolveClampSafePerspectiveHeight_LeavesPanRoomAtMaxZoom), test => test.ResolveClampSafePerspectiveHeight_LeavesPanRoomAtMaxZoom());
             RunCase(nameof(ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid), test => test.ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid());
             RunCase(nameof(RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked());
             RunCase(nameof(RuntimePanCamera_IgnoresBuildModeDragPanWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresBuildModeDragPanWhenTacticalFollowLocked());
@@ -42,7 +43,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue());
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
-            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=27");
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=28");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -199,6 +200,40 @@ public sealed class RtsCameraSystemTests
         bool moved = cameraSystem.PanCamera(camera, new Vector2(1000f, 1000f), 1f);
 
         Assert.IsTrue(moved);
+        AssertCameraFootprintInside(cameraSystem, camera, boundary);
+    }
+
+    [Test]
+    public void ResolveClampSafePerspectiveHeight_LeavesPanRoomAtMaxZoom()
+    {
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
+        Camera camera = CreateCamera(new Vector3(0f, 24f, -20f), Quaternion.Euler(58f, 10f, 0f));
+        camera.fieldOfView = 36f;
+        camera.aspect = 16f / 9f;
+        Rect boundary = new(-80f, -80f, 160f, 160f);
+        cameraSystem.SetGroundBoundary(boundary);
+
+        float safeHeight = cameraSystem.ResolveClampSafePerspectiveHeight(
+            camera,
+            160f,
+            24f,
+            58f,
+            10f,
+            36f,
+            0.88f);
+
+        Assert.That(safeHeight, Is.LessThan(160f), "Max zoom should be lowered before it fights the RTS boundary clamp.");
+        Assert.That(safeHeight, Is.GreaterThanOrEqualTo(24f));
+
+        cameraSystem.ApplyPerspectiveCameraModeInstant(camera, safeHeight, 58f, 10f, 36f);
+        cameraSystem.MoveCameraGroundCenterTo(camera, Vector3.zero);
+        Vector3 beforePan = camera.transform.position;
+
+        Assert.IsTrue(cameraSystem.PanCamera(camera, new Vector2(10f, 0f), 0.1f));
+        Vector2 beforePanXZ = new(beforePan.x, beforePan.z);
+        Vector2 afterPanXZ = new(camera.transform.position.x, camera.transform.position.z);
+
+        Assert.That(Vector2.Distance(beforePanXZ, afterPanXZ), Is.GreaterThan(0.001f), "Safe max zoom must leave enough boundary room for drag pan.");
         AssertCameraFootprintInside(cameraSystem, camera, boundary);
     }
 
@@ -557,28 +592,28 @@ public sealed class RtsCameraSystemTests
             Assert.IsTrue(state.ZoomOutEnabled, "Default zoom should allow stepping out.");
 
             Assert.IsTrue(helper.RequestZoomInLevel());
-            Assert.That(camera.transform.position.y, Is.EqualTo(10f).Within(0.0001f));
+            Assert.That(Mathf.Abs(camera.transform.position.y - 10f), Is.GreaterThan(0.0001f), "Zoom-in button should start a smooth transition instead of snapping to min height.");
             state = helper.ReadZoomControlState();
             Assert.IsFalse(state.ZoomInEnabled, "Min zoom disables the zoom-in button.");
             Assert.IsTrue(state.ZoomOutEnabled, "Min zoom still allows returning toward default.");
 
             Assert.IsFalse(helper.RequestZoomInLevel(), "Already at min zoom should not queue another level change.");
-            Assert.That(camera.transform.position.y, Is.EqualTo(10f).Within(0.0001f));
+            Assert.That(Mathf.Abs(camera.transform.position.y - 10f), Is.GreaterThan(0.0001f));
 
             Assert.IsTrue(helper.RequestZoomOutLevel());
-            Assert.That(camera.transform.position.y, Is.EqualTo(24f).Within(0.0001f));
             state = helper.ReadZoomControlState();
             Assert.IsTrue(state.ZoomInEnabled, "Default zoom re-enables zoom in.");
             Assert.IsTrue(state.ZoomOutEnabled, "Default zoom re-enables zoom out.");
 
+            cameraSystem.BeginZoomTransition(false);
             Assert.IsTrue(helper.RequestZoomOutLevel());
-            Assert.That(camera.transform.position.y, Is.EqualTo(45f).Within(0.0001f));
+            Assert.IsFalse(cameraSystem.IsZoomTransitionActive, "Match HUD zoom buttons must clear the normal camera zoom transition so zoom-out is not pulled back to default.");
+            Assert.That(Mathf.Abs(camera.transform.position.y - 45f), Is.GreaterThan(0.0001f), "Zoom-out button should start a smooth transition instead of snapping to max height.");
             state = helper.ReadZoomControlState();
             Assert.IsTrue(state.ZoomInEnabled, "Max zoom still allows returning toward default.");
             Assert.IsFalse(state.ZoomOutEnabled, "Max zoom disables the zoom-out button.");
 
             Assert.IsTrue(helper.RequestZoomInLevel());
-            Assert.That(camera.transform.position.y, Is.EqualTo(24f).Within(0.0001f));
         }
         finally
         {

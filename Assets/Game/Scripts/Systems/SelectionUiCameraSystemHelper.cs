@@ -13,6 +13,7 @@ public sealed class SelectionUiCameraSystemHelper
     private const float DefaultMinZoomHeight = 10f;
     private const float DefaultMaxZoomHeight = 45f;
     private const float DefaultZoomSpeed = 20f;
+    private const float MatchHudZoomOutBoundaryUsage = 0.88f;
 
     private readonly RtsCameraSystem _cameraSystem;
     private readonly RtsCameraRequestSystem _cameraRequestSystem;
@@ -24,10 +25,14 @@ public sealed class SelectionUiCameraSystemHelper
     private float _normalModePitch = 58f;
     private float _normalModeYaw = 10f;
     private float _normalModeFieldOfView = 36f;
+    private float _matchHudZoomTransitionSmoothTime = 0.25f;
     private float _fullscreenIsoPitch = 82f;
     private float _fullscreenIsoYaw = 10f;
     private float _fullscreenIsoOrthographicSize = 24f;
     private MatchHudZoomLevel _matchHudZoomLevel = MatchHudZoomLevel.Default;
+    private bool _matchHudZoomTransitionActive;
+    private float _matchHudZoomTargetHeight = 24f;
+    private Vector3 _matchHudZoomFocusWorldPosition;
 
     public SelectionUiCameraSystemHelper(RtsCameraSystem cameraSystem, RtsCameraRequestSystem cameraRequestSystem)
     {
@@ -51,6 +56,7 @@ public sealed class SelectionUiCameraSystemHelper
             _normalModePitch = config.NormalModePitch;
             _normalModeYaw = config.NormalModeYaw;
             _normalModeFieldOfView = config.NormalModeFieldOfView;
+            _matchHudZoomTransitionSmoothTime = config.ZoomTransitionSmoothTime;
             _fullscreenIsoPitch = config.FullscreenIsoPitch;
             _fullscreenIsoYaw = config.FullscreenIsoYaw;
             _fullscreenIsoOrthographicSize = config.FullscreenIsoOrthographicSize;
@@ -67,7 +73,11 @@ public sealed class SelectionUiCameraSystemHelper
         _normalModeZoomHeight = Mathf.Min(_normalModeZoomHeight, _maxZoomHeight);
         if (_normalModeFieldOfView <= 1f)
             _normalModeFieldOfView = 36f;
+        if (_matchHudZoomTransitionSmoothTime <= 0f)
+            _matchHudZoomTransitionSmoothTime = 0.25f;
         _matchHudZoomLevel = MatchHudZoomLevel.Default;
+        _matchHudZoomTransitionActive = false;
+        _matchHudZoomTargetHeight = _normalModeZoomHeight;
     }
 
     public void ToggleNormalIsoMode()
@@ -116,6 +126,37 @@ public sealed class SelectionUiCameraSystemHelper
         return new MatchHudZoomControlState(
             zoomInEnabled: _matchHudZoomLevel != MatchHudZoomLevel.ZoomedIn,
             zoomOutEnabled: _matchHudZoomLevel != MatchHudZoomLevel.ZoomedOut);
+    }
+
+    public void UpdateZoomTransition()
+    {
+        if (!_matchHudZoomTransitionActive)
+            return;
+        if (_cameraSystem == null || _cameraRequestSystem == null || _worldCamera == null || !TryGetDefaultEntityManager(out EntityManager em))
+        {
+            _matchHudZoomTransitionActive = false;
+            return;
+        }
+        if (HasValidTacticalFollowPose(em))
+        {
+            _matchHudZoomTransitionActive = false;
+            return;
+        }
+
+        _cameraRequestSystem.QueueUpdatePerspectiveMode(
+            em,
+            _matchHudZoomTargetHeight,
+            _normalModePitch,
+            _normalModeYaw,
+            _normalModeFieldOfView,
+            _matchHudZoomTransitionSmoothTime,
+            completeTransitionOnArrive: false);
+        _cameraRequestSystem.QueueMoveGroundCenterTo(em, _matchHudZoomFocusWorldPosition);
+        _cameraRequestSystem.QueueSetNormalIsoModeActive(em, false);
+        ProcessCameraRequests(em);
+
+        if (IsMatchHudZoomTransitionComplete())
+            _matchHudZoomTransitionActive = false;
     }
 
     public bool RequestZoomInLevel()
@@ -228,16 +269,18 @@ public sealed class SelectionUiCameraSystemHelper
         if (HasValidTacticalFollowPose(em))
             return false;
 
-        Vector3 focusWorldPosition = _cameraSystem.GetCameraGroundCenterWorld(_worldCamera);
-        float targetHeight = ResolveMatchHudZoomHeight(targetLevel);
+        _matchHudZoomFocusWorldPosition = _cameraSystem.GetCameraGroundCenterWorld(_worldCamera);
+        _matchHudZoomTargetHeight = ResolveMatchHudZoomHeight(targetLevel);
+        _matchHudZoomLevel = targetLevel;
+        _matchHudZoomTransitionActive = true;
 
         _cameraRequestSystem.QueueClearSmoothFocusTarget(em);
         _cameraRequestSystem.QueueClearDragging(em);
-        _cameraRequestSystem.QueueApplyPerspectiveModeInstant(em, targetHeight, _normalModePitch, _normalModeYaw, _normalModeFieldOfView);
-        _cameraRequestSystem.QueueMoveGroundCenterTo(em, focusWorldPosition);
+        _cameraRequestSystem.QueueCompleteZoomTransition(em);
+        _cameraRequestSystem.QueueResetTransitionVelocities(em);
         _cameraRequestSystem.QueueSetNormalIsoModeActive(em, false);
         ProcessCameraRequests(em);
-        _matchHudZoomLevel = targetLevel;
+        UpdateZoomTransition();
         return true;
     }
 
@@ -245,10 +288,29 @@ public sealed class SelectionUiCameraSystemHelper
     {
         return zoomLevel switch
         {
-            MatchHudZoomLevel.ZoomedOut => _maxZoomHeight,
+            MatchHudZoomLevel.ZoomedOut => _cameraSystem.ResolveClampSafePerspectiveHeight(
+                _worldCamera,
+                _maxZoomHeight,
+                _normalModeZoomHeight,
+                _normalModePitch,
+                _normalModeYaw,
+                _normalModeFieldOfView,
+                MatchHudZoomOutBoundaryUsage),
             MatchHudZoomLevel.ZoomedIn => _minZoomHeight,
             _ => _normalModeZoomHeight
         };
+    }
+
+    private bool IsMatchHudZoomTransitionComplete()
+    {
+        if (_worldCamera == null)
+            return true;
+
+        Vector3 euler = _worldCamera.transform.rotation.eulerAngles;
+        return Mathf.Abs(_worldCamera.transform.position.y - _matchHudZoomTargetHeight) <= 0.05f &&
+               Mathf.Abs(Mathf.DeltaAngle(euler.x, _normalModePitch)) <= 0.1f &&
+               Mathf.Abs(Mathf.DeltaAngle(euler.y, _normalModeYaw)) <= 0.1f &&
+               Mathf.Abs(_worldCamera.fieldOfView - _normalModeFieldOfView) <= 0.05f;
     }
 
     private void ProcessCameraRequests(EntityManager em)

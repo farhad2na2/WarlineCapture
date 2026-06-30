@@ -749,6 +749,10 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             MoveCount++;
         }
 
+        public void UpdateZoomTransition()
+        {
+        }
+
         public MatchHudZoomControlState ReadZoomControlState()
         {
             return MatchHudZoomControlState.Default;

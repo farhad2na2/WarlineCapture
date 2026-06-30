@@ -321,6 +321,62 @@ public sealed partial class RtsCameraSystem : SystemBase
         return true;
     }
 
+    public float ResolveClampSafePerspectiveHeight(
+        Camera worldCamera,
+        float targetHeight,
+        float minHeight,
+        float pitch,
+        float yaw,
+        float fieldOfView,
+        float boundaryUsageRatio)
+    {
+        float resolvedHeight = Mathf.Max(minHeight, targetHeight);
+        if (!_hasGroundBoundary || worldCamera == null)
+            return resolvedHeight;
+
+        bool originalOrthographic = worldCamera.orthographic;
+        Vector3 originalPosition = worldCamera.transform.position;
+        Quaternion originalRotation = worldCamera.transform.rotation;
+        float originalFieldOfView = worldCamera.fieldOfView;
+        float originalOrthographicSize = worldCamera.orthographicSize;
+
+        try
+        {
+            worldCamera.orthographic = false;
+            Vector3 position = originalPosition;
+            position.y = resolvedHeight;
+            worldCamera.transform.position = position;
+            worldCamera.transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
+            worldCamera.fieldOfView = fieldOfView;
+
+            if (!TryGetCameraGroundBounds(worldCamera, out Rect footprint))
+                return resolvedHeight;
+
+            float usage = Mathf.Clamp(boundaryUsageRatio, 0.1f, 0.98f);
+            float targetWidth = Mathf.Max(0.01f, _groundBoundary.width * usage);
+            float targetHeightOnGround = Mathf.Max(0.01f, _groundBoundary.height * usage);
+            float scaleX = footprint.width > targetWidth && footprint.width > 0.01f
+                ? targetWidth / footprint.width
+                : 1f;
+            float scaleZ = footprint.height > targetHeightOnGround && footprint.height > 0.01f
+                ? targetHeightOnGround / footprint.height
+                : 1f;
+            float scale = Mathf.Min(scaleX, scaleZ);
+            if (scale >= 0.999f)
+                return resolvedHeight;
+
+            return Mathf.Max(minHeight, resolvedHeight * Mathf.Clamp01(scale));
+        }
+        finally
+        {
+            worldCamera.orthographic = originalOrthographic;
+            worldCamera.transform.position = originalPosition;
+            worldCamera.transform.rotation = originalRotation;
+            worldCamera.fieldOfView = originalFieldOfView;
+            worldCamera.orthographicSize = originalOrthographicSize;
+        }
+    }
+
     public float CalculateOrthographicSizeForGroundSpan(
         Camera worldCamera,
         float targetGroundSpan,

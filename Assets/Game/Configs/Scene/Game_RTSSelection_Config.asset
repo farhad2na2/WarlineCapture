@@ -24,7 +24,7 @@ MonoBehaviour:
   panSensitivity: 0.05
   zoomSpeed: 20
   minZoomHeight: 15
-  maxZoomHeight: 200
+  maxZoomHeight: 100
   normalModeZoomHeight: 44
   buildModeZoomHeight: 90
   normalModePitch: 40

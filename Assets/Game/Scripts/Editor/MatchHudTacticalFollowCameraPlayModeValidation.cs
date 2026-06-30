@@ -170,7 +170,7 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
             }
 
             MatchHudSelectionPanelView panel = UnityEngine.Object.FindAnyObjectByType<MatchHudSelectionPanelView>(FindObjectsInactive.Include);
-            Button cameraButton = FindCameraButton();
+            Button cameraButton = FindCameraButton(panel);
             if (panel == null || cameraButton == null)
             {
                 Complete(false, "Match HUD CameraButton is not present after match HUD binding.");
@@ -179,6 +179,12 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
 
             if (!enterClicked)
             {
+                if (!EnsureDirectSelectedUnit(matchScene, out string directSelectionError))
+                {
+                    Complete(false, directSelectionError);
+                    return;
+                }
+
                 panel.ShowSelection();
                 panel.SetCameraActionEnabled(true);
                 cameraButton.onClick.Invoke();
@@ -203,7 +209,7 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
                     if (frameCount - enterClickFrame < 120)
                         return;
 
-                    Complete(false, "CameraButton click did not enable tactical follow mode.");
+                    Complete(false, $"CameraButton click did not enable tactical follow mode. {DescribeFollowDiagnostics()}");
                     return;
                 }
 
@@ -300,7 +306,7 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
         }
 
         EntityManager em = world.EntityManager;
-        if (!TryFindPlayerUnit(em, out Entity unit, out LocalTransform transform))
+        if (!TryFindPlayerUnit(em, out Entity unit))
         {
             error = "No player unit with LocalTransform/Faction was found for CameraButton PlayMode proof.";
             return false;
@@ -309,31 +315,6 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
         followedEntity = unit;
         if (!em.HasComponent<SelectedUnitTag>(unit))
             em.AddComponent<SelectedUnitTag>(unit);
-
-        Entity readModelEntity = EnsureFocusedUnitReadModelEntity(em);
-        em.SetComponentData(readModelEntity, new FocusedUnitUiReadModelComponent
-        {
-            FocusedUnit = unit,
-            HasFocusedUnit = 1,
-            OwnedByPlayer = 1,
-            CanAttack = 1,
-            CanHold = 1,
-            CanStop = 1,
-            CanScan = 1,
-            HasWorldPosition = 1,
-            WorldPosition = transform.Position,
-            HasPortraitPose = 1,
-            PortraitWorldPosition = transform.Position + new float3(0f, 1.4f, 0f),
-            PortraitForward = math.forward(transform.Rotation),
-            Label = new FixedString64Bytes("Tactical Follow Proof Unit"),
-            Description = new FixedString128Bytes("PlayMode CameraButton proof target."),
-            HealthText = new FixedString32Bytes("Health: proof")
-        });
-
-        DynamicBuffer<FocusedUnitPassengerUiReadModelElement> passengers =
-            em.GetBuffer<FocusedUnitPassengerUiReadModelElement>(readModelEntity);
-        passengers.Clear();
-
         MatchHudSelectionPanelView panel = UnityEngine.Object.FindAnyObjectByType<MatchHudSelectionPanelView>(FindObjectsInactive.Include);
         if (panel == null)
         {
@@ -348,10 +329,37 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
         return true;
     }
 
-    private static bool TryFindPlayerUnit(EntityManager em, out Entity unit, out LocalTransform transform)
+    private static bool EnsureDirectSelectedUnit(MatchSceneView matchScene, out string error)
+    {
+        error = string.Empty;
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+        {
+            error = "Default ECS world is not created while arming CameraButton proof selection.";
+            return false;
+        }
+
+        EntityManager em = world.EntityManager;
+        if (followedEntity == Entity.Null ||
+            !em.Exists(followedEntity) ||
+            em.GetComponentData<Faction>(followedEntity).Id != FactionIdentity.PlayerFactionId)
+        {
+            if (!TryFindPlayerUnit(em, out followedEntity))
+            {
+                error = "Could not resolve a player unit immediately before CameraButton click.";
+                return false;
+            }
+        }
+
+        if (!em.HasComponent<SelectedUnitTag>(followedEntity))
+            em.AddComponent<SelectedUnitTag>(followedEntity);
+
+        return true;
+    }
+
+    private static bool TryFindPlayerUnit(EntityManager em, out Entity unit)
     {
         unit = Entity.Null;
-        transform = default;
         using EntityQuery query = em.CreateEntityQuery(
             ComponentType.ReadOnly<Faction>(),
             ComponentType.ReadOnly<UnitGrid>(),
@@ -365,25 +373,10 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
                 continue;
 
             unit = entity;
-            transform = em.GetComponentData<LocalTransform>(entity);
             return true;
         }
 
         return false;
-    }
-
-    private static Entity EnsureFocusedUnitReadModelEntity(EntityManager em)
-    {
-        using EntityQuery query = em.CreateEntityQuery(
-            ComponentType.ReadWrite<FocusedUnitUiReadModelComponent>(),
-            ComponentType.ReadWrite<FocusedUnitPassengerUiReadModelElement>());
-        if (!query.IsEmptyIgnoreFilter)
-            return query.GetSingletonEntity();
-
-        Entity entity = em.CreateEntity(typeof(FocusedUnitUiReadModelComponent));
-        em.SetName(entity, "FocusedUnitUiReadModel");
-        em.AddBuffer<FocusedUnitPassengerUiReadModelElement>(entity);
-        return entity;
     }
 
     private static bool TryReadTacticalFollowMode(out TacticalFollowCameraModeComponent mode)
@@ -422,8 +415,19 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
         return null;
     }
 
-    private static Button FindCameraButton()
+    private static Button FindCameraButton(MatchHudSelectionPanelView panel)
     {
+        if (panel != null)
+        {
+            Button[] panelButtons = panel.GetComponentsInChildren<Button>(true);
+            for (int i = 0; i < panelButtons.Length; i++)
+            {
+                Button candidate = panelButtons[i];
+                if (candidate != null && string.Equals(candidate.gameObject.name, "CameraButton", StringComparison.Ordinal))
+                    return candidate;
+            }
+        }
+
         Button[] buttons = UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Include);
         for (int i = 0; i < buttons.Length; i++)
         {
@@ -433,6 +437,44 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
         }
 
         return null;
+    }
+
+    private static string DescribeFollowDiagnostics()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return "world=missing";
+
+        EntityManager em = world.EntityManager;
+        int selectedCount;
+        using (EntityQuery selectedQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>()))
+            selectedCount = selectedQuery.CalculateEntityCount();
+
+        int requestCount = 0;
+        int lastReason = -1;
+        int uiEnabled = -1;
+        int uiSelected = -1;
+        using (EntityQuery requestQuery = em.CreateEntityQuery(
+                   ComponentType.ReadOnly<TacticalFollowCameraRequestQueueComponent>(),
+                   ComponentType.ReadOnly<TacticalFollowCameraRequestElement>()))
+        {
+            if (!requestQuery.IsEmptyIgnoreFilter)
+                requestCount = em.GetBuffer<TacticalFollowCameraRequestElement>(requestQuery.GetSingletonEntity()).Length;
+        }
+
+        using (EntityQuery readModelQuery = em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraUiReadModelComponent>()))
+        {
+            if (!readModelQuery.IsEmptyIgnoreFilter)
+            {
+                TacticalFollowCameraUiReadModelComponent readModel =
+                    em.GetComponentData<TacticalFollowCameraUiReadModelComponent>(readModelQuery.GetSingletonEntity());
+                lastReason = readModel.ReasonCode;
+                uiEnabled = readModel.Enabled;
+                uiSelected = readModel.Selected;
+            }
+        }
+
+        return $"selectedCount={selectedCount} requestCount={requestCount} reason={lastReason} uiEnabled={uiEnabled} uiSelected={uiSelected} followedEntity={followedEntity}";
     }
 
     private static bool TryRenderCamera(Camera camera, string path, out string error)
@@ -522,6 +564,9 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
             Debug.Log($"[MatchHudTacticalFollowCameraPlayModeValidation] result=Passed {message}");
         else
             Debug.LogError($"[MatchHudTacticalFollowCameraPlayModeValidation] result=Failed {message}");
-        EditorApplication.Exit(success ? 0 : 1);
+        if (EditorApplication.isPlaying)
+            EditorApplication.ExitPlaymode();
+        if (Application.isBatchMode)
+            EditorApplication.Exit(success ? 0 : 1);
     }
 }

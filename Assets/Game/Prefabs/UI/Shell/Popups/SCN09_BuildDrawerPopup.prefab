@@ -9829,6 +9829,8 @@ GameObject:
   - component: {fileID: 1800108209000000002}
   - component: {fileID: 5121146197482808315}
   - component: {fileID: 2420960382460592093}
+  - component: {fileID: 9218269658421920109}
+  - component: {fileID: 5416695032796754004}
   m_Layer: 0
   m_Name: SCN09_BuildDrawerPopup
   m_TagString: Untagged
@@ -9989,6 +9991,44 @@ MonoBehaviour:
   view: {fileID: 5121146197482808315}
   unitPrefabRegistryConfig: {fileID: 11400000, guid: b201000000000000000000000000000d, type: 2}
   buildingPlacementConfig: {fileID: 11400000, guid: b2010000000000000000000000000004, type: 2}
+--- !u!222 &9218269658421920109
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6681354990523575241}
+  m_CullTransparentMesh: 1
+--- !u!114 &5416695032796754004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6681354990523575241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.5803922}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &6718956666824274557
 GameObject:
   m_ObjectHideFlags: 0
@@ -11960,11 +12000,11 @@ RectTransform:
   - {fileID: 8364250454817529824}
   m_Father: {fileID: 4447144602982383775}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -500, y: 70}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 156}
   m_SizeDelta: {x: 2460, y: 1510}
-  m_Pivot: {x: 1, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8410545787387279596
 GameObject:
   m_ObjectHideFlags: 0

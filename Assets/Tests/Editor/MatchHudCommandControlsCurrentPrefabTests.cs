@@ -243,9 +243,15 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
 
         selectionPanel.SetCameraActionSelected(true);
         Assert.AreSame(cameraButton.spriteState.selectedSprite, targetImage.sprite, "CameraButton selected state must persist visually while follow mode is active.");
+        Assert.AreSame(cameraButton.spriteState.selectedSprite, targetImage.overrideSprite, "CameraButton selected state must own the rendered SpriteSwap override while follow mode is active.");
+
+        targetImage.overrideSprite = null;
+        selectionPanel.SetCameraActionSelected(true);
+        Assert.AreSame(cameraButton.spriteState.selectedSprite, targetImage.overrideSprite, "CameraButton selected state must be reasserted after normal UI transitions clear the override.");
 
         selectionPanel.SetCameraActionSelected(false);
         Assert.IsNull(targetImage.sprite, "CameraButton must restore its transparent normal sprite when follow mode exits.");
+        Assert.IsNull(targetImage.overrideSprite, "CameraButton must release its selected SpriteSwap override when follow mode exits.");
     }
 
     [Test]

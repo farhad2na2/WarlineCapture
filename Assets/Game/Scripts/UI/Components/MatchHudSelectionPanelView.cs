@@ -300,16 +300,21 @@ public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelecti
         if (selected && selectedSprite != null)
         {
             image.sprite = selectedSprite;
+            image.overrideSprite = selectedSprite;
             image.color = _cameraActionNormalColorCached ? _cameraActionNormalColor : image.color;
         }
         else if (_cameraActionNormalSprite != null)
         {
             image.sprite = _cameraActionNormalSprite;
+            if (image.overrideSprite == selectedSprite)
+                image.overrideSprite = null;
             image.color = _cameraActionNormalColorCached ? _cameraActionNormalColor : image.color;
         }
         else
         {
             image.sprite = null;
+            if (image.overrideSprite == selectedSprite)
+                image.overrideSprite = null;
             image.color = selected
                 ? cameraAction.colors.selectedColor
                 : (_cameraActionNormalColorCached ? _cameraActionNormalColor : image.color);

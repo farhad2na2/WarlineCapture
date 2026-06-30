@@ -41,9 +41,10 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(TacticalFollowPoseRequest_SuppressesNormalRequestsAndBoundaryClampWhilePoseValid), test => test.TacticalFollowPoseRequest_SuppressesNormalRequestsAndBoundaryClampWhilePoseValid());
             RunCase(nameof(TacticalFollowPoseRequest_UsesExplicitRestoreRotationInsteadOfLookAt), test => test.TacticalFollowPoseRequest_UsesExplicitRestoreRotationInsteadOfLookAt());
             RunCase(nameof(TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue());
+            RunCase(nameof(RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete), test => test.RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete());
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
-            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=28");
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=29");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -959,6 +960,59 @@ public sealed class RtsCameraSystemTests
     }
 
     [Test]
+    public void RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.ManualZoomOutPan");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true };
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
+            Camera camera = CreateCamera(new Vector3(0f, 45f, -20f), Quaternion.Euler(58f, 10f, 0f));
+            camera.fieldOfView = 36f;
+            cameraSystem.WasPlayRequested = true;
+            cameraSystem.MatchIntroZoomSettlePending = false;
+            cameraSystem.IsZoomTransitionActive = false;
+
+            var context = CreateRuntimeCameraContext(
+                runtime,
+                new RtsSelectionInputCompositionSystemHelper(),
+                cameraSystem,
+                cameraRequestSystem,
+                camera,
+                TryGetDefaultEntityManager);
+
+            Assert.IsTrue(runtimeCameraSystem.UpdateRuntimeCameraTick(context));
+            Assert.IsFalse(cameraSystem.IsZoomTransitionActive, "Manual max zoom-out after intro must not be mistaken for intro zoom-out settle.");
+            Assert.IsFalse(cameraSystem.MatchIntroZoomSettlePending);
+
+            Vector3 beforePan = camera.transform.position;
+            runtimeCameraSystem.SetCameraDragging(context, true);
+            runtimeCameraSystem.PanCamera(context, new Vector2(10f, 0f));
+
+            Assert.IsTrue(cameraSystem.IsDragging);
+            Assert.That(Vector3.Distance(beforePan, camera.transform.position), Is.GreaterThan(0.001f), "Manual max zoom-out must remain draggable after the runtime camera tick.");
+            Assert.IsFalse(cameraSystem.IsZoomTransitionActive);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+
+        bool TryGetDefaultEntityManager(out EntityManager entityManager)
+        {
+            entityManager = world.EntityManager;
+            return world.IsCreated;
+        }
+    }
+
+    [Test]
     public void MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;
@@ -1013,6 +1067,7 @@ public sealed class RtsCameraSystemTests
 
             Assert.IsTrue(cameraSystem.WasPlayRequested);
             Assert.IsTrue(cameraSystem.IsZoomTransitionActive);
+            Assert.IsFalse(cameraSystem.MatchIntroZoomSettlePending);
             Assert.Greater(camera.transform.position.y, 24f, "First play should start slightly zoomed out before smoothing to normal.");
             Assert.Greater(camera.fieldOfView, 36f, "First play should start with a subtly wider FOV before smoothing to normal.");
         }
@@ -1086,6 +1141,7 @@ public sealed class RtsCameraSystemTests
             Assert.IsTrue(runtimeCameraSystem.UpdateRuntimeCameraTick(context));
             Assert.IsTrue(cameraSystem.WasPlayRequested);
             Assert.IsFalse(cameraSystem.IsZoomTransitionActive, "Camera should hold the intro zoom while the shell intro is still locked.");
+            Assert.IsTrue(cameraSystem.MatchIntroZoomSettlePending, "Only the actual delayed match intro should arm the zoom settle.");
             Assert.Greater(camera.transform.position.y, 24f);
             Assert.Greater(camera.fieldOfView, 36f);
 
@@ -1093,6 +1149,7 @@ public sealed class RtsCameraSystemTests
 
             Assert.IsTrue(runtimeCameraSystem.UpdateRuntimeCameraTick(context));
             Assert.IsTrue(cameraSystem.IsZoomTransitionActive, "Camera should begin settling only after the shell intro completes.");
+            Assert.IsFalse(cameraSystem.MatchIntroZoomSettlePending);
         }
         finally
         {

@@ -26,7 +26,8 @@ public enum RtsCameraRequestKind : byte
     SetSmoothFocusTarget = 21,
     ClearSmoothFocusTarget = 22,
     UpdateSmoothFocus = 23,
-    UpdateTacticalFollowPose = 24
+    UpdateTacticalFollowPose = 24,
+    SetMatchIntroZoomSettlePending = 25
 }
 
 public struct RtsCameraRequestQueueComponent : IComponentData
@@ -42,6 +43,7 @@ public struct RtsCameraStateComponent : IComponentData
     public byte WasPlayRequested;
     public byte WasBuildModeActive;
     public byte IsZoomTransitionActive;
+    public byte MatchIntroZoomSettlePending;
     public float FullscreenIsoTargetHeight;
     public float FullscreenIsoTargetOrthographicSize;
     public byte NormalIsoModeActive;

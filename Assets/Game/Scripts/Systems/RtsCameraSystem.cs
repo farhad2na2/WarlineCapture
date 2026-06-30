@@ -22,6 +22,7 @@ public sealed partial class RtsCameraSystem : SystemBase
     public bool WasPlayRequested { get; set; }
     public bool WasBuildModeActive { get; set; }
     public bool IsZoomTransitionActive { get; set; }
+    public bool MatchIntroZoomSettlePending { get; set; }
     public float FullscreenIsoTargetHeight { get; set; }
     public float FullscreenIsoTargetOrthographicSize { get; set; }
     public bool NormalIsoModeActive { get; set; }
@@ -57,6 +58,7 @@ public sealed partial class RtsCameraSystem : SystemBase
         WasPlayRequested = false;
         WasBuildModeActive = false;
         IsZoomTransitionActive = false;
+        MatchIntroZoomSettlePending = false;
         NormalIsoModeActive = false;
         ResetTransitionVelocities();
     }

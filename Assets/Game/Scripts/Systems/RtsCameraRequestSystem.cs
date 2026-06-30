@@ -102,6 +102,11 @@ public sealed partial class RtsCameraRequestSystem : SystemBase
         return TryEnqueue(entityManager, Request(RtsCameraRequestKind.SetZoomTransitionActive, flag: isActive));
     }
 
+    public bool QueueSetMatchIntroZoomSettlePending(EntityManager entityManager, bool isPending)
+    {
+        return TryEnqueue(entityManager, Request(RtsCameraRequestKind.SetMatchIntroZoomSettlePending, flag: isPending));
+    }
+
     public bool QueueSetNormalIsoModeActive(EntityManager entityManager, bool isActive)
     {
         return TryEnqueue(entityManager, Request(RtsCameraRequestKind.SetNormalIsoModeActive, flag: isActive));
@@ -352,6 +357,9 @@ public sealed partial class RtsCameraRequestSystem : SystemBase
             case RtsCameraRequestKind.SetZoomTransitionActive:
                 cameraSystem.IsZoomTransitionActive = request.Flag != 0;
                 break;
+            case RtsCameraRequestKind.SetMatchIntroZoomSettlePending:
+                cameraSystem.MatchIntroZoomSettlePending = request.Flag != 0;
+                break;
             case RtsCameraRequestKind.SetFullscreenIsoTargets:
                 cameraSystem.FullscreenIsoTargetHeight = request.Value;
                 cameraSystem.FullscreenIsoTargetOrthographicSize = request.Value2;
@@ -441,6 +449,7 @@ public sealed partial class RtsCameraRequestSystem : SystemBase
             WasPlayRequested = ToByte(cameraSystem.WasPlayRequested),
             WasBuildModeActive = ToByte(cameraSystem.WasBuildModeActive),
             IsZoomTransitionActive = ToByte(cameraSystem.IsZoomTransitionActive),
+            MatchIntroZoomSettlePending = ToByte(cameraSystem.MatchIntroZoomSettlePending),
             FullscreenIsoTargetHeight = cameraSystem.FullscreenIsoTargetHeight,
             FullscreenIsoTargetOrthographicSize = cameraSystem.FullscreenIsoTargetOrthographicSize,
             NormalIsoModeActive = ToByte(cameraSystem.NormalIsoModeActive)

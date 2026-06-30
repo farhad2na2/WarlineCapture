@@ -658,16 +658,17 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
 
             SetCameraWasPlayRequested(context, true);
             SetCameraWasBuildModeActive(context, false);
-            SetCameraZoomTransitionActive(context, IsMatchIntroComplete(context));
+            bool introComplete = IsMatchIntroComplete(context);
+            SetCameraMatchIntroZoomSettlePending(context, !introComplete);
+            SetCameraZoomTransitionActive(context, introComplete);
             return;
         }
 
         SetCameraWasPlayRequested(context, runtime.PlayRequested);
 
-        if (!camera.IsZoomTransitionActive &&
-            IsCameraAtMatchIntroZoomOut(context) &&
-            IsMatchIntroComplete(context))
+        if (camera.MatchIntroZoomSettlePending && IsMatchIntroComplete(context))
         {
+            SetCameraMatchIntroZoomSettlePending(context, false);
             SetCameraZoomTransitionActive(context, true);
             return;
         }
@@ -757,6 +758,18 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
             return;
 
         context.CameraRequestSystem.QueueSetZoomTransitionActive(em, isActive);
+        ProcessCameraRequests(context, em);
+    }
+
+    private void SetCameraMatchIntroZoomSettlePending(Context context, bool isPending)
+    {
+        if (context.CameraSystem.MatchIntroZoomSettlePending == isPending)
+            return;
+
+        if (!context.TryGetDefaultEntityManager(out EntityManager em))
+            return;
+
+        context.CameraRequestSystem.QueueSetMatchIntroZoomSettlePending(em, isPending);
         ProcessCameraRequests(context, em);
     }
 

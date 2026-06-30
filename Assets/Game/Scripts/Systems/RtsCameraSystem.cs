@@ -4,6 +4,7 @@ using UnityEngine;
 public sealed partial class RtsCameraSystem : SystemBase
 {
     private const float SmoothFocusCompletionDistanceSq = 0.01f;
+    private const float FallbackDeltaTime = 1f / 60f;
 
     private Vector3 _smoothFocusVelocity;
     private Vector3 _tacticalFollowPositionVelocity;
@@ -448,6 +449,7 @@ public sealed partial class RtsCameraSystem : SystemBase
             worldCamera.orthographic = targetOrthographic;
 
         float resolvedSmoothTime = Mathf.Max(0f, smoothTime);
+        float resolvedDeltaTime = UnityEngine.Time.deltaTime > 0f ? UnityEngine.Time.deltaTime : FallbackDeltaTime;
         if (resolvedSmoothTime <= 0.0001f)
         {
             worldCamera.transform.position = desiredPosition;
@@ -463,13 +465,15 @@ public sealed partial class RtsCameraSystem : SystemBase
             worldCamera.transform.position,
             desiredPosition,
             ref _tacticalFollowPositionVelocity,
-            resolvedSmoothTime);
+            resolvedSmoothTime,
+            Mathf.Infinity,
+            resolvedDeltaTime);
 
         ApplyTacticalFollowRotation(
             worldCamera,
             worldCamera.transform.position,
             lookAt,
-            1f - Mathf.Exp(-UnityEngine.Time.deltaTime / resolvedSmoothTime));
+            1f - Mathf.Exp(-resolvedDeltaTime / resolvedSmoothTime));
 
         if (targetOrthographic)
         {
@@ -477,7 +481,9 @@ public sealed partial class RtsCameraSystem : SystemBase
                 worldCamera.orthographicSize,
                 Mathf.Max(0.1f, targetOrthographicSize),
                 ref _orthographicSizeTransitionVelocity,
-                resolvedSmoothTime);
+                resolvedSmoothTime,
+                Mathf.Infinity,
+                resolvedDeltaTime);
         }
         else
         {
@@ -485,7 +491,9 @@ public sealed partial class RtsCameraSystem : SystemBase
                 worldCamera.fieldOfView,
                 Mathf.Max(1f, targetFieldOfView),
                 ref _fieldOfViewTransitionVelocity,
-                resolvedSmoothTime);
+                resolvedSmoothTime,
+                Mathf.Infinity,
+                resolvedDeltaTime);
         }
 
         bool zoomReached = targetOrthographic

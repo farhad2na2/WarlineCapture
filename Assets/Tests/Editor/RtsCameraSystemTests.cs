@@ -25,10 +25,11 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter), test => test.MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter());
             RunCase(nameof(UpdateFullscreenIsoZoom_ClampsTargets), test => test.UpdateFullscreenIsoZoom_ClampsTargets());
             RunCase(nameof(TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue());
+            RunCase(nameof(TacticalFollowPoseRequest_SmoothlyApproachesTargetWithoutSnapping), test => test.TacticalFollowPoseRequest_SmoothlyApproachesTargetWithoutSnapping());
             RunCase(nameof(TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue());
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
-            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=14");
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=15");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -355,6 +356,56 @@ public sealed class RtsCameraSystemTests
             Assert.AreEqual(new Vector3(8f, 12f, -14f), camera.transform.position);
             Assert.IsTrue(camera.orthographic);
             Assert.AreEqual(11f, camera.orthographicSize, 0.001f);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void TacticalFollowPoseRequest_SmoothlyApproachesTargetWithoutSnapping()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowSmoothPose");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            Vector3 startPosition = new(0f, 5f, 0f);
+            Vector3 desiredPosition = new(18f, 9f, -24f);
+            Vector3 lookAt = new(18f, 1.5f, -4f);
+            Camera camera = CreateCamera(startPosition, Quaternion.identity);
+            camera.fieldOfView = 60f;
+
+            QueueAndProcess();
+
+            float firstDistance = Vector3.Distance(camera.transform.position, desiredPosition);
+            Assert.Greater(Vector3.Distance(startPosition, desiredPosition), firstDistance, "First smooth request should move toward the tactical follow pose.");
+            Assert.Greater(firstDistance, 0.5f, "First smooth request must not snap directly to the tactical follow pose.");
+            Assert.That(camera.fieldOfView, Is.GreaterThan(38f), "Field of view should ease toward the tactical follow value instead of snapping.");
+
+            for (int i = 0; i < 180; i++)
+                QueueAndProcess();
+
+            Assert.That(Vector3.Distance(camera.transform.position, desiredPosition), Is.LessThan(0.1f));
+            Assert.That(Vector3.Angle(camera.transform.forward, (lookAt - camera.transform.position).normalized), Is.LessThan(1f));
+            Assert.That(camera.fieldOfView, Is.EqualTo(38f).Within(0.1f));
+
+            void QueueAndProcess()
+            {
+                cameraRequestSystem.QueueUpdateTacticalFollowPose(
+                    world.EntityManager,
+                    desiredPosition,
+                    lookAt,
+                    38f,
+                    0.12f);
+                cameraRequestSystem.ProcessPendingRequests(world.EntityManager, cameraSystem, camera);
+            }
         }
         finally
         {

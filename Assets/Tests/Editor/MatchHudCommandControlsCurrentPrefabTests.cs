@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public sealed class MatchHudCommandControlsCurrentPrefabTests
@@ -25,8 +26,9 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
             RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonQueuesToggleFollowMode), tests => tests.MatchHudSelectionPanelCameraButtonQueuesToggleFollowMode());
             RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonUsesCommandButtonSpriteStates), tests => tests.MatchHudSelectionPanelCameraButtonUsesCommandButtonSpriteStates());
             RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonAppliesEnabledAndSelectedState), tests => tests.MatchHudSelectionPanelCameraButtonAppliesEnabledAndSelectedState());
+            RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonHoverAndPressUseSpriteSwapStates), tests => tests.MatchHudSelectionPanelCameraButtonHoverAndPressUseSpriteSwapStates());
             RunValidationStep(nameof(LegacySupportCommandTabRoutesToScanCommandMode), tests => tests.LegacySupportCommandTabRoutesToScanCommandMode());
-            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=9");
+            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=10");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -247,6 +249,40 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     }
 
     [Test]
+    public void MatchHudSelectionPanelCameraButtonHoverAndPressUseSpriteSwapStates()
+    {
+        MatchHudSelectionPanelView selectionPanel = _instance.GetComponentInChildren<MatchHudSelectionPanelView>(true);
+        Assert.NotNull(selectionPanel, "SCN08_MatchHudContent must expose MatchHudSelectionPanelView.");
+        Button cameraButton = GetSerializedCameraButton(selectionPanel);
+        Image targetImage = cameraButton.targetGraphic as Image;
+        Assert.NotNull(targetImage, "CameraButton must use an Image target graphic for live sprite transitions.");
+
+        ActivateHierarchy(cameraButton.transform);
+        selectionPanel.SetSelectionVisible(true);
+        selectionPanel.SetCameraActionEnabled(true);
+        selectionPanel.SetCameraActionSelected(false);
+        Assert.IsNull(targetImage.sprite, "CameraButton starts from the transparent normal sprite.");
+        Assert.IsNull(targetImage.overrideSprite, "CameraButton starts with no live transition override sprite.");
+
+        var pointerEvent = new PointerEventData(EventSystem.current)
+        {
+            button = PointerEventData.InputButton.Left
+        };
+        Assert.IsTrue(cameraButton.IsActive(), "CameraButton must be active before live pointer transition validation.");
+        cameraButton.OnPointerEnter(pointerEvent);
+        Assert.AreSame(cameraButton.spriteState.highlightedSprite, targetImage.overrideSprite, "CameraButton hover must use the highlighted sprite.");
+
+        cameraButton.OnPointerDown(pointerEvent);
+        Assert.AreSame(cameraButton.spriteState.pressedSprite, targetImage.overrideSprite, "CameraButton press must use the pressed sprite.");
+
+        cameraButton.OnPointerUp(pointerEvent);
+        Assert.AreSame(cameraButton.spriteState.highlightedSprite, targetImage.overrideSprite, "CameraButton release while hovered must return to highlighted sprite.");
+
+        cameraButton.OnPointerExit(pointerEvent);
+        Assert.IsNull(targetImage.overrideSprite, "CameraButton exit must restore the transparent normal sprite.");
+    }
+
+    [Test]
     public void LegacySupportCommandTabRoutesToScanCommandMode()
     {
         MatchOverlayCommandControlsView controls = LoadControls();
@@ -304,6 +340,12 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         }
 
         return false;
+    }
+
+    private static void ActivateHierarchy(Transform transform)
+    {
+        for (Transform current = transform; current != null; current = current.parent)
+            current.gameObject.SetActive(true);
     }
 
     private static Button GetSerializedCameraButton(MatchHudSelectionPanelView selectionPanel)

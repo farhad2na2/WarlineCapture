@@ -55,6 +55,11 @@ public struct TacticalFollowCameraRequestElement : IBufferElementData
     public byte HasWorldPosition;
 }
 
+public struct TacticalFollowCameraBaseTargetElement : IBufferElementData
+{
+    public Entity Entity;
+}
+
 public struct TacticalFollowCameraModeComponent : IComponentData
 {
     public byte Enabled;

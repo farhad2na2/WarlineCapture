@@ -131,7 +131,7 @@ public sealed class TacticalFollowCameraModeSystemHelper
             return false;
         }
 
-        if (!TryResolveBaseTarget(em, context, out TacticalFollowCameraTargetComponent target))
+        if (!TryResolveLockedBaseTarget(em, modeEntity, mode, out TacticalFollowCameraTargetComponent target))
         {
             if (mode.HasTemporaryTarget != 0 &&
                 TryContinueTemporaryTargetWithoutBase(em, modeEntity, mode, context, currentTime))
@@ -233,6 +233,7 @@ public sealed class TacticalFollowCameraModeSystemHelper
             mode.TemporaryTargetKind = TacticalFollowCameraTargetKind.None;
             mode.TemporaryTargetEntity = Entity.Null;
             em.SetComponentData(modeEntity, mode);
+            ClearBaseTargetEntities(em, modeEntity);
             ClearTarget(em);
             PublishUiReadModel(em, modeEntity, TacticalCommandReasonCode.NoSelection, context);
             return;
@@ -269,6 +270,7 @@ public sealed class TacticalFollowCameraModeSystemHelper
         mode.TemporaryTargetEntity = Entity.Null;
         mode.ModeEnteredFrame = Time.frameCount;
         em.SetComponentData(modeEntity, mode);
+        CaptureBaseTargetEntities(em, modeEntity, target);
         em.SetComponentData(EnsureTargetEntity(em), target);
         em.SetComponentData(EnsurePoseEntity(em), BuildPose(target, TacticalFollowCameraPoseSource.BaseTarget));
         PublishUiReadModel(em, modeEntity, TacticalCommandReasonCode.None, context, TacticalFollowCameraFeedbackCode.EnteredFollowMode);
@@ -290,6 +292,7 @@ public sealed class TacticalFollowCameraModeSystemHelper
         mode.TemporaryTargetKind = TacticalFollowCameraTargetKind.None;
         mode.TemporaryTargetEntity = Entity.Null;
         em.SetComponentData(modeEntity, mode);
+        ClearBaseTargetEntities(em, modeEntity);
         ClearTarget(em);
         if (mode.RestorePoseValid != 0)
             em.SetComponentData(EnsurePoseEntity(em), BuildRestorePose(mode));
@@ -315,7 +318,7 @@ public sealed class TacticalFollowCameraModeSystemHelper
         em.SetComponentData(readModelEntity, new TacticalFollowCameraUiReadModelComponent
         {
             Visible = 1,
-            Enabled = hasSelection ? (byte)1 : (byte)0,
+            Enabled = mode.Enabled != 0 || hasSelection ? (byte)1 : (byte)0,
             Selected = mode.Enabled,
             ReasonCode = reasonCode == TacticalCommandReasonCode.None && !hasSelection
                 ? (int)TacticalCommandReasonCode.NoSelection
@@ -382,6 +385,152 @@ public sealed class TacticalFollowCameraModeSystemHelper
         }
 
         return TryReadSelectedBuildingTarget(context, out target);
+    }
+
+    private static bool TryResolveLockedBaseTarget(
+        EntityManager em,
+        Entity modeEntity,
+        TacticalFollowCameraModeComponent mode,
+        out TacticalFollowCameraTargetComponent target)
+    {
+        target = default;
+        if (mode.HasBaseTarget == 0)
+            return false;
+
+        if (mode.BaseTargetKind == TacticalFollowCameraTargetKind.Unit)
+            return TryBuildUnitTarget(em, mode.BaseTargetEntity, out target);
+
+        if (mode.BaseTargetKind == TacticalFollowCameraTargetKind.UnitGroup)
+            return TryBuildGroupTargetFromLockedEntities(em, modeEntity, out target);
+
+        if (mode.BaseTargetKind == TacticalFollowCameraTargetKind.Building)
+            return TryReadCurrentTarget(em, TacticalFollowCameraTargetKind.Building, out target);
+
+        return false;
+    }
+
+    private static bool TryBuildUnitTarget(
+        EntityManager em,
+        Entity entity,
+        out TacticalFollowCameraTargetComponent target)
+    {
+        target = default;
+        if (!IsFollowableUnitEntity(em, entity) || !em.HasComponent<LocalTransform>(entity))
+            return false;
+
+        target = BuildSingleUnitTarget(entity, em.GetComponentData<LocalTransform>(entity));
+        return true;
+    }
+
+    private static bool TryBuildGroupTargetFromLockedEntities(
+        EntityManager em,
+        Entity modeEntity,
+        out TacticalFollowCameraTargetComponent target)
+    {
+        target = default;
+        if (!em.HasBuffer<TacticalFollowCameraBaseTargetElement>(modeEntity))
+            return false;
+
+        DynamicBuffer<TacticalFollowCameraBaseTargetElement> entities =
+            em.GetBuffer<TacticalFollowCameraBaseTargetElement>(modeEntity);
+        Entity singleEntity = Entity.Null;
+        LocalTransform singleTransform = default;
+        int followableCount = 0;
+        using NativeList<LocalTransform> transforms = new NativeList<LocalTransform>(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i].Entity;
+            if (!IsFollowableUnitEntity(em, entity) || !em.HasComponent<LocalTransform>(entity))
+                continue;
+
+            LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
+            followableCount++;
+            if (followableCount == 1)
+            {
+                singleEntity = entity;
+                singleTransform = transform;
+            }
+            else
+            {
+                if (followableCount == 2)
+                    transforms.Add(singleTransform);
+                transforms.Add(transform);
+            }
+        }
+
+        if (followableCount == 1)
+        {
+            target = BuildSingleUnitTarget(singleEntity, singleTransform);
+            return true;
+        }
+
+        if (followableCount > 1)
+        {
+            target = BuildGroupTarget(transforms.AsArray());
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryReadCurrentTarget(
+        EntityManager em,
+        TacticalFollowCameraTargetKind expectedKind,
+        out TacticalFollowCameraTargetComponent target)
+    {
+        target = default;
+        Entity targetEntity = EnsureTargetEntity(em);
+        if (!em.HasComponent<TacticalFollowCameraTargetComponent>(targetEntity))
+            return false;
+
+        target = em.GetComponentData<TacticalFollowCameraTargetComponent>(targetEntity);
+        return target.Valid != 0 && target.TargetKind == expectedKind;
+    }
+
+    private static void CaptureBaseTargetEntities(
+        EntityManager em,
+        Entity modeEntity,
+        TacticalFollowCameraTargetComponent target)
+    {
+        DynamicBuffer<TacticalFollowCameraBaseTargetElement> buffer = EnsureBaseTargetEntityBuffer(em, modeEntity);
+        buffer.Clear();
+        if (target.TargetKind == TacticalFollowCameraTargetKind.Unit && target.TargetEntity != Entity.Null)
+        {
+            buffer.Add(new TacticalFollowCameraBaseTargetElement { Entity = target.TargetEntity });
+            return;
+        }
+
+        if (target.TargetKind != TacticalFollowCameraTargetKind.UnitGroup)
+            return;
+
+        using EntityQuery selectedQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<SelectedUnitTag>(),
+            ComponentType.ReadOnly<LocalTransform>());
+        if (selectedQuery.IsEmptyIgnoreFilter)
+            return;
+
+        using NativeArray<Entity> selected = selectedQuery.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < selected.Length; i++)
+        {
+            if (IsFollowableUnitEntity(em, selected[i]))
+                buffer.Add(new TacticalFollowCameraBaseTargetElement { Entity = selected[i] });
+        }
+    }
+
+    private static DynamicBuffer<TacticalFollowCameraBaseTargetElement> EnsureBaseTargetEntityBuffer(
+        EntityManager em,
+        Entity modeEntity)
+    {
+        if (!em.HasBuffer<TacticalFollowCameraBaseTargetElement>(modeEntity))
+            em.AddBuffer<TacticalFollowCameraBaseTargetElement>(modeEntity);
+
+        return em.GetBuffer<TacticalFollowCameraBaseTargetElement>(modeEntity);
+    }
+
+    private static void ClearBaseTargetEntities(EntityManager em, Entity modeEntity)
+    {
+        if (em.HasBuffer<TacticalFollowCameraBaseTargetElement>(modeEntity))
+            em.GetBuffer<TacticalFollowCameraBaseTargetElement>(modeEntity).Clear();
     }
 
     private static bool IsFollowableUnitEntity(EntityManager em, Entity entity)
@@ -1030,9 +1179,15 @@ public sealed class TacticalFollowCameraModeSystemHelper
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraModeComponent>());
         if (!query.IsEmptyIgnoreFilter)
-            return query.GetSingletonEntity();
+        {
+            Entity existing = query.GetSingletonEntity();
+            EnsureBaseTargetEntityBuffer(em, existing);
+            return existing;
+        }
 
-        Entity entity = em.CreateEntity(typeof(TacticalFollowCameraModeComponent));
+        Entity entity = em.CreateEntity(
+            typeof(TacticalFollowCameraModeComponent),
+            typeof(TacticalFollowCameraBaseTargetElement));
         em.SetName(entity, "TacticalFollowCameraMode");
         return entity;
     }

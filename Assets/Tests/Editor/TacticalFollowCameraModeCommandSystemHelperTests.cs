@@ -46,7 +46,9 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             passed++;
             RunCase(test => test.SelectedUnitPriorityDocumentsMixedUnitBuildingRule());
             passed++;
-            RunCase(test => test.SelectionChangeWhileActiveRefreshesBaseTarget());
+            RunCase(test => test.SelectionChangeWhileActiveKeepsOriginalBaseTarget());
+            passed++;
+            RunCase(test => test.SelectedBuildingClickWhileActiveKeepsOriginalUnitTargetAndExitEnabled());
             passed++;
             RunCase(test => test.DestroyedGroupMemberFallsBackToRemainingSelectedUnit());
             passed++;
@@ -432,7 +434,7 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
     }
 
     [Test]
-    public void SelectionChangeWhileActiveRefreshesBaseTarget()
+    public void SelectionChangeWhileActiveKeepsOriginalBaseTarget()
     {
         Entity first = CreateSelectedUnit(new float3(4f, 0f, 6f), quaternion.identity);
         QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
@@ -444,10 +446,41 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
 
         Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
         Assert.AreEqual(TacticalFollowCameraTargetKind.Unit, mode.BaseTargetKind);
-        Assert.AreEqual(second, mode.BaseTargetEntity);
+        Assert.AreEqual(first, mode.BaseTargetEntity);
         Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent target));
-        Assert.AreEqual(second, target.TargetEntity);
-        Assert.AreEqual(new float3(14f, 0f, 18f), target.Center);
+        Assert.AreEqual(first, target.TargetEntity);
+        Assert.AreEqual(new float3(4f, 0f, 6f), target.Center);
+        Assert.AreNotEqual(second, target.TargetEntity);
+    }
+
+    [Test]
+    public void SelectedBuildingClickWhileActiveKeepsOriginalUnitTargetAndExitEnabled()
+    {
+        Entity soldier = CreateSelectedUnit(new float3(4f, 0f, 6f), quaternion.identity);
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+        _em.RemoveComponent<SelectedUnitTag>(soldier);
+        var airportContext = new TacticalFollowCameraModeSystemHelper.Context(
+            (out Vector3 worldPosition, out float boundsRadius) =>
+            {
+                worldPosition = new Vector3(80f, 0f, 90f);
+                boundsRadius = 22f;
+                return true;
+            });
+
+        Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em, airportContext));
+
+        Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
+        Assert.AreEqual(1, mode.Enabled);
+        Assert.AreEqual(TacticalFollowCameraTargetKind.Unit, mode.BaseTargetKind);
+        Assert.AreEqual(soldier, mode.BaseTargetEntity);
+        Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent target));
+        Assert.AreEqual(TacticalFollowCameraTargetKind.Unit, target.TargetKind);
+        Assert.AreEqual(soldier, target.TargetEntity);
+        Assert.AreEqual(new float3(4f, 0f, 6f), target.Center);
+        Assert.IsTrue(_system.TryReadUiReadModel(_em, out TacticalFollowCameraUiReadModelComponent model));
+        Assert.AreEqual(1, model.Selected);
+        Assert.AreEqual(1, model.Enabled);
     }
 
     [Test]

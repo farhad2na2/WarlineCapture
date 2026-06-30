@@ -8975,7 +8975,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 2
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -9936,11 +9936,11 @@ MonoBehaviour:
     labelText: {fileID: 570035734042742535}
     countText: {fileID: 0}
     disabledOverlay: {fileID: 0}
-  selectedTabFrameSprite: {fileID: 21300000, guid: 291ea5f631e9b7c408ce4deb6c21b882, type: 3}
-  normalTabFrameSprite: {fileID: 21300000, guid: 01b0aa9cffca6c64c9cf5a4cf1015bee, type: 3}
+  selectedTabFrameSprite: {fileID: 21300000, guid: 79bf17d5cabb4bfc9eae4d61e01269b1, type: 3}
+  normalTabFrameSprite: {fileID: 21300000, guid: 91a74cae97834ac192e13ae327c2eb08, type: 3}
   itemContentRoot: {fileID: 8514639999409668590}
   itemTemplate: {fileID: -9205153555886113324}
-  selectedItemFrameSprite: {fileID: 21300000, guid: 3109bafcd7259b549881acbb79410661, type: 3}
+  selectedItemFrameSprite: {fileID: 21300000, guid: 79bf17d5cabb4bfc9eae4d61e01269b1, type: 3}
   previewImage: {fileID: 5866987094321382430}
   thumbnailImage: {fileID: 0}
   nameText: {fileID: 6030163123476267040}

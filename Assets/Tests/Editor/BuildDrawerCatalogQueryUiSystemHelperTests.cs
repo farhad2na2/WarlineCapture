@@ -55,6 +55,10 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
                 test => test.CurrentBuildDrawerPrefabBindsSelectionDetailAndActionLabel(),
                 ref passed);
             RunValidationStep(
+                nameof(BuildDrawerItemSelection_UsesModelDrivenFrameState),
+                test => test.BuildDrawerItemSelection_UsesModelDrivenFrameState(),
+                ref passed);
+            RunValidationStep(
                 nameof(CurrentBuildDrawerPrefabBindsInstructionStripAndIcons),
                 test => test.CurrentBuildDrawerPrefabBindsInstructionStripAndIcons(),
                 ref passed);
@@ -364,6 +368,41 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             Assert.AreEqual(1, CountSelectedRows(activeRows, view.SelectedItemFrameSprite));
             Assert.AreEqual(_results[1].DisplayName, detailNameText.text);
         }
+    }
+
+    [Test]
+    public void BuildDrawerItemSelection_UsesModelDrivenFrameState()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
+        Assert.NotNull(view);
+        Assert.NotNull(presenter);
+
+        BuildingPlacementSystemConfig buildingConfig = CreateAsset<BuildingPlacementSystemConfig>();
+        buildingConfig.Spawnables.Add(CreateBuilding("Airport", true, BuildingRole.MilitaryCamp, false));
+        buildingConfig.Spawnables.Add(CreateBuilding("Barracks", true, BuildingRole.MilitaryCamp, false));
+
+        ConfigurePresenterForTests(presenter, view, null, buildingConfig);
+        presenter.RefreshForTests();
+
+        List<BuildDrawerItemView> activeRows = GetActiveCatalogItemRows(view);
+        Assert.GreaterOrEqual(activeRows.Count, 2);
+        Assert.AreEqual(Selectable.Transition.None, activeRows[0].SelectionButton.transition);
+        Assert.AreEqual(Selectable.Transition.None, activeRows[1].SelectionButton.transition);
+        Assert.AreSame(view.SelectedItemFrameSprite, activeRows[0].FrameImage.sprite);
+        Assert.AreNotSame(view.SelectedItemFrameSprite, activeRows[1].FrameImage.sprite);
+
+        activeRows[1].SelectionButton.onClick.Invoke();
+
+        Assert.AreNotSame(view.SelectedItemFrameSprite, activeRows[0].FrameImage.sprite);
+        Assert.AreSame(view.SelectedItemFrameSprite, activeRows[1].FrameImage.sprite);
+        Assert.AreEqual(1, CountSelectedRows(activeRows, view.SelectedItemFrameSprite));
     }
 
     [Test]

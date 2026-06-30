@@ -26,6 +26,7 @@ public sealed class BuildDrawerItemView : MonoBehaviour
     private void Awake()
     {
         CaptureNormalFrameSprite();
+        DisableTransientSelectableFrameState();
     }
 
     public void CaptureNormalFrameSprite()
@@ -64,6 +65,7 @@ public sealed class BuildDrawerItemView : MonoBehaviour
     public void SetSelected(bool selected, Sprite selectedFrameSprite)
     {
         CaptureNormalFrameSprite();
+        DisableTransientSelectableFrameState();
         if (frameImage == null)
             return;
 
@@ -74,6 +76,7 @@ public sealed class BuildDrawerItemView : MonoBehaviour
 
     public void SetInteractable(bool interactable)
     {
+        DisableTransientSelectableFrameState();
         if (selectionButton != null)
             selectionButton.interactable = interactable;
 
@@ -85,5 +88,11 @@ public sealed class BuildDrawerItemView : MonoBehaviour
     {
         if (text != null)
             text.text = value ?? string.Empty;
+    }
+
+    private void DisableTransientSelectableFrameState()
+    {
+        if (selectionButton != null)
+            selectionButton.transition = Selectable.Transition.None;
     }
 }

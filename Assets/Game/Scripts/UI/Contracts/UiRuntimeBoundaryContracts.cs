@@ -112,6 +112,24 @@ public interface IMatchHudCameraControl
     Camera WorldCamera { get; }
     bool IsCameraDragging { get; }
     void MoveCameraGroundCenterTo(Vector3 worldPosition);
+    MatchHudZoomControlState ReadZoomControlState();
+    bool RequestZoomInLevel();
+    bool RequestZoomOutLevel();
+}
+
+public readonly struct MatchHudZoomControlState
+{
+    public readonly bool ZoomInEnabled;
+    public readonly bool ZoomOutEnabled;
+
+    public MatchHudZoomControlState(bool zoomInEnabled, bool zoomOutEnabled)
+    {
+        ZoomInEnabled = zoomInEnabled;
+        ZoomOutEnabled = zoomOutEnabled;
+    }
+
+    public static MatchHudZoomControlState Disabled => new(false, false);
+    public static MatchHudZoomControlState Default => new(true, true);
 }
 
 public readonly struct MatchHudMinimapGridModel

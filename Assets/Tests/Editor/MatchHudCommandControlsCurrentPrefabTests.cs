@@ -27,8 +27,10 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
             RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonUsesCommandButtonSpriteStates), tests => tests.MatchHudSelectionPanelCameraButtonUsesCommandButtonSpriteStates());
             RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonAppliesEnabledAndSelectedState), tests => tests.MatchHudSelectionPanelCameraButtonAppliesEnabledAndSelectedState());
             RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonHoverAndPressUseSpriteSwapStates), tests => tests.MatchHudSelectionPanelCameraButtonHoverAndPressUseSpriteSwapStates());
+            RunValidationStep(nameof(MatchHudRightQuickRailZoomButtonsUseSpriteSwapStates), tests => tests.MatchHudRightQuickRailZoomButtonsUseSpriteSwapStates());
+            RunValidationStep(nameof(MatchHudRightQuickRailZoomButtonsApplyStepState), tests => tests.MatchHudRightQuickRailZoomButtonsApplyStepState());
             RunValidationStep(nameof(LegacySupportCommandTabRoutesToScanCommandMode), tests => tests.LegacySupportCommandTabRoutesToScanCommandMode());
-            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=10");
+            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=12");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -289,6 +291,53 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     }
 
     [Test]
+    public void MatchHudRightQuickRailZoomButtonsUseSpriteSwapStates()
+    {
+        MatchHudRightQuickRailView rail = _instance.GetComponentInChildren<MatchHudRightQuickRailView>(true);
+        Assert.NotNull(rail, "SCN08_MatchHudContent must expose MatchHudRightQuickRailView.");
+
+        AssertZoomButtonUsesSpriteSwap(rail.ZoomInButton, "ZoomInButton");
+        AssertZoomButtonUsesSpriteSwap(rail.ZoomOutButton, "ZoomOutButton");
+    }
+
+    [Test]
+    public void MatchHudRightQuickRailZoomButtonsApplyStepState()
+    {
+        MatchHudRightQuickRailView rail = _instance.GetComponentInChildren<MatchHudRightQuickRailView>(true);
+        Assert.NotNull(rail, "SCN08_MatchHudContent must expose MatchHudRightQuickRailView.");
+        Assert.NotNull(rail.ZoomInButton, "ZoomInButton must resolve from the right quick rail hierarchy.");
+        Assert.NotNull(rail.ZoomOutButton, "ZoomOutButton must resolve from the right quick rail hierarchy.");
+
+        int zoomInClicks = 0;
+        int zoomOutClicks = 0;
+        MatchHudZoomControlState state = MatchHudZoomControlState.Default;
+        rail.BindZoomControls(
+            () => zoomInClicks++,
+            () => zoomOutClicks++,
+            () => state);
+
+        rail.RefreshZoomControls();
+        Assert.IsTrue(rail.ZoomInButton.interactable, "Default zoom should enable ZoomInButton.");
+        Assert.IsTrue(rail.ZoomOutButton.interactable, "Default zoom should enable ZoomOutButton.");
+
+        rail.ZoomInButton.onClick.Invoke();
+        Assert.AreEqual(1, zoomInClicks, "ZoomInButton click should route through the rail callback.");
+
+        state = new MatchHudZoomControlState(zoomInEnabled: false, zoomOutEnabled: true);
+        rail.RefreshZoomControls();
+        Assert.IsFalse(rail.ZoomInButton.interactable, "Min zoom disables ZoomInButton visually.");
+        Assert.IsTrue(rail.ZoomOutButton.interactable, "Min zoom keeps ZoomOutButton enabled.");
+
+        state = new MatchHudZoomControlState(zoomInEnabled: true, zoomOutEnabled: false);
+        rail.RefreshZoomControls();
+        Assert.IsTrue(rail.ZoomInButton.interactable, "Max zoom keeps ZoomInButton enabled.");
+        Assert.IsFalse(rail.ZoomOutButton.interactable, "Max zoom disables ZoomOutButton visually.");
+
+        rail.ZoomOutButton.onClick.Invoke();
+        Assert.AreEqual(1, zoomOutClicks, "ZoomOutButton click should route through the rail callback.");
+    }
+
+    [Test]
     public void LegacySupportCommandTabRoutesToScanCommandMode()
     {
         MatchOverlayCommandControlsView controls = LoadControls();
@@ -364,6 +413,20 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Assert.IsTrue(IsChildOfNamedTransform(cameraButton.transform, "CommandButtons"), "CameraButton should remain in the selected-squad CommandButtons cluster.");
         Assert.IsTrue(cameraButton.interactable, "CameraButton prefab state should be interactable; runtime read model can disable it later.");
         return cameraButton;
+    }
+
+    private static void AssertZoomButtonUsesSpriteSwap(Button button, string label)
+    {
+        Assert.NotNull(button, $"{label} must resolve from RightContent/ZommButtons.");
+        Image targetImage = button.targetGraphic as Image;
+        Assert.AreEqual(Selectable.Transition.SpriteSwap, button.transition, $"{label} must use SpriteSwap like command buttons.");
+        Assert.NotNull(targetImage, $"{label} must use an Image target graphic for sprite-state swaps.");
+        Assert.IsTrue(targetImage.raycastTarget, $"{label} target graphic must receive raycasts.");
+        Assert.IsTrue(targetImage.transform.IsChildOf(button.transform), $"{label} target graphic must belong to the button hierarchy.");
+        Assert.NotNull(button.spriteState.highlightedSprite, $"{label} highlighted/hover sprite is required.");
+        Assert.NotNull(button.spriteState.pressedSprite, $"{label} pressed/impact sprite is required.");
+        Assert.NotNull(button.spriteState.selectedSprite, $"{label} selected/current sprite is required.");
+        Assert.NotNull(button.spriteState.disabledSprite, $"{label} disabled sprite is required.");
     }
 
     private void AssertClickQueues(Button button, RtsSelectionCommandIntentKind expectedKind)

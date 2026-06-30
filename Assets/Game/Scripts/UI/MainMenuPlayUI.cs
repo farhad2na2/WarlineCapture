@@ -59,6 +59,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
             _matchHudMinimapView.FullMapOpenRequested -= RequestFullMapPopup;
         if (_matchHudFullMapPopupView != null)
             _matchHudFullMapPopupView.CloseRequested -= RequestFullMapClose;
+        _matchHudRightQuickRailView?.UnbindZoomControls();
         _matchHudCommandControlsView = null;
         _matchHudRightQuickRailView = null;
         _matchHudMinimapView = null;
@@ -91,6 +92,8 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
         {
             BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(_matchHudRuntimeFeedbackView, Time.unscaledTime);
         }
+
+        _matchHudRightQuickRailView?.RefreshZoomControls();
     }
 
     public void NotifyStaticMinimapChanged()
@@ -156,7 +159,12 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
 
     public void BindMatchHudRightQuickRail(MatchHudRightQuickRailView rightQuickRailView)
     {
+        _matchHudRightQuickRailView?.UnbindZoomControls();
         _matchHudRightQuickRailView = rightQuickRailView;
+        _matchHudRightQuickRailView?.BindZoomControls(
+            RequestMatchHudZoomIn,
+            RequestMatchHudZoomOut,
+            ReadMatchHudZoomControlState);
     }
 
     public void ConfigureMatchHudSelectionPanelBinding(System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel)
@@ -334,7 +342,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
 
     public bool IsPointerOverZoomControls(Vector2 screenPosition)
     {
-        return false;
+        return _matchHudRightQuickRailView != null && _matchHudRightQuickRailView.ContainsZoomScreenPoint(screenPosition);
     }
 
     public bool IsPointerOverUnitCommandUi(Vector2 screenPosition, out string source)
@@ -389,5 +397,33 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
             _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
 
         FullMapPopupCloseRequested?.Invoke();
+    }
+
+    private void RequestMatchHudZoomIn()
+    {
+        CaptureZoomUiClick();
+        _selectionUiCameraSystem?.RequestZoomInLevel();
+        _matchHudRightQuickRailView?.RefreshZoomControls();
+    }
+
+    private void RequestMatchHudZoomOut()
+    {
+        CaptureZoomUiClick();
+        _selectionUiCameraSystem?.RequestZoomOutLevel();
+        _matchHudRightQuickRailView?.RefreshZoomControls();
+    }
+
+    private MatchHudZoomControlState ReadMatchHudZoomControlState()
+    {
+        return _selectionUiCameraSystem != null
+            ? _selectionUiCameraSystem.ReadZoomControlState()
+            : MatchHudZoomControlState.Disabled;
+    }
+
+    private void CaptureZoomUiClick()
+    {
+        _selectionUiCommandSystem?.CaptureUiClickSequence();
+        if (_runtimeGameplayStateSystem != null)
+            _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
     }
 }

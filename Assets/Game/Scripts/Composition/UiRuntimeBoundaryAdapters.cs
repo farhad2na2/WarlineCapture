@@ -215,6 +215,21 @@ internal sealed class MatchHudCameraControlAdapter : IMatchHudCameraControl
     {
         cameraSystem?.MoveCameraGroundCenterTo(worldPosition);
     }
+
+    public MatchHudZoomControlState ReadZoomControlState()
+    {
+        return cameraSystem != null ? cameraSystem.ReadZoomControlState() : MatchHudZoomControlState.Disabled;
+    }
+
+    public bool RequestZoomInLevel()
+    {
+        return cameraSystem != null && cameraSystem.RequestZoomInLevel();
+    }
+
+    public bool RequestZoomOutLevel()
+    {
+        return cameraSystem != null && cameraSystem.RequestZoomOutLevel();
+    }
 }
 
 internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSource

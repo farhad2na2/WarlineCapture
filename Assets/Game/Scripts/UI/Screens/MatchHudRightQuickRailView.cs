@@ -7,24 +7,53 @@ using UnityEngine.UI;
 public sealed class MatchHudRightQuickRailView : MonoBehaviour
 {
     [SerializeField] private Button buildButton;
+    [SerializeField] private Button zoomInButton;
+    [SerializeField] private Button zoomOutButton;
 
     private Action _buildCommandClicked;
+    private Action _zoomInClicked;
+    private Action _zoomOutClicked;
+    private Func<MatchHudZoomControlState> _zoomStateProvider;
     private ISelectionUiCommand _selectionUiCommandSystem;
     private BattleHudRuntimeFeedbackView _runtimeFeedbackView;
     private bool _buildButtonListenerInstalled;
+    private bool _zoomButtonListenersInstalled;
     private Canvas _cachedCanvas;
 
     public Button BuildButton => buildButton;
+    public Button ZoomInButton
+    {
+        get
+        {
+            ResolveZoomButtonsFromChildren();
+            return zoomInButton;
+        }
+    }
+
+    public Button ZoomOutButton
+    {
+        get
+        {
+            ResolveZoomButtonsFromChildren();
+            return zoomOutButton;
+        }
+    }
 
     private void OnEnable()
     {
+        ResolveZoomButtonsFromChildren();
         InstallBuildButtonListener();
-        ClearBuildButtonSelection();
+        InstallZoomButtonListeners();
+        ClearButtonSelection(buildButton);
+        ClearButtonSelection(zoomInButton);
+        ClearButtonSelection(zoomOutButton);
+        RefreshZoomControls();
     }
 
     private void OnDisable()
     {
         UninstallBuildButtonListener();
+        UninstallZoomButtonListeners();
     }
 
     private void OnTransformParentChanged()
@@ -41,7 +70,7 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
         _selectionUiCommandSystem = selectionUiCommandSystem;
         _runtimeFeedbackView = runtimeFeedbackView;
         InstallBuildButtonListener();
-        ClearBuildButtonSelection();
+        ClearButtonSelection(buildButton);
     }
 
     public void UnbindBuildCommand()
@@ -51,10 +80,55 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
         _runtimeFeedbackView = null;
     }
 
+    public void BindZoomControls(
+        Action zoomInClicked,
+        Action zoomOutClicked,
+        Func<MatchHudZoomControlState> zoomStateProvider)
+    {
+        _zoomInClicked = zoomInClicked;
+        _zoomOutClicked = zoomOutClicked;
+        _zoomStateProvider = zoomStateProvider;
+        ResolveZoomButtonsFromChildren();
+        InstallZoomButtonListeners();
+        RefreshZoomControls();
+    }
+
+    public void UnbindZoomControls()
+    {
+        _zoomInClicked = null;
+        _zoomOutClicked = null;
+        _zoomStateProvider = null;
+        UninstallZoomButtonListeners();
+    }
+
     public bool ContainsScreenPoint(Vector2 screenPosition)
     {
         Camera eventCamera = ResolveEventCamera();
-        return ContainsButton(buildButton, screenPosition, eventCamera);
+        ResolveZoomButtonsFromChildren();
+        return ContainsButton(buildButton, screenPosition, eventCamera) ||
+               ContainsButton(zoomInButton, screenPosition, eventCamera) ||
+               ContainsButton(zoomOutButton, screenPosition, eventCamera);
+    }
+
+    public bool ContainsZoomScreenPoint(Vector2 screenPosition)
+    {
+        Camera eventCamera = ResolveEventCamera();
+        ResolveZoomButtonsFromChildren();
+        return ContainsButton(zoomInButton, screenPosition, eventCamera) ||
+               ContainsButton(zoomOutButton, screenPosition, eventCamera);
+    }
+
+    public void RefreshZoomControls()
+    {
+        ResolveZoomButtonsFromChildren();
+        MatchHudZoomControlState state = _zoomStateProvider != null
+            ? _zoomStateProvider.Invoke()
+            : MatchHudZoomControlState.Disabled;
+
+        if (zoomInButton != null)
+            zoomInButton.interactable = state.ZoomInEnabled;
+        if (zoomOutButton != null)
+            zoomOutButton.interactable = state.ZoomOutEnabled;
     }
 
     private void OnBuildButtonClicked()
@@ -77,6 +151,20 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
             "Build drawer is not ready."));
     }
 
+    private void OnZoomInButtonClicked()
+    {
+        _selectionUiCommandSystem?.CaptureUiClickSequence();
+        _zoomInClicked?.Invoke();
+        RefreshZoomControls();
+    }
+
+    private void OnZoomOutButtonClicked()
+    {
+        _selectionUiCommandSystem?.CaptureUiClickSequence();
+        _zoomOutClicked?.Invoke();
+        RefreshZoomControls();
+    }
+
     private void InstallBuildButtonListener()
     {
         if (buildButton == null)
@@ -87,13 +175,33 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
         _buildButtonListenerInstalled = true;
     }
 
-    private void ClearBuildButtonSelection()
+    private void InstallZoomButtonListeners()
     {
-        EventSystem eventSystem = EventSystem.current;
-        if (eventSystem == null || buildButton == null)
+        if (zoomInButton == null && zoomOutButton == null)
             return;
 
-        if (eventSystem.currentSelectedGameObject == buildButton.gameObject)
+        if (zoomInButton != null)
+        {
+            zoomInButton.onClick.RemoveListener(OnZoomInButtonClicked);
+            zoomInButton.onClick.AddListener(OnZoomInButtonClicked);
+        }
+
+        if (zoomOutButton != null)
+        {
+            zoomOutButton.onClick.RemoveListener(OnZoomOutButtonClicked);
+            zoomOutButton.onClick.AddListener(OnZoomOutButtonClicked);
+        }
+
+        _zoomButtonListenersInstalled = true;
+    }
+
+    private void ClearButtonSelection(Button button)
+    {
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem == null || button == null)
+            return;
+
+        if (eventSystem.currentSelectedGameObject == button.gameObject)
             eventSystem.SetSelectedGameObject(null);
     }
 
@@ -104,6 +212,37 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
 
         buildButton.onClick.RemoveListener(OnBuildButtonClicked);
         _buildButtonListenerInstalled = false;
+    }
+
+    private void UninstallZoomButtonListeners()
+    {
+        if (!_zoomButtonListenersInstalled)
+            return;
+
+        if (zoomInButton != null)
+            zoomInButton.onClick.RemoveListener(OnZoomInButtonClicked);
+        if (zoomOutButton != null)
+            zoomOutButton.onClick.RemoveListener(OnZoomOutButtonClicked);
+        _zoomButtonListenersInstalled = false;
+    }
+
+    private void ResolveZoomButtonsFromChildren()
+    {
+        if (zoomInButton != null && zoomOutButton != null)
+            return;
+
+        Button[] buttons = GetComponentsInChildren<Button>(true);
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            Button button = buttons[i];
+            if (button == null)
+                continue;
+
+            if (zoomInButton == null && button.name == "ZoomInButton")
+                zoomInButton = button;
+            else if (zoomOutButton == null && button.name == "ZoomOutButton")
+                zoomOutButton = button;
+        }
     }
 
     private Camera ResolveEventCamera()

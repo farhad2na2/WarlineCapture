@@ -748,6 +748,21 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             LastMoveTarget = worldPosition;
             MoveCount++;
         }
+
+        public MatchHudZoomControlState ReadZoomControlState()
+        {
+            return MatchHudZoomControlState.Default;
+        }
+
+        public bool RequestZoomInLevel()
+        {
+            return true;
+        }
+
+        public bool RequestZoomOutLevel()
+        {
+            return true;
+        }
     }
 
     private sealed class FakeMinimapDataSource : IMatchHudMinimapDataSource

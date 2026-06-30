@@ -3,6 +3,13 @@ using UnityEngine;
 
 public sealed class SelectionUiCameraSystemHelper
 {
+    private enum MatchHudZoomLevel
+    {
+        ZoomedOut,
+        Default,
+        ZoomedIn
+    }
+
     private const float DefaultMinZoomHeight = 10f;
     private const float DefaultMaxZoomHeight = 45f;
     private const float DefaultZoomSpeed = 20f;
@@ -20,6 +27,7 @@ public sealed class SelectionUiCameraSystemHelper
     private float _fullscreenIsoPitch = 82f;
     private float _fullscreenIsoYaw = 10f;
     private float _fullscreenIsoOrthographicSize = 24f;
+    private MatchHudZoomLevel _matchHudZoomLevel = MatchHudZoomLevel.Default;
 
     public SelectionUiCameraSystemHelper(RtsCameraSystem cameraSystem, RtsCameraRequestSystem cameraRequestSystem)
     {
@@ -59,6 +67,7 @@ public sealed class SelectionUiCameraSystemHelper
         _normalModeZoomHeight = Mathf.Min(_normalModeZoomHeight, _maxZoomHeight);
         if (_normalModeFieldOfView <= 1f)
             _normalModeFieldOfView = 36f;
+        _matchHudZoomLevel = MatchHudZoomLevel.Default;
     }
 
     public void ToggleNormalIsoMode()
@@ -94,6 +103,43 @@ public sealed class SelectionUiCameraSystemHelper
             _minZoomHeight,
             _maxZoomHeight);
         ProcessCameraRequests(em);
+    }
+
+    public MatchHudZoomControlState ReadZoomControlState()
+    {
+        if (_cameraRequestSystem == null || _cameraSystem == null || _worldCamera == null)
+            return MatchHudZoomControlState.Disabled;
+
+        if (!TryGetDefaultEntityManager(out EntityManager em) || HasValidTacticalFollowPose(em))
+            return MatchHudZoomControlState.Disabled;
+
+        return new MatchHudZoomControlState(
+            zoomInEnabled: _matchHudZoomLevel != MatchHudZoomLevel.ZoomedIn,
+            zoomOutEnabled: _matchHudZoomLevel != MatchHudZoomLevel.ZoomedOut);
+    }
+
+    public bool RequestZoomInLevel()
+    {
+        MatchHudZoomLevel targetLevel = _matchHudZoomLevel switch
+        {
+            MatchHudZoomLevel.ZoomedOut => MatchHudZoomLevel.Default,
+            MatchHudZoomLevel.Default => MatchHudZoomLevel.ZoomedIn,
+            _ => MatchHudZoomLevel.ZoomedIn
+        };
+
+        return ApplyMatchHudZoomLevel(targetLevel);
+    }
+
+    public bool RequestZoomOutLevel()
+    {
+        MatchHudZoomLevel targetLevel = _matchHudZoomLevel switch
+        {
+            MatchHudZoomLevel.ZoomedIn => MatchHudZoomLevel.Default,
+            MatchHudZoomLevel.Default => MatchHudZoomLevel.ZoomedOut,
+            _ => MatchHudZoomLevel.ZoomedOut
+        };
+
+        return ApplyMatchHudZoomLevel(targetLevel);
     }
 
     public void SmoothMoveCameraGroundCenterTo(Vector3 focusWorldPosition)
@@ -173,6 +219,38 @@ public sealed class SelectionUiCameraSystemHelper
         ProcessCameraRequests(em);
     }
 
+    private bool ApplyMatchHudZoomLevel(MatchHudZoomLevel targetLevel)
+    {
+        if (targetLevel == _matchHudZoomLevel)
+            return false;
+        if (_cameraSystem == null || _cameraRequestSystem == null || _worldCamera == null || !TryGetDefaultEntityManager(out EntityManager em))
+            return false;
+        if (HasValidTacticalFollowPose(em))
+            return false;
+
+        Vector3 focusWorldPosition = _cameraSystem.GetCameraGroundCenterWorld(_worldCamera);
+        float targetHeight = ResolveMatchHudZoomHeight(targetLevel);
+
+        _cameraRequestSystem.QueueClearSmoothFocusTarget(em);
+        _cameraRequestSystem.QueueClearDragging(em);
+        _cameraRequestSystem.QueueApplyPerspectiveModeInstant(em, targetHeight, _normalModePitch, _normalModeYaw, _normalModeFieldOfView);
+        _cameraRequestSystem.QueueMoveGroundCenterTo(em, focusWorldPosition);
+        _cameraRequestSystem.QueueSetNormalIsoModeActive(em, false);
+        ProcessCameraRequests(em);
+        _matchHudZoomLevel = targetLevel;
+        return true;
+    }
+
+    private float ResolveMatchHudZoomHeight(MatchHudZoomLevel zoomLevel)
+    {
+        return zoomLevel switch
+        {
+            MatchHudZoomLevel.ZoomedOut => _maxZoomHeight,
+            MatchHudZoomLevel.ZoomedIn => _minZoomHeight,
+            _ => _normalModeZoomHeight
+        };
+    }
+
     private void ProcessCameraRequests(EntityManager em)
     {
         if (_cameraRequestSystem == null || _cameraSystem == null)
@@ -206,5 +284,16 @@ public sealed class SelectionUiCameraSystemHelper
 
         em = world.EntityManager;
         return true;
+    }
+
+    private static bool HasValidTacticalFollowPose(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraPoseComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        TacticalFollowCameraPoseComponent pose =
+            em.GetComponentData<TacticalFollowCameraPoseComponent>(query.GetSingletonEntity());
+        return pose.Valid != 0;
     }
 }

@@ -30,6 +30,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowRestorePoseValid), test => test.RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowRestorePoseValid());
             RunCase(nameof(RuntimeCameraTick_RemovesQueuedNormalCameraMotionWhileTacticalFollowPoseValid), test => test.RuntimeCameraTick_RemovesQueuedNormalCameraMotionWhileTacticalFollowPoseValid());
             RunCase(nameof(ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera), test => test.ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera());
+            RunCase(nameof(MatchHudZoomButtonsStepBetweenMinDefaultAndMaxHeights), test => test.MatchHudZoomButtonsStepBetweenMinDefaultAndMaxHeights());
             RunCase(nameof(MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter), test => test.MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter());
             RunCase(nameof(UpdateFullscreenIsoZoom_ClampsTargets), test => test.UpdateFullscreenIsoZoom_ClampsTargets());
             RunCase(nameof(TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue());
@@ -41,7 +42,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue());
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
-            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=26");
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=27");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -535,6 +536,54 @@ public sealed class RtsCameraSystemTests
         Assert.That(camera.transform.rotation.eulerAngles.x, Is.EqualTo(58f).Within(0.0001f));
         Assert.That(camera.transform.rotation.eulerAngles.y, Is.EqualTo(10f).Within(0.0001f));
         Assert.That(camera.fieldOfView, Is.EqualTo(36f).Within(0.0001f));
+    }
+
+    [Test]
+    public void MatchHudZoomButtonsStepBetweenMinDefaultAndMaxHeights()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
+        RtsCameraRequestSystem cameraRequestSystem = _cameraSystemWorld.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+        World.DefaultGameObjectInjectionWorld = _cameraSystemWorld;
+        Camera camera = CreateCamera(new Vector3(0f, 24f, -20f), Quaternion.Euler(58f, 10f, 0f));
+        camera.fieldOfView = 36f;
+        var helper = new SelectionUiCameraSystemHelper(cameraSystem, cameraRequestSystem);
+
+        try
+        {
+            helper.Init(null, camera);
+            MatchHudZoomControlState state = helper.ReadZoomControlState();
+            Assert.IsTrue(state.ZoomInEnabled, "Default zoom should allow stepping in.");
+            Assert.IsTrue(state.ZoomOutEnabled, "Default zoom should allow stepping out.");
+
+            Assert.IsTrue(helper.RequestZoomInLevel());
+            Assert.That(camera.transform.position.y, Is.EqualTo(10f).Within(0.0001f));
+            state = helper.ReadZoomControlState();
+            Assert.IsFalse(state.ZoomInEnabled, "Min zoom disables the zoom-in button.");
+            Assert.IsTrue(state.ZoomOutEnabled, "Min zoom still allows returning toward default.");
+
+            Assert.IsFalse(helper.RequestZoomInLevel(), "Already at min zoom should not queue another level change.");
+            Assert.That(camera.transform.position.y, Is.EqualTo(10f).Within(0.0001f));
+
+            Assert.IsTrue(helper.RequestZoomOutLevel());
+            Assert.That(camera.transform.position.y, Is.EqualTo(24f).Within(0.0001f));
+            state = helper.ReadZoomControlState();
+            Assert.IsTrue(state.ZoomInEnabled, "Default zoom re-enables zoom in.");
+            Assert.IsTrue(state.ZoomOutEnabled, "Default zoom re-enables zoom out.");
+
+            Assert.IsTrue(helper.RequestZoomOutLevel());
+            Assert.That(camera.transform.position.y, Is.EqualTo(45f).Within(0.0001f));
+            state = helper.ReadZoomControlState();
+            Assert.IsTrue(state.ZoomInEnabled, "Max zoom still allows returning toward default.");
+            Assert.IsFalse(state.ZoomOutEnabled, "Max zoom disables the zoom-out button.");
+
+            Assert.IsTrue(helper.RequestZoomInLevel());
+            Assert.That(camera.transform.position.y, Is.EqualTo(24f).Within(0.0001f));
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
     }
 
     [Test]

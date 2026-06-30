@@ -4,8 +4,11 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
-public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler, IPointerClickHandler
+public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, IInitializePotentialDragHandler, IDragHandler, IPointerUpHandler, IPointerClickHandler
 {
+    internal const float ViewportDragHitPadding = 18f;
+    private const string DragLogTag = "[FullMapViewportDrag]";
+
     [SerializeField] private Image mapImage;
     [SerializeField] private RectTransform mapRect;
     [SerializeField] private RectTransform viewportRect;
@@ -61,6 +64,7 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
     {
         EnsureZoomRelay(zoomInButton, 1);
         EnsureZoomRelay(zoomOutButton, -1);
+        EnsureViewportDragRelay();
         if (mapImage != null)
             mapImage.raycastTarget = true;
     }
@@ -133,7 +137,10 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
         _dragMoved = false;
 
         if (viewportRect != null)
+        {
             viewportRect.gameObject.SetActive(showViewport);
+            EnsureViewportDragRelay();
+        }
         SetZoomVisible(zoomInButton, allowZoom);
         SetZoomVisible(zoomOutButton, allowZoom);
     }
@@ -247,37 +254,90 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        _dragMoved = false;
-        _draggingViewport = false;
-
-        if (!_allowViewportDrag ||
-            viewportRect == null ||
-            !viewportRect.gameObject.activeInHierarchy ||
-            !RectTransformUtility.RectangleContainsScreenPoint(viewportRect, eventData.position, eventData.pressEventCamera))
-        {
+        if (eventData == null)
             return;
-        }
 
-        if (TryGetPointerLocalPointInViewportParent(eventData, out Vector2 pointerInParent) &&
-            TryGetRectInParentSpace(viewportRect, viewportRect.parent as RectTransform, out Rect viewportInParent))
-        {
-            _viewportDragOffset = new Vector2(
-                pointerInParent.x - viewportInParent.xMin,
-                viewportInParent.yMax - pointerInParent.y);
-        }
+        TryBeginViewportDrag(eventData.position, eventData.pressEventCamera, "view");
+    }
 
-        _draggingViewport = true;
+    public void OnInitializePotentialDrag(PointerEventData eventData)
+    {
+        if (eventData != null)
+            eventData.useDragThreshold = false;
+        Debug.Log($"{DragLogTag} initializePotentialDrag frame={Time.frameCount} view={name} pos={FormatPointerPosition(eventData)} useDragThreshold={(eventData != null ? eventData.useDragThreshold.ToString() : "null")}");
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!_allowViewportDrag ||
-            !_draggingViewport ||
-            !TryGetPointerLocalPointInViewportParent(eventData, out Vector2 pointerInParent) ||
-            !TryGetMapRectInViewportParent(MapRect, out Rect map) ||
-            !TryGetRectInParentSpace(viewportRect, viewportRect.parent as RectTransform, out Rect viewportInParent))
-        {
+        if (eventData == null)
             return;
+
+        DragViewport(eventData.position, eventData.pressEventCamera, "view");
+    }
+
+    internal bool TryBeginViewportDrag(Vector2 screenPosition, Camera eventCamera, string source)
+    {
+        _dragMoved = false;
+        _draggingViewport = false;
+        bool containsViewport = ContainsViewportDragPoint(screenPosition, eventCamera);
+        Debug.Log($"{DragLogTag} {source}PointerDown frame={Time.frameCount} view={name} pos={FormatVector2(screenPosition)} allow={_allowViewportDrag} show={_showViewport} viewportExists={viewportRect != null} viewportActive={IsViewportActive()} containsViewport={containsViewport}");
+
+        if (!_allowViewportDrag ||
+            viewportRect == null ||
+            !viewportRect.gameObject.activeInHierarchy ||
+            !containsViewport)
+        {
+            Debug.Log($"{DragLogTag} {source}PointerDownRejected frame={Time.frameCount} reason={ResolvePointerDownRejectReason(containsViewport)}");
+            return false;
+        }
+
+        if (TryGetPointerLocalPointInViewportParent(screenPosition, eventCamera, out Vector2 pointerInParent) &&
+            TryGetRectInParentSpace(viewportRect, viewportRect.parent as RectTransform, out Rect viewportInParent))
+        {
+            _viewportDragOffset = new Vector2(
+                Mathf.Clamp(pointerInParent.x - viewportInParent.xMin, 0f, viewportInParent.width),
+                Mathf.Clamp(viewportInParent.yMax - pointerInParent.y, 0f, viewportInParent.height));
+            Debug.Log($"{DragLogTag} {source}PointerDownAccepted frame={Time.frameCount} pointerInParent={FormatVector2(pointerInParent)} viewportInParent={FormatRect(viewportInParent)} dragOffset={FormatVector2(_viewportDragOffset)}");
+        }
+        else
+        {
+            Debug.Log($"{DragLogTag} {source}PointerDownAccepted frame={Time.frameCount} offsetUnavailable=true");
+        }
+
+        _draggingViewport = true;
+        return true;
+    }
+
+    internal bool DragViewport(Vector2 screenPosition, Camera eventCamera, string source)
+    {
+        if (!_allowViewportDrag)
+        {
+            Debug.Log($"{DragLogTag} {source}DragRejected frame={Time.frameCount} reason=ViewportDragDisabled pos={FormatVector2(screenPosition)}");
+            return false;
+        }
+
+        if (!_draggingViewport)
+        {
+            Debug.Log($"{DragLogTag} {source}DragRejected frame={Time.frameCount} reason=NotDraggingViewport pos={FormatVector2(screenPosition)}");
+            return false;
+        }
+
+        if (!TryGetPointerLocalPointInViewportParent(screenPosition, eventCamera, out Vector2 pointerInParent))
+        {
+            Debug.Log($"{DragLogTag} {source}DragRejected frame={Time.frameCount} reason=PointerParentPointFailed pos={FormatVector2(screenPosition)}");
+            return false;
+        }
+
+        if (!TryGetMapRectInViewportParent(MapRect, out Rect map))
+        {
+            Debug.Log($"{DragLogTag} {source}DragRejected frame={Time.frameCount} reason=MapRectInViewportParentFailed pos={FormatVector2(screenPosition)}");
+            return false;
+        }
+
+        if (!TryGetRectInParentSpace(viewportRect, viewportRect.parent as RectTransform, out Rect viewportInParent))
+        {
+            Debug.Log($"{DragLogTag} {source}DragRejected frame={Time.frameCount} reason=ViewportRectInParentFailed pos={FormatVector2(screenPosition)}");
+            return false;
         }
 
         _dragMoved = true;
@@ -300,16 +360,25 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
             normalizedHeight);
         _hasManualViewportOverride = true;
         SetViewportNormalizedRect(_manualViewportNormalizedRect);
+        Debug.Log($"{DragLogTag} {source}DragAccepted frame={Time.frameCount} pos={FormatVector2(screenPosition)} pointerInParent={FormatVector2(pointerInParent)} map={FormatRect(map)} viewport={FormatRect(viewportInParent)} normalizedCenter={FormatVector2(normalizedCenter)} manualRect={FormatRect(_manualViewportNormalizedRect)}");
         FocusRequested?.Invoke(normalizedCenter);
+        return true;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        EndViewportDrag(eventData != null ? eventData.position : default, "view");
+    }
+
+    internal void EndViewportDrag(Vector2 screenPosition, string source)
+    {
+        Debug.Log($"{DragLogTag} {source}PointerUp frame={Time.frameCount} view={name} pos={FormatVector2(screenPosition)} wasDragging={_draggingViewport} dragMoved={_dragMoved}");
         _draggingViewport = false;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        Debug.Log($"{DragLogTag} viewPointerClick frame={Time.frameCount} view={name} pos={FormatPointerPosition(eventData)} dragMoved={_dragMoved} dragging={_draggingViewport} openFullMap={_openFullMapOnClick} allowMapFocus={_allowMapFocus}");
         if (_dragMoved || _draggingViewport || viewportRect == null && !TryGetNormalizedPoint(eventData, out _))
             return;
 
@@ -355,12 +424,33 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
                RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out localPoint);
     }
 
-    private bool TryGetPointerLocalPointInViewportParent(PointerEventData eventData, out Vector2 localPoint)
+    private bool ContainsViewportDragPoint(Vector2 screenPosition, Camera eventCamera)
+    {
+        if (viewportRect == null)
+            return false;
+
+        if (RectTransformUtility.RectangleContainsScreenPoint(viewportRect, screenPosition, eventCamera))
+            return true;
+
+        if (!TryGetPointerLocalPointInViewportParent(screenPosition, eventCamera, out Vector2 pointerInParent) ||
+            !TryGetRectInParentSpace(viewportRect, viewportRect.parent as RectTransform, out Rect viewportInParent))
+        {
+            return false;
+        }
+
+        viewportInParent.xMin -= ViewportDragHitPadding;
+        viewportInParent.xMax += ViewportDragHitPadding;
+        viewportInParent.yMin -= ViewportDragHitPadding;
+        viewportInParent.yMax += ViewportDragHitPadding;
+        return viewportInParent.Contains(pointerInParent);
+    }
+
+    private bool TryGetPointerLocalPointInViewportParent(Vector2 screenPosition, Camera eventCamera, out Vector2 localPoint)
     {
         localPoint = default;
         RectTransform parent = viewportRect != null ? viewportRect.parent as RectTransform : null;
         return parent != null &&
-               RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, eventData.position, eventData.pressEventCamera, out localPoint);
+               RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screenPosition, eventCamera, out localPoint);
     }
 
     private bool TryGetRectInParentSpace(RectTransform source, RectTransform parent, out Rect rect)
@@ -403,6 +493,23 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
         relay.Configure(this, direction);
     }
 
+    private void EnsureViewportDragRelay()
+    {
+        if (viewportRect == null)
+            return;
+
+        Graphic graphic = viewportRect.GetComponent<Graphic>();
+        if (graphic != null)
+            graphic.raycastTarget = true;
+
+        MatchHudMinimapViewportDragRelay relay = viewportRect.GetComponent<MatchHudMinimapViewportDragRelay>();
+        if (relay == null)
+            relay = viewportRect.gameObject.AddComponent<MatchHudMinimapViewportDragRelay>();
+
+        relay.Configure(this);
+        Debug.Log($"{DragLogTag} ensureViewportDragRelay frame={Time.frameCount} view={name} viewport={viewportRect.name} graphicRaycastTarget={(graphic != null ? graphic.raycastTarget.ToString() : "none")} relay={relay.GetType().Name}");
+    }
+
     internal void NotifyZoomHeld(int direction, bool held)
     {
         if (!_allowZoom)
@@ -415,6 +522,39 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
     {
         if (button != null)
             button.gameObject.SetActive(visible);
+    }
+
+    private bool IsViewportActive()
+    {
+        return viewportRect != null && viewportRect.gameObject.activeInHierarchy;
+    }
+
+    private string ResolvePointerDownRejectReason(bool containsViewport)
+    {
+        if (!_allowViewportDrag)
+            return "ViewportDragDisabled";
+        if (viewportRect == null)
+            return "MissingViewportRect";
+        if (!viewportRect.gameObject.activeInHierarchy)
+            return "ViewportInactive";
+        if (!containsViewport)
+            return "PointerOutsideViewport";
+        return "Unknown";
+    }
+
+    private static string FormatPointerPosition(PointerEventData eventData)
+    {
+        return eventData != null ? FormatVector2(eventData.position) : "null";
+    }
+
+    private static string FormatVector2(Vector2 value)
+    {
+        return $"({value.x:0.###},{value.y:0.###})";
+    }
+
+    private static string FormatRect(Rect rect)
+    {
+        return $"(x:{rect.x:0.###},y:{rect.y:0.###},w:{rect.width:0.###},h:{rect.height:0.###})";
     }
 }
 
@@ -442,5 +582,45 @@ public sealed class MatchHudMinimapZoomPressRelay : MonoBehaviour, IPointerDownH
     public void OnPointerExit(PointerEventData eventData)
     {
         _view?.NotifyZoomHeld(_direction, false);
+    }
+}
+
+public sealed class MatchHudMinimapViewportDragRelay : MonoBehaviour, IPointerDownHandler, IInitializePotentialDragHandler, IDragHandler, IPointerUpHandler, IPointerClickHandler
+{
+    private MatchHudMinimapView _view;
+
+    public void Configure(MatchHudMinimapView view)
+    {
+        _view = view;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        Debug.Log($"[FullMapViewportDrag] relayPointerDown frame={Time.frameCount} relay={name} pos={(eventData != null ? eventData.position.ToString() : "null")} viewExists={_view != null}");
+        _view?.OnPointerDown(eventData);
+    }
+
+    public void OnInitializePotentialDrag(PointerEventData eventData)
+    {
+        if (eventData != null)
+            eventData.useDragThreshold = false;
+        _view?.OnInitializePotentialDrag(eventData);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        Debug.Log($"[FullMapViewportDrag] relayDrag frame={Time.frameCount} relay={name} pos={(eventData != null ? eventData.position.ToString() : "null")} viewExists={_view != null}");
+        _view?.OnDrag(eventData);
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        Debug.Log($"[FullMapViewportDrag] relayPointerUp frame={Time.frameCount} relay={name} pos={(eventData != null ? eventData.position.ToString() : "null")} viewExists={_view != null}");
+        _view?.OnPointerUp(eventData);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        _view?.OnPointerClick(eventData);
     }
 }

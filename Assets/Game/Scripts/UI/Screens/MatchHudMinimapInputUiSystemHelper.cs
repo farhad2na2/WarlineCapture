@@ -30,6 +30,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
     private const float ViewportDragRefreshSeconds = 0.05f;
     private const float MarkerRefreshSeconds = 0.2f;
     private const int MinRasterFeatureCount = 24;
+    private const string DragLogTag = "[FullMapViewportDrag]";
 
     private MatchHudMinimapView _view;
     private IMatchRuntimeState _runtimeGameplayStateSystem;
@@ -61,6 +62,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
     private float _nextMarkerRefreshTime;
     private float _cameraDragRefreshBlockedUntil;
     private bool _minimapZoomedIn;
+    private bool _rawPointerWasPressedLastFrame;
 
     public void Bind(
         MatchHudMinimapView view,
@@ -97,6 +99,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         _cameraDragRefreshBlockedUntil = 0f;
         _warmupStaticMapRefreshesRemaining = 0;
         _minimapZoomedIn = false;
+        _rawPointerWasPressedLastFrame = false;
         _staticMapDirty = true;
         _view.ApplyInteractionOptions(
             useFullMapProjection,
@@ -105,6 +108,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
             allowMapFocus,
             allowZoom,
             openFullMapOnClick);
+        Debug.Log($"{DragLogTag} bind frame={Time.frameCount} view={_view.name} useFullMap={useFullMapProjection} showViewport={showViewport} allowViewportDrag={allowViewportDrag} allowMapFocus={allowMapFocus} allowZoom={allowZoom} openFullMapOnClick={openFullMapOnClick}");
         Update();
     }
 
@@ -127,6 +131,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         _selectionUiCameraSystem = null;
         _minimapDataSource = null;
         _markerPool.Clear();
+        _rawPointerWasPressedLastFrame = false;
     }
 
     public void Dispose()
@@ -213,6 +218,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
             _staticMapDirty = true;
         }
 
+        UpdateRawPointerDiagnosticsAndDrag(worldCamera, projectionGrid);
         UpdateViewportIfDue(worldCamera, projectionGrid);
         UpdateMarkersIfDue(projectionGrid);
     }
@@ -223,6 +229,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
             _selectionUiCameraSystem == null ||
             !TryGetGrid(out MatchHudMinimapGridModel grid))
         {
+            Debug.Log($"{DragLogTag} focusRejected frame={Time.frameCount} normalized={FormatVector2(normalized)} hasRuntime={_runtimeGameplayStateSystem != null} hasCameraControl={_selectionUiCameraSystem != null}");
             return;
         }
 
@@ -238,16 +245,22 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         Vector3 focusWorld = MatchHudMinimapProjectionUiSystemHelper.ClampWorldToGrid(
             grid,
             MatchHudMinimapProjectionUiSystemHelper.NormalizedToWorld(projectionGrid, normalized));
+        Camera worldCamera = _selectionUiCameraSystem.WorldCamera;
+        Debug.Log($"{DragLogTag} focusRequested frame={Time.frameCount} view={(_view != null ? _view.name : "null")} normalized={FormatVector2(normalized)} projectionOrigin={FormatVector3(projectionGrid.Origin)} projectionSize=({projectionGrid.Width:0.###},{projectionGrid.Height:0.###}) focusWorld={FormatVector3(focusWorld)} camera={(worldCamera != null ? worldCamera.name : "null")}");
         _selectionUiCameraSystem.MoveCameraGroundCenterTo(focusWorld);
-        if (!_view.IsDraggingViewport)
+        bool draggingViewport = _view != null && _view.IsDraggingViewport;
+        if (!draggingViewport)
         {
             _view.ClearManualViewportOverride();
             if (!_view.UseFullMapProjection)
                 _staticMapDirty = true;
             _nextStaticMapRetryTime = 0f;
             _nextViewportRefreshTime = 0f;
+            Update();
+            return;
         }
-        Update();
+
+        _nextViewportRefreshTime = 0f;
     }
 
     private float ResolveMapAspect()
@@ -435,6 +448,82 @@ public sealed class MatchHudMinimapInputUiSystemHelper
             _view.SetViewportNormalizedRect(viewport);
     }
 
+    private void UpdateRawPointerDiagnosticsAndDrag(Camera worldCamera, MatchHudMinimapProjectionGrid projectionGrid)
+    {
+        if (_view == null || !_view.UseFullMapProjection || !_view.ShowsViewport)
+            return;
+        if (!TryGetPrimaryPointerDiagnostic(out PointerDiagnosticState pointer))
+        {
+            if (_rawPointerWasPressedLastFrame && _view.IsDraggingViewport)
+                _view.EndViewportDrag(Vector2.zero, "rawLost");
+            _rawPointerWasPressedLastFrame = false;
+            return;
+        }
+
+        RectTransform mapRectTransform = _view.MapRect;
+        RectTransform viewportRectTransform = _view.ViewportRect;
+        RectTransform eventRectTransform = mapRectTransform != null ? mapRectTransform : viewportRectTransform;
+        Camera eventCamera = ResolveEventCamera(eventRectTransform);
+        bool viewportHit = false;
+        bool paddedViewportHit = false;
+        bool pressedThisFrame = pointer.WasPressedThisFrame || (pointer.IsPressed && !_rawPointerWasPressedLastFrame);
+        bool releasedThisFrame = pointer.WasReleasedThisFrame || (!pointer.IsPressed && _rawPointerWasPressedLastFrame);
+
+        if (pressedThisFrame)
+        {
+            bool mapHit = mapRectTransform != null &&
+                          RectTransformUtility.RectangleContainsScreenPoint(mapRectTransform, pointer.Position, eventCamera);
+            viewportHit = viewportRectTransform != null &&
+                          RectTransformUtility.RectangleContainsScreenPoint(viewportRectTransform, pointer.Position, eventCamera);
+            bool pointerParentPointResolved = false;
+            bool mapParentRectResolved = false;
+            bool viewportParentRectResolved = false;
+            Rect mapParentRect = default;
+            Rect viewportParentRect = default;
+            Rect cameraViewportRect = default;
+            RectTransform viewportParent = viewportRectTransform != null ? viewportRectTransform.parent as RectTransform : null;
+
+            if (viewportParent != null)
+            {
+                pointerParentPointResolved = RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    viewportParent,
+                    pointer.Position,
+                    eventCamera,
+                    out Vector2 pointerInViewportParent);
+                mapParentRectResolved = TryGetRectInParentSpace(mapRectTransform, viewportParent, _mapWorldCorners, out mapParentRect);
+                viewportParentRectResolved = TryGetRectInParentSpace(viewportRectTransform, viewportParent, _mapWorldCorners, out viewportParentRect);
+                if (pointerParentPointResolved && viewportParentRectResolved)
+                {
+                    Rect paddedViewportRect = viewportParentRect;
+                    paddedViewportRect.xMin -= MatchHudMinimapView.ViewportDragHitPadding;
+                    paddedViewportRect.xMax += MatchHudMinimapView.ViewportDragHitPadding;
+                    paddedViewportRect.yMin -= MatchHudMinimapView.ViewportDragHitPadding;
+                    paddedViewportRect.yMax += MatchHudMinimapView.ViewportDragHitPadding;
+                    paddedViewportHit = paddedViewportRect.Contains(pointerInViewportParent);
+                }
+            }
+
+            bool cameraViewportResolved = MatchHudMinimapProjectionUiSystemHelper.TryGetCameraViewportRect(
+                worldCamera,
+                projectionGrid,
+                out cameraViewportRect);
+            string eventCameraName = eventCamera != null ? eventCamera.name : "null";
+            string worldCameraName = worldCamera != null ? worldCamera.name : "null";
+            Debug.Log($"{DragLogTag} inputPointerDown frame={Time.frameCount} source={pointer.Source} view={_view.name} pos={FormatVector2(pointer.Position)} isPressed={pointer.IsPressed} pressedFlag={pointer.WasPressedThisFrame} localEdge={!pointer.WasPressedThisFrame} mapHit={mapHit} viewportHit={viewportHit} paddedViewportHit={paddedViewportHit} pointerParentPoint={pointerParentPointResolved} viewportActive={(viewportRectTransform != null && viewportRectTransform.gameObject.activeInHierarchy)} viewportParent={(viewportParent != null ? viewportParent.name : "null")} mapRect={(mapParentRectResolved ? FormatRect(mapParentRect) : "unresolved")} viewportRect={(viewportParentRectResolved ? FormatRect(viewportParentRect) : "unresolved")} cameraViewport={(cameraViewportResolved ? FormatRect(cameraViewportRect) : "unresolved")} projectionOrigin={FormatVector3(projectionGrid.Origin)} projectionSize=({projectionGrid.Width:0.###},{projectionGrid.Height:0.###}) eventCamera={eventCameraName} worldCamera={worldCameraName}");
+
+            if (viewportHit || paddedViewportHit)
+                _view.TryBeginViewportDrag(pointer.Position, eventCamera, "raw");
+        }
+
+        if (pointer.IsPressed && _view.IsDraggingViewport)
+            _view.DragViewport(pointer.Position, eventCamera, "raw");
+
+        if (releasedThisFrame && _view.IsDraggingViewport)
+            _view.EndViewportDrag(pointer.Position, "raw");
+
+        _rawPointerWasPressedLastFrame = pointer.IsPressed;
+    }
+
     private void UpdateMarkers(MatchHudMinimapProjectionGrid grid)
     {
         if (_view == null || _view.MapRect == null)
@@ -553,6 +642,163 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         _cachedGrid = grid;
         _hasCachedGrid = true;
         return true;
+    }
+
+    private static Camera ResolveEventCamera(RectTransform rectTransform)
+    {
+        if (rectTransform == null)
+            return null;
+
+        Canvas canvas = rectTransform.GetComponentInParent<Canvas>();
+        if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            return null;
+
+        return canvas.worldCamera;
+    }
+
+    private readonly struct PointerDiagnosticState
+    {
+        public readonly Vector2 Position;
+        public readonly bool IsPressed;
+        public readonly bool WasPressedThisFrame;
+        public readonly bool WasReleasedThisFrame;
+        public readonly string Source;
+
+        public PointerDiagnosticState(
+            Vector2 position,
+            bool isPressed,
+            bool wasPressedThisFrame,
+            bool wasReleasedThisFrame,
+            string source)
+        {
+            Position = position;
+            IsPressed = isPressed;
+            WasPressedThisFrame = wasPressedThisFrame;
+            WasReleasedThisFrame = wasReleasedThisFrame;
+            Source = source;
+        }
+    }
+
+    private static bool TryGetPrimaryPointerDiagnostic(out PointerDiagnosticState pointer)
+    {
+        pointer = default;
+        if (TryGetTouchPointerDiagnostic(out pointer))
+            return true;
+        if (TryGetInputSystemMousePointerDiagnostic(out pointer))
+        {
+            if (pointer.IsPressed || pointer.WasPressedThisFrame || pointer.WasReleasedThisFrame)
+                return true;
+
+            if (TryGetLegacyMousePointerDiagnostic(out PointerDiagnosticState legacyPointer) &&
+                (legacyPointer.IsPressed || legacyPointer.WasPressedThisFrame || legacyPointer.WasReleasedThisFrame))
+            {
+                pointer = legacyPointer;
+            }
+
+            return true;
+        }
+
+        return TryGetLegacyMousePointerDiagnostic(out pointer);
+    }
+
+    private static bool TryGetInputSystemMousePointerDiagnostic(out PointerDiagnosticState pointer)
+    {
+        pointer = default;
+        System.Type mouseType = System.Type.GetType("UnityEngine.InputSystem.Mouse, Unity.InputSystem");
+        object mouse = mouseType?.GetProperty("current", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)?.GetValue(null);
+        if (mouse == null)
+            return false;
+
+        object leftButton = GetPublicProperty(mouse, "leftButton");
+        if (!TryReadVector2Control(GetPublicProperty(mouse, "position"), out Vector2 position))
+            return false;
+
+        pointer = new PointerDiagnosticState(
+            position,
+            ReadBoolProperty(leftButton, "isPressed"),
+            ReadBoolProperty(leftButton, "wasPressedThisFrame"),
+            ReadBoolProperty(leftButton, "wasReleasedThisFrame"),
+            "InputSystemMouse");
+        return true;
+    }
+
+    private static bool TryGetLegacyMousePointerDiagnostic(out PointerDiagnosticState pointer)
+    {
+        pointer = default;
+        try
+        {
+            pointer = new PointerDiagnosticState(
+                Input.mousePosition,
+                Input.GetMouseButton(0),
+                Input.GetMouseButtonDown(0),
+                Input.GetMouseButtonUp(0),
+                "LegacyMouse");
+            return true;
+        }
+        catch (System.InvalidOperationException)
+        {
+            return false;
+        }
+    }
+
+    private static bool TryGetTouchPointerDiagnostic(out PointerDiagnosticState pointer)
+    {
+        pointer = default;
+        System.Type touchscreenType = System.Type.GetType("UnityEngine.InputSystem.Touchscreen, Unity.InputSystem");
+        object touchscreen = touchscreenType?.GetProperty("current", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)?.GetValue(null);
+        if (touchscreen == null)
+            return false;
+
+        object primaryTouch = GetPublicProperty(touchscreen, "primaryTouch");
+        object press = GetPublicProperty(primaryTouch, "press");
+        bool isPressed = ReadBoolProperty(press, "isPressed");
+        bool wasPressedThisFrame = ReadBoolProperty(press, "wasPressedThisFrame");
+        bool wasReleasedThisFrame = ReadBoolProperty(press, "wasReleasedThisFrame");
+        if (!isPressed && !wasPressedThisFrame && !wasReleasedThisFrame)
+            return false;
+
+        if (!TryReadVector2Control(GetPublicProperty(primaryTouch, "position"), out Vector2 position))
+            return false;
+
+        pointer = new PointerDiagnosticState(position, isPressed, wasPressedThisFrame, wasReleasedThisFrame, "Touchscreen");
+        return true;
+    }
+
+    private static object GetPublicProperty(object source, string propertyName)
+    {
+        return source?.GetType().GetProperty(propertyName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)?.GetValue(source);
+    }
+
+    private static bool ReadBoolProperty(object source, string propertyName)
+    {
+        object value = source?.GetType().GetProperty(propertyName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)?.GetValue(source);
+        return value is bool boolValue && boolValue;
+    }
+
+    private static bool TryReadVector2Control(object control, out Vector2 value)
+    {
+        value = default;
+        object result = control?.GetType().GetMethod("ReadValue", System.Type.EmptyTypes)?.Invoke(control, null);
+        if (result is not Vector2 vector)
+            return false;
+
+        value = vector;
+        return true;
+    }
+
+    private static string FormatVector2(Vector2 value)
+    {
+        return $"({value.x:0.###},{value.y:0.###})";
+    }
+
+    private static string FormatVector3(Vector3 value)
+    {
+        return $"({value.x:0.###},{value.y:0.###},{value.z:0.###})";
+    }
+
+    private static string FormatRect(Rect rect)
+    {
+        return $"(x:{rect.x:0.###},y:{rect.y:0.###},w:{rect.width:0.###},h:{rect.height:0.###})";
     }
 
     private static bool TryGetRectInParentSpace(RectTransform source, RectTransform parent, Vector3[] corners, out Rect rect)

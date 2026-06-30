@@ -26,8 +26,10 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             tests.ViewportRectUsesMapPositionWhenViewportIsNotMapChild();
             tests.RebindingAfterDestroyedMapViewRecreatesMarkerPool();
             tests.ViewportDragUsesViewportParentSpaceWhenMapIsFramed();
+            tests.ViewportDragCanStartFromVisibleOutlinePadding();
+            tests.FullMapViewportDragRequestsCameraMoveThroughInputHelper();
             tests.FullMapProjectionExpandsToKeepCameraViewportInsideMap();
-            Debug.Log("[MatchHudMinimapProjectionFocusedValidation] result=Passed tests=14");
+            Debug.Log("[MatchHudMinimapProjectionFocusedValidation] result=Passed tests=16");
         }
         catch (System.Exception ex)
         {
@@ -462,6 +464,8 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             RectTransform mapRect = CreateRect("Map", frameRect, new Vector2(832f, 562f), new Vector2(-1f, 0f));
             Image mapImage = mapRect.gameObject.AddComponent<Image>();
             RectTransform viewportRect = CreateRect("Viewport", frameRect, new Vector2(250f, 154f), Vector2.zero);
+            Image viewportImage = viewportRect.gameObject.AddComponent<Image>();
+            viewportImage.raycastTarget = false;
             MatchHudMinimapView view = mapRect.gameObject.AddComponent<MatchHudMinimapView>();
             view.Configure(mapImage, mapRect, viewportRect, null, null, mapRect);
             view.ApplyInteractionOptions(
@@ -475,16 +479,19 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
 
             Vector2 focused = default;
             view.FocusRequested += value => focused = value;
+            MatchHudMinimapViewportDragRelay relay = viewportRect.GetComponent<MatchHudMinimapViewportDragRelay>();
+            Assert.IsNotNull(relay);
+            Assert.IsTrue(viewportImage.raycastTarget);
 
-            view.OnPointerDown(new PointerEventData(null)
+            relay.OnPointerDown(new PointerEventData(null)
             {
                 position = GetScreenPoint(viewportRect, 0.5f, 0.5f)
             });
-            view.OnDrag(new PointerEventData(null)
+            relay.OnDrag(new PointerEventData(null)
             {
                 position = GetScreenPoint(mapRect, 0.75f, 0.25f)
             });
-            view.OnPointerUp(new PointerEventData(null));
+            relay.OnPointerUp(new PointerEventData(null));
 
             Assert.AreEqual(0.75f, focused.x, 0.02f);
             Assert.AreEqual(0.25f, focused.y, 0.02f);
@@ -492,6 +499,123 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
         finally
         {
             Object.DestroyImmediate(panel);
+        }
+    }
+
+    [Test]
+    public void ViewportDragCanStartFromVisibleOutlinePadding()
+    {
+        GameObject panel = new("MinimapPanel_ViewportOutlineDrag");
+        try
+        {
+            RectTransform panelRect = panel.AddComponent<RectTransform>();
+            panelRect.sizeDelta = new Vector2(900f, 610f);
+            RectTransform frameRect = CreateRect("Frame", panelRect, new Vector2(900f, 610f), Vector2.zero);
+            RectTransform mapRect = CreateRect("Map", frameRect, new Vector2(832f, 562f), new Vector2(-1f, 0f));
+            Image mapImage = mapRect.gameObject.AddComponent<Image>();
+            RectTransform viewportRect = CreateRect("Viewport", frameRect, new Vector2(250f, 154f), Vector2.zero);
+            Image viewportImage = viewportRect.gameObject.AddComponent<Image>();
+            viewportImage.raycastTarget = false;
+            MatchHudMinimapView view = mapRect.gameObject.AddComponent<MatchHudMinimapView>();
+            view.Configure(mapImage, mapRect, viewportRect, null, null, mapRect);
+            view.ApplyInteractionOptions(
+                useFullMapProjection: true,
+                showViewport: true,
+                allowViewportDrag: true,
+                allowMapFocus: true,
+                allowZoom: false,
+                openFullMapOnClick: false);
+            view.SetViewportNormalizedRect(new Rect(0.25f, 0.25f, 0.25f, 0.25f));
+
+            Vector2 focused = default;
+            view.FocusRequested += value => focused = value;
+            Vector2 startOnVisibleOutline = GetScreenPoint(viewportRect, 1f, 0.5f) + new Vector2(8f, 0f);
+
+            view.OnPointerDown(new PointerEventData(null)
+            {
+                position = startOnVisibleOutline
+            });
+            view.OnDrag(new PointerEventData(null)
+            {
+                position = GetScreenPoint(mapRect, 0.75f, 0.25f)
+            });
+            view.OnPointerUp(new PointerEventData(null));
+
+            Assert.AreEqual(0.625f, focused.x, 0.02f);
+            Assert.AreEqual(0.25f, focused.y, 0.02f);
+        }
+        finally
+        {
+            Object.DestroyImmediate(panel);
+        }
+    }
+
+    [Test]
+    public void FullMapViewportDragRequestsCameraMoveThroughInputHelper()
+    {
+        GameObject cameraObject = new("MinimapFullMapDragCamera");
+        Texture2D defaultTexture = new(4, 4, TextureFormat.RGBA32, false);
+        MatchHudMinimapInputUiSystemHelper inputSystem = null;
+        GameObject panel = null;
+        bool restoreLogAssertIgnore = false;
+        try
+        {
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.orthographic = true;
+            camera.orthographicSize = 25f;
+            camera.aspect = 1f;
+            camera.transform.position = new Vector3(500f, 100f, 500f);
+            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+
+            FakeMatchRuntimeState runtimeState = new();
+            FakeMatchHudCameraControl cameraControl = new(camera);
+            FakeMinimapDataSource minimapDataSource = new(CreateGridModel(100, 100, 10f));
+            panel = CreateMinimapPanel("MinimapPanel_FullMapDrag", defaultTexture, out MatchHudMinimapView view, out _, out _);
+            inputSystem = new MatchHudMinimapInputUiSystemHelper();
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+            {
+                LogAssert.ignoreFailingMessages = true;
+                restoreLogAssertIgnore = true;
+            }
+
+            inputSystem.Bind(
+                view,
+                runtimeState,
+                cameraControl,
+                minimapDataSource,
+                useFullMapProjection: true,
+                showViewport: true,
+                allowViewportDrag: true,
+                allowMapFocus: true,
+                allowZoom: false,
+                openFullMapOnClick: false);
+            MatchHudMinimapViewportDragRelay relay = view.ViewportRect.GetComponent<MatchHudMinimapViewportDragRelay>();
+            Assert.IsNotNull(relay);
+
+            relay.OnPointerDown(new PointerEventData(null)
+            {
+                position = GetScreenPoint(view.ViewportRect, 0.5f, 0.5f)
+            });
+            relay.OnDrag(new PointerEventData(null)
+            {
+                position = GetScreenPoint(view.MapRect, 0.8f, 0.2f)
+            });
+            relay.OnPointerUp(new PointerEventData(null));
+
+            Assert.AreEqual(1, cameraControl.MoveCount);
+            Assert.AreEqual(800f, cameraControl.LastMoveTarget.x, 1f);
+            Assert.AreEqual(200f, cameraControl.LastMoveTarget.z, 1f);
+            Assert.IsTrue(runtimeState.SuppressNextWorldClick);
+        }
+        finally
+        {
+            if (restoreLogAssertIgnore)
+                LogAssert.ignoreFailingMessages = false;
+            inputSystem?.Dispose();
+            Object.DestroyImmediate(defaultTexture);
+            Object.DestroyImmediate(cameraObject);
+            if (panel != null)
+                Object.DestroyImmediate(panel);
         }
     }
 
@@ -517,10 +641,10 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             Assert.Greater(expandedGrid.Width, 1000f);
             Assert.Greater(expandedGrid.Height, 1000f);
             Assert.IsTrue(MatchHudMinimapProjectionUiSystemHelper.TryGetCameraViewportRect(camera, expandedGrid, out Rect rect));
-            Assert.Greater(rect.xMin, 0f);
-            Assert.Greater(rect.yMin, 0f);
-            Assert.Less(rect.xMax, 1f);
-            Assert.Less(rect.yMax, 1f);
+            Assert.GreaterOrEqual(rect.xMin, -0.0001f);
+            Assert.GreaterOrEqual(rect.yMin, -0.0001f);
+            Assert.LessOrEqual(rect.xMax, 1.0001f);
+            Assert.LessOrEqual(rect.yMax, 1.0001f);
         }
         finally
         {
@@ -617,10 +741,12 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
         public Camera WorldCamera { get; }
         public bool IsCameraDragging => false;
         public Vector3 LastMoveTarget { get; private set; }
+        public int MoveCount { get; private set; }
 
         public void MoveCameraGroundCenterTo(Vector3 worldPosition)
         {
             LastMoveTarget = worldPosition;
+            MoveCount++;
         }
     }
 

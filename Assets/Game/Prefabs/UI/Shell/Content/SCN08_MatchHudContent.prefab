@@ -11565,7 +11565,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 57e2748a8f8ce45fdb0d036f9d731e6d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 40211a857346409f99875d1539d8283a, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -18239,7 +18239,7 @@ MonoBehaviour:
   boardAllButtonLabel: {fileID: 710202000000000004}
   cancelButton: {fileID: 710203000000000005}
   cancelButtonLabel: {fileID: 710204000000000004}
-  neutralIcon: {fileID: 21300000, guid: bb98b26a791d49cfaac0745be982817a, type: 3}
+  neutralIcon: {fileID: 21300000, guid: 40211a857346409f99875d1539d8283a, type: 3}
   readyIcon: {fileID: 21300000, guid: b6d975cf9eba42dfb64709b349f7d41c, type: 3}
   warningIcon: {fileID: 21300000, guid: 0d03d7a14dbb4d17beceb62011c66e6b, type: 3}
   errorIcon: {fileID: 21300000, guid: 98e0f934116a411cbdcbccc16e4dd250, type: 3}

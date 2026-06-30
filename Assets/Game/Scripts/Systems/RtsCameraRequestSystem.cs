@@ -215,13 +215,51 @@ public sealed partial class RtsCameraRequestSystem : SystemBase
         if (cameraSystem == null)
             return;
 
+        SyncGroundBoundary(entityManager, cameraSystem, worldCamera);
+
         Entity entity = EnsureCameraEntity(entityManager);
         DynamicBuffer<RtsCameraRequestElement> requests = entityManager.GetBuffer<RtsCameraRequestElement>(entity);
         for (int i = 0; i < requests.Length; i++)
             ProcessRequest(requests[i], cameraSystem, worldCamera, orderMarkersHideRequested);
 
         requests.Clear();
+        cameraSystem.ClampCameraToGroundBoundary(worldCamera);
         MirrorState(entityManager, entity, cameraSystem);
+    }
+
+    private static void SyncGroundBoundary(EntityManager entityManager, RtsCameraSystem cameraSystem, Camera worldCamera)
+    {
+        if (TryGetGridConfig(entityManager, out GridConfig grid))
+        {
+            cameraSystem.SetGroundBoundary(ToGroundBoundary(grid));
+            cameraSystem.ClampCameraToGroundBoundary(worldCamera);
+        }
+        else
+        {
+            cameraSystem.ClearGroundBoundary();
+        }
+    }
+
+    private static bool TryGetGridConfig(EntityManager entityManager, out GridConfig grid)
+    {
+        grid = default;
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        grid = entityManager.GetComponentData<GridConfig>(query.GetSingletonEntity());
+        return grid.Width > 0 && grid.Height > 0 && grid.CellSize > 0.01f;
+    }
+
+    private static Rect ToGroundBoundary(GridConfig grid)
+    {
+        float minX = grid.Origin.x;
+        float minZ = grid.Origin.z;
+        return new Rect(
+            minX,
+            minZ,
+            grid.Width * grid.CellSize,
+            grid.Height * grid.CellSize);
     }
 
     private static void ProcessRequest(RtsCameraRequestElement request, RtsCameraSystem cameraSystem, Camera worldCamera, Action orderMarkersHideRequested)

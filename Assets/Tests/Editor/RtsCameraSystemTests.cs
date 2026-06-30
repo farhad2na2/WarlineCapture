@@ -2,6 +2,7 @@
 using System;
 using NUnit.Framework;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,6 +21,8 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(ResetSession_ClearsDragAndSmoothFocus), test => test.ResetSession_ClearsDragAndSmoothFocus());
             RunCase(nameof(ResetCameraModeSession_ClearsModeTransitionState), test => test.ResetCameraModeSession_ClearsModeTransitionState());
             RunCase(nameof(PanCamera_MovesAlongFlattenedCameraAxes), test => test.PanCamera_MovesAlongFlattenedCameraAxes());
+            RunCase(nameof(PanCamera_ClampsViewportInsideGroundBoundary), test => test.PanCamera_ClampsViewportInsideGroundBoundary());
+            RunCase(nameof(ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid), test => test.ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid());
             RunCase(nameof(RuntimePanCamera_IgnoresPanAndDragWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresPanAndDragWhenTacticalFollowLocked());
             RunCase(nameof(ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera), test => test.ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera());
             RunCase(nameof(MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter), test => test.MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter());
@@ -29,7 +32,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue());
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
-            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=15");
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=17");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -169,6 +172,59 @@ public sealed class RtsCameraSystemTests
         Assert.That(camera.transform.position.x, Is.EqualTo(-1f).Within(0.0001f));
         Assert.That(camera.transform.position.y, Is.EqualTo(10f).Within(0.0001f));
         Assert.That(camera.transform.position.z, Is.EqualTo(-10f).Within(0.0001f));
+    }
+
+    [Test]
+    public void PanCamera_ClampsViewportInsideGroundBoundary()
+    {
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
+        Camera camera = CreateCamera(new Vector3(50f, 10f, 50f), Quaternion.Euler(90f, 0f, 0f));
+        camera.orthographic = true;
+        camera.orthographicSize = 10f;
+        camera.aspect = 1f;
+        Rect boundary = new(0f, 0f, 100f, 100f);
+        cameraSystem.SetGroundBoundary(boundary);
+
+        bool moved = cameraSystem.PanCamera(camera, new Vector2(1000f, 1000f), 1f);
+
+        Assert.IsTrue(moved);
+        AssertCameraFootprintInside(cameraSystem, camera, boundary);
+    }
+
+    [Test]
+    public void ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.InitialGridClamp");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            Camera camera = CreateCamera(new Vector3(-50f, 10f, -50f), Quaternion.Euler(90f, 0f, 0f));
+            camera.orthographic = true;
+            camera.orthographicSize = 10f;
+            camera.aspect = 1f;
+            Entity gridEntity = world.EntityManager.CreateEntity(typeof(GridConfig));
+            world.EntityManager.SetComponentData(gridEntity, new GridConfig
+            {
+                Width = 100,
+                Height = 100,
+                CellSize = 1f,
+                Origin = float3.zero
+            });
+
+            cameraRequestSystem.ProcessPendingRequests(world.EntityManager, cameraSystem, camera);
+
+            AssertCameraFootprintInside(cameraSystem, camera, new Rect(0f, 0f, 100f, 100f));
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
     }
 
     [Test]
@@ -579,6 +635,15 @@ public sealed class RtsCameraSystemTests
     {
         _cameraSystemWorld ??= new World("RtsCameraSystemTests.CameraSystem");
         return _cameraSystemWorld.GetOrCreateSystemManaged<RtsCameraSystem>();
+    }
+
+    private static void AssertCameraFootprintInside(RtsCameraSystem cameraSystem, Camera camera, Rect boundary)
+    {
+        Assert.IsTrue(cameraSystem.TryGetCameraGroundBounds(camera, out Rect footprint));
+        Assert.That(footprint.xMin, Is.GreaterThanOrEqualTo(boundary.xMin - 0.001f));
+        Assert.That(footprint.xMax, Is.LessThanOrEqualTo(boundary.xMax + 0.001f));
+        Assert.That(footprint.yMin, Is.GreaterThanOrEqualTo(boundary.yMin - 0.001f));
+        Assert.That(footprint.yMax, Is.LessThanOrEqualTo(boundary.yMax + 0.001f));
     }
 
     private sealed class FakeMatchIntroStateQuery : IMatchIntroStateQuery

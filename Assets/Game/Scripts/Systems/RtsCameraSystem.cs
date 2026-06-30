@@ -13,6 +13,8 @@ public sealed partial class RtsCameraSystem : SystemBase
     private float _yawTransitionVelocity;
     private float _fieldOfViewTransitionVelocity;
     private float _orthographicSizeTransitionVelocity;
+    private bool _hasGroundBoundary;
+    private Rect _groundBoundary;
 
     public bool IsDragging { get; private set; }
     public bool HasSmoothFocusTarget { get; private set; }
@@ -23,6 +25,7 @@ public sealed partial class RtsCameraSystem : SystemBase
     public float FullscreenIsoTargetHeight { get; set; }
     public float FullscreenIsoTargetOrthographicSize { get; set; }
     public bool NormalIsoModeActive { get; set; }
+    public bool HasGroundBoundary => _hasGroundBoundary;
 
     protected override void OnCreate()
     {
@@ -86,9 +89,34 @@ public sealed partial class RtsCameraSystem : SystemBase
         _fieldOfViewTransitionVelocity = 0f;
     }
 
+    public void SetGroundBoundary(Rect boundary)
+    {
+        if (boundary.width <= 0.01f || boundary.height <= 0.01f)
+        {
+            ClearGroundBoundary();
+            return;
+        }
+
+        _groundBoundary = boundary;
+        _hasGroundBoundary = true;
+    }
+
+    public void ClearGroundBoundary()
+    {
+        _hasGroundBoundary = false;
+        _groundBoundary = default;
+    }
+
+    public bool TryGetGroundBoundary(out Rect boundary)
+    {
+        boundary = _groundBoundary;
+        return _hasGroundBoundary;
+    }
+
     public void SetSmoothFocusTarget(Vector3 focusWorldPosition, bool resetVelocity)
     {
         focusWorldPosition.y = 0f;
+        focusWorldPosition = ClampGroundPositionToBoundary(focusWorldPosition);
         SmoothFocusTarget = focusWorldPosition;
         HasSmoothFocusTarget = true;
 
@@ -141,6 +169,7 @@ public sealed partial class RtsCameraSystem : SystemBase
             (-flatRight * screenDelta.x + -flatForward * screenDelta.y) * panSensitivity;
 
         worldCamera.transform.position += worldDelta;
+        ClampCameraToGroundBoundary(worldCamera);
         return true;
     }
 
@@ -171,6 +200,7 @@ public sealed partial class RtsCameraSystem : SystemBase
         }
 
         worldCamera.transform.position = targetPosition;
+        ClampCameraToGroundBoundary(worldCamera);
     }
 
     public void UpdateFullscreenIsoZoom(
@@ -203,6 +233,7 @@ public sealed partial class RtsCameraSystem : SystemBase
         position.x += focusWorldPosition.x - currentGroundCenter.x;
         position.z += focusWorldPosition.z - currentGroundCenter.z;
         worldCamera.transform.position = position;
+        ClampCameraToGroundBoundary(worldCamera);
     }
 
     public Vector3 GetCameraGroundCenterWorld(Camera worldCamera)
@@ -226,6 +257,7 @@ public sealed partial class RtsCameraSystem : SystemBase
         worldCamera.transform.position = position;
         worldCamera.transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
         worldCamera.fieldOfView = fieldOfView;
+        ClampCameraToGroundBoundary(worldCamera);
     }
 
     public void ApplyFullscreenIsoCameraModeInstant(Camera worldCamera, float height, float orthographicSize, float pitch, float yaw)
@@ -239,6 +271,7 @@ public sealed partial class RtsCameraSystem : SystemBase
         worldCamera.transform.position = position;
         worldCamera.transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
         worldCamera.orthographicSize = orthographicSize;
+        ClampCameraToGroundBoundary(worldCamera);
     }
 
     public float GetVisibleGroundVerticalSpan(Camera worldCamera)
@@ -265,6 +298,26 @@ public sealed partial class RtsCameraSystem : SystemBase
             return false;
 
         point = ray.GetPoint(distance);
+        return true;
+    }
+
+    public bool TryGetCameraGroundBounds(Camera worldCamera, out Rect bounds)
+    {
+        bounds = default;
+        if (worldCamera == null)
+            return false;
+
+        if (!TryGetGroundPointFromViewport(worldCamera, new Vector2(0f, 0f), out Vector3 bottomLeft) ||
+            !TryGetGroundPointFromViewport(worldCamera, new Vector2(1f, 0f), out Vector3 bottomRight) ||
+            !TryGetGroundPointFromViewport(worldCamera, new Vector2(0f, 1f), out Vector3 topLeft) ||
+            !TryGetGroundPointFromViewport(worldCamera, new Vector2(1f, 1f), out Vector3 topRight))
+            return false;
+
+        float minX = Mathf.Min(bottomLeft.x, bottomRight.x, topLeft.x, topRight.x);
+        float maxX = Mathf.Max(bottomLeft.x, bottomRight.x, topLeft.x, topRight.x);
+        float minZ = Mathf.Min(bottomLeft.z, bottomRight.z, topLeft.z, topRight.z);
+        float maxZ = Mathf.Max(bottomLeft.z, bottomRight.z, topLeft.z, topRight.z);
+        bounds = Rect.MinMaxRect(minX, minZ, maxX, maxZ);
         return true;
     }
 
@@ -386,6 +439,8 @@ public sealed partial class RtsCameraSystem : SystemBase
             ref _fieldOfViewTransitionVelocity,
             smoothTime);
 
+        ClampCameraToGroundBoundary(worldCamera);
+
         return Mathf.Abs(newHeight - targetHeight) <= 0.05f &&
                Mathf.Abs(Mathf.DeltaAngle(newPitch, targetPitch)) <= 0.1f &&
                Mathf.Abs(Mathf.DeltaAngle(newYaw, targetYaw)) <= 0.1f &&
@@ -427,6 +482,8 @@ public sealed partial class RtsCameraSystem : SystemBase
             ref _orthographicSizeTransitionVelocity,
             smoothTime);
 
+        ClampCameraToGroundBoundary(worldCamera);
+
         return Mathf.Abs(newHeight - targetHeight) <= 0.05f &&
                Mathf.Abs(Mathf.DeltaAngle(newPitch, targetPitch)) <= 0.1f &&
                Mathf.Abs(Mathf.DeltaAngle(newYaw, targetYaw)) <= 0.1f &&
@@ -458,6 +515,7 @@ public sealed partial class RtsCameraSystem : SystemBase
                 worldCamera.orthographicSize = Mathf.Max(0.1f, targetOrthographicSize);
             else
                 worldCamera.fieldOfView = Mathf.Max(1f, targetFieldOfView);
+            ClampCameraToGroundBoundary(worldCamera);
             return true;
         }
 
@@ -499,8 +557,88 @@ public sealed partial class RtsCameraSystem : SystemBase
         bool zoomReached = targetOrthographic
             ? Mathf.Abs(worldCamera.orthographicSize - targetOrthographicSize) <= 0.05f
             : Mathf.Abs(worldCamera.fieldOfView - targetFieldOfView) <= 0.05f;
+        ClampCameraToGroundBoundary(worldCamera);
         return Vector3.Distance(worldCamera.transform.position, desiredPosition) <= 0.05f &&
                zoomReached;
+    }
+
+    public void ClampCameraToGroundBoundary(Camera worldCamera)
+    {
+        if (!_hasGroundBoundary || worldCamera == null)
+            return;
+
+        FitCameraFootprintToGroundBoundary(worldCamera);
+
+        if (!TryGetCameraGroundBounds(worldCamera, out Rect footprint))
+            return;
+
+        Vector3 offset = Vector3.zero;
+        if (footprint.width <= _groundBoundary.width)
+        {
+            if (footprint.xMin < _groundBoundary.xMin)
+                offset.x = _groundBoundary.xMin - footprint.xMin;
+            else if (footprint.xMax > _groundBoundary.xMax)
+                offset.x = _groundBoundary.xMax - footprint.xMax;
+        }
+        else
+        {
+            offset.x = _groundBoundary.center.x - footprint.center.x;
+        }
+
+        if (footprint.height <= _groundBoundary.height)
+        {
+            if (footprint.yMin < _groundBoundary.yMin)
+                offset.z = _groundBoundary.yMin - footprint.yMin;
+            else if (footprint.yMax > _groundBoundary.yMax)
+                offset.z = _groundBoundary.yMax - footprint.yMax;
+        }
+        else
+        {
+            offset.z = _groundBoundary.center.y - footprint.center.y;
+        }
+
+        if (offset.sqrMagnitude > 0.000001f)
+            worldCamera.transform.position += offset;
+    }
+
+    private void FitCameraFootprintToGroundBoundary(Camera worldCamera)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            if (!TryGetCameraGroundBounds(worldCamera, out Rect footprint))
+                return;
+
+            float scaleX = footprint.width > _groundBoundary.width && footprint.width > 0.01f
+                ? _groundBoundary.width / footprint.width
+                : 1f;
+            float scaleZ = footprint.height > _groundBoundary.height && footprint.height > 0.01f
+                ? _groundBoundary.height / footprint.height
+                : 1f;
+            float scale = Mathf.Min(scaleX, scaleZ);
+            if (scale >= 0.999f)
+                return;
+
+            if (worldCamera.orthographic)
+            {
+                worldCamera.orthographicSize = Mathf.Max(0.1f, worldCamera.orthographicSize * scale * 0.995f);
+            }
+            else
+            {
+                Vector3 position = worldCamera.transform.position;
+                position.y = Mathf.Max(0.1f, position.y * scale * 0.995f);
+                worldCamera.transform.position = position;
+            }
+        }
+    }
+
+    private Vector3 ClampGroundPositionToBoundary(Vector3 position)
+    {
+        if (!_hasGroundBoundary)
+            return position;
+
+        position.x = Mathf.Clamp(position.x, _groundBoundary.xMin, _groundBoundary.xMax);
+        position.z = Mathf.Clamp(position.z, _groundBoundary.yMin, _groundBoundary.yMax);
+        return position;
     }
 
     private static void ApplyTacticalFollowRotation(Camera worldCamera, Vector3 position, Vector3 lookAt, float t)

@@ -258,11 +258,12 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
             return;
         }
 
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(viewportRect, eventData.position, eventData.pressEventCamera, out Vector2 localPoint))
+        if (TryGetPointerLocalPointInViewportParent(eventData, out Vector2 pointerInParent) &&
+            TryGetRectInParentSpace(viewportRect, viewportRect.parent as RectTransform, out Rect viewportInParent))
         {
             _viewportDragOffset = new Vector2(
-                localPoint.x - viewportRect.rect.xMin,
-                viewportRect.rect.yMax - localPoint.y);
+                pointerInParent.x - viewportInParent.xMin,
+                viewportInParent.yMax - pointerInParent.y);
         }
 
         _draggingViewport = true;
@@ -270,16 +271,20 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!_allowViewportDrag || !_draggingViewport || !TryGetMapLocalPoint(eventData, out Vector2 localPoint))
+        if (!_allowViewportDrag ||
+            !_draggingViewport ||
+            !TryGetPointerLocalPointInViewportParent(eventData, out Vector2 pointerInParent) ||
+            !TryGetMapRectInViewportParent(MapRect, out Rect map) ||
+            !TryGetRectInParentSpace(viewportRect, viewportRect.parent as RectTransform, out Rect viewportInParent))
+        {
             return;
+        }
 
         _dragMoved = true;
-        RectTransform rectTransform = MapRect;
-        Rect map = rectTransform.rect;
-        float rectWidth = Mathf.Max(6f, viewportRect.rect.width);
-        float rectHeight = Mathf.Max(6f, viewportRect.rect.height);
-        float localX = localPoint.x - map.xMin;
-        float localY = map.yMax - localPoint.y;
+        float rectWidth = Mathf.Max(6f, viewportInParent.width);
+        float rectHeight = Mathf.Max(6f, viewportInParent.height);
+        float localX = pointerInParent.x - map.xMin;
+        float localY = map.yMax - pointerInParent.y;
         float left = Mathf.Clamp(localX - _viewportDragOffset.x, 0f, Mathf.Max(0f, map.width - rectWidth));
         float top = Mathf.Clamp(localY - _viewportDragOffset.y, 0f, Mathf.Max(0f, map.height - rectHeight));
 
@@ -348,6 +353,42 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
         RectTransform rectTransform = MapRect;
         return rectTransform != null &&
                RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out localPoint);
+    }
+
+    private bool TryGetPointerLocalPointInViewportParent(PointerEventData eventData, out Vector2 localPoint)
+    {
+        localPoint = default;
+        RectTransform parent = viewportRect != null ? viewportRect.parent as RectTransform : null;
+        return parent != null &&
+               RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, eventData.position, eventData.pressEventCamera, out localPoint);
+    }
+
+    private bool TryGetRectInParentSpace(RectTransform source, RectTransform parent, out Rect rect)
+    {
+        rect = default;
+        if (source == null || parent == null)
+            return false;
+
+        source.GetWorldCorners(_worldCorners);
+        Vector2 min = new(float.PositiveInfinity, float.PositiveInfinity);
+        Vector2 max = new(float.NegativeInfinity, float.NegativeInfinity);
+        for (int i = 0; i < _worldCorners.Length; i++)
+        {
+            Vector3 local = parent.InverseTransformPoint(_worldCorners[i]);
+            min = Vector2.Min(min, local);
+            max = Vector2.Max(max, local);
+        }
+
+        if (!IsFinite(min.x) || !IsFinite(min.y) ||
+            !IsFinite(max.x) || !IsFinite(max.y) ||
+            max.x <= min.x ||
+            max.y <= min.y)
+        {
+            return false;
+        }
+
+        rect = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+        return true;
     }
 
     private void EnsureZoomRelay(Button button, int direction)

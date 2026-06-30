@@ -149,7 +149,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
 
         Camera worldCamera = _selectionUiCameraSystem != null ? _selectionUiCameraSystem.WorldCamera : null;
         MatchHudMinimapProjectionGrid desiredProjectionGrid = _view.UseFullMapProjection
-            ? MatchHudMinimapProjectionGrid.FromGridModel(grid)
+            ? MatchHudMinimapProjectionUiSystemHelper.CreateFullGridIncludingCamera(grid, worldCamera)
             : MatchHudMinimapProjectionUiSystemHelper.CreateCameraCenteredGrid(
                 grid,
                 worldCamera,

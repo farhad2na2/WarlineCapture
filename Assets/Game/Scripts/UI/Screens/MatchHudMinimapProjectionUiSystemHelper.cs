@@ -59,6 +59,24 @@ public static class MatchHudMinimapProjectionUiSystemHelper
             Mathf.Clamp(worldPosition.z, fullGrid.Origin.z, fullGrid.Origin.z + fullGrid.Height));
     }
 
+    public static MatchHudMinimapProjectionGrid CreateFullGridIncludingCamera(
+        MatchHudMinimapGridModel fullGridConfig,
+        Camera worldCamera)
+    {
+        MatchHudMinimapProjectionGrid fullGrid = MatchHudMinimapProjectionGrid.FromGridModel(fullGridConfig);
+        if (!TryGetCameraGroundBounds(worldCamera, fullGrid, out _, out _, out Rect cameraBounds))
+            return fullGrid;
+
+        float minX = Mathf.Min(fullGrid.Origin.x, cameraBounds.xMin);
+        float minZ = Mathf.Min(fullGrid.Origin.z, cameraBounds.yMin);
+        float maxX = Mathf.Max(fullGrid.Origin.x + fullGrid.Width, cameraBounds.xMax);
+        float maxZ = Mathf.Max(fullGrid.Origin.z + fullGrid.Height, cameraBounds.yMax);
+        return new MatchHudMinimapProjectionGrid(
+            new Vector3(minX, fullGrid.Origin.y, minZ),
+            maxX - minX,
+            maxZ - minZ);
+    }
+
     public static bool TryGetCameraViewportRect(Camera worldCamera, MatchHudMinimapProjectionGrid grid, out Rect normalizedRect)
     {
         normalizedRect = default;
@@ -243,8 +261,19 @@ public static class MatchHudMinimapProjectionUiSystemHelper
         out Vector3 center,
         out Vector2 size)
     {
+        return TryGetCameraGroundBounds(worldCamera, fullGrid, out center, out size, out _);
+    }
+
+    private static bool TryGetCameraGroundBounds(
+        Camera worldCamera,
+        MatchHudMinimapProjectionGrid fullGrid,
+        out Vector3 center,
+        out Vector2 size,
+        out Rect bounds)
+    {
         center = default;
         size = default;
+        bounds = default;
         if (worldCamera == null)
             return false;
 
@@ -271,6 +300,7 @@ public static class MatchHudMinimapProjectionUiSystemHelper
 
         center = new Vector3((minX + maxX) * 0.5f, fullGrid.Origin.y, (minZ + maxZ) * 0.5f);
         size = new Vector2(Mathf.Max(1f, maxX - minX), Mathf.Max(1f, maxZ - minZ));
+        bounds = Rect.MinMaxRect(minX, minZ, maxX, maxZ);
         return true;
     }
 

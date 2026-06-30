@@ -25,9 +25,10 @@ public sealed class MatchHudCommandFeedbackPanelTests
             RunValidationStep(nameof(RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions), tests => tests.RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions());
             RunValidationStep(nameof(RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides), tests => tests.RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides());
             RunValidationStep(nameof(SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions), tests => tests.SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions());
+            RunValidationStep(nameof(HoldStopScanButtons_WhenNoSelectionShowRecommendedFeedback), tests => tests.HoldStopScanButtons_WhenNoSelectionShowRecommendedFeedback());
             RunValidationStep(nameof(ScanButtonClick_WhenReadModelRejectsShowsFeedbackWithoutQueueing), tests => tests.ScanButtonClick_WhenReadModelRejectsShowsFeedbackWithoutQueueing());
             RunValidationStep(nameof(MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity), tests => tests.MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity());
-            Debug.Log("[MatchHudCommandFeedbackValidation] result=Passed tests=13");
+            Debug.Log("[MatchHudCommandFeedbackValidation] result=Passed tests=14");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -471,7 +472,74 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         Assert.AreEqual(0, commandSink.ScanModeRequests, "Rejected Scan must not queue scan target mode.");
         Assert.IsTrue(panel.activeSelf, "Rejected Scan must show HUD feedback.");
-        Assert.AreEqual("Scan unavailable.", text.text);
+        Assert.AreEqual("Select a scanner or combat unit first.", text.text);
+    }
+
+    [Test]
+    public void HoldStopScanButtons_WhenNoSelectionShowRecommendedFeedback()
+    {
+        _root = new GameObject("NoSelectionCommandFeedbackBoundary");
+        var controlsObject = new GameObject("Controls");
+        var holdButtonObject = new GameObject("HoldButton");
+        var stopButtonObject = new GameObject("StopButton");
+        var scanButtonObject = new GameObject("ScanButton");
+        var feedbackObject = new GameObject("FeedbackView");
+        var panel = new GameObject("FeedbackPanel");
+        var textNode = new GameObject("FeedbackText");
+
+        controlsObject.transform.SetParent(_root.transform);
+        holdButtonObject.transform.SetParent(controlsObject.transform);
+        stopButtonObject.transform.SetParent(controlsObject.transform);
+        scanButtonObject.transform.SetParent(controlsObject.transform);
+        feedbackObject.transform.SetParent(_root.transform);
+        panel.transform.SetParent(feedbackObject.transform);
+        textNode.transform.SetParent(panel.transform);
+
+        var controls = controlsObject.AddComponent<MatchOverlayCommandControlsView>();
+        Button holdButton = holdButtonObject.AddComponent<Button>();
+        Button stopButton = stopButtonObject.AddComponent<Button>();
+        Button scanButton = scanButtonObject.AddComponent<Button>();
+        var feedbackView = feedbackObject.AddComponent<BattleHudRuntimeFeedbackView>();
+        TMP_Text text = textNode.AddComponent<TextMeshProUGUI>();
+
+        SetPrivateField(controls, "holdButton", holdButton);
+        SetPrivateField(controls, "stopButton", stopButton);
+        SetPrivateField(controls, "scanButton", scanButton);
+        SetPrivateField(feedbackView, "feedbackPanel", panel);
+        SetPrivateField(feedbackView, "feedbackText", text);
+
+        var commandSink = new RecordingSelectionUiCommand();
+        var readModel = new FakeSelectionUiReadModel
+        {
+            HasSelectedUnits = false,
+            CanHold = true,
+            CanStop = true,
+            CanScan = true,
+            HoldReason = TacticalCommandReasonCode.NoSelection,
+            StopReason = TacticalCommandReasonCode.NoSelection,
+            ScanReason = TacticalCommandReasonCode.NoSelection
+        };
+        var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
+        inputSystem.Bind(
+            controls,
+            commandSink,
+            feedbackView,
+            selectionUiReadModel: readModel);
+
+        holdButton.onClick.Invoke();
+        Assert.IsTrue(panel.activeSelf, "Rejected Hold must show HUD feedback.");
+        Assert.AreEqual("Select units before holding position.", text.text);
+        Assert.AreEqual(0, commandSink.HoldRequests, "Rejected Hold must not queue a hold command.");
+
+        stopButton.onClick.Invoke();
+        Assert.IsTrue(panel.activeSelf, "Rejected Stop must show HUD feedback.");
+        Assert.AreEqual("Select units before stopping orders.", text.text);
+        Assert.AreEqual(0, commandSink.StopRequests, "Rejected Stop must not queue a stop command.");
+
+        scanButton.onClick.Invoke();
+        Assert.IsTrue(panel.activeSelf, "Rejected Scan must show HUD feedback.");
+        Assert.AreEqual("Select a scanner or combat unit first.", text.text);
+        Assert.AreEqual(0, commandSink.ScanModeRequests, "Rejected Scan must not queue scan target mode.");
     }
 
     [Test]
@@ -598,6 +666,8 @@ public sealed class MatchHudCommandFeedbackPanelTests
     {
         public int EnterSelectionModeRequests { get; private set; }
         public int ScanModeRequests { get; private set; }
+        public int HoldRequests { get; private set; }
+        public int StopRequests { get; private set; }
 
         public void CaptureUiClickSequence()
         {
@@ -627,9 +697,17 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         public bool RequestToggleTacticalFollowCameraMode() => true;
 
-        public bool RequestHoldPosition() => true;
+        public bool RequestHoldPosition()
+        {
+            HoldRequests++;
+            return true;
+        }
 
-        public bool RequestStop() => true;
+        public bool RequestStop()
+        {
+            StopRequests++;
+            return true;
+        }
 
         public bool RequestBoardAllSelectedTransport() => true;
 
@@ -641,10 +719,12 @@ public sealed class MatchHudCommandFeedbackPanelTests
         public bool CanHold;
         public bool CanStop;
         public bool CanScan;
+        public bool HasSelectedUnits = true;
         public TacticalCommandReasonCode HoldReason;
         public TacticalCommandReasonCode StopReason;
         public TacticalCommandReasonCode ScanReason;
 
+        public bool HasAnySelectedUnits => HasSelectedUnits;
         public bool FocusedUnitCanHold => CanHold;
         public TacticalCommandReasonCode FocusedUnitHoldDisabledReason => HoldReason;
         public bool FocusedUnitCanStop => CanStop;

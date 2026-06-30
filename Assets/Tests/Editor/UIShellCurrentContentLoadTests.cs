@@ -770,10 +770,12 @@ public sealed class UIShellCurrentContentLoadTests
         public bool CanHold;
         public bool CanStop;
         public bool CanScan;
+        public bool HasSelectedUnits = true;
         public TacticalCommandReasonCode HoldReason;
         public TacticalCommandReasonCode StopReason;
         public TacticalCommandReasonCode ScanReason;
 
+        public bool HasAnySelectedUnits => HasSelectedUnits;
         public bool FocusedUnitCanHold => CanHold;
         public TacticalCommandReasonCode FocusedUnitHoldDisabledReason => HoldReason;
         public bool FocusedUnitCanStop => CanStop;

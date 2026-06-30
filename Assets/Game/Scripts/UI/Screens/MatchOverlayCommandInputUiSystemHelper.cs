@@ -245,8 +245,8 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
 
             if (!queued)
                 BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
-                    TacticalCommandReasonCode.CommandUnavailable,
-                    "Scan command unavailable."));
+                    ResolveFallbackReason(CommandCapability.Scan),
+                    ResolveUnavailableFeedbackMessage(CommandCapability.Scan, ResolveFallbackReason(CommandCapability.Scan))));
         }
 
         private void OnBoardButtonClicked()
@@ -340,7 +340,13 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
             if (!TryAcceptCapability(CommandCapability.Hold))
                 return;
 
-            _selectionUiCommandSystem?.RequestHoldPosition();
+            bool queued = _selectionUiCommandSystem != null &&
+                _selectionUiCommandSystem.RequestHoldPosition();
+
+            if (!queued)
+                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ResolveFallbackReason(CommandCapability.Hold),
+                    ResolveUnavailableFeedbackMessage(CommandCapability.Hold, ResolveFallbackReason(CommandCapability.Hold))));
         }
 
         private void OnStopButtonClicked()
@@ -348,7 +354,13 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
             if (!TryAcceptCapability(CommandCapability.Stop))
                 return;
 
-            _selectionUiCommandSystem?.RequestStop();
+            bool queued = _selectionUiCommandSystem != null &&
+                _selectionUiCommandSystem.RequestStop();
+
+            if (!queued)
+                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ResolveFallbackReason(CommandCapability.Stop),
+                    ResolveUnavailableFeedbackMessage(CommandCapability.Stop, ResolveFallbackReason(CommandCapability.Stop))));
         }
 
         private void OnCommandWheelStopButtonClicked()
@@ -357,7 +369,13 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                 return;
 
             _view.CommandWheelPanel?.Close();
-            _selectionUiCommandSystem?.RequestStop();
+            bool queued = _selectionUiCommandSystem != null &&
+                _selectionUiCommandSystem.RequestStop();
+
+            if (!queued)
+                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ResolveFallbackReason(CommandCapability.Stop),
+                    ResolveUnavailableFeedbackMessage(CommandCapability.Stop, ResolveFallbackReason(CommandCapability.Stop))));
         }
 
         public void RefreshCommandControlState(ISelectionUiReadModel selectionUiReadModel = null)
@@ -380,6 +398,16 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
             if (readModel == null)
                 return true;
 
+            if (!readModel.HasAnySelectedUnits)
+            {
+                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(
+                    _runtimeFeedbackView,
+                    TacticalCommandResult.Rejected(
+                        TacticalCommandReasonCode.NoSelection,
+                        ResolveUnavailableFeedbackMessage(capability, TacticalCommandReasonCode.NoSelection)));
+                return false;
+            }
+
             bool accepted = capability switch
             {
                 CommandCapability.Hold => readModel.FocusedUnitCanHold,
@@ -399,8 +427,36 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
             };
             BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(
                 _runtimeFeedbackView,
-                TacticalCommandResult.Rejected(reason));
+                TacticalCommandResult.Rejected(reason, ResolveUnavailableFeedbackMessage(capability, reason)));
             return false;
+        }
+
+        private static TacticalCommandReasonCode ResolveFallbackReason(CommandCapability capability)
+        {
+            return capability switch
+            {
+                CommandCapability.Scan => TacticalCommandReasonCode.ScanUnavailable,
+                _ => TacticalCommandReasonCode.NoSelection
+            };
+        }
+
+        private static string ResolveUnavailableFeedbackMessage(CommandCapability capability, TacticalCommandReasonCode reason)
+        {
+            if (reason == TacticalCommandReasonCode.NoSelection)
+            {
+                return capability switch
+                {
+                    CommandCapability.Hold => "Select units before holding position.",
+                    CommandCapability.Stop => "Select units before stopping orders.",
+                    CommandCapability.Scan => "Select a scanner or combat unit first.",
+                    _ => TacticalCommandFeedbackText.ToDisplayText(reason)
+                };
+            }
+
+            if (capability == CommandCapability.Scan && reason == TacticalCommandReasonCode.ScanUnavailable)
+                return "Select a scanner or combat unit first.";
+
+            return TacticalCommandFeedbackText.ToDisplayText(reason);
         }
 
         private static void ApplyButtonInteractable(Button button, bool interactable)

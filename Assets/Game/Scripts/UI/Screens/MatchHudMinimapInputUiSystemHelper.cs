@@ -126,6 +126,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         _runtimeGameplayStateSystem = null;
         _selectionUiCameraSystem = null;
         _minimapDataSource = null;
+        _markerPool.Clear();
     }
 
     public void Dispose()
@@ -461,7 +462,11 @@ public sealed class MatchHudMinimapInputUiSystemHelper
 
         for (int i = markerIndex; i < _markerPool.Count; i++)
         {
-            GameObject markerObject = _markerPool[i].gameObject;
+            Image marker = _markerPool[i];
+            if (marker == null)
+                continue;
+
+            GameObject markerObject = marker.gameObject;
             if (markerObject.activeSelf)
                 markerObject.SetActive(false);
         }
@@ -522,6 +527,12 @@ public sealed class MatchHudMinimapInputUiSystemHelper
             outline.effectColor = new Color(0f, 0f, 0f, 0.8f);
             outline.effectDistance = new Vector2(2f, -2f);
             _markerPool.Add(image);
+        }
+
+        if (_markerPool[index] == null)
+        {
+            _markerPool.RemoveRange(index, _markerPool.Count - index);
+            return EnsureMarker(index);
         }
 
         return _markerPool[index];

@@ -23,7 +23,8 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             tests.ClampWorldToGridKeepsFocusInsideAuthoredMap();
             tests.NormalizedToWorldClampsOutOfRangeInput();
             tests.ViewportRectUsesMapPositionWhenViewportIsNotMapChild();
-            Debug.Log("[MatchHudMinimapProjectionFocusedValidation] result=Passed tests=11");
+            tests.RebindingAfterDestroyedMapViewRecreatesMarkerPool();
+            Debug.Log("[MatchHudMinimapProjectionFocusedValidation] result=Passed tests=12");
         }
         catch (System.Exception ex)
         {
@@ -385,9 +386,91 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
         }
     }
 
+    [Test]
+    public void RebindingAfterDestroyedMapViewRecreatesMarkerPool()
+    {
+        GameObject cameraObject = new("MinimapRebindCamera");
+        Texture2D defaultTexture = new(4, 4, TextureFormat.RGBA32, false);
+        MatchHudMinimapInputUiSystemHelper inputSystem = null;
+        GameObject firstPanel = null;
+        GameObject secondPanel = null;
+        bool restoreLogAssertIgnore = false;
+        try
+        {
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.orthographic = true;
+            camera.orthographicSize = 25f;
+            camera.aspect = 1f;
+            camera.transform.position = new Vector3(500f, 100f, 500f);
+            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+
+            FakeMatchRuntimeState runtimeState = new();
+            FakeMatchHudCameraControl cameraControl = new(camera);
+            FakeMinimapDataSource minimapDataSource = new(CreateGridModel(100, 100, 10f));
+            minimapDataSource.Markers.Add(new MatchHudMinimapMarkerModel(
+                new Vector3(500f, 0f, 500f),
+                MatchHudMinimapMarkerAllegiance.Player));
+
+            inputSystem = new MatchHudMinimapInputUiSystemHelper();
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+            {
+                LogAssert.ignoreFailingMessages = true;
+                restoreLogAssertIgnore = true;
+            }
+
+            firstPanel = CreateMinimapPanel("MinimapPanel_First", defaultTexture, out MatchHudMinimapView firstView, out Button firstZoomIn, out _);
+            inputSystem.Bind(firstView, runtimeState, cameraControl, minimapDataSource);
+            inputSystem.Update();
+            firstZoomIn.GetComponent<MatchHudMinimapZoomPressRelay>().OnPointerDown(null);
+            inputSystem.Unbind();
+            Object.DestroyImmediate(firstPanel);
+            firstPanel = null;
+
+            secondPanel = CreateMinimapPanel("MinimapPanel_Second", defaultTexture, out MatchHudMinimapView secondView, out Button secondZoomIn, out Button secondZoomOut);
+            inputSystem.Bind(secondView, runtimeState, cameraControl, minimapDataSource);
+            secondZoomIn.GetComponent<MatchHudMinimapZoomPressRelay>().OnPointerDown(null);
+            secondZoomOut.GetComponent<MatchHudMinimapZoomPressRelay>().OnPointerDown(null);
+
+            Assert.IsNotNull(secondView.MapRect.Find("MinimapMarker"), "Rebound minimap must create fresh marker images under the live map view.");
+        }
+        finally
+        {
+            if (restoreLogAssertIgnore)
+                LogAssert.ignoreFailingMessages = false;
+            inputSystem?.Dispose();
+            Object.DestroyImmediate(defaultTexture);
+            Object.DestroyImmediate(cameraObject);
+            if (firstPanel != null)
+                Object.DestroyImmediate(firstPanel);
+            if (secondPanel != null)
+                Object.DestroyImmediate(secondPanel);
+        }
+    }
+
     private static MatchHudMinimapGridModel CreateGridModel(int width, int height, float cellSize)
     {
         return new MatchHudMinimapGridModel(Vector3.zero, width, height, cellSize);
+    }
+
+    private static GameObject CreateMinimapPanel(
+        string name,
+        Texture2D defaultTexture,
+        out MatchHudMinimapView view,
+        out Button zoomInButton,
+        out Button zoomOutButton)
+    {
+        GameObject panel = new(name);
+        RectTransform panelRect = panel.AddComponent<RectTransform>();
+        panelRect.sizeDelta = new Vector2(900f, 610f);
+        RectTransform mapRect = CreateRect("Map", panelRect, new Vector2(832f, 562f), Vector2.zero);
+        Image mapImage = mapRect.gameObject.AddComponent<Image>();
+        mapImage.sprite = Sprite.Create(defaultTexture, new Rect(0, 0, 1, 1), Vector2.one * 0.5f);
+        RectTransform viewportRect = CreateRect("Viewport", panelRect, new Vector2(250f, 154f), Vector2.zero);
+        zoomInButton = CreateRect("ZoomIn", panelRect, new Vector2(32f, 32f), Vector2.zero).gameObject.AddComponent<Button>();
+        zoomOutButton = CreateRect("ZoomOut", panelRect, new Vector2(32f, 32f), Vector2.zero).gameObject.AddComponent<Button>();
+        view = panel.AddComponent<MatchHudMinimapView>();
+        view.Configure(mapImage, mapRect, viewportRect, zoomInButton, zoomOutButton, mapRect);
+        return panel;
     }
 
     private static RectTransform CreateRect(string name, RectTransform parent, Vector2 size, Vector2 anchoredPosition)

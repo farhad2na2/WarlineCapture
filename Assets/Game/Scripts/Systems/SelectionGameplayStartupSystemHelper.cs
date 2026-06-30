@@ -113,6 +113,11 @@ internal sealed class SelectionGameplayStartupSystemHelper
         bool hasCommandResultFlushContext = false;
         IMatchHudSelectionPanelView matchHudSelectionPanelView = null;
         int lastTacticalFollowCameraFeedbackSequence = 0;
+        bool hasLastTacticalFollowPose = false;
+        TacticalFollowCameraPoseSource lastTacticalFollowPoseSource = TacticalFollowCameraPoseSource.None;
+        Vector3 lastTacticalFollowDesiredPosition = Vector3.zero;
+        Vector3 lastTacticalFollowLookAt = Vector3.zero;
+        bool lastTacticalFollowOrthographic = false;
         Unity.Entities.World selectionRuntimeQueryWorld = null;
         EntityQuery selectedMoveQuery = default;
         EntityQuery selectedTagQuery = default;
@@ -442,23 +447,62 @@ internal sealed class SelectionGameplayStartupSystemHelper
                 !TryGetDefaultEntityManager(out EntityManager em) ||
                 !tacticalFollowCameraModeSystem.TryReadPose(em, out TacticalFollowCameraPoseComponent pose))
             {
+                hasLastTacticalFollowPose = false;
                 return;
             }
 
+            Vector3 desiredPosition = ToVector3(pose.DesiredPosition);
+            Vector3 lookAt = ToVector3(pose.LookAt);
+            bool orthographic = pose.Orthographic != 0;
+            if (ShouldSuppressTacticalFollowVerticalJitter(
+                    hasLastTacticalFollowPose,
+                    lastTacticalFollowPoseSource,
+                    lastTacticalFollowOrthographic,
+                    lastTacticalFollowDesiredPosition,
+                    lastTacticalFollowLookAt,
+                    pose.Source,
+                    orthographic,
+                    desiredPosition,
+                    lookAt))
+            {
+                desiredPosition.y = lastTacticalFollowDesiredPosition.y;
+                lookAt.y = lastTacticalFollowLookAt.y;
+            }
+
+            bool resetVelocity =
+                !hasLastTacticalFollowPose ||
+                lastTacticalFollowPoseSource != pose.Source ||
+                lastTacticalFollowOrthographic != orthographic ||
+                Vector3.Distance(lastTacticalFollowDesiredPosition, desiredPosition) > 1.25f ||
+                Vector3.Distance(lastTacticalFollowLookAt, lookAt) > 1.25f;
+
+            rtsCameraRequestSystem.RemoveRequestsSuppressedByTacticalFollow(em);
+            rtsCameraRequestSystem.QueueClearSmoothFocusTarget(em);
             rtsCameraRequestSystem.QueueUpdateTacticalFollowPose(
                 em,
-                ToVector3(pose.DesiredPosition),
-                ToVector3(pose.LookAt),
+                desiredPosition,
+                lookAt,
                 pose.FieldOfView,
                 pose.PositionDampingSeconds,
-                pose.Orthographic != 0,
-                pose.OrthographicSize);
+                orthographic,
+                pose.OrthographicSize,
+                resetVelocity,
+                pose.Source == TacticalFollowCameraPoseSource.RestoreDefault
+                    ? ToQuaternion(pose.DesiredRotation)
+                    : null);
             rtsSelectionRuntimeCameraSystem.ProcessCameraRequests(GetRuntimeCameraContext(), em);
+
+            hasLastTacticalFollowPose = true;
+            lastTacticalFollowPoseSource = pose.Source;
+            lastTacticalFollowDesiredPosition = desiredPosition;
+            lastTacticalFollowLookAt = lookAt;
+            lastTacticalFollowOrthographic = orthographic;
 
             if (pose.Source == TacticalFollowCameraPoseSource.RestoreDefault &&
                 IsTacticalFollowRestorePoseReached(runtimeConfig.WorldCamera, pose))
             {
                 tacticalFollowCameraModeSystem.ClearPose(em);
+                hasLastTacticalFollowPose = false;
             }
         }
 
@@ -468,13 +512,21 @@ internal sealed class SelectionGameplayStartupSystemHelper
                 return false;
 
             Vector3 desiredPosition = ToVector3(pose.DesiredPosition);
-            Vector3 lookAt = ToVector3(pose.LookAt);
-            Vector3 desiredForward = lookAt - desiredPosition;
-            if (desiredForward.sqrMagnitude <= 0.0001f)
-                desiredForward = ToVector3(math.forward(pose.DesiredRotation));
-
             float positionDistance = Vector3.Distance(worldCamera.transform.position, desiredPosition);
-            float rotationAngle = Vector3.Angle(worldCamera.transform.forward, desiredForward.normalized);
+            float rotationAngle;
+            if (pose.Source == TacticalFollowCameraPoseSource.RestoreDefault)
+            {
+                rotationAngle = Quaternion.Angle(worldCamera.transform.rotation, ToQuaternion(pose.DesiredRotation));
+            }
+            else
+            {
+                Vector3 lookAt = ToVector3(pose.LookAt);
+                Vector3 desiredForward = lookAt - desiredPosition;
+                if (desiredForward.sqrMagnitude <= 0.0001f)
+                    desiredForward = ToVector3(math.forward(pose.DesiredRotation));
+                rotationAngle = Vector3.Angle(worldCamera.transform.forward, desiredForward.normalized);
+            }
+
             float zoomDelta = pose.Orthographic != 0
                 ? Mathf.Abs(worldCamera.orthographicSize - pose.OrthographicSize)
                 : Mathf.Abs(worldCamera.fieldOfView - pose.FieldOfView);
@@ -482,6 +534,40 @@ internal sealed class SelectionGameplayStartupSystemHelper
                    rotationAngle <= 0.5f &&
                    zoomDelta <= 0.1f &&
                    worldCamera.orthographic == (pose.Orthographic != 0);
+        }
+
+        static bool ShouldSuppressTacticalFollowVerticalJitter(
+            bool hasLastPose,
+            TacticalFollowCameraPoseSource lastSource,
+            bool lastOrthographic,
+            Vector3 lastDesiredPosition,
+            Vector3 lastLookAt,
+            TacticalFollowCameraPoseSource source,
+            bool orthographic,
+            Vector3 desiredPosition,
+            Vector3 lookAt)
+        {
+            const float horizontalEpsilon = 0.35f;
+            const float verticalEpsilon = 0.35f;
+            if (!hasLastPose ||
+                source != TacticalFollowCameraPoseSource.BaseTarget ||
+                lastSource != source ||
+                lastOrthographic != orthographic)
+            {
+                return false;
+            }
+
+            return HorizontalDistanceSq(lastDesiredPosition, desiredPosition) <= horizontalEpsilon * horizontalEpsilon &&
+                   HorizontalDistanceSq(lastLookAt, lookAt) <= horizontalEpsilon * horizontalEpsilon &&
+                   Mathf.Abs(lastDesiredPosition.y - desiredPosition.y) <= verticalEpsilon &&
+                   Mathf.Abs(lastLookAt.y - lookAt.y) <= verticalEpsilon;
+        }
+
+        static float HorizontalDistanceSq(Vector3 a, Vector3 b)
+        {
+            float dx = a.x - b.x;
+            float dz = a.z - b.z;
+            return dx * dx + dz * dz;
         }
 
         RtsSelectionRuntimeInputCompositionSystemHelper.Context GetRuntimeInputContext()
@@ -1092,5 +1178,10 @@ internal sealed class SelectionGameplayStartupSystemHelper
     private static Vector3 ToVector3(float3 value)
     {
         return new Vector3(value.x, value.y, value.z);
+    }
+
+    private static Quaternion ToQuaternion(quaternion value)
+    {
+        return new Quaternion(value.value.x, value.value.y, value.value.z, value.value.w);
     }
 }

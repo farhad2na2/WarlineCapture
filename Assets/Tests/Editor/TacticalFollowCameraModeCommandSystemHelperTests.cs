@@ -30,6 +30,8 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             passed++;
             RunCase(test => test.FocusedOwnedUnitIsPreferredAsBaseTarget());
             passed++;
+            RunCase(test => test.FocusedOwnedUnitUsesLocalTransformBeforePortraitPose());
+            passed++;
             RunCase(test => test.SelectedUnitPublishesTargetCenterAndForward());
             passed++;
             RunCase(test => test.SelectedGroupPublishesCentroidAndRadius());
@@ -237,6 +239,30 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.AreEqual(1, mode.Enabled);
         Assert.AreEqual(TacticalFollowCameraTargetKind.Unit, mode.BaseTargetKind);
         Assert.AreEqual(focused, mode.BaseTargetEntity);
+    }
+
+    [Test]
+    public void FocusedOwnedUnitUsesLocalTransformBeforePortraitPose()
+    {
+        Entity focused = CreateSelectedUnit(new float3(8f, 0f, 2f), quaternion.RotateY(math.radians(90f)));
+        Entity readModelEntity = _em.CreateEntity(typeof(FocusedUnitUiReadModelComponent));
+        _em.SetComponentData(readModelEntity, new FocusedUnitUiReadModelComponent
+        {
+            FocusedUnit = focused,
+            HasFocusedUnit = 1,
+            OwnedByPlayer = 1,
+            HasPortraitPose = 1,
+            PortraitWorldPosition = new float3(80f, 10f, 80f),
+            PortraitForward = new float3(0f, 0f, 1f)
+        });
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+
+        Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent target));
+        Assert.AreEqual(focused, target.TargetEntity);
+        Assert.AreEqual(new float3(8f, 0f, 2f), target.Center);
+        Assert.That(math.distance(new float3(1f, 0f, 0f), target.ForwardHint), Is.LessThan(0.001f));
     }
 
     [Test]

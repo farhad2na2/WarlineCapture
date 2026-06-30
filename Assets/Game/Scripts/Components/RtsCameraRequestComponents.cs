@@ -53,6 +53,7 @@ public struct RtsCameraRequestElement : IBufferElementData
     public int RequestId;
     public float2 ScreenDelta;
     public float3 WorldPosition;
+    public float4 Rotation;
     public float Value;
     public float Value2;
     public float Value3;
@@ -60,4 +61,6 @@ public struct RtsCameraRequestElement : IBufferElementData
     public float Value5;
     public float Value6;
     public byte Flag;
+    public byte Flag2;
+    public byte Flag3;
 }

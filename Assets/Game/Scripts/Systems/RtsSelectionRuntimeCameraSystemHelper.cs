@@ -130,8 +130,13 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
             return false;
         }
 
-        if (IsTacticalFollowPanLocked(context))
+        bool tacticalFollowOwnsCamera = TacticalFollowOwnsCamera(context);
+        if (tacticalFollowOwnsCamera)
+        {
             SetCameraDragging(context, false);
+            ClearTacticalFollowConflictingCameraState(context);
+            return !runtime.BuildModeActive && !runtime.FullscreenMapIsoMode && !runtime.FullscreenMapOpen;
+        }
 
         if (runtime.FullscreenMapIsoMode)
         {
@@ -190,7 +195,7 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
         if (!context.TryGetDefaultEntityManager(out EntityManager em))
             return;
 
-        if (IsTacticalFollowPanLocked(em))
+        if (IsTacticalFollowPanLocked(em) || HasValidTacticalFollowPose(em))
             return;
 
         context.CameraRequestSystem.QueuePan(em, screenDelta, context.PanSensitivity);
@@ -199,7 +204,7 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
 
     public void SetCameraDragging(Context context, bool isDragging)
     {
-        if (isDragging && IsTacticalFollowPanLocked(context))
+        if (isDragging && TacticalFollowOwnsCamera(context))
             isDragging = false;
 
         if (context.CameraSystem.IsDragging == isDragging)
@@ -375,6 +380,14 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
                IsTacticalFollowPanLocked(em);
     }
 
+    private static bool TacticalFollowOwnsCamera(Context context)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em))
+            return false;
+
+        return IsTacticalFollowPanLocked(em) || HasValidTacticalFollowPose(em);
+    }
+
     private static bool IsTacticalFollowPanLocked(EntityManager em)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraModeComponent>());
@@ -384,6 +397,41 @@ public sealed class RtsSelectionRuntimeCameraSystemHelper
         TacticalFollowCameraModeComponent mode =
             em.GetComponentData<TacticalFollowCameraModeComponent>(query.GetSingletonEntity());
         return mode.Enabled != 0 && mode.PanInputLocked != 0;
+    }
+
+    private static bool HasValidTacticalFollowPose(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraPoseComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        TacticalFollowCameraPoseComponent pose =
+            em.GetComponentData<TacticalFollowCameraPoseComponent>(query.GetSingletonEntity());
+        return pose.Valid != 0;
+    }
+
+    private void ClearTacticalFollowConflictingCameraState(Context context)
+    {
+        if (!context.TryGetDefaultEntityManager(out EntityManager em))
+            return;
+
+        int removedRequests = context.CameraRequestSystem.RemoveRequestsSuppressedByTacticalFollow(em);
+        if (!context.CameraSystem.HasSmoothFocusTarget &&
+            !context.CameraSystem.IsDragging &&
+            !context.CameraSystem.IsZoomTransitionActive &&
+            removedRequests == 0)
+        {
+            return;
+        }
+
+        if (context.CameraSystem.HasSmoothFocusTarget)
+            context.CameraRequestSystem.QueueClearSmoothFocusTarget(em);
+        if (context.CameraSystem.IsDragging)
+            context.CameraRequestSystem.QueueClearDragging(em);
+        if (context.CameraSystem.IsZoomTransitionActive)
+            context.CameraRequestSystem.QueueSetZoomTransitionActive(em, false);
+
+        ProcessCameraRequests(context, em);
     }
 
     private void HandleBuildModeCameraPan(Context context)

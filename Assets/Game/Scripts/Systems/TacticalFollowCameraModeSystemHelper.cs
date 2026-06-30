@@ -410,6 +410,12 @@ public sealed class TacticalFollowCameraModeSystemHelper
             return false;
         }
 
+        if (em.HasComponent<LocalTransform>(model.FocusedUnit))
+        {
+            target = BuildSingleUnitTarget(model.FocusedUnit, em.GetComponentData<LocalTransform>(model.FocusedUnit));
+            return true;
+        }
+
         if (model.HasPortraitPose != 0)
         {
             target = BuildTarget(
@@ -429,12 +435,6 @@ public sealed class TacticalFollowCameraModeSystemHelper
                 model.WorldPosition,
                 new Unity.Mathematics.float3(0f, 0f, 1f),
                 SingleUnitRadius);
-            return true;
-        }
-
-        if (em.HasComponent<LocalTransform>(model.FocusedUnit))
-        {
-            target = BuildSingleUnitTarget(model.FocusedUnit, em.GetComponentData<LocalTransform>(model.FocusedUnit));
             return true;
         }
 

@@ -194,20 +194,46 @@ public sealed partial class RtsCameraRequestSystem : SystemBase
         float fieldOfView,
         float smoothTime,
         bool orthographic = false,
-        float orthographicSize = 0f)
+        float orthographicSize = 0f,
+        bool resetVelocity = false,
+        Quaternion? targetRotation = null)
     {
+        bool hasTargetRotation = targetRotation.HasValue;
         return TryEnqueue(entityManager, new RtsCameraRequestElement
         {
             Kind = RtsCameraRequestKind.UpdateTacticalFollowPose,
             WorldPosition = ToFloat3(desiredPosition),
+            Rotation = hasTargetRotation ? ToFloat4(targetRotation.Value) : default,
             Value = lookAt.x,
             Value2 = lookAt.y,
             Value3 = lookAt.z,
             Value4 = fieldOfView,
             Value5 = smoothTime,
             Value6 = orthographicSize,
-            Flag = orthographic ? (byte)1 : (byte)0
+            Flag = orthographic ? (byte)1 : (byte)0,
+            Flag2 = resetVelocity ? (byte)1 : (byte)0,
+            Flag3 = hasTargetRotation ? (byte)1 : (byte)0
         });
+    }
+
+    public int RemoveRequestsSuppressedByTacticalFollow(EntityManager entityManager)
+    {
+        Entity entity = EnsureCameraEntity(entityManager);
+        if (entity == Entity.Null || !entityManager.Exists(entity) || !entityManager.HasBuffer<RtsCameraRequestElement>(entity))
+            return 0;
+
+        DynamicBuffer<RtsCameraRequestElement> requests = entityManager.GetBuffer<RtsCameraRequestElement>(entity);
+        int removed = 0;
+        for (int i = requests.Length - 1; i >= 0; i--)
+        {
+            if (!IsSuppressedByTacticalFollow(requests[i].Kind))
+                continue;
+
+            requests.RemoveAt(i);
+            removed++;
+        }
+
+        return removed;
     }
 
     public void ProcessPendingRequests(EntityManager entityManager, RtsCameraSystem cameraSystem, Camera worldCamera, Action orderMarkersHideRequested = null)
@@ -215,24 +241,63 @@ public sealed partial class RtsCameraRequestSystem : SystemBase
         if (cameraSystem == null)
             return;
 
-        SyncGroundBoundary(entityManager, cameraSystem, worldCamera);
+        bool tacticalFollowPoseValid = HasValidTacticalFollowPose(entityManager);
+        SyncGroundBoundary(entityManager, cameraSystem, worldCamera, skipClamp: tacticalFollowPoseValid);
 
         Entity entity = EnsureCameraEntity(entityManager);
         DynamicBuffer<RtsCameraRequestElement> requests = entityManager.GetBuffer<RtsCameraRequestElement>(entity);
+        bool processedTacticalFollowPose = false;
         for (int i = 0; i < requests.Length; i++)
+        {
+            if (requests[i].Kind == RtsCameraRequestKind.UpdateTacticalFollowPose)
+                processedTacticalFollowPose = true;
+            else if (tacticalFollowPoseValid && IsSuppressedByTacticalFollow(requests[i].Kind))
+                continue;
+
             ProcessRequest(requests[i], cameraSystem, worldCamera, orderMarkersHideRequested);
+        }
 
         requests.Clear();
-        cameraSystem.ClampCameraToGroundBoundary(worldCamera);
+        if (!processedTacticalFollowPose && !tacticalFollowPoseValid)
+            cameraSystem.ClampCameraToGroundBoundary(worldCamera);
         MirrorState(entityManager, entity, cameraSystem);
     }
 
-    private static void SyncGroundBoundary(EntityManager entityManager, RtsCameraSystem cameraSystem, Camera worldCamera)
+    private static bool IsSuppressedByTacticalFollow(RtsCameraRequestKind kind)
+    {
+        return kind == RtsCameraRequestKind.BeginZoomTransition ||
+               kind == RtsCameraRequestKind.CompleteZoomTransition ||
+               kind == RtsCameraRequestKind.ResetTransitionVelocities ||
+               kind == RtsCameraRequestKind.Pan ||
+               kind == RtsCameraRequestKind.PerspectiveZoom ||
+               kind == RtsCameraRequestKind.FullscreenIsoZoom ||
+               kind == RtsCameraRequestKind.UpdatePerspectiveMode ||
+               kind == RtsCameraRequestKind.UpdateFullscreenIsoMode ||
+               kind == RtsCameraRequestKind.ApplyPerspectiveModeInstant ||
+               kind == RtsCameraRequestKind.ApplyFullscreenIsoModeInstant ||
+               kind == RtsCameraRequestKind.MoveGroundCenterTo ||
+               kind == RtsCameraRequestKind.SetSmoothFocusTarget ||
+               kind == RtsCameraRequestKind.UpdateSmoothFocus;
+    }
+
+    private static bool HasValidTacticalFollowPose(EntityManager entityManager)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraPoseComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        TacticalFollowCameraPoseComponent pose =
+            entityManager.GetComponentData<TacticalFollowCameraPoseComponent>(query.GetSingletonEntity());
+        return pose.Valid != 0;
+    }
+
+    private static void SyncGroundBoundary(EntityManager entityManager, RtsCameraSystem cameraSystem, Camera worldCamera, bool skipClamp)
     {
         if (TryGetGridConfig(entityManager, out GridConfig grid))
         {
             cameraSystem.SetGroundBoundary(ToGroundBoundary(grid));
-            cameraSystem.ClampCameraToGroundBoundary(worldCamera);
+            if (!skipClamp)
+                cameraSystem.ClampCameraToGroundBoundary(worldCamera);
         }
         else
         {
@@ -351,7 +416,9 @@ public sealed partial class RtsCameraRequestSystem : SystemBase
                     request.Value4,
                     request.Value5,
                     request.Flag != 0,
-                    request.Value6);
+                    request.Value6,
+                    request.Flag2 != 0,
+                    request.Flag3 != 0 ? ToQuaternion(request.Rotation) : null);
                 break;
         }
     }
@@ -442,8 +509,18 @@ public sealed partial class RtsCameraRequestSystem : SystemBase
         return new float3(value.x, value.y, value.z);
     }
 
+    private static float4 ToFloat4(Quaternion value)
+    {
+        return new float4(value.x, value.y, value.z, value.w);
+    }
+
     private static Vector3 ToVector3(float3 value)
     {
         return new Vector3(value.x, value.y, value.z);
+    }
+
+    private static Quaternion ToQuaternion(float4 value)
+    {
+        return new Quaternion(value.x, value.y, value.z, value.w);
     }
 }

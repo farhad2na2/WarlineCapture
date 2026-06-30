@@ -497,10 +497,19 @@ public sealed partial class RtsCameraSystem : SystemBase
         float targetFieldOfView,
         float smoothTime,
         bool targetOrthographic = false,
-        float targetOrthographicSize = 0f)
+        float targetOrthographicSize = 0f,
+        bool resetVelocity = false,
+        Quaternion? targetRotation = null)
     {
         if (worldCamera == null)
             return true;
+
+        if (resetVelocity)
+        {
+            _tacticalFollowPositionVelocity = Vector3.zero;
+            _fieldOfViewTransitionVelocity = 0f;
+            _orthographicSizeTransitionVelocity = 0f;
+        }
 
         if (worldCamera.orthographic != targetOrthographic)
             worldCamera.orthographic = targetOrthographic;
@@ -510,12 +519,11 @@ public sealed partial class RtsCameraSystem : SystemBase
         if (resolvedSmoothTime <= 0.0001f)
         {
             worldCamera.transform.position = desiredPosition;
-            ApplyTacticalFollowRotation(worldCamera, desiredPosition, lookAt, 1f);
+            ApplyTacticalFollowRotation(worldCamera, desiredPosition, lookAt, 1f, targetRotation);
             if (targetOrthographic)
                 worldCamera.orthographicSize = Mathf.Max(0.1f, targetOrthographicSize);
             else
                 worldCamera.fieldOfView = Mathf.Max(1f, targetFieldOfView);
-            ClampCameraToGroundBoundary(worldCamera);
             return true;
         }
 
@@ -531,7 +539,8 @@ public sealed partial class RtsCameraSystem : SystemBase
             worldCamera,
             worldCamera.transform.position,
             lookAt,
-            1f - Mathf.Exp(-resolvedDeltaTime / resolvedSmoothTime));
+            1f - Mathf.Exp(-resolvedDeltaTime / resolvedSmoothTime),
+            targetRotation);
 
         if (targetOrthographic)
         {
@@ -557,7 +566,6 @@ public sealed partial class RtsCameraSystem : SystemBase
         bool zoomReached = targetOrthographic
             ? Mathf.Abs(worldCamera.orthographicSize - targetOrthographicSize) <= 0.05f
             : Mathf.Abs(worldCamera.fieldOfView - targetFieldOfView) <= 0.05f;
-        ClampCameraToGroundBoundary(worldCamera);
         return Vector3.Distance(worldCamera.transform.position, desiredPosition) <= 0.05f &&
                zoomReached;
     }
@@ -641,13 +649,27 @@ public sealed partial class RtsCameraSystem : SystemBase
         return position;
     }
 
-    private static void ApplyTacticalFollowRotation(Camera worldCamera, Vector3 position, Vector3 lookAt, float t)
+    private static void ApplyTacticalFollowRotation(
+        Camera worldCamera,
+        Vector3 position,
+        Vector3 lookAt,
+        float t,
+        Quaternion? targetRotation = null)
     {
-        Vector3 lookDirection = lookAt - position;
-        if (lookDirection.sqrMagnitude <= 0.0001f)
-            return;
+        Quaternion desiredRotation;
+        if (targetRotation.HasValue)
+        {
+            desiredRotation = targetRotation.Value;
+        }
+        else
+        {
+            Vector3 lookDirection = lookAt - position;
+            if (lookDirection.sqrMagnitude <= 0.0001f)
+                return;
 
-        Quaternion desiredRotation = Quaternion.LookRotation(lookDirection.normalized, Vector3.up);
+            desiredRotation = Quaternion.LookRotation(lookDirection.normalized, Vector3.up);
+        }
+
         worldCamera.transform.rotation = Quaternion.Slerp(
             worldCamera.transform.rotation,
             desiredRotation,

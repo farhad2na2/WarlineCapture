@@ -26,15 +26,22 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked());
             RunCase(nameof(RuntimePanCamera_IgnoresBuildModeDragPanWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresBuildModeDragPanWhenTacticalFollowLocked());
             RunCase(nameof(RuntimePanCamera_IgnoresFullscreenIsoDragPanWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresFullscreenIsoDragPanWhenTacticalFollowLocked());
+            RunCase(nameof(RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowPoseValid), test => test.RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowPoseValid());
+            RunCase(nameof(RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowRestorePoseValid), test => test.RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowRestorePoseValid());
+            RunCase(nameof(RuntimeCameraTick_RemovesQueuedNormalCameraMotionWhileTacticalFollowPoseValid), test => test.RuntimeCameraTick_RemovesQueuedNormalCameraMotionWhileTacticalFollowPoseValid());
             RunCase(nameof(ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera), test => test.ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera());
             RunCase(nameof(MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter), test => test.MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter());
             RunCase(nameof(UpdateFullscreenIsoZoom_ClampsTargets), test => test.UpdateFullscreenIsoZoom_ClampsTargets());
             RunCase(nameof(TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue());
             RunCase(nameof(TacticalFollowPoseRequest_SmoothlyApproachesTargetWithoutSnapping), test => test.TacticalFollowPoseRequest_SmoothlyApproachesTargetWithoutSnapping());
+            RunCase(nameof(TacticalFollowPoseRequest_ResetVelocityPreventsCarryOverOvershoot), test => test.TacticalFollowPoseRequest_ResetVelocityPreventsCarryOverOvershoot());
+            RunCase(nameof(TacticalFollowPoseRequest_DoesNotClampToRtsGroundBoundary), test => test.TacticalFollowPoseRequest_DoesNotClampToRtsGroundBoundary());
+            RunCase(nameof(TacticalFollowPoseRequest_SuppressesNormalRequestsAndBoundaryClampWhilePoseValid), test => test.TacticalFollowPoseRequest_SuppressesNormalRequestsAndBoundaryClampWhilePoseValid());
+            RunCase(nameof(TacticalFollowPoseRequest_UsesExplicitRestoreRotationInsteadOfLookAt), test => test.TacticalFollowPoseRequest_UsesExplicitRestoreRotationInsteadOfLookAt());
             RunCase(nameof(TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue());
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
-            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=19");
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=26");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -375,6 +382,146 @@ public sealed class RtsCameraSystemTests
     }
 
     [Test]
+    public void RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowPoseValid()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowOwnsCamera");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true };
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
+            Camera camera = CreateCamera(new Vector3(0f, 60f, -25f), Quaternion.Euler(58f, 10f, 0f));
+            camera.fieldOfView = 58f;
+            cameraSystem.SetSmoothFocusTarget(new Vector3(90f, 0f, 90f), resetVelocity: true);
+            cameraSystem.BeginZoomTransition(false);
+            CreateTacticalFollowPose(world.EntityManager, TacticalFollowCameraPoseSource.BaseTarget);
+            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
+
+            Vector3 originalPosition = camera.transform.position;
+            Quaternion originalRotation = camera.transform.rotation;
+            float originalFieldOfView = camera.fieldOfView;
+
+            Assert.IsTrue(runtimeCameraSystem.UpdateRuntimeCameraTick(context));
+
+            Assert.That(Vector3.Distance(originalPosition, camera.transform.position), Is.LessThan(0.0001f));
+            Assert.That(Quaternion.Angle(originalRotation, camera.transform.rotation), Is.LessThan(0.0001f));
+            Assert.That(Mathf.Abs(originalFieldOfView - camera.fieldOfView), Is.LessThan(0.0001f));
+            Assert.IsFalse(cameraSystem.HasSmoothFocusTarget);
+            Assert.IsFalse(cameraSystem.IsZoomTransitionActive);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+
+        bool TryGetDefaultEntityManager(out EntityManager entityManager)
+        {
+            entityManager = world.EntityManager;
+            return world.IsCreated;
+        }
+    }
+
+    [Test]
+    public void RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowRestorePoseValid()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowRestoreOwnsCamera");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true };
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
+            Camera camera = CreateCamera(new Vector3(30f, 50f, -35f), Quaternion.Euler(55f, 8f, 0f));
+            camera.fieldOfView = 54f;
+            cameraSystem.SetSmoothFocusTarget(new Vector3(-90f, 0f, 90f), resetVelocity: true);
+            cameraSystem.BeginZoomTransition(false);
+            CreateTacticalFollowPose(world.EntityManager, TacticalFollowCameraPoseSource.RestoreDefault);
+            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
+
+            Vector3 originalPosition = camera.transform.position;
+            Quaternion originalRotation = camera.transform.rotation;
+            float originalFieldOfView = camera.fieldOfView;
+
+            Assert.IsTrue(runtimeCameraSystem.UpdateRuntimeCameraTick(context));
+
+            Assert.That(Vector3.Distance(originalPosition, camera.transform.position), Is.LessThan(0.0001f));
+            Assert.That(Quaternion.Angle(originalRotation, camera.transform.rotation), Is.LessThan(0.0001f));
+            Assert.That(Mathf.Abs(originalFieldOfView - camera.fieldOfView), Is.LessThan(0.0001f));
+            Assert.IsFalse(cameraSystem.HasSmoothFocusTarget);
+            Assert.IsFalse(cameraSystem.IsZoomTransitionActive);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+
+        bool TryGetDefaultEntityManager(out EntityManager entityManager)
+        {
+            entityManager = world.EntityManager;
+            return world.IsCreated;
+        }
+    }
+
+    [Test]
+    public void RuntimeCameraTick_RemovesQueuedNormalCameraMotionWhileTacticalFollowPoseValid()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowSuppressesQueuedCameraMotion");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true };
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
+            Camera camera = CreateCamera(new Vector3(0f, 60f, -25f), Quaternion.Euler(58f, 10f, 0f));
+            EntityManager em = world.EntityManager;
+            cameraRequestSystem.QueueMoveGroundCenterTo(em, new Vector3(250f, 0f, 250f));
+            cameraRequestSystem.QueueSetSmoothFocusTarget(em, new Vector3(-140f, 0f, 90f), resetVelocity: true);
+            cameraRequestSystem.QueueUpdatePerspectiveMode(em, 100f, 70f, 20f, 50f, 0.1f, completeTransitionOnArrive: false);
+            cameraRequestSystem.QueuePan(em, new Vector2(80f, -20f), 1f);
+            CreateTacticalFollowPose(em, TacticalFollowCameraPoseSource.BaseTarget);
+            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
+
+            Vector3 originalPosition = camera.transform.position;
+            Quaternion originalRotation = camera.transform.rotation;
+            float originalFieldOfView = camera.fieldOfView;
+
+            Assert.IsTrue(runtimeCameraSystem.UpdateRuntimeCameraTick(context));
+
+            Assert.That(Vector3.Distance(originalPosition, camera.transform.position), Is.LessThan(0.0001f));
+            Assert.That(Quaternion.Angle(originalRotation, camera.transform.rotation), Is.LessThan(0.0001f));
+            Assert.That(Mathf.Abs(originalFieldOfView - camera.fieldOfView), Is.LessThan(0.0001f));
+            Assert.AreEqual(0, em.GetBuffer<RtsCameraRequestElement>(cameraRequestSystem.EnsureCameraEntity(em)).Length);
+            Assert.IsFalse(cameraSystem.HasSmoothFocusTarget);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+
+        bool TryGetDefaultEntityManager(out EntityManager entityManager)
+        {
+            entityManager = world.EntityManager;
+            return world.IsCreated;
+        }
+    }
+
+    [Test]
     public void ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera()
     {
         RtsCameraSystem cameraSystem = CreateCameraSystem();
@@ -529,6 +676,195 @@ public sealed class RtsCameraSystemTests
                     0.12f);
                 cameraRequestSystem.ProcessPendingRequests(world.EntityManager, cameraSystem, camera);
             }
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void TacticalFollowPoseRequest_ResetVelocityPreventsCarryOverOvershoot()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowResetVelocity");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            Camera camera = CreateCamera(new Vector3(0f, 5f, 0f), Quaternion.identity);
+            Vector3 farPose = new(100f, 5f, 0f);
+            Vector3 restorePose = new(0f, 5f, 0f);
+
+            for (int i = 0; i < 12; i++)
+            {
+                cameraRequestSystem.QueueUpdateTacticalFollowPose(
+                    world.EntityManager,
+                    farPose,
+                    new Vector3(100f, 1f, 8f),
+                    38f,
+                    0.35f);
+                cameraRequestSystem.ProcessPendingRequests(world.EntityManager, cameraSystem, camera);
+            }
+
+            float beforeSwitchX = camera.transform.position.x;
+            Assert.Greater(beforeSwitchX, 0f);
+
+            cameraRequestSystem.QueueUpdateTacticalFollowPose(
+                world.EntityManager,
+                restorePose,
+                new Vector3(0f, 1f, 8f),
+                60f,
+                0.35f,
+                false,
+                0f,
+                true);
+            cameraRequestSystem.ProcessPendingRequests(world.EntityManager, cameraSystem, camera);
+
+            Assert.Less(
+                camera.transform.position.x,
+                beforeSwitchX,
+                "Resetting tactical-follow velocity should move toward the new restore target immediately instead of carrying old velocity farther away.");
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void TacticalFollowPoseRequest_DoesNotClampToRtsGroundBoundary()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowNoGroundClamp");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            EntityManager em = world.EntityManager;
+            Entity grid = em.CreateEntity(typeof(GridConfig));
+            em.SetComponentData(grid, new GridConfig
+            {
+                Width = 4,
+                Height = 4,
+                CellSize = 1f,
+                Origin = new float3(0f, 0f, 0f)
+            });
+
+            Camera camera = CreateCamera(new Vector3(0f, 10f, 0f), Quaternion.Euler(58f, 10f, 0f));
+            Vector3 desiredPosition = new(-80f, 18f, -80f);
+            Vector3 lookAt = new(-70f, 2f, -70f);
+
+            cameraRequestSystem.QueueUpdateTacticalFollowPose(
+                em,
+                desiredPosition,
+                lookAt,
+                38f,
+                0f,
+                false,
+                0f,
+                true);
+            cameraRequestSystem.ProcessPendingRequests(em, cameraSystem, camera);
+
+            Assert.That(Vector3.Distance(camera.transform.position, desiredPosition), Is.LessThan(0.0001f));
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void TacticalFollowPoseRequest_SuppressesNormalRequestsAndBoundaryClampWhilePoseValid()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowRequestSuppression");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            EntityManager em = world.EntityManager;
+            Entity grid = em.CreateEntity(typeof(GridConfig));
+            em.SetComponentData(grid, new GridConfig
+            {
+                Width = 4,
+                Height = 4,
+                CellSize = 1f,
+                Origin = new float3(0f, 0f, 0f)
+            });
+            CreateTacticalFollowPose(em, TacticalFollowCameraPoseSource.RestoreDefault);
+
+            Camera camera = CreateCamera(new Vector3(-60f, 18f, -60f), Quaternion.Euler(30f, 20f, 0f));
+            camera.fieldOfView = 42f;
+            Vector3 originalPosition = camera.transform.position;
+            Quaternion originalRotation = camera.transform.rotation;
+            float originalFieldOfView = camera.fieldOfView;
+            cameraSystem.SetDragging(true);
+            cameraRequestSystem.QueueClearDragging(em);
+            cameraRequestSystem.QueueMoveGroundCenterTo(em, new Vector3(2f, 0f, 2f));
+            cameraRequestSystem.QueueSetSmoothFocusTarget(em, new Vector3(1f, 0f, 1f), resetVelocity: true);
+            cameraRequestSystem.QueueUpdatePerspectiveMode(em, 100f, 70f, 20f, 50f, 0.1f, completeTransitionOnArrive: false);
+            cameraRequestSystem.QueuePan(em, new Vector2(80f, -20f), 1f);
+
+            cameraRequestSystem.ProcessPendingRequests(em, cameraSystem, camera);
+
+            Assert.That(Vector3.Distance(camera.transform.position, originalPosition), Is.LessThan(0.0001f));
+            Assert.That(Quaternion.Angle(camera.transform.rotation, originalRotation), Is.LessThan(0.0001f));
+            Assert.That(Mathf.Abs(camera.fieldOfView - originalFieldOfView), Is.LessThan(0.0001f));
+            Assert.IsFalse(cameraSystem.IsDragging);
+            Assert.IsFalse(cameraSystem.HasSmoothFocusTarget);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void TacticalFollowPoseRequest_UsesExplicitRestoreRotationInsteadOfLookAt()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowRestoreRotation");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            EntityManager em = world.EntityManager;
+            Camera camera = CreateCamera(new Vector3(30f, 8f, -30f), Quaternion.Euler(25f, -80f, 0f));
+            Vector3 restorePosition = new(10f, 70f, -15f);
+            Quaternion restoreRotation = Quaternion.Euler(62f, 12f, 0f);
+            Vector3 misleadingLookAt = restorePosition + Vector3.right * 100f;
+
+            cameraRequestSystem.QueueUpdateTacticalFollowPose(
+                em,
+                restorePosition,
+                misleadingLookAt,
+                55f,
+                0f,
+                false,
+                0f,
+                true,
+                restoreRotation);
+            cameraRequestSystem.ProcessPendingRequests(em, cameraSystem, camera);
+
+            Assert.That(Vector3.Distance(camera.transform.position, restorePosition), Is.LessThan(0.0001f));
+            Assert.That(Quaternion.Angle(camera.transform.rotation, restoreRotation), Is.LessThan(0.0001f));
         }
         finally
         {
@@ -702,6 +1038,22 @@ public sealed class RtsCameraSystemTests
     {
         _cameraSystemWorld ??= new World("RtsCameraSystemTests.CameraSystem");
         return _cameraSystemWorld.GetOrCreateSystemManaged<RtsCameraSystem>();
+    }
+
+    private static void CreateTacticalFollowPose(EntityManager em, TacticalFollowCameraPoseSource source)
+    {
+        Entity poseEntity = em.CreateEntity(typeof(TacticalFollowCameraPoseComponent));
+        em.SetComponentData(poseEntity, new TacticalFollowCameraPoseComponent
+        {
+            Valid = 1,
+            Source = source,
+            DesiredPosition = new float3(10f, 15f, -10f),
+            DesiredRotation = quaternion.identity,
+            LookAt = new float3(10f, 1f, 0f),
+            FieldOfView = 38f,
+            PositionDampingSeconds = 0.32f,
+            RotationDampingSeconds = 0.22f
+        });
     }
 
     private static RtsSelectionRuntimeCameraSystemHelper.Context CreateRuntimeCameraContext(

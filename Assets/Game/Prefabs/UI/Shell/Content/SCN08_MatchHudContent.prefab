@@ -15603,7 +15603,7 @@ GameObject:
   - component: {fileID: 9144043407428345441}
   - component: {fileID: 6879796393442765888}
   m_Layer: 0
-  m_Name: SquadText
+  m_Name: DescriptionText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20003,7 +20003,7 @@ GameObject:
   - component: {fileID: 2772835119884664702}
   - component: {fileID: 1327526324820689724}
   m_Layer: 0
-  m_Name: Chevrons
+  m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -362,12 +362,14 @@ public sealed class CombatDeathValidationTests
 
     private static void AssertHidden(EntityManager em, Entity root, string message)
     {
+        Assert.IsFalse(em.HasComponent<Disabled>(root), message);
         Assert.IsTrue(em.HasComponent<DisableRendering>(root), message);
         Assert.IsTrue(em.HasComponent<UnitRenderBudgetCulledTag>(root), message);
         DynamicBuffer<Child> children = em.GetBuffer<Child>(root);
         for (int i = 0; i < children.Length; i++)
         {
             Entity child = children[i].Value;
+            Assert.IsFalse(em.HasComponent<Disabled>(child), message);
             Assert.IsTrue(em.HasComponent<DisableRendering>(child), message);
             Assert.IsTrue(em.HasComponent<UnitRenderBudgetCulledTag>(child), message);
         }

@@ -685,8 +685,6 @@ public partial struct UnitRenderVisualExclusivitySystem : ISystem
         }
         else
         {
-            if (!em.HasComponent<Disabled>(entity))
-                em.AddComponent<Disabled>(entity);
             if (!em.HasComponent<DisableRendering>(entity))
                 em.AddComponent<DisableRendering>(entity);
             if (!em.HasComponent<UnitRenderBudgetCulledTag>(entity))

@@ -174,6 +174,9 @@ public sealed partial class VisualQualitySettingsSystem : SystemBase
             case VisualQualityRuntimeMode.Medium:
                 ApplyMediumStaticSettings();
                 break;
+            case VisualQualityRuntimeMode.High:
+                ApplyHighStaticSettings();
+                break;
             case VisualQualityRuntimeMode.Ultra:
                 ApplyUltraStaticSettings();
                 break;
@@ -193,6 +196,7 @@ public sealed partial class VisualQualitySettingsSystem : SystemBase
                 ApplyMobileDynamicSettings(_premiumProfile.LowSunShadowStrength);
                 break;
             case VisualQualityRuntimeMode.Medium:
+            case VisualQualityRuntimeMode.High:
                 ApplyMobileDynamicSettings(_premiumProfile.MediumSunShadowStrength);
                 break;
             case VisualQualityRuntimeMode.Ultra:
@@ -239,6 +243,11 @@ public sealed partial class VisualQualitySettingsSystem : SystemBase
         }
 
         _overrideApplied = true;
+    }
+
+    private void ApplyHighStaticSettings()
+    {
+        ApplyMediumStaticSettings();
     }
 
     private void ApplyUltraStaticSettings()

@@ -13,7 +13,9 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
 {
     private const float ProductionTransportLaneSpacing = 12f;
     private const float RunwaySurfaceClearance = 0.03f;
-    private const int HelicopterDropSearchRadiusCells = 64;
+    private const int HelicopterDropSearchRadiusCells = 24;
+    private const float HelicopterDropBlockedRetryBaseSeconds = 0.5f;
+    private const float HelicopterDropBlockedRetryMaxSeconds = 2f;
     private const int HelicopterDropLandingPaddingCells = 1;
     private const int HelicopterDropBuildingBufferCells = 6;
     private const int HelicopterDropActiveTransportBufferCells = 5;
@@ -200,6 +202,8 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
         transport.PhaseStartedAt = now;
         transport.HoverEnteredAt = -1f;
         transport.NextDropReadyAt = now;
+        transport.NextClearDropSearchAt = now;
+        transport.ClearDropFailureCount = 0;
         transport.Phase = 0;
         transport.Mode = pending.TransportMode;
         transport.ActiveDrop = null;
@@ -565,9 +569,17 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
 
         if (transport.Mode == ProductionTransportMode.Helicopter)
         {
+            if (now < transport.NextClearDropSearchAt)
+            {
+                transport.NextDropReadyAt = transport.NextClearDropSearchAt;
+                return;
+            }
+
             Vector3 preferredDrop = new(transport.HoverPosition.x, finalSpawnPosition.y, transport.HoverPosition.z);
             if (TryResolveClearHelicopterDropPosition(context, building, pending, preferredDrop, transport, out int2 clearDropCell, out Vector3 clearDropPosition))
             {
+                transport.ClearDropFailureCount = 0;
+                transport.NextClearDropSearchAt = now;
                 AlignHelicopterTransportAnchorOverDrop(transport, clearDropPosition);
                 Vector3 anchor = ResolveTransportVisualCenterWorld(transport);
                 dropStartPosition = new Vector3(clearDropPosition.x, anchor.y, clearDropPosition.z);
@@ -576,7 +588,12 @@ internal sealed class BuildingProductionTransportPresentationSystemHelper
             }
             else
             {
-                transport.NextDropReadyAt = now + 0.25f;
+                transport.ClearDropFailureCount = (byte)Mathf.Min(transport.ClearDropFailureCount + 1, 6);
+                float retryDelay = Mathf.Min(
+                    HelicopterDropBlockedRetryMaxSeconds,
+                    HelicopterDropBlockedRetryBaseSeconds * Mathf.Pow(1.35f, transport.ClearDropFailureCount - 1));
+                transport.NextClearDropSearchAt = now + retryDelay;
+                transport.NextDropReadyAt = transport.NextClearDropSearchAt;
                 return;
             }
         }

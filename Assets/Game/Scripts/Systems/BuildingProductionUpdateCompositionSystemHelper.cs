@@ -3,6 +3,9 @@ using UnityEngine;
 
 internal sealed class BuildingProductionUpdateCompositionSystemHelper
 {
+    private const int MaxTransportLaunchesPerTick = 1;
+    private const int MaxImmediateProductionSpawnsPerTick = 2;
+
     public readonly struct Context
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
@@ -30,15 +33,33 @@ internal sealed class BuildingProductionUpdateCompositionSystemHelper
         if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
             return;
 
+        int remainingTransportLaunches = MaxTransportLaunchesPerTick;
+        int remainingImmediateProductionSpawns = MaxImmediateProductionSpawnsPerTick;
         if (context.RuntimeBuildingMap != null)
         {
             foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
-                UpdatePendingProductionForBuilding(context, pair.Value, now, deltaTime, ref randomState);
+                UpdatePendingProductionForBuilding(
+                    context,
+                    pair.Value,
+                    now,
+                    deltaTime,
+                    ref randomState,
+                    ref remainingTransportLaunches,
+                    ref remainingImmediateProductionSpawns);
             return;
         }
 
         foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
-            UpdatePendingProductionForBuilding(context, pair.Value, now, deltaTime, ref randomState);
+        {
+            UpdatePendingProductionForBuilding(
+                context,
+                pair.Value,
+                now,
+                deltaTime,
+                ref randomState,
+                ref remainingTransportLaunches,
+                ref remainingImmediateProductionSpawns);
+        }
     }
 
     public void UpdateActiveProductionTransports(Context context, float now, float deltaTime, ref uint randomState)
@@ -75,7 +96,9 @@ internal sealed class BuildingProductionUpdateCompositionSystemHelper
         RuntimeBuildingEntity building,
         float now,
         float deltaTime,
-        ref uint randomState)
+        ref uint randomState,
+        ref int remainingTransportLaunches,
+        ref int remainingImmediateProductionSpawns)
     {
         if (building == null || building.PendingProductions == null || building.PendingProductions.Count == 0)
             return;
@@ -101,13 +124,26 @@ internal sealed class BuildingProductionUpdateCompositionSystemHelper
                 if (context.ProductionSystem.IsReadyWithin(pending, now, transportLaunchWindow) ||
                     context.ProductionSystem.ShouldLaunchTransport(pending, now))
                 {
+                    if (remainingTransportLaunches <= 0)
+                        continue;
+
+                    bool hadActiveTransport = building.ActiveTransport != null;
                     if (!context.TransportSystem.TryEnsureActiveProductionTransport(context.TransportContext, building, pending, now, ref randomState))
+                    {
                         context.ProductionSystem.DelayPendingProduction(pending, deltaTime);
+                    }
+                    else if (!hadActiveTransport)
+                    {
+                        remainingTransportLaunches--;
+                    }
                 }
                 continue;
             }
 
             if (progress.RemainingSeconds > 0f || !context.ProductionSystem.IsReady(pending, now))
+                continue;
+
+            if (remainingImmediateProductionSpawns <= 0)
                 continue;
 
             if (BuildingProductionTransportPresentationSystemHelper.TrySpawnPlayerUnitNearBuilding(
@@ -119,6 +155,7 @@ internal sealed class BuildingProductionUpdateCompositionSystemHelper
                     null,
                     ref randomState))
             {
+                remainingImmediateProductionSpawns--;
                 if (context.ProductionSystem.RemovePendingAt(building.PendingProductions, i))
                     context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
             }

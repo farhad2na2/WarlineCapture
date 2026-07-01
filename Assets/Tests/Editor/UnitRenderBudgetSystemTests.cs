@@ -23,10 +23,11 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.CharacterClassificationUsesCachedLookups();
             tests.LodReferenceResolutionUsesCachedLookups();
             tests.RenderableQueryUsesCachedLookups();
-            tests.MovingVisibleCharactersUseDetailedModelPath();
+            tests.MovingVisibleCharactersUseAnimatableMeshLodPath();
             tests.MovingVisibleCharactersFallbackToDetailWhenMeshLodIsNotAnimatable();
-            tests.IdleDistantVisibleCharactersStayOnDetailedModelPath();
-            tests.CharacterRenderPolicyForcesDetailedModelPath();
+            tests.IdleDistantVisibleCharactersUseFarImpostorPath();
+            tests.NearVisibleCharactersUseDetailedModelPath();
+            tests.CharacterRenderPolicyDoesNotGloballyForceDetailedModelPath();
             tests.ImpostorTagRequestUsesCachedLookup();
             tests.UnselectedEnemyBeyondImpostorThresholdUsesFarVisual();
             tests.SelectedVehicleForcesImmediateDetailedVisual();
@@ -414,7 +415,7 @@ public sealed partial class UnitRenderBudgetSystemTests
     }
 
     [Test]
-    public void MovingVisibleCharactersUseDetailedModelPath()
+    public void MovingVisibleCharactersUseAnimatableMeshLodPath()
     {
         var policy = new UnitRenderBudgetCharacterPolicy();
         UnitRenderVisualKind visual = policy.ResolveVisibleCharacterVisualKind(
@@ -428,7 +429,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             hasSafeLow: true,
             lowRootAnimatable: true);
 
-        Assert.AreEqual(UnitRenderVisualKind.Detail, visual);
+        Assert.AreEqual(UnitRenderVisualKind.Mid, visual);
     }
 
     [Test]
@@ -450,7 +451,7 @@ public sealed partial class UnitRenderBudgetSystemTests
     }
 
     [Test]
-    public void IdleDistantVisibleCharactersStayOnDetailedModelPath()
+    public void IdleDistantVisibleCharactersUseFarImpostorPath()
     {
         var policy = new UnitRenderBudgetCharacterPolicy();
         UnitRenderVisualKind visual = policy.ResolveVisibleCharacterVisualKind(
@@ -464,14 +465,32 @@ public sealed partial class UnitRenderBudgetSystemTests
             hasSafeLow: true,
             lowRootAnimatable: true);
 
+        Assert.AreEqual(UnitRenderVisualKind.Far, visual);
+    }
+
+    [Test]
+    public void NearVisibleCharactersUseDetailedModelPath()
+    {
+        var policy = new UnitRenderBudgetCharacterPolicy();
+        UnitRenderVisualKind visual = policy.ResolveVisibleCharacterVisualKind(
+            movingVisibleCharacter: false,
+            forceDetailNearVisible: true,
+            forceDetailByBudget: false,
+            farEnoughForImpostor: true,
+            lowEnoughForSafeLow: true,
+            hasSafeMid: true,
+            midRootAnimatable: true,
+            hasSafeLow: true,
+            lowRootAnimatable: true);
+
         Assert.AreEqual(UnitRenderVisualKind.Detail, visual);
     }
 
     [Test]
-    public void CharacterRenderPolicyForcesDetailedModelPath()
+    public void CharacterRenderPolicyDoesNotGloballyForceDetailedModelPath()
     {
         var policy = new UnitRenderBudgetCharacterPolicy();
-        Assert.IsTrue(policy.ShouldForceCharacterDetailVisual(true));
+        Assert.IsFalse(policy.ShouldForceCharacterDetailVisual(true));
         Assert.IsFalse(policy.ShouldForceCharacterDetailVisual(false));
     }
 
@@ -711,6 +730,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             AnimationIndexLookup = lookupSystem.GetMaterialAnimationIndexLookup(),
             MoveVisualLookup = lookupSystem.GetMoveVisualLookup(),
             MovementBehaviorLookup = lookupSystem.GetMovementBehaviorLookup(),
+            HealthLookup = lookupSystem.GetHealthLookup(),
             SourcePrefabKeyLookup = lookupSystem.GetSourcePrefabKeyLookup(),
             FactionLookup = lookupSystem.GetFactionLookup(),
             SelectedLookup = lookupSystem.GetSelectedLookup(),
@@ -1294,6 +1314,11 @@ public sealed partial class UnitRenderBudgetSystemTests
         public ComponentLookup<UnitMoveVisualComponent> GetMoveVisualLookup()
         {
             return GetComponentLookup<UnitMoveVisualComponent>(true);
+        }
+
+        public ComponentLookup<UnitHealth> GetHealthLookup()
+        {
+            return GetComponentLookup<UnitHealth>(true);
         }
 
         public ComponentLookup<UnitRenderBudgetCulledUnitTag> GetCulledUnitLookup()

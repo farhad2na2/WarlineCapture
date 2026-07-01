@@ -41,6 +41,8 @@ internal sealed class RuntimeBuildingEntity : BuildingCombatUtilitySystemHelper.
         public byte Phase;
         public float HoverEnteredAt;
         public float NextDropReadyAt;
+        public float NextClearDropSearchAt;
+        public byte ClearDropFailureCount;
         public ProductionTransportMode Mode;
         public PendingDropVisual ActiveDrop;
     }

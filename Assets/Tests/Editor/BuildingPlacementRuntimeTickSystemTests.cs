@@ -10,7 +10,7 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
         {
             var tests = new BuildingPlacementRuntimeTickCompositionSystemHelperTests();
             tests.StartupTickRunsBoundaryBeforeAndAfterMapPlacementQueues();
-            tests.SimulationTickKeepsMapPlacementQueuesAliveBeforeBoundary();
+            tests.SimulationTickRunsBoundaryBeforeProductionWork();
             tests.SimulationTickUpdatesProductionTransportsEveryFrameAndThrottlesResourceVisuals();
             UnityEngine.Debug.Log("[BuildingPlacementRuntimeTickFocusedValidation] result=Passed tests=3");
         }
@@ -39,7 +39,7 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
     }
 
     [Test]
-    public void SimulationTickKeepsMapPlacementQueuesAliveBeforeBoundary()
+    public void SimulationTickRunsBoundaryBeforeProductionWork()
     {
         BuildingPlacementRuntimeTickCompositionSystemHelper tickSystem = new();
         var calls = new List<string>();
@@ -52,7 +52,7 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
 
         Assert.GreaterOrEqual(calls.Count, 3);
         CollectionAssert.AreEqual(
-            new[] { "mapBuildings", "mapVehicles", "boundary" },
+            new[] { "boundary", "production", "activeTransport" },
             calls.GetRange(0, 3));
     }
 

@@ -125,7 +125,8 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
             allowViewportDrag: false,
             allowMapFocus: false,
             allowZoom: false,
-            openFullMapOnClick: true);
+            openFullMapOnClick: true,
+            useStableFullMapProjection: true);
 
         if (_matchHudMinimapView != null)
             _matchHudMinimapView.FullMapOpenRequested += RequestFullMapPopup;

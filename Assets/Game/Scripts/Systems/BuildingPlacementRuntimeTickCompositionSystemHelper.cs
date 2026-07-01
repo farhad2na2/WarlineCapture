@@ -140,6 +140,7 @@ internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
                     afterBoundary,
                     afterBoundary,
                     afterBoundary,
+                    afterBoundary,
                     afterBoundary));
         }
     }
@@ -154,6 +155,7 @@ internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
         double startTime = UnityEngine.Time.realtimeSinceStartupAsDouble;
         double afterMapPlacements = startTime;
         double afterBoundary = startTime;
+        double afterPendingProductions = startTime;
         double afterProductions = startTime;
         double afterResources = startTime;
         double afterHaulers = startTime;
@@ -184,7 +186,7 @@ internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
                     context.ProcessPendingProductions?.Invoke();
                 }
             }
-            afterProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
+            afterPendingProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
             using (UpdateActiveProductionTransportsMarker.Auto())
             {
@@ -284,6 +286,7 @@ internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
                     startTime,
                     afterMapPlacements,
                     afterBoundary,
+                    afterPendingProductions,
                     afterProductions,
                     afterResources,
                     afterHaulers,

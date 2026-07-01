@@ -26,6 +26,7 @@ internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystemHelper
         public readonly double Start;
         public readonly double AfterMapPlacements;
         public readonly double AfterBoundary;
+        public readonly double AfterPendingProductions;
         public readonly double AfterProductions;
         public readonly double AfterResources;
         public readonly double AfterHaulers;
@@ -44,6 +45,7 @@ internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystemHelper
             double start,
             double afterMapPlacements,
             double afterBoundary,
+            double afterPendingProductions,
             double afterProductions,
             double afterResources,
             double afterHaulers,
@@ -61,6 +63,7 @@ internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystemHelper
             Start = start;
             AfterMapPlacements = afterMapPlacements;
             AfterBoundary = afterBoundary;
+            AfterPendingProductions = afterPendingProductions;
             AfterProductions = afterProductions;
             AfterResources = afterResources;
             AfterHaulers = afterHaulers;
@@ -86,8 +89,9 @@ internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystemHelper
     {
         double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
         double elapsed = now - timing.Start;
-        if (context.ShouldLogDiagnostics == null ||
-            !context.ShouldLogDiagnostics() ||
+        bool diagnosticsEnabled = Application.isBatchMode ||
+                                  (context.ShouldLogDiagnostics != null && context.ShouldLogDiagnostics());
+        if (!diagnosticsEnabled ||
             elapsed < SlowLogThresholdSeconds ||
             now < _nextSlowLogAt ||
             (!Application.isFocused && !Application.isBatchMode))
@@ -96,7 +100,8 @@ internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystemHelper
         _nextSlowLogAt = now + SlowLogCooldownSeconds;
         double afterMapPlacements = Math.Max(timing.AfterMapPlacements, timing.Start);
         double afterBoundary = Math.Max(timing.AfterBoundary, afterMapPlacements);
-        double afterProductions = Math.Max(timing.AfterProductions, afterBoundary);
+        double afterPendingProductions = Math.Max(timing.AfterPendingProductions, afterBoundary);
+        double afterProductions = Math.Max(timing.AfterProductions, afterPendingProductions);
         double afterResources = Math.Max(timing.AfterResources, afterProductions);
         double afterHaulers = Math.Max(timing.AfterHaulers, afterResources);
         double afterResourceVisuals = Math.Max(timing.AfterResourceVisuals, afterHaulers);
@@ -115,6 +120,8 @@ internal sealed class BuildingPlacementRuntimeTickDiagnosticsSystemHelper
             $"mapPlacement={(afterMapPlacements - timing.Start) * 1000d:F1}ms " +
             $"boundary={(afterBoundary - afterMapPlacements) * 1000d:F1}ms " +
             $"productions={(afterProductions - afterBoundary) * 1000d:F1}ms " +
+            $"pendingProductions={(afterPendingProductions - afterBoundary) * 1000d:F1}ms " +
+            $"activeTransports={(afterProductions - afterPendingProductions) * 1000d:F1}ms " +
             $"resources={(afterResources - afterProductions) * 1000d:F1}ms " +
             $"haulers={(afterHaulers - afterResources) * 1000d:F1}ms " +
             $"resourceVisuals={(afterResourceVisuals - afterHaulers) * 1000d:F1}ms " +

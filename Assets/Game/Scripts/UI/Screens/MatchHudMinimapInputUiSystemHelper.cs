@@ -66,6 +66,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
     private bool _minimapZoomedIn;
     private bool _rawPointerWasPressedLastFrame;
     private bool _rawViewportDragActive;
+    private bool _useStableFullMapProjection;
 
     public void Bind(
         MatchHudMinimapView view,
@@ -77,13 +78,15 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         bool allowViewportDrag = true,
         bool allowMapFocus = true,
         bool allowZoom = true,
-        bool openFullMapOnClick = false)
+        bool openFullMapOnClick = false,
+        bool useStableFullMapProjection = false)
     {
         Unbind();
         _view = view;
         _runtimeGameplayStateSystem = runtimeGameplayStateSystem;
         _selectionUiCameraSystem = selectionUiCameraSystem;
         _minimapDataSource = minimapDataSource;
+        _useStableFullMapProjection = useStableFullMapProjection;
 
         if (_view == null)
             return;
@@ -136,6 +139,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         _markerPool.Clear();
         _rawPointerWasPressedLastFrame = false;
         _rawViewportDragActive = false;
+        _useStableFullMapProjection = false;
     }
 
     public void Dispose()
@@ -157,7 +161,9 @@ public sealed class MatchHudMinimapInputUiSystemHelper
             return;
 
         Camera worldCamera = _selectionUiCameraSystem != null ? _selectionUiCameraSystem.WorldCamera : null;
-        MatchHudMinimapProjectionGrid desiredProjectionGrid = _view.UseFullMapProjection
+        MatchHudMinimapProjectionGrid desiredProjectionGrid = _useStableFullMapProjection
+            ? MatchHudMinimapProjectionGrid.FromGridModel(grid)
+            : _view.UseFullMapProjection
             ? MatchHudMinimapProjectionUiSystemHelper.CreateFullGridIncludingCamera(grid, worldCamera)
             : MatchHudMinimapProjectionUiSystemHelper.CreateCameraCenteredGrid(
                 grid,
@@ -201,7 +207,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
 
                 if (rendered)
                 {
-                    if (wasFirstCapture)
+                    if (wasFirstCapture && !_useStableFullMapProjection)
                         _warmupStaticMapRefreshesRemaining = WarmupStaticMapRefreshCount;
                     else if (_warmupStaticMapRefreshesRemaining > 0)
                         _warmupStaticMapRefreshesRemaining--;
@@ -294,6 +300,8 @@ public sealed class MatchHudMinimapInputUiSystemHelper
     {
         if (!_hasCapturedProjectionGrid)
             return true;
+        if (_useStableFullMapProjection)
+            return false;
         if (_view != null && _view.UseFullMapProjection)
             return false;
         if (_view != null && _view.IsDraggingViewport)

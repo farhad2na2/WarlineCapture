@@ -9,6 +9,8 @@ using UnityEngine.Profiling;
 
 public sealed class PerformanceDiagnosticsSystemHelper
 {
+    private const string EnableProfilerMarkerDiagnosticsEnvironmentVariable = "WARLINE_ENABLE_PROFILER_MARKERS";
+    private const string EnableProfilerMarkerDiagnosticsCommandLineArg = "-warlineProfilerMarkers";
     private const double FreezeLogThresholdSeconds = 0.15d;
     private const double LowFpsDiagThreshold = 55d;
     private const double FrameRateDiagIntervalSeconds = 2d;
@@ -45,6 +47,7 @@ public sealed class PerformanceDiagnosticsSystemHelper
 
     private readonly bool _enableFrameRateDiagnostics = true;
     private readonly bool _enableSlowFrameDiagnostics = true;
+    private readonly bool _enableProfilerMarkerDiagnostics;
     private readonly System.Text.StringBuilder _freezeLogBuilder = new(256);
     private readonly System.Text.StringBuilder _lastStepLogBuilder = new(256);
     private readonly StepSample[] _lastStepSamples = new StepSample[MaxLastStepSamples];
@@ -70,6 +73,11 @@ public sealed class PerformanceDiagnosticsSystemHelper
     private ProfilerRecorder _setPassCallsRecorder;
     private ProfilerRecorder _trianglesRecorder;
     private ProfilerRecorder _verticesRecorder;
+
+    public PerformanceDiagnosticsSystemHelper()
+    {
+        _enableProfilerMarkerDiagnostics = ShouldEnableProfilerMarkerDiagnostics();
+    }
 
     private struct StepSample
     {
@@ -279,6 +287,9 @@ public sealed class PerformanceDiagnosticsSystemHelper
         _setPassCallsRecorder = StartProfilerRecorder(ProfilerCategory.Render, "SetPass Calls Count");
         _trianglesRecorder = StartProfilerRecorder(ProfilerCategory.Render, "Triangles Count");
         _verticesRecorder = StartProfilerRecorder(ProfilerCategory.Render, "Vertices Count");
+        if (!_enableProfilerMarkerDiagnostics)
+            return;
+
         AddProfilerMarkerRecorder(ProfilerCategory.Internal, "PlayerLoop");
         AddProfilerMarkerRecorder(ProfilerCategory.Internal, "EditorLoop");
         AddProfilerMarkerRecorder(ProfilerCategory.Internal, "Overhead");
@@ -292,6 +303,38 @@ public sealed class PerformanceDiagnosticsSystemHelper
         AddProfilerMarkerRecorder(ProfilerCategory.Scripts, "Canvas.SendWillRenderCanvases");
         AddPriorityPlayerLoopMarkerRecorders();
         AddAvailablePlayerLoopMarkerRecorders();
+    }
+
+    private static bool ShouldEnableProfilerMarkerDiagnostics()
+    {
+        try
+        {
+            string environmentValue = Environment.GetEnvironmentVariable(EnableProfilerMarkerDiagnosticsEnvironmentVariable);
+            if (IsTruthy(environmentValue))
+                return true;
+
+            string[] args = Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (string.Equals(args[i], EnableProfilerMarkerDiagnosticsCommandLineArg, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+        }
+        catch
+        {
+            // Diagnostics configuration must never make runtime startup fail.
+        }
+
+        return false;
+    }
+
+    private static bool IsTruthy(string value)
+    {
+        return
+            string.Equals(value, "1", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(value, "true", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(value, "yes", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(value, "on", StringComparison.OrdinalIgnoreCase);
     }
 
     private ProfilerRecorder StartProfilerRecorder(ProfilerCategory category, string statName)
@@ -640,6 +683,9 @@ public sealed class PerformanceDiagnosticsSystemHelper
 
     private string BuildProfilerMarkerDiagString()
     {
+        if (!_enableProfilerMarkerDiagnostics)
+            return "disabled";
+
         if (_markerRecorders.Count == 0)
             return "none";
 
@@ -687,6 +733,9 @@ public sealed class PerformanceDiagnosticsSystemHelper
 
     private string BuildTopSystemProfilerMarkerString()
     {
+        if (!_enableProfilerMarkerDiagnostics)
+            return "disabled";
+
         if (_markerRecorders.Count == 0)
             return "none";
 

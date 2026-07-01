@@ -18,6 +18,10 @@ public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
                 test => test.EndStepDoesNotAllocateAfterWarmup(),
                 ref passed);
             RunValidationStep(
+                nameof(DefaultInitializationSkipsBroadProfilerMarkerRecorders),
+                test => test.DefaultInitializationSkipsBroadProfilerMarkerRecorders(),
+                ref passed);
+            RunValidationStep(
                 nameof(ReferenceResolverSkipsUninitializedMenuDiagnostics),
                 test => test.ReferenceResolverSkipsUninitializedMenuDiagnostics(),
                 ref passed);
@@ -65,6 +69,29 @@ public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
             measuredBytes,
             timeBaselineBytes,
             $"EndStep allocated beyond the warmed Unity time baseline. baseline={timeBaselineBytes}B measured={measuredBytes}B");
+    }
+
+    [Test]
+    public void DefaultInitializationSkipsBroadProfilerMarkerRecorders()
+    {
+        var diagnosticsSystem = new PerformanceDiagnosticsSystemHelper();
+        diagnosticsSystem.Initialize();
+        try
+        {
+            FieldInfo markerRecordersField = typeof(PerformanceDiagnosticsSystemHelper).GetField(
+                "_markerRecorders",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+
+            Assert.IsNotNull(markerRecordersField);
+            object markerRecorders = markerRecordersField.GetValue(diagnosticsSystem);
+            int count = (int)markerRecorders.GetType().GetProperty("Count").GetValue(markerRecorders);
+
+            Assert.Zero(count, "Broad profiler marker recorders should be opt-in for normal match runtime.");
+        }
+        finally
+        {
+            diagnosticsSystem.Dispose();
+        }
     }
 
     [Test]

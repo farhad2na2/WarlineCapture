@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
@@ -31,6 +32,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
     private const float ViewportDragRefreshSeconds = 0.05f;
     private const float MarkerRefreshSeconds = 0.2f;
     private const int MinRasterFeatureCount = 24;
+    private static Color32[] s_rasterBasePixels;
 
     private MatchHudMinimapView _view;
     private IMatchRuntimeState _runtimeGameplayStateSystem;
@@ -806,7 +808,6 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         {
             MatchHudMinimapProjectionGrid candidate = _rasterProjectionCandidates[i];
             DrawRasterBase(_rasterPixels);
-            DrawRasterGrid(_rasterPixels);
             int featureCount = DrawRasterSurfaceFeatures(candidate, _rasterPixels);
             featureCount += DrawRasterRoads(candidate, _rasterPixels);
             renderedGrid = candidate;
@@ -857,6 +858,16 @@ public sealed class MatchHudMinimapInputUiSystemHelper
 
     private static void DrawRasterBase(Color32[] pixels)
     {
+        Color32[] basePixels = GetRasterBasePixels();
+        Array.Copy(basePixels, pixels, basePixels.Length);
+    }
+
+    private static Color32[] GetRasterBasePixels()
+    {
+        if (s_rasterBasePixels != null && s_rasterBasePixels.Length == CaptureResolution * CaptureResolution)
+            return s_rasterBasePixels;
+
+        Color32[] pixels = new Color32[CaptureResolution * CaptureResolution];
         for (int y = 0; y < CaptureResolution; y++)
         {
             for (int x = 0; x < CaptureResolution; x++)
@@ -867,6 +878,10 @@ public sealed class MatchHudMinimapInputUiSystemHelper
                 pixels[x + y * CaptureResolution] = LerpColor(RasterBackgroundA, RasterBackgroundB, vertical, ripple + ridge);
             }
         }
+
+        DrawRasterGrid(pixels);
+        s_rasterBasePixels = pixels;
+        return s_rasterBasePixels;
     }
 
     private static Color32 LerpColor(Color32 a, Color32 b, float t, int offset)
@@ -1076,7 +1091,7 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         {
             GameObject cameraObject = new("Runtime_MatchHudMinimapCaptureCamera");
             if (Application.isPlaying)
-                Object.DontDestroyOnLoad(cameraObject);
+                UnityEngine.Object.DontDestroyOnLoad(cameraObject);
             cameraObject.hideFlags = HideFlags.HideAndDontSave;
             _captureCamera = cameraObject.AddComponent<Camera>();
             _captureCamera.enabled = false;
@@ -1113,15 +1128,15 @@ public sealed class MatchHudMinimapInputUiSystemHelper
         _captureCamera = null;
     }
 
-    private static void DestroyRuntimeObject(Object value)
+    private static void DestroyRuntimeObject(UnityEngine.Object value)
     {
         if (value == null)
             return;
 
         if (Application.isPlaying)
-            Object.Destroy(value);
+            UnityEngine.Object.Destroy(value);
         else
-            Object.DestroyImmediate(value);
+            UnityEngine.Object.DestroyImmediate(value);
     }
 
     private static int ResolveCaptureMask()

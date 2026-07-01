@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -44,6 +45,8 @@ internal sealed class MapBuildingPlacementSpawnPrefabSystemHelper
     private bool _warnedMissingConfig;
     private int _nextPlacementIndex;
     private bool _warnedFailedPlacement;
+    private bool _priorityPlayerProductionQueued;
+    private readonly HashSet<int> _spawnedPlacementIndices = new();
 
     public bool IsComplete => _queued && _authoringHidden;
 
@@ -73,33 +76,19 @@ internal sealed class MapBuildingPlacementSpawnPrefabSystemHelper
         if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out _, out _))
             return;
 
+        if (!_priorityPlayerProductionQueued)
+        {
+            SpawnPriorityPlayerProductionPlacements(context, grid);
+            _priorityPlayerProductionQueued = true;
+        }
+
         int processed = 0;
         for (; _nextPlacementIndex < context.Config.Placements.Count && processed < MaxPlacementsPerUpdate; _nextPlacementIndex++, processed++)
         {
-            MapBuildingPlacementConfigEntry placement = context.Config.Placements[_nextPlacementIndex];
-            if (placement == null || placement.BuildingPrefab == null)
+            if (_spawnedPlacementIndices.Contains(_nextPlacementIndex))
                 continue;
 
-            if (!context.RuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint(
-                    context.RuntimeSpawnContext,
-                    placement.BuildingPrefab,
-                    placement.RotateVertical,
-                    out Vector2Int footprint))
-            {
-                context.LogWarning?.Invoke($"[MapBuildingPlacement] skipped {placement.SourcePath}: could not resolve footprint for {placement.BuildingPrefab.name}.");
-                continue;
-            }
-
-            Vector3 worldCenter = placement.WorldCenter;
-            int2 centerCell = GridUtils.WorldToCell(grid, new float3(worldCenter.x, worldCenter.y, worldCenter.z));
-            int2 originCell = CenterCellToOrigin(centerCell, footprint, grid);
-            if (!TrySpawnAuthoredPlacement(context, placement, new Vector2Int(originCell.x, originCell.y), footprint))
-            {
-                WarnOnce(
-                    ref _warnedFailedPlacement,
-                    context,
-                    $"[MapBuildingPlacement] at least one authored building failed to register. First failed source={placement.SourcePath} prefab={placement.BuildingPrefab.name}.");
-            }
+            TrySpawnPlacementAtIndex(context, grid, _nextPlacementIndex);
         }
 
         if (_nextPlacementIndex >= context.Config.Placements.Count)
@@ -107,6 +96,74 @@ internal sealed class MapBuildingPlacementSpawnPrefabSystemHelper
             _queued = true;
             HideAuthoringVisuals(context);
         }
+    }
+
+    private void SpawnPriorityPlayerProductionPlacements(Context context, GridConfig grid)
+    {
+        if (context.Config?.Placements == null)
+            return;
+
+        for (int i = 0; i < context.Config.Placements.Count; i++)
+        {
+            if (_spawnedPlacementIndices.Contains(i))
+                continue;
+
+            MapBuildingPlacementConfigEntry placement = context.Config.Placements[i];
+            if (!IsPlayerProductionPlacement(context, placement))
+                continue;
+
+            if (TrySpawnPlacementAtIndex(context, grid, i))
+                _spawnedPlacementIndices.Add(i);
+        }
+    }
+
+    private bool TrySpawnPlacementAtIndex(Context context, GridConfig grid, int placementIndex)
+    {
+        MapBuildingPlacementConfigEntry placement = context.Config.Placements[placementIndex];
+        if (placement == null || placement.BuildingPrefab == null)
+            return false;
+
+        if (!context.RuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint(
+                context.RuntimeSpawnContext,
+                placement.BuildingPrefab,
+                placement.RotateVertical,
+                out Vector2Int footprint))
+        {
+            context.LogWarning?.Invoke($"[MapBuildingPlacement] skipped {placement.SourcePath}: could not resolve footprint for {placement.BuildingPrefab.name}.");
+            return false;
+        }
+
+        Vector3 worldCenter = placement.WorldCenter;
+        int2 centerCell = GridUtils.WorldToCell(grid, new float3(worldCenter.x, worldCenter.y, worldCenter.z));
+        int2 originCell = CenterCellToOrigin(centerCell, footprint, grid);
+        if (TrySpawnAuthoredPlacement(context, placement, new Vector2Int(originCell.x, originCell.y), footprint))
+            return true;
+
+        WarnOnce(
+            ref _warnedFailedPlacement,
+            context,
+            $"[MapBuildingPlacement] at least one authored building failed to register. First failed source={placement.SourcePath} prefab={placement.BuildingPrefab.name}.");
+        return false;
+    }
+
+    private static bool IsPlayerProductionPlacement(Context context, MapBuildingPlacementConfigEntry placement)
+    {
+        if (placement == null ||
+            placement.FactionId != FactionIdentity.PlayerFactionId ||
+            placement.BuildingPrefab == null ||
+            context.RuntimeSpawnContext.DefinitionSystem == null)
+        {
+            return false;
+        }
+
+        BuildingDefinition definition = context.RuntimeSpawnContext.DefinitionSystem.CreateRuntimeBuildingDefinition(
+            placement.BuildingPrefab,
+            placement.BuildingPrefab.name,
+            "Authored map building.",
+            new Vector2Int(10, 10),
+            500,
+            context.RuntimeSpawnContext.RunwaySystem);
+        return BuildingDefinitionPrefabSystemHelper.GetProductionCount(definition) > 0;
     }
 
     private static bool TrySpawnAuthoredPlacement(

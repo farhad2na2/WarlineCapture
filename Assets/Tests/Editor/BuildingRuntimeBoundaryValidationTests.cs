@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
@@ -13,6 +14,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
     private const string MapBuildingPlacementConfigPath = "Assets/Game/Configs/Scene/Match_MapBuildingPlacement_Config.asset";
     private const string TentRegularPrefabPath = "Assets/Game/Prefabs/Buildings/Tent_Regular.prefab";
     private const string OilPumpPrefabPath = "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab";
+    private const string RegularSoldierPrefabGuid = "8ec7389d67b7543d0ac6050c06d26187";
 
     private World _previousDefaultWorld;
     private World _world;
@@ -22,6 +24,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
     private NativeArray<byte> _friendlyPassFactionIds;
     private GameObject _runtimeRoot;
     private GameObject _buildingPrefab;
+    private GameObject _mapAuthoringRoot;
     private BuildingPlacementSystemConfig _buildingConfig;
     private BuildingGameplayCompositionSystemHelper _buildingComposition;
     private BuildingGameplayResultCompositionSystemHelper.Result _buildingGameplay;
@@ -40,6 +43,10 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tests.TearDown();
             tests.MapAuthoredFaction2PlacementsDoNotSpawnOilPumpOverInitialTent();
             tests.TearDown();
+            tests.PlayerOwnedTentRegularSatisfiesSoldierBuildRequirement();
+            tests.TearDown();
+            tests.MapAuthoredFaction1TentRegularSatisfiesSoldierBuildRequirementOnStartupTick();
+            tests.TearDown();
             tests.RuntimeSpawnCommandEnqueuesBoundarySpawnRequest();
             tests.TearDown();
             tests.RuntimeCitySpawnUsesBoundarySpawnRequestAndPreservesUnownedBuilding();
@@ -50,7 +57,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tests.TearDown();
             tests.RuntimeBoundaryPublishesProductionSlotSourceKeyReadModel();
             tests.TearDown();
-            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=9");
+            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=11");
             ValidationExit.Exit(0);
         }
         catch (System.Exception ex)
@@ -58,6 +65,44 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tests.TearDown();
             Debug.LogException(ex);
             Debug.LogError("[BuildingRuntimeBoundaryValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunPlayerOwnedTentRegularProductionEligibilityValidation()
+    {
+        var tests = new BuildingRuntimeBoundaryValidationTests();
+        try
+        {
+            tests.PlayerOwnedTentRegularSatisfiesSoldierBuildRequirement();
+            tests.TearDown();
+            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=1 PlayerOwnedTentRegularSatisfiesSoldierBuildRequirement");
+            ValidationExit.Exit(0);
+        }
+        catch (System.Exception ex)
+        {
+            tests.TearDown();
+            Debug.LogException(ex);
+            Debug.LogError("[BuildingRuntimeBoundaryValidation] result=Failed PlayerOwnedTentRegularSatisfiesSoldierBuildRequirement");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunMapAuthoredFaction1TentProductionEligibilityValidation()
+    {
+        var tests = new BuildingRuntimeBoundaryValidationTests();
+        try
+        {
+            tests.MapAuthoredFaction1TentRegularSatisfiesSoldierBuildRequirementOnStartupTick();
+            tests.TearDown();
+            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=1 MapAuthoredFaction1TentRegularSatisfiesSoldierBuildRequirementOnStartupTick");
+            ValidationExit.Exit(0);
+        }
+        catch (System.Exception ex)
+        {
+            tests.TearDown();
+            Debug.LogException(ex);
+            Debug.LogError("[BuildingRuntimeBoundaryValidation] result=Failed MapAuthoredFaction1TentRegularSatisfiesSoldierBuildRequirementOnStartupTick");
             ValidationExit.Exit(1);
         }
     }
@@ -90,6 +135,9 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         if (_buildingPrefab != null)
             Object.DestroyImmediate(_buildingPrefab);
         _buildingPrefab = null;
+        if (_mapAuthoringRoot != null)
+            Object.DestroyImmediate(_mapAuthoringRoot);
+        _mapAuthoringRoot = null;
         if (_buildingConfig != null)
             Object.DestroyImmediate(_buildingConfig);
         _buildingConfig = null;
@@ -115,6 +163,147 @@ public sealed class BuildingRuntimeBoundaryValidationTests
                 placement.FactionId == 2 && placement.BuildingPrefab == oilPumpPrefab,
                 $"Map-authored Faction 2 OilPump placement shadows the initial Faction 2 Tent_Regular config. source={placement.SourcePath}");
         }
+    }
+
+    [Test]
+    public void PlayerOwnedTentRegularSatisfiesSoldierBuildRequirement()
+    {
+        BuildingPlacementSystemConfig placementConfig =
+            AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(BuildingPlacementConfigPath);
+        GameObject tentPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TentRegularPrefabPath);
+        GameObject soldierPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(RegularSoldierPrefabGuid));
+
+        Assert.NotNull(placementConfig, $"Missing building placement config at {BuildingPlacementConfigPath}.");
+        Assert.NotNull(tentPrefab, $"Missing tent prefab at {TentRegularPrefabPath}.");
+        Assert.NotNull(soldierPrefab, $"Missing regular soldier prefab for guid={RegularSoldierPrefabGuid}.");
+
+        _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("PlayerOwnedTentRegularProductionEligibility");
+        World.DefaultGameObjectInjectionWorld = _world;
+        EntityManager em = _world.EntityManager;
+
+        CreateGrid(em, 64, 64);
+        _runtimeRoot = new GameObject("PlayerOwnedTentRegularProductionEligibility_RuntimeRoot");
+        _buildingComposition = new BuildingGameplayCompositionSystemHelper();
+        _buildingGameplay = _buildingComposition.Initialize(
+            buildingPlacementConfig: placementConfig,
+            worldCamera: null,
+            runtimeTransportsRoot: _runtimeRoot.transform,
+            runtimeUiRoot: _runtimeRoot.transform,
+            roadFootprintState: default,
+            factionVisuals: null,
+            dayNight: null,
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeyPrefabSystemHelper.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
+        _buildingGameplayInitialized = true;
+
+        em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TryEnqueueRuntimeBuildingSpawnRequest(
+            em,
+            "Tent_Regular",
+            new Vector2Int(10, 10),
+            FactionIdentity.PlayerFactionId,
+            out int requestId));
+        Assert.Greater(requestId, 0);
+
+        Assert.DoesNotThrow(() => _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext));
+        Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeSpawnRequestResult(
+            em,
+            requestId,
+            out BuildingRuntimeSpawnRequest request));
+        Assert.AreEqual(BuildingRuntimeSpawnRequest.Succeeded, request.Status);
+        Assert.IsTrue(_buildingGameplay.RuntimeBuildings.TryGetValue(request.BuildingRuntimeId, out RuntimeBuildingEntity runtimeBuilding));
+        Assert.AreSame(tentPrefab, runtimeBuilding.Definition.Prefab);
+        Assert.IsTrue(runtimeBuilding.HasOwnerFaction);
+        Assert.AreEqual(FactionIdentity.PlayerFactionId, runtimeBuilding.OwnerFactionId);
+        Assert.IsFalse(runtimeBuilding.IsCityGenerated);
+
+        BuildingUiCommandBoundary.CampRequestFailure failure =
+            _buildingGameplay.UiCommand.GetCampRequestFailure(
+                _buildingGameplay.UiCommandContext,
+                soldierPrefab,
+                0,
+                out string requiredBuildingDisplayName);
+
+        Assert.AreEqual(
+            BuildingUiCommandBoundary.CampRequestFailure.None,
+            failure,
+            $"Player-owned Tent_Regular should satisfy soldier production. required={requiredBuildingDisplayName}");
+    }
+
+    [Test]
+    public void MapAuthoredFaction1TentRegularSatisfiesSoldierBuildRequirementOnStartupTick()
+    {
+        BuildingPlacementSystemConfig placementConfig =
+            AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(BuildingPlacementConfigPath);
+        MapBuildingPlacementConfig mapConfig =
+            AssetDatabase.LoadAssetAtPath<MapBuildingPlacementConfig>(MapBuildingPlacementConfigPath);
+        GameObject tentPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(TentRegularPrefabPath);
+        GameObject soldierPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(RegularSoldierPrefabGuid));
+
+        Assert.NotNull(placementConfig, $"Missing building placement config at {BuildingPlacementConfigPath}.");
+        Assert.NotNull(mapConfig, $"Missing map building placement config at {MapBuildingPlacementConfigPath}.");
+        Assert.NotNull(tentPrefab, $"Missing tent prefab at {TentRegularPrefabPath}.");
+        Assert.NotNull(soldierPrefab, $"Missing regular soldier prefab for guid={RegularSoldierPrefabGuid}.");
+
+        _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("MapAuthoredFaction1TentRegularProductionEligibility");
+        World.DefaultGameObjectInjectionWorld = _world;
+        EntityManager em = _world.EntityManager;
+
+        CreateGrid(em, 2048, 1024);
+        _runtimeRoot = new GameObject("MapAuthoredFaction1TentRegularProductionEligibility_RuntimeRoot");
+        _mapAuthoringRoot = CreateMapAuthoringRoot(mapConfig);
+        _buildingComposition = new BuildingGameplayCompositionSystemHelper();
+        _buildingGameplay = _buildingComposition.Initialize(
+            buildingPlacementConfig: placementConfig,
+            worldCamera: null,
+            runtimeTransportsRoot: _runtimeRoot.transform,
+            runtimeUiRoot: _runtimeRoot.transform,
+            roadFootprintState: default,
+            factionVisuals: null,
+            dayNight: null,
+            mapBuildingPlacementConfig: mapConfig,
+            mapBuildingAuthoringRoot: _mapAuthoringRoot.transform,
+            resolveSpawnableLookupKey: BuildingSpawnPrefabLookupKeyPrefabSystemHelper.ResolveSpawnableLookupKey,
+            tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+            tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
+        _buildingGameplayInitialized = true;
+
+        em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Assert.DoesNotThrow(() => _buildingGameplay.RuntimeUpdate.UpdateStartup(_buildingGameplay.RuntimeUpdateContext));
+
+        bool foundPlayerTent = false;
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in _buildingGameplay.RuntimeBuildings)
+        {
+            RuntimeBuildingEntity building = pair.Value;
+            if (building == null ||
+                building.Definition?.Prefab != tentPrefab ||
+                !building.HasOwnerFaction ||
+                building.OwnerFactionId != FactionIdentity.PlayerFactionId ||
+                building.IsCityGenerated)
+            {
+                continue;
+            }
+
+            foundPlayerTent = true;
+            break;
+        }
+
+        Assert.IsTrue(foundPlayerTent, "Startup map placement must register at least one player-owned authored Tent_Regular before build-menu recruit checks.");
+
+        BuildingUiCommandBoundary.CampRequestFailure failure =
+            _buildingGameplay.UiCommand.GetCampRequestFailure(
+                _buildingGameplay.UiCommandContext,
+                soldierPrefab,
+                0,
+                out string requiredBuildingDisplayName);
+
+        Assert.AreEqual(
+            BuildingUiCommandBoundary.CampRequestFailure.None,
+            failure,
+            $"Faction 1 authored scene Tent_Regular should satisfy soldier production on startup. required={requiredBuildingDisplayName}");
     }
 
     [Test]
@@ -610,6 +799,57 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         walkable.ResizeUninitialized(gridSize);
         for (int i = 0; i < walkable.Length; i++)
             walkable[i] = new GridWalkable { Value = 1 };
+    }
+
+    private static GameObject CreateMapAuthoringRoot(MapBuildingPlacementConfig config)
+    {
+        GameObject root = new("Map");
+        if (config?.Placements == null)
+            return root;
+
+        for (int i = 0; i < config.Placements.Count; i++)
+        {
+            MapBuildingPlacementConfigEntry placement = config.Placements[i];
+            if (placement == null || string.IsNullOrEmpty(placement.SourcePath))
+                continue;
+
+            EnsureAuthoringPath(root.transform, placement.SourcePath);
+        }
+
+        return root;
+    }
+
+    private static Transform EnsureAuthoringPath(Transform root, string sourcePath)
+    {
+        string[] segments = sourcePath.Split('/');
+        int startIndex = segments.Length > 0 && string.Equals(segments[0], root.name, System.StringComparison.Ordinal)
+            ? 1
+            : 0;
+
+        Transform current = root;
+        for (int i = startIndex; i < segments.Length; i++)
+        {
+            if (string.IsNullOrEmpty(segments[i]))
+                continue;
+
+            current = FindOrCreateDirectChild(current, segments[i]);
+        }
+
+        return current;
+    }
+
+    private static Transform FindOrCreateDirectChild(Transform parent, string childName)
+    {
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (string.Equals(child.name, childName, System.StringComparison.Ordinal))
+                return child;
+        }
+
+        GameObject childObject = new(childName);
+        childObject.transform.SetParent(parent, false);
+        return childObject.transform;
     }
 
     private static GameObject CreateBuildingPrefab(string id, int width, int height)

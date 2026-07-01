@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public interface IBattleHudRuntimeFeedbackView
 {
@@ -11,6 +12,12 @@ public interface IBattleHudRuntimeFeedbackView
     bool HasLastCommandResult { get; set; }
 
     BattleHudRuntimeFeedbackState RuntimeFeedbackState { get; }
+
+    Sprite ResolveCommandIconSprite(TacticalCommandMode mode);
+
+    void ApplyCurrentOrderBanner(MatchHudCurrentOrderBannerModel model);
+
+    void ApplyTransientCurrentOrderBanner(MatchHudCurrentOrderBannerModel model, float now, float durationSeconds);
 
     void ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel model);
 
@@ -25,6 +32,8 @@ public interface IBattleHudRuntimeFeedbackView
     void ClearCommandModeTabs();
 
     void ClearFeedbackActionCallbacks();
+
+    void HideCurrentOrderBanner();
 
     void ClearPersistentCommandFeedback();
 

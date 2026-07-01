@@ -146,7 +146,7 @@ public sealed class MatchHudRightQuickRailView : MonoBehaviour
             return;
         }
 
-        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
             TacticalCommandReasonCode.BuildUnavailable,
             "Build drawer is not ready."));
     }

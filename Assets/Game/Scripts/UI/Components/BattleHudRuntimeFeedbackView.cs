@@ -12,6 +12,8 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRunt
     [SerializeField] private GameObject feedbackPanel;
     [SerializeField] private TMP_Text feedbackText;
     [SerializeField] private Image feedbackIcon;
+    [SerializeField] private MatchHudCurrentOrderBannerView currentOrderBanner;
+    [SerializeField] private MatchOverlayCommandControlsView commandIconSource;
     [SerializeField] private GameObject feedbackActionsRoot;
     [SerializeField] private Button boardAllButton;
     [SerializeField] private TMP_Text boardAllButtonLabel;
@@ -28,6 +30,10 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRunt
     private bool _hasPersistentCommandFeedback;
     private MatchHudCommandFeedbackModel _persistentCommandFeedback = MatchHudCommandFeedbackModel.Hidden;
     private MatchHudCommandFeedbackActionsModel _persistentCommandFeedbackActions = MatchHudCommandFeedbackActionsModel.Hidden;
+    private bool _hasPersistentCurrentOrderBanner;
+    private MatchHudCurrentOrderBannerModel _persistentCurrentOrderBanner = MatchHudCurrentOrderBannerModel.Hidden;
+    private bool _transientCurrentOrderBannerActive;
+    private float _transientCurrentOrderBannerExpiresAt;
     private bool _transientFeedbackActive;
     private float _transientFeedbackExpiresAt;
     private System.Action _boardAllRequested;
@@ -40,6 +46,8 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRunt
     public GameObject FeedbackPanel => feedbackPanel;
     public TMP_Text FeedbackText => feedbackText;
     public Image FeedbackIcon => feedbackIcon;
+    public MatchHudCurrentOrderBannerView CurrentOrderBanner => currentOrderBanner;
+    public MatchOverlayCommandControlsView CommandIconSource => commandIconSource;
     public GameObject FeedbackActionsRoot => feedbackActionsRoot;
     public Button BoardAllButton => boardAllButton;
     public Button CancelButton => cancelButton;
@@ -70,6 +78,37 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRunt
     public BattleHudRuntimeFeedbackState RuntimeFeedbackState =>
         new(_currentCommandMode, _stickyCommandMode, _lastCommandResult, _hasLastCommandResult);
 
+    public Sprite ResolveCommandIconSprite(TacticalCommandMode mode)
+    {
+        return commandIconSource != null ? commandIconSource.ResolveCommandIconSprite(mode) : null;
+    }
+
+    public void ApplyCurrentOrderBanner(MatchHudCurrentOrderBannerModel model)
+    {
+        _transientCurrentOrderBannerActive = false;
+        _hasPersistentCurrentOrderBanner = model.Visible;
+        _persistentCurrentOrderBanner = model.Visible ? model : MatchHudCurrentOrderBannerModel.Hidden;
+        currentOrderBanner?.Apply(model);
+    }
+
+    public void ApplyTransientCurrentOrderBanner(MatchHudCurrentOrderBannerModel model, float now, float durationSeconds)
+    {
+        if (!model.Visible)
+            return;
+
+        _transientCurrentOrderBannerActive = true;
+        _transientCurrentOrderBannerExpiresAt = now + Mathf.Max(0f, durationSeconds);
+        currentOrderBanner?.Apply(model);
+    }
+
+    public void HideCurrentOrderBanner()
+    {
+        _hasPersistentCurrentOrderBanner = false;
+        _persistentCurrentOrderBanner = MatchHudCurrentOrderBannerModel.Hidden;
+        _transientCurrentOrderBannerActive = false;
+        currentOrderBanner?.Hide();
+    }
+
     private void Awake()
     {
         BindUnityEvents();
@@ -80,7 +119,7 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRunt
     {
         BindUnityEvents();
         ResetRuntimeFeedbackState();
-        BattleHudRuntimeFeedbackBoundary.ClearCommandMode(this);
+        BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(this);
     }
 
     private void OnDestroy()
@@ -165,6 +204,12 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRunt
 
     public void TickFeedbackLifetime(float now)
     {
+        TickCommandFeedbackLifetime(now);
+        TickCurrentOrderBannerLifetime(now);
+    }
+
+    private void TickCommandFeedbackLifetime(float now)
+    {
         if (!_transientFeedbackActive || now < _transientFeedbackExpiresAt)
             return;
 
@@ -177,6 +222,21 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRunt
         }
 
         HideFeedbackMessage();
+    }
+
+    private void TickCurrentOrderBannerLifetime(float now)
+    {
+        if (!_transientCurrentOrderBannerActive || now < _transientCurrentOrderBannerExpiresAt)
+            return;
+
+        _transientCurrentOrderBannerActive = false;
+        if (_hasPersistentCurrentOrderBanner && _persistentCurrentOrderBanner.Visible)
+        {
+            currentOrderBanner?.Apply(_persistentCurrentOrderBanner);
+            return;
+        }
+
+        currentOrderBanner?.Hide();
     }
 
     public void ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel model)
@@ -196,6 +256,9 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRunt
         _hasLastCommandResult = false;
         ClearPersistentCommandFeedback();
         _transientFeedbackActive = false;
+        _hasPersistentCurrentOrderBanner = false;
+        _persistentCurrentOrderBanner = MatchHudCurrentOrderBannerModel.Hidden;
+        _transientCurrentOrderBannerActive = false;
     }
 
     private void ApplyFeedbackVisuals(MatchHudCommandFeedbackModel model)

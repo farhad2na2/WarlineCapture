@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public sealed class BattleHudRuntimeFeedbackBoundary
+public static class BattleHudRuntimeFeedbackUiSystemHelper
 {
     public const float SuccessFeedbackDurationSeconds = 1.4f;
     public const float ErrorFeedbackDurationSeconds = 2.25f;
@@ -45,6 +45,9 @@ public sealed class BattleHudRuntimeFeedbackBoundary
 
         view.CurrentCommandMode = TacticalCommandMode.Board;
         view.ApplyCommandModeTabs(TacticalCommandMode.Board);
+        view.ApplyCurrentOrderBanner(MatchHudCurrentOrderBannerUiSystemHelper.BuildBoardCommandModeBanner(
+            direction,
+            view.ResolveCommandIconSprite(TacticalCommandMode.Board)));
 
         MatchHudCommandFeedbackModel commandFeedback = direction == UiBoardCommandModeDirection.TransportToPassenger
             ? MatchHudCommandFeedbackModel.Show("Select units to board or use BOARD ALL.", CommandFeedbackSeverity.Ready)
@@ -105,6 +108,20 @@ public sealed class BattleHudRuntimeFeedbackBoundary
         if (result.Accepted)
         {
             view.HideInvalidCommand();
+            TacticalCommandMode bannerMode = MatchHudCurrentOrderBannerUiSystemHelper.ResolveAcceptedResultCommandMode(
+                result,
+                view.RuntimeFeedbackState);
+            if (bannerMode != TacticalCommandMode.None)
+            {
+                view.ApplyTransientCurrentOrderBanner(
+                    MatchHudCurrentOrderBannerUiSystemHelper.BuildAcceptedResultBanner(
+                        result,
+                        bannerMode,
+                        view.ResolveCommandIconSprite(bannerMode)),
+                    Time.unscaledTime,
+                    SuccessFeedbackDurationSeconds);
+            }
+
             MatchHudCommandFeedbackModel feedbackModel = BuildCommandResultFeedback(result, view.RuntimeFeedbackState);
             if (feedbackModel.Visible)
                 view.ApplyTransientCommandFeedback(feedbackModel, Time.unscaledTime);
@@ -135,9 +152,17 @@ public sealed class BattleHudRuntimeFeedbackBoundary
     private static void ApplyCommandModeVisuals(IBattleHudRuntimeFeedbackView view, TacticalCommandMode mode)
     {
         if (mode == TacticalCommandMode.None)
+        {
             view.ClearCommandModeTabs();
+            view.HideCurrentOrderBanner();
+        }
         else
+        {
             view.ApplyCommandModeTabs(mode);
+            view.ApplyCurrentOrderBanner(MatchHudCurrentOrderBannerUiSystemHelper.BuildCommandModeBanner(
+                mode,
+                view.ResolveCommandIconSprite(mode)));
+        }
 
         MatchHudCommandFeedbackModel commandFeedback = BuildCommandModeFeedback(mode);
         if (!commandFeedback.Visible)
@@ -158,6 +183,7 @@ public sealed class BattleHudRuntimeFeedbackBoundary
         view.ClearPersistentCommandFeedback();
         view.HideFeedbackMessage();
         view.HideCommandMode();
+        view.HideCurrentOrderBanner();
         view.ClearCommandModeTabs();
     }
 

@@ -331,20 +331,20 @@ public sealed class UIShellContentView : MonoBehaviour
         _selectionUiCommandSystem?.CaptureUiClickSequence();
         if (_buildDrawerPopupInstance != null)
         {
-            BattleHudRuntimeFeedbackBoundary.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
             return;
         }
 
         GameObject popup = InstallBuildDrawerPopup();
         if (popup == null)
         {
-            BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
                 "Build drawer is not ready."));
             return;
         }
 
-        BattleHudRuntimeFeedbackBoundary.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
+        BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
     }
 
     private void BindBuildPlacementConfirmationBarInRegion()
@@ -440,7 +440,7 @@ public sealed class UIShellContentView : MonoBehaviour
             : null;
         if (_fullMapPopupView == null)
         {
-            BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.CommandUnavailable,
                 "Tactical map is not ready."));
             return;
@@ -486,7 +486,7 @@ public sealed class UIShellContentView : MonoBehaviour
         bool hasActivePlacement = _buildingUiCommandSystem != null &&
                                   _buildingUiCommandSystem.HasPendingBuildingPlacement;
         if (!hasActivePlacement)
-            BattleHudRuntimeFeedbackBoundary.ClearStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackUiSystemHelper.ClearStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
 
         if (popup != null)
         {

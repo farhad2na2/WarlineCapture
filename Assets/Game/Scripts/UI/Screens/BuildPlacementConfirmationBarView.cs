@@ -197,15 +197,15 @@ public sealed class BuildPlacementConfirmationBarView : MonoBehaviour
     private void OnCancelClicked()
     {
         _commandSystem?.CancelBuildingPlacement();
-        BattleHudRuntimeFeedbackBoundary.ClearStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
-        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success("PLACEMENT CANCELLED"));
+        BattleHudRuntimeFeedbackUiSystemHelper.ClearStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
+        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success("PLACEMENT CANCELLED"));
         Refresh(force: true);
     }
 
     private void OnRotateClicked()
     {
         bool rotated = _commandSystem != null && _commandSystem.RotateBuildingPlacement();
-        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, rotated
+        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, rotated
             ? TacticalCommandResult.Success("ROTATED 90 DEGREES")
             : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "No active building placement."));
         Refresh(force: true);
@@ -214,7 +214,7 @@ public sealed class BuildPlacementConfirmationBarView : MonoBehaviour
     private void OnConfirmClicked()
     {
         bool placed = _commandSystem != null && _commandSystem.ConfirmBuildingPlacement();
-        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, placed
+        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, placed
             ? TacticalCommandResult.Success("BUILDING PLACED")
             : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "Place on valid ground."));
         Refresh(force: true);

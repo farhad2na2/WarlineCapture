@@ -3033,11 +3033,11 @@ public sealed class RtsSelectionInputSystemTests
         Assert.IsFalse(commandInput.Contains("ApplyDefaultSelection", StringComparison.Ordinal));
         Assert.IsFalse(commandInput.Contains(".Toggle(", StringComparison.Ordinal));
         Assert.IsFalse(commandInput.Contains(".Select(", StringComparison.Ordinal));
-        Assert.IsFalse(commandInput.Contains("BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(_runtimeFeedbackView", StringComparison.Ordinal));
-        Assert.IsFalse(commandInput.Contains("BattleHudRuntimeFeedbackBoundary.ClearCommandMode(_runtimeFeedbackView", StringComparison.Ordinal));
+        Assert.IsFalse(commandInput.Contains("BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(_runtimeFeedbackView", StringComparison.Ordinal));
+        Assert.IsFalse(commandInput.Contains("BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(_runtimeFeedbackView", StringComparison.Ordinal));
         StringAssert.Contains("RequestEnterSelectionMode", commandInput);
         StringAssert.Contains("RequestExitSelectionMode", commandInput);
-        StringAssert.Contains("BattleHudRuntimeFeedbackBoundary.GetState(_runtimeFeedbackView)", commandInput);
+        StringAssert.Contains("BattleHudRuntimeFeedbackUiSystemHelper.GetState(_runtimeFeedbackView)", commandInput);
     }
 
     [Test]

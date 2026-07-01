@@ -482,7 +482,7 @@ Status: Complete
 Implementation checklist:
 
 - [x] Confirm `TacticalCommandFeedbackText` has clear text for Hold, Stop, and Scan.
-- [x] Confirm `BattleHudRuntimeFeedbackBoundary` visual state handles Hold/Stop/Scan.
+- [x] Confirm `BattleHudRuntimeFeedbackUiSystemHelper` visual state handles Hold/Stop/Scan.
 - [x] Confirm command mode clears after one-shot Scan.
 - [x] Confirm Hold/Stop feedback is transient or persistent according to HUD spec.
 - [x] Confirm world markers for Scan are consistent with move/attack marker style.

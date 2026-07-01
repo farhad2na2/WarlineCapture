@@ -346,7 +346,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         if (_uiCommandSystem == null)
         {
             ApplyInstruction("Build drawer is still connecting. Try again in a moment.", BuildDrawerInstructionSeverity.Error);
-            BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
                 "Build drawer is not ready."));
             return;
@@ -367,14 +367,14 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         if (_selectedItem.Category == BuildDrawerCategory.Buildings)
         {
             ApplyInstruction($"Place {_selectedItem.DisplayName}: choose a valid footprint.", BuildDrawerInstructionSeverity.Ready);
-            BattleHudRuntimeFeedbackBoundary.ApplyStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
-            BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success("PLACE BUILDING"));
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success("PLACE BUILDING"));
             _closeDrawer?.Invoke();
             return;
         }
 
         ApplyInstruction(FormatPrimarySuccessInstruction(_selectedItem), BuildDrawerInstructionSeverity.Ready);
-        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success($"{_selectedItem.ActionLabel}: {_selectedItem.DisplayName}"));
+        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success($"{_selectedItem.ActionLabel}: {_selectedItem.DisplayName}"));
         RefreshQueue();
     }
 
@@ -385,7 +385,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
             _uiCommandSystem == null)
         {
             ApplyInstruction("Production cancel unavailable.", BuildDrawerInstructionSeverity.Error);
-            BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
                 "Production cancel unavailable."));
             return;
@@ -398,7 +398,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
                 : "Production cancel unavailable.",
             cancelled ? BuildDrawerInstructionSeverity.Warning : BuildDrawerInstructionSeverity.Error);
 
-        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, cancelled
+        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, cancelled
             ? TacticalCommandResult.Success("PRODUCTION CANCELLED")
             : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "Production cancel unavailable."));
         RefreshQueue();
@@ -409,7 +409,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         if (_pendingProductions.Count == 0 || _uiCommandSystem == null)
         {
             ApplyInstruction("Production queue is empty.", BuildDrawerInstructionSeverity.Warning);
-            BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
                 "Production queue is empty."));
             return;
@@ -438,7 +438,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
                 ? "Production queue cleared."
                 : "Production clear unavailable.",
             cancelledCount > 0 ? BuildDrawerInstructionSeverity.Warning : BuildDrawerInstructionSeverity.Error);
-        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, cancelledCount > 0
+        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, cancelledCount > 0
             ? TacticalCommandResult.Success("PRODUCTION QUEUE CLEARED")
             : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "Production clear unavailable."));
         RefreshQueue();
@@ -834,7 +834,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
         TacticalCommandReasonCode reason = failure == BuildingUiCommandFailure.NotEnoughMoney
             ? TacticalCommandReasonCode.InsufficientResources
             : TacticalCommandReasonCode.BuildUnavailable;
-        BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
             reason,
             FormatFailureMessage(failure, requiredBuildingDisplayName)));
     }

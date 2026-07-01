@@ -12,6 +12,14 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     [SerializeField] private Button holdButton;
     [SerializeField] private Button stopButton;
     [SerializeField] private Button commandWheelStopButton;
+    [SerializeField] private Image selectIcon;
+    [SerializeField] private Image moveIcon;
+    [SerializeField] private Image attackIcon;
+    [SerializeField] private Image scanIcon;
+    [SerializeField] private Image boardIcon;
+    [SerializeField] private Image buildIcon;
+    [SerializeField] private Image holdIcon;
+    [SerializeField] private Image stopIcon;
     [SerializeField] private CommandWheelPanelView commandWheelPanel;
     [SerializeField] private MatchOverlayCommandTabGroupView commandTabGroup;
 
@@ -26,8 +34,34 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     public Button HoldButton => holdButton;
     public Button StopButton => stopButton;
     public Button CommandWheelStopButton => commandWheelStopButton;
+    public Image SelectIcon => selectIcon;
+    public Image MoveIcon => moveIcon;
+    public Image AttackIcon => attackIcon;
+    public Image ScanIcon => scanIcon;
+    public Image BoardIcon => boardIcon;
+    public Image BuildIcon => buildIcon;
+    public Image HoldIcon => holdIcon;
+    public Image StopIcon => stopIcon;
     public CommandWheelPanelView CommandWheelPanel => commandWheelPanel;
     public MatchOverlayCommandTabGroupView CommandTabGroup => commandTabGroup;
+
+    public Sprite ResolveCommandIconSprite(TacticalCommandMode mode)
+    {
+        Image image = mode switch
+        {
+            TacticalCommandMode.Select => selectIcon,
+            TacticalCommandMode.Move => moveIcon,
+            TacticalCommandMode.Attack => attackIcon,
+            TacticalCommandMode.Hold => holdIcon,
+            TacticalCommandMode.Stop => stopIcon,
+            TacticalCommandMode.Build => buildIcon,
+            TacticalCommandMode.Scan => scanIcon,
+            TacticalCommandMode.Board => boardIcon,
+            _ => null
+        };
+
+        return image != null ? image.sprite : null;
+    }
 
     private void OnTransformParentChanged()
     {

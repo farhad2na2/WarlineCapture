@@ -189,7 +189,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                     : _selectionUiCommandSystem.RequestExitSelectionMode());
 
             if (!queued)
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.CommandUnavailable,
                     "Selection command unavailable."));
         }
@@ -200,11 +200,11 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
             {
                 _showBuildDrawer.Invoke();
                 _buildDrawerOpen = true;
-                BattleHudRuntimeFeedbackBoundary.ApplyStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
                 return;
             }
 
-            BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
                 "Build drawer is not ready."));
         }
@@ -218,7 +218,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
             LogMoveCommandTrace($"moveButtonRequestMoveCommandMode queued={queued}");
 
             if (!queued)
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.CommandUnavailable,
                     "Move command unavailable."));
         }
@@ -229,7 +229,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                 _selectionUiCommandSystem.RequestAttackCommandMode();
 
             if (!queued)
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.CommandUnavailable,
                     "Attack command unavailable."));
         }
@@ -244,7 +244,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                 _selectionUiCommandSystem.RequestScanCommandMode();
 
             if (!queued)
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     ResolveFallbackReason(CommandCapability.Scan),
                     ResolveUnavailableFeedbackMessage(CommandCapability.Scan, ResolveFallbackReason(CommandCapability.Scan))));
         }
@@ -256,7 +256,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                 _selectionUiCommandSystem.RequestBoardTargetMode();
 
             if (!queued)
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.CommandUnavailable,
                     "Board command unavailable."));
         }
@@ -325,12 +325,12 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                 _closeBuildDrawer.Invoke();
 
             _buildDrawerOpen = false;
-            BattleHudRuntimeFeedbackBoundary.ClearStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackUiSystemHelper.ClearStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
         }
 
         private bool IsCommandModePresented(TacticalCommandMode mode)
         {
-            BattleHudRuntimeFeedbackState state = BattleHudRuntimeFeedbackBoundary.GetState(_runtimeFeedbackView);
+            BattleHudRuntimeFeedbackState state = BattleHudRuntimeFeedbackUiSystemHelper.GetState(_runtimeFeedbackView);
             return state.CurrentCommandMode == mode ||
                 state.StickyCommandMode == mode;
         }
@@ -344,7 +344,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                 _selectionUiCommandSystem.RequestHoldPosition();
 
             if (!queued)
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     ResolveFallbackReason(CommandCapability.Hold),
                     ResolveUnavailableFeedbackMessage(CommandCapability.Hold, ResolveFallbackReason(CommandCapability.Hold))));
         }
@@ -358,7 +358,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                 _selectionUiCommandSystem.RequestStop();
 
             if (!queued)
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     ResolveFallbackReason(CommandCapability.Stop),
                     ResolveUnavailableFeedbackMessage(CommandCapability.Stop, ResolveFallbackReason(CommandCapability.Stop))));
         }
@@ -373,7 +373,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                 _selectionUiCommandSystem.RequestStop();
 
             if (!queued)
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     ResolveFallbackReason(CommandCapability.Stop),
                     ResolveUnavailableFeedbackMessage(CommandCapability.Stop, ResolveFallbackReason(CommandCapability.Stop))));
         }
@@ -400,7 +400,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
 
             if (!readModel.HasAnySelectedUnits)
             {
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(
                     _runtimeFeedbackView,
                     TacticalCommandResult.Rejected(
                         TacticalCommandReasonCode.NoSelection,
@@ -425,7 +425,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                 CommandCapability.Scan => readModel.FocusedUnitScanDisabledReason,
                 _ => TacticalCommandReasonCode.CommandUnavailable
             };
-            BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(
                 _runtimeFeedbackView,
                 TacticalCommandResult.Rejected(reason, ResolveUnavailableFeedbackMessage(capability, reason)));
             return false;
@@ -471,7 +471,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                 _selectionUiCommandSystem.RequestBoardAllSelectedTransport();
 
             if (!queued)
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.CommandUnavailable,
                     "Board all unavailable."));
         }
@@ -482,7 +482,7 @@ public sealed class MatchOverlayCommandInputUiSystemHelper
                 _selectionUiCommandSystem.RequestCancelActiveCommandMode();
 
             if (!queued)
-                BattleHudRuntimeFeedbackBoundary.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.CommandUnavailable,
                     "Cancel unavailable."));
         }

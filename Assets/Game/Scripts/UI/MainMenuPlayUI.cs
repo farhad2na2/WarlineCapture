@@ -95,7 +95,7 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
 
         using (FeedbackLifetimeMarker.Auto())
         {
-            BattleHudRuntimeFeedbackBoundary.TickFeedbackLifetime(_matchHudRuntimeFeedbackView, Time.unscaledTime);
+            BattleHudRuntimeFeedbackUiSystemHelper.TickFeedbackLifetime(_matchHudRuntimeFeedbackView, Time.unscaledTime);
         }
 
         _selectionUiCameraSystem?.UpdateZoomTransition();
@@ -203,12 +203,12 @@ public sealed class MainMenuPlayUI : IMatchRuntimeUi
 
     public void ApplyMatchHudCommandMode(TacticalCommandMode mode)
     {
-        BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(_matchHudRuntimeFeedbackView, mode);
+        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(_matchHudRuntimeFeedbackView, mode);
     }
 
     public void ClearMatchHudCommandMode()
     {
-        BattleHudRuntimeFeedbackBoundary.ClearCommandMode(_matchHudRuntimeFeedbackView);
+        BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(_matchHudRuntimeFeedbackView);
     }
 
     public void ConfigureMatchHudSquadTrayBinding(System.Action<IMatchHudSquadTrayView> bindMatchHudSquadTray)

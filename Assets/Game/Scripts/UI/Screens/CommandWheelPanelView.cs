@@ -70,7 +70,7 @@ public sealed class CommandWheelPanelView : MonoBehaviour
 
     private void ApplySpecialMode()
     {
-        BattleHudRuntimeFeedbackBoundary.ApplyCommandMode(runtimeFeedbackView, TacticalCommandMode.Special);
+        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(runtimeFeedbackView, TacticalCommandMode.Special);
         _appliedSpecialMode = runtimeFeedbackView != null;
     }
 
@@ -79,7 +79,7 @@ public sealed class CommandWheelPanelView : MonoBehaviour
         if (!_appliedSpecialMode)
             return;
 
-        BattleHudRuntimeFeedbackBoundary.ClearCommandMode(runtimeFeedbackView);
+        BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(runtimeFeedbackView);
         _appliedSpecialMode = false;
     }
 }

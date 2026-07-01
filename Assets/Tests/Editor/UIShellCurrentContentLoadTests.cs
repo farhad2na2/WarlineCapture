@@ -431,7 +431,7 @@ public sealed class UIShellCurrentContentLoadTests
             "Right quick rail Build button must not start in Unity selected state after Match HUD binding.");
         Assert.AreNotEqual(
             TacticalCommandMode.Build,
-            BattleHudRuntimeFeedbackBoundary.GetState(runtimeFeedback).CurrentCommandMode,
+            BattleHudRuntimeFeedbackUiSystemHelper.GetState(runtimeFeedback).CurrentCommandMode,
             "Build command mode must not be active by default when the Match HUD loads.");
 
         Vector2 buttonCenter = GetButtonTargetGraphicCenterScreenPoint(quickRail.BuildButton);

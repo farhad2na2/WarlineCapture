@@ -30,6 +30,7 @@ public sealed class UIShellContentView : MonoBehaviour
     private MatchHudFooterContentView _matchHudFooterContentView;
     private MatchHudRightQuickRailView _rightQuickRailView;
     private GameObject _matchHudHeaderContent;
+    private MatchHudCurrentOrderBannerView _matchHudCurrentOrderBannerView;
     private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
     private ArmoryContentListView _armoryContentListView;
     private TryResolveUiBuildingCatalogMetadata _tryResolveBuildingCatalogMetadata;
@@ -292,6 +293,9 @@ public sealed class UIShellContentView : MonoBehaviour
     {
         ClearRegion(UIShellRegionId.MenuBackgroundRegion);
         _matchHudHeaderContent = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Header, UIShellRegionId.HeaderRegion);
+        _matchHudCurrentOrderBannerView = _matchHudHeaderContent != null
+            ? _matchHudHeaderContent.GetComponent<MatchHudCurrentOrderBannerView>()
+            : null;
         _mainMenuPlayUi?.BindMatchHudThreatJumpPanel(_matchHudHeaderContent);
         GameObject left = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
         _matchHudSelectionPanelView = left != null ? left.GetComponent<MatchHudSelectionPanelView>() : null;
@@ -316,6 +320,8 @@ public sealed class UIShellContentView : MonoBehaviour
     private void BindMatchHudFooter(MatchHudFooterContentView footer)
     {
         _matchHudCommandControlsView = footer != null ? footer.CommandControls : null;
+        if (footer != null && footer.RuntimeFeedback != null)
+            footer.RuntimeFeedback.BindCurrentOrderBanner(_matchHudCurrentOrderBannerView);
         BindMatchHudCommandControls(_matchHudCommandControlsView);
         BindMatchHudRuntimeFeedback(footer != null ? footer.RuntimeFeedback : null);
         BindMatchHudMinimap(footer != null ? footer.Minimap : null);
@@ -694,6 +700,8 @@ public sealed class UIShellContentView : MonoBehaviour
         else if (regionId == UIShellRegionId.HeaderRegion)
         {
             UnbindMatchHudThreatWarningHeader();
+            _matchHudHeaderContent = null;
+            _matchHudCurrentOrderBannerView = null;
         }
         else if (regionId == UIShellRegionId.LeftRegion)
         {

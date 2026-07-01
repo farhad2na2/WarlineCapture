@@ -40,6 +40,10 @@ public sealed class UIShellCurrentContentLoadTests
                 test => test.InstalledMatchHudCommandControlsUseSelectionReadModelCapabilities(),
                 ref passed);
             RunValidationStep(
+                nameof(InstalledMatchHudRuntimeFeedbackBindsThroughMainMenuPlayUi),
+                test => test.InstalledMatchHudRuntimeFeedbackBindsThroughMainMenuPlayUi(),
+                ref passed);
+            RunValidationStep(
                 nameof(RightQuickRailBuildButtonShowsAndClosesBuildDrawerPopup),
                 test => test.RightQuickRailBuildButtonShowsAndClosesBuildDrawerPopup(),
                 ref passed);
@@ -391,6 +395,10 @@ public sealed class UIShellCurrentContentLoadTests
 
         Assert.IsTrue(runtimeFeedback.FeedbackPanel.activeSelf);
         Assert.AreEqual("Choose destination.", runtimeFeedback.FeedbackText.text);
+        Assert.NotNull(runtimeFeedback.CurrentOrderBanner, "The separately installed footer runtime feedback must bind the live header CurrentOrderBanner.");
+        Assert.IsTrue(runtimeFeedback.CurrentOrderBanner.BannerRoot.activeSelf, "Move command mode must show the live header CurrentOrderBanner.");
+        Assert.AreEqual("MOVE ORDER", runtimeFeedback.CurrentOrderBanner.OrderText.text);
+        Assert.AreEqual("Select a destination.", runtimeFeedback.CurrentOrderBanner.DescriptionText.text);
     }
 
     [Test]

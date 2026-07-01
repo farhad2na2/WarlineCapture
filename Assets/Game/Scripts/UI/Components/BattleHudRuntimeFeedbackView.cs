@@ -83,6 +83,13 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour, IBattleHudRunt
         return commandIconSource != null ? commandIconSource.ResolveCommandIconSprite(mode) : null;
     }
 
+    public void BindCurrentOrderBanner(MatchHudCurrentOrderBannerView bannerView)
+    {
+        currentOrderBanner = bannerView;
+        if (currentOrderBanner != null)
+            currentOrderBanner.Apply(_persistentCurrentOrderBanner);
+    }
+
     public void ApplyCurrentOrderBanner(MatchHudCurrentOrderBannerModel model)
     {
         _transientCurrentOrderBannerActive = false;

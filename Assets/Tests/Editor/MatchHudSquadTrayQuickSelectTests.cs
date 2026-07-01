@@ -6,6 +6,14 @@ using UnityEngine.UI;
 public sealed class MatchHudSquadTrayQuickSelectTests
 {
     private const string MatchHudContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
+    private static readonly string[] DedicatedSquadPortraitPaths =
+    {
+        "Assets/Game/Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card1_RifleSquad.png",
+        "Assets/Game/Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card2_CombatVehicles.png",
+        "Assets/Game/Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card3_AttackHelicopter.png",
+        "Assets/Game/Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card4_FighterJet.png",
+        "Assets/Game/Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card5_Transport.png",
+    };
 
     [Test]
     public void MatchHudSquadTrayCardsAreButtons()
@@ -29,6 +37,35 @@ public sealed class MatchHudSquadTrayQuickSelectTests
             Assert.NotNull(frameImage, $"SquadCard{i}/Frame must keep its frame image.");
             Assert.AreSame(frameImage, button.targetGraphic, $"SquadCard{i} button should target its existing frame image.");
             Assert.IsTrue(frameImage.raycastTarget, $"SquadCard{i}/Frame image must receive pointer raycasts.");
+        }
+    }
+
+    [Test]
+    public void MatchHudSquadTrayCardsUseDedicatedPortraitSprites()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
+        Assert.NotNull(prefab);
+
+        Transform frame = prefab.transform.Find("FooterContent/SquadTray/Frame");
+        Assert.NotNull(frame);
+
+        MatchHudSquadTrayView view = frame.GetComponent<MatchHudSquadTrayView>();
+        Assert.NotNull(view, "The squad tray frame must own MatchHudSquadTrayView so runtime code uses serialized references.");
+
+        SerializedObject serialized = new(view);
+        SerializedProperty cards = serialized.FindProperty("cards");
+        Assert.NotNull(cards);
+        Assert.AreEqual(DedicatedSquadPortraitPaths.Length, cards.arraySize);
+
+        for (int i = 0; i < DedicatedSquadPortraitPaths.Length; i++)
+        {
+            Sprite expectedSprite = AssetDatabase.LoadAssetAtPath<Sprite>(DedicatedSquadPortraitPaths[i]);
+            Assert.NotNull(expectedSprite, $"Dedicated squad portrait sprite is missing at {DedicatedSquadPortraitPaths[i]}.");
+
+            SerializedProperty card = cards.GetArrayElementAtIndex(i);
+            Image portraitImage = card.FindPropertyRelative("PortraitImage").objectReferenceValue as Image;
+            Assert.NotNull(portraitImage, $"Card {i + 1} portrait reference is required.");
+            Assert.AreSame(expectedSprite, portraitImage.sprite, $"Card {i + 1} must use its dedicated Match HUD squad tray sprite.");
         }
     }
 

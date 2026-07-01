@@ -257,12 +257,12 @@ Actual validation log:
 
 | Command | Result | Log |
 | --- | --- | --- |
-| `SettingsPopupPrefabBuilder.Build` | Passed; shared prefab and scene/content bindings regenerated; legacy duplicate prefabs removed. | `/private/tmp/warline-settings-popup-shared-builder.log` |
+| `SettingsPopupPrefabBuilder.Build` | Passed; shared prefab and scene/content bindings regenerated; legacy duplicate prefabs removed; popup runtime scale matches the 4800x2160 menu canvas reference. | `/private/tmp/warline-settings-popup-runtime-scale-builder.log` |
 | `dotnet build Assembly-CSharp.csproj --no-restore -v:minimal` | Passed, 0 warnings/errors. | terminal |
 | `dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal` | Passed, 0 warnings/errors. | terminal |
 | `git diff --check` | Passed. | terminal |
-| `SettingsPopupValidationTests.RunFocusedValidation` | Passed, `tests=8`; verifies shared popup for menu and match contexts and legacy duplicate removal. | `/private/tmp/warline-settings-popup-shared-validation.log` |
-| `SettingsPopupPrefabBuilder.CaptureVisualQa` | Passed; menu/match 16:9 and 20:9 captures generated. | `/private/tmp/warline-settings-popup-capture-gpu.log` |
+| `SettingsPopupValidationTests.RunFocusedValidation` | Passed, `tests=8`; verifies shared popup for menu and match contexts, legacy duplicate removal, and effective size on the 4800x2160 menu canvas. | `/private/tmp/warline-settings-popup-runtime-scale-validation.log` |
+| `SettingsPopupPrefabBuilder.CaptureVisualQa` | Passed; captures now use the same 4800x2160 reference as the Menu scene and prove the popup is no longer tiny. | `/private/tmp/warline-settings-popup-runtime-scale-capture.log` |
 | `NonEcsSystemConversionArchitectureTests.RunFocusedValidation` | Failed on pre-existing direct `new UnitPathRequest` ownership violations outside this slice. | `/private/tmp/warline-settings-popup-non-ecs-guardrail.log` |
 
 Known unrelated guardrail failure:
@@ -281,7 +281,7 @@ Verify the popups are visually usable and match the command-base style.
 | Complete | Capture menu popup at 20:9. | `/private/tmp/warline-settings-popup-menu-20x9.png`. |
 | Complete | Capture match popup at 16:9. | `/private/tmp/warline-settings-popup-match-16x9.png`. |
 | Complete | Capture match popup at 20:9. | `/private/tmp/warline-settings-popup-match-20x9.png`. |
-| Complete | Inspect control states. | Captures inspected; frame/control Images now serialize `Sliced` with PPU multiplier `2`; validation locks this. |
+| Complete | Inspect control states. | Captures inspected; enlarged frame/control Images serialize `Sliced` with PPU multiplier `2`; validation locks this. |
 
 Acceptance:
 

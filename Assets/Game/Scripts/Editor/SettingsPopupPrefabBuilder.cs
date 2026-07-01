@@ -16,6 +16,8 @@ public static class SettingsPopupPrefabBuilder
     private const string MainMenuContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
     private const string MatchHudContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
+    private const float PopupRuntimeScale = 2.1f;
+    private static readonly Vector2 MenuReferenceResolution = new(4800f, 2160f);
     private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
     private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
     private const string LightFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Light SDF.asset";
@@ -104,7 +106,8 @@ public static class SettingsPopupPrefabBuilder
         Image dim = CreateImage("InputBlocker", root.transform, null, new Color(0f, 0f, 0f, 0.48f), true);
         Stretch(dim.rectTransform);
 
-        RectTransform panel = CreateRect("SettingsRoot", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1240f, 860f), Vector2.zero);
+        RectTransform panel = CreateRect("SettingsRoot", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1660f, 940f), Vector2.zero);
+        panel.localScale = Vector3.one * PopupRuntimeScale;
         Image panelImage = panel.gameObject.AddComponent<Image>();
         panelImage.sprite = panelBacking;
         ApplySliced(panelImage, 2f);
@@ -114,45 +117,45 @@ public static class SettingsPopupPrefabBuilder
         Stretch(frame.rectTransform);
         ApplySliced(frame, 2f);
 
-        RectTransform header = CreateRect("Header", panel, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 92f), new Vector2(0f, -46f));
+        RectTransform header = CreateRect("Header", panel, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 112f), new Vector2(0f, -56f));
         Image headerImage = header.gameObject.AddComponent<Image>();
         headerImage.sprite = headerFrame;
         ApplySliced(headerImage, 2f);
         headerImage.raycastTarget = false;
 
         Image gear = CreateImage("SettingsIcon", header, settingsIcon, Color.white, false);
-        SetRect(gear.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(56f, 56f), new Vector2(56f, 0f));
+        SetRect(gear.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(68f, 68f), new Vector2(70f, 0f));
 
-        TMP_Text title = CreateText("TitleText", header, "COMMAND SETTINGS", 34f, boldFont, TextAlignmentOptions.Left);
-        SetRect(title.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(-220f, 0f), new Vector2(142f, 0f));
+        TMP_Text title = CreateText("TitleText", header, "COMMAND SETTINGS", 42f, boldFont, TextAlignmentOptions.Left);
+        SetRect(title.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(-260f, 0f), new Vector2(166f, 0f));
 
         Button closeButton = CreateButton("CloseButton", header, squareDefault, squareHover, squarePressed, squareSelected, squareDisabled);
-        SetRect(closeButton.GetComponent<RectTransform>(), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(62f, 62f), new Vector2(-58f, 0f));
-        TMP_Text closeLabel = CreateText("CloseLabel", closeButton.transform, "X", 26f, boldFont, TextAlignmentOptions.Center);
+        SetRect(closeButton.GetComponent<RectTransform>(), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(74f, 74f), new Vector2(-70f, 0f));
+        TMP_Text closeLabel = CreateText("CloseLabel", closeButton.transform, "X", 30f, boldFont, TextAlignmentOptions.Center);
         Stretch(closeLabel.rectTransform);
 
         SettingsPanelView panelView = panel.gameObject.AddComponent<SettingsPanelView>();
-        RectTransform content = CreateRect("Content", panel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(1148f, 640f), new Vector2(0f, -410f));
-        RectTransform audioSection = CreateSection("AudioSection", content, "AUDIO", new Vector2(-294f, 170f), new Vector2(560f, 270f));
-        RectTransform controlSection = CreateSection("ControlSection", content, "GAMEPLAY", new Vector2(-294f, -135f), new Vector2(560f, 300f));
-        RectTransform displaySection = CreateSection("DisplaySection", content, "VIDEO", new Vector2(294f, 180f), new Vector2(560f, 250f));
-        RectTransform accessSection = CreateSection("AccessibilitySection", content, "ACCESSIBILITY", new Vector2(294f, -120f), new Vector2(560f, 350f));
+        RectTransform content = CreateRect("Content", panel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(1540f, 720f), new Vector2(0f, -470f));
+        RectTransform audioSection = CreateSection("AudioSection", content, "AUDIO", new Vector2(-395f, 190f), new Vector2(750f, 300f));
+        RectTransform controlSection = CreateSection("ControlSection", content, "GAMEPLAY", new Vector2(-395f, -170f), new Vector2(750f, 330f));
+        RectTransform displaySection = CreateSection("DisplaySection", content, "VIDEO", new Vector2(395f, 190f), new Vector2(750f, 280f));
+        RectTransform accessSection = CreateSection("AccessibilitySection", content, "ACCESSIBILITY", new Vector2(395f, -150f), new Vector2(750f, 380f));
 
-        UISliderRowView master = CreateSliderRow("MasterVolumeRow", audioSection, "MASTER VOLUME", 42f, 62f);
-        UISliderRowView music = CreateSliderRow("MusicVolumeRow", audioSection, "MUSIC", 108f, 62f);
-        UISliderRowView sfx = CreateSliderRow("SfxVolumeRow", audioSection, "SFX", 174f, 62f);
+        UISliderRowView master = CreateSliderRow("MasterVolumeRow", audioSection, "MASTER VOLUME", 52f, 72f);
+        UISliderRowView music = CreateSliderRow("MusicVolumeRow", audioSection, "MUSIC", 130f, 72f);
+        UISliderRowView sfx = CreateSliderRow("SfxVolumeRow", audioSection, "SFX", 208f, 72f);
 
-        UISliderRowView camera = CreateSliderRow("CameraSensitivityRow", controlSection, "CAMERA SENSITIVITY", 42f, 62f);
-        UIToggleRowView threat = CreateToggleRow("ThreatWarningsRow", controlSection, "THREAT WARNINGS", "Show tactical warnings during missions.", 108f, 58f);
-        UISegmentedControlView assistance = CreateSegmentRow("AssistanceLevelControl", controlSection, "ASSISTANT GUIDANCE", 170f, AssistanceLevelLabels, 78f);
+        UISliderRowView camera = CreateSliderRow("CameraSensitivityRow", controlSection, "CAMERA SENSITIVITY", 52f, 72f);
+        UIToggleRowView threat = CreateToggleRow("ThreatWarningsRow", controlSection, "THREAT WARNINGS", "Show tactical warnings during missions.", 130f, 70f);
+        UISegmentedControlView assistance = CreateSegmentRow("AssistanceLevelControl", controlSection, "ASSISTANT GUIDANCE", 208f, AssistanceLevelLabels, 84f);
 
-        UISegmentedControlView quality = CreateSegmentRow("GraphicsQualityControl", displaySection, "GRAPHICS QUALITY", 42f, GraphicsQualityLabels, 78f);
-        UISegmentedControlView frameRate = CreateSegmentRow("FrameRateControl", displaySection, "FRAME RATE", 124f, FrameRateLabels, 78f);
+        UISegmentedControlView quality = CreateSegmentRow("GraphicsQualityControl", displaySection, "GRAPHICS QUALITY", 52f, GraphicsQualityLabels, 84f);
+        UISegmentedControlView frameRate = CreateSegmentRow("FrameRateControl", displaySection, "FRAME RATE", 144f, FrameRateLabels, 84f);
 
-        UIToggleRowView contrast = CreateToggleRow("HighContrastRow", accessSection, "HIGH CONTRAST UI", "Increase panel and text contrast.", 42f, 58f);
-        UIToggleRowView largeText = CreateToggleRow("LargeTextRow", accessSection, "LARGE TEXT", "Increase UI text scale for readability.", 104f, 58f);
-        UISegmentedControlView colorblind = CreateSegmentRow("ColorblindModeControl", accessSection, "COLORBLIND MODE", 166f, ColorblindModeLabels, 78f);
-        UISegmentedControlView language = CreateSegmentRow("LanguageControl", accessSection, "LANGUAGE", 248f, LanguageLabels, 78f);
+        UIToggleRowView contrast = CreateToggleRow("HighContrastRow", accessSection, "HIGH CONTRAST UI", "Increase panel and text contrast.", 52f, 70f);
+        UIToggleRowView largeText = CreateToggleRow("LargeTextRow", accessSection, "LARGE TEXT", "Increase UI text scale for readability.", 124f, 70f);
+        UISegmentedControlView colorblind = CreateSegmentRow("ColorblindModeControl", accessSection, "COLORBLIND MODE", 200f, ColorblindModeLabels, 84f);
+        UISegmentedControlView language = CreateSegmentRow("LanguageControl", accessSection, "LANGUAGE", 282f, LanguageLabels, 84f);
 
         SetObject(panelView, "masterVolumeRow", master);
         SetObject(panelView, "musicVolumeRow", music);
@@ -167,15 +170,15 @@ public static class SettingsPopupPrefabBuilder
         SetObject(panelView, "colorblindModeControl", colorblind);
         SetObject(panelView, "languageControl", language);
 
-        RectTransform footer = CreateRect("Footer", panel, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 84f), new Vector2(0f, 42f));
+        RectTransform footer = CreateRect("Footer", panel, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 100f), new Vector2(0f, 50f));
         Button reset = CreateButton("ResetButton", footer, deployDefault, deployHover, deployPressed, deploySelected, deployDisabled);
-        SetRect(reset.GetComponent<RectTransform>(), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(210f, 56f), new Vector2(-330f, 0f));
-        TMP_Text resetText = CreateText("Label", reset.transform, "RESET", 23f, boldFont, TextAlignmentOptions.Center);
+        SetRect(reset.GetComponent<RectTransform>(), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(260f, 66f), new Vector2(-405f, 0f));
+        TMP_Text resetText = CreateText("Label", reset.transform, "RESET", 27f, boldFont, TextAlignmentOptions.Center);
         Stretch(resetText.rectTransform);
 
         Button apply = CreateButton("ApplyButton", footer, deployDefault, deployHover, deployPressed, deploySelected, deployDisabled);
-        SetRect(apply.GetComponent<RectTransform>(), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(250f, 56f), new Vector2(-94f, 0f));
-        TMP_Text applyText = CreateText("Label", apply.transform, "APPLY", 23f, boldFont, TextAlignmentOptions.Center);
+        SetRect(apply.GetComponent<RectTransform>(), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(300f, 66f), new Vector2(-120f, 0f));
+        TMP_Text applyText = CreateText("Label", apply.transform, "APPLY", 27f, boldFont, TextAlignmentOptions.Center);
         Stretch(applyText.rectTransform);
 
         SettingsPopupView popupView = root.AddComponent<SettingsPopupView>();
@@ -208,7 +211,7 @@ public static class SettingsPopupPrefabBuilder
         SetRect(rail.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-40f, 30f), new Vector2(0f, -19f));
         ApplySliced(rail, 2f);
 
-        TMP_Text sectionTitle = CreateText("SectionTitle", section, title, 18f, boldFont, TextAlignmentOptions.Left);
+        TMP_Text sectionTitle = CreateText("SectionTitle", section, title, 22f, boldFont, TextAlignmentOptions.Left);
         SetRect(sectionTitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-52f, 28f), new Vector2(28f, -20f));
         sectionTitle.color = new Color(0.97f, 0.9f, 0.66f, 1f);
         return section;
@@ -218,9 +221,9 @@ public static class SettingsPopupPrefabBuilder
     {
         RectTransform row = CreateRowRoot(name, parent, topOffset, rowHeight);
         UISliderRowView view = row.gameObject.AddComponent<UISliderRowView>();
-        TMP_Text label = CreateText("Label", row, labelText, 18f, mediumFont, TextAlignmentOptions.Left);
+        TMP_Text label = CreateText("Label", row, labelText, 21f, mediumFont, TextAlignmentOptions.Left);
         SetRect(label.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-116f, 28f), new Vector2(-52f, -18f));
-        TMP_Text value = CreateText("Value", row, "0%", 18f, lightFont, TextAlignmentOptions.Right);
+        TMP_Text value = CreateText("Value", row, "0%", 21f, lightFont, TextAlignmentOptions.Right);
         SetRect(value.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(86f, 28f), new Vector2(-49f, -18f));
 
         Slider slider = CreateSlider("Slider", row);
@@ -235,11 +238,11 @@ public static class SettingsPopupPrefabBuilder
     {
         RectTransform row = CreateRowRoot(name, parent, topOffset, rowHeight);
         UIToggleRowView view = row.gameObject.AddComponent<UIToggleRowView>();
-        TMP_Text label = CreateText("Label", row, labelText, 18f, mediumFont, TextAlignmentOptions.Left);
+        TMP_Text label = CreateText("Label", row, labelText, 21f, mediumFont, TextAlignmentOptions.Left);
         SetRect(label.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-176f, 28f), new Vector2(-82f, -18f));
-        TMP_Text description = CreateText("Description", row, descriptionText, 13f, lightFont, TextAlignmentOptions.Left);
+        TMP_Text description = CreateText("Description", row, descriptionText, 15f, lightFont, TextAlignmentOptions.Left);
         SetRect(description.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(-176f, 24f), new Vector2(-82f, 19f));
-        TMP_Text state = CreateText("State", row, "OFF", 17f, boldFont, TextAlignmentOptions.Right);
+        TMP_Text state = CreateText("State", row, "OFF", 20f, boldFont, TextAlignmentOptions.Right);
         SetRect(state.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(56f, 26f), new Vector2(-84f, -18f));
 
         RectTransform toggleRect = CreateRect("Toggle", row, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(94f, 30f), new Vector2(-48f, -6f));
@@ -265,20 +268,20 @@ public static class SettingsPopupPrefabBuilder
     {
         RectTransform row = CreateRowRoot(name, parent, topOffset, rowHeight);
         UISegmentedControlView view = row.gameObject.AddComponent<UISegmentedControlView>();
-        TMP_Text label = CreateText("Label", row, labelText, 18f, mediumFont, TextAlignmentOptions.Left);
+        TMP_Text label = CreateText("Label", row, labelText, 21f, mediumFont, TextAlignmentOptions.Left);
         SetRect(label.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-52f, 30f), new Vector2(0f, -18f));
 
-        RectTransform segmentRoot = CreateRect("Segments", row, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(-52f, 34f), new Vector2(0f, 19f));
+        RectTransform segmentRoot = CreateRect("Segments", row, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(-64f, 40f), new Vector2(0f, 22f));
         Button[] buttons = new Button[optionLabels.Length];
         TMP_Text[] labels = new TMP_Text[optionLabels.Length];
         float gap = 8f;
-        float segmentRootWidth = 496f;
+        float segmentRootWidth = 640f;
         float width = (segmentRootWidth - (optionLabels.Length - 1) * gap) / optionLabels.Length;
         for (int i = 0; i < optionLabels.Length; i++)
         {
             Button button = CreateButton($"Segment{i}", segmentRoot, navDefault, navSelected, navSelected, navSelected, squareDisabled);
-            SetRect(button.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(width, 34f), new Vector2(i * (width + gap) + width * 0.5f, 0f));
-            TMP_Text segmentLabel = CreateText("Label", button.transform, optionLabels[i], 13f, boldFont, TextAlignmentOptions.Center);
+            SetRect(button.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(width, 40f), new Vector2(i * (width + gap) + width * 0.5f, 0f));
+            TMP_Text segmentLabel = CreateText("Label", button.transform, optionLabels[i], 14f, boldFont, TextAlignmentOptions.Center);
             Stretch(segmentLabel.rectTransform);
             buttons[i] = button;
             labels[i] = segmentLabel;
@@ -536,7 +539,7 @@ public static class SettingsPopupPrefabBuilder
         canvas.planeDistance = 10f;
         CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1920f, 1080f);
+        scaler.referenceResolution = MenuReferenceResolution;
         scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
         scaler.matchWidthOrHeight = 0.5f;
 

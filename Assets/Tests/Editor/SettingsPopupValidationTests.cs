@@ -269,7 +269,13 @@ public sealed class SettingsPopupValidationTests
     {
         GameObject prefab = LoadPrefab(prefabPath);
         SettingsPopupView popupView = prefab.GetComponent<SettingsPopupView>();
+        RectTransform settingsRoot = FindChild(prefab.transform, "SettingsRoot") as RectTransform;
         AssertSettingsPopupInstance(prefab, SettingsPopupContext.Menu);
+        Assert.NotNull(settingsRoot, $"{prefabPath} must include a SettingsRoot panel.");
+        Assert.GreaterOrEqual(settingsRoot.sizeDelta.x, 1600f, $"{prefabPath} SettingsRoot must be large enough for the command UI scale.");
+        Assert.GreaterOrEqual(settingsRoot.sizeDelta.y, 900f, $"{prefabPath} SettingsRoot must be tall enough for readable command UI controls.");
+        Assert.GreaterOrEqual(settingsRoot.sizeDelta.x * settingsRoot.localScale.x, 3400f, $"{prefabPath} SettingsRoot effective width must match the 4800x2160 menu canvas scale.");
+        Assert.GreaterOrEqual(settingsRoot.sizeDelta.y * settingsRoot.localScale.y, 1900f, $"{prefabPath} SettingsRoot effective height must match the 4800x2160 menu canvas scale.");
         Assert.NotNull(popupView.CloseButton, $"{prefabPath} must serialize a close button.");
         Assert.NotNull(popupView.ResetButton, $"{prefabPath} must serialize a reset button.");
         Assert.NotNull(popupView.ApplyButton, $"{prefabPath} must serialize an apply button.");

@@ -721,11 +721,6 @@ internal sealed class MatchBootstrapCompositionSystemHelper
                 _gameplayStartPending = true;
                 ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld)?.SetWorldCamera(WorldCamera);
                 _runtimeGameplayStateSystem.ResetForGameplayStart();
-                MatchBootstrapStartupConfigProjection.FocusInitialCameraOnConfiguredFactionBase(
-                    World.DefaultGameObjectInjectionWorld,
-                    SelectionUiCamera,
-                    ResolveInitialFactionSpawnCell,
-                    0);
                 _gameplayStartStep = GameplayStartStep.Complete;
                 break;
 

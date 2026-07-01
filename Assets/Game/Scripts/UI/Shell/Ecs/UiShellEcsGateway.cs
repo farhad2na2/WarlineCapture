@@ -1000,7 +1000,8 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
                 command.Region,
                 command.Route,
                 command.TargetMode,
-                command.SequenceId));
+                command.SequenceId,
+                command.PopupKind));
         }
 
         buffer.Clear();

@@ -13150,7 +13150,7 @@ GameObject:
   - component: {fileID: 4403734596393021742}
   - component: {fileID: 1320930555433151702}
   - component: {fileID: 2697270087146534552}
-  - component: {fileID: 5358417557226111521}
+  - component: {fileID: 4665840872372779119}
   m_Layer: 0
   m_Name: SettingsButton
   m_TagString: Untagged
@@ -13260,7 +13260,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &5358417557226111521
+--- !u!114 &4665840872372779119
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -13269,12 +13269,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 8444455008908787299}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
+  m_Script: {fileID: 11500000, guid: 34943d27a58af470b9f5ac567de42bf0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
-  intent: 0
-  route: 2
-  pushHistory: 0
+  m_EditorClassIdentifier: Game.UI.Runtime::UIShellActionButtonView
+  actionKind: 10
+  payloadId: 0
+  button: {fileID: 2697270087146534552}
 --- !u!1 &8451603944853440805
 GameObject:
   m_ObjectHideFlags: 0

@@ -266,6 +266,7 @@ public struct UiShellPresentationCommandComponent : IBufferElementData
     public UiShellRegionId Region;
     public UIRoute Route;
     public UiShellMode TargetMode;
+    public UiShellPopupKind PopupKind;
     public int SequenceId;
 }
 

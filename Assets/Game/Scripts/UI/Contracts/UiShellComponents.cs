@@ -48,7 +48,8 @@ public enum UiShellPopupKind
     ThreatAlert,
     Pause,
     BuildDrawer,
-    RewardUnlock
+    RewardUnlock,
+    Settings
 }
 
 public enum UiShellPopupIntent
@@ -1148,6 +1149,7 @@ public readonly struct UiShellPresentationCommandModel
     public readonly UiShellRegionId Region;
     public readonly UIRoute Route;
     public readonly UiShellMode TargetMode;
+    public readonly UiShellPopupKind PopupKind;
     public readonly int SequenceId;
 
     public UiShellPresentationCommandModel(
@@ -1155,12 +1157,14 @@ public readonly struct UiShellPresentationCommandModel
         UiShellRegionId region,
         UIRoute route,
         UiShellMode targetMode,
-        int sequenceId)
+        int sequenceId,
+        UiShellPopupKind popupKind = UiShellPopupKind.ThreatAlert)
     {
         Kind = kind;
         Region = region;
         Route = route;
         TargetMode = targetMode;
+        PopupKind = popupKind;
         SequenceId = sequenceId;
     }
 }

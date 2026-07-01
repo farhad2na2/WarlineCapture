@@ -238,7 +238,14 @@ public partial struct UiShellFlowSystem : ISystem
         UiShellCommandKind kind = request.Intent == UiShellPopupIntent.Hide
             ? UiShellCommandKind.HidePopup
             : UiShellCommandKind.ShowPopup;
-        BeginCommandSequence(ref shellState, commands, kind, UiShellRegionId.PopupLayer, shellState.ActiveRoute, UiShellMode.PopupOnly);
+        BeginCommandSequence(
+            ref shellState,
+            commands,
+            kind,
+            UiShellRegionId.PopupLayer,
+            shellState.ActiveRoute,
+            UiShellMode.PopupOnly,
+            request.PopupKind);
         shellState.Phase = request.Intent == UiShellPopupIntent.Hide
             ? UiShellTransitionPhase.HidingPopup
             : UiShellTransitionPhase.ShowingPopup;
@@ -304,12 +311,13 @@ public partial struct UiShellFlowSystem : ISystem
         UiShellCommandKind kind,
         UiShellRegionId region,
         UIRoute route,
-        UiShellMode targetMode)
+        UiShellMode targetMode,
+        UiShellPopupKind popupKind = UiShellPopupKind.ThreatAlert)
     {
         shellState.TransitionSequenceId++;
         shellState.IsTransitionRunning = 1;
         commands.Clear();
-        AppendCommand(commands, shellState, kind, region, route, targetMode);
+        AppendCommand(commands, shellState, kind, region, route, targetMode, popupKind);
     }
 
     private static void AppendCommand(
@@ -318,7 +326,8 @@ public partial struct UiShellFlowSystem : ISystem
         UiShellCommandKind kind,
         UiShellRegionId region,
         UIRoute route,
-        UiShellMode targetMode)
+        UiShellMode targetMode,
+        UiShellPopupKind popupKind = UiShellPopupKind.ThreatAlert)
     {
         commands.Add(new UiShellPresentationCommandComponent
         {
@@ -326,6 +335,7 @@ public partial struct UiShellFlowSystem : ISystem
             Region = region,
             Route = route,
             TargetMode = targetMode,
+            PopupKind = popupKind,
             SequenceId = shellState.TransitionSequenceId
         });
     }

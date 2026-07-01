@@ -212,12 +212,7 @@ public partial struct UiActionRequestSystem : ISystem
                 EnqueuePopup(popupRequests, UiShellPopupKind.Pause, UiShellPopupIntent.Show, request.PayloadId);
                 break;
             case UiActionKind.OpenSettings:
-                routeRequests.Add(new UiShellRouteRequestComponent
-                {
-                    Route = UIRoute.Settings,
-                    Intent = UiShellRouteIntent.OpenSettings,
-                    PushHistory = 1
-                });
+                EnqueuePopup(popupRequests, UiShellPopupKind.Settings, UiShellPopupIntent.Show, request.PayloadId);
                 break;
             case UiActionKind.RightBuild:
             case UiActionKind.Build:

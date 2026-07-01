@@ -36,6 +36,15 @@ public enum UILanguage
 }
 
 [Serializable]
+public enum UIAssistanceLevel
+{
+    FullGuidance = 0,
+    HintsOnly = 1,
+    Minimal = 2,
+    Off = 3
+}
+
+[Serializable]
 public struct AudioSettingsModel
 {
     public float MasterVolume;
@@ -77,6 +86,12 @@ public struct LocalizationSettingsModel
 }
 
 [Serializable]
+public struct AssistantSettingsModel
+{
+    public UIAssistanceLevel AssistanceLevel;
+}
+
+[Serializable]
 public struct UISettingsModel
 {
     public AudioSettingsModel Audio;
@@ -85,4 +100,5 @@ public struct UISettingsModel
     public NotificationSettingsModel Notifications;
     public AccessibilitySettingsModel Accessibility;
     public LocalizationSettingsModel Localization;
+    public AssistantSettingsModel Assistant;
 }

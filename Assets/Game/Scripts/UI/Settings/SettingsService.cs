@@ -14,6 +14,7 @@ public static class SettingsService
     private const string LargeTextKey = Prefix + "Accessibility.LargeText";
     private const string ColorblindModeKey = Prefix + "Accessibility.ColorblindMode";
     private const string LanguageKey = Prefix + "Localization.Language";
+    private const string AssistanceLevelKey = Prefix + "Assistant.AssistanceLevel";
 
     public static event System.Action<UISettingsModel> RuntimeApplied;
 
@@ -47,6 +48,10 @@ public static class SettingsService
         Localization = new LocalizationSettingsModel
         {
             Language = UILanguage.English
+        },
+        Assistant = new AssistantSettingsModel
+        {
+            AssistanceLevel = UIAssistanceLevel.FullGuidance
         }
     };
 
@@ -83,6 +88,10 @@ public static class SettingsService
             Localization = new LocalizationSettingsModel
             {
                 Language = GetEnum(LanguageKey, defaults.Localization.Language)
+            },
+            Assistant = new AssistantSettingsModel
+            {
+                AssistanceLevel = GetEnum(AssistanceLevelKey, defaults.Assistant.AssistanceLevel)
             }
         };
     }
@@ -100,6 +109,7 @@ public static class SettingsService
         PlayerPrefs.SetInt(LargeTextKey, model.Accessibility.LargeText ? 1 : 0);
         PlayerPrefs.SetInt(ColorblindModeKey, (int)model.Accessibility.ColorblindMode);
         PlayerPrefs.SetInt(LanguageKey, (int)model.Localization.Language);
+        PlayerPrefs.SetInt(AssistanceLevelKey, (int)model.Assistant.AssistanceLevel);
         PlayerPrefs.Save();
     }
 

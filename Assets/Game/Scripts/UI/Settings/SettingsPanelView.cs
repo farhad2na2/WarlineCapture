@@ -2,13 +2,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class SettingsScreenView : UIScreenView, ISettingsControlsView
+[DisallowMultipleComponent]
+public sealed class SettingsPanelView : MonoBehaviour, ISettingsControlsView
 {
     private static readonly string[] GraphicsQualityLabels = { "LOW", "MEDIUM", "HIGH", "ULTRA" };
     private static readonly string[] FrameRateLabels = { "30 FPS", "60 FPS", "120 FPS" };
     private static readonly string[] AssistanceLevelLabels = { "FULL", "HINTS", "MINIMAL", "OFF" };
-
-    private readonly SettingsScreenFlowUiSystemHelper flowSystem = new();
+    private static readonly string[] ColorblindModeLabels = { "OFF", "PRO", "DEU", "TRI" };
+    private static readonly string[] LanguageLabels = { "EN", "DE", "FR", "ES" };
 
     [SerializeField] private UISliderRowView masterVolumeRow;
     [SerializeField] private UISliderRowView musicVolumeRow;
@@ -20,36 +21,22 @@ public sealed class SettingsScreenView : UIScreenView, ISettingsControlsView
     [SerializeField] private UIToggleRowView highContrastRow;
     [SerializeField] private UIToggleRowView largeTextRow;
     [SerializeField] private UISegmentedControlView assistanceLevelControl;
+    [SerializeField] private UISegmentedControlView colorblindModeControl;
+    [SerializeField] private UISegmentedControlView languageControl;
     [SerializeField] private TMP_Dropdown colorblindModeDropdown;
     [SerializeField] private TMP_Dropdown languageDropdown;
-    [SerializeField] private Button resetButton;
-    [SerializeField] private Button applyButton;
     [SerializeField] private UIAccessibilityApplier accessibilityApplier;
 
     private UISettingsModel _model;
-    private bool _hasLoaded;
 
     private void Awake()
     {
         WireEvents();
-        LoadSettings();
     }
 
     private void OnDestroy()
     {
         UnwireEvents();
-    }
-
-    private void OnDisable()
-    {
-        if (_hasLoaded)
-            SaveSettings();
-    }
-
-    public void LoadSettings()
-    {
-        _model = flowSystem.LoadSettings(this);
-        _hasLoaded = true;
     }
 
     public void Bind(UISettingsModel model)
@@ -66,18 +53,36 @@ public sealed class SettingsScreenView : UIScreenView, ISettingsControlsView
         highContrastRow?.Bind("High Contrast UI", "Increase panel and text contrast.", model.Accessibility.HighContrastUi);
         largeTextRow?.Bind("Large Text", "Increase UI text scale for readability.", model.Accessibility.LargeText);
         assistanceLevelControl?.Bind(AssistanceLevelLabels, (int)model.Assistant.AssistanceLevel);
+        colorblindModeControl?.Bind(ColorblindModeLabels, (int)model.Accessibility.ColorblindMode);
+        languageControl?.Bind(LanguageLabels, (int)model.Localization.Language);
         SetDropdownValue(colorblindModeDropdown, (int)model.Accessibility.ColorblindMode);
         SetDropdownValue(languageDropdown, (int)model.Localization.Language);
     }
 
-    public void SaveSettings()
+    public UISettingsModel ReadModelFromControls(UISettingsModel model)
     {
-        _model = flowSystem.SaveSettings(this, _model);
+        model.Audio.MasterVolume = GetSliderValue(masterVolumeRow, model.Audio.MasterVolume);
+        model.Audio.MusicVolume = GetSliderValue(musicVolumeRow, model.Audio.MusicVolume);
+        model.Audio.SfxVolume = GetSliderValue(sfxVolumeRow, model.Audio.SfxVolume);
+        model.Graphics.Quality = _model.Graphics.Quality;
+        model.Graphics.FrameRateMode = _model.Graphics.FrameRateMode;
+        model.Controls.CameraSensitivity = GetSliderValue(cameraSensitivityRow, model.Controls.CameraSensitivity);
+        model.Notifications.ThreatWarnings = GetToggleValue(threatWarningsRow, model.Notifications.ThreatWarnings);
+        model.Accessibility.HighContrastUi = GetToggleValue(highContrastRow, model.Accessibility.HighContrastUi);
+        model.Accessibility.LargeText = GetToggleValue(largeTextRow, model.Accessibility.LargeText);
+        model.Accessibility.ColorblindMode = colorblindModeDropdown != null
+            ? (UIColorblindMode)GetDropdownValue(colorblindModeDropdown, (int)_model.Accessibility.ColorblindMode)
+            : _model.Accessibility.ColorblindMode;
+        model.Localization.Language = languageDropdown != null
+            ? (UILanguage)GetDropdownValue(languageDropdown, (int)_model.Localization.Language)
+            : _model.Localization.Language;
+        model.Assistant.AssistanceLevel = _model.Assistant.AssistanceLevel;
+        return model;
     }
 
-    public void ResetSettings()
+    public void ApplyVisualPreferences(UISettingsModel model)
     {
-        _model = flowSystem.ResetSettings(this);
+        accessibilityApplier?.Apply(model);
     }
 
     private void WireEvents()
@@ -92,15 +97,13 @@ public sealed class SettingsScreenView : UIScreenView, ISettingsControlsView
         AddSegmentListeners(graphicsQualityControl, OnGraphicsQualityChanged);
         AddSegmentListeners(frameRateControl, OnFrameRateChanged);
         AddSegmentListeners(assistanceLevelControl, OnAssistanceLevelChanged);
+        AddSegmentListeners(colorblindModeControl, OnColorblindModeChanged);
+        AddSegmentListeners(languageControl, OnLanguageChanged);
 
         if (colorblindModeDropdown != null)
             colorblindModeDropdown.onValueChanged.AddListener(OnColorblindModeChanged);
         if (languageDropdown != null)
             languageDropdown.onValueChanged.AddListener(OnLanguageChanged);
-        if (resetButton != null)
-            resetButton.onClick.AddListener(ResetSettings);
-        if (applyButton != null)
-            applyButton.onClick.AddListener(SaveSettings);
     }
 
     private void UnwireEvents()
@@ -117,29 +120,6 @@ public sealed class SettingsScreenView : UIScreenView, ISettingsControlsView
             colorblindModeDropdown.onValueChanged.RemoveListener(OnColorblindModeChanged);
         if (languageDropdown != null)
             languageDropdown.onValueChanged.RemoveListener(OnLanguageChanged);
-        if (resetButton != null)
-            resetButton.onClick.RemoveListener(ResetSettings);
-        if (applyButton != null)
-            applyButton.onClick.RemoveListener(SaveSettings);
-    }
-
-    public UISettingsModel ReadModelFromControls(UISettingsModel model)
-    {
-        model.Audio.MasterVolume = GetSliderValue(masterVolumeRow, model.Audio.MasterVolume);
-        model.Audio.MusicVolume = GetSliderValue(musicVolumeRow, model.Audio.MusicVolume);
-        model.Audio.SfxVolume = GetSliderValue(sfxVolumeRow, model.Audio.SfxVolume);
-        model.Controls.CameraSensitivity = GetSliderValue(cameraSensitivityRow, model.Controls.CameraSensitivity);
-        model.Notifications.ThreatWarnings = GetToggleValue(threatWarningsRow, model.Notifications.ThreatWarnings);
-        model.Accessibility.HighContrastUi = GetToggleValue(highContrastRow, model.Accessibility.HighContrastUi);
-        model.Accessibility.LargeText = GetToggleValue(largeTextRow, model.Accessibility.LargeText);
-        model.Accessibility.ColorblindMode = (UIColorblindMode)GetDropdownValue(colorblindModeDropdown, (int)model.Accessibility.ColorblindMode);
-        model.Localization.Language = (UILanguage)GetDropdownValue(languageDropdown, (int)model.Localization.Language);
-        return model;
-    }
-
-    public void ApplyVisualPreferences(UISettingsModel model)
-    {
-        accessibilityApplier?.Apply(model);
     }
 
     private void OnMasterVolumeChanged(float value) => _model.Audio.MasterVolume = value;
@@ -149,6 +129,7 @@ public sealed class SettingsScreenView : UIScreenView, ISettingsControlsView
     private void OnThreatWarningsChanged(bool value) => _model.Notifications.ThreatWarnings = value;
     private void OnHighContrastChanged(bool value) => _model.Accessibility.HighContrastUi = value;
     private void OnLargeTextChanged(bool value) => _model.Accessibility.LargeText = value;
+
     private void OnGraphicsQualityChanged(int index)
     {
         _model.Graphics.Quality = (UIGraphicsQuality)index;
@@ -167,8 +148,17 @@ public sealed class SettingsScreenView : UIScreenView, ISettingsControlsView
         assistanceLevelControl?.Bind(AssistanceLevelLabels, (int)_model.Assistant.AssistanceLevel);
     }
 
-    private void OnColorblindModeChanged(int value) => _model.Accessibility.ColorblindMode = (UIColorblindMode)value;
-    private void OnLanguageChanged(int value) => _model.Localization.Language = (UILanguage)value;
+    private void OnColorblindModeChanged(int value)
+    {
+        _model.Accessibility.ColorblindMode = (UIColorblindMode)value;
+        colorblindModeControl?.Bind(ColorblindModeLabels, (int)_model.Accessibility.ColorblindMode);
+    }
+
+    private void OnLanguageChanged(int value)
+    {
+        _model.Localization.Language = (UILanguage)value;
+        languageControl?.Bind(LanguageLabels, (int)_model.Localization.Language);
+    }
 
     private static void AddSliderListener(UISliderRowView row, UnityEngine.Events.UnityAction<float> action)
     {

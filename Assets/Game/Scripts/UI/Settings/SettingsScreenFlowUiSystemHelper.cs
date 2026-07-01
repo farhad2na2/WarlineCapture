@@ -1,6 +1,6 @@
 internal sealed class SettingsScreenFlowUiSystemHelper
 {
-    public UISettingsModel LoadSettings(SettingsScreenView view)
+    public UISettingsModel LoadSettings(ISettingsControlsView view)
     {
         UISettingsModel model = SettingsService.Load();
         if (view != null)
@@ -12,7 +12,7 @@ internal sealed class SettingsScreenFlowUiSystemHelper
         return model;
     }
 
-    public UISettingsModel SaveSettings(SettingsScreenView view, UISettingsModel currentModel)
+    public UISettingsModel SaveSettings(ISettingsControlsView view, UISettingsModel currentModel)
     {
         UISettingsModel model = view != null
             ? view.ReadModelFromControls(currentModel)
@@ -24,7 +24,7 @@ internal sealed class SettingsScreenFlowUiSystemHelper
         return model;
     }
 
-    public UISettingsModel ResetSettings(SettingsScreenView view)
+    public UISettingsModel ResetSettings(ISettingsControlsView view)
     {
         UISettingsModel model = SettingsService.ResetToDefaults();
         if (view != null)

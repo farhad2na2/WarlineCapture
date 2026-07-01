@@ -13,6 +13,8 @@ public sealed class UIShellContentView : MonoBehaviour
     [SerializeField] private GameObject matchHudContentPrefab;
     [SerializeField] private GameObject buildDrawerPopupPrefab;
     [SerializeField] private GameObject fullMapPopupPrefab;
+    [SerializeField] private GameObject menuSettingsPopupPrefab;
+    [SerializeField] private GameObject matchSettingsPopupPrefab;
     [SerializeField] private GameObject buildPlacementConfirmationBarPrefab;
     private readonly MatchOverlayCommandInputUiSystemHelper _matchOverlayCommandInputSystem = new();
     private ISelectionUiCommand _selectionUiCommandSystem;
@@ -38,6 +40,8 @@ public sealed class UIShellContentView : MonoBehaviour
     private UnityAction _buildDrawerPopupCloseButtonListener;
     private GameObject _buildDrawerPopupInstance;
     private GameObject _fullMapPopupInstance;
+    private GameObject _settingsPopupInstance;
+    private SettingsPopupView _settingsPopupView;
     private MatchHudFullMapPopupView _fullMapPopupView;
     private int _contentVersion;
 
@@ -48,6 +52,8 @@ public sealed class UIShellContentView : MonoBehaviour
     public GameObject MatchHudContentPrefab => matchHudContentPrefab;
     public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
     public GameObject FullMapPopupPrefab => fullMapPopupPrefab;
+    public GameObject MenuSettingsPopupPrefab => menuSettingsPopupPrefab;
+    public GameObject MatchSettingsPopupPrefab => matchSettingsPopupPrefab;
     public GameObject BuildPlacementConfirmationBarPrefab => buildPlacementConfirmationBarPrefab;
     public int ContentVersion => _contentVersion;
 
@@ -59,7 +65,9 @@ public sealed class UIShellContentView : MonoBehaviour
         GameObject matchHudPrefab,
         GameObject buildDrawerPrefab,
         GameObject fullMapPrefab = null,
-        GameObject buildPlacementConfirmationPrefab = null)
+        GameObject buildPlacementConfirmationPrefab = null,
+        GameObject menuSettingsPrefab = null,
+        GameObject matchSettingsPrefab = null)
     {
         shellView = view;
         loadingContentPrefab = loadingPrefab;
@@ -71,6 +79,10 @@ public sealed class UIShellContentView : MonoBehaviour
             fullMapPopupPrefab = fullMapPrefab;
         if (buildPlacementConfirmationPrefab != null)
             buildPlacementConfirmationBarPrefab = buildPlacementConfirmationPrefab;
+        if (menuSettingsPrefab != null)
+            menuSettingsPopupPrefab = menuSettingsPrefab;
+        if (matchSettingsPrefab != null)
+            matchSettingsPopupPrefab = matchSettingsPrefab;
     }
 
     public void PrepareForCommandSequence(IReadOnlyList<UiShellPresentationCommandModel> commands)
@@ -90,6 +102,9 @@ public sealed class UIShellContentView : MonoBehaviour
                     break;
                 case UiShellCommandKind.EnterMatchHud:
                     InstallMatchHud();
+                    break;
+                case UiShellCommandKind.ShowPopup:
+                    InstallPopup(commands[i]);
                     break;
             }
         }
@@ -425,6 +440,33 @@ public sealed class UIShellContentView : MonoBehaviour
         return _buildDrawerPopupInstance;
     }
 
+    private void InstallPopup(UiShellPresentationCommandModel command)
+    {
+        switch (command.PopupKind)
+        {
+            case UiShellPopupKind.BuildDrawer:
+                InstallBuildDrawerPopup();
+                break;
+            case UiShellPopupKind.Settings:
+                InstallSettingsPopup(command.Route);
+                break;
+        }
+    }
+
+    public GameObject InstallSettingsPopup(UIRoute activeRoute)
+    {
+        _settingsPopupInstance = InstallRoot(
+            activeRoute == UIRoute.Match && matchSettingsPopupPrefab != null
+                ? matchSettingsPopupPrefab
+                : menuSettingsPopupPrefab,
+            UIShellRegionId.PopupLayer);
+        _settingsPopupView = _settingsPopupInstance != null
+            ? _settingsPopupInstance.GetComponent<SettingsPopupView>()
+            : null;
+        _settingsPopupView?.BindClose(CloseSettingsPopup);
+        return _settingsPopupInstance;
+    }
+
     private void OpenFullMapPopup()
     {
         _selectionUiCommandSystem?.CaptureUiClickSequence();
@@ -506,6 +548,32 @@ public sealed class UIShellContentView : MonoBehaviour
             DestroyRegionObject(popup);
             MarkContentChanged();
         }
+    }
+
+    public void CloseSettingsPopup()
+    {
+        GameObject popup = _settingsPopupInstance;
+        _settingsPopupInstance = null;
+        _settingsPopupView = null;
+
+        if (popup == null)
+            return;
+
+        if (Application.isPlaying)
+        {
+            UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
+            if (motionView != null && motionView.PlayHide(() =>
+                {
+                    DestroyRegionObject(popup);
+                    MarkContentChanged();
+                }))
+            {
+                return;
+            }
+        }
+
+        DestroyRegionObject(popup);
+        MarkContentChanged();
     }
 
     private void BindBuildDrawerPopupInputBlocker(GameObject popup)
@@ -642,6 +710,8 @@ public sealed class UIShellContentView : MonoBehaviour
             _mainMenuPlayUi?.BindMatchHudFullMapPopup(null);
             _fullMapPopupInstance = null;
             _fullMapPopupView = null;
+            _settingsPopupInstance = null;
+            _settingsPopupView = null;
         }
 
         if (TryGetRegionContentRoot(regionId, out RectTransform contentRoot))
@@ -655,6 +725,8 @@ public sealed class UIShellContentView : MonoBehaviour
             _buildDrawerPopupInstance = null;
             _fullMapPopupInstance = null;
             _fullMapPopupView = null;
+            _settingsPopupInstance = null;
+            _settingsPopupView = null;
         }
         if (regionId == UIShellRegionId.FooterRegion)
         {

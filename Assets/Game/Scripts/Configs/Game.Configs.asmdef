@@ -1,6 +1,6 @@
 {
     "name": "Game.Configs",
-    "rootNamespace": "",
+    "rootNamespace": "Game.Configs",
     "references": [
         "Game.Catalog.Contracts",
         "Game.Components",

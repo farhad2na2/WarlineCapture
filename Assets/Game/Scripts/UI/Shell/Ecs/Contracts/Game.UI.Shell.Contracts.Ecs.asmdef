@@ -1,6 +1,6 @@
 {
     "name": "Game.UI.Shell.Contracts.Ecs",
-    "rootNamespace": "",
+    "rootNamespace": "Game.UI.Shell.Contracts.Ecs",
     "references": [
         "Game.UI.Contracts",
         "Unity.Collections",

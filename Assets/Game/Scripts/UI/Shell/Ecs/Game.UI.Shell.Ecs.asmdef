@@ -1,6 +1,6 @@
 {
     "name": "Game.UI.Shell.Ecs",
-    "rootNamespace": "",
+    "rootNamespace": "Game.UI.Shell.Ecs",
     "references": [
         "Game.Catalog.Contracts",
         "Game.Components",

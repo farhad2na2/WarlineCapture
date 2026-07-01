@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.Scripts.UI
+namespace Game.UI.Runtime
 {
     public sealed class CampListItemViewReferences : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 {
     "name": "Game.Tactical.Contracts",
-    "rootNamespace": "",
+    "rootNamespace": "Game.Tactical.Contracts",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

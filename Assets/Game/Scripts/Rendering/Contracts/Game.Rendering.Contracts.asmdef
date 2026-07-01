@@ -1,6 +1,6 @@
 {
     "name": "Game.Rendering.Contracts",
-    "rootNamespace": "",
+    "rootNamespace": "Game.Rendering.Contracts",
     "references": [
         "Unity.Collections"
     ],

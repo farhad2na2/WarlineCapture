@@ -1,6 +1,6 @@
 {
     "name": "Game.Catalog.Contracts",
-    "rootNamespace": "",
+    "rootNamespace": "Game.Catalog.Contracts",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

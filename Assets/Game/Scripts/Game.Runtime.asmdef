@@ -1,6 +1,6 @@
 {
     "name": "Game.Runtime",
-    "rootNamespace": "",
+    "rootNamespace": "Game.Runtime",
     "references": [
         "Game.Components",
         "Game.Configs",

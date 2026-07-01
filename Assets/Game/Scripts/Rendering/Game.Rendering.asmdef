@@ -1,6 +1,6 @@
 {
     "name": "Game.Rendering",
-    "rootNamespace": "",
+    "rootNamespace": "Game.Rendering",
     "references": [
         "Game.Components",
         "Game.Configs",

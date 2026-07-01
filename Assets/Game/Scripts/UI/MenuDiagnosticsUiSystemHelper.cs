@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.Scripts.UI
+namespace Game.UI.Runtime
 {
     internal sealed class MenuDiagnosticsUiSystemHelper
     {

@@ -1,6 +1,6 @@
 {
     "name": "Game.Components",
-    "rootNamespace": "",
+    "rootNamespace": "Game.Components",
     "references": [
         "Unity.Collections",
         "Unity.Entities",

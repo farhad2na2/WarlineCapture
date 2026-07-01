@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Scripts.UI
+namespace Game.UI.Runtime
 {
     internal static class RuntimeLogBuffer
     {

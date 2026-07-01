@@ -1,6 +1,6 @@
 {
     "name": "Game.Composition",
-    "rootNamespace": "",
+    "rootNamespace": "Game.Composition",
     "references": [
         "Game.Authoring",
         "Game.Catalog.Contracts",

@@ -1,6 +1,6 @@
 {
     "name": "Game.UI.Runtime",
-    "rootNamespace": "",
+    "rootNamespace": "Game.UI.Runtime",
     "references": [
         "Game.Catalog.Contracts",
         "Game.Tactical.Contracts",

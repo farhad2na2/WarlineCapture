@@ -1,6 +1,6 @@
 {
     "name": "Game.Editor",
-    "rootNamespace": "",
+    "rootNamespace": "Game.Editor",
     "references": [
         "Game.Authoring",
         "Game.Catalog.Contracts",

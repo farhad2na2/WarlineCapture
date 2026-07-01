@@ -1,6 +1,6 @@
 {
     "name": "Game.Authoring",
-    "rootNamespace": "",
+    "rootNamespace": "Game.Authoring",
     "references": [
         "Game.Components",
         "Game.Configs",

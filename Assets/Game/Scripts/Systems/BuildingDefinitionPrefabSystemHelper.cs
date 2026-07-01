@@ -389,7 +389,10 @@ internal sealed class BuildingDefinitionPrefabSystemHelper
             RefugeeUpkeepPerCitizenPerDay = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.RefugeeUpkeepPerCitizenPerDay) : 0,
             LocalBounds = metadata.LocalBounds,
             HasLocalBounds = metadata.HasLocalBounds,
-            ProductionSpawnLocalPositions = metadata.ProductionSpawnLocalPositions,
+            ProductionSpawnLocalPositions = BuildProductionSpawnLocalPositions(
+                prefab,
+                productionSlots,
+                metadata.ProductionSpawnLocalPositions),
             HasRunway = metadata.HasRunway,
             RunwayLocalPosition = metadata.RunwayLocalPosition,
             RunwayLocalRotation = metadata.RunwayLocalRotation,
@@ -451,7 +454,10 @@ internal sealed class BuildingDefinitionPrefabSystemHelper
             ThreatDetectionRadiusCells = hasMetadata ? Mathf.Max(0, metadata.ThreatDetectionRadiusCells) : 0,
             LocalBounds = localBounds,
             HasLocalBounds = hasLocalBounds,
-            ProductionSpawnLocalPositions = FindProductionSpawnLocalPositions(prefab),
+            ProductionSpawnLocalPositions = BuildProductionSpawnLocalPositions(
+                prefab,
+                productionSlots,
+                FindProductionSpawnLocalPositions(prefab)),
             HasRunway = hasRunway,
             RunwayLocalPosition = runwayLocalPosition,
             RunwayLocalRotation = runwayLocalRotation,
@@ -811,6 +817,46 @@ internal sealed class BuildingDefinitionPrefabSystemHelper
         for (int i = 0; i < matches.Count; i++)
             ordered[i] = matches[i].position;
         return ordered;
+    }
+
+    private static Vector3[] BuildProductionSpawnLocalPositions(
+        GameObject prefab,
+        IReadOnlyList<BuildingDefinition.ProductionSlotDefinition> productionSlots,
+        Vector3[] explicitPositions)
+    {
+        if (explicitPositions != null && explicitPositions.Length > 0)
+            return explicitPositions;
+
+        int fallbackCount = productionSlots?.Count ?? 0;
+        if (fallbackCount <= 0)
+            return null;
+
+        return BuildFallbackProductionSpawnLocalPositions(prefab, fallbackCount);
+    }
+
+    private static Vector3[] BuildFallbackProductionSpawnLocalPositions(GameObject prefab, int count)
+    {
+        Vector3[] positions = new Vector3[count];
+        bool hasBounds = TryGetPrefabLocalBounds(prefab, out Bounds localBounds);
+        float width = Mathf.Max(3f, hasBounds ? localBounds.size.x : 3f);
+        float frontZ = hasBounds ? localBounds.min.z - 1.25f : -2f;
+        float spacing = 1.2f;
+        int columns = Mathf.Max(1, Mathf.CeilToInt(Mathf.Sqrt(count)));
+
+        for (int i = 0; i < count; i++)
+        {
+            int row = i / columns;
+            int column = i % columns;
+            int columnsInRow = Mathf.Min(columns, count - (row * columns));
+            float rowWidth = Mathf.Min(width + spacing, Mathf.Max(0f, (columnsInRow - 1) * spacing));
+            float x = columnsInRow <= 1
+                ? 0f
+                : -rowWidth * 0.5f + column * (rowWidth / (columnsInRow - 1));
+            float z = frontZ - row * spacing;
+            positions[i] = new Vector3(x, 0f, z);
+        }
+
+        return positions;
     }
 
     private static bool TryParseSpawnPointIndex(string name, out int index)

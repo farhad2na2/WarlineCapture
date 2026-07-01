@@ -212,6 +212,24 @@ public sealed class BuildingProductionQueueCompositionSystemHelper
         return true;
     }
 
+    internal bool HasAvailableProductionSlot(
+        QueueContext context,
+        RuntimeBuildingEntity building,
+        EntityManager entityManager)
+    {
+        if (building == null)
+            return false;
+
+        if (building.ProductionSpawnLocalPositions == null ||
+            building.ProducedUnitSlots == null ||
+            building.ProductionSpawnLocalPositions.Length <= 0)
+        {
+            return true;
+        }
+
+        return TryFindAvailableProductionSlot(context, building, entityManager, out _);
+    }
+
     private static bool TryReserveProductionSlot(
         QueueContext context,
         RuntimeBuildingEntity building,
@@ -219,6 +237,24 @@ public sealed class BuildingProductionQueueCompositionSystemHelper
         out int reservedProductionSlotIndex)
     {
         reservedProductionSlotIndex = -1;
+        if (context.ProductionSlotSystem == null ||
+            building?.ProducedUnitSlots == null ||
+            building.ProductionSpawnLocalPositions == null ||
+            building.ProductionSpawnLocalPositions.Length <= 0)
+        {
+            return false;
+        }
+
+        return TryFindAvailableProductionSlot(context, building, entityManager, out reservedProductionSlotIndex);
+    }
+
+    private static bool TryFindAvailableProductionSlot(
+        QueueContext context,
+        RuntimeBuildingEntity building,
+        EntityManager entityManager,
+        out int slotIndex)
+    {
+        slotIndex = -1;
         if (context.ProductionSlotSystem == null ||
             building?.ProducedUnitSlots == null ||
             building.ProductionSpawnLocalPositions == null ||
@@ -237,7 +273,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelper
                 continue;
             }
 
-            reservedProductionSlotIndex = i;
+            slotIndex = i;
             return true;
         }
 

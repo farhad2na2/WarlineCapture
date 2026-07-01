@@ -54,6 +54,7 @@ internal sealed class BuildingProductionRequestSystemHelper
     public delegate void RecordUnitOrderedDelegate(GameObject prefab);
     public delegate void LogWarningDelegate(string message);
     public delegate int CountFactionUnitsDelegate(byte factionId, string unitId);
+    public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
     public delegate bool TryGetConfiguredUnitReadModelDelegate(
         int index,
         out GameObject prefab,
@@ -91,6 +92,7 @@ internal sealed class BuildingProductionRequestSystemHelper
         public readonly CountFactionUnitsDelegate CountPendingProductionsForFaction;
         public readonly CountFactionUnitsDelegate CountRuntimeProducedUnitsForFaction;
         public readonly TryGetConfiguredUnitReadModelDelegate TryGetConfiguredUnitReadModel;
+        public readonly TryGetEntityManagerDelegate TryGetEntityManager;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -119,7 +121,8 @@ internal sealed class BuildingProductionRequestSystemHelper
             LogWarningDelegate logWarning,
             CountFactionUnitsDelegate countPendingProductionsForFaction,
             CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction,
-            TryGetConfiguredUnitReadModelDelegate tryGetConfiguredUnitReadModel = null)
+            TryGetConfiguredUnitReadModelDelegate tryGetConfiguredUnitReadModel = null,
+            TryGetEntityManagerDelegate tryGetEntityManager = null)
         {
             RuntimeBuildings = runtimeBuildings;
             ConfiguredSpawnableDefinitions = configuredSpawnableDefinitions;
@@ -148,6 +151,7 @@ internal sealed class BuildingProductionRequestSystemHelper
             CountPendingProductionsForFaction = countPendingProductionsForFaction;
             CountRuntimeProducedUnitsForFaction = countRuntimeProducedUnitsForFaction;
             TryGetConfiguredUnitReadModel = tryGetConfiguredUnitReadModel;
+            TryGetEntityManager = tryGetEntityManager;
         }
     }
 
@@ -709,6 +713,18 @@ internal sealed class BuildingProductionRequestSystemHelper
         int count = Mathf.Min(building.ProductionSpawnLocalPositions.Length, building.ProducedUnitSlots.Length);
         if (count <= 0)
             return false;
+
+        if (context.ProductionSystem != null &&
+            context.TryGetEntityManager != null &&
+            context.TryGetEntityManager(out EntityManager entityManager) &&
+            entityManager.World != null &&
+            entityManager.World.IsCreated)
+        {
+            return context.ProductionSystem.HasAvailableProductionSlot(
+                context.ProductionQueueContext,
+                building,
+                entityManager);
+        }
 
         for (int i = 0; i < count; i++)
         {

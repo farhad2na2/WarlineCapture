@@ -294,7 +294,11 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             source.LogWarning,
             source.CountPendingProductionsForFaction,
             source.CountRuntimeProducedUnitsForFaction,
-            source.DefinitionSystem.TryGetConfiguredUnitReadModel);
+            source.DefinitionSystem.TryGetConfiguredUnitReadModel,
+            source.TryGetEntityManager == null
+                ? null
+                : (BuildingProductionRequestSystemHelper.TryGetEntityManagerDelegate)(
+                    (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager)));
     }
 
     public BuildingProductionQueueCompositionSystemHelper.QueueContext CreateProductionQueueContext(Source source)

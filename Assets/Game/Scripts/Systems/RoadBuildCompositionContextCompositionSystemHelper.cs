@@ -54,10 +54,10 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             () => source.RoadMinimapEventUiSystemHelper?.PublishStaticMinimapChanged(),
             () => ApplyBuildCommandMode(source),
             () => ClearCommandMode(source),
-            () => source.RoadBuildDependencyState.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
+            () => source.RoadBuildDependencyState.BuildingPlacementInteractionCompositionSystemHelper?.ClearSelectedBuilding(
                 source.RoadBuildDependencyState.BuildingPlacementInteractionContext,
                 "RoadBuild.ClearSelectedBuilding"),
-            () => source.RoadBuildDependencyState.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.CancelBuildingPlacement(
+            () => source.RoadBuildDependencyState.BuildingPlacementInteractionCompositionSystemHelper?.CancelBuildingPlacement(
                 source.RoadBuildDependencyState.BuildingPlacementInteractionContext),
             () => source.RoadBuildInputCompositionSystemHelper.CancelPendingBuild(CreateRoadBuildInputContext(source)),
             () => source.RoadBuildPlacementVisualSystem?.HidePlacementOutline(source.RoadBuildPlacementVisualState),
@@ -106,7 +106,7 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
             source.RoadVisualVariantSystem,
             source.RoadPreviewPresentationSystemHelper,
             source.RoadChunkVisualSystem,
-            source.RoadBuildEcsBoundaryCompositionSystemHelper,
+            source.RoadBuildEcsCompositionSystemHelper,
             source.RoadBuildPlacementStorageCompositionSystemHelper,
             source.RoadSpecialVisualSystem,
             source.RoadMinimapEventUiSystemHelper,
@@ -185,17 +185,17 @@ internal sealed class RoadBuildCompositionContextCompositionSystemHelper
     private RoadBuildContextCompositionSystemHelper.Context CreateRoadBuildContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return new RoadBuildContextCompositionSystemHelper.Context(
-            source.RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManager,
+            source.RoadBuildEcsCompositionSystemHelper.TryGetEntityManager,
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                 TryGetRoadBuildGridData(source, out gridEntity, out grid, out roads, out blockerData),
             (originCell, footprintCells, grid) => GetRoadBuildFootprintCenter(source, originCell, footprintCells, grid),
-            source.RoadBuildDependencyState.BuildingPlacementInteractionBoundaryCompositionSystemHelper,
+            source.RoadBuildDependencyState.BuildingPlacementInteractionCompositionSystemHelper,
             source.RoadBuildDependencyState.BuildingPlacementInteractionContext,
             source.RoadBuildDependencyState.RuntimeBuildingEntityLinks,
             source.BuildingSpawnRandomState);
     }
 
-    private RoadBuildEcsBoundaryCompositionSystemHelper.Context CreateRoadBuildEcsContext(RoadBuildCompositionSourceCompositionSystemHelper source)
+    private RoadBuildEcsCompositionSystemHelper.Context CreateRoadBuildEcsContext(RoadBuildCompositionSourceCompositionSystemHelper source)
     {
         return source.RoadBuildContextCompositionSystemHelper.CreateEcsContext(CreateRoadBuildContext(source));
     }

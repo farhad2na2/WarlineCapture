@@ -72,17 +72,17 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/Components/GridComponents.cs|UnitPathCell",
         "Assets/Game/Scripts/Components/MapSurfaceComponents.cs|MapSurfaceCell",
         "Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs|MatchIntroEcsStateQuery",
-        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|BuildingUiCommandAdapter",
-        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|BuildingUiQueryAdapter",
-        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|MatchHudCameraControlAdapter",
-        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|MatchHudMinimapDataSourceAdapter",
-        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|MatchRuntimeStateAdapter",
-        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|SelectionDiagnosticsSinkAdapter",
-        "Assets/Game/Scripts/Composition/UiRuntimeBoundaryAdapters.cs|SelectionRectangleStateAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|BuildingUiCommandAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|BuildingUiQueryAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|MatchHudCameraControlAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|MatchHudMinimapDataSourceAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|MatchRuntimeStateAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|SelectionDiagnosticsSinkAdapter",
+        "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|SelectionRectangleStateAdapter",
         "Assets/Game/Scripts/Persistence/SaveService.cs|SaveService",
         "Assets/Game/Scripts/Systems/NullMatchIntroStateQuery.cs|NullMatchIntroStateQuery",
         "Assets/Game/Scripts/UI/Contracts/IMatchIntroStateQuery.cs|IMatchIntroStateQuery",
-        "Assets/Game/Scripts/UI/Contracts/UiRuntimeBoundaryContracts.cs|IBuildingUiQuery",
+        "Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs|IBuildingUiQuery",
         "Assets/Game/Scripts/UI/Settings/SettingsService.cs|SettingsService"
     };
 
@@ -106,7 +106,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
     private static readonly string[] ConcreteGameplaySystemTokens =
     {
         "SelectionUiCommandUiSystemHelper",
-        "BuildingUiCommandBoundary",
+        "BuildingUiCommandSystemHelper",
         "RuntimeGameplayStateSystem",
         "SelectionUiCameraSystemHelper",
         "RtsSelectionInputCompositionSystemHelper",

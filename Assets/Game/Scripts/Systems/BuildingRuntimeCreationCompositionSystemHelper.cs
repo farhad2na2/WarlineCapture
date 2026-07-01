@@ -21,8 +21,8 @@ internal sealed class BuildingRuntimeCreationCompositionSystemHelper
     public readonly struct Context
     {
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
-        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper RuntimeLinkInteractionSystem;
-        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context RuntimeLinkInteractionContext;
+        public readonly BuildingPlacementInteractionCompositionSystemHelper RuntimeLinkInteractionSystem;
+        public readonly BuildingPlacementInteractionCompositionSystemHelper.Context RuntimeLinkInteractionContext;
         public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public readonly bool DeferSideEffects;
         public readonly BuildingRuntimeOwnershipCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
@@ -40,8 +40,8 @@ internal sealed class BuildingRuntimeCreationCompositionSystemHelper
 
         public Context(
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper runtimeLinkInteractionSystem,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context runtimeLinkInteractionContext,
+            BuildingPlacementInteractionCompositionSystemHelper runtimeLinkInteractionSystem,
+            BuildingPlacementInteractionCompositionSystemHelper.Context runtimeLinkInteractionContext,
             RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
             bool deferSideEffects,
             BuildingRuntimeOwnershipCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -191,8 +191,8 @@ internal sealed class BuildingRuntimeCreationCompositionSystemHelper
     }
 
     private static void AttachRuntimeLink(
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper interactionSystem,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper interactionSystem,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         RuntimeBuildingEntityLinkRegistry registry,
         RuntimeBuildingEntity building)
     {

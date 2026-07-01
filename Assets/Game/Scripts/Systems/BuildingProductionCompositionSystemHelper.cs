@@ -7,8 +7,8 @@ internal sealed class BuildingProductionCompositionSystemHelper
     public BuildingProductionContextCompositionSystemHelper.Source CreateRuntimeContextSource(
         BuildingGameplaySourceCompositionSystemHelper source,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext = default,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext = default,
         MaterialPropertyBlock markerPropertyBlock = null)
     {
         BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource = createRuntimeContextSource(source);

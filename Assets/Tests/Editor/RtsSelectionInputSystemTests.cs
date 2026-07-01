@@ -2997,31 +2997,31 @@ public sealed class RtsSelectionInputSystemTests
     public void PointerTargetCommandSystem_UsesBoundaryPassForResolvedCommandTargets()
     {
         string pointerTarget = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs");
-        StringAssert.Contains("private readonly struct PointerTargetBoundaryPass", pointerTarget);
+        StringAssert.Contains("private readonly struct PointerTargetResolutionPass", pointerTarget);
 
         string move = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedMoveCommand");
-        StringAssert.Contains("PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);", move);
+        StringAssert.Contains("PointerTargetResolutionPass targetBoundary = CreatePointerTargetResolutionPass(context);", move);
         StringAssert.Contains("targetBoundary.TryGetClickedUnitEntity", move);
         StringAssert.Contains("targetBoundary.TryGetMoveCommandCell", move);
         Assert.IsFalse(move.Contains("TryGetClickedCell(context", StringComparison.Ordinal));
 
         string attack = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedAttackCommand");
-        StringAssert.Contains("PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);", attack);
+        StringAssert.Contains("PointerTargetResolutionPass targetBoundary = CreatePointerTargetResolutionPass(context);", attack);
         StringAssert.Contains("targetBoundary.TryGetClickedUnitEntity", attack);
         Assert.IsFalse(attack.Contains("TryGetClickedUnitEntity(context", StringComparison.Ordinal));
 
         string scan = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedScanCommand");
-        StringAssert.Contains("PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);", scan);
+        StringAssert.Contains("PointerTargetResolutionPass targetBoundary = CreatePointerTargetResolutionPass(context);", scan);
         StringAssert.Contains("targetBoundary.TryGetClickedCell", scan);
         Assert.IsFalse(scan.Contains("TryGetClickedCell(context", StringComparison.Ordinal));
 
         string board = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedBoardTransportCommand");
-        StringAssert.Contains("PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);", board);
+        StringAssert.Contains("PointerTargetResolutionPass targetBoundary = CreatePointerTargetResolutionPass(context);", board);
         StringAssert.Contains("targetBoundary.TryGetClickedUnitEntity", board);
         StringAssert.Contains("targetBoundary.TryGetClickedCell", board);
 
         string clickedCellWrapper = ExtractMethodBodyByName(pointerTarget, "TryGetClickedCell(Context context");
-        StringAssert.Contains("return CreatePointerTargetBoundaryPass(context).TryGetClickedCell", clickedCellWrapper);
+        StringAssert.Contains("return CreatePointerTargetResolutionPass(context).TryGetClickedCell", clickedCellWrapper);
     }
 
     [Test]

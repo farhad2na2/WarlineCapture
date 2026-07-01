@@ -2,8 +2,8 @@ internal sealed class RoadBuildDependencyCompositionSystemHelper
 {
     internal sealed class State
     {
-        public BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
-        public BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
+        public BuildingPlacementInteractionCompositionSystemHelper BuildingPlacementInteractionCompositionSystemHelper;
+        public BuildingPlacementInteractionCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public IMatchRuntimeUi MainMenuPlayUi;
         public RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers;
@@ -16,17 +16,17 @@ internal sealed class RoadBuildDependencyCompositionSystemHelper
 
     public void BindBuildingInteraction(
         State state,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext)
+        BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext)
     {
-        state.BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
+        state.BuildingPlacementInteractionCompositionSystemHelper = buildingPlacementInteractionSystem;
         state.BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
     }
 
     public void BindDependencies(
         State state,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
+        BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
         IMatchRuntimeUi mainMenuPlayUi,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
         RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,

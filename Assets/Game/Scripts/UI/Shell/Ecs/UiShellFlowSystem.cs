@@ -19,7 +19,7 @@ public partial struct UiShellFlowSystem : ISystem
             ComponentType.ReadWrite<UiShellPopupRequestComponent>(),
             ComponentType.ReadWrite<UiShellPresentationCommandComponent>(),
             ComponentType.ReadWrite<UiShellTransitionCompleteComponent>(),
-            ComponentType.ReadOnly<UiShellBoundaryComponent>());
+            ComponentType.ReadOnly<UiShellStateComponent>());
         state.RequireForUpdate(boundaryQuery);
     }
 

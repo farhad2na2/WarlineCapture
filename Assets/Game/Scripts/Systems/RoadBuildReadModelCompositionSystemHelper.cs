@@ -54,7 +54,7 @@ public sealed class RoadBuildReadModelCompositionSystemHelper
     {
         get
         {
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionBoundaryCompositionSystemHelper;
+            BuildingPlacementInteractionCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionCompositionSystemHelper;
             if (interaction != null)
                 return interaction.HasSelectedBuilding(_context.DependencyState.BuildingPlacementInteractionContext);
 
@@ -67,7 +67,7 @@ public sealed class RoadBuildReadModelCompositionSystemHelper
     {
         get
         {
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionBoundaryCompositionSystemHelper;
+            BuildingPlacementInteractionCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionCompositionSystemHelper;
             if (interaction != null)
                 return interaction.CanConfirmBuildingPlacement(_context.DependencyState.BuildingPlacementInteractionContext);
 
@@ -80,7 +80,7 @@ public sealed class RoadBuildReadModelCompositionSystemHelper
     {
         get
         {
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionBoundaryCompositionSystemHelper;
+            BuildingPlacementInteractionCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionCompositionSystemHelper;
             if (interaction != null &&
                 interaction.HasPendingBuildingPlacement(_context.DependencyState.BuildingPlacementInteractionContext))
             {
@@ -102,7 +102,7 @@ public sealed class RoadBuildReadModelCompositionSystemHelper
     {
         get
         {
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionBoundaryCompositionSystemHelper;
+            BuildingPlacementInteractionCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionCompositionSystemHelper;
             if (interaction != null &&
                 interaction.HasActiveBuilding(_context.DependencyState.BuildingPlacementInteractionContext))
             {

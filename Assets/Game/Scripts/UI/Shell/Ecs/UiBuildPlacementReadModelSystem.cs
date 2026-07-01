@@ -29,7 +29,7 @@ public partial struct UiBuildPlacementReadModelSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         boundaryQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<UiShellStateComponent>(),
             ComponentType.ReadWrite<UiBuildPlacementConfirmationBarComponent>());
         state.RequireForUpdate(boundaryQuery);
     }

@@ -15,7 +15,7 @@ public static class MatchStartRequestValidationRunner
 
             Require(system.QueueStartAfterMatchLoaded(em), "Initial match start request was not queued.");
 
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MatchStartBoundaryComponent>());
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MatchStartStateComponent>());
             Require(query.CalculateEntityCount() == 1, "Expected one match start boundary entity.");
 
             Entity boundary = query.GetSingletonEntity();

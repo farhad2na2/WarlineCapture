@@ -14,7 +14,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
     private readonly BuildingMarkerVisualPresentationSystemHelper _markerVisualPresentationHelper = new();
     private readonly BuildingRuntimeTickCompositionSystemHelper _runtimeTickCompositionHelper = new();
     private readonly BuildingPlacementInputTickCompositionSystemHelper _placementInputTickCompositionHelper = new();
-    private readonly BuildingRuntimeBoundaryCompositionSystemHelper _runtimeBoundaryCompositionHelper = new();
+    private readonly BuildingRuntimeCompositionSystemHelper _runtimeBoundaryCompositionHelper = new();
     private readonly BuildingProductionTickCompositionSystemHelper _productionTickCompositionHelper = new();
     private readonly BuildingPlacementInteractionCompositionSystemHelper _placementInteractionCompositionHelper = new();
     private readonly BuildingPlacementRuntimeTickContextCompositionSystemHelper _runtimeTickContextCompositionHelper = new();
@@ -155,7 +155,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 tryGetRuntimeBuilding,
                 getEffectivePlacementRect,
                 DestroyedBuildingLifetimeSeconds);
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextFactoryCompositionSystemHelper.Source> createBuildingRuntimeContextSource =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextFactoryCompositionSystemHelper.Source> createBuildingRuntimeContextSource =
             (source, placementInteractionContext, placementMarkerPropertyBlock) => source.BuildingRuntimeContextCompositionSystemHelper.CreateBuildingRuntimeContextSource(
                 source,
                 placementInteractionContext,
@@ -205,7 +205,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
         BuildingPlacementCommandCompositionSystemHelper.TryResolveInitialPlacementOriginDelegate tryResolveInitialPlacementOrigin =
             (
                 BuildingGameplaySourceCompositionSystemHelper source,
-                BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context placementInteractionContext,
+                BuildingPlacementInteractionCompositionSystemHelper.Context placementInteractionContext,
                 MaterialPropertyBlock placementMarkerPropertyBlock,
                 BuildingDefinition definition,
                 Vector2Int preferredOrigin,
@@ -317,9 +317,6 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                     createPlacementContextSource,
                     createRuntimeContextSource,
                     createBuildingSelectionContext);
-        BuildingPlacementInteractionCompositionSystemHelper.UpdatePlacementDelegate updatePlacementForInteraction =
-            (source, placementInteractionContext, placementMarkerPropertyBlock, screenPosition) =>
-                updatePlacement(source, placementInteractionContext, placementMarkerPropertyBlock, screenPosition);
         createPlacementContextSource = (source, placementInteractionContext, placementMarkerPropertyBlock) =>
             source.BuildingPlacementCommandCompositionSystemHelper.CreateContextSource(
                 source,
@@ -337,7 +334,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 tryAlignGateForCommand,
                 createBuildingRuntimeContextSource,
                 createBuildingSelectionContext);
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext =
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext =
             (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                 source.BuildingPlacementCommandCompositionSystemHelper.CreateCommandContext(
                     source,
@@ -355,31 +352,167 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                     tryAlignGateForCommand,
                     createBuildingRuntimeContextSource,
                     createBuildingSelectionContext);
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext = default;
-        interactionContext = _placementInteractionCompositionHelper.CreateBuildingPlacementInteractionContext(
-            childSystems,
-            () => interactionContext,
-            markerPropertyBlock,
-            (source, placementInteractionContext, placementMarkerPropertyBlock) => source.BuildingUiCompositionSystemHelper.CreateQueryContext(
-                source,
-                placementInteractionContext,
-                placementMarkerPropertyBlock,
-                createRuntimeContextSource,
-                createPlacementCommandContext,
-                createPlacementQueryContext,
-                createBuildingSelectionContext),
-            createPlacementCommandContext,
-            (source, placementInteractionContext, placementMarkerPropertyBlock) =>
-                source.BuildingProductionContextCompositionSystemHelper.CreateProductionRequestContext(
-                    source.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
-                        source,
-                        createRuntimeContextSource,
-                        createPlacementCommandContext,
-                        placementInteractionContext,
-                        placementMarkerPropertyBlock)),
-            createBuildingSelectionContext,
-            createBuildingRuntimeEntityContext,
-            createRuntimeContextSource);
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext = default;
+        void BeginSoldierBasePlacement()
+        {
+            BuildingPlacementCommandRequestCompositionSystemHelper.Context commandContext =
+                createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock);
+            if (tryGetEntityManager(out EntityManager em))
+            {
+                childSystems.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessBeginSoldierBasePlacement(em, commandContext);
+                return;
+            }
+
+            if (childSystems.BuildingPlacementStartupSystemHelper.SoldierBaseDefinition != null)
+                commandContext.SessionSystem?.BeginPlacement(commandContext.SessionContext, childSystems.BuildingPlacementStartupSystemHelper.SoldierBaseDefinition);
+        }
+
+        bool ConfirmBuildingPlacement()
+        {
+            BuildingPlacementCommandRequestCompositionSystemHelper.Context commandContext =
+                createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock);
+            return tryGetEntityManager(out EntityManager em)
+                ? childSystems.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessConfirmBuildingPlacement(em, commandContext)
+                : commandContext.SessionSystem != null && commandContext.SessionSystem.ConfirmBuildingPlacement(commandContext.SessionContext);
+        }
+
+        void CancelBuildingPlacement()
+        {
+            BuildingPlacementCommandRequestCompositionSystemHelper.Context commandContext =
+                createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock);
+            if (tryGetEntityManager(out EntityManager em))
+                childSystems.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessCancelBuildingPlacement(em, commandContext);
+            else
+                commandContext.SessionSystem?.CancelBuildingPlacement(commandContext.SessionContext);
+        }
+
+        void CreateUnitFromSelectedBuilding()
+        {
+            if (!tryGetEntityManager(out EntityManager em))
+                return;
+
+            BuildingProductionContextCompositionSystemHelper.Source productionSource =
+                childSystems.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
+                    childSystems,
+                    createRuntimeContextSource,
+                    createPlacementCommandContext,
+                    interactionContext,
+                    markerPropertyBlock);
+            BuildingProductionRequestSystemHelper.Context productionContext =
+                childSystems.BuildingProductionContextCompositionSystemHelper.CreateProductionRequestContext(productionSource);
+            childSystems.BuildingProductionRequestSystemHelper.EnqueueAndProcessCreateUnitFromSelectedBuilding(
+                em,
+                productionContext,
+                childSystems.RuntimeBuildingSystem.CurrentActiveBuildingId,
+                productionIndex: 0,
+                frameCount: Time.frameCount);
+        }
+
+        void DeleteSelectedBuilding()
+        {
+            BuildingSelectionRuntimeCompositionSystemHelper.Context selectionContext =
+                createBuildingSelectionContext(childSystems);
+            bool DeleteBuildingById(int buildingId)
+            {
+                return childSystems.BuildingRuntimeEntityCompositionSystemHelper.DeleteBuildingById(
+                    createBuildingRuntimeEntityContext(childSystems),
+                    buildingId);
+            }
+
+            if (tryGetEntityManager(out EntityManager em))
+                childSystems.BuildingSelectionRuntimeCompositionSystemHelper.EnqueueAndProcessDeleteSelectedBuilding(em, selectionContext, DeleteBuildingById);
+            else
+                childSystems.BuildingSelectionRuntimeCompositionSystemHelper.DeleteSelectedBuilding(selectionContext, DeleteBuildingById);
+        }
+
+        void ClearSelectedBuilding(string reason)
+        {
+            BuildingSelectionRuntimeCompositionSystemHelper.Context selectionContext =
+                createBuildingSelectionContext(childSystems);
+            if (tryGetEntityManager(out EntityManager em))
+                childSystems.BuildingSelectionRuntimeCompositionSystemHelper.EnqueueAndProcessClearSelectedBuilding(em, selectionContext);
+            else
+                childSystems.BuildingSelectionRuntimeCompositionSystemHelper.ClearSelectedBuilding(selectionContext);
+        }
+
+        void ExitBuildMode()
+        {
+            BuildingPlacementCommandRequestCompositionSystemHelper.Context commandContext =
+                createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock);
+            if (tryGetEntityManager(out EntityManager em))
+                childSystems.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessExitBuildMode(em, commandContext);
+            else
+                commandContext.SessionSystem?.ExitBuildMode(commandContext.SessionContext);
+        }
+
+        bool TryResolveSelectedBuildingFollowTarget(out Vector3 worldPosition, out float boundsRadius)
+        {
+            worldPosition = Vector3.zero;
+            boundsRadius = 0f;
+            int? buildingId = childSystems.RuntimeBuildingSystem.CurrentActiveBuildingId;
+            if (!buildingId.HasValue)
+                return false;
+
+            BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource =
+                createRuntimeContextSource(childSystems);
+            if (runtimeSource.TryGetRuntimeBuilding == null ||
+                !runtimeSource.TryGetRuntimeBuilding(buildingId.Value, out RuntimeBuildingEntity building) ||
+                building == null)
+            {
+                return false;
+            }
+
+            worldPosition = BuildingRuntimeFocusPositionPresentationSystemHelper.Resolve(runtimeSource, building);
+            if (building.Definition != null)
+                boundsRadius = Mathf.Max(1f, Mathf.Max(building.Definition.FootprintCells.x, building.Definition.FootprintCells.y) * 0.5f);
+            else if (building.Instance != null)
+                boundsRadius = Mathf.Max(1f, building.Instance.transform.localScale.magnitude);
+            else
+                boundsRadius = 1f;
+            return true;
+        }
+
+        interactionContext = childSystems.BuildingPlacementInteractionContextCompositionSystemHelper.CreateContext(
+            childSystems.BuildingPlacementInteractionContextCompositionSystemHelper.CreateSource(
+                () => childSystems.BuildingPlacementLifecycleCompositionSystemHelper.HasPendingBuildingPlacement,
+                () => childSystems.BuildingPlacementLifecycleCompositionSystemHelper.CanConfirmBuildingPlacement,
+                childSystems.RuntimeBuildingSystem.HasSelectedBuilding,
+                () => childSystems.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
+                () => childSystems.BuildingPlacementInputUiSystemHelper.IsDraggingPlacement,
+                () => childSystems.BuildingPlacementQueryUiSystemHelper.GetPlacementStatusText(
+                    childSystems.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement),
+                () => childSystems.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingLabel(
+                    createPlacementQueryContext(childSystems)),
+                BeginSoldierBasePlacement,
+                ConfirmBuildingPlacement,
+                CancelBuildingPlacement,
+                CreateUnitFromSelectedBuilding,
+                DeleteSelectedBuilding,
+                ClearSelectedBuilding,
+                ExitBuildMode,
+                (buildingId, blockerEntity, buildingObject) => childSystems.BuildingRuntimeEntityCompositionSystemHelper.HandleRuntimeBuildingEntityDestroyed(
+                    createBuildingRuntimeEntityContext(childSystems),
+                    buildingId,
+                    blockerEntity,
+                    buildingObject),
+                (byte attackerFactionId,
+                    Entity finalTarget,
+                    Unity.Mathematics.int2 finalTargetCell,
+                    Unity.Mathematics.int2 attackerCell,
+                    out Entity breachTarget,
+                    out Unity.Mathematics.int2 breachCell,
+                    out Unity.Mathematics.float3 breachPosition,
+                    out string reason) => childSystems.BuildingRuntimeReadModelCompositionSystemHelper.TryResolveBaseBreachTarget(
+                    childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(childSystems)),
+                    attackerFactionId,
+                    finalTarget,
+                    finalTargetCell,
+                    attackerCell,
+                    out breachTarget,
+                    out breachCell,
+                    out breachPosition,
+                    out reason),
+                TryResolveSelectedBuildingFollowTarget));
         BuildingRuntimeContextFactoryCompositionSystemHelper.Source buildingRuntimeContextSource =
             createBuildingRuntimeContextSource(childSystems, interactionContext, markerPropertyBlock);
         CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary =
@@ -388,7 +521,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             BuildingCitizenPopulationCompositionSystemHelper.Create(_citizenPopulationCompositionSystem);
 
         var runtimeUpdate = new BuildingRuntimeUpdateCompositionSystemHelper();
-        BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext =
+        BuildingRuntimeSpawnCommandSystemHelper.Context runtimeSpawnCommandContext =
             childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnCommandContext(
                 buildingRuntimeContextSource,
                 childSystems.BuildingRuntimeSpawnCompositionSystemHelper);
@@ -433,13 +566,8 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                     rtsSelectionConfig != null ? rtsSelectionConfig.DragThresholdPixels : 8f,
                     createPlacementCommandContext,
                     (pointerSource, pointerInteractionContext, pointerMarkerPropertyBlock) =>
-                        _placementInteractionCompositionHelper.CreateActivePlacementPointerContext(
-                            pointerSource,
-                            pointerInteractionContext,
-                            pointerMarkerPropertyBlock,
-                            tryGetGridForPlacementInput,
-                            tryGetGridCell,
-                            updatePlacementForInteraction),
+                        pointerSource.BuildingPlacementContextCompositionSystemHelper.CreateActivePlacementPointerContext(
+                            createPlacementContextSource(pointerSource, pointerInteractionContext, pointerMarkerPropertyBlock)),
                     source => source.BuildingSelectionClickCompositionHelper.Create(
                         source,
                         tryGetGridForSelection,
@@ -506,7 +634,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                     bool TryGetMapRuntimeBoundary(EntityManager em, out Entity boundaryEntity)
                     {
                         source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
-                        EntityQuery boundaryQuery = source.BuildingGameplayEcsQueryCompositionSystemHelper.BuildingRuntimeBoundaryQuery;
+                        EntityQuery boundaryQuery = source.BuildingGameplayEcsQueryCompositionSystemHelper.BuildingRuntimeStateQuery;
                         if (boundaryQuery.IsEmptyIgnoreFilter)
                         {
                             boundaryEntity = Entity.Null;
@@ -558,12 +686,12 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             childSystems.BuildingRuntimeCitySpawnBridgeCompositionSystemHelper,
             childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCitySpawnContext(
                 buildingRuntimeContextSource,
-                childSystems.BuildingRuntimeSpawnCommandBoundary,
+                childSystems.BuildingRuntimeSpawnCommandSystemHelper,
                 runtimeSpawnCommandContext,
-                childSystems.BuildingRuntimeBoundaryProcessingCompositionSystemHelper),
+                childSystems.BuildingRuntimeProcessingCompositionSystemHelper),
             childSystems.BuildingRuntimeReadModelCompositionSystemHelper,
             childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(childSystems)),
-            childSystems.BuildingRuntimeSpawnCommandBoundary,
+            childSystems.BuildingRuntimeSpawnCommandSystemHelper,
             runtimeSpawnCommandContext,
             childSystems.BuildingSpawnCompositionSystemHelper,
             createSpawnContext(),
@@ -572,7 +700,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
             createBarrierContext,
             childSystems.BuildingCombatUtilitySystemHelper,
             createCombatContext,
-            childSystems.BuildingUiCommandBoundary,
+            childSystems.BuildingUiCommandSystemHelper,
             childSystems.BuildingUiCompositionSystemHelper.CreateCommandContext(
                 childSystems,
                 interactionContext,
@@ -590,7 +718,7 @@ internal sealed class BuildingGameplayCompositionSystemHelper
                 createPlacementCommandContext,
                 createPlacementQueryContext,
                 createBuildingSelectionContext),
-            childSystems.BuildingPlacementInteractionBoundaryCompositionSystemHelper,
+            childSystems.BuildingPlacementInteractionCompositionSystemHelper,
             interactionContext,
             childSystems.BuildingGameplayDependencyCompositionSystemHelper,
             childSystems.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,

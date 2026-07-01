@@ -509,7 +509,7 @@ public partial struct UiBuildDrawerReadModelSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         boundaryQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<UiShellStateComponent>(),
             ComponentType.ReadWrite<UiBuildDrawerStateComponent>(),
             ComponentType.ReadWrite<UiBuildDrawerDetailComponent>(),
             ComponentType.ReadWrite<UiBuildDrawerActiveProductionComponent>(),

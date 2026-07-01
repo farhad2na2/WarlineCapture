@@ -27,8 +27,8 @@ public sealed class BuildingUiQueryUiSystemHelper
         internal readonly Func<string> GetSelectedBuildingDescription;
         internal readonly TryGetSelectedBuildingHealthDelegate TryGetSelectedBuildingHealth;
         internal readonly TryGetSelectedBuildingPreviewPrefabDelegate TryGetSelectedBuildingPreviewPrefab;
-        internal readonly BuildingProductionRequestBoundary ProductionRequestSystem;
-        internal readonly Func<BuildingProductionRequestBoundary.Context> CreateProductionRequestContext;
+        internal readonly BuildingProductionRequestSystemHelper ProductionRequestSystem;
+        internal readonly Func<BuildingProductionRequestSystemHelper.Context> CreateProductionRequestContext;
         internal readonly Func<int, bool> IsRuntimeBuildingWall;
         internal readonly Func<int, bool> IsRuntimeBuildingCityGenerated;
         internal readonly TryGetRuntimeBuildingOwnerFactionDelegate TryGetRuntimeBuildingOwnerFaction;
@@ -49,8 +49,8 @@ public sealed class BuildingUiQueryUiSystemHelper
             Func<string> getSelectedBuildingDescription,
             TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
             TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab,
-            BuildingProductionRequestBoundary productionRequestSystem,
-            Func<BuildingProductionRequestBoundary.Context> createProductionRequestContext,
+            BuildingProductionRequestSystemHelper productionRequestSystem,
+            Func<BuildingProductionRequestSystemHelper.Context> createProductionRequestContext,
             Func<int, bool> isRuntimeBuildingWall,
             Func<int, bool> isRuntimeBuildingCityGenerated,
             TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
@@ -417,7 +417,7 @@ public sealed class BuildingUiQueryUiSystemHelper
         if (em.World == null || !em.World.IsCreated)
             return false;
 
-        using EntityQuery boundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
+        using EntityQuery boundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
         if (boundaryQuery.IsEmptyIgnoreFilter)
             return false;
 

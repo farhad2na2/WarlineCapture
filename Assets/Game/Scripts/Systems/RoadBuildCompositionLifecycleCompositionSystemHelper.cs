@@ -9,8 +9,8 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
         RoadBuildSystemConfig configAsset,
         Camera sceneWorldCamera,
         Transform runtimeRoot,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext = default)
+        BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext = default)
     {
         source.RoadBuildStartupState = source.RoadBuildStartupSystem.Initialize(
             configAsset,
@@ -33,7 +33,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
             source.RoadBuildRuntimeActionState,
             source.RoadBuildCommandCompositionSystemHelper,
             contextSystem.CreateRoadBuildCommandContext(source),
-            source.RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManager);
+            source.RoadBuildEcsCompositionSystemHelper.TryGetEntityManager);
         RoadBuildRuntimeActionCompositionSystemHelper.ConfigureGui(
             source.RoadBuildRuntimeActionState,
             source.RoadDeletePromptUiSystemHelper,
@@ -51,8 +51,8 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
 
     public void BindDependencies(
         RoadBuildCompositionSourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext = default,
+        BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext = default,
         IMatchRuntimeUi mainMenuPlayUi = null,
         RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = null,
         RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks = null)
@@ -72,7 +72,7 @@ internal sealed class RoadBuildCompositionLifecycleCompositionSystemHelper
         RoadBuildCompositionContextCompositionSystemHelper contextSystem)
     {
         RoadBuildCommandCompositionSystemHelper.Context commandContext = contextSystem.CreateRoadBuildCommandContext(source);
-        if (source.RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManager(out EntityManager entityManager))
+        if (source.RoadBuildEcsCompositionSystemHelper.TryGetEntityManager(out EntityManager entityManager))
             source.RoadBuildCommandCompositionSystemHelper.EnqueueAndProcessExitBuildMode(entityManager, commandContext);
         else
             ExitBuildModeWithoutEntityManager(commandContext);

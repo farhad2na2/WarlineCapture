@@ -27,13 +27,13 @@ internal static class RuntimeGameplayStateTestHelper
 
     public static void SetBuildingPlacement(EntityManager entityManager, Action tickBuildingRuntime)
     {
-        GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
+        GetOrCreateBuildingRuntimeStateEntity(entityManager);
         TickBuildingRuntime(tickBuildingRuntime);
     }
 
-    public static void PublishBuildingRuntimeBoundary(EntityManager entityManager, Action tickBuildingRuntime)
+    public static void PublishBuildingRuntimeState(EntityManager entityManager, Action tickBuildingRuntime)
     {
-        GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
+        GetOrCreateBuildingRuntimeStateEntity(entityManager);
         TickBuildingRuntime(tickBuildingRuntime);
     }
 
@@ -44,7 +44,7 @@ internal static class RuntimeGameplayStateTestHelper
 
     public static int CountRuntimeBuildingsForFaction(EntityManager entityManager, byte factionId, string buildingId)
     {
-        Entity entity = GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
+        Entity entity = GetOrCreateBuildingRuntimeStateEntity(entityManager);
         if (!entityManager.HasBuffer<BuildingRuntimeOwnedBuildingSummary>(entity))
             return 0;
 
@@ -66,7 +66,7 @@ internal static class RuntimeGameplayStateTestHelper
 
     public static string DescribeOwnedBuildingSummaries(EntityManager entityManager)
     {
-        Entity entity = GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
+        Entity entity = GetOrCreateBuildingRuntimeStateEntity(entityManager);
         if (!entityManager.HasBuffer<BuildingRuntimeOwnedBuildingSummary>(entity))
             return "<no BuildingRuntimeOwnedBuildingSummary buffer>";
 
@@ -94,7 +94,7 @@ internal static class RuntimeGameplayStateTestHelper
 
     public static int CountPendingProductionsForFaction(EntityManager entityManager, byte factionId, string unitId)
     {
-        Entity entity = GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
+        Entity entity = GetOrCreateBuildingRuntimeStateEntity(entityManager);
         if (!entityManager.HasBuffer<BuildingRuntimeUnitProductionSummary>(entity))
             return 0;
 
@@ -116,7 +116,7 @@ internal static class RuntimeGameplayStateTestHelper
 
     public static string DescribeUnitProductionBoundary(EntityManager entityManager)
     {
-        Entity entity = GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
+        Entity entity = GetOrCreateBuildingRuntimeStateEntity(entityManager);
         StringBuilder builder = new();
         AppendBuffer(builder, "configuredUnits", entityManager.GetBuffer<BuildingConfiguredUnitReadModel>(entity, true), item =>
             $"{item.UnitId.ToString()}:{item.DisplayName.ToString()}:can={item.CanRequest}:price={item.Price}");
@@ -127,21 +127,21 @@ internal static class RuntimeGameplayStateTestHelper
         return builder.Length == 0 ? "<empty production boundary>" : builder.ToString();
     }
 
-    private static Entity GetOrCreateBuildingRuntimeBoundaryEntity(EntityManager entityManager)
+    private static Entity GetOrCreateBuildingRuntimeStateEntity(EntityManager entityManager)
     {
-        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
         Entity entity = query.CalculateEntityCount() > 0
             ? query.GetSingletonEntity()
             : entityManager.CreateEntity();
 
-        EnsureBuildingRuntimeBoundaryBuffers(entityManager, entity);
+        EnsureBuildingRuntimeStateBuffers(entityManager, entity);
         return entity;
     }
 
-    private static void EnsureBuildingRuntimeBoundaryBuffers(EntityManager entityManager, Entity entity)
+    private static void EnsureBuildingRuntimeStateBuffers(EntityManager entityManager, Entity entity)
     {
-        if (!entityManager.HasComponent<BuildingRuntimeBoundaryTag>(entity))
-            entityManager.AddComponent<BuildingRuntimeBoundaryTag>(entity);
+        if (!entityManager.HasComponent<BuildingRuntimeStateTag>(entity))
+            entityManager.AddComponent<BuildingRuntimeStateTag>(entity);
         EnsureBuffer<BuildingConfiguredSpawnableReadModel>(entityManager, entity);
         EnsureBuffer<BuildingConfiguredUnitReadModel>(entityManager, entity);
         EnsureBuffer<BuildingProductionSlotReadModel>(entityManager, entity);

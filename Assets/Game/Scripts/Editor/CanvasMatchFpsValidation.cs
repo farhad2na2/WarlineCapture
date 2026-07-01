@@ -42,7 +42,7 @@ public static class CanvasMatchFpsValidation
         "MainMenuPlayUI.FeedbackLifetime",
         "BuildingPlacementRuntimeTick.EnqueueMapBuildingPlacements",
         "BuildingPlacementRuntimeTick.EnqueueMapVehiclePlacements",
-        "BuildingPlacementRuntimeTick.UpdateBuildingRuntimeBoundary",
+        "BuildingPlacementRuntimeTick.UpdateBuildingRuntimeState",
         "BuildingPlacementRuntimeTick.ProcessPendingProductions",
         "BuildingPlacementRuntimeTick.UpdateActiveProductionTransports",
         "BuildingPlacementRuntimeTick.UpdateResourceProduction",

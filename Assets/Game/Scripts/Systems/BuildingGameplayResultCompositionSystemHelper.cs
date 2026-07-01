@@ -12,8 +12,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context runtimeCitySpawnContext,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
         BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
-        BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommand,
-        BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
+        BuildingRuntimeSpawnCommandSystemHelper runtimeSpawnCommand,
+        BuildingRuntimeSpawnCommandSystemHelper.Context runtimeSpawnCommandContext,
         BuildingSpawnCompositionSystemHelper spawn,
         BuildingSpawnCompositionSystemHelper.Context spawnContext,
         Func<BuildingSpawnCompositionSystemHelper.Context> createSpawnContext,
@@ -21,12 +21,12 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         Func<BuildingBarrierUtilitySystemHelper.Context> createBarrierContext,
         BuildingCombatUtilitySystemHelper combat,
         Func<BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>> createCombatContext,
-        BuildingUiCommandBoundary uiCommand,
-        BuildingUiCommandBoundary.Context uiCommandContext,
+        BuildingUiCommandSystemHelper uiCommand,
+        BuildingUiCommandSystemHelper.Context uiCommandContext,
         BuildingUiQueryUiSystemHelper uiQuery,
         BuildingUiQueryUiSystemHelper.Context uiQueryContext,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper interaction,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper interaction,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
         BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,
@@ -88,8 +88,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context RuntimeCitySpawnContext;
         public readonly BuildingRuntimeReadModelCompositionSystemHelper RuntimeQuery;
         public readonly BuildingRuntimeReadModelCompositionSystemHelper.Context RuntimeQueryContext;
-        public readonly BuildingRuntimeSpawnCommandBoundary RuntimeSpawnCommand;
-        public readonly BuildingRuntimeSpawnCommandBoundary.Context RuntimeSpawnCommandContext;
+        public readonly BuildingRuntimeSpawnCommandSystemHelper RuntimeSpawnCommand;
+        public readonly BuildingRuntimeSpawnCommandSystemHelper.Context RuntimeSpawnCommandContext;
         public readonly BuildingSpawnCompositionSystemHelper Spawn;
         public readonly BuildingSpawnCompositionSystemHelper.Context SpawnContext;
         public readonly Func<BuildingSpawnCompositionSystemHelper.Context> CreateSpawnContext;
@@ -97,12 +97,12 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
         public readonly Func<BuildingBarrierUtilitySystemHelper.Context> CreateBarrierContext;
         public readonly BuildingCombatUtilitySystemHelper Combat;
         public readonly Func<BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>> CreateCombatContext;
-        public readonly BuildingUiCommandBoundary UiCommand;
-        public readonly BuildingUiCommandBoundary.Context UiCommandContext;
+        public readonly BuildingUiCommandSystemHelper UiCommand;
+        public readonly BuildingUiCommandSystemHelper.Context UiCommandContext;
         public readonly BuildingUiQueryUiSystemHelper UiQuery;
         public readonly BuildingUiQueryUiSystemHelper.Context UiQueryContext;
-        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper Interaction;
-        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context InteractionContext;
+        public readonly BuildingPlacementInteractionCompositionSystemHelper Interaction;
+        public readonly BuildingPlacementInteractionCompositionSystemHelper.Context InteractionContext;
         private readonly BuildingGameplayDependencyCompositionSystemHelper DependencySystem;
         private readonly BuildingRuntimeResourcePrefabContextCompositionSystemHelper RuntimeResourcePrefabContextSystem;
         private readonly BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source RuntimeResourcePrefabSource;
@@ -125,8 +125,8 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context runtimeCitySpawnContext,
             BuildingRuntimeReadModelCompositionSystemHelper runtimeQuery,
             BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
-            BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommand,
-            BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
+            BuildingRuntimeSpawnCommandSystemHelper runtimeSpawnCommand,
+            BuildingRuntimeSpawnCommandSystemHelper.Context runtimeSpawnCommandContext,
             BuildingSpawnCompositionSystemHelper spawn,
             BuildingSpawnCompositionSystemHelper.Context spawnContext,
             Func<BuildingSpawnCompositionSystemHelper.Context> createSpawnContext,
@@ -134,12 +134,12 @@ internal sealed class BuildingGameplayResultCompositionSystemHelper
             Func<BuildingBarrierUtilitySystemHelper.Context> createBarrierContext,
             BuildingCombatUtilitySystemHelper combat,
             Func<BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>> createCombatContext,
-            BuildingUiCommandBoundary uiCommand,
-            BuildingUiCommandBoundary.Context uiCommandContext,
+            BuildingUiCommandSystemHelper uiCommand,
+            BuildingUiCommandSystemHelper.Context uiCommandContext,
             BuildingUiQueryUiSystemHelper uiQuery,
             BuildingUiQueryUiSystemHelper.Context uiQueryContext,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper interaction,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+            BuildingPlacementInteractionCompositionSystemHelper interaction,
+            BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
             BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper runtimeResourcePrefabContextSystem,
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source runtimeResourcePrefabSource,

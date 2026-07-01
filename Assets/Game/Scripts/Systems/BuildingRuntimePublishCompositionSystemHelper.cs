@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
+internal sealed class BuildingRuntimePublishCompositionSystemHelper
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
@@ -11,12 +11,12 @@ internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
     {
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Action<EntityManager> EnsureEntityQueries;
-        public readonly BuildingRuntimeBoundaryProcessingCompositionSystemHelper BoundarySystem;
+        public readonly BuildingRuntimeProcessingCompositionSystemHelper BoundarySystem;
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly BuildingRuntimeSpawnCompositionSystemHelper RuntimeSpawnSystem;
         public readonly BuildingRuntimeSpawnCompositionSystemHelper.Context RuntimeSpawnContext;
-        public readonly BuildingProductionRequestBoundary ProductionRequestSystem;
-        public readonly BuildingProductionRequestBoundary.Context ProductionRequestContext;
+        public readonly BuildingProductionRequestSystemHelper ProductionRequestSystem;
+        public readonly BuildingProductionRequestSystemHelper.Context ProductionRequestContext;
         public readonly BuildingRuntimeReadModelCompositionSystemHelper RuntimeQuerySystem;
         public readonly BuildingRuntimeReadModelCompositionSystemHelper.Context RuntimeQueryContext;
         public readonly FactionResourceCompositionSystemHelper FactionResourceCompositionSystemHelper;
@@ -26,12 +26,12 @@ internal sealed class BuildingRuntimeBoundaryPublishCompositionSystemHelper
         public Context(
             TryGetEntityManagerDelegate tryGetEntityManager,
             Action<EntityManager> ensureEntityQueries,
-            BuildingRuntimeBoundaryProcessingCompositionSystemHelper boundarySystem,
+            BuildingRuntimeProcessingCompositionSystemHelper boundarySystem,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
             BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
-            BuildingProductionRequestBoundary productionRequestSystem,
-            BuildingProductionRequestBoundary.Context productionRequestContext,
+            BuildingProductionRequestSystemHelper productionRequestSystem,
+            BuildingProductionRequestSystemHelper.Context productionRequestContext,
             BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
             BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
             FactionResourceCompositionSystemHelper factionResourceSystem,

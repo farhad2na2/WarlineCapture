@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
+public sealed class BuildingRuntimeProcessingCompositionSystemHelper
 {
     private const float PublishIntervalSeconds = 0.5f;
     private const int MaxRuntimeSpawnRequestsPerUpdate = 16;
@@ -62,8 +62,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
         BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
         BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
-        BuildingProductionRequestBoundary productionRequestSystem,
-        BuildingProductionRequestBoundary.Context productionRequestContext,
+        BuildingProductionRequestSystemHelper productionRequestSystem,
+        BuildingProductionRequestSystemHelper.Context productionRequestContext,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
         BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         FactionResourceCompositionSystemHelper factionResourceSystem,
@@ -115,8 +115,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
         BuildingDefinitionPrefabSystemHelper definitionSystem,
         BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
         BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
-        BuildingProductionRequestBoundary productionRequestSystem,
-        BuildingProductionRequestBoundary.Context productionRequestContext,
+        BuildingProductionRequestSystemHelper productionRequestSystem,
+        BuildingProductionRequestSystemHelper.Context productionRequestContext,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
         BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         FactionResourceCompositionSystemHelper factionResourceSystem,
@@ -151,8 +151,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
     }
 
     private static void ProcessUiProductionRequests(
-        BuildingProductionRequestBoundary productionRequestSystem,
-        BuildingProductionRequestBoundary.Context productionRequestContext,
+        BuildingProductionRequestSystemHelper productionRequestSystem,
+        BuildingProductionRequestSystemHelper.Context productionRequestContext,
         EntityManager em,
         int frameCount,
         float now)
@@ -203,8 +203,8 @@ public sealed class BuildingRuntimeBoundaryProcessingCompositionSystemHelper
     }
 
     private void ProcessProductionRequests(
-        BuildingProductionRequestBoundary productionRequestSystem,
-        BuildingProductionRequestBoundary.Context productionRequestContext,
+        BuildingProductionRequestSystemHelper productionRequestSystem,
+        BuildingProductionRequestSystemHelper.Context productionRequestContext,
         BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
         BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
         EntityManager em,

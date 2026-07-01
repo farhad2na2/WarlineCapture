@@ -22,10 +22,10 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingPlacementQueryUiSystemHelper BuildingPlacementQueryUiSystemHelper = new();
     internal readonly BuildingPlacementQueryCompositionSystem BuildingPlacementQueryCompositionSystem = new();
     internal readonly BuildingUiQueryUiSystemHelper BuildingUiQueryUiSystemHelper = new();
-    internal readonly BuildingUiCommandBoundary BuildingUiCommandBoundary = new();
+    internal readonly BuildingUiCommandSystemHelper BuildingUiCommandSystemHelper = new();
     internal readonly BuildingUiContextCompositionSystemHelper BuildingUiContextCompositionSystemHelper = new();
     internal readonly BuildingUiCompositionSystemHelper BuildingUiCompositionSystemHelper = new();
-    internal readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper = new();
+    internal readonly BuildingPlacementInteractionCompositionSystemHelper BuildingPlacementInteractionCompositionSystemHelper = new();
     internal readonly BuildingPlacementInteractionContextCompositionSystemHelper BuildingPlacementInteractionContextCompositionSystemHelper = new();
     internal readonly BuildingRunwaySystem BuildingRunwaySystem = new();
     internal readonly BuildingPlacementValidationUtilitySystemHelper BuildingPlacementValidationUtilitySystemHelper = new();
@@ -39,7 +39,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingPlacementCommandRequestCompositionSystemHelper BuildingPlacementCommandRequestCompositionSystemHelper = new();
     internal readonly BuildingPlacementCommandCompositionSystemHelper BuildingPlacementCommandCompositionSystemHelper = new();
     internal readonly BuildingPlacementSessionCompositionSystemHelper BuildingPlacementSessionCompositionSystemHelper = new();
-    internal readonly BuildingProductionRequestBoundary BuildingProductionRequestBoundary = new();
+    internal readonly BuildingProductionRequestSystemHelper BuildingProductionRequestSystemHelper = new();
     internal readonly BuildingProductionCompositionSystemHelper BuildingProductionCompositionSystemHelper = new();
     internal readonly BuildingRuntimeCreationCompositionSystemHelper BuildingRuntimeCreationCompositionSystemHelper = new();
     internal readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinkRegistry = new();
@@ -54,7 +54,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingPlacementGridCameraSystemHelper BuildingPlacementGridCameraSystemHelper = new();
     internal readonly BuildingPlacementVisualPresentationSystemHelper BuildingPlacementVisualPresentationSystemHelper;
     internal readonly BuildingRuntimeSpawnCompositionSystemHelper BuildingRuntimeSpawnCompositionSystemHelper = new();
-    internal readonly BuildingRuntimeSpawnCommandBoundary BuildingRuntimeSpawnCommandBoundary = new();
+    internal readonly BuildingRuntimeSpawnCommandSystemHelper BuildingRuntimeSpawnCommandSystemHelper = new();
     internal readonly BuildingRuntimeContextFactoryCompositionSystemHelper BuildingRuntimeContextFactoryCompositionSystemHelper = new();
     internal readonly BuildingRuntimeContextCompositionSystemHelper BuildingRuntimeContextCompositionSystemHelper = new();
     internal readonly BuildingRuntimeQueryCompositionSystemHelper BuildingRuntimeQueryCompositionSystemHelper = new();
@@ -64,7 +64,7 @@ internal sealed class BuildingGameplaySourceCompositionSystemHelper
     internal readonly BuildingRuntimeEntityCompositionSystemHelper BuildingRuntimeEntityCompositionSystemHelper = new();
     internal readonly BuildingPlacementRedirectCompositionSystemHelper BuildingPlacementRedirectCompositionSystemHelper = new();
     internal readonly BuildingResourceHaulerBridgeCompositionSystemHelper BuildingResourceHaulerBridgeCompositionSystemHelper = new();
-    internal readonly BuildingRuntimeBoundaryProcessingCompositionSystemHelper BuildingRuntimeBoundaryProcessingCompositionSystemHelper = new();
+    internal readonly BuildingRuntimeProcessingCompositionSystemHelper BuildingRuntimeProcessingCompositionSystemHelper = new();
     internal readonly MapBuildingPlacementSpawnPrefabSystemHelper MapBuildingPlacementSpawnPrefabSystemHelper = new();
     internal readonly MapVehiclePlacementSpawnPrefabSystemHelper MapVehiclePlacementSpawnPrefabSystemHelper = new();
     internal readonly BuildingPlacementRuntimeTickCompositionSystemHelper BuildingPlacementRuntimeTickCompositionSystemHelper = new();

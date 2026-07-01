@@ -29,7 +29,7 @@ public partial struct AIEconomySystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         _buildingRuntimeBoundaryQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
             ComponentType.ReadOnly<BuildingRuntimeFactionSummary>(),
             ComponentType.ReadWrite<BuildingFactionResourceSellRequest>());
         _runtimeDiagnosticsQuery = state.GetEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
@@ -49,7 +49,7 @@ public partial struct AIEconomySystem : ISystem
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
         bool shouldLogDiagnostics = ShouldQueueDiagnostics(_runtimeDiagnosticsQuery);
         Entity diagnosticQueueEntity = shouldLogDiagnostics ? EnsureDiagnosticQueue(ref state) : Entity.Null;
-        Entity boundaryEntity = TryGetBuildingRuntimeBoundaryEntity(ref state, out Entity foundBoundaryEntity)
+        Entity boundaryEntity = TryGetBuildingRuntimeStateEntity(ref state, out Entity foundBoundaryEntity)
             ? foundBoundaryEntity
             : Entity.Null;
 
@@ -106,7 +106,7 @@ public partial struct AIEconomySystem : ISystem
         }
     }
 
-    private bool TryGetBuildingRuntimeBoundaryEntity(ref SystemState state, out Entity entity)
+    private bool TryGetBuildingRuntimeStateEntity(ref SystemState state, out Entity entity)
     {
         entity = Entity.Null;
         if (_buildingRuntimeBoundaryQuery.IsEmptyIgnoreFilter)

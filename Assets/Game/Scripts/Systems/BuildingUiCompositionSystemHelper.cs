@@ -7,10 +7,10 @@ internal sealed class BuildingUiCompositionSystemHelper
 {
     public BuildingUiContextCompositionSystemHelper.Source CreateSource(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
@@ -19,7 +19,7 @@ internal sealed class BuildingUiCompositionSystemHelper
             source.BuildingDefinitionPrefabSystemHelper,
             source.RuntimeBuildingSystem,
             source.BuildingProductionQueueCompositionSystemHelper,
-            source.BuildingProductionRequestBoundary,
+            source.BuildingProductionRequestSystemHelper,
             () => source.BuildingProductionContextCompositionSystemHelper.CreateProductionRequestContext(
                 source.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
                     source,
@@ -84,12 +84,12 @@ internal sealed class BuildingUiCompositionSystemHelper
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock)));
     }
 
-    public BuildingUiCommandBoundary.Context CreateCommandContext(
+    public BuildingUiCommandSystemHelper.Context CreateCommandContext(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
@@ -106,10 +106,10 @@ internal sealed class BuildingUiCompositionSystemHelper
 
     public BuildingUiQueryUiSystemHelper.Context CreateQueryContext(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {

@@ -17,7 +17,7 @@ public partial struct UiDiagnosticsReadModelSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         boundaryQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<UiShellStateComponent>(),
             ComponentType.ReadWrite<UiDiagnosticsOverlayComponent>());
         appliedLogVersion = -1;
         UiDiagnosticsRuntimeLogBuffer.EnsureSubscribed();

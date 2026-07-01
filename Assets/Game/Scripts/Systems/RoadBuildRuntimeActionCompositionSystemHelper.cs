@@ -9,7 +9,7 @@ internal sealed class RoadBuildRuntimeActionCompositionSystemHelper
         public RoadBuildInteractionContextCompositionSystemHelper.Context InteractionContext;
         public RoadBuildCommandCompositionSystemHelper CommandSystem;
         public RoadBuildCommandCompositionSystemHelper.Context CommandContext;
-        public RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
+        public RoadBuildEcsCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
         public RoadDeletePromptUiSystemHelper DeletePromptSystem;
         public RoadDeletePromptUiSystemHelper.Context DeletePromptContext;
         public Camera WorldCamera;
@@ -50,7 +50,7 @@ internal sealed class RoadBuildRuntimeActionCompositionSystemHelper
         State state,
         RoadBuildCommandCompositionSystemHelper commandSystem,
         RoadBuildCommandCompositionSystemHelper.Context commandContext,
-        RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager)
+        RoadBuildEcsCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager)
     {
         if (state == null)
             return;

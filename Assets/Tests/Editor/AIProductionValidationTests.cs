@@ -129,7 +129,7 @@ public sealed class AIProductionValidationTests
         _buildingGameplayInitialized = true;
         RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, TickBuildingRuntime);
 
-        BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnContext = _buildingGameplay.RuntimeSpawnCommandContext;
+        BuildingRuntimeSpawnCommandSystemHelper.Context runtimeSpawnContext = _buildingGameplay.RuntimeSpawnCommandContext;
         Assert.IsTrue(runtimeSpawnContext.RuntimeSpawnSystem.TrySpawnRuntimeBuilding(
             runtimeSpawnContext.SpawnContext,
             _buildingPrefab,
@@ -166,7 +166,7 @@ public sealed class AIProductionValidationTests
         entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Rifleman")) });
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
         SystemHandle system = _world.CreateSystem<AIProductionSystem>();
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
@@ -177,7 +177,7 @@ public sealed class AIProductionValidationTests
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
 
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
         if (assertDiagnosticLog)
             LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
         system.Update(_world.Unmanaged);
@@ -185,7 +185,7 @@ public sealed class AIProductionValidationTests
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
 
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
         Assert.AreEqual(40000, economy.Money);
         Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, (byte)1, "Rifleman"));
@@ -199,7 +199,7 @@ public sealed class AIProductionValidationTests
         using var world = new World("AIProductionFocusedValidation");
         EntityManager em = world.EntityManager;
 
-        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         DynamicBuffer<BuildingConfiguredUnitReadModel> units = em.AddBuffer<BuildingConfiguredUnitReadModel>(boundaryEntity);
         units.Add(new BuildingConfiguredUnitReadModel
         {

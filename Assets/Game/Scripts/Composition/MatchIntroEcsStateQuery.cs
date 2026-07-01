@@ -36,7 +36,7 @@ internal sealed class MatchIntroEcsStateQuery : IMatchIntroStateQuery
         {
             cachedWorld = world;
             query = world.EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+                ComponentType.ReadOnly<UiShellStateComponent>(),
                 ComponentType.ReadOnly<MatchIntroTransitionComponent>());
             hasQuery = true;
         }

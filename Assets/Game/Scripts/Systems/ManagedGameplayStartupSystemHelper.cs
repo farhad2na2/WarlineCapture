@@ -24,12 +24,12 @@ internal sealed class ManagedGameplayStartupSystemHelper
         public readonly BuildingSelectionClickUtilitySystemHelper.Context BuildingSelectionClickContext;
         public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper BuildingRuntimeCitySpawn;
         public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context BuildingRuntimeCitySpawnContext;
-        public readonly BuildingUiCommandBoundary BuildingUiCommand;
-        public readonly BuildingUiCommandBoundary.Context BuildingUiCommandContext;
+        public readonly BuildingUiCommandSystemHelper BuildingUiCommand;
+        public readonly BuildingUiCommandSystemHelper.Context BuildingUiCommandContext;
         public readonly BuildingUiQueryUiSystemHelper BuildingUiQuery;
         public readonly BuildingUiQueryUiSystemHelper.Context BuildingUiQueryContext;
-        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteraction;
-        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
+        public readonly BuildingPlacementInteractionCompositionSystemHelper BuildingPlacementInteraction;
+        public readonly BuildingPlacementInteractionCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly System.Action<IMatchRuntimeUi> BindBuildingMainMenu;
         public readonly System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionCompositionSystemHelper, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> BindBuildingGameplayFeatures;
         public readonly System.Action DisposeBuildingGameplay;
@@ -63,12 +63,12 @@ internal sealed class ManagedGameplayStartupSystemHelper
             BuildingSelectionClickUtilitySystemHelper.Context buildingSelectionClickContext,
             BuildingRuntimeCitySpawnBridgeCompositionSystemHelper buildingRuntimeCitySpawn,
             BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context buildingRuntimeCitySpawnContext,
-            BuildingUiCommandBoundary buildingUiCommand,
-            BuildingUiCommandBoundary.Context buildingUiCommandContext,
+            BuildingUiCommandSystemHelper buildingUiCommand,
+            BuildingUiCommandSystemHelper.Context buildingUiCommandContext,
             BuildingUiQueryUiSystemHelper buildingUiQuery,
             BuildingUiQueryUiSystemHelper.Context buildingUiQueryContext,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteraction,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
+            BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteraction,
+            BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
             System.Action<IMatchRuntimeUi> bindBuildingMainMenu,
             System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionCompositionSystemHelper, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> bindBuildingGameplayFeatures,
             System.Action disposeBuildingGameplay,

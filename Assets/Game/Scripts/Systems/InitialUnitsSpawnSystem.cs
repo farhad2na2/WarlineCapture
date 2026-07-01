@@ -97,7 +97,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         _buildingRuntimeBoundaryQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
             ComponentType.ReadOnly<BuildingConfiguredSpawnableReadModel>(),
             ComponentType.ReadOnly<BuildingFactionProductionSpawnPointReadModel>(),
             ComponentType.ReadWrite<BuildingRuntimeSpawnRequest>());
@@ -442,14 +442,14 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         if (runtimeState.PlayRequested == 0)
             return InitialSpawnStartupGateResult.NotActionable();
 
-        Entity boundaryEntity = TryGetBuildingRuntimeBoundaryEntity(em, buildingRuntimeBoundaryQuery, out Entity foundBoundaryEntity)
+        Entity boundaryEntity = TryGetBuildingRuntimeStateEntity(em, buildingRuntimeBoundaryQuery, out Entity foundBoundaryEntity)
             ? foundBoundaryEntity
             : Entity.Null;
 
         return InitialSpawnStartupGateResult.Actionable(boundaryEntity);
     }
 
-    private static bool TryGetBuildingRuntimeBoundaryEntity(
+    private static bool TryGetBuildingRuntimeStateEntity(
         EntityManager em,
         EntityQuery buildingRuntimeBoundaryQuery,
         out Entity entity)

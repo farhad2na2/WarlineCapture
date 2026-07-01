@@ -793,7 +793,7 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
             return;
 
         minimapMarkerQuery = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+            ComponentType.ReadOnly<MatchHudMinimapMarkerStateComponent>(),
             ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
         hasMinimapMarkerQuery = true;
     }
@@ -1106,7 +1106,7 @@ public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
 
         if (!hasBoundaryQuery)
         {
-            boundaryQuery = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<UiShellBoundaryComponent>());
+            boundaryQuery = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<UiShellRootComponent>());
             hasBoundaryQuery = true;
         }
 

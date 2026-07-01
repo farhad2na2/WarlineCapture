@@ -181,8 +181,8 @@ public static class PremiumWorldMarkerPrefabBuilder
             AddMeshChild(root.transform, "FootprintFill_Subtle", fill, fillMaterial, new Vector3(0f, 0.06f, 0f), Vector3.one * 0.96f, sortingOrder: -2);
             AddMeshChild(root.transform, "ExactFootprintFrame", frame, material, new Vector3(0f, 0.085f, 0f), Vector3.one, sortingOrder: 0);
             AddMeshChild(root.transform, "CornerLockBrackets", brackets, material, new Vector3(0f, 0.12f, 0f), Vector3.one, sortingOrder: 2);
-            if (root.GetComponent<PremiumWorldSelectionBoundaryView>() == null)
-                root.AddComponent<PremiumWorldSelectionBoundaryView>();
+            if (root.GetComponent<PremiumWorldSelectionFrameView>() == null)
+                root.AddComponent<PremiumWorldSelectionFrameView>();
             if (root.GetComponent<PremiumWorldSelectionObjectOutlineView>() == null)
                 root.AddComponent<PremiumWorldSelectionObjectOutlineView>();
             SavePrefabRoot(root, BuildingSelectionPrefabPath);
@@ -279,8 +279,8 @@ public static class PremiumWorldMarkerPrefabBuilder
             AddMeshChild(root.transform, "TargetLockFill_Subtle", fill, fillMaterial, new Vector3(0f, 0.075f, 0f), Vector3.one * 0.95f, sortingOrder: -2);
             AddMeshChild(root.transform, "TargetLockBoundsFrame", frame, material, new Vector3(0f, 0.12f, 0f), Vector3.one, sortingOrder: 0);
             AddMeshChild(root.transform, "TargetLockCornerBrackets", brackets, material, new Vector3(0f, 0.17f, 0f), Vector3.one, sortingOrder: 2);
-            if (root.GetComponent<PremiumWorldSelectionBoundaryView>() == null)
-                root.AddComponent<PremiumWorldSelectionBoundaryView>();
+            if (root.GetComponent<PremiumWorldSelectionFrameView>() == null)
+                root.AddComponent<PremiumWorldSelectionFrameView>();
             SavePrefabRoot(root, AttackTargetMarkerPrefabPath);
         }
         finally

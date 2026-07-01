@@ -12,7 +12,7 @@ public enum MatchStartStatusKind : byte
     Failed = 6
 }
 
-public struct MatchStartBoundaryComponent : IComponentData
+public struct MatchStartStateComponent : IComponentData
 {
 }
 

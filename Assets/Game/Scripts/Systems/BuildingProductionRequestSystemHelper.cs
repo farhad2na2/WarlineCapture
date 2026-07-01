@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
-using CampRequestFailure = BuildingUiCommandBoundary.CampRequestFailure;
+using CampRequestFailure = BuildingUiCommandSystemHelper.CampRequestFailure;
 using ProductionTransportMode = BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode;
 
-internal sealed class BuildingProductionRequestBoundary
+internal sealed class BuildingProductionRequestSystemHelper
 {
     public enum FactionUnitProductionResultCode
     {

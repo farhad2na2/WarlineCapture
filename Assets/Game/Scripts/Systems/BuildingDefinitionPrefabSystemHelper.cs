@@ -3,8 +3,8 @@ using System.Globalization;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
-using ConfiguredSpawnableEntry = BuildingUiCommandBoundary.ConfiguredSpawnableEntry;
-using ConfiguredUnitEntry = BuildingUiCommandBoundary.ConfiguredUnitEntry;
+using ConfiguredSpawnableEntry = BuildingUiCommandSystemHelper.ConfiguredSpawnableEntry;
+using ConfiguredUnitEntry = BuildingUiCommandSystemHelper.ConfiguredUnitEntry;
 
 internal sealed class BuildingDefinitionPrefabSystemHelper
 {

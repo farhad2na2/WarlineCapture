@@ -78,7 +78,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public RuntimeCityCompositionSystemHelper RuntimeCity { get; private set; }
     public RoadBuildReadModelCompositionSystemHelper RoadBuildReadModel { get; private set; }
     public BuildingSelectionClickUtilitySystemHelper BuildingSelectionClick { get; private set; }
-    public BuildingUiCommandBoundary BuildingUiCommand { get; private set; }
+    public BuildingUiCommandSystemHelper BuildingUiCommand { get; private set; }
     public BuildingUiQueryUiSystemHelper BuildingUiQuery { get; private set; }
     public IBuildingUiCommand BuildingUiCommandContract { get; private set; }
     public IBuildingUiQuery BuildingUiQueryContract { get; private set; }
@@ -97,18 +97,18 @@ internal sealed class MatchBootstrapCompositionSystemHelper
     public IUnitImpostorRenderer UnitImpostors { get; private set; }
     public bool GameplayInitialized { get; private set; }
     public BuildingSelectionClickUtilitySystemHelper.Context BuildingSelectionClickContext { get; private set; }
-    public BuildingUiCommandBoundary.Context BuildingUiCommandContext => _buildingUiCommandContext;
+    public BuildingUiCommandSystemHelper.Context BuildingUiCommandContext => _buildingUiCommandContext;
     public BuildingUiQueryUiSystemHelper.Context BuildingUiQueryContext => _buildingUiQueryContext;
     private BuildingRuntimeCitySpawnBridgeCompositionSystemHelper _buildingRuntimeCitySpawn;
     private BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context _buildingRuntimeCitySpawnContext;
-    private BuildingUiCommandBoundary.Context _buildingUiCommandContext;
+    private BuildingUiCommandSystemHelper.Context _buildingUiCommandContext;
     private BuildingUiQueryUiSystemHelper.Context _buildingUiQueryContext;
     private IMatchRuntimeState _matchRuntimeState;
     private IMatchHudCameraControl _matchHudCameraControl;
     private IMatchHudMinimapDataSource _matchHudMinimapDataSource;
     private ISelectionRectangleState _selectionRectangleState;
-    private BuildingPlacementInteractionBoundaryCompositionSystemHelper _buildingPlacementInteraction;
-    private BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context _buildingPlacementInteractionContext;
+    private BuildingPlacementInteractionCompositionSystemHelper _buildingPlacementInteraction;
+    private BuildingPlacementInteractionCompositionSystemHelper.Context _buildingPlacementInteractionContext;
     private RoadRuntimeGenerationCompositionSystemHelper _roadRuntimeGeneration;
     private RoadRuntimeGenerationCompositionSystemHelper.Context _roadRuntimeGenerationContext;
     private Action _roadRuntimeUpdate;
@@ -445,7 +445,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
         if (MainMenu == null)
             MainMenu = new MainMenuPlayUI();
 
-        EnsureUiRuntimeBoundaryAdapters();
+        EnsureUiRuntimeAdapters();
         MainMenu.Init(SelectionUiCommand, _matchRuntimeState, _matchHudCameraControl, _matchHudMinimapDataSource, resetRuntimeState);
         ApplyMainMenuBaseBindings();
         ApplyMainMenuFeatureBindingsIfReady();
@@ -907,7 +907,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
         SelectionBuildingInteraction = managedSystems.SelectionBuildingInteraction;
         SelectionScreenMarkers = managedSystems.SelectionScreenMarkers;
         SelectionRectangle = managedSystems.SelectionRectangleView;
-        EnsureUiRuntimeBoundaryAdapters();
+        EnsureUiRuntimeAdapters();
         if (SelectionRectangle is SelectionRectangleView selectionRectangleView)
             selectionRectangleView.BindState(_selectionRectangleState);
         InitializeRenderingSystems(ownerLayer);
@@ -917,7 +917,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
             : null;
         _citizenPopulationReadModel = managedSystems.CitizenPopulationComposition?.ReadModel;
         _citizenPopulationEventSystem = managedSystems.CitizenPopulationComposition?.EventSystem;
-        _buildingRuntimeBoundaryEntity = MatchBuildingRuntimeBoundaryBootstrapStartupSystemHelper.Ensure(_buildingRuntimeBoundaryEntity);
+        _buildingRuntimeBoundaryEntity = MatchBuildingRuntimeBootstrapStartupSystemHelper.Ensure(_buildingRuntimeBoundaryEntity);
         ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld)?.SetWorldCamera(WorldCamera);
         _managedRuntimeInitialized = true;
         if (MainMenu != null)
@@ -948,7 +948,7 @@ internal sealed class MatchBootstrapCompositionSystemHelper
         SharedPrefabPreviewCache.Init(PrefabPreviewCameraConfig);
     }
 
-    private void EnsureUiRuntimeBoundaryAdapters()
+    private void EnsureUiRuntimeAdapters()
     {
         _matchRuntimeState ??= new MatchRuntimeStateAdapter(_runtimeGameplayStateSystem);
         _matchHudCameraControl = new MatchHudCameraControlAdapter(SelectionUiCamera);

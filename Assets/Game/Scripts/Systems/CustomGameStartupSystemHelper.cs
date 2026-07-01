@@ -256,7 +256,7 @@ public sealed class CustomGameStartupSystemHelper
             return;
 
         using EntityQuery query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
             ComponentType.ReadWrite<BuildingRuntimeSpawnRequest>());
         EntityTypeHandle entityType = em.GetEntityTypeHandle();
         using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);

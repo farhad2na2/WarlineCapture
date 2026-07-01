@@ -1428,7 +1428,7 @@ public static class CanvasMenuFallbackValidation
         {
             EntityManager entityManager = world.EntityManager;
             using EntityQuery query = entityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+                ComponentType.ReadOnly<UiShellRootComponent>(),
                 ComponentType.ReadOnly<UiShellStateComponent>(),
                 ComponentType.ReadOnly<UiShellPresentationCommandComponent>());
             if (!query.IsEmptyIgnoreFilter)
@@ -1468,7 +1468,7 @@ public static class CanvasMenuFallbackValidation
 
         EntityManager entityManager = world.EntityManager;
         using EntityQuery query = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<SceneLifecycleBoundaryComponent>(),
+            ComponentType.ReadOnly<SceneLifecycleRootComponent>(),
             ComponentType.ReadOnly<SceneLifecycleStateComponent>());
         if (query.IsEmptyIgnoreFilter)
             return false;

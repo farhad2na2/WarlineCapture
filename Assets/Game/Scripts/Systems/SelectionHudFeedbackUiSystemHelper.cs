@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public sealed class SelectionHudFeedbackBoundary
+public sealed class SelectionHudFeedbackUiSystemHelper
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
     public delegate Sprite ResolveSelectionPortraitSpriteDelegate(EntityManager em, Entity entity);

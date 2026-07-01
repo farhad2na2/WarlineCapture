@@ -20,22 +20,22 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public readonly BuildingSpawnCompositionSystemHelper SpawnSystem;
         public readonly BuildingSpawnCompositionSystemHelper.Context SpawnContext;
         public readonly int ResourceDollars;
-        public readonly BuildingProductionRequestBoundary.BeginPlacementForConfiguredSpawnableDelegate BeginPlacementForConfiguredSpawnable;
-        public readonly BuildingProductionRequestBoundary.TrySpendDollarsDelegate TrySpendDollars;
-        public readonly BuildingProductionRequestBoundary.RefundDollarsDelegate RefundDollars;
-        public readonly BuildingProductionRequestBoundary.SetActivePlacementCostDelegate SetActivePlacementCost;
-        public readonly BuildingProductionRequestBoundary.TryQueuePlayerUnitDelegate TryQueuePlayerUnit;
-        public readonly BuildingProductionRequestBoundary.SelectRuntimeBuildingDelegate SelectRuntimeBuilding;
-        public readonly BuildingProductionRequestBoundary.RuntimeGameplayAction SuppressNextWorldClick;
-        public readonly BuildingProductionRequestBoundary.RuntimeGameplayAction RefreshBuildingMarkers;
-        public readonly BuildingProductionRequestBoundary.RuntimeGameplayAction ClearFocusedUnit;
+        public readonly BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate BeginPlacementForConfiguredSpawnable;
+        public readonly BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate TrySpendDollars;
+        public readonly BuildingProductionRequestSystemHelper.RefundDollarsDelegate RefundDollars;
+        public readonly BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate SetActivePlacementCost;
+        public readonly BuildingProductionRequestSystemHelper.TryQueuePlayerUnitDelegate TryQueuePlayerUnit;
+        public readonly BuildingProductionRequestSystemHelper.SelectRuntimeBuildingDelegate SelectRuntimeBuilding;
+        public readonly BuildingProductionRequestSystemHelper.RuntimeGameplayAction SuppressNextWorldClick;
+        public readonly BuildingProductionRequestSystemHelper.RuntimeGameplayAction RefreshBuildingMarkers;
+        public readonly BuildingProductionRequestSystemHelper.RuntimeGameplayAction ClearFocusedUnit;
         public readonly BuildingProductionTransportBridgeCompositionSystemHelper.BooleanQuery IsBuildDrawerOpen;
-        public readonly BuildingProductionRequestBoundary.CameraFocusAction SmoothMoveCameraGroundCenterTo;
-        public readonly BuildingProductionRequestBoundary.ResolveBuildingFocusWorldPositionDelegate ResolveBuildingFocusWorldPosition;
-        public readonly BuildingProductionRequestBoundary.RecordUnitOrderedDelegate RecordUnitOrdered;
-        public readonly BuildingProductionRequestBoundary.LogWarningDelegate LogWarning;
-        public readonly BuildingProductionRequestBoundary.CountFactionUnitsDelegate CountPendingProductionsForFaction;
-        public readonly BuildingProductionRequestBoundary.CountFactionUnitsDelegate CountRuntimeProducedUnitsForFaction;
+        public readonly BuildingProductionRequestSystemHelper.CameraFocusAction SmoothMoveCameraGroundCenterTo;
+        public readonly BuildingProductionRequestSystemHelper.ResolveBuildingFocusWorldPositionDelegate ResolveBuildingFocusWorldPosition;
+        public readonly BuildingProductionRequestSystemHelper.RecordUnitOrderedDelegate RecordUnitOrdered;
+        public readonly BuildingProductionRequestSystemHelper.LogWarningDelegate LogWarning;
+        public readonly BuildingProductionRequestSystemHelper.CountFactionUnitsDelegate CountPendingProductionsForFaction;
+        public readonly BuildingProductionRequestSystemHelper.CountFactionUnitsDelegate CountRuntimeProducedUnitsForFaction;
         public readonly ResourceHaulerUtilitySystemHelper ResourceHaulerUtilitySystemHelper;
         public readonly FactionResourceCompositionSystemHelper FactionResourceCompositionSystemHelper;
         public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
@@ -61,22 +61,22 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             BuildingSpawnCompositionSystemHelper spawnSystem,
             BuildingSpawnCompositionSystemHelper.Context spawnContext,
             int resourceDollars,
-            BuildingProductionRequestBoundary.BeginPlacementForConfiguredSpawnableDelegate beginPlacementForConfiguredSpawnable,
-            BuildingProductionRequestBoundary.TrySpendDollarsDelegate trySpendDollars,
-            BuildingProductionRequestBoundary.RefundDollarsDelegate refundDollars,
-            BuildingProductionRequestBoundary.SetActivePlacementCostDelegate setActivePlacementCost,
-            BuildingProductionRequestBoundary.TryQueuePlayerUnitDelegate tryQueuePlayerUnit,
-            BuildingProductionRequestBoundary.SelectRuntimeBuildingDelegate selectRuntimeBuilding,
-            BuildingProductionRequestBoundary.RuntimeGameplayAction suppressNextWorldClick,
-            BuildingProductionRequestBoundary.RuntimeGameplayAction refreshBuildingMarkers,
-            BuildingProductionRequestBoundary.RuntimeGameplayAction clearFocusedUnit,
+            BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate beginPlacementForConfiguredSpawnable,
+            BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars,
+            BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars,
+            BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate setActivePlacementCost,
+            BuildingProductionRequestSystemHelper.TryQueuePlayerUnitDelegate tryQueuePlayerUnit,
+            BuildingProductionRequestSystemHelper.SelectRuntimeBuildingDelegate selectRuntimeBuilding,
+            BuildingProductionRequestSystemHelper.RuntimeGameplayAction suppressNextWorldClick,
+            BuildingProductionRequestSystemHelper.RuntimeGameplayAction refreshBuildingMarkers,
+            BuildingProductionRequestSystemHelper.RuntimeGameplayAction clearFocusedUnit,
             BuildingProductionTransportBridgeCompositionSystemHelper.BooleanQuery isBuildDrawerOpen,
-            BuildingProductionRequestBoundary.CameraFocusAction smoothMoveCameraGroundCenterTo,
-            BuildingProductionRequestBoundary.ResolveBuildingFocusWorldPositionDelegate resolveBuildingFocusWorldPosition,
-            BuildingProductionRequestBoundary.RecordUnitOrderedDelegate recordUnitOrdered,
-            BuildingProductionRequestBoundary.LogWarningDelegate logWarning,
-            BuildingProductionRequestBoundary.CountFactionUnitsDelegate countPendingProductionsForFaction,
-            BuildingProductionRequestBoundary.CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction,
+            BuildingProductionRequestSystemHelper.CameraFocusAction smoothMoveCameraGroundCenterTo,
+            BuildingProductionRequestSystemHelper.ResolveBuildingFocusWorldPositionDelegate resolveBuildingFocusWorldPosition,
+            BuildingProductionRequestSystemHelper.RecordUnitOrderedDelegate recordUnitOrdered,
+            BuildingProductionRequestSystemHelper.LogWarningDelegate logWarning,
+            BuildingProductionRequestSystemHelper.CountFactionUnitsDelegate countPendingProductionsForFaction,
+            BuildingProductionRequestSystemHelper.CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction,
             ResourceHaulerUtilitySystemHelper resourceHaulerSystem,
             FactionResourceCompositionSystemHelper factionResourceSystem,
             BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -144,22 +144,22 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         BuildingSpawnCompositionSystemHelper spawnSystem,
         BuildingSpawnCompositionSystemHelper.Context spawnContext,
         int resourceDollars,
-        BuildingProductionRequestBoundary.BeginPlacementForConfiguredSpawnableDelegate beginPlacementForConfiguredSpawnable,
-        BuildingProductionRequestBoundary.TrySpendDollarsDelegate trySpendDollars,
-        BuildingProductionRequestBoundary.RefundDollarsDelegate refundDollars,
-        BuildingProductionRequestBoundary.SetActivePlacementCostDelegate setActivePlacementCost,
-        BuildingProductionRequestBoundary.TryQueuePlayerUnitDelegate tryQueuePlayerUnit,
-        BuildingProductionRequestBoundary.SelectRuntimeBuildingDelegate selectRuntimeBuilding,
-        BuildingProductionRequestBoundary.RuntimeGameplayAction suppressNextWorldClick,
-        BuildingProductionRequestBoundary.RuntimeGameplayAction refreshBuildingMarkers,
-        BuildingProductionRequestBoundary.RuntimeGameplayAction clearFocusedUnit,
+        BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate beginPlacementForConfiguredSpawnable,
+        BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars,
+        BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars,
+        BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate setActivePlacementCost,
+        BuildingProductionRequestSystemHelper.TryQueuePlayerUnitDelegate tryQueuePlayerUnit,
+        BuildingProductionRequestSystemHelper.SelectRuntimeBuildingDelegate selectRuntimeBuilding,
+        BuildingProductionRequestSystemHelper.RuntimeGameplayAction suppressNextWorldClick,
+        BuildingProductionRequestSystemHelper.RuntimeGameplayAction refreshBuildingMarkers,
+        BuildingProductionRequestSystemHelper.RuntimeGameplayAction clearFocusedUnit,
         BuildingProductionTransportBridgeCompositionSystemHelper.BooleanQuery isBuildDrawerOpen,
-        BuildingProductionRequestBoundary.CameraFocusAction smoothMoveCameraGroundCenterTo,
-        BuildingProductionRequestBoundary.ResolveBuildingFocusWorldPositionDelegate resolveBuildingFocusWorldPosition,
-        BuildingProductionRequestBoundary.RecordUnitOrderedDelegate recordUnitOrdered,
-        BuildingProductionRequestBoundary.LogWarningDelegate logWarning,
-        BuildingProductionRequestBoundary.CountFactionUnitsDelegate countPendingProductionsForFaction,
-        BuildingProductionRequestBoundary.CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction,
+        BuildingProductionRequestSystemHelper.CameraFocusAction smoothMoveCameraGroundCenterTo,
+        BuildingProductionRequestSystemHelper.ResolveBuildingFocusWorldPositionDelegate resolveBuildingFocusWorldPosition,
+        BuildingProductionRequestSystemHelper.RecordUnitOrderedDelegate recordUnitOrdered,
+        BuildingProductionRequestSystemHelper.LogWarningDelegate logWarning,
+        BuildingProductionRequestSystemHelper.CountFactionUnitsDelegate countPendingProductionsForFaction,
+        BuildingProductionRequestSystemHelper.CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction,
         ResourceHaulerUtilitySystemHelper resourceHaulerSystem,
         FactionResourceCompositionSystemHelper factionResourceSystem,
         BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -259,7 +259,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             worldPosition => source.SmoothMoveCameraGroundCenterTo?.Invoke(worldPosition));
     }
 
-    public BuildingProductionRequestBoundary.Context CreateProductionRequestContext(Source source)
+    public BuildingProductionRequestSystemHelper.Context CreateProductionRequestContext(Source source)
     {
         source.ProductionSystem?.PrewarmPendingProductionPool();
         source.ProductionSystem?.PrewarmProductionTransportSettings(
@@ -267,7 +267,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             source.DefinitionSystem.UnitSpawnPrefabsByKey,
             BuildingDefinitionPrefabSystemHelper.TryGetPrefabLocalBounds);
 
-        return new BuildingProductionRequestBoundary.Context(
+        return new BuildingProductionRequestSystemHelper.Context(
             source.RuntimeBuildings,
             source.DefinitionSystem.ConfiguredSpawnableDefinitions,
             source.DefinitionSystem.ConfiguredDefinitionsByPrefab,

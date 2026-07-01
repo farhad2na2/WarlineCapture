@@ -11,7 +11,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
     {
         using var world = new World("BuildDrawerPlacementThenProduction_UsesRuntimeBoundaryData");
         EntityManager em = world.EntityManager;
-        var requestBoundary = new BuildingProductionRequestBoundary();
+        var requestBoundary = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject buildingPrefab = new("PlayMode Barracks");
         GameObject unitPrefab = new("PlayMode Rifleman");
@@ -37,7 +37,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
             int activePlacementCost = -1;
             int spentDollars = 0;
             int selectedBuildingId = 0;
-            BuildingProductionRequestBoundary.Context context = CreateRequestContext(
+            BuildingProductionRequestSystemHelper.Context context = CreateRequestContext(
                 runtimeBuildings,
                 placementDefinition,
                 buildingPrefab,
@@ -125,17 +125,17 @@ public sealed class BuildingPlacementProductionPlayModeTests
         };
     }
 
-    private static BuildingProductionRequestBoundary.Context CreateRequestContext(
+    private static BuildingProductionRequestSystemHelper.Context CreateRequestContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         BuildingDefinition placementDefinition,
         GameObject buildingPrefab,
         GameObject unitPrefab,
         BuildingProductionQueueCompositionSystemHelper productionSystem,
         EntityManager em,
-        BuildingProductionRequestBoundary.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
-        BuildingProductionRequestBoundary.TrySpendDollarsDelegate trySpendDollars,
-        BuildingProductionRequestBoundary.SetActivePlacementCostDelegate setActivePlacementCost,
-        BuildingProductionRequestBoundary.SelectRuntimeBuildingDelegate selectRuntimeBuilding)
+        BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
+        BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars,
+        BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate setActivePlacementCost,
+        BuildingProductionRequestSystemHelper.SelectRuntimeBuildingDelegate selectRuntimeBuilding)
     {
         var unitPrefabs = new List<GameObject> { unitPrefab };
         var unitPrefabsByKey = new Dictionary<string, GameObject>();
@@ -146,7 +146,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
             null,
             null);
 
-        return new BuildingProductionRequestBoundary.Context(
+        return new BuildingProductionRequestSystemHelper.Context(
             runtimeBuildings,
             new List<BuildingDefinition> { placementDefinition },
             new Dictionary<GameObject, BuildingDefinition> { [buildingPrefab] = placementDefinition },

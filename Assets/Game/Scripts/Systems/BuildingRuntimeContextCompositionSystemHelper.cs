@@ -40,7 +40,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
 
     public BuildingRuntimeContextFactoryCompositionSystemHelper.Source CreateBuildingRuntimeContextSource(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         TryGetEntityManagerDelegate tryGetEntityManager,
         TryGetGridDataDelegate tryGetGridData,
@@ -159,7 +159,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
                 building,
                 ownerFactionId),
             source.RuntimeBuildingSystem,
-            source.BuildingPlacementInteractionBoundaryCompositionSystemHelper,
+            source.BuildingPlacementInteractionCompositionSystemHelper,
             interactionContext,
             source.RuntimeBuildingEntityLinkRegistry,
             () => source.BuildingPlacementRedirectCompositionSystemHelper.IsDeferringSideEffects,
@@ -256,7 +256,7 @@ internal sealed class BuildingRuntimeContextCompositionSystemHelper
             source.BuildingGameplayEcsQueryCompositionSystemHelper.HaulerUnitsQuery,
             source.BuildingGameplayEcsQueryCompositionSystemHelper.SelectedUnitsQuery,
             source.BuildingGameplayEcsQueryCompositionSystemHelper.LiveFactionUnitsQuery,
-            source.BuildingGameplayEcsQueryCompositionSystemHelper.BuildingRuntimeBoundaryQuery,
+            source.BuildingGameplayEcsQueryCompositionSystemHelper.BuildingRuntimeStateQuery,
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId,
             (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
             (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>

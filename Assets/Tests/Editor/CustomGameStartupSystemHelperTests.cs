@@ -85,7 +85,7 @@ public sealed class CustomGameStartupSystemHelperTests
         unitProgress.Add(new InitialUnitsFactionUnitSpawnProgress { Spawned = 9 });
 
         Entity unrelatedPlan = em.CreateEntity();
-        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         DynamicBuffer<BuildingRuntimeSpawnRequest> requests = em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
         requests.Add(new BuildingRuntimeSpawnRequest
         {

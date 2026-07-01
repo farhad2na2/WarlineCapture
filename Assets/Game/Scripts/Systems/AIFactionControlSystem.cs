@@ -17,7 +17,7 @@ public partial struct AIFactionControlSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         _buildingRuntimeBoundaryQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
             ComponentType.ReadOnly<BuildingRuntimeFactionSummary>());
         _runtimeDiagnosticsQuery = state.GetEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
         _diagnosticLogQueueQuery = state.GetEntityQuery(

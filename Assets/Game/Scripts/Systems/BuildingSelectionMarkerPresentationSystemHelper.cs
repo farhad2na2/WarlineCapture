@@ -56,7 +56,7 @@ internal sealed class BuildingSelectionMarkerPresentationSystemHelper
     private GameObject _markerInstance;
     private Renderer[] _markerRenderers;
     private Vector3 _baseRendererSize = Vector3.one;
-    private PremiumWorldSelectionBoundaryView _boundaryView;
+    private PremiumWorldSelectionFrameView _boundaryView;
     private PremiumWorldSelectionObjectOutlineView _objectOutlineView;
     private Color _markerColor = PremiumSelectionColor;
 
@@ -184,9 +184,9 @@ internal sealed class BuildingSelectionMarkerPresentationSystemHelper
 
         _markerColor = PremiumSelectionColor;
         context.VisualSystem?.ApplyMarkerColor(_markerRenderers, _markerColor, context.MarkerPropertyBlock);
-        _boundaryView = _markerInstance.GetComponent<PremiumWorldSelectionBoundaryView>();
+        _boundaryView = _markerInstance.GetComponent<PremiumWorldSelectionFrameView>();
         if (_boundaryView == null)
-            _boundaryView = _markerInstance.AddComponent<PremiumWorldSelectionBoundaryView>();
+            _boundaryView = _markerInstance.AddComponent<PremiumWorldSelectionFrameView>();
         _objectOutlineView = _markerInstance.GetComponent<PremiumWorldSelectionObjectOutlineView>();
         if (_objectOutlineView == null)
             _objectOutlineView = _markerInstance.AddComponent<PremiumWorldSelectionObjectOutlineView>();

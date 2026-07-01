@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 
-public struct UiShellBoundaryComponent : IComponentData
+public struct UiShellRootComponent : IComponentData
 {
 }
 

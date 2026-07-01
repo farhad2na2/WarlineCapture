@@ -11,8 +11,8 @@ internal sealed class BuildingUiContextCompositionSystemHelper
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
         public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
-        public readonly BuildingProductionRequestBoundary ProductionRequestSystem;
-        public readonly Func<BuildingProductionRequestBoundary.Context> CreateProductionRequestContext;
+        public readonly BuildingProductionRequestSystemHelper ProductionRequestSystem;
+        public readonly Func<BuildingProductionRequestSystemHelper.Context> CreateProductionRequestContext;
         public readonly Func<int?> GetActiveBuildingId;
         public readonly Func<int> GetFrameCount;
         public readonly BuildingUiQueryUiSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
@@ -43,8 +43,8 @@ internal sealed class BuildingUiContextCompositionSystemHelper
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingProductionQueueCompositionSystemHelper productionSystem,
-            BuildingProductionRequestBoundary productionRequestSystem,
-            Func<BuildingProductionRequestBoundary.Context> createProductionRequestContext,
+            BuildingProductionRequestSystemHelper productionRequestSystem,
+            Func<BuildingProductionRequestSystemHelper.Context> createProductionRequestContext,
             Func<int?> getActiveBuildingId,
             Func<int> getFrameCount,
             BuildingUiQueryUiSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -108,8 +108,8 @@ internal sealed class BuildingUiContextCompositionSystemHelper
         BuildingDefinitionPrefabSystemHelper definitionSystem,
         RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
         BuildingProductionQueueCompositionSystemHelper productionSystem,
-        BuildingProductionRequestBoundary productionRequestSystem,
-        Func<BuildingProductionRequestBoundary.Context> createProductionRequestContext,
+        BuildingProductionRequestSystemHelper productionRequestSystem,
+        Func<BuildingProductionRequestSystemHelper.Context> createProductionRequestContext,
         Func<int?> getActiveBuildingId,
         Func<int> getFrameCount,
         BuildingUiQueryUiSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -168,9 +168,9 @@ internal sealed class BuildingUiContextCompositionSystemHelper
             rotateBuildingPlacement);
     }
 
-    public BuildingUiCommandBoundary.Context CreateCommandContext(Source source)
+    public BuildingUiCommandSystemHelper.Context CreateCommandContext(Source source)
     {
-        return new BuildingUiCommandBoundary.Context(
+        return new BuildingUiCommandSystemHelper.Context(
             () => source.RuntimeResourceUtilitySystemHelper.CurrentDollars,
             () => source.DefinitionSystem.ConfiguredSpawnableCount,
             source.DefinitionSystem.TryGetConfiguredSpawnable,
@@ -219,7 +219,7 @@ internal sealed class BuildingUiContextCompositionSystemHelper
             source.GetNow?.Invoke() ?? UnityEngine.Time.time);
     }
 
-    private static BuildingUiCommandBoundary.CampRequestFailure RequestCampItem(
+    private static BuildingUiCommandSystemHelper.CampRequestFailure RequestCampItem(
         Source source,
         GameObject prefab,
         int price,
@@ -228,9 +228,9 @@ internal sealed class BuildingUiContextCompositionSystemHelper
     {
         requiredBuildingDisplayName = string.Empty;
         if (source.ProductionRequestSystem == null)
-            return BuildingUiCommandBoundary.CampRequestFailure.InvalidSelection;
+            return BuildingUiCommandSystemHelper.CampRequestFailure.InvalidSelection;
 
-        BuildingProductionRequestBoundary.Context context =
+        BuildingProductionRequestSystemHelper.Context context =
             source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default;
         int frameCount = source.GetFrameCount?.Invoke() ?? 0;
         if (TryGetEntityManager(source, out EntityManager entityManager))
@@ -287,9 +287,9 @@ internal sealed class BuildingUiContextCompositionSystemHelper
             source.TryResolveLiveUnitPreviewPrefab);
     }
 
-    private static BuildingUiCommandBoundary.CampRequestFailure InvalidCampRequest(out string requiredBuildingDisplayName)
+    private static BuildingUiCommandSystemHelper.CampRequestFailure InvalidCampRequest(out string requiredBuildingDisplayName)
     {
         requiredBuildingDisplayName = string.Empty;
-        return BuildingUiCommandBoundary.CampRequestFailure.InvalidSelection;
+        return BuildingUiCommandSystemHelper.CampRequestFailure.InvalidSelection;
     }
 }

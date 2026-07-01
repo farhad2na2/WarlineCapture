@@ -7,7 +7,7 @@ using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
-public sealed class BuildingRuntimeBoundaryValidationTests
+public sealed class BuildingRuntimeValidationTests
 {
     private const string BuildingPlacementConfigPath = "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset";
     private const string InitialSpawnConfigPath = "Assets/Game/Configs/Scene/MatchSubScene_InitialUnitsSpawner_Config.asset";
@@ -32,7 +32,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
 
     public static void RunBatchValidation()
     {
-        var tests = new BuildingRuntimeBoundaryValidationTests();
+        var tests = new BuildingRuntimeValidationTests();
         try
         {
             tests.RuntimeSpawnRequestCompletionSurvivesSpawnStructuralChanges();
@@ -57,52 +57,52 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tests.TearDown();
             tests.RuntimeBoundaryPublishesProductionSlotSourceKeyReadModel();
             tests.TearDown();
-            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=11");
+            Debug.Log("[BuildingRuntimeValidation] result=Passed tests=11");
             ValidationExit.Exit(0);
         }
         catch (System.Exception ex)
         {
             tests.TearDown();
             Debug.LogException(ex);
-            Debug.LogError("[BuildingRuntimeBoundaryValidation] result=Failed");
+            Debug.LogError("[BuildingRuntimeValidation] result=Failed");
             ValidationExit.Exit(1);
         }
     }
 
     public static void RunPlayerOwnedTentRegularProductionEligibilityValidation()
     {
-        var tests = new BuildingRuntimeBoundaryValidationTests();
+        var tests = new BuildingRuntimeValidationTests();
         try
         {
             tests.PlayerOwnedTentRegularSatisfiesSoldierBuildRequirement();
             tests.TearDown();
-            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=1 PlayerOwnedTentRegularSatisfiesSoldierBuildRequirement");
+            Debug.Log("[BuildingRuntimeValidation] result=Passed tests=1 PlayerOwnedTentRegularSatisfiesSoldierBuildRequirement");
             ValidationExit.Exit(0);
         }
         catch (System.Exception ex)
         {
             tests.TearDown();
             Debug.LogException(ex);
-            Debug.LogError("[BuildingRuntimeBoundaryValidation] result=Failed PlayerOwnedTentRegularSatisfiesSoldierBuildRequirement");
+            Debug.LogError("[BuildingRuntimeValidation] result=Failed PlayerOwnedTentRegularSatisfiesSoldierBuildRequirement");
             ValidationExit.Exit(1);
         }
     }
 
     public static void RunMapAuthoredFaction1TentProductionEligibilityValidation()
     {
-        var tests = new BuildingRuntimeBoundaryValidationTests();
+        var tests = new BuildingRuntimeValidationTests();
         try
         {
             tests.MapAuthoredFaction1TentRegularSatisfiesSoldierBuildRequirementOnStartupTick();
             tests.TearDown();
-            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed tests=1 MapAuthoredFaction1TentRegularSatisfiesSoldierBuildRequirementOnStartupTick");
+            Debug.Log("[BuildingRuntimeValidation] result=Passed tests=1 MapAuthoredFaction1TentRegularSatisfiesSoldierBuildRequirementOnStartupTick");
             ValidationExit.Exit(0);
         }
         catch (System.Exception ex)
         {
             tests.TearDown();
             Debug.LogException(ex);
-            Debug.LogError("[BuildingRuntimeBoundaryValidation] result=Failed MapAuthoredFaction1TentRegularSatisfiesSoldierBuildRequirementOnStartupTick");
+            Debug.LogError("[BuildingRuntimeValidation] result=Failed MapAuthoredFaction1TentRegularSatisfiesSoldierBuildRequirementOnStartupTick");
             ValidationExit.Exit(1);
         }
     }
@@ -198,7 +198,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
-        em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        em.CreateEntity(typeof(BuildingRuntimeStateTag));
         Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TryEnqueueRuntimeBuildingSpawnRequest(
             em,
             "Tent_Regular",
@@ -219,7 +219,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         Assert.AreEqual(FactionIdentity.PlayerFactionId, runtimeBuilding.OwnerFactionId);
         Assert.IsFalse(runtimeBuilding.IsCityGenerated);
 
-        BuildingUiCommandBoundary.CampRequestFailure failure =
+        BuildingUiCommandSystemHelper.CampRequestFailure failure =
             _buildingGameplay.UiCommand.GetCampRequestFailure(
                 _buildingGameplay.UiCommandContext,
                 soldierPrefab,
@@ -227,7 +227,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
                 out string requiredBuildingDisplayName);
 
         Assert.AreEqual(
-            BuildingUiCommandBoundary.CampRequestFailure.None,
+            BuildingUiCommandSystemHelper.CampRequestFailure.None,
             failure,
             $"Player-owned Tent_Regular should satisfy soldier production. required={requiredBuildingDisplayName}");
     }
@@ -271,7 +271,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
-        em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        em.CreateEntity(typeof(BuildingRuntimeStateTag));
         Assert.DoesNotThrow(() => _buildingGameplay.RuntimeUpdate.UpdateStartup(_buildingGameplay.RuntimeUpdateContext));
 
         bool foundPlayerTent = false;
@@ -293,7 +293,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
 
         Assert.IsTrue(foundPlayerTent, "Startup map placement must register at least one player-owned authored Tent_Regular before build-menu recruit checks.");
 
-        BuildingUiCommandBoundary.CampRequestFailure failure =
+        BuildingUiCommandSystemHelper.CampRequestFailure failure =
             _buildingGameplay.UiCommand.GetCampRequestFailure(
                 _buildingGameplay.UiCommandContext,
                 soldierPrefab,
@@ -301,7 +301,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
                 out string requiredBuildingDisplayName);
 
         Assert.AreEqual(
-            BuildingUiCommandBoundary.CampRequestFailure.None,
+            BuildingUiCommandSystemHelper.CampRequestFailure.None,
             failure,
             $"Faction 1 authored scene Tent_Regular should satisfy soldier production on startup. required={requiredBuildingDisplayName}");
     }
@@ -362,7 +362,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
-        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
 
         CustomGameStartupSystemHelper startupSystem = new(_world.EntityManager);
@@ -410,7 +410,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
     public void RuntimeSpawnRequestCompletionSurvivesSpawnStructuralChanges()
     {
         _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
-        _world = new World("BuildingRuntimeBoundaryValidationTests");
+        _world = new World("BuildingRuntimeValidationTests");
         World.DefaultGameObjectInjectionWorld = _world;
         EntityManager em = _world.EntityManager;
 
@@ -419,7 +419,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         _buildingConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
         SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
 
-        _runtimeRoot = new GameObject("BuildingRuntimeBoundary_RuntimeRoot");
+        _runtimeRoot = new GameObject("BuildingRuntimeState_RuntimeRoot");
         _buildingComposition = new BuildingGameplayCompositionSystemHelper();
         _buildingGameplay = _buildingComposition.Initialize(
             buildingPlacementConfig: _buildingConfig,
@@ -434,7 +434,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
-        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         DynamicBuffer<BuildingRuntimeSpawnRequest> requests = em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
         requests.Add(new BuildingRuntimeSpawnRequest
         {
@@ -459,7 +459,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
     public void RuntimeSpawnRequestCompletionRunsDuringStartupTick()
     {
         _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
-        _world = new World("BuildingRuntimeBoundaryStartupTickTests");
+        _world = new World("BuildingRuntimeStateStartupTickTests");
         World.DefaultGameObjectInjectionWorld = _world;
         EntityManager em = _world.EntityManager;
 
@@ -468,7 +468,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         _buildingConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
         SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
 
-        _runtimeRoot = new GameObject("BuildingRuntimeBoundary_StartupRuntimeRoot");
+        _runtimeRoot = new GameObject("BuildingRuntimeState_StartupRuntimeRoot");
         _buildingComposition = new BuildingGameplayCompositionSystemHelper();
         _buildingGameplay = _buildingComposition.Initialize(
             buildingPlacementConfig: _buildingConfig,
@@ -483,7 +483,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
-        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         DynamicBuffer<BuildingRuntimeSpawnRequest> requests = em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
         requests.Add(new BuildingRuntimeSpawnRequest
         {
@@ -532,7 +532,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
-        em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        em.CreateEntity(typeof(BuildingRuntimeStateTag));
 
         Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TryEnqueueRuntimeBuildingSpawnRequest(
             em,
@@ -583,7 +583,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
-        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
 
         Assert.IsTrue(_buildingGameplay.RuntimeCitySpawn.TrySpawnRuntimeBuilding(
             _buildingGameplay.RuntimeCitySpawnContext,
@@ -636,7 +636,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
-        em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        em.CreateEntity(typeof(BuildingRuntimeStateTag));
 
         Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TryEnqueueRuntimeWallRunSpawnRequest(
             em,
@@ -685,7 +685,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
         _buildingGameplayInitialized = true;
 
-        em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        em.CreateEntity(typeof(BuildingRuntimeStateTag));
 
         Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TryEnqueueRuntimeWallSegmentSpawnRequest(
             em,
@@ -735,14 +735,14 @@ public sealed class BuildingRuntimeBoundaryValidationTests
                 new System.Collections.Generic.List<GameObject> { unitPrefab });
             definitionSystem.RebuildConfiguredSpawnableDefinitions(null, Object.DestroyImmediate);
 
-            var boundarySystem = new BuildingRuntimeBoundaryProcessingCompositionSystemHelper();
-            Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
-            using EntityQuery boundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
+            var boundarySystem = new BuildingRuntimeProcessingCompositionSystemHelper();
+            Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
+            using EntityQuery boundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
             boundarySystem.Update(
                 definitionSystem,
                 new BuildingRuntimeSpawnCompositionSystemHelper(),
                 default,
-                new BuildingProductionRequestBoundary(),
+                new BuildingProductionRequestSystemHelper(),
                 default,
                 new BuildingRuntimeReadModelCompositionSystemHelper(),
                 default,

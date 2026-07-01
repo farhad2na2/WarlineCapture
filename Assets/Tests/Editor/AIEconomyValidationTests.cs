@@ -143,7 +143,7 @@ public sealed class AIEconomyValidationTests
             SellIntervalSeconds = 1f
         });
 
-        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         DynamicBuffer<BuildingRuntimeFactionSummary> summaries = em.AddBuffer<BuildingRuntimeFactionSummary>(boundary);
         summaries.Add(new BuildingRuntimeFactionSummary
         {

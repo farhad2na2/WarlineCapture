@@ -31,7 +31,7 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
             calls,
             enqueueMapBuildingPlacements: () => calls.Add("mapBuildings"),
             enqueueMapVehiclePlacements: () => calls.Add("mapVehicles"),
-            updateBuildingRuntimeBoundary: () => calls.Add("boundary")));
+            updateBuildingRuntimeState: () => calls.Add("boundary")));
 
         CollectionAssert.AreEqual(
             new[] { "boundary", "mapBuildings", "mapVehicles", "boundary" },
@@ -48,7 +48,7 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
             calls,
             enqueueMapBuildingPlacements: () => calls.Add("mapBuildings"),
             enqueueMapVehiclePlacements: () => calls.Add("mapVehicles"),
-            updateBuildingRuntimeBoundary: () => calls.Add("boundary")));
+            updateBuildingRuntimeState: () => calls.Add("boundary")));
 
         Assert.GreaterOrEqual(calls.Count, 3);
         CollectionAssert.AreEqual(
@@ -66,7 +66,7 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
             calls,
             enqueueMapBuildingPlacements: () => calls.Add("mapBuildings"),
             enqueueMapVehiclePlacements: () => calls.Add("mapVehicles"),
-            updateBuildingRuntimeBoundary: () => calls.Add("boundary"),
+            updateBuildingRuntimeState: () => calls.Add("boundary"),
             updateActiveProductionTransports: () => calls.Add("activeTransport"),
             updateBuildingResourceVisuals: () => calls.Add("visuals"));
 
@@ -81,7 +81,7 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
         List<string> calls,
         System.Action enqueueMapBuildingPlacements,
         System.Action enqueueMapVehiclePlacements,
-        System.Action updateBuildingRuntimeBoundary,
+        System.Action updateBuildingRuntimeState,
         System.Action updateActiveProductionTransports = null,
         System.Action updateBuildingResourceVisuals = null)
     {
@@ -98,7 +98,7 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
             flushPendingMarkerRefresh: () => calls.Add("markers"),
             enqueueMapBuildingPlacements: enqueueMapBuildingPlacements,
             enqueueMapVehiclePlacements: enqueueMapVehiclePlacements,
-            updateBuildingRuntimeBoundary: updateBuildingRuntimeBoundary,
+            updateBuildingRuntimeState: updateBuildingRuntimeState,
             updateInput: () => default,
             diagnosticsSystem: null,
             diagnosticsContext: default);

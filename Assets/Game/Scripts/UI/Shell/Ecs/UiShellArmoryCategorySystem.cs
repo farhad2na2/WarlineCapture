@@ -9,7 +9,7 @@ public partial struct UiShellArmoryCategorySystem : ISystem
     {
         UiShellEcsGateway.RegisterAsRuntimeGateway();
         boundaryQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<UiShellStateComponent>(),
             ComponentType.ReadWrite<UiShellArmoryCategoryComponent>(),
             ComponentType.ReadWrite<UiShellArmoryCategoryRequestComponent>());
         state.RequireForUpdate(boundaryQuery);

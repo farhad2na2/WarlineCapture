@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 [DisallowMultipleComponent]
-public sealed class PremiumWorldSelectionBoundaryView : MonoBehaviour
+public sealed class PremiumWorldSelectionFrameView : MonoBehaviour
 {
     private const string ShaderName = "WarlineCapture/Markers/SelectionHologram";
     private const string FallbackShaderName = "Sprites/Default";

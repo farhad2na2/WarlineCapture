@@ -53,11 +53,11 @@ internal sealed class SelectionGameplayStartupSystemHelper
         Transform runtimeUiRoot,
         System.Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
         RoadBuildReadModelCompositionSystemHelper roadBuildReadModel,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingInteraction,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingInteractionContext,
+        BuildingPlacementInteractionCompositionSystemHelper buildingInteraction,
+        BuildingPlacementInteractionCompositionSystemHelper.Context buildingInteractionContext,
         System.Func<Rect, bool> trySelectFirstBuildingInScreenRect,
-        SelectionHudFeedbackBoundary.ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite,
-        SelectionHudFeedbackBoundary.ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
+        SelectionHudFeedbackUiSystemHelper.ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite,
+        SelectionHudFeedbackUiSystemHelper.ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
         System.Func<Sprite> resolveSelectedBuildingPortraitSprite,
         SelectionOrderMarkerPresentationSystemHelper.TryResolveRuntimeBuildingInstanceDelegate tryResolveRuntimeBuildingInstance,
         FactionVisualSettings factionVisuals,
@@ -89,7 +89,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
         var attackOrderCommandSystem = new AttackOrderCommandSystem();
         var scanIntelCommandSystem = new ScanIntelCommandSystem();
         var selectionOrderMarkerSystem = new SelectionOrderMarkerPresentationSystemHelper();
-        var selectionHudFeedbackSystem = new SelectionHudFeedbackBoundary();
+        var selectionHudFeedbackSystem = new SelectionHudFeedbackUiSystemHelper();
         var focusedUnitCommandSystem = new FocusedUnitCommandSystem();
         var focusedUnitLifecycleSystem = new FocusedUnitLifecycleCompositionSystemHelper();
         var selectedUnitOrderSnapshotSystem = new SelectedUnitOrderSnapshotCompositionSystemHelper();
@@ -129,8 +129,8 @@ internal sealed class SelectionGameplayStartupSystemHelper
         SelectionRectangleRequestCompositionSystemHelper.ApplyHudSquadSelectionAction applyRectangleHudSquadSelectionAction = ApplyHudSquadSelection;
         System.Action clearHudSelectionAction = ClearHudSelection;
         RoadBuildReadModelCompositionSystemHelper roadBuildReadState = roadBuildReadModel;
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem = buildingInteraction;
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext = buildingInteractionContext;
+        BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem = buildingInteraction;
+        BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext = buildingInteractionContext;
         bool explicitAttackTargetModeActive = false;
         bool attackModeOrderSnapshotActive = false;
         string attackModeOrderSnapshotText = string.Empty;
@@ -705,7 +705,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
             if (TryGetDefaultEntityManager(out EntityManager em))
                 EnsureRuntimeSelectionDependencies(em);
 
-            SelectionHudFeedbackBoundary.Context hudFeedbackContext = CreateHudFeedbackContext();
+            SelectionHudFeedbackUiSystemHelper.Context hudFeedbackContext = CreateHudFeedbackContext();
 
             return new RtsSelectionCommandResultFlushCompositionSystemHelper.Context(
                 rtsSelectionInputSystem,
@@ -791,7 +791,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
 
         RtsSelectionFocusCommandCompositionSystemHelper.Context CreateFocusCommandContext()
         {
-            SelectionHudFeedbackBoundary.Context hudFeedbackContext = CreateHudFeedbackContext();
+            SelectionHudFeedbackUiSystemHelper.Context hudFeedbackContext = CreateHudFeedbackContext();
 
             return new RtsSelectionFocusCommandCompositionSystemHelper.Context(
                 runtimeGameplayStateSystem,
@@ -823,7 +823,7 @@ internal sealed class SelectionGameplayStartupSystemHelper
 
         RtsSelectionPointerTargetCommandCompositionSystemHelper.Context CreatePointerTargetCommandContext()
         {
-            SelectionHudFeedbackBoundary.Context hudFeedbackContext = CreateHudFeedbackContext();
+            SelectionHudFeedbackUiSystemHelper.Context hudFeedbackContext = CreateHudFeedbackContext();
 
             return new RtsSelectionPointerTargetCommandCompositionSystemHelper.Context(
                 runtimeGameplayStateSystem,
@@ -863,9 +863,9 @@ internal sealed class SelectionGameplayStartupSystemHelper
                 visibleSelectionScratch);
         }
 
-        SelectionHudFeedbackBoundary.Context CreateHudFeedbackContext()
+        SelectionHudFeedbackUiSystemHelper.Context CreateHudFeedbackContext()
         {
-            return new SelectionHudFeedbackBoundary.Context(
+            return new SelectionHudFeedbackUiSystemHelper.Context(
                 selectionUiReadModelLookup,
                 TryGetDefaultEntityManager,
                 resolveSelectionPortraitSprite);

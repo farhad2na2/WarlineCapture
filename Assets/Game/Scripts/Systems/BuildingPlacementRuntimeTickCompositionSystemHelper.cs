@@ -22,7 +22,7 @@ internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
     private static readonly ProfilerMarker FlushPendingMarkerRefreshMarker = new("BuildingPlacementRuntimeTick.FlushPendingMarkerRefresh");
     private static readonly ProfilerMarker EnqueueMapBuildingPlacementsMarker = new("BuildingPlacementRuntimeTick.EnqueueMapBuildingPlacements");
     private static readonly ProfilerMarker EnqueueMapVehiclePlacementsMarker = new("BuildingPlacementRuntimeTick.EnqueueMapVehiclePlacements");
-    private static readonly ProfilerMarker UpdateBuildingRuntimeBoundaryMarker = new("BuildingPlacementRuntimeTick.UpdateBuildingRuntimeBoundary");
+    private static readonly ProfilerMarker UpdateBuildingRuntimeStateMarker = new("BuildingPlacementRuntimeTick.UpdateBuildingRuntimeState");
     private static readonly ProfilerMarker UpdateInputMarker = new("BuildingPlacementRuntimeTick.UpdateInput");
     private double _nextProductionAt;
     private double _nextResourceProductionAt;
@@ -45,7 +45,7 @@ internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
         public readonly Action FlushPendingMarkerRefresh;
         public readonly Action EnqueueMapBuildingPlacements;
         public readonly Action EnqueueMapVehiclePlacements;
-        public readonly Action UpdateBuildingRuntimeBoundary;
+        public readonly Action UpdateBuildingRuntimeState;
         public readonly Func<BuildingPlacementInputRuntimeTickUiSystemHelper.Result> UpdateInput;
         public readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper DiagnosticsSystem;
         public readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context DiagnosticsContext;
@@ -63,7 +63,7 @@ internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
             Action flushPendingMarkerRefresh,
             Action enqueueMapBuildingPlacements,
             Action enqueueMapVehiclePlacements,
-            Action updateBuildingRuntimeBoundary,
+            Action updateBuildingRuntimeState,
             Func<BuildingPlacementInputRuntimeTickUiSystemHelper.Result> updateInput,
             BuildingPlacementRuntimeTickDiagnosticsSystemHelper diagnosticsSystem,
             BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context diagnosticsContext)
@@ -80,7 +80,7 @@ internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
             FlushPendingMarkerRefresh = flushPendingMarkerRefresh;
             EnqueueMapBuildingPlacements = enqueueMapBuildingPlacements;
             EnqueueMapVehiclePlacements = enqueueMapVehiclePlacements;
-            UpdateBuildingRuntimeBoundary = updateBuildingRuntimeBoundary;
+            UpdateBuildingRuntimeState = updateBuildingRuntimeState;
             UpdateInput = updateInput;
             DiagnosticsSystem = diagnosticsSystem;
             DiagnosticsContext = diagnosticsContext;
@@ -94,9 +94,9 @@ internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
         double afterBoundary = startTime;
         try
         {
-            using (UpdateBuildingRuntimeBoundaryMarker.Auto())
+            using (UpdateBuildingRuntimeStateMarker.Auto())
             {
-                context.UpdateBuildingRuntimeBoundary?.Invoke();
+                context.UpdateBuildingRuntimeState?.Invoke();
             }
 
             afterBoundary = UnityEngine.Time.realtimeSinceStartupAsDouble;
@@ -113,9 +113,9 @@ internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
 
             afterMapPlacements = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-            using (UpdateBuildingRuntimeBoundaryMarker.Auto())
+            using (UpdateBuildingRuntimeStateMarker.Auto())
             {
-                context.UpdateBuildingRuntimeBoundary?.Invoke();
+                context.UpdateBuildingRuntimeState?.Invoke();
             }
 
             afterBoundary = UnityEngine.Time.realtimeSinceStartupAsDouble;
@@ -171,9 +171,9 @@ internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
         double afterInput = startTime;
         try
         {
-            using (UpdateBuildingRuntimeBoundaryMarker.Auto())
+            using (UpdateBuildingRuntimeStateMarker.Auto())
             {
-                context.UpdateBuildingRuntimeBoundary?.Invoke();
+                context.UpdateBuildingRuntimeState?.Invoke();
             }
 
             afterBoundary = UnityEngine.Time.realtimeSinceStartupAsDouble;

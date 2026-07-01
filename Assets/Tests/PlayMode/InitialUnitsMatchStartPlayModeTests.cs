@@ -31,7 +31,7 @@ public sealed class InitialUnitsMatchStartPlayModeTests
         using var world = new World("MatchStartPlayRequested_SpawnsConfiguredInitialUnit");
         EntityManager em = world.EntityManager;
         CreateGrid(em, 24, 24);
-        CreateBuildingRuntimeBoundary(em);
+        CreateBuildingRuntimeState(em);
         CreateStartedMatchBoundary(em);
         Entity runtimeState = CreateRuntimeGameplayState(em, playRequested: false);
         Entity prefab = CreateInitialUnitPrefab(em);
@@ -93,9 +93,9 @@ public sealed class InitialUnitsMatchStartPlayModeTests
             walkable[i] = new GridWalkable { Value = 1 };
     }
 
-    private static void CreateBuildingRuntimeBoundary(EntityManager em)
+    private static void CreateBuildingRuntimeState(EntityManager em)
     {
-        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
         em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundary);
         em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
@@ -103,7 +103,7 @@ public sealed class InitialUnitsMatchStartPlayModeTests
 
     private static void CreateStartedMatchBoundary(EntityManager em)
     {
-        Entity matchStart = em.CreateEntity(typeof(MatchStartBoundaryComponent), typeof(MatchStartQueueComponent), typeof(MatchStartProgressComponent));
+        Entity matchStart = em.CreateEntity(typeof(MatchStartStateComponent), typeof(MatchStartQueueComponent), typeof(MatchStartProgressComponent));
         em.SetComponentData(matchStart, new MatchStartQueueComponent
         {
             LastRequestId = 1,

@@ -554,7 +554,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
         if (sceneLifecycleQueryWorld != world || !hasSceneLifecycleQuery)
         {
             sceneLifecycleQueryWorld = world;
-            sceneLifecycleQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<SceneLifecycleBoundaryComponent>());
+            sceneLifecycleQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<SceneLifecycleRootComponent>());
             hasSceneLifecycleQuery = true;
         }
 
@@ -567,7 +567,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
         if (matchStartBoundaryQueryWorld != world || !hasMatchStartBoundaryQuery)
         {
             matchStartBoundaryQueryWorld = world;
-            matchStartBoundaryQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<MatchStartBoundaryComponent>());
+            matchStartBoundaryQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<MatchStartStateComponent>());
             hasMatchStartBoundaryQuery = true;
         }
 
@@ -581,7 +581,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
         {
             matchStartProgressQueryWorld = world;
             matchStartProgressQuery = entityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<MatchStartBoundaryComponent>(),
+                ComponentType.ReadOnly<MatchStartStateComponent>(),
                 ComponentType.ReadOnly<MatchStartProgressComponent>());
             hasMatchStartProgressQuery = true;
         }
@@ -595,7 +595,7 @@ internal sealed class MenuBootstrapCompositionSystemHelper
             return;
 
         using EntityQuery query = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<UiShellRootComponent>(),
             ComponentType.ReadWrite<UiShellStateComponent>(),
             ComponentType.ReadWrite<UiShellLoadingProgressComponent>(),
             ComponentType.ReadWrite<MatchIntroTransitionComponent>(),
@@ -676,13 +676,13 @@ internal sealed class MenuBootstrapCompositionSystemHelper
         {
             cachedWorld = world;
             cachedBoundaryEntity = Entity.Null;
-            boundaryQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<UiShellBoundaryComponent>());
+            boundaryQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<UiShellRootComponent>());
             hasBoundaryQuery = true;
         }
 
         if (cachedBoundaryEntity != Entity.Null &&
             entityManager.Exists(cachedBoundaryEntity) &&
-            entityManager.HasComponent<UiShellBoundaryComponent>(cachedBoundaryEntity))
+            entityManager.HasComponent<UiShellRootComponent>(cachedBoundaryEntity))
         {
             boundary = cachedBoundaryEntity;
             return true;

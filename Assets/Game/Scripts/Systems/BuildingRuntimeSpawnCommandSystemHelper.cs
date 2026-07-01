@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeSpawnCommandBoundary
+internal sealed class BuildingRuntimeSpawnCommandSystemHelper
 {
     public readonly struct Context
     {
@@ -138,7 +138,7 @@ internal sealed class BuildingRuntimeSpawnCommandBoundary
 
     internal static bool TryGetRuntimeBoundaryEntity(EntityManager em, out Entity boundaryEntity)
     {
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
         if (!query.IsEmptyIgnoreFilter)
         {
             boundaryEntity = query.GetSingletonEntity();

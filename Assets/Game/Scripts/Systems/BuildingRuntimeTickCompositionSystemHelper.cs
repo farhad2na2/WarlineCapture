@@ -5,14 +5,14 @@ internal sealed class BuildingRuntimeTickCompositionSystemHelper
 {
     public BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source Create(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementInputRuntimeTickUiSystemHelper.Context> createInputRuntimeTickContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementInputRuntimeTickUiSystemHelper.Context> createInputRuntimeTickContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingProductionRuntimeTickCompositionSystemHelper.Context> createProductionRuntimeTickContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeBoundaryPublishCompositionSystemHelper.Context> createRuntimeBoundaryPublishContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, Action> createMapBuildingPlacementSpawnUpdate,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, Action> createMapVehiclePlacementSpawnUpdate,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimePublishCompositionSystemHelper.Context> createRuntimeBoundaryPublishContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, Action> createMapBuildingPlacementSpawnUpdate,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, Action> createMapVehiclePlacementSpawnUpdate,
         float destroyedBuildingLifetimeSeconds)
     {
         BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource = createRuntimeContextSource(source);

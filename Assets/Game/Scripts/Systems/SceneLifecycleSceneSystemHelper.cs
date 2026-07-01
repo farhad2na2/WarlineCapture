@@ -82,7 +82,7 @@ public sealed class SceneLifecycleSceneSystemHelper
         if (_world == world &&
             _lifecycleEntity != Entity.Null &&
             em.Exists(_lifecycleEntity) &&
-            em.HasComponent<SceneLifecycleBoundaryComponent>(_lifecycleEntity))
+            em.HasComponent<SceneLifecycleRootComponent>(_lifecycleEntity))
         {
             EnsureBuffers(em, _lifecycleEntity);
             MirrorLoadedSceneState(em, _lifecycleEntity);
@@ -90,7 +90,7 @@ public sealed class SceneLifecycleSceneSystemHelper
         }
 
         _world = world;
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SceneLifecycleBoundaryComponent>());
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SceneLifecycleRootComponent>());
         if (!query.IsEmptyIgnoreFilter)
         {
             _lifecycleEntity = query.GetSingletonEntity();
@@ -100,10 +100,10 @@ public sealed class SceneLifecycleSceneSystemHelper
         }
 
         _lifecycleEntity = em.CreateEntity(
-            typeof(SceneLifecycleBoundaryComponent),
+            typeof(SceneLifecycleRootComponent),
             typeof(SceneLifecycleQueueComponent),
             typeof(SceneLifecycleStateComponent));
-        em.SetName(_lifecycleEntity, "SceneLifecycleBoundary");
+        em.SetName(_lifecycleEntity, "SceneLifecycleState");
         EnsureBuffers(em, _lifecycleEntity);
         MirrorLoadedSceneState(em, _lifecycleEntity);
         return _lifecycleEntity;

@@ -47,7 +47,7 @@ public partial struct AIBuildPlannerSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         _buildingRuntimeBoundaryQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
             ComponentType.ReadOnly<BuildingConfiguredSpawnableReadModel>(),
             ComponentType.ReadOnly<BuildingRuntimeFactionSummary>(),
             ComponentType.ReadOnly<BuildingRuntimeOwnedBuildingSummary>(),
@@ -73,7 +73,7 @@ public partial struct AIBuildPlannerSystem : ISystem
         if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive == 0)
             return;
 
-        if (!TryGetBuildingRuntimeBoundaryEntity(ref state, out Entity boundaryEntity))
+        if (!TryGetBuildingRuntimeStateEntity(ref state, out Entity boundaryEntity))
             return;
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;
@@ -425,7 +425,7 @@ public partial struct AIBuildPlannerSystem : ISystem
         return false;
     }
 
-    private bool TryGetBuildingRuntimeBoundaryEntity(ref SystemState state, out Entity entity)
+    private bool TryGetBuildingRuntimeStateEntity(ref SystemState state, out Entity entity)
     {
         entity = Entity.Null;
         if (_buildingRuntimeBoundaryQuery.IsEmptyIgnoreFilter)

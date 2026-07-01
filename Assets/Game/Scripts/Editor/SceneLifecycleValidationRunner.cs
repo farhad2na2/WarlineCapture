@@ -14,8 +14,8 @@ public static class SceneLifecycleValidationRunner
             var system = new SceneLifecycleSceneSystemHelper();
 
             Entity boundary = system.EnsureLifecycleEntity(em);
-            Require(boundary != Entity.Null && em.Exists(boundary), "Scene lifecycle boundary was not created.");
-            Require(em.HasComponent<SceneLifecycleBoundaryComponent>(boundary), "Boundary marker is missing.");
+            Require(boundary != Entity.Null && em.Exists(boundary), "Scene lifecycle root was not created.");
+            Require(em.HasComponent<SceneLifecycleRootComponent>(boundary), "Root marker is missing.");
             Require(em.HasComponent<SceneLifecycleQueueComponent>(boundary), "Queue component is missing.");
             Require(em.HasComponent<SceneLifecycleStateComponent>(boundary), "State component is missing.");
             Require(em.HasBuffer<SceneLifecycleRequestElement>(boundary), "Request buffer is missing.");

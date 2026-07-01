@@ -111,7 +111,7 @@ public sealed class EcsBurstHotPathArchitectureTests
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs"] = "UI shell read-model boundary; projects build placement state for managed UI views.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs"] = "UI shell diagnostics boundary; projects runtime diagnostics into UI read models.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiShellArmoryCategorySystem.cs"] = "UI shell state boundary; single boundary entity command consumption stays managed.",
-        ["Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs"] = "UI shell bootstrap boundary; creates the shell boundary entity and buffers.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"] = "UI shell bootstrap boundary; creates the shell boundary entity and buffers.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs"] = "UI shell transition boundary; route/popup/presentation command buffering stays managed."
     };
 

@@ -5,11 +5,11 @@ internal sealed class BuildingPlacementInputTickCompositionSystemHelper
 {
     public BuildingPlacementInputRuntimeTickUiSystemHelper.Context Create(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         float clickDragThresholdPixels,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementInputUiSystemHelper.ActivePlacementPointerContext> createActivePlacementPointerContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementInputUiSystemHelper.ActivePlacementPointerContext> createActivePlacementPointerContext,
         Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionClickUtilitySystemHelper.Context> createSelectionClickContext)
     {
         return new BuildingPlacementInputRuntimeTickUiSystemHelper.Context(
@@ -36,9 +36,9 @@ internal sealed class BuildingPlacementInputTickCompositionSystemHelper
 
     private static void ProcessPendingPlacementCommands(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext)
+        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext)
     {
         if (source?.BuildingPlacementCommandRequestCompositionSystemHelper == null ||
             createPlacementCommandContext == null ||

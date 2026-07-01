@@ -23,7 +23,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
     public readonly struct Context
     {
         public readonly RtsSelectionInputCompositionSystemHelper InputSystem;
-        public readonly SelectionHudFeedbackBoundary HudFeedbackSystem;
+        public readonly SelectionHudFeedbackUiSystemHelper HudFeedbackSystem;
         public readonly SelectionOrderMarkerPresentationSystemHelper OrderMarkerSystem;
         public readonly SelectedMoveOrderCommandSystem SelectedMoveOrderCommandSystem;
         public readonly AttackOrderCommandSystem AttackOrderCommandSystem;
@@ -33,8 +33,8 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         public readonly UnitTransportCapacitySystem UnitTransportCapacitySystem;
         public readonly UnitTransportAirPickupSystem UnitTransportAirPickupSystem;
         public readonly SelectionStateCompositionSystemHelper SelectionStateCompositionSystemHelper;
-        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
-        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
+        public readonly BuildingPlacementInteractionCompositionSystemHelper BuildingPlacementInteractionCompositionSystemHelper;
+        public readonly BuildingPlacementInteractionCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly EntityQuery SelectedMoveQuery;
         public readonly EntityQuery SelectedTagQuery;
         public readonly EntityQuery GridConfigQuery;
@@ -67,7 +67,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
 
         public Context(
             RtsSelectionInputCompositionSystemHelper inputSystem,
-            SelectionHudFeedbackBoundary hudFeedbackSystem,
+            SelectionHudFeedbackUiSystemHelper hudFeedbackSystem,
             SelectionOrderMarkerPresentationSystemHelper orderMarkerSystem,
             SelectedMoveOrderCommandSystem selectedMoveOrderCommandSystem,
             AttackOrderCommandSystem attackOrderCommandSystem,
@@ -77,8 +77,8 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             UnitTransportCapacitySystem unitTransportCapacitySystem,
             UnitTransportAirPickupSystem unitTransportAirPickupSystem,
             SelectionStateCompositionSystemHelper selectionStateSystem,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
+            BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem,
+            BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
             EntityQuery selectedMoveQuery,
             EntityQuery selectedTagQuery,
             EntityQuery gridConfigQuery,
@@ -120,7 +120,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             UnitTransportCapacitySystem = unitTransportCapacitySystem;
             UnitTransportAirPickupSystem = unitTransportAirPickupSystem;
             SelectionStateCompositionSystemHelper = selectionStateSystem;
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
+            BuildingPlacementInteractionCompositionSystemHelper = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             SelectedMoveQuery = selectedMoveQuery;
             SelectedTagQuery = selectedTagQuery;
@@ -263,13 +263,13 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         if (processedKind != RtsSelectionCommandIntentKind.DestroyFocusedUnit ||
             accepted ||
             rejectionReason != TacticalCommandReasonCode.NoSelection ||
-            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper == null ||
-            !context.BuildingPlacementInteractionBoundaryCompositionSystemHelper.HasSelectedBuilding(context.BuildingPlacementInteractionContext))
+            context.BuildingPlacementInteractionCompositionSystemHelper == null ||
+            !context.BuildingPlacementInteractionCompositionSystemHelper.HasSelectedBuilding(context.BuildingPlacementInteractionContext))
         {
             return false;
         }
 
-        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper.DeleteSelectedBuilding(context.BuildingPlacementInteractionContext);
+        context.BuildingPlacementInteractionCompositionSystemHelper.DeleteSelectedBuilding(context.BuildingPlacementInteractionContext);
         context.ClearHudSelection?.Invoke();
         context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success("Destroyed selected building."));
         return true;
@@ -325,9 +325,9 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         context.SetHudWorldMarkersVisible?.Invoke(false);
         if (hasCommandMode)
         {
-            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ExitBuildMode(context.BuildingPlacementInteractionContext);
-            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
-            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionCompositionSystemHelper?.ExitBuildMode(context.BuildingPlacementInteractionContext);
+            context.BuildingPlacementInteractionCompositionSystemHelper?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
+            context.BuildingPlacementInteractionCompositionSystemHelper?.ClearSelectedBuilding(
                 context.BuildingPlacementInteractionContext,
                 $"SelectionUiCommandUiSystemHelper.{mode}");
             context.SetCameraDragging?.Invoke(false);
@@ -391,7 +391,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         }
 
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
-        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
+        context.BuildingPlacementInteractionCompositionSystemHelper?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
             "SelectionUiCommandUiSystemHelper.EnterMoveTargetMode");
         context.SetCameraDragging?.Invoke(false);
@@ -441,7 +441,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         if (enterAttackTargetMode)
         {
             context.SetExplicitAttackTargetModeActive?.Invoke(false);
-            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionCompositionSystemHelper?.ClearSelectedBuilding(
                 context.BuildingPlacementInteractionContext,
                 "SelectionUiCommandUiSystemHelper.EnterAttackTargetMode");
         }
@@ -496,7 +496,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         if (enteredSelectionMode)
         {
             context.SetExplicitAttackTargetModeActive?.Invoke(false);
-            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionCompositionSystemHelper?.ClearSelectedBuilding(
                 context.BuildingPlacementInteractionContext,
                 "SelectionUiCommandUiSystemHelper.EnterSelectionMode");
         }
@@ -529,9 +529,9 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
             $"processScanTargetModeCommandRequests accepted=True frame={currentFrame}");
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
-        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ExitBuildMode(context.BuildingPlacementInteractionContext);
-        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
-        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
+        context.BuildingPlacementInteractionCompositionSystemHelper?.ExitBuildMode(context.BuildingPlacementInteractionContext);
+        context.BuildingPlacementInteractionCompositionSystemHelper?.CancelBuildingPlacement(context.BuildingPlacementInteractionContext);
+        context.BuildingPlacementInteractionCompositionSystemHelper?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
             "SelectionUiCommandUiSystemHelper.EnterScanTargetMode");
         context.SetCameraDragging?.Invoke(false);
@@ -558,7 +558,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
         }
 
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
-        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(
+        context.BuildingPlacementInteractionCompositionSystemHelper?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
             "SelectionUiCommandUiSystemHelper.EnterBoardTargetMode");
         context.SetCameraDragging?.Invoke(false);
@@ -802,7 +802,7 @@ public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
             commandResults,
             context.TryGetAttackClickedUnitEntity,
             (sourceEm, sources) => CollectSelectedAttackSources(context, sourceEm, sources),
-            context.BuildingPlacementInteractionBoundaryCompositionSystemHelper,
+            context.BuildingPlacementInteractionCompositionSystemHelper,
             context.BuildingPlacementInteractionContext,
             _selectedAttackSourceScratch);
 

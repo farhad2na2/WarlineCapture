@@ -9,7 +9,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
 
     internal delegate bool TryResolveInitialPlacementOriginDelegate(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         BuildingDefinition definition,
         Vector2Int preferredOrigin,
@@ -17,7 +17,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
 
     internal delegate void UpdatePlacementVisualDelegate(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement,
         bool updateCellFromPointer,
@@ -25,19 +25,19 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
 
     internal delegate void FocusActivePlacementDelegate(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement);
 
     internal delegate bool ValidateActivePlacementForConfirmDelegate(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement);
 
     internal delegate void PlaceBuildingDelegate(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         PlacementState placement);
 
@@ -53,7 +53,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
 
     internal delegate void UpdatePlacementDelegate(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         Vector2 screenPosition);
 
@@ -65,7 +65,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
 
     public BuildingPlacementCommandRequestCompositionSystemHelper.Context CreateCommandContext(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         GetCenterScreenPlacementOriginDelegate getCenterScreenPlacementOrigin,
         TryResolveInitialPlacementOriginDelegate tryResolveInitialPlacementOrigin,
@@ -77,7 +77,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         TryGetGridCellDelegate tryGetGridCell,
         UpdatePlacementDelegate updatePlacement,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextFactoryCompositionSystemHelper.Source> createBuildingRuntimeContextSource,
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextFactoryCompositionSystemHelper.Source> createBuildingRuntimeContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
         return source.BuildingPlacementContextCompositionSystemHelper.CreateCommandContext(
@@ -109,7 +109,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
 
     public BuildingPlacementContextCompositionSystemHelper.Source CreateContextSource(
         BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context interactionContext,
+        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
         GetCenterScreenPlacementOriginDelegate getCenterScreenPlacementOrigin,
         TryResolveInitialPlacementOriginDelegate tryResolveInitialPlacementOrigin,
@@ -121,7 +121,7 @@ internal sealed class BuildingPlacementCommandCompositionSystemHelper
         TryGetGridCellDelegate tryGetGridCell,
         UpdatePlacementDelegate updatePlacement,
         TryAlignGateToNearbyWallDelegate tryAlignGateToNearbyWall,
-        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextFactoryCompositionSystemHelper.Source> createBuildingRuntimeContextSource,
+        System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextFactoryCompositionSystemHelper.Source> createBuildingRuntimeContextSource,
         System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
     {
         return new BuildingPlacementContextCompositionSystemHelper.Source(

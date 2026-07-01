@@ -10,21 +10,21 @@ internal sealed class RoadBuildInteractionCompositionSystemHelper
     public readonly struct Context
     {
         public readonly RoadBuildPlacementStorageCompositionSystemHelper StorageSystem;
-        public readonly RoadBuildEcsBoundaryCompositionSystemHelper EcsSystem;
-        public readonly RoadBuildEcsBoundaryCompositionSystemHelper.Context EcsContext;
+        public readonly RoadBuildEcsCompositionSystemHelper EcsSystem;
+        public readonly RoadBuildEcsCompositionSystemHelper.Context EcsContext;
         public readonly RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers;
-        public readonly RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
-        public readonly RoadBuildEcsBoundaryCompositionSystemHelper.TryGetGridDataDelegate TryGetGridData;
+        public readonly RoadBuildEcsCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly RoadBuildEcsCompositionSystemHelper.TryGetGridDataDelegate TryGetGridData;
         public readonly TryGetGridCellDelegate TryGetGridCell;
         public readonly IsPointerOverUiDelegate IsPointerOverUi;
 
         public Context(
             RoadBuildPlacementStorageCompositionSystemHelper storageSystem,
-            RoadBuildEcsBoundaryCompositionSystemHelper ecsSystem,
-            RoadBuildEcsBoundaryCompositionSystemHelper.Context ecsContext,
+            RoadBuildEcsCompositionSystemHelper ecsSystem,
+            RoadBuildEcsCompositionSystemHelper.Context ecsContext,
             RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
-            RoadBuildEcsBoundaryCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
-            RoadBuildEcsBoundaryCompositionSystemHelper.TryGetGridDataDelegate tryGetGridData,
+            RoadBuildEcsCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
+            RoadBuildEcsCompositionSystemHelper.TryGetGridDataDelegate tryGetGridData,
             TryGetGridCellDelegate tryGetGridCell,
             IsPointerOverUiDelegate isPointerOverUi)
         {

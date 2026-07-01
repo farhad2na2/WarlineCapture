@@ -27,8 +27,8 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         public readonly UnitTransportCapacitySystem UnitTransportCapacitySystem;
         public readonly UnitTransportAirPickupSystem UnitTransportAirPickupSystem;
         public readonly BuildingTargetMoveOrderSystem BuildingTargetMoveOrderSystem;
-        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper BuildingPlacementInteractionBoundaryCompositionSystemHelper;
-        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context BuildingPlacementInteractionContext;
+        public readonly BuildingPlacementInteractionCompositionSystemHelper BuildingPlacementInteractionCompositionSystemHelper;
+        public readonly BuildingPlacementInteractionCompositionSystemHelper.Context BuildingPlacementInteractionContext;
         public readonly Camera WorldCamera;
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly TryGetPointerPositionDelegate TryGetPointerPosition;
@@ -60,8 +60,8 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             UnitTransportCapacitySystem unitTransportCapacitySystem,
             UnitTransportAirPickupSystem unitTransportAirPickupSystem,
             BuildingTargetMoveOrderSystem buildingTargetMoveOrderSystem,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper buildingPlacementInteractionSystem,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context buildingPlacementInteractionContext,
+            BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem,
+            BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
             Camera worldCamera,
             TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetPointerPositionDelegate tryGetPointerPosition,
@@ -96,7 +96,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             UnitTransportCapacitySystem = unitTransportCapacitySystem;
             UnitTransportAirPickupSystem = unitTransportAirPickupSystem;
             BuildingTargetMoveOrderSystem = buildingTargetMoveOrderSystem;
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper = buildingPlacementInteractionSystem;
+            BuildingPlacementInteractionCompositionSystemHelper = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             WorldCamera = worldCamera;
             TryGetEntityManager = tryGetEntityManager;
@@ -157,12 +157,12 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         }
     }
 
-    private readonly struct PointerTargetBoundaryPass
+    private readonly struct PointerTargetResolutionPass
     {
         private readonly RtsSelectionPointerTargetCommandCompositionSystemHelper _owner;
         private readonly Context _context;
 
-        public PointerTargetBoundaryPass(RtsSelectionPointerTargetCommandCompositionSystemHelper owner, Context context)
+        public PointerTargetResolutionPass(RtsSelectionPointerTargetCommandCompositionSystemHelper owner, Context context)
         {
             _owner = owner;
             _context = context;
@@ -189,9 +189,9 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         }
     }
 
-    private PointerTargetBoundaryPass CreatePointerTargetBoundaryPass(Context context)
+    private PointerTargetResolutionPass CreatePointerTargetResolutionPass(Context context)
     {
-        return new PointerTargetBoundaryPass(this, context);
+        return new PointerTargetResolutionPass(this, context);
     }
 
     public void RequestMoveOrder(Context context, Vector2 screenPosition)
@@ -243,7 +243,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             return context.InputSystem.QueueMoveCommandRequest(screenPosition, frame);
         }
 
-        PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
+        PointerTargetResolutionPass targetBoundary = CreatePointerTargetResolutionPass(context);
         if (targetBoundary.TryGetClickedUnitEntity(screenPosition, em, out _))
             return context.InputSystem.QueueMoveCommandRequest(screenPosition, frame);
 
@@ -288,7 +288,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             return context.InputSystem.QueueAttackCommandRequest(screenPosition, explicitAttackTargetModeActive, frame);
         }
 
-        PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
+        PointerTargetResolutionPass targetBoundary = CreatePointerTargetResolutionPass(context);
         if (!targetBoundary.TryGetClickedUnitEntity(screenPosition, em, out Entity targetEntity) ||
             !IsDirectResolvedAttackTarget(em, targetEntity))
         {
@@ -369,7 +369,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             return context.InputSystem.QueueScanCommandRequest(screenPosition, frame);
         }
 
-        PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
+        PointerTargetResolutionPass targetBoundary = CreatePointerTargetResolutionPass(context);
         if (!targetBoundary.TryGetClickedCell(screenPosition, em, out int2 targetCell, out Vector3 worldPoint))
         {
             SelectionRuntimeDiagnosticsSystemHelper.LogScanCommandTrace(
@@ -404,7 +404,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             return context.InputSystem.QueueBoardTransportCommandRequest(screenPosition, frame);
         }
 
-        PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
+        PointerTargetResolutionPass targetBoundary = CreatePointerTargetResolutionPass(context);
         if (!context.TransportBoardingCommandSystem.TryResolveBoardablePlayerTransportClick(
                 em,
                 screenPosition,
@@ -424,7 +424,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         if (!context.TryGetEntityManager(out EntityManager em))
             return false;
 
-        PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
+        PointerTargetResolutionPass targetBoundary = CreatePointerTargetResolutionPass(context);
         return context.TransportBoardingCommandSystem.IsBoardablePlayerTransportClick(
             em,
             screenPosition,
@@ -680,7 +680,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
         }
 
         context.LogSelectionDiagnostic?.Invoke($"focusAttempt pos={screenPosition} frame={UnityEngine.Time.frameCount}");
-        PointerTargetBoundaryPass targetBoundary = CreatePointerTargetBoundaryPass(context);
+        PointerTargetResolutionPass targetBoundary = CreatePointerTargetResolutionPass(context);
         if (!context.FocusedUnitLifecycleCompositionSystemHelper.TryFocusUnit(
                 em,
                 screenPosition,
@@ -698,7 +698,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
             return false;
         }
 
-        context.BuildingPlacementInteractionBoundaryCompositionSystemHelper?.ClearSelectedBuilding(context.BuildingPlacementInteractionContext, "RTSSelection.TryFocusUnit");
+        context.BuildingPlacementInteractionCompositionSystemHelper?.ClearSelectedBuilding(context.BuildingPlacementInteractionContext, "RTSSelection.TryFocusUnit");
         context.InputSystem.ClearQueuedMoveOrder();
         int removedMoveCommands = context.InputSystem.ClearPendingMoveCommandRequests();
         context.InputSystem.IgnoreWorldCommandsUntilFrame = UnityEngine.Time.frameCount + 1;
@@ -709,7 +709,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
 
     public bool TryGetClickedUnitEntity(Context context, Vector2 screenPosition, EntityManager em, out Entity bestEntity)
     {
-        return CreatePointerTargetBoundaryPass(context).TryGetClickedUnitEntity(screenPosition, em, out bestEntity);
+        return CreatePointerTargetResolutionPass(context).TryGetClickedUnitEntity(screenPosition, em, out bestEntity);
     }
 
     private bool TryGetClickedUnitEntityFromBoundary(Context context, Vector2 screenPosition, EntityManager em, out Entity bestEntity)
@@ -764,7 +764,7 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
 
     public bool TryGetClickedAttackTargetEntity(Context context, Vector2 screenPosition, EntityManager em, out Entity bestEntity)
     {
-        return CreatePointerTargetBoundaryPass(context).TryGetClickedAttackTargetEntity(screenPosition, em, out bestEntity);
+        return CreatePointerTargetResolutionPass(context).TryGetClickedAttackTargetEntity(screenPosition, em, out bestEntity);
     }
 
     public string BuildClickDebugSummary(Context context, Vector2 screenPosition)
@@ -969,12 +969,12 @@ public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
 
     public bool TryGetClickedCell(Context context, Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
     {
-        return CreatePointerTargetBoundaryPass(context).TryGetClickedCell(screenPosition, em, out cell, out worldPoint);
+        return CreatePointerTargetResolutionPass(context).TryGetClickedCell(screenPosition, em, out cell, out worldPoint);
     }
 
     public bool TryGetMoveCommandCell(Context context, Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
     {
-        return CreatePointerTargetBoundaryPass(context).TryGetMoveCommandCell(screenPosition, em, out cell, out worldPoint);
+        return CreatePointerTargetResolutionPass(context).TryGetMoveCommandCell(screenPosition, em, out cell, out worldPoint);
     }
 
     private bool TryGetClickedCellFromBoundary(Context context, Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)

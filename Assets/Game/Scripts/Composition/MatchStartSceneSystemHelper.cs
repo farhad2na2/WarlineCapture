@@ -86,14 +86,14 @@ public sealed class MatchStartSceneSystemHelper
         if (_world == world &&
             _matchStartEntity != Entity.Null &&
             em.Exists(_matchStartEntity) &&
-            em.HasComponent<MatchStartBoundaryComponent>(_matchStartEntity))
+            em.HasComponent<MatchStartStateComponent>(_matchStartEntity))
         {
             EnsureBuffers(em, _matchStartEntity);
             return _matchStartEntity;
         }
 
         _world = world;
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MatchStartBoundaryComponent>());
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MatchStartStateComponent>());
         if (!query.IsEmptyIgnoreFilter)
         {
             _matchStartEntity = query.GetSingletonEntity();
@@ -101,7 +101,7 @@ public sealed class MatchStartSceneSystemHelper
             return _matchStartEntity;
         }
 
-        _matchStartEntity = em.CreateEntity(typeof(MatchStartBoundaryComponent), typeof(MatchStartQueueComponent));
+        _matchStartEntity = em.CreateEntity(typeof(MatchStartStateComponent), typeof(MatchStartQueueComponent));
         em.SetName(_matchStartEntity, "MatchStartBoundary");
         EnsureBuffers(em, _matchStartEntity);
         EnsureProgress(em, _matchStartEntity);

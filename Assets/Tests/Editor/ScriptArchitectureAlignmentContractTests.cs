@@ -121,7 +121,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "RuntimeGameplayStateSystem",
         "SelectionUiCameraSystemHelper",
         "RtsSelectionInputStateCompositionSystemHelper",
-        "BuildingUiCommandBoundary",
+        "BuildingUiCommandSystemHelper",
         "BuildingUiQueryUiSystemHelper",
         "SceneLifecycleSceneSystemHelper",
         "MatchStartRequestStartupSystemHelper",
@@ -147,7 +147,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.UiAndCompositionAssembliesMustNotReferenceUnusedHeavyPackages();
             tests.GameRuntimeStatsMustNotReadAuthoringComponents();
             tests.BuildingProductionQueueCompositionSystemHelperMustNotReadAuthoringComponents();
-            tests.BuildingProductionRequestBoundaryMustNotReadAuthoringComponents();
+            tests.BuildingProductionRequestSystemHelperMustNotReadAuthoringComponents();
             tests.BuildingProductionTransportPresentationSystemHelperMustNotReadAuthoringComponents();
             tests.BuildingSpawnPrefabSystemMustNotReadAuthoringComponents();
             tests.BuildingDefinitionPrefabSystemHelperMustNotReadAuthoringComponents();
@@ -630,15 +630,15 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
-    public void BuildingProductionRequestBoundaryMustNotReadAuthoringComponents()
+    public void BuildingProductionRequestSystemHelperMustNotReadAuthoringComponents()
     {
-        string productionRequestPath = Path.Combine(GameScriptsRoot, "Systems/BuildingProductionRequestBoundary.cs");
+        string productionRequestPath = Path.Combine(GameScriptsRoot, "Systems/BuildingProductionRequestSystemHelper.cs");
         string source = File.ReadAllText(productionRequestPath);
 
         Assert.IsFalse(
             source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
             source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
-            "`BuildingProductionRequestBoundary` must not read authoring components. Use configured-unit read models from `BuildingDefinitionPrefabSystemHelper`.");
+            "`BuildingProductionRequestSystemHelper` must not read authoring components. Use configured-unit read models from `BuildingDefinitionPrefabSystemHelper`.");
     }
 
     [Test]

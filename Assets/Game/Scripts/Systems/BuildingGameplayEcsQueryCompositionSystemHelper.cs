@@ -24,7 +24,7 @@ internal sealed class BuildingGameplayEcsQueryCompositionSystemHelper
     internal EntityQuery LivePlayerUnitsQuery => _livePlayerUnitsQuery;
     internal EntityQuery LiveUnitFootprintQuery => _liveUnitFootprintQuery;
     internal EntityQuery LiveFactionUnitsQuery => _liveFactionUnitsQuery;
-    internal EntityQuery BuildingRuntimeBoundaryQuery => _buildingRuntimeBoundaryQuery;
+    internal EntityQuery BuildingRuntimeStateQuery => _buildingRuntimeBoundaryQuery;
 
     internal void EnsureEntityQueries(EntityManager em)
     {
@@ -77,6 +77,6 @@ internal sealed class BuildingGameplayEcsQueryCompositionSystemHelper
                 ComponentType.ReadOnly<RuntimeBuildingCombatTag>()
             }
         });
-        _buildingRuntimeBoundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
+        _buildingRuntimeBoundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
     }
 }

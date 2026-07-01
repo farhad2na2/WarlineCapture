@@ -6,10 +6,10 @@ using UnityEngine;
 
 internal sealed class BuildingUiCommandAdapter : IBuildingUiCommand
 {
-    private readonly BuildingUiCommandBoundary boundary;
-    private readonly BuildingUiCommandBoundary.Context context;
+    private readonly BuildingUiCommandSystemHelper boundary;
+    private readonly BuildingUiCommandSystemHelper.Context context;
 
-    public BuildingUiCommandAdapter(BuildingUiCommandBoundary boundary, BuildingUiCommandBoundary.Context context)
+    public BuildingUiCommandAdapter(BuildingUiCommandSystemHelper boundary, BuildingUiCommandSystemHelper.Context context)
     {
         this.boundary = boundary;
         this.context = context;
@@ -58,15 +58,15 @@ internal sealed class BuildingUiCommandAdapter : IBuildingUiCommand
         return boundary != null && boundary.RotateBuildingPlacement(context);
     }
 
-    private static BuildingUiCommandFailure Map(BuildingUiCommandBoundary.CampRequestFailure failure)
+    private static BuildingUiCommandFailure Map(BuildingUiCommandSystemHelper.CampRequestFailure failure)
     {
         return failure switch
         {
-            BuildingUiCommandBoundary.CampRequestFailure.None => BuildingUiCommandFailure.None,
-            BuildingUiCommandBoundary.CampRequestFailure.NotEnoughMoney => BuildingUiCommandFailure.NotEnoughMoney,
-            BuildingUiCommandBoundary.CampRequestFailure.MissingProducerBuilding => BuildingUiCommandFailure.MissingProducerBuilding,
-            BuildingUiCommandBoundary.CampRequestFailure.InvalidSelection => BuildingUiCommandFailure.InvalidSelection,
-            BuildingUiCommandBoundary.CampRequestFailure.ProductionQueueFull => BuildingUiCommandFailure.ProductionQueueFull,
+            BuildingUiCommandSystemHelper.CampRequestFailure.None => BuildingUiCommandFailure.None,
+            BuildingUiCommandSystemHelper.CampRequestFailure.NotEnoughMoney => BuildingUiCommandFailure.NotEnoughMoney,
+            BuildingUiCommandSystemHelper.CampRequestFailure.MissingProducerBuilding => BuildingUiCommandFailure.MissingProducerBuilding,
+            BuildingUiCommandSystemHelper.CampRequestFailure.InvalidSelection => BuildingUiCommandFailure.InvalidSelection,
+            BuildingUiCommandSystemHelper.CampRequestFailure.ProductionQueueFull => BuildingUiCommandFailure.ProductionQueueFull,
             _ => BuildingUiCommandFailure.InvalidSelection
         };
     }
@@ -456,7 +456,7 @@ internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSou
         if (IsValidEntity(
                 em,
                 cachedMarkerBoundaryEntity,
-                ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+                ComponentType.ReadOnly<MatchHudMinimapMarkerStateComponent>(),
                 ComponentType.ReadOnly<MatchHudMinimapMarkerElement>()))
         {
             markerEntity = cachedMarkerBoundaryEntity;
@@ -466,7 +466,7 @@ internal sealed class MatchHudMinimapDataSourceAdapter : IMatchHudMinimapDataSou
         if (!TryFindSingleEntity(
                 em,
                 out markerEntity,
-                ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+                ComponentType.ReadOnly<MatchHudMinimapMarkerStateComponent>(),
                 ComponentType.ReadOnly<MatchHudMinimapMarkerElement>()))
         {
             return false;

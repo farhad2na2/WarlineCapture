@@ -6,20 +6,20 @@ internal sealed class BuildingRuntimeCitySpawnBridgeCompositionSystemHelper
 {
     public readonly struct Context
     {
-        public readonly BuildingRuntimeSpawnCommandBoundary RuntimeSpawnCommandBoundary;
-        public readonly BuildingRuntimeSpawnCommandBoundary.Context RuntimeSpawnCommandContext;
+        public readonly BuildingRuntimeSpawnCommandSystemHelper RuntimeSpawnCommandBoundary;
+        public readonly BuildingRuntimeSpawnCommandSystemHelper.Context RuntimeSpawnCommandContext;
         public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
-        public readonly BuildingRuntimeBoundaryProcessingCompositionSystemHelper RuntimeBoundarySystem;
+        public readonly BuildingRuntimeProcessingCompositionSystemHelper RuntimeBoundarySystem;
         public readonly BuildingRuntimeOwnershipCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Func<int, bool> DeleteBuildingById;
         public readonly Action BeginDeferredRuntimeBuildingSideEffects;
         public readonly Action EndDeferredRuntimeBuildingSideEffects;
 
         public Context(
-            BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommandBoundary,
-            BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
+            BuildingRuntimeSpawnCommandSystemHelper runtimeSpawnCommandBoundary,
+            BuildingRuntimeSpawnCommandSystemHelper.Context runtimeSpawnCommandContext,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
-            BuildingRuntimeBoundaryProcessingCompositionSystemHelper runtimeBoundarySystem,
+            BuildingRuntimeProcessingCompositionSystemHelper runtimeBoundarySystem,
             BuildingRuntimeOwnershipCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
             Func<int, bool> deleteBuildingById,
             Action beginDeferredRuntimeBuildingSideEffects,
@@ -125,7 +125,7 @@ internal sealed class BuildingRuntimeCitySpawnBridgeCompositionSystemHelper
             context.TryGetEntityManager == null ||
             !context.TryGetEntityManager(out EntityManager em) ||
             !context.DefinitionSystem.TryGetConfiguredDefinition(prefab, out _) ||
-            !BuildingRuntimeSpawnCommandBoundary.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity))
+            !BuildingRuntimeSpawnCommandSystemHelper.TryGetRuntimeBoundaryEntity(em, out Entity boundaryEntity))
         {
             return false;
         }

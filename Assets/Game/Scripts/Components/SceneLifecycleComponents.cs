@@ -34,7 +34,7 @@ public enum SceneLifecycleResultCode : byte
     SceneOperationFailed = 4
 }
 
-public struct SceneLifecycleBoundaryComponent : IComponentData
+public struct SceneLifecycleRootComponent : IComponentData
 {
 }
 

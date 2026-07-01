@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public sealed class BuildingUiCommandBoundary
+public sealed class BuildingUiCommandSystemHelper
 {
     public readonly struct ConfiguredSpawnableEntry
     {

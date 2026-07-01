@@ -11,7 +11,7 @@ public partial struct UiActionRequestSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         boundaryQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<UiShellStateComponent>(),
             ComponentType.ReadWrite<UiActionRequestComponent>(),
             ComponentType.ReadWrite<UiDiagnosticsOverlayComponent>(),
             ComponentType.ReadWrite<UiMatchHudPassengerDrawerStateComponent>(),

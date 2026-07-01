@@ -115,10 +115,10 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.BuildingUiCampItemCommandRequest_StartsConfiguredPlacementAndWritesResult();
             tests.BuildingUiCampItemCommandRequest_QueuesUnitProductionAndWritesResult();
             tests.BuildingUiCampItemCommandRequest_RejectsFullProductionSlotsAndRefunds();
-            tests.BuildingRuntimeBoundary_ProcessesQueuedUiProductionCommand();
-            tests.BuildingRuntimeBoundary_ProcessesQueuedCampItemCommand();
+            tests.BuildingRuntimeState_ProcessesQueuedUiProductionCommand();
+            tests.BuildingRuntimeState_ProcessesQueuedCampItemCommand();
             tests.CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel();
-            tests.BuildingRuntimeBoundary_ProductionSummaryUsesProducedUnitReadModel();
+            tests.BuildingRuntimeState_ProductionSummaryUsesProducedUnitReadModel();
             tests.TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy();
             tests.BuildingDefinitionProductionSourceKey_UsesSlotKeyBeforePrefabFallback();
             tests.BuildingSpawnCompositionSystemHelper_SpawnsSourceKeyOnlyProductionSlot();
@@ -236,7 +236,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
             DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
             registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
-            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
 
             using EntityQuery registryQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
@@ -355,7 +355,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     {
         using World world = new("BuildingSpawnCompositionSystemHelper_FactionSpawnPointReadModel");
         EntityManager em = world.EntityManager;
-        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
             em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity);
         spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
@@ -465,7 +465,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
             DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
             registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
-            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
 
             using EntityQuery registryQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
@@ -610,7 +610,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
             DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
             registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
-            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
             DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
                 em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity);
             spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
@@ -769,7 +769,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
             DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
             registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
-            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
             DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
                 em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity);
             spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
@@ -934,7 +934,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
             DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
             registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
-            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
             DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
                 em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity);
             spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
@@ -1114,7 +1114,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
             DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
             registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
-            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
             DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
                 em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity);
             spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
@@ -1432,7 +1432,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         em.SetComponentData(older, LocalTransform.FromPosition(new float3(1f, 0f, 2f)));
         em.SetComponentData(newest, LocalTransform.FromPosition(new float3(7f, 0f, 9f)));
 
-        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
             em.AddBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
         producedUnits.Add(new BuildingProducedUnitReadModel
@@ -1527,7 +1527,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     [Test]
     public void TryFindFirstFriendlyProducerBuilding_PrefersPlayerProducerOverNeutralFallback()
     {
-        var requestSystem = new BuildingProductionRequestBoundary();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Attack Helicopter");
         try
@@ -1549,7 +1549,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 [neutralProducer.Id] = neutralProducer,
                 [playerProducer.Id] = playerProducer
             };
-            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab);
@@ -1573,7 +1573,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     [Test]
     public void TryFindFirstFriendlyProducerBuilding_AllowsNeutralFallbackWhenNoPlayerProducerExists()
     {
-        var requestSystem = new BuildingProductionRequestBoundary();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Attack Helicopter");
         try
@@ -1588,7 +1588,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 [neutralProducer.Id] = neutralProducer
             };
-            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab);
@@ -1613,7 +1613,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     public void BuildingUiProductionCommandRequest_QueuesSelectedBuildingUnitAndWritesResult()
     {
         using World world = new("BuildingUiProductionCommandRequestTest");
-        var requestSystem = new BuildingProductionRequestBoundary();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Unit");
         try
@@ -1628,7 +1628,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 [producer.Id] = producer
             };
-            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
@@ -1667,12 +1667,12 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     public void BuildingUiProductionCommandRequest_RejectsMissingActiveBuilding()
     {
         using World world = new("BuildingUiProductionCommandMissingActiveBuildingTest");
-        var requestSystem = new BuildingProductionRequestBoundary();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Unit");
         try
         {
-            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 new Dictionary<int, RuntimeBuildingEntity>(),
                 productionSystem,
                 unitPrefab,
@@ -1702,7 +1702,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     public void BuildingUiProductionCommandRequest_RejectsStaleFrame()
     {
         using World world = new("BuildingUiProductionCommandStaleFrameTest");
-        var requestSystem = new BuildingProductionRequestBoundary();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Unit");
         try
@@ -1717,7 +1717,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 [producer.Id] = producer
             };
-            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
@@ -1748,7 +1748,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     public void BuildingUiProductionCommandRequest_RejectsUnavailablePrefab()
     {
         using World world = new("BuildingUiProductionCommandUnavailablePrefabTest");
-        var requestSystem = new BuildingProductionRequestBoundary();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject contextUnitPrefab = new("Context Unit");
         try
@@ -1763,7 +1763,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 [producer.Id] = producer
             };
-            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 contextUnitPrefab,
@@ -1793,7 +1793,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     public void BuildingUiProductionCommandRequest_RejectsQueueFull()
     {
         using World world = new("BuildingUiProductionCommandQueueFullTest");
-        var requestSystem = new BuildingProductionRequestBoundary();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Unit");
         try
@@ -1808,7 +1808,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 [producer.Id] = producer
             };
-            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
@@ -1840,7 +1840,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     public void BuildingUiProductionCommandRequest_CancelsPendingProductionAndWritesResult()
     {
         using World world = new("BuildingUiProductionCommandCancelProductionTest");
-        var requestSystem = new BuildingProductionRequestBoundary();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Unit");
         try
@@ -1855,7 +1855,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 [producer.Id] = producer
             };
-            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
@@ -1890,7 +1890,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     public void BuildingUiCampItemCommandRequest_StartsConfiguredPlacementAndWritesResult()
     {
         using World world = new("BuildingUiCampItemCommandPlacementTest");
-        var requestSystem = new BuildingProductionRequestBoundary();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         GameObject buildingPrefab = new("Requestable Airport");
         try
         {
@@ -1901,7 +1901,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             };
             bool beganPlacement = false;
             int activePlacementCost = -1;
-            BuildingProductionRequestBoundary.Context context = CreateCampItemRequestContext(
+            BuildingProductionRequestSystemHelper.Context context = CreateCampItemRequestContext(
                 new Dictionary<int, RuntimeBuildingEntity>(),
                 new List<BuildingDefinition> { definition },
                 new Dictionary<GameObject, BuildingDefinition> { { buildingPrefab, definition } },
@@ -1949,7 +1949,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     public void BuildingUiCampItemCommandRequest_QueuesUnitProductionAndWritesResult()
     {
         using World world = new("BuildingUiCampItemCommandUnitProductionTest");
-        var requestSystem = new BuildingProductionRequestBoundary();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Vehicle");
         try
@@ -1964,7 +1964,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 [producer.Id] = producer
             };
-            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
@@ -1999,7 +1999,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     public void BuildingUiCampItemCommandRequest_RejectsFullProductionSlotsAndRefunds()
     {
         using World world = new("BuildingUiCampItemCommandFullProductionSlotsTest");
-        var requestSystem = new BuildingProductionRequestBoundary();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         GameObject unitPrefab = new("Requestable Soldier");
         try
@@ -2019,7 +2019,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 [producer.Id] = producer
             };
             int dollars = 10000;
-            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
@@ -2058,12 +2058,12 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
-    public void BuildingRuntimeBoundary_ProcessesQueuedUiProductionCommand()
+    public void BuildingRuntimeState_ProcessesQueuedUiProductionCommand()
     {
-        using World world = new("BuildingRuntimeBoundaryQueuedUiProductionTest");
-        var requestSystem = new BuildingProductionRequestBoundary();
+        using World world = new("BuildingRuntimeStateQueuedUiProductionTest");
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
-        var boundarySystem = new BuildingRuntimeBoundaryProcessingCompositionSystemHelper();
+        var boundarySystem = new BuildingRuntimeProcessingCompositionSystemHelper();
         var runtimeQuerySystem = new BuildingRuntimeReadModelCompositionSystemHelper();
         GameObject unitPrefab = new("Runtime Boundary Unit");
         try
@@ -2078,10 +2078,10 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 [producer.Id] = producer
             };
-            Entity boundaryEntity = world.EntityManager.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            Entity boundaryEntity = world.EntityManager.CreateEntity(typeof(BuildingRuntimeStateTag));
             using EntityQuery boundaryQuery = world.EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
-            BuildingProductionRequestBoundary.Context productionContext = CreateProducerSelectionContext(
+                ComponentType.ReadOnly<BuildingRuntimeStateTag>());
+            BuildingProductionRequestSystemHelper.Context productionContext = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
@@ -2129,12 +2129,12 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
-    public void BuildingRuntimeBoundary_ProcessesQueuedCampItemCommand()
+    public void BuildingRuntimeState_ProcessesQueuedCampItemCommand()
     {
-        using World world = new("BuildingRuntimeBoundaryQueuedCampItemTest");
-        var requestSystem = new BuildingProductionRequestBoundary();
+        using World world = new("BuildingRuntimeStateQueuedCampItemTest");
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
-        var boundarySystem = new BuildingRuntimeBoundaryProcessingCompositionSystemHelper();
+        var boundarySystem = new BuildingRuntimeProcessingCompositionSystemHelper();
         var runtimeQuerySystem = new BuildingRuntimeReadModelCompositionSystemHelper();
         GameObject unitPrefab = new("Runtime Boundary Vehicle");
         try
@@ -2149,10 +2149,10 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 [producer.Id] = producer
             };
-            world.EntityManager.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            world.EntityManager.CreateEntity(typeof(BuildingRuntimeStateTag));
             using EntityQuery boundaryQuery = world.EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
-            BuildingProductionRequestBoundary.Context productionContext = CreateProducerSelectionContext(
+                ComponentType.ReadOnly<BuildingRuntimeStateTag>());
+            BuildingProductionRequestSystemHelper.Context productionContext = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
@@ -2206,7 +2206,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         var runtimeQuerySystem = new BuildingRuntimeReadModelCompositionSystemHelper();
         Entity producedUnit = em.CreateEntity(typeof(UnitHealth));
         em.SetComponentData(producedUnit, new UnitHealth { Current = 10, Max = 10 });
-        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
             em.AddBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
         producedUnitRows.Add(new BuildingProducedUnitReadModel
@@ -2254,13 +2254,13 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
-    public void BuildingRuntimeBoundary_ProductionSummaryUsesProducedUnitReadModel()
+    public void BuildingRuntimeState_ProductionSummaryUsesProducedUnitReadModel()
     {
-        using World world = new("BuildingRuntimeBoundary_ProductionSummaryUsesProducedUnitReadModel");
+        using World world = new("BuildingRuntimeState_ProductionSummaryUsesProducedUnitReadModel");
         EntityManager em = world.EntityManager;
-        var requestSystem = new BuildingProductionRequestBoundary();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
-        var boundarySystem = new BuildingRuntimeBoundaryProcessingCompositionSystemHelper();
+        var boundarySystem = new BuildingRuntimeProcessingCompositionSystemHelper();
         var runtimeQuerySystem = new BuildingRuntimeReadModelCompositionSystemHelper();
         var definitionSystem = new BuildingDefinitionPrefabSystemHelper();
         GameObject unitPrefab = new("Unit_Inf_Regular");
@@ -2269,7 +2269,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             definitionSystem.RebuildSpawnablesLookup(null, new List<GameObject> { unitPrefab });
             Entity producedUnit = em.CreateEntity(typeof(UnitHealth));
             em.SetComponentData(producedUnit, new UnitHealth { Current = 10, Max = 10 });
-            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
             DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
                 em.AddBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
             producedUnitRows.Add(new BuildingProducedUnitReadModel
@@ -2296,8 +2296,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 [producer.Id] = producer
             };
             using EntityQuery boundaryQuery = em.CreateEntityQuery(
-                ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
-            BuildingProductionRequestBoundary.Context productionContext = CreateProducerSelectionContext(
+                ComponentType.ReadOnly<BuildingRuntimeStateTag>());
+            BuildingProductionRequestSystemHelper.Context productionContext = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
@@ -2350,7 +2350,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         {
             Entity producedUnit = em.CreateEntity(typeof(UnitHealth));
             em.SetComponentData(producedUnit, new UnitHealth { Current = 10, Max = 10 });
-            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
             DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
                 em.AddBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
             producedUnitRows.Add(new BuildingProducedUnitReadModel
@@ -2821,14 +2821,14 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 tryGetBuildingDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
                 tryGetUnitDefinitionMetadata: BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
 
-            BuildingUiCommandBoundary.CampRequestFailure failure = result.UiCommand.TryRequestCampItem(
+            BuildingUiCommandSystemHelper.CampRequestFailure failure = result.UiCommand.TryRequestCampItem(
                 result.UiCommandContext,
                 buildingPrefab,
                 price: 500,
                 out _,
                 focusProducerOnSuccess: true);
 
-            Assert.AreEqual(BuildingUiCommandBoundary.CampRequestFailure.None, failure);
+            Assert.AreEqual(BuildingUiCommandSystemHelper.CampRequestFailure.None, failure);
         }
         finally
         {
@@ -2901,16 +2901,16 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         };
     }
 
-    private static BuildingProductionRequestBoundary.Context CreateCampItemRequestContext(
+    private static BuildingProductionRequestSystemHelper.Context CreateCampItemRequestContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         IReadOnlyList<BuildingDefinition> configuredSpawnableDefinitions,
         IReadOnlyDictionary<GameObject, BuildingDefinition> configuredDefinitionsByPrefab,
         IReadOnlyList<GameObject> unitPrefabs,
         IReadOnlyDictionary<string, GameObject> unitPrefabsByKey,
-        BuildingProductionRequestBoundary.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
-        BuildingProductionRequestBoundary.TrySpendDollarsDelegate trySpendDollars,
-        BuildingProductionRequestBoundary.RefundDollarsDelegate refundDollars,
-        BuildingProductionRequestBoundary.SetActivePlacementCostDelegate setActivePlacementCost)
+        BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
+        BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars,
+        BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars,
+        BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate setActivePlacementCost)
     {
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
@@ -2920,7 +2920,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             null,
             null);
 
-        return new BuildingProductionRequestBoundary.Context(
+        return new BuildingProductionRequestSystemHelper.Context(
             runtimeBuildings,
             configuredSpawnableDefinitions,
             configuredDefinitionsByPrefab,
@@ -2949,14 +2949,14 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             (_, _) => 0);
     }
 
-    private static BuildingProductionRequestBoundary.Context CreateProducerSelectionContext(
+    private static BuildingProductionRequestSystemHelper.Context CreateProducerSelectionContext(
         IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
         BuildingProductionQueueCompositionSystemHelper productionSystem,
         GameObject unitPrefab,
         EntityManager entityManager = default,
-        BuildingProductionRequestBoundary.TryQueuePlayerUnitDelegate tryQueuePlayerUnit = null,
-        BuildingProductionRequestBoundary.TrySpendDollarsDelegate trySpendDollars = null,
-        BuildingProductionRequestBoundary.RefundDollarsDelegate refundDollars = null)
+        BuildingProductionRequestSystemHelper.TryQueuePlayerUnitDelegate tryQueuePlayerUnit = null,
+        BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars = null,
+        BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars = null)
     {
         var unitPrefabs = new List<GameObject> { unitPrefab };
         BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
@@ -2966,7 +2966,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             null,
             null);
 
-        return new BuildingProductionRequestBoundary.Context(
+        return new BuildingProductionRequestSystemHelper.Context(
             runtimeBuildings,
             null,
             null,

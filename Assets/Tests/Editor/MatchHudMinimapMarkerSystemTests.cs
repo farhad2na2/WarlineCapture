@@ -50,7 +50,7 @@ public sealed class MatchHudMinimapMarkerSystemTests
         system.Update(world.Unmanaged);
 
         using EntityQuery markerQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+            ComponentType.ReadOnly<MatchHudMinimapMarkerStateComponent>(),
             ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
         using NativeArray<Entity> markerEntities = markerQuery.ToEntityArray(Allocator.Temp);
         Assert.AreEqual(1, markerEntities.Length);
@@ -107,7 +107,7 @@ public sealed class MatchHudMinimapMarkerSystemTests
         system.Update(world.Unmanaged);
 
         using EntityQuery markerQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+            ComponentType.ReadOnly<MatchHudMinimapMarkerStateComponent>(),
             ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
         Entity markerEntity = markerQuery.GetSingletonEntity();
         DynamicBuffer<MatchHudMinimapMarkerElement> markers = em.GetBuffer<MatchHudMinimapMarkerElement>(markerEntity);
@@ -139,7 +139,7 @@ public sealed class MatchHudMinimapMarkerSystemTests
         system.Update(world.Unmanaged);
 
         using EntityQuery markerQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<MatchHudMinimapMarkerBoundary>(),
+            ComponentType.ReadOnly<MatchHudMinimapMarkerStateComponent>(),
             ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
         Entity markerEntity = markerQuery.GetSingletonEntity();
         DynamicBuffer<MatchHudMinimapMarkerElement> markers = em.GetBuffer<MatchHudMinimapMarkerElement>(markerEntity);

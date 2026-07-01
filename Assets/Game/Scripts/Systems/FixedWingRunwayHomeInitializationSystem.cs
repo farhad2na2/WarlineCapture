@@ -12,7 +12,7 @@ public partial struct FixedWingRunwayHomeInitializationSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         _boundaryQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
             ComponentType.ReadOnly<BuildingFactionRunwayReadModel>());
 
         state.RequireForUpdate(_boundaryQuery);

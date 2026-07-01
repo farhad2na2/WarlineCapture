@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-public struct MatchHudMinimapMarkerBoundary : IComponentData
+public struct MatchHudMinimapMarkerStateComponent : IComponentData
 {
 }
 

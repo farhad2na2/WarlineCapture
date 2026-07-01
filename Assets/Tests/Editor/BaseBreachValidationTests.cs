@@ -1553,7 +1553,7 @@ public sealed class BaseBreachValidationTests
             buildingId = 0;
             actualOrigin = default;
             actualFootprint = default;
-            BuildingRuntimeSpawnCommandBoundary.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
+            BuildingRuntimeSpawnCommandSystemHelper.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
             if (commandContext.RuntimeSpawnSystem == null ||
                 !commandContext.RuntimeSpawnSystem.TrySpawnRuntimeBuilding(
                     commandContext.SpawnContext,
@@ -1579,7 +1579,7 @@ public sealed class BaseBreachValidationTests
 
         public int TrySpawnRuntimeWallRun(GameObject prefab, Vector2Int startOrigin, Vector2Int endOrigin, byte? ownerFactionId)
         {
-            BuildingRuntimeSpawnCommandBoundary.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
+            BuildingRuntimeSpawnCommandSystemHelper.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
             return commandContext.RuntimeSpawnSystem != null
                 ? commandContext.RuntimeSpawnSystem.TrySpawnRuntimeWallRun(
                     commandContext.SpawnContext,
@@ -1597,7 +1597,7 @@ public sealed class BaseBreachValidationTests
             byte? ownerFactionId,
             bool allowExistingWallOverlap = false)
         {
-            BuildingRuntimeSpawnCommandBoundary.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
+            BuildingRuntimeSpawnCommandSystemHelper.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
             return commandContext.RuntimeSpawnSystem != null &&
                    commandContext.RuntimeSpawnSystem.TrySpawnRuntimeWallSegment(
                        commandContext.SpawnContext,
@@ -1611,7 +1611,7 @@ public sealed class BaseBreachValidationTests
         public bool TryGetRuntimeWallSegmentFootprint(GameObject prefab, bool rotateVertical, out Vector2Int footprint)
         {
             footprint = default;
-            BuildingRuntimeSpawnCommandBoundary.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
+            BuildingRuntimeSpawnCommandSystemHelper.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
             return commandContext.RuntimeSpawnSystem != null &&
                    commandContext.RuntimeSpawnSystem.TryGetRuntimeWallSegmentFootprint(
                        commandContext.SpawnContext,
@@ -1623,7 +1623,7 @@ public sealed class BaseBreachValidationTests
         public bool TryGetRuntimeBuildingPlacementFootprint(GameObject prefab, bool rotateVertical, out Vector2Int footprint)
         {
             footprint = default;
-            BuildingRuntimeSpawnCommandBoundary.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
+            BuildingRuntimeSpawnCommandSystemHelper.Context commandContext = _buildingGameplay.RuntimeSpawnCommandContext;
             return commandContext.RuntimeSpawnSystem != null &&
                    commandContext.RuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint(
                        commandContext.SpawnContext,

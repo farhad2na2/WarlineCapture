@@ -540,7 +540,7 @@ public sealed class InitialFactionBaseValidationTests
                         AssertGateCenteredOnOpening((byte)faction.FactionId, anchor, placement, actualOrigin, actualFootprint);
                 }
 
-                RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(world.EntityManager, TickBuildingRuntime);
+                RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(world.EntityManager, TickBuildingRuntime);
                 string ownedSummary = RuntimeGameplayStateTestHelper.DescribeOwnedBuildingSummaries(world.EntityManager);
                 StringAssert.Contains("id=building_airport count=1", ownedSummary);
                 StringAssert.Contains("id=building_helipad count=3", ownedSummary);
@@ -684,7 +684,7 @@ public sealed class InitialFactionBaseValidationTests
         buildingId = 0;
         actualOrigin = default;
         actualFootprint = default;
-        BuildingRuntimeSpawnCommandBoundary.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
+        BuildingRuntimeSpawnCommandSystemHelper.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
         if (commandContext.RuntimeSpawnSystem == null ||
             !commandContext.RuntimeSpawnSystem.TrySpawnRuntimeBuilding(
                 commandContext.SpawnContext,
@@ -715,7 +715,7 @@ public sealed class InitialFactionBaseValidationTests
         Vector2Int endOrigin,
         byte? ownerFactionId)
     {
-        BuildingRuntimeSpawnCommandBoundary.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
+        BuildingRuntimeSpawnCommandSystemHelper.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
         return commandContext.RuntimeSpawnSystem != null
             ? commandContext.RuntimeSpawnSystem.TrySpawnRuntimeWallRun(
                 commandContext.SpawnContext,
@@ -734,7 +734,7 @@ public sealed class InitialFactionBaseValidationTests
         byte? ownerFactionId,
         bool allowExistingWallOverlap)
     {
-        BuildingRuntimeSpawnCommandBoundary.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
+        BuildingRuntimeSpawnCommandSystemHelper.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
         return commandContext.RuntimeSpawnSystem != null &&
                commandContext.RuntimeSpawnSystem.TrySpawnRuntimeWallSegment(
                    commandContext.SpawnContext,
@@ -752,7 +752,7 @@ public sealed class InitialFactionBaseValidationTests
         out Vector2Int footprint)
     {
         footprint = default;
-        BuildingRuntimeSpawnCommandBoundary.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
+        BuildingRuntimeSpawnCommandSystemHelper.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
         return commandContext.RuntimeSpawnSystem != null &&
                commandContext.RuntimeSpawnSystem.TryGetRuntimeWallSegmentFootprint(
                    commandContext.SpawnContext,
@@ -768,7 +768,7 @@ public sealed class InitialFactionBaseValidationTests
         out Vector2Int footprint)
     {
         footprint = default;
-        BuildingRuntimeSpawnCommandBoundary.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
+        BuildingRuntimeSpawnCommandSystemHelper.Context commandContext = buildingGameplay.RuntimeSpawnCommandContext;
         return commandContext.RuntimeSpawnSystem != null &&
                commandContext.RuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint(
                    commandContext.SpawnContext,

@@ -127,7 +127,7 @@ public sealed class AIEndToEndValidationTests
         Entity unitD = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(23, 20), new float3(23f, 0f, 20f));
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
         SystemHandle buildSystem = _world.CreateSystem<AIBuildPlannerSystem>();
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
         SystemHandle productionSystem = _world.CreateSystem<AIProductionSystem>();
@@ -141,7 +141,7 @@ public sealed class AIEndToEndValidationTests
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
 
         if (assertDiagnosticLog)
             LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=2 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));
@@ -149,7 +149,7 @@ public sealed class AIEndToEndValidationTests
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
         Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountRuntimeBuildingsForFaction(em, FactionIdentity.EnemyFactionId, "Tent_Regular"));
 
         if (assertDiagnosticLog)
@@ -158,7 +158,7 @@ public sealed class AIEndToEndValidationTests
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
 
         if (assertDiagnosticLog)
             LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
@@ -166,8 +166,8 @@ public sealed class AIEndToEndValidationTests
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
         Assert.AreEqual(
             1,
             RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, FactionIdentity.EnemyFactionId, "Rifleman"),

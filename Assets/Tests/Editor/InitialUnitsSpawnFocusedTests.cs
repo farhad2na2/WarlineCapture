@@ -109,7 +109,7 @@ public sealed class InitialUnitsSpawnFocusedTests
     {
         using var world = new World("InitialUnitsSpawnConfiguredBuildingRequestTest");
         EntityManager em = world.EntityManager;
-        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
         DynamicBuffer<BuildingConfiguredSpawnableReadModel> readModels =
             em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
@@ -171,7 +171,7 @@ public sealed class InitialUnitsSpawnFocusedTests
     {
         using var world = new World("InitialUnitsSpawnConfiguredBuildingRequestKeyOnlyTest");
         EntityManager em = world.EntityManager;
-        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
         DynamicBuffer<BuildingConfiguredSpawnableReadModel> readModels =
             em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
@@ -233,7 +233,7 @@ public sealed class InitialUnitsSpawnFocusedTests
     {
         using var world = new World("InitialUnitsSpawnFactionBaseRequestTest");
         EntityManager em = world.EntityManager;
-        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
         DynamicBuffer<BuildingConfiguredSpawnableReadModel> readModels =
             em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
@@ -562,7 +562,7 @@ public sealed class InitialUnitsSpawnFocusedTests
     {
         using var world = new World("InitialUnitsSpawnAirPlatformTest");
         EntityManager em = world.EntityManager;
-        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
         DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
             em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundary);
         spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel

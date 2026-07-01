@@ -760,11 +760,11 @@ public static class MatchGcAllocationCallstackCapture
 
         EntityManager entityManager = world.EntityManager;
         using EntityQuery query = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<UiShellRootComponent>(),
             ComponentType.ReadWrite<UiShellRouteRequestComponent>());
         if (query.IsEmptyIgnoreFilter)
         {
-            error = "UI shell boundary is missing.";
+            error = "UI shell root is missing.";
             return false;
         }
 
@@ -1046,7 +1046,7 @@ public static class MatchGcAllocationCallstackCapture
 
         EntityManager entityManager = world.EntityManager;
         using EntityQuery query = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<UiShellRootComponent>(),
             ComponentType.ReadOnly<UiShellStateComponent>());
         if (query.IsEmptyIgnoreFilter)
             return false;
@@ -1080,7 +1080,7 @@ public static class MatchGcAllocationCallstackCapture
 
         EntityManager entityManager = world.EntityManager;
         using EntityQuery query = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<UiShellRootComponent>(),
             ComponentType.ReadOnly<MatchIntroTransitionComponent>());
         if (query.IsEmptyIgnoreFilter)
             return false;

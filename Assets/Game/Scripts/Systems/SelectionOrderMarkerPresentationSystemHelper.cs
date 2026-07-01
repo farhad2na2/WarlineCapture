@@ -27,7 +27,7 @@ public sealed class SelectionOrderMarkerPresentationSystemHelper
     private Renderer[] _attackTargetSelectionMarkerRenderers;
     private Vector3 _attackTargetSelectionMarkerBaseRendererSize = Vector3.one;
     private readonly MaterialPropertyBlock _attackTargetSelectionMarkerPropertyBlock = new();
-    private PremiumWorldSelectionBoundaryView _attackTargetSelectionBoundaryView;
+    private PremiumWorldSelectionFrameView _attackTargetSelectionBoundaryView;
     private GameObject _scanOrderMarker;
     private LineRenderer _scanOrderMarkerRenderer;
     private LineRenderer _scanOrderMarkerInnerRenderer;
@@ -908,9 +908,9 @@ public sealed class SelectionOrderMarkerPresentationSystemHelper
         _attackTargetSelectionMarkerBaseRendererSize = CalculateRendererSize(_attackTargetSelectionMarkerRenderers);
         ConfigureMarkerRenderers(_attackTargetSelectionMarkerRenderers);
         ApplyAttackTargetSelectionMarkerColor();
-        _attackTargetSelectionBoundaryView = _attackTargetSelectionMarker.GetComponent<PremiumWorldSelectionBoundaryView>();
+        _attackTargetSelectionBoundaryView = _attackTargetSelectionMarker.GetComponent<PremiumWorldSelectionFrameView>();
         if (_attackTargetSelectionBoundaryView == null)
-            _attackTargetSelectionBoundaryView = _attackTargetSelectionMarker.AddComponent<PremiumWorldSelectionBoundaryView>();
+            _attackTargetSelectionBoundaryView = _attackTargetSelectionMarker.AddComponent<PremiumWorldSelectionFrameView>();
         _attackTargetSelectionMarker.SetActive(false);
     }
 

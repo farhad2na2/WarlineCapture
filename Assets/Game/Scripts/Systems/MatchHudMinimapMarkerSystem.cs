@@ -56,13 +56,13 @@ public partial struct MatchHudMinimapMarkerSystem : ISystem
     {
         if (_markerBoundaryEntity != Entity.Null &&
             em.Exists(_markerBoundaryEntity) &&
-            em.HasComponent<MatchHudMinimapMarkerBoundary>(_markerBoundaryEntity) &&
+            em.HasComponent<MatchHudMinimapMarkerStateComponent>(_markerBoundaryEntity) &&
             em.HasBuffer<MatchHudMinimapMarkerElement>(_markerBoundaryEntity))
         {
             return _markerBoundaryEntity;
         }
 
-        _markerBoundaryEntity = em.CreateEntity(typeof(MatchHudMinimapMarkerBoundary));
+        _markerBoundaryEntity = em.CreateEntity(typeof(MatchHudMinimapMarkerStateComponent));
         em.AddBuffer<MatchHudMinimapMarkerElement>(_markerBoundaryEntity);
         em.SetName(_markerBoundaryEntity, "MatchHudMinimapMarkers");
         return _markerBoundaryEntity;

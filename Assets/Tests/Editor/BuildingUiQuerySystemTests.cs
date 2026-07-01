@@ -181,7 +181,7 @@ public sealed class BuildingUiQuerySystemTests
         Entity otherBuildingUnit = entityManager.CreateEntity(typeof(UnitHealth));
         entityManager.SetComponentData(otherBuildingUnit, new UnitHealth { Current = 10, Max = 10 });
 
-        Entity boundaryEntity = entityManager.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+        Entity boundaryEntity = entityManager.CreateEntity(typeof(BuildingRuntimeStateTag));
         DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
             entityManager.AddBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
         producedUnits.Add(new BuildingProducedUnitReadModel

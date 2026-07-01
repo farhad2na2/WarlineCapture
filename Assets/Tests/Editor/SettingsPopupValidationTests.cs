@@ -140,7 +140,8 @@ public sealed class SettingsPopupValidationTests
         using World world = new("SettingsPopupValidation");
         EntityManager entityManager = world.EntityManager;
         Entity boundary = entityManager.CreateEntity(
-            typeof(UiShellBoundaryComponent),
+            typeof(UiShellRootComponent),
+            typeof(UiShellStateComponent),
             typeof(UiDiagnosticsOverlayComponent),
             typeof(UiMatchHudPassengerDrawerStateComponent),
             typeof(UiMatchHudSquadTrayStateComponent),

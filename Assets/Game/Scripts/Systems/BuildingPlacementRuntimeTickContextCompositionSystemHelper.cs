@@ -6,7 +6,7 @@ internal sealed class BuildingPlacementRuntimeTickContextCompositionSystemHelper
     public readonly struct Source
     {
         public readonly BuildingProductionRuntimeTickCompositionSystemHelper.Context ProductionContext;
-        public readonly BuildingRuntimeBoundaryPublishCompositionSystemHelper.Context BoundaryContext;
+        public readonly BuildingRuntimePublishCompositionSystemHelper.Context BoundaryContext;
         public readonly Action UpdateBuildingResourceVisuals;
         public readonly Action SyncDestroyedRuntimeBuildingCombatEntities;
         public readonly Action UpdateDestroyedBuildings;
@@ -19,7 +19,7 @@ internal sealed class BuildingPlacementRuntimeTickContextCompositionSystemHelper
 
         public Source(
             BuildingProductionRuntimeTickCompositionSystemHelper.Context productionContext,
-            BuildingRuntimeBoundaryPublishCompositionSystemHelper.Context boundaryContext,
+            BuildingRuntimePublishCompositionSystemHelper.Context boundaryContext,
             Action updateBuildingResourceVisuals,
             Action syncDestroyedRuntimeBuildingCombatEntities,
             Action updateDestroyedBuildings,
@@ -45,7 +45,7 @@ internal sealed class BuildingPlacementRuntimeTickContextCompositionSystemHelper
     }
 
     private readonly BuildingProductionRuntimeTickCompositionSystemHelper _productionRuntimeTickSystem = new();
-    private readonly BuildingRuntimeBoundaryPublishCompositionSystemHelper _runtimeBoundaryPublishSystem = new();
+    private readonly BuildingRuntimePublishCompositionSystemHelper _runtimeBoundaryPublishSystem = new();
     private readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper _diagnosticsSystem = new();
 
     public BuildingPlacementRuntimeTickCompositionSystemHelper.Context Create(Source source)

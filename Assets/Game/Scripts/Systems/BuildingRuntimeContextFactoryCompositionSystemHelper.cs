@@ -29,7 +29,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         public readonly EntityQuery HaulerUnitsQuery;
         public readonly EntityQuery SelectedUnitsQuery;
         public readonly EntityQuery LiveFactionUnitsQuery;
-        public readonly EntityQuery BuildingRuntimeBoundaryQuery;
+        public readonly EntityQuery BuildingRuntimeStateQuery;
         public readonly Func<int?> GetActiveBuildingId;
         public readonly BuildingRuntimeEntityCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingRuntimeEntityCompositionSystemHelper.TryGetGridDataDelegate TryGetGridData;
@@ -110,7 +110,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             HaulerUnitsQuery = haulerUnitsQuery;
             SelectedUnitsQuery = selectedUnitsQuery;
             LiveFactionUnitsQuery = liveFactionUnitsQuery;
-            BuildingRuntimeBoundaryQuery = buildingRuntimeBoundaryQuery;
+            BuildingRuntimeStateQuery = buildingRuntimeBoundaryQuery;
             GetActiveBuildingId = getActiveBuildingId;
             TryGetEntityManager = tryGetEntityManager;
             TryGetGridData = tryGetGridData;
@@ -147,8 +147,8 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
         public readonly BuildingRuntimeSpawnCompositionSystemHelper.RegisterRuntimeBuildingDelegate RegisterRuntimeBuilding;
         public readonly BuildingRuntimeSpawnCompositionSystemHelper.SetRuntimeBuildingOwnerFactionDelegate SetRuntimeBuildingOwnerFaction;
         public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
-        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper RuntimeLinkInteractionSystem;
-        public readonly BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context RuntimeLinkInteractionContext;
+        public readonly BuildingPlacementInteractionCompositionSystemHelper RuntimeLinkInteractionSystem;
+        public readonly BuildingPlacementInteractionCompositionSystemHelper.Context RuntimeLinkInteractionContext;
         public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
         public readonly Func<bool> IsDeferringSideEffects;
         public readonly BuildingRuntimeCreationCompositionSystemHelper.TryGetGridDelegate TryGetGridForRuntimeCreation;
@@ -187,8 +187,8 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             BuildingRuntimeSpawnCompositionSystemHelper.RegisterRuntimeBuildingDelegate registerRuntimeBuilding,
             BuildingRuntimeSpawnCompositionSystemHelper.SetRuntimeBuildingOwnerFactionDelegate setRuntimeBuildingOwnerFaction,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper runtimeLinkInteractionSystem,
-            BuildingPlacementInteractionBoundaryCompositionSystemHelper.Context runtimeLinkInteractionContext,
+            BuildingPlacementInteractionCompositionSystemHelper runtimeLinkInteractionSystem,
+            BuildingPlacementInteractionCompositionSystemHelper.Context runtimeLinkInteractionContext,
             RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
             Func<bool> isDeferringSideEffects,
             BuildingRuntimeCreationCompositionSystemHelper.TryGetGridDelegate tryGetGridForRuntimeCreation,
@@ -271,11 +271,11 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             source.SetRuntimeBuildingOwnerFaction);
     }
 
-    public BuildingRuntimeSpawnCommandBoundary.Context CreateSpawnCommandContext(
+    public BuildingRuntimeSpawnCommandSystemHelper.Context CreateSpawnCommandContext(
         Source source,
         BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem)
     {
-        return new BuildingRuntimeSpawnCommandBoundary.Context(
+        return new BuildingRuntimeSpawnCommandSystemHelper.Context(
             runtimeSpawnSystem,
             CreateSpawnContext(source));
     }
@@ -318,9 +318,9 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
 
     public BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context CreateCitySpawnContext(
         Source source,
-        BuildingRuntimeSpawnCommandBoundary runtimeSpawnCommandBoundary,
-        BuildingRuntimeSpawnCommandBoundary.Context runtimeSpawnCommandContext,
-        BuildingRuntimeBoundaryProcessingCompositionSystemHelper runtimeBoundarySystem)
+        BuildingRuntimeSpawnCommandSystemHelper runtimeSpawnCommandBoundary,
+        BuildingRuntimeSpawnCommandSystemHelper.Context runtimeSpawnCommandContext,
+        BuildingRuntimeProcessingCompositionSystemHelper runtimeBoundarySystem)
     {
         return new BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context(
             runtimeSpawnCommandBoundary,
@@ -345,7 +345,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
             BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
             (EntityManager em, out Entity boundaryEntity) =>
-                TryGetRuntimeBoundaryEntity(source.BuildingRuntimeBoundaryQuery, em, out boundaryEntity));
+                TryGetRuntimeBoundaryEntity(source.BuildingRuntimeStateQuery, em, out boundaryEntity));
     }
 
     private static bool TryGetRuntimeBoundaryEntity(EntityQuery boundaryQuery, EntityManager em, out Entity boundaryEntity)
@@ -442,7 +442,7 @@ internal sealed class BuildingRuntimeContextFactoryCompositionSystemHelper
             source.RuntimeBuildingSystem.Buildings,
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
             (EntityManager em, out Entity boundaryEntity) =>
-                TryGetRuntimeBoundaryEntity(source.BuildingRuntimeBoundaryQuery, em, out boundaryEntity),
+                TryGetRuntimeBoundaryEntity(source.BuildingRuntimeStateQuery, em, out boundaryEntity),
             source.ProductionSystem,
             BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey,
             source.IsHouseBuilding,

@@ -299,7 +299,7 @@ public static class PremiumWorldMarkerVisualProofCapture
         float targetZ,
         MarkerHueExpectation expectation)
     {
-        PremiumWorldSelectionBoundaryView boundaryView = marker.GetComponent<PremiumWorldSelectionBoundaryView>();
+        PremiumWorldSelectionFrameView boundaryView = marker.GetComponent<PremiumWorldSelectionFrameView>();
         if (boundaryView == null)
             return;
 

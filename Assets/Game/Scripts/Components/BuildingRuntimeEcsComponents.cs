@@ -2,7 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-public struct BuildingRuntimeBoundaryTag : IComponentData
+public struct BuildingRuntimeStateTag : IComponentData
 {
 }
 

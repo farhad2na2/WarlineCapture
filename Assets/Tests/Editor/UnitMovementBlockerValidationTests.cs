@@ -801,7 +801,7 @@ public sealed class UnitMovementBlockerValidationTests
             DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
             registry.Add(new UnitPrefabRegistryEntry { Prefab = prefabEntity });
 
-            Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
+            Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
             EntityQuery registryQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
                 ComponentType.ReadOnly<UnitPrefabRegistryEntry>());

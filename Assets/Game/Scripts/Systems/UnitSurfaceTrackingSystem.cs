@@ -24,7 +24,7 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
     {
         _surfaceQuery = state.GetEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
         _runtimeSurfaceOverlayQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
             ComponentType.ReadOnly<BuildingRuntimeSurfaceOverlay>());
         state.RequireForUpdate(_surfaceQuery);
         state.RequireForUpdate<UnitSurfaceComponent>();

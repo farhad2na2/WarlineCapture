@@ -2,14 +2,14 @@ using Unity.Collections;
 using Unity.Entities;
 
 [UpdateInGroup(typeof(InitializationSystemGroup))]
-public partial struct UiShellBoundarySystem : ISystem
+public partial struct UiShellStateSystem : ISystem
 {
     private EntityQuery boundaryQuery;
 
     public void OnCreate(ref SystemState state)
     {
         UiShellEcsGateway.RegisterAsRuntimeGateway();
-        boundaryQuery = state.GetEntityQuery(ComponentType.ReadOnly<UiShellBoundaryComponent>());
+        boundaryQuery = state.GetEntityQuery(ComponentType.ReadOnly<UiShellRootComponent>());
         // RequireForUpdate intentionally omitted: this startup boundary creates the singleton it would require.
         EnsureBoundary(ref state);
         state.Enabled = false;
@@ -57,8 +57,8 @@ public partial struct UiShellBoundarySystem : ISystem
             return;
         }
 
-        Entity boundary = state.EntityManager.CreateEntity(typeof(UiShellBoundaryComponent));
-        state.EntityManager.SetName(boundary, "UiShellBoundary");
+        Entity boundary = state.EntityManager.CreateEntity(typeof(UiShellRootComponent));
+        state.EntityManager.SetName(boundary, "UiShellState");
         state.EntityManager.AddComponentData(boundary, new UiShellStateComponent
         {
             CurrentMode = UiShellMode.None,

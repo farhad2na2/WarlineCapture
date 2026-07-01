@@ -438,7 +438,7 @@ public static class MatchHudTacticalFollowCameraPlayModeValidation
 
         EntityManager em = world.EntityManager;
         using EntityQuery query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<UiShellRootComponent>(),
             ComponentType.ReadOnly<MatchIntroTransitionComponent>());
         if (query.IsEmptyIgnoreFilter)
             return true;

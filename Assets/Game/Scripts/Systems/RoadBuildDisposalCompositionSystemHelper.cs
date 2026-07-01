@@ -14,7 +14,7 @@ internal sealed class RoadBuildDisposalCompositionSystemHelper
         public readonly RoadVisualVariantSystem VisualVariantSystem;
         public readonly RoadPreviewPresentationSystemHelper PreviewSystem;
         public readonly RoadChunkVisualSystem ChunkVisualSystem;
-        public readonly RoadBuildEcsBoundaryCompositionSystemHelper EcsBoundarySystem;
+        public readonly RoadBuildEcsCompositionSystemHelper EcsBoundarySystem;
         public readonly RoadBuildPlacementStorageCompositionSystemHelper PlacementStorageSystem;
         public readonly RoadSpecialVisualSystem SpecialVisualSystem;
         public readonly RoadMinimapEventUiSystemHelper MinimapEventSystem;
@@ -30,7 +30,7 @@ internal sealed class RoadBuildDisposalCompositionSystemHelper
             RoadVisualVariantSystem visualVariantSystem,
             RoadPreviewPresentationSystemHelper previewSystem,
             RoadChunkVisualSystem chunkVisualSystem,
-            RoadBuildEcsBoundaryCompositionSystemHelper ecsBoundarySystem,
+            RoadBuildEcsCompositionSystemHelper ecsBoundarySystem,
             RoadBuildPlacementStorageCompositionSystemHelper placementStorageSystem,
             RoadSpecialVisualSystem specialVisualSystem,
             RoadMinimapEventUiSystemHelper minimapEventSystem,

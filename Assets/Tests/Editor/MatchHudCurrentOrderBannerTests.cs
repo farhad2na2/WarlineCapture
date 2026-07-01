@@ -277,7 +277,7 @@ public sealed class MatchHudCurrentOrderBannerTests
         try
         {
             FakeRuntimeFeedbackView view = new(TacticalCommandMode.Move, sprite);
-            SelectionHudFeedbackBoundary boundary = new();
+            SelectionHudFeedbackUiSystemHelper boundary = new();
             boundary.BindBattleHudRuntimeFeedback(new BattleHudRuntimeFeedbackSink(view));
 
             boundary.ApplyCommandMode(world.EntityManager, TacticalCommandMode.Move);
@@ -301,9 +301,9 @@ public sealed class MatchHudCurrentOrderBannerTests
         try
         {
             FakeRuntimeFeedbackView view = new(TacticalCommandMode.Board, sprite);
-            SelectionHudFeedbackBoundary boundary = new();
+            SelectionHudFeedbackUiSystemHelper boundary = new();
             boundary.BindBattleHudRuntimeFeedback(new BattleHudRuntimeFeedbackSink(view));
-            SelectionHudFeedbackBoundary.Context context = new(default, TryGetEntityManager);
+            SelectionHudFeedbackUiSystemHelper.Context context = new(default, TryGetEntityManager);
 
             boundary.ApplyBoardCommandMode(
                 context,
@@ -336,7 +336,7 @@ public sealed class MatchHudCurrentOrderBannerTests
         try
         {
             FakeRuntimeFeedbackView view = new(TacticalCommandMode.Attack, sprite);
-            SelectionHudFeedbackBoundary boundary = new();
+            SelectionHudFeedbackUiSystemHelper boundary = new();
             boundary.BindBattleHudRuntimeFeedback(new BattleHudRuntimeFeedbackSink(view));
 
             boundary.ApplyCommandMode(world.EntityManager, TacticalCommandMode.Attack);

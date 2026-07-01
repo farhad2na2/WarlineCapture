@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-internal static class MatchBuildingRuntimeBoundaryBootstrapStartupSystemHelper
+internal static class MatchBuildingRuntimeBootstrapStartupSystemHelper
 {
     public static Entity Ensure(Entity currentEntity)
     {
@@ -12,7 +12,7 @@ internal static class MatchBuildingRuntimeBoundaryBootstrapStartupSystemHelper
         Entity boundaryEntity = currentEntity;
         if (boundaryEntity == Entity.Null || !em.Exists(boundaryEntity))
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
             if (!query.IsEmptyIgnoreFilter)
             {
                 boundaryEntity = query.GetSingletonEntity();
@@ -20,7 +20,7 @@ internal static class MatchBuildingRuntimeBoundaryBootstrapStartupSystemHelper
             else
             {
                 boundaryEntity = em.CreateEntity();
-                em.SetName(boundaryEntity, "BuildingRuntimeBoundaryEntity");
+                em.SetName(boundaryEntity, "BuildingRuntimeStateEntity");
             }
         }
 
@@ -30,8 +30,8 @@ internal static class MatchBuildingRuntimeBoundaryBootstrapStartupSystemHelper
 
     private static void EnsureBuffers(EntityManager em, Entity entity)
     {
-        if (!em.HasComponent<BuildingRuntimeBoundaryTag>(entity))
-            em.AddComponent<BuildingRuntimeBoundaryTag>(entity);
+        if (!em.HasComponent<BuildingRuntimeStateTag>(entity))
+            em.AddComponent<BuildingRuntimeStateTag>(entity);
         EnsureBuffer<BuildingConfiguredSpawnableReadModel>(em, entity);
         EnsureBuffer<BuildingConfiguredUnitReadModel>(em, entity);
         EnsureBuffer<BuildingProductionSlotReadModel>(em, entity);

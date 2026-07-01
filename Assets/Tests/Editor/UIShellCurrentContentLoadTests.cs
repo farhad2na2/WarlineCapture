@@ -171,10 +171,10 @@ public sealed class UIShellCurrentContentLoadTests
         _world = new World("UIShellLoadingProgressRequestTests");
         World.DefaultGameObjectInjectionWorld = _world;
 
-        _world.CreateSystem<UiShellBoundarySystem>();
+        _world.CreateSystem<UiShellStateSystem>();
         EntityManager em = _world.EntityManager;
         using EntityQuery boundaryQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<UiShellRootComponent>(),
             ComponentType.ReadWrite<UiShellLoadingProgressComponent>(),
             ComponentType.ReadWrite<UiShellLoadingProgressRequestComponent>());
         Assert.AreEqual(1, boundaryQuery.CalculateEntityCount(), "Boundary setup must create a request-capable shell boundary in OnCreate.");
@@ -204,10 +204,10 @@ public sealed class UIShellCurrentContentLoadTests
         _world = new World("UIShellEnterMatchRouteTests");
         World.DefaultGameObjectInjectionWorld = _world;
 
-        _world.CreateSystem<UiShellBoundarySystem>();
+        _world.CreateSystem<UiShellStateSystem>();
         EntityManager em = _world.EntityManager;
         using EntityQuery boundaryQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+            ComponentType.ReadOnly<UiShellRootComponent>(),
             ComponentType.ReadWrite<UiShellStateComponent>(),
             ComponentType.ReadWrite<UiShellLoadingProgressComponent>(),
             ComponentType.ReadWrite<UiShellLoadingProgressRequestComponent>(),
@@ -304,7 +304,7 @@ public sealed class UIShellCurrentContentLoadTests
         Transform selectedPanel = matchLeft.transform.Find("SelectedSquadPanel");
         Assert.NotNull(selectedPanel, "Installed Match HUD must contain SelectedSquadPanel under LeftContent.");
 
-        var feedback = new SelectionHudFeedbackBoundary();
+        var feedback = new SelectionHudFeedbackUiSystemHelper();
         content.BindGameplayRuntimeDependencies(
             new SelectionUiCommandUiSystemHelper(),
             null,
@@ -386,7 +386,7 @@ public sealed class UIShellCurrentContentLoadTests
         BattleHudRuntimeFeedbackView runtimeFeedback = AssertMatchHudFooterView(matchFooter).RuntimeFeedback;
         Assert.NotNull(runtimeFeedback);
 
-        var feedback = new SelectionHudFeedbackBoundary();
+        var feedback = new SelectionHudFeedbackUiSystemHelper();
         var mainMenuPlayUi = new MainMenuPlayUI();
         mainMenuPlayUi.ConfigureMatchHudRuntimeFeedbackSinkBinding(feedback.BindBattleHudRuntimeFeedback);
         content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper(), mainMenuPlayUi);

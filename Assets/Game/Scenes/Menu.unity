@@ -2035,8 +2035,7 @@ MonoBehaviour:
   matchHudContentPrefab: {fileID: 8032040054424849745, guid: 19831a366284140cbabb9f7e0acc1858, type: 3}
   buildDrawerPopupPrefab: {fileID: 6681354990523575241, guid: f8fdfa57f1e92e74dbc1987ff731b3b3, type: 3}
   fullMapPopupPrefab: {fileID: 5212093184515549060, guid: 4cbbb8d6a3a28439784346da6e1c3022, type: 3}
-  menuSettingsPopupPrefab: {fileID: 5083130255322340985, guid: ed359de83cf994412b6e0e098af8d57a, type: 3}
-  matchSettingsPopupPrefab: {fileID: 6468819457411722341, guid: a8ae6ecf4721d49d197db8b7ee83a030, type: 3}
+  settingsPopupPrefab: {fileID: 6007764285479271553, guid: aa32fc17726f147338fed3c55fbd6534, type: 3}
   buildPlacementConfirmationBarPrefab: {fileID: 732146810000000001, guid: 4e6c8754ee9148fca63ee5f8b91a230a, type: 3}
 --- !u!114 &1818590230
 MonoBehaviour:

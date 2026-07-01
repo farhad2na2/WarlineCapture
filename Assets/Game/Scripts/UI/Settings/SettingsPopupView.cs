@@ -31,8 +31,7 @@ public sealed class SettingsPopupView : MonoBehaviour
 
     private void Awake()
     {
-        if (titleText != null)
-            titleText.text = context == SettingsPopupContext.Match ? "MATCH SETTINGS" : "COMMAND SETTINGS";
+        ApplyContextTitle();
 
         if (closeButton != null)
             closeButton.onClick.AddListener(Close);
@@ -61,6 +60,12 @@ public sealed class SettingsPopupView : MonoBehaviour
         _closeRequested = closeRequested;
     }
 
+    public void ConfigureContext(SettingsPopupContext popupContext)
+    {
+        context = popupContext;
+        ApplyContextTitle();
+    }
+
     public void LoadSettings()
     {
         _model = flowSystem.LoadSettings(settingsPanel);
@@ -79,5 +84,11 @@ public sealed class SettingsPopupView : MonoBehaviour
     private void Close()
     {
         _closeRequested?.Invoke();
+    }
+
+    private void ApplyContextTitle()
+    {
+        if (titleText != null)
+            titleText.text = context == SettingsPopupContext.Match ? "MATCH SETTINGS" : "COMMAND SETTINGS";
     }
 }

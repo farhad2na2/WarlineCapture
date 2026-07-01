@@ -12,8 +12,9 @@ public sealed class SettingsPopupValidationTests
 {
     private const string ApprovedSpriteFolder = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites";
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
-    private const string MenuSettingsPopupPath = "Assets/Game/Prefabs/UI/Shell/Popups/SCN02_MenuSettingsPopup.prefab";
-    private const string MatchSettingsPopupPath = "Assets/Game/Prefabs/UI/Shell/Popups/SCN08_MatchSettingsPopup.prefab";
+    private const string SharedSettingsPopupPath = "Assets/Game/Prefabs/UI/Shell/Popups/SCN_SettingsPopup.prefab";
+    private const string LegacyMenuSettingsPopupPath = "Assets/Game/Prefabs/UI/Shell/Popups/SCN02_MenuSettingsPopup.prefab";
+    private const string LegacyMatchSettingsPopupPath = "Assets/Game/Prefabs/UI/Shell/Popups/SCN08_MatchSettingsPopup.prefab";
     private const string MainMenuContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
     private const string MatchHudContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
 
@@ -103,29 +104,27 @@ public sealed class SettingsPopupValidationTests
     [Test]
     public void SettingsPopupPrefabs_UseOnlyApprovedSprites()
     {
-        AssertPrefabUsesOnlyApprovedSprites(MenuSettingsPopupPath);
-        AssertPrefabUsesOnlyApprovedSprites(MatchSettingsPopupPath);
+        AssertLegacyDuplicatePopupRemoved(LegacyMenuSettingsPopupPath);
+        AssertLegacyDuplicatePopupRemoved(LegacyMatchSettingsPopupPath);
+        AssertPrefabUsesOnlyApprovedSprites(SharedSettingsPopupPath);
     }
 
     [Test]
     public void SettingsPopupPrefabs_ExposeRequiredControls()
     {
-        AssertSettingsPopupPrefab(MenuSettingsPopupPath, SettingsPopupContext.Menu);
-        AssertSettingsPopupPrefab(MatchSettingsPopupPath, SettingsPopupContext.Match);
+        AssertSettingsPopupPrefab(SharedSettingsPopupPath);
     }
 
     [Test]
     public void SettingsPopupPrefabs_AuthorReadableNonOverlappingLayout()
     {
-        AssertReadablePopupLayout(MenuSettingsPopupPath);
-        AssertReadablePopupLayout(MatchSettingsPopupPath);
+        AssertReadablePopupLayout(SharedSettingsPopupPath);
     }
 
     [Test]
     public void SettingsPopupPrefabs_FrameImagesUseSlicedPpuTwo()
     {
-        AssertFrameImagesUseSlicedPpuTwo(MenuSettingsPopupPath);
-        AssertFrameImagesUseSlicedPpuTwo(MatchSettingsPopupPath);
+        AssertFrameImagesUseSlicedPpuTwo(SharedSettingsPopupPath);
     }
 
     [Test]
@@ -191,8 +190,8 @@ public sealed class SettingsPopupValidationTests
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
         UIShellContentView content = FindInScene<UIShellContentView>(scene);
         Assert.NotNull(content, "Menu scene must contain the shell content binder.");
-        Assert.NotNull(content.MenuSettingsPopupPrefab, "Menu settings popup prefab must be assigned on the shell content binder.");
-        Assert.NotNull(content.MatchSettingsPopupPrefab, "Match settings popup prefab must be assigned on the shell content binder.");
+        Assert.NotNull(content.SettingsPopupPrefab, "Shared settings popup prefab must be assigned on the shell content binder.");
+        Assert.AreEqual("SCN_SettingsPopup", content.SettingsPopupPrefab.name);
 
         content.PrepareForCommandSequence(new[]
         {
@@ -212,7 +211,7 @@ public sealed class SettingsPopupValidationTests
         });
 
         GameObject menuPopup = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
-        Assert.AreEqual("SCN02_MenuSettingsPopup", menuPopup.name);
+        Assert.AreEqual("SCN_SettingsPopup", menuPopup.name);
         AssertSettingsPopupInstance(menuPopup, SettingsPopupContext.Menu);
 
         content.CloseSettingsPopup();
@@ -236,8 +235,15 @@ public sealed class SettingsPopupValidationTests
         });
 
         GameObject matchPopup = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
-        Assert.AreEqual("SCN08_MatchSettingsPopup", matchPopup.name);
+        Assert.AreEqual("SCN_SettingsPopup", matchPopup.name);
         AssertSettingsPopupInstance(matchPopup, SettingsPopupContext.Match);
+    }
+
+    private static void AssertLegacyDuplicatePopupRemoved(string prefabPath)
+    {
+        Assert.IsNull(
+            AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath),
+            $"Duplicate settings popup should be removed: {prefabPath}");
     }
 
     private static void AssertPrefabUsesOnlyApprovedSprites(string prefabPath)
@@ -259,11 +265,11 @@ public sealed class SettingsPopupValidationTests
         }
     }
 
-    private static void AssertSettingsPopupPrefab(string prefabPath, SettingsPopupContext expectedContext)
+    private static void AssertSettingsPopupPrefab(string prefabPath)
     {
         GameObject prefab = LoadPrefab(prefabPath);
         SettingsPopupView popupView = prefab.GetComponent<SettingsPopupView>();
-        AssertSettingsPopupInstance(prefab, expectedContext);
+        AssertSettingsPopupInstance(prefab, SettingsPopupContext.Menu);
         Assert.NotNull(popupView.CloseButton, $"{prefabPath} must serialize a close button.");
         Assert.NotNull(popupView.ResetButton, $"{prefabPath} must serialize a reset button.");
         Assert.NotNull(popupView.ApplyButton, $"{prefabPath} must serialize an apply button.");

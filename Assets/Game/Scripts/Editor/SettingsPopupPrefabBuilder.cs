@@ -10,8 +10,9 @@ public static class SettingsPopupPrefabBuilder
 {
     private const string SpriteRoot = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/";
     private const string PopupsRoot = "Assets/Game/Prefabs/UI/Shell/Popups/";
-    private const string MenuPopupPath = PopupsRoot + "SCN02_MenuSettingsPopup.prefab";
-    private const string MatchPopupPath = PopupsRoot + "SCN08_MatchSettingsPopup.prefab";
+    private const string SharedPopupPath = PopupsRoot + "SCN_SettingsPopup.prefab";
+    private const string LegacyMenuPopupPath = PopupsRoot + "SCN02_MenuSettingsPopup.prefab";
+    private const string LegacyMatchPopupPath = PopupsRoot + "SCN08_MatchSettingsPopup.prefab";
     private const string MainMenuContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
     private const string MatchHudContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
@@ -49,23 +50,24 @@ public static class SettingsPopupPrefabBuilder
     public static void Build()
     {
         LoadAssets();
-        GameObject menuPrefab = BuildPopup(MenuPopupPath, "SCN02_MenuSettingsPopup", SettingsPopupContext.Menu);
-        GameObject matchPrefab = BuildPopup(MatchPopupPath, "SCN08_MatchSettingsPopup", SettingsPopupContext.Match);
+        GameObject sharedPrefab = BuildPopup(SharedPopupPath, "SCN_SettingsPopup");
+        DeleteLegacyPopup(LegacyMenuPopupPath);
+        DeleteLegacyPopup(LegacyMatchPopupPath);
         WireSettingsButtons(MainMenuContentPath);
         WireSettingsButtons(MatchHudContentPath);
-        WireMenuScene(menuPrefab, matchPrefab);
+        WireMenuScene(sharedPrefab);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log("[SettingsPopupPrefabBuilder] Settings popup prefabs rebuilt and shell bindings updated.");
+        Debug.Log("[SettingsPopupPrefabBuilder] Shared settings popup prefab rebuilt and shell bindings updated.");
     }
 
     [MenuItem("WarlineCapture/UI/Capture Settings Popup QA")]
     public static void CaptureVisualQa()
     {
-        CapturePopup(MenuPopupPath, "/private/tmp/warline-settings-popup-menu-16x9.png", 1920, 1080);
-        CapturePopup(MenuPopupPath, "/private/tmp/warline-settings-popup-menu-20x9.png", 2400, 1080);
-        CapturePopup(MatchPopupPath, "/private/tmp/warline-settings-popup-match-16x9.png", 1920, 1080);
-        CapturePopup(MatchPopupPath, "/private/tmp/warline-settings-popup-match-20x9.png", 2400, 1080);
+        CapturePopup(SharedPopupPath, SettingsPopupContext.Menu, "/private/tmp/warline-settings-popup-menu-16x9.png", 1920, 1080);
+        CapturePopup(SharedPopupPath, SettingsPopupContext.Menu, "/private/tmp/warline-settings-popup-menu-20x9.png", 2400, 1080);
+        CapturePopup(SharedPopupPath, SettingsPopupContext.Match, "/private/tmp/warline-settings-popup-match-16x9.png", 1920, 1080);
+        CapturePopup(SharedPopupPath, SettingsPopupContext.Match, "/private/tmp/warline-settings-popup-match-20x9.png", 2400, 1080);
         Debug.Log("[SettingsPopupPrefabBuilder] Settings popup visual QA captures written to /private/tmp.");
     }
 
@@ -93,7 +95,7 @@ public static class SettingsPopupPrefabBuilder
         settingsIcon = LoadSprite("scn02c_settings_gear_icon.png");
     }
 
-    private static GameObject BuildPopup(string path, string prefabName, SettingsPopupContext context)
+    private static GameObject BuildPopup(string path, string prefabName)
     {
         GameObject root = CreateRect(prefabName, null, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject;
         root.AddComponent<CanvasGroup>();
@@ -121,7 +123,7 @@ public static class SettingsPopupPrefabBuilder
         Image gear = CreateImage("SettingsIcon", header, settingsIcon, Color.white, false);
         SetRect(gear.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(56f, 56f), new Vector2(56f, 0f));
 
-        TMP_Text title = CreateText("TitleText", header, context == SettingsPopupContext.Match ? "MATCH SETTINGS" : "COMMAND SETTINGS", 34f, boldFont, TextAlignmentOptions.Left);
+        TMP_Text title = CreateText("TitleText", header, "COMMAND SETTINGS", 34f, boldFont, TextAlignmentOptions.Left);
         SetRect(title.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(-220f, 0f), new Vector2(142f, 0f));
 
         Button closeButton = CreateButton("CloseButton", header, squareDefault, squareHover, squarePressed, squareSelected, squareDisabled);
@@ -177,7 +179,7 @@ public static class SettingsPopupPrefabBuilder
         Stretch(applyText.rectTransform);
 
         SettingsPopupView popupView = root.AddComponent<SettingsPopupView>();
-        SetEnum(popupView, "context", (int)context);
+        SetEnum(popupView, "context", (int)SettingsPopupContext.Menu);
         SetObject(popupView, "titleText", title);
         SetObject(popupView, "settingsPanel", panelView);
         SetObject(popupView, "closeButton", closeButton);
@@ -458,18 +460,25 @@ public static class SettingsPopupPrefabBuilder
         }
     }
 
-    private static void WireMenuScene(GameObject menuPrefab, GameObject matchPrefab)
+    private static void WireMenuScene(GameObject sharedPrefab)
     {
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
         UIShellContentView content = Object.FindAnyObjectByType<UIShellContentView>(FindObjectsInactive.Include);
         if (content == null)
             return;
 
-        SetObject(content, "menuSettingsPopupPrefab", menuPrefab);
-        SetObject(content, "matchSettingsPopupPrefab", matchPrefab);
+        SetObject(content, "settingsPopupPrefab", sharedPrefab);
         EditorUtility.SetDirty(content);
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
+    }
+
+    private static void DeleteLegacyPopup(string path)
+    {
+        if (!AssetDatabase.LoadAssetAtPath<GameObject>(path))
+            return;
+
+        AssetDatabase.DeleteAsset(path);
     }
 
     private static Transform FindDeepChild(Transform parent, string name)
@@ -497,7 +506,7 @@ public static class SettingsPopupPrefabBuilder
         return sprite;
     }
 
-    private static void CapturePopup(string prefabPath, string outputPath, int width, int height)
+    private static void CapturePopup(string prefabPath, SettingsPopupContext context, string outputPath, int width, int height)
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
         if (prefab == null)
@@ -536,6 +545,7 @@ public static class SettingsPopupPrefabBuilder
         RectTransform instanceRect = instance.GetComponent<RectTransform>();
         Stretch(instanceRect);
         SettingsPopupView popupView = instance.GetComponent<SettingsPopupView>();
+        popupView?.ConfigureContext(context);
         popupView?.LoadSettings();
 
         Canvas.ForceUpdateCanvases();

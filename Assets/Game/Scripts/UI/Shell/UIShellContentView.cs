@@ -13,8 +13,7 @@ public sealed class UIShellContentView : MonoBehaviour
     [SerializeField] private GameObject matchHudContentPrefab;
     [SerializeField] private GameObject buildDrawerPopupPrefab;
     [SerializeField] private GameObject fullMapPopupPrefab;
-    [SerializeField] private GameObject menuSettingsPopupPrefab;
-    [SerializeField] private GameObject matchSettingsPopupPrefab;
+    [SerializeField] private GameObject settingsPopupPrefab;
     [SerializeField] private GameObject buildPlacementConfirmationBarPrefab;
     private readonly MatchOverlayCommandInputUiSystemHelper _matchOverlayCommandInputSystem = new();
     private ISelectionUiCommand _selectionUiCommandSystem;
@@ -52,8 +51,7 @@ public sealed class UIShellContentView : MonoBehaviour
     public GameObject MatchHudContentPrefab => matchHudContentPrefab;
     public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
     public GameObject FullMapPopupPrefab => fullMapPopupPrefab;
-    public GameObject MenuSettingsPopupPrefab => menuSettingsPopupPrefab;
-    public GameObject MatchSettingsPopupPrefab => matchSettingsPopupPrefab;
+    public GameObject SettingsPopupPrefab => settingsPopupPrefab;
     public GameObject BuildPlacementConfirmationBarPrefab => buildPlacementConfirmationBarPrefab;
     public int ContentVersion => _contentVersion;
 
@@ -66,8 +64,7 @@ public sealed class UIShellContentView : MonoBehaviour
         GameObject buildDrawerPrefab,
         GameObject fullMapPrefab = null,
         GameObject buildPlacementConfirmationPrefab = null,
-        GameObject menuSettingsPrefab = null,
-        GameObject matchSettingsPrefab = null)
+        GameObject settingsPrefab = null)
     {
         shellView = view;
         loadingContentPrefab = loadingPrefab;
@@ -79,10 +76,8 @@ public sealed class UIShellContentView : MonoBehaviour
             fullMapPopupPrefab = fullMapPrefab;
         if (buildPlacementConfirmationPrefab != null)
             buildPlacementConfirmationBarPrefab = buildPlacementConfirmationPrefab;
-        if (menuSettingsPrefab != null)
-            menuSettingsPopupPrefab = menuSettingsPrefab;
-        if (matchSettingsPrefab != null)
-            matchSettingsPopupPrefab = matchSettingsPrefab;
+        if (settingsPrefab != null)
+            settingsPopupPrefab = settingsPrefab;
     }
 
     public void PrepareForCommandSequence(IReadOnlyList<UiShellPresentationCommandModel> commands)
@@ -455,15 +450,18 @@ public sealed class UIShellContentView : MonoBehaviour
 
     public GameObject InstallSettingsPopup(UIRoute activeRoute)
     {
-        _settingsPopupInstance = InstallRoot(
-            activeRoute == UIRoute.Match && matchSettingsPopupPrefab != null
-                ? matchSettingsPopupPrefab
-                : menuSettingsPopupPrefab,
-            UIShellRegionId.PopupLayer);
+        _settingsPopupInstance = InstallRoot(settingsPopupPrefab, UIShellRegionId.PopupLayer);
         _settingsPopupView = _settingsPopupInstance != null
             ? _settingsPopupInstance.GetComponent<SettingsPopupView>()
             : null;
-        _settingsPopupView?.BindClose(CloseSettingsPopup);
+        if (_settingsPopupView != null)
+        {
+            _settingsPopupView.ConfigureContext(activeRoute == UIRoute.Match
+                ? SettingsPopupContext.Match
+                : SettingsPopupContext.Menu);
+            _settingsPopupView.BindClose(CloseSettingsPopup);
+        }
+
         return _settingsPopupInstance;
     }
 

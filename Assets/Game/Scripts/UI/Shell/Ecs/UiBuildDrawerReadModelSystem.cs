@@ -396,6 +396,10 @@ public static class UiBuildDrawerReadModelSource
                 $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: requires {requiredBuildingDisplayName}.",
             BuildingUiCommandFailure.MissingProducerBuilding =>
                 $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: {FormatMissingProducerFallback(item.Category)}.",
+            BuildingUiCommandFailure.ProductionQueueFull when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
+                $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: all {requiredBuildingDisplayName} production slots are full.",
+            BuildingUiCommandFailure.ProductionQueueFull =>
+                $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: all compatible production slots are full.",
             BuildingUiCommandFailure.InvalidSelection => "Select a build drawer item first.",
             _ => $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: request unavailable."
         };

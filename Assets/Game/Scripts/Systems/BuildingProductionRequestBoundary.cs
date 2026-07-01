@@ -426,8 +426,14 @@ internal sealed class BuildingProductionRequestBoundary
         if (context.ConfiguredDefinitionsByPrefab != null && context.ConfiguredDefinitionsByPrefab.ContainsKey(prefab))
             return CampRequestFailure.None;
 
-        if (TryFindFirstFriendlyProducerBuilding(context, prefab, out _, out _, out _))
+        if (TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: true, out _, out _, out _))
             return CampRequestFailure.None;
+
+        if (TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: false, out _, out _, out string fullProducerDisplayName))
+        {
+            requiredBuildingDisplayName = fullProducerDisplayName;
+            return CampRequestFailure.ProductionQueueFull;
+        }
 
         TryGetRequiredProducerDisplayName(context, prefab, out requiredBuildingDisplayName);
         return CampRequestFailure.MissingProducerBuilding;
@@ -454,8 +460,14 @@ internal sealed class BuildingProductionRequestBoundary
             return CampRequestFailure.None;
         }
 
-        if (!TryFindFirstFriendlyProducerBuilding(context, prefab, out int producerBuildingId, out int productionIndex, out _))
+        if (!TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: true, out int producerBuildingId, out int productionIndex, out _))
         {
+            if (TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: false, out _, out _, out string fullProducerDisplayName))
+            {
+                requiredBuildingDisplayName = fullProducerDisplayName;
+                return CampRequestFailure.ProductionQueueFull;
+            }
+
             TryGetRequiredProducerDisplayName(context, prefab, out requiredBuildingDisplayName);
             return CampRequestFailure.MissingProducerBuilding;
         }
@@ -474,7 +486,14 @@ internal sealed class BuildingProductionRequestBoundary
         if (focusProducerOnSuccess)
             SelectBuildingForProductionRequest(context, producerBuilding, prefab);
 
-        TryCreateUnitFromBuilding(context, producerBuildingId, productionIndex, frameCount, frameCount, out _);
+        if (!TryCreateUnitFromBuilding(context, producerBuildingId, productionIndex, frameCount, frameCount, out byte resultCode))
+        {
+            context.RefundDollars?.Invoke(Mathf.Max(0, price));
+            return resultCode == BuildingUiProductionCommandResultElement.QueueFull
+                ? CampRequestFailure.ProductionQueueFull
+                : CampRequestFailure.InvalidSelection;
+        }
+
         context.RecordUnitOrdered?.Invoke(prefab);
         return CampRequestFailure.None;
     }
@@ -648,7 +667,8 @@ internal sealed class BuildingProductionRequestBoundary
         if (building == null || spawnUnitPrefab == null)
             return false;
 
-        return CanQueueTransportForAnyProducer(context, spawnUnitPrefab, transportSettings, logReason);
+        return CanQueueTransportForAnyProducer(context, spawnUnitPrefab, transportSettings, logReason) &&
+               HasAvailableProductionSlotForRequest(context, building);
     }
 
     private static bool CanQueueTransportForAnyProducer(
@@ -672,6 +692,39 @@ internal sealed class BuildingProductionRequestBoundary
         }
 
         return true;
+    }
+
+    private static bool HasAvailableProductionSlotForRequest(Context context, RuntimeBuildingEntity building)
+    {
+        if (building == null)
+            return false;
+
+        if (building.ProductionSpawnLocalPositions == null ||
+            building.ProducedUnitSlots == null ||
+            building.ProductionSpawnLocalPositions.Length <= 0)
+        {
+            return true;
+        }
+
+        int count = Mathf.Min(building.ProductionSpawnLocalPositions.Length, building.ProducedUnitSlots.Length);
+        if (count <= 0)
+            return false;
+
+        for (int i = 0; i < count; i++)
+        {
+            if (context.ProductionQueueContext.ProductionSlotSystem != null &&
+                context.ProductionQueueContext.ProductionSlotSystem.IsProductionSlotReservedByPending(building, i))
+            {
+                continue;
+            }
+
+            if (building.ProducedUnitSlots[i] != Entity.Null)
+                continue;
+
+            return true;
+        }
+
+        return false;
     }
 
     public bool QueueFactionUnitProductionRequest(
@@ -806,6 +859,17 @@ internal sealed class BuildingProductionRequestBoundary
 
     public bool TryFindFirstFriendlyProducerBuilding(Context context, GameObject unitPrefab, out int buildingId, out int productionIndex, out string buildingDisplayName)
     {
+        return TryFindFirstFriendlyProducerBuilding(context, unitPrefab, requireQueueCapacity: false, out buildingId, out productionIndex, out buildingDisplayName);
+    }
+
+    private bool TryFindFirstFriendlyProducerBuilding(
+        Context context,
+        GameObject unitPrefab,
+        bool requireQueueCapacity,
+        out int buildingId,
+        out int productionIndex,
+        out string buildingDisplayName)
+    {
         buildingId = 0;
         productionIndex = -1;
         buildingDisplayName = string.Empty;
@@ -823,7 +887,7 @@ internal sealed class BuildingProductionRequestBoundary
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
                 {
-                    if (TryUseFriendlyProducerBuilding(context, unitPrefab, pass, pair, out buildingId, out productionIndex, out buildingDisplayName))
+                    if (TryUseFriendlyProducerBuilding(context, unitPrefab, pass, requireQueueCapacity, pair, out buildingId, out productionIndex, out buildingDisplayName))
                         return true;
                 }
             }
@@ -835,7 +899,7 @@ internal sealed class BuildingProductionRequestBoundary
         {
             foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
             {
-                if (TryUseFriendlyProducerBuilding(context, unitPrefab, pass, pair, out buildingId, out productionIndex, out buildingDisplayName))
+                if (TryUseFriendlyProducerBuilding(context, unitPrefab, pass, requireQueueCapacity, pair, out buildingId, out productionIndex, out buildingDisplayName))
                     return true;
             }
         }
@@ -847,6 +911,7 @@ internal sealed class BuildingProductionRequestBoundary
         Context context,
         GameObject unitPrefab,
         int pass,
+        bool requireQueueCapacity,
         KeyValuePair<int, RuntimeBuildingEntity> pair,
         out int buildingId,
         out int productionIndex,
@@ -868,6 +933,8 @@ internal sealed class BuildingProductionRequestBoundary
         for (int i = 0; i < productionCount; i++)
         {
             if (context.GetProductionPrefab(building.Definition, i) != unitPrefab)
+                continue;
+            if (requireQueueCapacity && !CanQueueUnitFromBuilding(context, building, unitPrefab, false))
                 continue;
             buildingId = pair.Key;
             productionIndex = i;
@@ -1063,6 +1130,7 @@ internal sealed class BuildingProductionRequestBoundary
                 : BuildingUiCampItemCommandResultElement.ProductionQueued,
             CampRequestFailure.NotEnoughMoney => BuildingUiCampItemCommandResultElement.NotEnoughMoney,
             CampRequestFailure.MissingProducerBuilding => BuildingUiCampItemCommandResultElement.MissingProducerBuilding,
+            CampRequestFailure.ProductionQueueFull => BuildingUiCampItemCommandResultElement.ProductionQueueFull,
             _ => BuildingUiCampItemCommandResultElement.InvalidSelection
         };
     }
@@ -1075,6 +1143,7 @@ internal sealed class BuildingProductionRequestBoundary
             BuildingUiCampItemCommandResultElement.ProductionQueued => CampRequestFailure.None,
             BuildingUiCampItemCommandResultElement.NotEnoughMoney => CampRequestFailure.NotEnoughMoney,
             BuildingUiCampItemCommandResultElement.MissingProducerBuilding => CampRequestFailure.MissingProducerBuilding,
+            BuildingUiCampItemCommandResultElement.ProductionQueueFull => CampRequestFailure.ProductionQueueFull,
             _ => CampRequestFailure.InvalidSelection
         };
     }

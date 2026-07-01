@@ -66,6 +66,7 @@ internal sealed class BuildingUiCommandAdapter : IBuildingUiCommand
             BuildingUiCommandBoundary.CampRequestFailure.NotEnoughMoney => BuildingUiCommandFailure.NotEnoughMoney,
             BuildingUiCommandBoundary.CampRequestFailure.MissingProducerBuilding => BuildingUiCommandFailure.MissingProducerBuilding,
             BuildingUiCommandBoundary.CampRequestFailure.InvalidSelection => BuildingUiCommandFailure.InvalidSelection,
+            BuildingUiCommandBoundary.CampRequestFailure.ProductionQueueFull => BuildingUiCommandFailure.ProductionQueueFull,
             _ => BuildingUiCommandFailure.InvalidSelection
         };
     }

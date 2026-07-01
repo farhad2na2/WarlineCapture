@@ -6,7 +6,8 @@ public enum BuildingUiCommandFailure
     None = 0,
     NotEnoughMoney = 1,
     MissingProducerBuilding = 2,
-    InvalidSelection = 3
+    InvalidSelection = 3,
+    ProductionQueueFull = 4
 }
 
 public readonly struct BuildingPendingProductionUiEntry

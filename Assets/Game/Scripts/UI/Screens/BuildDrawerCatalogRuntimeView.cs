@@ -849,6 +849,9 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
             BuildingUiCommandFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
                 $"Requires {requiredBuildingDisplayName}.",
             BuildingUiCommandFailure.MissingProducerBuilding => "Required producer is missing.",
+            BuildingUiCommandFailure.ProductionQueueFull when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
+                $"{requiredBuildingDisplayName} production slots are full.",
+            BuildingUiCommandFailure.ProductionQueueFull => "All compatible production slots are full.",
             BuildingUiCommandFailure.InvalidSelection => "Select a build drawer item first.",
             _ => "Build request unavailable."
         };
@@ -916,6 +919,10 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
                 $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: requires {requiredBuildingDisplayName}.",
             BuildingUiCommandFailure.MissingProducerBuilding =>
                 $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: {FormatMissingProducerFallback(_selectedItem.Category)}.",
+            BuildingUiCommandFailure.ProductionQueueFull when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
+                $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: all {requiredBuildingDisplayName} production slots are full.",
+            BuildingUiCommandFailure.ProductionQueueFull =>
+                $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: all compatible production slots are full.",
             BuildingUiCommandFailure.InvalidSelection => "Select a build drawer item first.",
             _ => $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: request unavailable."
         };

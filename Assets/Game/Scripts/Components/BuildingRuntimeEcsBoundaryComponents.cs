@@ -257,6 +257,7 @@ public struct BuildingUiCampItemCommandResultElement : IBufferElementData
     public const byte NotEnoughMoney = 2;
     public const byte MissingProducerBuilding = 3;
     public const byte InvalidSelection = 4;
+    public const byte ProductionQueueFull = 5;
 
     public int RequestId;
     public FixedString128Bytes ItemId;

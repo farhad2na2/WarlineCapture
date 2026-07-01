@@ -71,6 +71,10 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
                 test => test.BuildDrawerInstruction_ShowsInsufficientCredits(),
                 ref passed);
             RunValidationStep(
+                nameof(BuildDrawerInstruction_ShowsProductionQueueFull),
+                test => test.BuildDrawerInstruction_ShowsProductionQueueFull(),
+                ref passed);
+            RunValidationStep(
                 nameof(BuildDrawerPrimaryAction_RoutesBuildingPlacementRequestAndClosesDrawer),
                 test => test.BuildDrawerPrimaryAction_RoutesBuildingPlacementRequestAndClosesDrawer(),
                 ref passed);
@@ -513,6 +517,41 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         Assert.NotNull(view.InstructionText);
         Assert.AreEqual(
             "Need 4678 more credits to produce Light Vehicle.",
+            view.InstructionText.text);
+    }
+
+    [Test]
+    public void BuildDrawerInstruction_ShowsProductionQueueFull()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
+        UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
+        GameObject soldier = CreateUnit("Rifle Infantry", true, false, Vector2Int.one, 0);
+        unitConfig.UnitSpawnPrefabs.Add(soldier);
+
+        ConfigurePresenterForTests(presenter, view, unitConfig, null);
+        presenter.BindRuntimeCommands(
+            new BuildingUiCommandAdapter(new BuildingUiCommandBoundary(), CreateCommandContext(
+                null,
+                null,
+                100000,
+                (GameObject requestPrefab, int price, out string requiredBuilding) =>
+                {
+                    requiredBuilding = "Soldier Tent";
+                    return BuildingUiCommandBoundary.CampRequestFailure.ProductionQueueFull;
+                })),
+            null);
+        presenter.SelectCategoryForTests(BuildDrawerCategory.Soldiers);
+
+        Assert.NotNull(view.InstructionText);
+        Assert.AreEqual(
+            "Cannot recruit Rifle Infantry: all Soldier Tent production slots are full.",
             view.InstructionText.text);
     }
 

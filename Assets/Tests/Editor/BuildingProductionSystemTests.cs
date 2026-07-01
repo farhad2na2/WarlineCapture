@@ -114,6 +114,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.BuildingUiProductionCommandRequest_CancelsPendingProductionAndWritesResult();
             tests.BuildingUiCampItemCommandRequest_StartsConfiguredPlacementAndWritesResult();
             tests.BuildingUiCampItemCommandRequest_QueuesUnitProductionAndWritesResult();
+            tests.BuildingUiCampItemCommandRequest_RejectsFullProductionSlotsAndRefunds();
             tests.BuildingRuntimeBoundary_ProcessesQueuedUiProductionCommand();
             tests.BuildingRuntimeBoundary_ProcessesQueuedCampItemCommand();
             tests.CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel();
@@ -127,7 +128,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointWithoutManagedSlotArray();
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForOverrideHelicopterSlot();
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForAutomaticHelicopterSpawn();
-            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=21");
+            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=22");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -1995,6 +1996,68 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
+    public void BuildingUiCampItemCommandRequest_RejectsFullProductionSlotsAndRefunds()
+    {
+        using World world = new("BuildingUiCampItemCommandFullProductionSlotsTest");
+        var requestSystem = new BuildingProductionRequestBoundary();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
+        GameObject unitPrefab = new("Requestable Soldier");
+        try
+        {
+            Entity occupiedUnit = world.EntityManager.CreateEntity(typeof(UnitHealth));
+            world.EntityManager.SetComponentData(occupiedUnit, new UnitHealth { Current = 10, Max = 10 });
+            RuntimeBuildingEntity producer = CreateProducerBuilding(
+                id: 24,
+                displayName: "Soldier Tent",
+                unitPrefab,
+                hasOwnerFaction: true,
+                ownerFactionId: FactionIdentity.PlayerFactionId);
+            producer.ProductionSpawnLocalPositions = new[] { Vector3.zero };
+            producer.ProducedUnitSlots = new[] { occupiedUnit };
+            Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
+            {
+                [producer.Id] = producer
+            };
+            int dollars = 10000;
+            BuildingProductionRequestBoundary.Context context = CreateProducerSelectionContext(
+                runtimeBuildings,
+                productionSystem,
+                unitPrefab,
+                world.EntityManager,
+                trySpendDollars: amount =>
+                {
+                    if (dollars < amount)
+                        return false;
+
+                    dollars -= amount;
+                    return true;
+                },
+                refundDollars: amount => dollars += amount);
+
+            int requestId = requestSystem.EnqueueCampItemRequest(
+                world.EntityManager,
+                unitPrefab,
+                price: 1200,
+                focusProducerOnSuccess: false);
+            requestSystem.ProcessPendingUiCampItemCommands(world.EntityManager, context, frameCount: 88);
+
+            Assert.IsTrue(requestSystem.TryGetUiCampItemCommandResult(
+                world.EntityManager,
+                requestId,
+                out BuildingUiCampItemCommandResultElement result));
+            Assert.AreEqual(0, result.Accepted);
+            Assert.AreEqual(BuildingUiCampItemCommandResultElement.ProductionQueueFull, result.ResultCode);
+            Assert.AreEqual("Soldier Tent", result.RequiredBuildingDisplayName.ToString());
+            Assert.AreEqual(10000, dollars);
+            Assert.AreEqual(0, producer.PendingProductions.Count);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
     public void BuildingRuntimeBoundary_ProcessesQueuedUiProductionCommand()
     {
         using World world = new("BuildingRuntimeBoundaryQueuedUiProductionTest");
@@ -2891,7 +2954,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         BuildingProductionQueueCompositionSystemHelper productionSystem,
         GameObject unitPrefab,
         EntityManager entityManager = default,
-        BuildingProductionRequestBoundary.TryQueuePlayerUnitDelegate tryQueuePlayerUnit = null)
+        BuildingProductionRequestBoundary.TryQueuePlayerUnitDelegate tryQueuePlayerUnit = null,
+        BuildingProductionRequestBoundary.TrySpendDollarsDelegate trySpendDollars = null,
+        BuildingProductionRequestBoundary.RefundDollarsDelegate refundDollars = null)
     {
         var unitPrefabs = new List<GameObject> { unitPrefab };
         BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
@@ -2914,8 +2979,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
             null,
             null,
-            _ => true,
-            _ => { },
+            trySpendDollars ?? (_ => true),
+            refundDollars ?? (_ => { }),
             _ => { },
             tryQueuePlayerUnit ?? ((building, productionIndex, spawnUnitPrefab) => productionSystem.TryQueuePlayerUnitFromBuilding(
                 queueContext,

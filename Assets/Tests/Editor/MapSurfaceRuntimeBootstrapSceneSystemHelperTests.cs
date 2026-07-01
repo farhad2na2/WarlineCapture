@@ -68,7 +68,8 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
 
             MapSurfaceComponent runtimeSurface = em.GetComponentData<MapSurfaceComponent>(staleSubsceneSurface);
             ref MapSurfaceBlob runtimeBlob = ref runtimeSurface.SurfaceBlob.Value;
-            Assert.AreEqual(0.125f, runtimeBlob.Samples[0].Height, 0.0001f);
+            Assert.IsTrue(MapSurfaceBlobAccess.TryGetPrimarySurface(ref runtimeBlob, int2.zero, out MapSurfaceSample runtimeSample));
+            Assert.AreEqual(0.125f, runtimeSample.Height, 0.0001f);
             Assert.AreEqual(new float3(0f, 0f, 0f), runtimeBlob.GridOrigin);
             Assert.AreEqual(new int2(1, 1), runtimeBlob.Dimensions);
         }
@@ -167,6 +168,7 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
         root.GridOrigin = float3.zero;
         root.CellSize = 1f;
         root.Dimensions = new int2(1, 1);
+        root.RuntimeEncoding = MapSurfaceRuntimeEncoding.Full;
 
         BlobBuilderArray<MapSurfaceCell> cells = builder.Allocate(ref root.Cells, 1);
         cells[0] = new MapSurfaceCell
@@ -193,6 +195,7 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
         };
 
         builder.Allocate(ref root.Connections, 0);
+        builder.Allocate(ref root.CompactSamples, 0);
         BlobAssetReference<MapSurfaceBlob> blob = builder.CreateBlobAssetReference<MapSurfaceBlob>(Allocator.Persistent);
         builder.Dispose();
         return blob;

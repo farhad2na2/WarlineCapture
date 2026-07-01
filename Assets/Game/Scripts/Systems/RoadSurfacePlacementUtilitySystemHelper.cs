@@ -131,15 +131,6 @@ internal sealed class RoadSurfacePlacementUtilitySystemHelper
         }
 
         ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
-        int index = cell.x + cell.y * surface.Dimensions.x;
-        if ((uint)index >= (uint)blob.Cells.Length)
-            return false;
-
-        MapSurfaceCell surfaceCell = blob.Cells[index];
-        if (surfaceCell.SurfaceCount == 0 || (uint)surfaceCell.FirstSurfaceIndex >= (uint)blob.Samples.Length)
-            return false;
-
-        sample = blob.Samples[surfaceCell.FirstSurfaceIndex];
-        return true;
+        return MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob, cell, out sample);
     }
 }

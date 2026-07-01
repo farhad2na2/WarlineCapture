@@ -9,7 +9,7 @@ public sealed class MapSurfaceAuthoring : MonoBehaviour
     [SerializeField] private MapSurfaceDataAsset bakedSurfaceData;
     [SerializeField] private GridAuthoringConfig gridConfig;
     [SerializeField, Min(1)] private int samplesPerCellAxis = 2;
-    [SerializeField, Min(0.01f)] private float maxSampleHeightDelta = 0.25f;
+    [SerializeField, Min(0.01f)] private float maxSampleHeightDelta = 0.05f;
     [SerializeField, Min(0f)] private float maxBuildingSlopeDegrees = 8f;
     [SerializeField, Min(0f)] private float maxInfantrySlopeDegrees = 35f;
     [SerializeField, Min(0f)] private float maxVehicleSlopeDegrees = 22f;
@@ -74,18 +74,14 @@ public sealed class MapSurfaceAuthoring : MonoBehaviour
             hasRoadSurfaces = 0;
             hasBridgeSurfaces = 0;
 
-            for (int i = 0; i < blob.Cells.Length; i++)
-            {
-                if (blob.Cells[i].SurfaceCount > 1)
-                {
-                    hasLayeredCells = 1;
-                    break;
-                }
-            }
+            hasLayeredCells = (byte)(MapSurfaceBlobAccess.IsLayered(ref blob) ? 1 : 0);
 
-            for (int i = 0; i < blob.Samples.Length; i++)
+            int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref blob);
+            for (int i = 0; i < surfaceCount; i++)
             {
-                MapSurfaceSample sample = blob.Samples[i];
+                if (!MapSurfaceBlobAccess.TryGetSurfaceByIndex(ref blob, i, out MapSurfaceSample sample))
+                    continue;
+
                 if (sample.SurfaceType == MapSurfaceType.Road ||
                     sample.SurfaceType == MapSurfaceType.DirtRoad ||
                     sample.SurfaceType == MapSurfaceType.Highway ||

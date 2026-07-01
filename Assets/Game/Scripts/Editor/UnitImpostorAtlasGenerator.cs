@@ -444,6 +444,9 @@ public static class UnitImpostorAtlasGenerator
         entry.FindPropertyRelative("columns").intValue = Columns;
         entry.FindPropertyRelative("rows").intValue = Rows;
         entry.FindPropertyRelative("size").vector2Value = size;
+        SerializedProperty groundAnchor = entry.FindPropertyRelative("groundAnchorNormalized");
+        if (groundAnchor != null)
+            groundAnchor.floatValue = 0f;
         serializedRegistry.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(registry);
     }

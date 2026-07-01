@@ -70,17 +70,7 @@ public sealed class MapSurfaceSampler
             return false;
 
         ref MapSurfaceBlob blob = ref context.Surface.SurfaceBlob.Value;
-        for (int i = 0; i < blob.Samples.Length; i++)
-        {
-            MapSurfaceSample candidate = blob.Samples[i];
-            if (candidate.SurfaceId != surfaceId)
-                continue;
-
-            sample = candidate;
-            return true;
-        }
-
-        return false;
+        return MapSurfaceBlobAccess.TryGetSurfaceById(ref blob, surfaceId, out sample);
     }
 
     public bool TryGetNearestValidSurface(Context context, int2 cell, out MapSurfaceSample sample)

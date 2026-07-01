@@ -4,7 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public sealed class UnitImpostorAtlasEntry
 {
-    private const float DefaultGroundAnchorNormalized = 0.25f;
+    private const float DefaultGroundAnchorNormalized = 0f;
 
     [SerializeField] private GameObject prefab;
     [SerializeField] private Texture2D atlas;
@@ -20,9 +20,7 @@ public sealed class UnitImpostorAtlasEntry
     public int Columns => Mathf.Max(1, columns);
     public int Rows => Mathf.Max(1, rows);
     public Vector2 Size => size;
-    public float GroundAnchorNormalized => groundAnchorNormalized > 0f
-        ? Mathf.Clamp(groundAnchorNormalized, 0f, 0.45f)
-        : DefaultGroundAnchorNormalized;
+    public float GroundAnchorNormalized => Mathf.Clamp(groundAnchorNormalized, 0f, 0.45f);
 }
 
 [CreateAssetMenu(menuName = "Game/Config/Unit Prefab Registry")]

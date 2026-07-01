@@ -15,22 +15,7 @@ public readonly struct MapSurfaceLayerAccess
         }
 
         ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
-        int index = cell.x + cell.y * surface.Dimensions.x;
-        if ((uint)index >= (uint)blob.Cells.Length)
-            return false;
-
-        MapSurfaceCell cellData = blob.Cells[index];
-        if (cellData.SurfaceCount == 0)
-            return false;
-
-        range = new MapSurfaceCellSurfaceRange
-        {
-            FirstSurfaceIndex = cellData.FirstSurfaceIndex,
-            SurfaceCount = cellData.SurfaceCount,
-            InlineSurfaceIndex = cellData.InlineSurfaceIndex,
-            IsLayered = (byte)(cellData.SurfaceCount > 1 ? 1 : 0)
-        };
-        return true;
+        return MapSurfaceBlobAccess.TryGetSurfaceRange(ref blob, cell, out range);
     }
 
     public bool TryGetSurface(MapSurfaceComponent surface, MapSurfaceCellSurfaceRange range, int surfaceOffset, out MapSurfaceSample sample)
@@ -46,12 +31,7 @@ public readonly struct MapSurfaceLayerAccess
         }
 
         ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
-        int surfaceIndex = range.FirstSurfaceIndex + surfaceOffset;
-        if ((uint)surfaceIndex >= (uint)blob.Samples.Length)
-            return false;
-
-        sample = blob.Samples[surfaceIndex];
-        return true;
+        return MapSurfaceBlobAccess.TryGetSurface(ref blob, range, surfaceOffset, out sample);
     }
 
     public bool TryGetPrimarySurface(MapSurfaceComponent surface, int2 cell, out MapSurfaceSample sample)

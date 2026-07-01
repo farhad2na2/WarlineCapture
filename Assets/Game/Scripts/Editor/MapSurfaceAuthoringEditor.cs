@@ -193,6 +193,11 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         var bakeSystem = new MapSurfaceBakeSystem();
         bool baked;
         bool[] cancelled = { false };
+        bool showProgress = !Application.isBatchMode;
+        int lastLoggedBatchRow = -1;
+        System.Func<int, int, bool> shouldCancel = showProgress
+            ? (completedRows, totalRows) => ShouldCancelBakeProgress(completedRows, totalRows, cancelled)
+            : (completedRows, totalRows) => LogBatchBakeProgress(completedRows, totalRows, ref lastLoggedBatchRow);
         try
         {
             baked = sourceCount > 0
@@ -201,12 +206,13 @@ public sealed class MapSurfaceAuthoringEditor : Editor
                     sources.ToArray(),
                     Allocator.Persistent,
                     out surfaceBlob,
-                    (completedRows, totalRows) => ShouldCancelBakeProgress(completedRows, totalRows, cancelled))
+                    shouldCancel)
                 : bakeSystem.TryBuildFlatEquivalent(request, Allocator.Persistent, out surfaceBlob);
         }
         finally
         {
-            EditorUtility.ClearProgressBar();
+            if (showProgress)
+                EditorUtility.ClearProgressBar();
         }
 
         if (baked && surfaceBlob.IsCreated)
@@ -214,10 +220,14 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         if (cancelled[0])
             return false;
 
-        EditorUtility.DisplayDialog(
-            "Map Surface Bake",
-            "Bake failed. Check grid dimensions, cell size, and source meshes.",
-            "OK");
+        const string message = "Bake failed. Check grid dimensions, cell size, and source meshes.";
+        if (Application.isBatchMode)
+            Debug.LogError($"[MapSurfaceBake] {message}");
+        else
+            EditorUtility.DisplayDialog(
+                "Map Surface Bake",
+                message,
+                "OK");
         return false;
     }
 
@@ -231,6 +241,17 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         if (cancelled != null && cancelled.Length > 0)
             cancelled[0] = isCancelled;
         return isCancelled;
+    }
+
+    private static bool LogBatchBakeProgress(int completedRows, int totalRows, ref int lastLoggedRow)
+    {
+        if (completedRows == 0 || completedRows - lastLoggedRow >= 64)
+        {
+            Debug.Log($"[MapSurfaceBake] progress rows={completedRows}/{totalRows}");
+            lastLoggedRow = completedRows;
+        }
+
+        return false;
     }
 
     private MapSurfaceDataAsset ResolveOrCreateDataAsset(MapSurfaceAuthoring authoring)
@@ -262,7 +283,9 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         return new MapSurfaceBakeRequest(
             (float3)grid.Origin,
             grid.CellSize,
-            new int2(grid.Width, grid.Height));
+            new int2(grid.Width, grid.Height),
+            authoring.SamplesPerCellAxis,
+            authoring.MaxSampleHeightDelta);
     }
 
 

@@ -3,6 +3,8 @@ using Unity.Mathematics;
 
 public readonly struct MapSurfaceSpawnGrounding
 {
+    private const float MaxInfantrySupportLift = 1.5f;
+
     public bool TryGroundCellCenter(
         EntityManager entityManager,
         GridConfig grid,
@@ -16,6 +18,13 @@ public readonly struct MapSurfaceSpawnGrounding
             !TryGetSample(surface, cell, out sample))
         {
             return false;
+        }
+
+        if (TryGetHighestInfantrySupport(surface, cell, sample, out MapSurfaceSample supportSample) &&
+            supportSample.Height > sample.Height &&
+            supportSample.Height - sample.Height <= MaxInfantrySupportLift)
+        {
+            sample = supportSample;
         }
 
         worldPosition.y = sample.Height + groundOffset;
@@ -58,15 +67,59 @@ public readonly struct MapSurfaceSpawnGrounding
         }
 
         ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
-        int cellIndex = cell.x + cell.y * surface.Dimensions.x;
-        if ((uint)cellIndex >= (uint)blob.Cells.Length)
+        return MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob, cell, out sample);
+    }
+
+    private bool TryGetHighestInfantrySupport(
+        MapSurfaceComponent surface,
+        int2 centerCell,
+        MapSurfaceSample anchor,
+        out MapSurfaceSample supportSample)
+    {
+        supportSample = anchor;
+        bool found = false;
+        float bestHeight = anchor.Height;
+
+        for (int y = -1; y <= 1; y++)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                int2 cell = centerCell + new int2(x, y);
+                if (!TryGetSample(surface, cell, out MapSurfaceSample candidate))
+                    continue;
+                if (!CanUseInfantrySupportSample(anchor, candidate))
+                    continue;
+                if (found && candidate.Height <= bestHeight)
+                    continue;
+
+                supportSample = candidate;
+                bestHeight = candidate.Height;
+                found = true;
+            }
+        }
+
+        return found;
+    }
+
+    private static bool CanUseInfantrySupportSample(MapSurfaceSample anchor, MapSurfaceSample candidate)
+    {
+        if ((candidate.MovementMask & MapSurfaceMovementMask.Infantry) == 0)
+            return false;
+        if (candidate.LayerId != anchor.LayerId)
             return false;
 
-        MapSurfaceCell surfaceCell = blob.Cells[cellIndex];
-        if (surfaceCell.SurfaceCount == 0 || (uint)surfaceCell.FirstSurfaceIndex >= (uint)blob.Samples.Length)
-            return false;
+        bool anchorRoadLike = IsRoadLikeSurface(anchor.SurfaceType, anchor.Flags);
+        bool candidateRoadLike = IsRoadLikeSurface(candidate.SurfaceType, candidate.Flags);
+        return anchorRoadLike == candidateRoadLike;
+    }
 
-        sample = blob.Samples[surfaceCell.FirstSurfaceIndex];
-        return true;
+    private static bool IsRoadLikeSurface(MapSurfaceType surfaceType, MapSurfaceFlags flags)
+    {
+        return surfaceType == MapSurfaceType.Road ||
+               surfaceType == MapSurfaceType.DirtRoad ||
+               surfaceType == MapSurfaceType.Highway ||
+               surfaceType == MapSurfaceType.BridgeDeck ||
+               surfaceType == MapSurfaceType.Ramp ||
+               (flags & MapSurfaceFlags.Road) != 0;
     }
 }

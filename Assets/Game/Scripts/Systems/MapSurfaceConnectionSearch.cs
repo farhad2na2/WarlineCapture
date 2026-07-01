@@ -41,12 +41,7 @@ public readonly struct MapSurfaceConnectionSearch
         }
 
         ref MapSurfaceBlob blob = ref context.Surface.SurfaceBlob.Value;
-        int connectionIndex = sample.FirstConnectionIndex + connectionOffset;
-        if ((uint)connectionIndex >= (uint)blob.Connections.Length)
-            return false;
-
-        connection = blob.Connections[connectionIndex];
-        return true;
+        return MapSurfaceBlobAccess.TryGetConnection(ref blob, sample.FirstConnectionIndex + connectionOffset, out connection);
     }
 
     public bool TryFindConnection(

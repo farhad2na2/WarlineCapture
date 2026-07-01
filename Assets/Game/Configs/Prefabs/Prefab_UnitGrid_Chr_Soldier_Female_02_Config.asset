@@ -38,7 +38,7 @@ MonoBehaviour:
   walkSpeed: 1.7
   roadSpeedMultiplier: 1.15
   arriveDistance: 0.05
-  groundOffset: 0
+  groundOffset: 0.1
   displayName: Rifleman Female II
   description: Regular soldier armed with a rifle. Reliable frontline infantry for
     patrols, defense, and direct engagements.

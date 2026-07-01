@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 using Stopwatch = System.Diagnostics.Stopwatch;
 
@@ -22,15 +23,20 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             tests.LayeredCellsDoNotPermitSurfaceJumpWithoutExplicitConnection();
             tests.RuntimeValidationProbeCoversSlopeTankAndBridgeSeparation();
             tests.PerformanceValidationProbeKeepsSurfaceSamplingAllocationBounded();
+            tests.MapSurfaceDataAssetLoadsSingleLayerGridAsCompactRuntimeBlob();
             tests.PathingValidationUsesTraversableLayerWhenFirstSampleIsBlocked();
             tests.PathingValidationAllowsRoadsRegardlessOfSlope();
             tests.MapSurfaceBakeUsesGroundHeightWhenBlockerOverlapsTerrain();
             tests.MapSurfaceBakeIgnoresBlockerBuriedBelowGround();
             tests.MapSurfaceBakeKeepsRoadWalkableWhenBlockerMeshOverlaps();
             tests.MapSurfaceBakePrefersRoadHeightOverHigherTerrain();
-            tests.MapSurfaceBakeUsesLowestNonRoadGroundWhenAccidentalHigherGroundingMeshOverlaps();
+            tests.MapSurfaceBakeUsesHighestNonRoadGroundWhenRaisedTerrainOverlapsBase();
+            tests.MapSurfaceBakeUsesSubCellSamplesForBumpyTerrainSupport();
+            tests.UnitSurfaceTrackingKeepsInfantryAboveCurrentCellSupportHeight();
+            tests.UnitSurfaceTrackingKeepsInfantryAboveNearbyBumpySupportHeight();
+            tests.SpawnGroundingKeepsInfantryAboveNearbyBumpySupportHeight();
             tests.MovePreviewResolverUsesSelectedVehicleFootprint();
-            Debug.Log("[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=15");
+            Debug.Log("[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=20");
         }
         catch (System.Exception exception)
         {
@@ -335,6 +341,78 @@ public sealed class MapSurfaceLayeredGridFocusedTests
     }
 
     [Test]
+    public void MapSurfaceDataAssetLoadsSingleLayerGridAsCompactRuntimeBlob()
+    {
+        int width = 4;
+        int height = 3;
+        MapSurfaceCell[] cells = FlatCells(width, height);
+        var samples = new MapSurfaceSample[width * height];
+        for (int i = 0; i < samples.Length; i++)
+        {
+            samples[i] = Sample(
+                new int2(i % width, i / width),
+                i,
+                0,
+                0.25f + i * 0.125f,
+                slopeDegrees: 8f,
+                surfaceType: i == 5 ? MapSurfaceType.Road : MapSurfaceType.Terrain,
+                flags: i == 5 ? MapSurfaceFlags.Road : MapSurfaceFlags.None,
+                normal: math.normalize(new float3(0.1f, 0.98f, 0.05f)));
+        }
+
+        using SurfaceBlobScope source = CreateSurface(
+            new int2(width, height),
+            cells,
+            samples,
+            Array.Empty<MapSurfaceConnection>());
+
+        MapSurfaceDataAsset asset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
+        BlobAssetReference<MapSurfaceBlob> runtimeBlob = default;
+        try
+        {
+            asset.ConfigureBakedSurface(
+                Vector3.zero,
+                1f,
+                new Vector2Int(width, height),
+                source.Blob,
+                generatedFlatEquivalent: false);
+
+            Assert.IsTrue(asset.TryCreateRuntimeBlobAsset(Allocator.Persistent, out runtimeBlob));
+            ref MapSurfaceBlob blob = ref runtimeBlob.Value;
+            Assert.AreEqual(MapSurfaceRuntimeEncoding.SingleLayerCompact, blob.RuntimeEncoding);
+            Assert.AreEqual(0, blob.Cells.Length);
+            Assert.AreEqual(0, blob.Samples.Length);
+            Assert.AreEqual(width * height, blob.CompactSamples.Length);
+            Assert.AreEqual(width * height, MapSurfaceBlobAccess.SurfaceCount(ref blob));
+
+            Assert.IsTrue(MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob, new int2(1, 1), out MapSurfaceSample sample));
+            Assert.AreEqual(5, sample.SurfaceId);
+            Assert.AreEqual(MapSurfaceType.Road, sample.SurfaceType);
+            Assert.AreEqual(MapSurfaceFlags.Road, sample.Flags);
+            Assert.AreEqual(samples[5].Height, sample.Height, 0.011f);
+            Assert.That(math.distance(math.normalizesafe(samples[5].Normal, new float3(0f, 1f, 0f)), sample.Normal), Is.LessThan(0.02f));
+
+            var querySystem = new MapSurfaceSampler();
+            var context = new MapSurfaceSampler.Context(new MapSurfaceComponent
+            {
+                SurfaceBlob = runtimeBlob,
+                GridOrigin = blob.GridOrigin,
+                CellSize = blob.CellSize,
+                Dimensions = blob.Dimensions,
+                HasSurfaceData = 1
+            });
+            Assert.IsTrue(querySystem.TrySampleHeight(context, new int2(1, 1), out float sampledHeight));
+            Assert.AreEqual(samples[5].Height, sampledHeight, 0.011f);
+        }
+        finally
+        {
+            if (runtimeBlob.IsCreated)
+                runtimeBlob.Dispose();
+            UnityEngine.Object.DestroyImmediate(asset);
+        }
+    }
+
+    [Test]
     public void MapSurfaceBakeUsesGroundHeightWhenBlockerOverlapsTerrain()
     {
         Mesh terrain = CreatePlaneMesh(0f);
@@ -523,10 +601,10 @@ public sealed class MapSurfaceLayeredGridFocusedTests
     }
 
     [Test]
-    public void MapSurfaceBakeUsesLowestNonRoadGroundWhenAccidentalHigherGroundingMeshOverlaps()
+    public void MapSurfaceBakeUsesHighestNonRoadGroundWhenRaisedTerrainOverlapsBase()
     {
         Mesh ground = CreatePlaneMesh(0f);
-        Mesh propLikeGroundingMesh = CreatePlaneMesh(0.8f);
+        Mesh raisedTerrain = CreatePlaneMesh(0.8f);
         BlobAssetReference<MapSurfaceBlob> blob = default;
         try
         {
@@ -543,7 +621,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
                         MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.BuildingPlacement,
                         0),
                     new MapSurfaceMeshBakeSource(
-                        propLikeGroundingMesh,
+                        raisedTerrain,
                         Matrix4x4.identity,
                         MapSurfaceType.Terrain,
                         MapSurfaceFlags.None,
@@ -556,7 +634,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             Assert.IsTrue(baked);
             ref MapSurfaceBlob surface = ref blob.Value;
             MapSurfaceSample sample = surface.Samples[0];
-            Assert.AreEqual(0f, sample.Height, 0.0001f);
+            Assert.AreEqual(0.8f, sample.Height, 0.0001f);
             Assert.AreEqual(MapSurfaceType.Terrain, sample.SurfaceType);
             Assert.IsTrue((sample.MovementMask & MapSurfaceMovementMask.Infantry) != 0);
         }
@@ -565,7 +643,205 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             if (blob.IsCreated)
                 blob.Dispose();
             UnityEngine.Object.DestroyImmediate(ground);
-            UnityEngine.Object.DestroyImmediate(propLikeGroundingMesh);
+            UnityEngine.Object.DestroyImmediate(raisedTerrain);
+        }
+    }
+
+    [Test]
+    public void MapSurfaceBakeUsesSubCellSamplesForBumpyTerrainSupport()
+    {
+        Mesh bumpyTerrain = CreateRaisedCornerPlateauMesh(0.4f);
+        BlobAssetReference<MapSurfaceBlob> blob = default;
+        try
+        {
+            var bakeSystem = new MapSurfaceBakeSystem();
+            bool baked = bakeSystem.TryBuildSingleLayerTerrain(
+                new MapSurfaceBakeRequest(
+                    float3.zero,
+                    1f,
+                    new int2(1, 1),
+                    samplesPerCellAxis: 2,
+                    maxSampleHeightDelta: 0.05f),
+                new[]
+                {
+                    new MapSurfaceMeshBakeSource(
+                        bumpyTerrain,
+                        Matrix4x4.identity,
+                        MapSurfaceType.Terrain,
+                        MapSurfaceFlags.None,
+                        MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.BuildingPlacement,
+                        0)
+                },
+                Allocator.Persistent,
+                out blob);
+
+            Assert.IsTrue(baked);
+            ref MapSurfaceBlob surface = ref blob.Value;
+            MapSurfaceSample sample = surface.Samples[0];
+            Assert.AreEqual(0.4f, sample.Height, 0.0001f);
+            Assert.AreEqual(MapSurfaceType.Terrain, sample.SurfaceType);
+            Assert.IsTrue((sample.MovementMask & MapSurfaceMovementMask.Infantry) != 0);
+        }
+        finally
+        {
+            if (blob.IsCreated)
+                blob.Dispose();
+            UnityEngine.Object.DestroyImmediate(bumpyTerrain);
+        }
+    }
+
+    [Test]
+    public void UnitSurfaceTrackingKeepsInfantryAboveCurrentCellSupportHeight()
+    {
+        using SurfaceBlobScope scope = CreateSurface(
+            new int2(2, 1),
+            FlatCells(2, 1),
+            new[]
+            {
+                Sample(new int2(0, 0), 1, 0, 1f),
+                Sample(new int2(1, 0), 2, 0, 0f)
+            },
+            Array.Empty<MapSurfaceConnection>());
+
+        World world = new("UnitSurfaceTrackingKeepsInfantryAboveCurrentCellSupportHeight");
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity surfaceEntity = em.CreateEntity(typeof(MapSurfaceComponent));
+            em.SetComponentData(surfaceEntity, scope.Surface);
+
+            Entity unit = em.CreateEntity(
+                typeof(UnitSurfaceComponent),
+                typeof(UnitGrid),
+                typeof(UnitMovementBehavior),
+                typeof(LocalTransform),
+                typeof(UnitGroundOffsetComponent));
+            em.SetComponentData(unit, new UnitSurfaceComponent());
+            em.SetComponentData(unit, new UnitGrid { Cell = int2.zero });
+            em.SetComponentData(unit, new UnitMovementBehavior { UsesVehicleMotion = 0 });
+            em.SetComponentData(unit, LocalTransform.FromPosition(new float3(0.9f, -5f, 0.5f)));
+            em.SetComponentData(unit, new UnitGroundOffsetComponent { Value = 0.1f });
+
+            SystemHandle trackingSystem = world.CreateSystem<UnitSurfaceTrackingSystem>();
+            SystemHandle groundingSystem = world.CreateSystem<UnitGroundingSystem>();
+            trackingSystem.Update(world.Unmanaged);
+            groundingSystem.Update(world.Unmanaged);
+            em.CompleteAllTrackedJobs();
+
+            UnitSurfaceComponent unitSurface = em.GetComponentData<UnitSurfaceComponent>(unit);
+            LocalTransform transform = em.GetComponentData<LocalTransform>(unit);
+            Assert.AreEqual(1f, unitSurface.LastSampledHeight, 0.0001f);
+            Assert.AreEqual(1.1f, transform.Position.y, 0.0001f);
+            Assert.AreEqual(1, unitSurface.IsGrounded);
+        }
+        finally
+        {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void UnitSurfaceTrackingKeepsInfantryAboveNearbyBumpySupportHeight()
+    {
+        using SurfaceBlobScope scope = CreateSurface(
+            new int2(3, 3),
+            FlatCells(3, 3),
+            new[]
+            {
+                Sample(new int2(0, 0), 1, 0, 0f),
+                Sample(new int2(1, 0), 2, 0, 0f),
+                Sample(new int2(2, 0), 3, 0, 0f),
+                Sample(new int2(0, 1), 4, 0, 0f),
+                Sample(new int2(1, 1), 5, 0, 0f),
+                Sample(new int2(2, 1), 6, 0, 0.8f),
+                Sample(new int2(0, 2), 7, 0, 0f),
+                Sample(new int2(1, 2), 8, 0, 0f),
+                Sample(new int2(2, 2), 9, 0, 0f)
+            },
+            Array.Empty<MapSurfaceConnection>());
+
+        World world = new("UnitSurfaceTrackingKeepsInfantryAboveNearbyBumpySupportHeight");
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity surfaceEntity = em.CreateEntity(typeof(MapSurfaceComponent));
+            em.SetComponentData(surfaceEntity, scope.Surface);
+
+            Entity unit = em.CreateEntity(
+                typeof(UnitSurfaceComponent),
+                typeof(UnitGrid),
+                typeof(UnitMovementBehavior),
+                typeof(LocalTransform),
+                typeof(UnitGroundOffsetComponent));
+            em.SetComponentData(unit, new UnitSurfaceComponent());
+            em.SetComponentData(unit, new UnitGrid { Cell = new int2(1, 1) });
+            em.SetComponentData(unit, new UnitMovementBehavior { UsesVehicleMotion = 0 });
+            em.SetComponentData(unit, LocalTransform.FromPosition(new float3(1.5f, -5f, 1.5f)));
+            em.SetComponentData(unit, new UnitGroundOffsetComponent { Value = 0.1f });
+
+            SystemHandle trackingSystem = world.CreateSystem<UnitSurfaceTrackingSystem>();
+            SystemHandle groundingSystem = world.CreateSystem<UnitGroundingSystem>();
+            trackingSystem.Update(world.Unmanaged);
+            groundingSystem.Update(world.Unmanaged);
+            em.CompleteAllTrackedJobs();
+
+            UnitSurfaceComponent unitSurface = em.GetComponentData<UnitSurfaceComponent>(unit);
+            LocalTransform transform = em.GetComponentData<LocalTransform>(unit);
+            Assert.AreEqual(0.8f, unitSurface.LastSampledHeight, 0.0001f);
+            Assert.AreEqual(0.9f, transform.Position.y, 0.0001f);
+            Assert.AreEqual(1, unitSurface.IsGrounded);
+        }
+        finally
+        {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void SpawnGroundingKeepsInfantryAboveNearbyBumpySupportHeight()
+    {
+        using SurfaceBlobScope scope = CreateSurface(
+            new int2(3, 3),
+            FlatCells(3, 3),
+            new[]
+            {
+                Sample(new int2(0, 0), 1, 0, 0f),
+                Sample(new int2(1, 0), 2, 0, 0f),
+                Sample(new int2(2, 0), 3, 0, 0f),
+                Sample(new int2(0, 1), 4, 0, 0f),
+                Sample(new int2(1, 1), 5, 0, 0f),
+                Sample(new int2(2, 1), 6, 0, 0.8f),
+                Sample(new int2(0, 2), 7, 0, 0f),
+                Sample(new int2(1, 2), 8, 0, 0f),
+                Sample(new int2(2, 2), 9, 0, 0f)
+            },
+            Array.Empty<MapSurfaceConnection>());
+
+        World world = new("SpawnGroundingKeepsInfantryAboveNearbyBumpySupportHeight");
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity surfaceEntity = em.CreateEntity(typeof(MapSurfaceComponent));
+            em.SetComponentData(surfaceEntity, scope.Surface);
+            GridConfig grid = new()
+            {
+                Width = 3,
+                Height = 3,
+                CellSize = 1f,
+                Origin = float3.zero
+            };
+
+            int2 cell = new(1, 1);
+            float3 worldPosition = GridUtils.CellToWorldCenter(grid, cell);
+            MapSurfaceSpawnGrounding grounding = new();
+
+            Assert.IsTrue(grounding.TryGroundCellCenter(em, grid, cell, ref worldPosition, out MapSurfaceSample sample, 0.1f));
+            Assert.AreEqual(0.8f, sample.Height, 0.0001f);
+            Assert.AreEqual(0.9f, worldPosition.y, 0.0001f);
+        }
+        finally
+        {
+            world.Dispose();
         }
     }
 
@@ -761,6 +1037,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
         root.GridOrigin = float3.zero;
         root.CellSize = 1f;
         root.Dimensions = dimensions;
+        root.RuntimeEncoding = MapSurfaceRuntimeEncoding.Full;
 
         BlobBuilderArray<MapSurfaceCell> cellArray = builder.Allocate(ref root.Cells, cells.Length);
         for (int i = 0; i < cells.Length; i++)
@@ -773,6 +1050,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
         BlobBuilderArray<MapSurfaceConnection> connectionArray = builder.Allocate(ref root.Connections, connections.Length);
         for (int i = 0; i < connections.Length; i++)
             connectionArray[i] = connections[i];
+        builder.Allocate(ref root.CompactSamples, 0);
 
         BlobAssetReference<MapSurfaceBlob> blob = builder.CreateBlobAssetReference<MapSurfaceBlob>(Allocator.Persistent);
         builder.Dispose();
@@ -791,6 +1069,36 @@ public sealed class MapSurfaceLayeredGridFocusedTests
                 new Vector3(1f, y, 1f)
             },
             triangles = new[] { 0, 2, 1, 1, 2, 3 }
+        };
+    }
+
+    private static Mesh CreateRaisedCornerPlateauMesh(float height)
+    {
+        return new Mesh
+        {
+            vertices = new[]
+            {
+                new Vector3(0f, 0f, 0f),
+                new Vector3(1f, 0f, 0f),
+                new Vector3(0f, 0f, 0.5f),
+                new Vector3(0.5f, 0f, 0.5f),
+                new Vector3(1f, 0f, 0.5f),
+                new Vector3(0f, 0f, 1f),
+                new Vector3(0.5f, 0f, 1f),
+                new Vector3(0.5f, height, 0.5f),
+                new Vector3(1f, height, 0.5f),
+                new Vector3(0.5f, height, 1f),
+                new Vector3(1f, height, 1f)
+            },
+            triangles = new[]
+            {
+                0, 2, 1,
+                1, 2, 4,
+                0, 5, 2,
+                2, 5, 6,
+                7, 9, 8,
+                8, 9, 10
+            }
         };
     }
 
@@ -1011,9 +1319,11 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
             const int estimatedCellBytes = 8;
             const int estimatedSampleBytes = 64;
+            const int estimatedCompactSampleBytes = 12;
             const int estimatedConnectionBytes = 24;
             return blob.Cells.Length * estimatedCellBytes +
                    blob.Samples.Length * estimatedSampleBytes +
+                   blob.CompactSamples.Length * estimatedCompactSampleBytes +
                    blob.Connections.Length * estimatedConnectionBytes;
         }
 
@@ -1032,6 +1342,7 @@ public sealed class MapSurfaceLayeredGridFocusedTests
     private readonly struct SurfaceBlobScope : IDisposable
     {
         private readonly BlobAssetReference<MapSurfaceBlob> _blob;
+        public BlobAssetReference<MapSurfaceBlob> Blob => _blob;
         public readonly MapSurfaceComponent Surface;
 
         public SurfaceBlobScope(BlobAssetReference<MapSurfaceBlob> blob, int2 dimensions)

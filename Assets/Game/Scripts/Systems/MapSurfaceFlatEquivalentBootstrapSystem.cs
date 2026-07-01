@@ -92,40 +92,33 @@ public partial struct MapSurfaceFlatEquivalentBootstrapSystem : ISystem
         root.GridOrigin = grid.Origin;
         root.CellSize = grid.CellSize;
         root.Dimensions = new int2(grid.Width, grid.Height);
+        root.RuntimeEncoding = MapSurfaceRuntimeEncoding.SingleLayerCompact;
+        root.CompactMinHeight = grid.Origin.y;
+        root.CompactHeightStep = 0.01f;
 
-        BlobBuilderArray<MapSurfaceCell> cells = builder.Allocate(ref root.Cells, cellCount);
-        BlobBuilderArray<MapSurfaceSample> samples = builder.Allocate(ref root.Samples, cellCount);
+        builder.Allocate(ref root.Cells, 0);
+        builder.Allocate(ref root.Samples, 0);
         builder.Allocate(ref root.Connections, 0);
+        BlobBuilderArray<MapSurfaceCompactSample> samples = builder.Allocate(ref root.CompactSamples, cellCount);
 
         for (int y = 0; y < grid.Height; y++)
         {
             for (int x = 0; x < grid.Width; x++)
             {
                 int index = x + y * grid.Width;
-                var cell = new int2(x, y);
 
-                cells[index] = new MapSurfaceCell
+                samples[index] = new MapSurfaceCompactSample
                 {
-                    FirstSurfaceIndex = index,
-                    SurfaceCount = 1,
-                    InlineSurfaceIndex = (ushort)index
-                };
-
-                samples[index] = new MapSurfaceSample
-                {
-                    Cell = cell,
-                    SurfaceId = index,
                     LayerId = 0,
-                    Height = grid.Origin.y,
-                    Normal = new float3(0f, 1f, 0f),
-                    SlopeDegrees = 0f,
+                    PackedHeight = 0,
+                    NormalX = 0,
+                    NormalY = sbyte.MaxValue,
+                    NormalZ = 0,
                     SurfaceType = MapSurfaceType.Terrain,
                     MovementMask = MapSurfaceMovementMask.AllGroundUnits |
                                    MapSurfaceMovementMask.AirGrounded |
                                    MapSurfaceMovementMask.BuildingPlacement,
-                    Flags = MapSurfaceFlags.None,
-                    FirstConnectionIndex = 0,
-                    ConnectionCount = 0
+                    Flags = MapSurfaceFlags.None
                 };
             }
         }

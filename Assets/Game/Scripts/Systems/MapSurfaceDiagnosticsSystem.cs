@@ -113,9 +113,9 @@ public partial struct MapSurfaceDiagnosticsSystem : ISystem
             return signature;
 
         ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
-        signature.CellCount = blob.Cells.Length;
-        signature.SurfaceCount = blob.Samples.Length;
-        signature.ConnectionCount = blob.Connections.Length;
+        signature.CellCount = MapSurfaceBlobAccess.CellCount(ref blob);
+        signature.SurfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref blob);
+        signature.ConnectionCount = MapSurfaceBlobAccess.ConnectionCount(ref blob);
         return signature;
     }
 
@@ -127,19 +127,18 @@ public partial struct MapSurfaceDiagnosticsSystem : ISystem
             return diagnostics;
 
         ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
-        diagnostics.CellCount = blob.Cells.Length;
-        diagnostics.SurfaceCount = blob.Samples.Length;
-        diagnostics.ConnectionCount = blob.Connections.Length;
+        diagnostics.CellCount = MapSurfaceBlobAccess.CellCount(ref blob);
+        diagnostics.SurfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref blob);
+        diagnostics.ConnectionCount = MapSurfaceBlobAccess.ConnectionCount(ref blob);
 
-        for (int i = 0; i < blob.Cells.Length; i++)
-        {
-            if (blob.Cells[i].SurfaceCount > 1)
-                diagnostics.LayeredCellCount++;
-        }
+        diagnostics.LayeredCellCount = MapSurfaceBlobAccess.CountLayeredCells(ref blob);
 
-        for (int i = 0; i < blob.Samples.Length; i++)
+        int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref blob);
+        for (int i = 0; i < surfaceCount; i++)
         {
-            MapSurfaceSample sample = blob.Samples[i];
+            if (!MapSurfaceBlobAccess.TryGetSurfaceByIndex(ref blob, i, out MapSurfaceSample sample))
+                continue;
+
             if ((sample.Flags & MapSurfaceFlags.Road) != 0)
                 diagnostics.RoadSurfaceCount++;
             if ((sample.Flags & MapSurfaceFlags.Bridge) != 0)

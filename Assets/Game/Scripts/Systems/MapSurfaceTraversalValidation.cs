@@ -17,27 +17,20 @@ public readonly struct MapSurfaceTraversalValidation
         }
 
         ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
-        int index = cell.x + cell.y * surface.Dimensions.x;
-        if ((uint)index >= (uint)blob.Cells.Length)
-            return false;
-
-        MapSurfaceCell surfaceCell = blob.Cells[index];
-        if (surfaceCell.SurfaceCount == 0 || (uint)surfaceCell.FirstSurfaceIndex >= (uint)blob.Samples.Length)
-            return false;
-
-        int firstSurfaceIndex = surfaceCell.FirstSurfaceIndex;
-        int surfaceEnd = firstSurfaceIndex + surfaceCell.SurfaceCount;
-        if ((uint)surfaceEnd > (uint)blob.Samples.Length)
+        if (!MapSurfaceBlobAccess.TryGetSurfaceRange(ref blob, cell, out MapSurfaceCellSurfaceRange range))
             return false;
 
         float maxSlopeDegrees = GetMaxSlopeForMovement(movementMask);
         if (maxSlopeDegrees <= 0f)
             return false;
 
-        for (int i = firstSurfaceIndex; i < surfaceEnd; i++)
+        for (int i = 0; i < range.SurfaceCount; i++)
         {
-            if (CanTraverseSample(blob.Samples[i], movementMask, maxSlopeDegrees))
+            if (MapSurfaceBlobAccess.TryGetSurface(ref blob, range, i, out MapSurfaceSample sample) &&
+                CanTraverseSample(sample, movementMask, maxSlopeDegrees))
+            {
                 return true;
+            }
         }
 
         return false;

@@ -20,15 +20,10 @@ public readonly struct MapSurfacePathCost
         }
 
         ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
-        int index = cell.x + cell.y * surface.Dimensions.x;
-        if ((uint)index >= (uint)blob.Cells.Length)
+        if (!MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob, cell, out MapSurfaceSample sample))
             return 0;
 
-        MapSurfaceCell surfaceCell = blob.Cells[index];
-        if (surfaceCell.SurfaceCount == 0 || (uint)surfaceCell.FirstSurfaceIndex >= (uint)blob.Samples.Length)
-            return 0;
-
-        float slope = math.max(0f, blob.Samples[surfaceCell.FirstSurfaceIndex].SlopeDegrees);
+        float slope = math.max(0f, sample.SlopeDegrees);
         if (slope <= MapSurfaceSlopeClassifier.FlatSlopeDegrees)
             return 0;
         if (slope <= MapSurfaceSlopeClassifier.GentleSlopeDegrees)

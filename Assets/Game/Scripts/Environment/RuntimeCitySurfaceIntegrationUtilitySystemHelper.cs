@@ -85,15 +85,6 @@ internal sealed class RuntimeCitySurfaceIntegrationUtilitySystemHelper
         }
 
         ref MapSurfaceBlob blob = ref _surface.SurfaceBlob.Value;
-        int index = surfaceCell.x + surfaceCell.y * _surface.Dimensions.x;
-        if ((uint)index >= (uint)blob.Cells.Length)
-            return false;
-
-        MapSurfaceCell cellData = blob.Cells[index];
-        if (cellData.SurfaceCount == 0 || (uint)cellData.FirstSurfaceIndex >= (uint)blob.Samples.Length)
-            return false;
-
-        sample = blob.Samples[cellData.FirstSurfaceIndex];
-        return true;
+        return MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob, surfaceCell, out sample);
     }
 }

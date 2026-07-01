@@ -10,12 +10,21 @@ public readonly struct MapSurfaceBakeRequest
     public readonly float3 GridOrigin;
     public readonly float CellSize;
     public readonly int2 Dimensions;
+    public readonly int SamplesPerCellAxis;
+    public readonly float MaxSampleHeightDelta;
 
-    public MapSurfaceBakeRequest(float3 gridOrigin, float cellSize, int2 dimensions)
+    public MapSurfaceBakeRequest(
+        float3 gridOrigin,
+        float cellSize,
+        int2 dimensions,
+        int samplesPerCellAxis = 1,
+        float maxSampleHeightDelta = 0.25f)
     {
         GridOrigin = gridOrigin;
         CellSize = cellSize;
         Dimensions = dimensions;
+        SamplesPerCellAxis = math.max(1, samplesPerCellAxis);
+        MaxSampleHeightDelta = math.max(0f, maxSampleHeightDelta);
     }
 }
 
@@ -47,7 +56,7 @@ public readonly struct MapSurfaceMeshBakeSource
 
 public sealed class MapSurfaceBakeSystem
 {
-    private const int SpatialBucketSizeInCells = 16;
+    private const int SpatialBucketSizeInCells = 8;
     private const float BlockerBelowSurfaceIgnoreTolerance = 0.25f;
     private const string MissingSurfaceReferenceError = "Match must have exactly one active MapSurfaceAuthoring with a baked MapSurfaceDataAsset reference.";
     private const string MultipleSurfaceReferencesError = "Match has multiple active MapSurfaceAuthoring baked surface references. Keep exactly one active map-surface data reference.";
@@ -119,10 +128,12 @@ public sealed class MapSurfaceBakeSystem
         root.GridOrigin = request.GridOrigin;
         root.CellSize = request.CellSize;
         root.Dimensions = request.Dimensions;
+        root.RuntimeEncoding = MapSurfaceRuntimeEncoding.Full;
 
         BlobBuilderArray<MapSurfaceCell> cells = builder.Allocate(ref root.Cells, cellCount);
         BlobBuilderArray<MapSurfaceSample> samples = builder.Allocate(ref root.Samples, cellCount);
         builder.Allocate(ref root.Connections, 0);
+        builder.Allocate(ref root.CompactSamples, 0);
 
         for (int y = 0; y < request.Dimensions.y; y++)
         {
@@ -181,10 +192,12 @@ public sealed class MapSurfaceBakeSystem
         root.GridOrigin = request.GridOrigin;
         root.CellSize = request.CellSize;
         root.Dimensions = request.Dimensions;
+        root.RuntimeEncoding = MapSurfaceRuntimeEncoding.Full;
 
         BlobBuilderArray<MapSurfaceCell> cells = builder.Allocate(ref root.Cells, cellCount);
         BlobBuilderArray<MapSurfaceSample> samples = builder.Allocate(ref root.Samples, cellCount);
         builder.Allocate(ref root.Connections, 0);
+        builder.Allocate(ref root.CompactSamples, 0);
 
         for (int y = 0; y < request.Dimensions.y; y++)
         {
@@ -195,11 +208,6 @@ public sealed class MapSurfaceBakeSystem
             {
                 int index = x + y * request.Dimensions.x;
                 var cell = new int2(x, y);
-                float3 worldCenter = request.GridOrigin + new float3(
-                    (x + 0.5f) * request.CellSize,
-                    0f,
-                    (y + 0.5f) * request.CellSize);
-
                 cells[index] = new MapSurfaceCell
                 {
                     FirstSurfaceIndex = index,
@@ -207,10 +215,10 @@ public sealed class MapSurfaceBakeSystem
                     InlineSurfaceIndex = (ushort)index
                 };
 
-                bool sampled = TrySampleHighestGroundingSurface(
+                bool sampled = TrySampleCellGroundingSurface(
                     spatialIndex,
+                    request,
                     cell,
-                    new float2(worldCenter.x, worldCenter.z),
                     out float height,
                     out float3 normal,
                     out MapSurfaceType surfaceType,
@@ -230,10 +238,10 @@ public sealed class MapSurfaceBakeSystem
                     layerId = 0;
                 }
 
-                bool blockerCoversCell = TrySampleHighestBlocker(
+                bool blockerCoversCell = TrySampleCellBlockerSurface(
                     spatialIndex,
+                    request,
                     cell,
-                    new float2(worldCenter.x, worldCenter.z),
                     out float blockerHeight,
                     out _,
                     out _,
@@ -270,10 +278,10 @@ public sealed class MapSurfaceBakeSystem
         return surfaceBlob.IsCreated;
     }
 
-    private static bool TrySampleHighestGroundingSurface(
+    private static bool TrySampleCellGroundingSurface(
         SpatialTriangleIndex spatialIndex,
+        MapSurfaceBakeRequest request,
         int2 cell,
-        float2 sampleXZ,
         out float height,
         out float3 normal,
         out MapSurfaceType surfaceType,
@@ -281,10 +289,12 @@ public sealed class MapSurfaceBakeSystem
         out MapSurfaceMovementMask movementMask,
         out int layerId)
     {
-        return TrySampleGroundingSurface(
+        return TrySampleCellSurface(
             spatialIndex,
+            request,
             cell,
-            sampleXZ,
+            includeBlocked: false,
+            preferRoadLike: true,
             out height,
             out normal,
             out surfaceType,
@@ -293,10 +303,10 @@ public sealed class MapSurfaceBakeSystem
             out layerId);
     }
 
-    private static bool TrySampleHighestBlocker(
+    private static bool TrySampleCellBlockerSurface(
         SpatialTriangleIndex spatialIndex,
+        MapSurfaceBakeRequest request,
         int2 cell,
-        float2 sampleXZ,
         out float height,
         out float3 normal,
         out MapSurfaceType surfaceType,
@@ -304,10 +314,10 @@ public sealed class MapSurfaceBakeSystem
         out MapSurfaceMovementMask movementMask,
         out int layerId)
     {
-        return TrySampleHighestSurface(
+        return TrySampleCellSurface(
             spatialIndex,
+            request,
             cell,
-            sampleXZ,
             includeBlocked: true,
             preferRoadLike: false,
             out height,
@@ -316,6 +326,177 @@ public sealed class MapSurfaceBakeSystem
             out flags,
             out movementMask,
             out layerId);
+    }
+
+    private static bool TrySampleCellSurface(
+        SpatialTriangleIndex spatialIndex,
+        MapSurfaceBakeRequest request,
+        int2 cell,
+        bool includeBlocked,
+        bool preferRoadLike,
+        out float height,
+        out float3 normal,
+        out MapSurfaceType surfaceType,
+        out MapSurfaceFlags flags,
+        out MapSurfaceMovementMask movementMask,
+        out int layerId)
+    {
+        height = 0f;
+        normal = new float3(0f, 1f, 0f);
+        surfaceType = MapSurfaceType.Terrain;
+        flags = MapSurfaceFlags.None;
+        movementMask = includeBlocked
+            ? MapSurfaceMovementMask.None
+            : MapSurfaceMovementMask.AllGroundUnits |
+              MapSurfaceMovementMask.AirGrounded |
+              MapSurfaceMovementMask.BuildingPlacement;
+        layerId = 0;
+
+        if (spatialIndex == null || request.CellSize <= 0f)
+            return false;
+
+        bool found = false;
+        bool foundCenter = false;
+        bool foundRoadLikeSample = false;
+        float minHeight = float.MaxValue;
+        float maxHeight = float.MinValue;
+        SurfacePointSample centerSample = default;
+        SurfacePointSample highestSample = default;
+        SurfacePointSample highestRoadLikeSample = default;
+
+        if (TrySampleSurfacePoint(
+                spatialIndex,
+                request,
+                cell,
+                new float2(0.5f, 0.5f),
+                includeBlocked,
+                preferRoadLike,
+                out SurfacePointSample pointSample))
+        {
+            found = true;
+            foundCenter = true;
+            centerSample = pointSample;
+            highestSample = pointSample;
+            minHeight = pointSample.Height;
+            maxHeight = pointSample.Height;
+            if (preferRoadLike && IsRoadLikeSurface(pointSample.SurfaceType, pointSample.Flags))
+            {
+                foundRoadLikeSample = true;
+                highestRoadLikeSample = pointSample;
+            }
+        }
+
+        int samplesPerAxis = math.max(1, request.SamplesPerCellAxis);
+        if (samplesPerAxis > 1)
+        {
+            for (int y = 0; y < samplesPerAxis; y++)
+            {
+                for (int x = 0; x < samplesPerAxis; x++)
+                {
+                    float2 normalized = new(
+                        (x + 0.5f) / samplesPerAxis,
+                        (y + 0.5f) / samplesPerAxis);
+                    if (math.lengthsq(normalized - new float2(0.5f, 0.5f)) <= 0.000001f)
+                        continue;
+
+                    if (!TrySampleSurfacePoint(
+                            spatialIndex,
+                            request,
+                            cell,
+                            normalized,
+                            includeBlocked,
+                            preferRoadLike,
+                            out pointSample))
+                    {
+                        continue;
+                    }
+
+                    if (!found || pointSample.Height > highestSample.Height)
+                        highestSample = pointSample;
+                    if (preferRoadLike && IsRoadLikeSurface(pointSample.SurfaceType, pointSample.Flags))
+                    {
+                        if (!foundRoadLikeSample || pointSample.Height > highestRoadLikeSample.Height)
+                            highestRoadLikeSample = pointSample;
+                        foundRoadLikeSample = true;
+                    }
+                    minHeight = found ? math.min(minHeight, pointSample.Height) : pointSample.Height;
+                    maxHeight = found ? math.max(maxHeight, pointSample.Height) : pointSample.Height;
+                    found = true;
+                }
+            }
+        }
+
+        if (!found)
+            return false;
+
+        SurfacePointSample selected = preferRoadLike && foundRoadLikeSample
+            ? highestRoadLikeSample
+            : !foundCenter || maxHeight - minHeight > request.MaxSampleHeightDelta
+            ? highestSample
+            : centerSample;
+        height = selected.Height;
+        normal = selected.Normal;
+        surfaceType = selected.SurfaceType;
+        flags = selected.Flags;
+        movementMask = selected.MovementMask;
+        layerId = selected.LayerId;
+        return true;
+    }
+
+    private static bool TrySampleSurfacePoint(
+        SpatialTriangleIndex spatialIndex,
+        MapSurfaceBakeRequest request,
+        int2 cell,
+        float2 normalizedCellPoint,
+        bool includeBlocked,
+        bool preferRoadLike,
+        out SurfacePointSample sample)
+    {
+        sample = default;
+        float2 sampleXZ = new(
+            request.GridOrigin.x + ((cell.x + normalizedCellPoint.x) * request.CellSize),
+            request.GridOrigin.z + ((cell.y + normalizedCellPoint.y) * request.CellSize));
+        float height;
+        float3 normal;
+        MapSurfaceType surfaceType;
+        MapSurfaceFlags flags;
+        MapSurfaceMovementMask movementMask;
+        int layerId;
+        bool sampled;
+        if (includeBlocked)
+        {
+            sampled = TrySampleHighestSurface(
+                spatialIndex,
+                cell,
+                sampleXZ,
+                includeBlocked: true,
+                preferRoadLike,
+                out height,
+                out normal,
+                out surfaceType,
+                out flags,
+                out movementMask,
+                out layerId);
+        }
+        else
+        {
+            sampled = TrySampleGroundingSurface(
+                spatialIndex,
+                cell,
+                sampleXZ,
+                out height,
+                out normal,
+                out surfaceType,
+                out flags,
+                out movementMask,
+                out layerId);
+        }
+
+        if (!sampled)
+            return false;
+
+        sample = new SurfacePointSample(height, normal, surfaceType, flags, movementMask, layerId);
+        return true;
     }
 
     private static bool TrySampleGroundingSurface(
@@ -371,7 +552,7 @@ public sealed class MapSurfaceBakeSystem
             {
                 if (foundRoadLike)
                     continue;
-                if (found && candidateHeight >= height)
+                if (found && candidateHeight <= height)
                     continue;
 
                 found = true;
@@ -606,6 +787,32 @@ public sealed class MapSurfaceBakeSystem
             A = a;
             B = b;
             C = c;
+            Normal = normal;
+            SurfaceType = surfaceType;
+            Flags = flags;
+            MovementMask = movementMask;
+            LayerId = layerId;
+        }
+    }
+
+    private readonly struct SurfacePointSample
+    {
+        public readonly float Height;
+        public readonly float3 Normal;
+        public readonly MapSurfaceType SurfaceType;
+        public readonly MapSurfaceFlags Flags;
+        public readonly MapSurfaceMovementMask MovementMask;
+        public readonly int LayerId;
+
+        public SurfacePointSample(
+            float height,
+            float3 normal,
+            MapSurfaceType surfaceType,
+            MapSurfaceFlags flags,
+            MapSurfaceMovementMask movementMask,
+            int layerId)
+        {
+            Height = height;
             Normal = normal;
             SurfaceType = surfaceType;
             Flags = flags;

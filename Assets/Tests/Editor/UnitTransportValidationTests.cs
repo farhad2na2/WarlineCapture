@@ -3353,6 +3353,7 @@ public sealed class UnitTransportValidationTests
         root.GridOrigin = float3.zero;
         root.CellSize = 1f;
         root.Dimensions = dimensions;
+        root.RuntimeEncoding = MapSurfaceRuntimeEncoding.Full;
 
         BlobBuilderArray<MapSurfaceCell> cells = builder.Allocate(ref root.Cells, cellCount);
         BlobBuilderArray<MapSurfaceSample> samples = builder.Allocate(ref root.Samples, cellCount);
@@ -3386,6 +3387,7 @@ public sealed class UnitTransportValidationTests
         }
 
         builder.Allocate(ref root.Connections, 0);
+        builder.Allocate(ref root.CompactSamples, 0);
         BlobAssetReference<MapSurfaceBlob> blob = builder.CreateBlobAssetReference<MapSurfaceBlob>(Allocator.Persistent);
         builder.Dispose();
         return blob;

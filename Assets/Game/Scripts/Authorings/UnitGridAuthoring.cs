@@ -212,6 +212,7 @@ public class UnitGridAuthoring : MonoBehaviour
     public float ConfiguredAttackCooldownSeconds => Mathf.Max(0.01f, config != null ? config.AttackCooldownSeconds : attackCooldownSeconds);
     public int ConfiguredAttackDamage => Mathf.Max(0, config != null ? config.AttackDamage : attackDamage);
     public int ConfiguredMaxHealth => Mathf.Max(1, config != null ? config.MaxHealth : maxHealth);
+    public float ConfiguredGroundOffset => Mathf.Max(0f, config != null ? config.GroundOffset : groundOffset);
     public GroundMissileLauncherConfig GroundMissileLauncherConfig => config != null ? config.GroundMissileLauncherConfig : groundMissileLauncherConfig;
     public AirMissileLauncherConfig AirMissileLauncherConfig => config != null ? config.AirMissileLauncherConfig : airMissileLauncherConfig;
     public Transform GroundMissileLauncherBattery => groundMissileLauncherBattery;
@@ -315,7 +316,7 @@ public class UnitGridAuthoring : MonoBehaviour
                     AlignmentWeight = 0f
                 });
             }
-            AddComponent(entity, new UnitGroundOffsetComponent { Value = authoring.groundOffset });
+            AddComponent(entity, new UnitGroundOffsetComponent { Value = authoring.ConfiguredGroundOffset });
             int soldierCapacity = math.max(0, authoring.SoldierTransportCapacity);
             int vehicleCapacity = math.max(0, authoring.VehicleTransportCapacity);
             int cargoWeightCapacity = math.max(0, authoring.CargoWeightCapacity);

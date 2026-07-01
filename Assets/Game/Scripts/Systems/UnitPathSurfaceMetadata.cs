@@ -60,23 +60,16 @@ internal readonly struct UnitPathSurfaceMetadata
         }
 
         ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
-        int cellIndex = cell.x + cell.y * surface.Dimensions.x;
-        if ((uint)cellIndex >= (uint)blob.Cells.Length)
-            return false;
-
-        MapSurfaceCell surfaceCell = blob.Cells[cellIndex];
-        if (surfaceCell.SurfaceCount == 0)
+        if (!MapSurfaceBlobAccess.TryGetSurfaceRange(ref blob, cell, out MapSurfaceCellSurfaceRange range))
             return false;
 
         if (currentSurface.HasSurface != 0)
         {
-            for (int i = 0; i < surfaceCell.SurfaceCount; i++)
+            for (int i = 0; i < range.SurfaceCount; i++)
             {
-                int surfaceIndex = surfaceCell.FirstSurfaceIndex + i;
-                if ((uint)surfaceIndex >= (uint)blob.Samples.Length)
+                if (!MapSurfaceBlobAccess.TryGetSurface(ref blob, range, i, out MapSurfaceSample candidate))
                     break;
 
-                MapSurfaceSample candidate = blob.Samples[surfaceIndex];
                 if (candidate.SurfaceId == currentSurface.SurfaceId &&
                     candidate.LayerId == currentSurface.LayerId)
                 {
@@ -86,10 +79,6 @@ internal readonly struct UnitPathSurfaceMetadata
             }
         }
 
-        if ((uint)surfaceCell.FirstSurfaceIndex >= (uint)blob.Samples.Length)
-            return false;
-
-        sample = blob.Samples[surfaceCell.FirstSurfaceIndex];
-        return true;
+        return MapSurfaceBlobAccess.TryGetSurface(ref blob, range, 0, out sample);
     }
 }

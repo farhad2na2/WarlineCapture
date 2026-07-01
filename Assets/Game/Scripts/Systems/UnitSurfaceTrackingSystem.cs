@@ -9,6 +9,7 @@ using Unity.Transforms;
 public partial struct UnitSurfaceTrackingSystem : ISystem
 {
     private const float MaxInfantryInterpolatedHeightSpan = 0.75f;
+    private const float MaxInfantrySupportLift = 1.5f;
     private const int SceneOverlayBinCellSize = 32;
     private EntityQuery _surfaceQuery;
     private EntityQuery _runtimeSurfaceOverlayQuery;
@@ -307,6 +308,16 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
                 sample = currentSample;
                 height = currentSample.Height;
                 normal = math.normalizesafe(currentSample.Normal, new float3(0f, 1f, 0f));
+                if (movementBehavior.UsesVehicleMotion == 0 &&
+                    TryResolveHighestNearbySupport(currentCell, sample, out MapSurfaceSample currentSupportSample) &&
+                    currentSupportSample.Height > height &&
+                    currentSupportSample.Height - height <= MaxInfantrySupportLift)
+                {
+                    sample = currentSupportSample;
+                    height = currentSupportSample.Height;
+                    normal = math.normalizesafe(currentSupportSample.Normal, normal);
+                }
+
                 return true;
             }
 
@@ -323,7 +334,69 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
             float3 nx0 = math.lerp(n00, n10, t.x);
             float3 nx1 = math.lerp(n01, n11, t.x);
             normal = math.normalizesafe(math.lerp(nx0, nx1, t.y), new float3(0f, 1f, 0f));
+
+            if (hasCurrentSample &&
+                movementBehavior.UsesVehicleMotion == 0 &&
+                currentSample.Height > height)
+            {
+                sample = currentSample;
+                height = currentSample.Height;
+                normal = math.normalizesafe(currentSample.Normal, normal);
+            }
+
+            if (movementBehavior.UsesVehicleMotion == 0 &&
+                TryResolveHighestNearbySupport(currentCell, sample, out MapSurfaceSample nearbySupportSample) &&
+                nearbySupportSample.Height > height &&
+                nearbySupportSample.Height - height <= MaxInfantrySupportLift)
+            {
+                sample = nearbySupportSample;
+                height = nearbySupportSample.Height;
+                normal = math.normalizesafe(nearbySupportSample.Normal, normal);
+            }
+
             return true;
+        }
+
+        private bool TryResolveHighestNearbySupport(
+            int2 centerCell,
+            MapSurfaceSample anchor,
+            out MapSurfaceSample supportSample)
+        {
+            supportSample = anchor;
+            bool found = false;
+            float bestHeight = anchor.Height;
+
+            for (int y = -1; y <= 1; y++)
+            {
+                for (int x = -1; x <= 1; x++)
+                {
+                    int2 cell = centerCell + new int2(x, y);
+                    if (!TryResolveSurface(cell, default, out MapSurfaceSample candidate))
+                        continue;
+                    if (!CanUseInfantrySupportSample(anchor, candidate))
+                        continue;
+                    if (found && candidate.Height <= bestHeight)
+                        continue;
+
+                    supportSample = candidate;
+                    bestHeight = candidate.Height;
+                    found = true;
+                }
+            }
+
+            return found;
+        }
+
+        private static bool CanUseInfantrySupportSample(MapSurfaceSample anchor, MapSurfaceSample candidate)
+        {
+            if ((candidate.MovementMask & MapSurfaceMovementMask.Infantry) == 0)
+                return false;
+            if (candidate.LayerId != anchor.LayerId)
+                return false;
+
+            bool anchorRoadLike = IsRoadLikeSurface(anchor.SurfaceType, anchor.Flags);
+            bool candidateRoadLike = IsRoadLikeSurface(candidate.SurfaceType, candidate.Flags);
+            return anchorRoadLike == candidateRoadLike;
         }
 
         private static bool CanInterpolateWithNeighborSamples(
@@ -497,26 +570,17 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
                 return false;
             }
 
-            int cellIndex = cell.x + cell.y * Surface.Dimensions.x;
             ref MapSurfaceBlob blob = ref Surface.SurfaceBlob.Value;
-            if ((uint)cellIndex >= (uint)blob.Cells.Length)
+            if (!MapSurfaceBlobAccess.TryGetSurfaceRange(ref blob, cell, out MapSurfaceCellSurfaceRange range))
                 return false;
 
-            MapSurfaceCell surfaceCell = blob.Cells[cellIndex];
-            if (surfaceCell.SurfaceCount == 0)
-                return false;
-
-            int firstSurfaceIndex = surfaceCell.FirstSurfaceIndex;
-            int surfaceCount = surfaceCell.SurfaceCount;
             if (unitSurface.HasSurface != 0)
             {
-                for (int i = 0; i < surfaceCount; i++)
+                for (int i = 0; i < range.SurfaceCount; i++)
                 {
-                    int surfaceIndex = firstSurfaceIndex + i;
-                    if ((uint)surfaceIndex >= (uint)blob.Samples.Length)
+                    if (!MapSurfaceBlobAccess.TryGetSurface(ref blob, range, i, out MapSurfaceSample candidate))
                         break;
 
-                    MapSurfaceSample candidate = blob.Samples[surfaceIndex];
                     if (candidate.SurfaceId != unitSurface.SurfaceId ||
                         candidate.LayerId != unitSurface.LayerId)
                     {
@@ -527,13 +591,11 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
                     return true;
                 }
 
-                for (int i = 0; i < surfaceCount; i++)
+                for (int i = 0; i < range.SurfaceCount; i++)
                 {
-                    int surfaceIndex = firstSurfaceIndex + i;
-                    if ((uint)surfaceIndex >= (uint)blob.Samples.Length)
+                    if (!MapSurfaceBlobAccess.TryGetSurface(ref blob, range, i, out MapSurfaceSample candidate))
                         break;
 
-                    MapSurfaceSample candidate = blob.Samples[surfaceIndex];
                     if (candidate.LayerId != unitSurface.LayerId)
                         continue;
 
@@ -542,11 +604,7 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
                 }
             }
 
-            if ((uint)firstSurfaceIndex >= (uint)blob.Samples.Length)
-                return false;
-
-            sample = blob.Samples[firstSurfaceIndex];
-            return true;
+            return MapSurfaceBlobAccess.TryGetSurface(ref blob, range, 0, out sample);
         }
     }
 }

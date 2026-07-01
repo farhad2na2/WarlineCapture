@@ -61,9 +61,13 @@ public struct MapSurfaceBlob
     public float3 GridOrigin;
     public float CellSize;
     public int2 Dimensions;
+    public MapSurfaceRuntimeEncoding RuntimeEncoding;
+    public float CompactMinHeight;
+    public float CompactHeightStep;
     public BlobArray<MapSurfaceCell> Cells;
     public BlobArray<MapSurfaceSample> Samples;
     public BlobArray<MapSurfaceConnection> Connections;
+    public BlobArray<MapSurfaceCompactSample> CompactSamples;
 }
 
 public struct MapSurfaceCell
@@ -103,6 +107,18 @@ public struct MapSurfaceConnection
     public int2 Direction;
     public MapSurfaceConnectionType ConnectionType;
     public MapSurfaceMovementMask MovementMask;
+}
+
+public struct MapSurfaceCompactSample
+{
+    public ushort PackedHeight;
+    public short LayerId;
+    public MapSurfaceMovementMask MovementMask;
+    public MapSurfaceFlags Flags;
+    public sbyte NormalX;
+    public sbyte NormalY;
+    public sbyte NormalZ;
+    public MapSurfaceType SurfaceType;
 }
 
 public struct UnitSurfaceComponent : IComponentData
@@ -181,6 +197,12 @@ public enum MapSurfaceConnectionType : byte
     BridgeApproach = 2,
     RoadJoin = 3,
     Blocked = 255
+}
+
+public enum MapSurfaceRuntimeEncoding : byte
+{
+    Full = 0,
+    SingleLayerCompact = 1
 }
 
 public enum MapSurfaceSlopeClass : byte

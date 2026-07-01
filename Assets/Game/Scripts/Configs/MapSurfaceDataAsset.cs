@@ -103,11 +103,7 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
         {
             using var compressed = new MemoryStream(compressedSurfacePayload);
             using var gzip = new GZipStream(compressed, CompressionMode.Decompress);
-            using var uncompressed = new MemoryStream();
-            gzip.CopyTo(uncompressed);
-            uncompressed.Position = 0;
-
-            using var reader = new BinaryReader(uncompressed, Encoding.UTF8, true);
+            using var reader = new BinaryReader(gzip, Encoding.UTF8, true);
             int version = reader.ReadInt32();
             if (version == 1)
                 return TryReadFullPayload(reader, allocator, out surfaceBlob);
@@ -191,8 +187,8 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
         }
 
         ref MapSurfaceBlob blob = ref surfaceBlob.Value;
-        surfaceCount = blob.Samples.Length;
-        connectionCount = blob.Connections.Length;
+        surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref blob);
+        connectionCount = MapSurfaceBlobAccess.ConnectionCount(ref blob);
         payloadVersion = CurrentPayloadVersion;
         compressedSurfacePayload = BuildCompressedPayload(ref blob, out uncompressedPayloadBytes, out payloadEncoding);
     }
@@ -224,6 +220,34 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
 
     private static bool TryWriteSingleLayerGridPayload(ref MapSurfaceBlob blob, BinaryWriter writer)
     {
+        if (MapSurfaceBlobAccess.IsCompactSingleLayer(ref blob))
+        {
+            writer.Write(CurrentPayloadVersion);
+            writer.Write(SingleLayerGridPayloadEncoding);
+            writer.Write(blob.CompactSamples.Length);
+            writer.Write(blob.CompactSamples.Length);
+            writer.Write(blob.Connections.Length);
+            writer.Write(blob.Dimensions.x);
+            writer.Write(blob.Dimensions.y);
+            writer.Write(blob.CompactMinHeight);
+            writer.Write(blob.CompactHeightStep);
+
+            for (int i = 0; i < blob.CompactSamples.Length; i++)
+            {
+                MapSurfaceCompactSample sample = blob.CompactSamples[i];
+                writer.Write(sample.PackedHeight);
+                writer.Write(sample.NormalX);
+                writer.Write(sample.NormalY);
+                writer.Write(sample.NormalZ);
+                writer.Write(sample.LayerId);
+                writer.Write((byte)sample.SurfaceType);
+                writer.Write((ushort)sample.MovementMask);
+                writer.Write((ushort)sample.Flags);
+            }
+
+            return true;
+        }
+
         if (!CanUseSingleLayerGridPayload(ref blob, out float minHeight, out float maxHeight))
             return false;
 
@@ -386,46 +410,44 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
         root.GridOrigin = ToFloat3(gridOrigin);
         root.CellSize = cellSize;
         root.Dimensions = new int2(width, height);
+        root.RuntimeEncoding = MapSurfaceRuntimeEncoding.SingleLayerCompact;
+        root.CompactMinHeight = minHeight;
+        root.CompactHeightStep = heightStep;
 
-        BlobBuilderArray<MapSurfaceCell> cells = builder.Allocate(ref root.Cells, cellCount);
-        BlobBuilderArray<MapSurfaceSample> samples = builder.Allocate(ref root.Samples, sampleCount);
+        builder.Allocate(ref root.Cells, 0);
+        builder.Allocate(ref root.Samples, 0);
         builder.Allocate(ref root.Connections, 0);
+        BlobBuilderArray<MapSurfaceCompactSample> samples = builder.Allocate(ref root.CompactSamples, sampleCount);
 
         for (int i = 0; i < sampleCount; i++)
         {
             ushort packedHeight = reader.ReadUInt16();
-            float3 normal = payloadVersion >= 3
-                ? new float3(
-                    UnpackNormalByte(reader.ReadSByte()),
-                    UnpackNormalByte(reader.ReadSByte()),
-                    UnpackNormalByte(reader.ReadSByte()))
-                : new float3(
-                    UnpackNormalComponent(reader.ReadInt16()),
-                    UnpackNormalComponent(reader.ReadInt16()),
-                    UnpackNormalComponent(reader.ReadInt16()));
-            normal = math.normalizesafe(normal, new float3(0f, 1f, 0f));
+            sbyte normalX;
+            sbyte normalY;
+            sbyte normalZ;
+            if (payloadVersion >= 3)
+            {
+                normalX = reader.ReadSByte();
+                normalY = reader.ReadSByte();
+                normalZ = reader.ReadSByte();
+            }
+            else
+            {
+                normalX = PackNormalByte(UnpackNormalComponent(reader.ReadInt16()));
+                normalY = PackNormalByte(UnpackNormalComponent(reader.ReadInt16()));
+                normalZ = PackNormalByte(UnpackNormalComponent(reader.ReadInt16()));
+            }
 
-            int x = i % width;
-            int y = i / width;
-            cells[i] = new MapSurfaceCell
+            samples[i] = new MapSurfaceCompactSample
             {
-                FirstSurfaceIndex = i,
-                SurfaceCount = 1,
-                InlineSurfaceIndex = (ushort)i
-            };
-            samples[i] = new MapSurfaceSample
-            {
-                Cell = new int2(x, y),
-                SurfaceId = i,
                 LayerId = reader.ReadInt16(),
-                Height = minHeight + packedHeight * heightStep,
-                Normal = normal,
-                SlopeDegrees = CalculateSlopeDegrees(normal),
+                PackedHeight = packedHeight,
+                NormalX = normalX,
+                NormalY = normalY,
+                NormalZ = normalZ,
                 SurfaceType = (MapSurfaceType)reader.ReadByte(),
                 MovementMask = (MapSurfaceMovementMask)reader.ReadUInt16(),
-                Flags = (MapSurfaceFlags)reader.ReadUInt16(),
-                FirstConnectionIndex = 0,
-                ConnectionCount = 0
+                Flags = (MapSurfaceFlags)reader.ReadUInt16()
             };
         }
 
@@ -451,10 +473,12 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
         root.GridOrigin = ToFloat3(gridOrigin);
         root.CellSize = cellSize;
         root.Dimensions = new int2(dimensions.x, dimensions.y);
+        root.RuntimeEncoding = MapSurfaceRuntimeEncoding.Full;
 
         BlobBuilderArray<MapSurfaceCell> cells = builder.Allocate(ref root.Cells, cellCount);
         BlobBuilderArray<MapSurfaceSample> samples = builder.Allocate(ref root.Samples, sampleCount);
         BlobBuilderArray<MapSurfaceConnection> connections = builder.Allocate(ref root.Connections, serializedConnectionCount);
+        builder.Allocate(ref root.CompactSamples, 0);
 
         for (int i = 0; i < cellCount; i++)
         {

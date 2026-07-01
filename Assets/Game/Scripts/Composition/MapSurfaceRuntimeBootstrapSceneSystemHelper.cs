@@ -317,18 +317,14 @@ internal sealed class MapSurfaceRuntimeBootstrapSceneSystemHelper
         hasRoadSurfaces = 0;
         hasBridgeSurfaces = 0;
 
-        for (int i = 0; i < blob.Cells.Length; i++)
-        {
-            if (blob.Cells[i].SurfaceCount > 1)
-            {
-                hasLayeredCells = 1;
-                break;
-            }
-        }
+        hasLayeredCells = (byte)(MapSurfaceBlobAccess.IsLayered(ref blob) ? 1 : 0);
 
-        for (int i = 0; i < blob.Samples.Length; i++)
+        int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref blob);
+        for (int i = 0; i < surfaceCount; i++)
         {
-            MapSurfaceSample sample = blob.Samples[i];
+            if (!MapSurfaceBlobAccess.TryGetSurfaceByIndex(ref blob, i, out MapSurfaceSample sample))
+                continue;
+
             if (sample.SurfaceType == MapSurfaceType.Road ||
                 sample.SurfaceType == MapSurfaceType.DirtRoad ||
                 sample.SurfaceType == MapSurfaceType.Highway ||

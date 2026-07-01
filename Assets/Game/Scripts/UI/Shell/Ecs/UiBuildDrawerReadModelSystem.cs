@@ -400,9 +400,16 @@ public static class UiBuildDrawerReadModelSource
                 $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: all {requiredBuildingDisplayName} production slots are full.",
             BuildingUiCommandFailure.ProductionQueueFull =>
                 $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: all compatible production slots are full.",
+            BuildingUiCommandFailure.GlobalProductionQueueFull =>
+                $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: production queue limit reached ({FormatMaxQueuedUnitProductions()} max).",
             BuildingUiCommandFailure.InvalidSelection => "Select a build drawer item first.",
             _ => $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: request unavailable."
         };
+    }
+
+    private static int FormatMaxQueuedUnitProductions()
+    {
+        return Mathf.Max(0, buildingUiCommand != null ? buildingUiCommand.MaxQueuedUnitProductions : 25);
     }
 
     private static int FormatMissingCredits(int price)

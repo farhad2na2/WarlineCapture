@@ -839,7 +839,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
             FormatFailureMessage(failure, requiredBuildingDisplayName)));
     }
 
-    private static string FormatFailureMessage(
+    private string FormatFailureMessage(
         BuildingUiCommandFailure failure,
         string requiredBuildingDisplayName)
     {
@@ -852,6 +852,7 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
             BuildingUiCommandFailure.ProductionQueueFull when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
                 $"{requiredBuildingDisplayName} production slots are full.",
             BuildingUiCommandFailure.ProductionQueueFull => "All compatible production slots are full.",
+            BuildingUiCommandFailure.GlobalProductionQueueFull => $"Production queue limit reached ({FormatMaxQueuedUnitProductions()} max).",
             BuildingUiCommandFailure.InvalidSelection => "Select a build drawer item first.",
             _ => "Build request unavailable."
         };
@@ -923,9 +924,16 @@ public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
                 $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: all {requiredBuildingDisplayName} production slots are full.",
             BuildingUiCommandFailure.ProductionQueueFull =>
                 $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: all compatible production slots are full.",
+            BuildingUiCommandFailure.GlobalProductionQueueFull =>
+                $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: production queue limit reached ({FormatMaxQueuedUnitProductions()} max).",
             BuildingUiCommandFailure.InvalidSelection => "Select a build drawer item first.",
             _ => $"Cannot {FormatActionVerb(_selectedItem.Category).ToLowerInvariant()} {itemName}: request unavailable."
         };
+    }
+
+    private int FormatMaxQueuedUnitProductions()
+    {
+        return Mathf.Max(0, _uiCommandSystem != null ? _uiCommandSystem.MaxQueuedUnitProductions : 25);
     }
 
     private int FormatMissingCredits()

@@ -27,6 +27,7 @@ internal sealed class BuildingPlacementStartupSystemHelper
     public GameObject BuildingSelectionMarkerPrefab => _config != null ? _config.BuildingSelectionMarkerPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => _config != null ? _config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => _config != null ? _config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
+    public int MaxQueuedUnitProductions => _config != null ? _config.MaxQueuedUnitProductions : 25;
 
     public void ConfigureRoadFootprintState(RoadGridProjectionSystem.RoadFootprintState roadFootprintState)
     {

@@ -75,6 +75,10 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
                 test => test.BuildDrawerInstruction_ShowsProductionQueueFull(),
                 ref passed);
             RunValidationStep(
+                nameof(BuildDrawerInstruction_ShowsGlobalProductionQueueFull),
+                test => test.BuildDrawerInstruction_ShowsGlobalProductionQueueFull(),
+                ref passed);
+            RunValidationStep(
                 nameof(BuildDrawerPrimaryAction_RoutesBuildingPlacementRequestAndClosesDrawer),
                 test => test.BuildDrawerPrimaryAction_RoutesBuildingPlacementRequestAndClosesDrawer(),
                 ref passed);
@@ -552,6 +556,41 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         Assert.NotNull(view.InstructionText);
         Assert.AreEqual(
             "Cannot recruit Rifle Infantry: all Soldier Tent production slots are full.",
+            view.InstructionText.text);
+    }
+
+    [Test]
+    public void BuildDrawerInstruction_ShowsGlobalProductionQueueFull()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
+        UnitPrefabRegistryAuthoringConfig unitConfig = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
+        GameObject soldier = CreateUnit("Rifle Infantry", true, false, Vector2Int.one, 0);
+        unitConfig.UnitSpawnPrefabs.Add(soldier);
+
+        ConfigurePresenterForTests(presenter, view, unitConfig, null);
+        presenter.BindRuntimeCommands(
+            new BuildingUiCommandAdapter(new BuildingUiCommandSystemHelper(), CreateCommandContext(
+                null,
+                null,
+                100000,
+                (GameObject requestPrefab, int price, out string requiredBuilding) =>
+                {
+                    requiredBuilding = string.Empty;
+                    return BuildingUiCommandSystemHelper.CampRequestFailure.GlobalProductionQueueFull;
+                })),
+            null);
+        presenter.SelectCategoryForTests(BuildDrawerCategory.Soldiers);
+
+        Assert.NotNull(view.InstructionText);
+        Assert.AreEqual(
+            "Cannot recruit Rifle Infantry: production queue limit reached (25 max).",
             view.InstructionText.text);
     }
 
@@ -1350,6 +1389,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             unitPrefabs,
             unitPrefabsByKey,
             100000,
+            25,
             productionSystem,
             queueContext,
             null,
@@ -1384,6 +1424,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
     {
         return new BuildingUiCommandSystemHelper.Context(
             () => 100000,
+            () => 25,
             () => 0,
             null,
             () => 0,
@@ -1522,6 +1563,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
     {
         return new BuildingUiCommandSystemHelper.Context(
             () => currentDollars,
+            () => 25,
             () => 0,
             null,
             () => 0,

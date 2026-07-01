@@ -2529,6 +2529,7 @@ public static class CanvasMenuFallbackValidation
         public string PlacementStatusText => "Barracks: Valid placement";
         public int ActivePlacementCost => 650;
         public float ActivePlacementDurationSeconds => 45f;
+        public int MaxQueuedUnitProductions => 25;
 
         public BuildingUiCommandFailure GetCampRequestFailure(GameObject prefab, int price, out string requiredBuildingDisplayName)
         {

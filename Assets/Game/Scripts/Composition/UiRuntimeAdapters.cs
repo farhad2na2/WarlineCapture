@@ -21,6 +21,7 @@ internal sealed class BuildingUiCommandAdapter : IBuildingUiCommand
     public string PlacementStatusText => boundary != null ? boundary.PlacementStatusText(context) : string.Empty;
     public int ActivePlacementCost => boundary != null ? boundary.ActivePlacementCost(context) : 0;
     public float ActivePlacementDurationSeconds => boundary != null ? boundary.ActivePlacementDurationSeconds(context) : 0f;
+    public int MaxQueuedUnitProductions => boundary != null ? boundary.MaxQueuedUnitProductions(context) : 25;
 
     public BuildingUiCommandFailure GetCampRequestFailure(GameObject prefab, int price, out string requiredBuildingDisplayName)
     {
@@ -67,6 +68,7 @@ internal sealed class BuildingUiCommandAdapter : IBuildingUiCommand
             BuildingUiCommandSystemHelper.CampRequestFailure.MissingProducerBuilding => BuildingUiCommandFailure.MissingProducerBuilding,
             BuildingUiCommandSystemHelper.CampRequestFailure.InvalidSelection => BuildingUiCommandFailure.InvalidSelection,
             BuildingUiCommandSystemHelper.CampRequestFailure.ProductionQueueFull => BuildingUiCommandFailure.ProductionQueueFull,
+            BuildingUiCommandSystemHelper.CampRequestFailure.GlobalProductionQueueFull => BuildingUiCommandFailure.GlobalProductionQueueFull,
             _ => BuildingUiCommandFailure.InvalidSelection
         };
     }

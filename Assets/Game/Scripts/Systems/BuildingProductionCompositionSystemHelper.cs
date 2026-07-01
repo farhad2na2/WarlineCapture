@@ -29,6 +29,7 @@ internal sealed class BuildingProductionCompositionSystemHelper
             source.BuildingSpawnCompositionSystemHelper,
             spawnContext,
             source.RuntimeResourceUtilitySystemHelper.CurrentDollars,
+            source.BuildingPlacementStartupSystemHelper.MaxQueuedUnitProductions,
             prefab => EnqueueAndProcessBeginPlacementForConfiguredSpawnable(
                 source,
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock),

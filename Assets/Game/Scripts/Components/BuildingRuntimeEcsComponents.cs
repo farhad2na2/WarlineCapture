@@ -192,6 +192,7 @@ public struct BuildingUiProductionCommandResultElement : IBufferElementData
     public const byte Cancelled = 8;
     public const byte UnavailablePrefab = 9;
     public const byte QueueFull = 10;
+    public const byte GlobalQueueFull = 11;
 
     public int RequestId;
     public int BuildingId;
@@ -258,6 +259,7 @@ public struct BuildingUiCampItemCommandResultElement : IBufferElementData
     public const byte MissingProducerBuilding = 3;
     public const byte InvalidSelection = 4;
     public const byte ProductionQueueFull = 5;
+    public const byte GlobalProductionQueueFull = 6;
 
     public int RequestId;
     public FixedString128Bytes ItemId;

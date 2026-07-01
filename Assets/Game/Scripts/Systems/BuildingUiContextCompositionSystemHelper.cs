@@ -172,6 +172,9 @@ internal sealed class BuildingUiContextCompositionSystemHelper
     {
         return new BuildingUiCommandSystemHelper.Context(
             () => source.RuntimeResourceUtilitySystemHelper.CurrentDollars,
+            () => source.CreateProductionRequestContext != null
+                ? source.CreateProductionRequestContext().MaxQueuedUnitProductions
+                : 25,
             () => source.DefinitionSystem.ConfiguredSpawnableCount,
             source.DefinitionSystem.TryGetConfiguredSpawnable,
             () => source.DefinitionSystem.ConfiguredUnitCount,

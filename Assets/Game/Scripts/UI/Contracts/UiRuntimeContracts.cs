@@ -7,7 +7,8 @@ public enum BuildingUiCommandFailure
     NotEnoughMoney = 1,
     MissingProducerBuilding = 2,
     InvalidSelection = 3,
-    ProductionQueueFull = 4
+    ProductionQueueFull = 4,
+    GlobalProductionQueueFull = 5
 }
 
 public readonly struct BuildingPendingProductionUiEntry
@@ -66,6 +67,7 @@ public interface IBuildingUiCommand
     string PlacementStatusText { get; }
     int ActivePlacementCost { get; }
     float ActivePlacementDurationSeconds { get; }
+    int MaxQueuedUnitProductions { get; }
 
     BuildingUiCommandFailure GetCampRequestFailure(GameObject prefab, int price, out string requiredBuildingDisplayName);
     BuildingUiCommandFailure TryRequestCampItem(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess);

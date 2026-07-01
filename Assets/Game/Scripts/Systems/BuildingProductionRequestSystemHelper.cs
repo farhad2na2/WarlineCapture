@@ -71,6 +71,7 @@ internal sealed class BuildingProductionRequestSystemHelper
         public readonly IReadOnlyList<GameObject> UnitSpawnPrefabs;
         public readonly IReadOnlyDictionary<string, GameObject> UnitSpawnPrefabsByKey;
         public readonly int ResourceDollars;
+        public readonly int MaxQueuedUnitProductions;
         public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
         public readonly BuildingProductionQueueCompositionSystemHelper.QueueContext ProductionQueueContext;
         public readonly BuildingRunwaySystem RunwaySystem;
@@ -101,6 +102,7 @@ internal sealed class BuildingProductionRequestSystemHelper
             IReadOnlyList<GameObject> unitSpawnPrefabs,
             IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
             int resourceDollars,
+            int maxQueuedUnitProductions,
             BuildingProductionQueueCompositionSystemHelper productionSystem,
             BuildingProductionQueueCompositionSystemHelper.QueueContext productionQueueContext,
             BuildingRunwaySystem runwaySystem,
@@ -130,6 +132,7 @@ internal sealed class BuildingProductionRequestSystemHelper
             UnitSpawnPrefabs = unitSpawnPrefabs;
             UnitSpawnPrefabsByKey = unitSpawnPrefabsByKey;
             ResourceDollars = resourceDollars;
+            MaxQueuedUnitProductions = Mathf.Max(0, maxQueuedUnitProductions);
             ProductionSystem = productionSystem;
             ProductionQueueContext = productionQueueContext;
             RunwaySystem = runwaySystem;
@@ -362,6 +365,12 @@ internal sealed class BuildingProductionRequestSystemHelper
             return false;
         }
 
+        if (!HasGlobalQueueCapacity(context))
+        {
+            resultCode = BuildingUiProductionCommandResultElement.GlobalQueueFull;
+            return false;
+        }
+
         if (!CanQueueUnitFromBuilding(context, building, spawnUnitPrefab, true))
         {
             resultCode = BuildingUiProductionCommandResultElement.QueueFull;
@@ -430,17 +439,20 @@ internal sealed class BuildingProductionRequestSystemHelper
         if (context.ConfiguredDefinitionsByPrefab != null && context.ConfiguredDefinitionsByPrefab.ContainsKey(prefab))
             return CampRequestFailure.None;
 
+        if (!TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: false, out _, out _, out string producerDisplayName))
+        {
+            TryGetRequiredProducerDisplayName(context, prefab, out requiredBuildingDisplayName);
+            return CampRequestFailure.MissingProducerBuilding;
+        }
+
+        if (!HasGlobalQueueCapacity(context))
+            return CampRequestFailure.GlobalProductionQueueFull;
+
         if (TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: true, out _, out _, out _))
             return CampRequestFailure.None;
 
-        if (TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: false, out _, out _, out string fullProducerDisplayName))
-        {
-            requiredBuildingDisplayName = fullProducerDisplayName;
-            return CampRequestFailure.ProductionQueueFull;
-        }
-
-        TryGetRequiredProducerDisplayName(context, prefab, out requiredBuildingDisplayName);
-        return CampRequestFailure.MissingProducerBuilding;
+        requiredBuildingDisplayName = producerDisplayName;
+        return CampRequestFailure.ProductionQueueFull;
     }
 
     public CampRequestFailure TryRequestCampItem(
@@ -463,6 +475,9 @@ internal sealed class BuildingProductionRequestSystemHelper
             context.SetActivePlacementCost?.Invoke(Mathf.Max(0, price));
             return CampRequestFailure.None;
         }
+
+        if (!HasGlobalQueueCapacity(context))
+            return CampRequestFailure.GlobalProductionQueueFull;
 
         if (!TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: true, out int producerBuildingId, out int productionIndex, out _))
         {
@@ -493,9 +508,12 @@ internal sealed class BuildingProductionRequestSystemHelper
         if (!TryCreateUnitFromBuilding(context, producerBuildingId, productionIndex, frameCount, frameCount, out byte resultCode))
         {
             context.RefundDollars?.Invoke(Mathf.Max(0, price));
-            return resultCode == BuildingUiProductionCommandResultElement.QueueFull
-                ? CampRequestFailure.ProductionQueueFull
-                : CampRequestFailure.InvalidSelection;
+            return resultCode switch
+            {
+                BuildingUiProductionCommandResultElement.GlobalQueueFull => CampRequestFailure.GlobalProductionQueueFull,
+                BuildingUiProductionCommandResultElement.QueueFull => CampRequestFailure.ProductionQueueFull,
+                _ => CampRequestFailure.InvalidSelection
+            };
         }
 
         context.RecordUnitOrdered?.Invoke(prefab);
@@ -644,7 +662,9 @@ internal sealed class BuildingProductionRequestSystemHelper
             return false;
 
         GameObject spawnUnitPrefab = context.GetProductionPrefab?.Invoke(building.Definition, productionIndex);
-        return spawnUnitPrefab != null && CanQueueUnitFromBuilding(context, building, spawnUnitPrefab, false);
+        return spawnUnitPrefab != null &&
+               HasGlobalQueueCapacity(context) &&
+               CanQueueUnitFromBuilding(context, building, spawnUnitPrefab, false);
     }
 
     public bool CanQueueUnitFromBuilding(Context context, RuntimeBuildingEntity building, GameObject spawnUnitPrefab, bool logReason)
@@ -741,6 +761,48 @@ internal sealed class BuildingProductionRequestSystemHelper
         }
 
         return false;
+    }
+
+    private static bool HasGlobalQueueCapacity(Context context)
+    {
+        int limit = Mathf.Max(0, context.MaxQueuedUnitProductions);
+        return limit <= 0 || CountFriendlyPendingUnitProductions(context) < limit;
+    }
+
+    private static int CountFriendlyPendingUnitProductions(Context context)
+    {
+        if (context.RuntimeBuildings == null)
+            return 0;
+
+        int count = 0;
+        if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                count += CountPendingProductionsForGlobalLimit(pair.Value);
+            return count;
+        }
+
+        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+            count += CountPendingProductionsForGlobalLimit(pair.Value);
+
+        return count;
+    }
+
+    private static int CountPendingProductionsForGlobalLimit(RuntimeBuildingEntity building)
+    {
+        return IsFriendlyProductionQueueOwner(building) && building.PendingProductions != null
+            ? building.PendingProductions.Count
+            : 0;
+    }
+
+    private static bool IsFriendlyProductionQueueOwner(RuntimeBuildingEntity building)
+    {
+        if (building == null || building.IsDestroyed || building.IsCityGenerated)
+            return false;
+
+        return (building.HasOwnerFaction && building.OwnerFactionId == FactionIdentity.PlayerFactionId) ||
+               !building.HasOwnerFaction ||
+               building.OwnerFactionId == FactionIdentity.NeutralFactionId;
     }
 
     public bool QueueFactionUnitProductionRequest(
@@ -1147,6 +1209,7 @@ internal sealed class BuildingProductionRequestSystemHelper
             CampRequestFailure.NotEnoughMoney => BuildingUiCampItemCommandResultElement.NotEnoughMoney,
             CampRequestFailure.MissingProducerBuilding => BuildingUiCampItemCommandResultElement.MissingProducerBuilding,
             CampRequestFailure.ProductionQueueFull => BuildingUiCampItemCommandResultElement.ProductionQueueFull,
+            CampRequestFailure.GlobalProductionQueueFull => BuildingUiCampItemCommandResultElement.GlobalProductionQueueFull,
             _ => BuildingUiCampItemCommandResultElement.InvalidSelection
         };
     }
@@ -1160,6 +1223,7 @@ internal sealed class BuildingProductionRequestSystemHelper
             BuildingUiCampItemCommandResultElement.NotEnoughMoney => CampRequestFailure.NotEnoughMoney,
             BuildingUiCampItemCommandResultElement.MissingProducerBuilding => CampRequestFailure.MissingProducerBuilding,
             BuildingUiCampItemCommandResultElement.ProductionQueueFull => CampRequestFailure.ProductionQueueFull,
+            BuildingUiCampItemCommandResultElement.GlobalProductionQueueFull => CampRequestFailure.GlobalProductionQueueFull,
             _ => CampRequestFailure.InvalidSelection
         };
     }

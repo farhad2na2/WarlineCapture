@@ -47,7 +47,8 @@ public sealed class BuildingUiCommandSystemHelper
         NotEnoughMoney = 1,
         MissingProducerBuilding = 2,
         InvalidSelection = 3,
-        ProductionQueueFull = 4
+        ProductionQueueFull = 4,
+        GlobalProductionQueueFull = 5
     }
 
     public delegate bool TryGetConfiguredSpawnableDelegate(int index, out ConfiguredSpawnableEntry entry);
@@ -59,6 +60,7 @@ public sealed class BuildingUiCommandSystemHelper
     public readonly struct Context
     {
         public readonly Func<int> GetCurrentDollars;
+        public readonly Func<int> GetMaxQueuedUnitProductions;
         public readonly Func<int> GetConfiguredSpawnableCount;
         public readonly TryGetConfiguredSpawnableDelegate TryGetConfiguredSpawnable;
         public readonly Func<int> GetConfiguredUnitCount;
@@ -78,6 +80,7 @@ public sealed class BuildingUiCommandSystemHelper
 
         public Context(
             Func<int> getCurrentDollars,
+            Func<int> getMaxQueuedUnitProductions,
             Func<int> getConfiguredSpawnableCount,
             TryGetConfiguredSpawnableDelegate tryGetConfiguredSpawnable,
             Func<int> getConfiguredUnitCount,
@@ -96,6 +99,7 @@ public sealed class BuildingUiCommandSystemHelper
             Func<bool> rotateBuildingPlacement = null)
         {
             GetCurrentDollars = getCurrentDollars;
+            GetMaxQueuedUnitProductions = getMaxQueuedUnitProductions;
             GetConfiguredSpawnableCount = getConfiguredSpawnableCount;
             TryGetConfiguredSpawnable = tryGetConfiguredSpawnable;
             GetConfiguredUnitCount = getConfiguredUnitCount;
@@ -118,6 +122,11 @@ public sealed class BuildingUiCommandSystemHelper
     public int CurrentDollars(Context context)
     {
         return context.GetCurrentDollars?.Invoke() ?? 0;
+    }
+
+    public int MaxQueuedUnitProductions(Context context)
+    {
+        return Mathf.Max(0, context.GetMaxQueuedUnitProductions?.Invoke() ?? 25);
     }
 
     public int ConfiguredSpawnableCount(Context context)

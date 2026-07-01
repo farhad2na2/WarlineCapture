@@ -20,6 +20,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         public readonly BuildingSpawnCompositionSystemHelper SpawnSystem;
         public readonly BuildingSpawnCompositionSystemHelper.Context SpawnContext;
         public readonly int ResourceDollars;
+        public readonly int MaxQueuedUnitProductions;
         public readonly BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate BeginPlacementForConfiguredSpawnable;
         public readonly BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate TrySpendDollars;
         public readonly BuildingProductionRequestSystemHelper.RefundDollarsDelegate RefundDollars;
@@ -61,6 +62,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             BuildingSpawnCompositionSystemHelper spawnSystem,
             BuildingSpawnCompositionSystemHelper.Context spawnContext,
             int resourceDollars,
+            int maxQueuedUnitProductions,
             BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate beginPlacementForConfiguredSpawnable,
             BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars,
             BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars,
@@ -101,6 +103,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             SpawnSystem = spawnSystem;
             SpawnContext = spawnContext;
             ResourceDollars = resourceDollars;
+            MaxQueuedUnitProductions = Mathf.Max(0, maxQueuedUnitProductions);
             BeginPlacementForConfiguredSpawnable = beginPlacementForConfiguredSpawnable;
             TrySpendDollars = trySpendDollars;
             RefundDollars = refundDollars;
@@ -144,6 +147,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
         BuildingSpawnCompositionSystemHelper spawnSystem,
         BuildingSpawnCompositionSystemHelper.Context spawnContext,
         int resourceDollars,
+        int maxQueuedUnitProductions,
         BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate beginPlacementForConfiguredSpawnable,
         BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars,
         BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars,
@@ -185,6 +189,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             spawnSystem,
             spawnContext,
             resourceDollars,
+            maxQueuedUnitProductions,
             beginPlacementForConfiguredSpawnable,
             trySpendDollars,
             refundDollars,
@@ -274,6 +279,7 @@ internal sealed class BuildingProductionContextCompositionSystemHelper
             source.DefinitionSystem.ConfiguredUnitSpawnPrefabs,
             source.DefinitionSystem.UnitSpawnPrefabsByKey,
             source.ResourceDollars,
+            source.MaxQueuedUnitProductions,
             source.ProductionSystem,
             CreateProductionQueueContext(source),
             source.RunwaySystem,

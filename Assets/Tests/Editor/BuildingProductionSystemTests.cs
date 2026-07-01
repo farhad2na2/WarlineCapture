@@ -39,6 +39,23 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
     }
 
+    public static void RunGlobalProductionQueueLimitValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
+            tests.BuildingUiCampItemCommandRequest_RejectsGlobalProductionQueueLimitAndRefunds();
+            Debug.Log("[BuildingProductionGlobalQueueLimitValidation] result=Passed");
+            ValidationExit.Passed();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[BuildingProductionGlobalQueueLimitValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunProductionCameraFocusValidation()
     {
         try
@@ -2058,6 +2075,65 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
+    public void BuildingUiCampItemCommandRequest_RejectsGlobalProductionQueueLimitAndRefunds()
+    {
+        using World world = new("BuildingUiCampItemCommandGlobalQueueLimitTest");
+        var requestSystem = new BuildingProductionRequestSystemHelper();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
+        GameObject unitPrefab = new("Requestable Soldier");
+        try
+        {
+            RuntimeBuildingEntity producer = CreateProducerBuilding(
+                id: 25,
+                displayName: "Soldier Tent",
+                unitPrefab,
+                hasOwnerFaction: true,
+                ownerFactionId: FactionIdentity.PlayerFactionId);
+            producer.PendingProductions.Add(new RuntimeBuildingEntity.PendingProduction { Prefab = unitPrefab });
+            Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
+            {
+                [producer.Id] = producer
+            };
+            int dollars = 10000;
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                runtimeBuildings,
+                productionSystem,
+                unitPrefab,
+                world.EntityManager,
+                trySpendDollars: amount =>
+                {
+                    if (dollars < amount)
+                        return false;
+
+                    dollars -= amount;
+                    return true;
+                },
+                refundDollars: amount => dollars += amount,
+                maxQueuedUnitProductions: 1);
+
+            int requestId = requestSystem.EnqueueCampItemRequest(
+                world.EntityManager,
+                unitPrefab,
+                price: 1200,
+                focusProducerOnSuccess: false);
+            requestSystem.ProcessPendingUiCampItemCommands(world.EntityManager, context, frameCount: 88);
+
+            Assert.IsTrue(requestSystem.TryGetUiCampItemCommandResult(
+                world.EntityManager,
+                requestId,
+                out BuildingUiCampItemCommandResultElement result));
+            Assert.AreEqual(0, result.Accepted);
+            Assert.AreEqual(BuildingUiCampItemCommandResultElement.GlobalProductionQueueFull, result.ResultCode);
+            Assert.AreEqual(10000, dollars);
+            Assert.AreEqual(1, producer.PendingProductions.Count);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
     public void BuildingRuntimeState_ProcessesQueuedUiProductionCommand()
     {
         using World world = new("BuildingRuntimeStateQueuedUiProductionTest");
@@ -2927,6 +3003,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             unitPrefabs,
             unitPrefabsByKey,
             100000,
+            25,
             productionSystem,
             queueContext,
             null,
@@ -2956,7 +3033,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         EntityManager entityManager = default,
         BuildingProductionRequestSystemHelper.TryQueuePlayerUnitDelegate tryQueuePlayerUnit = null,
         BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars = null,
-        BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars = null)
+        BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars = null,
+        int maxQueuedUnitProductions = 25)
     {
         var unitPrefabs = new List<GameObject> { unitPrefab };
         BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
@@ -2973,6 +3051,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             unitPrefabs,
             new Dictionary<string, GameObject>(),
             100000,
+            maxQueuedUnitProductions,
             productionSystem,
             queueContext,
             null,

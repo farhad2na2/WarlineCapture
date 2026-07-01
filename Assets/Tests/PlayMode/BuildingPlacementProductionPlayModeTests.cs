@@ -153,6 +153,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
             unitPrefabs,
             unitPrefabsByKey,
             10000,
+            25,
             productionSystem,
             queueContext,
             null,

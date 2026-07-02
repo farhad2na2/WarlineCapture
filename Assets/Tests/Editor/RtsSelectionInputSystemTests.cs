@@ -56,6 +56,8 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.StopCommandSystem_StopsSelectedMovableUnitsAndClearsQueuedMoveCommands());
             RunCase(test => test.StopCommandSystem_StopsVehicleAndAirUnitsWithoutDeselecting());
             RunCase(test => test.ReturnToBaseCommandSystem_ReturnsFocusedPlayerUnitToRespawnSpawnPoint());
+            RunCase(test => test.ReturnToBaseCommandSystem_ReturnsProducedUnitToProducingBuildingSpawnPoint());
+            RunCase(test => test.ReturnToBaseCommandSystem_RejectsWhenNoOwnedHomeSpawnPointExists());
             RunCase(test => test.ReturnToBaseCommandSystem_ReturnsSelectedPlayerUnitsWhenFocusedUnitMissing());
             RunCase(test => test.ReturnToBaseCommandSystem_RejectsWithoutSelectedPlayerUnit());
             RunCase(test => test.DestroyFocusedUnitCommandSystem_DestroysFocusedPlayerUnit());
@@ -2068,6 +2070,102 @@ public sealed class RtsSelectionInputSystemTests
         Assert.AreEqual(1, runtimeState.SelectionModeActive);
         Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
         AssertNoQueuedCommandIntents(inputSystem);
+    }
+
+    [Test]
+    public void ReturnToBaseCommandSystem_ReturnsProducedUnitToProducingBuildingSpawnPoint()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        CreateRuntimeGameplayState(em, selectionModeActive: true);
+        CreateRespawnQueue(em, FactionIdentity.PlayerFactionId, new int2(99, 99));
+        Entity focusedUnit = em.CreateEntity(typeof(Faction), typeof(UnitGrid), typeof(UnitMove));
+        em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(focusedUnit, new UnitGrid { Cell = new int2(40, 40) });
+        em.SetComponentData(focusedUnit, new UnitMove { Speed = 5f, WalkSpeed = 5f, ArriveDistance = 0.1f });
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
+        DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+            em.AddBuffer<BuildingProducedUnitReadModel>(boundary);
+        producedUnits.Add(new BuildingProducedUnitReadModel
+        {
+            BuildingRuntimeId = 12,
+            ProductionSlotBuildingRuntimeId = 12,
+            ProductionSlotIndex = 1,
+            OwnerFactionId = FactionIdentity.PlayerFactionId,
+            HasOwnerFaction = 1,
+            Unit = focusedUnit,
+            UnitSourceKey = new FixedString64Bytes("unit_inf_regular")
+        });
+        DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+            em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundary);
+        spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
+        {
+            FactionId = FactionIdentity.PlayerFactionId,
+            BuildingId = new FixedString128Bytes("tent_regular"),
+            BuildingRuntimeId = 12,
+            SlotIndex = 0,
+            Cell = new int2(10, 11),
+            WorldPosition = new float3(10.5f, 0f, 11.5f)
+        });
+        spawnPoints.Add(new BuildingFactionProductionSpawnPointReadModel
+        {
+            FactionId = FactionIdentity.PlayerFactionId,
+            BuildingId = new FixedString128Bytes("tent_regular"),
+            BuildingRuntimeId = 12,
+            SlotIndex = 1,
+            Cell = new int2(13, 14),
+            WorldPosition = new float3(13.5f, 0f, 14.5f)
+        });
+
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.ReturnToBase, frame: 551));
+
+        bool processed = RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
+            em,
+            focusedUnit,
+            out RtsSelectionCommandIntentKind processedKind,
+            out bool accepted,
+            out TacticalCommandReasonCode rejectionReason,
+            out int issuedCount);
+
+        Assert.IsTrue(processed);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.ReturnToBase, processedKind);
+        Assert.IsTrue(accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.None, rejectionReason);
+        Assert.AreEqual(1, issuedCount);
+        Assert.AreEqual(new int2(13, 14), em.GetComponentData<UnitTarget>(focusedUnit).Cell);
+        Assert.AreEqual(new int2(13, 14), em.GetComponentData<UnitPathRequest>(focusedUnit).Goal);
+        Assert.AreNotEqual(new int2(99, 99), em.GetComponentData<UnitTarget>(focusedUnit).Cell);
+    }
+
+    [Test]
+    public void ReturnToBaseCommandSystem_RejectsWhenNoOwnedHomeSpawnPointExists()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        CreateRuntimeGameplayState(em, selectionModeActive: true);
+        CreateRespawnQueue(em, FactionIdentity.EnemyFactionId, new int2(0, 0));
+        Entity focusedUnit = em.CreateEntity(typeof(Faction), typeof(UnitGrid), typeof(UnitMove));
+        em.SetComponentData(focusedUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(focusedUnit, new UnitGrid { Cell = new int2(12, 12) });
+        em.SetComponentData(focusedUnit, new UnitMove { Speed = 5f, WalkSpeed = 5f, ArriveDistance = 0.1f });
+
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
+        Assert.IsTrue(inputSystem.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.ReturnToBase, frame: 561));
+
+        bool processed = RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
+            em,
+            focusedUnit,
+            out RtsSelectionCommandIntentKind processedKind,
+            out bool accepted,
+            out TacticalCommandReasonCode rejectionReason,
+            out int issuedCount);
+
+        Assert.IsTrue(processed);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.ReturnToBase, processedKind);
+        Assert.IsFalse(accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.CommandUnavailable, rejectionReason);
+        Assert.AreEqual(0, issuedCount);
+        Assert.IsFalse(em.HasComponent<UnitTarget>(focusedUnit));
+        Assert.IsFalse(em.HasComponent<UnitPathRequest>(focusedUnit));
     }
 
     [Test]

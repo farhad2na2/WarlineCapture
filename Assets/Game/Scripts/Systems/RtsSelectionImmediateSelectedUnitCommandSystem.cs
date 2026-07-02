@@ -13,6 +13,7 @@ namespace Game.Runtime
         private EntityQuery _commandQueueQuery;
         private EntityQuery _runtimeStateQuery;
         private EntityQuery _respawnQueueQuery;
+        private EntityQuery _buildingRuntimeStateQuery;
         private EntityQuery _selectedQuery;
         private EntityQuery _selectedMoveQuery;
 
@@ -25,6 +26,7 @@ namespace Game.Runtime
             _respawnQueueQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<RespawnQueueTag>(),
                 ComponentType.ReadOnly<RespawnQueueComponent>());
+            _buildingRuntimeStateQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
             _selectedQuery = state.GetEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
             _selectedMoveQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<SelectedUnitTag>(),
@@ -40,6 +42,7 @@ namespace Game.Runtime
                 _commandQueueQuery,
                 _runtimeStateQuery,
                 _respawnQueueQuery,
+                _buildingRuntimeStateQuery,
                 _selectedQuery,
                 _selectedMoveQuery,
                 Entity.Null,
@@ -79,6 +82,8 @@ namespace Game.Runtime
             using EntityQuery respawnQueueQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<RespawnQueueTag>(),
                 ComponentType.ReadOnly<RespawnQueueComponent>());
+            using EntityQuery buildingRuntimeStateQuery =
+                em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
             using EntityQuery selectedQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
             using EntityQuery selectedMoveQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<SelectedUnitTag>(),
@@ -90,6 +95,7 @@ namespace Game.Runtime
                 commandQueueQuery,
                 runtimeStateQuery,
                 respawnQueueQuery,
+                buildingRuntimeStateQuery,
                 selectedQuery,
                 selectedMoveQuery,
                 focusedUnit,
@@ -104,6 +110,7 @@ namespace Game.Runtime
             EntityQuery commandQueueQuery,
             EntityQuery runtimeStateQuery,
             EntityQuery respawnQueueQuery,
+            EntityQuery buildingRuntimeStateQuery,
             EntityQuery selectedQuery,
             EntityQuery selectedMoveQuery,
             Entity focusedUnit,
@@ -132,6 +139,7 @@ namespace Game.Runtime
                     commandEntity,
                     runtimeStateQuery,
                     respawnQueueQuery,
+                    buildingRuntimeStateQuery,
                     selectedQuery,
                     focusedUnit,
                     out accepted,
@@ -190,6 +198,7 @@ namespace Game.Runtime
             Entity commandEntity,
             EntityQuery runtimeStateQuery,
             EntityQuery respawnQueueQuery,
+            EntityQuery buildingRuntimeStateQuery,
             EntityQuery selectedQuery,
             Entity focusedUnit,
             out bool accepted,
@@ -199,6 +208,7 @@ namespace Game.Runtime
             accepted = false;
             rejectionReason = TacticalCommandReasonCode.None;
             issuedCount = 0;
+            bool foundPlayerUnit = false;
 
             RtsSelectionInputStateComponent inputState = em.GetComponentData<RtsSelectionInputStateComponent>(commandEntity);
             ClearCommandMode(ref inputState);
@@ -216,7 +226,8 @@ namespace Game.Runtime
                 em.Exists(focusedUnit) &&
                 IsPlayerControlled(em, focusedUnit))
             {
-                if (TryIssueReturnToBase(em, queueEntity, focusedUnit))
+                foundPlayerUnit = true;
+                if (TryIssueReturnToBase(em, queueEntity, buildingRuntimeStateQuery, focusedUnit))
                     issuedCount = 1;
             }
             else if (!selectedQuery.IsEmptyIgnoreFilter)
@@ -225,7 +236,8 @@ namespace Game.Runtime
                 for (int i = 0; i < selectedEntities.Length; i++)
                 {
                     Entity entity = selectedEntities[i];
-                    if (TryIssueReturnToBase(em, queueEntity, entity))
+                    foundPlayerUnit = true;
+                    if (TryIssueReturnToBase(em, queueEntity, buildingRuntimeStateQuery, entity))
                         issuedCount++;
                 }
             }
@@ -233,7 +245,9 @@ namespace Game.Runtime
             ApplyReturnToBaseRuntimeState(em, runtimeStateQuery);
             if (issuedCount <= 0)
             {
-                rejectionReason = TacticalCommandReasonCode.NoSelection;
+                rejectionReason = foundPlayerUnit
+                    ? TacticalCommandReasonCode.CommandUnavailable
+                    : TacticalCommandReasonCode.NoSelection;
                 return true;
             }
 
@@ -377,25 +391,199 @@ namespace Game.Runtime
             return selectedEntities;
         }
 
-        private static bool TryIssueReturnToBase(EntityManager em, Entity queueEntity, Entity entity)
+        private static bool TryIssueReturnToBase(
+            EntityManager em,
+            Entity queueEntity,
+            EntityQuery buildingRuntimeStateQuery,
+            Entity entity)
         {
             byte factionId = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
-            int2 goal = default;
-            if (em.HasBuffer<RespawnFactionSpawnPoint>(queueEntity))
-            {
-                DynamicBuffer<RespawnFactionSpawnPoint> points = em.GetBuffer<RespawnFactionSpawnPoint>(queueEntity);
-                for (int i = 0; i < points.Length; i++)
-                {
-                    if (points[i].FactionId != factionId)
-                        continue;
+            int2 currentCell = em.HasComponent<UnitGrid>(entity)
+                ? em.GetComponentData<UnitGrid>(entity).Cell
+                : default;
 
-                    goal = points[i].SpawnCell;
-                    break;
-                }
-            }
+            if (!TryResolveReturnToBaseGoal(em, queueEntity, buildingRuntimeStateQuery, entity, factionId, currentCell, out int2 goal))
+                return false;
 
             UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, entity, goal);
             return true;
+        }
+
+        private static bool TryResolveReturnToBaseGoal(
+            EntityManager em,
+            Entity queueEntity,
+            EntityQuery buildingRuntimeStateQuery,
+            Entity entity,
+            byte factionId,
+            int2 currentCell,
+            out int2 goal)
+        {
+            if (TryResolveProducedUnitHomeSpawnPoint(em, buildingRuntimeStateQuery, entity, factionId, out goal))
+                return true;
+
+            if (TryResolveNearestFactionProductionSpawnPoint(em, buildingRuntimeStateQuery, factionId, currentCell, out goal))
+                return true;
+
+            return TryResolveFactionRespawnSpawnPoint(em, queueEntity, factionId, out goal);
+        }
+
+        private static bool TryResolveProducedUnitHomeSpawnPoint(
+            EntityManager em,
+            EntityQuery buildingRuntimeStateQuery,
+            Entity entity,
+            byte factionId,
+            out int2 goal)
+        {
+            goal = default;
+            if (!TryGetBuildingRuntimeBoundaryEntity(em, buildingRuntimeStateQuery, out Entity boundaryEntity) ||
+                !em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity) ||
+                !em.HasBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity))
+            {
+                return false;
+            }
+
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+                em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+            DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+                em.GetBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity, true);
+
+            for (int i = 0; i < producedUnits.Length; i++)
+            {
+                BuildingProducedUnitReadModel producedUnit = producedUnits[i];
+                if (producedUnit.Unit != entity ||
+                    producedUnit.HasOwnerFaction == 0 ||
+                    producedUnit.OwnerFactionId != factionId)
+                {
+                    continue;
+                }
+
+                int buildingRuntimeId = producedUnit.ProductionSlotBuildingRuntimeId > 0
+                    ? producedUnit.ProductionSlotBuildingRuntimeId
+                    : producedUnit.BuildingRuntimeId;
+                int slotIndex = producedUnit.ProductionSlotIndex;
+                if (TryFindProductionSpawnPoint(spawnPoints, factionId, buildingRuntimeId, slotIndex, out goal))
+                    return true;
+
+                if (TryFindProductionSpawnPoint(spawnPoints, factionId, buildingRuntimeId, -1, out goal))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryResolveNearestFactionProductionSpawnPoint(
+            EntityManager em,
+            EntityQuery buildingRuntimeStateQuery,
+            byte factionId,
+            int2 currentCell,
+            out int2 goal)
+        {
+            goal = default;
+            if (!TryGetBuildingRuntimeBoundaryEntity(em, buildingRuntimeStateQuery, out Entity boundaryEntity) ||
+                !em.HasBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity))
+            {
+                return false;
+            }
+
+            DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+                em.GetBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity, true);
+            int bestDistance = int.MaxValue;
+            bool found = false;
+            for (int i = 0; i < spawnPoints.Length; i++)
+            {
+                BuildingFactionProductionSpawnPointReadModel spawnPoint = spawnPoints[i];
+                if (spawnPoint.FactionId != factionId)
+                    continue;
+
+                int2 delta = spawnPoint.Cell - currentCell;
+                int distance = delta.x * delta.x + delta.y * delta.y;
+                if (found && distance >= bestDistance)
+                    continue;
+
+                bestDistance = distance;
+                goal = spawnPoint.Cell;
+                found = true;
+            }
+
+            return found;
+        }
+
+        private static bool TryResolveFactionRespawnSpawnPoint(
+            EntityManager em,
+            Entity queueEntity,
+            byte factionId,
+            out int2 goal)
+        {
+            goal = default;
+            if (queueEntity == Entity.Null ||
+                !em.Exists(queueEntity) ||
+                !em.HasBuffer<RespawnFactionSpawnPoint>(queueEntity))
+            {
+                return false;
+            }
+
+            DynamicBuffer<RespawnFactionSpawnPoint> points = em.GetBuffer<RespawnFactionSpawnPoint>(queueEntity);
+            for (int i = 0; i < points.Length; i++)
+            {
+                if (points[i].FactionId != factionId)
+                    continue;
+
+                goal = points[i].SpawnCell;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryGetBuildingRuntimeBoundaryEntity(
+            EntityManager em,
+            EntityQuery buildingRuntimeStateQuery,
+            out Entity boundaryEntity)
+        {
+            boundaryEntity = Entity.Null;
+            if (buildingRuntimeStateQuery.IsEmptyIgnoreFilter)
+                return false;
+
+            using NativeArray<Entity> entities = buildingRuntimeStateQuery.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (!em.Exists(entity))
+                    continue;
+
+                boundaryEntity = entity;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryFindProductionSpawnPoint(
+            DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints,
+            byte factionId,
+            int buildingRuntimeId,
+            int slotIndex,
+            out int2 goal)
+        {
+            goal = default;
+            if (buildingRuntimeId <= 0)
+                return false;
+
+            for (int i = 0; i < spawnPoints.Length; i++)
+            {
+                BuildingFactionProductionSpawnPointReadModel spawnPoint = spawnPoints[i];
+                if (spawnPoint.FactionId != factionId ||
+                    spawnPoint.BuildingRuntimeId != buildingRuntimeId ||
+                    (slotIndex >= 0 && spawnPoint.SlotIndex != slotIndex))
+                {
+                    continue;
+                }
+
+                goal = spawnPoint.Cell;
+                return true;
+            }
+
+            return false;
         }
 
         private static bool RemoveImmediateRequests(

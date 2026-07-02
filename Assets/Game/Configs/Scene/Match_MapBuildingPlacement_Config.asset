@@ -1359,7 +1359,7 @@ MonoBehaviour:
   - sourcePath: Map/Buildings/Building_Road_Barrier/SM_Prop_Road_Barrier_01
     category: Building_Road_Barrier
     buildingPrefab: {fileID: 3689421368615084249, guid: f37001b3891c2408b882eed3ce395d9c, type: 3}
-    factionId: 0
+    factionId: 1
     worldCenter: {x: 886.2456, y: 1.6740977, z: 410.36}
     worldPosition: {x: 883.969, y: 1.138, z: 410.36}
     worldEulerAngles: {x: -0, y: 0.000013660377, z: -0}

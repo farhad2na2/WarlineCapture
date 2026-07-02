@@ -422,7 +422,7 @@ namespace Game.Runtime
             List<RuntimeBuildingEntity> buildings = GetRuntimeBuildingSnapshot(context);
             for (int i = 0; i < buildings.Count; i++)
             {
-                if (IsActiveRoadGateBuilding(context, buildings[i]))
+                if (IsRuntimeRoadGateBuilding(context, buildings[i]))
                     return true;
             }
 
@@ -441,7 +441,7 @@ namespace Game.Runtime
             for (int i = 0; i < buildings.Count; i++)
             {
                 RuntimeBuildingEntity building = buildings[i];
-                if (!IsActiveRoadGateBuilding(context, building) ||
+                if (!IsRuntimeRoadGateBuilding(context, building) ||
                     !building.HasOwnerFaction ||
                     building.OwnerFactionId != factionId)
                 {
@@ -458,9 +458,14 @@ namespace Game.Runtime
 
         public bool IsActiveRoadGateBuilding(Context context, RuntimeBuildingEntity building)
         {
+            return IsRuntimeRoadGateBuilding(context, building) &&
+                   building.DoorZ != null;
+        }
+
+        private bool IsRuntimeRoadGateBuilding(Context context, RuntimeBuildingEntity building)
+        {
             return building != null &&
                    !building.IsDestroyed &&
-                   building.DoorZ != null &&
                    IsWallGateDefinition(context, building.Definition);
         }
 

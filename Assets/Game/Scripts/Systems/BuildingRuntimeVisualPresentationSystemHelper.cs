@@ -7,6 +7,8 @@ namespace Game.Runtime
 {
     internal sealed class BuildingRuntimeVisualPresentationSystemHelper
     {
+        private const float RoadBarrierArmOpenEulerZ = 70f;
+
         public readonly struct Context
         {
             public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
@@ -47,12 +49,23 @@ namespace Game.Runtime
                 ? building.Instance.transform.GetChild(0)
                 : building.Instance.transform;
 
+            bool usesRoadBarrierArmFallback = false;
             building.DoorZ = context.VisualSystem.FindDescendantByName(visualRoot, "Door_Z");
+            if (building.DoorZ == null &&
+                BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(building.Definition))
+            {
+                building.DoorZ = context.VisualSystem.FindDescendantByName(visualRoot, "SM_Prop_Road_Barrier_Arm_01");
+                usesRoadBarrierArmFallback = building.DoorZ != null;
+            }
 
             if (building.DoorZ != null)
             {
+                float openEulerZ = NormalizeSignedAngle(building.DoorZ.localEulerAngles.z);
+                if (usesRoadBarrierArmFallback && Mathf.Abs(openEulerZ) < 0.01f)
+                    openEulerZ = RoadBarrierArmOpenEulerZ;
+
                 building.DoorClosedLocalEulerZ = 0f;
-                building.DoorOpenLocalEulerZ = NormalizeSignedAngle(building.DoorZ.localEulerAngles.z);
+                building.DoorOpenLocalEulerZ = openEulerZ;
                 building.DoorOpen01 = 0f;
                 context.BarrierSystem?.SetBarrierDoorOpen01(building, 0f);
             }

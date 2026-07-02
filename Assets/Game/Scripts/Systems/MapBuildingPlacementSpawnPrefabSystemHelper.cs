@@ -232,6 +232,8 @@ namespace Game.Runtime
             visual.transform.localRotation = Quaternion.identity;
             visual.transform.localScale = Vector3.one;
             visual.SetActive(true);
+            if (context.Config.HideAuthoringVisualsAfterSpawn)
+                source.gameObject.SetActive(false);
 
             return wrapper;
         }

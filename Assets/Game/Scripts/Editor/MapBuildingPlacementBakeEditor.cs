@@ -77,10 +77,11 @@ namespace Game.Editor
                     for (int childIndex = 0; childIndex < categoryRoot.childCount; childIndex++)
                     {
                         Transform placementRoot = categoryRoot.GetChild(childIndex);
-                        Vector3 center = TryGetObjectBounds(placementRoot.gameObject) is { } bounds
+                        Bounds? placementBounds = TryGetObjectBounds(placementRoot.gameObject);
+                        Vector3 center = placementBounds is { } bounds
                             ? bounds.center
                             : placementRoot.position;
-                        byte factionId = ResolveFactionId(center, faction1, faction2, placementRoot, report);
+                        byte factionId = ResolveFactionId(center, placementBounds, faction1, faction2, placementRoot, report);
                         bool rotateVertical = IsVerticalRotation(placementRoot.eulerAngles.y);
                         placements.Add(new MapBuildingPlacementConfigEntry(
                             GetHierarchyPath(placementRoot),
@@ -135,6 +136,7 @@ namespace Game.Editor
 
         private static byte ResolveFactionId(
             Vector3 center,
+            Bounds? placementBounds,
             Bounds? faction1,
             Bounds? faction2,
             Transform placementRoot,
@@ -142,6 +144,12 @@ namespace Game.Editor
         {
             bool inFaction1 = faction1.HasValue && faction1.Value.Contains(center);
             bool inFaction2 = faction2.HasValue && faction2.Value.Contains(center);
+            if (!inFaction1 && !inFaction2 && placementBounds.HasValue)
+            {
+                inFaction1 = faction1.HasValue && faction1.Value.Intersects(placementBounds.Value);
+                inFaction2 = faction2.HasValue && faction2.Value.Intersects(placementBounds.Value);
+            }
+
             if (inFaction1 && inFaction2)
             {
                 report.errors.Add($"{GetHierarchyPath(placementRoot)} is inside both Faction1 and Faction2 volumes.");

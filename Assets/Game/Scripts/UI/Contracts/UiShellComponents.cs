@@ -833,6 +833,7 @@ namespace Game.UI.Contracts
         public readonly string OrderText;
         public readonly string SquadText;
         public readonly string CreditsText;
+        public readonly string OilText;
         public readonly string FuelText;
         public readonly string SupplyText;
         public readonly string CivilianRiskText;
@@ -843,18 +844,20 @@ namespace Game.UI.Contracts
             string creditsText,
             string fuelText,
             string supplyText,
-            string civilianRiskText)
+            string civilianRiskText,
+            string oilText = "")
         {
             OrderText = orderText;
             SquadText = squadText;
             CreditsText = creditsText;
+            OilText = oilText;
             FuelText = fuelText;
             SupplyText = supplyText;
             CivilianRiskText = civilianRiskText;
         }
 
         public static UiMatchHudHeaderModel Default =>
-            new("MOVE ORDER", "RIFLE SQUAD", "187,540", "2,860", "92/120", "MED");
+            new("MOVE ORDER", "RIFLE SQUAD", "187,540", "2,860", "92/120", "MED", "0");
     }
 
     public enum UiMatchHudObjectiveIconKind : byte

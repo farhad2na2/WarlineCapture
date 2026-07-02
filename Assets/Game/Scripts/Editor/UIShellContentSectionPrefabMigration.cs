@@ -39,7 +39,7 @@ namespace Game.Editor
             new(UIShellContentSectionId.Footer, "FooterContent")
         };
 
-        [MenuItem("Tools/Game/UI/Populate Shell Content Sections")]
+        [MenuItem("Game/UI/Populate Shell Content Sections")]
         public static void PopulateAll()
         {
             Populate(MainMenuContentPath, MainMenuSections);

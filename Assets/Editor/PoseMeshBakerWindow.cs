@@ -16,7 +16,7 @@ public sealed class PoseMeshBakerWindow : EditorWindow
     [SerializeField] private string _meshName = "";
     [SerializeField] private bool _createPrefab = false;
 
-    [MenuItem("Tools/DOTS/Pose Mesh Baker")]
+    [MenuItem("Game/DOTS/Pose Mesh Baker")]
     public static void Open()
     {
         GetWindow<PoseMeshBakerWindow>("Pose Mesh Baker");

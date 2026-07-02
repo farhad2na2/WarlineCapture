@@ -12,7 +12,7 @@ public sealed class SkinnedPrefabCombinerWindow : EditorWindow
     [SerializeField] private string _outputPrefabName = "";
     [SerializeField] private string _lastSourcePrefabPath = "";
 
-    [MenuItem("Tools/DOTS/Skinned Prefab Combiner")]
+    [MenuItem("Game/DOTS/Skinned Prefab Combiner")]
     public static void Open()
     {
         GetWindow<SkinnedPrefabCombinerWindow>("Skinned Prefab Combiner");

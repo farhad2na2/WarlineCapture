@@ -15,7 +15,7 @@ namespace Game.Editor
         public const string SuiteIndexPath = "/private/tmp/warline-scenario-lab-suite-index.json";
         private const string ScenarioAssetSearchRoot = "Assets/Game/Configs/ScenarioLab";
 
-        [MenuItem("Tools/Game/Scenario Lab/Run Scenario Suite")]
+        [MenuItem("Game/Scenario Lab/Run Scenario Suite")]
         public static void RunScenarioSuite()
         {
             try

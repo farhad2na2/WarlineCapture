@@ -644,22 +644,33 @@ namespace Game.UI.Shell.Ecs
 
             EnsureMatchHudHeaderState(entityManager, boundary);
             UiMatchHudHeaderComponent component = entityManager.GetComponentData<UiMatchHudHeaderComponent>(boundary);
-            string fuelText = TryFormatPlayerResourceSummary(entityManager, boundary, out string resourceSummary)
-                ? resourceSummary
-                : component.FuelText.ToString();
+            string oilText = "0";
+            string fuelText = component.FuelText.ToString();
+            if (TryFormatPlayerResourceSummary(entityManager, boundary, out string resourceOilText, out string resourceFuelText))
+            {
+                oilText = resourceOilText;
+                fuelText = resourceFuelText;
+            }
+
             header = new UiMatchHudHeaderModel(
                 component.OrderText.ToString(),
                 component.SquadText.ToString(),
                 component.CreditsText.ToString(),
                 fuelText,
                 component.SupplyText.ToString(),
-                component.CivilianRiskText.ToString());
+                component.CivilianRiskText.ToString(),
+                oilText);
             return true;
         }
 
-        private static bool TryFormatPlayerResourceSummary(EntityManager entityManager, Entity boundary, out string text)
+        private static bool TryFormatPlayerResourceSummary(
+            EntityManager entityManager,
+            Entity boundary,
+            out string oilText,
+            out string fuelText)
         {
-            text = string.Empty;
+            oilText = string.Empty;
+            fuelText = string.Empty;
             if (!entityManager.HasBuffer<BuildingRuntimeFactionSummary>(boundary))
                 return false;
 
@@ -673,7 +684,8 @@ namespace Game.UI.Shell.Ecs
 
                 int oil = Mathf.Max(0, Mathf.RoundToInt(summary.StoredOilBarrels));
                 int fuel = Mathf.Max(0, Mathf.RoundToInt(summary.StoredFuelBarrels));
-                text = $"O {FormatCompact(oil)} F {FormatCompact(fuel)}";
+                oilText = FormatCompact(oil);
+                fuelText = FormatCompact(fuel);
                 return true;
             }
 

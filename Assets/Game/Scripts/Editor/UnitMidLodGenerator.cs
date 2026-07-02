@@ -77,13 +77,13 @@ namespace Game.Editor
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Tools/Game/Rendering/LODs/Generate All Soldier LODs")]
+        [MenuItem("Game/Rendering/LODs/Generate All Soldier LODs")]
         public static void GenerateAllSoldierLods()
         {
             GenerateSoldierMale02Alt04();
         }
 
-        [MenuItem("Tools/Game/Rendering/LODs/Generate All Vehicle LODs")]
+        [MenuItem("Game/Rendering/LODs/Generate All Vehicle LODs")]
         public static void GenerateAllVehicleLods()
         {
             EnsureOutputFolder();

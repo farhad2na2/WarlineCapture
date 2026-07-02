@@ -29,7 +29,7 @@ namespace Game.Editor
         [SerializeField] private List<BakeComboDefinition> combos = new();
         [SerializeField] private Vector2 scrollPosition;
 
-        [MenuItem("Tools/Game/Soldier Animator Combo Baker")]
+        [MenuItem("Game/Soldier Animator Combo Baker")]
         public static void Open()
         {
             var window = GetWindow<SoldierAnimatorComboBakerWindow>();

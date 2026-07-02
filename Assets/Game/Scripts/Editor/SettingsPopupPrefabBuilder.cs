@@ -52,7 +52,7 @@ namespace Game.Editor
         private static readonly string[] ColorblindModeLabels = { "OFF", "PRO", "DEU", "TRI" };
         private static readonly string[] LanguageLabels = { "EN", "DE", "FR", "ES" };
 
-        [MenuItem("Tools/Game/UI/Rebuild Settings Popups")]
+        [MenuItem("Game/UI/Rebuild Settings Popups")]
         public static void Build()
         {
             LoadAssets();
@@ -67,7 +67,7 @@ namespace Game.Editor
             Debug.Log("[SettingsPopupPrefabBuilder] Shared settings popup prefab rebuilt and shell bindings updated.");
         }
 
-        [MenuItem("Tools/Game/UI/Capture Settings Popup QA")]
+        [MenuItem("Game/UI/Capture Settings Popup QA")]
         public static void CaptureVisualQa()
         {
             CapturePopup(SharedPopupPath, SettingsPopupContext.Menu, "/private/tmp/warline-settings-popup-menu-16x9.png", 1920, 1080);

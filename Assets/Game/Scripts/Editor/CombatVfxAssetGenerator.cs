@@ -152,7 +152,7 @@ namespace Game.Editor
         private static Material _smokeMat;
         private static Material _dustMat;
 
-        [MenuItem("Tools/Game/Generate Combat VFX (Muzzle Flash + Impact)")]
+        [MenuItem("Game/Generate Combat VFX (Muzzle Flash + Impact)")]
         public static void Generate()
         {
             EnsureFolders();

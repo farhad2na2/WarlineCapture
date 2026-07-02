@@ -38,7 +38,7 @@ namespace Game.Editor
             TransportBoardingScenarioCatalog.Tb012CameraProofPathId
         };
 
-        [MenuItem("Tools/Game/Scenario Lab/Capture AD-001 Visual Proof")]
+        [MenuItem("Game/Scenario Lab/Capture AD-001 Visual Proof")]
         public static void CaptureAd001VisualProof()
         {
             try
@@ -56,7 +56,7 @@ namespace Game.Editor
             }
         }
 
-        [MenuItem("Tools/Game/Scenario Lab/Capture Transport Boarding Visual Proof")]
+        [MenuItem("Game/Scenario Lab/Capture Transport Boarding Visual Proof")]
         public static void CaptureTransportBoardingVisualProof()
         {
             try

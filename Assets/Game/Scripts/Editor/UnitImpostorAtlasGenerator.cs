@@ -46,7 +46,7 @@ namespace Game.Editor
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Tools/Game/Rendering/Atlases/Generate All Character Atlases")]
+        [MenuItem("Game/Rendering/Atlases/Generate All Character Atlases")]
         public static void GenerateAllRegisteredSoldierAtlases()
         {
             UnitPrefabRegistryAuthoringConfig registry = AssetDatabase.LoadAssetAtPath<UnitPrefabRegistryAuthoringConfig>(RegistryConfigPath);

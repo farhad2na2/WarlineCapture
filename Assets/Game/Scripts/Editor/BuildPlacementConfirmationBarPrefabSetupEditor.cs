@@ -10,7 +10,7 @@ namespace Game.Editor
     {
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_BuildPlacementConfirmationBar.prefab";
 
-        [MenuItem("Tools/UI/Setup Build Placement Confirmation Bar Prefab")]
+        [MenuItem("Game/UI/Setup Build Placement Confirmation Bar Prefab")]
         public static void Setup()
         {
             GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);

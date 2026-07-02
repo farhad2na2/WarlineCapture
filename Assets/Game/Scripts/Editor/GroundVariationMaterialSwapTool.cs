@@ -37,7 +37,7 @@ namespace Game.Editor
             "SM_Env_Beach",
         };
 
-        [MenuItem("Tools/Game/Rendering/Ground Variation/Apply To Open Scene")]
+        [MenuItem("Game/Rendering/Ground Variation/Apply To Open Scene")]
         public static void Apply()
         {
             Shader groundShader = Shader.Find(ShaderName);
@@ -93,7 +93,7 @@ namespace Game.Editor
             Debug.Log($"GroundVariationMaterialSwapTool: swapped {swappedSlots} material slot(s) on {touchedRenderers} renderer(s) using {variationByOriginal.Count} variation material(s).");
         }
 
-        [MenuItem("Tools/Game/Rendering/Ground Variation/Revert Open Scene")]
+        [MenuItem("Game/Rendering/Ground Variation/Revert Open Scene")]
         public static void Revert()
         {
             Shader groundShader = Shader.Find(ShaderName);

@@ -33,7 +33,7 @@ namespace Game.Editor
         private const string PlaneTransportPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab";
         private const string VehicleCargoPrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Tank_USA.prefab";
 
-        [MenuItem("Tools/Game/Scenario Lab/Create Manual Scene Shell")]
+        [MenuItem("Game/Scenario Lab/Create Manual Scene Shell")]
         public static void CreateManualSceneShell()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath) ?? "Assets/Game/Scenes/ScenarioLab");

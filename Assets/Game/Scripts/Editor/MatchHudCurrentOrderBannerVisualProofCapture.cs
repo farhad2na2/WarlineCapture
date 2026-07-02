@@ -36,7 +36,7 @@ namespace Game.Editor
             new("no_selection_rejected", "No selection rejected", TacticalCommandMode.Move, "Select units or a building first.", false)
         };
 
-        [MenuItem("Tools/Game/UI/Capture Current Order Banner Visual Proof")]
+        [MenuItem("Game/UI/Capture Current Order Banner Visual Proof")]
         public static void CaptureVisualProof()
         {
             try

@@ -14,7 +14,7 @@ public sealed class ProBuilderShapeBakerWindow : EditorWindow
     private bool _includeInactive = true;
     private bool _removeProBuilderComponents = true;
 
-    [MenuItem("Tools/Game/ProBuilder Shape Baker")]
+    [MenuItem("Tools/ProBuilder Shape Baker")]
     private static void OpenWindow()
     {
         var window = GetWindow<ProBuilderShapeBakerWindow>("ProBuilder Shape Baker");

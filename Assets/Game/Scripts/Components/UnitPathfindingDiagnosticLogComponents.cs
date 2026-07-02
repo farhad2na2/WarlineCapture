@@ -1,11 +1,14 @@
 using Unity.Collections;
 using Unity.Entities;
 
-public struct UnitPathfindingDiagnosticLogQueueComponent : IComponentData
+namespace Game.Components
 {
-}
+    public struct UnitPathfindingDiagnosticLogQueueComponent : IComponentData
+    {
+    }
 
-public struct UnitPathfindingDiagnosticLogComponent : IBufferElementData
-{
-    public FixedString4096Bytes Message;
+    public struct UnitPathfindingDiagnosticLogComponent : IBufferElementData
+    {
+        public FixedString4096Bytes Message;
+    }
 }

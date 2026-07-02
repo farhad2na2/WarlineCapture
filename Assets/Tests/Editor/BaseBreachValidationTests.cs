@@ -8,6 +8,10 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEditor;
 using UnityEngine;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Composition;
 
 public sealed class BaseBreachValidationTests
 {

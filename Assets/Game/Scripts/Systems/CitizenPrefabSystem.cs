@@ -2,66 +2,69 @@ using System;
 using Unity.Collections;
 using Unity.Entities;
 
-[UpdateInGroup(typeof(SimulationSystemGroup))]
-internal partial struct CitizenPrefabSystem : ISystem
+namespace Game.Runtime
 {
-    public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
-
-    public readonly struct Context
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    internal partial struct CitizenPrefabSystem : ISystem
     {
-        public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
-        public readonly TryGetEntityManagerDelegate TryGetEntityManager;
-        public readonly Action<EntityManager> EnsureEntityQueries;
-        public readonly Func<BuildingSpawnPrefabSystem.Context> CreateSpawnPrefabContext;
+        public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
-        public Context(
-            BuildingSpawnPrefabSystem spawnPrefabSystem,
-            TryGetEntityManagerDelegate tryGetEntityManager,
-            Action<EntityManager> ensureEntityQueries,
-            Func<BuildingSpawnPrefabSystem.Context> createSpawnPrefabContext)
+        public readonly struct Context
         {
-            SpawnPrefabSystem = spawnPrefabSystem;
-            TryGetEntityManager = tryGetEntityManager;
-            EnsureEntityQueries = ensureEntityQueries;
-            CreateSpawnPrefabContext = createSpawnPrefabContext;
-        }
-    }
+            public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
+            public readonly TryGetEntityManagerDelegate TryGetEntityManager;
+            public readonly Action<EntityManager> EnsureEntityQueries;
+            public readonly Func<BuildingSpawnPrefabSystem.Context> CreateSpawnPrefabContext;
 
-    public void OnCreate(ref SystemState state)
-    {
-        // RequireForUpdate intentionally omitted: disabled helper; composition calls prefab lookup methods directly.
-        state.Enabled = false;
-    }
-
-    public void OnUpdate(ref SystemState state)
-    {
-    }
-
-    public bool TryResolveConfiguredUnitPrefabEntity(Context context, string unitPrefabSourceKey, out Entity prefabEntity)
-    {
-        string sourceKey = BuildingDefinitionPrefabSystemHelper.GetSpawnableLookupKey(unitPrefabSourceKey);
-        return TryResolveConfiguredUnitPrefabEntity(
-            context,
-            string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey),
-            out prefabEntity);
-    }
-
-    public bool TryResolveConfiguredUnitPrefabEntity(Context context, FixedString64Bytes unitPrefabSourceKey, out Entity prefabEntity)
-    {
-        prefabEntity = Entity.Null;
-        if (unitPrefabSourceKey.Length == 0 ||
-            context.TryGetEntityManager == null ||
-            context.CreateSpawnPrefabContext == null ||
-            !context.TryGetEntityManager(out EntityManager em))
-        {
-            return false;
+            public Context(
+                BuildingSpawnPrefabSystem spawnPrefabSystem,
+                TryGetEntityManagerDelegate tryGetEntityManager,
+                Action<EntityManager> ensureEntityQueries,
+                Func<BuildingSpawnPrefabSystem.Context> createSpawnPrefabContext)
+            {
+                SpawnPrefabSystem = spawnPrefabSystem;
+                TryGetEntityManager = tryGetEntityManager;
+                EnsureEntityQueries = ensureEntityQueries;
+                CreateSpawnPrefabContext = createSpawnPrefabContext;
+            }
         }
 
-        context.EnsureEntityQueries?.Invoke(em);
-        return context.SpawnPrefabSystem.TryGetSpawnUnitPrefabEntity(
-            context.CreateSpawnPrefabContext(),
-            em,
-            unitPrefabSourceKey,
-            out prefabEntity);
+        public void OnCreate(ref SystemState state)
+        {
+            // RequireForUpdate intentionally omitted: disabled helper; composition calls prefab lookup methods directly.
+            state.Enabled = false;
+        }
+
+        public void OnUpdate(ref SystemState state)
+        {
+        }
+
+        public bool TryResolveConfiguredUnitPrefabEntity(Context context, string unitPrefabSourceKey, out Entity prefabEntity)
+        {
+            string sourceKey = BuildingDefinitionPrefabSystemHelper.GetSpawnableLookupKey(unitPrefabSourceKey);
+            return TryResolveConfiguredUnitPrefabEntity(
+                context,
+                string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey),
+                out prefabEntity);
+        }
+
+        public bool TryResolveConfiguredUnitPrefabEntity(Context context, FixedString64Bytes unitPrefabSourceKey, out Entity prefabEntity)
+        {
+            prefabEntity = Entity.Null;
+            if (unitPrefabSourceKey.Length == 0 ||
+                context.TryGetEntityManager == null ||
+                context.CreateSpawnPrefabContext == null ||
+                !context.TryGetEntityManager(out EntityManager em))
+            {
+                return false;
+            }
+
+            context.EnsureEntityQueries?.Invoke(em);
+            return context.SpawnPrefabSystem.TryGetSpawnUnitPrefabEntity(
+                context.CreateSpawnPrefabContext(),
+                em,
+                unitPrefabSourceKey,
+                out prefabEntity);
+        }
     }
 }

@@ -1,85 +1,89 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Game.Tactical.Contracts;
 
-public sealed class CommandWheelPanelView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private GameObject wheelRoot;
-    [SerializeField] private Button openButton;
-    [SerializeField] private Button closeButton;
-    [SerializeField] private Button scrimButton;
-    [SerializeField] private BattleHudRuntimeFeedbackView runtimeFeedbackView;
-    private bool _appliedSpecialMode;
-
-    public bool IsOpen => wheelRoot != null && wheelRoot.activeSelf;
-
-    private void Awake()
+    public sealed class CommandWheelPanelView : MonoBehaviour
     {
-        if (runtimeFeedbackView == null)
-            runtimeFeedbackView = GetComponent<BattleHudRuntimeFeedbackView>();
+        [SerializeField] private GameObject wheelRoot;
+        [SerializeField] private Button openButton;
+        [SerializeField] private Button closeButton;
+        [SerializeField] private Button scrimButton;
+        [SerializeField] private BattleHudRuntimeFeedbackView runtimeFeedbackView;
+        private bool _appliedSpecialMode;
 
-        if (openButton != null)
-            openButton.onClick.AddListener(Open);
+        public bool IsOpen => wheelRoot != null && wheelRoot.activeSelf;
 
-        if (closeButton != null)
-            closeButton.onClick.AddListener(Close);
+        private void Awake()
+        {
+            if (runtimeFeedbackView == null)
+                runtimeFeedbackView = GetComponent<BattleHudRuntimeFeedbackView>();
 
-        if (scrimButton != null)
-            scrimButton.onClick.AddListener(Close);
+            if (openButton != null)
+                openButton.onClick.AddListener(Open);
 
-        Close();
-    }
+            if (closeButton != null)
+                closeButton.onClick.AddListener(Close);
 
-    private void OnDestroy()
-    {
-        if (openButton != null)
-            openButton.onClick.RemoveListener(Open);
+            if (scrimButton != null)
+                scrimButton.onClick.AddListener(Close);
 
-        if (closeButton != null)
-            closeButton.onClick.RemoveListener(Close);
+            Close();
+        }
 
-        if (scrimButton != null)
-            scrimButton.onClick.RemoveListener(Close);
-    }
+        private void OnDestroy()
+        {
+            if (openButton != null)
+                openButton.onClick.RemoveListener(Open);
 
-    public void Open()
-    {
-        if (wheelRoot != null)
-            wheelRoot.SetActive(true);
-        ApplySpecialMode();
-    }
+            if (closeButton != null)
+                closeButton.onClick.RemoveListener(Close);
 
-    public void Close()
-    {
-        if (wheelRoot != null)
-            wheelRoot.SetActive(false);
-        ClearSpecialMode();
-    }
+            if (scrimButton != null)
+                scrimButton.onClick.RemoveListener(Close);
+        }
 
-    public void Toggle()
-    {
-        if (wheelRoot == null)
-            return;
-
-        bool shouldOpen = !wheelRoot.activeSelf;
-        wheelRoot.SetActive(shouldOpen);
-        if (shouldOpen)
+        public void Open()
+        {
+            if (wheelRoot != null)
+                wheelRoot.SetActive(true);
             ApplySpecialMode();
-        else
+        }
+
+        public void Close()
+        {
+            if (wheelRoot != null)
+                wheelRoot.SetActive(false);
             ClearSpecialMode();
-    }
+        }
 
-    private void ApplySpecialMode()
-    {
-        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(runtimeFeedbackView, TacticalCommandMode.Special);
-        _appliedSpecialMode = runtimeFeedbackView != null;
-    }
+        public void Toggle()
+        {
+            if (wheelRoot == null)
+                return;
 
-    private void ClearSpecialMode()
-    {
-        if (!_appliedSpecialMode)
-            return;
+            bool shouldOpen = !wheelRoot.activeSelf;
+            wheelRoot.SetActive(shouldOpen);
+            if (shouldOpen)
+                ApplySpecialMode();
+            else
+                ClearSpecialMode();
+        }
 
-        BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(runtimeFeedbackView);
-        _appliedSpecialMode = false;
+        private void ApplySpecialMode()
+        {
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(runtimeFeedbackView, TacticalCommandMode.Special);
+            _appliedSpecialMode = runtimeFeedbackView != null;
+        }
+
+        private void ClearSpecialMode()
+        {
+            if (!_appliedSpecialMode)
+                return;
+
+            BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(runtimeFeedbackView);
+            _appliedSpecialMode = false;
+        }
     }
 }

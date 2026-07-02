@@ -3,111 +3,115 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Game.Components;
 
-[UpdateAfter(typeof(UnitDeathSystem))]
-public partial struct UnitRespawnSystem : ISystem
+namespace Game.Runtime
 {
-    private MapSurfaceSpawnGrounding _spawnGroundingSystem;
-    private EntityQuery _gridQuery;
-    private EntityQuery _respawnQueueQuery;
-
-    public void OnCreate(ref SystemState state)
+    [UpdateAfter(typeof(UnitDeathSystem))]
+    public partial struct UnitRespawnSystem : ISystem
     {
-        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        _respawnQueueQuery = state.GetEntityQuery(ComponentType.ReadOnly<RespawnQueueTag>());
-        state.RequireForUpdate(_gridQuery);
-        state.RequireForUpdate<DynamicOccupancyComponent>();
-        state.RequireForUpdate<DynamicBlockerComponent>();
-        state.RequireForUpdate<GridWalkable>();
-    }
+        private MapSurfaceSpawnGrounding _spawnGroundingSystem;
+        private EntityQuery _gridQuery;
+        private EntityQuery _respawnQueueQuery;
 
-    public void OnUpdate(ref SystemState state)
-    {
-        var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state, _respawnQueueQuery);
-        var buffer = SystemAPI.GetBuffer<RespawnRequest>(queueEntity);
-        if (buffer.Length == 0)
-            return;
-
-        Entity gridEntity = _gridQuery.GetSingletonEntity();
-        var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
-        var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var occupied = SystemAPI.GetComponent<DynamicOccupancyComponent>(gridEntity).Occupied;
-        var dynamicBlocked = SystemAPI.GetComponent<DynamicBlockerComponent>(gridEntity).Blocked;
-        var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp);
-
-        var queueState = SystemAPI.GetComponentRW<RespawnQueueComponent>(queueEntity);
-        var rng = new Unity.Mathematics.Random(queueState.ValueRW.RandomState == 0 ? 1u : queueState.ValueRW.RandomState);
-
-        double now = SystemAPI.Time.ElapsedTime;
-
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
-
-        for (int i = buffer.Length - 1; i >= 0; i--)
+        public void OnCreate(ref SystemState state)
         {
-            var req = buffer[i];
-            if (req.ReadyTime > now)
-                continue;
+            _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            _respawnQueueQuery = state.GetEntityQuery(ComponentType.ReadOnly<RespawnQueueTag>());
+            state.RequireForUpdate(_gridQuery);
+            state.RequireForUpdate<DynamicOccupancyComponent>();
+            state.RequireForUpdate<DynamicBlockerComponent>();
+            state.RequireForUpdate<GridWalkable>();
+        }
 
-            buffer.RemoveAt(i);
+        public void OnUpdate(ref SystemState state)
+        {
+            var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state, _respawnQueueQuery);
+            var buffer = SystemAPI.GetBuffer<RespawnRequest>(queueEntity);
+            if (buffer.Length == 0)
+                return;
 
-            if (req.Prefab == Entity.Null)
-                continue;
+            Entity gridEntity = _gridQuery.GetSingletonEntity();
+            var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
+            var walkable = SystemAPI.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
+            var occupied = SystemAPI.GetComponent<DynamicOccupancyComponent>(gridEntity).Occupied;
+            var dynamicBlocked = SystemAPI.GetComponent<DynamicBlockerComponent>(gridEntity).Blocked;
+            var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp);
 
-            int2 center = ResolveFactionSpawnCell(state.EntityManager, queueEntity, req.FactionId);
-            int2 footprintSize = state.EntityManager.HasComponent<UnitFootprint>(req.Prefab)
-                ? state.EntityManager.GetComponentData<UnitFootprint>(req.Prefab).Size
-                : new int2(1, 1);
-            if (!SpawnCellUtility.TryFindSpawnCellNear(ref rng, grid, walkable, dynamicBlocked, occupied, ref reserved, center, queueState.ValueRO.SpawnRadiusCells, footprintSize, out int2 cell))
+            var queueState = SystemAPI.GetComponentRW<RespawnQueueComponent>(queueEntity);
+            var rng = new Unity.Mathematics.Random(queueState.ValueRW.RandomState == 0 ? 1u : queueState.ValueRW.RandomState);
+
+            double now = SystemAPI.Time.ElapsedTime;
+
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
+
+            for (int i = buffer.Length - 1; i >= 0; i--)
             {
-                Debug.LogWarning($"[Respawn] no-free-cell faction={req.FactionId} prefab={req.Prefab} center={center} radius={queueState.ValueRO.SpawnRadiusCells} footprint={footprintSize}");
-                continue;
+                var req = buffer[i];
+                if (req.ReadyTime > now)
+                    continue;
+
+                buffer.RemoveAt(i);
+
+                if (req.Prefab == Entity.Null)
+                    continue;
+
+                int2 center = ResolveFactionSpawnCell(state.EntityManager, queueEntity, req.FactionId);
+                int2 footprintSize = state.EntityManager.HasComponent<UnitFootprint>(req.Prefab)
+                    ? state.EntityManager.GetComponentData<UnitFootprint>(req.Prefab).Size
+                    : new int2(1, 1);
+                if (!SpawnCellUtility.TryFindSpawnCellNear(ref rng, grid, walkable, dynamicBlocked, occupied, ref reserved, center, queueState.ValueRO.SpawnRadiusCells, footprintSize, out int2 cell))
+                {
+                    Debug.LogWarning($"[Respawn] no-free-cell faction={req.FactionId} prefab={req.Prefab} center={center} radius={queueState.ValueRO.SpawnRadiusCells} footprint={footprintSize}");
+                    continue;
+                }
+
+                var instance = ecb.Instantiate(req.Prefab);
+                ecb.SetComponent(instance, new UnitGrid { Cell = cell });
+                float3 pos = GridUtils.CellToWorldCenter(grid, cell);
+                bool isAirUnit = state.EntityManager.HasComponent<UnitAirMovement>(req.Prefab);
+                if (!isAirUnit)
+                    _spawnGroundingSystem.TryGroundCellCenter(state.EntityManager, grid, cell, ref pos, out _);
+                ecb.SetComponent(instance, LocalTransform.FromPosition(pos));
+                ecb.SetComponent(instance, new UnitPrevWorldPos { Value = pos });
+                ecb.SetComponent(instance, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
+                ecb.SetComponent(instance, new Faction { Id = req.FactionId });
+                ecb.SetComponent(instance, new UnitRespawnPrefab { Prefab = req.Prefab });
+                ecb.SetComponent(instance, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
+                ecb.SetComponent(instance, new UnitIdleWanderComponent
+                {
+                    RandomState = rng.NextUInt(),
+                    RetrySeconds = 0f,
+                    CurrentIdleDelaySeconds = 0f
+                });
+                ecb.RemoveComponent<UnitPathFollow>(instance);
+                ecb.RemoveComponent<UnitPathRange>(instance);
+                ecb.RemoveComponent<EngageTarget>(instance);
+                ecb.RemoveComponent<UnitPathRequest>(instance);
+                ecb.RemoveComponent<UnitTarget>(instance);
+                ecb.RemoveComponent<AutoWanderMoveTag>(instance);
             }
 
-            var instance = ecb.Instantiate(req.Prefab);
-            ecb.SetComponent(instance, new UnitGrid { Cell = cell });
-            float3 pos = GridUtils.CellToWorldCenter(grid, cell);
-            bool isAirUnit = state.EntityManager.HasComponent<UnitAirMovement>(req.Prefab);
-            if (!isAirUnit)
-                _spawnGroundingSystem.TryGroundCellCenter(state.EntityManager, grid, cell, ref pos, out _);
-            ecb.SetComponent(instance, LocalTransform.FromPosition(pos));
-            ecb.SetComponent(instance, new UnitPrevWorldPos { Value = pos });
-            ecb.SetComponent(instance, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
-            ecb.SetComponent(instance, new Faction { Id = req.FactionId });
-            ecb.SetComponent(instance, new UnitRespawnPrefab { Prefab = req.Prefab });
-            ecb.SetComponent(instance, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
-            ecb.SetComponent(instance, new UnitIdleWanderComponent
-            {
-                RandomState = rng.NextUInt(),
-                RetrySeconds = 0f,
-                CurrentIdleDelaySeconds = 0f
-            });
-            ecb.RemoveComponent<UnitPathFollow>(instance);
-            ecb.RemoveComponent<UnitPathRange>(instance);
-            ecb.RemoveComponent<EngageTarget>(instance);
-            ecb.RemoveComponent<UnitPathRequest>(instance);
-            ecb.RemoveComponent<UnitTarget>(instance);
-            ecb.RemoveComponent<AutoWanderMoveTag>(instance);
+            queueState.ValueRW.RandomState = rng.state;
+
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
+            reserved.Dispose();
         }
 
-        queueState.ValueRW.RandomState = rng.state;
-
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
-        reserved.Dispose();
-    }
-
-    private static int2 ResolveFactionSpawnCell(EntityManager em, Entity queueEntity, byte factionId)
-    {
-        if (!em.HasBuffer<RespawnFactionSpawnPoint>(queueEntity))
-            return default;
-
-        DynamicBuffer<RespawnFactionSpawnPoint> points = em.GetBuffer<RespawnFactionSpawnPoint>(queueEntity);
-        for (int i = 0; i < points.Length; i++)
+        private static int2 ResolveFactionSpawnCell(EntityManager em, Entity queueEntity, byte factionId)
         {
-            if (points[i].FactionId == factionId)
-                return points[i].SpawnCell;
-        }
+            if (!em.HasBuffer<RespawnFactionSpawnPoint>(queueEntity))
+                return default;
 
-        return points.Length > 0 ? points[0].SpawnCell : default;
+            DynamicBuffer<RespawnFactionSpawnPoint> points = em.GetBuffer<RespawnFactionSpawnPoint>(queueEntity);
+            for (int i = 0; i < points.Length; i++)
+            {
+                if (points[i].FactionId == factionId)
+                    return points[i].SpawnCell;
+            }
+
+            return points.Length > 0 ? points[0].SpawnCell : default;
+        }
     }
 }

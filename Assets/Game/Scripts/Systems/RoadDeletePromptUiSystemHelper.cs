@@ -1,73 +1,76 @@
 using System;
 using UnityEngine;
 
-public sealed class RoadDeletePromptUiSystemHelper
+namespace Game.Runtime
 {
-    public struct Context
+    public sealed class RoadDeletePromptUiSystemHelper
     {
-        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly RoadBuildSessionCompositionSystemHelper SessionSystem;
-        public readonly RoadBuildSessionCompositionSystemHelper.State SessionState;
-        public readonly Action<int> DeleteStroke;
-
-        public Context(
-            RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            RoadBuildSessionCompositionSystemHelper sessionSystem,
-            RoadBuildSessionCompositionSystemHelper.State sessionState,
-            Action<int> deleteStroke)
+        public struct Context
         {
-            RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
-            SessionSystem = sessionSystem;
-            SessionState = sessionState;
-            DeleteStroke = deleteStroke;
-        }
-    }
+            public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+            public readonly RoadBuildSessionCompositionSystemHelper SessionSystem;
+            public readonly RoadBuildSessionCompositionSystemHelper.State SessionState;
+            public readonly Action<int> DeleteStroke;
 
-    public void OnGui(Context context)
-    {
-        if (!context.RuntimeGameplayStateSystem.PlayRequested ||
-            !context.RuntimeGameplayStateSystem.BuildModeActive ||
-            !context.SessionSystem.HasDeletePrompt(context.SessionState))
-        {
-            return;
+            public Context(
+                RuntimeGameplayStateSystem runtimeGameplayStateSystem,
+                RoadBuildSessionCompositionSystemHelper sessionSystem,
+                RoadBuildSessionCompositionSystemHelper.State sessionState,
+                Action<int> deleteStroke)
+            {
+                RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
+                SessionSystem = sessionSystem;
+                SessionState = sessionState;
+                DeleteStroke = deleteStroke;
+            }
         }
 
-        const int deleteRoadWindowId = 12001;
-        const float width = 320f;
-        const float height = 150f;
-        Rect windowRect = new(
-            (Screen.width - width) * 0.5f,
-            (Screen.height - height) * 0.5f,
-            width,
-            height);
-
-        GUI.ModalWindow(deleteRoadWindowId, windowRect, windowId => DrawDeleteWindow(context, windowId), "Delete Road");
-    }
-
-    private void DrawDeleteWindow(Context context, int windowId)
-    {
-        GUILayout.Space(12f);
-        GUILayout.Label(context.SessionSystem.GetDeletePromptMessage(context.SessionState, "Delete this road?"));
-        GUILayout.FlexibleSpace();
-        GUILayout.BeginHorizontal();
-
-        if (GUILayout.Button("Delete", GUILayout.Height(32f)))
+        public void OnGui(Context context)
         {
-            if (context.SessionSystem.TryGetDeleteStrokeId(context.SessionState, out int strokeId))
-                context.DeleteStroke?.Invoke(strokeId);
+            if (!context.RuntimeGameplayStateSystem.PlayRequested ||
+                !context.RuntimeGameplayStateSystem.BuildModeActive ||
+                !context.SessionSystem.HasDeletePrompt(context.SessionState))
+            {
+                return;
+            }
 
-            ClearDeletePrompt(context);
+            const int deleteRoadWindowId = 12001;
+            const float width = 320f;
+            const float height = 150f;
+            Rect windowRect = new(
+                (Screen.width - width) * 0.5f,
+                (Screen.height - height) * 0.5f,
+                width,
+                height);
+
+            GUI.ModalWindow(deleteRoadWindowId, windowRect, windowId => DrawDeleteWindow(context, windowId), "Delete Road");
         }
 
-        if (GUILayout.Button("Cancel", GUILayout.Height(32f)))
-            ClearDeletePrompt(context);
+        private void DrawDeleteWindow(Context context, int windowId)
+        {
+            GUILayout.Space(12f);
+            GUILayout.Label(context.SessionSystem.GetDeletePromptMessage(context.SessionState, "Delete this road?"));
+            GUILayout.FlexibleSpace();
+            GUILayout.BeginHorizontal();
 
-        GUILayout.EndHorizontal();
-        GUILayout.Space(8f);
-    }
+            if (GUILayout.Button("Delete", GUILayout.Height(32f)))
+            {
+                if (context.SessionSystem.TryGetDeleteStrokeId(context.SessionState, out int strokeId))
+                    context.DeleteStroke?.Invoke(strokeId);
 
-    private void ClearDeletePrompt(Context context)
-    {
-        context.SessionSystem.ClearDeletePrompt(context.SessionState);
+                ClearDeletePrompt(context);
+            }
+
+            if (GUILayout.Button("Cancel", GUILayout.Height(32f)))
+                ClearDeletePrompt(context);
+
+            GUILayout.EndHorizontal();
+            GUILayout.Space(8f);
+        }
+
+        private void ClearDeletePrompt(Context context)
+        {
+            context.SessionSystem.ClearDeletePrompt(context.SessionState);
+        }
     }
 }

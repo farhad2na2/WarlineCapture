@@ -1,37 +1,40 @@
 using TMPro;
 using UnityEngine;
 
-[DisallowMultipleComponent]
-public sealed class MatchHudObjectivesElapsedView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private TMP_Text elapsedText;
-
-    private float elapsedSeconds;
-    private int displayedTotalSeconds = -1;
-
-    private void OnEnable()
+    [DisallowMultipleComponent]
+    public sealed class MatchHudObjectivesElapsedView : MonoBehaviour
     {
-        elapsedSeconds = 0f;
-        displayedTotalSeconds = -1;
-        Refresh();
-    }
+        [SerializeField] private TMP_Text elapsedText;
 
-    private void Update()
-    {
-        elapsedSeconds += Time.deltaTime;
-        Refresh();
-    }
+        private float elapsedSeconds;
+        private int displayedTotalSeconds = -1;
 
-    private void Refresh()
-    {
-        if (elapsedText == null)
-            return;
+        private void OnEnable()
+        {
+            elapsedSeconds = 0f;
+            displayedTotalSeconds = -1;
+            Refresh();
+        }
 
-        int totalSeconds = Mathf.FloorToInt(elapsedSeconds);
-        if (totalSeconds == displayedTotalSeconds)
-            return;
+        private void Update()
+        {
+            elapsedSeconds += Time.deltaTime;
+            Refresh();
+        }
 
-        displayedTotalSeconds = totalSeconds;
-        elapsedText.text = $"Elapsed: {totalSeconds / 60:00}:{totalSeconds % 60:00}";
+        private void Refresh()
+        {
+            if (elapsedText == null)
+                return;
+
+            int totalSeconds = Mathf.FloorToInt(elapsedSeconds);
+            if (totalSeconds == displayedTotalSeconds)
+                return;
+
+            displayedTotalSeconds = totalSeconds;
+            elapsedText.text = $"Elapsed: {totalSeconds / 60:00}:{totalSeconds % 60:00}";
+        }
     }
 }

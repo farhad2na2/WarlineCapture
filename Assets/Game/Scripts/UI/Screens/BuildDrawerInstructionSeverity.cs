@@ -1,7 +1,10 @@
-public enum BuildDrawerInstructionSeverity : byte
+namespace Game.UI.Runtime
 {
-    Neutral = 0,
-    Ready = 1,
-    Warning = 2,
-    Error = 3
+    public enum BuildDrawerInstructionSeverity : byte
+    {
+        Neutral = 0,
+        Ready = 1,
+        Warning = 2,
+        Error = 3
+    }
 }

@@ -1,6 +1,9 @@
-internal interface ISettingsControlsView
+namespace Game.UI.Runtime
 {
-    void Bind(UISettingsModel model);
-    UISettingsModel ReadModelFromControls(UISettingsModel model);
-    void ApplyVisualPreferences(UISettingsModel model);
+    internal interface ISettingsControlsView
+    {
+        void Bind(UISettingsModel model);
+        UISettingsModel ReadModelFromControls(UISettingsModel model);
+        void ApplyVisualPreferences(UISettingsModel model);
+    }
 }

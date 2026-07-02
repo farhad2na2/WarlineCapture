@@ -1,8 +1,11 @@
 using Unity.Entities;
 
-public struct RuntimeDiagnosticsStateComponent : IComponentData
+namespace Game.Components
 {
-    public byte VerboseAILogs;
-    public byte TransportBoardingDiagnostics;
-    public byte BuildingRuntimeSliceDiagnostics;
+    public struct RuntimeDiagnosticsStateComponent : IComponentData
+    {
+        public byte VerboseAILogs;
+        public byte TransportBoardingDiagnostics;
+        public byte BuildingRuntimeSliceDiagnostics;
+    }
 }

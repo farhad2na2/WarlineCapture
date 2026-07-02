@@ -1,48 +1,51 @@
 using UnityEngine;
 
-[RequireComponent(typeof(RectTransform))]
-public sealed class UISafeAreaView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private RectTransform target;
-    private Rect _lastSafeArea;
-    private Vector2Int _lastScreenSize;
-
-    private void Awake()
+    [RequireComponent(typeof(RectTransform))]
+    public sealed class UISafeAreaView : MonoBehaviour
     {
-        if (target == null)
-            target = (RectTransform)transform;
+        [SerializeField] private RectTransform target;
+        private Rect _lastSafeArea;
+        private Vector2Int _lastScreenSize;
 
-        ApplySafeArea();
-    }
+        private void Awake()
+        {
+            if (target == null)
+                target = (RectTransform)transform;
 
-    private void Update()
-    {
-        ApplySafeArea();
-    }
+            ApplySafeArea();
+        }
 
-    public void ApplySafeArea()
-    {
-        if (target == null)
-            return;
+        private void Update()
+        {
+            ApplySafeArea();
+        }
 
-        Rect safeArea = Screen.safeArea;
-        Vector2Int screenSize = new(Screen.width, Screen.height);
-        if (safeArea == _lastSafeArea && screenSize == _lastScreenSize)
-            return;
+        public void ApplySafeArea()
+        {
+            if (target == null)
+                return;
 
-        _lastSafeArea = safeArea;
-        _lastScreenSize = screenSize;
+            Rect safeArea = Screen.safeArea;
+            Vector2Int screenSize = new(Screen.width, Screen.height);
+            if (safeArea == _lastSafeArea && screenSize == _lastScreenSize)
+                return;
 
-        Vector2 anchorMin = safeArea.position;
-        Vector2 anchorMax = safeArea.position + safeArea.size;
-        anchorMin.x /= Mathf.Max(1, Screen.width);
-        anchorMin.y /= Mathf.Max(1, Screen.height);
-        anchorMax.x /= Mathf.Max(1, Screen.width);
-        anchorMax.y /= Mathf.Max(1, Screen.height);
+            _lastSafeArea = safeArea;
+            _lastScreenSize = screenSize;
 
-        target.anchorMin = anchorMin;
-        target.anchorMax = anchorMax;
-        target.offsetMin = Vector2.zero;
-        target.offsetMax = Vector2.zero;
+            Vector2 anchorMin = safeArea.position;
+            Vector2 anchorMax = safeArea.position + safeArea.size;
+            anchorMin.x /= Mathf.Max(1, Screen.width);
+            anchorMin.y /= Mathf.Max(1, Screen.height);
+            anchorMax.x /= Mathf.Max(1, Screen.width);
+            anchorMax.y /= Mathf.Max(1, Screen.height);
+
+            target.anchorMin = anchorMin;
+            target.anchorMax = anchorMax;
+            target.offsetMin = Vector2.zero;
+            target.offsetMax = Vector2.zero;
+        }
     }
 }

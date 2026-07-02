@@ -1,43 +1,58 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class BuildingProductionUpdateCompositionSystemHelper
+namespace Game.Runtime
 {
-    private const int MaxTransportLaunchesPerTick = 1;
-    private const int MaxImmediateProductionSpawnsPerTick = 2;
-
-    public readonly struct Context
+    internal sealed class BuildingProductionUpdateCompositionSystemHelper
     {
-        public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
-        public readonly Dictionary<int, RuntimeBuildingEntity> RuntimeBuildingMap;
-        public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
-        public readonly BuildingProductionTransportPresentationSystemHelper TransportSystem;
-        public readonly BuildingProductionTransportPresentationSystemHelper.Context TransportContext;
+        private const int MaxTransportLaunchesPerTick = 1;
+        private const int MaxImmediateProductionSpawnsPerTick = 2;
 
-        public Context(
-            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
-            BuildingProductionQueueCompositionSystemHelper productionSystem,
-            BuildingProductionTransportPresentationSystemHelper transportSystem,
-            BuildingProductionTransportPresentationSystemHelper.Context transportContext)
+        public readonly struct Context
         {
-            RuntimeBuildings = runtimeBuildings;
-            RuntimeBuildingMap = runtimeBuildings as Dictionary<int, RuntimeBuildingEntity>;
-            ProductionSystem = productionSystem;
-            TransportSystem = transportSystem;
-            TransportContext = transportContext;
+            public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
+            public readonly Dictionary<int, RuntimeBuildingEntity> RuntimeBuildingMap;
+            public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
+            public readonly BuildingProductionTransportPresentationSystemHelper TransportSystem;
+            public readonly BuildingProductionTransportPresentationSystemHelper.Context TransportContext;
+
+            public Context(
+                IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+                BuildingProductionQueueCompositionSystemHelper productionSystem,
+                BuildingProductionTransportPresentationSystemHelper transportSystem,
+                BuildingProductionTransportPresentationSystemHelper.Context transportContext)
+            {
+                RuntimeBuildings = runtimeBuildings;
+                RuntimeBuildingMap = runtimeBuildings as Dictionary<int, RuntimeBuildingEntity>;
+                ProductionSystem = productionSystem;
+                TransportSystem = transportSystem;
+                TransportContext = transportContext;
+            }
         }
-    }
 
-    public void UpdatePendingProductions(Context context, float now, float deltaTime, ref uint randomState)
-    {
-        if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
-            return;
-
-        int remainingTransportLaunches = MaxTransportLaunchesPerTick;
-        int remainingImmediateProductionSpawns = MaxImmediateProductionSpawnsPerTick;
-        if (context.RuntimeBuildingMap != null)
+        public void UpdatePendingProductions(Context context, float now, float deltaTime, ref uint randomState)
         {
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
+            if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
+                return;
+
+            int remainingTransportLaunches = MaxTransportLaunchesPerTick;
+            int remainingImmediateProductionSpawns = MaxImmediateProductionSpawnsPerTick;
+            if (context.RuntimeBuildingMap != null)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
+                    UpdatePendingProductionForBuilding(
+                        context,
+                        pair.Value,
+                        now,
+                        deltaTime,
+                        ref randomState,
+                        ref remainingTransportLaunches,
+                        ref remainingImmediateProductionSpawns);
+                return;
+            }
+
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+            {
                 UpdatePendingProductionForBuilding(
                     context,
                     pair.Value,
@@ -46,118 +61,106 @@ internal sealed class BuildingProductionUpdateCompositionSystemHelper
                     ref randomState,
                     ref remainingTransportLaunches,
                     ref remainingImmediateProductionSpawns);
-            return;
+            }
         }
 
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+        public void UpdateActiveProductionTransports(Context context, float now, float deltaTime, ref uint randomState)
         {
-            UpdatePendingProductionForBuilding(
-                context,
-                pair.Value,
-                now,
-                deltaTime,
-                ref randomState,
-                ref remainingTransportLaunches,
-                ref remainingImmediateProductionSpawns);
-        }
-    }
+            if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0 || context.TransportSystem == null)
+                return;
 
-    public void UpdateActiveProductionTransports(Context context, float now, float deltaTime, ref uint randomState)
-    {
-        if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0 || context.TransportSystem == null)
-            return;
+            if (context.RuntimeBuildingMap != null)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
+                    UpdateActiveProductionTransportForBuilding(context, pair.Value, now, deltaTime, ref randomState);
+                return;
+            }
 
-        if (context.RuntimeBuildingMap != null)
-        {
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
                 UpdateActiveProductionTransportForBuilding(context, pair.Value, now, deltaTime, ref randomState);
-            return;
         }
 
-        foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
-            UpdateActiveProductionTransportForBuilding(context, pair.Value, now, deltaTime, ref randomState);
-    }
-
-    private static void UpdateActiveProductionTransportForBuilding(
-        Context context,
-        RuntimeBuildingEntity building,
-        float now,
-        float deltaTime,
-        ref uint randomState)
-    {
-        if (building == null || building.ActiveTransport == null)
-            return;
-
-        context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime, ref randomState);
-    }
-
-    private static void UpdatePendingProductionForBuilding(
-        Context context,
-        RuntimeBuildingEntity building,
-        float now,
-        float deltaTime,
-        ref uint randomState,
-        ref int remainingTransportLaunches,
-        ref int remainingImmediateProductionSpawns)
-    {
-        if (building == null || building.PendingProductions == null || building.PendingProductions.Count == 0)
-            return;
-
-        for (int i = building.PendingProductions.Count - 1; i >= 0; i--)
+        private static void UpdateActiveProductionTransportForBuilding(
+            Context context,
+            RuntimeBuildingEntity building,
+            float now,
+            float deltaTime,
+            ref uint randomState)
         {
-            RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
-            if (pending == null)
-            {
-                if (context.ProductionSystem.RemovePendingAt(building.PendingProductions, i))
-                    context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: i > 0);
-                continue;
-            }
+            if (building == null || building.ActiveTransport == null)
+                return;
 
-            BuildingProductionQueueCompositionSystemHelper.PendingProductionProgress progress = context.ProductionSystem.GetProgress(
-                pending,
-                now,
-                pending.TransportPrefab != null);
+            context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime, ref randomState);
+        }
 
-            if (pending.TransportPrefab != null)
+        private static void UpdatePendingProductionForBuilding(
+            Context context,
+            RuntimeBuildingEntity building,
+            float now,
+            float deltaTime,
+            ref uint randomState,
+            ref int remainingTransportLaunches,
+            ref int remainingImmediateProductionSpawns)
+        {
+            if (building == null || building.PendingProductions == null || building.PendingProductions.Count == 0)
+                return;
+
+            for (int i = building.PendingProductions.Count - 1; i >= 0; i--)
             {
-                float transportLaunchWindow = Mathf.Max(0.5f, pending.TransportArrivalSeconds);
-                if (context.ProductionSystem.IsReadyWithin(pending, now, transportLaunchWindow) ||
-                    context.ProductionSystem.ShouldLaunchTransport(pending, now))
+                RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
+                if (pending == null)
                 {
-                    if (remainingTransportLaunches <= 0)
-                        continue;
-
-                    bool hadActiveTransport = building.ActiveTransport != null;
-                    if (!context.TransportSystem.TryEnsureActiveProductionTransport(context.TransportContext, building, pending, now, ref randomState))
-                    {
-                        context.ProductionSystem.DelayPendingProduction(pending, deltaTime);
-                    }
-                    else if (!hadActiveTransport)
-                    {
-                        remainingTransportLaunches--;
-                    }
+                    if (context.ProductionSystem.RemovePendingAt(building.PendingProductions, i))
+                        context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: i > 0);
+                    continue;
                 }
-                continue;
-            }
 
-            if (progress.RemainingSeconds > 0f || !context.ProductionSystem.IsReady(pending, now))
-                continue;
+                BuildingProductionQueueCompositionSystemHelper.PendingProductionProgress progress = context.ProductionSystem.GetProgress(
+                    pending,
+                    now,
+                    pending.TransportPrefab != null);
 
-            if (remainingImmediateProductionSpawns <= 0)
-                continue;
+                if (pending.TransportPrefab != null)
+                {
+                    float transportLaunchWindow = Mathf.Max(0.5f, pending.TransportArrivalSeconds);
+                    if (context.ProductionSystem.IsReadyWithin(pending, now, transportLaunchWindow) ||
+                        context.ProductionSystem.ShouldLaunchTransport(pending, now))
+                    {
+                        if (remainingTransportLaunches <= 0)
+                            continue;
 
-            if (BuildingProductionTransportPresentationSystemHelper.TrySpawnPlayerUnitNearBuilding(
-                    context.TransportContext,
-                    building,
-                    pending.ProductionIndex,
-                    pending.ReservedProductionSlotIndex,
-                    null,
-                    null,
-                    ref randomState))
-            {
-                remainingImmediateProductionSpawns--;
-                if (context.ProductionSystem.RemovePendingAt(building.PendingProductions, i))
-                    context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
+                        bool hadActiveTransport = building.ActiveTransport != null;
+                        if (!context.TransportSystem.TryEnsureActiveProductionTransport(context.TransportContext, building, pending, now, ref randomState))
+                        {
+                            context.ProductionSystem.DelayPendingProduction(pending, deltaTime);
+                        }
+                        else if (!hadActiveTransport)
+                        {
+                            remainingTransportLaunches--;
+                        }
+                    }
+                    continue;
+                }
+
+                if (progress.RemainingSeconds > 0f || !context.ProductionSystem.IsReady(pending, now))
+                    continue;
+
+                if (remainingImmediateProductionSpawns <= 0)
+                    continue;
+
+                if (BuildingProductionTransportPresentationSystemHelper.TrySpawnPlayerUnitNearBuilding(
+                        context.TransportContext,
+                        building,
+                        pending.ProductionIndex,
+                        pending.ReservedProductionSlotIndex,
+                        null,
+                        null,
+                        ref randomState))
+                {
+                    remainingImmediateProductionSpawns--;
+                    if (context.ProductionSystem.RemovePendingAt(building.PendingProductions, i))
+                        context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
+                }
             }
         }
     }

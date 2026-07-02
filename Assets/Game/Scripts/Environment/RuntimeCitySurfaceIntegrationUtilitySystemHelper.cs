@@ -1,90 +1,94 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using Game.Components;
 
-internal sealed class RuntimeCitySurfaceIntegrationUtilitySystemHelper
+namespace Game.Runtime
 {
-    private const float RuntimeCityMaxSurfaceHeightDelta = 0.5f;
-    private const float RuntimeCityMaxSurfaceSlopeDegrees = 45f;
-
-    private readonly BuildingSurfacePlacementUtilitySystemHelper _buildingSurfacePlacementSystem = new();
-    private readonly RoadSurfacePlacementUtilitySystemHelper _roadSurfacePlacementSystem = new();
-    private MapSurfaceComponent _surface;
-    private bool _hasSurface;
-
-    public void Configure(MapSurfaceComponent surface)
+    internal sealed class RuntimeCitySurfaceIntegrationUtilitySystemHelper
     {
-        _surface = surface;
-        _hasSurface = surface.HasSurfaceData != 0 && surface.SurfaceBlob.IsCreated;
-        if (_hasSurface)
-            _roadSurfacePlacementSystem.Configure(surface);
-        else
-            _roadSurfacePlacementSystem.Clear();
-    }
+        private const float RuntimeCityMaxSurfaceHeightDelta = 0.5f;
+        private const float RuntimeCityMaxSurfaceSlopeDegrees = 45f;
 
-    public void Clear()
-    {
-        _surface = default;
-        _hasSurface = false;
-        _roadSurfacePlacementSystem.Clear();
-    }
+        private readonly BuildingSurfacePlacementUtilitySystemHelper _buildingSurfacePlacementSystem = new();
+        private readonly RoadSurfacePlacementUtilitySystemHelper _roadSurfacePlacementSystem = new();
+        private MapSurfaceComponent _surface;
+        private bool _hasSurface;
 
-    public Vector3 ResolveFootprintCenter(
-        Vector2Int originCell,
-        Vector2Int footprintCells,
-        GridConfig grid,
-        Vector3 fallbackCenter)
-    {
-        if (!_hasSurface ||
-            !_buildingSurfacePlacementSystem.TryEvaluateFootprint(
-                _surface,
-                originCell,
-                footprintCells,
-                RuntimeCityMaxSurfaceHeightDelta,
-                RuntimeCityMaxSurfaceSlopeDegrees,
-                out BuildingSurfacePlacementUtilitySystemHelper.Result surfaceResult))
+        public void Configure(MapSurfaceComponent surface)
         {
+            _surface = surface;
+            _hasSurface = surface.HasSurfaceData != 0 && surface.SurfaceBlob.IsCreated;
+            if (_hasSurface)
+                _roadSurfacePlacementSystem.Configure(surface);
+            else
+                _roadSurfacePlacementSystem.Clear();
+        }
+
+        public void Clear()
+        {
+            _surface = default;
+            _hasSurface = false;
+            _roadSurfacePlacementSystem.Clear();
+        }
+
+        public Vector3 ResolveFootprintCenter(
+            Vector2Int originCell,
+            Vector2Int footprintCells,
+            GridConfig grid,
+            Vector3 fallbackCenter)
+        {
+            if (!_hasSurface ||
+                !_buildingSurfacePlacementSystem.TryEvaluateFootprint(
+                    _surface,
+                    originCell,
+                    footprintCells,
+                    RuntimeCityMaxSurfaceHeightDelta,
+                    RuntimeCityMaxSurfaceSlopeDegrees,
+                    out BuildingSurfacePlacementUtilitySystemHelper.Result surfaceResult))
+            {
+                return fallbackCenter;
+            }
+
+            fallbackCenter.y = surfaceResult.FoundationHeight;
             return fallbackCenter;
         }
 
-        fallbackCenter.y = surfaceResult.FoundationHeight;
-        return fallbackCenter;
-    }
-
-    public bool CanReserveFootprint(Vector2Int originCell, Vector2Int footprintCells)
-    {
-        if (!_hasSurface)
-            return true;
-
-        return _buildingSurfacePlacementSystem.TryEvaluateFootprint(
-                _surface,
-                originCell,
-                footprintCells,
-                RuntimeCityMaxSurfaceHeightDelta,
-                RuntimeCityMaxSurfaceSlopeDegrees,
-                out BuildingSurfacePlacementUtilitySystemHelper.Result surfaceResult) &&
-            surfaceResult.IsValid;
-    }
-
-    public bool IsRoadPathSurfaceValid(List<Vector2Int> cells)
-    {
-        return _roadSurfacePlacementSystem.IsPathSurfaceValid(cells);
-    }
-
-    public bool TryResolvePrimarySurface(Vector2Int cell, out MapSurfaceSample sample)
-    {
-        sample = default;
-        if (!_hasSurface)
-            return false;
-
-        int2 surfaceCell = new(cell.x, cell.y);
-        if ((uint)surfaceCell.x >= (uint)_surface.Dimensions.x ||
-            (uint)surfaceCell.y >= (uint)_surface.Dimensions.y)
+        public bool CanReserveFootprint(Vector2Int originCell, Vector2Int footprintCells)
         {
-            return false;
+            if (!_hasSurface)
+                return true;
+
+            return _buildingSurfacePlacementSystem.TryEvaluateFootprint(
+                    _surface,
+                    originCell,
+                    footprintCells,
+                    RuntimeCityMaxSurfaceHeightDelta,
+                    RuntimeCityMaxSurfaceSlopeDegrees,
+                    out BuildingSurfacePlacementUtilitySystemHelper.Result surfaceResult) &&
+                surfaceResult.IsValid;
         }
 
-        ref MapSurfaceBlob blob = ref _surface.SurfaceBlob.Value;
-        return MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob, surfaceCell, out sample);
+        public bool IsRoadPathSurfaceValid(List<Vector2Int> cells)
+        {
+            return _roadSurfacePlacementSystem.IsPathSurfaceValid(cells);
+        }
+
+        public bool TryResolvePrimarySurface(Vector2Int cell, out MapSurfaceSample sample)
+        {
+            sample = default;
+            if (!_hasSurface)
+                return false;
+
+            int2 surfaceCell = new(cell.x, cell.y);
+            if ((uint)surfaceCell.x >= (uint)_surface.Dimensions.x ||
+                (uint)surfaceCell.y >= (uint)_surface.Dimensions.y)
+            {
+                return false;
+            }
+
+            ref MapSurfaceBlob blob = ref _surface.SurfaceBlob.Value;
+            return MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob, surfaceCell, out sample);
+        }
     }
 }

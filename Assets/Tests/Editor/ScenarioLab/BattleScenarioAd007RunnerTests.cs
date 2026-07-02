@@ -1,5 +1,7 @@
 using NUnit.Framework;
 using UnityEditor;
+using Game.Editor;
+using Game.Runtime;
 
 public sealed class BattleScenarioAd007RunnerTests
 {

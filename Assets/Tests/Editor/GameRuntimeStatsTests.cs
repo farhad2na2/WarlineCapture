@@ -2,6 +2,8 @@ using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Game.Components;
+using Game.Runtime;
 
 public sealed class GameRuntimeStatsTests
 {

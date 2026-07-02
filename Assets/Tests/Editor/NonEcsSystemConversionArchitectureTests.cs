@@ -1,3 +1,6 @@
+using Game.UI.Contracts;
+using Game.Components;
+using Game.UI.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using System.Collections.Generic;

@@ -1,146 +1,150 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Contracts;
 
-[DisallowMultipleComponent]
-public sealed class ArmoryCategoryNavigationView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private ArmoryCategoryNavigationTabView[] tabs;
-
-    private readonly List<TabBinding> bindings = new();
-    private Sprite selectedFrameSprite;
-    private Sprite inactiveFrameSprite;
-    private ArmoryCatalogCategory activeCategory = ArmoryCatalogCategory.Characters;
-
-    private void Awake()
+    [DisallowMultipleComponent]
+    public sealed class ArmoryCategoryNavigationView : MonoBehaviour
     {
-        WireAll();
-    }
+        [SerializeField] private ArmoryCategoryNavigationTabView[] tabs;
 
-    private void OnEnable()
-    {
-        WireAll();
-    }
+        private readonly List<TabBinding> bindings = new();
+        private Sprite selectedFrameSprite;
+        private Sprite inactiveFrameSprite;
+        private ArmoryCatalogCategory activeCategory = ArmoryCatalogCategory.Characters;
 
-    private void WireAll()
-    {
-        if (bindings.Count > 0)
-            return;
-
-        if (tabs == null)
-            return;
-
-        for (int i = 0; i < tabs.Length; i++)
-            Wire(tabs[i]);
-
-        activeCategory = TryReadCategory(out ArmoryCatalogCategory category)
-            ? category
-            : ArmoryCatalogCategory.Characters;
-        ApplyVisualState(activeCategory);
-    }
-
-    private void OnDisable()
-    {
-        for (int i = 0; i < bindings.Count; i++)
-            bindings[i].Button.onClick.RemoveListener(bindings[i].Action);
-
-        bindings.Clear();
-    }
-
-    private void Update()
-    {
-        if (!TryReadCategory(out ArmoryCatalogCategory category) || category == activeCategory)
-            return;
-
-        activeCategory = category;
-        ApplyVisualState(category);
-    }
-
-    private void Wire(ArmoryCategoryNavigationTabView tab)
-    {
-        Button button = tab.Button;
-        if (button == null)
-            return;
-
-        DisableRouteButtonComponent(button);
-
-        ArmoryCatalogCategory category = tab.Category;
-        UnityEngine.Events.UnityAction action = () => SelectCategory(category);
-        button.onClick.AddListener(action);
-
-        Image frame = tab.Frame;
-        CacheFrameSprite(category, frame);
-        bindings.Add(new TabBinding(category, button, frame, action));
-    }
-
-    private static void DisableRouteButtonComponent(Button button)
-    {
-        if (button == null)
-            return;
-
-        UIShellRouteButtonView routeButton = button.GetComponent<UIShellRouteButtonView>();
-        if (routeButton != null)
-            routeButton.enabled = false;
-    }
-
-    private void SelectCategory(ArmoryCatalogCategory category)
-    {
-        if (!UiShellRuntimeGateway.TryEnqueueArmoryCategory(category))
-            return;
-
-        activeCategory = category;
-        ApplyVisualState(category);
-    }
-
-    private bool TryReadCategory(out ArmoryCatalogCategory category)
-    {
-        return UiShellRuntimeGateway.TryReadArmoryCategory(out category);
-    }
-
-    private void CacheFrameSprite(ArmoryCatalogCategory category, Image frame)
-    {
-        if (frame == null || frame.sprite == null)
-            return;
-
-        string spriteName = frame.sprite.name.ToLowerInvariant();
-        if (category == ArmoryCatalogCategory.Characters || spriteName.Contains("selected"))
-            selectedFrameSprite ??= frame.sprite;
-        else
-            inactiveFrameSprite ??= frame.sprite;
-    }
-
-    private void ApplyVisualState(ArmoryCatalogCategory category)
-    {
-        for (int i = 0; i < bindings.Count; i++)
+        private void Awake()
         {
-            Image frame = bindings[i].Frame;
-            if (frame == null)
-                continue;
-
-            bool selected = bindings[i].Category == category;
-            Sprite sprite = selected ? selectedFrameSprite : inactiveFrameSprite;
-            if (sprite != null)
-                frame.sprite = sprite;
+            WireAll();
         }
-    }
 
-    private readonly struct TabBinding
-    {
-        public readonly ArmoryCatalogCategory Category;
-        public readonly Button Button;
-        public readonly Image Frame;
-        public readonly UnityEngine.Events.UnityAction Action;
-
-        public TabBinding(
-            ArmoryCatalogCategory category,
-            Button button,
-            Image frame,
-            UnityEngine.Events.UnityAction action)
+        private void OnEnable()
         {
-            Category = category;
-            Button = button;
-            Frame = frame;
-            Action = action;
+            WireAll();
+        }
+
+        private void WireAll()
+        {
+            if (bindings.Count > 0)
+                return;
+
+            if (tabs == null)
+                return;
+
+            for (int i = 0; i < tabs.Length; i++)
+                Wire(tabs[i]);
+
+            activeCategory = TryReadCategory(out ArmoryCatalogCategory category)
+                ? category
+                : ArmoryCatalogCategory.Characters;
+            ApplyVisualState(activeCategory);
+        }
+
+        private void OnDisable()
+        {
+            for (int i = 0; i < bindings.Count; i++)
+                bindings[i].Button.onClick.RemoveListener(bindings[i].Action);
+
+            bindings.Clear();
+        }
+
+        private void Update()
+        {
+            if (!TryReadCategory(out ArmoryCatalogCategory category) || category == activeCategory)
+                return;
+
+            activeCategory = category;
+            ApplyVisualState(category);
+        }
+
+        private void Wire(ArmoryCategoryNavigationTabView tab)
+        {
+            Button button = tab.Button;
+            if (button == null)
+                return;
+
+            DisableRouteButtonComponent(button);
+
+            ArmoryCatalogCategory category = tab.Category;
+            UnityEngine.Events.UnityAction action = () => SelectCategory(category);
+            button.onClick.AddListener(action);
+
+            Image frame = tab.Frame;
+            CacheFrameSprite(category, frame);
+            bindings.Add(new TabBinding(category, button, frame, action));
+        }
+
+        private static void DisableRouteButtonComponent(Button button)
+        {
+            if (button == null)
+                return;
+
+            UIShellRouteButtonView routeButton = button.GetComponent<UIShellRouteButtonView>();
+            if (routeButton != null)
+                routeButton.enabled = false;
+        }
+
+        private void SelectCategory(ArmoryCatalogCategory category)
+        {
+            if (!UiShellRuntimeGateway.TryEnqueueArmoryCategory(category))
+                return;
+
+            activeCategory = category;
+            ApplyVisualState(category);
+        }
+
+        private bool TryReadCategory(out ArmoryCatalogCategory category)
+        {
+            return UiShellRuntimeGateway.TryReadArmoryCategory(out category);
+        }
+
+        private void CacheFrameSprite(ArmoryCatalogCategory category, Image frame)
+        {
+            if (frame == null || frame.sprite == null)
+                return;
+
+            string spriteName = frame.sprite.name.ToLowerInvariant();
+            if (category == ArmoryCatalogCategory.Characters || spriteName.Contains("selected"))
+                selectedFrameSprite ??= frame.sprite;
+            else
+                inactiveFrameSprite ??= frame.sprite;
+        }
+
+        private void ApplyVisualState(ArmoryCatalogCategory category)
+        {
+            for (int i = 0; i < bindings.Count; i++)
+            {
+                Image frame = bindings[i].Frame;
+                if (frame == null)
+                    continue;
+
+                bool selected = bindings[i].Category == category;
+                Sprite sprite = selected ? selectedFrameSprite : inactiveFrameSprite;
+                if (sprite != null)
+                    frame.sprite = sprite;
+            }
+        }
+
+        private readonly struct TabBinding
+        {
+            public readonly ArmoryCatalogCategory Category;
+            public readonly Button Button;
+            public readonly Image Frame;
+            public readonly UnityEngine.Events.UnityAction Action;
+
+            public TabBinding(
+                ArmoryCatalogCategory category,
+                Button button,
+                Image frame,
+                UnityEngine.Events.UnityAction action)
+            {
+                Category = category;
+                Button = button;
+                Frame = frame;
+                Action = action;
+            }
         }
     }
 }

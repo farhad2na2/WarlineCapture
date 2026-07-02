@@ -1,57 +1,63 @@
 using Unity.Mathematics;
 using UnityEngine;
+using Game.Components;
+using Game.Runtime;
+using Game.Composition;
 
-public sealed class MapSurfaceBridgeBakeSystem
+namespace Game.Editor
 {
-    private readonly MapSurfaceRoadPriorityPolicy _roadPrioritySystem = new();
-
-    public MapSurfaceMeshBakeSource CreateBridgeDeckSource(
-        Mesh bridgeDeckMesh,
-        Matrix4x4 localToWorld,
-        MapSurfaceMovementMask movementMask,
-        int layerId)
+    public sealed class MapSurfaceBridgeBakeSystem
     {
-        return new MapSurfaceMeshBakeSource(
-            bridgeDeckMesh,
-            localToWorld,
-            MapSurfaceType.BridgeDeck,
-            _roadPrioritySystem.NormalizeFlagsForSurfaceType(MapSurfaceType.BridgeDeck, MapSurfaceFlags.None),
-            movementMask,
-            math.max(1, layerId));
-    }
+        private readonly MapSurfaceRoadPriorityPolicy _roadPrioritySystem = new();
 
-    public MapSurfaceMeshBakeSource CreateBridgeApproachSource(
-        Mesh approachMesh,
-        Matrix4x4 localToWorld,
-        MapSurfaceMovementMask movementMask,
-        int layerId)
-    {
-        return new MapSurfaceMeshBakeSource(
-            approachMesh,
-            localToWorld,
-            MapSurfaceType.Ramp,
-            _roadPrioritySystem.NormalizeFlagsForSurfaceType(MapSurfaceType.Ramp, MapSurfaceFlags.None),
-            movementMask,
-            math.max(0, layerId));
-    }
+        public MapSurfaceMeshBakeSource CreateBridgeDeckSource(
+            Mesh bridgeDeckMesh,
+            Matrix4x4 localToWorld,
+            MapSurfaceMovementMask movementMask,
+            int layerId)
+        {
+            return new MapSurfaceMeshBakeSource(
+                bridgeDeckMesh,
+                localToWorld,
+                MapSurfaceType.BridgeDeck,
+                _roadPrioritySystem.NormalizeFlagsForSurfaceType(MapSurfaceType.BridgeDeck, MapSurfaceFlags.None),
+                movementMask,
+                math.max(1, layerId));
+        }
 
-    public MapSurfaceMeshBakeSource CreateLowerPassThroughSource(
-        Mesh lowerSurfaceMesh,
-        Matrix4x4 localToWorld,
-        MapSurfaceType lowerSurfaceType,
-        MapSurfaceMovementMask movementMask,
-        int layerId)
-    {
-        MapSurfaceType normalizedType = lowerSurfaceType == MapSurfaceType.Highway
-            ? MapSurfaceType.Highway
-            : MapSurfaceType.Road;
+        public MapSurfaceMeshBakeSource CreateBridgeApproachSource(
+            Mesh approachMesh,
+            Matrix4x4 localToWorld,
+            MapSurfaceMovementMask movementMask,
+            int layerId)
+        {
+            return new MapSurfaceMeshBakeSource(
+                approachMesh,
+                localToWorld,
+                MapSurfaceType.Ramp,
+                _roadPrioritySystem.NormalizeFlagsForSurfaceType(MapSurfaceType.Ramp, MapSurfaceFlags.None),
+                movementMask,
+                math.max(0, layerId));
+        }
 
-        return new MapSurfaceMeshBakeSource(
-            lowerSurfaceMesh,
-            localToWorld,
-            normalizedType,
-            _roadPrioritySystem.NormalizeFlagsForSurfaceType(normalizedType, MapSurfaceFlags.None),
-            movementMask,
-            math.max(0, layerId));
+        public MapSurfaceMeshBakeSource CreateLowerPassThroughSource(
+            Mesh lowerSurfaceMesh,
+            Matrix4x4 localToWorld,
+            MapSurfaceType lowerSurfaceType,
+            MapSurfaceMovementMask movementMask,
+            int layerId)
+        {
+            MapSurfaceType normalizedType = lowerSurfaceType == MapSurfaceType.Highway
+                ? MapSurfaceType.Highway
+                : MapSurfaceType.Road;
+
+            return new MapSurfaceMeshBakeSource(
+                lowerSurfaceMesh,
+                localToWorld,
+                normalizedType,
+                _roadPrioritySystem.NormalizeFlagsForSurfaceType(normalizedType, MapSurfaceFlags.None),
+                movementMask,
+                math.max(0, layerId));
+        }
     }
 }

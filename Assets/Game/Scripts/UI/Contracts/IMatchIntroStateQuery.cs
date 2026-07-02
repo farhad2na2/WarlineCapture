@@ -1,6 +1,9 @@
-public interface IMatchIntroStateQuery
+namespace Game.UI.Contracts
 {
-    bool IsGameplayInputLocked();
+    public interface IMatchIntroStateQuery
+    {
+        bool IsGameplayInputLocked();
 
-    bool IsIntroComplete();
+        bool IsIntroComplete();
+    }
 }

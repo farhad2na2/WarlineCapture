@@ -1,6 +1,10 @@
 using UnityEngine;
+using Game.Components;
 
-[CreateAssetMenu(menuName = "Game/Prefab Config/Faction Tint Target")]
-public sealed class FactionTintTargetPrefabConfigAsset : FactionTintTargetConfig
+namespace Game.Configs
 {
+    [CreateAssetMenu(menuName = "Game/Prefab Config/Faction Tint Target")]
+    public sealed class FactionTintTargetPrefabConfigAsset : FactionTintTargetConfig
+    {
+    }
 }

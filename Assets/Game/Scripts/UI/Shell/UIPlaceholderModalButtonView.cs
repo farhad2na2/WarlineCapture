@@ -1,32 +1,35 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Button))]
-public sealed class UIPlaceholderModalButtonView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private UIModalView modalController;
-    [SerializeField] private string title;
-    [SerializeField] private string body;
-
-    private Button _button;
-
-    private void Awake()
+    [RequireComponent(typeof(Button))]
+    public sealed class UIPlaceholderModalButtonView : MonoBehaviour
     {
-        _button = GetComponent<Button>();
-        _button.onClick.AddListener(HandleClick);
-    }
+        [SerializeField] private UIModalView modalController;
+        [SerializeField] private string title;
+        [SerializeField] private string body;
 
-    private void OnDestroy()
-    {
-        if (_button != null)
-            _button.onClick.RemoveListener(HandleClick);
-    }
+        private Button _button;
 
-    private void HandleClick()
-    {
-        if (modalController == null)
-            modalController = GetComponentInParent<UIModalView>();
+        private void Awake()
+        {
+            _button = GetComponent<Button>();
+            _button.onClick.AddListener(HandleClick);
+        }
 
-        modalController?.ShowPlaceholder(title, body);
+        private void OnDestroy()
+        {
+            if (_button != null)
+                _button.onClick.RemoveListener(HandleClick);
+        }
+
+        private void HandleClick()
+        {
+            if (modalController == null)
+                modalController = GetComponentInParent<UIModalView>();
+
+            modalController?.ShowPlaceholder(title, body);
+        }
     }
 }

@@ -1,39 +1,42 @@
-internal sealed class SettingsScreenFlowUiSystemHelper
+namespace Game.UI.Runtime
 {
-    public UISettingsModel LoadSettings(ISettingsControlsView view)
+    internal sealed class SettingsScreenFlowUiSystemHelper
     {
-        UISettingsModel model = SettingsService.Load();
-        if (view != null)
+        public UISettingsModel LoadSettings(ISettingsControlsView view)
         {
-            view.Bind(model);
-            view.ApplyVisualPreferences(model);
+            UISettingsModel model = SettingsService.Load();
+            if (view != null)
+            {
+                view.Bind(model);
+                view.ApplyVisualPreferences(model);
+            }
+
+            return model;
         }
 
-        return model;
-    }
-
-    public UISettingsModel SaveSettings(ISettingsControlsView view, UISettingsModel currentModel)
-    {
-        UISettingsModel model = view != null
-            ? view.ReadModelFromControls(currentModel)
-            : currentModel;
-
-        SettingsService.Save(model);
-        SettingsService.ApplyRuntime(model);
-        view?.ApplyVisualPreferences(model);
-        return model;
-    }
-
-    public UISettingsModel ResetSettings(ISettingsControlsView view)
-    {
-        UISettingsModel model = SettingsService.ResetToDefaults();
-        if (view != null)
+        public UISettingsModel SaveSettings(ISettingsControlsView view, UISettingsModel currentModel)
         {
-            view.Bind(model);
-            view.ApplyVisualPreferences(model);
+            UISettingsModel model = view != null
+                ? view.ReadModelFromControls(currentModel)
+                : currentModel;
+
+            SettingsService.Save(model);
+            SettingsService.ApplyRuntime(model);
+            view?.ApplyVisualPreferences(model);
+            return model;
         }
 
-        SettingsService.ApplyRuntime(model);
-        return model;
+        public UISettingsModel ResetSettings(ISettingsControlsView view)
+        {
+            UISettingsModel model = SettingsService.ResetToDefaults();
+            if (view != null)
+            {
+                view.Bind(model);
+                view.ApplyVisualPreferences(model);
+            }
+
+            SettingsService.ApplyRuntime(model);
+            return model;
+        }
     }
 }

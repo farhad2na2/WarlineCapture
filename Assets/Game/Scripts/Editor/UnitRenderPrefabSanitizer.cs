@@ -2,393 +2,396 @@ using UnityEditor;
 using UnityEngine;
 using SnivelerCode.GpuAnimation.Scripts.Authoring;
 
-public static class UnitRenderPrefabSanitizer
+namespace Game.Editor
 {
-    private static readonly string[] TargetFolders =
+    public static class UnitRenderPrefabSanitizer
     {
-        "Assets/Game/Prefabs/Generated/MidLOD"
-    };
-
-    public static void SanitizeUnitRenderPrefabs()
-    {
-        string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", TargetFolders);
-        int updated = 0;
-        int removedLodGroups = 0;
-        int disabledDynamicOcclusion = 0;
-
-        for (int i = 0; i < prefabGuids.Length; i++)
+        private static readonly string[] TargetFolders =
         {
-            string path = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
-            GameObject root = PrefabUtility.LoadPrefabContents(path);
-            if (root == null)
-                continue;
+            "Assets/Game/Prefabs/Generated/MidLOD"
+        };
 
-            bool changed = false;
-            try
+        public static void SanitizeUnitRenderPrefabs()
+        {
+            string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", TargetFolders);
+            int updated = 0;
+            int removedLodGroups = 0;
+            int disabledDynamicOcclusion = 0;
+
+            for (int i = 0; i < prefabGuids.Length; i++)
             {
-                if (root.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true) != null)
+                string path = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
+                GameObject root = PrefabUtility.LoadPrefabContents(path);
+                if (root == null)
                     continue;
 
-                LODGroup[] lodGroups = root.GetComponentsInChildren<LODGroup>(true);
-                for (int j = 0; j < lodGroups.Length; j++)
+                bool changed = false;
+                try
                 {
-                    Object.DestroyImmediate(lodGroups[j], true);
-                    removedLodGroups++;
-                    changed = true;
-                }
-
-                Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
-                for (int j = 0; j < renderers.Length; j++)
-                {
-                    if (!renderers[j].allowOcclusionWhenDynamic)
+                    if (root.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true) != null)
                         continue;
 
-                    renderers[j].allowOcclusionWhenDynamic = false;
-                    disabledDynamicOcclusion++;
-                    changed = true;
-                }
-
-                if (changed)
-                {
-                    PrefabUtility.SaveAsPrefabAsset(root, path);
-                    updated++;
-                }
-            }
-            finally
-            {
-                PrefabUtility.UnloadPrefabContents(root);
-            }
-        }
-
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"[UnitRenderSanitizer] updated={updated} removedLodGroups={removedLodGroups} disabledDynamicOcclusion={disabledDynamicOcclusion}");
-    }
-
-    [MenuItem("Game/Tools/Unit Render/Remove Inherited Placeholder Character Models")]
-    public static void RemoveInheritedPlaceholderCharacterModels()
-    {
-        string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Characters" });
-        int updated = 0;
-        int removed = 0;
-
-        for (int i = 0; i < prefabGuids.Length; i++)
-        {
-            string path = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
-            if (path.EndsWith("/Unit.prefab", System.StringComparison.Ordinal))
-                continue;
-
-            GameObject root = PrefabUtility.LoadPrefabContents(path);
-            if (root == null)
-                continue;
-
-            bool changed = false;
-            try
-            {
-                for (int childIndex = root.transform.childCount - 1; childIndex >= 0; childIndex--)
-                {
-                    Transform child = root.transform.GetChild(childIndex);
-                    if (child == null ||
-                        !string.Equals(child.name, "Model", System.StringComparison.Ordinal) ||
-                        child.GetComponent<MeshRenderer>() == null ||
-                        child.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true) != null)
+                    LODGroup[] lodGroups = root.GetComponentsInChildren<LODGroup>(true);
+                    for (int j = 0; j < lodGroups.Length; j++)
                     {
-                        continue;
+                        Object.DestroyImmediate(lodGroups[j], true);
+                        removedLodGroups++;
+                        changed = true;
                     }
 
-                    Object.DestroyImmediate(child.gameObject, true);
-                    removed++;
-                    changed = true;
-                }
+                    Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+                    for (int j = 0; j < renderers.Length; j++)
+                    {
+                        if (!renderers[j].allowOcclusionWhenDynamic)
+                            continue;
 
-                if (changed)
+                        renderers[j].allowOcclusionWhenDynamic = false;
+                        disabledDynamicOcclusion++;
+                        changed = true;
+                    }
+
+                    if (changed)
+                    {
+                        PrefabUtility.SaveAsPrefabAsset(root, path);
+                        updated++;
+                    }
+                }
+                finally
                 {
-                    PrefabUtility.SaveAsPrefabAsset(root, path);
-                    updated++;
+                    PrefabUtility.UnloadPrefabContents(root);
                 }
             }
-            finally
-            {
-                PrefabUtility.UnloadPrefabContents(root);
-            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[UnitRenderSanitizer] updated={updated} removedLodGroups={removedLodGroups} disabledDynamicOcclusion={disabledDynamicOcclusion}");
         }
 
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"[UnitRenderSanitizer] removedPlaceholderCharacterModels={removed} updated={updated}");
-    }
-
-    [MenuItem("Game/Tools/Unit Render/Validate Character Variant Models")]
-    public static void ValidateCharacterVariantModels()
-    {
-        string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Characters" });
-        int validated = 0;
-        int failures = 0;
-
-        for (int i = 0; i < prefabGuids.Length; i++)
+        [MenuItem("Game/Tools/Unit Render/Remove Inherited Placeholder Character Models")]
+        public static void RemoveInheritedPlaceholderCharacterModels()
         {
-            string path = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
-            if (path.EndsWith("/Unit.prefab", System.StringComparison.Ordinal))
-                continue;
+            string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Characters" });
+            int updated = 0;
+            int removed = 0;
 
-            GameObject root = PrefabUtility.LoadPrefabContents(path);
-            if (root == null)
-                continue;
-
-            try
+            for (int i = 0; i < prefabGuids.Length; i++)
             {
-                int modelChildren = 0;
-                int animatedModelChildren = 0;
-                int placeholderModelChildren = 0;
+                string path = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
+                if (path.EndsWith("/Unit.prefab", System.StringComparison.Ordinal))
+                    continue;
 
-                for (int childIndex = 0; childIndex < root.transform.childCount; childIndex++)
+                GameObject root = PrefabUtility.LoadPrefabContents(path);
+                if (root == null)
+                    continue;
+
+                bool changed = false;
+                try
                 {
-                    Transform child = root.transform.GetChild(childIndex);
-                    if (child == null || !string.Equals(child.name, "Model", System.StringComparison.Ordinal))
+                    for (int childIndex = root.transform.childCount - 1; childIndex >= 0; childIndex--)
+                    {
+                        Transform child = root.transform.GetChild(childIndex);
+                        if (child == null ||
+                            !string.Equals(child.name, "Model", System.StringComparison.Ordinal) ||
+                            child.GetComponent<MeshRenderer>() == null ||
+                            child.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true) != null)
+                        {
+                            continue;
+                        }
+
+                        Object.DestroyImmediate(child.gameObject, true);
+                        removed++;
+                        changed = true;
+                    }
+
+                    if (changed)
+                    {
+                        PrefabUtility.SaveAsPrefabAsset(root, path);
+                        updated++;
+                    }
+                }
+                finally
+                {
+                    PrefabUtility.UnloadPrefabContents(root);
+                }
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[UnitRenderSanitizer] removedPlaceholderCharacterModels={removed} updated={updated}");
+        }
+
+        [MenuItem("Game/Tools/Unit Render/Validate Character Variant Models")]
+        public static void ValidateCharacterVariantModels()
+        {
+            string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Characters" });
+            int validated = 0;
+            int failures = 0;
+
+            for (int i = 0; i < prefabGuids.Length; i++)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
+                if (path.EndsWith("/Unit.prefab", System.StringComparison.Ordinal))
+                    continue;
+
+                GameObject root = PrefabUtility.LoadPrefabContents(path);
+                if (root == null)
+                    continue;
+
+                try
+                {
+                    int modelChildren = 0;
+                    int animatedModelChildren = 0;
+                    int placeholderModelChildren = 0;
+
+                    for (int childIndex = 0; childIndex < root.transform.childCount; childIndex++)
+                    {
+                        Transform child = root.transform.GetChild(childIndex);
+                        if (child == null || !string.Equals(child.name, "Model", System.StringComparison.Ordinal))
+                            continue;
+
+                        modelChildren++;
+                        bool hasAnimatorIndex = child.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true) != null;
+                        bool hasDirectMeshRenderer = child.GetComponent<MeshRenderer>() != null;
+                        if (hasAnimatorIndex)
+                            animatedModelChildren++;
+                        else if (hasDirectMeshRenderer)
+                            placeholderModelChildren++;
+                    }
+
+                    if (modelChildren != 1 || animatedModelChildren != 1 || placeholderModelChildren != 0)
+                    {
+                        Debug.LogError($"[UnitRenderSanitizer] invalidCharacterModel path={path} modelChildren={modelChildren} animatedModelChildren={animatedModelChildren} placeholderModelChildren={placeholderModelChildren}");
+                        failures++;
+                    }
+                    else
+                    {
+                        validated++;
+                    }
+                }
+                finally
+                {
+                    PrefabUtility.UnloadPrefabContents(root);
+                }
+            }
+
+            Debug.Log($"[UnitRenderSanitizer] validatedCharacterVariantModels={validated} failures={failures}");
+            if (failures > 0)
+                throw new System.InvalidOperationException($"Character variant model validation failed: {failures}");
+        }
+
+        [MenuItem("Game/Tools/Unit Render/Align Character Model Feet To Root")]
+        public static void AlignCharacterModelFeetToRoot()
+        {
+            string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Characters" });
+            int updated = 0;
+            int aligned = 0;
+
+            for (int i = 0; i < prefabGuids.Length; i++)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
+                if (path.EndsWith("/Unit.prefab", System.StringComparison.Ordinal))
+                    continue;
+
+                GameObject root = PrefabUtility.LoadPrefabContents(path);
+                if (root == null)
+                    continue;
+
+                bool changed = false;
+                try
+                {
+                    Transform model = FindAnimatedModelChild(root.transform);
+                    if (model == null || !TryGetLocalBounds(root.transform, model, out Bounds bounds))
                         continue;
 
-                    modelChildren++;
-                    bool hasAnimatorIndex = child.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true) != null;
-                    bool hasDirectMeshRenderer = child.GetComponent<MeshRenderer>() != null;
-                    if (hasAnimatorIndex)
-                        animatedModelChildren++;
-                    else if (hasDirectMeshRenderer)
-                        placeholderModelChildren++;
-                }
+                    Vector3 localPosition = model.localPosition;
+                    float desiredOffset = localPosition.y - bounds.min.y;
+                    if (Mathf.Abs(bounds.min.y) <= 0.001f)
+                        desiredOffset = localPosition.y;
 
-                if (modelChildren != 1 || animatedModelChildren != 1 || placeholderModelChildren != 0)
-                {
-                    Debug.LogError($"[UnitRenderSanitizer] invalidCharacterModel path={path} modelChildren={modelChildren} animatedModelChildren={animatedModelChildren} placeholderModelChildren={placeholderModelChildren}");
-                    failures++;
+                    if (!Mathf.Approximately(localPosition.y, desiredOffset))
+                    {
+                        localPosition.y = desiredOffset;
+                        model.localPosition = localPosition;
+                        aligned++;
+                        changed = true;
+                    }
+
+                    if (changed)
+                    {
+                        PrefabUtility.SaveAsPrefabAsset(root, path);
+                        updated++;
+                    }
                 }
-                else
+                finally
                 {
-                    validated++;
+                    PrefabUtility.UnloadPrefabContents(root);
                 }
             }
-            finally
-            {
-                PrefabUtility.UnloadPrefabContents(root);
-            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[UnitRenderSanitizer] alignedCharacterModelFeet={aligned} updated={updated}");
         }
 
-        Debug.Log($"[UnitRenderSanitizer] validatedCharacterVariantModels={validated} failures={failures}");
-        if (failures > 0)
-            throw new System.InvalidOperationException($"Character variant model validation failed: {failures}");
-    }
-
-    [MenuItem("Game/Tools/Unit Render/Align Character Model Feet To Root")]
-    public static void AlignCharacterModelFeetToRoot()
-    {
-        string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Characters" });
-        int updated = 0;
-        int aligned = 0;
-
-        for (int i = 0; i < prefabGuids.Length; i++)
+        private static Transform FindAnimatedModelChild(Transform root)
         {
-            string path = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
-            if (path.EndsWith("/Unit.prefab", System.StringComparison.Ordinal))
-                continue;
-
-            GameObject root = PrefabUtility.LoadPrefabContents(path);
-            if (root == null)
-                continue;
-
-            bool changed = false;
-            try
+            for (int childIndex = 0; childIndex < root.childCount; childIndex++)
             {
-                Transform model = FindAnimatedModelChild(root.transform);
-                if (model == null || !TryGetLocalBounds(root.transform, model, out Bounds bounds))
+                Transform child = root.GetChild(childIndex);
+                if (child != null &&
+                    string.Equals(child.name, "Model", System.StringComparison.Ordinal) &&
+                    child.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true) != null)
+                {
+                    return child;
+                }
+            }
+
+            return null;
+        }
+
+        private static bool TryGetLocalBounds(Transform root, Transform model, out Bounds bounds)
+        {
+            bounds = default;
+            Renderer[] renderers = model.GetComponentsInChildren<Renderer>(true);
+            bool hasBounds = false;
+            Matrix4x4 rootWorldToLocal = root.worldToLocalMatrix;
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer renderer = renderers[i];
+                if (renderer == null)
                     continue;
 
-                Vector3 localPosition = model.localPosition;
-                float desiredOffset = localPosition.y - bounds.min.y;
-                if (Mathf.Abs(bounds.min.y) <= 0.001f)
-                    desiredOffset = localPosition.y;
-
-                if (!Mathf.Approximately(localPosition.y, desiredOffset))
-                {
-                    localPosition.y = desiredOffset;
-                    model.localPosition = localPosition;
-                    aligned++;
-                    changed = true;
-                }
-
-                if (changed)
-                {
-                    PrefabUtility.SaveAsPrefabAsset(root, path);
-                    updated++;
-                }
+                Bounds localBounds = renderer.localBounds;
+                Matrix4x4 rendererToRoot = rootWorldToLocal * renderer.transform.localToWorldMatrix;
+                Encapsulate(rendererToRoot.MultiplyPoint3x4(localBounds.min), ref bounds, ref hasBounds);
+                Encapsulate(rendererToRoot.MultiplyPoint3x4(localBounds.max), ref bounds, ref hasBounds);
+                Encapsulate(rendererToRoot.MultiplyPoint3x4(new Vector3(localBounds.min.x, localBounds.min.y, localBounds.max.z)), ref bounds, ref hasBounds);
+                Encapsulate(rendererToRoot.MultiplyPoint3x4(new Vector3(localBounds.min.x, localBounds.max.y, localBounds.min.z)), ref bounds, ref hasBounds);
+                Encapsulate(rendererToRoot.MultiplyPoint3x4(new Vector3(localBounds.max.x, localBounds.min.y, localBounds.min.z)), ref bounds, ref hasBounds);
+                Encapsulate(rendererToRoot.MultiplyPoint3x4(new Vector3(localBounds.min.x, localBounds.max.y, localBounds.max.z)), ref bounds, ref hasBounds);
+                Encapsulate(rendererToRoot.MultiplyPoint3x4(new Vector3(localBounds.max.x, localBounds.min.y, localBounds.max.z)), ref bounds, ref hasBounds);
+                Encapsulate(rendererToRoot.MultiplyPoint3x4(new Vector3(localBounds.max.x, localBounds.max.y, localBounds.min.z)), ref bounds, ref hasBounds);
             }
-            finally
+
+            return hasBounds;
+        }
+
+        private static void Encapsulate(Vector3 point, ref Bounds bounds, ref bool hasBounds)
+        {
+            if (!hasBounds)
             {
-                PrefabUtility.UnloadPrefabContents(root);
+                bounds = new Bounds(point, Vector3.zero);
+                hasBounds = true;
+                return;
             }
+
+            bounds.Encapsulate(point);
         }
 
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"[UnitRenderSanitizer] alignedCharacterModelFeet={aligned} updated={updated}");
-    }
-
-    private static Transform FindAnimatedModelChild(Transform root)
-    {
-        for (int childIndex = 0; childIndex < root.childCount; childIndex++)
+        public static void RestoreCharacterBakedLodGroups()
         {
-            Transform child = root.GetChild(childIndex);
-            if (child != null &&
-                string.Equals(child.name, "Model", System.StringComparison.Ordinal) &&
-                child.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true) != null)
+            string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Generated/CharactersBaked" });
+            int updated = 0;
+
+            for (int i = 0; i < prefabGuids.Length; i++)
             {
-                return child;
-            }
-        }
-
-        return null;
-    }
-
-    private static bool TryGetLocalBounds(Transform root, Transform model, out Bounds bounds)
-    {
-        bounds = default;
-        Renderer[] renderers = model.GetComponentsInChildren<Renderer>(true);
-        bool hasBounds = false;
-        Matrix4x4 rootWorldToLocal = root.worldToLocalMatrix;
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            Renderer renderer = renderers[i];
-            if (renderer == null)
-                continue;
-
-            Bounds localBounds = renderer.localBounds;
-            Matrix4x4 rendererToRoot = rootWorldToLocal * renderer.transform.localToWorldMatrix;
-            Encapsulate(rendererToRoot.MultiplyPoint3x4(localBounds.min), ref bounds, ref hasBounds);
-            Encapsulate(rendererToRoot.MultiplyPoint3x4(localBounds.max), ref bounds, ref hasBounds);
-            Encapsulate(rendererToRoot.MultiplyPoint3x4(new Vector3(localBounds.min.x, localBounds.min.y, localBounds.max.z)), ref bounds, ref hasBounds);
-            Encapsulate(rendererToRoot.MultiplyPoint3x4(new Vector3(localBounds.min.x, localBounds.max.y, localBounds.min.z)), ref bounds, ref hasBounds);
-            Encapsulate(rendererToRoot.MultiplyPoint3x4(new Vector3(localBounds.max.x, localBounds.min.y, localBounds.min.z)), ref bounds, ref hasBounds);
-            Encapsulate(rendererToRoot.MultiplyPoint3x4(new Vector3(localBounds.min.x, localBounds.max.y, localBounds.max.z)), ref bounds, ref hasBounds);
-            Encapsulate(rendererToRoot.MultiplyPoint3x4(new Vector3(localBounds.max.x, localBounds.min.y, localBounds.max.z)), ref bounds, ref hasBounds);
-            Encapsulate(rendererToRoot.MultiplyPoint3x4(new Vector3(localBounds.max.x, localBounds.max.y, localBounds.min.z)), ref bounds, ref hasBounds);
-        }
-
-        return hasBounds;
-    }
-
-    private static void Encapsulate(Vector3 point, ref Bounds bounds, ref bool hasBounds)
-    {
-        if (!hasBounds)
-        {
-            bounds = new Bounds(point, Vector3.zero);
-            hasBounds = true;
-            return;
-        }
-
-        bounds.Encapsulate(point);
-    }
-
-    public static void RestoreCharacterBakedLodGroups()
-    {
-        string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Generated/CharactersBaked" });
-        int updated = 0;
-
-        for (int i = 0; i < prefabGuids.Length; i++)
-        {
-            string path = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
-            GameObject root = PrefabUtility.LoadPrefabContents(path);
-            if (root == null)
-                continue;
-
-            bool changed = false;
-            try
-            {
-                MaterialAnimatorIndexAuthoring indexAuthoring = root.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true);
-                if (indexAuthoring == null)
+                string path = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
+                GameObject root = PrefabUtility.LoadPrefabContents(path);
+                if (root == null)
                     continue;
 
-                LODGroup lodGroup = root.GetComponent<LODGroup>();
-                if (lodGroup == null)
+                bool changed = false;
+                try
                 {
-                    lodGroup = root.AddComponent<LODGroup>();
-                    changed = true;
-                }
+                    MaterialAnimatorIndexAuthoring indexAuthoring = root.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true);
+                    if (indexAuthoring == null)
+                        continue;
 
-                Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
-                if (renderers.Length > 0)
-                {
-                    lodGroup.SetLODs(new[] { new LOD(0f, renderers) });
-                    lodGroup.fadeMode = LODFadeMode.None;
-                    lodGroup.animateCrossFading = false;
-                    lodGroup.RecalculateBounds();
-                    changed = true;
-                }
+                    LODGroup lodGroup = root.GetComponent<LODGroup>();
+                    if (lodGroup == null)
+                    {
+                        lodGroup = root.AddComponent<LODGroup>();
+                        changed = true;
+                    }
 
-                if (changed)
+                    Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+                    if (renderers.Length > 0)
+                    {
+                        lodGroup.SetLODs(new[] { new LOD(0f, renderers) });
+                        lodGroup.fadeMode = LODFadeMode.None;
+                        lodGroup.animateCrossFading = false;
+                        lodGroup.RecalculateBounds();
+                        changed = true;
+                    }
+
+                    if (changed)
+                    {
+                        PrefabUtility.SaveAsPrefabAsset(root, path);
+                        updated++;
+                    }
+                }
+                finally
                 {
-                    PrefabUtility.SaveAsPrefabAsset(root, path);
-                    updated++;
+                    PrefabUtility.UnloadPrefabContents(root);
                 }
             }
-            finally
-            {
-                PrefabUtility.UnloadPrefabContents(root);
-            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[UnitRenderSanitizer] restoredCharacterLodGroups={updated}");
         }
 
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"[UnitRenderSanitizer] restoredCharacterLodGroups={updated}");
-    }
-
-    public static void RestoreAnimatedMidLodGroups()
-    {
-        string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Generated/MidLOD" });
-        int updated = 0;
-
-        for (int i = 0; i < prefabGuids.Length; i++)
+        public static void RestoreAnimatedMidLodGroups()
         {
-            string path = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
-            GameObject root = PrefabUtility.LoadPrefabContents(path);
-            if (root == null)
-                continue;
+            string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Game/Prefabs/Generated/MidLOD" });
+            int updated = 0;
 
-            bool changed = false;
-            try
+            for (int i = 0; i < prefabGuids.Length; i++)
             {
-                MaterialAnimatorIndexAuthoring indexAuthoring = root.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true);
-                if (indexAuthoring == null)
+                string path = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
+                GameObject root = PrefabUtility.LoadPrefabContents(path);
+                if (root == null)
                     continue;
 
-                LODGroup lodGroup = root.GetComponent<LODGroup>();
-                if (lodGroup == null)
+                bool changed = false;
+                try
                 {
-                    lodGroup = root.AddComponent<LODGroup>();
-                    changed = true;
-                }
+                    MaterialAnimatorIndexAuthoring indexAuthoring = root.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true);
+                    if (indexAuthoring == null)
+                        continue;
 
-                Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
-                if (renderers.Length > 0)
-                {
-                    lodGroup.SetLODs(new[] { new LOD(0f, renderers) });
-                    lodGroup.fadeMode = LODFadeMode.None;
-                    lodGroup.animateCrossFading = false;
-                    lodGroup.RecalculateBounds();
-                    changed = true;
-                }
+                    LODGroup lodGroup = root.GetComponent<LODGroup>();
+                    if (lodGroup == null)
+                    {
+                        lodGroup = root.AddComponent<LODGroup>();
+                        changed = true;
+                    }
 
-                if (changed)
+                    Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+                    if (renderers.Length > 0)
+                    {
+                        lodGroup.SetLODs(new[] { new LOD(0f, renderers) });
+                        lodGroup.fadeMode = LODFadeMode.None;
+                        lodGroup.animateCrossFading = false;
+                        lodGroup.RecalculateBounds();
+                        changed = true;
+                    }
+
+                    if (changed)
+                    {
+                        PrefabUtility.SaveAsPrefabAsset(root, path);
+                        updated++;
+                    }
+                }
+                finally
                 {
-                    PrefabUtility.SaveAsPrefabAsset(root, path);
-                    updated++;
+                    PrefabUtility.UnloadPrefabContents(root);
                 }
             }
-            finally
-            {
-                PrefabUtility.UnloadPrefabContents(root);
-            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[UnitRenderSanitizer] restoredAnimatedMidLodGroups={updated}");
         }
-
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"[UnitRenderSanitizer] restoredAnimatedMidLodGroups={updated}");
     }
 }

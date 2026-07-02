@@ -1,31 +1,35 @@
 using Unity.Entities;
 using Unity.Collections;
+using Game.Components;
 
-public static class RespawnQueueUtility
+namespace Game.Runtime
 {
-    public static Entity GetOrCreateQueue(ref SystemState state)
+    public static class RespawnQueueUtility
     {
-        var em = state.EntityManager;
-        using var q = em.CreateEntityQuery(ComponentType.ReadOnly<RespawnQueueTag>());
-        return GetOrCreateQueue(ref state, q);
-    }
-
-    public static Entity GetOrCreateQueue(ref SystemState state, EntityQuery queueQuery)
-    {
-        var em = state.EntityManager;
-        if (!queueQuery.IsEmptyIgnoreFilter)
-            return queueQuery.GetSingletonEntity();
-
-        var e = em.CreateEntity();
-        em.AddComponentData(e, new RespawnQueueTag());
-        em.AddComponentData(e, new RespawnQueueComponent
+        public static Entity GetOrCreateQueue(ref SystemState state)
         {
-            RandomState = 0x12345678u,
-            SpawnRadiusCells = 0,
-            RespawnDelaySeconds = 10f
-        });
-        em.AddBuffer<RespawnRequest>(e);
-        em.AddBuffer<RespawnFactionSpawnPoint>(e);
-        return e;
+            var em = state.EntityManager;
+            using var q = em.CreateEntityQuery(ComponentType.ReadOnly<RespawnQueueTag>());
+            return GetOrCreateQueue(ref state, q);
+        }
+
+        public static Entity GetOrCreateQueue(ref SystemState state, EntityQuery queueQuery)
+        {
+            var em = state.EntityManager;
+            if (!queueQuery.IsEmptyIgnoreFilter)
+                return queueQuery.GetSingletonEntity();
+
+            var e = em.CreateEntity();
+            em.AddComponentData(e, new RespawnQueueTag());
+            em.AddComponentData(e, new RespawnQueueComponent
+            {
+                RandomState = 0x12345678u,
+                SpawnRadiusCells = 0,
+                RespawnDelaySeconds = 10f
+            });
+            em.AddBuffer<RespawnRequest>(e);
+            em.AddBuffer<RespawnFactionSpawnPoint>(e);
+            return e;
+        }
     }
 }

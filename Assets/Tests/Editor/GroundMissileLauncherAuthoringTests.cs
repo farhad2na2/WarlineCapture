@@ -1,3 +1,5 @@
+using Game.Configs;
+using Game.Authoring;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System.IO;
 using NUnit.Framework;

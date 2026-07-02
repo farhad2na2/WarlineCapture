@@ -1,59 +1,63 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Game.Runtime;
 
-public sealed class MatchSceneReferenceSceneSystemHelper
+namespace Game.Composition
 {
-    public bool TryGetLoadedMatchSceneView(out MatchSceneView view)
+    public sealed class MatchSceneReferenceSceneSystemHelper
     {
-        return TryGetLoadedSceneView(SceneLifecycleSceneSystemHelper.MatchSceneName, out view);
-    }
-
-    public bool TryGetLoadedSceneView(string sceneName, out MatchSceneView view)
-    {
-        view = null;
-
-        if (string.IsNullOrEmpty(sceneName))
-            return false;
-
-        Scene scene = SceneManager.GetSceneByName(sceneName);
-        return TryGetLoadedSceneView(scene, out view);
-    }
-
-    public bool TryGetLoadedSceneView(Scene scene, out MatchSceneView view)
-    {
-        view = null;
-
-        if (!scene.IsValid() || !scene.isLoaded)
-            return false;
-
-        GameObject[] roots = scene.GetRootGameObjects();
-        for (int i = 0; i < roots.Length; i++)
+        public bool TryGetLoadedMatchSceneView(out MatchSceneView view)
         {
-            GameObject root = roots[i];
-            if (root == null)
-                continue;
-
-            if (!root.TryGetComponent(out MatchSceneView candidate))
-                continue;
-
-            if (!IsLoadedSceneView(candidate, scene))
-                continue;
-
-            view = candidate;
-            return true;
+            return TryGetLoadedSceneView(SceneLifecycleSceneSystemHelper.MatchSceneName, out view);
         }
 
-        return false;
-    }
+        public bool TryGetLoadedSceneView(string sceneName, out MatchSceneView view)
+        {
+            view = null;
 
-    private static bool IsLoadedSceneView(MatchSceneView view, Scene expectedScene)
-    {
-        if (view == null || view.gameObject == null)
+            if (string.IsNullOrEmpty(sceneName))
+                return false;
+
+            Scene scene = SceneManager.GetSceneByName(sceneName);
+            return TryGetLoadedSceneView(scene, out view);
+        }
+
+        public bool TryGetLoadedSceneView(Scene scene, out MatchSceneView view)
+        {
+            view = null;
+
+            if (!scene.IsValid() || !scene.isLoaded)
+                return false;
+
+            GameObject[] roots = scene.GetRootGameObjects();
+            for (int i = 0; i < roots.Length; i++)
+            {
+                GameObject root = roots[i];
+                if (root == null)
+                    continue;
+
+                if (!root.TryGetComponent(out MatchSceneView candidate))
+                    continue;
+
+                if (!IsLoadedSceneView(candidate, scene))
+                    continue;
+
+                view = candidate;
+                return true;
+            }
+
             return false;
+        }
 
-        Scene scene = view.gameObject.scene;
-        return scene.IsValid() &&
-               scene.isLoaded &&
-               scene == expectedScene;
+        private static bool IsLoadedSceneView(MatchSceneView view, Scene expectedScene)
+        {
+            if (view == null || view.gameObject == null)
+                return false;
+
+            Scene scene = view.gameObject.scene;
+            return scene.IsValid() &&
+                   scene.isLoaded &&
+                   scene == expectedScene;
+        }
     }
 }

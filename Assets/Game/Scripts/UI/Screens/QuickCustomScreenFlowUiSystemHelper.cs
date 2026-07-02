@@ -1,32 +1,37 @@
-internal sealed class QuickCustomScreenFlowUiSystemHelper
+using Game.UI.Contracts;
+
+namespace Game.UI.Runtime
 {
-    public void Initialize(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)
+    internal sealed class QuickCustomScreenFlowUiSystemHelper
     {
-        view?.Bind(configStore != null ? configStore.Current : UiQuickCustomGameConfig.Defaults);
-    }
+        public void Initialize(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)
+        {
+            view?.Bind(configStore != null ? configStore.Current : UiQuickCustomGameConfig.Defaults);
+        }
 
-    public void ResetToDefaults(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)
-    {
-        view?.Bind(configStore != null ? configStore.Defaults : UiQuickCustomGameConfig.Defaults);
-    }
+        public void ResetToDefaults(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)
+        {
+            view?.Bind(configStore != null ? configStore.Defaults : UiQuickCustomGameConfig.Defaults);
+        }
 
-    public void ApplyCurrentConfig(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)
-    {
-        if (view == null || configStore == null)
-            return;
+        public void ApplyCurrentConfig(QuickCustomScreenView view, IQuickCustomGameConfigStore configStore)
+        {
+            if (view == null || configStore == null)
+                return;
 
-        configStore.Apply(view.ReadConfigFromControls());
-    }
+            configStore.Apply(view.ReadConfigFromControls());
+        }
 
-    public void LaunchMatch(
-        QuickCustomScreenView view,
-        IQuickCustomGameConfigStore configStore,
-        IMatchLaunchCommand launchCommand)
-    {
-        if (view == null)
-            return;
+        public void LaunchMatch(
+            QuickCustomScreenView view,
+            IQuickCustomGameConfigStore configStore,
+            IMatchLaunchCommand launchCommand)
+        {
+            if (view == null)
+                return;
 
-        ApplyCurrentConfig(view, configStore);
-        launchCommand?.LaunchMatch(view);
+            ApplyCurrentConfig(view, configStore);
+            launchCommand?.LaunchMatch(view);
+        }
     }
 }

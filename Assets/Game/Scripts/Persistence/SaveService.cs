@@ -1,76 +1,79 @@
 using System;
 using UnityEngine;
 
-public sealed class SaveService
+namespace Game.Runtime
 {
-    public const string ProfileFileName = "profile.json";
-    public const string SettingsFileName = "settings.json";
-    public const string QuickGameFileName = "quickgame.json";
-
-    private readonly JsonSaveRepository _repository;
-
-    public SaveService(JsonSaveRepository repository)
+    public sealed class SaveService
     {
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-    }
+        public const string ProfileFileName = "profile.json";
+        public const string SettingsFileName = "settings.json";
+        public const string QuickGameFileName = "quickgame.json";
 
-    public static SaveService CreateDefault()
-    {
-        return new SaveService(new JsonSaveRepository(Application.persistentDataPath));
-    }
+        private readonly JsonSaveRepository _repository;
 
-    public SaveDataModel LoadProject()
-    {
-        var data = new SaveDataModel
+        public SaveService(JsonSaveRepository repository)
         {
-            profile = LoadProfile(),
-            settings = LoadSettings(),
-            quickGame = LoadQuickGame()
-        };
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        }
 
-        return SaveMigration.Migrate(data);
-    }
+        public static SaveService CreateDefault()
+        {
+            return new SaveService(new JsonSaveRepository(Application.persistentDataPath));
+        }
 
-    public void SaveProject(SaveDataModel data)
-    {
-        SaveDataModel migrated = SaveMigration.Migrate(data);
-        SaveProfile(migrated.profile);
-        SaveSettings(migrated.settings);
-        SaveQuickGame(migrated.quickGame);
-    }
+        public SaveDataModel LoadProject()
+        {
+            var data = new SaveDataModel
+            {
+                profile = LoadProfile(),
+                settings = LoadSettings(),
+                quickGame = LoadQuickGame()
+            };
 
-    public PlayerProfileSaveData LoadProfile()
-    {
-        return _repository.Load<PlayerProfileSaveData>(ProfileFileName);
-    }
+            return SaveMigration.Migrate(data);
+        }
 
-    public SettingsSaveData LoadSettings()
-    {
-        return _repository.Load<SettingsSaveData>(SettingsFileName);
-    }
+        public void SaveProject(SaveDataModel data)
+        {
+            SaveDataModel migrated = SaveMigration.Migrate(data);
+            SaveProfile(migrated.profile);
+            SaveSettings(migrated.settings);
+            SaveQuickGame(migrated.quickGame);
+        }
 
-    public QuickGameSaveData LoadQuickGame()
-    {
-        return _repository.Load<QuickGameSaveData>(QuickGameFileName);
-    }
+        public PlayerProfileSaveData LoadProfile()
+        {
+            return _repository.Load<PlayerProfileSaveData>(ProfileFileName);
+        }
 
-    public void SaveProfile(PlayerProfileSaveData data)
-    {
-        _repository.Save(ProfileFileName, data);
-    }
+        public SettingsSaveData LoadSettings()
+        {
+            return _repository.Load<SettingsSaveData>(SettingsFileName);
+        }
 
-    public void SaveSettings(SettingsSaveData data)
-    {
-        _repository.Save(SettingsFileName, data);
-    }
+        public QuickGameSaveData LoadQuickGame()
+        {
+            return _repository.Load<QuickGameSaveData>(QuickGameFileName);
+        }
 
-    public void SaveQuickGame(QuickGameSaveData data)
-    {
-        _repository.Save(QuickGameFileName, data);
-    }
+        public void SaveProfile(PlayerProfileSaveData data)
+        {
+            _repository.Save(ProfileFileName, data);
+        }
 
-    public SaveSlotInfo GetSlotInfo(string slotId, string fileName)
-    {
-        return new SaveSlotInfo(slotId, fileName, _repository.Exists(fileName));
+        public void SaveSettings(SettingsSaveData data)
+        {
+            _repository.Save(SettingsFileName, data);
+        }
+
+        public void SaveQuickGame(QuickGameSaveData data)
+        {
+            _repository.Save(QuickGameFileName, data);
+        }
+
+        public SaveSlotInfo GetSlotInfo(string slotId, string fileName)
+        {
+            return new SaveSlotInfo(slotId, fileName, _repository.Exists(fileName));
+        }
     }
 }

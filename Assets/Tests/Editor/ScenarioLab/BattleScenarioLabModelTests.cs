@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using Game.Runtime;
 
 public sealed class BattleScenarioLabModelTests
 {

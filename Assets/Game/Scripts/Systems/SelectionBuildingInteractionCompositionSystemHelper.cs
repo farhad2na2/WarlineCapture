@@ -1,182 +1,187 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Game.UI.Contracts;
+using Game.Components;
 
-public sealed class SelectionBuildingInteractionCompositionSystemHelper
+namespace Game.Runtime
 {
-    private readonly FocusedUnitLifecycleCompositionSystemHelper _focusedUnitLifecycleSystem = new();
-    private readonly SelectionHudFeedbackUiSystemHelper _selectionHudFeedbackSystem = new();
-    private readonly FocusableUnitLookupCameraSystemHelper _focusableUnitLookupSystem = new();
-    private readonly TransportBoardingCommandSystem _transportBoardingCommandSystem = new();
-    private readonly BuildingTargetMoveOrderSystem _buildingTargetMoveOrderSystem = new();
-    private readonly RtsSelectionPointerTargetCommandCompositionSystemHelper _pointerTargetCommandSystem = new();
-
-    private SelectionStateCompositionSystemHelper _selectionStateSystem;
-    private SelectionScreenMarkerUiSystemHelper _screenMarkerHelper;
-    private Camera _worldCamera;
-    private Unity.Entities.World _queryWorld;
-    private EntityQuery _gridConfigQuery;
-    private EntityQuery _mapSurfaceQuery;
-
-    public void Init(
-        SelectionStateCompositionSystemHelper selectionStateSystem,
-        SelectionScreenMarkerUiSystemHelper screenMarkerHelper,
-        Camera worldCamera)
+    public sealed class SelectionBuildingInteractionCompositionSystemHelper
     {
-        _selectionStateSystem = selectionStateSystem;
-        _screenMarkerHelper = screenMarkerHelper;
-        _worldCamera = worldCamera;
-        _selectionHudFeedbackSystem.ResetViewCache();
-    }
+        private readonly FocusedUnitLifecycleCompositionSystemHelper _focusedUnitLifecycleSystem = new();
+        private readonly SelectionHudFeedbackUiSystemHelper _selectionHudFeedbackSystem = new();
+        private readonly FocusableUnitLookupCameraSystemHelper _focusableUnitLookupSystem = new();
+        private readonly TransportBoardingCommandSystem _transportBoardingCommandSystem = new();
+        private readonly BuildingTargetMoveOrderSystem _buildingTargetMoveOrderSystem = new();
+        private readonly RtsSelectionPointerTargetCommandCompositionSystemHelper _pointerTargetCommandSystem = new();
 
-    public void BindMatchHudSelectionPanel(IMatchHudSelectionPanelView view)
-    {
-        _selectionHudFeedbackSystem.BindMatchHudSelectionPanel(view);
-    }
+        private SelectionStateCompositionSystemHelper _selectionStateSystem;
+        private SelectionScreenMarkerUiSystemHelper _screenMarkerHelper;
+        private Camera _worldCamera;
+        private Unity.Entities.World _queryWorld;
+        private EntityQuery _gridConfigQuery;
+        private EntityQuery _mapSurfaceQuery;
 
-    public void ClearFocusedUnit()
-    {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
+        public void Init(
+            SelectionStateCompositionSystemHelper selectionStateSystem,
+            SelectionScreenMarkerUiSystemHelper screenMarkerHelper,
+            Camera worldCamera)
         {
-            _focusedUnitLifecycleSystem.ClearFocusedUnit(SelectionState);
-            return;
+            _selectionStateSystem = selectionStateSystem;
+            _screenMarkerHelper = screenMarkerHelper;
+            _worldCamera = worldCamera;
+            _selectionHudFeedbackSystem.ResetViewCache();
         }
 
-        _focusedUnitLifecycleSystem.ClearCurrentSelection(
-            em,
-            SelectionState,
-            "BuildingSelection",
-            null,
-            () => _selectionHudFeedbackSystem.QueueClearSelection(em));
-        _focusedUnitLifecycleSystem.ClearFocusedUnit(SelectionState);
-        _selectionHudFeedbackSystem.QueueClearCommandMode(em);
-        _selectionHudFeedbackSystem.QueueWorldMarkersVisible(em, false);
-        _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
-    }
+        public void BindMatchHudSelectionPanel(IMatchHudSelectionPanelView view)
+        {
+            _selectionHudFeedbackSystem.BindMatchHudSelectionPanel(view);
+        }
 
-    public void ApplyBuildingSelectionHudFeedback(Sprite portraitSprite)
-    {
-        _selectionHudFeedbackSystem.ApplyBuildingSelection(portraitSprite);
-    }
+        public void ClearFocusedUnit()
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em))
+            {
+                _focusedUnitLifecycleSystem.ClearFocusedUnit(SelectionState);
+                return;
+            }
 
-    public bool IsBoardablePlayerTransportClick(Vector2 screenPosition)
-    {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return false;
-
-        EnsureEntityQueries(em);
-        return _transportBoardingCommandSystem.IsBoardablePlayerTransportClick(
-            em,
-            screenPosition,
-            TryGetClickedUnitEntity,
-            TryGetClickedCell);
-    }
-
-    public bool TryRequestMoveOrderToBuilding(Vector2Int originCell, Vector2Int footprintCells)
-    {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return false;
-
-        bool issued = _buildingTargetMoveOrderSystem.TryRequestMoveOrderToBuilding(
-            em,
-            new int2(originCell.x, originCell.y),
-            new int2(footprintCells.x, footprintCells.y));
-        if (!issued)
-            return false;
-
-        _focusedUnitLifecycleSystem.ClearCurrentSelection(
-            em,
-            SelectionState,
-            "MoveOrderToBuilding",
-            null,
-            () => _selectionHudFeedbackSystem.QueueClearSelection(em));
-        _focusedUnitLifecycleSystem.ClearFocusedUnit(SelectionState);
-        _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
-
-        if (TryGetPointerPosition(out Vector2 markerScreenPosition))
-            _screenMarkerHelper?.RequestMoveOrderMarker(markerScreenPosition);
-        return true;
-    }
-
-    private SelectionStateCompositionSystemHelper SelectionState => _selectionStateSystem ??= new SelectionStateCompositionSystemHelper();
-
-    private void EnsureEntityQueries(EntityManager em)
-    {
-        Unity.Entities.World world = em.World;
-        if (_queryWorld == world && world != null && world.IsCreated)
-            return;
-
-        _queryWorld = world;
-        _gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        _mapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
-        _focusableUnitLookupSystem.EnsureEntityQueries(em);
-        _transportBoardingCommandSystem.EnsureEntityQueries(em);
-        _focusedUnitLifecycleSystem.EnsureEntityQueries(em);
-    }
-
-    private bool TryGetClickedCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
-    {
-        cell = default;
-        worldPoint = default;
-        if (_worldCamera == null)
-            return false;
-
-        EnsureEntityQueries(em);
-        if (_gridConfigQuery.IsEmptyIgnoreFilter)
-            return false;
-
-        GridConfig grid = em.GetComponentData<GridConfig>(_gridConfigQuery.GetSingletonEntity());
-        if (!_pointerTargetCommandSystem.TryResolveMapSurfaceCommandTarget(
+            _focusedUnitLifecycleSystem.ClearCurrentSelection(
                 em,
-                _mapSurfaceQuery,
-                grid,
-                _worldCamera,
-                screenPosition,
                 SelectionState,
-                out RtsSelectionPointerTargetCommandCompositionSystemHelper.MapSurfaceCommandTargetResult target))
-        {
-            return false;
+                "BuildingSelection",
+                null,
+                () => _selectionHudFeedbackSystem.QueueClearSelection(em));
+            _focusedUnitLifecycleSystem.ClearFocusedUnit(SelectionState);
+            _selectionHudFeedbackSystem.QueueClearCommandMode(em);
+            _selectionHudFeedbackSystem.QueueWorldMarkersVisible(em, false);
+            _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
         }
 
-        cell = target.Cell;
-        worldPoint = target.WorldPoint;
-        return true;
-    }
-
-    private bool TryGetClickedUnitEntity(Vector2 screenPosition, EntityManager em, out Entity bestEntity)
-    {
-        bestEntity = Entity.Null;
-        if (!TryGetClickedCell(screenPosition, em, out int2 clickedCell, out _))
-            return false;
-
-        return _focusableUnitLookupSystem.TryGetClickedUnitEntity(
-            em,
-            _worldCamera,
-            clickedCell,
-            screenPosition,
-            out bestEntity);
-    }
-
-    private static bool TryGetPointerPosition(out Vector2 pointerPosition)
-    {
-        if (GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer))
+        public void ApplyBuildingSelectionHudFeedback(Sprite portraitSprite)
         {
-            pointerPosition = pointer.Position;
+            _selectionHudFeedbackSystem.ApplyBuildingSelection(portraitSprite);
+        }
+
+        public bool IsBoardablePlayerTransportClick(Vector2 screenPosition)
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em))
+                return false;
+
+            EnsureEntityQueries(em);
+            return _transportBoardingCommandSystem.IsBoardablePlayerTransportClick(
+                em,
+                screenPosition,
+                TryGetClickedUnitEntity,
+                TryGetClickedCell);
+        }
+
+        public bool TryRequestMoveOrderToBuilding(Vector2Int originCell, Vector2Int footprintCells)
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em))
+                return false;
+
+            bool issued = _buildingTargetMoveOrderSystem.TryRequestMoveOrderToBuilding(
+                em,
+                new int2(originCell.x, originCell.y),
+                new int2(footprintCells.x, footprintCells.y));
+            if (!issued)
+                return false;
+
+            _focusedUnitLifecycleSystem.ClearCurrentSelection(
+                em,
+                SelectionState,
+                "MoveOrderToBuilding",
+                null,
+                () => _selectionHudFeedbackSystem.QueueClearSelection(em));
+            _focusedUnitLifecycleSystem.ClearFocusedUnit(SelectionState);
+            _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
+
+            if (TryGetPointerPosition(out Vector2 markerScreenPosition))
+                _screenMarkerHelper?.RequestMoveOrderMarker(markerScreenPosition);
             return true;
         }
 
-        pointerPosition = default;
-        return false;
-    }
+        private SelectionStateCompositionSystemHelper SelectionState => _selectionStateSystem ??= new SelectionStateCompositionSystemHelper();
 
-    private static bool TryGetDefaultEntityManager(out EntityManager em)
-    {
-        em = default;
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
+        private void EnsureEntityQueries(EntityManager em)
+        {
+            Unity.Entities.World world = em.World;
+            if (_queryWorld == world && world != null && world.IsCreated)
+                return;
+
+            _queryWorld = world;
+            _gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            _mapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+            _focusableUnitLookupSystem.EnsureEntityQueries(em);
+            _transportBoardingCommandSystem.EnsureEntityQueries(em);
+            _focusedUnitLifecycleSystem.EnsureEntityQueries(em);
+        }
+
+        private bool TryGetClickedCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
+        {
+            cell = default;
+            worldPoint = default;
+            if (_worldCamera == null)
+                return false;
+
+            EnsureEntityQueries(em);
+            if (_gridConfigQuery.IsEmptyIgnoreFilter)
+                return false;
+
+            GridConfig grid = em.GetComponentData<GridConfig>(_gridConfigQuery.GetSingletonEntity());
+            if (!_pointerTargetCommandSystem.TryResolveMapSurfaceCommandTarget(
+                    em,
+                    _mapSurfaceQuery,
+                    grid,
+                    _worldCamera,
+                    screenPosition,
+                    SelectionState,
+                    out RtsSelectionPointerTargetCommandCompositionSystemHelper.MapSurfaceCommandTargetResult target))
+            {
+                return false;
+            }
+
+            cell = target.Cell;
+            worldPoint = target.WorldPoint;
+            return true;
+        }
+
+        private bool TryGetClickedUnitEntity(Vector2 screenPosition, EntityManager em, out Entity bestEntity)
+        {
+            bestEntity = Entity.Null;
+            if (!TryGetClickedCell(screenPosition, em, out int2 clickedCell, out _))
+                return false;
+
+            return _focusableUnitLookupSystem.TryGetClickedUnitEntity(
+                em,
+                _worldCamera,
+                clickedCell,
+                screenPosition,
+                out bestEntity);
+        }
+
+        private static bool TryGetPointerPosition(out Vector2 pointerPosition)
+        {
+            if (GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer))
+            {
+                pointerPosition = pointer.Position;
+                return true;
+            }
+
+            pointerPosition = default;
             return false;
+        }
 
-        em = world.EntityManager;
-        return true;
+        private static bool TryGetDefaultEntityManager(out EntityManager em)
+        {
+            em = default;
+            Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return false;
+
+            em = world.EntityManager;
+            return true;
+        }
     }
 }

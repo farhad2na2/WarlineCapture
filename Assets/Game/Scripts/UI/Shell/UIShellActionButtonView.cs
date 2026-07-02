@@ -1,39 +1,43 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Contracts;
 
-[DisallowMultipleComponent]
-[RequireComponent(typeof(Button))]
-public sealed class UIShellActionButtonView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private UiActionKind actionKind;
-    [SerializeField] private int payloadId;
-    [SerializeField] private Button button;
-
-    public UiActionKind ActionKind => actionKind;
-    public int PayloadId => payloadId;
-
-    private void Awake()
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(Button))]
+    public sealed class UIShellActionButtonView : MonoBehaviour
     {
-        if (button == null)
-            button = GetComponent<Button>();
-    }
+        [SerializeField] private UiActionKind actionKind;
+        [SerializeField] private int payloadId;
+        [SerializeField] private Button button;
 
-    private void OnEnable()
-    {
-        if (button == null)
-            button = GetComponent<Button>();
-        if (button != null)
-            button.onClick.AddListener(EnqueueAction);
-    }
+        public UiActionKind ActionKind => actionKind;
+        public int PayloadId => payloadId;
 
-    private void OnDisable()
-    {
-        if (button != null)
-            button.onClick.RemoveListener(EnqueueAction);
-    }
+        private void Awake()
+        {
+            if (button == null)
+                button = GetComponent<Button>();
+        }
 
-    private void EnqueueAction()
-    {
-        UiShellRuntimeGateway.TryEnqueueUiAction(actionKind, payloadId);
+        private void OnEnable()
+        {
+            if (button == null)
+                button = GetComponent<Button>();
+            if (button != null)
+                button.onClick.AddListener(EnqueueAction);
+        }
+
+        private void OnDisable()
+        {
+            if (button != null)
+                button.onClick.RemoveListener(EnqueueAction);
+        }
+
+        private void EnqueueAction()
+        {
+            UiShellRuntimeGateway.TryEnqueueUiAction(actionKind, payloadId);
+        }
     }
 }

@@ -1,253 +1,257 @@
 using System.Collections.Generic;
+using Game.UI.Contracts;
 
-public static class UiShellRuntimeGateway
+namespace Game.UI.Runtime
 {
-    private static IUiShellRuntimeGateway current = NullUiShellRuntimeGateway.Instance;
-
-    public static void Register(IUiShellRuntimeGateway gateway)
+    public static class UiShellRuntimeGateway
     {
-        current = gateway ?? NullUiShellRuntimeGateway.Instance;
-    }
+        private static IUiShellRuntimeGateway current = NullUiShellRuntimeGateway.Instance;
 
-    public static bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory)
-    {
-        return current.TryEnqueueRouteRequest(intent, route, pushHistory);
-    }
-
-    public static bool TryEnqueueUiAction(UiActionKind kind, int payloadId = 0)
-    {
-        return current.TryEnqueueUiAction(kind, payloadId);
-    }
-
-    public static bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading)
-    {
-        return current.TryReadLoadingProgress(out loading);
-    }
-
-    public static bool TrySetLoadingProgress(float progress01, string status, bool complete)
-    {
-        return current.TrySetLoadingProgress(progress01, status, complete);
-    }
-
-    public static bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics)
-    {
-        return current.TryReadDiagnosticsOverlay(out diagnostics);
-    }
-
-    public static bool TryReadShellState(out UiShellStateModel state)
-    {
-        return current.TryReadShellState(out state);
-    }
-
-    public static bool TryReadCommanderProfile(out UiShellCommanderProfileModel profile)
-    {
-        return current.TryReadCommanderProfile(out profile);
-    }
-
-    public static bool TryReadMainMenuResources(out UiShellMainMenuResourcesModel resources)
-    {
-        return current.TryReadMainMenuResources(out resources);
-    }
-
-    public static bool TryReadMissionResult(out UiMissionResultPopupModel result)
-    {
-        return current.TryReadMissionResult(out result);
-    }
-
-    public static bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection)
-    {
-        return current.TryReadMatchHudSelection(out selection);
-    }
-
-    public static bool TryReadMatchHudCommandState(out UiMatchHudCommandStateModel commandState)
-    {
-        return current.TryReadMatchHudCommandState(out commandState);
-    }
-
-    public static bool TryReadMatchHudHeader(out UiMatchHudHeaderModel header)
-    {
-        return current.TryReadMatchHudHeader(out header);
-    }
-
-    public static bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
-    {
-        return current.TryReadMatchHudStatusSurfaces(out statusSurfaces);
-    }
-
-    public static bool TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap)
-    {
-        return current.TryReadMatchHudMinimap(out minimap);
-    }
-
-    public static bool TryReadMatchHudPassengerDrawer(out UiMatchHudPassengerDrawerModel passengerDrawer)
-    {
-        return current.TryReadMatchHudPassengerDrawer(out passengerDrawer);
-    }
-
-    public static bool TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel squadTray)
-    {
-        return current.TryReadMatchHudSquadTray(out squadTray);
-    }
-
-    public static bool TryReadBuildDrawer(out UiBuildDrawerModel drawer)
-    {
-        return current.TryReadBuildDrawer(out drawer);
-    }
-
-    public static bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)
-    {
-        return current.TryReadBuildPlacementConfirmationBar(out placementBar);
-    }
-
-    public static bool TryReadArmoryCategory(out ArmoryCatalogCategory category)
-    {
-        return current.TryReadArmoryCategory(out category);
-    }
-
-    public static bool TryEnqueueArmoryCategory(ArmoryCatalogCategory category)
-    {
-        return current.TryEnqueueArmoryCategory(category);
-    }
-
-    public static bool TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands)
-    {
-        return current.TryConsumePresentationCommands(commands);
-    }
-
-    public static bool TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion)
-    {
-        return current.TryEnqueueTransitionComplete(completion);
-    }
-
-    private sealed class NullUiShellRuntimeGateway : IUiShellRuntimeGateway
-    {
-        public static readonly NullUiShellRuntimeGateway Instance = new();
-
-        public bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory)
+        public static void Register(IUiShellRuntimeGateway gateway)
         {
-            return false;
+            current = gateway ?? NullUiShellRuntimeGateway.Instance;
         }
 
-        public bool TryEnqueueUiAction(UiActionKind kind, int payloadId)
+        public static bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory)
         {
-            return false;
+            return current.TryEnqueueRouteRequest(intent, route, pushHistory);
         }
 
-        public bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading)
+        public static bool TryEnqueueUiAction(UiActionKind kind, int payloadId = 0)
         {
-            loading = default;
-            return false;
+            return current.TryEnqueueUiAction(kind, payloadId);
         }
 
-        public bool TrySetLoadingProgress(float progress01, string status, bool complete)
+        public static bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading)
         {
-            return false;
+            return current.TryReadLoadingProgress(out loading);
         }
 
-        public bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics)
+        public static bool TrySetLoadingProgress(float progress01, string status, bool complete)
         {
-            diagnostics = UiDiagnosticsOverlayModel.Default;
-            return false;
+            return current.TrySetLoadingProgress(progress01, status, complete);
         }
 
-        public bool TryReadShellState(out UiShellStateModel state)
+        public static bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics)
         {
-            state = default;
-            return false;
+            return current.TryReadDiagnosticsOverlay(out diagnostics);
         }
 
-        public bool TryReadCommanderProfile(out UiShellCommanderProfileModel profile)
+        public static bool TryReadShellState(out UiShellStateModel state)
         {
-            profile = default;
-            return false;
+            return current.TryReadShellState(out state);
         }
 
-        public bool TryReadMainMenuResources(out UiShellMainMenuResourcesModel resources)
+        public static bool TryReadCommanderProfile(out UiShellCommanderProfileModel profile)
         {
-            resources = default;
-            return false;
+            return current.TryReadCommanderProfile(out profile);
         }
 
-        public bool TryReadMissionResult(out UiMissionResultPopupModel result)
+        public static bool TryReadMainMenuResources(out UiShellMainMenuResourcesModel resources)
         {
-            result = UiMissionResultPopupModel.VictoryDefault;
-            return false;
+            return current.TryReadMainMenuResources(out resources);
         }
 
-        public bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection)
+        public static bool TryReadMissionResult(out UiMissionResultPopupModel result)
         {
-            selection = UiMatchHudSelectionPanelModel.Hidden;
-            return false;
+            return current.TryReadMissionResult(out result);
         }
 
-        public bool TryReadMatchHudCommandState(out UiMatchHudCommandStateModel commandState)
+        public static bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection)
         {
-            commandState = default;
-            return false;
+            return current.TryReadMatchHudSelection(out selection);
         }
 
-        public bool TryReadMatchHudHeader(out UiMatchHudHeaderModel header)
+        public static bool TryReadMatchHudCommandState(out UiMatchHudCommandStateModel commandState)
         {
-            header = UiMatchHudHeaderModel.Default;
-            return false;
+            return current.TryReadMatchHudCommandState(out commandState);
         }
 
-        public bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
+        public static bool TryReadMatchHudHeader(out UiMatchHudHeaderModel header)
         {
-            statusSurfaces = UiMatchHudStatusSurfacesModel.Default;
-            return false;
+            return current.TryReadMatchHudHeader(out header);
         }
 
-        public bool TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap)
+        public static bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
         {
-            minimap = UiMatchHudMinimapModel.Default;
-            return false;
+            return current.TryReadMatchHudStatusSurfaces(out statusSurfaces);
         }
 
-        public bool TryReadMatchHudPassengerDrawer(out UiMatchHudPassengerDrawerModel passengerDrawer)
+        public static bool TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap)
         {
-            passengerDrawer = UiMatchHudPassengerDrawerModel.Hidden;
-            return false;
+            return current.TryReadMatchHudMinimap(out minimap);
         }
 
-        public bool TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel squadTray)
+        public static bool TryReadMatchHudPassengerDrawer(out UiMatchHudPassengerDrawerModel passengerDrawer)
         {
-            squadTray = UiMatchHudSquadTrayModel.Default;
-            return false;
+            return current.TryReadMatchHudPassengerDrawer(out passengerDrawer);
         }
 
-        public bool TryReadBuildDrawer(out UiBuildDrawerModel drawer)
+        public static bool TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel squadTray)
         {
-            drawer = UiBuildDrawerModel.Empty;
-            return false;
+            return current.TryReadMatchHudSquadTray(out squadTray);
         }
 
-        public bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)
+        public static bool TryReadBuildDrawer(out UiBuildDrawerModel drawer)
         {
-            placementBar = UiBuildPlacementConfirmationBarModel.Hidden;
-            return false;
+            return current.TryReadBuildDrawer(out drawer);
         }
 
-        public bool TryReadArmoryCategory(out ArmoryCatalogCategory category)
+        public static bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)
         {
-            category = ArmoryCatalogCategory.Characters;
-            return false;
+            return current.TryReadBuildPlacementConfirmationBar(out placementBar);
         }
 
-        public bool TryEnqueueArmoryCategory(ArmoryCatalogCategory category)
+        public static bool TryReadArmoryCategory(out ArmoryCatalogCategory category)
         {
-            return false;
+            return current.TryReadArmoryCategory(out category);
         }
 
-        public bool TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands)
+        public static bool TryEnqueueArmoryCategory(ArmoryCatalogCategory category)
         {
-            commands?.Clear();
-            return false;
+            return current.TryEnqueueArmoryCategory(category);
         }
 
-        public bool TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion)
+        public static bool TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands)
         {
-            return false;
+            return current.TryConsumePresentationCommands(commands);
+        }
+
+        public static bool TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion)
+        {
+            return current.TryEnqueueTransitionComplete(completion);
+        }
+
+        private sealed class NullUiShellRuntimeGateway : IUiShellRuntimeGateway
+        {
+            public static readonly NullUiShellRuntimeGateway Instance = new();
+
+            public bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory)
+            {
+                return false;
+            }
+
+            public bool TryEnqueueUiAction(UiActionKind kind, int payloadId)
+            {
+                return false;
+            }
+
+            public bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading)
+            {
+                loading = default;
+                return false;
+            }
+
+            public bool TrySetLoadingProgress(float progress01, string status, bool complete)
+            {
+                return false;
+            }
+
+            public bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics)
+            {
+                diagnostics = UiDiagnosticsOverlayModel.Default;
+                return false;
+            }
+
+            public bool TryReadShellState(out UiShellStateModel state)
+            {
+                state = default;
+                return false;
+            }
+
+            public bool TryReadCommanderProfile(out UiShellCommanderProfileModel profile)
+            {
+                profile = default;
+                return false;
+            }
+
+            public bool TryReadMainMenuResources(out UiShellMainMenuResourcesModel resources)
+            {
+                resources = default;
+                return false;
+            }
+
+            public bool TryReadMissionResult(out UiMissionResultPopupModel result)
+            {
+                result = UiMissionResultPopupModel.VictoryDefault;
+                return false;
+            }
+
+            public bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection)
+            {
+                selection = UiMatchHudSelectionPanelModel.Hidden;
+                return false;
+            }
+
+            public bool TryReadMatchHudCommandState(out UiMatchHudCommandStateModel commandState)
+            {
+                commandState = default;
+                return false;
+            }
+
+            public bool TryReadMatchHudHeader(out UiMatchHudHeaderModel header)
+            {
+                header = UiMatchHudHeaderModel.Default;
+                return false;
+            }
+
+            public bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
+            {
+                statusSurfaces = UiMatchHudStatusSurfacesModel.Default;
+                return false;
+            }
+
+            public bool TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap)
+            {
+                minimap = UiMatchHudMinimapModel.Default;
+                return false;
+            }
+
+            public bool TryReadMatchHudPassengerDrawer(out UiMatchHudPassengerDrawerModel passengerDrawer)
+            {
+                passengerDrawer = UiMatchHudPassengerDrawerModel.Hidden;
+                return false;
+            }
+
+            public bool TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel squadTray)
+            {
+                squadTray = UiMatchHudSquadTrayModel.Default;
+                return false;
+            }
+
+            public bool TryReadBuildDrawer(out UiBuildDrawerModel drawer)
+            {
+                drawer = UiBuildDrawerModel.Empty;
+                return false;
+            }
+
+            public bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)
+            {
+                placementBar = UiBuildPlacementConfirmationBarModel.Hidden;
+                return false;
+            }
+
+            public bool TryReadArmoryCategory(out ArmoryCatalogCategory category)
+            {
+                category = ArmoryCatalogCategory.Characters;
+                return false;
+            }
+
+            public bool TryEnqueueArmoryCategory(ArmoryCatalogCategory category)
+            {
+                return false;
+            }
+
+            public bool TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands)
+            {
+                commands?.Clear();
+                return false;
+            }
+
+            public bool TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion)
+            {
+                return false;
+            }
         }
     }
 }

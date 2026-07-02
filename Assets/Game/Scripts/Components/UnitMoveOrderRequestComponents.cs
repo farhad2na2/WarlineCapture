@@ -1,42 +1,45 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-public enum UnitMoveOrderRequestKind : byte
+namespace Game.Components
 {
-    GroupedManual,
-    Immediate,
-    TargetOnly,
-    TargetPathOnly,
-    ClearMovement
-}
+    public enum UnitMoveOrderRequestKind : byte
+    {
+        GroupedManual,
+        Immediate,
+        TargetOnly,
+        TargetPathOnly,
+        ClearMovement
+    }
 
-public struct UnitMoveOrderQueueComponent : IComponentData
-{
-    public int LastRequestId;
-}
+    public struct UnitMoveOrderQueueComponent : IComponentData
+    {
+        public int LastRequestId;
+    }
 
-public struct UnitMoveOrderRequestElement : IBufferElementData
-{
-    public int RequestId;
-    public Entity Entity;
-    public int2 Goal;
-    public UnitMoveOrderRequestKind Kind;
-    public int ResumeFrame;
-    public int CurrentFrame;
-    public byte IssueGroundPathNow;
-    public byte UseGroundPathRetryCooldown;
-}
+    public struct UnitMoveOrderRequestElement : IBufferElementData
+    {
+        public int RequestId;
+        public Entity Entity;
+        public int2 Goal;
+        public UnitMoveOrderRequestKind Kind;
+        public int ResumeFrame;
+        public int CurrentFrame;
+        public byte IssueGroundPathNow;
+        public byte UseGroundPathRetryCooldown;
+    }
 
-public struct UnitMoveOrderResultElement : IBufferElementData
-{
-    public int RequestId;
-    public Entity Entity;
-    public int2 Goal;
-    public byte Issued;
-    public int StructuralAdds;
-    public int StructuralRemoves;
-    public int PathRequests;
-    public int StaggeredPathRequests;
-    public int MaxStaggerDelayFrames;
-    public int AirUnits;
+    public struct UnitMoveOrderResultElement : IBufferElementData
+    {
+        public int RequestId;
+        public Entity Entity;
+        public int2 Goal;
+        public byte Issued;
+        public int StructuralAdds;
+        public int StructuralRemoves;
+        public int PathRequests;
+        public int StaggeredPathRequests;
+        public int MaxStaggerDelayFrames;
+        public int AirUnits;
+    }
 }

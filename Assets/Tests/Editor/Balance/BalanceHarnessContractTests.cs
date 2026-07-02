@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using NUnit.Framework;
+using Game.Configs;
+using Game.Runtime;
 
 public sealed class BalanceHarnessContractTests
 {

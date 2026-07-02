@@ -1,31 +1,36 @@
 using Unity.Burst;
 using Unity.Entities;
+using Game.Components;
 
 // Ensures all units that can attack have a UnitAttackCooldownComponent, even if the prefab was baked before the component existed.
-[BurstCompile]
-[UpdateInGroup(typeof(InitializationSystemGroup))]
-public partial struct UnitAttackStateEnsureSystem : ISystem
+
+namespace Game.Runtime
 {
-    private EntityQuery _ecbSingletonQuery;
-
     [BurstCompile]
-    public void OnCreate(ref SystemState state)
+    [UpdateInGroup(typeof(InitializationSystemGroup))]
+    public partial struct UnitAttackStateEnsureSystem : ISystem
     {
-        _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
-        state.RequireForUpdate<UnitAttack>();
-        state.RequireForUpdate(_ecbSingletonQuery);
-    }
+        private EntityQuery _ecbSingletonQuery;
 
-    [BurstCompile]
-    public void OnUpdate(ref SystemState state)
-    {
-        Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
-        var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
-        var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
-
-        foreach (var (attack, entity) in SystemAPI.Query<RefRO<UnitAttack>>().WithNone<UnitAttackCooldownComponent>().WithEntityAccess())
+        [BurstCompile]
+        public void OnCreate(ref SystemState state)
         {
-            ecb.AddComponent(entity, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
+            _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
+            state.RequireForUpdate<UnitAttack>();
+            state.RequireForUpdate(_ecbSingletonQuery);
+        }
+
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
+        {
+            Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
+            var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
+            var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
+
+            foreach (var (attack, entity) in SystemAPI.Query<RefRO<UnitAttack>>().WithNone<UnitAttackCooldownComponent>().WithEntityAccess())
+            {
+                ecb.AddComponent(entity, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
+            }
         }
     }
 }

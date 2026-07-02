@@ -1,278 +1,282 @@
 using Unity.Collections;
 using Unity.Entities;
+using Game.UI.Contracts;
 
-public struct UiShellRootComponent : IComponentData
+namespace Game.UI.Shell.Contracts.Ecs
 {
-}
+    public struct UiShellRootComponent : IComponentData
+    {
+    }
 
-public struct UiShellStateComponent : IComponentData
-{
-    public UiShellMode CurrentMode;
-    public UIRoute ActiveRoute;
-    public UiShellTransitionPhase Phase;
-    public int TransitionSequenceId;
-    public byte IsTransitionRunning;
-}
+    public struct UiShellStateComponent : IComponentData
+    {
+        public UiShellMode CurrentMode;
+        public UIRoute ActiveRoute;
+        public UiShellTransitionPhase Phase;
+        public int TransitionSequenceId;
+        public byte IsTransitionRunning;
+    }
 
-public struct UiShellLoadingProgressComponent : IComponentData
-{
-    public float Progress01;
-    public FixedString64Bytes Status;
-    public byte IsComplete;
-}
+    public struct UiShellLoadingProgressComponent : IComponentData
+    {
+        public float Progress01;
+        public FixedString64Bytes Status;
+        public byte IsComplete;
+    }
 
-public struct UiShellLoadingProgressRequestComponent : IBufferElementData
-{
-    public float Progress01;
-    public FixedString64Bytes Status;
-    public byte IsComplete;
-}
+    public struct UiShellLoadingProgressRequestComponent : IBufferElementData
+    {
+        public float Progress01;
+        public FixedString64Bytes Status;
+        public byte IsComplete;
+    }
 
-public struct UiDiagnosticsOverlayComponent : IComponentData
-{
-    public int Fps;
-    public byte LogVisible;
-    public FixedString4096Bytes LogText;
-}
+    public struct UiDiagnosticsOverlayComponent : IComponentData
+    {
+        public int Fps;
+        public byte LogVisible;
+        public FixedString4096Bytes LogText;
+    }
 
-public struct MatchIntroTransitionComponent : IComponentData
-{
-    public MatchIntroTransitionStateKind State;
-    public float Progress01;
-    public byte InputLocked;
-    public int SequenceId;
-    public FixedString64Bytes Status;
-}
+    public struct MatchIntroTransitionComponent : IComponentData
+    {
+        public MatchIntroTransitionStateKind State;
+        public float Progress01;
+        public byte InputLocked;
+        public int SequenceId;
+        public FixedString64Bytes Status;
+    }
 
-public struct UiShellArmoryCategoryComponent : IComponentData
-{
-    public ArmoryCatalogCategory Category;
-}
+    public struct UiShellArmoryCategoryComponent : IComponentData
+    {
+        public ArmoryCatalogCategory Category;
+    }
 
-public struct UiShellCommanderProfileComponent : IComponentData
-{
-    public FixedString64Bytes Name;
-    public FixedString64Bytes Subtitle;
-    public FixedString64Bytes PortraitClass;
-}
+    public struct UiShellCommanderProfileComponent : IComponentData
+    {
+        public FixedString64Bytes Name;
+        public FixedString64Bytes Subtitle;
+        public FixedString64Bytes PortraitClass;
+    }
 
-public struct UiShellMainMenuResourcesComponent : IComponentData
-{
-    public FixedString32Bytes CreditsText;
-    public FixedString32Bytes SuppliesText;
-    public FixedString32Bytes CommandText;
-}
+    public struct UiShellMainMenuResourcesComponent : IComponentData
+    {
+        public FixedString32Bytes CreditsText;
+        public FixedString32Bytes SuppliesText;
+        public FixedString32Bytes CommandText;
+    }
 
-public struct UiShellActivePopupComponent : IComponentData
-{
-    public UiShellPopupKind PopupKind;
-    public byte Visible;
-}
+    public struct UiShellActivePopupComponent : IComponentData
+    {
+        public UiShellPopupKind PopupKind;
+        public byte Visible;
+    }
 
-public struct UiMatchHudPassengerDrawerStateComponent : IComponentData
-{
-    public byte Visible;
-}
+    public struct UiMatchHudPassengerDrawerStateComponent : IComponentData
+    {
+        public byte Visible;
+    }
 
-public struct UiMatchHudSquadTrayStateComponent : IComponentData
-{
-    public MatchHudSquadTraySlot SelectedSlot;
-}
+    public struct UiMatchHudSquadTrayStateComponent : IComponentData
+    {
+        public MatchHudSquadTraySlot SelectedSlot;
+    }
 
-public struct UiMatchHudHeaderComponent : IComponentData
-{
-    public FixedString32Bytes OrderText;
-    public FixedString32Bytes SquadText;
-    public FixedString32Bytes CreditsText;
-    public FixedString32Bytes FuelText;
-    public FixedString32Bytes SupplyText;
-    public FixedString32Bytes CivilianRiskText;
-}
+    public struct UiMatchHudHeaderComponent : IComponentData
+    {
+        public FixedString32Bytes OrderText;
+        public FixedString32Bytes SquadText;
+        public FixedString32Bytes CreditsText;
+        public FixedString32Bytes FuelText;
+        public FixedString32Bytes SupplyText;
+        public FixedString32Bytes CivilianRiskText;
+    }
 
-public struct UiMatchHudStatusSurfacesComponent : IComponentData
-{
-    public FixedString32Bytes ObjectivesTitle;
-    public FixedString64Bytes Objective0Text;
-    public FixedString64Bytes Objective1Text;
-    public FixedString64Bytes Objective2Text;
-    public UiMatchHudObjectiveIconKind Objective0IconKind;
-    public UiMatchHudObjectiveIconKind Objective1IconKind;
-    public UiMatchHudObjectiveIconKind Objective2IconKind;
-    public FixedString32Bytes ElapsedText;
-    public byte ThreatVisible;
-    public FixedString64Bytes ThreatTitle;
-    public FixedString64Bytes ThreatSubtitle;
-    public byte JumpEnabled;
-    public byte FeedbackVisible;
-    public FixedString64Bytes FeedbackText;
-    public byte BoardAllVisible;
-    public byte BoardAllEnabled;
-    public byte CancelVisible;
-    public byte CancelEnabled;
-}
+    public struct UiMatchHudStatusSurfacesComponent : IComponentData
+    {
+        public FixedString32Bytes ObjectivesTitle;
+        public FixedString64Bytes Objective0Text;
+        public FixedString64Bytes Objective1Text;
+        public FixedString64Bytes Objective2Text;
+        public UiMatchHudObjectiveIconKind Objective0IconKind;
+        public UiMatchHudObjectiveIconKind Objective1IconKind;
+        public UiMatchHudObjectiveIconKind Objective2IconKind;
+        public FixedString32Bytes ElapsedText;
+        public byte ThreatVisible;
+        public FixedString64Bytes ThreatTitle;
+        public FixedString64Bytes ThreatSubtitle;
+        public byte JumpEnabled;
+        public byte FeedbackVisible;
+        public FixedString64Bytes FeedbackText;
+        public byte BoardAllVisible;
+        public byte BoardAllEnabled;
+        public byte CancelVisible;
+        public byte CancelEnabled;
+    }
 
-public struct UiMatchHudMinimapComponent : IComponentData
-{
-    public float ViewportLeftPercent;
-    public float ViewportTopPercent;
-    public float ViewportWidthPercent;
-    public float ViewportHeightPercent;
-    public byte ZoomInEnabled;
-    public byte ZoomOutEnabled;
-    public byte FocusEnabled;
-    public byte FriendlyAVisible;
-    public float FriendlyALeftPercent;
-    public float FriendlyATopPercent;
-    public byte FriendlyBVisible;
-    public float FriendlyBLeftPercent;
-    public float FriendlyBTopPercent;
-    public byte HostileAVisible;
-    public float HostileALeftPercent;
-    public float HostileATopPercent;
-    public byte CivilianVisible;
-    public float CivilianLeftPercent;
-    public float CivilianTopPercent;
-}
+    public struct UiMatchHudMinimapComponent : IComponentData
+    {
+        public float ViewportLeftPercent;
+        public float ViewportTopPercent;
+        public float ViewportWidthPercent;
+        public float ViewportHeightPercent;
+        public byte ZoomInEnabled;
+        public byte ZoomOutEnabled;
+        public byte FocusEnabled;
+        public byte FriendlyAVisible;
+        public float FriendlyALeftPercent;
+        public float FriendlyATopPercent;
+        public byte FriendlyBVisible;
+        public float FriendlyBLeftPercent;
+        public float FriendlyBTopPercent;
+        public byte HostileAVisible;
+        public float HostileALeftPercent;
+        public float HostileATopPercent;
+        public byte CivilianVisible;
+        public float CivilianLeftPercent;
+        public float CivilianTopPercent;
+    }
 
-public struct UiBuildDrawerDetailComponent : IComponentData
-{
-    public FixedString64Bytes Name;
-    public FixedString32Bytes Role;
-    public FixedString64Bytes PreviewSpriteKey;
-    public FixedString128Bytes Description;
-    public FixedString32Bytes FootprintText;
-    public FixedString64Bytes RequirementsText;
-    public FixedString64Bytes PlacementText;
-    public FixedString32Bytes ProductionTimeText;
-    public FixedString32Bytes CreditsCostText;
-    public FixedString32Bytes SuppliesCostText;
-    public FixedString128Bytes InstructionText;
-    public FixedString32Bytes ProductionTitle;
-    public FixedString32Bytes ProductionCountText;
-    public byte BuildEnabled;
-    public byte RushEnabled;
-    public byte ClearEnabled;
-    public byte NoProductionVisible;
-}
+    public struct UiBuildDrawerDetailComponent : IComponentData
+    {
+        public FixedString64Bytes Name;
+        public FixedString32Bytes Role;
+        public FixedString64Bytes PreviewSpriteKey;
+        public FixedString128Bytes Description;
+        public FixedString32Bytes FootprintText;
+        public FixedString64Bytes RequirementsText;
+        public FixedString64Bytes PlacementText;
+        public FixedString32Bytes ProductionTimeText;
+        public FixedString32Bytes CreditsCostText;
+        public FixedString32Bytes SuppliesCostText;
+        public FixedString128Bytes InstructionText;
+        public FixedString32Bytes ProductionTitle;
+        public FixedString32Bytes ProductionCountText;
+        public byte BuildEnabled;
+        public byte RushEnabled;
+        public byte ClearEnabled;
+        public byte NoProductionVisible;
+    }
 
-public struct UiBuildDrawerStateComponent : IComponentData
-{
-    public BuildDrawerCategory ActiveCategory;
-    public int SelectedCatalogSlot;
-    public int BuildingsCount;
-    public int VehiclesCount;
-    public int AircraftsCount;
-    public int SoldiersCount;
-}
+    public struct UiBuildDrawerStateComponent : IComponentData
+    {
+        public BuildDrawerCategory ActiveCategory;
+        public int SelectedCatalogSlot;
+        public int BuildingsCount;
+        public int VehiclesCount;
+        public int AircraftsCount;
+        public int SoldiersCount;
+    }
 
-public struct UiBuildDrawerActiveProductionComponent : IComponentData
-{
-    public byte Visible;
-    public byte CancelEnabled;
-    public FixedString64Bytes ThumbnailSpriteKey;
-    public FixedString64Bytes Name;
-    public FixedString32Bytes PercentText;
-    public float Progress01;
-}
+    public struct UiBuildDrawerActiveProductionComponent : IComponentData
+    {
+        public byte Visible;
+        public byte CancelEnabled;
+        public FixedString64Bytes ThumbnailSpriteKey;
+        public FixedString64Bytes Name;
+        public FixedString32Bytes PercentText;
+        public float Progress01;
+    }
 
-public struct UiBuildDrawerCatalogItemComponent : IBufferElementData
-{
-    public byte Visible;
-    public byte Enabled;
-    public byte Selected;
-    public BuildDrawerCategory Category;
-    public FixedString64Bytes ThumbnailSpriteKey;
-    public FixedString64Bytes Title;
-    public FixedString32Bytes Role;
-    public FixedString32Bytes CreditsText;
-    public FixedString32Bytes SuppliesText;
-    public FixedString32Bytes TimeText;
-}
+    public struct UiBuildDrawerCatalogItemComponent : IBufferElementData
+    {
+        public byte Visible;
+        public byte Enabled;
+        public byte Selected;
+        public BuildDrawerCategory Category;
+        public FixedString64Bytes ThumbnailSpriteKey;
+        public FixedString64Bytes Title;
+        public FixedString32Bytes Role;
+        public FixedString32Bytes CreditsText;
+        public FixedString32Bytes SuppliesText;
+        public FixedString32Bytes TimeText;
+    }
 
-public struct UiBuildDrawerQueueRowComponent : IBufferElementData
-{
-    public byte Visible;
-    public byte ActionEnabled;
-    public FixedString64Bytes ThumbnailSpriteKey;
-    public FixedString32Bytes NumberText;
-    public FixedString64Bytes Name;
-    public FixedString32Bytes TimeText;
-}
+    public struct UiBuildDrawerQueueRowComponent : IBufferElementData
+    {
+        public byte Visible;
+        public byte ActionEnabled;
+        public FixedString64Bytes ThumbnailSpriteKey;
+        public FixedString32Bytes NumberText;
+        public FixedString64Bytes Name;
+        public FixedString32Bytes TimeText;
+    }
 
-public struct UiBuildPlacementConfirmationBarComponent : IComponentData
-{
-    public byte Visible;
-    public byte CanConfirm;
-    public byte CanCancel;
-    public byte CanRotate;
-    public FixedString64Bytes Title;
-    public FixedString64Bytes Status;
-    public FixedString32Bytes CostText;
-    public FixedString32Bytes DurationText;
-    public FixedString128Bytes InstructionText;
-}
+    public struct UiBuildPlacementConfirmationBarComponent : IComponentData
+    {
+        public byte Visible;
+        public byte CanConfirm;
+        public byte CanCancel;
+        public byte CanRotate;
+        public FixedString64Bytes Title;
+        public FixedString64Bytes Status;
+        public FixedString32Bytes CostText;
+        public FixedString32Bytes DurationText;
+        public FixedString128Bytes InstructionText;
+    }
 
-public struct UiShellArmoryCategoryRequestComponent : IBufferElementData
-{
-    public ArmoryCatalogCategory Category;
-}
+    public struct UiShellArmoryCategoryRequestComponent : IBufferElementData
+    {
+        public ArmoryCatalogCategory Category;
+    }
 
-public struct UiActionRequestComponent : IBufferElementData
-{
-    public UiActionKind Kind;
-    public int PayloadId;
-}
+    public struct UiActionRequestComponent : IBufferElementData
+    {
+        public UiActionKind Kind;
+        public int PayloadId;
+    }
 
-public struct UiBuildCatalogRequestComponent : IBufferElementData
-{
-    public int CatalogSlot;
-    public int RequestId;
-}
+    public struct UiBuildCatalogRequestComponent : IBufferElementData
+    {
+        public int CatalogSlot;
+        public int RequestId;
+    }
 
-public struct UiBuildProductionRequestComponent : IBufferElementData
-{
-    public UiBuildProductionActionKind ActionKind;
-    public int QueueSlot;
-    public int RequestId;
-}
+    public struct UiBuildProductionRequestComponent : IBufferElementData
+    {
+        public UiBuildProductionActionKind ActionKind;
+        public int QueueSlot;
+        public int RequestId;
+    }
 
-public struct UiBuildPrimaryRequestComponent : IBufferElementData
-{
-    public int RequestId;
-}
+    public struct UiBuildPrimaryRequestComponent : IBufferElementData
+    {
+        public int RequestId;
+    }
 
-public struct UiShellRouteRequestComponent : IBufferElementData
-{
-    public UIRoute Route;
-    public UiShellRouteIntent Intent;
-    public byte PushHistory;
-}
+    public struct UiShellRouteRequestComponent : IBufferElementData
+    {
+        public UIRoute Route;
+        public UiShellRouteIntent Intent;
+        public byte PushHistory;
+    }
 
-public struct UiShellRouteHistoryComponent : IBufferElementData
-{
-    public UIRoute Route;
-}
+    public struct UiShellRouteHistoryComponent : IBufferElementData
+    {
+        public UIRoute Route;
+    }
 
-public struct UiShellPopupRequestComponent : IBufferElementData
-{
-    public UiShellPopupKind PopupKind;
-    public UiShellPopupIntent Intent;
-    public int PayloadId;
-}
+    public struct UiShellPopupRequestComponent : IBufferElementData
+    {
+        public UiShellPopupKind PopupKind;
+        public UiShellPopupIntent Intent;
+        public int PayloadId;
+    }
 
-public struct UiShellPresentationCommandComponent : IBufferElementData
-{
-    public UiShellCommandKind Kind;
-    public UiShellRegionId Region;
-    public UIRoute Route;
-    public UiShellMode TargetMode;
-    public UiShellPopupKind PopupKind;
-    public int SequenceId;
-}
+    public struct UiShellPresentationCommandComponent : IBufferElementData
+    {
+        public UiShellCommandKind Kind;
+        public UiShellRegionId Region;
+        public UIRoute Route;
+        public UiShellMode TargetMode;
+        public UiShellPopupKind PopupKind;
+        public int SequenceId;
+    }
 
-public struct UiShellTransitionCompleteComponent : IBufferElementData
-{
-    public UiShellCommandKind Kind;
-    public UiShellRegionId Region;
-    public int SequenceId;
+    public struct UiShellTransitionCompleteComponent : IBufferElementData
+    {
+        public UiShellCommandKind Kind;
+        public UiShellRegionId Region;
+        public int SequenceId;
+    }
 }

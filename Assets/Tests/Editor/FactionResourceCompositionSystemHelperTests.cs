@@ -1,3 +1,4 @@
+using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System.Collections.Generic;
 using NUnit.Framework;

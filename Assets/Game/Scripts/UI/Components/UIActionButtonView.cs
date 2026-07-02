@@ -2,38 +2,41 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class UIActionButtonView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private Image icon;
-    [SerializeField] private TMP_Text labelText;
-    [SerializeField] private TMP_Text costText;
-    [SerializeField] private GameObject lockRoot;
-    [SerializeField] private Button button;
-
-    public Image Icon => icon;
-    public TMP_Text LabelText => labelText;
-    public TMP_Text CostText => costText;
-    public GameObject LockRoot => lockRoot;
-    public Button Button => button;
-
-    public void Bind(string label, string cost = "", bool locked = false, Sprite iconSprite = null)
+    public sealed class UIActionButtonView : MonoBehaviour
     {
-        if (labelText != null)
-            labelText.text = label;
+        [SerializeField] private Image icon;
+        [SerializeField] private TMP_Text labelText;
+        [SerializeField] private TMP_Text costText;
+        [SerializeField] private GameObject lockRoot;
+        [SerializeField] private Button button;
 
-        if (costText != null)
-            costText.text = cost;
+        public Image Icon => icon;
+        public TMP_Text LabelText => labelText;
+        public TMP_Text CostText => costText;
+        public GameObject LockRoot => lockRoot;
+        public Button Button => button;
 
-        if (lockRoot != null)
-            lockRoot.SetActive(locked);
-
-        if (button != null)
-            button.interactable = !locked;
-
-        if (icon != null)
+        public void Bind(string label, string cost = "", bool locked = false, Sprite iconSprite = null)
         {
-            icon.sprite = iconSprite;
-            icon.enabled = iconSprite != null;
+            if (labelText != null)
+                labelText.text = label;
+
+            if (costText != null)
+                costText.text = cost;
+
+            if (lockRoot != null)
+                lockRoot.SetActive(locked);
+
+            if (button != null)
+                button.interactable = !locked;
+
+            if (icon != null)
+            {
+                icon.sprite = iconSprite;
+                icon.enabled = iconSprite != null;
+            }
         }
     }
 }

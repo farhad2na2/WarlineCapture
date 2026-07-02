@@ -3,101 +3,105 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Game.Components;
 
-[BurstCompile]
-[UpdateInGroup(typeof(SimulationSystemGroup))]
-[UpdateAfter(typeof(UnitRuntimeHealthBarSystem))]
-[UpdateBefore(typeof(EngageTargetValidateSystem))]
-public partial struct UnitHealthBarSystem : ISystem
+namespace Game.Runtime
 {
-    private EntityQuery _ecbSingletonQuery;
-
-    public void OnCreate(ref SystemState state)
-    {
-        _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
-        state.RequireForUpdate<UnitHealth>();
-        state.RequireForUpdate<HealthBarFill>();
-        state.RequireForUpdate(_ecbSingletonQuery);
-    }
-
-    public void OnUpdate(ref SystemState state)
-    {
-        float deltaTime = SystemAPI.Time.DeltaTime;
-        Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
-        var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
-        EntityCommandBuffer.ParallelWriter ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
-        state.Dependency = new ExpireRecentDamageVisibilityJob
-        {
-            DeltaTime = deltaTime,
-            Ecb = ecb
-        }.ScheduleParallel(state.Dependency);
-
-        var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
-        var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);
-        var recentDamageLookup = SystemAPI.GetComponentLookup<RecentDamageHealthBarVisibility>(true);
-        var passengerLookup = SystemAPI.GetComponentLookup<UnitTransportPassenger>(true);
-        var culledLookup = SystemAPI.GetComponentLookup<UnitRenderBudgetCulledUnitTag>(true);
-
-        var handle = new UpdateJob
-        {
-            HealthLookup = healthLookup,
-            FactionLookup = factionLookup,
-            RecentDamageLookup = recentDamageLookup,
-            PassengerLookup = passengerLookup,
-            CulledLookup = culledLookup
-        }.ScheduleParallel(state.Dependency);
-
-        state.Dependency = handle;
-    }
-
     [BurstCompile]
-    private partial struct ExpireRecentDamageVisibilityJob : IJobEntity
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    [UpdateAfter(typeof(UnitRuntimeHealthBarSystem))]
+    [UpdateBefore(typeof(EngageTargetValidateSystem))]
+    public partial struct UnitHealthBarSystem : ISystem
     {
-        public float DeltaTime;
-        public EntityCommandBuffer.ParallelWriter Ecb;
+        private EntityQuery _ecbSingletonQuery;
 
-        public void Execute([EntityIndexInQuery] int sortKey, Entity entity, ref RecentDamageHealthBarVisibility recentDamage)
+        public void OnCreate(ref SystemState state)
         {
-            recentDamage.TimeRemaining -= DeltaTime;
-            if (recentDamage.TimeRemaining <= 0f)
-                Ecb.RemoveComponent<RecentDamageHealthBarVisibility>(sortKey, entity);
+            _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
+            state.RequireForUpdate<UnitHealth>();
+            state.RequireForUpdate<HealthBarFill>();
+            state.RequireForUpdate(_ecbSingletonQuery);
         }
-    }
 
-    [BurstCompile]
-    private partial struct UpdateJob : IJobEntity
-    {
-        [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;
-        [ReadOnly] public ComponentLookup<Faction> FactionLookup;
-        [ReadOnly] public ComponentLookup<RecentDamageHealthBarVisibility> RecentDamageLookup;
-        [ReadOnly] public ComponentLookup<UnitTransportPassenger> PassengerLookup;
-        [ReadOnly] public ComponentLookup<UnitRenderBudgetCulledUnitTag> CulledLookup;
-
-        public void Execute(ref HealthBarFill fill, ref LocalTransform transform, in Parent parent)
+        public void OnUpdate(ref SystemState state)
         {
-            var unit = parent.Value;
-            bool show = false;
-            if (HealthLookup.HasComponent(unit) &&
-                HealthLookup[unit].Current > 0 &&
-                RecentDamageLookup.HasComponent(unit) &&
-                RecentDamageLookup[unit].TimeRemaining > 0f &&
-                !PassengerLookup.HasComponent(unit) &&
-                !CulledLookup.HasComponent(unit))
+            float deltaTime = SystemAPI.Time.DeltaTime;
+            Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
+            var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
+            EntityCommandBuffer.ParallelWriter ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
+            state.Dependency = new ExpireRecentDamageVisibilityJob
             {
-                show = true;
+                DeltaTime = deltaTime,
+                Ecb = ecb
+            }.ScheduleParallel(state.Dependency);
+
+            var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
+            var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);
+            var recentDamageLookup = SystemAPI.GetComponentLookup<RecentDamageHealthBarVisibility>(true);
+            var passengerLookup = SystemAPI.GetComponentLookup<UnitTransportPassenger>(true);
+            var culledLookup = SystemAPI.GetComponentLookup<UnitRenderBudgetCulledUnitTag>(true);
+
+            var handle = new UpdateJob
+            {
+                HealthLookup = healthLookup,
+                FactionLookup = factionLookup,
+                RecentDamageLookup = recentDamageLookup,
+                PassengerLookup = passengerLookup,
+                CulledLookup = culledLookup
+            }.ScheduleParallel(state.Dependency);
+
+            state.Dependency = handle;
+        }
+
+        [BurstCompile]
+        private partial struct ExpireRecentDamageVisibilityJob : IJobEntity
+        {
+            public float DeltaTime;
+            public EntityCommandBuffer.ParallelWriter Ecb;
+
+            public void Execute([EntityIndexInQuery] int sortKey, Entity entity, ref RecentDamageHealthBarVisibility recentDamage)
+            {
+                recentDamage.TimeRemaining -= DeltaTime;
+                if (recentDamage.TimeRemaining <= 0f)
+                    Ecb.RemoveComponent<RecentDamageHealthBarVisibility>(sortKey, entity);
             }
+        }
 
-            float targetScale = show ? 1f : 0f;
-            if (math.abs(transform.Scale - targetScale) > 0.0001f)
-                transform.Scale = targetScale;
-            else if (!show)
-                return;
+        [BurstCompile]
+        private partial struct UpdateJob : IJobEntity
+        {
+            [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;
+            [ReadOnly] public ComponentLookup<Faction> FactionLookup;
+            [ReadOnly] public ComponentLookup<RecentDamageHealthBarVisibility> RecentDamageLookup;
+            [ReadOnly] public ComponentLookup<UnitTransportPassenger> PassengerLookup;
+            [ReadOnly] public ComponentLookup<UnitRenderBudgetCulledUnitTag> CulledLookup;
 
-            var h = HealthLookup[unit];
-            float v = (h.Max > 0) ? ((float)h.Current / h.Max) : 0f;
-            float clamped = math.clamp(v, 0f, 1f);
-            if (math.abs(fill.Value - clamped) > 0.0001f)
-                fill.Value = clamped;
+            public void Execute(ref HealthBarFill fill, ref LocalTransform transform, in Parent parent)
+            {
+                var unit = parent.Value;
+                bool show = false;
+                if (HealthLookup.HasComponent(unit) &&
+                    HealthLookup[unit].Current > 0 &&
+                    RecentDamageLookup.HasComponent(unit) &&
+                    RecentDamageLookup[unit].TimeRemaining > 0f &&
+                    !PassengerLookup.HasComponent(unit) &&
+                    !CulledLookup.HasComponent(unit))
+                {
+                    show = true;
+                }
+
+                float targetScale = show ? 1f : 0f;
+                if (math.abs(transform.Scale - targetScale) > 0.0001f)
+                    transform.Scale = targetScale;
+                else if (!show)
+                    return;
+
+                var h = HealthLookup[unit];
+                float v = (h.Max > 0) ? ((float)h.Current / h.Max) : 0f;
+                float clamped = math.clamp(v, 0f, 1f);
+                if (math.abs(fill.Value - clamped) > 0.0001f)
+                    fill.Value = clamped;
+            }
         }
     }
 }

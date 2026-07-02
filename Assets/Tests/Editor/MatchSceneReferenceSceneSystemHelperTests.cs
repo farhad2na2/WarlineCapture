@@ -1,3 +1,4 @@
+using Game.Composition;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using NUnit.Framework;

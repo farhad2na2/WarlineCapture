@@ -1,61 +1,65 @@
 using Unity.Entities;
 using UnityEngine;
+using Game.Components;
 
-internal sealed class BuildingGameplayGridDataCompositionSystemHelper
+namespace Game.Runtime
 {
-    internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
-
-    internal bool TryGetGridForPlacementInput(
-        BuildingGameplayEcsQueryCompositionSystemHelper ecsQuerySystem,
-        TryGetEntityManagerDelegate tryGetEntityManager,
-        out GridConfig grid)
+    internal sealed class BuildingGameplayGridDataCompositionSystemHelper
     {
-        return TryGetGridData(ecsQuerySystem, tryGetEntityManager, out _, out grid, out _, out _);
-    }
+        internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
-    internal bool TryGetGridForSelection(
-        BuildingGameplayEcsQueryCompositionSystemHelper ecsQuerySystem,
-        TryGetEntityManagerDelegate tryGetEntityManager,
-        out GridConfig grid)
-    {
-        return TryGetGridData(ecsQuerySystem, tryGetEntityManager, out _, out grid, out _, out _);
-    }
+        internal bool TryGetGridForPlacementInput(
+            BuildingGameplayEcsQueryCompositionSystemHelper ecsQuerySystem,
+            TryGetEntityManagerDelegate tryGetEntityManager,
+            out GridConfig grid)
+        {
+            return TryGetGridData(ecsQuerySystem, tryGetEntityManager, out _, out grid, out _, out _);
+        }
 
-    internal bool TryGetGridData(
-        BuildingGameplayEcsQueryCompositionSystemHelper ecsQuerySystem,
-        TryGetEntityManagerDelegate tryGetEntityManager,
-        out Entity gridEntity,
-        out GridConfig grid,
-        out DynamicBuffer<GridRoad> roads,
-        out DynamicBlockerComponent blockerData)
-    {
-        gridEntity = Entity.Null;
-        grid = default;
-        roads = default;
-        blockerData = default;
+        internal bool TryGetGridForSelection(
+            BuildingGameplayEcsQueryCompositionSystemHelper ecsQuerySystem,
+            TryGetEntityManagerDelegate tryGetEntityManager,
+            out GridConfig grid)
+        {
+            return TryGetGridData(ecsQuerySystem, tryGetEntityManager, out _, out grid, out _, out _);
+        }
 
-        if (!tryGetEntityManager(out EntityManager em))
-            return false;
+        internal bool TryGetGridData(
+            BuildingGameplayEcsQueryCompositionSystemHelper ecsQuerySystem,
+            TryGetEntityManagerDelegate tryGetEntityManager,
+            out Entity gridEntity,
+            out GridConfig grid,
+            out DynamicBuffer<GridRoad> roads,
+            out DynamicBlockerComponent blockerData)
+        {
+            gridEntity = Entity.Null;
+            grid = default;
+            roads = default;
+            blockerData = default;
 
-        ecsQuerySystem.EnsureEntityQueries(em);
-        EntityQuery gridDataQuery = ecsQuerySystem.GridDataQuery;
-        if (gridDataQuery.IsEmptyIgnoreFilter)
-            return false;
+            if (!tryGetEntityManager(out EntityManager em))
+                return false;
 
-        gridEntity = gridDataQuery.GetSingletonEntity();
-        grid = em.GetComponentData<GridConfig>(gridEntity);
-        roads = em.GetBuffer<GridRoad>(gridEntity);
-        blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
-        return true;
-    }
+            ecsQuerySystem.EnsureEntityQueries(em);
+            EntityQuery gridDataQuery = ecsQuerySystem.GridDataQuery;
+            if (gridDataQuery.IsEmptyIgnoreFilter)
+                return false;
 
-    internal bool TryGetGridCell(
-        BuildingPlacementGridCameraSystemHelper gridSystem,
-        BuildingPlacementStartupSystemHelper startupSystem,
-        Vector2 screenPosition,
-        GridConfig grid,
-        out Vector2Int cell)
-    {
-        return gridSystem.TryGetGridCell(screenPosition, grid, startupSystem.WorldCamera, startupSystem.BuildPlaneY, out cell);
+            gridEntity = gridDataQuery.GetSingletonEntity();
+            grid = em.GetComponentData<GridConfig>(gridEntity);
+            roads = em.GetBuffer<GridRoad>(gridEntity);
+            blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+            return true;
+        }
+
+        internal bool TryGetGridCell(
+            BuildingPlacementGridCameraSystemHelper gridSystem,
+            BuildingPlacementStartupSystemHelper startupSystem,
+            Vector2 screenPosition,
+            GridConfig grid,
+            out Vector2Int cell)
+        {
+            return gridSystem.TryGetGridCell(screenPosition, grid, startupSystem.WorldCamera, startupSystem.BuildPlaneY, out cell);
+        }
     }
 }

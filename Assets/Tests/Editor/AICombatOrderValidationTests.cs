@@ -5,6 +5,8 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Game.Components;
+using Game.Runtime;
 
 public sealed class AICombatOrderValidationTests
 {

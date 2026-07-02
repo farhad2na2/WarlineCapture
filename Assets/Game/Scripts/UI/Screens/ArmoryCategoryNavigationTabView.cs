@@ -1,15 +1,19 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Contracts;
 
-[Serializable]
-public sealed class ArmoryCategoryNavigationTabView
+namespace Game.UI.Runtime
 {
-    [SerializeField] private ArmoryCatalogCategory category;
-    [SerializeField] private Button button;
-    [SerializeField] private Image frame;
+    [Serializable]
+    public sealed class ArmoryCategoryNavigationTabView
+    {
+        [SerializeField] private ArmoryCatalogCategory category;
+        [SerializeField] private Button button;
+        [SerializeField] private Image frame;
 
-    public ArmoryCatalogCategory Category => category;
-    public Button Button => button;
-    public Image Frame => frame;
+        public ArmoryCatalogCategory Category => category;
+        public Button Button => button;
+        public Image Frame => frame;
+    }
 }

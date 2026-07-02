@@ -2,251 +2,256 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using Unity.Collections;
+using Game.Components;
+using Game.Configs;
 
-[DisallowMultipleComponent]
-public class InitialUnitsSpawnerAuthoring : MonoBehaviour
+namespace Game.Authoring
 {
-    [SerializeField] private InitialUnitsSpawnerAuthoringConfig config;
-    [SerializeField] private GameObject unitSelectionMarkerPrefab;
-    [SerializeField] private GameObject unitHealthBarPrefab;
-    private GameObject BlockerPrefab => config != null ? config.BlockerPrefab : null;
-    private GameObject UnitSelectionMarkerPrefab =>
-        unitSelectionMarkerPrefab != null ? unitSelectionMarkerPrefab : config != null ? config.UnitSelectionMarkerPrefab : null;
-    private GameObject UnitHealthBarPrefab =>
-        unitHealthBarPrefab != null ? unitHealthBarPrefab : config != null ? config.UnitHealthBarPrefab : null;
-    private int BlockerCount => config != null ? config.BlockerCount : 2000;
-    private int SpawnRadiusCells => config != null ? config.SpawnRadiusCells : 5;
-    private float RespawnDelaySeconds => config != null ? config.RespawnDelaySeconds : 10f;
-    private uint RandomSeed => config != null ? config.RandomSeed : 1u;
-    private bool CreateFactionBases => config == null || config.CreateFactionBases;
-    private bool EnableBlockerChurn => config == null || config.EnableBlockerChurn;
-    private float ChurnIntervalSeconds => config != null ? config.ChurnIntervalSeconds : 1f;
-    private int AddRemovePerInterval => config != null ? config.AddRemovePerInterval : 50;
-
-    private class InitialUnitsSpawnerBaker : Baker<InitialUnitsSpawnerAuthoring>
+    [DisallowMultipleComponent]
+    public class InitialUnitsSpawnerAuthoring : MonoBehaviour
     {
-        public override void Bake(InitialUnitsSpawnerAuthoring authoring)
+        [SerializeField] private InitialUnitsSpawnerAuthoringConfig config;
+        [SerializeField] private GameObject unitSelectionMarkerPrefab;
+        [SerializeField] private GameObject unitHealthBarPrefab;
+        private GameObject BlockerPrefab => config != null ? config.BlockerPrefab : null;
+        private GameObject UnitSelectionMarkerPrefab =>
+            unitSelectionMarkerPrefab != null ? unitSelectionMarkerPrefab : config != null ? config.UnitSelectionMarkerPrefab : null;
+        private GameObject UnitHealthBarPrefab =>
+            unitHealthBarPrefab != null ? unitHealthBarPrefab : config != null ? config.UnitHealthBarPrefab : null;
+        private int BlockerCount => config != null ? config.BlockerCount : 2000;
+        private int SpawnRadiusCells => config != null ? config.SpawnRadiusCells : 5;
+        private float RespawnDelaySeconds => config != null ? config.RespawnDelaySeconds : 10f;
+        private uint RandomSeed => config != null ? config.RandomSeed : 1u;
+        private bool CreateFactionBases => config == null || config.CreateFactionBases;
+        private bool EnableBlockerChurn => config == null || config.EnableBlockerChurn;
+        private float ChurnIntervalSeconds => config != null ? config.ChurnIntervalSeconds : 1f;
+        private int AddRemovePerInterval => config != null ? config.AddRemovePerInterval : 50;
+
+        private class InitialUnitsSpawnerBaker : Baker<InitialUnitsSpawnerAuthoring>
         {
-            if (authoring.config != null)
-                DependsOn(authoring.config);
-
-            var entity = GetEntity(TransformUsageFlags.None);
-
-            AddComponent(entity, new InitialUnitsSpawnConfig
+            public override void Bake(InitialUnitsSpawnerAuthoring authoring)
             {
-                BlockerPrefab = authoring.BlockerPrefab != null
-                    ? GetEntity(authoring.BlockerPrefab, TransformUsageFlags.Dynamic)
-                    : Entity.Null,
-                UnitSelectionMarkerPrefab = authoring.UnitSelectionMarkerPrefab != null
-                    ? GetEntity(authoring.UnitSelectionMarkerPrefab, TransformUsageFlags.Dynamic)
-                    : Entity.Null,
-                UnitHealthBarPrefab = authoring.UnitHealthBarPrefab != null
-                    ? GetEntity(authoring.UnitHealthBarPrefab, TransformUsageFlags.Dynamic)
-                    : Entity.Null,
-                BlockerCount = authoring.BlockerCount,
-                SpawnRadiusCells = math.max(0, authoring.SpawnRadiusCells),
-                RespawnDelaySeconds = math.max(0.01f, authoring.RespawnDelaySeconds),
-                RandomSeed = math.max(1u, authoring.RandomSeed),
-                InitialDollars = authoring.config != null ? authoring.config.InitialDollars : 0,
-                InitialOil = authoring.config != null ? authoring.config.InitialOil : 0,
-                InitialFuel = authoring.config != null ? authoring.config.InitialFuel : 0,
-                CreateFactionBases = authoring.CreateFactionBases ? (byte)1 : (byte)0,
-                BaseWallPrefabLookupKey = new FixedString128Bytes(GetBuildingLookupKey(authoring.config != null ? authoring.config.BaseWallPrefab : null, "Wall_Dirt_Straight")),
-                BaseGatePrefabLookupKey = new FixedString128Bytes(GetBuildingLookupKey(authoring.config != null ? authoring.config.BaseGatePrefab : null, "Building_Road_Barrier")),
-                BaseCoreBuildingPrefabLookupKey = new FixedString128Bytes(GetBuildingLookupKey(authoring.config != null ? authoring.config.BaseCoreBuildingPrefab : null, "Building_Ammunition_Depot")),
-                BaseHalfWidthCells = authoring.config != null ? authoring.config.BaseHalfWidthCells : 120,
-                BaseHalfHeightCells = authoring.config != null ? authoring.config.BaseHalfHeightCells : 80,
-                BaseMinimumUnitsPerFaction = authoring.config != null ? authoring.config.BaseMinimumUnitsPerFaction : 18
-            });
+                if (authoring.config != null)
+                    DependsOn(authoring.config);
 
-            AddComponent(entity, new InitialUnitsBlockerChurnConfig
-            {
-                Enabled = authoring.EnableBlockerChurn,
-                IntervalSeconds = authoring.ChurnIntervalSeconds,
-                AddRemovePerInterval = authoring.AddRemovePerInterval
-            });
+                var entity = GetEntity(TransformUsageFlags.None);
 
-            AddComponent(entity, new InitialUnitsBlockerChurnComponent
-            {
-                Timer = 0f,
-                RandomState = math.max(1u, authoring.RandomSeed),
-                BlockerPrefab = authoring.BlockerPrefab != null
-                    ? GetEntity(authoring.BlockerPrefab, TransformUsageFlags.Dynamic)
-                    : Entity.Null
-            });
-
-            if (authoring.UnitSelectionMarkerPrefab != null || authoring.UnitHealthBarPrefab != null)
-            {
-                AddComponent(entity, new UnitSharedVisualPrefabReferences
+                AddComponent(entity, new InitialUnitsSpawnConfig
                 {
-                    SelectionMarkerPrefab = authoring.UnitSelectionMarkerPrefab != null
+                    BlockerPrefab = authoring.BlockerPrefab != null
+                        ? GetEntity(authoring.BlockerPrefab, TransformUsageFlags.Dynamic)
+                        : Entity.Null,
+                    UnitSelectionMarkerPrefab = authoring.UnitSelectionMarkerPrefab != null
                         ? GetEntity(authoring.UnitSelectionMarkerPrefab, TransformUsageFlags.Dynamic)
                         : Entity.Null,
-                    HealthBarPrefab = authoring.UnitHealthBarPrefab != null
+                    UnitHealthBarPrefab = authoring.UnitHealthBarPrefab != null
                         ? GetEntity(authoring.UnitHealthBarPrefab, TransformUsageFlags.Dynamic)
+                        : Entity.Null,
+                    BlockerCount = authoring.BlockerCount,
+                    SpawnRadiusCells = math.max(0, authoring.SpawnRadiusCells),
+                    RespawnDelaySeconds = math.max(0.01f, authoring.RespawnDelaySeconds),
+                    RandomSeed = math.max(1u, authoring.RandomSeed),
+                    InitialDollars = authoring.config != null ? authoring.config.InitialDollars : 0,
+                    InitialOil = authoring.config != null ? authoring.config.InitialOil : 0,
+                    InitialFuel = authoring.config != null ? authoring.config.InitialFuel : 0,
+                    CreateFactionBases = authoring.CreateFactionBases ? (byte)1 : (byte)0,
+                    BaseWallPrefabLookupKey = new FixedString128Bytes(GetBuildingLookupKey(authoring.config != null ? authoring.config.BaseWallPrefab : null, "Wall_Dirt_Straight")),
+                    BaseGatePrefabLookupKey = new FixedString128Bytes(GetBuildingLookupKey(authoring.config != null ? authoring.config.BaseGatePrefab : null, "Building_Road_Barrier")),
+                    BaseCoreBuildingPrefabLookupKey = new FixedString128Bytes(GetBuildingLookupKey(authoring.config != null ? authoring.config.BaseCoreBuildingPrefab : null, "Building_Ammunition_Depot")),
+                    BaseHalfWidthCells = authoring.config != null ? authoring.config.BaseHalfWidthCells : 120,
+                    BaseHalfHeightCells = authoring.config != null ? authoring.config.BaseHalfHeightCells : 80,
+                    BaseMinimumUnitsPerFaction = authoring.config != null ? authoring.config.BaseMinimumUnitsPerFaction : 18
+                });
+
+                AddComponent(entity, new InitialUnitsBlockerChurnConfig
+                {
+                    Enabled = authoring.EnableBlockerChurn,
+                    IntervalSeconds = authoring.ChurnIntervalSeconds,
+                    AddRemovePerInterval = authoring.AddRemovePerInterval
+                });
+
+                AddComponent(entity, new InitialUnitsBlockerChurnComponent
+                {
+                    Timer = 0f,
+                    RandomState = math.max(1u, authoring.RandomSeed),
+                    BlockerPrefab = authoring.BlockerPrefab != null
+                        ? GetEntity(authoring.BlockerPrefab, TransformUsageFlags.Dynamic)
                         : Entity.Null
                 });
-            }
 
-            DynamicBuffer<InitialUnitsFactionSpawnEntry> factionSpawns = AddBuffer<InitialUnitsFactionSpawnEntry>(entity);
-            DynamicBuffer<InitialUnitsFactionUnitSpawnEntry> unitSpawns = AddBuffer<InitialUnitsFactionUnitSpawnEntry>(entity);
-            DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> buildingSpawns = AddBuffer<InitialUnitsFactionBuildingSpawnEntry>(entity);
-            DynamicBuffer<UnitTransportAirdropVisualPrefabRegistryEntry> airdropVisualRegistry =
-                AddBuffer<UnitTransportAirdropVisualPrefabRegistryEntry>(entity);
-            if (authoring.config != null && authoring.config.Factions != null)
-            {
-                for (int i = 0; i < authoring.config.Factions.Count; i++)
+                if (authoring.UnitSelectionMarkerPrefab != null || authoring.UnitHealthBarPrefab != null)
                 {
-                    InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = authoring.config.Factions[i];
-                    if (faction == null)
-                        continue;
-
-                    byte factionId = (byte)math.clamp(faction.FactionId, 0, 255);
-                    GameObject firstUnitPrefab = null;
-                    int configuredUnitCount = 0;
-                    factionSpawns.Add(new InitialUnitsFactionSpawnEntry
+                    AddComponent(entity, new UnitSharedVisualPrefabReferences
                     {
-                        FactionId = factionId,
-                        SpawnCell = new int2(faction.SpawnCell.x, faction.SpawnCell.y)
+                        SelectionMarkerPrefab = authoring.UnitSelectionMarkerPrefab != null
+                            ? GetEntity(authoring.UnitSelectionMarkerPrefab, TransformUsageFlags.Dynamic)
+                            : Entity.Null,
+                        HealthBarPrefab = authoring.UnitHealthBarPrefab != null
+                            ? GetEntity(authoring.UnitHealthBarPrefab, TransformUsageFlags.Dynamic)
+                            : Entity.Null
                     });
+                }
 
-                    if (faction.Units != null)
+                DynamicBuffer<InitialUnitsFactionSpawnEntry> factionSpawns = AddBuffer<InitialUnitsFactionSpawnEntry>(entity);
+                DynamicBuffer<InitialUnitsFactionUnitSpawnEntry> unitSpawns = AddBuffer<InitialUnitsFactionUnitSpawnEntry>(entity);
+                DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> buildingSpawns = AddBuffer<InitialUnitsFactionBuildingSpawnEntry>(entity);
+                DynamicBuffer<UnitTransportAirdropVisualPrefabRegistryEntry> airdropVisualRegistry =
+                    AddBuffer<UnitTransportAirdropVisualPrefabRegistryEntry>(entity);
+                if (authoring.config != null && authoring.config.Factions != null)
+                {
+                    for (int i = 0; i < authoring.config.Factions.Count; i++)
                     {
-                        for (int unitIndex = 0; unitIndex < faction.Units.Count; unitIndex++)
-                        {
-                            InitialUnitsSpawnerAuthoringConfig.FactionUnitEntry unit = faction.Units[unitIndex];
-                            if (unit == null || unit.Prefab == null || unit.Count <= 0)
-                                continue;
-                            firstUnitPrefab ??= unit.Prefab;
-                            configuredUnitCount += math.max(0, unit.Count);
-                            AddAirdropVisualRegistryEntry(airdropVisualRegistry, unit.Prefab);
+                        InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = authoring.config.Factions[i];
+                        if (faction == null)
+                            continue;
 
+                        byte factionId = (byte)math.clamp(faction.FactionId, 0, 255);
+                        GameObject firstUnitPrefab = null;
+                        int configuredUnitCount = 0;
+                        factionSpawns.Add(new InitialUnitsFactionSpawnEntry
+                        {
+                            FactionId = factionId,
+                            SpawnCell = new int2(faction.SpawnCell.x, faction.SpawnCell.y)
+                        });
+
+                        if (faction.Units != null)
+                        {
+                            for (int unitIndex = 0; unitIndex < faction.Units.Count; unitIndex++)
+                            {
+                                InitialUnitsSpawnerAuthoringConfig.FactionUnitEntry unit = faction.Units[unitIndex];
+                                if (unit == null || unit.Prefab == null || unit.Count <= 0)
+                                    continue;
+                                firstUnitPrefab ??= unit.Prefab;
+                                configuredUnitCount += math.max(0, unit.Count);
+                                AddAirdropVisualRegistryEntry(airdropVisualRegistry, unit.Prefab);
+
+                                unitSpawns.Add(new InitialUnitsFactionUnitSpawnEntry
+                                {
+                                    FactionId = factionId,
+                                    Prefab = GetEntity(unit.Prefab, TransformUsageFlags.Dynamic),
+                                    Count = math.max(0, unit.Count),
+                                    SpawnOffset = new int2(unit.SpawnOffset.x, unit.SpawnOffset.y)
+                                });
+                            }
+                        }
+
+                        int minimumUnits = authoring.config != null ? authoring.config.BaseMinimumUnitsPerFaction : 18;
+                        if (authoring.CreateFactionBases && firstUnitPrefab != null && configuredUnitCount < minimumUnits)
+                        {
+                            AddAirdropVisualRegistryEntry(airdropVisualRegistry, firstUnitPrefab);
                             unitSpawns.Add(new InitialUnitsFactionUnitSpawnEntry
                             {
                                 FactionId = factionId,
-                                Prefab = GetEntity(unit.Prefab, TransformUsageFlags.Dynamic),
-                                Count = math.max(0, unit.Count),
-                                SpawnOffset = new int2(unit.SpawnOffset.x, unit.SpawnOffset.y)
+                                Prefab = GetEntity(firstUnitPrefab, TransformUsageFlags.Dynamic),
+                                Count = minimumUnits - configuredUnitCount,
+                                SpawnOffset = default
                             });
                         }
-                    }
 
-                    int minimumUnits = authoring.config != null ? authoring.config.BaseMinimumUnitsPerFaction : 18;
-                    if (authoring.CreateFactionBases && firstUnitPrefab != null && configuredUnitCount < minimumUnits)
-                    {
-                        AddAirdropVisualRegistryEntry(airdropVisualRegistry, firstUnitPrefab);
-                        unitSpawns.Add(new InitialUnitsFactionUnitSpawnEntry
+                        if (faction.Buildings != null)
                         {
-                            FactionId = factionId,
-                            Prefab = GetEntity(firstUnitPrefab, TransformUsageFlags.Dynamic),
-                            Count = minimumUnits - configuredUnitCount,
-                            SpawnOffset = default
-                        });
-                    }
-
-                    if (faction.Buildings != null)
-                    {
-                        for (int buildingIndex = 0; buildingIndex < faction.Buildings.Count; buildingIndex++)
-                        {
-                            InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry building = faction.Buildings[buildingIndex];
-                            if (building == null || building.Prefab == null)
-                                continue;
-
-                            buildingSpawns.Add(new InitialUnitsFactionBuildingSpawnEntry
+                            for (int buildingIndex = 0; buildingIndex < faction.Buildings.Count; buildingIndex++)
                             {
-                                FactionId = factionId,
-                                Prefab = GetEntity(building.Prefab, TransformUsageFlags.Dynamic),
-                                PrefabLookupKey = new FixedString128Bytes(GetBuildingLookupKey(building.Prefab)),
-                                OriginOffset = new int2(building.OriginOffset.x, building.OriginOffset.y)
-                            });
+                                InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry building = faction.Buildings[buildingIndex];
+                                if (building == null || building.Prefab == null)
+                                    continue;
+
+                                buildingSpawns.Add(new InitialUnitsFactionBuildingSpawnEntry
+                                {
+                                    FactionId = factionId,
+                                    Prefab = GetEntity(building.Prefab, TransformUsageFlags.Dynamic),
+                                    PrefabLookupKey = new FixedString128Bytes(GetBuildingLookupKey(building.Prefab)),
+                                    OriginOffset = new int2(building.OriginOffset.x, building.OriginOffset.y)
+                                });
+                            }
                         }
                     }
                 }
             }
-        }
 
-        private static string GetBuildingLookupKey(GameObject prefab, string fallback = "")
-        {
-            if (prefab == null)
-                return fallback;
-
-            return prefab.name.Trim().ToLowerInvariant();
-        }
-
-        private void AddAirdropVisualRegistryEntry(
-            DynamicBuffer<UnitTransportAirdropVisualPrefabRegistryEntry> registry,
-            GameObject unitPrefab)
-        {
-            if (unitPrefab == null ||
-                !unitPrefab.TryGetComponent(out UnitGridAuthoring unitAuthoring) ||
-                !unitAuthoring.IsAirUnit ||
-                !unitAuthoring.ProductionTransportUsesRunwayLanding ||
-                (unitAuthoring.SoldierTransportCapacity <= 0 && unitAuthoring.VehicleTransportCapacity <= 0))
+            private static string GetBuildingLookupKey(GameObject prefab, string fallback = "")
             {
-                return;
+                if (prefab == null)
+                    return fallback;
+
+                return prefab.name.Trim().ToLowerInvariant();
             }
 
-            FixedString64Bytes sourceKey = new(unitPrefab.name);
-            for (int i = 0; i < registry.Length; i++)
+            private void AddAirdropVisualRegistryEntry(
+                DynamicBuffer<UnitTransportAirdropVisualPrefabRegistryEntry> registry,
+                GameObject unitPrefab)
             {
-                if (registry[i].SourceKey.Equals(sourceKey))
+                if (unitPrefab == null ||
+                    !unitPrefab.TryGetComponent(out UnitGridAuthoring unitAuthoring) ||
+                    !unitAuthoring.IsAirUnit ||
+                    !unitAuthoring.ProductionTransportUsesRunwayLanding ||
+                    (unitAuthoring.SoldierTransportCapacity <= 0 && unitAuthoring.VehicleTransportCapacity <= 0))
+                {
                     return;
+                }
+
+                FixedString64Bytes sourceKey = new(unitPrefab.name);
+                for (int i = 0; i < registry.Length; i++)
+                {
+                    if (registry[i].SourceKey.Equals(sourceKey))
+                        return;
+                }
+
+                GameObject soldierParachutePrefab = unitAuthoring.SoldierParachuteVisualPrefab;
+                GameObject vehicleEmergencyDropPrefab = unitAuthoring.VehicleEmergencyDropVisualPrefab;
+                if (unitAuthoring.SoldierTransportCapacity > 0 && soldierParachutePrefab == null)
+                    ThrowMissingAirdropVisual(unitPrefab, nameof(unitAuthoring.SoldierParachuteVisualPrefab));
+                if (unitAuthoring.VehicleTransportCapacity > 0 && vehicleEmergencyDropPrefab == null)
+                    ThrowMissingAirdropVisual(unitPrefab, nameof(unitAuthoring.VehicleEmergencyDropVisualPrefab));
+                RequireValidAirdropVisualPrefab(
+                    soldierParachutePrefab,
+                    unitPrefab,
+                    nameof(unitAuthoring.SoldierParachuteVisualPrefab));
+                RequireValidAirdropVisualPrefab(
+                    vehicleEmergencyDropPrefab,
+                    unitPrefab,
+                    nameof(unitAuthoring.VehicleEmergencyDropVisualPrefab));
+
+                DependsOn(unitPrefab);
+                if (soldierParachutePrefab != null)
+                    DependsOn(soldierParachutePrefab);
+                if (vehicleEmergencyDropPrefab != null)
+                    DependsOn(vehicleEmergencyDropPrefab);
+
+                registry.Add(new UnitTransportAirdropVisualPrefabRegistryEntry
+                {
+                    SourceKey = sourceKey,
+                    SoldierParachuteVisualPrefab = soldierParachutePrefab != null
+                        ? GetEntity(soldierParachutePrefab, TransformUsageFlags.Dynamic | TransformUsageFlags.Renderable)
+                        : Entity.Null,
+                    VehicleEmergencyDropVisualPrefab = vehicleEmergencyDropPrefab != null
+                        ? GetEntity(vehicleEmergencyDropPrefab, TransformUsageFlags.Dynamic | TransformUsageFlags.Renderable)
+                        : Entity.Null
+                });
             }
 
-            GameObject soldierParachutePrefab = unitAuthoring.SoldierParachuteVisualPrefab;
-            GameObject vehicleEmergencyDropPrefab = unitAuthoring.VehicleEmergencyDropVisualPrefab;
-            if (unitAuthoring.SoldierTransportCapacity > 0 && soldierParachutePrefab == null)
-                ThrowMissingAirdropVisual(unitPrefab, nameof(unitAuthoring.SoldierParachuteVisualPrefab));
-            if (unitAuthoring.VehicleTransportCapacity > 0 && vehicleEmergencyDropPrefab == null)
-                ThrowMissingAirdropVisual(unitPrefab, nameof(unitAuthoring.VehicleEmergencyDropVisualPrefab));
-            RequireValidAirdropVisualPrefab(
-                soldierParachutePrefab,
-                unitPrefab,
-                nameof(unitAuthoring.SoldierParachuteVisualPrefab));
-            RequireValidAirdropVisualPrefab(
-                vehicleEmergencyDropPrefab,
-                unitPrefab,
-                nameof(unitAuthoring.VehicleEmergencyDropVisualPrefab));
-
-            DependsOn(unitPrefab);
-            if (soldierParachutePrefab != null)
-                DependsOn(soldierParachutePrefab);
-            if (vehicleEmergencyDropPrefab != null)
-                DependsOn(vehicleEmergencyDropPrefab);
-
-            registry.Add(new UnitTransportAirdropVisualPrefabRegistryEntry
-            {
-                SourceKey = sourceKey,
-                SoldierParachuteVisualPrefab = soldierParachutePrefab != null
-                    ? GetEntity(soldierParachutePrefab, TransformUsageFlags.Dynamic | TransformUsageFlags.Renderable)
-                    : Entity.Null,
-                VehicleEmergencyDropVisualPrefab = vehicleEmergencyDropPrefab != null
-                    ? GetEntity(vehicleEmergencyDropPrefab, TransformUsageFlags.Dynamic | TransformUsageFlags.Renderable)
-                    : Entity.Null
-            });
-        }
-
-        private static void ThrowMissingAirdropVisual(GameObject unitPrefab, string fieldName)
-        {
-            throw new System.InvalidOperationException(
-                $"{nameof(InitialUnitsSpawnerAuthoring)} requires {fieldName} on transport unit '{unitPrefab.name}' for airdrop spawning.");
-        }
-
-        private static void RequireValidAirdropVisualPrefab(GameObject prefab, GameObject unitPrefab, string fieldName)
-        {
-            if (prefab == null)
-                return;
-
-            try
-            {
-                _ = prefab.scene;
-            }
-            catch (MissingReferenceException exception)
+            private static void ThrowMissingAirdropVisual(GameObject unitPrefab, string fieldName)
             {
                 throw new System.InvalidOperationException(
-                    $"{nameof(InitialUnitsSpawnerAuthoring)} requires a valid prefab reference for {fieldName} on transport unit '{unitPrefab.name}'. " +
-                    "Reassign the prefab in the UnitGridAuthoring config asset and rebake the subscene.",
-                    exception);
+                    $"{nameof(InitialUnitsSpawnerAuthoring)} requires {fieldName} on transport unit '{unitPrefab.name}' for airdrop spawning.");
+            }
+
+            private static void RequireValidAirdropVisualPrefab(GameObject prefab, GameObject unitPrefab, string fieldName)
+            {
+                if (prefab == null)
+                    return;
+
+                try
+                {
+                    _ = prefab.scene;
+                }
+                catch (MissingReferenceException exception)
+                {
+                    throw new System.InvalidOperationException(
+                        $"{nameof(InitialUnitsSpawnerAuthoring)} requires a valid prefab reference for {fieldName} on transport unit '{unitPrefab.name}'. " +
+                        "Reassign the prefab in the UnitGridAuthoring config asset and rebake the subscene.",
+                        exception);
+                }
             }
         }
     }

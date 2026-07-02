@@ -1,167 +1,170 @@
 using System;
 
-public sealed class RoadBuildReadModelCompositionSystemHelper
+namespace Game.Runtime
 {
-    internal struct Context
+    public sealed class RoadBuildReadModelCompositionSystemHelper
     {
-        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
-        public readonly RoadBuildSessionCompositionSystemHelper RoadBuildSessionCompositionSystemHelper;
-        public readonly RoadBuildSessionCompositionSystemHelper.State RoadBuildSessionState;
-        public readonly RoadBuildInputCompositionSystemHelper RoadBuildInputCompositionSystemHelper;
-        public readonly RoadBuildInputCompositionSystemHelper.State RoadBuildInputState;
-        public readonly RoadBuildPlacementStorageCompositionSystemHelper PlacementStorageSystem;
-        public readonly RoadBuildDependencyCompositionSystemHelper.State DependencyState;
-        public readonly Func<bool> IsDraggingBuildingPlacement;
-
-        public Context(
-            RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-            RoadBuildSessionCompositionSystemHelper roadBuildSessionSystem,
-            RoadBuildSessionCompositionSystemHelper.State roadBuildSessionState,
-            RoadBuildInputCompositionSystemHelper roadBuildInputSystem,
-            RoadBuildInputCompositionSystemHelper.State roadBuildInputState,
-            RoadBuildPlacementStorageCompositionSystemHelper placementStorageSystem,
-            RoadBuildDependencyCompositionSystemHelper.State dependencyState,
-            Func<bool> isDraggingBuildingPlacement)
+        internal struct Context
         {
-            RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
-            RoadBuildSessionCompositionSystemHelper = roadBuildSessionSystem;
-            RoadBuildSessionState = roadBuildSessionState;
-            RoadBuildInputCompositionSystemHelper = roadBuildInputSystem;
-            RoadBuildInputState = roadBuildInputState;
-            PlacementStorageSystem = placementStorageSystem;
-            DependencyState = dependencyState;
-            IsDraggingBuildingPlacement = isDraggingBuildingPlacement;
-        }
-    }
+            public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+            public readonly RoadBuildSessionCompositionSystemHelper RoadBuildSessionCompositionSystemHelper;
+            public readonly RoadBuildSessionCompositionSystemHelper.State RoadBuildSessionState;
+            public readonly RoadBuildInputCompositionSystemHelper RoadBuildInputCompositionSystemHelper;
+            public readonly RoadBuildInputCompositionSystemHelper.State RoadBuildInputState;
+            public readonly RoadBuildPlacementStorageCompositionSystemHelper PlacementStorageSystem;
+            public readonly RoadBuildDependencyCompositionSystemHelper.State DependencyState;
+            public readonly Func<bool> IsDraggingBuildingPlacement;
 
-    private Context _context;
-
-    public bool IsRoadBuildModeActive =>
-        _context.RoadBuildSessionCompositionSystemHelper != null &&
-        _context.RoadBuildSessionCompositionSystemHelper.IsRoadBuildModeActive(CreateSessionContext());
-
-    public bool IsDraggingBuildInteraction =>
-        (_context.RoadBuildInputCompositionSystemHelper != null && _context.RoadBuildInputCompositionSystemHelper.IsDrawing(_context.RoadBuildInputState)) ||
-        (_context.PlacementStorageSystem != null &&
-         _context.PlacementStorageSystem.HasPendingBuildingPlacement &&
-         _context.IsDraggingBuildingPlacement?.Invoke() == true);
-
-    public bool HasPendingBuildingPlacement =>
-        _context.PlacementStorageSystem != null &&
-        _context.PlacementStorageSystem.HasPendingBuildingPlacement;
-
-    public bool HasSelectedBuilding
-    {
-        get
-        {
-            BuildingPlacementInteractionCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionCompositionSystemHelper;
-            if (interaction != null)
-                return interaction.HasSelectedBuilding(_context.DependencyState.BuildingPlacementInteractionContext);
-
-            return _context.PlacementStorageSystem != null &&
-                   _context.PlacementStorageSystem.HasSelectedBuilding;
-        }
-    }
-
-    public bool CanConfirmBuildingPlacement
-    {
-        get
-        {
-            BuildingPlacementInteractionCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionCompositionSystemHelper;
-            if (interaction != null)
-                return interaction.CanConfirmBuildingPlacement(_context.DependencyState.BuildingPlacementInteractionContext);
-
-            return _context.PlacementStorageSystem != null &&
-                   _context.PlacementStorageSystem.CanConfirmBuildingPlacement;
-        }
-    }
-
-    public string PlacementStatusText
-    {
-        get
-        {
-            BuildingPlacementInteractionCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionCompositionSystemHelper;
-            if (interaction != null &&
-                interaction.HasPendingBuildingPlacement(_context.DependencyState.BuildingPlacementInteractionContext))
+            public Context(
+                RuntimeGameplayStateSystem runtimeGameplayStateSystem,
+                RoadBuildSessionCompositionSystemHelper roadBuildSessionSystem,
+                RoadBuildSessionCompositionSystemHelper.State roadBuildSessionState,
+                RoadBuildInputCompositionSystemHelper roadBuildInputSystem,
+                RoadBuildInputCompositionSystemHelper.State roadBuildInputState,
+                RoadBuildPlacementStorageCompositionSystemHelper placementStorageSystem,
+                RoadBuildDependencyCompositionSystemHelper.State dependencyState,
+                Func<bool> isDraggingBuildingPlacement)
             {
-                return interaction.PlacementStatusText(_context.DependencyState.BuildingPlacementInteractionContext);
+                RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
+                RoadBuildSessionCompositionSystemHelper = roadBuildSessionSystem;
+                RoadBuildSessionState = roadBuildSessionState;
+                RoadBuildInputCompositionSystemHelper = roadBuildInputSystem;
+                RoadBuildInputState = roadBuildInputState;
+                PlacementStorageSystem = placementStorageSystem;
+                DependencyState = dependencyState;
+                IsDraggingBuildingPlacement = isDraggingBuildingPlacement;
             }
-
-            BuildingPlacementInputUiSystemHelper.IPlacementState activePlacement = _context.PlacementStorageSystem?.ActivePlacement;
-            if (activePlacement == null)
-                return "Choose a build type.";
-
-            string state = activePlacement.IsValid ? "Valid placement" : "Blocked by road or blocker";
-            UnityEngine.Vector2Int origin = activePlacement.OriginCell;
-            UnityEngine.Vector2Int size = activePlacement.Definition.FootprintCells;
-            return $"{activePlacement.Definition.DisplayName}: {state} ({origin.x},{origin.y}) {size.x}x{size.y}";
         }
-    }
 
-    public string SelectedBuildingLabel
-    {
-        get
+        private Context _context;
+
+        public bool IsRoadBuildModeActive =>
+            _context.RoadBuildSessionCompositionSystemHelper != null &&
+            _context.RoadBuildSessionCompositionSystemHelper.IsRoadBuildModeActive(CreateSessionContext());
+
+        public bool IsDraggingBuildInteraction =>
+            (_context.RoadBuildInputCompositionSystemHelper != null && _context.RoadBuildInputCompositionSystemHelper.IsDrawing(_context.RoadBuildInputState)) ||
+            (_context.PlacementStorageSystem != null &&
+             _context.PlacementStorageSystem.HasPendingBuildingPlacement &&
+             _context.IsDraggingBuildingPlacement?.Invoke() == true);
+
+        public bool HasPendingBuildingPlacement =>
+            _context.PlacementStorageSystem != null &&
+            _context.PlacementStorageSystem.HasPendingBuildingPlacement;
+
+        public bool HasSelectedBuilding
         {
-            BuildingPlacementInteractionCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionCompositionSystemHelper;
-            if (interaction != null &&
-                interaction.HasActiveBuilding(_context.DependencyState.BuildingPlacementInteractionContext))
+            get
             {
-                return interaction.SelectedBuildingLabel(_context.DependencyState.BuildingPlacementInteractionContext);
+                BuildingPlacementInteractionCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionCompositionSystemHelper;
+                if (interaction != null)
+                    return interaction.HasSelectedBuilding(_context.DependencyState.BuildingPlacementInteractionContext);
+
+                return _context.PlacementStorageSystem != null &&
+                       _context.PlacementStorageSystem.HasSelectedBuilding;
             }
-
-            if (!HasSelectedBuilding)
-                return "Building";
-
-            return _context.PlacementStorageSystem != null &&
-                   _context.PlacementStorageSystem.TryGetSelectedBuilding(out RuntimeBuildingEntity building)
-                ? $"{building.Definition.DisplayName} ({building.OriginCell.x},{building.OriginCell.y})"
-                : "Building";
         }
-    }
 
-    public string ActiveModeStatusText
-    {
-        get
+        public bool CanConfirmBuildingPlacement
         {
-            if (_context.RoadBuildSessionCompositionSystemHelper != null &&
-                _context.RoadBuildSessionCompositionSystemHelper.IsActiveTool(_context.RoadBuildSessionState, RoadBuildSessionCompositionSystemHelper.BuildToolMode.Road))
+            get
             {
-                return "Road build mode active";
+                BuildingPlacementInteractionCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionCompositionSystemHelper;
+                if (interaction != null)
+                    return interaction.CanConfirmBuildingPlacement(_context.DependencyState.BuildingPlacementInteractionContext);
+
+                return _context.PlacementStorageSystem != null &&
+                       _context.PlacementStorageSystem.CanConfirmBuildingPlacement;
             }
-
-            if (HasSelectedBuilding)
-                return "Building selected";
-            if (_context.RuntimeGameplayStateSystem.BuildModeActive)
-                return "Build mode active";
-            return "Simulation running";
         }
-    }
 
-    internal void Configure(Context context)
-    {
-        _context = context;
-    }
+        public string PlacementStatusText
+        {
+            get
+            {
+                BuildingPlacementInteractionCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionCompositionSystemHelper;
+                if (interaction != null &&
+                    interaction.HasPendingBuildingPlacement(_context.DependencyState.BuildingPlacementInteractionContext))
+                {
+                    return interaction.PlacementStatusText(_context.DependencyState.BuildingPlacementInteractionContext);
+                }
 
-    public void Clear()
-    {
-        _context = default;
-    }
+                BuildingPlacementInputUiSystemHelper.IPlacementState activePlacement = _context.PlacementStorageSystem?.ActivePlacement;
+                if (activePlacement == null)
+                    return "Choose a build type.";
 
-    private RoadBuildSessionCompositionSystemHelper.Context CreateSessionContext()
-    {
-        return new RoadBuildSessionCompositionSystemHelper.Context(
-            _context.RoadBuildSessionState,
-            _context.RuntimeGameplayStateSystem,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
+                string state = activePlacement.IsValid ? "Valid placement" : "Blocked by road or blocker";
+                UnityEngine.Vector2Int origin = activePlacement.OriginCell;
+                UnityEngine.Vector2Int size = activePlacement.Definition.FootprintCells;
+                return $"{activePlacement.Definition.DisplayName}: {state} ({origin.x},{origin.y}) {size.x}x{size.y}";
+            }
+        }
+
+        public string SelectedBuildingLabel
+        {
+            get
+            {
+                BuildingPlacementInteractionCompositionSystemHelper interaction = _context.DependencyState?.BuildingPlacementInteractionCompositionSystemHelper;
+                if (interaction != null &&
+                    interaction.HasActiveBuilding(_context.DependencyState.BuildingPlacementInteractionContext))
+                {
+                    return interaction.SelectedBuildingLabel(_context.DependencyState.BuildingPlacementInteractionContext);
+                }
+
+                if (!HasSelectedBuilding)
+                    return "Building";
+
+                return _context.PlacementStorageSystem != null &&
+                       _context.PlacementStorageSystem.TryGetSelectedBuilding(out RuntimeBuildingEntity building)
+                    ? $"{building.Definition.DisplayName} ({building.OriginCell.x},{building.OriginCell.y})"
+                    : "Building";
+            }
+        }
+
+        public string ActiveModeStatusText
+        {
+            get
+            {
+                if (_context.RoadBuildSessionCompositionSystemHelper != null &&
+                    _context.RoadBuildSessionCompositionSystemHelper.IsActiveTool(_context.RoadBuildSessionState, RoadBuildSessionCompositionSystemHelper.BuildToolMode.Road))
+                {
+                    return "Road build mode active";
+                }
+
+                if (HasSelectedBuilding)
+                    return "Building selected";
+                if (_context.RuntimeGameplayStateSystem.BuildModeActive)
+                    return "Build mode active";
+                return "Simulation running";
+            }
+        }
+
+        internal void Configure(Context context)
+        {
+            _context = context;
+        }
+
+        public void Clear()
+        {
+            _context = default;
+        }
+
+        private RoadBuildSessionCompositionSystemHelper.Context CreateSessionContext()
+        {
+            return new RoadBuildSessionCompositionSystemHelper.Context(
+                _context.RoadBuildSessionState,
+                _context.RuntimeGameplayStateSystem,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+        }
     }
 }

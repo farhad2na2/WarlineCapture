@@ -6,6 +6,10 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Game.UI.Contracts;
+using Game.Components;
+using Game.UI.Runtime;
+using Game.Runtime;
 
 public sealed class MatchHudCommandControlsCurrentPrefabTests
 {

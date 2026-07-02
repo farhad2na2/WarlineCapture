@@ -1,117 +1,121 @@
 using System.Collections.Generic;
 using Unity.Profiling;
 using UnityEngine;
+using Game.UI.Contracts;
 
-[DisallowMultipleComponent]
-public sealed class UIShellEcsPresentationSystem : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    private static readonly ProfilerMarker TryGetBoundaryMarker = new("UIShellEcsPresentation.TryGetBoundary");
-    private static readonly ProfilerMarker FlushCompletionMarker = new("UIShellEcsPresentation.FlushCompletion");
-    private static readonly ProfilerMarker ReadCommandsMarker = new("UIShellEcsPresentation.ReadCommands");
-
-    [SerializeField] private UIShellView shellView;
-
-    private readonly List<UiShellPresentationCommandModel> commandScratch = new();
-    private bool isExecuting;
-    private int activeSequenceId = -1;
-    private bool hasPendingCompletion;
-    private UiShellTransitionCompleteModel pendingCompletion;
-
-#if UNITY_EDITOR
-    private static long editorAllocationBytes;
-    private static int editorAllocationSamples;
-    private static int editorUpdateSamples;
-
-    public static void ResetEditorAllocationProbe()
+    [DisallowMultipleComponent]
+    public sealed class UIShellEcsPresentationSystem : MonoBehaviour
     {
-        editorAllocationBytes = 0;
-        editorAllocationSamples = 0;
-        editorUpdateSamples = 0;
-    }
+        private static readonly ProfilerMarker TryGetBoundaryMarker = new("UIShellEcsPresentation.TryGetBoundary");
+        private static readonly ProfilerMarker FlushCompletionMarker = new("UIShellEcsPresentation.FlushCompletion");
+        private static readonly ProfilerMarker ReadCommandsMarker = new("UIShellEcsPresentation.ReadCommands");
 
-    public static void GetEditorAllocationProbe(out long bytes, out int allocationSamples, out int updateSamples)
-    {
-        bytes = editorAllocationBytes;
-        allocationSamples = editorAllocationSamples;
-        updateSamples = editorUpdateSamples;
-    }
-#endif
+        [SerializeField] private UIShellView shellView;
 
-    private void Awake()
-    {
-        if (shellView == null)
-            shellView = GetComponent<UIShellView>();
-    }
+        private readonly List<UiShellPresentationCommandModel> commandScratch = new();
+        private bool isExecuting;
+        private int activeSequenceId = -1;
+        private bool hasPendingCompletion;
+        private UiShellTransitionCompleteModel pendingCompletion;
 
-    private void Update()
-    {
-#if UNITY_EDITOR
-        long allocationStart = System.GC.GetAllocatedBytesForCurrentThread();
-        try
+    #if UNITY_EDITOR
+        private static long editorAllocationBytes;
+        private static int editorAllocationSamples;
+        private static int editorUpdateSamples;
+
+        public static void ResetEditorAllocationProbe()
         {
-#endif
-        using (TryGetBoundaryMarker.Auto())
-        {
-            if (!UiShellRuntimeGateway.TryReadShellState(out _))
-                return;
+            editorAllocationBytes = 0;
+            editorAllocationSamples = 0;
+            editorUpdateSamples = 0;
         }
 
-        using (FlushCompletionMarker.Auto())
+        public static void GetEditorAllocationProbe(out long bytes, out int allocationSamples, out int updateSamples)
         {
-            FlushPendingCompletion();
+            bytes = editorAllocationBytes;
+            allocationSamples = editorAllocationSamples;
+            updateSamples = editorUpdateSamples;
+        }
+    #endif
+
+        private void Awake()
+        {
+            if (shellView == null)
+                shellView = GetComponent<UIShellView>();
         }
 
-        if (isExecuting || shellView == null)
-            return;
-
-        using (ReadCommandsMarker.Auto())
+        private void Update()
         {
-            if (!UiShellRuntimeGateway.TryConsumePresentationCommands(commandScratch))
-                return;
-        }
-
-        UiShellPresentationCommandModel finalCommand = commandScratch[commandScratch.Count - 1];
-        activeSequenceId = finalCommand.SequenceId;
-        isExecuting = true;
-
-        shellView.ExecuteCommandSequence(commandScratch, activeSequenceId, completedSequenceId =>
-        {
-            if (completedSequenceId != activeSequenceId)
-                return;
-
-            pendingCompletion = new UiShellTransitionCompleteModel(
-                finalCommand.Kind,
-                finalCommand.Region,
-                completedSequenceId);
-            hasPendingCompletion = true;
-            isExecuting = false;
-        });
-#if UNITY_EDITOR
-        }
-        finally
-        {
-            long allocated = System.GC.GetAllocatedBytesForCurrentThread() - allocationStart;
-            editorUpdateSamples++;
-            if (allocated > 0)
+    #if UNITY_EDITOR
+            long allocationStart = System.GC.GetAllocatedBytesForCurrentThread();
+            try
             {
-                editorAllocationBytes += allocated;
-                editorAllocationSamples++;
+    #endif
+            using (TryGetBoundaryMarker.Auto())
+            {
+                if (!UiShellRuntimeGateway.TryReadShellState(out _))
+                    return;
             }
+
+            using (FlushCompletionMarker.Auto())
+            {
+                FlushPendingCompletion();
+            }
+
+            if (isExecuting || shellView == null)
+                return;
+
+            using (ReadCommandsMarker.Auto())
+            {
+                if (!UiShellRuntimeGateway.TryConsumePresentationCommands(commandScratch))
+                    return;
+            }
+
+            UiShellPresentationCommandModel finalCommand = commandScratch[commandScratch.Count - 1];
+            activeSequenceId = finalCommand.SequenceId;
+            isExecuting = true;
+
+            shellView.ExecuteCommandSequence(commandScratch, activeSequenceId, completedSequenceId =>
+            {
+                if (completedSequenceId != activeSequenceId)
+                    return;
+
+                pendingCompletion = new UiShellTransitionCompleteModel(
+                    finalCommand.Kind,
+                    finalCommand.Region,
+                    completedSequenceId);
+                hasPendingCompletion = true;
+                isExecuting = false;
+            });
+    #if UNITY_EDITOR
+            }
+            finally
+            {
+                long allocated = System.GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+                editorUpdateSamples++;
+                if (allocated > 0)
+                {
+                    editorAllocationBytes += allocated;
+                    editorAllocationSamples++;
+                }
+            }
+    #endif
         }
-#endif
-    }
 
-    public void Configure(UIShellView view)
-    {
-        shellView = view;
-    }
+        public void Configure(UIShellView view)
+        {
+            shellView = view;
+        }
 
-    private void FlushPendingCompletion()
-    {
-        if (!hasPendingCompletion)
-            return;
+        private void FlushPendingCompletion()
+        {
+            if (!hasPendingCompletion)
+                return;
 
-        if (UiShellRuntimeGateway.TryEnqueueTransitionComplete(pendingCompletion))
-            hasPendingCompletion = false;
+            if (UiShellRuntimeGateway.TryEnqueueTransitionComplete(pendingCompletion))
+                hasPendingCompletion = false;
+        }
     }
 }

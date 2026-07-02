@@ -1,60 +1,64 @@
 using System.Collections.Generic;
 using Unity.Entities;
+using Game.Components;
 
-public sealed class SelectionStateCompositionSystemHelper
+namespace Game.Runtime
 {
-    public Entity FocusedUnit { get; private set; } = Entity.Null;
-    public List<Entity> CachedSelectedMoveEntities { get; } = new();
-    public string LastSelectionLifecycleDebug { get; private set; } = "none";
-
-    public void SetFocusedUnit(Entity entity)
+    public sealed class SelectionStateCompositionSystemHelper
     {
-        FocusedUnit = entity;
-    }
+        public Entity FocusedUnit { get; private set; } = Entity.Null;
+        public List<Entity> CachedSelectedMoveEntities { get; } = new();
+        public string LastSelectionLifecycleDebug { get; private set; } = "none";
 
-    public void ClearFocusedUnit()
-    {
-        FocusedUnit = Entity.Null;
-    }
+        public void SetFocusedUnit(Entity entity)
+        {
+            FocusedUnit = entity;
+        }
 
-    public void ClearSelectedMoveCache()
-    {
-        CachedSelectedMoveEntities.Clear();
-    }
+        public void ClearFocusedUnit()
+        {
+            FocusedUnit = Entity.Null;
+        }
 
-    public void RecordSelectionLifecycleDebug(string message)
-    {
-        LastSelectionLifecycleDebug = message ?? "none";
-    }
+        public void ClearSelectedMoveCache()
+        {
+            CachedSelectedMoveEntities.Clear();
+        }
 
-    public void CacheSelectedMoveEntities(EntityManager entityManager, IReadOnlyList<Entity> entities)
-    {
-        CachedSelectedMoveEntities.Clear();
-        if (entities == null)
-            return;
+        public void RecordSelectionLifecycleDebug(string message)
+        {
+            LastSelectionLifecycleDebug = message ?? "none";
+        }
 
-        for (int i = 0; i < entities.Count; i++)
-            CacheSelectedMoveEntity(entityManager, entities[i]);
-    }
+        public void CacheSelectedMoveEntities(EntityManager entityManager, IReadOnlyList<Entity> entities)
+        {
+            CachedSelectedMoveEntities.Clear();
+            if (entities == null)
+                return;
 
-    public void CacheSelectedMoveEntity(EntityManager entityManager, Entity entity)
-    {
-        if (!IsCacheableSelectedMoveEntity(entityManager, entity))
-            return;
-        if (CachedSelectedMoveEntities.Contains(entity))
-            return;
+            for (int i = 0; i < entities.Count; i++)
+                CacheSelectedMoveEntity(entityManager, entities[i]);
+        }
 
-        CachedSelectedMoveEntities.Add(entity);
-    }
+        public void CacheSelectedMoveEntity(EntityManager entityManager, Entity entity)
+        {
+            if (!IsCacheableSelectedMoveEntity(entityManager, entity))
+                return;
+            if (CachedSelectedMoveEntities.Contains(entity))
+                return;
 
-    public static bool IsCacheableSelectedMoveEntity(EntityManager entityManager, Entity entity)
-    {
-        return entityManager.Exists(entity) &&
-               entityManager.HasComponent<Faction>(entity) &&
-               FactionIdentity.IsPlayerControlled(entityManager.GetComponentData<Faction>(entity).Id) &&
-               entityManager.HasComponent<UnitGrid>(entity) &&
-               entityManager.HasComponent<UnitMove>(entity) &&
-               !entityManager.HasComponent<Disabled>(entity) &&
-               !entityManager.HasComponent<UnitTransportPassenger>(entity);
+            CachedSelectedMoveEntities.Add(entity);
+        }
+
+        public static bool IsCacheableSelectedMoveEntity(EntityManager entityManager, Entity entity)
+        {
+            return entityManager.Exists(entity) &&
+                   entityManager.HasComponent<Faction>(entity) &&
+                   FactionIdentity.IsPlayerControlled(entityManager.GetComponentData<Faction>(entity).Id) &&
+                   entityManager.HasComponent<UnitGrid>(entity) &&
+                   entityManager.HasComponent<UnitMove>(entity) &&
+                   !entityManager.HasComponent<Disabled>(entity) &&
+                   !entityManager.HasComponent<UnitTransportPassenger>(entity);
+        }
     }
 }

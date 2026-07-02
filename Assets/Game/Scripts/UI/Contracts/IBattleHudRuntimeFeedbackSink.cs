@@ -1,20 +1,25 @@
-public interface IBattleHudRuntimeFeedbackSink
+using Game.Tactical.Contracts;
+
+namespace Game.UI.Contracts
 {
-    BattleHudRuntimeFeedbackState GetState();
+    public interface IBattleHudRuntimeFeedbackSink
+    {
+        BattleHudRuntimeFeedbackState GetState();
 
-    void ApplySelection(string displayName, string status);
+        void ApplySelection(string displayName, string status);
 
-    void ClearSelection();
+        void ClearSelection();
 
-    void ApplyCommandMode(TacticalCommandMode mode);
+        void ApplyCommandMode(TacticalCommandMode mode);
 
-    void ApplyBoardCommandMode(UiBoardCommandModeDirection direction, bool boardAllInteractable);
+        void ApplyBoardCommandMode(UiBoardCommandModeDirection direction, bool boardAllInteractable);
 
-    void ClearCommandMode();
+        void ClearCommandMode();
 
-    void ClearCommandModeTabs();
+        void ClearCommandModeTabs();
 
-    void ApplyCommandResult(TacticalCommandResult result);
+        void ApplyCommandResult(TacticalCommandResult result);
 
-    void SetWorldMarkersVisible(bool visible);
+        void SetWorldMarkersVisible(bool visible);
+    }
 }

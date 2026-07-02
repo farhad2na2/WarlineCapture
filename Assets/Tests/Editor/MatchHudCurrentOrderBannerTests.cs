@@ -5,6 +5,11 @@ using UnityEditor;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.Tactical.Contracts;
+using Game.UI.Contracts;
+using Game.Components;
+using Game.UI.Runtime;
+using Game.Runtime;
 
 public sealed class MatchHudCurrentOrderBannerTests
 {

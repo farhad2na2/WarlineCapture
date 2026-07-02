@@ -1,102 +1,106 @@
 using UnityEngine;
+using Game.Components;
 
-public sealed class CitizenPopulationEventCompositionSystemHelper
+namespace Game.Runtime
 {
-    private CitizenPopulationStateCompositionSystemHelper _state;
-    private CitizenBuildingReadCompositionSystemHelper _buildingReadSystem;
-    private CitizenHouseholdRegistrationCompositionSystemHelper _householdRegistrationSystem;
-    private CitizenRefugeeCompositionSystemHelper _refugeeSystem;
-    private CitizenTravelSystem _travelSystem;
-    private CitizenPopulationEcsProjectionCompositionSystemHelper _ecsProjection;
-    private CitizenStatusTransitionCompositionSystemHelper _statusTransitionSystem;
-    private CitizenRefugeeCompositionSystemHelper.StoreHouseholdAction _storeHousehold;
-    private CitizenRefugeeCompositionSystemHelper.StoreCitizenAction _storeCitizen;
-    private CitizenRefugeeCompositionSystemHelper.TryGetHouseholdReferenceWorldPositionAction _tryGetHouseholdReferenceWorldPosition;
-    private CitizenRefugeeCompositionSystemHelper.EstimateTravelSecondsAction _estimateTravelSeconds;
-    private CitizenRefugeeCompositionSystemHelper.MarkCitizenDeadAction _markCitizenDead;
-
-    internal void Init(
-        CitizenPopulationStateCompositionSystemHelper state,
-        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
-        CitizenRefugeeCompositionSystemHelper refugeeSystem,
-        CitizenTravelSystem travelSystem,
-        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
-        CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
-        CitizenRefugeeCompositionSystemHelper.StoreHouseholdAction storeHousehold,
-        CitizenRefugeeCompositionSystemHelper.StoreCitizenAction storeCitizen,
-        CitizenRefugeeCompositionSystemHelper.MarkCitizenDeadAction markCitizenDead)
+    public sealed class CitizenPopulationEventCompositionSystemHelper
     {
-        _state = state;
-        _buildingReadSystem = buildingReadSystem;
-        _householdRegistrationSystem = householdRegistrationSystem;
-        _refugeeSystem = refugeeSystem;
-        _travelSystem = travelSystem;
-        _ecsProjection = ecsProjection;
-        _statusTransitionSystem = statusTransitionSystem;
-        _storeHousehold = storeHousehold;
-        _storeCitizen = storeCitizen;
-        _tryGetHouseholdReferenceWorldPosition = TryGetHouseholdReferenceWorldPosition;
-        _estimateTravelSeconds = EstimateTravelSeconds;
-        _markCitizenDead = markCitizenDead;
-    }
+        private CitizenPopulationStateCompositionSystemHelper _state;
+        private CitizenBuildingReadCompositionSystemHelper _buildingReadSystem;
+        private CitizenHouseholdRegistrationCompositionSystemHelper _householdRegistrationSystem;
+        private CitizenRefugeeCompositionSystemHelper _refugeeSystem;
+        private CitizenTravelSystem _travelSystem;
+        private CitizenPopulationEcsProjectionCompositionSystemHelper _ecsProjection;
+        private CitizenStatusTransitionCompositionSystemHelper _statusTransitionSystem;
+        private CitizenRefugeeCompositionSystemHelper.StoreHouseholdAction _storeHousehold;
+        private CitizenRefugeeCompositionSystemHelper.StoreCitizenAction _storeCitizen;
+        private CitizenRefugeeCompositionSystemHelper.TryGetHouseholdReferenceWorldPositionAction _tryGetHouseholdReferenceWorldPosition;
+        private CitizenRefugeeCompositionSystemHelper.EstimateTravelSecondsAction _estimateTravelSeconds;
+        private CitizenRefugeeCompositionSystemHelper.MarkCitizenDeadAction _markCitizenDead;
 
-    public void Reset()
-    {
-        _state = null;
-        _buildingReadSystem = null;
-        _householdRegistrationSystem = null;
-        _refugeeSystem = null;
-        _travelSystem = null;
-        _ecsProjection = null;
-        _statusTransitionSystem = null;
-        _storeHousehold = null;
-        _storeCitizen = null;
-        _tryGetHouseholdReferenceWorldPosition = null;
-        _estimateTravelSeconds = null;
-        _markCitizenDead = null;
-    }
+        internal void Init(
+            CitizenPopulationStateCompositionSystemHelper state,
+            CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
+            CitizenHouseholdRegistrationCompositionSystemHelper householdRegistrationSystem,
+            CitizenRefugeeCompositionSystemHelper refugeeSystem,
+            CitizenTravelSystem travelSystem,
+            CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
+            CitizenStatusTransitionCompositionSystemHelper statusTransitionSystem,
+            CitizenRefugeeCompositionSystemHelper.StoreHouseholdAction storeHousehold,
+            CitizenRefugeeCompositionSystemHelper.StoreCitizenAction storeCitizen,
+            CitizenRefugeeCompositionSystemHelper.MarkCitizenDeadAction markCitizenDead)
+        {
+            _state = state;
+            _buildingReadSystem = buildingReadSystem;
+            _householdRegistrationSystem = householdRegistrationSystem;
+            _refugeeSystem = refugeeSystem;
+            _travelSystem = travelSystem;
+            _ecsProjection = ecsProjection;
+            _statusTransitionSystem = statusTransitionSystem;
+            _storeHousehold = storeHousehold;
+            _storeCitizen = storeCitizen;
+            _tryGetHouseholdReferenceWorldPosition = TryGetHouseholdReferenceWorldPosition;
+            _estimateTravelSeconds = EstimateTravelSeconds;
+            _markCitizenDead = markCitizenDead;
+        }
 
-    public void NotifyVisibleCitizenDestroyed(int citizenId)
-    {
-        if (_state == null || !_state.VisibleCitizensById.ContainsKey(citizenId))
-            return;
+        public void Reset()
+        {
+            _state = null;
+            _buildingReadSystem = null;
+            _householdRegistrationSystem = null;
+            _refugeeSystem = null;
+            _travelSystem = null;
+            _ecsProjection = null;
+            _statusTransitionSystem = null;
+            _storeHousehold = null;
+            _storeCitizen = null;
+            _tryGetHouseholdReferenceWorldPosition = null;
+            _estimateTravelSeconds = null;
+            _markCitizenDead = null;
+        }
 
-        _markCitizenDead?.Invoke(citizenId, "visual-destroyed");
-    }
+        public void NotifyVisibleCitizenDestroyed(int citizenId)
+        {
+            if (_state == null || !_state.VisibleCitizensById.ContainsKey(citizenId))
+                return;
 
-    public void NotifyHomeBuildingDestroyed(int buildingId)
-    {
-        if (_state == null)
-            return;
+            _markCitizenDead?.Invoke(citizenId, "visual-destroyed");
+        }
 
-        CitizenRefugeeCompositionSystemHelper.NotifyHomeBuildingDestroyed(
-            _refugeeSystem,
-            _state,
-            _buildingReadSystem,
-            _householdRegistrationSystem,
-            buildingId,
-            _storeHousehold,
-            _storeCitizen,
-            _tryGetHouseholdReferenceWorldPosition,
-            _estimateTravelSeconds,
-            _markCitizenDead);
-    }
+        public void NotifyHomeBuildingDestroyed(int buildingId)
+        {
+            if (_state == null)
+                return;
 
-    private bool TryGetHouseholdReferenceWorldPosition(CitizenHouseholdRecordComponent household, out Vector3 worldPosition)
-    {
-        return CitizenTravelSystem.TryGetHouseholdReferenceWorldPosition(
-            _travelSystem,
-            _state,
-            _ecsProjection,
-            _buildingReadSystem,
-            _statusTransitionSystem,
-            household,
-            out worldPosition);
-    }
+            CitizenRefugeeCompositionSystemHelper.NotifyHomeBuildingDestroyed(
+                _refugeeSystem,
+                _state,
+                _buildingReadSystem,
+                _householdRegistrationSystem,
+                buildingId,
+                _storeHousehold,
+                _storeCitizen,
+                _tryGetHouseholdReferenceWorldPosition,
+                _estimateTravelSeconds,
+                _markCitizenDead);
+        }
 
-    private float EstimateTravelSeconds(CitizenRecordComponent citizen, int targetBuildingId)
-    {
-        return CitizenTravelSystem.EstimateTravelSeconds(_travelSystem, _state, _buildingReadSystem, citizen, targetBuildingId);
+        private bool TryGetHouseholdReferenceWorldPosition(CitizenHouseholdRecordComponent household, out Vector3 worldPosition)
+        {
+            return CitizenTravelSystem.TryGetHouseholdReferenceWorldPosition(
+                _travelSystem,
+                _state,
+                _ecsProjection,
+                _buildingReadSystem,
+                _statusTransitionSystem,
+                household,
+                out worldPosition);
+        }
+
+        private float EstimateTravelSeconds(CitizenRecordComponent citizen, int targetBuildingId)
+        {
+            return CitizenTravelSystem.EstimateTravelSeconds(_travelSystem, _state, _buildingReadSystem, citizen, targetBuildingId);
+        }
     }
 }

@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using UnityEngine;
+using Game.Configs;
 
 public sealed class ConfigDefaultsTests
 {

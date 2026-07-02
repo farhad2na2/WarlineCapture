@@ -1,35 +1,39 @@
 using Unity.Entities;
+using Game.UI.Shell.Contracts.Ecs;
 
-[UpdateInGroup(typeof(SimulationSystemGroup))]
-public partial struct UiShellArmoryCategorySystem : ISystem
+namespace Game.UI.Shell.Ecs
 {
-    private EntityQuery boundaryQuery;
-
-    public void OnCreate(ref SystemState state)
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    public partial struct UiShellArmoryCategorySystem : ISystem
     {
-        UiShellEcsGateway.RegisterAsRuntimeGateway();
-        boundaryQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<UiShellStateComponent>(),
-            ComponentType.ReadWrite<UiShellArmoryCategoryComponent>(),
-            ComponentType.ReadWrite<UiShellArmoryCategoryRequestComponent>());
-        state.RequireForUpdate(boundaryQuery);
-    }
+        private EntityQuery boundaryQuery;
 
-    public void OnUpdate(ref SystemState state)
-    {
-        if (boundaryQuery.IsEmptyIgnoreFilter)
-            return;
+        public void OnCreate(ref SystemState state)
+        {
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            boundaryQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<UiShellStateComponent>(),
+                ComponentType.ReadWrite<UiShellArmoryCategoryComponent>(),
+                ComponentType.ReadWrite<UiShellArmoryCategoryRequestComponent>());
+            state.RequireForUpdate(boundaryQuery);
+        }
 
-        Entity boundary = boundaryQuery.GetSingletonEntity();
-        DynamicBuffer<UiShellArmoryCategoryRequestComponent> requests =
-            state.EntityManager.GetBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
-        if (requests.Length == 0)
-            return;
+        public void OnUpdate(ref SystemState state)
+        {
+            if (boundaryQuery.IsEmptyIgnoreFilter)
+                return;
 
-        UiShellArmoryCategoryComponent categoryState =
-            state.EntityManager.GetComponentData<UiShellArmoryCategoryComponent>(boundary);
-        categoryState.Category = requests[requests.Length - 1].Category;
-        requests.Clear();
-        state.EntityManager.SetComponentData(boundary, categoryState);
+            Entity boundary = boundaryQuery.GetSingletonEntity();
+            DynamicBuffer<UiShellArmoryCategoryRequestComponent> requests =
+                state.EntityManager.GetBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
+            if (requests.Length == 0)
+                return;
+
+            UiShellArmoryCategoryComponent categoryState =
+                state.EntityManager.GetComponentData<UiShellArmoryCategoryComponent>(boundary);
+            categoryState.Category = requests[requests.Length - 1].Category;
+            requests.Clear();
+            state.EntityManager.SetComponentData(boundary, categoryState);
+        }
     }
 }

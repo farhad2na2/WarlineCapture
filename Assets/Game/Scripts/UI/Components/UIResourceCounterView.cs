@@ -2,28 +2,31 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class UIResourceCounterView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private Image icon;
-    [SerializeField] private TMP_Text valueText;
-    [SerializeField] private Button plusButton;
-
-    public Image Icon => icon;
-    public TMP_Text ValueText => valueText;
-    public Button PlusButton => plusButton;
-
-    public void Bind(string value, Sprite iconSprite = null, bool showPlusButton = true)
+    public sealed class UIResourceCounterView : MonoBehaviour
     {
-        if (valueText != null)
-            valueText.text = value;
+        [SerializeField] private Image icon;
+        [SerializeField] private TMP_Text valueText;
+        [SerializeField] private Button plusButton;
 
-        if (icon != null)
+        public Image Icon => icon;
+        public TMP_Text ValueText => valueText;
+        public Button PlusButton => plusButton;
+
+        public void Bind(string value, Sprite iconSprite = null, bool showPlusButton = true)
         {
-            icon.sprite = iconSprite;
-            icon.enabled = iconSprite != null;
-        }
+            if (valueText != null)
+                valueText.text = value;
 
-        if (plusButton != null)
-            plusButton.gameObject.SetActive(showPlusButton);
+            if (icon != null)
+            {
+                icon.sprite = iconSprite;
+                icon.enabled = iconSprite != null;
+            }
+
+            if (plusButton != null)
+                plusButton.gameObject.SetActive(showPlusButton);
+        }
     }
 }

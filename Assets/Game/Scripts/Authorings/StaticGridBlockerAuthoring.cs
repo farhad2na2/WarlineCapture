@@ -1,44 +1,49 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Game.Components;
+using Game.Configs;
 
-[DisallowMultipleComponent]
-public class StaticGridBlockerAuthoring : MonoBehaviour
+namespace Game.Authoring
 {
-    [SerializeField] private StaticGridBlockerAuthoringConfig config;
-    [SerializeField, HideInInspector] private Vector2Int cell = new(5, 5);
-    [SerializeField, HideInInspector] private Vector2Int size = new(1, 1);
-
-    private void OnValidate()
+    [DisallowMultipleComponent]
+    public class StaticGridBlockerAuthoring : MonoBehaviour
     {
-        ApplyConfigIfAvailable();
-    }
+        [SerializeField] private StaticGridBlockerAuthoringConfig config;
+        [SerializeField, HideInInspector] private Vector2Int cell = new(5, 5);
+        [SerializeField, HideInInspector] private Vector2Int size = new(1, 1);
 
-    private void ApplyConfigIfAvailable()
-    {
-        if (config == null)
-            return;
-
-        cell = config.Cell;
-        size = config.Size;
-    }
-
-    private class StaticGridBlockerBaker : Baker<StaticGridBlockerAuthoring>
-    {
-        public override void Bake(StaticGridBlockerAuthoring authoring)
+        private void OnValidate()
         {
-            authoring.ApplyConfigIfAvailable();
-            var entity = GetEntity(TransformUsageFlags.Dynamic);
+            ApplyConfigIfAvailable();
+        }
 
-            AddComponent(entity, new UnitGrid
+        private void ApplyConfigIfAvailable()
+        {
+            if (config == null)
+                return;
+
+            cell = config.Cell;
+            size = config.Size;
+        }
+
+        private class StaticGridBlockerBaker : Baker<StaticGridBlockerAuthoring>
+        {
+            public override void Bake(StaticGridBlockerAuthoring authoring)
             {
-                Cell = new int2(authoring.cell.x, authoring.cell.y)
-            });
+                authoring.ApplyConfigIfAvailable();
+                var entity = GetEntity(TransformUsageFlags.Dynamic);
 
-            AddComponent<StaticGridBlocker>(entity);
+                AddComponent(entity, new UnitGrid
+                {
+                    Cell = new int2(authoring.cell.x, authoring.cell.y)
+                });
 
-            var blockerSize = new int2(math.max(1, authoring.size.x), math.max(1, authoring.size.y));
-            AddComponent(entity, new GridBlockerSize { Size = blockerSize });
+                AddComponent<StaticGridBlocker>(entity);
+
+                var blockerSize = new int2(math.max(1, authoring.size.x), math.max(1, authoring.size.y));
+                AddComponent(entity, new GridBlockerSize { Size = blockerSize });
+            }
         }
     }
 }

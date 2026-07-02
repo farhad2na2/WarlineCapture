@@ -4,6 +4,8 @@ using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Game.Components;
+using Game.Runtime;
 
 public sealed class SelectedUnitDebugFireSystemTests
 {

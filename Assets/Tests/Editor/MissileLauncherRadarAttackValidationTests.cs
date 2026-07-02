@@ -4,6 +4,9 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEditor;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
 
 public sealed class MissileLauncherRadarAttackValidationTests
 {

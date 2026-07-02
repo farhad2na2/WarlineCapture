@@ -5,3 +5,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Game.UI.Runtime")]
 [assembly: InternalsVisibleTo("Game.Tests.Editor")]
 [assembly: InternalsVisibleTo("Game.Tests.PlayMode")]
+
+namespace Game.Runtime
+{
+}

@@ -8,6 +8,9 @@ using Unity.Rendering;
 using UnityEditor;
 using Unity.Transforms;
 using UnityEngine;
+using Game.Components;
+using Game.Rendering;
+using Game.Runtime;
 
 public sealed class CombatDeathValidationTests
 {

@@ -1,33 +1,36 @@
 using System;
 using UnityEngine;
 
-public interface IMatchHudSelectionPanelView
+namespace Game.UI.Contracts
 {
-    void BindActions(Action returnRequested, Action destroyRequested, Action boardRequested);
+    public interface IMatchHudSelectionPanelView
+    {
+        void BindActions(Action returnRequested, Action destroyRequested, Action boardRequested);
 
-    void BindCameraAction(Action cameraRequested);
+        void BindCameraAction(Action cameraRequested);
 
-    void BindTransportPassengerActions(
-        Action passengerChipRequested,
-        Action passengerDrawerCloseRequested,
-        Action passengerExitAllRequested,
-        Action<UiEntityHandle> passengerExitRequested);
+        void BindTransportPassengerActions(
+            Action passengerChipRequested,
+            Action passengerDrawerCloseRequested,
+            Action passengerExitAllRequested,
+            Action<UiEntityHandle> passengerExitRequested);
 
-    void HideSelection();
+        void HideSelection();
 
-    void SetSelectionVisible(bool visible);
+        void SetSelectionVisible(bool visible);
 
-    void SetSelectionVisible(bool visible, Sprite portraitSprite);
+        void SetSelectionVisible(bool visible, Sprite portraitSprite);
 
-    void SetBoardActionSelected(bool selected);
+        void SetBoardActionSelected(bool selected);
 
-    void SetCameraActionSelected(bool selected);
+        void SetCameraActionSelected(bool selected);
 
-    void SetCameraActionEnabled(bool enabled);
+        void SetCameraActionEnabled(bool enabled);
 
-    Sprite ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind kind);
+        Sprite ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind kind);
 
-    void Apply(MatchHudSelectionPanelModel model);
+        void Apply(MatchHudSelectionPanelModel model);
 
-    void ApplyTransportPassengers(MatchHudTransportPassengersModel model);
+        void ApplyTransportPassengers(MatchHudTransportPassengersModel model);
+    }
 }

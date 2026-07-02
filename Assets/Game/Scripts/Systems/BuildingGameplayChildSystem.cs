@@ -1,20 +1,23 @@
 using Unity.Entities;
 
-[UpdateInGroup(typeof(SimulationSystemGroup))]
-internal partial struct BuildingGameplayChildSystem : ISystem
+namespace Game.Runtime
 {
-    public void OnCreate(ref SystemState state)
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    internal partial struct BuildingGameplayChildSystem : ISystem
     {
-        // RequireForUpdate intentionally omitted: disabled composition helper; OnUpdate never runs.
-        state.Enabled = false;
-    }
+        public void OnCreate(ref SystemState state)
+        {
+            // RequireForUpdate intentionally omitted: disabled composition helper; OnUpdate never runs.
+            state.Enabled = false;
+        }
 
-    public void OnUpdate(ref SystemState state)
-    {
-    }
+        public void OnUpdate(ref SystemState state)
+        {
+        }
 
-    public BuildingGameplaySourceCompositionSystemHelper Create()
-    {
-        return new BuildingGameplaySourceCompositionSystemHelper();
+        public BuildingGameplaySourceCompositionSystemHelper Create()
+        {
+            return new BuildingGameplaySourceCompositionSystemHelper();
+        }
     }
 }

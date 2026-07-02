@@ -1,52 +1,56 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Contracts;
 
-[DisallowMultipleComponent]
-public sealed class ArmoryCatalogItemView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private Button selectionButton;
-    [SerializeField] private Image frameImage;
-    [SerializeField] private Sprite defaultFrameSprite;
-    [SerializeField] private Sprite selectedFrameSprite;
-    [SerializeField] private TMP_Text titleText;
-    [SerializeField] private TMP_Text typeText;
-    [SerializeField] private ArmoryCatalogCategoryVisualSet[] categoryVisuals;
-
-    public Button SelectionButton => selectionButton;
-    public Image FrameImage => frameImage;
-
-    public void Bind(ArmoryCatalogItem model)
+    [DisallowMultipleComponent]
+    public sealed class ArmoryCatalogItemView : MonoBehaviour
     {
-        if (titleText != null)
-            titleText.text = model.DisplayName;
+        [SerializeField] private Button selectionButton;
+        [SerializeField] private Image frameImage;
+        [SerializeField] private Sprite defaultFrameSprite;
+        [SerializeField] private Sprite selectedFrameSprite;
+        [SerializeField] private TMP_Text titleText;
+        [SerializeField] private TMP_Text typeText;
+        [SerializeField] private ArmoryCatalogCategoryVisualSet[] categoryVisuals;
 
-        if (typeText != null)
-            typeText.text = ArmoryCatalogCategoryFormatter.Format(model.Category);
+        public Button SelectionButton => selectionButton;
+        public Image FrameImage => frameImage;
 
-        BindCategoryVisuals(model.Category, model.CardPortrait);
-        SetSelected(false);
-    }
-
-    public void SetSelected(bool selected)
-    {
-        if (frameImage == null)
-            return;
-
-        Sprite targetSprite = selected ? selectedFrameSprite : defaultFrameSprite;
-        if (targetSprite != null)
-            frameImage.sprite = targetSprite;
-    }
-
-    private void BindCategoryVisuals(ArmoryCatalogCategory selectedCategory, Sprite portrait)
-    {
-        if (categoryVisuals == null)
-            return;
-
-        for (int i = 0; i < categoryVisuals.Length; i++)
+        public void Bind(ArmoryCatalogItem model)
         {
-            ArmoryCatalogCategoryVisualSet visualSet = categoryVisuals[i];
-            visualSet?.Bind(visualSet.Category == selectedCategory, portrait);
+            if (titleText != null)
+                titleText.text = model.DisplayName;
+
+            if (typeText != null)
+                typeText.text = ArmoryCatalogCategoryFormatter.Format(model.Category);
+
+            BindCategoryVisuals(model.Category, model.CardPortrait);
+            SetSelected(false);
+        }
+
+        public void SetSelected(bool selected)
+        {
+            if (frameImage == null)
+                return;
+
+            Sprite targetSprite = selected ? selectedFrameSprite : defaultFrameSprite;
+            if (targetSprite != null)
+                frameImage.sprite = targetSprite;
+        }
+
+        private void BindCategoryVisuals(ArmoryCatalogCategory selectedCategory, Sprite portrait)
+        {
+            if (categoryVisuals == null)
+                return;
+
+            for (int i = 0; i < categoryVisuals.Length; i++)
+            {
+                ArmoryCatalogCategoryVisualSet visualSet = categoryVisuals[i];
+                visualSet?.Bind(visualSet.Category == selectedCategory, portrait);
+            }
         }
     }
 }

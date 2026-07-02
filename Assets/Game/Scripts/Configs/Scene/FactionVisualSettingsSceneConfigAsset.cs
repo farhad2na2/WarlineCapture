@@ -1,6 +1,10 @@
 using UnityEngine;
+using Game.Components;
 
-[CreateAssetMenu(menuName = "Game/Scene Config/Faction Visual Settings")]
-public sealed class FactionVisualSettingsSceneConfigAsset : FactionVisualSettingsConfig
+namespace Game.Configs
 {
+    [CreateAssetMenu(menuName = "Game/Scene Config/Faction Visual Settings")]
+    public sealed class FactionVisualSettingsSceneConfigAsset : FactionVisualSettingsConfig
+    {
+    }
 }

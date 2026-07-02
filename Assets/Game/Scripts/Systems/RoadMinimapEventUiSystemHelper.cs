@@ -1,31 +1,36 @@
-public sealed class RoadMinimapEventUiSystemHelper
+using Game.UI.Contracts;
+
+namespace Game.Runtime
 {
-    private IMatchRuntimeUi _mainMenuPlayUi;
-    private bool _staticMinimapChanged;
-
-    public void Configure(IMatchRuntimeUi mainMenuPlayUi)
+    public sealed class RoadMinimapEventUiSystemHelper
     {
-        _mainMenuPlayUi = mainMenuPlayUi;
-    }
+        private IMatchRuntimeUi _mainMenuPlayUi;
+        private bool _staticMinimapChanged;
 
-    public void PublishStaticMinimapChanged()
-    {
-        _staticMinimapChanged = true;
-        Flush();
-    }
+        public void Configure(IMatchRuntimeUi mainMenuPlayUi)
+        {
+            _mainMenuPlayUi = mainMenuPlayUi;
+        }
 
-    public void Flush()
-    {
-        if (!_staticMinimapChanged)
-            return;
+        public void PublishStaticMinimapChanged()
+        {
+            _staticMinimapChanged = true;
+            Flush();
+        }
 
-        _staticMinimapChanged = false;
-        _mainMenuPlayUi?.NotifyStaticMinimapChanged();
-    }
+        public void Flush()
+        {
+            if (!_staticMinimapChanged)
+                return;
 
-    public void Clear()
-    {
-        _staticMinimapChanged = false;
-        _mainMenuPlayUi = null;
+            _staticMinimapChanged = false;
+            _mainMenuPlayUi?.NotifyStaticMinimapChanged();
+        }
+
+        public void Clear()
+        {
+            _staticMinimapChanged = false;
+            _mainMenuPlayUi = null;
+        }
     }
 }

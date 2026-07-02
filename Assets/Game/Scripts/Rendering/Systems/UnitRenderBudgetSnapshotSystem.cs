@@ -6,69 +6,72 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Transforms;
 
-public readonly struct UnitRenderBudgetSnapshot
+namespace Game.Rendering
 {
-    public struct Snapshot : IDisposable
+    public readonly struct UnitRenderBudgetSnapshot
     {
-        public NativeList<Entity> Units;
-        public NativeList<LocalTransform> Transforms;
-
-        public Snapshot(NativeList<Entity> units, NativeList<LocalTransform> transforms)
+        public struct Snapshot : IDisposable
         {
-            Units = units;
-            Transforms = transforms;
-        }
+            public NativeList<Entity> Units;
+            public NativeList<LocalTransform> Transforms;
 
-        public void Dispose()
-        {
-            if (Transforms.IsCreated)
-                Transforms.Dispose();
-            if (Units.IsCreated)
-                Units.Dispose();
-        }
-    }
-
-    public Snapshot Create(
-        EntityQuery unitQuery,
-        EntityTypeHandle entityTypeHandle,
-        ComponentTypeHandle<LocalTransform> localTransformTypeHandle,
-        Allocator allocator)
-    {
-        int capacity = unitQuery.CalculateEntityCount();
-        NativeList<Entity> units = new(capacity, allocator);
-        NativeList<LocalTransform> transforms = new(capacity, allocator);
-        JobHandle collectHandle = new CollectSnapshotJob
-        {
-            EntityTypeHandle = entityTypeHandle,
-            LocalTransformTypeHandle = localTransformTypeHandle,
-            Units = units,
-            Transforms = transforms
-        }.Schedule(unitQuery, default);
-        collectHandle.Complete();
-
-        return new Snapshot(units, transforms);
-    }
-
-    [BurstCompile]
-    private struct CollectSnapshotJob : IJobChunk
-    {
-        [ReadOnly] public EntityTypeHandle EntityTypeHandle;
-        [ReadOnly] public ComponentTypeHandle<LocalTransform> LocalTransformTypeHandle;
-        public NativeList<Entity> Units;
-        public NativeList<LocalTransform> Transforms;
-
-        public void Execute(
-            in ArchetypeChunk chunk,
-            int unfilteredChunkIndex,
-            bool useEnabledMask,
-            in v128 chunkEnabledMask)
-        {
-            NativeArray<Entity> entities = chunk.GetNativeArray(EntityTypeHandle);
-            NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref LocalTransformTypeHandle);
-            for (int i = 0; i < chunk.Count; i++)
+            public Snapshot(NativeList<Entity> units, NativeList<LocalTransform> transforms)
             {
-                Units.Add(entities[i]);
-                Transforms.Add(transforms[i]);
+                Units = units;
+                Transforms = transforms;
+            }
+
+            public void Dispose()
+            {
+                if (Transforms.IsCreated)
+                    Transforms.Dispose();
+                if (Units.IsCreated)
+                    Units.Dispose();
+            }
+        }
+
+        public Snapshot Create(
+            EntityQuery unitQuery,
+            EntityTypeHandle entityTypeHandle,
+            ComponentTypeHandle<LocalTransform> localTransformTypeHandle,
+            Allocator allocator)
+        {
+            int capacity = unitQuery.CalculateEntityCount();
+            NativeList<Entity> units = new(capacity, allocator);
+            NativeList<LocalTransform> transforms = new(capacity, allocator);
+            JobHandle collectHandle = new CollectSnapshotJob
+            {
+                EntityTypeHandle = entityTypeHandle,
+                LocalTransformTypeHandle = localTransformTypeHandle,
+                Units = units,
+                Transforms = transforms
+            }.Schedule(unitQuery, default);
+            collectHandle.Complete();
+
+            return new Snapshot(units, transforms);
+        }
+
+        [BurstCompile]
+        private struct CollectSnapshotJob : IJobChunk
+        {
+            [ReadOnly] public EntityTypeHandle EntityTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<LocalTransform> LocalTransformTypeHandle;
+            public NativeList<Entity> Units;
+            public NativeList<LocalTransform> Transforms;
+
+            public void Execute(
+                in ArchetypeChunk chunk,
+                int unfilteredChunkIndex,
+                bool useEnabledMask,
+                in v128 chunkEnabledMask)
+            {
+                NativeArray<Entity> entities = chunk.GetNativeArray(EntityTypeHandle);
+                NativeArray<LocalTransform> transforms = chunk.GetNativeArray(ref LocalTransformTypeHandle);
+                for (int i = 0; i < chunk.Count; i++)
+                {
+                    Units.Add(entities[i]);
+                    Transforms.Add(transforms[i]);
+                }
             }
         }
     }

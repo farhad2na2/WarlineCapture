@@ -1,11 +1,14 @@
-public interface IUnitAttackTraceRenderer : System.IDisposable
+namespace Game.Rendering.Contracts
 {
-    void LateUpdate();
-}
+    public interface IUnitAttackTraceRenderer : System.IDisposable
+    {
+        void LateUpdate();
+    }
 
-public interface IUnitImpostorRenderer : System.IDisposable
-{
-    int LastDrawnCount { get; }
+    public interface IUnitImpostorRenderer : System.IDisposable
+    {
+        int LastDrawnCount { get; }
 
-    void LateUpdate();
+        void LateUpdate();
+    }
 }

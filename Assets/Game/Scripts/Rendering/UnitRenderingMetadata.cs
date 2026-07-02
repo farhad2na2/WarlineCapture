@@ -1,21 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Game.Configs;
 
-public readonly struct UnitRenderingMetadata
+namespace Game.Rendering
 {
-    public readonly bool IsAirUnit;
-    public readonly Vector2Int FootprintCells;
-    public readonly IReadOnlyList<UnitAnimationKind> AnimationOrder;
-
-    public UnitRenderingMetadata(
-        bool isAirUnit,
-        Vector2Int footprintCells,
-        IReadOnlyList<UnitAnimationKind> animationOrder)
+    public readonly struct UnitRenderingMetadata
     {
-        IsAirUnit = isAirUnit;
-        FootprintCells = footprintCells;
-        AnimationOrder = animationOrder;
-    }
-}
+        public readonly bool IsAirUnit;
+        public readonly Vector2Int FootprintCells;
+        public readonly IReadOnlyList<UnitAnimationKind> AnimationOrder;
 
-public delegate bool TryGetUnitRenderingMetadataDelegate(GameObject prefab, out UnitRenderingMetadata metadata);
+        public UnitRenderingMetadata(
+            bool isAirUnit,
+            Vector2Int footprintCells,
+            IReadOnlyList<UnitAnimationKind> animationOrder)
+        {
+            IsAirUnit = isAirUnit;
+            FootprintCells = footprintCells;
+            AnimationOrder = animationOrder;
+        }
+    }
+
+    public delegate bool TryGetUnitRenderingMetadataDelegate(GameObject prefab, out UnitRenderingMetadata metadata);
+}

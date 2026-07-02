@@ -8,6 +8,9 @@ using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Game.Rendering.Contracts;
+using Game.Components;
+using Game.Rendering;
 
 public sealed partial class UnitRenderBudgetSystemTests
 {

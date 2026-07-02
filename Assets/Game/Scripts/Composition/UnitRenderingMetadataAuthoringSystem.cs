@@ -1,27 +1,33 @@
 using Unity.Entities;
 using UnityEngine;
+using Game.Authoring;
+using Game.Rendering;
+using Game.Runtime;
 
-internal sealed partial class UnitRenderingMetadataAuthoringSystem : SystemBase
+namespace Game.Composition
 {
-    protected override void OnCreate()
+    internal sealed partial class UnitRenderingMetadataAuthoringSystem : SystemBase
     {
-        Enabled = false;
-    }
+        protected override void OnCreate()
+        {
+            Enabled = false;
+        }
 
-    protected override void OnUpdate()
-    {
-    }
+        protected override void OnUpdate()
+        {
+        }
 
-    public static bool TryGetUnitRenderingMetadata(GameObject prefab, out UnitRenderingMetadata metadata)
-    {
-        metadata = default;
-        if (prefab == null || !prefab.TryGetComponent(out UnitGridAuthoring authoring))
-            return false;
+        public static bool TryGetUnitRenderingMetadata(GameObject prefab, out UnitRenderingMetadata metadata)
+        {
+            metadata = default;
+            if (prefab == null || !prefab.TryGetComponent(out UnitGridAuthoring authoring))
+                return false;
 
-        metadata = new UnitRenderingMetadata(
-            authoring.IsAirUnit,
-            authoring.GetConfiguredFootprintCells(),
-            authoring.AnimationOrder);
-        return true;
+            metadata = new UnitRenderingMetadata(
+                authoring.IsAirUnit,
+                authoring.GetConfiguredFootprintCells(),
+                authoring.AnimationOrder);
+            return true;
+        }
     }
 }

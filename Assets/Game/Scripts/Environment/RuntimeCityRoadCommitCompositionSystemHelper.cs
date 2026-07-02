@@ -1,184 +1,188 @@
 using System.Collections.Generic;
 using UnityEngine;
-using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
 
-internal sealed class RuntimeCityRoadCommitCompositionSystemHelper
+namespace Game.Runtime
 {
-    private readonly RuntimeCityRoadCommitState _state = new();
+    using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
 
-    public RuntimeCityRoadCommitState State => _state;
-
-    public void CommitCityRoadNetwork(Context context, CityLayoutData city, HashSet<Vector2Int> occupiedRoadCells)
+    internal sealed class RuntimeCityRoadCommitCompositionSystemHelper
     {
-        _state.CommitCityRoadNetwork(context, city, occupiedRoadCells);
-    }
+        private readonly RuntimeCityRoadCommitState _state = new();
 
-    public void PopulateCityRoadCells(CityLayoutData city)
-    {
-        _state.PopulateCityRoadCells(city);
-    }
+        public RuntimeCityRoadCommitState State => _state;
 
-    public bool TryCommitSourceExitRoad(
-        Context context,
-        int cityNumber,
-        List<Vector2Int> sourceExitRoad,
-        CityLayoutData currentCity,
-        HashSet<Vector2Int> occupiedRoadCells)
-    {
-        return _state.TryCommitSourceExitRoad(context, cityNumber, sourceExitRoad, currentCity, occupiedRoadCells);
-    }
-
-    public bool TryCommitAutobahn(
-        Context context,
-        int cityNumber,
-        List<Vector2Int> autobahnPath,
-        Vector2Int travelDirection,
-        CityLayoutData currentCity,
-        HashSet<Vector2Int> occupiedRoadCells,
-        out List<Vector2Int> extendedAutobahnPath,
-        out Vector2Int endConnectorCell)
-    {
-        return _state.TryCommitAutobahn(
-            context,
-            cityNumber,
-            autobahnPath,
-            travelDirection,
-            currentCity,
-            occupiedRoadCells,
-            out extendedAutobahnPath,
-            out endConnectorCell);
-    }
-
-    public bool TryCreateStandaloneConnector(
-        Context context,
-        Vector2Int endConnectorCell,
-        Vector2Int travelDirection,
-        int roadLength,
-        out Vector2Int secondCityAnchorCell)
-    {
-        return _state.TryCreateStandaloneConnector(
-            context,
-            endConnectorCell,
-            travelDirection,
-            roadLength,
-            out secondCityAnchorCell);
-    }
-
-    public readonly struct Context
-    {
-        public readonly RuntimeCityRoadBuildBridgeState RoadBuildBridgeSystem;
-        public readonly RuntimeCityDiagnosticsSystemHelper Diagnostics;
-
-        public Context(
-            RuntimeCityRoadBuildBridgeState roadBuildBridgeSystem,
-            RuntimeCityDiagnosticsSystemHelper diagnostics)
+        public void CommitCityRoadNetwork(Context context, CityLayoutData city, HashSet<Vector2Int> occupiedRoadCells)
         {
-            RoadBuildBridgeSystem = roadBuildBridgeSystem;
-            Diagnostics = diagnostics;
+            _state.CommitCityRoadNetwork(context, city, occupiedRoadCells);
         }
-    }
-}
 
-internal sealed class RuntimeCityRoadCommitState
-{
-    public void CommitCityRoadNetwork(RuntimeCityRoadCommitCompositionSystemHelper.Context context, CityLayoutData city, HashSet<Vector2Int> occupiedRoadCells)
-    {
-        PopulateCityRoadCells(city);
-        for (int strokeIndex = 0; strokeIndex < city.RoadStrokes.Count; strokeIndex++)
+        public void PopulateCityRoadCells(CityLayoutData city)
         {
-            List<Vector2Int> stroke = city.RoadStrokes[strokeIndex];
-            context.RoadBuildBridgeSystem.CreateRoadStrokeFromRoadCells(stroke);
-            for (int cellIndex = 0; cellIndex < stroke.Count; cellIndex++)
+            _state.PopulateCityRoadCells(city);
+        }
+
+        public bool TryCommitSourceExitRoad(
+            Context context,
+            int cityNumber,
+            List<Vector2Int> sourceExitRoad,
+            CityLayoutData currentCity,
+            HashSet<Vector2Int> occupiedRoadCells)
+        {
+            return _state.TryCommitSourceExitRoad(context, cityNumber, sourceExitRoad, currentCity, occupiedRoadCells);
+        }
+
+        public bool TryCommitAutobahn(
+            Context context,
+            int cityNumber,
+            List<Vector2Int> autobahnPath,
+            Vector2Int travelDirection,
+            CityLayoutData currentCity,
+            HashSet<Vector2Int> occupiedRoadCells,
+            out List<Vector2Int> extendedAutobahnPath,
+            out Vector2Int endConnectorCell)
+        {
+            return _state.TryCommitAutobahn(
+                context,
+                cityNumber,
+                autobahnPath,
+                travelDirection,
+                currentCity,
+                occupiedRoadCells,
+                out extendedAutobahnPath,
+                out endConnectorCell);
+        }
+
+        public bool TryCreateStandaloneConnector(
+            Context context,
+            Vector2Int endConnectorCell,
+            Vector2Int travelDirection,
+            int roadLength,
+            out Vector2Int secondCityAnchorCell)
+        {
+            return _state.TryCreateStandaloneConnector(
+                context,
+                endConnectorCell,
+                travelDirection,
+                roadLength,
+                out secondCityAnchorCell);
+        }
+
+        public readonly struct Context
+        {
+            public readonly RuntimeCityRoadBuildBridgeState RoadBuildBridgeSystem;
+            public readonly RuntimeCityDiagnosticsSystemHelper Diagnostics;
+
+            public Context(
+                RuntimeCityRoadBuildBridgeState roadBuildBridgeSystem,
+                RuntimeCityDiagnosticsSystemHelper diagnostics)
             {
-                Vector2Int cell = stroke[cellIndex];
-                city.RoadCells.Add(cell);
-                occupiedRoadCells.Add(cell);
+                RoadBuildBridgeSystem = roadBuildBridgeSystem;
+                Diagnostics = diagnostics;
             }
         }
     }
 
-    public void PopulateCityRoadCells(CityLayoutData city)
+    internal sealed class RuntimeCityRoadCommitState
     {
-        city.RoadCells.Clear();
-        for (int strokeIndex = 0; strokeIndex < city.RoadStrokes.Count; strokeIndex++)
+        public void CommitCityRoadNetwork(RuntimeCityRoadCommitCompositionSystemHelper.Context context, CityLayoutData city, HashSet<Vector2Int> occupiedRoadCells)
         {
-            List<Vector2Int> stroke = city.RoadStrokes[strokeIndex];
-            for (int cellIndex = 0; cellIndex < stroke.Count; cellIndex++)
-                city.RoadCells.Add(stroke[cellIndex]);
+            PopulateCityRoadCells(city);
+            for (int strokeIndex = 0; strokeIndex < city.RoadStrokes.Count; strokeIndex++)
+            {
+                List<Vector2Int> stroke = city.RoadStrokes[strokeIndex];
+                context.RoadBuildBridgeSystem.CreateRoadStrokeFromRoadCells(stroke);
+                for (int cellIndex = 0; cellIndex < stroke.Count; cellIndex++)
+                {
+                    Vector2Int cell = stroke[cellIndex];
+                    city.RoadCells.Add(cell);
+                    occupiedRoadCells.Add(cell);
+                }
+            }
         }
+
+        public void PopulateCityRoadCells(CityLayoutData city)
+        {
+            city.RoadCells.Clear();
+            for (int strokeIndex = 0; strokeIndex < city.RoadStrokes.Count; strokeIndex++)
+            {
+                List<Vector2Int> stroke = city.RoadStrokes[strokeIndex];
+                for (int cellIndex = 0; cellIndex < stroke.Count; cellIndex++)
+                    city.RoadCells.Add(stroke[cellIndex]);
+            }
+        }
+
+        public bool TryCommitSourceExitRoad(
+            RuntimeCityRoadCommitCompositionSystemHelper.Context context,
+            int cityNumber,
+            List<Vector2Int> sourceExitRoad,
+            CityLayoutData currentCity,
+            HashSet<Vector2Int> occupiedRoadCells)
+        {
+            if (!context.RoadBuildBridgeSystem.CreateRoadStrokeFromRoadCells(sourceExitRoad))
+            {
+                context.Diagnostics?.LogSourceExitRoadFailed(cityNumber, sourceExitRoad.Count);
+                return false;
+            }
+
+            for (int exitIndex = 0; exitIndex < sourceExitRoad.Count; exitIndex++)
+            {
+                Vector2Int cell = sourceExitRoad[exitIndex];
+                occupiedRoadCells.Add(cell);
+                currentCity.RoadCells.Add(cell);
+            }
+
+            return true;
+        }
+
+        public bool TryCommitAutobahn(
+            RuntimeCityRoadCommitCompositionSystemHelper.Context context,
+            int cityNumber,
+            List<Vector2Int> autobahnPath,
+            Vector2Int travelDirection,
+            CityLayoutData currentCity,
+            HashSet<Vector2Int> occupiedRoadCells,
+            out List<Vector2Int> extendedAutobahnPath,
+            out Vector2Int endConnectorCell)
+        {
+            extendedAutobahnPath = new List<Vector2Int>(autobahnPath);
+            extendedAutobahnPath.Add(autobahnPath[autobahnPath.Count - 1] + travelDirection);
+
+            if (!context.RoadBuildBridgeSystem.CreateAutobahnStrokeFromRoadCells(extendedAutobahnPath, true, true))
+            {
+                context.Diagnostics?.LogAutobahnFailed(cityNumber, extendedAutobahnPath.Count, travelDirection);
+                endConnectorCell = default;
+                return false;
+            }
+
+            for (int pathIndex = 0; pathIndex < extendedAutobahnPath.Count; pathIndex++)
+            {
+                Vector2Int cell = extendedAutobahnPath[pathIndex];
+                occupiedRoadCells.Add(cell);
+                currentCity.RoadCells.Add(cell);
+            }
+
+            endConnectorCell = extendedAutobahnPath[extendedAutobahnPath.Count - 1];
+            return true;
+        }
+
+        public bool TryCreateStandaloneConnector(
+            RuntimeCityRoadCommitCompositionSystemHelper.Context context,
+            Vector2Int endConnectorCell,
+            Vector2Int travelDirection,
+            int roadLength,
+            out Vector2Int secondCityAnchorCell)
+        {
+            secondCityAnchorCell = default;
+            if (!context.RoadBuildBridgeSystem.CreateStandaloneStraightRoadChainFromConnector(
+                    endConnectorCell,
+                    travelDirection,
+                    roadLength))
+            {
+                return false;
+            }
+
+            return context.RoadBuildBridgeSystem.TryGetStandaloneStraightChainEndRoadCell(travelDirection, out secondCityAnchorCell);
+        }
+
     }
-
-    public bool TryCommitSourceExitRoad(
-        RuntimeCityRoadCommitCompositionSystemHelper.Context context,
-        int cityNumber,
-        List<Vector2Int> sourceExitRoad,
-        CityLayoutData currentCity,
-        HashSet<Vector2Int> occupiedRoadCells)
-    {
-        if (!context.RoadBuildBridgeSystem.CreateRoadStrokeFromRoadCells(sourceExitRoad))
-        {
-            context.Diagnostics?.LogSourceExitRoadFailed(cityNumber, sourceExitRoad.Count);
-            return false;
-        }
-
-        for (int exitIndex = 0; exitIndex < sourceExitRoad.Count; exitIndex++)
-        {
-            Vector2Int cell = sourceExitRoad[exitIndex];
-            occupiedRoadCells.Add(cell);
-            currentCity.RoadCells.Add(cell);
-        }
-
-        return true;
-    }
-
-    public bool TryCommitAutobahn(
-        RuntimeCityRoadCommitCompositionSystemHelper.Context context,
-        int cityNumber,
-        List<Vector2Int> autobahnPath,
-        Vector2Int travelDirection,
-        CityLayoutData currentCity,
-        HashSet<Vector2Int> occupiedRoadCells,
-        out List<Vector2Int> extendedAutobahnPath,
-        out Vector2Int endConnectorCell)
-    {
-        extendedAutobahnPath = new List<Vector2Int>(autobahnPath);
-        extendedAutobahnPath.Add(autobahnPath[autobahnPath.Count - 1] + travelDirection);
-
-        if (!context.RoadBuildBridgeSystem.CreateAutobahnStrokeFromRoadCells(extendedAutobahnPath, true, true))
-        {
-            context.Diagnostics?.LogAutobahnFailed(cityNumber, extendedAutobahnPath.Count, travelDirection);
-            endConnectorCell = default;
-            return false;
-        }
-
-        for (int pathIndex = 0; pathIndex < extendedAutobahnPath.Count; pathIndex++)
-        {
-            Vector2Int cell = extendedAutobahnPath[pathIndex];
-            occupiedRoadCells.Add(cell);
-            currentCity.RoadCells.Add(cell);
-        }
-
-        endConnectorCell = extendedAutobahnPath[extendedAutobahnPath.Count - 1];
-        return true;
-    }
-
-    public bool TryCreateStandaloneConnector(
-        RuntimeCityRoadCommitCompositionSystemHelper.Context context,
-        Vector2Int endConnectorCell,
-        Vector2Int travelDirection,
-        int roadLength,
-        out Vector2Int secondCityAnchorCell)
-    {
-        secondCityAnchorCell = default;
-        if (!context.RoadBuildBridgeSystem.CreateStandaloneStraightRoadChainFromConnector(
-                endConnectorCell,
-                travelDirection,
-                roadLength))
-        {
-            return false;
-        }
-
-        return context.RoadBuildBridgeSystem.TryGetStandaloneStraightChainEndRoadCell(travelDirection, out secondCityAnchorCell);
-    }
-
 }

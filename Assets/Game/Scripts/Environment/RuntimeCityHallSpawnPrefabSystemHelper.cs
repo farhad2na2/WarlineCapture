@@ -1,90 +1,94 @@
 using System.Collections.Generic;
 using UnityEngine;
-using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
-using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 
-internal sealed class RuntimeCityHallSpawnPrefabSystemHelper
+namespace Game.Runtime
 {
-    private readonly RuntimeCityHallSpawnState _state = new();
+    using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
+    using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 
-    public RuntimeCityHallSpawnState State => _state;
-
-    public void EnsureCityHall(
-        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
-        RuntimeCityBuildingPlacementState placementSystem,
-        RuntimeCityLandmarkOffsetState offsetSystem,
-        CityLayoutData city,
-        int roadCellSizeInGridCells,
-        ref Unity.Mathematics.Random rng)
+    internal sealed class RuntimeCityHallSpawnPrefabSystemHelper
     {
-        _state.EnsureCityHall(context, placementSystem, offsetSystem, city, roadCellSizeInGridCells, ref rng);
-    }
-}
+        private readonly RuntimeCityHallSpawnState _state = new();
 
-internal sealed class RuntimeCityHallSpawnState
-{
-    public void EnsureCityHall(
-        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
-        RuntimeCityBuildingPlacementState placementSystem,
-        RuntimeCityLandmarkOffsetState offsetSystem,
-        CityLayoutData city,
-        int roadCellSizeInGridCells,
-        ref Unity.Mathematics.Random rng)
-    {
-        if (city.HallPlaced)
-            return;
+        public RuntimeCityHallSpawnState State => _state;
 
-        city.HallPlaced = TrySpawnHall(context, placementSystem, offsetSystem, city.CenterRoadCell, roadCellSizeInGridCells, ref rng, city.ReservedFootprints);
-        if (!city.HallPlaced)
-            context.DiagnosticSystem?.LogHallPlacementFailed(city.CenterRoadCell);
-    }
-
-    private static bool TrySpawnHall(
-        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
-        RuntimeCityBuildingPlacementState placementSystem,
-        RuntimeCityLandmarkOffsetState offsetSystem,
-        Vector2Int centerRoadCell,
-        int roadCellSizeInGridCells,
-        ref Unity.Mathematics.Random rng,
-        List<ReservedFootprint> reservedFootprints)
-    {
-        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
-        if (config.HallPrefabs == null || config.HallPrefabs.Count == 0)
-            return false;
-
-        var hallCandidates = new List<GameObject>(config.HallPrefabs);
-        context.PrefabSelectionSystem.Shuffle(hallCandidates, ref rng);
-
-        Vector2Int[] offsets = offsetSystem.HallOffsets;
-
-        for (int prefabIndex = 0; prefabIndex < hallCandidates.Count; prefabIndex++)
+        public void EnsureCityHall(
+            RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
+            RuntimeCityBuildingPlacementState placementSystem,
+            RuntimeCityLandmarkOffsetState offsetSystem,
+            CityLayoutData city,
+            int roadCellSizeInGridCells,
+            ref Unity.Mathematics.Random rng)
         {
-            GameObject hallPrefab = hallCandidates[prefabIndex];
-            if (hallPrefab == null)
-                continue;
+            _state.EnsureCityHall(context, placementSystem, offsetSystem, city, roadCellSizeInGridCells, ref rng);
+        }
+    }
 
-            Vector2Int footprint = placementSystem.GetFootprint(context, hallPrefab);
-            for (int offsetIndex = 0; offsetIndex < offsets.Length; offsetIndex++)
-            {
-                Vector2Int hallOrigin = context.BuildingPlotSystem.GetCenteredOriginForPlot(centerRoadCell + offsets[offsetIndex], footprint, roadCellSizeInGridCells);
-                if (placementSystem.TrySpawnAndReserve(
-                    context,
-                    new RuntimeCityBuildingPlacementPrefabSystemHelper.Request(
-                        hallPrefab,
-                        hallOrigin,
-                        footprint,
-                        hallPrefab.name,
-                        "Old town civic center.",
-                        config.DefaultBuildingMaxHealth,
-                        reservedFootprints,
-                        config.LandmarkClearanceCells),
-                    out _))
-                {
-                    return true;
-                }
-            }
+    internal sealed class RuntimeCityHallSpawnState
+    {
+        public void EnsureCityHall(
+            RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
+            RuntimeCityBuildingPlacementState placementSystem,
+            RuntimeCityLandmarkOffsetState offsetSystem,
+            CityLayoutData city,
+            int roadCellSizeInGridCells,
+            ref Unity.Mathematics.Random rng)
+        {
+            if (city.HallPlaced)
+                return;
+
+            city.HallPlaced = TrySpawnHall(context, placementSystem, offsetSystem, city.CenterRoadCell, roadCellSizeInGridCells, ref rng, city.ReservedFootprints);
+            if (!city.HallPlaced)
+                context.DiagnosticSystem?.LogHallPlacementFailed(city.CenterRoadCell);
         }
 
-        return false;
+        private static bool TrySpawnHall(
+            RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
+            RuntimeCityBuildingPlacementState placementSystem,
+            RuntimeCityLandmarkOffsetState offsetSystem,
+            Vector2Int centerRoadCell,
+            int roadCellSizeInGridCells,
+            ref Unity.Mathematics.Random rng,
+            List<ReservedFootprint> reservedFootprints)
+        {
+            RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
+            if (config.HallPrefabs == null || config.HallPrefabs.Count == 0)
+                return false;
+
+            var hallCandidates = new List<GameObject>(config.HallPrefabs);
+            context.PrefabSelectionSystem.Shuffle(hallCandidates, ref rng);
+
+            Vector2Int[] offsets = offsetSystem.HallOffsets;
+
+            for (int prefabIndex = 0; prefabIndex < hallCandidates.Count; prefabIndex++)
+            {
+                GameObject hallPrefab = hallCandidates[prefabIndex];
+                if (hallPrefab == null)
+                    continue;
+
+                Vector2Int footprint = placementSystem.GetFootprint(context, hallPrefab);
+                for (int offsetIndex = 0; offsetIndex < offsets.Length; offsetIndex++)
+                {
+                    Vector2Int hallOrigin = context.BuildingPlotSystem.GetCenteredOriginForPlot(centerRoadCell + offsets[offsetIndex], footprint, roadCellSizeInGridCells);
+                    if (placementSystem.TrySpawnAndReserve(
+                        context,
+                        new RuntimeCityBuildingPlacementPrefabSystemHelper.Request(
+                            hallPrefab,
+                            hallOrigin,
+                            footprint,
+                            hallPrefab.name,
+                            "Old town civic center.",
+                            config.DefaultBuildingMaxHealth,
+                            reservedFootprints,
+                            config.LandmarkClearanceCells),
+                        out _))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
     }
 }

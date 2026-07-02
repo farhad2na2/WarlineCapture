@@ -6,6 +6,10 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Composition;
 
 public sealed class InitialFactionBaseValidationTests
 {

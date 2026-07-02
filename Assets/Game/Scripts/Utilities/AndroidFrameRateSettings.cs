@@ -1,17 +1,20 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public static class AndroidFrameRateSettings
+namespace Game.Runtime
 {
-    private const int TargetAndroidFrameRate = 60;
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void Apply()
+    public static class AndroidFrameRateSettings
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        QualitySettings.vSyncCount = 0;
-        OnDemandRendering.renderFrameInterval = 1;
-        Application.targetFrameRate = TargetAndroidFrameRate;
-#endif
+        private const int TargetAndroidFrameRate = 60;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void Apply()
+        {
+    #if UNITY_ANDROID && !UNITY_EDITOR
+            QualitySettings.vSyncCount = 0;
+            OnDemandRendering.renderFrameInterval = 1;
+            Application.targetFrameRate = TargetAndroidFrameRate;
+    #endif
+        }
     }
 }

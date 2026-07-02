@@ -1,88 +1,92 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
+using Game.Components;
 
-public readonly struct UnitRenderBudgetReadiness
+namespace Game.Rendering
 {
-    public struct Lookups
+    public readonly struct UnitRenderBudgetReadiness
     {
-        public EntityStorageInfoLookup EntityStorageInfoLookup;
-        public ComponentLookup<UnitRenderVisualReadyTag> VisualReadyLookup;
-
-        public void Update(ref SystemState state)
+        public struct Lookups
         {
-            EntityStorageInfoLookup.Update(ref state);
-            VisualReadyLookup.Update(ref state);
-        }
-    }
+            public EntityStorageInfoLookup EntityStorageInfoLookup;
+            public ComponentLookup<UnitRenderVisualReadyTag> VisualReadyLookup;
 
-    public bool IsVisualReadyForExclusiveDisplay(
-        EntityCommandBuffer ecb,
-        NativeHashSet<Entity> readyTaggedThisFrame,
-        Entity root,
-        BufferLookup<Child> childLookup,
-        UnitRenderBudgetAnimationReadiness animationReadinessSystem,
-        UnitRenderBudgetRenderableState renderableQuerySystem,
-        Lookups lookups,
-        UnitRenderBudgetAnimationReadiness.Lookups animationReadinessLookups,
-        UnitRenderBudgetRenderableState.Lookups renderableQueryLookups)
-    {
-        if (root == Entity.Null || !lookups.EntityStorageInfoLookup.Exists(root))
-            return false;
-        if (lookups.VisualReadyLookup.HasComponent(root) || readyTaggedThisFrame.Contains(root))
-            return true;
-
-        bool ready = animationReadinessSystem.IsAnimatedRenderReady(
-            root,
-            childLookup,
-            renderableQuerySystem,
-            renderableQueryLookups,
-            animationReadinessLookups);
-        if (ready)
-        {
-            readyTaggedThisFrame.Add(root);
-            ecb.AddComponent<UnitRenderVisualReadyTag>(root);
+            public void Update(ref SystemState state)
+            {
+                EntityStorageInfoLookup.Update(ref state);
+                VisualReadyLookup.Update(ref state);
+            }
         }
 
-        return ready;
-    }
-
-    public bool IsVisualReadyForExclusiveDisplay(
-        EntityManager em,
-        EntityCommandBuffer ecb,
-        NativeHashSet<Entity> readyTaggedThisFrame,
-        Entity root,
-        BufferLookup<Child> childLookup,
-        UnitRenderBudgetAnimationReadiness animationReadinessSystem,
-        UnitRenderBudgetRenderableState renderableQuerySystem)
-    {
-        if (root == Entity.Null || !em.Exists(root))
-            return false;
-        if (em.HasComponent<UnitRenderVisualReadyTag>(root) || readyTaggedThisFrame.Contains(root))
-            return true;
-
-        bool ready = animationReadinessSystem.IsAnimatedRenderReady(em, root, childLookup, renderableQuerySystem);
-        if (ready)
+        public bool IsVisualReadyForExclusiveDisplay(
+            EntityCommandBuffer ecb,
+            NativeHashSet<Entity> readyTaggedThisFrame,
+            Entity root,
+            BufferLookup<Child> childLookup,
+            UnitRenderBudgetAnimationReadiness animationReadinessSystem,
+            UnitRenderBudgetRenderableState renderableQuerySystem,
+            Lookups lookups,
+            UnitRenderBudgetAnimationReadiness.Lookups animationReadinessLookups,
+            UnitRenderBudgetRenderableState.Lookups renderableQueryLookups)
         {
-            readyTaggedThisFrame.Add(root);
-            ecb.AddComponent<UnitRenderVisualReadyTag>(root);
+            if (root == Entity.Null || !lookups.EntityStorageInfoLookup.Exists(root))
+                return false;
+            if (lookups.VisualReadyLookup.HasComponent(root) || readyTaggedThisFrame.Contains(root))
+                return true;
+
+            bool ready = animationReadinessSystem.IsAnimatedRenderReady(
+                root,
+                childLookup,
+                renderableQuerySystem,
+                renderableQueryLookups,
+                animationReadinessLookups);
+            if (ready)
+            {
+                readyTaggedThisFrame.Add(root);
+                ecb.AddComponent<UnitRenderVisualReadyTag>(root);
+            }
+
+            return ready;
         }
 
-        return ready;
-    }
+        public bool IsVisualReadyForExclusiveDisplay(
+            EntityManager em,
+            EntityCommandBuffer ecb,
+            NativeHashSet<Entity> readyTaggedThisFrame,
+            Entity root,
+            BufferLookup<Child> childLookup,
+            UnitRenderBudgetAnimationReadiness animationReadinessSystem,
+            UnitRenderBudgetRenderableState renderableQuerySystem)
+        {
+            if (root == Entity.Null || !em.Exists(root))
+                return false;
+            if (em.HasComponent<UnitRenderVisualReadyTag>(root) || readyTaggedThisFrame.Contains(root))
+                return true;
 
-    public bool IsVisualReadyForExclusiveDisplay(
-        EntityManager em,
-        Entity root,
-        BufferLookup<Child> childLookup,
-        UnitRenderBudgetAnimationReadiness animationReadinessSystem,
-        UnitRenderBudgetRenderableState renderableQuerySystem)
-    {
-        if (root == Entity.Null || !em.Exists(root))
-            return false;
-        if (em.HasComponent<UnitRenderVisualReadyTag>(root))
-            return true;
+            bool ready = animationReadinessSystem.IsAnimatedRenderReady(em, root, childLookup, renderableQuerySystem);
+            if (ready)
+            {
+                readyTaggedThisFrame.Add(root);
+                ecb.AddComponent<UnitRenderVisualReadyTag>(root);
+            }
 
-        return animationReadinessSystem.IsAnimatedRenderReady(em, root, childLookup, renderableQuerySystem);
+            return ready;
+        }
+
+        public bool IsVisualReadyForExclusiveDisplay(
+            EntityManager em,
+            Entity root,
+            BufferLookup<Child> childLookup,
+            UnitRenderBudgetAnimationReadiness animationReadinessSystem,
+            UnitRenderBudgetRenderableState renderableQuerySystem)
+        {
+            if (root == Entity.Null || !em.Exists(root))
+                return false;
+            if (em.HasComponent<UnitRenderVisualReadyTag>(root))
+                return true;
+
+            return animationReadinessSystem.IsAnimatedRenderReady(em, root, childLookup, renderableQuerySystem);
+        }
     }
 }

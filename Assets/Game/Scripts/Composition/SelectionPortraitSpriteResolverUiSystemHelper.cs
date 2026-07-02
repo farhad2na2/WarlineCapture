@@ -1,40 +1,45 @@
 using UnityEngine;
+using Game.Authoring;
+using Game.Runtime;
 
-internal static class SelectionPortraitSpriteResolverUiSystemHelper
+namespace Game.Composition
 {
-    public static Sprite ResolveSelectionPortraitSprite(GameObject prefab)
+    internal static class SelectionPortraitSpriteResolverUiSystemHelper
     {
-        if (prefab == null)
+        public static Sprite ResolveSelectionPortraitSprite(GameObject prefab)
+        {
+            if (prefab == null)
+                return null;
+
+            if (prefab.TryGetComponent(out UnitGridAuthoring unitAuthoring))
+                return unitAuthoring.PortraitActionSprite != null
+                    ? unitAuthoring.PortraitActionSprite
+                    : unitAuthoring.PortraitCardSprite;
+
+            if (prefab.TryGetComponent(out BuildingDefinitionAuthoring buildingAuthoring))
+                return buildingAuthoring.ConfiguredPortraitActionSprite != null
+                    ? buildingAuthoring.ConfiguredPortraitActionSprite
+                    : buildingAuthoring.ConfiguredPortraitCardSprite;
+
             return null;
+        }
 
-        if (prefab.TryGetComponent(out UnitGridAuthoring unitAuthoring))
-            return unitAuthoring.PortraitActionSprite != null
-                ? unitAuthoring.PortraitActionSprite
-                : unitAuthoring.PortraitCardSprite;
+        public static Sprite ResolveSelectionCardPortraitSprite(GameObject prefab)
+        {
+            if (prefab == null)
+                return null;
 
-        if (prefab.TryGetComponent(out BuildingDefinitionAuthoring buildingAuthoring))
-            return buildingAuthoring.ConfiguredPortraitActionSprite != null
-                ? buildingAuthoring.ConfiguredPortraitActionSprite
-                : buildingAuthoring.ConfiguredPortraitCardSprite;
+            if (prefab.TryGetComponent(out UnitGridAuthoring unitAuthoring))
+                return unitAuthoring.PortraitCardSprite != null
+                    ? unitAuthoring.PortraitCardSprite
+                    : unitAuthoring.PortraitSprite;
 
-        return null;
-    }
+            if (prefab.TryGetComponent(out BuildingDefinitionAuthoring buildingAuthoring))
+                return buildingAuthoring.ConfiguredPortraitCardSprite != null
+                    ? buildingAuthoring.ConfiguredPortraitCardSprite
+                    : buildingAuthoring.ConfiguredPortraitSprite;
 
-    public static Sprite ResolveSelectionCardPortraitSprite(GameObject prefab)
-    {
-        if (prefab == null)
             return null;
-
-        if (prefab.TryGetComponent(out UnitGridAuthoring unitAuthoring))
-            return unitAuthoring.PortraitCardSprite != null
-                ? unitAuthoring.PortraitCardSprite
-                : unitAuthoring.PortraitSprite;
-
-        if (prefab.TryGetComponent(out BuildingDefinitionAuthoring buildingAuthoring))
-            return buildingAuthoring.ConfiguredPortraitCardSprite != null
-                ? buildingAuthoring.ConfiguredPortraitCardSprite
-                : buildingAuthoring.ConfiguredPortraitSprite;
-
-        return null;
+        }
     }
 }

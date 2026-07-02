@@ -1,4 +1,7 @@
-public interface IRuntimeGridBlockerCellLookup
+namespace Game.Components
 {
-    bool IsRuntimeBlockerCell(int x, int y, int gridWidth, int gridHeight);
+    public interface IRuntimeGridBlockerCellLookup
+    {
+        bool IsRuntimeBlockerCell(int x, int y, int gridWidth, int gridHeight);
+    }
 }

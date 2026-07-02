@@ -5,257 +5,261 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using static UnityEngine.Object;
+using Game.Components;
 
-internal sealed class RoadBuildEcsCompositionSystemHelper
+namespace Game.Runtime
 {
-    public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
-    public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
-    public delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
-
-    public readonly struct Context
+    internal sealed class RoadBuildEcsCompositionSystemHelper
     {
-        public readonly TryGetEntityManagerDelegate TryGetEntityManager;
-        public readonly TryGetGridDataDelegate TryGetGridData;
-        public readonly GetFootprintCenterDelegate GetFootprintCenter;
-        public readonly BuildingPlacementInteractionCompositionSystemHelper BuildingPlacementInteractionCompositionSystemHelper;
-        public readonly BuildingPlacementInteractionCompositionSystemHelper.Context BuildingPlacementInteractionContext;
-        public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
-        public readonly uint BuildingSpawnRandomState;
+        public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
+        public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
+        public delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
 
-        public Context(
-            TryGetEntityManagerDelegate tryGetEntityManager,
-            TryGetGridDataDelegate tryGetGridData,
-            GetFootprintCenterDelegate getFootprintCenter,
-            BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem,
-            BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
-            RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
-            uint buildingSpawnRandomState)
+        public readonly struct Context
         {
-            TryGetEntityManager = tryGetEntityManager;
-            TryGetGridData = tryGetGridData;
-            GetFootprintCenter = getFootprintCenter;
-            BuildingPlacementInteractionCompositionSystemHelper = buildingPlacementInteractionSystem;
-            BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
-            RuntimeBuildingEntityLinks = runtimeBuildingEntityLinks;
-            BuildingSpawnRandomState = buildingSpawnRandomState;
+            public readonly TryGetEntityManagerDelegate TryGetEntityManager;
+            public readonly TryGetGridDataDelegate TryGetGridData;
+            public readonly GetFootprintCenterDelegate GetFootprintCenter;
+            public readonly BuildingPlacementInteractionCompositionSystemHelper BuildingPlacementInteractionCompositionSystemHelper;
+            public readonly BuildingPlacementInteractionCompositionSystemHelper.Context BuildingPlacementInteractionContext;
+            public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
+            public readonly uint BuildingSpawnRandomState;
+
+            public Context(
+                TryGetEntityManagerDelegate tryGetEntityManager,
+                TryGetGridDataDelegate tryGetGridData,
+                GetFootprintCenterDelegate getFootprintCenter,
+                BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem,
+                BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
+                RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
+                uint buildingSpawnRandomState)
+            {
+                TryGetEntityManager = tryGetEntityManager;
+                TryGetGridData = tryGetGridData;
+                GetFootprintCenter = getFootprintCenter;
+                BuildingPlacementInteractionCompositionSystemHelper = buildingPlacementInteractionSystem;
+                BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
+                RuntimeBuildingEntityLinks = runtimeBuildingEntityLinks;
+                BuildingSpawnRandomState = buildingSpawnRandomState;
+            }
         }
-    }
 
-    public readonly struct SpawnResult
-    {
-        public readonly bool Spawned;
-        public readonly uint BuildingSpawnRandomState;
-
-        public SpawnResult(bool spawned, uint buildingSpawnRandomState)
+        public readonly struct SpawnResult
         {
-            Spawned = spawned;
-            BuildingSpawnRandomState = buildingSpawnRandomState;
+            public readonly bool Spawned;
+            public readonly uint BuildingSpawnRandomState;
+
+            public SpawnResult(bool spawned, uint buildingSpawnRandomState)
+            {
+                Spawned = spawned;
+                BuildingSpawnRandomState = buildingSpawnRandomState;
+            }
         }
-    }
 
-    public bool TryGetEntityManager(out EntityManager entityManager)
-    {
-        entityManager = default;
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        entityManager = world.EntityManager;
-        return true;
-    }
-
-    public void DisposeRuntimeBuildings(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
-    {
-        if (runtimeBuildings == null)
-            return;
-
-        foreach (var building in runtimeBuildings.Values)
+        public bool TryGetEntityManager(out EntityManager entityManager)
         {
-            if (building.Instance != null)
-                Destroy(building.Instance);
+            entityManager = default;
+            Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return false;
 
-            DestroyEntityIfExists(building.CombatEntity);
-            DestroyEntityIfExists(building.BlockerEntity);
+            entityManager = world.EntityManager;
+            return true;
         }
-    }
 
-    private void DestroyEntityIfExists(Entity entity)
-    {
-        if (entity == Entity.Null || !TryGetEntityManager(out EntityManager em) || !em.Exists(entity))
-            return;
-
-        em.DestroyEntity(entity);
-    }
-
-    public Entity CreateBlockerEntity(Context context, Vector2Int originCell, Vector2Int footprintCells)
-    {
-        if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
-            return Entity.Null;
-
-        Entity entity = em.CreateEntity();
-        em.AddComponentData(entity, new UnitGrid { Cell = new int2(originCell.x, originCell.y) });
-        em.AddComponentData(entity, new GridBlockerSize
+        public void DisposeRuntimeBuildings(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
         {
-            Size = new int2(Mathf.Max(1, footprintCells.x), Mathf.Max(1, footprintCells.y))
-        });
-        em.AddComponent<StaticGridBlocker>(entity);
-        return entity;
-    }
+            if (runtimeBuildings == null)
+                return;
 
-    public Entity CreateBuildingCombatEntity(Context context, Vector2Int originCell, BuildingDefinition definition)
-    {
-        if (definition == null)
-            return Entity.Null;
-        if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
-            return Entity.Null;
-        if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out _, out _))
-            return Entity.Null;
-        if (context.GetFootprintCenter == null)
-            return Entity.Null;
+            foreach (var building in runtimeBuildings.Values)
+            {
+                if (building.Instance != null)
+                    Destroy(building.Instance);
 
-        Entity entity = em.CreateEntity();
-        float3 center = context.GetFootprintCenter(originCell, definition.FootprintCells, grid);
+                DestroyEntityIfExists(building.CombatEntity);
+                DestroyEntityIfExists(building.BlockerEntity);
+            }
+        }
 
-        em.AddComponentData(entity, new LocalTransform
+        private void DestroyEntityIfExists(Entity entity)
         {
-            Position = center,
-            Rotation = quaternion.identity,
-            Scale = 1f
-        });
-        em.AddComponentData(entity, new LocalToWorld());
-        em.AddComponentData(entity, new UnitGrid
+            if (entity == Entity.Null || !TryGetEntityManager(out EntityManager em) || !em.Exists(entity))
+                return;
+
+            em.DestroyEntity(entity);
+        }
+
+        public Entity CreateBlockerEntity(Context context, Vector2Int originCell, Vector2Int footprintCells)
         {
-            Cell = new int2(originCell.x, originCell.y)
-        });
-        em.AddComponentData(entity, new UnitGridInitialized());
-        em.AddComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
-        em.AddComponentData(entity, new UnitHealth { Current = 500, Max = 500 });
-        em.AddComponentData(entity, new UnitRespawnPrefab { Prefab = Entity.Null });
-        em.AddComponentData(entity, new UnitPrevWorldPos { Value = center });
-        em.AddComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
-        return entity;
-    }
+            if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
+                return Entity.Null;
 
-    public void AttachRuntimeLink(Context context, RuntimeBuildingEntity building)
-    {
-        if (context.BuildingPlacementInteractionCompositionSystemHelper == null || building?.Instance == null)
-            return;
+            Entity entity = em.CreateEntity();
+            em.AddComponentData(entity, new UnitGrid { Cell = new int2(originCell.x, originCell.y) });
+            em.AddComponentData(entity, new GridBlockerSize
+            {
+                Size = new int2(Mathf.Max(1, footprintCells.x), Mathf.Max(1, footprintCells.y))
+            });
+            em.AddComponent<StaticGridBlocker>(entity);
+            return entity;
+        }
 
-        RuntimeBuildingEntityLink link = building.Instance.GetComponent<RuntimeBuildingEntityLink>();
-        if (link == null)
-            link = building.Instance.AddComponent<RuntimeBuildingEntityLink>();
-
-        link.Configure(
-            context.BuildingPlacementInteractionCompositionSystemHelper,
-            context.BuildingPlacementInteractionContext,
-            context.RuntimeBuildingEntityLinks,
-            building.Id,
-            building.CombatEntity,
-            building.BlockerEntity);
-    }
-
-    public SpawnResult TrySpawnPlayerUnitNearBuilding(Context context, RuntimeBuildingEntity building)
-    {
-        uint randomState = context.BuildingSpawnRandomState;
-        if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
-            return new SpawnResult(false, randomState);
-        if (context.TryGetGridData == null || !context.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerComponent blockerData))
-            return new SpawnResult(false, randomState);
-        if (!TryGetPlayerUnitPrefabEntity(em, out Entity prefabEntity))
-            return new SpawnResult(false, randomState);
-
-        var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
-        var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp);
-        try
+        public Entity CreateBuildingCombatEntity(Context context, Vector2Int originCell, BuildingDefinition definition)
         {
-            randomState = math.max(1u, randomState + 1u);
-            var rng = new Unity.Mathematics.Random(randomState);
-            Vector2Int size = building.Definition.FootprintCells;
-            int2 center = new(building.OriginCell.x + size.x / 2, building.OriginCell.y + size.y / 2);
-            int radius = Mathf.Max(size.x, size.y) + 4;
-            int2 cell = SpawnCellUtility.FindSpawnCellNear(ref rng, grid, walkable, blockerData.Blocked, occupied, ref reserved, center, radius);
+            if (definition == null)
+                return Entity.Null;
+            if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
+                return Entity.Null;
+            if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out _, out _))
+                return Entity.Null;
+            if (context.GetFootprintCenter == null)
+                return Entity.Null;
 
-            Entity instance = em.Instantiate(prefabEntity);
-            float3 pos = GridUtils.CellToWorldCenter(grid, cell);
-            em.SetComponentData(instance, new UnitGrid { Cell = cell });
-            em.SetComponentData(instance, LocalTransform.FromPosition(pos));
-            if (em.HasComponent<UnitPrevWorldPos>(instance))
-                em.SetComponentData(instance, new UnitPrevWorldPos { Value = pos });
-            if (em.HasComponent<UnitMoveVisualComponent>(instance))
-                em.SetComponentData(instance, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
-            if (em.HasComponent<Faction>(instance))
-                em.SetComponentData(instance, new Faction { Id = FactionIdentity.PlayerFactionId });
-            if (em.HasComponent<UnitRespawnPrefab>(instance))
-                em.SetComponentData(instance, new UnitRespawnPrefab { Prefab = prefabEntity });
-            if (em.HasComponent<UnitIdleWanderComponent>(instance))
+            Entity entity = em.CreateEntity();
+            float3 center = context.GetFootprintCenter(originCell, definition.FootprintCells, grid);
+
+            em.AddComponentData(entity, new LocalTransform
+            {
+                Position = center,
+                Rotation = quaternion.identity,
+                Scale = 1f
+            });
+            em.AddComponentData(entity, new LocalToWorld());
+            em.AddComponentData(entity, new UnitGrid
+            {
+                Cell = new int2(originCell.x, originCell.y)
+            });
+            em.AddComponentData(entity, new UnitGridInitialized());
+            em.AddComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
+            em.AddComponentData(entity, new UnitHealth { Current = 500, Max = 500 });
+            em.AddComponentData(entity, new UnitRespawnPrefab { Prefab = Entity.Null });
+            em.AddComponentData(entity, new UnitPrevWorldPos { Value = center });
+            em.AddComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
+            return entity;
+        }
+
+        public void AttachRuntimeLink(Context context, RuntimeBuildingEntity building)
+        {
+            if (context.BuildingPlacementInteractionCompositionSystemHelper == null || building?.Instance == null)
+                return;
+
+            RuntimeBuildingEntityLink link = building.Instance.GetComponent<RuntimeBuildingEntityLink>();
+            if (link == null)
+                link = building.Instance.AddComponent<RuntimeBuildingEntityLink>();
+
+            link.Configure(
+                context.BuildingPlacementInteractionCompositionSystemHelper,
+                context.BuildingPlacementInteractionContext,
+                context.RuntimeBuildingEntityLinks,
+                building.Id,
+                building.CombatEntity,
+                building.BlockerEntity);
+        }
+
+        public SpawnResult TrySpawnPlayerUnitNearBuilding(Context context, RuntimeBuildingEntity building)
+        {
+            uint randomState = context.BuildingSpawnRandomState;
+            if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
+                return new SpawnResult(false, randomState);
+            if (context.TryGetGridData == null || !context.TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerComponent blockerData))
+                return new SpawnResult(false, randomState);
+            if (!TryGetPlayerUnitPrefabEntity(em, out Entity prefabEntity))
+                return new SpawnResult(false, randomState);
+
+            var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
+            var occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
+            var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp);
+            try
             {
                 randomState = math.max(1u, randomState + 1u);
-                em.SetComponentData(instance, new UnitIdleWanderComponent
+                var rng = new Unity.Mathematics.Random(randomState);
+                Vector2Int size = building.Definition.FootprintCells;
+                int2 center = new(building.OriginCell.x + size.x / 2, building.OriginCell.y + size.y / 2);
+                int radius = Mathf.Max(size.x, size.y) + 4;
+                int2 cell = SpawnCellUtility.FindSpawnCellNear(ref rng, grid, walkable, blockerData.Blocked, occupied, ref reserved, center, radius);
+
+                Entity instance = em.Instantiate(prefabEntity);
+                float3 pos = GridUtils.CellToWorldCenter(grid, cell);
+                em.SetComponentData(instance, new UnitGrid { Cell = cell });
+                em.SetComponentData(instance, LocalTransform.FromPosition(pos));
+                if (em.HasComponent<UnitPrevWorldPos>(instance))
+                    em.SetComponentData(instance, new UnitPrevWorldPos { Value = pos });
+                if (em.HasComponent<UnitMoveVisualComponent>(instance))
+                    em.SetComponentData(instance, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
+                if (em.HasComponent<Faction>(instance))
+                    em.SetComponentData(instance, new Faction { Id = FactionIdentity.PlayerFactionId });
+                if (em.HasComponent<UnitRespawnPrefab>(instance))
+                    em.SetComponentData(instance, new UnitRespawnPrefab { Prefab = prefabEntity });
+                if (em.HasComponent<UnitIdleWanderComponent>(instance))
                 {
-                    RandomState = randomState,
-                    RetrySeconds = 0f,
-                    CurrentIdleDelaySeconds = 0f
-                });
+                    randomState = math.max(1u, randomState + 1u);
+                    em.SetComponentData(instance, new UnitIdleWanderComponent
+                    {
+                        RandomState = randomState,
+                        RetrySeconds = 0f,
+                        CurrentIdleDelaySeconds = 0f
+                    });
+                }
+                if (em.HasComponent<UnitPathFollow>(instance))
+                    em.RemoveComponent<UnitPathFollow>(instance);
+                if (em.HasComponent<UnitPathRange>(instance))
+                    em.RemoveComponent<UnitPathRange>(instance);
+                if (em.HasComponent<EngageTarget>(instance))
+                    em.RemoveComponent<EngageTarget>(instance);
+                if (em.HasComponent<UnitPathRequest>(instance))
+                    em.RemoveComponent<UnitPathRequest>(instance);
+                if (em.HasComponent<UnitTarget>(instance))
+                    em.RemoveComponent<UnitTarget>(instance);
+                if (em.HasComponent<AutoWanderMoveTag>(instance))
+                    em.RemoveComponent<AutoWanderMoveTag>(instance);
+
+                return new SpawnResult(true, randomState);
             }
-            if (em.HasComponent<UnitPathFollow>(instance))
-                em.RemoveComponent<UnitPathFollow>(instance);
-            if (em.HasComponent<UnitPathRange>(instance))
-                em.RemoveComponent<UnitPathRange>(instance);
-            if (em.HasComponent<EngageTarget>(instance))
-                em.RemoveComponent<EngageTarget>(instance);
-            if (em.HasComponent<UnitPathRequest>(instance))
-                em.RemoveComponent<UnitPathRequest>(instance);
-            if (em.HasComponent<UnitTarget>(instance))
-                em.RemoveComponent<UnitTarget>(instance);
-            if (em.HasComponent<AutoWanderMoveTag>(instance))
-                em.RemoveComponent<AutoWanderMoveTag>(instance);
-
-            return new SpawnResult(true, randomState);
-        }
-        finally
-        {
-            reserved.Dispose();
-        }
-    }
-
-    private static bool TryGetPlayerUnitPrefabEntity(EntityManager em, out Entity prefabEntity)
-    {
-        prefabEntity = Entity.Null;
-        using var query = em.CreateEntityQuery(new EntityQueryDesc
-        {
-            All = new[]
+            finally
             {
-                ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<UnitRespawnPrefab>(),
-            },
-            None = new[]
-            {
-                ComponentType.ReadOnly<StaticGridBlocker>(),
-            }
-        });
-        ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
-        ComponentTypeHandle<UnitRespawnPrefab> respawnPrefabType = em.GetComponentTypeHandle<UnitRespawnPrefab>(true);
-        using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
-        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-        {
-            ArchetypeChunk chunk = chunks[chunkIndex];
-            NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
-            NativeArray<UnitRespawnPrefab> respawnPrefabs = chunk.GetNativeArray(ref respawnPrefabType);
-            for (int i = 0; i < factions.Length; i++)
-            {
-                if (!FactionIdentity.IsPlayerControlled(factions[i].Id))
-                    continue;
-
-                Entity candidate = respawnPrefabs[i].Prefab;
-                if (candidate == Entity.Null)
-                    continue;
-
-                prefabEntity = candidate;
-                return true;
+                reserved.Dispose();
             }
         }
 
-        return false;
+        private static bool TryGetPlayerUnitPrefabEntity(EntityManager em, out Entity prefabEntity)
+        {
+            prefabEntity = Entity.Null;
+            using var query = em.CreateEntityQuery(new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<Faction>(),
+                    ComponentType.ReadOnly<UnitRespawnPrefab>(),
+                },
+                None = new[]
+                {
+                    ComponentType.ReadOnly<StaticGridBlocker>(),
+                }
+            });
+            ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
+            ComponentTypeHandle<UnitRespawnPrefab> respawnPrefabType = em.GetComponentTypeHandle<UnitRespawnPrefab>(true);
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                ArchetypeChunk chunk = chunks[chunkIndex];
+                NativeArray<Faction> factions = chunk.GetNativeArray(ref factionType);
+                NativeArray<UnitRespawnPrefab> respawnPrefabs = chunk.GetNativeArray(ref respawnPrefabType);
+                for (int i = 0; i < factions.Length; i++)
+                {
+                    if (!FactionIdentity.IsPlayerControlled(factions[i].Id))
+                        continue;
+
+                    Entity candidate = respawnPrefabs[i].Prefab;
+                    if (candidate == Entity.Null)
+                        continue;
+
+                    prefabEntity = candidate;
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

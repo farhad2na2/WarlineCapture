@@ -1,3 +1,6 @@
+using Game.Components;
+using Game.Rendering;
+using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using Unity.Core;

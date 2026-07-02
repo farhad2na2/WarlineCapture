@@ -7,6 +7,9 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
 
 public sealed class SelectionOrderMarkerPresentationSystemHelperTests
 {

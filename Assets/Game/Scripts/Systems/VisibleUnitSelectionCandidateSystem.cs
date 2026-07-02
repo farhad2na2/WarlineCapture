@@ -4,313 +4,317 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Transforms;
+using Game.Components;
 
-public struct VisibleUnitSelectionCandidateSnapshot : IComponentData
+namespace Game.Runtime
 {
-}
-
-public struct VisibleUnitSelectionCandidateElement : IBufferElementData
-{
-    public Entity Entity;
-    public Unity.Mathematics.float3 Position;
-    public byte IsVehicle;
-}
-
-[UpdateInGroup(typeof(SimulationSystemGroup))]
-public partial struct VisibleUnitSelectionCandidateSystem : ISystem
-{
-    private EntityQuery _visiblePlayerUnitQuery;
-    private EntityQuery _snapshotQuery;
-    private Entity _snapshotEntity;
-
-    public void OnCreate(ref SystemState state)
+    public struct VisibleUnitSelectionCandidateSnapshot : IComponentData
     {
-        _visiblePlayerUnitQuery = state.GetEntityQuery(VisibleUnitSelectionCandidateCollector.CreateQueryDesc());
-        _snapshotQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<VisibleUnitSelectionCandidateSnapshot>(),
-            ComponentType.ReadWrite<VisibleUnitSelectionCandidateElement>());
-        // RequireForUpdate intentionally omitted: this producer creates and clears its snapshot even when no units remain.
     }
 
-    public void OnDestroy(ref SystemState state)
+    public struct VisibleUnitSelectionCandidateElement : IBufferElementData
     {
-        if (_snapshotEntity != Entity.Null && state.EntityManager.Exists(_snapshotEntity))
+        public Entity Entity;
+        public Unity.Mathematics.float3 Position;
+        public byte IsVehicle;
+    }
+
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    public partial struct VisibleUnitSelectionCandidateSystem : ISystem
+    {
+        private EntityQuery _visiblePlayerUnitQuery;
+        private EntityQuery _snapshotQuery;
+        private Entity _snapshotEntity;
+
+        public void OnCreate(ref SystemState state)
         {
-            using EntityCommandBuffer ecb = new(Allocator.Temp);
-            ecb.DestroyEntity(_snapshotEntity);
-            ecb.Playback(state.EntityManager);
+            _visiblePlayerUnitQuery = state.GetEntityQuery(VisibleUnitSelectionCandidateCollector.CreateQueryDesc());
+            _snapshotQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<VisibleUnitSelectionCandidateSnapshot>(),
+                ComponentType.ReadWrite<VisibleUnitSelectionCandidateElement>());
+            // RequireForUpdate intentionally omitted: this producer creates and clears its snapshot even when no units remain.
         }
-    }
 
-    public void OnUpdate(ref SystemState state)
-    {
-        if (!TryResolveSnapshotEntity(ref state))
-            return;
-
-        DynamicBuffer<VisibleUnitSelectionCandidateElement> snapshot =
-            state.EntityManager.GetBuffer<VisibleUnitSelectionCandidateElement>(_snapshotEntity);
-        snapshot.Clear();
-
-        int candidateCapacity = _visiblePlayerUnitQuery.CalculateEntityCount();
-        using NativeList<VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate> candidates =
-            new(candidateCapacity, Allocator.TempJob);
-        VisibleUnitSelectionCandidateCollector.Collect(
-            state.EntityManager,
-            _visiblePlayerUnitQuery,
-            VisibleUnitSelectionCameraSystemHelper.Filter.All,
-            candidates);
-
-        for (int i = 0; i < candidates.Length; i++)
+        public void OnDestroy(ref SystemState state)
         {
-            VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate candidate = candidates[i];
-            snapshot.Add(new VisibleUnitSelectionCandidateElement
+            if (_snapshotEntity != Entity.Null && state.EntityManager.Exists(_snapshotEntity))
             {
-                Entity = candidate.Entity,
-                Position = candidate.Position,
-                IsVehicle = candidate.IsVehicle
-            });
-        }
-    }
-
-    private bool TryResolveSnapshotEntity(ref SystemState state)
-    {
-        if (_snapshotEntity != Entity.Null && state.EntityManager.Exists(_snapshotEntity))
-            return true;
-
-        if (!_snapshotQuery.IsEmptyIgnoreFilter)
-        {
-            _snapshotEntity = _snapshotQuery.GetSingletonEntity();
-            return true;
-        }
-
-        using (EntityCommandBuffer ecb = new(Allocator.Temp))
-        {
-            Entity snapshotEntity = ecb.CreateEntity();
-            ecb.AddComponent<VisibleUnitSelectionCandidateSnapshot>(snapshotEntity);
-            ecb.AddBuffer<VisibleUnitSelectionCandidateElement>(snapshotEntity);
-            ecb.Playback(state.EntityManager);
-        }
-
-        if (_snapshotQuery.IsEmptyIgnoreFilter)
-            return false;
-
-        _snapshotEntity = _snapshotQuery.GetSingletonEntity();
-        return true;
-    }
-}
-
-internal static class VisibleUnitSelectionCandidateCollector
-{
-    public static EntityQueryDesc CreateQueryDesc()
-    {
-        return new EntityQueryDesc
-        {
-            All = new[]
-            {
-                ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<LocalToWorld>(),
-                ComponentType.ReadOnly<UnitGrid>(),
-                ComponentType.ReadOnly<UnitMove>()
-            },
-            None = new[]
-            {
-                ComponentType.ReadOnly<Prefab>(),
-                ComponentType.ReadOnly<StaticGridBlocker>()
+                using EntityCommandBuffer ecb = new(Allocator.Temp);
+                ecb.DestroyEntity(_snapshotEntity);
+                ecb.Playback(state.EntityManager);
             }
-        };
-    }
+        }
 
-    public static void Collect(
-        EntityManager em,
-        EntityQuery query,
-        VisibleUnitSelectionCameraSystemHelper.Filter filter,
-        NativeList<VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate> candidates)
-    {
-        candidates.Clear();
-        em.CompleteDependencyBeforeRO<LocalToWorld>();
-        JobHandle collectHandle = new CollectVisibleUnitCandidatesJob
+        public void OnUpdate(ref SystemState state)
         {
-            Filter = (byte)filter,
-            EntityType = em.GetEntityTypeHandle(),
-            FactionType = em.GetComponentTypeHandle<Faction>(true),
-            LocalToWorldType = em.GetComponentTypeHandle<LocalToWorld>(true),
-            SourcePrefabKeyType = em.GetComponentTypeHandle<UnitSourcePrefabKey>(true),
-            FootprintType = em.GetComponentTypeHandle<UnitFootprint>(true),
-            MovementBehaviorType = em.GetComponentTypeHandle<UnitMovementBehavior>(true),
-            Candidates = candidates
-        }.Schedule(query, default);
-        collectHandle.Complete();
-    }
+            if (!TryResolveSnapshotEntity(ref state))
+                return;
 
-    public static void Collect(
-        ref SystemState state,
-        EntityQuery query,
-        NativeList<VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate> candidates)
-    {
-        candidates.Clear();
-        state.EntityManager.CompleteDependencyBeforeRO<LocalToWorld>();
-        JobHandle collectHandle = new CollectVisibleUnitCandidatesJob
-        {
-            Filter = (byte)VisibleUnitSelectionCameraSystemHelper.Filter.All,
-            EntityType = state.GetEntityTypeHandle(),
-            FactionType = state.GetComponentTypeHandle<Faction>(true),
-            LocalToWorldType = state.GetComponentTypeHandle<LocalToWorld>(true),
-            SourcePrefabKeyType = state.GetComponentTypeHandle<UnitSourcePrefabKey>(true),
-            FootprintType = state.GetComponentTypeHandle<UnitFootprint>(true),
-            MovementBehaviorType = state.GetComponentTypeHandle<UnitMovementBehavior>(true),
-            Candidates = candidates
-        }.Schedule(query, state.Dependency);
-        collectHandle.Complete();
-    }
+            DynamicBuffer<VisibleUnitSelectionCandidateElement> snapshot =
+                state.EntityManager.GetBuffer<VisibleUnitSelectionCandidateElement>(_snapshotEntity);
+            snapshot.Clear();
 
-    [BurstCompile]
-    private struct CollectVisibleUnitCandidatesJob : IJobChunk
-    {
-        public byte Filter;
-        [ReadOnly] public EntityTypeHandle EntityType;
-        [ReadOnly] public ComponentTypeHandle<Faction> FactionType;
-        [ReadOnly] public ComponentTypeHandle<LocalToWorld> LocalToWorldType;
-        [ReadOnly] public ComponentTypeHandle<UnitSourcePrefabKey> SourcePrefabKeyType;
-        [ReadOnly] public ComponentTypeHandle<UnitFootprint> FootprintType;
-        [ReadOnly] public ComponentTypeHandle<UnitMovementBehavior> MovementBehaviorType;
-        public NativeList<VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate> Candidates;
+            int candidateCapacity = _visiblePlayerUnitQuery.CalculateEntityCount();
+            using NativeList<VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate> candidates =
+                new(candidateCapacity, Allocator.TempJob);
+            VisibleUnitSelectionCandidateCollector.Collect(
+                state.EntityManager,
+                _visiblePlayerUnitQuery,
+                VisibleUnitSelectionCameraSystemHelper.Filter.All,
+                candidates);
 
-        public void Execute(
-            in ArchetypeChunk chunk,
-            int unfilteredChunkIndex,
-            bool useEnabledMask,
-            in v128 chunkEnabledMask)
-        {
-            NativeArray<Entity> entities = chunk.GetNativeArray(EntityType);
-            NativeArray<Faction> factions = chunk.GetNativeArray(ref FactionType);
-            NativeArray<LocalToWorld> transforms = chunk.GetNativeArray(ref LocalToWorldType);
-            bool hasSourcePrefabKey = chunk.Has(ref SourcePrefabKeyType);
-            bool hasFootprint = chunk.Has(ref FootprintType);
-            bool hasMovementBehavior = chunk.Has(ref MovementBehaviorType);
-            NativeArray<UnitSourcePrefabKey> sourcePrefabKeys = hasSourcePrefabKey
-                ? chunk.GetNativeArray(ref SourcePrefabKeyType)
-                : default;
-            NativeArray<UnitFootprint> footprints = hasFootprint
-                ? chunk.GetNativeArray(ref FootprintType)
-                : default;
-            NativeArray<UnitMovementBehavior> movementBehaviors = hasMovementBehavior
-                ? chunk.GetNativeArray(ref MovementBehaviorType)
-                : default;
-
-            for (int i = 0; i < entities.Length; i++)
+            for (int i = 0; i < candidates.Length; i++)
             {
-                if (factions[i].Id != FactionIdentity.PlayerFactionId)
-                    continue;
-
-                bool isVehicle = IsVehicleForVisibleSelection(
-                    i,
-                    hasSourcePrefabKey,
-                    sourcePrefabKeys,
-                    hasFootprint,
-                    footprints,
-                    hasMovementBehavior,
-                    movementBehaviors);
-                if (Filter == (byte)VisibleUnitSelectionCameraSystemHelper.Filter.Soldiers && isVehicle)
-                    continue;
-                if (Filter == (byte)VisibleUnitSelectionCameraSystemHelper.Filter.Vehicles && !isVehicle)
-                    continue;
-
-                Candidates.Add(new VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate
+                VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate candidate = candidates[i];
+                snapshot.Add(new VisibleUnitSelectionCandidateElement
                 {
-                    Entity = entities[i],
-                    Position = transforms[i].Position,
-                    IsVehicle = isVehicle ? (byte)1 : (byte)0
+                    Entity = candidate.Entity,
+                    Position = candidate.Position,
+                    IsVehicle = candidate.IsVehicle
                 });
             }
         }
 
-        private static bool IsVehicleForVisibleSelection(
-            int index,
-            bool hasSourcePrefabKey,
-            NativeArray<UnitSourcePrefabKey> sourcePrefabKeys,
-            bool hasFootprint,
-            NativeArray<UnitFootprint> footprints,
-            bool hasMovementBehavior,
-            NativeArray<UnitMovementBehavior> movementBehaviors)
+        private bool TryResolveSnapshotEntity(ref SystemState state)
         {
-            if (hasSourcePrefabKey)
+            if (_snapshotEntity != Entity.Null && state.EntityManager.Exists(_snapshotEntity))
+                return true;
+
+            if (!_snapshotQuery.IsEmptyIgnoreFilter)
             {
-                FixedString64Bytes sourceKey = sourcePrefabKeys[index].Value;
-                if (StartsWithUnitVehiclePrefix(sourceKey))
-                    return true;
-                if (StartsWithUnitCharacterPrefix(sourceKey))
-                    return false;
+                _snapshotEntity = _snapshotQuery.GetSingletonEntity();
+                return true;
             }
 
-            return hasFootprint &&
-                   hasMovementBehavior &&
-                   UnitVehicleMovementUtility.IsVehicle(footprints[index], movementBehaviors[index]);
+            using (EntityCommandBuffer ecb = new(Allocator.Temp))
+            {
+                Entity snapshotEntity = ecb.CreateEntity();
+                ecb.AddComponent<VisibleUnitSelectionCandidateSnapshot>(snapshotEntity);
+                ecb.AddBuffer<VisibleUnitSelectionCandidateElement>(snapshotEntity);
+                ecb.Playback(state.EntityManager);
+            }
+
+            if (_snapshotQuery.IsEmptyIgnoreFilter)
+                return false;
+
+            _snapshotEntity = _snapshotQuery.GetSingletonEntity();
+            return true;
+        }
+    }
+
+    internal static class VisibleUnitSelectionCandidateCollector
+    {
+        public static EntityQueryDesc CreateQueryDesc()
+        {
+            return new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<Faction>(),
+                    ComponentType.ReadOnly<LocalToWorld>(),
+                    ComponentType.ReadOnly<UnitGrid>(),
+                    ComponentType.ReadOnly<UnitMove>()
+                },
+                None = new[]
+                {
+                    ComponentType.ReadOnly<Prefab>(),
+                    ComponentType.ReadOnly<StaticGridBlocker>()
+                }
+            };
         }
 
-        private static bool StartsWithUnitVehiclePrefix(FixedString64Bytes value)
+        public static void Collect(
+            EntityManager em,
+            EntityQuery query,
+            VisibleUnitSelectionCameraSystemHelper.Filter filter,
+            NativeList<VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate> candidates)
         {
-            return HasNineBytePrefixIgnoreCase(
-                value,
-                (byte)'U',
-                (byte)'n',
-                (byte)'i',
-                (byte)'t',
-                (byte)'_',
-                (byte)'V',
-                (byte)'e',
-                (byte)'h',
-                (byte)'_');
+            candidates.Clear();
+            em.CompleteDependencyBeforeRO<LocalToWorld>();
+            JobHandle collectHandle = new CollectVisibleUnitCandidatesJob
+            {
+                Filter = (byte)filter,
+                EntityType = em.GetEntityTypeHandle(),
+                FactionType = em.GetComponentTypeHandle<Faction>(true),
+                LocalToWorldType = em.GetComponentTypeHandle<LocalToWorld>(true),
+                SourcePrefabKeyType = em.GetComponentTypeHandle<UnitSourcePrefabKey>(true),
+                FootprintType = em.GetComponentTypeHandle<UnitFootprint>(true),
+                MovementBehaviorType = em.GetComponentTypeHandle<UnitMovementBehavior>(true),
+                Candidates = candidates
+            }.Schedule(query, default);
+            collectHandle.Complete();
         }
 
-        private static bool StartsWithUnitCharacterPrefix(FixedString64Bytes value)
+        public static void Collect(
+            ref SystemState state,
+            EntityQuery query,
+            NativeList<VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate> candidates)
         {
-            return HasNineBytePrefixIgnoreCase(
-                value,
-                (byte)'U',
-                (byte)'n',
-                (byte)'i',
-                (byte)'t',
-                (byte)'_',
-                (byte)'C',
-                (byte)'h',
-                (byte)'r',
-                (byte)'_');
+            candidates.Clear();
+            state.EntityManager.CompleteDependencyBeforeRO<LocalToWorld>();
+            JobHandle collectHandle = new CollectVisibleUnitCandidatesJob
+            {
+                Filter = (byte)VisibleUnitSelectionCameraSystemHelper.Filter.All,
+                EntityType = state.GetEntityTypeHandle(),
+                FactionType = state.GetComponentTypeHandle<Faction>(true),
+                LocalToWorldType = state.GetComponentTypeHandle<LocalToWorld>(true),
+                SourcePrefabKeyType = state.GetComponentTypeHandle<UnitSourcePrefabKey>(true),
+                FootprintType = state.GetComponentTypeHandle<UnitFootprint>(true),
+                MovementBehaviorType = state.GetComponentTypeHandle<UnitMovementBehavior>(true),
+                Candidates = candidates
+            }.Schedule(query, state.Dependency);
+            collectHandle.Complete();
         }
 
-        private static bool HasNineBytePrefixIgnoreCase(
-            FixedString64Bytes value,
-            byte c0,
-            byte c1,
-            byte c2,
-            byte c3,
-            byte c4,
-            byte c5,
-            byte c6,
-            byte c7,
-            byte c8)
+        [BurstCompile]
+        private struct CollectVisibleUnitCandidatesJob : IJobChunk
         {
-            return value.Length >= 9 &&
-                   EqualsAsciiIgnoreCase(value[0], c0) &&
-                   EqualsAsciiIgnoreCase(value[1], c1) &&
-                   EqualsAsciiIgnoreCase(value[2], c2) &&
-                   EqualsAsciiIgnoreCase(value[3], c3) &&
-                   EqualsAsciiIgnoreCase(value[4], c4) &&
-                   EqualsAsciiIgnoreCase(value[5], c5) &&
-                   EqualsAsciiIgnoreCase(value[6], c6) &&
-                   EqualsAsciiIgnoreCase(value[7], c7) &&
-                   EqualsAsciiIgnoreCase(value[8], c8);
-        }
+            public byte Filter;
+            [ReadOnly] public EntityTypeHandle EntityType;
+            [ReadOnly] public ComponentTypeHandle<Faction> FactionType;
+            [ReadOnly] public ComponentTypeHandle<LocalToWorld> LocalToWorldType;
+            [ReadOnly] public ComponentTypeHandle<UnitSourcePrefabKey> SourcePrefabKeyType;
+            [ReadOnly] public ComponentTypeHandle<UnitFootprint> FootprintType;
+            [ReadOnly] public ComponentTypeHandle<UnitMovementBehavior> MovementBehaviorType;
+            public NativeList<VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate> Candidates;
 
-        private static bool EqualsAsciiIgnoreCase(byte a, byte b)
-        {
-            return ToLowerAscii(a) == ToLowerAscii(b);
-        }
+            public void Execute(
+                in ArchetypeChunk chunk,
+                int unfilteredChunkIndex,
+                bool useEnabledMask,
+                in v128 chunkEnabledMask)
+            {
+                NativeArray<Entity> entities = chunk.GetNativeArray(EntityType);
+                NativeArray<Faction> factions = chunk.GetNativeArray(ref FactionType);
+                NativeArray<LocalToWorld> transforms = chunk.GetNativeArray(ref LocalToWorldType);
+                bool hasSourcePrefabKey = chunk.Has(ref SourcePrefabKeyType);
+                bool hasFootprint = chunk.Has(ref FootprintType);
+                bool hasMovementBehavior = chunk.Has(ref MovementBehaviorType);
+                NativeArray<UnitSourcePrefabKey> sourcePrefabKeys = hasSourcePrefabKey
+                    ? chunk.GetNativeArray(ref SourcePrefabKeyType)
+                    : default;
+                NativeArray<UnitFootprint> footprints = hasFootprint
+                    ? chunk.GetNativeArray(ref FootprintType)
+                    : default;
+                NativeArray<UnitMovementBehavior> movementBehaviors = hasMovementBehavior
+                    ? chunk.GetNativeArray(ref MovementBehaviorType)
+                    : default;
 
-        private static byte ToLowerAscii(byte value)
-        {
-            return value >= (byte)'A' && value <= (byte)'Z'
-                ? (byte)(value + 32)
-                : value;
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    if (factions[i].Id != FactionIdentity.PlayerFactionId)
+                        continue;
+
+                    bool isVehicle = IsVehicleForVisibleSelection(
+                        i,
+                        hasSourcePrefabKey,
+                        sourcePrefabKeys,
+                        hasFootprint,
+                        footprints,
+                        hasMovementBehavior,
+                        movementBehaviors);
+                    if (Filter == (byte)VisibleUnitSelectionCameraSystemHelper.Filter.Soldiers && isVehicle)
+                        continue;
+                    if (Filter == (byte)VisibleUnitSelectionCameraSystemHelper.Filter.Vehicles && !isVehicle)
+                        continue;
+
+                    Candidates.Add(new VisibleUnitSelectionCameraSystemHelper.VisibleUnitSelectionCandidate
+                    {
+                        Entity = entities[i],
+                        Position = transforms[i].Position,
+                        IsVehicle = isVehicle ? (byte)1 : (byte)0
+                    });
+                }
+            }
+
+            private static bool IsVehicleForVisibleSelection(
+                int index,
+                bool hasSourcePrefabKey,
+                NativeArray<UnitSourcePrefabKey> sourcePrefabKeys,
+                bool hasFootprint,
+                NativeArray<UnitFootprint> footprints,
+                bool hasMovementBehavior,
+                NativeArray<UnitMovementBehavior> movementBehaviors)
+            {
+                if (hasSourcePrefabKey)
+                {
+                    FixedString64Bytes sourceKey = sourcePrefabKeys[index].Value;
+                    if (StartsWithUnitVehiclePrefix(sourceKey))
+                        return true;
+                    if (StartsWithUnitCharacterPrefix(sourceKey))
+                        return false;
+                }
+
+                return hasFootprint &&
+                       hasMovementBehavior &&
+                       UnitVehicleMovementUtility.IsVehicle(footprints[index], movementBehaviors[index]);
+            }
+
+            private static bool StartsWithUnitVehiclePrefix(FixedString64Bytes value)
+            {
+                return HasNineBytePrefixIgnoreCase(
+                    value,
+                    (byte)'U',
+                    (byte)'n',
+                    (byte)'i',
+                    (byte)'t',
+                    (byte)'_',
+                    (byte)'V',
+                    (byte)'e',
+                    (byte)'h',
+                    (byte)'_');
+            }
+
+            private static bool StartsWithUnitCharacterPrefix(FixedString64Bytes value)
+            {
+                return HasNineBytePrefixIgnoreCase(
+                    value,
+                    (byte)'U',
+                    (byte)'n',
+                    (byte)'i',
+                    (byte)'t',
+                    (byte)'_',
+                    (byte)'C',
+                    (byte)'h',
+                    (byte)'r',
+                    (byte)'_');
+            }
+
+            private static bool HasNineBytePrefixIgnoreCase(
+                FixedString64Bytes value,
+                byte c0,
+                byte c1,
+                byte c2,
+                byte c3,
+                byte c4,
+                byte c5,
+                byte c6,
+                byte c7,
+                byte c8)
+            {
+                return value.Length >= 9 &&
+                       EqualsAsciiIgnoreCase(value[0], c0) &&
+                       EqualsAsciiIgnoreCase(value[1], c1) &&
+                       EqualsAsciiIgnoreCase(value[2], c2) &&
+                       EqualsAsciiIgnoreCase(value[3], c3) &&
+                       EqualsAsciiIgnoreCase(value[4], c4) &&
+                       EqualsAsciiIgnoreCase(value[5], c5) &&
+                       EqualsAsciiIgnoreCase(value[6], c6) &&
+                       EqualsAsciiIgnoreCase(value[7], c7) &&
+                       EqualsAsciiIgnoreCase(value[8], c8);
+            }
+
+            private static bool EqualsAsciiIgnoreCase(byte a, byte b)
+            {
+                return ToLowerAscii(a) == ToLowerAscii(b);
+            }
+
+            private static byte ToLowerAscii(byte value)
+            {
+                return value >= (byte)'A' && value <= (byte)'Z'
+                    ? (byte)(value + 32)
+                    : value;
+            }
         }
     }
 }

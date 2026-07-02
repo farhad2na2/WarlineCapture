@@ -2,101 +2,108 @@ using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
+using Game.UI.Contracts;
+using Game.Configs;
+using Game.Authoring;
+using Game.Runtime;
 
-internal sealed class GameplayFeatureStartupCompositionSystemHelper
+namespace Game.Composition
 {
-    public readonly struct Result
+    internal sealed class GameplayFeatureStartupCompositionSystemHelper
     {
-        public readonly RuntimeCityCompositionSystemHelper RuntimeCity;
-        public readonly RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers;
-        public readonly RuntimeDecorationSpawnerPresentationSystemHelper RuntimeDecorations;
-
-        public Result(
-            RuntimeCityCompositionSystemHelper runtimeCity,
-            RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
-            RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
+        public readonly struct Result
         {
-            RuntimeCity = runtimeCity;
-            RuntimeGridBlockers = runtimeGridBlockers;
-            RuntimeDecorations = runtimeDecorations;
+            public readonly RuntimeCityCompositionSystemHelper RuntimeCity;
+            public readonly RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers;
+            public readonly RuntimeDecorationSpawnerPresentationSystemHelper RuntimeDecorations;
+
+            public Result(
+                RuntimeCityCompositionSystemHelper runtimeCity,
+                RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
+                RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
+            {
+                RuntimeCity = runtimeCity;
+                RuntimeGridBlockers = runtimeGridBlockers;
+                RuntimeDecorations = runtimeDecorations;
+            }
         }
-    }
 
-    public Result Initialize(
-        RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
-        RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig,
-        RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig,
-        RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGenerationHelper,
-        RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext,
-        Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> bindRoadGameplayFeatures,
-        BuildingRuntimeCitySpawnBridgeCompositionSystemHelper buildingRuntimeCitySpawn,
-        BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context buildingRuntimeCitySpawnContext,
-        BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteraction,
-        BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
-        Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionCompositionSystemHelper, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> bindBuildingGameplayFeatures,
-        IMatchRuntimeUi mainMenu,
-        SelectionUiCameraSystemHelper selectionUiCameraSystem,
-        SelectionBuildingInteractionCompositionSystemHelper selectionBuildingInteractionSystem,
-        CitizenPopulationEventCompositionSystemHelper citizenPopulationEventSystem,
-        Transform runtimeCityRoot,
-        Transform runtimeBlockerRoot,
-        Transform decorationRoot,
-        CombinedMeshBaker decorationCombinedMeshBaker,
-        IReadOnlyList<GridAuthoring> runtimeGridDebugViews,
-        GameplaySceneBindingSceneSystemHelper sceneBindingSystem)
-    {
-        RuntimeCityCompositionSystemHelper runtimeCity = ResolveRuntimeCityCompositionSystemHelper();
-        runtimeCity?.Configure(
-            runtimeCitySpawnerConfig,
-            roadRuntimeGenerationHelper,
-            roadRuntimeGenerationContext,
-            buildingRuntimeCitySpawn,
-            buildingRuntimeCitySpawnContext,
-            runtimeCityRoot,
-            mainMenu);
+        public Result Initialize(
+            RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
+            RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig,
+            RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig,
+            RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGenerationHelper,
+            RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext,
+            Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> bindRoadGameplayFeatures,
+            BuildingRuntimeCitySpawnBridgeCompositionSystemHelper buildingRuntimeCitySpawn,
+            BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context buildingRuntimeCitySpawnContext,
+            BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteraction,
+            BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
+            Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionCompositionSystemHelper, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> bindBuildingGameplayFeatures,
+            IMatchRuntimeUi mainMenu,
+            SelectionUiCameraSystemHelper selectionUiCameraSystem,
+            SelectionBuildingInteractionCompositionSystemHelper selectionBuildingInteractionSystem,
+            CitizenPopulationEventCompositionSystemHelper citizenPopulationEventSystem,
+            Transform runtimeCityRoot,
+            Transform runtimeBlockerRoot,
+            Transform decorationRoot,
+            CombinedMeshBaker decorationCombinedMeshBaker,
+            IReadOnlyList<GridAuthoring> runtimeGridDebugViews,
+            GameplaySceneBindingSceneSystemHelper sceneBindingSystem)
+        {
+            RuntimeCityCompositionSystemHelper runtimeCity = ResolveRuntimeCityCompositionSystemHelper();
+            runtimeCity?.Configure(
+                runtimeCitySpawnerConfig,
+                roadRuntimeGenerationHelper,
+                roadRuntimeGenerationContext,
+                buildingRuntimeCitySpawn,
+                buildingRuntimeCitySpawnContext,
+                runtimeCityRoot,
+                mainMenu);
 
-        RuntimeCityReadModelCompositionSystemHelper runtimeCityReadModel = runtimeCity?.ReadModel;
-        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = ResolveRuntimeGridBlockerPresentationHelper();
-        runtimeGridBlockers?.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCityReadModel);
-        bindRoadGameplayFeatures?.Invoke(mainMenu, runtimeGridBlockers);
-        sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(runtimeGridBlockers, runtimeGridDebugViews);
-        bindBuildingGameplayFeatures?.Invoke(
-            mainMenu,
-            selectionUiCameraSystem,
-            selectionBuildingInteractionSystem,
-            runtimeGridBlockers,
-            runtimeCity,
-            citizenPopulationEventSystem);
+            RuntimeCityReadModelCompositionSystemHelper runtimeCityReadModel = runtimeCity?.ReadModel;
+            RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = ResolveRuntimeGridBlockerPresentationHelper();
+            runtimeGridBlockers?.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCityReadModel);
+            bindRoadGameplayFeatures?.Invoke(mainMenu, runtimeGridBlockers);
+            sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(runtimeGridBlockers, runtimeGridDebugViews);
+            bindBuildingGameplayFeatures?.Invoke(
+                mainMenu,
+                selectionUiCameraSystem,
+                selectionBuildingInteractionSystem,
+                runtimeGridBlockers,
+                runtimeCity,
+                citizenPopulationEventSystem);
 
-        RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations = ResolveRuntimeDecorationSpawnerPresentationHelper();
-        runtimeDecorations?.Init(
-            runtimeDecorationSpawnerConfig,
-            decorationRoot,
-            decorationCombinedMeshBaker,
-            runtimeCityReadModel,
-            runtimeGridBlockers);
+            RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations = ResolveRuntimeDecorationSpawnerPresentationHelper();
+            runtimeDecorations?.Init(
+                runtimeDecorationSpawnerConfig,
+                decorationRoot,
+                decorationCombinedMeshBaker,
+                runtimeCityReadModel,
+                runtimeGridBlockers);
 
-        return new Result(runtimeCity, runtimeGridBlockers, runtimeDecorations);
-    }
+            return new Result(runtimeCity, runtimeGridBlockers, runtimeDecorations);
+        }
 
-    private static RuntimeGridBlockerPresentationSystemHelper ResolveRuntimeGridBlockerPresentationHelper()
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? new RuntimeGridBlockerPresentationSystemHelper()
-            : null;
-    }
+        private static RuntimeGridBlockerPresentationSystemHelper ResolveRuntimeGridBlockerPresentationHelper()
+        {
+            World world = World.DefaultGameObjectInjectionWorld;
+            return world != null && world.IsCreated
+                ? new RuntimeGridBlockerPresentationSystemHelper()
+                : null;
+        }
 
-    private static RuntimeCityCompositionSystemHelper ResolveRuntimeCityCompositionSystemHelper()
-    {
-        return new RuntimeCityCompositionSystemHelper();
-    }
+        private static RuntimeCityCompositionSystemHelper ResolveRuntimeCityCompositionSystemHelper()
+        {
+            return new RuntimeCityCompositionSystemHelper();
+        }
 
-    private static RuntimeDecorationSpawnerPresentationSystemHelper ResolveRuntimeDecorationSpawnerPresentationHelper()
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? new RuntimeDecorationSpawnerPresentationSystemHelper()
-            : null;
+        private static RuntimeDecorationSpawnerPresentationSystemHelper ResolveRuntimeDecorationSpawnerPresentationHelper()
+        {
+            World world = World.DefaultGameObjectInjectionWorld;
+            return world != null && world.IsCreated
+                ? new RuntimeDecorationSpawnerPresentationSystemHelper()
+                : null;
+        }
     }
 }

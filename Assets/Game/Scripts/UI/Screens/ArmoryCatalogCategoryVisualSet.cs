@@ -1,34 +1,38 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Contracts;
 
-[Serializable]
-public sealed class ArmoryCatalogCategoryVisualSet
+namespace Game.UI.Runtime
 {
-    [SerializeField] private ArmoryCatalogCategory category;
-    [SerializeField] private GameObject backgroundRoot;
-    [SerializeField] private Image artImage;
-
-    public ArmoryCatalogCategory Category => category;
-    public GameObject BackgroundRoot => backgroundRoot;
-    public Image ArtImage => artImage;
-
-    public void Bind(bool selected, Sprite portrait)
+    [Serializable]
+    public sealed class ArmoryCatalogCategoryVisualSet
     {
-        if (backgroundRoot != null)
-            backgroundRoot.SetActive(selected);
+        [SerializeField] private ArmoryCatalogCategory category;
+        [SerializeField] private GameObject backgroundRoot;
+        [SerializeField] private Image artImage;
 
-        if (artImage == null)
-            return;
+        public ArmoryCatalogCategory Category => category;
+        public GameObject BackgroundRoot => backgroundRoot;
+        public Image ArtImage => artImage;
 
-        if (selected)
+        public void Bind(bool selected, Sprite portrait)
         {
-            artImage.sprite = portrait;
-            artImage.preserveAspect = true;
-            artImage.enabled = portrait != null;
-            return;
-        }
+            if (backgroundRoot != null)
+                backgroundRoot.SetActive(selected);
 
-        artImage.enabled = false;
+            if (artImage == null)
+                return;
+
+            if (selected)
+            {
+                artImage.sprite = portrait;
+                artImage.preserveAspect = true;
+                artImage.enabled = portrait != null;
+                return;
+            }
+
+            artImage.enabled = false;
+        }
     }
 }

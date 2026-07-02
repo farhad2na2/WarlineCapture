@@ -1,44 +1,48 @@
 using UnityEngine;
+using Game.UI.Contracts;
 
-public sealed class UIBootstrap : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private GameObject appCanvasPrefab;
-    [SerializeField] private UIStartupMode startupMode = UIStartupMode.UseLegacyMenu;
-    [SerializeField] private bool enableParallelUiOnStart;
-    [SerializeField] private UIRoute parallelStartupRoute = UIRoute.MainMenu;
-
-    public GameObject AppCanvasInstance { get; private set; }
-    public UIStartupMode StartupMode => startupMode;
-    public UIRoute ParallelStartupRoute => parallelStartupRoute;
-
-    private void Awake()
+    public sealed class UIBootstrap : MonoBehaviour
     {
-        if (appCanvasPrefab == null)
-            return;
+        [SerializeField] private GameObject appCanvasPrefab;
+        [SerializeField] private UIStartupMode startupMode = UIStartupMode.UseLegacyMenu;
+        [SerializeField] private bool enableParallelUiOnStart;
+        [SerializeField] private UIRoute parallelStartupRoute = UIRoute.MainMenu;
 
-        bool shouldEnableParallelUi = ShouldEnableParallelUi();
-        AppCanvasInstance = Instantiate(appCanvasPrefab);
-        AppCanvasInstance.name = appCanvasPrefab.name;
-        AppCanvasInstance.SetActive(shouldEnableParallelUi);
+        public GameObject AppCanvasInstance { get; private set; }
+        public UIStartupMode StartupMode => startupMode;
+        public UIRoute ParallelStartupRoute => parallelStartupRoute;
 
-        if (shouldEnableParallelUi && AppCanvasInstance.TryGetComponent(out UIRouterView router))
-            router.GoTo(parallelStartupRoute, false);
-    }
-
-    public void SetParallelUiEnabled(bool enabled)
-    {
-        startupMode = enabled ? UIStartupMode.UseParallelCodexUi : UIStartupMode.UseLegacyMenu;
-        enableParallelUiOnStart = enabled;
-        if (AppCanvasInstance != null)
+        private void Awake()
         {
-            AppCanvasInstance.SetActive(enabled);
-            if (enabled && AppCanvasInstance.TryGetComponent(out UIRouterView router))
+            if (appCanvasPrefab == null)
+                return;
+
+            bool shouldEnableParallelUi = ShouldEnableParallelUi();
+            AppCanvasInstance = Instantiate(appCanvasPrefab);
+            AppCanvasInstance.name = appCanvasPrefab.name;
+            AppCanvasInstance.SetActive(shouldEnableParallelUi);
+
+            if (shouldEnableParallelUi && AppCanvasInstance.TryGetComponent(out UIRouterView router))
                 router.GoTo(parallelStartupRoute, false);
         }
-    }
 
-    private bool ShouldEnableParallelUi()
-    {
-        return startupMode == UIStartupMode.UseParallelCodexUi || enableParallelUiOnStart;
+        public void SetParallelUiEnabled(bool enabled)
+        {
+            startupMode = enabled ? UIStartupMode.UseParallelCodexUi : UIStartupMode.UseLegacyMenu;
+            enableParallelUiOnStart = enabled;
+            if (AppCanvasInstance != null)
+            {
+                AppCanvasInstance.SetActive(enabled);
+                if (enabled && AppCanvasInstance.TryGetComponent(out UIRouterView router))
+                    router.GoTo(parallelStartupRoute, false);
+            }
+        }
+
+        private bool ShouldEnableParallelUi()
+        {
+            return startupMode == UIStartupMode.UseParallelCodexUi || enableParallelUiOnStart;
+        }
     }
 }

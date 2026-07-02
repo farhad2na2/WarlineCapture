@@ -1,24 +1,28 @@
 using UnityEngine;
+using Game.UI.Contracts;
 
-public class UIScreenView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private UIRoute route;
-
-    public UIRoute Route => route;
-    public bool IsVisible => gameObject.activeSelf;
-
-    public virtual void Show()
+    public class UIScreenView : MonoBehaviour
     {
-        gameObject.SetActive(true);
-    }
+        [SerializeField] private UIRoute route;
 
-    public virtual void Hide()
-    {
-        gameObject.SetActive(false);
-    }
+        public UIRoute Route => route;
+        public bool IsVisible => gameObject.activeSelf;
 
-    public void SetRouteForTests(UIRoute value)
-    {
-        route = value;
+        public virtual void Show()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public virtual void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
+        public void SetRouteForTests(UIRoute value)
+        {
+            route = value;
+        }
     }
 }

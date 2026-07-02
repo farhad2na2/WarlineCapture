@@ -9,6 +9,12 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEditor;
 using UnityEngine;
+using Game.Tactical.Contracts;
+using Game.Components;
+using Game.Configs;
+using Game.Authoring;
+using Game.Runtime;
+using Game.Composition;
 
 public sealed class UnitTransportValidationTests
 {

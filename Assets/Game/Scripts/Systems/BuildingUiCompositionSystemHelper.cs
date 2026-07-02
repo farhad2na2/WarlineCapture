@@ -2,241 +2,245 @@ using System;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+using Game.Components;
 
-internal sealed class BuildingUiCompositionSystemHelper
+namespace Game.Runtime
 {
-    public BuildingUiContextCompositionSystemHelper.Source CreateSource(
-        BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
-        MaterialPropertyBlock markerPropertyBlock,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
+    internal sealed class BuildingUiCompositionSystemHelper
     {
-        return source.BuildingUiContextCompositionSystemHelper.CreateSource(
-            source.RuntimeResourceUtilitySystemHelper,
-            source.BuildingDefinitionPrefabSystemHelper,
-            source.RuntimeBuildingSystem,
-            source.BuildingProductionQueueCompositionSystemHelper,
-            source.BuildingProductionRequestSystemHelper,
-            () => source.BuildingProductionContextCompositionSystemHelper.CreateProductionRequestContext(
-                source.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
+        public BuildingUiContextCompositionSystemHelper.Source CreateSource(
+            BuildingGameplaySourceCompositionSystemHelper source,
+            BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
+            MaterialPropertyBlock markerPropertyBlock,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
+        {
+            return source.BuildingUiContextCompositionSystemHelper.CreateSource(
+                source.RuntimeResourceUtilitySystemHelper,
+                source.BuildingDefinitionPrefabSystemHelper,
+                source.RuntimeBuildingSystem,
+                source.BuildingProductionQueueCompositionSystemHelper,
+                source.BuildingProductionRequestSystemHelper,
+                () => source.BuildingProductionContextCompositionSystemHelper.CreateProductionRequestContext(
+                    source.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
+                        source,
+                        createRuntimeContextSource,
+                        createPlacementCommandContext,
+                        interactionContext,
+                        markerPropertyBlock)),
+                () => source.RuntimeBuildingSystem.CurrentActiveBuildingId,
+                () => UnityEngine.Time.frameCount,
+                source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
+                () => UnityEngine.Time.time,
+                source.RuntimeBuildingSystem.HasSelectedBuilding,
+                () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
+                () => source.BuildingPlacementLifecycleCompositionSystemHelper.HasPendingBuildingPlacement,
+                () => source.BuildingPlacementLifecycleCompositionSystemHelper.CanConfirmBuildingPlacement,
+                () => source.BuildingPlacementQueryUiSystemHelper.GetPlacementStatusText(source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement),
+                () => source.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingLabel(createBuildingPlacementQueryContext(source)),
+                () => source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacementCost,
+                () => source.BuildingPlacementQueryUiSystemHelper.GetActivePlacementDurationSeconds(source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement),
+                () => source.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingDisplayName(createBuildingPlacementQueryContext(source)),
+                () => source.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingDescription(createBuildingPlacementQueryContext(source)),
+                (out int current, out int max) => source.BuildingPlacementQueryUiSystemHelper.TryGetSelectedBuildingHealth(
+                    createBuildingPlacementQueryContext(source),
+                    out current,
+                    out max),
+                (out GameObject prefab) => source.BuildingPlacementQueryUiSystemHelper.TryGetSelectedBuildingPreviewPrefab(
+                    createBuildingPlacementQueryContext(source),
+                    out prefab),
+                buildingId => source.BuildingRuntimeReadModelCompositionSystemHelper.IsRuntimeBuildingWall(
+                    source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
+                    buildingId),
+                buildingId => source.BuildingRuntimeReadModelCompositionSystemHelper.IsRuntimeBuildingCityGenerated(
+                    source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
+                    buildingId),
+                (int buildingId, out byte factionId) => source.BuildingRuntimeReadModelCompositionSystemHelper.TryGetRuntimeBuildingOwnerFaction(
+                    source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
+                    buildingId,
+                    out factionId),
+                camera => source.BuildingSelectionRuntimeCompositionSystemHelper.HasVisibleSelectableBuilding(
+                    createBuildingSelectionContext(source),
+                    camera != null ? camera : source.BuildingPlacementStartupSystemHelper.WorldCamera,
+                    Screen.width,
+                    Screen.height),
+                (Entity unitEntity, out GameObject prefab) =>
+                {
+                    RuntimeUnitPrefabSystem.Context runtimeUnitPrefabContext =
+                        BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateRuntimeUnitPrefabContext(
+                            source.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,
+                            BuildingRuntimeResourcePrefabCompositionSystemHelper.Create(
+                                source.BuildingRuntimeResourcePrefabCompositionHelper,
+                                source));
+                    return TryResolveLiveUnitPreviewPrefab(source, runtimeUnitPrefabContext, unitEntity, out prefab);
+                },
+                () => EnqueueAndProcessConfirmBuildingPlacement(
                     source,
+                    createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
+                () => EnqueueAndProcessCancelBuildingPlacement(
+                    source,
+                    createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
+                () => EnqueueAndProcessRotateBuildingPlacement(
+                    source,
+                    createPlacementCommandContext(source, interactionContext, markerPropertyBlock)));
+        }
+
+        public BuildingUiCommandSystemHelper.Context CreateCommandContext(
+            BuildingGameplaySourceCompositionSystemHelper source,
+            BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
+            MaterialPropertyBlock markerPropertyBlock,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
+        {
+            return source.BuildingUiContextCompositionSystemHelper.CreateCommandContext(
+                CreateSource(
+                    source,
+                    interactionContext,
+                    markerPropertyBlock,
                     createRuntimeContextSource,
                     createPlacementCommandContext,
+                    createBuildingPlacementQueryContext,
+                    createBuildingSelectionContext));
+        }
+
+        public BuildingUiQueryUiSystemHelper.Context CreateQueryContext(
+            BuildingGameplaySourceCompositionSystemHelper source,
+            BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
+            MaterialPropertyBlock markerPropertyBlock,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
+        {
+            return source.BuildingUiContextCompositionSystemHelper.CreateQueryContext(
+                CreateSource(
+                    source,
                     interactionContext,
-                    markerPropertyBlock)),
-            () => source.RuntimeBuildingSystem.CurrentActiveBuildingId,
-            () => UnityEngine.Time.frameCount,
-            source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
-            () => UnityEngine.Time.time,
-            source.RuntimeBuildingSystem.HasSelectedBuilding,
-            () => source.RuntimeBuildingSystem.CurrentActiveBuildingId.HasValue,
-            () => source.BuildingPlacementLifecycleCompositionSystemHelper.HasPendingBuildingPlacement,
-            () => source.BuildingPlacementLifecycleCompositionSystemHelper.CanConfirmBuildingPlacement,
-            () => source.BuildingPlacementQueryUiSystemHelper.GetPlacementStatusText(source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement),
-            () => source.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingLabel(createBuildingPlacementQueryContext(source)),
-            () => source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacementCost,
-            () => source.BuildingPlacementQueryUiSystemHelper.GetActivePlacementDurationSeconds(source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement),
-            () => source.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingDisplayName(createBuildingPlacementQueryContext(source)),
-            () => source.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingDescription(createBuildingPlacementQueryContext(source)),
-            (out int current, out int max) => source.BuildingPlacementQueryUiSystemHelper.TryGetSelectedBuildingHealth(
-                createBuildingPlacementQueryContext(source),
-                out current,
-                out max),
-            (out GameObject prefab) => source.BuildingPlacementQueryUiSystemHelper.TryGetSelectedBuildingPreviewPrefab(
-                createBuildingPlacementQueryContext(source),
-                out prefab),
-            buildingId => source.BuildingRuntimeReadModelCompositionSystemHelper.IsRuntimeBuildingWall(
-                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
-                buildingId),
-            buildingId => source.BuildingRuntimeReadModelCompositionSystemHelper.IsRuntimeBuildingCityGenerated(
-                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
-                buildingId),
-            (int buildingId, out byte factionId) => source.BuildingRuntimeReadModelCompositionSystemHelper.TryGetRuntimeBuildingOwnerFaction(
-                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(source)),
-                buildingId,
-                out factionId),
-            camera => source.BuildingSelectionRuntimeCompositionSystemHelper.HasVisibleSelectableBuilding(
-                createBuildingSelectionContext(source),
-                camera != null ? camera : source.BuildingPlacementStartupSystemHelper.WorldCamera,
-                Screen.width,
-                Screen.height),
-            (Entity unitEntity, out GameObject prefab) =>
-            {
-                RuntimeUnitPrefabSystem.Context runtimeUnitPrefabContext =
-                    BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateRuntimeUnitPrefabContext(
-                        source.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,
-                        BuildingRuntimeResourcePrefabCompositionSystemHelper.Create(
-                            source.BuildingRuntimeResourcePrefabCompositionHelper,
-                            source));
-                return TryResolveLiveUnitPreviewPrefab(source, runtimeUnitPrefabContext, unitEntity, out prefab);
-            },
-            () => EnqueueAndProcessConfirmBuildingPlacement(
-                source,
-                createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
-            () => EnqueueAndProcessCancelBuildingPlacement(
-                source,
-                createPlacementCommandContext(source, interactionContext, markerPropertyBlock)),
-            () => EnqueueAndProcessRotateBuildingPlacement(
-                source,
-                createPlacementCommandContext(source, interactionContext, markerPropertyBlock)));
-    }
-
-    public BuildingUiCommandSystemHelper.Context CreateCommandContext(
-        BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
-        MaterialPropertyBlock markerPropertyBlock,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
-    {
-        return source.BuildingUiContextCompositionSystemHelper.CreateCommandContext(
-            CreateSource(
-                source,
-                interactionContext,
-                markerPropertyBlock,
-                createRuntimeContextSource,
-                createPlacementCommandContext,
-                createBuildingPlacementQueryContext,
-                createBuildingSelectionContext));
-    }
-
-    public BuildingUiQueryUiSystemHelper.Context CreateQueryContext(
-        BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
-        MaterialPropertyBlock markerPropertyBlock,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createBuildingPlacementQueryContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
-    {
-        return source.BuildingUiContextCompositionSystemHelper.CreateQueryContext(
-            CreateSource(
-                source,
-                interactionContext,
-                markerPropertyBlock,
-                createRuntimeContextSource,
-                createPlacementCommandContext,
-                createBuildingPlacementQueryContext,
-                createBuildingSelectionContext));
-    }
-
-    private static bool TryResolveLiveUnitPreviewPrefab(
-        BuildingGameplaySourceCompositionSystemHelper source,
-        RuntimeUnitPrefabSystem.Context runtimeUnitPrefabContext,
-        Entity unitEntity,
-        out GameObject prefab)
-    {
-        prefab = null;
-        if (source == null ||
-            unitEntity == Entity.Null ||
-            runtimeUnitPrefabContext.TryGetEntityManager == null ||
-            !runtimeUnitPrefabContext.TryGetEntityManager(out EntityManager em) ||
-            !em.Exists(unitEntity))
-        {
-            return false;
+                    markerPropertyBlock,
+                    createRuntimeContextSource,
+                    createPlacementCommandContext,
+                    createBuildingPlacementQueryContext,
+                    createBuildingSelectionContext));
         }
 
-        runtimeUnitPrefabContext.EnsureEntityQueries?.Invoke(em);
-        if (em.HasComponent<UnitRespawnPrefab>(unitEntity))
+        private static bool TryResolveLiveUnitPreviewPrefab(
+            BuildingGameplaySourceCompositionSystemHelper source,
+            RuntimeUnitPrefabSystem.Context runtimeUnitPrefabContext,
+            Entity unitEntity,
+            out GameObject prefab)
         {
-            Entity prefabEntity = em.GetComponentData<UnitRespawnPrefab>(unitEntity).Prefab;
-            if (prefabEntity != Entity.Null &&
-                source.RuntimeUnitPrefabSystem.TryResolveSpawnUnitSourceKey(runtimeUnitPrefabContext, prefabEntity, out FixedString64Bytes sourceKey) &&
-                TryResolveConfiguredUnitSpawnPrefab(source, sourceKey, out prefab))
+            prefab = null;
+            if (source == null ||
+                unitEntity == Entity.Null ||
+                runtimeUnitPrefabContext.TryGetEntityManager == null ||
+                !runtimeUnitPrefabContext.TryGetEntityManager(out EntityManager em) ||
+                !em.Exists(unitEntity))
             {
-                return true;
+                return false;
             }
-        }
 
-        if (em.HasComponent<UnitSourcePrefabKey>(unitEntity) &&
-            TryResolveConfiguredUnitSpawnPrefab(source, em.GetComponentData<UnitSourcePrefabKey>(unitEntity).Value, out prefab))
-        {
-            return true;
-        }
-
-        if (source.RuntimeBuildingSystem?.Buildings != null)
-        {
-            foreach (var pair in source.RuntimeBuildingSystem.Buildings)
+            runtimeUnitPrefabContext.EnsureEntityQueries?.Invoke(em);
+            if (em.HasComponent<UnitRespawnPrefab>(unitEntity))
             {
-                RuntimeBuildingEntity building = pair.Value;
-                if (building == null)
-                    continue;
-
-                if (building.ProducedUnitSourceKeys != null &&
-                    building.ProducedUnitSourceKeys.TryGetValue(unitEntity, out FixedString64Bytes producedSourceKey) &&
-                    TryResolveConfiguredUnitSpawnPrefab(source, producedSourceKey, out prefab))
+                Entity prefabEntity = em.GetComponentData<UnitRespawnPrefab>(unitEntity).Prefab;
+                if (prefabEntity != Entity.Null &&
+                    source.RuntimeUnitPrefabSystem.TryResolveSpawnUnitSourceKey(runtimeUnitPrefabContext, prefabEntity, out FixedString64Bytes sourceKey) &&
+                    TryResolveConfiguredUnitSpawnPrefab(source, sourceKey, out prefab))
                 {
                     return true;
                 }
-
-                if (building.ProducedUnitPrefabs == null)
-                    continue;
-                if (building.ProducedUnitPrefabs.TryGetValue(unitEntity, out prefab) && prefab != null)
-                    return true;
             }
+
+            if (em.HasComponent<UnitSourcePrefabKey>(unitEntity) &&
+                TryResolveConfiguredUnitSpawnPrefab(source, em.GetComponentData<UnitSourcePrefabKey>(unitEntity).Value, out prefab))
+            {
+                return true;
+            }
+
+            if (source.RuntimeBuildingSystem?.Buildings != null)
+            {
+                foreach (var pair in source.RuntimeBuildingSystem.Buildings)
+                {
+                    RuntimeBuildingEntity building = pair.Value;
+                    if (building == null)
+                        continue;
+
+                    if (building.ProducedUnitSourceKeys != null &&
+                        building.ProducedUnitSourceKeys.TryGetValue(unitEntity, out FixedString64Bytes producedSourceKey) &&
+                        TryResolveConfiguredUnitSpawnPrefab(source, producedSourceKey, out prefab))
+                    {
+                        return true;
+                    }
+
+                    if (building.ProducedUnitPrefabs == null)
+                        continue;
+                    if (building.ProducedUnitPrefabs.TryGetValue(unitEntity, out prefab) && prefab != null)
+                        return true;
+                }
+            }
+
+            return false;
         }
 
-        return false;
-    }
+        private static bool TryResolveConfiguredUnitSpawnPrefab(
+            BuildingGameplaySourceCompositionSystemHelper source,
+            FixedString64Bytes sourceKey,
+            out GameObject prefab)
+        {
+            prefab = null;
+            return source?.BuildingDefinitionPrefabSystemHelper != null &&
+                   sourceKey.Length > 0 &&
+                   source.BuildingDefinitionPrefabSystemHelper.TryResolveConfiguredUnitSpawnPrefab(sourceKey.ToString(), out prefab) &&
+                   prefab != null;
+        }
 
-    private static bool TryResolveConfiguredUnitSpawnPrefab(
-        BuildingGameplaySourceCompositionSystemHelper source,
-        FixedString64Bytes sourceKey,
-        out GameObject prefab)
-    {
-        prefab = null;
-        return source?.BuildingDefinitionPrefabSystemHelper != null &&
-               sourceKey.Length > 0 &&
-               source.BuildingDefinitionPrefabSystemHelper.TryResolveConfiguredUnitSpawnPrefab(sourceKey.ToString(), out prefab) &&
-               prefab != null;
-    }
+        private static bool EnqueueAndProcessConfirmBuildingPlacement(
+            BuildingGameplaySourceCompositionSystemHelper source,
+            BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
+        {
+            return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
+                ? source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessConfirmBuildingPlacement(entityManager, context)
+                : ConfirmBuildingPlacementWithoutEntityManager(context);
+        }
 
-    private static bool EnqueueAndProcessConfirmBuildingPlacement(
-        BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
-    {
-        return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
-            ? source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessConfirmBuildingPlacement(entityManager, context)
-            : ConfirmBuildingPlacementWithoutEntityManager(context);
-    }
+        private static void EnqueueAndProcessCancelBuildingPlacement(
+            BuildingGameplaySourceCompositionSystemHelper source,
+            BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
+        {
+            if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
+                source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessCancelBuildingPlacement(entityManager, context);
+            else
+                CancelBuildingPlacementWithoutEntityManager(context);
+        }
 
-    private static void EnqueueAndProcessCancelBuildingPlacement(
-        BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
-    {
-        if (source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager))
-            source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessCancelBuildingPlacement(entityManager, context);
-        else
-            CancelBuildingPlacementWithoutEntityManager(context);
-    }
+        private static bool EnqueueAndProcessRotateBuildingPlacement(
+            BuildingGameplaySourceCompositionSystemHelper source,
+            BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
+        {
+            return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
+                ? source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessRotateBuildingPlacement(entityManager, context)
+                : RotateBuildingPlacementWithoutEntityManager(context);
+        }
 
-    private static bool EnqueueAndProcessRotateBuildingPlacement(
-        BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
-    {
-        return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
-            ? source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessRotateBuildingPlacement(entityManager, context)
-            : RotateBuildingPlacementWithoutEntityManager(context);
-    }
+        private static bool ConfirmBuildingPlacementWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
+        {
+            return context.SessionSystem != null &&
+                   context.SessionSystem.ConfirmBuildingPlacement(context.SessionContext);
+        }
 
-    private static bool ConfirmBuildingPlacementWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
-    {
-        return context.SessionSystem != null &&
-               context.SessionSystem.ConfirmBuildingPlacement(context.SessionContext);
-    }
+        private static void CancelBuildingPlacementWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
+        {
+            context.SessionSystem?.CancelBuildingPlacement(context.SessionContext);
+        }
 
-    private static void CancelBuildingPlacementWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
-    {
-        context.SessionSystem?.CancelBuildingPlacement(context.SessionContext);
-    }
-
-    private static bool RotateBuildingPlacementWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
-    {
-        return context.SessionSystem != null &&
-               context.SessionSystem.RotateBuildingPlacement(context.SessionContext);
+        private static bool RotateBuildingPlacementWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
+        {
+            return context.SessionSystem != null &&
+                   context.SessionSystem.RotateBuildingPlacement(context.SessionContext);
+        }
     }
 }

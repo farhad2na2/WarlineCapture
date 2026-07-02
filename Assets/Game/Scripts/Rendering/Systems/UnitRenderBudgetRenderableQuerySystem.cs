@@ -2,146 +2,150 @@ using Unity.Entities;
 using Unity.Entities.Graphics;
 using Unity.Rendering;
 using Unity.Transforms;
+using Game.Components;
 
-public readonly struct UnitRenderBudgetRenderableState
+namespace Game.Rendering
 {
-    public struct Lookups
+    public readonly struct UnitRenderBudgetRenderableState
     {
-        public EntityStorageInfoLookup EntityStorageInfoLookup;
-        public EntityQueryMask RenderableEntityMask;
-        public ComponentLookup<Disabled> DisabledLookup;
-        public ComponentLookup<DisableRendering> DisableRenderingLookup;
-        public ComponentLookup<UnitRenderBudgetCulledTag> CulledTagLookup;
-        public ComponentLookup<UnitSafeVisibleCharacterLodTag> SafeVisibleCharacterLodLookup;
-
-        public void Update(ref SystemState state)
+        public struct Lookups
         {
-            EntityStorageInfoLookup.Update(ref state);
-            DisabledLookup.Update(ref state);
-            DisableRenderingLookup.Update(ref state);
-            CulledTagLookup.Update(ref state);
-            SafeVisibleCharacterLodLookup.Update(ref state);
-        }
-    }
+            public EntityStorageInfoLookup EntityStorageInfoLookup;
+            public EntityQueryMask RenderableEntityMask;
+            public ComponentLookup<Disabled> DisabledLookup;
+            public ComponentLookup<DisableRendering> DisableRenderingLookup;
+            public ComponentLookup<UnitRenderBudgetCulledTag> CulledTagLookup;
+            public ComponentLookup<UnitSafeVisibleCharacterLodTag> SafeVisibleCharacterLodLookup;
 
-    public bool IsRenderableVisibleRecursive(Entity entity, BufferLookup<Child> childLookup, Lookups lookups)
-    {
-        if (entity == Entity.Null || !lookups.EntityStorageInfoLookup.Exists(entity))
-            return false;
-
-        if (IsRenderableEntity(entity, lookups) &&
-            !lookups.DisabledLookup.HasComponent(entity) &&
-            !lookups.DisableRenderingLookup.HasComponent(entity) &&
-            !lookups.CulledTagLookup.HasComponent(entity))
-        {
-            return true;
+            public void Update(ref SystemState state)
+            {
+                EntityStorageInfoLookup.Update(ref state);
+                DisabledLookup.Update(ref state);
+                DisableRenderingLookup.Update(ref state);
+                CulledTagLookup.Update(ref state);
+                SafeVisibleCharacterLodLookup.Update(ref state);
+            }
         }
 
-        if (!childLookup.HasBuffer(entity))
-            return false;
-
-        DynamicBuffer<Child> children = childLookup[entity];
-        for (int i = 0; i < children.Length; i++)
+        public bool IsRenderableVisibleRecursive(Entity entity, BufferLookup<Child> childLookup, Lookups lookups)
         {
-            if (IsRenderableVisibleRecursive(children[i].Value, childLookup, lookups))
+            if (entity == Entity.Null || !lookups.EntityStorageInfoLookup.Exists(entity))
+                return false;
+
+            if (IsRenderableEntity(entity, lookups) &&
+                !lookups.DisabledLookup.HasComponent(entity) &&
+                !lookups.DisableRenderingLookup.HasComponent(entity) &&
+                !lookups.CulledTagLookup.HasComponent(entity))
+            {
                 return true;
+            }
+
+            if (!childLookup.HasBuffer(entity))
+                return false;
+
+            DynamicBuffer<Child> children = childLookup[entity];
+            for (int i = 0; i < children.Length; i++)
+            {
+                if (IsRenderableVisibleRecursive(children[i].Value, childLookup, lookups))
+                    return true;
+            }
+
+            return false;
         }
 
-        return false;
-    }
-
-    public bool IsRenderableVisibleRecursive(EntityManager em, Entity entity, BufferLookup<Child> childLookup)
-    {
-        if (!em.Exists(entity))
-            return false;
-
-        if (IsRenderableEntity(em, entity) &&
-            !em.HasComponent<Disabled>(entity) &&
-            !em.HasComponent<DisableRendering>(entity) &&
-            !em.HasComponent<UnitRenderBudgetCulledTag>(entity))
+        public bool IsRenderableVisibleRecursive(EntityManager em, Entity entity, BufferLookup<Child> childLookup)
         {
-            return true;
-        }
+            if (!em.Exists(entity))
+                return false;
 
-        if (!childLookup.HasBuffer(entity))
-            return false;
-
-        DynamicBuffer<Child> children = childLookup[entity];
-        for (int i = 0; i < children.Length; i++)
-        {
-            if (IsRenderableVisibleRecursive(em, children[i].Value, childLookup))
+            if (IsRenderableEntity(em, entity) &&
+                !em.HasComponent<Disabled>(entity) &&
+                !em.HasComponent<DisableRendering>(entity) &&
+                !em.HasComponent<UnitRenderBudgetCulledTag>(entity))
+            {
                 return true;
+            }
+
+            if (!childLookup.HasBuffer(entity))
+                return false;
+
+            DynamicBuffer<Child> children = childLookup[entity];
+            for (int i = 0; i < children.Length; i++)
+            {
+                if (IsRenderableVisibleRecursive(em, children[i].Value, childLookup))
+                    return true;
+            }
+
+            return false;
         }
 
-        return false;
-    }
-
-    public bool HasRenderableRecursive(Entity entity, BufferLookup<Child> childLookup, Lookups lookups)
-    {
-        if (entity == Entity.Null || !lookups.EntityStorageInfoLookup.Exists(entity))
-            return false;
-
-        if (IsRenderableEntity(entity, lookups))
-            return true;
-
-        if (!childLookup.HasBuffer(entity))
-            return false;
-
-        DynamicBuffer<Child> children = childLookup[entity];
-        for (int i = 0; i < children.Length; i++)
+        public bool HasRenderableRecursive(Entity entity, BufferLookup<Child> childLookup, Lookups lookups)
         {
-            if (HasRenderableRecursive(children[i].Value, childLookup, lookups))
+            if (entity == Entity.Null || !lookups.EntityStorageInfoLookup.Exists(entity))
+                return false;
+
+            if (IsRenderableEntity(entity, lookups))
                 return true;
+
+            if (!childLookup.HasBuffer(entity))
+                return false;
+
+            DynamicBuffer<Child> children = childLookup[entity];
+            for (int i = 0; i < children.Length; i++)
+            {
+                if (HasRenderableRecursive(children[i].Value, childLookup, lookups))
+                    return true;
+            }
+
+            return false;
         }
 
-        return false;
-    }
-
-    public bool HasRenderableRecursive(EntityManager em, Entity entity, BufferLookup<Child> childLookup)
-    {
-        if (!em.Exists(entity))
-            return false;
-
-        if (IsRenderableEntity(em, entity))
-            return true;
-
-        if (!childLookup.HasBuffer(entity))
-            return false;
-
-        DynamicBuffer<Child> children = childLookup[entity];
-        for (int i = 0; i < children.Length; i++)
+        public bool HasRenderableRecursive(EntityManager em, Entity entity, BufferLookup<Child> childLookup)
         {
-            if (HasRenderableRecursive(em, children[i].Value, childLookup))
+            if (!em.Exists(entity))
+                return false;
+
+            if (IsRenderableEntity(em, entity))
                 return true;
+
+            if (!childLookup.HasBuffer(entity))
+                return false;
+
+            DynamicBuffer<Child> children = childLookup[entity];
+            for (int i = 0; i < children.Length; i++)
+            {
+                if (HasRenderableRecursive(em, children[i].Value, childLookup))
+                    return true;
+            }
+
+            return false;
         }
 
-        return false;
-    }
+        public bool IsSafeVisibleCharacterLod(Entity entity, Lookups lookups)
+        {
+            return entity != Entity.Null &&
+                   lookups.EntityStorageInfoLookup.Exists(entity) &&
+                   lookups.SafeVisibleCharacterLodLookup.HasComponent(entity);
+        }
 
-    public bool IsSafeVisibleCharacterLod(Entity entity, Lookups lookups)
-    {
-        return entity != Entity.Null &&
-               lookups.EntityStorageInfoLookup.Exists(entity) &&
-               lookups.SafeVisibleCharacterLodLookup.HasComponent(entity);
-    }
+        public bool IsSafeVisibleCharacterLod(EntityManager em, Entity entity)
+        {
+            return entity != Entity.Null &&
+                   em.Exists(entity) &&
+                   em.HasComponent<UnitSafeVisibleCharacterLodTag>(entity);
+        }
 
-    public bool IsSafeVisibleCharacterLod(EntityManager em, Entity entity)
-    {
-        return entity != Entity.Null &&
-               em.Exists(entity) &&
-               em.HasComponent<UnitSafeVisibleCharacterLodTag>(entity);
-    }
+        public bool IsRenderableEntity(Entity entity, Lookups lookups)
+        {
+            return entity != Entity.Null &&
+                   lookups.EntityStorageInfoLookup.Exists(entity) &&
+                   lookups.RenderableEntityMask.MatchesIgnoreFilter(entity);
+        }
 
-    public bool IsRenderableEntity(Entity entity, Lookups lookups)
-    {
-        return entity != Entity.Null &&
-               lookups.EntityStorageInfoLookup.Exists(entity) &&
-               lookups.RenderableEntityMask.MatchesIgnoreFilter(entity);
-    }
-
-    public bool IsRenderableEntity(EntityManager em, Entity entity)
-    {
-        return em.HasComponent<RenderFilterSettings>(entity) ||
-               em.HasComponent<Unity.Rendering.RenderBounds>(entity);
+        public bool IsRenderableEntity(EntityManager em, Entity entity)
+        {
+            return em.HasComponent<RenderFilterSettings>(entity) ||
+                   em.HasComponent<Unity.Rendering.RenderBounds>(entity);
+        }
     }
 }

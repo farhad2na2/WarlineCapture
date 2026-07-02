@@ -1,219 +1,224 @@
 using System.Collections.Generic;
 using UnityEngine;
-using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
-using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
+using Game.Components;
 
-internal sealed class RuntimeCityWalkabilityUtilitySystemHelper
+namespace Game.Runtime
 {
-    private readonly RuntimeCityWalkabilityState _state = new();
+    using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
+    using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 
-    public RuntimeCityWalkabilityState State => _state;
-
-    public struct ReservedFootprint
+    internal sealed class RuntimeCityWalkabilityUtilitySystemHelper
     {
-        public RectInt Rect;
-        public int ClearanceCells;
-    }
+        private readonly RuntimeCityWalkabilityState _state = new();
 
-    public void ReserveFootprint(
-        List<ReservedFootprint> reservedFootprints,
-        Vector2Int originCell,
-        Vector2Int footprint,
-        int clearanceCells)
-    {
-        _state.ReserveFootprint(reservedFootprints, originCell, footprint, clearanceCells);
-    }
+        public RuntimeCityWalkabilityState State => _state;
 
-    public void ReserveStandaloneEntranceCorridor(
-        CityLayoutData city,
-        Vector2Int startRoadCell,
-        Vector2Int direction,
-        int roadSegmentCount,
-        int roadCellSizeInGridCells)
-    {
-        _state.ReserveStandaloneEntranceCorridor(city, startRoadCell, direction, roadSegmentCount, roadCellSizeInGridCells);
-    }
-
-    public bool WouldBeTooCloseToReserved(
-        Vector2Int originCell,
-        Vector2Int footprint,
-        List<ReservedFootprint> reservedFootprints,
-        int additionalClearanceCells)
-    {
-        return _state.WouldBeTooCloseToReserved(originCell, footprint, reservedFootprints, additionalClearanceCells);
-    }
-
-    public bool CanPlaceHouseYardRect(
-        RectInt yardRect,
-        RectInt houseRect,
-        int roadCellSizeInGridCells,
-        HashSet<Vector2Int> roadCells,
-        List<ReservedFootprint> reservedFootprints,
-        GridConfig grid)
-    {
-        return _state.CanPlaceHouseYardRect(
-            yardRect,
-            houseRect,
-            roadCellSizeInGridCells,
-            roadCells,
-            reservedFootprints,
-            grid);
-    }
-
-    public RectInt ExpandRect(RectInt rect, int padding)
-    {
-        return _state.ExpandRect(rect, padding);
-    }
-
-    public bool DoesRectOverlapRoadCells(RectInt rect, int roadCellSizeInGridCells, HashSet<Vector2Int> roadCells)
-    {
-        return _state.DoesRectOverlapRoadCells(rect, roadCellSizeInGridCells, roadCells);
-    }
-
-    public bool TouchesRect(RectInt rectA, RectInt rectB)
-    {
-        return _state.TouchesRect(rectA, rectB);
-    }
-
-    public Vector2Int GetCenteredOriginForPlot(
-        Vector2Int plotCell,
-        Vector2Int footprint,
-        int roadCellSizeInGridCells)
-    {
-        return _state.GetCenteredOriginForPlot(plotCell, footprint, roadCellSizeInGridCells);
-    }
-}
-
-internal sealed class RuntimeCityWalkabilityState
-{
-    public void ReserveFootprint(
-        List<ReservedFootprint> reservedFootprints,
-        Vector2Int originCell,
-        Vector2Int footprint,
-        int clearanceCells)
-    {
-        reservedFootprints.Add(new ReservedFootprint
+        public struct ReservedFootprint
         {
-            Rect = new RectInt(originCell, footprint),
-            ClearanceCells = Mathf.Max(0, clearanceCells)
-        });
-    }
-
-    public void ReserveStandaloneEntranceCorridor(
-        CityLayoutData city,
-        Vector2Int startRoadCell,
-        Vector2Int direction,
-        int roadSegmentCount,
-        int roadCellSizeInGridCells)
-    {
-        Vector2Int roadFootprint = new(
-            Mathf.Max(1, roadCellSizeInGridCells),
-            Mathf.Max(1, roadCellSizeInGridCells));
-
-        for (int step = 0; step <= roadSegmentCount; step++)
-        {
-            Vector2Int roadCell = startRoadCell + direction * step;
-            Vector2Int originCell = GetCenteredOriginForPlot(roadCell, roadFootprint, roadCellSizeInGridCells);
-            ReserveFootprint(city.ReservedFootprints, originCell, roadFootprint, 0);
-        }
-    }
-
-    public bool WouldBeTooCloseToReserved(
-        Vector2Int originCell,
-        Vector2Int footprint,
-        List<ReservedFootprint> reservedFootprints,
-        int additionalClearanceCells)
-    {
-        RectInt candidateRect = new(originCell, footprint);
-        for (int i = 0; i < reservedFootprints.Count; i++)
-        {
-            ReservedFootprint reserved = reservedFootprints[i];
-            RectInt expandedReserved = ExpandRect(reserved.Rect, reserved.ClearanceCells + Mathf.Max(0, additionalClearanceCells));
-            if (expandedReserved.Overlaps(candidateRect))
-                return true;
+            public RectInt Rect;
+            public int ClearanceCells;
         }
 
-        return false;
-    }
-
-    public bool CanPlaceHouseYardRect(
-        RectInt yardRect,
-        RectInt houseRect,
-        int roadCellSizeInGridCells,
-        HashSet<Vector2Int> roadCells,
-        List<ReservedFootprint> reservedFootprints,
-        GridConfig grid)
-    {
-        if (yardRect.xMin < 0 || yardRect.yMin < 0 || yardRect.xMax > grid.Width || yardRect.yMax > grid.Height)
-            return false;
-        if (DoesRectOverlapRoadCells(yardRect, roadCellSizeInGridCells, roadCells))
-            return false;
-
-        for (int i = 0; i < reservedFootprints.Count; i++)
+        public void ReserveFootprint(
+            List<ReservedFootprint> reservedFootprints,
+            Vector2Int originCell,
+            Vector2Int footprint,
+            int clearanceCells)
         {
-            RectInt reserved = reservedFootprints[i].Rect;
-            if (RectsEqual(reserved, houseRect))
-                continue;
-            if (yardRect.Overlaps(reserved))
-                return false;
+            _state.ReserveFootprint(reservedFootprints, originCell, footprint, clearanceCells);
         }
 
-        return true;
-    }
-
-    public RectInt ExpandRect(RectInt rect, int padding)
-    {
-        if (padding <= 0)
-            return rect;
-
-        return new RectInt(
-            rect.xMin - padding,
-            rect.yMin - padding,
-            rect.width + padding * 2,
-            rect.height + padding * 2);
-    }
-
-    public bool DoesRectOverlapRoadCells(RectInt rect, int roadCellSizeInGridCells, HashSet<Vector2Int> roadCells)
-    {
-        foreach (Vector2Int roadCell in roadCells)
+        public void ReserveStandaloneEntranceCorridor(
+            CityLayoutData city,
+            Vector2Int startRoadCell,
+            Vector2Int direction,
+            int roadSegmentCount,
+            int roadCellSizeInGridCells)
         {
-            RectInt roadRect = new(
-                roadCell.x * roadCellSizeInGridCells,
-                roadCell.y * roadCellSizeInGridCells,
+            _state.ReserveStandaloneEntranceCorridor(city, startRoadCell, direction, roadSegmentCount, roadCellSizeInGridCells);
+        }
+
+        public bool WouldBeTooCloseToReserved(
+            Vector2Int originCell,
+            Vector2Int footprint,
+            List<ReservedFootprint> reservedFootprints,
+            int additionalClearanceCells)
+        {
+            return _state.WouldBeTooCloseToReserved(originCell, footprint, reservedFootprints, additionalClearanceCells);
+        }
+
+        public bool CanPlaceHouseYardRect(
+            RectInt yardRect,
+            RectInt houseRect,
+            int roadCellSizeInGridCells,
+            HashSet<Vector2Int> roadCells,
+            List<ReservedFootprint> reservedFootprints,
+            GridConfig grid)
+        {
+            return _state.CanPlaceHouseYardRect(
+                yardRect,
+                houseRect,
                 roadCellSizeInGridCells,
-                roadCellSizeInGridCells);
-            if (rect.Overlaps(roadRect))
-                return true;
+                roadCells,
+                reservedFootprints,
+                grid);
         }
 
-        return false;
+        public RectInt ExpandRect(RectInt rect, int padding)
+        {
+            return _state.ExpandRect(rect, padding);
+        }
+
+        public bool DoesRectOverlapRoadCells(RectInt rect, int roadCellSizeInGridCells, HashSet<Vector2Int> roadCells)
+        {
+            return _state.DoesRectOverlapRoadCells(rect, roadCellSizeInGridCells, roadCells);
+        }
+
+        public bool TouchesRect(RectInt rectA, RectInt rectB)
+        {
+            return _state.TouchesRect(rectA, rectB);
+        }
+
+        public Vector2Int GetCenteredOriginForPlot(
+            Vector2Int plotCell,
+            Vector2Int footprint,
+            int roadCellSizeInGridCells)
+        {
+            return _state.GetCenteredOriginForPlot(plotCell, footprint, roadCellSizeInGridCells);
+        }
     }
 
-    public bool TouchesRect(RectInt rectA, RectInt rectB)
+    internal sealed class RuntimeCityWalkabilityState
     {
-        bool horizontalTouch =
-            (rectA.xMax == rectB.xMin || rectA.xMin == rectB.xMax) &&
-            rectA.yMin < rectB.yMax &&
-            rectA.yMax > rectB.yMin;
-        bool verticalTouch =
-            (rectA.yMax == rectB.yMin || rectA.yMin == rectB.yMax) &&
-            rectA.xMin < rectB.xMax &&
-            rectA.xMax > rectB.xMin;
-        return horizontalTouch || verticalTouch;
-    }
+        public void ReserveFootprint(
+            List<ReservedFootprint> reservedFootprints,
+            Vector2Int originCell,
+            Vector2Int footprint,
+            int clearanceCells)
+        {
+            reservedFootprints.Add(new ReservedFootprint
+            {
+                Rect = new RectInt(originCell, footprint),
+                ClearanceCells = Mathf.Max(0, clearanceCells)
+            });
+        }
 
-    public Vector2Int GetCenteredOriginForPlot(
-        Vector2Int plotCell,
-        Vector2Int footprint,
-        int roadCellSizeInGridCells)
-    {
-        return new Vector2Int(
-            plotCell.x * roadCellSizeInGridCells + Mathf.FloorToInt((roadCellSizeInGridCells - footprint.x) * 0.5f),
-            plotCell.y * roadCellSizeInGridCells + Mathf.FloorToInt((roadCellSizeInGridCells - footprint.y) * 0.5f));
-    }
+        public void ReserveStandaloneEntranceCorridor(
+            CityLayoutData city,
+            Vector2Int startRoadCell,
+            Vector2Int direction,
+            int roadSegmentCount,
+            int roadCellSizeInGridCells)
+        {
+            Vector2Int roadFootprint = new(
+                Mathf.Max(1, roadCellSizeInGridCells),
+                Mathf.Max(1, roadCellSizeInGridCells));
 
-    private static bool RectsEqual(RectInt a, RectInt b)
-    {
-        return a.xMin == b.xMin && a.yMin == b.yMin && a.width == b.width && a.height == b.height;
+            for (int step = 0; step <= roadSegmentCount; step++)
+            {
+                Vector2Int roadCell = startRoadCell + direction * step;
+                Vector2Int originCell = GetCenteredOriginForPlot(roadCell, roadFootprint, roadCellSizeInGridCells);
+                ReserveFootprint(city.ReservedFootprints, originCell, roadFootprint, 0);
+            }
+        }
+
+        public bool WouldBeTooCloseToReserved(
+            Vector2Int originCell,
+            Vector2Int footprint,
+            List<ReservedFootprint> reservedFootprints,
+            int additionalClearanceCells)
+        {
+            RectInt candidateRect = new(originCell, footprint);
+            for (int i = 0; i < reservedFootprints.Count; i++)
+            {
+                ReservedFootprint reserved = reservedFootprints[i];
+                RectInt expandedReserved = ExpandRect(reserved.Rect, reserved.ClearanceCells + Mathf.Max(0, additionalClearanceCells));
+                if (expandedReserved.Overlaps(candidateRect))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public bool CanPlaceHouseYardRect(
+            RectInt yardRect,
+            RectInt houseRect,
+            int roadCellSizeInGridCells,
+            HashSet<Vector2Int> roadCells,
+            List<ReservedFootprint> reservedFootprints,
+            GridConfig grid)
+        {
+            if (yardRect.xMin < 0 || yardRect.yMin < 0 || yardRect.xMax > grid.Width || yardRect.yMax > grid.Height)
+                return false;
+            if (DoesRectOverlapRoadCells(yardRect, roadCellSizeInGridCells, roadCells))
+                return false;
+
+            for (int i = 0; i < reservedFootprints.Count; i++)
+            {
+                RectInt reserved = reservedFootprints[i].Rect;
+                if (RectsEqual(reserved, houseRect))
+                    continue;
+                if (yardRect.Overlaps(reserved))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public RectInt ExpandRect(RectInt rect, int padding)
+        {
+            if (padding <= 0)
+                return rect;
+
+            return new RectInt(
+                rect.xMin - padding,
+                rect.yMin - padding,
+                rect.width + padding * 2,
+                rect.height + padding * 2);
+        }
+
+        public bool DoesRectOverlapRoadCells(RectInt rect, int roadCellSizeInGridCells, HashSet<Vector2Int> roadCells)
+        {
+            foreach (Vector2Int roadCell in roadCells)
+            {
+                RectInt roadRect = new(
+                    roadCell.x * roadCellSizeInGridCells,
+                    roadCell.y * roadCellSizeInGridCells,
+                    roadCellSizeInGridCells,
+                    roadCellSizeInGridCells);
+                if (rect.Overlaps(roadRect))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public bool TouchesRect(RectInt rectA, RectInt rectB)
+        {
+            bool horizontalTouch =
+                (rectA.xMax == rectB.xMin || rectA.xMin == rectB.xMax) &&
+                rectA.yMin < rectB.yMax &&
+                rectA.yMax > rectB.yMin;
+            bool verticalTouch =
+                (rectA.yMax == rectB.yMin || rectA.yMin == rectB.yMax) &&
+                rectA.xMin < rectB.xMax &&
+                rectA.xMax > rectB.xMin;
+            return horizontalTouch || verticalTouch;
+        }
+
+        public Vector2Int GetCenteredOriginForPlot(
+            Vector2Int plotCell,
+            Vector2Int footprint,
+            int roadCellSizeInGridCells)
+        {
+            return new Vector2Int(
+                plotCell.x * roadCellSizeInGridCells + Mathf.FloorToInt((roadCellSizeInGridCells - footprint.x) * 0.5f),
+                plotCell.y * roadCellSizeInGridCells + Mathf.FloorToInt((roadCellSizeInGridCells - footprint.y) * 0.5f));
+        }
+
+        private static bool RectsEqual(RectInt a, RectInt b)
+        {
+            return a.xMin == b.xMin && a.yMin == b.yMin && a.width == b.width && a.height == b.height;
+        }
     }
 }

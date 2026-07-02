@@ -1,15 +1,18 @@
-public enum UIRoute
+namespace Game.UI.Contracts
 {
-    Splash,
-    MainMenu,
-    Settings,
-    QuickCustomSetup,
-    Match,
-    Armory,
-    CommandExchange,
-    Inbox,
-    Events,
-    Ranking,
-    CommandFeed,
-    LoadoutSquadPrep
+    public enum UIRoute
+    {
+        Splash,
+        MainMenu,
+        Settings,
+        QuickCustomSetup,
+        Match,
+        Armory,
+        CommandExchange,
+        Inbox,
+        Events,
+        Ranking,
+        CommandFeed,
+        LoadoutSquadPrep
+    }
 }

@@ -1,3 +1,6 @@
+using Game.Tactical.Contracts;
+using Game.Components;
+
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
 using Unity.Collections;
@@ -5,6 +8,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Game.Runtime;
 
 public sealed class HoldStopScanCommandPlayModeTests
 {

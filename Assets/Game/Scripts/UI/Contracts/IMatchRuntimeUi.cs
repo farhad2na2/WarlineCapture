@@ -1,45 +1,49 @@
 using System;
 using UnityEngine;
+using Game.Tactical.Contracts;
 
-public interface IMatchRuntimeUi
+namespace Game.UI.Contracts
 {
-    bool IsBuildDrawerOpen { get; }
+    public interface IMatchRuntimeUi
+    {
+        bool IsBuildDrawerOpen { get; }
 
-    void ApplyMatchHudCommandMode(TacticalCommandMode mode);
+        void ApplyMatchHudCommandMode(TacticalCommandMode mode);
 
-    bool CanTriggerSelectionModeFromHold();
+        bool CanTriggerSelectionModeFromHold();
 
-    void ClearMatchHudCommandMode();
+        void ClearMatchHudCommandMode();
 
-    void ConfigureMatchHudRuntimeFeedbackSinkBinding(Action<IBattleHudRuntimeFeedbackSink> bindMatchHudRuntimeFeedback);
+        void ConfigureMatchHudRuntimeFeedbackSinkBinding(Action<IBattleHudRuntimeFeedbackSink> bindMatchHudRuntimeFeedback);
 
-    void ConfigureMatchHudSelectionPanelBinding(Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel);
+        void ConfigureMatchHudSelectionPanelBinding(Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel);
 
-    void ConfigureMatchHudSquadTrayBinding(Action<IMatchHudSquadTrayView> bindMatchHudSquadTray);
+        void ConfigureMatchHudSquadTrayBinding(Action<IMatchHudSquadTrayView> bindMatchHudSquadTray);
 
-    bool IsPointerOverAnyGameplayUi(Vector2 screenPosition, out string source);
+        bool IsPointerOverAnyGameplayUi(Vector2 screenPosition, out string source);
 
-    bool IsPointerOverBuildToolMenu(Vector2 screenPosition);
+        bool IsPointerOverBuildToolMenu(Vector2 screenPosition);
 
-    bool IsPointerOverPlacementUi(Vector2 screenPosition);
+        bool IsPointerOverPlacementUi(Vector2 screenPosition);
 
-    bool IsPointerOverRaycastableUi(Vector2 screenPosition, out string source);
+        bool IsPointerOverRaycastableUi(Vector2 screenPosition, out string source);
 
-    bool IsPointerOverSelectionCancelUi(Vector2 screenPosition);
+        bool IsPointerOverSelectionCancelUi(Vector2 screenPosition);
 
-    bool IsPointerOverUnitCommandUi(Vector2 screenPosition, out string source);
+        bool IsPointerOverUnitCommandUi(Vector2 screenPosition, out string source);
 
-    bool IsPointerOverZoomControls(Vector2 screenPosition);
+        bool IsPointerOverZoomControls(Vector2 screenPosition);
 
-    void NotifyStaticMinimapChanged();
+        void NotifyStaticMinimapChanged();
 
-    bool ShouldIgnoreBuildingSelectionThisFrame();
+        bool ShouldIgnoreBuildingSelectionThisFrame();
 
-    void TriggerSelectionCancel();
+        void TriggerSelectionCancel();
 
-    void TriggerSelectionModeFromHold();
+        void TriggerSelectionModeFromHold();
 
-    bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime);
+        bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime);
 
-    void Update();
+        void Update();
+    }
 }

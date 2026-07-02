@@ -1,6 +1,8 @@
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Mathematics;
+using Game.Components;
+using Game.Runtime;
 
 public class GridUtilityTests
 {

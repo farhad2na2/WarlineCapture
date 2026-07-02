@@ -1,14 +1,18 @@
 using Unity.Entities;
 using UnityEngine;
+using Game.Components;
 
-public sealed class UnitSafeVisibleCharacterLodAuthoring : MonoBehaviour
+namespace Game.Authoring
 {
-    private sealed class Baker : Baker<UnitSafeVisibleCharacterLodAuthoring>
+    public sealed class UnitSafeVisibleCharacterLodAuthoring : MonoBehaviour
     {
-        public override void Bake(UnitSafeVisibleCharacterLodAuthoring authoring)
+        private sealed class Baker : Baker<UnitSafeVisibleCharacterLodAuthoring>
         {
-            Entity entity = GetEntity(TransformUsageFlags.Renderable);
-            AddComponent<UnitSafeVisibleCharacterLodTag>(entity);
+            public override void Bake(UnitSafeVisibleCharacterLodAuthoring authoring)
+            {
+                Entity entity = GetEntity(TransformUsageFlags.Renderable);
+                AddComponent<UnitSafeVisibleCharacterLodTag>(entity);
+            }
         }
     }
 }

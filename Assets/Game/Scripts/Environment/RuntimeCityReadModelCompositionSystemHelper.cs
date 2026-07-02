@@ -1,13 +1,16 @@
-public sealed class RuntimeCityReadModelCompositionSystemHelper
+namespace Game.Runtime
 {
-    public bool SpawnOnStartEnabled { get; private set; }
-    public bool HasSpawned { get; private set; }
-    public bool IsGenerating { get; private set; }
-
-    public void Publish(bool spawnOnStartEnabled, bool hasSpawned, bool isGenerating)
+    public sealed class RuntimeCityReadModelCompositionSystemHelper
     {
-        SpawnOnStartEnabled = spawnOnStartEnabled;
-        HasSpawned = hasSpawned;
-        IsGenerating = isGenerating;
+        public bool SpawnOnStartEnabled { get; private set; }
+        public bool HasSpawned { get; private set; }
+        public bool IsGenerating { get; private set; }
+
+        public void Publish(bool spawnOnStartEnabled, bool hasSpawned, bool isGenerating)
+        {
+            SpawnOnStartEnabled = spawnOnStartEnabled;
+            HasSpawned = hasSpawned;
+            IsGenerating = isGenerating;
+        }
     }
 }

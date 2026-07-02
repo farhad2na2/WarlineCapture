@@ -1,48 +1,51 @@
 using System.Collections.Generic;
 
-public interface IUiShellRuntimeGateway
+namespace Game.UI.Contracts
 {
-    bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory);
+    public interface IUiShellRuntimeGateway
+    {
+        bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory);
 
-    bool TryEnqueueUiAction(UiActionKind kind, int payloadId);
+        bool TryEnqueueUiAction(UiActionKind kind, int payloadId);
 
-    bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading);
+        bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading);
 
-    bool TrySetLoadingProgress(float progress01, string status, bool complete);
+        bool TrySetLoadingProgress(float progress01, string status, bool complete);
 
-    bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics);
+        bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics);
 
-    bool TryReadShellState(out UiShellStateModel state);
+        bool TryReadShellState(out UiShellStateModel state);
 
-    bool TryReadCommanderProfile(out UiShellCommanderProfileModel profile);
+        bool TryReadCommanderProfile(out UiShellCommanderProfileModel profile);
 
-    bool TryReadMainMenuResources(out UiShellMainMenuResourcesModel resources);
+        bool TryReadMainMenuResources(out UiShellMainMenuResourcesModel resources);
 
-    bool TryReadMissionResult(out UiMissionResultPopupModel result);
+        bool TryReadMissionResult(out UiMissionResultPopupModel result);
 
-    bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection);
+        bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection);
 
-    bool TryReadMatchHudCommandState(out UiMatchHudCommandStateModel commandState);
+        bool TryReadMatchHudCommandState(out UiMatchHudCommandStateModel commandState);
 
-    bool TryReadMatchHudHeader(out UiMatchHudHeaderModel header);
+        bool TryReadMatchHudHeader(out UiMatchHudHeaderModel header);
 
-    bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces);
+        bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces);
 
-    bool TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap);
+        bool TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap);
 
-    bool TryReadMatchHudPassengerDrawer(out UiMatchHudPassengerDrawerModel passengerDrawer);
+        bool TryReadMatchHudPassengerDrawer(out UiMatchHudPassengerDrawerModel passengerDrawer);
 
-    bool TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel squadTray);
+        bool TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel squadTray);
 
-    bool TryReadBuildDrawer(out UiBuildDrawerModel drawer);
+        bool TryReadBuildDrawer(out UiBuildDrawerModel drawer);
 
-    bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar);
+        bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar);
 
-    bool TryReadArmoryCategory(out ArmoryCatalogCategory category);
+        bool TryReadArmoryCategory(out ArmoryCatalogCategory category);
 
-    bool TryEnqueueArmoryCategory(ArmoryCatalogCategory category);
+        bool TryEnqueueArmoryCategory(ArmoryCatalogCategory category);
 
-    bool TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands);
+        bool TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands);
 
-    bool TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion);
+        bool TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion);
+    }
 }

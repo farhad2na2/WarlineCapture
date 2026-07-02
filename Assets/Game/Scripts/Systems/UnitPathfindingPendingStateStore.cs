@@ -1,127 +1,130 @@
 using Unity.Collections;
 using Unity.Entities;
 
-public struct UnitPathfindingPendingStateComponent : IComponentData
+namespace Game.Runtime
 {
-    public byte HasPendingPathJob;
-    public int RequestCount;
-    public int RequestBudget;
-    public int ScheduledFrame;
-}
-
-internal struct UnitPathfindingPendingStateStore
-{
-    public EntityQuery CreateQuery(ref SystemState state)
+    public struct UnitPathfindingPendingStateComponent : IComponentData
     {
-        return state.GetEntityQuery(ComponentType.ReadWrite<UnitPathfindingPendingStateComponent>());
+        public byte HasPendingPathJob;
+        public int RequestCount;
+        public int RequestBudget;
+        public int ScheduledFrame;
     }
 
-    public void EnsureSingleton(ref SystemState state, EntityQuery query)
+    internal struct UnitPathfindingPendingStateStore
     {
-        if (!query.IsEmptyIgnoreFilter)
-            return;
-
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
-        Entity entity = ecb.CreateEntity();
-        ecb.AddComponent<UnitPathfindingPendingStateComponent>(entity);
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
-    }
-
-    public static UnitPathfindingPendingStateComponent CreateState(
-        bool hasPendingPathJob,
-        int requestCount,
-        int requestBudget,
-        int scheduledFrame)
-    {
-        return new UnitPathfindingPendingStateComponent
+        public EntityQuery CreateQuery(ref SystemState state)
         {
-            HasPendingPathJob = hasPendingPathJob ? (byte)1 : (byte)0,
-            RequestCount = requestCount,
-            RequestBudget = requestBudget,
-            ScheduledFrame = scheduledFrame
-        };
-    }
-}
+            return state.GetEntityQuery(ComponentType.ReadWrite<UnitPathfindingPendingStateComponent>());
+        }
 
-internal sealed class UnitPathfindingPendingStateReader
-{
-    private EntityQuery _query;
-    private World _world;
-    private bool _hasQuery;
-
-    public bool HasPendingPathJob()
-    {
-        if (!TryEnsureQuery())
-            return false;
-
-        try
+        public void EnsureSingleton(ref SystemState state, EntityQuery query)
         {
-            if (_query.IsEmptyIgnoreFilter)
+            if (!query.IsEmptyIgnoreFilter)
+                return;
+
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
+            Entity entity = ecb.CreateEntity();
+            ecb.AddComponent<UnitPathfindingPendingStateComponent>(entity);
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
+        }
+
+        public static UnitPathfindingPendingStateComponent CreateState(
+            bool hasPendingPathJob,
+            int requestCount,
+            int requestBudget,
+            int scheduledFrame)
+        {
+            return new UnitPathfindingPendingStateComponent
+            {
+                HasPendingPathJob = hasPendingPathJob ? (byte)1 : (byte)0,
+                RequestCount = requestCount,
+                RequestBudget = requestBudget,
+                ScheduledFrame = scheduledFrame
+            };
+        }
+    }
+
+    internal sealed class UnitPathfindingPendingStateReader
+    {
+        private EntityQuery _query;
+        private World _world;
+        private bool _hasQuery;
+
+        public bool HasPendingPathJob()
+        {
+            if (!TryEnsureQuery())
                 return false;
 
-            return _query.GetSingleton<UnitPathfindingPendingStateComponent>().HasPendingPathJob != 0;
-        }
-        catch (System.NullReferenceException)
-        {
-            ClearQueryState();
-            return false;
-        }
-        catch (System.InvalidOperationException)
-        {
-            ClearQueryState();
-            return false;
-        }
-    }
+            try
+            {
+                if (_query.IsEmptyIgnoreFilter)
+                    return false;
 
-    public void Dispose()
-    {
-        if (!_hasQuery)
-            return;
+                return _query.GetSingleton<UnitPathfindingPendingStateComponent>().HasPendingPathJob != 0;
+            }
+            catch (System.NullReferenceException)
+            {
+                ClearQueryState();
+                return false;
+            }
+            catch (System.InvalidOperationException)
+            {
+                ClearQueryState();
+                return false;
+            }
+        }
 
-        try
+        public void Dispose()
         {
-            if (IsQueryWorldAlive())
-                _query.Dispose();
+            if (!_hasQuery)
+                return;
+
+            try
+            {
+                if (IsQueryWorldAlive())
+                    _query.Dispose();
+            }
+            catch (System.NullReferenceException)
+            {
+            }
+            catch (System.InvalidOperationException)
+            {
+            }
+            finally
+            {
+                ClearQueryState();
+            }
         }
-        catch (System.NullReferenceException)
+
+        private bool TryEnsureQuery()
         {
-        }
-        catch (System.InvalidOperationException)
-        {
-        }
-        finally
-        {
+            if (_hasQuery && IsQueryWorldAlive())
+                return true;
+
             ClearQueryState();
-        }
-    }
 
-    private bool TryEnsureQuery()
-    {
-        if (_hasQuery && IsQueryWorldAlive())
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return false;
+
+            _query = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<UnitPathfindingPendingStateComponent>());
+            _world = world;
+            _hasQuery = true;
             return true;
+        }
 
-        ClearQueryState();
+        private bool IsQueryWorldAlive()
+        {
+            return _world != null && _world.IsCreated;
+        }
 
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        _query = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<UnitPathfindingPendingStateComponent>());
-        _world = world;
-        _hasQuery = true;
-        return true;
-    }
-
-    private bool IsQueryWorldAlive()
-    {
-        return _world != null && _world.IsCreated;
-    }
-
-    private void ClearQueryState()
-    {
-        _query = default;
-        _world = null;
-        _hasQuery = false;
+        private void ClearQueryState()
+        {
+            _query = default;
+            _world = null;
+            _hasQuery = false;
+        }
     }
 }

@@ -1,6 +1,8 @@
 using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
+using Game.Configs;
+using Game.Runtime;
 
 public sealed class GameStringsTests
 {

@@ -1,165 +1,170 @@
-#if UNITY_EDITOR
-using System.IO;
-using UnityEditor;
-using UnityEngine;
+using Game.Authoring;
 
-public static class BuildingDestroyedVisualPrefabMigration
+namespace Game.Editor
 {
-    private const string BuildingPrefabRoot = "Assets/Game/Prefabs/Buildings";
-    private const string DestroyedPrefabRoot = "Assets/Game/Prefabs/Buildings/Destroyed";
+    #if UNITY_EDITOR
+    using System.IO;
+    using UnityEditor;
+    using UnityEngine;
 
-    public static void ExtractDestroyedVisualPrefabs()
+    public static class BuildingDestroyedVisualPrefabMigration
     {
-        if (!AssetDatabase.IsValidFolder(DestroyedPrefabRoot))
-            AssetDatabase.CreateFolder(BuildingPrefabRoot, "Destroyed");
+        private const string BuildingPrefabRoot = "Assets/Game/Prefabs/Buildings";
+        private const string DestroyedPrefabRoot = "Assets/Game/Prefabs/Buildings/Destroyed";
 
-        string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { BuildingPrefabRoot });
-        int extracted = 0;
-        int assigned = 0;
-        int removed = 0;
-
-        for (int i = 0; i < prefabGuids.Length; i++)
+        public static void ExtractDestroyedVisualPrefabs()
         {
-            string prefabPath = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
-            if (!ShouldProcessPrefab(prefabPath))
-                continue;
+            if (!AssetDatabase.IsValidFolder(DestroyedPrefabRoot))
+                AssetDatabase.CreateFolder(BuildingPrefabRoot, "Destroyed");
 
-            GameObject prefabRoot = PrefabUtility.LoadPrefabContents(prefabPath);
-            try
+            string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { BuildingPrefabRoot });
+            int extracted = 0;
+            int assigned = 0;
+            int removed = 0;
+
+            for (int i = 0; i < prefabGuids.Length; i++)
             {
-                BuildingDefinitionAuthoring authoring = prefabRoot.GetComponent<BuildingDefinitionAuthoring>();
-                if (authoring == null)
+                string prefabPath = AssetDatabase.GUIDToAssetPath(prefabGuids[i]);
+                if (!ShouldProcessPrefab(prefabPath))
                     continue;
 
-                Transform destroyed = FindDirectOrNestedByName(prefabRoot.transform, "Destroyed");
-                GameObject destroyedPrefab = null;
-                if (destroyed != null)
+                GameObject prefabRoot = PrefabUtility.LoadPrefabContents(prefabPath);
+                try
                 {
-                    destroyedPrefab = SaveDestroyedVisualPrefab(prefabPath, destroyed);
-                    extracted++;
-                    destroyed.SetParent(null, false);
-                    Object.DestroyImmediate(destroyed.gameObject, true);
-                    removed++;
-                }
-                else
-                {
-                    string expectedPath = BuildDestroyedPrefabPath(prefabPath);
-                    destroyedPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(expectedPath);
-                }
+                    BuildingDefinitionAuthoring authoring = prefabRoot.GetComponent<BuildingDefinitionAuthoring>();
+                    if (authoring == null)
+                        continue;
 
-                bool prefabDirty = destroyed != null;
-                if (destroyedPrefab != null && AssignDestroyedVisual(authoring, destroyedPrefab, out bool authoringChanged))
-                {
-                    assigned++;
-                    prefabDirty |= authoringChanged;
-                }
+                    Transform destroyed = FindDirectOrNestedByName(prefabRoot.transform, "Destroyed");
+                    GameObject destroyedPrefab = null;
+                    if (destroyed != null)
+                    {
+                        destroyedPrefab = SaveDestroyedVisualPrefab(prefabPath, destroyed);
+                        extracted++;
+                        destroyed.SetParent(null, false);
+                        Object.DestroyImmediate(destroyed.gameObject, true);
+                        removed++;
+                    }
+                    else
+                    {
+                        string expectedPath = BuildDestroyedPrefabPath(prefabPath);
+                        destroyedPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(expectedPath);
+                    }
 
-                if (prefabDirty)
-                    PrefabUtility.SaveAsPrefabAsset(prefabRoot, prefabPath);
+                    bool prefabDirty = destroyed != null;
+                    if (destroyedPrefab != null && AssignDestroyedVisual(authoring, destroyedPrefab, out bool authoringChanged))
+                    {
+                        assigned++;
+                        prefabDirty |= authoringChanged;
+                    }
+
+                    if (prefabDirty)
+                        PrefabUtility.SaveAsPrefabAsset(prefabRoot, prefabPath);
+                }
+                finally
+                {
+                    PrefabUtility.UnloadPrefabContents(prefabRoot);
+                }
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[BuildingDestroyedVisualPrefabMigration] extracted={extracted} assigned={assigned} removed={removed}");
+        }
+
+        private static bool ShouldProcessPrefab(string prefabPath)
+        {
+            if (string.IsNullOrWhiteSpace(prefabPath))
+                return false;
+            if (!prefabPath.StartsWith(BuildingPrefabRoot + "/", System.StringComparison.Ordinal))
+                return false;
+            if (prefabPath.StartsWith(DestroyedPrefabRoot + "/", System.StringComparison.Ordinal))
+                return false;
+            if (Path.GetFileName(prefabPath) == "BuildingSelectionMarker.prefab")
+                return false;
+            return Path.GetExtension(prefabPath) == ".prefab";
+        }
+
+        private static GameObject SaveDestroyedVisualPrefab(string sourcePrefabPath, Transform destroyed)
+        {
+            GameObject root = new($"{Path.GetFileNameWithoutExtension(sourcePrefabPath)}_Destroyed");
+            try
+            {
+                GameObject copy = Object.Instantiate(destroyed.gameObject);
+                copy.name = "Destroyed";
+                copy.SetActive(true);
+                copy.transform.SetParent(root.transform, false);
+                copy.transform.localPosition = destroyed.localPosition;
+                copy.transform.localRotation = destroyed.localRotation;
+                copy.transform.localScale = destroyed.localScale;
+
+                return PrefabUtility.SaveAsPrefabAsset(root, BuildDestroyedPrefabPath(sourcePrefabPath));
             }
             finally
             {
-                PrefabUtility.UnloadPrefabContents(prefabRoot);
+                Object.DestroyImmediate(root);
             }
         }
 
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log($"[BuildingDestroyedVisualPrefabMigration] extracted={extracted} assigned={assigned} removed={removed}");
-    }
-
-    private static bool ShouldProcessPrefab(string prefabPath)
-    {
-        if (string.IsNullOrWhiteSpace(prefabPath))
-            return false;
-        if (!prefabPath.StartsWith(BuildingPrefabRoot + "/", System.StringComparison.Ordinal))
-            return false;
-        if (prefabPath.StartsWith(DestroyedPrefabRoot + "/", System.StringComparison.Ordinal))
-            return false;
-        if (Path.GetFileName(prefabPath) == "BuildingSelectionMarker.prefab")
-            return false;
-        return Path.GetExtension(prefabPath) == ".prefab";
-    }
-
-    private static GameObject SaveDestroyedVisualPrefab(string sourcePrefabPath, Transform destroyed)
-    {
-        GameObject root = new($"{Path.GetFileNameWithoutExtension(sourcePrefabPath)}_Destroyed");
-        try
+        private static string BuildDestroyedPrefabPath(string sourcePrefabPath)
         {
-            GameObject copy = Object.Instantiate(destroyed.gameObject);
-            copy.name = "Destroyed";
-            copy.SetActive(true);
-            copy.transform.SetParent(root.transform, false);
-            copy.transform.localPosition = destroyed.localPosition;
-            copy.transform.localRotation = destroyed.localRotation;
-            copy.transform.localScale = destroyed.localScale;
-
-            return PrefabUtility.SaveAsPrefabAsset(root, BuildDestroyedPrefabPath(sourcePrefabPath));
+            return $"{DestroyedPrefabRoot}/{Path.GetFileNameWithoutExtension(sourcePrefabPath)}_Destroyed.prefab";
         }
-        finally
+
+        private static bool AssignDestroyedVisual(
+            BuildingDefinitionAuthoring authoring,
+            GameObject destroyedPrefab,
+            out bool authoringChanged)
         {
-            Object.DestroyImmediate(root);
-        }
-    }
+            authoringChanged = false;
+            if (authoring == null || destroyedPrefab == null)
+                return false;
 
-    private static string BuildDestroyedPrefabPath(string sourcePrefabPath)
-    {
-        return $"{DestroyedPrefabRoot}/{Path.GetFileNameWithoutExtension(sourcePrefabPath)}_Destroyed.prefab";
-    }
-
-    private static bool AssignDestroyedVisual(
-        BuildingDefinitionAuthoring authoring,
-        GameObject destroyedPrefab,
-        out bool authoringChanged)
-    {
-        authoringChanged = false;
-        if (authoring == null || destroyedPrefab == null)
-            return false;
-
-        SerializedObject authoringObject = new(authoring);
-        SerializedProperty configProperty = authoringObject.FindProperty("config");
-        Object config = configProperty != null ? configProperty.objectReferenceValue : null;
-        if (config != null)
-        {
-            SerializedObject configObject = new(config);
-            SerializedProperty configDestroyed = configObject.FindProperty("destroyedVisualPrefab");
-            if (configDestroyed != null)
+            SerializedObject authoringObject = new(authoring);
+            SerializedProperty configProperty = authoringObject.FindProperty("config");
+            Object config = configProperty != null ? configProperty.objectReferenceValue : null;
+            if (config != null)
             {
-                configDestroyed.objectReferenceValue = destroyedPrefab;
-                configObject.ApplyModifiedPropertiesWithoutUndo();
-                EditorUtility.SetDirty(config);
-                return true;
+                SerializedObject configObject = new(config);
+                SerializedProperty configDestroyed = configObject.FindProperty("destroyedVisualPrefab");
+                if (configDestroyed != null)
+                {
+                    configDestroyed.objectReferenceValue = destroyedPrefab;
+                    configObject.ApplyModifiedPropertiesWithoutUndo();
+                    EditorUtility.SetDirty(config);
+                    return true;
+                }
             }
+
+            SerializedProperty authoringDestroyed = authoringObject.FindProperty("destroyedVisualPrefab");
+            if (authoringDestroyed == null)
+                return false;
+
+            authoringDestroyed.objectReferenceValue = destroyedPrefab;
+            authoringObject.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(authoring);
+            authoringChanged = true;
+            return true;
         }
 
-        SerializedProperty authoringDestroyed = authoringObject.FindProperty("destroyedVisualPrefab");
-        if (authoringDestroyed == null)
-            return false;
-
-        authoringDestroyed.objectReferenceValue = destroyedPrefab;
-        authoringObject.ApplyModifiedPropertiesWithoutUndo();
-        EditorUtility.SetDirty(authoring);
-        authoringChanged = true;
-        return true;
-    }
-
-    private static Transform FindDirectOrNestedByName(Transform root, string targetName)
-    {
-        if (root == null)
-            return null;
-
-        for (int i = 0; i < root.childCount; i++)
+        private static Transform FindDirectOrNestedByName(Transform root, string targetName)
         {
-            Transform child = root.GetChild(i);
-            if (child.name == targetName)
-                return child;
+            if (root == null)
+                return null;
 
-            Transform nested = FindDirectOrNestedByName(child, targetName);
-            if (nested != null)
-                return nested;
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform child = root.GetChild(i);
+                if (child.name == targetName)
+                    return child;
+
+                Transform nested = FindDirectOrNestedByName(child, targetName);
+                if (nested != null)
+                    return nested;
+            }
+
+            return null;
         }
-
-        return null;
     }
+    #endif
 }
-#endif

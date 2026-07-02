@@ -1,137 +1,142 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Game.Components;
+using Game.Configs;
 
-internal sealed class BuildingPlacementStartupSystemHelper
+namespace Game.Runtime
 {
-    private BuildingPlacementSystemConfig _config;
-    private Camera _worldCamera;
-    private float _buildPlaneY;
-    private float _placementOutlineHeight = 0.15f;
-    private Color _placementValidColor = new(0.15f, 0.85f, 0.2f, 1f);
-    private Color _placementInvalidColor = new(0.9f, 0.2f, 0.2f, 1f);
-    private Transform _runtimeRoot;
-    private Transform _buildingRoot;
-    private BuildingDefinition _soldierBaseDefinition;
-    private BuildingDefinition _soldierTentDefinition;
-    private BuildingDefinition _factoryDefinition;
-    private RoadGridProjectionSystem.RoadFootprintState _roadFootprintState;
-
-    public Camera WorldCamera => _worldCamera;
-    public float BuildPlaneY => _buildPlaneY;
-    public Transform BuildingRoot => _buildingRoot;
-    public BuildingDefinition SoldierBaseDefinition => _soldierBaseDefinition;
-    public BuildingDefinition SoldierTentDefinition => _soldierTentDefinition;
-    public BuildingDefinition FactoryDefinition => _factoryDefinition;
-    public GameObject RoadPreviewPrefab => _config != null ? _config.RoadPreviewPrefab : null;
-    public GameObject BuildingSelectionMarkerPrefab => _config != null ? _config.BuildingSelectionMarkerPrefab : null;
-    public float BuildButtonPreviewDistanceMultiplier => _config != null ? _config.BuildButtonPreviewDistanceMultiplier : 1f;
-    public float UnitCommandButtonPreviewDistanceMultiplier => _config != null ? _config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
-    public int MaxQueuedUnitProductions => _config != null ? _config.MaxQueuedUnitProductions : 25;
-
-    public void ConfigureRoadFootprintState(RoadGridProjectionSystem.RoadFootprintState roadFootprintState)
+    internal sealed class BuildingPlacementStartupSystemHelper
     {
-        _roadFootprintState = roadFootprintState;
-    }
+        private BuildingPlacementSystemConfig _config;
+        private Camera _worldCamera;
+        private float _buildPlaneY;
+        private float _placementOutlineHeight = 0.15f;
+        private Color _placementValidColor = new(0.15f, 0.85f, 0.2f, 1f);
+        private Color _placementInvalidColor = new(0.9f, 0.2f, 0.2f, 1f);
+        private Transform _runtimeRoot;
+        private Transform _buildingRoot;
+        private BuildingDefinition _soldierBaseDefinition;
+        private BuildingDefinition _soldierTentDefinition;
+        private BuildingDefinition _factoryDefinition;
+        private RoadGridProjectionSystem.RoadFootprintState _roadFootprintState;
 
-    public void Init(
-        BuildingPlacementSystemConfig configAsset,
-        Camera sceneWorldCamera,
-        Transform runtimeRoot,
-        BuildingDefinitionPrefabSystemHelper definitionSystem,
-        BuildingRunwaySystem runwaySystem,
-        BuildingPlacementPreviewPresentationSystemHelper previewSystem,
-        Action<UnityEngine.Object> destroyRuntimeObject)
-    {
-        _config = configAsset;
-        _worldCamera = sceneWorldCamera;
-        _runtimeRoot = runtimeRoot;
-        ApplyConfigIfAvailable(definitionSystem);
-        CreateBuildingRoot();
-        RebuildConfiguredSpawnableDefinitions(definitionSystem, runwaySystem, destroyRuntimeObject);
-        previewSystem.Init(
-            _runtimeRoot,
-            _placementOutlineHeight,
-            _placementValidColor,
-            _placementInvalidColor,
-            destroyRuntimeObject);
-    }
+        public Camera WorldCamera => _worldCamera;
+        public float BuildPlaneY => _buildPlaneY;
+        public Transform BuildingRoot => _buildingRoot;
+        public BuildingDefinition SoldierBaseDefinition => _soldierBaseDefinition;
+        public BuildingDefinition SoldierTentDefinition => _soldierTentDefinition;
+        public BuildingDefinition FactoryDefinition => _factoryDefinition;
+        public GameObject RoadPreviewPrefab => _config != null ? _config.RoadPreviewPrefab : null;
+        public GameObject BuildingSelectionMarkerPrefab => _config != null ? _config.BuildingSelectionMarkerPrefab : null;
+        public float BuildButtonPreviewDistanceMultiplier => _config != null ? _config.BuildButtonPreviewDistanceMultiplier : 1f;
+        public float UnitCommandButtonPreviewDistanceMultiplier => _config != null ? _config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
+        public int MaxQueuedUnitProductions => _config != null ? _config.MaxQueuedUnitProductions : 25;
 
-    public void ApplyConfigIfAvailable(BuildingDefinitionPrefabSystemHelper definitionSystem)
-    {
-        if (_config == null || definitionSystem == null)
-            return;
+        public void ConfigureRoadFootprintState(RoadGridProjectionSystem.RoadFootprintState roadFootprintState)
+        {
+            _roadFootprintState = roadFootprintState;
+        }
 
-        if (_config.WorldCamera != null)
-            _worldCamera = _config.WorldCamera;
+        public void Init(
+            BuildingPlacementSystemConfig configAsset,
+            Camera sceneWorldCamera,
+            Transform runtimeRoot,
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingRunwaySystem runwaySystem,
+            BuildingPlacementPreviewPresentationSystemHelper previewSystem,
+            Action<UnityEngine.Object> destroyRuntimeObject)
+        {
+            _config = configAsset;
+            _worldCamera = sceneWorldCamera;
+            _runtimeRoot = runtimeRoot;
+            ApplyConfigIfAvailable(definitionSystem);
+            CreateBuildingRoot();
+            RebuildConfiguredSpawnableDefinitions(definitionSystem, runwaySystem, destroyRuntimeObject);
+            previewSystem.Init(
+                _runtimeRoot,
+                _placementOutlineHeight,
+                _placementValidColor,
+                _placementInvalidColor,
+                destroyRuntimeObject);
+        }
 
-        IReadOnlyList<GameObject> configuredSpawnables = _config.Spawnables ?? new List<GameObject>();
-        UnitPrefabRegistryAuthoringConfig configuredUnitPrefabRegistry = _config.UnitPrefabRegistryConfig;
-        IReadOnlyList<GameObject> configuredUnitSpawnPrefabs =
-            configuredUnitPrefabRegistry != null && configuredUnitPrefabRegistry.UnitSpawnPrefabs != null
-                ? configuredUnitPrefabRegistry.UnitSpawnPrefabs
-                : new List<GameObject>();
-        definitionSystem.RebuildSpawnablesLookup(configuredSpawnables, configuredUnitSpawnPrefabs);
-        _buildPlaneY = _config.BuildPlaneY;
-        _placementOutlineHeight = _config.PlacementOutlineHeight;
-        _placementValidColor = _config.PlacementValidColor;
-        _placementInvalidColor = _config.PlacementInvalidColor;
-    }
+        public void ApplyConfigIfAvailable(BuildingDefinitionPrefabSystemHelper definitionSystem)
+        {
+            if (_config == null || definitionSystem == null)
+                return;
 
-    public void Dispose(
-        BuildingDefinitionPrefabSystemHelper definitionSystem,
-        BuildingPlacementPreviewPresentationSystemHelper previewSystem,
-        Action<UnityEngine.Object> destroyRuntimeObject)
-    {
-        definitionSystem.ClearConfiguredSpawnableDefinitions(target => destroyRuntimeObject?.Invoke(target));
-        definitionSystem.ClearConfiguredPrefabLookups();
-        _soldierBaseDefinition = null;
-        _soldierTentDefinition = null;
-        _factoryDefinition = null;
+            if (_config.WorldCamera != null)
+                _worldCamera = _config.WorldCamera;
 
-        previewSystem.Dispose();
-        if (_buildingRoot != null)
-            destroyRuntimeObject?.Invoke(_buildingRoot.gameObject);
+            IReadOnlyList<GameObject> configuredSpawnables = _config.Spawnables ?? new List<GameObject>();
+            UnitPrefabRegistryAuthoringConfig configuredUnitPrefabRegistry = _config.UnitPrefabRegistryConfig;
+            IReadOnlyList<GameObject> configuredUnitSpawnPrefabs =
+                configuredUnitPrefabRegistry != null && configuredUnitPrefabRegistry.UnitSpawnPrefabs != null
+                    ? configuredUnitPrefabRegistry.UnitSpawnPrefabs
+                    : new List<GameObject>();
+            definitionSystem.RebuildSpawnablesLookup(configuredSpawnables, configuredUnitSpawnPrefabs);
+            _buildPlaneY = _config.BuildPlaneY;
+            _placementOutlineHeight = _config.PlacementOutlineHeight;
+            _placementValidColor = _config.PlacementValidColor;
+            _placementInvalidColor = _config.PlacementInvalidColor;
+        }
 
-        _buildingRoot = null;
-        _runtimeRoot = null;
-        _config = null;
-        _worldCamera = null;
-        _roadFootprintState = default;
-    }
+        public void Dispose(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingPlacementPreviewPresentationSystemHelper previewSystem,
+            Action<UnityEngine.Object> destroyRuntimeObject)
+        {
+            definitionSystem.ClearConfiguredSpawnableDefinitions(target => destroyRuntimeObject?.Invoke(target));
+            definitionSystem.ClearConfiguredPrefabLookups();
+            _soldierBaseDefinition = null;
+            _soldierTentDefinition = null;
+            _factoryDefinition = null;
 
-    public void FillRoadFootprintMask(GridConfig grid, bool[] roadFootprintMask)
-    {
-        RoadGridProjectionSystem.FillRoadFootprintMask(_roadFootprintState, grid, roadFootprintMask);
-    }
+            previewSystem.Dispose();
+            if (_buildingRoot != null)
+                destroyRuntimeObject?.Invoke(_buildingRoot.gameObject);
 
-    public bool HasRoadInFootprint(GridConfig grid, Vector2Int originCell, Vector2Int footprintCells)
-    {
-        return RoadGridProjectionSystem.HasRoadInFootprint(
-            _roadFootprintState,
-            grid,
-            originCell,
-            footprintCells);
-    }
+            _buildingRoot = null;
+            _runtimeRoot = null;
+            _config = null;
+            _worldCamera = null;
+            _roadFootprintState = default;
+        }
 
-    private void CreateBuildingRoot()
-    {
-        _buildingRoot = new GameObject("RuntimeBuildings").transform;
-        _buildingRoot.SetParent(_runtimeRoot, false);
-        _buildingRoot.localPosition = Vector3.zero;
-        _buildingRoot.localRotation = Quaternion.identity;
-        _buildingRoot.localScale = Vector3.one;
-    }
+        public void FillRoadFootprintMask(GridConfig grid, bool[] roadFootprintMask)
+        {
+            RoadGridProjectionSystem.FillRoadFootprintMask(_roadFootprintState, grid, roadFootprintMask);
+        }
 
-    private void RebuildConfiguredSpawnableDefinitions(
-        BuildingDefinitionPrefabSystemHelper definitionSystem,
-        BuildingRunwaySystem runwaySystem,
-        Action<UnityEngine.Object> destroyRuntimeObject)
-    {
-        definitionSystem.RebuildConfiguredSpawnableDefinitions(runwaySystem, target => destroyRuntimeObject?.Invoke(target));
+        public bool HasRoadInFootprint(GridConfig grid, Vector2Int originCell, Vector2Int footprintCells)
+        {
+            return RoadGridProjectionSystem.HasRoadInFootprint(
+                _roadFootprintState,
+                grid,
+                originCell,
+                footprintCells);
+        }
 
-        _soldierBaseDefinition = definitionSystem.FindConfiguredDefinition("Soldier Base");
-        _soldierTentDefinition = definitionSystem.FindConfiguredDefinition("Soldier Tent");
-        _factoryDefinition = definitionSystem.FindConfiguredDefinition("Factory");
+        private void CreateBuildingRoot()
+        {
+            _buildingRoot = new GameObject("RuntimeBuildings").transform;
+            _buildingRoot.SetParent(_runtimeRoot, false);
+            _buildingRoot.localPosition = Vector3.zero;
+            _buildingRoot.localRotation = Quaternion.identity;
+            _buildingRoot.localScale = Vector3.one;
+        }
+
+        private void RebuildConfiguredSpawnableDefinitions(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingRunwaySystem runwaySystem,
+            Action<UnityEngine.Object> destroyRuntimeObject)
+        {
+            definitionSystem.RebuildConfiguredSpawnableDefinitions(runwaySystem, target => destroyRuntimeObject?.Invoke(target));
+
+            _soldierBaseDefinition = definitionSystem.FindConfiguredDefinition("Soldier Base");
+            _soldierTentDefinition = definitionSystem.FindConfiguredDefinition("Soldier Tent");
+            _factoryDefinition = definitionSystem.FindConfiguredDefinition("Factory");
+        }
     }
 }

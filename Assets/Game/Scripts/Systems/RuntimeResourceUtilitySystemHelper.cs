@@ -1,38 +1,41 @@
 using Unity.Entities;
 using UnityEngine;
 
-internal sealed class RuntimeResourceUtilitySystemHelper
+namespace Game.Runtime
 {
-    private int _dollars;
-
-    public int CurrentDollars => _dollars;
-
-    public void SetInitialDollars(int dollars)
+    internal sealed class RuntimeResourceUtilitySystemHelper
     {
-        _dollars = Mathf.Max(0, dollars);
-    }
+        private int _dollars;
 
-    public void AddDollars(int amount)
-    {
-        _dollars += Mathf.Max(0, amount);
-    }
+        public int CurrentDollars => _dollars;
 
-    public bool TrySpendDollars(int amount)
-    {
-        amount = Mathf.Max(0, amount);
-        if (amount <= 0)
+        public void SetInitialDollars(int dollars)
+        {
+            _dollars = Mathf.Max(0, dollars);
+        }
+
+        public void AddDollars(int amount)
+        {
+            _dollars += Mathf.Max(0, amount);
+        }
+
+        public bool TrySpendDollars(int amount)
+        {
+            amount = Mathf.Max(0, amount);
+            if (amount <= 0)
+                return true;
+            if (_dollars < amount)
+                return false;
+
+            _dollars -= amount;
             return true;
-        if (_dollars < amount)
-            return false;
+        }
 
-        _dollars -= amount;
-        return true;
-    }
-
-    public CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContext()
-    {
-        return new CitizenResourceCompositionSystemHelper.Context(
-            () => _dollars,
-            value => _dollars = Mathf.Max(0, value));
+        public CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContext()
+        {
+            return new CitizenResourceCompositionSystemHelper.Context(
+                () => _dollars,
+                value => _dollars = Mathf.Max(0, value));
+        }
     }
 }

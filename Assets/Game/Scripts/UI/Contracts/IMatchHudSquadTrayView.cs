@@ -1,19 +1,22 @@
 using System;
 using UnityEngine;
 
-public interface IMatchHudSquadTrayView
+namespace Game.UI.Contracts
 {
-    void Bind(Action<MatchHudSquadTraySlot> cardClicked);
+    public interface IMatchHudSquadTrayView
+    {
+        void Bind(Action<MatchHudSquadTraySlot> cardClicked);
 
-    void ClearActiveSlot();
+        void ClearActiveSlot();
 
-    bool ContainsScreenPoint(Vector2 screenPosition);
+        bool ContainsScreenPoint(Vector2 screenPosition);
 
-    void FlashDisabled(MatchHudSquadTraySlot slot);
+        void FlashDisabled(MatchHudSquadTraySlot slot);
 
-    void SetSelectedSlot(MatchHudSquadTraySlot selectedSlot);
+        void SetSelectedSlot(MatchHudSquadTraySlot selectedSlot);
 
-    bool TryGetPortraitSprite(MatchHudSquadTraySlot slot, out Sprite sprite);
+        bool TryGetPortraitSprite(MatchHudSquadTraySlot slot, out Sprite sprite);
 
-    void Unbind();
+        void Unbind();
+    }
 }

@@ -1,50 +1,53 @@
 using System;
 using UnityEngine;
 
-internal sealed class BuildingRuntimeTickCompositionSystemHelper
+namespace Game.Runtime
 {
-    public BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source Create(
-        BuildingGameplaySourceCompositionSystemHelper source,
-        BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
-        MaterialPropertyBlock markerPropertyBlock,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementInputRuntimeTickUiSystemHelper.Context> createInputRuntimeTickContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingProductionRuntimeTickCompositionSystemHelper.Context> createProductionRuntimeTickContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimePublishCompositionSystemHelper.Context> createRuntimeBoundaryPublishContext,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, Action> createMapBuildingPlacementSpawnUpdate,
-        Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, Action> createMapVehiclePlacementSpawnUpdate,
-        float destroyedBuildingLifetimeSeconds)
+    internal sealed class BuildingRuntimeTickCompositionSystemHelper
     {
-        BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource = createRuntimeContextSource(source);
-        BuildingRuntimeVisualPresentationSystemHelper.Context runtimeVisualContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeVisualContext(runtimeSource);
-        BuildingSelectionMarkerPresentationSystemHelper.Context selectionMarkerContext =
-            source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
-                runtimeSource,
-                source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
-                source.BuildingPlacementStartupSystemHelper.BuildingRoot,
-                markerPropertyBlock,
-                source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
-        BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> combatContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCombatContext(runtimeSource);
-        BuildingBarrierUtilitySystemHelper.Context barrierContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(runtimeSource);
-        BuildingPlacementInputRuntimeTickUiSystemHelper.Context inputContext = createInputRuntimeTickContext(source, interactionContext, markerPropertyBlock);
-        return new BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source(
-            createProductionRuntimeTickContext(source),
-            createRuntimeBoundaryPublishContext(source, interactionContext, markerPropertyBlock),
-            () => source.BuildingRuntimeVisualPresentationSystemHelper.UpdateBuildingResourceVisuals(runtimeVisualContext, UnityEngine.Time.time),
-            () => source.BuildingCombatUtilitySystemHelper.SyncDestroyedRuntimeBuildingCombatEntities(
-                combatContext,
-                UnityEngine.Time.time,
-                destroyedBuildingLifetimeSeconds),
-            () => source.BuildingCombatUtilitySystemHelper.UpdateDestroyedBuildings(combatContext, UnityEngine.Time.time),
-            () => source.BuildingBarrierUtilitySystemHelper.UpdateRoadBarrierDoors(barrierContext, UnityEngine.Time.deltaTime),
-            () => source.BuildingPlacementRedirectCompositionSystemHelper.FlushPendingMarkerRefresh(
-                () => source.BuildingSelectionMarkerPresentationSystemHelper.Refresh(selectionMarkerContext)),
-            createMapBuildingPlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
-            createMapVehiclePlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
-            () => source.BuildingPlacementInputRuntimeTickUiSystemHelper.Update(inputContext),
-            BuildingPlacementRuntimeTickDiagnosticsSystemHelper.CreateContext(
-                () => source.RuntimeDiagnosticsSystem.ShouldLogBuildingRuntimeSlices,
-                () => source.RuntimeBuildingSystem.Count,
-                Debug.Log));
+        public BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source Create(
+            BuildingGameplaySourceCompositionSystemHelper source,
+            BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
+            MaterialPropertyBlock markerPropertyBlock,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementInputRuntimeTickUiSystemHelper.Context> createInputRuntimeTickContext,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingProductionRuntimeTickCompositionSystemHelper.Context> createProductionRuntimeTickContext,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimePublishCompositionSystemHelper.Context> createRuntimeBoundaryPublishContext,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, Action> createMapBuildingPlacementSpawnUpdate,
+            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, Action> createMapVehiclePlacementSpawnUpdate,
+            float destroyedBuildingLifetimeSeconds)
+        {
+            BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource = createRuntimeContextSource(source);
+            BuildingRuntimeVisualPresentationSystemHelper.Context runtimeVisualContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeVisualContext(runtimeSource);
+            BuildingSelectionMarkerPresentationSystemHelper.Context selectionMarkerContext =
+                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
+                    runtimeSource,
+                    source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
+                    source.BuildingPlacementStartupSystemHelper.BuildingRoot,
+                    markerPropertyBlock,
+                    source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
+            BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> combatContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCombatContext(runtimeSource);
+            BuildingBarrierUtilitySystemHelper.Context barrierContext = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(runtimeSource);
+            BuildingPlacementInputRuntimeTickUiSystemHelper.Context inputContext = createInputRuntimeTickContext(source, interactionContext, markerPropertyBlock);
+            return new BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source(
+                createProductionRuntimeTickContext(source),
+                createRuntimeBoundaryPublishContext(source, interactionContext, markerPropertyBlock),
+                () => source.BuildingRuntimeVisualPresentationSystemHelper.UpdateBuildingResourceVisuals(runtimeVisualContext, UnityEngine.Time.time),
+                () => source.BuildingCombatUtilitySystemHelper.SyncDestroyedRuntimeBuildingCombatEntities(
+                    combatContext,
+                    UnityEngine.Time.time,
+                    destroyedBuildingLifetimeSeconds),
+                () => source.BuildingCombatUtilitySystemHelper.UpdateDestroyedBuildings(combatContext, UnityEngine.Time.time),
+                () => source.BuildingBarrierUtilitySystemHelper.UpdateRoadBarrierDoors(barrierContext, UnityEngine.Time.deltaTime),
+                () => source.BuildingPlacementRedirectCompositionSystemHelper.FlushPendingMarkerRefresh(
+                    () => source.BuildingSelectionMarkerPresentationSystemHelper.Refresh(selectionMarkerContext)),
+                createMapBuildingPlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
+                createMapVehiclePlacementSpawnUpdate?.Invoke(source, interactionContext, markerPropertyBlock),
+                () => source.BuildingPlacementInputRuntimeTickUiSystemHelper.Update(inputContext),
+                BuildingPlacementRuntimeTickDiagnosticsSystemHelper.CreateContext(
+                    () => source.RuntimeDiagnosticsSystem.ShouldLogBuildingRuntimeSlices,
+                    () => source.RuntimeBuildingSystem.Count,
+                    Debug.Log));
+        }
     }
 }

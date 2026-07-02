@@ -1,3 +1,7 @@
+using Game.Tactical.Contracts;
+using Game.Components;
+using Game.Runtime;
+
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
 using Unity.Entities;

@@ -4,6 +4,9 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
 
 public sealed class AITargetingValidationTests
 {

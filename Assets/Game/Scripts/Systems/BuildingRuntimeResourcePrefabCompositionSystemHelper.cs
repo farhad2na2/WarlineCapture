@@ -1,33 +1,36 @@
-internal sealed class BuildingRuntimeResourcePrefabCompositionSystemHelper
+namespace Game.Runtime
 {
-    public static BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source Create(
-        BuildingRuntimeResourcePrefabCompositionSystemHelper system,
-        BuildingGameplaySourceCompositionSystemHelper source)
+    internal sealed class BuildingRuntimeResourcePrefabCompositionSystemHelper
     {
-        return system != null ? system.Create(source) : CreateSource(source);
-    }
+        public static BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source Create(
+            BuildingRuntimeResourcePrefabCompositionSystemHelper system,
+            BuildingGameplaySourceCompositionSystemHelper source)
+        {
+            return system != null ? system.Create(source) : CreateSource(source);
+        }
 
-    public BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source Create(
-        BuildingGameplaySourceCompositionSystemHelper source)
-    {
-        return CreateSource(source);
-    }
+        public BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source Create(
+            BuildingGameplaySourceCompositionSystemHelper source)
+        {
+            return CreateSource(source);
+        }
 
-    private static BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source CreateSource(
-        BuildingGameplaySourceCompositionSystemHelper source)
-    {
-        return BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource(
-            source.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,
-            source.RuntimeResourceUtilitySystemHelper,
-            source.RuntimeUnitPrefabSystem,
-            source.BuildingDefinitionPrefabSystemHelper,
-            source.RuntimeBuildingSystem,
-            source.BuildingSpawnPrefabSystem,
-            source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
-            source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,
-            source.BuildingGameplayEcsQueryCompositionSystemHelper.UnitPrefabRegistryQuery,
-            source.BuildingGameplayEcsQueryCompositionSystemHelper.SpawnPrefabCandidatesQuery,
-            source.BuildingGameplayEcsQueryCompositionSystemHelper.LivePlayerUnitsQuery,
-            createCurrentSource: () => Create(source.BuildingRuntimeResourcePrefabCompositionHelper, source));
+        private static BuildingRuntimeResourcePrefabContextCompositionSystemHelper.Source CreateSource(
+            BuildingGameplaySourceCompositionSystemHelper source)
+        {
+            return BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource(
+                source.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,
+                source.RuntimeResourceUtilitySystemHelper,
+                source.RuntimeUnitPrefabSystem,
+                source.BuildingDefinitionPrefabSystemHelper,
+                source.RuntimeBuildingSystem,
+                source.BuildingSpawnPrefabSystem,
+                source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
+                source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,
+                source.BuildingGameplayEcsQueryCompositionSystemHelper.UnitPrefabRegistryQuery,
+                source.BuildingGameplayEcsQueryCompositionSystemHelper.SpawnPrefabCandidatesQuery,
+                source.BuildingGameplayEcsQueryCompositionSystemHelper.LivePlayerUnitsQuery,
+                createCurrentSource: () => Create(source.BuildingRuntimeResourcePrefabCompositionHelper, source));
+        }
     }
 }

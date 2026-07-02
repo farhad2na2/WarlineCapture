@@ -2,80 +2,85 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using UnitDistance = UnitRenderBudgetDistance.UnitDistance;
+using Game.Components;
 
-public readonly struct UnitRenderBudgetLightDiagnostic
+namespace Game.Rendering
 {
-    public void LogRenderBudgetStateLight(
-        EntityManager em,
-        NativeList<UnitDistance> distances,
-        int detailedCount,
-        bool cameraMotionActive,
-        float alwaysDetailedDistanceSq,
-        UnitRenderBudgetClassification classificationSystem,
-        ref UnitRenderBudgetDiagnosticLog diagnosticLogSystem)
+    using UnitDistance = UnitRenderBudgetDistance.UnitDistance;
+
+    public readonly struct UnitRenderBudgetLightDiagnostic
     {
-        int targetDetail = 0;
-        int targetMid = 0;
-        int targetLow = 0;
-        int targetFar = 0;
-        int visibleCharacters = 0;
-        int visibleCharacterNotDetail = 0;
-        int visibleCharacterActiveMid = 0;
-        int visibleCharacterActiveLow = 0;
-        int visibleCharacterActiveFar = 0;
-        int visibleCharacterScreenEdge = 0;
-        int visibleCharacterScreenEdgeDetail = 0;
-        int visibleNearDetail = 0;
-        int visibleNearMid = 0;
-
-        for (int i = 0; i < distances.Length; i++)
+        public void LogRenderBudgetStateLight(
+            EntityManager em,
+            NativeList<UnitDistance> distances,
+            int detailedCount,
+            bool cameraMotionActive,
+            float alwaysDetailedDistanceSq,
+            UnitRenderBudgetClassification classificationSystem,
+            ref UnitRenderBudgetDiagnosticLog diagnosticLogSystem)
         {
-            Entity unit = distances[i].Unit;
-            if (!em.Exists(unit))
-                continue;
+            int targetDetail = 0;
+            int targetMid = 0;
+            int targetLow = 0;
+            int targetFar = 0;
+            int visibleCharacters = 0;
+            int visibleCharacterNotDetail = 0;
+            int visibleCharacterActiveMid = 0;
+            int visibleCharacterActiveLow = 0;
+            int visibleCharacterActiveFar = 0;
+            int visibleCharacterScreenEdge = 0;
+            int visibleCharacterScreenEdgeDetail = 0;
+            int visibleNearDetail = 0;
+            int visibleNearMid = 0;
 
-            UnitRenderVisualKind activeVisual = em.HasComponent<UnitRenderVisualComponent>(unit)
-                ? (UnitRenderVisualKind)em.GetComponentData<UnitRenderVisualComponent>(unit).Current
-                : UnitRenderVisualKind.Detail;
-            if (activeVisual == UnitRenderVisualKind.Detail)
-                targetDetail++;
-            else if (activeVisual == UnitRenderVisualKind.Mid)
-                targetMid++;
-            else if (activeVisual == UnitRenderVisualKind.Low)
-                targetLow++;
-            else
-                targetFar++;
-
-            bool isCharacter = classificationSystem.IsCharacterUnit(em, unit);
-            if (!isCharacter || distances[i].Visible == 0)
-                continue;
-
-            visibleCharacters++;
-            if (distances[i].ScreenEdge != 0)
-                visibleCharacterScreenEdge++;
-            if (activeVisual != UnitRenderVisualKind.Detail)
-                visibleCharacterNotDetail++;
-            if (activeVisual == UnitRenderVisualKind.Mid)
-                visibleCharacterActiveMid++;
-            else if (activeVisual == UnitRenderVisualKind.Low)
-                visibleCharacterActiveLow++;
-            else if (activeVisual == UnitRenderVisualKind.Far)
-                visibleCharacterActiveFar++;
-            if (distances[i].ScreenEdge != 0 && activeVisual == UnitRenderVisualKind.Detail)
-                visibleCharacterScreenEdgeDetail++;
-            if (distances[i].DistanceSq <= alwaysDetailedDistanceSq)
+            for (int i = 0; i < distances.Length; i++)
             {
-                if (activeVisual == UnitRenderVisualKind.Detail)
-                    visibleNearDetail++;
-                else if (activeVisual == UnitRenderVisualKind.Mid)
-                    visibleNearMid++;
-            }
-        }
+                Entity unit = distances[i].Unit;
+                if (!em.Exists(unit))
+                    continue;
 
-        diagnosticLogSystem.EnqueueLog(
-            em,
-            $"[UnitRenderBudgetState] frame={Time.frameCount} units={distances.Length} targetDetail={targetDetail} targetMid={targetMid} targetLow={targetLow} targetFar={targetFar} " +
-            $"cameraMotion={(cameraMotionActive ? 1 : 0)} visibleCharacters={visibleCharacters} visibleCharacterNotDetail={visibleCharacterNotDetail} visibleCharacterActiveMid={visibleCharacterActiveMid} visibleCharacterActiveLow={visibleCharacterActiveLow} visibleCharacterActiveFar={visibleCharacterActiveFar} visibleCharacterScreenEdge={visibleCharacterScreenEdge} visibleCharacterScreenEdgeDetail={visibleCharacterScreenEdgeDetail} visibleNearDetail={visibleNearDetail} visibleNearMid={visibleNearMid} detailedCap={detailedCount} light=1");
+                UnitRenderVisualKind activeVisual = em.HasComponent<UnitRenderVisualComponent>(unit)
+                    ? (UnitRenderVisualKind)em.GetComponentData<UnitRenderVisualComponent>(unit).Current
+                    : UnitRenderVisualKind.Detail;
+                if (activeVisual == UnitRenderVisualKind.Detail)
+                    targetDetail++;
+                else if (activeVisual == UnitRenderVisualKind.Mid)
+                    targetMid++;
+                else if (activeVisual == UnitRenderVisualKind.Low)
+                    targetLow++;
+                else
+                    targetFar++;
+
+                bool isCharacter = classificationSystem.IsCharacterUnit(em, unit);
+                if (!isCharacter || distances[i].Visible == 0)
+                    continue;
+
+                visibleCharacters++;
+                if (distances[i].ScreenEdge != 0)
+                    visibleCharacterScreenEdge++;
+                if (activeVisual != UnitRenderVisualKind.Detail)
+                    visibleCharacterNotDetail++;
+                if (activeVisual == UnitRenderVisualKind.Mid)
+                    visibleCharacterActiveMid++;
+                else if (activeVisual == UnitRenderVisualKind.Low)
+                    visibleCharacterActiveLow++;
+                else if (activeVisual == UnitRenderVisualKind.Far)
+                    visibleCharacterActiveFar++;
+                if (distances[i].ScreenEdge != 0 && activeVisual == UnitRenderVisualKind.Detail)
+                    visibleCharacterScreenEdgeDetail++;
+                if (distances[i].DistanceSq <= alwaysDetailedDistanceSq)
+                {
+                    if (activeVisual == UnitRenderVisualKind.Detail)
+                        visibleNearDetail++;
+                    else if (activeVisual == UnitRenderVisualKind.Mid)
+                        visibleNearMid++;
+                }
+            }
+
+            diagnosticLogSystem.EnqueueLog(
+                em,
+                $"[UnitRenderBudgetState] frame={Time.frameCount} units={distances.Length} targetDetail={targetDetail} targetMid={targetMid} targetLow={targetLow} targetFar={targetFar} " +
+                $"cameraMotion={(cameraMotionActive ? 1 : 0)} visibleCharacters={visibleCharacters} visibleCharacterNotDetail={visibleCharacterNotDetail} visibleCharacterActiveMid={visibleCharacterActiveMid} visibleCharacterActiveLow={visibleCharacterActiveLow} visibleCharacterActiveFar={visibleCharacterActiveFar} visibleCharacterScreenEdge={visibleCharacterScreenEdge} visibleCharacterScreenEdgeDetail={visibleCharacterScreenEdgeDetail} visibleNearDetail={visibleNearDetail} visibleNearMid={visibleNearMid} detailedCap={detailedCount} light=1");
+        }
     }
 }

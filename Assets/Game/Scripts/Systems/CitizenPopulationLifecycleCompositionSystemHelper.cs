@@ -1,54 +1,71 @@
 using System;
 using UnityEngine;
 
-internal sealed class CitizenPopulationLifecycleCompositionSystemHelper
+namespace Game.Runtime
 {
-    private const float LogicalCitizenUpdateIntervalSeconds = 0.2f;
-    private const float VisibleCitizenSyncIntervalSeconds = 0.12f;
-    private const float TotalsRefreshIntervalSeconds = 0.25f;
-
-    public struct State
+    internal sealed class CitizenPopulationLifecycleCompositionSystemHelper
     {
-        public float NextLogicalCitizenUpdateAt;
-        public float NextVisibleCitizenSyncAt;
-        public float NextTotalsRefreshAt;
-    }
+        private const float LogicalCitizenUpdateIntervalSeconds = 0.2f;
+        private const float VisibleCitizenSyncIntervalSeconds = 0.12f;
+        private const float TotalsRefreshIntervalSeconds = 0.25f;
 
-    private State _state;
-
-    public static void Reset(CitizenPopulationLifecycleCompositionSystemHelper system, ref State state)
-    {
-        if (system != null)
+        public struct State
         {
-            system.Reset();
-            return;
+            public float NextLogicalCitizenUpdateAt;
+            public float NextVisibleCitizenSyncAt;
+            public float NextTotalsRefreshAt;
         }
 
-        ResetState(ref state);
-    }
+        private State _state;
 
-    public void Reset()
-    {
-        ResetState(ref _state);
-    }
-
-    public static void Update(
-        CitizenPopulationLifecycleCompositionSystemHelper system,
-        ref State state,
-        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
-        CitizenDangerCompositionSystemHelper dangerSystem,
-        CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
-        CitizenPopulationStateCompositionSystemHelper populationState,
-        Action updateLogicalCitizens,
-        Action syncVisibleCitizens,
-        Action<bool> recalculateTotals,
-        Func<bool> hasPendingPathJob,
-        float now)
-    {
-        if (system != null)
+        public static void Reset(CitizenPopulationLifecycleCompositionSystemHelper system, ref State state)
         {
-            system.Update(
+            if (system != null)
+            {
+                system.Reset();
+                return;
+            }
+
+            ResetState(ref state);
+        }
+
+        public void Reset()
+        {
+            ResetState(ref _state);
+        }
+
+        public static void Update(
+            CitizenPopulationLifecycleCompositionSystemHelper system,
+            ref State state,
+            CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
+            CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
+            CitizenDangerCompositionSystemHelper dangerSystem,
+            CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
+            CitizenPopulationStateCompositionSystemHelper populationState,
+            Action updateLogicalCitizens,
+            Action syncVisibleCitizens,
+            Action<bool> recalculateTotals,
+            Func<bool> hasPendingPathJob,
+            float now)
+        {
+            if (system != null)
+            {
+                system.Update(
+                    buildingReadSystem,
+                    ecsProjection,
+                    dangerSystem,
+                    diagnosticSystem,
+                    populationState,
+                    updateLogicalCitizens,
+                    syncVisibleCitizens,
+                    recalculateTotals,
+                    hasPendingPathJob,
+                    now);
+                return;
+            }
+
+            UpdateState(
+                ref state,
                 buildingReadSystem,
                 ecsProjection,
                 dangerSystem,
@@ -59,129 +76,115 @@ internal sealed class CitizenPopulationLifecycleCompositionSystemHelper
                 recalculateTotals,
                 hasPendingPathJob,
                 now);
-            return;
         }
 
-        UpdateState(
-            ref state,
-            buildingReadSystem,
-            ecsProjection,
-            dangerSystem,
-            diagnosticSystem,
-            populationState,
-            updateLogicalCitizens,
-            syncVisibleCitizens,
-            recalculateTotals,
-            hasPendingPathJob,
-            now);
-    }
-
-    public void Update(
-        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
-        CitizenDangerCompositionSystemHelper dangerSystem,
-        CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
-        CitizenPopulationStateCompositionSystemHelper state,
-        Action updateLogicalCitizens,
-        Action syncVisibleCitizens,
-        Action<bool> recalculateTotals,
-        Func<bool> hasPendingPathJob,
-        float now)
-    {
-        UpdateState(
-            ref _state,
-            buildingReadSystem,
-            ecsProjection,
-            dangerSystem,
-            diagnosticSystem,
-            state,
-            updateLogicalCitizens,
-            syncVisibleCitizens,
-            recalculateTotals,
-            hasPendingPathJob,
-            now);
-    }
-
-    private static void ResetState(ref State state)
-    {
-        state.NextLogicalCitizenUpdateAt = 0f;
-        state.NextVisibleCitizenSyncAt = 0f;
-        state.NextTotalsRefreshAt = 0f;
-    }
-
-    private static void UpdateState(
-        ref State lifecycleState,
-        CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
-        CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
-        CitizenDangerCompositionSystemHelper dangerSystem,
-        CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
-        CitizenPopulationStateCompositionSystemHelper state,
-        Action updateLogicalCitizens,
-        Action syncVisibleCitizens,
-        Action<bool> recalculateTotals,
-        Func<bool> hasPendingPathJob,
-        float now)
-    {
-        CitizenPopulationDiagnosticsSystemHelper.FrameTimings timings = CitizenPopulationDiagnosticsSystemHelper.BeginFrame(diagnosticSystem);
-        try
+        public void Update(
+            CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
+            CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
+            CitizenDangerCompositionSystemHelper dangerSystem,
+            CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
+            CitizenPopulationStateCompositionSystemHelper state,
+            Action updateLogicalCitizens,
+            Action syncVisibleCitizens,
+            Action<bool> recalculateTotals,
+            Func<bool> hasPendingPathJob,
+            float now)
         {
-            if (!buildingReadSystem.HasRuntimeBuildingQuery())
-                return;
+            UpdateState(
+                ref _state,
+                buildingReadSystem,
+                ecsProjection,
+                dangerSystem,
+                diagnosticSystem,
+                state,
+                updateLogicalCitizens,
+                syncVisibleCitizens,
+                recalculateTotals,
+                hasPendingPathJob,
+                now);
+        }
 
-            bool refreshedBuildings = buildingReadSystem.RefreshRuntimeBuildingListsIfDue(now);
-            CitizenPopulationDiagnosticsSystemHelper.MarkBuildings(diagnosticSystem, ref timings);
+        private static void ResetState(ref State state)
+        {
+            state.NextLogicalCitizenUpdateAt = 0f;
+            state.NextVisibleCitizenSyncAt = 0f;
+            state.NextTotalsRefreshAt = 0f;
+        }
 
-            if (hasPendingPathJob != null && hasPendingPathJob())
+        private static void UpdateState(
+            ref State lifecycleState,
+            CitizenBuildingReadCompositionSystemHelper buildingReadSystem,
+            CitizenPopulationEcsProjectionCompositionSystemHelper ecsProjection,
+            CitizenDangerCompositionSystemHelper dangerSystem,
+            CitizenPopulationDiagnosticsSystemHelper diagnosticSystem,
+            CitizenPopulationStateCompositionSystemHelper state,
+            Action updateLogicalCitizens,
+            Action syncVisibleCitizens,
+            Action<bool> recalculateTotals,
+            Func<bool> hasPendingPathJob,
+            float now)
+        {
+            CitizenPopulationDiagnosticsSystemHelper.FrameTimings timings = CitizenPopulationDiagnosticsSystemHelper.BeginFrame(diagnosticSystem);
+            try
             {
-                CitizenPopulationDiagnosticsSystemHelper.MarkSkippedForPathfinding(diagnosticSystem, ref timings);
-                RecalculateTotalsIfDue(ref lifecycleState, syncSummaryEntity: false, now, recalculateTotals);
+                if (!buildingReadSystem.HasRuntimeBuildingQuery())
+                    return;
+
+                bool refreshedBuildings = buildingReadSystem.RefreshRuntimeBuildingListsIfDue(now);
+                CitizenPopulationDiagnosticsSystemHelper.MarkBuildings(diagnosticSystem, ref timings);
+
+                if (hasPendingPathJob != null && hasPendingPathJob())
+                {
+                    CitizenPopulationDiagnosticsSystemHelper.MarkSkippedForPathfinding(diagnosticSystem, ref timings);
+                    RecalculateTotalsIfDue(ref lifecycleState, syncSummaryEntity: false, now, recalculateTotals);
+                    CitizenPopulationDiagnosticsSystemHelper.MarkTotals(diagnosticSystem, ref timings);
+                    return;
+                }
+
+                ecsProjection.ResolveEntityManager();
+                ecsProjection.EnsurePopulationSummaryEntity();
+                CitizenPopulationDiagnosticsSystemHelper.MarkResolve(diagnosticSystem, ref timings);
+
+                CitizenDangerCompositionSystemHelper.RefreshDangerSourcesIfNeeded(dangerSystem, now);
+                CitizenPopulationDiagnosticsSystemHelper.MarkDanger(diagnosticSystem, ref timings);
+
+                if (now >= lifecycleState.NextLogicalCitizenUpdateAt)
+                {
+                    lifecycleState.NextLogicalCitizenUpdateAt = now + LogicalCitizenUpdateIntervalSeconds;
+                    if (!refreshedBuildings)
+                        buildingReadSystem.RefreshRuntimeBuildingLists(now, force: true);
+                    updateLogicalCitizens();
+                }
+
+                CitizenPopulationDiagnosticsSystemHelper.MarkLogical(diagnosticSystem, ref timings);
+
+                if (now >= lifecycleState.NextVisibleCitizenSyncAt)
+                {
+                    lifecycleState.NextVisibleCitizenSyncAt = now + VisibleCitizenSyncIntervalSeconds;
+                    syncVisibleCitizens();
+                }
+
+                CitizenPopulationDiagnosticsSystemHelper.MarkVisible(diagnosticSystem, ref timings);
+                RecalculateTotalsIfDue(ref lifecycleState, syncSummaryEntity: true, now, recalculateTotals);
                 CitizenPopulationDiagnosticsSystemHelper.MarkTotals(diagnosticSystem, ref timings);
-                return;
             }
-
-            ecsProjection.ResolveEntityManager();
-            ecsProjection.EnsurePopulationSummaryEntity();
-            CitizenPopulationDiagnosticsSystemHelper.MarkResolve(diagnosticSystem, ref timings);
-
-            CitizenDangerCompositionSystemHelper.RefreshDangerSourcesIfNeeded(dangerSystem, now);
-            CitizenPopulationDiagnosticsSystemHelper.MarkDanger(diagnosticSystem, ref timings);
-
-            if (now >= lifecycleState.NextLogicalCitizenUpdateAt)
+            finally
             {
-                lifecycleState.NextLogicalCitizenUpdateAt = now + LogicalCitizenUpdateIntervalSeconds;
-                if (!refreshedBuildings)
-                    buildingReadSystem.RefreshRuntimeBuildingLists(now, force: true);
-                updateLogicalCitizens();
+                CitizenPopulationDiagnosticsSystemHelper.EndFrame(diagnosticSystem, ref timings, state);
             }
-
-            CitizenPopulationDiagnosticsSystemHelper.MarkLogical(diagnosticSystem, ref timings);
-
-            if (now >= lifecycleState.NextVisibleCitizenSyncAt)
-            {
-                lifecycleState.NextVisibleCitizenSyncAt = now + VisibleCitizenSyncIntervalSeconds;
-                syncVisibleCitizens();
-            }
-
-            CitizenPopulationDiagnosticsSystemHelper.MarkVisible(diagnosticSystem, ref timings);
-            RecalculateTotalsIfDue(ref lifecycleState, syncSummaryEntity: true, now, recalculateTotals);
-            CitizenPopulationDiagnosticsSystemHelper.MarkTotals(diagnosticSystem, ref timings);
         }
-        finally
+
+        private static void RecalculateTotalsIfDue(
+            ref State state,
+            bool syncSummaryEntity,
+            float now,
+            Action<bool> recalculateTotals)
         {
-            CitizenPopulationDiagnosticsSystemHelper.EndFrame(diagnosticSystem, ref timings, state);
+            if (now < state.NextTotalsRefreshAt)
+                return;
+
+            state.NextTotalsRefreshAt = now + TotalsRefreshIntervalSeconds;
+            recalculateTotals(syncSummaryEntity);
         }
-    }
-
-    private static void RecalculateTotalsIfDue(
-        ref State state,
-        bool syncSummaryEntity,
-        float now,
-        Action<bool> recalculateTotals)
-    {
-        if (now < state.NextTotalsRefreshAt)
-            return;
-
-        state.NextTotalsRefreshAt = now + TotalsRefreshIntervalSeconds;
-        recalculateTotals(syncSummaryEntity);
     }
 }

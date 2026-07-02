@@ -6,330 +6,318 @@ using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Game.Components;
 
-[UpdateInGroup(typeof(SimulationSystemGroup))]
-public partial struct UnitTransportRopeDisembarkSystem : ISystem
+namespace Game.Runtime
 {
-    private const int RopeDropClearanceCells = 2;
-    private const float RopeDropDurationSeconds = 1.2f;
-    private const float RopeDropMaxNonRoadLandingHeightDelta = 0.75f;
-    private MapSurfaceSpawnGrounding _spawnGroundingSystem;
-    private EntityQuery _gridQuery;
-    private EntityQuery _landingClearanceQuery;
-    private EntityTypeHandle _landingEntityType;
-    private ComponentTypeHandle<UnitTransportRopeLandingClearance> _landingClearanceType;
-    private ComponentTypeHandle<UnitGrid> _landingGridType;
-    private EntityStorageInfoLookup _entityStorageInfoLookup;
-
-    public void OnCreate(ref SystemState state)
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    public partial struct UnitTransportRopeDisembarkSystem : ISystem
     {
-        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        state.RequireForUpdate(_gridQuery);
-        state.RequireForUpdate<UnitTransportRopeDisembarkRequest>();
-        _landingClearanceQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<UnitTransportRopeLandingClearance>(),
-            ComponentType.ReadOnly<UnitGrid>());
-        _landingEntityType = state.GetEntityTypeHandle();
-        _landingClearanceType = state.GetComponentTypeHandle<UnitTransportRopeLandingClearance>(true);
-        _landingGridType = state.GetComponentTypeHandle<UnitGrid>(true);
-        _entityStorageInfoLookup = state.GetEntityStorageInfoLookup();
-    }
+        private const int RopeDropClearanceCells = 2;
+        private const float RopeDropDurationSeconds = 1.2f;
+        private const float RopeDropMaxNonRoadLandingHeightDelta = 0.75f;
+        private MapSurfaceSpawnGrounding _spawnGroundingSystem;
+        private EntityQuery _gridQuery;
+        private EntityQuery _landingClearanceQuery;
+        private EntityTypeHandle _landingEntityType;
+        private ComponentTypeHandle<UnitTransportRopeLandingClearance> _landingClearanceType;
+        private ComponentTypeHandle<UnitGrid> _landingGridType;
+        private EntityStorageInfoLookup _entityStorageInfoLookup;
 
-    public void OnUpdate(ref SystemState state)
-    {
-        UpdateLandingTypeHandles(ref state);
-        EntityManager em = state.EntityManager;
-        CleanupClearedLandingCells(
-            ref state,
-            _landingClearanceQuery,
-            _landingEntityType,
-            _landingClearanceType,
-            _landingGridType,
-            _entityStorageInfoLookup);
-
-        Entity gridEntity = _gridQuery.GetSingletonEntity();
-        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-        DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
-        DynamicBlockerComponent blockerData = em.HasComponent<DynamicBlockerComponent>(gridEntity) ? em.GetComponentData<DynamicBlockerComponent>(gridEntity) : default;
-        DynamicOccupancyComponent occupancyData = em.HasComponent<DynamicOccupancyComponent>(gridEntity) ? em.GetComponentData<DynamicOccupancyComponent>(gridEntity) : default;
-        float now = (float)SystemAPI.Time.ElapsedTime;
-
-        EntityCommandBuffer ecb = new(Allocator.Temp);
-        List<Entity> droppedPassengers = new();
-
-        foreach (var (request, transportGrid, transportFootprint, transportTransform, passengers, transport) in
-                 SystemAPI.Query<RefRW<UnitTransportRopeDisembarkRequest>, RefRO<UnitGrid>, RefRO<UnitFootprint>, RefRW<LocalTransform>, DynamicBuffer<UnitTransportPassengerElement>>()
-                     .WithEntityAccess())
+        public void OnCreate(ref SystemState state)
         {
-            if (passengers.Length <= 0)
+            _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            state.RequireForUpdate(_gridQuery);
+            state.RequireForUpdate<UnitTransportRopeDisembarkRequest>();
+            _landingClearanceQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<UnitTransportRopeLandingClearance>(),
+                ComponentType.ReadOnly<UnitGrid>());
+            _landingEntityType = state.GetEntityTypeHandle();
+            _landingClearanceType = state.GetComponentTypeHandle<UnitTransportRopeLandingClearance>(true);
+            _landingGridType = state.GetComponentTypeHandle<UnitGrid>(true);
+            _entityStorageInfoLookup = state.GetEntityStorageInfoLookup();
+        }
+
+        public void OnUpdate(ref SystemState state)
+        {
+            UpdateLandingTypeHandles(ref state);
+            EntityManager em = state.EntityManager;
+            CleanupClearedLandingCells(
+                ref state,
+                _landingClearanceQuery,
+                _landingEntityType,
+                _landingClearanceType,
+                _landingGridType,
+                _entityStorageInfoLookup);
+
+            Entity gridEntity = _gridQuery.GetSingletonEntity();
+            GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
+            DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
+            DynamicBlockerComponent blockerData = em.HasComponent<DynamicBlockerComponent>(gridEntity) ? em.GetComponentData<DynamicBlockerComponent>(gridEntity) : default;
+            DynamicOccupancyComponent occupancyData = em.HasComponent<DynamicOccupancyComponent>(gridEntity) ? em.GetComponentData<DynamicOccupancyComponent>(gridEntity) : default;
+            float now = (float)SystemAPI.Time.ElapsedTime;
+
+            EntityCommandBuffer ecb = new(Allocator.Temp);
+            List<Entity> droppedPassengers = new();
+
+            foreach (var (request, transportGrid, transportFootprint, transportTransform, passengers, transport) in
+                     SystemAPI.Query<RefRW<UnitTransportRopeDisembarkRequest>, RefRO<UnitGrid>, RefRO<UnitFootprint>, RefRW<LocalTransform>, DynamicBuffer<UnitTransportPassengerElement>>()
+                         .WithEntityAccess())
             {
-                if (IsRopeLandingClear(_landingClearanceQuery, transport, ref _landingClearanceType, ref _landingGridType))
+                if (passengers.Length <= 0)
+                {
+                    if (IsRopeLandingClear(_landingClearanceQuery, transport, ref _landingClearanceType, ref _landingGridType))
+                        ecb.RemoveComponent<UnitTransportRopeDisembarkRequest>(transport);
+                    continue;
+                }
+
+                if (!IsRopeLandingClear(_landingClearanceQuery, transport, ref _landingClearanceType, ref _landingGridType))
+                    continue;
+
+                if (request.ValueRO.NextDropAt > 0f && now < request.ValueRO.NextDropAt)
+                    continue;
+
+                int passengerIndex = FindExistingPassenger(em, passengers);
+                if (passengerIndex < 0)
+                {
+                    passengers.Clear();
                     ecb.RemoveComponent<UnitTransportRopeDisembarkRequest>(transport);
-                continue;
-            }
+                    continue;
+                }
 
-            if (!IsRopeLandingClear(_landingClearanceQuery, transport, ref _landingClearanceType, ref _landingGridType))
-                continue;
+                Entity passenger = passengers[passengerIndex].Passenger;
+                passengers.RemoveAt(passengerIndex);
 
-            if (request.ValueRO.NextDropAt > 0f && now < request.ValueRO.NextDropAt)
-                continue;
-
-            int passengerIndex = FindExistingPassenger(em, passengers);
-            if (passengerIndex < 0)
-            {
-                passengers.Clear();
-                ecb.RemoveComponent<UnitTransportRopeDisembarkRequest>(transport);
-                continue;
-            }
-
-            Entity passenger = passengers[passengerIndex].Passenger;
-            passengers.RemoveAt(passengerIndex);
-
-            if (!TryFindRopeDropCell(
-                    grid,
-                    walkable.AsNativeArray(),
-                    blockerData.Blocked,
-                    occupancyData.Occupied,
-                    transportGrid.ValueRO.Cell,
-                    transportFootprint.ValueRO.Size,
-                    request.ValueRO.ReferenceCell,
-                    request.ValueRO.DropCount,
-                    _spawnGroundingSystem,
-                    em,
-                    out int2 dropCell,
-                    out float3 endPosition))
-            {
-                passengers.Add(new UnitTransportPassengerElement { Passenger = passenger });
-                request.ValueRW.NextDropAt = now + 0.25f;
-                continue;
-            }
-
-            LocalTransform adjustedTransportTransform = transportTransform.ValueRO;
-            float3 anchorOffset = ResolveTransportRopeAnchor(em, transport, adjustedTransportTransform) - adjustedTransportTransform.Position;
-            adjustedTransportTransform.Position.x = endPosition.x - anchorOffset.x;
-            adjustedTransportTransform.Position.z = endPosition.z - anchorOffset.z;
-            transportTransform.ValueRW.Position = adjustedTransportTransform.Position;
-            if (em.HasComponent<LocalToWorld>(transport))
-                ecb.SetComponent(transport, new LocalToWorld { Value = ToLocalToWorldMatrix(adjustedTransportTransform) });
-            if (em.HasComponent<UnitGrid>(transport))
-                ecb.SetComponent(transport, new UnitGrid { Cell = dropCell });
-
-            float3 anchorPosition = ResolveTransportRopeAnchor(em, transport, adjustedTransportTransform);
-            float3 startPosition = new(endPosition.x, anchorPosition.y, endPosition.z);
-            int2 shortDisperseCell = ResolveAdjacentDisperseCell(grid, dropCell, request.ValueRO.DropCount);
-            if (startPosition.y < endPosition.y + 2f)
-                startPosition.y = endPosition.y + 2f;
-
-            if (em.HasComponent<Disabled>(passenger))
-                ecb.RemoveComponent<Disabled>(passenger);
-            RemoveIfPresent<UnitTransportPassenger>(ref ecb, em, passenger);
-            RemoveIfPresent<UnitTransportCargoPassenger>(ref ecb, em, passenger);
-            RemoveIfPresent<UnitTransportBoardingTarget>(ref ecb, em, passenger);
-            RemoveIfPresent<UnitTarget>(ref ecb, em, passenger);
-            RemoveIfPresent<UnitPathRequest>(ref ecb, em, passenger);
-            RemoveIfPresent<UnitPathFollow>(ref ecb, em, passenger);
-            RemoveIfPresent<UnitPathRange>(ref ecb, em, passenger);
-            RemoveIfPresent<ManualMoveOrderTag>(ref ecb, em, passenger);
-            RemoveIfPresent<AutoWanderMoveTag>(ref ecb, em, passenger);
-            RemoveIfPresent<EngageTarget>(ref ecb, em, passenger);
-
-            if (em.HasComponent<UnitGrid>(passenger))
-                ecb.SetComponent(passenger, new UnitGrid { Cell = dropCell });
-            if (em.HasComponent<LocalTransform>(passenger))
-                ecb.SetComponent(passenger, LocalTransform.FromPosition(startPosition));
-            if (em.HasComponent<UnitTransportRopeLandingClearance>(passenger))
-            {
-                ecb.SetComponent(passenger, new UnitTransportRopeLandingClearance
+                if (!TryFindRopeDropCell(
+                        grid,
+                        walkable.AsNativeArray(),
+                        blockerData.Blocked,
+                        occupancyData.Occupied,
+                        transportGrid.ValueRO.Cell,
+                        transportFootprint.ValueRO.Size,
+                        request.ValueRO.ReferenceCell,
+                        request.ValueRO.DropCount,
+                        _spawnGroundingSystem,
+                        em,
+                        out int2 dropCell,
+                        out float3 endPosition))
                 {
-                    Transport = transport,
-                    LandingCell = dropCell
-                });
-            }
-            else
-            {
-                ecb.AddComponent(passenger, new UnitTransportRopeLandingClearance
+                    passengers.Add(new UnitTransportPassengerElement { Passenger = passenger });
+                    request.ValueRW.NextDropAt = now + 0.25f;
+                    continue;
+                }
+
+                LocalTransform adjustedTransportTransform = transportTransform.ValueRO;
+                float3 anchorOffset = ResolveTransportRopeAnchor(em, transport, adjustedTransportTransform) - adjustedTransportTransform.Position;
+                adjustedTransportTransform.Position.x = endPosition.x - anchorOffset.x;
+                adjustedTransportTransform.Position.z = endPosition.z - anchorOffset.z;
+                transportTransform.ValueRW.Position = adjustedTransportTransform.Position;
+                if (em.HasComponent<LocalToWorld>(transport))
+                    ecb.SetComponent(transport, new LocalToWorld { Value = ToLocalToWorldMatrix(adjustedTransportTransform) });
+                if (em.HasComponent<UnitGrid>(transport))
+                    ecb.SetComponent(transport, new UnitGrid { Cell = dropCell });
+
+                float3 anchorPosition = ResolveTransportRopeAnchor(em, transport, adjustedTransportTransform);
+                float3 startPosition = new(endPosition.x, anchorPosition.y, endPosition.z);
+                int2 shortDisperseCell = ResolveAdjacentDisperseCell(grid, dropCell, request.ValueRO.DropCount);
+                if (startPosition.y < endPosition.y + 2f)
+                    startPosition.y = endPosition.y + 2f;
+
+                if (em.HasComponent<Disabled>(passenger))
+                    ecb.RemoveComponent<Disabled>(passenger);
+                RemoveIfPresent<UnitTransportPassenger>(ref ecb, em, passenger);
+                RemoveIfPresent<UnitTransportCargoPassenger>(ref ecb, em, passenger);
+                RemoveIfPresent<UnitTransportBoardingTarget>(ref ecb, em, passenger);
+                RemoveIfPresent<UnitTarget>(ref ecb, em, passenger);
+                RemoveIfPresent<UnitPathRequest>(ref ecb, em, passenger);
+                RemoveIfPresent<UnitPathFollow>(ref ecb, em, passenger);
+                RemoveIfPresent<UnitPathRange>(ref ecb, em, passenger);
+                RemoveIfPresent<ManualMoveOrderTag>(ref ecb, em, passenger);
+                RemoveIfPresent<AutoWanderMoveTag>(ref ecb, em, passenger);
+                RemoveIfPresent<EngageTarget>(ref ecb, em, passenger);
+
+                if (em.HasComponent<UnitGrid>(passenger))
+                    ecb.SetComponent(passenger, new UnitGrid { Cell = dropCell });
+                if (em.HasComponent<LocalTransform>(passenger))
+                    ecb.SetComponent(passenger, LocalTransform.FromPosition(startPosition));
+                if (em.HasComponent<UnitTransportRopeLandingClearance>(passenger))
                 {
-                    Transport = transport,
-                    LandingCell = dropCell
-                });
+                    ecb.SetComponent(passenger, new UnitTransportRopeLandingClearance
+                    {
+                        Transport = transport,
+                        LandingCell = dropCell
+                    });
+                }
+                else
+                {
+                    ecb.AddComponent(passenger, new UnitTransportRopeLandingClearance
+                    {
+                        Transport = transport,
+                        LandingCell = dropCell
+                    });
+                }
+
+                UnitTransportRopeDropComponent dropState = new()
+                {
+                    StartPosition = startPosition,
+                    EndPosition = endPosition,
+                    DisperseCell = shortDisperseCell,
+                    StartedAt = now,
+                    DurationSeconds = RopeDropDurationSeconds,
+                    HasDisperseCell = (byte)(CellsEqual(shortDisperseCell, dropCell) ? 0 : 1)
+                };
+                if (em.HasComponent<UnitTransportRopeDropComponent>(passenger))
+                    ecb.SetComponent(passenger, dropState);
+                else
+                    ecb.AddComponent(passenger, dropState);
+
+                droppedPassengers.Add(passenger);
+                request.ValueRW.NextDropAt = now + math.max(RopeDropDurationSeconds + 0.25f, request.ValueRO.DropIntervalSeconds);
+                request.ValueRW.DropCount++;
             }
 
-            UnitTransportRopeDropComponent dropState = new()
-            {
-                StartPosition = startPosition,
-                EndPosition = endPosition,
-                DisperseCell = shortDisperseCell,
-                StartedAt = now,
-                DurationSeconds = RopeDropDurationSeconds,
-                HasDisperseCell = (byte)(CellsEqual(shortDisperseCell, dropCell) ? 0 : 1)
-            };
-            if (em.HasComponent<UnitTransportRopeDropComponent>(passenger))
-                ecb.SetComponent(passenger, dropState);
-            else
-                ecb.AddComponent(passenger, dropState);
+            ecb.Playback(em);
+            ecb.Dispose();
 
-            droppedPassengers.Add(passenger);
-            request.ValueRW.NextDropAt = now + math.max(RopeDropDurationSeconds + 0.25f, request.ValueRO.DropIntervalSeconds);
-            request.ValueRW.DropCount++;
+            for (int i = 0; i < droppedPassengers.Count; i++)
+                UnitTransportVisualUtility.SetPassengerVisible(em, droppedPassengers[i], true);
         }
 
-        ecb.Playback(em);
-        ecb.Dispose();
-
-        for (int i = 0; i < droppedPassengers.Count; i++)
-            UnitTransportVisualUtility.SetPassengerVisible(em, droppedPassengers[i], true);
-    }
-
-    private static int FindExistingPassenger(EntityManager em, DynamicBuffer<UnitTransportPassengerElement> passengers)
-    {
-        for (int i = 0; i < passengers.Length; i++)
+        private static int FindExistingPassenger(EntityManager em, DynamicBuffer<UnitTransportPassengerElement> passengers)
         {
-            if (em.Exists(passengers[i].Passenger))
-                return i;
-        }
-
-        return -1;
-    }
-
-    private void UpdateLandingTypeHandles(ref SystemState state)
-    {
-        _landingEntityType.Update(ref state);
-        _landingClearanceType.Update(ref state);
-        _landingGridType.Update(ref state);
-        _entityStorageInfoLookup.Update(ref state);
-    }
-
-    private static void CleanupClearedLandingCells(
-        ref SystemState state,
-        EntityQuery landingClearanceQuery,
-        EntityTypeHandle entityType,
-        ComponentTypeHandle<UnitTransportRopeLandingClearance> clearanceType,
-        ComponentTypeHandle<UnitGrid> gridType,
-        EntityStorageInfoLookup entityStorageInfoLookup)
-    {
-        EntityCommandBuffer ecb = new(Allocator.TempJob);
-        state.Dependency = new CleanupClearedLandingCellsJob
-        {
-            EntityType = entityType,
-            ClearanceType = clearanceType,
-            GridType = gridType,
-            EntityStorageInfoLookup = entityStorageInfoLookup,
-            Ecb = ecb.AsParallelWriter()
-        }.ScheduleParallel(landingClearanceQuery, state.Dependency);
-        state.Dependency.Complete();
-
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
-    }
-
-    [BurstCompile]
-    private struct CleanupClearedLandingCellsJob : IJobChunk
-    {
-        [ReadOnly] public EntityTypeHandle EntityType;
-        [ReadOnly] public ComponentTypeHandle<UnitTransportRopeLandingClearance> ClearanceType;
-        [ReadOnly] public ComponentTypeHandle<UnitGrid> GridType;
-        [ReadOnly] public EntityStorageInfoLookup EntityStorageInfoLookup;
-        public EntityCommandBuffer.ParallelWriter Ecb;
-
-        public void Execute(
-            in ArchetypeChunk chunk,
-            int unfilteredChunkIndex,
-            bool useEnabledMask,
-            in v128 chunkEnabledMask)
-        {
-            NativeArray<Entity> entities = chunk.GetNativeArray(EntityType);
-            NativeArray<UnitTransportRopeLandingClearance> clearances = chunk.GetNativeArray(ref ClearanceType);
-            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref GridType);
-
-            for (int i = 0; i < chunk.Count; i++)
+            for (int i = 0; i < passengers.Length; i++)
             {
-                UnitTransportRopeLandingClearance clearance = clearances[i];
-                if (!EntityStorageInfoLookup.Exists(clearance.Transport) || !CellsEqual(grids[i].Cell, clearance.LandingCell))
-                    Ecb.RemoveComponent<UnitTransportRopeLandingClearance>(unfilteredChunkIndex, entities[i]);
+                if (em.Exists(passengers[i].Passenger))
+                    return i;
             }
+
+            return -1;
         }
-    }
 
-    private static bool IsRopeLandingClear(
-        EntityQuery landingClearanceQuery,
-        Entity transport,
-        ref ComponentTypeHandle<UnitTransportRopeLandingClearance> clearanceType,
-        ref ComponentTypeHandle<UnitGrid> gridType)
-    {
-        using NativeArray<ArchetypeChunk> chunks = landingClearanceQuery.ToArchetypeChunkArray(Allocator.Temp);
-        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        private void UpdateLandingTypeHandles(ref SystemState state)
         {
-            ArchetypeChunk chunk = chunks[chunkIndex];
-            NativeArray<UnitTransportRopeLandingClearance> clearances = chunk.GetNativeArray(ref clearanceType);
-            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref gridType);
+            _landingEntityType.Update(ref state);
+            _landingClearanceType.Update(ref state);
+            _landingGridType.Update(ref state);
+            _entityStorageInfoLookup.Update(ref state);
+        }
 
-            for (int i = 0; i < chunk.Count; i++)
+        private static void CleanupClearedLandingCells(
+            ref SystemState state,
+            EntityQuery landingClearanceQuery,
+            EntityTypeHandle entityType,
+            ComponentTypeHandle<UnitTransportRopeLandingClearance> clearanceType,
+            ComponentTypeHandle<UnitGrid> gridType,
+            EntityStorageInfoLookup entityStorageInfoLookup)
+        {
+            EntityCommandBuffer ecb = new(Allocator.TempJob);
+            state.Dependency = new CleanupClearedLandingCellsJob
             {
-                if (clearances[i].Transport == transport &&
-                    grids[i].Cell.Equals(clearances[i].LandingCell))
+                EntityType = entityType,
+                ClearanceType = clearanceType,
+                GridType = gridType,
+                EntityStorageInfoLookup = entityStorageInfoLookup,
+                Ecb = ecb.AsParallelWriter()
+            }.ScheduleParallel(landingClearanceQuery, state.Dependency);
+            state.Dependency.Complete();
+
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
+        }
+
+        [BurstCompile]
+        private struct CleanupClearedLandingCellsJob : IJobChunk
+        {
+            [ReadOnly] public EntityTypeHandle EntityType;
+            [ReadOnly] public ComponentTypeHandle<UnitTransportRopeLandingClearance> ClearanceType;
+            [ReadOnly] public ComponentTypeHandle<UnitGrid> GridType;
+            [ReadOnly] public EntityStorageInfoLookup EntityStorageInfoLookup;
+            public EntityCommandBuffer.ParallelWriter Ecb;
+
+            public void Execute(
+                in ArchetypeChunk chunk,
+                int unfilteredChunkIndex,
+                bool useEnabledMask,
+                in v128 chunkEnabledMask)
+            {
+                NativeArray<Entity> entities = chunk.GetNativeArray(EntityType);
+                NativeArray<UnitTransportRopeLandingClearance> clearances = chunk.GetNativeArray(ref ClearanceType);
+                NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref GridType);
+
+                for (int i = 0; i < chunk.Count; i++)
                 {
-                    return false;
+                    UnitTransportRopeLandingClearance clearance = clearances[i];
+                    if (!EntityStorageInfoLookup.Exists(clearance.Transport) || !CellsEqual(grids[i].Cell, clearance.LandingCell))
+                        Ecb.RemoveComponent<UnitTransportRopeLandingClearance>(unfilteredChunkIndex, entities[i]);
                 }
             }
         }
 
-        return true;
-    }
-
-    private static float3 ResolveTransportRopeAnchor(EntityManager em, Entity transport, LocalTransform transportTransform)
-    {
-        float3 anchor = transportTransform.Position;
-        if (em.HasComponent<UnitModelLocalTransform>(transport))
+        private static bool IsRopeLandingClear(
+            EntityQuery landingClearanceQuery,
+            Entity transport,
+            ref ComponentTypeHandle<UnitTransportRopeLandingClearance> clearanceType,
+            ref ComponentTypeHandle<UnitGrid> gridType)
         {
-            UnitModelLocalTransform model = em.GetComponentData<UnitModelLocalTransform>(transport);
-            anchor += math.rotate(transportTransform.Rotation, model.Position);
+            using NativeArray<ArchetypeChunk> chunks = landingClearanceQuery.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                ArchetypeChunk chunk = chunks[chunkIndex];
+                NativeArray<UnitTransportRopeLandingClearance> clearances = chunk.GetNativeArray(ref clearanceType);
+                NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref gridType);
+
+                for (int i = 0; i < chunk.Count; i++)
+                {
+                    if (clearances[i].Transport == transport &&
+                        grids[i].Cell.Equals(clearances[i].LandingCell))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
-        return anchor;
-    }
-
-    private static bool TryFindRopeDropCell(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeBitArray occupied,
-        int2 transportCell,
-        int2 transportSize,
-        int2 referenceCell,
-        int dropCount,
-        MapSurfaceSpawnGrounding spawnGroundingSystem,
-        EntityManager em,
-        out int2 dropCell,
-        out float3 dropPosition)
-    {
-        dropCell = default;
-        dropPosition = default;
-        int2 size = UnitFootprintUtility.ClampSize(transportSize);
-        int2 min = UnitFootprintUtility.GetMinCell(transportCell, size);
-        int2 max = min + size;
-
-        for (int radius = 1; radius <= RopeDropClearanceCells + 6; radius++)
+        private static float3 ResolveTransportRopeAnchor(EntityManager em, Entity transport, LocalTransform transportTransform)
         {
-            int minX = min.x - radius;
-            int minY = min.y - radius;
-            int maxX = max.x - 1 + radius;
-            int maxY = max.y - 1 + radius;
-            int validCount = CountValidRopeDropCells(
-                grid,
-                walkable,
-                blocked,
-                occupied,
-                spawnGroundingSystem,
-                em,
-                minX,
-                minY,
-                maxX,
-                maxY);
-            if (validCount <= 0)
-                continue;
+            float3 anchor = transportTransform.Position;
+            if (em.HasComponent<UnitModelLocalTransform>(transport))
+            {
+                UnitModelLocalTransform model = em.GetComponentData<UnitModelLocalTransform>(transport);
+                anchor += math.rotate(transportTransform.Rotation, model.Position);
+            }
 
-            int desiredOrdinal = math.abs(dropCount) % validCount;
-            if (TryGetValidRopeDropCellAtOrdinal(
+            return anchor;
+        }
+
+        private static bool TryFindRopeDropCell(
+            in GridConfig grid,
+            in NativeArray<GridWalkable> walkable,
+            in NativeBitArray blocked,
+            in NativeBitArray occupied,
+            int2 transportCell,
+            int2 transportSize,
+            int2 referenceCell,
+            int dropCount,
+            MapSurfaceSpawnGrounding spawnGroundingSystem,
+            EntityManager em,
+            out int2 dropCell,
+            out float3 dropPosition)
+        {
+            dropCell = default;
+            dropPosition = default;
+            int2 size = UnitFootprintUtility.ClampSize(transportSize);
+            int2 min = UnitFootprintUtility.GetMinCell(transportCell, size);
+            int2 max = min + size;
+
+            for (int radius = 1; radius <= RopeDropClearanceCells + 6; radius++)
+            {
+                int minX = min.x - radius;
+                int minY = min.y - radius;
+                int maxX = max.x - 1 + radius;
+                int maxY = max.y - 1 + radius;
+                int validCount = CountValidRopeDropCells(
                     grid,
                     walkable,
                     blocked,
@@ -339,452 +327,453 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
                     minX,
                     minY,
                     maxX,
-                    maxY,
-                    referenceCell,
-                    desiredOrdinal,
-                    out dropCell,
-                    out dropPosition))
-                return true;
+                    maxY);
+                if (validCount <= 0)
+                    continue;
+
+                int desiredOrdinal = math.abs(dropCount) % validCount;
+                if (TryGetValidRopeDropCellAtOrdinal(
+                        grid,
+                        walkable,
+                        blocked,
+                        occupied,
+                        spawnGroundingSystem,
+                        em,
+                        minX,
+                        minY,
+                        maxX,
+                        maxY,
+                        referenceCell,
+                        desiredOrdinal,
+                        out dropCell,
+                        out dropPosition))
+                    return true;
+            }
+
+            return false;
         }
 
-        return false;
-    }
-
-    private static int2 ResolveAdjacentDisperseCell(in GridConfig grid, int2 landingCell, int dropCount)
-    {
-        int2 candidate = landingCell + DirectionForDropCount(dropCount);
-        if (grid.Width > 0)
-            candidate.x = math.clamp(candidate.x, 0, grid.Width - 1);
-        if (grid.Height > 0)
-            candidate.y = math.clamp(candidate.y, 0, grid.Height - 1);
-        if (!CellsEqual(candidate, landingCell))
-            return candidate;
-
-        for (int i = 0; i < 8; i++)
+        private static int2 ResolveAdjacentDisperseCell(in GridConfig grid, int2 landingCell, int dropCount)
         {
-            candidate = landingCell + DirectionForDropCount(dropCount + i);
+            int2 candidate = landingCell + DirectionForDropCount(dropCount);
             if (grid.Width > 0)
                 candidate.x = math.clamp(candidate.x, 0, grid.Width - 1);
             if (grid.Height > 0)
                 candidate.y = math.clamp(candidate.y, 0, grid.Height - 1);
             if (!CellsEqual(candidate, landingCell))
                 return candidate;
+
+            for (int i = 0; i < 8; i++)
+            {
+                candidate = landingCell + DirectionForDropCount(dropCount + i);
+                if (grid.Width > 0)
+                    candidate.x = math.clamp(candidate.x, 0, grid.Width - 1);
+                if (grid.Height > 0)
+                    candidate.y = math.clamp(candidate.y, 0, grid.Height - 1);
+                if (!CellsEqual(candidate, landingCell))
+                    return candidate;
+            }
+
+            return landingCell;
         }
 
-        return landingCell;
-    }
-
-    private static int2 DirectionForDropCount(int dropCount)
-    {
-        return math.abs(dropCount) % 8 switch
+        private static int2 DirectionForDropCount(int dropCount)
         {
-            0 => new int2(1, 0),
-            1 => new int2(1, 1),
-            2 => new int2(0, 1),
-            3 => new int2(-1, 1),
-            4 => new int2(-1, 0),
-            5 => new int2(-1, -1),
-            6 => new int2(0, -1),
-            _ => new int2(1, -1)
-        };
-    }
-
-    private static bool CellsEqual(int2 a, int2 b) => a.x == b.x && a.y == b.y;
-
-    private static int CountValidRopeDropCells(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeBitArray occupied,
-        MapSurfaceSpawnGrounding spawnGroundingSystem,
-        EntityManager em,
-        int minX,
-        int minY,
-        int maxX,
-        int maxY)
-    {
-        int count = 0;
-        ForEachRopeDropRingCell(grid, walkable, blocked, occupied, spawnGroundingSystem, em, minX, minY, maxX, maxY, (int2 unusedCell, float3 unusedPosition) => count++);
-        return count;
-    }
-
-    private static bool TryGetValidRopeDropCellAtOrdinal(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeBitArray occupied,
-        MapSurfaceSpawnGrounding spawnGroundingSystem,
-        EntityManager em,
-        int minX,
-        int minY,
-        int maxX,
-        int maxY,
-        int2 referenceCell,
-        int desiredOrdinal,
-        out int2 dropCell,
-        out float3 dropPosition)
-    {
-        dropCell = default;
-        dropPosition = default;
-        int ordinal = 0;
-        for (int y = minY; y <= maxY; y++)
-        {
-            for (int x = minX; x <= maxX; x++)
+            return math.abs(dropCount) % 8 switch
             {
-                if (!IsValidRopeDropRingCell(grid, walkable, blocked, occupied, spawnGroundingSystem, em, minX, minY, maxX, maxY, x, y, out int2 candidate, out float3 candidatePosition))
-                    continue;
+                0 => new int2(1, 0),
+                1 => new int2(1, 1),
+                2 => new int2(0, 1),
+                3 => new int2(-1, 1),
+                4 => new int2(-1, 0),
+                5 => new int2(-1, -1),
+                6 => new int2(0, -1),
+                _ => new int2(1, -1)
+            };
+        }
 
-                if (ordinal == desiredOrdinal)
+        private static bool CellsEqual(int2 a, int2 b) => a.x == b.x && a.y == b.y;
+
+        private static int CountValidRopeDropCells(
+            in GridConfig grid,
+            in NativeArray<GridWalkable> walkable,
+            in NativeBitArray blocked,
+            in NativeBitArray occupied,
+            MapSurfaceSpawnGrounding spawnGroundingSystem,
+            EntityManager em,
+            int minX,
+            int minY,
+            int maxX,
+            int maxY)
+        {
+            int count = 0;
+            ForEachRopeDropRingCell(grid, walkable, blocked, occupied, spawnGroundingSystem, em, minX, minY, maxX, maxY, (int2 unusedCell, float3 unusedPosition) => count++);
+            return count;
+        }
+
+        private static bool TryGetValidRopeDropCellAtOrdinal(
+            in GridConfig grid,
+            in NativeArray<GridWalkable> walkable,
+            in NativeBitArray blocked,
+            in NativeBitArray occupied,
+            MapSurfaceSpawnGrounding spawnGroundingSystem,
+            EntityManager em,
+            int minX,
+            int minY,
+            int maxX,
+            int maxY,
+            int2 referenceCell,
+            int desiredOrdinal,
+            out int2 dropCell,
+            out float3 dropPosition)
+        {
+            dropCell = default;
+            dropPosition = default;
+            int ordinal = 0;
+            for (int y = minY; y <= maxY; y++)
+            {
+                for (int x = minX; x <= maxX; x++)
                 {
-                    dropCell = candidate;
-                    dropPosition = candidatePosition;
-                    return true;
+                    if (!IsValidRopeDropRingCell(grid, walkable, blocked, occupied, spawnGroundingSystem, em, minX, minY, maxX, maxY, x, y, out int2 candidate, out float3 candidatePosition))
+                        continue;
+
+                    if (ordinal == desiredOrdinal)
+                    {
+                        dropCell = candidate;
+                        dropPosition = candidatePosition;
+                        return true;
+                    }
+
+                    ordinal++;
                 }
-
-                ordinal++;
             }
+
+            return false;
         }
 
-        return false;
-    }
-
-    private static void ForEachRopeDropRingCell(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeBitArray occupied,
-        MapSurfaceSpawnGrounding spawnGroundingSystem,
-        EntityManager em,
-        int minX,
-        int minY,
-        int maxX,
-        int maxY,
-        System.Action<int2, float3> action)
-    {
-        for (int y = minY; y <= maxY; y++)
+        private static void ForEachRopeDropRingCell(
+            in GridConfig grid,
+            in NativeArray<GridWalkable> walkable,
+            in NativeBitArray blocked,
+            in NativeBitArray occupied,
+            MapSurfaceSpawnGrounding spawnGroundingSystem,
+            EntityManager em,
+            int minX,
+            int minY,
+            int maxX,
+            int maxY,
+            System.Action<int2, float3> action)
         {
-            for (int x = minX; x <= maxX; x++)
+            for (int y = minY; y <= maxY; y++)
             {
-                if (!IsValidRopeDropRingCell(grid, walkable, blocked, occupied, spawnGroundingSystem, em, minX, minY, maxX, maxY, x, y, out int2 candidate, out float3 candidatePosition))
-                    continue;
-                action(candidate, candidatePosition);
+                for (int x = minX; x <= maxX; x++)
+                {
+                    if (!IsValidRopeDropRingCell(grid, walkable, blocked, occupied, spawnGroundingSystem, em, minX, minY, maxX, maxY, x, y, out int2 candidate, out float3 candidatePosition))
+                        continue;
+                    action(candidate, candidatePosition);
+                }
             }
         }
-    }
 
-    private static bool IsValidRopeDropRingCell(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeBitArray occupied,
-        MapSurfaceSpawnGrounding spawnGroundingSystem,
-        EntityManager em,
-        int minX,
-        int minY,
-        int maxX,
-        int maxY,
-        int x,
-        int y,
-        out int2 candidate,
-        out float3 candidatePosition)
-    {
-        candidate = new int2(x, y);
-        candidatePosition = default;
-        bool onRing = x == minX || x == maxX || y == minY || y == maxY;
-        if (!onRing)
-            return false;
-
-        if (!GridUtils.InBounds(candidate, grid.Width, grid.Height))
-            return false;
-
-        int index = GridUtils.CellToIndex(candidate, grid.Width);
-        if (walkable[index].Value == 0)
-            return false;
-        if (blocked.IsCreated && blocked.IsSet(index))
-            return false;
-        if (occupied.IsCreated && occupied.IsSet(index))
-            return false;
-
-        if (!TryResolveRopeLandingPosition(spawnGroundingSystem, em, grid, candidate, out candidatePosition))
-            return false;
-
-        return true;
-    }
-
-    private static bool TryResolveRopeLandingPosition(
-        MapSurfaceSpawnGrounding spawnGroundingSystem,
-        EntityManager em,
-        in GridConfig grid,
-        int2 cell,
-        out float3 position)
-    {
-        position = GridUtils.CellToWorldCenter(grid, cell);
-        if (!spawnGroundingSystem.TryGroundCellCenter(em, grid, cell, ref position, out MapSurfaceSample sample))
+        private static bool IsValidRopeDropRingCell(
+            in GridConfig grid,
+            in NativeArray<GridWalkable> walkable,
+            in NativeBitArray blocked,
+            in NativeBitArray occupied,
+            MapSurfaceSpawnGrounding spawnGroundingSystem,
+            EntityManager em,
+            int minX,
+            int minY,
+            int maxX,
+            int maxY,
+            int x,
+            int y,
+            out int2 candidate,
+            out float3 candidatePosition)
         {
-            position.y = grid.Origin.y;
+            candidate = new int2(x, y);
+            candidatePosition = default;
+            bool onRing = x == minX || x == maxX || y == minY || y == maxY;
+            if (!onRing)
+                return false;
+
+            if (!GridUtils.InBounds(candidate, grid.Width, grid.Height))
+                return false;
+
+            int index = GridUtils.CellToIndex(candidate, grid.Width);
+            if (walkable[index].Value == 0)
+                return false;
+            if (blocked.IsCreated && blocked.IsSet(index))
+                return false;
+            if (occupied.IsCreated && occupied.IsSet(index))
+                return false;
+
+            if (!TryResolveRopeLandingPosition(spawnGroundingSystem, em, grid, candidate, out candidatePosition))
+                return false;
+
             return true;
         }
 
-        if (sample.SurfaceType == MapSurfaceType.Blocked ||
-            (sample.Flags & MapSurfaceFlags.Reserved) != 0 ||
-            (sample.MovementMask & MapSurfaceMovementMask.Infantry) == 0)
+        private static bool TryResolveRopeLandingPosition(
+            MapSurfaceSpawnGrounding spawnGroundingSystem,
+            EntityManager em,
+            in GridConfig grid,
+            int2 cell,
+            out float3 position)
         {
-            return false;
-        }
-
-        float heightDelta = position.y - grid.Origin.y;
-        if (heightDelta > RopeDropMaxNonRoadLandingHeightDelta && !IsRoadLikeRopeLandingSurface(sample))
-            return false;
-
-        return true;
-    }
-
-    private static bool IsRoadLikeRopeLandingSurface(MapSurfaceSample sample)
-    {
-        return sample.SurfaceType == MapSurfaceType.Road ||
-               sample.SurfaceType == MapSurfaceType.DirtRoad ||
-               sample.SurfaceType == MapSurfaceType.Highway ||
-               sample.SurfaceType == MapSurfaceType.BridgeDeck ||
-               sample.SurfaceType == MapSurfaceType.Ramp ||
-               (sample.Flags & (MapSurfaceFlags.Road | MapSurfaceFlags.Bridge | MapSurfaceFlags.Ramp)) != 0;
-    }
-
-    private static float4x4 ToLocalToWorldMatrix(LocalTransform transform)
-    {
-        return float4x4.TRS(
-            transform.Position,
-            transform.Rotation,
-            new float3(transform.Scale, transform.Scale, transform.Scale));
-    }
-
-    private static void RemoveIfPresent<T>(ref EntityCommandBuffer ecb, EntityManager em, Entity entity)
-        where T : unmanaged, IComponentData
-    {
-        if (em.HasComponent<T>(entity))
-            ecb.RemoveComponent<T>(entity);
-    }
-}
-
-[UpdateInGroup(typeof(SimulationSystemGroup))]
-public partial struct UnitTransportRopeDropSystem : ISystem
-{
-    private MapSurfaceSpawnGrounding _spawnGroundingSystem;
-    private EntityQuery _gridQuery;
-    private EntityQuery _liveUnitQuery;
-    private EntityTypeHandle _liveEntityType;
-    private ComponentTypeHandle<UnitGrid> _liveGridType;
-    private ComponentTypeHandle<UnitFootprint> _liveFootprintType;
-
-    private readonly struct LiveUnitRecord
-    {
-        public readonly Entity Entity;
-        public readonly int2 Cell;
-        public readonly int2 FootprintSize;
-
-        public LiveUnitRecord(Entity entity, int2 cell, int2 footprintSize)
-        {
-            Entity = entity;
-            Cell = cell;
-            FootprintSize = footprintSize;
-        }
-    }
-
-    public void OnCreate(ref SystemState state)
-    {
-        _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        state.RequireForUpdate(_gridQuery);
-        state.RequireForUpdate<UnitTransportRopeDropComponent>();
-        _liveUnitQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitFootprint>());
-        _liveEntityType = state.GetEntityTypeHandle();
-        _liveGridType = state.GetComponentTypeHandle<UnitGrid>(true);
-        _liveFootprintType = state.GetComponentTypeHandle<UnitFootprint>(true);
-    }
-
-    public void OnUpdate(ref SystemState state)
-    {
-        UpdateTypeHandles(ref state);
-        float now = (float)SystemAPI.Time.ElapsedTime;
-        EntityManager em = state.EntityManager;
-        Entity gridEntity = _gridQuery.GetSingletonEntity();
-        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-        DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
-        DynamicBlockerComponent blockerData = em.HasComponent<DynamicBlockerComponent>(gridEntity) ? em.GetComponentData<DynamicBlockerComponent>(gridEntity) : default;
-        DynamicOccupancyComponent occupancyData = em.HasComponent<DynamicOccupancyComponent>(gridEntity) ? em.GetComponentData<DynamicOccupancyComponent>(gridEntity) : default;
-        NativeList<LiveUnitRecord> liveUnits = default;
-        bool liveUnitsCollected = false;
-        EntityCommandBuffer ecb = new(Allocator.Temp);
-
-        foreach (var (transform, drop, entity) in
-                 SystemAPI.Query<RefRW<LocalTransform>, RefRO<UnitTransportRopeDropComponent>>()
-                     .WithEntityAccess())
-        {
-            float duration = math.max(0.01f, drop.ValueRO.DurationSeconds);
-            float t = math.saturate((now - drop.ValueRO.StartedAt) / duration);
-            transform.ValueRW.Position = math.lerp(drop.ValueRO.StartPosition, drop.ValueRO.EndPosition, t);
-            if (t >= 1f)
+            position = GridUtils.CellToWorldCenter(grid, cell);
+            if (!spawnGroundingSystem.TryGroundCellCenter(em, grid, cell, ref position, out MapSurfaceSample sample))
             {
-                transform.ValueRW.Position = drop.ValueRO.EndPosition;
-                EnsureLiveUnitRecords(em, _liveUnitQuery, _liveEntityType, ref _liveGridType, ref _liveFootprintType, ref liveUnits, ref liveUnitsCollected);
-                IssueDisperseMoveOrder(
-                    _spawnGroundingSystem,
-                    em,
-                    ecb,
-                    entity,
-                    transform.ValueRW.Position,
-                    now,
-                    grid,
-                    walkable.AsNativeArray(),
-                    blockerData.Blocked,
-                    occupancyData.Occupied,
-                    liveUnits.AsArray());
-                ecb.RemoveComponent<UnitTransportRopeDropComponent>(entity);
+                position.y = grid.Origin.y;
+                return true;
+            }
+
+            if (sample.SurfaceType == MapSurfaceType.Blocked ||
+                (sample.Flags & MapSurfaceFlags.Reserved) != 0 ||
+                (sample.MovementMask & MapSurfaceMovementMask.Infantry) == 0)
+            {
+                return false;
+            }
+
+            float heightDelta = position.y - grid.Origin.y;
+            if (heightDelta > RopeDropMaxNonRoadLandingHeightDelta && !IsRoadLikeRopeLandingSurface(sample))
+                return false;
+
+            return true;
+        }
+
+        private static bool IsRoadLikeRopeLandingSurface(MapSurfaceSample sample)
+        {
+            return sample.SurfaceType == MapSurfaceType.Road ||
+                   sample.SurfaceType == MapSurfaceType.DirtRoad ||
+                   sample.SurfaceType == MapSurfaceType.Highway ||
+                   sample.SurfaceType == MapSurfaceType.BridgeDeck ||
+                   sample.SurfaceType == MapSurfaceType.Ramp ||
+                   (sample.Flags & (MapSurfaceFlags.Road | MapSurfaceFlags.Bridge | MapSurfaceFlags.Ramp)) != 0;
+        }
+
+        private static float4x4 ToLocalToWorldMatrix(LocalTransform transform)
+        {
+            return float4x4.TRS(
+                transform.Position,
+                transform.Rotation,
+                new float3(transform.Scale, transform.Scale, transform.Scale));
+        }
+
+        private static void RemoveIfPresent<T>(ref EntityCommandBuffer ecb, EntityManager em, Entity entity)
+            where T : unmanaged, IComponentData
+        {
+            if (em.HasComponent<T>(entity))
+                ecb.RemoveComponent<T>(entity);
+        }
+    }
+
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    public partial struct UnitTransportRopeDropSystem : ISystem
+    {
+        private MapSurfaceSpawnGrounding _spawnGroundingSystem;
+        private EntityQuery _gridQuery;
+        private EntityQuery _liveUnitQuery;
+        private EntityTypeHandle _liveEntityType;
+        private ComponentTypeHandle<UnitGrid> _liveGridType;
+        private ComponentTypeHandle<UnitFootprint> _liveFootprintType;
+
+        private readonly struct LiveUnitRecord
+        {
+            public readonly Entity Entity;
+            public readonly int2 Cell;
+            public readonly int2 FootprintSize;
+
+            public LiveUnitRecord(Entity entity, int2 cell, int2 footprintSize)
+            {
+                Entity = entity;
+                Cell = cell;
+                FootprintSize = footprintSize;
             }
         }
 
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
-        if (liveUnits.IsCreated)
-            liveUnits.Dispose();
-    }
-
-    private void UpdateTypeHandles(ref SystemState state)
-    {
-        _liveEntityType.Update(ref state);
-        _liveGridType.Update(ref state);
-        _liveFootprintType.Update(ref state);
-    }
-
-    private static void EnsureLiveUnitRecords(
-        EntityManager em,
-        EntityQuery liveUnitQuery,
-        EntityTypeHandle entityType,
-        ref ComponentTypeHandle<UnitGrid> gridType,
-        ref ComponentTypeHandle<UnitFootprint> footprintType,
-        ref NativeList<LiveUnitRecord> liveUnits,
-        ref bool liveUnitsCollected)
-    {
-        if (liveUnitsCollected)
-            return;
-
-        em.CompleteDependencyBeforeRO<UnitGrid>();
-        em.CompleteDependencyBeforeRO<UnitFootprint>();
-        liveUnits = new NativeList<LiveUnitRecord>(liveUnitQuery.CalculateEntityCount(), Allocator.Temp);
-        using NativeArray<ArchetypeChunk> chunks = liveUnitQuery.ToArchetypeChunkArray(Allocator.Temp);
-        for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+        public void OnCreate(ref SystemState state)
         {
-            ArchetypeChunk chunk = chunks[chunkIndex];
-            NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
-            NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref gridType);
-            NativeArray<UnitFootprint> footprints = chunk.GetNativeArray(ref footprintType);
-
-            for (int i = 0; i < chunk.Count; i++)
-                liveUnits.Add(new LiveUnitRecord(entities[i], grids[i].Cell, footprints[i].Size));
+            _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            state.RequireForUpdate(_gridQuery);
+            state.RequireForUpdate<UnitTransportRopeDropComponent>();
+            _liveUnitQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitFootprint>());
+            _liveEntityType = state.GetEntityTypeHandle();
+            _liveGridType = state.GetComponentTypeHandle<UnitGrid>(true);
+            _liveFootprintType = state.GetComponentTypeHandle<UnitFootprint>(true);
         }
 
-        liveUnitsCollected = true;
-    }
-
-    private static void IssueDisperseMoveOrder(
-        MapSurfaceSpawnGrounding spawnGroundingSystem,
-        EntityManager em,
-        EntityCommandBuffer ecb,
-        Entity entity,
-        float3 currentPosition,
-        float now,
-        GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeBitArray occupied,
-        in NativeArray<LiveUnitRecord> liveUnits)
-    {
-        if (!em.HasComponent<UnitGrid>(entity) ||
-            !em.HasComponent<UnitFootprint>(entity))
+        public void OnUpdate(ref SystemState state)
         {
+            UpdateTypeHandles(ref state);
+            float now = (float)SystemAPI.Time.ElapsedTime;
+            EntityManager em = state.EntityManager;
+            Entity gridEntity = _gridQuery.GetSingletonEntity();
+            GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
+            DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
+            DynamicBlockerComponent blockerData = em.HasComponent<DynamicBlockerComponent>(gridEntity) ? em.GetComponentData<DynamicBlockerComponent>(gridEntity) : default;
+            DynamicOccupancyComponent occupancyData = em.HasComponent<DynamicOccupancyComponent>(gridEntity) ? em.GetComponentData<DynamicOccupancyComponent>(gridEntity) : default;
+            NativeList<LiveUnitRecord> liveUnits = default;
+            bool liveUnitsCollected = false;
+            EntityCommandBuffer ecb = new(Allocator.Temp);
+
+            foreach (var (transform, drop, entity) in
+                     SystemAPI.Query<RefRW<LocalTransform>, RefRO<UnitTransportRopeDropComponent>>()
+                         .WithEntityAccess())
+            {
+                float duration = math.max(0.01f, drop.ValueRO.DurationSeconds);
+                float t = math.saturate((now - drop.ValueRO.StartedAt) / duration);
+                transform.ValueRW.Position = math.lerp(drop.ValueRO.StartPosition, drop.ValueRO.EndPosition, t);
+                if (t >= 1f)
+                {
+                    transform.ValueRW.Position = drop.ValueRO.EndPosition;
+                    EnsureLiveUnitRecords(em, _liveUnitQuery, _liveEntityType, ref _liveGridType, ref _liveFootprintType, ref liveUnits, ref liveUnitsCollected);
+                    IssueDisperseMoveOrder(
+                        _spawnGroundingSystem,
+                        em,
+                        ecb,
+                        entity,
+                        transform.ValueRW.Position,
+                        now,
+                        grid,
+                        walkable.AsNativeArray(),
+                        blockerData.Blocked,
+                        occupancyData.Occupied,
+                        liveUnits.AsArray());
+                    ecb.RemoveComponent<UnitTransportRopeDropComponent>(entity);
+                }
+            }
+
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
+            if (liveUnits.IsCreated)
+                liveUnits.Dispose();
+        }
+
+        private void UpdateTypeHandles(ref SystemState state)
+        {
+            _liveEntityType.Update(ref state);
+            _liveGridType.Update(ref state);
+            _liveFootprintType.Update(ref state);
+        }
+
+        private static void EnsureLiveUnitRecords(
+            EntityManager em,
+            EntityQuery liveUnitQuery,
+            EntityTypeHandle entityType,
+            ref ComponentTypeHandle<UnitGrid> gridType,
+            ref ComponentTypeHandle<UnitFootprint> footprintType,
+            ref NativeList<LiveUnitRecord> liveUnits,
+            ref bool liveUnitsCollected)
+        {
+            if (liveUnitsCollected)
+                return;
+
+            em.CompleteDependencyBeforeRO<UnitGrid>();
+            em.CompleteDependencyBeforeRO<UnitFootprint>();
+            liveUnits = new NativeList<LiveUnitRecord>(liveUnitQuery.CalculateEntityCount(), Allocator.Temp);
+            using NativeArray<ArchetypeChunk> chunks = liveUnitQuery.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                ArchetypeChunk chunk = chunks[chunkIndex];
+                NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+                NativeArray<UnitGrid> grids = chunk.GetNativeArray(ref gridType);
+                NativeArray<UnitFootprint> footprints = chunk.GetNativeArray(ref footprintType);
+
+                for (int i = 0; i < chunk.Count; i++)
+                    liveUnits.Add(new LiveUnitRecord(entities[i], grids[i].Cell, footprints[i].Size));
+            }
+
+            liveUnitsCollected = true;
+        }
+
+        private static void IssueDisperseMoveOrder(
+            MapSurfaceSpawnGrounding spawnGroundingSystem,
+            EntityManager em,
+            EntityCommandBuffer ecb,
+            Entity entity,
+            float3 currentPosition,
+            float now,
+            GridConfig grid,
+            in NativeArray<GridWalkable> walkable,
+            in NativeBitArray blocked,
+            in NativeBitArray occupied,
+            in NativeArray<LiveUnitRecord> liveUnits)
+        {
+            if (!em.HasComponent<UnitGrid>(entity) ||
+                !em.HasComponent<UnitFootprint>(entity))
+            {
+                if (em.HasComponent<UnitTransportRopeLandingClearance>(entity))
+                    ecb.RemoveComponent<UnitTransportRopeLandingClearance>(entity);
+                return;
+            }
+
+            int2 landingCell = em.GetComponentData<UnitGrid>(entity).Cell;
+            int2 footprint = em.GetComponentData<UnitFootprint>(entity).Size;
+            if (!TryFindFreeDisperseCell(
+                    grid,
+                    walkable,
+                    blocked,
+                    occupied,
+                    landingCell,
+                    footprint,
+                    entity,
+                    liveUnits,
+                    out int2 disperseCell))
+            {
+                if (em.HasComponent<UnitTransportRopeLandingClearance>(entity))
+                    ecb.RemoveComponent<UnitTransportRopeLandingClearance>(entity);
+                return;
+            }
+
+            RemoveIfPresent<UnitPathFollow>(ecb, em, entity);
+            RemoveIfPresent<UnitPathRange>(ecb, em, entity);
+            RemoveIfPresent<UnitTarget>(ecb, em, entity);
+            RemoveIfPresent<UnitPathRequest>(ecb, em, entity);
+            RemoveIfPresent<ManualMoveOrderTag>(ecb, em, entity);
+            RemoveIfPresent<AutoWanderMoveTag>(ecb, em, entity);
+
+            float3 endPosition = GridUtils.CellToWorldCenter(grid, disperseCell);
+            if (!spawnGroundingSystem.TryGroundCellCenter(em, grid, disperseCell, ref endPosition, out _))
+                endPosition.y = currentPosition.y;
+            float speed = em.HasComponent<UnitMove>(entity) ? math.max(0.1f, em.GetComponentData<UnitMove>(entity).Speed) : 2f;
+            float duration = math.max(0.1f, math.distance(currentPosition, endPosition) / speed);
+            UnitTransportRopeDisperseComponent disperse = new()
+            {
+                StartPosition = currentPosition,
+                EndPosition = endPosition,
+                EndCell = disperseCell,
+                StartedAt = now,
+                DurationSeconds = duration
+            };
+            if (em.HasComponent<UnitTransportRopeDisperseComponent>(entity))
+                ecb.SetComponent(entity, disperse);
+            else
+                ecb.AddComponent(entity, disperse);
             if (em.HasComponent<UnitTransportRopeLandingClearance>(entity))
                 ecb.RemoveComponent<UnitTransportRopeLandingClearance>(entity);
-            return;
+            if (em.HasComponent<UnitMoveVisualComponent>(entity))
+                ecb.SetComponent(entity, new UnitMoveVisualComponent { IsMoving = 1, StillSeconds = 0f });
         }
 
-        int2 landingCell = em.GetComponentData<UnitGrid>(entity).Cell;
-        int2 footprint = em.GetComponentData<UnitFootprint>(entity).Size;
-        if (!TryFindFreeDisperseCell(
-                grid,
-                walkable,
-                blocked,
-                occupied,
-                landingCell,
-                footprint,
-                entity,
-                liveUnits,
-                out int2 disperseCell))
+        private static bool TryFindFreeDisperseCell(
+            in GridConfig grid,
+            in NativeArray<GridWalkable> walkable,
+            in NativeBitArray blocked,
+            in NativeBitArray occupied,
+            int2 landingCell,
+            int2 footprint,
+            Entity movingEntity,
+            in NativeArray<LiveUnitRecord> liveUnits,
+            out int2 disperseCell)
         {
-            if (em.HasComponent<UnitTransportRopeLandingClearance>(entity))
-                ecb.RemoveComponent<UnitTransportRopeLandingClearance>(entity);
-            return;
-        }
-
-        RemoveIfPresent<UnitPathFollow>(ecb, em, entity);
-        RemoveIfPresent<UnitPathRange>(ecb, em, entity);
-        RemoveIfPresent<UnitTarget>(ecb, em, entity);
-        RemoveIfPresent<UnitPathRequest>(ecb, em, entity);
-        RemoveIfPresent<ManualMoveOrderTag>(ecb, em, entity);
-        RemoveIfPresent<AutoWanderMoveTag>(ecb, em, entity);
-
-        float3 endPosition = GridUtils.CellToWorldCenter(grid, disperseCell);
-        if (!spawnGroundingSystem.TryGroundCellCenter(em, grid, disperseCell, ref endPosition, out _))
-            endPosition.y = currentPosition.y;
-        float speed = em.HasComponent<UnitMove>(entity) ? math.max(0.1f, em.GetComponentData<UnitMove>(entity).Speed) : 2f;
-        float duration = math.max(0.1f, math.distance(currentPosition, endPosition) / speed);
-        UnitTransportRopeDisperseComponent disperse = new()
-        {
-            StartPosition = currentPosition,
-            EndPosition = endPosition,
-            EndCell = disperseCell,
-            StartedAt = now,
-            DurationSeconds = duration
-        };
-        if (em.HasComponent<UnitTransportRopeDisperseComponent>(entity))
-            ecb.SetComponent(entity, disperse);
-        else
-            ecb.AddComponent(entity, disperse);
-        if (em.HasComponent<UnitTransportRopeLandingClearance>(entity))
-            ecb.RemoveComponent<UnitTransportRopeLandingClearance>(entity);
-        if (em.HasComponent<UnitMoveVisualComponent>(entity))
-            ecb.SetComponent(entity, new UnitMoveVisualComponent { IsMoving = 1, StillSeconds = 0f });
-    }
-
-    private static bool TryFindFreeDisperseCell(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeBitArray occupied,
-        int2 landingCell,
-        int2 footprint,
-        Entity movingEntity,
-        in NativeArray<LiveUnitRecord> liveUnits,
-        out int2 disperseCell)
-    {
-        disperseCell = default;
-        int ordinal = math.abs(movingEntity.Index + (movingEntity.Version * 17));
-        for (int radius = 1; radius <= 12; radius++)
-        {
-            int validCount = CountValidDisperseCells(
-                grid,
-                walkable,
-                blocked,
-                occupied,
-                landingCell,
-                footprint,
-                movingEntity,
-                liveUnits,
-                radius);
-            if (validCount <= 0)
-                continue;
-
-            int desiredOrdinal = ordinal % validCount;
-            if (TryGetValidDisperseCellAtOrdinal(
+            disperseCell = default;
+            int ordinal = math.abs(movingEntity.Index + (movingEntity.Version * 17));
+            for (int radius = 1; radius <= 12; radius++)
+            {
+                int validCount = CountValidDisperseCells(
                     grid,
                     walkable,
                     blocked,
@@ -793,173 +782,188 @@ public partial struct UnitTransportRopeDropSystem : ISystem
                     footprint,
                     movingEntity,
                     liveUnits,
-                    radius,
-                    desiredOrdinal,
-                    out disperseCell))
-                return true;
-        }
-
-        return false;
-    }
-
-    private static int CountValidDisperseCells(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeBitArray occupied,
-        int2 landingCell,
-        int2 footprint,
-        Entity movingEntity,
-        in NativeArray<LiveUnitRecord> liveUnits,
-        int radius)
-    {
-        int count = 0;
-        int minX = landingCell.x - radius;
-        int minY = landingCell.y - radius;
-        int maxX = landingCell.x + radius;
-        int maxY = landingCell.y + radius;
-        for (int y = minY; y <= maxY; y++)
-        {
-            for (int x = minX; x <= maxX; x++)
-            {
-                if (x != minX && x != maxX && y != minY && y != maxY)
+                    radius);
+                if (validCount <= 0)
                     continue;
 
-                if (IsValidDisperseCell(grid, walkable, blocked, occupied, new int2(x, y), footprint, movingEntity, liveUnits))
-                    count++;
-            }
-        }
-
-        return count;
-    }
-
-    private static bool TryGetValidDisperseCellAtOrdinal(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeBitArray occupied,
-        int2 landingCell,
-        int2 footprint,
-        Entity movingEntity,
-        in NativeArray<LiveUnitRecord> liveUnits,
-        int radius,
-        int desiredOrdinal,
-        out int2 disperseCell)
-    {
-        disperseCell = default;
-        int ordinal = 0;
-        int minX = landingCell.x - radius;
-        int minY = landingCell.y - radius;
-        int maxX = landingCell.x + radius;
-        int maxY = landingCell.y + radius;
-        for (int y = minY; y <= maxY; y++)
-        {
-            for (int x = minX; x <= maxX; x++)
-            {
-                if (x != minX && x != maxX && y != minY && y != maxY)
-                    continue;
-
-                int2 candidate = new int2(x, y);
-                if (!IsValidDisperseCell(grid, walkable, blocked, occupied, candidate, footprint, movingEntity, liveUnits))
-                    continue;
-
-                if (ordinal == desiredOrdinal)
-                {
-                    disperseCell = candidate;
+                int desiredOrdinal = ordinal % validCount;
+                if (TryGetValidDisperseCellAtOrdinal(
+                        grid,
+                        walkable,
+                        blocked,
+                        occupied,
+                        landingCell,
+                        footprint,
+                        movingEntity,
+                        liveUnits,
+                        radius,
+                        desiredOrdinal,
+                        out disperseCell))
                     return true;
-                }
-
-                ordinal++;
             }
-        }
 
-        return false;
-    }
-
-    private static bool IsValidDisperseCell(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeBitArray occupied,
-        int2 cell,
-        int2 footprint,
-        Entity movingEntity,
-        in NativeArray<LiveUnitRecord> liveUnits)
-    {
-        int2 size = UnitFootprintUtility.ClampSize(footprint);
-        int2 min = UnitFootprintUtility.GetMinCell(cell, size);
-        int2 max = min + size;
-        if (min.x < 0 || min.y < 0 || max.x > grid.Width || max.y > grid.Height)
             return false;
+        }
 
-        for (int y = min.y; y < max.y; y++)
+        private static int CountValidDisperseCells(
+            in GridConfig grid,
+            in NativeArray<GridWalkable> walkable,
+            in NativeBitArray blocked,
+            in NativeBitArray occupied,
+            int2 landingCell,
+            int2 footprint,
+            Entity movingEntity,
+            in NativeArray<LiveUnitRecord> liveUnits,
+            int radius)
         {
-            int row = y * grid.Width;
-            for (int x = min.x; x < max.x; x++)
+            int count = 0;
+            int minX = landingCell.x - radius;
+            int minY = landingCell.y - radius;
+            int maxX = landingCell.x + radius;
+            int maxY = landingCell.y + radius;
+            for (int y = minY; y <= maxY; y++)
             {
-                int index = row + x;
-                if ((uint)index >= (uint)walkable.Length || walkable[index].Value == 0)
-                    return false;
-                if (blocked.IsCreated && blocked.IsSet(index))
-                    return false;
-                if (occupied.IsCreated && occupied.IsSet(index))
+                for (int x = minX; x <= maxX; x++)
+                {
+                    if (x != minX && x != maxX && y != minY && y != maxY)
+                        continue;
+
+                    if (IsValidDisperseCell(grid, walkable, blocked, occupied, new int2(x, y), footprint, movingEntity, liveUnits))
+                        count++;
+                }
+            }
+
+            return count;
+        }
+
+        private static bool TryGetValidDisperseCellAtOrdinal(
+            in GridConfig grid,
+            in NativeArray<GridWalkable> walkable,
+            in NativeBitArray blocked,
+            in NativeBitArray occupied,
+            int2 landingCell,
+            int2 footprint,
+            Entity movingEntity,
+            in NativeArray<LiveUnitRecord> liveUnits,
+            int radius,
+            int desiredOrdinal,
+            out int2 disperseCell)
+        {
+            disperseCell = default;
+            int ordinal = 0;
+            int minX = landingCell.x - radius;
+            int minY = landingCell.y - radius;
+            int maxX = landingCell.x + radius;
+            int maxY = landingCell.y + radius;
+            for (int y = minY; y <= maxY; y++)
+            {
+                for (int x = minX; x <= maxX; x++)
+                {
+                    if (x != minX && x != maxX && y != minY && y != maxY)
+                        continue;
+
+                    int2 candidate = new int2(x, y);
+                    if (!IsValidDisperseCell(grid, walkable, blocked, occupied, candidate, footprint, movingEntity, liveUnits))
+                        continue;
+
+                    if (ordinal == desiredOrdinal)
+                    {
+                        disperseCell = candidate;
+                        return true;
+                    }
+
+                    ordinal++;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsValidDisperseCell(
+            in GridConfig grid,
+            in NativeArray<GridWalkable> walkable,
+            in NativeBitArray blocked,
+            in NativeBitArray occupied,
+            int2 cell,
+            int2 footprint,
+            Entity movingEntity,
+            in NativeArray<LiveUnitRecord> liveUnits)
+        {
+            int2 size = UnitFootprintUtility.ClampSize(footprint);
+            int2 min = UnitFootprintUtility.GetMinCell(cell, size);
+            int2 max = min + size;
+            if (min.x < 0 || min.y < 0 || max.x > grid.Width || max.y > grid.Height)
+                return false;
+
+            for (int y = min.y; y < max.y; y++)
+            {
+                int row = y * grid.Width;
+                for (int x = min.x; x < max.x; x++)
+                {
+                    int index = row + x;
+                    if ((uint)index >= (uint)walkable.Length || walkable[index].Value == 0)
+                        return false;
+                    if (blocked.IsCreated && blocked.IsSet(index))
+                        return false;
+                    if (occupied.IsCreated && occupied.IsSet(index))
+                        return false;
+                }
+            }
+
+            for (int i = 0; i < liveUnits.Length; i++)
+            {
+                LiveUnitRecord liveUnit = liveUnits[i];
+                if (liveUnit.Entity == movingEntity)
+                    continue;
+                if (UnitFootprintUtility.Overlaps(cell, size, liveUnit.Cell, liveUnit.FootprintSize))
                     return false;
             }
+
+            return true;
         }
 
-        for (int i = 0; i < liveUnits.Length; i++)
+        private static void RemoveIfPresent<T>(EntityCommandBuffer ecb, EntityManager em, Entity entity)
+            where T : unmanaged, IComponentData
         {
-            LiveUnitRecord liveUnit = liveUnits[i];
-            if (liveUnit.Entity == movingEntity)
-                continue;
-            if (UnitFootprintUtility.Overlaps(cell, size, liveUnit.Cell, liveUnit.FootprintSize))
-                return false;
+            if (em.HasComponent<T>(entity))
+                ecb.RemoveComponent<T>(entity);
         }
 
-        return true;
     }
 
-    private static void RemoveIfPresent<T>(EntityCommandBuffer ecb, EntityManager em, Entity entity)
-        where T : unmanaged, IComponentData
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    public partial struct UnitTransportRopeDisperseSystem : ISystem
     {
-        if (em.HasComponent<T>(entity))
-            ecb.RemoveComponent<T>(entity);
-    }
-
-}
-
-[UpdateInGroup(typeof(SimulationSystemGroup))]
-public partial struct UnitTransportRopeDisperseSystem : ISystem
-{
-    public void OnCreate(ref SystemState state)
-    {
-        state.RequireForUpdate<UnitTransportRopeDisperseComponent>();
-    }
-
-    public void OnUpdate(ref SystemState state)
-    {
-        float now = (float)SystemAPI.Time.ElapsedTime;
-        EntityCommandBuffer ecb = new(Allocator.Temp);
-
-        foreach (var (transform, disperse, entity) in
-                 SystemAPI.Query<RefRW<LocalTransform>, RefRO<UnitTransportRopeDisperseComponent>>()
-                     .WithEntityAccess())
+        public void OnCreate(ref SystemState state)
         {
-            float duration = math.max(0.01f, disperse.ValueRO.DurationSeconds);
-            float t = math.saturate((now - disperse.ValueRO.StartedAt) / duration);
-            transform.ValueRW.Position = math.lerp(disperse.ValueRO.StartPosition, disperse.ValueRO.EndPosition, t);
-            if (t < 1f)
-                continue;
-
-            transform.ValueRW.Position = disperse.ValueRO.EndPosition;
-            if (state.EntityManager.HasComponent<UnitGrid>(entity))
-                ecb.SetComponent(entity, new UnitGrid { Cell = disperse.ValueRO.EndCell });
-            if (state.EntityManager.HasComponent<UnitTransportRopeLandingClearance>(entity))
-                ecb.RemoveComponent<UnitTransportRopeLandingClearance>(entity);
-            ecb.RemoveComponent<UnitTransportRopeDisperseComponent>(entity);
+            state.RequireForUpdate<UnitTransportRopeDisperseComponent>();
         }
 
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
+        public void OnUpdate(ref SystemState state)
+        {
+            float now = (float)SystemAPI.Time.ElapsedTime;
+            EntityCommandBuffer ecb = new(Allocator.Temp);
+
+            foreach (var (transform, disperse, entity) in
+                     SystemAPI.Query<RefRW<LocalTransform>, RefRO<UnitTransportRopeDisperseComponent>>()
+                         .WithEntityAccess())
+            {
+                float duration = math.max(0.01f, disperse.ValueRO.DurationSeconds);
+                float t = math.saturate((now - disperse.ValueRO.StartedAt) / duration);
+                transform.ValueRW.Position = math.lerp(disperse.ValueRO.StartPosition, disperse.ValueRO.EndPosition, t);
+                if (t < 1f)
+                    continue;
+
+                transform.ValueRW.Position = disperse.ValueRO.EndPosition;
+                if (state.EntityManager.HasComponent<UnitGrid>(entity))
+                    ecb.SetComponent(entity, new UnitGrid { Cell = disperse.ValueRO.EndCell });
+                if (state.EntityManager.HasComponent<UnitTransportRopeLandingClearance>(entity))
+                    ecb.RemoveComponent<UnitTransportRopeLandingClearance>(entity);
+                ecb.RemoveComponent<UnitTransportRopeDisperseComponent>(entity);
+            }
+
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
+        }
     }
 }

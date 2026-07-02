@@ -1,94 +1,98 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Contracts;
 
-[DisallowMultipleComponent]
-public sealed class MatchHudCurrentOrderBannerView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private GameObject bannerRoot;
-    [SerializeField] private GameObject chevrons;
-    [SerializeField] private Image icon;
-    [SerializeField] private TMP_Text orderText;
-    [SerializeField] private TMP_Text descriptionText;
-
-    public GameObject BannerRoot => bannerRoot;
-    public GameObject Chevrons => chevrons;
-    public Image Icon => icon;
-    public TMP_Text OrderText => orderText;
-    public TMP_Text DescriptionText => descriptionText;
-
-    private void OnEnable()
+    [DisallowMultipleComponent]
+    public sealed class MatchHudCurrentOrderBannerView : MonoBehaviour
     {
-        Apply(MatchHudCurrentOrderBannerModel.Hidden);
-    }
+        [SerializeField] private GameObject bannerRoot;
+        [SerializeField] private GameObject chevrons;
+        [SerializeField] private Image icon;
+        [SerializeField] private TMP_Text orderText;
+        [SerializeField] private TMP_Text descriptionText;
 
-    public void Apply(MatchHudCurrentOrderBannerModel model)
-    {
-        SetRootVisible(model.Visible);
+        public GameObject BannerRoot => bannerRoot;
+        public GameObject Chevrons => chevrons;
+        public Image Icon => icon;
+        public TMP_Text OrderText => orderText;
+        public TMP_Text DescriptionText => descriptionText;
 
-        if (!model.Visible)
+        private void OnEnable()
         {
-            ClearVisuals();
-            return;
+            Apply(MatchHudCurrentOrderBannerModel.Hidden);
         }
 
-        if (chevrons != null)
+        public void Apply(MatchHudCurrentOrderBannerModel model)
         {
-            chevrons.SetActive(model.ChevronsVisible);
+            SetRootVisible(model.Visible);
+
+            if (!model.Visible)
+            {
+                ClearVisuals();
+                return;
+            }
+
+            if (chevrons != null)
+            {
+                chevrons.SetActive(model.ChevronsVisible);
+            }
+
+            if (icon != null)
+            {
+                icon.sprite = model.IconSprite;
+                icon.preserveAspect = true;
+                icon.enabled = model.IconSprite != null;
+            }
+
+            if (orderText != null)
+            {
+                orderText.text = model.OrderText;
+            }
+
+            if (descriptionText != null)
+            {
+                descriptionText.text = model.DescriptionText;
+            }
         }
 
-        if (icon != null)
+        public void Hide()
         {
-            icon.sprite = model.IconSprite;
-            icon.preserveAspect = true;
-            icon.enabled = model.IconSprite != null;
+            Apply(MatchHudCurrentOrderBannerModel.Hidden);
         }
 
-        if (orderText != null)
+        private void SetRootVisible(bool visible)
         {
-            orderText.text = model.OrderText;
+            if (bannerRoot != null && bannerRoot.activeSelf != visible)
+            {
+                bannerRoot.SetActive(visible);
+            }
         }
 
-        if (descriptionText != null)
+        private void ClearVisuals()
         {
-            descriptionText.text = model.DescriptionText;
-        }
-    }
+            if (chevrons != null)
+            {
+                chevrons.SetActive(false);
+            }
 
-    public void Hide()
-    {
-        Apply(MatchHudCurrentOrderBannerModel.Hidden);
-    }
+            if (icon != null)
+            {
+                icon.sprite = null;
+                icon.enabled = false;
+            }
 
-    private void SetRootVisible(bool visible)
-    {
-        if (bannerRoot != null && bannerRoot.activeSelf != visible)
-        {
-            bannerRoot.SetActive(visible);
-        }
-    }
+            if (orderText != null)
+            {
+                orderText.text = string.Empty;
+            }
 
-    private void ClearVisuals()
-    {
-        if (chevrons != null)
-        {
-            chevrons.SetActive(false);
-        }
-
-        if (icon != null)
-        {
-            icon.sprite = null;
-            icon.enabled = false;
-        }
-
-        if (orderText != null)
-        {
-            orderText.text = string.Empty;
-        }
-
-        if (descriptionText != null)
-        {
-            descriptionText.text = string.Empty;
+            if (descriptionText != null)
+            {
+                descriptionText.text = string.Empty;
+            }
         }
     }
 }

@@ -2,141 +2,148 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Game.Components;
+using Game.Configs;
+using Game.Authoring;
+using Game.Runtime;
 
-[DisallowMultipleComponent]
-public sealed class MatchSceneView : MonoBehaviour
+namespace Game.Composition
 {
-    private readonly MatchBootstrapCompositionSystemHelper matchBootstrapSystem = new();
-    private bool matchRuntimeBound;
-
-    [Header("Scene Refs")]
-    [SerializeField] private Camera worldCamera;
-    [SerializeField] private Light directionalLight;
-    [SerializeField] private Volume globalVolume;
-    [SerializeField] private VisualQualityProfileAsset visualQualityProfile;
-    [SerializeField] private CombinedMeshBaker decorationCombinedMeshBaker;
-    [SerializeField] private Transform decorationRoot;
-    [SerializeField] private Transform mapBuildingAuthoringRoot;
-    [SerializeField] private Transform mapVehicleAuthoringRoot;
-    [SerializeField] private MapSurfaceAuthoring mapSurfaceAuthoring;
-
-    [Header("Configs")]
-    [SerializeField] private RTSSelectionSystemConfig rtsSelectionConfig;
-    [SerializeField] private RoadBuildSystemConfig roadBuildConfig;
-    [SerializeField] private BuildingPlacementSystemConfig buildingPlacementConfig;
-    [SerializeField] private MapBuildingPlacementConfig mapBuildingPlacementConfig;
-    [SerializeField] private MapVehiclePlacementConfig mapVehiclePlacementConfig;
-    [SerializeField] private UnitAttackTraceSystemConfig unitAttackTraceConfig;
-    [SerializeField] private RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig;
-    [SerializeField] private RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig;
-    [SerializeField] private RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig;
-    [SerializeField] private GridAuthoringConfig runtimeGridConfig;
-    [SerializeField] private GridAuthoring[] runtimeGridDebugViews = Array.Empty<GridAuthoring>();
-    [SerializeField] private DayNightSystemConfig dayNightConfig;
-    [SerializeField] private FactionVisualSettingsConfig factionVisualConfig;
-    [SerializeField] private GameStringsConfig gameStringsConfig;
-    [SerializeField] private PrefabPreviewCameraConfig prefabPreviewCameraConfig;
-    [SerializeField] private AIPlanEntryStartupConfig aiPlanEntryConfig;
-    [SerializeField] private List<AIControllerConfig> aiControllerConfigs = new();
-
-    public Camera WorldCamera => worldCamera;
-    public Light DirectionalLight => directionalLight;
-    public Volume GlobalVolume => globalVolume;
-    public VisualQualityProfileAsset VisualQualityProfile => visualQualityProfile;
-    public CombinedMeshBaker DecorationCombinedMeshBaker => decorationCombinedMeshBaker;
-    public Transform DecorationRoot => decorationRoot != null ? decorationRoot : (decorationCombinedMeshBaker != null ? decorationCombinedMeshBaker.transform : null);
-    public Transform MapBuildingAuthoringRoot => mapBuildingAuthoringRoot;
-    public Transform MapVehicleAuthoringRoot => mapVehicleAuthoringRoot;
-    public MapSurfaceAuthoring MapSurfaceAuthoring => mapSurfaceAuthoring;
-    public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;
-    public RoadBuildSystemConfig RoadBuildConfig => roadBuildConfig;
-    public BuildingPlacementSystemConfig BuildingPlacementConfig => buildingPlacementConfig;
-    public MapBuildingPlacementConfig MapBuildingPlacementConfig => mapBuildingPlacementConfig;
-    public MapVehiclePlacementConfig MapVehiclePlacementConfig => mapVehiclePlacementConfig;
-    public UnitAttackTraceSystemConfig UnitAttackTraceConfig => unitAttackTraceConfig;
-    public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => runtimeCitySpawnerConfig;
-    public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => runtimeDecorationSpawnerConfig;
-    public RuntimeGridBlockerSystemConfig RuntimeGridBlockerConfig => runtimeGridBlockerConfig;
-    public GridAuthoringConfig RuntimeGridConfig => runtimeGridConfig;
-    public IReadOnlyList<GridAuthoring> RuntimeGridDebugViews => runtimeGridDebugViews;
-    public DayNightSystemConfig DayNightConfig => dayNightConfig;
-    public FactionVisualSettingsConfig FactionVisualConfig => factionVisualConfig;
-    public GameStringsConfig GameStringsConfig => gameStringsConfig;
-    public PrefabPreviewCameraConfig PrefabPreviewCameraConfig => prefabPreviewCameraConfig;
-    public AIPlanEntryStartupConfig AIPlanEntryConfig => aiPlanEntryConfig;
-    public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
-
-    internal MatchBootstrapCompositionSystemHelper MatchBootstrap => matchBootstrapSystem;
-    public bool GameplayStartRequested => matchBootstrapSystem.GameplayStartRequested;
-    public bool GameplayStartComplete => matchBootstrapSystem.GameplayStartComplete;
-    public float GameplayStartProgress01 => matchBootstrapSystem.GameplayStartProgress01;
-    public string GameplayStartStatus => matchBootstrapSystem.GameplayStartStatus;
-
-    public void BeginGameplay()
+    [DisallowMultipleComponent]
+    public sealed class MatchSceneView : MonoBehaviour
     {
-        matchBootstrapSystem.BeginGameplay();
-    }
+        private readonly MatchBootstrapCompositionSystemHelper matchBootstrapSystem = new();
+        private bool matchRuntimeBound;
 
-    private void Awake()
-    {
-        EnsureMatchRuntimeBound();
-    }
+        [Header("Scene Refs")]
+        [SerializeField] private Camera worldCamera;
+        [SerializeField] private Light directionalLight;
+        [SerializeField] private Volume globalVolume;
+        [SerializeField] private VisualQualityProfileAsset visualQualityProfile;
+        [SerializeField] private CombinedMeshBaker decorationCombinedMeshBaker;
+        [SerializeField] private Transform decorationRoot;
+        [SerializeField] private Transform mapBuildingAuthoringRoot;
+        [SerializeField] private Transform mapVehicleAuthoringRoot;
+        [SerializeField] private MapSurfaceAuthoring mapSurfaceAuthoring;
 
-    private void OnEnable()
-    {
-        EnsureMatchRuntimeBound();
-    }
+        [Header("Configs")]
+        [SerializeField] private RTSSelectionSystemConfig rtsSelectionConfig;
+        [SerializeField] private RoadBuildSystemConfig roadBuildConfig;
+        [SerializeField] private BuildingPlacementSystemConfig buildingPlacementConfig;
+        [SerializeField] private MapBuildingPlacementConfig mapBuildingPlacementConfig;
+        [SerializeField] private MapVehiclePlacementConfig mapVehiclePlacementConfig;
+        [SerializeField] private UnitAttackTraceSystemConfig unitAttackTraceConfig;
+        [SerializeField] private RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig;
+        [SerializeField] private RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig;
+        [SerializeField] private RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig;
+        [SerializeField] private GridAuthoringConfig runtimeGridConfig;
+        [SerializeField] private GridAuthoring[] runtimeGridDebugViews = Array.Empty<GridAuthoring>();
+        [SerializeField] private DayNightSystemConfig dayNightConfig;
+        [SerializeField] private FactionVisualSettingsConfig factionVisualConfig;
+        [SerializeField] private GameStringsConfig gameStringsConfig;
+        [SerializeField] private PrefabPreviewCameraConfig prefabPreviewCameraConfig;
+        [SerializeField] private AIPlanEntryStartupConfig aiPlanEntryConfig;
+        [SerializeField] private List<AIControllerConfig> aiControllerConfigs = new();
 
-    private void Update()
-    {
-        matchBootstrapSystem.Update();
-    }
+        public Camera WorldCamera => worldCamera;
+        public Light DirectionalLight => directionalLight;
+        public Volume GlobalVolume => globalVolume;
+        public VisualQualityProfileAsset VisualQualityProfile => visualQualityProfile;
+        public CombinedMeshBaker DecorationCombinedMeshBaker => decorationCombinedMeshBaker;
+        public Transform DecorationRoot => decorationRoot != null ? decorationRoot : (decorationCombinedMeshBaker != null ? decorationCombinedMeshBaker.transform : null);
+        public Transform MapBuildingAuthoringRoot => mapBuildingAuthoringRoot;
+        public Transform MapVehicleAuthoringRoot => mapVehicleAuthoringRoot;
+        public MapSurfaceAuthoring MapSurfaceAuthoring => mapSurfaceAuthoring;
+        public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;
+        public RoadBuildSystemConfig RoadBuildConfig => roadBuildConfig;
+        public BuildingPlacementSystemConfig BuildingPlacementConfig => buildingPlacementConfig;
+        public MapBuildingPlacementConfig MapBuildingPlacementConfig => mapBuildingPlacementConfig;
+        public MapVehiclePlacementConfig MapVehiclePlacementConfig => mapVehiclePlacementConfig;
+        public UnitAttackTraceSystemConfig UnitAttackTraceConfig => unitAttackTraceConfig;
+        public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => runtimeCitySpawnerConfig;
+        public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => runtimeDecorationSpawnerConfig;
+        public RuntimeGridBlockerSystemConfig RuntimeGridBlockerConfig => runtimeGridBlockerConfig;
+        public GridAuthoringConfig RuntimeGridConfig => runtimeGridConfig;
+        public IReadOnlyList<GridAuthoring> RuntimeGridDebugViews => runtimeGridDebugViews;
+        public DayNightSystemConfig DayNightConfig => dayNightConfig;
+        public FactionVisualSettingsConfig FactionVisualConfig => factionVisualConfig;
+        public GameStringsConfig GameStringsConfig => gameStringsConfig;
+        public PrefabPreviewCameraConfig PrefabPreviewCameraConfig => prefabPreviewCameraConfig;
+        public AIPlanEntryStartupConfig AIPlanEntryConfig => aiPlanEntryConfig;
+        public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
 
-    private void OnApplicationFocus(bool hasFocus)
-    {
-        matchBootstrapSystem.OnApplicationFocus(hasFocus);
-    }
+        internal MatchBootstrapCompositionSystemHelper MatchBootstrap => matchBootstrapSystem;
+        public bool GameplayStartRequested => matchBootstrapSystem.GameplayStartRequested;
+        public bool GameplayStartComplete => matchBootstrapSystem.GameplayStartComplete;
+        public float GameplayStartProgress01 => matchBootstrapSystem.GameplayStartProgress01;
+        public string GameplayStartStatus => matchBootstrapSystem.GameplayStartStatus;
 
-    private void OnApplicationPause(bool pauseStatus)
-    {
-        matchBootstrapSystem.OnApplicationPause(pauseStatus);
-    }
+        public void BeginGameplay()
+        {
+            matchBootstrapSystem.BeginGameplay();
+        }
 
-    private void LateUpdate()
-    {
-        matchBootstrapSystem.LateUpdate();
-    }
+        private void Awake()
+        {
+            EnsureMatchRuntimeBound();
+        }
 
-    private void OnGUI()
-    {
-        matchBootstrapSystem.OnGUI();
-    }
+        private void OnEnable()
+        {
+            EnsureMatchRuntimeBound();
+        }
 
-    private void OnDestroy()
-    {
-        ShutdownMatchRuntimeBound();
-    }
+        private void Update()
+        {
+            matchBootstrapSystem.Update();
+        }
 
-    private void OnDisable()
-    {
-        ShutdownMatchRuntimeBound();
-    }
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            matchBootstrapSystem.OnApplicationFocus(hasFocus);
+        }
 
-    private void EnsureMatchRuntimeBound()
-    {
-        if (matchRuntimeBound)
-            return;
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            matchBootstrapSystem.OnApplicationPause(pauseStatus);
+        }
 
-        matchBootstrapSystem.Awake(this, transform, gameObject.layer);
-        matchRuntimeBound = true;
-    }
+        private void LateUpdate()
+        {
+            matchBootstrapSystem.LateUpdate();
+        }
 
-    private void ShutdownMatchRuntimeBound()
-    {
-        if (!matchRuntimeBound)
-            return;
+        private void OnGUI()
+        {
+            matchBootstrapSystem.OnGUI();
+        }
 
-        matchBootstrapSystem.OnDestroy();
-        matchRuntimeBound = false;
+        private void OnDestroy()
+        {
+            ShutdownMatchRuntimeBound();
+        }
+
+        private void OnDisable()
+        {
+            ShutdownMatchRuntimeBound();
+        }
+
+        private void EnsureMatchRuntimeBound()
+        {
+            if (matchRuntimeBound)
+                return;
+
+            matchBootstrapSystem.Awake(this, transform, gameObject.layer);
+            matchRuntimeBound = true;
+        }
+
+        private void ShutdownMatchRuntimeBound()
+        {
+            if (!matchRuntimeBound)
+                return;
+
+            matchBootstrapSystem.OnDestroy();
+            matchRuntimeBound = false;
+        }
     }
 }

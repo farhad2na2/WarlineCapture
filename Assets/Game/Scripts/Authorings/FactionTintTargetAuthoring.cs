@@ -1,33 +1,38 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Game.Components;
+using Game.Configs;
 
-[DisallowMultipleComponent]
-public sealed class FactionTintTargetAuthoring : MonoBehaviour
+namespace Game.Authoring
 {
-    [SerializeField] private FactionTintTargetConfig config;
-    [SerializeField, HideInInspector] private Color defaultColor = Color.white;
-
-    private void OnValidate()
+    [DisallowMultipleComponent]
+    public sealed class FactionTintTargetAuthoring : MonoBehaviour
     {
-        if (config != null)
-            defaultColor = config.DefaultColor;
-    }
+        [SerializeField] private FactionTintTargetConfig config;
+        [SerializeField, HideInInspector] private Color defaultColor = Color.white;
 
-    private sealed class Baker : Baker<FactionTintTargetAuthoring>
-    {
-        public override void Bake(FactionTintTargetAuthoring authoring)
+        private void OnValidate()
         {
-            var entity = GetEntity(TransformUsageFlags.Renderable);
-            AddComponent<FactionTintTarget>(entity);
-            AddComponent(entity, new FactionTintColor
+            if (config != null)
+                defaultColor = config.DefaultColor;
+        }
+
+        private sealed class Baker : Baker<FactionTintTargetAuthoring>
+        {
+            public override void Bake(FactionTintTargetAuthoring authoring)
             {
-                Value = new float4(
-                    authoring.defaultColor.r,
-                    authoring.defaultColor.g,
-                    authoring.defaultColor.b,
-                    authoring.defaultColor.a)
-            });
+                var entity = GetEntity(TransformUsageFlags.Renderable);
+                AddComponent<FactionTintTarget>(entity);
+                AddComponent(entity, new FactionTintColor
+                {
+                    Value = new float4(
+                        authoring.defaultColor.r,
+                        authoring.defaultColor.g,
+                        authoring.defaultColor.b,
+                        authoring.defaultColor.a)
+                });
+            }
         }
     }
 }

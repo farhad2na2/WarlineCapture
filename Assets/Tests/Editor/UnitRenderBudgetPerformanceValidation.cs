@@ -1,3 +1,5 @@
+using Game.Components;
+using Game.Rendering;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using System.Diagnostics;

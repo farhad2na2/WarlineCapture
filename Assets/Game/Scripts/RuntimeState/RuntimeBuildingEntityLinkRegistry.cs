@@ -1,37 +1,40 @@
 using System.Collections.Generic;
 
-public sealed class RuntimeBuildingEntityLinkRegistry
+namespace Game.Runtime
 {
-    private readonly List<RuntimeBuildingEntityLink> links = new();
-
-    public void Register(RuntimeBuildingEntityLink link)
+    public sealed class RuntimeBuildingEntityLinkRegistry
     {
-        if (link == null || links.Contains(link))
-            return;
+        private readonly List<RuntimeBuildingEntityLink> links = new();
 
-        links.Add(link);
-    }
-
-    public void Unregister(RuntimeBuildingEntityLink link)
-    {
-        if (link == null)
-            return;
-
-        links.Remove(link);
-    }
-
-    public void SyncLinks()
-    {
-        for (int i = links.Count - 1; i >= 0; i--)
+        public void Register(RuntimeBuildingEntityLink link)
         {
-            RuntimeBuildingEntityLink link = links[i];
-            if (link == null)
-            {
-                links.RemoveAt(i);
-                continue;
-            }
+            if (link == null || links.Contains(link))
+                return;
 
-            link.SyncNow();
+            links.Add(link);
+        }
+
+        public void Unregister(RuntimeBuildingEntityLink link)
+        {
+            if (link == null)
+                return;
+
+            links.Remove(link);
+        }
+
+        public void SyncLinks()
+        {
+            for (int i = links.Count - 1; i >= 0; i--)
+            {
+                RuntimeBuildingEntityLink link = links[i];
+                if (link == null)
+                {
+                    links.RemoveAt(i);
+                    continue;
+                }
+
+                link.SyncNow();
+            }
         }
     }
 }

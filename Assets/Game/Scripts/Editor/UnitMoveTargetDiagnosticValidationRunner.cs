@@ -3,49 +3,53 @@ using System.IO;
 using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
+using Game.Runtime;
 
-public static class UnitMoveTargetDiagnosticValidationRunner
+namespace Game.Editor
 {
-    public static void Run()
+    public static class UnitMoveTargetDiagnosticValidationRunner
     {
-        try
+        public static void Run()
         {
-            using World world = new("UnitMoveTargetDiagnosticValidationRunner");
-            SystemHandle system = world.CreateSystem<UnitMoveTargetDiagnosticSystem>();
-            Require(system != SystemHandle.Null, "UnitMoveTargetDiagnosticSystem was not created as an ISystem.");
-            system.Update(world.Unmanaged);
+            try
+            {
+                using World world = new("UnitMoveTargetDiagnosticValidationRunner");
+                SystemHandle system = world.CreateSystem<UnitMoveTargetDiagnosticSystem>();
+                Require(system != SystemHandle.Null, "UnitMoveTargetDiagnosticSystem was not created as an ISystem.");
+                system.Update(world.Unmanaged);
 
-            string sourcePath = Path.Combine(
-                Application.dataPath,
-                "Game/Scripts/Systems/UnitMoveTargetDiagnosticSystem.cs");
-            string source = File.ReadAllText(sourcePath);
-            Require(source.Contains("struct UnitMoveTargetDiagnosticSystem : ISystem", StringComparison.Ordinal),
-                "UnitMoveTargetDiagnosticSystem is not declared as an ISystem struct.");
-            Require(!source.Contains("UnitMoveTargetDiagnosticSystem : SystemBase", StringComparison.Ordinal),
-                "UnitMoveTargetDiagnosticSystem still declares SystemBase inheritance.");
-            Require(source.Contains("NativeParallelHashMap<Entity, int2>", StringComparison.Ordinal),
-                "Move target cache did not migrate to a native container.");
+                string sourcePath = Path.Combine(
+                    Application.dataPath,
+                    "Game/Scripts/Systems/UnitMoveTargetDiagnosticSystem.cs");
+                string source = File.ReadAllText(sourcePath);
+                Require(source.Contains("struct UnitMoveTargetDiagnosticSystem : ISystem", StringComparison.Ordinal),
+                    "UnitMoveTargetDiagnosticSystem is not declared as an ISystem struct.");
+                Require(!source.Contains("UnitMoveTargetDiagnosticSystem : SystemBase", StringComparison.Ordinal),
+                    "UnitMoveTargetDiagnosticSystem still declares SystemBase inheritance.");
+                Require(source.Contains("NativeParallelHashMap<Entity, int2>", StringComparison.Ordinal),
+                    "Move target cache did not migrate to a native container.");
 
-            Debug.Log("[UnitMoveTargetDiagnosticValidation] result=Passed tests=1");
-            Exit(0);
+                Debug.Log("[UnitMoveTargetDiagnosticValidation] result=Passed tests=1");
+                Exit(0);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                Debug.LogError("[UnitMoveTargetDiagnosticValidation] result=Failed");
+                Exit(1);
+            }
         }
-        catch (Exception ex)
+
+        private static void Require(bool condition, string message)
         {
-            Debug.LogException(ex);
-            Debug.LogError("[UnitMoveTargetDiagnosticValidation] result=Failed");
-            Exit(1);
+            if (!condition)
+                throw new InvalidOperationException(message);
         }
-    }
 
-    private static void Require(bool condition, string message)
-    {
-        if (!condition)
-            throw new InvalidOperationException(message);
-    }
-
-    private static void Exit(int code)
-    {
-        if (Application.isBatchMode)
-            EditorApplication.Exit(code);
+        private static void Exit(int code)
+        {
+            if (Application.isBatchMode)
+                EditorApplication.Exit(code);
+        }
     }
 }

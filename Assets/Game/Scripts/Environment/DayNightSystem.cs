@@ -2,464 +2,468 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using Game.Configs;
 
-public sealed partial class DayNightSystem : SystemBase
+namespace Game.Runtime
 {
-    private const float MinFullDayDurationMinutes = 0.1f;
-
-    private DayNightSystemConfig config;
-    private float fullDayDurationMinutes = 5f;
-    private float startHour = 9f;
-    private Light directionalLight;
-    private Volume globalVolume;
-    private float sunYaw = 170f;
-    private bool animateDirectionalLight;
-    private float nightStartsAtHour = 19f;
-    private float morningStartsAtHour = 6f;
-    private float nightVisionStartHour = 19f;
-    private float nightVisionEndHour = 6f;
-    private float nightVisionPostExposure = 2.2f;
-    private Color nightVisionColorFilter = new(0.55f, 1f, 0.58f, 1f);
-    private float nightVisionTemperature = -80f;
-    private float nightVisionTint = -55f;
-    private float nightVisionBloomIntensity = 0.02f;
-    private float nightVisionBloomThreshold = 2f;
-    private bool affectFog = true;
-    private bool affectVolume = true;
-    private bool updateDynamicGI;
-    private float dynamicGIRefreshIntervalSeconds = 30f;
-
-    private Material _runtimeSkyboxMaterial;
-    private Material _originalSkyboxMaterial;
-    private bool _originalFogEnabled;
-    private Color _originalFogColor;
-    private float _originalFogDensity;
-    private Color _originalAmbientSkyColor;
-    private Color _originalAmbientEquatorColor;
-    private Color _originalAmbientGroundColor;
-    private float _originalAmbientIntensity;
-    private float _originalReflectionIntensity;
-    private bool _originalVolumeWeightCaptured;
-    private float _originalVolumeWeight;
-    private float _currentHour;
-    private int _dayCount = 1;
-    private float _nextEnvironmentRefreshTime;
-    private ColorAdjustments _colorAdjustments;
-    private WhiteBalance _whiteBalance;
-    private Bloom _bloom;
-    private bool _runtimeVisualsEnabled = true;
-    private bool _initialEnvironmentStateCaptured;
-
-    public float FullDayDurationMinutes => fullDayDurationMinutes;
-    public float CurrentHour => _currentHour;
-    public int DayCount => _dayCount;
-    public int Hour24 => GetHour24();
-    public int Minute => GetMinute();
-    public bool IsNightTime => IsHourWithinWrappedRange(_currentHour, nightStartsAtHour, morningStartsAtHour);
-    public string FormattedTimeText => $"Day {_dayCount}  {GetHour24():00}:{GetMinute():00}";
-    public bool RuntimeVisualsEnabled => _runtimeVisualsEnabled;
-
-    protected override void OnCreate()
+    public sealed partial class DayNightSystem : SystemBase
     {
-        Enabled = false;
-    }
+        private const float MinFullDayDurationMinutes = 0.1f;
 
-    protected override void OnUpdate()
-    {
-    }
+        private DayNightSystemConfig config;
+        private float fullDayDurationMinutes = 5f;
+        private float startHour = 9f;
+        private Light directionalLight;
+        private Volume globalVolume;
+        private float sunYaw = 170f;
+        private bool animateDirectionalLight;
+        private float nightStartsAtHour = 19f;
+        private float morningStartsAtHour = 6f;
+        private float nightVisionStartHour = 19f;
+        private float nightVisionEndHour = 6f;
+        private float nightVisionPostExposure = 2.2f;
+        private Color nightVisionColorFilter = new(0.55f, 1f, 0.58f, 1f);
+        private float nightVisionTemperature = -80f;
+        private float nightVisionTint = -55f;
+        private float nightVisionBloomIntensity = 0.02f;
+        private float nightVisionBloomThreshold = 2f;
+        private bool affectFog = true;
+        private bool affectVolume = true;
+        private bool updateDynamicGI;
+        private float dynamicGIRefreshIntervalSeconds = 30f;
 
-    protected override void OnDestroy()
-    {
-        Dispose();
-    }
+        private Material _runtimeSkyboxMaterial;
+        private Material _originalSkyboxMaterial;
+        private bool _originalFogEnabled;
+        private Color _originalFogColor;
+        private float _originalFogDensity;
+        private Color _originalAmbientSkyColor;
+        private Color _originalAmbientEquatorColor;
+        private Color _originalAmbientGroundColor;
+        private float _originalAmbientIntensity;
+        private float _originalReflectionIntensity;
+        private bool _originalVolumeWeightCaptured;
+        private float _originalVolumeWeight;
+        private float _currentHour;
+        private int _dayCount = 1;
+        private float _nextEnvironmentRefreshTime;
+        private ColorAdjustments _colorAdjustments;
+        private WhiteBalance _whiteBalance;
+        private Bloom _bloom;
+        private bool _runtimeVisualsEnabled = true;
+        private bool _initialEnvironmentStateCaptured;
 
-    public void Init(DayNightSystemConfig configAsset, Light sceneDirectionalLight, Volume sceneGlobalVolume)
-    {
-        config = configAsset;
-        directionalLight = sceneDirectionalLight;
-        globalVolume = sceneGlobalVolume;
-        ApplyConfigIfAvailable();
+        public float FullDayDurationMinutes => fullDayDurationMinutes;
+        public float CurrentHour => _currentHour;
+        public int DayCount => _dayCount;
+        public int Hour24 => GetHour24();
+        public int Minute => GetMinute();
+        public bool IsNightTime => IsHourWithinWrappedRange(_currentHour, nightStartsAtHour, morningStartsAtHour);
+        public string FormattedTimeText => $"Day {_dayCount}  {GetHour24():00}:{GetMinute():00}";
+        public bool RuntimeVisualsEnabled => _runtimeVisualsEnabled;
 
-        CaptureInitialEnvironmentState();
-        PrepareRuntimeSkybox();
-        PrepareVolumeOverrides();
+        protected override void OnCreate()
+        {
+            Enabled = false;
+        }
 
-        _currentHour = Mathf.Repeat(startHour, 24f);
-        _dayCount = 1;
-        ApplyVisualState();
-    }
+        protected override void OnUpdate()
+        {
+        }
 
-    public void SetRuntimeVisualsEnabled(bool enabled)
-    {
-        if (_runtimeVisualsEnabled == enabled)
-            return;
+        protected override void OnDestroy()
+        {
+            Dispose();
+        }
 
-        _runtimeVisualsEnabled = enabled;
-        if (!enabled)
+        public void Init(DayNightSystemConfig configAsset, Light sceneDirectionalLight, Volume sceneGlobalVolume)
+        {
+            config = configAsset;
+            directionalLight = sceneDirectionalLight;
+            globalVolume = sceneGlobalVolume;
+            ApplyConfigIfAvailable();
+
+            CaptureInitialEnvironmentState();
+            PrepareRuntimeSkybox();
+            PrepareVolumeOverrides();
+
+            _currentHour = Mathf.Repeat(startHour, 24f);
+            _dayCount = 1;
+            ApplyVisualState();
+        }
+
+        public void SetRuntimeVisualsEnabled(bool enabled)
+        {
+            if (_runtimeVisualsEnabled == enabled)
+                return;
+
+            _runtimeVisualsEnabled = enabled;
+            if (!enabled)
+            {
+                RestoreInitialEnvironmentState();
+                return;
+            }
+
+            CaptureInitialEnvironmentState();
+            PrepareRuntimeSkybox();
+            PrepareVolumeOverrides();
+            ApplyVisualState();
+        }
+
+        private void ApplyConfigIfAvailable()
+        {
+            if (config == null)
+                return;
+
+            fullDayDurationMinutes = config.FullDayDurationMinutes;
+            startHour = config.StartHour;
+            if (config.DirectionalLight != null)
+                directionalLight = config.DirectionalLight;
+            if (config.GlobalVolume != null)
+                globalVolume = config.GlobalVolume;
+            sunYaw = config.SunYaw;
+            animateDirectionalLight = config.AnimateDirectionalLight;
+            nightStartsAtHour = Mathf.Repeat(config.NightStartsAtHour, 24f);
+            morningStartsAtHour = Mathf.Repeat(config.MorningStartsAtHour, 24f);
+            nightVisionStartHour = Mathf.Repeat(config.NightVisionStartHour, 24f);
+            nightVisionEndHour = Mathf.Repeat(config.NightVisionEndHour, 24f);
+            nightVisionPostExposure = config.NightVisionPostExposure;
+            nightVisionColorFilter = config.NightVisionColorFilter;
+            nightVisionTemperature = config.NightVisionTemperature;
+            nightVisionTint = config.NightVisionTint;
+            nightVisionBloomIntensity = Mathf.Max(0f, config.NightVisionBloomIntensity);
+            nightVisionBloomThreshold = Mathf.Max(0f, config.NightVisionBloomThreshold);
+            affectFog = config.AffectFog;
+            affectVolume = config.AffectVolume;
+            updateDynamicGI = config.UpdateDynamicGI;
+            dynamicGIRefreshIntervalSeconds = Mathf.Max(1f, config.DynamicGIRefreshIntervalSeconds);
+        }
+
+        public new void Update()
+        {
+            if (!_runtimeVisualsEnabled)
+                return;
+
+            float clampedDurationMinutes = Mathf.Max(MinFullDayDurationMinutes, fullDayDurationMinutes);
+            float hoursPerSecond = 24f / (clampedDurationMinutes * 60f);
+            float previousHour = _currentHour;
+            _currentHour = Mathf.Repeat(_currentHour + (UnityEngine.Time.deltaTime * hoursPerSecond), 24f);
+            if (_currentHour < previousHour)
+                _dayCount++;
+
+            ApplyVisualState();
+        }
+
+        public void Dispose()
         {
             RestoreInitialEnvironmentState();
-            return;
+            _initialEnvironmentStateCaptured = false;
         }
 
-        CaptureInitialEnvironmentState();
-        PrepareRuntimeSkybox();
-        PrepareVolumeOverrides();
-        ApplyVisualState();
-    }
-
-    private void ApplyConfigIfAvailable()
-    {
-        if (config == null)
-            return;
-
-        fullDayDurationMinutes = config.FullDayDurationMinutes;
-        startHour = config.StartHour;
-        if (config.DirectionalLight != null)
-            directionalLight = config.DirectionalLight;
-        if (config.GlobalVolume != null)
-            globalVolume = config.GlobalVolume;
-        sunYaw = config.SunYaw;
-        animateDirectionalLight = config.AnimateDirectionalLight;
-        nightStartsAtHour = Mathf.Repeat(config.NightStartsAtHour, 24f);
-        morningStartsAtHour = Mathf.Repeat(config.MorningStartsAtHour, 24f);
-        nightVisionStartHour = Mathf.Repeat(config.NightVisionStartHour, 24f);
-        nightVisionEndHour = Mathf.Repeat(config.NightVisionEndHour, 24f);
-        nightVisionPostExposure = config.NightVisionPostExposure;
-        nightVisionColorFilter = config.NightVisionColorFilter;
-        nightVisionTemperature = config.NightVisionTemperature;
-        nightVisionTint = config.NightVisionTint;
-        nightVisionBloomIntensity = Mathf.Max(0f, config.NightVisionBloomIntensity);
-        nightVisionBloomThreshold = Mathf.Max(0f, config.NightVisionBloomThreshold);
-        affectFog = config.AffectFog;
-        affectVolume = config.AffectVolume;
-        updateDynamicGI = config.UpdateDynamicGI;
-        dynamicGIRefreshIntervalSeconds = Mathf.Max(1f, config.DynamicGIRefreshIntervalSeconds);
-    }
-
-    public new void Update()
-    {
-        if (!_runtimeVisualsEnabled)
-            return;
-
-        float clampedDurationMinutes = Mathf.Max(MinFullDayDurationMinutes, fullDayDurationMinutes);
-        float hoursPerSecond = 24f / (clampedDurationMinutes * 60f);
-        float previousHour = _currentHour;
-        _currentHour = Mathf.Repeat(_currentHour + (UnityEngine.Time.deltaTime * hoursPerSecond), 24f);
-        if (_currentHour < previousHour)
-            _dayCount++;
-
-        ApplyVisualState();
-    }
-
-    public void Dispose()
-    {
-        RestoreInitialEnvironmentState();
-        _initialEnvironmentStateCaptured = false;
-    }
-
-    private void CaptureInitialEnvironmentState()
-    {
-        _originalSkyboxMaterial = RenderSettings.skybox;
-        _originalFogEnabled = RenderSettings.fog;
-        _originalFogColor = RenderSettings.fogColor;
-        _originalFogDensity = RenderSettings.fogDensity;
-        _originalAmbientSkyColor = RenderSettings.ambientSkyColor;
-        _originalAmbientEquatorColor = RenderSettings.ambientEquatorColor;
-        _originalAmbientGroundColor = RenderSettings.ambientGroundColor;
-        _originalAmbientIntensity = RenderSettings.ambientIntensity;
-        _originalReflectionIntensity = RenderSettings.reflectionIntensity;
-
-        if (globalVolume != null)
+        private void CaptureInitialEnvironmentState()
         {
-            _originalVolumeWeight = globalVolume.weight;
-            _originalVolumeWeightCaptured = true;
+            _originalSkyboxMaterial = RenderSettings.skybox;
+            _originalFogEnabled = RenderSettings.fog;
+            _originalFogColor = RenderSettings.fogColor;
+            _originalFogDensity = RenderSettings.fogDensity;
+            _originalAmbientSkyColor = RenderSettings.ambientSkyColor;
+            _originalAmbientEquatorColor = RenderSettings.ambientEquatorColor;
+            _originalAmbientGroundColor = RenderSettings.ambientGroundColor;
+            _originalAmbientIntensity = RenderSettings.ambientIntensity;
+            _originalReflectionIntensity = RenderSettings.reflectionIntensity;
+
+            if (globalVolume != null)
+            {
+                _originalVolumeWeight = globalVolume.weight;
+                _originalVolumeWeightCaptured = true;
+            }
+
+            _initialEnvironmentStateCaptured = true;
         }
 
-        _initialEnvironmentStateCaptured = true;
-    }
-
-    private void RestoreInitialEnvironmentState()
-    {
-        if (!_initialEnvironmentStateCaptured)
-            return;
-
-        if (_originalSkyboxMaterial != null)
-            RenderSettings.skybox = _originalSkyboxMaterial;
-
-        RenderSettings.fog = _originalFogEnabled;
-        RenderSettings.fogColor = _originalFogColor;
-        RenderSettings.fogDensity = _originalFogDensity;
-        RenderSettings.ambientSkyColor = _originalAmbientSkyColor;
-        RenderSettings.ambientEquatorColor = _originalAmbientEquatorColor;
-        RenderSettings.ambientGroundColor = _originalAmbientGroundColor;
-        RenderSettings.ambientIntensity = _originalAmbientIntensity;
-        RenderSettings.reflectionIntensity = _originalReflectionIntensity;
-
-        if (globalVolume != null && _originalVolumeWeightCaptured)
-            globalVolume.weight = _originalVolumeWeight;
-
-        if (_runtimeSkyboxMaterial != null)
+        private void RestoreInitialEnvironmentState()
         {
-            Object.Destroy(_runtimeSkyboxMaterial);
-            _runtimeSkyboxMaterial = null;
+            if (!_initialEnvironmentStateCaptured)
+                return;
+
+            if (_originalSkyboxMaterial != null)
+                RenderSettings.skybox = _originalSkyboxMaterial;
+
+            RenderSettings.fog = _originalFogEnabled;
+            RenderSettings.fogColor = _originalFogColor;
+            RenderSettings.fogDensity = _originalFogDensity;
+            RenderSettings.ambientSkyColor = _originalAmbientSkyColor;
+            RenderSettings.ambientEquatorColor = _originalAmbientEquatorColor;
+            RenderSettings.ambientGroundColor = _originalAmbientGroundColor;
+            RenderSettings.ambientIntensity = _originalAmbientIntensity;
+            RenderSettings.reflectionIntensity = _originalReflectionIntensity;
+
+            if (globalVolume != null && _originalVolumeWeightCaptured)
+                globalVolume.weight = _originalVolumeWeight;
+
+            if (_runtimeSkyboxMaterial != null)
+            {
+                Object.Destroy(_runtimeSkyboxMaterial);
+                _runtimeSkyboxMaterial = null;
+            }
         }
-    }
 
-    private void PrepareRuntimeSkybox()
-    {
-        if (RenderSettings.skybox == null)
-            return;
-
-        _runtimeSkyboxMaterial = Object.Instantiate(RenderSettings.skybox);
-        _runtimeSkyboxMaterial.name = $"{RenderSettings.skybox.name}_RuntimeDayNight";
-        RenderSettings.skybox = _runtimeSkyboxMaterial;
-    }
-
-    private void PrepareVolumeOverrides()
-    {
-        if (!affectVolume || globalVolume == null)
-            return;
-
-        VolumeProfile profile = globalVolume.profile;
-        if (profile == null)
+        private void PrepareRuntimeSkybox()
         {
-            profile = ScriptableObject.CreateInstance<VolumeProfile>();
-            globalVolume.sharedProfile = profile;
+            if (RenderSettings.skybox == null)
+                return;
+
+            _runtimeSkyboxMaterial = Object.Instantiate(RenderSettings.skybox);
+            _runtimeSkyboxMaterial.name = $"{RenderSettings.skybox.name}_RuntimeDayNight";
+            RenderSettings.skybox = _runtimeSkyboxMaterial;
         }
 
-        profile = globalVolume.profile ?? globalVolume.sharedProfile;
-        if (profile == null)
-            return;
-
-        if (!profile.TryGet(out _colorAdjustments))
-            _colorAdjustments = profile.Add<ColorAdjustments>(true);
-        if (!profile.TryGet(out _whiteBalance))
-            _whiteBalance = profile.Add<WhiteBalance>(true);
-        if (!profile.TryGet(out _bloom))
-            _bloom = profile.Add<Bloom>(true);
-
-        _colorAdjustments.active = true;
-        _colorAdjustments.postExposure.overrideState = true;
-        _colorAdjustments.colorFilter.overrideState = true;
-
-        _whiteBalance.active = true;
-        _whiteBalance.temperature.overrideState = true;
-        _whiteBalance.tint.overrideState = true;
-
-        _bloom.active = true;
-        _bloom.intensity.overrideState = true;
-        _bloom.threshold.overrideState = true;
-    }
-
-    private void ApplyVisualState()
-    {
-        float daylight = ComputeDaylightFromConfig(_currentHour);
-        float twilight = ComputeTwilightFromConfig(_currentHour);
-
-        ApplyDirectionalLight(_currentHour, daylight, twilight);
-        ApplyAmbientAndFog(daylight, twilight);
-        ApplySkybox(daylight, twilight);
-        ApplyVolume(daylight, twilight, IsNightVisionActive(_currentHour));
-
-        if (updateDynamicGI && UnityEngine.Time.unscaledTime >= _nextEnvironmentRefreshTime)
+        private void PrepareVolumeOverrides()
         {
-            DynamicGI.UpdateEnvironment();
-            _nextEnvironmentRefreshTime = UnityEngine.Time.unscaledTime + dynamicGIRefreshIntervalSeconds;
+            if (!affectVolume || globalVolume == null)
+                return;
+
+            VolumeProfile profile = globalVolume.profile;
+            if (profile == null)
+            {
+                profile = ScriptableObject.CreateInstance<VolumeProfile>();
+                globalVolume.sharedProfile = profile;
+            }
+
+            profile = globalVolume.profile ?? globalVolume.sharedProfile;
+            if (profile == null)
+                return;
+
+            if (!profile.TryGet(out _colorAdjustments))
+                _colorAdjustments = profile.Add<ColorAdjustments>(true);
+            if (!profile.TryGet(out _whiteBalance))
+                _whiteBalance = profile.Add<WhiteBalance>(true);
+            if (!profile.TryGet(out _bloom))
+                _bloom = profile.Add<Bloom>(true);
+
+            _colorAdjustments.active = true;
+            _colorAdjustments.postExposure.overrideState = true;
+            _colorAdjustments.colorFilter.overrideState = true;
+
+            _whiteBalance.active = true;
+            _whiteBalance.temperature.overrideState = true;
+            _whiteBalance.tint.overrideState = true;
+
+            _bloom.active = true;
+            _bloom.intensity.overrideState = true;
+            _bloom.threshold.overrideState = true;
         }
-    }
 
-    private void ApplyDirectionalLight(float hour, float daylight, float twilight)
-    {
-        if (directionalLight == null)
-            return;
-
-        float elevation = ComputeDirectionalElevationFromConfig(hour);
-        if (animateDirectionalLight)
-            directionalLight.transform.rotation = Quaternion.Euler(elevation, sunYaw, 0f);
-
-        Color nightColor = new(0.34f, 0.40f, 0.52f);
-        Color dawnColor = new(1f, 0.67f, 0.42f);
-        Color noonColor = new(1f, 0.97f, 0.87f);
-        Color blended = Color.Lerp(nightColor, dawnColor, twilight);
-        directionalLight.color = Color.Lerp(blended, noonColor, daylight);
-        directionalLight.intensity = Mathf.Lerp(0.10f, 1.15f, daylight) + (twilight * 0.08f);
-        directionalLight.shadowStrength = Mathf.Lerp(0.35f, 1f, daylight);
-    }
-
-    private void ApplyAmbientAndFog(float daylight, float twilight)
-    {
-        Color nightSky = new(0.045f, 0.065f, 0.12f);
-        Color dawnSky = new(0.55f, 0.34f, 0.28f);
-        Color daySky = new(0.212f, 0.227f, 0.259f);
-        Color nightEquator = new(0.03f, 0.04f, 0.08f);
-        Color dawnEquator = new(0.42f, 0.22f, 0.18f);
-        Color dayEquator = new(0.114f, 0.125f, 0.133f);
-        Color nightGround = new(0.015f, 0.018f, 0.03f);
-        Color dawnGround = new(0.17f, 0.11f, 0.08f);
-        Color dayGround = new(0.047f, 0.043f, 0.035f);
-
-        RenderSettings.ambientSkyColor = Color.Lerp(Color.Lerp(nightSky, dawnSky, twilight), daySky, daylight);
-        RenderSettings.ambientEquatorColor = Color.Lerp(Color.Lerp(nightEquator, dawnEquator, twilight), dayEquator, daylight);
-        RenderSettings.ambientGroundColor = Color.Lerp(Color.Lerp(nightGround, dawnGround, twilight), dayGround, daylight);
-        RenderSettings.ambientIntensity = Mathf.Lerp(0.40f, 1f, daylight);
-        RenderSettings.reflectionIntensity = Mathf.Lerp(0.35f, 1f, daylight);
-
-        if (!affectFog)
-            return;
-
-        RenderSettings.fog = true;
-        RenderSettings.fogColor = Color.Lerp(
-            new Color(0.05f, 0.07f, 0.13f),
-            new Color(0.74f, 0.58f, 0.45f),
-            twilight);
-        RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor, new Color(0.70f, 0.77f, 0.85f), daylight);
-        RenderSettings.fogDensity = Mathf.Lerp(0.0065f, 0.0012f, daylight);
-    }
-
-    private void ApplySkybox(float daylight, float twilight)
-    {
-        if (_runtimeSkyboxMaterial == null)
-            return;
-
-        if (_runtimeSkyboxMaterial.HasProperty("_SkyTint"))
+        private void ApplyVisualState()
         {
-            Color tint = Color.Lerp(new Color(0.06f, 0.10f, 0.19f), new Color(0.78f, 0.42f, 0.26f), twilight);
-            tint = Color.Lerp(tint, new Color(0.5f, 0.62f, 0.78f), daylight);
-            _runtimeSkyboxMaterial.SetColor("_SkyTint", tint);
+            float daylight = ComputeDaylightFromConfig(_currentHour);
+            float twilight = ComputeTwilightFromConfig(_currentHour);
+
+            ApplyDirectionalLight(_currentHour, daylight, twilight);
+            ApplyAmbientAndFog(daylight, twilight);
+            ApplySkybox(daylight, twilight);
+            ApplyVolume(daylight, twilight, IsNightVisionActive(_currentHour));
+
+            if (updateDynamicGI && UnityEngine.Time.unscaledTime >= _nextEnvironmentRefreshTime)
+            {
+                DynamicGI.UpdateEnvironment();
+                _nextEnvironmentRefreshTime = UnityEngine.Time.unscaledTime + dynamicGIRefreshIntervalSeconds;
+            }
         }
 
-        if (_runtimeSkyboxMaterial.HasProperty("_GroundColor"))
+        private void ApplyDirectionalLight(float hour, float daylight, float twilight)
         {
-            Color ground = Color.Lerp(new Color(0.03f, 0.03f, 0.05f), new Color(0.25f, 0.18f, 0.14f), twilight);
-            ground = Color.Lerp(ground, new Color(0.37f, 0.35f, 0.30f), daylight);
-            _runtimeSkyboxMaterial.SetColor("_GroundColor", ground);
+            if (directionalLight == null)
+                return;
+
+            float elevation = ComputeDirectionalElevationFromConfig(hour);
+            if (animateDirectionalLight)
+                directionalLight.transform.rotation = Quaternion.Euler(elevation, sunYaw, 0f);
+
+            Color nightColor = new(0.34f, 0.40f, 0.52f);
+            Color dawnColor = new(1f, 0.67f, 0.42f);
+            Color noonColor = new(1f, 0.97f, 0.87f);
+            Color blended = Color.Lerp(nightColor, dawnColor, twilight);
+            directionalLight.color = Color.Lerp(blended, noonColor, daylight);
+            directionalLight.intensity = Mathf.Lerp(0.10f, 1.15f, daylight) + (twilight * 0.08f);
+            directionalLight.shadowStrength = Mathf.Lerp(0.35f, 1f, daylight);
         }
 
-        if (_runtimeSkyboxMaterial.HasProperty("_Exposure"))
-            _runtimeSkyboxMaterial.SetFloat("_Exposure", Mathf.Lerp(0.22f, 1.1f, daylight) + (twilight * 0.12f));
-
-        if (_runtimeSkyboxMaterial.HasProperty("_AtmosphereThickness"))
-            _runtimeSkyboxMaterial.SetFloat("_AtmosphereThickness", Mathf.Lerp(0.65f, 1.1f, daylight));
-    }
-
-    private void ApplyVolume(float daylight, float twilight, bool nightVisionActive)
-    {
-        if (!affectVolume || globalVolume == null || _colorAdjustments == null || _whiteBalance == null || _bloom == null)
-            return;
-
-        globalVolume.weight = 1f;
-        if (nightVisionActive)
+        private void ApplyAmbientAndFog(float daylight, float twilight)
         {
-            _colorAdjustments.postExposure.value = nightVisionPostExposure;
-            _colorAdjustments.colorFilter.value = nightVisionColorFilter;
-            _whiteBalance.temperature.value = nightVisionTemperature;
-            _whiteBalance.tint.value = nightVisionTint;
-            _bloom.intensity.value = nightVisionBloomIntensity;
-            _bloom.threshold.value = nightVisionBloomThreshold;
-            return;
+            Color nightSky = new(0.045f, 0.065f, 0.12f);
+            Color dawnSky = new(0.55f, 0.34f, 0.28f);
+            Color daySky = new(0.212f, 0.227f, 0.259f);
+            Color nightEquator = new(0.03f, 0.04f, 0.08f);
+            Color dawnEquator = new(0.42f, 0.22f, 0.18f);
+            Color dayEquator = new(0.114f, 0.125f, 0.133f);
+            Color nightGround = new(0.015f, 0.018f, 0.03f);
+            Color dawnGround = new(0.17f, 0.11f, 0.08f);
+            Color dayGround = new(0.047f, 0.043f, 0.035f);
+
+            RenderSettings.ambientSkyColor = Color.Lerp(Color.Lerp(nightSky, dawnSky, twilight), daySky, daylight);
+            RenderSettings.ambientEquatorColor = Color.Lerp(Color.Lerp(nightEquator, dawnEquator, twilight), dayEquator, daylight);
+            RenderSettings.ambientGroundColor = Color.Lerp(Color.Lerp(nightGround, dawnGround, twilight), dayGround, daylight);
+            RenderSettings.ambientIntensity = Mathf.Lerp(0.40f, 1f, daylight);
+            RenderSettings.reflectionIntensity = Mathf.Lerp(0.35f, 1f, daylight);
+
+            if (!affectFog)
+                return;
+
+            RenderSettings.fog = true;
+            RenderSettings.fogColor = Color.Lerp(
+                new Color(0.05f, 0.07f, 0.13f),
+                new Color(0.74f, 0.58f, 0.45f),
+                twilight);
+            RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor, new Color(0.70f, 0.77f, 0.85f), daylight);
+            RenderSettings.fogDensity = Mathf.Lerp(0.0065f, 0.0012f, daylight);
         }
 
-        _colorAdjustments.postExposure.value = Mathf.Lerp(-1.0f, 0.15f, daylight) + (twilight * 0.12f);
-        _colorAdjustments.colorFilter.value = Color.Lerp(
-            Color.Lerp(new Color(0.62f, 0.72f, 0.95f), new Color(1.0f, 0.76f, 0.58f), twilight),
-            Color.white,
-            daylight);
+        private void ApplySkybox(float daylight, float twilight)
+        {
+            if (_runtimeSkyboxMaterial == null)
+                return;
 
-        _whiteBalance.temperature.value = Mathf.Lerp(-18f, 4f, daylight) + (twilight * 14f);
-        _whiteBalance.tint.value = Mathf.Lerp(6f, 0f, daylight);
+            if (_runtimeSkyboxMaterial.HasProperty("_SkyTint"))
+            {
+                Color tint = Color.Lerp(new Color(0.06f, 0.10f, 0.19f), new Color(0.78f, 0.42f, 0.26f), twilight);
+                tint = Color.Lerp(tint, new Color(0.5f, 0.62f, 0.78f), daylight);
+                _runtimeSkyboxMaterial.SetColor("_SkyTint", tint);
+            }
 
-        _bloom.intensity.value = Mathf.Lerp(0.55f, 0.18f, daylight);
-        _bloom.threshold.value = Mathf.Lerp(0.85f, 1.15f, daylight);
-    }
+            if (_runtimeSkyboxMaterial.HasProperty("_GroundColor"))
+            {
+                Color ground = Color.Lerp(new Color(0.03f, 0.03f, 0.05f), new Color(0.25f, 0.18f, 0.14f), twilight);
+                ground = Color.Lerp(ground, new Color(0.37f, 0.35f, 0.30f), daylight);
+                _runtimeSkyboxMaterial.SetColor("_GroundColor", ground);
+            }
 
-    private bool IsNightVisionActive(float hour)
-    {
-        return IsHourWithinWrappedRange(hour, nightVisionStartHour, nightVisionEndHour);
-    }
+            if (_runtimeSkyboxMaterial.HasProperty("_Exposure"))
+                _runtimeSkyboxMaterial.SetFloat("_Exposure", Mathf.Lerp(0.22f, 1.1f, daylight) + (twilight * 0.12f));
 
-    private float ComputeDaylightFromConfig(float hour)
-    {
-        const float transitionHours = 1f;
+            if (_runtimeSkyboxMaterial.HasProperty("_AtmosphereThickness"))
+                _runtimeSkyboxMaterial.SetFloat("_AtmosphereThickness", Mathf.Lerp(0.65f, 1.1f, daylight));
+        }
 
-        float sunriseEnd = morningStartsAtHour + transitionHours;
-        float sunsetBegin = nightStartsAtHour - transitionHours;
+        private void ApplyVolume(float daylight, float twilight, bool nightVisionActive)
+        {
+            if (!affectVolume || globalVolume == null || _colorAdjustments == null || _whiteBalance == null || _bloom == null)
+                return;
 
-        float sunriseBlend = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(morningStartsAtHour, sunriseEnd, hour));
-        float sunsetBlend = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(sunsetBegin, nightStartsAtHour, hour));
+            globalVolume.weight = 1f;
+            if (nightVisionActive)
+            {
+                _colorAdjustments.postExposure.value = nightVisionPostExposure;
+                _colorAdjustments.colorFilter.value = nightVisionColorFilter;
+                _whiteBalance.temperature.value = nightVisionTemperature;
+                _whiteBalance.tint.value = nightVisionTint;
+                _bloom.intensity.value = nightVisionBloomIntensity;
+                _bloom.threshold.value = nightVisionBloomThreshold;
+                return;
+            }
 
-        if (hour < morningStartsAtHour || hour >= nightStartsAtHour)
+            _colorAdjustments.postExposure.value = Mathf.Lerp(-1.0f, 0.15f, daylight) + (twilight * 0.12f);
+            _colorAdjustments.colorFilter.value = Color.Lerp(
+                Color.Lerp(new Color(0.62f, 0.72f, 0.95f), new Color(1.0f, 0.76f, 0.58f), twilight),
+                Color.white,
+                daylight);
+
+            _whiteBalance.temperature.value = Mathf.Lerp(-18f, 4f, daylight) + (twilight * 14f);
+            _whiteBalance.tint.value = Mathf.Lerp(6f, 0f, daylight);
+
+            _bloom.intensity.value = Mathf.Lerp(0.55f, 0.18f, daylight);
+            _bloom.threshold.value = Mathf.Lerp(0.85f, 1.15f, daylight);
+        }
+
+        private bool IsNightVisionActive(float hour)
+        {
+            return IsHourWithinWrappedRange(hour, nightVisionStartHour, nightVisionEndHour);
+        }
+
+        private float ComputeDaylightFromConfig(float hour)
+        {
+            const float transitionHours = 1f;
+
+            float sunriseEnd = morningStartsAtHour + transitionHours;
+            float sunsetBegin = nightStartsAtHour - transitionHours;
+
+            float sunriseBlend = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(morningStartsAtHour, sunriseEnd, hour));
+            float sunsetBlend = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(sunsetBegin, nightStartsAtHour, hour));
+
+            if (hour < morningStartsAtHour || hour >= nightStartsAtHour)
+                return 0f;
+
+            if (hour < sunriseEnd)
+                return sunriseBlend;
+
+            if (hour >= sunsetBegin)
+                return sunsetBlend;
+
+            return 1f;
+        }
+
+        private float ComputeTwilightFromConfig(float hour)
+        {
+            const float transitionHours = 1f;
+
+            float dawn = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(morningStartsAtHour, morningStartsAtHour + transitionHours, hour));
+            float dusk = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(nightStartsAtHour - transitionHours, nightStartsAtHour, hour));
+
+            if (hour >= morningStartsAtHour && hour < morningStartsAtHour + transitionHours)
+                return dawn;
+
+            if (hour >= nightStartsAtHour - transitionHours && hour < nightStartsAtHour)
+                return dusk;
+
             return 0f;
-
-        if (hour < sunriseEnd)
-            return sunriseBlend;
-
-        if (hour >= sunsetBegin)
-            return sunsetBlend;
-
-        return 1f;
-    }
-
-    private float ComputeTwilightFromConfig(float hour)
-    {
-        const float transitionHours = 1f;
-
-        float dawn = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(morningStartsAtHour, morningStartsAtHour + transitionHours, hour));
-        float dusk = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(nightStartsAtHour - transitionHours, nightStartsAtHour, hour));
-
-        if (hour >= morningStartsAtHour && hour < morningStartsAtHour + transitionHours)
-            return dawn;
-
-        if (hour >= nightStartsAtHour - transitionHours && hour < nightStartsAtHour)
-            return dusk;
-
-        return 0f;
-    }
-
-    private float ComputeDirectionalElevationFromConfig(float hour)
-    {
-        float sunriseHour = morningStartsAtHour;
-        float sunsetHour = nightStartsAtHour;
-
-        if (sunriseHour < sunsetHour)
-        {
-            if (hour >= sunriseHour && hour < sunsetHour)
-            {
-                float dayProgress = Mathf.InverseLerp(sunriseHour, sunsetHour, hour);
-                return Mathf.Lerp(0f, 180f, dayProgress);
-            }
-
-            if (hour < sunriseHour)
-            {
-                float nightProgress = Mathf.InverseLerp(0f, sunriseHour, hour);
-                return Mathf.Lerp(-90f, 0f, nightProgress);
-            }
-
-            float eveningProgress = Mathf.InverseLerp(sunsetHour, 24f, hour);
-            return Mathf.Lerp(180f, 270f, eveningProgress);
         }
 
-        float normalizedDay = hour / 24f;
-        return (normalizedDay * 360f) - 90f;
-    }
+        private float ComputeDirectionalElevationFromConfig(float hour)
+        {
+            float sunriseHour = morningStartsAtHour;
+            float sunsetHour = nightStartsAtHour;
 
-    private static bool IsHourWithinWrappedRange(float hour, float startHour, float endHour)
-    {
-        if (Mathf.Approximately(startHour, endHour))
-            return false;
+            if (sunriseHour < sunsetHour)
+            {
+                if (hour >= sunriseHour && hour < sunsetHour)
+                {
+                    float dayProgress = Mathf.InverseLerp(sunriseHour, sunsetHour, hour);
+                    return Mathf.Lerp(0f, 180f, dayProgress);
+                }
 
-        if (startHour < endHour)
-            return hour >= startHour && hour < endHour;
+                if (hour < sunriseHour)
+                {
+                    float nightProgress = Mathf.InverseLerp(0f, sunriseHour, hour);
+                    return Mathf.Lerp(-90f, 0f, nightProgress);
+                }
 
-        return hour >= startHour || hour < endHour;
-    }
+                float eveningProgress = Mathf.InverseLerp(sunsetHour, 24f, hour);
+                return Mathf.Lerp(180f, 270f, eveningProgress);
+            }
 
-    private int GetHour24()
-    {
-        return Mathf.FloorToInt(_currentHour) % 24;
-    }
+            float normalizedDay = hour / 24f;
+            return (normalizedDay * 360f) - 90f;
+        }
 
-    private int GetMinute()
-    {
-        return Mathf.FloorToInt((_currentHour - Mathf.Floor(_currentHour)) * 60f);
+        private static bool IsHourWithinWrappedRange(float hour, float startHour, float endHour)
+        {
+            if (Mathf.Approximately(startHour, endHour))
+                return false;
+
+            if (startHour < endHour)
+                return hour >= startHour && hour < endHour;
+
+            return hour >= startHour || hour < endHour;
+        }
+
+        private int GetHour24()
+        {
+            return Mathf.FloorToInt(_currentHour) % 24;
+        }
+
+        private int GetMinute()
+        {
+            return Mathf.FloorToInt((_currentHour - Mathf.Floor(_currentHour)) * 60f);
+        }
     }
 }

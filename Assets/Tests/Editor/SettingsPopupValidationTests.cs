@@ -7,6 +7,12 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
+using Game.Components;
+using Game.UI.Runtime;
+using Game.UI.Shell.Ecs;
+using SettingsService = Game.UI.Runtime.SettingsService;
 
 public sealed class SettingsPopupValidationTests
 {

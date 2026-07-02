@@ -5,6 +5,9 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Contracts;
+using Game.UI.Runtime;
+using Game.Composition;
 
 public sealed class ArmoryCurrentContentPrefabTests
 {

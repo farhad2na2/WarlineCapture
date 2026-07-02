@@ -4,548 +4,553 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Game.Components;
+using Game.Configs;
 
-internal sealed class MapVehiclePlacementSpawnPrefabSystemHelper
+namespace Game.Runtime
 {
-    private const int MaxPlacementsPerUpdate = 32;
-    private const int VehicleDepartureClearancePaddingCells = UnitPathPlacementValidation.VehicleOccupancyPaddingCells;
-    private const float UniformScaleEpsilon = 0.0001f;
-
-    public delegate bool TryGetGridDataDelegate(
-        out Entity gridEntity,
-        out GridConfig grid,
-        out DynamicBuffer<GridRoad> roads,
-        out DynamicBlockerComponent blockerData);
-
-    public delegate bool TryGetRuntimeBoundaryDelegate(EntityManager em, out Entity boundaryEntity);
-
-    public readonly struct Context
+    internal sealed class MapVehiclePlacementSpawnPrefabSystemHelper
     {
-        public readonly MapVehiclePlacementConfig Config;
-        public readonly Transform AuthoringVehiclesRoot;
-        public readonly RuntimeUnitPrefabSystem UnitPrefabSystem;
-        public readonly RuntimeUnitPrefabSystem.Context UnitPrefabContext;
-        public readonly TryGetGridDataDelegate TryGetGridData;
-        public readonly TryGetRuntimeBoundaryDelegate TryGetRuntimeBoundary;
-        public readonly Action<string> LogWarning;
+        private const int MaxPlacementsPerUpdate = 32;
+        private const int VehicleDepartureClearancePaddingCells = UnitPathPlacementValidation.VehicleOccupancyPaddingCells;
+        private const float UniformScaleEpsilon = 0.0001f;
 
-        public Context(
-            MapVehiclePlacementConfig config,
-            Transform authoringVehiclesRoot,
-            RuntimeUnitPrefabSystem unitPrefabSystem,
-            RuntimeUnitPrefabSystem.Context unitPrefabContext,
-            TryGetGridDataDelegate tryGetGridData,
-            Action<string> logWarning)
-            : this(
-                config,
-                authoringVehiclesRoot,
-                unitPrefabSystem,
-                unitPrefabContext,
-                tryGetGridData,
-                null,
-                logWarning)
+        public delegate bool TryGetGridDataDelegate(
+            out Entity gridEntity,
+            out GridConfig grid,
+            out DynamicBuffer<GridRoad> roads,
+            out DynamicBlockerComponent blockerData);
+
+        public delegate bool TryGetRuntimeBoundaryDelegate(EntityManager em, out Entity boundaryEntity);
+
+        public readonly struct Context
         {
-        }
+            public readonly MapVehiclePlacementConfig Config;
+            public readonly Transform AuthoringVehiclesRoot;
+            public readonly RuntimeUnitPrefabSystem UnitPrefabSystem;
+            public readonly RuntimeUnitPrefabSystem.Context UnitPrefabContext;
+            public readonly TryGetGridDataDelegate TryGetGridData;
+            public readonly TryGetRuntimeBoundaryDelegate TryGetRuntimeBoundary;
+            public readonly Action<string> LogWarning;
 
-        public Context(
-            MapVehiclePlacementConfig config,
-            Transform authoringVehiclesRoot,
-            RuntimeUnitPrefabSystem unitPrefabSystem,
-            RuntimeUnitPrefabSystem.Context unitPrefabContext,
-            TryGetGridDataDelegate tryGetGridData,
-            TryGetRuntimeBoundaryDelegate tryGetRuntimeBoundary,
-            Action<string> logWarning)
-        {
-            Config = config;
-            AuthoringVehiclesRoot = authoringVehiclesRoot;
-            UnitPrefabSystem = unitPrefabSystem;
-            UnitPrefabContext = unitPrefabContext;
-            TryGetGridData = tryGetGridData;
-            TryGetRuntimeBoundary = tryGetRuntimeBoundary;
-            LogWarning = logWarning;
-        }
-    }
-
-    private readonly InitialUnitSpawnApplySystem _unitSpawnApplySystem = new();
-    private readonly InitialUnitSpawnResetSystem _unitSpawnResetSystem = new();
-    private bool _warnedMissingConfig;
-    private bool _warnedMissingPrefab;
-    private int _lastClearedBlockerCells;
-    private bool _isComplete;
-
-    internal int LastClearedBlockerCells => _lastClearedBlockerCells;
-    public bool IsComplete => _isComplete;
-
-    public void Update(Context context)
-    {
-        if (context.Config == null || !context.Config.SpawnOnMatchStart)
-            return;
-
-        if (!TryGetProgressState(context, out EntityManager em, out Entity progressEntity, out MapVehiclePlacementProgressState progress))
-            return;
-
-        SyncProgressSnapshot(progress);
-        if (IsComplete)
-            return;
-
-        TryPublishPlacementReadModel(context);
-
-        if (progress.Queued != 0)
-        {
-            RefreshPlacementClearance(context, em, ref progress);
-            HideAuthoringVisuals(context, ref progress);
-            SaveProgressState(em, progressEntity, progress);
-            SyncProgressSnapshot(progress);
-            return;
-        }
-
-        SpawnPlacements(context, em, progressEntity, ref progress);
-        SaveProgressState(em, progressEntity, progress);
-        SyncProgressSnapshot(progress);
-    }
-
-    private void SpawnPlacements(
-        Context context,
-        EntityManager em,
-        Entity progressEntity,
-        ref MapVehiclePlacementProgressState progress)
-    {
-        if (context.Config.Placements == null || context.Config.Placements.Count == 0)
-        {
-            WarnOnce(ref _warnedMissingConfig, context, "[MapVehiclePlacement] no baked map vehicle placements configured.");
-            progress.Queued = 1;
-            HideAuthoringVisuals(context, ref progress);
-            SaveProgressState(em, progressEntity, progress);
-            return;
-        }
-
-        context.UnitPrefabContext.EnsureEntityQueries?.Invoke(em);
-        if (context.TryGetGridData == null ||
-            !context.TryGetGridData(out _, out GridConfig grid, out _, out _))
-        {
-            return;
-        }
-
-        using EntityCommandBuffer ecb = new(Allocator.Temp);
-        int processed = 0;
-        for (; progress.NextPlacementIndex < context.Config.Placements.Count && processed < MaxPlacementsPerUpdate; progress.NextPlacementIndex++, processed++)
-        {
-            MapVehiclePlacementConfigEntry placement = context.Config.Placements[progress.NextPlacementIndex];
-            if (placement == null || string.IsNullOrWhiteSpace(placement.VehicleSourceKey))
-                continue;
-
-            if (!context.UnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity(
-                    context.UnitPrefabContext,
-                    GetVehiclePrefabSourceKey(placement),
-                    out Entity prefabEntity))
+            public Context(
+                MapVehiclePlacementConfig config,
+                Transform authoringVehiclesRoot,
+                RuntimeUnitPrefabSystem unitPrefabSystem,
+                RuntimeUnitPrefabSystem.Context unitPrefabContext,
+                TryGetGridDataDelegate tryGetGridData,
+                Action<string> logWarning)
+                : this(
+                    config,
+                    authoringVehiclesRoot,
+                    unitPrefabSystem,
+                    unitPrefabContext,
+                    tryGetGridData,
+                    null,
+                    logWarning)
             {
-                WarnOnce(
-                    ref _warnedMissingPrefab,
-                    context,
-                    $"[MapVehiclePlacement] at least one authored vehicle could not resolve an ECS prefab. First failed source={placement.SourcePath} sourceKey={placement.VehicleSourceKey}.");
-                continue;
             }
 
-            SpawnVehicle(context, em, ecb, grid, placement, prefabEntity, ref progress);
+            public Context(
+                MapVehiclePlacementConfig config,
+                Transform authoringVehiclesRoot,
+                RuntimeUnitPrefabSystem unitPrefabSystem,
+                RuntimeUnitPrefabSystem.Context unitPrefabContext,
+                TryGetGridDataDelegate tryGetGridData,
+                TryGetRuntimeBoundaryDelegate tryGetRuntimeBoundary,
+                Action<string> logWarning)
+            {
+                Config = config;
+                AuthoringVehiclesRoot = authoringVehiclesRoot;
+                UnitPrefabSystem = unitPrefabSystem;
+                UnitPrefabContext = unitPrefabContext;
+                TryGetGridData = tryGetGridData;
+                TryGetRuntimeBoundary = tryGetRuntimeBoundary;
+                LogWarning = logWarning;
+            }
         }
 
-        ecb.Playback(em);
+        private readonly InitialUnitSpawnApplySystem _unitSpawnApplySystem = new();
+        private readonly InitialUnitSpawnResetSystem _unitSpawnResetSystem = new();
+        private bool _warnedMissingConfig;
+        private bool _warnedMissingPrefab;
+        private int _lastClearedBlockerCells;
+        private bool _isComplete;
 
-        if (progress.NextPlacementIndex >= context.Config.Placements.Count)
+        internal int LastClearedBlockerCells => _lastClearedBlockerCells;
+        public bool IsComplete => _isComplete;
+
+        public void Update(Context context)
         {
-            progress.Queued = 1;
-            RefreshPlacementClearance(context, em, ref progress);
-            HideAuthoringVisuals(context, ref progress);
-        }
-    }
+            if (context.Config == null || !context.Config.SpawnOnMatchStart)
+                return;
 
-    private void SpawnVehicle(
-        Context context,
-        EntityManager em,
-        EntityCommandBuffer ecb,
-        GridConfig grid,
-        MapVehiclePlacementConfigEntry placement,
-        Entity prefabEntity,
-        ref MapVehiclePlacementProgressState progress)
-    {
-        bool hasPrefab = prefabEntity != Entity.Null && em.Exists(prefabEntity);
-        if (!hasPrefab)
-            return;
+            if (!TryGetProgressState(context, out EntityManager em, out Entity progressEntity, out MapVehiclePlacementProgressState progress))
+                return;
 
-        float3 center = ToFloat3(placement.WorldCenter);
-        float3 position = ToFloat3(placement.WorldPosition);
-        int2 cell = GridUtils.WorldToCell(grid, center);
-        byte faction = placement.FactionId;
-        Entity instance = _unitSpawnApplySystem.InstantiateAndConfigureSpawnedUnit(
-            em,
-            ecb,
-            prefabEntity,
-            hasPrefab,
-            faction,
-            cell,
-            position);
+            SyncProgressSnapshot(progress);
+            if (IsComplete)
+                return;
 
-        progress.RandomState = math.max(1u, progress.RandomState + 1u);
-        var rng = new Unity.Mathematics.Random(progress.RandomState);
-        _unitSpawnResetSystem.ResetSpawnedUnitRuntimeState(em, ecb, instance, prefabEntity, hasPrefab, ref rng);
-        progress.RandomState = math.max(1u, rng.state);
+            TryPublishPlacementReadModel(context);
 
-        ApplyAuthoredTransform(em, ecb, instance, prefabEntity, hasPrefab, placement);
-        FixedString64Bytes sourceKey = ResolveSpawnedVehicleSourceKey(em, prefabEntity, hasPrefab, placement);
-        if (sourceKey.Length > 0)
-            SetOrAddComponent(em, ecb, instance, prefabEntity, hasPrefab, new UnitSourcePrefabKey { Value = sourceKey });
-        SetOrAddComponent(em, ecb, instance, prefabEntity, hasPrefab, new UnitRespawnPrefab { Prefab = prefabEntity });
-    }
+            if (progress.Queued != 0)
+            {
+                RefreshPlacementClearance(context, em, ref progress);
+                HideAuthoringVisuals(context, ref progress);
+                SaveProgressState(em, progressEntity, progress);
+                SyncProgressSnapshot(progress);
+                return;
+            }
 
-    private static FixedString64Bytes ResolveSpawnedVehicleSourceKey(
-        EntityManager em,
-        Entity prefabEntity,
-        bool hasPrefab,
-        MapVehiclePlacementConfigEntry placement)
-    {
-        if (hasPrefab &&
-            prefabEntity != Entity.Null &&
-            em.Exists(prefabEntity) &&
-            em.HasComponent<UnitSourcePrefabKey>(prefabEntity))
-        {
-            return em.GetComponentData<UnitSourcePrefabKey>(prefabEntity).Value;
+            SpawnPlacements(context, em, progressEntity, ref progress);
+            SaveProgressState(em, progressEntity, progress);
+            SyncProgressSnapshot(progress);
         }
 
-        return GetVehiclePrefabSourceKey(placement);
-    }
-
-    private static void ApplyAuthoredTransform(
-        EntityManager em,
-        EntityCommandBuffer ecb,
-        Entity instance,
-        Entity prefab,
-        bool hasPrefab,
-        MapVehiclePlacementConfigEntry placement)
-    {
-        quaternion rotation = quaternion.EulerXYZ(math.radians(ToFloat3(placement.WorldEulerAngles)));
-        float3 scale = ToFloat3(placement.WorldScale);
-        if (IsUniformScale(scale, out float uniformScale))
+        private void SpawnPlacements(
+            Context context,
+            EntityManager em,
+            Entity progressEntity,
+            ref MapVehiclePlacementProgressState progress)
         {
+            if (context.Config.Placements == null || context.Config.Placements.Count == 0)
+            {
+                WarnOnce(ref _warnedMissingConfig, context, "[MapVehiclePlacement] no baked map vehicle placements configured.");
+                progress.Queued = 1;
+                HideAuthoringVisuals(context, ref progress);
+                SaveProgressState(em, progressEntity, progress);
+                return;
+            }
+
+            context.UnitPrefabContext.EnsureEntityQueries?.Invoke(em);
+            if (context.TryGetGridData == null ||
+                !context.TryGetGridData(out _, out GridConfig grid, out _, out _))
+            {
+                return;
+            }
+
+            using EntityCommandBuffer ecb = new(Allocator.Temp);
+            int processed = 0;
+            for (; progress.NextPlacementIndex < context.Config.Placements.Count && processed < MaxPlacementsPerUpdate; progress.NextPlacementIndex++, processed++)
+            {
+                MapVehiclePlacementConfigEntry placement = context.Config.Placements[progress.NextPlacementIndex];
+                if (placement == null || string.IsNullOrWhiteSpace(placement.VehicleSourceKey))
+                    continue;
+
+                if (!context.UnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity(
+                        context.UnitPrefabContext,
+                        GetVehiclePrefabSourceKey(placement),
+                        out Entity prefabEntity))
+                {
+                    WarnOnce(
+                        ref _warnedMissingPrefab,
+                        context,
+                        $"[MapVehiclePlacement] at least one authored vehicle could not resolve an ECS prefab. First failed source={placement.SourcePath} sourceKey={placement.VehicleSourceKey}.");
+                    continue;
+                }
+
+                SpawnVehicle(context, em, ecb, grid, placement, prefabEntity, ref progress);
+            }
+
+            ecb.Playback(em);
+
+            if (progress.NextPlacementIndex >= context.Config.Placements.Count)
+            {
+                progress.Queued = 1;
+                RefreshPlacementClearance(context, em, ref progress);
+                HideAuthoringVisuals(context, ref progress);
+            }
+        }
+
+        private void SpawnVehicle(
+            Context context,
+            EntityManager em,
+            EntityCommandBuffer ecb,
+            GridConfig grid,
+            MapVehiclePlacementConfigEntry placement,
+            Entity prefabEntity,
+            ref MapVehiclePlacementProgressState progress)
+        {
+            bool hasPrefab = prefabEntity != Entity.Null && em.Exists(prefabEntity);
+            if (!hasPrefab)
+                return;
+
+            float3 center = ToFloat3(placement.WorldCenter);
+            float3 position = ToFloat3(placement.WorldPosition);
+            int2 cell = GridUtils.WorldToCell(grid, center);
+            byte faction = placement.FactionId;
+            Entity instance = _unitSpawnApplySystem.InstantiateAndConfigureSpawnedUnit(
+                em,
+                ecb,
+                prefabEntity,
+                hasPrefab,
+                faction,
+                cell,
+                position);
+
+            progress.RandomState = math.max(1u, progress.RandomState + 1u);
+            var rng = new Unity.Mathematics.Random(progress.RandomState);
+            _unitSpawnResetSystem.ResetSpawnedUnitRuntimeState(em, ecb, instance, prefabEntity, hasPrefab, ref rng);
+            progress.RandomState = math.max(1u, rng.state);
+
+            ApplyAuthoredTransform(em, ecb, instance, prefabEntity, hasPrefab, placement);
+            FixedString64Bytes sourceKey = ResolveSpawnedVehicleSourceKey(em, prefabEntity, hasPrefab, placement);
+            if (sourceKey.Length > 0)
+                SetOrAddComponent(em, ecb, instance, prefabEntity, hasPrefab, new UnitSourcePrefabKey { Value = sourceKey });
+            SetOrAddComponent(em, ecb, instance, prefabEntity, hasPrefab, new UnitRespawnPrefab { Prefab = prefabEntity });
+        }
+
+        private static FixedString64Bytes ResolveSpawnedVehicleSourceKey(
+            EntityManager em,
+            Entity prefabEntity,
+            bool hasPrefab,
+            MapVehiclePlacementConfigEntry placement)
+        {
+            if (hasPrefab &&
+                prefabEntity != Entity.Null &&
+                em.Exists(prefabEntity) &&
+                em.HasComponent<UnitSourcePrefabKey>(prefabEntity))
+            {
+                return em.GetComponentData<UnitSourcePrefabKey>(prefabEntity).Value;
+            }
+
+            return GetVehiclePrefabSourceKey(placement);
+        }
+
+        private static void ApplyAuthoredTransform(
+            EntityManager em,
+            EntityCommandBuffer ecb,
+            Entity instance,
+            Entity prefab,
+            bool hasPrefab,
+            MapVehiclePlacementConfigEntry placement)
+        {
+            quaternion rotation = quaternion.EulerXYZ(math.radians(ToFloat3(placement.WorldEulerAngles)));
+            float3 scale = ToFloat3(placement.WorldScale);
+            if (IsUniformScale(scale, out float uniformScale))
+            {
+                SetOrAddComponent(
+                    em,
+                    ecb,
+                    instance,
+                    prefab,
+                    hasPrefab,
+                    LocalTransform.FromPositionRotationScale(ToFloat3(placement.WorldPosition), rotation, uniformScale));
+                if (hasPrefab && em.HasComponent<PostTransformMatrix>(prefab))
+                    ecb.RemoveComponent<PostTransformMatrix>(instance);
+                return;
+            }
+
             SetOrAddComponent(
                 em,
                 ecb,
                 instance,
                 prefab,
                 hasPrefab,
-                LocalTransform.FromPositionRotationScale(ToFloat3(placement.WorldPosition), rotation, uniformScale));
-            if (hasPrefab && em.HasComponent<PostTransformMatrix>(prefab))
-                ecb.RemoveComponent<PostTransformMatrix>(instance);
-            return;
+                LocalTransform.FromPositionRotationScale(ToFloat3(placement.WorldPosition), rotation, 1f));
+            SetOrAddComponent(
+                em,
+                ecb,
+                instance,
+                prefab,
+                hasPrefab,
+                new PostTransformMatrix { Value = float4x4.Scale(scale) });
         }
 
-        SetOrAddComponent(
-            em,
-            ecb,
-            instance,
-            prefab,
-            hasPrefab,
-            LocalTransform.FromPositionRotationScale(ToFloat3(placement.WorldPosition), rotation, 1f));
-        SetOrAddComponent(
-            em,
-            ecb,
-            instance,
-            prefab,
-            hasPrefab,
-            new PostTransformMatrix { Value = float4x4.Scale(scale) });
-    }
-
-    private static bool IsUniformScale(float3 scale, out float uniformScale)
-    {
-        uniformScale = math.max(UniformScaleEpsilon, scale.x);
-        return math.abs(scale.x - scale.y) <= UniformScaleEpsilon &&
-               math.abs(scale.x - scale.z) <= UniformScaleEpsilon;
-    }
-
-    private void RefreshPlacementClearance(
-        Context context,
-        EntityManager em,
-        ref MapVehiclePlacementProgressState progress)
-    {
-        progress.LastClearedBlockerCells = 0;
-        if (context.Config == null ||
-            context.Config.Placements == null ||
-            context.TryGetGridData == null ||
-            !context.TryGetGridData(out _, out GridConfig grid, out _, out DynamicBlockerComponent blockerData) ||
-            !blockerData.Blocked.IsCreated)
+        private static bool IsUniformScale(float3 scale, out float uniformScale)
         {
-            return;
+            uniformScale = math.max(UniformScaleEpsilon, scale.x);
+            return math.abs(scale.x - scale.y) <= UniformScaleEpsilon &&
+                   math.abs(scale.x - scale.z) <= UniformScaleEpsilon;
         }
 
-        context.UnitPrefabContext.EnsureEntityQueries?.Invoke(em);
-        int clearedCells = 0;
-        for (int i = 0; i < context.Config.Placements.Count; i++)
+        private void RefreshPlacementClearance(
+            Context context,
+            EntityManager em,
+            ref MapVehiclePlacementProgressState progress)
         {
-            MapVehiclePlacementConfigEntry placement = context.Config.Placements[i];
-            if (placement == null ||
-                string.IsNullOrWhiteSpace(placement.VehicleSourceKey) ||
-                !TryResolvePlacementFootprint(context, em, placement, out int2 footprintSize))
+            progress.LastClearedBlockerCells = 0;
+            if (context.Config == null ||
+                context.Config.Placements == null ||
+                context.TryGetGridData == null ||
+                !context.TryGetGridData(out _, out GridConfig grid, out _, out DynamicBlockerComponent blockerData) ||
+                !blockerData.Blocked.IsCreated)
             {
-                continue;
+                return;
             }
 
-            int2 centerCell = GridUtils.WorldToCell(grid, ToFloat3(placement.WorldCenter));
-            clearedCells += ClearRuntimeBlockersInFootprint(grid, ref blockerData, centerCell, footprintSize, VehicleDepartureClearancePaddingCells);
+            context.UnitPrefabContext.EnsureEntityQueries?.Invoke(em);
+            int clearedCells = 0;
+            for (int i = 0; i < context.Config.Placements.Count; i++)
+            {
+                MapVehiclePlacementConfigEntry placement = context.Config.Placements[i];
+                if (placement == null ||
+                    string.IsNullOrWhiteSpace(placement.VehicleSourceKey) ||
+                    !TryResolvePlacementFootprint(context, em, placement, out int2 footprintSize))
+                {
+                    continue;
+                }
+
+                int2 centerCell = GridUtils.WorldToCell(grid, ToFloat3(placement.WorldCenter));
+                clearedCells += ClearRuntimeBlockersInFootprint(grid, ref blockerData, centerCell, footprintSize, VehicleDepartureClearancePaddingCells);
+            }
+
+            progress.LastClearedBlockerCells = clearedCells;
         }
 
-        progress.LastClearedBlockerCells = clearedCells;
-    }
-
-    private static void TryPublishPlacementReadModel(Context context)
-    {
-        if (context.UnitPrefabContext.TryGetEntityManager == null ||
-            !context.UnitPrefabContext.TryGetEntityManager(out EntityManager em) ||
-            context.TryGetRuntimeBoundary == null ||
-            !context.TryGetRuntimeBoundary(em, out Entity boundaryEntity))
+        private static void TryPublishPlacementReadModel(Context context)
         {
-            return;
+            if (context.UnitPrefabContext.TryGetEntityManager == null ||
+                !context.UnitPrefabContext.TryGetEntityManager(out EntityManager em) ||
+                context.TryGetRuntimeBoundary == null ||
+                !context.TryGetRuntimeBoundary(em, out Entity boundaryEntity))
+            {
+                return;
+            }
+
+            PublishPlacementReadModel(context, em, boundaryEntity);
         }
 
-        PublishPlacementReadModel(context, em, boundaryEntity);
-    }
-
-    internal static int PublishPlacementReadModel(Context context, EntityManager em, Entity boundaryEntity)
-    {
-        if (context.Config == null ||
-            context.Config.Placements == null ||
-            boundaryEntity == Entity.Null ||
-            !em.Exists(boundaryEntity))
+        internal static int PublishPlacementReadModel(Context context, EntityManager em, Entity boundaryEntity)
         {
-            return 0;
+            if (context.Config == null ||
+                context.Config.Placements == null ||
+                boundaryEntity == Entity.Null ||
+                !em.Exists(boundaryEntity))
+            {
+                return 0;
+            }
+
+            DynamicBuffer<MapVehiclePlacementReadModel> buffer =
+                EnsureBuffer<MapVehiclePlacementReadModel>(em, boundaryEntity);
+            buffer.Clear();
+
+            context.UnitPrefabContext.EnsureEntityQueries?.Invoke(em);
+            int projected = 0;
+            for (int i = 0; i < context.Config.Placements.Count; i++)
+            {
+                MapVehiclePlacementConfigEntry placement = context.Config.Placements[i];
+                FixedString64Bytes sourceKey = GetVehiclePrefabSourceKey(placement);
+                if (placement == null || sourceKey.Length == 0)
+                    continue;
+
+                Entity prefabEntity = Entity.Null;
+                int2 footprintCells = new(1, 1);
+                byte hasPrefab = 0;
+                if (context.UnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity(
+                        context.UnitPrefabContext,
+                        sourceKey,
+                        out Entity resolvedPrefab) &&
+                    resolvedPrefab != Entity.Null &&
+                    em.Exists(resolvedPrefab))
+                {
+                    prefabEntity = resolvedPrefab;
+                    hasPrefab = 1;
+                    if (em.HasComponent<UnitFootprint>(prefabEntity))
+                        footprintCells = UnitFootprintUtility.ClampSize(em.GetComponentData<UnitFootprint>(prefabEntity).Size);
+                }
+
+                buffer.Add(new MapVehiclePlacementReadModel
+                {
+                    PlacementIndex = i,
+                    SourcePath = ToFixedString128(placement.SourcePath),
+                    Category = ToFixedString128(placement.Category),
+                    VehicleSourceKey = sourceKey,
+                    Prefab = prefabEntity,
+                    FootprintCells = footprintCells,
+                    FactionId = placement.FactionId,
+                    HasPrefab = hasPrefab,
+                    WorldCenter = ToFloat3(placement.WorldCenter),
+                    WorldPosition = ToFloat3(placement.WorldPosition),
+                    WorldEulerAngles = ToFloat3(placement.WorldEulerAngles),
+                    WorldScale = ToFloat3(placement.WorldScale)
+                });
+                projected++;
+            }
+
+            return projected;
         }
 
-        DynamicBuffer<MapVehiclePlacementReadModel> buffer =
-            EnsureBuffer<MapVehiclePlacementReadModel>(em, boundaryEntity);
-        buffer.Clear();
-
-        context.UnitPrefabContext.EnsureEntityQueries?.Invoke(em);
-        int projected = 0;
-        for (int i = 0; i < context.Config.Placements.Count; i++)
+        private static bool TryResolvePlacementFootprint(
+            Context context,
+            EntityManager em,
+            MapVehiclePlacementConfigEntry placement,
+            out int2 footprintSize)
         {
-            MapVehiclePlacementConfigEntry placement = context.Config.Placements[i];
-            FixedString64Bytes sourceKey = GetVehiclePrefabSourceKey(placement);
-            if (placement == null || sourceKey.Length == 0)
-                continue;
+            footprintSize = new int2(1, 1);
+            if (placement == null || string.IsNullOrWhiteSpace(placement.VehicleSourceKey))
+                return false;
 
-            Entity prefabEntity = Entity.Null;
-            int2 footprintCells = new(1, 1);
-            byte hasPrefab = 0;
             if (context.UnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity(
                     context.UnitPrefabContext,
-                    sourceKey,
-                    out Entity resolvedPrefab) &&
-                resolvedPrefab != Entity.Null &&
-                em.Exists(resolvedPrefab))
+                    GetVehiclePrefabSourceKey(placement),
+                    out Entity prefabEntity) &&
+                prefabEntity != Entity.Null &&
+                em.Exists(prefabEntity) &&
+                em.HasComponent<UnitFootprint>(prefabEntity))
             {
-                prefabEntity = resolvedPrefab;
-                hasPrefab = 1;
-                if (em.HasComponent<UnitFootprint>(prefabEntity))
-                    footprintCells = UnitFootprintUtility.ClampSize(em.GetComponentData<UnitFootprint>(prefabEntity).Size);
+                footprintSize = UnitFootprintUtility.ClampSize(em.GetComponentData<UnitFootprint>(prefabEntity).Size);
+                return true;
             }
 
-            buffer.Add(new MapVehiclePlacementReadModel
-            {
-                PlacementIndex = i,
-                SourcePath = ToFixedString128(placement.SourcePath),
-                Category = ToFixedString128(placement.Category),
-                VehicleSourceKey = sourceKey,
-                Prefab = prefabEntity,
-                FootprintCells = footprintCells,
-                FactionId = placement.FactionId,
-                HasPrefab = hasPrefab,
-                WorldCenter = ToFloat3(placement.WorldCenter),
-                WorldPosition = ToFloat3(placement.WorldPosition),
-                WorldEulerAngles = ToFloat3(placement.WorldEulerAngles),
-                WorldScale = ToFloat3(placement.WorldScale)
-            });
-            projected++;
+            return false;
         }
 
-        return projected;
-    }
-
-    private static bool TryResolvePlacementFootprint(
-        Context context,
-        EntityManager em,
-        MapVehiclePlacementConfigEntry placement,
-        out int2 footprintSize)
-    {
-        footprintSize = new int2(1, 1);
-        if (placement == null || string.IsNullOrWhiteSpace(placement.VehicleSourceKey))
-            return false;
-
-        if (context.UnitPrefabSystem.TryResolveConfiguredUnitPrefabEntity(
-                context.UnitPrefabContext,
-                GetVehiclePrefabSourceKey(placement),
-                out Entity prefabEntity) &&
-            prefabEntity != Entity.Null &&
-            em.Exists(prefabEntity) &&
-            em.HasComponent<UnitFootprint>(prefabEntity))
+        internal static int ClearRuntimeBlockersInFootprint(
+            in GridConfig grid,
+            ref DynamicBlockerComponent blockerData,
+            int2 centerCell,
+            int2 footprintSize,
+            int paddingCells = 0)
         {
-            footprintSize = UnitFootprintUtility.ClampSize(em.GetComponentData<UnitFootprint>(prefabEntity).Size);
+            if (!blockerData.Blocked.IsCreated || grid.Width <= 0 || grid.Height <= 0)
+                return 0;
+
+            int2 clampedSize = UnitFootprintUtility.ClampSize(footprintSize);
+            int2 min = UnitFootprintUtility.GetMinCell(centerCell, clampedSize);
+            int2 max = min + clampedSize;
+            int padding = math.max(0, paddingCells);
+            min = math.max(min - new int2(padding, padding), int2.zero);
+            max = math.min(max + new int2(padding, padding), new int2(grid.Width, grid.Height));
+
+            int clearedCells = 0;
+            for (int y = min.y; y < max.y; y++)
+            {
+                int row = y * grid.Width;
+                for (int x = min.x; x < max.x; x++)
+                {
+                    int index = row + x;
+                    if ((uint)index >= (uint)blockerData.GridSize)
+                        continue;
+
+                    if (blockerData.Blocked.IsSet(index))
+                        clearedCells++;
+
+                    blockerData.Blocked.Set(index, false);
+                    if (blockerData.Counts.IsCreated && (uint)index < (uint)blockerData.Counts.Length)
+                        blockerData.Counts[index] = 0;
+                    if (blockerData.FriendlyPassFactionIds.IsCreated && (uint)index < (uint)blockerData.FriendlyPassFactionIds.Length)
+                        blockerData.FriendlyPassFactionIds[index] = byte.MaxValue;
+                }
+            }
+
+            return clearedCells;
+        }
+
+        private static float3 ToFloat3(Vector3 value)
+        {
+            return new float3(value.x, value.y, value.z);
+        }
+
+        private static FixedString64Bytes GetVehiclePrefabSourceKey(MapVehiclePlacementConfigEntry placement)
+        {
+            string sourceKey = BuildingDefinitionPrefabSystemHelper.GetSpawnableLookupKey(placement?.VehicleSourceKey);
+            return string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey);
+        }
+
+        private static FixedString128Bytes ToFixedString128(string value)
+        {
+            return string.IsNullOrWhiteSpace(value) ? default : new FixedString128Bytes(value);
+        }
+
+        private static DynamicBuffer<T> EnsureBuffer<T>(EntityManager em, Entity entity)
+            where T : unmanaged, IBufferElementData
+        {
+            return em.HasBuffer<T>(entity)
+                ? em.GetBuffer<T>(entity)
+                : em.AddBuffer<T>(entity);
+        }
+
+        private static void SetOrAddComponent<T>(
+            EntityManager em,
+            EntityCommandBuffer ecb,
+            Entity instance,
+            Entity prefab,
+            bool hasPrefab,
+            T component)
+            where T : unmanaged, IComponentData
+        {
+            if (hasPrefab && em.HasComponent<T>(prefab))
+                ecb.SetComponent(instance, component);
+            else
+                ecb.AddComponent(instance, component);
+        }
+
+        private void HideAuthoringVisuals(Context context, ref MapVehiclePlacementProgressState progress)
+        {
+            if (progress.AuthoringHidden != 0 ||
+                context.Config == null ||
+                !context.Config.HideAuthoringVisualsAfterSpawn ||
+                context.AuthoringVehiclesRoot == null)
+            {
+                return;
+            }
+
+            context.AuthoringVehiclesRoot.gameObject.SetActive(false);
+            progress.AuthoringHidden = 1;
+        }
+
+        private static bool TryGetProgressState(
+            Context context,
+            out EntityManager em,
+            out Entity progressEntity,
+            out MapVehiclePlacementProgressState progress)
+        {
+            em = default;
+            progressEntity = Entity.Null;
+            progress = default;
+            if (context.UnitPrefabContext.TryGetEntityManager == null ||
+                !context.UnitPrefabContext.TryGetEntityManager(out em))
+            {
+                return false;
+            }
+
+            progressEntity = EnsureProgressEntity(em);
+            progress = em.GetComponentData<MapVehiclePlacementProgressState>(progressEntity);
+            if (progress.RandomState == 0)
+            {
+                progress.RandomState = MapVehiclePlacementProgressState.InitialRandomState;
+                em.SetComponentData(progressEntity, progress);
+            }
+
             return true;
         }
 
-        return false;
-    }
-
-    internal static int ClearRuntimeBlockersInFootprint(
-        in GridConfig grid,
-        ref DynamicBlockerComponent blockerData,
-        int2 centerCell,
-        int2 footprintSize,
-        int paddingCells = 0)
-    {
-        if (!blockerData.Blocked.IsCreated || grid.Width <= 0 || grid.Height <= 0)
-            return 0;
-
-        int2 clampedSize = UnitFootprintUtility.ClampSize(footprintSize);
-        int2 min = UnitFootprintUtility.GetMinCell(centerCell, clampedSize);
-        int2 max = min + clampedSize;
-        int padding = math.max(0, paddingCells);
-        min = math.max(min - new int2(padding, padding), int2.zero);
-        max = math.min(max + new int2(padding, padding), new int2(grid.Width, grid.Height));
-
-        int clearedCells = 0;
-        for (int y = min.y; y < max.y; y++)
+        private static Entity EnsureProgressEntity(EntityManager em)
         {
-            int row = y * grid.Width;
-            for (int x = min.x; x < max.x; x++)
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MapVehiclePlacementProgressState>());
+            if (!query.IsEmptyIgnoreFilter)
+                return query.GetSingletonEntity();
+
+            Entity entity = em.CreateEntity(typeof(MapVehiclePlacementProgressState));
+            em.SetName(entity, "MapVehiclePlacementProgress");
+            em.SetComponentData(entity, new MapVehiclePlacementProgressState
             {
-                int index = row + x;
-                if ((uint)index >= (uint)blockerData.GridSize)
-                    continue;
-
-                if (blockerData.Blocked.IsSet(index))
-                    clearedCells++;
-
-                blockerData.Blocked.Set(index, false);
-                if (blockerData.Counts.IsCreated && (uint)index < (uint)blockerData.Counts.Length)
-                    blockerData.Counts[index] = 0;
-                if (blockerData.FriendlyPassFactionIds.IsCreated && (uint)index < (uint)blockerData.FriendlyPassFactionIds.Length)
-                    blockerData.FriendlyPassFactionIds[index] = byte.MaxValue;
-            }
+                RandomState = MapVehiclePlacementProgressState.InitialRandomState
+            });
+            return entity;
         }
 
-        return clearedCells;
-    }
-
-    private static float3 ToFloat3(Vector3 value)
-    {
-        return new float3(value.x, value.y, value.z);
-    }
-
-    private static FixedString64Bytes GetVehiclePrefabSourceKey(MapVehiclePlacementConfigEntry placement)
-    {
-        string sourceKey = BuildingDefinitionPrefabSystemHelper.GetSpawnableLookupKey(placement?.VehicleSourceKey);
-        return string.IsNullOrWhiteSpace(sourceKey) ? default : new FixedString64Bytes(sourceKey);
-    }
-
-    private static FixedString128Bytes ToFixedString128(string value)
-    {
-        return string.IsNullOrWhiteSpace(value) ? default : new FixedString128Bytes(value);
-    }
-
-    private static DynamicBuffer<T> EnsureBuffer<T>(EntityManager em, Entity entity)
-        where T : unmanaged, IBufferElementData
-    {
-        return em.HasBuffer<T>(entity)
-            ? em.GetBuffer<T>(entity)
-            : em.AddBuffer<T>(entity);
-    }
-
-    private static void SetOrAddComponent<T>(
-        EntityManager em,
-        EntityCommandBuffer ecb,
-        Entity instance,
-        Entity prefab,
-        bool hasPrefab,
-        T component)
-        where T : unmanaged, IComponentData
-    {
-        if (hasPrefab && em.HasComponent<T>(prefab))
-            ecb.SetComponent(instance, component);
-        else
-            ecb.AddComponent(instance, component);
-    }
-
-    private void HideAuthoringVisuals(Context context, ref MapVehiclePlacementProgressState progress)
-    {
-        if (progress.AuthoringHidden != 0 ||
-            context.Config == null ||
-            !context.Config.HideAuthoringVisualsAfterSpawn ||
-            context.AuthoringVehiclesRoot == null)
+        private static void SaveProgressState(EntityManager em, Entity progressEntity, MapVehiclePlacementProgressState progress)
         {
-            return;
+            if (progressEntity != Entity.Null && em.Exists(progressEntity))
+                em.SetComponentData(progressEntity, progress);
         }
 
-        context.AuthoringVehiclesRoot.gameObject.SetActive(false);
-        progress.AuthoringHidden = 1;
-    }
-
-    private static bool TryGetProgressState(
-        Context context,
-        out EntityManager em,
-        out Entity progressEntity,
-        out MapVehiclePlacementProgressState progress)
-    {
-        em = default;
-        progressEntity = Entity.Null;
-        progress = default;
-        if (context.UnitPrefabContext.TryGetEntityManager == null ||
-            !context.UnitPrefabContext.TryGetEntityManager(out em))
+        private void SyncProgressSnapshot(MapVehiclePlacementProgressState progress)
         {
-            return false;
+            _lastClearedBlockerCells = progress.LastClearedBlockerCells;
+            _isComplete = progress.Queued != 0 && progress.AuthoringHidden != 0;
         }
 
-        progressEntity = EnsureProgressEntity(em);
-        progress = em.GetComponentData<MapVehiclePlacementProgressState>(progressEntity);
-        if (progress.RandomState == 0)
+        private static void WarnOnce(ref bool flag, Context context, string message)
         {
-            progress.RandomState = MapVehiclePlacementProgressState.InitialRandomState;
-            em.SetComponentData(progressEntity, progress);
+            if (flag)
+                return;
+
+            flag = true;
+            context.LogWarning?.Invoke(message);
         }
-
-        return true;
-    }
-
-    private static Entity EnsureProgressEntity(EntityManager em)
-    {
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MapVehiclePlacementProgressState>());
-        if (!query.IsEmptyIgnoreFilter)
-            return query.GetSingletonEntity();
-
-        Entity entity = em.CreateEntity(typeof(MapVehiclePlacementProgressState));
-        em.SetName(entity, "MapVehiclePlacementProgress");
-        em.SetComponentData(entity, new MapVehiclePlacementProgressState
-        {
-            RandomState = MapVehiclePlacementProgressState.InitialRandomState
-        });
-        return entity;
-    }
-
-    private static void SaveProgressState(EntityManager em, Entity progressEntity, MapVehiclePlacementProgressState progress)
-    {
-        if (progressEntity != Entity.Null && em.Exists(progressEntity))
-            em.SetComponentData(progressEntity, progress);
-    }
-
-    private void SyncProgressSnapshot(MapVehiclePlacementProgressState progress)
-    {
-        _lastClearedBlockerCells = progress.LastClearedBlockerCells;
-        _isComplete = progress.Queued != 0 && progress.AuthoringHidden != 0;
-    }
-
-    private static void WarnOnce(ref bool flag, Context context, string message)
-    {
-        if (flag)
-            return;
-
-        flag = true;
-        context.LogWarning?.Invoke(message);
     }
 }

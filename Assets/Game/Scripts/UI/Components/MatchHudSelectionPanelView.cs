@@ -3,522 +3,526 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using System.Collections.Generic;
+using Game.UI.Contracts;
 
-[DisallowMultipleComponent]
-public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelectionPanelView
+namespace Game.UI.Runtime
 {
-    [SerializeField] private GameObject selectedSquadPanel;
-    [SerializeField] private Image selectedPortraitImage;
-    [SerializeField] private TMP_Text titleText;
-    [SerializeField] private TMP_Text subtitleText;
-    [SerializeField] private TMP_Text currentOrderText;
-    [SerializeField] private Image healthFillImage;
-    [SerializeField] private TMP_Text healthText;
-    [SerializeField] private GameObject badgeRoot;
-    [SerializeField] private Image badgeImage;
-    [SerializeField] private Button returnAction;
-    [SerializeField] private Button destroyAction;
-    [SerializeField] private Button boardAction;
-    [SerializeField] private Button cameraAction;
-    [SerializeField] private GameObject passengerChipRoot;
-    [SerializeField] private Button passengerChipButton;
-    [SerializeField] private TMP_Text passengerChipLabel;
-    [SerializeField] private MatchHudTransportPassengerDrawerView passengerDrawer;
-
-    [Header("Fallback Portraits")]
-    [SerializeField] private Sprite genericSquadPortraitSprite;
-    [SerializeField] private Sprite soldierSquadPortraitSprite;
-    [SerializeField] private Sprite vehicleSquadPortraitSprite;
-    [SerializeField] private Sprite aircraftSquadPortraitSprite;
-    [SerializeField] private Sprite transportSquadPortraitSprite;
-    [SerializeField] private Sprite buildingSquadPortraitSprite;
-    [SerializeField] private Sprite mixedForcePortraitSprite;
-    [SerializeField] private Sprite mixedSoldierVehiclePortraitSprite;
-    [SerializeField] private Sprite mixedSoldierAircraftPortraitSprite;
-    [SerializeField] private Sprite mixedVehicleAircraftPortraitSprite;
-    [SerializeField] private Sprite mixedSoldierVehicleAircraftPortraitSprite;
-
-    private System.Action _returnRequested;
-    private System.Action _destroyRequested;
-    private System.Action _boardRequested;
-    private Action _cameraRequested;
-    private Action _passengerChipRequested;
-    private Action _passengerDrawerCloseRequested;
-    private Action _passengerExitAllRequested;
-    private Action<UiEntityHandle> _passengerExitRequested;
-    private Button _boundReturnAction;
-    private Button _boundDestroyAction;
-    private Button _boundBoardAction;
-    private Button _boundCameraAction;
-    private Button _boundPassengerChipButton;
-    private Sprite _boardActionNormalSprite;
-    private Sprite _cameraActionNormalSprite;
-    private bool _boardActionNormalSpriteCached;
-    private bool _cameraActionNormalSpriteCached;
-    private Color _boardActionNormalColor;
-    private Color _cameraActionNormalColor;
-    private bool _boardActionNormalColorCached;
-    private bool _cameraActionNormalColorCached;
-    private bool _boardActionSelected;
-    private bool _cameraActionSelected;
-    private bool _cameraActionEnabled;
-    private bool _passengerDrawerOpen;
-    private UiEntityHandle _passengerDrawerTransport;
-    private readonly List<MatchHudSelectionPanelPassengerItemModel> _emptyPassengers = new();
-
-    private void Awake()
+    [DisallowMultipleComponent]
+    public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelectionPanelView
     {
-        BindUnityEvents();
-        CacheBoardActionNormalSprite();
-        CacheCameraActionNormalSprite();
-        _cameraActionEnabled = cameraAction != null && cameraAction.interactable;
-        ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
-        HideSelection();
-    }
+        [SerializeField] private GameObject selectedSquadPanel;
+        [SerializeField] private Image selectedPortraitImage;
+        [SerializeField] private TMP_Text titleText;
+        [SerializeField] private TMP_Text subtitleText;
+        [SerializeField] private TMP_Text currentOrderText;
+        [SerializeField] private Image healthFillImage;
+        [SerializeField] private TMP_Text healthText;
+        [SerializeField] private GameObject badgeRoot;
+        [SerializeField] private Image badgeImage;
+        [SerializeField] private Button returnAction;
+        [SerializeField] private Button destroyAction;
+        [SerializeField] private Button boardAction;
+        [SerializeField] private Button cameraAction;
+        [SerializeField] private GameObject passengerChipRoot;
+        [SerializeField] private Button passengerChipButton;
+        [SerializeField] private TMP_Text passengerChipLabel;
+        [SerializeField] private MatchHudTransportPassengerDrawerView passengerDrawer;
 
-    private void OnDestroy()
-    {
-        ClearActions();
-        ClearTransportPassengerActions();
-        RemoveUnityEvents();
-    }
+        [Header("Fallback Portraits")]
+        [SerializeField] private Sprite genericSquadPortraitSprite;
+        [SerializeField] private Sprite soldierSquadPortraitSprite;
+        [SerializeField] private Sprite vehicleSquadPortraitSprite;
+        [SerializeField] private Sprite aircraftSquadPortraitSprite;
+        [SerializeField] private Sprite transportSquadPortraitSprite;
+        [SerializeField] private Sprite buildingSquadPortraitSprite;
+        [SerializeField] private Sprite mixedForcePortraitSprite;
+        [SerializeField] private Sprite mixedSoldierVehiclePortraitSprite;
+        [SerializeField] private Sprite mixedSoldierAircraftPortraitSprite;
+        [SerializeField] private Sprite mixedVehicleAircraftPortraitSprite;
+        [SerializeField] private Sprite mixedSoldierVehicleAircraftPortraitSprite;
 
-    public void BindActions(System.Action returnRequested, System.Action destroyRequested, System.Action boardRequested)
-    {
-        BindUnityEvents();
-        _returnRequested = returnRequested;
-        _destroyRequested = destroyRequested;
-        _boardRequested = boardRequested;
-    }
+        private System.Action _returnRequested;
+        private System.Action _destroyRequested;
+        private System.Action _boardRequested;
+        private Action _cameraRequested;
+        private Action _passengerChipRequested;
+        private Action _passengerDrawerCloseRequested;
+        private Action _passengerExitAllRequested;
+        private Action<UiEntityHandle> _passengerExitRequested;
+        private Button _boundReturnAction;
+        private Button _boundDestroyAction;
+        private Button _boundBoardAction;
+        private Button _boundCameraAction;
+        private Button _boundPassengerChipButton;
+        private Sprite _boardActionNormalSprite;
+        private Sprite _cameraActionNormalSprite;
+        private bool _boardActionNormalSpriteCached;
+        private bool _cameraActionNormalSpriteCached;
+        private Color _boardActionNormalColor;
+        private Color _cameraActionNormalColor;
+        private bool _boardActionNormalColorCached;
+        private bool _cameraActionNormalColorCached;
+        private bool _boardActionSelected;
+        private bool _cameraActionSelected;
+        private bool _cameraActionEnabled;
+        private bool _passengerDrawerOpen;
+        private UiEntityHandle _passengerDrawerTransport;
+        private readonly List<MatchHudSelectionPanelPassengerItemModel> _emptyPassengers = new();
 
-    public void BindCameraAction(Action cameraRequested)
-    {
-        BindUnityEvents();
-        _cameraRequested = cameraRequested;
-    }
-
-    public void BindTransportPassengerActions(
-        Action passengerChipRequested,
-        Action passengerDrawerCloseRequested,
-        Action passengerExitAllRequested,
-        Action<UiEntityHandle> passengerExitRequested)
-    {
-        BindUnityEvents();
-        _passengerChipRequested = passengerChipRequested;
-        _passengerDrawerCloseRequested = passengerDrawerCloseRequested;
-        _passengerExitAllRequested = passengerExitAllRequested;
-        _passengerExitRequested = passengerExitRequested;
-        passengerDrawer?.BindActions(HandlePassengerExitAll, HandlePassengerDrawerClose, HandlePassengerExit);
-    }
-
-    public void ClearActions()
-    {
-        _returnRequested = null;
-        _destroyRequested = null;
-        _boardRequested = null;
-        _cameraRequested = null;
-    }
-
-    public void ClearTransportPassengerActions()
-    {
-        _passengerChipRequested = null;
-        _passengerDrawerCloseRequested = null;
-        _passengerExitAllRequested = null;
-        _passengerExitRequested = null;
-        passengerDrawer?.ClearActions();
-    }
-
-    public void ShowSelection()
-    {
-        SetSelectionVisible(true);
-    }
-
-    public void HideSelection()
-    {
-        SetSelectionVisible(false);
-        SetActionState(boardAction, true);
-        SetActionState(cameraAction, false);
-    }
-
-    public void SetSelectionVisible(bool visible)
-    {
-        if (selectedSquadPanel != null)
-            selectedSquadPanel.SetActive(visible);
-    }
-
-    public void SetSelectionVisible(bool visible, Sprite portraitSprite)
-    {
-        SetSelectionVisible(visible);
-        if (visible)
-            SetSelectionPortrait(FirstNonNull(portraitSprite, ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad)));
-    }
-
-    public void SetSelectionPortrait(Sprite portraitSprite)
-    {
-        if (selectedPortraitImage == null)
-            return;
-
-        selectedPortraitImage.sprite = portraitSprite;
-        selectedPortraitImage.enabled = portraitSprite != null;
-        selectedPortraitImage.preserveAspect = true;
-    }
-
-    public Sprite ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind kind)
-    {
-        return kind switch
+        private void Awake()
         {
-            SelectionSummaryPortraitKind.Soldiers => FirstNonNull(soldierSquadPortraitSprite, genericSquadPortraitSprite),
-            SelectionSummaryPortraitKind.Vehicles => FirstNonNull(vehicleSquadPortraitSprite, genericSquadPortraitSprite),
-            SelectionSummaryPortraitKind.Aircraft => FirstNonNull(aircraftSquadPortraitSprite, genericSquadPortraitSprite),
-            SelectionSummaryPortraitKind.Transports => FirstNonNull(vehicleSquadPortraitSprite, transportSquadPortraitSprite, genericSquadPortraitSprite),
-            SelectionSummaryPortraitKind.Buildings => FirstNonNull(buildingSquadPortraitSprite, genericSquadPortraitSprite),
-            SelectionSummaryPortraitKind.MixedSoldierVehicle => FirstNonNull(mixedSoldierVehiclePortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
-            SelectionSummaryPortraitKind.MixedSoldierAircraft => FirstNonNull(mixedSoldierAircraftPortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
-            SelectionSummaryPortraitKind.MixedVehicleAircraft => FirstNonNull(mixedVehicleAircraftPortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
-            SelectionSummaryPortraitKind.MixedSoldierVehicleAircraft => FirstNonNull(mixedSoldierVehicleAircraftPortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
-            SelectionSummaryPortraitKind.MixedForce => FirstNonNull(mixedForcePortraitSprite, genericSquadPortraitSprite),
-            SelectionSummaryPortraitKind.GenericSquad => genericSquadPortraitSprite,
-            _ => genericSquadPortraitSprite
-        };
-    }
-
-    public bool ContainsScreenPoint(Vector2 screenPosition)
-    {
-        if (selectedSquadPanel == null || !selectedSquadPanel.activeInHierarchy)
-            return false;
-
-        return ContainsScreenPoint(selectedSquadPanel.transform as RectTransform, screenPosition) ||
-               ContainsScreenPoint(returnAction != null ? returnAction.transform as RectTransform : null, screenPosition) ||
-               ContainsScreenPoint(destroyAction != null ? destroyAction.transform as RectTransform : null, screenPosition) ||
-               ContainsScreenPoint(boardAction != null ? boardAction.transform as RectTransform : null, screenPosition) ||
-               ContainsScreenPoint(cameraAction != null ? cameraAction.transform as RectTransform : null, screenPosition) ||
-               ContainsScreenPoint(passengerChipButton != null ? passengerChipButton.transform as RectTransform : null, screenPosition) ||
-               (passengerDrawer != null && passengerDrawer.ContainsScreenPoint(screenPosition));
-    }
-
-    public void Apply(MatchHudSelectionPanelModel model)
-    {
-        SetSelectionVisible(model.Visible);
-        if (!model.Visible)
-            return;
-
-        SetText(titleText, model.Title);
-        SetText(subtitleText, model.Subtitle);
-        SetText(currentOrderText, model.CurrentOrder);
-        SetText(healthText, model.HealthText);
-        SetSelectionPortrait(FirstNonNull(model.PortraitSprite, ResolveFallbackPortraitSprite(model.PortraitKind)));
-        SetHealthFill(model.Health01);
-        SetBadge(model.BadgeVisible, model.BadgeSprite);
-        SetActionState(returnAction, model.Visible && model.ReturnEnabled);
-        SetActionState(destroyAction, model.Visible && model.DestroyEnabled);
-        // BoardButton is hosted in the command rail; keep it pressable so the
-        // command system can show no-selection/invalid-selection feedback.
-        SetActionState(boardAction, true);
-        SetBoardActionSelected(_boardActionSelected);
-        SetActionState(cameraAction, model.Visible && _cameraActionEnabled);
-        SetCameraActionSelected(_cameraActionSelected);
-    }
-
-    public void ToggleTransportPassengerDrawer()
-    {
-        _passengerDrawerOpen = !_passengerDrawerOpen;
-    }
-
-    public void CloseTransportPassengerDrawer()
-    {
-        _passengerDrawerOpen = false;
-    }
-
-    public void ApplyTransportPassengers(MatchHudTransportPassengersModel model)
-    {
-        if (!model.Visible || model.Transport.IsNull)
-        {
-            _passengerDrawerOpen = false;
-            _passengerDrawerTransport = UiEntityHandle.Null;
-            ApplyPassengerChip(false, 0, 0);
-            passengerDrawer?.Apply(MatchHudTransportPassengersModel.Hidden);
-            return;
+            BindUnityEvents();
+            CacheBoardActionNormalSprite();
+            CacheCameraActionNormalSprite();
+            _cameraActionEnabled = cameraAction != null && cameraAction.interactable;
+            ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+            HideSelection();
         }
 
-        if (_passengerDrawerTransport != model.Transport)
+        private void OnDestroy()
         {
-            _passengerDrawerTransport = model.Transport;
+            ClearActions();
+            ClearTransportPassengerActions();
+            RemoveUnityEvents();
+        }
+
+        public void BindActions(System.Action returnRequested, System.Action destroyRequested, System.Action boardRequested)
+        {
+            BindUnityEvents();
+            _returnRequested = returnRequested;
+            _destroyRequested = destroyRequested;
+            _boardRequested = boardRequested;
+        }
+
+        public void BindCameraAction(Action cameraRequested)
+        {
+            BindUnityEvents();
+            _cameraRequested = cameraRequested;
+        }
+
+        public void BindTransportPassengerActions(
+            Action passengerChipRequested,
+            Action passengerDrawerCloseRequested,
+            Action passengerExitAllRequested,
+            Action<UiEntityHandle> passengerExitRequested)
+        {
+            BindUnityEvents();
+            _passengerChipRequested = passengerChipRequested;
+            _passengerDrawerCloseRequested = passengerDrawerCloseRequested;
+            _passengerExitAllRequested = passengerExitAllRequested;
+            _passengerExitRequested = passengerExitRequested;
+            passengerDrawer?.BindActions(HandlePassengerExitAll, HandlePassengerDrawerClose, HandlePassengerExit);
+        }
+
+        public void ClearActions()
+        {
+            _returnRequested = null;
+            _destroyRequested = null;
+            _boardRequested = null;
+            _cameraRequested = null;
+        }
+
+        public void ClearTransportPassengerActions()
+        {
+            _passengerChipRequested = null;
+            _passengerDrawerCloseRequested = null;
+            _passengerExitAllRequested = null;
+            _passengerExitRequested = null;
+            passengerDrawer?.ClearActions();
+        }
+
+        public void ShowSelection()
+        {
+            SetSelectionVisible(true);
+        }
+
+        public void HideSelection()
+        {
+            SetSelectionVisible(false);
+            SetActionState(boardAction, true);
+            SetActionState(cameraAction, false);
+        }
+
+        public void SetSelectionVisible(bool visible)
+        {
+            if (selectedSquadPanel != null)
+                selectedSquadPanel.SetActive(visible);
+        }
+
+        public void SetSelectionVisible(bool visible, Sprite portraitSprite)
+        {
+            SetSelectionVisible(visible);
+            if (visible)
+                SetSelectionPortrait(FirstNonNull(portraitSprite, ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad)));
+        }
+
+        public void SetSelectionPortrait(Sprite portraitSprite)
+        {
+            if (selectedPortraitImage == null)
+                return;
+
+            selectedPortraitImage.sprite = portraitSprite;
+            selectedPortraitImage.enabled = portraitSprite != null;
+            selectedPortraitImage.preserveAspect = true;
+        }
+
+        public Sprite ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind kind)
+        {
+            return kind switch
+            {
+                SelectionSummaryPortraitKind.Soldiers => FirstNonNull(soldierSquadPortraitSprite, genericSquadPortraitSprite),
+                SelectionSummaryPortraitKind.Vehicles => FirstNonNull(vehicleSquadPortraitSprite, genericSquadPortraitSprite),
+                SelectionSummaryPortraitKind.Aircraft => FirstNonNull(aircraftSquadPortraitSprite, genericSquadPortraitSprite),
+                SelectionSummaryPortraitKind.Transports => FirstNonNull(vehicleSquadPortraitSprite, transportSquadPortraitSprite, genericSquadPortraitSprite),
+                SelectionSummaryPortraitKind.Buildings => FirstNonNull(buildingSquadPortraitSprite, genericSquadPortraitSprite),
+                SelectionSummaryPortraitKind.MixedSoldierVehicle => FirstNonNull(mixedSoldierVehiclePortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
+                SelectionSummaryPortraitKind.MixedSoldierAircraft => FirstNonNull(mixedSoldierAircraftPortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
+                SelectionSummaryPortraitKind.MixedVehicleAircraft => FirstNonNull(mixedVehicleAircraftPortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
+                SelectionSummaryPortraitKind.MixedSoldierVehicleAircraft => FirstNonNull(mixedSoldierVehicleAircraftPortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
+                SelectionSummaryPortraitKind.MixedForce => FirstNonNull(mixedForcePortraitSprite, genericSquadPortraitSprite),
+                SelectionSummaryPortraitKind.GenericSquad => genericSquadPortraitSprite,
+                _ => genericSquadPortraitSprite
+            };
+        }
+
+        public bool ContainsScreenPoint(Vector2 screenPosition)
+        {
+            if (selectedSquadPanel == null || !selectedSquadPanel.activeInHierarchy)
+                return false;
+
+            return ContainsScreenPoint(selectedSquadPanel.transform as RectTransform, screenPosition) ||
+                   ContainsScreenPoint(returnAction != null ? returnAction.transform as RectTransform : null, screenPosition) ||
+                   ContainsScreenPoint(destroyAction != null ? destroyAction.transform as RectTransform : null, screenPosition) ||
+                   ContainsScreenPoint(boardAction != null ? boardAction.transform as RectTransform : null, screenPosition) ||
+                   ContainsScreenPoint(cameraAction != null ? cameraAction.transform as RectTransform : null, screenPosition) ||
+                   ContainsScreenPoint(passengerChipButton != null ? passengerChipButton.transform as RectTransform : null, screenPosition) ||
+                   (passengerDrawer != null && passengerDrawer.ContainsScreenPoint(screenPosition));
+        }
+
+        public void Apply(MatchHudSelectionPanelModel model)
+        {
+            SetSelectionVisible(model.Visible);
+            if (!model.Visible)
+                return;
+
+            SetText(titleText, model.Title);
+            SetText(subtitleText, model.Subtitle);
+            SetText(currentOrderText, model.CurrentOrder);
+            SetText(healthText, model.HealthText);
+            SetSelectionPortrait(FirstNonNull(model.PortraitSprite, ResolveFallbackPortraitSprite(model.PortraitKind)));
+            SetHealthFill(model.Health01);
+            SetBadge(model.BadgeVisible, model.BadgeSprite);
+            SetActionState(returnAction, model.Visible && model.ReturnEnabled);
+            SetActionState(destroyAction, model.Visible && model.DestroyEnabled);
+            // BoardButton is hosted in the command rail; keep it pressable so the
+            // command system can show no-selection/invalid-selection feedback.
+            SetActionState(boardAction, true);
+            SetBoardActionSelected(_boardActionSelected);
+            SetActionState(cameraAction, model.Visible && _cameraActionEnabled);
+            SetCameraActionSelected(_cameraActionSelected);
+        }
+
+        public void ToggleTransportPassengerDrawer()
+        {
+            _passengerDrawerOpen = !_passengerDrawerOpen;
+        }
+
+        public void CloseTransportPassengerDrawer()
+        {
             _passengerDrawerOpen = false;
         }
 
-        ApplyPassengerChip(true, model.PassengerCount, model.Capacity);
-        passengerDrawer?.Apply(new MatchHudTransportPassengersModel(
-            true,
-            _passengerDrawerOpen,
-            model.Transport,
-            model.PassengerCount,
-            model.Capacity,
-            model.ExitAllEnabled,
-            model.Passengers ?? _emptyPassengers,
-            model.SoldierPassengerCount,
-            model.SoldierCapacity,
-            model.VehiclePassengerCount,
-            model.VehicleCapacity));
-    }
-
-    public void SetBoardActionSelected(bool selected)
-    {
-        if (boardAction == null || boardAction.targetGraphic is not Image image)
-            return;
-
-        _boardActionSelected = selected;
-        CacheBoardActionNormalSprite();
-        CacheBoardActionNormalColor(image);
-        Sprite selectedSprite = boardAction.spriteState.selectedSprite;
-        if (selected && selectedSprite != null)
+        public void ApplyTransportPassengers(MatchHudTransportPassengersModel model)
         {
-            image.sprite = selectedSprite;
-            image.color = _boardActionNormalColorCached ? _boardActionNormalColor : image.color;
-        }
-        else if (_boardActionNormalSprite != null)
-        {
-            image.sprite = _boardActionNormalSprite;
-            image.color = _boardActionNormalColorCached ? _boardActionNormalColor : image.color;
-        }
-        else
-        {
-            image.color = selected
-                ? boardAction.colors.selectedColor
-                : (_boardActionNormalColorCached ? _boardActionNormalColor : image.color);
-        }
-    }
+            if (!model.Visible || model.Transport.IsNull)
+            {
+                _passengerDrawerOpen = false;
+                _passengerDrawerTransport = UiEntityHandle.Null;
+                ApplyPassengerChip(false, 0, 0);
+                passengerDrawer?.Apply(MatchHudTransportPassengersModel.Hidden);
+                return;
+            }
 
-    public void SetCameraActionSelected(bool selected)
-    {
-        if (cameraAction == null || cameraAction.targetGraphic is not Image image)
-            return;
+            if (_passengerDrawerTransport != model.Transport)
+            {
+                _passengerDrawerTransport = model.Transport;
+                _passengerDrawerOpen = false;
+            }
 
-        _cameraActionSelected = selected;
-        CacheCameraActionNormalSprite();
-        CacheCameraActionNormalColor(image);
-        Sprite selectedSprite = cameraAction.spriteState.selectedSprite;
-        if (selected && selectedSprite != null)
-        {
-            image.sprite = selectedSprite;
-            image.overrideSprite = selectedSprite;
-            image.color = _cameraActionNormalColorCached ? _cameraActionNormalColor : image.color;
-        }
-        else if (_cameraActionNormalSprite != null)
-        {
-            image.sprite = _cameraActionNormalSprite;
-            if (image.overrideSprite == selectedSprite)
-                image.overrideSprite = null;
-            image.color = _cameraActionNormalColorCached ? _cameraActionNormalColor : image.color;
-        }
-        else
-        {
-            image.sprite = null;
-            if (image.overrideSprite == selectedSprite)
-                image.overrideSprite = null;
-            image.color = selected
-                ? cameraAction.colors.selectedColor
-                : (_cameraActionNormalColorCached ? _cameraActionNormalColor : image.color);
-        }
-    }
-
-    public void SetCameraActionEnabled(bool enabled)
-    {
-        _cameraActionEnabled = enabled;
-        SetActionState(cameraAction, selectedSquadPanel == null || selectedSquadPanel.activeSelf ? enabled : false);
-        SetCameraActionSelected(_cameraActionSelected);
-    }
-
-    private void BindUnityEvents()
-    {
-        BindButton(returnAction, ref _boundReturnAction, HandleReturnAction);
-        BindButton(destroyAction, ref _boundDestroyAction, HandleDestroyAction);
-        BindButton(boardAction, ref _boundBoardAction, HandleBoardAction);
-        BindButton(cameraAction, ref _boundCameraAction, HandleCameraAction);
-        BindButton(passengerChipButton, ref _boundPassengerChipButton, HandlePassengerChip);
-    }
-
-    private void CacheBoardActionNormalSprite()
-    {
-        if (_boardActionNormalSpriteCached ||
-            boardAction == null ||
-            boardAction.targetGraphic is not Image image)
-        {
-            return;
+            ApplyPassengerChip(true, model.PassengerCount, model.Capacity);
+            passengerDrawer?.Apply(new MatchHudTransportPassengersModel(
+                true,
+                _passengerDrawerOpen,
+                model.Transport,
+                model.PassengerCount,
+                model.Capacity,
+                model.ExitAllEnabled,
+                model.Passengers ?? _emptyPassengers,
+                model.SoldierPassengerCount,
+                model.SoldierCapacity,
+                model.VehiclePassengerCount,
+                model.VehicleCapacity));
         }
 
-        _boardActionNormalSprite = image.sprite;
-        _boardActionNormalSpriteCached = true;
-    }
-
-    private void CacheCameraActionNormalSprite()
-    {
-        if (_cameraActionNormalSpriteCached ||
-            cameraAction == null ||
-            cameraAction.targetGraphic is not Image image)
+        public void SetBoardActionSelected(bool selected)
         {
-            return;
+            if (boardAction == null || boardAction.targetGraphic is not Image image)
+                return;
+
+            _boardActionSelected = selected;
+            CacheBoardActionNormalSprite();
+            CacheBoardActionNormalColor(image);
+            Sprite selectedSprite = boardAction.spriteState.selectedSprite;
+            if (selected && selectedSprite != null)
+            {
+                image.sprite = selectedSprite;
+                image.color = _boardActionNormalColorCached ? _boardActionNormalColor : image.color;
+            }
+            else if (_boardActionNormalSprite != null)
+            {
+                image.sprite = _boardActionNormalSprite;
+                image.color = _boardActionNormalColorCached ? _boardActionNormalColor : image.color;
+            }
+            else
+            {
+                image.color = selected
+                    ? boardAction.colors.selectedColor
+                    : (_boardActionNormalColorCached ? _boardActionNormalColor : image.color);
+            }
         }
 
-        _cameraActionNormalSprite = image.sprite;
-        _cameraActionNormalSpriteCached = true;
-    }
+        public void SetCameraActionSelected(bool selected)
+        {
+            if (cameraAction == null || cameraAction.targetGraphic is not Image image)
+                return;
 
-    private void CacheBoardActionNormalColor(Image image)
-    {
-        if (_boardActionNormalColorCached || image == null)
-            return;
+            _cameraActionSelected = selected;
+            CacheCameraActionNormalSprite();
+            CacheCameraActionNormalColor(image);
+            Sprite selectedSprite = cameraAction.spriteState.selectedSprite;
+            if (selected && selectedSprite != null)
+            {
+                image.sprite = selectedSprite;
+                image.overrideSprite = selectedSprite;
+                image.color = _cameraActionNormalColorCached ? _cameraActionNormalColor : image.color;
+            }
+            else if (_cameraActionNormalSprite != null)
+            {
+                image.sprite = _cameraActionNormalSprite;
+                if (image.overrideSprite == selectedSprite)
+                    image.overrideSprite = null;
+                image.color = _cameraActionNormalColorCached ? _cameraActionNormalColor : image.color;
+            }
+            else
+            {
+                image.sprite = null;
+                if (image.overrideSprite == selectedSprite)
+                    image.overrideSprite = null;
+                image.color = selected
+                    ? cameraAction.colors.selectedColor
+                    : (_cameraActionNormalColorCached ? _cameraActionNormalColor : image.color);
+            }
+        }
 
-        _boardActionNormalColor = image.color;
-        _boardActionNormalColorCached = true;
-    }
+        public void SetCameraActionEnabled(bool enabled)
+        {
+            _cameraActionEnabled = enabled;
+            SetActionState(cameraAction, selectedSquadPanel == null || selectedSquadPanel.activeSelf ? enabled : false);
+            SetCameraActionSelected(_cameraActionSelected);
+        }
 
-    private void CacheCameraActionNormalColor(Image image)
-    {
-        if (_cameraActionNormalColorCached || image == null)
-            return;
+        private void BindUnityEvents()
+        {
+            BindButton(returnAction, ref _boundReturnAction, HandleReturnAction);
+            BindButton(destroyAction, ref _boundDestroyAction, HandleDestroyAction);
+            BindButton(boardAction, ref _boundBoardAction, HandleBoardAction);
+            BindButton(cameraAction, ref _boundCameraAction, HandleCameraAction);
+            BindButton(passengerChipButton, ref _boundPassengerChipButton, HandlePassengerChip);
+        }
 
-        _cameraActionNormalColor = image.color;
-        _cameraActionNormalColorCached = true;
-    }
+        private void CacheBoardActionNormalSprite()
+        {
+            if (_boardActionNormalSpriteCached ||
+                boardAction == null ||
+                boardAction.targetGraphic is not Image image)
+            {
+                return;
+            }
 
-    private void RemoveUnityEvents()
-    {
-        UnbindButton(ref _boundReturnAction, HandleReturnAction);
-        UnbindButton(ref _boundDestroyAction, HandleDestroyAction);
-        UnbindButton(ref _boundBoardAction, HandleBoardAction);
-        UnbindButton(ref _boundCameraAction, HandleCameraAction);
-        UnbindButton(ref _boundPassengerChipButton, HandlePassengerChip);
-    }
+            _boardActionNormalSprite = image.sprite;
+            _boardActionNormalSpriteCached = true;
+        }
 
-    private void HandleReturnAction()
-    {
-        _returnRequested?.Invoke();
-    }
+        private void CacheCameraActionNormalSprite()
+        {
+            if (_cameraActionNormalSpriteCached ||
+                cameraAction == null ||
+                cameraAction.targetGraphic is not Image image)
+            {
+                return;
+            }
 
-    private void HandleDestroyAction()
-    {
-        _destroyRequested?.Invoke();
-    }
+            _cameraActionNormalSprite = image.sprite;
+            _cameraActionNormalSpriteCached = true;
+        }
 
-    private void HandleBoardAction()
-    {
-        _boardRequested?.Invoke();
-    }
+        private void CacheBoardActionNormalColor(Image image)
+        {
+            if (_boardActionNormalColorCached || image == null)
+                return;
 
-    private void HandleCameraAction()
-    {
-        _cameraRequested?.Invoke();
-    }
+            _boardActionNormalColor = image.color;
+            _boardActionNormalColorCached = true;
+        }
 
-    private void HandlePassengerChip()
-    {
-        ToggleTransportPassengerDrawer();
-        _passengerChipRequested?.Invoke();
-    }
+        private void CacheCameraActionNormalColor(Image image)
+        {
+            if (_cameraActionNormalColorCached || image == null)
+                return;
 
-    private void HandlePassengerDrawerClose()
-    {
-        CloseTransportPassengerDrawer();
-        _passengerDrawerCloseRequested?.Invoke();
-    }
+            _cameraActionNormalColor = image.color;
+            _cameraActionNormalColorCached = true;
+        }
 
-    private void HandlePassengerExitAll()
-    {
-        _passengerExitAllRequested?.Invoke();
-    }
+        private void RemoveUnityEvents()
+        {
+            UnbindButton(ref _boundReturnAction, HandleReturnAction);
+            UnbindButton(ref _boundDestroyAction, HandleDestroyAction);
+            UnbindButton(ref _boundBoardAction, HandleBoardAction);
+            UnbindButton(ref _boundCameraAction, HandleCameraAction);
+            UnbindButton(ref _boundPassengerChipButton, HandlePassengerChip);
+        }
 
-    private void HandlePassengerExit(UiEntityHandle passenger)
-    {
-        _passengerExitRequested?.Invoke(passenger);
-    }
+        private void HandleReturnAction()
+        {
+            _returnRequested?.Invoke();
+        }
 
-    private void ApplyPassengerChip(bool visible, int passengerCount, int capacity)
-    {
-        if (passengerChipRoot != null)
-            passengerChipRoot.SetActive(visible);
+        private void HandleDestroyAction()
+        {
+            _destroyRequested?.Invoke();
+        }
 
-        if (passengerChipButton != null)
-            passengerChipButton.interactable = visible;
+        private void HandleBoardAction()
+        {
+            _boardRequested?.Invoke();
+        }
 
-        if (passengerChipLabel != null)
-            passengerChipLabel.text = visible
-                ? $"PASSENGERS {Mathf.Max(0, passengerCount)}/{Mathf.Max(0, capacity)}"
-                : string.Empty;
-    }
+        private void HandleCameraAction()
+        {
+            _cameraRequested?.Invoke();
+        }
 
-    private void SetHealthFill(float health01)
-    {
-        if (healthFillImage == null)
-            return;
+        private void HandlePassengerChip()
+        {
+            ToggleTransportPassengerDrawer();
+            _passengerChipRequested?.Invoke();
+        }
 
-        healthFillImage.type = Image.Type.Filled;
-        healthFillImage.fillMethod = Image.FillMethod.Horizontal;
-        healthFillImage.fillOrigin = 0;
-        healthFillImage.fillAmount = Mathf.Clamp01(health01);
-    }
+        private void HandlePassengerDrawerClose()
+        {
+            CloseTransportPassengerDrawer();
+            _passengerDrawerCloseRequested?.Invoke();
+        }
 
-    private void SetBadge(bool visible, Sprite sprite)
-    {
-        if (badgeRoot != null)
-            badgeRoot.SetActive(visible);
-        if (badgeImage == null)
-            return;
+        private void HandlePassengerExitAll()
+        {
+            _passengerExitAllRequested?.Invoke();
+        }
 
-        if (sprite != null)
-            badgeImage.sprite = sprite;
-        badgeImage.enabled = visible && badgeImage.sprite != null;
-    }
+        private void HandlePassengerExit(UiEntityHandle passenger)
+        {
+            _passengerExitRequested?.Invoke(passenger);
+        }
 
-    private static void SetActionState(Selectable action, bool enabled)
-    {
-        if (action != null)
-            action.interactable = enabled;
-    }
+        private void ApplyPassengerChip(bool visible, int passengerCount, int capacity)
+        {
+            if (passengerChipRoot != null)
+                passengerChipRoot.SetActive(visible);
 
-    private static void BindButton(Button button, ref Button boundButton, UnityEngine.Events.UnityAction action)
-    {
-        if (boundButton == button)
-            return;
+            if (passengerChipButton != null)
+                passengerChipButton.interactable = visible;
 
-        UnbindButton(ref boundButton, action);
-        boundButton = button;
-        if (boundButton != null)
-            boundButton.onClick.AddListener(action);
-    }
+            if (passengerChipLabel != null)
+                passengerChipLabel.text = visible
+                    ? $"PASSENGERS {Mathf.Max(0, passengerCount)}/{Mathf.Max(0, capacity)}"
+                    : string.Empty;
+        }
 
-    private static void UnbindButton(ref Button boundButton, UnityEngine.Events.UnityAction action)
-    {
-        if (boundButton == null)
-            return;
+        private void SetHealthFill(float health01)
+        {
+            if (healthFillImage == null)
+                return;
 
-        boundButton.onClick.RemoveListener(action);
-        boundButton = null;
-    }
+            healthFillImage.type = Image.Type.Filled;
+            healthFillImage.fillMethod = Image.FillMethod.Horizontal;
+            healthFillImage.fillOrigin = 0;
+            healthFillImage.fillAmount = Mathf.Clamp01(health01);
+        }
 
-    private static void SetText(TMP_Text text, string value)
-    {
-        if (text != null)
-            text.text = string.IsNullOrWhiteSpace(value) ? "-" : value;
-    }
+        private void SetBadge(bool visible, Sprite sprite)
+        {
+            if (badgeRoot != null)
+                badgeRoot.SetActive(visible);
+            if (badgeImage == null)
+                return;
 
-    private static bool ContainsScreenPoint(RectTransform rectTransform, Vector2 screenPosition)
-    {
-        return rectTransform != null &&
-               rectTransform.gameObject.activeInHierarchy &&
-               RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPosition);
-    }
+            if (sprite != null)
+                badgeImage.sprite = sprite;
+            badgeImage.enabled = visible && badgeImage.sprite != null;
+        }
 
-    private static Sprite FirstNonNull(params Sprite[] sprites)
-    {
-        if (sprites == null)
+        private static void SetActionState(Selectable action, bool enabled)
+        {
+            if (action != null)
+                action.interactable = enabled;
+        }
+
+        private static void BindButton(Button button, ref Button boundButton, UnityEngine.Events.UnityAction action)
+        {
+            if (boundButton == button)
+                return;
+
+            UnbindButton(ref boundButton, action);
+            boundButton = button;
+            if (boundButton != null)
+                boundButton.onClick.AddListener(action);
+        }
+
+        private static void UnbindButton(ref Button boundButton, UnityEngine.Events.UnityAction action)
+        {
+            if (boundButton == null)
+                return;
+
+            boundButton.onClick.RemoveListener(action);
+            boundButton = null;
+        }
+
+        private static void SetText(TMP_Text text, string value)
+        {
+            if (text != null)
+                text.text = string.IsNullOrWhiteSpace(value) ? "-" : value;
+        }
+
+        private static bool ContainsScreenPoint(RectTransform rectTransform, Vector2 screenPosition)
+        {
+            return rectTransform != null &&
+                   rectTransform.gameObject.activeInHierarchy &&
+                   RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPosition);
+        }
+
+        private static Sprite FirstNonNull(params Sprite[] sprites)
+        {
+            if (sprites == null)
+                return null;
+
+            for (int i = 0; i < sprites.Length; i++)
+            {
+                if (sprites[i] != null)
+                    return sprites[i];
+            }
+
             return null;
-
-        for (int i = 0; i < sprites.Length; i++)
-        {
-            if (sprites[i] != null)
-                return sprites[i];
         }
-
-        return null;
     }
 }

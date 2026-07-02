@@ -1,61 +1,65 @@
 using System;
 using UnityEngine;
+using Game.Tactical.Contracts;
 
-public interface IBattleHudRuntimeFeedbackView
+namespace Game.UI.Contracts
 {
-    TacticalCommandMode CurrentCommandMode { get; set; }
+    public interface IBattleHudRuntimeFeedbackView
+    {
+        TacticalCommandMode CurrentCommandMode { get; set; }
 
-    TacticalCommandMode StickyCommandMode { get; set; }
+        TacticalCommandMode StickyCommandMode { get; set; }
 
-    TacticalCommandResult LastCommandResult { get; set; }
+        TacticalCommandResult LastCommandResult { get; set; }
 
-    bool HasLastCommandResult { get; set; }
+        bool HasLastCommandResult { get; set; }
 
-    BattleHudRuntimeFeedbackState RuntimeFeedbackState { get; }
+        BattleHudRuntimeFeedbackState RuntimeFeedbackState { get; }
 
-    Sprite ResolveCommandIconSprite(TacticalCommandMode mode);
+        Sprite ResolveCommandIconSprite(TacticalCommandMode mode);
 
-    void ApplyCurrentOrderBanner(MatchHudCurrentOrderBannerModel model);
+        void ApplyCurrentOrderBanner(MatchHudCurrentOrderBannerModel model);
 
-    void ApplyTransientCurrentOrderBanner(MatchHudCurrentOrderBannerModel model, float now, float durationSeconds);
+        void ApplyTransientCurrentOrderBanner(MatchHudCurrentOrderBannerModel model, float now, float durationSeconds);
 
-    void ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel model);
+        void ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel model);
 
-    void ApplyCommandModeTabs(TacticalCommandMode mode);
+        void ApplyCommandModeTabs(TacticalCommandMode mode);
 
-    void ApplyPersistentCommandFeedback(MatchHudCommandFeedbackModel model, MatchHudCommandFeedbackActionsModel actionsModel);
+        void ApplyPersistentCommandFeedback(MatchHudCommandFeedbackModel model, MatchHudCommandFeedbackActionsModel actionsModel);
 
-    void ApplyTransientCommandFeedback(MatchHudCommandFeedbackModel model, float now);
+        void ApplyTransientCommandFeedback(MatchHudCommandFeedbackModel model, float now);
 
-    void BindFeedbackActionCallbacks(Action boardAllRequested, Action cancelRequested);
+        void BindFeedbackActionCallbacks(Action boardAllRequested, Action cancelRequested);
 
-    void ClearCommandModeTabs();
+        void ClearCommandModeTabs();
 
-    void ClearFeedbackActionCallbacks();
+        void ClearFeedbackActionCallbacks();
 
-    void HideCurrentOrderBanner();
+        void HideCurrentOrderBanner();
 
-    void ClearPersistentCommandFeedback();
+        void ClearPersistentCommandFeedback();
 
-    void HideCommandMode();
+        void HideCommandMode();
 
-    void HideFeedbackMessage();
+        void HideFeedbackMessage();
 
-    void HideInvalidCommand();
+        void HideInvalidCommand();
 
-    void HideSelectedEntity();
+        void HideSelectedEntity();
 
-    void SetWorldMarkersVisible(bool visible);
+        void SetWorldMarkersVisible(bool visible);
 
-    void ShowCommandMode(string mode);
+        void ShowCommandMode(string mode);
 
-    void ShowFeedbackMessage(string message);
+        void ShowFeedbackMessage(string message);
 
-    void ShowFeedbackMessage(string message, CommandFeedbackSeverity severity);
+        void ShowFeedbackMessage(string message, CommandFeedbackSeverity severity);
 
-    void ShowInvalidCommand(string reason);
+        void ShowInvalidCommand(string reason);
 
-    void ShowSelectedEntity(string displayName, string status);
+        void ShowSelectedEntity(string displayName, string status);
 
-    void TickFeedbackLifetime(float now);
+        void TickFeedbackLifetime(float now);
+    }
 }

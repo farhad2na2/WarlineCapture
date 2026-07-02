@@ -7,6 +7,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Game.UI.Contracts;
+using Game.Configs;
+using Game.Authoring;
+using Game.UI.Runtime;
+using Game.Runtime;
+using Game.Composition;
 
 public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
 {

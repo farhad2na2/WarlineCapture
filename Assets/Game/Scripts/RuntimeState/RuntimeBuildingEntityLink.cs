@@ -1,118 +1,122 @@
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
+using Game.Components;
 
-[DisallowMultipleComponent]
-public sealed class RuntimeBuildingEntityLink : MonoBehaviour
+namespace Game.Runtime
 {
-    private BuildingPlacementInteractionCompositionSystemHelper _buildingPlacementInteractionSystem;
-    private BuildingPlacementInteractionCompositionSystemHelper.Context _buildingPlacementInteractionContext;
-    private RuntimeBuildingEntityLinkRegistry _registry;
-    private int _buildingId;
-    private Entity _entity;
-    private Entity _blockerEntity;
-    private Vector3 _positionOffset;
-    private Vector3 _authoredLocalScale = Vector3.one;
-    private bool _preserveAuthoredTransform;
-    private bool _configured;
-
-    public Entity Entity => _entity;
-    public int BuildingId => _buildingId;
-
-    public void Configure(
-        BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem,
-        BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
-        RuntimeBuildingEntityLinkRegistry registry,
-        int buildingId,
-        Entity entity,
-        Entity blockerEntity)
+    [DisallowMultipleComponent]
+    public sealed class RuntimeBuildingEntityLink : MonoBehaviour
     {
-        _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
-        _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
-        SetRegistry(registry);
-        _buildingId = buildingId;
-        _entity = entity != Entity.Null ? entity : blockerEntity;
-        _blockerEntity = blockerEntity;
-        MapAuthoredBuildingVisualComponent authoredVisual = GetComponent<MapAuthoredBuildingVisualComponent>();
-        _preserveAuthoredTransform = authoredVisual != null && authoredVisual.PreserveAuthoredTransform;
-        _authoredLocalScale = transform.localScale;
-        CacheOffsetFromEntity();
-        _configured = true;
-    }
+        private BuildingPlacementInteractionCompositionSystemHelper _buildingPlacementInteractionSystem;
+        private BuildingPlacementInteractionCompositionSystemHelper.Context _buildingPlacementInteractionContext;
+        private RuntimeBuildingEntityLinkRegistry _registry;
+        private int _buildingId;
+        private Entity _entity;
+        private Entity _blockerEntity;
+        private Vector3 _positionOffset;
+        private Vector3 _authoredLocalScale = Vector3.one;
+        private bool _preserveAuthoredTransform;
+        private bool _configured;
 
-    public void SyncNow()
-    {
-        if (!_configured)
-            return;
+        public Entity Entity => _entity;
+        public int BuildingId => _buildingId;
 
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return;
-
-        var em = world.EntityManager;
-        if (!em.Exists(_entity))
+        public void Configure(
+            BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem,
+            BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
+            RuntimeBuildingEntityLinkRegistry registry,
+            int buildingId,
+            Entity entity,
+            Entity blockerEntity)
         {
-            _buildingPlacementInteractionSystem?.HandleRuntimeBuildingEntityDestroyed(
-                _buildingPlacementInteractionContext,
-                _buildingId,
-                _blockerEntity,
-                gameObject);
-            _configured = false;
-            return;
+            _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+            _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
+            SetRegistry(registry);
+            _buildingId = buildingId;
+            _entity = entity != Entity.Null ? entity : blockerEntity;
+            _blockerEntity = blockerEntity;
+            MapAuthoredBuildingVisualComponent authoredVisual = GetComponent<MapAuthoredBuildingVisualComponent>();
+            _preserveAuthoredTransform = authoredVisual != null && authoredVisual.PreserveAuthoredTransform;
+            _authoredLocalScale = transform.localScale;
+            CacheOffsetFromEntity();
+            _configured = true;
         }
 
-        if (!em.HasComponent<LocalTransform>(_entity))
-            return;
+        public void SyncNow()
+        {
+            if (!_configured)
+                return;
 
-        LocalTransform transformData = em.GetComponentData<LocalTransform>(_entity);
-        Vector3 worldPosition = (Vector3)transformData.Position + _positionOffset;
-        transform.SetPositionAndRotation(worldPosition, transformData.Rotation);
-        transform.localScale = _preserveAuthoredTransform
-            ? _authoredLocalScale
-            : Vector3.one * transformData.Scale;
-    }
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return;
 
-    private void OnEnable()
-    {
-        _registry?.Register(this);
-    }
+            var em = world.EntityManager;
+            if (!em.Exists(_entity))
+            {
+                _buildingPlacementInteractionSystem?.HandleRuntimeBuildingEntityDestroyed(
+                    _buildingPlacementInteractionContext,
+                    _buildingId,
+                    _blockerEntity,
+                    gameObject);
+                _configured = false;
+                return;
+            }
 
-    private void OnDisable()
-    {
-        _registry?.Unregister(this);
-    }
+            if (!em.HasComponent<LocalTransform>(_entity))
+                return;
 
-    private void OnDestroy()
-    {
-        _registry?.Unregister(this);
-    }
+            LocalTransform transformData = em.GetComponentData<LocalTransform>(_entity);
+            Vector3 worldPosition = (Vector3)transformData.Position + _positionOffset;
+            transform.SetPositionAndRotation(worldPosition, transformData.Rotation);
+            transform.localScale = _preserveAuthoredTransform
+                ? _authoredLocalScale
+                : Vector3.one * transformData.Scale;
+        }
 
-    private void SetRegistry(RuntimeBuildingEntityLinkRegistry registry)
-    {
-        if (_registry == registry)
+        private void OnEnable()
         {
             _registry?.Register(this);
-            return;
         }
 
-        _registry?.Unregister(this);
-        _registry = registry;
-        _registry?.Register(this);
-    }
+        private void OnDisable()
+        {
+            _registry?.Unregister(this);
+        }
 
-    private void CacheOffsetFromEntity()
-    {
-        _positionOffset = Vector3.zero;
+        private void OnDestroy()
+        {
+            _registry?.Unregister(this);
+        }
 
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return;
+        private void SetRegistry(RuntimeBuildingEntityLinkRegistry registry)
+        {
+            if (_registry == registry)
+            {
+                _registry?.Register(this);
+                return;
+            }
 
-        var em = world.EntityManager;
-        if (!em.Exists(_entity) || !em.HasComponent<LocalTransform>(_entity))
-            return;
+            _registry?.Unregister(this);
+            _registry = registry;
+            _registry?.Register(this);
+        }
 
-        LocalTransform transformData = em.GetComponentData<LocalTransform>(_entity);
-        _positionOffset = transform.position - (Vector3)transformData.Position;
+        private void CacheOffsetFromEntity()
+        {
+            _positionOffset = Vector3.zero;
+
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return;
+
+            var em = world.EntityManager;
+            if (!em.Exists(_entity) || !em.HasComponent<LocalTransform>(_entity))
+                return;
+
+            LocalTransform transformData = em.GetComponentData<LocalTransform>(_entity);
+            _positionOffset = transform.position - (Vector3)transformData.Position;
+        }
     }
 }

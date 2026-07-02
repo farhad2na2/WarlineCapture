@@ -1,16 +1,19 @@
 using UnityEngine;
 using static UnityEngine.Object;
 
-internal sealed class BuildingRuntimeObjectPresentationSystemHelper
+namespace Game.Runtime
 {
-    internal void DestroyRuntimeObject(Object target)
+    internal sealed class BuildingRuntimeObjectPresentationSystemHelper
     {
-        if (target == null)
-            return;
+        internal void DestroyRuntimeObject(Object target)
+        {
+            if (target == null)
+                return;
 
-        if (Application.isPlaying)
-            Destroy(target);
-        else
-            DestroyImmediate(target);
+            if (Application.isPlaying)
+                Destroy(target);
+            else
+                DestroyImmediate(target);
+        }
     }
 }

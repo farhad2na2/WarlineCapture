@@ -11,6 +11,15 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Game.Tactical.Contracts;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
+using Game.Components;
+using Game.Configs;
+using Game.UI.Runtime;
+using Game.UI.Shell.Ecs;
+using Game.Composition;
+using Game.Runtime;
 
 public sealed class UIShellCurrentContentLoadTests
 {

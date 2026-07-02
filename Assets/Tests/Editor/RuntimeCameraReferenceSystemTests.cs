@@ -1,3 +1,4 @@
+using Game.Rendering;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
 using Unity.Entities;

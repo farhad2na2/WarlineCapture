@@ -1,36 +1,40 @@
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
+using Game.Components;
 
-[DisallowMultipleComponent]
-public sealed class SelectionMarkerAuthoring : MonoBehaviour
+namespace Game.Authoring
 {
-    private sealed class Baker : Baker<SelectionMarkerAuthoring>
+    [DisallowMultipleComponent]
+    public sealed class SelectionMarkerAuthoring : MonoBehaviour
     {
-        public override void Bake(SelectionMarkerAuthoring authoring)
+        private sealed class Baker : Baker<SelectionMarkerAuthoring>
         {
-            var entity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent<SelectionMarkerTag>(entity);
-
-            if (authoring.transform.childCount <= 0)
-                return;
-
-            Transform visualChild = authoring.transform.GetChild(0);
-            if (visualChild == null)
-                return;
-
-            Entity visualEntity = GetEntity(visualChild, TransformUsageFlags.Dynamic);
-            float visibleScale = visualChild.localScale.x;
-            if (Mathf.Approximately(visibleScale, 0f))
-                visibleScale = 1f;
-
-            AddComponent(entity, new SelectionMarkerVisualChild
+            public override void Bake(SelectionMarkerAuthoring authoring)
             {
-                Value = visualEntity,
-                VisibleScale = visibleScale,
-                VisibleScaleX = visibleScale,
-                VisibleScaleZ = visibleScale
-            });
+                var entity = GetEntity(TransformUsageFlags.Dynamic);
+                AddComponent<SelectionMarkerTag>(entity);
+
+                if (authoring.transform.childCount <= 0)
+                    return;
+
+                Transform visualChild = authoring.transform.GetChild(0);
+                if (visualChild == null)
+                    return;
+
+                Entity visualEntity = GetEntity(visualChild, TransformUsageFlags.Dynamic);
+                float visibleScale = visualChild.localScale.x;
+                if (Mathf.Approximately(visibleScale, 0f))
+                    visibleScale = 1f;
+
+                AddComponent(entity, new SelectionMarkerVisualChild
+                {
+                    Value = visualEntity,
+                    VisibleScale = visibleScale,
+                    VisibleScaleX = visibleScale,
+                    VisibleScaleZ = visibleScale
+                });
+            }
         }
     }
 }

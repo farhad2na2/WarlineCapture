@@ -5,6 +5,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
+using Game.UI.Contracts;
+using Game.UI.Runtime;
 
 public sealed class MatchHudMinimapProjectionUiSystemHelperTests
 {

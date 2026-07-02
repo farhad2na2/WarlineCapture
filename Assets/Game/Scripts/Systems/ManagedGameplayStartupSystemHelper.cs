@@ -1,346 +1,351 @@
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Game.UI.Contracts;
+using Game.Configs;
 
-internal sealed class ManagedGameplayStartupSystemHelper
+namespace Game.Runtime
 {
-    private readonly RoadBuildCompositionSystemHelper _roadBuildCompositionSystem = new();
-    private readonly BuildingGameplayCompositionSystemHelper _buildingGameplayCompositionSystem = new();
-    private readonly SelectionGameplayStartupSystemHelper _selectionGameplayStartupSystem = new();
-
-    public readonly struct Result
+    internal sealed class ManagedGameplayStartupSystemHelper
     {
-        public readonly DayNightSystem DayNight;
-        public readonly FactionVisualSettings FactionVisuals;
-        public readonly RoadBuildReadModelCompositionSystemHelper RoadBuildReadModel;
-        public readonly RoadRuntimeGenerationCompositionSystemHelper RoadRuntimeGeneration;
-        public readonly RoadRuntimeGenerationCompositionSystemHelper.Context RoadRuntimeGenerationContext;
-        public readonly System.Action RoadRuntimeUpdate;
-        public readonly System.Action RoadOnGui;
-        public readonly System.Action DisposeRoad;
-        public readonly System.Action<IMatchRuntimeUi> BindRoadMainMenu;
-        public readonly System.Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> BindRoadGameplayFeatures;
-        public readonly BuildingSelectionClickUtilitySystemHelper BuildingSelectionClick;
-        public readonly BuildingSelectionClickUtilitySystemHelper.Context BuildingSelectionClickContext;
-        public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper BuildingRuntimeCitySpawn;
-        public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context BuildingRuntimeCitySpawnContext;
-        public readonly BuildingUiCommandSystemHelper BuildingUiCommand;
-        public readonly BuildingUiCommandSystemHelper.Context BuildingUiCommandContext;
-        public readonly BuildingUiQueryUiSystemHelper BuildingUiQuery;
-        public readonly BuildingUiQueryUiSystemHelper.Context BuildingUiQueryContext;
-        public readonly BuildingPlacementInteractionCompositionSystemHelper BuildingPlacementInteraction;
-        public readonly BuildingPlacementInteractionCompositionSystemHelper.Context BuildingPlacementInteractionContext;
-        public readonly System.Action<IMatchRuntimeUi> BindBuildingMainMenu;
-        public readonly System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionCompositionSystemHelper, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> BindBuildingGameplayFeatures;
-        public readonly System.Action DisposeBuildingGameplay;
-        public readonly BuildingRuntimeUpdateCompositionSystemHelper BuildingRuntimeUpdate;
-        public readonly BuildingRuntimeUpdateCompositionSystemHelper.Context BuildingRuntimeUpdateContext;
-        public readonly System.Action<IMatchRuntimeUi> BindSelectionMainMenu;
-        public readonly System.Action<IMatchHudSelectionPanelView> BindMatchHudSelectionPanel;
-        public readonly System.Action SelectionRuntimeUpdate;
-        public readonly System.Action DisposeSelection;
-        public readonly SelectionUiCommandUiSystemHelper SelectionUiCommand;
-        public readonly SelectionUiReadModelUiSystemHelper SelectionUiReadModel;
-        public readonly SelectionUiCameraSystemHelper SelectionUiCamera;
-        public readonly SelectionBuildingInteractionCompositionSystemHelper SelectionBuildingInteraction;
-        public readonly SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers;
-        public readonly ISelectionRectangleView SelectionRectangleView;
-        public readonly CitizenPopulationCompositionSystemHelper.Result CitizenPopulationComposition;
-        public readonly System.Action DisposeCitizenPopulation;
+        private readonly RoadBuildCompositionSystemHelper _roadBuildCompositionSystem = new();
+        private readonly BuildingGameplayCompositionSystemHelper _buildingGameplayCompositionSystem = new();
+        private readonly SelectionGameplayStartupSystemHelper _selectionGameplayStartupSystem = new();
 
-        public Result(
-            DayNightSystem dayNight,
-            FactionVisualSettings factionVisuals,
-            RoadBuildReadModelCompositionSystemHelper roadBuildReadModel,
-            RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGeneration,
-            RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext,
-            System.Action roadRuntimeUpdate,
-            System.Action roadOnGui,
-            System.Action disposeRoad,
-            System.Action<IMatchRuntimeUi> bindRoadMainMenu,
-            System.Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> bindRoadGameplayFeatures,
-            BuildingSelectionClickUtilitySystemHelper buildingSelectionClick,
-            BuildingSelectionClickUtilitySystemHelper.Context buildingSelectionClickContext,
-            BuildingRuntimeCitySpawnBridgeCompositionSystemHelper buildingRuntimeCitySpawn,
-            BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context buildingRuntimeCitySpawnContext,
-            BuildingUiCommandSystemHelper buildingUiCommand,
-            BuildingUiCommandSystemHelper.Context buildingUiCommandContext,
-            BuildingUiQueryUiSystemHelper buildingUiQuery,
-            BuildingUiQueryUiSystemHelper.Context buildingUiQueryContext,
-            BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteraction,
-            BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
-            System.Action<IMatchRuntimeUi> bindBuildingMainMenu,
-            System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionCompositionSystemHelper, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> bindBuildingGameplayFeatures,
-            System.Action disposeBuildingGameplay,
-            BuildingRuntimeUpdateCompositionSystemHelper buildingRuntimeUpdate,
-            BuildingRuntimeUpdateCompositionSystemHelper.Context buildingRuntimeUpdateContext,
-            System.Action<IMatchRuntimeUi> bindSelectionMainMenu,
-            System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel,
-            System.Action selectionRuntimeUpdate,
-            System.Action disposeSelection,
-            SelectionUiCommandUiSystemHelper selectionUiCommand,
-            SelectionUiReadModelUiSystemHelper selectionUiReadModel,
-            SelectionUiCameraSystemHelper selectionUiCamera,
-            SelectionBuildingInteractionCompositionSystemHelper selectionBuildingInteraction,
-            SelectionScreenMarkerUiSystemHelper selectionScreenMarkers,
-            ISelectionRectangleView selectionRectangleView,
-            CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition,
-            System.Action disposeCitizenPopulation)
+        public readonly struct Result
         {
-            DayNight = dayNight;
-            FactionVisuals = factionVisuals;
-            RoadBuildReadModel = roadBuildReadModel;
-            RoadRuntimeGeneration = roadRuntimeGeneration;
-            RoadRuntimeGenerationContext = roadRuntimeGenerationContext;
-            RoadRuntimeUpdate = roadRuntimeUpdate;
-            RoadOnGui = roadOnGui;
-            DisposeRoad = disposeRoad;
-            BindRoadMainMenu = bindRoadMainMenu;
-            BindRoadGameplayFeatures = bindRoadGameplayFeatures;
-            BuildingSelectionClick = buildingSelectionClick;
-            BuildingSelectionClickContext = buildingSelectionClickContext;
-            BuildingRuntimeCitySpawn = buildingRuntimeCitySpawn;
-            BuildingRuntimeCitySpawnContext = buildingRuntimeCitySpawnContext;
-            BuildingUiCommand = buildingUiCommand;
-            BuildingUiCommandContext = buildingUiCommandContext;
-            BuildingUiQuery = buildingUiQuery;
-            BuildingUiQueryContext = buildingUiQueryContext;
-            BuildingPlacementInteraction = buildingPlacementInteraction;
-            BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
-            BindBuildingMainMenu = bindBuildingMainMenu;
-            BindBuildingGameplayFeatures = bindBuildingGameplayFeatures;
-            DisposeBuildingGameplay = disposeBuildingGameplay;
-            BuildingRuntimeUpdate = buildingRuntimeUpdate;
-            BuildingRuntimeUpdateContext = buildingRuntimeUpdateContext;
-            BindSelectionMainMenu = bindSelectionMainMenu;
-            BindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
-            SelectionRuntimeUpdate = selectionRuntimeUpdate;
-            DisposeSelection = disposeSelection;
-            SelectionUiCommand = selectionUiCommand;
-            SelectionUiReadModel = selectionUiReadModel;
-            SelectionUiCamera = selectionUiCamera;
-            SelectionBuildingInteraction = selectionBuildingInteraction;
-            SelectionScreenMarkers = selectionScreenMarkers;
-            SelectionRectangleView = selectionRectangleView;
-            CitizenPopulationComposition = citizenPopulationComposition;
-            DisposeCitizenPopulation = disposeCitizenPopulation;
-        }
-    }
+            public readonly DayNightSystem DayNight;
+            public readonly FactionVisualSettings FactionVisuals;
+            public readonly RoadBuildReadModelCompositionSystemHelper RoadBuildReadModel;
+            public readonly RoadRuntimeGenerationCompositionSystemHelper RoadRuntimeGeneration;
+            public readonly RoadRuntimeGenerationCompositionSystemHelper.Context RoadRuntimeGenerationContext;
+            public readonly System.Action RoadRuntimeUpdate;
+            public readonly System.Action RoadOnGui;
+            public readonly System.Action DisposeRoad;
+            public readonly System.Action<IMatchRuntimeUi> BindRoadMainMenu;
+            public readonly System.Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> BindRoadGameplayFeatures;
+            public readonly BuildingSelectionClickUtilitySystemHelper BuildingSelectionClick;
+            public readonly BuildingSelectionClickUtilitySystemHelper.Context BuildingSelectionClickContext;
+            public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper BuildingRuntimeCitySpawn;
+            public readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context BuildingRuntimeCitySpawnContext;
+            public readonly BuildingUiCommandSystemHelper BuildingUiCommand;
+            public readonly BuildingUiCommandSystemHelper.Context BuildingUiCommandContext;
+            public readonly BuildingUiQueryUiSystemHelper BuildingUiQuery;
+            public readonly BuildingUiQueryUiSystemHelper.Context BuildingUiQueryContext;
+            public readonly BuildingPlacementInteractionCompositionSystemHelper BuildingPlacementInteraction;
+            public readonly BuildingPlacementInteractionCompositionSystemHelper.Context BuildingPlacementInteractionContext;
+            public readonly System.Action<IMatchRuntimeUi> BindBuildingMainMenu;
+            public readonly System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionCompositionSystemHelper, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> BindBuildingGameplayFeatures;
+            public readonly System.Action DisposeBuildingGameplay;
+            public readonly BuildingRuntimeUpdateCompositionSystemHelper BuildingRuntimeUpdate;
+            public readonly BuildingRuntimeUpdateCompositionSystemHelper.Context BuildingRuntimeUpdateContext;
+            public readonly System.Action<IMatchRuntimeUi> BindSelectionMainMenu;
+            public readonly System.Action<IMatchHudSelectionPanelView> BindMatchHudSelectionPanel;
+            public readonly System.Action SelectionRuntimeUpdate;
+            public readonly System.Action DisposeSelection;
+            public readonly SelectionUiCommandUiSystemHelper SelectionUiCommand;
+            public readonly SelectionUiReadModelUiSystemHelper SelectionUiReadModel;
+            public readonly SelectionUiCameraSystemHelper SelectionUiCamera;
+            public readonly SelectionBuildingInteractionCompositionSystemHelper SelectionBuildingInteraction;
+            public readonly SelectionScreenMarkerUiSystemHelper SelectionScreenMarkers;
+            public readonly ISelectionRectangleView SelectionRectangleView;
+            public readonly CitizenPopulationCompositionSystemHelper.Result CitizenPopulationComposition;
+            public readonly System.Action DisposeCitizenPopulation;
 
-    public Result Initialize(
-        DayNightSystemConfig dayNightConfig,
-        FactionVisualSettingsConfig factionVisualConfig,
-        RoadBuildSystemConfig roadBuildConfig,
-        BuildingPlacementSystemConfig buildingPlacementConfig,
-        MapBuildingPlacementConfig mapBuildingPlacementConfig,
-        MapVehiclePlacementConfig mapVehiclePlacementConfig,
-        RTSSelectionSystemConfig rtsSelectionConfig,
-        RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
-        GameStringsConfig gameStringsConfig,
-        Camera worldCamera,
-        Light directionalLight,
-        Volume globalVolume,
-        Transform runtimeTransportsRoot,
-        Transform runtimeUiRoot,
-        System.Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
-        System.Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab,
-        System.Func<GameObject, Sprite> resolveSelectionCardPortraitSpriteFromPrefab,
-        BuildingProductionQueueCompositionSystemHelper.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata,
-        BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual,
-        System.Func<GameObject, string> resolveSpawnableLookupKey,
-        BuildingDefinitionPrefabSystemHelper.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata,
-        BuildingDefinitionPrefabSystemHelper.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata,
-        Transform mapBuildingAuthoringRoot,
-        Transform mapVehicleAuthoringRoot,
-        IMatchIntroStateQuery matchIntroStateQuery)
-    {
-        DayNightSystem dayNight = ResolveDayNightSystem();
-        dayNight?.Init(dayNightConfig, directionalLight, globalVolume);
-
-        var factionVisuals = new FactionVisualSettings();
-        factionVisuals.Init(factionVisualConfig);
-
-        RoadBuildCompositionSystemHelper.Result road = _roadBuildCompositionSystem.Initialize(
-            roadBuildConfig,
-            worldCamera,
-            runtimeUiRoot);
-        RoadBuildReadModelCompositionSystemHelper roadBuildReadModel = road.RoadBuildReadModel;
-
-        BuildingGameplayResultCompositionSystemHelper.Result building = _buildingGameplayCompositionSystem.Initialize(
-            buildingPlacementConfig,
-            worldCamera,
-            runtimeTransportsRoot,
-            runtimeUiRoot,
-            road.RoadFootprintState,
-            factionVisuals,
-            dayNight,
-            rtsSelectionConfig,
-            mapBuildingPlacementConfig,
-            mapVehiclePlacementConfig,
-            mapBuildingAuthoringRoot,
-            mapVehicleAuthoringRoot,
-            resolveSelectionPortraitSpriteFromPrefab,
-            tryGetUnitProductionMetadata,
-            prepareTransportDropVisual,
-            resolveSpawnableLookupKey,
-            tryGetBuildingDefinitionMetadata,
-            tryGetUnitDefinitionMetadata);
-
-        Sprite ResolveSelectionPortraitSprite(EntityManager em, Entity entity)
-        {
-            return building.UiQuery.TryResolveLiveUnitPreviewPrefab(building.UiQueryContext, entity, out GameObject prefab)
-                ? resolveSelectionPortraitSpriteFromPrefab?.Invoke(prefab)
-                : null;
-        }
-
-        Sprite ResolveSelectionCardPortraitSprite(EntityManager em, Entity entity)
-        {
-            return building.UiQuery.TryResolveLiveUnitPreviewPrefab(building.UiQueryContext, entity, out GameObject prefab)
-                ? resolveSelectionCardPortraitSpriteFromPrefab?.Invoke(prefab)
-                : null;
-        }
-
-        Sprite ResolveSelectedBuildingPortraitSprite()
-        {
-            return building.UiQuery.TryGetSelectedBuildingPreviewPrefab(building.UiQueryContext, out GameObject prefab)
-                ? resolveSelectionPortraitSpriteFromPrefab?.Invoke(prefab)
-                : null;
-        }
-
-        bool TryResolveRuntimeBuildingInstance(Entity combatEntity, int runtimeBuildingId, out GameObject instance)
-        {
-            instance = null;
-            if (building.RuntimeBuildings == null)
+            public Result(
+                DayNightSystem dayNight,
+                FactionVisualSettings factionVisuals,
+                RoadBuildReadModelCompositionSystemHelper roadBuildReadModel,
+                RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGeneration,
+                RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext,
+                System.Action roadRuntimeUpdate,
+                System.Action roadOnGui,
+                System.Action disposeRoad,
+                System.Action<IMatchRuntimeUi> bindRoadMainMenu,
+                System.Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> bindRoadGameplayFeatures,
+                BuildingSelectionClickUtilitySystemHelper buildingSelectionClick,
+                BuildingSelectionClickUtilitySystemHelper.Context buildingSelectionClickContext,
+                BuildingRuntimeCitySpawnBridgeCompositionSystemHelper buildingRuntimeCitySpawn,
+                BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context buildingRuntimeCitySpawnContext,
+                BuildingUiCommandSystemHelper buildingUiCommand,
+                BuildingUiCommandSystemHelper.Context buildingUiCommandContext,
+                BuildingUiQueryUiSystemHelper buildingUiQuery,
+                BuildingUiQueryUiSystemHelper.Context buildingUiQueryContext,
+                BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteraction,
+                BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
+                System.Action<IMatchRuntimeUi> bindBuildingMainMenu,
+                System.Action<IMatchRuntimeUi, SelectionUiCameraSystemHelper, SelectionBuildingInteractionCompositionSystemHelper, RuntimeGridBlockerPresentationSystemHelper, RuntimeCityCompositionSystemHelper, CitizenPopulationEventCompositionSystemHelper> bindBuildingGameplayFeatures,
+                System.Action disposeBuildingGameplay,
+                BuildingRuntimeUpdateCompositionSystemHelper buildingRuntimeUpdate,
+                BuildingRuntimeUpdateCompositionSystemHelper.Context buildingRuntimeUpdateContext,
+                System.Action<IMatchRuntimeUi> bindSelectionMainMenu,
+                System.Action<IMatchHudSelectionPanelView> bindMatchHudSelectionPanel,
+                System.Action selectionRuntimeUpdate,
+                System.Action disposeSelection,
+                SelectionUiCommandUiSystemHelper selectionUiCommand,
+                SelectionUiReadModelUiSystemHelper selectionUiReadModel,
+                SelectionUiCameraSystemHelper selectionUiCamera,
+                SelectionBuildingInteractionCompositionSystemHelper selectionBuildingInteraction,
+                SelectionScreenMarkerUiSystemHelper selectionScreenMarkers,
+                ISelectionRectangleView selectionRectangleView,
+                CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition,
+                System.Action disposeCitizenPopulation)
             {
+                DayNight = dayNight;
+                FactionVisuals = factionVisuals;
+                RoadBuildReadModel = roadBuildReadModel;
+                RoadRuntimeGeneration = roadRuntimeGeneration;
+                RoadRuntimeGenerationContext = roadRuntimeGenerationContext;
+                RoadRuntimeUpdate = roadRuntimeUpdate;
+                RoadOnGui = roadOnGui;
+                DisposeRoad = disposeRoad;
+                BindRoadMainMenu = bindRoadMainMenu;
+                BindRoadGameplayFeatures = bindRoadGameplayFeatures;
+                BuildingSelectionClick = buildingSelectionClick;
+                BuildingSelectionClickContext = buildingSelectionClickContext;
+                BuildingRuntimeCitySpawn = buildingRuntimeCitySpawn;
+                BuildingRuntimeCitySpawnContext = buildingRuntimeCitySpawnContext;
+                BuildingUiCommand = buildingUiCommand;
+                BuildingUiCommandContext = buildingUiCommandContext;
+                BuildingUiQuery = buildingUiQuery;
+                BuildingUiQueryContext = buildingUiQueryContext;
+                BuildingPlacementInteraction = buildingPlacementInteraction;
+                BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
+                BindBuildingMainMenu = bindBuildingMainMenu;
+                BindBuildingGameplayFeatures = bindBuildingGameplayFeatures;
+                DisposeBuildingGameplay = disposeBuildingGameplay;
+                BuildingRuntimeUpdate = buildingRuntimeUpdate;
+                BuildingRuntimeUpdateContext = buildingRuntimeUpdateContext;
+                BindSelectionMainMenu = bindSelectionMainMenu;
+                BindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
+                SelectionRuntimeUpdate = selectionRuntimeUpdate;
+                DisposeSelection = disposeSelection;
+                SelectionUiCommand = selectionUiCommand;
+                SelectionUiReadModel = selectionUiReadModel;
+                SelectionUiCamera = selectionUiCamera;
+                SelectionBuildingInteraction = selectionBuildingInteraction;
+                SelectionScreenMarkers = selectionScreenMarkers;
+                SelectionRectangleView = selectionRectangleView;
+                CitizenPopulationComposition = citizenPopulationComposition;
+                DisposeCitizenPopulation = disposeCitizenPopulation;
+            }
+        }
+
+        public Result Initialize(
+            DayNightSystemConfig dayNightConfig,
+            FactionVisualSettingsConfig factionVisualConfig,
+            RoadBuildSystemConfig roadBuildConfig,
+            BuildingPlacementSystemConfig buildingPlacementConfig,
+            MapBuildingPlacementConfig mapBuildingPlacementConfig,
+            MapVehiclePlacementConfig mapVehiclePlacementConfig,
+            RTSSelectionSystemConfig rtsSelectionConfig,
+            RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
+            GameStringsConfig gameStringsConfig,
+            Camera worldCamera,
+            Light directionalLight,
+            Volume globalVolume,
+            Transform runtimeTransportsRoot,
+            Transform runtimeUiRoot,
+            System.Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
+            System.Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab,
+            System.Func<GameObject, Sprite> resolveSelectionCardPortraitSpriteFromPrefab,
+            BuildingProductionQueueCompositionSystemHelper.TryGetUnitProductionMetadataDelegate tryGetUnitProductionMetadata,
+            BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual,
+            System.Func<GameObject, string> resolveSpawnableLookupKey,
+            BuildingDefinitionPrefabSystemHelper.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata,
+            BuildingDefinitionPrefabSystemHelper.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata,
+            Transform mapBuildingAuthoringRoot,
+            Transform mapVehicleAuthoringRoot,
+            IMatchIntroStateQuery matchIntroStateQuery)
+        {
+            DayNightSystem dayNight = ResolveDayNightSystem();
+            dayNight?.Init(dayNightConfig, directionalLight, globalVolume);
+
+            var factionVisuals = new FactionVisualSettings();
+            factionVisuals.Init(factionVisualConfig);
+
+            RoadBuildCompositionSystemHelper.Result road = _roadBuildCompositionSystem.Initialize(
+                roadBuildConfig,
+                worldCamera,
+                runtimeUiRoot);
+            RoadBuildReadModelCompositionSystemHelper roadBuildReadModel = road.RoadBuildReadModel;
+
+            BuildingGameplayResultCompositionSystemHelper.Result building = _buildingGameplayCompositionSystem.Initialize(
+                buildingPlacementConfig,
+                worldCamera,
+                runtimeTransportsRoot,
+                runtimeUiRoot,
+                road.RoadFootprintState,
+                factionVisuals,
+                dayNight,
+                rtsSelectionConfig,
+                mapBuildingPlacementConfig,
+                mapVehiclePlacementConfig,
+                mapBuildingAuthoringRoot,
+                mapVehicleAuthoringRoot,
+                resolveSelectionPortraitSpriteFromPrefab,
+                tryGetUnitProductionMetadata,
+                prepareTransportDropVisual,
+                resolveSpawnableLookupKey,
+                tryGetBuildingDefinitionMetadata,
+                tryGetUnitDefinitionMetadata);
+
+            Sprite ResolveSelectionPortraitSprite(EntityManager em, Entity entity)
+            {
+                return building.UiQuery.TryResolveLiveUnitPreviewPrefab(building.UiQueryContext, entity, out GameObject prefab)
+                    ? resolveSelectionPortraitSpriteFromPrefab?.Invoke(prefab)
+                    : null;
+            }
+
+            Sprite ResolveSelectionCardPortraitSprite(EntityManager em, Entity entity)
+            {
+                return building.UiQuery.TryResolveLiveUnitPreviewPrefab(building.UiQueryContext, entity, out GameObject prefab)
+                    ? resolveSelectionCardPortraitSpriteFromPrefab?.Invoke(prefab)
+                    : null;
+            }
+
+            Sprite ResolveSelectedBuildingPortraitSprite()
+            {
+                return building.UiQuery.TryGetSelectedBuildingPreviewPrefab(building.UiQueryContext, out GameObject prefab)
+                    ? resolveSelectionPortraitSpriteFromPrefab?.Invoke(prefab)
+                    : null;
+            }
+
+            bool TryResolveRuntimeBuildingInstance(Entity combatEntity, int runtimeBuildingId, out GameObject instance)
+            {
+                instance = null;
+                if (building.RuntimeBuildings == null)
+                {
+                    return false;
+                }
+
+                if (runtimeBuildingId > 0 &&
+                    building.RuntimeBuildings.TryGetValue(runtimeBuildingId, out RuntimeBuildingEntity runtimeBuilding) &&
+                    TryResolveRuntimeBuildingGameObject(runtimeBuilding, out instance))
+                {
+                    return true;
+                }
+
+                foreach (RuntimeBuildingEntity candidateBuilding in building.RuntimeBuildings.Values)
+                {
+                    if (candidateBuilding == null || candidateBuilding.CombatEntity != combatEntity)
+                        continue;
+
+                    return TryResolveRuntimeBuildingGameObject(candidateBuilding, out instance);
+                }
+
                 return false;
             }
 
-            if (runtimeBuildingId > 0 &&
-                building.RuntimeBuildings.TryGetValue(runtimeBuildingId, out RuntimeBuildingEntity runtimeBuilding) &&
-                TryResolveRuntimeBuildingGameObject(runtimeBuilding, out instance))
+            static bool TryResolveRuntimeBuildingGameObject(RuntimeBuildingEntity runtimeBuilding, out GameObject instance)
             {
+                instance = null;
+                if (runtimeBuilding == null ||
+                    runtimeBuilding.IsDestroyed ||
+                    runtimeBuilding.Instance == null)
+                {
+                    return false;
+                }
+
+                instance = runtimeBuilding.Instance;
                 return true;
             }
 
-            foreach (RuntimeBuildingEntity candidateBuilding in building.RuntimeBuildings.Values)
-            {
-                if (candidateBuilding == null || candidateBuilding.CombatEntity != combatEntity)
-                    continue;
+            SelectionGameplayStartupSystemHelper.Result selection = _selectionGameplayStartupSystem.Initialize(
+                rtsSelectionConfig,
+                worldCamera,
+                runtimeUiRoot,
+                createSelectionRectangleView,
+                roadBuildReadModel,
+                building.Interaction,
+                building.InteractionContext,
+                building.TrySelectFirstBuildingInScreenRect,
+                ResolveSelectionPortraitSprite,
+                ResolveSelectionCardPortraitSprite,
+                ResolveSelectedBuildingPortraitSprite,
+                TryResolveRuntimeBuildingInstance,
+                factionVisuals,
+                matchIntroStateQuery);
 
-                return TryResolveRuntimeBuildingGameObject(candidateBuilding, out instance);
-            }
+            _roadBuildCompositionSystem.BindBuildingInteraction(
+                road,
+                building.Interaction,
+                building.InteractionContext);
+            building.BindSelection(
+                dayNight,
+                selection.SelectionUiCamera,
+                selection.SelectionBuildingInteraction,
+                selection.ShouldBlockBuildingSelectionClick);
 
-            return false;
+            building.InitializeCitizenPopulation(dayNight, worldCamera, runtimeCitySpawnerConfig);
+            building.BindCitizenPopulation(
+                dayNight,
+                selection.SelectionUiCamera,
+                selection.SelectionBuildingInteraction,
+                building.CitizenPopulationComposition.EventSystem);
+
+            GameStrings.Init(gameStringsConfig);
+            System.Action<IMatchRuntimeUi> bindRoadMainMenu = mainMenu =>
+                _roadBuildCompositionSystem.BindMainMenu(
+                    road,
+                    building.Interaction,
+                    building.InteractionContext,
+                    mainMenu);
+            System.Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> bindRoadGameplayFeatures = (mainMenu, runtimeGridBlockers) =>
+                _roadBuildCompositionSystem.BindRuntimeGameplayFeatures(
+                    road,
+                    building.Interaction,
+                    building.InteractionContext,
+                    mainMenu,
+                    runtimeGridBlockers,
+                    building.RuntimeBuildingEntityLinks);
+
+            return new Result(
+                dayNight,
+                factionVisuals,
+                roadBuildReadModel,
+                road.RoadRuntimeGeneration,
+                road.RoadRuntimeGenerationContext,
+                road.RuntimeUpdate,
+                road.OnGui,
+                road.Dispose,
+                bindRoadMainMenu,
+                bindRoadGameplayFeatures,
+                building.SelectionClick,
+                building.SelectionClickContext,
+                building.RuntimeCitySpawn,
+                building.RuntimeCitySpawnContext,
+                building.UiCommand,
+                building.UiCommandContext,
+                building.UiQuery,
+                building.UiQueryContext,
+                building.Interaction,
+                building.InteractionContext,
+                building.BindMainMenu,
+                building.BindGameplayFeatures,
+                building.Dispose,
+                building.RuntimeUpdate,
+                building.RuntimeUpdateContext,
+                selection.BindSelectionMainMenu,
+                selection.BindMatchHudSelectionPanel,
+                selection.SelectionRuntimeUpdate,
+                selection.DisposeSelection,
+                selection.SelectionUiCommand,
+                selection.SelectionUiReadModel,
+                selection.SelectionUiCamera,
+                selection.SelectionBuildingInteraction,
+                selection.SelectionScreenMarkers,
+                selection.SelectionRectangleView,
+                building.CitizenPopulationComposition,
+                building.DisposeCitizenPopulation);
         }
 
-        static bool TryResolveRuntimeBuildingGameObject(RuntimeBuildingEntity runtimeBuilding, out GameObject instance)
+        private static DayNightSystem ResolveDayNightSystem()
         {
-            instance = null;
-            if (runtimeBuilding == null ||
-                runtimeBuilding.IsDestroyed ||
-                runtimeBuilding.Instance == null)
-            {
-                return false;
-            }
-
-            instance = runtimeBuilding.Instance;
-            return true;
+            Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+            return world != null && world.IsCreated
+                ? world.GetOrCreateSystemManaged<DayNightSystem>()
+                : null;
         }
-
-        SelectionGameplayStartupSystemHelper.Result selection = _selectionGameplayStartupSystem.Initialize(
-            rtsSelectionConfig,
-            worldCamera,
-            runtimeUiRoot,
-            createSelectionRectangleView,
-            roadBuildReadModel,
-            building.Interaction,
-            building.InteractionContext,
-            building.TrySelectFirstBuildingInScreenRect,
-            ResolveSelectionPortraitSprite,
-            ResolveSelectionCardPortraitSprite,
-            ResolveSelectedBuildingPortraitSprite,
-            TryResolveRuntimeBuildingInstance,
-            factionVisuals,
-            matchIntroStateQuery);
-
-        _roadBuildCompositionSystem.BindBuildingInteraction(
-            road,
-            building.Interaction,
-            building.InteractionContext);
-        building.BindSelection(
-            dayNight,
-            selection.SelectionUiCamera,
-            selection.SelectionBuildingInteraction,
-            selection.ShouldBlockBuildingSelectionClick);
-
-        building.InitializeCitizenPopulation(dayNight, worldCamera, runtimeCitySpawnerConfig);
-        building.BindCitizenPopulation(
-            dayNight,
-            selection.SelectionUiCamera,
-            selection.SelectionBuildingInteraction,
-            building.CitizenPopulationComposition.EventSystem);
-
-        GameStrings.Init(gameStringsConfig);
-        System.Action<IMatchRuntimeUi> bindRoadMainMenu = mainMenu =>
-            _roadBuildCompositionSystem.BindMainMenu(
-                road,
-                building.Interaction,
-                building.InteractionContext,
-                mainMenu);
-        System.Action<IMatchRuntimeUi, RuntimeGridBlockerPresentationSystemHelper> bindRoadGameplayFeatures = (mainMenu, runtimeGridBlockers) =>
-            _roadBuildCompositionSystem.BindRuntimeGameplayFeatures(
-                road,
-                building.Interaction,
-                building.InteractionContext,
-                mainMenu,
-                runtimeGridBlockers,
-                building.RuntimeBuildingEntityLinks);
-
-        return new Result(
-            dayNight,
-            factionVisuals,
-            roadBuildReadModel,
-            road.RoadRuntimeGeneration,
-            road.RoadRuntimeGenerationContext,
-            road.RuntimeUpdate,
-            road.OnGui,
-            road.Dispose,
-            bindRoadMainMenu,
-            bindRoadGameplayFeatures,
-            building.SelectionClick,
-            building.SelectionClickContext,
-            building.RuntimeCitySpawn,
-            building.RuntimeCitySpawnContext,
-            building.UiCommand,
-            building.UiCommandContext,
-            building.UiQuery,
-            building.UiQueryContext,
-            building.Interaction,
-            building.InteractionContext,
-            building.BindMainMenu,
-            building.BindGameplayFeatures,
-            building.Dispose,
-            building.RuntimeUpdate,
-            building.RuntimeUpdateContext,
-            selection.BindSelectionMainMenu,
-            selection.BindMatchHudSelectionPanel,
-            selection.SelectionRuntimeUpdate,
-            selection.DisposeSelection,
-            selection.SelectionUiCommand,
-            selection.SelectionUiReadModel,
-            selection.SelectionUiCamera,
-            selection.SelectionBuildingInteraction,
-            selection.SelectionScreenMarkers,
-            selection.SelectionRectangleView,
-            building.CitizenPopulationComposition,
-            building.DisposeCitizenPopulation);
-    }
-
-    private static DayNightSystem ResolveDayNightSystem()
-    {
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        return world != null && world.IsCreated
-            ? world.GetOrCreateSystemManaged<DayNightSystem>()
-            : null;
     }
 }

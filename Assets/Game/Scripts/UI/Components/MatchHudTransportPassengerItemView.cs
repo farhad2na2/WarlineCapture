@@ -2,102 +2,106 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Contracts;
 
-[DisallowMultipleComponent]
-public sealed class MatchHudTransportPassengerItemView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private Image portraitImage;
-    [SerializeField] private TMP_Text nameText;
-    [SerializeField] private TMP_Text roleText;
-    [SerializeField] private Image healthFillImage;
-    [SerializeField] private TMP_Text healthText;
-    [SerializeField] private Button exitButton;
-
-    private UiEntityHandle _passenger;
-    private Action<UiEntityHandle> _exitRequested;
-    private Button _boundExitButton;
-
-    private void Awake()
+    [DisallowMultipleComponent]
+    public sealed class MatchHudTransportPassengerItemView : MonoBehaviour
     {
-        BindUnityEvents();
-    }
+        [SerializeField] private Image portraitImage;
+        [SerializeField] private TMP_Text nameText;
+        [SerializeField] private TMP_Text roleText;
+        [SerializeField] private Image healthFillImage;
+        [SerializeField] private TMP_Text healthText;
+        [SerializeField] private Button exitButton;
 
-    private void OnDestroy()
-    {
-        UnbindButton(ref _boundExitButton, HandleExit);
-    }
+        private UiEntityHandle _passenger;
+        private Action<UiEntityHandle> _exitRequested;
+        private Button _boundExitButton;
 
-    public void Bind(MatchHudSelectionPanelPassengerItemModel model, Action<UiEntityHandle> exitRequested)
-    {
-        BindUnityEvents();
+        private void Awake()
+        {
+            BindUnityEvents();
+        }
 
-        _passenger = model.Passenger;
-        _exitRequested = exitRequested;
+        private void OnDestroy()
+        {
+            UnbindButton(ref _boundExitButton, HandleExit);
+        }
 
-        SetImage(portraitImage, model.PortraitSprite);
-        SetText(nameText, model.DisplayName);
-        SetText(roleText, model.RoleText);
-        SetText(healthText, model.HealthText);
-        SetHealthFill(model.Health01);
-        if (exitButton != null)
-            exitButton.interactable = model.ExitEnabled;
-    }
+        public void Bind(MatchHudSelectionPanelPassengerItemModel model, Action<UiEntityHandle> exitRequested)
+        {
+            BindUnityEvents();
 
-    private void BindUnityEvents()
-    {
-        BindButton(exitButton, ref _boundExitButton, HandleExit);
-    }
+            _passenger = model.Passenger;
+            _exitRequested = exitRequested;
 
-    private void HandleExit()
-    {
-        if (!_passenger.IsNull)
-            _exitRequested?.Invoke(_passenger);
-    }
+            SetImage(portraitImage, model.PortraitSprite);
+            SetText(nameText, model.DisplayName);
+            SetText(roleText, model.RoleText);
+            SetText(healthText, model.HealthText);
+            SetHealthFill(model.Health01);
+            if (exitButton != null)
+                exitButton.interactable = model.ExitEnabled;
+        }
 
-    private static void SetImage(Image image, Sprite sprite)
-    {
-        if (image == null)
-            return;
+        private void BindUnityEvents()
+        {
+            BindButton(exitButton, ref _boundExitButton, HandleExit);
+        }
 
-        image.sprite = sprite;
-        image.enabled = sprite != null;
-        image.preserveAspect = true;
-    }
+        private void HandleExit()
+        {
+            if (!_passenger.IsNull)
+                _exitRequested?.Invoke(_passenger);
+        }
 
-    private static void SetText(TMP_Text text, string value)
-    {
-        if (text != null)
-            text.text = string.IsNullOrWhiteSpace(value) ? "-" : value;
-    }
+        private static void SetImage(Image image, Sprite sprite)
+        {
+            if (image == null)
+                return;
 
-    private void SetHealthFill(float health01)
-    {
-        if (healthFillImage == null)
-            return;
+            image.sprite = sprite;
+            image.enabled = sprite != null;
+            image.preserveAspect = true;
+        }
 
-        healthFillImage.type = Image.Type.Filled;
-        healthFillImage.fillMethod = Image.FillMethod.Horizontal;
-        healthFillImage.fillOrigin = 0;
-        healthFillImage.fillAmount = Mathf.Clamp01(health01);
-    }
+        private static void SetText(TMP_Text text, string value)
+        {
+            if (text != null)
+                text.text = string.IsNullOrWhiteSpace(value) ? "-" : value;
+        }
 
-    private static void BindButton(Button button, ref Button boundButton, UnityEngine.Events.UnityAction action)
-    {
-        if (boundButton == button)
-            return;
+        private void SetHealthFill(float health01)
+        {
+            if (healthFillImage == null)
+                return;
 
-        UnbindButton(ref boundButton, action);
-        boundButton = button;
-        if (boundButton != null)
-            boundButton.onClick.AddListener(action);
-    }
+            healthFillImage.type = Image.Type.Filled;
+            healthFillImage.fillMethod = Image.FillMethod.Horizontal;
+            healthFillImage.fillOrigin = 0;
+            healthFillImage.fillAmount = Mathf.Clamp01(health01);
+        }
 
-    private static void UnbindButton(ref Button boundButton, UnityEngine.Events.UnityAction action)
-    {
-        if (boundButton == null)
-            return;
+        private static void BindButton(Button button, ref Button boundButton, UnityEngine.Events.UnityAction action)
+        {
+            if (boundButton == button)
+                return;
 
-        boundButton.onClick.RemoveListener(action);
-        boundButton = null;
+            UnbindButton(ref boundButton, action);
+            boundButton = button;
+            if (boundButton != null)
+                boundButton.onClick.AddListener(action);
+        }
+
+        private static void UnbindButton(ref Button boundButton, UnityEngine.Events.UnityAction action)
+        {
+            if (boundButton == null)
+                return;
+
+            boundButton.onClick.RemoveListener(action);
+            boundButton = null;
+        }
     }
 }

@@ -1,21 +1,26 @@
 using System.Collections.Generic;
+using Game.Authoring;
+using Game.Runtime;
 
-public sealed class GameplaySceneBindingSceneSystemHelper
+namespace Game.Composition
 {
-    public void BindRuntimeGridBlockerDebugViews(
-        RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
-        IReadOnlyList<GridAuthoring> grids)
+    public sealed class GameplaySceneBindingSceneSystemHelper
     {
-        if (grids == null)
-            return;
-
-        for (int i = 0; i < grids.Count; i++)
+        public void BindRuntimeGridBlockerDebugViews(
+            RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
+            IReadOnlyList<GridAuthoring> grids)
         {
-            GridAuthoring grid = grids[i];
-            if (grid == null)
-                continue;
+            if (grids == null)
+                return;
 
-            grid.BindRuntimeGridBlockers(runtimeGridBlockers);
+            for (int i = 0; i < grids.Count; i++)
+            {
+                GridAuthoring grid = grids[i];
+                if (grid == null)
+                    continue;
+
+                grid.BindRuntimeGridBlockers(runtimeGridBlockers);
+            }
         }
     }
 }

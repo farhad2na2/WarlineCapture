@@ -4,6 +4,9 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.Tactical.Contracts;
+using Game.UI.Contracts;
+using Game.UI.Runtime;
 
 public sealed class MatchHudCommandFeedbackPanelTests
 {

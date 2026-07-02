@@ -3,381 +3,385 @@ using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Game.Components;
 
-public static class BattleScenarioAd006Runner
+namespace Game.Runtime
 {
-    public const string ScenarioId = "AD-006_AirMissileLauncher_RadarDisabledMidScenario_RadarComparison";
-
-    private const int Seed = 62345;
-    private const float FixedDeltaTime = 0.05f;
-    private const float MaxDurationSeconds = 16f;
-    private const float RadarDisableSeconds = 0.7f;
-    private static readonly float3 LauncherPosition = new(0f, 0f, 0f);
-    private static readonly float3 DefendedTargetPosition = new(-40f, 0f, 0f);
-
-    public static BattleScenarioVariant[] CreateDefaultVariants()
+    public static class BattleScenarioAd006Runner
     {
-        return new[]
+        public const string ScenarioId = "AD-006_AirMissileLauncher_RadarDisabledMidScenario_RadarComparison";
+
+        private const int Seed = 62345;
+        private const float FixedDeltaTime = 0.05f;
+        private const float MaxDurationSeconds = 16f;
+        private const float RadarDisableSeconds = 0.7f;
+        private static readonly float3 LauncherPosition = new(0f, 0f, 0f);
+        private static readonly float3 DefendedTargetPosition = new(-40f, 0f, 0f);
+
+        public static BattleScenarioVariant[] CreateDefaultVariants()
         {
-            new BattleScenarioVariant
+            return new[]
             {
-                VariantId = "AD-006-A-NoSupport-Normal",
-                Label = "No Support / Normal",
-                SupportMode = BattleScenarioSupportMode.None,
-                IncomingThreatKind = BattleScenarioIncomingThreatKind.GroundMissile,
-                IncomingThreatSpeedMultiplier = 1f,
-                IncomingThreatStartDistance = 135f,
-                IncomingThreatAltitude = 8f,
-                LauncherCount = 1,
-                RadarDistanceFromLauncher = 0f,
-                ExpectedOutcome = BattleScenarioExpectedOutcome.Baseline
-            },
-            new BattleScenarioVariant
+                new BattleScenarioVariant
+                {
+                    VariantId = "AD-006-A-NoSupport-Normal",
+                    Label = "No Support / Normal",
+                    SupportMode = BattleScenarioSupportMode.None,
+                    IncomingThreatKind = BattleScenarioIncomingThreatKind.GroundMissile,
+                    IncomingThreatSpeedMultiplier = 1f,
+                    IncomingThreatStartDistance = 135f,
+                    IncomingThreatAltitude = 8f,
+                    LauncherCount = 1,
+                    RadarDistanceFromLauncher = 0f,
+                    ExpectedOutcome = BattleScenarioExpectedOutcome.Baseline
+                },
+                new BattleScenarioVariant
+                {
+                    VariantId = "AD-006-B-RadarNear-Persistent",
+                    Label = "Radar Near / Persistent",
+                    SupportMode = BattleScenarioSupportMode.RadarNear,
+                    IncomingThreatKind = BattleScenarioIncomingThreatKind.GroundMissile,
+                    IncomingThreatSpeedMultiplier = 1f,
+                    IncomingThreatStartDistance = 135f,
+                    IncomingThreatAltitude = 8f,
+                    LauncherCount = 1,
+                    RadarDistanceFromLauncher = 8f,
+                    ExpectedOutcome = BattleScenarioExpectedOutcome.MustImproveOrMatchBaseline
+                },
+                new BattleScenarioVariant
+                {
+                    VariantId = "AD-006-C-RadarNear-DisabledMidScenario",
+                    Label = "Radar Near / Disabled Mid-Scenario",
+                    SupportMode = BattleScenarioSupportMode.RadarNear,
+                    IncomingThreatKind = BattleScenarioIncomingThreatKind.GroundMissile,
+                    IncomingThreatSpeedMultiplier = 1f,
+                    IncomingThreatStartDistance = 135f,
+                    IncomingThreatAltitude = 8f,
+                    LauncherCount = 1,
+                    RadarDistanceFromLauncher = 8f,
+                    ExpectedOutcome = BattleScenarioExpectedOutcome.MustImproveOrMatchBaseline
+                }
+            };
+        }
+
+        public static BattleScenarioResult RunDefault()
+        {
+            return RunVariants(CreateDefaultVariants(), Seed, FixedDeltaTime, MaxDurationSeconds);
+        }
+
+        public static BattleScenarioResult RunDefinition(BattleScenarioDefinition definition)
+        {
+            if (definition == null)
+                throw new ArgumentNullException(nameof(definition));
+
+            if (definition.ScenarioId != ScenarioId)
+                throw new ArgumentException($"Unsupported AD-006 scenario id '{definition.ScenarioId}'.", nameof(definition));
+
+            BattleScenarioVariant[] variants = definition.ScenarioVariants;
+            if (variants.Length == 0)
+                variants = CreateDefaultVariants();
+
+            return RunVariants(
+                variants,
+                definition.RandomSeed,
+                definition.FixedDeltaTime,
+                definition.MaxDurationSeconds);
+        }
+
+        private static BattleScenarioResult RunVariants(
+            BattleScenarioVariant[] variants,
+            int seed,
+            float fixedDeltaTime,
+            float maxDurationSeconds)
+        {
+            var result = new BattleScenarioResult
             {
-                VariantId = "AD-006-B-RadarNear-Persistent",
-                Label = "Radar Near / Persistent",
-                SupportMode = BattleScenarioSupportMode.RadarNear,
-                IncomingThreatKind = BattleScenarioIncomingThreatKind.GroundMissile,
-                IncomingThreatSpeedMultiplier = 1f,
-                IncomingThreatStartDistance = 135f,
-                IncomingThreatAltitude = 8f,
-                LauncherCount = 1,
-                RadarDistanceFromLauncher = 8f,
-                ExpectedOutcome = BattleScenarioExpectedOutcome.MustImproveOrMatchBaseline
-            },
-            new BattleScenarioVariant
+                ScenarioId = ScenarioId,
+                GeneratedAtUtc = DateTime.UtcNow.ToString("O"),
+                FixedDeltaTime = fixedDeltaTime,
+                Variants = new BattleScenarioMetrics[variants.Length],
+                FailureReason = BattleScenarioFailureReason.None
+            };
+
+            for (int i = 0; i < variants.Length; i++)
+                result.Variants[i] = RunVariant(variants[i], seed, fixedDeltaTime, maxDurationSeconds);
+
+            result.Comparisons = new[]
             {
-                VariantId = "AD-006-C-RadarNear-DisabledMidScenario",
-                Label = "Radar Near / Disabled Mid-Scenario",
-                SupportMode = BattleScenarioSupportMode.RadarNear,
-                IncomingThreatKind = BattleScenarioIncomingThreatKind.GroundMissile,
-                IncomingThreatSpeedMultiplier = 1f,
-                IncomingThreatStartDistance = 135f,
-                IncomingThreatAltitude = 8f,
-                LauncherCount = 1,
-                RadarDistanceFromLauncher = 8f,
-                ExpectedOutcome = BattleScenarioExpectedOutcome.MustImproveOrMatchBaseline
+                BattleScenarioResultComparison.CompareRadarSupport(result.Variants[0], result.Variants[1]),
+                BattleScenarioResultComparison.CompareRadarSupport(result.Variants[0], result.Variants[2])
+            };
+            result.Passed = EvaluateResult(result);
+            if (!result.Passed)
+                result.FailureReason = BattleScenarioFailureReason.MetricsComparisonFailed;
+
+            return result;
+        }
+
+        private static BattleScenarioMetrics RunVariant(
+            BattleScenarioVariant variant,
+            int seed,
+            float fixedDeltaTime,
+            float maxDurationSeconds)
+        {
+            using World world = new($"BattleScenarioLab_{variant.VariantId}");
+            EntityManager em = world.EntityManager;
+            Entity launcher = CreateLauncher(em);
+            Entity incomingMissile = CreateIncomingGroundMissile(em, variant);
+            Entity radarProvider = Entity.Null;
+            bool shouldDisableRadar = variant.VariantId.Contains("DisabledMidScenario", StringComparison.Ordinal);
+            bool radarDisabled = false;
+            bool radarWasUsed = false;
+            if (variant.SupportMode == BattleScenarioSupportMode.RadarNear)
+                radarProvider = CreateRadarSupportProvider(em, variant.RadarDistanceFromLauncher);
+
+            SystemHandle supportSystem = world.CreateSystem<AirMissileLauncherSupportLinkSystem>();
+            SystemHandle acquisitionSystem = world.CreateSystem<AirMissileLauncherTargetAcquisitionSystem>();
+            SystemHandle fireControlSystem = world.CreateSystem<AirMissileLauncherFireControlSystem>();
+            SystemHandle homingSystem = world.CreateSystem<AirMissileHomingProjectileSystem>();
+            SystemHandle airImpactSystem = world.CreateSystem<AirMissileImpactSystem>();
+            SystemHandle groundFlightSystem = world.CreateSystem<GroundMissileProjectileFlightSystem>();
+            SystemHandle groundImpactSystem = world.CreateSystem<GroundMissileImpactSystem>();
+
+            bool incomingWasAlive = true;
+            return BattleScenarioFixedStepRunner.RunVariant(
+                ScenarioId,
+                variant,
+                seed,
+                fixedDeltaTime,
+                maxDurationSeconds,
+                (state, metrics) =>
+                {
+                    world.SetTime(new TimeData(state.TimeSeconds, state.FixedDeltaTime));
+                    if (shouldDisableRadar && !radarDisabled && state.TimeSeconds >= RadarDisableSeconds)
+                    {
+                        if (em.Exists(radarProvider))
+                            em.DestroyEntity(radarProvider);
+                        radarDisabled = true;
+                    }
+
+                    UpdateIfHasWork(world, supportSystem);
+                    radarWasUsed |= HasRadarProvider(em, launcher);
+                    UpdateIfHasWork(world, groundFlightSystem);
+                    UpdateIfHasWork(world, acquisitionSystem);
+                    CaptureLauncherMetrics(em, launcher, incomingMissile, metrics, state, radarWasUsed);
+                    UpdateIfHasWork(world, fireControlSystem);
+                    CaptureLauncherMetrics(em, launcher, incomingMissile, metrics, state, radarWasUsed);
+                    CaptureProjectileMetrics(em, incomingMissile, metrics);
+                    UpdateIfHasWork(world, homingSystem);
+                    UpdateIfHasWork(world, airImpactSystem);
+                    UpdateIfHasWork(world, groundImpactSystem);
+                    CaptureProjectileMetrics(em, incomingMissile, metrics);
+
+                    bool incomingAlive = em.Exists(incomingMissile) && em.HasComponent<GroundMissileProjectileComponent>(incomingMissile);
+                    if (incomingWasAlive && !incomingAlive)
+                    {
+                        incomingWasAlive = false;
+                        metrics.Intercepted = !metrics.IncomingThreatImpacted;
+                        metrics.InterceptTimeSeconds = state.TimeSeconds;
+                        metrics.FailureReason = metrics.Intercepted
+                            ? BattleScenarioFailureReason.None
+                            : BattleScenarioFailureReason.IncomingThreatImpactedTarget;
+                        return metrics.Intercepted
+                            ? BattleScenarioStepOutcome.Complete
+                            : BattleScenarioStepOutcome.Failed;
+                    }
+
+                    if (em.Exists(incomingMissile) && em.HasComponent<GroundMissileImpactRequestComponent>(incomingMissile))
+                    {
+                        metrics.IncomingThreatImpacted = true;
+                        metrics.IncomingThreatImpactTimeSeconds = state.TimeSeconds;
+                        metrics.FailureReason = BattleScenarioFailureReason.IncomingThreatImpactedTarget;
+                        return BattleScenarioStepOutcome.Failed;
+                    }
+
+                    return BattleScenarioStepOutcome.Continue;
+                });
+        }
+
+        private static bool EvaluateResult(BattleScenarioResult result)
+        {
+            if (result.Variants.Length < 3 || result.Comparisons.Length < 2)
+                return false;
+
+            BattleScenarioMetrics persistentRadar = result.Variants[1];
+            BattleScenarioMetrics disabledRadar = result.Variants[2];
+            BattleScenarioComparison persistentComparison = result.Comparisons[0];
+            BattleScenarioComparison disabledComparison = result.Comparisons[1];
+            return persistentRadar.Intercepted &&
+                   disabledRadar.RadarProviderUsed &&
+                   disabledRadar.Intercepted &&
+                   disabledRadar.LauncherEffectiveRange <= result.Variants[0].LauncherEffectiveRange + 0.01f &&
+                   persistentComparison.RadarImprovedLockTime &&
+                   persistentComparison.RadarImprovedOrMatchedOutcome &&
+                   disabledComparison.RadarImprovedOrMatchedOutcome;
+        }
+
+        private static void UpdateIfHasWork(World world, SystemHandle system)
+        {
+            if (world.Unmanaged.ResolveSystemStateRef(system).ShouldRunSystem())
+                system.Update(world.Unmanaged);
+        }
+
+        private static Entity CreateLauncher(EntityManager em)
+        {
+            return BattleScenarioEcsSpawnHelpers.CreateAirMissileLauncher(
+                em,
+                LauncherPosition,
+                FactionIdentity.PlayerFactionId,
+                500,
+                new AirMissileLauncherComponent
+                {
+                    MinRange = 4f,
+                    BaseDetectionRange = 140f,
+                    MaxDetectionRange = 260f,
+                    AirTargetPriority = 25f,
+                    IncomingMissilePriority = 100f,
+                    TurretYawSpeedDegreesPerSecond = 900f,
+                    AimToleranceDegrees = 5f,
+                    LockSeconds = 0.9f,
+                    LaunchDelaySeconds = 0.1f,
+                    ReloadSeconds = 1.5f,
+                    MissileSpeed = 95f,
+                    MissileAcceleration = 0f,
+                    MissileTurnRateDegreesPerSecond = 140f,
+                    MissileLifetimeSeconds = 5f,
+                    ProximityFuseRadius = 4f,
+                    AirTargetDamage = 120,
+                    IncomingMissileDamage = 9999,
+                    TrackingQuality = 0.75f,
+                    MaxSupportRangeBonus = 120f,
+                    MaxSupportTrackingBonus = 0.3f
+                },
+                new AirMissileLauncherStateComponent
+                {
+                    Phase = (byte)AirMissileLauncherPhase.Idle,
+                    TargetEntity = Entity.Null,
+                    TargetKind = (byte)AirMissileTargetKind.None,
+                    EffectiveRange = 140f,
+                    EffectiveLockSeconds = 0.9f,
+                    EffectiveTrackingQuality = 0.75f,
+                    EffectiveTurnRateDegreesPerSecond = 140f,
+                    SelectedMissileSlot = -1
+                },
+                new AirDefenseSupportLinkComponent
+                {
+                    LockTimeMultiplier = 1f
+                });
+        }
+
+        private static Entity CreateIncomingGroundMissile(EntityManager em, BattleScenarioVariant variant)
+        {
+            float3 start = new(variant.IncomingThreatStartDistance, variant.IncomingThreatAltitude, 0f);
+            return BattleScenarioEcsSpawnHelpers.CreateIncomingGroundMissile(
+                em,
+                start,
+                DefendedTargetPosition,
+                FactionIdentity.EnemyFactionId,
+                8f / math.max(0.1f, variant.IncomingThreatSpeedMultiplier),
+                10f,
+                8f,
+                120);
+        }
+
+        private static Entity CreateRadarSupportProvider(EntityManager em, float distanceFromLauncher)
+        {
+            return BattleScenarioEcsSpawnHelpers.CreateAirDefenseSupportProvider(
+                em,
+                LauncherPosition + new float3(distanceFromLauncher, 0f, 0f),
+                FactionIdentity.PlayerFactionId,
+                AirDefenseSupportProviderKind.Radar,
+                1,
+                90f,
+                AirDefenseSupportTuning.RadarRangeBonus,
+                AirDefenseSupportTuning.RadarLockTimeMultiplier,
+                AirDefenseSupportTuning.RadarTrackingBonus,
+                AirDefenseSupportTuning.RadarTurnRateBonus);
+        }
+
+        private static bool HasRadarProvider(EntityManager em, Entity launcher)
+        {
+            return em.Exists(launcher) &&
+                   em.HasComponent<AirDefenseSupportLinkComponent>(launcher) &&
+                   em.GetComponentData<AirDefenseSupportLinkComponent>(launcher).RadarProvider != Entity.Null;
+        }
+
+        private static void CaptureLauncherMetrics(
+            EntityManager em,
+            Entity launcher,
+            Entity incomingMissile,
+            BattleScenarioMetrics metrics,
+            BattleScenarioFixedStepState state,
+            bool radarWasUsed)
+        {
+            if (!em.Exists(launcher))
+                return;
+
+            AirMissileLauncherStateComponent launcherState = em.GetComponentData<AirMissileLauncherStateComponent>(launcher);
+            AirDefenseSupportLinkComponent supportLink = em.GetComponentData<AirDefenseSupportLinkComponent>(launcher);
+            metrics.LauncherEffectiveRange = launcherState.EffectiveRange;
+            metrics.LauncherEffectiveLockSeconds = launcherState.EffectiveLockSeconds;
+            metrics.LauncherEffectiveTrackingQuality = launcherState.EffectiveTrackingQuality;
+            metrics.LauncherEffectiveTurnRateDegreesPerSecond = launcherState.EffectiveTurnRateDegreesPerSecond;
+            metrics.RadarProviderUsed = radarWasUsed || supportLink.RadarProvider != Entity.Null;
+            metrics.SatelliteProviderUsed = supportLink.SatelliteProvider != Entity.Null;
+
+            if (!metrics.Detected && em.HasComponent<AirMissileLauncherTargetComponent>(launcher))
+            {
+                metrics.Detected = true;
+                metrics.DetectionTimeSeconds = state.TimeSeconds;
+                if (em.Exists(incomingMissile) && em.HasComponent<LocalTransform>(incomingMissile))
+                {
+                    float3 missilePosition = em.GetComponentData<LocalTransform>(incomingMissile).Position;
+                    metrics.IncomingThreatDistanceAtDetection = math.distance(LauncherPosition, missilePosition);
+                }
             }
-        };
-    }
 
-    public static BattleScenarioResult RunDefault()
-    {
-        return RunVariants(CreateDefaultVariants(), Seed, FixedDeltaTime, MaxDurationSeconds);
-    }
-
-    public static BattleScenarioResult RunDefinition(BattleScenarioDefinition definition)
-    {
-        if (definition == null)
-            throw new ArgumentNullException(nameof(definition));
-
-        if (definition.ScenarioId != ScenarioId)
-            throw new ArgumentException($"Unsupported AD-006 scenario id '{definition.ScenarioId}'.", nameof(definition));
-
-        BattleScenarioVariant[] variants = definition.ScenarioVariants;
-        if (variants.Length == 0)
-            variants = CreateDefaultVariants();
-
-        return RunVariants(
-            variants,
-            definition.RandomSeed,
-            definition.FixedDeltaTime,
-            definition.MaxDurationSeconds);
-    }
-
-    private static BattleScenarioResult RunVariants(
-        BattleScenarioVariant[] variants,
-        int seed,
-        float fixedDeltaTime,
-        float maxDurationSeconds)
-    {
-        var result = new BattleScenarioResult
-        {
-            ScenarioId = ScenarioId,
-            GeneratedAtUtc = DateTime.UtcNow.ToString("O"),
-            FixedDeltaTime = fixedDeltaTime,
-            Variants = new BattleScenarioMetrics[variants.Length],
-            FailureReason = BattleScenarioFailureReason.None
-        };
-
-        for (int i = 0; i < variants.Length; i++)
-            result.Variants[i] = RunVariant(variants[i], seed, fixedDeltaTime, maxDurationSeconds);
-
-        result.Comparisons = new[]
-        {
-            BattleScenarioResultComparison.CompareRadarSupport(result.Variants[0], result.Variants[1]),
-            BattleScenarioResultComparison.CompareRadarSupport(result.Variants[0], result.Variants[2])
-        };
-        result.Passed = EvaluateResult(result);
-        if (!result.Passed)
-            result.FailureReason = BattleScenarioFailureReason.MetricsComparisonFailed;
-
-        return result;
-    }
-
-    private static BattleScenarioMetrics RunVariant(
-        BattleScenarioVariant variant,
-        int seed,
-        float fixedDeltaTime,
-        float maxDurationSeconds)
-    {
-        using World world = new($"BattleScenarioLab_{variant.VariantId}");
-        EntityManager em = world.EntityManager;
-        Entity launcher = CreateLauncher(em);
-        Entity incomingMissile = CreateIncomingGroundMissile(em, variant);
-        Entity radarProvider = Entity.Null;
-        bool shouldDisableRadar = variant.VariantId.Contains("DisabledMidScenario", StringComparison.Ordinal);
-        bool radarDisabled = false;
-        bool radarWasUsed = false;
-        if (variant.SupportMode == BattleScenarioSupportMode.RadarNear)
-            radarProvider = CreateRadarSupportProvider(em, variant.RadarDistanceFromLauncher);
-
-        SystemHandle supportSystem = world.CreateSystem<AirMissileLauncherSupportLinkSystem>();
-        SystemHandle acquisitionSystem = world.CreateSystem<AirMissileLauncherTargetAcquisitionSystem>();
-        SystemHandle fireControlSystem = world.CreateSystem<AirMissileLauncherFireControlSystem>();
-        SystemHandle homingSystem = world.CreateSystem<AirMissileHomingProjectileSystem>();
-        SystemHandle airImpactSystem = world.CreateSystem<AirMissileImpactSystem>();
-        SystemHandle groundFlightSystem = world.CreateSystem<GroundMissileProjectileFlightSystem>();
-        SystemHandle groundImpactSystem = world.CreateSystem<GroundMissileImpactSystem>();
-
-        bool incomingWasAlive = true;
-        return BattleScenarioFixedStepRunner.RunVariant(
-            ScenarioId,
-            variant,
-            seed,
-            fixedDeltaTime,
-            maxDurationSeconds,
-            (state, metrics) =>
+            if (!metrics.TrackingStarted && launcherState.Phase == (byte)AirMissileLauncherPhase.Tracking)
             {
-                world.SetTime(new TimeData(state.TimeSeconds, state.FixedDeltaTime));
-                if (shouldDisableRadar && !radarDisabled && state.TimeSeconds >= RadarDisableSeconds)
-                {
-                    if (em.Exists(radarProvider))
-                        em.DestroyEntity(radarProvider);
-                    radarDisabled = true;
-                }
+                metrics.TrackingStarted = true;
+                metrics.TrackingStartTimeSeconds = state.TimeSeconds;
+            }
 
-                UpdateIfHasWork(world, supportSystem);
-                radarWasUsed |= HasRadarProvider(em, launcher);
-                UpdateIfHasWork(world, groundFlightSystem);
-                UpdateIfHasWork(world, acquisitionSystem);
-                CaptureLauncherMetrics(em, launcher, incomingMissile, metrics, state, radarWasUsed);
-                UpdateIfHasWork(world, fireControlSystem);
-                CaptureLauncherMetrics(em, launcher, incomingMissile, metrics, state, radarWasUsed);
-                CaptureProjectileMetrics(em, incomingMissile, metrics);
-                UpdateIfHasWork(world, homingSystem);
-                UpdateIfHasWork(world, airImpactSystem);
-                UpdateIfHasWork(world, groundImpactSystem);
-                CaptureProjectileMetrics(em, incomingMissile, metrics);
-
-                bool incomingAlive = em.Exists(incomingMissile) && em.HasComponent<GroundMissileProjectileComponent>(incomingMissile);
-                if (incomingWasAlive && !incomingAlive)
-                {
-                    incomingWasAlive = false;
-                    metrics.Intercepted = !metrics.IncomingThreatImpacted;
-                    metrics.InterceptTimeSeconds = state.TimeSeconds;
-                    metrics.FailureReason = metrics.Intercepted
-                        ? BattleScenarioFailureReason.None
-                        : BattleScenarioFailureReason.IncomingThreatImpactedTarget;
-                    return metrics.Intercepted
-                        ? BattleScenarioStepOutcome.Complete
-                        : BattleScenarioStepOutcome.Failed;
-                }
-
-                if (em.Exists(incomingMissile) && em.HasComponent<GroundMissileImpactRequestComponent>(incomingMissile))
-                {
-                    metrics.IncomingThreatImpacted = true;
-                    metrics.IncomingThreatImpactTimeSeconds = state.TimeSeconds;
-                    metrics.FailureReason = BattleScenarioFailureReason.IncomingThreatImpactedTarget;
-                    return BattleScenarioStepOutcome.Failed;
-                }
-
-                return BattleScenarioStepOutcome.Continue;
-            });
-    }
-
-    private static bool EvaluateResult(BattleScenarioResult result)
-    {
-        if (result.Variants.Length < 3 || result.Comparisons.Length < 2)
-            return false;
-
-        BattleScenarioMetrics persistentRadar = result.Variants[1];
-        BattleScenarioMetrics disabledRadar = result.Variants[2];
-        BattleScenarioComparison persistentComparison = result.Comparisons[0];
-        BattleScenarioComparison disabledComparison = result.Comparisons[1];
-        return persistentRadar.Intercepted &&
-               disabledRadar.RadarProviderUsed &&
-               disabledRadar.Intercepted &&
-               disabledRadar.LauncherEffectiveRange <= result.Variants[0].LauncherEffectiveRange + 0.01f &&
-               persistentComparison.RadarImprovedLockTime &&
-               persistentComparison.RadarImprovedOrMatchedOutcome &&
-               disabledComparison.RadarImprovedOrMatchedOutcome;
-    }
-
-    private static void UpdateIfHasWork(World world, SystemHandle system)
-    {
-        if (world.Unmanaged.ResolveSystemStateRef(system).ShouldRunSystem())
-            system.Update(world.Unmanaged);
-    }
-
-    private static Entity CreateLauncher(EntityManager em)
-    {
-        return BattleScenarioEcsSpawnHelpers.CreateAirMissileLauncher(
-            em,
-            LauncherPosition,
-            FactionIdentity.PlayerFactionId,
-            500,
-            new AirMissileLauncherComponent
+            if (!metrics.Locked &&
+                (launcherState.Phase == (byte)AirMissileLauncherPhase.Locked ||
+                 launcherState.Phase == (byte)AirMissileLauncherPhase.Launching ||
+                 launcherState.Phase == (byte)AirMissileLauncherPhase.Reloading))
             {
-                MinRange = 4f,
-                BaseDetectionRange = 140f,
-                MaxDetectionRange = 260f,
-                AirTargetPriority = 25f,
-                IncomingMissilePriority = 100f,
-                TurretYawSpeedDegreesPerSecond = 900f,
-                AimToleranceDegrees = 5f,
-                LockSeconds = 0.9f,
-                LaunchDelaySeconds = 0.1f,
-                ReloadSeconds = 1.5f,
-                MissileSpeed = 95f,
-                MissileAcceleration = 0f,
-                MissileTurnRateDegreesPerSecond = 140f,
-                MissileLifetimeSeconds = 5f,
-                ProximityFuseRadius = 4f,
-                AirTargetDamage = 120,
-                IncomingMissileDamage = 9999,
-                TrackingQuality = 0.75f,
-                MaxSupportRangeBonus = 120f,
-                MaxSupportTrackingBonus = 0.3f
-            },
-            new AirMissileLauncherStateComponent
-            {
-                Phase = (byte)AirMissileLauncherPhase.Idle,
-                TargetEntity = Entity.Null,
-                TargetKind = (byte)AirMissileTargetKind.None,
-                EffectiveRange = 140f,
-                EffectiveLockSeconds = 0.9f,
-                EffectiveTrackingQuality = 0.75f,
-                EffectiveTurnRateDegreesPerSecond = 140f,
-                SelectedMissileSlot = -1
-            },
-            new AirDefenseSupportLinkComponent
-            {
-                LockTimeMultiplier = 1f
-            });
-    }
-
-    private static Entity CreateIncomingGroundMissile(EntityManager em, BattleScenarioVariant variant)
-    {
-        float3 start = new(variant.IncomingThreatStartDistance, variant.IncomingThreatAltitude, 0f);
-        return BattleScenarioEcsSpawnHelpers.CreateIncomingGroundMissile(
-            em,
-            start,
-            DefendedTargetPosition,
-            FactionIdentity.EnemyFactionId,
-            8f / math.max(0.1f, variant.IncomingThreatSpeedMultiplier),
-            10f,
-            8f,
-            120);
-    }
-
-    private static Entity CreateRadarSupportProvider(EntityManager em, float distanceFromLauncher)
-    {
-        return BattleScenarioEcsSpawnHelpers.CreateAirDefenseSupportProvider(
-            em,
-            LauncherPosition + new float3(distanceFromLauncher, 0f, 0f),
-            FactionIdentity.PlayerFactionId,
-            AirDefenseSupportProviderKind.Radar,
-            1,
-            90f,
-            AirDefenseSupportTuning.RadarRangeBonus,
-            AirDefenseSupportTuning.RadarLockTimeMultiplier,
-            AirDefenseSupportTuning.RadarTrackingBonus,
-            AirDefenseSupportTuning.RadarTurnRateBonus);
-    }
-
-    private static bool HasRadarProvider(EntityManager em, Entity launcher)
-    {
-        return em.Exists(launcher) &&
-               em.HasComponent<AirDefenseSupportLinkComponent>(launcher) &&
-               em.GetComponentData<AirDefenseSupportLinkComponent>(launcher).RadarProvider != Entity.Null;
-    }
-
-    private static void CaptureLauncherMetrics(
-        EntityManager em,
-        Entity launcher,
-        Entity incomingMissile,
-        BattleScenarioMetrics metrics,
-        BattleScenarioFixedStepState state,
-        bool radarWasUsed)
-    {
-        if (!em.Exists(launcher))
-            return;
-
-        AirMissileLauncherStateComponent launcherState = em.GetComponentData<AirMissileLauncherStateComponent>(launcher);
-        AirDefenseSupportLinkComponent supportLink = em.GetComponentData<AirDefenseSupportLinkComponent>(launcher);
-        metrics.LauncherEffectiveRange = launcherState.EffectiveRange;
-        metrics.LauncherEffectiveLockSeconds = launcherState.EffectiveLockSeconds;
-        metrics.LauncherEffectiveTrackingQuality = launcherState.EffectiveTrackingQuality;
-        metrics.LauncherEffectiveTurnRateDegreesPerSecond = launcherState.EffectiveTurnRateDegreesPerSecond;
-        metrics.RadarProviderUsed = radarWasUsed || supportLink.RadarProvider != Entity.Null;
-        metrics.SatelliteProviderUsed = supportLink.SatelliteProvider != Entity.Null;
-
-        if (!metrics.Detected && em.HasComponent<AirMissileLauncherTargetComponent>(launcher))
-        {
-            metrics.Detected = true;
-            metrics.DetectionTimeSeconds = state.TimeSeconds;
-            if (em.Exists(incomingMissile) && em.HasComponent<LocalTransform>(incomingMissile))
-            {
-                float3 missilePosition = em.GetComponentData<LocalTransform>(incomingMissile).Position;
-                metrics.IncomingThreatDistanceAtDetection = math.distance(LauncherPosition, missilePosition);
+                metrics.Locked = true;
+                metrics.LockTimeSeconds = state.TimeSeconds;
             }
         }
 
-        if (!metrics.TrackingStarted && launcherState.Phase == (byte)AirMissileLauncherPhase.Tracking)
+        private static void CaptureProjectileMetrics(
+            EntityManager em,
+            Entity incomingMissile,
+            BattleScenarioMetrics metrics)
         {
-            metrics.TrackingStarted = true;
-            metrics.TrackingStartTimeSeconds = state.TimeSeconds;
-        }
+            using EntityQuery projectileQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<AirMissileProjectileComponent>(),
+                ComponentType.ReadOnly<LocalTransform>());
+            if (projectileQuery.CalculateEntityCount() <= 0)
+                return;
 
-        if (!metrics.Locked &&
-            (launcherState.Phase == (byte)AirMissileLauncherPhase.Locked ||
-             launcherState.Phase == (byte)AirMissileLauncherPhase.Launching ||
-             launcherState.Phase == (byte)AirMissileLauncherPhase.Reloading))
-        {
-            metrics.Locked = true;
-            metrics.LockTimeSeconds = state.TimeSeconds;
-        }
-    }
+            if (!metrics.InterceptorLaunched)
+            {
+                metrics.InterceptorLaunched = true;
+                metrics.LaunchTimeSeconds = metrics.DurationSeconds;
+            }
 
-    private static void CaptureProjectileMetrics(
-        EntityManager em,
-        Entity incomingMissile,
-        BattleScenarioMetrics metrics)
-    {
-        using EntityQuery projectileQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<AirMissileProjectileComponent>(),
-            ComponentType.ReadOnly<LocalTransform>());
-        if (projectileQuery.CalculateEntityCount() <= 0)
-            return;
+            if (!em.Exists(incomingMissile) || !em.HasComponent<LocalTransform>(incomingMissile))
+                return;
 
-        if (!metrics.InterceptorLaunched)
-        {
-            metrics.InterceptorLaunched = true;
-            metrics.LaunchTimeSeconds = metrics.DurationSeconds;
-        }
-
-        if (!em.Exists(incomingMissile) || !em.HasComponent<LocalTransform>(incomingMissile))
-            return;
-
-        float3 threatPosition = em.GetComponentData<LocalTransform>(incomingMissile).Position;
-        using Unity.Collections.NativeArray<LocalTransform> transforms =
-            projectileQuery.ToComponentDataArray<LocalTransform>(Unity.Collections.Allocator.Temp);
-        for (int i = 0; i < transforms.Length; i++)
-        {
-            float distance = math.distance(transforms[i].Position, threatPosition);
-            if (metrics.ClosestInterceptorDistanceToThreat < 0f || distance < metrics.ClosestInterceptorDistanceToThreat)
-                metrics.ClosestInterceptorDistanceToThreat = distance;
+            float3 threatPosition = em.GetComponentData<LocalTransform>(incomingMissile).Position;
+            using Unity.Collections.NativeArray<LocalTransform> transforms =
+                projectileQuery.ToComponentDataArray<LocalTransform>(Unity.Collections.Allocator.Temp);
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                float distance = math.distance(transforms[i].Position, threatPosition);
+                if (metrics.ClosestInterceptorDistanceToThreat < 0f || distance < metrics.ClosestInterceptorDistanceToThreat)
+                    metrics.ClosestInterceptorDistanceToThreat = distance;
+            }
         }
     }
 }

@@ -3,52 +3,56 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Game.Components;
 
-[BurstCompile]
-[UpdateAfter(typeof(UnitSurfaceTrackingSystem))]
-[UpdateBefore(typeof(UnitMoveVisualStateSystem))]
-public partial struct UnitGroundingSystem : ISystem
+namespace Game.Runtime
 {
     [BurstCompile]
-    public void OnCreate(ref SystemState state)
+    [UpdateAfter(typeof(UnitSurfaceTrackingSystem))]
+    [UpdateBefore(typeof(UnitMoveVisualStateSystem))]
+    public partial struct UnitGroundingSystem : ISystem
     {
-        state.RequireForUpdate<UnitSurfaceComponent>();
-    }
-
-    [BurstCompile]
-    public void OnUpdate(ref SystemState state)
-    {
-        var job = new GroundUnitsJob
+        [BurstCompile]
+        public void OnCreate(ref SystemState state)
         {
-            GroundOffsetLookup = SystemAPI.GetComponentLookup<UnitGroundOffsetComponent>(true)
-        };
-        state.Dependency = job.ScheduleParallel(state.Dependency);
-    }
+            state.RequireForUpdate<UnitSurfaceComponent>();
+        }
 
-    [BurstCompile]
-    [WithNone(typeof(UnitAirMovement))]
-    private partial struct GroundUnitsJob : IJobEntity
-    {
-        [ReadOnly] public ComponentLookup<UnitGroundOffsetComponent> GroundOffsetLookup;
-
-        public void Execute(
-            Entity entity,
-            ref LocalTransform transform,
-            ref UnitSurfaceComponent unitSurface)
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
         {
-            if (unitSurface.HasSurface == 0)
-                return;
+            var job = new GroundUnitsJob
+            {
+                GroundOffsetLookup = SystemAPI.GetComponentLookup<UnitGroundOffsetComponent>(true)
+            };
+            state.Dependency = job.ScheduleParallel(state.Dependency);
+        }
 
-            float offset = GroundOffsetLookup.HasComponent(entity)
-                ? GroundOffsetLookup[entity].Value
-                : 0f;
+        [BurstCompile]
+        [WithNone(typeof(UnitAirMovement))]
+        private partial struct GroundUnitsJob : IJobEntity
+        {
+            [ReadOnly] public ComponentLookup<UnitGroundOffsetComponent> GroundOffsetLookup;
 
-            float3 position = transform.Position;
-            position.y = unitSurface.LastSampledHeight + offset;
-            transform.Position = position;
+            public void Execute(
+                Entity entity,
+                ref LocalTransform transform,
+                ref UnitSurfaceComponent unitSurface)
+            {
+                if (unitSurface.HasSurface == 0)
+                    return;
 
-            unitSurface.LastSampledNormal = math.normalizesafe(unitSurface.LastSampledNormal, new float3(0f, 1f, 0f));
-            unitSurface.IsGrounded = 1;
+                float offset = GroundOffsetLookup.HasComponent(entity)
+                    ? GroundOffsetLookup[entity].Value
+                    : 0f;
+
+                float3 position = transform.Position;
+                position.y = unitSurface.LastSampledHeight + offset;
+                transform.Position = position;
+
+                unitSurface.LastSampledNormal = math.normalizesafe(unitSurface.LastSampledNormal, new float3(0f, 1f, 0f));
+                unitSurface.IsGrounded = 1;
+            }
         }
     }
 }

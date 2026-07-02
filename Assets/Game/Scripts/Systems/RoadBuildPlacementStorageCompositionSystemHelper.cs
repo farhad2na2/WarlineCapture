@@ -1,99 +1,102 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class RoadBuildPlacementStorageCompositionSystemHelper
+namespace Game.Runtime
 {
-    private readonly RuntimeBuildingCollection<RuntimeBuildingEntity> _runtimeBuildingSystem = new();
-
-    public IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings => _runtimeBuildingSystem.Buildings;
-    public BuildingDefinition SoldierBaseDefinition { get; private set; }
-    public BuildingPlacementLifecycleCompositionSystemHelper.PlacementState ActivePlacement { get; private set; }
-    public bool HasPendingBuildingPlacement => ActivePlacement != null;
-    public bool CanConfirmBuildingPlacement => ActivePlacement != null && ActivePlacement.IsValid;
-    public bool HasSelectedBuilding => _runtimeBuildingSystem.HasSelectedBuilding();
-
-    public void SetSoldierBaseDefinition(BuildingDefinition definition)
+    internal sealed class RoadBuildPlacementStorageCompositionSystemHelper
     {
-        SoldierBaseDefinition = definition;
-    }
+        private readonly RuntimeBuildingCollection<RuntimeBuildingEntity> _runtimeBuildingSystem = new();
 
-    public void BeginPlacement(BuildingDefinition definition, GameObject previewInstance, Vector2Int originCell)
-    {
-        ActivePlacement = new BuildingPlacementLifecycleCompositionSystemHelper.PlacementState
+        public IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings => _runtimeBuildingSystem.Buildings;
+        public BuildingDefinition SoldierBaseDefinition { get; private set; }
+        public BuildingPlacementLifecycleCompositionSystemHelper.PlacementState ActivePlacement { get; private set; }
+        public bool HasPendingBuildingPlacement => ActivePlacement != null;
+        public bool CanConfirmBuildingPlacement => ActivePlacement != null && ActivePlacement.IsValid;
+        public bool HasSelectedBuilding => _runtimeBuildingSystem.HasSelectedBuilding();
+
+        public void SetSoldierBaseDefinition(BuildingDefinition definition)
         {
-            Definition = definition,
-            PreviewInstance = previewInstance,
-            OriginCell = originCell,
-            CommittedOriginCell = originCell,
-            DragStartOriginCell = originCell,
-            DragCurrentOriginCell = originCell
-        };
-    }
+            SoldierBaseDefinition = definition;
+        }
 
-    public GameObject ClearActivePlacement()
-    {
-        GameObject previewInstance = ActivePlacement?.PreviewInstance;
-        ActivePlacement = null;
-        return previewInstance;
-    }
+        public void BeginPlacement(BuildingDefinition definition, GameObject previewInstance, Vector2Int originCell)
+        {
+            ActivePlacement = new BuildingPlacementLifecycleCompositionSystemHelper.PlacementState
+            {
+                Definition = definition,
+                PreviewInstance = previewInstance,
+                OriginCell = originCell,
+                CommittedOriginCell = originCell,
+                DragStartOriginCell = originCell,
+                DragCurrentOriginCell = originCell
+            };
+        }
 
-    public void ReleaseActivePlacementPreview()
-    {
-        if (ActivePlacement != null)
-            ActivePlacement.PreviewInstance = null;
-    }
+        public GameObject ClearActivePlacement()
+        {
+            GameObject previewInstance = ActivePlacement?.PreviewInstance;
+            ActivePlacement = null;
+            return previewInstance;
+        }
 
-    public int AllocateBuildingId()
-    {
-        return _runtimeBuildingSystem.AllocateId();
-    }
+        public void ReleaseActivePlacementPreview()
+        {
+            if (ActivePlacement != null)
+                ActivePlacement.PreviewInstance = null;
+        }
 
-    public void AddBuilding(RuntimeBuildingEntity building)
-    {
-        if (building == null)
-            return;
+        public int AllocateBuildingId()
+        {
+            return _runtimeBuildingSystem.AllocateId();
+        }
 
-        _runtimeBuildingSystem.AddBuilding(building.Id, building);
-    }
+        public void AddBuilding(RuntimeBuildingEntity building)
+        {
+            if (building == null)
+                return;
 
-    public bool RemoveBuilding(int buildingId)
-    {
-        return _runtimeBuildingSystem.RemoveBuilding(buildingId);
-    }
+            _runtimeBuildingSystem.AddBuilding(building.Id, building);
+        }
 
-    public bool ContainsBuilding(int buildingId)
-    {
-        return _runtimeBuildingSystem.ContainsBuilding(buildingId);
-    }
+        public bool RemoveBuilding(int buildingId)
+        {
+            return _runtimeBuildingSystem.RemoveBuilding(buildingId);
+        }
 
-    public bool TryGetBuilding(int buildingId, out RuntimeBuildingEntity building)
-    {
-        return _runtimeBuildingSystem.TryGetBuilding(buildingId, out building);
-    }
+        public bool ContainsBuilding(int buildingId)
+        {
+            return _runtimeBuildingSystem.ContainsBuilding(buildingId);
+        }
 
-    public bool TryGetSelectedBuilding(out RuntimeBuildingEntity building)
-    {
-        building = null;
-        int? selectedBuildingId = _runtimeBuildingSystem.SelectedBuildingId;
-        return selectedBuildingId.HasValue &&
-               _runtimeBuildingSystem.TryGetBuilding(selectedBuildingId.Value, out building);
-    }
+        public bool TryGetBuilding(int buildingId, out RuntimeBuildingEntity building)
+        {
+            return _runtimeBuildingSystem.TryGetBuilding(buildingId, out building);
+        }
 
-    public void SelectBuilding(int buildingId)
-    {
-        if (_runtimeBuildingSystem.ContainsBuilding(buildingId))
-            _runtimeBuildingSystem.SelectBuilding(buildingId);
-    }
+        public bool TryGetSelectedBuilding(out RuntimeBuildingEntity building)
+        {
+            building = null;
+            int? selectedBuildingId = _runtimeBuildingSystem.SelectedBuildingId;
+            return selectedBuildingId.HasValue &&
+                   _runtimeBuildingSystem.TryGetBuilding(selectedBuildingId.Value, out building);
+        }
 
-    public void ClearSelection()
-    {
-        _runtimeBuildingSystem.ClearSelection();
-    }
+        public void SelectBuilding(int buildingId)
+        {
+            if (_runtimeBuildingSystem.ContainsBuilding(buildingId))
+                _runtimeBuildingSystem.SelectBuilding(buildingId);
+        }
 
-    public void Clear()
-    {
-        _runtimeBuildingSystem.Clear();
-        ActivePlacement = null;
-        SoldierBaseDefinition = null;
+        public void ClearSelection()
+        {
+            _runtimeBuildingSystem.ClearSelection();
+        }
+
+        public void Clear()
+        {
+            _runtimeBuildingSystem.Clear();
+            ActivePlacement = null;
+            SoldierBaseDefinition = null;
+        }
     }
 }

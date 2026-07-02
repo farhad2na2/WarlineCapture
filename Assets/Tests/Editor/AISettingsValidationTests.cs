@@ -1,5 +1,8 @@
 using NUnit.Framework;
 using Unity.Entities;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
 
 public sealed class AISettingsValidationTests
 {

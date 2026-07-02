@@ -1,36 +1,40 @@
 using Unity.Entities;
 using UnityEngine;
+using Game.Components;
 
-[UpdateInGroup(typeof(SimulationSystemGroup))]
-[UpdateAfter(typeof(UnitRenderBudgetSystem))]
-public partial struct UnitRenderBudgetDiagnosticLogFlushSystem : ISystem
+namespace Game.Rendering
 {
-    private EntityQuery _logQueueQuery;
-
-    public void OnCreate(ref SystemState state)
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    [UpdateAfter(typeof(UnitRenderBudgetSystem))]
+    public partial struct UnitRenderBudgetDiagnosticLogFlushSystem : ISystem
     {
-        _logQueueQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<UnitRenderBudgetDiagnosticLogQueueComponent>(),
-            ComponentType.ReadWrite<UnitRenderBudgetDiagnosticLogComponent>());
-        state.RequireForUpdate(_logQueueQuery);
-    }
+        private EntityQuery _logQueueQuery;
 
-    public void OnUpdate(ref SystemState state)
-    {
-        foreach (DynamicBuffer<UnitRenderBudgetDiagnosticLogComponent> logs in SystemAPI
-                     .Query<DynamicBuffer<UnitRenderBudgetDiagnosticLogComponent>>()
-                     .WithAll<UnitRenderBudgetDiagnosticLogQueueComponent>())
+        public void OnCreate(ref SystemState state)
         {
-            for (int logIndex = 0; logIndex < logs.Length; logIndex++)
-            {
-                UnitRenderBudgetDiagnosticLogComponent log = logs[logIndex];
-                if (log.Severity == UnitRenderBudgetDiagnosticLogComponent.WarningSeverity)
-                    Debug.LogWarning(log.Message.ToString());
-                else
-                    Debug.Log(log.Message.ToString());
-            }
+            _logQueueQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<UnitRenderBudgetDiagnosticLogQueueComponent>(),
+                ComponentType.ReadWrite<UnitRenderBudgetDiagnosticLogComponent>());
+            state.RequireForUpdate(_logQueueQuery);
+        }
 
-            logs.Clear();
+        public void OnUpdate(ref SystemState state)
+        {
+            foreach (DynamicBuffer<UnitRenderBudgetDiagnosticLogComponent> logs in SystemAPI
+                         .Query<DynamicBuffer<UnitRenderBudgetDiagnosticLogComponent>>()
+                         .WithAll<UnitRenderBudgetDiagnosticLogQueueComponent>())
+            {
+                for (int logIndex = 0; logIndex < logs.Length; logIndex++)
+                {
+                    UnitRenderBudgetDiagnosticLogComponent log = logs[logIndex];
+                    if (log.Severity == UnitRenderBudgetDiagnosticLogComponent.WarningSeverity)
+                        Debug.LogWarning(log.Message.ToString());
+                    else
+                        Debug.Log(log.Message.ToString());
+                }
+
+                logs.Clear();
+            }
         }
     }
 }

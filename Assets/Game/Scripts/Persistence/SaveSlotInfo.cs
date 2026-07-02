@@ -1,16 +1,19 @@
 using System;
 
-[Serializable]
-public readonly struct SaveSlotInfo
+namespace Game.Runtime
 {
-    public string SlotId { get; }
-    public string FileName { get; }
-    public bool Exists { get; }
-
-    public SaveSlotInfo(string slotId, string fileName, bool exists)
+    [Serializable]
+    public readonly struct SaveSlotInfo
     {
-        SlotId = slotId;
-        FileName = fileName;
-        Exists = exists;
+        public string SlotId { get; }
+        public string FileName { get; }
+        public bool Exists { get; }
+
+        public SaveSlotInfo(string slotId, string fileName, bool exists)
+        {
+            SlotId = slotId;
+            FileName = fileName;
+            Exists = exists;
+        }
     }
 }

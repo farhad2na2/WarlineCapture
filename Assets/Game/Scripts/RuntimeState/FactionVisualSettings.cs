@@ -1,39 +1,43 @@
 using UnityEngine;
+using Game.Configs;
 
-public sealed class FactionVisualSettings
+namespace Game.Runtime
 {
-    private FactionVisualSettingsConfig _config;
-    private Color _playerColor = new(0.12f, 0.72f, 1f, 1f);
-    private Color _enemyColor = new(1f, 0.35f, 0.2f, 1f);
-    private Color _neutralColor = new(0.82f, 0.82f, 0.82f, 1f);
-    private float _buildingFactionTintStrength = 0.45f;
-
-    public float BuildingFactionTintStrength => Mathf.Clamp01(_buildingFactionTintStrength);
-
-    public void Init(FactionVisualSettingsConfig config)
+    public sealed class FactionVisualSettings
     {
-        _config = config;
-        ApplyConfigIfAvailable();
-    }
+        private FactionVisualSettingsConfig _config;
+        private Color _playerColor = new(0.12f, 0.72f, 1f, 1f);
+        private Color _enemyColor = new(1f, 0.35f, 0.2f, 1f);
+        private Color _neutralColor = new(0.82f, 0.82f, 0.82f, 1f);
+        private float _buildingFactionTintStrength = 0.45f;
 
-    public Color GetColor(byte factionId)
-    {
-        return factionId switch
+        public float BuildingFactionTintStrength => Mathf.Clamp01(_buildingFactionTintStrength);
+
+        public void Init(FactionVisualSettingsConfig config)
         {
-            0 => _neutralColor,
-            1 => _playerColor,
-            _ => _enemyColor
-        };
-    }
+            _config = config;
+            ApplyConfigIfAvailable();
+        }
 
-    private void ApplyConfigIfAvailable()
-    {
-        if (_config == null)
-            return;
+        public Color GetColor(byte factionId)
+        {
+            return factionId switch
+            {
+                0 => _neutralColor,
+                1 => _playerColor,
+                _ => _enemyColor
+            };
+        }
 
-        _playerColor = _config.PlayerColor;
-        _enemyColor = _config.EnemyColor;
-        _neutralColor = _config.NeutralColor;
-        _buildingFactionTintStrength = _config.BuildingFactionTintStrength;
+        private void ApplyConfigIfAvailable()
+        {
+            if (_config == null)
+                return;
+
+            _playerColor = _config.PlayerColor;
+            _enemyColor = _config.EnemyColor;
+            _neutralColor = _config.NeutralColor;
+            _buildingFactionTintStrength = _config.BuildingFactionTintStrength;
+        }
     }
 }

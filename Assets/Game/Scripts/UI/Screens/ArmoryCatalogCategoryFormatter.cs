@@ -1,14 +1,19 @@
-public static class ArmoryCatalogCategoryFormatter
+using Game.UI.Contracts;
+
+namespace Game.UI.Runtime
 {
-    public static string Format(ArmoryCatalogCategory category)
+    public static class ArmoryCatalogCategoryFormatter
     {
-        return category switch
+        public static string Format(ArmoryCatalogCategory category)
         {
-            ArmoryCatalogCategory.Aircrafts => "AIRCRAFT",
-            ArmoryCatalogCategory.Buildings => "BUILDING",
-            ArmoryCatalogCategory.Vehicles => "VEHICLE",
-            ArmoryCatalogCategory.Support => "SUPPORT",
-            _ => "CHARACTER"
-        };
+            return category switch
+            {
+                ArmoryCatalogCategory.Aircrafts => "AIRCRAFT",
+                ArmoryCatalogCategory.Buildings => "BUILDING",
+                ArmoryCatalogCategory.Vehicles => "VEHICLE",
+                ArmoryCatalogCategory.Support => "SUPPORT",
+                _ => "CHARACTER"
+            };
+        }
     }
 }

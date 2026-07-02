@@ -1,21 +1,24 @@
 using UnityEngine;
 
-public sealed class CitizenVisualLifecycleReporter : MonoBehaviour
+namespace Game.Runtime
 {
-    public int CitizenId;
-    public bool SuppressNotifyOnDestroy;
-    private CitizenPopulationEventCompositionSystemHelper _eventSystem;
-
-    public void Bind(CitizenPopulationEventCompositionSystemHelper eventSystem)
+    public sealed class CitizenVisualLifecycleReporter : MonoBehaviour
     {
-        _eventSystem = eventSystem;
-    }
+        public int CitizenId;
+        public bool SuppressNotifyOnDestroy;
+        private CitizenPopulationEventCompositionSystemHelper _eventSystem;
 
-    private void OnDestroy()
-    {
-        if (SuppressNotifyOnDestroy)
-            return;
+        public void Bind(CitizenPopulationEventCompositionSystemHelper eventSystem)
+        {
+            _eventSystem = eventSystem;
+        }
 
-        _eventSystem?.NotifyVisibleCitizenDestroyed(CitizenId);
+        private void OnDestroy()
+        {
+            if (SuppressNotifyOnDestroy)
+                return;
+
+            _eventSystem?.NotifyVisibleCitizenDestroyed(CitizenId);
+        }
     }
 }

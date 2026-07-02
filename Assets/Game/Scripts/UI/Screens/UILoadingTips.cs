@@ -1,27 +1,30 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/UI/Loading Tips", fileName = "LoadingTips")]
-public sealed class UILoadingTips : ScriptableObject
+namespace Game.UI.Runtime
 {
-    [SerializeField] private string[] tips = Array.Empty<string>();
-
-    public int Count => tips?.Length ?? 0;
-
-    public string GetTip(int index)
+    [CreateAssetMenu(menuName = "Game/UI/Loading Tips", fileName = "LoadingTips")]
+    public sealed class UILoadingTips : ScriptableObject
     {
-        if (tips == null || tips.Length == 0)
-            return string.Empty;
+        [SerializeField] private string[] tips = Array.Empty<string>();
 
-        int safeIndex = Mathf.Abs(index) % tips.Length;
-        return tips[safeIndex];
-    }
+        public int Count => tips?.Length ?? 0;
 
-    public string GetRandomTip()
-    {
-        if (tips == null || tips.Length == 0)
-            return string.Empty;
+        public string GetTip(int index)
+        {
+            if (tips == null || tips.Length == 0)
+                return string.Empty;
 
-        return tips[UnityEngine.Random.Range(0, tips.Length)];
+            int safeIndex = Mathf.Abs(index) % tips.Length;
+            return tips[safeIndex];
+        }
+
+        public string GetRandomTip()
+        {
+            if (tips == null || tips.Length == 0)
+                return string.Empty;
+
+            return tips[UnityEngine.Random.Range(0, tips.Length)];
+        }
     }
 }

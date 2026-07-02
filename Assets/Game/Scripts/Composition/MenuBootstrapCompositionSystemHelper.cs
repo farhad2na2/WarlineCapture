@@ -1,697 +1,705 @@
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
+using Game.Components;
+using Game.UI.Runtime;
+using Game.Runtime;
 
-internal sealed class MenuBootstrapCompositionSystemHelper
+namespace Game.Composition
 {
-    private const int DeferredMatchLoadVisibleFrames = 2;
-    private const float MinimumLoadingVisibleSeconds = 2f;
-    private const float MatchReadyHoldSeconds = 0.75f;
-
-    private readonly SceneLifecycleSceneSystemHelper sceneLifecycleSceneSystemHelper = new();
-    private readonly MatchStartSceneSystemHelper matchStartSystem = new();
-    private readonly PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem = new();
-    private readonly MatchSceneReferenceSceneSystemHelper matchSceneReferenceSystem = new();
-    private readonly QuickCustomGameConfigStore quickCustomGameConfigStore = new();
-    private readonly MatchLaunchCommand matchLaunchCommand = new();
-
-    private EntityQuery boundaryQuery;
-    private Entity cachedBoundaryEntity;
-    private World cachedWorld;
-    private bool hasBoundaryQuery;
-    private EntityQuery sceneLifecycleQuery;
-    private World sceneLifecycleQueryWorld;
-    private bool hasSceneLifecycleQuery;
-    private EntityQuery matchStartBoundaryQuery;
-    private World matchStartBoundaryQueryWorld;
-    private bool hasMatchStartBoundaryQuery;
-    private EntityQuery matchStartProgressQuery;
-    private World matchStartProgressQueryWorld;
-    private bool hasMatchStartProgressQuery;
-    private bool diagnosticsInitialized;
-    private bool initialized;
-    private bool hasCapturedUiPresentation;
-    private CameraClearFlags defaultUiCameraClearFlags;
-    private Color defaultUiCameraBackgroundColor;
-    private bool defaultUiCameraEnabled;
-    private RenderMode defaultUiCanvasRenderMode;
-    private Camera defaultUiCanvasWorldCamera;
-    private int deferredMatchLoadFrame = -1;
-    private int activeLoadingSequenceId = -1;
-    private float activeLoadingStartedAt;
-    private UIRoute activeLoadingRoute;
-    private int activeMatchReadySequenceId = -1;
-    private float activeMatchReadyStartedAt;
-    private bool matchLoadQueuedForCurrentRoute;
-    private MatchSceneView boundMatchRuntimeView;
-    private SelectionUiCommandUiSystemHelper boundSelectionUiCommand;
-    private SelectionUiReadModelUiSystemHelper boundSelectionUiReadModel;
-    private MainMenuPlayUI boundMainMenu;
-    private int boundContentVersion = -1;
-
-    public PerformanceDiagnosticsSystemHelper PerformanceDiagnostics => performanceDiagnosticsSystem;
-    public bool IsPerformanceDiagnosticsInitialized => diagnosticsInitialized;
-
-    public void Initialize(MenuBootstrapView view)
+    internal sealed class MenuBootstrapCompositionSystemHelper
     {
-        if (view == null)
-            return;
+        private const int DeferredMatchLoadVisibleFrames = 2;
+        private const float MinimumLoadingVisibleSeconds = 2f;
+        private const float MatchReadyHoldSeconds = 0.75f;
 
-        bool wasInitialized = initialized;
-        ApplyEditorMenuPerformanceDefaults();
-        EnsurePersistentDiagnosticsInitialized();
-        view.ApplyRuntimeUiMode();
+        private readonly SceneLifecycleSceneSystemHelper sceneLifecycleSceneSystemHelper = new();
+        private readonly MatchStartSceneSystemHelper matchStartSystem = new();
+        private readonly PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem = new();
+        private readonly MatchSceneReferenceSceneSystemHelper matchSceneReferenceSystem = new();
+        private readonly QuickCustomGameConfigStore quickCustomGameConfigStore = new();
+        private readonly MatchLaunchCommand matchLaunchCommand = new();
 
-        if (view.ShellEcsPresentation != null)
-            view.ShellEcsPresentation.Configure(view.ShellView);
-        if (view.ContentSystem != null)
+        private EntityQuery boundaryQuery;
+        private Entity cachedBoundaryEntity;
+        private World cachedWorld;
+        private bool hasBoundaryQuery;
+        private EntityQuery sceneLifecycleQuery;
+        private World sceneLifecycleQueryWorld;
+        private bool hasSceneLifecycleQuery;
+        private EntityQuery matchStartBoundaryQuery;
+        private World matchStartBoundaryQueryWorld;
+        private bool hasMatchStartBoundaryQuery;
+        private EntityQuery matchStartProgressQuery;
+        private World matchStartProgressQueryWorld;
+        private bool hasMatchStartProgressQuery;
+        private bool diagnosticsInitialized;
+        private bool initialized;
+        private bool hasCapturedUiPresentation;
+        private CameraClearFlags defaultUiCameraClearFlags;
+        private Color defaultUiCameraBackgroundColor;
+        private bool defaultUiCameraEnabled;
+        private RenderMode defaultUiCanvasRenderMode;
+        private Camera defaultUiCanvasWorldCamera;
+        private int deferredMatchLoadFrame = -1;
+        private int activeLoadingSequenceId = -1;
+        private float activeLoadingStartedAt;
+        private UIRoute activeLoadingRoute;
+        private int activeMatchReadySequenceId = -1;
+        private float activeMatchReadyStartedAt;
+        private bool matchLoadQueuedForCurrentRoute;
+        private MatchSceneView boundMatchRuntimeView;
+        private SelectionUiCommandUiSystemHelper boundSelectionUiCommand;
+        private SelectionUiReadModelUiSystemHelper boundSelectionUiReadModel;
+        private MainMenuPlayUI boundMainMenu;
+        private int boundContentVersion = -1;
+
+        public PerformanceDiagnosticsSystemHelper PerformanceDiagnostics => performanceDiagnosticsSystem;
+        public bool IsPerformanceDiagnosticsInitialized => diagnosticsInitialized;
+
+        public void Initialize(MenuBootstrapView view)
         {
-            view.ContentSystem.ConfigureCatalogMetadataResolvers(
-                UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
-                UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
-            view.ContentSystem.BindQuickCustomRuntimeDependencies(quickCustomGameConfigStore, matchLaunchCommand);
-        }
-        if (view.Router != null)
-            view.Router.Initialize();
+            if (view == null)
+                return;
 
-        if (!wasInitialized)
-            ResetShellForFreshMenuScene();
+            bool wasInitialized = initialized;
+            ApplyEditorMenuPerformanceDefaults();
+            EnsurePersistentDiagnosticsInitialized();
+            view.ApplyRuntimeUiMode();
 
-        initialized = true;
-    }
-
-    public void OnApplicationFocus(bool hasFocus)
-    {
-        if (diagnosticsInitialized)
-            performanceDiagnosticsSystem.OnApplicationFocus(hasFocus);
-    }
-
-    public void OnApplicationPause(bool pauseStatus)
-    {
-        if (diagnosticsInitialized)
-            performanceDiagnosticsSystem.OnApplicationPause(pauseStatus);
-    }
-
-    public void Update(MenuBootstrapView view, float unscaledDeltaTime)
-    {
-        _ = unscaledDeltaTime;
-        if (!initialized)
-            Initialize(view);
-        if (view == null)
-            return;
-        view.ApplyRuntimeUiMode();
-
-        if (!TryGetWorldEntityManager(out EntityManager entityManager))
-            return;
-
-        sceneLifecycleSceneSystemHelper.Update(entityManager);
-        matchStartSystem.Update(entityManager);
-
-        if (!TryGetBoundary(entityManager, out Entity boundary))
-            return;
-
-        UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
-        ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
-        QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
-        UpdateActualLoadingProgress(entityManager, boundary, shellState);
-        BindMatchRuntimeUi(view, shellState);
-    }
-
-    public void Shutdown(MenuBootstrapView view)
-    {
-        if (view != null && view.UiCanvas != null && view.UiCanvas.transform.localScale != Vector3.one)
-            view.UiCanvas.transform.localScale = Vector3.one;
-
-        if (view != null)
-            RestoreUiPresentationMode(view.UiCamera, view.UiCanvas);
-
-        initialized = false;
-        hasCapturedUiPresentation = false;
-        deferredMatchLoadFrame = -1;
-        ResetLoadingMinimumWindow();
-        ResetMatchReadyHoldWindow();
-        matchLoadQueuedForCurrentRoute = false;
-        ClearBoundMatchRuntimeUi();
-        if (!diagnosticsInitialized)
-            return;
-
-        performanceDiagnosticsSystem.Dispose();
-        diagnosticsInitialized = false;
-    }
-
-    private void EnsurePersistentDiagnosticsInitialized()
-    {
-        if (diagnosticsInitialized)
-            return;
-
-        Application.runInBackground = true;
-        performanceDiagnosticsSystem.Initialize();
-        diagnosticsInitialized = true;
-    }
-
-    [System.Diagnostics.Conditional("UNITY_EDITOR")]
-    private static void ApplyEditorMenuPerformanceDefaults()
-    {
-        // Editor menu benchmarks should stay uncapped; build/runtime settings still own shipped frame limits.
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = -1;
-    }
-
-    private static void SetLoading(EntityManager entityManager, Entity boundary, float progress01, bool complete)
-    {
-        SetLoading(
-            entityManager,
-            boundary,
-            progress01,
-            complete,
-            complete ? "Command shell ready" : "Loading command shell");
-    }
-
-    private static void SetLoading(EntityManager entityManager, Entity boundary, float progress01, bool complete, string status)
-    {
-        entityManager.SetComponentData(boundary, new UiShellLoadingProgressComponent
-        {
-            Progress01 = Mathf.Clamp01(progress01),
-            Status = new FixedString64Bytes(ToFixed64Status(status)),
-            IsComplete = complete ? (byte)1 : (byte)0
-        });
-    }
-
-    private static string ToFixed64Status(string status)
-    {
-        const int MaxAsciiChars = 60;
-        if (string.IsNullOrEmpty(status))
-            return "Loading";
-        return status.Length <= MaxAsciiChars ? status : status.Substring(0, MaxAsciiChars);
-    }
-
-    private void UpdateActualLoadingProgress(EntityManager entityManager, Entity boundary, UiShellStateComponent shellState)
-    {
-        if (shellState.CurrentMode != UiShellMode.Loading)
-        {
-            ResetLoadingMinimumWindow();
-            return;
-        }
-
-        TrackLoadingMinimumWindow(shellState);
-
-        if (shellState.IsTransitionRunning != 0)
-            return;
-
-        UiShellLoadingProgressComponent loading = entityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
-        if (loading.IsComplete != 0)
-            return;
-
-        if (shellState.ActiveRoute == UIRoute.Match)
-        {
-            UpdateMatchLoadingProgress(entityManager, boundary);
-            return;
-        }
-
-        UpdateMenuLoadingProgress(entityManager, boundary);
-    }
-
-    private void UpdateMatchLoadingProgress(EntityManager entityManager, Entity boundary)
-    {
-        if (!matchLoadQueuedForCurrentRoute)
-        {
-            SetLoading(entityManager, boundary, 0f, false, "Preparing match load");
-            return;
-        }
-
-        if (!TryGetSceneLifecycleState(entityManager, out SceneLifecycleStateComponent sceneState))
-        {
-            SetLoading(entityManager, boundary, 0f, false, "Loading match");
-            return;
-        }
-
-        if (sceneState.IsMatchLoaded == 0)
-        {
-            SetLoading(entityManager, boundary, Mathf.Min(sceneState.Progress01, 0.9f), false, "Loading match");
-            return;
-        }
-
-        if (!IsMatchStartComplete(entityManager))
-        {
-            if (TryGetMatchStartProgress(entityManager, out MatchStartProgressComponent progress))
+            if (view.ShellEcsPresentation != null)
+                view.ShellEcsPresentation.Configure(view.ShellView);
+            if (view.ContentSystem != null)
             {
-                float startupProgress = 0.90f + (Mathf.Clamp01(progress.Progress01) * 0.09f);
-                string status = progress.Status.Length == 0 ? "Starting match" : progress.Status.ToString();
-                SetLoading(entityManager, boundary, startupProgress, false, status);
+                view.ContentSystem.ConfigureCatalogMetadataResolvers(
+                    UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
+                    UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
+                view.ContentSystem.BindQuickCustomRuntimeDependencies(quickCustomGameConfigStore, matchLaunchCommand);
+            }
+            if (view.Router != null)
+                view.Router.Initialize();
+
+            if (!wasInitialized)
+                ResetShellForFreshMenuScene();
+
+            initialized = true;
+        }
+
+        public void OnApplicationFocus(bool hasFocus)
+        {
+            if (diagnosticsInitialized)
+                performanceDiagnosticsSystem.OnApplicationFocus(hasFocus);
+        }
+
+        public void OnApplicationPause(bool pauseStatus)
+        {
+            if (diagnosticsInitialized)
+                performanceDiagnosticsSystem.OnApplicationPause(pauseStatus);
+        }
+
+        public void Update(MenuBootstrapView view, float unscaledDeltaTime)
+        {
+            _ = unscaledDeltaTime;
+            if (!initialized)
+                Initialize(view);
+            if (view == null)
+                return;
+            view.ApplyRuntimeUiMode();
+
+            if (!TryGetWorldEntityManager(out EntityManager entityManager))
+                return;
+
+            sceneLifecycleSceneSystemHelper.Update(entityManager);
+            matchStartSystem.Update(entityManager);
+
+            if (!TryGetBoundary(entityManager, out Entity boundary))
+                return;
+
+            UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
+            ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
+            QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
+            UpdateActualLoadingProgress(entityManager, boundary, shellState);
+            BindMatchRuntimeUi(view, shellState);
+        }
+
+        public void Shutdown(MenuBootstrapView view)
+        {
+            if (view != null && view.UiCanvas != null && view.UiCanvas.transform.localScale != Vector3.one)
+                view.UiCanvas.transform.localScale = Vector3.one;
+
+            if (view != null)
+                RestoreUiPresentationMode(view.UiCamera, view.UiCanvas);
+
+            initialized = false;
+            hasCapturedUiPresentation = false;
+            deferredMatchLoadFrame = -1;
+            ResetLoadingMinimumWindow();
+            ResetMatchReadyHoldWindow();
+            matchLoadQueuedForCurrentRoute = false;
+            ClearBoundMatchRuntimeUi();
+            if (!diagnosticsInitialized)
+                return;
+
+            performanceDiagnosticsSystem.Dispose();
+            diagnosticsInitialized = false;
+        }
+
+        private void EnsurePersistentDiagnosticsInitialized()
+        {
+            if (diagnosticsInitialized)
+                return;
+
+            Application.runInBackground = true;
+            performanceDiagnosticsSystem.Initialize();
+            diagnosticsInitialized = true;
+        }
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
+        private static void ApplyEditorMenuPerformanceDefaults()
+        {
+            // Editor menu benchmarks should stay uncapped; build/runtime settings still own shipped frame limits.
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = -1;
+        }
+
+        private static void SetLoading(EntityManager entityManager, Entity boundary, float progress01, bool complete)
+        {
+            SetLoading(
+                entityManager,
+                boundary,
+                progress01,
+                complete,
+                complete ? "Command shell ready" : "Loading command shell");
+        }
+
+        private static void SetLoading(EntityManager entityManager, Entity boundary, float progress01, bool complete, string status)
+        {
+            entityManager.SetComponentData(boundary, new UiShellLoadingProgressComponent
+            {
+                Progress01 = Mathf.Clamp01(progress01),
+                Status = new FixedString64Bytes(ToFixed64Status(status)),
+                IsComplete = complete ? (byte)1 : (byte)0
+            });
+        }
+
+        private static string ToFixed64Status(string status)
+        {
+            const int MaxAsciiChars = 60;
+            if (string.IsNullOrEmpty(status))
+                return "Loading";
+            return status.Length <= MaxAsciiChars ? status : status.Substring(0, MaxAsciiChars);
+        }
+
+        private void UpdateActualLoadingProgress(EntityManager entityManager, Entity boundary, UiShellStateComponent shellState)
+        {
+            if (shellState.CurrentMode != UiShellMode.Loading)
+            {
+                ResetLoadingMinimumWindow();
                 return;
             }
 
-            SetLoading(entityManager, boundary, 0.95f, false, "Starting match");
-            return;
-        }
+            TrackLoadingMinimumWindow(shellState);
 
-        TrackMatchReadyHoldWindow();
-        bool readyToExitLoading = IsMinimumLoadingWindowElapsed() && IsMatchReadyHoldWindowElapsed();
-        SetLoading(entityManager, boundary, 1f, readyToExitLoading, "Match ready");
-    }
+            if (shellState.IsTransitionRunning != 0)
+                return;
 
-    private void UpdateMenuLoadingProgress(EntityManager entityManager, Entity boundary)
-    {
-        if (TryGetSceneLifecycleState(entityManager, out SceneLifecycleStateComponent sceneState) &&
-            (sceneState.IsBusy != 0 || sceneState.IsMatchLoaded != 0))
-        {
-            if (sceneState.IsBusy == 0 && sceneState.IsMatchLoaded != 0)
-                sceneLifecycleSceneSystemHelper.QueueUnloadMatch(entityManager);
+            UiShellLoadingProgressComponent loading = entityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
+            if (loading.IsComplete != 0)
+                return;
 
-            float progress = sceneState.Status == SceneLifecycleStatusKind.Unloading ? sceneState.Progress01 : 0f;
-            SetLoading(entityManager, boundary, progress, false, "Unloading match");
-            return;
-        }
-
-        SetLoading(entityManager, boundary, 1f, IsMinimumLoadingWindowElapsed(), "Command shell ready");
-    }
-
-    private void TrackLoadingMinimumWindow(UiShellStateComponent shellState)
-    {
-        if (activeLoadingSequenceId == shellState.TransitionSequenceId &&
-            activeLoadingRoute == shellState.ActiveRoute)
-        {
-            return;
-        }
-
-        activeLoadingSequenceId = shellState.TransitionSequenceId;
-        activeLoadingRoute = shellState.ActiveRoute;
-        activeLoadingStartedAt = Time.unscaledTime;
-    }
-
-    private bool IsMinimumLoadingWindowElapsed()
-    {
-        return activeLoadingSequenceId >= 0 &&
-            Time.unscaledTime - activeLoadingStartedAt >= MinimumLoadingVisibleSeconds;
-    }
-
-    private void ResetLoadingMinimumWindow()
-    {
-        activeLoadingSequenceId = -1;
-        activeLoadingStartedAt = 0f;
-        activeLoadingRoute = UIRoute.Splash;
-        ResetMatchReadyHoldWindow();
-    }
-
-    private void TrackMatchReadyHoldWindow()
-    {
-        if (activeMatchReadySequenceId == activeLoadingSequenceId)
-            return;
-
-        activeMatchReadySequenceId = activeLoadingSequenceId;
-        activeMatchReadyStartedAt = Time.unscaledTime;
-    }
-
-    private bool IsMatchReadyHoldWindowElapsed()
-    {
-        return activeMatchReadySequenceId == activeLoadingSequenceId &&
-            Time.unscaledTime - activeMatchReadyStartedAt >= MatchReadyHoldSeconds;
-    }
-
-    private void ResetMatchReadyHoldWindow()
-    {
-        activeMatchReadySequenceId = -1;
-        activeMatchReadyStartedAt = 0f;
-    }
-
-    private void QueueDeferredMatchLoadAfterLoadingFeedback(EntityManager entityManager, UiShellStateComponent shellState)
-    {
-        if (shellState.ActiveRoute != UIRoute.Match)
-        {
-            deferredMatchLoadFrame = -1;
-            matchLoadQueuedForCurrentRoute = false;
-            return;
-        }
-
-        if (matchLoadQueuedForCurrentRoute)
-            return;
-
-        if (shellState.CurrentMode != UiShellMode.Loading || shellState.IsTransitionRunning != 0)
-        {
-            deferredMatchLoadFrame = -1;
-            return;
-        }
-
-        if (deferredMatchLoadFrame < 0)
-        {
-            deferredMatchLoadFrame = Time.frameCount;
-            return;
-        }
-
-        if (Time.frameCount - deferredMatchLoadFrame < DeferredMatchLoadVisibleFrames)
-            return;
-
-        if (!sceneLifecycleSceneSystemHelper.QueueLoadMatch(entityManager))
-        {
-            Debug.LogError("[UiShellRoute] failed to submit deferred Match scene load request.");
-            return;
-        }
-
-        matchLoadQueuedForCurrentRoute = true;
-        deferredMatchLoadFrame = -1;
-        Debug.Log("[UiShellRoute] submitted deferred Match scene load request after loading feedback.");
-
-        if (matchStartSystem.QueueStartAfterMatchLoaded(entityManager))
-            Debug.Log("[UiShellRoute] submitted deferred Match gameplay start request.");
-        else
-            Debug.LogError("[UiShellRoute] failed to submit deferred Match gameplay start request.");
-    }
-
-    private void BindMatchRuntimeUi(MenuBootstrapView view, UiShellStateComponent shellState)
-    {
-        if (shellState.ActiveRoute != UIRoute.Match)
-        {
-            ClearBoundMatchRuntimeUi();
-            return;
-        }
-
-        if (view == null || view.ContentSystem == null)
-            return;
-
-        if (!matchSceneReferenceSystem.TryGetLoadedMatchSceneView(out MatchSceneView matchScene))
-        {
-            return;
-        }
-
-        MatchBootstrapCompositionSystemHelper matchBootstrap = matchScene.MatchBootstrap;
-        MainMenuPlayUI mainMenu = matchBootstrap.EnsureMainMenuRuntimeDependencies();
-        if (view.ContentSystem.TryGetMatchHudSelectionPanelView(out MatchHudSelectionPanelView selectionPanelView))
-            matchBootstrap.BindMatchHudSelectionPanel(selectionPanelView);
-
-        SelectionUiCommandUiSystemHelper selectionUiCommand = matchBootstrap.SelectionUiCommand;
-        if (selectionUiCommand == null)
-            return;
-        SelectionUiReadModelUiSystemHelper selectionUiReadModel = matchBootstrap.SelectionUiReadModel;
-
-        int contentVersion = view.ContentSystem.ContentVersion;
-        if (boundMatchRuntimeView == matchScene &&
-            boundSelectionUiCommand == selectionUiCommand &&
-            boundSelectionUiReadModel == selectionUiReadModel &&
-            boundMainMenu == mainMenu &&
-            boundContentVersion == contentVersion)
-        {
-            return;
-        }
-
-        view.ContentSystem.BindGameplayRuntimeDependencies(
-            selectionUiCommand,
-            mainMenu,
-            matchBootstrap.BindMatchHudSelectionPanel,
-            matchBootstrap.BuildingUiCommandContract,
-            matchBootstrap.SelectionDiagnosticsSink,
-            selectionUiReadModel);
-        view.ContentSystem.BindBuildDrawerRuntimeQueries(matchBootstrap.BuildingUiQueryContract);
-        view.ContentSystem.BindQuickCustomRuntimeDependencies(quickCustomGameConfigStore, matchLaunchCommand);
-        boundMatchRuntimeView = matchScene;
-        boundSelectionUiCommand = selectionUiCommand;
-        boundSelectionUiReadModel = selectionUiReadModel;
-        boundMainMenu = mainMenu;
-        boundContentVersion = contentVersion;
-    }
-
-    private void ClearBoundMatchRuntimeUi()
-    {
-        boundMatchRuntimeView = null;
-        boundSelectionUiCommand = null;
-        boundSelectionUiReadModel = null;
-        boundMainMenu = null;
-        boundContentVersion = -1;
-    }
-
-    private void ApplyUiPresentationMode(Camera uiCamera, Canvas uiCanvas, UiShellStateComponent shellState, EntityManager entityManager)
-    {
-        CaptureUiPresentationMode(uiCamera, uiCanvas);
-
-        if (shellState.ActiveRoute == UIRoute.Match)
-        {
-            if (uiCanvas != null)
+            if (shellState.ActiveRoute == UIRoute.Match)
             {
-                if (uiCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
-                    uiCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                if (uiCanvas.worldCamera != null)
-                    uiCanvas.worldCamera = null;
+                UpdateMatchLoadingProgress(entityManager, boundary);
+                return;
             }
+
+            UpdateMenuLoadingProgress(entityManager, boundary);
+        }
+
+        private void UpdateMatchLoadingProgress(EntityManager entityManager, Entity boundary)
+        {
+            if (!matchLoadQueuedForCurrentRoute)
+            {
+                SetLoading(entityManager, boundary, 0f, false, "Preparing match load");
+                return;
+            }
+
+            if (!TryGetSceneLifecycleState(entityManager, out SceneLifecycleStateComponent sceneState))
+            {
+                SetLoading(entityManager, boundary, 0f, false, "Loading match");
+                return;
+            }
+
+            if (sceneState.IsMatchLoaded == 0)
+            {
+                SetLoading(entityManager, boundary, Mathf.Min(sceneState.Progress01, 0.9f), false, "Loading match");
+                return;
+            }
+
+            if (!IsMatchStartComplete(entityManager))
+            {
+                if (TryGetMatchStartProgress(entityManager, out MatchStartProgressComponent progress))
+                {
+                    float startupProgress = 0.90f + (Mathf.Clamp01(progress.Progress01) * 0.09f);
+                    string status = progress.Status.Length == 0 ? "Starting match" : progress.Status.ToString();
+                    SetLoading(entityManager, boundary, startupProgress, false, status);
+                    return;
+                }
+
+                SetLoading(entityManager, boundary, 0.95f, false, "Starting match");
+                return;
+            }
+
+            TrackMatchReadyHoldWindow();
+            bool readyToExitLoading = IsMinimumLoadingWindowElapsed() && IsMatchReadyHoldWindowElapsed();
+            SetLoading(entityManager, boundary, 1f, readyToExitLoading, "Match ready");
+        }
+
+        private void UpdateMenuLoadingProgress(EntityManager entityManager, Entity boundary)
+        {
+            if (TryGetSceneLifecycleState(entityManager, out SceneLifecycleStateComponent sceneState) &&
+                (sceneState.IsBusy != 0 || sceneState.IsMatchLoaded != 0))
+            {
+                if (sceneState.IsBusy == 0 && sceneState.IsMatchLoaded != 0)
+                    sceneLifecycleSceneSystemHelper.QueueUnloadMatch(entityManager);
+
+                float progress = sceneState.Status == SceneLifecycleStatusKind.Unloading ? sceneState.Progress01 : 0f;
+                SetLoading(entityManager, boundary, progress, false, "Unloading match");
+                return;
+            }
+
+            SetLoading(entityManager, boundary, 1f, IsMinimumLoadingWindowElapsed(), "Command shell ready");
+        }
+
+        private void TrackLoadingMinimumWindow(UiShellStateComponent shellState)
+        {
+            if (activeLoadingSequenceId == shellState.TransitionSequenceId &&
+                activeLoadingRoute == shellState.ActiveRoute)
+            {
+                return;
+            }
+
+            activeLoadingSequenceId = shellState.TransitionSequenceId;
+            activeLoadingRoute = shellState.ActiveRoute;
+            activeLoadingStartedAt = Time.unscaledTime;
+        }
+
+        private bool IsMinimumLoadingWindowElapsed()
+        {
+            return activeLoadingSequenceId >= 0 &&
+                Time.unscaledTime - activeLoadingStartedAt >= MinimumLoadingVisibleSeconds;
+        }
+
+        private void ResetLoadingMinimumWindow()
+        {
+            activeLoadingSequenceId = -1;
+            activeLoadingStartedAt = 0f;
+            activeLoadingRoute = UIRoute.Splash;
+            ResetMatchReadyHoldWindow();
+        }
+
+        private void TrackMatchReadyHoldWindow()
+        {
+            if (activeMatchReadySequenceId == activeLoadingSequenceId)
+                return;
+
+            activeMatchReadySequenceId = activeLoadingSequenceId;
+            activeMatchReadyStartedAt = Time.unscaledTime;
+        }
+
+        private bool IsMatchReadyHoldWindowElapsed()
+        {
+            return activeMatchReadySequenceId == activeLoadingSequenceId &&
+                Time.unscaledTime - activeMatchReadyStartedAt >= MatchReadyHoldSeconds;
+        }
+
+        private void ResetMatchReadyHoldWindow()
+        {
+            activeMatchReadySequenceId = -1;
+            activeMatchReadyStartedAt = 0f;
+        }
+
+        private void QueueDeferredMatchLoadAfterLoadingFeedback(EntityManager entityManager, UiShellStateComponent shellState)
+        {
+            if (shellState.ActiveRoute != UIRoute.Match)
+            {
+                deferredMatchLoadFrame = -1;
+                matchLoadQueuedForCurrentRoute = false;
+                return;
+            }
+
+            if (matchLoadQueuedForCurrentRoute)
+                return;
+
+            if (shellState.CurrentMode != UiShellMode.Loading || shellState.IsTransitionRunning != 0)
+            {
+                deferredMatchLoadFrame = -1;
+                return;
+            }
+
+            if (deferredMatchLoadFrame < 0)
+            {
+                deferredMatchLoadFrame = Time.frameCount;
+                return;
+            }
+
+            if (Time.frameCount - deferredMatchLoadFrame < DeferredMatchLoadVisibleFrames)
+                return;
+
+            if (!sceneLifecycleSceneSystemHelper.QueueLoadMatch(entityManager))
+            {
+                Debug.LogError("[UiShellRoute] failed to submit deferred Match scene load request.");
+                return;
+            }
+
+            matchLoadQueuedForCurrentRoute = true;
+            deferredMatchLoadFrame = -1;
+            Debug.Log("[UiShellRoute] submitted deferred Match scene load request after loading feedback.");
+
+            if (matchStartSystem.QueueStartAfterMatchLoaded(entityManager))
+                Debug.Log("[UiShellRoute] submitted deferred Match gameplay start request.");
+            else
+                Debug.LogError("[UiShellRoute] failed to submit deferred Match gameplay start request.");
+        }
+
+        private void BindMatchRuntimeUi(MenuBootstrapView view, UiShellStateComponent shellState)
+        {
+            if (shellState.ActiveRoute != UIRoute.Match)
+            {
+                ClearBoundMatchRuntimeUi();
+                return;
+            }
+
+            if (view == null || view.ContentSystem == null)
+                return;
+
+            if (!matchSceneReferenceSystem.TryGetLoadedMatchSceneView(out MatchSceneView matchScene))
+            {
+                return;
+            }
+
+            MatchBootstrapCompositionSystemHelper matchBootstrap = matchScene.MatchBootstrap;
+            MainMenuPlayUI mainMenu = matchBootstrap.EnsureMainMenuRuntimeDependencies();
+            if (view.ContentSystem.TryGetMatchHudSelectionPanelView(out MatchHudSelectionPanelView selectionPanelView))
+                matchBootstrap.BindMatchHudSelectionPanel(selectionPanelView);
+
+            SelectionUiCommandUiSystemHelper selectionUiCommand = matchBootstrap.SelectionUiCommand;
+            if (selectionUiCommand == null)
+                return;
+            SelectionUiReadModelUiSystemHelper selectionUiReadModel = matchBootstrap.SelectionUiReadModel;
+
+            int contentVersion = view.ContentSystem.ContentVersion;
+            if (boundMatchRuntimeView == matchScene &&
+                boundSelectionUiCommand == selectionUiCommand &&
+                boundSelectionUiReadModel == selectionUiReadModel &&
+                boundMainMenu == mainMenu &&
+                boundContentVersion == contentVersion)
+            {
+                return;
+            }
+
+            view.ContentSystem.BindGameplayRuntimeDependencies(
+                selectionUiCommand,
+                mainMenu,
+                matchBootstrap.BindMatchHudSelectionPanel,
+                matchBootstrap.BuildingUiCommandContract,
+                matchBootstrap.SelectionDiagnosticsSink,
+                selectionUiReadModel);
+            view.ContentSystem.BindBuildDrawerRuntimeQueries(matchBootstrap.BuildingUiQueryContract);
+            view.ContentSystem.BindQuickCustomRuntimeDependencies(quickCustomGameConfigStore, matchLaunchCommand);
+            boundMatchRuntimeView = matchScene;
+            boundSelectionUiCommand = selectionUiCommand;
+            boundSelectionUiReadModel = selectionUiReadModel;
+            boundMainMenu = mainMenu;
+            boundContentVersion = contentVersion;
+        }
+
+        private void ClearBoundMatchRuntimeUi()
+        {
+            boundMatchRuntimeView = null;
+            boundSelectionUiCommand = null;
+            boundSelectionUiReadModel = null;
+            boundMainMenu = null;
+            boundContentVersion = -1;
+        }
+
+        private void ApplyUiPresentationMode(Camera uiCamera, Canvas uiCanvas, UiShellStateComponent shellState, EntityManager entityManager)
+        {
+            CaptureUiPresentationMode(uiCamera, uiCanvas);
+
+            if (shellState.ActiveRoute == UIRoute.Match)
+            {
+                if (uiCanvas != null)
+                {
+                    if (uiCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
+                        uiCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                    if (uiCanvas.worldCamera != null)
+                        uiCanvas.worldCamera = null;
+                }
+
+                if (uiCamera != null)
+                {
+                    if (IsMatchSceneLoaded(entityManager))
+                    {
+                        if (uiCamera.clearFlags != CameraClearFlags.Depth)
+                            uiCamera.clearFlags = CameraClearFlags.Depth;
+                        if (uiCamera.enabled)
+                            uiCamera.enabled = false;
+                    }
+                    else
+                    {
+                        if (uiCamera.clearFlags != CameraClearFlags.SolidColor)
+                            uiCamera.clearFlags = CameraClearFlags.SolidColor;
+                        if (!uiCamera.enabled)
+                            uiCamera.enabled = true;
+                    }
+                }
+
+                return;
+            }
+
+            RestoreUiPresentationMode(uiCamera, uiCanvas);
+        }
+
+        private void CaptureUiPresentationMode(Camera uiCamera, Canvas uiCanvas)
+        {
+            if (hasCapturedUiPresentation)
+                return;
 
             if (uiCamera != null)
             {
-                if (IsMatchSceneLoaded(entityManager))
-                {
-                    if (uiCamera.clearFlags != CameraClearFlags.Depth)
-                        uiCamera.clearFlags = CameraClearFlags.Depth;
-                    if (uiCamera.enabled)
-                        uiCamera.enabled = false;
-                }
-                else
-                {
-                    if (uiCamera.clearFlags != CameraClearFlags.SolidColor)
-                        uiCamera.clearFlags = CameraClearFlags.SolidColor;
-                    if (!uiCamera.enabled)
-                        uiCamera.enabled = true;
-                }
+                defaultUiCameraClearFlags = uiCamera.clearFlags;
+                defaultUiCameraBackgroundColor = uiCamera.backgroundColor;
+                defaultUiCameraEnabled = uiCamera.enabled;
             }
 
-            return;
-        }
-
-        RestoreUiPresentationMode(uiCamera, uiCanvas);
-    }
-
-    private void CaptureUiPresentationMode(Camera uiCamera, Canvas uiCanvas)
-    {
-        if (hasCapturedUiPresentation)
-            return;
-
-        if (uiCamera != null)
-        {
-            defaultUiCameraClearFlags = uiCamera.clearFlags;
-            defaultUiCameraBackgroundColor = uiCamera.backgroundColor;
-            defaultUiCameraEnabled = uiCamera.enabled;
-        }
-
-        if (uiCanvas != null)
-        {
-            defaultUiCanvasRenderMode = uiCanvas.renderMode;
-            defaultUiCanvasWorldCamera = uiCanvas.worldCamera;
-        }
-
-        hasCapturedUiPresentation = true;
-    }
-
-    private void RestoreUiPresentationMode(Camera uiCamera, Canvas uiCanvas)
-    {
-        if (!hasCapturedUiPresentation)
-            return;
-
-        if (uiCamera != null)
-        {
-            if (uiCamera.enabled != defaultUiCameraEnabled)
-                uiCamera.enabled = defaultUiCameraEnabled;
-            if (uiCamera.clearFlags != defaultUiCameraClearFlags)
-                uiCamera.clearFlags = defaultUiCameraClearFlags;
-            if (uiCamera.backgroundColor != defaultUiCameraBackgroundColor)
-                uiCamera.backgroundColor = defaultUiCameraBackgroundColor;
-        }
-
-        if (uiCanvas != null)
-        {
-            if (uiCanvas.renderMode != defaultUiCanvasRenderMode)
-                uiCanvas.renderMode = defaultUiCanvasRenderMode;
-            Camera targetWorldCamera = defaultUiCanvasWorldCamera != null ? defaultUiCanvasWorldCamera : uiCamera;
-            if (uiCanvas.renderMode == RenderMode.ScreenSpaceCamera && uiCanvas.worldCamera != targetWorldCamera)
-                uiCanvas.worldCamera = targetWorldCamera;
-        }
-    }
-
-    private bool IsMatchStartComplete(EntityManager entityManager)
-    {
-        EntityQuery query = GetMatchStartBoundaryQuery(entityManager);
-        if (query.IsEmptyIgnoreFilter)
-            return false;
-
-        Entity entity = query.GetSingletonEntity();
-        if (!entityManager.HasComponent<MatchStartQueueComponent>(entity))
-            return false;
-
-        MatchStartQueueComponent queue = entityManager.GetComponentData<MatchStartQueueComponent>(entity);
-        return queue.HasStarted != 0 && queue.IsStartPending == 0;
-    }
-
-    private bool TryGetMatchStartProgress(EntityManager entityManager, out MatchStartProgressComponent progress)
-    {
-        progress = default;
-        EntityQuery query = GetMatchStartProgressQuery(entityManager);
-        if (query.IsEmptyIgnoreFilter)
-            return false;
-
-        Entity entity = query.GetSingletonEntity();
-        progress = entityManager.GetComponentData<MatchStartProgressComponent>(entity);
-        return true;
-    }
-
-    private bool IsMatchSceneLoaded(EntityManager entityManager)
-    {
-        return TryGetSceneLifecycleState(entityManager, out SceneLifecycleStateComponent state) && state.IsMatchLoaded != 0;
-    }
-
-    private bool TryGetSceneLifecycleState(EntityManager entityManager, out SceneLifecycleStateComponent state)
-    {
-        state = default;
-        EntityQuery query = GetSceneLifecycleQuery(entityManager);
-        if (query.IsEmptyIgnoreFilter)
-            return false;
-
-        Entity entity = query.GetSingletonEntity();
-        if (!entityManager.HasComponent<SceneLifecycleStateComponent>(entity))
-            return false;
-
-        state = entityManager.GetComponentData<SceneLifecycleStateComponent>(entity);
-        return true;
-    }
-
-    private EntityQuery GetSceneLifecycleQuery(EntityManager entityManager)
-    {
-        World world = entityManager.World;
-        if (sceneLifecycleQueryWorld != world || !hasSceneLifecycleQuery)
-        {
-            sceneLifecycleQueryWorld = world;
-            sceneLifecycleQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<SceneLifecycleRootComponent>());
-            hasSceneLifecycleQuery = true;
-        }
-
-        return sceneLifecycleQuery;
-    }
-
-    private EntityQuery GetMatchStartBoundaryQuery(EntityManager entityManager)
-    {
-        World world = entityManager.World;
-        if (matchStartBoundaryQueryWorld != world || !hasMatchStartBoundaryQuery)
-        {
-            matchStartBoundaryQueryWorld = world;
-            matchStartBoundaryQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<MatchStartStateComponent>());
-            hasMatchStartBoundaryQuery = true;
-        }
-
-        return matchStartBoundaryQuery;
-    }
-
-    private EntityQuery GetMatchStartProgressQuery(EntityManager entityManager)
-    {
-        World world = entityManager.World;
-        if (matchStartProgressQueryWorld != world || !hasMatchStartProgressQuery)
-        {
-            matchStartProgressQueryWorld = world;
-            matchStartProgressQuery = entityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<MatchStartStateComponent>(),
-                ComponentType.ReadOnly<MatchStartProgressComponent>());
-            hasMatchStartProgressQuery = true;
-        }
-
-        return matchStartProgressQuery;
-    }
-
-    private static void ResetShellForFreshMenuScene()
-    {
-        if (!TryGetWorldEntityManager(out EntityManager entityManager))
-            return;
-
-        using EntityQuery query = entityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<UiShellRootComponent>(),
-            ComponentType.ReadWrite<UiShellStateComponent>(),
-            ComponentType.ReadWrite<UiShellLoadingProgressComponent>(),
-            ComponentType.ReadWrite<MatchIntroTransitionComponent>(),
-            ComponentType.ReadWrite<UiShellRouteRequestComponent>(),
-            ComponentType.ReadWrite<UiShellPopupRequestComponent>(),
-            ComponentType.ReadWrite<UiShellPresentationCommandComponent>(),
-            ComponentType.ReadWrite<UiShellTransitionCompleteComponent>());
-        if (query.IsEmptyIgnoreFilter)
-            return;
-
-        Entity boundary = query.GetSingletonEntity();
-        entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary).Clear();
-        entityManager.GetBuffer<UiShellPopupRequestComponent>(boundary).Clear();
-        entityManager.GetBuffer<UiShellPresentationCommandComponent>(boundary).Clear();
-        entityManager.GetBuffer<UiShellTransitionCompleteComponent>(boundary).Clear();
-        entityManager.SetComponentData(boundary, new UiShellStateComponent
-        {
-            CurrentMode = UiShellMode.None,
-            ActiveRoute = UIRoute.MainMenu,
-            Phase = UiShellTransitionPhase.Idle,
-            TransitionSequenceId = 0,
-            IsTransitionRunning = 0
-        });
-        entityManager.SetComponentData(boundary, new UiShellLoadingProgressComponent
-        {
-            Progress01 = 0f,
-            Status = new FixedString64Bytes("Starting"),
-            IsComplete = 0
-        });
-        entityManager.SetComponentData(boundary, new MatchIntroTransitionComponent
-        {
-            State = MatchIntroTransitionStateKind.Inactive,
-            Progress01 = 0f,
-            InputLocked = 0,
-            SequenceId = 0,
-            Status = new FixedString64Bytes("Inactive")
-        });
-
-        if (entityManager.HasComponent<UiShellCommanderProfileComponent>(boundary))
-        {
-            entityManager.SetComponentData(boundary, new UiShellCommanderProfileComponent
+            if (uiCanvas != null)
             {
-                Name = new FixedString64Bytes("COL. ALEX MORGAN"),
-                Subtitle = new FixedString64Bytes("VICTORY IS PLANNED"),
-                PortraitClass = new FixedString64Bytes("commander-portrait-default")
-            });
+                defaultUiCanvasRenderMode = uiCanvas.renderMode;
+                defaultUiCanvasWorldCamera = uiCanvas.worldCamera;
+            }
+
+            hasCapturedUiPresentation = true;
         }
 
-        if (entityManager.HasComponent<UiShellMainMenuResourcesComponent>(boundary))
+        private void RestoreUiPresentationMode(Camera uiCamera, Canvas uiCanvas)
         {
-            entityManager.SetComponentData(boundary, new UiShellMainMenuResourcesComponent
+            if (!hasCapturedUiPresentation)
+                return;
+
+            if (uiCamera != null)
             {
-                CreditsText = new FixedString32Bytes("12,450"),
-                SuppliesText = new FixedString32Bytes("1,280"),
-                CommandText = new FixedString32Bytes("78/100")
-            });
-        }
-    }
+                if (uiCamera.enabled != defaultUiCameraEnabled)
+                    uiCamera.enabled = defaultUiCameraEnabled;
+                if (uiCamera.clearFlags != defaultUiCameraClearFlags)
+                    uiCamera.clearFlags = defaultUiCameraClearFlags;
+                if (uiCamera.backgroundColor != defaultUiCameraBackgroundColor)
+                    uiCamera.backgroundColor = defaultUiCameraBackgroundColor;
+            }
 
-    private static bool TryGetWorldEntityManager(out EntityManager entityManager)
-    {
-        entityManager = default;
-
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        entityManager = world.EntityManager;
-        return true;
-    }
-
-    private bool TryGetBoundary(EntityManager entityManager, out Entity boundary)
-    {
-        boundary = Entity.Null;
-
-        World world = entityManager.World;
-        if (cachedWorld != world || !hasBoundaryQuery)
-        {
-            cachedWorld = world;
-            cachedBoundaryEntity = Entity.Null;
-            boundaryQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<UiShellRootComponent>());
-            hasBoundaryQuery = true;
+            if (uiCanvas != null)
+            {
+                if (uiCanvas.renderMode != defaultUiCanvasRenderMode)
+                    uiCanvas.renderMode = defaultUiCanvasRenderMode;
+                Camera targetWorldCamera = defaultUiCanvasWorldCamera != null ? defaultUiCanvasWorldCamera : uiCamera;
+                if (uiCanvas.renderMode == RenderMode.ScreenSpaceCamera && uiCanvas.worldCamera != targetWorldCamera)
+                    uiCanvas.worldCamera = targetWorldCamera;
+            }
         }
 
-        if (cachedBoundaryEntity != Entity.Null &&
-            entityManager.Exists(cachedBoundaryEntity) &&
-            entityManager.HasComponent<UiShellRootComponent>(cachedBoundaryEntity))
+        private bool IsMatchStartComplete(EntityManager entityManager)
         {
-            boundary = cachedBoundaryEntity;
+            EntityQuery query = GetMatchStartBoundaryQuery(entityManager);
+            if (query.IsEmptyIgnoreFilter)
+                return false;
+
+            Entity entity = query.GetSingletonEntity();
+            if (!entityManager.HasComponent<MatchStartQueueComponent>(entity))
+                return false;
+
+            MatchStartQueueComponent queue = entityManager.GetComponentData<MatchStartQueueComponent>(entity);
+            return queue.HasStarted != 0 && queue.IsStartPending == 0;
+        }
+
+        private bool TryGetMatchStartProgress(EntityManager entityManager, out MatchStartProgressComponent progress)
+        {
+            progress = default;
+            EntityQuery query = GetMatchStartProgressQuery(entityManager);
+            if (query.IsEmptyIgnoreFilter)
+                return false;
+
+            Entity entity = query.GetSingletonEntity();
+            progress = entityManager.GetComponentData<MatchStartProgressComponent>(entity);
             return true;
         }
 
-        if (boundaryQuery.IsEmptyIgnoreFilter)
-            return false;
-        boundary = boundaryQuery.GetSingletonEntity();
-        cachedBoundaryEntity = boundary;
-        return true;
+        private bool IsMatchSceneLoaded(EntityManager entityManager)
+        {
+            return TryGetSceneLifecycleState(entityManager, out SceneLifecycleStateComponent state) && state.IsMatchLoaded != 0;
+        }
+
+        private bool TryGetSceneLifecycleState(EntityManager entityManager, out SceneLifecycleStateComponent state)
+        {
+            state = default;
+            EntityQuery query = GetSceneLifecycleQuery(entityManager);
+            if (query.IsEmptyIgnoreFilter)
+                return false;
+
+            Entity entity = query.GetSingletonEntity();
+            if (!entityManager.HasComponent<SceneLifecycleStateComponent>(entity))
+                return false;
+
+            state = entityManager.GetComponentData<SceneLifecycleStateComponent>(entity);
+            return true;
+        }
+
+        private EntityQuery GetSceneLifecycleQuery(EntityManager entityManager)
+        {
+            World world = entityManager.World;
+            if (sceneLifecycleQueryWorld != world || !hasSceneLifecycleQuery)
+            {
+                sceneLifecycleQueryWorld = world;
+                sceneLifecycleQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<SceneLifecycleRootComponent>());
+                hasSceneLifecycleQuery = true;
+            }
+
+            return sceneLifecycleQuery;
+        }
+
+        private EntityQuery GetMatchStartBoundaryQuery(EntityManager entityManager)
+        {
+            World world = entityManager.World;
+            if (matchStartBoundaryQueryWorld != world || !hasMatchStartBoundaryQuery)
+            {
+                matchStartBoundaryQueryWorld = world;
+                matchStartBoundaryQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<MatchStartStateComponent>());
+                hasMatchStartBoundaryQuery = true;
+            }
+
+            return matchStartBoundaryQuery;
+        }
+
+        private EntityQuery GetMatchStartProgressQuery(EntityManager entityManager)
+        {
+            World world = entityManager.World;
+            if (matchStartProgressQueryWorld != world || !hasMatchStartProgressQuery)
+            {
+                matchStartProgressQueryWorld = world;
+                matchStartProgressQuery = entityManager.CreateEntityQuery(
+                    ComponentType.ReadOnly<MatchStartStateComponent>(),
+                    ComponentType.ReadOnly<MatchStartProgressComponent>());
+                hasMatchStartProgressQuery = true;
+            }
+
+            return matchStartProgressQuery;
+        }
+
+        private static void ResetShellForFreshMenuScene()
+        {
+            if (!TryGetWorldEntityManager(out EntityManager entityManager))
+                return;
+
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<UiShellRootComponent>(),
+                ComponentType.ReadWrite<UiShellStateComponent>(),
+                ComponentType.ReadWrite<UiShellLoadingProgressComponent>(),
+                ComponentType.ReadWrite<MatchIntroTransitionComponent>(),
+                ComponentType.ReadWrite<UiShellRouteRequestComponent>(),
+                ComponentType.ReadWrite<UiShellPopupRequestComponent>(),
+                ComponentType.ReadWrite<UiShellPresentationCommandComponent>(),
+                ComponentType.ReadWrite<UiShellTransitionCompleteComponent>());
+            if (query.IsEmptyIgnoreFilter)
+                return;
+
+            Entity boundary = query.GetSingletonEntity();
+            entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary).Clear();
+            entityManager.GetBuffer<UiShellPopupRequestComponent>(boundary).Clear();
+            entityManager.GetBuffer<UiShellPresentationCommandComponent>(boundary).Clear();
+            entityManager.GetBuffer<UiShellTransitionCompleteComponent>(boundary).Clear();
+            entityManager.SetComponentData(boundary, new UiShellStateComponent
+            {
+                CurrentMode = UiShellMode.None,
+                ActiveRoute = UIRoute.MainMenu,
+                Phase = UiShellTransitionPhase.Idle,
+                TransitionSequenceId = 0,
+                IsTransitionRunning = 0
+            });
+            entityManager.SetComponentData(boundary, new UiShellLoadingProgressComponent
+            {
+                Progress01 = 0f,
+                Status = new FixedString64Bytes("Starting"),
+                IsComplete = 0
+            });
+            entityManager.SetComponentData(boundary, new MatchIntroTransitionComponent
+            {
+                State = MatchIntroTransitionStateKind.Inactive,
+                Progress01 = 0f,
+                InputLocked = 0,
+                SequenceId = 0,
+                Status = new FixedString64Bytes("Inactive")
+            });
+
+            if (entityManager.HasComponent<UiShellCommanderProfileComponent>(boundary))
+            {
+                entityManager.SetComponentData(boundary, new UiShellCommanderProfileComponent
+                {
+                    Name = new FixedString64Bytes("COL. ALEX MORGAN"),
+                    Subtitle = new FixedString64Bytes("VICTORY IS PLANNED"),
+                    PortraitClass = new FixedString64Bytes("commander-portrait-default")
+                });
+            }
+
+            if (entityManager.HasComponent<UiShellMainMenuResourcesComponent>(boundary))
+            {
+                entityManager.SetComponentData(boundary, new UiShellMainMenuResourcesComponent
+                {
+                    CreditsText = new FixedString32Bytes("12,450"),
+                    SuppliesText = new FixedString32Bytes("1,280"),
+                    CommandText = new FixedString32Bytes("78/100")
+                });
+            }
+        }
+
+        private static bool TryGetWorldEntityManager(out EntityManager entityManager)
+        {
+            entityManager = default;
+
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return false;
+
+            entityManager = world.EntityManager;
+            return true;
+        }
+
+        private bool TryGetBoundary(EntityManager entityManager, out Entity boundary)
+        {
+            boundary = Entity.Null;
+
+            World world = entityManager.World;
+            if (cachedWorld != world || !hasBoundaryQuery)
+            {
+                cachedWorld = world;
+                cachedBoundaryEntity = Entity.Null;
+                boundaryQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<UiShellRootComponent>());
+                hasBoundaryQuery = true;
+            }
+
+            if (cachedBoundaryEntity != Entity.Null &&
+                entityManager.Exists(cachedBoundaryEntity) &&
+                entityManager.HasComponent<UiShellRootComponent>(cachedBoundaryEntity))
+            {
+                boundary = cachedBoundaryEntity;
+                return true;
+            }
+
+            if (boundaryQuery.IsEmptyIgnoreFilter)
+                return false;
+            boundary = boundaryQuery.GetSingletonEntity();
+            cachedBoundaryEntity = boundary;
+            return true;
+        }
     }
 }

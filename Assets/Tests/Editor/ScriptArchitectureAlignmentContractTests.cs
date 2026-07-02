@@ -1,3 +1,10 @@
+using Game.UI.Contracts;
+using Game.Components;
+using Game.Configs;
+using Game.Authoring;
+using Game.Rendering;
+using Game.UI.Runtime;
+using Game.UI.Shell.Ecs;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using System.Collections.Generic;
@@ -168,11 +175,13 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.UiContractsAssemblyMustNotReferenceGameComponentsOrConfigs();
             tests.UiContractsAssemblyMustNotReferenceEcsPackages();
             tests.UiRuntimeAssemblyMustNotReferenceConfigsAssembly();
+            tests.GameScriptAsmdefsMustDeclareMatchingRootNamespace();
+            tests.GameScriptsMustDeclareOwningAssemblyNamespace();
             tests.UiRuntimeAssemblyMustNotReadAuthoringComponents();
             tests.UiRuntimeScriptsMustNotUseDirectEcsApis();
             tests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandUiSystemHelper();
             tests.UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes();
-            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=28");
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=30");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -359,6 +368,67 @@ public sealed class ScriptArchitectureAlignmentContractTests
         Assert.IsFalse(
             asmdef.Contains("\"Game.UI.Contracts\"", StringComparison.Ordinal),
             "`Game.Configs` must not reference UI contracts. Shared config/UI catalog surfaces belong in `Game.Catalog.Contracts`.");
+    }
+
+    [Test]
+    public void GameScriptAsmdefsMustDeclareMatchingRootNamespace()
+    {
+        List<string> violations = new();
+
+        foreach (string asmdefPath in Directory.GetFiles(GameScriptsRoot, "*.asmdef", SearchOption.AllDirectories))
+        {
+            string normalizedPath = NormalizePath(asmdefPath);
+            string asmdef = File.ReadAllText(asmdefPath);
+            string assemblyName = ReadAsmdefStringValue(asmdef, "name");
+            string rootNamespace = ReadAsmdefStringValue(asmdef, "rootNamespace");
+
+            if (string.IsNullOrWhiteSpace(rootNamespace))
+            {
+                violations.Add($"{normalizedPath} has an empty rootNamespace.");
+                continue;
+            }
+
+            if (!string.Equals(rootNamespace, assemblyName, StringComparison.Ordinal))
+                violations.Add($"{normalizedPath} rootNamespace `{rootNamespace}` does not match assembly name `{assemblyName}`.");
+        }
+
+        AssertNoViolations(
+            violations,
+            "Game asmdefs under Assets/Game/Scripts must declare a non-empty rootNamespace matching the asmdef name.");
+    }
+
+    [Test]
+    public void GameScriptsMustDeclareOwningAssemblyNamespace()
+    {
+        List<AssemblyNamespaceRule> rules = EnumerateGameScriptNamespaceRules()
+            .OrderByDescending(rule => rule.RootPath.Length)
+            .ToList();
+        List<string> violations = new();
+
+        foreach (string path in EnumerateSourceFiles(GameScriptsRoot))
+        {
+            string normalizedPath = NormalizePath(path);
+            AssemblyNamespaceRule owner = rules.FirstOrDefault(rule => IsPathOwnedByRule(normalizedPath, rule.RootPath));
+            if (string.IsNullOrEmpty(owner.Namespace))
+            {
+                violations.Add($"{normalizedPath} has no owning game asmdef namespace rule.");
+                continue;
+            }
+
+            string declaredNamespace = ReadDeclaredNamespace(File.ReadAllText(path));
+            if (string.IsNullOrEmpty(declaredNamespace))
+            {
+                violations.Add($"{normalizedPath} does not declare namespace `{owner.Namespace}`.");
+                continue;
+            }
+
+            if (!string.Equals(declaredNamespace, owner.Namespace, StringComparison.Ordinal))
+                violations.Add($"{normalizedPath} declares namespace `{declaredNamespace}` but owning asmdef expects `{owner.Namespace}`.");
+        }
+
+        AssertNoViolations(
+            violations,
+            "Every first-party game script under Assets/Game/Scripts must use the namespace of its owning asmdef rootNamespace.");
     }
 
     [Test]
@@ -1168,6 +1238,39 @@ public sealed class ScriptArchitectureAlignmentContractTests
         }
     }
 
+    private static IEnumerable<AssemblyNamespaceRule> EnumerateGameScriptNamespaceRules()
+    {
+        foreach (string asmdefPath in Directory.GetFiles(GameScriptsRoot, "*.asmdef", SearchOption.AllDirectories))
+        {
+            string asmdef = File.ReadAllText(asmdefPath);
+            string rootNamespace = ReadAsmdefStringValue(asmdef, "rootNamespace");
+            yield return new AssemblyNamespaceRule(NormalizePath(Path.GetDirectoryName(asmdefPath)), rootNamespace);
+        }
+    }
+
+    private static string ReadAsmdefStringValue(string asmdef, string propertyName)
+    {
+        Match match = Regex.Match(
+            asmdef,
+            "\"" + Regex.Escape(propertyName) + "\"\\s*:\\s*\"(?<value>[^\"]*)\"",
+            RegexOptions.CultureInvariant);
+        return match.Success ? match.Groups["value"].Value : string.Empty;
+    }
+
+    private static string ReadDeclaredNamespace(string source)
+    {
+        Match match = Regex.Match(
+            source,
+            @"^\s*namespace\s+(?<name>[A-Za-z_][A-Za-z0-9_.]*)\s*[;{]",
+            RegexOptions.CultureInvariant | RegexOptions.Multiline);
+        return match.Success ? match.Groups["name"].Value : string.Empty;
+    }
+
+    private static bool IsPathOwnedByRule(string sourcePath, string ruleRootPath)
+    {
+        return sourcePath.StartsWith(ruleRootPath + "/", StringComparison.Ordinal);
+    }
+
     private static IEnumerable<string> FindAuthoringComponentReferences(string path)
     {
         string normalized = NormalizePath(path);
@@ -1482,6 +1585,18 @@ public sealed class ScriptArchitectureAlignmentContractTests
 
         public string Name { get; }
         public string BaseClause { get; }
+    }
+
+    private readonly struct AssemblyNamespaceRule
+    {
+        public AssemblyNamespaceRule(string rootPath, string namespaceName)
+        {
+            RootPath = rootPath ?? string.Empty;
+            Namespace = namespaceName ?? string.Empty;
+        }
+
+        public string RootPath { get; }
+        public string Namespace { get; }
     }
 }
 #endif

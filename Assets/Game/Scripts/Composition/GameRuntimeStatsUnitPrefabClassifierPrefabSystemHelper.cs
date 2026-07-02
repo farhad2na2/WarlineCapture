@@ -1,36 +1,41 @@
 using UnityEngine;
+using Game.Authoring;
+using Game.Runtime;
 
-internal static class GameRuntimeStatsUnitPrefabClassifierPrefabSystemHelper
+namespace Game.Composition
 {
-    public static GameRuntimeStats.UnitOrderKind ClassifyUnitPrefab(GameObject prefab)
+    internal static class GameRuntimeStatsUnitPrefabClassifierPrefabSystemHelper
     {
-        if (prefab == null)
-            return GameRuntimeStats.UnitOrderKind.Soldier;
-
-        UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
-        string displayName = authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName)
-            ? authoring.ConfiguredDisplayName
-            : prefab.name;
-
-        if (displayName.IndexOf("Ammo", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-            prefab.name.IndexOf("Ammo", System.StringComparison.OrdinalIgnoreCase) >= 0)
+        public static GameRuntimeStats.UnitOrderKind ClassifyUnitPrefab(GameObject prefab)
         {
-            return GameRuntimeStats.UnitOrderKind.Ammo;
-        }
+            if (prefab == null)
+                return GameRuntimeStats.UnitOrderKind.Soldier;
 
-        if (authoring != null)
-        {
-            Vector2Int footprint = authoring.GetConfiguredFootprintCells();
-            if (footprint.x > 1 || footprint.y > 1 || authoring.IsAirUnit)
+            UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
+            string displayName = authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName)
+                ? authoring.ConfiguredDisplayName
+                : prefab.name;
+
+            if (displayName.IndexOf("Ammo", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                prefab.name.IndexOf("Ammo", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return GameRuntimeStats.UnitOrderKind.Ammo;
+            }
+
+            if (authoring != null)
+            {
+                Vector2Int footprint = authoring.GetConfiguredFootprintCells();
+                if (footprint.x > 1 || footprint.y > 1 || authoring.IsAirUnit)
+                    return GameRuntimeStats.UnitOrderKind.Vehicle;
+            }
+
+            if (prefab.name.IndexOf("Veh", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                prefab.name.IndexOf("Vehicle", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            {
                 return GameRuntimeStats.UnitOrderKind.Vehicle;
-        }
+            }
 
-        if (prefab.name.IndexOf("Veh", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-            prefab.name.IndexOf("Vehicle", System.StringComparison.OrdinalIgnoreCase) >= 0)
-        {
-            return GameRuntimeStats.UnitOrderKind.Vehicle;
+            return GameRuntimeStats.UnitOrderKind.Soldier;
         }
-
-        return GameRuntimeStats.UnitOrderKind.Soldier;
     }
 }

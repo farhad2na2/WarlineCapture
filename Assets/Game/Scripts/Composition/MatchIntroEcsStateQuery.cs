@@ -1,50 +1,56 @@
 using Unity.Entities;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
+using Game.Runtime;
 
-internal sealed class MatchIntroEcsStateQuery : IMatchIntroStateQuery
+namespace Game.Composition
 {
-    private World cachedWorld;
-    private EntityQuery query;
-    private bool hasQuery;
-
-    public bool IsGameplayInputLocked()
+    internal sealed class MatchIntroEcsStateQuery : IMatchIntroStateQuery
     {
-        return TryReadState(out MatchIntroTransitionComponent state) && state.InputLocked != 0;
-    }
+        private World cachedWorld;
+        private EntityQuery query;
+        private bool hasQuery;
 
-    public bool IsIntroComplete()
-    {
-        return !TryReadState(out MatchIntroTransitionComponent state) ||
-               state.State == MatchIntroTransitionStateKind.Complete &&
-               state.InputLocked == 0;
-    }
-
-    public void Reset()
-    {
-        cachedWorld = null;
-        query = default;
-        hasQuery = false;
-    }
-
-    private bool TryReadState(out MatchIntroTransitionComponent state)
-    {
-        state = default;
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        if (cachedWorld != world || !hasQuery)
+        public bool IsGameplayInputLocked()
         {
-            cachedWorld = world;
-            query = world.EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<UiShellStateComponent>(),
-                ComponentType.ReadOnly<MatchIntroTransitionComponent>());
-            hasQuery = true;
+            return TryReadState(out MatchIntroTransitionComponent state) && state.InputLocked != 0;
         }
 
-        if (query.IsEmptyIgnoreFilter)
-            return false;
+        public bool IsIntroComplete()
+        {
+            return !TryReadState(out MatchIntroTransitionComponent state) ||
+                   state.State == MatchIntroTransitionStateKind.Complete &&
+                   state.InputLocked == 0;
+        }
 
-        state = world.EntityManager.GetComponentData<MatchIntroTransitionComponent>(query.GetSingletonEntity());
-        return true;
+        public void Reset()
+        {
+            cachedWorld = null;
+            query = default;
+            hasQuery = false;
+        }
+
+        private bool TryReadState(out MatchIntroTransitionComponent state)
+        {
+            state = default;
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return false;
+
+            if (cachedWorld != world || !hasQuery)
+            {
+                cachedWorld = world;
+                query = world.EntityManager.CreateEntityQuery(
+                    ComponentType.ReadOnly<UiShellStateComponent>(),
+                    ComponentType.ReadOnly<MatchIntroTransitionComponent>());
+                hasQuery = true;
+            }
+
+            if (query.IsEmptyIgnoreFilter)
+                return false;
+
+            state = world.EntityManager.GetComponentData<MatchIntroTransitionComponent>(query.GetSingletonEntity());
+            return true;
+        }
     }
 }

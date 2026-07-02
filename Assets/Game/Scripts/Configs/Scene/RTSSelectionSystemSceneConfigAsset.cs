@@ -1,6 +1,9 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Scene Config/RTS Selection System")]
-public sealed class RTSSelectionSystemSceneConfigAsset : RTSSelectionSystemConfig
+namespace Game.Configs
 {
+    [CreateAssetMenu(menuName = "Game/Scene Config/RTS Selection System")]
+    public sealed class RTSSelectionSystemSceneConfigAsset : RTSSelectionSystemConfig
+    {
+    }
 }

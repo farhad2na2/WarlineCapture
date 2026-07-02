@@ -1,140 +1,144 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Game.Tactical.Contracts;
 
-public sealed class MatchOverlayCommandControlsView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private Button selectButton;
-    [SerializeField] private Button moveButton;
-    [SerializeField] private Button attackButton;
-    [SerializeField] private Button scanButton;
-    [SerializeField] private Button boardButton;
-    [SerializeField] private Button buildButton;
-    [SerializeField] private Button holdButton;
-    [SerializeField] private Button stopButton;
-    [SerializeField] private Button commandWheelStopButton;
-    [SerializeField] private Image selectIcon;
-    [SerializeField] private Image moveIcon;
-    [SerializeField] private Image attackIcon;
-    [SerializeField] private Image scanIcon;
-    [SerializeField] private Image boardIcon;
-    [SerializeField] private Image buildIcon;
-    [SerializeField] private Image holdIcon;
-    [SerializeField] private Image stopIcon;
-    [SerializeField] private CommandWheelPanelView commandWheelPanel;
-    [SerializeField] private MatchOverlayCommandTabGroupView commandTabGroup;
-
-    private Canvas _cachedCanvas;
-
-    public Button SelectButton => selectButton;
-    public Button MoveButton => moveButton;
-    public Button AttackButton => attackButton;
-    public Button ScanButton => scanButton;
-    public Button BoardButton => boardButton;
-    public Button BuildButton => buildButton;
-    public Button HoldButton => holdButton;
-    public Button StopButton => stopButton;
-    public Button CommandWheelStopButton => commandWheelStopButton;
-    public Image SelectIcon => selectIcon;
-    public Image MoveIcon => moveIcon;
-    public Image AttackIcon => attackIcon;
-    public Image ScanIcon => scanIcon;
-    public Image BoardIcon => boardIcon;
-    public Image BuildIcon => buildIcon;
-    public Image HoldIcon => holdIcon;
-    public Image StopIcon => stopIcon;
-    public CommandWheelPanelView CommandWheelPanel => commandWheelPanel;
-    public MatchOverlayCommandTabGroupView CommandTabGroup => commandTabGroup;
-
-    public Sprite ResolveCommandIconSprite(TacticalCommandMode mode)
+    public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     {
-        Image image = mode switch
+        [SerializeField] private Button selectButton;
+        [SerializeField] private Button moveButton;
+        [SerializeField] private Button attackButton;
+        [SerializeField] private Button scanButton;
+        [SerializeField] private Button boardButton;
+        [SerializeField] private Button buildButton;
+        [SerializeField] private Button holdButton;
+        [SerializeField] private Button stopButton;
+        [SerializeField] private Button commandWheelStopButton;
+        [SerializeField] private Image selectIcon;
+        [SerializeField] private Image moveIcon;
+        [SerializeField] private Image attackIcon;
+        [SerializeField] private Image scanIcon;
+        [SerializeField] private Image boardIcon;
+        [SerializeField] private Image buildIcon;
+        [SerializeField] private Image holdIcon;
+        [SerializeField] private Image stopIcon;
+        [SerializeField] private CommandWheelPanelView commandWheelPanel;
+        [SerializeField] private MatchOverlayCommandTabGroupView commandTabGroup;
+
+        private Canvas _cachedCanvas;
+
+        public Button SelectButton => selectButton;
+        public Button MoveButton => moveButton;
+        public Button AttackButton => attackButton;
+        public Button ScanButton => scanButton;
+        public Button BoardButton => boardButton;
+        public Button BuildButton => buildButton;
+        public Button HoldButton => holdButton;
+        public Button StopButton => stopButton;
+        public Button CommandWheelStopButton => commandWheelStopButton;
+        public Image SelectIcon => selectIcon;
+        public Image MoveIcon => moveIcon;
+        public Image AttackIcon => attackIcon;
+        public Image ScanIcon => scanIcon;
+        public Image BoardIcon => boardIcon;
+        public Image BuildIcon => buildIcon;
+        public Image HoldIcon => holdIcon;
+        public Image StopIcon => stopIcon;
+        public CommandWheelPanelView CommandWheelPanel => commandWheelPanel;
+        public MatchOverlayCommandTabGroupView CommandTabGroup => commandTabGroup;
+
+        public Sprite ResolveCommandIconSprite(TacticalCommandMode mode)
         {
-            TacticalCommandMode.Select => selectIcon,
-            TacticalCommandMode.Move => moveIcon,
-            TacticalCommandMode.Attack => attackIcon,
-            TacticalCommandMode.Hold => holdIcon,
-            TacticalCommandMode.Stop => stopIcon,
-            TacticalCommandMode.Build => buildIcon,
-            TacticalCommandMode.Scan => scanIcon,
-            TacticalCommandMode.Board => boardIcon,
-            _ => null
-        };
+            Image image = mode switch
+            {
+                TacticalCommandMode.Select => selectIcon,
+                TacticalCommandMode.Move => moveIcon,
+                TacticalCommandMode.Attack => attackIcon,
+                TacticalCommandMode.Hold => holdIcon,
+                TacticalCommandMode.Stop => stopIcon,
+                TacticalCommandMode.Build => buildIcon,
+                TacticalCommandMode.Scan => scanIcon,
+                TacticalCommandMode.Board => boardIcon,
+                _ => null
+            };
 
-        return image != null ? image.sprite : null;
-    }
+            return image != null ? image.sprite : null;
+        }
 
-    private void OnTransformParentChanged()
-    {
-        _cachedCanvas = null;
-    }
+        private void OnTransformParentChanged()
+        {
+            _cachedCanvas = null;
+        }
 
-    public bool ContainsScreenPoint(Vector2 screenPosition)
-    {
-        Camera eventCamera = ResolveEventCamera();
-        RectTransform root = transform as RectTransform;
-        if (root != null && RectTransformUtility.RectangleContainsScreenPoint(root, screenPosition, eventCamera))
-            return true;
+        public bool ContainsScreenPoint(Vector2 screenPosition)
+        {
+            Camera eventCamera = ResolveEventCamera();
+            RectTransform root = transform as RectTransform;
+            if (root != null && RectTransformUtility.RectangleContainsScreenPoint(root, screenPosition, eventCamera))
+                return true;
 
-        return ContainsButton(selectButton, screenPosition, eventCamera) ||
-               ContainsButton(moveButton, screenPosition, eventCamera) ||
-               ContainsButton(attackButton, screenPosition, eventCamera) ||
-               ContainsButton(scanButton, screenPosition, eventCamera) ||
-               ContainsButton(boardButton, screenPosition, eventCamera) ||
-               ContainsButton(buildButton, screenPosition, eventCamera) ||
-               ContainsButton(holdButton, screenPosition, eventCamera) ||
-               ContainsButton(stopButton, screenPosition, eventCamera) ||
-               ContainsButton(commandWheelStopButton, screenPosition, eventCamera);
-    }
+            return ContainsButton(selectButton, screenPosition, eventCamera) ||
+                   ContainsButton(moveButton, screenPosition, eventCamera) ||
+                   ContainsButton(attackButton, screenPosition, eventCamera) ||
+                   ContainsButton(scanButton, screenPosition, eventCamera) ||
+                   ContainsButton(boardButton, screenPosition, eventCamera) ||
+                   ContainsButton(buildButton, screenPosition, eventCamera) ||
+                   ContainsButton(holdButton, screenPosition, eventCamera) ||
+                   ContainsButton(stopButton, screenPosition, eventCamera) ||
+                   ContainsButton(commandWheelStopButton, screenPosition, eventCamera);
+        }
 
-    public string DescribeScreenPointHit(Vector2 screenPosition)
-    {
-        Camera eventCamera = ResolveEventCamera();
-        if (ContainsButton(selectButton, screenPosition, eventCamera))
-            return "SelectCommand";
-        if (ContainsButton(moveButton, screenPosition, eventCamera))
-            return "MoveCommand";
-        if (ContainsButton(attackButton, screenPosition, eventCamera))
-            return "AttackCommand";
-        if (ContainsButton(scanButton, screenPosition, eventCamera))
-            return "ScanCommand";
-        if (ContainsButton(boardButton, screenPosition, eventCamera))
-            return "BoardCommand";
-        if (ContainsButton(buildButton, screenPosition, eventCamera))
-            return "BuildCommand";
-        if (ContainsButton(holdButton, screenPosition, eventCamera))
-            return "HoldCommand";
-        if (ContainsButton(stopButton, screenPosition, eventCamera))
-            return "StopCommand";
-        if (ContainsButton(commandWheelStopButton, screenPosition, eventCamera))
-            return "CommandWheelStop";
+        public string DescribeScreenPointHit(Vector2 screenPosition)
+        {
+            Camera eventCamera = ResolveEventCamera();
+            if (ContainsButton(selectButton, screenPosition, eventCamera))
+                return "SelectCommand";
+            if (ContainsButton(moveButton, screenPosition, eventCamera))
+                return "MoveCommand";
+            if (ContainsButton(attackButton, screenPosition, eventCamera))
+                return "AttackCommand";
+            if (ContainsButton(scanButton, screenPosition, eventCamera))
+                return "ScanCommand";
+            if (ContainsButton(boardButton, screenPosition, eventCamera))
+                return "BoardCommand";
+            if (ContainsButton(buildButton, screenPosition, eventCamera))
+                return "BuildCommand";
+            if (ContainsButton(holdButton, screenPosition, eventCamera))
+                return "HoldCommand";
+            if (ContainsButton(stopButton, screenPosition, eventCamera))
+                return "StopCommand";
+            if (ContainsButton(commandWheelStopButton, screenPosition, eventCamera))
+                return "CommandWheelStop";
 
-        RectTransform root = transform as RectTransform;
-        return root != null && RectTransformUtility.RectangleContainsScreenPoint(root, screenPosition, eventCamera)
-            ? "CommandControlsRoot"
-            : "None";
-    }
+            RectTransform root = transform as RectTransform;
+            return root != null && RectTransformUtility.RectangleContainsScreenPoint(root, screenPosition, eventCamera)
+                ? "CommandControlsRoot"
+                : "None";
+        }
 
-    private Camera ResolveEventCamera()
-    {
-        Canvas canvas = ResolveCanvas();
-        if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
-            return null;
+        private Camera ResolveEventCamera()
+        {
+            Canvas canvas = ResolveCanvas();
+            if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                return null;
 
-        return canvas.worldCamera;
-    }
+            return canvas.worldCamera;
+        }
 
-    private Canvas ResolveCanvas()
-    {
-        if (_cachedCanvas == null)
-            _cachedCanvas = GetComponentInParent<Canvas>();
-        return _cachedCanvas;
-    }
+        private Canvas ResolveCanvas()
+        {
+            if (_cachedCanvas == null)
+                _cachedCanvas = GetComponentInParent<Canvas>();
+            return _cachedCanvas;
+        }
 
-    private static bool ContainsButton(Button button, Vector2 screenPosition, Camera eventCamera)
-    {
-        RectTransform rect = button != null ? button.transform as RectTransform : null;
-        return rect != null &&
-               button.gameObject.activeInHierarchy &&
-               RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, eventCamera);
+        private static bool ContainsButton(Button button, Vector2 screenPosition, Camera eventCamera)
+        {
+            RectTransform rect = button != null ? button.transform as RectTransform : null;
+            return rect != null &&
+                   button.gameObject.activeInHierarchy &&
+                   RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, eventCamera);
+        }
     }
 }

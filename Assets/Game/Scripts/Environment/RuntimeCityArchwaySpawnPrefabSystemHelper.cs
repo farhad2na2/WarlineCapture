@@ -1,100 +1,104 @@
 using System.Collections.Generic;
 using UnityEngine;
-using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 
-internal sealed class RuntimeCityArchwaySpawnPrefabSystemHelper
+namespace Game.Runtime
 {
-    private readonly RuntimeCityArchwaySpawnState _state = new();
+    using ReservedFootprint = RuntimeCityWalkabilityUtilitySystemHelper.ReservedFootprint;
 
-    public RuntimeCityArchwaySpawnState State => _state;
-
-    public int PlaceCentralArchwayBuildings(
-        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
-        RuntimeCityBuildingPlacementState placementSystem,
-        List<GameObject> archwayPrefabs,
-        int maxCount,
-        Vector2Int centerRoadCell,
-        int roadCellSizeInGridCells,
-        HashSet<Vector2Int> roadCells,
-        ref Unity.Mathematics.Random rng,
-        List<Vector2Int> usedPlotCells,
-        List<ReservedFootprint> reservedFootprints)
+    internal sealed class RuntimeCityArchwaySpawnPrefabSystemHelper
     {
-        return _state.PlaceCentralArchwayBuildings(
-            context,
-            placementSystem,
-            archwayPrefabs,
-            maxCount,
-            centerRoadCell,
-            roadCellSizeInGridCells,
-            roadCells,
-            ref rng,
-            usedPlotCells,
-            reservedFootprints);
-    }
-}
+        private readonly RuntimeCityArchwaySpawnState _state = new();
 
-internal sealed class RuntimeCityArchwaySpawnState
-{
-    public int PlaceCentralArchwayBuildings(
-        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
-        RuntimeCityBuildingPlacementState placementSystem,
-        List<GameObject> archwayPrefabs,
-        int maxCount,
-        Vector2Int centerRoadCell,
-        int roadCellSizeInGridCells,
-        HashSet<Vector2Int> roadCells,
-        ref Unity.Mathematics.Random rng,
-        List<Vector2Int> usedPlotCells,
-        List<ReservedFootprint> reservedFootprints)
-    {
-        if (archwayPrefabs == null || archwayPrefabs.Count == 0 || maxCount <= 0)
-            return 0;
+        public RuntimeCityArchwaySpawnState State => _state;
 
-        int placed = 0;
-        int attempts = 0;
-        int maxAttempts = Mathf.Max(120, maxCount * 24);
-        int minDistance = Mathf.Max(1, context.Config.HallPlazaRadiusRoadCells + 1);
-        int maxDistance = context.Config.HallPlazaRadiusRoadCells + 5;
-
-        while (placed < maxCount && attempts < maxAttempts)
+        public int PlaceCentralArchwayBuildings(
+            RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
+            RuntimeCityBuildingPlacementState placementSystem,
+            List<GameObject> archwayPrefabs,
+            int maxCount,
+            Vector2Int centerRoadCell,
+            int roadCellSizeInGridCells,
+            HashSet<Vector2Int> roadCells,
+            ref Unity.Mathematics.Random rng,
+            List<Vector2Int> usedPlotCells,
+            List<ReservedFootprint> reservedFootprints)
         {
-            attempts++;
-            Vector2Int plotCell = context.BuildingPlotSystem.GetRandomScatterPlotCell(centerRoadCell, maxDistance, ref rng);
-            int distance = Mathf.Abs(plotCell.x - centerRoadCell.x) + Mathf.Abs(plotCell.y - centerRoadCell.y);
-            if (distance < minDistance || distance > maxDistance)
-                continue;
-            if (roadCells.Contains(plotCell))
-                continue;
-            if (!context.BuildingPlotSystem.HasPlotSpacing(plotCell, usedPlotCells, 1))
-                continue;
+            return _state.PlaceCentralArchwayBuildings(
+                context,
+                placementSystem,
+                archwayPrefabs,
+                maxCount,
+                centerRoadCell,
+                roadCellSizeInGridCells,
+                roadCells,
+                ref rng,
+                usedPlotCells,
+                reservedFootprints);
+        }
+    }
 
-            GameObject prefab = archwayPrefabs[placed % archwayPrefabs.Count];
-            if (prefab == null)
-                continue;
+    internal sealed class RuntimeCityArchwaySpawnState
+    {
+        public int PlaceCentralArchwayBuildings(
+            RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
+            RuntimeCityBuildingPlacementState placementSystem,
+            List<GameObject> archwayPrefabs,
+            int maxCount,
+            Vector2Int centerRoadCell,
+            int roadCellSizeInGridCells,
+            HashSet<Vector2Int> roadCells,
+            ref Unity.Mathematics.Random rng,
+            List<Vector2Int> usedPlotCells,
+            List<ReservedFootprint> reservedFootprints)
+        {
+            if (archwayPrefabs == null || archwayPrefabs.Count == 0 || maxCount <= 0)
+                return 0;
 
-            Vector2Int footprint = placementSystem.GetFootprint(context, prefab);
-            Vector2Int preferredOrigin = context.BuildingPlotSystem.GetCenteredOriginForPlot(plotCell, footprint, roadCellSizeInGridCells);
-            if (!placementSystem.TrySpawnAndReserve(
-                    context,
-                    new RuntimeCityBuildingPlacementPrefabSystemHelper.Request(
-                    prefab,
-                    preferredOrigin,
-                    footprint,
-                    "Archway",
-                    "Decorative archway near the town center.",
-                    context.Config.DefaultBuildingMaxHealth,
-                    reservedFootprints,
-                    0),
-                    out _))
+            int placed = 0;
+            int attempts = 0;
+            int maxAttempts = Mathf.Max(120, maxCount * 24);
+            int minDistance = Mathf.Max(1, context.Config.HallPlazaRadiusRoadCells + 1);
+            int maxDistance = context.Config.HallPlazaRadiusRoadCells + 5;
+
+            while (placed < maxCount && attempts < maxAttempts)
             {
-                continue;
+                attempts++;
+                Vector2Int plotCell = context.BuildingPlotSystem.GetRandomScatterPlotCell(centerRoadCell, maxDistance, ref rng);
+                int distance = Mathf.Abs(plotCell.x - centerRoadCell.x) + Mathf.Abs(plotCell.y - centerRoadCell.y);
+                if (distance < minDistance || distance > maxDistance)
+                    continue;
+                if (roadCells.Contains(plotCell))
+                    continue;
+                if (!context.BuildingPlotSystem.HasPlotSpacing(plotCell, usedPlotCells, 1))
+                    continue;
+
+                GameObject prefab = archwayPrefabs[placed % archwayPrefabs.Count];
+                if (prefab == null)
+                    continue;
+
+                Vector2Int footprint = placementSystem.GetFootprint(context, prefab);
+                Vector2Int preferredOrigin = context.BuildingPlotSystem.GetCenteredOriginForPlot(plotCell, footprint, roadCellSizeInGridCells);
+                if (!placementSystem.TrySpawnAndReserve(
+                        context,
+                        new RuntimeCityBuildingPlacementPrefabSystemHelper.Request(
+                        prefab,
+                        preferredOrigin,
+                        footprint,
+                        "Archway",
+                        "Decorative archway near the town center.",
+                        context.Config.DefaultBuildingMaxHealth,
+                        reservedFootprints,
+                        0),
+                        out _))
+                {
+                    continue;
+                }
+
+                usedPlotCells.Add(plotCell);
+                placed++;
             }
 
-            usedPlotCells.Add(plotCell);
-            placed++;
+            return placed;
         }
-
-        return placed;
     }
 }

@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Runtime;
 
 public sealed class MatchHudSquadTrayQuickSelectTests
 {

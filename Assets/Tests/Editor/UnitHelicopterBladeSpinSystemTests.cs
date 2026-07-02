@@ -1,3 +1,6 @@
+using Game.Components;
+using Game.Configs;
+using Game.Rendering;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System.IO;
 using NUnit.Framework;

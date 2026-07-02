@@ -1,9 +1,12 @@
-public enum MatchHudSquadTraySlot
+namespace Game.UI.Contracts
 {
-    None = 0,
-    Soldiers = 1,
-    CombatVehicles = 2,
-    AttackHelicopter = 3,
-    Jet = 4,
-    Transport = 5
+    public enum MatchHudSquadTraySlot
+    {
+        None = 0,
+        Soldiers = 1,
+        CombatVehicles = 2,
+        AttackHelicopter = 3,
+        Jet = 4,
+        Transport = 5
+    }
 }

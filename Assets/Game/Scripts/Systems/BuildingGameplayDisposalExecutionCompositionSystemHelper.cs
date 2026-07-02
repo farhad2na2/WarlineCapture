@@ -1,78 +1,81 @@
 using System;
 using Unity.Entities;
 
-internal sealed class BuildingGameplayDisposalExecutionCompositionSystemHelper
+namespace Game.Runtime
 {
-    internal readonly struct Source
+    internal sealed class BuildingGameplayDisposalExecutionCompositionSystemHelper
     {
-        public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
-        public readonly BuildingPlacementStartupSystemHelper PlacementStartupSystem;
-        public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
-        public readonly BuildingPlacementPreviewPresentationSystemHelper PlacementPreviewSystem;
-        public readonly BuildingRuntimeObjectPresentationSystemHelper RuntimeObjectPresentationHelper;
-        public readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader;
-        public readonly Action ExitBuildMode;
-
-        public Source(
-            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
-            BuildingPlacementStartupSystemHelper placementStartupSystem,
-            BuildingDefinitionPrefabSystemHelper definitionSystem,
-            BuildingPlacementPreviewPresentationSystemHelper placementPreviewSystem,
-            BuildingRuntimeObjectPresentationSystemHelper runtimeObjectPresentationHelper,
-            UnitPathfindingPendingStateReader unitPathfindingPendingStateReadSystem,
-            Action exitBuildMode)
+        internal readonly struct Source
         {
-            RuntimeBuildingSystem = runtimeBuildingSystem;
-            PlacementStartupSystem = placementStartupSystem;
-            DefinitionSystem = definitionSystem;
-            PlacementPreviewSystem = placementPreviewSystem;
-            RuntimeObjectPresentationHelper = runtimeObjectPresentationHelper;
-            UnitPathfindingPendingStateReader = unitPathfindingPendingStateReadSystem;
-            ExitBuildMode = exitBuildMode;
-        }
-    }
+            public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
+            public readonly BuildingPlacementStartupSystemHelper PlacementStartupSystem;
+            public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
+            public readonly BuildingPlacementPreviewPresentationSystemHelper PlacementPreviewSystem;
+            public readonly BuildingRuntimeObjectPresentationSystemHelper RuntimeObjectPresentationHelper;
+            public readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader;
+            public readonly Action ExitBuildMode;
 
-    internal void Dispose(Source source)
-    {
-        source.ExitBuildMode?.Invoke();
-
-        if (source.RuntimeBuildingSystem != null)
-        {
-            foreach (RuntimeBuildingEntity building in source.RuntimeBuildingSystem.Buildings.Values)
+            public Source(
+                RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
+                BuildingPlacementStartupSystemHelper placementStartupSystem,
+                BuildingDefinitionPrefabSystemHelper definitionSystem,
+                BuildingPlacementPreviewPresentationSystemHelper placementPreviewSystem,
+                BuildingRuntimeObjectPresentationSystemHelper runtimeObjectPresentationHelper,
+                UnitPathfindingPendingStateReader unitPathfindingPendingStateReadSystem,
+                Action exitBuildMode)
             {
-                if (building == null)
-                    continue;
+                RuntimeBuildingSystem = runtimeBuildingSystem;
+                PlacementStartupSystem = placementStartupSystem;
+                DefinitionSystem = definitionSystem;
+                PlacementPreviewSystem = placementPreviewSystem;
+                RuntimeObjectPresentationHelper = runtimeObjectPresentationHelper;
+                UnitPathfindingPendingStateReader = unitPathfindingPendingStateReadSystem;
+                ExitBuildMode = exitBuildMode;
+            }
+        }
 
-                if (building.Instance != null)
-                    source.RuntimeObjectPresentationHelper?.DestroyRuntimeObject(building.Instance);
+        internal void Dispose(Source source)
+        {
+            source.ExitBuildMode?.Invoke();
 
-                if (TryGetEntityManager(out EntityManager em))
+            if (source.RuntimeBuildingSystem != null)
+            {
+                foreach (RuntimeBuildingEntity building in source.RuntimeBuildingSystem.Buildings.Values)
                 {
-                    if (building.CombatEntity != Entity.Null && em.Exists(building.CombatEntity))
-                        em.DestroyEntity(building.CombatEntity);
-                    if (building.BlockerEntity != Entity.Null && em.Exists(building.BlockerEntity))
-                        em.DestroyEntity(building.BlockerEntity);
+                    if (building == null)
+                        continue;
+
+                    if (building.Instance != null)
+                        source.RuntimeObjectPresentationHelper?.DestroyRuntimeObject(building.Instance);
+
+                    if (TryGetEntityManager(out EntityManager em))
+                    {
+                        if (building.CombatEntity != Entity.Null && em.Exists(building.CombatEntity))
+                            em.DestroyEntity(building.CombatEntity);
+                        if (building.BlockerEntity != Entity.Null && em.Exists(building.BlockerEntity))
+                            em.DestroyEntity(building.BlockerEntity);
+                    }
                 }
+
+                source.RuntimeBuildingSystem.Clear();
             }
 
-            source.RuntimeBuildingSystem.Clear();
+            source.PlacementStartupSystem?.Dispose(
+                source.DefinitionSystem,
+                source.PlacementPreviewSystem,
+                target => source.RuntimeObjectPresentationHelper?.DestroyRuntimeObject(target));
+            source.UnitPathfindingPendingStateReader?.Dispose();
         }
 
-        source.PlacementStartupSystem?.Dispose(
-            source.DefinitionSystem,
-            source.PlacementPreviewSystem,
-            target => source.RuntimeObjectPresentationHelper?.DestroyRuntimeObject(target));
-        source.UnitPathfindingPendingStateReader?.Dispose();
-    }
+        private static bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = default;
+            Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return false;
 
-    private static bool TryGetEntityManager(out EntityManager entityManager)
-    {
-        entityManager = default;
-        Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        entityManager = world.EntityManager;
-        return true;
+            entityManager = world.EntityManager;
+            return true;
+        }
     }
 }

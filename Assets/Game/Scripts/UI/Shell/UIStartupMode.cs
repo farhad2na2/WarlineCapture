@@ -1,5 +1,8 @@
-public enum UIStartupMode
+namespace Game.UI.Runtime
 {
-    UseLegacyMenu = 0,
-    UseParallelCodexUi = 1
+    public enum UIStartupMode
+    {
+        UseLegacyMenu = 0,
+        UseParallelCodexUi = 1
+    }
 }

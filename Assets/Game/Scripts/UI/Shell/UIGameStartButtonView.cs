@@ -1,31 +1,35 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Contracts;
 
-[RequireComponent(typeof(Button))]
-public sealed class UIGameStartButtonView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    private Button _button;
-    private IMatchLaunchCommand _launchCommand;
-
-    public void BindMatchLaunchCommand(IMatchLaunchCommand launchCommand)
+    [RequireComponent(typeof(Button))]
+    public sealed class UIGameStartButtonView : MonoBehaviour
     {
-        _launchCommand = launchCommand;
-    }
+        private Button _button;
+        private IMatchLaunchCommand _launchCommand;
 
-    private void Awake()
-    {
-        _button = GetComponent<Button>();
-        _button.onClick.AddListener(HandleClick);
-    }
+        public void BindMatchLaunchCommand(IMatchLaunchCommand launchCommand)
+        {
+            _launchCommand = launchCommand;
+        }
 
-    private void OnDestroy()
-    {
-        if (_button != null)
-            _button.onClick.RemoveListener(HandleClick);
-    }
+        private void Awake()
+        {
+            _button = GetComponent<Button>();
+            _button.onClick.AddListener(HandleClick);
+        }
 
-    private void HandleClick()
-    {
-        _launchCommand?.LaunchMatch(this);
+        private void OnDestroy()
+        {
+            if (_button != null)
+                _button.onClick.RemoveListener(HandleClick);
+        }
+
+        private void HandleClick()
+        {
+            _launchCommand?.LaunchMatch(this);
+        }
     }
 }

@@ -1,18 +1,23 @@
-public sealed class NullMatchIntroStateQuery : IMatchIntroStateQuery
+using Game.UI.Contracts;
+
+namespace Game.Runtime
 {
-    public static readonly NullMatchIntroStateQuery Instance = new();
-
-    private NullMatchIntroStateQuery()
+    public sealed class NullMatchIntroStateQuery : IMatchIntroStateQuery
     {
-    }
+        public static readonly NullMatchIntroStateQuery Instance = new();
 
-    public bool IsGameplayInputLocked()
-    {
-        return false;
-    }
+        private NullMatchIntroStateQuery()
+        {
+        }
 
-    public bool IsIntroComplete()
-    {
-        return true;
+        public bool IsGameplayInputLocked()
+        {
+            return false;
+        }
+
+        public bool IsIntroComplete()
+        {
+            return true;
+        }
     }
 }

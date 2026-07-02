@@ -1,54 +1,60 @@
-public sealed class BattleHudRuntimeFeedbackSink : IBattleHudRuntimeFeedbackSink
+using Game.Tactical.Contracts;
+using Game.UI.Contracts;
+
+namespace Game.UI.Runtime
 {
-    private readonly IBattleHudRuntimeFeedbackView _view;
-
-    public BattleHudRuntimeFeedbackSink(IBattleHudRuntimeFeedbackView view)
+    public sealed class BattleHudRuntimeFeedbackSink : IBattleHudRuntimeFeedbackSink
     {
-        _view = view;
-    }
+        private readonly IBattleHudRuntimeFeedbackView _view;
 
-    public BattleHudRuntimeFeedbackState GetState()
-    {
-        return BattleHudRuntimeFeedbackUiSystemHelper.GetState(_view);
-    }
+        public BattleHudRuntimeFeedbackSink(IBattleHudRuntimeFeedbackView view)
+        {
+            _view = view;
+        }
 
-    public void ApplySelection(string displayName, string status)
-    {
-        BattleHudRuntimeFeedbackUiSystemHelper.ApplySelection(_view, displayName, status);
-    }
+        public BattleHudRuntimeFeedbackState GetState()
+        {
+            return BattleHudRuntimeFeedbackUiSystemHelper.GetState(_view);
+        }
 
-    public void ClearSelection()
-    {
-        BattleHudRuntimeFeedbackUiSystemHelper.ClearSelection(_view);
-    }
+        public void ApplySelection(string displayName, string status)
+        {
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplySelection(_view, displayName, status);
+        }
 
-    public void ApplyCommandMode(TacticalCommandMode mode)
-    {
-        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(_view, mode);
-    }
+        public void ClearSelection()
+        {
+            BattleHudRuntimeFeedbackUiSystemHelper.ClearSelection(_view);
+        }
 
-    public void ApplyBoardCommandMode(UiBoardCommandModeDirection direction, bool boardAllInteractable)
-    {
-        BattleHudRuntimeFeedbackUiSystemHelper.ApplyBoardCommandMode(_view, direction, boardAllInteractable);
-    }
+        public void ApplyCommandMode(TacticalCommandMode mode)
+        {
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(_view, mode);
+        }
 
-    public void ClearCommandMode()
-    {
-        BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(_view);
-    }
+        public void ApplyBoardCommandMode(UiBoardCommandModeDirection direction, bool boardAllInteractable)
+        {
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyBoardCommandMode(_view, direction, boardAllInteractable);
+        }
 
-    public void ClearCommandModeTabs()
-    {
-        _view?.ClearCommandModeTabs();
-    }
+        public void ClearCommandMode()
+        {
+            BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(_view);
+        }
 
-    public void ApplyCommandResult(TacticalCommandResult result)
-    {
-        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_view, result);
-    }
+        public void ClearCommandModeTabs()
+        {
+            _view?.ClearCommandModeTabs();
+        }
 
-    public void SetWorldMarkersVisible(bool visible)
-    {
-        BattleHudRuntimeFeedbackUiSystemHelper.SetWorldMarkersVisible(_view, visible);
+        public void ApplyCommandResult(TacticalCommandResult result)
+        {
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_view, result);
+        }
+
+        public void SetWorldMarkersVisible(bool visible)
+        {
+            BattleHudRuntimeFeedbackUiSystemHelper.SetWorldMarkersVisible(_view, visible);
+        }
     }
 }

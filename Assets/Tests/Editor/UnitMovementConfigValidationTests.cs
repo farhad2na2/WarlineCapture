@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Unity.Collections;
 using UnityEditor;
+using Game.Configs;
 
 public sealed class UnitMovementConfigValidationTests
 {

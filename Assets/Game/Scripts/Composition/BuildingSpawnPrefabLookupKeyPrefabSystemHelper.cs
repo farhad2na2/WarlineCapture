@@ -1,16 +1,21 @@
 using UnityEngine;
+using Game.Authoring;
+using Game.Runtime;
 
-internal static class BuildingSpawnPrefabLookupKeyPrefabSystemHelper
+namespace Game.Composition
 {
-    public static string ResolveSpawnableLookupKey(GameObject prefab)
+    internal static class BuildingSpawnPrefabLookupKeyPrefabSystemHelper
     {
-        if (prefab == null)
-            return string.Empty;
+        public static string ResolveSpawnableLookupKey(GameObject prefab)
+        {
+            if (prefab == null)
+                return string.Empty;
 
-        BuildingDefinitionAuthoring authoring = prefab.GetComponent<BuildingDefinitionAuthoring>();
-        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName))
-            return authoring.ConfiguredDisplayName;
+            BuildingDefinitionAuthoring authoring = prefab.GetComponent<BuildingDefinitionAuthoring>();
+            if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName))
+                return authoring.ConfiguredDisplayName;
 
-        return prefab.name;
+            return prefab.name;
+        }
     }
 }

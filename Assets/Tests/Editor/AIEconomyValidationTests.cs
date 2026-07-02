@@ -4,6 +4,9 @@ using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
 
 public sealed class AIEconomyValidationTests
 {

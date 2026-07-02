@@ -1,78 +1,82 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Game.Tactical.Contracts;
 
-public sealed class BuildDrawerPanelView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private GameObject drawerRoot;
-    [SerializeField] private Button openButton;
-    [SerializeField] private Button closeButton;
-    [SerializeField] private BattleHudRuntimeFeedbackView runtimeFeedbackView;
-    private bool _appliedBuildMode;
-
-    public bool IsOpen => drawerRoot != null && drawerRoot.activeSelf;
-
-    private void Awake()
+    public sealed class BuildDrawerPanelView : MonoBehaviour
     {
-        if (runtimeFeedbackView == null)
-            runtimeFeedbackView = GetComponent<BattleHudRuntimeFeedbackView>();
+        [SerializeField] private GameObject drawerRoot;
+        [SerializeField] private Button openButton;
+        [SerializeField] private Button closeButton;
+        [SerializeField] private BattleHudRuntimeFeedbackView runtimeFeedbackView;
+        private bool _appliedBuildMode;
 
-        if (openButton != null)
-            openButton.onClick.AddListener(Open);
+        public bool IsOpen => drawerRoot != null && drawerRoot.activeSelf;
 
-        if (closeButton != null)
-            closeButton.onClick.AddListener(Close);
+        private void Awake()
+        {
+            if (runtimeFeedbackView == null)
+                runtimeFeedbackView = GetComponent<BattleHudRuntimeFeedbackView>();
 
-        Close();
-    }
+            if (openButton != null)
+                openButton.onClick.AddListener(Open);
 
-    private void OnDestroy()
-    {
-        if (openButton != null)
-            openButton.onClick.RemoveListener(Open);
+            if (closeButton != null)
+                closeButton.onClick.AddListener(Close);
 
-        if (closeButton != null)
-            closeButton.onClick.RemoveListener(Close);
-    }
+            Close();
+        }
 
-    public void Open()
-    {
-        if (drawerRoot != null)
-            drawerRoot.SetActive(true);
-        ApplyBuildMode();
-    }
+        private void OnDestroy()
+        {
+            if (openButton != null)
+                openButton.onClick.RemoveListener(Open);
 
-    public void Close()
-    {
-        if (drawerRoot != null)
-            drawerRoot.SetActive(false);
-        ClearBuildMode();
-    }
+            if (closeButton != null)
+                closeButton.onClick.RemoveListener(Close);
+        }
 
-    public void Toggle()
-    {
-        if (drawerRoot == null)
-            return;
-
-        bool shouldOpen = !drawerRoot.activeSelf;
-        drawerRoot.SetActive(shouldOpen);
-        if (shouldOpen)
+        public void Open()
+        {
+            if (drawerRoot != null)
+                drawerRoot.SetActive(true);
             ApplyBuildMode();
-        else
+        }
+
+        public void Close()
+        {
+            if (drawerRoot != null)
+                drawerRoot.SetActive(false);
             ClearBuildMode();
-    }
+        }
 
-    private void ApplyBuildMode()
-    {
-        BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(runtimeFeedbackView, TacticalCommandMode.Build);
-        _appliedBuildMode = runtimeFeedbackView != null;
-    }
+        public void Toggle()
+        {
+            if (drawerRoot == null)
+                return;
 
-    private void ClearBuildMode()
-    {
-        if (!_appliedBuildMode)
-            return;
+            bool shouldOpen = !drawerRoot.activeSelf;
+            drawerRoot.SetActive(shouldOpen);
+            if (shouldOpen)
+                ApplyBuildMode();
+            else
+                ClearBuildMode();
+        }
 
-        BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(runtimeFeedbackView);
-        _appliedBuildMode = false;
+        private void ApplyBuildMode()
+        {
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(runtimeFeedbackView, TacticalCommandMode.Build);
+            _appliedBuildMode = runtimeFeedbackView != null;
+        }
+
+        private void ClearBuildMode()
+        {
+            if (!_appliedBuildMode)
+                return;
+
+            BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(runtimeFeedbackView);
+            _appliedBuildMode = false;
+        }
     }
 }

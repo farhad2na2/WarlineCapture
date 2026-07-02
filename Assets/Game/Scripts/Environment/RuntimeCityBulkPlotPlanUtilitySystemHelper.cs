@@ -1,75 +1,79 @@
 using System.Collections.Generic;
 using UnityEngine;
-using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
-using Plan = RuntimeCityBulkPlotPlanUtilitySystemHelper.Plan;
-using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 
-internal sealed class RuntimeCityBulkPlotPlanUtilitySystemHelper
+namespace Game.Runtime
 {
-    private readonly RuntimeCityBulkPlotPlanState _state = new();
+    using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
+    using Plan = RuntimeCityBulkPlotPlanUtilitySystemHelper.Plan;
+    using PlotCandidate = RuntimeCityBuildingPlotUtilitySystemHelper.PlotCandidate;
 
-    public RuntimeCityBulkPlotPlanState State => _state;
-
-    public readonly struct Plan
+    internal sealed class RuntimeCityBulkPlotPlanUtilitySystemHelper
     {
-        public readonly List<PlotCandidate> CentralPlots;
-        public readonly List<PlotCandidate> OuterPlots;
-        public readonly List<PlotCandidate> EntryPlots;
+        private readonly RuntimeCityBulkPlotPlanState _state = new();
 
-        public Plan(
-            List<PlotCandidate> centralPlots,
-            List<PlotCandidate> outerPlots,
-            List<PlotCandidate> entryPlots)
+        public RuntimeCityBulkPlotPlanState State => _state;
+
+        public readonly struct Plan
         {
-            CentralPlots = centralPlots;
-            OuterPlots = outerPlots;
-            EntryPlots = entryPlots;
+            public readonly List<PlotCandidate> CentralPlots;
+            public readonly List<PlotCandidate> OuterPlots;
+            public readonly List<PlotCandidate> EntryPlots;
+
+            public Plan(
+                List<PlotCandidate> centralPlots,
+                List<PlotCandidate> outerPlots,
+                List<PlotCandidate> entryPlots)
+            {
+                CentralPlots = centralPlots;
+                OuterPlots = outerPlots;
+                EntryPlots = entryPlots;
+            }
+        }
+
+        public Plan CreatePlan(
+            RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
+            CityLayoutData city,
+            int townRadius,
+            HashSet<Vector2Int> roadCells,
+            Vector2Int centerRoadCell,
+            ref Unity.Mathematics.Random rng)
+        {
+            return _state.CreatePlan(context, city, townRadius, roadCells, centerRoadCell, ref rng);
         }
     }
 
-    public Plan CreatePlan(
-        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
-        CityLayoutData city,
-        int townRadius,
-        HashSet<Vector2Int> roadCells,
-        Vector2Int centerRoadCell,
-        ref Unity.Mathematics.Random rng)
+    internal sealed class RuntimeCityBulkPlotPlanState
     {
-        return _state.CreatePlan(context, city, townRadius, roadCells, centerRoadCell, ref rng);
-    }
-}
+        public Plan CreatePlan(
+            RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
+            CityLayoutData city,
+            int townRadius,
+            HashSet<Vector2Int> roadCells,
+            Vector2Int centerRoadCell,
+            ref Unity.Mathematics.Random rng)
+        {
+            RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
+            List<PlotCandidate> centralPlots = context.BuildingPlotSystem.CollectRoadsidePlots(
+                roadCells,
+                centerRoadCell,
+                townRadius,
+                config.HallPlazaRadiusRoadCells + 1,
+                config.HallPlazaRadiusRoadCells + 3);
+            List<PlotCandidate> outerPlots = context.BuildingPlotSystem.CollectRoadsidePlots(
+                roadCells,
+                centerRoadCell,
+                townRadius,
+                config.HallPlazaRadiusRoadCells + 4,
+                townRadius + 1);
+            List<PlotCandidate> entryPlots = city.HasIncomingAnchor
+                ? context.BuildingPlotSystem.CollectEntryRoadsidePlots(city, townRadius)
+                : new List<PlotCandidate>();
 
-internal sealed class RuntimeCityBulkPlotPlanState
-{
-    public Plan CreatePlan(
-        RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
-        CityLayoutData city,
-        int townRadius,
-        HashSet<Vector2Int> roadCells,
-        Vector2Int centerRoadCell,
-        ref Unity.Mathematics.Random rng)
-    {
-        RuntimeCityConfigCompositionSystemHelper.Snapshot config = context.Config;
-        List<PlotCandidate> centralPlots = context.BuildingPlotSystem.CollectRoadsidePlots(
-            roadCells,
-            centerRoadCell,
-            townRadius,
-            config.HallPlazaRadiusRoadCells + 1,
-            config.HallPlazaRadiusRoadCells + 3);
-        List<PlotCandidate> outerPlots = context.BuildingPlotSystem.CollectRoadsidePlots(
-            roadCells,
-            centerRoadCell,
-            townRadius,
-            config.HallPlazaRadiusRoadCells + 4,
-            townRadius + 1);
-        List<PlotCandidate> entryPlots = city.HasIncomingAnchor
-            ? context.BuildingPlotSystem.CollectEntryRoadsidePlots(city, townRadius)
-            : new List<PlotCandidate>();
+            context.PrefabSelectionSystem.Shuffle(centralPlots, ref rng);
+            context.PrefabSelectionSystem.Shuffle(outerPlots, ref rng);
+            context.PrefabSelectionSystem.Shuffle(entryPlots, ref rng);
 
-        context.PrefabSelectionSystem.Shuffle(centralPlots, ref rng);
-        context.PrefabSelectionSystem.Shuffle(outerPlots, ref rng);
-        context.PrefabSelectionSystem.Shuffle(entryPlots, ref rng);
-
-        return new Plan(centralPlots, outerPlots, entryPlots);
+            return new Plan(centralPlots, outerPlots, entryPlots);
+        }
     }
 }

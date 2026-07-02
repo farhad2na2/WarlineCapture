@@ -1,3 +1,5 @@
+using Game.Configs;
+using Game.Runtime;
 public static class QuickCustomBalanceProbe
 {
     public const string ProbeId = "QuickCustom_Default_Medium";

@@ -1,30 +1,34 @@
 using Unity.Burst;
 using Unity.Entities;
+using Game.Components;
 
-[BurstCompile]
-[UpdateAfter(typeof(UnitGridMovementSystem))]
-public partial struct PathPoolMaintenanceSystem : ISystem
+namespace Game.Runtime
 {
-    private EntityQuery _activePaths;
-
     [BurstCompile]
-    public void OnCreate(ref SystemState state)
+    [UpdateAfter(typeof(UnitGridMovementSystem))]
+    public partial struct PathPoolMaintenanceSystem : ISystem
     {
-        state.RequireForUpdate<GridConfig>();
-        state.RequireForUpdate<PathPoolComponent>();
-        _activePaths = state.GetEntityQuery(ComponentType.ReadOnly<UnitPathRange>());
-    }
+        private EntityQuery _activePaths;
 
-    [BurstCompile]
-    public void OnUpdate(ref SystemState state)
-    {
-        if (_activePaths.CalculateEntityCount() != 0)
-            return;
+        [BurstCompile]
+        public void OnCreate(ref SystemState state)
+        {
+            state.RequireForUpdate<GridConfig>();
+            state.RequireForUpdate<PathPoolComponent>();
+            _activePaths = state.GetEntityQuery(ComponentType.ReadOnly<UnitPathRange>());
+        }
 
-        RefRW<PathPoolComponent> pool = SystemAPI.GetSingletonRW<PathPoolComponent>();
-        if (!pool.ValueRO.Cells.IsCreated || pool.ValueRO.Cells.Length == 0)
-            return;
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
+        {
+            if (_activePaths.CalculateEntityCount() != 0)
+                return;
 
-        pool.ValueRW.Cells.Clear();
+            RefRW<PathPoolComponent> pool = SystemAPI.GetSingletonRW<PathPoolComponent>();
+            if (!pool.ValueRO.Cells.IsCreated || pool.ValueRO.Cells.Length == 0)
+                return;
+
+            pool.ValueRW.Cells.Clear();
+        }
     }
 }

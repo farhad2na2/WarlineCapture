@@ -1,97 +1,101 @@
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+using Game.Components;
 
-public sealed class SelectionRuntimeDiagnosticsSystemHelper
+namespace Game.Runtime
 {
-    public static readonly bool EnableSelectionClickDiagnostics = false;
-    public static readonly bool EnableMoveCommandTrace = false;
-    public static readonly bool EnableScanCommandTrace = false;
-
-    private const string SelectionClickPrefix = "[SelectionClick]";
-    private const string MoveCommandTracePrefix = "[MoveCommandTrace]";
-    private const string ScanCommandTracePrefix = "[ScanCommandTrace]";
-
-    public void EnqueueSelectionDiagnostic(string message)
+    public sealed class SelectionRuntimeDiagnosticsSystemHelper
     {
-        EnqueueSelectionDiagnosticMessage(message);
-    }
+        public static readonly bool EnableSelectionClickDiagnostics = false;
+        public static readonly bool EnableMoveCommandTrace = false;
+        public static readonly bool EnableScanCommandTrace = false;
 
-    public static void EnqueueSelectionDiagnosticMessage(string message)
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return;
+        private const string SelectionClickPrefix = "[SelectionClick]";
+        private const string MoveCommandTracePrefix = "[MoveCommandTrace]";
+        private const string ScanCommandTracePrefix = "[ScanCommandTrace]";
 
-        EntityManager em = world.EntityManager;
-        if (ShouldQueueTransportBoardingDiagnostics(em))
-            EnqueueTransportBoardingDiagnostic(em, $"[Selection] {message}");
-    }
+        public void EnqueueSelectionDiagnostic(string message)
+        {
+            EnqueueSelectionDiagnosticMessage(message);
+        }
 
-    public void LogSelectionClickDiagnostic(string message)
-    {
-        LogSelectionClickDiagnosticMessage(message);
-    }
+        public static void EnqueueSelectionDiagnosticMessage(string message)
+        {
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return;
 
-    public static void LogSelectionClickDiagnosticMessage(string message)
-    {
-        if (!EnableSelectionClickDiagnostics)
-            return;
+            EntityManager em = world.EntityManager;
+            if (ShouldQueueTransportBoardingDiagnostics(em))
+                EnqueueTransportBoardingDiagnostic(em, $"[Selection] {message}");
+        }
 
-        Debug.Log($"{SelectionClickPrefix} {message}");
-        EnqueueSelectionDiagnosticMessage(message);
-    }
+        public void LogSelectionClickDiagnostic(string message)
+        {
+            LogSelectionClickDiagnosticMessage(message);
+        }
 
-    [System.Diagnostics.Conditional("WARLINE_SELECTION_CLICK_DIAGNOSTICS")]
-    public static void LogSelectionClickDebug(string message)
-    {
-        Debug.Log(message);
-    }
+        public static void LogSelectionClickDiagnosticMessage(string message)
+        {
+            if (!EnableSelectionClickDiagnostics)
+                return;
 
-    public static void LogMoveCommandTrace(string message)
-    {
-        if (!EnableMoveCommandTrace)
-            return;
+            Debug.Log($"{SelectionClickPrefix} {message}");
+            EnqueueSelectionDiagnosticMessage(message);
+        }
 
-        Debug.Log($"{MoveCommandTracePrefix} {message}");
-    }
+        [System.Diagnostics.Conditional("WARLINE_SELECTION_CLICK_DIAGNOSTICS")]
+        public static void LogSelectionClickDebug(string message)
+        {
+            Debug.Log(message);
+        }
 
-    public static void LogScanCommandTrace(string message)
-    {
-        if (!EnableScanCommandTrace)
-            return;
+        public static void LogMoveCommandTrace(string message)
+        {
+            if (!EnableMoveCommandTrace)
+                return;
 
-        Debug.Log($"{ScanCommandTracePrefix} {message}");
-    }
+            Debug.Log($"{MoveCommandTracePrefix} {message}");
+        }
 
-    private static bool ShouldQueueTransportBoardingDiagnostics(EntityManager em)
-    {
-        if (Application.isBatchMode)
-            return true;
+        public static void LogScanCommandTrace(string message)
+        {
+            if (!EnableScanCommandTrace)
+                return;
 
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
-        return !query.IsEmptyIgnoreFilter &&
-            em.GetComponentData<RuntimeDiagnosticsStateComponent>(query.GetSingletonEntity()).TransportBoardingDiagnostics != 0;
-    }
+            Debug.Log($"{ScanCommandTracePrefix} {message}");
+        }
 
-    private static Entity EnsureTransportBoardingDiagnosticQueue(EntityManager em)
-    {
-        using EntityQuery query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<TransportBoardingDiagnosticLogQueueComponent>(),
-            ComponentType.ReadWrite<TransportBoardingDiagnosticLogComponent>());
-        if (!query.IsEmptyIgnoreFilter)
-            return query.GetSingletonEntity();
+        private static bool ShouldQueueTransportBoardingDiagnostics(EntityManager em)
+        {
+            if (Application.isBatchMode)
+                return true;
 
-        Entity queueEntity = em.CreateEntity(typeof(TransportBoardingDiagnosticLogQueueComponent));
-        em.SetName(queueEntity, "TransportBoardingDiagnosticLogQueue");
-        em.AddBuffer<TransportBoardingDiagnosticLogComponent>(queueEntity);
-        return queueEntity;
-    }
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
+            return !query.IsEmptyIgnoreFilter &&
+                em.GetComponentData<RuntimeDiagnosticsStateComponent>(query.GetSingletonEntity()).TransportBoardingDiagnostics != 0;
+        }
 
-    private static void EnqueueTransportBoardingDiagnostic(EntityManager em, FixedString512Bytes message)
-    {
-        Entity queueEntity = EnsureTransportBoardingDiagnosticQueue(em);
-        DynamicBuffer<TransportBoardingDiagnosticLogComponent> logs = em.GetBuffer<TransportBoardingDiagnosticLogComponent>(queueEntity);
-        logs.Add(new TransportBoardingDiagnosticLogComponent { Message = message });
+        private static Entity EnsureTransportBoardingDiagnosticQueue(EntityManager em)
+        {
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<TransportBoardingDiagnosticLogQueueComponent>(),
+                ComponentType.ReadWrite<TransportBoardingDiagnosticLogComponent>());
+            if (!query.IsEmptyIgnoreFilter)
+                return query.GetSingletonEntity();
+
+            Entity queueEntity = em.CreateEntity(typeof(TransportBoardingDiagnosticLogQueueComponent));
+            em.SetName(queueEntity, "TransportBoardingDiagnosticLogQueue");
+            em.AddBuffer<TransportBoardingDiagnosticLogComponent>(queueEntity);
+            return queueEntity;
+        }
+
+        private static void EnqueueTransportBoardingDiagnostic(EntityManager em, FixedString512Bytes message)
+        {
+            Entity queueEntity = EnsureTransportBoardingDiagnosticQueue(em);
+            DynamicBuffer<TransportBoardingDiagnosticLogComponent> logs = em.GetBuffer<TransportBoardingDiagnosticLogComponent>(queueEntity);
+            logs.Add(new TransportBoardingDiagnosticLogComponent { Message = message });
+        }
     }
 }

@@ -1,47 +1,51 @@
 using Unity.Collections;
 using Unity.Entities;
+using Game.Components;
 
-public readonly struct UnitRenderBudgetImpostorTag
+namespace Game.Rendering
 {
-    public void CollectUnitImpostorTagRequest(
-        EntityManager em,
-        Entity unit,
-        bool shouldShowFar,
-        NativeList<Entity> unitsToShowDetailed,
-        NativeList<Entity> unitsToShowFarImpostor,
-        ref int changed)
+    public readonly struct UnitRenderBudgetImpostorTag
     {
-        bool farImpostor = em.HasComponent<UnitRenderBudgetCulledUnitTag>(unit);
-        if (!shouldShowFar && farImpostor)
+        public void CollectUnitImpostorTagRequest(
+            EntityManager em,
+            Entity unit,
+            bool shouldShowFar,
+            NativeList<Entity> unitsToShowDetailed,
+            NativeList<Entity> unitsToShowFarImpostor,
+            ref int changed)
         {
-            unitsToShowDetailed.Add(unit);
-            changed++;
+            bool farImpostor = em.HasComponent<UnitRenderBudgetCulledUnitTag>(unit);
+            if (!shouldShowFar && farImpostor)
+            {
+                unitsToShowDetailed.Add(unit);
+                changed++;
+            }
+            else if (shouldShowFar && !farImpostor)
+            {
+                unitsToShowFarImpostor.Add(unit);
+                changed++;
+            }
         }
-        else if (shouldShowFar && !farImpostor)
-        {
-            unitsToShowFarImpostor.Add(unit);
-            changed++;
-        }
-    }
 
-    public void CollectUnitImpostorTagRequest(
-        Entity unit,
-        bool shouldShowFar,
-        ComponentLookup<UnitRenderBudgetCulledUnitTag> culledUnitLookup,
-        NativeList<Entity> unitsToShowDetailed,
-        NativeList<Entity> unitsToShowFarImpostor,
-        ref int changed)
-    {
-        bool farImpostor = culledUnitLookup.HasComponent(unit);
-        if (!shouldShowFar && farImpostor)
+        public void CollectUnitImpostorTagRequest(
+            Entity unit,
+            bool shouldShowFar,
+            ComponentLookup<UnitRenderBudgetCulledUnitTag> culledUnitLookup,
+            NativeList<Entity> unitsToShowDetailed,
+            NativeList<Entity> unitsToShowFarImpostor,
+            ref int changed)
         {
-            unitsToShowDetailed.Add(unit);
-            changed++;
-        }
-        else if (shouldShowFar && !farImpostor)
-        {
-            unitsToShowFarImpostor.Add(unit);
-            changed++;
+            bool farImpostor = culledUnitLookup.HasComponent(unit);
+            if (!shouldShowFar && farImpostor)
+            {
+                unitsToShowDetailed.Add(unit);
+                changed++;
+            }
+            else if (shouldShowFar && !farImpostor)
+            {
+                unitsToShowFarImpostor.Add(unit);
+                changed++;
+            }
         }
     }
 }

@@ -2,68 +2,72 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Game.Components;
 
-[BurstCompile]
-[UpdateAfter(typeof(UnitGridMovementSystem))]
-[UpdateAfter(typeof(UnitEngagedMovementSystem))]
-[UpdateAfter(typeof(UnitAirMovementSystem))]
-public partial struct UnitMoveVisualStateSystem : ISystem
+namespace Game.Runtime
 {
-    public void OnCreate(ref SystemState state)
-    {
-        state.RequireForUpdate<UnitPrevWorldPos>();
-        state.RequireForUpdate<UnitMoveVisualComponent>();
-    }
-
     [BurstCompile]
-    public void OnUpdate(ref SystemState state)
+    [UpdateAfter(typeof(UnitGridMovementSystem))]
+    [UpdateAfter(typeof(UnitEngagedMovementSystem))]
+    [UpdateAfter(typeof(UnitAirMovementSystem))]
+    public partial struct UnitMoveVisualStateSystem : ISystem
     {
-        float epsSq = 0.00025f * 0.00025f;
-        float stopHoldSeconds = 0.15f;
-        float dt = SystemAPI.Time.DeltaTime;
-        var handle = new UpdateJob
+        public void OnCreate(ref SystemState state)
         {
-            DeltaTime = dt,
-            EpsilonSq = epsSq,
-            StopHoldSeconds = stopHoldSeconds
-        }.ScheduleParallel(state.Dependency);
+            state.RequireForUpdate<UnitPrevWorldPos>();
+            state.RequireForUpdate<UnitMoveVisualComponent>();
+        }
 
-        state.Dependency = handle;
-    }
-
-    [BurstCompile]
-    [WithNone(typeof(StaticGridBlocker))]
-    private partial struct UpdateJob : IJobEntity
-    {
-        public float DeltaTime;
-        public float EpsilonSq;
-        public float StopHoldSeconds;
-
-        public void Execute(ref UnitPrevWorldPos prev, ref UnitMoveVisualComponent vis, in LocalTransform transform)
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
         {
-            float3 cur = transform.Position;
-            float3 delta = cur - prev.Value;
-            delta.y = 0f;
-            bool moved = math.lengthsq(delta) > EpsilonSq;
+            float epsSq = 0.00025f * 0.00025f;
+            float stopHoldSeconds = 0.15f;
+            float dt = SystemAPI.Time.DeltaTime;
+            var handle = new UpdateJob
+            {
+                DeltaTime = dt,
+                EpsilonSq = epsSq,
+                StopHoldSeconds = stopHoldSeconds
+            }.ScheduleParallel(state.Dependency);
 
-            if (moved)
+            state.Dependency = handle;
+        }
+
+        [BurstCompile]
+        [WithNone(typeof(StaticGridBlocker))]
+        private partial struct UpdateJob : IJobEntity
+        {
+            public float DeltaTime;
+            public float EpsilonSq;
+            public float StopHoldSeconds;
+
+            public void Execute(ref UnitPrevWorldPos prev, ref UnitMoveVisualComponent vis, in LocalTransform transform)
             {
-                vis.IsMoving = 1;
-                vis.StillSeconds = 0f;
-            }
-            else
-            {
-                vis.StillSeconds += DeltaTime;
-                if (vis.IsMoving != 0 && vis.StillSeconds < StopHoldSeconds)
+                float3 cur = transform.Position;
+                float3 delta = cur - prev.Value;
+                delta.y = 0f;
+                bool moved = math.lengthsq(delta) > EpsilonSq;
+
+                if (moved)
                 {
-                    // Keep "walk" on brief stalls (path cell snapping / occupancy waits).
+                    vis.IsMoving = 1;
+                    vis.StillSeconds = 0f;
                 }
                 else
                 {
-                    vis.IsMoving = 0;
+                    vis.StillSeconds += DeltaTime;
+                    if (vis.IsMoving != 0 && vis.StillSeconds < StopHoldSeconds)
+                    {
+                        // Keep "walk" on brief stalls (path cell snapping / occupancy waits).
+                    }
+                    else
+                    {
+                        vis.IsMoving = 0;
+                    }
                 }
+                prev.Value = cur;
             }
-            prev.Value = cur;
         }
     }
 }

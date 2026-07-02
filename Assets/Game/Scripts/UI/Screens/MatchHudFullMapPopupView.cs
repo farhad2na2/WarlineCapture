@@ -1,83 +1,86 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-[DisallowMultipleComponent]
-public sealed class MatchHudFullMapPopupView : MonoBehaviour
+namespace Game.UI.Runtime
 {
-    [SerializeField] private GameObject popupRoot;
-    [SerializeField] private MatchHudMinimapView minimap;
-    [SerializeField] private Button closeAction;
-
-    private Canvas _cachedCanvas;
-
-    public GameObject PopupRoot => popupRoot != null ? popupRoot : gameObject;
-    public MatchHudMinimapView Minimap => minimap;
-    public bool IsOpen => PopupRoot != null && PopupRoot.activeInHierarchy;
-
-    public event System.Action CloseRequested;
-
-    private void Awake()
+    [DisallowMultipleComponent]
+    public sealed class MatchHudFullMapPopupView : MonoBehaviour
     {
-        if (popupRoot == null)
-            popupRoot = gameObject;
-    }
+        [SerializeField] private GameObject popupRoot;
+        [SerializeField] private MatchHudMinimapView minimap;
+        [SerializeField] private Button closeAction;
 
-    private void OnEnable()
-    {
-        if (closeAction != null)
-            closeAction.onClick.AddListener(RequestClose);
-    }
+        private Canvas _cachedCanvas;
 
-    private void OnDisable()
-    {
-        if (closeAction != null)
-            closeAction.onClick.RemoveListener(RequestClose);
-    }
+        public GameObject PopupRoot => popupRoot != null ? popupRoot : gameObject;
+        public MatchHudMinimapView Minimap => minimap;
+        public bool IsOpen => PopupRoot != null && PopupRoot.activeInHierarchy;
 
-    private void OnTransformParentChanged()
-    {
-        _cachedCanvas = null;
-    }
+        public event System.Action CloseRequested;
 
-    public void Show()
-    {
-        if (PopupRoot != null && !PopupRoot.activeSelf)
-            PopupRoot.SetActive(true);
-    }
+        private void Awake()
+        {
+            if (popupRoot == null)
+                popupRoot = gameObject;
+        }
 
-    public void Hide()
-    {
-        if (PopupRoot != null && PopupRoot.activeSelf)
-            PopupRoot.SetActive(false);
-    }
+        private void OnEnable()
+        {
+            if (closeAction != null)
+                closeAction.onClick.AddListener(RequestClose);
+        }
 
-    public bool ContainsScreenPoint(Vector2 screenPosition)
-    {
-        RectTransform rect = PopupRoot != null ? PopupRoot.transform as RectTransform : transform as RectTransform;
-        if (rect == null || !rect.gameObject.activeInHierarchy)
-            return false;
+        private void OnDisable()
+        {
+            if (closeAction != null)
+                closeAction.onClick.RemoveListener(RequestClose);
+        }
 
-        return RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, ResolveEventCamera(rect));
-    }
+        private void OnTransformParentChanged()
+        {
+            _cachedCanvas = null;
+        }
 
-    private void RequestClose()
-    {
-        CloseRequested?.Invoke();
-    }
+        public void Show()
+        {
+            if (PopupRoot != null && !PopupRoot.activeSelf)
+                PopupRoot.SetActive(true);
+        }
 
-    private Camera ResolveEventCamera(RectTransform rect)
-    {
-        Canvas canvas = ResolveCanvas(rect);
-        if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
-            return null;
+        public void Hide()
+        {
+            if (PopupRoot != null && PopupRoot.activeSelf)
+                PopupRoot.SetActive(false);
+        }
 
-        return canvas.worldCamera;
-    }
+        public bool ContainsScreenPoint(Vector2 screenPosition)
+        {
+            RectTransform rect = PopupRoot != null ? PopupRoot.transform as RectTransform : transform as RectTransform;
+            if (rect == null || !rect.gameObject.activeInHierarchy)
+                return false;
 
-    private Canvas ResolveCanvas(RectTransform rect)
-    {
-        if (_cachedCanvas == null && rect != null)
-            _cachedCanvas = rect.GetComponentInParent<Canvas>();
-        return _cachedCanvas;
+            return RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, ResolveEventCamera(rect));
+        }
+
+        private void RequestClose()
+        {
+            CloseRequested?.Invoke();
+        }
+
+        private Camera ResolveEventCamera(RectTransform rect)
+        {
+            Canvas canvas = ResolveCanvas(rect);
+            if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                return null;
+
+            return canvas.worldCamera;
+        }
+
+        private Canvas ResolveCanvas(RectTransform rect)
+        {
+            if (_cachedCanvas == null && rect != null)
+                _cachedCanvas = rect.GetComponentInParent<Canvas>();
+            return _cachedCanvas;
+        }
     }
 }

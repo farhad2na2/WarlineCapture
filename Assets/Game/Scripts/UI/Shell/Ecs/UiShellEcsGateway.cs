@@ -644,14 +644,49 @@ namespace Game.UI.Shell.Ecs
 
             EnsureMatchHudHeaderState(entityManager, boundary);
             UiMatchHudHeaderComponent component = entityManager.GetComponentData<UiMatchHudHeaderComponent>(boundary);
+            string fuelText = TryFormatPlayerResourceSummary(entityManager, boundary, out string resourceSummary)
+                ? resourceSummary
+                : component.FuelText.ToString();
             header = new UiMatchHudHeaderModel(
                 component.OrderText.ToString(),
                 component.SquadText.ToString(),
                 component.CreditsText.ToString(),
-                component.FuelText.ToString(),
+                fuelText,
                 component.SupplyText.ToString(),
                 component.CivilianRiskText.ToString());
             return true;
+        }
+
+        private static bool TryFormatPlayerResourceSummary(EntityManager entityManager, Entity boundary, out string text)
+        {
+            text = string.Empty;
+            if (!entityManager.HasBuffer<BuildingRuntimeFactionSummary>(boundary))
+                return false;
+
+            DynamicBuffer<BuildingRuntimeFactionSummary> summaries =
+                entityManager.GetBuffer<BuildingRuntimeFactionSummary>(boundary, true);
+            for (int i = 0; i < summaries.Length; i++)
+            {
+                BuildingRuntimeFactionSummary summary = summaries[i];
+                if (!FactionIdentity.IsPlayerControlled(summary.FactionId))
+                    continue;
+
+                int oil = Mathf.Max(0, Mathf.RoundToInt(summary.StoredOilBarrels));
+                int fuel = Mathf.Max(0, Mathf.RoundToInt(summary.StoredFuelBarrels));
+                text = $"O {FormatCompact(oil)} F {FormatCompact(fuel)}";
+                return true;
+            }
+
+            return false;
+        }
+
+        private static string FormatCompact(int value)
+        {
+            if (value >= 1000000)
+                return $"{value / 1000000f:0.#}M";
+            if (value >= 10000)
+                return $"{value / 1000f:0.#}K";
+            return value.ToString();
         }
 
         public static bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)

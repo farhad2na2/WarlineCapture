@@ -185,6 +185,34 @@ namespace Game.Runtime
             return true;
         }
 
+        public bool TryGetSelectedBuildingResourceStorage(
+            Context context,
+            out int oilCurrent,
+            out int oilCapacity,
+            out int fuelCurrent,
+            out int fuelCapacity)
+        {
+            oilCurrent = 0;
+            oilCapacity = 0;
+            fuelCurrent = 0;
+            fuelCapacity = 0;
+
+            if (!TryGetActiveBuilding(context, out RuntimeBuildingEntity building) || building?.Definition == null)
+                return false;
+
+            oilCapacity = Mathf.Max(0, building.OilStorageCapacity);
+            fuelCapacity = Mathf.Max(0, building.FuelStorageCapacity);
+            oilCurrent = Mathf.RoundToInt(Mathf.Max(0f, building.StoredOilBarrels));
+            fuelCurrent = Mathf.RoundToInt(Mathf.Max(0f, building.StoredFuelBarrels));
+
+            if (oilCapacity > 0)
+                oilCurrent = Mathf.Min(oilCurrent, oilCapacity);
+            if (fuelCapacity > 0)
+                fuelCurrent = Mathf.Min(fuelCurrent, fuelCapacity);
+
+            return oilCapacity > 0 || fuelCapacity > 0 || oilCurrent > 0 || fuelCurrent > 0;
+        }
+
         private static bool TryGetActiveBuilding(Context context, out RuntimeBuildingEntity building)
         {
             building = null;

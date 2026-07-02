@@ -234,11 +234,21 @@ namespace Game.UI.Runtime
 
         public void ApplyTransportPassengers(MatchHudTransportPassengersModel model)
         {
-            if (!model.Visible || model.Transport.IsNull)
+            bool isPassengerModel = model.StorageKind == MatchHudStorageChipKind.Passengers;
+            if (!model.Visible || (isPassengerModel && model.Transport.IsNull))
             {
                 _passengerDrawerOpen = false;
                 _passengerDrawerTransport = UiEntityHandle.Null;
-                ApplyPassengerChip(false, 0, 0);
+                ApplyPassengerChip(MatchHudTransportPassengersModel.Hidden);
+                passengerDrawer?.Apply(MatchHudTransportPassengersModel.Hidden);
+                return;
+            }
+
+            if (!isPassengerModel)
+            {
+                _passengerDrawerOpen = false;
+                _passengerDrawerTransport = UiEntityHandle.Null;
+                ApplyPassengerChip(model);
                 passengerDrawer?.Apply(MatchHudTransportPassengersModel.Hidden);
                 return;
             }
@@ -249,7 +259,7 @@ namespace Game.UI.Runtime
                 _passengerDrawerOpen = false;
             }
 
-            ApplyPassengerChip(true, model.PassengerCount, model.Capacity);
+            ApplyPassengerChip(model);
             passengerDrawer?.Apply(new MatchHudTransportPassengersModel(
                 true,
                 _passengerDrawerOpen,
@@ -261,7 +271,12 @@ namespace Game.UI.Runtime
                 model.SoldierPassengerCount,
                 model.SoldierCapacity,
                 model.VehiclePassengerCount,
-                model.VehicleCapacity));
+                model.VehicleCapacity,
+                model.StorageKind,
+                model.OilCurrent,
+                model.OilCapacity,
+                model.FuelCurrent,
+                model.FuelCapacity));
         }
 
         public void SetBoardActionSelected(bool selected)
@@ -435,18 +450,48 @@ namespace Game.UI.Runtime
             _passengerExitRequested?.Invoke(passenger);
         }
 
-        private void ApplyPassengerChip(bool visible, int passengerCount, int capacity)
+        private void ApplyPassengerChip(MatchHudTransportPassengersModel model)
         {
+            bool visible = model.Visible;
             if (passengerChipRoot != null)
                 passengerChipRoot.SetActive(visible);
 
             if (passengerChipButton != null)
-                passengerChipButton.interactable = visible;
+                passengerChipButton.interactable = visible && model.StorageKind == MatchHudStorageChipKind.Passengers;
 
             if (passengerChipLabel != null)
-                passengerChipLabel.text = visible
-                    ? $"PASSENGERS {Mathf.Max(0, passengerCount)}/{Mathf.Max(0, capacity)}"
-                    : string.Empty;
+                passengerChipLabel.text = visible ? ResolveStorageChipLabel(model) : string.Empty;
+        }
+
+        private static string ResolveStorageChipLabel(MatchHudTransportPassengersModel model)
+        {
+            return model.StorageKind switch
+            {
+                MatchHudStorageChipKind.OilBarrels =>
+                    $"OIL BARRELS {Mathf.Max(0, model.OilCurrent)}/{Mathf.Max(0, model.OilCapacity)}",
+                MatchHudStorageChipKind.FuelBarrels =>
+                    $"FUEL {Mathf.Max(0, model.FuelCurrent)}/{Mathf.Max(0, model.FuelCapacity)}",
+                MatchHudStorageChipKind.OilAndFuel =>
+                    $"OIL {Mathf.Max(0, model.OilCurrent)}/{Mathf.Max(0, model.OilCapacity)} | FUEL {Mathf.Max(0, model.FuelCurrent)}/{Mathf.Max(0, model.FuelCapacity)}",
+                MatchHudStorageChipKind.ResourceCargo =>
+                    ResolveResourceCargoChipLabel(model),
+                _ =>
+                    $"PASSENGERS {Mathf.Max(0, model.PassengerCount)}/{Mathf.Max(0, model.Capacity)}"
+            };
+        }
+
+        private static string ResolveResourceCargoChipLabel(MatchHudTransportPassengersModel model)
+        {
+            int capacity = Mathf.Max(0, model.Capacity);
+            int oil = Mathf.Max(0, model.OilCurrent);
+            int fuel = Mathf.Max(0, model.FuelCurrent);
+            if (oil > 0 && fuel > 0)
+                return $"OIL {oil}/{capacity} | FUEL {fuel}/{capacity}";
+            if (fuel > 0)
+                return $"FUEL {fuel}/{capacity}";
+            if (oil > 0)
+                return $"OIL {oil}/{capacity}";
+            return $"CARGO 0/{capacity}";
         }
 
         private void SetHealthFill(float health01)

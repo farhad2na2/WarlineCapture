@@ -29,6 +29,8 @@ namespace Game.UI.Runtime
         private GameObject _matchHudThreatJumpPanel;
         private TMP_Text _matchHudThreatTitle;
         private float _matchHudThreatVisibleUntil = float.NegativeInfinity;
+        private TMP_Text _matchHudResourceSlotLabel;
+        private TMP_Text _matchHudResourceSlotValue;
         private BuildDrawerView _buildDrawerView;
         private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
         private System.Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
@@ -104,6 +106,7 @@ namespace Game.UI.Runtime
 
             _selectionUiCameraSystem?.UpdateZoomTransition();
             _matchHudRightQuickRailView?.RefreshZoomControls();
+            ApplyMatchHudHeaderResourceState();
             TickMatchHudThreatWarning(Time.unscaledTime);
         }
 
@@ -236,9 +239,13 @@ namespace Game.UI.Runtime
             _matchHudThreatJumpPanel = null;
             _matchHudThreatTitle = null;
             _matchHudThreatVisibleUntil = float.NegativeInfinity;
+            _matchHudResourceSlotLabel = null;
+            _matchHudResourceSlotValue = null;
 
             if (headerContent == null)
                 return;
+
+            BindMatchHudResourceSlot(headerContent);
 
             Transform panelTransform = headerContent.transform.Find("ThreatJumpPanel");
             panelTransform ??= headerContent.transform.Find("HeaderContent/ThreatJumpPanel");
@@ -251,6 +258,35 @@ namespace Game.UI.Runtime
                 ? titleTransform.GetComponent<TMP_Text>()
                 : panelTransform.GetComponentInChildren<TMP_Text>(true);
             SetMatchHudThreatWarningVisible(false);
+        }
+
+        private void BindMatchHudResourceSlot(GameObject headerContent)
+        {
+            Transform fuelSlot = headerContent.transform.Find("ResourceStrip/FuelSlot");
+            fuelSlot ??= headerContent.transform.Find("HeaderContent/ResourceStrip/FuelSlot");
+            if (fuelSlot == null)
+                return;
+
+            Transform label = fuelSlot.Find("Label");
+            Transform value = fuelSlot.Find("Value");
+            _matchHudResourceSlotLabel = label != null ? label.GetComponent<TMP_Text>() : null;
+            _matchHudResourceSlotValue = value != null ? value.GetComponent<TMP_Text>() : null;
+            ApplyMatchHudHeaderResourceState();
+        }
+
+        private void ApplyMatchHudHeaderResourceState()
+        {
+            if (_matchHudResourceSlotValue == null)
+                return;
+
+            if (!UiShellRuntimeGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header))
+                return;
+
+            if (_matchHudResourceSlotLabel != null)
+                _matchHudResourceSlotLabel.text = "Oil / Fuel";
+            _matchHudResourceSlotValue.text = string.IsNullOrWhiteSpace(header.FuelText)
+                ? "O 0 F 0"
+                : header.FuelText;
         }
 
         public bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime)

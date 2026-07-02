@@ -516,7 +516,14 @@ namespace Game.Runtime
                         out breachCell,
                         out breachPosition,
                         out reason),
-                    TryResolveSelectedBuildingFollowTarget));
+                    TryResolveSelectedBuildingFollowTarget,
+                    (out int oilCurrent, out int oilCapacity, out int fuelCurrent, out int fuelCapacity) =>
+                        childSystems.BuildingPlacementQueryUiSystemHelper.TryGetSelectedBuildingResourceStorage(
+                            createPlacementQueryContext(childSystems),
+                            out oilCurrent,
+                            out oilCapacity,
+                            out fuelCurrent,
+                            out fuelCapacity)));
             BuildingRuntimeContextFactoryCompositionSystemHelper.Source buildingRuntimeContextSource =
                 createBuildingRuntimeContextSource(childSystems, interactionContext, markerPropertyBlock);
             CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary =

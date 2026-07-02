@@ -14,7 +14,7 @@ namespace Game.Editor
         public const string Ad001BaselineMarkdownPath = "Design/Architecture/battle_scenario_lab_ad001_baseline_metrics.md";
         public const string Ad001BaselineJsonPath = "Design/Architecture/battle_scenario_lab_ad001_baseline_metrics.json";
 
-        [MenuItem("Warline Capture/Scenario Lab/Capture AD-001 Baseline Metrics")]
+        [MenuItem("Tools/Game/Scenario Lab/Capture AD-001 Baseline Metrics")]
         public static void CaptureAd001BaselineMetrics()
         {
             try

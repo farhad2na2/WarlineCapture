@@ -74,6 +74,20 @@ namespace Game.Runtime
                 model.CapacityProgress01 = capacityProgress01;
             }
 
+            if (selectionUiReadModelLookup.TryGetFocusedUnitResourceCargoInfo(
+                    em,
+                    focusedUnit,
+                    timeSeconds,
+                    out int resourceOilBarrels,
+                    out int resourceFuelBarrels,
+                    out int resourceCapacity))
+            {
+                model.HasResourceCargo = 1;
+                model.ResourceCargoOilBarrels = resourceOilBarrels;
+                model.ResourceCargoFuelBarrels = resourceFuelBarrels;
+                model.ResourceCargoCapacity = resourceCapacity;
+            }
+
             if (selectionUiReadModelLookup.TryGetTransportPassengerBreakdown(
                     em,
                     focusedUnit,

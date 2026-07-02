@@ -18,6 +18,11 @@ namespace Game.Runtime
         public delegate bool TryGetAttackModeOrderSnapshotDelegate(out string orderText);
         public delegate bool IsBoardCommandAvailableDelegate(EntityManager em, Entity entity);
         public delegate bool HasSelectedBoardActionDelegate(EntityManager em);
+        public delegate bool TryGetSelectedBuildingResourceStorageDelegate(
+            out int oilCurrent,
+            out int oilCapacity,
+            out int fuelCurrent,
+            out int fuelCapacity);
 
         public readonly struct Context
         {
@@ -296,6 +301,7 @@ namespace Game.Runtime
             System.Func<Sprite> resolveActiveSquadTrayPortraitSprite,
             System.Func<bool> hasSelectedBuilding,
             System.Func<string> selectedBuildingLabel,
+            TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage,
             IsBoardCommandAvailableDelegate isBoardCommandAvailable,
             HasSelectedBoardActionDelegate hasSelectedBoardAction)
         {
@@ -363,7 +369,8 @@ namespace Game.Runtime
                 _matchHudSelectionPanelView.Apply(BuildSelectedBuildingPanelModel(
                     selectedBuildingLabel,
                     resolveSelectedBuildingPortraitSprite));
-                _matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+                _matchHudSelectionPanelView.ApplyTransportPassengers(
+                    BuildSelectedBuildingResourceStoragePanelModel(tryGetSelectedBuildingResourceStorage));
                 return;
             }
 
@@ -567,11 +574,13 @@ namespace Game.Runtime
                     out DynamicBuffer<FocusedUnitPassengerUiReadModelElement> passengers) ||
                 focusedModel.HasFocusedUnit == 0 ||
                 focusedModel.FocusedUnit != transport ||
-                focusedModel.OwnedByPlayer == 0 ||
-                focusedModel.TransportPassengerCapacity <= 0)
+                focusedModel.OwnedByPlayer == 0)
             {
                 return MatchHudTransportPassengersModel.Hidden;
             }
+
+            if (focusedModel.TransportPassengerCapacity <= 0)
+                return BuildResourceCargoPanelModel(transport, focusedModel);
 
             int capacity = math.max(0, focusedModel.TransportPassengerCapacity);
             if (capacity <= 0)
@@ -614,6 +623,67 @@ namespace Game.Runtime
                 focusedModel.TransportSoldierPassengerCapacity,
                 focusedModel.TransportVehiclePassengerCount,
                 focusedModel.TransportVehiclePassengerCapacity);
+        }
+
+        private static MatchHudTransportPassengersModel BuildResourceCargoPanelModel(
+            Entity entity,
+            FocusedUnitUiReadModelComponent focusedModel)
+        {
+            if (focusedModel.HasResourceCargo == 0 || focusedModel.ResourceCargoCapacity <= 0)
+                return MatchHudTransportPassengersModel.Hidden;
+
+            return new MatchHudTransportPassengersModel(
+                true,
+                false,
+                ToUiHandle(entity),
+                focusedModel.ResourceCargoOilBarrels + focusedModel.ResourceCargoFuelBarrels,
+                focusedModel.ResourceCargoCapacity,
+                false,
+                null,
+                storageKind: MatchHudStorageChipKind.ResourceCargo,
+                oilCurrent: focusedModel.ResourceCargoOilBarrels,
+                oilCapacity: focusedModel.ResourceCargoCapacity,
+                fuelCurrent: focusedModel.ResourceCargoFuelBarrels,
+                fuelCapacity: focusedModel.ResourceCargoCapacity);
+        }
+
+        private static MatchHudTransportPassengersModel BuildSelectedBuildingResourceStoragePanelModel(
+            TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage)
+        {
+            if (tryGetSelectedBuildingResourceStorage == null ||
+                !tryGetSelectedBuildingResourceStorage(
+                    out int oilCurrent,
+                    out int oilCapacity,
+                    out int fuelCurrent,
+                    out int fuelCapacity))
+            {
+                return MatchHudTransportPassengersModel.Hidden;
+            }
+
+            bool hasOil = oilCapacity > 0 || oilCurrent > 0;
+            bool hasFuel = fuelCapacity > 0 || fuelCurrent > 0;
+            if (!hasOil && !hasFuel)
+                return MatchHudTransportPassengersModel.Hidden;
+
+            MatchHudStorageChipKind kind = hasOil && hasFuel
+                ? MatchHudStorageChipKind.OilAndFuel
+                : hasOil
+                    ? MatchHudStorageChipKind.OilBarrels
+                    : MatchHudStorageChipKind.FuelBarrels;
+
+            return new MatchHudTransportPassengersModel(
+                true,
+                false,
+                UiEntityHandle.Null,
+                oilCurrent + fuelCurrent,
+                oilCapacity + fuelCapacity,
+                false,
+                null,
+                storageKind: kind,
+                oilCurrent: oilCurrent,
+                oilCapacity: oilCapacity,
+                fuelCurrent: fuelCurrent,
+                fuelCapacity: fuelCapacity);
         }
 
         private string ResolvePassengerRoleText(Context context, EntityManager em, Entity passenger)

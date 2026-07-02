@@ -146,7 +146,7 @@ namespace Game.Editor
                 HookLiveEcsPlaybackPendingExit();
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Run AD-001 Air Defense")]
+        [MenuItem("Tools/Game/Scenario Lab/Run AD-001 Air Defense")]
         public static void RunAirDefenseAd001()
         {
             try
@@ -175,7 +175,7 @@ namespace Game.Editor
             }
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update AD-001 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update AD-001 Definition")]
         public static void CreateOrUpdateAd001DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Ad001DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -212,7 +212,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] AD-001 definition saved: {Ad001DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update AD-002 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update AD-002 Definition")]
         public static void CreateOrUpdateAd002DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Ad002DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -247,7 +247,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] AD-002 definition saved: {Ad002DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update AD-003 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update AD-003 Definition")]
         public static void CreateOrUpdateAd003DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Ad003DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -282,7 +282,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] AD-003 definition saved: {Ad003DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update AD-004 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update AD-004 Definition")]
         public static void CreateOrUpdateAd004DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Ad004DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -317,7 +317,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] AD-004 definition saved: {Ad004DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update AD-005 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update AD-005 Definition")]
         public static void CreateOrUpdateAd005DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Ad005DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -352,7 +352,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] AD-005 definition saved: {Ad005DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update AD-006 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update AD-006 Definition")]
         public static void CreateOrUpdateAd006DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Ad006DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -387,7 +387,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] AD-006 definition saved: {Ad006DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update AD-007 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update AD-007 Definition")]
         public static void CreateOrUpdateAd007DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Ad007DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -422,7 +422,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] AD-007 definition saved: {Ad007DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update AD-008 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update AD-008 Definition")]
         public static void CreateOrUpdateAd008DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Ad008DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -457,7 +457,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] AD-008 definition saved: {Ad008DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update AD-009 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update AD-009 Definition")]
         public static void CreateOrUpdateAd009DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Ad009DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -492,7 +492,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] AD-009 definition saved: {Ad009DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update AD-010 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update AD-010 Definition")]
         public static void CreateOrUpdateAd010DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Ad010DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -527,7 +527,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] AD-010 definition saved: {Ad010DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update AD-011 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update AD-011 Definition")]
         public static void CreateOrUpdateAd011DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Ad011DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -562,7 +562,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] AD-011 definition saved: {Ad011DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update GM-001 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update GM-001 Definition")]
         public static void CreateOrUpdateGm001DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Gm001DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -597,7 +597,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] GM-001 definition saved: {Gm001DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update DR-001 Definition")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update DR-001 Definition")]
         public static void CreateOrUpdateDr001DefinitionAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Dr001DefinitionPath) ?? "Assets/Game/Configs/ScenarioLab");
@@ -632,7 +632,7 @@ namespace Game.Editor
             Debug.Log($"[BattleScenarioLab] DR-001 definition saved: {Dr001DefinitionPath}");
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Create or Update Transport Boarding Definitions")]
+        [MenuItem("Tools/Game/Scenario Lab/Create or Update Transport Boarding Definitions")]
         public static void CreateOrUpdateTransportBoardingDefinitionAssets()
         {
             Directory.CreateDirectory(TransportBoardingDefinitionFolder);
@@ -676,7 +676,7 @@ namespace Game.Editor
             return $"{TransportBoardingDefinitionFolder}/{descriptor.ScenarioId}.asset";
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Manual Scene Smoke")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Manual Scene Smoke")]
         public static void ValidateManualSceneSmoke()
         {
             try
@@ -815,7 +815,7 @@ namespace Game.Editor
             }
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Manual Scene Live ECS Playback")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Manual Scene Live ECS Playback")]
         public static void ValidateManualSceneLiveEcsPlayback()
         {
             try
@@ -839,7 +839,7 @@ namespace Game.Editor
             }
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Manual Scene Next Switches Visual Playback")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Manual Scene Next Switches Visual Playback")]
         public static void ValidateManualSceneNextSwitchesVisualPlayback()
         {
             try
@@ -861,7 +861,7 @@ namespace Game.Editor
             }
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-001 Visual Playback")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Transport Boarding TB-001 Visual Playback")]
         public static void ValidateTransportBoardingTb001VisualPlayback()
         {
             ValidateTransportBoardingVisualPlayback(
@@ -869,7 +869,7 @@ namespace Game.Editor
                 GroundVehicleTransportSourceKey);
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-002 Visual Playback")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Transport Boarding TB-002 Visual Playback")]
         public static void ValidateTransportBoardingTb002VisualPlayback()
         {
             ValidateTransportBoardingVisualPlayback(
@@ -877,7 +877,7 @@ namespace Game.Editor
                 HelicopterTransportSourceKey);
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-003 Visual Playback")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Transport Boarding TB-003 Visual Playback")]
         public static void ValidateTransportBoardingTb003VisualPlayback()
         {
             ValidateTransportBoardingVisualPlayback(
@@ -885,7 +885,7 @@ namespace Game.Editor
                 HelicopterTransportSourceKey);
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-005 Visual Playback")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Transport Boarding TB-005 Visual Playback")]
         public static void ValidateTransportBoardingTb005VisualPlayback()
         {
             ValidateTransportBoardingVisualPlayback(
@@ -893,7 +893,7 @@ namespace Game.Editor
                 PlaneTransportSourceKey);
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-006 Visual Playback")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Transport Boarding TB-006 Visual Playback")]
         public static void ValidateTransportBoardingTb006VisualPlayback()
         {
             ValidateTransportBoardingVisualPlayback(
@@ -901,7 +901,7 @@ namespace Game.Editor
                 PlaneTransportSourceKey);
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-007 Visual Playback")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Transport Boarding TB-007 Visual Playback")]
         public static void ValidateTransportBoardingTb007VisualPlayback()
         {
             ValidateTransportBoardingVisualPlayback(
@@ -909,7 +909,7 @@ namespace Game.Editor
                 PlaneTransportSourceKey);
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-008 Visual Playback")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Transport Boarding TB-008 Visual Playback")]
         public static void ValidateTransportBoardingTb008VisualPlayback()
         {
             ValidateTransportBoardingVisualPlayback(
@@ -917,7 +917,7 @@ namespace Game.Editor
                 PlaneTransportSourceKey);
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding TB-009 Visual Playback")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Transport Boarding TB-009 Visual Playback")]
         public static void ValidateTransportBoardingTb009VisualPlayback()
         {
             ValidateTransportBoardingVisualPlayback(
@@ -925,13 +925,13 @@ namespace Game.Editor
                 PlaneTransportSourceKey);
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding Next Cleanup Visual Playback")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Transport Boarding Next Cleanup Visual Playback")]
         public static void ValidateTransportBoardingNextCleanupVisualPlayback()
         {
             ValidateTransportBoardingCleanupVisualPlayback(runAgainMode: false);
         }
 
-        [MenuItem("Warline Capture/Scenario Lab/Validate Transport Boarding Run Again Cleanup Visual Playback")]
+        [MenuItem("Tools/Game/Scenario Lab/Validate Transport Boarding Run Again Cleanup Visual Playback")]
         public static void ValidateTransportBoardingRunAgainCleanupVisualPlayback()
         {
             ValidateTransportBoardingCleanupVisualPlayback(runAgainMode: true);

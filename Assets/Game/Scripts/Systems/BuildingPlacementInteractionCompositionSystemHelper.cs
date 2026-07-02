@@ -8,6 +8,11 @@ namespace Game.Runtime
     public sealed class BuildingPlacementInteractionCompositionSystemHelper
     {
         public delegate bool TryResolveSelectedBuildingFollowTargetDelegate(out Vector3 worldPosition, out float boundsRadius);
+        public delegate bool TryGetSelectedBuildingResourceStorageDelegate(
+            out int oilCurrent,
+            out int oilCapacity,
+            out int fuelCurrent,
+            out int fuelCapacity);
 
         public delegate bool TryResolveBaseBreachTargetDelegate(
             byte attackerFactionId,
@@ -38,6 +43,7 @@ namespace Game.Runtime
             public readonly Action<int, Entity, GameObject> HandleRuntimeBuildingEntityDestroyed;
             public readonly TryResolveBaseBreachTargetDelegate TryResolveBaseBreachTarget;
             public readonly TryResolveSelectedBuildingFollowTargetDelegate TryResolveSelectedBuildingFollowTarget;
+            public readonly TryGetSelectedBuildingResourceStorageDelegate TryGetSelectedBuildingResourceStorage;
 
             public Context(
                 Func<bool> hasPendingBuildingPlacement,
@@ -56,7 +62,8 @@ namespace Game.Runtime
                 Action exitBuildMode,
                 Action<int, Entity, GameObject> handleRuntimeBuildingEntityDestroyed,
                 TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget,
-                TryResolveSelectedBuildingFollowTargetDelegate tryResolveSelectedBuildingFollowTarget = null)
+                TryResolveSelectedBuildingFollowTargetDelegate tryResolveSelectedBuildingFollowTarget = null,
+                TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage = null)
             {
                 HasPendingBuildingPlacement = hasPendingBuildingPlacement;
                 CanConfirmBuildingPlacement = canConfirmBuildingPlacement;
@@ -75,6 +82,7 @@ namespace Game.Runtime
                 HandleRuntimeBuildingEntityDestroyed = handleRuntimeBuildingEntityDestroyed;
                 TryResolveBaseBreachTarget = tryResolveBaseBreachTarget;
                 TryResolveSelectedBuildingFollowTarget = tryResolveSelectedBuildingFollowTarget;
+                TryGetSelectedBuildingResourceStorage = tryGetSelectedBuildingResourceStorage;
             }
         }
 
@@ -192,6 +200,25 @@ namespace Game.Runtime
             boundsRadius = 0f;
             return context.TryResolveSelectedBuildingFollowTarget != null &&
                    context.TryResolveSelectedBuildingFollowTarget(out worldPosition, out boundsRadius);
+        }
+
+        public bool TryGetSelectedBuildingResourceStorage(
+            Context context,
+            out int oilCurrent,
+            out int oilCapacity,
+            out int fuelCurrent,
+            out int fuelCapacity)
+        {
+            oilCurrent = 0;
+            oilCapacity = 0;
+            fuelCurrent = 0;
+            fuelCapacity = 0;
+            return context.TryGetSelectedBuildingResourceStorage != null &&
+                   context.TryGetSelectedBuildingResourceStorage(
+                       out oilCurrent,
+                       out oilCapacity,
+                       out fuelCurrent,
+                       out fuelCapacity);
         }
     }
 }

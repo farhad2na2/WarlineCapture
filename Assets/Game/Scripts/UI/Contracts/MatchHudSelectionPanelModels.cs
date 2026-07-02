@@ -92,13 +92,27 @@ namespace Game.UI.Contracts
         }
     }
 
+    public enum MatchHudStorageChipKind
+    {
+        Passengers = 0,
+        OilBarrels = 1,
+        FuelBarrels = 2,
+        OilAndFuel = 3,
+        ResourceCargo = 4
+    }
+
     public readonly struct MatchHudTransportPassengersModel
     {
         public readonly bool Visible;
         public readonly bool DrawerOpen;
         public readonly UiEntityHandle Transport;
+        public readonly MatchHudStorageChipKind StorageKind;
         public readonly int PassengerCount;
         public readonly int Capacity;
+        public readonly int OilCurrent;
+        public readonly int OilCapacity;
+        public readonly int FuelCurrent;
+        public readonly int FuelCapacity;
         public readonly int SoldierPassengerCount;
         public readonly int SoldierCapacity;
         public readonly int VehiclePassengerCount;
@@ -117,13 +131,23 @@ namespace Game.UI.Contracts
             int soldierPassengerCount = 0,
             int soldierCapacity = 0,
             int vehiclePassengerCount = 0,
-            int vehicleCapacity = 0)
+            int vehicleCapacity = 0,
+            MatchHudStorageChipKind storageKind = MatchHudStorageChipKind.Passengers,
+            int oilCurrent = 0,
+            int oilCapacity = 0,
+            int fuelCurrent = 0,
+            int fuelCapacity = 0)
         {
             Visible = visible;
             DrawerOpen = drawerOpen;
             Transport = transport;
+            StorageKind = storageKind;
             PassengerCount = passengerCount;
             Capacity = capacity;
+            OilCurrent = oilCurrent;
+            OilCapacity = oilCapacity;
+            FuelCurrent = fuelCurrent;
+            FuelCapacity = fuelCapacity;
             SoldierPassengerCount = soldierPassengerCount;
             SoldierCapacity = soldierCapacity;
             VehiclePassengerCount = vehiclePassengerCount;

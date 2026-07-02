@@ -185,6 +185,65 @@ namespace Game.Runtime
             return true;
         }
 
+        public bool TryGetFocusedUnitResourceCargoInfo(
+            EntityManager entityManager,
+            Entity entity,
+            float timeSeconds,
+            out int oilBarrels,
+            out int fuelBarrels,
+            out int capacity)
+        {
+            oilBarrels = 0;
+            fuelBarrels = 0;
+            capacity = 0;
+
+            if (!entityManager.Exists(entity) || !entityManager.HasComponent<UnitResourceHauler>(entity))
+                return false;
+
+            UnitResourceHauler hauler = entityManager.GetComponentData<UnitResourceHauler>(entity);
+            capacity = Mathf.Max(0, hauler.BarrelCapacity);
+            if (capacity <= 0)
+                return false;
+
+            float oil = Mathf.Clamp(hauler.CargoOilBarrels, 0f, capacity);
+            float fuel = Mathf.Clamp(hauler.CargoFuelBarrels, 0f, capacity);
+
+            if (entityManager.HasComponent<UnitResourceHaulOrder>(entity))
+            {
+                const byte LoadingPhase = 2;
+                const byte UnloadingPhase = 4;
+                const byte OilKind = 0;
+                const byte FuelKind = 1;
+
+                UnitResourceHaulOrder order = entityManager.GetComponentData<UnitResourceHaulOrder>(entity);
+                if (order.ActionEndsAt > 0f)
+                {
+                    if (order.Phase == LoadingPhase && hauler.FillDurationSeconds > 0.01f)
+                    {
+                        float startedAt = order.ActionEndsAt - hauler.FillDurationSeconds;
+                        float fillCargo = Mathf.Clamp01((timeSeconds - startedAt) / hauler.FillDurationSeconds) * capacity;
+                        if (order.ResourceKind == FuelKind)
+                            fuel = Mathf.Max(fuel, fillCargo);
+                        else if (order.ResourceKind == OilKind)
+                            oil = Mathf.Max(oil, fillCargo);
+                    }
+                    else if (order.Phase == UnloadingPhase && hauler.UnloadDurationSeconds > 0.01f)
+                    {
+                        float startedAt = order.ActionEndsAt - hauler.UnloadDurationSeconds;
+                        float remainingCargo = (1f - Mathf.Clamp01((timeSeconds - startedAt) / hauler.UnloadDurationSeconds)) * capacity;
+                        if (order.ResourceKind == FuelKind)
+                            fuel = Mathf.Min(fuel, remainingCargo);
+                        else if (order.ResourceKind == OilKind)
+                            oil = Mathf.Min(oil, remainingCargo);
+                    }
+                }
+            }
+
+            oilBarrels = Mathf.Clamp(Mathf.RoundToInt(oil), 0, capacity);
+            fuelBarrels = Mathf.Clamp(Mathf.RoundToInt(fuel), 0, capacity);
+            return true;
+        }
+
         public bool IsOwnedByPlayer(EntityManager entityManager, Entity entity)
         {
             return entityManager.Exists(entity) &&

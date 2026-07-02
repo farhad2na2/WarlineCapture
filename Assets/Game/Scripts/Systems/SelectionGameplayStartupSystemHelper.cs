@@ -328,6 +328,20 @@ namespace Game.Runtime
                     () => buildingPlacementInteractionSystem != null
                         ? buildingPlacementInteractionSystem.SelectedBuildingLabel(buildingPlacementInteractionContext)
                         : string.Empty,
+                    (out int oilCurrent, out int oilCapacity, out int fuelCurrent, out int fuelCapacity) =>
+                    {
+                        oilCurrent = 0;
+                        oilCapacity = 0;
+                        fuelCurrent = 0;
+                        fuelCapacity = 0;
+                        return buildingPlacementInteractionSystem != null &&
+                               buildingPlacementInteractionSystem.TryGetSelectedBuildingResourceStorage(
+                                   buildingPlacementInteractionContext,
+                                   out oilCurrent,
+                                   out oilCapacity,
+                                   out fuelCurrent,
+                                   out fuelCapacity);
+                    },
                     (em, entity) => rtsSelectionPointerTargetCommandSystem.IsBoardCommandAvailable(
                         CreatePointerTargetCommandContext(),
                         em,

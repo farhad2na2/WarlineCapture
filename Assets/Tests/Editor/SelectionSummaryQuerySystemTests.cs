@@ -418,6 +418,7 @@ public sealed class SelectionSummaryQuerySystemTests
                 null,
                 null,
                 null,
+                null,
                 null);
 
             Assert.IsTrue(panel.AppliedModel.Visible);

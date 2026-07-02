@@ -30,6 +30,10 @@ namespace Game.Components
         public int TransportSoldierPassengerCapacity;
         public int TransportVehiclePassengerCount;
         public int TransportVehiclePassengerCapacity;
+        public byte HasResourceCargo;
+        public int ResourceCargoOilBarrels;
+        public int ResourceCargoFuelBarrels;
+        public int ResourceCargoCapacity;
         public int Status;
         public FixedString64Bytes Label;
         public FixedString128Bytes Description;

@@ -6,20 +6,24 @@ The current codebase already has the core tactical simulation: units, buildings,
 
 ## Project Setup
 
-- Unity editor version: `6000.4.0f1`
+- Unity editor version: `6000.5.2f1` (`ProjectSettings/ProjectVersion.txt`)
 - Persistent app/menu scene: `Assets/Game/Scenes/Menu.unity`
 - Match scene: `Assets/Game/Scenes/Match.unity`
 - Match subscene: `Assets/Game/Scenes/Match/MatchSubScene.unity`
 - Main gameplay code: `Assets/Game/Scripts`
 - Main design docs: `Design`
 - Demo scenes: `Assets/Game/Scenes/Demo.unity` and `Assets/Game/Scenes/Demo2.unity`
+- Unity MCP status: Unity 6.5 starts the AI Assistant relay and exposes MCP tools through the editor bridge. Tool execution still requires an accepted Codex connection in `Project Settings > AI > Unity MCP Server`, and native Codex MCP tools may require a fresh Codex session after approval.
 
 ## Packages
 
-- Unity Entities: `6.4.0`
-- Unity Entities Graphics: `6.4.0`
+- Unity Entities: `6.5.0`
+- Unity Entities Graphics: `6.5.0`
 - Unity Input System: `1.19.0`
-- Universal Render Pipeline: `17.4.0`
+- Universal Render Pipeline: `17.5.0`
+- Unity Collections: `6.5.0`
+- Unity Serialization: `6.5.0`
+- Unity AI Assistant / MCP package: `2.13.0-pre.2`
 
 ## Product Direction
 

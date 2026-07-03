@@ -608,8 +608,17 @@ namespace Game.Runtime
 
         public bool ProcessScanTargetModeCommandRequests(Context context, int currentFrame)
         {
-            if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests(em, currentFrame))
+            if (!context.TryGetDefaultEntityManager(out EntityManager em))
+            {
+                return false;
+            }
+
+            context.EnsureEntityQueries?.Invoke(em);
+            if (!RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests(
+                    em,
+                    context.MoveTargetCommandQueueQuery,
+                    context.MoveTargetRuntimeStateQuery,
+                    currentFrame))
             {
                 return false;
             }

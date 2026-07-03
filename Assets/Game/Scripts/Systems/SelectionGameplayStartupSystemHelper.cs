@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Game.Tactical.Contracts;
@@ -12,6 +13,14 @@ namespace Game.Runtime
 {
     internal sealed class SelectionGameplayStartupSystemHelper
     {
+        private static readonly ProfilerMarker SelectionCommandFlushMarker = new("GameplayRuntimeUpdate.Selection.CommandFlush");
+        private static readonly ProfilerMarker SelectionInputMarker = new("GameplayRuntimeUpdate.Selection.Input");
+        private static readonly ProfilerMarker SelectionFocusedReadModelMarker = new("GameplayRuntimeUpdate.Selection.FocusedReadModel");
+        private static readonly ProfilerMarker SelectionPanelMarker = new("GameplayRuntimeUpdate.Selection.Panel");
+        private static readonly ProfilerMarker SelectionTacticalCameraMarker = new("GameplayRuntimeUpdate.Selection.TacticalCamera");
+        private static readonly ProfilerMarker SelectionMarkerPreviewMarker = new("GameplayRuntimeUpdate.Selection.MarkerPreview");
+        private static readonly ProfilerMarker SelectionCameraMarker = new("GameplayRuntimeUpdate.Selection.Camera");
+
         public readonly struct Result
         {
             public readonly System.Action<IMatchRuntimeUi> BindSelectionMainMenu;
@@ -132,6 +141,10 @@ namespace Game.Runtime
             bool lastTacticalFollowOrthographic = false;
             Unity.Entities.World selectionRuntimeQueryWorld = null;
             EntityQuery selectedMoveQuery = default;
+            EntityQuery moveTargetCommandQueueQuery = default;
+            EntityQuery moveTargetRuntimeStateQuery = default;
+            EntityQuery moveTargetSelectedMoveQuery = default;
+            EntityQuery selectAllCommandQueueQuery = default;
             EntityQuery selectedTagQuery = default;
             EntityQuery gridConfigQuery = default;
             EntityQuery mapSurfaceQuery = default;
@@ -268,99 +281,130 @@ namespace Game.Runtime
 
             void UpdateSelectionRuntimePhases()
             {
-                if (rtsSelectionInputSystem.HasPendingTransportCommandRequests())
-                    rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(GetCommandResultFlushContext());
-                if (rtsSelectionInputSystem.HasPendingMoveCommandRequestsOrResults())
-                    rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(GetCommandResultFlushContext());
-                if (rtsSelectionInputSystem.HasPendingAttackCommandRequestsOrResults())
-                    rtsSelectionCommandResultFlushSystem.ProcessAttackCommandRequests(
-                        GetCommandResultFlushContext(),
-                        explicitAttackTargetModeActive);
-                if (rtsSelectionInputSystem.HasPendingScanCommandRequestsOrResults())
-                    rtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests(GetCommandResultFlushContext());
-                rtsSelectionCommandResultFlushSystem.ProcessSelectionModeCommandRequests(
-                    GetCommandResultFlushContext(),
-                    UnityEngine.Time.frameCount);
-                rtsSelectionCommandResultFlushSystem.ProcessMoveTargetModeCommandRequests(
-                    GetCommandResultFlushContext(),
-                    UnityEngine.Time.frameCount);
-                if (TryGetDefaultEntityManager(out EntityManager attackTargetModeEntityManager))
+                using (SelectionCommandFlushMarker.Auto())
                 {
-                    Entity focusedUnit = focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(
-                        attackTargetModeEntityManager,
-                        selectionStateSystem,
-                        out Entity resolvedFocusedUnit)
-                        ? resolvedFocusedUnit
-                        : Entity.Null;
-                    if (!RtsSelectionAttackTargetModeCommandSystem.HasPendingToggleAttackTargetModeRequest(attackTargetModeEntityManager) ||
-                        !rtsSelectionCommandResultFlushSystem.ProcessFocusedMissileLauncherRadarAttack(
+                    if (rtsSelectionInputSystem.HasPendingTransportCommandRequests())
+                        rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(GetCommandResultFlushContext());
+                    if (rtsSelectionInputSystem.HasPendingMoveCommandRequestsOrResults())
+                        rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(GetCommandResultFlushContext());
+                    if (rtsSelectionInputSystem.HasPendingAttackCommandRequestsOrResults())
+                        rtsSelectionCommandResultFlushSystem.ProcessAttackCommandRequests(
                             GetCommandResultFlushContext(),
-                            focusedUnit))
+                            explicitAttackTargetModeActive);
+                    if (rtsSelectionInputSystem.HasPendingScanCommandRequestsOrResults())
+                        rtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests(GetCommandResultFlushContext());
+                    rtsSelectionCommandResultFlushSystem.ProcessSelectionModeCommandRequests(
+                        GetCommandResultFlushContext(),
+                        UnityEngine.Time.frameCount);
+                    rtsSelectionCommandResultFlushSystem.ProcessMoveTargetModeCommandRequests(
+                        GetCommandResultFlushContext(),
+                        UnityEngine.Time.frameCount);
+                    if (TryGetDefaultEntityManager(out EntityManager attackTargetModeEntityManager))
                     {
-                        rtsSelectionCommandResultFlushSystem.ProcessAttackTargetModeCommandRequests(
-                            GetCommandResultFlushContext(),
-                            UnityEngine.Time.frameCount,
-                            focusedUnit);
+                        Entity focusedUnit = focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(
+                            attackTargetModeEntityManager,
+                            selectionStateSystem,
+                            out Entity resolvedFocusedUnit)
+                            ? resolvedFocusedUnit
+                            : Entity.Null;
+                        if (!RtsSelectionAttackTargetModeCommandSystem.HasPendingToggleAttackTargetModeRequest(attackTargetModeEntityManager) ||
+                            !rtsSelectionCommandResultFlushSystem.ProcessFocusedMissileLauncherRadarAttack(
+                                GetCommandResultFlushContext(),
+                                focusedUnit))
+                        {
+                            rtsSelectionCommandResultFlushSystem.ProcessAttackTargetModeCommandRequests(
+                                GetCommandResultFlushContext(),
+                                UnityEngine.Time.frameCount,
+                                focusedUnit);
+                        }
                     }
+                    rtsSelectionCommandResultFlushSystem.ProcessScanTargetModeCommandRequests(
+                        GetCommandResultFlushContext(),
+                        UnityEngine.Time.frameCount);
+                    rtsSelectionCommandResultFlushSystem.ProcessBoardTargetModeCommandRequests(
+                        GetCommandResultFlushContext(),
+                        UnityEngine.Time.frameCount);
+                    rtsSelectionCommandResultFlushSystem.ProcessCancelActiveCommandModeRequests(GetCommandResultFlushContext());
+                    rtsSelectionCommandResultFlushSystem.ProcessImmediateSelectedUnitCommandRequests(
+                        GetCommandResultFlushContext(),
+                        selectionStateSystem.FocusedUnit);
+                    if (runtimeConfig.WorldCamera != null)
+                        rtsSelectionCommandResultFlushSystem.ProcessSelectAllCommandRequests(GetCommandResultFlushContext());
+                    rtsSelectionCommandResultFlushSystem.ProcessDeselectAllCommandRequests(GetCommandResultFlushContext());
                 }
-                rtsSelectionCommandResultFlushSystem.ProcessScanTargetModeCommandRequests(
-                    GetCommandResultFlushContext(),
-                    UnityEngine.Time.frameCount);
-                rtsSelectionCommandResultFlushSystem.ProcessBoardTargetModeCommandRequests(
-                    GetCommandResultFlushContext(),
-                    UnityEngine.Time.frameCount);
-                rtsSelectionCommandResultFlushSystem.ProcessCancelActiveCommandModeRequests(GetCommandResultFlushContext());
-                rtsSelectionCommandResultFlushSystem.ProcessImmediateSelectedUnitCommandRequests(
-                    GetCommandResultFlushContext(),
-                    selectionStateSystem.FocusedUnit);
-                if (runtimeConfig.WorldCamera != null)
-                    rtsSelectionCommandResultFlushSystem.ProcessSelectAllCommandRequests(GetCommandResultFlushContext());
-                rtsSelectionCommandResultFlushSystem.ProcessDeselectAllCommandRequests(GetCommandResultFlushContext());
-                if (rtsSelectionInputSystem.HasPendingExternalSelectionCommandRequests())
-                    rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
-                ProcessTacticalFollowCameraRequests();
-                RtsSelectionRuntimeInputCompositionSystemHelper.Context inputContext = GetRuntimeInputContext();
-                rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
-                selectionHudFeedbackSystem.RefreshFocusedSelectionReadModels(
-                    GetHudFeedbackContext(),
-                    selectionStateSystem,
-                    focusedUnitUiReadModelSystem,
-                    unitTransportCapacitySystem,
-                    EnsureRuntimeSelectionDependencies,
-                    refreshFocusedUnitAction,
-                    UnityEngine.Time.time);
-                selectionHudFeedbackSystem.UpdateMatchHudSelectionPanel(
-                    GetHudFeedbackContext(),
-                    selectionStateSystem,
-                    focusedUnitLifecycleSystem,
-                    focusedUnitUiReadModelSystem,
-                    transportPassengerPanelItems,
-                    EnsureRuntimeSelectionDependencies,
-                    TryGetAttackModeOrderSnapshot,
-                    resolveSelectionCardPortraitSprite,
-                    resolveSelectedBuildingPortraitSprite,
-                    resolveActiveSquadTrayPortraitSpriteAction,
-                    hasSelectedBuildingAction,
-                    selectedBuildingLabelAction,
-                    tryGetSelectedBuildingResourceStorageAction,
-                    isBoardCommandAvailableAction,
-                    hasSelectedBoardAction);
-                RefreshTacticalFollowCameraPose();
-                ApplyTacticalFollowCameraUiReadModel();
-                rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(GetCommandResultFlushContext());
-                rtsSelectionCommandResultFlushSystem.UpdateCommandPreviewMarkers(
-                    GetCommandResultFlushContext(),
-                    explicitAttackTargetModeActive,
-                    isValidBoardTransportPreviewTargetAction,
-                    isValidBoardPassengerPreviewTargetAction);
+
+                using (SelectionInputMarker.Auto())
+                {
+                    if (rtsSelectionInputSystem.HasPendingExternalSelectionCommandRequests())
+                        rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
+                    RtsSelectionRuntimeInputCompositionSystemHelper.Context inputContext = GetRuntimeInputContext();
+                    rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
+                }
+
+                using (SelectionTacticalCameraMarker.Auto())
+                {
+                    ProcessTacticalFollowCameraRequests();
+                }
+
+                using (SelectionFocusedReadModelMarker.Auto())
+                {
+                    selectionHudFeedbackSystem.RefreshFocusedSelectionReadModels(
+                        GetHudFeedbackContext(),
+                        selectionStateSystem,
+                        focusedUnitUiReadModelSystem,
+                        unitTransportCapacitySystem,
+                        EnsureRuntimeSelectionDependencies,
+                        refreshFocusedUnitAction,
+                        UnityEngine.Time.time);
+                }
+
+                using (SelectionPanelMarker.Auto())
+                {
+                    selectionHudFeedbackSystem.UpdateMatchHudSelectionPanel(
+                        GetHudFeedbackContext(),
+                        selectionStateSystem,
+                        focusedUnitLifecycleSystem,
+                        focusedUnitUiReadModelSystem,
+                        transportPassengerPanelItems,
+                        EnsureRuntimeSelectionDependencies,
+                        TryGetAttackModeOrderSnapshot,
+                        resolveSelectionCardPortraitSprite,
+                        resolveSelectedBuildingPortraitSprite,
+                        resolveActiveSquadTrayPortraitSpriteAction,
+                        hasSelectedBuildingAction,
+                        selectedBuildingLabelAction,
+                        tryGetSelectedBuildingResourceStorageAction,
+                        isBoardCommandAvailableAction,
+                        hasSelectedBoardAction);
+                }
+
+                using (SelectionTacticalCameraMarker.Auto())
+                {
+                    RefreshTacticalFollowCameraPose();
+                    ApplyTacticalFollowCameraUiReadModel();
+                }
+
+                using (SelectionMarkerPreviewMarker.Auto())
+                {
+                    rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(GetCommandResultFlushContext());
+                    rtsSelectionCommandResultFlushSystem.UpdateCommandPreviewMarkers(
+                        GetCommandResultFlushContext(),
+                        explicitAttackTargetModeActive,
+                        isValidBoardTransportPreviewTargetAction,
+                        isValidBoardPassengerPreviewTargetAction);
+                }
 
                 RtsSelectionRuntimeCameraSystemHelper.Context cameraContext = GetRuntimeCameraContext();
-                if (rtsSelectionRuntimeCameraSystem != null &&
-                    rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(cameraContext))
+                RtsSelectionRuntimeInputCompositionSystemHelper.Context cameraInputContext = GetRuntimeInputContext();
+                using (SelectionCameraMarker.Auto())
                 {
-                    rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(inputContext);
+                    if (rtsSelectionRuntimeCameraSystem != null &&
+                        rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(cameraContext))
+                    {
+                        rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(cameraInputContext);
+                    }
+                    UpdateTacticalFollowCameraPose();
                 }
-                UpdateTacticalFollowCameraPose();
             }
 
             void ProcessTacticalFollowCameraRequests()
@@ -741,6 +785,10 @@ namespace Game.Runtime
                     buildingPlacementInteractionSystem,
                     buildingPlacementInteractionContext,
                     selectedMoveQuery,
+                    moveTargetCommandQueueQuery,
+                    moveTargetRuntimeStateQuery,
+                    moveTargetSelectedMoveQuery,
+                    selectAllCommandQueueQuery,
                     selectedTagQuery,
                     gridConfigQuery,
                     mapSurfaceQuery,
@@ -1025,6 +1073,22 @@ namespace Game.Runtime
                     ComponentType.ReadOnly<SelectedUnitTag>(),
                     ComponentType.ReadOnly<UnitGrid>(),
                     ComponentType.ReadOnly<UnitMove>());
+                moveTargetCommandQueueQuery = em.CreateEntityQuery(
+                    ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
+                    ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
+                moveTargetRuntimeStateQuery = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeGameplayStateComponent>());
+                moveTargetSelectedMoveQuery = em.CreateEntityQuery(
+                    ComponentType.ReadOnly<SelectedUnitTag>(),
+                    ComponentType.ReadOnly<Faction>(),
+                    ComponentType.ReadOnly<UnitGrid>(),
+                    ComponentType.ReadOnly<UnitMove>(),
+                    ComponentType.Exclude<Disabled>(),
+                    ComponentType.Exclude<UnitTransportPassenger>());
+                selectAllCommandQueueQuery = em.CreateEntityQuery(
+                    ComponentType.ReadWrite<RtsSelectionInputRequestQueueComponent>(),
+                    ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
+                    ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>(),
+                    ComponentType.ReadWrite<RtsSelectionPointerRequestElement>());
                 gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
                 selectedTagQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
                 mapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());

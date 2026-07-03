@@ -40,6 +40,10 @@ namespace Game.Runtime
             public readonly BuildingPlacementInteractionCompositionSystemHelper BuildingPlacementInteractionCompositionSystemHelper;
             public readonly BuildingPlacementInteractionCompositionSystemHelper.Context BuildingPlacementInteractionContext;
             public readonly EntityQuery SelectedMoveQuery;
+            public readonly EntityQuery MoveTargetCommandQueueQuery;
+            public readonly EntityQuery MoveTargetRuntimeStateQuery;
+            public readonly EntityQuery MoveTargetSelectedMoveQuery;
+            public readonly EntityQuery SelectAllCommandQueueQuery;
             public readonly EntityQuery SelectedTagQuery;
             public readonly EntityQuery GridConfigQuery;
             public readonly EntityQuery MapSurfaceQuery;
@@ -84,6 +88,10 @@ namespace Game.Runtime
                 BuildingPlacementInteractionCompositionSystemHelper buildingPlacementInteractionSystem,
                 BuildingPlacementInteractionCompositionSystemHelper.Context buildingPlacementInteractionContext,
                 EntityQuery selectedMoveQuery,
+                EntityQuery moveTargetCommandQueueQuery,
+                EntityQuery moveTargetRuntimeStateQuery,
+                EntityQuery moveTargetSelectedMoveQuery,
+                EntityQuery selectAllCommandQueueQuery,
                 EntityQuery selectedTagQuery,
                 EntityQuery gridConfigQuery,
                 EntityQuery mapSurfaceQuery,
@@ -127,6 +135,10 @@ namespace Game.Runtime
                 BuildingPlacementInteractionCompositionSystemHelper = buildingPlacementInteractionSystem;
                 BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
                 SelectedMoveQuery = selectedMoveQuery;
+                MoveTargetCommandQueueQuery = moveTargetCommandQueueQuery;
+                MoveTargetRuntimeStateQuery = moveTargetRuntimeStateQuery;
+                MoveTargetSelectedMoveQuery = moveTargetSelectedMoveQuery;
+                SelectAllCommandQueueQuery = selectAllCommandQueueQuery;
                 SelectedTagQuery = selectedTagQuery;
                 GridConfigQuery = gridConfigQuery;
                 MapSurfaceQuery = mapSurfaceQuery;
@@ -241,7 +253,7 @@ namespace Game.Runtime
         public bool ProcessSelectAllCommandRequests(Context context)
         {
             if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionSelectAllCommandSystem.ProcessPendingRequests(em))
+                !ProcessSelectAllCommandRequests(context, em))
             {
                 return false;
             }
@@ -351,7 +363,7 @@ namespace Game.Runtime
         public bool ProcessDeselectAllCommandRequests(Context context)
         {
             if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionDeselectAllCommandSystem.ProcessPendingRequests(em))
+                !ProcessDeselectAllCommandRequests(context, em))
             {
                 return false;
             }
@@ -365,6 +377,23 @@ namespace Game.Runtime
             context.SetHudWorldMarkersVisible?.Invoke(false);
             context.SetCameraDragging?.Invoke(false);
             return true;
+        }
+
+        private static bool ProcessSelectAllCommandRequests(Context context, EntityManager em)
+        {
+            context.EnsureEntityQueries?.Invoke(em);
+            return RtsSelectionSelectAllCommandSystem.ProcessPendingRequests(
+                em,
+                context.SelectAllCommandQueueQuery);
+        }
+
+        private static bool ProcessDeselectAllCommandRequests(Context context, EntityManager em)
+        {
+            context.EnsureEntityQueries?.Invoke(em);
+            return RtsSelectionDeselectAllCommandSystem.ProcessPendingRequests(
+                em,
+                context.MoveTargetCommandQueueQuery,
+                context.SelectedTagQuery);
         }
 
         public bool ProcessCancelActiveCommandModeRequests(Context context)
@@ -385,11 +414,7 @@ namespace Game.Runtime
         public bool ProcessMoveTargetModeCommandRequests(Context context, int currentFrame)
         {
             if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionMoveTargetModeCommandSystem.ProcessPendingRequests(
-                    em,
-                    currentFrame,
-                    out bool accepted,
-                    out TacticalCommandReasonCode rejectionReason))
+                !ProcessMoveTargetModeCommandRequests(context, em, currentFrame, out bool accepted, out TacticalCommandReasonCode rejectionReason))
             {
                 return false;
             }
@@ -520,6 +545,24 @@ namespace Game.Runtime
                 context.LogSelectionClickDiagnostic?.Invoke(
                     $"selectionModeExited source=ui frame={currentFrame} dragReset={SelectionPointerPosition(context)}");
             return true;
+        }
+
+        private static bool ProcessMoveTargetModeCommandRequests(
+            Context context,
+            EntityManager em,
+            int currentFrame,
+            out bool accepted,
+            out TacticalCommandReasonCode rejectionReason)
+        {
+            context.EnsureEntityQueries?.Invoke(em);
+            return RtsSelectionMoveTargetModeCommandSystem.ProcessPendingRequests(
+                em,
+                context.MoveTargetCommandQueueQuery,
+                context.MoveTargetRuntimeStateQuery,
+                context.MoveTargetSelectedMoveQuery,
+                currentFrame,
+                out accepted,
+                out rejectionReason);
         }
 
         public bool ProcessScanTargetModeCommandRequests(Context context, int currentFrame)

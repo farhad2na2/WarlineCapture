@@ -93,8 +93,11 @@ namespace Game.Runtime
         private EntityQuery _selectedTagQuery;
         private bool _hasLastPanelKey;
         private SelectionPanelCacheKey _lastPanelKey;
+        private bool _hasLastSummaryPanelKey;
+        private SelectionSummaryPanelCacheKey _lastSummaryPanelKey;
         private bool _hasLastTransportKey;
         private TransportPanelCacheKey _lastTransportKey;
+        private bool _selectionPanelHiddenApplied;
 
         public void ResetViewCache()
         {
@@ -104,6 +107,7 @@ namespace Game.Runtime
         public void BindMatchHudSelectionPanel(IMatchHudSelectionPanelView view)
         {
             _matchHudSelectionPanelView = view;
+            _selectionPanelHiddenApplied = false;
             ClearPanelCache();
         }
 
@@ -325,16 +329,29 @@ namespace Game.Runtime
             int selectedCount = CountSelectedTagsCached(em);
             if (selectedCount > 1)
             {
-                ClearPanelCache();
-                _matchHudSelectionPanelView.Apply(BuildSquadPanelModel(
+                MarkSelectionPanelVisible();
+                SelectionSummaryPanelCacheKey summaryKey = CreateSelectionSummaryPanelCacheKey(
                     context,
                     em,
-                    selectedCount,
                     tryGetAttackModeOrderSnapshot,
-                    resolveActiveSquadTrayPortraitSprite,
                     hasSelectedBuilding,
-                    hasSelectedBoardAction));
-                _matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+                    hasSelectedBoardAction);
+                if (!_hasLastSummaryPanelKey || !_lastSummaryPanelKey.Equals(summaryKey))
+                {
+                    ClearFocusedPanelCache();
+                    _matchHudSelectionPanelView.Apply(BuildSquadPanelModel(
+                        context,
+                        em,
+                        selectedCount,
+                        tryGetAttackModeOrderSnapshot,
+                        resolveActiveSquadTrayPortraitSprite,
+                        hasSelectedBuilding,
+                        hasSelectedBoardAction));
+                    _lastSummaryPanelKey = summaryKey;
+                    _hasLastSummaryPanelKey = true;
+                }
+
+                ApplyTransportPassengersHiddenCached();
                 return;
             }
 
@@ -343,6 +360,7 @@ namespace Game.Runtime
                 em.Exists(focusedUnit))
             {
                 string attackModeOrderText = null;
+                MarkSelectionPanelVisible();
                 bool hasAttackModeSnapshot = tryGetAttackModeOrderSnapshot != null &&
                                              tryGetAttackModeOrderSnapshot(out attackModeOrderText);
                 bool boardAvailable = isBoardCommandAvailable != null && isBoardCommandAvailable(em, focusedUnit);
@@ -355,6 +373,7 @@ namespace Game.Runtime
                     boardAvailable);
                 if (!_hasLastPanelKey || !_lastPanelKey.Equals(panelKey))
                 {
+                    ClearSummaryPanelCache();
                     _matchHudSelectionPanelView.Apply(BuildFocusedUnitPanelModel(
                         context,
                         em,
@@ -391,21 +410,35 @@ namespace Game.Runtime
 
             if (selectedCount > 0)
             {
-                ClearPanelCache();
-                _matchHudSelectionPanelView.Apply(BuildSquadPanelModel(
+                MarkSelectionPanelVisible();
+                SelectionSummaryPanelCacheKey summaryKey = CreateSelectionSummaryPanelCacheKey(
                     context,
                     em,
-                    selectedCount,
                     tryGetAttackModeOrderSnapshot,
-                    resolveActiveSquadTrayPortraitSprite,
                     hasSelectedBuilding,
-                    hasSelectedBoardAction));
-                _matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+                    hasSelectedBoardAction);
+                if (!_hasLastSummaryPanelKey || !_lastSummaryPanelKey.Equals(summaryKey))
+                {
+                    ClearFocusedPanelCache();
+                    _matchHudSelectionPanelView.Apply(BuildSquadPanelModel(
+                        context,
+                        em,
+                        selectedCount,
+                        tryGetAttackModeOrderSnapshot,
+                        resolveActiveSquadTrayPortraitSprite,
+                        hasSelectedBuilding,
+                        hasSelectedBoardAction));
+                    _lastSummaryPanelKey = summaryKey;
+                    _hasLastSummaryPanelKey = true;
+                }
+
+                ApplyTransportPassengersHiddenCached();
                 return;
             }
 
             if (hasSelectedBuilding != null && hasSelectedBuilding())
             {
+                MarkSelectionPanelVisible();
                 ClearPanelCache();
                 _matchHudSelectionPanelView.Apply(BuildSelectedBuildingPanelModel(
                     selectedBuildingLabel,
@@ -563,6 +596,129 @@ namespace Game.Runtime
                 portraitKind);
         }
 
+        private SelectionSummaryPanelCacheKey CreateSelectionSummaryPanelCacheKey(
+            Context context,
+            EntityManager em,
+            TryGetAttackModeOrderSnapshotDelegate tryGetAttackModeOrderSnapshot,
+            System.Func<bool> hasSelectedBuilding,
+            HasSelectedBoardActionDelegate hasSelectedBoardAction)
+        {
+            bool includeSelectedBuilding = hasSelectedBuilding != null && hasSelectedBuilding();
+            SelectedSummaryFingerprint summary = BuildSelectedSummaryFingerprint(
+                em,
+                context.SelectionUiReadModelLookup,
+                includeSelectedBuilding,
+                GetSelectedTagQuery(em));
+            string attackModeOrderText = null;
+            bool hasAttackModeSnapshot = tryGetAttackModeOrderSnapshot != null &&
+                                         tryGetAttackModeOrderSnapshot(out attackModeOrderText);
+            return new SelectionSummaryPanelCacheKey(
+                summary.UnitCount,
+                summary.SoldierCount,
+                summary.VehicleCount,
+                summary.AircraftCount,
+                summary.TransportCount,
+                summary.BuildingCount,
+                summary.CurrentTotal,
+                summary.MaxTotal,
+                summary.HasOrder,
+                summary.MixedOrders,
+                (int)summary.FirstOrder,
+                summary.PortraitKind,
+                hasAttackModeSnapshot,
+                StableStringHash(attackModeOrderText),
+                hasSelectedBoardAction != null && hasSelectedBoardAction(em));
+        }
+
+        private static SelectedSummaryFingerprint BuildSelectedSummaryFingerprint(
+            EntityManager em,
+            SelectionUiReadModelLookup selectionUiReadModelLookup,
+            bool includeSelectedBuilding,
+            EntityQuery query)
+        {
+            if (query.IsEmptyIgnoreFilter)
+            {
+                int noSelectionBuildingCount = includeSelectedBuilding ? 1 : 0;
+                return new SelectedSummaryFingerprint(
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    noSelectionBuildingCount,
+                    0,
+                    0,
+                    false,
+                    false,
+                    SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle,
+                    noSelectionBuildingCount > 0 ? SelectionSummaryPortraitKind.Buildings : SelectionSummaryPortraitKind.None);
+            }
+
+            int unitCount = 0;
+            int soldierCount = 0;
+            int vehicleCount = 0;
+            int aircraftCount = 0;
+            int transportCount = 0;
+            int currentTotal = 0;
+            int maxTotal = 0;
+            bool hasOrder = false;
+            bool mixedOrders = false;
+            SelectionUiReadModelLookup.FocusedUnitUiStatus firstOrder = SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle;
+
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    Entity entity = entities[i];
+                    if (!em.Exists(entity))
+                        continue;
+
+                    unitCount++;
+                    UnitCategory category = ResolveCategory(em, entity);
+                    soldierCount += category == UnitCategory.Soldier ? 1 : 0;
+                    vehicleCount += category == UnitCategory.Vehicle ? 1 : 0;
+                    aircraftCount += category == UnitCategory.Aircraft ? 1 : 0;
+                    transportCount += category == UnitCategory.Transport ? 1 : 0;
+
+                    if (em.HasComponent<UnitHealth>(entity))
+                    {
+                        UnitHealth health = em.GetComponentData<UnitHealth>(entity);
+                        currentTotal += math.max(0, health.Current);
+                        maxTotal += math.max(0, health.Max);
+                    }
+
+                    SelectionUiReadModelLookup.FocusedUnitUiStatus order = selectionUiReadModelLookup.GetFocusedUnitUiStatus(em, entity);
+                    if (!hasOrder)
+                    {
+                        firstOrder = order;
+                        hasOrder = true;
+                    }
+                    else if (firstOrder != order)
+                    {
+                        mixedOrders = true;
+                    }
+                }
+            }
+
+            int buildingCount = includeSelectedBuilding ? 1 : 0;
+            return new SelectedSummaryFingerprint(
+                unitCount,
+                soldierCount,
+                vehicleCount,
+                aircraftCount,
+                transportCount,
+                buildingCount,
+                currentTotal,
+                maxTotal,
+                hasOrder,
+                mixedOrders,
+                firstOrder,
+                ResolvePortraitKind(soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount));
+        }
+
         private EntityQuery GetSelectedTagQuery(EntityManager em)
         {
             World world = em.World;
@@ -582,17 +738,49 @@ namespace Game.Runtime
 
         private void ApplySelectionPanelHidden()
         {
+            if (_selectionPanelHiddenApplied)
+                return;
+
             ClearPanelCache();
             _matchHudSelectionPanelView?.Apply(MatchHudSelectionPanelModel.Hidden);
             _matchHudSelectionPanelView?.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+            _selectionPanelHiddenApplied = true;
+        }
+
+        private void MarkSelectionPanelVisible()
+        {
+            _selectionPanelHiddenApplied = false;
         }
 
         private void ClearPanelCache()
+        {
+            ClearFocusedPanelCache();
+            ClearSummaryPanelCache();
+        }
+
+        private void ClearSummaryPanelCache()
+        {
+            _hasLastSummaryPanelKey = false;
+            _lastSummaryPanelKey = default;
+        }
+
+        private void ClearFocusedPanelCache()
         {
             _hasLastPanelKey = false;
             _lastPanelKey = default;
             _hasLastTransportKey = false;
             _lastTransportKey = default;
+        }
+
+        private void ApplyTransportPassengersHiddenCached()
+        {
+            TransportPanelCacheKey hiddenKey = new(UiEntityHandle.Null, false);
+            if (_hasLastTransportKey && _lastTransportKey.Equals(hiddenKey))
+                return;
+
+            _matchHudSelectionPanelView.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+            _lastTransportKey = hiddenKey;
+            _hasLastTransportKey = true;
         }
 
         private static SelectionPanelCacheKey CreateFocusedPanelCacheKey(
@@ -1060,44 +1248,169 @@ namespace Game.Runtime
             return SelectionSummaryPortraitKind.GenericSquad;
         }
 
+        private readonly struct SelectedSummaryFingerprint
+        {
+            public readonly int UnitCount;
+            public readonly int SoldierCount;
+            public readonly int VehicleCount;
+            public readonly int AircraftCount;
+            public readonly int TransportCount;
+            public readonly int BuildingCount;
+            public readonly int CurrentTotal;
+            public readonly int MaxTotal;
+            public readonly bool HasOrder;
+            public readonly bool MixedOrders;
+            public readonly SelectionUiReadModelLookup.FocusedUnitUiStatus FirstOrder;
+            public readonly SelectionSummaryPortraitKind PortraitKind;
+
+            public SelectedSummaryFingerprint(
+                int unitCount,
+                int soldierCount,
+                int vehicleCount,
+                int aircraftCount,
+                int transportCount,
+                int buildingCount,
+                int currentTotal,
+                int maxTotal,
+                bool hasOrder,
+                bool mixedOrders,
+                SelectionUiReadModelLookup.FocusedUnitUiStatus firstOrder,
+                SelectionSummaryPortraitKind portraitKind)
+            {
+                UnitCount = unitCount;
+                SoldierCount = soldierCount;
+                VehicleCount = vehicleCount;
+                AircraftCount = aircraftCount;
+                TransportCount = transportCount;
+                BuildingCount = buildingCount;
+                CurrentTotal = currentTotal;
+                MaxTotal = maxTotal;
+                HasOrder = hasOrder;
+                MixedOrders = mixedOrders;
+                FirstOrder = firstOrder;
+                PortraitKind = portraitKind;
+            }
+        }
+
+        private readonly struct SelectionSummaryPanelCacheKey : System.IEquatable<SelectionSummaryPanelCacheKey>
+        {
+            private readonly int _unitCount;
+            private readonly int _soldierCount;
+            private readonly int _vehicleCount;
+            private readonly int _aircraftCount;
+            private readonly int _transportCount;
+            private readonly int _buildingCount;
+            private readonly int _currentTotal;
+            private readonly int _maxTotal;
+            private readonly int _orderStatus;
+            private readonly int _attackModeOrderHash;
+            private readonly SelectionSummaryPortraitKind _portraitKind;
+            private readonly bool _hasOrder;
+            private readonly bool _mixedOrders;
+            private readonly bool _hasAttackModeOrder;
+            private readonly bool _boardAvailable;
+
+            public SelectionSummaryPanelCacheKey(
+                int unitCount,
+                int soldierCount,
+                int vehicleCount,
+                int aircraftCount,
+                int transportCount,
+                int buildingCount,
+                int currentTotal,
+                int maxTotal,
+                bool hasOrder,
+                bool mixedOrders,
+                int orderStatus,
+                SelectionSummaryPortraitKind portraitKind,
+                bool hasAttackModeOrder,
+                int attackModeOrderHash,
+                bool boardAvailable)
+            {
+                _unitCount = unitCount;
+                _soldierCount = soldierCount;
+                _vehicleCount = vehicleCount;
+                _aircraftCount = aircraftCount;
+                _transportCount = transportCount;
+                _buildingCount = buildingCount;
+                _currentTotal = currentTotal;
+                _maxTotal = maxTotal;
+                _hasOrder = hasOrder;
+                _mixedOrders = mixedOrders;
+                _orderStatus = orderStatus;
+                _portraitKind = portraitKind;
+                _hasAttackModeOrder = hasAttackModeOrder;
+                _attackModeOrderHash = attackModeOrderHash;
+                _boardAvailable = boardAvailable;
+            }
+
+            public bool Equals(SelectionSummaryPanelCacheKey other)
+            {
+                return _unitCount == other._unitCount &&
+                       _soldierCount == other._soldierCount &&
+                       _vehicleCount == other._vehicleCount &&
+                       _aircraftCount == other._aircraftCount &&
+                       _transportCount == other._transportCount &&
+                       _buildingCount == other._buildingCount &&
+                       _currentTotal == other._currentTotal &&
+                       _maxTotal == other._maxTotal &&
+                       _hasOrder == other._hasOrder &&
+                       _mixedOrders == other._mixedOrders &&
+                       _orderStatus == other._orderStatus &&
+                       _portraitKind == other._portraitKind &&
+                       _hasAttackModeOrder == other._hasAttackModeOrder &&
+                       _attackModeOrderHash == other._attackModeOrderHash &&
+                       _boardAvailable == other._boardAvailable;
+            }
+        }
+
         private static UnitCategory ResolveCategory(EntityManager em, Entity entity)
         {
-            string source = ResolveSource(em, entity);
-            string lower = source.ToLowerInvariant();
+            bool sourceKeyStartsWithVehicle = false;
+            bool namedTransport = false;
+            if (em.HasComponent<UnitSourcePrefabKey>(entity))
+            {
+                FixedString64Bytes sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity).Value;
+                sourceKeyStartsWithVehicle = StartsWithUnitVehiclePrefix(sourceKey);
+                namedTransport = ContainsTransportName(sourceKey);
+            }
+            else if (em.HasComponent<UnitDisplayInfo>(entity))
+            {
+                UnitDisplayInfo displayInfo = em.GetComponentData<UnitDisplayInfo>(entity);
+                namedTransport =
+                    ContainsTransportName(displayInfo.Name) ||
+                    ContainsTransportName(displayInfo.Description);
+            }
+
             bool isAir = em.HasComponent<UnitAirMovement>(entity);
             bool hasTransportCapacity = em.HasComponent<UnitTransportCapacity>(entity) &&
                                         em.GetComponentData<UnitTransportCapacity>(entity).SoldierCapacity > 0;
             bool usesVehicleMotion = isAir ||
                                      (em.HasComponent<UnitMovementBehavior>(entity) &&
                                       em.GetComponentData<UnitMovementBehavior>(entity).UsesVehicleMotion != 0);
-            bool namedTransport = ContainsAny(lower, "transport", "apc", "truck", "tanker", "hauler", "canopy");
             if (isAir)
                 return UnitCategory.Aircraft;
             if (hasTransportCapacity || namedTransport && usesVehicleMotion)
                 return UnitCategory.Transport;
-            if (usesVehicleMotion || lower.Contains("unit_veh_", System.StringComparison.OrdinalIgnoreCase))
+            if (usesVehicleMotion || sourceKeyStartsWithVehicle)
                 return UnitCategory.Vehicle;
 
             return UnitCategory.Soldier;
         }
 
-        private static string ResolveSource(EntityManager em, Entity entity)
+        private static bool StartsWithUnitVehiclePrefix(FixedString64Bytes value)
         {
-            if (em.HasComponent<UnitSourcePrefabKey>(entity))
-            {
-                string source = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
-                if (!string.IsNullOrWhiteSpace(source))
-                    return source;
-            }
-
-            if (em.HasComponent<UnitDisplayInfo>(entity))
-            {
-                string displayName = em.GetComponentData<UnitDisplayInfo>(entity).Name.ToString();
-                if (!string.IsNullOrWhiteSpace(displayName))
-                    return displayName;
-            }
-
-            return em.GetName(entity);
+            return HasNineBytePrefixIgnoreCase(
+                value,
+                (byte)'U',
+                (byte)'n',
+                (byte)'i',
+                (byte)'t',
+                (byte)'_',
+                (byte)'V',
+                (byte)'e',
+                (byte)'h',
+                (byte)'_');
         }
 
         private static string ToOrderText(SelectionUiReadModelLookup.FocusedUnitUiStatus status)
@@ -1116,18 +1429,114 @@ namespace Game.Runtime
             };
         }
 
-        private static bool ContainsAny(string value, params string[] needles)
+        private static bool ContainsTransportName(FixedString64Bytes value)
         {
-            if (string.IsNullOrEmpty(value))
+            if (value.Length == 0)
                 return false;
 
-            for (int i = 0; i < needles.Length; i++)
+            return ContainsIgnoreCase(value, "transport") ||
+                   ContainsIgnoreCase(value, "apc") ||
+                   ContainsIgnoreCase(value, "truck") ||
+                   ContainsIgnoreCase(value, "tanker") ||
+                   ContainsIgnoreCase(value, "hauler") ||
+                   ContainsIgnoreCase(value, "canopy");
+        }
+
+        private static bool ContainsTransportName(FixedString128Bytes value)
+        {
+            if (value.Length == 0)
+                return false;
+
+            return ContainsIgnoreCase(value, "transport") ||
+                   ContainsIgnoreCase(value, "apc") ||
+                   ContainsIgnoreCase(value, "truck") ||
+                   ContainsIgnoreCase(value, "tanker") ||
+                   ContainsIgnoreCase(value, "hauler") ||
+                   ContainsIgnoreCase(value, "canopy");
+        }
+
+        private static bool ContainsIgnoreCase(FixedString64Bytes value, string needle)
+        {
+            if (string.IsNullOrEmpty(needle) || value.Length < needle.Length)
+                return false;
+
+            for (int start = 0; start <= value.Length - needle.Length; start++)
             {
-                if (value.Contains(needles[i], System.StringComparison.OrdinalIgnoreCase))
+                bool matched = true;
+                for (int i = 0; i < needle.Length; i++)
+                {
+                    if (!EqualsAsciiIgnoreCase(value[start + i], (byte)needle[i]))
+                    {
+                        matched = false;
+                        break;
+                    }
+                }
+
+                if (matched)
                     return true;
             }
 
             return false;
+        }
+
+        private static bool ContainsIgnoreCase(FixedString128Bytes value, string needle)
+        {
+            if (string.IsNullOrEmpty(needle) || value.Length < needle.Length)
+                return false;
+
+            for (int start = 0; start <= value.Length - needle.Length; start++)
+            {
+                bool matched = true;
+                for (int i = 0; i < needle.Length; i++)
+                {
+                    if (!EqualsAsciiIgnoreCase(value[start + i], (byte)needle[i]))
+                    {
+                        matched = false;
+                        break;
+                    }
+                }
+
+                if (matched)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool HasNineBytePrefixIgnoreCase(
+            FixedString64Bytes value,
+            byte c0,
+            byte c1,
+            byte c2,
+            byte c3,
+            byte c4,
+            byte c5,
+            byte c6,
+            byte c7,
+            byte c8)
+        {
+            return value.Length >= 9 &&
+                   EqualsAsciiIgnoreCase(value[0], c0) &&
+                   EqualsAsciiIgnoreCase(value[1], c1) &&
+                   EqualsAsciiIgnoreCase(value[2], c2) &&
+                   EqualsAsciiIgnoreCase(value[3], c3) &&
+                   EqualsAsciiIgnoreCase(value[4], c4) &&
+                   EqualsAsciiIgnoreCase(value[5], c5) &&
+                   EqualsAsciiIgnoreCase(value[6], c6) &&
+                   EqualsAsciiIgnoreCase(value[7], c7) &&
+                   EqualsAsciiIgnoreCase(value[8], c8);
+        }
+
+        private static bool EqualsAsciiIgnoreCase(byte a, byte b)
+        {
+            return ToLowerAscii(a) == ToLowerAscii(b);
+        }
+
+        private static byte ToLowerAscii(byte value)
+        {
+            return value >= (byte)'A' && value <= (byte)'Z'
+                ? (byte)(value + 32)
+                : value;
         }
 
         private enum UnitCategory

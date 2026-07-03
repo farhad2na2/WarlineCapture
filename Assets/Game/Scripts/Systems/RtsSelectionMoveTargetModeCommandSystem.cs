@@ -75,7 +75,7 @@ namespace Game.Runtime
                 ComponentType.Exclude<UnitTransportPassenger>());
         }
 
-        private static bool ProcessPendingRequests(
+        public static bool ProcessPendingRequests(
             EntityManager em,
             EntityQuery commandQueueQuery,
             EntityQuery runtimeStateQuery,

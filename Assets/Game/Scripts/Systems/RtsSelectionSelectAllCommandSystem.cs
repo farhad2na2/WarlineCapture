@@ -35,7 +35,7 @@ namespace Game.Runtime
             return ProcessPendingRequests(em, commandQueueQuery);
         }
 
-        private static bool ProcessPendingRequests(EntityManager em, EntityQuery commandQueueQuery)
+        public static bool ProcessPendingRequests(EntityManager em, EntityQuery commandQueueQuery)
         {
             if (commandQueueQuery.IsEmptyIgnoreFilter)
                 return false;

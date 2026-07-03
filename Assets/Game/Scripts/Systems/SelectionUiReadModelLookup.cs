@@ -265,14 +265,80 @@ namespace Game.Runtime
         {
             if (entityManager.HasComponent<UnitSourcePrefabKey>(entity))
             {
-                string sourceKey = entityManager.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
-                if (sourceKey.StartsWith("Unit_Veh_", System.StringComparison.OrdinalIgnoreCase))
+                FixedString64Bytes sourceKey = entityManager.GetComponentData<UnitSourcePrefabKey>(entity).Value;
+                if (StartsWithUnitVehiclePrefix(sourceKey))
                     return true;
-                if (sourceKey.StartsWith("Unit_Chr_", System.StringComparison.OrdinalIgnoreCase))
+                if (StartsWithUnitCharacterPrefix(sourceKey))
                     return false;
             }
 
             return IsVehicleUnit(entityManager, entity);
+        }
+
+        private static bool StartsWithUnitVehiclePrefix(FixedString64Bytes value)
+        {
+            return HasNineBytePrefixIgnoreCase(
+                value,
+                (byte)'U',
+                (byte)'n',
+                (byte)'i',
+                (byte)'t',
+                (byte)'_',
+                (byte)'V',
+                (byte)'e',
+                (byte)'h',
+                (byte)'_');
+        }
+
+        private static bool StartsWithUnitCharacterPrefix(FixedString64Bytes value)
+        {
+            return HasNineBytePrefixIgnoreCase(
+                value,
+                (byte)'U',
+                (byte)'n',
+                (byte)'i',
+                (byte)'t',
+                (byte)'_',
+                (byte)'C',
+                (byte)'h',
+                (byte)'r',
+                (byte)'_');
+        }
+
+        private static bool HasNineBytePrefixIgnoreCase(
+            FixedString64Bytes value,
+            byte c0,
+            byte c1,
+            byte c2,
+            byte c3,
+            byte c4,
+            byte c5,
+            byte c6,
+            byte c7,
+            byte c8)
+        {
+            return value.Length >= 9 &&
+                   EqualsAsciiIgnoreCase(value[0], c0) &&
+                   EqualsAsciiIgnoreCase(value[1], c1) &&
+                   EqualsAsciiIgnoreCase(value[2], c2) &&
+                   EqualsAsciiIgnoreCase(value[3], c3) &&
+                   EqualsAsciiIgnoreCase(value[4], c4) &&
+                   EqualsAsciiIgnoreCase(value[5], c5) &&
+                   EqualsAsciiIgnoreCase(value[6], c6) &&
+                   EqualsAsciiIgnoreCase(value[7], c7) &&
+                   EqualsAsciiIgnoreCase(value[8], c8);
+        }
+
+        private static bool EqualsAsciiIgnoreCase(byte a, byte b)
+        {
+            return ToLowerAscii(a) == ToLowerAscii(b);
+        }
+
+        private static byte ToLowerAscii(byte value)
+        {
+            return value >= (byte)'A' && value <= (byte)'Z'
+                ? (byte)(value + 32)
+                : value;
         }
 
         public bool CanAttack(EntityManager entityManager, Entity entity)

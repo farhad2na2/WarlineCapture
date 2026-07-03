@@ -39,7 +39,7 @@ namespace Game.Editor
         private const int BattleCaptureTargetHealth = 1_000_000_000;
         private const int BattleVfxPrewarmCount = 64;
         private const int TopSiteCount = 15;
-        private const double TimeoutSeconds = 180d;
+        private const double TimeoutSeconds = 360d;
 
         private const string ActiveKey = "MatchGcAllocationCallstackCapture.Active";
         private const string PhaseKey = "MatchGcAllocationCallstackCapture.Phase";
@@ -403,6 +403,26 @@ namespace Game.Editor
                 totalSamples += rankedFrames[i].Samples;
             }
 
+            long editorCompilerThreadBytes = 0;
+            int editorCompilerThreadSamples = 0;
+            long playerRelevantBytes = 0;
+            int playerRelevantSamples = 0;
+            List<AllocationSite> playerRelevantSites = new(rankedSites.Count);
+            for (int i = 0; i < rankedSites.Count; i++)
+            {
+                AllocationSite site = rankedSites[i];
+                if (IsEditorCompilerThread(site.ThreadName))
+                {
+                    editorCompilerThreadBytes += site.Bytes;
+                    editorCompilerThreadSamples += site.Samples;
+                    continue;
+                }
+
+                playerRelevantBytes += site.Bytes;
+                playerRelevantSamples += site.Samples;
+                playerRelevantSites.Add(site);
+            }
+
             StringBuilder builder = new(16384);
             builder.AppendLine("# Match GC Allocation Call-Stack Capture");
             builder.AppendLine();
@@ -419,13 +439,80 @@ namespace Game.Editor
             builder.AppendLine($"- Scanned thread views: {scannedThreads}");
             builder.AppendLine($"- GC.Alloc samples: {totalSamples}");
             builder.AppendLine($"- GC.Alloc bytes from hierarchy column: {totalBytes}");
+            builder.AppendLine($"- GC.Alloc samples excluding editor compiler threads: {playerRelevantSamples}");
+            builder.AppendLine($"- GC.Alloc bytes excluding editor compiler threads: {playerRelevantBytes}");
+            builder.AppendLine($"- Editor compiler-thread GC.Alloc samples: {editorCompilerThreadSamples}");
+            builder.AppendLine($"- Editor compiler-thread GC.Alloc bytes: {editorCompilerThreadBytes}");
             builder.AppendLine($"- Raw load status: `{loadStatus}`");
             builder.AppendLine($"- Raw capture: `{ProfilerRawPath}`");
             builder.AppendLine($"- Editor live conversion systems disabled before warmup: {SessionState.GetInt(EditorLiveConversionDisabledCountKey, 0)}");
             AppendRuntimeAllocationProbeSummary(builder);
             builder.AppendLine();
+            builder.AppendLine("## Top Allocation Sites Excluding Editor Compiler Threads");
+            builder.AppendLine();
+            AppendAllocationSiteTable(builder, playerRelevantSites);
+            builder.AppendLine();
             builder.AppendLine("## Top Allocation Sites");
             builder.AppendLine();
+            AppendAllocationSiteTable(builder, rankedSites);
+
+            builder.AppendLine();
+            builder.AppendLine("## Highest Allocation Frames");
+            builder.AppendLine();
+            builder.AppendLine("| Rank | Profiler frame | Bytes | Samples |");
+            builder.AppendLine("| ---: | ---: | ---: | ---: |");
+            int frameLimit = Math.Min(10, rankedFrames.Count);
+            for (int i = 0; i < frameLimit; i++)
+            {
+                FrameAllocationSummary summary = rankedFrames[i];
+                builder.Append("| ")
+                    .Append(i + 1)
+                    .Append(" | ")
+                    .Append(summary.FrameIndex)
+                    .Append(" | ")
+                    .Append(summary.Bytes)
+                    .Append(" | ")
+                    .Append(summary.Samples)
+                    .AppendLine(" |");
+            }
+
+            if (frameLimit == 0)
+                builder.AppendLine("| 0 | n/a | 0 | 0 |");
+
+            builder.AppendLine();
+            builder.AppendLine("## Call Stacks");
+            builder.AppendLine();
+            int limit = Math.Min(TopSiteCount, rankedSites.Count);
+            for (int i = 0; i < limit; i++)
+            {
+                AllocationSite site = rankedSites[i];
+                builder.AppendLine($"### {i + 1}. {GetTopManagedFrame(site.Callstack)}");
+                builder.AppendLine();
+                builder.AppendLine($"Bytes: {site.Bytes}");
+                builder.AppendLine($"Samples: {site.Samples}");
+                builder.AppendLine($"Frames: {site.Frames}");
+                builder.AppendLine($"Thread: {site.ThreadName}");
+                builder.AppendLine($"Hierarchy path: {site.HierarchyPath}");
+                builder.AppendLine();
+                builder.AppendLine("```");
+                builder.AppendLine(string.IsNullOrWhiteSpace(site.Callstack) ? "(no managed call stack captured)" : site.Callstack);
+                builder.AppendLine("```");
+                builder.AppendLine();
+            }
+
+            builder.AppendLine("## Coverage Notes");
+            builder.AppendLine();
+            if (mode == CaptureMode.Battle)
+                builder.AppendLine("- This automated pass covers a deterministic Match battle state seeded after the shell completes the Menu -> Match transition.");
+            else
+                builder.AppendLine("- This automated pass covers steady-state Match HUD/runtime after the shell completes the Menu -> Match transition.");
+            builder.AppendLine("- Spike-frame call stacks still require an interactive Profiler capture with Call Stacks -> GC.Alloc enabled unless a deterministic spike driver is added.");
+            builder.AppendLine("- Do not use this report to edit unrelated files unless they appear in the call stacks above.");
+            return builder.ToString();
+        }
+
+        private static void AppendAllocationSiteTable(StringBuilder builder, List<AllocationSite> rankedSites)
+        {
             builder.AppendLine("| Rank | Bytes | Samples | Frames | Thread | Sample | Top managed frame | Hierarchy path |");
             builder.AppendLine("| ---: | ---: | ---: | ---: | --- | --- | --- | --- |");
 
@@ -454,59 +541,12 @@ namespace Game.Editor
 
             if (limit == 0)
                 builder.AppendLine("| 0 | 0 | 0 | 0 | n/a | n/a | No GC.Alloc samples found in this automated capture. | n/a |");
+        }
 
-            builder.AppendLine();
-            builder.AppendLine("## Highest Allocation Frames");
-            builder.AppendLine();
-            builder.AppendLine("| Rank | Profiler frame | Bytes | Samples |");
-            builder.AppendLine("| ---: | ---: | ---: | ---: |");
-            int frameLimit = Math.Min(10, rankedFrames.Count);
-            for (int i = 0; i < frameLimit; i++)
-            {
-                FrameAllocationSummary summary = rankedFrames[i];
-                builder.Append("| ")
-                    .Append(i + 1)
-                    .Append(" | ")
-                    .Append(summary.FrameIndex)
-                    .Append(" | ")
-                    .Append(summary.Bytes)
-                    .Append(" | ")
-                    .Append(summary.Samples)
-                    .AppendLine(" |");
-            }
-
-            if (frameLimit == 0)
-                builder.AppendLine("| 0 | n/a | 0 | 0 |");
-
-            builder.AppendLine();
-            builder.AppendLine("## Call Stacks");
-            builder.AppendLine();
-            for (int i = 0; i < limit; i++)
-            {
-                AllocationSite site = rankedSites[i];
-                builder.AppendLine($"### {i + 1}. {GetTopManagedFrame(site.Callstack)}");
-                builder.AppendLine();
-                builder.AppendLine($"Bytes: {site.Bytes}");
-                builder.AppendLine($"Samples: {site.Samples}");
-                builder.AppendLine($"Frames: {site.Frames}");
-                builder.AppendLine($"Thread: {site.ThreadName}");
-                builder.AppendLine($"Hierarchy path: {site.HierarchyPath}");
-                builder.AppendLine();
-                builder.AppendLine("```");
-                builder.AppendLine(string.IsNullOrWhiteSpace(site.Callstack) ? "(no managed call stack captured)" : site.Callstack);
-                builder.AppendLine("```");
-                builder.AppendLine();
-            }
-
-            builder.AppendLine("## Coverage Notes");
-            builder.AppendLine();
-            if (mode == CaptureMode.Battle)
-                builder.AppendLine("- This automated pass covers a deterministic Match battle state seeded after the shell completes the Menu -> Match transition.");
-            else
-                builder.AppendLine("- This automated pass covers steady-state Match HUD/runtime after the shell completes the Menu -> Match transition.");
-            builder.AppendLine("- Spike-frame call stacks still require an interactive Profiler capture with Call Stacks -> GC.Alloc enabled unless a deterministic spike driver is added.");
-            builder.AppendLine("- Do not use this report to edit unrelated files unless they appear in the call stacks above.");
-            return builder.ToString();
+        private static bool IsEditorCompilerThread(string threadName)
+        {
+            return !string.IsNullOrEmpty(threadName) &&
+                   threadName.StartsWith("Burst-CompilerThread", StringComparison.Ordinal);
         }
 
         private static CaptureMode GetCaptureMode()

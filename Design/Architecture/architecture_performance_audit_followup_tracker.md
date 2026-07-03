@@ -73,16 +73,16 @@ Turn `Design/AgentReports/2026-07-02_audit_architecture-performance-followup.md`
 | Checklist percent complete | 46.1% |
 | Current phase | Phase 4 - GC Re-baseline And Allocation Gate |
 | Quick wins complete | 2 / 6 |
-| Current target | Continue reducing the remaining `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases` recurring selection allocation after cached HUD feedback, command preview, tactical-follow, selection-panel callbacks, pointer-target context, selected-tag query, focused read-model text reuse, and an initial focused selection-panel unchanged-state cache |
-| Compiler status | Unity 6.5.2 batchmode compile logs show no compiler errors after the latest focused selection-panel cache changes; earlier `dotnet build Game.Composition.csproj --no-restore`, `dotnet build Game.Runtime.csproj --no-restore`, and `dotnet build Game.UI.Shell.Ecs.csproj --no-restore` passed with 0 errors; Unity MCP was not exposed, so escalated Unity batchmode/editor-log validation is the current Unity path |
+| Current target | Continue reducing the remaining `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases` recurring selection allocation after cached HUD feedback, command preview, tactical-follow, selection-panel callbacks, pointer-target context, selected-tag query, focused read-model text reuse, focused selection-panel unchanged-state cache, hidden-panel apply guard, fixed-string vehicle/transport classification, and compiler-thread-separated GC reporting |
+| Compiler status | `dotnet build Game.Editor.csproj --no-restore`, `dotnet build Game.Runtime.csproj --no-restore`, and Unity 6.5.2 batchmode compile passed with 0 compiler errors after the latest selection fixed-string/hidden-panel and GC capture report changes; Unity MCP was not exposed in tools, so escalated Unity batchmode/editor-log validation is the current Unity path |
 | Android baseline status | Not started |
-| GC baseline status | Latest 2026-07-03 steady-state Match GC capture: 300 requested frames after 180 warmup frames, 301 scanned profiler frames, 34,567 GC.Alloc samples, 1,829,437 hierarchy-column bytes; `UiDiagnosticsReadModelSystem.BuildLogText()`, `BuildingPlacementCommandCompositionSystemHelper.CreateContextSource()`, `CreateTacticalFollowCameraContext()`, and `CreatePointerTargetCommandContext()` no longer appear in the searched/top allocation sites; current recurring gameplay allocator remains `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases` across 299 frames |
+| GC baseline status | Latest 2026-07-03 steady-state Match GC capture: 300 requested frames after 180 warmup frames, 301 scanned profiler frames, 33,372 GC.Alloc samples, 1,914,559 hierarchy-column bytes; compiler-thread-separated report fields are now present and show `0` editor compiler-thread bytes in the latest run; current main-thread selection lane remains `693,680` bytes / `14,053` samples across `299` frames |
 | Burst coverage status | Current inventory: 125 `ISystem` files, 72 missing `[BurstCompile]`; classification pending |
 | Mobile URP status | `Mobile_RPAsset` shadow distance changed from 240 m to 90 m and cascades from 4 to 2; HDR, MSAA 2x, render scale 0.8, and soft shadows remain unchanged pending visual/Android baseline |
 | ECS instantiate status | Current inventory: 15 runtime `Object.Instantiate` call lines under `Assets/Game/Scripts/Systems` |
 | Fuel/Oil drift status | Drift confirmed: authoritative production, conversion, load/unload, and storage mutation are still in managed helper/runtime-building paths; UI/header paths are read-only display consumers |
-| Validation status | Phase 0 inventory completed; Phase 1 config edited; Phase 2 release OnGUI strip implemented; Phase 3 release diagnostic system gate implemented; Unity 6.5.2 batchmode compile passed after the latest focused selection-panel cache changes; Unity 6.5.2 Match GC captures passed via escalated windowed batchmode without `-quit`; latest Phase 4 GC capture passed and shows lower total bytes, but the focused selection-panel cache did not improve the selection marker |
-| Still wrong / next iteration | `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()` still allocates across 299 captured frames, now with rank-1 `828,464` bytes / `16,861` samples; total GC is lower than the prior best (`1,829,437` bytes vs `2,166,981`), but the selection lane is worse than both the previous focused-read-model run (`812,336` bytes) and the earlier best (`705,640` bytes), so the next slice should inspect other per-frame selection work or revert/adjust the focused panel cache and pointer-context cache if repeat captures confirm they only move noise between markers |
+| Validation status | Phase 0 inventory completed; Phase 1 config edited; Phase 2 release OnGUI strip implemented; Phase 3 release diagnostic system gate implemented; Unity 6.5.2 batchmode compile passed after the latest fixed-string/hidden-panel selection changes; Unity 6.5.2 Match GC captures passed after extending the editor capture timeout from 180s to 360s and adding compiler-thread-separated report fields |
+| Still wrong / next iteration | `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()` still allocates across 299 captured frames. The fixed-string/hidden-panel slice improved the main-thread selection row to `693,680` bytes / `14,053` samples, but the lane remains the rank-1 non-compiler allocation site; the next slice should inspect per-frame selection runtime work around line 332 outside the focused panel apply path |
 
 ## Phase 0 - Baseline And Inventory
 Fast setup work. No behavior changes.
@@ -223,12 +223,13 @@ Measure before deeper managed-helper work.
   - `Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs`
   - Execute method: `Game.Editor.MatchGcAllocationCallstackCapture.RunSteadyState`
   - Built-in capture shape: opens `Assets/Game/Scenes/Menu.unity`, routes into Match, warms up 180 frames, captures 300 frames with `Profiler.enableAllocationCallstacks`, then writes a report under `Design/AgentReports`.
+  - Unity 6.5.2 Match scene load in batchmode exceeded the old 180s readiness timeout, so the editor-only capture timeout is now 360s.
 - Working command shape:
   - Unity 6.5.2 windowed batchmode, escalated/out-of-sandbox, no `-quit`, execute method `Game.Editor.MatchGcAllocationCallstackCapture.RunSteadyState`.
   - This follows the project licensing workaround: run Unity outside the sandbox and let the execute method finish the asynchronous Play Mode capture before quitting.
 - Current result:
   - Unity batchmode compile/capture reaches Menu, enters Play Mode, loads Match, completes warmup/capture, writes the GC report, and exits with `[MatchGcAllocationCallstackCapture] result=Passed frames=300`.
-  - Shutdown still logs Unity editor preview-scene leak noise. No compiler errors were found in the capture log.
+  - Shutdown still logs Unity editor preview-scene leak noise and Unity AI/MCP tracing noise. No compiler errors were found in the capture logs.
 
 ### Phase 4 GC Baseline - 2026-07-02
 
@@ -238,14 +239,18 @@ Measure before deeper managed-helper work.
   - Result marker: `[MatchGcAllocationCallstackCapture] result=Passed frames=300`.
 - Report:
   - `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`
-  - Latest date in report: `2026-07-03 07:25:24 UTC`.
+- Latest date in report: `2026-07-03 09:07:07 UTC`.
 - Capture summary:
   - Requested frames: `300`.
   - Warmup frames before capture: `180`.
   - Profiler frame range: `0..300`.
   - Scanned frames with data: `301`.
-  - GC.Alloc samples: `34,567`.
-  - GC.Alloc bytes from hierarchy column: `1,829,437`.
+  - GC.Alloc samples: `33,372`.
+  - GC.Alloc bytes from hierarchy column: `1,914,559`.
+  - GC.Alloc samples excluding editor compiler threads: `33,372`.
+  - GC.Alloc bytes excluding editor compiler threads: `1,914,559`.
+  - Editor compiler-thread GC.Alloc samples: `0`.
+  - Editor compiler-thread GC.Alloc bytes: `0`.
   - Runtime allocation probe reports `UIShellEcsPresentationSystem.Update` and `MenuBootstrapView.Update` as `0 bytes / 0 allocating updates / 300 total updates`, so the previous shell/update probe path is clean.
 - Completed allocation fixes verified by rerun:
   - `UiDiagnosticsReadModelSystem` now rebuilds runtime diagnostics log text only while the diagnostics overlay is visible, and only on first visibility or log-version changes; `UiDiagnosticsReadModelSystem` / `BuildLogText()` no longer appears in the searched/top allocation sites.
@@ -254,17 +259,20 @@ Measure before deeper managed-helper work.
   - `SelectionHudFeedbackUiSystemHelper` now caches the `SelectedUnitTag` query used by the runtime selection-panel refresh path; the public static summary query path remains available for focused tests.
   - `FocusedUnitUiReadModelUiSystemHelper` now reuses focused-unit label/description fixed strings while the focused entity is unchanged and builds health fixed strings from numeric values instead of managed interpolation.
   - `SelectionHudFeedbackUiSystemHelper` now skips reapplying the focused-unit selection-panel model and transport/passenger drawer model when the focused entity, order, health, board availability, and cargo/passenger summary are unchanged. This reduced total captured GC in the latest run, but did not improve the selection marker, so it remains under review rather than accepted as the final selection-lane fix.
+  - `SelectionHudFeedbackUiSystemHelper` now avoids repeated hidden-panel apply calls when no selection is active and uses fixed-string vehicle/transport classification instead of managed source-key strings in the selection summary path.
+  - `SelectionUiReadModelLookup` now uses fixed-string source-key prefix checks for vehicle/character classification in visible selection reads.
+  - `MatchGcAllocationCallstackCapture` now reports raw totals and a compiler-thread-separated top allocation table so editor Burst compiler-thread noise does not hide player-relevant rows.
 - Top recurring offender after these fixes:
   - `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()` still appears across `299` frames.
 - Top three allocation rows from the latest report:
-  - Rank 1: `828,464` bytes / `16,861` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection`, top managed frame `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()`.
+  - Rank 1: `693,680` bytes / `14,053` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection`, top managed frame `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()`.
   - Rank 2: `478,400` bytes / `6,877` samples / `299` frames, parent hierarchy `FixedWingRunwayHomeInitializationSystem`, top managed frame `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()`.
-  - Rank 3: `76,544` bytes / `2,093` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.MainMenu`, top managed frame `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()`.
+  - Rank 3: `85,441` bytes / `1,128` samples / `299` frames, parent hierarchy `BuildingPlacementRuntimeTick.UpdateBuildingRuntimeState`, top managed frame `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()`.
 - Known editor/tooling allocations separated from gameplay cleanup target:
-  - One-frame Burst JIT/compiler allocations appear under `Burst.Compiler.IL.JitCompilerService.CompileInternal()` for several Burst systems. These are not the first gameplay cleanup target.
+  - The capture report now separates editor compiler-thread allocations from raw totals. The latest run has `0` editor compiler-thread bytes, but previous same-slice runs showed these can spike above `12 MB` and should remain separated before using total editor bytes as a gate.
   - Unity AI/MCP tracing stack logs appeared during batch shutdown; these are editor/tooling noise, not player gameplay code.
 - Next cleanup target:
-  - Inspect the remaining `SelectionGameplayStartupSystemHelper` allocation around line `332`, focusing on per-frame selection work outside the focused panel apply path. If the next rerun confirms the pointer-target context cache or focused panel cache only worsens the selection lane, adjust or revert those specific caches while preserving selected-tag query caching and focused read-model text reuse.
+  - Inspect the remaining `SelectionGameplayStartupSystemHelper` allocation around line `332`, focusing on per-frame selection work outside the focused panel apply path.
 
 ## Phase 5 - Burst Coverage Pass
 Mechanical pass, but only where correct.
@@ -358,7 +366,8 @@ Make the gains durable.
 - 2026-07-03: Cached the selection pointer-target command context and selected-tag query, then reran Unity 6.5.2 compile and Match GC capture. Compile passed; capture passed with `35,021` samples and `1,892,651` hierarchy-column bytes. `CreatePointerTargetCommandContext()` no longer appears in searched/top allocation sites. Selection lane remains the top recurring source at `818,096` bytes / `16,645` samples across `299` frames, so this is not a complete selection-lane fix.
 - 2026-07-03: Reused focused-unit label/description fixed strings and replaced focused health interpolation with numeric fixed-string append. Unity 6.5.2 compile passed; Match GC capture passed with `34,926` samples and `1,888,685` hierarchy-column bytes. Selection lane moved only slightly to `812,336` bytes / `16,525` samples, so the next fix must skip unchanged selection-panel/model refresh work rather than only caching more context.
 - 2026-07-03: Added a focused selection-panel unchanged-state cache and transport/passenger panel key to avoid reapplying identical Canvas selection-panel models each frame. Unity 6.5.2 compile passed; Match GC capture passed with `34,567` samples and `1,829,437` hierarchy-column bytes. The total captured bytes improved, but the selection marker moved to `828,464` bytes / `16,861` samples, so the cache is not yet a proven selection-lane fix.
+- 2026-07-03: Added hidden-panel apply guard and fixed-string vehicle/transport classification in the selection HUD/read-model path. `dotnet build Game.Editor.csproj --no-restore`, `dotnet build Game.Runtime.csproj --no-restore`, and Unity 6.5.2 batchmode compile passed with 0 compiler errors. The GC capture tool timeout was raised from 180s to 360s because Unity 6.5.2 Match scene deserialization exceeded the old timeout. Two Match GC captures then passed; one run exposed editor Burst compiler-thread noise at `12,630,812` bytes / `94,325` samples, so the report now includes compiler-thread-separated totals and top sites. The final capture passed with `33,372` samples and `1,914,559` hierarchy-column bytes, with `0` editor compiler-thread bytes and `693,680` bytes / `14,053` samples in the main-thread `GameplayRuntimeUpdate.Selection` row.
 
 ## Still Wrong / Next Iteration
 - Known unresolved: Unity MCP is not exposed in this turn, visual/playmode smoke validation is pending, HDR/soft-shadow tier ownership is still unresolved, Android baseline is not captured, Fuel/Oil authoritative gameplay still lives in managed helper/runtime-building paths, Burst coverage is not classified, the remaining `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()` allocation still appears across `299` frames, and ECS instantiate cleanup is not implemented.
-- Next iteration: inspect and reduce the remaining selection runtime allocation outside the focused panel apply path; if another capture confirms the pointer-target context cache or focused panel cache worsened the selection lane, adjust or revert those specific caches. Rerun the same 300-frame GC capture before moving to Fuel/Oil drift cleanup and Burst classification.
+- Next iteration: continue reducing the main-thread selection runtime allocation outside the focused panel apply path. Rerun the same 300-frame GC capture before moving to Fuel/Oil drift cleanup and Burst classification.

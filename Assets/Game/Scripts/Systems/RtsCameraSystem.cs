@@ -317,12 +317,22 @@ namespace Game.Runtime
                 !TryGetGroundPointFromViewport(worldCamera, new Vector2(1f, 1f), out Vector3 topRight))
                 return false;
 
-            float minX = Mathf.Min(bottomLeft.x, bottomRight.x, topLeft.x, topRight.x);
-            float maxX = Mathf.Max(bottomLeft.x, bottomRight.x, topLeft.x, topRight.x);
-            float minZ = Mathf.Min(bottomLeft.z, bottomRight.z, topLeft.z, topRight.z);
-            float maxZ = Mathf.Max(bottomLeft.z, bottomRight.z, topLeft.z, topRight.z);
+            float minX = Min4(bottomLeft.x, bottomRight.x, topLeft.x, topRight.x);
+            float maxX = Max4(bottomLeft.x, bottomRight.x, topLeft.x, topRight.x);
+            float minZ = Min4(bottomLeft.z, bottomRight.z, topLeft.z, topRight.z);
+            float maxZ = Max4(bottomLeft.z, bottomRight.z, topLeft.z, topRight.z);
             bounds = Rect.MinMaxRect(minX, minZ, maxX, maxZ);
             return true;
+        }
+
+        private static float Min4(float a, float b, float c, float d)
+        {
+            return Mathf.Min(Mathf.Min(a, b), Mathf.Min(c, d));
+        }
+
+        private static float Max4(float a, float b, float c, float d)
+        {
+            return Mathf.Max(Mathf.Max(a, b), Mathf.Max(c, d));
         }
 
         public float ResolveClampSafePerspectiveHeight(

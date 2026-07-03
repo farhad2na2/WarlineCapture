@@ -4402,6 +4402,23 @@ public sealed class SelectionCommandRequestResultContractTests
         RtsSelectionCommandResultFlushCompositionSystemHelper.ClearCurrentSelectionAction clearCurrentSelection = null,
         SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetScanClickedCell = null)
     {
+        EntityQuery moveTargetCommandQueueQuery = em.CreateEntityQuery(
+            ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
+            ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
+        EntityQuery moveTargetRuntimeStateQuery = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeGameplayStateComponent>());
+        EntityQuery moveTargetSelectedMoveQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<SelectedUnitTag>(),
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitMove>(),
+            ComponentType.Exclude<Disabled>(),
+            ComponentType.Exclude<UnitTransportPassenger>());
+        EntityQuery selectAllCommandQueueQuery = em.CreateEntityQuery(
+            ComponentType.ReadWrite<RtsSelectionInputRequestQueueComponent>(),
+            ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
+            ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>(),
+            ComponentType.ReadWrite<RtsSelectionPointerRequestElement>());
+
         return new RtsSelectionCommandResultFlushCompositionSystemHelper.Context(
             inputSystem,
             new SelectionHudFeedbackUiSystemHelper(),
@@ -4417,6 +4434,10 @@ public sealed class SelectionCommandRequestResultContractTests
             buildingPlacementInteractionSystem,
             buildingPlacementInteractionContext,
             selectedMoveQuery,
+            moveTargetCommandQueueQuery,
+            moveTargetRuntimeStateQuery,
+            moveTargetSelectedMoveQuery,
+            selectAllCommandQueueQuery,
             selectedMoveQuery,
             gridConfigQuery,
             mapSurfaceQuery,

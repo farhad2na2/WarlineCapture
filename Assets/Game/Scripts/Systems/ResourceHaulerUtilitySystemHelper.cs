@@ -154,7 +154,7 @@ namespace Game.Runtime
                 return false;
 
             BuildingResourceStorageComponent storage = CreateResourceStorage(source);
-            bool loaded = BuildingResourceStorageTransferSystemHelper.TryCompleteLoad(
+            bool loaded = BuildingResourceHaulerTransferEcsSystem.TryCompleteLoad(
                 ref storage,
                 ToStorageResourceKind(resourceKind),
                 loadAmount,
@@ -176,7 +176,7 @@ namespace Game.Runtime
                 return;
 
             BuildingResourceStorageComponent storage = CreateResourceStorage(source);
-            BuildingResourceStorageTransferSystemHelper.RevertLoad(
+            BuildingResourceHaulerTransferEcsSystem.RevertLoad(
                 ref storage,
                 ToStorageResourceKind(resourceKind),
                 loadAmount,
@@ -205,7 +205,7 @@ namespace Game.Runtime
                 return false;
 
             BuildingResourceStorageComponent storage = CreateResourceStorage(destination);
-            bool unloaded = BuildingResourceStorageTransferSystemHelper.TryCompleteUnload(
+            bool unloaded = BuildingResourceHaulerTransferEcsSystem.TryCompleteUnload(
                 ref storage,
                 ToStorageResourceKind(resourceKind),
                 ref hauler);

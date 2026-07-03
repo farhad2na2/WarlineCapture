@@ -84,24 +84,29 @@ pipeline {
                 }
             }
             steps {
-                bat '''
-                @echo off
-                if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
-                if not exist "%PROJECT_PATH%\\TestResults" mkdir "%PROJECT_PATH%\\TestResults"
-                if exist "%PROJECT_PATH%\\TestResults\\BuildGateStatus.txt" del "%PROJECT_PATH%\\TestResults\\BuildGateStatus.txt"
+                powershell '''
+                $ErrorActionPreference = "Continue"
+                New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
+                New-Item -ItemType Directory -Path "$env:PROJECT_PATH\\TestResults" -Force | Out-Null
+                Remove-Item -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt" -Force -ErrorAction Ignore
 
-                "%UNITY_EXE%" -batchmode -nographics -projectPath "%PROJECT_PATH%" -runTests -testPlatform EditMode -testResults "%PROJECT_PATH%\\TestResults\\EditMode.xml" -logFile "%PROJECT_PATH%\\TestResults\\EditMode.log"
-                set EDITMODE_EXIT=%ERRORLEVEL%
-                powershell -NoProfile -ExecutionPolicy Bypass -File "%PROJECT_PATH%\\Tools\\CI\\PrintUnityTestFailures.ps1" -ResultsPath "%PROJECT_PATH%\\TestResults\\EditMode.xml" -PlatformName "EditMode"
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
+                    -UnityExe "$env:UNITY_EXE" `
+                    -ProjectPath "$env:PROJECT_PATH" `
+                    -LogFile "$env:PROJECT_PATH\\TestResults\\EditMode.log" `
+                    -UnityArguments @("-nographics", "-runTests", "-testPlatform", "EditMode", "-testResults", "$env:PROJECT_PATH\\TestResults\\EditMode.xml")
+                $editModeExit = $LASTEXITCODE
 
-                if not "%EDITMODE_EXIT%"=="0" (
-                    echo [BuildGate] EditMode tests failed with exit code %EDITMODE_EXIT%. Continuing build and deployment.
-                    echo [BuildGate][FINAL] EditMode tests FAILED with exit code %EDITMODE_EXIT%; build was allowed to continue. See archived TestResults/EditMode.xml and TestResults/EditMode.log.>"%PROJECT_PATH%\\TestResults\\BuildGateStatus.txt"
-                    exit /b 0
-                )
+                powershell -NoProfile -ExecutionPolicy Bypass -File "$env:PROJECT_PATH\\Tools\\CI\\PrintUnityTestFailures.ps1" -ResultsPath "$env:PROJECT_PATH\\TestResults\\EditMode.xml" -PlatformName "EditMode"
 
-                echo [BuildGate] EditMode tests passed. Continuing build.
-                echo [BuildGate][FINAL] EditMode tests PASSED; build was allowed to continue.>"%PROJECT_PATH%\\TestResults\\BuildGateStatus.txt"
+                if ($editModeExit -ne 0) {
+                    Write-Host "[BuildGate] EditMode tests failed with exit code $editModeExit. Continuing build and deployment."
+                    "[BuildGate][FINAL] EditMode tests FAILED with exit code $editModeExit; build was allowed to continue. See archived TestResults/EditMode.xml and TestResults/EditMode.log." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
+                    exit 0
+                }
+
+                Write-Host "[BuildGate] EditMode tests passed. Continuing build."
+                "[BuildGate][FINAL] EditMode tests PASSED; build was allowed to continue." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
                 '''
             }
             post {
@@ -114,9 +119,9 @@ pipeline {
         stage('Build Windows') {
             when { expression { return params.BUILD_WINDOWS == true || params.BUILD_WINDOWS?.toString()?.equalsIgnoreCase('true') } }
             steps {
-                bat '''
-                if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
-                "%UNITY_EXE%" -executeMethod BuildScript.BuildWindows -batchmode -quit -projectPath "%PROJECT_PATH%" -logFile "%BUILD_LOG%"
+                powershell '''
+                New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" -UnityExe "$env:UNITY_EXE" -ProjectPath "$env:PROJECT_PATH" -LogFile "$env:BUILD_LOG" -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildWindows")
                 '''
             }
             post {
@@ -148,9 +153,9 @@ pipeline {
         stage('Build WebGL') {
             when { expression { return params.BUILD_WEBGL == true || params.BUILD_WEBGL?.toString()?.equalsIgnoreCase('true') } }
             steps {
-                bat '''
-                if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
-                "%UNITY_EXE%" -executeMethod BuildScript.BuildWebGL -batchmode -quit -projectPath "%PROJECT_PATH%" -logFile "%BUILD_LOG%"
+                powershell '''
+                New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" -UnityExe "$env:UNITY_EXE" -ProjectPath "$env:PROJECT_PATH" -LogFile "$env:BUILD_LOG" -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildWebGL")
                 '''
             }
             post {
@@ -182,9 +187,9 @@ pipeline {
         stage('Build iOS') {
             when { expression { return params.BUILD_IOS == true || params.BUILD_IOS?.toString()?.equalsIgnoreCase('true') } }
             steps {
-                bat '''
-                if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
-                "%UNITY_EXE%" -executeMethod BuildScript.BuildIOS -batchmode -quit -projectPath "%PROJECT_PATH%" -logFile "%BUILD_LOG%"
+                powershell '''
+                New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" -UnityExe "$env:UNITY_EXE" -ProjectPath "$env:PROJECT_PATH" -LogFile "$env:BUILD_LOG" -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildIOS")
                 '''
             }
             post {
@@ -232,9 +237,9 @@ pipeline {
         stage('Build Android APK') {
             when { expression { return params.BUILD_ANDROID_APK == true || params.BUILD_ANDROID_APK?.toString()?.equalsIgnoreCase('true') } }
             steps {
-                bat '''
-                if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
-                "%UNITY_EXE%" -executeMethod BuildScript.BuildAndroid -buildType APK -batchmode -quit -projectPath "%PROJECT_PATH%" -logFile "%BUILD_LOG%"
+                powershell '''
+                New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" -UnityExe "$env:UNITY_EXE" -ProjectPath "$env:PROJECT_PATH" -LogFile "$env:BUILD_LOG" -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildAndroid", "-buildType", "APK")
                 '''
             }
             post {
@@ -266,9 +271,9 @@ pipeline {
         stage('Build Android AAB') {
             when { expression { return params.BUILD_ANDROID_AAB == true || params.BUILD_ANDROID_AAB?.toString()?.equalsIgnoreCase('true') } }
             steps {
-                bat '''
-                if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
-                "%UNITY_EXE%" -executeMethod BuildScript.BuildAndroid -buildType AAB -batchmode -quit -projectPath "%PROJECT_PATH%" -logFile "%BUILD_LOG%"
+                powershell '''
+                New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" -UnityExe "$env:UNITY_EXE" -ProjectPath "$env:PROJECT_PATH" -LogFile "$env:BUILD_LOG" -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildAndroid", "-buildType", "AAB")
                 '''
             }
             post {

@@ -9,6 +9,7 @@ namespace Game.Runtime
     public sealed partial class DayNightSystem : SystemBase
     {
         private const float MinFullDayDurationMinutes = 0.1f;
+        private const float VisualRefreshIntervalSeconds = 0.25f;
 
         private DayNightSystemConfig config;
         private float fullDayDurationMinutes = 5f;
@@ -52,6 +53,7 @@ namespace Game.Runtime
         private Bloom _bloom;
         private bool _runtimeVisualsEnabled = true;
         private bool _initialEnvironmentStateCaptured;
+        private float _nextVisualRefreshTime;
 
         public float FullDayDurationMinutes => fullDayDurationMinutes;
         public float CurrentHour => _currentHour;
@@ -90,6 +92,7 @@ namespace Game.Runtime
             _currentHour = Mathf.Repeat(startHour, 24f);
             _dayCount = 1;
             ApplyVisualState();
+            _nextVisualRefreshTime = UnityEngine.Time.unscaledTime + VisualRefreshIntervalSeconds;
         }
 
         public void SetRuntimeVisualsEnabled(bool enabled)
@@ -108,6 +111,7 @@ namespace Game.Runtime
             PrepareRuntimeSkybox();
             PrepareVolumeOverrides();
             ApplyVisualState();
+            _nextVisualRefreshTime = UnityEngine.Time.unscaledTime + VisualRefreshIntervalSeconds;
         }
 
         private void ApplyConfigIfAvailable()
@@ -151,7 +155,12 @@ namespace Game.Runtime
             if (_currentHour < previousHour)
                 _dayCount++;
 
+            float now = UnityEngine.Time.unscaledTime;
+            if (now < _nextVisualRefreshTime && (!updateDynamicGI || now < _nextEnvironmentRefreshTime))
+                return;
+
             ApplyVisualState();
+            _nextVisualRefreshTime = now + VisualRefreshIntervalSeconds;
         }
 
         public void Dispose()

@@ -1,7 +1,7 @@
 def PROJECT_NAME = 'WarlineCapture'
-def UNITY_VERSION = '6000.4.0f1'
+def UNITY_EDITOR_VERSION = '6000.5.2f1'
 def CUSTOM_WORKSPACE = "D:\\Projects\\Jenkins\\${PROJECT_NAME}"
-def UNITY_EDITOR = "D:\\Program Files\\Unity\\${UNITY_VERSION}\\Editor\\Unity.exe"
+def UNITY_EDITOR = "D:\\Program Files\\Unity\\Hub\\Editor\\${UNITY_EDITOR_VERSION}\\Editor\\Unity.exe"
 
 pipeline {
     agent {
@@ -17,6 +17,7 @@ pipeline {
 
     environment {
         PROJECT_PATH = "${CUSTOM_WORKSPACE}"
+        UNITY_VERSION = "${UNITY_EDITOR_VERSION}"
         UNITY_EXE = "${UNITY_EDITOR}"
         BUILD_LOG = "${CUSTOM_WORKSPACE}\\build.log"
         CODEX_TASK_DIR = "\\\\192.168.2.175\\farhad\\Projects\\Jenkins_Builds\\WarlineCapture\\CodexTasks"
@@ -45,6 +46,29 @@ pipeline {
                         script: '@git -C "%PROJECT_PATH%" rev-parse HEAD'
                     ).trim()
                     echo "Checked out WarlineCapture commit ${env.GIT_COMMIT}"
+                }
+            }
+        }
+
+        stage('Resolve Unity Editor') {
+            when {
+                expression {
+                    return params.BUILD_WINDOWS == true || params.BUILD_WINDOWS?.toString()?.equalsIgnoreCase('true') ||
+                        params.BUILD_WEBGL == true || params.BUILD_WEBGL?.toString()?.equalsIgnoreCase('true') ||
+                        params.BUILD_IOS == true || params.BUILD_IOS?.toString()?.equalsIgnoreCase('true') ||
+                        params.BUILD_ANDROID_APK == true || params.BUILD_ANDROID_APK?.toString()?.equalsIgnoreCase('true') ||
+                        params.BUILD_ANDROID_AAB == true || params.BUILD_ANDROID_AAB?.toString()?.equalsIgnoreCase('true')
+                }
+            }
+            steps {
+                script {
+                    env.UNITY_EXE = powershell(
+                        returnStdout: true,
+                        script: '''
+                        & "$env:PROJECT_PATH\\Tools\\CI\\ResolveUnityEditor.ps1" -UnityVersion "$env:UNITY_VERSION" -PreferredPath "$env:UNITY_EXE"
+                        '''
+                    ).trim()
+                    echo "Using Unity editor: ${env.UNITY_EXE}"
                 }
             }
         }

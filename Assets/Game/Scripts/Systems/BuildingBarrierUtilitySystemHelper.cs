@@ -62,8 +62,11 @@ namespace Game.Runtime
 
         private readonly List<RuntimeBaseBreach> _openBaseBreaches = new();
         private readonly List<RuntimeBuildingEntity> _runtimeBuildingSnapshot = new();
+        private readonly List<RuntimeBuildingEntity> _runtimeRoadGateSnapshot = new();
         private IReadOnlyDictionary<int, RuntimeBuildingEntity> _runtimeBuildingSnapshotSource;
+        private IReadOnlyDictionary<int, RuntimeBuildingEntity> _runtimeRoadGateSnapshotSource;
         private int _runtimeBuildingSnapshotCount = -1;
+        private int _runtimeRoadGateSnapshotCount = -1;
         private readonly Dictionary<BuildingDefinition, bool> _wallGateDefinitionCache = new();
         private readonly Dictionary<byte, RectInt> _enemyWallPerimetersScratch = new();
         private float _roadBarrierDoorAccumulatedDeltaTime;
@@ -346,26 +349,26 @@ namespace Game.Runtime
             if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
                 return;
 
-            if (!HasActiveRoadGateBuilding(context))
+            List<RuntimeBuildingEntity> gateBuildings = GetActiveRoadGateBuildingSnapshot(context);
+            if (gateBuildings.Count == 0)
                 return;
 
             if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
                 return;
 
             context.EnsureEntityQueries?.Invoke(em);
-            List<RuntimeBuildingEntity> buildings = GetRuntimeBuildingSnapshot(context);
             if (context.GetLiveFactionUnitsQuery == null)
             {
-                for (int i = 0; i < buildings.Count; i++)
-                    UpdateRoadBarrierDoorForBuilding(context, buildings[i], default, elapsedSeconds);
+                for (int i = 0; i < gateBuildings.Count; i++)
+                    UpdateRoadBarrierDoorForBuilding(context, gateBuildings[i], default, elapsedSeconds);
                 return;
             }
 
             EntityQuery liveFactionUnitsQuery = context.GetLiveFactionUnitsQuery();
             if (liveFactionUnitsQuery.IsEmptyIgnoreFilter)
             {
-                for (int i = 0; i < buildings.Count; i++)
-                    UpdateRoadBarrierDoorForBuilding(context, buildings[i], default, elapsedSeconds);
+                for (int i = 0; i < gateBuildings.Count; i++)
+                    UpdateRoadBarrierDoorForBuilding(context, gateBuildings[i], default, elapsedSeconds);
                 return;
             }
 
@@ -375,8 +378,8 @@ namespace Game.Runtime
                 Allocator.Temp);
             NativeArray<LiveFactionUnitDoorRecord> liveFactionUnitRecords = liveFactionUnits.AsArray();
 
-            for (int i = 0; i < buildings.Count; i++)
-                UpdateRoadBarrierDoorForBuilding(context, buildings[i], liveFactionUnitRecords, elapsedSeconds);
+            for (int i = 0; i < gateBuildings.Count; i++)
+                UpdateRoadBarrierDoorForBuilding(context, gateBuildings[i], liveFactionUnitRecords, elapsedSeconds);
         }
 
         private void UpdateRoadBarrierDoorForBuilding(
@@ -427,14 +430,7 @@ namespace Game.Runtime
 
         private bool HasActiveRoadGateBuilding(Context context)
         {
-            List<RuntimeBuildingEntity> buildings = GetRuntimeBuildingSnapshot(context);
-            for (int i = 0; i < buildings.Count; i++)
-            {
-                if (IsRuntimeRoadGateBuilding(context, buildings[i]))
-                    return true;
-            }
-
-            return false;
+            return GetActiveRoadGateBuildingSnapshot(context).Count > 0;
         }
 
         public int GetRuntimeRoadBarrierGateRects(Context context, byte factionId, List<RectInt> rects, List<int> buildingIds = null)
@@ -662,6 +658,37 @@ namespace Game.Runtime
             _runtimeBuildingSnapshotSource = source;
             _runtimeBuildingSnapshotCount = source.Count;
             return _runtimeBuildingSnapshot;
+        }
+
+        private List<RuntimeBuildingEntity> GetActiveRoadGateBuildingSnapshot(Context context)
+        {
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> source = context.RuntimeBuildings;
+            if (source == null)
+            {
+                _runtimeRoadGateSnapshot.Clear();
+                _runtimeRoadGateSnapshotSource = null;
+                _runtimeRoadGateSnapshotCount = -1;
+                return _runtimeRoadGateSnapshot;
+            }
+
+            if (ReferenceEquals(_runtimeRoadGateSnapshotSource, source) &&
+                _runtimeRoadGateSnapshotCount == source.Count)
+            {
+                return _runtimeRoadGateSnapshot;
+            }
+
+            _runtimeRoadGateSnapshot.Clear();
+            List<RuntimeBuildingEntity> buildings = GetRuntimeBuildingSnapshot(context);
+            for (int i = 0; i < buildings.Count; i++)
+            {
+                RuntimeBuildingEntity building = buildings[i];
+                if (IsActiveRoadGateBuilding(context, building))
+                    _runtimeRoadGateSnapshot.Add(building);
+            }
+
+            _runtimeRoadGateSnapshotSource = source;
+            _runtimeRoadGateSnapshotCount = source.Count;
+            return _runtimeRoadGateSnapshot;
         }
 
         public static bool TryFindBreachApproachCell(

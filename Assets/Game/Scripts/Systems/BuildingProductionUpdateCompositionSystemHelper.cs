@@ -7,6 +7,8 @@ namespace Game.Runtime
     {
         private const int MaxTransportLaunchesPerTick = 1;
         private const int MaxImmediateProductionSpawnsPerTick = 2;
+        private readonly List<RuntimeBuildingEntity> _activeTransportBuildings = new();
+        private bool _activeTransportCachePrimed;
 
         public readonly struct Context
         {
@@ -41,27 +43,38 @@ namespace Game.Runtime
             if (context.RuntimeBuildingMap != null)
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
-                    hasActiveTransport |= UpdatePendingProductionForBuilding(
+                {
+                    RuntimeBuildingEntity building = pair.Value;
+                    bool buildingHasActiveTransport = UpdatePendingProductionForBuilding(
                         context,
-                        pair.Value,
+                        building,
                         now,
                         deltaTime,
                         ref randomState,
                         ref remainingTransportLaunches,
                         ref remainingImmediateProductionSpawns);
+                    if (buildingHasActiveTransport)
+                        TrackActiveTransportBuilding(building);
+                    hasActiveTransport |= buildingHasActiveTransport;
+                }
+
                 return hasActiveTransport;
             }
 
             foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
             {
-                hasActiveTransport |= UpdatePendingProductionForBuilding(
+                RuntimeBuildingEntity building = pair.Value;
+                bool buildingHasActiveTransport = UpdatePendingProductionForBuilding(
                     context,
-                    pair.Value,
+                    building,
                     now,
                     deltaTime,
                     ref randomState,
                     ref remainingTransportLaunches,
                     ref remainingImmediateProductionSpawns);
+                if (buildingHasActiveTransport)
+                    TrackActiveTransportBuilding(building);
+                hasActiveTransport |= buildingHasActiveTransport;
             }
 
             return hasActiveTransport;
@@ -72,32 +85,55 @@ namespace Game.Runtime
             if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0 || context.TransportSystem == null)
                 return false;
 
-            bool hasActiveTransport = false;
-            if (context.RuntimeBuildingMap != null)
-            {
-                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
-                    hasActiveTransport |= UpdateActiveProductionTransportForBuilding(context, pair.Value, now, deltaTime, ref randomState);
-                return hasActiveTransport;
-            }
+            if (!_activeTransportCachePrimed)
+                PrimeActiveTransportCache(context);
+            if (_activeTransportBuildings.Count == 0)
+                return false;
 
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
-                hasActiveTransport |= UpdateActiveProductionTransportForBuilding(context, pair.Value, now, deltaTime, ref randomState);
+            bool hasActiveTransport = false;
+            for (int i = _activeTransportBuildings.Count - 1; i >= 0; i--)
+            {
+                RuntimeBuildingEntity building = _activeTransportBuildings[i];
+                if (building == null || building.ActiveTransport == null)
+                {
+                    _activeTransportBuildings.RemoveAt(i);
+                    continue;
+                }
+
+                context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime, ref randomState);
+                if (building.ActiveTransport == null)
+                {
+                    _activeTransportBuildings.RemoveAt(i);
+                    continue;
+                }
+
+                hasActiveTransport = true;
+            }
 
             return hasActiveTransport;
         }
 
-        private static bool UpdateActiveProductionTransportForBuilding(
-            Context context,
-            RuntimeBuildingEntity building,
-            float now,
-            float deltaTime,
-            ref uint randomState)
+        private void PrimeActiveTransportCache(Context context)
         {
-            if (building == null || building.ActiveTransport == null)
-                return false;
+            _activeTransportBuildings.Clear();
+            _activeTransportCachePrimed = true;
+            if (context.RuntimeBuildingMap != null)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
+                    TrackActiveTransportBuilding(pair.Value);
+                return;
+            }
 
-            context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime, ref randomState);
-            return true;
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+                TrackActiveTransportBuilding(pair.Value);
+        }
+
+        private void TrackActiveTransportBuilding(RuntimeBuildingEntity building)
+        {
+            if (building == null || building.ActiveTransport == null || _activeTransportBuildings.Contains(building))
+                return;
+
+            _activeTransportBuildings.Add(building);
         }
 
         private static bool UpdatePendingProductionForBuilding(

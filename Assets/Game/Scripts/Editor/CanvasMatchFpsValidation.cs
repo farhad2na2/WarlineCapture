@@ -93,6 +93,7 @@ namespace Game.Editor
                 warmupFrames = ResolvePositiveInt("WARLINE_CANVAS_MATCH_FPS_WARMUP_FRAMES", 120);
                 sampleFrames = ResolvePositiveInt("WARLINE_CANVAS_MATCH_FPS_SAMPLE_FRAMES", 240);
                 variant = Environment.GetEnvironmentVariable("WARLINE_CANVAS_MATCH_FPS_VARIANT") ?? "Normal";
+                GameplayRuntimeUpdateDebugFlags.Reset();
                 StartMarkerRecorders();
 
                 EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
@@ -248,7 +249,7 @@ namespace Game.Editor
             float median = Percentile(0.50f);
             float p95 = Percentile(0.95f);
             float medianFps = median > 0f ? 1f / median : 0f;
-            return $"variant={variant} samples={frameTimes.Count} warmupFrames={warmupFrames} avgMs={average * 1000f:0.000} fps={fps:0.0} medianMs={median * 1000f:0.000} medianFps={medianFps:0.0} p95Ms={p95 * 1000f:0.000} minMs={min * 1000f:0.000} maxMs={max * 1000f:0.000} deployFrame={deployFrame} matchReadyFrame={matchReadyFrame} markers={BuildMarkerSummary()}";
+            return $"variant={variant} samples={frameTimes.Count} warmupFrames={warmupFrames} avgMs={average * 1000f:0.000} fps={fps:0.0} medianMs={median * 1000f:0.000} medianFps={medianFps:0.0} p95Ms={p95 * 1000f:0.000} minMs={min * 1000f:0.000} maxMs={max * 1000f:0.000} deployFrame={deployFrame} matchReadyFrame={matchReadyFrame} vSync={QualitySettings.vSyncCount} targetFps={Application.targetFrameRate} focused={(Application.isFocused ? 1 : 0)} batch={(Application.isBatchMode ? 1 : 0)} disableBuildingPlacement={(GameplayRuntimeUpdateDebugFlags.DisableBuildingPlacementRuntime ? 1 : 0)} disableSelection={(GameplayRuntimeUpdateDebugFlags.DisableSelectionRuntime ? 1 : 0)} markers={BuildMarkerSummary()}";
         }
 
         private static void StartMarkerRecorders()
@@ -355,6 +356,11 @@ namespace Game.Editor
                 string.Equals(variant, "HideCanvasAndCamera", StringComparison.OrdinalIgnoreCase);
             bool disableMinimap = string.Equals(variant, "DisableMinimap", StringComparison.OrdinalIgnoreCase);
             bool unbindMinimap = string.Equals(variant, "UnbindMinimap", StringComparison.OrdinalIgnoreCase);
+            bool disableBuildingPlacement = string.Equals(variant, "DisableBuildingPlacement", StringComparison.OrdinalIgnoreCase);
+            bool disableSelection = string.Equals(variant, "DisableSelection", StringComparison.OrdinalIgnoreCase);
+
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingPlacementRuntime = disableBuildingPlacement;
+            GameplayRuntimeUpdateDebugFlags.DisableSelectionRuntime = disableSelection;
 
             if (hideCanvas && bootstrap.UiCanvas != null && bootstrap.UiCanvas.gameObject.activeSelf)
                 bootstrap.UiCanvas.gameObject.SetActive(false);
@@ -408,6 +414,7 @@ namespace Game.Editor
             completed = true;
             EditorApplication.update -= Continue;
             DisposeMarkerRecorders();
+            GameplayRuntimeUpdateDebugFlags.Reset();
             if (success)
                 Debug.Log($"[CanvasMatchFpsValidation] result=Passed {message}");
             else

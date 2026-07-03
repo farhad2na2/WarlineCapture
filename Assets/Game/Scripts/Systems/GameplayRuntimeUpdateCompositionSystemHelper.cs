@@ -96,7 +96,7 @@ namespace Game.Runtime
                 }
             }
 
-            if (startupActive)
+            if (startupActive && !GameplayRuntimeUpdateDebugFlags.DisableBuildingPlacementRuntime)
             {
                 stepStart = performanceDiagnosticsSystem.BeginStep();
                 using (BuildingPlacementMarker.Auto())
@@ -115,19 +115,25 @@ namespace Game.Runtime
                 }
                 hadSlowStep |= performanceDiagnosticsSystem.EndStep("RoadBuild", stepStart);
 
-                stepStart = performanceDiagnosticsSystem.BeginStep();
-                using (BuildingPlacementMarker.Auto())
+                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingPlacementRuntime)
                 {
-                    buildingRuntimeUpdate?.UpdateSimulation(buildingRuntimeUpdateContext);
+                    stepStart = performanceDiagnosticsSystem.BeginStep();
+                    using (BuildingPlacementMarker.Auto())
+                    {
+                        buildingRuntimeUpdate?.UpdateSimulation(buildingRuntimeUpdateContext);
+                    }
+                    hadSlowStep |= performanceDiagnosticsSystem.EndStep("BuildingPlacement", stepStart);
                 }
-                hadSlowStep |= performanceDiagnosticsSystem.EndStep("BuildingPlacement", stepStart);
 
-                stepStart = performanceDiagnosticsSystem.BeginStep();
-                using (SelectionMarker.Auto())
+                if (!GameplayRuntimeUpdateDebugFlags.DisableSelectionRuntime)
                 {
-                    selectionRuntimeUpdate?.Invoke();
+                    stepStart = performanceDiagnosticsSystem.BeginStep();
+                    using (SelectionMarker.Auto())
+                    {
+                        selectionRuntimeUpdate?.Invoke();
+                    }
+                    hadSlowStep |= performanceDiagnosticsSystem.EndStep("Selection", stepStart);
                 }
-                hadSlowStep |= performanceDiagnosticsSystem.EndStep("Selection", stepStart);
 
                 stepStart = performanceDiagnosticsSystem.BeginStep();
                 using (DayNightMarker.Auto())

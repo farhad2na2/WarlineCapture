@@ -346,12 +346,13 @@ namespace Game.Runtime
                     rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
                 }
 
+                bool refreshSelectionUi = ShouldRefreshSelectionUi();
+                bool tacticalFollowRequestProcessed;
                 using (SelectionTacticalCameraMarker.Auto())
                 {
-                    ProcessTacticalFollowCameraRequests();
+                    tacticalFollowRequestProcessed = ProcessTacticalFollowCameraRequests(refreshSelectionUi);
                 }
 
-                bool refreshSelectionUi = ShouldRefreshSelectionUi();
                 if (refreshSelectionUi)
                 {
                     using (SelectionFocusedReadModelMarker.Auto())
@@ -391,8 +392,9 @@ namespace Game.Runtime
 
                 using (SelectionTacticalCameraMarker.Auto())
                 {
-                    RefreshTacticalFollowCameraPose();
-                    ApplyTacticalFollowCameraUiReadModel();
+                    bool tacticalFollowPoseRefreshed = RefreshTacticalFollowCameraPose();
+                    if (refreshSelectionUi || tacticalFollowRequestProcessed || tacticalFollowPoseRefreshed)
+                        ApplyTacticalFollowCameraUiReadModel();
                 }
 
                 using (SelectionMarkerPreviewMarker.Auto())
@@ -431,10 +433,13 @@ namespace Game.Runtime
                 nextSelectionUiRefreshAt = UnityEngine.Time.realtimeSinceStartupAsDouble + SelectionUiRefreshIntervalSeconds;
             }
 
-            void ProcessTacticalFollowCameraRequests()
+            bool ProcessTacticalFollowCameraRequests(bool forcePublishReadModel)
             {
                 if (!TryGetDefaultEntityManager(out EntityManager em))
-                    return;
+                    return false;
+
+                if (!forcePublishReadModel && !tacticalFollowCameraModeSystem.HasPendingModeRequests(em))
+                    return false;
 
                 bool processed = tacticalFollowCameraModeSystem.ProcessPendingRequests(
                     em,
@@ -444,12 +449,13 @@ namespace Game.Runtime
                     !tacticalFollowCameraModeSystem.TryReadUiReadModel(em, out TacticalFollowCameraUiReadModelComponent readModel) ||
                     readModel.ReasonCode == (int)TacticalCommandReasonCode.None)
                 {
-                    return;
+                    return processed;
                 }
 
                 selectionHudFeedbackSystem.ApplyCommandResult(
                     GetHudFeedbackContext(),
                     TacticalCommandResult.Rejected((TacticalCommandReasonCode)readModel.ReasonCode));
+                return processed;
             }
 
             void ApplyTacticalFollowCameraUiReadModel()
@@ -492,12 +498,12 @@ namespace Game.Runtime
                     selectionHudFeedbackSystem.ApplyCommandResult(GetHudFeedbackContext(), result);
             }
 
-            void RefreshTacticalFollowCameraPose()
+            bool RefreshTacticalFollowCameraPose()
             {
                 if (!TryGetDefaultEntityManager(out EntityManager em))
-                    return;
+                    return false;
 
-                tacticalFollowCameraModeSystem.RefreshActiveTargetAndPose(em, GetTacticalFollowCameraContext());
+                return tacticalFollowCameraModeSystem.RefreshActiveTargetAndPose(em, GetTacticalFollowCameraContext());
             }
 
             TacticalFollowCameraModeSystemHelper.Context GetTacticalFollowCameraContext()

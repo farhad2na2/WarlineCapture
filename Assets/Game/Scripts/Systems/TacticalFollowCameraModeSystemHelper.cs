@@ -102,6 +102,22 @@ namespace Game.Runtime
             return handledAny;
         }
 
+        public bool HasPendingModeRequests(EntityManager em)
+        {
+            if (!TryGetRequestEntity(em, out Entity requestEntity))
+                return false;
+
+            DynamicBuffer<TacticalFollowCameraRequestElement> requests =
+                em.GetBuffer<TacticalFollowCameraRequestElement>(requestEntity);
+            for (int i = 0; i < requests.Length; i++)
+            {
+                if (IsModeRequest(requests[i].Kind))
+                    return true;
+            }
+
+            return false;
+        }
+
         public bool TryReadMode(EntityManager em, out TacticalFollowCameraModeComponent mode)
         {
             Entity entity = EnsureModeEntity(em);

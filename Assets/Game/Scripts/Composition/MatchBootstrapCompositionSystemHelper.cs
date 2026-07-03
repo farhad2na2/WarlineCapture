@@ -49,7 +49,9 @@ namespace Game.Composition
         private readonly ManagedGameplayStartupSystemHelper managedGameplayStartupSystem = new();
         private readonly GameplayRuntimeUpdateCompositionSystemHelper gameplayRuntimeUpdateSystem = new();
         private readonly PerformanceDiagnosticsSystemHelper fallbackPerformanceDiagnosticsSystemHelper = new();
+        private readonly StaticMapChunkBatchingPresentationSystemHelper staticMapBatchingSystem = new();
         private bool fallbackPerformanceDiagnosticsInitialized;
+        private bool _staticMapBatchingInitialized;
         private MatchSceneView sceneView;
 
         public MatchSceneView SceneView => sceneView;
@@ -286,6 +288,7 @@ namespace Game.Composition
                 _performanceDiagnosticsSystem);
             gameplayRuntimeUpdateSystem.Dispose();
             _visualQualitySettingsSystem?.Dispose();
+            staticMapBatchingSystem.Dispose();
             matchIntroStateQuery.Reset();
 
             MainMenu = null;
@@ -356,6 +359,7 @@ namespace Game.Composition
             _gameplayStartComplete = false;
             _managedRuntimeInitialized = false;
             _visualQualitySettingsInitialized = false;
+            _staticMapBatchingInitialized = false;
             _gameplayStartStep = GameplayStartStep.Idle;
             _gameplayStartProgress01 = 0f;
             _gameplayStartStatus = "Waiting for match scene";
@@ -857,6 +861,7 @@ namespace Game.Composition
                 return;
 
             InitializeVisualQualitySettingsIfNeeded();
+            InitializeStaticMapBatchingIfNeeded();
             int ownerLayer = MatchScene != null ? MatchScene.gameObject.layer : 0;
 
             ManagedGameplayStartupSystemHelper.Result managedSystems = InitializeManagedRuntime(
@@ -981,6 +986,40 @@ namespace Game.Composition
 
             visualQualitySettingsSystem.Initialize(VisualQualityProfile, WorldCamera, DirectionalLight, GlobalVolume);
             _visualQualitySettingsInitialized = true;
+        }
+
+        private void InitializeStaticMapBatchingIfNeeded()
+        {
+            if (_staticMapBatchingInitialized)
+                return;
+
+            Transform mapRoot = ResolveStaticMapRoot();
+            if (mapRoot == null)
+                return;
+
+            staticMapBatchingSystem.Initialize(
+                mapRoot,
+                MapBuildingAuthoringRoot,
+                MapVehicleAuthoringRoot,
+                DecorationRoot);
+            _staticMapBatchingInitialized = true;
+        }
+
+        private Transform ResolveStaticMapRoot()
+        {
+            Transform current = MapSurfaceAuthoring != null ? MapSurfaceAuthoring.transform : null;
+            while (current != null)
+            {
+                if (string.Equals(current.name, "Map", StringComparison.Ordinal))
+                    return current;
+
+                current = current.parent;
+            }
+
+            GameObject mapObject = GameObject.Find("Map");
+            if (mapObject == null || MatchScene == null)
+                return null;
+            return mapObject.scene == MatchScene.gameObject.scene ? mapObject.transform : null;
         }
 
         private void InitializeGameplaySystemsIfNeeded()

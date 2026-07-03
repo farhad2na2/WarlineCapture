@@ -632,9 +632,17 @@ namespace Game.Runtime
 
         public bool ProcessBoardTargetModeCommandRequests(Context context, int currentFrame)
         {
-            if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
+            if (!context.TryGetDefaultEntityManager(out EntityManager em))
+            {
+                return false;
+            }
+
+            context.EnsureEntityQueries?.Invoke(em);
+            if (!RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests(
                     em,
+                    context.MoveTargetCommandQueueQuery,
+                    context.MoveTargetRuntimeStateQuery,
+                    context.SelectedTagQuery,
                     currentFrame,
                     out bool accepted,
                     out bool toggledOff,

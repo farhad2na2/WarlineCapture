@@ -11,6 +11,7 @@ namespace Game.Runtime
     public sealed class BuildingRuntimeProcessingCompositionSystemHelper
     {
         private const float PublishIntervalSeconds = 0.125f;
+        private const float IdleRequestProbeIntervalSeconds = 0.1f;
         private const int MaxRuntimeSpawnRequestsPerUpdate = 16;
 
         private readonly List<byte> _factionIds = new();
@@ -24,6 +25,10 @@ namespace Game.Runtime
         private bool _forcePublishNextUpdate;
         private bool _configuredReadModelsPublished;
         private int _lastPublishedRuntimeBuildingSignature = int.MinValue;
+        private int _lastPublishedOwnedBuildingSummarySignature = int.MinValue;
+        private float _nextResourceSellProbeAt;
+        private float _nextProductionRequestProbeAt;
+        private float _nextRuntimeSpawnRequestProbeAt;
         private PublishPhase _nextPublishPhase = PublishPhase.FactionSummaries;
 
         private enum PublishPhase : byte
@@ -138,10 +143,10 @@ namespace Game.Runtime
             float now,
             int frameCount)
         {
-            ProcessResourceSellRequests(factionResourceSystem, runtimeBuildings, em, boundaryEntity);
+            ProcessResourceSellRequests(factionResourceSystem, runtimeBuildings, em, boundaryEntity, now);
             ProcessUiProductionRequests(productionRequestSystem, productionRequestContext, em, frameCount, now);
             ProcessProductionRequests(productionRequestSystem, productionRequestContext, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, now);
-            ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity);
+            ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity, now);
         }
 
         internal void ProcessRuntimeSpawnRequestsForBoundary(
@@ -159,7 +164,7 @@ namespace Game.Runtime
                 return;
             }
 
-            ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity);
+            ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity, now: 0f, forceScan: true);
         }
 
         private static void ProcessUiProductionRequests(
@@ -184,16 +189,22 @@ namespace Game.Runtime
             FactionResourceCompositionSystemHelper factionResourceSystem,
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             EntityManager em,
-            Entity boundaryEntity)
+            Entity boundaryEntity,
+            float now)
         {
+            if (now < _nextResourceSellProbeAt)
+                return;
+
             DynamicBuffer<BuildingFactionResourceSellRequest> sellRequests =
                 EnsureBoundaryBuffer<BuildingFactionResourceSellRequest>(em, boundaryEntity);
+            bool foundPending = false;
             for (int i = 0; i < sellRequests.Length; i++)
             {
                 BuildingFactionResourceSellRequest request = sellRequests[i];
                 if (request.Status != BuildingFactionResourceSellRequest.Pending)
                     continue;
 
+                foundPending = true;
                 float soldOil = factionResourceSystem.DrainFactionResource(
                     runtimeBuildings,
                     request.FactionId,
@@ -212,6 +223,10 @@ namespace Game.Runtime
                 request.SoldFuelBarrels = soldFuel;
                 sellRequests[i] = request;
             }
+
+            _nextResourceSellProbeAt = foundPending
+                ? now
+                : now + IdleRequestProbeIntervalSeconds;
         }
 
         private void ProcessProductionRequests(
@@ -223,14 +238,19 @@ namespace Game.Runtime
             Entity boundaryEntity,
             float now)
         {
+            if (now < _nextProductionRequestProbeAt)
+                return;
+
             DynamicBuffer<BuildingFactionUnitProductionRequest> productionRequests =
                 EnsureBoundaryBuffer<BuildingFactionUnitProductionRequest>(em, boundaryEntity);
+            bool foundPending = false;
             for (int i = 0; i < productionRequests.Length; i++)
             {
                 BuildingFactionUnitProductionRequest request = productionRequests[i];
                 if (request.Status != BuildingFactionUnitProductionRequest.Pending)
                     continue;
 
+                foundPending = true;
                 string unitId = productionRequestSystem.GetCachedUnitIdString(request.UnitId);
                 bool queued = productionRequestSystem.QueueFactionUnitProductionRequest(
                     productionRequestContext,
@@ -252,6 +272,10 @@ namespace Game.Runtime
                 }
                 productionRequests[i] = request;
             }
+
+            _nextProductionRequestProbeAt = foundPending
+                ? now
+                : now + IdleRequestProbeIntervalSeconds;
         }
 
         private void ProcessRuntimeSpawnRequests(
@@ -259,8 +283,13 @@ namespace Game.Runtime
             BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
             BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
             EntityManager em,
-            Entity boundaryEntity)
+            Entity boundaryEntity,
+            float now,
+            bool forceScan = false)
         {
+            if (!forceScan && now < _nextRuntimeSpawnRequestProbeAt)
+                return;
+
             _pendingSpawnRequestIndices.Clear();
             DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests =
                 EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em, boundaryEntity);
@@ -271,6 +300,13 @@ namespace Game.Runtime
             }
 
             int processedRequests = 0;
+            if (_pendingSpawnRequestIndices.Count == 0)
+            {
+                if (!forceScan)
+                    _nextRuntimeSpawnRequestProbeAt = now + IdleRequestProbeIntervalSeconds;
+                return;
+            }
+
             for (int pendingIndex = 0; pendingIndex < _pendingSpawnRequestIndices.Count; pendingIndex++)
             {
                 if (processedRequests >= MaxRuntimeSpawnRequestsPerUpdate)
@@ -370,6 +406,13 @@ namespace Game.Runtime
                 request.ActualFootprint = placed ? new int2(result.ActualFootprint.x, result.ActualFootprint.y) : default;
                 WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
             }
+
+            if (!forceScan)
+            {
+                _nextRuntimeSpawnRequestProbeAt = processedRequests >= MaxRuntimeSpawnRequestsPerUpdate
+                    ? now
+                    : now + IdleRequestProbeIntervalSeconds;
+            }
         }
 
         private static byte? ResolveOwnerFaction(BuildingRuntimeSpawnRequest request)
@@ -422,6 +465,7 @@ namespace Game.Runtime
                     boundaryEntity,
                     runtimeBuildings);
                 _lastPublishedRuntimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
+                _lastPublishedOwnedBuildingSummarySignature = _lastPublishedRuntimeBuildingSignature;
                 _nextPublishPhase = PublishPhase.FactionSummaries;
                 return;
             }
@@ -437,6 +481,7 @@ namespace Game.Runtime
                     boundaryEntity,
                     runtimeBuildings);
                 _lastPublishedRuntimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
+                _lastPublishedOwnedBuildingSummarySignature = _lastPublishedRuntimeBuildingSignature;
                 _nextPublishPhase = PublishPhase.FactionSummaries;
                 return;
             }
@@ -482,7 +527,13 @@ namespace Game.Runtime
                     _nextPublishPhase = PublishPhase.OwnedBuildingSummaries;
                     break;
                 case PublishPhase.OwnedBuildingSummaries:
-                    PublishRuntimeOwnedBuildingSummaries(definitionSystem, runtimeBuildings, em, boundaryEntity);
+                    int ownedBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
+                    if (ownedBuildingSignature != _lastPublishedOwnedBuildingSummarySignature)
+                    {
+                        PublishRuntimeOwnedBuildingSummaries(definitionSystem, runtimeBuildings, em, boundaryEntity);
+                        _lastPublishedOwnedBuildingSummarySignature = ownedBuildingSignature;
+                    }
+
                     _nextPublishPhase = PublishPhase.UnitProductionSummaries;
                     break;
                 case PublishPhase.UnitProductionSummaries:

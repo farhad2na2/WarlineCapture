@@ -66,9 +66,11 @@ namespace Game.Runtime
         private int _runtimeBuildingSnapshotCount = -1;
         private readonly Dictionary<BuildingDefinition, bool> _wallGateDefinitionCache = new();
         private readonly Dictionary<byte, RectInt> _enemyWallPerimetersScratch = new();
+        private float _roadBarrierDoorAccumulatedDeltaTime;
 
         private const float BarrierDoorOpenCloseSpeed = 2f;
         private const int BarrierDoorDetectPaddingCells = 8;
+        private const float RoadBarrierDoorUpdateIntervalSeconds = 0.08f;
 
         private readonly struct LiveFactionUnitDoorRecord
         {
@@ -335,6 +337,12 @@ namespace Game.Runtime
 
         public void UpdateRoadBarrierDoors(Context context, float deltaTime)
         {
+            _roadBarrierDoorAccumulatedDeltaTime += Mathf.Max(0f, deltaTime);
+            if (_roadBarrierDoorAccumulatedDeltaTime < RoadBarrierDoorUpdateIntervalSeconds)
+                return;
+
+            float elapsedSeconds = _roadBarrierDoorAccumulatedDeltaTime;
+            _roadBarrierDoorAccumulatedDeltaTime = 0f;
             if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
                 return;
 
@@ -349,7 +357,7 @@ namespace Game.Runtime
             if (context.GetLiveFactionUnitsQuery == null)
             {
                 for (int i = 0; i < buildings.Count; i++)
-                    UpdateRoadBarrierDoorForBuilding(context, buildings[i], default, deltaTime);
+                    UpdateRoadBarrierDoorForBuilding(context, buildings[i], default, elapsedSeconds);
                 return;
             }
 
@@ -357,7 +365,7 @@ namespace Game.Runtime
             if (liveFactionUnitsQuery.IsEmptyIgnoreFilter)
             {
                 for (int i = 0; i < buildings.Count; i++)
-                    UpdateRoadBarrierDoorForBuilding(context, buildings[i], default, deltaTime);
+                    UpdateRoadBarrierDoorForBuilding(context, buildings[i], default, elapsedSeconds);
                 return;
             }
 
@@ -368,7 +376,7 @@ namespace Game.Runtime
             NativeArray<LiveFactionUnitDoorRecord> liveFactionUnitRecords = liveFactionUnits.AsArray();
 
             for (int i = 0; i < buildings.Count; i++)
-                UpdateRoadBarrierDoorForBuilding(context, buildings[i], liveFactionUnitRecords, deltaTime);
+                UpdateRoadBarrierDoorForBuilding(context, buildings[i], liveFactionUnitRecords, elapsedSeconds);
         }
 
         private void UpdateRoadBarrierDoorForBuilding(

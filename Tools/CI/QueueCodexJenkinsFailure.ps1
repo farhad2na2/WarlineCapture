@@ -47,8 +47,10 @@ $logsDir = Join-Path $bundleDir "logs"
 New-Item -ItemType Directory -Path $logsDir -Force | Out-Null
 
 $copiedLogFiles = New-Object "System.Collections.Generic.List[string]"
+$copiedUnityDiagnosticFiles = New-Object "System.Collections.Generic.List[string]"
 if (Copy-IfPresent -Source $BuildLog -Destination (Join-Path $logsDir "build.log")) {
     $copiedLogFiles.Add("build.log") | Out-Null
+    $copiedUnityDiagnosticFiles.Add("build.log") | Out-Null
 }
 
 $testResultsDir = $null
@@ -58,16 +60,22 @@ if (-not [string]::IsNullOrWhiteSpace($ProjectPath)) {
     if (Test-Path -LiteralPath $testResultsDir) {
         foreach ($item in Get-ChildItem -LiteralPath $testResultsDir -Force -ErrorAction SilentlyContinue) {
             Copy-Item -LiteralPath $item.FullName -Destination $logsDir -Recurse -Force -ErrorAction SilentlyContinue
-            $copiedLogFiles.Add((Join-Path "TestResults" $item.Name)) | Out-Null
+            $copiedPath = Join-Path "TestResults" $item.Name
+            $copiedLogFiles.Add($copiedPath) | Out-Null
+
+            if ($item.Extension -in @(".log", ".xml")) {
+                $copiedUnityDiagnosticFiles.Add($copiedPath) | Out-Null
+            }
         }
     }
 }
 
-if ($copiedLogFiles.Count -eq 0) {
+if ($copiedUnityDiagnosticFiles.Count -eq 0) {
     $diagnosticsPath = Join-Path $logsDir "FailureBundleDiagnostics.txt"
     $buildLogExists = -not [string]::IsNullOrWhiteSpace($BuildLog) -and (Test-Path -LiteralPath $BuildLog)
     $testResultsDirExists = -not [string]::IsNullOrWhiteSpace($testResultsDir) -and (Test-Path -LiteralPath $testResultsDir)
     $consoleUrl = if ([string]::IsNullOrWhiteSpace($env:BUILD_URL)) { "<unknown>" } else { "$($env:BUILD_URL)consoleText" }
+    $copiedFilesSummary = if ($copiedLogFiles.Count -eq 0) { "<none>" } else { ($copiedLogFiles -join ", ") }
 
     @(
         "[CodexQueue] No Unity log files were present when this failure bundle was created.",
@@ -78,6 +86,7 @@ if ($copiedLogFiles.Count -eq 0) {
         "Build log exists: $buildLogExists",
         "Expected TestResults directory: $testResultsDir",
         "TestResults directory exists: $testResultsDirExists",
+        "Copied files: $copiedFilesSummary",
         "Workspace: $($env:WORKSPACE)",
         "Project path: $ProjectPath"
     ) | Set-Content -LiteralPath $diagnosticsPath -Encoding UTF8

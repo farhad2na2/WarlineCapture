@@ -1,4 +1,3 @@
-using System;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -162,20 +161,52 @@ namespace Game.Runtime
     {
         public static bool IsFixedWingRunwayUnit(FixedString64Bytes sourceKey)
         {
-            string key = sourceKey.ToString();
-            if (string.IsNullOrEmpty(key))
+            if (sourceKey.Length == 0)
                 return false;
 
-            if (key.IndexOf("Helicopter", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                key.IndexOf("Heli", StringComparison.OrdinalIgnoreCase) >= 0)
+            if (ContainsIgnoreCase(sourceKey, "Helicopter") ||
+                ContainsIgnoreCase(sourceKey, "Heli"))
             {
                 return false;
             }
 
-            return key.IndexOf("Jet", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   key.IndexOf("Drone", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   key.IndexOf("Plane", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   key.IndexOf("FixedWing", StringComparison.OrdinalIgnoreCase) >= 0;
+            return ContainsIgnoreCase(sourceKey, "Jet") ||
+                   ContainsIgnoreCase(sourceKey, "Drone") ||
+                   ContainsIgnoreCase(sourceKey, "Plane") ||
+                   ContainsIgnoreCase(sourceKey, "FixedWing");
+        }
+
+        private static bool ContainsIgnoreCase(FixedString64Bytes value, string needle)
+        {
+            int valueLength = value.Length;
+            int needleLength = needle.Length;
+            if (needleLength == 0 || valueLength < needleLength)
+                return false;
+
+            for (int start = 0; start <= valueLength - needleLength; start++)
+            {
+                bool matches = true;
+                for (int offset = 0; offset < needleLength; offset++)
+                {
+                    if (ToLowerAscii(value[start + offset]) == ToLowerAscii((byte)needle[offset]))
+                        continue;
+
+                    matches = false;
+                    break;
+                }
+
+                if (matches)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static byte ToLowerAscii(byte value)
+        {
+            return value is >= (byte)'A' and <= (byte)'Z'
+                ? (byte)(value + ((byte)'a' - (byte)'A'))
+                : value;
         }
     }
 }

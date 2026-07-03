@@ -44,6 +44,8 @@ namespace Game.Runtime
             public readonly EntityQuery MoveTargetRuntimeStateQuery;
             public readonly EntityQuery MoveTargetSelectedMoveQuery;
             public readonly EntityQuery SelectAllCommandQueueQuery;
+            public readonly EntityQuery ImmediateRespawnQueueQuery;
+            public readonly EntityQuery ImmediateBuildingRuntimeStateQuery;
             public readonly EntityQuery SelectedTagQuery;
             public readonly EntityQuery GridConfigQuery;
             public readonly EntityQuery MapSurfaceQuery;
@@ -92,6 +94,8 @@ namespace Game.Runtime
                 EntityQuery moveTargetRuntimeStateQuery,
                 EntityQuery moveTargetSelectedMoveQuery,
                 EntityQuery selectAllCommandQueueQuery,
+                EntityQuery immediateRespawnQueueQuery,
+                EntityQuery immediateBuildingRuntimeStateQuery,
                 EntityQuery selectedTagQuery,
                 EntityQuery gridConfigQuery,
                 EntityQuery mapSurfaceQuery,
@@ -139,6 +143,8 @@ namespace Game.Runtime
                 MoveTargetRuntimeStateQuery = moveTargetRuntimeStateQuery;
                 MoveTargetSelectedMoveQuery = moveTargetSelectedMoveQuery;
                 SelectAllCommandQueueQuery = selectAllCommandQueueQuery;
+                ImmediateRespawnQueueQuery = immediateRespawnQueueQuery;
+                ImmediateBuildingRuntimeStateQuery = immediateBuildingRuntimeStateQuery;
                 SelectedTagQuery = selectedTagQuery;
                 GridConfigQuery = gridConfigQuery;
                 MapSurfaceQuery = mapSurfaceQuery;
@@ -294,7 +300,8 @@ namespace Game.Runtime
         public bool ProcessImmediateSelectedUnitCommandRequests(Context context, Entity focusedUnit)
         {
             if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
+                !ProcessImmediateSelectedUnitCommandRequests(
+                    context,
                     em,
                     focusedUnit,
                     out RtsSelectionCommandIntentKind processedKind,
@@ -563,6 +570,31 @@ namespace Game.Runtime
                 currentFrame,
                 out accepted,
                 out rejectionReason);
+        }
+
+        private static bool ProcessImmediateSelectedUnitCommandRequests(
+            Context context,
+            EntityManager em,
+            Entity focusedUnit,
+            out RtsSelectionCommandIntentKind processedKind,
+            out bool accepted,
+            out TacticalCommandReasonCode rejectionReason,
+            out int issuedCount)
+        {
+            context.EnsureEntityQueries?.Invoke(em);
+            return RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
+                em,
+                context.MoveTargetCommandQueueQuery,
+                context.MoveTargetRuntimeStateQuery,
+                context.ImmediateRespawnQueueQuery,
+                context.ImmediateBuildingRuntimeStateQuery,
+                context.SelectedTagQuery,
+                context.SelectedMoveQuery,
+                focusedUnit,
+                out processedKind,
+                out accepted,
+                out rejectionReason,
+                out issuedCount);
         }
 
         public bool ProcessScanTargetModeCommandRequests(Context context, int currentFrame)

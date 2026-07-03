@@ -73,16 +73,16 @@ Turn `Design/AgentReports/2026-07-02_audit_architecture-performance-followup.md`
 | Checklist percent complete | 46.1% |
 | Current phase | Phase 4 - GC Re-baseline And Allocation Gate |
 | Quick wins complete | 2 / 6 |
-| Current target | Continue reducing the remaining `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases` recurring selection allocation after cached HUD feedback, command preview, tactical-follow, selection-panel callbacks, pointer-target context, selected-tag query, focused read-model text reuse, focused selection-panel unchanged-state cache, hidden-panel apply guard, fixed-string vehicle/transport classification, and compiler-thread-separated GC reporting |
-| Compiler status | `dotnet build Game.Editor.csproj --no-restore`, `dotnet build Game.Runtime.csproj --no-restore`, and Unity 6.5.2 batchmode compile passed with 0 compiler errors after the latest selection fixed-string/hidden-panel and GC capture report changes; Unity MCP was not exposed in tools, so escalated Unity batchmode/editor-log validation is the current Unity path |
+| Current target | Continue reducing remaining recurring gameplay allocations after removing the `FixedWingRunwayHomeInitializationSystem` source-key string allocation; next target is the shared `RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests` allocation showing under `Selection.CommandFlush`, `Selection.Camera`, `Selection.TacticalCamera`, selection panel/main menu, and end-update markers |
+| Compiler status | `dotnet build Game.Runtime.csproj --no-restore -v:q`, `dotnet build Game.Editor.csproj --no-restore -v:q`, `git diff --check`, and Unity 6.5.2 batchmode compile passed with 0 compiler errors after the fixed-wing runway classifier allocation cleanup; Unity MCP still returned `Connection revoked`, so escalated Unity batchmode/editor-log validation is the current Unity path |
 | Android baseline status | Not started |
-| GC baseline status | Latest 2026-07-03 steady-state Match GC capture: 300 requested frames after 180 warmup frames, 301 scanned profiler frames, 33,372 GC.Alloc samples, 1,914,559 hierarchy-column bytes; compiler-thread-separated report fields are now present and show `0` editor compiler-thread bytes in the latest run; current main-thread selection lane remains `693,680` bytes / `14,053` samples across `299` frames |
+| GC baseline status | Latest 2026-07-03 11:04:25 UTC steady-state Match GC capture: 300 requested frames after 180 warmup frames, 301 scanned profiler frames, 25,245 GC.Alloc samples, 1,413,444 hierarchy-column bytes, and `0` editor compiler-thread bytes. `FixedWingRunwayHomeInitializationSystem` no longer appears in the searched/top allocation rows after replacing runtime `FixedString64Bytes.ToString()`/managed `IndexOf` classification with allocation-free fixed-string scanning. |
 | Burst coverage status | Current inventory: 125 `ISystem` files, 72 missing `[BurstCompile]`; classification pending |
 | Mobile URP status | `Mobile_RPAsset` shadow distance changed from 240 m to 90 m and cascades from 4 to 2; HDR, MSAA 2x, render scale 0.8, and soft shadows remain unchanged pending visual/Android baseline |
 | ECS instantiate status | Current inventory: 15 runtime `Object.Instantiate` call lines under `Assets/Game/Scripts/Systems` |
 | Fuel/Oil drift status | Drift confirmed: authoritative production, conversion, load/unload, and storage mutation are still in managed helper/runtime-building paths; UI/header paths are read-only display consumers |
-| Validation status | Phase 0 inventory completed; Phase 1 config edited; Phase 2 release OnGUI strip implemented; Phase 3 release diagnostic system gate implemented; Unity 6.5.2 batchmode compile passed after the latest fixed-string/hidden-panel selection changes; Unity 6.5.2 Match GC captures passed after extending the editor capture timeout from 180s to 360s and adding compiler-thread-separated report fields |
-| Still wrong / next iteration | `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()` still allocates across 299 captured frames. The fixed-string/hidden-panel slice improved the main-thread selection row to `693,680` bytes / `14,053` samples, but the lane remains the rank-1 non-compiler allocation site; the next slice should inspect per-frame selection runtime work around line 332 outside the focused panel apply path |
+| Validation status | Phase 0 inventory completed; Phase 1 config edited; Phase 2 release OnGUI strip implemented; Phase 3 release diagnostic system gate implemented; latest validations passed: `dotnet build Game.Runtime.csproj --no-restore -v:q`, `dotnet build Game.Editor.csproj --no-restore -v:q`, `git diff --check`, Unity 6.5.2 compile log `/private/tmp/warline-arch-followup-unity-compile-fixedwing.log`, and Match GC capture log `/private/tmp/warline-arch-followup-gc-fixedwing.log` |
+| Still wrong / next iteration | No visual defects are known in this non-visual GC slice. Recurring allocations remain: `Selection.CommandFlush` `169,832`, `Selection.Camera` `143,520`, `Selection.TacticalCamera` `88,504`, main menu `76,544`, selection panel `76,544`, `GameplayRuntimeUpdate.EndUpdate` `66,036`, `BuildingPlacementRuntimeTick.UpdateActiveProductionTransports` `64,482` plus a one-frame Burst JIT row, `GameplayRuntimeUpdate.RoadBuild` `59,800`, and `Selection.FocusedReadModel` `38,272`. Next slice should inspect/cached-query `RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests`, which is the top managed frame across the selection-related rows. |
 
 ## Phase 0 - Baseline And Inventory
 Fast setup work. No behavior changes.
@@ -239,16 +239,16 @@ Measure before deeper managed-helper work.
   - Result marker: `[MatchGcAllocationCallstackCapture] result=Passed frames=300`.
 - Report:
   - `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`
-- Latest date in report: `2026-07-03 09:07:07 UTC`.
+- Latest date in report: `2026-07-03 11:04:25 UTC`.
 - Capture summary:
   - Requested frames: `300`.
   - Warmup frames before capture: `180`.
   - Profiler frame range: `0..300`.
   - Scanned frames with data: `301`.
-  - GC.Alloc samples: `33,372`.
-  - GC.Alloc bytes from hierarchy column: `1,914,559`.
-  - GC.Alloc samples excluding editor compiler threads: `33,372`.
-  - GC.Alloc bytes excluding editor compiler threads: `1,914,559`.
+  - GC.Alloc samples: `25,245`.
+  - GC.Alloc bytes from hierarchy column: `1,413,444`.
+  - GC.Alloc samples excluding editor compiler threads: `25,245`.
+  - GC.Alloc bytes excluding editor compiler threads: `1,413,444`.
   - Editor compiler-thread GC.Alloc samples: `0`.
   - Editor compiler-thread GC.Alloc bytes: `0`.
   - Runtime allocation probe reports `UIShellEcsPresentationSystem.Update` and `MenuBootstrapView.Update` as `0 bytes / 0 allocating updates / 300 total updates`, so the previous shell/update probe path is clean.
@@ -262,17 +262,22 @@ Measure before deeper managed-helper work.
   - `SelectionHudFeedbackUiSystemHelper` now avoids repeated hidden-panel apply calls when no selection is active and uses fixed-string vehicle/transport classification instead of managed source-key strings in the selection summary path.
   - `SelectionUiReadModelLookup` now uses fixed-string source-key prefix checks for vehicle/character classification in visible selection reads.
   - `MatchGcAllocationCallstackCapture` now reports raw totals and a compiler-thread-separated top allocation table so editor Burst compiler-thread noise does not hide player-relevant rows.
+  - `SelectionGameplayStartupSystemHelper` now wraps selection runtime phases in profiler submarkers and reuses cached query handles for move-target, select-all, deselect-all, and immediate selected-unit command result flushing instead of creating temporary queries each live flush.
+  - `RtsCameraSystem.TryGetCameraGroundBounds()` now avoids the `Mathf.Min/Max` params-array overload while computing four-corner camera bounds.
+  - `FixedWingRunwayUnitUtility.IsFixedWingRunwayUnit()` now scans `FixedString64Bytes` in place instead of converting source keys to managed strings each frame; `FixedWingRunwayHomeInitializationSystem` no longer appears in the searched/top allocation rows.
 - Top recurring offender after these fixes:
-  - `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()` still appears across `299` frames.
-- Top three allocation rows from the latest report:
-  - Rank 1: `693,680` bytes / `14,053` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection`, top managed frame `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()`.
-  - Rank 2: `478,400` bytes / `6,877` samples / `299` frames, parent hierarchy `FixedWingRunwayHomeInitializationSystem`, top managed frame `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()`.
-  - Rank 3: `85,441` bytes / `1,128` samples / `299` frames, parent hierarchy `BuildingPlacementRuntimeTick.UpdateBuildingRuntimeState`, top managed frame `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()`.
+  - The top recurring rows are now selection-related markers whose top managed frame is `RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests`.
+- Top recurring allocation rows from the latest report:
+  - Rank 1: `169,832` bytes / `3,887` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.CommandFlush`.
+  - Rank 2: `143,520` bytes / `3,588` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Camera`.
+  - Rank 3: `88,504` bytes / `2,093` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.TacticalCamera`.
+  - Rank 4: `76,544` bytes / `2,093` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.MainMenu`.
+  - Rank 5: `76,544` bytes / `598` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Panel`.
 - Known editor/tooling allocations separated from gameplay cleanup target:
   - The capture report now separates editor compiler-thread allocations from raw totals. The latest run has `0` editor compiler-thread bytes, but previous same-slice runs showed these can spike above `12 MB` and should remain separated before using total editor bytes as a gate.
   - Unity AI/MCP tracing stack logs appeared during batch shutdown; these are editor/tooling noise, not player gameplay code.
 - Next cleanup target:
-  - Inspect the remaining `SelectionGameplayStartupSystemHelper` allocation around line `332`, focusing on per-frame selection work outside the focused panel apply path.
+  - Inspect `RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests` first because it is the top managed frame for the recurring selection marker rows, then continue camera/tactical-camera markers if the cancel-active command path is not fully removable in one fast slice.
 
 ## Phase 5 - Burst Coverage Pass
 Mechanical pass, but only where correct.

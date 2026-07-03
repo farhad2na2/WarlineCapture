@@ -145,6 +145,8 @@ namespace Game.Runtime
             EntityQuery moveTargetRuntimeStateQuery = default;
             EntityQuery moveTargetSelectedMoveQuery = default;
             EntityQuery selectAllCommandQueueQuery = default;
+            EntityQuery immediateRespawnQueueQuery = default;
+            EntityQuery immediateBuildingRuntimeStateQuery = default;
             EntityQuery selectedTagQuery = default;
             EntityQuery gridConfigQuery = default;
             EntityQuery mapSurfaceQuery = default;
@@ -789,6 +791,8 @@ namespace Game.Runtime
                     moveTargetRuntimeStateQuery,
                     moveTargetSelectedMoveQuery,
                     selectAllCommandQueueQuery,
+                    immediateRespawnQueueQuery,
+                    immediateBuildingRuntimeStateQuery,
                     selectedTagQuery,
                     gridConfigQuery,
                     mapSurfaceQuery,
@@ -1089,6 +1093,10 @@ namespace Game.Runtime
                     ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
                     ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>(),
                     ComponentType.ReadWrite<RtsSelectionPointerRequestElement>());
+                immediateRespawnQueueQuery = em.CreateEntityQuery(
+                    ComponentType.ReadOnly<RespawnQueueTag>(),
+                    ComponentType.ReadOnly<RespawnQueueComponent>());
+                immediateBuildingRuntimeStateQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
                 gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
                 selectedTagQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
                 mapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());

@@ -105,7 +105,7 @@ namespace Game.Runtime
                 out issuedCount);
         }
 
-        private static bool ProcessPendingRequests(
+        public static bool ProcessPendingRequests(
             EntityManager em,
             EntityQuery commandQueueQuery,
             EntityQuery runtimeStateQuery,

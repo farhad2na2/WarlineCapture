@@ -4418,6 +4418,11 @@ public sealed class SelectionCommandRequestResultContractTests
             ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
             ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>(),
             ComponentType.ReadWrite<RtsSelectionPointerRequestElement>());
+        EntityQuery immediateRespawnQueueQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<RespawnQueueTag>(),
+            ComponentType.ReadOnly<RespawnQueueComponent>());
+        EntityQuery immediateBuildingRuntimeStateQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
+        EntityQuery selectedTagQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
 
         return new RtsSelectionCommandResultFlushCompositionSystemHelper.Context(
             inputSystem,
@@ -4438,7 +4443,9 @@ public sealed class SelectionCommandRequestResultContractTests
             moveTargetRuntimeStateQuery,
             moveTargetSelectedMoveQuery,
             selectAllCommandQueueQuery,
-            selectedMoveQuery,
+            immediateRespawnQueueQuery,
+            immediateBuildingRuntimeStateQuery,
+            selectedTagQuery,
             gridConfigQuery,
             mapSurfaceQuery,
             TryGetEntityManager,

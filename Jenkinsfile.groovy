@@ -158,6 +158,7 @@ pipeline {
 
                 Write-Host "[BuildGate] EditMode tests passed. Continuing build."
                 "[BuildGate][FINAL] EditMode tests PASSED; build was allowed to continue." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
+                exit 0
                 '''
             }
             post {

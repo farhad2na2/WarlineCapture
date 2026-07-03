@@ -21,10 +21,11 @@ function Copy-IfPresent {
     )
 
     if ([string]::IsNullOrWhiteSpace($Source) -or -not (Test-Path -LiteralPath $Source)) {
-        return
+        return $false
     }
 
     Copy-Item -LiteralPath $Source -Destination $Destination -Force
+    return $true
 }
 
 New-Item -ItemType Directory -Path $TaskDir -Force | Out-Null
@@ -45,14 +46,41 @@ $bundleDir = Join-Path $TaskDir $bundleName
 $logsDir = Join-Path $bundleDir "logs"
 New-Item -ItemType Directory -Path $logsDir -Force | Out-Null
 
-Copy-IfPresent -Source $BuildLog -Destination (Join-Path $logsDir "build.log")
+$copiedLogFiles = New-Object "System.Collections.Generic.List[string]"
+if (Copy-IfPresent -Source $BuildLog -Destination (Join-Path $logsDir "build.log")) {
+    $copiedLogFiles.Add("build.log") | Out-Null
+}
+
+$testResultsDir = $null
 
 if (-not [string]::IsNullOrWhiteSpace($ProjectPath)) {
     $testResultsDir = Join-Path $ProjectPath "TestResults"
     if (Test-Path -LiteralPath $testResultsDir) {
-        Get-ChildItem -LiteralPath $testResultsDir -Force -ErrorAction SilentlyContinue |
-            Copy-Item -Destination $logsDir -Recurse -Force -ErrorAction SilentlyContinue
+        foreach ($item in Get-ChildItem -LiteralPath $testResultsDir -Force -ErrorAction SilentlyContinue) {
+            Copy-Item -LiteralPath $item.FullName -Destination $logsDir -Recurse -Force -ErrorAction SilentlyContinue
+            $copiedLogFiles.Add((Join-Path "TestResults" $item.Name)) | Out-Null
+        }
     }
+}
+
+if ($copiedLogFiles.Count -eq 0) {
+    $diagnosticsPath = Join-Path $logsDir "FailureBundleDiagnostics.txt"
+    $buildLogExists = -not [string]::IsNullOrWhiteSpace($BuildLog) -and (Test-Path -LiteralPath $BuildLog)
+    $testResultsDirExists = -not [string]::IsNullOrWhiteSpace($testResultsDir) -and (Test-Path -LiteralPath $testResultsDir)
+    $consoleUrl = if ([string]::IsNullOrWhiteSpace($env:BUILD_URL)) { "<unknown>" } else { "$($env:BUILD_URL)consoleText" }
+
+    @(
+        "[CodexQueue] No Unity log files were present when this failure bundle was created.",
+        "This usually means the Jenkins pipeline failed before Unity wrote build.log or TestResults files.",
+        "Check the Jenkins console for the failed stage: $consoleUrl",
+        "",
+        "Expected build log: $BuildLog",
+        "Build log exists: $buildLogExists",
+        "Expected TestResults directory: $testResultsDir",
+        "TestResults directory exists: $testResultsDirExists",
+        "Workspace: $($env:WORKSPACE)",
+        "Project path: $ProjectPath"
+    ) | Set-Content -LiteralPath $diagnosticsPath -Encoding UTF8
 }
 
 $metadata = [ordered]@{

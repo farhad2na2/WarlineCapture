@@ -27,6 +27,8 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             passed++;
             RunCase(test => test.SelectedUnitWithoutPendingRequestPublishesEnabledReadModel());
             passed++;
+            RunCase(test => test.SelectedUnitReadModelDoesNotReadLocalTransformWhileSelectionMarkerJobWrites());
+            passed++;
             RunCase(test => test.ToggleWithSelectedUnitEntersFollowModeAndLocksPanData());
             passed++;
             RunCase(test => test.ToggleWhileActiveExitsFollowModeAndClearsPanLockData());
@@ -163,6 +165,34 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.AreEqual(1, readModel.Enabled);
         Assert.AreEqual(0, readModel.Selected);
         Assert.AreEqual((int)TacticalCommandReasonCode.None, readModel.ReasonCode);
+    }
+
+    [Test]
+    public void SelectedUnitReadModelDoesNotReadLocalTransformWhileSelectionMarkerJobWrites()
+    {
+        Entity selected = CreateSelectedUnit(new float3(4f, 0f, 6f), quaternion.identity);
+        Entity outline = _em.CreateEntity(
+            typeof(LocalTransform),
+            typeof(SelectionObjectOutlineTag),
+            typeof(SelectionMarkerOwner),
+            typeof(SelectionObjectOutlineVisibleScale));
+        _em.SetComponentData(outline, LocalTransform.FromPosition(float3.zero));
+        _em.SetComponentData(outline, new SelectionMarkerOwner { Value = selected });
+        _em.SetComponentData(outline, new SelectionObjectOutlineVisibleScale { Value = 1f });
+        SystemHandle markerVisibility = _world.CreateSystem<SelectionMarkerVisibilitySystem>();
+        markerVisibility.Update(_world.Unmanaged);
+
+        try
+        {
+            Assert.DoesNotThrow(() => _system.ProcessPendingRequests(_em));
+            Assert.IsTrue(_system.TryReadUiReadModel(_em, out TacticalFollowCameraUiReadModelComponent readModel));
+            Assert.AreEqual(1, readModel.Visible);
+            Assert.AreEqual(1, readModel.Enabled);
+        }
+        finally
+        {
+            _em.CompleteAllTrackedJobs();
+        }
     }
 
     [Test]

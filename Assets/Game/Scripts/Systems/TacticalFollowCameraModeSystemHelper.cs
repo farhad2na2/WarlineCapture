@@ -329,7 +329,7 @@ namespace Game.Runtime
         {
             TacticalFollowCameraModeComponent mode =
                 em.GetComponentData<TacticalFollowCameraModeComponent>(modeEntity);
-            bool hasSelection = TryResolveBaseTarget(em, context, out _);
+            bool hasSelection = HasFollowableBaseTarget(em, context);
             Entity readModelEntity = EnsureUiReadModelEntity(em);
             TacticalFollowCameraUiReadModelComponent previous =
                 em.GetComponentData<TacticalFollowCameraUiReadModelComponent>(readModelEntity);
@@ -353,6 +353,7 @@ namespace Game.Runtime
             out TacticalFollowCameraTargetComponent target)
         {
             target = default;
+            CompleteLocalTransformReadDependencies(em);
 
             if (TryReadFocusedTarget(em, out target))
                 return true;
@@ -421,6 +422,12 @@ namespace Game.Runtime
             target = default;
             if (mode.HasBaseTarget == 0)
                 return false;
+
+            if (mode.BaseTargetKind == TacticalFollowCameraTargetKind.Unit ||
+                mode.BaseTargetKind == TacticalFollowCameraTargetKind.UnitGroup)
+            {
+                CompleteLocalTransformReadDependencies(em);
+            }
 
             if (mode.BaseTargetKind == TacticalFollowCameraTargetKind.Unit)
                 return TryBuildUnitTarget(em, mode.BaseTargetEntity, out target);
@@ -555,6 +562,46 @@ namespace Game.Runtime
                 em.AddBuffer<TacticalFollowCameraBaseTargetElement>(modeEntity);
 
             return em.GetBuffer<TacticalFollowCameraBaseTargetElement>(modeEntity);
+        }
+
+        private static bool HasFollowableBaseTarget(EntityManager em, Context context)
+        {
+            if (HasFollowableFocusedTarget(em))
+                return true;
+
+            using EntityQuery selectedQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<SelectedUnitTag>(),
+                ComponentType.ReadOnly<LocalTransform>(),
+                ComponentType.Exclude<Disabled>(),
+                ComponentType.Exclude<UnitTransportPassenger>(),
+                ComponentType.Exclude<UnitTransportCargoPassenger>());
+            if (!selectedQuery.IsEmptyIgnoreFilter)
+                return true;
+
+            return context.TryResolveSelectedBuildingTarget != null &&
+                   context.TryResolveSelectedBuildingTarget(out _, out _);
+        }
+
+        private static bool HasFollowableFocusedTarget(EntityManager em)
+        {
+            using EntityQuery focusedQuery = em.CreateEntityQuery(ComponentType.ReadOnly<FocusedUnitUiReadModelComponent>());
+            if (focusedQuery.IsEmptyIgnoreFilter)
+                return false;
+
+            FocusedUnitUiReadModelComponent model =
+                em.GetComponentData<FocusedUnitUiReadModelComponent>(focusedQuery.GetSingletonEntity());
+            return model.HasFocusedUnit != 0 &&
+                   model.OwnedByPlayer != 0 &&
+                   model.FocusedUnit != Entity.Null &&
+                   IsFollowableUnitEntity(em, model.FocusedUnit) &&
+                   (em.HasComponent<LocalTransform>(model.FocusedUnit) ||
+                    model.HasPortraitPose != 0 ||
+                    model.HasWorldPosition != 0);
+        }
+
+        private static void CompleteLocalTransformReadDependencies(EntityManager em)
+        {
+            em.CompleteDependencyBeforeRO<LocalTransform>();
         }
 
         private static void ClearBaseTargetEntities(EntityManager em, Entity modeEntity)

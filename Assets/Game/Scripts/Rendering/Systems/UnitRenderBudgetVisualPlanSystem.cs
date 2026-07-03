@@ -7,7 +7,7 @@ namespace Game.Rendering
 {
     public readonly struct UnitRenderBudgetVisualPlan
     {
-        private const bool EnableFarImpostorVisuals = false;
+        private const bool EnableFarImpostorVisuals = true;
 
         public struct Request
         {
@@ -246,7 +246,10 @@ namespace Game.Rendering
 
             if (enemyShouldUseImpostor && !(isProtectedVisibleCharacter && request.IsMovingUnit))
             {
-                UseClosestMeshVisual(request, out shouldShowDetail, out shouldShowMid, out shouldShowLow, out shouldShowFar);
+                shouldShowDetail = false;
+                shouldShowMid = false;
+                shouldShowLow = false;
+                shouldShowFar = true;
                 forceImmediateDetailVisual = false;
             }
 

@@ -950,7 +950,13 @@ namespace Game.Composition
             unitAttackTraces?.Init(UnitAttackTraceConfig, WorldCamera, ownerLayer);
             UnitAttackTraces = unitAttackTraces;
 
-            UnitImpostors = null;
+            UnitImpostorPresentationSystemHelper unitImpostors = ResolveUnitImpostorPresentationSystemHelper();
+            unitImpostors?.Init(
+                WorldCamera,
+                ownerLayer,
+                BuildingPlacementConfig != null ? BuildingPlacementConfig.UnitPrefabRegistryConfig : null,
+                UnitRenderingMetadataAuthoringSystem.TryGetUnitRenderingMetadata);
+            UnitImpostors = unitImpostors;
 
             SharedPrefabPreviewCache.ConfigureUnitRenderingMetadataResolver(UnitRenderingMetadataAuthoringSystem.TryGetUnitRenderingMetadata);
             SharedPrefabPreviewCache.Init(PrefabPreviewCameraConfig);

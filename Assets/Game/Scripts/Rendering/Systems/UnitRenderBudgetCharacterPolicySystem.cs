@@ -4,7 +4,7 @@ namespace Game.Rendering
 {
     public readonly struct UnitRenderBudgetCharacterPolicy
     {
-        private const bool EnableFarImpostorVisuals = false;
+        private const bool EnableFarImpostorVisuals = true;
 
         public UnitRenderVisualKind ResolveVisibleCharacterVisualKind(
             bool movingVisibleCharacter,

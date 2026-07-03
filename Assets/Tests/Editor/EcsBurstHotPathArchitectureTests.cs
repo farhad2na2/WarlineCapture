@@ -50,6 +50,10 @@ public sealed class EcsBurstHotPathArchitectureTests
         @"\b(?:class|struct)\s+\w+\s*:\s*[^{;\n]*(?:\bISystem\b|\bSystemBase\b|\bComponentSystemBase\b|\bComponentSystem\b|\bJobComponentSystem\b)",
         RegexOptions.CultureInvariant);
 
+    private static readonly Regex ISystemTypeRegex = new(
+        @"\b(?:class|struct)\s+\w+\s*:\s*[^{;\n]*\bISystem\b",
+        RegexOptions.CultureInvariant);
+
     private static readonly Regex ClassBaseRegex = new(
         @"\bclass\s+(?<name>\w+)\s*:\s*(?<bases>[^{\n]+)",
         RegexOptions.CultureInvariant);
@@ -200,11 +204,12 @@ public sealed class EcsBurstHotPathArchitectureTests
             tests.NonBurstOnUpdateDebtMustNotIncrease();
             tests.ManagedBoundaryNonBurstFilesMustBeSeparateFromTrackedHotPathDebt();
             tests.ManagedBoundaryClassificationsMustBeDisjointAndConcrete();
+            tests.NoBurstISystemFilesMustBeClassified();
             tests.RuntimeOnUpdateMustNotReadScriptableObjectConfigAssets();
             tests.BurstCompileCoverageMustNotDecrease();
             tests.SystemStateTypeHandlesMustBeCreatedOnlyDuringInitialization();
             tests.UnitRenderBudgetPureEcsSystemsMustNotUseUnityObjectApis();
-            Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=9");
+            Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=10");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -228,6 +233,23 @@ public sealed class EcsBurstHotPathArchitectureTests
         {
             Debug.LogException(exception);
             Debug.LogError("[EcsTypeHandleArchitectureValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunNoBurstISystemClassificationValidation()
+    {
+        try
+        {
+            var tests = new EcsBurstHotPathArchitectureTests();
+            tests.NoBurstISystemFilesMustBeClassified();
+            Debug.Log("[EcsNoBurstISystemClassificationValidation] result=Passed tests=1");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[EcsNoBurstISystemClassificationValidation] result=Failed");
             ValidationExit.Exit(1);
         }
     }
@@ -405,6 +427,31 @@ public sealed class EcsBurstHotPathArchitectureTests
     }
 
     [Test]
+    public void NoBurstISystemFilesMustBeClassified()
+    {
+        List<string> files = EnumerateRuntimeISystemFiles()
+            .Where(path =>
+            {
+                string text = File.ReadAllText(path);
+                return !BurstCompileRegex.IsMatch(text);
+            })
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToList();
+
+        List<string> unclassified = files
+            .Where(path => !ClassifiedNonBurstOnUpdateFiles.ContainsKey(path))
+            .ToList();
+
+        Debug.Log(
+            $"Runtime ISystem Burst classification: noBurst={files.Count} classified={files.Count - unclassified.Count} unclassified={unclassified.Count}");
+
+        Assert.IsEmpty(
+            unclassified,
+            "Runtime ISystem files without [BurstCompile] must be classified before landing. Either make the system Burst-compatible or document why it is a managed/presentation/bootstrap boundary:\n" +
+            string.Join(Environment.NewLine, unclassified));
+    }
+
+    [Test]
     public void RuntimeOnUpdateMustNotReadScriptableObjectConfigAssets()
     {
         HashSet<string> scriptableConfigTypes = CollectScriptableObjectTypeNames();
@@ -553,6 +600,13 @@ public sealed class EcsBurstHotPathArchitectureTests
                 string text = File.ReadAllText(path);
                 return EcsSystemTypeRegex.IsMatch(text) && OnUpdateRegex.IsMatch(text);
             })
+            .OrderBy(path => path, StringComparer.Ordinal);
+    }
+
+    private static IEnumerable<string> EnumerateRuntimeISystemFiles()
+    {
+        return EnumerateRuntimeEcsAuditFiles()
+            .Where(path => ISystemTypeRegex.IsMatch(File.ReadAllText(path)))
             .OrderBy(path => path, StringComparer.Ordinal);
     }
 

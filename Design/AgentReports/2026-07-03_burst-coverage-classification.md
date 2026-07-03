@@ -3,9 +3,9 @@
 ## Scope
 - Source tracker: `Design/Architecture/architecture_performance_audit_followup_tracker.md`
 - Date: 2026-07-03
-- Scan root: `Assets/Game/Scripts`
-- `ISystem` file count: 125
-- Files with no `[BurstCompile]` marker: 72
+- Runtime scan roots: `Assets/Game/Scripts/Systems`, `Assets/Game/Scripts/Rendering/Systems`, `Assets/Game/Scripts/UI/Shell/Ecs`
+- Runtime `ISystem` file count: 124
+- Runtime files with no `[BurstCompile]` marker: 71
 
 ## Classification Rule
 This is a conservative first-pass classification for Phase 5. Files are not marked Burst-eligible just because they implement `ISystem`; they must avoid managed Unity APIs, GameObject/prefab/presentation ownership, diagnostic string/log paths, live-helper static entry points, and composition-helper state ownership.
@@ -15,7 +15,7 @@ This is a conservative first-pass classification for Phase 5. Files are not mark
 | Classification | Count | Notes |
 |---|---:|---|
 | Burst eligible | 0 | No file in the no-marker set is safe for a blind type-level `[BurstCompile]` addition without either compile probing or helper separation. |
-| Managed edge | 25 | UI, rendering, diagnostics, editor, prefab/model, or live helper access. |
+| Managed edge | 24 | UI, rendering, diagnostics, prefab/model, or live helper access. |
 | Presentation only | 8 | Visual/model/read-model systems that should stay at the presentation edge unless split. |
 | Needs refactor | 39 | Gameplay systems that need helper extraction, ECB/job conversion, or managed diagnostics separation before Burst can be applied safely. |
 
@@ -27,7 +27,6 @@ The closest compile-probe candidates are disabled composition stubs such as `Bui
 
 ## Managed Edge
 
-- `Assets/Game/Scripts/Editor/UnitMoveTargetDiagnosticValidationRunner.cs` - editor validation runner.
 - `Assets/Game/Scripts/Rendering/Systems/UnitFactionTintTargetBackfillSystem.cs` - rendering backfill edge.
 - `Assets/Game/Scripts/Rendering/Systems/UnitModelSpawnSystem.cs` - model/prefab spawn edge.
 - `Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDiagnosticLogFlushSystem.cs` - diagnostic log flush.
@@ -107,4 +106,4 @@ The closest compile-probe candidates are disabled composition stubs such as `Bui
 - `Assets/Game/Scripts/Systems/UnitTransportPassengerStateSystem.cs` - transport state path.
 
 ## Next Step
-Add a guardrail that keeps this classification current, then handle Burst in small refactor-backed batches rather than adding attributes blindly. The first practical code batch should split diagnostics from an otherwise Burst-compatible gameplay system or add method-level Burst only where compile validation proves it is truthful.
+The guardrail lives in `Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs`: `NoBurstISystemFilesMustBeClassified` fails if a runtime `ISystem` file lacks `[BurstCompile]` and is not listed in the existing managed-boundary/tracked-debt classification dictionaries. Future work should handle Burst in small refactor-backed batches rather than adding attributes blindly. The first practical code batch should split diagnostics from an otherwise Burst-compatible gameplay system or add method-level Burst only where compile validation proves it is truthful.

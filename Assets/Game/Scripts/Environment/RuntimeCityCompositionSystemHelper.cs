@@ -102,6 +102,10 @@ namespace Game.Runtime
         public bool SpawnOnStartEnabled => spawnOnStart;
         public bool HasSpawned => RuntimeCityLifecycleState.HasSpawned(cityCount);
         public bool IsGenerating => RuntimeCityLifecycleState.IsGenerating;
+        public bool RequiresUpdate => _configured &&
+                                      (!HasSpawned ||
+                                       IsGenerating ||
+                                       (_runtimeCityMinimapEventHelper?.HasPendingStaticMinimapChanged ?? false));
         public RuntimeCityReadModelCompositionSystemHelper ReadModel => RuntimeCityReadModelCompositionSystemHelper;
 
         public RuntimeCityCompositionSystemHelper()

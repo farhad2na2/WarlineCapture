@@ -65,26 +65,35 @@ namespace Game.Runtime
             double stepStart;
             if (runtimeRequested)
             {
-                stepStart = performanceDiagnosticsSystem.BeginStep();
-                using (RuntimeCityMarker.Auto())
+                if (runtimeCity != null && runtimeCity.RequiresUpdate)
                 {
-                    runtimeCity?.Update(UnityEngine.Time.frameCount);
+                    stepStart = performanceDiagnosticsSystem.BeginStep();
+                    using (RuntimeCityMarker.Auto())
+                    {
+                        runtimeCity.Update(UnityEngine.Time.frameCount);
+                    }
+                    hadSlowStep |= performanceDiagnosticsSystem.EndStep("RuntimeCity", stepStart);
                 }
-                hadSlowStep |= performanceDiagnosticsSystem.EndStep("RuntimeCity", stepStart);
 
-                stepStart = performanceDiagnosticsSystem.BeginStep();
-                using (RuntimeGridBlockersMarker.Auto())
+                if (runtimeGridBlockers != null && runtimeGridBlockers.RequiresUpdate)
                 {
-                    runtimeGridBlockers?.Update();
+                    stepStart = performanceDiagnosticsSystem.BeginStep();
+                    using (RuntimeGridBlockersMarker.Auto())
+                    {
+                        runtimeGridBlockers.Update();
+                    }
+                    hadSlowStep |= performanceDiagnosticsSystem.EndStep("RuntimeGridBlockers", stepStart);
                 }
-                hadSlowStep |= performanceDiagnosticsSystem.EndStep("RuntimeGridBlockers", stepStart);
 
-                stepStart = performanceDiagnosticsSystem.BeginStep();
-                using (RuntimeDecorationsMarker.Auto())
+                if (runtimeDecorations != null && runtimeDecorations.RequiresUpdate)
                 {
-                    runtimeDecorations?.Update();
+                    stepStart = performanceDiagnosticsSystem.BeginStep();
+                    using (RuntimeDecorationsMarker.Auto())
+                    {
+                        runtimeDecorations.Update();
+                    }
+                    hadSlowStep |= performanceDiagnosticsSystem.EndStep("RuntimeDecorations", stepStart);
                 }
-                hadSlowStep |= performanceDiagnosticsSystem.EndStep("RuntimeDecorations", stepStart);
             }
 
             if (startupActive)

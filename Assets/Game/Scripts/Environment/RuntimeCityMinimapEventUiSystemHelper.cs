@@ -7,6 +7,8 @@ namespace Game.Runtime
         private IMatchRuntimeUi _mainMenuPlayUi;
         private bool _staticMinimapChanged;
 
+        public bool HasPendingStaticMinimapChanged => _staticMinimapChanged;
+
         public void Configure(IMatchRuntimeUi mainMenuPlayUi)
         {
             _mainMenuPlayUi = mainMenuPlayUi;

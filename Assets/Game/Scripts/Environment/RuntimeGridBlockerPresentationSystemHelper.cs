@@ -66,22 +66,33 @@ namespace Game.Runtime
         private bool _readyForDependents = true;
         private int _finalizeAfterFrames = -1;
         private Entity _dependencyStateEntity;
+        private bool _initialized;
+        private bool _dependencyStateDirty;
 
         public bool DependentsReadyForPlacement => _readyForDependents;
         public bool HasSpawned => _spawned || !_spawnOnStart || _prefabs == null || _prefabs.Count == 0 || _blockerCount <= 0;
+        public bool RequiresUpdate => _initialized &&
+                                      (_dependencyStateDirty ||
+                                      _finalizeAfterFrames >= 0 ||
+                                      (_spawnOnStart && !_spawned && !_spawnFinalizing));
 
         public void Init(RuntimeGridBlockerSystemConfig config, Transform rootTransform, RuntimeCityReadModelCompositionSystemHelper cityReadModel)
         {
             _rootTransform = rootTransform;
             _cityReadModel = cityReadModel;
+            _initialized = true;
             ApplyConfig(config);
             LoadPrefabsIfNeeded();
             _readyForDependents = !_spawnOnStart || _prefabs.Count == 0 || _blockerCount <= 0;
+            _dependencyStateDirty = true;
             WriteDependencyState();
         }
 
         public void Update()
         {
+            if (!RequiresUpdate)
+                return;
+
             if (_finalizeAfterFrames >= 0)
             {
                 if (_finalizeAfterFrames == 0)
@@ -107,7 +118,9 @@ namespace Game.Runtime
             _runtimeBlockerCellCounts = null;
             _rootTransform = null;
             _cityReadModel = null;
+            _initialized = false;
             _readyForDependents = true;
+            _dependencyStateDirty = true;
             WriteDependencyState();
         }
 
@@ -287,6 +300,7 @@ namespace Game.Runtime
             _spawnFinalizing = false;
             _spawned = true;
             _readyForDependents = true;
+            _dependencyStateDirty = true;
             WriteDependencyState();
         }
 
@@ -299,7 +313,10 @@ namespace Game.Runtime
         private void WriteDependencyState()
         {
             if (!TryGetEntityManager(out EntityManager em))
+            {
+                _dependencyStateDirty = true;
                 return;
+            }
 
             if (_dependencyStateEntity == Entity.Null || !em.Exists(_dependencyStateEntity))
             {
@@ -322,6 +339,7 @@ namespace Game.Runtime
                 CityHasSpawned = cityReadModel != null && cityReadModel.HasSpawned ? (byte)1 : (byte)0,
                 CityGenerating = cityReadModel != null && cityReadModel.IsGenerating ? (byte)1 : (byte)0
             });
+            _dependencyStateDirty = false;
         }
 
         private void CreateRuntimeBlocker(GridConfig grid, GameObject prefab, PrefabPlacementMetadata metadata, Vector2Int originCell, Vector2Int sizeCells)

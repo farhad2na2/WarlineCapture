@@ -44,6 +44,14 @@ namespace Game.Runtime
         private bool _spawned;
         private int _combineAfterFrames = -1;
         public bool HasSpawned => _spawned || !_spawnOnStart || _prefabs == null || _prefabs.Count == 0 || _decorationCount <= 0;
+        public bool RequiresUpdate => _rootTransform != null &&
+                                      (_combineAfterFrames >= 0 ||
+                                      (_spawnOnStart &&
+                                       !_spawned &&
+                                       !_combinePending &&
+                                       _prefabs != null &&
+                                       _prefabs.Count > 0 &&
+                                       _decorationCount > 0));
 
         public void Init(RuntimeDecorationSpawnerSystemConfig config, Transform rootTransform, CombinedMeshBaker combinedMeshBaker, RuntimeCityReadModelCompositionSystemHelper cityReadModel, RuntimeGridBlockerPresentationSystemHelper gridBlockers)
         {

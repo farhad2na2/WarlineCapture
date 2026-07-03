@@ -58,18 +58,19 @@ namespace Game.Runtime
             }
         }
 
-        public void ProcessPendingProductions(Context context)
+        public bool ProcessPendingProductions(Context context)
         {
             if (context.ProductionUpdateSystem == null)
-                return;
+                return false;
 
             uint randomState = context.GetRandomState != null ? context.GetRandomState() : 0u;
-            context.ProductionUpdateSystem.UpdatePendingProductions(
+            bool hasActiveTransport = context.ProductionUpdateSystem.UpdatePendingProductions(
                 context.ProductionUpdateContext,
                 UnityEngine.Time.time,
                 UnityEngine.Time.deltaTime,
                 ref randomState);
             context.SetRandomState?.Invoke(randomState);
+            return hasActiveTransport;
         }
 
         public bool UpdateActiveProductionTransports(Context context)

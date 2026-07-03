@@ -30,17 +30,18 @@ namespace Game.Runtime
             }
         }
 
-        public void UpdatePendingProductions(Context context, float now, float deltaTime, ref uint randomState)
+        public bool UpdatePendingProductions(Context context, float now, float deltaTime, ref uint randomState)
         {
             if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
-                return;
+                return false;
 
             int remainingTransportLaunches = MaxTransportLaunchesPerTick;
             int remainingImmediateProductionSpawns = MaxImmediateProductionSpawnsPerTick;
+            bool hasActiveTransport = false;
             if (context.RuntimeBuildingMap != null)
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
-                    UpdatePendingProductionForBuilding(
+                    hasActiveTransport |= UpdatePendingProductionForBuilding(
                         context,
                         pair.Value,
                         now,
@@ -48,12 +49,12 @@ namespace Game.Runtime
                         ref randomState,
                         ref remainingTransportLaunches,
                         ref remainingImmediateProductionSpawns);
-                return;
+                return hasActiveTransport;
             }
 
             foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
             {
-                UpdatePendingProductionForBuilding(
+                hasActiveTransport |= UpdatePendingProductionForBuilding(
                     context,
                     pair.Value,
                     now,
@@ -62,6 +63,8 @@ namespace Game.Runtime
                     ref remainingTransportLaunches,
                     ref remainingImmediateProductionSpawns);
             }
+
+            return hasActiveTransport;
         }
 
         public bool UpdateActiveProductionTransports(Context context, float now, float deltaTime, ref uint randomState)
@@ -97,7 +100,7 @@ namespace Game.Runtime
             return true;
         }
 
-        private static void UpdatePendingProductionForBuilding(
+        private static bool UpdatePendingProductionForBuilding(
             Context context,
             RuntimeBuildingEntity building,
             float now,
@@ -106,8 +109,12 @@ namespace Game.Runtime
             ref int remainingTransportLaunches,
             ref int remainingImmediateProductionSpawns)
         {
-            if (building == null || building.PendingProductions == null || building.PendingProductions.Count == 0)
-                return;
+            if (building == null)
+                return false;
+
+            bool hasActiveTransport = building.ActiveTransport != null;
+            if (building.PendingProductions == null || building.PendingProductions.Count == 0)
+                return hasActiveTransport;
 
             for (int i = building.PendingProductions.Count - 1; i >= 0; i--)
             {
@@ -140,6 +147,7 @@ namespace Game.Runtime
                         }
                         else if (!hadActiveTransport)
                         {
+                            hasActiveTransport = true;
                             remainingTransportLaunches--;
                         }
                     }
@@ -166,6 +174,8 @@ namespace Game.Runtime
                         context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
                 }
             }
+
+            return hasActiveTransport || building.ActiveTransport != null;
         }
     }
 }

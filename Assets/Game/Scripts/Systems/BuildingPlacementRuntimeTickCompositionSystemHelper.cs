@@ -8,6 +8,7 @@ namespace Game.Runtime
     {
         private const double ProductionIntervalSeconds = 0.1d;
         private const double ActiveProductionTransportIntervalSeconds = 0.08d;
+        private const double IdleActiveProductionTransportProbeIntervalSeconds = 0.5d;
         private const double ResourceProductionIntervalSeconds = 1d;
         private const double ResourceHaulerIntervalSeconds = 0.25d;
         private const double ResourceVisualIntervalSeconds = 0.25d;
@@ -38,7 +39,7 @@ namespace Game.Runtime
 
         public readonly struct Context
         {
-            public readonly Action ProcessPendingProductions;
+            public readonly Func<bool> ProcessPendingProductions;
             public readonly Func<bool> UpdateActiveProductionTransports;
             public readonly Action UpdateResourceProduction;
             public readonly Action UpdateResourceHaulers;
@@ -56,7 +57,7 @@ namespace Game.Runtime
             public readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context DiagnosticsContext;
 
             public Context(
-                Action processPendingProductions,
+                Func<bool> processPendingProductions,
                 Func<bool> updateActiveProductionTransports,
                 Action updateResourceProduction,
                 Action updateResourceHaulers,
@@ -183,22 +184,23 @@ namespace Game.Runtime
 
                 afterBoundary = UnityEngine.Time.realtimeSinceStartupAsDouble;
                 double now = afterBoundary;
-                bool processedPendingProductions = false;
+                bool pendingProductionObservedActiveTransport = false;
                 if (now >= _nextProductionAt)
                 {
                     _nextProductionAt = now + ProductionIntervalSeconds;
                     using (ProcessPendingProductionsMarker.Auto())
                     {
-                        context.ProcessPendingProductions?.Invoke();
+                        pendingProductionObservedActiveTransport =
+                            context.ProcessPendingProductions != null &&
+                            context.ProcessPendingProductions();
                     }
-                    processedPendingProductions = true;
                 }
                 afterPendingProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
                 now = afterPendingProductions;
                 bool shouldUpdateActiveTransports =
                     (_activeProductionTransportsObserved && now >= _nextActiveProductionTransportProbeAt) ||
-                    processedPendingProductions ||
+                    pendingProductionObservedActiveTransport ||
                     now >= _nextActiveProductionTransportProbeAt;
                 if (shouldUpdateActiveTransports)
                 {
@@ -211,7 +213,7 @@ namespace Game.Runtime
 
                     _nextActiveProductionTransportProbeAt = _activeProductionTransportsObserved
                         ? now + ActiveProductionTransportIntervalSeconds
-                        : now + ProductionIntervalSeconds;
+                        : now + IdleActiveProductionTransportProbeIntervalSeconds;
                 }
                 afterProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
 

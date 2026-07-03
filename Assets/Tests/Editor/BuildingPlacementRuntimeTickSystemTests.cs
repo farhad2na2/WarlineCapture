@@ -10,10 +10,11 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
         try
         {
             var tests = new BuildingPlacementRuntimeTickCompositionSystemHelperTests();
-            tests.StartupTickRunsBoundaryBeforeAndAfterMapPlacementQueues();
-            tests.SimulationTickRunsBoundaryBeforeProductionWork();
-            tests.SimulationTickUpdatesProductionTransportsEveryFrameAndThrottlesResourceVisuals();
-            UnityEngine.Debug.Log("[BuildingPlacementRuntimeTickFocusedValidation] result=Passed tests=3");
+                tests.StartupTickRunsBoundaryBeforeAndAfterMapPlacementQueues();
+                tests.SimulationTickRunsBoundaryBeforeProductionWork();
+                tests.SimulationTickThrottlesProductionTransportsAndResourceVisuals();
+                tests.SimulationTickSkipsImmediateActiveTransportProbeWhenPendingTickIsIdle();
+                UnityEngine.Debug.Log("[BuildingPlacementRuntimeTickFocusedValidation] result=Passed tests=4");
         }
         catch (System.Exception exception)
         {
@@ -58,7 +59,7 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
     }
 
     [Test]
-    public void SimulationTickUpdatesProductionTransportsEveryFrameAndThrottlesResourceVisuals()
+    public void SimulationTickThrottlesProductionTransportsAndResourceVisuals()
     {
         BuildingPlacementRuntimeTickCompositionSystemHelper tickSystem = new();
         var calls = new List<string>();
@@ -78,8 +79,36 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
         tickSystem.UpdateSimulation(context);
         tickSystem.UpdateSimulation(context);
 
-        Assert.AreEqual(2, calls.Count(call => call == "activeTransport"));
+        Assert.AreEqual(1, calls.Count(call => call == "activeTransport"));
         Assert.AreEqual(1, calls.Count(call => call == "visuals"));
+    }
+
+    [Test]
+    public void SimulationTickSkipsImmediateActiveTransportProbeWhenPendingTickIsIdle()
+    {
+        BuildingPlacementRuntimeTickCompositionSystemHelper tickSystem = new();
+        var calls = new List<string>();
+
+        BuildingPlacementRuntimeTickCompositionSystemHelper.Context context = CreateContext(
+            calls,
+            enqueueMapBuildingPlacements: () => calls.Add("mapBuildings"),
+            enqueueMapVehiclePlacements: () => calls.Add("mapVehicles"),
+            updateBuildingRuntimeState: () => calls.Add("boundary"),
+            processPendingProductions: () =>
+            {
+                calls.Add("production");
+                return false;
+            },
+            updateActiveProductionTransports: () =>
+            {
+                calls.Add("activeTransport");
+                return false;
+            });
+
+        tickSystem.UpdateSimulation(context);
+        tickSystem.UpdateSimulation(context);
+
+        Assert.AreEqual(1, calls.Count(call => call == "activeTransport"));
     }
 
     private static BuildingPlacementRuntimeTickCompositionSystemHelper.Context CreateContext(
@@ -87,11 +116,16 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
         System.Action enqueueMapBuildingPlacements,
         System.Action enqueueMapVehiclePlacements,
         System.Action updateBuildingRuntimeState,
+        System.Func<bool> processPendingProductions = null,
         System.Func<bool> updateActiveProductionTransports = null,
         System.Action updateBuildingResourceVisuals = null)
     {
         return new BuildingPlacementRuntimeTickCompositionSystemHelper.Context(
-            processPendingProductions: () => calls.Add("production"),
+            processPendingProductions: processPendingProductions ?? (() =>
+            {
+                calls.Add("production");
+                return true;
+            }),
             updateActiveProductionTransports: updateActiveProductionTransports ?? (() =>
             {
                 calls.Add("activeTransport");

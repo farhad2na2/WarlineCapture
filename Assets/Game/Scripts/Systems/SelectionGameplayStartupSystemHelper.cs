@@ -13,6 +13,7 @@ namespace Game.Runtime
 {
     internal sealed class SelectionGameplayStartupSystemHelper
     {
+        private const double SelectionUiRefreshIntervalSeconds = 0.1d;
         private static readonly ProfilerMarker SelectionCommandFlushMarker = new("GameplayRuntimeUpdate.Selection.CommandFlush");
         private static readonly ProfilerMarker SelectionInputMarker = new("GameplayRuntimeUpdate.Selection.Input");
         private static readonly ProfilerMarker SelectionFocusedReadModelMarker = new("GameplayRuntimeUpdate.Selection.FocusedReadModel");
@@ -175,6 +176,8 @@ namespace Game.Runtime
                 IsValidBoardTransportPreviewTarget;
             SelectionOrderMarkerPresentationSystemHelper.IsPreviewTargetValidWithSourceDelegate isValidBoardPassengerPreviewTargetAction =
                 IsValidBoardPassengerPreviewTarget;
+            int lastSelectionUiRefreshVersion = int.MinValue;
+            double nextSelectionUiRefreshAt = 0d;
 
             selectionUiCamera.Init(rtsSelectionConfig, worldCamera);
             selectionBuildingInteraction.Init(selectionStateSystem, selectionScreenMarkers, worldCamera);
@@ -348,36 +351,42 @@ namespace Game.Runtime
                     ProcessTacticalFollowCameraRequests();
                 }
 
-                using (SelectionFocusedReadModelMarker.Auto())
+                bool refreshSelectionUi = ShouldRefreshSelectionUi();
+                if (refreshSelectionUi)
                 {
-                    selectionHudFeedbackSystem.RefreshFocusedSelectionReadModels(
-                        GetHudFeedbackContext(),
-                        selectionStateSystem,
-                        focusedUnitUiReadModelSystem,
-                        unitTransportCapacitySystem,
-                        EnsureRuntimeSelectionDependencies,
-                        refreshFocusedUnitAction,
-                        UnityEngine.Time.time);
-                }
+                    using (SelectionFocusedReadModelMarker.Auto())
+                    {
+                        selectionHudFeedbackSystem.RefreshFocusedSelectionReadModels(
+                            GetHudFeedbackContext(),
+                            selectionStateSystem,
+                            focusedUnitUiReadModelSystem,
+                            unitTransportCapacitySystem,
+                            EnsureRuntimeSelectionDependencies,
+                            refreshFocusedUnitAction,
+                            UnityEngine.Time.time);
+                    }
 
-                using (SelectionPanelMarker.Auto())
-                {
-                    selectionHudFeedbackSystem.UpdateMatchHudSelectionPanel(
-                        GetHudFeedbackContext(),
-                        selectionStateSystem,
-                        focusedUnitLifecycleSystem,
-                        focusedUnitUiReadModelSystem,
-                        transportPassengerPanelItems,
-                        EnsureRuntimeSelectionDependencies,
-                        TryGetAttackModeOrderSnapshot,
-                        resolveSelectionCardPortraitSprite,
-                        resolveSelectedBuildingPortraitSprite,
-                        resolveActiveSquadTrayPortraitSpriteAction,
-                        hasSelectedBuildingAction,
-                        selectedBuildingLabelAction,
-                        tryGetSelectedBuildingResourceStorageAction,
-                        isBoardCommandAvailableAction,
-                        hasSelectedBoardAction);
+                    using (SelectionPanelMarker.Auto())
+                    {
+                        selectionHudFeedbackSystem.UpdateMatchHudSelectionPanel(
+                            GetHudFeedbackContext(),
+                            selectionStateSystem,
+                            focusedUnitLifecycleSystem,
+                            focusedUnitUiReadModelSystem,
+                            transportPassengerPanelItems,
+                            EnsureRuntimeSelectionDependencies,
+                            TryGetAttackModeOrderSnapshot,
+                            resolveSelectionCardPortraitSprite,
+                            resolveSelectedBuildingPortraitSprite,
+                            resolveActiveSquadTrayPortraitSpriteAction,
+                            hasSelectedBuildingAction,
+                            selectedBuildingLabelAction,
+                            tryGetSelectedBuildingResourceStorageAction,
+                            isBoardCommandAvailableAction,
+                            hasSelectedBoardAction);
+                    }
+
+                    MarkSelectionUiRefreshed();
                 }
 
                 using (SelectionTacticalCameraMarker.Auto())
@@ -407,6 +416,19 @@ namespace Game.Runtime
                     }
                     UpdateTacticalFollowCameraPose();
                 }
+            }
+
+            bool ShouldRefreshSelectionUi()
+            {
+                double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
+                return selectionStateSystem.SelectionVersion != lastSelectionUiRefreshVersion ||
+                       now >= nextSelectionUiRefreshAt;
+            }
+
+            void MarkSelectionUiRefreshed()
+            {
+                lastSelectionUiRefreshVersion = selectionStateSystem.SelectionVersion;
+                nextSelectionUiRefreshAt = UnityEngine.Time.realtimeSinceStartupAsDouble + SelectionUiRefreshIntervalSeconds;
             }
 
             void ProcessTacticalFollowCameraRequests()

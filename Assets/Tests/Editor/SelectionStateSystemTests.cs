@@ -17,6 +17,7 @@ public sealed class SelectionStateCompositionSystemHelperTests
         try
         {
             RunCase(test => test.FocusedUnit_CanBeSetAndCleared());
+            RunCase(test => test.SelectionVersion_ChangesOnlyWhenSelectionStateChanges());
             RunCase(test => test.CacheSelectedMoveEntity_KeepsOnlyPlayerMoveUnits());
             RunCase(test => test.VisibleUnitSelection_IgnoresPlayerBuildingsWithoutUnitMove());
             RunCase(test => test.VisibleUnitSelection_UsesSourcePrefixBeforeMovementFallback());
@@ -24,7 +25,7 @@ public sealed class SelectionStateCompositionSystemHelperTests
             RunCase(test => test.FocusedUnitLifecycle_ClearCurrentSelection_RemovesSelectedTagsAndClearsCache());
             RunCase(test => test.FocusedUnitLifecycle_RefreshFocusedUnit_FocusesSingleSelectedPlayerUnit());
             RunCase(test => test.FocusedUnitLifecycle_FocusAirUnitClearsAccidentalSelectionMoveThroughRequest());
-            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=8");
+            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=9");
         }
         catch (System.Exception ex)
         {
@@ -72,6 +73,36 @@ public sealed class SelectionStateCompositionSystemHelperTests
 
         selectionState.ClearFocusedUnit();
         Assert.AreEqual(Entity.Null, selectionState.FocusedUnit);
+    }
+
+    [Test]
+    public void SelectionVersion_ChangesOnlyWhenSelectionStateChanges()
+    {
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        Entity unit = CreateMoveUnit(FactionIdentity.PlayerFactionId);
+
+        Assert.AreEqual(0, selectionState.SelectionVersion);
+
+        selectionState.SetFocusedUnit(unit);
+        Assert.AreEqual(1, selectionState.SelectionVersion);
+
+        selectionState.SetFocusedUnit(unit);
+        Assert.AreEqual(1, selectionState.SelectionVersion);
+
+        selectionState.CacheSelectedMoveEntity(_entityManager, unit);
+        Assert.AreEqual(2, selectionState.SelectionVersion);
+
+        selectionState.CacheSelectedMoveEntity(_entityManager, unit);
+        Assert.AreEqual(2, selectionState.SelectionVersion);
+
+        selectionState.ClearSelectedMoveCache();
+        Assert.AreEqual(3, selectionState.SelectionVersion);
+
+        selectionState.ClearSelectedMoveCache();
+        Assert.AreEqual(3, selectionState.SelectionVersion);
+
+        selectionState.ClearFocusedUnit();
+        Assert.AreEqual(4, selectionState.SelectionVersion);
     }
 
     [Test]

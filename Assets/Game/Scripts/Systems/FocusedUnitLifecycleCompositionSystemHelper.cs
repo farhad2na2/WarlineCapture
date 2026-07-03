@@ -109,7 +109,6 @@ namespace Game.Runtime
 
             if (focusedUnit != Entity.Null)
             {
-                applyHudSelection?.Invoke(em, focusedUnit);
                 return true;
             }
 

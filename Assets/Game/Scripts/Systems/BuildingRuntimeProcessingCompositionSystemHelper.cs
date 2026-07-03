@@ -10,7 +10,7 @@ namespace Game.Runtime
 {
     public sealed class BuildingRuntimeProcessingCompositionSystemHelper
     {
-        private const float PublishIntervalSeconds = 0.5f;
+        private const float PublishIntervalSeconds = 0.125f;
         private const int MaxRuntimeSpawnRequestsPerUpdate = 16;
 
         private readonly List<byte> _factionIds = new();
@@ -24,6 +24,15 @@ namespace Game.Runtime
         private bool _forcePublishNextUpdate;
         private bool _configuredReadModelsPublished;
         private int _lastPublishedRuntimeBuildingSignature = int.MinValue;
+        private PublishPhase _nextPublishPhase = PublishPhase.FactionSummaries;
+
+        private enum PublishPhase : byte
+        {
+            FactionSummaries = 0,
+            OwnedBuildingSummaries = 1,
+            UnitProductionSummaries = 2,
+            BuildingSetReadModels = 3
+        }
 
         private readonly struct ProductionSummaryKey : IEquatable<ProductionSummaryKey>
         {
@@ -396,8 +405,6 @@ namespace Game.Runtime
             if (!forcePublish && _configuredReadModelsPublished && now < _nextPublishAt)
                 return;
 
-            int runtimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
-            bool buildingSetChanged = runtimeBuildingSignature != _lastPublishedRuntimeBuildingSignature;
             _forcePublishNextUpdate = false;
             _nextPublishAt = now + PublishIntervalSeconds;
             if (!_configuredReadModelsPublished)
@@ -406,18 +413,103 @@ namespace Game.Runtime
                 PublishConfiguredUnitsReadModel(definitionSystem, em, boundaryEntity);
                 PublishProductionSlotsReadModel(definitionSystem, em, boundaryEntity);
                 _configuredReadModelsPublished = true;
+                PublishAllDynamicReadModels(
+                    definitionSystem,
+                    runtimeQuerySystem,
+                    runtimeQueryContext,
+                    factionResourceSystem,
+                    em,
+                    boundaryEntity,
+                    runtimeBuildings);
+                _lastPublishedRuntimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
+                _nextPublishPhase = PublishPhase.FactionSummaries;
+                return;
             }
 
+            if (forcePublish)
+            {
+                PublishAllDynamicReadModels(
+                    definitionSystem,
+                    runtimeQuerySystem,
+                    runtimeQueryContext,
+                    factionResourceSystem,
+                    em,
+                    boundaryEntity,
+                    runtimeBuildings);
+                _lastPublishedRuntimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
+                _nextPublishPhase = PublishPhase.FactionSummaries;
+                return;
+            }
+
+            PublishNextDynamicReadModelPhase(
+                definitionSystem,
+                runtimeQuerySystem,
+                runtimeQueryContext,
+                factionResourceSystem,
+                em,
+                boundaryEntity,
+                runtimeBuildings);
+        }
+
+        private void PublishAllDynamicReadModels(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            FactionResourceCompositionSystemHelper factionResourceSystem,
+            EntityManager em,
+            Entity boundaryEntity,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
             PublishRuntimeFactionSummaries(factionResourceSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, runtimeBuildings);
             PublishRuntimeOwnedBuildingSummaries(definitionSystem, runtimeBuildings, em, boundaryEntity);
             PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQueryContext, em, boundaryEntity);
-            if (forcePublish || buildingSetChanged)
+            PublishBuildingSetReadModels(em, boundaryEntity, runtimeBuildings);
+        }
+
+        private void PublishNextDynamicReadModelPhase(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            FactionResourceCompositionSystemHelper factionResourceSystem,
+            EntityManager em,
+            Entity boundaryEntity,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            switch (_nextPublishPhase)
             {
-                PublishFactionProductionSpawnPointsReadModel(em, boundaryEntity, runtimeBuildings);
-                PublishFactionRunwaysReadModel(em, boundaryEntity, runtimeBuildings);
-                _surfaceOverlaySystem.Publish(em, boundaryEntity, runtimeBuildings);
-                _lastPublishedRuntimeBuildingSignature = runtimeBuildingSignature;
+                case PublishPhase.FactionSummaries:
+                    PublishRuntimeFactionSummaries(factionResourceSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, runtimeBuildings);
+                    _nextPublishPhase = PublishPhase.OwnedBuildingSummaries;
+                    break;
+                case PublishPhase.OwnedBuildingSummaries:
+                    PublishRuntimeOwnedBuildingSummaries(definitionSystem, runtimeBuildings, em, boundaryEntity);
+                    _nextPublishPhase = PublishPhase.UnitProductionSummaries;
+                    break;
+                case PublishPhase.UnitProductionSummaries:
+                    PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQueryContext, em, boundaryEntity);
+                    _nextPublishPhase = PublishPhase.BuildingSetReadModels;
+                    break;
+                default:
+                    int runtimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
+                    if (runtimeBuildingSignature != _lastPublishedRuntimeBuildingSignature)
+                    {
+                        PublishBuildingSetReadModels(em, boundaryEntity, runtimeBuildings);
+                        _lastPublishedRuntimeBuildingSignature = runtimeBuildingSignature;
+                    }
+
+                    _nextPublishPhase = PublishPhase.FactionSummaries;
+                    break;
             }
+        }
+
+        private void PublishBuildingSetReadModels(
+            EntityManager em,
+            Entity boundaryEntity,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            PublishFactionProductionSpawnPointsReadModel(em, boundaryEntity, runtimeBuildings);
+            PublishFactionRunwaysReadModel(em, boundaryEntity, runtimeBuildings);
+            _surfaceOverlaySystem.Publish(em, boundaryEntity, runtimeBuildings);
         }
 
         private void PublishConfiguredSpawnablesReadModel(BuildingDefinitionPrefabSystemHelper definitionSystem, EntityManager em, Entity boundaryEntity)

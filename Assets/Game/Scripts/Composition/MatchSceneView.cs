@@ -113,10 +113,12 @@ namespace Game.Composition
             matchBootstrapSystem.LateUpdate();
         }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         private void OnGUI()
         {
             matchBootstrapSystem.OnGUI();
         }
+#endif
 
         private void OnDestroy()
         {

@@ -25,6 +25,10 @@ namespace Game.Runtime
 
         public void OnCreate(ref SystemState state)
         {
+#if !(UNITY_EDITOR || DEVELOPMENT_BUILD)
+            state.Enabled = false;
+            return;
+#endif
             _unitQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<Faction>());
             _modelReferenceQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitModelInstanceReference>());
             _healthBarQuery = state.GetEntityQuery(ComponentType.ReadOnly<HealthBarFill>());

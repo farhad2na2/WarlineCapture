@@ -117,6 +117,12 @@ namespace Game.Runtime
             bool hasRuntimeCameraContext = false;
             RtsSelectionCommandResultFlushCompositionSystemHelper.Context commandResultFlushContext = default;
             bool hasCommandResultFlushContext = false;
+            RtsSelectionPointerTargetCommandCompositionSystemHelper.Context pointerTargetCommandContext = default;
+            bool hasPointerTargetCommandContext = false;
+            SelectionHudFeedbackUiSystemHelper.Context hudFeedbackContext = default;
+            bool hasHudFeedbackContext = false;
+            TacticalFollowCameraModeSystemHelper.Context tacticalFollowCameraContext = default;
+            bool hasTacticalFollowCameraContext = false;
             IMatchHudSelectionPanelView matchHudSelectionPanelView = null;
             int lastTacticalFollowCameraFeedbackSequence = 0;
             bool hasLastTacticalFollowPose = false;
@@ -140,6 +146,20 @@ namespace Game.Runtime
             bool explicitAttackTargetModeActive = false;
             bool attackModeOrderSnapshotActive = false;
             string attackModeOrderSnapshotText = string.Empty;
+            SelectionHudFeedbackUiSystemHelper.RefreshFocusedUnitDelegate refreshFocusedUnitAction = RefreshFocusedUnit;
+            System.Func<Sprite> resolveActiveSquadTrayPortraitSpriteAction = ResolveActiveSquadTrayPortraitSprite;
+            System.Func<bool> hasSelectedBuildingAction = HasSelectedBuilding;
+            System.Func<string> selectedBuildingLabelAction = SelectedBuildingLabel;
+            SelectionHudFeedbackUiSystemHelper.TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorageAction =
+                TryGetSelectedBuildingResourceStorage;
+            SelectionHudFeedbackUiSystemHelper.IsBoardCommandAvailableDelegate isBoardCommandAvailableAction =
+                IsBoardCommandAvailable;
+            SelectionHudFeedbackUiSystemHelper.HasSelectedBoardActionDelegate hasSelectedBoardAction =
+                HasSelectedBoardAction;
+            SelectionOrderMarkerPresentationSystemHelper.IsPreviewTargetValidWithSourceDelegate isValidBoardTransportPreviewTargetAction =
+                IsValidBoardTransportPreviewTarget;
+            SelectionOrderMarkerPresentationSystemHelper.IsPreviewTargetValidWithSourceDelegate isValidBoardPassengerPreviewTargetAction =
+                IsValidBoardPassengerPreviewTarget;
 
             selectionUiCamera.Init(rtsSelectionConfig, worldCamera);
             selectionBuildingInteraction.Init(selectionStateSystem, selectionScreenMarkers, worldCamera);
@@ -215,7 +235,7 @@ namespace Game.Runtime
                     return;
 
                 selectionHudFeedbackSystem.ApplyCommandResult(
-                    CreateHudFeedbackContext(),
+                    GetHudFeedbackContext(),
                     TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "Board command unavailable."));
             }
 
@@ -225,7 +245,7 @@ namespace Game.Runtime
                     return;
 
                 selectionHudFeedbackSystem.ApplyCommandResult(
-                    CreateHudFeedbackContext(),
+                    GetHudFeedbackContext(),
                     TacticalCommandResult.Rejected(TacticalCommandReasonCode.CameraJumpUnavailable, "Camera follow unavailable."));
             }
 
@@ -302,18 +322,15 @@ namespace Game.Runtime
                 RtsSelectionRuntimeInputCompositionSystemHelper.Context inputContext = GetRuntimeInputContext();
                 rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
                 selectionHudFeedbackSystem.RefreshFocusedSelectionReadModels(
-                    CreateHudFeedbackContext(),
+                    GetHudFeedbackContext(),
                     selectionStateSystem,
                     focusedUnitUiReadModelSystem,
                     unitTransportCapacitySystem,
                     EnsureRuntimeSelectionDependencies,
-                    (em, state) => focusedUnitLifecycleSystem.RefreshFocusedUnit(
-                        em,
-                        state,
-                        applyHudSelectionAction),
+                    refreshFocusedUnitAction,
                     UnityEngine.Time.time);
                 selectionHudFeedbackSystem.UpdateMatchHudSelectionPanel(
-                    CreateHudFeedbackContext(),
+                    GetHudFeedbackContext(),
                     selectionStateSystem,
                     focusedUnitLifecycleSystem,
                     focusedUnitUiReadModelSystem,
@@ -322,49 +339,20 @@ namespace Game.Runtime
                     TryGetAttackModeOrderSnapshot,
                     resolveSelectionCardPortraitSprite,
                     resolveSelectedBuildingPortraitSprite,
-                    ResolveActiveSquadTrayPortraitSprite,
-                    () => buildingPlacementInteractionSystem != null &&
-                          buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext),
-                    () => buildingPlacementInteractionSystem != null
-                        ? buildingPlacementInteractionSystem.SelectedBuildingLabel(buildingPlacementInteractionContext)
-                        : string.Empty,
-                    (out int oilCurrent, out int oilCapacity, out int fuelCurrent, out int fuelCapacity) =>
-                    {
-                        oilCurrent = 0;
-                        oilCapacity = 0;
-                        fuelCurrent = 0;
-                        fuelCapacity = 0;
-                        return buildingPlacementInteractionSystem != null &&
-                               buildingPlacementInteractionSystem.TryGetSelectedBuildingResourceStorage(
-                                   buildingPlacementInteractionContext,
-                                   out oilCurrent,
-                                   out oilCapacity,
-                                   out fuelCurrent,
-                                   out fuelCapacity);
-                    },
-                    (em, entity) => rtsSelectionPointerTargetCommandSystem.IsBoardCommandAvailable(
-                        CreatePointerTargetCommandContext(),
-                        em,
-                        entity),
-                    em => rtsSelectionPointerTargetCommandSystem.HasSelectedBoardAction(
-                        CreatePointerTargetCommandContext(),
-                        em));
+                    resolveActiveSquadTrayPortraitSpriteAction,
+                    hasSelectedBuildingAction,
+                    selectedBuildingLabelAction,
+                    tryGetSelectedBuildingResourceStorageAction,
+                    isBoardCommandAvailableAction,
+                    hasSelectedBoardAction);
                 RefreshTacticalFollowCameraPose();
                 ApplyTacticalFollowCameraUiReadModel();
                 rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(GetCommandResultFlushContext());
                 rtsSelectionCommandResultFlushSystem.UpdateCommandPreviewMarkers(
                     GetCommandResultFlushContext(),
                     explicitAttackTargetModeActive,
-                    (em, source, target) => rtsSelectionPointerTargetCommandSystem.IsValidBoardTransportPreviewTarget(
-                        CreatePointerTargetCommandContext(),
-                        em,
-                        source,
-                        target),
-                    (em, source, target) => rtsSelectionPointerTargetCommandSystem.IsValidBoardPassengerPreviewTarget(
-                        CreatePointerTargetCommandContext(),
-                        em,
-                        source,
-                        target));
+                    isValidBoardTransportPreviewTargetAction,
+                    isValidBoardPassengerPreviewTargetAction);
 
                 RtsSelectionRuntimeCameraSystemHelper.Context cameraContext = GetRuntimeCameraContext();
                 if (rtsSelectionRuntimeCameraSystem != null &&
@@ -383,7 +371,7 @@ namespace Game.Runtime
                 bool processed = tacticalFollowCameraModeSystem.ProcessPendingRequests(
                     em,
                     runtimeConfig.WorldCamera,
-                    CreateTacticalFollowCameraContext());
+                    GetTacticalFollowCameraContext());
                 if (!processed ||
                     !tacticalFollowCameraModeSystem.TryReadUiReadModel(em, out TacticalFollowCameraUiReadModelComponent readModel) ||
                     readModel.ReasonCode == (int)TacticalCommandReasonCode.None)
@@ -392,7 +380,7 @@ namespace Game.Runtime
                 }
 
                 selectionHudFeedbackSystem.ApplyCommandResult(
-                    CreateHudFeedbackContext(),
+                    GetHudFeedbackContext(),
                     TacticalCommandResult.Rejected((TacticalCommandReasonCode)readModel.ReasonCode));
             }
 
@@ -433,7 +421,7 @@ namespace Game.Runtime
                     };
 
                 if (!string.IsNullOrWhiteSpace(result.Message) || !result.Accepted)
-                    selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), result);
+                    selectionHudFeedbackSystem.ApplyCommandResult(GetHudFeedbackContext(), result);
             }
 
             void RefreshTacticalFollowCameraPose()
@@ -441,7 +429,18 @@ namespace Game.Runtime
                 if (!TryGetDefaultEntityManager(out EntityManager em))
                     return;
 
-                tacticalFollowCameraModeSystem.RefreshActiveTargetAndPose(em, CreateTacticalFollowCameraContext());
+                tacticalFollowCameraModeSystem.RefreshActiveTargetAndPose(em, GetTacticalFollowCameraContext());
+            }
+
+            TacticalFollowCameraModeSystemHelper.Context GetTacticalFollowCameraContext()
+            {
+                if (!hasTacticalFollowCameraContext)
+                {
+                    tacticalFollowCameraContext = CreateTacticalFollowCameraContext();
+                    hasTacticalFollowCameraContext = true;
+                }
+
+                return tacticalFollowCameraContext;
             }
 
             TacticalFollowCameraModeSystemHelper.Context CreateTacticalFollowCameraContext()
@@ -638,34 +637,34 @@ namespace Game.Runtime
                     pointerPosition => IsPointerOverRaycastableUi(pointerPosition, out _),
                     pointerPosition => IsPointerOverGameplayUi(pointerPosition, out _),
                     screenPosition => rtsSelectionPointerTargetCommandSystem.TryRequestAttackOrderToClickedUnit(
-                        CreatePointerTargetCommandContext(),
+                        GetPointerTargetCommandContext(),
                         screenPosition),
                     screenPosition => rtsSelectionPointerTargetCommandSystem.TryRequestScanOrder(
-                        CreatePointerTargetCommandContext(),
+                        GetPointerTargetCommandContext(),
                         screenPosition),
                     selectionOrderMarkerSystem,
                     TryGetDefaultEntityManager,
                     (Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint) =>
                         rtsSelectionPointerTargetCommandSystem.TryGetClickedCell(
-                            CreatePointerTargetCommandContext(),
+                            GetPointerTargetCommandContext(),
                             screenPosition,
                             em,
                             out cell,
                             out worldPoint),
-                    visible => selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), visible),
+                    visible => selectionHudFeedbackSystem.SetWorldMarkersVisible(GetHudFeedbackContext(), visible),
                     screenPosition => rtsSelectionPointerTargetCommandSystem.TryRequestBoardTransportOrderToClickedUnit(
-                        CreatePointerTargetCommandContext(),
+                        GetPointerTargetCommandContext(),
                         screenPosition),
                     (transport, pointerPosition) => rtsSelectionPointerTargetCommandSystem.TryRequestBoardSelectedTransportOrderToClickedUnit(
-                        CreatePointerTargetCommandContext(),
+                        GetPointerTargetCommandContext(),
                         transport,
                         pointerPosition),
                     (transport, screenRect) => rtsSelectionPointerTargetCommandSystem.TryRequestBoardSelectedTransportOrdersToPassengerRect(
-                        CreatePointerTargetCommandContext(),
+                        GetPointerTargetCommandContext(),
                         transport,
                         screenRect),
                     (transport, pointerPosition) => rtsSelectionPointerTargetCommandSystem.IsBoardSelectedTransportPassengerTarget(
-                        CreatePointerTargetCommandContext(),
+                        GetPointerTargetCommandContext(),
                         transport,
                         pointerPosition),
                     screenPosition => rtsSelectionFocusCommandSystem.QueueFocusUnitCommand(
@@ -673,13 +672,13 @@ namespace Game.Runtime
                         screenPosition),
                     screenDelta => rtsSelectionRuntimeCameraSystem?.PanCamera(GetRuntimeCameraContext(), screenDelta),
                     screenPosition => rtsSelectionPointerTargetCommandSystem.RequestMoveOrder(
-                        CreatePointerTargetCommandContext(),
+                        GetPointerTargetCommandContext(),
                         screenPosition),
                     ProcessSelectionRectangleRequests,
-                    () => selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext()),
+                    () => selectionHudFeedbackSystem.ClearCommandMode(GetHudFeedbackContext()),
                     LogSelectionClickDiagnostic,
                     pointerPosition => rtsSelectionPointerTargetCommandSystem.BuildClickDebugSummary(
-                        CreatePointerTargetCommandContext(),
+                        GetPointerTargetCommandContext(),
                         pointerPosition),
                     IsMatchIntroGameplayInputLocked);
             }
@@ -725,7 +724,7 @@ namespace Game.Runtime
                 if (TryGetDefaultEntityManager(out EntityManager em))
                     EnsureRuntimeSelectionDependencies(em);
 
-                SelectionHudFeedbackUiSystemHelper.Context hudFeedbackContext = CreateHudFeedbackContext();
+                SelectionHudFeedbackUiSystemHelper.Context hudFeedbackContext = GetHudFeedbackContext();
 
                 return new RtsSelectionCommandResultFlushCompositionSystemHelper.Context(
                     rtsSelectionInputSystem,
@@ -770,39 +769,39 @@ namespace Game.Runtime
                     focusedUnitLifecycleSystem.SetFocusedUnit,
                     (Vector2 screenPosition, EntityManager entityManager, out Entity entity) =>
                         rtsSelectionPointerTargetCommandSystem.TryGetClickedUnitEntity(
-                            CreatePointerTargetCommandContext(),
+                            GetPointerTargetCommandContext(),
                             screenPosition,
                             entityManager,
                             out entity),
                     (Vector2 screenPosition, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) =>
                         rtsSelectionPointerTargetCommandSystem.TryGetMoveCommandCell(
-                            CreatePointerTargetCommandContext(),
+                            GetPointerTargetCommandContext(),
                             screenPosition,
                             entityManager,
                             out cell,
                             out worldPoint),
                     (Vector2 screenPosition, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) =>
                         rtsSelectionPointerTargetCommandSystem.TryGetClickedCell(
-                            CreatePointerTargetCommandContext(),
+                            GetPointerTargetCommandContext(),
                             screenPosition,
                             entityManager,
                             out cell,
                             out worldPoint),
                     (Vector2 screenPosition, EntityManager entityManager, out Entity entity) =>
                         rtsSelectionPointerTargetCommandSystem.TryGetClickedAttackTargetEntity(
-                            CreatePointerTargetCommandContext(),
+                            GetPointerTargetCommandContext(),
                             screenPosition,
                             entityManager,
                             out entity),
                     (Vector2 screenPosition, EntityManager entityManager, out Entity entity) =>
                         rtsSelectionPointerTargetCommandSystem.TryGetClickedUnitEntity(
-                            CreatePointerTargetCommandContext(),
+                            GetPointerTargetCommandContext(),
                             screenPosition,
                             entityManager,
                             out entity),
                     (Vector2 screenPosition, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) =>
                         rtsSelectionPointerTargetCommandSystem.TryGetClickedCell(
-                            CreatePointerTargetCommandContext(),
+                            GetPointerTargetCommandContext(),
                             screenPosition,
                             entityManager,
                             out cell,
@@ -811,7 +810,7 @@ namespace Game.Runtime
 
             RtsSelectionFocusCommandCompositionSystemHelper.Context CreateFocusCommandContext()
             {
-                SelectionHudFeedbackUiSystemHelper.Context hudFeedbackContext = CreateHudFeedbackContext();
+                SelectionHudFeedbackUiSystemHelper.Context hudFeedbackContext = GetHudFeedbackContext();
 
                 return new RtsSelectionFocusCommandCompositionSystemHelper.Context(
                     runtimeGameplayStateSystem,
@@ -837,13 +836,24 @@ namespace Game.Runtime
                     LogSelectionClickDiagnostic,
                     DescribeTransportBoardingEntity,
                     screenPosition => rtsSelectionPointerTargetCommandSystem.TryFocusUnit(
-                        CreatePointerTargetCommandContext(),
+                        GetPointerTargetCommandContext(),
                         screenPosition));
+            }
+
+            RtsSelectionPointerTargetCommandCompositionSystemHelper.Context GetPointerTargetCommandContext()
+            {
+                if (!hasPointerTargetCommandContext)
+                {
+                    pointerTargetCommandContext = CreatePointerTargetCommandContext();
+                    hasPointerTargetCommandContext = true;
+                }
+
+                return pointerTargetCommandContext;
             }
 
             RtsSelectionPointerTargetCommandCompositionSystemHelper.Context CreatePointerTargetCommandContext()
             {
-                SelectionHudFeedbackUiSystemHelper.Context hudFeedbackContext = CreateHudFeedbackContext();
+                SelectionHudFeedbackUiSystemHelper.Context hudFeedbackContext = GetHudFeedbackContext();
 
                 return new RtsSelectionPointerTargetCommandCompositionSystemHelper.Context(
                     runtimeGameplayStateSystem,
@@ -883,6 +893,17 @@ namespace Game.Runtime
                     visibleSelectionScratch);
             }
 
+            SelectionHudFeedbackUiSystemHelper.Context GetHudFeedbackContext()
+            {
+                if (!hasHudFeedbackContext)
+                {
+                    hudFeedbackContext = CreateHudFeedbackContext();
+                    hasHudFeedbackContext = true;
+                }
+
+                return hudFeedbackContext;
+            }
+
             SelectionHudFeedbackUiSystemHelper.Context CreateHudFeedbackContext()
             {
                 return new SelectionHudFeedbackUiSystemHelper.Context(
@@ -891,19 +912,89 @@ namespace Game.Runtime
                     resolveSelectionPortraitSprite);
             }
 
+            bool IsValidBoardTransportPreviewTarget(EntityManager em, Entity source, Entity target)
+            {
+                return rtsSelectionPointerTargetCommandSystem.IsValidBoardTransportPreviewTarget(
+                    GetPointerTargetCommandContext(),
+                    em,
+                    source,
+                    target);
+            }
+
+            bool IsValidBoardPassengerPreviewTarget(EntityManager em, Entity source, Entity target)
+            {
+                return rtsSelectionPointerTargetCommandSystem.IsValidBoardPassengerPreviewTarget(
+                    GetPointerTargetCommandContext(),
+                    em,
+                    source,
+                    target);
+            }
+
+            void RefreshFocusedUnit(EntityManager em, SelectionStateCompositionSystemHelper state)
+            {
+                focusedUnitLifecycleSystem.RefreshFocusedUnit(em, state, applyHudSelectionAction);
+            }
+
+            bool HasSelectedBuilding()
+            {
+                return buildingPlacementInteractionSystem != null &&
+                       buildingPlacementInteractionSystem.HasSelectedBuilding(buildingPlacementInteractionContext);
+            }
+
+            string SelectedBuildingLabel()
+            {
+                return buildingPlacementInteractionSystem != null
+                    ? buildingPlacementInteractionSystem.SelectedBuildingLabel(buildingPlacementInteractionContext)
+                    : string.Empty;
+            }
+
+            bool TryGetSelectedBuildingResourceStorage(
+                out int oilCurrent,
+                out int oilCapacity,
+                out int fuelCurrent,
+                out int fuelCapacity)
+            {
+                oilCurrent = 0;
+                oilCapacity = 0;
+                fuelCurrent = 0;
+                fuelCapacity = 0;
+                return buildingPlacementInteractionSystem != null &&
+                       buildingPlacementInteractionSystem.TryGetSelectedBuildingResourceStorage(
+                           buildingPlacementInteractionContext,
+                           out oilCurrent,
+                           out oilCapacity,
+                           out fuelCurrent,
+                           out fuelCapacity);
+            }
+
+            bool IsBoardCommandAvailable(EntityManager em, Entity entity)
+            {
+                return rtsSelectionPointerTargetCommandSystem.IsBoardCommandAvailable(
+                    GetPointerTargetCommandContext(),
+                    em,
+                    entity);
+            }
+
+            bool HasSelectedBoardAction(EntityManager em)
+            {
+                return rtsSelectionPointerTargetCommandSystem.HasSelectedBoardAction(
+                    GetPointerTargetCommandContext(),
+                    em);
+            }
+
             void ApplyHudSelection(EntityManager entityManager, Entity entity)
             {
-                selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), entityManager, entity);
+                selectionHudFeedbackSystem.ApplySelection(GetHudFeedbackContext(), entityManager, entity);
             }
 
             void ApplyHudSquadSelection(int selectedCount)
             {
-                selectionHudFeedbackSystem.ApplySquadSelection(CreateHudFeedbackContext(), selectedCount);
+                selectionHudFeedbackSystem.ApplySquadSelection(GetHudFeedbackContext(), selectedCount);
             }
 
             void ClearHudSelection()
             {
-                selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext());
+                selectionHudFeedbackSystem.ClearSelection(GetHudFeedbackContext());
             }
 
             MatchHudSquadTraySelectionUiSystemHelper.Context CreateSquadTraySelectionContext()
@@ -1020,7 +1111,7 @@ namespace Game.Runtime
             void CaptureAttackModeOrderSnapshot()
             {
                 attackModeOrderSnapshotText = selectionHudFeedbackSystem.ResolveCurrentSelectionOrderTextSnapshot(
-                    CreateHudFeedbackContext(),
+                    GetHudFeedbackContext(),
                     selectionStateSystem,
                     focusedUnitLifecycleSystem,
                     EnsureRuntimeSelectionDependencies,

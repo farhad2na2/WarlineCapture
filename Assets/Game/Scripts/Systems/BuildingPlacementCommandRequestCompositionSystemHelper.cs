@@ -161,6 +161,16 @@ namespace Game.Runtime
             ProcessPendingUiPlacementCommands(em, context, queueEntity);
         }
 
+        public bool HasPendingUiPlacementCommands(EntityManager em)
+        {
+            if (!TryGetUiPlacementCommandEntity(em, out Entity queueEntity))
+                return false;
+
+            DynamicBuffer<BuildingUiPlacementCommandRequestElement> requests =
+                em.GetBuffer<BuildingUiPlacementCommandRequestElement>(queueEntity);
+            return requests.Length > 0;
+        }
+
         private void ProcessPendingUiPlacementCommands(EntityManager em, Context context, Entity queueEntity)
         {
             DynamicBuffer<BuildingUiPlacementCommandRequestElement> requests =

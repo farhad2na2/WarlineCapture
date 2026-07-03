@@ -49,6 +49,9 @@ namespace Game.Runtime
                 return;
             }
 
+            if (!source.BuildingPlacementCommandRequestCompositionSystemHelper.HasPendingUiPlacementCommands(entityManager))
+                return;
+
             source.BuildingPlacementCommandRequestCompositionSystemHelper.ProcessPendingUiPlacementCommandsIfPresent(
                 entityManager,
                 createPlacementCommandContext(source, interactionContext, markerPropertyBlock));

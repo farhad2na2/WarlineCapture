@@ -255,6 +255,7 @@ namespace Game.Composition
                 UnitImpostors);
         }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         public void OnGUI()
         {
             OnGuiRuntime(
@@ -264,6 +265,7 @@ namespace Game.Composition
                 _roadOnGui,
                 SelectionRectangle);
         }
+#endif
 
         public void OnDestroy()
         {
@@ -585,6 +587,7 @@ namespace Game.Composition
                 unitImpostors);
         }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         public void OnGuiRuntime(
             bool gameplayInitialized,
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
@@ -599,6 +602,7 @@ namespace Game.Composition
                 roadBuildOnGui,
                 selectionRectangleView);
         }
+#endif
 
         public void ShutdownRuntime(
             MainMenuPlayUI mainMenu,

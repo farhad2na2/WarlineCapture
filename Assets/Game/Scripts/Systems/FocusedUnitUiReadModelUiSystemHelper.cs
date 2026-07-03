@@ -25,6 +25,7 @@ namespace Game.Runtime
             DynamicBuffer<FocusedUnitPassengerUiReadModelElement> passengerBuffer =
                 em.GetBuffer<FocusedUnitPassengerUiReadModelElement>(readModelEntity);
             passengerBuffer.Clear();
+            FocusedUnitUiReadModelComponent previousModel = em.GetComponentData<FocusedUnitUiReadModelComponent>(readModelEntity);
 
             Entity focusedUnit = selectionStateSystem.FocusedUnit;
             if (!selectionUiReadModelLookup.HasFocusedUnit(em, focusedUnit))
@@ -33,6 +34,7 @@ namespace Game.Runtime
                 return;
             }
 
+            bool sameFocusedUnit = previousModel.HasFocusedUnit != 0 && previousModel.FocusedUnit == focusedUnit;
             FocusedUnitUiReadModelComponent model = new()
             {
                 FocusedUnit = focusedUnit,
@@ -40,9 +42,12 @@ namespace Game.Runtime
                 OwnedByPlayer = selectionUiReadModelLookup.IsOwnedByPlayer(em, focusedUnit) ? (byte)1 : (byte)0,
                 IsVehicle = selectionUiReadModelLookup.IsVehicleUnit(em, focusedUnit) ? (byte)1 : (byte)0,
                 CanAttack = selectionUiReadModelLookup.CanAttack(em, focusedUnit) ? (byte)1 : (byte)0,
-                Label = ToFixed64(selectionUiReadModelLookup.ResolveFocusedUnitName(em, focusedUnit)),
-                Description = ToFixed128(selectionUiReadModelLookup.ResolveFocusedUnitDescription(em, focusedUnit)),
-                HealthText = ToFixed32(selectionUiReadModelLookup.ResolveFocusedUnitHealthText(em, focusedUnit)),
+                Label = sameFocusedUnit
+                    ? previousModel.Label
+                    : ToFixed64(selectionUiReadModelLookup.ResolveFocusedUnitName(em, focusedUnit)),
+                Description = sameFocusedUnit
+                    ? previousModel.Description
+                    : ToFixed128(selectionUiReadModelLookup.ResolveFocusedUnitDescription(em, focusedUnit)),
                 Status = (int)selectionUiReadModelLookup.GetFocusedUnitUiStatus(em, focusedUnit)
             };
 
@@ -58,6 +63,18 @@ namespace Game.Runtime
                 model.HasHealth = 1;
                 model.HealthCurrent = healthCurrent;
                 model.HealthMax = healthMax;
+                model.HealthText = sameFocusedUnit &&
+                                   previousModel.HasHealth != 0 &&
+                                   previousModel.HealthCurrent == healthCurrent &&
+                                   previousModel.HealthMax == healthMax
+                    ? previousModel.HealthText
+                    : ToHealthFixed32(healthCurrent, healthMax);
+            }
+            else
+            {
+                model.HealthText = sameFocusedUnit && previousModel.HasHealth == 0
+                    ? previousModel.HealthText
+                    : ToFixed32("Health: -");
             }
 
             if (selectionUiReadModelLookup.TryGetFocusedUnitCapacityInfo(
@@ -182,6 +199,16 @@ namespace Game.Runtime
         {
             FixedString32Bytes result = default;
             result.Append(Trim(value, 29));
+            return result;
+        }
+
+        private static FixedString32Bytes ToHealthFixed32(int current, int max)
+        {
+            FixedString32Bytes result = default;
+            result.Append("Health: ");
+            result.Append(current);
+            result.Append('/');
+            result.Append(max);
             return result;
         }
 

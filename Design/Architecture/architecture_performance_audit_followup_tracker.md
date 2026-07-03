@@ -1,0 +1,364 @@
+# Architecture and Performance Audit Follow-up Tracker
+
+## Goal
+Turn `Design/AgentReports/2026-07-02_audit_architecture-performance-followup.md` into a fast, measurable implementation plan. Start with quick wins and low-risk fixes, then move into measured ECS/SOLID architecture work. Keep every slice behavior-preserving unless a later tracker item explicitly calls out a tuning change.
+
+## Source
+- Audit commit: `94ddc5d48 Arcitecture and Performance audit followup`
+- Audit document: `Design/AgentReports/2026-07-02_audit_architecture-performance-followup.md`
+- Audit baseline: Unity `6000.5.2f1`, main `37c035a70`
+
+## Agreement Assessment
+
+### Agreed
+- Mobile URP settings are the first practical performance win. Shadow distance, cascade count, HDR, MSAA, and soft shadows are config-driven and should be tested immediately against the Android 30 FPS target.
+- Android ground truth is mandatory. Editor-only measurements are useful for regressions, but mobile decisions need at least one real-device baseline.
+- Burst coverage is a valid quick/medium pass, but only for Burst-eligible `ISystem` files.
+- `MatchSceneView.OnGUI` and related diagnostics must be editor/development-only. Release builds should not tick IMGUI diagnostics.
+- Interpolated diagnostic logs in hot paths should be gated before string construction.
+- `Object.Instantiate` inside ECS systems is a real drift signal. These call sites should move to entity prefab instantiation, pooled presentation helpers, or other explicitly owned edges.
+- The managed helper layer should be frozen for new gameplay logic. New gameplay should use Burst-capable `ISystem` ownership first, with thin Canvas/presentation helpers only at the edge.
+- Hot-path helper migration must be measured-first. Selection, BuildingPlacement/transports, and AttackVfx are the right first candidates because they have measured cost.
+- CI needs performance guardrails. A contract without an automated capture does not prevent regression.
+
+### Qualified Before Implementation
+- Do not rewrite all 309 `*SystemHelper` files. Freeze new drift now, then migrate the measured top hot paths.
+- Do not blindly add `[BurstCompile]` everywhere. Classify each missing-Burst `ISystem` as `Burst eligible`, `Managed edge`, `Presentation only`, or `Needs refactor`.
+- Do not split `Game.Runtime` before compiler health and performance baselines are stable. Assembly splitting is valuable, but it is not a quick win.
+- Do not replace `Object.Instantiate` with parallel gameplay logic. Keep ECS as the gameplay owner and move only visual/presentation instantiation to explicit pooled edges.
+- Do not tune gameplay balance while doing performance work. Config changes here are render/diagnostic/infrastructure unless separately approved.
+
+## Current Baseline From Audit
+
+| Area | Audit status | Tracker interpretation |
+|---|---:|---|
+| SystemBase to ISystem migration | 24 SystemBase / 141 ISystem | Major ECS direction is working. Continue guardrails. |
+| Main-thread `.Run()` jobs | 0 `.Run()`, 33 `ScheduleParallel` | Good baseline. Preserve. |
+| Managed `IComponentData` | 0 | Good baseline. Preserve. |
+| Scripting backend | IL2CPP configured | Good baseline. Needs Android measurement. |
+| Assembly graph | Clean | Preserve during future domain splits. |
+| Burst coverage | 72 of 125 ISystem files missing Burst | Quick/medium pass after classification. |
+| ECS `Object.Instantiate` | 15 open | Medium pass after inventory. |
+| `TransportBoardingCommandSystem` | 4,022 lines | Structural issue. Defer until measured quick wins are complete. |
+| Mobile shadows | 240 m, 4 cascades, soft shadows, HDR, MSAA 2x | First config quick win. |
+| Change filters | Underused | Medium pass after Burst/config work. |
+| Android device data | None | Required baseline before deeper tuning. |
+
+## Rules
+- No UI Toolkit.
+- No new `Boundary` or `Presenter` class names.
+- No new MonoBehaviour gameplay `Update` loops.
+- No new managed helper gameplay ownership.
+- New gameplay/projection logic should be Burst-capable `ISystem` where practical.
+- Canvas and MonoBehaviour code remains serialized-reference binding, button-event, scene bootstrap, camera, or visual-state application only.
+- Preserve existing scene/prefab/component bindings.
+- Preserve Unity `.meta` files.
+- Run `git diff --check` after each slice.
+- If Unity compile is available, do not hand off known compiler errors as complete.
+
+## Priority Strategy
+1. Stabilize compiler and inventory counts.
+2. Apply config and diagnostic quick wins.
+3. Re-baseline GC and Android performance.
+4. Add Burst where mechanically safe.
+5. Move ECS `Object.Instantiate` call sites to proper ownership.
+6. Migrate measured hot helper paths.
+7. Split assemblies and add CI gates after behavior and performance are stable.
+
+## Progress Snapshot
+
+| Field | Status |
+|---|---|
+| Checklist complete | 47 / 102 |
+| Checklist percent complete | 46.1% |
+| Current phase | Phase 4 - GC Re-baseline And Allocation Gate |
+| Quick wins complete | 2 / 6 |
+| Current target | Continue reducing the remaining `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases` recurring selection allocation after cached HUD feedback, command preview, tactical-follow, selection-panel callbacks, pointer-target context, selected-tag query, focused read-model text reuse, and an initial focused selection-panel unchanged-state cache |
+| Compiler status | Unity 6.5.2 batchmode compile logs show no compiler errors after the latest focused selection-panel cache changes; earlier `dotnet build Game.Composition.csproj --no-restore`, `dotnet build Game.Runtime.csproj --no-restore`, and `dotnet build Game.UI.Shell.Ecs.csproj --no-restore` passed with 0 errors; Unity MCP was not exposed, so escalated Unity batchmode/editor-log validation is the current Unity path |
+| Android baseline status | Not started |
+| GC baseline status | Latest 2026-07-03 steady-state Match GC capture: 300 requested frames after 180 warmup frames, 301 scanned profiler frames, 34,567 GC.Alloc samples, 1,829,437 hierarchy-column bytes; `UiDiagnosticsReadModelSystem.BuildLogText()`, `BuildingPlacementCommandCompositionSystemHelper.CreateContextSource()`, `CreateTacticalFollowCameraContext()`, and `CreatePointerTargetCommandContext()` no longer appear in the searched/top allocation sites; current recurring gameplay allocator remains `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases` across 299 frames |
+| Burst coverage status | Current inventory: 125 `ISystem` files, 72 missing `[BurstCompile]`; classification pending |
+| Mobile URP status | `Mobile_RPAsset` shadow distance changed from 240 m to 90 m and cascades from 4 to 2; HDR, MSAA 2x, render scale 0.8, and soft shadows remain unchanged pending visual/Android baseline |
+| ECS instantiate status | Current inventory: 15 runtime `Object.Instantiate` call lines under `Assets/Game/Scripts/Systems` |
+| Fuel/Oil drift status | Drift confirmed: authoritative production, conversion, load/unload, and storage mutation are still in managed helper/runtime-building paths; UI/header paths are read-only display consumers |
+| Validation status | Phase 0 inventory completed; Phase 1 config edited; Phase 2 release OnGUI strip implemented; Phase 3 release diagnostic system gate implemented; Unity 6.5.2 batchmode compile passed after the latest focused selection-panel cache changes; Unity 6.5.2 Match GC captures passed via escalated windowed batchmode without `-quit`; latest Phase 4 GC capture passed and shows lower total bytes, but the focused selection-panel cache did not improve the selection marker |
+| Still wrong / next iteration | `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()` still allocates across 299 captured frames, now with rank-1 `828,464` bytes / `16,861` samples; total GC is lower than the prior best (`1,829,437` bytes vs `2,166,981`), but the selection lane is worse than both the previous focused-read-model run (`812,336` bytes) and the earlier best (`705,640` bytes), so the next slice should inspect other per-frame selection work or revert/adjust the focused panel cache and pointer-context cache if repeat captures confirm they only move noise between markers |
+
+## Phase 0 - Baseline And Inventory
+Fast setup work. No behavior changes.
+
+- [x] Confirm Unity compiler is green before performance/config changes.
+- [x] Confirm exact Unity version and active mobile renderer asset path.
+- [x] Re-run current `ISystem` inventory and Burst coverage count.
+- [x] Re-run current `Object.Instantiate` inventory under `Assets/Game/Scripts`.
+- [x] Re-run current `Debug.Log($"...")` inventory under `Assets/Game/Scripts/Systems`.
+- [x] Re-run `OnGUI` call-chain inventory from `MatchSceneView` to diagnostics helpers.
+- [x] Re-run `SystemBase` / `ISystem` counts and compare to audit.
+- [x] Identify current `VisualQualityConfig` ownership and tier switching path.
+- [x] Confirm Android build target, IL2CPP, and runInBackground settings still match audit.
+- [x] Inventory the new Fuel/Oil feature files and identify which parts are gameplay simulation, ECS projection, UI display, and diagnostics.
+- [x] Confirm whether oil production, oil capacity, fuel conversion, truck transfer, and refinery storage are owned by ECS systems/components rather than managed UI/helper state.
+- [x] Update this progress snapshot with actual local counts.
+
+## Phase 0A - Fuel/Oil Feature Drift Audit
+Fast architecture check for the new resource feature called out by the audit as a likely managed-helper drift risk.
+
+- [x] Trace oil pump production from config to runtime storage.
+- [x] Trace transport truck oil/fuel load, unload, and capacity state.
+- [x] Trace refinery oil input, fuel output, and dual-capacity state.
+- [x] Trace match header oil/fuel totals and confirm they are read-only UI projections.
+- [x] Trace selected unit/building resource panel data and confirm it is read-only UI projection.
+- [x] Identify any managed helper that owns authoritative Fuel/Oil gameplay state.
+- [x] Identify any Fuel/Oil update path that ticks from MonoBehaviour/Canvas instead of ECS.
+- [x] Identify any Fuel/Oil `SystemBase`, non-Burst `ISystem`, or managed `IComponentData` drift.
+- [x] Decide the corrective target for each drift: Burst `ISystem`, ECS component/buffer/config, or UI-only sink.
+- [x] Update the tracker with the Fuel/Oil drift inventory and priority.
+
+### Phase 0 Findings
+
+- Unity version: `6000.5.2f1 (eb73d3b415a1)` from `ProjectSettings/ProjectVersion.txt`.
+- Android/runtime setup: `runInBackground: 1`; Android scripting backend is IL2CPP; Android static batching is enabled and dynamic batching is disabled.
+- Mobile render asset: `Assets/Settings/Mobile_RPAsset.asset` currently has HDR enabled, MSAA 2x, render scale `0.8`, main/additional shadow maps at `2048`, shadow distance `240`, cascade count `4`, and soft shadows enabled.
+- Visual quality ownership: `Assets/Game/Rendering/VisualQualityConfig.asset`, `Assets/Game/Scripts/Configs/VisualQualityProfileAsset.cs`, and `Assets/Game/Scripts/Systems/VisualQualitySettingsSystem.cs` own tier render scale and directional shadow strength; shadow distance, cascade count, HDR, and MSAA do not appear tier-owned yet.
+- ECS inventory: `125` `ISystem` files, `72` missing `[BurstCompile]`, `24` actual `SystemBase` classes, and `0` newly identified managed `IComponentData` drift in this inventory pass.
+- ECS instantiate inventory: `15` runtime `Object.Instantiate` call lines under `Assets/Game/Scripts/Systems`.
+- Diagnostics inventory: direct interpolated `Debug.Log($"...")` hot-path candidates were found in diagnostics/animation/startup helpers; ResourceHauler has additional gated interpolated logs and one warning.
+- IMGUI diagnostics chain: `MatchSceneView.OnGUI()` calls `MatchBootstrapCompositionSystemHelper.OnGUI()`, with diagnostics work downstream.
+- Unity MCP status: attempted after user re-approval, but Unity MCP still returns `Connection revoked`; fallback validation is editor-log and deterministic file inspection until the bridge accepts the client.
+
+### Phase 0A Fuel/Oil Drift Findings
+
+- ECS data exists for storage and projection: `BuildingRuntimeFactionSummary` carries faction oil/fuel totals and rates, while `UnitResourceHauler` / `UnitResourceHaulOrder` carry hauler cargo, capacity, phase, and resource kind.
+- Header UI is read-only display: `UiShellEcsGateway.TryReadMatchHudHeader` reads `BuildingRuntimeFactionSummary` and formats separate oil/fuel strings for Canvas.
+- Selected unit/building UI is read-only display: `FocusedUnitUiReadModelUiSystemHelper`, `SelectionHudFeedbackUiSystemHelper`, and `MatchHudSelectionPanelView` read ECS/runtime storage values into passenger/resource chips.
+- Authoritative simulation drift exists in managed helpers: `FactionResourceCompositionSystemHelper.UpdateResourceProduction` mutates `StoredOilBarrels` and `StoredFuelBarrels` on runtime building objects for oil extraction and refinery conversion.
+- Authoritative hauler transfer drift exists in managed helpers: `ResourceHaulerUtilitySystemHelper` and `BuildingResourceHaulerBridgeCompositionSystemHelper` mutate runtime building storage and `UnitResourceHauler` cargo during load/unload.
+- Tick ownership drift: `BuildingProductionRuntimeTickCompositionSystemHelper` drives production through `UnityEngine.Time.deltaTime` and managed runtime-building dictionaries rather than a Burst-capable ECS simulation system.
+- Corrective target: move oil pump production, refinery conversion, hauler load/unload, and storage mutation into ECS components/buffers processed by Burst-capable `ISystem` code where practical; keep Canvas header and selection-panel code as read-only visual sinks.
+
+## Phase 1 - Mobile Render Config Quick Win
+Lowest-risk large win. Config-only unless tier wiring is missing.
+
+- [x] Inspect `Assets/Settings/Mobile_RPAsset.asset` and related renderer assets.
+- [x] Set mobile shadow distance from 240 m to a first target of 90 m.
+- [x] Set cascade count from 4 to 2 for the mobile tier.
+- [ ] Decide soft shadow default per tier through `VisualQualityConfig`.
+- [ ] Decide HDR default per tier through `VisualQualityConfig`.
+- [x] Verify MSAA/renderScale are still intentional for the target device class.
+- [x] Capture before/after config diff in this tracker.
+- [ ] Run Unity compile and a lightweight scene smoke test.
+
+### Phase 1 Mobile Render Config Diff
+
+- `Assets/Settings/Mobile_RPAsset.asset`
+  - `m_ShadowDistance`: `240` -> `90`
+  - `m_ShadowCascadeCount`: `4` -> `2`
+- Deferred until Android/visual baseline or tier wiring work:
+  - `m_SupportsHDR`: remains `1`
+  - `m_MSAA`: remains `2`
+  - `m_RenderScale`: remains `0.8`
+  - `m_SoftShadowsSupported`: remains `1`
+  - `m_SoftShadowQuality`: remains `2`
+
+## Phase 2 - Release Diagnostic Strip
+Quick architecture/perf cleanup.
+
+- [x] Inspect `MatchSceneView.OnGUI`.
+- [x] Inspect `MatchBootstrapCompositionSystemHelper` diagnostics path.
+- [x] Wrap IMGUI diagnostic tick path with `#if UNITY_EDITOR || DEVELOPMENT_BUILD`.
+- [x] Keep editor and development diagnostics available.
+- [x] Confirm release/player builds do not include the IMGUI diagnostics path.
+- [x] Run compile validation.
+- [x] Update tracker with changed files and validation result.
+
+### Phase 2 Release Diagnostic Strip Diff
+
+- `Assets/Game/Scripts/Composition/MatchSceneView.cs`
+  - Wrapped `OnGUI()` with `#if UNITY_EDITOR || DEVELOPMENT_BUILD`.
+- `Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs`
+  - Wrapped public `OnGUI()` and `OnGuiRuntime(...)` with `#if UNITY_EDITOR || DEVELOPMENT_BUILD`.
+- Runtime effect:
+  - Editor and development builds keep road/selection IMGUI diagnostics.
+  - Non-development player builds no longer include the match IMGUI diagnostic entry path.
+
+## Phase 3 - Diagnostic Logging Allocation Cleanup
+Quick GC cleanup in hot systems.
+
+- [x] Inventory interpolated `Debug.Log($"...")` calls in `Assets/Game/Scripts/Systems`.
+- [x] Group each call by always-on, gated diagnostic, warning/error, or temporary debug.
+- [x] Move diagnostic enable gates before message construction.
+- [x] Replace repeated diagnostic string interpolation with conditional helper calls where appropriate.
+- [x] Preserve warnings/errors that are user-facing or required for failure diagnosis.
+- [x] Run compile validation.
+- [x] Update tracker with remaining intentional log call count.
+
+### Phase 3 Diagnostic Logging Cleanup Diff
+
+- `Assets/Game/Scripts/Systems/PreGameEcsActivityDiagnosticsSystem.cs`
+  - Disabled the diagnostic-only ECS activity system outside `UNITY_EDITOR || DEVELOPMENT_BUILD`.
+  - Release players no longer run the pre-game query/count/log path or construct its diagnostic interpolated strings.
+- Reviewed remaining interpolated log families under `Assets/Game/Scripts/Systems`:
+  - `ResourceHaulerUtilitySystemHelper` verbose logs are already behind `RuntimeConfig.VerboseResourceHaulerLogs`; warning logs are preserved.
+  - `LoadingGateSystem`, performance diagnostics, and render/frame diagnostics already gate message construction behind state/interval/threshold checks.
+  - No broad helper abstraction was added because the current safe quick win is compile-time release stripping for the always-diagnostic system; deeper log-helper churn would be riskier than useful without GC capture data.
+- Remaining intentional log categories:
+  - Warnings/errors required for failure diagnosis.
+  - Editor/development diagnostics.
+  - Threshold/cooldown diagnostics that are already gated before message construction.
+
+## Phase 4 - GC Re-baseline And Allocation Gate
+Measure before deeper managed-helper work.
+
+- [x] Identify the existing GC callstack capture tool or recreate the documented command path.
+- [x] Run a 300-frame steady-state ScenarioLab or match smoke capture.
+- [x] Record managed allocations per frame after June fixes.
+- [x] Identify top allocation call stacks.
+- [ ] Add or update a zero-alloc smoke assertion where practical.
+- [x] Record any known unavoidable editor-only allocations separately from player allocations.
+- [x] Update tracker with the new baseline and top three offenders.
+
+### Phase 4 GC Capture Path
+
+- Existing capture tool:
+  - `Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs`
+  - Execute method: `Game.Editor.MatchGcAllocationCallstackCapture.RunSteadyState`
+  - Built-in capture shape: opens `Assets/Game/Scenes/Menu.unity`, routes into Match, warms up 180 frames, captures 300 frames with `Profiler.enableAllocationCallstacks`, then writes a report under `Design/AgentReports`.
+- Working command shape:
+  - Unity 6.5.2 windowed batchmode, escalated/out-of-sandbox, no `-quit`, execute method `Game.Editor.MatchGcAllocationCallstackCapture.RunSteadyState`.
+  - This follows the project licensing workaround: run Unity outside the sandbox and let the execute method finish the asynchronous Play Mode capture before quitting.
+- Current result:
+  - Unity batchmode compile/capture reaches Menu, enters Play Mode, loads Match, completes warmup/capture, writes the GC report, and exits with `[MatchGcAllocationCallstackCapture] result=Passed frames=300`.
+  - Shutdown still logs Unity editor preview-scene leak noise. No compiler errors were found in the capture log.
+
+### Phase 4 GC Baseline - 2026-07-02
+
+- Successful command:
+  - Unity 6.5.2 windowed batchmode, escalated/out-of-sandbox, no `-quit`, execute method `Game.Editor.MatchGcAllocationCallstackCapture.RunSteadyState`.
+  - Log: `/private/tmp/warline-architecture-audit-gc-steady-windowed-noquit.log`.
+  - Result marker: `[MatchGcAllocationCallstackCapture] result=Passed frames=300`.
+- Report:
+  - `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`
+  - Latest date in report: `2026-07-03 07:25:24 UTC`.
+- Capture summary:
+  - Requested frames: `300`.
+  - Warmup frames before capture: `180`.
+  - Profiler frame range: `0..300`.
+  - Scanned frames with data: `301`.
+  - GC.Alloc samples: `34,567`.
+  - GC.Alloc bytes from hierarchy column: `1,829,437`.
+  - Runtime allocation probe reports `UIShellEcsPresentationSystem.Update` and `MenuBootstrapView.Update` as `0 bytes / 0 allocating updates / 300 total updates`, so the previous shell/update probe path is clean.
+- Completed allocation fixes verified by rerun:
+  - `UiDiagnosticsReadModelSystem` now rebuilds runtime diagnostics log text only while the diagnostics overlay is visible, and only on first visibility or log-version changes; `UiDiagnosticsReadModelSystem` / `BuildLogText()` no longer appears in the searched/top allocation sites.
+  - `BuildingPlacementInputTickCompositionSystemHelper` now checks for pending UI placement commands before constructing `BuildingPlacementCommandCompositionSystemHelper` delegate-heavy contexts; `CreateContextSource()` no longer appears in the searched/top allocation sites.
+  - `SelectionGameplayStartupSystemHelper` now caches the HUD feedback context, board preview delegates, tactical-follow camera context, pointer-target command context, focused-unit refresh delegate, selected-building callbacks, and selection-panel board/resource callbacks; `CreateTacticalFollowCameraContext()` and `CreatePointerTargetCommandContext()` no longer appear in the searched/top allocation sites.
+  - `SelectionHudFeedbackUiSystemHelper` now caches the `SelectedUnitTag` query used by the runtime selection-panel refresh path; the public static summary query path remains available for focused tests.
+  - `FocusedUnitUiReadModelUiSystemHelper` now reuses focused-unit label/description fixed strings while the focused entity is unchanged and builds health fixed strings from numeric values instead of managed interpolation.
+  - `SelectionHudFeedbackUiSystemHelper` now skips reapplying the focused-unit selection-panel model and transport/passenger drawer model when the focused entity, order, health, board availability, and cargo/passenger summary are unchanged. This reduced total captured GC in the latest run, but did not improve the selection marker, so it remains under review rather than accepted as the final selection-lane fix.
+- Top recurring offender after these fixes:
+  - `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()` still appears across `299` frames.
+- Top three allocation rows from the latest report:
+  - Rank 1: `828,464` bytes / `16,861` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection`, top managed frame `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()`.
+  - Rank 2: `478,400` bytes / `6,877` samples / `299` frames, parent hierarchy `FixedWingRunwayHomeInitializationSystem`, top managed frame `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()`.
+  - Rank 3: `76,544` bytes / `2,093` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.MainMenu`, top managed frame `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()`.
+- Known editor/tooling allocations separated from gameplay cleanup target:
+  - One-frame Burst JIT/compiler allocations appear under `Burst.Compiler.IL.JitCompilerService.CompileInternal()` for several Burst systems. These are not the first gameplay cleanup target.
+  - Unity AI/MCP tracing stack logs appeared during batch shutdown; these are editor/tooling noise, not player gameplay code.
+- Next cleanup target:
+  - Inspect the remaining `SelectionGameplayStartupSystemHelper` allocation around line `332`, focusing on per-frame selection work outside the focused panel apply path. If the next rerun confirms the pointer-target context cache or focused panel cache only worsens the selection lane, adjust or revert those specific caches while preserving selected-tag query caching and focused read-model text reuse.
+
+## Phase 5 - Burst Coverage Pass
+Mechanical pass, but only where correct.
+
+- [ ] Generate a list of `ISystem` files missing `[BurstCompile]`.
+- [ ] Classify each as `Burst eligible`, `Managed edge`, `Presentation only`, or `Needs refactor`.
+- [ ] Add `[BurstCompile]` to Burst-eligible system structs.
+- [ ] Add `[BurstCompile]` to eligible `OnCreate`, `OnUpdate`, and job methods.
+- [ ] Leave managed-edge systems un-Burst and document why.
+- [ ] Compile after each small batch.
+- [ ] Update the coverage count after each batch.
+- [ ] Add an architecture guardrail so new Burst-eligible `ISystem` files are not silently added without classification.
+
+## Phase 6 - ECS Instantiate Ownership Cleanup
+Medium pass. Must avoid parallel gameplay logic.
+
+- [ ] Inventory all `Object.Instantiate` calls under runtime ECS/system code.
+- [ ] Classify each call as gameplay entity spawn, visual VFX, UI/presentation, authoring/editor, or test-only.
+- [ ] Convert gameplay spawns to entity prefab/ECB ownership where practical.
+- [ ] Move visual GameObject creation to explicit pooled presentation helpers.
+- [ ] Add pool lifetime cleanup for VFX/presentation objects.
+- [ ] Keep ECS event/request ownership for the underlying gameplay action.
+- [ ] Run focused tests for each converted call-site family.
+- [ ] Update tracker with remaining intentional non-runtime or editor-only instantiates.
+
+## Phase 7 - Android Ground Truth Baseline
+Required before deeper tuning decisions.
+
+- [ ] Select one mid-tier Android target device profile.
+- [ ] Build IL2CPP Android with the mobile render config.
+- [ ] Run a 10-minute match/session capture.
+- [ ] Record p50, p95, and worst-frame CPU/GPU frame times.
+- [ ] Record thermal state and throttling symptoms.
+- [ ] Record draw calls, batches, triangles, and steady-state GC.
+- [ ] Compare Android results against editor assumptions and update priorities.
+
+## Phase 8 - Managed Helper Hot-path Migration
+Measured architecture work. Do not boil the 309-helper ocean.
+
+- [ ] Freeze new managed-helper gameplay ownership in review/architecture scripts.
+- [ ] If Fuel/Oil drift is found, move authoritative production/storage/transfer/conversion state into ECS before broader helper migrations.
+- [ ] Add or standardize profiler markers on helper tick paths.
+- [ ] Start with AttackVfx if still measured as the largest spike.
+- [ ] Move AttackVfx request processing toward ECS/jobs while keeping visual spawning at the presentation edge.
+- [ ] Migrate BuildingPlacement/transports only after current allocation and frame-time data confirms priority.
+- [ ] Migrate Selection updates after Selection allocation/frame-time data is captured.
+- [ ] Keep Canvas/MonoBehaviour code as serialized-reference visual binders.
+- [ ] Add focused tests for each migrated hot path.
+- [ ] Re-run GC and frame-time capture after every hot-path migration.
+
+## Phase 9 - TransportBoardingCommandSystem Decomposition
+Structural work after quick wins and measured baselines.
+
+- [ ] Inventory current internal phases of `TransportBoardingCommandSystem`.
+- [ ] Split only along stable responsibility seams.
+- [ ] Preserve production ECS ownership for boarding, movement, deploy, rope, and airdrop.
+- [ ] Add tests before extracting each phase.
+- [ ] Keep public command behavior unchanged.
+- [ ] Re-run boarding ScenarioLab validation after each extraction.
+
+## Phase 10 - Game.Runtime Domain Split
+Longer-term compile and ownership improvement.
+
+- [ ] Confirm compiler is clean and tests are stable before assembly splitting.
+- [ ] Draft target domain asmdefs: Combat, Buildings, Transport, Selection/Camera, Pathfinding.
+- [ ] Keep Contracts assemblies as the only cross-domain currency.
+- [ ] Split one domain per PR/slice.
+- [ ] Run full compile and focused tests after each split.
+- [ ] Update architecture docs after each domain split.
+
+## Phase 11 - CI Performance Regression Gate
+Make the gains durable.
+
+- [ ] Map `performance_regression_contract.md` requirements to concrete ScenarioLab captures.
+- [ ] Add a headless or batchmode capture path for weekly/per-merge CI.
+- [ ] Assert p95 frame-time budget.
+- [ ] Assert steady-state GC budget.
+- [ ] Store baseline artifacts for trend comparison.
+- [ ] Fail CI on budget breach once baseline is accepted.
+
+## Validation Log
+- 2026-07-02: Created tracker from `Design/AgentReports/2026-07-02_audit_architecture-performance-followup.md`. No code/config changes made.
+- 2026-07-02: Completed Phase 0/0A inventory by deterministic file inspection. Unity MCP still returned `Connection revoked` after retry, so MCP validation was not available.
+- 2026-07-02: Applied conservative mobile render quick win: `Mobile_RPAsset` shadow distance `240 -> 90`, cascade count `4 -> 2`. No gameplay code changes.
+- 2026-07-02: `git diff --check` passed. Unity 6.5.2 batchmode compile could not run because `/Users/farhad/Projects/WarlineCapture` is already open in another Unity instance. Editor log tail showed no current compiler errors, but this is not a full compile gate.
+- 2026-07-02: Phase 2 release diagnostic strip implemented. `dotnet build Game.Composition.csproj --no-restore` passed with 0 errors and 16 existing Unity generated-project reference warnings.
+- 2026-07-02: After the editor was closed, Unity 6.5.2 batchmode compile passed with no compiler errors. Phase 3 diagnostic release gate implemented. `git diff --check`, `dotnet build Game.Runtime.csproj --no-restore`, and Unity batchmode compile passed after the change.
+- 2026-07-02: Phase 4 capture path identified as `Game.Editor.MatchGcAllocationCallstackCapture.RunSteadyState`. Batchmode GC capture attempt was blocked before project execution by Unity 6.5.2 licensing handshake failures, then the stuck process was killed. No project code or compile failure was observed in that capture attempt.
+- 2026-07-02: Retried Unity with the documented licensing workaround: escalated/out-of-sandbox, windowed batchmode, and no `-nographics`. A first retry with `-quit` only opened `Menu.unity` then quit before the async capture. The corrected no-`-quit` command passed, loaded Match, warmed up, captured 300 frames, and wrote the current GC report.
+- 2026-07-03: Phase 4 GC cleanup slice cached diagnostic-log rebuilds, building-placement command context creation, selection HUD feedback context, board preview delegates, tactical-follow camera context, and selection panel callbacks. Unity 6.5.2 compile passed after each selection edit. Match GC capture passed with `35,158` samples and `2,166,981` hierarchy-column bytes, down from the earlier `190,938` samples and `27,951,959` bytes baseline.
+- 2026-07-03: Cached the selection pointer-target command context and selected-tag query, then reran Unity 6.5.2 compile and Match GC capture. Compile passed; capture passed with `35,021` samples and `1,892,651` hierarchy-column bytes. `CreatePointerTargetCommandContext()` no longer appears in searched/top allocation sites. Selection lane remains the top recurring source at `818,096` bytes / `16,645` samples across `299` frames, so this is not a complete selection-lane fix.
+- 2026-07-03: Reused focused-unit label/description fixed strings and replaced focused health interpolation with numeric fixed-string append. Unity 6.5.2 compile passed; Match GC capture passed with `34,926` samples and `1,888,685` hierarchy-column bytes. Selection lane moved only slightly to `812,336` bytes / `16,525` samples, so the next fix must skip unchanged selection-panel/model refresh work rather than only caching more context.
+- 2026-07-03: Added a focused selection-panel unchanged-state cache and transport/passenger panel key to avoid reapplying identical Canvas selection-panel models each frame. Unity 6.5.2 compile passed; Match GC capture passed with `34,567` samples and `1,829,437` hierarchy-column bytes. The total captured bytes improved, but the selection marker moved to `828,464` bytes / `16,861` samples, so the cache is not yet a proven selection-lane fix.
+
+## Still Wrong / Next Iteration
+- Known unresolved: Unity MCP is not exposed in this turn, visual/playmode smoke validation is pending, HDR/soft-shadow tier ownership is still unresolved, Android baseline is not captured, Fuel/Oil authoritative gameplay still lives in managed helper/runtime-building paths, Burst coverage is not classified, the remaining `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases()` allocation still appears across `299` frames, and ECS instantiate cleanup is not implemented.
+- Next iteration: inspect and reduce the remaining selection runtime allocation outside the focused panel apply path; if another capture confirms the pointer-target context cache or focused panel cache worsened the selection lane, adjust or revert those specific caches. Rerun the same 300-frame GC capture before moving to Fuel/Oil drift cleanup and Burst classification.

@@ -89,6 +89,12 @@ namespace Game.Runtime
         private IMatchHudSelectionPanelView _matchHudSelectionPanelView;
         private World _queryWorld;
         private EntityQuery _feedbackQuery;
+        private World _selectedTagQueryWorld;
+        private EntityQuery _selectedTagQuery;
+        private bool _hasLastPanelKey;
+        private SelectionPanelCacheKey _lastPanelKey;
+        private bool _hasLastTransportKey;
+        private TransportPanelCacheKey _lastTransportKey;
 
         public void ResetViewCache()
         {
@@ -98,6 +104,7 @@ namespace Game.Runtime
         public void BindMatchHudSelectionPanel(IMatchHudSelectionPanelView view)
         {
             _matchHudSelectionPanelView = view;
+            ClearPanelCache();
         }
 
         public void BindBattleHudRuntimeFeedback(IBattleHudRuntimeFeedbackSink feedbackSink)
@@ -315,9 +322,10 @@ namespace Game.Runtime
             }
 
             ensureEntityQueries?.Invoke(em);
-            int selectedCount = CountSelectedTags(em);
+            int selectedCount = CountSelectedTagsCached(em);
             if (selectedCount > 1)
             {
+                ClearPanelCache();
                 _matchHudSelectionPanelView.Apply(BuildSquadPanelModel(
                     context,
                     em,
@@ -334,12 +342,41 @@ namespace Game.Runtime
                 focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, selectionStateSystem, out Entity focusedUnit) &&
                 em.Exists(focusedUnit))
             {
-                _matchHudSelectionPanelView.Apply(BuildFocusedUnitPanelModel(
+                string attackModeOrderText = null;
+                bool hasAttackModeSnapshot = tryGetAttackModeOrderSnapshot != null &&
+                                             tryGetAttackModeOrderSnapshot(out attackModeOrderText);
+                bool boardAvailable = isBoardCommandAvailable != null && isBoardCommandAvailable(em, focusedUnit);
+                SelectionPanelCacheKey panelKey = CreateFocusedPanelCacheKey(
                     context,
                     em,
                     focusedUnit,
-                    tryGetAttackModeOrderSnapshot,
-                    isBoardCommandAvailable));
+                    hasAttackModeSnapshot,
+                    attackModeOrderText,
+                    boardAvailable);
+                if (!_hasLastPanelKey || !_lastPanelKey.Equals(panelKey))
+                {
+                    _matchHudSelectionPanelView.Apply(BuildFocusedUnitPanelModel(
+                        context,
+                        em,
+                        focusedUnit,
+                        hasAttackModeSnapshot,
+                        attackModeOrderText,
+                        boardAvailable));
+                    _lastPanelKey = panelKey;
+                    _hasLastPanelKey = true;
+                }
+
+                if (TryCreateFocusedTransportPanelCacheKey(
+                        focusedUnit,
+                        focusedUnitUiReadModelSystem,
+                        em,
+                        out TransportPanelCacheKey transportKey) &&
+                    _hasLastTransportKey &&
+                    _lastTransportKey.Equals(transportKey))
+                {
+                    return;
+                }
+
                 _matchHudSelectionPanelView.ApplyTransportPassengers(BuildTransportPassengersPanelModel(
                     context,
                     em,
@@ -347,11 +384,14 @@ namespace Game.Runtime
                     focusedUnitUiReadModelSystem,
                     transportPassengerPanelItems,
                     resolveSelectionCardPortraitSprite));
+                _lastTransportKey = transportKey;
+                _hasLastTransportKey = true;
                 return;
             }
 
             if (selectedCount > 0)
             {
+                ClearPanelCache();
                 _matchHudSelectionPanelView.Apply(BuildSquadPanelModel(
                     context,
                     em,
@@ -366,6 +406,7 @@ namespace Game.Runtime
 
             if (hasSelectedBuilding != null && hasSelectedBuilding())
             {
+                ClearPanelCache();
                 _matchHudSelectionPanelView.Apply(BuildSelectedBuildingPanelModel(
                     selectedBuildingLabel,
                     resolveSelectedBuildingPortraitSprite));
@@ -398,14 +439,15 @@ namespace Game.Runtime
                     context.SelectionUiReadModelLookup);
             }
 
-            int selectedCount = CountSelectedTags(em);
+            int selectedCount = CountSelectedTagsCached(em);
             if (selectedCount > 0)
             {
                 bool includeSelectedBuilding = hasSelectedBuilding != null && hasSelectedBuilding();
                 return BuildSelectedSummary(
                     em,
                     context.SelectionUiReadModelLookup,
-                    includeSelectedBuilding).OrderText;
+                    includeSelectedBuilding,
+                    GetSelectedTagQuery(em)).OrderText;
             }
 
             if (hasSelectedBuilding != null && hasSelectedBuilding())
@@ -420,6 +462,19 @@ namespace Game.Runtime
             bool includeSelectedBuilding)
         {
             using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            return BuildSelectedSummary(
+                em,
+                selectionUiReadModelLookup,
+                includeSelectedBuilding,
+                query);
+        }
+
+        private static SelectedSummary BuildSelectedSummary(
+            EntityManager em,
+            SelectionUiReadModelLookup selectionUiReadModelLookup,
+            bool includeSelectedBuilding,
+            EntityQuery query)
+        {
             if (query.IsEmptyIgnoreFilter)
             {
                 int noSelectionBuildingCount = includeSelectedBuilding ? 1 : 0;
@@ -508,24 +563,149 @@ namespace Game.Runtime
                 portraitKind);
         }
 
-        private static int CountSelectedTags(EntityManager em)
+        private EntityQuery GetSelectedTagQuery(EntityManager em)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
-            return query.CalculateEntityCount();
+            World world = em.World;
+            if (_selectedTagQueryWorld != world || world == null || !world.IsCreated)
+            {
+                _selectedTagQueryWorld = world;
+                _selectedTagQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            }
+
+            return _selectedTagQuery;
+        }
+
+        private int CountSelectedTagsCached(EntityManager em)
+        {
+            return GetSelectedTagQuery(em).CalculateEntityCount();
         }
 
         private void ApplySelectionPanelHidden()
         {
+            ClearPanelCache();
             _matchHudSelectionPanelView?.Apply(MatchHudSelectionPanelModel.Hidden);
             _matchHudSelectionPanelView?.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+        }
+
+        private void ClearPanelCache()
+        {
+            _hasLastPanelKey = false;
+            _lastPanelKey = default;
+            _hasLastTransportKey = false;
+            _lastTransportKey = default;
+        }
+
+        private static SelectionPanelCacheKey CreateFocusedPanelCacheKey(
+            Context context,
+            EntityManager em,
+            Entity entity,
+            bool hasAttackModeOrderSnapshot,
+            string attackModeOrderText,
+            bool boardAvailable)
+        {
+            context.SelectionUiReadModelLookup.TryGetFocusedUnitHealth(em, entity, out int healthCurrent, out int healthMax);
+            return new SelectionPanelCacheKey(
+                ToUiHandle(entity),
+                (int)context.SelectionUiReadModelLookup.GetFocusedUnitUiStatus(em, entity),
+                healthCurrent,
+                healthMax,
+                context.SelectionUiReadModelLookup.IsOwnedByPlayer(em, entity),
+                em.HasComponent<UnitMove>(entity),
+                context.SelectionUiReadModelLookup.IsVehicleForVisibleSelection(em, entity),
+                em.HasComponent<UnitTransportPassenger>(entity),
+                em.HasComponent<UnitTransportBoardingTarget>(entity),
+                hasAttackModeOrderSnapshot,
+                StableStringHash(attackModeOrderText),
+                boardAvailable);
+        }
+
+        private static bool TryCreateFocusedTransportPanelCacheKey(
+            Entity focusedUnit,
+            FocusedUnitUiReadModelUiSystemHelper focusedUnitUiReadModelSystem,
+            EntityManager em,
+            out TransportPanelCacheKey key)
+        {
+            key = new TransportPanelCacheKey(ToUiHandle(focusedUnit), false);
+            if (focusedUnitUiReadModelSystem == null ||
+                !focusedUnitUiReadModelSystem.TryRead(
+                    em,
+                    out FocusedUnitUiReadModelComponent focusedModel,
+                    out DynamicBuffer<FocusedUnitPassengerUiReadModelElement> passengers) ||
+                focusedModel.HasFocusedUnit == 0 ||
+                focusedModel.FocusedUnit != focusedUnit ||
+                focusedModel.OwnedByPlayer == 0)
+            {
+                return true;
+            }
+
+            if (focusedModel.TransportPassengerCapacity > 0)
+            {
+                int passengerHash = 17;
+                for (int i = 0; i < passengers.Length; i++)
+                {
+                    FocusedUnitPassengerUiReadModelElement passenger = passengers[i];
+                    unchecked
+                    {
+                        passengerHash = passengerHash * 31 + ToUiHandle(passenger.Passenger).GetHashCode();
+                        passengerHash = passengerHash * 31 + passenger.HealthCurrent;
+                        passengerHash = passengerHash * 31 + passenger.HealthMax;
+                    }
+                }
+
+                key = new TransportPanelCacheKey(
+                    ToUiHandle(focusedUnit),
+                    true,
+                    MatchHudStorageChipKind.Passengers,
+                    focusedModel.PassengerCount,
+                    focusedModel.TransportPassengerCapacity,
+                    focusedModel.TransportSoldierPassengerCount,
+                    focusedModel.TransportSoldierPassengerCapacity,
+                    focusedModel.TransportVehiclePassengerCount,
+                    focusedModel.TransportVehiclePassengerCapacity,
+                    0,
+                    0,
+                    0,
+                    0,
+                    passengerHash);
+                return true;
+            }
+
+            if (focusedModel.HasResourceCargo != 0 && focusedModel.ResourceCargoCapacity > 0)
+            {
+                key = new TransportPanelCacheKey(
+                    ToUiHandle(focusedUnit),
+                    true,
+                    MatchHudStorageChipKind.ResourceCargo,
+                    focusedModel.ResourceCargoOilBarrels + focusedModel.ResourceCargoFuelBarrels,
+                    focusedModel.ResourceCargoCapacity,
+                    0,
+                    0,
+                    0,
+                    0,
+                    focusedModel.ResourceCargoOilBarrels,
+                    focusedModel.ResourceCargoCapacity,
+                    focusedModel.ResourceCargoFuelBarrels,
+                    focusedModel.ResourceCargoCapacity,
+                    0);
+            }
+
+            return true;
+        }
+
+        private static int StableStringHash(string value)
+        {
+            return string.IsNullOrEmpty(value)
+                ? 0
+                : System.StringComparer.Ordinal.GetHashCode(value);
         }
 
         private MatchHudSelectionPanelModel BuildFocusedUnitPanelModel(
             Context context,
             EntityManager em,
             Entity entity,
-            TryGetAttackModeOrderSnapshotDelegate tryGetAttackModeOrderSnapshot,
-            IsBoardCommandAvailableDelegate isBoardCommandAvailable)
+            bool hasAttackModeOrderSnapshot,
+            string attackModeOrderText,
+            bool boardAvailable)
         {
             Sprite portraitSprite = context.ResolveSelectionPortraitSprite?.Invoke(em, entity);
             portraitSprite ??= _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
@@ -536,8 +716,7 @@ namespace Game.Runtime
             string orderText = ResolveFocusedUnitOrderText(em, entity, context.SelectionUiReadModelLookup);
             string focusedName = context.SelectionUiReadModelLookup.ResolveFocusedUnitName(em, entity);
             string focusedDescription = context.SelectionUiReadModelLookup.ResolveFocusedUnitDescription(em, entity);
-            if (tryGetAttackModeOrderSnapshot != null &&
-                tryGetAttackModeOrderSnapshot(out string attackModeOrderText))
+            if (hasAttackModeOrderSnapshot)
             {
                 orderText = attackModeOrderText;
             }
@@ -554,7 +733,7 @@ namespace Game.Runtime
                 null,
                 owned && movable && !em.HasComponent<UnitTransportPassenger>(entity),
                 owned,
-                isBoardCommandAvailable != null && isBoardCommandAvailable(em, entity));
+                boardAvailable);
         }
 
         private MatchHudTransportPassengersModel BuildTransportPassengersPanelModel(
@@ -710,7 +889,8 @@ namespace Game.Runtime
             SelectedSummary summary = BuildSelectedSummary(
                 em,
                 context.SelectionUiReadModelLookup,
-                includeSelectedBuilding);
+                includeSelectedBuilding,
+                GetSelectedTagQuery(em));
             string orderText = tryGetAttackModeOrderSnapshot != null &&
                                tryGetAttackModeOrderSnapshot(out string attackModeOrderText)
                 ? attackModeOrderText
@@ -956,6 +1136,153 @@ namespace Game.Runtime
             Vehicle = 1,
             Aircraft = 2,
             Transport = 3
+        }
+
+        private readonly struct SelectionPanelCacheKey : System.IEquatable<SelectionPanelCacheKey>
+        {
+            private readonly UiEntityHandle _entity;
+            private readonly int _status;
+            private readonly int _healthCurrent;
+            private readonly int _healthMax;
+            private readonly int _attackModeOrderHash;
+            private readonly bool _owned;
+            private readonly bool _movable;
+            private readonly bool _vehicle;
+            private readonly bool _transportPassenger;
+            private readonly bool _boardingTarget;
+            private readonly bool _hasAttackModeOrder;
+            private readonly bool _boardAvailable;
+
+            public SelectionPanelCacheKey(
+                UiEntityHandle entity,
+                int status,
+                int healthCurrent,
+                int healthMax,
+                bool owned,
+                bool movable,
+                bool vehicle,
+                bool transportPassenger,
+                bool boardingTarget,
+                bool hasAttackModeOrder,
+                int attackModeOrderHash,
+                bool boardAvailable)
+            {
+                _entity = entity;
+                _status = status;
+                _healthCurrent = healthCurrent;
+                _healthMax = healthMax;
+                _owned = owned;
+                _movable = movable;
+                _vehicle = vehicle;
+                _transportPassenger = transportPassenger;
+                _boardingTarget = boardingTarget;
+                _hasAttackModeOrder = hasAttackModeOrder;
+                _attackModeOrderHash = attackModeOrderHash;
+                _boardAvailable = boardAvailable;
+            }
+
+            public bool Equals(SelectionPanelCacheKey other)
+            {
+                return _entity == other._entity &&
+                       _status == other._status &&
+                       _healthCurrent == other._healthCurrent &&
+                       _healthMax == other._healthMax &&
+                       _attackModeOrderHash == other._attackModeOrderHash &&
+                       _owned == other._owned &&
+                       _movable == other._movable &&
+                       _vehicle == other._vehicle &&
+                       _transportPassenger == other._transportPassenger &&
+                       _boardingTarget == other._boardingTarget &&
+                       _hasAttackModeOrder == other._hasAttackModeOrder &&
+                       _boardAvailable == other._boardAvailable;
+            }
+        }
+
+        private readonly struct TransportPanelCacheKey : System.IEquatable<TransportPanelCacheKey>
+        {
+            private readonly UiEntityHandle _entity;
+            private readonly bool _visible;
+            private readonly MatchHudStorageChipKind _storageKind;
+            private readonly int _passengerCount;
+            private readonly int _capacity;
+            private readonly int _soldierPassengerCount;
+            private readonly int _soldierCapacity;
+            private readonly int _vehiclePassengerCount;
+            private readonly int _vehicleCapacity;
+            private readonly int _oilCurrent;
+            private readonly int _oilCapacity;
+            private readonly int _fuelCurrent;
+            private readonly int _fuelCapacity;
+            private readonly int _passengerHash;
+
+            public TransportPanelCacheKey(UiEntityHandle entity, bool visible)
+                : this(
+                    entity,
+                    visible,
+                    MatchHudStorageChipKind.Passengers,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0)
+            {
+            }
+
+            public TransportPanelCacheKey(
+                UiEntityHandle entity,
+                bool visible,
+                MatchHudStorageChipKind storageKind,
+                int passengerCount,
+                int capacity,
+                int soldierPassengerCount,
+                int soldierCapacity,
+                int vehiclePassengerCount,
+                int vehicleCapacity,
+                int oilCurrent,
+                int oilCapacity,
+                int fuelCurrent,
+                int fuelCapacity,
+                int passengerHash)
+            {
+                _entity = entity;
+                _visible = visible;
+                _storageKind = storageKind;
+                _passengerCount = passengerCount;
+                _capacity = capacity;
+                _soldierPassengerCount = soldierPassengerCount;
+                _soldierCapacity = soldierCapacity;
+                _vehiclePassengerCount = vehiclePassengerCount;
+                _vehicleCapacity = vehicleCapacity;
+                _oilCurrent = oilCurrent;
+                _oilCapacity = oilCapacity;
+                _fuelCurrent = fuelCurrent;
+                _fuelCapacity = fuelCapacity;
+                _passengerHash = passengerHash;
+            }
+
+            public bool Equals(TransportPanelCacheKey other)
+            {
+                return _entity == other._entity &&
+                       _visible == other._visible &&
+                       _storageKind == other._storageKind &&
+                       _passengerCount == other._passengerCount &&
+                       _capacity == other._capacity &&
+                       _soldierPassengerCount == other._soldierPassengerCount &&
+                       _soldierCapacity == other._soldierCapacity &&
+                       _vehiclePassengerCount == other._vehiclePassengerCount &&
+                       _vehicleCapacity == other._vehicleCapacity &&
+                       _oilCurrent == other._oilCurrent &&
+                       _oilCapacity == other._oilCapacity &&
+                       _fuelCurrent == other._fuelCurrent &&
+                       _fuelCapacity == other._fuelCapacity &&
+                       _passengerHash == other._passengerHash;
+            }
         }
 
         private static void TryGetHealthModel(

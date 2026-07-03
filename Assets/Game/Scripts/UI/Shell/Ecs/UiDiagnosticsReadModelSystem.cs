@@ -17,6 +17,7 @@ namespace Game.UI.Shell.Ecs
         private double accumulatedSeconds;
         private int accumulatedFrames;
         private int appliedLogVersion;
+        private byte previousLogVisible;
 
         public void OnCreate(ref SystemState state)
         {
@@ -60,7 +61,9 @@ namespace Game.UI.Shell.Ecs
             }
 
             int logVersion = UiDiagnosticsRuntimeLogBuffer.Version;
-            if (component.LogVisible != 0 || logVersion != appliedLogVersion)
+            bool logVisible = component.LogVisible != 0;
+            bool logBecameVisible = logVisible && previousLogVisible == 0;
+            if (logVisible && (logBecameVisible || logVersion != appliedLogVersion))
             {
                 FixedString4096Bytes logText = UiDiagnosticsRuntimeLogBuffer.BuildLogText();
                 if (!component.LogText.Equals(logText))
@@ -71,6 +74,12 @@ namespace Game.UI.Shell.Ecs
 
                 appliedLogVersion = logVersion;
             }
+            else if (!logVisible)
+            {
+                appliedLogVersion = logVersion;
+            }
+
+            previousLogVisible = component.LogVisible;
 
             if (changed)
                 state.EntityManager.SetComponentData(boundary, component);

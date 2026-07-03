@@ -21,8 +21,11 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             tests.RevertLoad_ReturnsCargoToSource();
             tests.TryCompleteUnload_ClampsDestinationCapacityAndClearsCargo();
             tests.TryCompleteUnload_WaitsWhenDestinationCannotFitCargo();
+            tests.TryCompleteLoad_ClearsOppositeCargoWhenLoadingFuel();
+            tests.TryCompleteUnload_PreservesCargoWhenDestinationCannotFitOil();
+            tests.RevertLoad_ReturnsOilAndClearsOnlyMatchingCargo();
             tests.Classification_DetectsHaulerSourceAndDestinationRoles();
-            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=9");
+            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=12");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -185,6 +188,73 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
         Assert.IsFalse(unloaded);
         Assert.AreEqual(16f, destination.StoredFuelBarrels);
         Assert.AreEqual(5f, hauler.CargoFuelBarrels);
+    }
+
+    [Test]
+    public void TryCompleteLoad_ClearsOppositeCargoWhenLoadingFuel()
+    {
+        var source = new TestHaulerBuilding
+        {
+            FuelStorageCapacity = 100,
+            FuelBarrelsPerDay = 12f,
+            StoredFuelBarrels = 30f
+        };
+        UnitResourceHauler hauler = new()
+        {
+            CargoOilBarrels = 7f
+        };
+
+        var system = new ResourceHaulerUtilitySystemHelper();
+        bool loaded = system.TryCompleteLoad(source, ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel, 10f, ref hauler);
+
+        Assert.IsTrue(loaded);
+        Assert.AreEqual(20f, source.StoredFuelBarrels);
+        Assert.AreEqual(10f, hauler.CargoFuelBarrels);
+        Assert.AreEqual(0f, hauler.CargoOilBarrels);
+    }
+
+    [Test]
+    public void TryCompleteUnload_PreservesCargoWhenDestinationCannotFitOil()
+    {
+        var destination = new TestHaulerBuilding
+        {
+            OilStorageCapacity = 20,
+            StoredOilBarrels = 16f
+        };
+        UnitResourceHauler hauler = new()
+        {
+            CargoOilBarrels = 5f
+        };
+
+        var system = new ResourceHaulerUtilitySystemHelper();
+        bool unloaded = system.TryCompleteUnload(destination, ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil, ref hauler);
+
+        Assert.IsFalse(unloaded);
+        Assert.AreEqual(16f, destination.StoredOilBarrels);
+        Assert.AreEqual(5f, hauler.CargoOilBarrels);
+    }
+
+    [Test]
+    public void RevertLoad_ReturnsOilAndClearsOnlyMatchingCargo()
+    {
+        var source = new TestHaulerBuilding
+        {
+            OilStorageCapacity = 50,
+            OilBarrelsPerDay = 10f,
+            StoredOilBarrels = 12f
+        };
+        UnitResourceHauler hauler = new()
+        {
+            CargoOilBarrels = 5f,
+            CargoFuelBarrels = 3f
+        };
+
+        var system = new ResourceHaulerUtilitySystemHelper();
+        system.RevertLoad(source, ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil, 5f, ref hauler);
+
+        Assert.AreEqual(17f, source.StoredOilBarrels);
+        Assert.AreEqual(0f, hauler.CargoOilBarrels);
+        Assert.AreEqual(3f, hauler.CargoFuelBarrels);
     }
 
     [Test]

@@ -18,7 +18,10 @@ public sealed class FactionResourceCompositionSystemHelperTests
             tests.TryGetPrimaryCapacityInfo_DerivesOilCapacityForFuelProducer();
             tests.UpdateResourceProduction_ExtractsOilUpToCapacity();
             tests.UpdateResourceProduction_ConvertsOilIntoFuel();
-            Debug.Log("[FactionResourceFocusedValidation] result=Passed tests=6");
+            tests.UpdateResourceProduction_ClampsOilAndFuelWhenLargeDeltaOverfillsStorage();
+            tests.UpdateResourceProduction_DoesNotConvertOilWhenFuelStorageIsFull();
+            tests.UpdateResourceProduction_IgnoresDestroyedBuildings();
+            Debug.Log("[FactionResourceFocusedValidation] result=Passed tests=9");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -147,6 +150,83 @@ public sealed class FactionResourceCompositionSystemHelperTests
         Assert.AreEqual(10f, refinery.StoredFuelBarrels);
         Assert.AreEqual(0f, result.OilExtractedBarrels);
         Assert.AreEqual(0.5f, result.FuelProducedBarrels);
+    }
+
+    [Test]
+    public void UpdateResourceProduction_ClampsOilAndFuelWhenLargeDeltaOverfillsStorage()
+    {
+        var oilPump = new TestResourceBuilding
+        {
+            OilStorageCapacity = 12,
+            OilBarrelsPerDay = 120f,
+            StoredOilBarrels = 9f
+        };
+        var refinery = new TestResourceBuilding
+        {
+            FuelStorageCapacity = 6,
+            FuelBarrelsPerDay = 60f,
+            StoredOilBarrels = 100f,
+            StoredFuelBarrels = 5f
+        };
+        var buildings = new Dictionary<int, TestResourceBuilding>
+        {
+            { 1, oilPump },
+            { 2, refinery }
+        };
+
+        var system = new FactionResourceCompositionSystemHelper();
+        FactionResourceCompositionSystemHelper.ResourceProductionTickResult result = system.UpdateResourceProduction(buildings, 10f, 5f, 2f);
+
+        Assert.AreEqual(12f, oilPump.StoredOilBarrels);
+        Assert.AreEqual(98f, refinery.StoredOilBarrels);
+        Assert.AreEqual(6f, refinery.StoredFuelBarrels);
+        Assert.AreEqual(3f, result.OilExtractedBarrels);
+        Assert.AreEqual(1f, result.FuelProducedBarrels);
+    }
+
+    [Test]
+    public void UpdateResourceProduction_DoesNotConvertOilWhenFuelStorageIsFull()
+    {
+        var refinery = new TestResourceBuilding
+        {
+            FuelStorageCapacity = 6,
+            FuelBarrelsPerDay = 60f,
+            StoredOilBarrels = 100f,
+            StoredFuelBarrels = 6f
+        };
+        var buildings = new Dictionary<int, TestResourceBuilding> { { 1, refinery } };
+
+        var system = new FactionResourceCompositionSystemHelper();
+        FactionResourceCompositionSystemHelper.ResourceProductionTickResult result = system.UpdateResourceProduction(buildings, 10f, 5f, 2f);
+
+        Assert.AreEqual(100f, refinery.StoredOilBarrels);
+        Assert.AreEqual(6f, refinery.StoredFuelBarrels);
+        Assert.AreEqual(0f, result.OilExtractedBarrels);
+        Assert.AreEqual(0f, result.FuelProducedBarrels);
+    }
+
+    [Test]
+    public void UpdateResourceProduction_IgnoresDestroyedBuildings()
+    {
+        var building = new TestResourceBuilding
+        {
+            IsDestroyed = true,
+            OilStorageCapacity = 10,
+            OilBarrelsPerDay = 100f,
+            FuelStorageCapacity = 10,
+            FuelBarrelsPerDay = 100f,
+            StoredOilBarrels = 5f,
+            StoredFuelBarrels = 5f
+        };
+        var buildings = new Dictionary<int, TestResourceBuilding> { { 1, building } };
+
+        var system = new FactionResourceCompositionSystemHelper();
+        FactionResourceCompositionSystemHelper.ResourceProductionTickResult result = system.UpdateResourceProduction(buildings, 10f, 5f, 2f);
+
+        Assert.AreEqual(5f, building.StoredOilBarrels);
+        Assert.AreEqual(5f, building.StoredFuelBarrels);
+        Assert.AreEqual(0f, result.OilExtractedBarrels);
+        Assert.AreEqual(0f, result.FuelProducedBarrels);
     }
 
     private sealed class TestResourceBuilding : FactionResourceCompositionSystemHelper.IResourceBuilding

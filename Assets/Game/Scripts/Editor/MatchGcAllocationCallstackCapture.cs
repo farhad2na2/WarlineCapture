@@ -414,6 +414,7 @@ namespace Game.Editor
             long playerRelevantBytes = 0;
             int playerRelevantSamples = 0;
             List<AllocationSite> playerRelevantSites = new(rankedSites.Count);
+            List<AllocationSite> editorToolingSites = new(rankedSites.Count);
             for (int i = 0; i < rankedSites.Count; i++)
             {
                 AllocationSite site = rankedSites[i];
@@ -421,6 +422,7 @@ namespace Game.Editor
                 {
                     editorToolingBytes += site.Bytes;
                     editorToolingSamples += site.Samples;
+                    editorToolingSites.Add(site);
                     continue;
                 }
 
@@ -458,7 +460,11 @@ namespace Game.Editor
             builder.AppendLine();
             AppendAllocationSiteTable(builder, playerRelevantSites);
             builder.AppendLine();
-            builder.AppendLine("## Top Allocation Sites");
+            builder.AppendLine("## Top Editor/Tooling Allocation Sites");
+            builder.AppendLine();
+            AppendAllocationSiteTable(builder, editorToolingSites);
+            builder.AppendLine();
+            builder.AppendLine("## Top Allocation Sites (Raw)");
             builder.AppendLine();
             AppendAllocationSiteTable(builder, rankedSites);
 
@@ -513,6 +519,7 @@ namespace Game.Editor
             else
                 builder.AppendLine("- This automated pass covers steady-state Match HUD/runtime after the shell completes the Menu -> Match transition.");
             builder.AppendLine("- Spike-frame call stacks still require an interactive Profiler capture with Call Stacks -> GC.Alloc enabled unless a deterministic spike driver is added.");
+            builder.AppendLine("- Editor/tooling rows include Burst compiler threads plus Unity AI/MCP/Tracing frames. Do not treat those raw rows as gameplay work unless they also appear in the player-relevant table.");
             builder.AppendLine("- Do not use this report to edit unrelated files unless they appear in the call stacks above.");
             return builder.ToString();
         }

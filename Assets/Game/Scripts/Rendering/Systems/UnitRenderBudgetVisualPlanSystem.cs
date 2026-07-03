@@ -7,6 +7,8 @@ namespace Game.Rendering
 {
     public readonly struct UnitRenderBudgetVisualPlan
     {
+        private const bool EnableFarImpostorVisuals = false;
+
         public struct Request
         {
             public Entity Unit;
@@ -140,10 +142,14 @@ namespace Game.Rendering
                 request.HasLowLodInstance &&
                 request.LowBand;
             bool shouldShowFar = !shouldShowDetail && !shouldShowMid && !shouldShowLow;
+            if (!EnableFarImpostorVisuals && shouldShowFar)
+                UseClosestMeshVisual(request, out shouldShowDetail, out shouldShowMid, out shouldShowLow, out shouldShowFar);
+
             bool forceImmediateDetailVisual = false;
             Counters counters = default;
             bool isProtectedVisibleCharacter = request.IsCharacter && request.Visible != 0;
             bool enemyShouldUseImpostor =
+                EnableFarImpostorVisuals &&
                 request.IsEnemyUnit &&
                 !request.IsSelectedUnit &&
                 request.DistanceSq >= request.EnemyImpostorDistanceSq;
@@ -189,14 +195,25 @@ namespace Game.Rendering
                 bool canUseFarImpostor = visibleCharacterVisual == UnitRenderVisualKind.Far;
                 bool canUseSafeLow = visibleCharacterVisual == UnitRenderVisualKind.Low;
                 bool canUseSafeMid = visibleCharacterVisual == UnitRenderVisualKind.Mid;
+                if (!EnableFarImpostorVisuals && canUseFarImpostor)
+                {
+                    UseClosestMeshVisual(request, out shouldShowDetail, out shouldShowMid, out shouldShowLow, out shouldShowFar);
+                    canUseFarImpostor = false;
+                    canUseSafeLow = shouldShowLow;
+                    canUseSafeMid = shouldShowMid;
+                }
+                else
+                {
+                    shouldShowDetail = visibleCharacterVisual == UnitRenderVisualKind.Detail;
+                    shouldShowMid = canUseSafeMid;
+                    shouldShowLow = canUseSafeLow;
+                    shouldShowFar = canUseFarImpostor;
+                }
+
                 bool mustShowDetailForSafety =
                     visibleCharacterVisual == UnitRenderVisualKind.Detail &&
                     !forceDetailNearVisible &&
                     !forceDetailByBudget;
-                shouldShowDetail = visibleCharacterVisual == UnitRenderVisualKind.Detail;
-                shouldShowMid = canUseSafeMid;
-                shouldShowLow = canUseSafeLow;
-                shouldShowFar = canUseFarImpostor;
                 forceImmediateDetailVisual = shouldShowDetail && (forceDetailNearVisible || mustShowDetailForSafety);
 
                 if (canUseFarImpostor)
@@ -229,10 +246,7 @@ namespace Game.Rendering
 
             if (enemyShouldUseImpostor && !(isProtectedVisibleCharacter && request.IsMovingUnit))
             {
-                shouldShowDetail = false;
-                shouldShowMid = false;
-                shouldShowLow = false;
-                shouldShowFar = true;
+                UseClosestMeshVisual(request, out shouldShowDetail, out shouldShowMid, out shouldShowLow, out shouldShowFar);
                 forceImmediateDetailVisual = false;
             }
 
@@ -286,6 +300,9 @@ namespace Game.Rendering
                 forceImmediateDetailVisual = true;
             }
 
+            if (!EnableFarImpostorVisuals && shouldShowFar)
+                UseClosestMeshVisual(request, out shouldShowDetail, out shouldShowMid, out shouldShowLow, out shouldShowFar);
+
             UnitRenderVisualKind desiredVisual = ResolveDesiredVisual(shouldShowDetail, shouldShowMid, shouldShowLow, shouldShowFar);
             return new Result(
                 shouldShowDetail,
@@ -306,7 +323,20 @@ namespace Game.Rendering
             if (low)
                 return UnitRenderVisualKind.Low;
 
-            return isCharacter ? UnitRenderVisualKind.Detail : UnitRenderVisualKind.Far;
+            return UnitRenderVisualKind.Detail;
+        }
+
+        private static void UseClosestMeshVisual(
+            Request request,
+            out bool shouldShowDetail,
+            out bool shouldShowMid,
+            out bool shouldShowLow,
+            out bool shouldShowFar)
+        {
+            shouldShowFar = false;
+            shouldShowLow = request.HasLowLodInstance;
+            shouldShowMid = !shouldShowLow && request.HasMidLodInstance;
+            shouldShowDetail = !shouldShowLow && !shouldShowMid;
         }
 
         private static UnitRenderVisualKind ResolveDesiredVisual(bool detail, bool mid, bool low, bool far)

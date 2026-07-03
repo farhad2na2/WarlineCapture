@@ -211,12 +211,16 @@ namespace Game.Rendering
                 UnitRenderVisualKind previousVisual = hadVisualState
                     ? (UnitRenderVisualKind)context.VisualStateLookup[unit].Current
                     : UnitRenderVisualKind.Unknown;
+                bool forceImmediateMeshVisual =
+                    previousVisual == UnitRenderVisualKind.Far &&
+                    desiredVisual != UnitRenderVisualKind.Far;
                 UnitRenderVisualKind activeVisual = context.VisualStateSystem.ResolveStableUnitRenderVisualState(
                     context.VisualStateLookup,
                     context.RenderStateEcb,
                     unit,
                     desiredVisual,
-                    visualPlan.ForceImmediateDetailVisual && desiredVisual == UnitRenderVisualKind.Detail,
+                    forceImmediateMeshVisual ||
+                    (visualPlan.ForceImmediateDetailVisual && desiredVisual == UnitRenderVisualKind.Detail),
                     context.CurrentFrame,
                     ref result.VisualStateChanges,
                     ref result.VisualStatePending,

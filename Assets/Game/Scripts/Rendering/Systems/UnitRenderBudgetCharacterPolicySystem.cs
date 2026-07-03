@@ -4,6 +4,8 @@ namespace Game.Rendering
 {
     public readonly struct UnitRenderBudgetCharacterPolicy
     {
+        private const bool EnableFarImpostorVisuals = false;
+
         public UnitRenderVisualKind ResolveVisibleCharacterVisualKind(
             bool movingVisibleCharacter,
             bool forceDetailNearVisible,
@@ -28,7 +30,7 @@ namespace Game.Rendering
                 return UnitRenderVisualKind.Detail;
             }
 
-            if (farEnoughForImpostor)
+            if (farEnoughForImpostor && EnableFarImpostorVisuals)
                 return UnitRenderVisualKind.Far;
             if (lowEnoughForSafeLow && hasSafeLow)
                 return UnitRenderVisualKind.Low;

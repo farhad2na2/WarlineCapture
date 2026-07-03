@@ -280,7 +280,8 @@ namespace Game.Editor
             public List<string> Ambiguous = new();
             public SerializableCategoryCount[] CategoryCounts = Array.Empty<SerializableCategoryCount>();
 
-            public Dictionary<string, int> ByCategory = new(StringComparer.Ordinal);
+            [NonSerialized]
+            public readonly Dictionary<string, int> ByCategory = new(StringComparer.Ordinal);
 
             public void PrepareForSerialization()
             {

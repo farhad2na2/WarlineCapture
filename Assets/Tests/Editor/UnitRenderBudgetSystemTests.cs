@@ -28,11 +28,11 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.RenderableQueryUsesCachedLookups();
             tests.MovingVisibleCharactersUseAnimatableMeshLodPath();
             tests.MovingVisibleCharactersFallbackToDetailWhenMeshLodIsNotAnimatable();
-            tests.IdleDistantVisibleCharactersUseFarImpostorPath();
+            tests.IdleDistantVisibleCharactersUseSafeLowMeshPath();
             tests.NearVisibleCharactersUseDetailedModelPath();
             tests.CharacterRenderPolicyDoesNotGloballyForceDetailedModelPath();
             tests.ImpostorTagRequestUsesCachedLookup();
-            tests.UnselectedEnemyBeyondImpostorThresholdUsesFarVisual();
+            tests.UnselectedEnemyBeyondImpostorThresholdUsesMeshLodVisual();
             tests.SelectedVehicleForcesImmediateDetailedVisual();
             tests.StableBudgetDoesNotSkipSelectedUnitsAndSelectionChanges();
             tests.SelectedVehicleReappliesDetailRootsWhenVisualStateAlreadyDetail();
@@ -454,7 +454,7 @@ public sealed partial class UnitRenderBudgetSystemTests
     }
 
     [Test]
-    public void IdleDistantVisibleCharactersUseFarImpostorPath()
+    public void IdleDistantVisibleCharactersUseSafeLowMeshPath()
     {
         var policy = new UnitRenderBudgetCharacterPolicy();
         UnitRenderVisualKind visual = policy.ResolveVisibleCharacterVisualKind(
@@ -468,7 +468,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             hasSafeLow: true,
             lowRootAnimatable: true);
 
-        Assert.AreEqual(UnitRenderVisualKind.Far, visual);
+        Assert.AreEqual(UnitRenderVisualKind.Low, visual);
     }
 
     [Test]
@@ -532,9 +532,9 @@ public sealed partial class UnitRenderBudgetSystemTests
     }
 
     [Test]
-    public void UnselectedEnemyBeyondImpostorThresholdUsesFarVisual()
+    public void UnselectedEnemyBeyondImpostorThresholdUsesMeshLodVisual()
     {
-        using var world = new World(nameof(UnselectedEnemyBeyondImpostorThresholdUsesFarVisual));
+        using var world = new World(nameof(UnselectedEnemyBeyondImpostorThresholdUsesMeshLodVisual));
         using var ecb = new EntityCommandBuffer(Allocator.Temp);
         using var readyTaggedThisFrame = new NativeHashSet<Entity>(1, Allocator.Temp);
 
@@ -558,7 +558,7 @@ public sealed partial class UnitRenderBudgetSystemTests
                 VisibleCharacterImpostorFarDistance = 48f,
                 HasMidLodInstance = true,
                 HasLowLodInstance = true,
-                MidBand = true,
+                MidBand = false,
                 LowBand = true
             },
             new UnitRenderBudgetCharacterPolicy(),
@@ -566,11 +566,11 @@ public sealed partial class UnitRenderBudgetSystemTests
             new UnitRenderBudgetAnimationReadiness(),
             new UnitRenderBudgetRenderableState());
 
-        Assert.AreEqual(UnitRenderVisualKind.Far, result.DesiredVisual);
-        Assert.IsTrue(result.ShouldShowFar);
+        Assert.AreEqual(UnitRenderVisualKind.Low, result.DesiredVisual);
+        Assert.IsFalse(result.ShouldShowFar);
         Assert.IsFalse(result.ShouldShowDetail);
         Assert.IsFalse(result.ShouldShowMid);
-        Assert.IsFalse(result.ShouldShowLow);
+        Assert.IsTrue(result.ShouldShowLow);
     }
 
     [Test]

@@ -1,0 +1,87 @@
+using Game.Components;
+using Game.Runtime;
+#if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using NUnit.Framework;
+using UnityEngine;
+
+public sealed class BuildingResourceProductionEcsSystemTests
+{
+    public static void RunFocusedValidation()
+    {
+        var tests = new BuildingResourceProductionEcsSystemTests();
+        try
+        {
+            tests.ApplyTick_ExtractsOilUpToCapacity();
+            tests.ApplyTick_ConvertsOilIntoFuel();
+            tests.ApplyTick_DoesNotConvertOilWhenFuelStorageIsFull();
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=3");
+            ValidationExit.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[BuildingResourceProductionEcsFocusedValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    [Test]
+    public void ApplyTick_ExtractsOilUpToCapacity()
+    {
+        var storage = new BuildingResourceStorageComponent
+        {
+            OilStorageCapacity = 10,
+            OilBarrelsPerDay = 20f,
+            StoredOilBarrels = 9f
+        };
+
+        BuildingResourceProductionEcsSystem.TickResult result =
+            BuildingResourceProductionEcsSystem.ApplyTick(ref storage, 10f, 1f, 2f);
+
+        Assert.AreEqual(10f, storage.StoredOilBarrels);
+        Assert.AreEqual(0f, storage.StoredFuelBarrels);
+        Assert.AreEqual(1f, result.OilExtractedBarrels);
+        Assert.AreEqual(0f, result.FuelProducedBarrels);
+    }
+
+    [Test]
+    public void ApplyTick_ConvertsOilIntoFuel()
+    {
+        var storage = new BuildingResourceStorageComponent
+        {
+            FuelStorageCapacity = 10,
+            FuelBarrelsPerDay = 10f,
+            StoredOilBarrels = 8f,
+            StoredFuelBarrels = 9.5f
+        };
+
+        BuildingResourceProductionEcsSystem.TickResult result =
+            BuildingResourceProductionEcsSystem.ApplyTick(ref storage, 10f, 1f, 2f);
+
+        Assert.AreEqual(7f, storage.StoredOilBarrels);
+        Assert.AreEqual(10f, storage.StoredFuelBarrels);
+        Assert.AreEqual(0f, result.OilExtractedBarrels);
+        Assert.AreEqual(0.5f, result.FuelProducedBarrels);
+    }
+
+    [Test]
+    public void ApplyTick_DoesNotConvertOilWhenFuelStorageIsFull()
+    {
+        var storage = new BuildingResourceStorageComponent
+        {
+            FuelStorageCapacity = 6,
+            FuelBarrelsPerDay = 60f,
+            StoredOilBarrels = 100f,
+            StoredFuelBarrels = 6f
+        };
+
+        BuildingResourceProductionEcsSystem.TickResult result =
+            BuildingResourceProductionEcsSystem.ApplyTick(ref storage, 10f, 5f, 2f);
+
+        Assert.AreEqual(100f, storage.StoredOilBarrels);
+        Assert.AreEqual(6f, storage.StoredFuelBarrels);
+        Assert.AreEqual(0f, result.OilExtractedBarrels);
+        Assert.AreEqual(0f, result.FuelProducedBarrels);
+    }
+}
+#endif

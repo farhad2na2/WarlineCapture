@@ -14,7 +14,8 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.ApplyTick_ExtractsOilUpToCapacity();
             tests.ApplyTick_ConvertsOilIntoFuel();
             tests.ApplyTick_DoesNotConvertOilWhenFuelStorageIsFull();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=3");
+            tests.ProductionRuntimeTick_SyncsResourceStorageMirrorAfterProductionUpdate();
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=4");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -82,6 +83,52 @@ public sealed class BuildingResourceProductionEcsSystemTests
         Assert.AreEqual(6f, storage.StoredFuelBarrels);
         Assert.AreEqual(0f, result.OilExtractedBarrels);
         Assert.AreEqual(0f, result.FuelProducedBarrels);
+    }
+
+    [Test]
+    public void ProductionRuntimeTick_SyncsResourceStorageMirrorAfterProductionUpdate()
+    {
+        var building = new RuntimeBuildingEntity
+        {
+            Id = 12,
+            Definition = new BuildingDefinition
+            {
+                OilStorageCapacity = 20,
+                OilBarrelsPerDay = 4f
+            },
+            StoredOilBarrels = 7f
+        };
+        var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+        {
+            { building.Id, building }
+        };
+        int syncCount = 0;
+        float syncedOil = -1f;
+        var context = new BuildingProductionRuntimeTickCompositionSystemHelper.Context(
+            runtimeBuildings,
+            null,
+            new FactionResourceCompositionSystemHelper(),
+            null,
+            default,
+            null,
+            default,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            2f,
+            syncedBuilding =>
+            {
+                syncCount++;
+                syncedOil = syncedBuilding.StoredOilBarrels;
+            });
+
+        new BuildingProductionRuntimeTickCompositionSystemHelper().UpdateResourceProduction(context);
+
+        Assert.AreEqual(1, syncCount);
+        Assert.AreEqual(7f, syncedOil);
     }
 }
 #endif

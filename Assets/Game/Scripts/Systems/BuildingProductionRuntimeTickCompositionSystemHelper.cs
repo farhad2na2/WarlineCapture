@@ -21,6 +21,7 @@ namespace Game.Runtime
             public readonly Action<uint> SetRandomState;
             public readonly Action<float> RecordOilExtracted;
             public readonly Action<float> RecordFuelProduced;
+            public readonly Action<RuntimeBuildingEntity> SyncResourceStorage;
             public readonly Func<bool> HasPendingPathJob;
             public readonly float OilBarrelsPerFuelBarrel;
 
@@ -38,7 +39,8 @@ namespace Game.Runtime
                 Action<float> recordOilExtracted,
                 Action<float> recordFuelProduced,
                 Func<bool> hasPendingPathJob,
-                float oilBarrelsPerFuelBarrel)
+                float oilBarrelsPerFuelBarrel,
+                Action<RuntimeBuildingEntity> syncResourceStorage = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 RuntimeBuildingMap = runtimeBuildings as Dictionary<int, RuntimeBuildingEntity>;
@@ -53,6 +55,7 @@ namespace Game.Runtime
                 SetRandomState = setRandomState;
                 RecordOilExtracted = recordOilExtracted;
                 RecordFuelProduced = recordFuelProduced;
+                SyncResourceStorage = syncResourceStorage;
                 HasPendingPathJob = hasPendingPathJob;
                 OilBarrelsPerFuelBarrel = oilBarrelsPerFuelBarrel;
             }
@@ -112,6 +115,40 @@ namespace Game.Runtime
                 context.RecordOilExtracted?.Invoke(result.OilExtractedBarrels);
             if (result.FuelProducedBarrels > 0f)
                 context.RecordFuelProduced?.Invoke(result.FuelProducedBarrels);
+
+            SyncResourceStorageMirrors(context);
+        }
+
+        private static void SyncResourceStorageMirrors(Context context)
+        {
+            if (context.SyncResourceStorage == null || context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
+                return;
+
+            if (context.RuntimeBuildingMap != null)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
+                    SyncResourceStorageMirror(context, pair.Value);
+                return;
+            }
+
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+                SyncResourceStorageMirror(context, pair.Value);
+        }
+
+        private static void SyncResourceStorageMirror(Context context, RuntimeBuildingEntity building)
+        {
+            if (building == null || building.IsDestroyed)
+                return;
+
+            bool hasStorageOrProduction =
+                building.OilStorageCapacity > 0 ||
+                building.FuelStorageCapacity > 0 ||
+                building.OilBarrelsPerDay > 0f ||
+                building.FuelBarrelsPerDay > 0f;
+            if (!hasStorageOrProduction)
+                return;
+
+            context.SyncResourceStorage(building);
         }
 
         public void UpdateResourceHaulers(Context context)

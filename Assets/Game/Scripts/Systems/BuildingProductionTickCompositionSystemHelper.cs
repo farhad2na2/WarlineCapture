@@ -1,4 +1,6 @@
 using System;
+using Game.Components;
+using Unity.Entities;
 
 namespace Game.Runtime
 {
@@ -24,7 +26,35 @@ namespace Game.Runtime
                 GameRuntimeStats.RecordOilExtracted,
                 GameRuntimeStats.RecordFuelProduced,
                 source.UnitPathfindingPendingStateReader.HasPendingPathJob,
-                oilBarrelsPerFuelBarrel);
+                oilBarrelsPerFuelBarrel,
+                building => SyncBuildingResourceStorage(source, building));
+        }
+
+        private static void SyncBuildingResourceStorage(
+            BuildingGameplaySourceCompositionSystemHelper source,
+            RuntimeBuildingEntity building)
+        {
+            if (source == null ||
+                building == null ||
+                building.CombatEntity == Entity.Null ||
+                !source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager) ||
+                !entityManager.Exists(building.CombatEntity) ||
+                !entityManager.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
+            {
+                return;
+            }
+
+            BuildingResourceStorageComponent storage =
+                entityManager.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
+            storage.RuntimeBuildingId = building.Id;
+            storage.OwnerFactionId = building.OwnerFactionId;
+            storage.OilStorageCapacity = Math.Max(0, building.OilStorageCapacity);
+            storage.FuelStorageCapacity = Math.Max(0, building.FuelStorageCapacity);
+            storage.OilBarrelsPerDay = Math.Max(0f, building.OilBarrelsPerDay);
+            storage.FuelBarrelsPerDay = Math.Max(0f, building.FuelBarrelsPerDay);
+            storage.StoredOilBarrels = Math.Max(0f, building.StoredOilBarrels);
+            storage.StoredFuelBarrels = Math.Max(0f, building.StoredFuelBarrels);
+            entityManager.SetComponentData(building.CombatEntity, storage);
         }
     }
 }

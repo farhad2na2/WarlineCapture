@@ -26,6 +26,9 @@ namespace Game.UI.Runtime
 
         public void Draw()
         {
+            if (Event.current == null || Event.current.type != EventType.Repaint)
+                return;
+
             if (_state == null || !_state.TryRead(out SelectionRectangleStateModel state))
                 return;
 

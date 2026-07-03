@@ -255,6 +255,12 @@ namespace Game.Editor
             string loadStatus = LoadRawProfileForAnalysis();
             string report = BuildReport(loadStatus);
             WriteReport(report);
+            if (!TryValidateRuntimeAllocationProbes(out string allocationProbeStatus))
+            {
+                Finish(false, $"[MatchGcAllocationCallstackCapture] result=Failed frames={CaptureFrameCount} report={ReportPath} raw={ProfilerRawPath} {allocationProbeStatus}");
+                return;
+            }
+
             Finish(true, $"[MatchGcAllocationCallstackCapture] result=Passed frames={CaptureFrameCount} report={ReportPath} raw={ProfilerRawPath}");
         }
 
@@ -403,18 +409,18 @@ namespace Game.Editor
                 totalSamples += rankedFrames[i].Samples;
             }
 
-            long editorCompilerThreadBytes = 0;
-            int editorCompilerThreadSamples = 0;
+            long editorToolingBytes = 0;
+            int editorToolingSamples = 0;
             long playerRelevantBytes = 0;
             int playerRelevantSamples = 0;
             List<AllocationSite> playerRelevantSites = new(rankedSites.Count);
             for (int i = 0; i < rankedSites.Count; i++)
             {
                 AllocationSite site = rankedSites[i];
-                if (IsEditorCompilerThread(site.ThreadName))
+                if (IsEditorToolingAllocation(site))
                 {
-                    editorCompilerThreadBytes += site.Bytes;
-                    editorCompilerThreadSamples += site.Samples;
+                    editorToolingBytes += site.Bytes;
+                    editorToolingSamples += site.Samples;
                     continue;
                 }
 
@@ -439,16 +445,16 @@ namespace Game.Editor
             builder.AppendLine($"- Scanned thread views: {scannedThreads}");
             builder.AppendLine($"- GC.Alloc samples: {totalSamples}");
             builder.AppendLine($"- GC.Alloc bytes from hierarchy column: {totalBytes}");
-            builder.AppendLine($"- GC.Alloc samples excluding editor compiler threads: {playerRelevantSamples}");
-            builder.AppendLine($"- GC.Alloc bytes excluding editor compiler threads: {playerRelevantBytes}");
-            builder.AppendLine($"- Editor compiler-thread GC.Alloc samples: {editorCompilerThreadSamples}");
-            builder.AppendLine($"- Editor compiler-thread GC.Alloc bytes: {editorCompilerThreadBytes}");
+            builder.AppendLine($"- GC.Alloc samples excluding editor/tooling rows: {playerRelevantSamples}");
+            builder.AppendLine($"- GC.Alloc bytes excluding editor/tooling rows: {playerRelevantBytes}");
+            builder.AppendLine($"- Editor/tooling GC.Alloc samples excluded from player-relevant rows: {editorToolingSamples}");
+            builder.AppendLine($"- Editor/tooling GC.Alloc bytes excluded from player-relevant rows: {editorToolingBytes}");
             builder.AppendLine($"- Raw load status: `{loadStatus}`");
             builder.AppendLine($"- Raw capture: `{ProfilerRawPath}`");
             builder.AppendLine($"- Editor live conversion systems disabled before warmup: {SessionState.GetInt(EditorLiveConversionDisabledCountKey, 0)}");
             AppendRuntimeAllocationProbeSummary(builder);
             builder.AppendLine();
-            builder.AppendLine("## Top Allocation Sites Excluding Editor Compiler Threads");
+            builder.AppendLine("## Top Allocation Sites Excluding Editor/Tooling Rows");
             builder.AppendLine();
             AppendAllocationSiteTable(builder, playerRelevantSites);
             builder.AppendLine();
@@ -543,10 +549,24 @@ namespace Game.Editor
                 builder.AppendLine("| 0 | 0 | 0 | 0 | n/a | n/a | No GC.Alloc samples found in this automated capture. | n/a |");
         }
 
-        private static bool IsEditorCompilerThread(string threadName)
+        private static bool IsEditorToolingAllocation(AllocationSite site)
         {
-            return !string.IsNullOrEmpty(threadName) &&
-                   threadName.StartsWith("Burst-CompilerThread", StringComparison.Ordinal);
+            if (site == null)
+                return false;
+
+            if (!string.IsNullOrEmpty(site.ThreadName) &&
+                site.ThreadName.StartsWith("Burst-CompilerThread", StringComparison.Ordinal))
+                return true;
+
+            return ContainsEditorToolingFrame(site.Callstack) ||
+                   ContainsEditorToolingFrame(site.HierarchyPath);
+        }
+
+        private static bool ContainsEditorToolingFrame(string value)
+        {
+            return !string.IsNullOrEmpty(value) &&
+                   (value.Contains("Unity.AI.MCP.Editor", StringComparison.Ordinal) ||
+                    value.Contains("Unity.AI.Tracing", StringComparison.Ordinal));
         }
 
         private static CaptureMode GetCaptureMode()
@@ -590,6 +610,30 @@ namespace Game.Editor
                 .Append(" allocating updates / ")
                 .Append(bootstrapUpdateSamples)
                 .AppendLine(" total updates.");
+            builder.Append("- Runtime allocation probe assertion: ")
+                .Append(shellBytes == 0 && bootstrapBytes == 0 ? "Passed." : "Failed.")
+                .AppendLine();
+        }
+
+        private static bool TryValidateRuntimeAllocationProbes(out string status)
+        {
+            UIShellEcsPresentationSystem.GetEditorAllocationProbe(
+                out long shellBytes,
+                out int shellAllocationSamples,
+                out int shellUpdateSamples);
+            MenuBootstrapView.GetEditorAllocationProbe(
+                out long bootstrapBytes,
+                out int bootstrapAllocationSamples,
+                out int bootstrapUpdateSamples);
+            if (shellBytes == 0 && bootstrapBytes == 0)
+            {
+                status = "runtimeAllocationProbe=Passed";
+                return true;
+            }
+
+            status =
+                $"runtimeAllocationProbe=Failed shell={shellBytes}B/{shellAllocationSamples}allocating/{shellUpdateSamples}updates bootstrap={bootstrapBytes}B/{bootstrapAllocationSamples}allocating/{bootstrapUpdateSamples}updates";
+            return false;
         }
 
         private static string ReportPath => GetCaptureMode() == CaptureMode.Battle

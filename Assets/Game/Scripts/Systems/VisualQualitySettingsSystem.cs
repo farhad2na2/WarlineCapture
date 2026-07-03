@@ -12,7 +12,7 @@ namespace Game.Runtime
         private static readonly int GroundVariationDisabledId = Shader.PropertyToID("_GroundVariationDisabled");
         private const float MinimumLowRenderScale = 0.72f;
         private const float MinimumMediumRenderScale = 0.9f;
-        private const float MinimumHighRenderScale = 1f;
+        private const float MinimumHighRenderScale = 0.9f;
         private const float MinimumUltraRenderScale = 1f;
 
         private VisualQualityProfileAsset _premiumProfile;

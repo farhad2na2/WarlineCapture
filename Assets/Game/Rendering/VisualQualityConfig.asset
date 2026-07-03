@@ -18,7 +18,7 @@ MonoBehaviour:
   renderPipelineAsset: {fileID: 11400000, guid: 540d0d69be1d47ad8d8aabbaa70ec494, type: 2}
   globalVolumeProfile: {fileID: 11400000, guid: bbfd3934d17f45fd8402c04c2be5e759, type: 2}
   lowRenderScaleOverride: 0.72
-  mediumRenderScaleOverride: 1
+  mediumRenderScaleOverride: 0.9
   enableCameraPostProcessing: 1
   cameraAntialiasingMode: 1
   cameraRenderScaleOverride: 1

@@ -11,16 +11,18 @@ public sealed class AndroidVisualQualityValidationTests
     private const string MobileRenderPipelinePath = "Assets/Settings/Mobile_RPAsset.asset";
     private const string VisualQualityProfilePath = "Assets/Game/Rendering/VisualQualityConfig.asset";
     private const float MinimumLowRenderScale = 0.72f;
-    private const float MinimumMediumRenderScale = 0.99f;
+    private const float BalancedMobileRenderScale = 0.9f;
+    private const int BalancedMobileMsaa = 2;
+    private const float BalancedMobileShadowDistance = 22f;
 
     public static void RunFocusedValidation()
     {
         try
         {
             int passed = 0;
-            RunCase(() => MobileRenderPipelineUsesNativeScaleAndMsaa(), ref passed);
-            RunCase(() => VisualQualityProfileDoesNotUndersampleAndroidMatchRendering(), ref passed);
-            RunCase(() => MobileQualityTierKeepsMsaaEnabled(), ref passed);
+            RunCase(() => MobileRenderPipelineUsesBalancedScaleAndMsaa(), ref passed);
+            RunCase(() => VisualQualityProfileUsesBalancedAndroidMatchRendering(), ref passed);
+            RunCase(() => MobileQualityTierUsesBalancedMsaaAndShadows(), ref passed);
             Debug.Log($"[AndroidVisualQualityValidation] result=Passed tests={passed}");
         }
         catch (Exception exception)
@@ -37,7 +39,7 @@ public sealed class AndroidVisualQualityValidationTests
     }
 
     [Test]
-    public static void MobileRenderPipelineUsesNativeScaleAndMsaa()
+    public static void MobileRenderPipelineUsesBalancedScaleAndMsaa()
     {
         UnityEngine.Object asset =
             AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(MobileRenderPipelinePath);
@@ -46,15 +48,18 @@ public sealed class AndroidVisualQualityValidationTests
         SerializedObject serializedAsset = new(asset);
         SerializedProperty msaa = serializedAsset.FindProperty("m_MSAA");
         SerializedProperty renderScale = serializedAsset.FindProperty("m_RenderScale");
+        SerializedProperty shadowDistance = serializedAsset.FindProperty("m_ShadowDistance");
 
         Assert.NotNull(msaa, "Mobile URP asset is missing serialized m_MSAA.");
         Assert.NotNull(renderScale, "Mobile URP asset is missing serialized m_RenderScale.");
-        Assert.GreaterOrEqual(msaa.intValue, 4, "Android/mobile pipeline must keep geometry edges anti-aliased.");
-        Assert.GreaterOrEqual(renderScale.floatValue, 0.99f, "Android/mobile pipeline must not upscale an undersampled world render.");
+        Assert.NotNull(shadowDistance, "Mobile URP asset is missing serialized m_ShadowDistance.");
+        Assert.AreEqual(BalancedMobileMsaa, msaa.intValue, "Android/mobile pipeline should use balanced 2x MSAA for 60 FPS.");
+        Assert.That(renderScale.floatValue, Is.EqualTo(BalancedMobileRenderScale).Within(0.001f), "Android/mobile pipeline should use balanced 0.90 render scale.");
+        Assert.That(shadowDistance.floatValue, Is.EqualTo(BalancedMobileShadowDistance).Within(0.001f), "Android/mobile shadows should stay bounded for 60 FPS.");
     }
 
     [Test]
-    public static void VisualQualityProfileDoesNotUndersampleAndroidMatchRendering()
+    public static void VisualQualityProfileUsesBalancedAndroidMatchRendering()
     {
         VisualQualityProfileAsset profile =
             AssetDatabase.LoadAssetAtPath<VisualQualityProfileAsset>(VisualQualityProfilePath);
@@ -64,18 +69,18 @@ public sealed class AndroidVisualQualityValidationTests
             profile.LowRenderScaleOverride,
             MinimumLowRenderScale,
             "Low mode can be cheaper, but it must stay above visibly broken mobile undersampling.");
-        Assert.GreaterOrEqual(
+        Assert.That(
             profile.MediumRenderScaleOverride,
-            MinimumMediumRenderScale,
-            "Match High mode uses the mobile pipeline and must render at native scale on Android.");
+            Is.EqualTo(BalancedMobileRenderScale).Within(0.001f),
+            "Match High mode uses the balanced mobile render scale on Android.");
         Assert.GreaterOrEqual(
             profile.CameraRenderScaleOverride,
-            MinimumMediumRenderScale,
+            BalancedMobileRenderScale,
             "Ultra camera render scale must not undersample the match world.");
     }
 
     [Test]
-    public static void MobileQualityTierKeepsMsaaEnabled()
+    public static void MobileQualityTierUsesBalancedMsaaAndShadows()
     {
         string qualitySettingsPath = Path.GetFullPath(Path.Combine(Application.dataPath, "../ProjectSettings/QualitySettings.asset"));
         string qualitySettings = File.ReadAllText(qualitySettingsPath);
@@ -87,7 +92,8 @@ public sealed class AndroidVisualQualityValidationTests
             ? qualitySettings.Substring(mobileIndex, nextTierIndex - mobileIndex)
             : qualitySettings.Substring(mobileIndex);
 
-        StringAssert.Contains("antiAliasing: 4", mobileBlock, "Android Mobile quality tier must keep 4x MSAA enabled.");
+        StringAssert.Contains("antiAliasing: 2", mobileBlock, "Android Mobile quality tier should use balanced 2x MSAA.");
+        StringAssert.Contains("shadowDistance: 22", mobileBlock, "Android Mobile quality tier should cap shadow distance for 60 FPS.");
     }
 }
 #endif

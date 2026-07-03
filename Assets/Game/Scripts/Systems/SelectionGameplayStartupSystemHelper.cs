@@ -178,6 +178,10 @@ namespace Game.Runtime
                 IsValidBoardPassengerPreviewTarget;
             int lastSelectionUiRefreshVersion = int.MinValue;
             double nextSelectionUiRefreshAt = 0d;
+            bool hasLastNormalPointerState = false;
+            Vector2 lastNormalPointerPosition = Vector2.zero;
+            bool lastNormalPointerPressed = false;
+            bool lastCommandPreviewActive = false;
 
             selectionUiCamera.Init(rtsSelectionConfig, worldCamera);
             selectionBuildingInteraction.Init(selectionStateSystem, selectionScreenMarkers, worldCamera);
@@ -286,25 +290,35 @@ namespace Game.Runtime
 
             void UpdateSelectionRuntimePhases()
             {
+                RtsSelectionInputCompositionSystemHelper.PendingCommandSummary commandSummary =
+                    rtsSelectionInputSystem.GetPendingCommandSummary();
+
                 using (SelectionCommandFlushMarker.Auto())
                 {
-                    if (rtsSelectionInputSystem.HasPendingTransportCommandRequests())
+                    if (commandSummary.HasTransportCommandRequestsOrResults)
                         rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(GetCommandResultFlushContext());
-                    if (rtsSelectionInputSystem.HasPendingMoveCommandRequestsOrResults())
+                    if (commandSummary.HasMoveCommandRequestsOrResults)
                         rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(GetCommandResultFlushContext());
-                    if (rtsSelectionInputSystem.HasPendingAttackCommandRequestsOrResults())
+                    if (commandSummary.HasAttackCommandRequestsOrResults)
                         rtsSelectionCommandResultFlushSystem.ProcessAttackCommandRequests(
                             GetCommandResultFlushContext(),
                             explicitAttackTargetModeActive);
-                    if (rtsSelectionInputSystem.HasPendingScanCommandRequestsOrResults())
+                    if (commandSummary.HasScanCommandRequestsOrResults)
                         rtsSelectionCommandResultFlushSystem.ProcessScanCommandRequests(GetCommandResultFlushContext());
-                    rtsSelectionCommandResultFlushSystem.ProcessSelectionModeCommandRequests(
-                        GetCommandResultFlushContext(),
-                        UnityEngine.Time.frameCount);
-                    rtsSelectionCommandResultFlushSystem.ProcessMoveTargetModeCommandRequests(
-                        GetCommandResultFlushContext(),
-                        UnityEngine.Time.frameCount);
-                    if (TryGetDefaultEntityManager(out EntityManager attackTargetModeEntityManager))
+                    if (commandSummary.HasSelectionModeCommandRequests)
+                    {
+                        rtsSelectionCommandResultFlushSystem.ProcessSelectionModeCommandRequests(
+                            GetCommandResultFlushContext(),
+                            UnityEngine.Time.frameCount);
+                    }
+                    if (commandSummary.HasMoveTargetModeCommandRequests)
+                    {
+                        rtsSelectionCommandResultFlushSystem.ProcessMoveTargetModeCommandRequests(
+                            GetCommandResultFlushContext(),
+                            UnityEngine.Time.frameCount);
+                    }
+                    if (commandSummary.HasAttackTargetModeCommandRequests &&
+                        TryGetDefaultEntityManager(out EntityManager attackTargetModeEntityManager))
                     {
                         Entity focusedUnit = focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(
                             attackTargetModeEntityManager,
@@ -323,27 +337,41 @@ namespace Game.Runtime
                                 focusedUnit);
                         }
                     }
-                    rtsSelectionCommandResultFlushSystem.ProcessScanTargetModeCommandRequests(
-                        GetCommandResultFlushContext(),
-                        UnityEngine.Time.frameCount);
-                    rtsSelectionCommandResultFlushSystem.ProcessBoardTargetModeCommandRequests(
-                        GetCommandResultFlushContext(),
-                        UnityEngine.Time.frameCount);
-                    rtsSelectionCommandResultFlushSystem.ProcessCancelActiveCommandModeRequests(GetCommandResultFlushContext());
-                    rtsSelectionCommandResultFlushSystem.ProcessImmediateSelectedUnitCommandRequests(
-                        GetCommandResultFlushContext(),
-                        selectionStateSystem.FocusedUnit);
-                    if (runtimeConfig.WorldCamera != null)
+                    if (commandSummary.HasScanTargetModeCommandRequests)
+                    {
+                        rtsSelectionCommandResultFlushSystem.ProcessScanTargetModeCommandRequests(
+                            GetCommandResultFlushContext(),
+                            UnityEngine.Time.frameCount);
+                    }
+                    if (commandSummary.HasBoardTargetModeCommandRequests)
+                    {
+                        rtsSelectionCommandResultFlushSystem.ProcessBoardTargetModeCommandRequests(
+                            GetCommandResultFlushContext(),
+                            UnityEngine.Time.frameCount);
+                    }
+                    if (commandSummary.HasCancelActiveCommandModeRequests)
+                        rtsSelectionCommandResultFlushSystem.ProcessCancelActiveCommandModeRequests(GetCommandResultFlushContext());
+                    if (commandSummary.HasImmediateSelectedUnitCommandRequests)
+                    {
+                        rtsSelectionCommandResultFlushSystem.ProcessImmediateSelectedUnitCommandRequests(
+                            GetCommandResultFlushContext(),
+                            selectionStateSystem.FocusedUnit);
+                    }
+                    if (commandSummary.HasSelectAllCommandRequests && runtimeConfig.WorldCamera != null)
                         rtsSelectionCommandResultFlushSystem.ProcessSelectAllCommandRequests(GetCommandResultFlushContext());
-                    rtsSelectionCommandResultFlushSystem.ProcessDeselectAllCommandRequests(GetCommandResultFlushContext());
+                    if (commandSummary.HasDeselectAllCommandRequests)
+                        rtsSelectionCommandResultFlushSystem.ProcessDeselectAllCommandRequests(GetCommandResultFlushContext());
                 }
 
                 using (SelectionInputMarker.Auto())
                 {
-                    if (rtsSelectionInputSystem.HasPendingExternalSelectionCommandRequests())
+                    if (commandSummary.HasExternalSelectionCommandRequests)
                         rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
-                    RtsSelectionRuntimeInputCompositionSystemHelper.Context inputContext = GetRuntimeInputContext();
-                    rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
+                    if (commandSummary.HasQueuedMoveOrder || commandSummary.HasMoveCommandRequestsOrResults)
+                    {
+                        RtsSelectionRuntimeInputCompositionSystemHelper.Context inputContext = GetRuntimeInputContext();
+                        rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
+                    }
                 }
 
                 bool refreshSelectionUi = ShouldRefreshSelectionUi();
@@ -400,11 +428,19 @@ namespace Game.Runtime
                 using (SelectionMarkerPreviewMarker.Auto())
                 {
                     rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(GetCommandResultFlushContext());
-                    rtsSelectionCommandResultFlushSystem.UpdateCommandPreviewMarkers(
-                        GetCommandResultFlushContext(),
-                        explicitAttackTargetModeActive,
-                        isValidBoardTransportPreviewTargetAction,
-                        isValidBoardPassengerPreviewTargetAction);
+                    bool commandPreviewActive =
+                        explicitAttackTargetModeActive ||
+                        rtsSelectionInputSystem.TryGetActiveCommandMode(out _) ||
+                        rtsSelectionInputSystem.TryGetActiveBoardCommandMode(out _, out _);
+                    if (commandPreviewActive || lastCommandPreviewActive || commandSummary.HasAnyCommandFlushWork)
+                    {
+                        rtsSelectionCommandResultFlushSystem.UpdateCommandPreviewMarkers(
+                            GetCommandResultFlushContext(),
+                            explicitAttackTargetModeActive,
+                            isValidBoardTransportPreviewTargetAction,
+                            isValidBoardPassengerPreviewTargetAction);
+                    }
+                    lastCommandPreviewActive = commandPreviewActive;
                 }
 
                 RtsSelectionRuntimeCameraSystemHelper.Context cameraContext = GetRuntimeCameraContext();
@@ -412,12 +448,59 @@ namespace Game.Runtime
                 using (SelectionCameraMarker.Auto())
                 {
                     if (rtsSelectionRuntimeCameraSystem != null &&
-                        rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(cameraContext))
+                        rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(cameraContext) &&
+                        ShouldUpdateNormalPointerInput(commandSummary))
                     {
                         rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(cameraInputContext);
                     }
                     UpdateTacticalFollowCameraPose();
                 }
+            }
+
+            bool ShouldUpdateNormalPointerInput(RtsSelectionInputCompositionSystemHelper.PendingCommandSummary commandSummary)
+            {
+                if (commandSummary.HasActiveCommandMode ||
+                    rtsSelectionInputSystem.TryGetActiveCommandMode(out _) ||
+                    runtimeGameplayStateSystem.SelectionModeActive ||
+                    runtimeGameplayStateSystem.SuppressNextWorldClick ||
+                    selectionUiCamera.IsCameraDragging ||
+                    rtsSelectionInputSystem.IsDraggingSelection ||
+                    rtsSelectionInputSystem.PointerPressedOverUi ||
+                    rtsSelectionInputSystem.IgnoreNextLeftMouseRelease ||
+                    rtsSelectionInputSystem.IgnoreUiClickUntilRelease ||
+                    rtsSelectionInputSystem.SelectionModeHoldArmed ||
+                    rtsSelectionInputSystem.BoardPassengerDragArmed)
+                {
+                    return true;
+                }
+
+                return HasNormalPointerInputChanged();
+            }
+
+            bool HasNormalPointerInputChanged()
+            {
+                if (!GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer))
+                {
+                    hasLastNormalPointerState = false;
+                    return false;
+                }
+
+                if (pointer.WasPressedThisFrame || pointer.WasReleasedThisFrame || pointer.IsPressed)
+                {
+                    lastNormalPointerPosition = pointer.Position;
+                    lastNormalPointerPressed = pointer.IsPressed;
+                    hasLastNormalPointerState = true;
+                    return true;
+                }
+
+                bool changed =
+                    !hasLastNormalPointerState ||
+                    lastNormalPointerPressed != pointer.IsPressed ||
+                    (lastNormalPointerPosition - pointer.Position).sqrMagnitude > 0.01f;
+                lastNormalPointerPosition = pointer.Position;
+                lastNormalPointerPressed = pointer.IsPressed;
+                hasLastNormalPointerState = true;
+                return changed;
             }
 
             bool ShouldRefreshSelectionUi()

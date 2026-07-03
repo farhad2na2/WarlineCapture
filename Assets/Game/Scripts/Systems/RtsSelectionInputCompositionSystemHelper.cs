@@ -11,6 +11,41 @@ namespace Game.Runtime
         public const float MoveTargetDoubleClickSeconds = 0.35f;
         public const float MoveTargetDoubleClickPixels = 48f;
 
+        public struct PendingCommandSummary
+        {
+            public bool HasTransportCommandRequestsOrResults;
+            public bool HasMoveCommandRequestsOrResults;
+            public bool HasAttackCommandRequestsOrResults;
+            public bool HasScanCommandRequestsOrResults;
+            public bool HasExternalSelectionCommandRequests;
+            public bool HasSelectionModeCommandRequests;
+            public bool HasMoveTargetModeCommandRequests;
+            public bool HasAttackTargetModeCommandRequests;
+            public bool HasScanTargetModeCommandRequests;
+            public bool HasBoardTargetModeCommandRequests;
+            public bool HasCancelActiveCommandModeRequests;
+            public bool HasImmediateSelectedUnitCommandRequests;
+            public bool HasSelectAllCommandRequests;
+            public bool HasDeselectAllCommandRequests;
+            public bool HasActiveCommandMode;
+            public bool HasQueuedMoveOrder;
+
+            public bool HasAnyCommandFlushWork =>
+                HasTransportCommandRequestsOrResults ||
+                HasMoveCommandRequestsOrResults ||
+                HasAttackCommandRequestsOrResults ||
+                HasScanCommandRequestsOrResults ||
+                HasSelectionModeCommandRequests ||
+                HasMoveTargetModeCommandRequests ||
+                HasAttackTargetModeCommandRequests ||
+                HasScanTargetModeCommandRequests ||
+                HasBoardTargetModeCommandRequests ||
+                HasCancelActiveCommandModeRequests ||
+                HasImmediateSelectedUnitCommandRequests ||
+                HasSelectAllCommandRequests ||
+                HasDeselectAllCommandRequests;
+        }
+
         private readonly RtsSelectionInputStateCompositionSystemHelper _inputStateSystem = new();
 
         public Vector2 DragStart
@@ -676,25 +711,7 @@ namespace Game.Runtime
 
         public bool HasPendingExternalSelectionCommandRequests()
         {
-            if (!TryGetCommandBuffers(out _, out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests, out _))
-                return false;
-
-            for (int i = 0; i < commandRequests.Length; i++)
-            {
-                switch (commandRequests[i].Kind)
-                {
-                    case RtsSelectionCommandIntentKind.FocusUnit:
-                    case RtsSelectionCommandIntentKind.SelectAll:
-                    case RtsSelectionCommandIntentKind.SelectAllSoldiers:
-                    case RtsSelectionCommandIntentKind.SelectAllVehicles:
-                    case RtsSelectionCommandIntentKind.EnterSelectionMode:
-                    case RtsSelectionCommandIntentKind.ExitSelectionMode:
-                    case RtsSelectionCommandIntentKind.DeselectAll:
-                        return true;
-                }
-            }
-
-            return false;
+            return GetPendingCommandSummary().HasExternalSelectionCommandRequests;
         }
 
         public bool HasPendingSelectionRectangleRequests()
@@ -716,27 +733,7 @@ namespace Game.Runtime
 
         public bool HasPendingTransportCommandRequests()
         {
-            if (!TryGetCommandBuffers(
-                    out _,
-                    out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
-                    out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
-            {
-                return false;
-            }
-
-            for (int i = 0; i < commandRequests.Length; i++)
-            {
-                if (IsTransportCommandIntent(commandRequests[i].Kind))
-                    return true;
-            }
-
-            for (int i = 0; i < commandResults.Length; i++)
-            {
-                if (IsTransportCommandIntent(commandResults[i].Kind))
-                    return true;
-            }
-
-            return false;
+            return GetPendingCommandSummary().HasTransportCommandRequestsOrResults;
         }
 
         private static bool IsTransportCommandIntent(RtsSelectionCommandIntentKind kind)
@@ -752,77 +749,126 @@ namespace Game.Runtime
 
         public bool HasPendingAttackCommandRequestsOrResults()
         {
-            if (!TryGetCommandBuffers(
-                    out _,
-                    out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
-                    out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
-            {
-                return false;
-            }
-
-            for (int i = 0; i < commandRequests.Length; i++)
-            {
-                if (commandRequests[i].Kind == RtsSelectionCommandIntentKind.Attack)
-                    return true;
-            }
-
-            for (int i = 0; i < commandResults.Length; i++)
-            {
-                if (commandResults[i].Kind == RtsSelectionCommandIntentKind.Attack)
-                    return true;
-            }
-
-            return false;
+            return GetPendingCommandSummary().HasAttackCommandRequestsOrResults;
         }
 
         public bool HasPendingMoveCommandRequestsOrResults()
         {
-            if (!TryGetCommandBuffers(
-                    out _,
-                    out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
-                    out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
-            {
-                return false;
-            }
-
-            for (int i = 0; i < commandRequests.Length; i++)
-            {
-                if (commandRequests[i].Kind == RtsSelectionCommandIntentKind.Move)
-                    return true;
-            }
-
-            for (int i = 0; i < commandResults.Length; i++)
-            {
-                if (commandResults[i].Kind == RtsSelectionCommandIntentKind.Move)
-                    return true;
-            }
-
-            return false;
+            return GetPendingCommandSummary().HasMoveCommandRequestsOrResults;
         }
 
         public bool HasPendingScanCommandRequestsOrResults()
         {
+            return GetPendingCommandSummary().HasScanCommandRequestsOrResults;
+        }
+
+        public PendingCommandSummary GetPendingCommandSummary()
+        {
+            RtsSelectionInputStateComponent state = ReadState();
+            PendingCommandSummary summary = new()
+            {
+                HasActiveCommandMode = (TacticalCommandMode)state.ActiveCommandMode != TacticalCommandMode.None,
+                HasQueuedMoveOrder = state.HasQueuedMoveOrder != 0
+            };
+
             if (!TryGetCommandBuffers(
                     out _,
                     out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
                     out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
             {
-                return false;
+                return summary;
             }
 
             for (int i = 0; i < commandRequests.Length; i++)
-            {
-                if (commandRequests[i].Kind == RtsSelectionCommandIntentKind.Scan)
-                    return true;
-            }
+                AddCommandRequestToSummary(commandRequests[i].Kind, ref summary);
 
             for (int i = 0; i < commandResults.Length; i++)
-            {
-                if (commandResults[i].Kind == RtsSelectionCommandIntentKind.Scan)
-                    return true;
-            }
+                AddCommandResultToSummary(commandResults[i].Kind, ref summary);
 
-            return false;
+            return summary;
+        }
+
+        private static void AddCommandRequestToSummary(
+            RtsSelectionCommandIntentKind kind,
+            ref PendingCommandSummary summary)
+        {
+            if (IsTransportCommandIntent(kind))
+                summary.HasTransportCommandRequestsOrResults = true;
+
+            switch (kind)
+            {
+                case RtsSelectionCommandIntentKind.Move:
+                    summary.HasMoveCommandRequestsOrResults = true;
+                    break;
+                case RtsSelectionCommandIntentKind.Attack:
+                    summary.HasAttackCommandRequestsOrResults = true;
+                    break;
+                case RtsSelectionCommandIntentKind.Scan:
+                    summary.HasScanCommandRequestsOrResults = true;
+                    break;
+                case RtsSelectionCommandIntentKind.FocusUnit:
+                    summary.HasExternalSelectionCommandRequests = true;
+                    break;
+                case RtsSelectionCommandIntentKind.SelectAll:
+                case RtsSelectionCommandIntentKind.SelectAllSoldiers:
+                case RtsSelectionCommandIntentKind.SelectAllVehicles:
+                    summary.HasExternalSelectionCommandRequests = true;
+                    summary.HasSelectAllCommandRequests = true;
+                    break;
+                case RtsSelectionCommandIntentKind.EnterSelectionMode:
+                case RtsSelectionCommandIntentKind.ExitSelectionMode:
+                    summary.HasExternalSelectionCommandRequests = true;
+                    summary.HasSelectionModeCommandRequests = true;
+                    break;
+                case RtsSelectionCommandIntentKind.DeselectAll:
+                    summary.HasExternalSelectionCommandRequests = true;
+                    summary.HasDeselectAllCommandRequests = true;
+                    break;
+                case RtsSelectionCommandIntentKind.EnterMoveTargetMode:
+                    summary.HasMoveTargetModeCommandRequests = true;
+                    break;
+                case RtsSelectionCommandIntentKind.EnterAttackTargetMode:
+                case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:
+                    summary.HasAttackTargetModeCommandRequests = true;
+                    break;
+                case RtsSelectionCommandIntentKind.EnterScanTargetMode:
+                    summary.HasScanTargetModeCommandRequests = true;
+                    break;
+                case RtsSelectionCommandIntentKind.EnterBoardTargetMode:
+                    summary.HasBoardTargetModeCommandRequests = true;
+                    break;
+                case RtsSelectionCommandIntentKind.CancelActiveCommandMode:
+                case RtsSelectionCommandIntentKind.CancelAttackTargetMode:
+                    summary.HasCancelActiveCommandModeRequests = true;
+                    break;
+                case RtsSelectionCommandIntentKind.HoldPosition:
+                case RtsSelectionCommandIntentKind.Stop:
+                case RtsSelectionCommandIntentKind.ReturnToBase:
+                case RtsSelectionCommandIntentKind.DestroyFocusedUnit:
+                    summary.HasImmediateSelectedUnitCommandRequests = true;
+                    break;
+            }
+        }
+
+        private static void AddCommandResultToSummary(
+            RtsSelectionCommandIntentKind kind,
+            ref PendingCommandSummary summary)
+        {
+            if (IsTransportCommandIntent(kind))
+                summary.HasTransportCommandRequestsOrResults = true;
+
+            switch (kind)
+            {
+                case RtsSelectionCommandIntentKind.Move:
+                    summary.HasMoveCommandRequestsOrResults = true;
+                    break;
+                case RtsSelectionCommandIntentKind.Attack:
+                    summary.HasAttackCommandRequestsOrResults = true;
+                    break;
+                case RtsSelectionCommandIntentKind.Scan:
+                    summary.HasScanCommandRequestsOrResults = true;
+                    break;
+            }
         }
 
         public bool TryConsumeQueuedMoveOrder(int currentFrame, out Vector2 screenPosition)

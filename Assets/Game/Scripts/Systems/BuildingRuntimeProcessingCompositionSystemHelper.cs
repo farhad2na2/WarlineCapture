@@ -24,8 +24,10 @@ namespace Game.Runtime
         private float _nextPublishAt;
         private bool _forcePublishNextUpdate;
         private bool _configuredReadModelsPublished;
+        private int _lastPublishedFactionSummarySignature = int.MinValue;
         private int _lastPublishedRuntimeBuildingSignature = int.MinValue;
         private int _lastPublishedOwnedBuildingSummarySignature = int.MinValue;
+        private int _lastPublishedUnitProductionSummarySignature = int.MinValue;
         private float _nextResourceSellProbeAt;
         private float _nextProductionRequestProbeAt;
         private float _nextRuntimeSpawnRequestProbeAt;
@@ -466,8 +468,12 @@ namespace Game.Runtime
                     em,
                     boundaryEntity,
                     runtimeBuildings);
+                _lastPublishedFactionSummarySignature =
+                    ComputeFactionSummarySignature(runtimeBuildings);
                 _lastPublishedRuntimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
                 _lastPublishedOwnedBuildingSummarySignature = _lastPublishedRuntimeBuildingSignature;
+                _lastPublishedUnitProductionSummarySignature =
+                    ComputeUnitProductionSummarySignature(runtimeQueryContext, em, boundaryEntity);
                 _nextPublishPhase = PublishPhase.FactionSummaries;
                 return;
             }
@@ -482,8 +488,12 @@ namespace Game.Runtime
                     em,
                     boundaryEntity,
                     runtimeBuildings);
+                _lastPublishedFactionSummarySignature =
+                    ComputeFactionSummarySignature(runtimeBuildings);
                 _lastPublishedRuntimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
                 _lastPublishedOwnedBuildingSummarySignature = _lastPublishedRuntimeBuildingSignature;
+                _lastPublishedUnitProductionSummarySignature =
+                    ComputeUnitProductionSummarySignature(runtimeQueryContext, em, boundaryEntity);
                 _nextPublishPhase = PublishPhase.FactionSummaries;
                 return;
             }
@@ -525,7 +535,13 @@ namespace Game.Runtime
             switch (_nextPublishPhase)
             {
                 case PublishPhase.FactionSummaries:
-                    PublishRuntimeFactionSummaries(factionResourceSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, runtimeBuildings);
+                    int factionSummarySignature = ComputeFactionSummarySignature(runtimeBuildings);
+                    if (factionSummarySignature != _lastPublishedFactionSummarySignature)
+                    {
+                        PublishRuntimeFactionSummaries(factionResourceSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, runtimeBuildings);
+                        _lastPublishedFactionSummarySignature = factionSummarySignature;
+                    }
+
                     _nextPublishPhase = PublishPhase.OwnedBuildingSummaries;
                     break;
                 case PublishPhase.OwnedBuildingSummaries:
@@ -539,7 +555,13 @@ namespace Game.Runtime
                     _nextPublishPhase = PublishPhase.UnitProductionSummaries;
                     break;
                 case PublishPhase.UnitProductionSummaries:
-                    PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQueryContext, em, boundaryEntity);
+                    int unitProductionSummarySignature = ComputeUnitProductionSummarySignature(runtimeQueryContext, em, boundaryEntity);
+                    if (unitProductionSummarySignature != _lastPublishedUnitProductionSummarySignature)
+                    {
+                        PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQueryContext, em, boundaryEntity);
+                        _lastPublishedUnitProductionSummarySignature = unitProductionSummarySignature;
+                    }
+
                     _nextPublishPhase = PublishPhase.BuildingSetReadModels;
                     break;
                 default:
@@ -1302,6 +1324,182 @@ namespace Game.Runtime
             hash = (hash * 31) + (building.HasOwnerFaction ? building.OwnerFactionId : 255);
             hash = (hash * 31) + (building.ProductionSpawnLocalPositions?.Length ?? 0);
             return hash;
+        }
+
+        private static int ComputeFactionSummarySignature(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            if (runtimeBuildings == null)
+                return 0;
+
+            unchecked
+            {
+                int hash = 17;
+                if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                        hash = AddFactionSummarySignature(hash, pair.Key, pair.Value);
+                }
+                else
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                        hash = AddFactionSummarySignature(hash, pair.Key, pair.Value);
+                }
+
+                return hash;
+            }
+        }
+
+        private static int AddFactionSummarySignature(int hash, int key, RuntimeBuildingEntity building)
+        {
+            hash = (hash * 31) + key;
+            if (building == null)
+                return hash;
+
+            hash = (hash * 31) + (building.IsDestroyed ? 1 : 0);
+            hash = (hash * 31) + (building.HasOwnerFaction ? building.OwnerFactionId : 255);
+            hash = AddFloatSignature(hash, building.StoredOilBarrels);
+            hash = AddFloatSignature(hash, building.StoredFuelBarrels);
+            hash = AddFloatSignature(hash, building.OilBarrelsPerDay);
+            hash = AddFloatSignature(hash, building.FuelBarrelsPerDay);
+            return hash;
+        }
+
+        private static int ComputeUnitProductionSummarySignature(
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            EntityManager em,
+            Entity boundaryEntity)
+        {
+            unchecked
+            {
+                int hash = 17;
+                IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings = runtimeQueryContext.RuntimeBuildings;
+                EntityManager producedUnitEntityManager = default;
+                bool hasEntityManager = runtimeQueryContext.TryGetEntityManager != null &&
+                                        runtimeQueryContext.TryGetEntityManager(out producedUnitEntityManager);
+
+                if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                        hash = AddUnitProductionSummarySignature(hash, pair.Key, pair.Value, producedUnitEntityManager, hasEntityManager);
+                }
+                else if (runtimeBuildings != null)
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                        hash = AddUnitProductionSummarySignature(hash, pair.Key, pair.Value, producedUnitEntityManager, hasEntityManager);
+                }
+
+                if (boundaryEntity != Entity.Null &&
+                    em.Exists(boundaryEntity) &&
+                    em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity))
+                {
+                    DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
+                        em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+                    hash = (hash * 31) + producedUnitRows.Length;
+                    for (int i = 0; i < producedUnitRows.Length; i++)
+                    {
+                        BuildingProducedUnitReadModel row = producedUnitRows[i];
+                        hash = (hash * 31) + row.BuildingRuntimeId;
+                        hash = (hash * 31) + row.ProductionSlotBuildingRuntimeId;
+                        hash = (hash * 31) + row.ProductionIndex;
+                        hash = (hash * 31) + row.ProductionSlotIndex;
+                        hash = (hash * 31) + row.OwnerFactionId;
+                        hash = (hash * 31) + row.HasOwnerFaction;
+                        hash = AddEntitySignature(hash, row.Unit);
+                        hash = (hash * 31) + row.UnitSourceKey.GetHashCode();
+                        if (hasEntityManager)
+                            hash = AddProducedUnitAliveSignature(hash, row.Unit, producedUnitEntityManager);
+                    }
+                }
+
+                return hash;
+            }
+        }
+
+        private static int AddUnitProductionSummarySignature(
+            int hash,
+            int key,
+            RuntimeBuildingEntity building,
+            EntityManager producedUnitEntityManager,
+            bool hasEntityManager)
+        {
+            hash = (hash * 31) + key;
+            if (building == null)
+                return hash;
+
+            hash = (hash * 31) + (building.IsDestroyed ? 1 : 0);
+            hash = (hash * 31) + (building.HasOwnerFaction ? building.OwnerFactionId : 255);
+            if (building.PendingProductions != null)
+            {
+                hash = (hash * 31) + building.PendingProductions.Count;
+                for (int i = 0; i < building.PendingProductions.Count; i++)
+                {
+                    RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
+                    hash = (hash * 31) + (pending?.ProductionIndex ?? -1);
+                    hash = AddUnityObjectSignature(hash, pending?.Prefab);
+                    hash = (hash * 31) + (pending?.ReservedProductionSlotIndex ?? -1);
+                }
+            }
+            else
+            {
+                hash = (hash * 31);
+            }
+
+            if (building.ProducedUnits != null)
+            {
+                hash = (hash * 31) + building.ProducedUnits.Count;
+                for (int i = 0; i < building.ProducedUnits.Count; i++)
+                {
+                    Entity unit = building.ProducedUnits[i];
+                    hash = AddEntitySignature(hash, unit);
+                    if (hasEntityManager)
+                        hash = AddProducedUnitAliveSignature(hash, unit, producedUnitEntityManager);
+                    if (building.ProducedUnitSourceKeys != null &&
+                        building.ProducedUnitSourceKeys.TryGetValue(unit, out FixedString64Bytes sourceKey))
+                    {
+                        hash = (hash * 31) + sourceKey.GetHashCode();
+                    }
+                    else if (building.ProducedUnitPrefabs != null &&
+                             building.ProducedUnitPrefabs.TryGetValue(unit, out GameObject prefab) &&
+                             prefab != null)
+                    {
+                        hash = AddUnityObjectSignature(hash, prefab);
+                    }
+                }
+            }
+            else
+            {
+                hash = (hash * 31);
+            }
+
+            return hash;
+        }
+
+        private static int AddProducedUnitAliveSignature(int hash, Entity unit, EntityManager em)
+        {
+            if (unit == Entity.Null || !em.Exists(unit))
+                return (hash * 31);
+
+            hash = (hash * 31) + 1;
+            if (em.HasComponent<UnitHealth>(unit))
+                hash = AddFloatSignature(hash, em.GetComponentData<UnitHealth>(unit).Current);
+            return hash;
+        }
+
+        private static int AddEntitySignature(int hash, Entity entity)
+        {
+            hash = (hash * 31) + entity.Index;
+            hash = (hash * 31) + entity.Version;
+            return hash;
+        }
+
+        private static int AddUnityObjectSignature(int hash, UnityEngine.Object unityObject)
+        {
+            return (hash * 31) + (unityObject != null ? unityObject.GetEntityId().GetHashCode() : 0);
+        }
+
+        private static int AddFloatSignature(int hash, float value)
+        {
+            return (hash * 31) + Mathf.RoundToInt(value * 1000f);
         }
 
         private bool TryGetBoundaryEntity(EntityManager em, EntityQuery boundaryQuery, out Entity boundaryEntity)

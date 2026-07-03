@@ -68,6 +68,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.HasPendingMoveCommandRequestsOrResults_DetectsMoveResults());
             RunCase(test => test.HasPendingScanCommandRequestsOrResults_DetectsScanResults());
             RunCase(test => test.HasPendingTransportCommandRequests_DetectsTransportResults());
+            RunCase(test => test.PendingCommandSummary_AggregatesRequestsResultsAndActiveMode());
             RunCase(test => test.SelectionCommandRequests_ProcessUiRequestsThroughCommandModeTransitions());
             RunCase(test => test.RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection());
             RunCase(test => test.RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting());
@@ -83,7 +84,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.BoardAllSelectedTransport_ClearsCommandFeedbackActionsOnSuccess());
             RunCase(test => test.BoardCommandResult_PreservesAcceptedTargetTransportEntity());
             RunCase(test => test.TransportFirstBoarding_PreservesSelectedTransportAfterSuccess());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=58");
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=59");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -708,6 +709,43 @@ public sealed class RtsSelectionInputSystemTests
         });
 
         Assert.IsTrue(inputSystem.HasPendingTransportCommandRequests());
+    }
+
+    [Test]
+    public void PendingCommandSummary_AggregatesRequestsResultsAndActiveMode()
+    {
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper();
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out DynamicBuffer<RtsSelectionCommandResultElement> results));
+
+        inputSystem.ArmCommandMode(TacticalCommandMode.Attack, frame: 10, oneShot: true, requiresWorldTarget: true);
+        inputSystem.QueueMoveOrder(new Vector2(16f, 24f), executeFrame: 11);
+        requests.Add(new RtsSelectionCommandIntentRequestElement { Kind = RtsSelectionCommandIntentKind.EnterMoveTargetMode });
+        requests.Add(new RtsSelectionCommandIntentRequestElement { Kind = RtsSelectionCommandIntentKind.EnterScanTargetMode });
+        requests.Add(new RtsSelectionCommandIntentRequestElement { Kind = RtsSelectionCommandIntentKind.EnterBoardTargetMode });
+        requests.Add(new RtsSelectionCommandIntentRequestElement { Kind = RtsSelectionCommandIntentKind.CancelActiveCommandMode });
+        requests.Add(new RtsSelectionCommandIntentRequestElement { Kind = RtsSelectionCommandIntentKind.HoldPosition });
+        requests.Add(new RtsSelectionCommandIntentRequestElement { Kind = RtsSelectionCommandIntentKind.SelectAll });
+        results.Add(new RtsSelectionCommandResultElement { Kind = RtsSelectionCommandIntentKind.Attack });
+        results.Add(new RtsSelectionCommandResultElement { Kind = RtsSelectionCommandIntentKind.BoardTransport });
+
+        RtsSelectionInputCompositionSystemHelper.PendingCommandSummary summary =
+            inputSystem.GetPendingCommandSummary();
+
+        Assert.IsTrue(summary.HasActiveCommandMode);
+        Assert.IsTrue(summary.HasQueuedMoveOrder);
+        Assert.IsTrue(summary.HasMoveTargetModeCommandRequests);
+        Assert.IsTrue(summary.HasScanTargetModeCommandRequests);
+        Assert.IsTrue(summary.HasBoardTargetModeCommandRequests);
+        Assert.IsTrue(summary.HasCancelActiveCommandModeRequests);
+        Assert.IsTrue(summary.HasImmediateSelectedUnitCommandRequests);
+        Assert.IsTrue(summary.HasSelectAllCommandRequests);
+        Assert.IsTrue(summary.HasExternalSelectionCommandRequests);
+        Assert.IsTrue(summary.HasAttackCommandRequestsOrResults);
+        Assert.IsTrue(summary.HasTransportCommandRequestsOrResults);
+        Assert.IsTrue(summary.HasAnyCommandFlushWork);
     }
 
     [Test]

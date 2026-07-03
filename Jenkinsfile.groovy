@@ -1,7 +1,6 @@
 def PROJECT_NAME = 'WarlineCapture'
 def UNITY_EDITOR_VERSION = '6000.5.2f1'
 def CUSTOM_WORKSPACE = "D:\\Projects\\Jenkins\\${PROJECT_NAME}"
-def UNITY_EDITOR = "D:\\Program Files\\Unity\\Hub\\Editor\\${UNITY_EDITOR_VERSION}\\Editor\\Unity.exe"
 
 pipeline {
     agent {
@@ -18,7 +17,7 @@ pipeline {
     environment {
         PROJECT_PATH = "${CUSTOM_WORKSPACE}"
         UNITY_VERSION = "${UNITY_EDITOR_VERSION}"
-        UNITY_EXE = "${UNITY_EDITOR}"
+        UNITY_EXE = ''
         BUILD_LOG = "${CUSTOM_WORKSPACE}\\build.log"
         CODEX_TASK_DIR = "\\\\192.168.2.175\\farhad\\Projects\\Jenkins_Builds\\WarlineCapture\\CodexTasks"
         MAC_PASSWORD = credentials('MAC_PASSWORD')
@@ -65,7 +64,7 @@ pipeline {
                     env.UNITY_EXE = powershell(
                         returnStdout: true,
                         script: '''
-                        & "$env:PROJECT_PATH\\Tools\\CI\\ResolveUnityEditor.ps1" -UnityVersion "$env:UNITY_VERSION" -PreferredPath "$env:UNITY_EXE"
+                        & "$env:PROJECT_PATH\\Tools\\CI\\ResolveUnityEditor.ps1" -UnityVersion "$env:UNITY_VERSION"
                         '''
                     ).trim()
                     echo "Using Unity editor: ${env.UNITY_EXE}"

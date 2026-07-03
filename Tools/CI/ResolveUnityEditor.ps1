@@ -36,7 +36,6 @@ $candidates = New-Object "System.Collections.Generic.List[string]"
 Add-Candidate -Candidates $candidates -Path $env:UNITY_EXE_OVERRIDE
 Add-Candidate -Candidates $candidates -Path $env:UNITY_EDITOR_PATH
 Add-Candidate -Candidates $candidates -Path $env:UNITY_PATH
-Add-Candidate -Candidates $candidates -Path $env:UNITY_EXE
 Add-Candidate -Candidates $candidates -Path $PreferredPath
 
 $programFiles = @(

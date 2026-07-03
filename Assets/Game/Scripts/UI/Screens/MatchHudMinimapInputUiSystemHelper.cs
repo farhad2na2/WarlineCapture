@@ -592,9 +592,6 @@ namespace Game.UI.Runtime
                 rect.pivot = new Vector2(0.5f, 0.5f);
                 Image image = markerObject.AddComponent<Image>();
                 image.raycastTarget = false;
-                Outline outline = markerObject.AddComponent<Outline>();
-                outline.effectColor = new Color(0f, 0f, 0f, 0.8f);
-                outline.effectDistance = new Vector2(2f, -2f);
                 _markerPool.Add(image);
             }
 

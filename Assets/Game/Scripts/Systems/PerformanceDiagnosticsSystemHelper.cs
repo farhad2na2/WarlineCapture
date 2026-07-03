@@ -6,6 +6,7 @@ using Unity.Profiling.LowLevel.Unsafe;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Profiling;
+using UnityEngine.Rendering.Universal;
 using Game.Components;
 using Game.Rendering;
 
@@ -132,7 +133,7 @@ namespace Game.Runtime
                 double gapSeconds = now - _lastUpdateTimestamp;
                 if (gapSeconds >= FreezeLogThresholdSeconds)
                 {
-                    Debug.Log($"[FreezeDetect] Frame gap frame={UnityEngine.Time.frameCount} Gap={FormatMilliseconds(gapSeconds)}ms GC={BuildGcDeltaString()} LastSteps={BuildLastStepLogString()}");
+                    LogNoStackTrace($"[FreezeDetect] Frame gap frame={UnityEngine.Time.frameCount} Gap={FormatMilliseconds(gapSeconds)}ms GC={BuildGcDeltaString()} LastSteps={BuildLastStepLogString()}");
                 }
             }
 
@@ -238,7 +239,7 @@ namespace Game.Runtime
                 _freezeLogBuilder.Append("Total=");
                 AppendMilliseconds(_freezeLogBuilder, totalSeconds);
                 _freezeLogBuilder.Append("ms");
-                Debug.Log($"[FreezeDetect] Update hitch frame={UnityEngine.Time.frameCount} {_freezeLogBuilder}");
+                LogNoStackTrace($"[FreezeDetect] Update hitch frame={UnityEngine.Time.frameCount} {_freezeLogBuilder}");
             }
 
             LogSlowUpdateDiagnosticsIfNeeded(gameplayActive, totalSeconds, now, gameplayInitialized, playRequested, simulationActive);
@@ -269,14 +270,14 @@ namespace Game.Runtime
         {
             double elapsed = UnityEngine.Time.realtimeSinceStartupAsDouble - start;
             if (elapsed >= FreezeLogThresholdSeconds)
-                Debug.Log($"[FreezeDetect] LateUpdate hitch frame={UnityEngine.Time.frameCount} UnitRenderLate={FormatMilliseconds(elapsed)}ms impostors={impostorCount} GC={BuildGcDeltaString()}");
+                LogNoStackTrace($"[FreezeDetect] LateUpdate hitch frame={UnityEngine.Time.frameCount} UnitRenderLate={FormatMilliseconds(elapsed)}ms impostors={impostorCount} GC={BuildGcDeltaString()}");
         }
 
         public void EndOnGui(double start)
         {
             double elapsed = UnityEngine.Time.realtimeSinceStartupAsDouble - start;
             if (elapsed >= FreezeLogThresholdSeconds)
-                Debug.Log($"[FreezeDetect] OnGUI hitch frame={UnityEngine.Time.frameCount} Total={FormatMilliseconds(elapsed)}ms GC={BuildGcDeltaString()}");
+                LogNoStackTrace($"[FreezeDetect] OnGUI hitch frame={UnityEngine.Time.frameCount} Total={FormatMilliseconds(elapsed)}ms GC={BuildGcDeltaString()}");
         }
 
         public void Dispose()
@@ -536,14 +537,15 @@ namespace Game.Runtime
                 string label = gameplayActive ? "FrameRateDiag" : "FrameRateDiag:PreGame";
                 string preGameDetails = gameplayActive
                     ? string.Empty
-                    : $" vSync={QualitySettings.vSyncCount} targetFps={Application.targetFrameRate} lastSteps={BuildLastStepLogString()}";
-                Debug.Log(
+                    : $" lastSteps={BuildLastStepLogString()}";
+                LogNoStackTrace(
                     $"[{label}] fps={averageFps:F1} avgFrame={averageFrameMs:F1}ms " +
                     $"updateAvg={updateAverageMs:F1}ms updateMax={_frameRateDiagMaxUpdateSeconds * 1000d:F1}ms " +
                     $"{BuildFrameTimingDiagString()} " +
                     $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
                     $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
                     $"units={units} models={modelInstances} sourceKeys={sourceKeys} sourceKeyFallbackVisuals={sourceKeyFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} impostors={impostorCount} " +
+                    $"render={BuildRenderQualityDiagString()} " +
                     $"memory={BuildMemoryDiagString()} focused={(Application.isFocused ? 1 : 0)} playRequested={(playRequested ? 1 : 0)} simulationActive={(simulationActive ? 1 : 0)}{preGameDetails} " +
                     $"stepStats={BuildStepStatsString()} topSystems={BuildTopSystemProfilerMarkerString()} markers={BuildProfilerMarkerDiagString()}");
                 LogRenderSceneBreakdownIfNeeded(now, averageFps);
@@ -554,6 +556,11 @@ namespace Game.Runtime
             _frameRateDiagUpdateAccumulatedSeconds = 0d;
             _frameRateDiagMaxUpdateSeconds = 0d;
             _nextFrameRateDiagTimestamp = now + FrameRateDiagIntervalSeconds;
+        }
+
+        private static void LogNoStackTrace(string message)
+        {
+            Debug.LogFormat(LogType.Log, LogOption.NoStacktrace, null, "{0}", message);
         }
 
         private void ResetFrameRateDiagnosticWindow(double now)
@@ -568,6 +575,32 @@ namespace Game.Runtime
         private long ReadProfilerRecorder(ProfilerRecorder recorder)
         {
             return recorder.Valid ? recorder.LastValue : -1L;
+        }
+
+        private static string BuildRenderQualityDiagString()
+        {
+            string pipelineName = QualitySettings.renderPipeline != null
+                ? QualitySettings.renderPipeline.name
+                : "null";
+            float renderScale = QualitySettings.renderPipeline is UniversalRenderPipelineAsset urpAsset
+                ? urpAsset.renderScale
+                : -1f;
+            Camera camera = Camera.main;
+            string cameraName = camera != null ? camera.name : "null";
+            string cameraData = "none";
+            if (camera != null && camera.TryGetComponent(out UniversalAdditionalCameraData additionalCameraData))
+            {
+                cameraData =
+                    $"post:{(additionalCameraData.renderPostProcessing ? 1 : 0)},aa:{additionalCameraData.antialiasing},stack:{additionalCameraData.cameraStack.Count}";
+            }
+
+            int qualityIndex = QualitySettings.GetQualityLevel();
+            string qualityName = qualityIndex >= 0 && qualityIndex < QualitySettings.names.Length
+                ? QualitySettings.names[qualityIndex]
+                : "unknown";
+
+            return
+                $"screen={Screen.width}x{Screen.height},batch={(Application.isBatchMode ? 1 : 0)},quality={qualityIndex}:{qualityName},vSync={QualitySettings.vSyncCount},targetFps={Application.targetFrameRate},pipeline={pipelineName},scale={renderScale:F2},msaa={QualitySettings.antiAliasing},camera={cameraName},cameraData={cameraData}";
         }
 
         private void GetRuntimeVisualCounts(
@@ -645,7 +678,7 @@ namespace Game.Runtime
                 out int sourceKeyFallbackVisuals,
                 out int initialSpawnConfigs);
             string label = gameplayActive ? "PerfDiag" : "PerfDiag:PreGame";
-            Debug.Log(
+            LogNoStackTrace(
                 $"[{label}] slowUpdate frame={UnityEngine.Time.frameCount} total={totalSeconds * 1000d:F1}ms " +
                 $"gc={BuildGcDeltaString()} {BuildFrameTimingDiagString()} steps={BuildLastStepLogString()} units={units} models={modelInstances} sourceKeys={sourceKeys} sourceKeyFallbackVisuals={sourceKeyFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} " +
                 $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
@@ -723,7 +756,7 @@ namespace Game.Runtime
                 return;
 
             _nextRenderSceneBreakdownDiagTimestamp = now + RenderSceneBreakdownDiagIntervalSeconds;
-            Debug.Log(BuildRenderSceneBreakdownDiagString());
+            LogNoStackTrace(BuildRenderSceneBreakdownDiagString());
         }
 
         private string BuildRenderSceneBreakdownDiagString()

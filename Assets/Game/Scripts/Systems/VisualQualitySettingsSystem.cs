@@ -213,7 +213,7 @@ namespace Game.Runtime
             if (_premiumProfile.LowRenderPipelineAsset != null)
             {
                 QualitySettings.renderPipeline = _premiumProfile.LowRenderPipelineAsset;
-                _premiumProfile.LowRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.LowRenderScaleOverride, 0.5f, 1f);
+                _premiumProfile.LowRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.LowRenderScaleOverride, 0.25f, 1f);
             }
 
             if (_globalVolume != null)
@@ -233,7 +233,7 @@ namespace Game.Runtime
             if (_premiumProfile.MediumRenderPipelineAsset != null)
             {
                 QualitySettings.renderPipeline = _premiumProfile.MediumRenderPipelineAsset;
-                _premiumProfile.MediumRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.MediumRenderScaleOverride, 0.5f, 1f);
+                _premiumProfile.MediumRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.MediumRenderScaleOverride, 0.25f, 1f);
             }
 
             if (_globalVolume != null)
@@ -242,7 +242,7 @@ namespace Game.Runtime
             if (_worldCamera != null && _worldCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
             {
                 cameraData.renderPostProcessing = false;
-                cameraData.antialiasing = AntialiasingMode.FastApproximateAntialiasing;
+                cameraData.antialiasing = AntialiasingMode.None;
             }
 
             _overrideApplied = true;

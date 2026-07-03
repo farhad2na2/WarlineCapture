@@ -1,7 +1,5 @@
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 using Game.Components;
 
@@ -29,13 +27,6 @@ namespace Game.Runtime
             MissingConfig = 2,
             InsufficientFunds = 3,
             Request = 4
-        }
-
-        private struct ProductionCandidateEntry
-        {
-            public int EntryIndex;
-            public FixedString128Bytes UnitId;
-            public byte IsValid;
         }
 
         private struct ProductionDecision
@@ -251,172 +242,122 @@ namespace Game.Runtime
             AIProductionPlan plan,
             int economyMoney)
         {
-            using NativeList<ProductionCandidateEntry> candidateEntries = BuildProductionCandidateEntries(entries);
-            using NativeArray<BuildingConfiguredUnitReadModel> units =
-                CopyBoundaryBuffer<BuildingConfiguredUnitReadModel>(state.EntityManager, boundaryEntity, Allocator.TempJob);
-            using NativeArray<BuildingRuntimeUnitProductionSummary> summaries =
-                CopyBoundaryBuffer<BuildingRuntimeUnitProductionSummary>(state.EntityManager, boundaryEntity, Allocator.TempJob);
-            using NativeArray<BuildingFactionUnitProductionRequest> requests =
-                CopyBoundaryBuffer<BuildingFactionUnitProductionRequest>(state.EntityManager, boundaryEntity, Allocator.TempJob);
-            using NativeReference<ProductionDecision> decision = new(Allocator.TempJob);
+            EntityManager em = state.EntityManager;
+            DynamicBuffer<BuildingConfiguredUnitReadModel> units = em.HasBuffer<BuildingConfiguredUnitReadModel>(boundaryEntity)
+                ? em.GetBuffer<BuildingConfiguredUnitReadModel>(boundaryEntity, true)
+                : default;
+            DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries = em.HasBuffer<BuildingRuntimeUnitProductionSummary>(boundaryEntity)
+                ? em.GetBuffer<BuildingRuntimeUnitProductionSummary>(boundaryEntity, true)
+                : default;
+            DynamicBuffer<BuildingFactionUnitProductionRequest> requests = em.HasBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity)
+                ? em.GetBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity, true)
+                : default;
 
-            new SelectProductionDecisionJob
-            {
-                Entries = candidateEntries.AsArray(),
-                Units = units,
-                Summaries = summaries,
-                Requests = requests,
-                Plan = plan,
-                EconomyMoney = economyMoney,
-                Decision = decision
-            }.Schedule(state.Dependency).Complete();
-
-            return decision.Value;
+            return SelectProductionDecision(entries, units, summaries, requests, plan, economyMoney);
         }
 
-        private static NativeList<ProductionCandidateEntry> BuildProductionCandidateEntries(DynamicBuffer<AIProductionPlanEntry> entries)
+        private static ProductionDecision SelectProductionDecision(
+            DynamicBuffer<AIProductionPlanEntry> entries,
+            DynamicBuffer<BuildingConfiguredUnitReadModel> units,
+            DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries,
+            DynamicBuffer<BuildingFactionUnitProductionRequest> requests,
+            AIProductionPlan plan,
+            int economyMoney)
         {
-            NativeList<ProductionCandidateEntry> candidateEntries = new(entries.Length, Allocator.TempJob);
-            for (int i = 0; i < entries.Length; i++)
+            ProductionDecision decision = default;
+            if (entries.Length == 0)
+                return decision;
+
+            int attempts = math.max(1, entries.Length);
+            int maxQueuedUnits = math.max(1, plan.MaxQueuedUnits);
+            int targetProducedUnits = math.max(1, plan.TargetProducedUnits);
+            for (int attempt = 0; attempt < attempts; attempt++)
             {
-                FixedString64Bytes unitId = entries[i].UnitId;
+                int candidateIndex = PositiveModulo(plan.NextUnitIndex + attempt, entries.Length);
+                FixedString64Bytes unitId = entries[candidateIndex].UnitId;
                 if (unitId.Length == 0)
+                    continue;
+
+                TryGetUnitProductionSummary(
+                    summaries,
+                    plan.FactionId,
+                    unitId,
+                    out int producedCount,
+                    out int queuedCount);
+                if (producedCount + queuedCount >= targetProducedUnits ||
+                    queuedCount >= maxQueuedUnits)
                 {
-                    candidateEntries.Add(new ProductionCandidateEntry
-                    {
-                        EntryIndex = i,
-                        IsValid = 0
-                    });
                     continue;
                 }
 
-                candidateEntries.Add(new ProductionCandidateEntry
+                decision.EntryIndex = candidateIndex;
+                decision.UnitId = unitId;
+                if (HasPendingProductionRequest(requests, plan.FactionId, unitId))
                 {
-                    EntryIndex = i,
-                    UnitId = unitId,
-                    IsValid = 1
-                });
-            }
-
-            return candidateEntries;
-        }
-
-        private static NativeArray<T> CopyBoundaryBuffer<T>(
-            EntityManager em,
-            Entity boundaryEntity,
-            Allocator allocator)
-            where T : unmanaged, IBufferElementData
-        {
-            if (!em.HasBuffer<T>(boundaryEntity))
-                return new NativeArray<T>(0, allocator);
-
-            DynamicBuffer<T> buffer = em.GetBuffer<T>(boundaryEntity, true);
-            NativeArray<T> copy = new(buffer.Length, allocator);
-            for (int i = 0; i < buffer.Length; i++)
-                copy[i] = buffer[i];
-
-            return copy;
-        }
-
-        [BurstCompile]
-        private struct SelectProductionDecisionJob : IJob
-        {
-            [ReadOnly] public NativeArray<ProductionCandidateEntry> Entries;
-            [ReadOnly] public NativeArray<BuildingConfiguredUnitReadModel> Units;
-            [ReadOnly] public NativeArray<BuildingRuntimeUnitProductionSummary> Summaries;
-            [ReadOnly] public NativeArray<BuildingFactionUnitProductionRequest> Requests;
-            public AIProductionPlan Plan;
-            public int EconomyMoney;
-            public NativeReference<ProductionDecision> Decision;
-
-            public void Execute()
-            {
-                ProductionDecision decision = default;
-                if (Entries.Length == 0)
-                {
-                    Decision.Value = decision;
-                    return;
-                }
-
-                int attempts = math.max(1, Entries.Length);
-                int maxQueuedUnits = math.max(1, Plan.MaxQueuedUnits);
-                int targetProducedUnits = math.max(1, Plan.TargetProducedUnits);
-                for (int attempt = 0; attempt < attempts; attempt++)
-                {
-                    int candidateIndex = PositiveModulo(Plan.NextUnitIndex + attempt, Entries.Length);
-                    ProductionCandidateEntry entry = Entries[candidateIndex];
-                    if (entry.IsValid == 0)
-                        continue;
-
-                    TryGetUnitProductionSummary(
-                        Plan.FactionId,
-                        entry.UnitId,
-                        out int producedCount,
-                        out int queuedCount);
-                    if (producedCount + queuedCount >= targetProducedUnits ||
-                        queuedCount >= maxQueuedUnits)
-                    {
-                        continue;
-                    }
-
-                    decision.EntryIndex = entry.EntryIndex;
-                    decision.UnitId = entry.UnitId;
-                    if (HasPendingProductionRequest(Plan.FactionId, entry.UnitId))
-                    {
-                        decision.Result = ProductionDecisionResult.Pending;
-                        break;
-                    }
-
-                    if (!TryResolveUnitReadModel(entry.UnitId, out BuildingConfiguredUnitReadModel unit) ||
-                        unit.CanRequest == 0)
-                    {
-                        decision.Result = ProductionDecisionResult.MissingConfig;
-                        break;
-                    }
-
-                    int cost = math.max(0, unit.Price);
-                    decision.Unit = unit;
-                    decision.Cost = cost;
-                    if (EconomyMoney < cost)
-                    {
-                        decision.Result = ProductionDecisionResult.InsufficientFunds;
-                        break;
-                    }
-
-                    decision.Result = ProductionDecisionResult.Request;
+                    decision.Result = ProductionDecisionResult.Pending;
                     break;
                 }
 
-                Decision.Value = decision;
-            }
-
-            private bool TryResolveUnitReadModel(
-                FixedString128Bytes unitId,
-                out BuildingConfiguredUnitReadModel unit)
-            {
-                for (int i = 0; i < Units.Length; i++)
+                if (!TryResolveUnitReadModel(units, unitId, out BuildingConfiguredUnitReadModel unit) ||
+                    unit.CanRequest == 0)
                 {
-                    BuildingConfiguredUnitReadModel candidate = Units[i];
-                    if (!candidate.UnitId.Equals(unitId))
-                        continue;
-
-                    unit = candidate;
-                    return true;
+                    decision.Result = ProductionDecisionResult.MissingConfig;
+                    break;
                 }
 
+                int cost = math.max(0, unit.Price);
+                decision.Unit = unit;
+                decision.Cost = cost;
+                if (economyMoney < cost)
+                {
+                    decision.Result = ProductionDecisionResult.InsufficientFunds;
+                    break;
+                }
+
+                decision.Result = ProductionDecisionResult.Request;
+                break;
+            }
+
+            return decision;
+        }
+
+        private static bool TryResolveUnitReadModel(
+            DynamicBuffer<BuildingConfiguredUnitReadModel> units,
+            FixedString128Bytes unitId,
+            out BuildingConfiguredUnitReadModel unit)
+        {
+            if (!units.IsCreated)
+            {
                 unit = default;
                 return false;
             }
 
-            private bool TryGetUnitProductionSummary(
-                byte factionId,
-                FixedString128Bytes unitId,
-                out int producedCount,
-                out int queuedCount)
+            for (int i = 0; i < units.Length; i++)
             {
-                for (int i = 0; i < Summaries.Length; i++)
+                BuildingConfiguredUnitReadModel candidate = units[i];
+                if (!candidate.UnitId.Equals(unitId))
+                    continue;
+
+                unit = candidate;
+                return true;
+            }
+
+            unit = default;
+            return false;
+        }
+
+        private static bool TryGetUnitProductionSummary(
+            DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries,
+            byte factionId,
+            FixedString128Bytes unitId,
+            out int producedCount,
+            out int queuedCount)
+        {
+            if (summaries.IsCreated)
+            {
+                for (int i = 0; i < summaries.Length; i++)
                 {
-                    BuildingRuntimeUnitProductionSummary summary = Summaries[i];
+                    BuildingRuntimeUnitProductionSummary summary = summaries[i];
                     if (summary.FactionId != factionId || !summary.UnitId.Equals(unitId))
                         continue;
 
@@ -424,27 +365,33 @@ namespace Game.Runtime
                     queuedCount = summary.QueuedCount;
                     return true;
                 }
-
-                producedCount = 0;
-                queuedCount = 0;
-                return false;
             }
 
-            private bool HasPendingProductionRequest(byte factionId, FixedString128Bytes unitId)
+            producedCount = 0;
+            queuedCount = 0;
+            return false;
+        }
+
+        private static bool HasPendingProductionRequest(
+            DynamicBuffer<BuildingFactionUnitProductionRequest> requests,
+            byte factionId,
+            FixedString128Bytes unitId)
+        {
+            if (!requests.IsCreated)
+                return false;
+
+            for (int i = 0; i < requests.Length; i++)
             {
-                for (int i = 0; i < Requests.Length; i++)
+                BuildingFactionUnitProductionRequest request = requests[i];
+                if (request.FactionId == factionId &&
+                    request.UnitId.Equals(unitId) &&
+                    request.Status == BuildingFactionUnitProductionRequest.Pending)
                 {
-                    BuildingFactionUnitProductionRequest request = Requests[i];
-                    if (request.FactionId == factionId &&
-                        request.UnitId.Equals(unitId) &&
-                        request.Status == BuildingFactionUnitProductionRequest.Pending)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-
-                return false;
             }
+
+            return false;
         }
 
         private void EnqueueProductionRequest(ref SystemState state, Entity boundaryEntity, byte factionId, FixedString128Bytes unitId)

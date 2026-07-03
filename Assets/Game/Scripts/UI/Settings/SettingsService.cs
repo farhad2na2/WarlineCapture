@@ -31,7 +31,7 @@ namespace Game.UI.Runtime
             Graphics = new GraphicsSettingsModel
             {
                 Quality = UIGraphicsQuality.High,
-                FrameRateMode = UIFrameRateMode.Sixty
+                FrameRateMode = UIFrameRateMode.OneTwenty
             },
             Controls = new ControlsSettingsModel
             {
@@ -133,11 +133,34 @@ namespace Game.UI.Runtime
                 _ => -1
             };
 
-            int qualityIndex = Mathf.Clamp((int)model.Graphics.Quality, 0, Mathf.Max(0, QualitySettings.names.Length - 1));
+            int qualityIndex = ResolveUnityQualityIndex(model.Graphics.Quality);
             if (QualitySettings.names.Length > 0)
                 QualitySettings.SetQualityLevel(qualityIndex, true);
 
             RuntimeApplied?.Invoke(model);
+        }
+
+        private static int ResolveUnityQualityIndex(UIGraphicsQuality quality)
+        {
+            if (QualitySettings.names.Length == 0)
+                return 0;
+
+            string qualityName = quality switch
+            {
+                UIGraphicsQuality.Low => "Low",
+                UIGraphicsQuality.Balanced => "Mobile",
+                UIGraphicsQuality.High => "Mobile",
+                UIGraphicsQuality.Ultra => "Ultra",
+                _ => "Mobile"
+            };
+
+            for (int i = 0; i < QualitySettings.names.Length; i++)
+            {
+                if (string.Equals(QualitySettings.names[i], qualityName, System.StringComparison.OrdinalIgnoreCase))
+                    return i;
+            }
+
+            return Mathf.Clamp(1, 0, QualitySettings.names.Length - 1);
         }
 
         private static T GetEnum<T>(string key, T fallback) where T : struct

@@ -20,8 +20,8 @@ namespace Game.Configs
         [SerializeField] private UniversalRenderPipelineAsset mediumRenderPipelineAsset;
         [SerializeField] private UniversalRenderPipelineAsset renderPipelineAsset;
         [SerializeField] private VolumeProfile globalVolumeProfile;
-        [SerializeField, Range(0.5f, 1f)] private float lowRenderScaleOverride = 0.72f;
-        [SerializeField, Range(0.5f, 1f)] private float mediumRenderScaleOverride = 0.9f;
+        [SerializeField, Range(0.25f, 1f)] private float lowRenderScaleOverride = 0.72f;
+        [SerializeField, Range(0.25f, 1f)] private float mediumRenderScaleOverride = 0.9f;
         [SerializeField] private bool enableCameraPostProcessing = true;
         [SerializeField] private AntialiasingMode cameraAntialiasingMode = AntialiasingMode.FastApproximateAntialiasing;
         [SerializeField, Min(0f)] private float cameraRenderScaleOverride = 1f;

@@ -17,8 +17,8 @@ MonoBehaviour:
   mediumRenderPipelineAsset: {fileID: 11400000, guid: 5e6cbd92db86f4b18aec3ed561671858, type: 2}
   renderPipelineAsset: {fileID: 11400000, guid: 540d0d69be1d47ad8d8aabbaa70ec494, type: 2}
   globalVolumeProfile: {fileID: 11400000, guid: bbfd3934d17f45fd8402c04c2be5e759, type: 2}
-  lowRenderScaleOverride: 0.6
-  mediumRenderScaleOverride: 0.68
+  lowRenderScaleOverride: 0.25
+  mediumRenderScaleOverride: 0.3
   enableCameraPostProcessing: 1
   cameraAntialiasingMode: 1
   cameraRenderScaleOverride: 1
@@ -31,7 +31,7 @@ MonoBehaviour:
   premiumAmbientSkyColor: {r: 0.58, g: 0.68, b: 0.78, a: 1}
   premiumAmbientEquatorColor: {r: 0.34, g: 0.36, b: 0.38, a: 1}
   premiumAmbientGroundColor: {r: 0.12, g: 0.13, b: 0.15, a: 1}
-  enableGroundVariation: 1
+  enableGroundVariation: 0
   enablePremiumFog: 1
   premiumFogColor: {r: 0.44, g: 0.5, b: 0.55, a: 1}
   premiumFogDensity: 0.0085

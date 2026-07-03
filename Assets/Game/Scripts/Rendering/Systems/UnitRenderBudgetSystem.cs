@@ -15,18 +15,18 @@ namespace Game.Rendering
     [UpdateAfter(typeof(UnitMassRenderSettingsSystem))]
     public partial struct UnitRenderBudgetSystem : ISystem
     {
-        private const int MaxDetailedUnits = 32;
-        private const int MaxMidLodUnits = 128;
-        private const int MaxLowLodUnits = 192;
+        private const int MaxDetailedUnits = 8;
+        private const int MaxMidLodUnits = 64;
+        private const int MaxLowLodUnits = 128;
         private const int MaxUpdatesPerFrame = 4096;
         private const int UpdateIntervalFrames = 10;
-        private const float AlwaysDetailedDistanceSq = 18f * 18f;
-        private const float VisibleCharacterLowDistanceSq = 32f * 32f;
-        private const float VisibleCharacterImpostorNearDistance = 48f;
-        private const float VisibleCharacterImpostorFarDistance = 48f;
-        private const float EnemyAlwaysDetailedDistanceSq = 14f * 14f;
-        private const float EnemyLowLodDistanceSq = 20f * 20f;
-        private const float EnemyImpostorDistanceSq = 28f * 28f;
+        private const float AlwaysDetailedDistanceSq = 12f * 12f;
+        private const float VisibleCharacterLowDistanceSq = 24f * 24f;
+        private const float VisibleCharacterImpostorNearDistance = 32f;
+        private const float VisibleCharacterImpostorFarDistance = 32f;
+        private const float EnemyAlwaysDetailedDistanceSq = 10f * 10f;
+        private const float EnemyLowLodDistanceSq = 14f * 14f;
+        private const float EnemyImpostorDistanceSq = 20f * 20f;
         private const float VisibleCharacterViewportPadding = 0.35f;
         private const float VisibleCharacterEdgeSafetyMargin = 0.18f;
 

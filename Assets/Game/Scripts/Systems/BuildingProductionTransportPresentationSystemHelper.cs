@@ -20,6 +20,8 @@ namespace Game.Runtime
         private const int HelicopterDropSearchRadiusCells = 24;
         private const float HelicopterDropBlockedRetryBaseSeconds = 0.5f;
         private const float HelicopterDropBlockedRetryMaxSeconds = 2f;
+        private const float HelicopterDropPartialSearchRetrySeconds = 0.05f;
+        private const int HelicopterDropMaxCandidateChecksPerSearch = 128;
         private const int HelicopterDropLandingPaddingCells = 1;
         private const int HelicopterDropBuildingBufferCells = 6;
         private const int HelicopterDropActiveTransportBufferCells = 5;
@@ -37,16 +39,20 @@ namespace Game.Runtime
         public delegate void PrepareTransportDropVisualDelegate(GameObject visual);
 
         private readonly Dictionary<GameObject, Stack<GameObject>> _transportPoolByPrefab = new();
+        private readonly Dictionary<GameObject, Stack<GameObject>> _dropVisualPoolByPrefab = new();
         private readonly Dictionary<GameObject, Renderer[]> _transportRenderersByInstance = new();
         private readonly Dictionary<GameObject, Transform> _transportDoorByInstance = new();
         private readonly HashSet<GameObject> _transportDoorLookupCompleted = new();
         private readonly Dictionary<GameObject, List<Transform>> _transportBladeTransformsByInstance = new();
         private readonly Dictionary<GameObject, int> _prewarmedTransportCountByPrefab = new();
         private readonly Stack<RuntimeBuildingEntity.ActiveProductionTransport> _transportStatePool = new();
+        private readonly Stack<RuntimeBuildingEntity.PendingDropVisual> _dropVisualStatePool = new();
+        private readonly Stack<LineRenderer> _dropRopePool = new();
         private readonly List<Transform> _transformSearchBuffer = new(64);
         private IReadOnlyList<GameObject> _configuredPoolSourcePrefabs;
         private IReadOnlyDictionary<string, GameObject> _configuredPoolSourcePrefabsByKey;
         private Transform _runtimeRoot;
+        private Material _dropRopeMaterial;
         private bool[] _laneUsage = new bool[4];
         private int _createdTransportStateCount;
 
@@ -165,7 +171,17 @@ namespace Game.Runtime
 
                 hoverPosition = ResolveProductionTransportHoverPosition(building, pending);
                 hoverPosition += ResolveProductionTransportLaneOffset(context, laneIndex, pending.TransportMaxConcurrent);
-                if (TryResolveClearHelicopterDropPosition(context, building, pending, hoverPosition, null, out _, out Vector3 clearDropPosition))
+                if (TryResolveClearHelicopterDropPosition(
+                        context,
+                        building,
+                        pending,
+                        hoverPosition,
+                        null,
+                        0,
+                        out _,
+                        out _,
+                        out _,
+                        out Vector3 clearDropPosition))
                 {
                     hoverPosition.x = clearDropPosition.x;
                     hoverPosition.z = clearDropPosition.z;
@@ -208,6 +224,7 @@ namespace Game.Runtime
             transport.NextDropReadyAt = now;
             transport.NextClearDropSearchAt = now;
             transport.ClearDropFailureCount = 0;
+            transport.ClearDropSearchStartRadius = 0;
             transport.Phase = 0;
             transport.Mode = pending.TransportMode;
             transport.ActiveDrop = null;
@@ -550,7 +567,7 @@ namespace Game.Runtime
             return axis * (centered * ProductionTransportLaneSpacing);
         }
 
-        private static void StartActiveTransportDrop(
+        private void StartActiveTransportDrop(
             Context context,
             RuntimeBuildingEntity building,
             RuntimeBuildingEntity.ActiveProductionTransport transport,
@@ -580,9 +597,20 @@ namespace Game.Runtime
                 }
 
                 Vector3 preferredDrop = new(transport.HoverPosition.x, finalSpawnPosition.y, transport.HoverPosition.z);
-                if (TryResolveClearHelicopterDropPosition(context, building, pending, preferredDrop, transport, out int2 clearDropCell, out Vector3 clearDropPosition))
+                if (TryResolveClearHelicopterDropPosition(
+                        context,
+                        building,
+                        pending,
+                        preferredDrop,
+                        transport,
+                        transport.ClearDropSearchStartRadius,
+                        out bool exhaustedSearchBudget,
+                        out int nextSearchRadius,
+                        out int2 clearDropCell,
+                        out Vector3 clearDropPosition))
                 {
                     transport.ClearDropFailureCount = 0;
+                    transport.ClearDropSearchStartRadius = 0;
                     transport.NextClearDropSearchAt = now;
                     AlignHelicopterTransportAnchorOverDrop(transport, clearDropPosition);
                     Vector3 anchor = ResolveTransportVisualCenterWorld(transport);
@@ -590,8 +618,16 @@ namespace Game.Runtime
                     dropEndPosition = clearDropPosition;
                     finalGoalCell = clearDropCell;
                 }
+                else if (exhaustedSearchBudget)
+                {
+                    transport.ClearDropSearchStartRadius = nextSearchRadius;
+                    transport.NextClearDropSearchAt = now + HelicopterDropPartialSearchRetrySeconds;
+                    transport.NextDropReadyAt = transport.NextClearDropSearchAt;
+                    return;
+                }
                 else
                 {
+                    transport.ClearDropSearchStartRadius = 0;
                     transport.ClearDropFailureCount = (byte)Mathf.Min(transport.ClearDropFailureCount + 1, 6);
                     float retryDelay = Mathf.Min(
                         HelicopterDropBlockedRetryMaxSeconds,
@@ -602,11 +638,7 @@ namespace Game.Runtime
                 }
             }
 
-            GameObject visual = Instantiate(pending.Prefab);
-            visual.name = $"{pending.Prefab.name}_TransportDrop";
-            HideTransportRuntimeMarkers(visual.transform);
-            ApplyTemporaryCharacterIdlePose(visual);
-            context.PrepareTransportDropVisual?.Invoke(visual);
+            GameObject visual = AcquireTransportDropVisual(pending.Prefab, context.PrepareTransportDropVisual);
 
             visual.transform.position = dropStartPosition;
             if (transport.Mode == ProductionTransportMode.Plane && transport.Transform != null)
@@ -615,26 +647,25 @@ namespace Game.Runtime
             LineRenderer rope = null;
             if (transport.Mode == ProductionTransportMode.Helicopter)
             {
-                rope = new GameObject("TransportDropRope").AddComponent<LineRenderer>();
+                rope = AcquireTransportDropRope();
                 rope.transform.SetParent(transport.Transform, false);
                 rope.positionCount = 2;
                 rope.widthMultiplier = 0.05f;
-                rope.material = new Material(Shader.Find("Sprites/Default"));
                 rope.startColor = new Color(0.82f, 0.82f, 0.82f, 0.95f);
                 rope.endColor = rope.startColor;
             }
 
-            transport.ActiveDrop = new RuntimeBuildingEntity.PendingDropVisual
-            {
-                Production = pending,
-                Visual = visual,
-                Rope = rope,
-                StartedAt = now,
-                Duration = transport.Mode == ProductionTransportMode.Plane ? 3f : 2f,
-                StartPosition = dropStartPosition,
-                EndPosition = dropEndPosition,
-                FinalGoalCell = finalGoalCell
-            };
+            RuntimeBuildingEntity.PendingDropVisual drop = AcquireTransportDropState();
+            drop.Production = pending;
+            drop.Prefab = pending.Prefab;
+            drop.Visual = visual;
+            drop.Rope = rope;
+            drop.StartedAt = now;
+            drop.Duration = transport.Mode == ProductionTransportMode.Plane ? 3f : 2f;
+            drop.StartPosition = dropStartPosition;
+            drop.EndPosition = dropEndPosition;
+            drop.FinalGoalCell = finalGoalCell;
+            transport.ActiveDrop = drop;
         }
 
         private static void ApplyTemporaryCharacterIdlePose(GameObject visual)
@@ -682,7 +713,140 @@ namespace Game.Runtime
             }
         }
 
-        private static void UpdateActiveTransportDrop(Context context, RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now, ref uint randomState)
+        private GameObject AcquireTransportDropVisual(
+            GameObject prefab,
+            PrepareTransportDropVisualDelegate prepareTransportDropVisual)
+        {
+            if (prefab == null)
+                return null;
+
+            Stack<GameObject> pool = GetTransportDropVisualPool(prefab);
+            GameObject visual = pool.Count > 0 ? pool.Pop() : CreateTransportDropVisual(prefab, prepareTransportDropVisual);
+            Transform visualTransform = visual.transform;
+            visualTransform.SetParent(EnsureRuntimeRoot(), false);
+            visualTransform.localPosition = Vector3.zero;
+            visualTransform.localRotation = Quaternion.identity;
+            visualTransform.localScale = Vector3.one;
+            visual.SetActive(true);
+            return visual;
+        }
+
+        private GameObject CreateTransportDropVisual(
+            GameObject prefab,
+            PrepareTransportDropVisualDelegate prepareTransportDropVisual)
+        {
+            Transform runtimeRoot = EnsureRuntimeRoot();
+            GameObject visual = runtimeRoot != null
+                ? Instantiate(prefab, runtimeRoot, false)
+                : Instantiate(prefab);
+            visual.name = $"{prefab.name}_TransportDrop";
+            HideTransportRuntimeMarkers(visual.transform);
+            ApplyTemporaryCharacterIdlePose(visual);
+            prepareTransportDropVisual?.Invoke(visual);
+            visual.SetActive(false);
+            return visual;
+        }
+
+        private void ReturnTransportDropVisual(GameObject prefab, GameObject visual)
+        {
+            if (prefab == null || visual == null)
+                return;
+
+            Transform visualTransform = visual.transform;
+            visualTransform.SetParent(EnsureRuntimeRoot(), false);
+            visualTransform.localPosition = Vector3.zero;
+            visualTransform.localRotation = Quaternion.identity;
+            visualTransform.localScale = Vector3.one;
+            visual.SetActive(false);
+            GetTransportDropVisualPool(prefab).Push(visual);
+        }
+
+        private Stack<GameObject> GetTransportDropVisualPool(GameObject prefab)
+        {
+            if (!_dropVisualPoolByPrefab.TryGetValue(prefab, out Stack<GameObject> pool))
+            {
+                pool = new Stack<GameObject>();
+                _dropVisualPoolByPrefab[prefab] = pool;
+            }
+
+            return pool;
+        }
+
+        private LineRenderer AcquireTransportDropRope()
+        {
+            LineRenderer rope = _dropRopePool.Count > 0
+                ? _dropRopePool.Pop()
+                : CreateTransportDropRope();
+            rope.gameObject.SetActive(true);
+            rope.positionCount = 0;
+            rope.widthMultiplier = 0.05f;
+            rope.material = EnsureTransportDropRopeMaterial();
+            return rope;
+        }
+
+        private LineRenderer CreateTransportDropRope()
+        {
+            Transform runtimeRoot = EnsureRuntimeRoot();
+            GameObject ropeObject = new("TransportDropRope");
+            if (runtimeRoot != null)
+                ropeObject.transform.SetParent(runtimeRoot, false);
+            LineRenderer rope = ropeObject.AddComponent<LineRenderer>();
+            rope.material = EnsureTransportDropRopeMaterial();
+            rope.gameObject.SetActive(false);
+            return rope;
+        }
+
+        private void ReturnTransportDropRope(LineRenderer rope)
+        {
+            if (rope == null)
+                return;
+
+            rope.positionCount = 0;
+            rope.transform.SetParent(EnsureRuntimeRoot(), false);
+            rope.transform.localPosition = Vector3.zero;
+            rope.transform.localRotation = Quaternion.identity;
+            rope.transform.localScale = Vector3.one;
+            rope.gameObject.SetActive(false);
+            _dropRopePool.Push(rope);
+        }
+
+        private Material EnsureTransportDropRopeMaterial()
+        {
+            if (_dropRopeMaterial != null)
+                return _dropRopeMaterial;
+
+            Shader shader = Shader.Find("Sprites/Default");
+            _dropRopeMaterial = shader != null
+                ? new Material(shader)
+                : new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+            return _dropRopeMaterial;
+        }
+
+        private RuntimeBuildingEntity.PendingDropVisual AcquireTransportDropState()
+        {
+            return _dropVisualStatePool.Count > 0
+                ? _dropVisualStatePool.Pop()
+                : new RuntimeBuildingEntity.PendingDropVisual();
+        }
+
+        private void ReturnTransportDropState(RuntimeBuildingEntity.PendingDropVisual drop)
+        {
+            if (drop == null)
+                return;
+
+            drop.Production = null;
+            drop.Prefab = null;
+            drop.Visual = null;
+            drop.Rope = null;
+            drop.StartedAt = 0f;
+            drop.Duration = 0f;
+            drop.StartPosition = default;
+            drop.EndPosition = default;
+            drop.FinalGoalCell = default;
+            _dropVisualStatePool.Push(drop);
+        }
+
+        private void UpdateActiveTransportDrop(Context context, RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now, ref uint randomState)
         {
             RuntimeBuildingEntity.PendingDropVisual drop = transport.ActiveDrop;
             if (drop == null)
@@ -719,10 +883,8 @@ namespace Game.Runtime
             if (t < 1f)
                 return;
 
-            if (drop.Visual != null)
-                Destroy(drop.Visual);
-            if (drop.Rope != null)
-                Destroy(drop.Rope.gameObject);
+            ReturnTransportDropVisual(drop.Prefab, drop.Visual);
+            ReturnTransportDropRope(drop.Rope);
 
             RuntimeBuildingEntity.PendingProduction production = drop.Production;
             bool removedProduction = context.ProductionSystem.RemovePendingProduction(building.PendingProductions, production);
@@ -751,6 +913,7 @@ namespace Game.Runtime
 
             if (removedProduction)
                 context.ProductionSystem.ReleasePendingProduction(production);
+            ReturnTransportDropState(drop);
             transport.ActiveDrop = null;
             transport.NextDropReadyAt = now;
         }
@@ -908,9 +1071,14 @@ namespace Game.Runtime
             RuntimeBuildingEntity.PendingProduction pending,
             Vector3 preferredWorld,
             RuntimeBuildingEntity.ActiveProductionTransport ignoredTransport,
+            int startRadius,
+            out bool exhaustedSearchBudget,
+            out int nextSearchRadius,
             out int2 dropCell,
             out Vector3 dropPosition)
         {
+            exhaustedSearchBudget = false;
+            nextSearchRadius = 0;
             dropCell = default;
             dropPosition = default;
             if (context.TransportBridgeSystem == null ||
@@ -930,14 +1098,16 @@ namespace Game.Runtime
             int2 unitFootprint = context.TransportBridgeSystem.ResolveUnitFootprintForPrefab(context.TransportBridgeContext, em, pending?.Prefab);
             int2 preferredCell = GridUtils.WorldToCell(grid, preferredWorld);
             int gridSize = math.max(0, grid.Width * grid.Height);
-            NativeBitArray reserved = new(gridSize, Allocator.Temp);
+            NativeBitArray reserved = new(gridSize, Allocator.Temp, NativeArrayOptions.ClearMemory);
             try
             {
                 ReserveRuntimeBuildingDropBuffers(context, ref reserved, grid, HelicopterDropBuildingBufferCells);
                 ReserveActiveProductionTransportDropBuffers(context, ignoredTransport, ref reserved, grid, HelicopterDropActiveTransportBufferCells);
-                ReserveProducedUnitDropBuffers(context, em, ref reserved, grid);
-                ReserveLiveUnitDropBuffers(em, ref reserved, grid);
-                for (int radius = 0; radius <= HelicopterDropSearchRadiusCells; radius++)
+                // Dynamic occupancy already rejects live and produced unit footprints. Avoid rebuilding
+                // broad per-unit safety reservations during the production transport frame tick.
+                int candidateChecks = 0;
+                int safeStartRadius = math.clamp(startRadius, 0, HelicopterDropSearchRadiusCells);
+                for (int radius = safeStartRadius; radius <= HelicopterDropSearchRadiusCells; radius++)
                 {
                     for (int y = preferredCell.y - radius; y <= preferredCell.y + radius; y++)
                     {
@@ -951,6 +1121,7 @@ namespace Game.Runtime
                             }
 
                             int2 candidate = new(x, y);
+                            candidateChecks++;
                             if (!TryResolveHelicopterDropCandidate(
                                     em,
                                     grid,
@@ -962,6 +1133,13 @@ namespace Game.Runtime
                                     unitFootprint,
                                     out Vector3 candidatePosition))
                             {
+                                if (candidateChecks >= HelicopterDropMaxCandidateChecksPerSearch)
+                                {
+                                    nextSearchRadius = radius < HelicopterDropSearchRadiusCells ? radius + 1 : 0;
+                                    exhaustedSearchBudget = nextSearchRadius > 0;
+                                    return false;
+                                }
+
                                 continue;
                             }
 
@@ -1528,6 +1706,9 @@ namespace Game.Runtime
             transport.Phase = 0;
             transport.HoverEnteredAt = 0f;
             transport.NextDropReadyAt = 0f;
+            transport.NextClearDropSearchAt = 0f;
+            transport.ClearDropFailureCount = 0;
+            transport.ClearDropSearchStartRadius = 0;
             transport.Mode = default;
             transport.ActiveDrop = null;
             _transportStatePool.Push(transport);

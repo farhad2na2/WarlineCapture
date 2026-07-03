@@ -13,6 +13,7 @@ namespace Game.Runtime
         internal sealed class PendingDropVisual
         {
             public PendingProduction Production;
+            public GameObject Prefab;
             public GameObject Visual;
             public LineRenderer Rope;
             public float StartedAt;
@@ -46,6 +47,7 @@ namespace Game.Runtime
             public float NextDropReadyAt;
             public float NextClearDropSearchAt;
             public byte ClearDropFailureCount;
+            public int ClearDropSearchStartRadius;
             public ProductionTransportMode Mode;
             public PendingDropVisual ActiveDrop;
         }

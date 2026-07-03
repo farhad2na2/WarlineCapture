@@ -30,6 +30,8 @@ namespace Game.Runtime
         private float _nextProductionRequestProbeAt;
         private float _nextRuntimeSpawnRequestProbeAt;
         private PublishPhase _nextPublishPhase = PublishPhase.FactionSummaries;
+        private Unity.Entities.World _cachedBoundaryWorld;
+        private Entity _cachedBoundaryEntity;
 
         private enum PublishPhase : byte
         {
@@ -1302,13 +1304,32 @@ namespace Game.Runtime
             return hash;
         }
 
-        private static bool TryGetBoundaryEntity(EntityManager em, EntityQuery boundaryQuery, out Entity boundaryEntity)
+        private bool TryGetBoundaryEntity(EntityManager em, EntityQuery boundaryQuery, out Entity boundaryEntity)
         {
             boundaryEntity = Entity.Null;
+            Unity.Entities.World world = em.World;
+            if (world == null || !world.IsCreated)
+            {
+                _cachedBoundaryWorld = null;
+                _cachedBoundaryEntity = Entity.Null;
+                return false;
+            }
+
+            if (_cachedBoundaryWorld == world &&
+                _cachedBoundaryEntity != Entity.Null &&
+                em.Exists(_cachedBoundaryEntity))
+            {
+                boundaryEntity = _cachedBoundaryEntity;
+                return true;
+            }
+
             if (!boundaryQuery.IsEmptyIgnoreFilter)
                 boundaryEntity = boundaryQuery.GetSingletonEntity();
 
-            return boundaryEntity != Entity.Null && em.Exists(boundaryEntity);
+            bool valid = boundaryEntity != Entity.Null && em.Exists(boundaryEntity);
+            _cachedBoundaryWorld = valid ? world : null;
+            _cachedBoundaryEntity = valid ? boundaryEntity : Entity.Null;
+            return valid;
         }
 
         private static bool TryGetGridConfig(EntityManager em, out GridConfig grid)

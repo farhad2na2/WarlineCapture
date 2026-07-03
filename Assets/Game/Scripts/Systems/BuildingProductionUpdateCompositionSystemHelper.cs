@@ -64,23 +64,26 @@ namespace Game.Runtime
             }
         }
 
-        public void UpdateActiveProductionTransports(Context context, float now, float deltaTime, ref uint randomState)
+        public bool UpdateActiveProductionTransports(Context context, float now, float deltaTime, ref uint randomState)
         {
             if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0 || context.TransportSystem == null)
-                return;
+                return false;
 
+            bool hasActiveTransport = false;
             if (context.RuntimeBuildingMap != null)
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
-                    UpdateActiveProductionTransportForBuilding(context, pair.Value, now, deltaTime, ref randomState);
-                return;
+                    hasActiveTransport |= UpdateActiveProductionTransportForBuilding(context, pair.Value, now, deltaTime, ref randomState);
+                return hasActiveTransport;
             }
 
             foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
-                UpdateActiveProductionTransportForBuilding(context, pair.Value, now, deltaTime, ref randomState);
+                hasActiveTransport |= UpdateActiveProductionTransportForBuilding(context, pair.Value, now, deltaTime, ref randomState);
+
+            return hasActiveTransport;
         }
 
-        private static void UpdateActiveProductionTransportForBuilding(
+        private static bool UpdateActiveProductionTransportForBuilding(
             Context context,
             RuntimeBuildingEntity building,
             float now,
@@ -88,9 +91,10 @@ namespace Game.Runtime
             ref uint randomState)
         {
             if (building == null || building.ActiveTransport == null)
-                return;
+                return false;
 
             context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime, ref randomState);
+            return true;
         }
 
         private static void UpdatePendingProductionForBuilding(

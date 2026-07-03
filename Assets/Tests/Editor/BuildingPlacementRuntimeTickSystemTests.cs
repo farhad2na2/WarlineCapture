@@ -68,7 +68,11 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
             enqueueMapBuildingPlacements: () => calls.Add("mapBuildings"),
             enqueueMapVehiclePlacements: () => calls.Add("mapVehicles"),
             updateBuildingRuntimeState: () => calls.Add("boundary"),
-            updateActiveProductionTransports: () => calls.Add("activeTransport"),
+            updateActiveProductionTransports: () =>
+            {
+                calls.Add("activeTransport");
+                return true;
+            },
             updateBuildingResourceVisuals: () => calls.Add("visuals"));
 
         tickSystem.UpdateSimulation(context);
@@ -83,12 +87,16 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
         System.Action enqueueMapBuildingPlacements,
         System.Action enqueueMapVehiclePlacements,
         System.Action updateBuildingRuntimeState,
-        System.Action updateActiveProductionTransports = null,
+        System.Func<bool> updateActiveProductionTransports = null,
         System.Action updateBuildingResourceVisuals = null)
     {
         return new BuildingPlacementRuntimeTickCompositionSystemHelper.Context(
             processPendingProductions: () => calls.Add("production"),
-            updateActiveProductionTransports: updateActiveProductionTransports ?? (() => calls.Add("activeTransport")),
+            updateActiveProductionTransports: updateActiveProductionTransports ?? (() =>
+            {
+                calls.Add("activeTransport");
+                return true;
+            }),
             updateResourceProduction: () => calls.Add("resources"),
             updateResourceHaulers: () => calls.Add("haulers"),
             updateBuildingResourceVisuals: updateBuildingResourceVisuals ?? (() => calls.Add("visuals")),

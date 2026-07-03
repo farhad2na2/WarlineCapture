@@ -10,6 +10,7 @@ namespace Game.UI.Runtime
 {
     public sealed class MainMenuPlayUI : IMatchRuntimeUi
     {
+        private const float CompactMinimapUpdateIntervalSeconds = 0.1f;
         private static readonly ProfilerMarker MinimapUpdateMarker = new("MainMenuPlayUI.MinimapUpdate");
         private static readonly ProfilerMarker FeedbackLifetimeMarker = new("MainMenuPlayUI.FeedbackLifetime");
 
@@ -33,11 +34,18 @@ namespace Game.UI.Runtime
         private TMP_Text _matchHudOilSlotValue;
         private TMP_Text _matchHudFuelSlotLabel;
         private TMP_Text _matchHudFuelSlotValue;
+        private string _lastMatchHudOilText;
+        private string _lastMatchHudFuelText;
+        private bool _matchHudResourceLabelsApplied;
+        private float _nextCompactMinimapUpdateTime;
         private BuildDrawerView _buildDrawerView;
         private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
         private System.Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
         private System.Action<IBattleHudRuntimeFeedbackSink> _bindMatchHudRuntimeFeedback;
         private System.Action<IMatchHudSquadTrayView> _bindMatchHudSquadTray;
+        private EventSystem _raycastEventSystem;
+        private PointerEventData _raycastPointerData;
+        private readonly List<RaycastResult> _raycastResults = new(16);
 
         public void Init(
             ISelectionUiCommand selectionUiCommandSystem,
@@ -96,7 +104,13 @@ namespace Game.UI.Runtime
         {
             using (MinimapUpdateMarker.Auto())
             {
-                _matchHudMinimapInputSystem.Update();
+                float now = Time.unscaledTime;
+                if (now >= _nextCompactMinimapUpdateTime)
+                {
+                    _nextCompactMinimapUpdateTime = now + CompactMinimapUpdateIntervalSeconds;
+                    _matchHudMinimapInputSystem.Update();
+                }
+
                 if (_matchHudFullMapPopupView != null && _matchHudFullMapPopupView.IsOpen)
                     _matchHudFullMapInputSystem.Update();
             }
@@ -114,6 +128,7 @@ namespace Game.UI.Runtime
 
         public void NotifyStaticMinimapChanged()
         {
+            _nextCompactMinimapUpdateTime = 0f;
             _matchHudMinimapInputSystem.NotifyStaticMapChanged();
             _matchHudFullMapInputSystem.NotifyStaticMapChanged();
         }
@@ -124,6 +139,7 @@ namespace Game.UI.Runtime
                 _matchHudMinimapView.FullMapOpenRequested -= RequestFullMapPopup;
 
             _matchHudMinimapView = minimapView;
+            _nextCompactMinimapUpdateTime = 0f;
             _matchHudMinimapInputSystem.Bind(
                 minimapView,
                 _runtimeGameplayStateSystem,
@@ -245,6 +261,9 @@ namespace Game.UI.Runtime
             _matchHudOilSlotValue = null;
             _matchHudFuelSlotLabel = null;
             _matchHudFuelSlotValue = null;
+            _lastMatchHudOilText = null;
+            _lastMatchHudFuelText = null;
+            _matchHudResourceLabelsApplied = false;
 
             if (headerContent == null)
                 return;
@@ -332,19 +351,25 @@ namespace Game.UI.Runtime
             if (!UiShellRuntimeGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header))
                 return;
 
-            if (_matchHudOilSlotLabel != null)
+            if (!_matchHudResourceLabelsApplied && _matchHudOilSlotLabel != null)
                 _matchHudOilSlotLabel.text = "Oil";
-            if (_matchHudOilSlotValue != null)
-                _matchHudOilSlotValue.text = string.IsNullOrWhiteSpace(header.OilText)
-                    ? "0"
-                    : header.OilText;
+            string oilText = string.IsNullOrWhiteSpace(header.OilText) ? "0" : header.OilText;
+            if (_matchHudOilSlotValue != null && _lastMatchHudOilText != oilText)
+            {
+                _matchHudOilSlotValue.text = oilText;
+                _lastMatchHudOilText = oilText;
+            }
 
-            if (_matchHudFuelSlotLabel != null)
+            if (!_matchHudResourceLabelsApplied && _matchHudFuelSlotLabel != null)
                 _matchHudFuelSlotLabel.text = "Fuel";
-            if (_matchHudFuelSlotValue != null)
-                _matchHudFuelSlotValue.text = string.IsNullOrWhiteSpace(header.FuelText)
-                    ? "0"
-                    : header.FuelText;
+            string fuelText = string.IsNullOrWhiteSpace(header.FuelText) ? "0" : header.FuelText;
+            if (_matchHudFuelSlotValue != null && _lastMatchHudFuelText != fuelText)
+            {
+                _matchHudFuelSlotValue.text = fuelText;
+                _lastMatchHudFuelText = fuelText;
+            }
+
+            _matchHudResourceLabelsApplied = true;
         }
 
         public bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime)
@@ -456,16 +481,20 @@ namespace Game.UI.Runtime
             if (eventSystem == null)
                 return false;
 
-            var pointerData = new PointerEventData(eventSystem)
+            if (_raycastPointerData == null || _raycastEventSystem != eventSystem)
             {
-                position = screenPosition
-            };
-            var results = new List<RaycastResult>();
-            eventSystem.RaycastAll(pointerData, results);
+                _raycastEventSystem = eventSystem;
+                _raycastPointerData = new PointerEventData(eventSystem);
+            }
 
-            for (int i = 0; i < results.Count; i++)
+            _raycastPointerData.Reset();
+            _raycastPointerData.position = screenPosition;
+            _raycastResults.Clear();
+            eventSystem.RaycastAll(_raycastPointerData, _raycastResults);
+
+            for (int i = 0; i < _raycastResults.Count; i++)
             {
-                RaycastResult result = results[i];
+                RaycastResult result = _raycastResults[i];
                 if (result.gameObject == null || !result.gameObject.activeInHierarchy)
                     continue;
 

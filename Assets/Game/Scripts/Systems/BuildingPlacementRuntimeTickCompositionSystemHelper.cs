@@ -32,11 +32,13 @@ namespace Game.Runtime
         private double _nextResourceVisualAt;
         private double _nextReservationCleanupAt;
         private double _nextDestroyedCleanupAt;
+        private double _nextActiveProductionTransportProbeAt;
+        private bool _activeProductionTransportsObserved;
 
         public readonly struct Context
         {
             public readonly Action ProcessPendingProductions;
-            public readonly Action UpdateActiveProductionTransports;
+            public readonly Func<bool> UpdateActiveProductionTransports;
             public readonly Action UpdateResourceProduction;
             public readonly Action UpdateResourceHaulers;
             public readonly Action UpdateBuildingResourceVisuals;
@@ -54,7 +56,7 @@ namespace Game.Runtime
 
             public Context(
                 Action processPendingProductions,
-                Action updateActiveProductionTransports,
+                Func<bool> updateActiveProductionTransports,
                 Action updateResourceProduction,
                 Action updateResourceHaulers,
                 Action updateBuildingResourceVisuals,
@@ -180,6 +182,7 @@ namespace Game.Runtime
 
                 afterBoundary = UnityEngine.Time.realtimeSinceStartupAsDouble;
                 double now = afterBoundary;
+                bool processedPendingProductions = false;
                 if (now >= _nextProductionAt)
                 {
                     _nextProductionAt = now + ProductionIntervalSeconds;
@@ -187,12 +190,27 @@ namespace Game.Runtime
                     {
                         context.ProcessPendingProductions?.Invoke();
                     }
+                    processedPendingProductions = true;
                 }
                 afterPendingProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-                using (UpdateActiveProductionTransportsMarker.Auto())
+                now = afterPendingProductions;
+                bool shouldUpdateActiveTransports =
+                    _activeProductionTransportsObserved ||
+                    processedPendingProductions ||
+                    now >= _nextActiveProductionTransportProbeAt;
+                if (shouldUpdateActiveTransports)
                 {
-                    context.UpdateActiveProductionTransports?.Invoke();
+                    using (UpdateActiveProductionTransportsMarker.Auto())
+                    {
+                        _activeProductionTransportsObserved =
+                            context.UpdateActiveProductionTransports != null &&
+                            context.UpdateActiveProductionTransports();
+                    }
+
+                    _nextActiveProductionTransportProbeAt = _activeProductionTransportsObserved
+                        ? now
+                        : now + ProductionIntervalSeconds;
                 }
                 afterProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
 

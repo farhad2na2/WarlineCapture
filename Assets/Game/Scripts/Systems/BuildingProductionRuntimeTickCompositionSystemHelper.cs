@@ -72,18 +72,19 @@ namespace Game.Runtime
             context.SetRandomState?.Invoke(randomState);
         }
 
-        public void UpdateActiveProductionTransports(Context context)
+        public bool UpdateActiveProductionTransports(Context context)
         {
             if (context.ProductionUpdateSystem == null)
-                return;
+                return false;
 
             uint randomState = context.GetRandomState != null ? context.GetRandomState() : 0u;
-            context.ProductionUpdateSystem.UpdateActiveProductionTransports(
+            bool hasActiveTransport = context.ProductionUpdateSystem.UpdateActiveProductionTransports(
                 context.ProductionUpdateContext,
                 UnityEngine.Time.time,
                 UnityEngine.Time.deltaTime,
                 ref randomState);
             context.SetRandomState?.Invoke(randomState);
+            return hasActiveTransport;
         }
 
         public void UpdateResourceProduction(Context context)

@@ -59,13 +59,33 @@ if (-not [string]::IsNullOrWhiteSpace($UnityVersion)) {
         foreach ($root in $programFiles) {
             Add-Candidate -Candidates $candidates -Path (Join-Path $root "Unity\Hub\Editor\$version\Editor\Unity.exe")
             Add-Candidate -Candidates $candidates -Path (Join-Path $root "Unity\$version\Editor\Unity.exe")
+            Add-Candidate -Candidates $candidates -Path (Join-Path $root "Unity $version\Editor\Unity.exe")
+            Add-Candidate -Candidates $candidates -Path (Join-Path $root "Unity-$version\Editor\Unity.exe")
         }
     }
 }
 
+foreach ($root in $programFiles) {
+    foreach ($unityRoot in @((Join-Path $root "Unity"), (Join-Path $root "Unity\Hub\Editor"))) {
+        if (-not [System.IO.Directory]::Exists($unityRoot)) {
+            continue
+        }
+
+        Get-ChildItem -LiteralPath $unityRoot -Directory -ErrorAction SilentlyContinue |
+            Where-Object {
+                [string]::IsNullOrWhiteSpace($UnityVersion) -or
+                $unityVersions.Contains($_.Name) -or
+                $_.Name -like "*$UnityVersion*"
+            } |
+            ForEach-Object {
+                Add-Candidate -Candidates $candidates -Path (Join-Path $_.FullName "Editor\Unity.exe")
+            }
+    }
+}
+
 foreach ($candidate in $candidates) {
-    if (Test-Path -LiteralPath $candidate -PathType Leaf) {
-        $resolved = (Get-Item -LiteralPath $candidate).FullName
+    if ([System.IO.File]::Exists($candidate)) {
+        $resolved = [System.IO.Path]::GetFullPath($candidate)
         Write-Output $resolved
         exit 0
     }

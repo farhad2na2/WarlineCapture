@@ -137,6 +137,7 @@ pipeline {
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:PROJECT_PATH\\TestResults\\EditMode.log" `
                     -NoProcessExit `
+                    -TimeoutSeconds 300 `
                     -UnityArguments @("-nographics", "-quit", "-runTests", "-testPlatform", "EditMode", "-testResults", "$env:PROJECT_PATH\\TestResults\\EditMode.xml")
                 $editModeExit = $LASTEXITCODE
 

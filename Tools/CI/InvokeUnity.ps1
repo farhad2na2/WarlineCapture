@@ -11,6 +11,9 @@ param(
     [Parameter(Mandatory = $false)]
     [switch] $NoProcessExit,
 
+    [Parameter(Mandatory = $false)]
+    [int] $TimeoutSeconds = 0,
+
     [Parameter(Mandatory = $false, ValueFromRemainingArguments = $true)]
     [string[]] $UnityArguments = @()
 )
@@ -66,6 +69,7 @@ function ConvertTo-ProcessArgument {
 Write-InvocationLog "[UnityInvoke] UnityExe: $resolvedUnityExe"
 Write-InvocationLog "[UnityInvoke] ProjectPath: $resolvedProjectPath"
 Write-InvocationLog "[UnityInvoke] LogFile: $resolvedLogFile"
+Write-InvocationLog "[UnityInvoke] TimeoutSeconds: $TimeoutSeconds"
 
 if (-not (Test-Path -LiteralPath $resolvedUnityExe -PathType Leaf)) {
     Write-InvocationLog "[UnityInvoke] ERROR: Unity executable does not exist: $resolvedUnityExe"
@@ -106,13 +110,24 @@ $process = Start-Process `
     -RedirectStandardError $stderrLogFile `
     -PassThru
 
+$timedOut = $false
+$startedAt = Get-Date
 while (-not $process.HasExited) {
+    if ($TimeoutSeconds -gt 0 -and ((Get-Date) - $startedAt).TotalSeconds -ge $TimeoutSeconds) {
+        $timedOut = $true
+        Write-InvocationLog "[UnityInvoke] ERROR: Unity timed out after $TimeoutSeconds seconds. Killing process tree for PID $($process.Id)."
+        & taskkill.exe /PID $process.Id /T /F 2>&1 | ForEach-Object {
+            Write-InvocationLog "[UnityInvoke] taskkill: $_"
+        }
+        break
+    }
+
     Start-Sleep -Seconds 1
     $process.Refresh()
 }
 
 $process.WaitForExit()
-$exitCode = if ($null -eq $process.ExitCode) { 0 } else { $process.ExitCode }
+$exitCode = if ($timedOut) { 124 } elseif ($null -eq $process.ExitCode) { 0 } else { $process.ExitCode }
 Write-InvocationLog "[UnityInvoke] ExitCode: $exitCode"
 if ($NoProcessExit) {
     $global:LASTEXITCODE = $exitCode

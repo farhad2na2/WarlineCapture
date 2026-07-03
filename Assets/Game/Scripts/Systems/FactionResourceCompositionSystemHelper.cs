@@ -326,44 +326,22 @@ namespace Game.Runtime
             if (building == null || building.IsDestroyed)
                 return;
 
-            int oilCapacity = Mathf.Max(0, building.OilStorageCapacity);
-            float oilBarrelsPerDay = Mathf.Max(0f, building.OilBarrelsPerDay);
-            if (oilCapacity > 0 && oilBarrelsPerDay > 0f)
-            {
-                if (building.StoredOilBarrels >= oilCapacity)
-                {
-                    building.StoredOilBarrels = oilCapacity;
-                }
-                else
-                {
-                    float barrelsPerSecond = oilBarrelsPerDay / secondsPerDay;
-                    float previousOil = building.StoredOilBarrels;
-                    building.StoredOilBarrels = Mathf.Min(oilCapacity, building.StoredOilBarrels + barrelsPerSecond * deltaTime);
-                    oilExtracted += building.StoredOilBarrels - previousOil;
-                }
-            }
+            BuildingResourceProductionSystemHelper.Result result = BuildingResourceProductionSystemHelper.Tick(
+                new BuildingResourceProductionSystemHelper.State(
+                    building.OilStorageCapacity,
+                    building.FuelStorageCapacity,
+                    building.OilBarrelsPerDay,
+                    building.FuelBarrelsPerDay,
+                    building.StoredOilBarrels,
+                    building.StoredFuelBarrels),
+                secondsPerDay,
+                deltaTime,
+                oilBarrelsPerFuelBarrel);
 
-            float fuelBarrelsPerDay = Mathf.Max(0f, building.FuelBarrelsPerDay);
-            int fuelCapacity = Mathf.Max(0, building.FuelStorageCapacity);
-            if (fuelBarrelsPerDay <= 0f)
-                return;
-
-            float maxFuelFromOil = building.StoredOilBarrels / oilBarrelsPerFuelBarrel;
-            if (maxFuelFromOil <= 0f)
-                return;
-
-            float desiredFuel = (fuelBarrelsPerDay / secondsPerDay) * deltaTime;
-            float producedFuel = Mathf.Min(desiredFuel, maxFuelFromOil);
-            if (fuelCapacity > 0)
-                producedFuel = Mathf.Min(producedFuel, Mathf.Max(0f, fuelCapacity - building.StoredFuelBarrels));
-
-            if (producedFuel <= 0f)
-                return;
-
-            building.StoredOilBarrels = Mathf.Max(0f, building.StoredOilBarrels - (producedFuel * oilBarrelsPerFuelBarrel));
-            if (fuelCapacity > 0)
-                building.StoredFuelBarrels = Mathf.Min(fuelCapacity, building.StoredFuelBarrels + producedFuel);
-            fuelProduced += producedFuel;
+            building.StoredOilBarrels = result.StoredOilBarrels;
+            building.StoredFuelBarrels = result.StoredFuelBarrels;
+            oilExtracted += result.OilExtractedBarrels;
+            fuelProduced += result.FuelProducedBarrels;
         }
 
         public bool IsResourceStorageBuilding(IResourceBuilding building)

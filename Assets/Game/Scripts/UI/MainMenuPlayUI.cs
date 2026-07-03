@@ -11,6 +11,8 @@ namespace Game.UI.Runtime
     public sealed class MainMenuPlayUI : IMatchRuntimeUi
     {
         private const float CompactMinimapUpdateIntervalSeconds = 0.1f;
+        private const float HeaderResourceRefreshIntervalSeconds = 0.2f;
+        private const float ZoomControlRefreshIntervalSeconds = 0.1f;
         private static readonly ProfilerMarker MinimapUpdateMarker = new("MainMenuPlayUI.MinimapUpdate");
         private static readonly ProfilerMarker FeedbackLifetimeMarker = new("MainMenuPlayUI.FeedbackLifetime");
 
@@ -38,6 +40,8 @@ namespace Game.UI.Runtime
         private string _lastMatchHudFuelText;
         private bool _matchHudResourceLabelsApplied;
         private float _nextCompactMinimapUpdateTime;
+        private float _nextHeaderResourceRefreshTime;
+        private float _nextZoomControlRefreshTime;
         private BuildDrawerView _buildDrawerView;
         private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
         private System.Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
@@ -102,9 +106,9 @@ namespace Game.UI.Runtime
 
         public void Update()
         {
+            float now = Time.unscaledTime;
             using (MinimapUpdateMarker.Auto())
             {
-                float now = Time.unscaledTime;
                 if (now >= _nextCompactMinimapUpdateTime)
                 {
                     _nextCompactMinimapUpdateTime = now + CompactMinimapUpdateIntervalSeconds;
@@ -121,9 +125,9 @@ namespace Game.UI.Runtime
             }
 
             _selectionUiCameraSystem?.UpdateZoomTransition();
-            _matchHudRightQuickRailView?.RefreshZoomControls();
-            ApplyMatchHudHeaderResourceState();
-            TickMatchHudThreatWarning(Time.unscaledTime);
+            RefreshZoomControlsIfDue(now);
+            ApplyMatchHudHeaderResourceStateIfDue(now);
+            TickMatchHudThreatWarning(now);
         }
 
         public void NotifyStaticMinimapChanged()
@@ -194,6 +198,7 @@ namespace Game.UI.Runtime
         {
             _matchHudRightQuickRailView?.UnbindZoomControls();
             _matchHudRightQuickRailView = rightQuickRailView;
+            _nextZoomControlRefreshTime = 0f;
             _matchHudRightQuickRailView?.BindZoomControls(
                 RequestMatchHudZoomIn,
                 RequestMatchHudZoomOut,
@@ -264,6 +269,7 @@ namespace Game.UI.Runtime
             _lastMatchHudOilText = null;
             _lastMatchHudFuelText = null;
             _matchHudResourceLabelsApplied = false;
+            _nextHeaderResourceRefreshTime = 0f;
 
             if (headerContent == null)
                 return;
@@ -302,6 +308,7 @@ namespace Game.UI.Runtime
             BindMatchHudResourceSlot(oilSlot, out _matchHudOilSlotLabel, out _matchHudOilSlotValue);
             BindMatchHudResourceSlot(fuelSlot, out _matchHudFuelSlotLabel, out _matchHudFuelSlotValue);
             ApplyMatchHudHeaderResourceState();
+            _nextHeaderResourceRefreshTime = Time.unscaledTime + HeaderResourceRefreshIntervalSeconds;
         }
 
         private static Transform CreateOilResourceSlot(Transform resourceStrip, Transform fuelSlot)
@@ -370,6 +377,15 @@ namespace Game.UI.Runtime
             }
 
             _matchHudResourceLabelsApplied = true;
+        }
+
+        private void ApplyMatchHudHeaderResourceStateIfDue(float now)
+        {
+            if (_matchHudResourceLabelsApplied && now < _nextHeaderResourceRefreshTime)
+                return;
+
+            _nextHeaderResourceRefreshTime = now + HeaderResourceRefreshIntervalSeconds;
+            ApplyMatchHudHeaderResourceState();
         }
 
         public bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime)
@@ -581,13 +597,27 @@ namespace Game.UI.Runtime
         {
             CaptureZoomUiClick();
             _selectionUiCameraSystem?.RequestZoomInLevel();
-            _matchHudRightQuickRailView?.RefreshZoomControls();
+            RefreshZoomControlsNow(Time.unscaledTime);
         }
 
         private void RequestMatchHudZoomOut()
         {
             CaptureZoomUiClick();
             _selectionUiCameraSystem?.RequestZoomOutLevel();
+            RefreshZoomControlsNow(Time.unscaledTime);
+        }
+
+        private void RefreshZoomControlsIfDue(float now)
+        {
+            if (now < _nextZoomControlRefreshTime)
+                return;
+
+            RefreshZoomControlsNow(now);
+        }
+
+        private void RefreshZoomControlsNow(float now)
+        {
+            _nextZoomControlRefreshTime = now + ZoomControlRefreshIntervalSeconds;
             _matchHudRightQuickRailView?.RefreshZoomControls();
         }
 

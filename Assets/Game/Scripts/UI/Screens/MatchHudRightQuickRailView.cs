@@ -23,6 +23,8 @@ namespace Game.UI.Runtime
         private bool _buildButtonListenerInstalled;
         private bool _zoomButtonListenersInstalled;
         private Canvas _cachedCanvas;
+        private bool _hasLastZoomControlState;
+        private MatchHudZoomControlState _lastZoomControlState;
 
         public Button BuildButton => buildButton;
         public Button ZoomInButton
@@ -51,6 +53,7 @@ namespace Game.UI.Runtime
             ClearButtonSelection(buildButton);
             ClearButtonSelection(zoomInButton);
             ClearButtonSelection(zoomOutButton);
+            _hasLastZoomControlState = false;
             RefreshZoomControls();
         }
 
@@ -92,6 +95,7 @@ namespace Game.UI.Runtime
             _zoomInClicked = zoomInClicked;
             _zoomOutClicked = zoomOutClicked;
             _zoomStateProvider = zoomStateProvider;
+            _hasLastZoomControlState = false;
             ResolveZoomButtonsFromChildren();
             InstallZoomButtonListeners();
             RefreshZoomControls();
@@ -102,6 +106,7 @@ namespace Game.UI.Runtime
             _zoomInClicked = null;
             _zoomOutClicked = null;
             _zoomStateProvider = null;
+            _hasLastZoomControlState = false;
             UninstallZoomButtonListeners();
         }
 
@@ -129,9 +134,19 @@ namespace Game.UI.Runtime
                 ? _zoomStateProvider.Invoke()
                 : MatchHudZoomControlState.Disabled;
 
-            if (zoomInButton != null)
+            if (_hasLastZoomControlState &&
+                _lastZoomControlState.ZoomInEnabled == state.ZoomInEnabled &&
+                _lastZoomControlState.ZoomOutEnabled == state.ZoomOutEnabled)
+            {
+                return;
+            }
+
+            _hasLastZoomControlState = true;
+            _lastZoomControlState = state;
+
+            if (zoomInButton != null && zoomInButton.interactable != state.ZoomInEnabled)
                 zoomInButton.interactable = state.ZoomInEnabled;
-            if (zoomOutButton != null)
+            if (zoomOutButton != null && zoomOutButton.interactable != state.ZoomOutEnabled)
                 zoomOutButton.interactable = state.ZoomOutEnabled;
         }
 

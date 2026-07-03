@@ -15,7 +15,8 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.ApplyTick_ConvertsOilIntoFuel();
             tests.ApplyTick_DoesNotConvertOilWhenFuelStorageIsFull();
             tests.ProductionRuntimeTick_SyncsResourceStorageMirrorAfterProductionUpdate();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=4");
+            tests.ProductionRuntimeTick_SyncsResourceStorageMirrorAfterHaulerUpdate();
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=5");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -129,6 +130,51 @@ public sealed class BuildingResourceProductionEcsSystemTests
 
         Assert.AreEqual(1, syncCount);
         Assert.AreEqual(7f, syncedOil);
+    }
+
+    [Test]
+    public void ProductionRuntimeTick_SyncsResourceStorageMirrorAfterHaulerUpdate()
+    {
+        var building = new RuntimeBuildingEntity
+        {
+            Id = 13,
+            Definition = new BuildingDefinition
+            {
+                OilStorageCapacity = 30
+            },
+            StoredOilBarrels = 11f
+        };
+        var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+        {
+            { building.Id, building }
+        };
+        int syncCount = 0;
+        float syncedOil = -1f;
+        var context = new BuildingProductionRuntimeTickCompositionSystemHelper.Context(
+            runtimeBuildings,
+            null,
+            null,
+            null,
+            default,
+            null,
+            default,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            2f,
+            syncedBuilding =>
+            {
+                syncCount++;
+                syncedOil = syncedBuilding.StoredOilBarrels;
+            });
+
+        new BuildingProductionRuntimeTickCompositionSystemHelper().UpdateResourceHaulers(context);
+
+        Assert.AreEqual(1, syncCount);
+        Assert.AreEqual(11f, syncedOil);
     }
 }
 #endif

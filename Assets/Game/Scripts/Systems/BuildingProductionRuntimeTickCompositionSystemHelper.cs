@@ -157,6 +157,8 @@ namespace Game.Runtime
                 context.ResourceHaulerBridgeContext,
                 context.HasPendingPathJob != null && context.HasPendingPathJob(),
                 UnityEngine.Time.time);
+
+            SyncResourceStorageMirrors(context);
         }
 
         public void CleanupRecentSpawnReservations(Context context)

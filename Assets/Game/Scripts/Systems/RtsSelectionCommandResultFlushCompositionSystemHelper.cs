@@ -405,8 +405,17 @@ namespace Game.Runtime
 
         public bool ProcessCancelActiveCommandModeRequests(Context context)
         {
-            if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
-                !RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests(em))
+            if (!context.TryGetDefaultEntityManager(out EntityManager em))
+            {
+                return false;
+            }
+
+            context.EnsureEntityQueries?.Invoke(em);
+            if (!RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests(
+                    em,
+                    context.MoveTargetCommandQueueQuery,
+                    context.MoveTargetRuntimeStateQuery,
+                    out _))
             {
                 return false;
             }

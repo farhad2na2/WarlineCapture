@@ -1,6 +1,6 @@
 ﻿# Match GC Allocation Call-Stack Capture
 
-Date: 2026-07-03 11:04:25 UTC
+Date: 2026-07-03 11:45:47 UTC
 Lane: Gameplay/Performance
 Capture type: automated Match steady-state after Menu -> Match route
 
@@ -10,13 +10,13 @@ Capture type: automated Match steady-state after Menu -> Match route
 - Warm-up frames before capture: 180
 - Profiler frame range: 0..300
 - Scanned frames with data: 301
-- Scanned thread views: 28294
-- GC.Alloc samples: 25245
-- GC.Alloc bytes from hierarchy column: 1413444
-- GC.Alloc samples excluding editor compiler threads: 25245
-- GC.Alloc bytes excluding editor compiler threads: 1413444
-- Editor compiler-thread GC.Alloc samples: 0
-- Editor compiler-thread GC.Alloc bytes: 0
+- Scanned thread views: 29498
+- GC.Alloc samples: 90197
+- GC.Alloc bytes from hierarchy column: 9114591
+- GC.Alloc samples excluding editor compiler threads: 24101
+- GC.Alloc bytes excluding editor compiler threads: 1418878
+- Editor compiler-thread GC.Alloc samples: 66096
+- Editor compiler-thread GC.Alloc bytes: 7695713
 - Raw load status: `rawLoaded path=/private/tmp/warline-match-gc-callstack-capture.raw`
 - Raw capture: `/private/tmp/warline-match-gc-callstack-capture.raw`
 - Editor live conversion systems disabled before warmup: 2
@@ -28,72 +28,72 @@ Capture type: automated Match steady-state after Menu -> Match route
 
 | Rank | Bytes | Samples | Frames | Thread | Sample | Top managed frame | Hierarchy path |
 | ---: | ---: | ---: | ---: | --- | --- | --- | --- |
-| 1 | 169832 | 3887 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.CommandFlush > GC.Alloc |
-| 2 | 143520 | 3588 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Camera > GC.Alloc |
-| 3 | 88504 | 2093 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.TacticalCamera > GC.Alloc |
-| 4 | 76544 | 2093 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.MainMenu > GC.Alloc |
-| 5 | 76544 | 598 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Panel > GC.Alloc |
-| 6 | 69278 | 985 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateActiveProductionTransports > Burst.Compiler.IL.dll!Burst.Compiler.IL.Jit::JitCompilerService.CompileInternal() [Invoke] > GC.Alloc |
-| 7 | 66036 | 1021 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.EndUpdate > GC.Alloc |
-| 8 | 65472 | 939 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World Game.Runtime.UnitPathfindingSystem > Burst.Compiler.IL.dll!Burst.Compiler.IL.Jit::JitCompilerService.CompileInternal() [Invoke] > GC.Alloc |
-| 9 | 65472 | 939 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World Game.Runtime.UnitLookAtTargetSystem > Burst.Compiler.IL.dll!Burst.Compiler.IL.Jit::JitCompilerService.CompileInternal() [Invoke] > GC.Alloc |
-| 10 | 64482 | 962 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateActiveProductionTransports > GC.Alloc |
-| 11 | 59800 | 1495 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.RoadBuild > GC.Alloc |
-| 12 | 48626 | 906 | 81 | Thread Pool Worker | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | GC.Alloc |
-| 13 | 45448 | 598 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MenuBootstrapView.Update() [Invoke] > GC.Alloc |
-| 14 | 38272 | 299 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.FocusedReadModel > GC.Alloc |
-| 15 | 35880 | 897 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateInput > GC.Alloc |
+| 1 | 205712 | 3588 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World Game.Runtime.AIBuildPlannerSystem > GC.Alloc |
+| 2 | 143520 | 3588 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Camera > GC.Alloc |
+| 3 | 143520 | 3289 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.CommandFlush > GC.Alloc |
+| 4 | 136954 | 1730 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.EndUpdate > GC.Alloc |
+| 5 | 91686 | 36 | 16 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.EndUpdate > LogStringToConsole > GC.Alloc |
+| 6 | 91248 | 18 | 16 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.EndUpdate > LogStringToConsole > UnityEngine.CoreModule.dll!UnityEngine::StackTraceUtility.ExtractStackTrace() [Invoke] > GC.Alloc |
+| 7 | 88504 | 2093 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.TacticalCamera > GC.Alloc |
+| 8 | 76544 | 2093 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.MainMenu > GC.Alloc |
+| 9 | 76544 | 598 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Panel > GC.Alloc |
+| 10 | 59800 | 1495 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.RoadBuild > GC.Alloc |
+| 11 | 45448 | 598 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MenuBootstrapView.Update() [Invoke] > GC.Alloc |
+| 12 | 38272 | 299 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.FocusedReadModel > GC.Alloc |
+| 13 | 35880 | 897 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateInput > GC.Alloc |
+| 14 | 30304 | 674 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateBuildingRuntimeState > GC.Alloc |
+| 15 | 23920 | 598 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World Game.Runtime.TransportBoardingCommandSystem > GC.Alloc |
 
 ## Top Allocation Sites
 
 | Rank | Bytes | Samples | Frames | Thread | Sample | Top managed frame | Hierarchy path |
 | ---: | ---: | ---: | ---: | --- | --- | --- | --- |
-| 1 | 169832 | 3887 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.CommandFlush > GC.Alloc |
-| 2 | 143520 | 3588 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Camera > GC.Alloc |
-| 3 | 88504 | 2093 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.TacticalCamera > GC.Alloc |
-| 4 | 76544 | 2093 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.MainMenu > GC.Alloc |
-| 5 | 76544 | 598 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Panel > GC.Alloc |
-| 6 | 69278 | 985 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateActiveProductionTransports > Burst.Compiler.IL.dll!Burst.Compiler.IL.Jit::JitCompilerService.CompileInternal() [Invoke] > GC.Alloc |
-| 7 | 66036 | 1021 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.EndUpdate > GC.Alloc |
-| 8 | 65472 | 939 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World Game.Runtime.UnitPathfindingSystem > Burst.Compiler.IL.dll!Burst.Compiler.IL.Jit::JitCompilerService.CompileInternal() [Invoke] > GC.Alloc |
-| 9 | 65472 | 939 | 1 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World Game.Runtime.UnitLookAtTargetSystem > Burst.Compiler.IL.dll!Burst.Compiler.IL.Jit::JitCompilerService.CompileInternal() [Invoke] > GC.Alloc |
-| 10 | 64482 | 962 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateActiveProductionTransports > GC.Alloc |
-| 11 | 59800 | 1495 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.RoadBuild > GC.Alloc |
-| 12 | 48626 | 906 | 81 | Thread Pool Worker | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | GC.Alloc |
-| 13 | 45448 | 598 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MenuBootstrapView.Update() [Invoke] > GC.Alloc |
-| 14 | 38272 | 299 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.FocusedReadModel > GC.Alloc |
-| 15 | 35880 | 897 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateInput > GC.Alloc |
+| 1 | 7531238 | 64519 | 292 | Burst-CompilerThread-1 | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | GC.Alloc |
+| 2 | 205712 | 3588 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World Game.Runtime.AIBuildPlannerSystem > GC.Alloc |
+| 3 | 161845 | 1532 | 285 | Burst-CompilerThread-1 | GC.Alloc | (no managed call stack captured) | GC.Alloc |
+| 4 | 143520 | 3588 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Camera > GC.Alloc |
+| 5 | 143520 | 3289 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.CommandFlush > GC.Alloc |
+| 6 | 136954 | 1730 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.EndUpdate > GC.Alloc |
+| 7 | 91686 | 36 | 16 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.EndUpdate > LogStringToConsole > GC.Alloc |
+| 8 | 91248 | 18 | 16 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.EndUpdate > LogStringToConsole > UnityEngine.CoreModule.dll!UnityEngine::StackTraceUtility.ExtractStackTrace() [Invoke] > GC.Alloc |
+| 9 | 88504 | 2093 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.TacticalCamera > GC.Alloc |
+| 10 | 76544 | 2093 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.MainMenu > GC.Alloc |
+| 11 | 76544 | 598 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Panel > GC.Alloc |
+| 12 | 59800 | 1495 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.RoadBuild > GC.Alloc |
+| 13 | 45448 | 598 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MenuBootstrapView.Update() [Invoke] > GC.Alloc |
+| 14 | 38272 | 299 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.FocusedReadModel > GC.Alloc |
+| 15 | 35880 | 897 | 299 | Main Thread | GC.Alloc | #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager) | Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateInput > GC.Alloc |
 
 ## Highest Allocation Frames
 
 | Rank | Profiler frame | Bytes | Samples |
 | ---: | ---: | ---: | ---: |
-| 1 | 188 | 289092 | 3402 |
-| 2 | 102 | 70910 | 527 |
-| 3 | 17 | 30398 | 151 |
-| 4 | 282 | 19006 | 372 |
-| 5 | 187 | 18784 | 132 |
-| 6 | 251 | 18722 | 129 |
-| 7 | 101 | 18706 | 131 |
-| 8 | 97 | 18173 | 358 |
-| 9 | 54 | 5366 | 72 |
-| 10 | 189 | 5308 | 103 |
+| 1 | 39 | 255122 | 261 |
+| 2 | 249 | 136340 | 1077 |
+| 3 | 188 | 133878 | 541 |
+| 4 | 256 | 112514 | 1009 |
+| 5 | 270 | 111710 | 961 |
+| 6 | 298 | 108733 | 857 |
+| 7 | 276 | 104573 | 924 |
+| 8 | 286 | 101934 | 921 |
+| 9 | 284 | 94810 | 600 |
+| 10 | 231 | 90668 | 121 |
 
 ## Call Stacks
 
-### 1. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
+### 1. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
 
-Bytes: 169832
-Samples: 3887
-Frames: 299
-Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.CommandFlush > GC.Alloc
+Bytes: 7531238
+Samples: 64519
+Frames: 292
+Thread: Burst-CompilerThread-1
+Hierarchy path: GC.Alloc
 
 ```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
  #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
@@ -102,7 +102,40 @@ Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded
 
 ```
 
-### 2. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
+### 2. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+
+Bytes: 205712
+Samples: 3588
+Frames: 299
+Thread: Main Thread
+Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World Game.Runtime.AIBuildPlannerSystem > GC.Alloc
+
+```
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
+ #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
+ #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
+ #7  (Mono JIT Code) [MatchSceneView.cs:98] Game.Composition.MatchSceneView:Update ()
+ #8  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+
+```
+
+### 3. (no managed call stack captured)
+
+Bytes: 161845
+Samples: 1532
+Frames: 285
+Thread: Burst-CompilerThread-1
+Hierarchy path: GC.Alloc
+
+```
+(no managed call stack captured)
+```
+
+### 4. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
 
 Bytes: 143520
 Samples: 3588
@@ -111,10 +144,10 @@ Thread: Main Thread
 Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Camera > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
  #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
@@ -123,7 +156,91 @@ Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded
 
 ```
 
-### 3. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
+### 5. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+
+Bytes: 143520
+Samples: 3289
+Frames: 299
+Thread: Main Thread
+Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.CommandFlush > GC.Alloc
+
+```
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
+ #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
+ #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
+ #7  (Mono JIT Code) [MatchSceneView.cs:98] Game.Composition.MatchSceneView:Update ()
+ #8  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+
+```
+
+### 6. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+
+Bytes: 136954
+Samples: 1730
+Frames: 299
+Thread: Main Thread
+Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.EndUpdate > GC.Alloc
+
+```
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
+ #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
+ #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
+ #7  (Mono JIT Code) [MatchSceneView.cs:98] Game.Composition.MatchSceneView:Update ()
+ #8  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+
+```
+
+### 7. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+
+Bytes: 91686
+Samples: 36
+Frames: 16
+Thread: Main Thread
+Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.EndUpdate > LogStringToConsole > GC.Alloc
+
+```
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
+ #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
+ #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
+ #7  (Mono JIT Code) [MatchSceneView.cs:98] Game.Composition.MatchSceneView:Update ()
+ #8  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+
+```
+
+### 8. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+
+Bytes: 91248
+Samples: 18
+Frames: 16
+Thread: Main Thread
+Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.EndUpdate > LogStringToConsole > UnityEngine.CoreModule.dll!UnityEngine::StackTraceUtility.ExtractStackTrace() [Invoke] > GC.Alloc
+
+```
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
+ #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
+ #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
+ #7  (Mono JIT Code) [MatchSceneView.cs:98] Game.Composition.MatchSceneView:Update ()
+ #8  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
+
+```
+
+### 9. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
 
 Bytes: 88504
 Samples: 2093
@@ -132,10 +249,10 @@ Thread: Main Thread
 Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.TacticalCamera > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
  #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
@@ -144,7 +261,7 @@ Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded
 
 ```
 
-### 4. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
+### 10. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
 
 Bytes: 76544
 Samples: 2093
@@ -153,10 +270,10 @@ Thread: Main Thread
 Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.MainMenu > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
  #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
@@ -165,7 +282,7 @@ Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded
 
 ```
 
-### 5. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
+### 11. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
 
 Bytes: 76544
 Samples: 598
@@ -174,10 +291,10 @@ Thread: Main Thread
 Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Panel > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
  #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
@@ -186,112 +303,7 @@ Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded
 
 ```
 
-### 6. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
-
-Bytes: 69278
-Samples: 985
-Frames: 1
-Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateActiveProductionTransports > Burst.Compiler.IL.dll!Burst.Compiler.IL.Jit::JitCompilerService.CompileInternal() [Invoke] > GC.Alloc
-
-```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
- #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
- #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
- #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
- #7  (Mono JIT Code) [MatchSceneView.cs:98] Game.Composition.MatchSceneView:Update ()
- #8  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
-
-```
-
-### 7. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
-
-Bytes: 66036
-Samples: 1021
-Frames: 299
-Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.EndUpdate > GC.Alloc
-
-```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
- #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
- #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
- #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
- #7  (Mono JIT Code) [MatchSceneView.cs:98] Game.Composition.MatchSceneView:Update ()
- #8  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
-
-```
-
-### 8. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
-
-Bytes: 65472
-Samples: 939
-Frames: 1
-Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World Game.Runtime.UnitPathfindingSystem > Burst.Compiler.IL.dll!Burst.Compiler.IL.Jit::JitCompilerService.CompileInternal() [Invoke] > GC.Alloc
-
-```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
- #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
- #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
- #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
- #7  (Mono JIT Code) [MatchSceneView.cs:98] Game.Composition.MatchSceneView:Update ()
- #8  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
-
-```
-
-### 9. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
-
-Bytes: 65472
-Samples: 939
-Frames: 1
-Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > SimulationSystemGroup > UnityEngine.CoreModule.dll!::UpdateFunction.Invoke() [Invoke] > Default World Unity.Entities.SimulationSystemGroup > Default World Game.Runtime.UnitLookAtTargetSystem > Burst.Compiler.IL.dll!Burst.Compiler.IL.Jit::JitCompilerService.CompileInternal() [Invoke] > GC.Alloc
-
-```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
- #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
- #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
- #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
- #7  (Mono JIT Code) [MatchSceneView.cs:98] Game.Composition.MatchSceneView:Update ()
- #8  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
-
-```
-
-### 10. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
-
-Bytes: 64482
-Samples: 962
-Frames: 299
-Thread: Main Thread
-Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateActiveProductionTransports > GC.Alloc
-
-```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
- #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
- #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
- #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
- #7  (Mono JIT Code) [MatchSceneView.cs:98] Game.Composition.MatchSceneView:Update ()
- #8  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
-
-```
-
-### 11. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
+### 12. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
 
 Bytes: 59800
 Samples: 1495
@@ -300,10 +312,10 @@ Thread: Main Thread
 Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.RoadBuild > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
  #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
@@ -312,28 +324,7 @@ Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded
 
 ```
 
-### 12. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
-
-Bytes: 48626
-Samples: 906
-Frames: 81
-Thread: Thread Pool Worker
-Hierarchy path: GC.Alloc
-
-```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
- #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
- #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
- #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
- #7  (Mono JIT Code) [MatchSceneView.cs:98] Game.Composition.MatchSceneView:Update ()
- #8  (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void__this__ (object,intptr,intptr,intptr)
-
-```
-
-### 13. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
+### 13. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
 
 Bytes: 45448
 Samples: 598
@@ -342,10 +333,10 @@ Thread: Main Thread
 Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MenuBootstrapView.Update() [Invoke] > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
  #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
@@ -354,7 +345,7 @@ Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded
 
 ```
 
-### 14. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
+### 14. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
 
 Bytes: 38272
 Samples: 299
@@ -363,10 +354,10 @@ Thread: Main Thread
 Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.FocusedReadModel > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
  #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()
@@ -375,7 +366,7 @@ Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded
 
 ```
 
-### 15. #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
+### 15. #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
 
 Bytes: 35880
 Samples: 897
@@ -384,10 +375,10 @@ Thread: Main Thread
 Hierarchy path: Application.Tick > Application.UpdateScene > UpdateSceneIfNeeded > UpdateScene > PlayerLoop > UpdateScene > Update.ScriptRunBehaviourUpdate > BehaviourUpdate > Game.Composition.dll!Game.Composition::MatchSceneView.Update() [Invoke] > GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateInput > GC.Alloc
 
 ```
- #0  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:37] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager,Game.Components.RtsSelectionCommandIntentKind&)
- #1  (Mono JIT Code) [RtsSelectionCancelActiveCommandModeSystem.cs:30] Game.Runtime.RtsSelectionCancelActiveCommandModeSystem:ProcessPendingRequests (Unity.Entities.EntityManager)
- #2  (Mono JIT Code) [RtsSelectionCommandResultFlushCompositionSystemHelper.cs:408] Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper:ProcessCancelActiveCommandModeRequests (Game.Runtime.RtsSelectionCommandResultFlushCompositionSystemHelper/Context)
- #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:329] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
+ #0  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:1362] Game.Runtime.TacticalFollowCameraModeSystemHelper:EnsurePoseEntity (Unity.Entities.EntityManager)
+ #1  (Mono JIT Code) [TacticalFollowCameraModeSystemHelper.cs:121] Game.Runtime.TacticalFollowCameraModeSystemHelper:TryReadPose (Unity.Entities.EntityManager,Game.Components.TacticalFollowCameraPoseComponent&)
+ #2  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:510] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateTacticalFollowCameraPose|15 ()
+ #3  (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:408] Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass8_0:<Initialize>g__UpdateSelectionRuntimePhases|7 ()
  #4  (Mono JIT Code) [GameplayRuntimeUpdateCompositionSystemHelper.cs:119] Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #5  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:556] Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&)
  #6  (Mono JIT Code) [MatchBootstrapCompositionSystemHelper.cs:208] Game.Composition.MatchBootstrapCompositionSystemHelper:Update ()

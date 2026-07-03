@@ -41,7 +41,7 @@ namespace Game.Runtime
             return ProcessPendingRequests(em, commandQueueQuery, runtimeStateQuery, out processedKind);
         }
 
-        private static bool ProcessPendingRequests(
+        public static bool ProcessPendingRequests(
             EntityManager em,
             EntityQuery commandQueueQuery,
             EntityQuery runtimeStateQuery,

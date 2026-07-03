@@ -50,7 +50,17 @@ Add-Candidate -Candidates $unityVersions -Path $UnityVersion
 
 if ($UnityVersion -match '^6\.(\d+)\.(\d+)(f\d+)?$') {
     $suffix = if ([string]::IsNullOrWhiteSpace($Matches[3])) { "f1" } else { $Matches[3] }
+    Add-Candidate -Candidates $unityVersions -Path "6000.$($Matches[1]).$($Matches[2])"
     Add-Candidate -Candidates $unityVersions -Path "6000.$($Matches[1]).$($Matches[2])$suffix"
+}
+
+if ($UnityVersion -match '^6000\.(\d+)\.(\d+)(f\d+)?$') {
+    $suffix = if ([string]::IsNullOrWhiteSpace($Matches[3])) { "" } else { $Matches[3] }
+    Add-Candidate -Candidates $unityVersions -Path "6000.$($Matches[1]).$($Matches[2])"
+    Add-Candidate -Candidates $unityVersions -Path "6.$($Matches[1]).$($Matches[2])"
+    if (-not [string]::IsNullOrWhiteSpace($suffix)) {
+        Add-Candidate -Candidates $unityVersions -Path "6.$($Matches[1]).$($Matches[2])$suffix"
+    }
 }
 
 if (-not [string]::IsNullOrWhiteSpace($UnityVersion)) {
@@ -103,4 +113,5 @@ $message = @(
     "Set UNITY_EXE_OVERRIDE to the installed Unity.exe path or install the requested Unity version."
 ) -join $newline
 
-throw $message
+Write-Error $message
+exit 1

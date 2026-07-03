@@ -64,13 +64,21 @@ pipeline {
                     def resolvedUnityExe = powershell(
                         returnStdout: true,
                         script: '''
-                        $resolved = & "$env:PROJECT_PATH\\Tools\\CI\\ResolveUnityEditor.ps1" -UnityVersion "$env:UNITY_VERSION"
-                        if ($LASTEXITCODE -ne 0) {
-                            exit $LASTEXITCODE
-                        }
-                        $resolved |
+                        $ErrorActionPreference = "Stop"
+                        $resolved = @(& "$env:PROJECT_PATH\\Tools\\CI\\ResolveUnityEditor.ps1" -UnityVersion "$env:UNITY_VERSION")
+                        $resolvedUnityExe = $resolved |
                             Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
                             Select-Object -Last 1
+
+                        if ([string]::IsNullOrWhiteSpace($resolvedUnityExe) -or $resolvedUnityExe -eq "null") {
+                            throw "Unity editor resolver returned no executable for version '$env:UNITY_VERSION'. Set UNITY_EXE_OVERRIDE to the installed Unity.exe path."
+                        }
+
+                        if (-not [System.IO.File]::Exists($resolvedUnityExe)) {
+                            throw "Unity editor resolver returned a missing executable: $resolvedUnityExe"
+                        }
+
+                        Write-Output $resolvedUnityExe
                         '''
                     ).trim()
 
@@ -101,27 +109,12 @@ pipeline {
                 New-Item -ItemType Directory -Path "$env:PROJECT_PATH\\TestResults" -Force | Out-Null
                 Remove-Item -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt" -Force -ErrorAction Ignore
 
-                $invokeUnityArgs = @(
-                    "-NoProfile",
-                    "-ExecutionPolicy",
-                    "Bypass",
-                    "-File",
-                    "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1",
-                    "-UnityExe",
-                    "$env:UNITY_EXE",
-                    "-ProjectPath",
-                    "$env:PROJECT_PATH",
-                    "-LogFile",
-                    "$env:PROJECT_PATH\\TestResults\\EditMode.log",
-                    "-UnityArguments",
-                    "-nographics",
-                    "-runTests",
-                    "-testPlatform",
-                    "EditMode",
-                    "-testResults",
-                    "$env:PROJECT_PATH\\TestResults\\EditMode.xml"
-                )
-                & powershell @invokeUnityArgs
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
+                    -UnityExe "$env:UNITY_EXE" `
+                    -ProjectPath "$env:PROJECT_PATH" `
+                    -LogFile "$env:PROJECT_PATH\\TestResults\\EditMode.log" `
+                    -NoProcessExit `
+                    -UnityArguments @("-nographics", "-runTests", "-testPlatform", "EditMode", "-testResults", "$env:PROJECT_PATH\\TestResults\\EditMode.xml")
                 $editModeExit = $LASTEXITCODE
 
                 powershell -NoProfile -ExecutionPolicy Bypass -File "$env:PROJECT_PATH\\Tools\\CI\\PrintUnityTestFailures.ps1" -ResultsPath "$env:PROJECT_PATH\\TestResults\\EditMode.xml" -PlatformName "EditMode"
@@ -148,24 +141,12 @@ pipeline {
             steps {
                 powershell '''
                 New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
-                $invokeUnityArgs = @(
-                    "-NoProfile",
-                    "-ExecutionPolicy",
-                    "Bypass",
-                    "-File",
-                    "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1",
-                    "-UnityExe",
-                    "$env:UNITY_EXE",
-                    "-ProjectPath",
-                    "$env:PROJECT_PATH",
-                    "-LogFile",
-                    "$env:BUILD_LOG",
-                    "-UnityArguments",
-                    "-quit",
-                    "-executeMethod",
-                    "BuildScript.BuildWindows"
-                )
-                & powershell @invokeUnityArgs
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
+                    -UnityExe "$env:UNITY_EXE" `
+                    -ProjectPath "$env:PROJECT_PATH" `
+                    -LogFile "$env:BUILD_LOG" `
+                    -NoProcessExit `
+                    -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildWindows")
                 exit $LASTEXITCODE
                 '''
             }
@@ -200,24 +181,12 @@ pipeline {
             steps {
                 powershell '''
                 New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
-                $invokeUnityArgs = @(
-                    "-NoProfile",
-                    "-ExecutionPolicy",
-                    "Bypass",
-                    "-File",
-                    "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1",
-                    "-UnityExe",
-                    "$env:UNITY_EXE",
-                    "-ProjectPath",
-                    "$env:PROJECT_PATH",
-                    "-LogFile",
-                    "$env:BUILD_LOG",
-                    "-UnityArguments",
-                    "-quit",
-                    "-executeMethod",
-                    "BuildScript.BuildWebGL"
-                )
-                & powershell @invokeUnityArgs
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
+                    -UnityExe "$env:UNITY_EXE" `
+                    -ProjectPath "$env:PROJECT_PATH" `
+                    -LogFile "$env:BUILD_LOG" `
+                    -NoProcessExit `
+                    -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildWebGL")
                 exit $LASTEXITCODE
                 '''
             }
@@ -252,24 +221,12 @@ pipeline {
             steps {
                 powershell '''
                 New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
-                $invokeUnityArgs = @(
-                    "-NoProfile",
-                    "-ExecutionPolicy",
-                    "Bypass",
-                    "-File",
-                    "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1",
-                    "-UnityExe",
-                    "$env:UNITY_EXE",
-                    "-ProjectPath",
-                    "$env:PROJECT_PATH",
-                    "-LogFile",
-                    "$env:BUILD_LOG",
-                    "-UnityArguments",
-                    "-quit",
-                    "-executeMethod",
-                    "BuildScript.BuildIOS"
-                )
-                & powershell @invokeUnityArgs
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
+                    -UnityExe "$env:UNITY_EXE" `
+                    -ProjectPath "$env:PROJECT_PATH" `
+                    -LogFile "$env:BUILD_LOG" `
+                    -NoProcessExit `
+                    -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildIOS")
                 exit $LASTEXITCODE
                 '''
             }
@@ -320,26 +277,12 @@ pipeline {
             steps {
                 powershell '''
                 New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
-                $invokeUnityArgs = @(
-                    "-NoProfile",
-                    "-ExecutionPolicy",
-                    "Bypass",
-                    "-File",
-                    "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1",
-                    "-UnityExe",
-                    "$env:UNITY_EXE",
-                    "-ProjectPath",
-                    "$env:PROJECT_PATH",
-                    "-LogFile",
-                    "$env:BUILD_LOG",
-                    "-UnityArguments",
-                    "-quit",
-                    "-executeMethod",
-                    "BuildScript.BuildAndroid",
-                    "-buildType",
-                    "APK"
-                )
-                & powershell @invokeUnityArgs
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
+                    -UnityExe "$env:UNITY_EXE" `
+                    -ProjectPath "$env:PROJECT_PATH" `
+                    -LogFile "$env:BUILD_LOG" `
+                    -NoProcessExit `
+                    -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildAndroid", "-buildType", "APK")
                 exit $LASTEXITCODE
                 '''
             }
@@ -374,26 +317,12 @@ pipeline {
             steps {
                 powershell '''
                 New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
-                $invokeUnityArgs = @(
-                    "-NoProfile",
-                    "-ExecutionPolicy",
-                    "Bypass",
-                    "-File",
-                    "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1",
-                    "-UnityExe",
-                    "$env:UNITY_EXE",
-                    "-ProjectPath",
-                    "$env:PROJECT_PATH",
-                    "-LogFile",
-                    "$env:BUILD_LOG",
-                    "-UnityArguments",
-                    "-quit",
-                    "-executeMethod",
-                    "BuildScript.BuildAndroid",
-                    "-buildType",
-                    "AAB"
-                )
-                & powershell @invokeUnityArgs
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
+                    -UnityExe "$env:UNITY_EXE" `
+                    -ProjectPath "$env:PROJECT_PATH" `
+                    -LogFile "$env:BUILD_LOG" `
+                    -NoProcessExit `
+                    -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildAndroid", "-buildType", "AAB")
                 exit $LASTEXITCODE
                 '''
             }

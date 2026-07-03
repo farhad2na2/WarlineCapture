@@ -8,6 +8,9 @@ param(
     [Parameter(Mandatory = $true)]
     [string] $LogFile,
 
+    [Parameter(Mandatory = $false)]
+    [switch] $NoProcessExit,
+
     [Parameter(Mandatory = $false, ValueFromRemainingArguments = $true)]
     [string[]] $UnityArguments = @()
 )
@@ -66,4 +69,9 @@ Write-InvocationLog "[UnityInvoke] Arguments: $($arguments -join ' ')"
 & $resolvedUnityExe @arguments
 $exitCode = if ($null -eq $LASTEXITCODE) { 0 } else { $LASTEXITCODE }
 Write-InvocationLog "[UnityInvoke] ExitCode: $exitCode"
+if ($NoProcessExit) {
+    $global:LASTEXITCODE = $exitCode
+    return
+}
+
 exit $exitCode

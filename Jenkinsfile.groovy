@@ -61,12 +61,24 @@ pipeline {
             }
             steps {
                 script {
-                    env.UNITY_EXE = powershell(
+                    def resolvedUnityExe = powershell(
                         returnStdout: true,
                         script: '''
-                        & "$env:PROJECT_PATH\\Tools\\CI\\ResolveUnityEditor.ps1" -UnityVersion "$env:UNITY_VERSION"
+                        $resolved = & "$env:PROJECT_PATH\\Tools\\CI\\ResolveUnityEditor.ps1" -UnityVersion "$env:UNITY_VERSION"
+                        if ($LASTEXITCODE -ne 0) {
+                            exit $LASTEXITCODE
+                        }
+                        $resolved |
+                            Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+                            Select-Object -Last 1
                         '''
                     ).trim()
+
+                    if (!resolvedUnityExe || resolvedUnityExe.equalsIgnoreCase('null')) {
+                        error "Unity editor resolver returned no executable for version ${env.UNITY_VERSION}. Check Jenkins console output and set UNITY_EXE_OVERRIDE to the installed Unity.exe path."
+                    }
+
+                    env.UNITY_EXE = resolvedUnityExe
                     echo "Using Unity editor: ${env.UNITY_EXE}"
                 }
             }

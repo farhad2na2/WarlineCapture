@@ -17,7 +17,6 @@ pipeline {
     environment {
         PROJECT_PATH = "${CUSTOM_WORKSPACE}"
         UNITY_VERSION = "${UNITY_EDITOR_VERSION}"
-        UNITY_EXE = ''
         BUILD_LOG = "${CUSTOM_WORKSPACE}\\build.log"
         CODEX_TASK_DIR = "\\\\192.168.2.175\\farhad\\Projects\\Jenkins_Builds\\WarlineCapture\\CodexTasks"
         MAC_PASSWORD = credentials('MAC_PASSWORD')
@@ -65,9 +64,12 @@ pipeline {
                     @echo off
                     setlocal EnableExtensions
                     set "UNITY_RESOLVE_FILE=%PROJECT_PATH%\\unity-editor-path.txt"
+                    set "UNITY_RESOLVE_LOG=%PROJECT_PATH%\\TestResults\\UnityEditorResolution.log"
+                    if not exist "%PROJECT_PATH%\\TestResults" mkdir "%PROJECT_PATH%\\TestResults"
                     if exist "%UNITY_RESOLVE_FILE%" del /f /q "%UNITY_RESOLVE_FILE%"
+                    if exist "%UNITY_RESOLVE_LOG%" del /f /q "%UNITY_RESOLVE_LOG%"
 
-                    powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "%PROJECT_PATH%\\Tools\\CI\\ResolveUnityEditor.ps1" -UnityVersion "%UNITY_VERSION%" -OutputPath "%UNITY_RESOLVE_FILE%"
+                    powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "%PROJECT_PATH%\\Tools\\CI\\ResolveUnityEditor.ps1" -UnityVersion "%UNITY_VERSION%" -OutputPath "%UNITY_RESOLVE_FILE%" -LogFile "%UNITY_RESOLVE_LOG%"
                     if errorlevel 1 (
                         echo Unity editor resolver failed for version %UNITY_VERSION%.
                         exit /b 1
@@ -107,8 +109,7 @@ pipeline {
                         error "Unity editor resolver returned a missing executable: ${resolvedUnityExe}"
                     }
 
-                    env.UNITY_EXE = resolvedUnityExe
-                    echo "Using Unity editor: ${env.UNITY_EXE}"
+                    echo "Using Unity editor: ${resolvedUnityExe}"
                 }
             }
         }
@@ -129,9 +130,18 @@ pipeline {
                 New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
                 New-Item -ItemType Directory -Path "$env:PROJECT_PATH\\TestResults" -Force | Out-Null
                 Remove-Item -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt" -Force -ErrorAction Ignore
+                $unityPathFile = "$env:PROJECT_PATH\\unity-editor-path.txt"
+                if (-not (Test-Path -LiteralPath $unityPathFile -PathType Leaf)) {
+                    throw "Unity editor path file not found: $unityPathFile"
+                }
+
+                $unityExe = (Get-Content -LiteralPath $unityPathFile -Raw).Trim()
+                if ([string]::IsNullOrWhiteSpace($unityExe) -or $unityExe -ieq "null") {
+                    throw "Unity editor path file is empty or invalid: $unityPathFile"
+                }
 
                 & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
-                    -UnityExe "$env:UNITY_EXE" `
+                    -UnityExe $unityExe `
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:PROJECT_PATH\\TestResults\\EditMode.log" `
                     -NoProcessExit `
@@ -162,8 +172,18 @@ pipeline {
             steps {
                 powershell '''
                 New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
+                $unityPathFile = "$env:PROJECT_PATH\\unity-editor-path.txt"
+                if (-not (Test-Path -LiteralPath $unityPathFile -PathType Leaf)) {
+                    throw "Unity editor path file not found: $unityPathFile"
+                }
+
+                $unityExe = (Get-Content -LiteralPath $unityPathFile -Raw).Trim()
+                if ([string]::IsNullOrWhiteSpace($unityExe) -or $unityExe -ieq "null") {
+                    throw "Unity editor path file is empty or invalid: $unityPathFile"
+                }
+
                 & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
-                    -UnityExe "$env:UNITY_EXE" `
+                    -UnityExe $unityExe `
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
@@ -202,8 +222,18 @@ pipeline {
             steps {
                 powershell '''
                 New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
+                $unityPathFile = "$env:PROJECT_PATH\\unity-editor-path.txt"
+                if (-not (Test-Path -LiteralPath $unityPathFile -PathType Leaf)) {
+                    throw "Unity editor path file not found: $unityPathFile"
+                }
+
+                $unityExe = (Get-Content -LiteralPath $unityPathFile -Raw).Trim()
+                if ([string]::IsNullOrWhiteSpace($unityExe) -or $unityExe -ieq "null") {
+                    throw "Unity editor path file is empty or invalid: $unityPathFile"
+                }
+
                 & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
-                    -UnityExe "$env:UNITY_EXE" `
+                    -UnityExe $unityExe `
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
@@ -242,8 +272,18 @@ pipeline {
             steps {
                 powershell '''
                 New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
+                $unityPathFile = "$env:PROJECT_PATH\\unity-editor-path.txt"
+                if (-not (Test-Path -LiteralPath $unityPathFile -PathType Leaf)) {
+                    throw "Unity editor path file not found: $unityPathFile"
+                }
+
+                $unityExe = (Get-Content -LiteralPath $unityPathFile -Raw).Trim()
+                if ([string]::IsNullOrWhiteSpace($unityExe) -or $unityExe -ieq "null") {
+                    throw "Unity editor path file is empty or invalid: $unityPathFile"
+                }
+
                 & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
-                    -UnityExe "$env:UNITY_EXE" `
+                    -UnityExe $unityExe `
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
@@ -298,8 +338,18 @@ pipeline {
             steps {
                 powershell '''
                 New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
+                $unityPathFile = "$env:PROJECT_PATH\\unity-editor-path.txt"
+                if (-not (Test-Path -LiteralPath $unityPathFile -PathType Leaf)) {
+                    throw "Unity editor path file not found: $unityPathFile"
+                }
+
+                $unityExe = (Get-Content -LiteralPath $unityPathFile -Raw).Trim()
+                if ([string]::IsNullOrWhiteSpace($unityExe) -or $unityExe -ieq "null") {
+                    throw "Unity editor path file is empty or invalid: $unityPathFile"
+                }
+
                 & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
-                    -UnityExe "$env:UNITY_EXE" `
+                    -UnityExe $unityExe `
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
@@ -338,8 +388,18 @@ pipeline {
             steps {
                 powershell '''
                 New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
+                $unityPathFile = "$env:PROJECT_PATH\\unity-editor-path.txt"
+                if (-not (Test-Path -LiteralPath $unityPathFile -PathType Leaf)) {
+                    throw "Unity editor path file not found: $unityPathFile"
+                }
+
+                $unityExe = (Get-Content -LiteralPath $unityPathFile -Raw).Trim()
+                if ([string]::IsNullOrWhiteSpace($unityExe) -or $unityExe -ieq "null") {
+                    throw "Unity editor path file is empty or invalid: $unityPathFile"
+                }
+
                 & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
-                    -UnityExe "$env:UNITY_EXE" `
+                    -UnityExe $unityExe `
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `

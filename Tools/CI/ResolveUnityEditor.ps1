@@ -6,10 +6,66 @@ param(
     [string] $PreferredPath,
 
     [Parameter(Mandatory = $false)]
-    [string] $OutputPath
+    [string] $OutputPath,
+
+    [Parameter(Mandatory = $false)]
+    [string] $LogFile
 )
 
 $ErrorActionPreference = "Stop"
+
+$resolvedLogFile = if ([string]::IsNullOrWhiteSpace($LogFile)) {
+    $null
+} else {
+    [Environment]::ExpandEnvironmentVariables($LogFile.Trim())
+}
+
+if (-not [string]::IsNullOrWhiteSpace($resolvedLogFile)) {
+    $logDirectory = Split-Path -Parent $resolvedLogFile
+    if (-not [string]::IsNullOrWhiteSpace($logDirectory) -and -not [System.IO.Directory]::Exists($logDirectory)) {
+        New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
+    }
+
+    Remove-Item -LiteralPath $resolvedLogFile -Force -ErrorAction Ignore
+}
+
+function Write-ResolverLog {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $Message
+    )
+
+    if ([string]::IsNullOrWhiteSpace($resolvedLogFile)) {
+        return
+    }
+
+    Add-Content -LiteralPath $resolvedLogFile -Value $Message -Encoding UTF8
+}
+
+function Format-LogValue {
+    param(
+        [Parameter(Mandatory = $false)]
+        [string] $Value
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return "<empty>"
+    }
+
+    return $Value
+}
+
+Write-ResolverLog "[UnityResolve] RequestedVersion: $(Format-LogValue $UnityVersion)"
+Write-ResolverLog "[UnityResolve] PreferredPath: $(Format-LogValue $PreferredPath)"
+Write-ResolverLog "[UnityResolve] OutputPath: $(Format-LogValue $OutputPath)"
+Write-ResolverLog "[UnityResolve] UNITY_EXE_OVERRIDE: $(Format-LogValue $env:UNITY_EXE_OVERRIDE)"
+Write-ResolverLog "[UnityResolve] UNITY_EDITOR_PATH: $(Format-LogValue $env:UNITY_EDITOR_PATH)"
+Write-ResolverLog "[UnityResolve] UNITY_PATH: $(Format-LogValue $env:UNITY_PATH)"
+Write-ResolverLog "[UnityResolve] UNITY_EDITOR_ROOT: $(Format-LogValue $env:UNITY_EDITOR_ROOT)"
+Write-ResolverLog "[UnityResolve] UNITY_EDITOR_ROOTS: $(Format-LogValue $env:UNITY_EDITOR_ROOTS)"
+Write-ResolverLog "[UnityResolve] UNITY_HUB_EDITOR_ROOT: $(Format-LogValue $env:UNITY_HUB_EDITOR_ROOT)"
+Write-ResolverLog "[UnityResolve] UNITY_HUB_EDITOR_ROOTS: $(Format-LogValue $env:UNITY_HUB_EDITOR_ROOTS)"
+Write-ResolverLog "[UnityResolve] UNITY_EDITORS_PATH: $(Format-LogValue $env:UNITY_EDITORS_PATH)"
 
 function Add-Candidate {
     param(
@@ -130,6 +186,7 @@ foreach ($unityRoot in $unityRoots) {
 foreach ($candidate in $candidates) {
     if ([System.IO.File]::Exists($candidate)) {
         $resolved = [System.IO.Path]::GetFullPath($candidate)
+        Write-ResolverLog "[UnityResolve] ResolvedUnityExe: $resolved"
         if (-not [string]::IsNullOrWhiteSpace($OutputPath)) {
             $resolvedOutputPath = [Environment]::ExpandEnvironmentVariables($OutputPath.Trim())
             $outputDirectory = Split-Path -Parent $resolvedOutputPath
@@ -157,6 +214,13 @@ $message = @(
     $candidateList,
     "Set UNITY_EXE_OVERRIDE to the installed Unity.exe path or install the requested Unity version."
 ) -join $newline
+
+Write-ResolverLog "[UnityResolve] ERROR: Unity editor executable was not found."
+Write-ResolverLog "[UnityResolve] Checked:"
+foreach ($candidate in $candidates) {
+    Write-ResolverLog "[UnityResolve]   - $candidate"
+}
+Write-ResolverLog "[UnityResolve] Set UNITY_EXE_OVERRIDE to the installed Unity.exe path or install the requested Unity version."
 
 Write-Error -Message $message -ErrorAction Continue
 exit 1

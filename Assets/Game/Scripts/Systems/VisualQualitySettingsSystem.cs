@@ -10,6 +10,10 @@ namespace Game.Runtime
     {
         // Read by Game/Environment/GroundMacroVariation.shader (0 = on, 1 = off).
         private static readonly int GroundVariationDisabledId = Shader.PropertyToID("_GroundVariationDisabled");
+        private const float MinimumLowRenderScale = 0.72f;
+        private const float MinimumMediumRenderScale = 0.9f;
+        private const float MinimumHighRenderScale = 1f;
+        private const float MinimumUltraRenderScale = 1f;
 
         private VisualQualityProfileAsset _premiumProfile;
         private Camera _worldCamera;
@@ -213,7 +217,7 @@ namespace Game.Runtime
             if (_premiumProfile.LowRenderPipelineAsset != null)
             {
                 QualitySettings.renderPipeline = _premiumProfile.LowRenderPipelineAsset;
-                _premiumProfile.LowRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.LowRenderScaleOverride, 0.25f, 1f);
+                _premiumProfile.LowRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.LowRenderScaleOverride, MinimumLowRenderScale, 1f);
             }
 
             if (_globalVolume != null)
@@ -233,7 +237,7 @@ namespace Game.Runtime
             if (_premiumProfile.MediumRenderPipelineAsset != null)
             {
                 QualitySettings.renderPipeline = _premiumProfile.MediumRenderPipelineAsset;
-                _premiumProfile.MediumRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.MediumRenderScaleOverride, 0.25f, 1f);
+                _premiumProfile.MediumRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.MediumRenderScaleOverride, MinimumMediumRenderScale, 1f);
             }
 
             if (_globalVolume != null)
@@ -250,7 +254,22 @@ namespace Game.Runtime
 
         private void ApplyHighStaticSettings()
         {
-            ApplyMediumStaticSettings();
+            if (_premiumProfile.MediumRenderPipelineAsset != null)
+            {
+                QualitySettings.renderPipeline = _premiumProfile.MediumRenderPipelineAsset;
+                _premiumProfile.MediumRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.MediumRenderScaleOverride, MinimumHighRenderScale, 1f);
+            }
+
+            if (_globalVolume != null)
+                _globalVolume.sharedProfile = _originalVolumeProfile;
+
+            if (_worldCamera != null && _worldCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
+            {
+                cameraData.renderPostProcessing = false;
+                cameraData.antialiasing = _premiumProfile.CameraAntialiasingMode;
+            }
+
+            _overrideApplied = true;
         }
 
         private void ApplyUltraStaticSettings()
@@ -259,7 +278,7 @@ namespace Game.Runtime
             {
                 QualitySettings.renderPipeline = _premiumProfile.RenderPipelineAsset;
                 if (_premiumProfile.HasCameraRenderScaleOverride)
-                    _premiumProfile.RenderPipelineAsset.renderScale = Mathf.Max(0.1f, _premiumProfile.CameraRenderScaleOverride);
+                    _premiumProfile.RenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.CameraRenderScaleOverride, MinimumUltraRenderScale, 1f);
             }
 
             if (_globalVolume != null && _premiumProfile.GlobalVolumeProfile != null)

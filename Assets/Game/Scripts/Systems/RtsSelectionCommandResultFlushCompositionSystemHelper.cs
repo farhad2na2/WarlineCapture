@@ -471,8 +471,11 @@ namespace Game.Runtime
             if (!context.TryGetDefaultEntityManager(out EntityManager em) ||
                 !RtsSelectionAttackTargetModeCommandSystem.ProcessPendingRequests(
                     em,
-                    currentFrame,
+                    context.MoveTargetCommandQueueQuery,
+                    context.MoveTargetRuntimeStateQuery,
+                    context.SelectedTagQuery,
                     focusedUnit,
+                    currentFrame,
                     out RtsSelectionCommandIntentKind processedKind,
                     out bool accepted,
                     out bool airDefenseAutoEngageOnly,

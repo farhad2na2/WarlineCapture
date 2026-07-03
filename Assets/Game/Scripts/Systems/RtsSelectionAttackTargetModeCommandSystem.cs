@@ -90,6 +90,11 @@ namespace Game.Runtime
             using EntityQuery commandQueueQuery = em.CreateEntityQuery(
                 ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
                 ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
+            return HasPendingToggleAttackTargetModeRequest(em, commandQueueQuery);
+        }
+
+        public static bool HasPendingToggleAttackTargetModeRequest(EntityManager em, EntityQuery commandQueueQuery)
+        {
             if (commandQueueQuery.IsEmptyIgnoreFilter)
                 return false;
 
@@ -111,7 +116,7 @@ namespace Game.Runtime
             return RemoveRequests(commandRequests, RtsSelectionCommandIntentKind.ToggleAttackTargetMode);
         }
 
-        private static bool ProcessPendingRequests(
+        public static bool ProcessPendingRequests(
             EntityManager em,
             EntityQuery commandQueueQuery,
             EntityQuery runtimeStateQuery,

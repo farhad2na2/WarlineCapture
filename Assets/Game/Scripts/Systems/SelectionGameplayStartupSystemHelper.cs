@@ -309,7 +309,7 @@ namespace Game.Runtime
                             out Entity resolvedFocusedUnit)
                             ? resolvedFocusedUnit
                             : Entity.Null;
-                        if (!RtsSelectionAttackTargetModeCommandSystem.HasPendingToggleAttackTargetModeRequest(attackTargetModeEntityManager) ||
+                        if (!RtsSelectionAttackTargetModeCommandSystem.HasPendingToggleAttackTargetModeRequest(attackTargetModeEntityManager, moveTargetCommandQueueQuery) ||
                             !rtsSelectionCommandResultFlushSystem.ProcessFocusedMissileLauncherRadarAttack(
                                 GetCommandResultFlushContext(),
                                 focusedUnit))

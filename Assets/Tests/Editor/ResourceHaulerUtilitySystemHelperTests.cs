@@ -27,7 +27,9 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             tests.Classification_DetectsHaulerSourceAndDestinationRoles();
             tests.StorageTransfer_TryCompleteLoad_UsesComponentStorage();
             tests.StorageTransfer_TryCompleteUnload_UsesComponentStorage();
-            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=14");
+            tests.HaulerTransferEcs_TryCompleteLoad_UsesComponentStorage();
+            tests.HaulerTransferEcs_TryCompleteUnload_UsesComponentStorage();
+            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=16");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -327,6 +329,54 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
         Assert.IsTrue(unloaded);
         Assert.AreEqual(23f, storage.StoredFuelBarrels);
         Assert.AreEqual(0f, hauler.CargoFuelBarrels);
+    }
+
+    [Test]
+    public void HaulerTransferEcs_TryCompleteLoad_UsesComponentStorage()
+    {
+        var storage = new BuildingResourceStorageComponent
+        {
+            FuelStorageCapacity = 40,
+            StoredFuelBarrels = 22f
+        };
+        UnitResourceHauler hauler = new()
+        {
+            CargoOilBarrels = 5f
+        };
+
+        bool loaded = BuildingResourceHaulerTransferEcsSystem.TryCompleteLoad(
+            ref storage,
+            BuildingResourceStorageTransferSystemHelper.FuelResourceKind,
+            9f,
+            ref hauler);
+
+        Assert.IsTrue(loaded);
+        Assert.AreEqual(13f, storage.StoredFuelBarrels);
+        Assert.AreEqual(9f, hauler.CargoFuelBarrels);
+        Assert.AreEqual(0f, hauler.CargoOilBarrels);
+    }
+
+    [Test]
+    public void HaulerTransferEcs_TryCompleteUnload_UsesComponentStorage()
+    {
+        var storage = new BuildingResourceStorageComponent
+        {
+            OilStorageCapacity = 25,
+            StoredOilBarrels = 14f
+        };
+        UnitResourceHauler hauler = new()
+        {
+            CargoOilBarrels = 4f
+        };
+
+        bool unloaded = BuildingResourceHaulerTransferEcsSystem.TryCompleteUnload(
+            ref storage,
+            BuildingResourceStorageTransferSystemHelper.OilResourceKind,
+            ref hauler);
+
+        Assert.IsTrue(unloaded);
+        Assert.AreEqual(18f, storage.StoredOilBarrels);
+        Assert.AreEqual(0f, hauler.CargoOilBarrels);
     }
 
     private sealed class TestHaulerBuilding : FactionResourceCompositionSystemHelper.IResourceBuilding

@@ -92,7 +92,6 @@ namespace Game.Runtime
             double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
             double elapsed = now - timing.Start;
             bool diagnosticsEnabled = Application.isBatchMode ||
-                                      Application.isEditor ||
                                       (context.ShouldLogDiagnostics != null && context.ShouldLogDiagnostics());
             if (!diagnosticsEnabled ||
                 elapsed < SlowLogThresholdSeconds ||

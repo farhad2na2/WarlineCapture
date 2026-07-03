@@ -45,7 +45,11 @@ function Write-InvocationLog {
         return
     }
 
-    Add-Content -LiteralPath $resolvedLogFile -Value $Message -Encoding UTF8
+    try {
+        Add-Content -LiteralPath $resolvedLogFile -Value $Message -Encoding UTF8 -ErrorAction Stop
+    } catch {
+        Write-Host "[UnityInvoke] WARN: Could not append invocation log: $($_.Exception.Message)"
+    }
 }
 
 function ConvertTo-ProcessArgument {

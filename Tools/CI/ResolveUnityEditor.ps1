@@ -10,12 +10,16 @@ $ErrorActionPreference = "Stop"
 
 function Add-Candidate {
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [System.Collections.Generic.List[string]] $Candidates,
 
         [Parameter(Mandatory = $false)]
         [string] $Path
     )
+
+    if ($null -eq $Candidates) {
+        return
+    }
 
     if ([string]::IsNullOrWhiteSpace($Path)) {
         return

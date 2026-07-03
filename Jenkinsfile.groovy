@@ -187,7 +187,7 @@ pipeline {
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
-                    -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildWindows")
+                    -UnityArguments @("-quit", "-executeMethod", "Game.Editor.BuildScript.BuildWindows")
                 exit $LASTEXITCODE
                 '''
             }
@@ -237,7 +237,7 @@ pipeline {
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
-                    -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildWebGL")
+                    -UnityArguments @("-quit", "-executeMethod", "Game.Editor.BuildScript.BuildWebGL")
                 exit $LASTEXITCODE
                 '''
             }
@@ -287,7 +287,7 @@ pipeline {
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
-                    -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildIOS")
+                    -UnityArguments @("-quit", "-executeMethod", "Game.Editor.BuildScript.BuildIOS")
                 exit $LASTEXITCODE
                 '''
             }
@@ -353,7 +353,7 @@ pipeline {
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
-                    -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildAndroid", "-buildType", "APK")
+                    -UnityArguments @("-quit", "-executeMethod", "Game.Editor.BuildScript.BuildAndroid", "-buildType", "APK")
                 exit $LASTEXITCODE
                 '''
             }
@@ -403,7 +403,7 @@ pipeline {
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
-                    -UnityArguments @("-quit", "-executeMethod", "BuildScript.BuildAndroid", "-buildType", "AAB")
+                    -UnityArguments @("-quit", "-executeMethod", "Game.Editor.BuildScript.BuildAndroid", "-buildType", "AAB")
                 exit $LASTEXITCODE
                 '''
             }

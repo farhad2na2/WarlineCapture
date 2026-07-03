@@ -46,6 +46,13 @@ namespace Game.Runtime
         private static readonly Unity.Mathematics.float3 BuildingForwardHint =
             math.normalize(new Unity.Mathematics.float3(0.55f, 0f, 0.83f));
 
+        private World _singletonQueryWorld;
+        private EntityQuery _targetQuery;
+        private EntityQuery _poseQuery;
+        private EntityQuery _requestQueueQuery;
+        private EntityQuery _modeQuery;
+        private EntityQuery _uiReadModelQuery;
+
         public delegate bool TryResolveSelectedBuildingTargetDelegate(out Vector3 worldPosition, out float boundsRadius);
 
         public readonly struct Context
@@ -213,7 +220,7 @@ namespace Game.Runtime
             ClearPoseData(em);
         }
 
-        private static void ProcessRequest(EntityManager em, TacticalFollowCameraRequestElement request, Camera worldCamera, Context context)
+        private void ProcessRequest(EntityManager em, TacticalFollowCameraRequestElement request, Camera worldCamera, Context context)
         {
             Entity modeEntity = EnsureModeEntity(em);
             TacticalFollowCameraModeComponent mode =
@@ -254,7 +261,7 @@ namespace Game.Runtime
             EnterFollowMode(em, modeEntity, mode, target, worldCamera, context);
         }
 
-        private static void EnterFollowMode(
+        private void EnterFollowMode(
             EntityManager em,
             Entity modeEntity,
             TacticalFollowCameraModeComponent mode,
@@ -288,7 +295,7 @@ namespace Game.Runtime
             PublishUiReadModel(em, modeEntity, TacticalCommandReasonCode.None, context, TacticalFollowCameraFeedbackCode.EnteredFollowMode);
         }
 
-        private static void ExitFollowMode(
+        private void ExitFollowMode(
             EntityManager em,
             Entity modeEntity,
             TacticalFollowCameraModeComponent mode,
@@ -313,7 +320,7 @@ namespace Game.Runtime
             PublishUiReadModel(em, modeEntity, TacticalCommandReasonCode.None, context, feedbackCode);
         }
 
-        private static void PublishUiReadModel(
+        private void PublishUiReadModel(
             EntityManager em,
             Entity modeEntity,
             TacticalCommandReasonCode reasonCode,
@@ -399,7 +406,7 @@ namespace Game.Runtime
             return TryReadSelectedBuildingTarget(context, out target);
         }
 
-        private static bool TryResolveLockedBaseTarget(
+        private bool TryResolveLockedBaseTarget(
             EntityManager em,
             Entity modeEntity,
             TacticalFollowCameraModeComponent mode,
@@ -485,7 +492,7 @@ namespace Game.Runtime
             return false;
         }
 
-        private static bool TryReadCurrentTarget(
+        private bool TryReadCurrentTarget(
             EntityManager em,
             TacticalFollowCameraTargetKind expectedKind,
             out TacticalFollowCameraTargetComponent target)
@@ -880,7 +887,7 @@ namespace Game.Runtime
             };
         }
 
-        private static bool TryContinueTemporaryTargetWithoutBase(
+        private bool TryContinueTemporaryTargetWithoutBase(
             EntityManager em,
             Entity modeEntity,
             TacticalFollowCameraModeComponent mode,
@@ -1116,7 +1123,7 @@ namespace Game.Runtime
             return target;
         }
 
-        private static bool TryResolveTemporaryImpactTarget(
+        private bool TryResolveTemporaryImpactTarget(
             EntityManager em,
             TacticalFollowCameraModeComponent originalMode,
             float currentTime,
@@ -1161,7 +1168,7 @@ namespace Game.Runtime
             return false;
         }
 
-        private static bool TryHoldLastTemporaryTarget(
+        private bool TryHoldLastTemporaryTarget(
             EntityManager em,
             float currentTime,
             ref TacticalFollowCameraModeComponent mode,
@@ -1175,7 +1182,7 @@ namespace Game.Runtime
             return true;
         }
 
-        private static bool TryReadCurrentTemporaryTarget(
+        private bool TryReadCurrentTemporaryTarget(
             EntityManager em,
             TacticalFollowCameraModeComponent mode,
             out TacticalFollowCameraTargetComponent target)
@@ -1193,7 +1200,7 @@ namespace Game.Runtime
                    target.TargetKind == TacticalFollowCameraTargetKind.AirMissile;
         }
 
-        private static float3 TryReadCurrentTemporaryForward(EntityManager em, TacticalFollowCameraModeComponent mode)
+        private float3 TryReadCurrentTemporaryForward(EntityManager em, TacticalFollowCameraModeComponent mode)
         {
             return TryReadCurrentTemporaryTarget(em, mode, out TacticalFollowCameraTargetComponent target)
                 ? target.ForwardHint
@@ -1336,59 +1343,57 @@ namespace Game.Runtime
                 : normalized * math.rsqrt(lengthSq);
         }
 
-        private static void ClearTarget(EntityManager em)
+        private void ClearTarget(EntityManager em)
         {
             em.SetComponentData(EnsureTargetEntity(em), default(TacticalFollowCameraTargetComponent));
         }
 
-        private static void ClearPoseData(EntityManager em)
+        private void ClearPoseData(EntityManager em)
         {
             em.SetComponentData(EnsurePoseEntity(em), default(TacticalFollowCameraPoseComponent));
         }
 
-        private static Entity EnsureTargetEntity(EntityManager em)
+        private Entity EnsureTargetEntity(EntityManager em)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraTargetComponent>());
-            if (!query.IsEmptyIgnoreFilter)
-                return query.GetSingletonEntity();
+            EnsureSingletonQueries(em);
+            if (!_targetQuery.IsEmptyIgnoreFilter)
+                return _targetQuery.GetSingletonEntity();
 
             Entity entity = em.CreateEntity(typeof(TacticalFollowCameraTargetComponent));
             em.SetName(entity, "TacticalFollowCameraTarget");
             return entity;
         }
 
-        private static Entity EnsurePoseEntity(EntityManager em)
+        private Entity EnsurePoseEntity(EntityManager em)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraPoseComponent>());
-            if (!query.IsEmptyIgnoreFilter)
-                return query.GetSingletonEntity();
+            EnsureSingletonQueries(em);
+            if (!_poseQuery.IsEmptyIgnoreFilter)
+                return _poseQuery.GetSingletonEntity();
 
             Entity entity = em.CreateEntity(typeof(TacticalFollowCameraPoseComponent));
             em.SetName(entity, "TacticalFollowCameraPose");
             return entity;
         }
 
-        private static bool TryGetRequestEntity(EntityManager em, out Entity entity)
+        private bool TryGetRequestEntity(EntityManager em, out Entity entity)
         {
-            using EntityQuery query = em.CreateEntityQuery(
-                ComponentType.ReadWrite<TacticalFollowCameraRequestQueueComponent>(),
-                ComponentType.ReadWrite<TacticalFollowCameraRequestElement>());
-            if (query.IsEmptyIgnoreFilter)
+            EnsureSingletonQueries(em);
+            if (_requestQueueQuery.IsEmptyIgnoreFilter)
             {
                 entity = Entity.Null;
                 return false;
             }
 
-            entity = query.GetSingletonEntity();
+            entity = _requestQueueQuery.GetSingletonEntity();
             return true;
         }
 
-        private static Entity EnsureModeEntity(EntityManager em)
+        private Entity EnsureModeEntity(EntityManager em)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraModeComponent>());
-            if (!query.IsEmptyIgnoreFilter)
+            EnsureSingletonQueries(em);
+            if (!_modeQuery.IsEmptyIgnoreFilter)
             {
-                Entity existing = query.GetSingletonEntity();
+                Entity existing = _modeQuery.GetSingletonEntity();
                 EnsureBaseTargetEntityBuffer(em, existing);
                 return existing;
             }
@@ -1400,11 +1405,11 @@ namespace Game.Runtime
             return entity;
         }
 
-        private static Entity EnsureUiReadModelEntity(EntityManager em)
+        private Entity EnsureUiReadModelEntity(EntityManager em)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraUiReadModelComponent>());
-            if (!query.IsEmptyIgnoreFilter)
-                return query.GetSingletonEntity();
+            EnsureSingletonQueries(em);
+            if (!_uiReadModelQuery.IsEmptyIgnoreFilter)
+                return _uiReadModelQuery.GetSingletonEntity();
 
             Entity entity = em.CreateEntity(typeof(TacticalFollowCameraUiReadModelComponent));
             em.SetName(entity, "TacticalFollowCameraUiReadModel");
@@ -1414,6 +1419,22 @@ namespace Game.Runtime
                 ReasonCode = (int)TacticalCommandReasonCode.NoSelection
             });
             return entity;
+        }
+
+        private void EnsureSingletonQueries(EntityManager em)
+        {
+            World world = em.World;
+            if (_singletonQueryWorld == world && world != null && world.IsCreated)
+                return;
+
+            _singletonQueryWorld = world;
+            _targetQuery = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraTargetComponent>());
+            _poseQuery = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraPoseComponent>());
+            _requestQueueQuery = em.CreateEntityQuery(
+                ComponentType.ReadWrite<TacticalFollowCameraRequestQueueComponent>(),
+                ComponentType.ReadWrite<TacticalFollowCameraRequestElement>());
+            _modeQuery = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraModeComponent>());
+            _uiReadModelQuery = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraUiReadModelComponent>());
         }
 
         private static bool IsModeRequest(TacticalFollowCameraRequestKind kind)

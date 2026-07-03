@@ -69,20 +69,20 @@ Turn `Design/AgentReports/2026-07-02_audit_architecture-performance-followup.md`
 
 | Field | Status |
 |---|---|
-| Checklist complete | 51 / 102 |
-| Checklist percent complete | 50.0% |
+| Checklist complete | 53 / 102 |
+| Checklist percent complete | 52.0% |
 | Current phase | Phase 5 - Burst Coverage Pass |
 | Quick wins complete | 6 / 6 |
-| Current target | Start Phase 5 by generating the missing `[BurstCompile]` inventory and classifying `ISystem` files as Burst-eligible, managed edge, presentation-only, or needs refactor before editing. |
+| Current target | Phase 5 inventory/classification is complete in `Design/AgentReports/2026-07-03_burst-coverage-classification.md`; next slice should add the guardrail for keeping the classification current, then handle Burst in small refactor-backed batches instead of blind attribute additions. |
 | Compiler status | `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, and Unity 6.5.2 batchmode compile log `/private/tmp/warline-arch-followup-unity-compile-final-gc-filter.log` passed with 0 compiler errors after adding the GC capture assertion/tooling filter. Unity MCP is still treated as unreliable for this tracker, so editor-log and batchmode validation remain the Unity path. |
 | Android baseline status | Not started |
 | GC baseline status | Latest 2026-07-03 15:59:03 UTC steady-state Match GC capture: 300 requested frames after 180 warmup frames, 301 scanned profiler frames, 15,800 raw GC.Alloc samples / 1,293,637 raw bytes, 5 player-relevant samples / 510 bytes after excluding editor/tooling rows, 15,795 editor/tooling samples / 1,293,127 editor/tooling bytes, and runtime allocation probe assertion passed for `UIShellEcsPresentationSystem.Update` plus `MenuBootstrapView.Update`. |
-| Burst coverage status | Current inventory: 125 `ISystem` files, 72 missing `[BurstCompile]`; classification pending |
+| Burst coverage status | Current inventory: 125 `ISystem` files, 72 missing `[BurstCompile]`; conservative classification complete: 0 immediately Burst-eligible, 25 managed edge, 8 presentation-only, 39 needs refactor. The no-marker list is intentionally not being fixed by blind type-level attributes because the files mix helper/presentation/static EntityManager entry points with the `ISystem` owners. |
 | Mobile URP status | `Mobile_RPAsset` shadow distance changed from 240 m to 90 m and cascades from 4 to 2; HDR, MSAA 2x, render scale 0.8, and soft shadows remain unchanged pending visual/Android baseline |
 | ECS instantiate status | Current inventory: 15 runtime `Object.Instantiate` call lines under `Assets/Game/Scripts/Systems`; latest GC top stack is real `BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance` runtime building visual spawning, not repeated pending-request churn, so it is classified for Phase 6 ownership/pooling cleanup rather than another Phase 4 query-cache quick win |
 | Fuel/Oil drift status | Drift confirmed: authoritative production, conversion, load/unload, and storage mutation are still in managed helper/runtime-building paths; UI/header paths are read-only display consumers |
-| Validation status | Phase 0 inventory completed; Phase 1 config edited; Phase 2 release OnGUI strip implemented; Phase 3 release diagnostic system gate implemented; Phase 4 GC quick wins completed; latest validations passed: `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, Unity 6.5.2 compile log `/private/tmp/warline-arch-followup-unity-compile-final-gc-filter.log`, and Match GC capture log `/private/tmp/warline-arch-followup-gc-tooling-filter.log`. |
-| Still wrong / next iteration | No visual defects are known in this non-visual GC slice. Phase 4 now has an automated zero-allocation assertion for the two existing runtime update probes, but broader Match allocations remain. The `UnityEngine.Object.Instantiate` rows are classified as building visual spawn ownership debt for Phase 6. Next slice should start Phase 5 Burst coverage classification from the 72 missing `[BurstCompile]` `ISystem` files before adding attributes. |
+| Validation status | Phase 0 inventory completed; Phase 1 config edited; Phase 2 release OnGUI strip implemented; Phase 3 release diagnostic system gate implemented; Phase 4 GC quick wins completed; Phase 5 Burst inventory/classification report added. Latest code validations still passed from the prior stable slice: `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, Unity 6.5.2 compile log `/private/tmp/warline-arch-followup-unity-compile-final-gc-filter.log`, and Match GC capture log `/private/tmp/warline-arch-followup-gc-tooling-filter.log`; this inventory slice is documentation-only and `git diff --check` passed. |
+| Still wrong / next iteration | No visual defects are known in this non-visual inventory slice. Phase 5 now has the missing-Burst classification, but no Burst attributes have been added yet because the first pass found no truthful blind-attribute candidates. Next slice should add the architecture guardrail, then refactor or method-level-probe the highest-value `needs refactor` systems. |
 
 ## Phase 0 - Baseline And Inventory
 Fast setup work. No behavior changes.
@@ -294,8 +294,8 @@ Measure before deeper managed-helper work.
 ## Phase 5 - Burst Coverage Pass
 Mechanical pass, but only where correct.
 
-- [ ] Generate a list of `ISystem` files missing `[BurstCompile]`.
-- [ ] Classify each as `Burst eligible`, `Managed edge`, `Presentation only`, or `Needs refactor`.
+- [x] Generate a list of `ISystem` files missing `[BurstCompile]`.
+- [x] Classify each as `Burst eligible`, `Managed edge`, `Presentation only`, or `Needs refactor`.
 - [ ] Add `[BurstCompile]` to Burst-eligible system structs.
 - [ ] Add `[BurstCompile]` to eligible `OnCreate`, `OnUpdate`, and job methods.
 - [ ] Leave managed-edge systems un-Burst and document why.

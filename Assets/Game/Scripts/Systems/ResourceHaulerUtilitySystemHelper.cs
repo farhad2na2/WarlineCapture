@@ -119,13 +119,8 @@ namespace Game.Runtime
             if (building == null)
                 return 0f;
 
-            if (building.OilStorageCapacity > 0)
-                return Mathf.Max(0f, building.OilStorageCapacity - building.StoredOilBarrels);
-
-            if (building.FuelBarrelsPerDay > 0f)
-                return float.MaxValue;
-
-            return 0f;
+            BuildingResourceStorageComponent storage = CreateResourceStorage(building);
+            return BuildingResourceStorageTransferSystemHelper.GetOilReceivingFreeCapacity(storage);
         }
 
         public float GetFuelReceivingFreeCapacity(FactionResourceCompositionSystemHelper.IResourceBuilding building)
@@ -133,10 +128,8 @@ namespace Game.Runtime
             if (building == null)
                 return 0f;
 
-            if (building.FuelStorageCapacity > 0)
-                return Mathf.Max(0f, building.FuelStorageCapacity - building.StoredFuelBarrels);
-
-            return 0f;
+            BuildingResourceStorageComponent storage = CreateResourceStorage(building);
+            return BuildingResourceStorageTransferSystemHelper.GetFuelReceivingFreeCapacity(storage);
         }
 
         public bool HasEnoughSourceResource(FactionResourceCompositionSystemHelper.IResourceBuilding source, ResourceHaulKind resourceKind, float loadAmount)
@@ -144,8 +137,11 @@ namespace Game.Runtime
             if (source == null || loadAmount <= 0f)
                 return false;
 
-            float stored = resourceKind == ResourceHaulKind.Fuel ? source.StoredFuelBarrels : source.StoredOilBarrels;
-            return stored + 0.001f >= loadAmount;
+            BuildingResourceStorageComponent storage = CreateResourceStorage(source);
+            return BuildingResourceStorageTransferSystemHelper.HasEnoughSourceResource(
+                storage,
+                ToStorageResourceKind(resourceKind),
+                loadAmount);
         }
 
         public bool TryCompleteLoad(
@@ -154,23 +150,19 @@ namespace Game.Runtime
             float loadAmount,
             ref UnitResourceHauler hauler)
         {
-            loadAmount = Mathf.Max(0f, loadAmount);
-            if (!HasEnoughSourceResource(source, resourceKind, loadAmount))
+            if (source == null)
                 return false;
 
-            if (resourceKind == ResourceHaulKind.Fuel)
-            {
-                source.StoredFuelBarrels = Mathf.Max(0f, source.StoredFuelBarrels - loadAmount);
-                hauler.CargoFuelBarrels = loadAmount;
-                hauler.CargoOilBarrels = 0f;
-            }
-            else
-            {
-                source.StoredOilBarrels = Mathf.Max(0f, source.StoredOilBarrels - loadAmount);
-                hauler.CargoOilBarrels = loadAmount;
-                hauler.CargoFuelBarrels = 0f;
-            }
+            BuildingResourceStorageComponent storage = CreateResourceStorage(source);
+            bool loaded = BuildingResourceStorageTransferSystemHelper.TryCompleteLoad(
+                ref storage,
+                ToStorageResourceKind(resourceKind),
+                loadAmount,
+                ref hauler);
+            if (!loaded)
+                return false;
 
+            ApplyResourceStorage(source, storage);
             return true;
         }
 
@@ -183,16 +175,13 @@ namespace Game.Runtime
             if (source == null || loadAmount <= 0f)
                 return;
 
-            if (resourceKind == ResourceHaulKind.Fuel)
-            {
-                source.StoredFuelBarrels += loadAmount;
-                hauler.CargoFuelBarrels = 0f;
-            }
-            else
-            {
-                source.StoredOilBarrels += loadAmount;
-                hauler.CargoOilBarrels = 0f;
-            }
+            BuildingResourceStorageComponent storage = CreateResourceStorage(source);
+            BuildingResourceStorageTransferSystemHelper.RevertLoad(
+                ref storage,
+                ToStorageResourceKind(resourceKind),
+                loadAmount,
+                ref hauler);
+            ApplyResourceStorage(source, storage);
         }
 
         public bool HasReceivingCapacity(FactionResourceCompositionSystemHelper.IResourceBuilding destination, ResourceHaulKind resourceKind, float cargo)
@@ -200,10 +189,11 @@ namespace Game.Runtime
             if (destination == null || cargo <= 0f)
                 return false;
 
-            float freeSpace = resourceKind == ResourceHaulKind.Fuel
-                ? GetFuelReceivingFreeCapacity(destination)
-                : GetOilReceivingFreeCapacity(destination);
-            return freeSpace + 0.001f >= cargo;
+            BuildingResourceStorageComponent storage = CreateResourceStorage(destination);
+            return BuildingResourceStorageTransferSystemHelper.HasReceivingCapacity(
+                storage,
+                ToStorageResourceKind(resourceKind),
+                cargo);
         }
 
         public bool TryCompleteUnload(
@@ -214,28 +204,46 @@ namespace Game.Runtime
             if (destination == null)
                 return false;
 
-            float cargo = resourceKind == ResourceHaulKind.Fuel
-                ? Mathf.Max(0f, hauler.CargoFuelBarrels)
-                : Mathf.Max(0f, hauler.CargoOilBarrels);
-            if (!HasReceivingCapacity(destination, resourceKind, cargo))
+            BuildingResourceStorageComponent storage = CreateResourceStorage(destination);
+            bool unloaded = BuildingResourceStorageTransferSystemHelper.TryCompleteUnload(
+                ref storage,
+                ToStorageResourceKind(resourceKind),
+                ref hauler);
+            if (!unloaded)
                 return false;
 
-            if (resourceKind == ResourceHaulKind.Fuel)
-            {
-                destination.StoredFuelBarrels += cargo;
-                if (destination.FuelStorageCapacity > 0)
-                    destination.StoredFuelBarrels = Mathf.Min(destination.FuelStorageCapacity, destination.StoredFuelBarrels);
-                hauler.CargoFuelBarrels = 0f;
-            }
-            else
-            {
-                destination.StoredOilBarrels += cargo;
-                if (destination.OilStorageCapacity > 0)
-                    destination.StoredOilBarrels = Mathf.Min(destination.OilStorageCapacity, destination.StoredOilBarrels);
-                hauler.CargoOilBarrels = 0f;
-            }
-
+            ApplyResourceStorage(destination, storage);
             return true;
+        }
+
+        private static byte ToStorageResourceKind(ResourceHaulKind resourceKind)
+        {
+            return resourceKind == ResourceHaulKind.Fuel
+                ? BuildingResourceStorageTransferSystemHelper.FuelResourceKind
+                : BuildingResourceStorageTransferSystemHelper.OilResourceKind;
+        }
+
+        private static BuildingResourceStorageComponent CreateResourceStorage(
+            FactionResourceCompositionSystemHelper.IResourceBuilding building)
+        {
+            return new BuildingResourceStorageComponent
+            {
+                OwnerFactionId = building.OwnerFactionId,
+                OilStorageCapacity = Mathf.Max(0, building.OilStorageCapacity),
+                FuelStorageCapacity = Mathf.Max(0, building.FuelStorageCapacity),
+                OilBarrelsPerDay = Mathf.Max(0f, building.OilBarrelsPerDay),
+                FuelBarrelsPerDay = Mathf.Max(0f, building.FuelBarrelsPerDay),
+                StoredOilBarrels = Mathf.Max(0f, building.StoredOilBarrels),
+                StoredFuelBarrels = Mathf.Max(0f, building.StoredFuelBarrels)
+            };
+        }
+
+        private static void ApplyResourceStorage(
+            FactionResourceCompositionSystemHelper.IResourceBuilding building,
+            in BuildingResourceStorageComponent storage)
+        {
+            building.StoredOilBarrels = storage.StoredOilBarrels;
+            building.StoredFuelBarrels = storage.StoredFuelBarrels;
         }
     }
 }

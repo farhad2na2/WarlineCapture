@@ -22,6 +22,10 @@ $resolvedProjectPath = [Environment]::ExpandEnvironmentVariables($ProjectPath.Tr
 $resolvedLogFile = [Environment]::ExpandEnvironmentVariables($LogFile.Trim())
 
 $logDirectory = Split-Path -Parent $resolvedLogFile
+if ([string]::IsNullOrWhiteSpace($logDirectory)) {
+    $logDirectory = (Get-Location).Path
+}
+
 if (-not [string]::IsNullOrWhiteSpace($logDirectory) -and -not (Test-Path -LiteralPath $logDirectory -PathType Container)) {
     New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
 }
@@ -39,6 +43,24 @@ function Write-InvocationLog {
     }
 
     Add-Content -LiteralPath $resolvedLogFile -Value $Message -Encoding UTF8
+}
+
+function ConvertTo-ProcessArgument {
+    param(
+        [Parameter(Mandatory = $false)]
+        [AllowNull()]
+        [string] $Argument
+    )
+
+    if ($null -eq $Argument) {
+        return '""'
+    }
+
+    if ($Argument -notmatch '[\s"]') {
+        return $Argument
+    }
+
+    return '"' + ($Argument -replace '"', '\"') + '"'
 }
 
 Write-InvocationLog "[UnityInvoke] UnityExe: $resolvedUnityExe"
@@ -65,9 +87,32 @@ $arguments = @(
 
 $arguments += $UnityArguments
 
+$argumentLine = ($arguments | ForEach-Object { ConvertTo-ProcessArgument $_ }) -join " "
+$logBaseName = [System.IO.Path]::GetFileNameWithoutExtension($resolvedLogFile)
+$stdoutLogFile = Join-Path $logDirectory "$logBaseName.stdout.log"
+$stderrLogFile = Join-Path $logDirectory "$logBaseName.stderr.log"
+Remove-Item -LiteralPath $stdoutLogFile -Force -ErrorAction Ignore
+Remove-Item -LiteralPath $stderrLogFile -Force -ErrorAction Ignore
+
 Write-InvocationLog "[UnityInvoke] Arguments: $($arguments -join ' ')"
-& $resolvedUnityExe @arguments
-$exitCode = if ($null -eq $LASTEXITCODE) { 0 } else { $LASTEXITCODE }
+Write-InvocationLog "[UnityInvoke] ProcessArguments: $argumentLine"
+Write-InvocationLog "[UnityInvoke] StdoutLog: $stdoutLogFile"
+Write-InvocationLog "[UnityInvoke] StderrLog: $stderrLogFile"
+
+$process = Start-Process `
+    -FilePath $resolvedUnityExe `
+    -ArgumentList $argumentLine `
+    -RedirectStandardOutput $stdoutLogFile `
+    -RedirectStandardError $stderrLogFile `
+    -PassThru
+
+while (-not $process.HasExited) {
+    Start-Sleep -Seconds 1
+    $process.Refresh()
+}
+
+$process.WaitForExit()
+$exitCode = if ($null -eq $process.ExitCode) { 0 } else { $process.ExitCode }
 Write-InvocationLog "[UnityInvoke] ExitCode: $exitCode"
 if ($NoProcessExit) {
     $global:LASTEXITCODE = $exitCode

@@ -8,6 +8,9 @@ namespace Game.Runtime
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct RuntimeGameplayStateSystem : ISystem
     {
+        private static Unity.Entities.World s_CachedStateWorld;
+        private static Entity s_CachedStateEntity;
+
         public void OnCreate(ref SystemState state)
         {
             // RequireForUpdate intentionally omitted: disabled state facade; public accessors create/read the backing entity.
@@ -299,10 +302,23 @@ namespace Game.Runtime
                 return false;
 
             entityManager = world.EntityManager;
+            if (s_CachedStateWorld == world &&
+                s_CachedStateEntity != Entity.Null &&
+                entityManager.Exists(s_CachedStateEntity) &&
+                entityManager.HasComponent<RuntimeGameplayStateComponent>(s_CachedStateEntity))
+            {
+                entity = s_CachedStateEntity;
+                EnsureStateComponents(entityManager, entity);
+                return true;
+            }
+
+            s_CachedStateWorld = world;
+            s_CachedStateEntity = Entity.Null;
             using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
             if (query.CalculateEntityCount() > 0)
             {
                 entity = query.GetSingletonEntity();
+                s_CachedStateEntity = entity;
                 EnsureStateComponents(entityManager, entity);
                 return true;
             }
@@ -325,6 +341,7 @@ namespace Game.Runtime
                 CameraInput = LegacyCameraInput(),
                 CameraFocusRequest = LegacyCameraFocusRequest()
             });
+            s_CachedStateEntity = entity;
             return true;
         }
 

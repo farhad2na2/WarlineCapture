@@ -69,20 +69,20 @@ Turn `Design/AgentReports/2026-07-02_audit_architecture-performance-followup.md`
 
 | Field | Status |
 |---|---|
-| Checklist complete | 48 / 102 |
-| Checklist percent complete | 47.1% |
+| Checklist complete | 49 / 102 |
+| Checklist percent complete | 48.0% |
 | Current phase | Phase 4 - GC Re-baseline And Allocation Gate |
-| Quick wins complete | 3 / 6 |
-| Current target | Continue Phase 4 allocation cleanup at the new measured top source: `RuntimeGameplayStateSystem.TryGetStateEntity`, mostly through camera input reads in `RtsSelectionRuntimeCameraSystemHelper.UpdateZoom`. |
-| Compiler status | `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, and Unity 6.5.2 batchmode compile log `/private/tmp/warline-arch-followup-unity-compile-boardtarget-final.log` passed with 0 compiler errors after the board-target cached-query cleanup. Unity MCP is still treated as unreliable for this tracker, so editor-log and batchmode validation remain the Unity path. |
+| Quick wins complete | 4 / 6 |
+| Current target | Continue Phase 4 allocation cleanup at the new measured top source: `RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests`, starting with the same cached-query live-helper pattern used by move/cancel/board target modes. |
+| Compiler status | `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, and Unity 6.5.2 batchmode compile log `/private/tmp/warline-arch-followup-unity-compile-runtime-state.log` passed with 0 compiler errors after the runtime-state singleton entity cache cleanup. Unity MCP is still treated as unreliable for this tracker, so editor-log and batchmode validation remain the Unity path. |
 | Android baseline status | Not started |
-| GC baseline status | Latest 2026-07-03 14:33:00 UTC steady-state Match GC capture: 300 requested frames after 180 warmup frames, 301 scanned profiler frames, 30,197 GC.Alloc samples excluding editor compiler threads, 2,142,439 hierarchy-column bytes excluding editor compiler threads, and 0 editor compiler-thread bytes. `RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests` no longer appears in searched/top allocation rows after routing live board target mode through cached command/runtime/selected queries. |
+| GC baseline status | Latest 2026-07-03 15:10:57 UTC steady-state Match GC capture: 300 requested frames after 180 warmup frames, 301 scanned profiler frames, 17,267 GC.Alloc samples excluding editor compiler threads, 1,299,916 hierarchy-column bytes excluding editor compiler threads, and 0 editor compiler-thread bytes. `RuntimeGameplayStateSystem.TryGetStateEntity` no longer appears in searched/top allocation rows after caching the runtime-state singleton entity per Unity world. |
 | Burst coverage status | Current inventory: 125 `ISystem` files, 72 missing `[BurstCompile]`; classification pending |
 | Mobile URP status | `Mobile_RPAsset` shadow distance changed from 240 m to 90 m and cascades from 4 to 2; HDR, MSAA 2x, render scale 0.8, and soft shadows remain unchanged pending visual/Android baseline |
 | ECS instantiate status | Current inventory: 15 runtime `Object.Instantiate` call lines under `Assets/Game/Scripts/Systems` |
 | Fuel/Oil drift status | Drift confirmed: authoritative production, conversion, load/unload, and storage mutation are still in managed helper/runtime-building paths; UI/header paths are read-only display consumers |
-| Validation status | Phase 0 inventory completed; Phase 1 config edited; Phase 2 release OnGUI strip implemented; Phase 3 release diagnostic system gate implemented; latest validations passed: `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, Unity 6.5.2 compile log `/private/tmp/warline-arch-followup-unity-compile-boardtarget-final.log`, and Match GC capture log `/private/tmp/warline-arch-followup-gc-boardtarget-retry.log`. The GC capture required the documented Unity licensing workaround: stop the stuck batch run, clear stale licensing clients, then rerun escalated/windowed batchmode. |
-| Still wrong / next iteration | No visual defects are known in this non-visual GC slice. Recurring allocations remain, now led by `RuntimeGameplayStateSystem.TryGetStateEntity`: thread-pool worker `718,173` bytes / `6,817` samples / `123` frames, selection camera `131,560` bytes / `3,289` samples / `299` frames, selection command flush `105,248` bytes / `2,392` samples / `299` frames, AI build planner `94,256` bytes / `1,644` samples / `137` frames, MCP editor bridge noise `91,740` bytes, main menu `76,544` bytes, selection panel `76,544` bytes, end update `72,094` bytes, active production transports `63,330` bytes, and road build `59,800` bytes. Next slice should inspect `RuntimeGameplayStateSystem.ReadCameraInput()` / `TryGetStateEntity()` and cache or move the runtime-state lookup so per-frame camera input reads do not allocate. |
+| Validation status | Phase 0 inventory completed; Phase 1 config edited; Phase 2 release OnGUI strip implemented; Phase 3 release diagnostic system gate implemented; latest validations passed: `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, Unity 6.5.2 compile log `/private/tmp/warline-arch-followup-unity-compile-runtime-state.log`, and Match GC capture log `/private/tmp/warline-arch-followup-gc-runtime-state.log`. |
+| Still wrong / next iteration | No visual defects are known in this non-visual GC slice. Recurring allocations remain, now led by `RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests`: thread-pool worker `422,529` bytes / `4,093` samples / `76` frames, selection command flush `105,248` bytes / `2,392` samples / `299` frames, building runtime state `85,147` bytes / `1,124` samples / `299` frames, main menu `76,544` bytes, selection panel `76,544` bytes, one-frame AI build planner Burst JIT row `65,472` bytes, MCP editor bridge noise `51,011` bytes, menu bootstrap `45,448` bytes, active production transports `41,332` bytes, focused read model `38,272` bytes, and end update `29,588` bytes. Next slice should inspect the scan target request path and route live callers through cached command/runtime queries like the move/cancel/board target cleanup. |
 
 ## Phase 0 - Baseline And Inventory
 Fast setup work. No behavior changes.
@@ -239,16 +239,16 @@ Measure before deeper managed-helper work.
   - Result marker: `[MatchGcAllocationCallstackCapture] result=Passed frames=300`.
 - Report:
   - `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`
-- Latest date in report: `2026-07-03 14:33:00 UTC`.
+- Latest date in report: `2026-07-03 15:10:57 UTC`.
 - Capture summary:
   - Requested frames: `300`.
   - Warmup frames before capture: `180`.
   - Profiler frame range: `0..300`.
   - Scanned frames with data: `301`.
-  - GC.Alloc samples: `30,197`.
-  - GC.Alloc bytes from hierarchy column: `2,142,439`.
-  - GC.Alloc samples excluding editor compiler threads: `30,197`.
-  - GC.Alloc bytes excluding editor compiler threads: `2,142,439`.
+  - GC.Alloc samples: `17,267`.
+  - GC.Alloc bytes from hierarchy column: `1,299,916`.
+  - GC.Alloc samples excluding editor compiler threads: `17,267`.
+  - GC.Alloc bytes excluding editor compiler threads: `1,299,916`.
   - Editor compiler-thread GC.Alloc samples: `0`.
   - Editor compiler-thread GC.Alloc bytes: `0`.
   - Runtime allocation probe reports `UIShellEcsPresentationSystem.Update` and `MenuBootstrapView.Update` as `0 bytes / 0 allocating updates / 300 total updates`, so the previous shell/update probe path is clean.
@@ -268,23 +268,24 @@ Measure before deeper managed-helper work.
   - `RtsSelectionCancelActiveCommandModeSystem.ProcessPendingRequests` now has a public cached-query overload for live helper callers, and `RtsSelectionCommandResultFlushCompositionSystemHelper.ProcessCancelActiveCommandModeRequests` routes through cached command/runtime queries instead of creating temporary queries each flush; this cancel-command frame no longer appears in the searched/top allocation rows.
   - `TacticalFollowCameraModeSystemHelper` now caches singleton queries for target, pose, request queue, mode, and UI read model entities on the helper instance instead of creating temporary query objects in `EnsurePoseEntity` and related singleton factories; `TacticalFollowCameraModeSystemHelper.EnsurePoseEntity` no longer appears in the searched/top allocation rows.
   - `RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests` now exposes its cached-query overload for live helper callers, and `RtsSelectionCommandResultFlushCompositionSystemHelper.ProcessBoardTargetModeCommandRequests` routes through startup-owned command queue, runtime state, and selected-tag queries; `RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests` no longer appears in the searched/top allocation rows.
+  - `RuntimeGameplayStateSystem.TryGetStateEntity` now caches the runtime-state singleton entity per Unity world instead of creating a temporary query on each gameplay/camera state read; `RuntimeGameplayStateSystem.TryGetStateEntity` no longer appears in the searched/top allocation rows.
 - Top recurring offender after these fixes:
-  - The top recurring rows now share `RuntimeGameplayStateSystem.TryGetStateEntity` as their top managed frame, mostly through camera input reads in `RtsSelectionRuntimeCameraSystemHelper.UpdateZoom`.
+  - The top recurring rows now share `RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests` as their top managed frame.
 - Top recurring allocation rows from the latest report:
-  - Rank 1: `718,173` bytes / `6,817` samples / `123` frames, thread-pool worker `GC.Alloc`.
-  - Rank 2: `131,560` bytes / `3,289` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Camera`.
-  - Rank 3: `105,248` bytes / `2,392` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.CommandFlush`.
-  - Rank 4: `94,256` bytes / `1,644` samples / `137` frames, parent hierarchy `Default World Game.Runtime.AIBuildPlannerSystem`.
-  - Rank 6: `76,544` bytes / `2,093` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.MainMenu`.
-  - Rank 7: `76,544` bytes / `598` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Panel`.
-  - Rank 8: `72,094` bytes / `1,085` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.EndUpdate`.
-  - Rank 12: `63,330` bytes / `938` samples / `287` frames, parent hierarchy `GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateActiveProductionTransports`.
-  - Rank 13: `59,800` bytes / `1,495` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.RoadBuild`.
+  - Rank 1: `422,529` bytes / `4,093` samples / `76` frames, thread-pool worker `GC.Alloc`.
+  - Rank 2: `105,248` bytes / `2,392` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.CommandFlush`.
+  - Rank 3: `85,147` bytes / `1,124` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateBuildingRuntimeState`.
+  - Rank 4: `76,544` bytes / `2,093` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.MainMenu`.
+  - Rank 5: `76,544` bytes / `598` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.Panel`.
+  - Rank 6: `65,472` bytes / `939` samples / `1` frame, parent hierarchy `Default World Game.Runtime.AIBuildPlannerSystem`.
+  - Rank 8: `45,448` bytes / `598` samples / `299` frames, parent hierarchy `Game.Composition::MenuBootstrapView.Update()`.
+  - Rank 9: `41,332` bytes / `764` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.BuildingPlacement > BuildingPlacementRuntimeTick.UpdateActiveProductionTransports`.
+  - Rank 10: `38,272` bytes / `299` samples / `299` frames, parent hierarchy `GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.FocusedReadModel`.
 - Known editor/tooling allocations separated from gameplay cleanup target:
   - The capture report now separates editor compiler-thread allocations from raw totals. The latest run has `0` editor compiler-thread bytes, but previous same-slice runs showed these can spike above `12 MB` and should remain separated before using total editor bytes as a gate.
   - Unity AI/MCP tracing stack logs appeared during batch shutdown; these are editor/tooling noise, not player gameplay code.
 - Next cleanup target:
-  - Inspect `RuntimeGameplayStateSystem.ReadCameraInput()` / `TryGetStateEntity()` first because it is now the top managed frame for the recurring selection, main menu, end-update, road-build, and AI build planner rows.
+  - Inspect `RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests` first because it is now the top managed frame for recurring selection, main menu, building-placement, focused-read-model, and active-production-transport rows.
 
 ## Phase 5 - Burst Coverage Pass
 Mechanical pass, but only where correct.
@@ -381,7 +382,8 @@ Make the gains durable.
 - 2026-07-03: Added hidden-panel apply guard and fixed-string vehicle/transport classification in the selection HUD/read-model path. `dotnet build Game.Editor.csproj --no-restore`, `dotnet build Game.Runtime.csproj --no-restore`, and Unity 6.5.2 batchmode compile passed with 0 compiler errors. The GC capture tool timeout was raised from 180s to 360s because Unity 6.5.2 Match scene deserialization exceeded the old timeout. Two Match GC captures then passed; one run exposed editor Burst compiler-thread noise at `12,630,812` bytes / `94,325` samples, so the report now includes compiler-thread-separated totals and top sites. The final capture passed with `33,372` samples and `1,914,559` hierarchy-column bytes, with `0` editor compiler-thread bytes and `693,680` bytes / `14,053` samples in the main-thread `GameplayRuntimeUpdate.Selection` row.
 - 2026-07-03: Completed the tactical-follow cached-query cleanup for the latest top GC row by caching singleton queries for `TacticalFollowCameraModeSystemHelper` target, pose, request queue, mode, and UI read model entities. `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, Unity 6.5.2 compile log `/private/tmp/warline-arch-followup-unity-compile-tacticalfollow-retry.log`, and Match GC capture log `/private/tmp/warline-arch-followup-gc-tacticalfollow-final.log` passed. The GC report no longer includes `TacticalFollowCameraModeSystemHelper.EnsurePoseEntity` in searched/top rows. `RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests` is now the next measured allocation target.
 - 2026-07-03: Completed the board-target cached-query cleanup by exposing the existing query-based `RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests` overload to live helper callers and routing `RtsSelectionCommandResultFlushCompositionSystemHelper.ProcessBoardTargetModeCommandRequests` through cached command queue, runtime state, and selected-tag queries. `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, Unity 6.5.2 compile log `/private/tmp/warline-arch-followup-unity-compile-boardtarget-final.log`, and Match GC capture log `/private/tmp/warline-arch-followup-gc-boardtarget-retry.log` passed. The first GC retry stuck in the known licensing loop; the documented workaround was applied by stopping the stuck batch process, clearing stale licensing clients, and rerunning escalated/windowed batchmode. The GC report no longer includes `RtsSelectionBoardTargetModeCommandSystem.ProcessPendingRequests` in searched/top rows. `RuntimeGameplayStateSystem.TryGetStateEntity` is now the next measured allocation target.
+- 2026-07-03: Completed the runtime-state singleton entity cache cleanup by caching the `RuntimeGameplayStateComponent` backing entity per Unity world in `RuntimeGameplayStateSystem.TryGetStateEntity`. `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, Unity 6.5.2 compile log `/private/tmp/warline-arch-followup-unity-compile-runtime-state.log`, and Match GC capture log `/private/tmp/warline-arch-followup-gc-runtime-state.log` passed. The GC report no longer includes `RuntimeGameplayStateSystem.TryGetStateEntity` in searched/top rows, and the measured excluded-editor-compiler total dropped to `17,267` samples / `1,299,916` bytes. `RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests` is now the next measured allocation target.
 
 ## Still Wrong / Next Iteration
-- Known unresolved: Unity MCP remains unreliable for this tracker, visual/playmode smoke validation is pending, HDR/soft-shadow tier ownership is still unresolved, Android baseline is not captured, Fuel/Oil authoritative gameplay still lives in managed helper/runtime-building paths, Burst coverage is not classified, `RuntimeGameplayStateSystem.TryGetStateEntity` is the remaining top GC allocation source, and ECS instantiate cleanup is not implemented.
-- Next iteration: inspect `RuntimeGameplayStateSystem.ReadCameraInput()` / `TryGetStateEntity()`, cache or move the runtime-state lookup used by camera input reads, and rerun the same 300-frame GC capture before moving to Fuel/Oil drift cleanup and Burst classification.
+- Known unresolved: Unity MCP remains unreliable for this tracker, visual/playmode smoke validation is pending, HDR/soft-shadow tier ownership is still unresolved, Android baseline is not captured, Fuel/Oil authoritative gameplay still lives in managed helper/runtime-building paths, Burst coverage is not classified, `RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests` is the remaining top GC allocation source, and ECS instantiate cleanup is not implemented.
+- Next iteration: inspect `RtsSelectionScanTargetModeCommandSystem.ProcessPendingRequests`, route live scan-target command callers through cached command/runtime queries like the move/cancel/board target paths, and rerun the same 300-frame GC capture before moving to Fuel/Oil drift cleanup and Burst classification.

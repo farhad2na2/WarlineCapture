@@ -125,6 +125,7 @@ namespace Game.Runtime
                 IsWall = definition.IsWall ? (byte)1 : (byte)0,
                 IsGate = BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition) ? (byte)1 : (byte)0
             });
+            AddResourceStorageComponent(em, entity, runtimeBuildingId, ownerFactionId, definition);
             em.AddComponentData(entity, new UnitGridInitialized());
             em.AddComponentData(entity, new Faction { Id = ownerFactionId });
             em.AddComponentData(entity, new UnitHealth { Current = maxHealth, Max = maxHealth });
@@ -155,6 +156,33 @@ namespace Game.Runtime
                 DeathAnimationSeconds = 0.01f
             });
             return entity;
+        }
+
+        private static void AddResourceStorageComponent(
+            EntityManager em,
+            Entity entity,
+            int runtimeBuildingId,
+            byte ownerFactionId,
+            BuildingDefinition definition)
+        {
+            int oilCapacity = Mathf.Max(0, definition.OilStorageCapacity);
+            int fuelCapacity = Mathf.Max(0, definition.FuelStorageCapacity);
+            float oilRate = Mathf.Max(0f, definition.OilBarrelsPerDay);
+            float fuelRate = Mathf.Max(0f, definition.FuelBarrelsPerDay);
+            if (oilCapacity <= 0 && fuelCapacity <= 0 && oilRate <= 0f && fuelRate <= 0f)
+                return;
+
+            em.AddComponentData(entity, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = runtimeBuildingId,
+                OwnerFactionId = ownerFactionId,
+                OilStorageCapacity = oilCapacity,
+                FuelStorageCapacity = fuelCapacity,
+                OilBarrelsPerDay = oilRate,
+                FuelBarrelsPerDay = fuelRate,
+                StoredOilBarrels = 0f,
+                StoredFuelBarrels = 0f
+            });
         }
 
         private static void AddAirDefenseSupportProvider(

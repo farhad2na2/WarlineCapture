@@ -5,7 +5,6 @@ using Game.Configs;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 public sealed class AndroidVisualQualityValidationTests
 {
@@ -40,8 +39,8 @@ public sealed class AndroidVisualQualityValidationTests
     [Test]
     public static void MobileRenderPipelineUsesNativeScaleAndMsaa()
     {
-        UniversalRenderPipelineAsset asset =
-            AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(MobileRenderPipelinePath);
+        UnityEngine.Object asset =
+            AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(MobileRenderPipelinePath);
         Assert.NotNull(asset, $"Missing mobile render pipeline asset at {MobileRenderPipelinePath}.");
 
         SerializedObject serializedAsset = new(asset);

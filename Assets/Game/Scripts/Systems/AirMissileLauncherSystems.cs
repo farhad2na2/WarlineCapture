@@ -1018,28 +1018,33 @@ namespace Game.Runtime
             using EntityQuery query = em.CreateEntityQuery(
                 ComponentType.ReadOnly<GroundMissileFlyingRocketVisualComponent>(),
                 ComponentType.ReadWrite<LocalTransform>());
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                Entity entity = entities[i];
-                if (!em.Exists(entity) || !em.HasComponent<GroundMissileFlyingRocketVisualComponent>(entity))
-                    continue;
+                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    Entity entity = entities[i];
+                    if (!em.Exists(entity) || !em.HasComponent<GroundMissileFlyingRocketVisualComponent>(entity))
+                        continue;
 
-                GroundMissileFlyingRocketVisualComponent visual =
-                    em.GetComponentData<GroundMissileFlyingRocketVisualComponent>(entity);
-                if (visual.Launcher != launcher)
-                    continue;
+                    GroundMissileFlyingRocketVisualComponent visual =
+                        em.GetComponentData<GroundMissileFlyingRocketVisualComponent>(entity);
+                    if (visual.Launcher != launcher)
+                        continue;
 
-                if (visual.OriginalParent != Entity.Null && !em.HasComponent<Parent>(entity))
-                    ecb.AddComponent(entity, new Parent { Value = visual.OriginalParent });
+                    if (visual.OriginalParent != Entity.Null && !em.HasComponent<Parent>(entity))
+                        ecb.AddComponent(entity, new Parent { Value = visual.OriginalParent });
 
-                ecb.SetComponent(
-                    entity,
-                    LocalTransform.FromPositionRotationScale(
-                        visual.InitialLocalPosition,
-                        visual.InitialLocalRotation,
-                        0f));
-                ecb.RemoveComponent<GroundMissileFlyingRocketVisualComponent>(entity);
+                    ecb.SetComponent(
+                        entity,
+                        LocalTransform.FromPositionRotationScale(
+                            visual.InitialLocalPosition,
+                            visual.InitialLocalRotation,
+                            0f));
+                    ecb.RemoveComponent<GroundMissileFlyingRocketVisualComponent>(entity);
+                }
             }
         }
 

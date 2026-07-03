@@ -544,15 +544,20 @@ namespace Game.Runtime
             if (buildingRuntimeStateQuery.IsEmptyIgnoreFilter)
                 return false;
 
-            using NativeArray<Entity> entities = buildingRuntimeStateQuery.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = buildingRuntimeStateQuery.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                Entity entity = entities[i];
-                if (!em.Exists(entity))
-                    continue;
+                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    Entity entity = entities[i];
+                    if (!em.Exists(entity))
+                        continue;
 
-                boundaryEntity = entity;
-                return true;
+                    boundaryEntity = entity;
+                    return true;
+                }
             }
 
             return false;

@@ -362,30 +362,36 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<LocalTransform>());
             if (!selectedQuery.IsEmptyIgnoreFilter)
             {
-                using NativeArray<Entity> selected = selectedQuery.ToEntityArray(Allocator.Temp);
-                using NativeArray<LocalTransform> transforms = selectedQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
-                if (selected.Length > 0)
+                EntityTypeHandle entityType = em.GetEntityTypeHandle();
+                ComponentTypeHandle<LocalTransform> transformType = em.GetComponentTypeHandle<LocalTransform>(true);
+                using NativeArray<ArchetypeChunk> chunks = selectedQuery.ToArchetypeChunkArray(Allocator.Temp);
+                if (chunks.Length > 0)
                 {
                     Entity singleEntity = Entity.Null;
                     LocalTransform singleTransform = default;
                     int followableCount = 0;
                     using NativeList<LocalTransform> followableTransforms = new NativeList<LocalTransform>(Allocator.Temp);
-                    for (int i = 0; i < selected.Length; i++)
+                    for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
                     {
-                        if (!IsFollowableUnitEntity(em, selected[i]))
-                            continue;
+                        NativeArray<Entity> selected = chunks[chunkIndex].GetNativeArray(entityType);
+                        NativeArray<LocalTransform> transforms = chunks[chunkIndex].GetNativeArray(ref transformType);
+                        for (int i = 0; i < selected.Length; i++)
+                        {
+                            if (!IsFollowableUnitEntity(em, selected[i]))
+                                continue;
 
-                        followableCount++;
-                        if (followableCount == 1)
-                        {
-                            singleEntity = selected[i];
-                            singleTransform = transforms[i];
-                        }
-                        else
-                        {
-                            if (followableCount == 2)
-                                followableTransforms.Add(singleTransform);
-                            followableTransforms.Add(transforms[i]);
+                            followableCount++;
+                            if (followableCount == 1)
+                            {
+                                singleEntity = selected[i];
+                                singleTransform = transforms[i];
+                            }
+                            else
+                            {
+                                if (followableCount == 2)
+                                    followableTransforms.Add(singleTransform);
+                                followableTransforms.Add(transforms[i]);
+                            }
                         }
                     }
 
@@ -528,11 +534,16 @@ namespace Game.Runtime
             if (selectedQuery.IsEmptyIgnoreFilter)
                 return;
 
-            using NativeArray<Entity> selected = selectedQuery.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < selected.Length; i++)
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = selectedQuery.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                if (IsFollowableUnitEntity(em, selected[i]))
-                    buffer.Add(new TacticalFollowCameraBaseTargetElement { Entity = selected[i] });
+                NativeArray<Entity> selected = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < selected.Length; i++)
+                {
+                    if (IsFollowableUnitEntity(em, selected[i]))
+                        buffer.Add(new TacticalFollowCameraBaseTargetElement { Entity = selected[i] });
+                }
             }
         }
 
@@ -975,11 +986,16 @@ namespace Game.Runtime
             if (query.IsEmptyIgnoreFilter)
                 return false;
 
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                if (TryBuildGroundMissileTarget(em, mode, entities[i], out target))
-                    return true;
+                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    if (TryBuildGroundMissileTarget(em, mode, entities[i], out target))
+                        return true;
+                }
             }
 
             return false;
@@ -997,11 +1013,16 @@ namespace Game.Runtime
             if (query.IsEmptyIgnoreFilter)
                 return false;
 
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                if (TryBuildAirMissileTarget(em, mode, entities[i], out target))
-                    return true;
+                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    if (TryBuildAirMissileTarget(em, mode, entities[i], out target))
+                        return true;
+                }
             }
 
             return false;

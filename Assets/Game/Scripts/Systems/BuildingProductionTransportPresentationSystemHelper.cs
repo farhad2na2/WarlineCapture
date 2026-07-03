@@ -1154,20 +1154,25 @@ namespace Game.Runtime
             EntityQuery unitQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<UnitFootprint>(),
                 ComponentType.ReadOnly<LocalTransform>());
-            NativeArray<Entity> units = unitQuery.ToEntityArray(Allocator.Temp);
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            NativeArray<ArchetypeChunk> chunks = unitQuery.ToArchetypeChunkArray(Allocator.Temp);
             try
             {
-                for (int i = 0; i < units.Length; i++)
+                for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
                 {
-                    Entity unit = units[i];
-                    int extraRadius = ResolveUnitDropBufferRadius(em, unit, liveUnit: true);
-                    ReserveUnitEntityDropBuffer(em, ref reserved, grid, unit, extraRadius);
+                    NativeArray<Entity> units = chunks[chunkIndex].GetNativeArray(entityType);
+                    for (int i = 0; i < units.Length; i++)
+                    {
+                        Entity unit = units[i];
+                        int extraRadius = ResolveUnitDropBufferRadius(em, unit, liveUnit: true);
+                        ReserveUnitEntityDropBuffer(em, ref reserved, grid, unit, extraRadius);
+                    }
                 }
             }
             finally
             {
-                if (units.IsCreated)
-                    units.Dispose();
+                if (chunks.IsCreated)
+                    chunks.Dispose();
                 unitQuery.Dispose();
             }
         }

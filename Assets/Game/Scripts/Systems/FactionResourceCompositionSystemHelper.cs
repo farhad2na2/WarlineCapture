@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.Components;
 using UnityEngine;
 
 namespace Game.Runtime
@@ -326,20 +327,24 @@ namespace Game.Runtime
             if (building == null || building.IsDestroyed)
                 return;
 
-            BuildingResourceProductionSystemHelper.Result result = BuildingResourceProductionSystemHelper.Tick(
-                new BuildingResourceProductionSystemHelper.State(
-                    building.OilStorageCapacity,
-                    building.FuelStorageCapacity,
-                    building.OilBarrelsPerDay,
-                    building.FuelBarrelsPerDay,
-                    building.StoredOilBarrels,
-                    building.StoredFuelBarrels),
+            var storage = new BuildingResourceStorageComponent
+            {
+                OilStorageCapacity = building.OilStorageCapacity,
+                FuelStorageCapacity = building.FuelStorageCapacity,
+                OilBarrelsPerDay = building.OilBarrelsPerDay,
+                FuelBarrelsPerDay = building.FuelBarrelsPerDay,
+                StoredOilBarrels = building.StoredOilBarrels,
+                StoredFuelBarrels = building.StoredFuelBarrels
+            };
+
+            BuildingResourceProductionEcsSystem.TickResult result = BuildingResourceProductionEcsSystem.ApplyTick(
+                ref storage,
                 secondsPerDay,
                 deltaTime,
                 oilBarrelsPerFuelBarrel);
 
-            building.StoredOilBarrels = result.StoredOilBarrels;
-            building.StoredFuelBarrels = result.StoredFuelBarrels;
+            building.StoredOilBarrels = storage.StoredOilBarrels;
+            building.StoredFuelBarrels = storage.StoredFuelBarrels;
             oilExtracted += result.OilExtractedBarrels;
             fuelProduced += result.FuelProducedBarrels;
         }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using Game.Components;
 
 namespace Game.Runtime
@@ -9,10 +10,19 @@ namespace Game.Runtime
         public delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
         public delegate bool ShouldAlignGateToNearbyWallDelegate(Vector2Int originCell, BuildingDefinition definition, out bool gateVertical);
 
+        private const string PoolRootName = "BuildingPlacementVisualPool";
+
+        private readonly Dictionary<BuildingDefinition, Stack<GameObject>> _pooledByDefinition = new();
+        private readonly Dictionary<GameObject, BuildingDefinition> _activeDefinitions = new();
+        private Transform _poolRoot;
+
         public GameObject CreateBuildingVisualInstance(BuildingDefinition definition, Transform parent)
         {
             if (definition == null)
                 return null;
+
+            if (TryGetPooledInstance(definition, parent, out GameObject pooled))
+                return pooled;
 
             var wrapper = new GameObject($"{definition.DisplayName}_VisualRoot");
             wrapper.transform.SetParent(parent, false);
@@ -36,7 +46,36 @@ namespace Game.Runtime
                 visual.transform.localScale = Vector3.one;
             }
 
+            _activeDefinitions[wrapper] = definition;
             return wrapper;
+        }
+
+        public void ReleaseBuildingVisualInstance(GameObject instance)
+        {
+            if (instance == null)
+                return;
+
+            if (!_activeDefinitions.TryGetValue(instance, out BuildingDefinition definition) || definition == null)
+            {
+                DestroyRuntimeObject(instance);
+                return;
+            }
+
+            _activeDefinitions.Remove(instance);
+            ClearRendererPropertyBlocks(instance);
+            instance.SetActive(false);
+            instance.transform.SetParent(EnsurePoolRoot(instance.transform.parent), false);
+            instance.transform.localPosition = Vector3.zero;
+            instance.transform.localRotation = Quaternion.identity;
+            instance.transform.localScale = Vector3.one;
+
+            if (!_pooledByDefinition.TryGetValue(definition, out Stack<GameObject> pool))
+            {
+                pool = new Stack<GameObject>();
+                _pooledByDefinition[definition] = pool;
+            }
+
+            pool.Push(instance);
         }
 
         public void PositionBuildingObject(
@@ -95,6 +134,62 @@ namespace Game.Runtime
             }
 
             return null;
+        }
+
+        private bool TryGetPooledInstance(BuildingDefinition definition, Transform parent, out GameObject instance)
+        {
+            instance = null;
+            if (!_pooledByDefinition.TryGetValue(definition, out Stack<GameObject> pool))
+                return false;
+
+            while (pool.Count > 0)
+            {
+                instance = pool.Pop();
+                if (instance == null)
+                    continue;
+
+                instance.transform.SetParent(parent, false);
+                instance.transform.localPosition = Vector3.zero;
+                instance.transform.localRotation = Quaternion.identity;
+                instance.transform.localScale = Vector3.one;
+                instance.SetActive(true);
+                _activeDefinitions[instance] = definition;
+                return true;
+            }
+
+            instance = null;
+            return false;
+        }
+
+        private Transform EnsurePoolRoot(Transform fallbackParent)
+        {
+            if (_poolRoot != null)
+                return _poolRoot;
+
+            var root = new GameObject(PoolRootName);
+            if (fallbackParent != null)
+                root.transform.SetParent(fallbackParent, false);
+            root.SetActive(false);
+            _poolRoot = root.transform;
+            return _poolRoot;
+        }
+
+        private static void ClearRendererPropertyBlocks(GameObject instance)
+        {
+            Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+                renderers[i]?.SetPropertyBlock(null);
+        }
+
+        private static void DestroyRuntimeObject(UnityEngine.Object target)
+        {
+            if (target == null)
+                return;
+
+            if (Application.isPlaying)
+                UnityEngine.Object.Destroy(target);
+            else
+                UnityEngine.Object.DestroyImmediate(target);
         }
 
         private static void DisableSourceRenderersOutsideCombinedMesh(Transform root, Transform combinedMesh)

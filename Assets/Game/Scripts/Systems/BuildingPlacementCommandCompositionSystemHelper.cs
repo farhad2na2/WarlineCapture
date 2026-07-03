@@ -137,7 +137,7 @@ namespace Game.Runtime
                 source.RuntimeBuildingSystem,
                 source.BuildingPlacementStartupSystemHelper.BuildingRoot,
                 source.BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance,
-                preview => source.RuntimeObjectPresentationHelper.DestroyRuntimeObject(preview),
+                source.BuildingPlacementVisualPresentationSystemHelper.ReleaseBuildingVisualInstance,
                 footprint => getCenterScreenPlacementOrigin(source, footprint),
                 (BuildingDefinition definition, Vector2Int preferredOrigin, out Vector2Int resolvedOrigin) => tryResolveInitialPlacementOrigin(source, interactionContext, markerPropertyBlock, definition, preferredOrigin, out resolvedOrigin),
                 (placement, updateCellFromPointer, screenPosition) => updatePlacementVisual(source, interactionContext, markerPropertyBlock, placement, updateCellFromPointer, screenPosition),

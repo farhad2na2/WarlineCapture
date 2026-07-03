@@ -36,6 +36,7 @@ namespace Game.Runtime
             public readonly GetFootprintCenterDelegate GetFootprintCenter;
             public readonly BuildingPlacementPreviewPresentationSystemHelper.CreateVisualDelegate CreateBuildingVisualInstance;
             public readonly BuildingPlacementPreviewPresentationSystemHelper.PositionVisualDelegate PositionBuildingObject;
+            public readonly BuildingPlacementPreviewPresentationSystemHelper.ReleaseVisualDelegate ReleaseBuildingVisualInstance;
             public readonly CreatePlacementContextSourceDelegate CreatePlacementContextSource;
             public readonly CreateBuildingBarrierContextDelegate CreateBuildingBarrierContext;
             public readonly SelectAndFocusBuildingDelegate SelectAndFocusBuilding;
@@ -58,6 +59,7 @@ namespace Game.Runtime
                 GetFootprintCenterDelegate getFootprintCenter,
                 BuildingPlacementPreviewPresentationSystemHelper.CreateVisualDelegate createBuildingVisualInstance,
                 BuildingPlacementPreviewPresentationSystemHelper.PositionVisualDelegate positionBuildingObject,
+                BuildingPlacementPreviewPresentationSystemHelper.ReleaseVisualDelegate releaseBuildingVisualInstance,
                 CreatePlacementContextSourceDelegate createPlacementContextSource,
                 CreateBuildingBarrierContextDelegate createBuildingBarrierContext,
                 SelectAndFocusBuildingDelegate selectAndFocusBuilding)
@@ -79,6 +81,7 @@ namespace Game.Runtime
                 GetFootprintCenter = getFootprintCenter;
                 CreateBuildingVisualInstance = createBuildingVisualInstance;
                 PositionBuildingObject = positionBuildingObject;
+                ReleaseBuildingVisualInstance = releaseBuildingVisualInstance;
                 CreatePlacementContextSource = createPlacementContextSource;
                 CreateBuildingBarrierContext = createBuildingBarrierContext;
                 SelectAndFocusBuilding = selectAndFocusBuilding;
@@ -251,7 +254,8 @@ namespace Game.Runtime
                 vertical,
                 grid,
                 context.CreateBuildingVisualInstance,
-                context.PositionBuildingObject);
+                context.PositionBuildingObject,
+                context.ReleaseBuildingVisualInstance);
             context.PreviewSystem.UpdateWallOutline(
                 context.InputSystem.GetAllWallPlacementOriginsScratch(placement, wallOrigins),
                 wallFootprint,

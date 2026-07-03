@@ -111,6 +111,7 @@ namespace Game.Runtime
                     source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
                     (origin, footprint, gridConfig) => source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(origin, footprint, gridConfig, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
                     (Vector2Int origin, BuildingDefinition definition, out bool gateVertical) => tryAlignGateToNearbyWall(source, origin, definition, out gateVertical)),
+                source.BuildingPlacementVisualPresentationSystemHelper.ReleaseBuildingVisualInstance,
                 () => createPlacementContextSource(source, interactionContext, markerPropertyBlock),
                 () => source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(createRuntimeContextSource(source)),
                 building => source.BuildingSelectionRuntimeCompositionSystemHelper.SelectAndFocusBuilding(createBuildingSelectionContext(source), building));

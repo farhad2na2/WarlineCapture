@@ -22,6 +22,7 @@ namespace Game.Runtime
 
         public delegate GameObject CreateVisualDelegate(BuildingDefinition definition, Transform parent);
         public delegate void PositionVisualDelegate(GameObject instance, Vector2Int originCell, BuildingDefinition definition, GridConfig grid, bool rotateVertical);
+        public delegate void ReleaseVisualDelegate(GameObject instance);
         public delegate Vector3 FootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
 
         private GameObject _placementOutline;
@@ -156,14 +157,15 @@ namespace Game.Runtime
             bool valid,
             GridConfig grid,
             CreateVisualDelegate createVisual,
-            PositionVisualDelegate positionVisual)
+            PositionVisualDelegate positionVisual,
+            ReleaseVisualDelegate releaseVisual)
         {
             if (previewInstance == null || createVisual == null || positionVisual == null)
                 return;
 
             Transform root = previewInstance.transform;
             for (int i = root.childCount - 1; i >= 0; i--)
-                DestroyRuntimeObject(root.GetChild(i).gameObject);
+                ReleasePreviewVisual(root.GetChild(i).gameObject, releaseVisual);
 
             if (committedRuns != null)
             {
@@ -205,7 +207,8 @@ namespace Game.Runtime
             bool vertical,
             GridConfig grid,
             CreateVisualDelegate createVisual,
-            PositionVisualDelegate positionVisual)
+            PositionVisualDelegate positionVisual,
+            ReleaseVisualDelegate releaseVisual)
         {
             if (placement?.PreviewInstance == null)
                 return;
@@ -233,7 +236,8 @@ namespace Game.Runtime
                 placement.IsValid,
                 grid,
                 createVisual,
-                positionVisual);
+                positionVisual,
+                releaseVisual);
         }
 
         private float GetOutlineHeight(BuildingDefinition definition)
@@ -321,6 +325,17 @@ namespace Game.Runtime
                 UnityEngine.Object.Destroy(target);
             else
                 UnityEngine.Object.DestroyImmediate(target);
+        }
+
+        private void ReleasePreviewVisual(GameObject instance, ReleaseVisualDelegate releaseVisual)
+        {
+            if (instance == null)
+                return;
+
+            if (releaseVisual != null)
+                releaseVisual(instance);
+            else
+                DestroyRuntimeObject(instance);
         }
     }
 }

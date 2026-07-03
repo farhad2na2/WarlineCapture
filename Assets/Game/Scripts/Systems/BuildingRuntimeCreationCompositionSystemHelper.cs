@@ -15,7 +15,7 @@ namespace Game.Runtime
         public delegate bool ShouldBlockPathingDelegate(BuildingDefinition definition);
         public delegate void RemoveOverlappingBlockersDelegate(Vector2Int originCell, Vector2Int footprintCells);
         public delegate Entity CreateBlockerEntityDelegate(BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells);
-        public delegate Entity CreateCombatEntityDelegate(Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation);
+        public delegate Entity CreateCombatEntityDelegate(int runtimeBuildingId, Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation);
         public delegate void RedirectUnitsDelegate(RectInt occupiedRect);
         public delegate void AddDeferredRedirectFootprintDelegate(RectInt occupiedRect);
         public delegate void RuntimeBuildingAction(RuntimeBuildingEntity building);
@@ -121,7 +121,7 @@ namespace Game.Runtime
                 ? context.CreateBlockerEntity(definition, originCell, definition.FootprintCells)
                 : Entity.Null;
             Entity combatEntity = context.CreateCombatEntity != null
-                ? context.CreateCombatEntity(originCell, definition, 0, instance.transform.rotation)
+                ? context.CreateCombatEntity(buildingId, originCell, definition, 0, instance.transform.rotation)
                 : Entity.Null;
             if (hasEntityManager && hasSurfaceResult && !preserveAuthoredTransform)
                 FoundationVisualPresentationHelper?.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);

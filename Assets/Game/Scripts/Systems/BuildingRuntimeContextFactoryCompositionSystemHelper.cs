@@ -299,8 +299,8 @@ namespace Game.Runtime
                 (definition, originCell, footprintCells) => source.RuntimeEntitySystem != null
                     ? source.RuntimeEntitySystem.CreateBlockerEntity(source.RuntimeEntityContext, definition, originCell, footprintCells)
                     : Entity.Null,
-                (originCell, definition, ownerFactionId, worldRotation) => source.RuntimeEntitySystem != null
-                    ? source.RuntimeEntitySystem.CreateBuildingCombatEntity(source.RuntimeEntityContext, originCell, definition, ownerFactionId, worldRotation)
+                (runtimeBuildingId, originCell, definition, ownerFactionId, worldRotation) => source.RuntimeEntitySystem != null
+                    ? source.RuntimeEntitySystem.CreateBuildingCombatEntity(source.RuntimeEntityContext, runtimeBuildingId, originCell, definition, ownerFactionId, worldRotation)
                     : Entity.Null,
                 footprint => source.PlacementRedirectSystem?.RedirectUnitsAroundPlacedBuilding(CreateCreationRedirectContext(source), footprint),
                 footprint => source.PlacementRedirectSystem?.AddDeferredRedirectFootprint(footprint),

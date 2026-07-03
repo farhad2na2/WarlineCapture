@@ -85,7 +85,7 @@ namespace Game.Runtime
                 BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Building_Helipad"));
         }
 
-        public Entity CreateBuildingCombatEntity(Context context, Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation)
+        public Entity CreateBuildingCombatEntity(Context context, int runtimeBuildingId, Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation)
         {
             if (definition == null)
                 return Entity.Null;
@@ -118,6 +118,7 @@ namespace Game.Runtime
             em.AddComponent<RuntimeBuildingCombatTag>(entity);
             em.AddComponentData(entity, new RuntimeBuildingCombatInfo
             {
+                RuntimeBuildingId = runtimeBuildingId,
                 OwnerFactionId = ownerFactionId,
                 OriginCell = new int2(originCell.x, originCell.y),
                 FootprintCells = new int2(footprintCells.x, footprintCells.y),

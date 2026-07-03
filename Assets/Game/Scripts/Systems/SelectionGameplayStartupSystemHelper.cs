@@ -20,8 +20,6 @@ namespace Game.Runtime
         private static readonly ProfilerMarker SelectionTacticalCameraMarker = new("GameplayRuntimeUpdate.Selection.TacticalCamera");
         private static readonly ProfilerMarker SelectionMarkerPreviewMarker = new("GameplayRuntimeUpdate.Selection.MarkerPreview");
         private static readonly ProfilerMarker SelectionCameraMarker = new("GameplayRuntimeUpdate.Selection.Camera");
-        private const float SelectionFocusedReadModelRefreshIntervalSeconds = 0.1f;
-        private const float SelectionPanelRefreshIntervalSeconds = 0.2f;
 
         public readonly struct Result
         {
@@ -177,9 +175,6 @@ namespace Game.Runtime
                 IsValidBoardTransportPreviewTarget;
             SelectionOrderMarkerPresentationSystemHelper.IsPreviewTargetValidWithSourceDelegate isValidBoardPassengerPreviewTargetAction =
                 IsValidBoardPassengerPreviewTarget;
-            float nextFocusedReadModelRefreshTime = 0f;
-            float nextSelectionPanelRefreshTime = 0f;
-            bool selectionHudRefreshRequested = true;
 
             selectionUiCamera.Init(rtsSelectionConfig, worldCamera);
             selectionBuildingInteraction.Init(selectionStateSystem, selectionScreenMarkers, worldCamera);
@@ -231,7 +226,6 @@ namespace Game.Runtime
                 selectionHudFeedbackSystem.BindMatchHudSelectionPanel(view);
                 selectionBuildingInteraction.BindMatchHudSelectionPanel(view);
                 hasCommandResultFlushContext = false;
-                RequestSelectionHudRefresh();
                 view?.BindActions(
                     () => selectionUiCommand.RequestReturnToBase(),
                     () => selectionUiCommand.RequestDestroyFocusedUnit(),
@@ -356,45 +350,34 @@ namespace Game.Runtime
 
                 using (SelectionFocusedReadModelMarker.Auto())
                 {
-                    float now = UnityEngine.Time.time;
-                    if (selectionHudRefreshRequested || now >= nextFocusedReadModelRefreshTime)
-                    {
-                        selectionHudFeedbackSystem.RefreshFocusedSelectionReadModels(
-                            GetHudFeedbackContext(),
-                            selectionStateSystem,
-                            focusedUnitUiReadModelSystem,
-                            unitTransportCapacitySystem,
-                            EnsureRuntimeSelectionDependencies,
-                            refreshFocusedUnitAction,
-                            now);
-                        nextFocusedReadModelRefreshTime = now + SelectionFocusedReadModelRefreshIntervalSeconds;
-                    }
+                    selectionHudFeedbackSystem.RefreshFocusedSelectionReadModels(
+                        GetHudFeedbackContext(),
+                        selectionStateSystem,
+                        focusedUnitUiReadModelSystem,
+                        unitTransportCapacitySystem,
+                        EnsureRuntimeSelectionDependencies,
+                        refreshFocusedUnitAction,
+                        UnityEngine.Time.time);
                 }
 
                 using (SelectionPanelMarker.Auto())
                 {
-                    float now = UnityEngine.Time.time;
-                    if (selectionHudRefreshRequested || now >= nextSelectionPanelRefreshTime)
-                    {
-                        selectionHudFeedbackSystem.UpdateMatchHudSelectionPanel(
-                            GetHudFeedbackContext(),
-                            selectionStateSystem,
-                            focusedUnitLifecycleSystem,
-                            focusedUnitUiReadModelSystem,
-                            transportPassengerPanelItems,
-                            EnsureRuntimeSelectionDependencies,
-                            TryGetAttackModeOrderSnapshot,
-                            resolveSelectionCardPortraitSprite,
-                            resolveSelectedBuildingPortraitSprite,
-                            resolveActiveSquadTrayPortraitSpriteAction,
-                            hasSelectedBuildingAction,
-                            selectedBuildingLabelAction,
-                            tryGetSelectedBuildingResourceStorageAction,
-                            isBoardCommandAvailableAction,
-                            hasSelectedBoardAction);
-                        nextSelectionPanelRefreshTime = now + SelectionPanelRefreshIntervalSeconds;
-                        selectionHudRefreshRequested = false;
-                    }
+                    selectionHudFeedbackSystem.UpdateMatchHudSelectionPanel(
+                        GetHudFeedbackContext(),
+                        selectionStateSystem,
+                        focusedUnitLifecycleSystem,
+                        focusedUnitUiReadModelSystem,
+                        transportPassengerPanelItems,
+                        EnsureRuntimeSelectionDependencies,
+                        TryGetAttackModeOrderSnapshot,
+                        resolveSelectionCardPortraitSprite,
+                        resolveSelectedBuildingPortraitSprite,
+                        resolveActiveSquadTrayPortraitSpriteAction,
+                        hasSelectedBuildingAction,
+                        selectedBuildingLabelAction,
+                        tryGetSelectedBuildingResourceStorageAction,
+                        isBoardCommandAvailableAction,
+                        hasSelectedBoardAction);
                 }
 
                 using (SelectionTacticalCameraMarker.Auto())
@@ -820,8 +803,8 @@ namespace Game.Runtime
                     (direction, boardAllInteractable) =>
                         selectionHudFeedbackSystem.ApplyBoardCommandMode(hudFeedbackContext, direction, boardAllInteractable),
                     result => selectionHudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
-                    ClearHudSelection,
-                    ApplyHudSelection,
+                    () => selectionHudFeedbackSystem.ClearSelection(hudFeedbackContext),
+                    (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(hudFeedbackContext, entityManager, entity),
                     () => selectionHudFeedbackSystem.ClearCommandMode(hudFeedbackContext),
                     SetExplicitAttackTargetModeActive,
                     visible => selectionHudFeedbackSystem.SetWorldMarkersVisible(hudFeedbackContext, visible),
@@ -894,10 +877,10 @@ namespace Game.Runtime
                     ClearCurrentSelection,
                     QueueSelectionRectangleRequest,
                     ProcessSelectionRectangleRequests,
-                    ApplyHudSelection,
+                    (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(hudFeedbackContext, entityManager, entity),
                     result => selectionHudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
                     mode => selectionHudFeedbackSystem.ApplyCommandMode(hudFeedbackContext, mode),
-                    ClearHudSelection,
+                    () => selectionHudFeedbackSystem.ClearSelection(hudFeedbackContext),
                     () => selectionHudFeedbackSystem.ClearCommandMode(hudFeedbackContext),
                     visible => selectionHudFeedbackSystem.SetWorldMarkersVisible(hudFeedbackContext, visible),
                     value => rtsSelectionRuntimeCameraSystem?.SetCameraDragging(GetRuntimeCameraContext(), value),
@@ -943,9 +926,9 @@ namespace Game.Runtime
                     SetExplicitAttackTargetModeActive,
                     mode => selectionHudFeedbackSystem.ApplyCommandMode(hudFeedbackContext, mode),
                     result => selectionHudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
-                    ClearHudSelection,
+                    () => selectionHudFeedbackSystem.ClearSelection(hudFeedbackContext),
                     () => selectionHudFeedbackSystem.ClearCommandMode(hudFeedbackContext),
-                    ApplyHudSelection,
+                    (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(hudFeedbackContext, entityManager, entity),
                     ClearCurrentSelection,
                     screenPosition => selectionScreenMarkers?.RequestMoveOrderMarker(screenPosition),
                     value => rtsSelectionRuntimeCameraSystem?.SetCameraDragging(GetRuntimeCameraContext(), value),
@@ -1054,26 +1037,16 @@ namespace Game.Runtime
             void ApplyHudSelection(EntityManager entityManager, Entity entity)
             {
                 selectionHudFeedbackSystem.ApplySelection(GetHudFeedbackContext(), entityManager, entity);
-                RequestSelectionHudRefresh();
             }
 
             void ApplyHudSquadSelection(int selectedCount)
             {
                 selectionHudFeedbackSystem.ApplySquadSelection(GetHudFeedbackContext(), selectedCount);
-                RequestSelectionHudRefresh();
             }
 
             void ClearHudSelection()
             {
                 selectionHudFeedbackSystem.ClearSelection(GetHudFeedbackContext());
-                RequestSelectionHudRefresh();
-            }
-
-            void RequestSelectionHudRefresh()
-            {
-                selectionHudRefreshRequested = true;
-                nextFocusedReadModelRefreshTime = 0f;
-                nextSelectionPanelRefreshTime = 0f;
             }
 
             MatchHudSquadTraySelectionUiSystemHelper.Context CreateSquadTraySelectionContext()

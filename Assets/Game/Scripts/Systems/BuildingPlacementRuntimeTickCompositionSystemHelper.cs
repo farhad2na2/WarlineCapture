@@ -6,9 +6,8 @@ namespace Game.Runtime
 {
     internal sealed class BuildingPlacementRuntimeTickCompositionSystemHelper
     {
-        private const double ProductionIntervalSeconds = 0.2d;
-        private const double ActiveProductionTransportIntervalSeconds = 0.1d;
-        private const double ActiveProductionTransportIdleProbeIntervalSeconds = 0.5d;
+        private const double ProductionIntervalSeconds = 0.1d;
+        private const double ActiveProductionTransportIntervalSeconds = 0.08d;
         private const double ResourceProductionIntervalSeconds = 1d;
         private const double ResourceHaulerIntervalSeconds = 0.25d;
         private const double ResourceVisualIntervalSeconds = 0.25d;
@@ -212,7 +211,7 @@ namespace Game.Runtime
 
                     _nextActiveProductionTransportProbeAt = _activeProductionTransportsObserved
                         ? now + ActiveProductionTransportIntervalSeconds
-                        : now + ActiveProductionTransportIdleProbeIntervalSeconds;
+                        : now + ProductionIntervalSeconds;
                 }
                 afterProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
 

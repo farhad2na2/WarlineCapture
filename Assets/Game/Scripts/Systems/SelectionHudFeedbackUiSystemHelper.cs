@@ -327,7 +327,6 @@ namespace Game.Runtime
 
             ensureEntityQueries?.Invoke(em);
             int selectedCount = CountSelectedTagsCached(em);
-            IReadOnlyList<Entity> cachedSelectedEntities = ResolveCompleteSelectedMoveCache(selectionStateSystem, selectedCount);
             if (selectedCount > 1)
             {
                 MarkSelectionPanelVisible();
@@ -336,8 +335,7 @@ namespace Game.Runtime
                     em,
                     tryGetAttackModeOrderSnapshot,
                     hasSelectedBuilding,
-                    hasSelectedBoardAction,
-                    cachedSelectedEntities);
+                    hasSelectedBoardAction);
                 if (!_hasLastSummaryPanelKey || !_lastSummaryPanelKey.Equals(summaryKey))
                 {
                     ClearFocusedPanelCache();
@@ -348,8 +346,7 @@ namespace Game.Runtime
                         tryGetAttackModeOrderSnapshot,
                         resolveActiveSquadTrayPortraitSprite,
                         hasSelectedBuilding,
-                        hasSelectedBoardAction,
-                        cachedSelectedEntities));
+                        hasSelectedBoardAction));
                     _lastSummaryPanelKey = summaryKey;
                     _hasLastSummaryPanelKey = true;
                 }
@@ -419,8 +416,7 @@ namespace Game.Runtime
                     em,
                     tryGetAttackModeOrderSnapshot,
                     hasSelectedBuilding,
-                    hasSelectedBoardAction,
-                    cachedSelectedEntities);
+                    hasSelectedBoardAction);
                 if (!_hasLastSummaryPanelKey || !_lastSummaryPanelKey.Equals(summaryKey))
                 {
                     ClearFocusedPanelCache();
@@ -431,8 +427,7 @@ namespace Game.Runtime
                         tryGetAttackModeOrderSnapshot,
                         resolveActiveSquadTrayPortraitSprite,
                         hasSelectedBuilding,
-                        hasSelectedBoardAction,
-                        cachedSelectedEntities));
+                        hasSelectedBoardAction));
                     _lastSummaryPanelKey = summaryKey;
                     _hasLastSummaryPanelKey = true;
                 }
@@ -481,18 +476,11 @@ namespace Game.Runtime
             if (selectedCount > 0)
             {
                 bool includeSelectedBuilding = hasSelectedBuilding != null && hasSelectedBuilding();
-                IReadOnlyList<Entity> cachedSelectedEntities = ResolveCompleteSelectedMoveCache(selectionStateSystem, selectedCount);
-                return cachedSelectedEntities != null
-                    ? BuildSelectedSummary(
-                        em,
-                        context.SelectionUiReadModelLookup,
-                        includeSelectedBuilding,
-                        cachedSelectedEntities).OrderText
-                    : BuildSelectedSummary(
-                        em,
-                        context.SelectionUiReadModelLookup,
-                        includeSelectedBuilding,
-                        GetSelectedTagQuery(em)).OrderText;
+                return BuildSelectedSummary(
+                    em,
+                    context.SelectionUiReadModelLookup,
+                    includeSelectedBuilding,
+                    GetSelectedTagQuery(em)).OrderText;
             }
 
             if (hasSelectedBuilding != null && hasSelectedBuilding())
@@ -608,114 +596,19 @@ namespace Game.Runtime
                 portraitKind);
         }
 
-        private static SelectedSummary BuildSelectedSummary(
-            EntityManager em,
-            SelectionUiReadModelLookup selectionUiReadModelLookup,
-            bool includeSelectedBuilding,
-            IReadOnlyList<Entity> selectedEntities)
-        {
-            if (selectedEntities == null || selectedEntities.Count == 0)
-            {
-                int noSelectionBuildingCount = includeSelectedBuilding ? 1 : 0;
-                return new SelectedSummary(
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    noSelectionBuildingCount,
-                    noSelectionBuildingCount > 0 ? "1 STRUCTURE" : "NO SELECTION",
-                    noSelectionBuildingCount > 0 ? "Building selected" : string.Empty,
-                    noSelectionBuildingCount > 0 ? "Structure selected" : "Idle",
-                    "-",
-                    0f,
-                    noSelectionBuildingCount > 0 ? SelectionSummaryPortraitKind.Buildings : SelectionSummaryPortraitKind.None);
-            }
-
-            int unitCount = 0;
-            int soldierCount = 0;
-            int vehicleCount = 0;
-            int aircraftCount = 0;
-            int transportCount = 0;
-            int currentTotal = 0;
-            int maxTotal = 0;
-            bool hasOrder = false;
-            bool mixedOrders = false;
-            SelectionUiReadModelLookup.FocusedUnitUiStatus firstOrder = SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle;
-
-            for (int i = 0; i < selectedEntities.Count; i++)
-            {
-                Entity entity = selectedEntities[i];
-                if (entity == Entity.Null || !em.Exists(entity))
-                    continue;
-
-                unitCount++;
-                UnitCategory category = ResolveCategory(em, entity);
-                soldierCount += category == UnitCategory.Soldier ? 1 : 0;
-                vehicleCount += category == UnitCategory.Vehicle ? 1 : 0;
-                aircraftCount += category == UnitCategory.Aircraft ? 1 : 0;
-                transportCount += category == UnitCategory.Transport ? 1 : 0;
-
-                if (em.HasComponent<UnitHealth>(entity))
-                {
-                    UnitHealth health = em.GetComponentData<UnitHealth>(entity);
-                    currentTotal += math.max(0, health.Current);
-                    maxTotal += math.max(0, health.Max);
-                }
-
-                SelectionUiReadModelLookup.FocusedUnitUiStatus order = selectionUiReadModelLookup.GetFocusedUnitUiStatus(em, entity);
-                if (!hasOrder)
-                {
-                    firstOrder = order;
-                    hasOrder = true;
-                }
-                else if (firstOrder != order)
-                {
-                    mixedOrders = true;
-                }
-            }
-
-            int buildingCount = includeSelectedBuilding ? 1 : 0;
-            string healthText = maxTotal > 0 ? $"{currentTotal}/{maxTotal}" : "-";
-            float health01 = maxTotal > 0 ? math.saturate((float)currentTotal / maxTotal) : 0f;
-            string orderText = mixedOrders ? "Mixed orders" : ToOrderText(firstOrder);
-            SelectionSummaryPortraitKind portraitKind = ResolvePortraitKind(soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount);
-
-            return new SelectedSummary(
-                unitCount,
-                soldierCount,
-                vehicleCount,
-                aircraftCount,
-                transportCount,
-                buildingCount,
-                ResolveTitle(unitCount, soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount),
-                ResolveSubtitle(unitCount, soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount),
-                orderText,
-                healthText,
-                health01,
-                portraitKind);
-        }
-
         private SelectionSummaryPanelCacheKey CreateSelectionSummaryPanelCacheKey(
             Context context,
             EntityManager em,
             TryGetAttackModeOrderSnapshotDelegate tryGetAttackModeOrderSnapshot,
             System.Func<bool> hasSelectedBuilding,
-            HasSelectedBoardActionDelegate hasSelectedBoardAction,
-            IReadOnlyList<Entity> cachedSelectedEntities)
+            HasSelectedBoardActionDelegate hasSelectedBoardAction)
         {
             bool includeSelectedBuilding = hasSelectedBuilding != null && hasSelectedBuilding();
-            SelectedSummaryFingerprint summary = cachedSelectedEntities != null
-                ? BuildSelectedSummaryFingerprint(
-                    em,
-                    context.SelectionUiReadModelLookup,
-                    includeSelectedBuilding,
-                    cachedSelectedEntities)
-                : BuildSelectedSummaryFingerprint(
-                    em,
-                    context.SelectionUiReadModelLookup,
-                    includeSelectedBuilding,
-                    GetSelectedTagQuery(em));
+            SelectedSummaryFingerprint summary = BuildSelectedSummaryFingerprint(
+                em,
+                context.SelectionUiReadModelLookup,
+                includeSelectedBuilding,
+                GetSelectedTagQuery(em));
             string attackModeOrderText = null;
             bool hasAttackModeSnapshot = tryGetAttackModeOrderSnapshot != null &&
                                          tryGetAttackModeOrderSnapshot(out attackModeOrderText);
@@ -826,89 +719,6 @@ namespace Game.Runtime
                 ResolvePortraitKind(soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount));
         }
 
-        private static SelectedSummaryFingerprint BuildSelectedSummaryFingerprint(
-            EntityManager em,
-            SelectionUiReadModelLookup selectionUiReadModelLookup,
-            bool includeSelectedBuilding,
-            IReadOnlyList<Entity> selectedEntities)
-        {
-            if (selectedEntities == null || selectedEntities.Count == 0)
-            {
-                int noSelectionBuildingCount = includeSelectedBuilding ? 1 : 0;
-                return new SelectedSummaryFingerprint(
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    noSelectionBuildingCount,
-                    0,
-                    0,
-                    false,
-                    false,
-                    SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle,
-                    noSelectionBuildingCount > 0 ? SelectionSummaryPortraitKind.Buildings : SelectionSummaryPortraitKind.None);
-            }
-
-            int unitCount = 0;
-            int soldierCount = 0;
-            int vehicleCount = 0;
-            int aircraftCount = 0;
-            int transportCount = 0;
-            int currentTotal = 0;
-            int maxTotal = 0;
-            bool hasOrder = false;
-            bool mixedOrders = false;
-            SelectionUiReadModelLookup.FocusedUnitUiStatus firstOrder = SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle;
-
-            for (int i = 0; i < selectedEntities.Count; i++)
-            {
-                Entity entity = selectedEntities[i];
-                if (entity == Entity.Null || !em.Exists(entity))
-                    continue;
-
-                unitCount++;
-                UnitCategory category = ResolveCategory(em, entity);
-                soldierCount += category == UnitCategory.Soldier ? 1 : 0;
-                vehicleCount += category == UnitCategory.Vehicle ? 1 : 0;
-                aircraftCount += category == UnitCategory.Aircraft ? 1 : 0;
-                transportCount += category == UnitCategory.Transport ? 1 : 0;
-
-                if (em.HasComponent<UnitHealth>(entity))
-                {
-                    UnitHealth health = em.GetComponentData<UnitHealth>(entity);
-                    currentTotal += math.max(0, health.Current);
-                    maxTotal += math.max(0, health.Max);
-                }
-
-                SelectionUiReadModelLookup.FocusedUnitUiStatus order = selectionUiReadModelLookup.GetFocusedUnitUiStatus(em, entity);
-                if (!hasOrder)
-                {
-                    firstOrder = order;
-                    hasOrder = true;
-                }
-                else if (firstOrder != order)
-                {
-                    mixedOrders = true;
-                }
-            }
-
-            int buildingCount = includeSelectedBuilding ? 1 : 0;
-            return new SelectedSummaryFingerprint(
-                unitCount,
-                soldierCount,
-                vehicleCount,
-                aircraftCount,
-                transportCount,
-                buildingCount,
-                currentTotal,
-                maxTotal,
-                hasOrder,
-                mixedOrders,
-                firstOrder,
-                ResolvePortraitKind(soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount));
-        }
-
         private EntityQuery GetSelectedTagQuery(EntityManager em)
         {
             World world = em.World;
@@ -924,21 +734,6 @@ namespace Game.Runtime
         private int CountSelectedTagsCached(EntityManager em)
         {
             return GetSelectedTagQuery(em).CalculateEntityCount();
-        }
-
-        private static IReadOnlyList<Entity> ResolveCompleteSelectedMoveCache(
-            SelectionStateCompositionSystemHelper selectionStateSystem,
-            int selectedCount)
-        {
-            List<Entity> cachedSelectedMoveEntities = selectionStateSystem?.CachedSelectedMoveEntities;
-            if (cachedSelectedMoveEntities == null ||
-                selectedCount <= 0 ||
-                cachedSelectedMoveEntities.Count != selectedCount)
-            {
-                return null;
-            }
-
-            return cachedSelectedMoveEntities;
         }
 
         private void ApplySelectionPanelHidden()
@@ -1276,21 +1071,14 @@ namespace Game.Runtime
             TryGetAttackModeOrderSnapshotDelegate tryGetAttackModeOrderSnapshot,
             System.Func<Sprite> resolveActiveSquadTrayPortraitSprite,
             System.Func<bool> hasSelectedBuilding,
-            HasSelectedBoardActionDelegate hasSelectedBoardAction,
-            IReadOnlyList<Entity> cachedSelectedEntities)
+            HasSelectedBoardActionDelegate hasSelectedBoardAction)
         {
             bool includeSelectedBuilding = hasSelectedBuilding != null && hasSelectedBuilding();
-            SelectedSummary summary = cachedSelectedEntities != null
-                ? BuildSelectedSummary(
-                    em,
-                    context.SelectionUiReadModelLookup,
-                    includeSelectedBuilding,
-                    cachedSelectedEntities)
-                : BuildSelectedSummary(
-                    em,
-                    context.SelectionUiReadModelLookup,
-                    includeSelectedBuilding,
-                    GetSelectedTagQuery(em));
+            SelectedSummary summary = BuildSelectedSummary(
+                em,
+                context.SelectionUiReadModelLookup,
+                includeSelectedBuilding,
+                GetSelectedTagQuery(em));
             string orderText = tryGetAttackModeOrderSnapshot != null &&
                                tryGetAttackModeOrderSnapshot(out string attackModeOrderText)
                 ? attackModeOrderText

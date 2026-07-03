@@ -3,7 +3,10 @@ param(
     [string] $UnityVersion,
 
     [Parameter(Mandatory = $false)]
-    [string] $PreferredPath
+    [string] $PreferredPath,
+
+    [Parameter(Mandatory = $false)]
+    [string] $OutputPath
 )
 
 $ErrorActionPreference = "Stop"
@@ -45,6 +48,10 @@ $programFiles = @(
     "D:\Program Files"
 ) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique
 
+$filesystemRoots = Get-PSDrive -PSProvider FileSystem -ErrorAction SilentlyContinue |
+    Where-Object { $_.Root -match '^[A-Z]:\\$' } |
+    Select-Object -ExpandProperty Root -Unique
+
 $unityVersions = New-Object "System.Collections.Generic.List[string]"
 Add-Candidate -Candidates $unityVersions -Path $UnityVersion
 
@@ -71,11 +78,40 @@ if (-not [string]::IsNullOrWhiteSpace($UnityVersion)) {
             Add-Candidate -Candidates $candidates -Path (Join-Path $root "Unity $version\Editor\Unity.exe")
             Add-Candidate -Candidates $candidates -Path (Join-Path $root "Unity-$version\Editor\Unity.exe")
         }
+
+        foreach ($root in $filesystemRoots) {
+            Add-Candidate -Candidates $candidates -Path (Join-Path $root "Unity\Hub\Editor\$version\Editor\Unity.exe")
+            Add-Candidate -Candidates $candidates -Path (Join-Path $root "Unity\$version\Editor\Unity.exe")
+            Add-Candidate -Candidates $candidates -Path (Join-Path $root "UnityEditors\$version\Editor\Unity.exe")
+            Add-Candidate -Candidates $candidates -Path (Join-Path $root "Unity $version\Editor\Unity.exe")
+            Add-Candidate -Candidates $candidates -Path (Join-Path $root "Unity-$version\Editor\Unity.exe")
+        }
     }
 }
 
+$unityRoots = New-Object "System.Collections.Generic.List[string]"
 foreach ($root in $programFiles) {
-    foreach ($unityRoot in @((Join-Path $root "Unity"), (Join-Path $root "Unity\Hub\Editor"))) {
+    Add-Candidate -Candidates $unityRoots -Path (Join-Path $root "Unity")
+    Add-Candidate -Candidates $unityRoots -Path (Join-Path $root "Unity\Hub\Editor")
+}
+
+foreach ($root in $filesystemRoots) {
+    Add-Candidate -Candidates $unityRoots -Path (Join-Path $root "Unity")
+    Add-Candidate -Candidates $unityRoots -Path (Join-Path $root "Unity\Hub\Editor")
+    Add-Candidate -Candidates $unityRoots -Path (Join-Path $root "UnityEditors")
+}
+
+foreach ($envRoot in @($env:UNITY_EDITOR_ROOT, $env:UNITY_EDITOR_ROOTS, $env:UNITY_HUB_EDITOR_ROOT, $env:UNITY_HUB_EDITOR_ROOTS, $env:UNITY_EDITORS_PATH)) {
+    if ([string]::IsNullOrWhiteSpace($envRoot)) {
+        continue
+    }
+
+    foreach ($root in ($envRoot -split ';')) {
+        Add-Candidate -Candidates $unityRoots -Path $root
+    }
+}
+
+foreach ($unityRoot in $unityRoots) {
         if (-not [System.IO.Directory]::Exists($unityRoot)) {
             continue
         }
@@ -89,12 +125,21 @@ foreach ($root in $programFiles) {
             ForEach-Object {
                 Add-Candidate -Candidates $candidates -Path (Join-Path $_.FullName "Editor\Unity.exe")
             }
-    }
 }
 
 foreach ($candidate in $candidates) {
     if ([System.IO.File]::Exists($candidate)) {
         $resolved = [System.IO.Path]::GetFullPath($candidate)
+        if (-not [string]::IsNullOrWhiteSpace($OutputPath)) {
+            $resolvedOutputPath = [Environment]::ExpandEnvironmentVariables($OutputPath.Trim())
+            $outputDirectory = Split-Path -Parent $resolvedOutputPath
+            if (-not [string]::IsNullOrWhiteSpace($outputDirectory) -and -not [System.IO.Directory]::Exists($outputDirectory)) {
+                New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
+            }
+
+            Set-Content -LiteralPath $resolvedOutputPath -Value $resolved -NoNewline -Encoding ASCII
+        }
+
         Write-Output $resolved
         exit 0
     }
@@ -113,5 +158,5 @@ $message = @(
     "Set UNITY_EXE_OVERRIDE to the installed Unity.exe path or install the requested Unity version."
 ) -join $newline
 
-Write-Error $message
+Write-Error -Message $message -ErrorAction Continue
 exit 1

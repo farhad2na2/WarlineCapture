@@ -61,29 +61,50 @@ pipeline {
             }
             steps {
                 script {
-                    def resolvedUnityExe = powershell(
-                        returnStdout: true,
-                        script: '''
-                        $ErrorActionPreference = "Stop"
-                        $resolved = @(& "$env:PROJECT_PATH\\Tools\\CI\\ResolveUnityEditor.ps1" -UnityVersion "$env:UNITY_VERSION")
-                        $resolvedUnityExe = $resolved |
-                            Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
-                            Select-Object -Last 1
+                    bat '''
+                    @echo off
+                    setlocal EnableExtensions
+                    set "UNITY_RESOLVE_FILE=%PROJECT_PATH%\\unity-editor-path.txt"
+                    if exist "%UNITY_RESOLVE_FILE%" del /f /q "%UNITY_RESOLVE_FILE%"
 
-                        if ([string]::IsNullOrWhiteSpace($resolvedUnityExe) -or $resolvedUnityExe -eq "null") {
-                            throw "Unity editor resolver returned no executable for version '$env:UNITY_VERSION'. Set UNITY_EXE_OVERRIDE to the installed Unity.exe path."
-                        }
+                    powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "%PROJECT_PATH%\\Tools\\CI\\ResolveUnityEditor.ps1" -UnityVersion "%UNITY_VERSION%" -OutputPath "%UNITY_RESOLVE_FILE%"
+                    if errorlevel 1 (
+                        echo Unity editor resolver failed for version %UNITY_VERSION%.
+                        exit /b 1
+                    )
 
-                        if (-not [System.IO.File]::Exists($resolvedUnityExe)) {
-                            throw "Unity editor resolver returned a missing executable: $resolvedUnityExe"
-                        }
+                    if not exist "%UNITY_RESOLVE_FILE%" (
+                        echo Unity editor resolver did not write "%UNITY_RESOLVE_FILE%".
+                        exit /b 1
+                    )
 
-                        Write-Output $resolvedUnityExe
-                        '''
-                    ).trim()
+                    set /p RESOLVED_UNITY_EXE=<"%UNITY_RESOLVE_FILE%"
+                    if "%RESOLVED_UNITY_EXE%"=="" (
+                        echo Unity editor resolver wrote an empty path.
+                        exit /b 1
+                    )
 
+                    if /i "%RESOLVED_UNITY_EXE%"=="null" (
+                        echo Unity editor resolver wrote null instead of a Unity.exe path.
+                        exit /b 1
+                    )
+
+                    if not exist "%RESOLVED_UNITY_EXE%" (
+                        echo Unity editor resolver wrote a missing executable: "%RESOLVED_UNITY_EXE%"
+                        exit /b 1
+                    )
+
+                    echo Resolved Unity editor: "%RESOLVED_UNITY_EXE%"
+                    endlocal
+                    '''
+
+                    def resolvedUnityExe = readFile('unity-editor-path.txt').trim()
                     if (!resolvedUnityExe || resolvedUnityExe.equalsIgnoreCase('null')) {
                         error "Unity editor resolver returned no executable for version ${env.UNITY_VERSION}. Check Jenkins console output and set UNITY_EXE_OVERRIDE to the installed Unity.exe path."
+                    }
+
+                    if (bat(returnStatus: true, script: "@if exist \"${resolvedUnityExe}\" (exit /b 0) else (exit /b 1)") != 0) {
+                        error "Unity editor resolver returned a missing executable: ${resolvedUnityExe}"
                     }
 
                     env.UNITY_EXE = resolvedUnityExe

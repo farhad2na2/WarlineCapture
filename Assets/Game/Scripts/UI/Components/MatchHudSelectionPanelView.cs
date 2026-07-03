@@ -308,7 +308,14 @@ namespace Game.UI.Runtime
 
         public void SetCameraActionSelected(bool selected)
         {
+            ApplyCameraActionSelected(selected, force: false);
+        }
+
+        private void ApplyCameraActionSelected(bool selected, bool force)
+        {
             if (cameraAction == null || cameraAction.targetGraphic is not Image image)
+                return;
+            if (!force && _cameraActionSelected == selected)
                 return;
 
             _cameraActionSelected = selected;
@@ -341,9 +348,16 @@ namespace Game.UI.Runtime
 
         public void SetCameraActionEnabled(bool enabled)
         {
+            bool effectiveEnabled = selectedSquadPanel == null || selectedSquadPanel.activeSelf ? enabled : false;
+            if (_cameraActionEnabled == enabled &&
+                (cameraAction == null || cameraAction.interactable == effectiveEnabled))
+            {
+                return;
+            }
+
             _cameraActionEnabled = enabled;
-            SetActionState(cameraAction, selectedSquadPanel == null || selectedSquadPanel.activeSelf ? enabled : false);
-            SetCameraActionSelected(_cameraActionSelected);
+            SetActionState(cameraAction, effectiveEnabled);
+            ApplyCameraActionSelected(_cameraActionSelected, force: true);
         }
 
         private void BindUnityEvents()
@@ -519,7 +533,7 @@ namespace Game.UI.Runtime
 
         private static void SetActionState(Selectable action, bool enabled)
         {
-            if (action != null)
+            if (action != null && action.interactable != enabled)
                 action.interactable = enabled;
         }
 

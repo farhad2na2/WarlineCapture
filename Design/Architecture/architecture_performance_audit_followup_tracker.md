@@ -69,20 +69,20 @@ Turn `Design/AgentReports/2026-07-02_audit_architecture-performance-followup.md`
 
 | Field | Status |
 |---|---|
-| Checklist complete | 54 / 102 |
-| Checklist percent complete | 52.9% |
-| Current phase | Phase 5 - Burst Coverage Pass |
+| Checklist complete | 57 / 102 |
+| Checklist percent complete | 55.9% |
+| Current phase | Phase 6 - ECS Instantiate Ownership Cleanup |
 | Quick wins complete | 6 / 6 |
-| Current target | Phase 5 runtime `ISystem` no-Burst classification and guardrail are in place, and the pre-existing `Assets/Game/Scripts/Systems` ToArray architecture debt has been cleared; next slice should handle Burst in small refactor-backed batches instead of blind attribute additions. |
+| Current target | Phase 6 runtime ECS/system `Object.Instantiate` inventory and classification are complete. Next slice should implement a narrow pooled presentation path for `BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance`, because that family is already present in the GC capture top rows. |
 | Compiler status | `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, and Unity 6.5.2 batchmode compile log `/private/tmp/warline-arch-followup-unity-compile-final-gc-filter.log` passed with 0 compiler errors after adding the GC capture assertion/tooling filter. Unity MCP is still treated as unreliable for this tracker, so editor-log and batchmode validation remain the Unity path. |
 | Android baseline status | Not started |
 | GC baseline status | Latest 2026-07-03 15:59:03 UTC steady-state Match GC capture: 300 requested frames after 180 warmup frames, 301 scanned profiler frames, 15,800 raw GC.Alloc samples / 1,293,637 raw bytes, 5 player-relevant samples / 510 bytes after excluding editor/tooling rows, 15,795 editor/tooling samples / 1,293,127 editor/tooling bytes, and runtime allocation probe assertion passed for `UIShellEcsPresentationSystem.Update` plus `MenuBootstrapView.Update`. |
 | Burst coverage status | Runtime inventory for Phase 5 scope: 124 `ISystem` files under `Systems`, `Rendering/Systems`, and `UI/Shell/Ecs`; 71 runtime files missing `[BurstCompile]`. Conservative classification complete: 0 immediately Burst-eligible, 24 managed edge, 8 presentation-only, 39 needs refactor. `EcsBurstHotPathArchitectureTests.NoBurstISystemFilesMustBeClassified` now guards against new unclassified no-Burst runtime `ISystem` files. |
 | Mobile URP status | `Mobile_RPAsset` shadow distance changed from 240 m to 90 m and cascades from 4 to 2; HDR, MSAA 2x, render scale 0.8, and soft shadows remain unchanged pending visual/Android baseline |
-| ECS instantiate status | Current inventory: 15 runtime `Object.Instantiate` call lines under `Assets/Game/Scripts/Systems`; latest GC top stack is real `BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance` runtime building visual spawning, not repeated pending-request churn, so it is classified for Phase 6 ownership/pooling cleanup rather than another Phase 4 query-cache quick win |
+| ECS instantiate status | Phase 6 classification report added at `Design/AgentReports/2026-07-03_ecs-instantiate-ownership-classification.md`: 20 runtime call lines across Systems/Rendering/Environment/UI ECS scan roots, 0 gameplay entity spawns, 17 visual/presentation spawns, 2 metadata/probe instantiates, and 1 environment material clone. `BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance` is the first pooling target because it is already measured in GC capture top rows. |
 | Fuel/Oil drift status | Drift confirmed: authoritative production, conversion, load/unload, and storage mutation are still in managed helper/runtime-building paths; UI/header paths are read-only display consumers |
-| Validation status | Phase 0 inventory completed; Phase 1 config edited; Phase 2 release OnGUI strip implemented; Phase 3 release diagnostic system gate implemented; Phase 4 GC quick wins completed; Phase 5 Burst inventory/classification report added and guardrail implemented. Latest validations passed: `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, Unity 6.5.2 `/private/tmp/warline-arch-followup-burst-guardrail-method.log` with `[EcsNoBurstISystemClassificationValidation] result=Passed tests=1`, and full Unity 6.5.2 focused architecture validation `/private/tmp/warline-arch-followup-toarray-focused.log` with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`, `total=145`, `burst=53`, `jobBacked=46`, `nonBurst=92`, `trackedHotPathDebt=0`, `unclassified=0`. |
-| Still wrong / next iteration | No visual defects are known in this non-visual architecture slice. Phase 5 now has the no-Burst runtime `ISystem` classification and passing guardrails, but no Burst attributes have been added yet because the first pass found no truthful blind-attribute candidates. There are still `ToEntityArray` calls in rendering/UI presentation roots outside the existing `Systems` hot-path debt rule; next slice should begin refactor-backed Burst work on the highest-value `needs refactor` systems or separately classify/pool presentation ToArray usage. |
+| Validation status | Phase 0 inventory completed; Phase 1 config edited; Phase 2 release OnGUI strip implemented; Phase 3 release diagnostic system gate implemented; Phase 4 GC quick wins completed; Phase 5 Burst inventory/classification report added and guardrail implemented; Phase 6 instantiate classification report added. Latest code validations before the Phase 6 doc-only classification passed: `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, Unity 6.5.2 `/private/tmp/warline-arch-followup-burst-guardrail-method.log` with `[EcsNoBurstISystemClassificationValidation] result=Passed tests=1`, and full Unity 6.5.2 focused architecture validation `/private/tmp/warline-arch-followup-toarray-focused.log` with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`, `total=145`, `burst=53`, `jobBacked=46`, `nonBurst=92`, `trackedHotPathDebt=0`, `unclassified=0`. |
+| Still wrong / next iteration | No visual defects are known in this non-visual architecture slice. Phase 5 still has no truthful blind Burst candidates; Phase 6 now knows the instantiate ownership shape but has not implemented pooling yet. Next iteration: pool/reuse building placement visual roots at the presentation edge and validate with Unity compile plus a follow-up GC capture. |
 
 ## Phase 0 - Baseline And Inventory
 Fast setup work. No behavior changes.
@@ -298,7 +298,7 @@ Mechanical pass, but only where correct.
 - [x] Classify each as `Burst eligible`, `Managed edge`, `Presentation only`, or `Needs refactor`.
 - [ ] Add `[BurstCompile]` to Burst-eligible system structs.
 - [ ] Add `[BurstCompile]` to eligible `OnCreate`, `OnUpdate`, and job methods.
-- [ ] Leave managed-edge systems un-Burst and document why.
+- [x] Leave managed-edge systems un-Burst and document why.
 - [ ] Compile after each small batch.
 - [ ] Update the coverage count after each batch.
 - [x] Add an architecture guardrail so new Burst-eligible `ISystem` files are not silently added without classification.
@@ -306,8 +306,8 @@ Mechanical pass, but only where correct.
 ## Phase 6 - ECS Instantiate Ownership Cleanup
 Medium pass. Must avoid parallel gameplay logic.
 
-- [ ] Inventory all `Object.Instantiate` calls under runtime ECS/system code.
-- [ ] Classify each call as gameplay entity spawn, visual VFX, UI/presentation, authoring/editor, or test-only.
+- [x] Inventory all `Object.Instantiate` calls under runtime ECS/system code.
+- [x] Classify each call as gameplay entity spawn, visual VFX, UI/presentation, authoring/editor, or test-only.
 - [ ] Convert gameplay spawns to entity prefab/ECB ownership where practical.
 - [ ] Move visual GameObject creation to explicit pooled presentation helpers.
 - [ ] Add pool lifetime cleanup for VFX/presentation objects.

@@ -447,20 +447,20 @@ namespace Game.Editor
             builder.AppendLine($"- Scanned thread views: {scannedThreads}");
             builder.AppendLine($"- GC.Alloc samples: {totalSamples}");
             builder.AppendLine($"- GC.Alloc bytes from hierarchy column: {totalBytes}");
-            builder.AppendLine($"- GC.Alloc samples excluding editor/tooling rows: {playerRelevantSamples}");
-            builder.AppendLine($"- GC.Alloc bytes excluding editor/tooling rows: {playerRelevantBytes}");
-            builder.AppendLine($"- Editor/tooling GC.Alloc samples excluded from player-relevant rows: {editorToolingSamples}");
-            builder.AppendLine($"- Editor/tooling GC.Alloc bytes excluded from player-relevant rows: {editorToolingBytes}");
+            builder.AppendLine($"- GC.Alloc samples excluding editor/tooling/diagnostic rows: {playerRelevantSamples}");
+            builder.AppendLine($"- GC.Alloc bytes excluding editor/tooling/diagnostic rows: {playerRelevantBytes}");
+            builder.AppendLine($"- Editor/tooling/diagnostic GC.Alloc samples excluded from player-relevant rows: {editorToolingSamples}");
+            builder.AppendLine($"- Editor/tooling/diagnostic GC.Alloc bytes excluded from player-relevant rows: {editorToolingBytes}");
             builder.AppendLine($"- Raw load status: `{loadStatus}`");
             builder.AppendLine($"- Raw capture: `{ProfilerRawPath}`");
             builder.AppendLine($"- Editor live conversion systems disabled before warmup: {SessionState.GetInt(EditorLiveConversionDisabledCountKey, 0)}");
             AppendRuntimeAllocationProbeSummary(builder);
             builder.AppendLine();
-            builder.AppendLine("## Top Allocation Sites Excluding Editor/Tooling Rows");
+            builder.AppendLine("## Top Allocation Sites Excluding Editor/Tooling/Diagnostic Rows");
             builder.AppendLine();
             AppendAllocationSiteTable(builder, playerRelevantSites);
             builder.AppendLine();
-            builder.AppendLine("## Top Editor/Tooling Allocation Sites");
+            builder.AppendLine("## Top Editor/Tooling/Diagnostic Allocation Sites");
             builder.AppendLine();
             AppendAllocationSiteTable(builder, editorToolingSites);
             builder.AppendLine();
@@ -519,7 +519,7 @@ namespace Game.Editor
             else
                 builder.AppendLine("- This automated pass covers steady-state Match HUD/runtime after the shell completes the Menu -> Match transition.");
             builder.AppendLine("- Spike-frame call stacks still require an interactive Profiler capture with Call Stacks -> GC.Alloc enabled unless a deterministic spike driver is added.");
-            builder.AppendLine("- Editor/tooling rows include Burst compiler threads plus Unity AI/MCP/Tracing frames. Do not treat those raw rows as gameplay work unless they also appear in the player-relevant table.");
+            builder.AppendLine("- Editor/tooling/diagnostic rows include Burst compiler threads, Unity AI/MCP/Tracing frames, and diagnostic logging from `PerformanceDiagnosticsSystemHelper.LogNoStackTrace`. Do not treat those raw rows as gameplay work unless they also appear in the player-relevant table.");
             builder.AppendLine("- Do not use this report to edit unrelated files unless they appear in the call stacks above.");
             return builder.ToString();
         }
@@ -566,7 +566,8 @@ namespace Game.Editor
                 return true;
 
             return ContainsEditorToolingFrame(site.Callstack) ||
-                   ContainsEditorToolingFrame(site.HierarchyPath);
+                   ContainsEditorToolingFrame(site.HierarchyPath) ||
+                   ContainsDiagnosticLoggingFrame(site.Callstack);
         }
 
         private static bool ContainsEditorToolingFrame(string value)
@@ -576,6 +577,12 @@ namespace Game.Editor
                     value.Contains("Unity.AI.Tracing", StringComparison.Ordinal) ||
                     value.Contains("Unity.Relay.Editor", StringComparison.Ordinal) ||
                     value.Contains("Burst.Compiler", StringComparison.Ordinal));
+        }
+
+        private static bool ContainsDiagnosticLoggingFrame(string value)
+        {
+            return !string.IsNullOrEmpty(value) &&
+                   value.Contains("PerformanceDiagnosticsSystemHelper:LogNoStackTrace", StringComparison.Ordinal);
         }
 
         private static CaptureMode GetCaptureMode()

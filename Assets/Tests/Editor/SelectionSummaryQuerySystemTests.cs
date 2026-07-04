@@ -33,7 +33,8 @@ public sealed class SelectionSummaryQuerySystemTests
             RunCase(test => test.GroundTransportAndAirTransportUsesAirVehiclePortraitKind());
             RunCase(test => test.MixedSelectedOrdersDisplaysMixedOrders());
             RunCase(test => test.FocusedTransportPlaneSelectionPanelUsesResolvedPortrait());
-            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=11");
+            RunCase(test => test.FocusedResourceHaulerSelectionPanelUsesEcsCargoStorage());
+            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=12");
         }
         catch (System.Exception ex)
         {
@@ -441,6 +442,74 @@ public sealed class SelectionSummaryQuerySystemTests
         }
     }
 
+    [Test]
+    public void FocusedResourceHaulerSelectionPanelUsesEcsCargoStorage()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity hauler = CreatePlayerUnit(em, "Fuel Truck", new int2(6, 3), 100);
+        em.SetComponentData(hauler, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.AddComponent<SelectedUnitTag>(hauler);
+        em.AddComponentData(hauler, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.AddComponentData(hauler, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_Transport_FuelTruck") });
+        em.AddComponentData(hauler, new UnitResourceHauler
+        {
+            BarrelCapacity = 40,
+            CargoOilBarrels = 11f,
+            CargoFuelBarrels = 17f
+        });
+
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        selectionState.SetFocusedUnit(hauler);
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        var readModel = new FocusedUnitUiReadModelUiSystemHelper();
+        var panel = new RecordingSelectionPanelView(null);
+        var feedback = new SelectionHudFeedbackUiSystemHelper();
+        feedback.BindMatchHudSelectionPanel(panel);
+
+        var context = new SelectionHudFeedbackUiSystemHelper.Context(new SelectionUiReadModelLookup(), TryGetEntityManager);
+        feedback.RefreshFocusedSelectionReadModels(
+            context,
+            selectionState,
+            readModel,
+            new UnitTransportCapacitySystem(),
+            null,
+            null,
+            0f);
+
+        feedback.UpdateMatchHudSelectionPanel(
+            context,
+            selectionState,
+            lifecycle,
+            readModel,
+            new List<MatchHudSelectionPanelPassengerItemModel>(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+
+        Assert.IsTrue(panel.AppliedModel.Visible);
+        Assert.IsTrue(panel.AppliedTransportPassengers.Visible);
+        Assert.AreEqual(MatchHudStorageChipKind.ResourceCargo, panel.AppliedTransportPassengers.StorageKind);
+        Assert.AreEqual(28, panel.AppliedTransportPassengers.PassengerCount);
+        Assert.AreEqual(40, panel.AppliedTransportPassengers.Capacity);
+        Assert.AreEqual(11, panel.AppliedTransportPassengers.OilCurrent);
+        Assert.AreEqual(40, panel.AppliedTransportPassengers.OilCapacity);
+        Assert.AreEqual(17, panel.AppliedTransportPassengers.FuelCurrent);
+        Assert.AreEqual(40, panel.AppliedTransportPassengers.FuelCapacity);
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+    }
+
     private static Entity CreatePlayerUnit(EntityManager em, string displayName, int2 cell, int health)
     {
         Entity entity = em.CreateEntity();
@@ -480,6 +549,7 @@ public sealed class SelectionSummaryQuerySystemTests
         }
 
         public MatchHudSelectionPanelModel AppliedModel { get; private set; }
+        public MatchHudTransportPassengersModel AppliedTransportPassengers { get; private set; }
 
         public void BindActions(System.Action returnRequested, System.Action destroyRequested, System.Action boardRequested)
         {
@@ -534,6 +604,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         public void ApplyTransportPassengers(MatchHudTransportPassengersModel model)
         {
+            AppliedTransportPassengers = model;
         }
     }
 }

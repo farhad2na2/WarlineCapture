@@ -32,7 +32,8 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             tests.HaulerTransferEcs_TryCompleteUnload_UsesComponentStorage();
             tests.LiveEcsStorage_TryCompleteLoad_PrefersCombatEntityStorage();
             tests.LiveEcsStorage_TryCompleteUnload_PrefersCombatEntityStorage();
-            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=18");
+            tests.LiveEcsStorage_GetStoredResource_PrefersCombatEntityStorage();
+            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=19");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -469,6 +470,47 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             Assert.AreEqual(23f, storage.StoredFuelBarrels);
             Assert.AreEqual(23f, destination.StoredFuelBarrels);
             Assert.AreEqual(0f, hauler.CargoFuelBarrels);
+        }
+        finally
+        {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void LiveEcsStorage_GetStoredResource_PrefersCombatEntityStorage()
+    {
+        var world = new World(nameof(LiveEcsStorage_GetStoredResource_PrefersCombatEntityStorage));
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity entity = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(entity, new BuildingResourceStorageComponent
+            {
+                OilStorageCapacity = 80,
+                FuelStorageCapacity = 50,
+                StoredOilBarrels = 33f,
+                StoredFuelBarrels = 21f
+            });
+            var building = new RuntimeBuildingEntity
+            {
+                Id = 46,
+                Definition = new BuildingDefinition
+                {
+                    OilStorageCapacity = 80,
+                    FuelStorageCapacity = 50
+                },
+                CombatEntity = entity,
+                StoredOilBarrels = 2f,
+                StoredFuelBarrels = 4f
+            };
+
+            var system = new ResourceHaulerUtilitySystemHelper();
+            float oil = system.GetStoredResource(em, building, ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil);
+            float fuel = system.GetStoredResource(em, building, ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel);
+
+            Assert.AreEqual(33f, oil);
+            Assert.AreEqual(21f, fuel);
         }
         finally
         {

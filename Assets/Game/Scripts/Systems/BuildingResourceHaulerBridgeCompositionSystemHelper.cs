@@ -316,7 +316,7 @@ namespace Game.Runtime
             }
 
             _invalidCapacityWarningEntities.Remove(entity);
-            float sourceStored = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel ? source.StoredFuelBarrels : source.StoredOilBarrels;
+            float sourceStored = context.ResourceHaulerUtilitySystemHelper.GetStoredResource(em, source, resourceKind);
             float currentCargo = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel ? hauler.CargoFuelBarrels : hauler.CargoOilBarrels;
             if (VerboseResourceHaulerLogs)
                 Debug.Log($"[ResourceHauler] entity={entity} phase=Loading resource={resourceKind} current={em.GetComponentData<UnitGrid>(entity).Cell} source={source.Id} stored={sourceStored:0.##} cargo={currentCargo:0.##}/{loadAmount:0.##} actionEndsAt={order.ActionEndsAt:0.##} now={now:0.##}");
@@ -342,7 +342,7 @@ namespace Game.Runtime
                 return;
             }
 
-            sourceStored = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel ? source.StoredFuelBarrels : source.StoredOilBarrels;
+            sourceStored = context.ResourceHaulerUtilitySystemHelper.GetStoredResource(em, source, resourceKind);
             if (!context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(em, source, resourceKind, loadAmount))
             {
                 context.ResourceHaulerUtilitySystemHelper.ResetActionTimer(ref order);

@@ -114,6 +114,23 @@ namespace Game.Runtime
                 : Mathf.Max(0f, hauler.CargoOilBarrels);
         }
 
+        internal float GetStoredResource(EntityManager entityManager, RuntimeBuildingEntity building, ResourceHaulKind resourceKind)
+        {
+            if (building == null)
+                return 0f;
+
+            if (TryGetEntityResourceStorage(entityManager, building, out BuildingResourceStorageComponent storage))
+            {
+                return resourceKind == ResourceHaulKind.Fuel
+                    ? Mathf.Max(0f, storage.StoredFuelBarrels)
+                    : Mathf.Max(0f, storage.StoredOilBarrels);
+            }
+
+            return resourceKind == ResourceHaulKind.Fuel
+                ? Mathf.Max(0f, building.StoredFuelBarrels)
+                : Mathf.Max(0f, building.StoredOilBarrels);
+        }
+
         public float GetOilReceivingFreeCapacity(FactionResourceCompositionSystemHelper.IResourceBuilding building)
         {
             if (building == null)

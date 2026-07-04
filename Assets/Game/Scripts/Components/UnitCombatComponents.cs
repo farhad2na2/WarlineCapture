@@ -78,6 +78,12 @@ namespace Game.Components
         public Entity Target;
         public float3 SourcePosition;
         public float3 TargetPosition;
+        public UnityObjectRef<GameObject> Prefab;
+        public float3 PlaybackPosition;
+        public quaternion PlaybackRotation;
+        public float3 SideRight;
+        public byte OriginCount;
+        public float LateralOffset;
     }
 
     public enum CombatGameObjectVfxRequestKind : byte

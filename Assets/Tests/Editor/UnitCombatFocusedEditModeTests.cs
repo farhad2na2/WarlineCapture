@@ -17,7 +17,9 @@ public sealed class UnitCombatFocusedEditModeTests
         {
             var tests = new UnitCombatFocusedEditModeTests();
             tests.StandardAttack_NonLethalHitDamagesTargetAndRecordsFeedbackState();
-            Debug.Log("[UnitCombatFocusedEditModeValidation] result=Passed tests=1");
+            tests.AttackVfxRequestResolution_PopulatesMuzzlePlaybackData();
+            tests.AttackVfxRequestResolution_PopulatesImpactPlaybackData();
+            Debug.Log("[UnitCombatFocusedEditModeValidation] result=Passed tests=3");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -58,6 +60,90 @@ public sealed class UnitCombatFocusedEditModeTests
         Assert.AreEqual(1f, cooldown.CooldownRemaining, 0.001f);
         Assert.AreEqual(1, trace.ShotCounter);
         Assert.Greater(trace.TimeRemaining, 0f);
+    }
+
+    [Test]
+    public void AttackVfxRequestResolution_PopulatesMuzzlePlaybackData()
+    {
+        using var world = new World("AttackVfxRequestResolution_PopulatesMuzzlePlaybackData");
+        EntityManager em = world.EntityManager;
+        GameObject prefab = new("MuzzleVfxPrefab");
+        try
+        {
+            Entity target = CreateTarget(em, new int2(4, 4), new float3(4f, 0f, 4f), health: 100);
+            Entity attacker = CreateAttacker(em, new int2(4, 5), new float3(4f, 0f, 5f), target, damage: 35);
+            Entity turret = em.CreateEntity(typeof(LocalToWorld));
+            em.SetComponentData(turret, new LocalToWorld { Value = float4x4.Translate(new float3(4.25f, 1.5f, 5f)) });
+            em.AddComponentData(attacker, new UnitTurretReference { Turret = turret });
+            em.AddComponentData(attacker, new UnitMuzzleFlashVfxReference
+            {
+                Prefab = prefab,
+                HeightOffset = 0.25f,
+                ForwardOffset = 0.5f
+            });
+            em.AddComponentData(attacker, new UnitAttackTraceOriginPattern
+            {
+                OriginCount = 3,
+                LateralOffset = 0.4f
+            });
+
+            bool built = UnitAttackSystem.TryBuildAttackVfxRequest(
+                em,
+                UnitAttackVfxRequestKind.MuzzleFlash,
+                attacker,
+                target,
+                new float3(4f, 0f, 5f),
+                new float3(4f, 0f, 4f),
+                out UnitAttackVfxRequest request);
+
+            Assert.IsTrue(built);
+            Assert.AreSame(prefab, request.Prefab.Value);
+            Assert.AreEqual((byte)UnitAttackVfxRequestKind.MuzzleFlash, request.Kind);
+            Assert.AreEqual((byte)3, request.OriginCount);
+            Assert.AreEqual(0.4f, request.LateralOffset, 0.001f);
+            Assert.AreEqual(4.25f, request.PlaybackPosition.x, 0.001f);
+            Assert.AreEqual(1.75f, request.PlaybackPosition.y, 0.001f);
+            Assert.Less(request.PlaybackPosition.z, 5f, "Forward offset should move the muzzle toward the target.");
+            Assert.Greater(math.lengthsq(request.SideRight), 0.9f);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
+    }
+
+    [Test]
+    public void AttackVfxRequestResolution_PopulatesImpactPlaybackData()
+    {
+        using var world = new World("AttackVfxRequestResolution_PopulatesImpactPlaybackData");
+        EntityManager em = world.EntityManager;
+        GameObject prefab = new("ImpactVfxPrefab");
+        try
+        {
+            Entity target = CreateTarget(em, new int2(4, 4), new float3(4f, 0f, 4f), health: 100);
+            Entity attacker = CreateAttacker(em, new int2(4, 5), new float3(4f, 0f, 5f), target, damage: 35);
+            em.AddComponentData(attacker, new UnitAttackImpactVfxReference { Prefab = prefab });
+
+            bool built = UnitAttackSystem.TryBuildAttackVfxRequest(
+                em,
+                UnitAttackVfxRequestKind.Impact,
+                attacker,
+                target,
+                new float3(4f, 0f, 5f),
+                new float3(4f, 0f, 4f),
+                out UnitAttackVfxRequest request);
+
+            Assert.IsTrue(built);
+            Assert.AreSame(prefab, request.Prefab.Value);
+            Assert.AreEqual((byte)UnitAttackVfxRequestKind.Impact, request.Kind);
+            Assert.AreEqual(new float3(4f, 0f, 4f), request.PlaybackPosition);
+            Assert.AreEqual((byte)1, request.OriginCount);
+            Assert.AreEqual(0f, request.LateralOffset, 0.001f);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
     }
 
     private static void CreateGrid(EntityManager em)

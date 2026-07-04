@@ -15,6 +15,7 @@ namespace Game.Runtime
         private const int FleeCellsMin = 12;
         private const int FleeCellsMax = 24;
         private const int InitialAttackScratchCapacity = 4096;
+        private const int MaxMuzzleFlashOriginCount = 4;
 
         private struct PendingAttack
         {
@@ -295,6 +296,7 @@ namespace Game.Runtime
                 {
                     EnqueueAttackVfxRequest(
                         ecb,
+                        em,
                         UnitAttackVfxRequestKind.MuzzleFlash,
                         entity,
                         engageRw.Target,
@@ -373,6 +375,7 @@ namespace Game.Runtime
                 {
                     EnqueueAttackVfxRequest(
                         ecb,
+                        em,
                         UnitAttackVfxRequestKind.Impact,
                         pending.Attacker,
                         target,
@@ -475,6 +478,7 @@ namespace Game.Runtime
                 {
                     EnqueueAttackVfxRequest(
                         ecb,
+                        em,
                         UnitAttackVfxRequestKind.MuzzleFlash,
                         candidate.Attacker,
                         candidate.Target,
@@ -668,21 +672,172 @@ namespace Game.Runtime
 
         private static void EnqueueAttackVfxRequest(
             EntityCommandBuffer ecb,
+            EntityManager em,
             UnitAttackVfxRequestKind kind,
             Entity source,
             Entity target,
             float3 sourcePosition,
             float3 targetPosition)
         {
+            if (!TryBuildAttackVfxRequest(em, kind, source, target, sourcePosition, targetPosition, out UnitAttackVfxRequest request))
+                return;
+
             Entity requestEntity = ecb.CreateEntity();
-            ecb.AddComponent(requestEntity, new UnitAttackVfxRequest
+            ecb.AddComponent(requestEntity, request);
+        }
+
+        internal static bool TryBuildAttackVfxRequest(
+            EntityManager em,
+            UnitAttackVfxRequestKind kind,
+            Entity source,
+            Entity target,
+            float3 sourcePosition,
+            float3 targetPosition,
+            out UnitAttackVfxRequest request)
+        {
+            request = new UnitAttackVfxRequest
             {
                 Kind = (byte)kind,
                 Source = source,
                 Target = target,
                 SourcePosition = sourcePosition,
                 TargetPosition = targetPosition
-            });
+            };
+
+            return kind switch
+            {
+                UnitAttackVfxRequestKind.MuzzleFlash => TryBuildMuzzleFlashVfxRequest(em, source, target, sourcePosition, targetPosition, ref request),
+                UnitAttackVfxRequestKind.Impact => TryBuildImpactVfxRequest(em, source, target, sourcePosition, targetPosition, ref request),
+                _ => false
+            };
+        }
+
+        private static bool TryBuildMuzzleFlashVfxRequest(
+            EntityManager em,
+            Entity source,
+            Entity target,
+            float3 sourcePosition,
+            float3 targetPosition,
+            ref UnitAttackVfxRequest request)
+        {
+            if (source == Entity.Null ||
+                !em.Exists(source) ||
+                !em.HasComponent<UnitMuzzleFlashVfxReference>(source))
+            {
+                return false;
+            }
+
+            UnitMuzzleFlashVfxReference muzzleVfx = em.GetComponentData<UnitMuzzleFlashVfxReference>(source);
+            LocalTransform sourceTransform = em.HasComponent<LocalTransform>(source)
+                ? em.GetComponentData<LocalTransform>(source)
+                : LocalTransform.FromPosition(sourcePosition);
+
+            float3 muzzlePosition = sourceTransform.Position;
+            if (em.HasComponent<UnitTurretReference>(source))
+            {
+                UnitTurretReference turretRef = em.GetComponentData<UnitTurretReference>(source);
+                if (em.Exists(turretRef.Turret) && em.HasComponent<LocalToWorld>(turretRef.Turret))
+                    muzzlePosition = em.GetComponentData<LocalToWorld>(turretRef.Turret).Position;
+            }
+
+            muzzlePosition.y += math.max(0f, muzzleVfx.HeightOffset);
+            quaternion rotation = ResolveAttackVfxLookRotation(em, target, targetPosition, sourceTransform.Position, sourceTransform.Rotation);
+            float forwardOffset = math.max(0f, muzzleVfx.ForwardOffset);
+            if (forwardOffset > 0f)
+                muzzlePosition += math.mul(rotation, new float3(0f, 0f, 1f)) * forwardOffset;
+
+            UnitAttackTraceOriginPattern originPattern = em.HasComponent<UnitAttackTraceOriginPattern>(source)
+                ? em.GetComponentData<UnitAttackTraceOriginPattern>(source)
+                : default;
+
+            request.Prefab = muzzleVfx.Prefab;
+            request.PlaybackPosition = muzzlePosition;
+            request.PlaybackRotation = rotation;
+            request.SideRight = ResolveMuzzleFlashSideRight(sourceTransform.Rotation, targetPosition - sourceTransform.Position);
+            request.OriginCount = (byte)ResolveMuzzleFlashOriginCount(originPattern);
+            request.LateralOffset = math.max(0f, originPattern.LateralOffset);
+            return true;
+        }
+
+        private static bool TryBuildImpactVfxRequest(
+            EntityManager em,
+            Entity source,
+            Entity target,
+            float3 sourcePosition,
+            float3 targetPosition,
+            ref UnitAttackVfxRequest request)
+        {
+            if (source == Entity.Null ||
+                !em.Exists(source) ||
+                !em.HasComponent<UnitAttackImpactVfxReference>(source))
+            {
+                return false;
+            }
+
+            UnitAttackImpactVfxReference impactVfx = em.GetComponentData<UnitAttackImpactVfxReference>(source);
+            float3 resolvedTargetPosition = ResolveAttackVfxTargetPosition(em, target, targetPosition);
+            float3 toAttacker = sourcePosition - resolvedTargetPosition;
+            toAttacker.y = 0f;
+
+            request.Prefab = impactVfx.Prefab;
+            request.PlaybackPosition = resolvedTargetPosition;
+            request.PlaybackRotation = math.lengthsq(toAttacker) > 1e-4f
+                ? quaternion.LookRotationSafe(toAttacker, math.up())
+                : quaternion.identity;
+            request.SideRight = new float3(1f, 0f, 0f);
+            request.OriginCount = 1;
+            request.LateralOffset = 0f;
+            return true;
+        }
+
+        private static quaternion ResolveAttackVfxLookRotation(
+            EntityManager em,
+            Entity target,
+            float3 fallbackTargetPosition,
+            float3 sourcePosition,
+            quaternion fallbackRotation)
+        {
+            float3 targetPosition = ResolveAttackVfxTargetPosition(em, target, fallbackTargetPosition);
+            float3 toTarget = targetPosition - sourcePosition;
+            toTarget.y = 0f;
+            return math.lengthsq(toTarget) > 1e-4f
+                ? quaternion.LookRotationSafe(toTarget, math.up())
+                : fallbackRotation;
+        }
+
+        private static float3 ResolveAttackVfxTargetPosition(EntityManager em, Entity target, float3 fallbackTargetPosition)
+        {
+            if (target != Entity.Null &&
+                em.Exists(target) &&
+                em.HasComponent<LocalTransform>(target))
+            {
+                return em.GetComponentData<LocalTransform>(target).Position;
+            }
+
+            return fallbackTargetPosition;
+        }
+
+        private static int ResolveMuzzleFlashOriginCount(UnitAttackTraceOriginPattern pattern)
+        {
+            if (pattern.OriginCount <= 1 || pattern.LateralOffset <= 0f)
+                return 1;
+
+            return math.clamp(pattern.OriginCount, 1, MaxMuzzleFlashOriginCount);
+        }
+
+        private static float3 ResolveMuzzleFlashSideRight(quaternion sourceRotation, float3 aim)
+        {
+            float3 right = math.mul(sourceRotation, new float3(1f, 0f, 0f));
+            right.y = 0f;
+            if (math.lengthsq(right) > 1e-5f)
+                return math.normalize(right);
+
+            float3 flatAim = aim;
+            flatAim.y = 0f;
+            if (math.lengthsq(flatAim) <= 1e-5f)
+                return new float3(1f, 0f, 0f);
+
+            return math.normalize(math.cross(math.up(), flatAim));
         }
 
         private static bool TryStartGroundMissileLauncherAttack(

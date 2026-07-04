@@ -8,6 +8,7 @@ namespace Game.UI.Runtime
     public sealed class UIShellLoadingProgressView : MonoBehaviour
     {
         private const string DefaultStatus = "Preparing command interface";
+        private const float CompletedPollIntervalSeconds = 0.25f;
         private static readonly string[] PercentLabels = BuildPercentLabels();
 
         [SerializeField] private RectTransform progressFill;
@@ -18,6 +19,8 @@ namespace Game.UI.Runtime
         private int lastPercent = -1;
         private bool hasLastStatus;
         private string lastStatus;
+        private bool lastReadWasComplete;
+        private float nextCompletedPollTime;
 
         public void Configure(RectTransform fill, TMP_Text percent, TMP_Text status, float maxFillWidth)
         {
@@ -32,15 +35,24 @@ namespace Game.UI.Runtime
         private void OnEnable()
         {
             ResetPresentationCache();
+            lastReadWasComplete = false;
+            nextCompletedPollTime = 0f;
             ApplyProgress(0f, DefaultStatus);
         }
 
         private void Update()
         {
+            if (lastReadWasComplete && Time.unscaledTime < nextCompletedPollTime)
+                return;
+
             if (!TryGetLoading(out UiShellLoadingProgressModel loading))
                 return;
 
             ApplyProgress(loading.Progress01, loading.Status);
+            lastReadWasComplete = loading.IsComplete;
+            nextCompletedPollTime = lastReadWasComplete
+                ? Time.unscaledTime + CompletedPollIntervalSeconds
+                : 0f;
         }
 
         private void ApplyProgress(float progress01, string status)
@@ -75,6 +87,8 @@ namespace Game.UI.Runtime
             lastPercent = -1;
             hasLastStatus = false;
             lastStatus = default;
+            lastReadWasComplete = false;
+            nextCompletedPollTime = 0f;
         }
 
         private static string[] BuildPercentLabels()

@@ -124,17 +124,27 @@ namespace Game.Rendering
                 int detailRotated = 0;
                 int modelRotated = 0;
                 int bakedRotated = MarkBakedBlades(_bladeLookup, entity, rotatedBlades);
+                bool hasVisualState = TryGetCurrentVisualKind(entity, _visualStateLookup, out UnitRenderVisualKind currentVisual);
+                bool scanAllFallbackRoots = !hasVisualState && bakedRotated == 0;
+                bool scanDetailFallback = scanAllFallbackRoots ||
+                                          (bakedRotated == 0 &&
+                                           (currentVisual == UnitRenderVisualKind.Detail ||
+                                            currentVisual == UnitRenderVisualKind.Unknown));
+                bool scanMidFallback = scanAllFallbackRoots ||
+                                       currentVisual == UnitRenderVisualKind.Mid;
+                bool scanLowFallback = scanAllFallbackRoots ||
+                                       currentVisual == UnitRenderVisualKind.Low;
 
-                if (_detailLookup.HasComponent(entity))
+                if (scanDetailFallback && _detailLookup.HasComponent(entity))
                     detailRotated = RotateBladeDescendants(em, _childLookup, _detailLookup[entity].Root, radians, rotatedBlades);
 
-                if (_modelLookup.HasComponent(entity))
+                if (scanDetailFallback && _modelLookup.HasComponent(entity))
                     modelRotated = RotateBladeDescendants(em, _childLookup, _modelLookup[entity].Instance, radians, rotatedBlades);
 
-                if (_midLookup.HasComponent(entity))
+                if (scanMidFallback && _midLookup.HasComponent(entity))
                     RotateBladeDescendants(em, _childLookup, _midLookup[entity].Instance, radians, rotatedBlades);
 
-                if (_lowLookup.HasComponent(entity))
+                if (scanLowFallback && _lowLookup.HasComponent(entity))
                     RotateBladeDescendants(em, _childLookup, _lowLookup[entity].Instance, radians, rotatedBlades);
 
                 if (shouldLogDiagnostics &&
@@ -222,6 +232,21 @@ namespace Game.Rendering
                 return false;
 
             return transformLookup[entity].Position.y > airState.HomePosition.y + FlyingHeightEpsilon;
+        }
+
+        private static bool TryGetCurrentVisualKind(
+            Entity entity,
+            ComponentLookup<UnitRenderVisualComponent> visualStateLookup,
+            out UnitRenderVisualKind currentVisual)
+        {
+            currentVisual = UnitRenderVisualKind.Detail;
+            if (!visualStateLookup.HasComponent(entity))
+                return false;
+
+            currentVisual = (UnitRenderVisualKind)visualStateLookup[entity].Current;
+            if (currentVisual == UnitRenderVisualKind.Unknown)
+                currentVisual = UnitRenderVisualKind.Detail;
+            return true;
         }
 
         private static int MarkBakedBlades(

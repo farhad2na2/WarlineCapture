@@ -25,6 +25,8 @@ namespace Game.Runtime
         private static readonly ProfilerMarker MainMenuMarker = new("GameplayRuntimeUpdate.MainMenu");
         private static readonly ProfilerMarker LoadingGateMarker = new("GameplayRuntimeUpdate.LoadingGate");
         private static readonly ProfilerMarker EndUpdateMarker = new("GameplayRuntimeUpdate.EndUpdate");
+        private static readonly ProfilerMarker UnitAttackTraceLateUpdateMarker = new("GameplayRuntimeLateUpdate.UnitAttackTrace");
+        private static readonly ProfilerMarker UnitImpostorLateUpdateMarker = new("GameplayRuntimeLateUpdate.UnitImpostors");
         private int _nextLoadingGateDiagnosticFrame;
         private int _loadingGateStartedFrame = -1;
         private Unity.Entities.World _initialSpawnQueryWorld;
@@ -267,8 +269,14 @@ namespace Game.Runtime
                 return;
 
             double start = performanceDiagnosticsSystem.BeginTimedSection();
-            unitAttackTraces?.LateUpdate();
-            unitImpostors?.LateUpdate();
+            using (UnitAttackTraceLateUpdateMarker.Auto())
+            {
+                unitAttackTraces?.LateUpdate();
+            }
+            using (UnitImpostorLateUpdateMarker.Auto())
+            {
+                unitImpostors?.LateUpdate();
+            }
             performanceDiagnosticsSystem.EndLateUpdate(start, unitImpostors?.LastDrawnCount ?? 0);
         }
 

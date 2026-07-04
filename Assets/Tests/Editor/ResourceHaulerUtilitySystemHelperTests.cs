@@ -33,7 +33,8 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             tests.LiveEcsStorage_TryCompleteLoad_PrefersCombatEntityStorage();
             tests.LiveEcsStorage_TryCompleteUnload_PrefersCombatEntityStorage();
             tests.LiveEcsStorage_GetStoredResource_PrefersCombatEntityStorage();
-            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=19");
+            tests.LiveEcsStorage_HasAvailableFuelForHauler_PrefersCombatEntityStorage();
+            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=20");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -511,6 +512,42 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
 
             Assert.AreEqual(33f, oil);
             Assert.AreEqual(21f, fuel);
+        }
+        finally
+        {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void LiveEcsStorage_HasAvailableFuelForHauler_PrefersCombatEntityStorage()
+    {
+        var world = new World(nameof(LiveEcsStorage_HasAvailableFuelForHauler_PrefersCombatEntityStorage));
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity entity = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(entity, new BuildingResourceStorageComponent
+            {
+                FuelStorageCapacity = 40,
+                FuelBarrelsPerDay = 5f,
+                StoredFuelBarrels = 0f
+            });
+            var building = new RuntimeBuildingEntity
+            {
+                Id = 47,
+                Definition = new BuildingDefinition
+                {
+                    FuelStorageCapacity = 40,
+                    FuelBarrelsPerDay = 5f
+                },
+                CombatEntity = entity,
+                StoredFuelBarrels = 12f
+            };
+
+            bool hasFuel = new ResourceHaulerUtilitySystemHelper().HasAvailableFuelForHauler(em, building);
+
+            Assert.IsFalse(hasFuel);
         }
         finally
         {

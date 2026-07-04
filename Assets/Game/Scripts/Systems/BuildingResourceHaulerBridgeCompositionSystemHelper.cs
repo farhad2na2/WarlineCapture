@@ -142,7 +142,7 @@ namespace Game.Runtime
             else
             {
                 destination = clickedBuilding;
-                if (TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerUtilitySystemHelper.HasAvailableFuelForHauler(candidate), out source))
+                if (TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerUtilitySystemHelper.HasAvailableFuelForHauler(em, candidate), out source))
                     resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel;
                 else if (TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(candidate), out source))
                     resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil;

@@ -55,6 +55,17 @@ namespace Game.Runtime
                    building.StoredFuelBarrels >= 1f;
         }
 
+        internal bool HasAvailableFuelForHauler(EntityManager entityManager, RuntimeBuildingEntity building)
+        {
+            if (building == null || !IsFuelStorageSourceBuilding(building))
+                return false;
+
+            if (TryGetEntityResourceStorage(entityManager, building, out BuildingResourceStorageComponent storage))
+                return storage.StoredFuelBarrels >= 1f;
+
+            return building.StoredFuelBarrels >= 1f;
+        }
+
         public UnitResourceHaulOrder CreateOrder(
             int sourceBuildingId,
             int destinationBuildingId,

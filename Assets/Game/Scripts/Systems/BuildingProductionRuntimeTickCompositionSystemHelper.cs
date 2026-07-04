@@ -1,12 +1,20 @@
 using System;
 using System.Collections.Generic;
 using Unity.Entities;
+using Unity.Profiling;
 using UnityEngine;
 
 namespace Game.Runtime
 {
     internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
     {
+        private static readonly ProfilerMarker ProcessPendingProductionsMarker = new("BuildingProductionRuntimeTick.ProcessPendingProductions");
+        private static readonly ProfilerMarker UpdateActiveProductionTransportsMarker = new("BuildingProductionRuntimeTick.UpdateActiveProductionTransports");
+        private static readonly ProfilerMarker UpdateResourceProductionMarker = new("BuildingProductionRuntimeTick.UpdateResourceProduction");
+        private static readonly ProfilerMarker SyncResourceStorageMirrorsMarker = new("BuildingProductionRuntimeTick.SyncResourceStorageMirrors");
+        private static readonly ProfilerMarker UpdateResourceHaulersMarker = new("BuildingProductionRuntimeTick.UpdateResourceHaulers");
+        private static readonly ProfilerMarker CleanupRecentSpawnReservationsMarker = new("BuildingProductionRuntimeTick.CleanupRecentSpawnReservations");
+
         public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
         public readonly struct Context
@@ -69,101 +77,113 @@ namespace Game.Runtime
 
         public bool ProcessPendingProductions(Context context)
         {
-            if (context.ProductionUpdateSystem == null)
-                return false;
+            using (ProcessPendingProductionsMarker.Auto())
+            {
+                if (context.ProductionUpdateSystem == null)
+                    return false;
 
-            uint randomState = context.GetRandomState != null ? context.GetRandomState() : 0u;
-            bool hasActiveTransport = context.ProductionUpdateSystem.UpdatePendingProductions(
-                context.ProductionUpdateContext,
-                UnityEngine.Time.time,
-                UnityEngine.Time.deltaTime,
-                ref randomState);
-            context.SetRandomState?.Invoke(randomState);
-            return hasActiveTransport;
+                uint randomState = context.GetRandomState != null ? context.GetRandomState() : 0u;
+                bool hasActiveTransport = context.ProductionUpdateSystem.UpdatePendingProductions(
+                    context.ProductionUpdateContext,
+                    UnityEngine.Time.time,
+                    UnityEngine.Time.deltaTime,
+                    ref randomState);
+                context.SetRandomState?.Invoke(randomState);
+                return hasActiveTransport;
+            }
         }
 
         public bool UpdateActiveProductionTransports(Context context)
         {
-            if (context.ProductionUpdateSystem == null)
-                return false;
+            using (UpdateActiveProductionTransportsMarker.Auto())
+            {
+                if (context.ProductionUpdateSystem == null)
+                    return false;
 
-            uint randomState = context.GetRandomState != null ? context.GetRandomState() : 0u;
-            bool hasActiveTransport = context.ProductionUpdateSystem.UpdateActiveProductionTransports(
-                context.ProductionUpdateContext,
-                UnityEngine.Time.time,
-                UnityEngine.Time.deltaTime,
-                ref randomState);
-            context.SetRandomState?.Invoke(randomState);
-            return hasActiveTransport;
+                uint randomState = context.GetRandomState != null ? context.GetRandomState() : 0u;
+                bool hasActiveTransport = context.ProductionUpdateSystem.UpdateActiveProductionTransports(
+                    context.ProductionUpdateContext,
+                    UnityEngine.Time.time,
+                    UnityEngine.Time.deltaTime,
+                    ref randomState);
+                context.SetRandomState?.Invoke(randomState);
+                return hasActiveTransport;
+            }
         }
 
         public void UpdateResourceProduction(Context context)
         {
-            if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0 || context.FactionResourceCompositionSystemHelper == null)
-                return;
+            using (UpdateResourceProductionMarker.Auto())
+            {
+                if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0 || context.FactionResourceCompositionSystemHelper == null)
+                    return;
 
-            float secondsPerDay = context.DayNightSystem != null
-                ? Mathf.Max(1f, context.DayNightSystem.FullDayDurationMinutes * 60f)
-                : 300f;
+                float secondsPerDay = context.DayNightSystem != null
+                    ? Mathf.Max(1f, context.DayNightSystem.FullDayDurationMinutes * 60f)
+                    : 300f;
 
-            EntityManager entityManager = default;
-            bool hasEntityManager = context.TryGetEntityManager != null &&
-                                    context.TryGetEntityManager(out entityManager);
-            FactionResourceCompositionSystemHelper.ResourceProductionTickResult result;
-            if (hasEntityManager && context.RuntimeBuildingMap != null)
-            {
-                result = context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
-                    entityManager,
-                    context.RuntimeBuildingMap,
-                    secondsPerDay,
-                    UnityEngine.Time.deltaTime,
-                    context.OilBarrelsPerFuelBarrel);
-            }
-            else if (hasEntityManager)
-            {
-                result = context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
-                    entityManager,
-                    context.RuntimeBuildings,
-                    secondsPerDay,
-                    UnityEngine.Time.deltaTime,
-                    context.OilBarrelsPerFuelBarrel);
-            }
-            else
-            {
-                result = context.RuntimeBuildingMap != null
-                    ? context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
+                EntityManager entityManager = default;
+                bool hasEntityManager = context.TryGetEntityManager != null &&
+                                        context.TryGetEntityManager(out entityManager);
+                FactionResourceCompositionSystemHelper.ResourceProductionTickResult result;
+                if (hasEntityManager && context.RuntimeBuildingMap != null)
+                {
+                    result = context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
+                        entityManager,
                         context.RuntimeBuildingMap,
                         secondsPerDay,
                         UnityEngine.Time.deltaTime,
-                        context.OilBarrelsPerFuelBarrel)
-                    : context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
+                        context.OilBarrelsPerFuelBarrel);
+                }
+                else if (hasEntityManager)
+                {
+                    result = context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
+                        entityManager,
                         context.RuntimeBuildings,
                         secondsPerDay,
                         UnityEngine.Time.deltaTime,
                         context.OilBarrelsPerFuelBarrel);
-            }
-            if (result.OilExtractedBarrels > 0f)
-                context.RecordOilExtracted?.Invoke(result.OilExtractedBarrels);
-            if (result.FuelProducedBarrels > 0f)
-                context.RecordFuelProduced?.Invoke(result.FuelProducedBarrels);
+                }
+                else
+                {
+                    result = context.RuntimeBuildingMap != null
+                        ? context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
+                            context.RuntimeBuildingMap,
+                            secondsPerDay,
+                            UnityEngine.Time.deltaTime,
+                            context.OilBarrelsPerFuelBarrel)
+                        : context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
+                            context.RuntimeBuildings,
+                            secondsPerDay,
+                            UnityEngine.Time.deltaTime,
+                            context.OilBarrelsPerFuelBarrel);
+                }
+                if (result.OilExtractedBarrels > 0f)
+                    context.RecordOilExtracted?.Invoke(result.OilExtractedBarrels);
+                if (result.FuelProducedBarrels > 0f)
+                    context.RecordFuelProduced?.Invoke(result.FuelProducedBarrels);
 
-            SyncResourceStorageMirrors(context);
+                SyncResourceStorageMirrors(context);
+            }
         }
 
         private static void SyncResourceStorageMirrors(Context context)
         {
-            if (context.SyncResourceStorage == null || context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
-                return;
-
-            if (context.RuntimeBuildingMap != null)
+            using (SyncResourceStorageMirrorsMarker.Auto())
             {
-                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
-                    SyncResourceStorageMirror(context, pair.Value);
-                return;
-            }
+                if (context.SyncResourceStorage == null || context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
+                    return;
 
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
-                SyncResourceStorageMirror(context, pair.Value);
+                if (context.RuntimeBuildingMap != null)
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildingMap)
+                        SyncResourceStorageMirror(context, pair.Value);
+                    return;
+                }
+
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+                    SyncResourceStorageMirror(context, pair.Value);
+            }
         }
 
         private static void SyncResourceStorageMirror(Context context, RuntimeBuildingEntity building)
@@ -184,17 +204,23 @@ namespace Game.Runtime
 
         public void UpdateResourceHaulers(Context context)
         {
-            context.ResourceHaulerBridgeSystem?.UpdateResourceHaulers(
-                context.ResourceHaulerBridgeContext,
-                context.HasPendingPathJob != null && context.HasPendingPathJob(),
-                UnityEngine.Time.time);
+            using (UpdateResourceHaulersMarker.Auto())
+            {
+                context.ResourceHaulerBridgeSystem?.UpdateResourceHaulers(
+                    context.ResourceHaulerBridgeContext,
+                    context.HasPendingPathJob != null && context.HasPendingPathJob(),
+                    UnityEngine.Time.time);
 
-            SyncResourceStorageMirrors(context);
+                SyncResourceStorageMirrors(context);
+            }
         }
 
         public void CleanupRecentSpawnReservations(Context context)
         {
-            context.SpawnSystem?.CleanupRecentSpawnReservations(UnityEngine.Time.time);
+            using (CleanupRecentSpawnReservationsMarker.Auto())
+            {
+                context.SpawnSystem?.CleanupRecentSpawnReservations(UnityEngine.Time.time);
+            }
         }
     }
 }

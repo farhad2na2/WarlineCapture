@@ -14,9 +14,12 @@ namespace Game.Runtime
         private const byte PlayerFactionId = FactionIdentity.PlayerFactionId;
         private const float FallbackThreatSpeed = 5f;
         private const int CloseContactWarningRadiusCells = 12;
+        private const int ScanIntervalFrames = 8;
+        private const int ScanEveryFrameTargetThreshold = 32;
 
         private NativeParallelHashSet<Entity> _previousGroundThreats;
         private NativeParallelHashSet<Entity> _previousAirThreats;
+        private int _framesUntilNextScan;
         private EntityQuery _sensorQuery;
         private EntityQuery _targetQuery;
         private EntityQuery _gridQuery;
@@ -79,15 +82,20 @@ namespace Game.Runtime
             state.EntityManager.CompleteDependencyBeforeRO<RuntimeGameplayStateComponent>();
             if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
             {
+                _framesUntilNextScan = 0;
                 ClearPreviousThreats();
                 return;
             }
+
+            int targetCount = _targetQuery.CalculateEntityCount();
+            if (ShouldSkipScan(targetCount))
+                return;
 
             CompleteMainThreadReadDependencies(ref state);
 
             float cellSize = TryGetCellSize(state.EntityManager, _gridQuery);
 
-            int targetCapacity = math.max(16, _targetQuery.CalculateEntityCount() * 2);
+            int targetCapacity = math.max(16, targetCount * 2);
             using NativeParallelHashSet<Entity> currentGroundThreats = new(targetCapacity, Allocator.TempJob);
             using NativeParallelHashSet<Entity> currentAirThreats = new(targetCapacity, Allocator.TempJob);
             using NativeList<Entity> currentGroundThreatList = new(Allocator.TempJob);
@@ -148,6 +156,24 @@ namespace Game.Runtime
                     scan.BestAirEtaSeconds == float.MaxValue ? 0f : scan.BestAirEtaSeconds,
                     currentAirThreatList.Length);
             }
+        }
+
+        private bool ShouldSkipScan(int targetCount)
+        {
+            if (targetCount <= ScanEveryFrameTargetThreshold)
+            {
+                _framesUntilNextScan = 0;
+                return false;
+            }
+
+            if (_framesUntilNextScan > 0)
+            {
+                _framesUntilNextScan--;
+                return true;
+            }
+
+            _framesUntilNextScan = ScanIntervalFrames - 1;
+            return false;
         }
 
         private static void CompleteMainThreadReadDependencies(ref SystemState state)

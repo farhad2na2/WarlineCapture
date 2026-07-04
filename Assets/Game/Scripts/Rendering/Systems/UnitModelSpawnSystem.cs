@@ -575,6 +575,7 @@ namespace Game.Rendering
 
                     if (em.HasComponent<VehicleDestroyedVisualInstanceReference>(entity))
                         SetRenderTreeVisible(em, em.GetComponentData<VehicleDestroyedVisualInstanceReference>(entity).Instance, true);
+                    SetAppliedState(em, entity, UnitRenderVisualKind.Unknown, destroyed: true);
                     continue;
                 }
 
@@ -586,13 +587,43 @@ namespace Game.Rendering
                         currentVisual = UnitRenderVisualKind.Detail;
                 }
 
+                if (IsLiveVisualStateAlreadyApplied(em, entity, currentVisual))
+                    continue;
+
                 SetLiveVisualRootsVisible(
                     em,
                     entity,
                     currentVisual == UnitRenderVisualKind.Detail,
                     currentVisual == UnitRenderVisualKind.Mid,
                     currentVisual == UnitRenderVisualKind.Low);
+                SetAppliedState(em, entity, currentVisual, destroyed: false);
             }
+        }
+
+        private static bool IsLiveVisualStateAlreadyApplied(EntityManager em, Entity entity, UnitRenderVisualKind currentVisual)
+        {
+            if (!em.HasComponent<UnitRenderVisualExclusivityAppliedState>(entity))
+                return false;
+
+            UnitRenderVisualExclusivityAppliedState state =
+                em.GetComponentData<UnitRenderVisualExclusivityAppliedState>(entity);
+            return state.Destroyed == 0 && state.Visual == (byte)currentVisual;
+        }
+
+        private static void SetAppliedState(EntityManager em, Entity entity, UnitRenderVisualKind currentVisual, bool destroyed)
+        {
+            UnitRenderVisualExclusivityAppliedState state = new()
+            {
+                Visual = (byte)currentVisual,
+                Destroyed = destroyed ? (byte)1 : (byte)0
+            };
+            if (em.HasComponent<UnitRenderVisualExclusivityAppliedState>(entity))
+            {
+                em.SetComponentData(entity, state);
+                return;
+            }
+
+            em.AddComponentData(entity, state);
         }
 
         private static void SetLiveVisualRootsVisible(

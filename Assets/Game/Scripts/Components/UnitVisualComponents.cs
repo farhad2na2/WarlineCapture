@@ -152,6 +152,12 @@ namespace Game.Components
         public int LastChangedFrame;
     }
 
+    public struct UnitRenderVisualExclusivityAppliedState : IComponentData
+    {
+        public byte Visual;
+        public byte Destroyed;
+    }
+
     public struct UnitMidLodRenderRootTag : IComponentData
     {
     }

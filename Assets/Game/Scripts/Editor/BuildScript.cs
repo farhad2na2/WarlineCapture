@@ -4,6 +4,7 @@ using UnityEditor.Build.Reporting;
 using System.IO;
 using System.Linq;
 using System.IO.Compression;
+using System.Reflection;
 
 namespace Game.Editor
 {
@@ -97,6 +98,48 @@ namespace Game.Editor
             ExecuteBuild(buildPlayerOptions);
         }
 
+        public static void BuildAndroidProfilerApk()
+        {
+            BuildAndroidProfilerApk(disableBurstAot: false);
+        }
+
+        public static void BuildAndroidProfilerNoBurstApk()
+        {
+            BuildAndroidProfilerApk(disableBurstAot: true);
+        }
+
+        private static void BuildAndroidProfilerApk(bool disableBurstAot)
+        {
+            SwitchBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
+            ConfigureGradleUserHome();
+            ConfigureAndroidBuild(false);
+            using var burstAotScope = disableBurstAot
+                ? TryDisableBurstAotForAndroidBuild()
+                : null;
+
+            const string outputDirectory = "Build/AndroidProfiler";
+            CreateDirectory(outputDirectory);
+            var outputSuffix = disableBurstAot ? "Profiler-NoBurst" : "Profiler";
+            var outputPath = $"{outputDirectory}/{ResolveBuildOutputName()}-{outputSuffix}.apk";
+            if (File.Exists(outputPath))
+            {
+                File.Delete(outputPath);
+            }
+
+            var buildPlayerOptions = new BuildPlayerOptions
+            {
+                scenes = GetEnabledScenes(),
+                target = BuildTarget.Android,
+                options =
+                    BuildOptions.Development |
+                    BuildOptions.ConnectWithProfiler,
+                locationPathName = outputPath
+            };
+
+            UnityEngine.Debug.Log($"[BuildScript] Android profiler APK configured: development=1 autoconnectProfiler=1 scriptDebugging=0 deepProfiling=0 burstAot={(disableBurstAot ? 0 : 1)}");
+            ExecuteBuild(buildPlayerOptions);
+        }
+
         public static void CreateDirectory(string path)
         {
             if (Directory.Exists(path)) return;
@@ -151,7 +194,7 @@ namespace Game.Editor
 
         private static void ConfigureAndroidBuild(bool buildAppBundle)
         {
-            PlayerSettings.Android.minSdkVersion = (AndroidSdkVersions)25;
+            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             //PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)34;
             EditorUserBuildSettings.buildAppBundle = buildAppBundle;
@@ -172,6 +215,83 @@ namespace Game.Editor
             CreateDirectory(projectGradleHome);
             Environment.SetEnvironmentVariable(variableName, projectGradleHome);
             UnityEngine.Debug.Log($"[BuildScript] Redirected {variableName} to {projectGradleHome}");
+        }
+
+        private static IDisposable TryDisableBurstAotForAndroidBuild()
+        {
+            Type settingsType = Type.GetType("Unity.Burst.Editor.BurstPlatformAotSettings, Unity.Burst.Editor");
+            if (settingsType == null)
+            {
+                UnityEngine.Debug.LogWarning("[BuildScript] Burst AOT settings type not found; continuing without disabling Burst AOT.");
+                return null;
+            }
+
+            MethodInfo getOrCreateSettings = settingsType.GetMethod(
+                "GetOrCreateSettings",
+                BindingFlags.Static | BindingFlags.NonPublic);
+            MethodInfo save = settingsType.GetMethod(
+                "Save",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo enableBurstCompilation = settingsType.GetField(
+                "EnableBurstCompilation",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (getOrCreateSettings == null || save == null || enableBurstCompilation == null)
+            {
+                UnityEngine.Debug.LogWarning("[BuildScript] Burst AOT settings members not found; continuing without disabling Burst AOT.");
+                return null;
+            }
+
+            object target = (BuildTarget?)BuildTarget.Android;
+            object settings = getOrCreateSettings.Invoke(null, new[] { target });
+            bool original = (bool)enableBurstCompilation.GetValue(settings);
+            if (!original)
+            {
+                UnityEngine.Debug.Log("[BuildScript] Android Burst AOT was already disabled.");
+                return null;
+            }
+
+            enableBurstCompilation.SetValue(settings, false);
+            save.Invoke(settings, new[] { target });
+            AssetDatabase.Refresh();
+            UnityEngine.Debug.Log("[BuildScript] Android Burst AOT temporarily disabled for profiler APK build.");
+            return new RestoreBurstAotSettings(settings, save, enableBurstCompilation, target, original);
+        }
+
+        private sealed class RestoreBurstAotSettings : IDisposable
+        {
+            private readonly object settings;
+            private readonly MethodInfo save;
+            private readonly FieldInfo enableBurstCompilation;
+            private readonly object target;
+            private readonly bool original;
+            private bool restored;
+
+            public RestoreBurstAotSettings(
+                object settings,
+                MethodInfo save,
+                FieldInfo enableBurstCompilation,
+                object target,
+                bool original)
+            {
+                this.settings = settings;
+                this.save = save;
+                this.enableBurstCompilation = enableBurstCompilation;
+                this.target = target;
+                this.original = original;
+            }
+
+            public void Dispose()
+            {
+                if (restored)
+                    return;
+
+                restored = true;
+                enableBurstCompilation.SetValue(settings, original);
+                save.Invoke(settings, new[] { target });
+                AssetDatabase.Refresh();
+                UnityEngine.Debug.Log("[BuildScript] Android Burst AOT setting restored after profiler APK build.");
+            }
         }
 
         private static void SwitchBuildTarget(BuildTargetGroup buildTargetGroup, BuildTarget buildTarget)

@@ -595,6 +595,7 @@ namespace Game.Editor
             SelectionRuntimeDiagnosticsSystemHelper.ResetEditorSelectionAllocationProbe();
             RuntimeDiagnosticsSystem.ResetEditorBuildingVisualAllocationProbe();
             RuntimeDiagnosticsSystem.ResetEditorProductionTransportAllocationProbe();
+            RuntimeDiagnosticsSystem.ResetEditorTransportBoardingAllocationProbe();
         }
 
         private static void AppendRuntimeAllocationProbeSummary(StringBuilder builder)
@@ -613,6 +614,8 @@ namespace Game.Editor
                 RuntimeDiagnosticsSystem.GetEditorBuildingVisualAllocationProbe();
             RuntimeDiagnosticsSystem.EditorProductionTransportAllocationProbeSnapshot productionTransportProbe =
                 RuntimeDiagnosticsSystem.GetEditorProductionTransportAllocationProbe();
+            RuntimeDiagnosticsSystem.EditorTransportBoardingAllocationProbeSnapshot transportBoardingProbe =
+                RuntimeDiagnosticsSystem.GetEditorTransportBoardingAllocationProbe();
             builder.AppendLine("- Runtime allocation probe:");
             builder.Append("  - `UIShellEcsPresentationSystem.Update`: ")
                 .Append(shellBytes)
@@ -734,6 +737,23 @@ namespace Game.Editor
                 .Append(productionTransportProbe.DropVisualCreateAllocationSamples)
                 .Append(" allocating drop-visual create calls, dropVisualCreateCalls=")
                 .Append(productionTransportProbe.DropVisualCreateCalls)
+                .AppendLine(". Diagnostic only; not a gate yet.");
+            builder.Append("  - `TransportBoardingCommandSystem`: ")
+                .Append(transportBoardingProbe.UpdateBytes)
+                .Append(" bytes / ")
+                .Append(transportBoardingProbe.UpdateAllocationSamples)
+                .Append(" allocating updates / ")
+                .Append(transportBoardingProbe.UpdateCalls)
+                .Append(" total updates. handledUpdates=")
+                .Append(transportBoardingProbe.HandledUpdateCalls)
+                .Append(", commandBytes=")
+                .Append(transportBoardingProbe.CommandBytes)
+                .Append(" / ")
+                .Append(transportBoardingProbe.CommandAllocationSamples)
+                .Append(" allocating command calls, commandCalls=")
+                .Append(transportBoardingProbe.CommandCalls)
+                .Append(", handledCommandCalls=")
+                .Append(transportBoardingProbe.HandledCommandCalls)
                 .AppendLine(". Diagnostic only; not a gate yet.");
             builder.Append("- Runtime allocation probe assertion: ")
                 .Append(shellBytes == 0 && bootstrapBytes == 0 ? "Passed." : "Failed.")

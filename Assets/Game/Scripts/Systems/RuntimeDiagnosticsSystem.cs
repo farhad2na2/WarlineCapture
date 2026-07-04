@@ -216,8 +216,74 @@ namespace Game.Runtime
             }
         }
 
+        public readonly struct EditorTransportBoardingAllocationProbeSnapshot
+        {
+            public readonly long UpdateBytes;
+            public readonly int UpdateAllocationSamples;
+            public readonly int UpdateCalls;
+            public readonly int HandledUpdateCalls;
+            public readonly long CommandBytes;
+            public readonly int CommandAllocationSamples;
+            public readonly int CommandCalls;
+            public readonly int HandledCommandCalls;
+
+            private EditorTransportBoardingAllocationProbeSnapshot(EditorTransportBoardingAllocationProbeCounter counter)
+            {
+                UpdateBytes = counter.UpdateBytes;
+                UpdateAllocationSamples = counter.UpdateAllocationSamples;
+                UpdateCalls = counter.UpdateCalls;
+                HandledUpdateCalls = counter.HandledUpdateCalls;
+                CommandBytes = counter.CommandBytes;
+                CommandAllocationSamples = counter.CommandAllocationSamples;
+                CommandCalls = counter.CommandCalls;
+                HandledCommandCalls = counter.HandledCommandCalls;
+            }
+
+            public static EditorTransportBoardingAllocationProbeSnapshot Create(EditorTransportBoardingAllocationProbeCounter counter)
+            {
+                return new EditorTransportBoardingAllocationProbeSnapshot(counter);
+            }
+        }
+
+        public struct EditorTransportBoardingAllocationProbeCounter
+        {
+            public long UpdateBytes;
+            public int UpdateAllocationSamples;
+            public int UpdateCalls;
+            public int HandledUpdateCalls;
+            public long CommandBytes;
+            public int CommandAllocationSamples;
+            public int CommandCalls;
+            public int HandledCommandCalls;
+
+            public void AddUpdate(long allocatedBytes, bool handled)
+            {
+                UpdateCalls++;
+                if (handled)
+                    HandledUpdateCalls++;
+                if (allocatedBytes <= 0)
+                    return;
+
+                UpdateBytes += allocatedBytes;
+                UpdateAllocationSamples++;
+            }
+
+            public void AddCommand(long allocatedBytes, bool handled)
+            {
+                CommandCalls++;
+                if (handled)
+                    HandledCommandCalls++;
+                if (allocatedBytes <= 0)
+                    return;
+
+                CommandBytes += allocatedBytes;
+                CommandAllocationSamples++;
+            }
+        }
+
         private static EditorBuildingVisualAllocationProbeCounter editorBuildingVisualAllocationProbe;
         private static EditorProductionTransportAllocationProbeCounter editorProductionTransportAllocationProbe;
+        private static EditorTransportBoardingAllocationProbeCounter editorTransportBoardingAllocationProbe;
 #endif
 
         public bool VerboseAILogs
@@ -277,6 +343,11 @@ namespace Game.Runtime
             editorProductionTransportAllocationProbe = default;
         }
 
+        public static void ResetEditorTransportBoardingAllocationProbe()
+        {
+            editorTransportBoardingAllocationProbe = default;
+        }
+
         public static void RecordEditorBuildingVisualAllocation(
             long allocatedBytes,
             bool pooled,
@@ -317,6 +388,16 @@ namespace Game.Runtime
             editorProductionTransportAllocationProbe.AddDropVisualCreate(allocatedBytes);
         }
 
+        public static void RecordEditorTransportBoardingUpdateAllocation(long allocatedBytes, bool handled)
+        {
+            editorTransportBoardingAllocationProbe.AddUpdate(allocatedBytes, handled);
+        }
+
+        public static void RecordEditorTransportBoardingCommandAllocation(long allocatedBytes, bool handled)
+        {
+            editorTransportBoardingAllocationProbe.AddCommand(allocatedBytes, handled);
+        }
+
         public static EditorBuildingVisualAllocationProbeSnapshot GetEditorBuildingVisualAllocationProbe()
         {
             return EditorBuildingVisualAllocationProbeSnapshot.Create(editorBuildingVisualAllocationProbe);
@@ -325,6 +406,11 @@ namespace Game.Runtime
         public static EditorProductionTransportAllocationProbeSnapshot GetEditorProductionTransportAllocationProbe()
         {
             return EditorProductionTransportAllocationProbeSnapshot.Create(editorProductionTransportAllocationProbe);
+        }
+
+        public static EditorTransportBoardingAllocationProbeSnapshot GetEditorTransportBoardingAllocationProbe()
+        {
+            return EditorTransportBoardingAllocationProbeSnapshot.Create(editorTransportBoardingAllocationProbe);
         }
 #endif
 

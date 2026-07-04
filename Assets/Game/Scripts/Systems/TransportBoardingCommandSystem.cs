@@ -195,7 +195,25 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
-            ProcessPreResolvedTransportRequests(state.EntityManager);
+#if UNITY_EDITOR
+            long allocationProbeStartBytes = System.GC.GetAllocatedBytesForCurrentThread();
+            bool allocationProbeHandled = false;
+            try
+            {
+#endif
+            bool handled = ProcessPreResolvedTransportRequests(state.EntityManager);
+#if UNITY_EDITOR
+            allocationProbeHandled = handled;
+#endif
+#if UNITY_EDITOR
+            }
+            finally
+            {
+                RuntimeDiagnosticsSystem.RecordEditorTransportBoardingUpdateAllocation(
+                    System.GC.GetAllocatedBytesForCurrentThread() - allocationProbeStartBytes,
+                    allocationProbeHandled);
+            }
+#endif
         }
 
         public void EnsureEntityQueries(EntityManager em)
@@ -251,6 +269,12 @@ namespace Game.Runtime
             TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
             TryGetClickedCellDelegate tryGetClickedCell)
         {
+#if UNITY_EDITOR
+            long allocationProbeStartBytes = System.GC.GetAllocatedBytesForCurrentThread();
+            bool allocationProbeHandled = false;
+            try
+            {
+#endif
             EnsureEntityQueries(em);
             bool handledAny = false;
             for (int i = 0; i < commandRequests.Length;)
@@ -323,7 +347,19 @@ namespace Game.Runtime
                 }
             }
 
+#if UNITY_EDITOR
+            allocationProbeHandled = handledAny;
+#endif
             return handledAny;
+#if UNITY_EDITOR
+            }
+            finally
+            {
+                RuntimeDiagnosticsSystem.RecordEditorTransportBoardingCommandAllocation(
+                    System.GC.GetAllocatedBytesForCurrentThread() - allocationProbeStartBytes,
+                    allocationProbeHandled);
+            }
+#endif
         }
 
         private bool ProcessPreResolvedTransportRequests(EntityManager em)

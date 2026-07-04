@@ -91,8 +91,7 @@ namespace Game.Runtime
         {
             double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
             double elapsed = now - timing.Start;
-            bool diagnosticsEnabled = Application.isBatchMode ||
-                                      (context.ShouldLogDiagnostics != null && context.ShouldLogDiagnostics());
+            bool diagnosticsEnabled = context.ShouldLogDiagnostics != null && context.ShouldLogDiagnostics();
             if (!diagnosticsEnabled ||
                 elapsed < SlowLogThresholdSeconds ||
                 now < _nextSlowLogAt ||

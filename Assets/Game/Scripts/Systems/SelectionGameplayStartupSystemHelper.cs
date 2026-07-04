@@ -8,6 +8,10 @@ using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 using Game.Components;
 using Game.Configs;
+#if UNITY_EDITOR
+using SelectionAllocationProbePhase = Game.Runtime.SelectionRuntimeDiagnosticsSystemHelper.EditorSelectionAllocationProbePhase;
+using SelectionAllocationProbeScope = Game.Runtime.SelectionRuntimeDiagnosticsSystemHelper.EditorSelectionAllocationProbeScope;
+#endif
 
 namespace Game.Runtime
 {
@@ -290,9 +294,16 @@ namespace Game.Runtime
 
             void UpdateSelectionRuntimePhases()
             {
-                RtsSelectionInputCompositionSystemHelper.PendingCommandSummary commandSummary =
-                    rtsSelectionInputSystem.GetPendingCommandSummary();
+#if UNITY_EDITOR
+                using (new SelectionAllocationProbeScope(SelectionAllocationProbePhase.Total))
+#endif
+                {
+                    RtsSelectionInputCompositionSystemHelper.PendingCommandSummary commandSummary =
+                        rtsSelectionInputSystem.GetPendingCommandSummary();
 
+#if UNITY_EDITOR
+                    using (new SelectionAllocationProbeScope(SelectionAllocationProbePhase.CommandFlush))
+#endif
                 using (SelectionCommandFlushMarker.Auto())
                 {
                     if (commandSummary.HasTransportCommandRequestsOrResults)
@@ -363,6 +374,9 @@ namespace Game.Runtime
                         rtsSelectionCommandResultFlushSystem.ProcessDeselectAllCommandRequests(GetCommandResultFlushContext());
                 }
 
+#if UNITY_EDITOR
+                    using (new SelectionAllocationProbeScope(SelectionAllocationProbePhase.Input))
+#endif
                 using (SelectionInputMarker.Auto())
                 {
                     if (commandSummary.HasExternalSelectionCommandRequests)
@@ -376,6 +390,9 @@ namespace Game.Runtime
 
                 bool refreshSelectionUi = ShouldRefreshSelectionUi();
                 bool tacticalFollowRequestProcessed;
+#if UNITY_EDITOR
+                    using (new SelectionAllocationProbeScope(SelectionAllocationProbePhase.TacticalCamera))
+#endif
                 using (SelectionTacticalCameraMarker.Auto())
                 {
                     tacticalFollowRequestProcessed = ProcessTacticalFollowCameraRequests(refreshSelectionUi);
@@ -383,6 +400,9 @@ namespace Game.Runtime
 
                 if (refreshSelectionUi)
                 {
+#if UNITY_EDITOR
+                        using (new SelectionAllocationProbeScope(SelectionAllocationProbePhase.FocusedReadModel))
+#endif
                     using (SelectionFocusedReadModelMarker.Auto())
                     {
                         selectionHudFeedbackSystem.RefreshFocusedSelectionReadModels(
@@ -395,6 +415,9 @@ namespace Game.Runtime
                             UnityEngine.Time.time);
                     }
 
+#if UNITY_EDITOR
+                        using (new SelectionAllocationProbeScope(SelectionAllocationProbePhase.Panel))
+#endif
                     using (SelectionPanelMarker.Auto())
                     {
                         selectionHudFeedbackSystem.UpdateMatchHudSelectionPanel(
@@ -418,6 +441,9 @@ namespace Game.Runtime
                     MarkSelectionUiRefreshed();
                 }
 
+#if UNITY_EDITOR
+                    using (new SelectionAllocationProbeScope(SelectionAllocationProbePhase.TacticalCamera))
+#endif
                 using (SelectionTacticalCameraMarker.Auto())
                 {
                     bool tacticalFollowPoseRefreshed = RefreshTacticalFollowCameraPose();
@@ -425,6 +451,9 @@ namespace Game.Runtime
                         ApplyTacticalFollowCameraUiReadModel();
                 }
 
+#if UNITY_EDITOR
+                    using (new SelectionAllocationProbeScope(SelectionAllocationProbePhase.MarkerPreview))
+#endif
                 using (SelectionMarkerPreviewMarker.Auto())
                 {
                     rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(GetCommandResultFlushContext());
@@ -445,6 +474,9 @@ namespace Game.Runtime
 
                 RtsSelectionRuntimeCameraSystemHelper.Context cameraContext = GetRuntimeCameraContext();
                 RtsSelectionRuntimeInputCompositionSystemHelper.Context cameraInputContext = GetRuntimeInputContext();
+#if UNITY_EDITOR
+                    using (new SelectionAllocationProbeScope(SelectionAllocationProbePhase.Camera))
+#endif
                 using (SelectionCameraMarker.Auto())
                 {
                     if (rtsSelectionRuntimeCameraSystem != null &&
@@ -454,6 +486,7 @@ namespace Game.Runtime
                         rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(cameraInputContext);
                     }
                     UpdateTacticalFollowCameraPose();
+                }
                 }
             }
 

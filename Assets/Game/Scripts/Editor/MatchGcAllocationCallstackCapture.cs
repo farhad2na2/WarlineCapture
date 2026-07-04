@@ -592,6 +592,7 @@ namespace Game.Editor
         {
             UIShellEcsPresentationSystem.ResetEditorAllocationProbe();
             MenuBootstrapView.ResetEditorAllocationProbe();
+            SelectionRuntimeDiagnosticsSystemHelper.ResetEditorSelectionAllocationProbe();
         }
 
         private static void AppendRuntimeAllocationProbeSummary(StringBuilder builder)
@@ -604,6 +605,8 @@ namespace Game.Editor
                 out long bootstrapBytes,
                 out int bootstrapAllocationSamples,
                 out int bootstrapUpdateSamples);
+            SelectionRuntimeDiagnosticsSystemHelper.EditorSelectionAllocationProbeSnapshot selectionProbe =
+                SelectionRuntimeDiagnosticsSystemHelper.GetEditorSelectionAllocationProbe();
             builder.AppendLine("- Runtime allocation probe:");
             builder.Append("  - `UIShellEcsPresentationSystem.Update`: ")
                 .Append(shellBytes)
@@ -619,9 +622,76 @@ namespace Game.Editor
                 .Append(" allocating updates / ")
                 .Append(bootstrapUpdateSamples)
                 .AppendLine(" total updates.");
+            builder.Append("  - `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases`: ")
+                .Append(selectionProbe.TotalBytes)
+                .Append(" bytes / ")
+                .Append(selectionProbe.TotalAllocationSamples)
+                .Append(" allocating updates / ")
+                .Append(selectionProbe.TotalUpdateSamples)
+                .AppendLine(" total updates. Diagnostic only; not a gate yet.");
+            AppendSelectionProbePhase(
+                builder,
+                "CommandFlush",
+                selectionProbe.CommandFlushBytes,
+                selectionProbe.CommandFlushAllocationSamples,
+                selectionProbe.CommandFlushUpdateSamples);
+            AppendSelectionProbePhase(
+                builder,
+                "Input",
+                selectionProbe.InputBytes,
+                selectionProbe.InputAllocationSamples,
+                selectionProbe.InputUpdateSamples);
+            AppendSelectionProbePhase(
+                builder,
+                "FocusedReadModel",
+                selectionProbe.FocusedReadModelBytes,
+                selectionProbe.FocusedReadModelAllocationSamples,
+                selectionProbe.FocusedReadModelUpdateSamples);
+            AppendSelectionProbePhase(
+                builder,
+                "Panel",
+                selectionProbe.PanelBytes,
+                selectionProbe.PanelAllocationSamples,
+                selectionProbe.PanelUpdateSamples);
+            AppendSelectionProbePhase(
+                builder,
+                "TacticalCamera",
+                selectionProbe.TacticalCameraBytes,
+                selectionProbe.TacticalCameraAllocationSamples,
+                selectionProbe.TacticalCameraUpdateSamples);
+            AppendSelectionProbePhase(
+                builder,
+                "MarkerPreview",
+                selectionProbe.MarkerPreviewBytes,
+                selectionProbe.MarkerPreviewAllocationSamples,
+                selectionProbe.MarkerPreviewUpdateSamples);
+            AppendSelectionProbePhase(
+                builder,
+                "Camera",
+                selectionProbe.CameraBytes,
+                selectionProbe.CameraAllocationSamples,
+                selectionProbe.CameraUpdateSamples);
             builder.Append("- Runtime allocation probe assertion: ")
                 .Append(shellBytes == 0 && bootstrapBytes == 0 ? "Passed." : "Failed.")
                 .AppendLine();
+        }
+
+        private static void AppendSelectionProbePhase(
+            StringBuilder builder,
+            string phaseName,
+            long bytes,
+            int allocationSamples,
+            int updateSamples)
+        {
+            builder.Append("    - `Selection.")
+                .Append(phaseName)
+                .Append("`: ")
+                .Append(bytes)
+                .Append(" bytes / ")
+                .Append(allocationSamples)
+                .Append(" allocating updates / ")
+                .Append(updateSamples)
+                .AppendLine(" total updates.");
         }
 
         private static bool TryValidateRuntimeAllocationProbes(out string status)

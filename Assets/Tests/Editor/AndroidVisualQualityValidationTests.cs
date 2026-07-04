@@ -1,8 +1,11 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using System.IO;
+using System.Reflection;
 using Game.Configs;
+using Game.Runtime;
 using NUnit.Framework;
+using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,7 +17,7 @@ public sealed class AndroidVisualQualityValidationTests
     private const float BalancedMobileRenderScale = 0.50f;
     private const int BalancedMobileMsaa = 1;
     private const int BalancedMobileUpscalingFilter = 3;
-    private const float BalancedMobileFsrSharpness = 0.72f;
+    private const float BalancedMobileFsrSharpness = 0.45f;
     private const float BalancedMobileShadowDistance = 16f;
 
     public static void RunFocusedValidation()
@@ -24,6 +27,7 @@ public sealed class AndroidVisualQualityValidationTests
             int passed = 0;
             RunCase(() => MobileRenderPipelineUsesBalancedScaleAndMsaa(), ref passed);
             RunCase(() => VisualQualityProfileUsesBalancedAndroidMatchRendering(), ref passed);
+            RunCase(() => HighModeEnablesSmaaPostProcess(), ref passed);
             RunCase(() => MobileQualityTierUsesBalancedMsaaAndShadows(), ref passed);
             Debug.Log($"[AndroidVisualQualityValidation] result=Passed tests={passed}");
         }
@@ -73,6 +77,10 @@ public sealed class AndroidVisualQualityValidationTests
             AssetDatabase.LoadAssetAtPath<VisualQualityProfileAsset>(VisualQualityProfilePath);
         Assert.NotNull(profile, $"Missing visual quality profile at {VisualQualityProfilePath}.");
 
+        SerializedObject serializedProfile = new(profile);
+        SerializedProperty cameraAntialiasingMode = serializedProfile.FindProperty("cameraAntialiasingMode");
+        Assert.NotNull(cameraAntialiasingMode, "Visual quality profile is missing serialized cameraAntialiasingMode.");
+
         Assert.GreaterOrEqual(
             profile.LowRenderScaleOverride,
             MinimumLowRenderScale,
@@ -81,10 +89,65 @@ public sealed class AndroidVisualQualityValidationTests
             profile.MediumRenderScaleOverride,
             Is.EqualTo(BalancedMobileRenderScale).Within(0.001f),
             "Match High mode uses the balanced mobile render scale on Android.");
+        Assert.AreEqual(
+            2,
+            cameraAntialiasingMode.intValue,
+            "Match High mode should use SMAA to reduce jagged world edges without increasing Android render scale.");
         Assert.GreaterOrEqual(
             profile.CameraRenderScaleOverride,
             BalancedMobileRenderScale,
             "Ultra camera render scale must not undersample the match world.");
+    }
+
+    [Test]
+    public static void HighModeEnablesSmaaPostProcess()
+    {
+        VisualQualityProfileAsset profile = ScriptableObject.CreateInstance<VisualQualityProfileAsset>();
+        GameObject cameraObject = new("AndroidVisualQualityCamera", typeof(Camera));
+        World world = null;
+
+        try
+        {
+            SerializedObject serializedProfile = new(profile);
+            serializedProfile.FindProperty("runtimeMode").intValue = (int)VisualQualityRuntimeMode.High;
+            serializedProfile.FindProperty("cameraAntialiasingMode").intValue = 2;
+            serializedProfile.ApplyModifiedPropertiesWithoutUndo();
+
+            Type cameraDataType = Type.GetType(
+                "UnityEngine.Rendering.Universal.UniversalAdditionalCameraData, Unity.RenderPipelines.Universal.Runtime");
+            Assert.NotNull(cameraDataType, "URP camera data type must be available for Android visual quality validation.");
+
+            Component cameraData = cameraObject.AddComponent(cameraDataType);
+            PropertyInfo renderPostProcessing = cameraDataType.GetProperty("renderPostProcessing", BindingFlags.Instance | BindingFlags.Public);
+            PropertyInfo antialiasing = cameraDataType.GetProperty("antialiasing", BindingFlags.Instance | BindingFlags.Public);
+            Assert.NotNull(renderPostProcessing, "URP camera data is missing renderPostProcessing.");
+            Assert.NotNull(antialiasing, "URP camera data is missing antialiasing.");
+
+            renderPostProcessing.SetValue(cameraData, false);
+            antialiasing.SetValue(cameraData, Enum.ToObject(antialiasing.PropertyType, 0));
+
+            world = new World("AndroidVisualQualityValidationWorld");
+            VisualQualitySettingsSystem system = world.GetOrCreateSystemManaged<VisualQualitySettingsSystem>();
+            MethodInfo initialize = typeof(VisualQualitySettingsSystem).GetMethod(
+                "Initialize",
+                BindingFlags.Instance | BindingFlags.Public);
+            Assert.NotNull(initialize, "VisualQualitySettingsSystem is missing Initialize.");
+            initialize.Invoke(system, new object[] { profile, cameraObject.GetComponent<Camera>(), null, null });
+
+            Assert.True(
+                (bool)renderPostProcessing.GetValue(cameraData),
+                "Match High mode must enable camera post processing so SMAA can run.");
+            Assert.AreEqual(
+                2,
+                Convert.ToInt32(antialiasing.GetValue(cameraData)),
+                "Match High mode must apply SMAA to reduce jagged Android edges.");
+        }
+        finally
+        {
+            world?.Dispose();
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+            UnityEngine.Object.DestroyImmediate(profile);
+        }
     }
 
     [Test]

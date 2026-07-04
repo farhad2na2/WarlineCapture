@@ -21,6 +21,7 @@ namespace Game.Runtime
         private Volume _globalVolume;
         private RenderPipelineAsset _originalRenderPipeline;
         private VolumeProfile _originalVolumeProfile;
+        private float _originalVolumeWeight;
         private Color _originalSunColor;
         private float _originalSunIntensity;
         private float _originalSunShadowStrength;
@@ -72,6 +73,7 @@ namespace Game.Runtime
             _globalVolume = globalVolume;
             _originalRenderPipeline = QualitySettings.renderPipeline;
             _originalVolumeProfile = globalVolume != null ? globalVolume.sharedProfile : null;
+            _originalVolumeWeight = globalVolume != null ? globalVolume.weight : 0f;
             _originalAmbientMode = RenderSettings.ambientMode;
             _originalAmbientSkyColor = RenderSettings.ambientSkyColor;
             _originalAmbientEquatorColor = RenderSettings.ambientEquatorColor;
@@ -221,7 +223,10 @@ namespace Game.Runtime
             }
 
             if (_globalVolume != null)
+            {
                 _globalVolume.sharedProfile = _originalVolumeProfile;
+                _globalVolume.weight = 0f;
+            }
 
             if (_worldCamera != null && _worldCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
             {
@@ -241,7 +246,10 @@ namespace Game.Runtime
             }
 
             if (_globalVolume != null)
+            {
                 _globalVolume.sharedProfile = _originalVolumeProfile;
+                _globalVolume.weight = 0f;
+            }
 
             if (_worldCamera != null && _worldCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
             {
@@ -261,11 +269,14 @@ namespace Game.Runtime
             }
 
             if (_globalVolume != null)
+            {
                 _globalVolume.sharedProfile = _originalVolumeProfile;
+                _globalVolume.weight = 0f;
+            }
 
             if (_worldCamera != null && _worldCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
             {
-                cameraData.renderPostProcessing = false;
+                cameraData.renderPostProcessing = _premiumProfile.CameraAntialiasingMode != AntialiasingMode.None;
                 cameraData.antialiasing = _premiumProfile.CameraAntialiasingMode;
             }
 
@@ -343,7 +354,10 @@ namespace Game.Runtime
             Shader.SetGlobalFloat(GroundVariationDisabledId, 0f);
 
             if (_globalVolume != null)
+            {
                 _globalVolume.sharedProfile = _originalVolumeProfile;
+                _globalVolume.weight = _originalVolumeWeight;
+            }
 
             if (_hasOriginalSunData && _directionalLight != null)
             {

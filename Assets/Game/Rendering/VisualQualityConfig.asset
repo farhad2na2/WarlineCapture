@@ -20,7 +20,7 @@ MonoBehaviour:
   lowRenderScaleOverride: 0.5
   mediumRenderScaleOverride: 0.5
   enableCameraPostProcessing: 1
-  cameraAntialiasingMode: 1
+  cameraAntialiasingMode: 2
   cameraRenderScaleOverride: 1
   lowSunShadowStrength: 0.25
   mediumSunShadowStrength: 0.55

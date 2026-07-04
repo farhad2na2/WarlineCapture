@@ -2,6 +2,7 @@ using Game.Components;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
+using Unity.Entities;
 using UnityEngine;
 
 public sealed class BuildingResourceProductionEcsSystemTests
@@ -14,9 +15,10 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.ApplyTick_ExtractsOilUpToCapacity();
             tests.ApplyTick_ConvertsOilIntoFuel();
             tests.ApplyTick_DoesNotConvertOilWhenFuelStorageIsFull();
+            tests.UpdateResourceProduction_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale();
             tests.ProductionRuntimeTick_SyncsResourceStorageMirrorAfterProductionUpdate();
             tests.ProductionRuntimeTick_SyncsResourceStorageMirrorAfterHaulerUpdate();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=5");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=6");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -84,6 +86,59 @@ public sealed class BuildingResourceProductionEcsSystemTests
         Assert.AreEqual(6f, storage.StoredFuelBarrels);
         Assert.AreEqual(0f, result.OilExtractedBarrels);
         Assert.AreEqual(0f, result.FuelProducedBarrels);
+    }
+
+    [Test]
+    public void UpdateResourceProduction_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale()
+    {
+        var world = new World(nameof(UpdateResourceProduction_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale));
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            Entity entity = entityManager.CreateEntity(typeof(BuildingResourceStorageComponent));
+            entityManager.SetComponentData(entity, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 21,
+                OilStorageCapacity = 20,
+                OilBarrelsPerDay = 20f,
+                StoredOilBarrels = 9f
+            });
+
+            var building = new RuntimeBuildingEntity
+            {
+                Id = 21,
+                Definition = new BuildingDefinition
+                {
+                    OilStorageCapacity = 20,
+                    OilBarrelsPerDay = 20f
+                },
+                CombatEntity = entity,
+                StoredOilBarrels = 2f
+            };
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { building.Id, building }
+            };
+
+            FactionResourceCompositionSystemHelper.ResourceProductionTickResult result =
+                new FactionResourceCompositionSystemHelper().UpdateResourceProduction(
+                    entityManager,
+                    runtimeBuildings,
+                    10f,
+                    1f,
+                    2f);
+
+            BuildingResourceStorageComponent storage =
+                entityManager.GetComponentData<BuildingResourceStorageComponent>(entity);
+            Assert.AreEqual(11f, storage.StoredOilBarrels);
+            Assert.AreEqual(11f, building.StoredOilBarrels);
+            Assert.AreEqual(2f, result.OilExtractedBarrels);
+            Assert.AreEqual(0f, result.FuelProducedBarrels);
+        }
+        finally
+        {
+            world.Dispose();
+        }
     }
 
     [Test]

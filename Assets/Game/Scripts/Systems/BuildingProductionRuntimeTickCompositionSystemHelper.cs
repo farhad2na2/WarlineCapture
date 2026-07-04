@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
 namespace Game.Runtime
 {
     internal sealed class BuildingProductionRuntimeTickCompositionSystemHelper
     {
+        public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
+
         public readonly struct Context
         {
             public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
@@ -24,6 +27,7 @@ namespace Game.Runtime
             public readonly Action<RuntimeBuildingEntity> SyncResourceStorage;
             public readonly Func<bool> HasPendingPathJob;
             public readonly float OilBarrelsPerFuelBarrel;
+            public readonly TryGetEntityManagerDelegate TryGetEntityManager;
 
             public Context(
                 IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -40,7 +44,8 @@ namespace Game.Runtime
                 Action<float> recordFuelProduced,
                 Func<bool> hasPendingPathJob,
                 float oilBarrelsPerFuelBarrel,
-                Action<RuntimeBuildingEntity> syncResourceStorage = null)
+                Action<RuntimeBuildingEntity> syncResourceStorage = null,
+                TryGetEntityManagerDelegate tryGetEntityManager = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 RuntimeBuildingMap = runtimeBuildings as Dictionary<int, RuntimeBuildingEntity>;
@@ -58,6 +63,7 @@ namespace Game.Runtime
                 SyncResourceStorage = syncResourceStorage;
                 HasPendingPathJob = hasPendingPathJob;
                 OilBarrelsPerFuelBarrel = oilBarrelsPerFuelBarrel;
+                TryGetEntityManager = tryGetEntityManager;
             }
         }
 
@@ -100,17 +106,42 @@ namespace Game.Runtime
                 ? Mathf.Max(1f, context.DayNightSystem.FullDayDurationMinutes * 60f)
                 : 300f;
 
-            FactionResourceCompositionSystemHelper.ResourceProductionTickResult result = context.RuntimeBuildingMap != null
-                ? context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
+            EntityManager entityManager = default;
+            bool hasEntityManager = context.TryGetEntityManager != null &&
+                                    context.TryGetEntityManager(out entityManager);
+            FactionResourceCompositionSystemHelper.ResourceProductionTickResult result;
+            if (hasEntityManager && context.RuntimeBuildingMap != null)
+            {
+                result = context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
+                    entityManager,
                     context.RuntimeBuildingMap,
                     secondsPerDay,
                     UnityEngine.Time.deltaTime,
-                    context.OilBarrelsPerFuelBarrel)
-                : context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
+                    context.OilBarrelsPerFuelBarrel);
+            }
+            else if (hasEntityManager)
+            {
+                result = context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
+                    entityManager,
                     context.RuntimeBuildings,
                     secondsPerDay,
                     UnityEngine.Time.deltaTime,
                     context.OilBarrelsPerFuelBarrel);
+            }
+            else
+            {
+                result = context.RuntimeBuildingMap != null
+                    ? context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
+                        context.RuntimeBuildingMap,
+                        secondsPerDay,
+                        UnityEngine.Time.deltaTime,
+                        context.OilBarrelsPerFuelBarrel)
+                    : context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
+                        context.RuntimeBuildings,
+                        secondsPerDay,
+                        UnityEngine.Time.deltaTime,
+                        context.OilBarrelsPerFuelBarrel);
+            }
             if (result.OilExtractedBarrels > 0f)
                 context.RecordOilExtracted?.Invoke(result.OilExtractedBarrels);
             if (result.FuelProducedBarrels > 0f)

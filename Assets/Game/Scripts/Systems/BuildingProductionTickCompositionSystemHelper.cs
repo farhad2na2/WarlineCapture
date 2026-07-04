@@ -27,7 +27,8 @@ namespace Game.Runtime
                 GameRuntimeStats.RecordFuelProduced,
                 source.UnitPathfindingPendingStateReader.HasPendingPathJob,
                 oilBarrelsPerFuelBarrel,
-                building => SyncBuildingResourceStorage(source, building));
+                building => SyncBuildingResourceStorage(source, building),
+                source.BuildingEntityManagerAccessSystem.TryGetEntityManager);
         }
 
         private static void SyncBuildingResourceStorage(

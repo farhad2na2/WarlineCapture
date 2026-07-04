@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Game.Components;
+using Unity.Entities;
 using UnityEngine;
 
 namespace Game.Runtime
@@ -260,6 +261,51 @@ namespace Game.Runtime
             return new ResourceProductionTickResult(oilExtracted, fuelProduced);
         }
 
+        internal ResourceProductionTickResult UpdateResourceProduction(
+            EntityManager entityManager,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> buildings,
+            float secondsPerDay,
+            float deltaTime,
+            float oilBarrelsPerFuelBarrel)
+        {
+            if (buildings == null || buildings.Count == 0)
+                return new ResourceProductionTickResult(0f, 0f);
+
+            secondsPerDay = Mathf.Max(1f, secondsPerDay);
+            deltaTime = Mathf.Max(0f, deltaTime);
+            oilBarrelsPerFuelBarrel = Mathf.Max(0.001f, oilBarrelsPerFuelBarrel);
+
+            float oilExtracted = 0f;
+            float fuelProduced = 0f;
+
+            if (buildings is Dictionary<int, RuntimeBuildingEntity> buildingMap)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in buildingMap)
+                    UpdateRuntimeBuildingResourceProduction(
+                        entityManager,
+                        pair.Value,
+                        secondsPerDay,
+                        deltaTime,
+                        oilBarrelsPerFuelBarrel,
+                        ref oilExtracted,
+                        ref fuelProduced);
+            }
+            else
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in buildings)
+                    UpdateRuntimeBuildingResourceProduction(
+                        entityManager,
+                        pair.Value,
+                        secondsPerDay,
+                        deltaTime,
+                        oilBarrelsPerFuelBarrel,
+                        ref oilExtracted,
+                        ref fuelProduced);
+            }
+
+            return new ResourceProductionTickResult(oilExtracted, fuelProduced);
+        }
+
         private void AddResourceTotals<TBuilding>(TBuilding building, ref int oilBarrels, ref int fuelBarrels)
             where TBuilding : class, IResourceBuilding
         {
@@ -347,6 +393,91 @@ namespace Game.Runtime
             building.StoredFuelBarrels = storage.StoredFuelBarrels;
             oilExtracted += result.OilExtractedBarrels;
             fuelProduced += result.FuelProducedBarrels;
+        }
+
+        private static void UpdateRuntimeBuildingResourceProduction(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building,
+            float secondsPerDay,
+            float deltaTime,
+            float oilBarrelsPerFuelBarrel,
+            ref float oilExtracted,
+            ref float fuelProduced)
+        {
+            if (building == null || building.IsDestroyed)
+                return;
+
+            if (!TryGetEntityResourceStorage(entityManager, building, out BuildingResourceStorageComponent storage))
+            {
+                UpdateResourceProductionForBuilding(
+                    building,
+                    secondsPerDay,
+                    deltaTime,
+                    oilBarrelsPerFuelBarrel,
+                    ref oilExtracted,
+                    ref fuelProduced);
+                return;
+            }
+
+            BuildingResourceProductionEcsSystem.TickResult result = BuildingResourceProductionEcsSystem.ApplyTick(
+                ref storage,
+                secondsPerDay,
+                deltaTime,
+                oilBarrelsPerFuelBarrel);
+
+            CommitEntityResourceStorage(entityManager, building, storage);
+            oilExtracted += result.OilExtractedBarrels;
+            fuelProduced += result.FuelProducedBarrels;
+        }
+
+        private static bool TryGetEntityResourceStorage(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building,
+            out BuildingResourceStorageComponent storage)
+        {
+            storage = default;
+            if (building == null ||
+                building.CombatEntity == Entity.Null ||
+                !entityManager.Exists(building.CombatEntity) ||
+                !entityManager.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
+            {
+                return false;
+            }
+
+            storage = entityManager.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
+            SyncResourceStorageMetadata(building, ref storage);
+            return true;
+        }
+
+        private static void CommitEntityResourceStorage(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building,
+            in BuildingResourceStorageComponent storage)
+        {
+            if (building == null)
+                return;
+
+            if (building.CombatEntity != Entity.Null &&
+                entityManager.Exists(building.CombatEntity) &&
+                entityManager.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
+            {
+                entityManager.SetComponentData(building.CombatEntity, storage);
+            }
+
+            building.StoredOilBarrels = storage.StoredOilBarrels;
+            building.StoredFuelBarrels = storage.StoredFuelBarrels;
+        }
+
+        private static void SyncResourceStorageMetadata(
+            RuntimeBuildingEntity building,
+            ref BuildingResourceStorageComponent storage)
+        {
+            storage.RuntimeBuildingId = building.Id;
+            storage.OwnerFactionId = building.OwnerFactionId;
+            storage.OilStorageCapacity = Mathf.Max(0, building.OilStorageCapacity);
+            storage.FuelStorageCapacity = Mathf.Max(0, building.FuelStorageCapacity);
+            storage.OilBarrelsPerDay = Mathf.Max(0f, building.OilBarrelsPerDay);
+            storage.FuelBarrelsPerDay = Mathf.Max(0f, building.FuelBarrelsPerDay);
         }
 
         public bool IsResourceStorageBuilding(IResourceBuilding building)

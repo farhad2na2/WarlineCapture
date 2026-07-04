@@ -24,8 +24,9 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
             RunCase(test => test.RefreshAppliesHologramCompatibleMarkerColorProperties());
             RunCase(test => test.RefreshKeepsMapAuthoredMarkerRenderableBoundsAboveSurface());
             RunCase(test => test.RuntimeVisualInitializationCachesBuildingRenderersWithoutMarkerChildren());
+            RunCase(test => test.RuntimeResourceVisualsPreferEcsStorageForProductionState());
             RunCase(test => test.RefreshCreatesMeshBoundObjectOutlineForSelectedBuilding());
-            Debug.Log("[BuildingSelectionMarkerFocusedValidation] result=Passed tests=6");
+            Debug.Log("[BuildingSelectionMarkerFocusedValidation] result=Passed tests=7");
         }
         catch (System.Exception ex)
         {
@@ -218,6 +219,63 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
         Assert.IsNotNull(building.FactionVisualRenderers);
         Assert.AreEqual(1, building.FactionVisualRenderers.Length);
         Assert.AreSame(model.GetComponent<Renderer>(), building.FactionVisualRenderers[0]);
+    }
+
+    [Test]
+    public void RuntimeResourceVisualsPreferEcsStorageForProductionState()
+    {
+        GameObject buildingObject = new("RuntimeResourceVisual");
+        _objects.Add(buildingObject);
+        GameObject modelRoot = new("ModelRoot");
+        modelRoot.transform.SetParent(buildingObject.transform, false);
+        GameObject animated = new("Pump_Y_30");
+        animated.transform.SetParent(modelRoot.transform, false);
+
+        BuildingVisualSystem buildingVisualSystem = CreateBuildingVisualSystem();
+        EntityManager entityManager = _world.EntityManager;
+        Entity storageEntity = entityManager.CreateEntity(typeof(BuildingResourceStorageComponent));
+        entityManager.SetComponentData(storageEntity, new BuildingResourceStorageComponent
+        {
+            OilStorageCapacity = 10,
+            OilBarrelsPerDay = 2f,
+            StoredOilBarrels = 5f
+        });
+
+        var building = new RuntimeBuildingEntity
+        {
+            Id = 2,
+            Instance = buildingObject,
+            Definition = new BuildingDefinition
+            {
+                FootprintCells = new Vector2Int(2, 2),
+                OilStorageCapacity = 10,
+                OilBarrelsPerDay = 2f
+            },
+            CombatEntity = storageEntity,
+            StoredOilBarrels = 10f
+        };
+        building.AnimatedParts = buildingVisualSystem.FindAnimatedBuildingParts(modelRoot.transform);
+        var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity> { { building.Id, building } };
+        var context = new BuildingRuntimeVisualPresentationSystemHelper.Context(
+            runtimeBuildings,
+            buildingVisualSystem,
+            CreateBuildingFactionVisualSystem(),
+            new BuildingBarrierUtilitySystemHelper(),
+            null,
+            new MaterialPropertyBlock(),
+            0.2f,
+            TryGetEntityManager);
+
+        BuildingRuntimeVisualPresentationSystemHelper visualSystem = CreateBuildingRuntimeVisualPresentationSystemHelper();
+        visualSystem.UpdateBuildingResourceVisuals(context, 1f);
+
+        Assert.Greater(Mathf.Abs(Mathf.DeltaAngle(0f, animated.transform.localEulerAngles.y)), 0.01f);
+
+        bool TryGetEntityManager(out EntityManager em)
+        {
+            em = entityManager;
+            return true;
+        }
     }
 
     [Test]

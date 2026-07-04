@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Entities;
+using Game.Components;
 using Game.Rendering;
 
 namespace Game.Runtime
@@ -19,6 +21,7 @@ namespace Game.Runtime
             public readonly FactionVisualSettings FactionVisualSettings;
             public readonly MaterialPropertyBlock MarkerPropertyBlock;
             public readonly float FactionTintStrength;
+            public readonly BuildingRuntimeEntityCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
 
             public Context(
                 IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -27,7 +30,8 @@ namespace Game.Runtime
                 BuildingBarrierUtilitySystemHelper barrierSystem,
                 FactionVisualSettings factionVisualSettings,
                 MaterialPropertyBlock markerPropertyBlock,
-                float factionTintStrength)
+                float factionTintStrength,
+                BuildingRuntimeEntityCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 RuntimeBuildingMap = runtimeBuildings as Dictionary<int, RuntimeBuildingEntity>;
@@ -37,6 +41,7 @@ namespace Game.Runtime
                 FactionVisualSettings = factionVisualSettings;
                 MarkerPropertyBlock = markerPropertyBlock;
                 FactionTintStrength = Mathf.Clamp01(factionTintStrength);
+                TryGetEntityManager = tryGetEntityManager;
             }
         }
 
@@ -108,14 +113,41 @@ namespace Game.Runtime
             if (building == null || building.IsDestroyed || building.AnimatedParts == null || building.AnimatedParts.Length == 0 || building.Definition == null)
                 return;
 
+            float storedOilBarrels = Mathf.Max(0f, building.StoredOilBarrels);
+            float storedFuelBarrels = Mathf.Max(0f, building.StoredFuelBarrels);
+            if (TryGetResourceStorage(context, building, out BuildingResourceStorageComponent storage))
+            {
+                storedOilBarrels = Mathf.Max(0f, storage.StoredOilBarrels);
+                storedFuelBarrels = Mathf.Max(0f, storage.StoredFuelBarrels);
+            }
+
             bool isProducingOil = building.Definition.OilStorageCapacity > 0 &&
                                   building.Definition.OilBarrelsPerDay > 0f &&
-                                  building.StoredOilBarrels < building.Definition.OilStorageCapacity;
+                                  storedOilBarrels < building.Definition.OilStorageCapacity;
             bool isProducingFuel = building.Definition.FuelStorageCapacity > 0 &&
                                    building.Definition.FuelBarrelsPerDay > 0f &&
-                                   building.StoredOilBarrels > 0f &&
-                                   building.StoredFuelBarrels < building.Definition.FuelStorageCapacity;
+                                   storedOilBarrels > 0f &&
+                                   storedFuelBarrels < building.Definition.FuelStorageCapacity;
             context.VisualSystem.UpdateAnimatedBuildingParts(building.AnimatedParts, isProducingOil || isProducingFuel, time);
+        }
+
+        private static bool TryGetResourceStorage(
+            Context context,
+            RuntimeBuildingEntity building,
+            out BuildingResourceStorageComponent storage)
+        {
+            storage = default;
+            if (building.CombatEntity == Entity.Null ||
+                context.TryGetEntityManager == null ||
+                !context.TryGetEntityManager(out EntityManager entityManager) ||
+                !entityManager.Exists(building.CombatEntity) ||
+                !entityManager.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
+            {
+                return false;
+            }
+
+            storage = entityManager.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
+            return true;
         }
 
         public void RefreshBuildingMarkerVisibility(Context context)

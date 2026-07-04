@@ -387,7 +387,8 @@ namespace Game.Runtime
                 source.BarrierSystem,
                 source.FactionVisualSettings,
                 source.MarkerPropertyBlock,
-                source.BuildingFactionTintStrength);
+                source.BuildingFactionTintStrength,
+                source.TryGetEntityManager);
         }
 
         public BuildingSelectionMarkerPresentationSystemHelper.Context CreateSelectionMarkerContext(

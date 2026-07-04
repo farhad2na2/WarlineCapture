@@ -79,7 +79,145 @@ namespace Game.Runtime
             }
         }
 
+        public readonly struct EditorProductionTransportAllocationProbeSnapshot
+        {
+            public readonly long UpdateBytes;
+            public readonly int UpdateAllocationSamples;
+            public readonly int UpdateCalls;
+            public readonly int ActiveUpdateCalls;
+            public readonly long AcquireBytes;
+            public readonly int AcquireAllocationSamples;
+            public readonly int AcquireCalls;
+            public readonly int PooledAcquireHits;
+            public readonly int CreatedAcquireInstances;
+            public readonly long CreateBytes;
+            public readonly int CreateAllocationSamples;
+            public readonly int CreateCalls;
+            public readonly long DropVisualAcquireBytes;
+            public readonly int DropVisualAcquireAllocationSamples;
+            public readonly int DropVisualAcquireCalls;
+            public readonly int PooledDropVisualAcquireHits;
+            public readonly int CreatedDropVisualInstances;
+            public readonly long DropVisualCreateBytes;
+            public readonly int DropVisualCreateAllocationSamples;
+            public readonly int DropVisualCreateCalls;
+
+            private EditorProductionTransportAllocationProbeSnapshot(EditorProductionTransportAllocationProbeCounter counter)
+            {
+                UpdateBytes = counter.UpdateBytes;
+                UpdateAllocationSamples = counter.UpdateAllocationSamples;
+                UpdateCalls = counter.UpdateCalls;
+                ActiveUpdateCalls = counter.ActiveUpdateCalls;
+                AcquireBytes = counter.AcquireBytes;
+                AcquireAllocationSamples = counter.AcquireAllocationSamples;
+                AcquireCalls = counter.AcquireCalls;
+                PooledAcquireHits = counter.PooledAcquireHits;
+                CreatedAcquireInstances = counter.CreatedAcquireInstances;
+                CreateBytes = counter.CreateBytes;
+                CreateAllocationSamples = counter.CreateAllocationSamples;
+                CreateCalls = counter.CreateCalls;
+                DropVisualAcquireBytes = counter.DropVisualAcquireBytes;
+                DropVisualAcquireAllocationSamples = counter.DropVisualAcquireAllocationSamples;
+                DropVisualAcquireCalls = counter.DropVisualAcquireCalls;
+                PooledDropVisualAcquireHits = counter.PooledDropVisualAcquireHits;
+                CreatedDropVisualInstances = counter.CreatedDropVisualInstances;
+                DropVisualCreateBytes = counter.DropVisualCreateBytes;
+                DropVisualCreateAllocationSamples = counter.DropVisualCreateAllocationSamples;
+                DropVisualCreateCalls = counter.DropVisualCreateCalls;
+            }
+
+            public static EditorProductionTransportAllocationProbeSnapshot Create(EditorProductionTransportAllocationProbeCounter counter)
+            {
+                return new EditorProductionTransportAllocationProbeSnapshot(counter);
+            }
+        }
+
+        public struct EditorProductionTransportAllocationProbeCounter
+        {
+            public long UpdateBytes;
+            public int UpdateAllocationSamples;
+            public int UpdateCalls;
+            public int ActiveUpdateCalls;
+            public long AcquireBytes;
+            public int AcquireAllocationSamples;
+            public int AcquireCalls;
+            public int PooledAcquireHits;
+            public int CreatedAcquireInstances;
+            public long CreateBytes;
+            public int CreateAllocationSamples;
+            public int CreateCalls;
+            public long DropVisualAcquireBytes;
+            public int DropVisualAcquireAllocationSamples;
+            public int DropVisualAcquireCalls;
+            public int PooledDropVisualAcquireHits;
+            public int CreatedDropVisualInstances;
+            public long DropVisualCreateBytes;
+            public int DropVisualCreateAllocationSamples;
+            public int DropVisualCreateCalls;
+
+            public void AddUpdate(long allocatedBytes, bool hasActiveTransport)
+            {
+                UpdateCalls++;
+                if (hasActiveTransport)
+                    ActiveUpdateCalls++;
+                if (allocatedBytes <= 0)
+                    return;
+
+                UpdateBytes += allocatedBytes;
+                UpdateAllocationSamples++;
+            }
+
+            public void AddAcquire(long allocatedBytes, bool pooled, bool created)
+            {
+                AcquireCalls++;
+                if (pooled)
+                    PooledAcquireHits++;
+                if (created)
+                    CreatedAcquireInstances++;
+                if (allocatedBytes <= 0)
+                    return;
+
+                AcquireBytes += allocatedBytes;
+                AcquireAllocationSamples++;
+            }
+
+            public void AddCreate(long allocatedBytes)
+            {
+                CreateCalls++;
+                if (allocatedBytes <= 0)
+                    return;
+
+                CreateBytes += allocatedBytes;
+                CreateAllocationSamples++;
+            }
+
+            public void AddDropVisualAcquire(long allocatedBytes, bool pooled, bool created)
+            {
+                DropVisualAcquireCalls++;
+                if (pooled)
+                    PooledDropVisualAcquireHits++;
+                if (created)
+                    CreatedDropVisualInstances++;
+                if (allocatedBytes <= 0)
+                    return;
+
+                DropVisualAcquireBytes += allocatedBytes;
+                DropVisualAcquireAllocationSamples++;
+            }
+
+            public void AddDropVisualCreate(long allocatedBytes)
+            {
+                DropVisualCreateCalls++;
+                if (allocatedBytes <= 0)
+                    return;
+
+                DropVisualCreateBytes += allocatedBytes;
+                DropVisualCreateAllocationSamples++;
+            }
+        }
+
         private static EditorBuildingVisualAllocationProbeCounter editorBuildingVisualAllocationProbe;
+        private static EditorProductionTransportAllocationProbeCounter editorProductionTransportAllocationProbe;
 #endif
 
         public bool VerboseAILogs
@@ -134,6 +272,11 @@ namespace Game.Runtime
             editorBuildingVisualAllocationProbe = default;
         }
 
+        public static void ResetEditorProductionTransportAllocationProbe()
+        {
+            editorProductionTransportAllocationProbe = default;
+        }
+
         public static void RecordEditorBuildingVisualAllocation(
             long allocatedBytes,
             bool pooled,
@@ -149,9 +292,39 @@ namespace Game.Runtime
                 prefabInstantiateBytes);
         }
 
+        public static void RecordEditorProductionTransportUpdateAllocation(long allocatedBytes, bool hasActiveTransport)
+        {
+            editorProductionTransportAllocationProbe.AddUpdate(allocatedBytes, hasActiveTransport);
+        }
+
+        public static void RecordEditorProductionTransportAcquireAllocation(long allocatedBytes, bool pooled, bool created)
+        {
+            editorProductionTransportAllocationProbe.AddAcquire(allocatedBytes, pooled, created);
+        }
+
+        public static void RecordEditorProductionTransportCreateAllocation(long allocatedBytes)
+        {
+            editorProductionTransportAllocationProbe.AddCreate(allocatedBytes);
+        }
+
+        public static void RecordEditorProductionTransportDropVisualAcquireAllocation(long allocatedBytes, bool pooled, bool created)
+        {
+            editorProductionTransportAllocationProbe.AddDropVisualAcquire(allocatedBytes, pooled, created);
+        }
+
+        public static void RecordEditorProductionTransportDropVisualCreateAllocation(long allocatedBytes)
+        {
+            editorProductionTransportAllocationProbe.AddDropVisualCreate(allocatedBytes);
+        }
+
         public static EditorBuildingVisualAllocationProbeSnapshot GetEditorBuildingVisualAllocationProbe()
         {
             return EditorBuildingVisualAllocationProbeSnapshot.Create(editorBuildingVisualAllocationProbe);
+        }
+
+        public static EditorProductionTransportAllocationProbeSnapshot GetEditorProductionTransportAllocationProbe()
+        {
+            return EditorProductionTransportAllocationProbeSnapshot.Create(editorProductionTransportAllocationProbe);
         }
 #endif
 

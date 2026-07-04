@@ -97,6 +97,12 @@ namespace Game.Runtime
         {
             using (UpdateActiveProductionTransportsMarker.Auto())
             {
+#if UNITY_EDITOR
+                long allocationProbeStartBytes = System.GC.GetAllocatedBytesForCurrentThread();
+                bool allocationProbeHasActiveTransport = false;
+                try
+                {
+#endif
                 if (context.ProductionUpdateSystem == null)
                     return false;
 
@@ -107,7 +113,19 @@ namespace Game.Runtime
                     UnityEngine.Time.deltaTime,
                     ref randomState);
                 context.SetRandomState?.Invoke(randomState);
+#if UNITY_EDITOR
+                allocationProbeHasActiveTransport = hasActiveTransport;
+#endif
                 return hasActiveTransport;
+#if UNITY_EDITOR
+                }
+                finally
+                {
+                    RuntimeDiagnosticsSystem.RecordEditorProductionTransportUpdateAllocation(
+                        System.GC.GetAllocatedBytesForCurrentThread() - allocationProbeStartBytes,
+                        allocationProbeHasActiveTransport);
+                }
+#endif
             }
         }
 

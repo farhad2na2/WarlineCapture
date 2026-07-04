@@ -720,8 +720,20 @@ namespace Game.Runtime
             if (prefab == null)
                 return null;
 
+#if UNITY_EDITOR
+            long allocationProbeStartBytes = System.GC.GetAllocatedBytesForCurrentThread();
+            bool allocationProbePooled = false;
+            bool allocationProbeCreated = false;
+            try
+            {
+#endif
             Stack<GameObject> pool = GetTransportDropVisualPool(prefab);
-            GameObject visual = pool.Count > 0 ? pool.Pop() : CreateTransportDropVisual(prefab, prepareTransportDropVisual);
+            bool hasPooledVisual = pool.Count > 0;
+            GameObject visual = hasPooledVisual ? pool.Pop() : CreateTransportDropVisual(prefab, prepareTransportDropVisual);
+#if UNITY_EDITOR
+            allocationProbePooled = hasPooledVisual;
+            allocationProbeCreated = !hasPooledVisual;
+#endif
             Transform visualTransform = visual.transform;
             visualTransform.SetParent(EnsureRuntimeRoot(), false);
             visualTransform.localPosition = Vector3.zero;
@@ -729,12 +741,27 @@ namespace Game.Runtime
             visualTransform.localScale = Vector3.one;
             visual.SetActive(true);
             return visual;
+#if UNITY_EDITOR
+            }
+            finally
+            {
+                RuntimeDiagnosticsSystem.RecordEditorProductionTransportDropVisualAcquireAllocation(
+                    System.GC.GetAllocatedBytesForCurrentThread() - allocationProbeStartBytes,
+                    allocationProbePooled,
+                    allocationProbeCreated);
+            }
+#endif
         }
 
         private GameObject CreateTransportDropVisual(
             GameObject prefab,
             PrepareTransportDropVisualDelegate prepareTransportDropVisual)
         {
+#if UNITY_EDITOR
+            long allocationProbeStartBytes = System.GC.GetAllocatedBytesForCurrentThread();
+            try
+            {
+#endif
             Transform runtimeRoot = EnsureRuntimeRoot();
             GameObject visual = runtimeRoot != null
                 ? Instantiate(prefab, runtimeRoot, false)
@@ -745,6 +772,14 @@ namespace Game.Runtime
             prepareTransportDropVisual?.Invoke(visual);
             visual.SetActive(false);
             return visual;
+#if UNITY_EDITOR
+            }
+            finally
+            {
+                RuntimeDiagnosticsSystem.RecordEditorProductionTransportDropVisualCreateAllocation(
+                    System.GC.GetAllocatedBytesForCurrentThread() - allocationProbeStartBytes);
+            }
+#endif
         }
 
         private void ReturnTransportDropVisual(GameObject prefab, GameObject visual)
@@ -1608,13 +1643,35 @@ namespace Game.Runtime
 
         private GameObject AcquireProductionTransportInstance(GameObject prefab, BuildingVisualSystem visualSystem)
         {
+#if UNITY_EDITOR
+            long allocationProbeStartBytes = System.GC.GetAllocatedBytesForCurrentThread();
+            bool allocationProbePooled = false;
+            bool allocationProbeCreated = false;
+            try
+            {
+#endif
             Stack<GameObject> pool = GetProductionTransportPool(prefab);
-            GameObject instance = pool.Count > 0
+            bool hasPooledInstance = pool.Count > 0;
+            GameObject instance = hasPooledInstance
                 ? pool.Pop()
                 : CreateProductionTransportInstance(prefab, visualSystem);
+#if UNITY_EDITOR
+            allocationProbePooled = hasPooledInstance;
+            allocationProbeCreated = !hasPooledInstance;
+#endif
 
             instance.SetActive(true);
             return instance;
+#if UNITY_EDITOR
+            }
+            finally
+            {
+                RuntimeDiagnosticsSystem.RecordEditorProductionTransportAcquireAllocation(
+                    System.GC.GetAllocatedBytesForCurrentThread() - allocationProbeStartBytes,
+                    allocationProbePooled,
+                    allocationProbeCreated);
+            }
+#endif
         }
 
         private void ReturnProductionTransportInstance(GameObject prefab, GameObject instance)
@@ -1632,6 +1689,11 @@ namespace Game.Runtime
 
         private GameObject CreateProductionTransportInstance(GameObject prefab, BuildingVisualSystem visualSystem)
         {
+#if UNITY_EDITOR
+            long allocationProbeStartBytes = System.GC.GetAllocatedBytesForCurrentThread();
+            try
+            {
+#endif
             Transform runtimeRoot = EnsureRuntimeRoot();
             GameObject instance = runtimeRoot != null
                 ? Instantiate(prefab, runtimeRoot, false)
@@ -1640,6 +1702,14 @@ namespace Game.Runtime
             CacheProductionTransportInstanceMetadata(instance, visualSystem);
             instance.SetActive(false);
             return instance;
+#if UNITY_EDITOR
+            }
+            finally
+            {
+                RuntimeDiagnosticsSystem.RecordEditorProductionTransportCreateAllocation(
+                    System.GC.GetAllocatedBytesForCurrentThread() - allocationProbeStartBytes);
+            }
+#endif
         }
 
         private Transform EnsureRuntimeRoot()

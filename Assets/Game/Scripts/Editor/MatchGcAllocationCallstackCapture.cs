@@ -594,6 +594,7 @@ namespace Game.Editor
             MenuBootstrapView.ResetEditorAllocationProbe();
             SelectionRuntimeDiagnosticsSystemHelper.ResetEditorSelectionAllocationProbe();
             RuntimeDiagnosticsSystem.ResetEditorBuildingVisualAllocationProbe();
+            RuntimeDiagnosticsSystem.ResetEditorProductionTransportAllocationProbe();
         }
 
         private static void AppendRuntimeAllocationProbeSummary(StringBuilder builder)
@@ -610,6 +611,8 @@ namespace Game.Editor
                 SelectionRuntimeDiagnosticsSystemHelper.GetEditorSelectionAllocationProbe();
             RuntimeDiagnosticsSystem.EditorBuildingVisualAllocationProbeSnapshot buildingVisualProbe =
                 RuntimeDiagnosticsSystem.GetEditorBuildingVisualAllocationProbe();
+            RuntimeDiagnosticsSystem.EditorProductionTransportAllocationProbeSnapshot productionTransportProbe =
+                RuntimeDiagnosticsSystem.GetEditorProductionTransportAllocationProbe();
             builder.AppendLine("- Runtime allocation probe:");
             builder.Append("  - `UIShellEcsPresentationSystem.Update`: ")
                 .Append(shellBytes)
@@ -691,6 +694,47 @@ namespace Game.Editor
                 .Append(" / ")
                 .Append(buildingVisualProbe.PrefabInstantiateAllocationSamples)
                 .AppendLine(" allocating prefab instantiates. Diagnostic only; not a gate yet.");
+            builder.Append("  - `BuildingProductionRuntimeTick.UpdateActiveProductionTransports`: ")
+                .Append(productionTransportProbe.UpdateBytes)
+                .Append(" bytes / ")
+                .Append(productionTransportProbe.UpdateAllocationSamples)
+                .Append(" allocating updates / ")
+                .Append(productionTransportProbe.UpdateCalls)
+                .Append(" total updates. activeUpdates=")
+                .Append(productionTransportProbe.ActiveUpdateCalls)
+                .Append(", acquireBytes=")
+                .Append(productionTransportProbe.AcquireBytes)
+                .Append(" / ")
+                .Append(productionTransportProbe.AcquireAllocationSamples)
+                .Append(" allocating acquire calls, acquireCalls=")
+                .Append(productionTransportProbe.AcquireCalls)
+                .Append(", pooledHits=")
+                .Append(productionTransportProbe.PooledAcquireHits)
+                .Append(", createdInstances=")
+                .Append(productionTransportProbe.CreatedAcquireInstances)
+                .Append(", createBytes=")
+                .Append(productionTransportProbe.CreateBytes)
+                .Append(" / ")
+                .Append(productionTransportProbe.CreateAllocationSamples)
+                .Append(" allocating create calls, createCalls=")
+                .Append(productionTransportProbe.CreateCalls)
+                .Append(", dropVisualAcquireBytes=")
+                .Append(productionTransportProbe.DropVisualAcquireBytes)
+                .Append(" / ")
+                .Append(productionTransportProbe.DropVisualAcquireAllocationSamples)
+                .Append(" allocating drop-visual acquire calls, dropVisualAcquireCalls=")
+                .Append(productionTransportProbe.DropVisualAcquireCalls)
+                .Append(", pooledDropVisualHits=")
+                .Append(productionTransportProbe.PooledDropVisualAcquireHits)
+                .Append(", createdDropVisuals=")
+                .Append(productionTransportProbe.CreatedDropVisualInstances)
+                .Append(", dropVisualCreateBytes=")
+                .Append(productionTransportProbe.DropVisualCreateBytes)
+                .Append(" / ")
+                .Append(productionTransportProbe.DropVisualCreateAllocationSamples)
+                .Append(" allocating drop-visual create calls, dropVisualCreateCalls=")
+                .Append(productionTransportProbe.DropVisualCreateCalls)
+                .AppendLine(". Diagnostic only; not a gate yet.");
             builder.Append("- Runtime allocation probe assertion: ")
                 .Append(shellBytes == 0 && bootstrapBytes == 0 ? "Passed." : "Failed.")
                 .AppendLine();

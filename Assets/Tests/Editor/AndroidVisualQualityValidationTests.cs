@@ -17,7 +17,7 @@ public sealed class AndroidVisualQualityValidationTests
     private const float BalancedMobileRenderScale = 0.50f;
     private const int BalancedMobileMsaa = 1;
     private const int BalancedMobileUpscalingFilter = 3;
-    private const float BalancedMobileFsrSharpness = 0.45f;
+    private const float BalancedMobileFsrSharpness = 0.72f;
     private const float BalancedMobileShadowDistance = 16f;
 
     public static void RunFocusedValidation()
@@ -27,7 +27,7 @@ public sealed class AndroidVisualQualityValidationTests
             int passed = 0;
             RunCase(() => MobileRenderPipelineUsesBalancedScaleAndMsaa(), ref passed);
             RunCase(() => VisualQualityProfileUsesBalancedAndroidMatchRendering(), ref passed);
-            RunCase(() => HighModeEnablesSmaaPostProcess(), ref passed);
+            RunCase(() => HighModeKeepsCameraPostProcessingDisabled(), ref passed);
             RunCase(() => MobileQualityTierUsesBalancedMsaaAndShadows(), ref passed);
             Debug.Log($"[AndroidVisualQualityValidation] result=Passed tests={passed}");
         }
@@ -90,9 +90,9 @@ public sealed class AndroidVisualQualityValidationTests
             Is.EqualTo(BalancedMobileRenderScale).Within(0.001f),
             "Match High mode uses the balanced mobile render scale on Android.");
         Assert.AreEqual(
-            2,
+            1,
             cameraAntialiasingMode.intValue,
-            "Match High mode should use SMAA to reduce jagged world edges without increasing Android render scale.");
+            "Match High mode should not force SMAA because it requires the costly camera post-processing path on Android.");
         Assert.GreaterOrEqual(
             profile.CameraRenderScaleOverride,
             BalancedMobileRenderScale,
@@ -100,7 +100,7 @@ public sealed class AndroidVisualQualityValidationTests
     }
 
     [Test]
-    public static void HighModeEnablesSmaaPostProcess()
+    public static void HighModeKeepsCameraPostProcessingDisabled()
     {
         VisualQualityProfileAsset profile = ScriptableObject.CreateInstance<VisualQualityProfileAsset>();
         GameObject cameraObject = new("AndroidVisualQualityCamera", typeof(Camera));
@@ -110,7 +110,7 @@ public sealed class AndroidVisualQualityValidationTests
         {
             SerializedObject serializedProfile = new(profile);
             serializedProfile.FindProperty("runtimeMode").intValue = (int)VisualQualityRuntimeMode.High;
-            serializedProfile.FindProperty("cameraAntialiasingMode").intValue = 2;
+            serializedProfile.FindProperty("cameraAntialiasingMode").intValue = 1;
             serializedProfile.ApplyModifiedPropertiesWithoutUndo();
 
             Type cameraDataType = Type.GetType(
@@ -134,13 +134,13 @@ public sealed class AndroidVisualQualityValidationTests
             Assert.NotNull(initialize, "VisualQualitySettingsSystem is missing Initialize.");
             initialize.Invoke(system, new object[] { profile, cameraObject.GetComponent<Camera>(), null, null });
 
-            Assert.True(
+            Assert.False(
                 (bool)renderPostProcessing.GetValue(cameraData),
-                "Match High mode must enable camera post processing so SMAA can run.");
+                "Match High mode must keep camera post processing disabled on Android to avoid color grading and FPS regressions.");
             Assert.AreEqual(
-                2,
+                1,
                 Convert.ToInt32(antialiasing.GetValue(cameraData)),
-                "Match High mode must apply SMAA to reduce jagged Android edges.");
+                "Match High mode may retain the configured camera AA enum, but it must not force the post-processing path.");
         }
         finally
         {

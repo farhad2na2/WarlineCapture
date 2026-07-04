@@ -15,6 +15,7 @@ namespace Game.Rendering
         private const int MaxBatchVertices = 55000;
         private const int MaxBatchRenderers = 64;
         private const int MinBatchRenderers = 2;
+        private const string ForceMobileStaticDetailCullingEnv = "WARLINE_FORCE_MOBILE_STATIC_DETAIL_CULLING";
 
         private readonly List<RendererState> _disabledRenderers = new();
         private readonly List<Mesh> _combinedMeshes = new();
@@ -119,6 +120,18 @@ namespace Game.Rendering
             public int SkippedBatchTooSmall;
         }
 
+        private readonly struct StaticDetailCullStats
+        {
+            public readonly int Renderers;
+            public readonly long Triangles;
+
+            public StaticDetailCullStats(int renderers, long triangles)
+            {
+                Renderers = renderers;
+                Triangles = triangles;
+            }
+        }
+
         public void Initialize(
             Transform mapRoot,
             Transform mapBuildingAuthoringRoot,
@@ -137,6 +150,12 @@ namespace Game.Rendering
             MeshRenderer[] renderers = mapRoot.GetComponentsInChildren<MeshRenderer>(false);
             Dictionary<BatchKey, List<SourceRenderer>> batches = new();
             BatchStats stats = new();
+            StaticDetailCullStats staticDetailCullStats = CullMobileStaticDetails(
+                renderers,
+                mapRoot,
+                mapBuildingAuthoringRoot,
+                mapVehicleAuthoringRoot,
+                decorationRoot);
 
             for (int i = 0; i < renderers.Length; i++)
             {
@@ -177,7 +196,8 @@ namespace Game.Rendering
                 $"[StaticMapBatching] result={(stats.Batches > 0 ? "Applied" : "Skipped")} " +
                 $"eligible={stats.Eligible} batches={stats.Batches} disabled={stats.Disabled} vertices={stats.CombinedVertices} " +
                 $"skippedUnreadable={stats.SkippedUnreadable} skippedUnsafe={stats.SkippedUnsafe} skippedLarge={stats.SkippedLarge} " +
-                $"skippedMaterial={stats.SkippedMaterial} skippedSmallBatch={stats.SkippedBatchTooSmall}");
+                $"skippedMaterial={stats.SkippedMaterial} skippedSmallBatch={stats.SkippedBatchTooSmall} " +
+                $"mobileStaticDetailCull={staticDetailCullStats.Renderers}r/{staticDetailCullStats.Triangles}tris");
         }
 
         public void Dispose()
@@ -203,6 +223,115 @@ namespace Game.Rendering
 
             _combinedMeshes.Clear();
             _initialized = false;
+        }
+
+        private StaticDetailCullStats CullMobileStaticDetails(
+            MeshRenderer[] renderers,
+            Transform mapRoot,
+            Transform mapBuildingAuthoringRoot,
+            Transform mapVehicleAuthoringRoot,
+            Transform decorationRoot)
+        {
+            if (!ShouldApplyMobileStaticDetailCulling())
+                return default;
+
+            int culledRenderers = 0;
+            long culledTriangles = 0;
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                MeshRenderer renderer = renderers[i];
+                if (!ShouldCullMobileStaticDetail(
+                        renderer,
+                        mapRoot,
+                        mapBuildingAuthoringRoot,
+                        mapVehicleAuthoringRoot,
+                        decorationRoot))
+                {
+                    continue;
+                }
+
+                _disabledRenderers.Add(new RendererState
+                {
+                    Renderer = renderer,
+                    WasEnabled = renderer.enabled
+                });
+                renderer.enabled = false;
+                culledRenderers++;
+                culledTriangles += CountRendererTriangles(renderer);
+            }
+
+            return new StaticDetailCullStats(culledRenderers, culledTriangles);
+        }
+
+        private static bool ShouldApplyMobileStaticDetailCulling()
+        {
+            if (Application.isMobilePlatform)
+                return true;
+
+            string forced = Environment.GetEnvironmentVariable(ForceMobileStaticDetailCullingEnv);
+            return string.Equals(forced, "1", StringComparison.Ordinal) ||
+                   string.Equals(forced, "true", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool ShouldCullMobileStaticDetail(
+            MeshRenderer renderer,
+            Transform mapRoot,
+            Transform mapBuildingAuthoringRoot,
+            Transform mapVehicleAuthoringRoot,
+            Transform decorationRoot)
+        {
+            if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
+                return false;
+            if (mapRoot != null && !renderer.transform.IsChildOf(mapRoot))
+                return false;
+            if (IsInRoot(renderer.transform, mapBuildingAuthoringRoot) ||
+                IsInRoot(renderer.transform, mapVehicleAuthoringRoot) ||
+                IsInRoot(renderer.transform, decorationRoot))
+            {
+                return false;
+            }
+
+            if (HasAncestorNamed(renderer.transform, "Clouds", mapRoot) ||
+                HasAncestorNamed(renderer.transform, "_UnmappedVehicleSources", mapRoot))
+            {
+                return true;
+            }
+
+            string name = renderer.gameObject.name;
+            return name.Contains("SM_Prop_BarrelPile", StringComparison.Ordinal) ||
+                   name.Contains("SM_Prop_Shelves", StringComparison.Ordinal) ||
+                   name.Contains("SM_Prop_Drone_Control_Room", StringComparison.Ordinal);
+        }
+
+        private static bool IsInRoot(Transform transform, Transform root)
+        {
+            return root != null && transform != null && transform.IsChildOf(root);
+        }
+
+        private static bool HasAncestorNamed(Transform transform, string name, Transform stopRoot)
+        {
+            for (Transform current = transform; current != null; current = current.parent)
+            {
+                if (string.Equals(current.name, name, StringComparison.Ordinal))
+                    return true;
+                if (current == stopRoot)
+                    return false;
+            }
+
+            return false;
+        }
+
+        private static int CountRendererTriangles(MeshRenderer renderer)
+        {
+            MeshFilter meshFilter = renderer != null ? renderer.GetComponent<MeshFilter>() : null;
+            Mesh mesh = meshFilter != null ? meshFilter.sharedMesh : null;
+            if (mesh == null)
+                return 0;
+
+            int triangles = 0;
+            for (int i = 0; i < mesh.subMeshCount; i++)
+                triangles += (int)(mesh.GetIndexCount(i) / 3);
+            return triangles;
         }
 
         private bool TryCollectSource(

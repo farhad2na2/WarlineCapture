@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Game.Configs;
 
@@ -9,6 +10,10 @@ namespace Game.Runtime
         private const float DefaultZoomSpeed = 20f;
         private const float DefaultMinZoomHeight = 10f;
         private const float DefaultMaxZoomHeight = 45f;
+        private const float MobileNormalModeZoomHeightCap = 36f;
+        private const float MobileBuildModeZoomHeightCap = 72f;
+        private const float MobileMaxZoomHeightCap = 72f;
+        private const string ForceMobileCameraLimitsEnv = "WARLINE_FORCE_MOBILE_CAMERA_LIMITS";
 
         public struct State
         {
@@ -132,6 +137,37 @@ namespace Game.Runtime
                 state.BuildModeFieldOfView = state.NormalModeFieldOfView;
             if (state.ZoomTransitionSmoothTime <= 0f)
                 state.ZoomTransitionSmoothTime = 0.25f;
+            ApplyMobilePerformanceCameraLimits(ref state);
+        }
+
+        private static void ApplyMobilePerformanceCameraLimits(ref State state)
+        {
+            if (!ShouldApplyMobileCameraLimits())
+                return;
+
+            state.MaxZoomHeight = Mathf.Min(state.MaxZoomHeight, Mathf.Max(state.MinZoomHeight + 1f, MobileMaxZoomHeightCap));
+            state.NormalModeZoomHeight = Mathf.Clamp(
+                Mathf.Min(state.NormalModeZoomHeight, MobileNormalModeZoomHeightCap),
+                state.MinZoomHeight,
+                state.MaxZoomHeight);
+            state.BuildModeZoomHeight = Mathf.Clamp(
+                Mathf.Min(state.BuildModeZoomHeight, MobileBuildModeZoomHeightCap),
+                state.NormalModeZoomHeight,
+                state.MaxZoomHeight);
+            state.FullscreenIsoZoomHeight = Mathf.Clamp(
+                state.FullscreenIsoZoomHeight,
+                state.MinZoomHeight,
+                state.MaxZoomHeight);
+        }
+
+        private static bool ShouldApplyMobileCameraLimits()
+        {
+            if (Application.isMobilePlatform)
+                return true;
+
+            string forced = Environment.GetEnvironmentVariable(ForceMobileCameraLimitsEnv);
+            return string.Equals(forced, "1", StringComparison.Ordinal) ||
+                   string.Equals(forced, "true", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

@@ -51,21 +51,20 @@ namespace Game.Runtime
 
         public void Init(RTSSelectionSystemConfig config, Camera worldCamera)
         {
-            _worldCamera = worldCamera != null ? worldCamera : config != null ? config.WorldCamera : null;
-            if (config != null)
-            {
-                _minZoomHeight = config.MinZoomHeight;
-                _maxZoomHeight = config.MaxZoomHeight;
-                _zoomSpeed = config.ZoomSpeed;
-                _normalModeZoomHeight = config.NormalModeZoomHeight;
-                _normalModePitch = config.NormalModePitch;
-                _normalModeYaw = config.NormalModeYaw;
-                _normalModeFieldOfView = config.NormalModeFieldOfView;
-                _matchHudZoomTransitionSmoothTime = config.ZoomTransitionSmoothTime;
-                _fullscreenIsoPitch = config.FullscreenIsoPitch;
-                _fullscreenIsoYaw = config.FullscreenIsoYaw;
-                _fullscreenIsoOrthographicSize = config.FullscreenIsoOrthographicSize;
-            }
+            SelectionRuntimeConfigStartupSystemHelper.State runtimeConfig =
+                SelectionRuntimeConfigStartupSystemHelper.CreateStateFromConfig(config, worldCamera);
+            _worldCamera = runtimeConfig.WorldCamera;
+            _minZoomHeight = runtimeConfig.MinZoomHeight;
+            _maxZoomHeight = runtimeConfig.MaxZoomHeight;
+            _zoomSpeed = runtimeConfig.ZoomSpeed;
+            _normalModeZoomHeight = runtimeConfig.NormalModeZoomHeight;
+            _normalModePitch = runtimeConfig.NormalModePitch;
+            _normalModeYaw = runtimeConfig.NormalModeYaw;
+            _normalModeFieldOfView = runtimeConfig.NormalModeFieldOfView;
+            _matchHudZoomTransitionSmoothTime = runtimeConfig.ZoomTransitionSmoothTime;
+            _fullscreenIsoPitch = runtimeConfig.FullscreenIsoPitch;
+            _fullscreenIsoYaw = runtimeConfig.FullscreenIsoYaw;
+            _fullscreenIsoOrthographicSize = runtimeConfig.FullscreenIsoOrthographicSize;
 
             if (_minZoomHeight <= 0f)
                 _minZoomHeight = DefaultMinZoomHeight;

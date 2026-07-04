@@ -573,7 +573,9 @@ namespace Game.Editor
         {
             return !string.IsNullOrEmpty(value) &&
                    (value.Contains("Unity.AI.MCP.Editor", StringComparison.Ordinal) ||
-                    value.Contains("Unity.AI.Tracing", StringComparison.Ordinal));
+                    value.Contains("Unity.AI.Tracing", StringComparison.Ordinal) ||
+                    value.Contains("Unity.Relay.Editor", StringComparison.Ordinal) ||
+                    value.Contains("Burst.Compiler", StringComparison.Ordinal));
         }
 
         private static CaptureMode GetCaptureMode()
@@ -1282,7 +1284,23 @@ namespace Game.Editor
                 return;
             }
 
+            if (IsEditorToolingConnectionError(condition, stackTrace))
+                return;
+
             SessionState.SetInt(ErrorCountKey, SessionState.GetInt(ErrorCountKey, 0) + 1);
+        }
+
+        private static bool IsEditorToolingConnectionError(string condition, string stackTrace)
+        {
+            if (string.IsNullOrEmpty(condition) || string.IsNullOrEmpty(stackTrace))
+                return false;
+
+            return
+                condition.Contains("connection.state_change", StringComparison.Ordinal) &&
+                condition.Contains("WebSocketException: Unable to connect to the remote server", StringComparison.Ordinal) &&
+                (stackTrace.Contains("Unity.AI.Tracing", StringComparison.Ordinal) ||
+                 stackTrace.Contains("Unity.Relay.Editor.RelayService", StringComparison.Ordinal) ||
+                 stackTrace.Contains("Unity.AI.MCP.Editor", StringComparison.Ordinal));
         }
 
         private static void Finish(bool success, string message)

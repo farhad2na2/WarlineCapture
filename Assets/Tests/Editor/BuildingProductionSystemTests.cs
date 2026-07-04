@@ -141,6 +141,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.BuildingRuntimeState_ProcessesQueuedCampItemCommand();
             tests.CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel();
             tests.BuildingRuntimeState_ProductionSummaryUsesProducedUnitReadModel();
+            tests.BuildingRuntimeState_FactionSummarySignatureUsesEcsResourceStorage();
             tests.TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy();
             tests.BuildingDefinitionProductionSourceKey_UsesSlotKeyBeforePrefabFallback();
             tests.BuildingSpawnCompositionSystemHelper_SpawnsSourceKeyOnlyProductionSlot();
@@ -150,7 +151,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointWithoutManagedSlotArray();
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForOverrideHelicopterSlot();
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForAutomaticHelicopterSpawn();
-            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=22");
+            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=23");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -2421,6 +2422,113 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
+    public void BuildingRuntimeState_FactionSummarySignatureUsesEcsResourceStorage()
+    {
+        using World world = new("BuildingRuntimeState_FactionSummarySignatureUsesEcsResourceStorage");
+        EntityManager em = world.EntityManager;
+        var requestSystem = new BuildingProductionRequestSystemHelper();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
+        var boundarySystem = new BuildingRuntimeProcessingCompositionSystemHelper();
+        var runtimeQuerySystem = new BuildingRuntimeReadModelCompositionSystemHelper();
+        GameObject unitPrefab = new("Runtime Resource Signature Unit");
+        try
+        {
+            Entity resourceEntity = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(resourceEntity, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 92,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OilStorageCapacity = 100,
+                FuelStorageCapacity = 100,
+                OilBarrelsPerDay = 2f,
+                FuelBarrelsPerDay = 1f,
+                StoredOilBarrels = 10f,
+                StoredFuelBarrels = 5f
+            });
+            RuntimeBuildingEntity producer = CreateProducerBuilding(
+                id: 92,
+                displayName: "Resource Signature Producer",
+                unitPrefab,
+                hasOwnerFaction: true,
+                ownerFactionId: FactionIdentity.PlayerFactionId);
+            producer.CombatEntity = resourceEntity;
+            producer.Definition.OilStorageCapacity = 100;
+            producer.Definition.FuelStorageCapacity = 100;
+            producer.Definition.OilBarrelsPerDay = 2f;
+            producer.Definition.FuelBarrelsPerDay = 1f;
+            producer.StoredOilBarrels = 0f;
+            producer.StoredFuelBarrels = 0f;
+            Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
+            {
+                [producer.Id] = producer
+            };
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
+            using EntityQuery boundaryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<BuildingRuntimeStateTag>());
+            BuildingProductionRequestSystemHelper.Context productionContext = CreateProducerSelectionContext(
+                runtimeBuildings,
+                productionSystem,
+                unitPrefab,
+                em);
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext = CreateRuntimeQueryContext(
+                runtimeBuildings,
+                em,
+                productionSystem,
+                boundaryEntity);
+
+            boundarySystem.Update(
+                new BuildingDefinitionPrefabSystemHelper(),
+                new BuildingRuntimeSpawnCompositionSystemHelper(),
+                default,
+                requestSystem,
+                productionContext,
+                runtimeQuerySystem,
+                runtimeQueryContext,
+                new FactionResourceCompositionSystemHelper(),
+                em,
+                boundaryQuery,
+                runtimeBuildings,
+                now: 20f,
+                frameCount: 0);
+
+            AssertFactionSummaryResourceStorage(em, boundaryEntity, FactionIdentity.PlayerFactionId, 10f, 5f);
+
+            em.SetComponentData(resourceEntity, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 92,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OilStorageCapacity = 100,
+                FuelStorageCapacity = 100,
+                OilBarrelsPerDay = 2f,
+                FuelBarrelsPerDay = 1f,
+                StoredOilBarrels = 25f,
+                StoredFuelBarrels = 9f
+            });
+
+            boundarySystem.Update(
+                new BuildingDefinitionPrefabSystemHelper(),
+                new BuildingRuntimeSpawnCompositionSystemHelper(),
+                default,
+                requestSystem,
+                productionContext,
+                runtimeQuerySystem,
+                runtimeQueryContext,
+                new FactionResourceCompositionSystemHelper(),
+                em,
+                boundaryQuery,
+                runtimeBuildings,
+                now: 20.25f,
+                frameCount: 1);
+
+            AssertFactionSummaryResourceStorage(em, boundaryEntity, FactionIdentity.PlayerFactionId, 25f, 9f);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
     public void TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy()
     {
         using World world = new("TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy");
@@ -3164,6 +3272,29 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
 
         Assert.Fail($"Missing production summary for faction={factionId}, unit={unitId.ToString()}.");
+    }
+
+    private static void AssertFactionSummaryResourceStorage(
+        EntityManager em,
+        Entity boundaryEntity,
+        byte factionId,
+        float expectedOilBarrels,
+        float expectedFuelBarrels)
+    {
+        DynamicBuffer<BuildingRuntimeFactionSummary> summaries =
+            em.GetBuffer<BuildingRuntimeFactionSummary>(boundaryEntity, true);
+        for (int i = 0; i < summaries.Length; i++)
+        {
+            BuildingRuntimeFactionSummary summary = summaries[i];
+            if (summary.FactionId != factionId)
+                continue;
+
+            Assert.AreEqual(expectedOilBarrels, summary.StoredOilBarrels);
+            Assert.AreEqual(expectedFuelBarrels, summary.StoredFuelBarrels);
+            return;
+        }
+
+        Assert.Fail($"Missing faction summary for faction={factionId}.");
     }
 
     private static FieldInfo FindPrivateField(System.Type type, string fieldName)

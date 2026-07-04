@@ -471,7 +471,7 @@ namespace Game.Runtime
                     boundaryEntity,
                     runtimeBuildings);
                 _lastPublishedFactionSummarySignature =
-                    ComputeFactionSummarySignature(runtimeBuildings);
+                    ComputeFactionSummarySignature(em, runtimeBuildings);
                 _lastPublishedRuntimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
                 _lastPublishedOwnedBuildingSummarySignature = _lastPublishedRuntimeBuildingSignature;
                 _lastPublishedUnitProductionSummarySignature =
@@ -491,7 +491,7 @@ namespace Game.Runtime
                     boundaryEntity,
                     runtimeBuildings);
                 _lastPublishedFactionSummarySignature =
-                    ComputeFactionSummarySignature(runtimeBuildings);
+                    ComputeFactionSummarySignature(em, runtimeBuildings);
                 _lastPublishedRuntimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
                 _lastPublishedOwnedBuildingSummarySignature = _lastPublishedRuntimeBuildingSignature;
                 _lastPublishedUnitProductionSummarySignature =
@@ -537,7 +537,7 @@ namespace Game.Runtime
             switch (_nextPublishPhase)
             {
                 case PublishPhase.FactionSummaries:
-                    int factionSummarySignature = ComputeFactionSummarySignature(runtimeBuildings);
+                    int factionSummarySignature = ComputeFactionSummarySignature(em, runtimeBuildings);
                     if (factionSummarySignature != _lastPublishedFactionSummarySignature)
                     {
                         PublishRuntimeFactionSummaries(factionResourceSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, runtimeBuildings);
@@ -1329,7 +1329,9 @@ namespace Game.Runtime
             return hash;
         }
 
-        private static int ComputeFactionSummarySignature(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        private static int ComputeFactionSummarySignature(
+            EntityManager em,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
         {
             if (runtimeBuildings == null)
                 return 0;
@@ -1340,31 +1342,60 @@ namespace Game.Runtime
                 if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
                 {
                     foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
-                        hash = AddFactionSummarySignature(hash, pair.Key, pair.Value);
+                        hash = AddFactionSummarySignature(em, hash, pair.Key, pair.Value);
                 }
                 else
                 {
                     foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
-                        hash = AddFactionSummarySignature(hash, pair.Key, pair.Value);
+                        hash = AddFactionSummarySignature(em, hash, pair.Key, pair.Value);
                 }
 
                 return hash;
             }
         }
 
-        private static int AddFactionSummarySignature(int hash, int key, RuntimeBuildingEntity building)
+        private static int AddFactionSummarySignature(
+            EntityManager em,
+            int hash,
+            int key,
+            RuntimeBuildingEntity building)
         {
             hash = (hash * 31) + key;
             if (building == null)
                 return hash;
 
+            float storedOilBarrels = building.StoredOilBarrels;
+            float storedFuelBarrels = building.StoredFuelBarrels;
+            if (TryGetBuildingResourceStorage(em, building, out BuildingResourceStorageComponent storage))
+            {
+                storedOilBarrels = storage.StoredOilBarrels;
+                storedFuelBarrels = storage.StoredFuelBarrels;
+            }
+
             hash = (hash * 31) + (building.IsDestroyed ? 1 : 0);
             hash = (hash * 31) + (building.HasOwnerFaction ? building.OwnerFactionId : 255);
-            hash = AddFloatSignature(hash, building.StoredOilBarrels);
-            hash = AddFloatSignature(hash, building.StoredFuelBarrels);
+            hash = AddFloatSignature(hash, storedOilBarrels);
+            hash = AddFloatSignature(hash, storedFuelBarrels);
             hash = AddFloatSignature(hash, building.OilBarrelsPerDay);
             hash = AddFloatSignature(hash, building.FuelBarrelsPerDay);
             return hash;
+        }
+
+        private static bool TryGetBuildingResourceStorage(
+            EntityManager em,
+            RuntimeBuildingEntity building,
+            out BuildingResourceStorageComponent storage)
+        {
+            storage = default;
+            if (building.CombatEntity == Entity.Null ||
+                !em.Exists(building.CombatEntity) ||
+                !em.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
+            {
+                return false;
+            }
+
+            storage = em.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
+            return true;
         }
 
         private static int ComputeUnitProductionSummarySignature(

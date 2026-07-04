@@ -2,6 +2,7 @@ using Game.Components;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using Unity.Mathematics;
+using Unity.Entities;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -29,7 +30,9 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             tests.StorageTransfer_TryCompleteUnload_UsesComponentStorage();
             tests.HaulerTransferEcs_TryCompleteLoad_UsesComponentStorage();
             tests.HaulerTransferEcs_TryCompleteUnload_UsesComponentStorage();
-            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=16");
+            tests.LiveEcsStorage_TryCompleteLoad_PrefersCombatEntityStorage();
+            tests.LiveEcsStorage_TryCompleteUnload_PrefersCombatEntityStorage();
+            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=18");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -377,6 +380,100 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
         Assert.IsTrue(unloaded);
         Assert.AreEqual(18f, storage.StoredOilBarrels);
         Assert.AreEqual(0f, hauler.CargoOilBarrels);
+    }
+
+    [Test]
+    public void LiveEcsStorage_TryCompleteLoad_PrefersCombatEntityStorage()
+    {
+        var world = new World(nameof(LiveEcsStorage_TryCompleteLoad_PrefersCombatEntityStorage));
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity entity = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(entity, new BuildingResourceStorageComponent
+            {
+                OilStorageCapacity = 40,
+                StoredOilBarrels = 18f
+            });
+            var source = new RuntimeBuildingEntity
+            {
+                Id = 44,
+                Definition = new BuildingDefinition
+                {
+                    OilStorageCapacity = 40
+                },
+                CombatEntity = entity,
+                StoredOilBarrels = 30f
+            };
+            UnitResourceHauler hauler = new()
+            {
+                CargoFuelBarrels = 3f
+            };
+
+            bool loaded = new ResourceHaulerUtilitySystemHelper().TryCompleteLoad(
+                em,
+                source,
+                ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil,
+                8f,
+                ref hauler);
+
+            BuildingResourceStorageComponent storage = em.GetComponentData<BuildingResourceStorageComponent>(entity);
+            Assert.IsTrue(loaded);
+            Assert.AreEqual(10f, storage.StoredOilBarrels);
+            Assert.AreEqual(10f, source.StoredOilBarrels);
+            Assert.AreEqual(8f, hauler.CargoOilBarrels);
+            Assert.AreEqual(0f, hauler.CargoFuelBarrels);
+        }
+        finally
+        {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void LiveEcsStorage_TryCompleteUnload_PrefersCombatEntityStorage()
+    {
+        var world = new World(nameof(LiveEcsStorage_TryCompleteUnload_PrefersCombatEntityStorage));
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity entity = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(entity, new BuildingResourceStorageComponent
+            {
+                FuelStorageCapacity = 25,
+                StoredFuelBarrels = 17f
+            });
+            var destination = new RuntimeBuildingEntity
+            {
+                Id = 45,
+                Definition = new BuildingDefinition
+                {
+                    FuelStorageCapacity = 25
+                },
+                CombatEntity = entity,
+                StoredFuelBarrels = 1f
+            };
+            UnitResourceHauler hauler = new()
+            {
+                CargoFuelBarrels = 6f
+            };
+
+            bool unloaded = new ResourceHaulerUtilitySystemHelper().TryCompleteUnload(
+                em,
+                destination,
+                ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel,
+                ref hauler);
+
+            BuildingResourceStorageComponent storage = em.GetComponentData<BuildingResourceStorageComponent>(entity);
+            Assert.IsTrue(unloaded);
+            Assert.AreEqual(23f, storage.StoredFuelBarrels);
+            Assert.AreEqual(23f, destination.StoredFuelBarrels);
+            Assert.AreEqual(0f, hauler.CargoFuelBarrels);
+        }
+        finally
+        {
+            world.Dispose();
+        }
     }
 
     private sealed class TestHaulerBuilding : FactionResourceCompositionSystemHelper.IResourceBuilding

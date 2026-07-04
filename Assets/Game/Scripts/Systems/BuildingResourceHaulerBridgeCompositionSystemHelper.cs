@@ -320,7 +320,7 @@ namespace Game.Runtime
             float currentCargo = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel ? hauler.CargoFuelBarrels : hauler.CargoOilBarrels;
             if (VerboseResourceHaulerLogs)
                 Debug.Log($"[ResourceHauler] entity={entity} phase=Loading resource={resourceKind} current={em.GetComponentData<UnitGrid>(entity).Cell} source={source.Id} stored={sourceStored:0.##} cargo={currentCargo:0.##}/{loadAmount:0.##} actionEndsAt={order.ActionEndsAt:0.##} now={now:0.##}");
-            if (!context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(source, resourceKind, loadAmount))
+            if (!context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(em, source, resourceKind, loadAmount))
             {
                 if (VerboseResourceHaulerLogs)
                     Debug.Log($"[ResourceHauler] entity={entity} waiting-for-resource resource={resourceKind} source={source.Id} stored={sourceStored:0.##} need={loadAmount:0.##}");
@@ -343,7 +343,7 @@ namespace Game.Runtime
             }
 
             sourceStored = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel ? source.StoredFuelBarrels : source.StoredOilBarrels;
-            if (!context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(source, resourceKind, loadAmount))
+            if (!context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(em, source, resourceKind, loadAmount))
             {
                 context.ResourceHaulerUtilitySystemHelper.ResetActionTimer(ref order);
                 em.SetComponentData(entity, order);
@@ -352,7 +352,7 @@ namespace Game.Runtime
                 return;
             }
 
-            if (!context.ResourceHaulerUtilitySystemHelper.TryCompleteLoad(source, resourceKind, loadAmount, ref hauler))
+            if (!context.ResourceHaulerUtilitySystemHelper.TryCompleteLoad(em, source, resourceKind, loadAmount, ref hauler))
                 return;
             em.SetComponentData(entity, hauler);
             if (VerboseResourceHaulerLogs)
@@ -360,7 +360,7 @@ namespace Game.Runtime
 
             if (!TryIssueHaulerMoveToBuilding(context, em, entity, destination, out int2 destinationGoal))
             {
-                context.ResourceHaulerUtilitySystemHelper.RevertLoad(source, resourceKind, loadAmount, ref hauler);
+                context.ResourceHaulerUtilitySystemHelper.RevertLoad(em, source, resourceKind, loadAmount, ref hauler);
                 em.SetComponentData(entity, hauler);
                 if (VerboseResourceHaulerLogs)
                     Debug.LogWarning($"[ResourceHauler] entity={entity} failed-destination-move destination={destination.Id} revertedLoad={loadAmount:0.##}");
@@ -413,7 +413,7 @@ namespace Game.Runtime
                 return;
             }
 
-            if (!context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(destination, resourceKind, cargo))
+            if (!context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(em, destination, resourceKind, cargo))
                 return;
 
             ResourceHaulerUtilitySystemHelper.TimedActionState unloadTimer = context.ResourceHaulerUtilitySystemHelper.AdvanceTimedAction(ref order, now, hauler.UnloadDurationSeconds);
@@ -424,14 +424,14 @@ namespace Game.Runtime
                 return;
             }
 
-            if (!context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(destination, resourceKind, cargo))
+            if (!context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(em, destination, resourceKind, cargo))
             {
                 context.ResourceHaulerUtilitySystemHelper.ResetActionTimer(ref order);
                 em.SetComponentData(entity, order);
                 return;
             }
 
-            if (!context.ResourceHaulerUtilitySystemHelper.TryCompleteUnload(destination, resourceKind, ref hauler))
+            if (!context.ResourceHaulerUtilitySystemHelper.TryCompleteUnload(em, destination, resourceKind, ref hauler))
                 return;
             em.SetComponentData(entity, hauler);
 

@@ -42,6 +42,7 @@ namespace Game.UI.Runtime
 
         private void Awake()
         {
+            MatchHudCanvasBatchingUtility.EnsureLocalCanvas(gameObject, needsRaycaster: true);
             CacheBaseFrameColors();
             CreateCardLabels();
             SetSelectedSlot(MatchHudSquadTraySlot.Soldiers);
@@ -112,7 +113,7 @@ namespace Game.UI.Runtime
                 return;
 
             if (TryGetCard(_disabledFlashIndex, out Card card) && card.FrameImage != null)
-                card.FrameImage.color = _frameBaseColors[_disabledFlashIndex];
+                SetImageColor(card.FrameImage, _frameBaseColors[_disabledFlashIndex]);
             _disabledFlashIndex = -1;
         }
 
@@ -150,8 +151,8 @@ namespace Game.UI.Runtime
                     continue;
 
                 bool selected = ToSlot(i) == selectedSlot;
-                card.FrameImage.sprite = selected ? selectedFrameSprite : normalFrameSprite;
-                card.FrameImage.color = _frameBaseColors[i];
+                SetImageSprite(card.FrameImage, selected ? selectedFrameSprite : normalFrameSprite);
+                SetImageColor(card.FrameImage, _frameBaseColors[i]);
             }
         }
 
@@ -166,7 +167,7 @@ namespace Game.UI.Runtime
             if (!TryGetCard(index, out Card card) || card.FrameImage == null)
                 return;
 
-            card.FrameImage.color = new Color(1f, 0.82f, 0.35f, 0.92f);
+            SetImageColor(card.FrameImage, new Color(1f, 0.82f, 0.35f, 0.92f));
             _disabledFlashIndex = index;
             _disabledFlashUntil = Time.unscaledTime + disabledFlashSeconds;
         }
@@ -225,6 +226,18 @@ namespace Game.UI.Runtime
 
             card = cards[index];
             return card != null;
+        }
+
+        private static void SetImageSprite(Image image, Sprite sprite)
+        {
+            if (image != null && image.sprite != sprite)
+                image.sprite = sprite;
+        }
+
+        private static void SetImageColor(Image image, Color color)
+        {
+            if (image != null && image.color != color)
+                image.color = color;
         }
 
         private static MatchHudSquadTraySlot ToSlot(int index)

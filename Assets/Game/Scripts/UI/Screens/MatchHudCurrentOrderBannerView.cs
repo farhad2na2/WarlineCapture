@@ -37,24 +37,33 @@ namespace Game.UI.Runtime
 
             if (chevrons != null)
             {
-                chevrons.SetActive(model.ChevronsVisible);
+                if (chevrons.activeSelf != model.ChevronsVisible)
+                    chevrons.SetActive(model.ChevronsVisible);
             }
 
             if (icon != null)
             {
-                icon.sprite = model.IconSprite;
-                icon.preserveAspect = true;
-                icon.enabled = model.IconSprite != null;
+                if (icon.sprite != model.IconSprite)
+                    icon.sprite = model.IconSprite;
+                if (!icon.preserveAspect)
+                    icon.preserveAspect = true;
+                bool iconEnabled = model.IconSprite != null;
+                if (icon.enabled != iconEnabled)
+                    icon.enabled = iconEnabled;
             }
 
             if (orderText != null)
             {
-                orderText.text = model.OrderText;
+                string text = model.OrderText ?? string.Empty;
+                if (orderText.text != text)
+                    orderText.text = text;
             }
 
             if (descriptionText != null)
             {
-                descriptionText.text = model.DescriptionText;
+                string text = model.DescriptionText ?? string.Empty;
+                if (descriptionText.text != text)
+                    descriptionText.text = text;
             }
         }
 
@@ -75,23 +84,28 @@ namespace Game.UI.Runtime
         {
             if (chevrons != null)
             {
-                chevrons.SetActive(false);
+                if (chevrons.activeSelf)
+                    chevrons.SetActive(false);
             }
 
             if (icon != null)
             {
-                icon.sprite = null;
-                icon.enabled = false;
+                if (icon.sprite != null)
+                    icon.sprite = null;
+                if (icon.enabled)
+                    icon.enabled = false;
             }
 
             if (orderText != null)
             {
-                orderText.text = string.Empty;
+                if (!string.IsNullOrEmpty(orderText.text))
+                    orderText.text = string.Empty;
             }
 
             if (descriptionText != null)
             {
-                descriptionText.text = string.Empty;
+                if (!string.IsNullOrEmpty(descriptionText.text))
+                    descriptionText.text = string.Empty;
             }
         }
     }

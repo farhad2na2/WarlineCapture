@@ -71,6 +71,7 @@ namespace Game.UI.Runtime
 
         private void Awake()
         {
+            MatchHudCanvasBatchingUtility.EnsureLocalCanvas(selectedSquadPanel, needsRaycaster: true);
             BindUnityEvents();
             CacheBoardActionNormalSprite();
             CacheCameraActionNormalSprite();
@@ -145,7 +146,7 @@ namespace Game.UI.Runtime
 
         public void SetSelectionVisible(bool visible)
         {
-            if (selectedSquadPanel != null)
+            if (selectedSquadPanel != null && selectedSquadPanel.activeSelf != visible)
                 selectedSquadPanel.SetActive(visible);
         }
 
@@ -161,9 +162,13 @@ namespace Game.UI.Runtime
             if (selectedPortraitImage == null)
                 return;
 
-            selectedPortraitImage.sprite = portraitSprite;
-            selectedPortraitImage.enabled = portraitSprite != null;
-            selectedPortraitImage.preserveAspect = true;
+            if (selectedPortraitImage.sprite != portraitSprite)
+                selectedPortraitImage.sprite = portraitSprite;
+            bool enabled = portraitSprite != null;
+            if (selectedPortraitImage.enabled != enabled)
+                selectedPortraitImage.enabled = enabled;
+            if (!selectedPortraitImage.preserveAspect)
+                selectedPortraitImage.preserveAspect = true;
         }
 
         public Sprite ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind kind)
@@ -290,19 +295,22 @@ namespace Game.UI.Runtime
             Sprite selectedSprite = boardAction.spriteState.selectedSprite;
             if (selected && selectedSprite != null)
             {
-                image.sprite = selectedSprite;
-                image.color = _boardActionNormalColorCached ? _boardActionNormalColor : image.color;
+                SetImageSprite(image, selectedSprite);
+                if (_boardActionNormalColorCached)
+                    SetImageColor(image, _boardActionNormalColor);
             }
             else if (_boardActionNormalSprite != null)
             {
-                image.sprite = _boardActionNormalSprite;
-                image.color = _boardActionNormalColorCached ? _boardActionNormalColor : image.color;
+                SetImageSprite(image, _boardActionNormalSprite);
+                if (_boardActionNormalColorCached)
+                    SetImageColor(image, _boardActionNormalColor);
             }
             else
             {
-                image.color = selected
-                    ? boardAction.colors.selectedColor
-                    : (_boardActionNormalColorCached ? _boardActionNormalColor : image.color);
+                if (selected)
+                    SetImageColor(image, boardAction.colors.selectedColor);
+                else if (_boardActionNormalColorCached)
+                    SetImageColor(image, _boardActionNormalColor);
             }
         }
 
@@ -324,25 +332,29 @@ namespace Game.UI.Runtime
             Sprite selectedSprite = cameraAction.spriteState.selectedSprite;
             if (selected && selectedSprite != null)
             {
-                image.sprite = selectedSprite;
-                image.overrideSprite = selectedSprite;
-                image.color = _cameraActionNormalColorCached ? _cameraActionNormalColor : image.color;
+                SetImageSprite(image, selectedSprite);
+                if (image.overrideSprite != selectedSprite)
+                    image.overrideSprite = selectedSprite;
+                if (_cameraActionNormalColorCached)
+                    SetImageColor(image, _cameraActionNormalColor);
             }
             else if (_cameraActionNormalSprite != null)
             {
-                image.sprite = _cameraActionNormalSprite;
+                SetImageSprite(image, _cameraActionNormalSprite);
                 if (image.overrideSprite == selectedSprite)
                     image.overrideSprite = null;
-                image.color = _cameraActionNormalColorCached ? _cameraActionNormalColor : image.color;
+                if (_cameraActionNormalColorCached)
+                    SetImageColor(image, _cameraActionNormalColor);
             }
             else
             {
-                image.sprite = null;
+                SetImageSprite(image, null);
                 if (image.overrideSprite == selectedSprite)
                     image.overrideSprite = null;
-                image.color = selected
-                    ? cameraAction.colors.selectedColor
-                    : (_cameraActionNormalColorCached ? _cameraActionNormalColor : image.color);
+                if (selected)
+                    SetImageColor(image, cameraAction.colors.selectedColor);
+                else if (_cameraActionNormalColorCached)
+                    SetImageColor(image, _cameraActionNormalColor);
             }
         }
 
@@ -467,14 +479,21 @@ namespace Game.UI.Runtime
         private void ApplyPassengerChip(MatchHudTransportPassengersModel model)
         {
             bool visible = model.Visible;
-            if (passengerChipRoot != null)
+            if (passengerChipRoot != null && passengerChipRoot.activeSelf != visible)
                 passengerChipRoot.SetActive(visible);
 
             if (passengerChipButton != null)
-                passengerChipButton.interactable = visible && model.StorageKind == MatchHudStorageChipKind.Passengers;
+            {
+                bool interactable = visible && model.StorageKind == MatchHudStorageChipKind.Passengers;
+                if (passengerChipButton.interactable != interactable)
+                    passengerChipButton.interactable = interactable;
+            }
 
             if (passengerChipLabel != null)
-                passengerChipLabel.text = visible ? ResolveStorageChipLabel(model) : string.Empty;
+            {
+                string text = visible ? ResolveStorageChipLabel(model) : string.Empty;
+                SetRawText(passengerChipLabel, text);
+            }
         }
 
         private static string ResolveStorageChipLabel(MatchHudTransportPassengersModel model)
@@ -513,22 +532,29 @@ namespace Game.UI.Runtime
             if (healthFillImage == null)
                 return;
 
-            healthFillImage.type = Image.Type.Filled;
-            healthFillImage.fillMethod = Image.FillMethod.Horizontal;
-            healthFillImage.fillOrigin = 0;
-            healthFillImage.fillAmount = Mathf.Clamp01(health01);
+            if (healthFillImage.type != Image.Type.Filled)
+                healthFillImage.type = Image.Type.Filled;
+            if (healthFillImage.fillMethod != Image.FillMethod.Horizontal)
+                healthFillImage.fillMethod = Image.FillMethod.Horizontal;
+            if (healthFillImage.fillOrigin != 0)
+                healthFillImage.fillOrigin = 0;
+            float fillAmount = Mathf.Clamp01(health01);
+            if (!Mathf.Approximately(healthFillImage.fillAmount, fillAmount))
+                healthFillImage.fillAmount = fillAmount;
         }
 
         private void SetBadge(bool visible, Sprite sprite)
         {
-            if (badgeRoot != null)
+            if (badgeRoot != null && badgeRoot.activeSelf != visible)
                 badgeRoot.SetActive(visible);
             if (badgeImage == null)
                 return;
 
             if (sprite != null)
-                badgeImage.sprite = sprite;
-            badgeImage.enabled = visible && badgeImage.sprite != null;
+                SetImageSprite(badgeImage, sprite);
+            bool enabled = visible && badgeImage.sprite != null;
+            if (badgeImage.enabled != enabled)
+                badgeImage.enabled = enabled;
         }
 
         private static void SetActionState(Selectable action, bool enabled)
@@ -559,8 +585,29 @@ namespace Game.UI.Runtime
 
         private static void SetText(TMP_Text text, string value)
         {
-            if (text != null)
-                text.text = string.IsNullOrWhiteSpace(value) ? "-" : value;
+            if (text == null)
+                return;
+
+            SetRawText(text, string.IsNullOrWhiteSpace(value) ? "-" : value);
+        }
+
+        private static void SetRawText(TMP_Text text, string value)
+        {
+            value ??= string.Empty;
+            if (text.text != value)
+                text.text = value;
+        }
+
+        private static void SetImageSprite(Image image, Sprite sprite)
+        {
+            if (image != null && image.sprite != sprite)
+                image.sprite = sprite;
+        }
+
+        private static void SetImageColor(Image image, Color color)
+        {
+            if (image != null && image.color != color)
+                image.color = color;
         }
 
         private static bool ContainsScreenPoint(RectTransform rectTransform, Vector2 screenPosition)

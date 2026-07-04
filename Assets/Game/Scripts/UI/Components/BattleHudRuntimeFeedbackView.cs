@@ -122,6 +122,10 @@ namespace Game.UI.Runtime
 
         private void Awake()
         {
+            MatchHudCanvasBatchingUtility.EnsureLocalCanvas(feedbackPanel, needsRaycaster: false);
+            MatchHudCanvasBatchingUtility.EnsureLocalCanvas(feedbackActionsRoot, needsRaycaster: true);
+            if (currentOrderBanner != null)
+                MatchHudCanvasBatchingUtility.EnsureLocalCanvas(currentOrderBanner.gameObject, needsRaycaster: false);
             BindUnityEvents();
             HideFeedbackMessage();
         }
@@ -201,7 +205,7 @@ namespace Game.UI.Runtime
         public void HideFeedbackMessage()
         {
             _transientFeedbackActive = false;
-            if (feedbackPanel != null)
+            if (feedbackPanel != null && feedbackPanel.activeSelf)
                 feedbackPanel.SetActive(false);
             ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel.Hidden);
         }
@@ -252,7 +256,7 @@ namespace Game.UI.Runtime
 
         public void ApplyCommandFeedbackActions(MatchHudCommandFeedbackActionsModel model)
         {
-            if (feedbackActionsRoot != null)
+            if (feedbackActionsRoot != null && feedbackActionsRoot.activeSelf != model.Visible)
                 feedbackActionsRoot.SetActive(model.Visible);
 
             ApplyButtonState(boardAllButton, boardAllButtonLabel, model.BoardAllVisible, model.BoardAllInteractable, model.BoardAllLabel);
@@ -275,9 +279,9 @@ namespace Game.UI.Runtime
         private void ApplyFeedbackVisuals(MatchHudCommandFeedbackModel model)
         {
             if (feedbackText != null)
-                feedbackText.text = model.Message;
+                SetText(feedbackText, model.Message);
             ApplyFeedbackIcon(model.Severity);
-            if (feedbackPanel != null)
+            if (feedbackPanel != null && !feedbackPanel.activeSelf)
                 feedbackPanel.SetActive(true);
         }
 
@@ -287,8 +291,11 @@ namespace Game.UI.Runtime
                 return;
 
             Sprite icon = ResolveFeedbackIcon(severity);
-            feedbackIcon.sprite = icon;
-            feedbackIcon.enabled = icon != null;
+            if (feedbackIcon.sprite != icon)
+                feedbackIcon.sprite = icon;
+            bool enabled = icon != null;
+            if (feedbackIcon.enabled != enabled)
+                feedbackIcon.enabled = enabled;
         }
 
         private Sprite ResolveFeedbackIcon(CommandFeedbackSeverity severity)
@@ -386,12 +393,22 @@ namespace Game.UI.Runtime
         {
             if (button != null)
             {
-                button.gameObject.SetActive(visible);
-                button.interactable = visible && interactable;
+                if (button.gameObject.activeSelf != visible)
+                    button.gameObject.SetActive(visible);
+                bool effectiveInteractable = visible && interactable;
+                if (button.interactable != effectiveInteractable)
+                    button.interactable = effectiveInteractable;
             }
 
             if (label != null)
-                label.text = string.IsNullOrWhiteSpace(text) ? string.Empty : text;
+                SetText(label, string.IsNullOrWhiteSpace(text) ? string.Empty : text);
+        }
+
+        private static void SetText(TMP_Text label, string text)
+        {
+            text ??= string.Empty;
+            if (label.text != text)
+                label.text = text;
         }
 
         private static void BindButton(Button button, ref Button boundButton, UnityEngine.Events.UnityAction action)

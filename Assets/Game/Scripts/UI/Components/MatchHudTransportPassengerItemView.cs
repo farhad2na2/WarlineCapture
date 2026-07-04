@@ -42,7 +42,7 @@ namespace Game.UI.Runtime
             SetText(roleText, model.RoleText);
             SetText(healthText, model.HealthText);
             SetHealthFill(model.Health01);
-            if (exitButton != null)
+            if (exitButton != null && exitButton.interactable != model.ExitEnabled)
                 exitButton.interactable = model.ExitEnabled;
         }
 
@@ -62,15 +62,23 @@ namespace Game.UI.Runtime
             if (image == null)
                 return;
 
-            image.sprite = sprite;
-            image.enabled = sprite != null;
-            image.preserveAspect = true;
+            if (image.sprite != sprite)
+                image.sprite = sprite;
+            bool enabled = sprite != null;
+            if (image.enabled != enabled)
+                image.enabled = enabled;
+            if (!image.preserveAspect)
+                image.preserveAspect = true;
         }
 
         private static void SetText(TMP_Text text, string value)
         {
-            if (text != null)
-                text.text = string.IsNullOrWhiteSpace(value) ? "-" : value;
+            if (text == null)
+                return;
+
+            string resolved = string.IsNullOrWhiteSpace(value) ? "-" : value;
+            if (text.text != resolved)
+                text.text = resolved;
         }
 
         private void SetHealthFill(float health01)
@@ -78,10 +86,15 @@ namespace Game.UI.Runtime
             if (healthFillImage == null)
                 return;
 
-            healthFillImage.type = Image.Type.Filled;
-            healthFillImage.fillMethod = Image.FillMethod.Horizontal;
-            healthFillImage.fillOrigin = 0;
-            healthFillImage.fillAmount = Mathf.Clamp01(health01);
+            if (healthFillImage.type != Image.Type.Filled)
+                healthFillImage.type = Image.Type.Filled;
+            if (healthFillImage.fillMethod != Image.FillMethod.Horizontal)
+                healthFillImage.fillMethod = Image.FillMethod.Horizontal;
+            if (healthFillImage.fillOrigin != 0)
+                healthFillImage.fillOrigin = 0;
+            float fillAmount = Mathf.Clamp01(health01);
+            if (!Mathf.Approximately(healthFillImage.fillAmount, fillAmount))
+                healthFillImage.fillAmount = fillAmount;
         }
 
         private static void BindButton(Button button, ref Button boundButton, UnityEngine.Events.UnityAction action)

@@ -333,8 +333,19 @@ namespace Game.UI.Runtime
             if (slot == null || !slot.TryGetComponent(out RectTransform rectTransform))
                 return;
 
-            rectTransform.anchoredPosition = new Vector2(x, rectTransform.anchoredPosition.y);
-            rectTransform.sizeDelta = new Vector2(300f, rectTransform.sizeDelta.y);
+            Vector2 anchoredPosition = new(x, rectTransform.anchoredPosition.y);
+            if (!Mathf.Approximately(rectTransform.anchoredPosition.x, anchoredPosition.x) ||
+                !Mathf.Approximately(rectTransform.anchoredPosition.y, anchoredPosition.y))
+            {
+                rectTransform.anchoredPosition = anchoredPosition;
+            }
+
+            Vector2 sizeDelta = new(300f, rectTransform.sizeDelta.y);
+            if (!Mathf.Approximately(rectTransform.sizeDelta.x, sizeDelta.x) ||
+                !Mathf.Approximately(rectTransform.sizeDelta.y, sizeDelta.y))
+            {
+                rectTransform.sizeDelta = sizeDelta;
+            }
         }
 
         private static void BindMatchHudResourceSlot(Transform slot, out TMP_Text labelText, out TMP_Text valueText)
@@ -358,7 +369,7 @@ namespace Game.UI.Runtime
             if (!UiShellRuntimeGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header))
                 return;
 
-            if (!_matchHudResourceLabelsApplied && _matchHudOilSlotLabel != null)
+            if (!_matchHudResourceLabelsApplied && _matchHudOilSlotLabel != null && _matchHudOilSlotLabel.text != "Oil")
                 _matchHudOilSlotLabel.text = "Oil";
             string oilText = string.IsNullOrWhiteSpace(header.OilText) ? "0" : header.OilText;
             if (_matchHudOilSlotValue != null && _lastMatchHudOilText != oilText)
@@ -367,7 +378,7 @@ namespace Game.UI.Runtime
                 _lastMatchHudOilText = oilText;
             }
 
-            if (!_matchHudResourceLabelsApplied && _matchHudFuelSlotLabel != null)
+            if (!_matchHudResourceLabelsApplied && _matchHudFuelSlotLabel != null && _matchHudFuelSlotLabel.text != "Fuel")
                 _matchHudFuelSlotLabel.text = "Fuel";
             string fuelText = string.IsNullOrWhiteSpace(header.FuelText) ? "0" : header.FuelText;
             if (_matchHudFuelSlotValue != null && _lastMatchHudFuelText != fuelText)
@@ -393,7 +404,9 @@ namespace Game.UI.Runtime
             if (_matchHudThreatJumpPanel == null || _matchHudThreatTitle == null)
                 return false;
 
-            _matchHudThreatTitle.text = string.IsNullOrWhiteSpace(title) ? "Threat detected" : title;
+            string resolvedTitle = string.IsNullOrWhiteSpace(title) ? "Threat detected" : title;
+            if (_matchHudThreatTitle.text != resolvedTitle)
+                _matchHudThreatTitle.text = resolvedTitle;
             _matchHudThreatVisibleUntil = visibleUntilTime;
             SetMatchHudThreatWarningVisible(true);
             return true;

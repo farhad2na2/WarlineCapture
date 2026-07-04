@@ -22,23 +22,23 @@ namespace Game.UI.Runtime
             HideCommandMode();
             HideInvalidCommand();
             SetWorldMarkersVisible(false);
-            if (minimapCameraBridge != null)
+            if (minimapCameraBridge != null && !minimapCameraBridge.activeSelf)
                 minimapCameraBridge.SetActive(true);
         }
 
         public void ShowSelectedEntity(string displayName, string status)
         {
             if (selectedEntityNameText != null)
-                selectedEntityNameText.text = displayName;
+                SetText(selectedEntityNameText, displayName);
             if (selectedEntityStatusText != null)
-                selectedEntityStatusText.text = status;
-            if (selectedEntityPanel != null)
+                SetText(selectedEntityStatusText, status);
+            if (selectedEntityPanel != null && !selectedEntityPanel.activeSelf)
                 selectedEntityPanel.SetActive(true);
         }
 
         public void HideSelectedEntity()
         {
-            if (selectedEntityPanel != null)
+            if (selectedEntityPanel != null && selectedEntityPanel.activeSelf)
                 selectedEntityPanel.SetActive(false);
         }
 
@@ -46,35 +46,42 @@ namespace Game.UI.Runtime
         {
             HideInvalidCommand();
             if (commandModeText != null)
-                commandModeText.text = mode;
-            if (commandModeBanner != null)
+                SetText(commandModeText, mode);
+            if (commandModeBanner != null && !commandModeBanner.activeSelf)
                 commandModeBanner.SetActive(true);
         }
 
         public void HideCommandMode()
         {
-            if (commandModeBanner != null)
+            if (commandModeBanner != null && commandModeBanner.activeSelf)
                 commandModeBanner.SetActive(false);
         }
 
         public void ShowInvalidCommand(string reason)
         {
             if (invalidCommandText != null)
-                invalidCommandText.text = reason;
-            if (invalidCommandToast != null)
+                SetText(invalidCommandText, reason);
+            if (invalidCommandToast != null && !invalidCommandToast.activeSelf)
                 invalidCommandToast.SetActive(true);
         }
 
         public void HideInvalidCommand()
         {
-            if (invalidCommandToast != null)
+            if (invalidCommandToast != null && invalidCommandToast.activeSelf)
                 invalidCommandToast.SetActive(false);
         }
 
         public void SetWorldMarkersVisible(bool visible)
         {
-            if (worldCommandMarkerLayer != null)
+            if (worldCommandMarkerLayer != null && worldCommandMarkerLayer.activeSelf != visible)
                 worldCommandMarkerLayer.SetActive(visible);
+        }
+
+        private static void SetText(TMP_Text text, string value)
+        {
+            value ??= string.Empty;
+            if (text.text != value)
+                text.text = value;
         }
     }
 }

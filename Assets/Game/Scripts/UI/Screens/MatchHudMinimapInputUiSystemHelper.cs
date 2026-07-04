@@ -549,9 +549,14 @@ namespace Game.UI.Runtime
 
             RectTransform rect = marker.rectTransform;
 
-            rect.anchorMin = new Vector2(0f, 1f);
-            rect.anchorMax = rect.anchorMin;
-            rect.pivot = new Vector2(0.5f, 0.5f);
+            Vector2 anchor = new(0f, 1f);
+            if (rect.anchorMin != anchor)
+                rect.anchorMin = anchor;
+            if (rect.anchorMax != anchor)
+                rect.anchorMax = anchor;
+            Vector2 pivot = new(0.5f, 0.5f);
+            if (rect.pivot != pivot)
+                rect.pivot = pivot;
             Vector2 mapPoint = new(
                 mapRect.xMin + mapRect.width * Mathf.Clamp01(normalized.x),
                 mapRect.yMin + mapRect.height * Mathf.Clamp01(normalized.y));

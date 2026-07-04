@@ -63,6 +63,7 @@ namespace Game.UI.Runtime
 
         private void Awake()
         {
+            MatchHudCanvasBatchingUtility.EnsureLocalCanvas(gameObject, needsRaycaster: true);
             EnsureZoomRelay(zoomInButton, 1);
             EnsureZoomRelay(zoomOutButton, -1);
             EnsureViewportDragRelay();
@@ -107,10 +108,14 @@ namespace Game.UI.Runtime
             if (mapImage == null)
                 return;
 
-            mapImage.sprite = sprite;
-            mapImage.preserveAspect = false;
-            mapImage.enabled = true;
-            mapImage.raycastTarget = true;
+            if (mapImage.sprite != sprite)
+                mapImage.sprite = sprite;
+            if (mapImage.preserveAspect)
+                mapImage.preserveAspect = false;
+            if (!mapImage.enabled)
+                mapImage.enabled = true;
+            if (!mapImage.raycastTarget)
+                mapImage.raycastTarget = true;
         }
 
         public void SetProjectionMode(bool useFullMapProjection)
@@ -139,7 +144,8 @@ namespace Game.UI.Runtime
 
             if (viewportRect != null)
             {
-                viewportRect.gameObject.SetActive(showViewport);
+                if (viewportRect.gameObject.activeSelf != showViewport)
+                    viewportRect.gameObject.SetActive(showViewport);
                 EnsureViewportDragRelay();
             }
             SetZoomVisible(zoomInButton, allowZoom);
@@ -494,7 +500,7 @@ namespace Game.UI.Runtime
 
         private static void SetZoomVisible(Button button, bool visible)
         {
-            if (button != null)
+            if (button != null && button.gameObject.activeSelf != visible)
                 button.gameObject.SetActive(visible);
         }
 

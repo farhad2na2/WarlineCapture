@@ -186,15 +186,15 @@ namespace Game.UI.Runtime
             bool canConfirm = _commandSystem.CanConfirmBuildingPlacement;
             SetText(statusText, string.IsNullOrWhiteSpace(status) ? "DRAG TO POSITION" : status.ToUpperInvariant());
             if (statusText != null)
-                statusText.color = canConfirm
+                SetTextColor(statusText, canConfirm
                     ? new Color(0.62f, 0.98f, 0.35f)
-                    : new Color(1f, 0.35f, 0.22f);
+                    : new Color(1f, 0.35f, 0.22f));
 
-            if (confirmButton != null)
+            if (confirmButton != null && confirmButton.interactable != canConfirm)
                 confirmButton.interactable = canConfirm;
-            if (cancelButton != null)
+            if (cancelButton != null && !cancelButton.interactable)
                 cancelButton.interactable = true;
-            if (rotateButton != null)
+            if (rotateButton != null && !rotateButton.interactable)
                 rotateButton.interactable = true;
         }
 
@@ -234,9 +234,7 @@ namespace Game.UI.Runtime
             if (_canvasGroup == null)
                 return;
 
-            _canvasGroup.alpha = 1f;
-            _canvasGroup.interactable = true;
-            _canvasGroup.blocksRaycasts = true;
+            SetCanvasGroup(_canvasGroup, 1f, true, true);
         }
 
         private void Hide()
@@ -246,9 +244,7 @@ namespace Game.UI.Runtime
             if (_canvasGroup == null)
                 return;
 
-            _canvasGroup.alpha = 0f;
-            _canvasGroup.interactable = false;
-            _canvasGroup.blocksRaycasts = false;
+            SetCanvasGroup(_canvasGroup, 0f, false, false);
         }
 
         private void CacheSerializedLayout()
@@ -258,13 +254,16 @@ namespace Game.UI.Runtime
             if (root == null)
                 return;
 
+            MatchHudCanvasBatchingUtility.EnsureLocalCanvas(root.gameObject, needsRaycaster: true);
             _canvasGroup ??= GetComponent<CanvasGroup>();
             Image background = GetComponent<Image>();
             if (background != null && panelFrameSprite != null)
             {
                 ApplySprite(background, panelFrameSprite, Image.Type.Sliced);
-                background.color = Color.white;
-                background.raycastTarget = true;
+                if (background.color != Color.white)
+                    background.color = Color.white;
+                if (!background.raycastTarget)
+                    background.raycastTarget = true;
             }
         }
 
@@ -299,8 +298,10 @@ namespace Game.UI.Runtime
             if (image == null || sprite == null)
                 return;
 
-            image.sprite = sprite;
-            image.type = type;
+            if (image.sprite != sprite)
+                image.sprite = sprite;
+            if (image.type != type)
+                image.type = type;
         }
 
         private static void SplitPlacementStatus(string rawStatus, out string title, out string status)
@@ -336,8 +337,28 @@ namespace Game.UI.Runtime
 
         private static void SetText(TMP_Text text, string value)
         {
-            if (text != null)
-                text.text = value ?? string.Empty;
+            if (text == null)
+                return;
+
+            value ??= string.Empty;
+            if (text.text != value)
+                text.text = value;
+        }
+
+        private static void SetTextColor(TMP_Text text, Color color)
+        {
+            if (text.color != color)
+                text.color = color;
+        }
+
+        private static void SetCanvasGroup(CanvasGroup canvasGroup, float alpha, bool interactable, bool blocksRaycasts)
+        {
+            if (!Mathf.Approximately(canvasGroup.alpha, alpha))
+                canvasGroup.alpha = alpha;
+            if (canvasGroup.interactable != interactable)
+                canvasGroup.interactable = interactable;
+            if (canvasGroup.blocksRaycasts != blocksRaycasts)
+                canvasGroup.blocksRaycasts = blocksRaycasts;
         }
 
         private Camera ResolveEventCamera()

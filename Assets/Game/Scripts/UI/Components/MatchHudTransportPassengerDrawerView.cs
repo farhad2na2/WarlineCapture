@@ -67,11 +67,14 @@ namespace Game.UI.Runtime
             SetText(exitAllLabel, "EXIT ALL");
             SetText(closeLabel, "CLOSE");
             if (exitAllButton != null)
-                exitAllButton.interactable = model.ExitAllEnabled;
+            {
+                if (exitAllButton.interactable != model.ExitAllEnabled)
+                    exitAllButton.interactable = model.ExitAllEnabled;
+            }
 
             IReadOnlyList<MatchHudSelectionPanelPassengerItemModel> passengers = model.Passengers;
             int passengerCount = passengers?.Count ?? 0;
-            if (emptyStateRoot != null)
+            if (emptyStateRoot != null && emptyStateRoot.activeSelf != (passengerCount == 0))
                 emptyStateRoot.SetActive(passengerCount == 0);
 
             EnsureItemPool(passengerCount);
@@ -82,7 +85,8 @@ namespace Game.UI.Runtime
                 if (item == null)
                     continue;
 
-                item.gameObject.SetActive(active);
+                if (item.gameObject.activeSelf != active)
+                    item.gameObject.SetActive(active);
                 if (active)
                 {
                     item.gameObject.name = $"PassengerItemView - {passengers[i].DisplayName}";
@@ -90,7 +94,7 @@ namespace Game.UI.Runtime
                 }
             }
 
-            if (itemTemplate != null && passengerCount == 0)
+            if (itemTemplate != null && passengerCount == 0 && itemTemplate.gameObject.activeSelf)
                 itemTemplate.gameObject.SetActive(false);
         }
 
@@ -107,9 +111,14 @@ namespace Game.UI.Runtime
         private void SetVisible(bool visible)
         {
             if (drawerRoot != null)
-                drawerRoot.SetActive(visible);
-            else
+            {
+                if (drawerRoot.activeSelf != visible)
+                    drawerRoot.SetActive(visible);
+            }
+            else if (gameObject.activeSelf != visible)
+            {
                 gameObject.SetActive(visible);
+            }
         }
 
         private void EnsureItemPool(int count)
@@ -145,8 +154,12 @@ namespace Game.UI.Runtime
 
         private static void SetText(TMP_Text text, string value)
         {
-            if (text != null)
-                text.text = value ?? string.Empty;
+            if (text == null)
+                return;
+
+            value ??= string.Empty;
+            if (text.text != value)
+                text.text = value;
         }
 
         private static string ResolveHeaderText(MatchHudTransportPassengersModel model)

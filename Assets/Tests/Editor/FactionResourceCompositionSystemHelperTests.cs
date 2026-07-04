@@ -1,8 +1,10 @@
+using Game.Components;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEditor;
+using Unity.Entities;
 using UnityEngine;
 
 public sealed class FactionResourceCompositionSystemHelperTests
@@ -15,13 +17,16 @@ public sealed class FactionResourceCompositionSystemHelperTests
             tests.GetResourceTotals_CountsStorageBuildingsOnly();
             tests.TryGetFactionResourceEconomy_SumsFactionStorageAndRates();
             tests.DrainFactionResource_DrainsRequestedResourceAcrossFactionBuildings();
+            tests.GetResourceTotals_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale();
+            tests.TryGetFactionResourceEconomy_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale();
+            tests.DrainFactionResource_PrefersLiveEcsStorageAndMirrorsResult();
             tests.TryGetPrimaryCapacityInfo_DerivesOilCapacityForFuelProducer();
             tests.UpdateResourceProduction_ExtractsOilUpToCapacity();
             tests.UpdateResourceProduction_ConvertsOilIntoFuel();
             tests.UpdateResourceProduction_ClampsOilAndFuelWhenLargeDeltaOverfillsStorage();
             tests.UpdateResourceProduction_DoesNotConvertOilWhenFuelStorageIsFull();
             tests.UpdateResourceProduction_IgnoresDestroyedBuildings();
-            Debug.Log("[FactionResourceFocusedValidation] result=Passed tests=9");
+            Debug.Log("[FactionResourceFocusedValidation] result=Passed tests=12");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -91,6 +96,147 @@ public sealed class FactionResourceCompositionSystemHelperTests
         Assert.AreEqual(0f, first.StoredOilBarrels);
         Assert.AreEqual(5f, second.StoredOilBarrels);
         Assert.AreEqual(20f, otherFaction.StoredOilBarrels);
+    }
+
+    [Test]
+    public void GetResourceTotals_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale()
+    {
+        var world = new World(nameof(GetResourceTotals_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale));
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            Entity entity = entityManager.CreateEntity(typeof(BuildingResourceStorageComponent));
+            entityManager.SetComponentData(entity, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 21,
+                OilStorageCapacity = 100,
+                StoredOilBarrels = 9f
+            });
+
+            var building = new RuntimeBuildingEntity
+            {
+                Id = 21,
+                Definition = new BuildingDefinition
+                {
+                    OilStorageCapacity = 100
+                },
+                CombatEntity = entity,
+                StoredOilBarrels = 2f
+            };
+            var buildings = new Dictionary<int, RuntimeBuildingEntity> { { building.Id, building } };
+
+            new FactionResourceCompositionSystemHelper().GetResourceTotals(
+                entityManager,
+                buildings,
+                out int oil,
+                out int fuel);
+
+            Assert.AreEqual(9, oil);
+            Assert.AreEqual(0, fuel);
+        }
+        finally
+        {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void TryGetFactionResourceEconomy_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale()
+    {
+        var world = new World(nameof(TryGetFactionResourceEconomy_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale));
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            Entity entity = entityManager.CreateEntity(typeof(BuildingResourceStorageComponent));
+            entityManager.SetComponentData(entity, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 22,
+                OwnerFactionId = 2,
+                OilStorageCapacity = 100,
+                OilBarrelsPerDay = 4f,
+                StoredOilBarrels = 13f
+            });
+
+            var building = new RuntimeBuildingEntity
+            {
+                Id = 22,
+                Definition = new BuildingDefinition
+                {
+                    OilStorageCapacity = 100,
+                    OilBarrelsPerDay = 4f
+                },
+                HasOwnerFaction = true,
+                OwnerFactionId = 2,
+                CombatEntity = entity,
+                StoredOilBarrels = 3f
+            };
+            var buildings = new Dictionary<int, RuntimeBuildingEntity> { { building.Id, building } };
+
+            bool found = new FactionResourceCompositionSystemHelper().TryGetFactionResourceEconomy(
+                entityManager,
+                buildings,
+                2,
+                out FactionResourceCompositionSystemHelper.ResourceEconomySnapshot snapshot);
+
+            Assert.IsTrue(found);
+            Assert.AreEqual(1, snapshot.ResourceBuildingCount);
+            Assert.AreEqual(13f, snapshot.StoredOilBarrels);
+            Assert.AreEqual(0f, snapshot.StoredFuelBarrels);
+            Assert.AreEqual(4f, snapshot.OilBarrelsPerDay);
+        }
+        finally
+        {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void DrainFactionResource_PrefersLiveEcsStorageAndMirrorsResult()
+    {
+        var world = new World(nameof(DrainFactionResource_PrefersLiveEcsStorageAndMirrorsResult));
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            Entity entity = entityManager.CreateEntity(typeof(BuildingResourceStorageComponent));
+            entityManager.SetComponentData(entity, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 23,
+                OwnerFactionId = 2,
+                OilStorageCapacity = 100,
+                StoredOilBarrels = 9f
+            });
+
+            var building = new RuntimeBuildingEntity
+            {
+                Id = 23,
+                Definition = new BuildingDefinition
+                {
+                    OilStorageCapacity = 100
+                },
+                HasOwnerFaction = true,
+                OwnerFactionId = 2,
+                CombatEntity = entity,
+                StoredOilBarrels = 2f
+            };
+            var buildings = new Dictionary<int, RuntimeBuildingEntity> { { building.Id, building } };
+
+            float drained = new FactionResourceCompositionSystemHelper().DrainFactionResource(
+                entityManager,
+                buildings,
+                2,
+                5f,
+                FactionResourceCompositionSystemHelper.ResourceKind.Oil);
+
+            BuildingResourceStorageComponent storage =
+                entityManager.GetComponentData<BuildingResourceStorageComponent>(entity);
+            Assert.AreEqual(5f, drained);
+            Assert.AreEqual(4f, storage.StoredOilBarrels);
+            Assert.AreEqual(4f, building.StoredOilBarrels);
+        }
+        finally
+        {
+            world.Dispose();
+        }
     }
 
     [Test]

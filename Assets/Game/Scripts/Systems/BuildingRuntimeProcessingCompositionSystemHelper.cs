@@ -210,11 +210,13 @@ namespace Game.Runtime
 
                 foundPending = true;
                 float soldOil = factionResourceSystem.DrainFactionResource(
+                    em,
                     runtimeBuildings,
                     request.FactionId,
                     Mathf.Max(0f, request.RequestedOilBarrels),
                     FactionResourceCompositionSystemHelper.ResourceKind.Oil);
                 float soldFuel = factionResourceSystem.DrainFactionResource(
+                    em,
                     runtimeBuildings,
                     request.FactionId,
                     Mathf.Max(0f, request.RequestedFuelBarrels),
@@ -696,6 +698,7 @@ namespace Game.Runtime
             {
                 byte factionId = _factionIds[i];
                 factionResourceSystem.TryGetFactionResourceEconomy(
+                    em,
                     runtimeBuildings,
                     factionId,
                     out FactionResourceCompositionSystemHelper.ResourceEconomySnapshot economy);

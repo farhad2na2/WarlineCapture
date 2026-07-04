@@ -158,6 +158,29 @@ namespace Game.Runtime
             }
         }
 
+        internal void GetResourceTotals(
+            EntityManager entityManager,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> buildings,
+            out int oilBarrels,
+            out int fuelBarrels)
+        {
+            oilBarrels = 0;
+            fuelBarrels = 0;
+            if (buildings == null)
+                return;
+
+            if (buildings is Dictionary<int, RuntimeBuildingEntity> buildingMap)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in buildingMap)
+                    AddResourceTotals(entityManager, entry.Value, ref oilBarrels, ref fuelBarrels);
+            }
+            else
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in buildings)
+                    AddResourceTotals(entityManager, entry.Value, ref oilBarrels, ref fuelBarrels);
+            }
+        }
+
         public bool TryGetFactionResourceEconomy<TBuilding>(IReadOnlyDictionary<int, TBuilding> buildings, byte factionId, out ResourceEconomySnapshot snapshot)
             where TBuilding : class, IResourceBuilding
         {
@@ -178,6 +201,36 @@ namespace Game.Runtime
                 {
                     foreach (KeyValuePair<int, TBuilding> entry in buildings)
                         AddFactionResourceEconomy(entry.Value, factionId, ref oil, ref fuel, ref oilRate, ref fuelRate, ref resourceBuildingCount);
+                }
+            }
+
+            snapshot = new ResourceEconomySnapshot(oil, fuel, oilRate, fuelRate, resourceBuildingCount);
+            return resourceBuildingCount > 0;
+        }
+
+        internal bool TryGetFactionResourceEconomy(
+            EntityManager entityManager,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> buildings,
+            byte factionId,
+            out ResourceEconomySnapshot snapshot)
+        {
+            float oil = 0f;
+            float fuel = 0f;
+            float oilRate = 0f;
+            float fuelRate = 0f;
+            int resourceBuildingCount = 0;
+
+            if (buildings != null)
+            {
+                if (buildings is Dictionary<int, RuntimeBuildingEntity> buildingMap)
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in buildingMap)
+                        AddFactionResourceEconomy(entityManager, entry.Value, factionId, ref oil, ref fuel, ref oilRate, ref fuelRate, ref resourceBuildingCount);
+                }
+                else
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in buildings)
+                        AddFactionResourceEconomy(entityManager, entry.Value, factionId, ref oil, ref fuel, ref oilRate, ref fuelRate, ref resourceBuildingCount);
                 }
             }
 
@@ -210,6 +263,39 @@ namespace Game.Runtime
                 foreach (KeyValuePair<int, TBuilding> entry in buildings)
                 {
                     DrainFactionResource(entry.Value, factionId, resourceKind, ref remaining);
+                    if (remaining <= 0.001f)
+                        break;
+                }
+            }
+
+            return requestedBarrels - remaining;
+        }
+
+        internal float DrainFactionResource(
+            EntityManager entityManager,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> buildings,
+            byte factionId,
+            float requestedBarrels,
+            ResourceKind resourceKind)
+        {
+            if (buildings == null || requestedBarrels <= 0f)
+                return 0f;
+
+            float remaining = requestedBarrels;
+            if (buildings is Dictionary<int, RuntimeBuildingEntity> buildingMap)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in buildingMap)
+                {
+                    DrainFactionResource(entityManager, entry.Value, factionId, resourceKind, ref remaining);
+                    if (remaining <= 0.001f)
+                        break;
+                }
+            }
+            else
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in buildings)
+                {
+                    DrainFactionResource(entityManager, entry.Value, factionId, resourceKind, ref remaining);
                     if (remaining <= 0.001f)
                         break;
                 }
@@ -318,6 +404,27 @@ namespace Game.Runtime
                 fuelBarrels += Mathf.Max(0, Mathf.FloorToInt(building.StoredFuelBarrels));
         }
 
+        private void AddResourceTotals(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building,
+            ref int oilBarrels,
+            ref int fuelBarrels)
+        {
+            if (!IsResourceStorageBuilding(building))
+                return;
+
+            if (!TryGetEntityResourceStorage(entityManager, building, out BuildingResourceStorageComponent storage))
+            {
+                AddResourceTotals<RuntimeBuildingEntity>(building, ref oilBarrels, ref fuelBarrels);
+                return;
+            }
+
+            if (building.OilStorageCapacity > 0)
+                oilBarrels += Mathf.Max(0, Mathf.FloorToInt(storage.StoredOilBarrels));
+            if (building.FuelStorageCapacity > 0)
+                fuelBarrels += Mathf.Max(0, Mathf.FloorToInt(storage.StoredFuelBarrels));
+        }
+
         private void AddFactionResourceEconomy<TBuilding>(
             TBuilding building,
             byte factionId,
@@ -334,6 +441,35 @@ namespace Game.Runtime
             resourceBuildingCount++;
             oil += Mathf.Max(0f, building.StoredOilBarrels);
             fuel += Mathf.Max(0f, building.StoredFuelBarrels);
+            oilRate += Mathf.Max(0f, building.OilBarrelsPerDay);
+            fuelRate += Mathf.Max(0f, building.FuelBarrelsPerDay);
+        }
+
+        private void AddFactionResourceEconomy(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building,
+            byte factionId,
+            ref float oil,
+            ref float fuel,
+            ref float oilRate,
+            ref float fuelRate,
+            ref int resourceBuildingCount)
+        {
+            if (!IsFactionResourceBuilding(building, factionId))
+                return;
+
+            resourceBuildingCount++;
+            if (TryGetEntityResourceStorage(entityManager, building, out BuildingResourceStorageComponent storage))
+            {
+                oil += Mathf.Max(0f, storage.StoredOilBarrels);
+                fuel += Mathf.Max(0f, storage.StoredFuelBarrels);
+            }
+            else
+            {
+                oil += Mathf.Max(0f, building.StoredOilBarrels);
+                fuel += Mathf.Max(0f, building.StoredFuelBarrels);
+            }
+
             oilRate += Mathf.Max(0f, building.OilBarrelsPerDay);
             fuelRate += Mathf.Max(0f, building.FuelBarrelsPerDay);
         }
@@ -358,6 +494,36 @@ namespace Game.Runtime
             else
                 building.StoredOilBarrels = Mathf.Max(0f, building.StoredOilBarrels - drained);
 
+            remaining -= drained;
+        }
+
+        private void DrainFactionResource(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building,
+            byte factionId,
+            ResourceKind resourceKind,
+            ref float remaining)
+        {
+            if (!IsFactionResourceBuilding(building, factionId))
+                return;
+
+            if (!TryGetEntityResourceStorage(entityManager, building, out BuildingResourceStorageComponent storage))
+            {
+                DrainFactionResource<RuntimeBuildingEntity>(building, factionId, resourceKind, ref remaining);
+                return;
+            }
+
+            float stored = resourceKind == ResourceKind.Fuel ? storage.StoredFuelBarrels : storage.StoredOilBarrels;
+            float drained = Mathf.Min(Mathf.Max(0f, stored), remaining);
+            if (drained <= 0f)
+                return;
+
+            if (resourceKind == ResourceKind.Fuel)
+                storage.StoredFuelBarrels = Mathf.Max(0f, storage.StoredFuelBarrels - drained);
+            else
+                storage.StoredOilBarrels = Mathf.Max(0f, storage.StoredOilBarrels - drained);
+
+            CommitEntityResourceStorage(entityManager, building, storage);
             remaining -= drained;
         }
 

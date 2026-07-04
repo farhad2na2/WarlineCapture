@@ -12,6 +12,7 @@ using UnityEngine;
 public sealed class AndroidVisualQualityValidationTests
 {
     private const string MobileRenderPipelinePath = "Assets/Settings/Mobile_RPAsset.asset";
+    private const string MobileRendererPath = "Assets/Settings/Mobile_Renderer.asset";
     private const string VisualQualityProfilePath = "Assets/Game/Rendering/VisualQualityConfig.asset";
     private const float MinimumLowRenderScale = 0.50f;
     private const float BalancedMobileRenderScale = 0.50f;
@@ -19,6 +20,7 @@ public sealed class AndroidVisualQualityValidationTests
     private const int BalancedMobileUpscalingFilter = 3;
     private const float BalancedMobileFsrSharpness = 0.72f;
     private const float BalancedMobileShadowDistance = 16f;
+    private const int DisabledMobileLightingFeature = 0;
 
     public static void RunFocusedValidation()
     {
@@ -26,6 +28,7 @@ public sealed class AndroidVisualQualityValidationTests
         {
             int passed = 0;
             RunCase(() => MobileRenderPipelineUsesBalancedScaleAndMsaa(), ref passed);
+            RunCase(() => MobileRendererUsesForwardPathForSingleLightMobile(), ref passed);
             RunCase(() => VisualQualityProfileUsesBalancedAndroidMatchRendering(), ref passed);
             RunCase(() => HighModeKeepsCameraPostProcessingDisabled(), ref passed);
             RunCase(() => MobileQualityTierUsesBalancedMsaaAndShadows(), ref passed);
@@ -57,17 +60,39 @@ public sealed class AndroidVisualQualityValidationTests
         SerializedProperty upscalingFilter = serializedAsset.FindProperty("m_UpscalingFilter");
         SerializedProperty fsrSharpness = serializedAsset.FindProperty("m_FsrSharpness");
         SerializedProperty shadowDistance = serializedAsset.FindProperty("m_ShadowDistance");
+        SerializedProperty lightCookies = serializedAsset.FindProperty("m_SupportsLightCookies");
+        SerializedProperty lightLayers = serializedAsset.FindProperty("m_SupportsLightLayers");
 
         Assert.NotNull(msaa, "Mobile URP asset is missing serialized m_MSAA.");
         Assert.NotNull(renderScale, "Mobile URP asset is missing serialized m_RenderScale.");
         Assert.NotNull(upscalingFilter, "Mobile URP asset is missing serialized m_UpscalingFilter.");
         Assert.NotNull(fsrSharpness, "Mobile URP asset is missing serialized m_FsrSharpness.");
         Assert.NotNull(shadowDistance, "Mobile URP asset is missing serialized m_ShadowDistance.");
+        Assert.NotNull(lightCookies, "Mobile URP asset is missing serialized m_SupportsLightCookies.");
+        Assert.NotNull(lightLayers, "Mobile URP asset is missing serialized m_SupportsLightLayers.");
         Assert.AreEqual(BalancedMobileMsaa, msaa.intValue, "Android/mobile pipeline should avoid MSAA bandwidth cost and rely on FSR plus camera AA for 60 FPS.");
         Assert.That(renderScale.floatValue, Is.EqualTo(BalancedMobileRenderScale).Within(0.001f), "Android/mobile pipeline should use FSR-backed 0.50 render scale for 60 FPS.");
         Assert.AreEqual(BalancedMobileUpscalingFilter, upscalingFilter.intValue, "Android/mobile pipeline should use FSR upscaling to preserve edge quality at the balanced render scale.");
         Assert.That(fsrSharpness.floatValue, Is.EqualTo(BalancedMobileFsrSharpness).Within(0.001f), "Android/mobile FSR sharpness should avoid ringing and jagged terrain edges when the match camera zooms out.");
         Assert.That(shadowDistance.floatValue, Is.EqualTo(BalancedMobileShadowDistance).Within(0.001f), "Android/mobile shadows should stay bounded for 60 FPS.");
+        Assert.AreEqual(DisabledMobileLightingFeature, lightCookies.intValue, "Android/mobile pipeline should not carry light-cookie support when additional lights are disabled.");
+        Assert.AreEqual(DisabledMobileLightingFeature, lightLayers.intValue, "Android/mobile pipeline should not carry light-layer support when additional lights are disabled.");
+    }
+
+    [Test]
+    public static void MobileRendererUsesForwardPathForSingleLightMobile()
+    {
+        UnityEngine.Object asset =
+            AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(MobileRendererPath);
+        Assert.NotNull(asset, $"Missing mobile renderer asset at {MobileRendererPath}.");
+
+        SerializedObject serializedAsset = new(asset);
+        SerializedProperty renderingMode = serializedAsset.FindProperty("m_RenderingMode");
+        Assert.NotNull(renderingMode, "Mobile renderer asset is missing serialized m_RenderingMode.");
+        Assert.AreEqual(
+            0,
+            renderingMode.intValue,
+            "Android/mobile renderer should use plain Forward because additional lights are disabled; Forward+ adds clustered-light overhead without visible benefit here.");
     }
 
     [Test]

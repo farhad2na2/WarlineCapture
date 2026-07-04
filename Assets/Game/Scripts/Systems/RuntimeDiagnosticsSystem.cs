@@ -9,6 +9,79 @@ namespace Game.Runtime
         private bool _hasCachedLegacyState;
         private RuntimeDiagnosticsStateComponent _lastLegacyState;
 
+#if UNITY_EDITOR
+        public readonly struct EditorBuildingVisualAllocationProbeSnapshot
+        {
+            public readonly long TotalBytes;
+            public readonly int AllocationSamples;
+            public readonly int CreateCalls;
+            public readonly int PooledHits;
+            public readonly int WrapperCreates;
+            public readonly int PrefabInstantiates;
+            public readonly long PrefabInstantiateBytes;
+            public readonly int PrefabInstantiateAllocationSamples;
+
+            private EditorBuildingVisualAllocationProbeSnapshot(EditorBuildingVisualAllocationProbeCounter counter)
+            {
+                TotalBytes = counter.TotalBytes;
+                AllocationSamples = counter.AllocationSamples;
+                CreateCalls = counter.CreateCalls;
+                PooledHits = counter.PooledHits;
+                WrapperCreates = counter.WrapperCreates;
+                PrefabInstantiates = counter.PrefabInstantiates;
+                PrefabInstantiateBytes = counter.PrefabInstantiateBytes;
+                PrefabInstantiateAllocationSamples = counter.PrefabInstantiateAllocationSamples;
+            }
+
+            public static EditorBuildingVisualAllocationProbeSnapshot Create(EditorBuildingVisualAllocationProbeCounter counter)
+            {
+                return new EditorBuildingVisualAllocationProbeSnapshot(counter);
+            }
+        }
+
+        public struct EditorBuildingVisualAllocationProbeCounter
+        {
+            public long TotalBytes;
+            public int AllocationSamples;
+            public int CreateCalls;
+            public int PooledHits;
+            public int WrapperCreates;
+            public int PrefabInstantiates;
+            public long PrefabInstantiateBytes;
+            public int PrefabInstantiateAllocationSamples;
+
+            public void Add(
+                long allocatedBytes,
+                bool pooled,
+                bool wrapperCreated,
+                bool prefabInstantiated,
+                long prefabInstantiateBytes)
+            {
+                CreateCalls++;
+                if (pooled)
+                    PooledHits++;
+                if (wrapperCreated)
+                    WrapperCreates++;
+                if (prefabInstantiated)
+                    PrefabInstantiates++;
+
+                if (allocatedBytes > 0)
+                {
+                    TotalBytes += allocatedBytes;
+                    AllocationSamples++;
+                }
+
+                if (prefabInstantiateBytes > 0)
+                {
+                    PrefabInstantiateBytes += prefabInstantiateBytes;
+                    PrefabInstantiateAllocationSamples++;
+                }
+            }
+        }
+
+        private static EditorBuildingVisualAllocationProbeCounter editorBuildingVisualAllocationProbe;
+#endif
+
         public bool VerboseAILogs
         {
             get => ReadDiagnosticsState().VerboseAILogs != 0;
@@ -54,6 +127,33 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
         }
+
+#if UNITY_EDITOR
+        public static void ResetEditorBuildingVisualAllocationProbe()
+        {
+            editorBuildingVisualAllocationProbe = default;
+        }
+
+        public static void RecordEditorBuildingVisualAllocation(
+            long allocatedBytes,
+            bool pooled,
+            bool wrapperCreated,
+            bool prefabInstantiated,
+            long prefabInstantiateBytes)
+        {
+            editorBuildingVisualAllocationProbe.Add(
+                allocatedBytes,
+                pooled,
+                wrapperCreated,
+                prefabInstantiated,
+                prefabInstantiateBytes);
+        }
+
+        public static EditorBuildingVisualAllocationProbeSnapshot GetEditorBuildingVisualAllocationProbe()
+        {
+            return EditorBuildingVisualAllocationProbeSnapshot.Create(editorBuildingVisualAllocationProbe);
+        }
+#endif
 
         public RuntimeDiagnosticsStateComponent ReadDiagnosticsState()
         {

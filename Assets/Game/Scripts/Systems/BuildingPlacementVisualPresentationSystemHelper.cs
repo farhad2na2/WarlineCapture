@@ -18,13 +18,63 @@ namespace Game.Runtime
 
         public GameObject CreateBuildingVisualInstance(BuildingDefinition definition, Transform parent)
         {
+#if UNITY_EDITOR
+            long allocationProbeStartBytes = System.GC.GetAllocatedBytesForCurrentThread();
+            long allocationProbePrefabInstantiateBytes = 0;
+            bool allocationProbePooled = false;
+            bool allocationProbeWrapperCreated = false;
+            bool allocationProbePrefabInstantiated = false;
+            try
+            {
+                return CreateBuildingVisualInstanceCore(
+                    definition,
+                    parent,
+                    ref allocationProbePooled,
+                    ref allocationProbeWrapperCreated,
+                    ref allocationProbePrefabInstantiated,
+                    ref allocationProbePrefabInstantiateBytes);
+            }
+            finally
+            {
+                RuntimeDiagnosticsSystem.RecordEditorBuildingVisualAllocation(
+                    System.GC.GetAllocatedBytesForCurrentThread() - allocationProbeStartBytes,
+                    allocationProbePooled,
+                    allocationProbeWrapperCreated,
+                    allocationProbePrefabInstantiated,
+                    allocationProbePrefabInstantiateBytes);
+            }
+#else
+            return CreateBuildingVisualInstanceCore(definition, parent);
+#endif
+        }
+
+#if UNITY_EDITOR
+        private GameObject CreateBuildingVisualInstanceCore(
+            BuildingDefinition definition,
+            Transform parent,
+            ref bool allocationProbePooled,
+            ref bool allocationProbeWrapperCreated,
+            ref bool allocationProbePrefabInstantiated,
+            ref long allocationProbePrefabInstantiateBytes)
+#else
+        private GameObject CreateBuildingVisualInstanceCore(BuildingDefinition definition, Transform parent)
+#endif
+        {
             if (definition == null)
                 return null;
 
             if (TryGetPooledInstance(definition, parent, out GameObject pooled))
+            {
+#if UNITY_EDITOR
+                allocationProbePooled = true;
+#endif
                 return pooled;
+            }
 
             var wrapper = new GameObject($"{definition.DisplayName}_VisualRoot");
+#if UNITY_EDITOR
+            allocationProbeWrapperCreated = true;
+#endif
             wrapper.transform.SetParent(parent, false);
             wrapper.transform.localPosition = Vector3.zero;
             wrapper.transform.localRotation = Quaternion.identity;
@@ -33,7 +83,15 @@ namespace Game.Runtime
             GameObject visual = null;
             if (definition.Prefab != null)
             {
+#if UNITY_EDITOR
+                long prefabInstantiateStartBytes = System.GC.GetAllocatedBytesForCurrentThread();
+#endif
                 visual = Object.Instantiate(definition.Prefab, wrapper.transform);
+#if UNITY_EDITOR
+                allocationProbePrefabInstantiated = true;
+                allocationProbePrefabInstantiateBytes =
+                    System.GC.GetAllocatedBytesForCurrentThread() - prefabInstantiateStartBytes;
+#endif
                 Transform combinedMesh = FindDescendantByName(visual.transform, "CombinedMesh");
                 if (combinedMesh != null)
                     DisableSourceRenderersOutsideCombinedMesh(visual.transform, combinedMesh);

@@ -593,6 +593,7 @@ namespace Game.Editor
             UIShellEcsPresentationSystem.ResetEditorAllocationProbe();
             MenuBootstrapView.ResetEditorAllocationProbe();
             SelectionRuntimeDiagnosticsSystemHelper.ResetEditorSelectionAllocationProbe();
+            RuntimeDiagnosticsSystem.ResetEditorBuildingVisualAllocationProbe();
         }
 
         private static void AppendRuntimeAllocationProbeSummary(StringBuilder builder)
@@ -607,6 +608,8 @@ namespace Game.Editor
                 out int bootstrapUpdateSamples);
             SelectionRuntimeDiagnosticsSystemHelper.EditorSelectionAllocationProbeSnapshot selectionProbe =
                 SelectionRuntimeDiagnosticsSystemHelper.GetEditorSelectionAllocationProbe();
+            RuntimeDiagnosticsSystem.EditorBuildingVisualAllocationProbeSnapshot buildingVisualProbe =
+                RuntimeDiagnosticsSystem.GetEditorBuildingVisualAllocationProbe();
             builder.AppendLine("- Runtime allocation probe:");
             builder.Append("  - `UIShellEcsPresentationSystem.Update`: ")
                 .Append(shellBytes)
@@ -671,6 +674,23 @@ namespace Game.Editor
                 selectionProbe.CameraBytes,
                 selectionProbe.CameraAllocationSamples,
                 selectionProbe.CameraUpdateSamples);
+            builder.Append("  - `BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance`: ")
+                .Append(buildingVisualProbe.TotalBytes)
+                .Append(" bytes / ")
+                .Append(buildingVisualProbe.AllocationSamples)
+                .Append(" allocating calls / ")
+                .Append(buildingVisualProbe.CreateCalls)
+                .Append(" create calls. pooled=")
+                .Append(buildingVisualProbe.PooledHits)
+                .Append(", wrappers=")
+                .Append(buildingVisualProbe.WrapperCreates)
+                .Append(", prefabInstantiates=")
+                .Append(buildingVisualProbe.PrefabInstantiates)
+                .Append(", prefabInstantiateBytes=")
+                .Append(buildingVisualProbe.PrefabInstantiateBytes)
+                .Append(" / ")
+                .Append(buildingVisualProbe.PrefabInstantiateAllocationSamples)
+                .AppendLine(" allocating prefab instantiates. Diagnostic only; not a gate yet.");
             builder.Append("- Runtime allocation probe assertion: ")
                 .Append(shellBytes == 0 && bootstrapBytes == 0 ? "Passed." : "Failed.")
                 .AppendLine();

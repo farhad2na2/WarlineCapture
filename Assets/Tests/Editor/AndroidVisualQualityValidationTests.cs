@@ -12,7 +12,7 @@ public sealed class AndroidVisualQualityValidationTests
     private const string VisualQualityProfilePath = "Assets/Game/Rendering/VisualQualityConfig.asset";
     private const float MinimumLowRenderScale = 0.50f;
     private const float BalancedMobileRenderScale = 0.50f;
-    private const int BalancedMobileMsaa = 2;
+    private const int BalancedMobileMsaa = 1;
     private const int BalancedMobileUpscalingFilter = 3;
     private const float BalancedMobileShadowDistance = 16f;
 
@@ -56,7 +56,7 @@ public sealed class AndroidVisualQualityValidationTests
         Assert.NotNull(renderScale, "Mobile URP asset is missing serialized m_RenderScale.");
         Assert.NotNull(upscalingFilter, "Mobile URP asset is missing serialized m_UpscalingFilter.");
         Assert.NotNull(shadowDistance, "Mobile URP asset is missing serialized m_ShadowDistance.");
-        Assert.AreEqual(BalancedMobileMsaa, msaa.intValue, "Android/mobile pipeline should use balanced 2x MSAA for 60 FPS.");
+        Assert.AreEqual(BalancedMobileMsaa, msaa.intValue, "Android/mobile pipeline should avoid MSAA bandwidth cost and rely on FSR plus camera AA for 60 FPS.");
         Assert.That(renderScale.floatValue, Is.EqualTo(BalancedMobileRenderScale).Within(0.001f), "Android/mobile pipeline should use FSR-backed 0.50 render scale for 60 FPS.");
         Assert.AreEqual(BalancedMobileUpscalingFilter, upscalingFilter.intValue, "Android/mobile pipeline should use FSR upscaling to preserve edge quality at the balanced render scale.");
         Assert.That(shadowDistance.floatValue, Is.EqualTo(BalancedMobileShadowDistance).Within(0.001f), "Android/mobile shadows should stay bounded for 60 FPS.");
@@ -96,7 +96,7 @@ public sealed class AndroidVisualQualityValidationTests
             ? qualitySettings.Substring(mobileIndex, nextTierIndex - mobileIndex)
             : qualitySettings.Substring(mobileIndex);
 
-        StringAssert.Contains("antiAliasing: 2", mobileBlock, "Android Mobile quality tier should use balanced 2x MSAA.");
+        StringAssert.Contains("antiAliasing: 0", mobileBlock, "Android Mobile quality tier should avoid MSAA bandwidth cost for 60 FPS.");
         StringAssert.Contains("shadowDistance: 16", mobileBlock, "Android Mobile quality tier should cap shadow distance for 60 FPS.");
     }
 }

@@ -5,7 +5,7 @@ namespace Game.Runtime
 {
     public static class AndroidFrameRateSettings
     {
-        private const int TargetAndroidFrameRate = 120;
+        private const int TargetAndroidFrameRate = 60;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Apply()

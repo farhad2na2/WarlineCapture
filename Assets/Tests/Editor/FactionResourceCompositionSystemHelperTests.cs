@@ -20,13 +20,14 @@ public sealed class FactionResourceCompositionSystemHelperTests
             tests.GetResourceTotals_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale();
             tests.TryGetFactionResourceEconomy_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale();
             tests.DrainFactionResource_PrefersLiveEcsStorageAndMirrorsResult();
+            tests.SelectedBuildingResourceStorage_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale();
             tests.TryGetPrimaryCapacityInfo_DerivesOilCapacityForFuelProducer();
             tests.UpdateResourceProduction_ExtractsOilUpToCapacity();
             tests.UpdateResourceProduction_ConvertsOilIntoFuel();
             tests.UpdateResourceProduction_ClampsOilAndFuelWhenLargeDeltaOverfillsStorage();
             tests.UpdateResourceProduction_DoesNotConvertOilWhenFuelStorageIsFull();
             tests.UpdateResourceProduction_IgnoresDestroyedBuildings();
-            Debug.Log("[FactionResourceFocusedValidation] result=Passed tests=12");
+            Debug.Log("[FactionResourceFocusedValidation] result=Passed tests=13");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -232,6 +233,63 @@ public sealed class FactionResourceCompositionSystemHelperTests
             Assert.AreEqual(5f, drained);
             Assert.AreEqual(4f, storage.StoredOilBarrels);
             Assert.AreEqual(4f, building.StoredOilBarrels);
+        }
+        finally
+        {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void SelectedBuildingResourceStorage_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale()
+    {
+        var world = new World(nameof(SelectedBuildingResourceStorage_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale));
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            Entity entity = entityManager.CreateEntity(typeof(BuildingResourceStorageComponent));
+            entityManager.SetComponentData(entity, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 24,
+                OilStorageCapacity = 100,
+                FuelStorageCapacity = 50,
+                StoredOilBarrels = 17f,
+                StoredFuelBarrels = 11f
+            });
+
+            var building = new RuntimeBuildingEntity
+            {
+                Id = 24,
+                Definition = new BuildingDefinition
+                {
+                    OilStorageCapacity = 100,
+                    FuelStorageCapacity = 50
+                },
+                CombatEntity = entity,
+                StoredOilBarrels = 2f,
+                StoredFuelBarrels = 3f
+            };
+            var buildings = new Dictionary<int, RuntimeBuildingEntity> { { building.Id, building } };
+            var context = new BuildingPlacementQueryUiSystemHelper.Context(
+                buildings,
+                building.Id,
+                null,
+                null,
+                true,
+                entityManager);
+
+            bool found = new BuildingPlacementQueryUiSystemHelper().TryGetSelectedBuildingResourceStorage(
+                context,
+                out int oilCurrent,
+                out int oilCapacity,
+                out int fuelCurrent,
+                out int fuelCapacity);
+
+            Assert.IsTrue(found);
+            Assert.AreEqual(17, oilCurrent);
+            Assert.AreEqual(100, oilCapacity);
+            Assert.AreEqual(11, fuelCurrent);
+            Assert.AreEqual(50, fuelCapacity);
         }
         finally
         {

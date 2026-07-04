@@ -202,8 +202,16 @@ namespace Game.Runtime
 
             oilCapacity = Mathf.Max(0, building.OilStorageCapacity);
             fuelCapacity = Mathf.Max(0, building.FuelStorageCapacity);
-            oilCurrent = Mathf.RoundToInt(Mathf.Max(0f, building.StoredOilBarrels));
-            fuelCurrent = Mathf.RoundToInt(Mathf.Max(0f, building.StoredFuelBarrels));
+            if (TryGetSelectedBuildingResourceStorage(context, building, out BuildingResourceStorageComponent storage))
+            {
+                oilCurrent = Mathf.RoundToInt(Mathf.Max(0f, storage.StoredOilBarrels));
+                fuelCurrent = Mathf.RoundToInt(Mathf.Max(0f, storage.StoredFuelBarrels));
+            }
+            else
+            {
+                oilCurrent = Mathf.RoundToInt(Mathf.Max(0f, building.StoredOilBarrels));
+                fuelCurrent = Mathf.RoundToInt(Mathf.Max(0f, building.StoredFuelBarrels));
+            }
 
             if (oilCapacity > 0)
                 oilCurrent = Mathf.Min(oilCurrent, oilCapacity);
@@ -211,6 +219,30 @@ namespace Game.Runtime
                 fuelCurrent = Mathf.Min(fuelCurrent, fuelCapacity);
 
             return oilCapacity > 0 || fuelCapacity > 0 || oilCurrent > 0 || fuelCurrent > 0;
+        }
+
+        private static bool TryGetSelectedBuildingResourceStorage(
+            Context context,
+            RuntimeBuildingEntity building,
+            out BuildingResourceStorageComponent storage)
+        {
+            storage = default;
+            if (!context.HasEntityManager ||
+                building == null ||
+                building.CombatEntity == Entity.Null)
+            {
+                return false;
+            }
+
+            EntityManager entityManager = context.EntityManager;
+            if (!entityManager.Exists(building.CombatEntity) ||
+                !entityManager.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
+            {
+                return false;
+            }
+
+            storage = entityManager.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
+            return true;
         }
 
         private static bool TryGetActiveBuilding(Context context, out RuntimeBuildingEntity building)

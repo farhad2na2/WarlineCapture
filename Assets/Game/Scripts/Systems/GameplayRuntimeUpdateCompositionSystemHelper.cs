@@ -5,6 +5,10 @@ using UnityEngine;
 using Game.Rendering.Contracts;
 using Game.UI.Contracts;
 using Game.Components;
+#if UNITY_EDITOR
+using GameplayRuntimeAllocationProbePhase = Game.Runtime.RuntimeDiagnosticsSystem.EditorGameplayRuntimeAllocationProbePhase;
+using GameplayRuntimeAllocationProbeScope = Game.Runtime.RuntimeDiagnosticsSystem.EditorGameplayRuntimeAllocationProbeScope;
+#endif
 
 namespace Game.Runtime
 {
@@ -70,6 +74,9 @@ namespace Game.Runtime
                 if (runtimeCity != null && runtimeCity.RequiresUpdate)
                 {
                     stepStart = performanceDiagnosticsSystem.BeginStep();
+#if UNITY_EDITOR
+                    using (new GameplayRuntimeAllocationProbeScope(GameplayRuntimeAllocationProbePhase.RuntimeCity))
+#endif
                     using (RuntimeCityMarker.Auto())
                     {
                         runtimeCity.Update(UnityEngine.Time.frameCount);
@@ -80,6 +87,9 @@ namespace Game.Runtime
                 if (runtimeGridBlockers != null && runtimeGridBlockers.RequiresUpdate)
                 {
                     stepStart = performanceDiagnosticsSystem.BeginStep();
+#if UNITY_EDITOR
+                    using (new GameplayRuntimeAllocationProbeScope(GameplayRuntimeAllocationProbePhase.RuntimeGridBlockers))
+#endif
                     using (RuntimeGridBlockersMarker.Auto())
                     {
                         runtimeGridBlockers.Update();
@@ -90,6 +100,9 @@ namespace Game.Runtime
                 if (runtimeDecorations != null && runtimeDecorations.RequiresUpdate)
                 {
                     stepStart = performanceDiagnosticsSystem.BeginStep();
+#if UNITY_EDITOR
+                    using (new GameplayRuntimeAllocationProbeScope(GameplayRuntimeAllocationProbePhase.RuntimeDecorations))
+#endif
                     using (RuntimeDecorationsMarker.Auto())
                     {
                         runtimeDecorations.Update();
@@ -101,6 +114,9 @@ namespace Game.Runtime
             if (startupActive && !GameplayRuntimeUpdateDebugFlags.DisableBuildingPlacementRuntime)
             {
                 stepStart = performanceDiagnosticsSystem.BeginStep();
+#if UNITY_EDITOR
+                using (new GameplayRuntimeAllocationProbeScope(GameplayRuntimeAllocationProbePhase.BuildingPlacement))
+#endif
                 using (BuildingPlacementMarker.Auto())
                 {
                     buildingRuntimeUpdate?.UpdateStartup(buildingRuntimeUpdateContext);
@@ -111,6 +127,9 @@ namespace Game.Runtime
             if (simulationActive)
             {
                 stepStart = performanceDiagnosticsSystem.BeginStep();
+#if UNITY_EDITOR
+                using (new GameplayRuntimeAllocationProbeScope(GameplayRuntimeAllocationProbePhase.RoadBuild))
+#endif
                 using (RoadBuildMarker.Auto())
                 {
                     roadBuildRuntimeUpdate?.Invoke();
@@ -120,6 +139,9 @@ namespace Game.Runtime
                 if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingPlacementRuntime)
                 {
                     stepStart = performanceDiagnosticsSystem.BeginStep();
+#if UNITY_EDITOR
+                    using (new GameplayRuntimeAllocationProbeScope(GameplayRuntimeAllocationProbePhase.BuildingPlacement))
+#endif
                     using (BuildingPlacementMarker.Auto())
                     {
                         buildingRuntimeUpdate?.UpdateSimulation(buildingRuntimeUpdateContext);
@@ -130,6 +152,9 @@ namespace Game.Runtime
                 if (!GameplayRuntimeUpdateDebugFlags.DisableSelectionRuntime)
                 {
                     stepStart = performanceDiagnosticsSystem.BeginStep();
+#if UNITY_EDITOR
+                    using (new GameplayRuntimeAllocationProbeScope(GameplayRuntimeAllocationProbePhase.Selection))
+#endif
                     using (SelectionMarker.Auto())
                     {
                         selectionRuntimeUpdate?.Invoke();
@@ -138,6 +163,9 @@ namespace Game.Runtime
                 }
 
                 stepStart = performanceDiagnosticsSystem.BeginStep();
+#if UNITY_EDITOR
+                using (new GameplayRuntimeAllocationProbeScope(GameplayRuntimeAllocationProbePhase.DayNight))
+#endif
                 using (DayNightMarker.Auto())
                 {
                     dayNight?.Update();
@@ -145,6 +173,9 @@ namespace Game.Runtime
                 hadSlowStep |= performanceDiagnosticsSystem.EndStep("DayNight", stepStart);
 
                 stepStart = performanceDiagnosticsSystem.BeginStep();
+#if UNITY_EDITOR
+                using (new GameplayRuntimeAllocationProbeScope(GameplayRuntimeAllocationProbePhase.CitizenPopulation))
+#endif
                 using (CitizenPopulationMarker.Auto())
                 {
                     citizenPopulationRuntimeUpdate?.Invoke();
@@ -153,6 +184,9 @@ namespace Game.Runtime
             }
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
+#if UNITY_EDITOR
+            using (new GameplayRuntimeAllocationProbeScope(GameplayRuntimeAllocationProbePhase.MainMenu))
+#endif
             using (MainMenuMarker.Auto())
             {
                 PresentPendingThreatWarning(mainMenu, Time.unscaledTime);
@@ -160,6 +194,9 @@ namespace Game.Runtime
             }
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("MainMenu", stepStart);
 
+#if UNITY_EDITOR
+            using (new GameplayRuntimeAllocationProbeScope(GameplayRuntimeAllocationProbePhase.LoadingGate))
+#endif
             using (LoadingGateMarker.Auto())
             {
                 if (gameplayStartPending && _loadingGateStartedFrame < 0)
@@ -199,6 +236,9 @@ namespace Game.Runtime
                 }
             }
 
+#if UNITY_EDITOR
+            using (new GameplayRuntimeAllocationProbeScope(GameplayRuntimeAllocationProbePhase.EndUpdate))
+#endif
             using (EndUpdateMarker.Auto())
             {
                 performanceDiagnosticsSystem.EndUpdate(

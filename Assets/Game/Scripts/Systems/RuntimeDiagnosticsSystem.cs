@@ -281,9 +281,139 @@ namespace Game.Runtime
             }
         }
 
+        public enum EditorGameplayRuntimeAllocationProbePhase
+        {
+            RuntimeCity = 0,
+            RuntimeGridBlockers = 1,
+            RuntimeDecorations = 2,
+            RoadBuild = 3,
+            BuildingPlacement = 4,
+            Selection = 5,
+            DayNight = 6,
+            CitizenPopulation = 7,
+            MainMenu = 8,
+            LoadingGate = 9,
+            EndUpdate = 10
+        }
+
+        public readonly struct EditorGameplayRuntimeAllocationProbeSnapshot
+        {
+            public readonly EditorGameplayRuntimeAllocationProbeCounter RuntimeCity;
+            public readonly EditorGameplayRuntimeAllocationProbeCounter RuntimeGridBlockers;
+            public readonly EditorGameplayRuntimeAllocationProbeCounter RuntimeDecorations;
+            public readonly EditorGameplayRuntimeAllocationProbeCounter RoadBuild;
+            public readonly EditorGameplayRuntimeAllocationProbeCounter BuildingPlacement;
+            public readonly EditorGameplayRuntimeAllocationProbeCounter Selection;
+            public readonly EditorGameplayRuntimeAllocationProbeCounter DayNight;
+            public readonly EditorGameplayRuntimeAllocationProbeCounter CitizenPopulation;
+            public readonly EditorGameplayRuntimeAllocationProbeCounter MainMenu;
+            public readonly EditorGameplayRuntimeAllocationProbeCounter LoadingGate;
+            public readonly EditorGameplayRuntimeAllocationProbeCounter EndUpdate;
+
+            private EditorGameplayRuntimeAllocationProbeSnapshot(
+                EditorGameplayRuntimeAllocationProbeCounter runtimeCity,
+                EditorGameplayRuntimeAllocationProbeCounter runtimeGridBlockers,
+                EditorGameplayRuntimeAllocationProbeCounter runtimeDecorations,
+                EditorGameplayRuntimeAllocationProbeCounter roadBuild,
+                EditorGameplayRuntimeAllocationProbeCounter buildingPlacement,
+                EditorGameplayRuntimeAllocationProbeCounter selection,
+                EditorGameplayRuntimeAllocationProbeCounter dayNight,
+                EditorGameplayRuntimeAllocationProbeCounter citizenPopulation,
+                EditorGameplayRuntimeAllocationProbeCounter mainMenu,
+                EditorGameplayRuntimeAllocationProbeCounter loadingGate,
+                EditorGameplayRuntimeAllocationProbeCounter endUpdate)
+            {
+                RuntimeCity = runtimeCity;
+                RuntimeGridBlockers = runtimeGridBlockers;
+                RuntimeDecorations = runtimeDecorations;
+                RoadBuild = roadBuild;
+                BuildingPlacement = buildingPlacement;
+                Selection = selection;
+                DayNight = dayNight;
+                CitizenPopulation = citizenPopulation;
+                MainMenu = mainMenu;
+                LoadingGate = loadingGate;
+                EndUpdate = endUpdate;
+            }
+
+            public static EditorGameplayRuntimeAllocationProbeSnapshot Create(
+                EditorGameplayRuntimeAllocationProbeCounter runtimeCity,
+                EditorGameplayRuntimeAllocationProbeCounter runtimeGridBlockers,
+                EditorGameplayRuntimeAllocationProbeCounter runtimeDecorations,
+                EditorGameplayRuntimeAllocationProbeCounter roadBuild,
+                EditorGameplayRuntimeAllocationProbeCounter buildingPlacement,
+                EditorGameplayRuntimeAllocationProbeCounter selection,
+                EditorGameplayRuntimeAllocationProbeCounter dayNight,
+                EditorGameplayRuntimeAllocationProbeCounter citizenPopulation,
+                EditorGameplayRuntimeAllocationProbeCounter mainMenu,
+                EditorGameplayRuntimeAllocationProbeCounter loadingGate,
+                EditorGameplayRuntimeAllocationProbeCounter endUpdate)
+            {
+                return new EditorGameplayRuntimeAllocationProbeSnapshot(
+                    runtimeCity,
+                    runtimeGridBlockers,
+                    runtimeDecorations,
+                    roadBuild,
+                    buildingPlacement,
+                    selection,
+                    dayNight,
+                    citizenPopulation,
+                    mainMenu,
+                    loadingGate,
+                    endUpdate);
+            }
+        }
+
+        public struct EditorGameplayRuntimeAllocationProbeCounter
+        {
+            public long Bytes;
+            public int AllocationSamples;
+            public int UpdateSamples;
+
+            public void Add(long allocatedBytes)
+            {
+                UpdateSamples++;
+                if (allocatedBytes <= 0)
+                    return;
+
+                Bytes += allocatedBytes;
+                AllocationSamples++;
+            }
+        }
+
+        public readonly struct EditorGameplayRuntimeAllocationProbeScope : System.IDisposable
+        {
+            private readonly EditorGameplayRuntimeAllocationProbePhase phase;
+            private readonly long startBytes;
+
+            public EditorGameplayRuntimeAllocationProbeScope(EditorGameplayRuntimeAllocationProbePhase phase)
+            {
+                this.phase = phase;
+                startBytes = System.GC.GetAllocatedBytesForCurrentThread();
+            }
+
+            public void Dispose()
+            {
+                RecordEditorGameplayRuntimeAllocation(
+                    phase,
+                    System.GC.GetAllocatedBytesForCurrentThread() - startBytes);
+            }
+        }
+
         private static EditorBuildingVisualAllocationProbeCounter editorBuildingVisualAllocationProbe;
         private static EditorProductionTransportAllocationProbeCounter editorProductionTransportAllocationProbe;
         private static EditorTransportBoardingAllocationProbeCounter editorTransportBoardingAllocationProbe;
+        private static EditorGameplayRuntimeAllocationProbeCounter editorGameplayRuntimeCityAllocationProbe;
+        private static EditorGameplayRuntimeAllocationProbeCounter editorGameplayRuntimeGridBlockersAllocationProbe;
+        private static EditorGameplayRuntimeAllocationProbeCounter editorGameplayRuntimeDecorationsAllocationProbe;
+        private static EditorGameplayRuntimeAllocationProbeCounter editorGameplayRoadBuildAllocationProbe;
+        private static EditorGameplayRuntimeAllocationProbeCounter editorGameplayBuildingPlacementAllocationProbe;
+        private static EditorGameplayRuntimeAllocationProbeCounter editorGameplaySelectionAllocationProbe;
+        private static EditorGameplayRuntimeAllocationProbeCounter editorGameplayDayNightAllocationProbe;
+        private static EditorGameplayRuntimeAllocationProbeCounter editorGameplayCitizenPopulationAllocationProbe;
+        private static EditorGameplayRuntimeAllocationProbeCounter editorGameplayMainMenuAllocationProbe;
+        private static EditorGameplayRuntimeAllocationProbeCounter editorGameplayLoadingGateAllocationProbe;
+        private static EditorGameplayRuntimeAllocationProbeCounter editorGameplayEndUpdateAllocationProbe;
 #endif
 
         public bool VerboseAILogs
@@ -348,6 +478,21 @@ namespace Game.Runtime
             editorTransportBoardingAllocationProbe = default;
         }
 
+        public static void ResetEditorGameplayRuntimeAllocationProbe()
+        {
+            editorGameplayRuntimeCityAllocationProbe = default;
+            editorGameplayRuntimeGridBlockersAllocationProbe = default;
+            editorGameplayRuntimeDecorationsAllocationProbe = default;
+            editorGameplayRoadBuildAllocationProbe = default;
+            editorGameplayBuildingPlacementAllocationProbe = default;
+            editorGameplaySelectionAllocationProbe = default;
+            editorGameplayDayNightAllocationProbe = default;
+            editorGameplayCitizenPopulationAllocationProbe = default;
+            editorGameplayMainMenuAllocationProbe = default;
+            editorGameplayLoadingGateAllocationProbe = default;
+            editorGameplayEndUpdateAllocationProbe = default;
+        }
+
         public static void RecordEditorBuildingVisualAllocation(
             long allocatedBytes,
             bool pooled,
@@ -398,6 +543,48 @@ namespace Game.Runtime
             editorTransportBoardingAllocationProbe.AddCommand(allocatedBytes, handled);
         }
 
+        public static void RecordEditorGameplayRuntimeAllocation(
+            EditorGameplayRuntimeAllocationProbePhase phase,
+            long allocatedBytes)
+        {
+            switch (phase)
+            {
+                case EditorGameplayRuntimeAllocationProbePhase.RuntimeCity:
+                    editorGameplayRuntimeCityAllocationProbe.Add(allocatedBytes);
+                    break;
+                case EditorGameplayRuntimeAllocationProbePhase.RuntimeGridBlockers:
+                    editorGameplayRuntimeGridBlockersAllocationProbe.Add(allocatedBytes);
+                    break;
+                case EditorGameplayRuntimeAllocationProbePhase.RuntimeDecorations:
+                    editorGameplayRuntimeDecorationsAllocationProbe.Add(allocatedBytes);
+                    break;
+                case EditorGameplayRuntimeAllocationProbePhase.RoadBuild:
+                    editorGameplayRoadBuildAllocationProbe.Add(allocatedBytes);
+                    break;
+                case EditorGameplayRuntimeAllocationProbePhase.BuildingPlacement:
+                    editorGameplayBuildingPlacementAllocationProbe.Add(allocatedBytes);
+                    break;
+                case EditorGameplayRuntimeAllocationProbePhase.Selection:
+                    editorGameplaySelectionAllocationProbe.Add(allocatedBytes);
+                    break;
+                case EditorGameplayRuntimeAllocationProbePhase.DayNight:
+                    editorGameplayDayNightAllocationProbe.Add(allocatedBytes);
+                    break;
+                case EditorGameplayRuntimeAllocationProbePhase.CitizenPopulation:
+                    editorGameplayCitizenPopulationAllocationProbe.Add(allocatedBytes);
+                    break;
+                case EditorGameplayRuntimeAllocationProbePhase.MainMenu:
+                    editorGameplayMainMenuAllocationProbe.Add(allocatedBytes);
+                    break;
+                case EditorGameplayRuntimeAllocationProbePhase.LoadingGate:
+                    editorGameplayLoadingGateAllocationProbe.Add(allocatedBytes);
+                    break;
+                case EditorGameplayRuntimeAllocationProbePhase.EndUpdate:
+                    editorGameplayEndUpdateAllocationProbe.Add(allocatedBytes);
+                    break;
+            }
+        }
+
         public static EditorBuildingVisualAllocationProbeSnapshot GetEditorBuildingVisualAllocationProbe()
         {
             return EditorBuildingVisualAllocationProbeSnapshot.Create(editorBuildingVisualAllocationProbe);
@@ -411,6 +598,22 @@ namespace Game.Runtime
         public static EditorTransportBoardingAllocationProbeSnapshot GetEditorTransportBoardingAllocationProbe()
         {
             return EditorTransportBoardingAllocationProbeSnapshot.Create(editorTransportBoardingAllocationProbe);
+        }
+
+        public static EditorGameplayRuntimeAllocationProbeSnapshot GetEditorGameplayRuntimeAllocationProbe()
+        {
+            return EditorGameplayRuntimeAllocationProbeSnapshot.Create(
+                editorGameplayRuntimeCityAllocationProbe,
+                editorGameplayRuntimeGridBlockersAllocationProbe,
+                editorGameplayRuntimeDecorationsAllocationProbe,
+                editorGameplayRoadBuildAllocationProbe,
+                editorGameplayBuildingPlacementAllocationProbe,
+                editorGameplaySelectionAllocationProbe,
+                editorGameplayDayNightAllocationProbe,
+                editorGameplayCitizenPopulationAllocationProbe,
+                editorGameplayMainMenuAllocationProbe,
+                editorGameplayLoadingGateAllocationProbe,
+                editorGameplayEndUpdateAllocationProbe);
         }
 #endif
 

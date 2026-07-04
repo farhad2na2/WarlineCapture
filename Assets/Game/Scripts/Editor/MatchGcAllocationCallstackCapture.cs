@@ -603,6 +603,7 @@ namespace Game.Editor
             RuntimeDiagnosticsSystem.ResetEditorBuildingVisualAllocationProbe();
             RuntimeDiagnosticsSystem.ResetEditorProductionTransportAllocationProbe();
             RuntimeDiagnosticsSystem.ResetEditorTransportBoardingAllocationProbe();
+            RuntimeDiagnosticsSystem.ResetEditorGameplayRuntimeAllocationProbe();
         }
 
         private static void AppendRuntimeAllocationProbeSummary(StringBuilder builder)
@@ -623,6 +624,8 @@ namespace Game.Editor
                 RuntimeDiagnosticsSystem.GetEditorProductionTransportAllocationProbe();
             RuntimeDiagnosticsSystem.EditorTransportBoardingAllocationProbeSnapshot transportBoardingProbe =
                 RuntimeDiagnosticsSystem.GetEditorTransportBoardingAllocationProbe();
+            RuntimeDiagnosticsSystem.EditorGameplayRuntimeAllocationProbeSnapshot gameplayRuntimeProbe =
+                RuntimeDiagnosticsSystem.GetEditorGameplayRuntimeAllocationProbe();
             builder.AppendLine("- Runtime allocation probe:");
             builder.Append("  - `UIShellEcsPresentationSystem.Update`: ")
                 .Append(shellBytes)
@@ -638,6 +641,18 @@ namespace Game.Editor
                 .Append(" allocating updates / ")
                 .Append(bootstrapUpdateSamples)
                 .AppendLine(" total updates.");
+            builder.AppendLine("  - `GameplayRuntimeUpdateCompositionSystemHelper.Update` top-level phases. Diagnostic only; not a gate yet.");
+            AppendGameplayRuntimeProbePhase(builder, "RuntimeCity", gameplayRuntimeProbe.RuntimeCity);
+            AppendGameplayRuntimeProbePhase(builder, "RuntimeGridBlockers", gameplayRuntimeProbe.RuntimeGridBlockers);
+            AppendGameplayRuntimeProbePhase(builder, "RuntimeDecorations", gameplayRuntimeProbe.RuntimeDecorations);
+            AppendGameplayRuntimeProbePhase(builder, "RoadBuild", gameplayRuntimeProbe.RoadBuild);
+            AppendGameplayRuntimeProbePhase(builder, "BuildingPlacement", gameplayRuntimeProbe.BuildingPlacement);
+            AppendGameplayRuntimeProbePhase(builder, "Selection", gameplayRuntimeProbe.Selection);
+            AppendGameplayRuntimeProbePhase(builder, "DayNight", gameplayRuntimeProbe.DayNight);
+            AppendGameplayRuntimeProbePhase(builder, "CitizenPopulation", gameplayRuntimeProbe.CitizenPopulation);
+            AppendGameplayRuntimeProbePhase(builder, "MainMenu", gameplayRuntimeProbe.MainMenu);
+            AppendGameplayRuntimeProbePhase(builder, "LoadingGate", gameplayRuntimeProbe.LoadingGate);
+            AppendGameplayRuntimeProbePhase(builder, "EndUpdate", gameplayRuntimeProbe.EndUpdate);
             builder.Append("  - `SelectionGameplayStartupSystemHelper.UpdateSelectionRuntimePhases`: ")
                 .Append(selectionProbe.TotalBytes)
                 .Append(" bytes / ")
@@ -782,6 +797,22 @@ namespace Game.Editor
                 .Append(allocationSamples)
                 .Append(" allocating updates / ")
                 .Append(updateSamples)
+                .AppendLine(" total updates.");
+        }
+
+        private static void AppendGameplayRuntimeProbePhase(
+            StringBuilder builder,
+            string phaseName,
+            RuntimeDiagnosticsSystem.EditorGameplayRuntimeAllocationProbeCounter counter)
+        {
+            builder.Append("    - `GameplayRuntimeUpdate.")
+                .Append(phaseName)
+                .Append("`: ")
+                .Append(counter.Bytes)
+                .Append(" bytes / ")
+                .Append(counter.AllocationSamples)
+                .Append(" allocating updates / ")
+                .Append(counter.UpdateSamples)
                 .AppendLine(" total updates.");
         }
 

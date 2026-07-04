@@ -11,9 +11,10 @@ public sealed class AndroidVisualQualityValidationTests
     private const string MobileRenderPipelinePath = "Assets/Settings/Mobile_RPAsset.asset";
     private const string VisualQualityProfilePath = "Assets/Game/Rendering/VisualQualityConfig.asset";
     private const float MinimumLowRenderScale = 0.72f;
-    private const float BalancedMobileRenderScale = 0.9f;
+    private const float BalancedMobileRenderScale = 0.72f;
     private const int BalancedMobileMsaa = 2;
-    private const float BalancedMobileShadowDistance = 22f;
+    private const int BalancedMobileUpscalingFilter = 3;
+    private const float BalancedMobileShadowDistance = 16f;
 
     public static void RunFocusedValidation()
     {
@@ -48,13 +49,16 @@ public sealed class AndroidVisualQualityValidationTests
         SerializedObject serializedAsset = new(asset);
         SerializedProperty msaa = serializedAsset.FindProperty("m_MSAA");
         SerializedProperty renderScale = serializedAsset.FindProperty("m_RenderScale");
+        SerializedProperty upscalingFilter = serializedAsset.FindProperty("m_UpscalingFilter");
         SerializedProperty shadowDistance = serializedAsset.FindProperty("m_ShadowDistance");
 
         Assert.NotNull(msaa, "Mobile URP asset is missing serialized m_MSAA.");
         Assert.NotNull(renderScale, "Mobile URP asset is missing serialized m_RenderScale.");
+        Assert.NotNull(upscalingFilter, "Mobile URP asset is missing serialized m_UpscalingFilter.");
         Assert.NotNull(shadowDistance, "Mobile URP asset is missing serialized m_ShadowDistance.");
         Assert.AreEqual(BalancedMobileMsaa, msaa.intValue, "Android/mobile pipeline should use balanced 2x MSAA for 60 FPS.");
-        Assert.That(renderScale.floatValue, Is.EqualTo(BalancedMobileRenderScale).Within(0.001f), "Android/mobile pipeline should use balanced 0.90 render scale.");
+        Assert.That(renderScale.floatValue, Is.EqualTo(BalancedMobileRenderScale).Within(0.001f), "Android/mobile pipeline should use FSR-backed 0.72 render scale for 60 FPS.");
+        Assert.AreEqual(BalancedMobileUpscalingFilter, upscalingFilter.intValue, "Android/mobile pipeline should use FSR upscaling to preserve edge quality at the balanced render scale.");
         Assert.That(shadowDistance.floatValue, Is.EqualTo(BalancedMobileShadowDistance).Within(0.001f), "Android/mobile shadows should stay bounded for 60 FPS.");
     }
 
@@ -93,7 +97,7 @@ public sealed class AndroidVisualQualityValidationTests
             : qualitySettings.Substring(mobileIndex);
 
         StringAssert.Contains("antiAliasing: 2", mobileBlock, "Android Mobile quality tier should use balanced 2x MSAA.");
-        StringAssert.Contains("shadowDistance: 22", mobileBlock, "Android Mobile quality tier should cap shadow distance for 60 FPS.");
+        StringAssert.Contains("shadowDistance: 16", mobileBlock, "Android Mobile quality tier should cap shadow distance for 60 FPS.");
     }
 }
 #endif

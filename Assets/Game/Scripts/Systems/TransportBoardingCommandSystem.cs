@@ -271,7 +271,7 @@ namespace Game.Runtime
             for (int i = 0; i < commandRequests.Length;)
             {
                 RtsSelectionCommandIntentRequestElement request = commandRequests[i];
-                if (!IsTransportCommandIntent(request.Kind))
+                if (!TransportBoardingCommandRoutingSystemHelper.IsTransportCommandIntent(request.Kind))
                 {
                     i++;
                     continue;
@@ -328,8 +328,8 @@ namespace Game.Runtime
                         transportCapacitySystem,
                         moveOrderSystem)
                 };
-                AddCommandResult(em, commandEntity, commandResults, result);
-                RefreshCommandBuffers(em, commandEntity, ref commandRequests, ref commandResults);
+                TransportBoardingCommandRoutingSystemHelper.AddCommandResult(em, commandEntity, commandResults, result);
+                TransportBoardingCommandRoutingSystemHelper.RefreshCommandBuffers(em, commandEntity, ref commandRequests, ref commandResults);
             }
 
 #if UNITY_EDITOR
@@ -366,7 +366,7 @@ namespace Game.Runtime
             for (int i = 0; i < commandRequests.Length;)
             {
                 RtsSelectionCommandIntentRequestElement request = commandRequests[i];
-                if (!IsPreResolvedTransportCommandIntent(request))
+                if (!TransportBoardingCommandRoutingSystemHelper.IsPreResolvedTransportCommandIntent(request))
                 {
                     i++;
                     continue;
@@ -399,43 +399,11 @@ namespace Game.Runtime
                         moveOrderSystem)
                 };
 
-                AddCommandResult(em, commandEntity, commandResults, result);
-                RefreshCommandBuffers(em, commandEntity, ref commandRequests, ref commandResults);
+                TransportBoardingCommandRoutingSystemHelper.AddCommandResult(em, commandEntity, commandResults, result);
+                TransportBoardingCommandRoutingSystemHelper.RefreshCommandBuffers(em, commandEntity, ref commandRequests, ref commandResults);
             }
 
             return handledAny;
-        }
-
-        private static bool IsTransportCommandIntent(RtsSelectionCommandIntentKind kind)
-        {
-            return TransportBoardingCommandRoutingSystemHelper.IsTransportCommandIntent(kind);
-        }
-
-        private static bool IsPreResolvedTransportCommandIntent(RtsSelectionCommandIntentRequestElement request)
-        {
-            return TransportBoardingCommandRoutingSystemHelper.IsPreResolvedTransportCommandIntent(request);
-        }
-
-        private static void AddCommandResult(
-            EntityManager em,
-            Entity commandEntity,
-            DynamicBuffer<RtsSelectionCommandResultElement> fallbackResults,
-            RtsSelectionCommandResultElement result)
-        {
-            TransportBoardingCommandRoutingSystemHelper.AddCommandResult(em, commandEntity, fallbackResults, result);
-        }
-
-        private static void RefreshCommandBuffers(
-            EntityManager em,
-            Entity commandEntity,
-            ref DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
-            ref DynamicBuffer<RtsSelectionCommandResultElement> commandResults)
-        {
-            TransportBoardingCommandRoutingSystemHelper.RefreshCommandBuffers(
-                em,
-                commandEntity,
-                ref commandRequests,
-                ref commandResults);
         }
 
         private RtsSelectionCommandResultElement ProcessBoardTransportRequest(
@@ -457,7 +425,7 @@ namespace Game.Runtime
                 tryGetClickedUnitEntity,
                 tryGetClickedCell);
 
-            return ToBoardingCommandResultElement(request, result);
+            return TransportBoardingCommandRoutingSystemHelper.ToBoardingCommandResultElement(request, result);
         }
 
         private RtsSelectionCommandResultElement ProcessBoardTransportTargetRequest(
@@ -476,7 +444,7 @@ namespace Game.Runtime
                     selectionStateSystem)
                 : Result.Rejected();
 
-            return ToBoardingCommandResultElement(request, result);
+            return TransportBoardingCommandRoutingSystemHelper.ToBoardingCommandResultElement(request, result);
         }
 
         private RtsSelectionCommandResultElement ProcessBoardSelectedTransportRequest(
@@ -495,7 +463,7 @@ namespace Game.Runtime
                 moveOrderSystem,
                 tryGetClickedUnitEntity);
 
-            return ToBoardingCommandResultElement(request, result);
+            return TransportBoardingCommandRoutingSystemHelper.ToBoardingCommandResultElement(request, result);
         }
 
         private RtsSelectionCommandResultElement ProcessBoardSelectedTransportPassengerRequest(
@@ -514,7 +482,7 @@ namespace Game.Runtime
                     moveOrderSystem)
                 : Result.Rejected();
 
-            return ToBoardingCommandResultElement(request, result);
+            return TransportBoardingCommandRoutingSystemHelper.ToBoardingCommandResultElement(request, result);
         }
 
         private RtsSelectionCommandResultElement ProcessBoardAllSelectedTransportRequest(
@@ -525,7 +493,7 @@ namespace Game.Runtime
         {
             if (!TryResolveSelectedBoardTransport(em, selectionStateSystem, out Entity transport))
             {
-                return ToBoardAllCommandResultElement(
+                return TransportBoardingCommandRoutingSystemHelper.ToBoardAllCommandResultElement(
                     request,
                     false,
                     TacticalCommandReasonCode.CommandUnavailable,
@@ -538,7 +506,7 @@ namespace Game.Runtime
                     transportCapacitySystem,
                     out int orderedCount))
             {
-                return ToBoardAllCommandResultElement(
+                return TransportBoardingCommandRoutingSystemHelper.ToBoardAllCommandResultElement(
                     request,
                     false,
                     TacticalCommandReasonCode.CommandUnavailable,
@@ -546,27 +514,11 @@ namespace Game.Runtime
             }
 
             string message = orderedCount == 1 ? "Boarding 1 unit." : $"Boarding {orderedCount} units.";
-            return ToBoardAllCommandResultElement(
+            return TransportBoardingCommandRoutingSystemHelper.ToBoardAllCommandResultElement(
                 request,
                 true,
                 TacticalCommandReasonCode.None,
                 message);
-        }
-
-        private static RtsSelectionCommandResultElement ToBoardingCommandResultElement(
-            RtsSelectionCommandIntentRequestElement request,
-            Result result)
-        {
-            return TransportBoardingCommandRoutingSystemHelper.ToBoardingCommandResultElement(request, result);
-        }
-
-        private static RtsSelectionCommandResultElement ToBoardAllCommandResultElement(
-            RtsSelectionCommandIntentRequestElement request,
-            bool accepted,
-            TacticalCommandReasonCode reasonCode,
-            string message)
-        {
-            return TransportBoardingCommandRoutingSystemHelper.ToBoardAllCommandResultElement(request, accepted, reasonCode, message);
         }
 
         private RtsSelectionCommandResultElement ProcessDisembarkTransportRequest(

@@ -335,6 +335,35 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void OrderPlanningHelper_ReportsPlannedSlotRejectionByPassengerKind()
+    {
+        Assert.AreEqual(
+            TransportBoardingPlannedSlotRejectionKind.None,
+            TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
+                UnitTransportPassengerKind.Soldier,
+                availableSoldierSeats: 2,
+                availableVehicleSlots: 0,
+                plannedSoldierSeats: 1,
+                plannedVehicleSlots: 0));
+        Assert.AreEqual(
+            TransportBoardingPlannedSlotRejectionKind.NoSoldierSeats,
+            TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
+                UnitTransportPassengerKind.Soldier,
+                availableSoldierSeats: 1,
+                availableVehicleSlots: 2,
+                plannedSoldierSeats: 1,
+                plannedVehicleSlots: 0));
+        Assert.AreEqual(
+            TransportBoardingPlannedSlotRejectionKind.NoVehicleSlots,
+            TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
+                UnitTransportPassengerKind.Vehicle,
+                availableSoldierSeats: 2,
+                availableVehicleSlots: 1,
+                plannedSoldierSeats: 0,
+                plannedVehicleSlots: 1));
+    }
+
+    [Test]
     public void OrderPlanningHelper_ResolvesBatchAcceptedMessages()
     {
         Assert.AreEqual(

@@ -759,14 +759,16 @@ namespace Game.Runtime
                     continue;
                 }
 
-                if (!TransportBoardingOrderPlanningSystemHelper.HasPlannedBoardingSlot(
+                TransportBoardingPlannedSlotRejectionKind slotRejection =
+                    TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
                         passengerKind,
                         slotAvailability.AvailableSoldierSeats,
                         slotAvailability.AvailableVehicleSlots,
                         plannedSoldierSeats,
-                        plannedVehicleSlots))
+                        plannedVehicleSlots);
+                if (slotRejection != TransportBoardingPlannedSlotRejectionKind.None)
                 {
-                    if (passengerKind == UnitTransportPassengerKind.Vehicle)
+                    if (slotRejection == TransportBoardingPlannedSlotRejectionKind.NoVehicleSlots)
                     {
                         if (shouldLogTransportBoarding)
                             TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoVehicleSlots passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} vehicles={slotAvailability.OccupiedVehicleSlots + plannedVehicleSlots}/{slotAvailability.VehicleCapacity}");
@@ -1353,12 +1355,12 @@ namespace Game.Runtime
                     continue;
                 }
 
-                if (!TransportBoardingOrderPlanningSystemHelper.HasPlannedBoardingSlot(
+                if (TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
                         passengerKind,
                         slotAvailability.AvailableSoldierSeats,
                         slotAvailability.AvailableVehicleSlots,
                         plannedSoldierSeats,
-                        plannedVehicleSlots))
+                        plannedVehicleSlots) != TransportBoardingPlannedSlotRejectionKind.None)
                 {
                     continue;
                 }

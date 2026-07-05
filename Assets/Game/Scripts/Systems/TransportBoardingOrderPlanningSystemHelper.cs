@@ -2,6 +2,13 @@ using Game.Components;
 
 namespace Game.Runtime
 {
+    internal enum TransportBoardingPlannedSlotRejectionKind
+    {
+        None,
+        NoSoldierSeats,
+        NoVehicleSlots
+    }
+
     internal static class TransportBoardingOrderPlanningSystemHelper
     {
         public static string ResolveBoardingAcceptedMessage(
@@ -47,6 +54,28 @@ namespace Game.Runtime
             return passengerKind == UnitTransportPassengerKind.Vehicle
                 ? plannedVehicleSlots < availableVehicleSlots
                 : plannedSoldierSeats < availableSoldierSeats;
+        }
+
+        public static TransportBoardingPlannedSlotRejectionKind ResolvePlannedSlotRejection(
+            byte passengerKind,
+            int availableSoldierSeats,
+            int availableVehicleSlots,
+            int plannedSoldierSeats,
+            int plannedVehicleSlots)
+        {
+            if (HasPlannedBoardingSlot(
+                    passengerKind,
+                    availableSoldierSeats,
+                    availableVehicleSlots,
+                    plannedSoldierSeats,
+                    plannedVehicleSlots))
+            {
+                return TransportBoardingPlannedSlotRejectionKind.None;
+            }
+
+            return passengerKind == UnitTransportPassengerKind.Vehicle
+                ? TransportBoardingPlannedSlotRejectionKind.NoVehicleSlots
+                : TransportBoardingPlannedSlotRejectionKind.NoSoldierSeats;
         }
 
         public static bool TryReservePlannedBoardingSlot(

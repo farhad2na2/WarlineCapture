@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 57% (57/99 checklist items complete).
+Overall implementation progress: 58% (58/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -32,7 +32,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
-| 3. Tray truck automation | In Progress | 8 | 13 | 62% | Auto-assign Oil pickup/delivery without manual target commands. |
+| 3. Tray truck automation | In Progress | 9 | 13 | 69% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
@@ -111,7 +111,7 @@ Validation:
 - [x] Seeded faction-base tray truck can start Oil hauling without building a truck at runtime.
 - [x] No refinery capacity causes tray truck idle with a typed reason.
 - [x] Destroyed source/destination clears reservations.
-- [ ] Steady-state automation produces 0 B/frame GC.
+- [x] Steady-state automation produces 0 B/frame GC.
 
 ## Phase 4: Refinery Conversion
 
@@ -779,3 +779,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 3 with steady-state no-GC validation and then reassess whether the remaining automation implementation rows need actual unmanaged `ISystem` work or should stay deferred until the tray/tanker loop is fully feature-complete.
+- Slice: steady-state tray automation managed-allocation probe.
+- Files changed: `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs` and this tracker.
+- Behavior intent:
+  - Added a focused steady-state probe after warmup for unchanged automatic tray hauling.
+  - The probe measures `System.GC.GetAllocatedBytesForCurrentThread()` across repeated `UpdateResourceHaulers` calls while the active order/reservation state remains stable.
+  - This guards against managed allocations in the automated tray logistics steady state; Temp native allocations are outside the managed GC budget.
+- Validation:
+  - Added `AutomaticFuelLogisticsSteadyState_DoesNotAllocateManagedMemory`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 3 implementation rows by reducing the remaining all-truck/all-building scan work, or move to Phase 4 refinery conversion if that produces a safer user-visible logistics increment first.

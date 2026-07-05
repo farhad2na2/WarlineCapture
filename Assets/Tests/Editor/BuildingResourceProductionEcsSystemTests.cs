@@ -32,9 +32,10 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsTray_NoRefineryCapacitySetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTray_DestroyedSourceClearsReservation();
             tests.AutomaticFuelLogisticsTray_DestroyedDestinationClearsReservation();
+            tests.AutomaticFuelLogisticsSteadyState_DoesNotAllocateManagedMemory();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
             tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=20");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=21");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -988,6 +989,77 @@ public sealed class BuildingResourceProductionEcsSystemTests
                     ? FuelLogisticsBlockReasonCode.SourceUnavailable
                     : FuelLogisticsBlockReasonCode.DestinationUnavailable),
                 status.ReasonCode);
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsSteadyState_DoesNotAllocateManagedMemory()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsSteadyState_DoesNotAllocateManagedMemory));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 48, 48, out blocked, out occupied);
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em,
+                43,
+                1,
+                new Vector2Int(8, 10),
+                oilCapacity: 100,
+                fuelCapacity: 0,
+                oilRate: 80f,
+                fuelRate: 0f,
+                storedOil: 40f,
+                storedFuel: 0f);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em,
+                44,
+                1,
+                new Vector2Int(20, 10),
+                oilCapacity: 100,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 40f,
+                storedOil: 0f,
+                storedFuel: 0f);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { oilPump.Id, oilPump },
+                { refinery.Id, refinery }
+            };
+            Entity tray = CreateFuelLogisticsHauler(
+                em,
+                "Unit_Veh_Truck_Tray",
+                1,
+                new int2(4, 12));
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0f);
+            Assert.IsTrue(em.HasComponent<UnitResourceHaulOrder>(tray));
+
+            for (int i = 0; i < 8; i++)
+                bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0.1f + i * 0.01f);
+
+            long allocationStart = System.GC.GetAllocatedBytesForCurrentThread();
+            for (int i = 0; i < 32; i++)
+                bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0.5f + i * 0.01f);
+            long allocatedBytes = System.GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+
+            Assert.AreEqual(0L, allocatedBytes, "Unchanged automatic fuel logistics steady state should not allocate managed memory.");
+            Assert.IsTrue(em.HasComponent<UnitResourceHaulOrder>(tray));
+            Assert.IsTrue(em.HasComponent<UnitResourceHaulReservation>(tray));
         }
         finally
         {

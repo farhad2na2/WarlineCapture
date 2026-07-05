@@ -55,7 +55,7 @@ namespace Game.Runtime
             return new BuildingPlacementRuntimeTickCompositionSystemHelper.Context(
                 () => _productionRuntimeTickSystem.ProcessPendingProductions(source.ProductionContext),
                 () => _productionRuntimeTickSystem.UpdateActiveProductionTransports(source.ProductionContext),
-                () => _productionRuntimeTickSystem.UpdateResourceProduction(source.ProductionContext),
+                deltaTime => _productionRuntimeTickSystem.UpdateResourceProduction(source.ProductionContext, deltaTime),
                 () => _productionRuntimeTickSystem.UpdateResourceHaulers(source.ProductionContext),
                 source.UpdateBuildingResourceVisuals,
                 () => _productionRuntimeTickSystem.CleanupRecentSpawnReservations(source.ProductionContext),

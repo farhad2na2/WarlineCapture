@@ -21,6 +21,7 @@ namespace Game.UI.Shell.Ecs
         private static EntityQuery selectedUnitsQuery;
         private static EntityQuery minimapMarkerQuery;
         private static EntityQuery gridConfigQuery;
+        private static EntityQuery resourceStorageQuery;
         private static FixedString4096Bytes cachedDiagnosticsLogFixedText;
         private static string cachedDiagnosticsLogText;
         private static bool hasBoundaryQuery;
@@ -29,6 +30,7 @@ namespace Game.UI.Shell.Ecs
         private static bool hasSelectedUnitsQuery;
         private static bool hasMinimapMarkerQuery;
         private static bool hasGridConfigQuery;
+        private static bool hasResourceStorageQuery;
         private static bool hasCachedDiagnosticsLogText;
 
         private UiShellEcsGateway()
@@ -48,6 +50,7 @@ namespace Game.UI.Shell.Ecs
             hasSelectedUnitsQuery = false;
             hasMinimapMarkerQuery = false;
             hasGridConfigQuery = false;
+            hasResourceStorageQuery = false;
             hasCachedDiagnosticsLogText = false;
             cachedDiagnosticsLogFixedText = default;
             cachedDiagnosticsLogText = string.Empty;
@@ -646,7 +649,12 @@ namespace Game.UI.Shell.Ecs
             UiMatchHudHeaderComponent component = entityManager.GetComponentData<UiMatchHudHeaderComponent>(boundary);
             string oilText = "0";
             string fuelText = component.FuelText.ToString();
-            if (TryFormatPlayerResourceSummary(entityManager, boundary, out string resourceOilText, out string resourceFuelText))
+            if (TryFormatLivePlayerResourceStorage(entityManager, out string liveOilText, out string liveFuelText))
+            {
+                oilText = liveOilText;
+                fuelText = liveFuelText;
+            }
+            else if (TryFormatPlayerResourceSummary(entityManager, boundary, out string resourceOilText, out string resourceFuelText))
             {
                 oilText = resourceOilText;
                 fuelText = resourceFuelText;
@@ -660,6 +668,52 @@ namespace Game.UI.Shell.Ecs
                 component.SupplyText.ToString(),
                 component.CivilianRiskText.ToString(),
                 oilText);
+            return true;
+        }
+
+        private static bool TryFormatLivePlayerResourceStorage(
+            EntityManager entityManager,
+            out string oilText,
+            out string fuelText)
+        {
+            oilText = string.Empty;
+            fuelText = string.Empty;
+            EnsureResourceStorageQuery(entityManager);
+            if (resourceStorageQuery.IsEmptyIgnoreFilter)
+                return false;
+
+            float oil = 0f;
+            float fuel = 0f;
+            bool foundPlayerStorage = false;
+            using NativeArray<BuildingResourceStorageComponent> storages =
+                resourceStorageQuery.ToComponentDataArray<BuildingResourceStorageComponent>(Allocator.Temp);
+            using NativeArray<Faction> factions =
+                resourceStorageQuery.ToComponentDataArray<Faction>(Allocator.Temp);
+            int count = math.min(storages.Length, factions.Length);
+            for (int i = 0; i < count; i++)
+            {
+                if (!FactionIdentity.IsPlayerControlled(factions[i].Id))
+                    continue;
+
+                BuildingResourceStorageComponent storage = storages[i];
+                bool hasResourceRole =
+                    storage.OilStorageCapacity > 0 ||
+                    storage.FuelStorageCapacity > 0 ||
+                    storage.OilBarrelsPerDay > 0f ||
+                    storage.FuelBarrelsPerDay > 0f;
+                if (!hasResourceRole)
+                    continue;
+
+                foundPlayerStorage = true;
+                oil += Mathf.Max(0f, storage.StoredOilBarrels);
+                fuel += Mathf.Max(0f, storage.StoredFuelBarrels);
+            }
+
+            if (!foundPlayerStorage)
+                return false;
+
+            oilText = FormatCompact(Mathf.Max(0, Mathf.RoundToInt(oil)));
+            fuelText = FormatCompact(Mathf.Max(0, Mathf.RoundToInt(fuel)));
             return true;
         }
 
@@ -690,6 +744,17 @@ namespace Game.UI.Shell.Ecs
             }
 
             return false;
+        }
+
+        private static void EnsureResourceStorageQuery(EntityManager entityManager)
+        {
+            if (hasResourceStorageQuery && cachedWorld == entityManager.World)
+                return;
+
+            resourceStorageQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<BuildingResourceStorageComponent>(),
+                ComponentType.ReadOnly<Faction>());
+            hasResourceStorageQuery = true;
         }
 
         private static string FormatCompact(int value)
@@ -1156,6 +1221,10 @@ namespace Game.UI.Shell.Ecs
                 hasBoundaryQuery = false;
                 hasFocusedSelectionQuery = false;
                 hasSelectionInputQuery = false;
+                hasSelectedUnitsQuery = false;
+                hasMinimapMarkerQuery = false;
+                hasGridConfigQuery = false;
+                hasResourceStorageQuery = false;
             }
 
             if (!hasBoundaryQuery)

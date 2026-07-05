@@ -16,9 +16,10 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.ApplyTick_ConvertsOilIntoFuel();
             tests.ApplyTick_DoesNotConvertOilWhenFuelStorageIsFull();
             tests.UpdateResourceProduction_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale();
+            tests.ProductionRuntimeTick_UsesProvidedDeltaTimeForThrottledResourceProduction();
             tests.ProductionRuntimeTick_SyncsResourceStorageMirrorAfterProductionUpdate();
             tests.ProductionRuntimeTick_SyncsResourceStorageMirrorAfterHaulerUpdate();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=6");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=7");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -139,6 +140,45 @@ public sealed class BuildingResourceProductionEcsSystemTests
         {
             world.Dispose();
         }
+    }
+
+    [Test]
+    public void ProductionRuntimeTick_UsesProvidedDeltaTimeForThrottledResourceProduction()
+    {
+        var building = new RuntimeBuildingEntity
+        {
+            Id = 31,
+            Definition = new BuildingDefinition
+            {
+                OilStorageCapacity = 20,
+                OilBarrelsPerDay = 600f
+            }
+        };
+        var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+        {
+            { building.Id, building }
+        };
+        float recordedOil = -1f;
+        var context = new BuildingProductionRuntimeTickCompositionSystemHelper.Context(
+            runtimeBuildings,
+            null,
+            new FactionResourceCompositionSystemHelper(),
+            null,
+            default,
+            null,
+            default,
+            null,
+            null,
+            null,
+            oil => recordedOil = oil,
+            null,
+            null,
+            2f);
+
+        new BuildingProductionRuntimeTickCompositionSystemHelper().UpdateResourceProduction(context, 1f);
+
+        Assert.AreEqual(2f, building.StoredOilBarrels);
+        Assert.AreEqual(2f, recordedOil);
     }
 
     [Test]

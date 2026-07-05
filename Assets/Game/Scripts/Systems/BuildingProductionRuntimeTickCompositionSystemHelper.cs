@@ -131,6 +131,11 @@ namespace Game.Runtime
 
         public void UpdateResourceProduction(Context context)
         {
+            UpdateResourceProduction(context, UnityEngine.Time.deltaTime);
+        }
+
+        public void UpdateResourceProduction(Context context, float deltaTime)
+        {
             using (UpdateResourceProductionMarker.Auto())
             {
                 if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0 || context.FactionResourceCompositionSystemHelper == null)
@@ -150,7 +155,7 @@ namespace Game.Runtime
                         entityManager,
                         context.RuntimeBuildingMap,
                         secondsPerDay,
-                        UnityEngine.Time.deltaTime,
+                        Mathf.Max(0f, deltaTime),
                         context.OilBarrelsPerFuelBarrel);
                 }
                 else if (hasEntityManager)
@@ -159,7 +164,7 @@ namespace Game.Runtime
                         entityManager,
                         context.RuntimeBuildings,
                         secondsPerDay,
-                        UnityEngine.Time.deltaTime,
+                        Mathf.Max(0f, deltaTime),
                         context.OilBarrelsPerFuelBarrel);
                 }
                 else
@@ -168,12 +173,12 @@ namespace Game.Runtime
                         ? context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
                             context.RuntimeBuildingMap,
                             secondsPerDay,
-                            UnityEngine.Time.deltaTime,
+                            Mathf.Max(0f, deltaTime),
                             context.OilBarrelsPerFuelBarrel)
                         : context.FactionResourceCompositionSystemHelper.UpdateResourceProduction(
                             context.RuntimeBuildings,
                             secondsPerDay,
-                            UnityEngine.Time.deltaTime,
+                            Mathf.Max(0f, deltaTime),
                             context.OilBarrelsPerFuelBarrel);
                 }
                 if (result.OilExtractedBarrels > 0f)

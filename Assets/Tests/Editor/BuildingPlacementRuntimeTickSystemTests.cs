@@ -14,7 +14,8 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
                 tests.SimulationTickRunsBoundaryBeforeProductionWork();
                 tests.SimulationTickThrottlesProductionTransportsAndResourceVisuals();
                 tests.SimulationTickSkipsImmediateActiveTransportProbeWhenPendingTickIsIdle();
-                UnityEngine.Debug.Log("[BuildingPlacementRuntimeTickFocusedValidation] result=Passed tests=4");
+                tests.SimulationTickPassesAccumulatedDeltaToResourceProduction();
+                UnityEngine.Debug.Log("[BuildingPlacementRuntimeTickFocusedValidation] result=Passed tests=5");
         }
         catch (System.Exception exception)
         {
@@ -111,6 +112,31 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
         Assert.AreEqual(1, calls.Count(call => call == "activeTransport"));
     }
 
+    [Test]
+    public void SimulationTickPassesAccumulatedDeltaToResourceProduction()
+    {
+        BuildingPlacementRuntimeTickCompositionSystemHelper tickSystem = new();
+        var calls = new List<string>();
+        float resourceDeltaTime = -1f;
+
+        BuildingPlacementRuntimeTickCompositionSystemHelper.Context context = CreateContext(
+            calls,
+            enqueueMapBuildingPlacements: () => calls.Add("mapBuildings"),
+            enqueueMapVehiclePlacements: () => calls.Add("mapVehicles"),
+            updateBuildingRuntimeState: () => calls.Add("boundary"),
+            updateResourceProduction: deltaTime =>
+            {
+                calls.Add("resources");
+                resourceDeltaTime = deltaTime;
+            },
+            getDeltaTime: () => 1f);
+
+        tickSystem.UpdateSimulation(context);
+
+        Assert.AreEqual(1, calls.Count(call => call == "resources"));
+        Assert.AreEqual(1f, resourceDeltaTime, 0.0001f);
+    }
+
     private static BuildingPlacementRuntimeTickCompositionSystemHelper.Context CreateContext(
         List<string> calls,
         System.Action enqueueMapBuildingPlacements,
@@ -118,7 +144,9 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
         System.Action updateBuildingRuntimeState,
         System.Func<bool> processPendingProductions = null,
         System.Func<bool> updateActiveProductionTransports = null,
-        System.Action updateBuildingResourceVisuals = null)
+        System.Action<float> updateResourceProduction = null,
+        System.Action updateBuildingResourceVisuals = null,
+        System.Func<float> getDeltaTime = null)
     {
         return new BuildingPlacementRuntimeTickCompositionSystemHelper.Context(
             processPendingProductions: processPendingProductions ?? (() =>
@@ -131,7 +159,7 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
                 calls.Add("activeTransport");
                 return true;
             }),
-            updateResourceProduction: () => calls.Add("resources"),
+            updateResourceProduction: updateResourceProduction ?? (_ => calls.Add("resources")),
             updateResourceHaulers: () => calls.Add("haulers"),
             updateBuildingResourceVisuals: updateBuildingResourceVisuals ?? (() => calls.Add("visuals")),
             cleanupRecentSpawnReservations: () => calls.Add("reservations"),
@@ -144,6 +172,7 @@ public sealed class BuildingPlacementRuntimeTickCompositionSystemHelperTests
             updateBuildingRuntimeState: updateBuildingRuntimeState,
             updateInput: () => default,
             diagnosticsSystem: null,
-            diagnosticsContext: default);
+            diagnosticsContext: default,
+            getDeltaTime: getDeltaTime);
     }
 }

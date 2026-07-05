@@ -35,13 +35,14 @@ namespace Game.Runtime
         private double _nextReservationCleanupAt;
         private double _nextDestroyedCleanupAt;
         private double _nextActiveProductionTransportProbeAt;
+        private float _resourceProductionElapsedSeconds;
         private bool _activeProductionTransportsObserved;
 
         public readonly struct Context
         {
             public readonly Func<bool> ProcessPendingProductions;
             public readonly Func<bool> UpdateActiveProductionTransports;
-            public readonly Action UpdateResourceProduction;
+            public readonly Action<float> UpdateResourceProduction;
             public readonly Action UpdateResourceHaulers;
             public readonly Action UpdateBuildingResourceVisuals;
             public readonly Action CleanupRecentSpawnReservations;
@@ -55,11 +56,12 @@ namespace Game.Runtime
             public readonly Func<BuildingPlacementInputRuntimeTickUiSystemHelper.Result> UpdateInput;
             public readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper DiagnosticsSystem;
             public readonly BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context DiagnosticsContext;
+            public readonly Func<float> GetDeltaTime;
 
             public Context(
                 Func<bool> processPendingProductions,
                 Func<bool> updateActiveProductionTransports,
-                Action updateResourceProduction,
+                Action<float> updateResourceProduction,
                 Action updateResourceHaulers,
                 Action updateBuildingResourceVisuals,
                 Action cleanupRecentSpawnReservations,
@@ -72,7 +74,8 @@ namespace Game.Runtime
                 Action updateBuildingRuntimeState,
                 Func<BuildingPlacementInputRuntimeTickUiSystemHelper.Result> updateInput,
                 BuildingPlacementRuntimeTickDiagnosticsSystemHelper diagnosticsSystem,
-                BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context diagnosticsContext)
+                BuildingPlacementRuntimeTickDiagnosticsSystemHelper.Context diagnosticsContext,
+                Func<float> getDeltaTime = null)
             {
                 ProcessPendingProductions = processPendingProductions;
                 UpdateActiveProductionTransports = updateActiveProductionTransports;
@@ -90,6 +93,7 @@ namespace Game.Runtime
                 UpdateInput = updateInput;
                 DiagnosticsSystem = diagnosticsSystem;
                 DiagnosticsContext = diagnosticsContext;
+                GetDeltaTime = getDeltaTime;
             }
         }
 
@@ -184,6 +188,10 @@ namespace Game.Runtime
 
                 afterBoundary = UnityEngine.Time.realtimeSinceStartupAsDouble;
                 double now = afterBoundary;
+                float deltaTime = context.GetDeltaTime != null
+                    ? Mathf.Max(0f, context.GetDeltaTime())
+                    : Mathf.Max(0f, UnityEngine.Time.deltaTime);
+                _resourceProductionElapsedSeconds += deltaTime;
                 bool pendingProductionObservedActiveTransport = false;
                 if (now >= _nextProductionAt)
                 {
@@ -223,7 +231,9 @@ namespace Game.Runtime
                     _nextResourceProductionAt = now + ResourceProductionIntervalSeconds;
                     using (UpdateResourceProductionMarker.Auto())
                     {
-                        context.UpdateResourceProduction?.Invoke();
+                        float resourceDeltaTime = Mathf.Max(deltaTime, _resourceProductionElapsedSeconds);
+                        _resourceProductionElapsedSeconds = 0f;
+                        context.UpdateResourceProduction?.Invoke(resourceDeltaTime);
                     }
                 }
                 afterResources = UnityEngine.Time.realtimeSinceStartupAsDouble;

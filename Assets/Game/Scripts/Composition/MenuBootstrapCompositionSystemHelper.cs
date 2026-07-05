@@ -1,3 +1,4 @@
+using System;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
@@ -14,6 +15,8 @@ namespace Game.Composition
         private const int DeferredMatchLoadVisibleFrames = 2;
         private const float MinimumLoadingVisibleSeconds = 2f;
         private const float MatchReadyHoldSeconds = 0.75f;
+        private const string AutoStartMatchEnvironmentVariable = "WARLINE_AUTO_START_MATCH";
+        private const string AutoStartMatchCommandLineArg = "-warlineAutoStartMatch";
 
         private readonly SceneLifecycleSceneSystemHelper sceneLifecycleSceneSystemHelper = new();
         private readonly MatchStartSceneSystemHelper matchStartSystem = new();
@@ -55,6 +58,8 @@ namespace Game.Composition
         private SelectionUiReadModelUiSystemHelper boundSelectionUiReadModel;
         private MainMenuPlayUI boundMainMenu;
         private int boundContentVersion = -1;
+        private bool autoStartMatchRequested;
+        private bool autoStartMatchSubmitted;
 
         public PerformanceDiagnosticsSystemHelper PerformanceDiagnostics => performanceDiagnosticsSystem;
         public bool IsPerformanceDiagnosticsInitialized => diagnosticsInitialized;
@@ -67,6 +72,7 @@ namespace Game.Composition
             bool wasInitialized = initialized;
             ApplyEditorMenuPerformanceDefaults();
             EnsurePersistentDiagnosticsInitialized();
+            autoStartMatchRequested = ShouldAutoStartMatch();
             view.ApplyRuntimeUiMode();
 
             if (view.ShellEcsPresentation != null)
@@ -118,6 +124,7 @@ namespace Game.Composition
                 return;
 
             UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
+            QueueAutoStartMatchIfRequested(entityManager, boundary, shellState);
             ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
             QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
             UpdateActualLoadingProgress(entityManager, boundary, shellState);
@@ -139,6 +146,7 @@ namespace Game.Composition
             ResetMatchReadyHoldWindow();
             matchLoadQueuedForCurrentRoute = false;
             ClearBoundMatchRuntimeUi();
+            autoStartMatchSubmitted = false;
             if (!diagnosticsInitialized)
                 return;
 
@@ -190,6 +198,63 @@ namespace Game.Composition
             if (string.IsNullOrEmpty(status))
                 return "Loading";
             return status.Length <= MaxAsciiChars ? status : status.Substring(0, MaxAsciiChars);
+        }
+
+        private void QueueAutoStartMatchIfRequested(EntityManager entityManager, Entity boundary, UiShellStateComponent shellState)
+        {
+            if (!autoStartMatchRequested || autoStartMatchSubmitted)
+                return;
+
+            if (shellState.ActiveRoute == UIRoute.Match)
+            {
+                autoStartMatchSubmitted = true;
+                return;
+            }
+
+            if (shellState.CurrentMode == UiShellMode.None || shellState.IsTransitionRunning != 0)
+                return;
+
+            DynamicBuffer<UiShellRouteRequestComponent> routeRequests =
+                entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
+            routeRequests.Add(new UiShellRouteRequestComponent
+            {
+                Intent = UiShellRouteIntent.EnterMatch,
+                Route = UIRoute.Match,
+                PushHistory = 0
+            });
+            autoStartMatchSubmitted = true;
+            Debug.Log("[UiShellRoute] submitted validation Match auto-start request.");
+        }
+
+        private static bool ShouldAutoStartMatch()
+        {
+            try
+            {
+                if (IsTruthy(Environment.GetEnvironmentVariable(AutoStartMatchEnvironmentVariable)))
+                    return true;
+
+                string[] args = Environment.GetCommandLineArgs();
+                for (int i = 0; i < args.Length; i++)
+                {
+                    if (string.Equals(args[i], AutoStartMatchCommandLineArg, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
+            }
+            catch
+            {
+                // Diagnostic auto-start must never make normal menu startup fail.
+            }
+
+            return false;
+        }
+
+        private static bool IsTruthy(string value)
+        {
+            return
+                string.Equals(value, "1", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(value, "true", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(value, "yes", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(value, "on", StringComparison.OrdinalIgnoreCase);
         }
 
         private void UpdateActualLoadingProgress(EntityManager entityManager, Entity boundary, UiShellStateComponent shellState)

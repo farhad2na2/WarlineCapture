@@ -27,6 +27,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsRoute_PairsTrayWithFactionOilAndRefinery();
             tests.AutomaticFuelLogisticsRoute_PairsTankerWithFactionRefineryAndFuelStorage();
             tests.AutomaticFuelLogisticsSignature_ChangesOnlyWhenRelevantStateChanges();
+            tests.AutomaticFuelLogisticsAssignmentScan_SkipsWithinStableRefreshWindow();
             tests.AutomaticFuelLogisticsReservation_ReservesSourceAndDestinationCapacity();
             tests.AutomaticFuelLogisticsSeededTray_StartsOilHaulingWithoutRuntimeBuild();
             tests.AutomaticFuelLogisticsTray_NoRefineryCapacitySetsTypedIdleReason();
@@ -35,7 +36,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsSteadyState_DoesNotAllocateManagedMemory();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
             tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=21");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=22");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -681,6 +682,69 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.AreNotEqual(0u, first);
             Assert.AreEqual(first, unchanged);
             Assert.AreNotEqual(first, changed);
+        }
+        finally
+        {
+            if (haulers.IsCreated)
+                haulers.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsAssignmentScan_SkipsWithinStableRefreshWindow()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsAssignmentScan_SkipsWithinStableRefreshWindow));
+        NativeList<Entity> haulers = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em,
+                25,
+                1,
+                new Vector2Int(8, 8),
+                oilCapacity: 100,
+                fuelCapacity: 0,
+                oilRate: 80f,
+                fuelRate: 0f,
+                storedOil: 40f,
+                storedFuel: 0f);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em,
+                26,
+                1,
+                new Vector2Int(16, 8),
+                oilCapacity: 100,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 40f,
+                storedOil: 0f,
+                storedFuel: 0f);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { oilPump.Id, oilPump },
+                { refinery.Id, refinery }
+            };
+            Entity hauler = CreateFuelLogisticsHauler(
+                em,
+                "Unit_Veh_Truck_Tray",
+                1,
+                new int2(0, 0));
+            haulers = new NativeList<Entity>(1, Allocator.Temp);
+            haulers.Add(hauler);
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateAutomaticRouteContext(runtimeBuildings);
+            GridConfig grid = CreateTestGrid();
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+
+            bool firstScan = bridge.ShouldRunAutomaticAssignmentScanForTests(context, em, grid, haulers, now: 0f);
+            bool skippedInsideWindow = bridge.ShouldRunAutomaticAssignmentScanForTests(context, em, grid, haulers, now: 0.5f);
+            bool refreshedAfterWindow = bridge.ShouldRunAutomaticAssignmentScanForTests(context, em, grid, haulers, now: 2.1f);
+
+            Assert.IsTrue(firstScan);
+            Assert.IsFalse(skippedInsideWindow);
+            Assert.IsTrue(refreshedAfterWindow);
         }
         finally
         {

@@ -296,6 +296,9 @@ namespace Game.Runtime
             NativeList<Entity> haulers,
             float now)
         {
+            if (_hasAutomaticAssignmentSignature && now < _nextAutomaticAssignmentRefreshAt)
+                return false;
+
             if (context.ResourceHaulerUtilitySystemHelper == null ||
                 context.FactionResourceCompositionSystemHelper == null ||
                 context.RuntimeBuildings == null ||
@@ -413,6 +416,16 @@ namespace Game.Runtime
         }
 
 #if UNITY_INCLUDE_TESTS
+        internal bool ShouldRunAutomaticAssignmentScanForTests(
+            Context context,
+            EntityManager em,
+            GridConfig grid,
+            NativeList<Entity> haulers,
+            float now)
+        {
+            return ShouldRunAutomaticAssignmentScan(context, em, grid, haulers, now);
+        }
+
         internal static uint CalculateAutomaticAssignmentSignatureForTests(
             Context context,
             EntityManager em,

@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 59% (59/99 checklist items complete).
+Overall implementation progress: 60% (60/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -32,7 +32,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
-| 3. Tray truck automation | In Progress | 10 | 13 | 77% | Auto-assign Oil pickup/delivery without manual target commands. |
+| 3. Tray truck automation | In Progress | 11 | 13 | 85% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
@@ -99,7 +99,7 @@ Validation:
 - [ ] Implement `OilTrayLogisticsAssignmentSystem` as unmanaged `ISystem` where practical.
 - [x] Use dirty/version gates so assignment work only runs when source availability, destination capacity, route validity, or truck availability changes.
 - [x] Reserve source Oil and refinery input capacity before a truck starts a task.
-- [ ] Avoid all-truck/all-building scans every frame; use cached queries and versioned candidate buffers where practical.
+- [x] Avoid all-truck/all-building scans every frame; use cached queries and versioned candidate buffers where practical.
 - [x] Reuse existing movement/order data path for truck travel rather than adding a new movement loop.
 - [x] Transfer cargo at pickup/drop-off through ECS mutation systems.
 - [ ] Clear reservations on truck death, source/destination death, route invalidation, or task cancellation.
@@ -804,3 +804,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 3 by reducing the remaining all-truck/all-building scan work and deciding whether the assignment bridge should be split into an unmanaged system now or after tanker/refinery feature completion.
+- Slice: throttle automatic assignment signature scans.
+- Files changed: `Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs`, `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs`, and this tracker.
+- Behavior intent:
+  - Moved the automatic assignment refresh-window check ahead of signature calculation so stable-state assignment skips the full runtime-building signature walk until the scheduled refresh time.
+  - Active hauler orders still update every frame, but idle assignment candidate/source/destination scanning no longer walks all resource buildings every frame when the assignment state is stable.
+  - Kept the existing EntityQuery-based hauler collection and versioned resource signature; this is the scoped scan-reduction slice before deciding whether a deeper unmanaged assignment system split is worth doing now.
+- Validation:
+  - Added `AutomaticFuelLogisticsAssignmentScan_SkipsWithinStableRefreshWindow`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 3 by resolving the remaining cancellation/truck-death cleanup row, then decide whether `OilTrayLogisticsAssignmentSystem` should become an unmanaged `ISystem` before moving to Phase 4.

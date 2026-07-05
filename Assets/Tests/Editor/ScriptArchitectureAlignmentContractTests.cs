@@ -85,6 +85,116 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "SelectionRuntimeContextSystem",
     };
 
+    private static readonly HashSet<string> RuntimeCompositionSystemHelperLedger = new(StringComparer.Ordinal)
+    {
+        "Assets/Game/Scripts/Systems/BuildingCitizenPopulationCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingGameplayBindingCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingGameplayDependencyCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingGameplayDisposalCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingGameplayDisposalExecutionCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingGameplayGridDataCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingGameplayResultCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingGameplaySourceCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingGameplayStartupCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementAdapterCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementCommandCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementCommandRequestCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementCommitCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementContextCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementInputTickCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementInteractionCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementInteractionContextCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementInvalidCellCacheCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementRedirectCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementSessionCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingProductionCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingProductionContextCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingProductionQueueCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingProductionRuntimeTickCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingProductionTickCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingProductionUpdateCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeContextCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeContextFactoryCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeCreationCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeQueryCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeReadModelCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeResourcePrefabCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeResourcePrefabContextCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeSideEffectCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeTickCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingSelectionClickCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingSelectionCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingSelectionRuntimeCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingUiCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingUiContextCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenBuildingReadCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenDangerCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenHouseholdRegistrationCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenPopulationCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenPopulationEcsProjectionCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenPopulationEventCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenPopulationLifecycleCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenPopulationReadModelCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenPopulationRuntimeUpdateCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenPopulationStateCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenPopulationTotalsCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenRefugeeCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenResourceCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenScheduleCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/CitizenStatusTransitionCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildBuildingPlacementCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildCommandCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildCompositionContextCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildCompositionLifecycleCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildContextCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildDependencyCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildDisposalCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildEcsCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildInputCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildInteractionCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildInteractionContextCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildMutationCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildPlacementStorageCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildReadModelCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildRuntimeActionCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildSessionCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadNetworkCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadRuntimeGenerationCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadRuntimeGenerationContextCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RtsSelectionFocusCommandCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RtsSelectionInputCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/SelectionRectangleRequestCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/SelectionStateCompositionSystemHelper.cs",
+    };
+
     private static readonly HashSet<string> SelectionPanelConcreteSystemBindingAllowlist = new(StringComparer.Ordinal)
     {
         "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
@@ -218,14 +328,32 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.RuntimeScriptsMustNotUseCameraMain();
             tests.RuntimeGameplayLogicMustNotAddStaticMutableRegistries();
             tests.BootstrapCompositionSystemsMustNotOwnGameplayPolicy();
+            tests.RuntimeCompositionSystemHelpersMustStayOnArchitectureLedger();
             tests.RuntimeTypeNamesMustNotIntroduceBroadApplicationLayerSuffixes();
-            Debug.Log("[BootstrapCompositionGuardrailValidation] result=Passed tests=5");
+            Debug.Log("[BootstrapCompositionGuardrailValidation] result=Passed tests=6");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[BootstrapCompositionGuardrailValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunRuntimeCompositionHelperLedgerValidation()
+    {
+        try
+        {
+            var tests = new ScriptArchitectureAlignmentContractTests();
+            tests.RuntimeCompositionSystemHelpersMustStayOnArchitectureLedger();
+            Debug.Log("[RuntimeCompositionHelperLedgerValidation] result=Passed tests=1");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[RuntimeCompositionHelperLedgerValidation] result=Failed");
             ValidationExit.Exit(1);
         }
     }
@@ -805,6 +933,28 @@ public sealed class ScriptArchitectureAlignmentContractTests
         AssertNoViolations(
             violations,
             "Bootstrap/composition systems must stay at serialized binding and lifecycle orchestration edges. Keep AI/economy/mission/perf diagnostics policy and retired gameplay shells in their owning ECS or narrow runtime systems.");
+    }
+
+    [Test]
+    public void RuntimeCompositionSystemHelpersMustStayOnArchitectureLedger()
+    {
+        HashSet<string> current = EnumerateSourceFiles(Path.Combine(GameScriptsRoot, "Systems"))
+            .Select(NormalizePath)
+            .Where(path => path.EndsWith("CompositionSystemHelper.cs", StringComparison.Ordinal))
+            .ToHashSet(StringComparer.Ordinal);
+
+        List<string> violations = current
+            .Except(RuntimeCompositionSystemHelperLedger, StringComparer.Ordinal)
+            .Select(path => $"{path} is a new runtime CompositionSystemHelper. Prefer a Burst-capable ISystem for gameplay ownership, or update the architecture ledger with a reviewed reason.")
+            .Concat(RuntimeCompositionSystemHelperLedger
+                .Except(current, StringComparer.Ordinal)
+                .Select(path => $"{path} is no longer present; remove the stale runtime CompositionSystemHelper ledger entry."))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToList();
+
+        AssertNoViolations(
+            violations,
+            "Runtime CompositionSystemHelper files are frozen as existing debt. New gameplay work should not add managed composition helpers without explicit architecture review.");
     }
 
     [Test]

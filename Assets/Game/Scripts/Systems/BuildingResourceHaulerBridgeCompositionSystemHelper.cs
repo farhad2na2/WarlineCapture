@@ -815,6 +815,27 @@ namespace Game.Runtime
             {
                 ReleaseOrderReservations(context, em, entity);
                 em.RemoveComponent<UnitResourceHaulOrder>(entity);
+                SetResourceHaulStatus(
+                    em,
+                    entity,
+                    FuelLogisticsTaskStatusCode.Blocked,
+                    FuelLogisticsBlockReasonCode.DestinationUnavailable,
+                    resourceKind);
+                return;
+            }
+
+            if (source == null || source.IsDestroyed || destination == null || destination.IsDestroyed)
+            {
+                ReleaseOrderReservations(context, em, entity);
+                em.RemoveComponent<UnitResourceHaulOrder>(entity);
+                SetResourceHaulStatus(
+                    em,
+                    entity,
+                    FuelLogisticsTaskStatusCode.Blocked,
+                    source == null || source.IsDestroyed
+                        ? FuelLogisticsBlockReasonCode.SourceUnavailable
+                        : FuelLogisticsBlockReasonCode.DestinationUnavailable,
+                    resourceKind);
                 return;
             }
 

@@ -445,12 +445,28 @@ namespace Game.Runtime
             float deltaTime,
             float oilBarrelsPerFuelBarrel)
         {
-            if (buildings == null || buildings.Count == 0)
-                return new ResourceProductionTickResult(0f, 0f);
-
             secondsPerDay = Mathf.Max(1f, secondsPerDay);
             deltaTime = Mathf.Max(0f, deltaTime);
             oilBarrelsPerFuelBarrel = Mathf.Max(0.001f, oilBarrelsPerFuelBarrel);
+
+            using EntityQuery storageQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadWrite<BuildingResourceStorageComponent>());
+            if (!storageQuery.IsEmptyIgnoreFilter)
+            {
+                BuildingResourceProductionEcsSystem.TickResult queryResult =
+                    BuildingResourceProductionEcsSystem.ApplyStorageQuery(
+                        entityManager,
+                        storageQuery,
+                        secondsPerDay,
+                        deltaTime,
+                        oilBarrelsPerFuelBarrel);
+                return new ResourceProductionTickResult(
+                    queryResult.OilExtractedBarrels,
+                    queryResult.FuelProducedBarrels);
+            }
+
+            if (buildings == null || buildings.Count == 0)
+                return new ResourceProductionTickResult(0f, 0f);
 
             float oilExtracted = 0f;
             float fuelProduced = 0f;

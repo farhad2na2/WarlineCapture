@@ -17,6 +17,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.ApplyTick_ExtractsOilUpToCapacity();
             tests.ApplyTick_FullOilStorageDoesNotOverflowVersionOrAllocate();
             tests.CreateBuildingCombatEntity_UsesSameResourceStorageForMapAndRuntimeOilPumps();
+            tests.ApplyStorageQuery_WritesOilToEcsStorageWithCapacityAndVersion();
             tests.ApplyTick_ConvertsOilIntoFuel();
             tests.ApplyTick_DoesNotConvertOilWhenFuelStorageIsFull();
             tests.UpdateResourceProduction_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale();
@@ -29,7 +30,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsReservation_ReservesSourceAndDestinationCapacity();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
             tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=15");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=16");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -188,6 +189,61 @@ public sealed class BuildingResourceProductionEcsSystemTests
                 blocked.Dispose();
             if (occupied.IsCreated)
                 occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void ApplyStorageQuery_WritesOilToEcsStorageWithCapacityAndVersion()
+    {
+        var world = new World(nameof(ApplyStorageQuery_WritesOilToEcsStorageWithCapacityAndVersion));
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity oilPump = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(oilPump, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 41,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OilStorageCapacity = 10,
+                OilBarrelsPerDay = 20f,
+                StoredOilBarrels = 9f,
+                Version = 3u
+            });
+            Entity fullOilPump = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(fullOilPump, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 42,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OilStorageCapacity = 10,
+                OilBarrelsPerDay = 20f,
+                StoredOilBarrels = 10f,
+                Version = 8u
+            });
+            using EntityQuery storageQuery = em.CreateEntityQuery(
+                ComponentType.ReadWrite<BuildingResourceStorageComponent>());
+
+            BuildingResourceProductionEcsSystem.TickResult result =
+                BuildingResourceProductionEcsSystem.ApplyStorageQuery(
+                    em,
+                    storageQuery,
+                    secondsPerDay: 10f,
+                    deltaTime: 1f,
+                    oilBarrelsPerFuelBarrel: 2f);
+
+            BuildingResourceStorageComponent oilStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(oilPump);
+            BuildingResourceStorageComponent fullStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(fullOilPump);
+            Assert.AreEqual(10f, oilStorage.StoredOilBarrels);
+            Assert.AreEqual(4u, oilStorage.Version);
+            Assert.AreEqual(10f, fullStorage.StoredOilBarrels);
+            Assert.AreEqual(8u, fullStorage.Version);
+            Assert.AreEqual(1f, result.OilExtractedBarrels);
+            Assert.AreEqual(0f, result.FuelProducedBarrels);
+        }
+        finally
+        {
             world.Dispose();
         }
     }

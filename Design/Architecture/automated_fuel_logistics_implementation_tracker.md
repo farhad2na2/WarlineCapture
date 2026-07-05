@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 52% (52/99 checklist items complete).
+Overall implementation progress: 54% (54/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -31,7 +31,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
-| 2. Oil extraction and refinery buffers | In Progress | 6 | 8 | 75% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
+| 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
@@ -82,8 +82,8 @@ Validation:
 
 ## Phase 2: Oil Extraction And Building Buffers
 
-- [ ] Keep Oil Pump extraction in ECS or move it into an unmanaged `ISystem` if currently managed.
-- [ ] Write Oil into a pump output buffer with capacity and dirty/version update.
+- [x] Keep Oil Pump extraction in ECS or move it into an unmanaged `ISystem` if currently managed.
+- [x] Write Oil into a pump output buffer with capacity and dirty/version update.
 - [x] Ensure extraction stalls cleanly when the pump buffer is full.
 - [x] Publish selected Oil Pump read model only when buffer/rate/block reason changes.
 - [x] Ensure map-placed and player-built oil pumps follow the same baked component path.
@@ -726,3 +726,17 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Finish Phase 2 by deciding whether Oil Pump extraction remains acceptable through the existing Burst-compatible ECS helper path or needs a true unmanaged `ISystem`, and by explicitly closing the pump output capacity/version row if current storage semantics are accepted as the buffer contract.
+- Slice: ECS-owned Oil Pump storage production tick.
+- Files changed: `Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs`, `Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs`, `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs`, and this tracker.
+- Behavior intent:
+  - Added `BuildingResourceProductionEcsSystem.ApplyStorageQuery` so the production tick mutates live `BuildingResourceStorageComponent` entities directly by ECS query when an EntityManager is available.
+  - Redirected `FactionResourceCompositionSystemHelper.UpdateResourceProduction(EntityManager, ...)` to use the ECS storage query path instead of walking the managed runtime-building dictionary for production mutation.
+  - Kept the existing managed mirror sync after production so UI/legacy composition can still read runtime building mirrors without becoming the source of truth.
+  - Closed Phase 2 by treating `BuildingResourceStorageComponent` as the explicit Oil/Fuel output buffer contract: capacity clamps stored Oil/Fuel, and `Version` changes only when stored values change.
+- Validation:
+  - Added `ApplyStorageQuery_WritesOilToEcsStorageWithCapacityAndVersion`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 3 by covering seeded faction-base tray truck startup and blocked/idle reason behavior, then address remaining reservation cleanup paths.

@@ -23,14 +23,14 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 44% (44/99 checklist items complete).
+Overall implementation progress: 46% (46/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
-| 1. Data model | In Progress | 9 | 11 | 82% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
+| 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
@@ -76,9 +76,9 @@ Performance notes:
 
 Validation:
 
-- [ ] Editor tests cover storage capacity, reservation accounting, and faction usable Fuel summary.
+- [x] Editor tests cover storage capacity, reservation accounting, and faction usable Fuel summary.
 - [x] Authoring validation warns or fails when a fuel-enabled map lacks one tray truck or one tanker near each faction military base.
-- [ ] `git diff --check` passes.
+- [x] `git diff --check` passes.
 
 ## Phase 2: Oil Extraction And Building Buffers
 
@@ -673,3 +673,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Close Phase 1 validation rows, then start Phase 2 oil extraction/refinery buffer ownership checks.
+- Slice: Phase 1 data-model validation closure.
+- Files changed: this tracker.
+- Behavior intent:
+  - Closed Phase 1 after confirming the existing focused editor coverage matches the remaining validation rows.
+  - Storage capacity is covered by `ResourceHaulerUtilitySystemHelperTests.TryCompleteUnload_ClampsDestinationCapacityAndClearsCargo` and the component storage transfer tests.
+  - Reservation accounting is covered by `StorageReservation_SourceReservationReducesAvailableResource`, `StorageReservation_DestinationReservationReducesFreeCapacity`, and `StorageTransfer_MutationsIncrementVersion`.
+  - Faction usable Fuel summary is covered by `BuildingProductionSystemTests.BuildingRuntimeState_PublishesUsableFuelSummaryFromDeliveredStorageOnly`, including current/delivered/produced/spent fields.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Start Phase 2 oil extraction/refinery buffer ownership checks and keep Unity validation blocker recorded until the licensing client issue is cleared.

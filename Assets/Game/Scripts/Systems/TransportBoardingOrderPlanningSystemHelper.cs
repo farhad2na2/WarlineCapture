@@ -30,6 +30,13 @@ namespace Game.Runtime
                 : "Boarding transport plane.";
         }
 
+        public static string ResolveBoardAllAcceptedMessage(int orderedCount)
+        {
+            return orderedCount == 1
+                ? "Boarding 1 unit."
+                : $"Boarding {orderedCount} units.";
+        }
+
         public static bool HasPlannedBoardingSlot(
             byte passengerKind,
             int availableSoldierSeats,

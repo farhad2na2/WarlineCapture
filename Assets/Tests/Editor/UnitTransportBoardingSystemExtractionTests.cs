@@ -383,6 +383,20 @@ public sealed class UnitTransportBoardingSystemExtractionTests
                 passengerKind: UnitTransportPassengerKind.Soldier));
     }
 
+    [Test]
+    public void OrderPlanningHelper_ResolvesBoardAllAcceptedMessages()
+    {
+        Assert.AreEqual(
+            "Boarding 1 unit.",
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardAllAcceptedMessage(1));
+        Assert.AreEqual(
+            "Boarding 2 units.",
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardAllAcceptedMessage(2));
+        Assert.AreEqual(
+            "Boarding 0 units.",
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardAllAcceptedMessage(0));
+    }
+
     private static Entity CreateBoardingCandidate(EntityManager entityManager, string sourceName)
     {
         Entity entity = entityManager.CreateEntity(

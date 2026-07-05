@@ -513,7 +513,7 @@ namespace Game.Runtime
                     "No nearby units can board this transport.");
             }
 
-            string message = orderedCount == 1 ? "Boarding 1 unit." : $"Boarding {orderedCount} units.";
+            string message = TransportBoardingOrderPlanningSystemHelper.ResolveBoardAllAcceptedMessage(orderedCount);
             return TransportBoardingCommandRoutingSystemHelper.ToBoardAllCommandResultElement(
                 request,
                 true,

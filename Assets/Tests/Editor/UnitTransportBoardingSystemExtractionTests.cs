@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Runtime;
+using Game.Tactical.Contracts;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -105,6 +106,117 @@ public sealed class UnitTransportBoardingSystemExtractionTests
         TransportBoardingCommandSystem.ReserveFootprintCells(grid, new int2(2, 2), new int2(2, 1), reserved);
 
         CollectionAssert.AreEquivalent(new[] { 18, 19 }, reserved);
+    }
+
+    [Test]
+    public void CommandRoutingHelper_IdentifiesTransportIntentKinds()
+    {
+        Assert.IsTrue(TransportBoardingCommandRoutingSystemHelper.IsTransportCommandIntent(RtsSelectionCommandIntentKind.BoardTransport));
+        Assert.IsTrue(TransportBoardingCommandRoutingSystemHelper.IsTransportCommandIntent(RtsSelectionCommandIntentKind.BoardSelectedTransport));
+        Assert.IsTrue(TransportBoardingCommandRoutingSystemHelper.IsTransportCommandIntent(RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger));
+        Assert.IsTrue(TransportBoardingCommandRoutingSystemHelper.IsTransportCommandIntent(RtsSelectionCommandIntentKind.BoardNearestSoldiers));
+        Assert.IsTrue(TransportBoardingCommandRoutingSystemHelper.IsTransportCommandIntent(RtsSelectionCommandIntentKind.BoardAllSelectedTransport));
+        Assert.IsTrue(TransportBoardingCommandRoutingSystemHelper.IsTransportCommandIntent(RtsSelectionCommandIntentKind.DisembarkTransport));
+        Assert.IsTrue(TransportBoardingCommandRoutingSystemHelper.IsTransportCommandIntent(RtsSelectionCommandIntentKind.DisembarkTransportPassenger));
+        Assert.IsFalse(TransportBoardingCommandRoutingSystemHelper.IsTransportCommandIntent(RtsSelectionCommandIntentKind.Move));
+    }
+
+    [Test]
+    public void CommandRoutingHelper_PreResolvedTransportIntentRequiresResolvedTargets()
+    {
+        Entity target = new() { Index = 10, Version = 1 };
+        Entity secondary = new() { Index = 11, Version = 1 };
+
+        Assert.IsTrue(TransportBoardingCommandRoutingSystemHelper.IsPreResolvedTransportCommandIntent(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardTransport,
+            HasTargetEntity = 1,
+            TargetEntity = target
+        }));
+        Assert.IsFalse(TransportBoardingCommandRoutingSystemHelper.IsPreResolvedTransportCommandIntent(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardTransport
+        }));
+        Assert.IsTrue(TransportBoardingCommandRoutingSystemHelper.IsPreResolvedTransportCommandIntent(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger,
+            HasTargetEntity = 1,
+            HasSecondaryTargetEntity = 1,
+            TargetEntity = target,
+            SecondaryTargetEntity = secondary
+        }));
+        Assert.IsFalse(TransportBoardingCommandRoutingSystemHelper.IsPreResolvedTransportCommandIntent(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger,
+            HasTargetEntity = 1,
+            TargetEntity = target
+        }));
+        Assert.IsFalse(TransportBoardingCommandRoutingSystemHelper.IsPreResolvedTransportCommandIntent(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.Move,
+            HasTargetEntity = 1,
+            TargetEntity = target
+        }));
+    }
+
+    [Test]
+    public void CommandRoutingHelper_MapsBoardingResultToCommandResultElement()
+    {
+        RtsSelectionCommandIntentRequestElement request = new()
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardTransport,
+            RequestId = 42,
+            Frame = 19,
+            HasTargetEntity = 1,
+            TargetEntity = new Entity { Index = 12, Version = 1 },
+            ScreenPosition = new float2(5f, 7f)
+        };
+        TransportBoardingCommandSystem.Result accepted = TransportBoardingCommandSystem.Result.AcceptedAt(
+            new int2(3, 4),
+            new float3(3.5f, 0f, 4.5f),
+            FactionIdentity.PlayerFactionId,
+            "Boarding.");
+
+        RtsSelectionCommandResultElement result =
+            TransportBoardingCommandRoutingSystemHelper.ToBoardingCommandResultElement(request, accepted);
+
+        Assert.AreEqual(request.Kind, result.Kind);
+        Assert.AreEqual(42, result.RequestId);
+        Assert.AreEqual(19, result.Frame);
+        Assert.AreEqual((int)TacticalCommandMode.Board, result.CommandMode);
+        Assert.AreEqual(1, result.HasCommandResult);
+        Assert.AreEqual(1, result.Accepted);
+        Assert.AreEqual(0, result.ReasonCode);
+        Assert.AreEqual(RtsSelectionCommandTargetKind.Cell, result.TargetKind);
+        Assert.AreEqual(new int2(3, 4), result.TargetCell);
+        Assert.AreEqual(1, result.HasTargetEntity);
+        Assert.AreEqual(1, result.HasTargetCell);
+        Assert.AreEqual(1, result.HasWorldPosition);
+        Assert.AreEqual(1, result.ShowWorldMarkers);
+        Assert.AreEqual(new FixedString64Bytes("Boarding."), result.Message);
+    }
+
+    [Test]
+    public void CommandRoutingHelper_AddCommandResultPrefersLiveCommandBuffer()
+    {
+        using var world = new World("UnitTransportBoardingSystemExtractionTests");
+        EntityManager entityManager = world.EntityManager;
+        Entity commandEntity = entityManager.CreateEntity();
+        entityManager.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        Entity fallbackEntity = entityManager.CreateEntity();
+        DynamicBuffer<RtsSelectionCommandResultElement> fallback =
+            entityManager.AddBuffer<RtsSelectionCommandResultElement>(fallbackEntity);
+        RtsSelectionCommandResultElement result = new()
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardTransport,
+            RequestId = 77
+        };
+
+        TransportBoardingCommandRoutingSystemHelper.AddCommandResult(entityManager, commandEntity, fallback, result);
+
+        Assert.AreEqual(1, entityManager.GetBuffer<RtsSelectionCommandResultElement>(commandEntity).Length);
+        Assert.AreEqual(77, entityManager.GetBuffer<RtsSelectionCommandResultElement>(commandEntity)[0].RequestId);
+        Assert.AreEqual(0, entityManager.GetBuffer<RtsSelectionCommandResultElement>(fallbackEntity).Length);
     }
 
     private static Entity CreateBoardingCandidate(EntityManager entityManager, string sourceName)

@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 37% (37/99 checklist items complete).
+Overall implementation progress: 38% (38/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
-| 7. UI read models and feedback | In Progress | 7 | 10 | 70% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
+| 7. UI read models and feedback | In Progress | 8 | 10 | 80% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
@@ -169,7 +169,7 @@ Validation:
 - [x] Oil can be shown only when the active mission/skirmish preset teaches extraction.
 - [x] Selection panel supports Oil Pump, Refinery, Fuel Bladder, tray truck, and tanker logistics state.
 - [x] Disabled command/build/production rows use typed reason ids.
-- [ ] Avoid per-frame string formatting; cache labels or update TMP text only on read-model version changes.
+- [x] Avoid per-frame string formatting; cache labels or update TMP text only on read-model version changes.
 - [ ] Keep Canvas work inside existing UI helper boundaries and do not add simulation logic to UI classes.
 
 Validation:
@@ -582,3 +582,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 7 no-GC/versioned HUD update validation and the remaining header string-formatting/cache item.
+- Slice: versioned match HUD header resource string cache.
+- Files changed: `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`, `Assets/Tests/Editor/UiShellEcsGatewayResourceHeaderTests.cs`, and this tracker.
+- Behavior intent:
+  - Added a `UiShellEcsGateway` match HUD header cache keyed by world, boundary, fixed header component text, usable Fuel summary source, version, rounded Oil/Fuel values, and Oil visibility.
+  - Versioned usable Fuel summary reads now return the cached `UiMatchHudHeaderModel` when resource state is unchanged, avoiding repeated Oil/Fuel compact string formatting in steady-state HUD polls.
+  - Cache invalidates when summary version/value, Oil visibility, boundary, world, or fixed header text changes.
+- Validation:
+  - Added `MatchHudHeader_ReusesVersionedUsableFuelSummaryStringsUntilVersionChanges`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Add or run explicit no-GC allocation validation for steady-state HUD updates, then close the remaining Phase 7 Canvas-boundary item if no simulation logic drift is found.

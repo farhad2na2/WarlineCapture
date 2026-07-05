@@ -139,6 +139,53 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
     }
 
     [Test]
+    public void MatchHudHeader_ReusesVersionedUsableFuelSummaryStringsUntilVersionChanges()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new(nameof(MatchHudHeader_ReusesVersionedUsableFuelSummaryStringsUntilVersionChanges));
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            EntityManager em = world.EntityManager;
+            Entity boundary = em.CreateEntity(typeof(UiShellRootComponent));
+            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
+                em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
+            summaries.Add(new BuildingRuntimeFactionUsableFuelSummary
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                StoredOilBarrels = 2f,
+                StoredFuelBarrels = 15f,
+                OilStorageCapacity = 200,
+                FuelStorageCapacity = 100,
+                Version = 7u
+            });
+
+            Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel first));
+            Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel steady));
+            Assert.AreSame(first.OilText, steady.OilText);
+            Assert.AreSame(first.FuelText, steady.FuelText);
+
+            BuildingRuntimeFactionUsableFuelSummary updated = summaries[0];
+            updated.StoredOilBarrels = 3f;
+            updated.StoredFuelBarrels = 16f;
+            updated.Version = 8u;
+            summaries[0] = updated;
+
+            Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel changed));
+            Assert.AreEqual("3", changed.OilText);
+            Assert.AreEqual("16", changed.FuelText);
+            Assert.AreNotSame(first.OilText, changed.OilText);
+            Assert.AreNotSame(first.FuelText, changed.FuelText);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
+    [Test]
     public void MatchHudHeader_EmptyUsableFuelSummaryDoesNotFallbackToRefineryOutput()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;

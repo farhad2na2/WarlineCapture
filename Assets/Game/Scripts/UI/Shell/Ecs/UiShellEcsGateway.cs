@@ -32,6 +32,16 @@ namespace Game.UI.Shell.Ecs
         private static bool hasGridConfigQuery;
         private static bool hasResourceStorageQuery;
         private static bool hasCachedDiagnosticsLogText;
+        private static bool hasCachedMatchHudHeader;
+        private static World cachedMatchHudHeaderWorld;
+        private static Entity cachedMatchHudHeaderBoundary;
+        private static UiMatchHudHeaderComponent cachedMatchHudHeaderComponent;
+        private static byte cachedMatchHudHeaderResourceSource;
+        private static uint cachedMatchHudHeaderResourceVersion;
+        private static int cachedMatchHudHeaderOil;
+        private static int cachedMatchHudHeaderFuel;
+        private static bool cachedMatchHudHeaderShowOil;
+        private static UiMatchHudHeaderModel cachedMatchHudHeader;
 
         private UiShellEcsGateway()
         {
@@ -52,6 +62,16 @@ namespace Game.UI.Shell.Ecs
             hasGridConfigQuery = false;
             hasResourceStorageQuery = false;
             hasCachedDiagnosticsLogText = false;
+            hasCachedMatchHudHeader = false;
+            cachedMatchHudHeaderWorld = null;
+            cachedMatchHudHeaderBoundary = Entity.Null;
+            cachedMatchHudHeaderComponent = default;
+            cachedMatchHudHeaderResourceSource = 0;
+            cachedMatchHudHeaderResourceVersion = 0;
+            cachedMatchHudHeaderOil = 0;
+            cachedMatchHudHeaderFuel = 0;
+            cachedMatchHudHeaderShowOil = false;
+            cachedMatchHudHeader = UiMatchHudHeaderModel.Default;
             cachedDiagnosticsLogFixedText = default;
             cachedDiagnosticsLogText = string.Empty;
             UiShellRuntimeGateway.Register(Shared);
@@ -650,15 +670,40 @@ namespace Game.UI.Shell.Ecs
             string oilText = "0";
             string fuelText = component.FuelText.ToString();
             bool showOil = false;
-            if (TryFormatPlayerUsableFuelSummary(
+            bool cacheHeader = false;
+            byte resourceSource = 0;
+            uint resourceVersion = 0u;
+            int resourceOil = 0;
+            int resourceFuel = 0;
+            if (TryReadPlayerUsableFuelSummary(
                     entityManager,
                     boundary,
-                    out string usableOilText,
-                    out string usableFuelText,
-                    out bool usableOilVisible))
+                    out int usableOil,
+                    out int usableFuel,
+                    out bool usableOilVisible,
+                    out uint usableFuelVersion))
             {
-                oilText = usableOilText;
-                fuelText = usableFuelText;
+                if (TryReadCachedMatchHudHeader(
+                        entityManager.World,
+                        boundary,
+                        component,
+                        1,
+                        usableFuelVersion,
+                        usableOil,
+                        usableFuel,
+                        usableOilVisible,
+                        out header))
+                {
+                    return true;
+                }
+
+                cacheHeader = true;
+                resourceSource = 1;
+                resourceVersion = usableFuelVersion;
+                resourceOil = usableOil;
+                resourceFuel = usableFuel;
+                oilText = FormatCompact(usableOil);
+                fuelText = FormatCompact(usableFuel);
                 showOil = usableOilVisible;
             }
             else if (TryFormatLivePlayerResourceStorage(
@@ -695,19 +740,99 @@ namespace Game.UI.Shell.Ecs
                 component.CivilianRiskText.ToString(),
                 oilText,
                 showOil);
+            if (cacheHeader)
+            {
+                CacheMatchHudHeader(
+                    entityManager.World,
+                    boundary,
+                    component,
+                    resourceSource,
+                    resourceVersion,
+                    resourceOil,
+                    resourceFuel,
+                    showOil,
+                    header);
+            }
+
             return true;
         }
 
-        private static bool TryFormatPlayerUsableFuelSummary(
+        private static bool TryReadCachedMatchHudHeader(
+            World world,
+            Entity boundary,
+            in UiMatchHudHeaderComponent component,
+            byte resourceSource,
+            uint resourceVersion,
+            int oil,
+            int fuel,
+            bool showOil,
+            out UiMatchHudHeaderModel header)
+        {
+            if (hasCachedMatchHudHeader &&
+                cachedMatchHudHeaderWorld == world &&
+                cachedMatchHudHeaderBoundary == boundary &&
+                cachedMatchHudHeaderResourceSource == resourceSource &&
+                cachedMatchHudHeaderResourceVersion == resourceVersion &&
+                cachedMatchHudHeaderOil == oil &&
+                cachedMatchHudHeaderFuel == fuel &&
+                cachedMatchHudHeaderShowOil == showOil &&
+                MatchHudHeaderComponentEquals(cachedMatchHudHeaderComponent, component))
+            {
+                header = cachedMatchHudHeader;
+                return true;
+            }
+
+            header = default;
+            return false;
+        }
+
+        private static void CacheMatchHudHeader(
+            World world,
+            Entity boundary,
+            in UiMatchHudHeaderComponent component,
+            byte resourceSource,
+            uint resourceVersion,
+            int oil,
+            int fuel,
+            bool showOil,
+            in UiMatchHudHeaderModel header)
+        {
+            hasCachedMatchHudHeader = true;
+            cachedMatchHudHeaderWorld = world;
+            cachedMatchHudHeaderBoundary = boundary;
+            cachedMatchHudHeaderComponent = component;
+            cachedMatchHudHeaderResourceSource = resourceSource;
+            cachedMatchHudHeaderResourceVersion = resourceVersion;
+            cachedMatchHudHeaderOil = oil;
+            cachedMatchHudHeaderFuel = fuel;
+            cachedMatchHudHeaderShowOil = showOil;
+            cachedMatchHudHeader = header;
+        }
+
+        private static bool MatchHudHeaderComponentEquals(
+            in UiMatchHudHeaderComponent left,
+            in UiMatchHudHeaderComponent right)
+        {
+            return left.OrderText.Equals(right.OrderText) &&
+                   left.SquadText.Equals(right.SquadText) &&
+                   left.CreditsText.Equals(right.CreditsText) &&
+                   left.FuelText.Equals(right.FuelText) &&
+                   left.SupplyText.Equals(right.SupplyText) &&
+                   left.CivilianRiskText.Equals(right.CivilianRiskText);
+        }
+
+        private static bool TryReadPlayerUsableFuelSummary(
             EntityManager entityManager,
             Entity boundary,
-            out string oilText,
-            out string fuelText,
-            out bool showOil)
+            out int oil,
+            out int fuel,
+            out bool showOil,
+            out uint version)
         {
-            oilText = string.Empty;
-            fuelText = string.Empty;
+            oil = 0;
+            fuel = 0;
             showOil = false;
+            version = 0u;
             if (!entityManager.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary))
                 return false;
 
@@ -719,14 +844,13 @@ namespace Game.UI.Shell.Ecs
                 if (!FactionIdentity.IsPlayerControlled(summary.FactionId))
                     continue;
 
-                oilText = FormatCompact(Mathf.Max(0, Mathf.RoundToInt(summary.StoredOilBarrels)));
-                fuelText = FormatCompact(Mathf.Max(0, Mathf.RoundToInt(summary.StoredFuelBarrels)));
+                oil = Mathf.Max(0, Mathf.RoundToInt(summary.StoredOilBarrels));
+                fuel = Mathf.Max(0, Mathf.RoundToInt(summary.StoredFuelBarrels));
                 showOil = summary.OilStorageCapacity > 0 || summary.StoredOilBarrels > 0.001f;
+                version = summary.Version;
                 return true;
             }
 
-            oilText = "0";
-            fuelText = "0";
             return true;
         }
 

@@ -30,6 +30,10 @@ namespace Game.Runtime
         private ComponentLookup<StaticGridBlocker> _staticGridBlockerLookup;
         private ComponentLookup<GridBlockerSize> _gridBlockerSizeLookup;
         private ComponentLookup<UnitResourceHauler> _resourceHaulerLookup;
+        private ComponentLookup<FuelLogisticsOilSourceTag> _fuelLogisticsOilSourceLookup;
+        private ComponentLookup<FuelLogisticsRefineryInputTag> _fuelLogisticsRefineryInputLookup;
+        private ComponentLookup<FuelLogisticsRefineryOutputTag> _fuelLogisticsRefineryOutputLookup;
+        private ComponentLookup<FuelLogisticsFuelStorageTag> _fuelLogisticsFuelStorageLookup;
         private NativeList<TargetingDiagnosticEvent> _diagnosticEvents;
         private float _nextTargetRefreshTime;
 
@@ -66,6 +70,10 @@ namespace Game.Runtime
             _staticGridBlockerLookup = state.GetComponentLookup<StaticGridBlocker>(true);
             _gridBlockerSizeLookup = state.GetComponentLookup<GridBlockerSize>(true);
             _resourceHaulerLookup = state.GetComponentLookup<UnitResourceHauler>(true);
+            _fuelLogisticsOilSourceLookup = state.GetComponentLookup<FuelLogisticsOilSourceTag>(true);
+            _fuelLogisticsRefineryInputLookup = state.GetComponentLookup<FuelLogisticsRefineryInputTag>(true);
+            _fuelLogisticsRefineryOutputLookup = state.GetComponentLookup<FuelLogisticsRefineryOutputTag>(true);
+            _fuelLogisticsFuelStorageLookup = state.GetComponentLookup<FuelLogisticsFuelStorageTag>(true);
             _diagnosticEvents = new NativeList<TargetingDiagnosticEvent>(Allocator.Persistent);
             state.RequireForUpdate<AISquad>();
             state.RequireForUpdate<RuntimeGameplayStateComponent>();
@@ -103,6 +111,10 @@ namespace Game.Runtime
             _staticGridBlockerLookup.Update(ref state);
             _gridBlockerSizeLookup.Update(ref state);
             _resourceHaulerLookup.Update(ref state);
+            _fuelLogisticsOilSourceLookup.Update(ref state);
+            _fuelLogisticsRefineryInputLookup.Update(ref state);
+            _fuelLogisticsRefineryOutputLookup.Update(ref state);
+            _fuelLogisticsFuelStorageLookup.Update(ref state);
 
             using NativeArray<ArchetypeChunk> targetChunks = _targetQuery.ToArchetypeChunkArray(Allocator.TempJob);
             using NativeArray<ArchetypeChunk> targetPriorityChunks = _targetPriorityQuery.ToArchetypeChunkArray(Allocator.TempJob);
@@ -125,6 +137,10 @@ namespace Game.Runtime
                 StaticGridBlockerLookup = _staticGridBlockerLookup,
                 GridBlockerSizeLookup = _gridBlockerSizeLookup,
                 ResourceHaulerLookup = _resourceHaulerLookup,
+                FuelLogisticsOilSourceLookup = _fuelLogisticsOilSourceLookup,
+                FuelLogisticsRefineryInputLookup = _fuelLogisticsRefineryInputLookup,
+                FuelLogisticsRefineryOutputLookup = _fuelLogisticsRefineryOutputLookup,
+                FuelLogisticsFuelStorageLookup = _fuelLogisticsFuelStorageLookup,
                 Diagnostics = _diagnosticEvents
             }.Schedule(_squadQuery, state.Dependency);
             assignTargetsHandle.Complete();
@@ -207,6 +223,10 @@ namespace Game.Runtime
             [ReadOnly] public ComponentLookup<StaticGridBlocker> StaticGridBlockerLookup;
             [ReadOnly] public ComponentLookup<GridBlockerSize> GridBlockerSizeLookup;
             [ReadOnly] public ComponentLookup<UnitResourceHauler> ResourceHaulerLookup;
+            [ReadOnly] public ComponentLookup<FuelLogisticsOilSourceTag> FuelLogisticsOilSourceLookup;
+            [ReadOnly] public ComponentLookup<FuelLogisticsRefineryInputTag> FuelLogisticsRefineryInputLookup;
+            [ReadOnly] public ComponentLookup<FuelLogisticsRefineryOutputTag> FuelLogisticsRefineryOutputLookup;
+            [ReadOnly] public ComponentLookup<FuelLogisticsFuelStorageTag> FuelLogisticsFuelStorageLookup;
             public NativeList<TargetingDiagnosticEvent> Diagnostics;
 
             public void Execute(
@@ -234,6 +254,10 @@ namespace Game.Runtime
                             StaticGridBlockerLookup,
                             GridBlockerSizeLookup,
                             ResourceHaulerLookup,
+                            FuelLogisticsOilSourceLookup,
+                            FuelLogisticsRefineryInputLookup,
+                            FuelLogisticsRefineryOutputLookup,
+                            FuelLogisticsFuelStorageLookup,
                             squad,
                             priority,
                             out Entity target,
@@ -312,6 +336,10 @@ namespace Game.Runtime
             ComponentLookup<StaticGridBlocker> staticGridBlockerLookup,
             ComponentLookup<GridBlockerSize> gridBlockerSizeLookup,
             ComponentLookup<UnitResourceHauler> resourceHaulerLookup,
+            ComponentLookup<FuelLogisticsOilSourceTag> fuelLogisticsOilSourceLookup,
+            ComponentLookup<FuelLogisticsRefineryInputTag> fuelLogisticsRefineryInputLookup,
+            ComponentLookup<FuelLogisticsRefineryOutputTag> fuelLogisticsRefineryOutputLookup,
+            ComponentLookup<FuelLogisticsFuelStorageTag> fuelLogisticsFuelStorageLookup,
             AISquad squad,
             AITargetPriority priority,
             out Entity bestTarget,
@@ -356,6 +384,10 @@ namespace Game.Runtime
                         target);
                     int score = ScoreTarget(
                         resourceHaulerLookup,
+                        fuelLogisticsOilSourceLookup,
+                        fuelLogisticsRefineryInputLookup,
+                        fuelLogisticsRefineryOutputLookup,
+                        fuelLogisticsFuelStorageLookup,
                         target,
                         kind,
                         priority,
@@ -416,6 +448,10 @@ namespace Game.Runtime
 
         private static int ScoreTarget(
             ComponentLookup<UnitResourceHauler> resourceHaulerLookup,
+            ComponentLookup<FuelLogisticsOilSourceTag> fuelLogisticsOilSourceLookup,
+            ComponentLookup<FuelLogisticsRefineryInputTag> fuelLogisticsRefineryInputLookup,
+            ComponentLookup<FuelLogisticsRefineryOutputTag> fuelLogisticsRefineryOutputLookup,
+            ComponentLookup<FuelLogisticsFuelStorageTag> fuelLogisticsFuelStorageLookup,
             Entity target,
             AITargetKind kind,
             AITargetPriority priority,
@@ -451,6 +487,17 @@ namespace Game.Runtime
                 reason = TargetReason.Economy;
             }
 
+            bool isFuelLogisticsInfrastructure =
+                fuelLogisticsOilSourceLookup.HasComponent(target) ||
+                fuelLogisticsRefineryInputLookup.HasComponent(target) ||
+                fuelLogisticsRefineryOutputLookup.HasComponent(target) ||
+                fuelLogisticsFuelStorageLookup.HasComponent(target);
+            if (isFuelLogisticsInfrastructure)
+            {
+                score += 20;
+                reason = TargetReason.Economy;
+            }
+
             switch (priority)
             {
                 case AITargetPriority.Units:
@@ -465,7 +512,7 @@ namespace Game.Runtime
                     }
                     break;
                 case AITargetPriority.Economy:
-                    if (isResourceHauler)
+                    if (isResourceHauler || isFuelLogisticsInfrastructure)
                     {
                         score += 50;
                         reason = TargetReason.Economy;

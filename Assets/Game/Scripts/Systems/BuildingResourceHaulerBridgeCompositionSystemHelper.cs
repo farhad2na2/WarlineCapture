@@ -15,6 +15,7 @@ namespace Game.Runtime
         private const float AutomaticAssignmentStableRefreshSeconds = 2f;
         private readonly HashSet<Entity> _invalidCapacityWarningEntities = new();
         private uint _lastAutomaticAssignmentSignature;
+        private uint _nextReservationId = 1u;
         private float _nextAutomaticAssignmentRefreshAt;
         private bool _hasAutomaticAssignmentSignature;
 
@@ -99,9 +100,15 @@ namespace Game.Runtime
             {
                 Entity hauler = haulerQuery[i];
                 if (em.HasComponent<UnitResourceHaulOrder>(hauler))
+                {
                     UpdateResourceHauler(context, em, grid, hauler, now);
-                else if (runAutomaticAssignment)
-                    TryAssignAutomaticHaulerOrder(context, em, grid, hauler);
+                }
+                else
+                {
+                    ReleaseOrphanedReservation(context, em, hauler);
+                    if (runAutomaticAssignment)
+                        TryAssignAutomaticHaulerOrder(context, em, grid, hauler);
+                }
             }
         }
 
@@ -170,8 +177,19 @@ namespace Game.Runtime
                 if (!em.Exists(unit) || !em.HasComponent<UnitResourceHauler>(unit) || em.HasComponent<UnitAirMovement>(unit))
                     continue;
 
-                if (!TryIssueHaulerMoveToBuilding(context, em, unit, source, out int2 sourceGoal))
+                UnitResourceHauler hauler = em.GetComponentData<UnitResourceHauler>(unit);
+                float loadAmount = context.ResourceHaulerUtilitySystemHelper.GetLoadAmount(hauler);
+                ReleaseOrderReservations(context, em, unit);
+                if (em.HasComponent<UnitResourceHaulOrder>(unit))
+                    em.RemoveComponent<UnitResourceHaulOrder>(unit);
+                if (!TryReserveHaulCapacity(context, em, source, destination, resourceKind, loadAmount, out UnitResourceHaulReservation reservation))
                     continue;
+
+                if (!TryIssueHaulerMoveToBuilding(context, em, unit, source, out int2 sourceGoal))
+                {
+                    ReleaseReservation(context, em, reservation);
+                    continue;
+                }
 
                 UnitResourceHaulOrder order = context.ResourceHaulerUtilitySystemHelper.CreateOrder(source.Id, destination.Id, sourceGoal, resourceKind);
 
@@ -179,6 +197,7 @@ namespace Game.Runtime
                     em.SetComponentData(unit, order);
                 else
                     em.AddComponentData(unit, order);
+                SetOrAddResourceHaulReservation(em, unit, reservation);
 
                 assignedAny = true;
             }
@@ -217,8 +236,14 @@ namespace Game.Runtime
                 return false;
             }
 
-            if (!TryIssueHaulerMoveToBuilding(context, em, unit, source, out int2 sourceGoal))
+            if (!TryReserveHaulCapacity(context, em, source, destination, resourceKind, loadAmount, out UnitResourceHaulReservation reservation))
                 return false;
+
+            if (!TryIssueHaulerMoveToBuilding(context, em, unit, source, out int2 sourceGoal))
+            {
+                ReleaseReservation(context, em, reservation);
+                return false;
+            }
 
             UnitResourceHaulOrder order = context.ResourceHaulerUtilitySystemHelper.CreateOrder(
                 source.Id,
@@ -226,6 +251,7 @@ namespace Game.Runtime
                 sourceGoal,
                 resourceKind);
             em.AddComponentData(unit, order);
+            SetOrAddResourceHaulReservation(em, unit, reservation);
             return true;
         }
 
@@ -336,6 +362,17 @@ namespace Game.Runtime
                     em,
                     building,
                     ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel)));
+                if (building.CombatEntity != Entity.Null &&
+                    em.Exists(building.CombatEntity) &&
+                    em.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
+                {
+                    BuildingResourceStorageComponent storage = em.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
+                    hash = AppendHash(hash, (int)storage.Version);
+                    hash = AppendHash(hash, QuantizeResource(storage.ReservedOilInboundBarrels));
+                    hash = AppendHash(hash, QuantizeResource(storage.ReservedOilOutboundBarrels));
+                    hash = AppendHash(hash, QuantizeResource(storage.ReservedFuelInboundBarrels));
+                    hash = AppendHash(hash, QuantizeResource(storage.ReservedFuelOutboundBarrels));
+                }
             }
 
             return hash;
@@ -664,6 +701,7 @@ namespace Game.Runtime
                 !context.TryGetRuntimeBuilding(order.SourceBuildingId, out RuntimeBuildingEntity source) ||
                 !context.TryGetRuntimeBuilding(order.DestinationBuildingId, out RuntimeBuildingEntity destination))
             {
+                ReleaseOrderReservations(context, em, entity);
                 em.RemoveComponent<UnitResourceHaulOrder>(entity);
                 return;
             }
@@ -672,7 +710,7 @@ namespace Game.Runtime
             switch ((ResourceHaulerUtilitySystemHelper.ResourceHaulPhase)order.Phase)
             {
                 case ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.None:
-                    UpdateNonePhase(context, em, entity, source, ref order);
+                    UpdateNonePhase(context, em, entity, source, destination, resourceKind, hauler, ref order);
                     break;
 
                 case ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource:
@@ -693,10 +731,32 @@ namespace Game.Runtime
             }
         }
 
-        private static void UpdateNonePhase(Context context, EntityManager em, Entity entity, RuntimeBuildingEntity source, ref UnitResourceHaulOrder order)
+        private void UpdateNonePhase(
+            Context context,
+            EntityManager em,
+            Entity entity,
+            RuntimeBuildingEntity source,
+            RuntimeBuildingEntity destination,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            UnitResourceHauler hauler,
+            ref UnitResourceHaulOrder order)
         {
+            float loadAmount = context.ResourceHaulerUtilitySystemHelper.GetLoadAmount(hauler);
+            if (!TryGetReservation(em, entity, out UnitResourceHaulReservation reservation) ||
+                reservation.SourceReservationActive == 0 ||
+                reservation.DestinationReservationActive == 0)
+            {
+                ReleaseOrderReservations(context, em, entity);
+                if (!TryReserveHaulCapacity(context, em, source, destination, resourceKind, loadAmount, out reservation))
+                    return;
+                SetOrAddResourceHaulReservation(em, entity, reservation);
+            }
+
             if (!TryIssueHaulerMoveToBuilding(context, em, entity, source, out int2 goal))
+            {
+                ReleaseOrderReservations(context, em, entity);
                 return;
+            }
 
             context.ResourceHaulerUtilitySystemHelper.SetTravelPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, goal);
             SetOrAddResourceHaulOrder(em, entity, order);
@@ -748,6 +808,7 @@ namespace Game.Runtime
             {
                 if (_invalidCapacityWarningEntities.Add(entity))
                     Debug.LogWarning($"[ResourceHauler] entity={entity} invalid-capacity capacity={hauler.BarrelCapacity}");
+                ReleaseOrderReservations(context, em, entity);
                 em.RemoveComponent<UnitResourceHaulOrder>(entity);
                 return;
             }
@@ -757,7 +818,10 @@ namespace Game.Runtime
             float currentCargo = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel ? hauler.CargoFuelBarrels : hauler.CargoOilBarrels;
             if (VerboseResourceHaulerLogs)
                 Debug.Log($"[ResourceHauler] entity={entity} phase=Loading resource={resourceKind} current={em.GetComponentData<UnitGrid>(entity).Cell} source={source.Id} stored={sourceStored:0.##} cargo={currentCargo:0.##}/{loadAmount:0.##} actionEndsAt={order.ActionEndsAt:0.##} now={now:0.##}");
-            if (!context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(em, source, resourceKind, loadAmount))
+            bool hasSourceReservation = TryGetReservation(em, entity, out UnitResourceHaulReservation reservation) &&
+                                        reservation.SourceReservationActive != 0 &&
+                                        reservation.ReservedBarrels + 0.001f >= loadAmount;
+            if (!hasSourceReservation && !context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(em, source, resourceKind, loadAmount))
             {
                 if (VerboseResourceHaulerLogs)
                     Debug.Log($"[ResourceHauler] entity={entity} waiting-for-resource resource={resourceKind} source={source.Id} stored={sourceStored:0.##} need={loadAmount:0.##}");
@@ -780,7 +844,10 @@ namespace Game.Runtime
             }
 
             sourceStored = context.ResourceHaulerUtilitySystemHelper.GetStoredResource(em, source, resourceKind);
-            if (!context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(em, source, resourceKind, loadAmount))
+            hasSourceReservation = TryGetReservation(em, entity, out reservation) &&
+                                   reservation.SourceReservationActive != 0 &&
+                                   reservation.ReservedBarrels + 0.001f >= loadAmount;
+            if (!hasSourceReservation && !context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(em, source, resourceKind, loadAmount))
             {
                 context.ResourceHaulerUtilitySystemHelper.ResetActionTimer(ref order);
                 em.SetComponentData(entity, order);
@@ -789,6 +856,8 @@ namespace Game.Runtime
                 return;
             }
 
+            if (hasSourceReservation)
+                ReleaseSourceReservationForOrder(context, em, entity, source, resourceKind, loadAmount);
             if (!context.ResourceHaulerUtilitySystemHelper.TryCompleteLoad(em, source, resourceKind, loadAmount, ref hauler))
                 return;
             em.SetComponentData(entity, hauler);
@@ -797,8 +866,10 @@ namespace Game.Runtime
 
             if (!TryIssueHaulerMoveToBuilding(context, em, entity, destination, out int2 destinationGoal))
             {
+                ReleaseDestinationReservationForOrder(context, em, entity, destination, resourceKind, loadAmount);
                 context.ResourceHaulerUtilitySystemHelper.RevertLoad(em, source, resourceKind, loadAmount, ref hauler);
                 em.SetComponentData(entity, hauler);
+                em.RemoveComponent<UnitResourceHaulOrder>(entity);
                 if (VerboseResourceHaulerLogs)
                     Debug.LogWarning($"[ResourceHauler] entity={entity} failed-destination-move destination={destination.Id} revertedLoad={loadAmount:0.##}");
                 return;
@@ -848,12 +919,16 @@ namespace Game.Runtime
             float cargo = context.ResourceHaulerUtilitySystemHelper.GetCargo(hauler, resourceKind);
             if (cargo <= 0f)
             {
+                ReleaseOrderReservations(context, em, entity);
                 context.ResourceHaulerUtilitySystemHelper.SetPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.None);
                 em.SetComponentData(entity, order);
                 return;
             }
 
-            if (!context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(em, destination, resourceKind, cargo))
+            bool hasDestinationReservation = TryGetReservation(em, entity, out UnitResourceHaulReservation reservation) &&
+                                             reservation.DestinationReservationActive != 0 &&
+                                             reservation.ReservedBarrels + 0.001f >= cargo;
+            if (!hasDestinationReservation && !context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(em, destination, resourceKind, cargo))
                 return;
 
             ResourceHaulerUtilitySystemHelper.TimedActionState unloadTimer = context.ResourceHaulerUtilitySystemHelper.AdvanceTimedAction(ref order, now, hauler.UnloadDurationSeconds);
@@ -864,26 +939,24 @@ namespace Game.Runtime
                 return;
             }
 
-            if (!context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(em, destination, resourceKind, cargo))
+            hasDestinationReservation = TryGetReservation(em, entity, out reservation) &&
+                                        reservation.DestinationReservationActive != 0 &&
+                                        reservation.ReservedBarrels + 0.001f >= cargo;
+            if (!hasDestinationReservation && !context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(em, destination, resourceKind, cargo))
             {
                 context.ResourceHaulerUtilitySystemHelper.ResetActionTimer(ref order);
                 em.SetComponentData(entity, order);
                 return;
             }
 
+            if (hasDestinationReservation)
+                ReleaseDestinationReservationForOrder(context, em, entity, destination, resourceKind, cargo);
             if (!context.ResourceHaulerUtilitySystemHelper.TryCompleteUnload(em, destination, resourceKind, ref hauler))
                 return;
             em.SetComponentData(entity, hauler);
-
-            if (!TryIssueHaulerMoveToBuilding(context, em, entity, source, out int2 sourceGoal))
-            {
-                context.ResourceHaulerUtilitySystemHelper.SetPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.None);
-                em.SetComponentData(entity, order);
-                return;
-            }
-
-            context.ResourceHaulerUtilitySystemHelper.SetTravelPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, sourceGoal);
-            SetOrAddResourceHaulOrder(em, entity, order);
+            if (em.HasComponent<UnitResourceHaulReservation>(entity))
+                em.RemoveComponent<UnitResourceHaulReservation>(entity);
+            em.RemoveComponent<UnitResourceHaulOrder>(entity);
         }
 
         private static bool IsHaulerAtBuildingApproach(Context context, int2 currentCell, int2 footprintSize, RuntimeBuildingEntity building, GridConfig grid)
@@ -990,6 +1063,181 @@ namespace Game.Runtime
                 em.SetComponentData(entity, order);
             else
                 em.AddComponentData(entity, order);
+        }
+
+        private static void SetOrAddResourceHaulReservation(EntityManager em, Entity entity, UnitResourceHaulReservation reservation)
+        {
+            if (em.HasComponent<UnitResourceHaulReservation>(entity))
+                em.SetComponentData(entity, reservation);
+            else
+                em.AddComponentData(entity, reservation);
+        }
+
+        private bool TryReserveHaulCapacity(
+            Context context,
+            EntityManager em,
+            RuntimeBuildingEntity source,
+            RuntimeBuildingEntity destination,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float loadAmount,
+            out UnitResourceHaulReservation reservation)
+        {
+            reservation = default;
+            if (context.ResourceHaulerUtilitySystemHelper == null || source == null || destination == null || loadAmount <= 0f)
+                return false;
+
+            if (!context.ResourceHaulerUtilitySystemHelper.TryReserveSource(em, source, resourceKind, loadAmount))
+                return false;
+
+            if (!context.ResourceHaulerUtilitySystemHelper.TryReserveDestination(em, destination, resourceKind, loadAmount))
+            {
+                context.ResourceHaulerUtilitySystemHelper.ReleaseSourceReservation(em, source, resourceKind, loadAmount);
+                return false;
+            }
+
+            reservation = new UnitResourceHaulReservation
+            {
+                SourceBuildingId = source.Id,
+                DestinationBuildingId = destination.Id,
+                ReservedBarrels = loadAmount,
+                ResourceKind = (byte)resourceKind,
+                SourceReservationActive = 1,
+                DestinationReservationActive = 1,
+                ReservationId = NextReservationId()
+            };
+            return true;
+        }
+
+#if UNITY_INCLUDE_TESTS
+        internal bool TryReserveHaulCapacityForTests(
+            Context context,
+            EntityManager em,
+            RuntimeBuildingEntity source,
+            RuntimeBuildingEntity destination,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float loadAmount,
+            out UnitResourceHaulReservation reservation)
+        {
+            return TryReserveHaulCapacity(context, em, source, destination, resourceKind, loadAmount, out reservation);
+        }
+#endif
+
+        private uint NextReservationId()
+        {
+            uint id = _nextReservationId;
+            _nextReservationId = _nextReservationId == uint.MaxValue ? 1u : _nextReservationId + 1u;
+            return id == 0u ? 1u : id;
+        }
+
+        private static bool TryGetReservation(EntityManager em, Entity entity, out UnitResourceHaulReservation reservation)
+        {
+            reservation = default;
+            if (!em.Exists(entity) || !em.HasComponent<UnitResourceHaulReservation>(entity))
+                return false;
+
+            reservation = em.GetComponentData<UnitResourceHaulReservation>(entity);
+            return reservation.ReservedBarrels > 0f;
+        }
+
+        private static void ReleaseOrphanedReservation(Context context, EntityManager em, Entity entity)
+        {
+            if (!em.Exists(entity) ||
+                em.HasComponent<UnitResourceHaulOrder>(entity) ||
+                !em.HasComponent<UnitResourceHaulReservation>(entity))
+            {
+                return;
+            }
+
+            ReleaseOrderReservations(context, em, entity);
+        }
+
+        private static void ReleaseOrderReservations(Context context, EntityManager em, Entity entity)
+        {
+            if (!TryGetReservation(em, entity, out UnitResourceHaulReservation reservation))
+                return;
+
+            ReleaseReservation(context, em, reservation);
+            if (em.Exists(entity) && em.HasComponent<UnitResourceHaulReservation>(entity))
+                em.RemoveComponent<UnitResourceHaulReservation>(entity);
+        }
+
+        private static void ReleaseReservation(Context context, EntityManager em, UnitResourceHaulReservation reservation)
+        {
+            if (context.ResourceHaulerUtilitySystemHelper == null)
+                return;
+
+            var resourceKind = (ResourceHaulerUtilitySystemHelper.ResourceHaulKind)reservation.ResourceKind;
+            if (reservation.SourceReservationActive != 0 &&
+                TryResolveReservationBuilding(context, reservation.SourceBuildingId, out RuntimeBuildingEntity source))
+            {
+                context.ResourceHaulerUtilitySystemHelper.ReleaseSourceReservation(
+                    em,
+                    source,
+                    resourceKind,
+                    reservation.ReservedBarrels);
+            }
+
+            if (reservation.DestinationReservationActive != 0 &&
+                TryResolveReservationBuilding(context, reservation.DestinationBuildingId, out RuntimeBuildingEntity destination))
+            {
+                context.ResourceHaulerUtilitySystemHelper.ReleaseDestinationReservation(
+                    em,
+                    destination,
+                    resourceKind,
+                    reservation.ReservedBarrels);
+            }
+        }
+
+        private static bool TryResolveReservationBuilding(
+            Context context,
+            int buildingId,
+            out RuntimeBuildingEntity building)
+        {
+            building = null;
+            if (context.TryGetRuntimeBuilding != null && context.TryGetRuntimeBuilding(buildingId, out building))
+                return true;
+
+            return context.RuntimeBuildings != null &&
+                   context.RuntimeBuildings.TryGetValue(buildingId, out building) &&
+                   building != null;
+        }
+
+        private static void ReleaseSourceReservationForOrder(
+            Context context,
+            EntityManager em,
+            Entity entity,
+            RuntimeBuildingEntity source,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float amount)
+        {
+            if (!TryGetReservation(em, entity, out UnitResourceHaulReservation reservation) ||
+                reservation.SourceReservationActive == 0)
+            {
+                return;
+            }
+
+            context.ResourceHaulerUtilitySystemHelper.ReleaseSourceReservation(em, source, resourceKind, amount);
+            reservation.SourceReservationActive = 0;
+            SetOrAddResourceHaulReservation(em, entity, reservation);
+        }
+
+        private static void ReleaseDestinationReservationForOrder(
+            Context context,
+            EntityManager em,
+            Entity entity,
+            RuntimeBuildingEntity destination,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float amount)
+        {
+            if (!TryGetReservation(em, entity, out UnitResourceHaulReservation reservation) ||
+                reservation.DestinationReservationActive == 0)
+            {
+                return;
+            }
+
+            context.ResourceHaulerUtilitySystemHelper.ReleaseDestinationReservation(em, destination, resourceKind, amount);
+            reservation.DestinationReservationActive = 0;
+            SetOrAddResourceHaulReservation(em, entity, reservation);
         }
 
         private static bool TryFindBuildingApproachCell(

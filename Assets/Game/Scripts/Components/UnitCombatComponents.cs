@@ -202,6 +202,17 @@ namespace Game.Components
         public byte ResourceKind;
     }
 
+    public struct UnitResourceHaulReservation : IComponentData
+    {
+        public int SourceBuildingId;
+        public int DestinationBuildingId;
+        public float ReservedBarrels;
+        public byte ResourceKind;
+        public byte SourceReservationActive;
+        public byte DestinationReservationActive;
+        public uint ReservationId;
+    }
+
     public struct RespawnQueueTag : IComponentData { }
 
     public struct RespawnQueueComponent : IComponentData

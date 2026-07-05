@@ -305,6 +305,126 @@ namespace Game.Runtime
             return HasReceivingCapacity((FactionResourceCompositionSystemHelper.IResourceBuilding)destination, resourceKind, cargo);
         }
 
+        internal bool TryReserveSource(
+            EntityManager entityManager,
+            RuntimeBuildingEntity source,
+            ResourceHaulKind resourceKind,
+            float loadAmount)
+        {
+            if (source == null || loadAmount <= 0f)
+                return false;
+
+            if (!TryGetEntityResourceStorage(entityManager, source, out BuildingResourceStorageComponent storage))
+            {
+                storage = CreateResourceStorage(source);
+                bool reserved = BuildingResourceStorageTransferSystemHelper.TryReserveSource(
+                    ref storage,
+                    ToStorageResourceKind(resourceKind),
+                    loadAmount);
+                if (reserved)
+                    ApplyResourceStorage(source, storage);
+                return reserved;
+            }
+
+            if (!BuildingResourceStorageTransferSystemHelper.TryReserveSource(
+                    ref storage,
+                    ToStorageResourceKind(resourceKind),
+                    loadAmount))
+            {
+                return false;
+            }
+
+            CommitEntityResourceStorage(entityManager, source, storage);
+            return true;
+        }
+
+        internal bool TryReserveDestination(
+            EntityManager entityManager,
+            RuntimeBuildingEntity destination,
+            ResourceHaulKind resourceKind,
+            float cargo)
+        {
+            if (destination == null || cargo <= 0f)
+                return false;
+
+            if (!TryGetEntityResourceStorage(entityManager, destination, out BuildingResourceStorageComponent storage))
+            {
+                storage = CreateResourceStorage(destination);
+                bool reserved = BuildingResourceStorageTransferSystemHelper.TryReserveDestination(
+                    ref storage,
+                    ToStorageResourceKind(resourceKind),
+                    cargo);
+                if (reserved)
+                    ApplyResourceStorage(destination, storage);
+                return reserved;
+            }
+
+            if (!BuildingResourceStorageTransferSystemHelper.TryReserveDestination(
+                    ref storage,
+                    ToStorageResourceKind(resourceKind),
+                    cargo))
+            {
+                return false;
+            }
+
+            CommitEntityResourceStorage(entityManager, destination, storage);
+            return true;
+        }
+
+        internal void ReleaseSourceReservation(
+            EntityManager entityManager,
+            RuntimeBuildingEntity source,
+            ResourceHaulKind resourceKind,
+            float loadAmount)
+        {
+            if (source == null || loadAmount <= 0f)
+                return;
+
+            if (!TryGetEntityResourceStorage(entityManager, source, out BuildingResourceStorageComponent storage))
+            {
+                storage = CreateResourceStorage(source);
+                BuildingResourceStorageTransferSystemHelper.ReleaseSourceReservation(
+                    ref storage,
+                    ToStorageResourceKind(resourceKind),
+                    loadAmount);
+                ApplyResourceStorage(source, storage);
+                return;
+            }
+
+            BuildingResourceStorageTransferSystemHelper.ReleaseSourceReservation(
+                ref storage,
+                ToStorageResourceKind(resourceKind),
+                loadAmount);
+            CommitEntityResourceStorage(entityManager, source, storage);
+        }
+
+        internal void ReleaseDestinationReservation(
+            EntityManager entityManager,
+            RuntimeBuildingEntity destination,
+            ResourceHaulKind resourceKind,
+            float cargo)
+        {
+            if (destination == null || cargo <= 0f)
+                return;
+
+            if (!TryGetEntityResourceStorage(entityManager, destination, out BuildingResourceStorageComponent storage))
+            {
+                storage = CreateResourceStorage(destination);
+                BuildingResourceStorageTransferSystemHelper.ReleaseDestinationReservation(
+                    ref storage,
+                    ToStorageResourceKind(resourceKind),
+                    cargo);
+                ApplyResourceStorage(destination, storage);
+                return;
+            }
+
+            BuildingResourceStorageTransferSystemHelper.ReleaseDestinationReservation(
+                ref storage,
+                ToStorageResourceKind(resourceKind),
+                cargo);
+            CommitEntityResourceStorage(entityManager, destination, storage);
+        }
+
         public bool TryCompleteUnload(
             FactionResourceCompositionSystemHelper.IResourceBuilding destination,
             ResourceHaulKind resourceKind,

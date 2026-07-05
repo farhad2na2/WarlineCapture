@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 67% (67/99 checklist items complete).
+Overall implementation progress: 68% (68/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -33,7 +33,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 12 | 13 | 92% | Auto-assign Oil pickup/delivery without manual target commands. |
-| 4. Refinery conversion | In Progress | 6 | 9 | 67% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
+| 4. Refinery conversion | In Progress | 7 | 9 | 78% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
@@ -119,7 +119,7 @@ Validation:
 - [x] Consume Oil input and produce Fuel output using config rate and efficiency.
 - [x] Stall when Oil input is empty.
 - [x] Stall when Fuel output buffer is full.
-- [ ] Publish selected Refinery read model only on version changes.
+- [x] Publish selected Refinery read model only on version changes.
 - [ ] Support Large Refinery with the same system and different config data.
 
 Validation:
@@ -844,3 +844,15 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 4 with selected Refinery read-model version gating and Large Refinery config coverage, then return to the remaining Phase 3 unmanaged-assignment decision once tanker/refinery data ownership is complete.
+- Slice: close selected refinery resource-panel version gate from existing evidence.
+- Files changed: this tracker.
+- Behavior intent:
+  - Confirmed selected building resource storage already flows through `SelectedBuildingResourceStorageSnapshot` with the live ECS storage `Version`.
+  - `SelectionHudFeedbackUiSystemHelper.BuildSelectedBuildingResourceStoragePanelModel` includes the snapshot version in the transport/resource panel cache key, so unchanged Oil/Fuel storage does not reapply the selected-building resource panel.
+  - Existing focused test `SelectedBuildingResourceStoragePanelSkipsApplyUntilVersionChanges` covers this behavior; the row is closed without runtime code changes.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 4 with Large Refinery config/data coverage and selected-building blocked-reason accuracy.

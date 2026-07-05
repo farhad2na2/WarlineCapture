@@ -15,6 +15,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
         try
         {
             tests.ApplyTick_ExtractsOilUpToCapacity();
+            tests.ApplyTick_FullOilStorageDoesNotOverflowVersionOrAllocate();
             tests.ApplyTick_ConvertsOilIntoFuel();
             tests.ApplyTick_DoesNotConvertOilWhenFuelStorageIsFull();
             tests.UpdateResourceProduction_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale();
@@ -27,7 +28,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsReservation_ReservesSourceAndDestinationCapacity();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
             tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=13");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=14");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -56,6 +57,37 @@ public sealed class BuildingResourceProductionEcsSystemTests
         Assert.AreEqual(1f, result.OilExtractedBarrels);
         Assert.AreEqual(0f, result.FuelProducedBarrels);
         Assert.AreEqual(1u, storage.Version);
+    }
+
+    [Test]
+    public void ApplyTick_FullOilStorageDoesNotOverflowVersionOrAllocate()
+    {
+        var storage = new BuildingResourceStorageComponent
+        {
+            OilStorageCapacity = 10,
+            OilBarrelsPerDay = 20f,
+            StoredOilBarrels = 10f,
+            Version = 7u
+        };
+
+        BuildingResourceProductionEcsSystem.TickResult warmup =
+            BuildingResourceProductionEcsSystem.ApplyTick(ref storage, 10f, 1f, 2f);
+        long before = System.GC.GetAllocatedBytesForCurrentThread();
+        float extracted = 0f;
+        for (int i = 0; i < 64; i++)
+        {
+            BuildingResourceProductionEcsSystem.TickResult result =
+                BuildingResourceProductionEcsSystem.ApplyTick(ref storage, 10f, 1f, 2f);
+            extracted += result.OilExtractedBarrels;
+        }
+        long after = System.GC.GetAllocatedBytesForCurrentThread();
+
+        Assert.AreEqual(10f, storage.StoredOilBarrels);
+        Assert.AreEqual(0f, storage.StoredFuelBarrels);
+        Assert.AreEqual(0f, warmup.OilExtractedBarrels);
+        Assert.AreEqual(0f, extracted);
+        Assert.AreEqual(7u, storage.Version);
+        Assert.AreEqual(before, after);
     }
 
     [Test]

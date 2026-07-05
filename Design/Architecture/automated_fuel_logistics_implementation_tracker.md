@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 46% (46/99 checklist items complete).
+Overall implementation progress: 49% (49/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -31,7 +31,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
-| 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
+| 2. Oil extraction and refinery buffers | In Progress | 3 | 8 | 38% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
@@ -84,14 +84,14 @@ Validation:
 
 - [ ] Keep Oil Pump extraction in ECS or move it into an unmanaged `ISystem` if currently managed.
 - [ ] Write Oil into a pump output buffer with capacity and dirty/version update.
-- [ ] Ensure extraction stalls cleanly when the pump buffer is full.
+- [x] Ensure extraction stalls cleanly when the pump buffer is full.
 - [ ] Publish selected Oil Pump read model only when buffer/rate/block reason changes.
 - [ ] Ensure map-placed and player-built oil pumps follow the same baked component path.
 
 Validation:
 
-- [ ] Focused oil pump production test: pump accumulates Oil over deterministic ticks.
-- [ ] Focused capacity test: pump stops at capacity without overflow or GC.
+- [x] Focused oil pump production test: pump accumulates Oil over deterministic ticks.
+- [x] Focused capacity test: pump stops at capacity without overflow or GC.
 - [ ] Selection panel test: pump status changes only when read-model version changes.
 
 ## Phase 3: Tray Truck Automation
@@ -686,3 +686,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Start Phase 2 oil extraction/refinery buffer ownership checks and keep Unity validation blocker recorded until the licensing client issue is cleared.
+- Slice: oil pump full-capacity stall validation.
+- Files changed: `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs` and this tracker.
+- Behavior intent:
+  - Added explicit coverage that an Oil Pump at full storage capacity does not overflow, does not advance storage version, and does not allocate managed memory while repeatedly ticking.
+  - Accounted for the existing deterministic Oil accumulation coverage in `ApplyTick_ExtractsOilUpToCapacity`.
+  - Closed the Phase 2 full-buffer stall row and the focused Oil Pump production/capacity validation rows.
+- Validation:
+  - Added `ApplyTick_FullOilStorageDoesNotOverflowVersionOrAllocate`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 2 by verifying map-placed/player-built oil pumps use the same `BuildingResourceStorageComponent` bake path and then address selected Oil Pump read-model version gating.

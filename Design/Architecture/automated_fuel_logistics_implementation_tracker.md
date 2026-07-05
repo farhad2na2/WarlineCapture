@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 15% (15/99 checklist items complete).
+Overall implementation progress: 16% (16/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -32,7 +32,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | In Progress | 5 | 11 | 45% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
-| 3. Tray truck automation | In Progress | 4 | 13 | 31% | Auto-assign Oil pickup/delivery without manual target commands. |
+| 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 1 | 12 | 8% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | Pending | 0 | 11 | 0% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
@@ -107,7 +107,7 @@ Validation:
 Validation:
 
 - [x] Focused route resolver test covers same-faction tray Oil pairing and tanker Fuel pairing.
-- [ ] One pump, one refinery, one tray truck transfers Oil without manual command.
+- [x] One pump, one refinery, one tray truck transfers Oil without manual command.
 - [ ] Seeded faction-base tray truck can start Oil hauling without building a truck at runtime.
 - [ ] No refinery capacity causes tray truck idle with a typed reason.
 - [ ] Destroyed source/destination clears reservations.
@@ -352,6 +352,18 @@ Use this section during implementation. Each completed batch should add:
   - Focused Unity batchmode validation remains blocked by the already-open Unity editor for this project.
 - Next action:
   - Add focused full-cycle edit-mode validation for one pump, one refinery, and one tray truck transferring Oil without a manual command, then cover tanker delivery into Fuel storage.
+- Slice: focused Oil tray transfer cycle validation.
+- Files changed: `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs` and this tracker.
+- Behavior intent:
+  - Added a direct ECS-side validation for one Oil Pump, one Refinery, and one idle `Unit_Veh_Truck_Tray`.
+  - The test drives the existing bridge through automatic assignment, source/destination reservation, pickup, destination travel, drop-off, reservation release, and order cleanup without a manual command.
+  - The test uses an in-memory grid entity and manually advances `UnitGrid` to the issued approach targets, avoiding scene objects, pathfinding jobs, and presentation dependencies.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Focused Unity batchmode validation remains blocked by the already-open Unity editor for this project.
+- Next action:
+  - Add focused tanker delivery validation from refinery output Fuel into Fuel Bladder/base Fuel storage.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

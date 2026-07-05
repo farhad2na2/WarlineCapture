@@ -25,7 +25,8 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsRoute_PairsTankerWithFactionRefineryAndFuelStorage();
             tests.AutomaticFuelLogisticsSignature_ChangesOnlyWhenRelevantStateChanges();
             tests.AutomaticFuelLogisticsReservation_ReservesSourceAndDestinationCapacity();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=11");
+            tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=12");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -558,6 +559,107 @@ public sealed class BuildingResourceProductionEcsSystemTests
         }
     }
 
+    [Test]
+    public void AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 32, 32, out blocked, out occupied);
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em,
+                41,
+                1,
+                new Vector2Int(8, 8),
+                oilCapacity: 100,
+                fuelCapacity: 0,
+                oilRate: 80f,
+                fuelRate: 0f,
+                storedOil: 40f,
+                storedFuel: 0f);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em,
+                42,
+                1,
+                new Vector2Int(16, 8),
+                oilCapacity: 100,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 40f,
+                storedOil: 0f,
+                storedFuel: 0f);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { oilPump.Id, oilPump },
+                { refinery.Id, refinery }
+            };
+            Entity hauler = CreateFuelLogisticsHauler(
+                em,
+                "Unit_Veh_Truck_Tray",
+                1,
+                new int2(0, 0));
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0f);
+
+            Assert.IsTrue(em.HasComponent<UnitResourceHaulOrder>(hauler));
+            Assert.IsTrue(em.HasComponent<UnitResourceHaulReservation>(hauler));
+            UnitResourceHaulOrder order = em.GetComponentData<UnitResourceHaulOrder>(hauler);
+            Assert.AreEqual(oilPump.Id, order.SourceBuildingId);
+            Assert.AreEqual(refinery.Id, order.DestinationBuildingId);
+            Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, order.Phase);
+            MoveHaulerToOrderTarget(em, hauler, order);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0.1f);
+            order = em.GetComponentData<UnitResourceHaulOrder>(hauler);
+            Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.Loading, order.Phase);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0.2f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 1.3f);
+
+            UnitResourceHauler cargo = em.GetComponentData<UnitResourceHauler>(hauler);
+            BuildingResourceStorageComponent sourceStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(oilPump.CombatEntity);
+            BuildingResourceStorageComponent destinationStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(refinery.CombatEntity);
+            order = em.GetComponentData<UnitResourceHaulOrder>(hauler);
+            Assert.AreEqual(8f, cargo.CargoOilBarrels);
+            Assert.AreEqual(32f, sourceStorage.StoredOilBarrels);
+            Assert.AreEqual(0f, sourceStorage.ReservedOilOutboundBarrels);
+            Assert.AreEqual(8f, destinationStorage.ReservedOilInboundBarrels);
+            Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToDestination, order.Phase);
+            MoveHaulerToOrderTarget(em, hauler, order);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 1.4f);
+            order = em.GetComponentData<UnitResourceHaulOrder>(hauler);
+            Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.Unloading, order.Phase);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 1.5f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 2.6f);
+
+            cargo = em.GetComponentData<UnitResourceHauler>(hauler);
+            destinationStorage = em.GetComponentData<BuildingResourceStorageComponent>(refinery.CombatEntity);
+            Assert.AreEqual(0f, cargo.CargoOilBarrels);
+            Assert.AreEqual(8f, destinationStorage.StoredOilBarrels);
+            Assert.AreEqual(0f, destinationStorage.ReservedOilInboundBarrels);
+            Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(hauler));
+            Assert.IsFalse(em.HasComponent<UnitResourceHaulReservation>(hauler));
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
     private static BuildingResourceHaulerBridgeCompositionSystemHelper.Context CreateAutomaticRouteContext(
         System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
     {
@@ -573,6 +675,48 @@ public sealed class BuildingResourceProductionEcsSystemTests
             null,
             ResolveBuildingFocusWorldPosition,
             null);
+    }
+
+    private static BuildingResourceHaulerBridgeCompositionSystemHelper.Context CreateBridgeCycleContext(
+        EntityManager em,
+        Entity gridEntity,
+        System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+    {
+        EntityQuery haulerQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitResourceHauler>(),
+            ComponentType.ReadOnly<UnitGrid>());
+        return new BuildingResourceHaulerBridgeCompositionSystemHelper.Context(
+            runtimeBuildings,
+            new ResourceHaulerUtilitySystemHelper(),
+            new FactionResourceCompositionSystemHelper(),
+            TryGetEntityManager,
+            TryGetGridData,
+            null,
+            () => haulerQuery,
+            null,
+            TryGetRuntimeBuilding,
+            ResolveBuildingFocusWorldPosition,
+            GetEffectivePlacementRect);
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+
+        bool TryGetGridData(out Entity entity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData)
+        {
+            entity = gridEntity;
+            grid = em.GetComponentData<GridConfig>(gridEntity);
+            roads = em.GetBuffer<GridRoad>(gridEntity);
+            blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+            return true;
+        }
+
+        bool TryGetRuntimeBuilding(int id, out RuntimeBuildingEntity building)
+        {
+            return runtimeBuildings.TryGetValue(id, out building);
+        }
     }
 
     private static RuntimeBuildingEntity CreateResourceBuilding(
@@ -630,7 +774,8 @@ public sealed class BuildingResourceProductionEcsSystemTests
             typeof(UnitResourceHauler),
             typeof(UnitSourcePrefabKey),
             typeof(Faction),
-            typeof(UnitGrid));
+            typeof(UnitGrid),
+            typeof(UnitFootprint));
         em.SetComponentData(entity, new UnitResourceHauler
         {
             BarrelCapacity = 8,
@@ -643,7 +788,63 @@ public sealed class BuildingResourceProductionEcsSystemTests
         });
         em.SetComponentData(entity, new Faction { Id = factionId });
         em.SetComponentData(entity, new UnitGrid { Cell = cell });
+        em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         return entity;
+    }
+
+    private static Entity CreateTestGridEntity(
+        EntityManager em,
+        int width,
+        int height,
+        out NativeBitArray blocked,
+        out NativeBitArray occupied)
+    {
+        int gridSize = width * height;
+        blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        Entity gridEntity = em.CreateEntity(
+            typeof(GridConfig),
+            typeof(DynamicBlockerComponent),
+            typeof(DynamicOccupancyComponent),
+            typeof(GridWalkable),
+            typeof(GridRoad),
+            typeof(GridRoadSidewalk),
+            typeof(GridRoadDirt));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = width,
+            Height = height,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+        em.SetComponentData(gridEntity, new DynamicBlockerComponent
+        {
+            GridSize = gridSize,
+            Blocked = blocked
+        });
+        em.SetComponentData(gridEntity, new DynamicOccupancyComponent
+        {
+            GridSize = gridSize,
+            Occupied = occupied
+        });
+
+        DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
+        DynamicBuffer<GridRoad> roads = em.GetBuffer<GridRoad>(gridEntity);
+        DynamicBuffer<GridRoadSidewalk> sidewalks = em.GetBuffer<GridRoadSidewalk>(gridEntity);
+        DynamicBuffer<GridRoadDirt> dirtRoads = em.GetBuffer<GridRoadDirt>(gridEntity);
+        walkable.ResizeUninitialized(gridSize);
+        roads.ResizeUninitialized(gridSize);
+        sidewalks.ResizeUninitialized(gridSize);
+        dirtRoads.ResizeUninitialized(gridSize);
+        for (int i = 0; i < gridSize; i++)
+        {
+            walkable[i] = new GridWalkable { Value = 1 };
+            roads[i] = new GridRoad { Value = 0 };
+            sidewalks[i] = new GridRoadSidewalk { Value = 0 };
+            dirtRoads[i] = new GridRoadDirt { Value = 0 };
+        }
+
+        return gridEntity;
     }
 
     private static GridConfig CreateTestGrid()
@@ -655,6 +856,19 @@ public sealed class BuildingResourceProductionEcsSystemTests
             CellSize = 1f,
             Origin = float3.zero
         };
+    }
+
+    private static void MoveHaulerToOrderTarget(EntityManager em, Entity hauler, UnitResourceHaulOrder order)
+    {
+        em.SetComponentData(hauler, new UnitGrid { Cell = order.TargetCell });
+    }
+
+    private static RectInt GetEffectivePlacementRect(RuntimeBuildingEntity building, GridConfig grid)
+    {
+        Vector2Int footprint = building.Definition != null && building.Definition.FootprintCells.x > 0 && building.Definition.FootprintCells.y > 0
+            ? building.Definition.FootprintCells
+            : Vector2Int.one;
+        return new RectInt(building.OriginCell, footprint);
     }
 
     private static Vector3 ResolveBuildingFocusWorldPosition(RuntimeBuildingEntity building)

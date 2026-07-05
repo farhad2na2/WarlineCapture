@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Runtime;
+using Game.Tactical.Contracts;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using Unity.Mathematics;
 using Unity.Entities;
@@ -38,7 +39,8 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             tests.StorageReservation_DestinationReservationReducesFreeCapacity();
             tests.StorageTransfer_MutationsIncrementVersion();
             tests.FuelLogisticsRoleTags_AreQueryableEcsTags();
-            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=24");
+            tests.FuelLogisticsReasonCodes_AreTypedForUiAndCommands();
+            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=25");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -700,6 +702,21 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
         Assert.AreEqual(1, oilSourceQuery.CalculateEntityCount());
         Assert.AreEqual(1, refineryQuery.CalculateEntityCount());
         Assert.AreEqual(1, fuelStorageQuery.CalculateEntityCount());
+    }
+
+    [Test]
+    public void FuelLogisticsReasonCodes_AreTypedForUiAndCommands()
+    {
+        Assert.AreEqual(0, (byte)FuelLogisticsTaskStatusCode.None);
+        Assert.AreEqual(0, (byte)FuelLogisticsBlockReasonCode.None);
+        Assert.AreNotEqual(FuelLogisticsBlockReasonCode.None, FuelLogisticsBlockReasonCode.SourceUnavailable);
+        Assert.AreNotEqual(FuelLogisticsBlockReasonCode.None, FuelLogisticsBlockReasonCode.DestinationFull);
+        Assert.AreNotEqual(FuelLogisticsBlockReasonCode.None, FuelLogisticsBlockReasonCode.RouteUnavailable);
+        Assert.AreNotEqual(FuelLogisticsBlockReasonCode.None, FuelLogisticsBlockReasonCode.ReservationFailed);
+        Assert.AreNotEqual(TacticalCommandReasonCode.None, TacticalCommandReasonCode.FuelLogisticsSourceUnavailable);
+        Assert.AreNotEqual(TacticalCommandReasonCode.None, TacticalCommandReasonCode.FuelLogisticsDestinationFull);
+        Assert.AreNotEqual(TacticalCommandReasonCode.None, TacticalCommandReasonCode.FuelLogisticsRouteUnavailable);
+        Assert.AreNotEqual(TacticalCommandReasonCode.None, TacticalCommandReasonCode.FuelLogisticsReservationFailed);
     }
 
     private sealed class TestHaulerBuilding : FactionResourceCompositionSystemHelper.IResourceBuilding

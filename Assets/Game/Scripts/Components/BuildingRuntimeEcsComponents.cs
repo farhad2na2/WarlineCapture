@@ -10,6 +10,30 @@ namespace Game.Components
         Fuel = 1
     }
 
+    public enum FuelLogisticsTaskStatusCode : byte
+    {
+        None = 0,
+        Idle = 1,
+        Assigned = 2,
+        ToSource = 3,
+        Loading = 4,
+        ToDestination = 5,
+        Unloading = 6,
+        Blocked = 7
+    }
+
+    public enum FuelLogisticsBlockReasonCode : byte
+    {
+        None = 0,
+        SourceUnavailable = 1,
+        DestinationUnavailable = 2,
+        DestinationFull = 3,
+        RouteUnavailable = 4,
+        ReservationFailed = 5,
+        HaulerUnavailable = 6,
+        InsufficientUsableFuel = 7
+    }
+
     public struct FuelLogisticsOilSourceTag : IComponentData
     {
     }

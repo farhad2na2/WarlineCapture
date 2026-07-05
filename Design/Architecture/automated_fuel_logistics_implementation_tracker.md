@@ -23,14 +23,14 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 43% (43/99 checklist items complete).
+Overall implementation progress: 44% (44/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
-| 1. Data model | In Progress | 8 | 11 | 73% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
+| 1. Data model | In Progress | 9 | 11 | 82% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
@@ -64,7 +64,7 @@ Exit criteria:
 - [x] Define logistics cargo data for tray/tanker trucks: carried resource, amount, capacity, source, destination, task state, and reservation id.
 - [x] Define logistics role tags: oil hauler, fuel hauler, source, refinery input, refinery output, fuel storage.
 - [x] Define faction usable Fuel summary: current, capacity, produced, delivered, spent, version.
-- [ ] Define typed blocked/status reason codes for UI and command validation.
+- [x] Define typed blocked/status reason codes for UI and command validation.
 - [x] Define scenario/map authoring requirement for seeded tray/tanker pairs at each fuel-enabled faction military base.
 - [x] Add baker/config mapping only where needed; do not duplicate balance data already owned by configs.
 
@@ -660,3 +660,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 1 typed logistics status/reason codes, then close the Phase 1 validation row with focused storage/summary tests.
+- Slice: typed fuel logistics status and block reason codes.
+- Files changed: `Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs`, `Assets/Game/Scripts/Contracts/TacticalCommandContracts.cs`, `Assets/Tests/Editor/ResourceHaulerUtilitySystemHelperTests.cs`, and this tracker.
+- Behavior intent:
+  - Added `FuelLogisticsTaskStatusCode` and `FuelLogisticsBlockReasonCode` as byte-backed ECS-friendly enums for automated hauler/refinery state.
+  - Added tactical command reason codes for logistics source unavailable, destination full, route unavailable, and reservation failure so UI/request validation can report specific typed failures instead of generic strings.
+  - Kept the slice data-model-only; no runtime command behavior changes yet.
+- Validation:
+  - Added `FuelLogisticsReasonCodes_AreTypedForUiAndCommands` to verify non-zero status/block/tactical reason codes.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Close Phase 1 validation rows, then start Phase 2 oil extraction/refinery buffer ownership checks.

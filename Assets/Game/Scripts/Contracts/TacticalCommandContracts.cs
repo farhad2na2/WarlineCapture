@@ -35,7 +35,11 @@ namespace Game.Tactical.Contracts
         TransportFull,
         NoEligiblePassengers,
         NoDisembarkCell,
-        TransportPassengerMissing
+        TransportPassengerMissing,
+        FuelLogisticsSourceUnavailable,
+        FuelLogisticsDestinationFull,
+        FuelLogisticsRouteUnavailable,
+        FuelLogisticsReservationFailed
     }
 
     public enum CommandFeedbackSeverity

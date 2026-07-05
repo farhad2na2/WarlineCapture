@@ -42,12 +42,13 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsSteadyState_DoesNotAllocateManagedMemory();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
             tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand();
+            tests.AutomaticFuelLogisticsEnemyFaction_ProducesAndDeliversFuel();
             tests.AutomaticFuelLogisticsTanker_NoRefineryFuelSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoFuelStorageSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_FullFuelStorageSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoRouteSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoAvailableTankerDoesNotReserveFuel();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=33");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=34");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -1810,6 +1811,122 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.AreEqual(0f, cargo.CargoFuelBarrels);
             Assert.AreEqual(8f, destinationStorage.StoredFuelBarrels);
             Assert.AreEqual(0f, destinationStorage.ReservedFuelInboundBarrels);
+            Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(hauler));
+            Assert.IsFalse(em.HasComponent<UnitResourceHaulReservation>(hauler));
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsEnemyFaction_ProducesAndDeliversFuel()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsEnemyFaction_ProducesAndDeliversFuel));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 32, 32, out blocked, out occupied);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em,
+                71,
+                FactionIdentity.EnemyFactionId,
+                new Vector2Int(8, 8),
+                oilCapacity: 100,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 800f,
+                storedOil: 20f,
+                storedFuel: 0f);
+            RuntimeBuildingEntity enemyFuelBladder = CreateResourceBuilding(
+                em,
+                72,
+                FactionIdentity.EnemyFactionId,
+                new Vector2Int(16, 8),
+                oilCapacity: 0,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 0f,
+                storedOil: 0f,
+                storedFuel: 0f);
+            RuntimeBuildingEntity playerFuelBladder = CreateResourceBuilding(
+                em,
+                73,
+                FactionIdentity.PlayerFactionId,
+                new Vector2Int(10, 8),
+                oilCapacity: 0,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 0f,
+                storedOil: 0f,
+                storedFuel: 0f);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { refinery.Id, refinery },
+                { enemyFuelBladder.Id, enemyFuelBladder },
+                { playerFuelBladder.Id, playerFuelBladder }
+            };
+
+            using EntityQuery storageQuery = em.CreateEntityQuery(
+                ComponentType.ReadWrite<BuildingResourceStorageComponent>());
+            BuildingResourceProductionEcsSystem.TickResult production =
+                BuildingResourceProductionEcsSystem.ApplyStorageQuery(
+                    em,
+                    storageQuery,
+                    secondsPerDay: 100f,
+                    deltaTime: 1f,
+                    oilBarrelsPerFuelBarrel: 2f);
+
+            Assert.AreEqual(8f, production.FuelProducedBarrels);
+            BuildingResourceStorageComponent refineryStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(refinery.CombatEntity);
+            Assert.AreEqual(FactionIdentity.EnemyFactionId, refineryStorage.OwnerFactionId);
+            Assert.AreEqual(4f, refineryStorage.StoredOilBarrels);
+            Assert.AreEqual(8f, refineryStorage.StoredFuelBarrels);
+
+            Entity hauler = CreateFuelLogisticsHauler(
+                em,
+                "Unit_Veh_Truck_Tanker",
+                FactionIdentity.EnemyFactionId,
+                new int2(0, 0));
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0f);
+
+            Assert.IsTrue(em.HasComponent<UnitResourceHaulOrder>(hauler));
+            UnitResourceHaulOrder order = em.GetComponentData<UnitResourceHaulOrder>(hauler);
+            Assert.AreEqual(refinery.Id, order.SourceBuildingId);
+            Assert.AreEqual(enemyFuelBladder.Id, order.DestinationBuildingId);
+            Assert.AreNotEqual(playerFuelBladder.Id, order.DestinationBuildingId);
+            Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel, order.ResourceKind);
+            MoveHaulerToOrderTarget(em, hauler, order);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0.1f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0.2f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 1.3f);
+            order = em.GetComponentData<UnitResourceHaulOrder>(hauler);
+            MoveHaulerToOrderTarget(em, hauler, order);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 1.4f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 1.5f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 2.6f);
+
+            BuildingResourceStorageComponent enemyStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(enemyFuelBladder.CombatEntity);
+            BuildingResourceStorageComponent playerStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(playerFuelBladder.CombatEntity);
+            Assert.AreEqual(8f, enemyStorage.StoredFuelBarrels);
+            Assert.AreEqual(0f, enemyStorage.ReservedFuelInboundBarrels);
+            Assert.AreEqual(0f, playerStorage.StoredFuelBarrels);
             Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(hauler));
             Assert.IsFalse(em.HasComponent<UnitResourceHaulReservation>(hauler));
         }

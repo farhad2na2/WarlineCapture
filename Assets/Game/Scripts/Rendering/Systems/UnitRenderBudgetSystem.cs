@@ -65,6 +65,7 @@ namespace Game.Rendering
         private UnitRenderBudgetRenderSafety.Lookups _renderSafetyLookups;
         private UnitRenderBudgetVisibilityApply.Lookups _visibilityApplyLookups;
         private ComponentLookup<UnitRenderVisualComponent> _visualStateLookup;
+        private ComponentLookup<UnitAirMovement> _airMovementLookup;
         private EntityTypeHandle _unitEntityTypeHandle;
         private ComponentTypeHandle<LocalTransform> _unitLocalTransformTypeHandle;
 
@@ -125,6 +126,7 @@ namespace Game.Rendering
                 CulledTagLookup = state.GetComponentLookup<UnitRenderBudgetCulledTag>(true)
             };
             _visualStateLookup = state.GetComponentLookup<UnitRenderVisualComponent>(true);
+            _airMovementLookup = state.GetComponentLookup<UnitAirMovement>(true);
             _unitEntityTypeHandle = state.GetEntityTypeHandle();
             _unitLocalTransformTypeHandle = state.GetComponentTypeHandle<LocalTransform>(true);
             state.RequireForUpdate<RuntimeGameplayStateComponent>();
@@ -182,6 +184,7 @@ namespace Game.Rendering
             _renderSafetyLookups.Update(ref state);
             _visibilityApplyLookups.Update(ref state);
             _visualStateLookup.Update(ref state);
+            _airMovementLookup.Update(ref state);
             _unitEntityTypeHandle.Update(ref state);
             _unitLocalTransformTypeHandle.Update(ref state);
 
@@ -248,6 +251,7 @@ namespace Game.Rendering
                 AnimationIndexLookup = animationIndexLookup,
                 MoveVisualLookup = moveVisualLookup,
                 MovementBehaviorLookup = movementBehaviorLookup,
+                AirMovementLookup = _airMovementLookup,
                 HealthLookup = healthLookup,
                 SourcePrefabKeyLookup = sourcePrefabKeyLookup,
                 FactionLookup = factionLookup,

@@ -23,6 +23,7 @@ namespace Game.Rendering
             public bool HasAnyMeshLodInstance;
             public bool WaitingForLow;
             public bool IsCharacter;
+            public bool IsAirUnit;
             public bool IsEnemyUnit;
             public bool IsSelectedUnit;
             public bool IsMovingUnit;
@@ -142,6 +143,18 @@ namespace Game.Rendering
                 request.HasLowLodInstance &&
                 request.LowBand;
             bool shouldShowFar = !shouldShowDetail && !shouldShowMid && !shouldShowLow;
+            if (request.IsAirUnit)
+            {
+                return new Result(
+                    shouldShowDetail: true,
+                    shouldShowMid: false,
+                    shouldShowLow: false,
+                    shouldShowFar: false,
+                    forceImmediateDetailVisual: true,
+                    desiredVisual: UnitRenderVisualKind.Detail,
+                    counters: default);
+            }
+
             if (!EnableFarImpostorVisuals && shouldShowFar)
                 UseClosestMeshVisual(request, out shouldShowDetail, out shouldShowMid, out shouldShowLow, out shouldShowFar);
 

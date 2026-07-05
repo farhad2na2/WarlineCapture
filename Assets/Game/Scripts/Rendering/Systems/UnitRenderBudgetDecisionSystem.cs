@@ -20,6 +20,7 @@ namespace Game.Rendering
             public ComponentLookup<MaterialAnimationIndex> AnimationIndexLookup;
             public ComponentLookup<UnitMoveVisualComponent> MoveVisualLookup;
             public ComponentLookup<UnitMovementBehavior> MovementBehaviorLookup;
+            public ComponentLookup<UnitAirMovement> AirMovementLookup;
             public ComponentLookup<UnitHealth> HealthLookup;
             public ComponentLookup<UnitSourcePrefabKey> SourcePrefabKeyLookup;
             public ComponentLookup<Faction> FactionLookup;
@@ -112,6 +113,7 @@ namespace Game.Rendering
                     unit,
                     context.MovementBehaviorLookup,
                     context.SourcePrefabKeyLookup);
+                bool isAirUnit = context.AirMovementLookup.HasComponent(unit);
                 byte factionId = context.FactionLookup.HasComponent(unit) ? context.FactionLookup[unit].Id : (byte)0;
                 bool isEnemyUnit = FactionIdentity.IsHostileToPlayer(factionId);
                 bool isSelectedUnit = context.SelectedLookup.HasComponent(unit);
@@ -164,6 +166,7 @@ namespace Game.Rendering
                         HasAnyMeshLodInstance = lodReferences.HasAnyMeshLodInstance,
                         WaitingForLow = waitingForLow,
                         IsCharacter = isCharacter,
+                        IsAirUnit = isAirUnit,
                         IsEnemyUnit = isEnemyUnit,
                         IsSelectedUnit = isSelectedUnit,
                         IsMovingUnit = isMovingUnit,

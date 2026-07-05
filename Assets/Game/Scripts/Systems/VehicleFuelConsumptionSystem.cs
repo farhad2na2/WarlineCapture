@@ -68,7 +68,7 @@ namespace Game.Runtime
             requestedFuelByFaction.Dispose();
         }
 
-        private static void DrainRequestedFuel(ref SystemState state, NativeArray<float> requestedFuelByFaction)
+        private void DrainRequestedFuel(ref SystemState state, NativeArray<float> requestedFuelByFaction)
         {
             for (int factionId = 0; factionId < requestedFuelByFaction.Length; factionId++)
             {

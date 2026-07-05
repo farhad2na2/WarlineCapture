@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Game.Components;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -460,6 +461,7 @@ namespace Game.Runtime
                         secondsPerDay,
                         deltaTime,
                         oilBarrelsPerFuelBarrel);
+                SyncRuntimeBuildingsFromEcsStorage(storageQuery, buildings);
                 return new ResourceProductionTickResult(
                     queryResult.OilExtractedBarrels,
                     queryResult.FuelProducedBarrels);
@@ -771,6 +773,30 @@ namespace Game.Runtime
 
             building.StoredOilBarrels = storage.StoredOilBarrels;
             building.StoredFuelBarrels = storage.StoredFuelBarrels;
+        }
+
+        private static void SyncRuntimeBuildingsFromEcsStorage(
+            EntityQuery storageQuery,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> buildings)
+        {
+            if (buildings == null || buildings.Count == 0)
+                return;
+
+            using NativeArray<BuildingResourceStorageComponent> storages =
+                storageQuery.ToComponentDataArray<BuildingResourceStorageComponent>(Allocator.Temp);
+            for (int i = 0; i < storages.Length; i++)
+            {
+                BuildingResourceStorageComponent storage = storages[i];
+                if (storage.RuntimeBuildingId == 0 ||
+                    !buildings.TryGetValue(storage.RuntimeBuildingId, out RuntimeBuildingEntity building) ||
+                    building == null)
+                {
+                    continue;
+                }
+
+                building.StoredOilBarrels = storage.StoredOilBarrels;
+                building.StoredFuelBarrels = storage.StoredFuelBarrels;
+            }
         }
 
         private static void SyncResourceStorageMetadata(

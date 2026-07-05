@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 91% (91/99 checklist items complete).
+Overall implementation progress: 94% (94/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -38,7 +38,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 6. Vehicle fuel spending | Complete | 11 | 11 | 100% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Complete | 7 | 7 | 100% | Let AI understand fuel economy after player loop is validated. |
-| 9. Validation and profiling | In Progress | 3 | 10 | 30% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
+| 9. Validation and profiling | In Progress | 6 | 10 | 60% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
 ## Phase 0: Inventory And Baseline
 
@@ -196,9 +196,9 @@ Validation:
 
 - [x] Run `git diff --check`.
 - [x] Run compile validation after each implementation batch.
-- [ ] Run focused oil/fuel logistics edit-mode tests.
-- [ ] Run focused building production/resource validation.
-- [ ] Run focused vehicle movement and aircraft return validation.
+- [x] Run focused oil/fuel logistics edit-mode tests.
+- [x] Run focused building production/resource validation.
+- [x] Run focused vehicle movement and aircraft return validation.
 - [ ] Run seeded logistics fixture validation for Faction 1 and Faction 2 military base tray/tanker pairs.
 - [ ] Run architecture guardrails, including Burst/ECS hot-path checks.
 - [ ] Run steady-state match profiler capture with fuel logistics active.
@@ -1067,3 +1067,18 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation/profiling remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Remaining work is Phase 9 Unity validation/profiling plus Phase 0 profiler marker capture after the licensing/profiler path is available.
+- Slice: Unity workaround focused validation recovery.
+- Files changed: `Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs`, `Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs`, `Assets/Tests/Editor/VehicleFuelConsumptionSystemTests.cs`, and this tracker.
+- Behavior intent:
+  - Used the documented `Tools/CI/invoke_unity_macos.sh` workaround instead of raw Unity batchmode.
+  - Fixed a Unity Entities source-generation compile error in `VehicleFuelConsumptionSystem` by keeping the `SystemAPI.Query` helper non-static with a `ref SystemState` parameter.
+  - Updated `VehicleFuelConsumptionSystemTests` to the repository's current unmanaged system update pattern and explicit tag component adds so Unity's editor test assembly compiles.
+  - Added `VehicleFuelConsumptionSystemTests.RunFocusedValidation` for repeatable focused validation.
+  - Fixed the resource production ECS fast path so updated ECS storage values are mirrored back to matching `RuntimeBuildingEntity` instances after `BuildingResourceProductionEcsSystem.ApplyStorageQuery`; ECS storage remains authoritative, while runtime/UI mirrors stop going stale.
+- Validation:
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-fuel-building-resource-validation-wrapper-5.log -- -quit -executeMethod BuildingResourceProductionEcsSystemTests.RunFocusedValidation` passed with `[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=34`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-fuel-vehicle-consumption-validation-wrapper-2.log -- -quit -executeMethod VehicleFuelConsumptionSystemTests.RunFocusedValidation` passed with `[VehicleFuelConsumptionFocusedValidation] result=Passed tests=7`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+- Next action:
+  - Continue with seeded Faction 1/Faction 2 fixture validation, architecture guardrails, steady-state profiler capture, Android profiling, and the Phase 0 profiler marker baseline.

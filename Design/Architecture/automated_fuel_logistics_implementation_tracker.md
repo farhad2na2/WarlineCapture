@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 75% (75/99 checklist items complete).
+Overall implementation progress: 76% (76/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -34,7 +34,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 12 | 13 | 92% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Complete | 9 | 9 | 100% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
-| 5. Tanker automation and usable Fuel | In Progress | 9 | 12 | 75% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
+| 5. Tanker automation and usable Fuel | In Progress | 10 | 12 | 83% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
@@ -143,7 +143,7 @@ Validation:
 - [x] Refinery output does not change header Fuel until tanker delivery completes.
 - [x] Fuel Bladder capacity controls max usable Fuel.
 - [x] Header updates after delivered Fuel and stays version-gated.
-- [ ] Seeded faction-base tanker can start Fuel hauling without building a truck at runtime.
+- [x] Seeded faction-base tanker can start Fuel hauling without building a truck at runtime.
 - [ ] Tanker idle/block reasons are typed and visible in selected truck/building UI.
 
 ## Phase 6: Vehicle Fuel Consumption
@@ -927,3 +927,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 5 with seeded faction-base tanker validation and selected tanker idle/block reason visibility.
+- Slice: seeded tanker automatic Fuel hauling validation.
+- Files changed: `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs` and this tracker.
+- Behavior intent:
+  - Added seeded tanker validation matching the seeded tray coverage.
+  - A map-start `Unit_Veh_Truck_Tanker` now has focused coverage for automatically creating a Fuel haul order from Refinery output to Fuel Bladder storage without runtime building.
+  - The test asserts source/destination ids, Fuel resource kind, initial travel phase, and ECS Fuel outbound/inbound reservations.
+- Validation:
+  - Added `AutomaticFuelLogisticsSeededTanker_StartsFuelHaulingWithoutRuntimeBuild`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 5 with selected tanker idle/block reason visibility, then reassess whether the remaining unmanaged `FuelTankerLogisticsAssignmentSystem` split is practical before moving phases.

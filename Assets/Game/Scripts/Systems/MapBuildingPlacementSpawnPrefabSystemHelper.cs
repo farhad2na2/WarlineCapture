@@ -11,6 +11,11 @@ namespace Game.Runtime
     internal sealed class MapBuildingPlacementSpawnPrefabSystemHelper
     {
         private const int MaxPlacementsPerUpdate = 32;
+        private const string AirportCategory = "Building_Airport";
+        private const string RunwaysRootName = "Runways";
+        private const string RunwayAnchorName = "Runway";
+        private const string RunwayStartName = "Runway_Start";
+        private const string RunwayEndName = "Runway_End";
 
         public delegate bool TryGetGridDataDelegate(
             out Entity gridEntity,
@@ -232,10 +237,332 @@ namespace Game.Runtime
             visual.transform.localRotation = Quaternion.identity;
             visual.transform.localScale = Vector3.one;
             visual.SetActive(true);
+            TryAttachMapRunwayAnchor(context.AuthoringBuildingsRoot, placement, wrapper.transform, context.LogWarning);
             if (context.Config.HideAuthoringVisualsAfterSpawn)
                 source.gameObject.SetActive(false);
 
             return wrapper;
+        }
+
+        internal static bool TryAttachMapRunwayAnchor(
+            Transform authoringBuildingsRoot,
+            MapBuildingPlacementConfigEntry placement,
+            Transform wrapper,
+            Action<string> logWarning = null)
+        {
+            if (!IsMapAirportPlacement(placement) || authoringBuildingsRoot == null || wrapper == null)
+                return false;
+
+            if (TryFindDescendantByName(wrapper, RunwayAnchorName, out _))
+                return true;
+
+            Transform mapRoot = authoringBuildingsRoot.parent;
+            if (mapRoot == null)
+            {
+                logWarning?.Invoke($"[MapBuildingPlacement] airport {placement.SourcePath} could not resolve map root for runway alignment.");
+                return false;
+            }
+
+            Transform runwaysRoot = FindDirectChildByName(mapRoot, RunwaysRootName);
+            if (runwaysRoot == null)
+            {
+                logWarning?.Invoke($"[MapBuildingPlacement] airport {placement.SourcePath} could not resolve {RunwaysRootName} root for runway alignment.");
+                return false;
+            }
+
+            if (!TryResolveNearestMapRunwayWorldData(
+                    runwaysRoot,
+                    placement.WorldPosition,
+                    out Vector3 runwayCenter,
+                    out Quaternion runwayRotation,
+                    out Vector3 runwayHalfExtents))
+            {
+                logWarning?.Invoke($"[MapBuildingPlacement] airport {placement.SourcePath} could not resolve a live runway surface under {GetHierarchyPath(runwaysRoot)}.");
+                return false;
+            }
+
+            CreateRuntimeRunwayAnchor(wrapper, runwayCenter, runwayRotation, runwayHalfExtents);
+            return true;
+        }
+
+        private static bool IsMapAirportPlacement(MapBuildingPlacementConfigEntry placement)
+        {
+            return placement != null &&
+                (string.Equals(placement.Category, AirportCategory, StringComparison.Ordinal) ||
+                 ContainsOrdinalIgnoreCase(placement.BuildingPrefab != null ? placement.BuildingPrefab.name : null, "Airport"));
+        }
+
+        private static bool TryResolveNearestMapRunwayWorldData(
+            Transform runwaysRoot,
+            Vector3 referencePosition,
+            out Vector3 center,
+            out Quaternion rotation,
+            out Vector3 halfExtents)
+        {
+            center = Vector3.zero;
+            rotation = Quaternion.identity;
+            halfExtents = new Vector3(8f, 0.5f, 24f);
+            if (runwaysRoot == null)
+                return false;
+
+            Renderer[] renderers = runwaysRoot.GetComponentsInChildren<Renderer>(true);
+            bool found = false;
+            float bestDistance = float.PositiveInfinity;
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer renderer = renderers[i];
+                if (renderer == null || !IsRunwaySurfaceRenderer(renderer))
+                    continue;
+
+                if (!TryResolveRunwayRendererWorldData(
+                        renderer,
+                        out Vector3 candidateCenter,
+                        out Quaternion candidateRotation,
+                        out Vector3 candidateHalfExtents))
+                {
+                    continue;
+                }
+
+                float distance = PlanarDistanceSquared(candidateCenter, referencePosition);
+                if (distance >= bestDistance)
+                    continue;
+
+                bestDistance = distance;
+                center = candidateCenter;
+                rotation = candidateRotation;
+                halfExtents = candidateHalfExtents;
+                found = true;
+            }
+
+            if (found)
+                return true;
+
+            return TryResolveRunwayGroupWorldData(runwaysRoot, referencePosition, out center, out rotation, out halfExtents);
+        }
+
+        private static bool TryResolveRunwayGroupWorldData(
+            Transform runwaysRoot,
+            Vector3 referencePosition,
+            out Vector3 center,
+            out Quaternion rotation,
+            out Vector3 halfExtents)
+        {
+            center = Vector3.zero;
+            rotation = Quaternion.identity;
+            halfExtents = new Vector3(8f, 0.5f, 24f);
+            bool found = false;
+            float bestDistance = float.PositiveInfinity;
+
+            for (int i = 0; i < runwaysRoot.childCount; i++)
+            {
+                Transform child = runwaysRoot.GetChild(i);
+                if (child == null ||
+                    !TryResolveCombinedRendererWorldData(
+                        child,
+                        out Vector3 candidateCenter,
+                        out Quaternion candidateRotation,
+                        out Vector3 candidateHalfExtents))
+                {
+                    continue;
+                }
+
+                float distance = PlanarDistanceSquared(candidateCenter, referencePosition);
+                if (distance >= bestDistance)
+                    continue;
+
+                bestDistance = distance;
+                center = candidateCenter;
+                rotation = candidateRotation;
+                halfExtents = candidateHalfExtents;
+                found = true;
+            }
+
+            return found;
+        }
+
+        private static bool TryResolveRunwayRendererWorldData(
+            Renderer renderer,
+            out Vector3 center,
+            out Quaternion rotation,
+            out Vector3 halfExtents)
+        {
+            center = Vector3.zero;
+            rotation = Quaternion.identity;
+            halfExtents = new Vector3(8f, 0.5f, 24f);
+            if (renderer == null)
+                return false;
+
+            Bounds bounds = renderer.bounds;
+            center = bounds.center;
+            center.y = bounds.max.y;
+            Transform transform = renderer.transform;
+            Vector3 rightAxis = ResolvePlanarAxis(transform != null ? transform.right : Vector3.right, Vector3.right);
+            Vector3 forwardAxis = ResolvePlanarAxis(transform != null ? transform.forward : Vector3.forward, Vector3.forward);
+            ResolveRunwayAxesFromBounds(bounds, center, rightAxis, forwardAxis, out Vector3 lengthAxis, out float halfWidth, out float halfLength);
+            if (halfLength <= 2f)
+                return false;
+
+            rotation = Quaternion.LookRotation(lengthAxis, Vector3.up);
+            halfExtents = new Vector3(Mathf.Max(1f, halfWidth), Mathf.Max(0.5f, bounds.extents.y), halfLength);
+            return true;
+        }
+
+        private static bool TryResolveCombinedRendererWorldData(
+            Transform root,
+            out Vector3 center,
+            out Quaternion rotation,
+            out Vector3 halfExtents)
+        {
+            center = Vector3.zero;
+            rotation = Quaternion.identity;
+            halfExtents = new Vector3(8f, 0.5f, 24f);
+            if (root == null)
+                return false;
+
+            Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+            bool found = false;
+            Bounds combinedBounds = default;
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer renderer = renderers[i];
+                if (renderer == null || IsRunwayPropRenderer(renderer))
+                    continue;
+
+                if (found)
+                    combinedBounds.Encapsulate(renderer.bounds);
+                else
+                {
+                    combinedBounds = renderer.bounds;
+                    found = true;
+                }
+            }
+
+            if (!found)
+                return false;
+
+            center = combinedBounds.center;
+            center.y = combinedBounds.max.y;
+            Vector3 rightAxis = ResolvePlanarAxis(root.right, Vector3.right);
+            Vector3 forwardAxis = ResolvePlanarAxis(root.forward, Vector3.forward);
+            ResolveRunwayAxesFromBounds(combinedBounds, center, rightAxis, forwardAxis, out Vector3 lengthAxis, out float halfWidth, out float halfLength);
+            if (halfLength <= 2f)
+                return false;
+
+            rotation = Quaternion.LookRotation(lengthAxis, Vector3.up);
+            halfExtents = new Vector3(Mathf.Max(1f, halfWidth), Mathf.Max(0.5f, combinedBounds.extents.y), halfLength);
+            return true;
+        }
+
+        private static void ResolveRunwayAxesFromBounds(
+            Bounds bounds,
+            Vector3 center,
+            Vector3 rightAxis,
+            Vector3 forwardAxis,
+            out Vector3 lengthAxis,
+            out float halfWidth,
+            out float halfLength)
+        {
+            float rightSpan = ResolveProjectedHalfSpan(bounds, center, rightAxis);
+            float forwardSpan = ResolveProjectedHalfSpan(bounds, center, forwardAxis);
+            if (rightSpan >= forwardSpan)
+            {
+                lengthAxis = rightAxis;
+                halfLength = rightSpan;
+                halfWidth = forwardSpan;
+            }
+            else
+            {
+                lengthAxis = forwardAxis;
+                halfLength = forwardSpan;
+                halfWidth = rightSpan;
+            }
+        }
+
+        private static float ResolveProjectedHalfSpan(Bounds bounds, Vector3 center, Vector3 axis)
+        {
+            float halfSpan = 0f;
+            EncapsulateProjectedBoundsCorner(bounds.min.x, bounds.min.y, bounds.min.z, center, axis, ref halfSpan);
+            EncapsulateProjectedBoundsCorner(bounds.min.x, bounds.min.y, bounds.max.z, center, axis, ref halfSpan);
+            EncapsulateProjectedBoundsCorner(bounds.min.x, bounds.max.y, bounds.min.z, center, axis, ref halfSpan);
+            EncapsulateProjectedBoundsCorner(bounds.min.x, bounds.max.y, bounds.max.z, center, axis, ref halfSpan);
+            EncapsulateProjectedBoundsCorner(bounds.max.x, bounds.min.y, bounds.min.z, center, axis, ref halfSpan);
+            EncapsulateProjectedBoundsCorner(bounds.max.x, bounds.min.y, bounds.max.z, center, axis, ref halfSpan);
+            EncapsulateProjectedBoundsCorner(bounds.max.x, bounds.max.y, bounds.min.z, center, axis, ref halfSpan);
+            EncapsulateProjectedBoundsCorner(bounds.max.x, bounds.max.y, bounds.max.z, center, axis, ref halfSpan);
+            return halfSpan;
+        }
+
+        private static void EncapsulateProjectedBoundsCorner(
+            float x,
+            float y,
+            float z,
+            Vector3 center,
+            Vector3 axis,
+            ref float halfSpan)
+        {
+            halfSpan = Mathf.Max(halfSpan, Mathf.Abs(Vector3.Dot(new Vector3(x, y, z) - center, axis)));
+        }
+
+        private static Vector3 ResolvePlanarAxis(Vector3 axis, Vector3 fallback)
+        {
+            axis.y = 0f;
+            if (axis.sqrMagnitude <= 0.0001f)
+                axis = fallback;
+
+            axis.y = 0f;
+            return axis.sqrMagnitude > 0.0001f ? axis.normalized : Vector3.forward;
+        }
+
+        private static void CreateRuntimeRunwayAnchor(
+            Transform wrapper,
+            Vector3 center,
+            Quaternion rotation,
+            Vector3 halfExtents)
+        {
+            GameObject runway = new(RunwayAnchorName);
+            Transform runwayTransform = runway.transform;
+            runwayTransform.SetParent(wrapper, true);
+            runwayTransform.SetPositionAndRotation(center, rotation);
+
+            GameObject start = new(RunwayStartName);
+            start.transform.SetParent(runwayTransform, false);
+            start.transform.localPosition = new Vector3(0f, 0f, -Mathf.Abs(halfExtents.z));
+            start.transform.localRotation = Quaternion.identity;
+
+            GameObject end = new(RunwayEndName);
+            end.transform.SetParent(runwayTransform, false);
+            end.transform.localPosition = new Vector3(0f, 0f, Mathf.Abs(halfExtents.z));
+            end.transform.localRotation = Quaternion.identity;
+        }
+
+        private static bool IsRunwaySurfaceRenderer(Renderer renderer)
+        {
+            if (renderer == null)
+                return false;
+
+            string name = renderer.name;
+            string path = GetHierarchyPath(renderer.transform);
+            return ContainsOrdinalIgnoreCase(name, "SM_Env_Runway") ||
+                   ContainsOrdinalIgnoreCase(path, "SM_Env_Runway") ||
+                   (ContainsOrdinalIgnoreCase(name, "Runway") && !IsRunwayPropRenderer(renderer));
+        }
+
+        private static bool IsRunwayPropRenderer(Renderer renderer)
+        {
+            if (renderer == null)
+                return true;
+
+            string path = GetHierarchyPath(renderer.transform);
+            return ContainsOrdinalIgnoreCase(path, "Light") ||
+                   ContainsOrdinalIgnoreCase(path, "Barrier") ||
+                   ContainsOrdinalIgnoreCase(path, "Prop_Runway");
+        }
+
+        private static float PlanarDistanceSquared(Vector3 a, Vector3 b)
+        {
+            float dx = a.x - b.x;
+            float dz = a.z - b.z;
+            return dx * dx + dz * dz;
         }
 
         private static bool TryResolveAuthoringTransform(
@@ -342,6 +669,28 @@ namespace Game.Runtime
             return index >= 0 && index + 1 < sourcePath.Length
                 ? sourcePath.Substring(index + 1)
                 : sourcePath;
+        }
+
+        private static string GetHierarchyPath(Transform transform)
+        {
+            if (transform == null)
+                return string.Empty;
+
+            string path = transform.name;
+            Transform current = transform.parent;
+            while (current != null)
+            {
+                path = $"{current.name}/{path}";
+                current = current.parent;
+            }
+
+            return path;
+        }
+
+        private static bool ContainsOrdinalIgnoreCase(string value, string part)
+        {
+            return !string.IsNullOrEmpty(value) &&
+                   value.IndexOf(part, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private void HideAuthoringVisuals(Context context)

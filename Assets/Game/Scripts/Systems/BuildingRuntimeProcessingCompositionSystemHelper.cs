@@ -1189,16 +1189,21 @@ namespace Game.Runtime
                 return;
             }
 
-            Transform transform = building.Instance.transform;
-            Vector3 center = transform.TransformPoint(BuildingRunwaySystem.ResolveRuntimeRunwayLocalPosition(building.Definition));
-            Quaternion rotation = transform.rotation * building.Definition.RunwayLocalRotation;
+            if (!BuildingRunwaySystem.TryResolveRuntimeRunwayWorldData(
+                    building,
+                    out Vector3 center,
+                    out Quaternion rotation,
+                    out Vector3 scaledHalfExtents))
+            {
+                return;
+            }
+
             Vector3 direction = rotation * Vector3.forward;
             direction.y = 0f;
             if (direction.sqrMagnitude <= 0.0001f)
                 direction = Vector3.forward;
             direction.Normalize();
 
-            Vector3 scaledHalfExtents = Vector3.Scale(building.Definition.RunwayHalfExtents, transform.lossyScale);
             float halfWidth = Mathf.Max(1f, Mathf.Abs(scaledHalfExtents.x));
             float halfLength = Mathf.Max(8f, Mathf.Abs(scaledHalfExtents.z));
             Vector3 takeoffPosition = center - direction * halfLength;

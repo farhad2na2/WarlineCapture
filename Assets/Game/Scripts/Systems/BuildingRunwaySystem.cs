@@ -98,7 +98,9 @@ namespace Game.Runtime
             if (candidate == null || candidate.IsDestroyed || candidate.Instance == null || candidate.Definition == null || !candidate.Definition.HasRunway)
                 return;
 
-            Vector3 candidateCenter = candidate.Instance.transform.TransformPoint(ResolveRuntimeRunwayLocalPosition(candidate.Definition));
+            if (!TryResolveRuntimeRunwayWorldData(candidate, out Vector3 candidateCenter, out Quaternion candidateRotation, out Vector3 candidateHalfExtents))
+                return;
+
             float distance = (candidateCenter - origin).sqrMagnitude;
             if (distance >= bestDistance)
                 return;
@@ -106,8 +108,8 @@ namespace Game.Runtime
             bestDistance = distance;
             airport = candidate;
             runwayCenter = candidateCenter;
-            runwayRotation = candidate.Instance.transform.rotation * candidate.Definition.RunwayLocalRotation;
-            runwayHalfExtents = Vector3.Scale(candidate.Definition.RunwayHalfExtents, candidate.Instance.transform.lossyScale);
+            runwayRotation = candidateRotation;
+            runwayHalfExtents = candidateHalfExtents;
         }
 
         internal static Vector3 ResolveRuntimeRunwayLocalPosition(BuildingDefinition definition)
@@ -119,6 +121,46 @@ namespace Game.Runtime
                 ? new Vector3(definition.LocalBounds.center.x, 0f, definition.LocalBounds.center.z)
                 : Vector3.zero;
             return definition.RunwayLocalPosition - visualOffset;
+        }
+
+        internal static bool TryResolveRuntimeRunwayWorldData(
+            RuntimeBuildingEntity building,
+            out Vector3 center,
+            out Quaternion rotation,
+            out Vector3 halfExtents)
+        {
+            center = Vector3.zero;
+            rotation = Quaternion.identity;
+            halfExtents = new Vector3(8f, 0.5f, 24f);
+            if (building == null ||
+                building.IsDestroyed ||
+                building.Instance == null ||
+                building.Definition == null ||
+                !building.Definition.HasRunway)
+            {
+                return false;
+            }
+
+            Transform instanceTransform = building.Instance.transform;
+            if (TryFindRunwayTransform(instanceTransform, out Transform runway))
+            {
+                if (TryResolveRunwayMarkerWorldData(runway, out center, out rotation, out halfExtents))
+                    return true;
+
+                center = ResolveRunwaySurfaceWorldCenter(runway, runway.position);
+                rotation = runway.rotation;
+                halfExtents = ResolveRunwayWorldHalfExtents(
+                    runway,
+                    center,
+                    rotation,
+                    Vector3.Scale(building.Definition.RunwayHalfExtents, instanceTransform.lossyScale));
+                return true;
+            }
+
+            center = instanceTransform.TransformPoint(ResolveRuntimeRunwayLocalPosition(building.Definition));
+            rotation = instanceTransform.rotation * building.Definition.RunwayLocalRotation;
+            halfExtents = Vector3.Scale(building.Definition.RunwayHalfExtents, instanceTransform.lossyScale);
+            return true;
         }
 
         public RectInt GetEffectivePlacementRect(
@@ -245,6 +287,98 @@ namespace Game.Runtime
             return center;
         }
 
+        private static bool TryResolveRunwayMarkerWorldData(
+            Transform runway,
+            out Vector3 center,
+            out Quaternion rotation,
+            out Vector3 halfExtents)
+        {
+            center = Vector3.zero;
+            rotation = Quaternion.identity;
+            halfExtents = new Vector3(8f, 0.5f, 24f);
+            if (runway == null ||
+                !TryFindRunwayMarker(runway, "Runway_Start", out Transform runwayStart) ||
+                !TryFindRunwayMarker(runway, "Runway_End", out Transform runwayEnd))
+            {
+                return false;
+            }
+
+            Vector3 worldStart = runwayStart.position;
+            Vector3 worldEnd = runwayEnd.position;
+            Vector3 worldDirection = worldEnd - worldStart;
+            Vector3 planarDirection = new(worldDirection.x, 0f, worldDirection.z);
+            if (planarDirection.sqrMagnitude <= 0.0001f)
+                return false;
+
+            Vector3 markerCenter = (worldStart + worldEnd) * 0.5f;
+            Vector3 surfaceCenter = ResolveRunwaySurfaceWorldCenter(runway, markerCenter);
+            center = new Vector3(markerCenter.x, surfaceCenter.y, markerCenter.z);
+            rotation = Quaternion.LookRotation(planarDirection.normalized, Vector3.up);
+            halfExtents = ResolveRunwayWorldHalfExtents(
+                runway,
+                center,
+                rotation,
+                new Vector3(8f, 0.5f, Mathf.Max(8f, planarDirection.magnitude * 0.5f)));
+            halfExtents.z = Mathf.Max(halfExtents.z, planarDirection.magnitude * 0.5f);
+            return true;
+        }
+
+        private static Vector3 ResolveRunwayWorldHalfExtents(
+            Transform runway,
+            Vector3 center,
+            Quaternion rotation,
+            Vector3 fallbackHalfExtents)
+        {
+            if (runway == null)
+                return fallbackHalfExtents;
+
+            Renderer[] renderers = runway.GetComponentsInChildren<Renderer>(true);
+            if (renderers == null || renderers.Length == 0)
+                return fallbackHalfExtents;
+
+            Vector3 right = rotation * Vector3.right;
+            Vector3 forward = rotation * Vector3.forward;
+            float halfWidth = Mathf.Max(1f, Mathf.Abs(fallbackHalfExtents.x));
+            float halfLength = Mathf.Max(8f, Mathf.Abs(fallbackHalfExtents.z));
+            bool found = false;
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer renderer = renderers[i];
+                if (renderer == null || IsRunwayEndpointMarker(renderer.transform))
+                    continue;
+
+                Bounds bounds = renderer.bounds;
+                EncapsulateRunwayBoundsCorner(bounds.min.x, bounds.min.y, bounds.min.z, center, right, forward, ref halfWidth, ref halfLength);
+                EncapsulateRunwayBoundsCorner(bounds.min.x, bounds.min.y, bounds.max.z, center, right, forward, ref halfWidth, ref halfLength);
+                EncapsulateRunwayBoundsCorner(bounds.min.x, bounds.max.y, bounds.min.z, center, right, forward, ref halfWidth, ref halfLength);
+                EncapsulateRunwayBoundsCorner(bounds.min.x, bounds.max.y, bounds.max.z, center, right, forward, ref halfWidth, ref halfLength);
+                EncapsulateRunwayBoundsCorner(bounds.max.x, bounds.min.y, bounds.min.z, center, right, forward, ref halfWidth, ref halfLength);
+                EncapsulateRunwayBoundsCorner(bounds.max.x, bounds.min.y, bounds.max.z, center, right, forward, ref halfWidth, ref halfLength);
+                EncapsulateRunwayBoundsCorner(bounds.max.x, bounds.max.y, bounds.min.z, center, right, forward, ref halfWidth, ref halfLength);
+                EncapsulateRunwayBoundsCorner(bounds.max.x, bounds.max.y, bounds.max.z, center, right, forward, ref halfWidth, ref halfLength);
+                found = true;
+            }
+
+            return found
+                ? new Vector3(halfWidth, Mathf.Max(0.5f, Mathf.Abs(fallbackHalfExtents.y)), halfLength)
+                : fallbackHalfExtents;
+        }
+
+        private static void EncapsulateRunwayBoundsCorner(
+            float x,
+            float y,
+            float z,
+            Vector3 center,
+            Vector3 right,
+            Vector3 forward,
+            ref float halfWidth,
+            ref float halfLength)
+        {
+            Vector3 delta = new Vector3(x, y, z) - center;
+            halfWidth = Mathf.Max(halfWidth, Mathf.Abs(Vector3.Dot(delta, right)));
+            halfLength = Mathf.Max(halfLength, Mathf.Abs(Vector3.Dot(delta, forward)));
+        }
+
         private static Vector3 ResolveRunwayRendererSurfaceCenter(Renderer renderer)
         {
             Bounds bounds = renderer.bounds;
@@ -263,6 +397,37 @@ namespace Game.Runtime
                    ContainsOrdinalIgnoreCase(name, "Runway_End") ||
                    ContainsOrdinalIgnoreCase(name, "Touchdown") ||
                    ContainsOrdinalIgnoreCase(name, "Marker");
+        }
+
+        private static bool TryFindRunwayTransform(Transform root, out Transform runway)
+        {
+            return TryFindChildByName(root, "Runway", out runway);
+        }
+
+        private static bool TryFindRunwayMarker(Transform root, string markerName, out Transform marker)
+        {
+            return TryFindChildByName(root, markerName, out marker);
+        }
+
+        private static bool TryFindChildByName(Transform root, string childName, out Transform child)
+        {
+            child = null;
+            if (root == null || string.IsNullOrEmpty(childName))
+                return false;
+
+            if (string.Equals(root.name, childName, System.StringComparison.Ordinal))
+            {
+                child = root;
+                return true;
+            }
+
+            for (int i = 0; i < root.childCount; i++)
+            {
+                if (TryFindChildByName(root.GetChild(i), childName, out child))
+                    return true;
+            }
+
+            return false;
         }
 
         private static bool ContainsOrdinalIgnoreCase(string value, string part)

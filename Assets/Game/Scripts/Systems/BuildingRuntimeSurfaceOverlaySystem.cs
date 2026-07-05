@@ -52,23 +52,37 @@ namespace Game.Runtime
         private bool TryBuildRunwayOverlay(RuntimeBuildingEntity building, out BuildingRuntimeSurfaceOverlay overlay)
         {
             overlay = default;
-            Transform instanceTransform = building.Instance.transform;
             BuildingDefinition definition = building.Definition;
             if (!definition.HasRunway)
                 return false;
 
-            Vector3 runwaySurfaceCenter = instanceTransform.TransformPoint(BuildingRunwaySystem.ResolveRuntimeRunwayLocalPosition(definition));
-            Vector3 center = runwaySurfaceCenter;
-            Quaternion rotation = instanceTransform.rotation * definition.RunwayLocalRotation;
+            if (!BuildingRunwaySystem.TryResolveRuntimeRunwayWorldData(
+                    building,
+                    out Vector3 runwaySurfaceCenter,
+                    out Quaternion runwayRotation,
+                    out Vector3 runwayHalfExtents))
+            {
+                return false;
+            }
 
             float height = ResolveRunwayOverlayHeight(runwaySurfaceCenter);
-            if (!TryResolveRunwayBounds(building.Id, instanceTransform, out Bounds visualBounds))
-                return false;
-
-            center = visualBounds.center;
-            center.y = height;
-            rotation = Quaternion.identity;
-            Vector3 scaledHalfExtents = visualBounds.extents;
+            Vector3 center;
+            Quaternion rotation;
+            Vector3 scaledHalfExtents;
+            if (TryResolveRunwayBounds(building.Id, building.Instance.transform, out Bounds visualBounds))
+            {
+                center = visualBounds.center;
+                center.y = height;
+                rotation = Quaternion.identity;
+                scaledHalfExtents = visualBounds.extents;
+            }
+            else
+            {
+                center = runwaySurfaceCenter;
+                center.y = height;
+                rotation = runwayRotation;
+                scaledHalfExtents = runwayHalfExtents;
+            }
 
             overlay = new BuildingRuntimeSurfaceOverlay
             {

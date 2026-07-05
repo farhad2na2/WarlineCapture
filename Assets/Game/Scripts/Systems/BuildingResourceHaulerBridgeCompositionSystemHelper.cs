@@ -282,6 +282,31 @@ namespace Game.Runtime
                 out destination);
         }
 
+#if UNITY_INCLUDE_TESTS
+        internal static bool TryFindAutomaticHaulerRouteForTests(
+            Context context,
+            EntityManager em,
+            GridConfig grid,
+            byte factionId,
+            int2 unitCell,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float loadAmount,
+            out RuntimeBuildingEntity source,
+            out RuntimeBuildingEntity destination)
+        {
+            return TryFindAutomaticHaulerRoute(
+                context,
+                em,
+                grid,
+                factionId,
+                unitCell,
+                resourceKind,
+                loadAmount,
+                out source,
+                out destination);
+        }
+#endif
+
         private static bool TryFindNearestAutomaticSourceToCell(
             Context context,
             EntityManager em,

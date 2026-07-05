@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 54% (54/99 checklist items complete).
+Overall implementation progress: 55% (55/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -32,7 +32,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
-| 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
+| 3. Tray truck automation | In Progress | 6 | 13 | 46% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
@@ -108,7 +108,7 @@ Validation:
 
 - [x] Focused route resolver test covers same-faction tray Oil pairing and tanker Fuel pairing.
 - [x] One pump, one refinery, one tray truck transfers Oil without manual command.
-- [ ] Seeded faction-base tray truck can start Oil hauling without building a truck at runtime.
+- [x] Seeded faction-base tray truck can start Oil hauling without building a truck at runtime.
 - [ ] No refinery capacity causes tray truck idle with a typed reason.
 - [ ] Destroyed source/destination clears reservations.
 - [ ] Steady-state automation produces 0 B/frame GC.
@@ -740,3 +740,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 3 by covering seeded faction-base tray truck startup and blocked/idle reason behavior, then address remaining reservation cleanup paths.
+- Slice: seeded tray truck automatic Oil assignment validation.
+- Files changed: `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs` and this tracker.
+- Behavior intent:
+  - Added focused coverage for the map/base-seeded tray truck boundary: an already-present ECS hauler with `Unit_Veh_Truck_Tray` source key, faction, grid cell, and hauler capacity can enter the automatic Oil route without being produced by a runtime build queue.
+  - The test exercises the live bridge `UpdateResourceHaulers` path, verifies the Oil Pump -> Refinery order, and verifies source/destination Oil reservations are written.
+  - This complements `InitialFactionBaseValidationTests.SceneInitialUnitsConfig_SeedsFuelLogisticsTrucksNearFactionBases`, which already verifies tray/tanker authoring is present near faction bases.
+- Validation:
+  - Added `AutomaticFuelLogisticsSeededTray_StartsOilHaulingWithoutRuntimeBuild`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 3 with the no-refinery-capacity typed idle reason, then reservation cleanup when source/destination entities disappear.

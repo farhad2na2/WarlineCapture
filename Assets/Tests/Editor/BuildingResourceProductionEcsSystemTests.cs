@@ -28,9 +28,10 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsRoute_PairsTankerWithFactionRefineryAndFuelStorage();
             tests.AutomaticFuelLogisticsSignature_ChangesOnlyWhenRelevantStateChanges();
             tests.AutomaticFuelLogisticsReservation_ReservesSourceAndDestinationCapacity();
+            tests.AutomaticFuelLogisticsSeededTray_StartsOilHaulingWithoutRuntimeBuild();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
             tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=16");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=17");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -746,6 +747,82 @@ public sealed class BuildingResourceProductionEcsSystemTests
         }
         finally
         {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsSeededTray_StartsOilHaulingWithoutRuntimeBuild()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsSeededTray_StartsOilHaulingWithoutRuntimeBuild));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 48, 48, out blocked, out occupied);
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em,
+                35,
+                1,
+                new Vector2Int(8, 10),
+                oilCapacity: 100,
+                fuelCapacity: 0,
+                oilRate: 80f,
+                fuelRate: 0f,
+                storedOil: 40f,
+                storedFuel: 0f);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em,
+                36,
+                1,
+                new Vector2Int(20, 10),
+                oilCapacity: 100,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 40f,
+                storedOil: 0f,
+                storedFuel: 0f);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { oilPump.Id, oilPump },
+                { refinery.Id, refinery }
+            };
+            Entity seededTray = CreateFuelLogisticsHauler(
+                em,
+                "Unit_Veh_Truck_Tray",
+                1,
+                new int2(4, 12));
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0f);
+
+            Assert.IsTrue(em.HasComponent<UnitResourceHaulOrder>(seededTray));
+            Assert.IsTrue(em.HasComponent<UnitResourceHaulReservation>(seededTray));
+            UnitResourceHaulOrder order = em.GetComponentData<UnitResourceHaulOrder>(seededTray);
+            UnitResourceHaulReservation reservation = em.GetComponentData<UnitResourceHaulReservation>(seededTray);
+            BuildingResourceStorageComponent sourceStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(oilPump.CombatEntity);
+            BuildingResourceStorageComponent destinationStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(refinery.CombatEntity);
+
+            Assert.AreEqual(oilPump.Id, order.SourceBuildingId);
+            Assert.AreEqual(refinery.Id, order.DestinationBuildingId);
+            Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil, order.ResourceKind);
+            Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, order.Phase);
+            Assert.AreEqual(oilPump.Id, reservation.SourceBuildingId);
+            Assert.AreEqual(refinery.Id, reservation.DestinationBuildingId);
+            Assert.AreEqual(8f, sourceStorage.ReservedOilOutboundBarrels);
+            Assert.AreEqual(8f, destinationStorage.ReservedOilInboundBarrels);
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
             world.Dispose();
         }
     }

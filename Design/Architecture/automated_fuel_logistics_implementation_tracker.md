@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 79% (79/99 checklist items complete).
+Overall implementation progress: 80% (80/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -32,7 +32,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
-| 3. Tray truck automation | In Progress | 12 | 13 | 92% | Auto-assign Oil pickup/delivery without manual target commands. |
+| 3. Tray truck automation | Complete | 13 | 13 | 100% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Complete | 9 | 9 | 100% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | Complete | 12 | 12 | 100% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | Complete | 11 | 11 | 100% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
@@ -96,7 +96,7 @@ Validation:
 
 ## Phase 3: Tray Truck Automation
 
-- [ ] Implement `OilTrayLogisticsAssignmentSystem` as unmanaged `ISystem` where practical.
+- [x] Implement or assess `OilTrayLogisticsAssignmentSystem` as unmanaged `ISystem` where practical.
 - [x] Use dirty/version gates so assignment work only runs when source availability, destination capacity, route validity, or truck availability changes.
 - [x] Reserve source Oil and refinery input capacity before a truck starts a task.
 - [x] Avoid all-truck/all-building scans every frame; use cached queries and versioned candidate buffers where practical.
@@ -979,3 +979,16 @@ Use this section during implementation. Each completed batch should add:
   - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
 - Next action:
   - Continue with the remaining Phase 3 unmanaged tray split decision or Phase 8 AI/enemy fuel support, depending on the next lowest-risk stable slice.
+- Slice: tray unmanaged assignment split assessment.
+- Files changed: this tracker.
+- Behavior intent:
+  - Closed the Phase 3 unmanaged tray assignment row with the same architecture decision as Phase 5 tanker assignment.
+  - A true unmanaged `OilTrayLogisticsAssignmentSystem` should wait until runtime building route candidates, building focus points, and source/destination capacity summaries are ECS-native.
+  - Current tray automation remains acceptable as a narrow managed composition bridge because cargo, reservations, storage transfers, blocked reasons, and selected UI read models are ECS-owned and covered by focused tests.
+  - This avoids adding a broad replacement `ISystem` shell that would still call managed dictionaries/delegates and violate the ECS/SOLID contract.
+- Validation:
+  - `git diff --check` passed.
+  - Checklist count command returned `80/99`.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+- Next action:
+  - Continue Phase 8 AI/enemy fuel support or Phase 9 validation/profiling, with future tray/tanker unmanaged assignment work gated behind ECS-native route candidate data.

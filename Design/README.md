@@ -32,7 +32,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Visual direction: new gameplay-facing battlefield art should use 3D town/base operation scenes with runtime units, buildings, civilians, vehicles, aircraft, markers, VFX, and metadata-backed command overlays.
 - Main menu visual direction: `UIUX_MainMenu_Visual_Contract.md` now points at the command-base style with Campaign, Operations, Skirmish, Store, Commander, Settings, Credits, Supplies, Command, and Deploy Operation.
 - Economy and rewards are locked by `Economy_Reward_Design.md`. Monetization and marketing claims use the same canonical resources, reward types, and disabled purchase states as the UI/gameplay alignment docs.
-- Field logistics: `Field_Logistics_Oil_Fuel_Design.md` formalizes the existing Oil Pump, Oil Refinery, Fuel Bladder, oil truck, and tanker truck configs as a tactical Oil -> Fuel logistics loop for base-building, vehicle, air, and Skirmish missions.
+- Field logistics: `Field_Logistics_Oil_Fuel_Design.md` formalizes the existing Oil Pump, Oil Refinery, Fuel Bladder, oil truck, and tanker truck configs as a tactical Oil -> Fuel logistics loop for base-building, vehicle, air, and Skirmish missions. `Automated_Fuel_Logistics_Design.md` defines the automation model: tray trucks and tankers work without direct micro, Fuel becomes usable only after delivery to storage, and vehicles spend a shared faction Fuel pool.
 
 ## Primary Reading Order
 
@@ -66,13 +66,14 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 28. `UIUX_Implementation_High_Level_Spec.md`
 29. `UIUX_Implementation_Detailed_Spec.md`
 30. `Field_Logistics_Oil_Fuel_Design.md`
-31. `Economy_Reward_Design.md`
-32. `Balancing_Automated_Test_Plan.md`
-33. `UIUX_Gameplay_Element_Alignment.md`
-34. `Visual_Feedback_VFX_Recommendations.md`
-35. `UIUX_MainMenu_Visual_Contract.md`
-36. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-37. `UIUX_Target_To_Canvas_Workflow_Guide.md`
+31. `Automated_Fuel_Logistics_Design.md`
+32. `Economy_Reward_Design.md`
+33. `Balancing_Automated_Test_Plan.md`
+34. `UIUX_Gameplay_Element_Alignment.md`
+35. `Visual_Feedback_VFX_Recommendations.md`
+36. `UIUX_MainMenu_Visual_Contract.md`
+37. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+38. `UIUX_Target_To_Canvas_Workflow_Guide.md`
 
 ## Core Product And Gameplay
 
@@ -121,6 +122,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `Gameplay_Features_High_Level_Spec.md` - mode, objective, reward, progression, persistence, Campaign, Operations, and Skirmish roadmap. Internal legacy naming may remain where runtime code has not yet been renamed.
 - `Gameplay_Features_Detailed_Spec.md` - code-oriented implementation plan for gameplay systems.
 - `Field_Logistics_Oil_Fuel_Design.md` - tactical Oil/Fuel logistics design for Oil Pump, Oil Refinery, Large Oil Refinery, Fuel Bladder, oil transport truck, tanker truck, Build Drawer integration, match HUD rules, AI/balance metrics, and acquisition/spending rules.
+- `Automated_Fuel_Logistics_Design.md` - automation design for tray truck and tanker behavior, refinery buffers, usable faction Fuel, vehicle/air Fuel spending, player-facing feedback, balance knobs, and ECS/performance expectations.
 - `Economy_Reward_Design.md` - canonical resources, reward types, resource strips, and popup/panel gameplay goals.
 - `Balancing_Automated_Test_Plan.md` - implementation plan for balance harness tests, opt-in probes, metrics, reports, and data sanity checks.
 - `AI_CONTROLLER_DESIGN.md` - AI controller architecture and tuning companion.

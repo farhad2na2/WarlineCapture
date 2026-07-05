@@ -20,6 +20,11 @@ Use this design when implementing or reviewing:
 Related economy source:
 
 - `Economy_Reward_Design.md`
+- `Automated_Fuel_Logistics_Design.md`
+
+Automation rule:
+
+- `Automated_Fuel_Logistics_Design.md` supersedes manual logistics micro for the normal match economy. Oil trucks and tanker trucks should work autonomously; Fuel becomes the shared header pool only after tanker delivery into Fuel Bladder/base storage.
 
 ## Resource Positioning
 
@@ -49,11 +54,11 @@ The intended loop is:
 ```text
 Oil Deposit
   -> Oil Pump extracts raw Oil
-  -> Oil Truck moves Oil to Refinery or storage
-  -> Oil Refinery converts Oil into Fuel
-  -> Fuel Bladder / Fuel Depot stores Fuel
-  -> Tanker Truck moves Fuel or refuels units
-  -> Vehicles, aircraft, generators, radar, or support actions consume Fuel
+  -> Oil Truck automatically moves Oil to Refinery input
+  -> Oil Refinery converts Oil into local output Fuel
+  -> Tanker Truck automatically moves Fuel to storage
+  -> Fuel Bladder / Fuel Depot stores usable Fuel
+  -> Vehicles, aircraft, generators, radar, or support actions consume shared faction Fuel
 ```
 
 ## Existing Config-Aligned Roles
@@ -136,10 +141,10 @@ Tactical Oil is not sold in the store and is not banked directly after match end
 | Source | Conversion / Spend |
 |---|---|
 | Oil Pump | Produces tactical Oil over time if connected/valid. |
-| Oil Truck | Moves Oil; does not create resources by itself. |
+| Oil Truck | Automatically moves Oil; does not create resources by itself. |
 | Oil Refinery | Converts tactical Oil into tactical Fuel. |
 | Fuel Bladder / Depot | Raises storage or enables local refuel. |
-| Tanker Truck | Moves Fuel or refuels units; does not create Fuel by itself. |
+| Tanker Truck | Automatically moves Fuel to storage or refuel endpoints; does not create Fuel by itself. |
 | Vehicle production | May spend Credits + Fuel, depending on unit. |
 | Air production/support | May spend Fuel and/or Command depending on mission rules. |
 | Match result | May grant account Fuel through `RewardConfig`; never auto-banks all tactical Fuel unless the mission explicitly rewards it. |

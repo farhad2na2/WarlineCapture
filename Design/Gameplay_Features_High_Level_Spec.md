@@ -14,6 +14,7 @@ Date: 2026-05-02
 - `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/LargeScale_Grid_Movement_Design.md`
 - `Design/Level_And_Mission_Content_Plan.md`
+- `Design/Automated_Fuel_Logistics_Design.md`
 - Current gameplay systems under `Assets/Game/Scripts`
 - Current validation tests under `Assets/Tests`
 
@@ -38,7 +39,7 @@ WarlineCapture already has a strong real-time tactical foundation:
 - Building placement and base construction.
 - Road building.
 - Unit production from buildings.
-- Faction resources: tactical money, oil, and fuel. Player-facing UI maps tactical money to Credits and keeps Fuel as the shared mobility resource.
+- Faction resources: tactical money, oil, and fuel. Player-facing UI maps tactical money to Credits and keeps Fuel as the shared mobility resource. Automated Oil -> Fuel logistics, usable stored Fuel, and vehicle mobility spending are governed by `Design/Automated_Fuel_Logistics_Design.md`.
 - Civilian population and housing/resource stats.
 - Combat against units and buildings.
 - Base breach through walls/gates.

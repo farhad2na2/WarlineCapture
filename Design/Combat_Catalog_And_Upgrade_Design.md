@@ -22,8 +22,9 @@ Read these files together:
 3. `BalanceConfigs/Combat_Balance_Config_v0_1.json`
 4. `VisualConfigs/Combat_Visual_Config_v0_1.json`
 5. `Economy_Reward_Design.md`
-6. `Balancing_Automated_Test_Plan.md`
-7. `Level_And_Mission_Content_Plan.md`
+6. `Automated_Fuel_Logistics_Design.md`
+7. `Balancing_Automated_Test_Plan.md`
+8. `Level_And_Mission_Content_Plan.md`
 
 `GAME_DESIGN_REFERENCE.md` remains the compact snapshot of what is implemented today. This document and its configs are the design-ready expansion layer for progression, upgrades, balancing, UI, and future asset production.
 
@@ -97,7 +98,7 @@ Upgrade currencies are `Credits`, `Materials`, and item-specific `BlueprintParts
 | Base Defense | Guard Towers, walls, road barrier. | Breach prevention and defensive preparation. | HP, repair cost, detection support where applicable. |
 | Sensor Network | Satellite Dish, Coastal Radar, Radar Tank support path. | Threat warnings, air/ground/naval ETA clarity. | Detection radius and warning lead time. |
 | Air Operations | Helipad, Airport, Water Tank. | Helicopter, drone, transport, jet production and air support. | Queue slots, fuel efficiency, air support cooldown. |
-| Resource Chain | Oil Pump, Fuel Bladder, Refinery, Large Refinery, Logistics Dock. | Tactical and Operation fuel/material pressure. | Output, storage, conversion efficiency. |
+| Resource Chain | Oil Pump, Fuel Bladder, Refinery, Large Refinery, Logistics Dock. | Tactical and Operation fuel/material pressure. `Automated_Fuel_Logistics_Design.md` defines the automated tray/tanker loop and stored usable Fuel meaning. | Output, storage, conversion efficiency, logistics throughput. |
 | Civic Support | House, Shops, City Hall, Refugee Tent, Medical Station, Portable Toilet. | Civilian density, trust, shelter, recovery. | Capacity, trust gain, civilian penalty reduction. |
 | Armory Supply | Ammunition Depot and gear-support path. | Gear modules, parts, support ability tuning. | Parts crafting, material discounts, power budget. |
 | Naval Operations | Naval Yard, Dock, Coastal Radar. | Sea-unit production, harbor threats, port missions. | Production, fuel costs, naval support cooldown. |

@@ -37,7 +37,10 @@ UI mapping:
 - `Oil` remains a production/economy stat when the screen specifically explains extraction/refining.
 - `Fuel` keeps the same name across tactical and account surfaces.
 
-Field logistics source: `Field_Logistics_Oil_Fuel_Design.md` owns the tactical Oil Pump -> Oil Truck -> Refinery -> Fuel -> Fuel Bladder/Tanker loop, including build menu usage, match HUD rules, and config-aligned roles.
+Field logistics sources:
+
+- `Field_Logistics_Oil_Fuel_Design.md` owns the tactical Oil Pump -> Oil Truck -> Refinery -> Fuel -> Fuel Bladder/Tanker baseline, including build menu usage, match HUD rules, and config-aligned roles.
+- `Automated_Fuel_Logistics_Design.md` owns the automated logistics model. Header Fuel is usable faction Fuel delivered into Fuel Bladder/base storage; raw Oil, Oil in transit, refinery input, refinery output Fuel, and tanker cargo are not header Fuel.
 
 ## Canonical Reward Types
 
@@ -121,7 +124,7 @@ Balancer reports should group by `ResourceOrRewardType`, `SourceSystem`, `Balanc
 | From | To | Trigger | Rule |
 |---|---|---|---|
 | Tactical `Money` | `Credits` display label | Tactical HUD and result presentation. | UI labels tactical money as Credits. Account banking occurs only through `RewardConfig`. |
-| Tactical `Oil` | Tactical `Fuel` | Refinery/production gameplay. | Tactical production converts Oil into Fuel for match use. Account Fuel grants are separate rewards. |
+| Tactical `Oil` | Tactical `Fuel` | Refinery/production gameplay plus tanker delivery into storage. | Tactical production converts Oil into refinery output Fuel; it becomes header usable Fuel only after delivery into Fuel Bladder/base storage. Account Fuel grants are separate rewards. |
 | `Credits`, `Materials`, `Fuel`, `Intel` | Operation metric deltas | Authored Operation action. | Spending resources applies the action's configured Trust, Security, Intel, or Infrastructure delta. |
 | `Command Authority` | Store item or `RushTicket` grant | Command Exchange purchase. | Purchase spends Command Authority and grants the exact catalog `RewardConfig`. |
 | `RushTicket` | Time reduction | Queue or Operation timer rush. | Each ticket reduces time by `RushTicketSecondsPerTicket`, capped per queue/day. |

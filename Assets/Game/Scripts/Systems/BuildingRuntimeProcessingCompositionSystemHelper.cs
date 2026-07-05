@@ -214,13 +214,13 @@ namespace Game.Runtime
                     runtimeBuildings,
                     request.FactionId,
                     Mathf.Max(0f, request.RequestedOilBarrels),
-                    FactionResourceCompositionSystemHelper.ResourceKind.Oil);
+                    ResourceKind.Oil);
                 float soldFuel = factionResourceSystem.DrainFactionResource(
                     em,
                     runtimeBuildings,
                     request.FactionId,
                     Mathf.Max(0f, request.RequestedFuelBarrels),
-                    FactionResourceCompositionSystemHelper.ResourceKind.Fuel);
+                    ResourceKind.Fuel);
                 request.Status = BuildingFactionResourceSellRequest.Succeeded;
                 request.ResultCode = soldOil > 0f || soldFuel > 0f
                     ? (byte)0

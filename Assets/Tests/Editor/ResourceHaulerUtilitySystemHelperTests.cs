@@ -62,7 +62,9 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
         Assert.AreEqual(34, order.DestinationBuildingId);
         Assert.AreEqual(new int2(5, 7), order.TargetCell);
         Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, order.Phase);
-        Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel, order.ResourceKind);
+        Assert.AreEqual((byte)ResourceKind.Fuel, order.ResourceKind);
+        Assert.AreEqual((byte)ResourceKind.Oil, BuildingResourceStorageTransferSystemHelper.OilResourceKind);
+        Assert.AreEqual((byte)ResourceKind.Fuel, BuildingResourceStorageTransferSystemHelper.FuelResourceKind);
         Assert.AreEqual(0f, order.ActionEndsAt);
     }
 

@@ -7,12 +7,6 @@ namespace Game.Runtime
 {
     public sealed class FactionResourceCompositionSystemHelper
     {
-        public enum ResourceKind : byte
-        {
-            Oil = 0,
-            Fuel = 1
-        }
-
         public readonly struct ResourceEconomySnapshot
         {
             public readonly float StoredOilBarrels;

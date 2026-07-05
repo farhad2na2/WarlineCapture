@@ -5,8 +5,8 @@ namespace Game.Runtime
 {
     public static class BuildingResourceStorageTransferSystemHelper
     {
-        public const byte OilResourceKind = 0;
-        public const byte FuelResourceKind = 1;
+        public const byte OilResourceKind = (byte)ResourceKind.Oil;
+        public const byte FuelResourceKind = (byte)ResourceKind.Fuel;
 
         public static float GetOilReceivingFreeCapacity(in BuildingResourceStorageComponent storage)
         {

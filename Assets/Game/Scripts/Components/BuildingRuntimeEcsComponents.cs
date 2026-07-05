@@ -4,6 +4,12 @@ using Unity.Mathematics;
 
 namespace Game.Components
 {
+    public enum ResourceKind : byte
+    {
+        Oil = 0,
+        Fuel = 1
+    }
+
     public struct BuildingRuntimeStateTag : IComponentData
     {
     }

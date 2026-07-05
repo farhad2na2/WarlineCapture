@@ -91,7 +91,7 @@ public sealed class FactionResourceCompositionSystemHelperTests
         };
 
         var system = new FactionResourceCompositionSystemHelper();
-        float drained = system.DrainFactionResource(buildings, 2, 8f, FactionResourceCompositionSystemHelper.ResourceKind.Oil);
+        float drained = system.DrainFactionResource(buildings, 2, 8f, ResourceKind.Oil);
 
         Assert.AreEqual(8f, drained);
         Assert.AreEqual(0f, first.StoredOilBarrels);
@@ -226,7 +226,7 @@ public sealed class FactionResourceCompositionSystemHelperTests
                 buildings,
                 2,
                 5f,
-                FactionResourceCompositionSystemHelper.ResourceKind.Oil);
+                ResourceKind.Oil);
 
             BuildingResourceStorageComponent storage =
                 entityManager.GetComponentData<BuildingResourceStorageComponent>(entity);

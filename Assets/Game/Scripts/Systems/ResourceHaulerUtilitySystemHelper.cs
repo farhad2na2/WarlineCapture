@@ -471,8 +471,8 @@ namespace Game.Runtime
         private static byte ToStorageResourceKind(ResourceHaulKind resourceKind)
         {
             return resourceKind == ResourceHaulKind.Fuel
-                ? BuildingResourceStorageTransferSystemHelper.FuelResourceKind
-                : BuildingResourceStorageTransferSystemHelper.OilResourceKind;
+                ? (byte)ResourceKind.Fuel
+                : (byte)ResourceKind.Oil;
         }
 
         private static BuildingResourceStorageComponent CreateResourceStorage(

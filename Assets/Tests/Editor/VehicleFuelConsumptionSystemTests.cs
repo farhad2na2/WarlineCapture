@@ -141,6 +141,60 @@ public sealed class VehicleFuelConsumptionSystemTests
         Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(aircraft));
     }
 
+    [Test]
+    public void GroundVehicleFuelHold_ZeroFuelClearsMovementAndStopsKinematics()
+    {
+        using World world = new(nameof(GroundVehicleFuelHold_ZeroFuelClearsMovementAndStopsKinematics));
+        EntityManager em = world.EntityManager;
+        SystemHandle system = world.CreateSystem<GroundVehicleFuelHoldSystem>();
+        CreateFuelStorage(em, storedFuel: 0f, fuelRate: 0f);
+        Entity vehicle = CreateFuelUsingUnit(em, new int2(6, 7), groundFuelPerCell: 1f);
+        em.AddComponentData(vehicle, new UnitTarget { Cell = new int2(10, 11) });
+        em.AddComponentData(vehicle, new UnitPathRequest { Goal = new int2(10, 11) });
+        em.AddComponentData(vehicle, new UnitPathFollow { PathIndex = 3 });
+        em.AddComponentData(vehicle, new UnitPathRange { Start = 2, Length = 6 });
+        em.AddComponentData(vehicle, new UnitPathRetryCooldown { ResumeFrame = 99 });
+        em.AddComponentData(vehicle, new UnitLongDistanceMove { FinalGoal = new int2(12, 13) });
+        em.AddComponentData<ManualMoveOrderTag>(vehicle);
+        em.AddComponentData(vehicle, new UnitVehicleKinematics { CurrentSpeed = 8f, StallSeconds = 2f });
+
+        world.Unmanaged.UpdateSystem(system);
+
+        Assert.IsFalse(em.HasComponent<UnitTarget>(vehicle));
+        Assert.IsFalse(em.HasComponent<UnitPathRequest>(vehicle));
+        Assert.IsFalse(em.HasComponent<UnitPathFollow>(vehicle));
+        Assert.IsFalse(em.HasComponent<UnitPathRange>(vehicle));
+        Assert.IsFalse(em.HasComponent<UnitPathRetryCooldown>(vehicle));
+        Assert.IsFalse(em.HasComponent<UnitLongDistanceMove>(vehicle));
+        Assert.IsFalse(em.HasComponent<ManualMoveOrderTag>(vehicle));
+        UnitVehicleKinematics kinematics = em.GetComponentData<UnitVehicleKinematics>(vehicle);
+        Assert.AreEqual(0f, kinematics.CurrentSpeed, 0.0001f);
+        Assert.AreEqual(0f, kinematics.StallSeconds, 0.0001f);
+    }
+
+    [Test]
+    public void GroundVehicleFuelHold_WithUsableFuelKeepsMovement()
+    {
+        using World world = new(nameof(GroundVehicleFuelHold_WithUsableFuelKeepsMovement));
+        EntityManager em = world.EntityManager;
+        SystemHandle system = world.CreateSystem<GroundVehicleFuelHoldSystem>();
+        CreateFuelStorage(em, storedFuel: 5f, fuelRate: 0f);
+        Entity vehicle = CreateFuelUsingUnit(em, new int2(6, 7), groundFuelPerCell: 1f);
+        em.AddComponentData(vehicle, new UnitTarget { Cell = new int2(10, 11) });
+        em.AddComponentData(vehicle, new UnitPathRequest { Goal = new int2(10, 11) });
+        em.AddComponentData<ManualMoveOrderTag>(vehicle);
+        em.AddComponentData(vehicle, new UnitVehicleKinematics { CurrentSpeed = 8f, StallSeconds = 2f });
+
+        world.Unmanaged.UpdateSystem(system);
+
+        Assert.IsTrue(em.HasComponent<UnitTarget>(vehicle));
+        Assert.IsTrue(em.HasComponent<UnitPathRequest>(vehicle));
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(vehicle));
+        UnitVehicleKinematics kinematics = em.GetComponentData<UnitVehicleKinematics>(vehicle);
+        Assert.AreEqual(8f, kinematics.CurrentSpeed, 0.0001f);
+        Assert.AreEqual(2f, kinematics.StallSeconds, 0.0001f);
+    }
+
     private static Entity CreateFuelUsingUnit(
         EntityManager em,
         int2 cell,

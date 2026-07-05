@@ -822,6 +822,19 @@ namespace Game.Runtime
                 : new int2(1, 1);
             ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind = (ResourceHaulerUtilitySystemHelper.ResourceHaulKind)order.ResourceKind;
 
+            if (IsHaulerDeadOrUnavailable(em, entity))
+            {
+                ReleaseOrderReservations(context, em, entity);
+                em.RemoveComponent<UnitResourceHaulOrder>(entity);
+                SetResourceHaulStatus(
+                    em,
+                    entity,
+                    FuelLogisticsTaskStatusCode.Blocked,
+                    FuelLogisticsBlockReasonCode.HaulerUnavailable,
+                    resourceKind);
+                return;
+            }
+
             if (context.TryGetRuntimeBuilding == null ||
                 !context.TryGetRuntimeBuilding(order.SourceBuildingId, out RuntimeBuildingEntity source) ||
                 !context.TryGetRuntimeBuilding(order.DestinationBuildingId, out RuntimeBuildingEntity destination))
@@ -927,7 +940,20 @@ namespace Game.Runtime
                     if (VerboseResourceHaulerLogs)
                         Debug.Log($"[ResourceHauler] entity={entity} reissuing-source-move source={source.Id}");
                     if (TryIssueHaulerMoveToBuilding(context, em, entity, source, out _))
+                    {
                         SetOrAddResourceHaulOrder(em, entity, order);
+                    }
+                    else
+                    {
+                        ReleaseOrderReservations(context, em, entity);
+                        em.RemoveComponent<UnitResourceHaulOrder>(entity);
+                        SetResourceHaulStatus(
+                            em,
+                            entity,
+                            FuelLogisticsTaskStatusCode.Blocked,
+                            FuelLogisticsBlockReasonCode.RouteUnavailable,
+                            (ResourceHaulerUtilitySystemHelper.ResourceHaulKind)order.ResourceKind);
+                    }
                 }
                 return;
             }
@@ -1042,7 +1068,20 @@ namespace Game.Runtime
                 if (!HasGoalOrPathRequest(em, entity, order.TargetCell))
                 {
                     if (TryIssueHaulerMoveToBuilding(context, em, entity, destination, out _))
+                    {
                         SetOrAddResourceHaulOrder(em, entity, order);
+                    }
+                    else
+                    {
+                        ReleaseOrderReservations(context, em, entity);
+                        em.RemoveComponent<UnitResourceHaulOrder>(entity);
+                        SetResourceHaulStatus(
+                            em,
+                            entity,
+                            FuelLogisticsTaskStatusCode.Blocked,
+                            FuelLogisticsBlockReasonCode.RouteUnavailable,
+                            (ResourceHaulerUtilitySystemHelper.ResourceHaulKind)order.ResourceKind);
+                    }
                 }
                 return;
             }
@@ -1236,6 +1275,14 @@ namespace Game.Runtime
                 em.SetComponentData(entity, status);
             else
                 em.AddComponentData(entity, status);
+        }
+
+        private static bool IsHaulerDeadOrUnavailable(EntityManager em, Entity entity)
+        {
+            if (em.HasComponent<UnitDeathAnimationComponent>(entity))
+                return true;
+            return em.HasComponent<UnitHealth>(entity) &&
+                   em.GetComponentData<UnitHealth>(entity).Current <= 0;
         }
 
         private bool TryReserveHaulCapacity(

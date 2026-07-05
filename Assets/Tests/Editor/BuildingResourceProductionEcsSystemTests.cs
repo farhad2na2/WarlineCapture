@@ -33,10 +33,12 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsTray_NoRefineryCapacitySetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTray_DestroyedSourceClearsReservation();
             tests.AutomaticFuelLogisticsTray_DestroyedDestinationClearsReservation();
+            tests.AutomaticFuelLogisticsTray_DeadHaulerClearsReservation();
+            tests.AutomaticFuelLogisticsTray_RouteInvalidationClearsReservation();
             tests.AutomaticFuelLogisticsSteadyState_DoesNotAllocateManagedMemory();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
             tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=22");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=24");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -1062,6 +1064,181 @@ public sealed class BuildingResourceProductionEcsSystemTests
                 occupied.Dispose();
             world.Dispose();
         }
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsTray_DeadHaulerClearsReservation()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsTray_DeadHaulerClearsReservation));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 48, 48, out blocked, out occupied);
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em,
+                45,
+                1,
+                new Vector2Int(8, 10),
+                oilCapacity: 100,
+                fuelCapacity: 0,
+                oilRate: 80f,
+                fuelRate: 0f,
+                storedOil: 40f,
+                storedFuel: 0f);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em,
+                46,
+                1,
+                new Vector2Int(20, 10),
+                oilCapacity: 100,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 40f,
+                storedOil: 0f,
+                storedFuel: 0f);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { oilPump.Id, oilPump },
+                { refinery.Id, refinery }
+            };
+            Entity tray = CreateFuelLogisticsHauler(
+                em,
+                "Unit_Veh_Truck_Tray",
+                1,
+                new int2(4, 12));
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0f);
+            em.AddComponentData(tray, new UnitHealth { Current = 0, Max = 100 });
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0.1f);
+
+            AssertClearedOilReservationWithStatus(
+                em,
+                tray,
+                oilPump,
+                refinery,
+                FuelLogisticsBlockReasonCode.HaulerUnavailable);
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsTray_RouteInvalidationClearsReservation()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsTray_RouteInvalidationClearsReservation));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 48, 48, out blocked, out occupied);
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em,
+                47,
+                1,
+                new Vector2Int(8, 10),
+                oilCapacity: 100,
+                fuelCapacity: 0,
+                oilRate: 80f,
+                fuelRate: 0f,
+                storedOil: 40f,
+                storedFuel: 0f);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em,
+                48,
+                1,
+                new Vector2Int(20, 10),
+                oilCapacity: 100,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 40f,
+                storedOil: 0f,
+                storedFuel: 0f);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { oilPump.Id, oilPump },
+                { refinery.Id, refinery }
+            };
+            Entity tray = CreateFuelLogisticsHauler(
+                em,
+                "Unit_Veh_Truck_Tray",
+                1,
+                new int2(4, 12));
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0f);
+            ClearMovementRequestState(em, tray);
+            BlockAllCells(blocked, 48 * 48);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0.1f);
+
+            AssertClearedOilReservationWithStatus(
+                em,
+                tray,
+                oilPump,
+                refinery,
+                FuelLogisticsBlockReasonCode.RouteUnavailable);
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    private static void AssertClearedOilReservationWithStatus(
+        EntityManager em,
+        Entity tray,
+        RuntimeBuildingEntity oilPump,
+        RuntimeBuildingEntity refinery,
+        FuelLogisticsBlockReasonCode expectedReason)
+    {
+        BuildingResourceStorageComponent sourceStorage =
+            em.GetComponentData<BuildingResourceStorageComponent>(oilPump.CombatEntity);
+        BuildingResourceStorageComponent destinationStorage =
+            em.GetComponentData<BuildingResourceStorageComponent>(refinery.CombatEntity);
+        UnitResourceHaulStatus status = em.GetComponentData<UnitResourceHaulStatus>(tray);
+        Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(tray));
+        Assert.IsFalse(em.HasComponent<UnitResourceHaulReservation>(tray));
+        Assert.AreEqual(0f, sourceStorage.ReservedOilOutboundBarrels);
+        Assert.AreEqual(0f, destinationStorage.ReservedOilInboundBarrels);
+        Assert.AreEqual((byte)FuelLogisticsTaskStatusCode.Blocked, status.StatusCode);
+        Assert.AreEqual((byte)expectedReason, status.ReasonCode);
+    }
+
+    private static void ClearMovementRequestState(EntityManager em, Entity entity)
+    {
+        if (em.HasComponent<UnitTarget>(entity))
+            em.RemoveComponent<UnitTarget>(entity);
+        if (em.HasComponent<UnitPathRequest>(entity))
+            em.RemoveComponent<UnitPathRequest>(entity);
+        if (em.HasComponent<UnitPathFollow>(entity))
+            em.RemoveComponent<UnitPathFollow>(entity);
+        if (em.HasComponent<UnitPathRange>(entity))
+            em.RemoveComponent<UnitPathRange>(entity);
+    }
+
+    private static void BlockAllCells(NativeBitArray blocked, int count)
+    {
+        for (int i = 0; i < count; i++)
+            blocked.Set(i, true);
     }
 
     [Test]

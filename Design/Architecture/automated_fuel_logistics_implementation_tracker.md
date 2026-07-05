@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 60% (60/99 checklist items complete).
+Overall implementation progress: 61% (61/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -32,7 +32,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
-| 3. Tray truck automation | In Progress | 11 | 13 | 85% | Auto-assign Oil pickup/delivery without manual target commands. |
+| 3. Tray truck automation | In Progress | 12 | 13 | 92% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
@@ -102,7 +102,7 @@ Validation:
 - [x] Avoid all-truck/all-building scans every frame; use cached queries and versioned candidate buffers where practical.
 - [x] Reuse existing movement/order data path for truck travel rather than adding a new movement loop.
 - [x] Transfer cargo at pickup/drop-off through ECS mutation systems.
-- [ ] Clear reservations on truck death, source/destination death, route invalidation, or task cancellation.
+- [x] Clear reservations on truck death, source/destination death, route invalidation, or task cancellation.
 
 Validation:
 
@@ -817,3 +817,17 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 3 by resolving the remaining cancellation/truck-death cleanup row, then decide whether `OilTrayLogisticsAssignmentSystem` should become an unmanaged `ISystem` before moving to Phase 4.
+- Slice: active tray cleanup for dead haulers and invalidated routes.
+- Files changed: `Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs`, `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs`, and this tracker.
+- Behavior intent:
+  - Active resource-hauler orders now release reservations and remove order/reservation state when the hauler has zero health or a death-animation component.
+  - Travel phases now release reservations and publish `RouteUnavailable` when the existing move/path state is gone and a route reissue can no longer find a valid approach cell.
+  - This completes the cleanup row together with the earlier destroyed source/destination cleanup and the existing orphaned-reservation cleanup path for task cancellation/no-order cases.
+- Validation:
+  - Added `AutomaticFuelLogisticsTray_DeadHaulerClearsReservation`.
+  - Added `AutomaticFuelLogisticsTray_RouteInvalidationClearsReservation`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Decide whether to split the remaining tray assignment bridge into a dedicated unmanaged `OilTrayLogisticsAssignmentSystem` now, or defer that architectural split until refinery conversion and tanker automation are complete.

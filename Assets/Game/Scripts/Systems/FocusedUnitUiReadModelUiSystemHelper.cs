@@ -30,7 +30,11 @@ namespace Game.Runtime
             Entity focusedUnit = selectionStateSystem.FocusedUnit;
             if (!selectionUiReadModelLookup.HasFocusedUnit(em, focusedUnit))
             {
-                em.SetComponentData(readModelEntity, EmptyModel());
+                FocusedUnitUiReadModelComponent emptyModel = EmptyModel();
+                emptyModel.CommandStateVersion = previousModel.CommandStateVersion == 0u || previousModel.HasFocusedUnit != 0
+                    ? NextVersion(previousModel.CommandStateVersion)
+                    : previousModel.CommandStateVersion;
+                em.SetComponentData(readModelEntity, emptyModel);
                 return;
             }
 
@@ -57,6 +61,9 @@ namespace Game.Runtime
             model.StopDisabledReason = (int)stopReason;
             model.CanScan = selectionUiReadModelLookup.CanScan(em, focusedUnit, out TacticalCommandReasonCode scanReason) ? (byte)1 : (byte)0;
             model.ScanDisabledReason = (int)scanReason;
+            model.CommandStateVersion = ShouldAdvanceCommandStateVersion(previousModel, model)
+                ? NextVersion(previousModel.CommandStateVersion)
+                : previousModel.CommandStateVersion;
 
             if (selectionUiReadModelLookup.TryGetFocusedUnitHealth(em, focusedUnit, out int healthCurrent, out int healthMax))
             {
@@ -193,6 +200,28 @@ namespace Game.Runtime
                 HealthText = ToFixed32("Health: -"),
                 PortraitForward = new float3(0f, 0f, 1f)
             };
+        }
+
+        private static bool ShouldAdvanceCommandStateVersion(
+            in FocusedUnitUiReadModelComponent previous,
+            in FocusedUnitUiReadModelComponent current)
+        {
+            return previous.CommandStateVersion == 0u ||
+                   previous.FocusedUnit != current.FocusedUnit ||
+                   previous.HasFocusedUnit != current.HasFocusedUnit ||
+                   previous.OwnedByPlayer != current.OwnedByPlayer ||
+                   previous.CanHold != current.CanHold ||
+                   previous.HoldDisabledReason != current.HoldDisabledReason ||
+                   previous.CanStop != current.CanStop ||
+                   previous.StopDisabledReason != current.StopDisabledReason ||
+                   previous.CanScan != current.CanScan ||
+                   previous.ScanDisabledReason != current.ScanDisabledReason;
+        }
+
+        private static uint NextVersion(uint version)
+        {
+            uint next = version + 1u;
+            return next == 0u ? 1u : next;
         }
 
         private static FixedString32Bytes ToFixed32(string value)

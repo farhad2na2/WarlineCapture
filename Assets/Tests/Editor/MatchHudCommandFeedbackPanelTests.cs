@@ -728,6 +728,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
         public TacticalCommandReasonCode ScanReason;
 
         public bool HasAnySelectedUnits => HasSelectedUnits;
+        public uint CommandStateVersion { get; set; }
         public bool FocusedUnitCanHold => CanHold;
         public TacticalCommandReasonCode FocusedUnitHoldDisabledReason => HoldReason;
         public bool FocusedUnitCanStop => CanStop;

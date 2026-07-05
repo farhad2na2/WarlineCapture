@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 29% (29/99 checklist items complete).
+Overall implementation progress: 30% (30/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -35,7 +35,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
-| 6. Vehicle fuel spending | In Progress | 6 | 11 | 55% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
+| 6. Vehicle fuel spending | In Progress | 7 | 11 | 64% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | In Progress | 1 | 10 | 10% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
@@ -154,7 +154,7 @@ Validation:
 - [x] Block new movement/launch/support commands when usable Fuel is below required threshold.
 - [x] Add aircraft-safe behavior: new launches blocked when fuel is short; active aircraft return to base or use emergency reserve, never stop midair.
 - [x] Add ground-vehicle no-fuel behavior: reject new long moves, finish committed segment, return, or hold by policy.
-- [ ] Publish warning/read-model updates only when fuel state or blocked reasons change.
+- [x] Publish warning/read-model updates only when fuel state or blocked reasons change.
 
 Validation:
 
@@ -478,6 +478,19 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Publish fuel warning/read-model updates only when fuel state or blocked reasons change, then surface disabled command feedback from typed fuel reasons.
+- Slice: version-gated focused command read model refresh.
+- Files changed: `Assets/Game/Scripts/Components/SelectionUiReadModelComponents.cs`, `Assets/Game/Scripts/UI/Contracts/ISelectionUiReadModel.cs`, `Assets/Game/Scripts/Systems/FocusedUnitUiReadModelUiSystemHelper.cs`, `Assets/Game/Scripts/Systems/SelectionUiReadModelUiSystemHelper.cs`, `Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs`, `Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs`, `Assets/Tests/Editor/MatchHudCommandFeedbackPanelTests.cs`, and this tracker.
+- Behavior intent:
+  - Added a `CommandStateVersion` to the focused unit UI read model.
+  - The publisher advances that version only when focused unit identity or command capability/reason state changes.
+  - Match HUD command controls now skip steady-state button refresh work when the read-model version is unchanged.
+  - Version `0` remains a volatile fallback so old/unversioned test doubles and future non-ECS read models keep refreshing normally.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Surface typed fuel reasons in disabled command/build/production rows and selected logistics UI, then add no-GC UI update validation where possible.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

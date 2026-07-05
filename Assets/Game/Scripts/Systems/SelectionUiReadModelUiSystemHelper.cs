@@ -61,6 +61,11 @@ namespace Game.Runtime
             }
         }
 
+        public uint CommandStateVersion =>
+            TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model)
+                ? model.CommandStateVersion
+                : 0u;
+
         public string FocusedUnitLabel =>
             TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model)
                 ? model.Label.ToString()

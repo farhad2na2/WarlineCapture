@@ -5,6 +5,7 @@ namespace Game.UI.Contracts
     public interface ISelectionUiReadModel
     {
         bool HasAnySelectedUnits { get; }
+        uint CommandStateVersion { get; }
         bool FocusedUnitCanHold { get; }
         TacticalCommandReasonCode FocusedUnitHoldDisabledReason { get; }
         bool FocusedUnitCanStop { get; }

@@ -17,6 +17,7 @@ namespace Game.Components
         public int StopDisabledReason;
         public byte CanScan;
         public int ScanDisabledReason;
+        public uint CommandStateVersion;
         public byte HasHealth;
         public int HealthCurrent;
         public int HealthMax;

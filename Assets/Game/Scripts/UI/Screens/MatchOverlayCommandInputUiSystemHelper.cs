@@ -92,6 +92,8 @@ namespace Game.UI.Runtime
             private readonly Action _captureGameplayUiClick;
             private readonly List<(Button Button, UnityEngine.Events.UnityAction Action)> _commandTabRuntimeListeners = new();
             private bool _buildDrawerOpen;
+            private bool _hasAppliedVersionedCommandState;
+            private uint _lastAppliedCommandStateVersion;
 
             public Binding(
                 MatchOverlayCommandControlsView view,
@@ -405,6 +407,14 @@ namespace Game.UI.Runtime
             public void RefreshCommandControlState(ISelectionUiReadModel selectionUiReadModel = null)
             {
                 ISelectionUiReadModel readModel = selectionUiReadModel ?? _selectionUiReadModel;
+                uint commandStateVersion = readModel != null ? readModel.CommandStateVersion : 0u;
+                if (commandStateVersion != 0u &&
+                    _hasAppliedVersionedCommandState &&
+                    _lastAppliedCommandStateVersion == commandStateVersion)
+                {
+                    return;
+                }
+
                 // Keep the bottom command rail interactive so hover/selected feedback remains visible.
                 // Unavailable commands still report the specific rejection reason through TryAcceptCapability.
                 ApplyButtonInteractable(_view.HoldButton, true);
@@ -414,6 +424,9 @@ namespace Game.UI.Runtime
                 ApplyButtonInteractable(_view.ScanButton, true);
                 // Keep Board pressable so no-selection and invalid-selection states can surface feedback.
                 ApplyButtonInteractable(_view.BoardButton, true);
+
+                _hasAppliedVersionedCommandState = commandStateVersion != 0u;
+                _lastAppliedCommandStateVersion = commandStateVersion;
             }
 
             private bool TryAcceptCapability(CommandCapability capability)

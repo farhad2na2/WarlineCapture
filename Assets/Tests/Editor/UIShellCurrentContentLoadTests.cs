@@ -793,6 +793,7 @@ public sealed class UIShellCurrentContentLoadTests
         public TacticalCommandReasonCode ScanReason;
 
         public bool HasAnySelectedUnits => HasSelectedUnits;
+        public uint CommandStateVersion { get; set; }
         public bool FocusedUnitCanHold => CanHold;
         public TacticalCommandReasonCode FocusedUnitHoldDisabledReason => HoldReason;
         public bool FocusedUnitCanStop => CanStop;

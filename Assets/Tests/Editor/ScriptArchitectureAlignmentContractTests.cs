@@ -246,6 +246,19 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "AISettingsRuntimeState",
     };
 
+    private static readonly string[] FuelLogisticsMutationTokensForbiddenInUiRuntime =
+    {
+        "SetComponentData<BuildingResourceStorageComponent",
+        "AddComponentData<BuildingResourceStorageComponent",
+        "GetComponentDataRW<BuildingResourceStorageComponent",
+        "RefRW<BuildingResourceStorageComponent",
+        "SetBuffer<BuildingRuntimeFactionUsableFuelSummary",
+        "AddBuffer<BuildingRuntimeFactionUsableFuelSummary",
+        "BuildingResourceStorageTransferSystemHelper",
+        "ResourceHaulerUtilitySystemHelper.",
+        "VehicleFuelConsumptionSystem",
+    };
+
     private static readonly string[] BroadNameTokens =
     {
         "Manager",
@@ -291,7 +304,8 @@ public sealed class ScriptArchitectureAlignmentContractTests
             tests.UiRuntimeScriptsMustNotUseDirectEcsApis();
             tests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandUiSystemHelper();
             tests.UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes();
-            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=30");
+            tests.UiRuntimeScriptsMustNotMutateFuelLogisticsSimulationState();
+            Debug.Log("[ScriptArchitectureBoundaryValidation] result=Passed tests=31");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -631,6 +645,19 @@ public sealed class ScriptArchitectureAlignmentContractTests
         AssertNoViolations(
             violations,
             "`Game.UI.Runtime` must use contracts from `Game.UI.Contracts`; concrete runtime systems stay in runtime/composition.");
+    }
+
+    [Test]
+    public void UiRuntimeScriptsMustNotMutateFuelLogisticsSimulationState()
+    {
+        List<string> violations = EnumerateSourceFiles(Path.Combine(GameScriptsRoot, "UI"))
+            .SelectMany(path => FindTokenReferences(path, FuelLogisticsMutationTokensForbiddenInUiRuntime))
+            .OrderBy(violation => violation, StringComparer.Ordinal)
+            .ToList();
+
+        AssertNoViolations(
+            violations,
+            "`Game.UI.Runtime` may consume fuel logistics read models, but Oil/Fuel storage, hauler transfer, and fuel-consumption mutation must stay in ECS/runtime systems.");
     }
 
     [Test]

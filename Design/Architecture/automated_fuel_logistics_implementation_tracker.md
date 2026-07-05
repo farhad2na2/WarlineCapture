@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 39% (39/99 checklist items complete).
+Overall implementation progress: 40% (40/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
-| 7. UI read models and feedback | In Progress | 9 | 10 | 90% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
+| 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
@@ -170,7 +170,7 @@ Validation:
 - [x] Selection panel supports Oil Pump, Refinery, Fuel Bladder, tray truck, and tanker logistics state.
 - [x] Disabled command/build/production rows use typed reason ids.
 - [x] Avoid per-frame string formatting; cache labels or update TMP text only on read-model version changes.
-- [ ] Keep Canvas work inside existing UI helper boundaries and do not add simulation logic to UI classes.
+- [x] Keep Canvas work inside existing UI helper boundaries and do not add simulation logic to UI classes.
 
 Validation:
 
@@ -608,3 +608,15 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Close the remaining Phase 7 Canvas-boundary item after confirming logistics simulation remains outside Canvas/UI classes, then continue into the next tracker phase.
+- Slice: fuel logistics UI boundary guardrail.
+- Files changed: `Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs` and this tracker.
+- Behavior intent:
+  - Added an architecture guardrail that allows UI runtime files to consume fuel logistics read models while blocking direct mutation of Oil/Fuel storage, hauler transfer helpers, and fuel-consumption systems from Canvas/UI code.
+  - The boundary validation runner now includes `UiRuntimeScriptsMustNotMutateFuelLogisticsSimulationState`.
+  - This closes Phase 7 by keeping Canvas work inside existing helper/read-model boundaries and preventing simulation logic from drifting into UI classes.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue with the next tracker phase: Phase 0/1 baseline and data-model gaps, then Phase 2 extraction/refinery buffer work.

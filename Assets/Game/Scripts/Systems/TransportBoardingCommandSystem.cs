@@ -734,7 +734,7 @@ namespace Game.Runtime
         {
             EnsureEntityQueries(em);
             selectionStateSystem ??= new SelectionStateCompositionSystemHelper();
-            bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
+            bool shouldLogTransportBoarding = TransportBoardingDiagnosticSystemHelper.ShouldQueueTransportBoardingDiagnostics(em);
             if (!TryValidateBoardingTransport(
                     em,
                     transport,
@@ -754,9 +754,9 @@ namespace Game.Runtime
             {
                 if (shouldLogTransportBoarding)
                 {
-                    EnqueueTransportBoardingDiagnostic(
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(
                         em,
-                        $"[TransportBoard] result=NoSeats transport={DescribeTransportBoardingEntity(em, transport)} " +
+                        $"[TransportBoard] result=NoSeats transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} " +
                         $"soldiers={slotAvailability.OccupiedSoldierSeats}/{slotAvailability.SoldierCapacity} vehicles={slotAvailability.OccupiedVehicleSlots}/{slotAvailability.VehicleCapacity}");
                 }
                 return Result.Rejected(TacticalCommandReasonCode.TransportFull);
@@ -768,9 +768,9 @@ namespace Game.Runtime
             {
                 if (shouldLogTransportBoarding)
                 {
-                    EnqueueTransportBoardingDiagnostic(
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(
                         em,
-                        $"[TransportBoard] result=NoSelectedPassengers transport={DescribeTransportBoardingEntity(em, transport)} " +
+                        $"[TransportBoard] result=NoSelectedPassengers transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} " +
                         $"soldiers={slotAvailability.OccupiedSoldierSeats}/{slotAvailability.SoldierCapacity} vehicles={slotAvailability.OccupiedVehicleSlots}/{slotAvailability.VehicleCapacity} " +
                         $"selectedTag={selectedTagCount} selectedMove={selectedMoveCount} cached={selectionStateSystem.CachedSelectedMoveEntities.Count}");
                 }
@@ -781,7 +781,7 @@ namespace Game.Runtime
             if (_gridPathingQuery.IsEmptyIgnoreFilter)
             {
                 if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoGridPathing transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount} usedCache={(usedCachedSelection ? 1 : 0)}");
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoGridPathing transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} selected={selectedCount} usedCache={(usedCachedSelection ? 1 : 0)}");
                 return Result.Rejected(TacticalCommandReasonCode.CommandUnavailable);
             }
 
@@ -838,7 +838,7 @@ namespace Game.Runtime
                         out pendingAirPickupCell))
                 {
                     if (shouldLogTransportBoarding)
-                        EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoAirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount}");
+                        TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoAirPickupLanding transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} selected={selectedCount}");
                     return Result.Rejected(
                         TacticalCommandReasonCode.NoEligiblePassengers,
                         "No landing zone for selected transport.");
@@ -858,14 +858,14 @@ namespace Game.Runtime
                 if (passenger == transport)
                 {
                     if (shouldLogTransportBoarding)
-                        EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=IsTransport passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
+                        TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=IsTransport passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)}");
                     continue;
                 }
 
                 if (!TryResolveBoardingPassengerKind(em, transport, passenger, out byte passengerKind, out int cargoWeight))
                 {
                     if (shouldLogTransportBoarding)
-                        EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NotBoardingCandidate passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
+                        TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NotBoardingCandidate passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)}");
                     continue;
                 }
 
@@ -874,14 +874,14 @@ namespace Game.Runtime
                     if (plannedVehicleSlots >= slotAvailability.AvailableVehicleSlots)
                     {
                         if (shouldLogTransportBoarding)
-                            EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoVehicleSlots passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} vehicles={slotAvailability.OccupiedVehicleSlots + plannedVehicleSlots}/{slotAvailability.VehicleCapacity}");
+                            TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoVehicleSlots passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} vehicles={slotAvailability.OccupiedVehicleSlots + plannedVehicleSlots}/{slotAvailability.VehicleCapacity}");
                         continue;
                     }
                 }
                 else if (plannedSoldierSeats >= slotAvailability.AvailableSoldierSeats)
                 {
                     if (shouldLogTransportBoarding)
-                        EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoSoldierSeats passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} soldiers={slotAvailability.OccupiedSoldierSeats + plannedSoldierSeats}/{slotAvailability.SoldierCapacity}");
+                        TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoSoldierSeats passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} soldiers={slotAvailability.OccupiedSoldierSeats + plannedSoldierSeats}/{slotAvailability.SoldierCapacity}");
                     continue;
                 }
 
@@ -913,9 +913,9 @@ namespace Game.Runtime
                 {
                     if (shouldLogTransportBoarding)
                     {
-                        EnqueueTransportBoardingDiagnostic(
+                        TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(
                             em,
-                            $"[TransportBoard] result=NoApproach passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
+                            $"[TransportBoard] result=NoApproach passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} " +
                             $"passengerCell={referenceCell} transportCell={transportCell} transportSize={boardingTransportSize} directCells={directBoardingCells}");
                     }
 
@@ -933,9 +933,9 @@ namespace Game.Runtime
             {
                 if (shouldLogTransportBoarding)
                 {
-                    EnqueueTransportBoardingDiagnostic(
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(
                         em,
-                        $"[TransportBoard] result=NoBoardingOrders transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount} " +
+                        $"[TransportBoard] result=NoBoardingOrders transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} selected={selectedCount} " +
                         $"selectedTag={selectedTagCount} selectedMove={selectedMoveCount} usedCache={(usedCachedSelection ? 1 : 0)} " +
                         $"soldiers={slotAvailability.OccupiedSoldierSeats}/{slotAvailability.SoldierCapacity} vehicles={slotAvailability.OccupiedVehicleSlots}/{slotAvailability.VehicleCapacity}");
                 }
@@ -949,7 +949,7 @@ namespace Game.Runtime
             {
                 airPickupSystem.CommandAirTransportPickup(em, transport, grid, pendingAirPickupCell, moveOrderSystem);
                 if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=AirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} landing={pendingAirPickupCell}");
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=AirPickupLanding transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} landing={pendingAirPickupCell}");
             }
 
             var passengerStateSystem = new UnitTransportPassengerStateSystem();
@@ -979,9 +979,9 @@ namespace Game.Runtime
 
                     if (shouldLogTransportBoarding)
                     {
-                        EnqueueTransportBoardingDiagnostic(
+                        TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(
                             em,
-                            $"[TransportBoard] result=Order passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
+                            $"[TransportBoard] result=Order passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} " +
                             $"from={boardingOrders[i].PassengerCell} goal={goal} kind={boardingOrders[i].PassengerKind} direct={(boardingOrders[i].DirectBoarding ? 1 : 0)} usedCache={(usedCachedSelection ? 1 : 0)} " +
                             $"soldiers={slotAvailability.OccupiedSoldierSeats + plannedSoldierSeats}/{slotAvailability.SoldierCapacity} vehicles={slotAvailability.OccupiedVehicleSlots + plannedVehicleSlots}/{slotAvailability.VehicleCapacity}");
                     }
@@ -1011,7 +1011,7 @@ namespace Game.Runtime
             TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity)
         {
             EnsureEntityQueries(em);
-            bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
+            bool shouldLogTransportBoarding = TransportBoardingDiagnosticSystemHelper.ShouldQueueTransportBoardingDiagnostics(em);
             if (!TryValidateBoardingTransport(
                     em,
                     transport,
@@ -1030,7 +1030,7 @@ namespace Game.Runtime
                 passenger == transport)
             {
                 if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=ClickedPassengerNotBoardable passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=ClickedPassengerNotBoardable passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)}");
                 return Result.Rejected(TacticalCommandReasonCode.InvalidPassenger);
             }
 
@@ -1050,7 +1050,7 @@ namespace Game.Runtime
             UnitMoveOrderSystem moveOrderSystem)
         {
             EnsureEntityQueries(em);
-            bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
+            bool shouldLogTransportBoarding = TransportBoardingDiagnosticSystemHelper.ShouldQueueTransportBoardingDiagnostics(em);
             if (!TryValidateBoardingTransport(
                     em,
                     transport,
@@ -1071,7 +1071,7 @@ namespace Game.Runtime
                 passenger == transport)
             {
                 if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=PassengerNotBoardable passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=PassengerNotBoardable passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)}");
                 return Result.Rejected(TacticalCommandReasonCode.InvalidPassenger);
             }
 
@@ -1080,14 +1080,14 @@ namespace Game.Runtime
             if (availableSlots <= 0)
             {
                 if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoSeats transport={DescribeTransportBoardingEntity(em, transport)} kind={passengerKind} slots={occupiedSlots}/{slotCapacity}");
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoSeats transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} kind={passengerKind} slots={occupiedSlots}/{slotCapacity}");
                 return Result.Rejected(TacticalCommandReasonCode.TransportFull);
             }
 
             if (_gridPathingQuery.IsEmptyIgnoreFilter)
             {
                 if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoGridPathing transport={DescribeTransportBoardingEntity(em, transport)} passenger={DescribeTransportBoardingEntity(em, passenger)}");
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoGridPathing transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)}");
                 return Result.Rejected(TacticalCommandReasonCode.CommandUnavailable);
             }
 
@@ -1134,7 +1134,7 @@ namespace Game.Runtime
                         out pendingAirPickupCell))
                 {
                     if (shouldLogTransportBoarding)
-                        EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoAirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} passenger={DescribeTransportBoardingEntity(em, passenger)}");
+                        TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoAirPickupLanding transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)}");
                     return Result.Rejected(TacticalCommandReasonCode.NoEligiblePassengers);
                 }
 
@@ -1171,9 +1171,9 @@ namespace Game.Runtime
             {
                 if (shouldLogTransportBoarding)
                 {
-                    EnqueueTransportBoardingDiagnostic(
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(
                         em,
-                        $"[TransportBoard] result=NoApproach passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
+                        $"[TransportBoard] result=NoApproach passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} " +
                         $"passengerCell={referenceCell} transportCell={transportCell} transportSize={boardingTransportSize} directCells={directBoardingCells}");
                 }
 
@@ -1184,7 +1184,7 @@ namespace Game.Runtime
             {
                 airPickupSystem.CommandAirTransportPickup(em, transport, grid, pendingAirPickupCell, moveOrderSystem);
                 if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=AirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} landing={pendingAirPickupCell}");
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=AirPickupLanding transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} landing={pendingAirPickupCell}");
             }
 
             UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, passenger);
@@ -1210,9 +1210,9 @@ namespace Game.Runtime
 
             if (shouldLogTransportBoarding)
             {
-                EnqueueTransportBoardingDiagnostic(
+                TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(
                     em,
-                    $"[TransportBoard] result=Order passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
+                    $"[TransportBoard] result=Order passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} " +
                     $"from={referenceCell} goal={boardingOrder.Goal} kind={passengerKind} direct={boardingOrder.DirectBoarding} selectedTransport=1 slots={occupiedSlots}/{slotCapacity}");
             }
 
@@ -1244,10 +1244,10 @@ namespace Game.Runtime
             {
                 if (shouldLogTransportBoarding)
                 {
-                    string message = $"[TransportBoard] result={invalidTransportDiagnosticResult} transport={DescribeTransportBoardingEntity(em, transport)}";
+                    string message = $"[TransportBoard] result={invalidTransportDiagnosticResult} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)}";
                     if (appendInvalidTransportAirState)
-                        message += $" {DescribeTransportAirState(em, transport)}";
-                    EnqueueTransportBoardingDiagnostic(em, message);
+                        message += $" {TransportBoardingDiagnosticSystemHelper.DescribeTransportAirState(em, transport)}";
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, message);
                 }
 
                 rejectedResult = Result.Rejected(TacticalCommandReasonCode.InvalidTransport);
@@ -1260,7 +1260,7 @@ namespace Game.Runtime
             if (!transportLanded && (!airTransport || cargoPlaneTransport))
             {
                 if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportNotLanded transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportNotLanded transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} {TransportBoardingDiagnosticSystemHelper.DescribeTransportAirState(em, transport)}");
                 rejectedResult = Result.Rejected(TacticalCommandReasonCode.CommandUnavailable);
                 return false;
             }
@@ -1268,7 +1268,7 @@ namespace Game.Runtime
             if (!transportLanded && em.HasComponent<UnitTransportRopeDisembarkRequest>(transport))
             {
                 if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportBusyRopeDisembark transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportBusyRopeDisembark transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} {TransportBoardingDiagnosticSystemHelper.DescribeTransportAirState(em, transport)}");
                 rejectedResult = Result.Rejected(TacticalCommandReasonCode.CommandUnavailable);
                 return false;
             }
@@ -1819,37 +1819,37 @@ namespace Game.Runtime
             bool logDiagnostics = true)
         {
             transport = Entity.Null;
-            bool shouldLogTransportBoarding = logDiagnostics && ShouldQueueTransportBoardingDiagnostics(em);
+            bool shouldLogTransportBoarding = logDiagnostics && TransportBoardingDiagnosticSystemHelper.ShouldQueueTransportBoardingDiagnostics(em);
             Entity clickedEntity = Entity.Null;
             bool hasClickedEntity = tryGetClickedUnitEntity(screenPosition, em, out clickedEntity);
             if (hasClickedEntity && IsBoardablePlayerTransport(em, clickedEntity))
             {
                 transport = clickedEntity;
                 if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=ClickedTransport transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=ClickedTransport transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} {TransportBoardingDiagnosticSystemHelper.DescribeTransportAirState(em, transport)}");
                 return true;
             }
 
             if (!tryGetClickedCell(screenPosition, em, out int2 clickedCell, out _))
             {
                 if (shouldLogTransportBoarding && hasClickedEntity && IsKnownPersonnelTransport(em, clickedEntity))
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoClickedCell clicked={DescribeTransportBoardingEntity(em, clickedEntity)} {DescribeTransportAirState(em, clickedEntity)}");
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoClickedCell clicked={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, clickedEntity)} {TransportBoardingDiagnosticSystemHelper.DescribeTransportAirState(em, clickedEntity)}");
                 return false;
             }
 
             if (TryFindNearbyBoardableTransport(em, clickedCell, out transport))
             {
                 if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NearbyTransport clickedCell={clickedCell} transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
+                    TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NearbyTransport clickedCell={clickedCell} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} {TransportBoardingDiagnosticSystemHelper.DescribeTransportAirState(em, transport)}");
                 return true;
             }
 
             if (shouldLogTransportBoarding && hasClickedEntity && IsKnownPersonnelTransport(em, clickedEntity))
             {
-                EnqueueTransportBoardingDiagnostic(
+                TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(
                     em,
-                    $"[TransportBoard] result=ClickedTransportRejected clicked={DescribeTransportBoardingEntity(em, clickedEntity)} " +
-                    $"player={(IsPlayerFaction(em, clickedEntity) ? 1 : 0)} landed={(IsTransportLandedForBoarding(em, clickedEntity) ? 1 : 0)} {DescribeTransportAirState(em, clickedEntity)}");
+                    $"[TransportBoard] result=ClickedTransportRejected clicked={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, clickedEntity)} " +
+                    $"player={(IsPlayerFaction(em, clickedEntity) ? 1 : 0)} landed={(IsTransportLandedForBoarding(em, clickedEntity) ? 1 : 0)} {TransportBoardingDiagnosticSystemHelper.DescribeTransportAirState(em, clickedEntity)}");
             }
 
             if (hasClickedEntity &&
@@ -3081,7 +3081,7 @@ namespace Game.Runtime
             if (!em.Exists(transport) || !em.HasComponent<UnitAirMovement>(transport))
                 return false;
 
-            string sourceName = ResolveUnitSourceName(em, transport);
+            string sourceName = ResolveSourceName(em, transport);
             return sourceName.IndexOf("Unit_Veh_Helicopter_Transport", System.StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
@@ -3968,91 +3968,5 @@ namespace Game.Runtime
                    FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id);
         }
 
-        private static string DescribeTransportBoardingEntity(EntityManager em, Entity entity)
-        {
-            if (entity == Entity.Null)
-                return "null";
-            if (!em.Exists(entity))
-                return $"{entity}:missing";
-
-            string sourceName = ResolveUnitSourceName(em, entity);
-            if (string.IsNullOrWhiteSpace(sourceName))
-                sourceName = "<unnamed>";
-
-            string cell = em.HasComponent<UnitGrid>(entity)
-                ? em.GetComponentData<UnitGrid>(entity).Cell.ToString()
-                : "no-cell";
-            string faction = em.HasComponent<Faction>(entity)
-                ? em.GetComponentData<Faction>(entity).Id.ToString()
-                : "no-faction";
-            string health = em.HasComponent<UnitHealth>(entity)
-                ? $"{em.GetComponentData<UnitHealth>(entity).Current}/{em.GetComponentData<UnitHealth>(entity).Max}"
-                : "no-health";
-            string capacity = em.HasComponent<UnitTransportCapacity>(entity)
-                ? em.GetComponentData<UnitTransportCapacity>(entity).SoldierCapacity.ToString()
-                : "no-capacity";
-            string passengers = em.HasBuffer<UnitTransportPassengerElement>(entity)
-                ? em.GetBuffer<UnitTransportPassengerElement>(entity).Length.ToString()
-                : "no-passengers";
-
-            return $"{sourceName} entity={entity} cell={cell} faction={faction} health={health} seats={passengers}/{capacity}";
-        }
-
-        private static string ResolveUnitSourceName(EntityManager em, Entity entity)
-        {
-            if (!em.Exists(entity))
-                return string.Empty;
-
-            if (em.HasComponent<UnitSourcePrefabKey>(entity))
-            {
-                string sourceName = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
-                if (!string.IsNullOrWhiteSpace(sourceName))
-                    return sourceName;
-            }
-
-            return em.GetName(entity);
-        }
-
-        private static string DescribeTransportAirState(EntityManager em, Entity entity)
-        {
-            if (!em.Exists(entity) || !em.HasComponent<UnitAirMovement>(entity))
-                return "air=none";
-            if (!em.HasComponent<UnitAirComponent>(entity))
-                return "air=missing-state";
-
-            UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(entity);
-            return $"airborne={airState.Airborne} takeoff={airState.TakeoffRolling} landing={airState.LandingRolling} returning={airState.ReturningHome} rope={(em.HasComponent<UnitTransportRopeDisembarkRequest>(entity) ? 1 : 0)} airdrop={(em.HasComponent<UnitTransportAirdropRequest>(entity) ? 1 : 0)}";
-        }
-
-        private static bool ShouldQueueTransportBoardingDiagnostics(EntityManager em)
-        {
-            if (Application.isBatchMode)
-                return true;
-
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
-            return !query.IsEmptyIgnoreFilter &&
-                em.GetComponentData<RuntimeDiagnosticsStateComponent>(query.GetSingletonEntity()).TransportBoardingDiagnostics != 0;
-        }
-
-        private static Entity EnsureTransportBoardingDiagnosticQueue(EntityManager em)
-        {
-            using EntityQuery query = em.CreateEntityQuery(
-                ComponentType.ReadOnly<TransportBoardingDiagnosticLogQueueComponent>(),
-                ComponentType.ReadWrite<TransportBoardingDiagnosticLogComponent>());
-            if (!query.IsEmptyIgnoreFilter)
-                return query.GetSingletonEntity();
-
-            Entity queueEntity = em.CreateEntity(typeof(TransportBoardingDiagnosticLogQueueComponent));
-            em.SetName(queueEntity, "TransportBoardingDiagnosticLogQueue");
-            em.AddBuffer<TransportBoardingDiagnosticLogComponent>(queueEntity);
-            return queueEntity;
-        }
-
-        private static void EnqueueTransportBoardingDiagnostic(EntityManager em, FixedString512Bytes message)
-        {
-            Entity queueEntity = EnsureTransportBoardingDiagnosticQueue(em);
-            DynamicBuffer<TransportBoardingDiagnosticLogComponent> logs = em.GetBuffer<TransportBoardingDiagnosticLogComponent>(queueEntity);
-            logs.Add(new TransportBoardingDiagnosticLogComponent { Message = message });
-        }
     }
 }

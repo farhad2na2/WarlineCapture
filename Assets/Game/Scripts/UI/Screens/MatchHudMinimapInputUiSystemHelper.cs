@@ -70,6 +70,7 @@ namespace Game.UI.Runtime
         private bool _rawPointerWasPressedLastFrame;
         private bool _rawViewportDragActive;
         private bool _useStableFullMapProjection;
+        private int _rawActiveTouchId = -1;
 
         public void Bind(
             MatchHudMinimapView view,
@@ -110,6 +111,7 @@ namespace Game.UI.Runtime
             _minimapZoomedIn = false;
             _rawPointerWasPressedLastFrame = false;
             _rawViewportDragActive = false;
+            _rawActiveTouchId = -1;
             _staticMapDirty = true;
             _view.ApplyInteractionOptions(
                 useFullMapProjection,
@@ -142,6 +144,7 @@ namespace Game.UI.Runtime
             _markerPool.Clear();
             _rawPointerWasPressedLastFrame = false;
             _rawViewportDragActive = false;
+            _rawActiveTouchId = -1;
             _useStableFullMapProjection = false;
         }
 
@@ -468,6 +471,7 @@ namespace Game.UI.Runtime
                     _view.EndViewportDrag();
                 _rawPointerWasPressedLastFrame = false;
                 _rawViewportDragActive = false;
+                _rawActiveTouchId = -1;
                 return;
             }
 
@@ -477,6 +481,7 @@ namespace Game.UI.Runtime
                     _view.EndViewportDrag();
                 _rawPointerWasPressedLastFrame = false;
                 _rawViewportDragActive = false;
+                _rawActiveTouchId = -1;
                 return;
             }
 
@@ -490,6 +495,8 @@ namespace Game.UI.Runtime
             if (pressedThisFrame)
             {
                 _rawViewportDragActive = _view.TryBeginViewportDrag(pointer.Position, eventCamera);
+                if (!_rawViewportDragActive && pointer.IsTouch)
+                    _rawActiveTouchId = -1;
             }
 
             if (pointer.IsPressed && _rawViewportDragActive)
@@ -502,6 +509,8 @@ namespace Game.UI.Runtime
             }
 
             _rawPointerWasPressedLastFrame = pointer.IsPressed;
+            if (pointer.IsTouch && releasedThisFrame)
+                _rawActiveTouchId = -1;
         }
 
         private void UpdateMarkers(MatchHudMinimapProjectionGrid grid)
@@ -632,40 +641,32 @@ namespace Game.UI.Runtime
             public readonly bool IsPressed;
             public readonly bool WasPressedThisFrame;
             public readonly bool WasReleasedThisFrame;
+            public readonly bool IsTouch;
+            public readonly int TouchId;
 
             public PointerState(
                 Vector2 position,
                 bool isPressed,
                 bool wasPressedThisFrame,
-                bool wasReleasedThisFrame)
+                bool wasReleasedThisFrame,
+                bool isTouch = false,
+                int touchId = -1)
             {
                 Position = position;
                 IsPressed = isPressed;
                 WasPressedThisFrame = wasPressedThisFrame;
                 WasReleasedThisFrame = wasReleasedThisFrame;
+                IsTouch = isTouch;
+                TouchId = touchId;
             }
         }
 
-        private static bool TryGetPrimaryPointer(out PointerState pointer)
+        private bool TryGetPrimaryPointer(out PointerState pointer)
         {
             pointer = default;
             Touchscreen touchscreen = Touchscreen.current;
-            if (touchscreen != null)
-            {
-                var touch = touchscreen.primaryTouch;
-                bool isPressed = touch.press.isPressed;
-                bool wasPressedThisFrame = touch.press.wasPressedThisFrame;
-                bool wasReleasedThisFrame = touch.press.wasReleasedThisFrame;
-                if (isPressed || wasPressedThisFrame || wasReleasedThisFrame)
-                {
-                    pointer = new PointerState(
-                        touch.position.ReadValue(),
-                        isPressed,
-                        wasPressedThisFrame,
-                        wasReleasedThisFrame);
-                    return true;
-                }
-            }
+            if (touchscreen != null && TryGetTouchPointer(touchscreen, out pointer))
+                return true;
 
             Mouse mouse = Mouse.current;
             if (mouse == null)
@@ -677,6 +678,82 @@ namespace Game.UI.Runtime
                 mouse.leftButton.wasPressedThisFrame,
                 mouse.leftButton.wasReleasedThisFrame);
             return true;
+        }
+
+        private bool TryGetTouchPointer(Touchscreen touchscreen, out PointerState pointer)
+        {
+            pointer = default;
+            if (touchscreen == null)
+                return false;
+
+            if (_rawActiveTouchId >= 0 && TryReadTouchById(touchscreen, _rawActiveTouchId, out pointer))
+                return true;
+
+            for (int i = 0; i < touchscreen.touches.Count; i++)
+            {
+                var touch = touchscreen.touches[i];
+                if (!touch.press.wasPressedThisFrame)
+                    continue;
+
+                pointer = ReadTouchPointer(touch);
+                _rawActiveTouchId = pointer.TouchId;
+                return true;
+            }
+
+            if (TryReadTouchControl(touchscreen.primaryTouch, out pointer))
+            {
+                if (pointer.IsPressed || pointer.WasPressedThisFrame)
+                    _rawActiveTouchId = pointer.TouchId;
+                return true;
+            }
+
+            for (int i = 0; i < touchscreen.touches.Count; i++)
+            {
+                if (TryReadTouchControl(touchscreen.touches[i], out pointer))
+                {
+                    if (pointer.IsPressed || pointer.WasPressedThisFrame)
+                        _rawActiveTouchId = pointer.TouchId;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TryReadTouchById(Touchscreen touchscreen, int touchId, out PointerState pointer)
+        {
+            pointer = default;
+            for (int i = 0; i < touchscreen.touches.Count; i++)
+            {
+                PointerState candidate = ReadTouchPointer(touchscreen.touches[i]);
+                if (candidate.TouchId != touchId)
+                    continue;
+
+                if (!candidate.IsPressed && !candidate.WasPressedThisFrame && !candidate.WasReleasedThisFrame)
+                    return false;
+
+                pointer = candidate;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryReadTouchControl(UnityEngine.InputSystem.Controls.TouchControl touch, out PointerState pointer)
+        {
+            pointer = ReadTouchPointer(touch);
+            return pointer.IsPressed || pointer.WasPressedThisFrame || pointer.WasReleasedThisFrame;
+        }
+
+        private static PointerState ReadTouchPointer(UnityEngine.InputSystem.Controls.TouchControl touch)
+        {
+            return new PointerState(
+                touch.position.ReadValue(),
+                touch.press.isPressed,
+                touch.press.wasPressedThisFrame,
+                touch.press.wasReleasedThisFrame,
+                isTouch: true,
+                touchId: touch.touchId.ReadValue());
         }
 
         private static Camera ResolveEventCamera(RectTransform rectTransform)

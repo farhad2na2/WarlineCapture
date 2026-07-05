@@ -463,7 +463,7 @@ namespace Game.Editor
                 RectTransform markerRect = markerRoot.GetComponent<RectTransform>();
                 ConfigureRect(markerRect, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-                GameObject viewport = CreateImageObject("Viewport", map.transform, null, new Color(0.65f, 0.95f, 0.30f, 0.12f), false, Image.Type.Simple);
+                GameObject viewport = CreateImageObject("Viewport", map.transform, null, new Color(0.65f, 0.95f, 0.30f, 0.12f), true, Image.Type.Simple);
                 RectTransform viewportRect = viewport.GetComponent<RectTransform>();
                 ConfigureRect(viewportRect, new Vector2(0.35f, 0.35f), new Vector2(0.65f, 0.65f), Vector2.zero, Vector2.zero);
                 Outline viewportOutline = viewport.AddComponent<Outline>();

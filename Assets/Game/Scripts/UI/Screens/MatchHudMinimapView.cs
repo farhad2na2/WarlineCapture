@@ -480,8 +480,16 @@ namespace Game.UI.Runtime
                 return;
 
             Graphic graphic = viewportRect.GetComponent<Graphic>();
-            if (graphic != null)
-                graphic.raycastTarget = true;
+            if (graphic == null)
+            {
+                Image image = viewportRect.gameObject.AddComponent<Image>();
+                image.color = Color.clear;
+                image.type = Image.Type.Simple;
+                image.preserveAspect = false;
+                graphic = image;
+            }
+
+            graphic.raycastTarget = true;
 
             MatchHudMinimapViewportDragRelay relay = viewportRect.GetComponent<MatchHudMinimapViewportDragRelay>();
             if (relay == null)

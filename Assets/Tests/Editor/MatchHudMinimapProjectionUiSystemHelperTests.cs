@@ -30,9 +30,10 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             tests.RebindingAfterDestroyedMapViewRecreatesMarkerPool();
             tests.ViewportDragUsesViewportParentSpaceWhenMapIsFramed();
             tests.ViewportDragCanStartFromVisibleOutlinePadding();
+            tests.ViewportDragAddsRaycastTargetWhenViewportHasNoGraphic();
             tests.FullMapViewportDragRequestsCameraMoveThroughInputHelper();
             tests.FullMapProjectionExpandsToKeepCameraViewportInsideMap();
-            Debug.Log("[MatchHudMinimapProjectionFocusedValidation] result=Passed tests=17");
+            Debug.Log("[MatchHudMinimapProjectionFocusedValidation] result=Passed tests=18");
         }
         catch (System.Exception ex)
         {
@@ -620,6 +621,41 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
     }
 
     [Test]
+    public void ViewportDragAddsRaycastTargetWhenViewportHasNoGraphic()
+    {
+        GameObject panel = new("MinimapPanel_ViewportRaycastTarget");
+        try
+        {
+            RectTransform panelRect = panel.AddComponent<RectTransform>();
+            panelRect.sizeDelta = new Vector2(900f, 610f);
+            RectTransform mapRect = CreateRect("Map", panelRect, new Vector2(832f, 562f), Vector2.zero);
+            Image mapImage = mapRect.gameObject.AddComponent<Image>();
+            RectTransform viewportRect = CreateRect("Viewport", panelRect, new Vector2(250f, 154f), Vector2.zero);
+
+            Assert.IsNull(viewportRect.GetComponent<Graphic>());
+
+            MatchHudMinimapView view = mapRect.gameObject.AddComponent<MatchHudMinimapView>();
+            view.Configure(mapImage, mapRect, viewportRect, null, null, mapRect);
+            view.ApplyInteractionOptions(
+                useFullMapProjection: true,
+                showViewport: true,
+                allowViewportDrag: true,
+                allowMapFocus: true,
+                allowZoom: false,
+                openFullMapOnClick: false);
+
+            Graphic viewportGraphic = viewportRect.GetComponent<Graphic>();
+            Assert.IsNotNull(viewportGraphic);
+            Assert.IsTrue(viewportGraphic.raycastTarget);
+            Assert.IsNotNull(viewportRect.GetComponent<MatchHudMinimapViewportDragRelay>());
+        }
+        finally
+        {
+            Object.DestroyImmediate(panel);
+        }
+    }
+
+    [Test]
     public void FullMapViewportDragRequestsCameraMoveThroughInputHelper()
     {
         GameObject cameraObject = new("MinimapFullMapDragCamera");
@@ -660,6 +696,9 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
                 openFullMapOnClick: false);
             MatchHudMinimapViewportDragRelay relay = view.ViewportRect.GetComponent<MatchHudMinimapViewportDragRelay>();
             Assert.IsNotNull(relay);
+            Graphic viewportGraphic = view.ViewportRect.GetComponent<Graphic>();
+            Assert.IsNotNull(viewportGraphic);
+            Assert.IsTrue(viewportGraphic.raycastTarget);
 
             relay.OnPointerDown(new PointerEventData(null)
             {

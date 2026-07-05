@@ -1,7 +1,7 @@
 # Automated Fuel Logistics Implementation Tracker
 
 Date: 2026-07-06
-Status: In progress
+Status: Complete
 Design source: `../Automated_Fuel_Logistics_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 98% (98/99 checklist items complete).
+Overall implementation progress: 100% (99/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -38,7 +38,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 6. Vehicle fuel spending | Complete | 11 | 11 | 100% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Complete | 7 | 7 | 100% | Let AI understand fuel economy after player loop is validated. |
-| 9. Validation and profiling | In Progress | 9 | 10 | 90% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
+| 9. Validation and profiling | Complete | 10 | 10 | 100% | Focused tests, seeded-map checks, guardrails, GC checks, Unity marker-backed profiling, and Android profiling scoped out for this oil/fuel tracker. |
 
 ## Phase 0: Inventory And Baseline
 
@@ -202,7 +202,7 @@ Validation:
 - [x] Run seeded logistics fixture validation for Faction 1 and Faction 2 military base tray/tanker pairs.
 - [x] Run architecture guardrails, including Burst/ECS hot-path checks.
 - [x] Run steady-state match profiler capture with fuel logistics active.
-- [ ] Run Android profiling if the feature affects match performance.
+- [x] Run Android profiling if the feature affects match performance.
 - [x] Update this tracker with command names, log paths, pass/fail result, and next action after each batch.
 
 Performance acceptance targets:
@@ -225,7 +225,7 @@ Performance acceptance targets:
 | Vehicle spend | Ground movement, aircraft launch/return, blocked commands. |
 | UI | Header, selection panel, command buttons, no stale text, no input leakage. |
 | Performance | 0 B/frame GC in steady state, skip gates verified, profiler sample attached. |
-| Android | Touch/UI blocking, profiler capture, no new match FPS regression. |
+| Android | Scoped out for this oil/fuel tracker by user direction; future mobile profiling belongs to a separate performance validation task. |
 
 ## Implementation Notes Log
 
@@ -1135,3 +1135,19 @@ Use this section during implementation. Each completed batch should add:
   - Escalated `adb devices -l` started the daemon successfully and returned an empty device list.
 - Next action:
   - Connect/authorize an Android device, then run the existing `BuildScript.BuildAndroidProfilerApk` path and capture/export the device profiler data.
+- Slice: Android profiling scope closure.
+- Files changed: this tracker.
+- Behavior intent:
+  - User clarified that no Android build or Android profiler capture is required for this oil/fuel tracker because the new feature can be validated in Unity.
+  - Interrupted the preparatory `BuildScript.BuildAndroidProfilerApk` run before completion; no Android artifact, install, or profiler capture was produced.
+  - Closed the conditional Android profiling row as not required for this feature scope.
+  - Unity focused tests, seeded fixture checks, architecture guardrails, GC checks, and marker-backed steady-state profiling remain the validation baseline for this implementation.
+- Validation:
+  - Previous `adb devices -l` availability check returned an empty device list after escalation.
+  - Interrupted command: `Tools/CI/invoke_unity_macos.sh --timeout 1200 --log /private/tmp/warline-fuel-android-profiler-apk-build.log -- -quit -executeMethod Game.Editor.BuildScript.BuildAndroidProfilerApk`; wrapper exited `130` after cancellation.
+  - Cleaned generated Unity performance/cache files from the canceled build/test path and restored the incidental `ProjectSettings/ProjectSettings.asset` whitespace-only edit.
+  - Checklist count command returned `99/99 100%`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed with 0 warnings and 0 errors.
+- Next action:
+  - Automated fuel logistics tracker is complete; future Android profiling should be tracked as a separate mobile performance validation task if requested.

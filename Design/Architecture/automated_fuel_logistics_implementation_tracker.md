@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 78% (78/99 checklist items complete).
+Overall implementation progress: 79% (79/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -35,7 +35,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 3. Tray truck automation | In Progress | 12 | 13 | 92% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Complete | 9 | 9 | 100% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | Complete | 12 | 12 | 100% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
-| 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
+| 6. Vehicle fuel spending | Complete | 11 | 11 | 100% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
@@ -967,3 +967,15 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 6 vehicle Fuel consumption validation and remaining typed feedback rows, while keeping any future assignment-system split gated behind ECS-native building route candidate data.
+- Slice: Phase 6 progress accounting correction.
+- Files changed: this tracker.
+- Behavior intent:
+  - Reconciled the tracker summary with the authoritative checklist rows after rebasing remote vehicle-fuel work.
+  - Phase 6 now correctly shows 11/11 complete because every vehicle Fuel spending implementation and validation row is checked.
+  - Overall implementation progress now matches the counted checklist total: 79/99.
+- Validation:
+  - `git diff --check` passed.
+  - Checklist count command returned `79/99`.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+- Next action:
+  - Continue with the remaining Phase 3 unmanaged tray split decision or Phase 8 AI/enemy fuel support, depending on the next lowest-risk stable slice.

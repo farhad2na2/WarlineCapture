@@ -155,7 +155,7 @@ namespace Game.UI.Runtime
                 allowMapFocus: false,
                 allowZoom: false,
                 openFullMapOnClick: true,
-                useStableFullMapProjection: true);
+                useStableFullMapProjection: false);
 
             if (_matchHudMinimapView != null)
                 _matchHudMinimapView.FullMapOpenRequested += RequestFullMapPopup;

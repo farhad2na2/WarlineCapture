@@ -267,7 +267,7 @@ namespace Game.Composition
             return grid.IsValid;
         }
 
-        public void GetMarkers(List<MatchHudMinimapMarkerModel> markers)
+        public void GetMarkers(MatchHudMinimapAreaModel area, List<MatchHudMinimapMarkerModel> markers)
         {
             if (markers == null)
                 return;
@@ -283,8 +283,12 @@ namespace Game.Composition
             for (int i = 0; i < buffer.Length; i++)
             {
                 MatchHudMinimapMarkerElement marker = buffer[i];
+                Vector3 position = new(marker.Position.x, marker.Position.y, marker.Position.z);
+                if (!area.ContainsXZ(position))
+                    continue;
+
                 markers.Add(new MatchHudMinimapMarkerModel(
-                    new Vector3(marker.Position.x, marker.Position.y, marker.Position.z),
+                    position,
                     ResolveMarkerAllegiance(marker.FactionId)));
             }
         }

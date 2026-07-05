@@ -381,7 +381,7 @@ namespace Game.UI.Runtime
 
             if (!captured || IsFlatCapture())
             {
-                DrawRasterMap(renderedGrid, out renderedGrid, !_minimapZoomedIn);
+                DrawRasterMap(renderedGrid, out renderedGrid, _view.UseFullMapProjection && !_minimapZoomedIn);
                 readbackMatchesRenderTexture = false;
             }
 
@@ -516,7 +516,7 @@ namespace Game.UI.Runtime
             Vector2 parentTopLeft = new(markerParent.rect.xMin, markerParent.rect.yMax);
             int markerIndex = 0;
             _markerScratch.Clear();
-            _minimapDataSource?.GetMarkers(_markerScratch);
+            _minimapDataSource?.GetMarkers(ToAreaModel(grid), _markerScratch);
             for (int i = 0; i < _markerScratch.Count && markerIndex < MaxMarkers; i++)
             {
                 MatchHudMinimapMarkerModel marker = _markerScratch[i];

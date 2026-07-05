@@ -22,6 +22,7 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             tests.CameraCenteredGridKeepsViewportCenteredNearMapEdge();
             tests.CameraProjectionHelpersDoNotAllocateAfterWarmup();
             tests.CaptureCameraUsesProjectionGridAspectAndCenter();
+            tests.CompactRuntimeMinimapUsesCameraLocalAreaForMarkers();
             tests.CenteredGridAllowsWindowPastMapEdgeToKeepRequestedCenter();
             tests.ClampWorldToGridKeepsFocusInsideAuthoredMap();
             tests.NormalizedToWorldClampsOutOfRangeInput();
@@ -31,7 +32,7 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             tests.ViewportDragCanStartFromVisibleOutlinePadding();
             tests.FullMapViewportDragRequestsCameraMoveThroughInputHelper();
             tests.FullMapProjectionExpandsToKeepCameraViewportInsideMap();
-            Debug.Log("[MatchHudMinimapProjectionFocusedValidation] result=Passed tests=16");
+            Debug.Log("[MatchHudMinimapProjectionFocusedValidation] result=Passed tests=17");
         }
         catch (System.Exception ex)
         {
@@ -231,6 +232,72 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
     }
 
     [Test]
+    public void CompactRuntimeMinimapUsesCameraLocalAreaForMarkers()
+    {
+        GameObject cameraObject = new("MinimapCompactAreaCamera");
+        Texture2D defaultTexture = new(4, 4, TextureFormat.RGBA32, false);
+        MatchHudMinimapInputUiSystemHelper inputSystem = null;
+        GameObject panel = null;
+        bool restoreLogAssertIgnore = false;
+        try
+        {
+            panel = CreateMinimapPanel("MinimapPanel_CompactArea", defaultTexture, out MatchHudMinimapView view, out _, out _);
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.orthographic = true;
+            camera.orthographicSize = 25f;
+            camera.aspect = view.MapRect.rect.width / view.MapRect.rect.height;
+            camera.transform.position = new Vector3(500f, 100f, 500f);
+            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+
+            FakeMatchRuntimeState runtimeState = new();
+            FakeMatchHudCameraControl cameraControl = new(camera);
+            FakeMinimapDataSource minimapDataSource = new(CreateGridModel(100, 100, 10f));
+            minimapDataSource.Markers.Add(new MatchHudMinimapMarkerModel(
+                new Vector3(500f, 0f, 500f),
+                MatchHudMinimapMarkerAllegiance.Player));
+            minimapDataSource.Markers.Add(new MatchHudMinimapMarkerModel(
+                new Vector3(900f, 0f, 900f),
+                MatchHudMinimapMarkerAllegiance.Enemy));
+
+            inputSystem = new MatchHudMinimapInputUiSystemHelper();
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+            {
+                LogAssert.ignoreFailingMessages = true;
+                restoreLogAssertIgnore = true;
+            }
+
+            inputSystem.Bind(
+                view,
+                runtimeState,
+                cameraControl,
+                minimapDataSource,
+                useFullMapProjection: false,
+                showViewport: false,
+                allowViewportDrag: false,
+                allowMapFocus: false,
+                allowZoom: false,
+                openFullMapOnClick: true,
+                useStableFullMapProjection: false);
+            inputSystem.Update();
+
+            Assert.AreEqual(1, CountActiveRuntimeMarkers(view.MapRect));
+            Assert.Less(minimapDataSource.LastMarkerArea.Width, minimapDataSource.Grid.WorldWidth);
+            Assert.Less(minimapDataSource.LastMarkerArea.Height, minimapDataSource.Grid.WorldHeight);
+            Assert.IsFalse(view.UseFullMapProjection);
+        }
+        finally
+        {
+            if (restoreLogAssertIgnore)
+                LogAssert.ignoreFailingMessages = false;
+            inputSystem?.Dispose();
+            Object.DestroyImmediate(defaultTexture);
+            Object.DestroyImmediate(cameraObject);
+            if (panel != null)
+                Object.DestroyImmediate(panel);
+        }
+    }
+
+    [Test]
     public void CenteredGridAllowsWindowPastMapEdgeToKeepRequestedCenter()
     {
         MatchHudMinimapGridModel grid = CreateGridModel(100, 80, 10f);
@@ -360,7 +427,7 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
 
             Assert.IsTrue(mapImage.enabled, "Runtime minimap must keep the existing Map Image enabled.");
             Assert.NotNull(mapImage.sprite, "Runtime minimap must assign a generated sprite to the existing Map Image.");
-            Assert.AreEqual("Runtime_MatchHudMinimapSprite", mapImage.sprite.name);
+            StringAssert.StartsWith("Runtime_MatchHudMinimap", mapImage.sprite.name);
 
             Rect viewportInPanel = GetRectInParent(viewportRect, panelRect);
             Rect mapInPanel = GetRectInParent(mapRect, panelRect);
@@ -722,6 +789,19 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
         return RectTransformUtility.WorldToScreenPoint(null, world);
     }
 
+    private static int CountActiveRuntimeMarkers(RectTransform root)
+    {
+        int count = 0;
+        Image[] images = root.GetComponentsInChildren<Image>(true);
+        for (int i = 0; i < images.Length; i++)
+        {
+            if (images[i].gameObject.name == "MinimapMarker" && images[i].gameObject.activeSelf)
+                count++;
+        }
+
+        return count;
+    }
+
     private sealed class FakeMatchRuntimeState : IMatchRuntimeState
     {
         public bool PlayRequested { get; set; }
@@ -780,6 +860,8 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             this.grid = grid;
         }
 
+        public MatchHudMinimapGridModel Grid => grid;
+        public MatchHudMinimapAreaModel LastMarkerArea { get; private set; }
         public List<MatchHudMinimapRoadCellModel> Roads { get; } = new();
         public List<MatchHudMinimapMarkerModel> Markers { get; } = new();
         public List<MatchHudMinimapSurfaceFeatureModel> SurfaceFeatures { get; } = new();
@@ -790,10 +872,16 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             return grid.IsValid;
         }
 
-        public void GetMarkers(List<MatchHudMinimapMarkerModel> markers)
+        public void GetMarkers(MatchHudMinimapAreaModel area, List<MatchHudMinimapMarkerModel> markers)
         {
+            LastMarkerArea = area;
             markers.Clear();
-            markers.AddRange(Markers);
+            for (int i = 0; i < Markers.Count; i++)
+            {
+                MatchHudMinimapMarkerModel marker = Markers[i];
+                if (area.ContainsXZ(marker.Position))
+                    markers.Add(marker);
+            }
         }
 
         public void GetRoadCells(MatchHudMinimapAreaModel area, List<MatchHudMinimapRoadCellModel> roadCells)

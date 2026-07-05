@@ -170,6 +170,14 @@ namespace Game.UI.Contracts
             Width = Mathf.Max(0.001f, width);
             Height = Mathf.Max(0.001f, height);
         }
+
+        public bool ContainsXZ(Vector3 position, float padding = 0f)
+        {
+            return position.x >= Origin.x - padding &&
+                   position.x <= Origin.x + Width + padding &&
+                   position.z >= Origin.z - padding &&
+                   position.z <= Origin.z + Height + padding;
+        }
     }
 
     public enum MatchHudMinimapMarkerAllegiance : byte
@@ -249,7 +257,7 @@ namespace Game.UI.Contracts
     public interface IMatchHudMinimapDataSource
     {
         bool TryGetGrid(out MatchHudMinimapGridModel grid);
-        void GetMarkers(List<MatchHudMinimapMarkerModel> markers);
+        void GetMarkers(MatchHudMinimapAreaModel area, List<MatchHudMinimapMarkerModel> markers);
         void GetRoadCells(MatchHudMinimapAreaModel area, List<MatchHudMinimapRoadCellModel> roadCells);
         void GetSurfaceFeatures(MatchHudMinimapAreaModel area, List<MatchHudMinimapSurfaceFeatureModel> features);
     }

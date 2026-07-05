@@ -1101,3 +1101,14 @@ Use this section during implementation. Each completed batch should add:
   - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
 - Next action:
   - Remaining work is the Phase 0/9 steady-state profiler capture with fuel logistics active and Android profiling if the feature affects match performance.
+- Slice: match steady-state FPS probe partial profiling evidence.
+- Files changed: this tracker.
+- Behavior intent:
+  - Ran the existing Canvas match FPS probe in batch playmode after the guardrail closure slice.
+  - The probe reached the Match scene, waited for gameplay to become active, warmed up, sampled 240 steady-state frames, and reported no managed GC in the slow-update diagnostics around match activation.
+  - This is useful performance evidence, but it does not close the profiler-marker/profiler-capture checklist rows because the probe reported `markers=none` for the configured `ProfilerRecorder` marker summary and did not generate a `.data` profiler capture.
+- Validation:
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-fuel-canvas-match-fps-normal.log -- -executeMethod Game.Editor.CanvasMatchFpsValidation.Run` passed with `[CanvasMatchFpsValidation] result=Passed variant=Normal samples=240 warmupFrames=120 avgMs=4.339 fps=230.4 medianMs=3.611 medianFps=277.0 p95Ms=5.334 minMs=3.280 maxMs=115.050 ... markers=none`.
+  - Latest steady-state slow-update diagnostic in the same log reported `gc=0/0/0`, `BuildingPlacement=11.1ms`, `Selection=16.2ms`, and `MainMenu=0.0ms` on the activation sample frame.
+- Next action:
+  - Capture/export an actual Unity profiler `.data` or marker-backed profiler summary for the Phase 0/9 profiler rows, then run Android profiling when a device/build capture path is available.

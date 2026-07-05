@@ -94,16 +94,6 @@ namespace Game.Runtime
             }
         }
 
-        private struct PendingTransportBoardingOrder
-        {
-            public Entity Passenger;
-            public int2 PassengerCell;
-            public int2 Goal;
-            public byte PassengerKind;
-            public int CargoWeight;
-            public bool DirectBoarding;
-        }
-
         private readonly struct TransportSlotAvailability
         {
             public readonly int OccupiedSoldierSeats;

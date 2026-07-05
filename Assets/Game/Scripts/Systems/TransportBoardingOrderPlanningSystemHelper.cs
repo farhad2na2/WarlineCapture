@@ -1,4 +1,6 @@
 using Game.Components;
+using Unity.Entities;
+using Unity.Mathematics;
 
 namespace Game.Runtime
 {
@@ -19,6 +21,16 @@ namespace Game.Runtime
             SoldierSeats = soldierSeats;
             VehicleSlots = vehicleSlots;
         }
+    }
+
+    internal struct PendingTransportBoardingOrder
+    {
+        public Entity Passenger;
+        public int2 PassengerCell;
+        public int2 Goal;
+        public byte PassengerKind;
+        public int CargoWeight;
+        public bool DirectBoarding;
     }
 
     internal static class TransportBoardingOrderPlanningSystemHelper
